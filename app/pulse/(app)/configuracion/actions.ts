@@ -2,20 +2,22 @@
 
 import { refresh } from "next/cache";
 
-import { requiereAdmin } from "@/lib/pulse/auth";
+import { requiereGestor } from "@/lib/pulse/auth";
 import { hashPassword } from "@/lib/pulse/password";
-import { actualizarUsuario, buscarUsuarioPorEmail, crearUsuario } from "@/lib/pulse/repo";
-import type { ColorPulse } from "@/lib/pulse/types";
+import { actualizarUsuario, buscarUsuarioPorEmail, crearUsuario, leerUsuario } from "@/lib/pulse/repo";
+import type { ColorPulse, RolUsuario } from "@/lib/pulse/types";
 
 type R = { ok: true } | { ok: false; error: string };
 
 export async function crearUsuarioAction(formData: FormData): Promise<R> {
   try {
-    await requiereAdmin();
+    const gestor = await requiereGestor();
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const nombre = String(formData.get("nombre") ?? "").trim();
     const password = String(formData.get("password") ?? "");
-    const rol = formData.get("rol") === "admin" ? "admin" : "miembro";
+    const pedido = String(formData.get("rol") ?? "miembro");
+    const rol: RolUsuario = pedido === "admin" ? "admin" : pedido === "editor" ? "editor" : "miembro";
+    if (rol === "admin" && gestor.rol !== "admin") return { ok: false, error: "Solo un admin puede crear admins" };
     const color = String(formData.get("color") ?? "blue") as ColorPulse;
     if (!email || !nombre) return { ok: false, error: "Faltan nombre o e-mail" };
     if (password.length < 6) return { ok: false, error: "La clave debe tener al menos 6 caracteres" };
@@ -28,10 +30,14 @@ export async function crearUsuarioAction(formData: FormData): Promise<R> {
   }
 }
 
-export async function actualizarUsuarioAction(p: { id: string; nombre?: string; rol?: "admin" | "miembro"; activo?: boolean; password?: string; color?: ColorPulse }): Promise<R> {
+export async function actualizarUsuarioAction(p: { id: string; nombre?: string; rol?: RolUsuario; activo?: boolean; password?: string; color?: ColorPulse }): Promise<R> {
   try {
-    const admin = await requiereAdmin();
-    if (p.id === admin.id && (p.activo === false || p.rol === "miembro")) return { ok: false, error: "No podés quitarte a vos mismo el acceso de admin" };
+    const gestor = await requiereGestor();
+    if (p.id === gestor.id && (p.activo === false || (p.rol && p.rol !== gestor.rol))) return { ok: false, error: "No podés cambiarte el rol ni desactivarte a vos mismo" };
+    const objetivo = await leerUsuario(p.id);
+    if (!objetivo) return { ok: false, error: "El usuario no existe" };
+    // Un editor no toca admins ni crea admins.
+    if (gestor.rol !== "admin" && (objetivo.rol === "admin" || p.rol === "admin")) return { ok: false, error: "Solo un admin puede modificar admins" };
     const patch: Parameters<typeof actualizarUsuario>[1] = {};
     if (p.nombre !== undefined) patch.nombre = p.nombre.trim().slice(0, 100) || undefined;
     if (p.rol !== undefined) patch.rol = p.rol;

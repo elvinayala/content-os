@@ -80,7 +80,13 @@ export type ValorLink = { url: string; text?: string };
 // link → { url, text }
 export type ValorCelda = string | number | boolean | string[] | ValorLink | null;
 
-export type RolUsuario = "admin" | "miembro";
+// admin: todo. editor: todo menos eliminar tableros y tocar admins (puede dar de alta gente).
+// miembro: usa los tableros.
+export type RolUsuario = "admin" | "editor" | "miembro";
+export const NOMBRE_ROL: Record<RolUsuario, string> = { admin: "Admin", editor: "Editor", miembro: "Miembro" };
+export function puedeGestionarUsuarios(rol: RolUsuario): boolean {
+  return rol === "admin" || rol === "editor";
+}
 
 export interface UsuarioPulse {
   id: string;

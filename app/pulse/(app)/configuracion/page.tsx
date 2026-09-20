@@ -4,14 +4,14 @@ import { UsuariosAdmin } from "@/components/pulse/usuarios-admin";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usuarioActual } from "@/lib/pulse/auth";
 import { listarUsuarios } from "@/lib/pulse/repo";
-import { NOMBRE_APP } from "@/lib/pulse/types";
+import { NOMBRE_APP, puedeGestionarUsuarios } from "@/lib/pulse/types";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: `Configuración · ${NOMBRE_APP}` };
 
 export default async function ConfiguracionPage() {
   const u = await usuarioActual();
-  if (!u || u.rol !== "admin") redirect("/pulse");
+  if (!u || !puedeGestionarUsuarios(u.rol)) redirect("/pulse");
   const usuarios = await listarUsuarios();
   return (
     <>

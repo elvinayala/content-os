@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { UsuarioPulse } from "@/lib/pulse/types";
+import { NOMBRE_ROL, type RolUsuario, type UsuarioPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
 export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: UsuarioPulse }) {
@@ -32,7 +32,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-semibold">Usuarios</h2>
-          <p className="text-sm text-muted-foreground">Quiénes pueden entrar a Pulse y aparecer en las columnas de Personas. Los importados de Monday llegan inactivos hasta que les pongas una clave.</p>
+          <p className="text-sm text-muted-foreground">Quiénes pueden entrar a Pulse y aparecer en las columnas de Personas. Los importados de Monday no tienen clave: para que entren, tocá "Poner clave". Roles: <b>Miembro</b> usa y edita los tableros · <b>Editor</b> además agrega gente y claves · <b>Admin</b> todo, incluso eliminar tableros.</p>
         </div>
         <Dialog open={abierto} onOpenChange={setAbierto}>
           <DialogTrigger asChild>
@@ -67,8 +67,9 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
               <div className="flex flex-col gap-1.5">
                 <Label>Rol</Label>
                 <select name="rol" className="h-9 rounded-md border bg-background px-2 text-sm" defaultValue="miembro">
-                  <option value="miembro">Miembro (usa los tableros)</option>
-                  <option value="admin">Admin (además administra usuarios y borra tableros)</option>
+                  <option value="miembro">Miembro (usa y edita los tableros)</option>
+                  <option value="editor">Editor (además da de alta gente y claves)</option>
+                  {yo.rol === "admin" ? <option value="admin">Admin (todo, incluso eliminar tableros)</option> : null}
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
@@ -125,22 +126,23 @@ function Lista({ titulo, usuarios, yo, onClave, aviso }: { titulo: string; usuar
                 {u.nombre} {u.id === yo.id ? <span className="text-xs text-muted-foreground">(vos)</span> : null}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                {u.email} · {u.rol === "admin" ? "Admin" : "Miembro"} {!u.tieneClave ? "· sin clave" : ""}
+                {u.email} · {NOMBRE_ROL[u.rol]} {!u.tieneClave ? "· sin clave" : ""}
               </p>
             </div>
             <select
               value={u.rol}
-              disabled={u.id === yo.id}
-              onChange={async (e) => aviso(await actualizarUsuarioAction({ id: u.id, rol: e.target.value as "admin" | "miembro" }), "Rol actualizado")}
+              disabled={u.id === yo.id || (yo.rol !== "admin" && u.rol === "admin")}
+              onChange={async (e) => aviso(await actualizarUsuarioAction({ id: u.id, rol: e.target.value as RolUsuario }), "Rol actualizado")}
               className="h-8 rounded-md border bg-background px-2 text-xs"
             >
               <option value="miembro">Miembro</option>
-              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
+              {yo.rol === "admin" || u.rol === "admin" ? <option value="admin">Admin</option> : null}
             </select>
-            <Button variant="outline" size="sm" onClick={() => onClave(u)}>
+            <Button variant="outline" size="sm" disabled={yo.rol !== "admin" && u.rol === "admin" && u.id !== yo.id} onClick={() => onClave(u)}>
               <KeyRound /> {u.tieneClave ? "Cambiar clave" : "Poner clave"}
             </Button>
-            {u.id !== yo.id ? (
+            {u.id !== yo.id && !(yo.rol !== "admin" && u.rol === "admin") ? (
               <Button variant="ghost" size="sm" onClick={async () => aviso(await actualizarUsuarioAction({ id: u.id, activo: !u.activo }), u.activo ? "Usuario desactivado" : "Usuario activado")}>
                 {u.activo ? (
                   <>

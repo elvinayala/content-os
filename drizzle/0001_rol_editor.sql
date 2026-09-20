@@ -1,0 +1,1 @@
+ALTER TYPE "public"."pulse_rol" ADD VALUE 'editor' BEFORE 'miembro';

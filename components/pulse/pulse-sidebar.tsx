@@ -19,7 +19,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { cssColor } from "@/lib/pulse/colores";
-import { NOMBRE_APP, SUBTITULO_APP, type Board, type UsuarioPulse } from "@/lib/pulse/types";
+import { NOMBRE_APP, NOMBRE_ROL, puedeGestionarUsuarios, SUBTITULO_APP, type Board, type UsuarioPulse } from "@/lib/pulse/types";
 
 export function PulseSidebar({
   boards,
@@ -80,7 +80,7 @@ export function PulseSidebar({
 
       <SidebarFooter className="border-t border-sidebar-border">
         <SidebarMenu>
-          {usuario.rol === "admin" ? (
+          {puedeGestionarUsuarios(usuario.rol) ? (
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/configuracion")} tooltip="Configuración">
                 <Link href="/pulse/configuracion">
@@ -105,7 +105,7 @@ export function PulseSidebar({
               <UserAvatar nombre={usuario.nombre} color={usuario.color} />
               <div className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-medium">{usuario.nombre}</span>
-                <span className="truncate text-xs text-muted-foreground">{usuario.rol === "admin" ? "Admin" : "Miembro"}</span>
+                <span className="truncate text-xs text-muted-foreground">{NOMBRE_ROL[usuario.rol]}</span>
               </div>
               <form action={logoutPulseAction} className="ml-auto group-data-[collapsible=icon]:hidden">
                 <button type="submit" title="Salir" className="rounded-md p-1.5 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground">

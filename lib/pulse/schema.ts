@@ -30,7 +30,7 @@ export const tipoColumnaEnum = pgEnum("pulse_tipo_columna", [
   "file",
   "relation",
 ]);
-export const rolEnum = pgEnum("pulse_rol", ["admin", "miembro"]);
+export const rolEnum = pgEnum("pulse_rol", ["admin", "editor", "miembro"]);
 export const tipoActividadEnum = pgEnum("pulse_tipo_actividad", [
   "crear",
   "valor",

@@ -23,6 +23,7 @@ import type {
   Columna,
   Grupo,
   Item,
+  RolUsuario,
   SettingsColumna,
   TipoActividad,
   TipoColumna,
@@ -422,7 +423,7 @@ export async function buscarUsuarioPorEmail(email: string) {
   return d.query.pulseUsers.findFirst({ where: eq(pulseUsers.email, email.toLowerCase().trim()) });
 }
 
-export async function crearUsuario(p: { email: string; nombre: string; rol: "admin" | "miembro"; passwordHash: string | null; color?: ColorPulse }): Promise<UsuarioPulse> {
+export async function crearUsuario(p: { email: string; nombre: string; rol: RolUsuario; passwordHash: string | null; color?: ColorPulse }): Promise<UsuarioPulse> {
   const d = await db();
   const [u] = await d
     .insert(pulseUsers)
@@ -431,7 +432,14 @@ export async function crearUsuario(p: { email: string; nombre: string; rol: "adm
   return aUsuario(u);
 }
 
-export async function actualizarUsuario(id: string, patch: { nombre?: string; rol?: "admin" | "miembro"; activo?: boolean; passwordHash?: string; color?: ColorPulse }): Promise<void> {
+export async function actualizarUsuario(id: string, patch: { nombre?: string; rol?: RolUsuario; activo?: boolean; passwordHash?: string; color?: ColorPulse }): Promise<void> {
   const d = await db();
   await d.update(pulseUsers).set(patch).where(eq(pulseUsers.id, id));
 }
+
+export async function leerUsuario(id: string): Promise<UsuarioPulse | null> {
+  const d = await db();
+  const [u] = await d.select().from(pulseUsers).where(eq(pulseUsers.id, id));
+  return u ? aUsuario(u) : null;
+}
+

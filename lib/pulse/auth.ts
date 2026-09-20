@@ -60,3 +60,10 @@ export async function requiereAdmin(): Promise<UsuarioPulse> {
   if (u.rol !== "admin") throw new Error("solo-admin");
   return u;
 }
+
+// Admin o editor: pueden dar de alta / clave / activar gente.
+export async function requiereGestor(): Promise<UsuarioPulse> {
+  const u = await requiereUsuario();
+  if (u.rol !== "admin" && u.rol !== "editor") throw new Error("solo-admin");
+  return u;
+}
