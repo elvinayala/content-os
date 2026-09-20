@@ -55,6 +55,7 @@ console.log(`→ Motor: ${db.motor}${DRY ? " (DRY RUN: no escribe)" : ""}`);
 // ---------- usuarios ----------
 const { users } = await gql(`{ users(kind: all) { id name email enabled } }`);
 const mapaUsuarios = new Map(); // mondayId → pulseId
+const usuariosNoEncontrados = new Set();
 for (const u of users) {
   if (!u.email) continue;
   if (DRY) {
@@ -122,6 +123,7 @@ for (const boardId of BOARDS) {
     pos++;
   }
 
+  const columnasTocadas = new Set();
   const grupos = new Map();
   const gruposOrdenados = b.groups.filter((g) => !g.archived).sort((a, b2) => Number(a.position) - Number(b2.position));
   for (let i = 0; i < gruposOrdenados.length; i++) {
@@ -160,6 +162,7 @@ for (const boardId of BOARDS) {
       const g = grupos.get(it.group?.id);
       if (!g) continue;
       g.items++;
+      await resolverUsuariosFaltantes(it);
       const values = {};
       const pendRel = [];
       const pendArch = [];
@@ -167,6 +170,14 @@ for (const boardId of BOARDS) {
         const col = columnas.get(cv.id);
         if (!col) continue;
         const r = mapearValor(col, cv, { usuarios: mapaUsuarios });
+        if (col.type === "status" && r.value === null && r.descartado && (cv.text ?? "").trim()) {
+          // etiqueta borrada en Monday pero todavía usada: la recreamos (gris)
+          const id = `m${cv.index}`;
+          col.settings.labels = [...(col.settings.labels ?? []), { id, label: cv.text.trim(), color: "grey" }];
+          columnasTocadas.add(col);
+          r.value = id;
+          delete r.descartado;
+        }
         if (r.descartado !== undefined) {
           if (col.type === "people") r.descartado.split(",").forEach((x) => rep.personasSinUsuario.add(x));
           else rep.valoresDescartados[col.title] = (rep.valoresDescartados[col.title] ?? 0) + 1;
@@ -196,6 +207,7 @@ for (const boardId of BOARDS) {
     await sleep(300);
   } while (cursor);
   console.log(`  · ${indice} items en ${grupos.size} grupos`);
+  if (!DRY) for (const col of columnasTocadas) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [JSON.stringify(col.settings), col.id]);
 
   // Grupos grandes arrancan colapsados.
   if (!DRY) {
@@ -281,7 +293,7 @@ for (const [slug, t] of Object.entries(reporte.tableros)) {
   console.log(`\n${t.nombre} (/pulse/${slug}): ${t.items} items · ${t.grupos} grupos · ${t.columnas.mapeadas.length} columnas`);
   if (t.columnas.saltadas.length) console.log(`  columnas saltadas: ${t.columnas.saltadas.join(", ")}`);
   if (Object.keys(t.valoresDescartados).length) console.log(`  valores descartados: ${JSON.stringify(t.valoresDescartados)}`);
-  if (t.personasSinUsuario.length) console.log(`  personas sin usuario (ids Monday): ${t.personasSinUsuario.join(", ")}`);
+  if (t.personasSinUsuario.length) console.log(`  personas borradas de Monday (sin usuario, ids): ${t.personasSinUsuario.join(", ")}`);
   if (!SIN_ARCHIVOS) console.log(`  archivos: ${t.archivos.subidos} subidos, ${t.archivos.fallidos} fallidos`);
 }
 await fs.mkdir(path.join(process.cwd(), "data"), { recursive: true });
@@ -290,6 +302,24 @@ console.log(`\nReporte guardado en data/pulse-migracion.json`);
 await db.close();
 
 // ---------- helpers ----------
+// Usuarios desactivados no salen en users(kind: all): se buscan por id y se crean inactivos.
+async function resolverUsuariosFaltantes(item) {
+  const ids = new Set();
+  for (const cv of item.column_values) for (const p of cv.persons_and_teams ?? []) if (p.kind === "person" && !mapaUsuarios.has(String(p.id)) && !usuariosNoEncontrados.has(String(p.id))) ids.add(String(p.id));
+  if (!ids.size) return;
+  const { users: encontrados } = await gql(`query ($ids: [ID!]) { users(ids: $ids) { id name email } }`, { ids: [...ids] });
+  for (const u of encontrados ?? []) {
+    if (!u.email) continue;
+    if (DRY) mapaUsuarios.set(String(u.id), `dry-${u.id}`);
+    else {
+      const fila = await upsertUsuario(db, { email: u.email, nombre: u.name, activo: false, mondayId: String(u.id) });
+      mapaUsuarios.set(String(u.id), fila.id);
+    }
+    reporte.usuarios.creados++;
+    ids.delete(String(u.id));
+  }
+  for (const id of ids) usuariosNoEncontrados.add(id);
+}
 function anchoPorTipo(type, title) {
   const base = { text: 180, long_text: 260, number: 130, status: 160, dropdown: 200, date: 140, people: 120, checkbox: 90, link: 160, email: 220, phone: 150, file: 160, relation: 200 }[type] ?? 160;
   return Math.max(base, Math.min(320, title.length * 8 + 40));

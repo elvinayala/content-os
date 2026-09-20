@@ -149,7 +149,7 @@ export function mapearValor(colPulse, cv, ctx = {}) {
     case "phone": {
       let t = text;
       if (colPulse.type === "email" && v?.email) t = String(v.email).trim();
-      if (colPulse.type === "phone" && v?.phone) t = String(v.phone).trim();
+      if (colPulse.type === "phone" && v?.phone) t = formatearTelefono(String(v.phone).trim());
       if (colPulse.type === "long_text" && v?.text) t = String(v.text).trim();
       if (colPulse.type === "email" && t && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) return { value: null, descartado: t };
       return { value: t || null };
@@ -168,7 +168,8 @@ export function mapearValor(colPulse, cv, ctx = {}) {
       const idx = cv.index ?? v?.index;
       if (idx === undefined || idx === null) return { value: null };
       const id = `m${idx}`;
-      return (colPulse.settings.labels ?? []).some((l) => l.id === id) ? { value: id } : { value: null, descartado: text || String(idx) };
+      if ((colPulse.settings.labels ?? []).some((l) => l.id === id)) return { value: id };
+      return text ? { value: null, descartado: text } : { value: null }; // índice de etiqueta vacía = sin valor
     }
     case "dropdown": {
       const ids = (v?.ids ?? []).map((id) => `m${id}`);
@@ -200,6 +201,14 @@ export function mapearValor(colPulse, cv, ctx = {}) {
     default:
       return { value: text || null };
   }
+}
+
+// "17876401068" → "+1 787 640 1068"; otros formatos se dejan como están.
+export function formatearTelefono(t) {
+  const d = t.replace(/\D/g, "");
+  if (d.length === 11 && d.startsWith("1")) return `+1 ${d.slice(1, 4)} ${d.slice(4, 7)} ${d.slice(7)}`;
+  if (d.length === 10) return `+1 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
+  return t;
 }
 
 export function slugDeBoard(nombre, mondayId) {
