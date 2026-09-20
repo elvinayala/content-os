@@ -28,28 +28,34 @@ else
   echo "⚠️ Sin GH_TOKEN ni GIT_SSH_KEY_B64: no puedo clonar los repos privados."
 fi
 
-# id|github de cada plataforma con repo en GitHub.
-node -e '
-const j=JSON.parse(require("fs").readFileSync(process.argv[1]+"/data/plataformas.json","utf8"));
-for(const p of j.plataformas) if(p.github) console.log(p.id+"|"+p.github);' "$SEMILLA" | while IFS='|' read -r id gh; do
-  d="$REPOS/$id"
-  if [ -d "$d/.git" ]; then
-    (cd "$d" && git pull --rebase --autostash -q 2>&1 | tail -1) && echo "↻ $id actualizado"
-  else
-    git clone -q "git@github.com:$gh.git" "$d" 2>&1 | tail -1 && echo "⬇ $id clonado" || echo "✗ no pude clonar $gh"
-  fi
-done
+clonar() {
+  # id|github de cada plataforma con repo en GitHub.
+  node -e '
+  const j=JSON.parse(require("fs").readFileSync(process.argv[1]+"/data/plataformas.json","utf8"));
+  for(const p of j.plataformas) if(p.github) console.log(p.id+"|"+p.github);' "$SEMILLA" | while IFS='|' read -r id gh; do
+    d="$REPOS/$id"
+    if [ -d "$d/.git" ]; then
+      (cd "$d" && git pull --rebase --autostash -q 2>&1 | tail -1) && echo "↻ $id actualizado"
+    else
+      git clone -q "git@github.com:$gh.git" "$d" 2>&1 | tail -1 && echo "⬇ $id clonado" || echo "✗ no pude clonar $gh"
+    fi
+  done
+}
 
 CO="$REPOS/content-os"
-if [ ! -f "$CO/package.json" ]; then
-  echo "⚠️ content-os no está clonado; arranco desde la copia de la imagen ($SEMILLA)."
-  CO="$SEMILLA"
-else
-  cd "$CO"
-  # deps solo si cambió el lockfile desde la última vez
-  if [ ! -d node_modules ] || ! cmp -s package-lock.json node_modules/.lock-instalado 2>/dev/null; then
-    npm ci --omit=dev --ignore-scripts >/dev/null 2>&1 && cp package-lock.json node_modules/.lock-instalado && echo "📦 deps instaladas"
-  fi
+# Sin el clon de content-os NO se arranca el puente (si polleara desde la copia de la imagen,
+# competiría con la Mac por los mensajes y trabajaría sobre un repo que no puede subir).
+# Se reintenta cada 5 min: cuando GH_TOKEN esté puesto y los repos existan, arranca solo.
+while :; do
+  clonar
+  [ -f "$CO/package.json" ] && break
+  echo "⏳ content-os no está clonado (¿falta GH_TOKEN o el repo en GitHub?). Reintento en 5 min."
+  sleep 300
+done
+cd "$CO"
+# deps solo si cambió el lockfile desde la última vez
+if [ ! -d node_modules ] || ! cmp -s package-lock.json node_modules/.lock-instalado 2>/dev/null; then
+  npm ci --omit=dev --ignore-scripts >/dev/null 2>&1 && cp package-lock.json node_modules/.lock-instalado && echo "📦 deps instaladas"
 fi
 cd "$CO"
 echo "▶ Nico arranca en $CO · repos: $(ls "$REPOS" 2>/dev/null | tr '\n' ' ')"

@@ -270,10 +270,20 @@ de voz en prod, secretos, escribirle a terceros). **Ronda diaria** `/ronda-nico`
 Railway, fallos de Bori, soporte de Plagas, `git log` 24 h y `data/nico-bitacora.json`; el
 reporte (~12 líneas) sale con `nico-ronda.mjs enviar` → Telegram + espejo Slack, y queda en
 `data/nico-reporte.json`. **Telegram propio**: `PUENTE_BOT=nico node scripts/telegram-puente.mjs`
-(token `TELEGRAM_BOT_TOKEN_NICO`, modo total, `--add-dir` con todos los repos; corre EN LA MAC
-vía `scripts/launchd/com.iamarket.nico-puente.plist`, porque los repos viven ahí). Comandos:
+(token `TELEGRAM_BOT_TOKEN_NICO`, modo total, `--add-dir` con todos los repos). Comandos:
 `/ronda`, `/plataformas`, `/nuevo`. Tokens opcionales para leer casos: `BORI_OPERADOR_TOKEN`,
 `PLAGAS_OPERADOR_TOKEN`.
+
+**Nico vive en Railway (desde el 20/sep/2026)** — servicio `nico` del proyecto `puente-telegram`,
+`Dockerfile.nico` + `scripts/nico-nube.sh`, volumen `/estado`. **GitHub es la fuente de verdad**:
+cada plataforma con campo `github` en `data/plataformas.json` (content-os, bori, plagas, cortex) se
+clona en `/estado/repos/<id>`; el puente corre desde el clon de content-os, hace `git pull` antes de
+cada pedido y `commit + push` después (`gitBajar`/`gitSubir` en el puente). Auth por `GH_TOKEN`
+(fine-grained, Contents RW) o `GIT_SSH_KEY_B64`. Sin el clon de content-os el contenedor espera
+(no pollea) para no competir con la Mac. **La Mac es una copia**: `git pull` antes de trabajar en
+cualquiera de esos 4 repos (`deploy-snapshots.sh` ya lo hace); commitear y subir al terminar.
+Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
+`npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
 ## El ecosistema de email (ActiveCampaign)
 

@@ -11,6 +11,11 @@ cd "$(dirname "$0")/.."
 
 # Antes de subir, bajar lo que otro lado (Railway / la Mac) haya cambiado, para no pisarlo.
 node scripts/sync-data.mjs pull 2>/dev/null || true
+# GitHub es la fuente de verdad desde el 20/sep (Nico en la nube commitea y sube): si este clon
+# tiene remoto, traer lo suyo primero (sin romper nada si hay conflicto: se avisa y se sigue).
+if git remote get-url origin >/dev/null 2>&1; then
+  git pull --rebase --autostash -q origin main 2>/dev/null || echo "⚠️ git pull con conflicto: resolver a mano (git status)"
+fi
 echo "▶ Desplegando snapshots a producción…"
 if [ -n "${VERCEL_TOKEN:-}" ]; then
   if [ ! -f .vercel/project.json ]; then
