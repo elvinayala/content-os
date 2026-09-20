@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ArrowLeft, LayoutGrid, LogOut, Settings, Table2 } from "lucide-react";
+import { Activity, ArrowLeft, LayoutGrid, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,13 +19,14 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { cssColor } from "@/lib/pulse/colores";
-import { NOMBRE_APP, NOMBRE_ROL, puedeGestionarUsuarios, SUBTITULO_APP, type Board, type UsuarioPulse } from "@/lib/pulse/types";
+import { NOMBRE_APP, NOMBRE_ROL, puedeGestionarUsuarios, SUBTITULO_APP, type UsuarioPulse } from "@/lib/pulse/types";
+import type { BoardResumen } from "@/lib/pulse/repo";
 
 export function PulseSidebar({
   boards,
   usuario,
 }: {
-  boards: (Board & { items: number })[];
+  boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items">[];
   usuario: UsuarioPulse;
 }) {
   const pathname = usePathname();
@@ -34,7 +35,7 @@ export function PulseSidebar({
     <Sidebar collapsible="icon" className="pulse">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-3 px-1 py-2">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <div className="logo-pulse flex size-9 shrink-0 items-center justify-center rounded-xl text-white">
             <Activity className="size-5" />
           </div>
           <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
@@ -66,7 +67,7 @@ export function PulseSidebar({
                 <SidebarMenuItem key={b.id}>
                   <SidebarMenuButton asChild isActive={pathname === href || pathname.startsWith(href + "/")} tooltip={b.nombre}>
                     <Link href={href}>
-                      <Table2 style={{ color: cssColor(b.color) }} />
+                      <span className="size-2.5 shrink-0 rounded-full" style={{ background: cssColor(b.color), boxShadow: `0 0 0 3px color-mix(in srgb, ${cssColor(b.color)} 22%, transparent)` }} />
                       <span className="truncate">{b.nombre}</span>
                       <span className="ml-auto text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{b.items}</span>
                     </Link>

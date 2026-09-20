@@ -78,6 +78,7 @@ type Accion =
   | { type: "archivo:quitar"; fileId: string }
   | { type: "colapsar"; groupId: string; colapsado?: boolean }
   | { type: "colapsar:todos"; colapsado: boolean }
+  | { type: "colapsar:set"; ids: Set<string> }
   | { type: "seleccion"; itemIds: string[]; seleccionado: boolean }
   | { type: "seleccion:limpiar" }
   | { type: "busqueda"; texto: string }
@@ -163,6 +164,8 @@ function reducer(s: EstadoBoard, a: Accion): EstadoBoard {
     }
     case "colapsar:todos":
       return { ...s, colapsados: a.colapsado ? new Set(s.groups.map((g) => g.id)) : new Set() };
+    case "colapsar:set":
+      return { ...s, colapsados: a.ids };
     case "seleccion": {
       const sel = new Set(s.seleccion);
       for (const id of a.itemIds) a.seleccionado ? sel.add(id) : sel.delete(id);
@@ -204,16 +207,10 @@ function estadoInicial(data: BoardCompleto, vista: Vista, itemAbierto: string | 
   for (const i of data.items) items[i.id] = i;
   const archivos: Record<string, ArchivoPulse> = {};
   for (const f of data.archivos) archivos[f.id] = f;
-  let colapsados: Set<string> | null = null;
-  try {
-    const raw = localStorage.getItem(claveColapsados(data.board.slug));
-    if (raw) colapsados = new Set(JSON.parse(raw) as string[]);
-  } catch {}
-  if (!colapsados) {
-    const porGrupo = new Map<string, number>();
-    for (const i of data.items) porGrupo.set(i.groupId, (porGrupo.get(i.groupId) ?? 0) + 1);
-    colapsados = new Set(data.groups.filter((g) => g.colapsadoDefault || (porGrupo.get(g.id) ?? 0) > 200).map((g) => g.id));
-  }
+  // Sin localStorage acá (hidratación): lo recordado se aplica en un efecto al montar.
+  const porGrupo = new Map<string, number>();
+  for (const i of data.items) porGrupo.set(i.groupId, (porGrupo.get(i.groupId) ?? 0) + 1);
+  const colapsados = new Set(data.groups.filter((g) => g.colapsadoDefault || (porGrupo.get(g.id) ?? 0) > 200).map((g) => g.id));
   return {
     board: data.board,
     columns: data.columns,
@@ -292,12 +289,27 @@ export function BoardProvider({
     dispatch({ type: "reemplazar", data });
   }, [data]);
 
-  // Persistir colapsados.
+  // Colapsados recordados por el usuario: leer al montar, persistir después.
+  const hidratado = useRef(false);
   useEffect(() => {
+    if (!hidratado.current) {
+      hidratado.current = true;
+      try {
+        const raw = localStorage.getItem(claveColapsados(state.board.slug));
+        if (raw) {
+          const validos = new Set(state.groups.map((g) => g.id));
+          const ids = new Set((JSON.parse(raw) as string[]).filter((id) => validos.has(id)));
+          if (ids.size) {
+            dispatch({ type: "colapsar:set", ids });
+            return;
+          }
+        }
+      } catch {}
+    }
     try {
       localStorage.setItem(claveColapsados(state.board.slug), JSON.stringify([...state.colapsados]));
     } catch {}
-  }, [state.colapsados, state.board.slug]);
+  }, [state.colapsados, state.board.slug, state.groups]);
 
   // Al volver el foco a la pestaña, traer lo que haya cambiado la otra usuaria.
   useEffect(() => {

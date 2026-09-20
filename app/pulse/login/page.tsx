@@ -16,11 +16,11 @@ export default async function PulseLoginPage({
 }) {
   const { error, desde } = await searchParams;
   return (
-    <div className="flex min-h-svh w-full items-center justify-center bg-secondary p-4">
-      <Card className="w-full max-w-sm shadow-lg">
+    <div className="fondo-malla flex min-h-svh w-full items-center justify-center p-4">
+      <Card className="w-full max-w-sm border-white/60 shadow-xl shadow-primary/10">
         <CardContent className="flex flex-col gap-5 p-6">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <div className="logo-pulse flex size-10 items-center justify-center rounded-xl text-white">
               <Activity className="size-5" />
             </div>
             <div className="leading-tight">

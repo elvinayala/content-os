@@ -41,7 +41,7 @@ export function BoardToolbar() {
   const persona = s.usuarios.find((u) => u.id === s.filtroPersona);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b px-4 py-2">
+    <div className="vidrio sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b px-4 py-2">
       <div className="mr-2 flex rounded-md border p-0.5">
         {VISTAS.map((v) => (
           <button

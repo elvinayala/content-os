@@ -17,6 +17,7 @@ export function StatusPill({
     <span
       className={cn(
         "inline-flex h-7 min-w-0 items-center justify-center rounded px-2 text-xs font-medium",
+        llena && "pill-brillo",
         llena ? (TEXTO_OSCURO.has(color) ? "text-[#323338]" : "text-white") : "text-foreground",
         className,
       )}

@@ -65,7 +65,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
     <div ref={scrollRef} className="scroll-fino relative h-full w-full overflow-auto">
       <div style={{ width: anchoTotal, minWidth: "100%" }}>
         {/* header sticky */}
-        <div className="sticky top-0 z-20 flex h-9 border-b bg-background" style={{ width: anchoTotal }}>
+        <div className="sticky top-0 z-20 flex h-9 border-b bg-background/95 shadow-[0_1px_0_var(--pulse-linea),0_6px_14px_-12px_rgba(50,51,56,0.35)] backdrop-blur" style={{ width: anchoTotal }}>
           <div className="sticky left-0 z-30 flex shrink-0 items-center justify-center border-r border-[var(--pulse-linea)] bg-background" style={{ width: ANCHO_CHECK }}>
             <Checkbox checked={todosSeleccionados} onCheckedChange={(c) => dispatch({ type: "seleccion", itemIds: todosIds, seleccionado: c === true })} className="size-4 rounded-sm" aria-label="Seleccionar todo" />
           </div>

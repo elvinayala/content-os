@@ -61,15 +61,25 @@ function aArchivo(f: typeof pulseFiles.$inferSelect): ArchivoPulse {
 
 // ---------- Tableros ----------
 
-export async function listarBoards(): Promise<(Board & { items: number })[]> {
+export type BoardResumen = Board & { items: number; grupos: { id: string; title: string; color: ColorPulse; items: number }[]; actualizadoEl: string | null };
+
+export async function listarBoards(): Promise<BoardResumen[]> {
   const d = await db();
-  const rows = await d
-    .select({ board: pulseBoards, items: count(pulseItems.id) })
-    .from(pulseBoards)
-    .leftJoin(pulseItems, eq(pulseItems.boardId, pulseBoards.id))
-    .groupBy(pulseBoards.id)
-    .orderBy(asc(pulseBoards.position), asc(pulseBoards.nombre));
-  return rows.map((r) => ({ ...aBoard(r.board), items: Number(r.items) }));
+  const [boards, porGrupo, ultimos] = await Promise.all([
+    d.select().from(pulseBoards).orderBy(asc(pulseBoards.position), asc(pulseBoards.nombre)),
+    d
+      .select({ g: pulseGroups, items: count(pulseItems.id) })
+      .from(pulseGroups)
+      .leftJoin(pulseItems, eq(pulseItems.groupId, pulseGroups.id))
+      .groupBy(pulseGroups.id)
+      .orderBy(asc(pulseGroups.position)),
+    d.select({ boardId: pulseItems.boardId, max: sql<Date>`max(${pulseItems.updatedAt})` }).from(pulseItems).groupBy(pulseItems.boardId),
+  ]);
+  return boards.map((b) => {
+    const grupos = porGrupo.filter((r) => r.g.boardId === b.id).map((r) => ({ id: r.g.id, title: r.g.title, color: r.g.color as ColorPulse, items: Number(r.items) }));
+    const u = ultimos.find((r) => r.boardId === b.id)?.max;
+    return { ...aBoard(b), items: grupos.reduce((a, g) => a + g.items, 0), grupos, actualizadoEl: u ? new Date(u).toISOString() : null };
+  });
 }
 
 export async function leerBoardCompleto(slug: string): Promise<BoardCompleto | null> {

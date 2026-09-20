@@ -43,7 +43,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
   };
 
   return (
-    <header className="flex h-14 shrink-0 items-center gap-3 border-b px-4">
+    <header className="vidrio relative flex h-14 shrink-0 items-center gap-3 border-b px-4" style={{ boxShadow: `inset 0 3px 0 ${cssColor(board.color)}` }}>
       <SidebarTrigger />
       <Popover>
         <PopoverTrigger asChild>
@@ -67,7 +67,9 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
           {board.nombre}
         </h1>
       )}
-      <span className="text-sm text-muted-foreground">{Object.keys(items).length} elementos</span>
+      <span className="flex items-center gap-2 rounded-full border bg-background/70 px-2.5 py-0.5 text-xs text-muted-foreground">
+        <span className="punto-vivo" /> {Object.keys(items).length.toLocaleString("en-US")} elementos
+      </span>
       <div className="ml-auto flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

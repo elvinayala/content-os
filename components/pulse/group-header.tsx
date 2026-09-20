@@ -54,8 +54,8 @@ export function GroupHeader({ grupo, colapsado, onToggle }: { grupo: GrupoVisibl
           {grupo.titulo}
         </span>
       )}
-      <span className="text-xs font-normal text-muted-foreground">
-        {grupo.items.length} elemento{grupo.items.length === 1 ? "" : "s"}
+      <span className="rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ background: `color-mix(in srgb, ${c} 14%, transparent)`, color: c }}>
+        {grupo.items.length}
       </span>
       {real ? (
         <>
