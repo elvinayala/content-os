@@ -52,6 +52,13 @@ export const ceoNavItems: CeoNavItem[] = [
       "El holding en una pantalla: motores, productos, piloto y congelados con sus compuertas.",
   },
   {
+    titulo: "Pulse (CRM)",
+    href: "/pulse",
+    icon: Activity,
+    descripcion:
+      "El CRM de clientes que reemplaza a Monday: Level Up, AI Borinquen y estrategas.",
+  },
+  {
     titulo: "Jarvis HUD",
     href: "/hud",
     icon: Hexagon,

@@ -60,3 +60,7 @@ data/telegram-puente*.json
 .claude/worktrees/
 scratchpad_titles_*.txt
 *.bak
+
+# Pulse: Postgres embebido local (PGlite) y reporte de migración
+.pulse-db/
+data/pulse-migracion.json

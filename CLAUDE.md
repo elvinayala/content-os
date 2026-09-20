@@ -313,6 +313,41 @@ Tokens = usuarios del sistema generados por Elvin con la app Hey Bori (`META_ADS
 API, 1 creativo por conjunto ≥ $10/día, tope diario por campaña, tuteo PR, sin "gratis", sin
 promesas de ingreso. Primera campaña: `vault/proyectos/level-up/campana-diagnostico-meta.md`.
 
+## Pulse — el CRM que reemplaza a Monday (`/pulse`)
+
+Clon simplificado de Monday.com (ahorra ~$800/mes) para lo único que Level Up usaba ahí:
+la ficha de cada cliente que paga. Lo usan Jessica (onboarding) y Carilin (operaciones);
+Pipedrive sigue siendo el CRM de leads. Modelo **genérico tipo Monday**: tableros → columnas
+(13 tipos: text, long_text, number, status, dropdown, date, people, checkbox, link, email,
+phone, file, relation) → grupos → items con `values jsonb {[columnId]: valor}`. Jessica y
+Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
+
+- **Stack**: Postgres (Supabase; sin `DATABASE_URL` cae a **PGlite** embebido en `./.pulse-db`,
+  solo dev) + Drizzle (`lib/pulse/schema.ts`, migraciones en `drizzle/`, `npm run db:generate|
+  db:migrate|db:studio`). Archivos en Supabase Storage (bucket privado `pulse`; en local van a
+  `.pulse-db/archivos/` y se sirven por `/api/pulse/archivo/[id]`).
+- **Auth propia**: tabla `pulse_users` (email + clave scrypt, rol admin|miembro), cookie
+  `pulse-session` firmada HMAC (`lib/pulse/session.ts`, verificable en `proxy.ts` sin DB). La
+  cookie CEO también entra como `PULSE_ADMIN_EMAIL`. Login en `/pulse/login`; usuarios en
+  `/pulse/configuracion` (solo admin). Los usuarios importados de Monday llegan inactivos hasta
+  que un admin les pone clave.
+- **UI** (`components/pulse/`): tema claro `.pulse` (globals.css; ¡`className="pulse"` en todo
+  `*Content` que portalea!), `board-provider.tsx` = store cliente con edición **optimista +
+  rollback** (sin `revalidatePath` por celda; `refresh()` solo en cambios estructurales),
+  `board-table.tsx` virtualizada (`@tanstack/react-virtual`, OFFBOARDED arranca colapsado),
+  `cell.tsx` (un editor por tipo), kanban con `@dnd-kit`, tarjetas, panel del item por `?item=`
+  con actividad + comentarios (`pulse_activity`), filtros/orden/agrupar client-side.
+- **Server actions**: `app/pulse/(app)/[board]/actions.ts` (verifican `usuarioActual()`, validan
+  con `lib/pulse/valores.ts`, devuelven `{ ok, ... }`); data access en `lib/pulse/repo.ts`.
+- **Migración**: `npm run pulse:migrar -- [--dry-run] [--board <id>] [--sin-archivos]` con
+  `MONDAY_TOKEN` (GraphQL 2025-01, `items_page` paginado, colores por `var_name`, personas por
+  email, relaciones en 2ª pasada, PDFs a Storage; idempotente por `monday_id`). Tableros:
+  LEVEL UP MEDIA 7784685790 → `/pulse/level-up-media`, AI BORINQUEN 18399101258, Asignación de
+  Estrategas 9506323087. Mapeo puro y testeado en `scripts/pulse/monday-mapeo.mjs`
+  (`tests/pulse-valores.test.mjs`). Reporte en `data/pulse-migracion.json`.
+- **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
+  tablero Demo). Env: ver bloque Pulse en `.env.example`.
+
 ## Conectar datos reales (próximos pasos)
 
 Cada sección está aislada detrás de su mock. Para pasar a datos reales, reemplazá el

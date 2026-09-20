@@ -242,6 +242,74 @@
   --status-idle: oklch(0.6 0.02 195);
 }
 
+/* ---------- Pulse (CRM, reemplazo de Monday) ----------
+   Tema CLARO estilo Monday (blanco / #f6f7fb / texto #323338) con el terracota de
+   Level Up como primario. Scoped a .pulse (app/pulse/layout.tsx). Como <html> lleva
+   class="dark", acá se redefinen TODOS los tokens. Portales a <body> (Sheet/Dialog/
+   Select/Popover/DropdownMenu/Tooltip): pasar className="pulse" al *Content. */
+.pulse {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #323338;
+  --card: #ffffff;
+  --card-foreground: #323338;
+  --popover: #ffffff;
+  --popover-foreground: #323338;
+  --primary: oklch(0.62 0.15 40);
+  --primary-foreground: #ffffff;
+  --secondary: #f6f7fb;
+  --secondary-foreground: #323338;
+  --muted: #f6f7fb;
+  --muted-foreground: #676879;
+  --accent: #eef1f8;
+  --accent-foreground: #323338;
+  --destructive: #e2445c;
+  --border: #d0d4e4;
+  --input: #c3c6d4;
+  --ring: oklch(0.62 0.15 40);
+  --chart-1: oklch(0.62 0.15 40);
+  --chart-2: #0086c0;
+  --chart-3: #00c875;
+  --chart-4: #a25ddc;
+  --chart-5: #ffcb00;
+  --sidebar: #f6f7fb;
+  --sidebar-foreground: #323338;
+  --sidebar-primary: oklch(0.62 0.15 40);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6e9ef;
+  --sidebar-accent-foreground: #323338;
+  --sidebar-border: #d0d4e4;
+  --sidebar-ring: oklch(0.62 0.15 40);
+  --radius: 0.375rem;
+  /* paleta de status/grupos (var_name de Monday → la migración mapea directo;
+     mismos hex que lib/pulse/colores.ts) */
+  --pulse-color-green: #00c875;
+  --pulse-color-bright_green: #9cd326;
+  --pulse-color-yellow: #ffcb00;
+  --pulse-color-orange: #fdab3d;
+  --pulse-color-dark_orange: #ff642e;
+  --pulse-color-red: #e2445c;
+  --pulse-color-dark_red: #bb3354;
+  --pulse-color-pink: #ff158a;
+  --pulse-color-purple: #a25ddc;
+  --pulse-color-dark_purple: #784bd1;
+  --pulse-color-indigo: #5559df;
+  --pulse-color-blue: #0086c0;
+  --pulse-color-bright_blue: #579bfc;
+  --pulse-color-dark_blue: #225091;
+  --pulse-color-aqua: #4eccc6;
+  --pulse-color-teal: #175a63;
+  --pulse-color-river: #68a1bd;
+  --pulse-color-brown: #7f5347;
+  --pulse-color-grey: #c4c4c4;
+  --pulse-color-dark_grey: #808080;
+  /* grilla */
+  --pulse-fila: 36px;
+  --pulse-linea: #e6e9ef;
+  --pulse-hover: #f5f6f8;
+  --pulse-seleccion: #cce5ff;
+}
+
 @layer components {
   /* label mono global (los temas .ceo/.hud lo redefinen igual) */
   .label-mono {
@@ -288,6 +356,35 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
     font-size: 0.65rem;
+  }
+  /* Pulse: celdas de la grilla */
+  .pulse .celda {
+    display: flex;
+    align-items: center;
+    height: var(--pulse-fila);
+    border-right: 1px solid var(--pulse-linea);
+    padding: 0 0.5rem;
+    font-size: 0.8125rem;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .pulse .celda:focus-within {
+    box-shadow: inset 0 0 0 2px var(--primary);
+  }
+  .pulse .fila:hover .celda {
+    background: var(--pulse-hover);
+  }
+  .pulse .fila[data-seleccionada="true"] .celda {
+    background: var(--pulse-seleccion);
+  }
+  .pulse .scroll-fino::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  .pulse .scroll-fino::-webkit-scrollbar-thumb {
+    background: #c3c6d4;
+    border-radius: 6px;
+    border: 2px solid #fff;
   }
 }
 

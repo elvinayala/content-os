@@ -6,6 +6,7 @@ import {
   sesionContenidoValida,
   sesionValida,
 } from "@/lib/auth";
+import { COOKIE_PULSE, verificarSesion } from "@/lib/pulse/session";
 
 // Protege el portal con login. Dos roles:
 //  - CEO (CEO_PORTAL_PASSWORD): acceso total.
@@ -47,6 +48,21 @@ export default async function proxy(request: NextRequest) {
   // Jobs de Vercel Cron (los llama Vercel, sin cookie): se autentican por CRON_SECRET
   // dentro del propio endpoint.
   if (pathname.startsWith("/api/cron/")) return NextResponse.next();
+
+  // Pulse (CRM, reemplazo de Monday): usuarios propios en Postgres (Jessica, Carly…).
+  // Entra con cookie pulse válida o con la cookie CEO. La sesión de contenido NO entra.
+  if (pathname === "/pulse/login") return NextResponse.next();
+  if (pathname === "/pulse" || pathname.startsWith("/pulse/") || pathname.startsWith("/api/pulse/")) {
+    const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
+    const ceoOk = await sesionValida(request.cookies.get(COOKIE_SESION)?.value);
+    if (pulseOk || ceoOk) return NextResponse.next();
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
+    }
+    const login = new URL("/pulse/login", request.url);
+    login.searchParams.set("desde", pathname);
+    return NextResponse.redirect(login);
+  }
 
   const ceoCookie = request.cookies.get(COOKIE_SESION)?.value;
   if (await sesionValida(ceoCookie)) return NextResponse.next(); // CEO: todo

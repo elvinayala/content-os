@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": ["./data/**", "./.claude/skills/**", "./vault/**"],
   },
+  // Pulse: PGlite (Postgres embebido, solo dev sin DATABASE_URL) y postgres.js van
+  // como externos del bundle del server.
+  serverExternalPackages: ["@electric-sql/pglite", "postgres"],
+  experimental: {
+    // Pulse: subir PDFs (PROPUESTA) por server action.
+    serverActions: { bodySizeLimit: "10mb" },
+  },
 };
 
 export default nextConfig;
