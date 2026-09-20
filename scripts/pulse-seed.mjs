@@ -65,7 +65,7 @@ let pos = 0;
 for (const [title, type, settings, width] of columnas) {
   const [c] = await db.query(
     `INSERT INTO pulse_columns (board_id, title, type, settings, position, width) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-    [board.id, title, type, JSON.stringify(settings), pos++, width],
+    [board.id, title, type, settings, pos++, width],
   );
   cols[title] = c.id;
 }
@@ -108,7 +108,7 @@ for (const [title, color, cantidad] of grupos) {
     for (const k of Object.keys(values)) if (values[k] === null) delete values[k];
     await db.query(
       `INSERT INTO pulse_items (board_id, group_id, name, position, values, created_by) VALUES ($1, $2, $3, $4, $5, $6)`,
-      [board.id, g.id, `${pick(nombres, n)}${n >= nombres.length ? ` ${Math.floor(n / nombres.length) + 1}` : ""}`, (i + 1) * 1024, JSON.stringify(values), admin.id],
+      [board.id, g.id, `${pick(nombres, n)}${n >= nombres.length ? ` ${Math.floor(n / nombres.length) + 1}` : ""}`, (i + 1) * 1024, values, admin.id],
     );
   }
 }

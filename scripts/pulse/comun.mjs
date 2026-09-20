@@ -10,9 +10,11 @@ export async function conectar() {
   if (url) {
     const { default: postgres } = await import("postgres");
     const sql = postgres(url, { prepare: false, max: 3 });
+    // Los params objeto (jsonb) se pasan como objeto: postgres.js los serializa él
+    // (si le pasás un string ya serializado, lo vuelve a serializar y queda un escalar).
     return {
       motor: "postgres",
-      query: (text, params = []) => sql.unsafe(text, params),
+      query: (text, params = []) => sql.unsafe(text, params.map((p) => (esObjeto(p) ? sql.json(p) : p))),
       close: () => sql.end({ timeout: 5 }),
     };
   }
@@ -21,9 +23,13 @@ export async function conectar() {
   await client.waitReady;
   return {
     motor: "pglite",
-    query: async (text, params = []) => (await client.query(text, params)).rows,
+    query: async (text, params = []) => (await client.query(text, params.map((p) => (esObjeto(p) ? JSON.stringify(p) : p)))).rows,
     close: () => client.close(),
   };
+}
+
+function esObjeto(p) {
+  return p !== null && typeof p === "object" && !(p instanceof Date) && !Buffer.isBuffer(p);
 }
 
 // Mismo formato que lib/pulse/password.ts.

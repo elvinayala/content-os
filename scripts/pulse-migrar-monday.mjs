@@ -114,7 +114,7 @@ for (const boardId of BOARDS) {
       const [fila] = await db.query(
         `INSERT INTO pulse_columns (board_id, title, type, settings, position, width, monday_id) VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (board_id, monday_id) DO UPDATE SET title = EXCLUDED.title, settings = EXCLUDED.settings, position = EXCLUDED.position RETURNING id`,
-        [pulseBoardId, c.title, m.type, JSON.stringify(m.settings), pos, anchoPorTipo(m.type, c.title), c.id],
+        [pulseBoardId, c.title, m.type, m.settings, pos, anchoPorTipo(m.type, c.title), c.id],
       );
       id = fila.id;
     }
@@ -193,7 +193,7 @@ for (const boardId of BOARDS) {
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
            ON CONFLICT (monday_id) DO UPDATE SET name = EXCLUDED.name, group_id = EXCLUDED.group_id, position = EXCLUDED.position,
              values = EXCLUDED.values, updated_at = EXCLUDED.updated_at RETURNING id`,
-          [pulseBoardId, g.id, it.name, (indice + 1) * 1024, JSON.stringify(values), String(it.id), it.created_at ?? new Date().toISOString(), it.updated_at ?? new Date().toISOString()],
+          [pulseBoardId, g.id, it.name, (indice + 1) * 1024, values, String(it.id), it.created_at ?? new Date().toISOString(), it.updated_at ?? new Date().toISOString()],
         );
         itemId = fila.id;
       }
@@ -207,7 +207,7 @@ for (const boardId of BOARDS) {
     await sleep(300);
   } while (cursor);
   console.log(`  · ${indice} items en ${grupos.size} grupos`);
-  if (!DRY) for (const col of columnasTocadas) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [JSON.stringify(col.settings), col.id]);
+  if (!DRY) for (const col of columnasTocadas) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [col.settings, col.id]);
 
   // Grupos grandes arrancan colapsados.
   if (!DRY) {
@@ -225,7 +225,7 @@ for (const [, b] of mapaBoards) {
     if (col.type !== "relation") continue;
     const destino = (col.settings.mondayBoardIds ?? []).map((id) => mapaBoards.get(String(id))?.id).find(Boolean);
     const settings = { multiple: true, ...(destino ? { boardId: destino } : {}) };
-    if (!DRY) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [JSON.stringify(settings), col.id]);
+    if (!DRY) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [settings, col.id]);
   }
 }
 let relOk = 0;
@@ -233,7 +233,7 @@ for (const r of relacionesPendientes) {
   const ids = r.mondayItemIds.map((id) => mapaItems.get(String(id))).filter(Boolean);
   if (!ids.length) continue;
   relOk++;
-  if (!DRY) await db.query(`UPDATE pulse_items SET values = values || $1::jsonb WHERE id = $2`, [JSON.stringify({ [r.columnId]: ids }), r.itemId]);
+  if (!DRY) await db.query(`UPDATE pulse_items SET values = values || $1::jsonb WHERE id = $2`, [{ [r.columnId]: ids }, r.itemId]);
 }
 console.log(`  · ${relOk} resueltas (el resto apunta a items fuera de los tableros migrados)`);
 
@@ -282,7 +282,7 @@ if (!SIN_ARCHIVOS) {
         console.log(`  ✗ ${asset.name}: ${e.message}`);
       }
     }
-    if (idsCelda.length && !DRY) await db.query(`UPDATE pulse_items SET values = values || $1::jsonb WHERE id = $2`, [JSON.stringify({ [p.columnId]: idsCelda }), p.itemId]);
+    if (idsCelda.length && !DRY) await db.query(`UPDATE pulse_items SET values = values || $1::jsonb WHERE id = $2`, [{ [p.columnId]: idsCelda }, p.itemId]);
   }
 }
 
