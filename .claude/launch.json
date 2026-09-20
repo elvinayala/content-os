@@ -1,0 +1,50 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ave-web",
+      "runtimeExecutable": "/Users/elvinayala/.local/bin/uv",
+      "runtimeArgs": [
+        "run",
+        "--project",
+        "/Users/elvinayala/ai-video-editor",
+        "ave",
+        "web"
+      ],
+      "port": 8765
+    },
+    {
+      "name": "content-os",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "demo-skinclinic",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8790",
+        "--directory",
+        "data/demos/skin-clinic-pr/site"
+      ],
+      "port": 8790
+    },
+    {
+      "name": "auditorias",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8794",
+        "-d",
+        "demos/auditorias"
+      ],
+      "port": 8794
+    }
+  ]
+}

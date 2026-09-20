@@ -1,0 +1,92 @@
+{
+  "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
+  "entradas": [
+    {
+      "fecha": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "que": "Decisión de Elvin: NO se mueve el CNAME ni nada más — se espera a que Aure pague ClickFunnels. El respaldo en Netlify queda parado sin tráfico apuntado.",
+      "porque": "Elvin no quiere tocar DNS por unos días de espera",
+      "verificado": "—",
+      "commit": "—"
+    },
+    {
+      "fecha": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "que": "DM a Aure (Aurenny L Diaz, U08HA9QCJBG) por Slack, con OK explícito de Elvin: que pague/reactive ClickFunnels, link de login https://accounts.myclickfunnels.com/users/sign_in y acceso con levelupmediapr@gmail.com (la clave se la pasa Elvin, no la mandé yo)",
+      "porque": "la cuenta de CF en pausa tiene caídos los dos diagnósticos",
+      "verificado": "sí — mensaje entregado (ts 1789917478.665639, DM D0BFPB2T8RG)",
+      "commit": "—"
+    },
+    {
+      "fecha": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "que": "Los dos quiz (LU /crecimiento y AIB /automatizacion) sirven la pantalla \"This account has been temporarily paused by its owner\" de ClickFunnels: la cuenta entera del workspace está en pausa, no es el código. Publiqué el quiz de Level Up en Netlify (https://diagnostico-crecimiento-lu.netlify.app) como respaldo, apuntando al mismo endpoint.",
+      "porque": "Elvin reportó el funnel de Level Up detenido; sin CF no hay captura de leads del diagnóstico",
+      "verificado": "sí — página 200 con el quiz completo, JS sin errores de sintaxis, logos públicos 200, /api/auditoria responde y los stages 122/12 de Pipedrive existen. Sin probar: un lead real de punta a punta (escribiría en Pipedrive/ActiveCampaign).",
+      "commit": "—"
+    },
+    {
+      "fecha": "2026-09-19",
+      "plataforma": "bori",
+      "que": "npm test estaba rojo desde el 18/sep (el guardia anti-SSRF bloqueaba el servidor local de infra.test.js); urlsegura acepta permitirLocal solo con opt-in del código y nunca en producción",
+      "porque": "con la suite en rojo la regla \"nunca pushear en rojo\" no servía de nada",
+      "verificado": "sí — 1349 checks verdes, /api/status 200 después del deploy",
+      "commit": "fb234e6"
+    },
+    {
+      "fecha": "2026-09-19",
+      "plataforma": "bori",
+      "que": "GET /api/fallos-abiertos: el panel Equipo → Fallos por token de solo lectura (BORI_METRICS_TOKEN), sin emails de clientes",
+      "porque": "la ronda diaria no podía ver los bugs de la plataforma crítica: el reporte salía ciego",
+      "verificado": "sí — 403 sin token, 200 con token y devuelve los 5 fallos abiertos en prod",
+      "commit": "62b0304"
+    },
+    {
+      "fecha": "2026-09-19",
+      "plataforma": "content-os",
+      "que": "la ronda lee los fallos de Bori por el endpoint nuevo y quedó PLAGAS_OPERADOR_TOKEN en .env.local (solo local, no al repo)",
+      "porque": "las dos plataformas críticas eran puntos ciegos del reporte",
+      "verificado": "sí — la ronda ya trae 5 fallos de Bori (3 de clientes que pagan) y los jobs de Plagas",
+      "commit": "9e47b93"
+    }
+  ],
+  "pendientesElvin": [
+    {
+      "que": "Reactivar la cuenta de ClickFunnels (está en pausa por el dueño): tumba los dos diagnósticos, el de Level Up y el de AI Borinquen. Es cuenta/cobro, no lo toco yo.",
+      "desde": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Cloudflare → R2 → bori-media → CORS (origen https://www.heybori.ai, PUT/GET/HEAD) para que la subida directa de creativos vuelva a funcionar",
+      "desde": "2026-09-16",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Configurar correo transaccional en Bori ('olvidé mi contraseña' no funciona) y borrar OWNER_BOOTSTRAP_PASSWORD de Railway",
+      "desde": "2026-08-27",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Railway mostró 'subscription past due' el 17/sep: si no se paga apagan Plagas (app + Evolution + Postgres)",
+      "desde": "2026-09-17",
+      "plataforma": "plagas",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Token de Vercel válido para el puente de Telegram en Railway: el que está es vcp_… y Vercel responde \"User not found\", así que lo que Sofi cambia en data/ o vault/ desde el celular NO llega a producción. Hacer uno en Vercel → Settings → Tokens y ponerlo en Railway (servicio puente, VERCEL_TOKEN)",
+      "desde": "2026-09-19",
+      "plataforma": "puente-telegram",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Decidir qué se hace con Lumière Boutique (plan Agencia, 16 días, se dio de baja y pregunta por reembolso): el reembolso solo lo tocas tú en Stripe",
+      "desde": "2026-09-19",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    }
+  ],
+  "actualizadoEl": "2026-09-20T15:28:36.900Z"
+}

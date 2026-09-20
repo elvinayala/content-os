@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{NEGOCIO}} · Tu equipo digital, listo para probar — AutoFlow</title>
+<meta name="description" content="Demo personalizada de AutoFlow para {{NEGOCIO}}: asistente de chat, asistente de voz y propuesta." />
+<style>
+  :root{
+    --bg:#07160f; --panel:#0d2118; --line:rgba(53,192,111,.18); --text:#e9f5ee; --muted:#9db8aa;
+    --accent:{{COLOR}}; --bori:#35C06F; --teal:#1FB6A6; --gold:#E0A93C; --red:#ef5350;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;background:
+    radial-gradient(900px 500px at 10% -10%, rgba(53,192,111,.16), transparent 60%),
+    radial-gradient(800px 600px at 100% 110%, rgba(31,182,166,.14), transparent 55%), var(--bg);
+    color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:40px 20px 90px}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--bori);font-weight:700}
+  h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:10px 0 12px;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--bori)}
+  .lead{color:var(--muted);font-size:17px;max-width:640px}
+  h2{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:44px 0 14px;font-weight:700}
+  .grid{display:grid;gap:14px}
+  @media(min-width:640px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:1fr 1fr 1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .card h3{font-size:17px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:14.5px}
+  .demo{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(92deg,var(--bori),var(--teal));color:#04120a;
+    font-weight:700;padding:12px 18px;border-radius:12px;text-decoration:none;font-size:15px;box-shadow:0 8px 30px rgba(53,192,111,.25)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
+  .btn.wa{background:#25d366;color:#04120a}
+  .pain{border-left:3px solid var(--red);padding-left:16px}
+  .pain p{color:var(--text)}
+  ul.res{list-style:none;display:flex;flex-direction:column;gap:8px}
+  ul.res li{padding-left:26px;position:relative;color:var(--text)}
+  ul.res li::before{content:"✓";position:absolute;left:0;color:var(--bori);font-weight:800}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  td.win{color:var(--bori);font-weight:700}
+  .tier{position:relative}
+  .tier .tag{position:absolute;top:-10px;right:14px;background:var(--gold);color:#1a1200;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.06em}
+  .tier .price{font-size:22px;font-weight:800;margin:6px 0 2px}
+  .tier .price small{font-size:13px;color:var(--muted);font-weight:500}
+  .tier.hot{border-color:rgba(224,169,60,.5);box-shadow:0 0 0 1px rgba(224,169,60,.25) inset}
+  .muted{color:var(--muted);font-size:13px}
+  .cta{margin-top:40px;text-align:center;background:linear-gradient(180deg,rgba(53,192,111,.10),rgba(31,182,166,.06));border:1px solid var(--line);border-radius:20px;padding:30px 20px}
+  .cta h3{font-size:24px;margin-bottom:8px}
+  .credit{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;
+    background:linear-gradient(to top,rgba(7,22,15,.96),transparent);color:#9db8aa;font-size:12.5px}
+  .credit .dot{width:8px;height:8px;border-radius:50%;background:var(--bori);box-shadow:0 0 0 3px rgba(53,192,111,.2),0 0 12px rgba(53,192,111,.6)}
+  .credit b{color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">MVP personalizado · {{FECHA}}</div>
+  <h1>{{NEGOCIO}}: <em>tu equipo digital</em>, construido para que lo pruebes.</h1>
+  <p class="lead">{{TITULAR}}</p>
+
+  <h2>Pruébalo tú mismo</h2>
+  <div class="grid two">
+    <div class="card demo">
+      <h3>💬 Asistente de chat</h3>
+      <p>Escríbele como si fueras un cliente de {{NEGOCIO}}. Responde en segundos, en español o inglés, y toma los datos del cliente.</p>
+      <a class="btn" href="{{URL_CHAT}}">Abrir el chat de {{NEGOCIO}}</a>
+    </div>
+    <div class="card demo">
+      <h3>📞 Asistente de voz</h3>
+      <p>Toca el orbe y habla con {{ASISTENTE}}. Es la misma voz que contestaría el teléfono de {{NEGOCIO}} a las 9 de la noche.</p>
+      <a class="btn" href="{{URL_VOZ}}">Hablar con {{ASISTENTE}}</a>
+      <span class="muted">Usa Chrome y permite el micrófono.</span>
+    </div>
+    <div class="card demo">
+      <h3>🖥️ Tu sistema por dentro</h3>
+      <p>Cómo se ve tu embudo, las conversaciones que atendió {{ASISTENTE}} y las citas que agendó. Con datos de ejemplo, con tu flujo real.</p>
+      <a class="btn ghost" href="{{URL_SISTEMA}}">Ver el recorrido</a>
+    </div>
+    <div class="card demo">
+      <h3>🌐 Tu página, lista para vender</h3>
+      <p>Una landing de {{NEGOCIO}} con tus servicios y el WhatsApp del asistente como puerta de entrada. Si ya tienes página, esta es la propuesta de rediseño.</p>
+      <a class="btn ghost" href="{{URL_LANDING}}">Ver la landing</a>
+    </div>
+  </div>
+  <div style="margin-top:14px">{{DECK_BTN}}</div>
+
+  <h2>Lo que vimos en {{NEGOCIO}}</h2>
+  <div class="card pain"><p>{{DOLOR}}</p></div>
+
+  <h2>Lo que cambia con AutoFlow</h2>
+  <div class="card">
+    <p style="color:var(--text);margin-bottom:12px">{{RESUMEN}}</p>
+    <ul class="res">{{RESULTADOS_LI}}</ul>
+  </div>
+
+  <h2>La cuenta que nadie te hace</h2>
+  <div class="card" style="overflow-x:auto">
+    <table>
+      <tr><th></th><th>Empleado atendiendo 24/7</th><th>AutoFlow</th></tr>
+      <tr><td>Costo al año</td><td>~$58,000</td><td class="win">~$9,500</td></tr>
+      <tr><td>Horas cubiertas al año</td><td>2,080</td><td class="win">8,736 (24/7)</td></tr>
+      <tr><td>Tiempo de respuesta</td><td>~4 horas</td><td class="win">~10 segundos</td></tr>
+      <tr><td>Ahorro año 1</td><td>—</td><td class="win">~$48,000</td></tr>
+    </table>
+    <p class="muted" style="margin-top:10px">78% de los clientes cierran con el primero que responde. 67% se van con el competidor tras una mala experiencia.</p>
+  </div>
+
+  <h2>Los 3 niveles (para que compares bien)</h2>
+  <div class="grid three">
+    <div class="card tier">
+      <h3>Botones y reglas</h3>
+      <div class="price">No lo vendemos</div>
+      <p>Menús fijos. El cliente escribe algo distinto y se rompe. Es lo que ya probaste y no te gustó.</p>
+    </div>
+    <div class="card tier">
+      <h3>Chatbot con IA</h3>
+      <div class="price">$800–1,000 <small>único</small></div>
+      <p>Conversa bien, pero no está conectado a nada: no agenda, no guarda el lead, no avisa.</p>
+    </div>
+    <div class="card tier hot">
+      <span class="tag">LO QUE PROBASTE ARRIBA</span>
+      <h3>Agente conectado · AutoFlow</h3>
+      <div class="price">$2,500–3,000 <small>+ $147/mes</small></div>
+      <p>Chat + voz + CRM configurado (no en blanco) + agenda. Precalifica y te avisa. Plan Pro $297/mes con reentrenamiento mensual.</p>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:12px">Garantía: funcionando en 21 días o no corre la mensualidad. Sin contrato de permanencia. Financiable: inicial + 2 pagos a 30 días.</p>
+
+  <div class="cta">
+    <h3>¿Lo instalamos en {{NEGOCIO}}?</h3>
+    <p class="muted" style="margin-bottom:16px">{{PRIMER_PASO}}</p>
+    <a class="btn wa" href="{{WA_LINK}}">Escríbenos por WhatsApp</a>
+  </div>
+</div>
+<div class="credit"><span class="dot"></span><span>Hecho por <b>AI Borinquen</b></span><span>·</span><span>AutoFlow</span></div>
+</body>
+</html>

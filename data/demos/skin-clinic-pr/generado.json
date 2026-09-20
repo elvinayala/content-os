@@ -1,0 +1,479 @@
+{
+  "asistente": "Nicole",
+  "descripcion": "Clínica de estética y dermatología en San Juan · Dra. Kasey Ruiz Vega",
+  "saludo": "👋 ¡Hola! Soy Nicole, la asistente virtual de <b>Skin Clinic PR</b>. Te puedo ayudar con: <br>✨ Tratamientos faciales<br>💉 Botox y rellenos<br>🔬 Láser y dermatología estética<br>📅 Agendar tu cita<br>💰 Info de precios y ubicación<br><br>¿En qué te puedo ayudar hoy?",
+  "intents": [
+    {
+      "k": [
+        "precio",
+        "precios",
+        "costo",
+        "cuanto cuesta",
+        "cotizacion",
+        "cuanto vale",
+        "price",
+        "cost",
+        "how much"
+      ],
+      "es": "Los precios varían según el tratamiento y lo que necesites. 💬 Déjame tu nombre y WhatsApp y un miembro del equipo te confirma el costo exacto.",
+      "en": "Prices vary depending on the treatment. Leave me your name and phone number and our team will confirm the exact cost."
+    },
+    {
+      "k": [
+        "facial",
+        "tratamiento facial",
+        "limpieza facial",
+        "facials"
+      ],
+      "es": "Ofrecemos tratamientos faciales personalizados para el cuidado de tu piel. ✨ ¿Quieres que te ayude a agendar una consulta?",
+      "en": "We offer personalized facial treatments for your skin. Would you like me to help you book a consultation?"
+    },
+    {
+      "k": [
+        "botox",
+        "bótox"
+      ],
+      "es": "Sí, hacemos aplicaciones de Botox con la Dra. Kasey Ruiz. 💉 Déjame tu nombre y WhatsApp para coordinar tu cita.",
+      "en": "Yes, we offer Botox treatments with Dr. Kasey Ruiz. Leave me your name and phone number to coordinate your appointment."
+    },
+    {
+      "k": [
+        "relleno",
+        "rellenos",
+        "filler",
+        "fillers"
+      ],
+      "es": "Trabajamos rellenos dérmicos para realzar tus facciones de forma natural. ¿Te ayudo a agendar tu cita?",
+      "en": "We offer dermal fillers to enhance your features naturally. Would you like me to help you book an appointment?"
+    },
+    {
+      "k": [
+        "laser",
+        "láser",
+        "laser treatment"
+      ],
+      "es": "Contamos con tratamientos láser para distintas necesidades de la piel. 🔬 ¿Quieres que te agende una consulta?",
+      "en": "We offer laser treatments for different skin needs. Would you like me to schedule a consultation for you?"
+    },
+    {
+      "k": [
+        "dermatologia",
+        "dermatologa",
+        "piel",
+        "dermatology",
+        "skin doctor"
+      ],
+      "es": "La Dra. Kasey Ruiz Vega atiende dermatología estética. Cuéntame qué necesitas y te ayudo a agendar.",
+      "en": "Dr. Kasey Ruiz Vega provides aesthetic dermatology care. Tell me what you need and I'll help you schedule."
+    },
+    {
+      "k": [
+        "ubicacion",
+        "direccion",
+        "donde estan",
+        "donde quedan",
+        "location",
+        "address"
+      ],
+      "es": "Estamos en San Juan. 📍 Un miembro del equipo te confirma la dirección exacta al coordinar tu cita.",
+      "en": "We're located in San Juan. Our team will confirm the exact address when we coordinate your appointment."
+    },
+    {
+      "k": [
+        "horario",
+        "horas",
+        "abren",
+        "cierran",
+        "hours",
+        "schedule",
+        "open"
+      ],
+      "es": "Escríbenos y te confirmamos el horario disponible para tu cita. 🕒",
+      "en": "Message us and we'll confirm the available schedule for your appointment."
+    },
+    {
+      "k": [
+        "contacto",
+        "telefono",
+        "numero",
+        "llamar",
+        "contact",
+        "phone number"
+      ],
+      "es": "Con gusto te conecto. 📞 Déjame tu nombre y WhatsApp y te contactamos enseguida.",
+      "en": "Happy to help. Leave me your name and phone number and we'll contact you right away."
+    },
+    {
+      "k": [
+        "cita",
+        "agendar",
+        "reservar",
+        "appointment",
+        "book",
+        "schedule appointment"
+      ],
+      "es": "Perfecto, para agendar tu cita solo necesito tu nombre y WhatsApp. 📅",
+      "en": "Great, to book your appointment I just need your name and phone number."
+    },
+    {
+      "k": [
+        "humano",
+        "persona",
+        "representante",
+        "hablar con alguien",
+        "human",
+        "agent",
+        "representative"
+      ],
+      "es": "Claro, te conecto con el equipo. 🙋‍♀️ Déjame tu nombre y WhatsApp y te contactan enseguida.",
+      "en": "Of course, I'll connect you with our team. Leave me your name and phone number and they'll reach out shortly."
+    },
+    {
+      "k": [
+        "gracias",
+        "muchas gracias",
+        "thank you",
+        "thanks"
+      ],
+      "es": "¡Con mucho gusto! 💕 Cualquier otra pregunta, aquí estoy.",
+      "en": "You're very welcome! Let me know if you have any other questions."
+    },
+    {
+      "k": [
+        "hola",
+        "buenas",
+        "buenos dias",
+        "buenas tardes",
+        "hi",
+        "hello",
+        "good morning"
+      ],
+      "es": "¡Hola! 👋 Bienvenido/a a Skin Clinic PR. ¿En qué te puedo ayudar hoy?",
+      "en": "Hello! Welcome to Skin Clinic PR. How can I help you today?"
+    }
+  ],
+  "fallback": {
+    "es": "No estoy segura de esa información, pero un miembro del equipo te la confirma. 💬 Déjame tu nombre y WhatsApp y te contactamos pronto.",
+    "en": "I'm not sure about that, but our team can confirm it for you. Leave me your name and phone number and we'll reach out soon."
+  },
+  "leadReply": {
+    "es": "¡Gracias! 🙌 Ya tomé tus datos. Un miembro del equipo de Skin Clinic PR te va a contactar en breve para confirmar tu cita.",
+    "en": "Thank you! I've got your information. A Skin Clinic PR team member will contact you shortly to confirm your appointment."
+  },
+  "voz": {
+    "kb": [
+      {
+        "k": [
+          "precio",
+          "costo",
+          "cuanto cuesta",
+          "price",
+          "cost"
+        ],
+        "es": "Los precios varian segun el tratamiento. Un miembro del equipo te confirma el costo exacto.",
+        "en": "Prices vary depending on the treatment. Our team will confirm the exact cost.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "facial",
+          "tratamiento facial",
+          "facials"
+        ],
+        "es": "Ofrecemos tratamientos faciales personalizados. Te puedo ayudar a agendar una consulta.",
+        "en": "We offer personalized facial treatments. I can help you book a consultation.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "botox"
+        ],
+        "es": "Hacemos aplicaciones de botox con la doctora Kasey Ruiz. Te ayudo a coordinar tu cita.",
+        "en": "We offer botox treatments with doctor Kasey Ruiz. I can help you set up your appointment.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "relleno",
+          "rellenos",
+          "filler"
+        ],
+        "es": "Trabajamos rellenos derMicos para realzar tus facciones. Te puedo agendar una cita.",
+        "en": "We offer dermal fillers to enhance your features. I can schedule an appointment for you.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "laser"
+        ],
+        "es": "Contamos con tratamientos laser para distintas necesidades de la piel. Te ayudo a agendar.",
+        "en": "We offer laser treatments for different skin needs. I can help you schedule.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "dermatologia",
+          "piel"
+        ],
+        "es": "La doctora Kasey Ruiz Vega atiende dermatologia estetica. Cuentame que necesitas.",
+        "en": "Doctor Kasey Ruiz Vega provides aesthetic dermatology care. Tell me what you need.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "ubicacion",
+          "direccion",
+          "donde estan"
+        ],
+        "es": "Estamos en San Juan. Un miembro del equipo te confirma la direccion exacta.",
+        "en": "We're located in San Juan. Our team will confirm the exact address.",
+        "ofrecerCita": false
+      },
+      {
+        "k": [
+          "horario",
+          "horas",
+          "abren"
+        ],
+        "es": "Escribenos y te confirmamos el horario disponible para tu cita.",
+        "en": "Message us and we'll confirm the available schedule for your appointment.",
+        "ofrecerCita": false
+      },
+      {
+        "k": [
+          "cita",
+          "agendar",
+          "appointment"
+        ],
+        "es": "Perfecto, para agendar tu cita solo necesito tu nombre y tu numero de telefono.",
+        "en": "Great, to book your appointment I just need your name and phone number.",
+        "ofrecerCita": true
+      },
+      {
+        "k": [
+          "humano",
+          "persona",
+          "representante"
+        ],
+        "es": "Claro, te conecto con el equipo. Dejame tu nombre y numero y te contactan enseguida.",
+        "en": "Of course, I'll connect you with our team. Leave me your name and number.",
+        "ofrecerCita": false
+      }
+    ],
+    "fallback": {
+      "es": "No tengo esa informacion en este momento, pero un miembro del equipo te la confirma. Dejame tu nombre y numero de telefono.",
+      "en": "I don't have that information right now, but our team can confirm it. Leave me your name and phone number."
+    },
+    "lead": {
+      "es": "Perfecto, ya tome tus datos. Un miembro del equipo de Skin Clinic PR te va a llamar pronto para confirmar.",
+      "en": "Great, I've got your information. A Skin Clinic PR team member will call you soon to confirm."
+    },
+    "saludo": {
+      "es": "Hola, gracias por llamar a Skin Clinic PR, soy Nicole, en que te puedo ayudar hoy.",
+      "en": "Hello, thank you for calling Skin Clinic PR, this is Nicole, how can I help you today."
+    },
+    "prompt": "# Identidad\nEres Nicole, la asistente virtual de Skin Clinic PR, una clinica de estetica y dermatologia en San Juan dirigida por la doctora Kasey Ruiz Vega. Hablas con calidez boricua, eres profesional y cercana.\n\n# Estilo\nUsa tuteo puertorriqueno (tu, tienes), nunca voseo. Responde en 1 a 2 frases, de forma natural y hablada, sin emojis ni simbolos ni markdown. Si el cliente te habla en ingles, cambia a ingles de inmediato. Di los numeros de telefono digito a digito. No uses apelativos carinosos como mi amor o mami.\n\n# Tu tarea\n1. Entender que necesita el cliente (tratamiento facial, botox, rellenos, laser, dermatologia, precio, ubicacion, etc).\n2. Orientar con la informacion real de la base de conocimiento, nunca inventar precios, horarios ni direcciones exactas.\n3. Tomar el nombre completo y numero de telefono del cliente, o agendar una cita si el cliente esta listo.\n4. Despedirte de forma calida y usar la funcion end_call para terminar la llamada.\n\n# Base de conocimiento\nSkin Clinic PR ofrece tratamientos faciales, botox, rellenos, laser y dermatologia estetica, atendidos por la doctora Kasey Ruiz Vega en San Juan. Se agenda por cita. Nunca inventes precios ni horarios ni direcciones exactas, si no sabes el dato di que un miembro del equipo lo confirma.\n\n# Reglas\nNunca prometas resultados medicos ni ingresos. Nunca uses la palabra gratis. Si el cliente pide hablar con una persona, toma sus datos y dile que el equipo lo contacta. Manten las respuestas breves y claras.",
+    "begin": "Hola, gracias por llamar a Skin Clinic PR, soy Nicole, en que te puedo ayudar hoy.",
+    "boosted": [
+      "Skin Clinic PR",
+      "Kasey Ruiz Vega",
+      "Botox",
+      "dermatologia estetica"
+    ]
+  },
+  "propuesta": {
+    "titular": "Un sistema digital que responde, confirma y agenda por Skin Clinic PR las 24 horas.",
+    "dolor": "Los mensajes de Instagram y WhatsApp llegan de noche y quedan sin respuesta hasta el otro dia, lo que hace que pacientes interesados en tratamientos como botox o rellenos se enfrien o busquen otra clinica. Ademas, las citas se caen porque nadie las confirma a tiempo, y la recepcion no da abasto respondiendo preguntas repetidas de precios.",
+    "resumen": "Con AutoFlow, Skin Clinic PR tiene un asistente de chat y voz que responde al instante en Instagram, WhatsApp y llamadas, todos los dias. El equipo se enfoca en atender pacientes en la clinica mientras el sistema captura y organiza cada consulta.",
+    "resultados": [
+      "Respuestas inmediatas a consultas de Instagram y WhatsApp, incluso de noche",
+      "Menos citas perdidas gracias a confirmaciones automaticas",
+      "Recepcion liberada de responder preguntas repetitivas de precios",
+      "Un CRM organizado con cada lead y su etapa en el proceso"
+    ],
+    "primerPaso": "Instalacion del sistema en 21 dias usando el numero de WhatsApp actual de Skin Clinic PR."
+  },
+  "landing": {
+    "eyebrow": "Clinica de estetica · San Juan",
+    "titular": "Cuida tu piel con tratamientos estéticos de confianza en San Juan",
+    "subtitulo": "La Dra. Kasey Ruiz Vega y su equipo te acompañan con tratamientos faciales, botox, rellenos y dermatologia estetica personalizados para ti.",
+    "servicios": [
+      {
+        "nombre": "Tratamientos faciales",
+        "descripcion": "Cuidado personalizado para la salud y apariencia de tu piel."
+      },
+      {
+        "nombre": "Botox",
+        "descripcion": "Aplicaciones para suavizar lineas de expresion con la Dra. Kasey Ruiz."
+      },
+      {
+        "nombre": "Rellenos dérmicos",
+        "descripcion": "Realza tus facciones de forma natural y segura."
+      },
+      {
+        "nombre": "Tratamientos láser",
+        "descripcion": "Soluciones láser para distintas necesidades de la piel."
+      },
+      {
+        "nombre": "Dermatología estética",
+        "descripcion": "Atencion especializada para el cuidado integral de tu piel."
+      }
+    ],
+    "beneficios": [
+      "Atendido por la Dra. Kasey Ruiz Vega",
+      "Tratamientos personalizados segun tu piel",
+      "Ubicados en San Juan",
+      "Agenda tu cita facilmente por WhatsApp"
+    ],
+    "sobre": "Skin Clinic PR es una clinica de estetica y dermatologia en San Juan dirigida por la Dra. Kasey Ruiz Vega. Con una comunidad de mas de 40 mil seguidores en Instagram, se especializan en tratamientos faciales, botox, rellenos y laser.",
+    "faq": [
+      {
+        "p": "¿Cuánto cuesta un tratamiento?",
+        "r": "El costo varia segun el tratamiento que necesites. Escribenos y un miembro del equipo te confirma el precio."
+      },
+      {
+        "p": "¿Dónde están ubicados?",
+        "r": "Estamos en San Juan. Al coordinar tu cita te confirmamos la direccion exacta."
+      },
+      {
+        "p": "¿Necesito cita previa?",
+        "r": "Sí, todos los tratamientos son por cita. Escríbenos para coordinar la tuya."
+      },
+      {
+        "p": "¿Cuál es el horario de atención?",
+        "r": "Escríbenos y te confirmamos el horario disponible para tu cita."
+      },
+      {
+        "p": "¿Atienden botox y rellenos el mismo día?",
+        "r": "Depende de tu evaluación. Cuéntanos qué necesitas y te orientamos al agendar."
+      }
+    ],
+    "cta": "Agenda tu cita por WhatsApp",
+    "horario": "Escríbenos y te confirmamos el horario"
+  },
+  "deck": {
+    "subtitulo": "Demo personalizada para Skin Clinic PR · Dra. Kasey Ruiz Vega",
+    "situacion": [
+      "Mensajes de Instagram y WhatsApp llegan de noche y quedan sin responder hasta el otro dia",
+      "Citas que se caen porque nadie las confirma a tiempo",
+      "Recepcion no da abasto con las consultas repetidas de precios de tratamientos",
+      "Comunidad activa de 40K seguidores en Instagram (@skinclinicpr) generando consultas constantes"
+    ],
+    "costo": [
+      "El 78% de los clientes elige al negocio que responde primero, y hoy esas respuestas llegan tarde",
+      "El 67% de los mensajes fuera de horario se pierden sin seguimiento",
+      "Cada cita que se cae por falta de confirmacion es tiempo y espacio en agenda que no se recupera"
+    ],
+    "sistema": [
+      "Agente de chat en Instagram y WhatsApp respondiendo preguntas de servicios y precios las 24 horas",
+      "Agente de voz que contesta llamadas, orienta y toma los datos del paciente",
+      "CRM configurado con el embudo de Skin Clinic PR: desde nuevo contacto hasta cita atendida",
+      "Confirmaciones automaticas de citas para reducir las que se caen"
+    ],
+    "diaUno": [
+      "Instalacion del sistema con el numero de WhatsApp actual de la clinica",
+      "Entrenamiento del asistente con los servicios reales: faciales, botox, rellenos, laser, dermatologia",
+      "Prueba en vivo respondiendo mensajes y llamadas de ejemplo",
+      "Ajustes finales segun el flujo de trabajo de la recepcion"
+    ],
+    "proximoPaso": "Agendar la instalacion del sistema con el numero de WhatsApp de Skin Clinic PR."
+  },
+  "sistema": {
+    "etapas": [
+      "Nuevo",
+      "Calificado",
+      "Cita agendada",
+      "Atendido",
+      "Seguimiento"
+    ],
+    "leads": [
+      {
+        "nombre": "Yaritza Colón (ejemplo)",
+        "canal": "Instagram",
+        "interes": "Botox",
+        "etapa": "Nuevo",
+        "hora": "9:14 p.m."
+      },
+      {
+        "nombre": "Luis Fernández (ejemplo)",
+        "canal": "WhatsApp",
+        "interes": "Tratamiento láser",
+        "etapa": "Calificado",
+        "hora": "11:02 a.m."
+      },
+      {
+        "nombre": "Michelle Ortiz (ejemplo)",
+        "canal": "WhatsApp",
+        "interes": "Rellenos dérmicos",
+        "etapa": "Cita agendada",
+        "hora": "3:45 p.m."
+      },
+      {
+        "nombre": "Carlos Meléndez (ejemplo)",
+        "canal": "Llamada",
+        "interes": "Tratamientos faciales",
+        "etapa": "Atendido",
+        "hora": "1:20 p.m."
+      },
+      {
+        "nombre": "Génesis Rivera (ejemplo)",
+        "canal": "Instagram",
+        "interes": "Dermatología estética",
+        "etapa": "Seguimiento",
+        "hora": "8:37 p.m."
+      },
+      {
+        "nombre": "Ángel Vázquez (ejemplo)",
+        "canal": "WhatsApp",
+        "interes": "Botox",
+        "etapa": "Nuevo",
+        "hora": "10:58 p.m."
+      }
+    ],
+    "conversacion": [
+      {
+        "de": "cliente",
+        "texto": "Buenas, quiero saber cuanto cuesta el botox"
+      },
+      {
+        "de": "agente",
+        "texto": "Hola, el precio varia segun la evaluacion. Un miembro del equipo te confirma el costo exacto. ¿Me regalas tu nombre y numero de whatsapp?"
+      },
+      {
+        "de": "cliente",
+        "texto": "Claro, soy Michelle Ortiz, 787-555-0142"
+      },
+      {
+        "de": "agente",
+        "texto": "Gracias Michelle. ¿Te gustaria que te agende una cita para evaluar tu botox?"
+      },
+      {
+        "de": "cliente",
+        "texto": "Sí, el jueves en la tarde si se puede"
+      },
+      {
+        "de": "agente",
+        "texto": "Perfecto, te reservo el jueves 3:30 p.m. Un miembro del equipo confirma por WhatsApp."
+      },
+      {
+        "de": "cliente",
+        "texto": "Buenísimo, gracias"
+      },
+      {
+        "de": "agente",
+        "texto": "Con mucho gusto Michelle, nos vemos el jueves en Skin Clinic PR."
+      }
+    ],
+    "cita": {
+      "servicio": "Botox",
+      "cuando": "jueves 3:30 p.m.",
+      "confirmadaPor": "WhatsApp"
+    }
+  },
+  "fuentes": {
+    "web": null,
+    "instagram": "skinclinicpr",
+    "generadoEl": "2026-09-19T00:57:41.445Z",
+    "modelo": "claude-sonnet-5"
+  }
+}

@@ -1,0 +1,399 @@
+{
+  "actualizadoEl": "2026-09-18T23:30:00-04:00",
+  "coordinadora": "Sofi",
+  "reglas": [
+    "Elvin escribe los guiones y decide el marketing. Es lo ÚNICO que aprueba: después de aprobar guiones, todo corre sin él.",
+    "Sofi coordina: locación, videógrafo, caras, grabación, edición (Cortex), publicación (Heidy), creadores, seguimiento del plan.",
+    "Logística (pagos, videógrafo, confirmar gente) se coordina DIRECTO con Aure por Slack (o Carilin si Aure no está). Contenido: nada sale a caras/creadores sin OK de Elvin.",
+    "Mezcla 50 problema / 20 solución / 20 producto / 10 mentalidad en todas las marcas. De cada 10 guiones: 8 con GANCHO→PROBLEMA→SOLUCIÓN→PRUEBA→CTA y 2 libres. Cada pieza ataca un enemigo. Doble CTA cuando aplique.",
+    "Ángulos claros por cara; si no están claros, preguntar. Cada mes preguntar de qué ángulo/anuncio vinieron las ventas y ajustar.",
+    "Tuteo PR. Nunca 'gratis' en CTA. Nunca prometer ingresos. Cuota: 14 piezas/semana (LU 5 · AIB 4 · Shadow 4 · Bori 1)."
+  ],
+  "diaDeGrabacion": {
+    "proximo": null,
+    "propuesta": "sábado 4/oct o sábado 11/oct (Elvin elige)",
+    "bloques": [
+      {
+        "hora": "09:00–11:00",
+        "quien": "Elvin",
+        "sale": "5 frontales Shadow + 1 yapping + voz de 20 B-roll"
+      },
+      {
+        "hora": "11:00–13:00",
+        "quien": "Daren (teleprompter) + Frankie Jay",
+        "sale": "6–8 anuncios + 8–10 reels orgánicos Level Up"
+      },
+      {
+        "hora": "14:00–16:00",
+        "quien": "Yulianna + testimonio del mes (Bryan Vega)",
+        "sale": "8–10 reels AIB + 1 testimonio"
+      }
+    ],
+    "listaPrevia": [
+      "guiones de Elvin impresos",
+      "teleprompter",
+      "confirmar Daren, Frankie Jay, Yulianna, Bryan 48 h antes",
+      "lugar y luz",
+      "material entra a Cortex el mismo día"
+    ]
+  },
+  "caras": [
+    {
+      "nombre": "Elvin",
+      "marca": "shadow-operator",
+      "avatar": "operador aspirante / quien quiere montar un negocio digital sin mostrar la cara",
+      "angulos": "los 6 de Shadow + tesis 'no tienes que mostrar tu cara… tus primeros $10K'",
+      "contacto": "DM Slack",
+      "estado": "activo"
+    },
+    {
+      "nombre": "Daren",
+      "marca": "level-up",
+      "avatar": "Done With You: coaches, mentores, agencias, digitales que quieren pasar de $5K a $20K/mes",
+      "angulos": "botón azul · sin estrategia · referidos · método DWY · doble CTA",
+      "contacto": "vía Juan Diego / Heidy",
+      "estado": "activo"
+    },
+    {
+      "nombre": "Frankie Jay",
+      "marca": "level-up",
+      "avatar": "profesionales de la salud, contratistas, negocios tradicionales, dueños de 40–65 años",
+      "angulos": "referidos frágiles · agenda llena · clientes nuevos todos los días · botón azul",
+      "contacto": "vía Juan Diego",
+      "estado": "activo"
+    },
+    {
+      "nombre": "Yulianna Vargas",
+      "marca": "ai-borinquen",
+      "avatar": "dueños de negocio que atienden a mano y quieren digitalizarse",
+      "angulos": "agentes personalizados · digitalizar · no responder a tiempo · recepcionista de IA · no contratar por contratar · crecer sin contratar · danos 7 días",
+      "contacto": "vía Aure",
+      "estado": "activo"
+    },
+    {
+      "nombre": "Bryan Vega",
+      "marca": "level-up",
+      "avatar": "caso real (quiropráctico, 1 año)",
+      "angulos": "antes→después · referidos desde la voz del cliente",
+      "contacto": "vía Carilin",
+      "estado": "confirmó disponibilidad (3/sep), falta fecha"
+    },
+    {
+      "nombre": "Bori el coquí",
+      "marca": "bori",
+      "avatar": "negocio pequeño que paga miles por marketing",
+      "angulos": "la agencia de $2–5K en una app desde $99 · plataforma que no existe en PR",
+      "contacto": "—",
+      "estado": "activo"
+    }
+  ],
+  "creadores": {
+    "presupuestoMensual": 1500,
+    "modelo": "paquete de 3 reels a $500–700 · 2–3 creadores/mes · 6–9 reels",
+    "docs": "vault/proyectos/estudio/micro-influencers/{propuesta,brief,acuerdo}.md",
+    "pipeline": [
+      {
+        "handle": "@skinclinicpr",
+        "quien": "Dra. Kasey Ruiz",
+        "marca": "ai-borinquen",
+        "paquete": 700,
+        "estado": "por contactar",
+        "keyword": "FLOW-K",
+        "ultimoToque": null,
+        "nota": "cliente + creadora; candidata #1; MVP ya generado"
+      },
+      {
+        "handle": "@drsebastianbonnin",
+        "quien": "Dr. Sebastián Bonnin",
+        "marca": "ai-borinquen",
+        "paquete": 500,
+        "estado": "por contactar",
+        "keyword": "FLOW-B",
+        "ultimoToque": null,
+        "nota": ""
+      },
+      {
+        "handle": "@virtualizate",
+        "quien": "Tech Guru (Obed Borrero)",
+        "marca": "ai-borinquen",
+        "paquete": 300,
+        "estado": "por contactar",
+        "keyword": "FLOW-T",
+        "ultimoToque": null,
+        "nota": "1 reel de prueba en vivo"
+      },
+      {
+        "handle": "@dr.luismorell",
+        "quien": "Dr. Luis Morell",
+        "marca": "ai-borinquen",
+        "paquete": 700,
+        "estado": "mes 2",
+        "keyword": "FLOW-M",
+        "ultimoToque": null,
+        "nota": ""
+      },
+      {
+        "handle": "@tuko_alberto_",
+        "quien": "Tuko",
+        "marca": "level-up",
+        "paquete": 700,
+        "estado": "mes 2",
+        "keyword": "LEVEL-T",
+        "ultimoToque": null,
+        "nota": "entrevista/caso, no anuncio"
+      }
+    ]
+  },
+  "contrataciones": [
+    {
+      "puesto": "Head de Crecimiento Bori",
+      "estado": "vacante lista (doc + DM a Elvin 19/sep); Elvin publica",
+      "docs": "vault/proyectos/contrataciones/head-crecimiento-bori.md",
+      "fechaMeta": "2026-10-06"
+    },
+    {
+      "puesto": "Setter puertorriqueño/a AIB",
+      "estado": "enviado a Yaileen (dueña) y Aure (apoyo) el 19/sep; seguimiento diario hasta 'listo'",
+      "docs": "vault/proyectos/contrataciones/setter-puertorriqueno-aib.md",
+      "fechaMeta": "2026-10-06",
+      "seguimiento": {
+        "yaileen": {
+          "user": "U08Q51UFLSH",
+          "dm": "D08TMMR61T4",
+          "ts": "1789787864.820909",
+          "estado": "enviado 19/sep desde la cuenta de Elvin (MCP Slack)"
+        },
+        "aure": {
+          "user": "U08HA9QCJBG",
+          "dm": "D08TBNYN95Z",
+          "ts": "1789787869.732939",
+          "estado": "enviado 19/sep desde la cuenta de Elvin (MCP Slack)"
+        },
+        "hitos": {
+          "publicada": null,
+          "entrevistas": null,
+          "listo": null
+        },
+        "ultimoRecordatorio": "2026-09-19T03:17:24.523Z",
+        "nota": "El bot no tiene scope im:write; los DMs salen desde la cuenta de Elvin con el MCP de Slack. Las respuestas llegan a los DMs de Elvin (D08TMMR61T4 Yaileen, D08TBNYN95Z Aure) y el seguimiento las lee con el MCP."
+      },
+      "pago": "100 % comisión: 10 % de cada venta que origine; sin base; 2 días de prueba pagados (corrección Elvin 19/sep, avisada a Yaileen y Aure en el hilo)"
+    }
+  ],
+  "plan": {
+    "doc": "vault/ceo/plan-de-guerra-2026Q4.md",
+    "compuertas": [
+      {
+        "fecha": "2026-10-15",
+        "que": "10 MVPs enviados · 25 posts de Shadow publicados · 2 contrataciones firmadas",
+        "estado": "abierta"
+      },
+      {
+        "fecha": "2026-11-15",
+        "que": "Compuerta de Resuelto · Skool abierto con fundadores · churn LU 2 meses",
+        "estado": "abierta"
+      },
+      {
+        "fecha": "2026-12-12",
+        "que": "Cierre del trimestre",
+        "estado": "abierta"
+      }
+    ],
+    "pendientesElvin": [
+      {
+        "que": "Conectar Telegram (BotFather → token → /start → `node scripts/telegram-bot.mjs quien` → Vercel → `setup` → `test`). Pasos: vault/proyectos/estudio/telegram-conexion.md",
+        "para": "2026-09-20",
+        "estado": "hecho",
+        "hechoEl": "2026-09-19"
+      },
+      {
+        "que": "Confirmar los ángulos por cara (cerebro-sofi §4) o corregirlos",
+        "para": "2026-09-22",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Aprobar en la bandeja los 44 guiones (Daren 10 · Frankie Jay 10 · Yulianna 10 · Shadow 8 · Bori 6)",
+        "para": "2026-09-22",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Elegir locación y fecha del día de grabación #1 (Sofi manda 3 opciones)",
+        "para": "2026-09-25",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Escribir los 14 guiones de S1 (o pedirle a Sofi el lote con tu estructura)",
+        "para": "2026-09-26",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Publicar las 2 vacantes (Head Bori, setter PR)",
+        "para": "2026-09-22",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Aprobar el DM a la Dra. Kasey (propuesta micro-influencer)",
+        "para": "2026-09-23",
+        "estado": "pendiente"
+      },
+      {
+        "que": "GoDaddy: TXT + CNAME de shadowoperator.co (10 min)",
+        "para": "2026-09-25",
+        "estado": "pendiente"
+      },
+      {
+        "que": "Plan 'Dragon Chat' con Liz (AIB): rescatar y nutrir toda la base por WhatsApp (~5,000 contactos que ya tiene Liz en el WhatsApp de AIB) — subir llamadas, promociones, seguimiento. Hacerlo cuando toque AI Borinquen; Sofi lo recuerda.",
+        "para": "2026-09-26",
+        "estado": "recordatorio",
+        "recordar": "cuando se hable de AI Borinquen"
+      }
+    ]
+  },
+  "bitacora": [
+    {
+      "ts": "2026-09-19T03:01:59.156Z",
+      "slackTs": "1789786919.114759",
+      "resumen": "Primera ronda: presentación, pide confirmar ángulos, aprobar 44 guiones, elegir fecha de grabación (4 u 11/oct), OK al DM de Kasey; recuerda vacantes y compuerta 15/oct."
+    },
+    {
+      "ts": "2026-09-19T17:25:06.104Z",
+      "resumen": "Locación de septiembre enviada: Engage Studios ($75–90/h), Photographika (cotizar), Marriott con MMP; idea Airbnb Rincón/Dorado para oct. Fechas 26/sep o 3/oct."
+    },
+    {
+      "ts": "2026-09-19T22:05:00-04:00",
+      "resumen": "Sofi se presentó oficialmente a Aure por DM (logística: locación mensual, videógrafo, confirmaciones, setter PR). Identidad visual v1 en public/marcas/sofi/. Puente Telegram en Railway con deploy a Vercel arreglado (.vercel/project.json viaja; reglas duras para que Claude no toque infra)."
+    }
+  ],
+  "cerebro": "vault/ceo/cerebro-sofi.md",
+  "calendario": {
+    "estado": "borrador",
+    "nota": "Elvin (18/sep): primero el plan y los ángulos por cara; las 56 piezas de octubre son un borrador para reescribir hooks/ángulos con él antes de producir. No contar como comprometidas hasta que apruebe los guiones de S1."
+  },
+  "contactos": {
+    "elvin": {
+      "slack": "U08U9777PUY",
+      "whatsapp": "pendiente (Elvin da el canal; mientras, vía Aure)",
+      "telegram": {
+        "chatId": "8771242182",
+        "bot": "@eamarket_sofi_bot",
+        "estado": "conectado 19/sep, puente en Railway"
+      }
+    },
+    "aure": {
+      "nombre": "Aurenny Diaz",
+      "rol": "asistente de Elvin + directora comercial",
+      "slackDM": "D08TBNYN95Z",
+      "funcion": "paga locación, coordina videógrafo, confirma personas, ayuda a Sofi cuando no consigue info",
+      "presentacionSofi": "2026-09-19 (DM D08TBNYN95Z ts 1789855297.707249); falta mandarle la foto (token de Slack sin files:write)"
+    },
+    "carilin": {
+      "rol": "directora de operaciones",
+      "slack": "buscar con el MCP",
+      "funcion": "respaldo de Aure"
+    },
+    "videografo": {
+      "nombre": "por confirmar (candidato: Cristian — propuesta pendiente en tareas)",
+      "contacto": "lo coordina Aure",
+      "instrucciones": "tomas con cuidado, repetir lo que no sirva, cautela con cada pieza: 'Elvin dijo así'"
+    }
+  },
+  "locaciones": {
+    "regla": "Una vez al mes (primer día hábil) buscar 3 opciones con precio, link, fecha propuesta y por qué; alternar estudio y Airbnb; Elvin elige; Aure paga y coordina videógrafo; confirmar a 7 días y 48 h. No puede fallar.",
+    "alternancia": [
+      "estudio",
+      "airbnb"
+    ],
+    "proximoTipo": "estudio",
+    "historial": [],
+    "propuestaActual": {
+      "fecha": "2026-09-19",
+      "fechasSugeridas": [
+        "2026-09-26",
+        "2026-10-03"
+      ],
+      "opciones": [
+        {
+          "tipo": "estudio",
+          "nombre": "Engage Studios PR",
+          "zona": "Guaynabo/San Juan",
+          "precio": "$75–90/h Infinity Room · podcast $125/h · día completo ~$525–630",
+          "link": "https://engagestudiopr.com/precios-para-alquiler-de-estudios-de-fotografia-podcasts-grabaciones/",
+          "porQue": "teleprompter y ads limpios; luz natural + artificial"
+        },
+        {
+          "tipo": "estudio",
+          "nombre": "Photographika Studio",
+          "zona": "Ave. San Patricio, San Juan",
+          "precio": "a cotizar (787) 304-0161",
+          "link": "https://www.yelp.com/biz/photographika-studio-san-juan-3",
+          "porQue": "6 estudios, 8,000 pies²: 3 bloques en paralelo"
+        },
+        {
+          "tipo": "marriott",
+          "nombre": "La Concha / San Juan Marriott / AC Condado / St. Regis / Dorado Ritz-Carlton Reserve",
+          "zona": "Condado, Bahía Beach, Dorado",
+          "precio": "código MMP (~70 % off), Elvin verifica",
+          "link": "https://www.marriott.com",
+          "porQue": "textura de hotel para Shadow (operador detrás de la cortina)"
+        }
+      ],
+      "ideaFresca": {
+        "tipo": "airbnb",
+        "nombre": "Villa moderna con vista en Rincón (Casita Azure / Ojalá) o Dorado (AQUA Ville)",
+        "cuando": "octubre",
+        "link": "https://www.airbnb.com/rincon-region-puerto-rico/stays/villas"
+      },
+      "alternanciaPropuesta": "sept estudio → oct Marriott → nov Airbnb",
+      "estado": "enviada a Elvin 19/sep, espera elección"
+    },
+    "ideasFrescas": [
+      "viaje Nueva York",
+      "viaje California",
+      "evento en Medellín (recap)",
+      "evento en Puerto Rico (recap)"
+    ],
+    "marriott": {
+      "regla": "Elvin tiene el pase Marriott con ~70 % de descuento (código de tarifa MMP). Hay tarifas especiales en Marriott de todo el mundo y de PR. Sofi propone hoteles Marriott como locación (o para viajes de contenido) con la FECHA; Elvin verifica el precio con el código y decide. Sofi nunca reserva: Aure paga cuando Elvin confirma.",
+      "codigo": "MMP",
+      "hotelesPR": [
+        "San Juan Marriott Resort & Stellaris Casino (Condado)",
+        "La Concha Renaissance (Condado)",
+        "AC Hotel San Juan Condado",
+        "Sheraton Puerto Rico (Miramar)",
+        "Sheraton Old San Juan",
+        "Aloft San Juan (Convention District)",
+        "Courtyard Isla Verde Beach Resort",
+        "Residence Inn San Juan Isla Verde",
+        "Fairfield Inn San Juan Vistas",
+        "Courtyard Aguadilla",
+        "St. Regis Bahía Beach (Río Grande)",
+        "Dorado Beach, a Ritz-Carlton Reserve"
+      ]
+    },
+    "nota": "Elvin (19/sep): quiere las opciones de locación de ESTE MES (fin de septiembre) y después ideas nuevas; alternar estudio / Airbnb / Marriott con código; siempre con precio y fecha."
+  },
+  "comunicacion": {
+    "canal": "Telegram (@eamarket_sofi_bot, puente en Railway) + espejo en DM de Slack",
+    "cadencia": "diario 7:30 + check-in corto cada 2–3 días si no hubo respuesta",
+    "tono": "corta, sin insistir, preguntar '¿qué hacemos con esto?' / '¿cómo te fue con…?' / 'acuérdate de…'",
+    "ultimoContacto": "2026-09-19T17:25:06.106Z",
+    "nota": "Elvin (19/sep): 'hoy no he hablado con Sofi; no me ha enviado los sitios para grabar este mes'. Regla: las opciones de locación van SIN esperar la fecha; se proponen 3 con fecha sugerida y Elvin ajusta."
+  },
+  "cicloAngulos": {
+    "regla": "cada mes: ¿de qué ángulo y de qué anuncio vino la mayor parte de las ventas? Repetir los que venden, cambiar los que no.",
+    "ultimaRevision": null,
+    "angulosQueVenden": [],
+    "angulosACambiar": []
+  },
+  "lotes": {
+    "2026-09-19": {
+      "Daren": 10,
+      "Frankie Jay": 10,
+      "Yulianna Vargas": 10,
+      "Elvin (Shadow)": 8,
+      "Bori el coquí": 6,
+      "estado": "en bandeja /ceo/entregas, esperando aprobación de Elvin",
+      "regla": "8 estructura + 2 libres por cada 10; doble CTA; un enemigo por pieza"
+    }
+  }
+}

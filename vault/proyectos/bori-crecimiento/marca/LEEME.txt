@@ -1,0 +1,17 @@
+BORI · KIT DE MARCA Y REDES · v1 · 13 sep 2026
+
+01-logo/        Logo en PNG (2000 px) y SVG. Fondo oscuro, claro y transparente.
+                Lockups horizontal y vertical. Ícono de app 1024. Favicons 512/180/32.
+                Una tinta: blanco, verde, oro, negro (SVG).
+02-perfil/      Avatares 1080x1080 para IG, TikTok, FB, LinkedIn, X, YouTube, WhatsApp.
+03-portadas/    Facebook 1640x924, LinkedIn 1584x396, YouTube 2560x1440, X 1500x500.
+04-plantillas/  Posts 1080x1350 (4:5): demo, live, caso, precio, educa, reto.
+05-historias/   Historias 1080x1920: encuesta, live, demo.
+
+Colores (los mismos de la plataforma):
+  fondo 07160F · superficie 0E2B1E · borde 1F4D36 · texto EAF5EE · gris 8FB3A0
+  verde 35C06F · teal 1FB6A6 · verde claro 7BE08A (gradiente 120° teal→verde→claro)
+  coquí: cobre B8733A / 8E5124 · crema EAD7B2 · oro del ojo E0A93C
+Tipografía: Onest (titulares 600, texto 400) · JetBrains Mono (etiquetas y datos).
+Handle: @heybori en todas las redes. Bio en el tablero de perfil de la canvas.
+Reglas: logo pequeño arriba a la derecha en piezas; nunca voltear, rotar ni recolorear.

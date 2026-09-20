@@ -1,0 +1,23 @@
+{
+  "nota": "Estado vivo de la revisión diaria de clientes para Carilin (/revision-clientes). Sembrado el 20/sep/2026 con lo que ya se le envió el 18 y 19/sep para que NO se repita: esos casos solo vuelven si cambian o como recordatorio de una línea cada 72 h.",
+  "ultimaCorrida": "2026-09-19T18:20:00-04:00",
+  "onboardingCanalId": "",
+  "umbralLupaUSD": 1500,
+  "clientes": {
+    "marian-parra-mp-legal-network": { "nombre": "Marian Parra – MP Legal Network", "estado": "alerta", "severidad": "alta", "resumen": "~$4,000 invertidos, exige revisión de reembolso, amenaza con advertir a otros clientes; equipo dijo revisarlo con directivos (17/sep), sin cierre", "primeraSenal": "2026-09-17", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 1, "ultimaRespuestaEquipo": "2026-09-17" },
+    "george-ortiz-jadaluz-construction": { "nombre": "George Ortiz – Jadaluz Construction", "estado": "seguimiento", "severidad": "alta", "resumen": "queja formal (+$2,000, resultados bajos), pidió cambiar de estratega; sin seguimiento desde el 25/ago", "primeraSenal": "2026-08-25", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 1, "ultimaRespuestaEquipo": "2026-08-25" },
+    "jack-cardoza-bukaino": { "nombre": "Jack Cardoza – Bukaino", "estado": "seguimiento", "severidad": "alta", "resumen": "asistente de chat sigue fallando, reclama pagos pendientes; 31 días sin respuesta", "primeraSenal": "2026-08-19", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 1 },
+    "vicente-cadena-cadena-ensurance": { "nombre": "Vicente Cadena – Cadena Ensurance", "estado": "seguimiento", "severidad": "media", "resumen": "exigió reembolso (20/jul); cliente y equipo abandonaron el canal sin cerrar", "primeraSenal": "2026-07-20", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 2, "notas": "caso viejo: decidir cierre formal, no re-alertar cada día" },
+    "karillyn-rodriguez-kl-professional": { "nombre": "Karillyn Rodríguez – KL Professional", "estado": "seguimiento", "severidad": "media", "resumen": "reclamó falta de seguimiento; el equipo del cliente abandonó el canal", "primeraSenal": "2026-09-01", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 1 },
+    "ivan-torres-vip-auto-servicio": { "nombre": "Ivan Torres – VIP Auto Servicio", "estado": "seguimiento", "severidad": "media", "resumen": "muy molesto por gasto sin resultados (16/jul); abandonó el canal (29/jul)", "primeraSenal": "2026-07-16", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 2, "notas": "caso viejo: cierre formal" },
+    "lina-herrera-hv-all-in-solutions": { "nombre": "Lina Herrera – HV All in Solutions", "estado": "seguimiento", "severidad": "alta", "resumen": "disputa por reembolso de $2,050 no recibido pese a carta (12/ago); abandonó el canal (28/ago)", "primeraSenal": "2026-08-12", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 2, "notas": "dinero de por medio: tesorera" },
+    "roberto-rivera-huellas-by-capricho": { "nombre": "Roberto Rivera – Huellas by Capricho", "estado": "seguimiento", "severidad": "media", "resumen": "anuncios apagados por pago pendiente; el equipo del cliente abandonó el canal", "primeraSenal": "2026-09-10", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-19", "vecesEnviado": 1 },
+    "jemil-vasquez-autolux": { "nombre": "Jemil Vásquez – AutoLux", "estado": "en-curso", "severidad": "media", "resumen": "asistente IA dio info errónea; el equipo resolvió 4 bugs (19/sep)", "primeraSenal": "2026-09-18", "ultimaSenal": "2026-09-19", "ultimoEnvio": "2026-09-18", "vecesEnviado": 1, "ultimaRespuestaEquipo": "2026-09-19" },
+    "luis-angel-valle-medical-office": { "nombre": "Luis Ángel Valle – Medical Office", "estado": "seguimiento", "severidad": "media", "resumen": "15 días desde inicio de contrato y cuenta publicitaria sin configurar", "primeraSenal": "2026-09-03", "ultimaSenal": "2026-09-18", "ultimoEnvio": "2026-09-18", "vecesEnviado": 1 },
+    "salliam-troche-art-of-beauty": { "nombre": "Salliam Troche – Art of Beauty", "estado": "seguimiento", "severidad": "media", "resumen": "leads de baja calidad / ghosting, sin resolver", "primeraSenal": "2026-09-15", "ultimaSenal": "2026-09-18", "ultimoEnvio": "2026-09-18", "vecesEnviado": 1 }
+  },
+  "envios": [
+    { "fecha": "2026-09-18", "formato": "libreto largo (versión anterior, Claude en Slack)", "lineas": 60 },
+    { "fecha": "2026-09-19", "formato": "libreto largo (versión anterior, Claude en Slack)", "lineas": 55 }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "shadow-operator": {
+    "guion": 30,
+    "gancho": 20
+  },
+  "level-up": {
+    "guion": 23,
+    "idea": 6,
+    "gancho": 20,
+    "carrusel": 40
+  },
+  "ai-borinquen": {
+    "guion": 10,
+    "carrusel": 20,
+    "gancho": 20
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "resuelto-agente",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agente conversacional de Resuelto: WhatsApp, Instagram, Messenger y web. Cotiza, agenda, cobra, lee fotos y audios, escala a humano.",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "chat": "tsx src/cli.ts",
+    "publicar": "tsx src/publicar.ts",
+    "bori": "tsx src/bori.ts",
+    "cotizar": "tsx src/cotizador.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "stripe": "^17.5.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "@types/web-push": "^3.6.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

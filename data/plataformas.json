@@ -1,0 +1,238 @@
+{
+  "actualizadoEl": "2026-09-19T00:00:00-04:00",
+  "nota": "Inventario de TODO lo que Nico (vibecoder) puede tocar. Lo lee scripts/nico-ronda.mjs (salud diaria) y el puente de Telegram (--add-dir). Si nace un proyecto nuevo, se agrega aquí y Nico ya lo ve.",
+  "plataformas": [
+    {
+      "id": "content-os",
+      "nombre": "Content OS / CEO Command Center",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO",
+      "prod": "https://content-os-chi-seven.vercel.app",
+      "salud": "https://content-os-chi-seven.vercel.app/login",
+      "hosting": "vercel",
+      "deploy": "bash scripts/deploy-snapshots.sh  (o npx vercel --prod --yes)",
+      "logs": "npx vercel logs content-os-chi-seven.vercel.app",
+      "tests": "npm test",
+      "leerPrimero": [
+        "CLAUDE.md"
+      ],
+      "critico": false,
+      "notas": "data/*.json van en el bundle: todo cambio de data/ o vault/ requiere deploy. Tareas de Sofi, Telegram, Calendly→Pipedrive, quiz funnels (/api/auditoria) viven aquí.",
+      "github": "elvinayala/content-os"
+    },
+    {
+      "id": "bori",
+      "nombre": "Bori / Hey Bori (heybori.ai) — SaaS con clientes pagando",
+      "repo": "/Users/elvinayala/Documents/Claude/Projects/ai borinquen plataforma",
+      "prod": "https://www.heybori.ai",
+      "salud": "https://www.heybori.ai/api/status",
+      "hosting": "railway",
+      "railway": {
+        "proyecto": "believable-amazement",
+        "servicio": "bori"
+      },
+      "deploy": "git push origin main  (Railway despliega solo, ~2 min; verificar /api/status = 200 después)",
+      "logs": "npx @railway/cli logs --service bori",
+      "tests": "npm test  (OBLIGATORIO antes de push: un error de sintaxis en public/index.html tumba la app entera)",
+      "fallos": "Panel Equipo → Fallos (tabla fallos, POST /api/fallos). Récord oficial de bugs: marcar 'arreglado' con nota al corregir algo.",
+      "leerPrimero": [
+        "TRASPASO.md"
+      ],
+      "critico": true,
+      "notas": "Stripe LIVE. Postgres: cada campo nuevo va en 3 lugares (SCHEMA+migrate en db.js, rowToUser y COL en store.pg.js). Índices nuevos SOLO en migrate() tras el ALTER. Nunca mover un cobro sin revisar que el catch no tenga refund. Nunca implementar reembolsos por código.",
+      "github": "elvinayala/bori"
+    },
+    {
+      "id": "plagas",
+      "nombre": "Plagas Puerto Rico — agente interno (cliente Gilbert / Kristian / Japhet)",
+      "repo": "/Users/elvinayala/Documents/Claude/Projects/plagas-puerto-rico",
+      "prod": "https://app-production-c4e7.up.railway.app",
+      "salud": "https://app-production-c4e7.up.railway.app/api/salud",
+      "hosting": "railway",
+      "railway": {
+        "proyecto": "plagas-puerto-rico",
+        "servicio": "app",
+        "otros": [
+          "evolution",
+          "postgres"
+        ]
+      },
+      "deploy": "git push (Railway) — desde el repo: npx railway up --detach si no hay remoto",
+      "logs": "npx railway logs --service app   (ante 'no le llega X' mirar logs ANTES de suponer que es el modelo)",
+      "tests": "npm test",
+      "soporte": "GET /api/operador/conversaciones con header x-operador-token=OPERADOR_TOKEN (lee conversaciones/jobs de prod sin login; ?memorias=1 ?tareas=1)",
+      "leerPrimero": [
+        "CLAUDE.md",
+        "docs/guia-uso-equipo.md"
+      ],
+      "critico": true,
+      "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto.",
+      "github": "elvinayala/plagas-puerto-rico"
+    },
+    {
+      "id": "cortex",
+      "nombre": "Cortex / AI Video Editor (edit.heybori.ai)",
+      "repo": "/Users/elvinayala/ai-video-editor",
+      "prod": "https://edit.heybori.ai",
+      "salud": "https://edit.heybori.ai/api/v1/health",
+      "hosting": "railway",
+      "railway": {
+        "proyecto": "cortex",
+        "servicio": "cortex"
+      },
+      "deploy": "npx --yes @railway/cli up --detach  (desde el repo; un redeploy MATA los renders en curso: revisar la cola antes)",
+      "logs": "npx @railway/cli logs   · vigilante en /data/watch.log (ssh railway-cortex)",
+      "tests": "uv run pytest",
+      "leerPrimero": [
+        "CLAUDE.md",
+        "docs/adr/"
+      ],
+      "critico": false,
+      "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor).",
+      "github": "elvinayala/cortex"
+    },
+    {
+      "id": "resuelto",
+      "nombre": "Resuelto — plataforma de plomería / home services",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/vault/proyectos/plomeria-pr",
+      "prod": "https://resueltopr.com",
+      "salud": "https://resueltopr.com",
+      "hosting": "netlify",
+      "netlify": {
+        "site": "resueltopr",
+        "siteId": "2a72cf58-73cd-4946-86fc-2da7daa928ed"
+      },
+      "deploy": "cd kit/landing && npx netlify-cli deploy --prod --dir . --no-build --site 2a72cf58-73cd-4946-86fc-2da7daa928ed",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "decisiones.md",
+        "agente/README.md"
+      ],
+      "critico": false,
+      "notas": "Landing clientes (index.html) + reclutamiento plomeros (plomeros/index.html). Agente propio en agente/ (Node+TS). El nombre 'Bori' NUNCA de cara al cliente. Equipo 100% separado de las agencias."
+    },
+    {
+      "id": "voz",
+      "nombre": "Agentes de voz (Retell) — AutoFlow, demos, Valeria, Demo AutoFlow · <negocio>",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/scripts/demo-cliente",
+      "prod": "https://api.retellai.com",
+      "salud": "https://api.retellai.com/list-agents",
+      "saludAuth": "RETELL_API_KEY",
+      "hosting": "retell",
+      "deploy": "API de Retell (RETELL_API_KEY en .env.local). Agentes de demo: nombre empieza con 'Demo AutoFlow' (solo esos emiten tokens vía /api/demo-webcall).",
+      "logs": "Retell dashboard → Calls",
+      "tests": "—",
+      "leerPrimero": [
+        "scripts/provision-retell-glenn.mjs",
+        "scripts/demo-cliente/demo.mjs"
+      ],
+      "critico": true,
+      "notas": "Agentes de clientes reales atienden llamadas: NUNCA borrar ni editar el prompt de un agente en producción sin OK de Elvin. Crear/ajustar demos sí."
+    },
+    {
+      "id": "quiz-funnels",
+      "nombre": "Quiz funnels (ClickFunnels 2.0) — Diagnóstico LU (NzxGPd) + Diagnóstico AIB (NEWQxr)",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/demos/auditorias",
+      "prod": "https://content-os-chi-seven.vercel.app/api/auditoria",
+      "salud": "https://content-os-chi-seven.vercel.app/api/auditoria",
+      "hosting": "clickfunnels + vercel",
+      "deploy": "El código del quiz se pega en ClickFunnels a mano (Elvin). El backend (/api/auditoria → Pipedrive + ActiveCampaign) se despliega con Content OS.",
+      "logs": "npx vercel logs (filtrar /api/auditoria)",
+      "tests": "—",
+      "leerPrimero": [
+        "demos/auditorias/README.md"
+      ],
+      "critico": false,
+      "notas": "Un cambio en el HTML del quiz requiere que Elvin lo vuelva a pegar en CF: Nico prepara el archivo y avisa."
+    },
+    {
+      "id": "bori-superplataforma",
+      "nombre": "Bori super plataforma (app/borinquen/ dentro de Content OS) + CRM Bori",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/app/borinquen",
+      "prod": "https://content-os-chi-seven.vercel.app/borinquen",
+      "salud": "https://content-os-chi-seven.vercel.app/borinquen",
+      "hosting": "vercel",
+      "deploy": "igual que content-os",
+      "logs": "igual que content-os",
+      "tests": "npm test",
+      "leerPrimero": [
+        "CLAUDE.md"
+      ],
+      "critico": false,
+      "notas": "NO confundir con heybori.ai (repo aparte)."
+    },
+    {
+      "id": "puente-telegram",
+      "nombre": "Puente Telegram (Sofi/Jarvis) en Railway",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO",
+      "prod": "railway",
+      "salud": "",
+      "hosting": "railway",
+      "railway": {
+        "proyecto": "puente-telegram",
+        "servicio": "puente"
+      },
+      "deploy": "npx @railway/cli up --detach  (Dockerfile.puente)",
+      "logs": "npx @railway/cli logs --service puente",
+      "tests": "—",
+      "leerPrimero": [
+        "scripts/telegram-puente.mjs"
+      ],
+      "critico": false,
+      "notas": "Si Sofi deja de contestar en Telegram, revisar estos logs primero."
+    },
+    {
+      "id": "victory-leads",
+      "nombre": "Victory Core — scrapper de leads (cliente Néstor)",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/scripts/victory-core",
+      "prod": "",
+      "salud": "",
+      "hosting": "local",
+      "deploy": "—",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        ".claude/commands/victory-leads.md"
+      ],
+      "critico": false,
+      "notas": "Elvin pidió NO sobre-ingenierizar."
+    },
+    {
+      "id": "ventaja",
+      "nombre": "Ventaja — apuestas +EV (mock)",
+      "repo": "/Users/elvinayala/ventaja",
+      "prod": "",
+      "salud": "",
+      "hosting": "local",
+      "deploy": "—",
+      "logs": "—",
+      "tests": "npm test",
+      "leerPrimero": [
+        "CLAUDE.md"
+      ],
+      "critico": false,
+      "notas": "Congelado en el plan de guerra Q4 (no construir features nuevas sin pedido de Elvin)."
+    }
+  ],
+  "casosAbiertos": {
+    "nota": "Canales donde aparecen quejas/casos de clientes. La ronda los lee (Slack MCP) para el reporte.",
+    "slack": [
+      {
+        "canal": "#office-6-problemas-onboarding-clientes",
+        "id": "C09ERUWPLJ2",
+        "para": "Level Up / AIB clientes"
+      },
+      {
+        "canal": "DM de Elvin (bitácora Telegram)",
+        "id": "U08U9777PUY",
+        "para": "todo"
+      }
+    ],
+    "bori": "Panel Equipo → Fallos (fallos sin marcar 'arreglado' = casos abiertos)",
+    "plagas": "GET /api/operador/conversaciones (quejas de Kristian/Japhet en el chat) + canal de Slack del cliente si existe"
+  },
+  "nube": {
+    "nota": "Nico corre en Railway (servicio nico): clona los repos con campo github en /estado/repos/<id>, hace git pull antes de cada pedido y commit+push después. La Mac es una copia: git pull antes de trabajar.",
+    "repos": "/estado/repos"
+  }
+}

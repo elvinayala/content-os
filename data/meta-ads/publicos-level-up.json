@@ -1,0 +1,568 @@
+{
+  "actualizadoEl": "2026-09-18",
+  "fuente": "Ads Manager (lectura en Chrome); reemplazar con `publicos --json` cuando haya token",
+  "cuentaId": "2010206776851",
+  "personalizados": [
+    {
+      "id": "52588564972397",
+      "nombre": "interaccion insta 365 d",
+      "tipo": "Interacción: Instagram",
+      "tamano": "3.400 - 4.000",
+      "estado": "Listo",
+      "creado": "24/7/2026"
+    },
+    {
+      "id": "52587411781597",
+      "nombre": "doctores 25% + video",
+      "tipo": "Interacción con video",
+      "tamano": "11.100 - 13.100",
+      "estado": "Listo",
+      "creado": "21/7/2026"
+    },
+    {
+      "id": "52587410860197",
+      "nombre": "interaciion 365 fb",
+      "tipo": "Interacción: página",
+      "tamano": "5.800 - 6.800",
+      "estado": "Listo",
+      "creado": "21/7/2026"
+    },
+    {
+      "id": "52587410812397",
+      "nombre": "trifasico daren, frankie, caliente 30 d 50% + thru",
+      "tipo": "Interacción con video",
+      "tamano": "3.100 - 3.700",
+      "estado": "Listo",
+      "creado": "21/7/2026"
+    },
+    {
+      "id": "52587410005797",
+      "nombre": "trifasico instgram all ugc trhuplay 15% 120 d tibi",
+      "tipo": "Interacción con video",
+      "tamano": "37.800 - 44.400",
+      "estado": "Listo",
+      "creado": "21/7/2026"
+    },
+    {
+      "id": "52580755521797",
+      "nombre": "interaccion insta 60 dias",
+      "tipo": "Interacción: Instagram",
+      "tamano": "13.000 - 15.300",
+      "estado": "Listo",
+      "creado": "3/7/2026"
+    },
+    {
+      "id": "52529882494397",
+      "nombre": "thruplay 365 15% video",
+      "tipo": "Interacción con video",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo",
+      "creado": "15/5/2026"
+    },
+    {
+      "id": "52529878751197",
+      "nombre": "interaccion instgram 365",
+      "tipo": "Interacción: Instagram",
+      "tamano": "1.800 - 2.100",
+      "estado": "Listo (sin actualizar)",
+      "creado": "15/5/2026"
+    },
+    {
+      "id": "52513319473797",
+      "nombre": "seguodores fj",
+      "tipo": "Interacción: Instagram",
+      "tamano": "6.200 - 7.300",
+      "estado": "Listo",
+      "creado": "26/4/2026"
+    },
+    {
+      "id": "52513319161197",
+      "nombre": "instagram interaccion frankie",
+      "tipo": "Interacción: Instagram",
+      "tamano": "4.700 - 5.600",
+      "estado": "Listo (sin actualizar)",
+      "creado": "26/4/2026"
+    },
+    {
+      "id": "52507637538597",
+      "nombre": "caliente 30 95% theuplay",
+      "tipo": "Interacción con video",
+      "tamano": "1.200 - 1.400",
+      "estado": "Listo",
+      "creado": "21/4/2026"
+    },
+    {
+      "id": "52507636602197",
+      "nombre": "caliente 120 d 75% video thruplay",
+      "tipo": "Interacción con video",
+      "tamano": "8.100 - 9.500",
+      "estado": "Listo",
+      "creado": "21/4/2026"
+    },
+    {
+      "id": "52507635995997",
+      "nombre": "tibio 15% thruplay 365d",
+      "tipo": "Interacción con video",
+      "tamano": "148.000 - 174.200",
+      "estado": "Listo",
+      "creado": "21/4/2026"
+    },
+    {
+      "id": "6950438101193",
+      "nombre": "clientes_meta_ads.csv",
+      "tipo": "Lista de clientes",
+      "tamano": "Inferior a 1.000",
+      "estado": "Obsoleto (17/1/2026)",
+      "creado": "17/1/2026"
+    },
+    {
+      "id": "6947088510593",
+      "nombre": "PUBLICO DR VIDEO CALIENTE 75% +",
+      "tipo": "Interacción con video",
+      "tamano": "7.300 - 8.600",
+      "estado": "Listo",
+      "creado": "7/1/2026"
+    },
+    {
+      "id": "6947088209393",
+      "nombre": "CALIENTE PUBLICO 180 D VIDEO 75% Y 95%",
+      "tipo": "Interacción con video",
+      "tamano": "5.000 - 5.900",
+      "estado": "Listo",
+      "creado": "7/1/2026"
+    },
+    {
+      "id": "6917880965593",
+      "nombre": "instagram 365",
+      "tipo": "Interacción: Instagram",
+      "tamano": "20.900 - 24.500",
+      "estado": "Listo (sin actualizar)",
+      "creado": "7/11/2025"
+    },
+    {
+      "id": "6917880872593",
+      "nombre": "365 level up nteraccion fb",
+      "tipo": "Interacción: página",
+      "tamano": "30.800 - 36.200",
+      "estado": "Listo",
+      "creado": "7/11/2025"
+    },
+    {
+      "id": "6905512882993",
+      "nombre": "120 d alondra publico",
+      "tipo": "Interacción con video",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo",
+      "creado": "11/10/2025"
+    },
+    {
+      "id": "6902064827393",
+      "nombre": "75% 95% 15 DIAS VIDEO CALIENTE",
+      "tipo": "Interacción con video",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902064575793",
+      "nombre": "24 HORAS INTERACCION INSTAGRAM CALIENTE",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902064502793",
+      "nombre": "ENVIARON MENSAJE 30 D CALIENTE",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902064472793",
+      "nombre": "INTERACCION 24 HORAS FB CALIENTE",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902064450593",
+      "nombre": "GUARDARON PUBLICACION ULTIMOS 30 DIAS CALIENTE",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902064280793",
+      "nombre": "ENVIARON MENSAJES INSTAGRAM 30 D CALIENTE",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6902063834193",
+      "nombre": "24 horas thruplay caliente video",
+      "tipo": "Interacción con video",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo",
+      "creado": "3/10/2025"
+    },
+    {
+      "id": "6899823370793",
+      "nombre": "30 DIAS VIDEO 25% 50% TIBIO",
+      "tipo": "Interacción con video",
+      "tamano": "2.000 - 2.300",
+      "estado": "Listo",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899822446993",
+      "nombre": "30 DIAS INSTAGRAM INTERACCION TIBIO",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899822309193",
+      "nombre": "30 DIAS INTERACCION FB TIBIO",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899782402393",
+      "nombre": "60 DIAS VIDEO 25% 50% TIBIO",
+      "tipo": "Interacción con video",
+      "tamano": "4.400 - 5.200",
+      "estado": "Listo",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899777140793",
+      "nombre": "60 DIAS INTERACCION FB TIBIO",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899776834393",
+      "nombre": "60 DIAS INTERACCIO INSTAGRAM TIBIO",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899776385393",
+      "nombre": "120 DIAS VIDEO 25% 50% TIBIO",
+      "tipo": "Interacción con video",
+      "tamano": "15.000 - 17.600",
+      "estado": "Listo",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899775462993",
+      "nombre": "120 DIAS INSTAGRAM INTERACCION TIBIO",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6899774788393",
+      "nombre": "120 DIAS INTERACCION PAGINA FB TIBIO",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "28/9/2025"
+    },
+    {
+      "id": "6884306232793",
+      "nombre": "15% THRUPLAY LUM",
+      "tipo": "Interacción con video",
+      "tamano": "81.700 - 96.200",
+      "estado": "Listo",
+      "creado": "19/8/2025"
+    },
+    {
+      "id": "6884304364793",
+      "nombre": "FB interacción 365",
+      "tipo": "Interacción: página",
+      "tamano": "24.400 - 28.700",
+      "estado": "Listo",
+      "creado": "19/8/2025"
+    },
+    {
+      "id": "6884304157193",
+      "nombre": "THRUPLAY 15% LUM VIDEO",
+      "tipo": "Interacción con video",
+      "tamano": "44.600 - 52.400",
+      "estado": "Listo",
+      "creado": "19/8/2025"
+    },
+    {
+      "id": "6884302883393",
+      "nombre": "75% video lum",
+      "tipo": "Interacción con video",
+      "tamano": "17.100 - 20.100",
+      "estado": "Listo",
+      "creado": "19/8/2025"
+    },
+    {
+      "id": "6861883877793",
+      "nombre": "instagram level up interaccion",
+      "tipo": "Interacción: Instagram",
+      "tamano": "23.100 - 27.200",
+      "estado": "Listo (sin actualizar)",
+      "creado": "23/7/2025"
+    },
+    {
+      "id": "6858117832793",
+      "nombre": "customer_spend (1).csv",
+      "tipo": "Lista de clientes (valores)",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (coincidencia reducida)",
+      "creado": "17/7/2025"
+    },
+    {
+      "id": "6854406130393",
+      "nombre": "LISTA DE CLIENTES ALTO VALOR",
+      "tipo": "Lista de clientes (valores)",
+      "tamano": "Inferior a 1.000",
+      "estado": "Obsoleto (11/7/2025)",
+      "creado": "11/7/2025"
+    },
+    {
+      "id": "6717224745793",
+      "nombre": "VIDEO PUBLICO 50 % + LEVEL UP",
+      "tipo": "Interacción con video",
+      "tamano": "32.500 - 38.200",
+      "estado": "Listo",
+      "creado": "19/3/2025"
+    },
+    {
+      "id": "6641339572193",
+      "nombre": "365 interaccion MASTER PAINTING",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "29/10/2024"
+    },
+    {
+      "id": "6628544875793",
+      "nombre": "interaccion dream team",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "30/8/2024"
+    },
+    {
+      "id": "6627217849193",
+      "nombre": "belleza",
+      "tipo": "Interacción con video",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo",
+      "creado": "24/8/2024"
+    },
+    {
+      "id": "6625677801393",
+      "nombre": "time to jump 365",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Por caducar",
+      "creado": "17/8/2024"
+    },
+    {
+      "id": "6615152270993",
+      "nombre": "Level Up Media 365 dias interaccion",
+      "tipo": "Interacción: página",
+      "tamano": "24.700 - 29.100",
+      "estado": "Listo",
+      "creado": "30/6/2024"
+    },
+    {
+      "id": "6609580744393",
+      "nombre": "interaccion master clean",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "26/5/2024"
+    },
+    {
+      "id": "6547630676793",
+      "nombre": "albino 365",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Por caducar",
+      "creado": "7/1/2024"
+    },
+    {
+      "id": "6407966129793",
+      "nombre": "30 DIAS FB",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Por caducar",
+      "creado": "8/9/2023"
+    },
+    {
+      "id": "6314918094793",
+      "nombre": "remercadeo instagram",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "29/12/2022"
+    },
+    {
+      "id": "6307720300793",
+      "nombre": "Interaction fb",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "26/10/2022"
+    },
+    {
+      "id": "6296056872793",
+      "nombre": "INTERACCION INSTAGRAM SCRUBS MORE",
+      "tipo": "Interacción: Instagram",
+      "tamano": "Inferior a 1.000",
+      "estado": "Listo (sin actualizar)",
+      "creado": "16/7/2022"
+    },
+    {
+      "id": "6284832703593",
+      "nombre": "albino interaccion",
+      "tipo": "Interacción: página",
+      "tamano": "Inferior a 1.000",
+      "estado": "Por caducar",
+      "creado": "24/3/2022"
+    }
+  ],
+  "similares": [
+    {
+      "id": "52516097143197",
+      "nombre": "Público similar (1% to 3%) - People who like Frankie Jay",
+      "tamano": "varía"
+    },
+    {
+      "id": "52516097109597",
+      "nombre": "Público similar (1%) - People who like Frankie Jay",
+      "tamano": "varía"
+    },
+    {
+      "id": "6952456199193",
+      "nombre": "Público similar (PR, US, 1%) - clientes_meta_ads.csv",
+      "tamano": "2.300.000 - 2.700.000"
+    },
+    {
+      "id": "6950629337793",
+      "nombre": "Público similar (US, 1%) - clientes_meta_ads.csv",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6950629000993",
+      "nombre": "Público similar (PR, 3% to 6%) - clientes_meta_ads.csv",
+      "tamano": "60.500 - 71.200"
+    },
+    {
+      "id": "6950629000793",
+      "nombre": "Público similar (PR, 1% to 3%) - clientes_meta_ads.csv",
+      "tamano": "40.400 - 47.500"
+    },
+    {
+      "id": "6950628999793",
+      "nombre": "Público similar (PR, 1%) - clientes_meta_ads.csv",
+      "tamano": "20.600 - 24.300"
+    },
+    {
+      "id": "6899824900193",
+      "nombre": "Público similar (PR, 6% to 10%) - FB interacción 365",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6899824899993",
+      "nombre": "Público similar (PR, 3% to 6%) - FB interacción 365",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6899824899793",
+      "nombre": "Público similar (PR, 3%) - FB interacción 365",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6893007029593",
+      "nombre": "Público similar (PR, 6%) - FB interacción 365",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6884853195793",
+      "nombre": "Público similar (PR, 4%) - Level Up Media 365 dias interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6884305660393",
+      "nombre": "Público similar (PR, 3%) - LISTA DE CLIENTES ALTO VALOR",
+      "tamano": "58.700 - 69.100"
+    },
+    {
+      "id": "6884304902793",
+      "nombre": "Público similar (PR, 2%) - instagram level up interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6884303633993",
+      "nombre": "Público similar (PR, 1%) - instagram level up interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6858119945593",
+      "nombre": "Público similar (US, 1%) - customer_spend (1).csv",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6855233448593",
+      "nombre": "Público similar (PR, 2%) - LISTA DE CLIENTES ALTO VALOR",
+      "tamano": "39.600 - 46.600"
+    },
+    {
+      "id": "6854412364993",
+      "nombre": "Público similar (PR, 1%) - LISTA DE CLIENTES ALTO VALOR",
+      "tamano": "20.200 - 23.700"
+    },
+    {
+      "id": "6717223469393",
+      "nombre": "Público similar (PR, 5%) - Level Up Media 365 dias interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6700042324393",
+      "nombre": "Público similar (PR, 2%) - Level Up Media 365 dias interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6649392089993",
+      "nombre": "Público similar (PR, 3%) - Level Up Media 365 dias interaccion",
+      "tamano": "No disponible"
+    },
+    {
+      "id": "6634632329193",
+      "nombre": "Público similar (PR, 1%) - Level Up Media 365 dias interaccion",
+      "tamano": "No disponible"
+    }
+  ],
+  "guardados": [],
+  "hallazgos": [
+    "NO existe ningún público de sitio web (pixel) ni de leads del quiz → crear web-180d y leads-quiz por API con el pixel 27706808412306198.",
+    "NO existe lista de agendados / agendaron-no-compraron → exportar de Pipedrive (pipeline CLOSERS 15) y subir; luego similar 1%.",
+    "Listas de clientes: clientes_meta_ads.csv (ene/2026, obsoleta), LISTA DE CLIENTES ALTO VALOR (jul/2025, obsoleta), customer_spend (1).csv (jul/2025) — todas < 1.000 y con coincidencia reducida: Elvin debería re-subir la lista de clientes actualizada.",
+    "Similares vivos y grandes: (PR,1%) clientes_meta_ads.csv 6950628999793 (20-24K), (PR,1%) LISTA ALTO VALOR 6854412364993 (20-24K), (PR,3%) LISTA ALTO VALOR 6884305660393 (59-69K).",
+    "Engagement 365d con volumen: 365 level up nteraccion fb 6917880872593 (31-36K), instagram 365 6917880965593 (21-25K), VIDEO PUBLICO 50%+ 6717224745793 (33-38K), 75% video lum 6884302883393 (17-20K), tibio 15% thruplay 365d 52507635995997 (148-174K).",
+    "Muchos públicos de clientes de la agencia (Frankie, doctores, Alondra, Master Painting, Scrubs…) — NO usar para LU."
+  ]
+}

@@ -1,0 +1,812 @@
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { background: #050807 !important; }
+  .x-audit-bleed { max-width: none !important; width: 100% !important; padding: 0 !important; margin: 0 !important; background: transparent !important; }
+</style>
+<script>
+  (function () {
+    var el = document.getElementById('x-audit');
+    if (!el) { document.addEventListener('DOMContentLoaded', function () { el = document.getElementById('x-audit'); walk(el); }); } else walk(el);
+    function walk(n) { if (!n) return; var p = n.parentElement; while (p && p !== document.body) { p.classList.add('x-audit-bleed'); p = p.parentElement; } document.body.style.margin = '0'; }
+  })();
+</script>
+<style>
+  #x-audit, #x-audit * { box-sizing: border-box; }
+  #x-audit {
+    /* Tema 1000X · ghost terminal: VOID + CHARCOAL + PHOSPHOR (solo acento) + GHOST + STATIC */
+    --bg: #050807; --card: #0A0F0C; --card-2: #0F1512; --border: #16201B; --border-2: #1F2B24;
+    --fg: #E6F2EB; --muted: #7C8781; --static: #5C6662; --accent: #00FF87; --accent-dim: #00C96A; --accent-fg: #050807; --accent-soft: rgba(0,255,135,.08);
+    --danger: #FF5C5C; --radius: 6px;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--fg); font-family: var(--font-body);
+    min-height: 100vh; width: 100%; -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  #x-audit .hero { position: relative; overflow: hidden; padding: 56px 20px 16px; text-align: center; }
+  #x-audit .hero::before {
+    /* rejilla de terminal, muy tenue */
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image: linear-gradient(to right, rgba(230,242,235,.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(230,242,235,.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 20%, #000, transparent); mask-image: radial-gradient(ellipse 75% 70% at 50% 20%, #000, transparent);
+  }
+  #x-audit .hero::after { content: ""; position: absolute; left: 50%; top: -200px; width: 720px; height: 420px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(0,255,135,.10), transparent); pointer-events: none; }
+  #x-audit .scan { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,.18) 2px 3px); opacity: .5; }
+  #x-audit .hero > * { position: relative; }
+  #x-audit .eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 8px 14px; border: 1px solid var(--border-2); border-radius: var(--radius); font: 500 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); }
+  #x-audit .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: x-blink 1.6s steps(1) infinite; }
+  @keyframes x-blink { 50% { opacity: .25; } }
+  #x-audit h1 { font-family: var(--font-mono); font-weight: 700; font-size: clamp(27px, 5.2vw, 52px); line-height: 1.08; letter-spacing: -.03em; margin: 0 auto; max-width: 940px; text-wrap: balance; }
+  #x-audit h1 em { font-style: normal; color: var(--accent); }
+  #x-audit h1 .cur { display: inline-block; width: .55em; height: .95em; background: var(--accent); vertical-align: -.12em; margin-left: .08em; animation: x-blink 1s steps(1) infinite; }
+  #x-audit .sub { max-width: 720px; margin: 20px auto 0; color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); line-height: 1.6; text-wrap: pretty; }
+  #x-audit .sub b { color: var(--fg); font-weight: 600; }
+  #x-audit .sub2 { margin: 22px auto 0; font: 600 clamp(14px, 2vw, 17px) var(--font-mono); letter-spacing: .02em; max-width: 620px; color: var(--fg); }
+  #x-audit .sub2 .warm { color: var(--accent); }
+  #x-audit .wrap { max-width: 576px; margin: 0 auto; padding: 8px 16px 40px; }
+  #x-audit .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: 0 24px 70px rgba(0,0,0,.6); position: relative; }
+  @media (min-width: 640px) { #x-audit .card { padding: 32px; } }
+  #x-audit .card.term { padding-top: 56px; }
+  #x-audit .tbar { position: absolute; left: 0; right: 0; top: 0; height: 34px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--card-2); font: 500 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--static); }
+  #x-audit .tbar b { color: var(--accent); font-weight: 600; }
+  #x-audit .tbar span:last-child { margin-left: auto; }
+  #x-audit .field { display: block; margin-bottom: 14px; }
+  #x-audit .label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 6px; }
+  #x-audit .hint { display: block; font-size: 12px; color: var(--muted); margin: -4px 0 6px; }
+  #x-audit .input, #x-audit select.input, #x-audit textarea.input {
+    width: 100%; height: 48px; border-radius: var(--radius); border: 1px solid var(--border-2); background: var(--bg);
+    color: var(--fg); padding: 0 16px; font: 500 15px var(--font-body); outline: none; transition: border-color .15s, box-shadow .15s; appearance: none; -webkit-appearance: none;
+  }
+  #x-audit textarea.input { height: auto; padding: 12px 16px; resize: vertical; }
+  #x-audit .input::placeholder { color: rgba(124,135,129,.6); }
+  #x-audit .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  #x-audit .input.err { border-color: var(--danger); background: rgba(255,92,92,.06); }
+  #x-audit select.input { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%237C8781' stroke-width='2' viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+  #x-audit select.input option { background: #0A0F0C; color: #E6F2EB; }
+  #x-audit .errmsg { display: block; margin-top: 4px; font-size: 12px; font-weight: 500; color: var(--danger); }
+  #x-audit .phone { display: flex; gap: 8px; }
+  #x-audit .phone select { width: 112px; flex: none; padding-left: 12px; }
+  #x-audit .ig { position: relative; }
+  #x-audit .ig::before { content: "@"; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; font-family: var(--font-mono); }
+  #x-audit .ig .input { padding-left: 34px; }
+  #x-audit .optin { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; margin: 4px 0 14px; }
+  #x-audit .optin input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+  #x-audit .optin span { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  #x-audit .optin.err { outline: 2px solid var(--danger); outline-offset: 6px; border-radius: var(--radius); }
+  #x-audit .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 26px; border-radius: var(--radius); border: 0;
+    background: var(--accent); color: var(--accent-fg); font: 700 14px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: transform .15s, box-shadow .15s, background .15s; white-space: nowrap; box-shadow: 0 8px 30px rgba(0,255,135,.18); }
+  #x-audit a.btn, #x-audit a.btn:hover, #x-audit a.btn:visited { text-decoration: none; color: var(--accent-fg); }
+  #x-audit .btn:hover { transform: translateY(-2px); background: var(--accent-dim); box-shadow: 0 12px 36px rgba(0,255,135,.28); }
+  #x-audit .btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+  #x-audit .btn.full { width: 100%; font-size: 15px; }
+  #x-audit .btn.big { min-height: 56px; height: auto; font-size: 15px; padding: 14px 28px; white-space: normal; line-height: 1.25; text-align: center; }
+  #x-audit .btn svg { width: 18px; height: 18px; }
+  #x-audit .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); font: 500 13px var(--font-mono); padding: 12px 14px; border-radius: var(--radius); cursor: pointer; }
+  #x-audit .btn-ghost:hover { color: var(--fg); }
+  #x-audit .btn-ghost:disabled { color: rgba(124,135,129,.35); cursor: not-allowed; }
+  #x-audit .btn-ghost svg { width: 16px; height: 16px; }
+  #x-audit .bullet { display: flex; gap: 12px; align-items: flex-start; max-width: 576px; margin: 28px auto 0; padding: 0 16px; font-size: 15px; line-height: 1.6; color: var(--muted); }
+  #x-audit .bullet b { color: var(--fg); }
+  #x-audit .bullet i { flex: none; font: 700 14px var(--font-mono); color: var(--accent); margin-top: 2px; }
+  /* la terminal (reemplaza la "nota manuscrita" de los otros embudos) */
+  #x-audit .terminal { max-width: 760px; margin: 44px auto 0; border: 1px solid var(--border-2); border-radius: var(--radius); background: #070B09; overflow: hidden; text-align: left; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  #x-audit .terminal .tbar { position: static; height: 36px; }
+  #x-audit .terminal pre { margin: 0; padding: 22px 24px 26px; font: 500 13.5px/1.75 var(--font-mono); color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+  #x-audit .terminal pre .p { color: var(--accent); }
+  #x-audit .terminal pre .k { color: var(--fg); }
+  #x-audit .terminal pre .q { color: var(--fg); font-style: italic; }
+  #x-audit .terminal pre .c { color: var(--static); }
+  #x-audit .legal { max-width: 680px; margin: 0 auto; padding: 24px 20px 32px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--static); }
+  #x-audit .badge { display: inline-flex; align-items: center; gap: 8px; border-radius: var(--radius); background: var(--accent); color: var(--accent-fg); padding: 6px 12px; font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
+  #x-audit .badge.ghost { background: transparent; color: var(--accent); border: 1px solid var(--border-2); }
+  #x-audit .topbar { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
+  #x-audit .counter { font: 600 13px var(--font-mono); color: var(--accent); letter-spacing: .08em; }
+  #x-audit .progress { height: 4px; border-radius: 2px; background: var(--card-2); overflow: hidden; margin-bottom: 22px; }
+  #x-audit .progress i { display: block; height: 100%; background: var(--accent); box-shadow: 0 0 12px var(--accent); transition: width .35s ease; }
+  #x-audit h2 { font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: -.02em; margin: 0 0 4px; line-height: 1.25; }
+  #x-audit h2::before { content: "> "; color: var(--accent); }
+  #x-audit .lead { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+  #x-audit .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  #x-audit .alert { margin-top: 14px; border: 1px solid var(--danger); background: rgba(255,92,92,.06); color: var(--danger); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; font-weight: 500; }
+  #x-audit .radios { display: flex; flex-direction: column; gap: 10px; }
+  #x-audit .radio { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; padding: 15px 16px; border-radius: var(--radius); border: 1px solid var(--border-2); background: var(--bg); color: var(--fg); cursor: pointer; font: 500 15px var(--font-body); line-height: 1.35; transition: border-color .15s, background .15s; }
+  #x-audit .radio:hover { border-color: rgba(0,255,135,.5); }
+  #x-audit .radio.on { border-color: var(--accent); background: var(--accent-soft); }
+  #x-audit .radio i { flex: none; width: 18px; height: 18px; border-radius: 3px; border: 1.5px solid rgba(124,135,129,.5); margin-top: 2px; display: grid; place-items: center; }
+  #x-audit .radio.on i { border-color: var(--accent); background: var(--accent); }
+  #x-audit .radio i svg { width: 12px; height: 12px; stroke: var(--accent-fg); stroke-width: 3.5; display: none; }
+  #x-audit .radio.on i svg { display: block; }
+  #x-audit .radios.err { outline: 1px solid rgba(255,92,92,.4); border-radius: var(--radius); outline-offset: 4px; }
+  /* loader */
+  #x-audit .loader { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  #x-audit .loader .card { width: 100%; max-width: 460px; text-align: left; padding: 56px 0 8px; }
+  #x-audit .loader pre { margin: 0; padding: 8px 24px 18px; font: 500 13.5px/1.9 var(--font-mono); color: var(--muted); white-space: pre-wrap; }
+  #x-audit .loader pre .ln { display: block; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+  #x-audit .loader pre .ln.on { opacity: 1; transform: none; }
+  #x-audit .loader pre .ln b { color: var(--accent); font-weight: 600; }
+  #x-audit .loader pre .ln .ok { color: var(--accent); }
+  #x-audit .loadbar { height: 4px; background: var(--card-2); overflow: hidden; margin: 0 24px 24px; border-radius: 2px; }
+  #x-audit .loadbar i { display: block; height: 100%; width: 0; background: var(--accent); box-shadow: 0 0 12px var(--accent); transition: width .6s ease; }
+  /* result */
+  #x-audit .result { max-width: 768px; margin: 0 auto; padding: 16px 16px 120px; display: grid; gap: 24px; }
+  @media (min-width: 640px) { #x-audit .result { padding: 32px 32px 120px; } }
+  #x-audit .rhead { text-align: center; display: grid; gap: 14px; justify-items: center; padding-top: 24px; }
+  #x-audit .rhead h1 { font-size: clamp(26px, 4.6vw, 38px); }
+  #x-audit .rhead p { color: var(--muted); font-size: 14px; max-width: 540px; margin: 0; text-wrap: pretty; }
+  #x-audit .perfil { display: inline-flex; align-items: baseline; gap: 10px; padding: 10px 16px; border: 1px solid var(--border-2); border-radius: var(--radius); background: var(--card); font: 600 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--static); }
+  #x-audit .perfil b { font-size: 18px; color: var(--accent); letter-spacing: .1em; }
+  #x-audit .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  #x-audit .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius); background: var(--accent); color: var(--accent-fg); padding: 6px 12px; font: 600 13px var(--font-mono); letter-spacing: .04em; }
+  #x-audit .chip.sec { background: transparent; color: var(--muted); border: 1px solid var(--border-2); font-weight: 500; }
+  #x-audit .diag { margin: 16px 0 0; line-height: 1.65; font-size: 16px; }
+  #x-audit .diag b { color: var(--accent); font-weight: 600; }
+  #x-audit .diag b.fact { color: var(--fg); }
+  #x-audit .fund { margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+  #x-audit .fund li { list-style: none; display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 12px; font-size: 14px; }
+  @media (max-width: 480px) { #x-audit .fund li { grid-template-columns: 96px 1fr 40px; } }
+  #x-audit .fund b { font-family: var(--font-mono); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  #x-audit .fund .bar { height: 8px; border-radius: 2px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+  #x-audit .fund .bar i { display: block; height: 100%; background: var(--static); transition: width .6s ease; }
+  #x-audit .fund li.weak .bar i { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  #x-audit .fund li.weak b { color: var(--accent); }
+  #x-audit .fund li.weak b::after { content: " ◄"; }
+  #x-audit .fund small { font: 600 12px var(--font-mono); color: var(--muted); text-align: right; }
+  #x-audit .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  @media (min-width: 640px) { #x-audit .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  #x-audit .kpi { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  #x-audit .kpi small { display: block; font: 500 10px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+  #x-audit .kpi strong { display: block; font-family: var(--font-mono); font-size: clamp(18px, 5vw, 21px); letter-spacing: -.02em; margin-top: 6px; overflow-wrap: anywhere; }
+  #x-audit .kpi strong.accent { color: var(--accent); }
+  #x-audit .score { display: flex; align-items: center; gap: 18px; margin-top: 18px; padding: 16px; border-radius: var(--radius); background: var(--bg); border: 1px solid var(--border); min-width: 0; }
+  #x-audit .ring { width: 84px; height: 84px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--card-2) 0); box-shadow: 0 0 24px rgba(0,255,135,.15); }
+  #x-audit .ring b { width: 70px; height: 70px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font: 700 22px var(--font-mono); letter-spacing: -.02em; }
+  #x-audit .ring b small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 1px; }
+  #x-audit .score p { margin: 0; font-size: 14px; color: var(--muted); min-width: 0; }
+  #x-audit .score p b { color: var(--fg); display: block; font-size: 15px; margin-bottom: 2px; font-family: var(--font-mono); }
+  #x-audit .locked-wrap { position: relative; }
+  #x-audit .locked { filter: blur(7px); pointer-events: none; user-select: none; }
+  #x-audit .plan-card { border-color: rgba(0,255,135,.25); }
+  #x-audit .plan-card p.lead { margin: 8px 0 16px; }
+  #x-audit .plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  #x-audit .plan li { display: flex; gap: 12px; font-size: 14px; line-height: 1.5; }
+  #x-audit .plan li i { flex: none; width: 22px; height: 22px; border-radius: 3px; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font: 700 11px var(--font-mono); margin-top: 1px; }
+  #x-audit .north { margin-top: 24px; border: 1px solid var(--border); background: var(--card-2); border-radius: var(--radius); padding: 16px; }
+  #x-audit .north small { display: flex; align-items: center; gap: 6px; font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+  #x-audit .north small svg { width: 14px; height: 14px; stroke: var(--accent); }
+  #x-audit .north strong { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 16px; letter-spacing: -.01em; }
+  #x-audit .north.camino { margin-top: 18px; }
+  #x-audit .north.camino strong { font: 500 15px/1.5 var(--font-body); margin-top: 8px; }
+  #x-audit .fine { font-size: 12px; color: var(--muted); }
+  #x-audit .unlock { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; border-radius: var(--radius); background: linear-gradient(to bottom, rgba(5,8,7,.2), rgba(5,8,7,.78) 40%, var(--bg)); }
+  #x-audit .unlock .card { max-width: 440px; width: 100%; text-align: center; border-color: rgba(0,255,135,.3); background: rgba(10,15,12,.96); backdrop-filter: blur(6px); }
+  #x-audit .unlock .lock { width: 56px; height: 56px; border-radius: var(--radius); border: 1px solid var(--border-2); display: grid; place-items: center; margin: 0 auto; background: var(--accent-soft); }
+  #x-audit .unlock .lock svg { width: 24px; height: 24px; stroke: var(--accent); }
+  #x-audit .unlock h3 { font-family: var(--font-mono); font-size: 20px; letter-spacing: -.02em; margin: 16px 0 6px; line-height: 1.25; }
+  #x-audit .unlock p { color: var(--muted); font-size: 14px; margin: 0 auto; max-width: 360px; line-height: 1.55; }
+  #x-audit .unlock ul { list-style: none; margin: 18px auto 0; padding: 0; max-width: 320px; display: grid; gap: 10px; text-align: left; font-size: 14px; }
+  #x-audit .unlock ul li { display: flex; gap: 10px; align-items: center; }
+  #x-audit .unlock ul li i { flex: none; font: 700 13px var(--font-mono); color: var(--accent); }
+  #x-audit .unlock .btn { margin-top: 22px; }
+  #x-audit .unlock .fine { margin-top: 10px; }
+  #x-audit .final { border-radius: var(--radius); background: #070B09; border: 1px solid var(--border-2); padding: 32px 24px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+  #x-audit .final h3 { font-family: var(--font-mono); font-size: clamp(20px, 3.6vw, 26px); letter-spacing: -.02em; margin: 0; line-height: 1.25; text-wrap: balance; }
+  #x-audit .final p { color: var(--muted); font-size: 14px; margin: 0; max-width: 480px; }
+  #x-audit .final .fine { color: var(--static); }
+  #x-audit .again { background: none; border: 0; color: var(--muted); text-decoration: underline; font: 500 13px var(--font-mono); cursor: pointer; }
+  #x-audit .sticky { position: fixed; left: 0; right: 0; bottom: 16px; z-index: 40; display: flex; justify-content: center; padding: 0 16px; transition: transform .3s, opacity .3s; }
+  #x-audit .sticky.hide { transform: translateY(24px); opacity: 0; pointer-events: none; }
+  #x-audit .sticky > div { width: 100%; max-width: 900px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border-2); background: #070B09; border-radius: var(--radius); padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.7); }
+  #x-audit .sticky p { flex: 1; margin: 0; font-weight: 500; font-size: 14px; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; }
+  #x-audit .sticky p em { font-style: normal; color: var(--accent); }
+  #x-audit .sticky .btn { height: 44px; padding: 0 18px; font-size: 13px; }
+  #x-audit .sticky .mono { font: 700 12px var(--font-mono); letter-spacing: .14em; color: var(--accent); flex: none; }
+  @media (max-width: 639px) { #x-audit .sticky .btn span { display: none; } #x-audit .sticky .btn { width: 44px; padding: 0; } #x-audit .sticky .mono { display: none; } }
+  @media (min-width: 640px) { #x-audit .sticky > div { padding: 18px 28px; gap: 20px; } #x-audit .sticky p { font-size: 17px; } }
+  /* footer */
+  #x-audit .footer { max-width: 1100px; margin: 24px auto 0; padding: 40px 20px 28px; border-top: 1px solid var(--border); }
+  #x-audit .fgrid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { #x-audit .fgrid { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+  #x-audit .fbrand .logo { display: flex; align-items: center; gap: 12px; font: 700 26px var(--font-mono); letter-spacing: .12em; line-height: 1; }
+  #x-audit .fbrand .logo svg { width: 34px; height: 34px; }
+  #x-audit .fbrand .logo span { color: var(--accent); animation: x-blink 1.2s steps(1) infinite; }
+  #x-audit .fbrand .tag { font: 500 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--static); margin: 12px 0 0; }
+  #x-audit .fbrand p { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 40ch; }
+  #x-audit .fcontact h4 { margin: 0 0 6px; font: 600 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--static); }
+  #x-audit .fcontact a, #x-audit .fcontact div { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); color: var(--fg); text-decoration: none; font-size: 15px; }
+  #x-audit .fcontact > :last-child { border-bottom: 1px solid var(--border); }
+  #x-audit .fcontact a:hover { color: var(--accent); }
+  #x-audit .fcontact svg { width: 18px; height: 18px; flex: none; stroke: currentColor; }
+  #x-audit .fbottom { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); font: 400 11px/1.7 var(--font-mono); letter-spacing: .02em; color: var(--static); }
+  #x-audit .honeypot { position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
+  #x-audit [hidden] { display: none !important; }
+</style>
+
+<div id="x-audit">
+  <!-- ==================== PANTALLA 0 · LANDING + CAPTURA ==================== -->
+  <section data-screen="landing">
+    <div class="hero"><div class="scan" aria-hidden="true"></div>
+      <p class="eyebrow"><i></i>audit_trader · 1000X · 60 segundos</p>
+      <h1>Descubre por qué tu cuenta no crece y <em>qué tipo de trader eres</em>… en menos de 1 minuto<span class="cur" aria-hidden="true"></span></h1>
+      <p class="sub">Contesta 9 preguntas sobre cómo operas (o cómo piensas empezar) y te digo <b>cuál de los 4 pilares tienes flojo</b>: estructura, ejecución, riesgo o sistema. Con tu matemática: <b>cuánto arriesgas por trade</b>, qué porcentaje de acierto necesitas con 1:2 y qué arreglar primero.</p>
+      <p class="sub2">&gt; Llena tus datos y en <span class="warm">60 segundos</span> tienes tu diagnóstico_</p>
+    </div>
+
+    <div class="wrap">
+      <div class="card term">
+        <div class="tbar"><b>1000X</b><span>session_01</span><span>acceso · nuevo</span></div>
+        <div class="honeypot" aria-hidden="true"><label for="x-web">No completar</label><input id="x-web" name="empresa_web" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="field">
+          <input class="input" data-f="nombre" placeholder="Tu nombre" autocomplete="given-name">
+          <span class="errmsg" hidden>Escribe tu nombre</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="email" type="email" placeholder="Tu mejor email" autocomplete="email" inputmode="email">
+          <span class="errmsg" hidden>Escribe un email válido (ej: nombre@email.com)</span>
+        </div>
+        <div class="field">
+          <div class="phone">
+            <select class="input" data-f="pais" aria-label="País">
+              <option value="+1" data-min="10" data-max="10" data-name="Puerto Rico / EE.UU." selected>🇵🇷 +1</option>
+              <option value="+1809" data-min="7" data-max="7" data-name="Rep. Dominicana">🇩🇴 +1</option>
+              <option value="+52" data-min="10" data-max="10" data-name="México">🇲🇽 +52</option>
+              <option value="+57" data-min="10" data-max="10" data-name="Colombia">🇨🇴 +57</option>
+              <option value="+34" data-min="9" data-max="9" data-name="España">🇪🇸 +34</option>
+              <option value="+54" data-min="10" data-max="11" data-name="Argentina">🇦🇷 +54</option>
+              <option value="+56" data-min="9" data-max="9" data-name="Chile">🇨🇱 +56</option>
+              <option value="+51" data-min="9" data-max="9" data-name="Perú">🇵🇪 +51</option>
+              <option value="+593" data-min="9" data-max="9" data-name="Ecuador">🇪🇨 +593</option>
+              <option value="+507" data-min="8" data-max="8" data-name="Panamá">🇵🇦 +507</option>
+            </select>
+            <input class="input" data-f="telefono" type="tel" placeholder="Tu WhatsApp" autocomplete="tel-national" inputmode="tel">
+          </div>
+          <span class="errmsg" hidden>Escribe un número válido (10 dígitos)</span>
+        </div>
+        <div class="field">
+          <div class="ig"><input class="input" data-f="negocio" placeholder="tu usuario de Instagram" autocomplete="off" autocapitalize="none"></div>
+          <span class="errmsg" hidden>Escribe tu usuario de Instagram (así te mando el plan por DM)</span>
+        </div>
+        <label class="optin">
+          <input type="checkbox" data-f="optin">
+          <span>Acepto recibir mi diagnóstico y que el equipo de 1000X me escriba por WhatsApp o DM. Entiendo que esto es educación, no asesoría financiera.</span>
+        </label>
+        <span class="errmsg" data-err="optin" hidden style="margin:-8px 0 12px">Necesitas aceptar para continuar con el diagnóstico</span>
+        <button class="btn full" data-action="start">Iniciar diagnóstico <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      </div>
+
+      <p class="bullet"><i>&gt;</i><span><b>Al terminar recibes el Protocolo 1000X:</b> el checklist de entrada de la estrategia de la casa (vela de referencia → retesteo → vela de rechazo → 1:2 con break even a 1R), tu <b>plan de 14 días</b> y la matemática de tu cuenta hecha con tus números.</span></p>
+    </div>
+
+    <div class="wrap" style="max-width:760px;padding-top:0">
+      <div class="terminal">
+        <div class="tbar"><b>1000X</b><span>ghost_terminal</span><span>no face · all signal</span></div>
+<pre><span class="p">&gt;</span> 1000x --status
+  <span class="k">mentor</span>        Richy
+  <span class="k">live_trading</span>  2x al día · lun–jue
+  <span class="k">radar</span>         ON   <span class="c">// vigila el mercado con la estrategia adentro</span>
+  <span class="k">autopilot</span>     ON   <span class="c">// ejecuta con la misma disciplina cada vez</span>
+  <span class="k">faces</span>         0
+<span class="p">&gt;</span> <span class="q">"El mercado no premia al que más sabe. Premia al que más reglas cumple."</span>
+<span class="p">&gt;</span> _</pre>
+      </div>
+    </div>
+    <p class="legal">Al cargar tus datos aceptas que el equipo de 1000X pueda contactarte para revisar tu diagnóstico. No compartimos tu información con terceros. Operar futuros, forex o cualquier mercado conlleva riesgo de pérdida; nada en esta página es asesoría financiera ni promesa de resultados.</p>
+  </section>
+
+  <!-- ==================== PASOS DE PREGUNTAS ==================== -->
+  <section data-screen="quiz" hidden>
+    <div class="wrap">
+      <div class="topbar"><span class="badge ghost">audit_trader</span><span class="counter" data-counter>1/4</span></div>
+      <div class="progress"><i data-progress style="width:25%"></i></div>
+      <div class="card">
+        <!-- Paso: punto de partida -->
+        <div data-step="partida">
+          <h2 data-title-partida>Tu punto de partida</h2>
+          <p class="lead">Sin juzgar. Si todavía no has operado en real, contesta con lo que tienes en mente.</p>
+          <label class="field"><span class="label">¿Cuánto tiempo llevas operando?</span>
+            <select class="input" data-q="experiencia">
+              <option value="">Elige una opción...</option>
+              <option value="0">Nunca he operado en real (demo o nada)</option>
+              <option value="3">Menos de 6 meses</option>
+              <option value="12">Entre 6 meses y 2 años</option>
+              <option value="36">Más de 2 años</option>
+            </select></label>
+          <label class="field"><span class="label">¿Qué mercado operas (u operarías)?</span>
+            <select class="input" data-q="mercado">
+              <option value="">Elige una opción...</option>
+              <option value="futuros">Futuros (NQ, ES, oro, petróleo)</option>
+              <option value="forex">Forex</option>
+              <option value="cripto">Cripto</option>
+              <option value="acciones">Acciones / opciones</option>
+              <option value="nose">Todavía no lo sé</option>
+            </select></label>
+          <label class="field"><span class="label">¿Con cuánto capital operas (u operarías)?</span><span class="hint">Lo que tienes en la cuenta para operar, no tus ahorros totales.</span>
+            <select class="input" data-q="capital">
+              <option value="">Elige un rango...</option>
+              <option value="250">Menos de $500</option>
+              <option value="1250">Entre $500 y $2,000</option>
+              <option value="6000">Entre $2,000 y $10,000</option>
+              <option value="20000">Más de $10,000</option>
+              <option value="fondeo">Cuenta de fondeo (prop firm)</option>
+            </select></label>
+        </div>
+        <!-- Paso: estrategia y ejecución -->
+        <div data-step="estrategia" hidden>
+          <h2>Tu estrategia y tu ejecución</h2>
+          <p class="lead">Aquí es donde se separa el trader del apostador. Sé honesto: nadie más ve esto.</p>
+          <label class="field"><span class="label">¿Tienes una estrategia con reglas?</span>
+            <select class="input" data-q="estrategia">
+              <option value="">Elige una opción...</option>
+              <option value="probada">Sí: reglas escritas y probadas (backtest o historial)</option>
+              <option value="reglas">Tengo reglas, pero nunca las he probado en serio</option>
+              <option value="intuicion">Opero por intuición o con señales de otros</option>
+              <option value="ninguna">No tengo estrategia</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cómo entras a un trade?</span>
+            <select class="input" data-q="entradas">
+              <option value="">Elige una opción...</option>
+              <option value="confirmacion">Espero confirmación (retesteo + vela de rechazo) y si no llega, no entro</option>
+              <option value="persigo">Entro en cuanto veo el movimiento, para no perderlo</option>
+              <option value="depende">Depende del día y de cómo me sienta</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuándo operas?</span>
+            <select class="input" data-q="horario">
+              <option value="">Elige una opción...</option>
+              <option value="fijo">En un horario fijo, las mismas sesiones</option>
+              <option value="cuando">Cuando puedo; el trabajo y la vida mandan</option>
+              <option value="sin">Cuando veo algo en el celular, sin planificar</option>
+            </select></label>
+        </div>
+        <!-- Paso: riesgo y resultados -->
+        <div data-step="riesgo" hidden>
+          <h2>Tu riesgo y tus resultados</h2>
+          <p class="lead">La gestión de riesgo es lo único que controlas al 100%. Estima los últimos 3 meses.</p>
+          <label class="field"><span class="label">¿Cuánto arriesgas por trade?</span><span class="hint">Lo que pierdes si te saca el stop, como porcentaje de la cuenta</span>
+            <select class="input" data-q="riesgo">
+              <option value="">Elige una opción...</option>
+              <option value="1">1% o menos</option>
+              <option value="2">Entre 1% y 3%</option>
+              <option value="5">Más del 3%</option>
+              <option value="nolo">No lo calculo / no uso stop fijo</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuál es tu relación riesgo:beneficio?</span>
+            <select class="input" data-q="rr">
+              <option value="">Elige una opción...</option>
+              <option value="2">1:2 o mejor, y la respeto</option>
+              <option value="1">Alrededor de 1:1</option>
+              <option value="corto">Suelo cerrar las ganancias temprano y dejar correr las pérdidas</option>
+              <option value="nomido">No la mido</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cómo te fue en los últimos 3 meses?</span>
+            <select class="input" data-q="resultado">
+              <option value="">Elige una opción...</option>
+              <option value="consistente">Rentable, de forma consistente</option>
+              <option value="devuelvo">Gano unas semanas y después lo devuelvo todo</option>
+              <option value="pierdo">Estoy perdiendo</option>
+              <option value="noreal">No he operado en real</option>
+            </select></label>
+        </div>
+        <!-- Paso condicional: sistema (solo si lleva 6+ meses) -->
+        <div data-step="sistema" hidden>
+          <h2>Tu sistema</h2>
+          <p class="lead">Ya llevas tiempo. Esto separa al que vive de rachas del que tiene un proceso.</p>
+          <label class="field"><span class="label">¿Llevas un diario de trades (journal)?</span>
+            <select class="input" data-q="journal">
+              <option value="">Elige una opción...</option>
+              <option value="si">Sí, anoto cada trade y lo reviso cada semana</option>
+              <option value="aveces">A veces, cuando me acuerdo</option>
+              <option value="no">No</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántas horas al día pasas frente a la gráfica?</span>
+            <select class="input" data-q="pantalla">
+              <option value="">Elige una opción...</option>
+              <option value="1">Menos de 1 hora</option>
+              <option value="2">Entre 1 y 3 horas</option>
+              <option value="4">Más de 3 horas (y a veces se me va el día)</option>
+            </select></label>
+        </div>
+        <!-- Paso: lo que declara que le frena -->
+        <div data-step="cuello" hidden>
+          <h2>¿Qué crees que te frena hoy?</h2>
+          <p class="lead">Elige lo que más te duele. Lo cruzo con tus respuestas para armar tu diagnóstico.</p>
+          <div class="radios" role="radiogroup" data-q="cuello" aria-label="Qué te frena">
+            <button type="button" class="radio" role="radio" data-v="psicologia"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Las emociones: miedo a entrar, FOMO, venganza después de perder</span></button>
+            <button type="button" class="radio" role="radio" data-v="estrategia"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>No tengo una estrategia clara con reglas que pueda repetir</span></button>
+            <button type="button" class="radio" role="radio" data-v="riesgo"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>La gestión de riesgo: un mal día me borra la semana</span></button>
+            <button type="button" class="radio" role="radio" data-v="tiempo"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>El tiempo: trabajo y no puedo estar pegado a la pantalla</span></button>
+            <button type="button" class="radio" role="radio" data-v="info"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Demasiada información contradictoria: cada gurú dice algo distinto</span></button>
+            <button type="button" class="radio" role="radio" data-v="otro"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Otro (cuéntame)</span></button>
+          </div>
+          <div data-otro hidden style="margin-top:16px">
+            <label class="field"><span class="label">Cuéntame en tus palabras qué te está frenando</span>
+              <textarea class="input" data-q="frustracion" rows="4" placeholder="Lo más concreto posible: qué has intentado, qué pasó y dónde te trancas."></textarea></label>
+          </div>
+        </div>
+        <p class="alert" data-alert hidden>Completa todos los campos para seguir. Elige la opción que más se acerque a tu caso.</p>
+        <div class="nav">
+          <button class="btn-ghost" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Atrás</button>
+          <button class="btn" data-action="next">Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <button class="btn" data-action="finish" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m8 14 3-3 2 2 3-4"/></svg> Ejecutar diagnóstico</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PANTALLA DE CARGA ==================== -->
+  <section data-screen="loading" hidden>
+    <div class="loader">
+      <div class="card term">
+        <div class="tbar"><b>1000X</b><span>audit_trader</span><span>procesando…</span></div>
+<pre><span class="ln" data-ls><b>&gt;</b> leyendo tus 4 pilares: estructura · ejecución · riesgo · sistema <span class="ok">✓</span></span><span class="ln" data-ls><b>&gt;</b> calculando tu riesgo por trade y tu punto de equilibrio con 1:2 <span class="ok">✓</span></span><span class="ln" data-ls><b>&gt;</b> comparando tu operativa con la de la sala de 1000X <span class="ok">✓</span></span><span class="ln" data-ls><b>&gt;</b> detectando la fuga que te está costando la cuenta <span class="ok">✓</span></span><span class="ln" data-ls><b>&gt;</b> compilando tu plan de 14 días…</span></pre>
+        <div class="loadbar"><i data-loadbar></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESULTADO ==================== -->
+  <section data-screen="result" hidden>
+    <div class="result">
+      <div class="rhead">
+        <span class="badge ghost" data-r="badge">resultado · audit_trader</span>
+        <span class="perfil">perfil <b data-r="perfil"></b></span>
+        <h1 data-r="titulo"></h1>
+        <p data-r="intro"></p>
+      </div>
+
+      <div class="card">
+        <span class="badge" data-r="pilarLabel">Tu pilar flojo</span>
+        <div class="chips"><span class="chip" data-r="chip1"></span><span class="chip sec" data-r="chip2" hidden></span></div>
+        <p class="diag" data-r="diagnostico"></p>
+        <ul class="fund" data-r="fund"></ul>
+        <div class="kpis" data-r="kpis"></div>
+        <div class="score">
+          <div class="ring" data-r="ring" style="--p:0"><b><span data-r="score">0</span><small>/100</small></b></div>
+          <p><b data-r="scoreTitulo"></b><span data-r="scoreTexto"></span></p>
+        </div>
+        <div class="north camino"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m8 14 3-3 2 2 3-4"/></svg>Por dónde empezar</small><strong data-r="camino"></strong></div>
+      </div>
+
+      <div class="locked-wrap">
+        <div class="locked">
+          <div class="card plan-card">
+            <span class="badge">Plan de acción · 14 días</span>
+            <p class="lead">Para ejecutar ya, en demo o en real, y ver el cambio en 2 semanas. En orden, sin saltarte pasos.</p>
+            <ul class="plan" data-r="plan"></ul>
+            <div class="north"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>Tu métrica norte (mírala cada semana)</small><strong data-r="norte"></strong></div>
+          </div>
+        </div>
+        <div class="unlock">
+          <div class="card">
+            <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Tu plan de 14 días está listo</h3>
+            <p>Agenda 15 minutos con el equipo y lo revisamos contigo, con tu matemática y el Protocolo 1000X.</p>
+            <ul>
+              <li><i>&gt;</i>Tu plan de acción de 14 días</li>
+              <li><i>&gt;</i>Tu métrica norte para medir el avance</li>
+              <li><i>&gt;</i>El Protocolo 1000X (checklist de entrada)</li>
+            </ul>
+            <a class="btn big full" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> <span data-r="ctaTexto">Agendar mi llamada</span></a>
+            <p class="fine" data-r="ctaFine">La llamada es gratis. Te atiende Richy o alguien del equipo de 1000X.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="final" data-final>
+        <span class="badge">Desbloquea tu plan</span>
+        <h3 data-r="finalTitulo">¿Quieres que lo veamos juntos?</h3>
+        <p>15 minutos para revisar tu diagnóstico, tu matemática y si la sala de 1000X (live trading, 1:1, RADAR y AUTOPILOT) es para ti.</p>
+        <a class="btn big" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> <span data-r="ctaTexto2">Agendar mi llamada</span></a>
+        <p class="fine">Sin compromiso. Los cupos del grupo sí son limitados.</p>
+      </div>
+      <div style="text-align:center"><button class="again" data-action="again">&gt; hacer otro diagnóstico</button></div>
+    </div>
+    <div class="sticky hide" data-sticky>
+      <div>
+        <span class="mono">1000X_</span>
+        <p>Tu plan de 14 días está <em>listo</em>. Lo revisamos contigo en 15 minutos.</p>
+        <a class="btn" data-cta target="_blank" rel="noopener noreferrer" href="#"><span>Agendar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="fgrid">
+      <div class="fbrand">
+        <div class="logo"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><mask id="x-cut"><rect width="100" height="100" fill="white"/><rect x="10" y="48" width="80" height="4" fill="black"/></mask></defs><path d="M22 22 L46 50 L22 78 L34 78 L52 57 L70 78 L82 78 L58 50 L82 22 L70 22 L52 43 L34 22 Z" fill="#00FF87" mask="url(#x-cut)"/><path d="M46 48 L48.5 48 L52 52 L49 52 Z" fill="#00FF87"/></svg>1000X<span>_</span></div>
+        <p class="tag">access granted to few · no face. all signal.</p>
+        <p>Mentoría de trading con Richy: live trading 2 veces al día, clase 1:1, comunidad privada y la plataforma AI de 1000X (RADAR + AUTOPILOT). Aprende a operar con reglas, no con corazonadas.</p>
+      </div>
+      <div class="fcontact">
+        <h4>Contacto</h4>
+        <a data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agendar una llamada</a>
+        <a data-ig hidden target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg><span data-ig-text></span></a>
+      </div>
+    </div>
+    <div class="fbottom">© <span data-year></span> 1000X · Richy &amp; Elvin Trading LLC · Todos los derechos reservados.<br>Operar futuros, forex, cripto o acciones conlleva riesgo sustancial de pérdida y no es apropiado para todo el mundo. Nada en esta página es asesoría financiera ni una promesa de resultados. Los resultados de otros estudiantes no garantizan los tuyos. El diagnóstico es educativo y los cálculos son ilustrativos.</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  /* ================== CONFIGURACIÓN (editar aquí) ================== */
+  var CONFIG = {
+    marca: '1000X',
+    // CTA del resultado. El embudo de 1000X cierra por llamada: pon el link de Calendly aquí.
+    // Si prefieres WhatsApp, deja calendly en '' y pon el número sin '+' (ej. '17875551234').
+    calendly: '',
+    whatsapp: '',
+    instagram: '',          // usuario sin '@' (se muestra en el footer si existe)
+    // Endpoint que crea el lead en Pipedrive (app/api/auditoria/route.ts del Content OS). Vacío = no envía.
+    endpoint: 'https://content-os-chi-seven.vercel.app/api/auditoria',
+    marcaId: '1000x',
+    storageKey: 'x1000_audit_v1',
+    rrObjetivo: 2,          // la estrategia de la casa: 1:2 (break even a 1R)
+    capitalFondeo: 50000,   // tamaño típico de una cuenta de fondeo para la matemática
+    umbralSistema: 12,      // muestra el paso "sistema" si lleva 6+ meses operando
+    loaderMs: 3600
+  };
+
+  var root = document.getElementById('x-audit');
+  var $ = function (sel, ctx) { return (ctx || root).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); };
+  var screens = { landing: $('[data-screen="landing"]'), quiz: $('[data-screen="quiz"]'), loading: $('[data-screen="loading"]'), result: $('[data-screen="result"]') };
+  $('[data-year]').textContent = new Date().getFullYear();
+  if (CONFIG.instagram) { var igA = $('[data-ig]'); igA.hidden = false; igA.href = 'https://instagram.com/' + CONFIG.instagram; $('[data-ig-text]').textContent = '@' + CONFIG.instagram; }
+
+  var datos = { nombre: '', email: '', pais: '+1', telefono: '', negocio: '', optin: false,
+    experiencia: '', mercado: '', capital: '', estrategia: '', entradas: '', horario: '', riesgo: '', rr: '', resultado: '', journal: '', pantalla: '', cuello: '', frustracion: '' };
+  var pasoIdx = 0; var intentado = false; var resultado = null;
+
+  function tracking() {
+    var t = {};
+    try {
+      var p = new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid','gclid','ttclid'].forEach(function (k) { if (p.get(k)) t[k] = p.get(k).slice(0, 200); });
+      t.landing_url = location.href.slice(0, 500); if (document.referrer) t.referrer = document.referrer.slice(0, 500);
+    } catch (e) {}
+    return t;
+  }
+
+  /* ================== PASOS ================== */
+  function pasos() {
+    var base = ['partida', 'estrategia', 'riesgo'];
+    if (Number(datos.experiencia) >= CONFIG.umbralSistema) base.push('sistema');
+    base.push('cuello');
+    return base;
+  }
+  var requeridos = { partida: ['experiencia','mercado','capital'], estrategia: ['estrategia','entradas','horario'], riesgo: ['riesgo','rr','resultado'], sistema: ['journal','pantalla'], cuello: ['cuello'] };
+
+  function mostrar(nombre) { Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== nombre; }); window.scrollTo(0, 0); }
+
+  function renderPaso() {
+    var lista = pasos(); var actual = lista[pasoIdx];
+    $$('[data-step]').forEach(function (el) { el.hidden = el.getAttribute('data-step') !== actual; });
+    $('[data-counter]').textContent = (pasoIdx + 1) + '/' + lista.length;
+    $('[data-progress]').style.width = ((pasoIdx + 1) / lista.length * 100) + '%';
+    $('[data-action="back"]').disabled = pasoIdx === 0;
+    var ultimo = pasoIdx === lista.length - 1;
+    $('[data-action="next"]').hidden = ultimo; $('[data-action="finish"]').hidden = !ultimo;
+    $('[data-title-partida]').textContent = datos.nombre ? 'Dale ' + datos.nombre.split(' ')[0] + ', tu punto de partida' : 'Tu punto de partida';
+    pintarErrores();
+  }
+  function faltantes() {
+    var actual = pasos()[pasoIdx];
+    var f = requeridos[actual].filter(function (k) { return String(datos[k] || '').trim() === ''; });
+    if (actual === 'cuello' && datos.cuello === 'otro' && !datos.frustracion.trim()) f.push('frustracion');
+    return f;
+  }
+  function pintarErrores() {
+    var f = intentado ? faltantes() : [];
+    $$('[data-q]').forEach(function (el) { el.classList.toggle('err', f.indexOf(el.getAttribute('data-q')) >= 0); });
+    $('[data-alert]').hidden = f.length === 0;
+  }
+
+  /* ================== GUARDAR PROGRESO ================== */
+  function guardar(paso) {
+    var payload = { paso: paso, datos: datos, tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('x:progreso', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.X_AUDIT && typeof window.X_AUDIT.onProgreso === 'function') { try { window.X_AUDIT.onProgreso(payload); } catch (e) {} }
+  }
+  var crm = { dealId: null };
+  try { crm.dealId = Number(localStorage.getItem(CONFIG.storageKey + '_deal')) || null; } catch (e) {}
+  function enviarCRM(evento, extra) {
+    if (!CONFIG.endpoint) return Promise.resolve(null);
+    var payload = { marca: CONFIG.marcaId, evento: evento, datos: datos, tracking: tracking(), dealId: crm.dealId, ts: new Date().toISOString() };
+    for (var k in (extra || {})) payload[k] = extra[k];
+    return fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j && j.dealId) { crm.dealId = j.dealId; try { localStorage.setItem(CONFIG.storageKey + '_deal', String(j.dealId)); } catch (e) {} } return j; })
+      .catch(function () { return null; });
+  }
+
+  /* ================== LANDING ================== */
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()); };
+  function validarLanding() {
+    var sel = $('[data-f="pais"]'); var opt = sel.options[sel.selectedIndex]; var dig = datos.telefono.replace(/\D/g, '');
+    var min = Number(opt.getAttribute('data-min')), max = Number(opt.getAttribute('data-max'));
+    return { nombre: datos.nombre.trim() !== '', email: emailOk(datos.email), telefono: dig.length >= min && dig.length <= max, negocio: datos.negocio.replace('@', '').trim() !== '', optin: !!datos.optin, _min: min, _max: max, _pais: opt.getAttribute('data-name') };
+  }
+  var landingIntentado = false;
+  $$('[data-f]').forEach(function (el) {
+    var h = function () { datos[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (landingIntentado) pintarLanding(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  function pintarLanding() {
+    var v = validarLanding();
+    ['nombre','email','telefono','negocio'].forEach(function (k) { var el = $('[data-f="' + k + '"]'); el.classList.toggle('err', !v[k]); var m = el.closest('.field').querySelector('.errmsg'); m.hidden = v[k]; if (k === 'telefono') m.textContent = 'Escribe un número válido (' + (v._min === v._max ? v._min : v._min + ' a ' + v._max) + ' dígitos, ' + v._pais + ')'; });
+    $('.optin').classList.toggle('err', !v.optin); $('[data-err="optin"]').hidden = v.optin;
+  }
+  $('[data-action="start"]').addEventListener('click', function () {
+    if ($('#x-web').value) return; // honeypot
+    landingIntentado = true; var v = validarLanding();
+    if (!(v.nombre && v.email && v.telefono && v.negocio && v.optin)) { pintarLanding(); return; }
+    datos.negocio = '@' + datos.negocio.replace(/^@+/, '').trim();
+    datos.telefonoCompleto = datos.pais.replace('+1809', '+1') + datos.telefono.replace(/\D/g, '');
+    guardar(0); enviarCRM('lead'); try { if (window.fbq) fbq('track', 'Lead', { content_name: 'Diagnóstico de Trader 1000X' }); } catch (e) {} pasoIdx = 0; intentado = false; mostrar('quiz'); renderPaso();
+  });
+
+  /* ================== QUIZ ================== */
+  $$('[data-q]').forEach(function (el) {
+    if (el.classList.contains('radios')) return;
+    var k = el.getAttribute('data-q');
+    var h = function () { datos[k] = el.value; pintarErrores(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  $$('.radio').forEach(function (b) {
+    b.addEventListener('click', function () {
+      datos.cuello = b.getAttribute('data-v');
+      $$('.radio').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
+      $('[data-otro]').hidden = datos.cuello !== 'otro'; pintarErrores();
+    });
+  });
+  $('[data-action="back"]').addEventListener('click', function () { intentado = false; pasoIdx = Math.max(0, pasoIdx - 1); renderPaso(); });
+  $('[data-action="next"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } guardar(pasoIdx + 1); intentado = false; pasoIdx++; renderPaso(); });
+  $('[data-action="finish"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } intentado = false; guardar(pasoIdx + 1); correrLoader(); });
+  $('[data-action="again"]').addEventListener('click', function () { location.reload(); });
+
+  /* ================== LOADER (log de terminal) ================== */
+  function correrLoader() {
+    mostrar('loading'); var bar = $('[data-loadbar]'); var items = $$('[data-ls]'); bar.style.width = '6%';
+    items.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); bar.style.width = (14 + (i + 1) * 16) + '%'; }, 350 + i * (CONFIG.loaderMs - 900) / items.length); });
+    setTimeout(function () { bar.style.width = '100%'; }, CONFIG.loaderMs - 350);
+    setTimeout(function () { resultado = calcular(datos); renderResultado(resultado); mostrar('result'); }, CONFIG.loaderMs);
+  }
+
+  /* ================== SCORING: LOS 4 PILARES ================== */
+  var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pct = function (x) { return Math.round(x * 100) + '%'; };
+  var NOMBRES = { estructura: 'Estructura', ejecucion: 'Ejecución', riesgo: 'Riesgo', sistema: 'Sistema' };
+  var PERFILES = { estructura: 'SIN_MAPA', ejecucion: 'IMPULSIVO', riesgo: 'APOSTADOR', sistema: 'INTERMITENTE' };
+  var CUELLOS = { psicologia: 'ejecucion', estrategia: 'estructura', riesgo: 'riesgo', tiempo: 'sistema', info: 'estructura' };
+  var clamp = function (x) { return Math.max(5, Math.min(100, Math.round(x))); };
+
+  function calcular(d) {
+    var exp = Number(d.experiencia); var nuevo = exp === 0; var veterano = exp >= CONFIG.umbralSistema;
+    var fondeo = d.capital === 'fondeo';
+    var capital = fondeo ? CONFIG.capitalFondeo : Number(d.capital) || 250;
+    var RIESGO = { 1: 0.01, 2: 0.02, 5: 0.04, nolo: 0.05 };
+    var riesgoPct = RIESGO[d.riesgo] || 0.05; var riesgoEstimado = d.riesgo === 'nolo';
+    var riesgoUSD = capital * riesgoPct;
+
+    // ESTRUCTURA: ¿hay un mapa (estrategia con reglas probadas) o se opera a ciegas?
+    var estructura = ({ probada: 92, reglas: 58, intuicion: 24, ninguna: 8 })[d.estrategia] || 8;
+    if (d.mercado === 'nose') estructura -= 8;
+    if (d.cuello === 'info') estructura -= 6;
+    if (veterano && d.estrategia === 'intuicion') estructura -= 6;
+    // EJECUCIÓN: disciplina en la entrada y en el horario
+    var ejecucion = ({ confirmacion: 84, depende: 44, persigo: 24 })[d.entradas] || 24;
+    ejecucion += ({ fijo: 10, cuando: 0, sin: -10 })[d.horario] || 0;
+    if (d.resultado === 'devuelvo') ejecucion -= 8;
+    if (d.cuello === 'psicologia') ejecucion -= 6;
+    // RIESGO: cuánto se arriesga y si la relación R:B se respeta
+    var riesgo = ({ 1: 88, 2: 64, 5: 26, nolo: 10 })[d.riesgo] || 10;
+    riesgo += ({ 2: 10, 1: -4, corto: -12, nomido: -14 })[d.rr] || 0;
+    if (d.resultado === 'pierdo' && d.riesgo === '5') riesgo -= 6;
+    // SISTEMA: rutina, journal, tiempo de pantalla, backtest
+    var sistema = 22;
+    if (d.journal) sistema += ({ si: 34, aveces: 14, no: 0 })[d.journal] || 0; else sistema += nuevo ? 12 : 6;
+    sistema += ({ fijo: 16, cuando: 6, sin: 0 })[d.horario] || 0;
+    if (d.estrategia === 'probada') sistema += 14;
+    if (d.pantalla) sistema += ({ 1: 6, 2: 14, 4: 4 })[d.pantalla] || 0;
+    if (d.resultado === 'consistente') sistema += 10;
+    if (d.cuello === 'tiempo') sistema -= 6;
+    var F = { estructura: clamp(estructura), ejecucion: clamp(ejecucion), riesgo: clamp(riesgo), sistema: clamp(sistema) };
+    var score = clamp((F.estructura + F.ejecucion + F.riesgo + F.sistema) / 4);
+
+    // Pilar flojo = el más bajo; empate (≤12 puntos) → el que declaró
+    var orden = ['estructura', 'ejecucion', 'riesgo', 'sistema'].sort(function (a, b) { return F[a] - F[b]; });
+    var declarado = CUELLOS[d.cuello] || null;
+    var principal = orden[0];
+    if (declarado && F[declarado] < 75 && F[declarado] - F[orden[0]] <= 12) principal = declarado;
+    var secundario = orden.filter(function (k) { return k !== principal; })[0];
+    if (F[secundario] >= 70) secundario = null;
+
+    // La matemática de la cuenta (ilustrativa, nunca una promesa)
+    var rr = CONFIG.rrObjetivo;
+    var breakEven = 1 / (1 + rr);                       // acierto mínimo para no perder con 1:R
+    var malaSemana = riesgoUSD * 5;                     // 5 stops seguidos
+    var racha = 1 - Math.pow(1 - riesgoPct, 10);       // drawdown tras 10 stops seguidos (compuesto)
+    var expectativa45 = 0.45 * rr - 0.55;               // R esperado por trade con 45% de acierto y 1:2 (hipotético)
+
+    return { exp: exp, nuevo: nuevo, veterano: veterano, fondeo: fondeo, capital: capital, riesgoPct: riesgoPct, riesgoEstimado: riesgoEstimado, riesgoUSD: riesgoUSD,
+      F: F, score: score, principal: principal, secundario: secundario, declarado: declarado, perfil: nuevo ? 'RECLUTA' : (score >= 80 ? 'OPERADOR' : PERFILES[principal]),
+      rr: rr, breakEven: breakEven, malaSemana: malaSemana, racha: racha, expectativa45: expectativa45,
+      calificado: (capital >= 2000 || fondeo) && exp >= 3 };
+  }
+
+  function textos(r, d) {
+    var nombre = d.nombre.split(' ')[0];
+    var MERCADO = { futuros: 'futuros', forex: 'forex', cripto: 'cripto', acciones: 'acciones', nose: 'un mercado que todavía no defines' };
+    var EXP = { 0: 'todavía no has operado en real', 3: 'llevas menos de 6 meses operando', 12: 'llevas entre 6 meses y 2 años operando', 36: 'llevas más de 2 años operando' };
+    var RES = { consistente: 'vienes rentable', devuelvo: 'ganas unas semanas y después lo devuelves', pierdo: 'vienes perdiendo', noreal: 'aún no tienes resultados en real' };
+    var base = '<b class="fact">' + nombre + '</b>, operas <b class="fact">' + (MERCADO[d.mercado] || 'el mercado') + '</b> ' + (r.fondeo ? 'con una cuenta de fondeo' : 'con <b class="fact">' + fmt(r.capital) + '</b> aprox.') + ', ' + (EXP[String(r.exp)] || '') + ' y ' + (RES[d.resultado] || '') + '. ';
+    var mate = (r.riesgoEstimado ? 'Como no calculas el riesgo, asumí un <b>' + pct(r.riesgoPct) + '</b> por trade: ' : 'Arriesgas <b>' + pct(r.riesgoPct) + '</b> por trade: ') + 'eso son <b>' + fmt(r.riesgoUSD) + '</b> cada vez que te saca el stop, y una mala semana de 5 stops te cuesta <b>' + fmt(r.malaSemana) + '</b>. ' +
+      'Con la estrategia de la casa (1:' + r.rr + ', break even a 1R) no necesitas tener razón la mayoría de las veces: con más de <b>' + pct(r.breakEven) + '</b> de acierto ya no pierdes, y con 45% el resultado esperado es <b>+' + r.expectativa45.toFixed(2) + 'R</b> por trade (ejemplo hipotético, no una garantía). ';
+    var T = {
+      estructura: { titulo: nombre + ', tu problema no es el mercado. Es que operas sin mapa.', diag: base + mate + 'Sin una estrategia con reglas escritas y probadas, cada trade es una opinión. Y las opiniones se pagan con la cuenta. Un mapa te dice qué vela marcar, dónde esperar el retesteo, cuándo NO operar (acumulación) y dónde va el stop antes de entrar. Con mapa, el trade se ejecuta; sin mapa, se sufre.',
+        plan: ['Escribe tu estrategia en una página: qué marcas, qué esperas (retesteo + vela de rechazo), dónde entra, dónde va el stop y dónde el objetivo (1:2).', 'Define tus reglas de NO operar: acumulación, noticias, fuera de tu sesión. Escríbelas.', 'Haz backtest de 50 trades en FX Replay o repasando gráficas: anota cada uno con captura.', 'Elige UNA fuente de información y silencia el resto por 14 días. Menos gurús, más gráficas.', 'Opera en demo solo con el mapa: si el setup no cumple las reglas, no existe.'],
+        norte: 'Trades que cumplieron el 100% de las reglas (meta: 10 de cada 10, aunque pierdan)', camino: 'Definir la estrategia antes de tocar un trade más. Con el mapa correcto, la ejecución y el riesgo se ordenan solos.' },
+      ejecucion: { titulo: nombre + ', sabes lo que hay que hacer. El problema es lo que haces cuando la vela se mueve.', diag: base + mate + 'Perseguir la vela, entrar sin confirmación o vengarte después de un stop no son problemas de conocimiento: son de ejecución. El mercado no premia al que más sabe, premia al que más reglas cumple. La confirmación (retesteo + rechazo) existe para que entres tarde a propósito: pierdes algunos movimientos y ganas todos los que importan.',
+        plan: ['Antes de cada sesión escribe tu plan: zonas marcadas, qué esperas y a qué hora apagas la pantalla.', 'Regla de la confirmación: si no hay retesteo y vela de rechazo, no hay trade. Sin excepciones 14 días.', 'Máximo 2 trades por sesión y stop del día después de 2 pérdidas. Cierras la plataforma.', 'Break even a 1R en cada trade y objetivo fijo en 1:2. Nada de mover el stop en contra.', 'Anota cómo te sentiste antes de cada entrada (1 a 5). Verás el patrón en una semana.'],
+        norte: 'Trades tomados con confirmación completa vs. trades impulsivos (meta: 0 impulsivos por semana)', camino: 'Reglas duras de entrada y un límite diario. La psicología se arregla con estructura, no con fuerza de voluntad.' },
+      riesgo: { titulo: nombre + ', con este riesgo no estás operando. Estás apostando.', diag: base + mate + 'Con ' + pct(r.riesgoPct) + ' por trade, una racha de 10 stops seguidos te deja la cuenta en <b>−' + pct(r.racha) + '</b>, y esa racha le pasa a cualquier trader con una buena estrategia; con 1% sería −10%. La gestión de riesgo es lo único que controlas al 100%: define cuánto pierdes ANTES de entrar, respeta el 1:2 y deja que la matemática trabaje.',
+        plan: ['Fija tu riesgo en 1% por trade (o el que exija tu prop firm) y calcula el tamaño de posición ANTES de entrar, siempre.', 'Stop fijo en cada trade, puesto en la plataforma, no en la cabeza.', 'Objetivo mínimo 1:2. Si el setup no da 1:2 desde la entrada, no se toma.', 'Break even a 1R: cuando el precio recorre una vez tu riesgo, el stop sube al punto de entrada.', 'Límite semanal: 3 stops en la semana y paras hasta el lunes. Sin excepciones.'],
+        norte: 'Riesgo real por trade en dólares (meta: nunca más del 1% de la cuenta) y relación R:B promedio (meta: ≥ 1:2)', camino: 'Bajar el riesgo por trade hoy mismo. Con 1% y 1:2, la misma estrategia que te está quemando la cuenta empieza a sostenerla.' },
+      sistema: { titulo: nombre + ', tienes piezas sueltas. Lo que falta es el sistema que las junte.', diag: base + mate + 'Operar "cuando puedes", sin journal y sin rutina te deja viviendo de rachas. Un sistema es: misma sesión, mismo plan, mismo registro, misma revisión semanal. Y hoy también es tecnología: un radar que vigile el mercado por ti y un autopilot que ejecute con la misma disciplina cada vez, mientras tú trabajas o duermes.',
+        plan: ['Elige UNA sesión fija (la que tu vida permita) y opera solo ahí por 14 días.', 'Abre un journal: fecha, setup, riesgo, resultado en R, captura y una línea de qué aprendiste.', 'Revisión semanal de 20 minutos: cuántos trades cumplieron reglas, cuántas R ganaste o perdiste.', 'Automatiza la vigilancia: alertas en tus zonas para no vivir pegado a la pantalla.', 'Define tu métrica norte y mírala cada semana; lo que no se mide no mejora.'],
+        norte: 'Sesiones operadas con plan y journal completo (meta: 100% de las sesiones de la semana)', camino: 'Rutina, journal y tecnología. Con lo que ya sabes, el sistema convierte las rachas en un proceso repetible.' }
+    };
+    var t = T[r.principal] || T.estructura;
+    if (r.nuevo) { t.titulo = nombre + ', todavía no has quemado una cuenta. Este es el mejor momento para construir bien.'; t.camino = 'Aprender la estrategia con reglas y practicarla en demo con riesgo real definido, antes de poner un dólar. Los que empiezan con mapa se ahorran las cuentas que los demás queman aprendiendo.'; }
+    if (r.score >= 80 && !r.nuevo) {
+      t = { titulo: nombre + (d.resultado === 'consistente' ? ', ya eres rentable. El siguiente nivel es escalar sin romper lo que funciona.' : ', tienes los 4 pilares sólidos. Lo que falta es tiempo de pantalla con reglas, no más teoría.'),
+        diag: base + mate + 'Tus 4 pilares están sólidos; el más bajo es <b>' + NOMBRES[r.principal].toLowerCase() + '</b>, y aun así está por encima de la mayoría de los traders que auditamos. A este nivel el riesgo ya no es la estrategia: es romper la disciplina al subir tamaño, o depender de que tu día esté bien para ejecutar igual.',
+        plan: ['Sube el tamaño solo por escalones: +25% cada 20 trades con reglas cumplidas, nunca después de una buena racha.', 'Si no tienes cuenta de fondeo, pasa una evaluación con tu riesgo actual: es capital ajeno para tu misma estrategia.', 'Automatiza la vigilancia y, si aplica, la ejecución: la disciplina no puede depender de tu día.', 'Revisión semanal en R, no en dólares: expectativa, acierto y R promedio por setup.', 'Define tu plan de drawdown: a qué porcentaje bajas tamaño a la mitad y a cuál paras.'],
+        norte: 'Expectativa en R por trade (meta: mantenerla al subir tamaño) y drawdown máximo (meta: nunca pasar el límite que definiste)',
+        camino: 'Escalar por escalones, fondeo y automatizar la ejecución para que la disciplina no dependa de tu día.' };
+    }
+    return t;
+  }
+
+  function renderResultado(r) {
+    var t = textos(r, datos);
+    $('[data-r="badge"]').textContent = r.calificado ? 'resultado · trader con capital' : 'resultado · audit_trader';
+    $('[data-r="perfil"]').textContent = r.perfil;
+    $('[data-r="titulo"]').textContent = t.titulo;
+    $('[data-r="intro"]').textContent = r.nuevo ? 'Este diagnóstico está armado con lo que acabas de contestar, no con una plantilla. Empezar con reglas es más fácil que desaprender malos hábitos.' : 'Esto no es sobre "más indicadores": es sobre el pilar que te tiene trancado. Armado con tus respuestas, no con una plantilla.';
+    $('[data-r="chip1"]').textContent = NOMBRES[r.principal];
+    $('[data-r="pilarLabel"]').textContent = r.score >= 80 && !r.nuevo ? 'Tu pilar más bajo' : 'Tu pilar flojo';
+    var c2 = $('[data-r="chip2"]'); c2.hidden = !r.secundario; if (r.secundario) c2.textContent = '+ ' + NOMBRES[r.secundario];
+    $('[data-r="diagnostico"]').innerHTML = t.diag;
+    $('[data-r="fund"]').innerHTML = ['estructura', 'ejecucion', 'riesgo', 'sistema'].map(function (k) { return '<li class="' + (k === r.principal ? 'weak' : '') + '"><b>' + NOMBRES[k] + '</b><span class="bar"><i style="width:' + r.F[k] + '%"></i></span><small>' + r.F[k] + '</small></li>'; }).join('');
+    $('[data-r="kpis"]').innerHTML = [
+      ['Riesgo por trade', (r.riesgoEstimado ? '~' : '') + fmt(r.riesgoUSD), true], ['Una mala semana (5 stops)', fmt(r.malaSemana), false], ['Acierto mínimo con 1:' + r.rr, pct(r.breakEven), false], ['Tu cuenta tras 10 stops seguidos', '−' + pct(r.racha), false]
+    ].map(function (k) { return '<div class="kpi"><small>' + k[0] + '</small><strong class="' + (k[2] ? 'accent' : '') + '">' + k[1] + '</strong></div>'; }).join('');
+    $('[data-r="ring"]').style.setProperty('--p', r.score); $('[data-r="score"]').textContent = r.score;
+    $('[data-r="scoreTitulo"]').textContent = 'Disciplina: ' + (r.score >= 70 ? 'sólida' : r.score >= 40 ? 'a medias' : 'por construir');
+    $('[data-r="scoreTexto"]').textContent = r.score >= 70 ? 'Tienes base. Te falta afinar un pilar y escalar lo que ya funciona.' : r.score >= 40 ? 'Dos pilares están bien; uno te está tumbando el resto.' : 'Hoy tu operativa se sostiene en suerte y esfuerzo, no en reglas. La buena noticia: esto se arregla en semanas, no en años.';
+    $('[data-r="plan"]').innerHTML = t.plan.map(function (p, i) { return '<li><i>' + (i + 1) + '</i><span>' + p + '</span></li>'; }).join('');
+    $('[data-r="norte"]').textContent = t.norte;
+    $('[data-r="camino"]').textContent = t.camino;
+    $('[data-r="finalTitulo"]').textContent = r.calificado ? '¿Quieres que lo veamos juntos?' : 'Agenda y te mando el plan completo';
+    var msg = 'Hola, soy ' + datos.nombre + ' (' + datos.negocio + '). Hice el diagnóstico de trader de 1000X: perfil ' + r.perfil + ', ' + r.score + '/100, pilar flojo ' + NOMBRES[r.principal] + ', riesgo por trade ' + fmt(r.riesgoUSD) + '. Quiero mi plan de 14 días y agendar la llamada.';
+    var href = CONFIG.calendly ? CONFIG.calendly : (CONFIG.whatsapp ? 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg) : '#');
+    if (!CONFIG.calendly && CONFIG.whatsapp) { $$('[data-r="ctaTexto"],[data-r="ctaTexto2"]').forEach(function (s) { s.textContent = 'Quiero mi plan por WhatsApp'; }); $('[data-r="ctaFine"]').textContent = 'Te contesta Richy o alguien del equipo de 1000X.'; }
+    $$('[data-cta]').forEach(function (a) { a.href = href; if (!a.__fbq) { a.__fbq = true; a.addEventListener('click', function () { try { if (window.fbq) fbq('track', 'Schedule', { content_name: 'Llamada desde diagnóstico 1000X' }); } catch (e) {} }); } });
+    try { if (window.fbq) fbq('trackCustom', 'DiagnosticoCompletado', { perfil: r.perfil, pilar: r.principal, score: r.score }); } catch (e) {}
+    var payload = { evento: 'resultado', marca: CONFIG.marca, datos: datos, resultado: r, principalNombre: NOMBRES[r.principal], tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey + '_resultado', JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('x:resultado', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.X_AUDIT && typeof window.X_AUDIT.onResultado === 'function') { try { window.X_AUDIT.onResultado(payload); } catch (e) {} }
+    enviarCRM('resultado', { resultado: r, principalNombre: NOMBRES[r.principal] });
+    var sticky = $('[data-sticky]'); var finalEl = $('[data-final]'); var finalVisible = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { finalVisible = e.isIntersecting; }); upd(); }, { threshold: 0 }).observe(finalEl);
+    function upd() { sticky.classList.toggle('hide', !(window.scrollY > 300 && !finalVisible)); }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  }
+
+  window.X_AUDIT = window.X_AUDIT || {};
+  window.X_AUDIT.config = CONFIG; window.X_AUDIT.datos = datos; window.X_AUDIT.calcular = calcular;
+})();
+</script>
+<script>(function(){var n=document.getElementById('x-audit');var p=n&&n.parentElement;while(p&&p!==document.body){p.classList.add('x-audit-bleed');p=p.parentElement;}})();</script>

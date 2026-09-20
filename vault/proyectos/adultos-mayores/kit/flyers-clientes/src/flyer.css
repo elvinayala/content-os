@@ -1,0 +1,37 @@
+/* Flyers de reclutamiento · Contigo PR · lienzo 1080×1350 */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap');
+:root{
+  --c1:#17463A; --c2:#F2B33D; --c3:#F7F5EC; --c5:#0E2B23; --c6:#DE5F4D; --c7:#FFFFFF;
+  --deep:#0B211B; --surface:#12302700;
+  --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --body:'Figtree','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;overflow:hidden}
+body{font-family:var(--body);background:var(--c3);color:var(--c5);-webkit-font-smoothing:antialiased}
+.canvas{width:1080px;height:1350px;padding:80px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.canvas.dark{background:var(--c1);color:var(--c3)}
+.canvas.deep{background:var(--deep);color:var(--c3)}
+.canvas.gold{background:var(--c2);color:var(--c5)}
+.canvas.light{background:var(--c3);color:var(--c5)}
+
+/* Marca */
+.brand{display:flex;align-items:center;gap:14px;font-family:var(--display);font-weight:800;font-size:40px;letter-spacing:-.03em}
+.brand svg{width:52px;height:52px;flex:none}
+.brand small{font-size:18px;font-weight:700;letter-spacing:.1em;align-self:flex-end;margin-bottom:7px;opacity:.6}
+
+.eyebrow{font-size:20px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+h1{font-family:var(--display);font-weight:800;letter-spacing:-.035em;line-height:.98;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.06}
+.lead{font-size:30px;line-height:1.42;font-weight:400}
+.spacer{flex:1}
+.num{font-variant-numeric:tabular-nums}
+
+/* Pie */
+.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-top:34px;border-top:2px solid currentColor;opacity:1}
+.foot .site{font-family:var(--display);font-weight:700;font-size:30px}
+.foot .site span{opacity:.62;font-weight:600}
+.foot .cta{font-size:22px;font-weight:600;text-align:right;line-height:1.35;opacity:.82}
+.pill{display:inline-block;padding:14px 26px;border-radius:999px;font-size:24px;font-weight:700;font-family:var(--display)}
+.pill.gold{background:var(--c2);color:var(--c5)}
+.pill.green{background:var(--c1);color:var(--c3)}

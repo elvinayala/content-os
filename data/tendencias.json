@@ -1,0 +1,338 @@
+{
+  "actualizadoEl": "2026-07-18T14:06:58-04:00",
+  "fuente": "apify",
+  "cuentas": [
+    {
+      "id": "openai",
+      "creador": "@openai",
+      "iniciales": "OP",
+      "seguidores": 6340170,
+      "topVistas": 23776
+    },
+    {
+      "id": "claudeai",
+      "creador": "@claudeai",
+      "iniciales": "CL",
+      "seguidores": 1699803,
+      "topVistas": 0
+    },
+    {
+      "id": "rowancheung",
+      "creador": "@rowancheung",
+      "iniciales": "RO",
+      "seguidores": 454850,
+      "topVistas": 44153
+    },
+    {
+      "id": "elevenlabsio",
+      "creador": "@elevenlabsio",
+      "iniciales": "EL",
+      "seguidores": 414810,
+      "topVistas": 70164
+    },
+    {
+      "id": "godofprompt",
+      "creador": "@godofprompt",
+      "iniciales": "GO",
+      "seguidores": 341950,
+      "topVistas": 0
+    },
+    {
+      "id": "lovable.dev",
+      "creador": "@lovable.dev",
+      "iniciales": "LO",
+      "seguidores": 292909,
+      "topVistas": 34629
+    },
+    {
+      "id": "gregisenberg",
+      "creador": "@gregisenberg",
+      "iniciales": "GR",
+      "seguidores": 137302,
+      "topVistas": 23197
+    },
+    {
+      "id": "heygen_official",
+      "creador": "@heygen_official",
+      "iniciales": "HE",
+      "seguidores": 124312,
+      "topVistas": 0
+    },
+    {
+      "id": "midjourney",
+      "creador": "@midjourney",
+      "iniciales": "MI",
+      "seguidores": 60906,
+      "topVistas": 0
+    },
+    {
+      "id": "aiwarper",
+      "creador": "@aiwarper",
+      "iniciales": "AI",
+      "seguidores": 14117,
+      "topVistas": 4887626
+    }
+  ],
+  "reels": [
+    {
+      "id": "Da6vaquHFBg",
+      "creador": "@godofprompt",
+      "seguidores": 341950,
+      "iniciales": "GO",
+      "gancho": "Comment “AI” and I’ll DM you everything.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-18",
+      "url": "https://www.instagram.com/p/Da6vaquHFBg/"
+    },
+    {
+      "id": "Da8M8hsG0B2",
+      "creador": "@openai",
+      "seguidores": 6340170,
+      "iniciales": "OP",
+      "gancho": "“In addition to being a software engineer, security practitioner, and all-around nerd, I’m also a stained-glass artist.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-18",
+      "url": "https://www.instagram.com/p/Da8M8hsG0B2/"
+    },
+    {
+      "id": "Da8Cm55jr7n",
+      "creador": "@claudeai",
+      "seguidores": 1699803,
+      "iniciales": "CL",
+      "gancho": "Introducing Claude for teachers. Verified K-12 educators in the US now get free access to Claude, with a library of teaching skill",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-18",
+      "url": "https://www.instagram.com/p/Da8Cm55jr7n/"
+    },
+    {
+      "id": "Da8VQ7SRyN6",
+      "creador": "@gregisenberg",
+      "seguidores": 137302,
+      "iniciales": "GR",
+      "gancho": "Midjourney medical is pretty insane. Follow for more.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 9000.0,
+      "publicadoEl": "2026-07-18",
+      "url": "https://www.instagram.com/p/Da8VQ7SRyN6/"
+    },
+    {
+      "id": "Da6JxYLnCrU",
+      "creador": "@godofprompt",
+      "seguidores": 341950,
+      "iniciales": "GO",
+      "gancho": "Comment “AI” and I’ll send you the full setup guide.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da6JxYLnCrU/"
+    },
+    {
+      "id": "Da6JXGaHIaJ",
+      "creador": "@godofprompt",
+      "seguidores": 341950,
+      "iniciales": "GO",
+      "gancho": "Comment “Github” and I’ll send you the link",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da6JXGaHIaJ/"
+    },
+    {
+      "id": "Da5poanJPG2",
+      "creador": "@openai",
+      "seguidores": 6340170,
+      "iniciales": "OP",
+      "gancho": "After Sekhar’s father developed frontal lobe dementia, he realized that could be him one day, and he didn’t want his own care to b",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da5poanJPG2/"
+    },
+    {
+      "id": "Da547_xoKLe",
+      "creador": "@claudeai",
+      "seguidores": 1699803,
+      "iniciales": "CL",
+      "gancho": "Congratulations to the winners of Built with Claude: Life Sciences, a global virtual hackathon hosted in partnership with @gladsto",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da547_xoKLe/"
+    },
+    {
+      "id": "Da6OUnCE9Nq",
+      "creador": "@heygen_official",
+      "seguidores": 124312,
+      "iniciales": "HE",
+      "gancho": "All the footage in this video was made with AI.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 3700.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da6OUnCE9Nq/"
+    },
+    {
+      "id": "Da5vv7VDfPa",
+      "creador": "@heygen_official",
+      "seguidores": 124312,
+      "iniciales": "HE",
+      "gancho": "It's the world cup final! Tim Walsh, a soccer coach, just got smashed by a greasy food tray seconds before his promo shoot.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 1500.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da5vv7VDfPa/"
+    },
+    {
+      "id": "Da4C-zqDSO8",
+      "creador": "@heygen_official",
+      "seguidores": 124312,
+      "iniciales": "HE",
+      "gancho": "The reason your content isn't generating leads might not be the quality.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 1500.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da4C-zqDSO8/"
+    },
+    {
+      "id": "Da5u5X4jZmY",
+      "creador": "@elevenlabsio",
+      "seguidores": 414810,
+      "iniciales": "EL",
+      "gancho": "Veed Lip Sync 2.0 is now available on ElevenCreative.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 3400.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da5u5X4jZmY/"
+    },
+    {
+      "id": "Da5aRLplIoR",
+      "creador": "@elevenlabsio",
+      "seguidores": 414810,
+      "iniciales": "EL",
+      "gancho": "Gemini Omni Flash is now available in ElevenCreative.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 7900.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da5aRLplIoR/"
+    },
+    {
+      "id": "Da6GvHZOLFQ",
+      "creador": "@rowancheung",
+      "seguidores": 454850,
+      "iniciales": "RO",
+      "gancho": "🌎🌍🌏 Kyutai and General Intuition just released something called MIRA…",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 81000.0,
+      "publicadoEl": "2026-07-17",
+      "url": "https://www.instagram.com/p/Da6GvHZOLFQ/"
+    },
+    {
+      "id": "Da3wmpfHKlB",
+      "creador": "@godofprompt",
+      "seguidores": 341950,
+      "iniciales": "GO",
+      "gancho": "Comment “AI” and I’ll send you the full guide.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da3wmpfHKlB/"
+    },
+    {
+      "id": "Da3mf9VSrkT",
+      "creador": "@openai",
+      "seguidores": 6340170,
+      "iniciales": "OP",
+      "gancho": "A mushroom grow kit sparked Hunter’s curiosity and grew into @mountain_mushrooms. Now ChatGPT helps him run the business and build",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 111500.0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da3mf9VSrkT/"
+    },
+    {
+      "id": "Da2_pMcpu21",
+      "creador": "@openai",
+      "seguidores": 6340170,
+      "iniciales": "OP",
+      "gancho": "Introducing GPT‑Red, an automated system that tests our AI models for weaknesses—helping us make them safer and more secure before",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 233600.0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da2_pMcpu21/"
+    },
+    {
+      "id": "Da3Kd-sCdSl",
+      "creador": "@lovable.dev",
+      "seguidores": 292909,
+      "iniciales": "LO",
+      "gancho": "5 lessons from the founder of Avara",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da3Kd-sCdSl/"
+    },
+    {
+      "id": "Da3YJsoIJ_Z",
+      "creador": "@claudeai",
+      "seguidores": 1699803,
+      "iniciales": "CL",
+      "gancho": "Our latest Anthropic Economic Index report looks at how the cadences of daily life shape when and why people turn to Claude, from ",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da3YJsoIJ_Z/"
+    },
+    {
+      "id": "Da26QTwEdXF",
+      "creador": "@claudeai",
+      "seguidores": 1699803,
+      "iniciales": "CL",
+      "gancho": "We spoke with Alan Ang about bridging the gap between the physical and digital world.",
+      "textoPantalla": "",
+      "plataforma": "Instagram",
+      "vistas": 0,
+      "engagementPct": 0,
+      "publicadoEl": "2026-07-16",
+      "url": "https://www.instagram.com/p/Da26QTwEdXF/"
+    }
+  ]
+}

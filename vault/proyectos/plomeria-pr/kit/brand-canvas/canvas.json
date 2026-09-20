@@ -1,0 +1,16 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 760, "title": "00 · Portada" },
+    { "file": "Logo.dc.html", "x": 1300, "y": 0, "w": 1200, "h": 900, "title": "01 · Logo" },
+    { "file": "LogoAlternativas.dc.html", "x": 0, "y": 1040, "w": 1200, "h": 520, "title": "02 · Alternativas de ícono" },
+    { "file": "Paleta.dc.html", "x": 1300, "y": 1040, "w": 1200, "h": 820, "title": "03 · Paleta C1–C7" },
+    { "file": "Tipografia.dc.html", "x": 0, "y": 1700, "w": 1200, "h": 900, "title": "04 · Tipografía T1–T8" },
+    { "file": "Voz.dc.html", "x": 1300, "y": 2000, "w": 1200, "h": 720, "title": "05 · Voz V1–V6" },
+    { "file": "Aplicaciones.dc.html", "x": 0, "y": 2860, "w": 1400, "h": 980, "title": "06 · Aplicaciones A1–A4 · D1–D4" }
+  ],
+  "annotations": [
+    { "id": "como-usar", "x": 0, "y": -140, "w": 520, "text": "Cómo referirse a las piezas: L1–L5 logo · A/B/C alternativas de ícono · C1–C7 colores · F1/F2 fuentes · T1–T8 estilos de texto · V1–V6 frases · A1–A4 físico · D1–D4 digital.\nEjemplo: \"Landing con fondo C3, títulos T2 en C1, botones C2 y logo L1.\"" },
+    { "id": "decidir", "x": 1300, "y": -100, "w": 420, "text": "Para decidir: ¿ícono A, B o C? El kit usa A. Si eliges otro, se reemplaza en todas las piezas." }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es-PR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resuelto · Cotizador</title>
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0F3D5E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--c1:#0F3D5E;--c2:#F2621F;--c3:#FBF7F0;--c4:#5C6670;--c5:#08243A;--c6:#1F9D6B;--c7:#fff;--line:rgba(15,61,94,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--c3);color:var(--c5);font-size:16px;line-height:1.45}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--c7);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;font-size:22px;color:var(--c1);letter-spacing:-.03em}.logo svg{width:28px;height:28px}
+.logo small{font-family:'DM Sans';font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--c2);border-left:1px solid var(--line);padding-left:8px}
+#quien{font-size:14px;color:var(--c4)}
+main{max-width:1100px;margin:0 auto;padding:18px 20px 90px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:18px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.panel{background:var(--c7);border:1px solid var(--line);border-radius:18px;padding:18px}
+h2{font-family:Sora;font-size:17px;font-weight:700;color:var(--c1);margin-bottom:12px}
+h3{font-family:Sora;font-size:14px;font-weight:700;color:var(--c1);margin:16px 0 8px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c4)}
+select,input,textarea{width:100%;font:inherit;font-size:15px;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--c5)}
+textarea{min-height:76px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--c2);color:#fff;font-weight:600;border:0;border-radius:12px;padding:13px 18px;font:inherit;font-size:15px;cursor:pointer}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--c1)}.btn.ok{background:var(--c6)}.btn:disabled{opacity:.45;cursor:default}
+.btn.full{width:100%;margin-top:10px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) 84px 110px 36px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.item .n{font-size:14.5px}.item .n small{display:block;color:var(--c4);font-size:12px}
+.item input{padding:9px 10px;font-size:14px}
+.item .x{background:none;border:0;color:var(--c4);font-size:20px;cursor:pointer}
+.tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:rgba(15,61,94,.08);color:var(--c4)}
+.tag.ok{background:rgba(31,157,107,.14);color:var(--c6)}.tag.warn{background:rgba(242,98,31,.14);color:#C94E14}
+.precio{background:var(--c1);color:#fff;border-radius:16px;padding:18px 20px;margin-top:12px}
+.precio .g{font-family:Sora;font-weight:800;font-size:40px;color:var(--c2);line-height:1}
+.precio .s{font-size:12.5px;color:#9FB8CA;margin-top:8px;line-height:1.5}
+.precio .s b{color:#fff}
+.slider{margin-top:14px}.slider input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:999px;background:rgba(255,255,255,.2);border:0;padding:0}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--c2);border:3px solid var(--c1);cursor:pointer}
+.estado{margin-top:10px;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:10px}
+.estado.ok{background:rgba(31,157,107,.16);color:#BFF0DA}.estado.warn{background:rgba(242,98,31,.2);color:#FFD1B8}.estado.bad{background:rgba(185,74,36,.35);color:#FFB39A}
+.lista{display:flex;flex-direction:column;gap:8px}
+.proy{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+.proy.sel{border-color:var(--c2);box-shadow:0 0 0 2px rgba(242,98,31,.2)}
+.proy b{font-family:Sora;font-size:14px;color:var(--c1);display:block}.proy small{color:var(--c4);font-size:12.5px}
+.fotos{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.fotos img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.sug{background:rgba(242,98,31,.06);border:1px dashed rgba(242,98,31,.4);border-radius:12px;padding:12px;font-size:13.5px;margin-top:10px}
+.aviso{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--c1);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;display:none;z-index:9;max-width:92vw}
+.muted{color:var(--c4);font-size:13px}
+.hitos{font-size:13px;color:#9FB8CA;margin-top:10px}.hitos b{color:#fff}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg viewBox="0 0 64 64" fill="none"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#0F3D5E"/><path d="M20 35 L29 44 L46 26" stroke="#F2621F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>resuelto<small>Cotizador</small></div>
+  <div id="quien">…</div>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <h2>1 · Proyecto y visita</h2>
+      <div class="eyebrow">Mis visitas</div>
+      <div class="lista" id="proyectos" style="margin:8px 0 12px"></div>
+      <div class="row"><select id="categoria"></select><input id="notas-cli" placeholder="Cliente (se llena al elegir proyecto)" disabled></div>
+      <h3>Fotos y notas de la visita</h3>
+      <input type="file" id="fotos" accept="image/*" multiple capture="environment">
+      <div class="fotos" id="fotos-prev"></div>
+      <textarea id="notas" placeholder="Lo que viste: medidas, estado actual, accesos, qué se mueve, terminaciones que quiere…" style="margin-top:8px"></textarea>
+      <button class="btn line full" id="btn-ia">✨ Que la IA proponga el alcance</button>
+      <div id="sug"></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <h2>2 · Alcance con el Cost Book</h2>
+      <div class="row"><select id="add-item"></select><button class="btn line" id="btn-add">Añadir partida</button></div>
+      <div id="items"></div>
+      <p class="muted" style="margin-top:10px">Los costos con <span class="tag ok">validado</span> vienen del Cost Book. Los demás los pones tú con el número real del contratista, y se guardan como muestra para validar el libro.</p>
+      <div class="row" style="margin-top:12px"><input id="incluye" placeholder="Incluye (opcional)"><input id="noincluye" placeholder="No incluye (opcional)"></div>
+    </div>
+  </section>
+
+  <aside>
+    <div class="panel">
+      <h2>3 · Precio</h2>
+      <div class="precio">
+        <div class="eyebrow" style="color:#9FB8CA">Precio al cliente</div>
+        <div class="g" id="p-final">$0</div>
+        <div class="s" id="p-detalle">Añade partidas para calcular.</div>
+        <div class="slider"><input type="range" id="p-range" min="0" max="0" step="50" value="0" disabled></div>
+        <div class="estado" id="p-estado" style="display:none"></div>
+        <div class="hitos" id="p-hitos"></div>
+      </div>
+      <button class="btn full" id="btn-propuesta" disabled>Generar propuesta y enviar al cliente</button>
+      <button class="btn ok full" id="btn-cerrar" disabled>El cliente aceptó → contrato + depósito</button>
+      <div class="row" style="margin-top:8px"><button class="btn line" id="btn-deposito" disabled>Depósito recibido (ATH/transf.)</button><a class="btn line" id="btn-ver" href="#" target="_blank" style="pointer-events:none;opacity:.45">Ver propuesta</a></div>
+      <p class="muted" style="margin-top:12px">El cotizador no fija el precio: lo fija el sistema. Un descuento bajo el mínimo pide aprobación; bajo el piso del 20% no se puede cerrar.</p>
+    </div>
+  </aside>
+</main>
+<div class="aviso" id="aviso"></div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), c=q.get('c'), k=q.get('k');
+  var $=function(id){return document.getElementById(id)};
+  var aviso=function(t){var a=$('aviso');a.textContent=t;a.style.display='block';setTimeout(function(){a.style.display='none'},4500)};
+  var money=function(n){return '$'+Math.round(Number(n)).toLocaleString('en-US')};
+  if(!c||!k){$('quien').textContent='Acceso inválido';return;}
+  var CTX=null, PROY=null, ITEMS=[], FOTOS=[], COT=null, PRECIO=null;
+  var post=function(u,b){b.c=c;b.k=k;return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()})};
+
+  fetch('/api/cotizador/contexto?c='+encodeURIComponent(c)+'&k='+k).then(function(r){return r.json()}).then(function(j){
+    if(j.error){$('quien').textContent=j.error;return;}
+    CTX=j; $('quien').textContent=j.cotizador.nombre;
+    $('categoria').innerHTML=j.categorias.map(function(x){return '<option value="'+x.id+'">'+x.nombre+'</option>'}).join('');
+    $('categoria').onchange=cargarItems; cargarItems();
+    $('proyectos').innerHTML=j.proyectos.length?j.proyectos.map(function(p){return '<div class="proy" data-id="'+p.id+'"><div><b>'+p.id+' · '+p.nombre+'</b><small>'+p.municipio+' · '+(p.visita?new Date(p.visita.inicio).toLocaleString('es-PR',{timeZone:'America/Puerto_Rico',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'sin visita')+' · '+p.estado+'</small></div><span class="tag">'+p.categoriaId+'</span></div>'}).join(''):'<div class="muted">No tienes visitas asignadas. Se agendan desde el WhatsApp de Resuelto.</div>';
+    document.querySelectorAll('.proy').forEach(function(el){el.onclick=function(){document.querySelectorAll('.proy').forEach(function(x){x.classList.remove('sel')});el.classList.add('sel');PROY=j.proyectos.find(function(p){return p.id===el.dataset.id});$('categoria').value=PROY.categoriaId;cargarItems();$('notas-cli').value=PROY.nombre+' · '+PROY.telefono+' · '+PROY.descripcion.slice(0,60);$('notas').value=PROY.descripcion;if(PROY.cotizacion){ITEMS=PROY.cotizacion.partidas.slice();pintarItems();calcular(PROY.cotizacion.precioFinal);}habilitar();}});
+  });
+
+  function cb(){return CTX.costbook[$('categoria').value]}
+  function cargarItems(){var b=cb();$('add-item').innerHTML=(b?b.items:[]).map(function(i){return '<option value="'+i.id+'">'+i.nombre+(i.validado?' ✓':'')+'</option>'}).join('');}
+  $('btn-add').onclick=function(){var b=cb();var it=b.items.find(function(i){return i.id===$('add-item').value});if(!it)return;ITEMS.push({id:it.id,nombre:it.nombre,unidad:it.unidad,cantidad:1,costoUnitario:it.costo||0,validado:!!it.validado});pintarItems();calcular();};
+  function pintarItems(){
+    $('items').innerHTML=ITEMS.map(function(it,i){return '<div class="item"><div class="n">'+it.nombre+'<small>'+it.unidad+(it.validado?' · <span class="tag ok">validado</span>':' · <span class="tag warn">costo manual</span>')+'</small></div><input type="number" min="0" step="0.5" value="'+it.cantidad+'" data-i="'+i+'" data-f="cantidad" placeholder="cant."><input type="number" min="0" step="1" value="'+(it.costoUnitario||'')+'" data-i="'+i+'" data-f="costoUnitario" placeholder="costo/u" '+(it.validado?'readonly':'')+'><button class="x" data-i="'+i+'">×</button></div>'}).join('')||'<div class="muted" style="padding:10px 0">Sin partidas todavía.</div>';
+    document.querySelectorAll('.item input').forEach(function(inp){inp.oninput=function(){ITEMS[+inp.dataset.i][inp.dataset.f]=Number(inp.value)||0;calcular();}});
+    document.querySelectorAll('.item .x').forEach(function(b){b.onclick=function(){ITEMS.splice(+b.dataset.i,1);pintarItems();calcular();}});
+  }
+  var tmr=null;
+  function calcular(precioPropuesto){
+    clearTimeout(tmr);
+    var validas=ITEMS.filter(function(i){return i.cantidad>0&&i.costoUnitario>0});
+    if(!validas.length){COT=null;$('p-final').textContent='$0';$('p-detalle').textContent='Añade partidas con cantidad y costo.';$('p-range').disabled=true;$('p-estado').style.display='none';$('p-hitos').textContent='';habilitar();return;}
+    tmr=setTimeout(function(){
+      post('/api/cotizador/calcular',{categoriaId:$('categoria').value,partidas:validas,precioPropuesto:precioPropuesto}).then(function(j){
+        if(j.error){aviso(j.error);return;} COT=j; PRECIO=j.precioFinal;
+        $('p-final').textContent=money(j.precioFinal);
+        $('p-detalle').innerHTML='Costo de ejecución <b>'+money(j.costoEjecucion)+'</b> · Recomendado <b>'+money(j.precioRecomendado)+'</b> ('+Math.round(j.margenRecomendado*100)+'%)<br>Mínimo sin aprobación <b>'+money(j.precioMinimoSinAprobacion)+'</b> · Piso <b>'+money(j.precioMinimoAbsoluto)+'</b><br>Resuelto <b>'+money(j.ingresoResuelto)+'</b> ('+Math.round(j.margenFinal*1000)/10+'%) · tu comisión <b>'+money(j.comisionCotizador)+'</b>';
+        var r=$('p-range');r.disabled=false;r.min=Math.floor(j.precioMinimoAbsoluto/50)*50;r.max=Math.ceil(j.precioRecomendado*1.15/50)*50;r.value=j.precioFinal;
+        r.oninput=function(){$('p-final').textContent=money(r.value)};r.onchange=function(){calcular(Number(r.value))};
+        var e=$('p-estado');e.style.display='block';
+        if(j.bloqueado){e.className='estado bad';e.textContent='⛔ '+j.motivo;}else if(j.requiereAprobacion){e.className='estado warn';e.textContent='⚠️ '+j.motivo+' Al generar la propuesta se pide aprobación al Coordinador.';}else{e.className='estado ok';e.textContent='✅ Precio dentro de la política. Puedes cerrar en la propiedad.';}
+        $('p-hitos').innerHTML='Hitos del cliente: '+j.hitos.map(function(h){return '<b>'+money(h.monto)+'</b> '+h.nombre.toLowerCase()}).join(' · ');
+        habilitar();
+      });
+    },250);
+  }
+  function habilitar(){
+    var ok=!!(PROY&&COT&&!COT.bloqueado);
+    $('btn-propuesta').disabled=!ok;
+    var tiene=!!(PROY&&PROY.cotizacion);
+    $('btn-cerrar').disabled=!(tiene&&PROY.estado!=='aprobacion-pendiente'&&PROY.estado!=='pendiente-deposito'&&PROY.estado!=='cerrado');
+    $('btn-deposito').disabled=!(tiene&&PROY.estado==='pendiente-deposito');
+    var v=$('btn-ver');if(tiene&&PROY.cotizacion.propuestaUrl){v.href=PROY.cotizacion.propuestaUrl;v.style.pointerEvents='auto';v.style.opacity='1';}
+  }
+  $('fotos').onchange=function(){FOTOS=[];$('fotos-prev').innerHTML='';Array.prototype.forEach.call(this.files,function(f){var r=new FileReader();r.onload=function(){FOTOS.push({mime:f.type||'image/jpeg',base64:String(r.result).split(',')[1]});var img=document.createElement('img');img.src=r.result;$('fotos-prev').appendChild(img);};r.readAsDataURL(f);});};
+  $('btn-ia').onclick=function(){if(!FOTOS.length&&!$('notas').value){aviso('Sube fotos o escribe notas primero.');return;}$('btn-ia').disabled=true;$('btn-ia').textContent='Analizando…';
+    post('/api/cotizador/sugerir-scope',{categoriaId:$('categoria').value,notas:$('notas').value,fotos:FOTOS}).then(function(j){$('btn-ia').disabled=false;$('btn-ia').textContent='✨ Que la IA proponga el alcance';
+      if(j.error||!j.partidas){aviso(j.error||j.nota||'Sin sugerencia');return;}
+      var b=cb();j.partidas.forEach(function(s){var it=b.items.find(function(i){return i.id===s.id});if(it&&!ITEMS.some(function(x){return x.id===it.id}))ITEMS.push({id:it.id,nombre:it.nombre,unidad:it.unidad,cantidad:Number(s.cantidad)||1,costoUnitario:it.costo||0,validado:!!it.validado});});
+      pintarItems();calcular();
+      $('sug').innerHTML='<div class="sug"><b>La IA sugiere:</b> '+j.partidas.map(function(s){return s.id+' ×'+s.cantidad+(s.porque?' ('+s.porque+')':'')}).join(' · ')+(j.alertas&&j.alertas.length?'<br><b>Ojo:</b> '+j.alertas.join(' · '):'')+(j.preguntas_al_cliente&&j.preguntas_al_cliente.length?'<br><b>Pregunta al cliente:</b> '+j.preguntas_al_cliente.join(' · '):'')+'</div>';
+    });};
+  $('btn-propuesta').onclick=function(){if(!PROY||!COT)return;$('btn-propuesta').disabled=true;
+    var partidas=ITEMS.filter(function(i){return i.cantidad>0&&i.costoUnitario>0});
+    // cada costo manual se guarda como muestra del Cost Book
+    partidas.filter(function(i){return !i.validado}).forEach(function(i){post('/api/cotizador/muestra',{categoriaId:$('categoria').value,itemId:i.id,costo:i.costoUnitario,supuestos:'visita '+PROY.id});});
+    post('/api/cotizador/propuesta',{proyectoId:PROY.id,categoriaId:$('categoria').value,partidas:partidas,precioFinal:PRECIO,incluye:$('incluye').value,noIncluye:$('noincluye').value,notas:$('notas').value,fotos:FOTOS}).then(function(j){
+      if(j.error){aviso(j.error);$('btn-propuesta').disabled=false;return;}
+      PROY=j.proyecto;aviso(j.proyecto.estado==='aprobacion-pendiente'?'Propuesta guardada. Esperando aprobación del precio.':'✅ Propuesta enviada al cliente por WhatsApp.');habilitar();
+    });};
+  $('btn-cerrar').onclick=function(){if(!PROY)return;$('btn-cerrar').disabled=true;post('/api/cotizador/cerrar',{proyectoId:PROY.id}).then(function(j){if(j.error){aviso(j.error);return;}PROY=j.proyecto;aviso('Contrato y depósito enviados al cliente. El cierre se completa al recibir el depósito.');habilitar();});};
+  $('btn-deposito').onclick=function(){if(!PROY)return;if(!confirm('¿Confirmas que el depósito de '+money(PROY.deposito)+' entró (ATH Móvil o transferencia)?'))return;post('/api/cotizador/cerrar',{proyectoId:PROY.id,depositoRecibido:true,metodo:'manual'}).then(function(j){if(j.error){aviso(j.error);return;}PROY=j.proyecto;aviso('🎉 Proyecto CERRADO. Oferta '+(j.oferta?j.oferta.id:'')+' enviada a los contratistas.');habilitar();});};
+})();
+</script>
+</body>
+</html>

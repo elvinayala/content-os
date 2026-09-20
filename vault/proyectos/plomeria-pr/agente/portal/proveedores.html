@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es-PR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resuelto · Proveedores</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0F3D5E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Resuelto">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--c1:#0F3D5E;--c2:#F2621F;--c6:#1F9D6B;--night:#071B2C;--surface:#0C2A42;--line:rgba(255,255,255,.14);--ink:#EAF2F8;--ink2:#9FB8CA;--ink3:#6E8AA0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--night);color:var(--ink);font-size:16px;line-height:1.45;padding-bottom:60px}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,27,44,.92);backdrop-filter:blur(10px)}
+.logo{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;font-size:22px;letter-spacing:-.03em}.logo svg{width:28px;height:28px}
+.logo small{font-family:'DM Sans';font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--c2);border-left:1px solid var(--line);padding-left:8px;margin-left:2px}
+#quien{font-size:14px;color:var(--ink2)}
+main{max-width:720px;margin:0 auto;padding:18px}
+h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.card b.id{font-family:Sora;color:var(--c2);font-size:13px;letter-spacing:.06em}
+.card h3{font-family:Sora;font-size:17px;font-weight:700;margin:4px 0 6px}
+.card p{color:var(--ink2);font-size:14.5px}
+.pago{font-family:Sora;font-weight:800;font-size:24px;color:#fff;white-space:nowrap}.pago small{display:block;font-family:'DM Sans';font-weight:500;font-size:11px;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;font-size:13.5px;color:var(--ink2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--c2);color:#fff;font-weight:600;border:0;border-radius:12px;padding:14px 18px;font:inherit;cursor:pointer;width:100%;margin-top:14px;font-size:16px}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink2)}
+.tag.ok{background:rgba(31,157,107,.2);color:#63D6A6}.tag.warn{background:rgba(242,98,31,.18);color:#FF9660}
+.vacio{color:var(--ink3);font-size:14.5px;padding:18px;border:1px dashed var(--line);border-radius:14px;text-align:center}
+.timer{font-variant-numeric:tabular-nums;color:#FF9660;font-weight:600}
+.aviso{background:rgba(31,157,107,.16);color:#7EE0B4;border-radius:12px;padding:12px 14px;font-weight:600;margin-bottom:12px;display:none}
+.error{background:rgba(185,74,36,.2);color:#FFB39A}
+.banner{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:none;gap:12px;align-items:center;justify-content:space-between}
+.banner p{font-size:14px;color:var(--ink2);margin:0}.banner b{color:#fff;display:block;font-family:Sora;font-size:15px}
+.banner button{background:var(--c2);color:#fff;border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+.pill-push{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#63D6A6}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg viewBox="0 0 64 64" fill="none"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#fff"/><path d="M20 35 L29 44 L46 26" stroke="#F2621F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>resuelto<small>Proveedores</small></div>
+  <div id="quien">…</div>
+</header>
+<main>
+  <div class="aviso" id="aviso"></div>
+  <div class="banner" id="b-push"><p><b>Activa las alertas</b>Te avisamos al celular en cuanto salga un trabajo en tu zona. El primero que acepta se lo lleva.</p><button id="btn-push">Activar</button></div>
+  <div class="banner" id="b-install"><p><b>Instala la app</b>Añádela a tu pantalla de inicio para abrirla con un toque.</p><button id="btn-install">Instalar</button></div>
+  <h2>Disponibles ahora</h2>
+  <div id="abiertas"><div class="vacio">Cargando…</div></div>
+  <h2>Mis trabajos</h2>
+  <div id="mios"></div>
+</main>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), p=q.get('p'), k=q.get('k');
+  var $=function(id){return document.getElementById(id)};
+  var aviso=function(t,err){var a=$('aviso');a.textContent=t;a.className='aviso'+(err?' error':'');a.style.display='block';setTimeout(function(){a.style.display='none'},5000)};
+  if(q.get('firmado')) aviso('Contrato '+q.get('firmado')+' firmado. ¡Listo para trabajar!');
+  if(!p||!k){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">Entra desde el enlace que te mandamos por WhatsApp.</div>';return;}
+  var money=function(n){return '$'+Number(n).toLocaleString('en-US')};
+  var cuando=function(iso){return iso?new Date(iso).toLocaleString('es-PR',{timeZone:'America/Puerto_Rico',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'por coordinar'};
+  function restante(iso){var ms=new Date(iso)-Date.now();if(ms<=0)return 'vencida';var m=Math.floor(ms/60000);return m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min'}
+  function card(o,mia){
+    var firma=o.contrato?(o.contrato.estado==='firmado'?'<span class="tag ok">Contrato firmado</span>':(o.contrato.urlFirma?'<a class="btn" href="'+o.contrato.urlFirma+'">✍️ Firmar orden de trabajo</a>':'<span class="tag warn">Contrato pendiente de firma</span>')):'';
+    return '<div class="card"><div class="top"><div><b class="id">'+o.id+' · '+o.referencia+'</b><h3>'+o.categoriaNombre+'</h3><p>'+o.resumen+'</p></div><div class="pago">'+money(o.pagoProveedor)+'<small>tu pago</small></div></div>'
+      +'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span>'+(mia?'<span class="tag ok">'+(o.estado==='aceptada'?'Tuyo':'Asignado a ti')+'</span>':'<span>⏳ <span class="timer">'+restante(o.expiraEn)+'</span></span>')+'</div>'
+      +(mia?firma:'<button class="btn" data-id="'+o.id+'">Aceptar este trabajo</button>')+'</div>';
+  }
+  function cargar(){
+    fetch('/api/proveedores/ofertas?p='+encodeURIComponent(p)+'&k='+k).then(function(r){return r.json()}).then(function(j){
+      if(j.error){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">'+j.error+'</div>';return;}
+      $('quien').textContent=j.proveedor.nombre+' · '+(j.proveedor.tipo==='plomero'?'Plomero':'Contratista');
+      var ab=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==p}), mi=j.ofertas.filter(function(o){return o.aceptadoPor===p});
+      $('abiertas').innerHTML=ab.length?ab.map(function(o){return card(o,false)}).join(''):'<div class="vacio">Nada disponible ahora. Te avisamos por WhatsApp en cuanto salga algo en tu zona.</div>';
+      $('mios').innerHTML=mi.length?mi.map(function(o){return card(o,true)}).join(''):'<div class="vacio">Todavía no tienes trabajos asignados.</div>';
+      document.querySelectorAll('button[data-id]').forEach(function(b){b.onclick=function(){b.disabled=true;b.textContent='Aceptando…';
+        fetch('/api/proveedores/aceptar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p:p,k:k,oferta:b.dataset.id})}).then(function(r){return r.json()}).then(function(j){
+          if(j.ok){aviso('✅ '+j.oferta.id+' es tuyo. Revisa WhatsApp: ahí van los datos del cliente y tu orden de trabajo.');}else{aviso(j.motivo||'No se pudo aceptar.',true);} cargar();});};});
+    }).catch(function(){$('abiertas').innerHTML='<div class="vacio">No pude conectar. Intenta otra vez.</div>'});
+  }
+  cargar(); setInterval(cargar,20000);
+
+  // ── App instalable + notificaciones push ──
+  var urlB64=function(b){var p='='.repeat((4-b.length%4)%4),s=(b+p).replace(/-/g,'+').replace(/_/g,'/'),r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a};
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      if(!('PushManager' in window)||!('Notification' in window))return;
+      reg.pushManager.getSubscription().then(function(sub){
+        if(sub){$('quien').innerHTML+=' <span class="pill-push">● alertas activas</span>';return;}
+        if(Notification.permission==='denied')return;
+        $('b-push').style.display='flex';
+        $('btn-push').onclick=function(){
+          fetch('/api/proveedores/push/clave').then(function(r){return r.json()}).then(function(j){
+            if(!j.clave){aviso('Las alertas push no están configuradas todavía. Te avisamos por WhatsApp.',true);$('b-push').style.display='none';return;}
+            return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(j.clave)}).then(function(sub){
+              return fetch('/api/proveedores/push/suscribir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p:p,k:k,sub:sub,dispositivo:navigator.userAgent.slice(0,80)})});
+            }).then(function(){$('b-push').style.display='none';aviso('✅ Alertas activas. Te avisamos en cuanto salga un trabajo.');});
+          }).catch(function(){aviso('No se pudieron activar las alertas en este navegador.',true)});
+        };
+      });
+    });
+  }
+  var deferred=null;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;$('b-install').style.display='flex';$('btn-install').onclick=function(){deferred.prompt();deferred=null;$('b-install').style.display='none';};});
+  var esIOS=/iphone|ipad/i.test(navigator.userAgent), standalone=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  if(esIOS&&!standalone){$('b-install').style.display='flex';$('b-install').querySelector('p').innerHTML='<b>Instala la app en tu iPhone</b>Toca <strong>Compartir</strong> y luego <strong>Añadir a pantalla de inicio</strong>. Así recibes las alertas.';$('btn-install').style.display='none';}
+})();
+</script>
+</body>
+</html>

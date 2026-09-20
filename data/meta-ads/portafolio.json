@@ -1,0 +1,118 @@
+{
+  "actualizadoEl": "2026-09-18",
+  "apiVersion": "v25.0",
+  "app": {
+    "nombre": "Hey Bori",
+    "id": "27337036735966798",
+    "nota": "App aprobada (ads_management, ads_read, business_management). Los tokens de usuario del sistema se generan con esta app."
+  },
+  "marcas": {
+    "level-up": {
+      "nombre": "Level Up Media",
+      "negocioId": "100872629602980",
+      "cuentaId": "2010206776851",
+      "cuentaNombre": "Level Up Official 2025",
+      "pageId": null,
+      "igUserId": null,
+      "pixelId": "27706808412306198",
+      "pixelNombre": "Level Up Media PR",
+      "tokenEnv": "META_ADS_TOKEN",
+      "landing": {
+        "url": "https://class.levelupmediapr.net/crecimiento",
+        "utmBase": "utm_source=meta&utm_medium=paid"
+      },
+      "compuertas": {
+        "cplMax": 10,
+        "ctrMin": 1,
+        "diasPrueba": 7
+      },
+      "publicosClave": {
+        "clientes": "6950438101193",
+        "clientes-alto-valor": "6854406130393",
+        "clientes-customer-spend": "6858117832793",
+        "similar-clientes-1": "6950628999793",
+        "similar-clientes-alto-valor-1": "6854412364993",
+        "similar-clientes-alto-valor-3": "6884305660393",
+        "similar-ig-engagers-1": "6884303633993",
+        "similar-fb-engagers-3": "6899824899793",
+        "engagers-365-fb": "6917880872593",
+        "engagers-365-ig": "6917880965593",
+        "fb-interaccion-365": "6884304364793",
+        "video50-365": "6717224745793",
+        "video75-lum": "6884302883393",
+        "video75-120d": "52507636602197",
+        "tibio-15-365": "52507635995997",
+        "ig-interaccion-60d": "52580755521797"
+      },
+      "pixelesNoUsar": [
+        "943949588521782",
+        "885023842490900"
+      ],
+      "publicosInventario": "data/meta-ads/publicos-level-up.json"
+    },
+    "ai-borinquen": {
+      "nombre": "AI Borinquen",
+      "negocioId": "492090353646087",
+      "cuentaId": "1114829350772277",
+      "cuentaNombre": "AI BORINQUEN",
+      "pageId": null,
+      "igUserId": null,
+      "pixelId": "2203459307257468",
+      "pixelNombre": "AI Borinquen Auditoría",
+      "tokenEnv": "META_ADS_TOKEN_AIB",
+      "landing": {
+        "url": "https://auditoria.aiborinquen.co/automatizacion",
+        "utmBase": "utm_source=meta&utm_medium=paid"
+      },
+      "compuertas": {
+        "cplMax": 10,
+        "ctrMin": 1,
+        "diasPrueba": 7
+      },
+      "publicosClave": {},
+      "campanasExistentes": {
+        "juliana": "120248911627010250"
+      }
+    },
+    "shadow-operator": {
+      "nombre": "Shadow Operator",
+      "negocioId": null,
+      "cuentaId": null,
+      "pageId": null,
+      "igUserId": null,
+      "pixelId": null,
+      "tokenEnv": "META_ADS_TOKEN",
+      "landing": {
+        "url": "https://myworkspace2d96f.myclickfunnels.com/negocio-digital",
+        "utmBase": "utm_source=meta&utm_medium=paid"
+      },
+      "compuertas": {
+        "cplMax": 8,
+        "ctrMin": 1,
+        "diasPrueba": 7
+      },
+      "publicosClave": {},
+      "nota": "Sin cuenta ni pixel documentados: correr `cuentas` para descubrir y completar."
+    },
+    "resuelto": {
+      "nombre": "Resuelto Home Services",
+      "negocioId": null,
+      "cuentaId": null,
+      "pageId": null,
+      "igUserId": null,
+      "pixelId": null,
+      "tokenEnv": "META_ADS_TOKEN_RESUELTO",
+      "landing": {
+        "url": null,
+        "utmBase": "utm_source=meta&utm_medium=paid"
+      },
+      "compuertas": {
+        "cplMax": 15,
+        "ctrMin": 1,
+        "diasPrueba": 7
+      },
+      "publicosClave": {},
+      "nota": "Business Manager propio (ver vault/proyectos/plomeria-pr/). Completar con `cuentas`."
+    }
+  }
+}

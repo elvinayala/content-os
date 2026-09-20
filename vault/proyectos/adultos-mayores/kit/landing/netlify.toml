@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/cuidadoras"
+  to = "/cuidadoras/index.html"
+  status = 200
+
+[[headers]]
+  for = "/flyers/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

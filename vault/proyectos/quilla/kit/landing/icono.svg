@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <title>Quilla · ícono</title>
+  <!-- línea de agua -->
+  <path d="M6 24h52"/>
+  <!-- casco: lo que va debajo -->
+  <path d="M14 27c4 12 10 20 18 20s14-8 18-20"/>
+  <!-- quilla -->
+  <path d="M32 47v9"/>
+</svg>

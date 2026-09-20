@@ -1,0 +1,64 @@
+{
+  "actualizadoEl": "2026-09-19",
+  "herramienta": "ActiveCampaign (cuenta de Level Up, plan $79). Una cuenta, dos marcas: lista + tag marca:*. Dominio de envío y DKIM por marca.",
+  "regla": "Cadencia total por persona ≤ 2 emails/semana (automatización + newsletter). Tuteo PR. Nunca 'gratis' en asunto ni CTA. Nunca prometer ingresos. Cada email = UN ángulo núcleo.",
+  "listas": [
+    { "clave": "lu", "nombre": "Level Up Media", "env": "AC_LISTA_LU", "from": { "nombre": "Elvin · Level Up Media", "email": "elvin@levelupmediapr.net" } },
+    { "clave": "aib", "nombre": "AI Borinquen", "env": "AC_LISTA_AIB", "from": { "nombre": "Elvin · AI Borinquen", "email": "hola@aiborinquen.co" } },
+    { "clave": "so", "nombre": "Shadow Operator", "env": "AC_LISTA_SO", "from": { "nombre": "Elvin Ayala", "email": "elvin@shadowoperator.co" } }
+  ],
+  "tags": {
+    "marca": ["marca:lu", "marca:aib", "marca:so"],
+    "avatar (solo LU)": ["avatar:servicios", "avatar:coach"],
+    "origen": ["origen:quiz", "origen:calendly", "origen:manychat", "origen:reel", "origen:historia", "origen:seguidor", "origen:leadad", "origen:referido", "origen:importado"],
+    "etapa (la pone la app desde Calendly/Pipedrive)": ["etapa:agendo", "etapa:reagendo", "etapa:cancelo", "etapa:show", "etapa:noshow", "etapa:no-compro", "etapa:cliente", "etapa:ex-cliente"],
+    "quiz": ["quiz:lead", "quiz:resultado", "quiz-principal:<cuello>"],
+    "control": ["sin-respuesta", "nutrir", "no-agendo", "unsub-newsletter"]
+  },
+  "campos": [
+    { "nombre": "Negocio", "tipo": "text" },
+    { "nombre": "WhatsApp", "tipo": "text" },
+    { "nombre": "Dolor", "tipo": "text" },
+    { "nombre": "Score diagnóstico", "tipo": "text" },
+    { "nombre": "Closer", "tipo": "text" }
+  ],
+  "automatizaciones": [
+    {
+      "clave": "bienvenida", "marcas": ["lu", "aib"], "trigger": "se suscribe a la lista de la marca (cualquier origen) y NO tiene etapa:agendo",
+      "salida": "tag etapa:agendo o etapa:cliente", "emails": 5, "dias": [0, 2, 4, 7, 10],
+      "nota": "En LU se ramifica por avatar:coach vs avatar:servicios en los emails 2 y 4."
+    },
+    {
+      "clave": "lead-agenda", "marcas": ["lu", "aib"], "trigger": "termina bienvenida sin etapa:agendo, o tag no-agendo (ManyChat)",
+      "salida": "etapa:agendo", "emails": 4, "dias": [0, 1, 3, 6]
+    },
+    {
+      "clave": "pre-llamada", "marcas": ["lu", "aib"], "trigger": "tag etapa:agendo",
+      "salida": "etapa:show / etapa:noshow / etapa:cancelo", "emails": 3, "cuando": ["al agendar", "24 h antes", "1 h antes (SMS/WhatsApp por Twilio)"],
+      "nota": "La de mayor ROI: sube el show rate. Ángulo fijo 'asume que el lead no te conoce'."
+    },
+    {
+      "clave": "no-show", "marcas": ["lu", "aib"], "trigger": "tag etapa:noshow (Pipedrive → app → AC, fase 2)",
+      "salida": "etapa:agendo", "emails": 3, "dias": [0, 1, 3]
+    },
+    {
+      "clave": "no-compro", "marcas": ["lu", "aib"], "trigger": "tag etapa:no-compro (Pipedrive LOST/no compró)",
+      "salida": "etapa:agendo o etapa:cliente", "emails": 4, "dias": [1, 4, 9, 20], "nota": "Objeciones reales + beca $250 (1 vez cada 3 meses)."
+    },
+    {
+      "clave": "newsletter", "marcas": ["lu", "aib"], "trigger": "campaña semanal, jueves 8:00 AM PR",
+      "nombre": { "lu": "El Sistema", "aib": "Tu equipo digital" },
+      "excluye": ["unsub-newsletter"], "rotacion": { "lu": "6 ángulos núcleo en orden", "aib": "8 ángulos; 1 de cada 3 = digitalizarse" },
+      "flujo": "miércoles 9 AM Sofi deja 2 borradores en la bandeja (LU + AIB) → Elvin aprueba → la app crea la campaña en AC programada para el jueves 8 AM → si no aprueba, no sale."
+    }
+  ],
+  "cables": [
+    { "de": "Quiz funnel (ClickFunnels)", "a": "AC", "como": "app/api/auditoria → upsertContacto: lista de la marca + origen:quiz + quiz:lead/resultado + quiz-principal + avatar (LU)", "estado": "código listo; activa con ACTIVECAMPAIGN_*" },
+    { "de": "Calendly", "a": "AC", "como": "app/api/calendly → upsertContacto: origen:calendly + etapa:agendo/reagendo/cancelo + agendo-por:<utm_source>; marca por evento/closer (CALENDLY_MARCA_AIB_REGEX)", "estado": "código listo; activa con ACTIVECAMPAIGN_*" },
+    { "de": "ManyChat", "a": "AC", "como": "integración nativa de ManyChat: mapear email/WhatsApp + tags marca/origen/dolor/no-agendo", "estado": "config en ManyChat (Jessica)" },
+    { "de": "Pipedrive (stage)", "a": "AC", "como": "webhook de Pipedrive → app/api/pipedrive (por construir) → tag etapa:*", "estado": "fase 2" },
+    { "de": "Bandeja (aprobar newsletter)", "a": "AC", "como": "app/api/aprobar-entrega → crearCampana (v1) programada jueves 8 AM", "estado": "código listo; activa con ACTIVECAMPAIGN_*" }
+  ],
+  "utm": { "bienvenida": "utm_source=bienvenida", "lead-agenda": "utm_source=lead-agenda", "newsletter": "utm_source=newsletter&utm_campaign=<AAAA-MM-DD>", "pre-llamada": "utm_source=pre-llamada" },
+  "kpis": { "emails capturados/semana": "50 LU · 30 AIB", "DM→email": "≥40%", "lead→agenda 7 días": "≥15%", "show rate": "+10 pts", "newsletter": "open 40% · click 4%" }
+}

@@ -1,0 +1,30 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/plomeros"
+  to = "/plomeros/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/contratistas"
+  to = "/contratistas/index.html"
+  status = 200
+
+[[headers]]
+  for = "/flyers/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/flyers/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"

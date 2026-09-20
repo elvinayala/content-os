@@ -1,0 +1,222 @@
+{
+  "marca": "level-up",
+  "nombre": "LU · Diagnóstico · Coaches/Agencias · Test 3 creativos × públicos",
+  "objetivo": "OUTCOME_LEADS",
+  "evento": "LEAD",
+  "topeDiario": 120,
+  "landing": "https://class.levelupmediapr.net/crecimiento",
+  "urlTags": "utm_source=meta&utm_medium=paid&utm_campaign=lu-diagnostico&utm_content={{ad.name}}&utm_term={{adset.name}}",
+  "targetingBase": {
+    "paises": [
+      "PR"
+    ],
+    "edadMin": 25,
+    "edadMax": 55,
+    "plataformas": [
+      "instagram"
+    ],
+    "posicionesIG": [
+      "stream",
+      "story",
+      "reels",
+      "explore",
+      "explore_home",
+      "profile_feed"
+    ]
+  },
+  "publicos": {
+    "A": {
+      "nombre": "Frío · IG intereses coaches/agencias",
+      "advantage": true,
+      "interesesBuscar": [
+        "coaching",
+        "marketing digital",
+        "emprendimiento",
+        "negocios en línea",
+        "cursos en línea",
+        "agencia de marketing",
+        "infoproductos",
+        "mentoría"
+      ],
+      "intereses": [],
+      "excluir": [
+        "clientes",
+        "clientes-alto-valor",
+        "leads-quiz"
+      ]
+    },
+    "B": {
+      "nombre": "Similares 1% · clientes, alto valor, IG engagers, video 50%",
+      "advantage": false,
+      "incluir": [
+        "similar-clientes-1",
+        "similar-clientes-alto-valor-1",
+        "similar-ig-engagers-1",
+        "similar-video50-1"
+      ],
+      "excluir": [
+        "clientes",
+        "clientes-alto-valor",
+        "leads-quiz"
+      ]
+    },
+    "C": {
+      "nombre": "Caliente · web 180d, leads quiz, engagers 365, video 50/75%",
+      "advantage": false,
+      "incluir": [
+        "web-180d",
+        "leads-quiz",
+        "engagers-365-fb",
+        "engagers-365-ig",
+        "video50-365",
+        "video75-lum"
+      ],
+      "excluir": [
+        "clientes",
+        "clientes-alto-valor"
+      ]
+    }
+  },
+  "publicosACrear": {
+    "web-180d": {
+      "tipo": "web",
+      "nombre": "LU · Web 180d (pixel Level Up Media PR)",
+      "dias": 180,
+      "evento": "PageView"
+    },
+    "leads-quiz": {
+      "tipo": "web",
+      "nombre": "LU · Leads Diagnóstico (evento Lead) 180d",
+      "dias": 180,
+      "evento": "Lead"
+    },
+    "similar-video50-1": {
+      "tipo": "similar",
+      "nombre": "LU · Similar 1% Video 50%+ Level Up",
+      "origen": "video50-365",
+      "ratio": 0.01,
+      "pais": "PR"
+    },
+    "agendaron-no-compraron": {
+      "tipo": "lista",
+      "nombre": "LU · Agendaron y no compraron (Pipedrive CLOSERS)",
+      "descripcion": "Exportar de Pipedrive y subir con subir-lista; fase 2"
+    },
+    "solo-agendaron": {
+      "tipo": "lista",
+      "nombre": "LU · Solo agendaron (Pipedrive CLOSERS)",
+      "descripcion": "fase 2"
+    },
+    "similar-agendados-1": {
+      "tipo": "similar",
+      "nombre": "LU · Similar 1% Agendados",
+      "origen": "agendaron-no-compraron",
+      "ratio": 0.01,
+      "pais": "PR"
+    }
+  },
+  "creativos": [
+    {
+      "clave": "V1",
+      "angulo": "Contenido sin estructura ni ángulos ganadores (avatar coaches/agencias)",
+      "videoId": null,
+      "copy": {
+        "textoPrincipal": "Publicas todos los días y no te escribe nadie. No es el algoritmo. Es que tu contenido no tiene ángulos ganadores ni una estrategia de comunicación que convierta seguidores en clientes.\n\nSi eres coach, mentor, infoproductor o tienes una agencia y facturas entre $3K y $10K al mes, hay un diagnóstico de 1 minuto que te dice exactamente qué te frena: cuántos clientes te faltan para tu meta, dónde se rompe tu sistema y qué arreglar primero.\n\nEntras tus números. Recibes tu plan de acción de 14 días. Sin llamadas de venta para verlo.\n\nSolo para negocios en Puerto Rico.",
+        "titulo": "Audita tu negocio en 1 minuto y recibe tu plan de 14 días",
+        "descripcion": "Diagnóstico de Crecimiento · Level Up Media",
+        "cta": "LEARN_MORE"
+      }
+    },
+    {
+      "clave": "V2",
+      "angulo": "Depender de referidos y lanzamientos → sistema que vende todos los días (caso Yadiel)",
+      "videoId": null,
+      "copy": {
+        "textoPrincipal": "Yadiel facturaba $5K al mes viviendo de lanzamientos. Hoy factura $40K al mes con un sistema que vende todos los días: oferta, contenido con estructura, anuncios y seguimiento.\n\nUn lanzamiento al año no es un negocio, es una apuesta. Y depender de referidos tampoco es un plan.\n\nSi vendes coaching, mentoría o servicios digitales y quieres saber qué te falta para pasar al siguiente nivel, haz el Diagnóstico de Crecimiento: 1 minuto, tus números reales y un plan de acción de 14 días.\n\nResultados de clientes reales; cada negocio es distinto. Solo Puerto Rico.",
+        "titulo": "¿Qué te falta para tu meta? Audítalo en 1 minuto",
+        "descripcion": "Plan de acción de 14 días con tus números",
+        "cta": "LEARN_MORE"
+      }
+    },
+    {
+      "clave": "V3",
+      "angulo": "No sabes cuántos clientes te faltan → la auditoría te lo dice (promesa exacta de la landing)",
+      "videoId": null,
+      "copy": {
+        "textoPrincipal": "¿Cuántos clientes te faltan para llegar a tu meta del mes? La mayoría de los coaches y dueños de agencias no lo sabe. Por eso publican, lanzan y prueban cosas al azar.\n\nEl Diagnóstico de Crecimiento te lo dice en menos de 1 minuto: entras tu facturación, tus leads y tu meta, y te devuelve cuántos clientes te faltan, cuál es tu cuello de botella (leads, conversión o seguimiento) y un plan de acción de 14 días para destrabarlo.\n\nNo es un formulario. Es una auditoría con tus números.\n\nSolo para negocios en Puerto Rico.",
+        "titulo": "Descubre qué frena tu crecimiento en 1 minuto",
+        "descripcion": "Diagnóstico de Crecimiento · con tus números reales",
+        "cta": "LEARN_MORE"
+      }
+    }
+  ],
+  "conjuntos": [
+    {
+      "clave": "A-V1",
+      "publico": "A",
+      "creativo": "V1",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "A-V2",
+      "publico": "A",
+      "creativo": "V2",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "A-V3",
+      "publico": "A",
+      "creativo": "V3",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "B-V1",
+      "publico": "B",
+      "creativo": "V1",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "B-V2",
+      "publico": "B",
+      "creativo": "V2",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "B-V3",
+      "publico": "B",
+      "creativo": "V3",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "C-V1",
+      "publico": "C",
+      "creativo": "V1",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "C-V2",
+      "publico": "C",
+      "creativo": "V2",
+      "presupuestoDiario": 13
+    },
+    {
+      "clave": "C-V3",
+      "publico": "C",
+      "creativo": "V3",
+      "presupuestoDiario": 13
+    }
+  ],
+  "fase2": {
+    "cuando": "día 5-7 con ≥ $60 gastados por conjunto",
+    "pausar": "CPL > 2× mediana, o CTR < 1% con ≥ 1,000 impresiones, o $20+ sin leads",
+    "duplicar": "el creativo ganador (menor CPL con ≥ 5 leads) a públicos nuevos: similares 3-5%, intereses set 2 (ventas, publicidad en línea, Hormozi/Vaynerchuk), video 25%+, seguidores IG; mantener suma ≤ $120/día",
+    "escalar": "+10-20% por día solo a conjuntos con CPL ≤ $10 tres días seguidos; nunca por encima del tope sin OK de Elvin",
+    "publicosNuevos": "agendaron-no-compraron + solo-agendaron (listas de Pipedrive) → conjunto C2; similar-agendados-1 → B2; similar-clientes-alto-valor-3 (6884305660393) y tibio-15-365 (52507635995997) → conjuntos A2/B3"
+  },
+  "meta": {
+    "campaignId": null,
+    "conjuntos": {},
+    "creativos": {},
+    "anuncios": {}
+  }
+}

@@ -39,3 +39,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Snapshots del CEO Command Center (data sensible de clientes — los escribe /brief-ceo)
+data/ops-*.json
+data/agenda.json
+data/debrief.json
+data/ig-shadow.json
+data/ventas-ea.json
+data/llamadas.json
+data/encargos.json
+data/.slack-estado.json
+
+# deps locales del generador de decks (kit/entrevista) y otros anidados
+**/node_modules/
+
+# estado por máquina de los puentes de Telegram (offset/sesión): nunca compartido entre Mac y Railway
+data/telegram-puente*.json
+.slack-estado.json
+.claude/settings.local.json
+.claude/worktrees/
+scratchpad_titles_*.txt
+*.bak

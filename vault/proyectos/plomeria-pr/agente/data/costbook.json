@@ -1,0 +1,126 @@
+{
+  "version": "0.1 · estructura · costos SIN validar",
+  "moneda": "USD",
+  "regla": "Los costos de este libro son lo que el contratista NECESITA RECIBIR para ejecutar bien y ganar dinero. Nunca lo que le cobraría al cliente. El precio al cliente lo calcula cotizador.ts aplicando el margen de Resuelto.",
+  "guion_levantamiento": {
+    "pregunta_clave": "¿Cuánto necesitas recibir para ejecutar correctamente este scope y ganar dinero?",
+    "como": "Sesión de 45 minutos con cada contratista, partida por partida, con un proyecto tipo como referencia (p. ej. baño de 5x8 pies, remodelación completa, terminaciones medias). Se anota costo unitario, unidad, supuestos y qué NO incluye. Mínimo 3 contratistas por partida antes de marcarla validada.",
+    "validado_cuando": "3 o más muestras con desviación menor al 25% entre la más alta y la más baja. Si hay más desviación, se levanta una cuarta y se revisa el scope: casi siempre están cotizando cosas distintas.",
+    "actualizacion": "Cada proyecto ejecutado añade una muestra REAL (costo pagado al contratista por partida). Con 10 proyectos por categoría, las muestras reales pesan más que las cotizadas."
+  },
+  "categorias": {
+    "poda-arboles": {
+      "contingencia_pct": 5,
+      "items": [
+        { "id": "poda-arbol-mediano", "nombre": "Poda de árbol mediano (hasta la altura de la casa)", "unidad": "árbol", "costo": null, "validado": false, "muestras": [] },
+        { "id": "poda-arbol-grande", "nombre": "Poda de árbol grande (más alto que la casa)", "unidad": "árbol", "costo": null, "validado": false, "muestras": [] },
+        { "id": "remocion-arbol-mediano", "nombre": "Remoción completa de árbol mediano", "unidad": "árbol", "costo": null, "validado": false, "muestras": [] },
+        { "id": "remocion-arbol-grande", "nombre": "Remoción completa de árbol grande", "unidad": "árbol", "costo": null, "validado": false, "muestras": [] },
+        { "id": "remocion-tocon", "nombre": "Remoción de tocón (stump grinding)", "unidad": "tocón", "costo": null, "validado": false, "muestras": [] },
+        { "id": "poda-palma", "nombre": "Limpieza de palma", "unidad": "palma", "costo": null, "validado": false, "muestras": [] },
+        { "id": "grua-canasta", "nombre": "Grúa o canasta (cuando no hay acceso para trepar)", "unidad": "día", "costo": null, "validado": false, "muestras": [] },
+        { "id": "disposicion-verde", "nombre": "Acarreo y disposición de material verde", "unidad": "viaje", "costo": null, "validado": false, "muestras": [] },
+        { "id": "permiso-drna", "nombre": "Permiso DRNA / municipal (cuando aplica)", "unidad": "permiso", "costo": null, "validado": false, "muestras": [], "nota": "Incluye gestión. Confirmar con el abogado quién lo tramita." }
+      ]
+    },
+    "banos": {
+      "contingencia_pct": 10,
+      "items": [
+        { "id": "demolicion-bano", "nombre": "Demolición y disposición (baño completo)", "unidad": "baño", "costo": null, "validado": false, "muestras": [] },
+        { "id": "plomeria-bano", "nombre": "Plomería: reubicación/reposición de puntos (mano de obra)", "unidad": "punto", "costo": null, "validado": false, "muestras": [], "nota": "Lo ejecuta la red de plomeros de Resuelto." },
+        { "id": "electricidad-bano", "nombre": "Electricidad: salidas, luces, extractor (perito)", "unidad": "salida", "costo": null, "validado": false, "muestras": [] },
+        { "id": "impermeabilizacion-ducha", "nombre": "Impermeabilización de área de ducha", "unidad": "ducha", "costo": null, "validado": false, "muestras": [] },
+        { "id": "losa-pared", "nombre": "Instalación de losa en pared (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "losa-piso", "nombre": "Instalación de losa en piso (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "instalacion-vanity", "nombre": "Instalación de vanity, espejo y accesorios", "unidad": "juego", "costo": null, "validado": false, "muestras": [] },
+        { "id": "instalacion-inodoro", "nombre": "Instalación de inodoro", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "puerta-ducha", "nombre": "Instalación de puerta o panel de ducha", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "empañetado-pintura-bano", "nombre": "Empañetado y pintura", "unidad": "baño", "costo": null, "validado": false, "muestras": [] },
+        { "id": "materiales-bano-medio", "nombre": "Materiales: terminaciones medias (losa, vanity, inodoro, grifería)", "unidad": "baño", "costo": null, "validado": false, "muestras": [], "nota": "Se cotiza por separado según selección del cliente; aquí va el paquete de referencia." },
+        { "id": "transporte-bano", "nombre": "Transporte de materiales", "unidad": "proyecto", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "cocinas": {
+      "contingencia_pct": 10,
+      "items": [
+        { "id": "demolicion-cocina", "nombre": "Demolición y disposición (cocina completa)", "unidad": "cocina", "costo": null, "validado": false, "muestras": [] },
+        { "id": "plomeria-cocina", "nombre": "Plomería: fregadera, dishwasher, filtro (mano de obra)", "unidad": "punto", "costo": null, "validado": false, "muestras": [] },
+        { "id": "electricidad-cocina", "nombre": "Electricidad: salidas, 220V estufa, luces (perito)", "unidad": "salida", "costo": null, "validado": false, "muestras": [] },
+        { "id": "gabinetes-instalacion", "nombre": "Instalación de gabinetes (mano de obra)", "unidad": "pie lineal", "costo": null, "validado": false, "muestras": [] },
+        { "id": "gabinetes-material", "nombre": "Gabinetes (material, calidad media)", "unidad": "pie lineal", "costo": null, "validado": false, "muestras": [] },
+        { "id": "countertop-cuarzo", "nombre": "Countertop de cuarzo instalado", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "countertop-granito", "nombre": "Countertop de granito instalado", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "backsplash", "nombre": "Backsplash (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "piso-cocina", "nombre": "Piso de cocina (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "pintura-cocina", "nombre": "Empañetado y pintura", "unidad": "cocina", "costo": null, "validado": false, "muestras": [] },
+        { "id": "transporte-cocina", "nombre": "Transporte de materiales", "unidad": "proyecto", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "pisos": {
+      "contingencia_pct": 7,
+      "items": [
+        { "id": "remocion-piso", "nombre": "Remoción de piso existente y disposición", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "nivelacion", "nombre": "Nivelación / preparación de superficie", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "losa-porcelanato-mo", "nombre": "Instalación de losa o porcelanato (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "lvp-mo", "nombre": "Instalación de vinilo LVP (mano de obra)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "material-piso-medio", "nombre": "Material de piso calidad media", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "zocalos", "nombre": "Zócalos instalados", "unidad": "pie lineal", "costo": null, "validado": false, "muestras": [] },
+        { "id": "transporte-pisos", "nombre": "Transporte de materiales", "unidad": "proyecto", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "puertas-ventanas": {
+      "contingencia_pct": 7,
+      "items": [
+        { "id": "ventana-impacto", "nombre": "Ventana de impacto instalada (tamaño estándar)", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "ventana-estandar", "nombre": "Ventana estándar de aluminio instalada", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "puerta-exterior", "nombre": "Puerta exterior instalada", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "puerta-interior", "nombre": "Puerta interior instalada", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "puerta-corrediza", "nombre": "Puerta corrediza / francesa instalada", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "abertura-nueva", "nombre": "Abertura nueva en muro (con dintel)", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "disposicion-pv", "nombre": "Disposición de puertas/ventanas viejas", "unidad": "proyecto", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "remodelacion-general": {
+      "contingencia_pct": 12,
+      "items": [
+        { "id": "demolicion-general", "nombre": "Demolición (paredes no estructurales) y disposición", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "muro-bloques", "nombre": "Muro de bloques con empañetado", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "pared-gypsum", "nombre": "Pared de gypsum terminada", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "plafon", "nombre": "Plafón / cielo raso", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "electricidad-general", "nombre": "Electricidad (perito) por salida", "unidad": "salida", "costo": null, "validado": false, "muestras": [] },
+        { "id": "plomeria-general", "nombre": "Plomería por punto", "unidad": "punto", "costo": null, "validado": false, "muestras": [] },
+        { "id": "pintura-general", "nombre": "Pintura interior", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "permiso-construccion", "nombre": "Permiso de construcción (OGPe/municipio) + gestión", "unidad": "permiso", "costo": null, "validado": false, "muestras": [] },
+        { "id": "contenedor-escombros", "nombre": "Contenedor de escombros", "unidad": "contenedor", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "piscinas": {
+      "contingencia_pct": 15,
+      "items": [
+        { "id": "excavacion", "nombre": "Excavación y disposición de tierra", "unidad": "yarda³", "costo": null, "validado": false, "muestras": [] },
+        { "id": "estructura-hormigon", "nombre": "Estructura de hormigón armado", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "plomeria-piscina", "nombre": "Plomería de piscina (retornos, skimmer, drenaje)", "unidad": "sistema", "costo": null, "validado": false, "muestras": [] },
+        { "id": "bomba-filtro", "nombre": "Bomba y filtro instalados", "unidad": "sistema", "costo": null, "validado": false, "muestras": [] },
+        { "id": "electricidad-piscina", "nombre": "Electricidad de piscina (perito, bonding)", "unidad": "sistema", "costo": null, "validado": false, "muestras": [] },
+        { "id": "terminacion-piscina", "nombre": "Terminación interior (plaster, pebble, losa)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "resane-piscina", "nombre": "Resane / re-plaster de piscina existente", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "deck-piscina", "nombre": "Deck perimetral", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "permiso-piscina", "nombre": "Permiso de construcción + gestión", "unidad": "permiso", "costo": null, "validado": false, "muestras": [] }
+      ]
+    },
+    "exteriores": {
+      "contingencia_pct": 10,
+      "items": [
+        { "id": "losa-terraza", "nombre": "Losa de hormigón para terraza", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "techo-terraza", "nombre": "Techo de terraza (aluminio / madera / hormigón)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "gazebo", "nombre": "Gazebo / pérgola instalado", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "piso-exterior", "nombre": "Piso exterior (losa antideslizante, pavers)", "unidad": "pie²", "costo": null, "validado": false, "muestras": [] },
+        { "id": "bbq-mamposteria", "nombre": "BBQ / barra de mampostería", "unidad": "unidad", "costo": null, "validado": false, "muestras": [] },
+        { "id": "electricidad-exterior", "nombre": "Electricidad exterior (perito)", "unidad": "salida", "costo": null, "validado": false, "muestras": [] },
+        { "id": "agua-exterior", "nombre": "Punto de agua exterior", "unidad": "punto", "costo": null, "validado": false, "muestras": [] },
+        { "id": "permiso-exterior", "nombre": "Permiso (estructura techada) + gestión", "unidad": "permiso", "costo": null, "validado": false, "muestras": [] }
+      ]
+    }
+  },
+  "formato_muestra": { "contratista_id": "C-001", "fecha": "2026-09-20", "costo": 0, "unidad": "pie²", "supuestos": "…", "no_incluye": "…", "origen": "cotizado | ejecutado" }
+}

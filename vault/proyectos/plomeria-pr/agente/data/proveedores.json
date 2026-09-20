@@ -1,0 +1,11 @@
+{
+  "_nota": "Registro unificado de PROVEEDORES (plomeros y contratistas) que reciben alertas de trabajos. Los contratistas que llegan a 'verified' en el almacén se suman automáticamente; aquí van los plomeros y cualquier alta manual. 'email' es donde llega el contrato para firmar.",
+  "tiempo_para_aceptar_min": { "trabajo": 30, "proyecto": 240 },
+  "proveedores": [
+    {
+      "id": "luis", "tipo": "plomero", "nombre": "Luis", "whatsapp": "1787000000", "email": "",
+      "categorias": ["plomeria"], "territorios": ["T1"], "estado": "activo", "calendar_id": "CAMBIAR@group.calendar.google.com",
+      "licencia": "PENDIENTE", "notas": "Plomero #1. Actualizar whatsapp, email, licencia y territorio con sus datos reales."
+    }
+  ]
+}

@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditoría de Automatización con IA · AI Borinquen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<!-- DIAGNOSTICO DE AUTOMATIZACION CON IA - AI BORINQUEN
+     Archivo autocontenido (HTML + CSS + JS). Para ClickFunnels 2.0: pegar TODO lo que esta
+     entre los marcadores CF:INICIO y CF:FIN dentro de un elemento "Custom JS/HTML" de la pagina. -->
+<style>html,body{margin:0;background:#050e0a}</style>
+</head>
+<body>
+<!-- CF:INICIO -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* Full-bleed dentro de ClickFunnels: fondo oscuro en toda la pagina y sin margenes del contenedor */
+  body { background: #050e0a !important; }
+  .ab-audit-bleed { max-width: none !important; width: 100% !important; padding: 0 !important; margin: 0 !important; background: transparent !important; }
+</style>
+<script>
+  (function () {
+    var el = document.getElementById('ab-audit');
+    if (!el) { document.addEventListener('DOMContentLoaded', function () { el = document.getElementById('ab-audit'); walk(el); }); } else walk(el);
+    function walk(n) { if (!n) return; var p = n.parentElement; while (p && p !== document.body) { p.classList.add('ab-audit-bleed'); p = p.parentElement; } document.body.style.margin = '0'; }
+  })();
+</script>
+<style>
+  #ab-audit, #ab-audit * { box-sizing: border-box; }
+  #ab-audit {
+    --bg: #050e0a; --card: #0d1f16; --card-2: #10271b; --border: #1f4030;
+    --fg: #e8f3ec; --muted: #8fb3a0; --accent: #2bff88; --accent-fg: #04140b; --teal: #1fb6a6;
+    --danger: #ff6b5e; --warm: #ff8a5b; --warm-fg: #1a0a05; --radius-card: 24px; --radius-input: 14px;
+    --font-head: 'Outfit', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--fg); font-family: var(--font-body);
+    min-height: 100vh; width: 100%; -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  #ab-audit .hero { position: relative; overflow: hidden; padding: 48px 20px 16px; text-align: center; }
+  #ab-audit .hero::before {
+    content: ""; position: absolute; inset: 0; opacity: .35; pointer-events: none;
+    background-image: linear-gradient(to right, rgba(43,255,136,.14) 1px, transparent 1px), linear-gradient(to bottom, rgba(43,255,136,.14) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 20%, #000, transparent);
+    mask-image: radial-gradient(ellipse 75% 60% at 50% 20%, #000, transparent);
+  }
+  #ab-audit .hero .glow2 { position: absolute; right: -120px; top: -40px; width: 620px; height: 420px; background: radial-gradient(closest-side, rgba(255,138,91,.30), transparent); pointer-events: none; }
+  #ab-audit .hero::after { content: ""; position: absolute; left: 50%; top: -120px; width: 520px; height: 320px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(43,255,136,.18), transparent); pointer-events: none; }
+  #ab-audit .hero > * { position: relative; }
+  #ab-audit h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(30px, 6vw, 58px); line-height: 1.06; letter-spacing: -.02em; margin: 0 auto; max-width: 900px; text-wrap: balance; }
+  #ab-audit h1 em { font-style: normal; color: var(--accent); font-weight: 800; }
+  #ab-audit h1 em.warm, #ab-audit .sub2 .warm { color: var(--warm); }
+  #ab-audit .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 7px 14px; border: 1px solid rgba(255,138,91,.45); border-radius: 999px; font: 600 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--warm); background: rgba(255,138,91,.08); }
+  #ab-audit .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 10px var(--warm); }
+  #ab-audit .sub { max-width: 720px; margin: 16px auto 0; color: var(--muted); font-size: clamp(16px, 2.2vw, 20px); line-height: 1.55; text-wrap: pretty; }
+  #ab-audit .sub b { color: var(--fg); font-weight: 600; }
+  #ab-audit .sub2 { margin: 20px auto 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(18px, 2.6vw, 24px); letter-spacing: -.01em; max-width: 560px; text-wrap: balance; }
+  #ab-audit .wrap { max-width: 576px; margin: 0 auto; padding: 8px 16px 40px; }
+  #ab-audit .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(43,255,136,.04); }
+  @media (min-width: 640px) { #ab-audit .card { padding: 32px; } }
+  #ab-audit .card.lead { position: relative; overflow: hidden; }
+  #ab-audit .card.lead::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--teal), var(--accent) 55%, var(--warm)); }
+  #ab-audit .field { display: block; margin-bottom: 14px; }
+  #ab-audit .label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 6px; }
+  #ab-audit .hint { display: block; font-size: 12px; color: var(--muted); margin: -4px 0 6px; }
+  #ab-audit .input, #ab-audit select.input, #ab-audit textarea.input {
+    width: 100%; height: 48px; border-radius: var(--radius-input); border: 1px solid var(--border); background: var(--bg);
+    color: var(--fg); padding: 0 16px; font: 500 15px var(--font-body); outline: none; transition: border-color .15s; appearance: none; -webkit-appearance: none;
+  }
+  #ab-audit textarea.input { height: auto; padding: 12px 16px; resize: vertical; }
+  #ab-audit .input::placeholder { color: rgba(143,179,160,.6); }
+  #ab-audit .input:focus { border-color: var(--accent); }
+  #ab-audit .input.err { border-color: var(--danger); background: rgba(255,107,94,.06); }
+  #ab-audit select.input { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238fb3a0' stroke-width='2' viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+  #ab-audit select.input option { background: #0d1f16; color: #e8f3ec; }
+  #ab-audit .errmsg { display: block; margin-top: 4px; font-size: 12px; font-weight: 500; color: var(--danger); }
+  #ab-audit .phone { display: flex; gap: 8px; }
+  #ab-audit .phone select { width: 112px; flex: none; padding-left: 12px; }
+  #ab-audit .optin { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; margin: 4px 0 14px; }
+  #ab-audit .optin input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--warm); flex: none; }
+  #ab-audit .optin span { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  #ab-audit .optin.err { outline: 2px solid var(--danger); outline-offset: 6px; border-radius: 6px; }
+  #ab-audit .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 28px; border-radius: 999px; border: 0;
+    background: linear-gradient(120deg, var(--teal), var(--accent)); color: var(--accent-fg); font: 600 16px var(--font-head); cursor: pointer; transition: transform .15s, opacity .15s, box-shadow .15s; letter-spacing: .01em; white-space: nowrap; box-shadow: 0 8px 30px rgba(43,255,136,.22); }
+  #ab-audit a.btn, #ab-audit a.btn:hover, #ab-audit a.btn:visited { text-decoration: none; color: var(--accent-fg); }
+  #ab-audit .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(43,255,136,.32); }
+  #ab-audit .btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+  #ab-audit .btn.full { width: 100%; font-size: 18px; }
+  #ab-audit .btn.big { min-height: 56px; height: auto; font-size: 17px; padding: 14px 28px; text-transform: uppercase; letter-spacing: .03em; white-space: normal; line-height: 1.2; text-align: center; }
+  #ab-audit .btn svg { width: 18px; height: 18px; }
+  #ab-audit .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); font: 500 14px var(--font-body); padding: 12px 14px; border-radius: 999px; cursor: pointer; }
+  #ab-audit .btn-ghost:hover { color: var(--fg); }
+  #ab-audit .btn-ghost:disabled { color: rgba(143,179,160,.35); cursor: not-allowed; }
+  #ab-audit .btn-ghost svg { width: 16px; height: 16px; }
+  #ab-audit .bullet { display: flex; gap: 10px; align-items: flex-start; max-width: 576px; margin: 28px auto 0; padding: 0 16px; font-size: 16px; line-height: 1.55; }
+  #ab-audit .bullet i { width: 6px; height: 6px; border-radius: 50%; background: var(--warm); flex: none; margin-top: 10px; box-shadow: 0 0 10px var(--warm); }
+  #ab-audit .quote { max-width: 1100px; margin: 44px auto 0; padding: 40px 28px; border-radius: 24px; background: #030906; border: 1px solid var(--border); text-align: center; }
+  #ab-audit .stars { display: inline-flex; gap: 2px; margin-bottom: 14px; }
+  #ab-audit .stars svg { width: 16px; height: 16px; fill: var(--warm); }
+  #ab-audit blockquote { margin: 0 auto; max-width: 760px; font-size: clamp(17px, 2.2vw, 20px); line-height: 1.55; color: rgba(232,243,236,.9); text-wrap: pretty; }
+  #ab-audit .who { margin-top: 14px; font-weight: 600; color: var(--accent); }
+  #ab-audit .legal { max-width: 640px; margin: 0 auto; padding: 24px 20px 32px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  #ab-audit .badge { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+  #ab-audit .badge.muted { background: var(--card-2); color: var(--muted); border: 1px solid var(--border); }
+  #ab-audit .topbar { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
+  #ab-audit .counter { font: 600 14px var(--font-mono); color: var(--warm); }
+  #ab-audit .progress { height: 6px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-bottom: 22px; }
+  #ab-audit .progress i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--accent) 70%, var(--warm)); transition: width .35s ease; box-shadow: 0 0 12px rgba(43,255,136,.5); }
+  #ab-audit h2 { font-family: var(--font-head); font-weight: 700; font-size: 24px; letter-spacing: -.02em; margin: 0 0 4px; line-height: 1.2; }
+  #ab-audit .lead { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+  #ab-audit .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  #ab-audit .alert { margin-top: 14px; border: 1px solid var(--danger); background: rgba(255,107,94,.06); color: var(--danger); border-radius: 12px; padding: 10px 12px; font-size: 14px; font-weight: 500; }
+  #ab-audit .radios { display: flex; flex-direction: column; gap: 10px; }
+  #ab-audit .radio { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; font: 500 15px var(--font-body); line-height: 1.35; transition: border-color .15s, background .15s; }
+  #ab-audit .radio:hover { border-color: rgba(43,255,136,.5); }
+  #ab-audit .radio.on { border-color: var(--accent); background: rgba(43,255,136,.07); }
+  #ab-audit .radio i { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(143,179,160,.4); margin-top: 1px; display: grid; place-items: center; }
+  #ab-audit .radio.on i { border-color: var(--accent); background: var(--accent); }
+  #ab-audit .radio i svg { width: 12px; height: 12px; stroke: var(--accent-fg); stroke-width: 3.5; display: none; }
+  #ab-audit .radio.on i svg { display: block; }
+  #ab-audit .radios.err { outline: 1px solid rgba(255,107,94,.4); border-radius: 16px; outline-offset: 4px; }
+  /* loader */
+  #ab-audit .loader { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  #ab-audit .loader .card { width: 100%; max-width: 420px; text-align: center; padding: 40px 28px; }
+  #ab-audit .orb { width: 64px; height: 64px; border-radius: 50%; background: rgba(43,255,136,.14); display: grid; place-items: center; margin: 0 auto; box-shadow: 0 0 32px rgba(43,255,136,.25); }
+  #ab-audit .orb svg { width: 28px; height: 28px; stroke: var(--accent); animation: ab-pulse 1.4s ease-in-out infinite; }
+  @keyframes ab-pulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .45; transform: scale(.92);} }
+  #ab-audit .loader h2 { margin-top: 20px; }
+  #ab-audit .loader p { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+  #ab-audit .loadbar { height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-top: 24px; }
+  #ab-audit .loadbar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--accent)); border-radius: 999px; transition: width .6s ease; }
+  #ab-audit .loadsteps { margin: 18px 0 0; padding: 0; list-style: none; text-align: left; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+  #ab-audit .loadsteps li { display: flex; gap: 8px; align-items: center; opacity: .35; transition: opacity .3s; }
+  #ab-audit .loadsteps li.on { opacity: 1; color: var(--fg); }
+  #ab-audit .loadsteps li svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 3; }
+  /* result */
+  #ab-audit .result { max-width: 768px; margin: 0 auto; padding: 16px 16px 120px; display: grid; gap: 24px; }
+  @media (min-width: 640px) { #ab-audit .result { padding: 32px 32px 120px; } }
+  #ab-audit .rhead { text-align: center; display: grid; gap: 12px; justify-items: center; padding-top: 24px; }
+  #ab-audit .rhead h1 { font-size: clamp(28px, 5vw, 40px); }
+  #ab-audit .rhead p { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0; text-wrap: pretty; }
+  #ab-audit .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  #ab-audit .badge.warm { background: var(--warm); color: var(--warm-fg); }
+  #ab-audit .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font-size: 14px; font-weight: 600; }
+  #ab-audit .chip.sec { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+  #ab-audit .diag { margin: 16px 0 0; line-height: 1.6; font-size: 16px; }
+  #ab-audit .diag b { color: var(--warm); font-weight: 600; }
+  #ab-audit .diag b.ok { color: var(--accent); }
+  #ab-audit .diag b.fact { color: var(--fg); }
+  #ab-audit .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  @media (min-width: 640px) { #ab-audit .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  #ab-audit .kpi { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+  #ab-audit .kpi small { display: block; font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+  #ab-audit .kpi strong { display: block; font-family: var(--font-head); font-size: clamp(19px, 5.5vw, 22px); letter-spacing: -.02em; margin-top: 4px; overflow-wrap: anywhere; }
+  #ab-audit .kpi strong.accent { color: var(--warm); }
+  #ab-audit .score { display: flex; align-items: center; gap: 18px; margin-top: 18px; padding: 16px; border-radius: 16px; background: var(--bg); border: 1px solid var(--border); min-width: 0; }
+  #ab-audit .score p { min-width: 0; }
+  #ab-audit .ring { width: 84px; height: 84px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--card-2) 0); box-shadow: 0 0 24px rgba(43,255,136,.2); }
+  #ab-audit .ring b { width: 68px; height: 68px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font: 700 22px var(--font-head); letter-spacing: -.02em; }
+  #ab-audit .ring b small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 1px; }
+  #ab-audit .score p { margin: 0; font-size: 14px; color: var(--muted); }
+  #ab-audit .score p b { color: var(--fg); display: block; font-size: 16px; margin-bottom: 2px; }
+  #ab-audit .procesos { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; }
+  #ab-audit .procesos li { display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 10px 12px; border-radius: 12px; background: var(--card-2); border: 1px solid var(--border); }
+  #ab-audit .procesos li i { flex: none; width: 22px; height: 22px; border-radius: 50%; background: rgba(43,255,136,.15); display: grid; place-items: center; }
+  #ab-audit .procesos li i svg { width: 12px; height: 12px; stroke: var(--accent); stroke-width: 3; }
+  #ab-audit .procesos li span b { color: var(--accent); font-weight: 600; }
+  #ab-audit .locked-wrap { position: relative; }
+  #ab-audit .locked { filter: blur(7px); pointer-events: none; user-select: none; }
+  #ab-audit .plan-card { border-color: rgba(43,255,136,.3); }
+  #ab-audit .plan-card p.lead { margin: 8px 0 16px; }
+  #ab-audit .plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  #ab-audit .plan li { display: flex; gap: 12px; font-size: 14px; line-height: 1.5; }
+  #ab-audit .plan li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font: 700 11px var(--font-mono); margin-top: 1px; }
+  #ab-audit .north { margin-top: 24px; border: 1px solid var(--border); background: var(--card-2); border-radius: 16px; padding: 16px; }
+  #ab-audit .north small { display: flex; align-items: center; gap: 6px; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+  #ab-audit .north small svg { width: 14px; height: 14px; stroke: var(--warm); }
+  #ab-audit .north.camino { margin-top: 18px; }
+  #ab-audit .north.camino strong { display: block; margin-top: 8px; font: 600 15px/1.45 var(--font-body, inherit); }
+  #ab-audit .north strong { display: block; margin-top: 6px; font-family: var(--font-head); font-size: 18px; letter-spacing: -.01em; }
+  #ab-audit .unlock { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; border-radius: var(--radius-card); background: linear-gradient(to bottom, rgba(5,14,10,.2), rgba(5,14,10,.75) 40%, var(--bg)); }
+  #ab-audit .unlock .card { max-width: 440px; width: 100%; text-align: center; border-color: rgba(43,255,136,.35); background: rgba(13,31,22,.96); backdrop-filter: blur(6px); }
+  #ab-audit .unlock .orb { width: 56px; height: 56px; }
+  #ab-audit .unlock .orb svg { animation: none; width: 24px; height: 24px; }
+  #ab-audit .unlock h3 { font-family: var(--font-head); font-size: 22px; letter-spacing: -.02em; margin: 16px 0 6px; line-height: 1.2; }
+  #ab-audit .unlock p { color: var(--muted); font-size: 14px; margin: 0 auto; max-width: 340px; line-height: 1.55; }
+  #ab-audit .unlock ul { list-style: none; margin: 18px auto 0; padding: 0; max-width: 300px; display: grid; gap: 10px; text-align: left; font-size: 14px; }
+  #ab-audit .unlock ul li { display: flex; gap: 10px; align-items: center; }
+  #ab-audit .unlock ul li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(43,255,136,.15); display: grid; place-items: center; }
+  #ab-audit .unlock ul li i svg { width: 12px; height: 12px; stroke: var(--accent); stroke-width: 3; }
+  #ab-audit .unlock .btn { margin-top: 22px; }
+  #ab-audit .unlock .fine { margin-top: 10px; font-size: 12px; }
+  #ab-audit .final { border-radius: 24px; background: #030906; border: 1px solid var(--border); padding: 32px 24px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+  #ab-audit .final h3 { font-family: var(--font-head); font-size: clamp(22px, 4vw, 28px); letter-spacing: -.02em; margin: 0; line-height: 1.2; text-wrap: balance; }
+  #ab-audit .final p { color: rgba(232,243,236,.7); font-size: 14px; margin: 0; max-width: 460px; }
+  #ab-audit .final .fine { color: rgba(232,243,236,.5); font-size: 12px; }
+  #ab-audit .again { background: none; border: 0; color: var(--muted); text-decoration: underline; font: 500 14px var(--font-body); cursor: pointer; }
+  #ab-audit .sticky { position: fixed; left: 0; right: 0; bottom: 16px; z-index: 40; display: flex; justify-content: center; padding: 0 16px; transition: transform .3s, opacity .3s; }
+  #ab-audit .sticky.hide { transform: translateY(24px); opacity: 0; pointer-events: none; }
+  #ab-audit .sticky > div { width: 100%; max-width: 900px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); background: #030906; border-radius: 16px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+  #ab-audit .sticky p { flex: 1; margin: 0; font-weight: 600; font-size: 14px; line-height: 1.25; min-width: 0; overflow-wrap: anywhere; }
+  #ab-audit .sticky p em { font-style: normal; color: var(--accent); }
+  #ab-audit .sticky .btn { height: 44px; padding: 0 18px; font-size: 14px; }
+  @media (max-width: 639px) { #ab-audit .sticky .btn span { display: none; } #ab-audit .sticky .btn { width: 44px; padding: 0; } }
+  @media (min-width: 640px) { #ab-audit .sticky > div { padding: 20px 28px; gap: 20px; } #ab-audit .sticky p { font-size: 18px; } }
+  /* footer estilo referencia */
+  #ab-audit .footer { max-width: 1100px; margin: 24px auto 0; padding: 40px 20px 28px; border-top: 1px solid var(--border); }
+  #ab-audit .fgrid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { #ab-audit .fgrid { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+  #ab-audit .fbrand img { height: 64px; width: auto; display: block; }
+  #ab-audit .fbrand p { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 34ch; }
+  #ab-audit .fbrand .tm { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px; font: 600 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  #ab-audit .fbrand .tm i { width: 6px; height: 6px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 8px var(--warm); }
+  #ab-audit .fcontact h4 { margin: 0 0 6px; font: 600 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  #ab-audit .fcontact a { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); color: var(--fg); text-decoration: none; font-size: 16px; }
+  #ab-audit .fcontact a:last-child { border-bottom: 1px solid var(--border); }
+  #ab-audit .fcontact a:hover { color: var(--accent); }
+  #ab-audit .fcontact svg { width: 18px; height: 18px; flex: none; stroke: currentColor; }
+  #ab-audit .fbottom { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); font: 500 11px var(--font-mono); letter-spacing: .06em; color: var(--muted); }
+  #ab-audit .honeypot { position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
+  #ab-audit [hidden] { display: none !important; }
+</style>
+
+<div id="ab-audit">
+  <!-- ==================== PANTALLA 0 · LANDING + CAPTURA ==================== -->
+  <section data-screen="landing">
+    <div class="hero"><div class="glow2" aria-hidden="true"></div>
+      <p class="eyebrow"><i></i>Auditoría de IA · Puerto Rico</p>
+      <h1>Audita tu operación y recibe un <em>plan de automatización de 14 días</em>… en menos de <em class="warm">1 minuto</em>.</h1>
+      <p class="sub">Entra los números de tu operación y te decimos exactamente <b>cuántos clientes estás perdiendo</b>, cuánto dinero estás dejando en la mesa y qué te conviene primero: un <b>agente de IA personalizado</b>, un <b>sistema desarrollado a la medida</b> de tu negocio o <b>capacitar a tu equipo</b> para trabajar con IA.</p>
+      <p class="sub2">Llena la información y en <span class="warm">1 minuto</span> tienes tu auditoría</p>
+    </div>
+
+    <div class="wrap">
+      <div class="card lead">
+        <div class="honeypot" aria-hidden="true"><label for="ab-web">No completar</label><input id="ab-web" name="empresa_web" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="field">
+          <input class="input" data-f="nombre" placeholder="Tu nombre" autocomplete="given-name">
+          <span class="errmsg" hidden>Escribe tu nombre</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="email" type="email" placeholder="Tu mejor email" autocomplete="email" inputmode="email">
+          <span class="errmsg" hidden>Escribe un email válido (ej: nombre@email.com)</span>
+        </div>
+        <div class="field">
+          <div class="phone">
+            <select class="input" data-f="pais" aria-label="País">
+              <option value="+1" data-min="10" data-max="10" data-name="Puerto Rico / EE.UU." selected>🇵🇷 +1</option>
+              <option value="+1809" data-min="7" data-max="7" data-name="Rep. Dominicana">🇩🇴 +1</option>
+              <option value="+52" data-min="10" data-max="10" data-name="México">🇲🇽 +52</option>
+              <option value="+57" data-min="10" data-max="10" data-name="Colombia">🇨🇴 +57</option>
+              <option value="+34" data-min="9" data-max="9" data-name="España">🇪🇸 +34</option>
+              <option value="+54" data-min="10" data-max="11" data-name="Argentina">🇦🇷 +54</option>
+              <option value="+56" data-min="9" data-max="9" data-name="Chile">🇨🇱 +56</option>
+              <option value="+51" data-min="9" data-max="9" data-name="Perú">🇵🇪 +51</option>
+              <option value="+593" data-min="9" data-max="9" data-name="Ecuador">🇪🇨 +593</option>
+              <option value="+507" data-min="8" data-max="8" data-name="Panamá">🇵🇦 +507</option>
+            </select>
+            <input class="input" data-f="telefono" type="tel" placeholder="Tu WhatsApp" autocomplete="tel-national" inputmode="tel">
+          </div>
+          <span class="errmsg" hidden>Escribe un número válido (10 dígitos)</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="negocio" placeholder="Nombre de tu empresa" autocomplete="organization">
+          <span class="errmsg" hidden>Escribe el nombre de tu empresa</span>
+        </div>
+        <label class="optin">
+          <input type="checkbox" data-f="optin">
+          <span>Acepto recibir el resultado de mi auditoría y ser contactado por el equipo de AI Borinquen.</span>
+        </label>
+        <span class="errmsg" data-err="optin" hidden style="margin:-8px 0 12px">Necesitas aceptar para continuar con la auditoría</span>
+        <button class="btn full" data-action="start">Empezar mi auditoría <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      </div>
+
+      <p class="bullet"><i></i><span><b>Mapa de IA para tu negocio:</b> una guía para resolver el 99% de los leads que hoy se te escapan y el trabajo que te roba horas, con <b>agentes personalizados</b> de chat y voz, <b>sistemas de IA a la medida</b> de tu operación y <b>capacitación</b> para que tú y tu equipo los dominen. Y cómo recuperar <b>clientes que ya estabas perdiendo</b> en los primeros 21 días.</span></p>
+    </div>
+
+    <div class="wrap" style="max-width:1100px;padding-top:0">
+      <div class="quote">
+        <div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+        <blockquote>“Estábamos contestando como el 20% de los leads que llegaban. Hoy el agente responde en segundos, califica y agenda solo. Lo primero fue ver en números cuánto se nos estaba escapando.”</blockquote>
+        <p class="who">— Teo, Mano Santa PR</p>
+      </div>
+    </div>
+    <p class="legal">Al cargar tus datos aceptas que el equipo de AI Borinquen pueda contactarte para revisar tu operación. No compartimos tu información con terceros.</p>
+  </section>
+
+  <!-- ==================== PASOS DE PREGUNTAS ==================== -->
+  <section data-screen="quiz" hidden>
+    <div class="wrap">
+      <div class="topbar"><span class="badge">Auditoría de Automatización</span><span class="counter" data-counter>1/4</span></div>
+      <div class="progress"><i data-progress style="width:25%"></i></div>
+      <div class="card">
+        <!-- Paso: negocio -->
+        <div data-step="negocio">
+          <h2 data-title-negocio>Tu empresa</h2>
+          <p class="lead">Las bases. Sin esto, el resto no se puede leer.</p>
+          <label class="field"><span class="label">¿Qué tipo de negocio tienes?</span>
+            <select class="input" data-q="tipo">
+              <option value="">Elige una opción...</option>
+              <option value="salud">Clínica / profesional de la salud</option>
+              <option value="estetica">Estética / medspa / bienestar</option>
+              <option value="profesional">Servicios profesionales (legal, contable, seguros)</option>
+              <option value="hogar">Servicios al hogar / contratistas</option>
+              <option value="agencia">Agencia / servicios B2B</option>
+              <option value="local">Restaurante / retail local</option>
+              <option value="otro">Otro</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántas personas trabajan en tu equipo?</span><span class="hint">Incluyéndote a ti</span>
+            <select class="input" data-q="equipo">
+              <option value="">Elige una opción...</option>
+              <option value="1">Solo yo</option>
+              <option value="3">2 a 5</option>
+              <option value="10">6 a 15</option>
+              <option value="30">16 a 50</option>
+              <option value="75">Más de 50</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuánto factura tu empresa al mes?</span>
+            <select class="input" data-q="facturacion">
+              <option value="">Elige tu rango...</option>
+              <option value="6000">Menos de $10,000 / mes</option>
+              <option value="17500">$10,000 a $25,000 / mes</option>
+              <option value="37500">$25,000 a $50,000 / mes</option>
+              <option value="75000">$50,000 a $100,000 / mes</option>
+              <option value="175000">$100,000 a $250,000 / mes</option>
+              <option value="300000">Más de $250,000 / mes</option>
+            </select></label>
+        </div>
+        <!-- Paso: leads -->
+        <div data-step="leads" hidden>
+          <h2>Tus leads</h2>
+          <p class="lead">Cuánta gente toca la puerta y qué pasa en los primeros minutos. Estima el último mes.</p>
+          <label class="field"><span class="label">¿Por dónde te llegan los leads o clientes?</span>
+            <select class="input" data-q="canal">
+              <option value="">Elige una opción...</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="llamadas">Llamadas telefónicas</option>
+              <option value="dm">Instagram / Facebook (DMs)</option>
+              <option value="web">Formulario web / email</option>
+              <option value="varios">Varios canales a la vez</option>
+              <option value="presencial">Presencial / walk-in</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuánto tardas en responder a un lead nuevo?</span><span class="hint">Sé honesto: el promedio real, no el mejor día</span>
+            <select class="input" data-q="respuesta">
+              <option value="">Elige una opción...</option>
+              <option value="min">Minutos</option>
+              <option value="hora">Menos de 1 hora</option>
+              <option value="dia">El mismo día</option>
+              <option value="dias">1 a 2 días</option>
+              <option value="nunca">A veces no respondemos</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántos leads u oportunidades recibes al mes?</span><span class="hint">Mensajes, llamadas y formularios, todo junto</span>
+            <select class="input" data-q="leads">
+              <option value="">Elige un rango...</option>
+              <option value="10">Menos de 20</option>
+              <option value="35">20 a 50</option>
+              <option value="85">50 a 120</option>
+              <option value="210">120 a 300</option>
+              <option value="400">Más de 300</option>
+            </select></label>
+        </div>
+        <!-- Paso: seguimiento -->
+        <div data-step="seguimiento" hidden>
+          <h2>Tu seguimiento</h2>
+          <p class="lead">Qué pasa después del primer contacto. Aquí es donde más dinero se escapa.</p>
+          <label class="field"><span class="label">¿Quién responde y hace seguimiento hoy?</span>
+            <select class="input" data-q="seguimiento">
+              <option value="">Elige una opción...</option>
+              <option value="yo">Yo mismo, entre todo lo demás</option>
+              <option value="empleado">Un empleado o recepcionista</option>
+              <option value="varios">Varias personas, sin un proceso claro</option>
+              <option value="crm">Un CRM con automatizaciones</option>
+              <option value="nadie">Nadie de forma consistente</option>
+            </select></label>
+        </div>
+        <!-- Paso condicional: operación (solo si equipo ≥ 2) -->
+        <div data-step="operacion" hidden>
+          <h2>Tu operación</h2>
+          <p class="lead">El trabajo que se repite todas las semanas. Esto separa una empresa que escala de una que se satura.</p>
+          <label class="field"><span class="label">¿Cuántas horas a la semana se van en tareas repetitivas?</span><span class="hint">Contestar lo mismo, agendar, confirmar citas, pasar datos, cotizar</span>
+            <select class="input" data-q="horas">
+              <option value="">Elige un rango...</option>
+              <option value="3">Menos de 5 horas</option>
+              <option value="7">5 a 10 horas</option>
+              <option value="15">10 a 20 horas</option>
+              <option value="30">20 a 40 horas</option>
+              <option value="45">Más de 40 horas</option>
+            </select></label>
+          <label class="field"><span class="label">¿Qué porcentaje de llamadas se quedan sin contestar?</span>
+            <select class="input" data-q="llamadas">
+              <option value="">Elige una opción...</option>
+              <option value="0.05">Casi ninguna</option>
+              <option value="0.18">10% a 25%</option>
+              <option value="0.38">25% a 50%</option>
+              <option value="0.6">Más de la mitad</option>
+              <option value="0.25">No lo sé</option>
+            </select></label>
+        </div>
+        <!-- Paso: proceso a automatizar -->
+        <div data-step="proceso" hidden>
+          <h2>¿Qué proceso te gustaría automatizar primero?</h2>
+          <p class="lead">Elige el que más te quita tiempo o clientes. Con esto armamos tu auditoría y el plan puntual para resolverlo.</p>
+          <div class="radios" role="radiogroup" data-q="proceso" aria-label="Proceso a automatizar">
+            <button type="button" class="radio" role="radio" data-v="respuesta"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Responder a los leads al instante, 24/7</span></button>
+            <button type="button" class="radio" role="radio" data-v="seguimiento"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Hacer seguimiento automático a los que no cerraron</span></button>
+            <button type="button" class="radio" role="radio" data-v="agenda"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Calificar y agendar citas sin intervención humana</span></button>
+            <button type="button" class="radio" role="radio" data-v="llamadas"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Atender las llamadas que hoy se pierden</span></button>
+            <button type="button" class="radio" role="radio" data-v="admin"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Tareas administrativas repetitivas (cotizar, confirmar, pasar datos)</span></button>
+            <button type="button" class="radio" role="radio" data-v="otro"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Otro (explícame)</span></button>
+          </div>
+          <div data-otro hidden style="margin-top:16px">
+            <label class="field"><span class="label">Cuéntame en tus palabras qué proceso te quita más tiempo</span>
+              <textarea class="input" data-q="frustracion" rows="4" placeholder="Describe lo más concreto posible qué tarea o proceso hoy depende de que alguien lo haga a mano."></textarea></label>
+          </div>
+        </div>
+        <p class="alert" data-alert hidden>Completa todos los campos para seguir. Elige la opción que más se acerque a tu caso.</p>
+        <div class="nav">
+          <button class="btn-ghost" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Atrás</button>
+          <button class="btn" data-action="next">Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <button class="btn" data-action="finish" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Auditar mi operación</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PANTALLA DE CARGA ==================== -->
+  <section data-screen="loading" hidden>
+    <div class="loader">
+      <div class="card">
+        <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h2>El Auditor está analizando tu operación...</h2>
+        <p>Comparando tus tiempos de respuesta y seguimiento contra las operaciones que hemos automatizado en Puerto Rico. Esto toma unos segundos.</p>
+        <div class="loadbar"><i data-loadbar></i></div>
+        <ul class="loadsteps">
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Calculando tu nivel de automatización</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Estimando oportunidades perdidas</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Detectando procesos automatizables y qué solución de IA aplica</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Armando tu plan de automatización de 14 días</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESULTADO ==================== -->
+  <section data-screen="result" hidden>
+    <div class="result">
+      <div class="rhead">
+        <span class="badge" data-r="badge">Tu Auditoría de Automatización · AI Borinquen</span>
+        <h1 data-r="titulo"></h1>
+        <p data-r="intro"></p>
+      </div>
+
+      <div class="card">
+        <span class="badge warm">Principal oportunidad detectada</span>
+        <div class="chips"><span class="chip" data-r="chip1"></span><span class="chip sec" data-r="chip2" hidden></span></div>
+        <p class="diag" data-r="diagnostico"></p>
+        <div class="kpis" data-r="kpis"></div>
+        <div class="score">
+          <div class="ring" data-r="ring" style="--p:0"><b><span data-r="score">0</span><small>/100</small></b></div>
+          <p><b data-r="scoreTitulo"></b><span data-r="scoreTexto"></span></p>
+        </div>
+        <ul class="procesos" data-r="procesos"></ul>
+        <div class="north camino"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5-3 6.5V17H8v-1.5C7 14 5 12 5 9a7 7 0 0 1 7-7z"/><path d="M9 21h6"/></svg>Tu camino recomendado con IA</small><strong data-r="camino"></strong><p class="fine" style="margin:8px 0 0;text-align:left">En AI Borinquen no solo instalamos un chat: diseñamos agentes personalizados, desarrollamos sistemas de IA a la medida y capacitamos al dueño y a su equipo para dirigirlos.</p></div>
+      </div>
+
+      <div class="locked-wrap">
+        <div class="locked">
+          <div class="card plan-card">
+            <span class="badge">Plan de acción rápido · 14 días</span>
+            <p class="lead">Para implementar ya y ver movimiento en 2 semanas. Ataca esto en orden, todo apunta a tu principal oportunidad.</p>
+            <ul class="plan" data-r="plan"></ul>
+            <div class="north"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>Tu métrica norte (mírala cada semana)</small><strong data-r="norte"></strong></div>
+          </div>
+        </div>
+        <div class="unlock">
+          <div class="card">
+            <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Tu plan de acción ya está listo</h3>
+            <p>Escríbenos por WhatsApp y te enviamos el material completo de tu auditoría: qué resolver primero, con qué solución de IA y cómo.</p>
+            <ul>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu plan de acción de 14 días</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu métrica norte para medir el avance</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Qué solución aplica a tu caso: agente personalizado, sistema a la medida o capacitación de tu equipo</li>
+            </ul>
+            <a class="btn big full" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Quiero ver qué puedo automatizar</a>
+            <p class="fine">Te responde nuestro agente al instante y luego una persona del equipo</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="final" data-final>
+        <span class="badge">Desbloquea tu material</span>
+        <h3 data-r="finalTitulo">¿Quieres que miremos tu operación juntos?</h3>
+        <p>Escríbenos por WhatsApp y te enviamos tu plan de acción de 14 días, tu métrica norte y la solución de IA que aplica a tu caso: agente personalizado, sistema a la medida o capacitación para ti y tu equipo.</p>
+        <a class="btn big" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Quiero ver qué puedo automatizar</a>
+        <p class="fine">Vive la demo: el primero en responderte es un agente de IA como el que podrías tener.</p>
+      </div>
+      <div style="text-align:center"><button class="again" data-action="again">Hacer otra auditoría</button></div>
+    </div>
+    <div class="sticky hide" data-sticky>
+      <div>
+        <img src="https://content-os-chi-seven.vercel.app/marcas/ai-borinquen-logo-dark.png" alt="" aria-hidden="true" style="width:40px;height:auto;flex:none">
+        <p>Tu auditoría y tu plan de acción están <em>listos</em>. Te los enviamos por WhatsApp.</p>
+        <a class="btn" data-cta target="_blank" rel="noopener noreferrer" href="#"><span>Quiero ver qué puedo automatizar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></a>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="fgrid">
+      <div class="fbrand">
+        <img src="https://content-os-chi-seven.vercel.app/marcas/ai-borinquen-logo-dark.png" alt="AI Borinquen" width="800" height="705" loading="lazy">
+        <span class="tm"><i></i>Inteligencia artificial para negocios · Puerto Rico</span>
+        <p>Agentes personalizados de chat y voz, sistemas de IA desarrollados a la medida y capacitación para dueños de negocio y sus equipos. Para que ningún lead se enfríe y tu operación crezca contigo.</p>
+      </div>
+      <div class="fcontact">
+        <h4>Contacto</h4>
+        <a href="https://wa.me/19393040491" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Hablemos por WhatsApp</a>
+        <a href="mailto:aiborinquen@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>aiborinquen@gmail.com</a>
+      </div>
+    </div>
+    <div class="fbottom">© <span data-year></span> AI Borinquen · Todos los derechos reservados.</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  /* ================== CONFIGURACIÓN (editar aquí) ================== */
+  var CONFIG = {
+    marca: 'AI Borinquen',
+    // WhatsApp de AI Borinquen en formato internacional sin "+" ni espacios. confirmado por Elvin 12/sep/2026.
+    whatsapp: '19393040491',
+    // Endpoint que crea el lead en Pipedrive (app/api/auditoria/route.ts del Content OS). Vacío = no envía.
+    endpoint: 'https://content-os-chi-seven.vercel.app/api/auditoria',
+    marcaId: 'ai-borinquen',
+    storageKey: 'ab_diagnostico_v1',
+    // Umbral para mostrar el paso condicional de "operación" (equipo de 2 o más)
+    umbralEquipo: 2,
+    loaderMs: 3200,
+    // Valor estimado de una hora de trabajo administrativo (para el cálculo de horas recuperables)
+    valorHora: 20
+  };
+
+  var root = document.getElementById('ab-audit');
+  var $ = function (sel, ctx) { return (ctx || root).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); };
+  var screens = { landing: $('[data-screen="landing"]'), quiz: $('[data-screen="quiz"]'), loading: $('[data-screen="loading"]'), result: $('[data-screen="result"]') };
+  $('[data-year]').textContent = new Date().getFullYear();
+
+  var datos = { nombre: '', email: '', pais: '+1', telefono: '', negocio: '', optin: false,
+    tipo: '', equipo: '', facturacion: '', canal: '', respuesta: '', leads: '', seguimiento: '', horas: '', llamadas: '', proceso: '', frustracion: '' };
+  var pasoIdx = 0; var intentado = false; var resultado = null;
+
+  function tracking() {
+    var t = {};
+    try {
+      var p = new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid','gclid','ttclid'].forEach(function (k) { if (p.get(k)) t[k] = p.get(k).slice(0, 200); });
+      t.landing_url = location.href.slice(0, 500); if (document.referrer) t.referrer = document.referrer.slice(0, 500);
+    } catch (e) {}
+    return t;
+  }
+
+  /* ================== PASOS ================== */
+  function pasos() {
+    var base = ['negocio', 'leads', 'seguimiento'];
+    if (Number(datos.equipo) >= CONFIG.umbralEquipo) base.push('operacion');
+    base.push('proceso');
+    return base;
+  }
+  var requeridos = { negocio: ['tipo','equipo','facturacion'], leads: ['canal','respuesta','leads'], seguimiento: ['seguimiento'], operacion: ['horas','llamadas'], proceso: ['proceso'] };
+
+  function mostrar(nombre) { Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== nombre; }); window.scrollTo(0, 0); }
+
+  function renderPaso() {
+    var lista = pasos(); var actual = lista[pasoIdx];
+    $$('[data-step]').forEach(function (el) { el.hidden = el.getAttribute('data-step') !== actual; });
+    $('[data-counter]').textContent = (pasoIdx + 1) + '/' + lista.length;
+    $('[data-progress]').style.width = ((pasoIdx + 1) / lista.length * 100) + '%';
+    $('[data-action="back"]').disabled = pasoIdx === 0;
+    var ultimo = pasoIdx === lista.length - 1;
+    $('[data-action="next"]').hidden = ultimo; $('[data-action="finish"]').hidden = !ultimo;
+    $('[data-title-negocio]').textContent = datos.nombre ? 'Dale ' + datos.nombre.split(' ')[0] + ', hablemos de tu empresa' : 'Tu empresa';
+    pintarErrores();
+  }
+  function faltantes() {
+    var actual = pasos()[pasoIdx];
+    var f = requeridos[actual].filter(function (k) { return String(datos[k] || '').trim() === ''; });
+    if (actual === 'proceso' && datos.proceso === 'otro' && !datos.frustracion.trim()) f.push('frustracion');
+    return f;
+  }
+  function pintarErrores() {
+    var f = intentado ? faltantes() : [];
+    $$('[data-q]').forEach(function (el) { el.classList.toggle('err', f.indexOf(el.getAttribute('data-q')) >= 0); });
+    $('[data-alert]').hidden = f.length === 0;
+  }
+
+  /* ================== GUARDAR PROGRESO ================== */
+  function guardar(paso) {
+    var payload = { paso: paso, datos: datos, tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('ab:progreso', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.AB_AUDIT && typeof window.AB_AUDIT.onProgreso === 'function') { try { window.AB_AUDIT.onProgreso(payload); } catch (e) {} }
+  }
+  var crm = { dealId: null };
+  try { crm.dealId = Number(localStorage.getItem(CONFIG.storageKey + '_deal')) || null; } catch (e) {}
+  function enviarCRM(evento, extra) {
+    if (!CONFIG.endpoint) return Promise.resolve(null);
+    var payload = { marca: CONFIG.marcaId, evento: evento, datos: datos, tracking: tracking(), dealId: crm.dealId, ts: new Date().toISOString() };
+    for (var k in (extra || {})) payload[k] = extra[k];
+    return fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j && j.dealId) { crm.dealId = j.dealId; try { localStorage.setItem(CONFIG.storageKey + '_deal', String(j.dealId)); } catch (e) {} } return j; })
+      .catch(function () { return null; });
+  }
+
+  /* ================== LANDING ================== */
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()); };
+  function validarLanding() {
+    var sel = $('[data-f="pais"]'); var opt = sel.options[sel.selectedIndex]; var dig = datos.telefono.replace(/\D/g, '');
+    var min = Number(opt.getAttribute('data-min')), max = Number(opt.getAttribute('data-max'));
+    return { nombre: datos.nombre.trim() !== '', email: emailOk(datos.email), telefono: dig.length >= min && dig.length <= max, negocio: datos.negocio.trim() !== '', optin: !!datos.optin, _min: min, _max: max, _pais: opt.getAttribute('data-name') };
+  }
+  var landingIntentado = false;
+  $$('[data-f]').forEach(function (el) {
+    var h = function () { datos[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (landingIntentado) pintarLanding(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  function pintarLanding() {
+    var v = validarLanding();
+    ['nombre','email','telefono','negocio'].forEach(function (k) { var el = $('[data-f="' + k + '"]'); el.classList.toggle('err', !v[k]); var m = el.closest('.field').querySelector('.errmsg'); m.hidden = v[k]; if (k === 'telefono') m.textContent = 'Escribe un número válido para ' + v._pais + ' (' + v._min + (v._max !== v._min ? '–' + v._max : '') + ' dígitos)'; });
+    $('.optin').classList.toggle('err', !v.optin); $('[data-err="optin"]').hidden = v.optin;
+  }
+  $('[data-action="start"]').addEventListener('click', function () {
+    if ($('#ab-web').value) return; // honeypot
+    landingIntentado = true; var v = validarLanding();
+    if (!(v.nombre && v.email && v.telefono && v.negocio && v.optin)) { pintarLanding(); return; }
+    datos.telefonoCompleto = datos.pais.replace('+1809', '+1') + datos.telefono.replace(/\D/g, '');
+    guardar(0); enviarCRM('lead'); try { if (window.fbq) fbq('track', 'Lead', { content_name: 'Auditoría de Automatización' }); } catch (e) {} pasoIdx = 0; intentado = false; mostrar('quiz'); renderPaso();
+  });
+
+  /* ================== QUIZ ================== */
+  $$('[data-q]').forEach(function (el) {
+    if (el.classList.contains('radios')) return;
+    var k = el.getAttribute('data-q');
+    var h = function () { datos[k] = el.value; pintarErrores(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  $$('.radio').forEach(function (b) {
+    b.addEventListener('click', function () {
+      datos.proceso = b.getAttribute('data-v');
+      $$('.radio').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
+      $('[data-otro]').hidden = datos.proceso !== 'otro'; pintarErrores();
+    });
+  });
+  $('[data-action="back"]').addEventListener('click', function () { intentado = false; pasoIdx = Math.max(0, pasoIdx - 1); renderPaso(); });
+  $('[data-action="next"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } guardar(pasoIdx + 1); intentado = false; pasoIdx++; renderPaso(); });
+  $('[data-action="finish"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } intentado = false; guardar(pasoIdx + 1); correrLoader(); });
+  $('[data-action="again"]').addEventListener('click', function () { location.reload(); });
+
+  /* ================== LOADER ================== */
+  function correrLoader() {
+    mostrar('loading'); var bar = $('[data-loadbar]'); var items = $$('[data-ls]'); bar.style.width = '8%';
+    items.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); bar.style.width = (20 + (i + 1) * 18) + '%'; }, 500 + i * (CONFIG.loaderMs - 900) / items.length); });
+    setTimeout(function () { bar.style.width = '100%'; }, CONFIG.loaderMs - 350);
+    setTimeout(function () { resultado = calcular(datos); renderResultado(resultado); mostrar('result'); }, CONFIG.loaderMs);
+  }
+
+  /* ================== SCORING + DIAGNÓSTICO ================== */
+  var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pct = function (x) { return Math.round(x * 100) + '%'; };
+  var NOMBRES = { respuesta: 'Respuesta tardía a leads', seguimiento: 'Seguimiento de leads', llamadas: 'Llamadas sin contestar', admin: 'Trabajo administrativo repetitivo', agenda: 'Calificación y agendamiento', avanzado: 'Operación lista para IA avanzada', otro: 'Proceso específico' };
+  var PROCESOS = { respuesta: 'Respuesta inmediata a leads 24/7 (agente de chat)', seguimiento: 'Seguimiento automático a leads que no cerraron', agenda: 'Calificación y agendamiento sin intervención humana', llamadas: 'Atención de llamadas con agente de voz', admin: 'Tareas administrativas repetitivas (cotizar, confirmar, pasar datos)', crm: 'CRM centralizado con historial de cada cliente' };
+
+  function calcular(d) {
+    var equipo = Number(d.equipo), fact = Number(d.facturacion), leads = Number(d.leads);
+    var pidioOperacion = d.horas !== '';
+    var horas = pidioOperacion ? Number(d.horas) : (equipo === 1 ? 7 : 15);
+    var llamadas = d.llamadas !== '' ? Number(d.llamadas) : 0.2;
+    var resp = d.respuesta, seg = d.seguimiento, canal = d.canal;
+
+    // Nivel de automatización 0-100 (más alto = más automatizado)
+    var n = 0;
+    n += ({ min: 25, hora: 18, dia: 10, dias: 4, nunca: 0 })[resp] || 0;
+    n += ({ crm: 25, empleado: 14, yo: 10, varios: 6, nadie: 0 })[seg] || 0;
+    n += pidioOperacion ? (({ 3: 15, 7: 11, 15: 7, 30: 3, 45: 0 })[horas] || 0) : 8;
+    n += d.llamadas !== '' ? (llamadas <= .05 ? 15 : llamadas <= .18 ? 10 : llamadas <= .25 ? 5 : llamadas <= .38 ? 5 : 0) : 8;
+    n += ({ web: 10, whatsapp: 6, dm: 5, llamadas: 4, varios: 3, presencial: 2 })[canal] || 0;
+    n += (leads >= 120 && seg !== 'crm') ? 0 : 10;
+    n = Math.max(0, Math.min(100, n));
+
+    // Oportunidades perdidas por mes (estimación)
+    var perdRespuesta = Math.round(leads * (({ min: 0, hora: .1, dia: .25, dias: .4, nunca: .55 })[resp] || 0));
+    var perdSeguimiento = Math.round(leads * (({ crm: .03, empleado: .1, yo: .15, varios: .25, nadie: .35 })[seg] || 0));
+    var usaTelefono = canal === 'llamadas' || canal === 'varios' || d.llamadas !== '';
+    var perdLlamadas = usaTelefono ? Math.round(leads * (canal === 'llamadas' ? 1 : .4) * llamadas * .6) : 0;
+    var horasMes = Math.round(horas * 4.3);
+    var valorHoras = horasMes * CONFIG.valorHora;
+    var perdidas = perdRespuesta + perdSeguimiento + perdLlamadas;
+    var ingresoPorLead = fact / Math.max(leads, 1);
+    var ingresoRiesgo = Math.round(perdidas * ingresoPorLead);
+
+    // Procesos automatizables (reglas)
+    var procesos = [];
+    if (resp !== 'min') procesos.push('respuesta');
+    if (seg !== 'crm') procesos.push('seguimiento');
+    if ((canal === 'whatsapp' || canal === 'dm' || canal === 'varios' || canal === 'web') && seg !== 'crm') procesos.push('agenda');
+    if (usaTelefono && llamadas >= .18) procesos.push('llamadas');
+    if (horas >= 10) procesos.push('admin');
+    if (seg === 'varios' || seg === 'nadie') procesos.push('crm');
+    if (d.proceso && d.proceso !== 'otro' && procesos.indexOf(d.proceso) < 0) procesos.push(d.proceso);
+
+    // Principal oportunidad = el balde más grande; empate → lo declarado
+    var baldes = [['respuesta', perdRespuesta], ['seguimiento', perdSeguimiento], ['llamadas', perdLlamadas], ['admin', horas >= 10 ? Math.round(horasMes / 8) : 0]];
+    baldes.sort(function (a, b) { return b[1] - a[1]; });
+    var principal;
+    if (n >= 70 && perdidas < leads * .1) principal = 'avanzado';
+    else if (baldes[0][1] === 0 || (d.proceso && d.proceso !== 'otro' && baldes[0][1] === (baldes.filter(function (b) { return b[0] === d.proceso; })[0] || [0, 0])[1])) principal = d.proceso && d.proceso !== 'otro' ? d.proceso : baldes[0][0];
+    else principal = baldes[0][0];
+    var secundario = (d.proceso && d.proceso !== 'otro' && d.proceso !== principal) ? d.proceso : null;
+
+    return { equipo: equipo, fact: fact, leads: leads, horas: horas, horasMes: horasMes, valorHoras: valorHoras, llamadas: llamadas, pidioOperacion: pidioOperacion, nivel: n, perdRespuesta: perdRespuesta, perdSeguimiento: perdSeguimiento, perdLlamadas: perdLlamadas, perdidas: perdidas, ingresoRiesgo: ingresoRiesgo, procesos: procesos, principal: principal, secundario: secundario, calificado: leads >= 50 && fact >= 10000 };
+  }
+
+  function textos(r, d) {
+    var nombre = d.nombre.split(' ')[0]; var neg = d.negocio;
+    var RESP = { min: 'en minutos', hora: 'en menos de una hora', dia: 'el mismo día', dias: 'en 1 a 2 días', nunca: 'a veces nunca' };
+    var SEG = { yo: 'de ti mismo', empleado: 'de un empleado', varios: 'de varias personas sin proceso', crm: 'de un CRM con automatizaciones', nadie: 'de nadie en particular' };
+    var base = '<b class="ok">' + neg + '</b> recibe aproximadamente <b class="fact">' + r.leads + ' oportunidades</b> al mes, responde <b class="fact">' + RESP[d.respuesta] + '</b> y el seguimiento depende <b class="fact">' + SEG[d.seguimiento] + '</b>. ';
+    var perd = 'Con esos tiempos, estimamos que se te escapan cerca de <b>' + r.perdidas + ' oportunidades al mes</b>' + (r.ingresoRiesgo > 0 ? ' (unos <b>' + fmt(r.ingresoRiesgo) + '</b> en ingresos en riesgo, según tu facturación por lead)' : '') + (r.horas >= 10 ? ', además de <b>' + r.horasMes + ' horas al mes</b> de trabajo repetitivo que podría hacer un agente' : '') + '. ';
+    var T = {
+      respuesta: { titulo: nombre + ', tu mayor fuga está en los primeros minutos: respondes tarde.', diag: base + 'Un lead que no recibe respuesta en 5 minutos tiene muchas menos probabilidades de convertirse en cliente. ' + perd + 'Esta es hoy tu mayor oportunidad de automatización: un agente que responda al instante, 24/7, califique y agende.',
+        plan: ['Define las 10 preguntas que más te hacen los leads y sus respuestas ideales.', 'Activa un agente de chat en tu canal principal que responda en segundos, día y noche.', 'Dale al agente 3 preguntas de calificación (qué necesita, cuándo, presupuesto).', 'Conecta el agente a tu calendario para que agende directo.', 'Mide el tiempo de primera respuesta: meta, menos de 1 minuto.'], norte: 'Tiempo de primera respuesta (meta: menos de 1 minuto, 24/7)', camino: 'Agente de chat personalizado en tu canal principal, conectado a tu agenda, más una sesión de capacitación para que tu equipo lo supervise.' },
+      seguimiento: { titulo: nombre + ', estás perdiendo clientes después del primer contacto.', diag: base + 'El volumen entra, pero sin un seguimiento sistemático la mayoría de los leads se enfría en silencio. ' + perd + 'Esta es hoy una de tus mayores oportunidades de automatización: una secuencia de seguimiento que no depende de que alguien se acuerde.',
+        plan: ['Lista todos los leads de los últimos 60 días que no cerraron.', 'Diseña una secuencia de 5 toques (día 0, 1, 3, 7, 14) por WhatsApp.', 'Automatiza la secuencia: cada lead nuevo entra solo, sin que nadie lo cargue.', 'Centraliza los leads en un CRM para ver en qué etapa está cada uno.', 'Mide cuántos cierres vienen de seguimiento vs. primer contacto.'], norte: 'Porcentaje de leads con seguimiento completo (meta: 100%)', camino: 'Sistema de seguimiento automático conectado a tu CRM, con un agente que retoma los leads fríos y tu equipo entrenado para cerrar lo que responde.' },
+      llamadas: { titulo: nombre + ', cada llamada que no contestas es un cliente que llama al siguiente.', diag: base + 'Aproximadamente <b>' + pct(r.llamadas) + ' de tus llamadas</b> se quedan sin contestar. Quien llama y no recibe respuesta rara vez vuelve a intentarlo. ' + perd + 'Un agente de voz contesta el 100% de las llamadas, responde preguntas, califica y agenda mientras tu equipo trabaja.',
+        plan: ['Revisa el registro de llamadas perdidas de los últimos 30 días.', 'Escribe el guion de las 5 razones más comunes por las que te llaman.', 'Activa un agente de voz que conteste cuando nadie puede.', 'Conecta el agente a tu agenda y a WhatsApp para confirmar por escrito.', 'Mide llamadas contestadas vs. recibidas cada semana.'], norte: 'Llamadas contestadas (meta: 100%, incluyendo fuera de horario)', camino: 'Agente de voz personalizado con tu guion, integrado con tu agenda y WhatsApp, más capacitación para que sepas leer sus reportes.' },
+      admin: { titulo: nombre + ', tu equipo está gastando horas en trabajo que una máquina haría mejor.', diag: base + 'Se van cerca de <b>' + r.horasMes + ' horas al mes</b> en tareas repetitivas: cotizar, confirmar, pasar datos de un lado a otro. ' + perd + 'Esas horas no son solo costo: son atención que no se le da al cliente. Esta es tu mayor oportunidad de automatización.',
+        plan: ['Anota durante 3 días cada tarea que se repite y cuánto tarda.', 'Elige la más frecuente y documenta el paso a paso exacto.', 'Automatiza esa tarea primero (confirmaciones, cotizaciones o carga de datos).', 'Conecta tus herramientas para que los datos fluyan sin copiar y pegar.', 'Mide horas recuperadas por semana y reinvierte ese tiempo en ventas.'], norte: 'Horas de trabajo repetitivo por semana (meta: reducir a la mitad en 30 días)', camino: 'Desarrollo de IA a la medida para tus tareas repetitivas, conectado a tus herramientas, y capacitación de tu equipo para operarlo.' },
+      agenda: { titulo: nombre + ', tus leads quieren agendar y hoy dependen de que alguien esté disponible.', diag: base + perd + 'Cada lead que pregunta y no puede agendar en ese momento es una cita que probablemente no ocurre. Tu mayor oportunidad: calificar y agendar sin intervención humana.',
+        plan: ['Define los criterios de un lead calificado (servicio, urgencia, capacidad de pago).', 'Publica tu disponibilidad real en un calendario conectado.', 'Activa un agente que califique con 3 preguntas y ofrezca horarios.', 'Automatiza recordatorios 24h y 1h antes de cada cita.', 'Mide citas agendadas sin intervención humana por semana.'], norte: 'Citas agendadas automáticamente (meta: más del 60% del total)', camino: 'Agente que califica y agenda solo, calendario conectado y recordatorios automáticos, con tu equipo entrenado para atender lo que entra.' },
+      avanzado: { titulo: nombre + ', tu operación ya está bien automatizada. Toca el siguiente nivel.', diag: base + 'Respondes rápido y tienes seguimiento sistemático. ' + perd + 'No tienes una fuga grande; tienes una base sólida. El siguiente paso es un agente interno que trabaje con tus datos y sistemas personalizados de IA para la operación.',
+        plan: ['Identifica los 3 reportes o decisiones que más tiempo te toman cada semana.', 'Centraliza tus datos (CRM, ventas, operación) en un solo lugar.', 'Activa un agente interno que responda preguntas sobre tu negocio.', 'Automatiza el reporte semanal de métricas para tu equipo.', 'Define el siguiente proceso a automatizar con criterio de retorno.'], norte: 'Horas del dueño dedicadas a operación (meta: menos de 5 por semana)', camino: 'Agente interno sobre tus datos, desarrollos de IA a la medida de tu operación y capacitación del dueño para dirigir el sistema.' }
+    };
+    return T[r.principal] || T.respuesta;
+  }
+
+  function renderResultado(r) {
+    var t = textos(r, datos);
+    $('[data-r="badge"]').textContent = r.calificado ? 'Auditoría · Operación con volumen' : 'Tu Auditoría de Automatización · AI Borinquen';
+    $('[data-r="titulo"]').textContent = t.titulo;
+    $('[data-r="intro"]').textContent = r.calificado ? 'Ya tienes volumen. Esto no es sobre "conseguir más leads": es sobre dejar de perder los que ya te llegan.' : 'Esta auditoría está armada con los números que acabas de entrar, no con una plantilla.';
+    $('[data-r="chip1"]').textContent = NOMBRES[r.principal];
+    var c2 = $('[data-r="chip2"]'); c2.hidden = !r.secundario; if (r.secundario) c2.textContent = '+ ' + NOMBRES[r.secundario];
+    $('[data-r="diagnostico"]').innerHTML = t.diag;
+    $('[data-r="kpis"]').innerHTML = [
+      ['Oportunidades perdidas / mes', String(r.perdidas), true], ['Ingresos en riesgo / mes', fmt(r.ingresoRiesgo), false], ['Horas recuperables / mes', String(r.horasMes), false], ['Procesos automatizables', String(r.procesos.length), false]
+    ].map(function (k) { return '<div class="kpi"><small>' + k[0] + '</small><strong class="' + (k[2] ? 'accent' : '') + '">' + k[1] + '</strong></div>'; }).join('');
+    $('[data-r="ring"]').style.setProperty('--p', r.nivel); $('[data-r="score"]').textContent = r.nivel;
+    $('[data-r="scoreTitulo"]').textContent = 'Nivel de automatización: ' + (r.nivel >= 70 ? 'alto' : r.nivel >= 40 ? 'medio' : 'bajo');
+    $('[data-r="scoreTexto"]').textContent = r.nivel >= 70 ? 'Tu operación ya corre con sistema. El siguiente paso es IA avanzada.' : r.nivel >= 40 ? 'Parte de tu operación está cubierta, pero un eslabón manual está frenando el resto.' : 'Hoy tu operación depende casi por completo de trabajo manual. Hay mucho por ganar rápido.';
+    $('[data-r="procesos"]').innerHTML = r.procesos.map(function (p) { return '<li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>' + PROCESOS[p] + '</span></li>'; }).join('');
+    $('[data-r="plan"]').innerHTML = t.plan.map(function (p, i) { return '<li><i>' + (i + 1) + '</i><span>' + p + '</span></li>'; }).join('');
+    $('[data-r="norte"]').textContent = t.norte;
+    $('[data-r="camino"]').textContent = t.camino;
+    $('[data-r="finalTitulo"]').textContent = r.calificado ? '¿Quieres que miremos tu operación juntos?' : 'Escríbenos y te enviamos tu plan completo';
+    var msg = 'Hola, soy ' + datos.nombre + ' de ' + datos.negocio + '. Ya completé mi auditoría de automatización con IA: nivel ' + r.nivel + '/100, principal oportunidad "' + NOMBRES[r.principal] + '", ' + r.perdidas + ' oportunidades perdidas al mes y ' + r.procesos.length + ' procesos automatizables. Quiero ver el material, mi plan de acción y qué solución de IA aplica a mi caso.';
+    $$('[data-cta]').forEach(function (a) { a.href = 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg); if (!a.__fbq) { a.__fbq = true; a.addEventListener('click', function () { try { if (window.fbq) fbq('track', 'Contact', { content_name: 'WhatsApp desde auditoría' }); } catch (e) {} }); } });
+    try { if (window.fbq) fbq('trackCustom', 'AuditoriaCompletada', { oportunidad: r.principal, nivel: r.nivel, perdidas: r.perdidas, procesos: r.procesos.length }); } catch (e) {}
+    var payload = { evento: 'resultado', marca: CONFIG.marca, datos: datos, resultado: r, principalNombre: NOMBRES[r.principal], tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey + '_resultado', JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('ab:resultado', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.AB_AUDIT && typeof window.AB_AUDIT.onResultado === 'function') { try { window.AB_AUDIT.onResultado(payload); } catch (e) {} }
+    enviarCRM('resultado', { resultado: r, principalNombre: NOMBRES[r.principal] });
+    var sticky = $('[data-sticky]'); var finalEl = $('[data-final]'); var finalVisible = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { finalVisible = e.isIntersecting; }); upd(); }, { threshold: 0 }).observe(finalEl);
+    function upd() { sticky.classList.toggle('hide', !(window.scrollY > 300 && !finalVisible)); }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  }
+
+  window.AB_AUDIT = window.AB_AUDIT || {};
+  window.AB_AUDIT.config = CONFIG; window.AB_AUDIT.datos = datos; window.AB_AUDIT.calcular = calcular;
+})();
+</script>
+<script>(function(){var n=document.getElementById('ab-audit');var p=n&&n.parentElement;while(p&&p!==document.body){p.classList.add('ab-audit-bleed');p=p.parentElement;}})();</script>
+<!-- CF:FIN -->
+</body>
+</html>

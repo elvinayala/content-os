@@ -1,0 +1,40 @@
+# Lo que NO sube al contenedor del puente (Railway respeta este archivo en vez de .gitignore,
+# así data/ y vault/ SÍ viajan; los secretos jamás).
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+.netlify
+*.tsbuildinfo
+.claude/settings.local.json
+# medios pesados del vault y demos (el puente no los necesita)
+vault/**/*.mp4
+vault/**/*.mov
+vault/**/*.png
+vault/**/*.jpg
+vault/**/*.jpeg
+vault/**/*.zip
+vault/**/*.pptx
+vault/**/*.pdf
+vault/**/*.wav
+vault/**/*.mp3
+demos/**/*.mp4
+demos/**/*.png
+demos/**/*.jpg
+data/demos/*/site
+tests
+# node_modules anidados (Resuelto y demos) y builds
+**/node_modules
+**/.next
+**/dist
+**/*.dylib
+**/*.node
+demos/richy-elvin-trading/brand
+vault/proyectos/**/kit/videos
+vault/proyectos/**/kit/feed
+vault/proyectos/bori-crecimiento/marca
+vault/proyectos/bori-crecimiento/leads-perdidos
+.vercel/*
+!.vercel/project.json

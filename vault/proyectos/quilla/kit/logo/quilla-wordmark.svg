@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" width="320" height="96">
+  <title>Quilla · wordmark</title>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(8 16)">
+    <path d="M6 24h52"/><path d="M14 27c4 12 10 20 18 20s14-8 18-20"/><path d="M32 47v9"/>
+  </g>
+  <text x="92" y="62" fill="currentColor" font-family="Newsreader, Georgia, 'Times New Roman', serif" font-size="52" font-weight="500" letter-spacing="-0.5">Quilla</text>
+</svg>

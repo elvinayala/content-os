@@ -1,0 +1,302 @@
+{
+  "base_url": "https://resueltopr.com",
+  "_nota": "Las imágenes se sirven desde la landing (carpeta landing/flyers/). Cambia base_url si las subes a otro sitio. Fechas en YYYY-MM-DD, hora de Puerto Rico.",
+  "piezas": [
+    {
+      "id": "p01",
+      "fecha": "2026-09-05",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/03-buscamos-10.png",
+      "texto": "Estamos armando Resuelto, una marca nueva de plomería en Puerto Rico: precio fijo antes de llegar, ventana de 2 horas y garantía de 12 meses por escrito.\n\nBuscamos 10 plomeros licenciados, uno por territorio.\n\nTú haces la plomería. Nosotros conseguimos los clientes, cotizamos, agendamos y cobramos. Te quedas con el 65% de la mano de obra y cobras todos los viernes.\n\nSi tienes licencia vigente y vehículo, aplica en resueltopr.com/plomeros\n\n#PuertoRico #Plomeria #Plomero #EmpleosPR #TrabajoPR #OficiosPR",
+      "nota": "Post de arranque. Contesta TODOS los comentarios en menos de 1 hora y llévalos a WhatsApp.",
+      "orden_lanzamiento": 3
+    },
+    {
+      "id": "p02",
+      "fecha": "2026-09-06",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/01-cuanto-ganas.png",
+      "texto": "¿Cuánto darías con nosotros?\n\nCon 2 trabajos al día, 5 días a la semana, al 65% de la mano de obra: unos $1,950 semanales. Sin gastar un peso en publicidad y sin perseguir a nadie para cobrar.\n\nEs un estimado, no una promesa: depende de la demanda de tu zona. Corre tus propios números en resueltopr.com/plomeros\n\n#Plomeria #PuertoRico #Plomero #TrabajoPR #OficiosPR"
+    },
+    {
+      "id": "p03",
+      "fecha": "2026-09-07",
+      "destinos": [
+        "ig-story"
+      ],
+      "imagen": "/flyers/04-story.png",
+      "texto": "",
+      "nota": "Story: añade el sticker de link a resueltopr.com/plomeros desde la app (la API no pone stickers)."
+    },
+    {
+      "id": "p04",
+      "fecha": "2026-09-08",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/02-el-trato.png",
+      "texto": "El trato, sin letra chica:\n\n· 65% de la mano de obra para ti, en cada trabajo\n· Pago todos los viernes con estado de cuenta\n· Materiales reembolsados completos, más 10% por tu tiempo\n· Cero cuotas, cero pago por leads\n\nLo único que pedimos: llegas en la ventana acordada, subes tus fotos del antes y después, y el cliente le paga a Resuelto.\n\nresueltopr.com/plomeros\n\n#Plomero #PuertoRico #Plomeria #TrabajoPR"
+    },
+    {
+      "id": "p05",
+      "fecha": "2026-09-10",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/03-buscamos-10.png",
+      "texto": "Puerto Rico tiene menos de mil plomeros colegiados para más de tres millones de personas, y el 70% pasa de 65 años.\n\nPor eso esperas días y te cobran lo que quieran.\n\nEstamos construyendo la solución: una marca con precio fijo publicado, plomeros licenciados verificados y garantía por escrito. Y estamos buscando a los primeros 10.\n\n¿Eres plomero? resueltopr.com/plomeros\n¿Necesitas uno? Escríbenos por WhatsApp.\n\n#PuertoRico #Plomeria #Plomero",
+      "nota": "Este ángulo (la escasez) es el que mejor funciona para prensa y comentarios."
+    },
+    {
+      "id": "c01",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c1-menu-precios.png",
+      "texto": "Nadie en Puerto Rico te dice cuánto cuesta antes de llegar a tu casa. Nosotros sí.\n\nDestape simple $149. Reparación de inodoro $99. Instalación de calentador $279. Cisterna con bomba desde $899.\n\nPrecios de mano de obra, publicados. Los materiales van al costo con el recibo. El cargo de coordinación de $19 incluye la garantía de 12 meses.\n\nSi aparece algo que no estaba a la vista, te lo confirmamos antes de tocarlo. Tú apruebas o no.\n\nEscríbenos por WhatsApp y te agendamos en 2 minutos. 👇\n\n#PuertoRico #Plomeria #Plomero #Hogar #PreciosJustos",
+      "nota": "PIEZA ESTRELLA. Fíjala en el perfil de IG y FB. Es la que la gente captura y reenvía.",
+      "orden_lanzamiento": 6
+    },
+    {
+      "id": "c02",
+      "fecha": "2099-01-02",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c2-promesa.png",
+      "texto": "Llega cuando dice. Cobra lo que dijo. Lo garantiza por escrito.\n\nTres cosas que en Puerto Rico nadie te promete. Nosotros las ponemos en la factura:\n\n· Ventana de 2 horas, con aviso 30 minutos antes y la foto del plomero que va\n· El precio que te damos por WhatsApp es el que pagas\n· 12 meses de garantía en la mano de obra. Si algo falla, volvemos en 48 horas sin costo\n\nY si no llegamos en la ventana acordada, el cargo de coordinación no lo pagas.\n\nResuelto. Tu casa, resuelta.\n\n#PuertoRico #Plomeria #ServiciosPR",
+      "orden_lanzamiento": 4
+    },
+    {
+      "id": "c03",
+      "fecha": "2099-01-03",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c3-destape.png",
+      "texto": "¿Fregadero tapado? $149 fijos.\n\nNo \"desde $149\". No \"depende\". $149 de mano de obra, más $19 de coordinación con garantía de 12 meses.\n\nMándanos una foto por WhatsApp y te confirmamos hora hoy mismo.\n\n#Plomeria #PuertoRico #Destape",
+      "orden_lanzamiento": 10
+    },
+    {
+      "id": "c04",
+      "fecha": "2099-01-04",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c4-cisterna.png",
+      "texto": "Cuando la AAA corta el agua, hay dos tipos de casa: la que se queda sin nada y la que ni se entera.\n\nInstalación de cisterna con bomba desde $899. El plomero te da el precio fijo en sitio, por escrito, y no se toca nada hasta que lo apruebes.\n\nReemplazo de bomba $249 · Calentador $279 · Filtro para toda la casa $349\n\nCotiza gratis por WhatsApp.\n\n#PuertoRico #Cisterna #AAA #Plomeria",
+      "nota": "Sube el presupuesto de esta pieza cada vez que la AAA anuncie cortes o haya aviso de tormenta."
+    },
+    {
+      "id": "c05",
+      "fecha": "2099-01-05",
+      "destinos": [
+        "ig-story"
+      ],
+      "imagen": "/flyers/c5-story-emergencia.png",
+      "texto": "",
+      "nota": "Story de emergencia. Ponle el sticker de link al WhatsApp desde el celular."
+    },
+    {
+      "id": "c08",
+      "fecha": "2099-01-06",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c8-el-problema.png",
+      "texto": "El problema no es el precio. Es no saberlo.\n\nEl plomero no tiene la culpa: así se ha trabajado siempre en Puerto Rico. Llamas a tres, contesta uno, viene, mira, y ahí te dice un número que no tienes con qué comparar.\n\nNosotros lo hacemos al revés: el precio sale de un menú publicado y lo ves antes de que salgamos de aquí. Si aparece algo que no estaba a la vista, tú lo apruebas primero.\n\nPrecios completos en resueltopr.com\n\n#PuertoRico #Plomeria #PreciosJustos",
+      "nota": "Ángulo contra el SISTEMA, nunca contra el plomero. Importante: estamos reclutando plomeros al mismo tiempo.",
+      "orden_lanzamiento": 2
+    },
+    {
+      "id": "c09",
+      "fecha": "2099-01-07",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c9-sin-sorpresas.png",
+      "texto": "5 sorpresas que con nosotros no existen:\n\n1. El precio no sube en tu casa. Lo que te dimos por WhatsApp es lo que pagas.\n2. No cobramos la visita dos veces. El diagnóstico de $69 se acredita al trabajo.\n3. No aparecemos sin avisar. Ventana de 2 horas y aviso 30 minutos antes.\n4. No dejamos reguero. Zapatones al entrar y el área queda limpia.\n5. No desaparecemos si algo falla. 12 meses de garantía y volvemos en 48 horas.\n\nY si no llegamos en la ventana acordada, la coordinación no la pagas.\n\n#PuertoRico #Plomeria #ServiciosPR",
+      "orden_lanzamiento": 8
+    },
+    {
+      "id": "c10",
+      "fecha": "2099-01-08",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c10-calentador.png",
+      "texto": "¿Ducha fría otra vez?\n\nInstalación de calentador de tanque: $279 de mano de obra. De línea (tankless): $349. Precio fijo, con 12 meses de garantía.\n\nUn dato: si tu calentador pasa de 8 años, casi siempre sale más barato cambiarlo que seguir reparándolo.\n\nEscríbenos por WhatsApp y te cotizamos hoy.\n\n#PuertoRico #Plomeria #Calentador"
+    },
+    {
+      "id": "c11",
+      "fecha": "2099-01-09",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c11-factura-agua.png",
+      "texto": "¿Te subió la factura de agua y no sabes por qué?\n\nUna filtración escondida bota agua las 24 horas. No la ves, no la oyes, y la pagas todos los meses.\n\nSeñales: mancha en la pared, piso siempre húmedo, se oye correr agua sin que nadie abra una llave, poca presión de repente, olor a humedad.\n\nDetección con equipo y cámara: $199. Te decimos exactamente dónde está, sin romper de más.\n\n#PuertoRico #Plomeria #Filtracion #AAA"
+    },
+    {
+      "id": "c12",
+      "fecha": "2099-01-10",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c12-b2b.png",
+      "texto": "¿Administras un condominio o tienes propiedades en alquiler?\n\nUn solo WhatsApp para toda la plomería:\n\n· Respuesta en 2 horas para Airbnb y alquileres, donde una hora sin agua cuesta una reseña\n· Factura mensual consolidada de todas las unidades\n· Precios cerrados por adelantado, con tarifa preferencial\n· Historial por unidad: qué se arregló, cuándo y cuánto costó\n\nContrato de mantenimiento desde $399/mes. Escríbenos y armamos el tuyo.\n\n#PuertoRico #Condominios #Airbnb #PropertyManagement",
+      "nota": "Esta es para mandar en DM y por email a administradores, no solo para el feed."
+    },
+    {
+      "id": "c13",
+      "fecha": "2099-01-11",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c13-arreglalo-tu.png",
+      "texto": "3 cosas que puedes arreglar tú sin llamar a nadie 👇 (guarda este post)\n\n1. Fregadero lento (no tapado del todo): agua bien caliente, media taza de bicarbonato y una de vinagre. Espera 15 minutos y enjuaga.\n\n2. Inodoro que no para de correr: casi siempre es el flapper. Cuesta unos $8 en la ferretería y se cambia con la mano, sin herramientas.\n\n3. Poca presión en una sola llave: desenrosca el filtrito de la punta y límpialo. Es cal acumulada, no es la tubería.\n\nSí, somos plomeros y te estamos diciendo cómo NO llamarnos. Si con eso no se arregla, ahí sí escríbenos.\n\n#PuertoRico #Plomeria #TipsDelHogar",
+      "nota": "Pieza de confianza. Es la que más se guarda y comparte. Publícala un domingo."
+    },
+    {
+      "id": "c14",
+      "fecha": "2099-01-12",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/c14-que-cisterna.png",
+      "texto": "¿Qué cisterna necesita tu casa?\n\nRegla simple: calcula unos 50 galones por persona al día y multiplícalo por los días que quieras aguantar sin servicio.\n\n· 1 o 2 personas: 200–300 galones\n· 3 o 4 personas: 400–600 galones (lo más común en PR)\n· 5 o más: 600–1,000 galones\n\nInstalación con bomba y conexiones desde $899, con precio fijo firmado en sitio antes de empezar.\n\nCotiza gratis por WhatsApp.\n\n#PuertoRico #Cisterna #AAA #Plomeria",
+      "orden_lanzamiento": 12
+    },
+    {
+      "id": "k01",
+      "fecha": "2099-02-01",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/k1-vendemos-el-proyecto.png",
+      "texto": "¿Eres contratista de remodelación en Puerto Rico? Esto no es un directorio ni te vendemos leads.\n\nResuelto consigue el cliente, visita la propiedad, cotiza, cierra el contrato y cobra el depósito. A ti te llega el proyecto ya vendido, con alcance y precio cerrados, y te pagamos por hitos contra fotos e inspección.\n\nTú haces lo que sabes: ejecutar bien. Lo demás es nuestro.\n\nBaños · cocinas · poda y árboles · remodelaciones · pisos · puertas y ventanas · piscinas · exteriores.\n\nRequisitos: registro DACO vigente, seguro, portfolio y referencias. Aplica en resueltopr.com/contratistas\n\n#ContratistasPR #Remodelacion #PuertoRico #Construccion",
+      "nota": "Reclutamiento de CONTRATISTAS (División Proyectos). Fecha 2099 hasta que Elvin dé luz verde."
+    },
+    {
+      "id": "k02",
+      "fecha": "2099-02-02",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/k2-nueve-mil.png",
+      "texto": "Tú nos dices cuánto necesitas recibir para ejecutar bien y ganar. Nosotros lo vendemos al cliente y tú no cotizas, no negocias ni persigues pagos.\n\nEjemplo: tú necesitas $9,000 por un baño. Resuelto lo cierra en $12,000 con depósito cobrado antes de asignártelo. Con esa diferencia pagamos el marketing, la venta, la cotización, la administración y la garantía.\n\nPagos por hitos: arranque, avance con fotos, aceptación final. Los cambios de alcance se cotizan y se pagan aparte.\n\nresueltopr.com/contratistas\n\n#ContratistasPR #Remodelacion #PuertoRico"
+    },
+    {
+      "id": "k03",
+      "fecha": "2099-02-03",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/flyers/k3-verified.png",
+      "texto": "No estamos armando una lista de mil contratistas. Estamos eligiendo pocos por categoría, verificados (DACO, seguro, referencias, portfolio), y cuidando que nunca les falte trabajo.\n\nAbrimos primero: baños, cocinas y poda de árboles en el área metro. El que entra ahora y ejecuta bien se queda con su categoría en su zona.\n\nAplica en resueltopr.com/contratistas. Contestamos en 48 horas, sea que sí o que no.\n\n#ResueltoVerified #ContratistasPR #PuertoRico"
+    },
+    {
+      "id": "k04",
+      "fecha": "2099-02-04",
+      "destinos": [
+        "ig-story"
+      ],
+      "imagen": "/flyers/k4-story.png",
+      "texto": "",
+      "nota": "Story contratistas. Sticker de link a /contratistas desde el celular."
+    },
+    {
+      "id": "f01",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/feed/f01-hola.png",
+      "texto": "Hola, Puerto Rico. Somos Resuelto.\n\nPlomería con precio fijo antes de llegar, ventana de 2 horas y garantía de 12 meses por escrito. Plomeros licenciados de tu zona. Todo por WhatsApp.\n\nNacimos de una frustración que conoces: llamar a tres, esperar a que uno conteste, que te digan el precio en la puerta y que después de un mes nadie responda. Eso se acabó.\n\nTu casa, resuelta. 🧡\n\n#ResueltoPR #PuertoRico #Plomeria #PlomeroPR #HogarPR #SanJuan #Bayamon #Caguas #CasaPR #ServiciosParaElHogar",
+      "nota": "Post 1 del feed (Día 1). Fijar en el perfil.",
+      "orden_lanzamiento": 1
+    },
+    {
+      "id": "f03",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/feed/f03-como-1.png",
+      "carrusel": [
+        "/feed/f03-como-1.png",
+        "/feed/f03-como-2.png",
+        "/feed/f03-como-3.png",
+        "/feed/f03-como-4.png",
+        "/feed/f03-como-5.png"
+      ],
+      "texto": "Un plomero licenciado en tu casa, en 4 pasos. Desliza →\n\n1. Escribes por WhatsApp y mandas una foto.\n2. Te damos el precio fijo del menú.\n3. Llega un plomero licenciado en la ventana que elegiste.\n4. Quedas con 12 meses de garantía por escrito.\n\nSin llamar a tres. Sin esperar días. Sin sorpresas en la factura.\n\nGuarda este post para cuando lo necesites. 🔖\n\n#ResueltoPR #Plomeria #PlomeroPR #PuertoRico #ComoFunciona #HogarPR #CasaPR #PrecioFijo #SanJuan #Caguas",
+      "nota": "Carrusel de 5 slides (Día 5).",
+      "orden_lanzamiento": 5
+    },
+    {
+      "id": "r01",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-reel",
+        "fb-page"
+      ],
+      "video": "/videos/resuelto-plomeros-15s.mp4",
+      "portada": "/feed/r-plomeros.png",
+      "texto": "Plomero licenciado: ¿cansado de buscar clientes, cotizar gratis y perseguir el pago?\n\nCon Resuelto solo trabajas. Te llegan los trabajos a la app, el precio ya está cerrado y te pagamos todos los viernes. 65% de la mano de obra para ti.\n\n10 cupos, uno por zona. Aplica en resueltopr.com/plomeros\n\n#PlomeroPR #Plomeria #EmpleosPR #TrabajoPR #OficiosPR #PuertoRico #ResueltoPR #Reels",
+      "nota": "Reel (Día 7). Portada desde el carrete: r-plomeros.png.",
+      "orden_lanzamiento": 7
+    },
+    {
+      "id": "f02",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-feed",
+        "fb-page"
+      ],
+      "imagen": "/feed/f02-garantia.png",
+      "texto": "12 meses de garantía en cada trabajo. Por escrito, no de palabra.\n\nSi algo falla: escribes por WhatsApp, volvemos en 48 horas sin costo, y Resuelto responde ante ti, no tienes que perseguir a nadie.\n\nCubre la mano de obra. Los materiales llevan la garantía del fabricante, y el reclamo lo gestionamos nosotros.\n\nAsí se trabaja cuando hay una empresa detrás.\n\n#ResueltoPR #Garantia #Plomeria #PlomeroPR #PuertoRico #HogarPR #CasaPR #Confianza",
+      "nota": "Día 9.",
+      "orden_lanzamiento": 9
+    },
+    {
+      "id": "r02",
+      "fecha": "2099-01-01",
+      "destinos": [
+        "ig-reel",
+        "fb-page"
+      ],
+      "video": "/videos/resuelto-clientes-15s.mp4",
+      "portada": "/feed/r-clientes.png",
+      "texto": "¿Cuánto te va a cobrar el plomero? Nosotros te lo decimos ANTES de ir.\n\nPrecios publicados, ventana de 2 horas, plomero licenciado de tu zona y 12 meses de garantía por escrito.\n\nEscríbenos por WhatsApp. Te resolvemos hoy.\n\n#ResueltoPR #Plomeria #PlomeroPR #PuertoRico #PrecioFijo #HogarPR #CasaPR #Reels #SanJuan",
+      "nota": "Reel (Día 11). Portada: r-clientes.png.",
+      "orden_lanzamiento": 11
+    }
+  ],
+  "_nota_clientes": "Las piezas c* son de la campaña de CLIENTES: se prenden cuando haya 5 plomeros activos. Cambia las fechas antes de correr --hoy.",
+  "_nota_feed": "Los 12 primeros posts llevan orden_lanzamiento 1–12 (ver plan-feed-instagram.md). Fechas 2099 hasta que Elvin dé el Día 1; entonces fecha = Día1 + (orden−1)."
+}

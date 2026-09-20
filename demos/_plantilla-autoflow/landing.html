@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{NEGOCIO}} — {{EYEBROW}}</title>
+<meta name="description" content="{{SUBTITULO}}" />
+<style>
+  :root{ --accent:{{COLOR}}; --ink:#15181c; --ink-2:#4b5563; --paper:#fbfaf8; --paper-2:#ffffff; --line:#e7e3dd; --wa:#25d366; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  header{position:sticky;top:0;background:rgba(251,250,248,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--accent);display:flex;align-items:center;gap:10px}
+  .logo img{height:36px;width:auto}
+  nav a{color:var(--ink-2);text-decoration:none;font-size:14px;margin-left:18px}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:700;padding:12px 20px;border-radius:12px;text-decoration:none;font-size:15px;box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 30%,transparent)}
+  .btn.wa{background:var(--wa);color:#05240f}
+  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
+  .hero{padding:72px 0 56px;display:grid;gap:36px;align-items:center}
+  @media(min-width:860px){.hero{grid-template-columns:1.15fr 1fr;padding:96px 0 72px}}
+  .eyebrow{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px}
+  h1{font-size:clamp(32px,5.2vw,52px);line-height:1.05;letter-spacing:-.025em;margin-bottom:16px}
+  .sub{font-size:18px;color:var(--ink-2);max-width:520px;margin-bottom:26px}
+  .hero .acts{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .hero .note{font-size:13px;color:var(--ink-2);margin-top:14px}
+  .hero .note b{color:var(--ink)}
+  .phone{justify-self:center;width:300px;max-width:100%;background:#111;border-radius:36px;padding:10px;box-shadow:0 30px 70px rgba(0,0,0,.28)}
+  .phone .scr{background:#efe7de;border-radius:28px;overflow:hidden;font-size:13px}
+  .phone .top{background:#008069;color:#fff;padding:14px 14px 10px;display:flex;gap:10px;align-items:center}
+  .phone .av{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
+  .phone .top small{display:block;opacity:.85;font-size:11px}
+  .phone .th{padding:12px 10px;display:flex;flex-direction:column;gap:6px;min-height:300px}
+  .phone .m{max-width:82%;padding:7px 10px;border-radius:9px;background:#fff;box-shadow:0 1px .5px rgba(0,0,0,.13);font-size:12.5px;line-height:1.35}
+  .phone .m.c{align-self:flex-end;background:#d9fdd3}
+  .phone .m i{display:block;font-size:10px;color:#667781;margin-top:3px;font-style:normal;text-align:right}
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.02em;margin-bottom:8px}
+  .lead{color:var(--ink-2);font-size:16px;max-width:620px;margin-bottom:28px}
+  .grid{display:grid;gap:16px}
+  @media(min-width:640px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .card h3{font-size:17px;margin-bottom:6px}
+  .card p{color:var(--ink-2);font-size:14.5px}
+  .card .n{display:inline-flex;width:30px;height:30px;border-radius:10px;background:color-mix(in srgb,var(--accent) 14%,white);color:var(--accent);font-weight:800;align-items:center;justify-content:center;margin-bottom:12px}
+  ul.ben{list-style:none;display:grid;gap:12px}
+  @media(min-width:640px){ul.ben{grid-template-columns:1fr 1fr}}
+  ul.ben li{padding:14px 16px 14px 44px;position:relative;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;font-size:15px}
+  ul.ben li::before{content:"✓";position:absolute;left:16px;top:12px;color:var(--accent);font-weight:800;font-size:16px}
+  .about{display:grid;gap:22px;align-items:start}
+  @media(min-width:860px){.about{grid-template-columns:1fr 1fr}}
+  .about .box{background:color-mix(in srgb,var(--accent) 7%,white);border-radius:16px;padding:22px;border:1px solid color-mix(in srgb,var(--accent) 20%,white)}
+  .about .box dt{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-top:12px}
+  .about .box dt:first-child{margin-top:0}
+  .about .box dd{font-size:15px}
+  details{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:600;font-size:15.5px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary::after{content:"+";color:var(--accent);font-size:20px;font-weight:300}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--ink-2);font-size:14.5px;margin-top:8px}
+  .final{text-align:center;padding:72px 0;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 8%,white),var(--paper))}
+  .final h2{margin-bottom:10px}
+  footer{padding:26px 0 90px;color:var(--ink-2);font-size:13px;border-top:1px solid var(--line)}
+  .credit{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;background:rgba(21,24,28,.94);color:#c9cdd6;font-size:12.5px;z-index:20}
+  .credit .dot{width:8px;height:8px;border-radius:50%;background:#35C06F;box-shadow:0 0 0 3px rgba(53,192,111,.2),0 0 12px rgba(53,192,111,.6)}
+  .credit b{color:#fff}
+  .credit a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="logo">{{LOGO}}<span>{{NEGOCIO}}</span></div>
+  <nav><a href="#servicios">Servicios</a><a href="#sobre">Sobre</a><a href="#faq">Preguntas</a><a class="btn wa" href="{{WA_LINK}}" style="padding:9px 14px;font-size:14px;margin-left:18px">WhatsApp</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITULAR}}</h1>
+      <p class="sub">{{SUBTITULO}}</p>
+      <div class="acts">
+        <a class="btn wa" href="{{WA_LINK}}">{{CTA}}</a>
+        <a class="btn ghost" href="#servicios">Ver servicios</a>
+      </div>
+      <p class="note"><b>Te respondemos en segundos</b>, a cualquier hora · {{HORARIO}}</p>
+    </div>
+    <div class="phone" aria-hidden="true"><div class="scr">
+      <div class="top"><div class="av">{{INICIAL}}</div><div><b>{{NEGOCIO}}</b><small>en línea · responde al instante</small></div></div>
+      <div class="th">{{CHAT_PREVIEW}}</div>
+    </div></div>
+  </div>
+
+  <section id="servicios">
+    <h2>Servicios</h2>
+    <p class="lead">Escríbenos y te decimos cuál es el indicado para ti.</p>
+    <div class="grid three">{{SERVICIOS}}</div>
+  </section>
+
+  <section>
+    <h2>Por qué {{NEGOCIO}}</h2>
+    <ul class="ben">{{BENEFICIOS}}</ul>
+  </section>
+
+  <section id="sobre">
+    <div class="about">
+      <div><h2>Sobre nosotros</h2><p class="lead" style="margin:0">{{SOBRE}}</p></div>
+      <dl class="box">
+        <dt>Dónde</dt><dd>{{CIUDAD}}</dd>
+        <dt>Horario</dt><dd>{{HORARIO}}</dd>
+        <dt>Contacto</dt><dd>{{CONTACTO_LINEA}}</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>Preguntas frecuentes</h2>
+    <div style="margin-top:18px">{{FAQ}}</div>
+  </section>
+</main>
+
+<div class="final"><div class="wrap">
+  <h2>¿Listo para empezar?</h2>
+  <p class="lead" style="margin:0 auto 22px">Escríbenos por WhatsApp: te respondemos en segundos y te agendamos.</p>
+  <a class="btn wa" href="{{WA_LINK}}">{{CTA}}</a>
+</div></div>
+
+<footer><div class="wrap">© {{ANIO}} {{NEGOCIO}} · {{CIUDAD}}</div></footer>
+<div class="credit"><span class="dot"></span><span>Propuesta de landing · <b>AI Borinquen</b> · AutoFlow</span><span>·</span><a href="../">Volver al MVP</a></div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "rotacion": [
+    { "marca": "ai-borinquen", "categoria": "dentista", "busqueda": "dentista", "municipios": ["San Juan", "Guaynabo", "Bayamón", "Carolina", "Caguas"] },
+    { "marca": "ai-borinquen", "categoria": "estetica", "busqueda": "medicina estética", "municipios": ["San Juan", "Guaynabo", "Dorado", "Caguas"] },
+    { "marca": "ai-borinquen", "categoria": "quiropractico", "busqueda": "quiropráctico", "municipios": ["San Juan", "Guaynabo", "Bayamón", "Ponce"] },
+    { "marca": "ai-borinquen", "categoria": "techos-solar", "busqueda": "sellado de techos", "municipios": ["Bayamón", "Caguas", "Carolina", "Toa Baja"] },
+    { "marca": "ai-borinquen", "categoria": "solar", "busqueda": "placas solares", "municipios": ["San Juan", "Bayamón", "Caguas", "Mayagüez"] },
+    { "marca": "ai-borinquen", "categoria": "dealer", "busqueda": "dealer de autos usados", "municipios": ["Bayamón", "Caguas", "Carolina", "Ponce"] },
+    { "marca": "ai-borinquen", "categoria": "legal", "busqueda": "abogado", "municipios": ["San Juan", "Guaynabo", "Caguas", "Ponce"] },
+    { "marca": "ai-borinquen", "categoria": "seguros", "busqueda": "agencia de seguros", "municipios": ["San Juan", "Bayamón", "Caguas"] },
+    { "marca": "level-up", "categoria": "clinica", "busqueda": "clínica médica", "municipios": ["San Juan", "Guaynabo", "Bayamón", "Caguas"] },
+    { "marca": "level-up", "categoria": "gym", "busqueda": "gimnasio", "municipios": ["San Juan", "Guaynabo", "Bayamón", "Carolina"] },
+    { "marca": "level-up", "categoria": "salon", "busqueda": "salón de belleza", "municipios": ["San Juan", "Guaynabo", "Bayamón", "Caguas"] }
+  ],
+  "filtros": { "minResenas": 30, "minRating": 4.0, "maxPorBusqueda": 60 },
+  "limiteCorrida": 500,
+  "auditoria": {
+    "llamadas": [{ "cuando": "horario comercial", "hora": "10:30" }, { "cuando": "fuera de horario", "hora": "18:30" }],
+    "mensajePrueba": "Hola, ¿tienen espacio esta semana para una consulta? ¿Cuál es el costo?",
+    "umbralFalla": 50
+  },
+  "pipedrive": {
+    "ai-borinquen": { "etapaProspecto": "Prospecto frío", "etiqueta": "outbound-auditoria" },
+    "level-up": { "etapaProspecto": "Prospecto frío", "etiqueta": "outbound-auditoria" }
+  },
+  "ultimaRotacion": -1
+}

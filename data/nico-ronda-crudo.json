@@ -1,0 +1,250 @@
+{
+  "generadoEl": "2026-09-20T03:08:48.462Z",
+  "desde": "2026-09-19T03:08:48.462Z",
+  "plataformas": [
+    {
+      "id": "content-os",
+      "nombre": "Content OS / CEO Command Center",
+      "critico": false,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 378
+      },
+      "git": {
+        "commits": [],
+        "sinCommitear": 51
+      },
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "bori",
+      "nombre": "Bori / Hey Bori (heybori.ai) — SaaS con clientes pagando",
+      "critico": true,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 336
+      },
+      "git": {
+        "commits": [
+          "62b0304 2026-09-19 Fallos: GET /api/fallos-abiertos (solo lectura) para la ronda diaria de Nico",
+          "fb234e6 2026-09-19 Tests: npm test estaba rojo desde la cacería de seguridad (mirrorUrl vs 127.0.0.1)",
+          "bd64502 2026-09-19 Editor: fallos de Cortex con causa humana (video sin audio, sin habla, timeout, editor caído) en vez del stack de ffmpeg; el cliente ve qué pasó y qué hacer",
+          "234b186 2026-09-19 Editor: subir video propio cae al servidor si la directa falla por CORS (como el wizard); reporta el fallo",
+          "1e6eba9 2026-09-19 Editor: línea discreta 'con Cortex · el editor de IA de Level Up'",
+          "ab9a78d 2026-09-19 Slack: fichas y alertas por bot token + id de canal (#bori-clientes y canal de bugs), webhooks como respaldo",
+          "a753151 2026-09-19 Editar con IA: tests y docs de la integración con Cortex (tope 3 min); el worker ya delega a Cortex",
+          "a7071af 2026-09-19 TRASPASO: canal único #bori-clientes-y-bugs para fichas y alertas",
+          "dc3cbfc 2026-09-19 Docs del cliente en PDF servidos en /docs (Conecta tu Meta, Tu primer anuncio, Preguntas frecuentes)",
+          "9941063 2026-09-19 Post-venta automática: ficha del cliente a Slack al pagar + secuencia de 3 correos (0h/24h/72h) que se saltan lo ya hecho; columnas sub_desde/onboarding",
+          "bf28210 2026-09-19 Primeros pasos: guías Tu primer anuncio / Conecta tu Meta / Cómo pedir ayuda (soporte humano solo Agencia) + 6 FAQ de post-venta; enlaces desde el riel y Conexiones",
+          "7dd1f48 2026-09-19 Conexiones: guía paso a paso cuando hay cuenta publicitaria pero Facebook no reporta la página (Business Portfolio) + botón Reconectar Meta",
+          "7677d5c 2026-09-18 Seguridad: enlaces de correo/Stripe con base fija (no Origin/Host), anti-SSRF en toda descarga del servidor (urlsegura.js), guardia Sec-Fetch-Site anti-CSRF, body 64kb en endpoints públicos, JWT HS256, deps parcheadas (0 vulns)"
+        ],
+        "sinCommitear": 0
+      },
+      "logs": {
+        "lineas": 17,
+        "sospechosas": 0,
+        "muestra": []
+      },
+      "fallos": {
+        "abiertos": 5,
+        "pagando": 3,
+        "muestra": [
+          "promesa: Cannot read properties of undefined (reading 'M_ID') (3x)",
+          "seguridad: Registro sin captcha en producción (TURNSTILE_* ausentes) y sin verificación de email (1x)",
+          "churn: Baja voluntaria: \"no he recibido la atención y el seguimiento que esperaba para mi proyecto\" (Lumière Boutique, plan Agencia, 16 días de cli (1x, paga)",
+          "promesa: Cannot read properties of undefined (reading 'toUpperCase') (1x, paga)",
+          "meta: Conecta a Facebook y no a Instagram; Bori no ve la página aunque la marque en el diálogo (página en Business Portfolio) (1x, paga)"
+        ]
+      },
+      "soporte": null
+    },
+    {
+      "id": "plagas",
+      "nombre": "Plagas Puerto Rico — agente interno (cliente Gilbert / Kristian / Japhet)",
+      "critico": true,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 283
+      },
+      "git": {
+        "commits": [],
+        "sinCommitear": 0
+      },
+      "logs": {
+        "lineas": 54,
+        "sospechosas": 1,
+        "muestra": [
+          "[runner] responder_conversacion 3e5b1618-4c38-43b7-b08a-f3a4a18b3a3e ok en 82503 ms"
+        ]
+      },
+      "fallos": null,
+      "soporte": {
+        "mensajesUsuario24h": 0,
+        "posiblesQuejas": [],
+        "jobsConError": 9
+      }
+    },
+    {
+      "id": "cortex",
+      "nombre": "Cortex / AI Video Editor (edit.heybori.ai)",
+      "critico": false,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 723
+      },
+      "git": [],
+      "logs": {
+        "lineas": 100,
+        "sospechosas": 3,
+        "muestra": [
+          "  compose: 11.4s → 3.7s (1 clips, 3 captions, 1 zooms, 0 b-roll = 0%, 0 cifras, ",
+          "  compose: 11.4s → 3.7s (1 clips, 3 captions, 1 zooms, 0 b-roll = 0%, 0 cifras, ",
+          "  compose: 101.5s → 56.2s (10 clips, 50 captions, 3 zooms, 4 b-roll = 15%, 3 "
+        ]
+      },
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "resuelto",
+      "nombre": "Resuelto — plataforma de plomería / home services",
+      "critico": false,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 288
+      },
+      "git": [],
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "voz",
+      "nombre": "Agentes de voz (Retell) — AutoFlow, demos, Valeria, Demo AutoFlow · <negocio>",
+      "critico": true,
+      "salud": {
+        "estado": "ok",
+        "http": 200,
+        "ms": 892
+      },
+      "git": [],
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "quiz-funnels",
+      "nombre": "Quiz funnels (ClickFunnels 2.0) — Diagnóstico LU (NzxGPd) + Diagnóstico AIB (NEWQxr)",
+      "critico": false,
+      "salud": {
+        "estado": "ok",
+        "http": 405,
+        "ms": 294
+      },
+      "git": [],
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "bori-superplataforma",
+      "nombre": "Bori super plataforma (app/borinquen/ dentro de Content OS) + CRM Bori",
+      "critico": false,
+      "salud": {
+        "estado": "ok",
+        "http": 307,
+        "ms": 306
+      },
+      "git": [],
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "puente-telegram",
+      "nombre": "Puente Telegram (Sofi/Jarvis) en Railway",
+      "critico": false,
+      "salud": {
+        "estado": "n/a"
+      },
+      "git": {
+        "commits": [],
+        "sinCommitear": 51
+      },
+      "logs": {
+        "lineas": 110,
+        "sospechosas": 3,
+        "muestra": [
+          "2026-09-19T22:32:41.733Z claude ‹ fin success 92931ms $11.050305750000005",
+          "2026-09-19T22:47:36.866Z deploy-snapshots: falló ▶ Desplegando snapshots a producción… | Error: User not found.",
+          "2026-09-19T22:51:25.460Z deploy-snapshots: falló ▶ Desplegando snapshots a producción… | Error: User not found."
+        ]
+      },
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "victory-leads",
+      "nombre": "Victory Core — scrapper de leads (cliente Néstor)",
+      "critico": false,
+      "salud": {
+        "estado": "n/a"
+      },
+      "git": [],
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    },
+    {
+      "id": "ventaja",
+      "nombre": "Ventaja — apuestas +EV (mock)",
+      "critico": false,
+      "salud": {
+        "estado": "n/a"
+      },
+      "git": {
+        "commits": [],
+        "sinCommitear": 10
+      },
+      "logs": null,
+      "fallos": null,
+      "soporte": null
+    }
+  ],
+  "ajustes24h": [],
+  "pendientesElvin": [
+    {
+      "que": "Cloudflare → R2 → bori-media → CORS (origen https://www.heybori.ai, PUT/GET/HEAD) para que la subida directa de creativos vuelva a funcionar",
+      "desde": "2026-09-16",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Configurar correo transaccional en Bori ('olvidé mi contraseña' no funciona) y borrar OWNER_BOOTSTRAP_PASSWORD de Railway",
+      "desde": "2026-08-27",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Railway mostró 'subscription past due' el 17/sep: si no se paga apagan Plagas (app + Evolution + Postgres)",
+      "desde": "2026-09-17",
+      "plataforma": "plagas",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Crear el bot de Nico en @BotFather y poner TELEGRAM_BOT_TOKEN_NICO en .env.local; luego cargar el plist com.iamarket.nico-puente",
+      "desde": "2026-09-19",
+      "plataforma": "puente-telegram",
+      "estado": "pendiente"
+    }
+  ]
+}

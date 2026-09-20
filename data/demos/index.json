@@ -1,0 +1,16 @@
+{
+  "actualizadoEl": "2026-09-19T00:59:35.620Z",
+  "demos": [
+    {
+      "slug": "skin-clinic-pr",
+      "negocio": "Skin Clinic PR",
+      "nicho": "clínica de estética y dermatología (Dra. Kasey Ruiz Vega)",
+      "creadoEl": "2026-09-19",
+      "estado": "construido",
+      "asistente": "Nicole",
+      "agentId": "agent_e0efaaf9a29d4e95591e230f42",
+      "vozReal": true,
+      "deck": "skin-clinic-pr-autoflow.pptx"
+    }
+  ]
+}

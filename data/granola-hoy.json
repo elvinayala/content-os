@@ -1,0 +1,32 @@
+{
+  "actualizadoEl": "2026-09-16T19:20:00-04:00",
+  "fecha": "2026-09-16",
+  "resumenDia": "Reunión de rescate con la Dra. Grisell Villanueva (GVR Metaesthetic, cliente Level Up): caída fuerte de leads desde mayo, branding a unificar, un solo número y propuesta de agentes de IA (voz + chat).",
+  "reuniones": [
+    {
+      "id": "e776822b-8977-41e9-b117-58aacc6e260b",
+      "titulo": "Dra. Grisell Villanueva — GVR Metaesthetic (revisión de cuenta)",
+      "hora": "12:03",
+      "resumen": "La clienta reporta caída de leads desde mayo (de $3K–$10K diarios a $200 algunos días; marzo fue el mejor mes) que coincide con el freno a los boosts orgánicos que pidió Diana. Se acordó auditar la cuenta hoy, unificar branding (logo GVR Metaesthetic + paleta crema/brown/gris), consolidar campañas a un solo número, grabar mínimo 2 videos de los equipos nuevos (Exterma, lifting), subir presupuesto 20% (~$1,200/mes) si hay resultados y enviar propuesta de agentes de IA voz + chat con pago único."
+    }
+  ],
+  "decisiones": [
+    "Auditar hoy mismo la cuenta de Meta Ads de la Dra. Villanueva para detectar los cambios de segmentación desde mayo y ajustar (la caída coincide con el freno a los boosts orgánicos).",
+    "Estandarizar el branding de la clienta: logo nuevo 'GVR Metaesthetic' + paleta aprobada (crema, brown claro/oscuro, gris oscuro, fondo caqui) como estándar definitivo — Carilin lo consolida con Maria del Carmen.",
+    "Recomendar consolidar las campañas a un solo número unificado con cuadro telefónico que transfiera por oficina (Aguadilla / Hato Rey), en vez de dos números separados.",
+    "Proponer un aumento de presupuesto del 20% (~$990 → ~$1,200/mes) condicionado a resultados; la clienta está abierta.",
+    "Ofrecer agentes de IA (voz y chat) para automatizar respuestas y precalificación (~70–80% de consultas) con pago único de implementación, sin recurrente; la clienta pidió propuesta combinada y una por canal.",
+    "Ampliar los servicios promovidos más allá de botox/fillers: lifting y el equipo nuevo Exterma (~$100K), con estética orgánica (gente real, sin antes/después evidentes).",
+    "Canal de comunicación con la clienta: Slack con respuesta en menos de 1 hora, con contacto directo a Elvin disponible."
+  ],
+  "pendientes": [
+    { "quien": "Elvin / Juan Diego (tráfico)", "que": "Auditar hoy la cuenta de la Dra. Villanueva: cambios de segmentación desde mayo y ajustes", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Juan David (closer AIB)", "que": "Enviar propuesta de agentes de IA: una combinada (voz + chat) y una por cada canal, con pago único de implementación", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Carilin + Maria del Carmen", "que": "Reunirse para consolidar la identidad visual (logo GVR Metaesthetic + paleta aprobada) y dejar de usar los logos viejos en anuncios", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Juan Diego (tráfico)", "que": "Consolidar las campañas de Aguadilla y Hato Rey a un solo número (con transferencia por oficina) y preparar el plan de aumento de presupuesto a ~$1,200/mes", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Daren / equipo creativo", "que": "Visita de contenido: grabar mínimo 2 videos de los equipos nuevos (Exterma, lifting) con estética orgánica", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Carilin (Ops)", "que": "Revisar el contrato de la clienta para clarificar términos de las visitas de contenido (las 2 primeras fueron cortesía)", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Carilin / estrategas", "que": "Reunión esta semana con los estrategas y Elizabeth para definir branding y alinear expectativas", "reunion": "Dra. Grisell Villanueva" },
+    { "quien": "Clienta (Elizabeth / Dra. Villanueva)", "que": "Enviar el logo nuevo GVR Metaesthetic y la imagen del arte del Exterma como referencia", "reunion": "Dra. Grisell Villanueva" }
+  ]
+}

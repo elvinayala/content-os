@@ -1,0 +1,382 @@
+{
+  "cliente": {
+    "nombre": "Néstor Nazario Robles",
+    "empresa": "Victory Core Property Services",
+    "email": null,
+    "emailsVendedores": []
+  },
+  "contacto": "Néstor Nazario Robles",
+  "version": "v1",
+  "territorios": [
+    {
+      "id": "fayetteville",
+      "query": "Fayetteville, North Carolina",
+      "ciudades": [
+        "Fayetteville",
+        "Hope Mills",
+        "Spring Lake",
+        "Fort Liberty",
+        "Fort Bragg",
+        "Raeford",
+        "Eastover"
+      ],
+      "activo": true
+    }
+  ],
+  "industrias": [
+    {
+      "id": "property-mgmt",
+      "nombre": "Property management / comercial",
+      "busquedas": [
+        "property management company",
+        "commercial real estate"
+      ],
+      "fitFacility": 90,
+      "activa": true,
+      "tamanoPorPortafolio": true
+    },
+    {
+      "id": "medico-dental",
+      "nombre": "Médicas y dentales",
+      "busquedas": [
+        "medical clinic",
+        "dental office"
+      ],
+      "fitFacility": 85,
+      "activa": true
+    },
+    {
+      "id": "bancos",
+      "nombre": "Bancos y credit unions",
+      "busquedas": [
+        "bank",
+        "credit union"
+      ],
+      "fitFacility": 85,
+      "activa": true
+    },
+    {
+      "id": "oficinas",
+      "nombre": "Oficinas profesionales",
+      "busquedas": [
+        "office building",
+        "law firm",
+        "accounting firm",
+        "insurance agency"
+      ],
+      "fitFacility": 75,
+      "activa": true
+    },
+    {
+      "id": "dealerships",
+      "nombre": "Dealerships",
+      "busquedas": [
+        "car dealership"
+      ],
+      "fitFacility": 80,
+      "activa": true
+    },
+    {
+      "id": "warehouse",
+      "nombre": "Warehouses / light industrial",
+      "busquedas": [
+        "warehouse",
+        "logistics company",
+        "manufacturing company"
+      ],
+      "fitFacility": 80,
+      "activa": true
+    },
+    {
+      "id": "educacion",
+      "nombre": "Daycare y educación",
+      "busquedas": [
+        "daycare",
+        "private school"
+      ],
+      "fitFacility": 70,
+      "activa": true
+    },
+    {
+      "id": "iglesias-ong",
+      "nombre": "Iglesias grandes y ONG",
+      "busquedas": [
+        "church",
+        "nonprofit organization"
+      ],
+      "fitFacility": 60,
+      "activa": true
+    },
+    {
+      "id": "retail",
+      "nombre": "Retail y comercial",
+      "busquedas": [
+        "shopping center",
+        "fitness center"
+      ],
+      "fitFacility": 65,
+      "activa": true
+    }
+  ],
+  "excluir": {
+    "categoriasMaps": [
+      "Cleaning service",
+      "Janitorial service",
+      "Commercial cleaning service",
+      "House cleaning service",
+      "Apartment building",
+      "Apartment complex",
+      "Residential",
+      "Real estate agent",
+      "Real estate consultant",
+      "Business broker",
+      "Custom home builder",
+      "ATM",
+      "Waste management service",
+      "Pest control service"
+    ],
+    "palabras": [
+      "residential cleaning",
+      "maid service"
+    ]
+  },
+  "filtros": {
+    "maxPorBusqueda": 40,
+    "minResenas": 0,
+    "requiereWeb": true,
+    "requiereTelefono": true
+  },
+  "decisores": {
+    "prioridad": [
+      "facility",
+      "operations",
+      "property",
+      "procurement",
+      "office",
+      "gerencia",
+      "dueno"
+    ],
+    "titulos": {
+      "facility": [
+        "facility",
+        "facilities",
+        "building manager",
+        "maintenance manager"
+      ],
+      "operations": [
+        "operations",
+        "coo",
+        "director of operations",
+        "practice administrator",
+        "office administrator"
+      ],
+      "property": [
+        "property manager",
+        "asset management",
+        "asset manager",
+        "portfolio manager",
+        "community manager",
+        "property operations",
+        "hoa property manager"
+      ],
+      "procurement": [
+        "procurement",
+        "purchasing",
+        "vendor"
+      ],
+      "office": [
+        "office manager",
+        "practice manager",
+        "branch manager",
+        "general manager"
+      ],
+      "gerencia": [
+        "director",
+        "vp",
+        "vice president",
+        "head of",
+        "broker-in-charge",
+        "broker in charge",
+        "principal",
+        "managing partner"
+      ],
+      "dueno": [
+        "owner",
+        "founder",
+        "ceo",
+        "president",
+        "pastor",
+        "executive director",
+        "co-owner"
+      ]
+    },
+    "busquedaApify": {
+      "personTitle": [
+        "facility manager",
+        "facilities manager",
+        "operations manager",
+        "office manager",
+        "property manager",
+        "general manager",
+        "administrator",
+        "owner",
+        "ceo",
+        "president"
+      ],
+      "seniority": [
+        "owner",
+        "founder",
+        "c_suite",
+        "vp",
+        "head",
+        "director",
+        "manager"
+      ],
+      "companyState": [
+        "North Carolina"
+      ],
+      "maxPorCuenta": 3
+    }
+  },
+  "icp": {
+    "territorioObligatorio": true,
+    "contratoMinUsd": 2500,
+    "requiereContacto": true,
+    "contrato": {
+      "empleados": [
+        [
+          50,
+          90
+        ],
+        [
+          20,
+          65
+        ],
+        [
+          10,
+          40
+        ]
+      ],
+      "sqft": [
+        [
+          10000,
+          90
+        ],
+        [
+          4000,
+          65
+        ],
+        [
+          1500,
+          40
+        ]
+      ],
+      "desconocido": 40,
+      "rangoPorNivel": {
+        "40": "$1,000–$3,000/mo",
+        "65": "$2,500–$6,000/mo",
+        "90": "$5,000–$15,000/mo"
+      },
+      "portafolio": [
+        [
+          10,
+          90
+        ],
+        [
+          5,
+          65
+        ],
+        [
+          2,
+          40
+        ]
+      ]
+    }
+  },
+  "pesos": {
+    "facilityFit": 20,
+    "contrato": 20,
+    "decisor": 15,
+    "expansion": 15,
+    "calidad": 10,
+    "geo": 10,
+    "senales": 10
+  },
+  "umbrales": {
+    "hot": 80,
+    "qualified": 65,
+    "nurture": 50
+  },
+  "presupuesto": {
+    "porCorridaUsd": 2.5,
+    "diarioUsd": 2.5,
+    "mensualUsd": 75,
+    "apify": {
+      "placesPorRunUsd": 1,
+      "placesRunsPorDia": 2,
+      "contactosPorRunUsd": 0.4
+    }
+  },
+  "crm": {
+    "adapter": "drive",
+    "exportarDesde": "qualified",
+    "drive": {
+      "carpetaId": "1SF57v4ATxl1tfbBSNK9EO87zg1FgvgGL",
+      "carpetaNombre": "Victory Core — Leads diarios",
+      "compartidaCon": [],
+      "url": "https://drive.google.com/drive/folders/1SF57v4ATxl1tfbBSNK9EO87zg1FgvgGL"
+    },
+    "pipedrive": {
+      "etapa": "Lead calificado",
+      "etapaId": null,
+      "pipelineId": null,
+      "etiqueta": null
+    },
+    "webhookUrl": null,
+    "adapters": [
+      "drive"
+    ]
+  },
+  "brief": {
+    "idioma": "en"
+  },
+  "ultimaRotacion": 0,
+  "corridas": [
+    {
+      "fecha": "2026-09-18",
+      "industria": "property-mgmt",
+      "territorio": "fayetteville",
+      "descubiertas": 80,
+      "nuevas": 62,
+      "enriquecidas": 57,
+      "conContacto": 10,
+      "hot": 1,
+      "qualified": 3,
+      "nurture": 13,
+      "disqualified": 45,
+      "entregadas": 4,
+      "enCola": 0,
+      "costoUsd": 0.96,
+      "csv": "data/victory-core/exports/leads-2026-09-18.csv",
+      "sheet": "https://docs.google.com/spreadsheets/d/10-6TmcLweAOdZdGtL7tKYL9U_QocCKHRLkpXArf2vz8/edit",
+      "notas": "1ª corrida real. property-mgmt rinde ~5% calificados (mayoría son PM residenciales/realtors). minResenas→0; excluidas: real estate agent/consultant, business broker, home builder, ATM, waste, pest. Contactos: braveleads exige maxResults>=100."
+    }
+  ],
+  "entrega": {
+    "leadsPorDia": 25,
+    "minimoPorDia": 20,
+    "horaLocal": "06:00",
+    "zona": "America/New_York"
+  },
+  "solicitudes": {
+    "sheetId": "13fKYVuxI6qzdxV8jMxWNi7IN4IAbUp71-yBdrusmFXs",
+    "url": "https://docs.google.com/spreadsheets/d/13fKYVuxI6qzdxV8jMxWNi7IN4IAbUp71-yBdrusmFXs/edit",
+    "atendidas": [
+      {
+        "fecha": "2026-09-18",
+        "texto": "EJEMPLO: agreguen Hope Mills y Spring Lake al territorio",
+        "estado": "ejemplo"
+      }
+    ]
+  }
+}

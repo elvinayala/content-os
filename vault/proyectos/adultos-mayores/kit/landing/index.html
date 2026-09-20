@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="es-PR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contigo PR</title>
+<meta name="description" content="Contigo PR llama a tu mamá o a tu papá todos los días, te cuenta cómo está por WhatsApp y le lleva lo que pida con una cuidadora de confianza. Para hijos que no pueden estar. Puerto Rico.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317463A'/%3E%3Cpath d='M32 10C19.8 10 10 18.6 10 29.3c0 6.1 3.3 11.6 8.4 15.1V54l9-5.4c1.5.2 3 .3 4.6.3 12.2 0 22-8.6 22-19.6S44.2 10 32 10z' fill='%23fff'/%3E%3Cpath d='M32 39l-7.7-7.6c-2.2-2.2-2.2-5.7 0-7.8 2.1-2.1 5.5-2.1 7.7 0 2.2-2.1 5.6-2.1 7.7 0 2.2 2.1 2.2 5.6 0 7.8L32 39z' fill='%23DE5F4D'/%3E%3C/svg%3E">
+<style>
+/* ── Tokens (brand kit v1: C1–C7, F1/F2, T1–T8) ── */
+:root{
+  --c1:#17463A; --c2:#F2B33D; --c3:#F7F5EC; --c4:#5F6B66; --c5:#0E2B23; --c6:#DE5F4D; --c7:#FFFFFF;
+  --c2-deep:#E0A128; --c1-soft:#E6EEE8; --tint:#EFEBDD;
+  --rule:rgba(23,70,58,.14); --rule-strong:rgba(23,70,58,.26);
+  --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --body:'Figtree','Helvetica Neue',Arial,sans-serif;
+  --max:1160px; --pad:clamp(20px,5vw,64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{font-family:var(--body);font-size:18px;line-height:1.55;color:var(--c5);background:var(--c3);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);color:var(--c1);line-height:1.08;text-wrap:balance;letter-spacing:-.02em}
+h2{font-size:clamp(30px,3.6vw,42px);font-weight:800}
+h3{font-size:22px;font-weight:700}
+p{max-width:62ch}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--c1);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c4)}
+.num{font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--c2);color:var(--c5);font-weight:600;font-size:17px;padding:16px 24px;border-radius:14px;transition:transform .15s ease,background .15s ease}
+.btn:hover{background:var(--c2-deep);transform:translateY(-1px)}
+.btn svg{width:20px;height:20px;flex:none}
+.btn.ghost{background:transparent;color:var(--c1);border:1.5px solid var(--rule-strong)}
+.btn.ghost:hover{background:var(--c7);transform:none}
+.btn.dark{background:var(--c1);color:var(--c7)}
+.btn.dark:hover{background:#0E2B23}
+section{padding:clamp(56px,7vw,96px) 0}
+.sec-head{max-width:640px;margin-bottom:clamp(28px,4vw,48px)}
+.sec-head p{color:var(--c4);margin-top:14px;font-size:19px}
+
+/* ── Header ── */
+header{position:sticky;top:0;z-index:20;background:rgba(247,245,236,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:27px;letter-spacing:-.03em;color:var(--c1)}
+.logo svg{width:36px;height:36px}
+.logo small{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--c4);align-self:flex-end;margin-bottom:5px}
+nav{display:flex;gap:26px;font-size:15px;font-weight:500;color:var(--c4)}
+nav a:hover{color:var(--c1)}
+.hdr-cta{font-size:15px;padding:11px 18px;border-radius:12px}
+@media (max-width:860px){nav{display:none}}
+
+/* ── Hero ── */
+.hero{position:relative;padding:clamp(52px,7vw,96px) 0 clamp(48px,6vw,80px);overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,5vw,72px);align-items:center}
+.hero h1{font-size:clamp(40px,5.4vw,66px);font-weight:800;margin:18px 0 22px}
+.hero h1 em{font-style:normal;color:var(--c6)}
+.lead{font-size:clamp(18px,1.5vw,21px);color:var(--c4);max-width:32em;margin-bottom:30px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero-note{font-size:14px;color:var(--c4);margin-top:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:22px;margin-top:34px;padding-top:22px;border-top:1px solid var(--rule)}
+.meta{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500;color:var(--c1)}
+.meta svg{width:18px;height:18px;color:var(--c1);flex:none}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}}
+
+/* Phone (el reporte diario) */
+.phone{background:var(--c7);border-radius:28px;border:1px solid var(--rule);box-shadow:0 30px 60px -30px rgba(14,43,35,.4);overflow:hidden;max-width:420px;margin-left:auto;width:100%}
+.phone-top{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--c1);color:var(--c7)}
+.phone-top .av{width:38px;height:38px;border-radius:50%;background:var(--c7);display:grid;place-items:center;flex:none}
+.phone-top .av svg{width:24px;height:24px}
+.phone-top b{display:block;font-size:15px}
+.phone-top span{font-size:12px;opacity:.8}
+.chat{padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--tint)}
+.bub{max-width:88%;padding:12px 14px;border-radius:16px;font-size:15px;line-height:1.45;background:var(--c7);border:1px solid var(--rule)}
+.bub.me{align-self:flex-end;background:#DCEFE0;border-color:transparent}
+.bub b{color:var(--c1)}
+.bub .t{display:block;font-size:11px;color:var(--c4);margin-top:6px;text-align:right}
+.bub .ok{color:var(--c1);font-weight:600}
+.bub .warn{color:var(--c6);font-weight:600}
+.bub .chip{display:inline-block;margin:8px 6px 0 0;padding:7px 12px;border-radius:999px;background:var(--c2);color:var(--c5);font-weight:600;font-size:13px}
+.bub .chip.g{background:transparent;border:1.5px solid var(--rule-strong);color:var(--c1)}
+.foto{margin-top:8px;border-radius:10px;background:linear-gradient(135deg,#C9DCCB,#9DBFA6);height:96px;display:grid;place-items:center;color:var(--c1);font-size:12px;font-weight:600}
+
+/* ── Para ella / para ti ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.side{padding:34px 32px;border-radius:22px}
+.side.ella{background:var(--c1);color:var(--c7)}
+.side.ella h3,.side.ella .eyebrow{color:var(--c7)}
+.side.ella .eyebrow{opacity:.75}
+.side.tu{background:var(--c7);border:1px solid var(--rule)}
+.side h3{font-size:26px;margin:8px 0 18px}
+.side ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.side li{display:flex;gap:12px;align-items:flex-start;font-size:17px}
+.side li svg{width:22px;height:22px;flex:none;margin-top:2px}
+.side.ella li svg{color:var(--c2)}
+.side.tu li svg{color:var(--c1)}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+
+/* ── Cómo funciona (secuencia real) ── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:paso}
+.step{background:var(--c7);border:1px solid var(--rule);border-radius:18px;padding:26px 24px 28px;position:relative}
+.step::before{counter-increment:paso;content:counter(paso);font-family:var(--display);font-weight:800;font-size:15px;color:var(--c5);background:var(--c2);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;margin-bottom:16px}
+.step h3{font-size:20px;margin-bottom:8px}
+.step p{font-size:16px;color:var(--c4)}
+@media (max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.steps{grid-template-columns:1fr}}
+
+/* ── Planes ── */
+.prices{background:var(--c7);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+.plan{border:1px solid var(--rule);border-radius:22px;padding:30px 28px;background:var(--c3);display:flex;flex-direction:column}
+.plan.hi{background:var(--c1);color:var(--c7);border-color:var(--c1)}
+.plan.hi h3,.plan.hi .price{color:var(--c7)}
+.plan.hi .eyebrow{color:rgba(255,255,255,.75)}
+.plan.hi .for{color:rgba(255,255,255,.85)}
+.plan .tag{display:inline-block;align-self:flex-start;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--c2);color:var(--c5);margin-bottom:14px}
+.plan h3{font-size:26px;margin:8px 0 6px}
+.plan .for{font-size:16px;color:var(--c4);min-height:48px}
+.price{font-family:var(--display);font-weight:800;font-size:44px;color:var(--c1);letter-spacing:-.03em;margin:18px 0 4px;line-height:1}
+.price small{font-family:var(--body);font-size:16px;font-weight:500;letter-spacing:0;color:inherit;opacity:.8}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin:20px 0 26px;font-size:16px}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li svg{width:18px;height:18px;flex:none;margin-top:4px;color:var(--c1)}
+.plan.hi li svg{color:var(--c2)}
+.plan li.no{opacity:.5}
+.plan .btn{margin-top:auto;justify-content:center}
+.plan.hi .btn{background:var(--c2);color:var(--c5)}
+.extras{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px 26px;font-size:15px;color:var(--c4)}
+.extras b{color:var(--c1)}
+.guar{margin-top:30px;display:flex;gap:16px;align-items:flex-start;padding:22px 24px;border-radius:18px;background:var(--c1-soft)}
+.guar svg{width:30px;height:30px;flex:none;color:var(--c1)}
+.guar b{color:var(--c1)}
+@media (max-width:900px){.plans{grid-template-columns:1fr}}
+
+/* ── La cuidadora ── */
+.cuid .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.card-luz{background:var(--c1);color:var(--c7);border-radius:26px;padding:32px;max-width:420px;box-shadow:0 30px 60px -30px rgba(14,43,35,.45)}
+.card-luz .ph{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#F2B33D,#DE5F4D);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:40px;color:var(--c5);margin-bottom:18px}
+.card-luz h3{color:var(--c7);font-size:30px;margin-bottom:4px}
+.card-luz .sub{opacity:.8;font-size:15px}
+.card-luz dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin-top:22px;font-size:15px}
+.card-luz dt{opacity:.7}
+.card-luz dd{font-weight:600}
+.card-luz .ver{margin-top:22px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12)}
+.card-luz .ver svg{width:16px;height:16px;color:var(--c2)}
+.checks{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.checks li{display:flex;gap:12px;align-items:flex-start;font-size:17px}
+.checks li svg{width:22px;height:22px;flex:none;color:var(--c1);margin-top:2px}
+.checks li b{color:var(--c1)}
+@media (max-width:860px){.cuid .wrap{grid-template-columns:1fr}.card-luz{max-width:none}}
+
+/* ── Pedidos ── */
+.ped{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pd{background:var(--c7);border:1px solid var(--rule);border-radius:16px;padding:20px 20px 22px}
+.pd h3{font-size:18px;margin-bottom:6px}
+.pd p{font-size:15px;color:var(--c4)}
+.pd .pr{display:block;margin-top:10px;font-family:var(--display);font-weight:700;color:var(--c1);font-size:17px}
+@media (max-width:900px){.ped{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.ped{grid-template-columns:1fr}}
+
+/* ── Zonas / lista de espera ── */
+.zonas{background:var(--c1);color:var(--c7)}
+.zonas h2,.zonas h3{color:var(--c7)}
+.zonas .sec-head p{color:rgba(255,255,255,.8)}
+.zgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start}
+.terr{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.terr li{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.08);font-size:15px}
+.terr .st{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+.terr .st.on{background:var(--c2);color:var(--c5)}
+.terr .st.soon{background:rgba(255,255,255,.14)}
+form.espera{display:flex;flex-direction:column;gap:12px;background:var(--c7);color:var(--c5);padding:26px;border-radius:20px}
+form.espera h3{color:var(--c1);font-size:22px;margin-bottom:4px}
+form.espera input,form.espera select{font:inherit;font-size:16px;padding:13px 14px;border:1.5px solid var(--rule-strong);border-radius:12px;background:var(--c3);color:var(--c5);width:100%}
+form.espera input:focus,form.espera select:focus{outline:2px solid var(--c1);outline-offset:1px}
+form.espera .btn{justify-content:center}
+form.espera .fine{font-size:13px;color:var(--c4)}
+.gracias{display:none;padding:18px;border-radius:12px;background:var(--c1-soft);color:var(--c1);font-weight:600}
+@media (max-width:860px){.zgrid{grid-template-columns:1fr}}
+
+/* ── FAQ ── */
+.faq{max-width:760px}
+details{border-top:1px solid var(--rule);padding:20px 0}
+details:last-of-type{border-bottom:1px solid var(--rule)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--display);font-weight:700;font-size:20px;color:var(--c1)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:26px;color:var(--c4);flex:none;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:12px;color:var(--c4);font-size:17px}
+
+/* ── Fundación ── */
+.fund{background:var(--c2);color:var(--c5)}
+.fund .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) auto;gap:32px;align-items:center}
+.fund h2{color:var(--c5)}
+.fund p{color:var(--c5);opacity:.85;margin-top:12px;font-size:18px}
+.fund .btn{background:var(--c1);color:var(--c7)}
+@media (max-width:760px){.fund .wrap{grid-template-columns:1fr}}
+
+/* ── Footer ── */
+footer{padding:44px 0 40px;font-size:15px;color:var(--c4)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:flex-start}
+footer .aviso{max-width:52ch}
+footer .aviso b{color:var(--c1)}
+footer nav{display:flex;flex-direction:column;gap:8px}
+</style>
+</head>
+<body>
+
+<script>
+  // ── Configuración (editar antes de publicar) ──
+  window.CONTIGO = {
+    whatsapp: "17870000000",                   // WhatsApp Business, formato internacional sin "+"
+    saludo: "Hola, quiero cuidar a mi mamá / papá con Contigo",
+    webhookEspera: ""                          // URL del webhook de GoHighLevel para la lista de espera
+  };
+</script>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="Contigo PR">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6C17.6 6 6 16.3 6 29c0 7.3 3.9 13.8 10 18v11l10.6-6.4c1.8.3 3.6.4 5.4.4 14.4 0 26-10.3 26-23S46.4 6 32 6z" fill="#17463A"/><path d="M32 40.5l-9.2-9.1c-2.6-2.6-2.6-6.8 0-9.3 2.5-2.5 6.6-2.5 9.2 0 2.6-2.5 6.7-2.5 9.2 0 2.6 2.5 2.6 6.7 0 9.3L32 40.5z" fill="#DE5F4D"/></svg>
+      contigo <small>PR</small>
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#como">Cómo funciona</a>
+      <a href="#planes">Planes</a>
+      <a href="#cuidadora">La cuidadora</a>
+      <a href="#zonas">Dónde estamos</a>
+      <a href="#faq">Preguntas</a>
+    </nav>
+    <a class="btn hdr-cta js-wa" href="#">Escríbenos</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Para hijos que no pueden estar</span>
+      <h1>Tu mamá atendida todos los días. <em>Y tú lo ves en tu WhatsApp.</em></h1>
+      <p class="lead">La llamamos cada mañana, te contamos cómo está, y si necesita algo, se lo lleva Luz, su cuidadora. Sin app para ella. Sin favores a la vecina. Sin enterarte tarde.</p>
+      <div class="hero-actions">
+        <a class="btn js-wa" href="#"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 12 12 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2l-.5-.3z"/></svg>Actívalo por WhatsApp en 5 minutos</a>
+        <a class="btn ghost" href="#planes">Ver los planes</a>
+      </div>
+      <p class="hero-note">Desde $39 al mes. El primer mes, si ella no quiere seguir, te devolvemos el dinero.</p>
+      <div class="hero-meta">
+        <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Llamada diaria a su teléfono de siempre</div>
+        <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>La misma cuidadora siempre</div>
+        <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Tú controlas el gasto</div>
+      </div>
+    </div>
+
+    <div class="phone" aria-label="Ejemplo del reporte diario que recibe el hijo por WhatsApp">
+      <div class="phone-top">
+        <div class="av"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6C17.6 6 6 16.3 6 29c0 7.3 3.9 13.8 10 18v11l10.6-6.4c1.8.3 3.6.4 5.4.4 14.4 0 26-10.3 26-23S46.4 6 32 6z" fill="#17463A"/><path d="M32 40.5l-9.2-9.1c-2.6-2.6-2.6-6.8 0-9.3 2.5-2.5 6.6-2.5 9.2 0 2.6-2.5 6.7-2.5 9.2 0 2.6 2.5 2.6 6.7 0 9.3L32 40.5z" fill="#DE5F4D"/></svg></div>
+        <div><b>Contigo · Doña Carmen</b><span>reporte de hoy</span></div>
+      </div>
+      <div class="chat">
+        <div class="bub">
+          <b>Mami hoy, 9:04 am (4 min)</b><br>
+          <span class="ok">Contestó.</span> Durmió bien. Desayunó café con pan. Tomó la de la presión.<br>
+          Pidió café, pan y leche. <span class="ok">Luz se lo lleva hoy a las 3.</span><br>
+          <span class="warn">Mencionó otra vez la rodilla (3er día).</span>
+          <span class="chip">¿Le agendamos el médico?</span><span class="chip g">Después</span>
+          <span class="t">9:09 am</span>
+        </div>
+        <div class="bub me">Sí, agéndalo. Y mándale un plato caliente mañana.<span class="t">9:12 am</span></div>
+        <div class="bub">
+          <b>Entregado, 3:12 pm</b><br>
+          Luz le llevó la compra. Se quedó 15 minutos. Recibo: $23.40.
+          <div class="foto">foto de la entrega</div>
+          <span class="t">3:14 pm</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ella">
+  <div class="wrap">
+    <div class="split">
+      <div class="side ella">
+        <span class="eyebrow">Para ella</span>
+        <h3>Nada que aprender. Solo contestar el teléfono.</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Cada mañana la llama Carmen, una voz boricua que se acuerda de la rodilla de ayer y del nieto que venía el domingo.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Tiene un imán en la nevera con un número. Llama cuando quiera: compra, farmacia, que alguien la lleve, o solo hablar.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Le abre la puerta a la misma persona siempre. Con nombre, con foto, verificada.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Si pide hablar con una persona real, la pasamos. Siempre hay alguien detrás.</li>
+        </ul>
+      </div>
+      <div class="side tu">
+        <span class="eyebrow">Para ti</span>
+        <h3>Sabes cómo está. Y resuelves con un toque.</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Un reporte por WhatsApp después de cada llamada: si contestó, si comió, si tomó las medicinas, qué pidió.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Alerta al momento si no contesta, si dice que no ha comido o si algo no suena bien.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Una billetera que tú cargas y controlas. Nunca se maneja efectivo. Foto y recibo de cada entrega.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Cuenta familiar: tus hermanos ven lo mismo y aportan a la misma billetera.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Cómo funciona</span>
+      <h2>Hoy lo activas. Mañana la llamamos.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Nos escribes por WhatsApp</h3><p>Cinco preguntas: cómo se llama, su teléfono, a qué hora le gusta que la llamen, sus medicinas y de qué le gusta hablar.</p></div>
+      <div class="step"><h3>Cargas la billetera</h3><p>Con ATH Móvil o tarjeta. Pones un límite. Hasta ahí, los pedidos se aprueban solos. Más arriba, tú apruebas con un toque.</p></div>
+      <div class="step"><h3>Carmen la llama cada mañana</h3><p>Conversan 3 a 6 minutos. Cómo durmió, si comió, las medicinas, qué necesita hoy. Tú recibes el reporte.</p></div>
+      <div class="step"><h3>Luz le lleva lo que pidió</h3><p>Compra, farmacia, un plato caliente o una visita. Foto en la puerta, recibo en tu WhatsApp, y se queda un rato con ella.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="planes" class="prices">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Planes</span>
+      <h2>Escoge cuánto quieres que estemos.</h2>
+      <p>Todos incluyen la llamada diaria, el reporte, las alertas y la billetera. Cancelas cuando quieras.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <span class="eyebrow">Contigo</span>
+        <h3>Quiero saber que está bien</h3>
+        <p class="for">Para el que la llama los domingos y quiere saber los otros seis días.</p>
+        <div class="price num">$39<small>/mes por abuelo</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Llamada diaria con reporte a tu WhatsApp</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Resumen semanal y alertas al momento</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>El imán con el número para que ella pida</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Billetera y cuenta familiar</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Pedidos y visitas, pagas por cada uno</li>
+        </ul>
+        <a class="btn ghost js-wa" href="#">Activar Contigo</a>
+      </div>
+      <div class="plan hi">
+        <span class="tag">El más escogido</span>
+        <span class="eyebrow">Contigo Cuidado</span>
+        <h3>Quiero que alguien pase a verla</h3>
+        <p class="for">Para el que vive lejos y no quiere depender de la vecina.</p>
+        <div class="price num">$149<small>/mes por abuelo</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Todo lo de Contigo</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><b>2 visitas al mes de su cuidadora fija</b> (1 hora)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>4 entregas al mes sin cargo de servicio</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Farmacia del mes coordinada</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Una coordinadora con nombre y teléfono</li>
+        </ul>
+        <a class="btn js-wa" href="#">Activar Cuidado</a>
+      </div>
+      <div class="plan">
+        <span class="eyebrow">Contigo Plus</span>
+        <h3>Quiero que esté como si yo estuviera</h3>
+        <p class="for">Para el que quiere comida caliente, transporte y compañía cada semana.</p>
+        <div class="price num">$299<small>/mes por abuelo</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Todo lo de Cuidado</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><b>4 visitas al mes</b> (2 horas) con la misma cuidadora</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Plato caliente 3 veces por semana</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Transporte acompañado a 1 cita al mes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Llamada humana semanal y entregas sin cargo</li>
+        </ul>
+        <a class="btn ghost js-wa" href="#">Activar Plus</a>
+      </div>
+    </div>
+    <div class="extras">
+      <span><b>Extras para cualquier plan:</b></span>
+      <span>Visita de cuidadora <b class="num">$35</b></span>
+      <span>Plato caliente 5 días a la semana <b class="num">+$199/mes</b></span>
+      <span>Transporte a cita <b class="num">$45</b></span>
+      <span>Gestión (luz, agua, correo) <b class="num">$15</b></span>
+      <span>Despensa mensual desde <b class="num">$60</b></span>
+    </div>
+    <div class="guar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div><b>Garantía del primer mes.</b> Si tu mamá no quiere seguir, te devolvemos el dinero. Sin preguntas. Ella decide, no nosotros.</div>
+    </div>
+  </div>
+</section>
+
+<section id="cuidadora" class="cuid">
+  <div class="wrap">
+    <div class="card-luz" aria-label="Ejemplo de la tarjeta de una cuidadora">
+      <div class="ph">L</div>
+      <h3>Se llama Luz.</h3>
+      <div class="sub">Cuidadora de doña Carmen desde marzo</div>
+      <dl>
+        <dt>Va</dt><dd>martes y jueves, 10:00 am</dd>
+        <dt>Zona</dt><dd>Bayamón y Toa Baja</dd>
+        <dt>Visitas hechas</dt><dd class="num">48 · calificación 4.9</dd>
+        <dt>Llega</dt><dd>con su tarjeta y su polo verde</dd>
+      </dl>
+      <span class="ver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Verificada por Contigo</span>
+    </div>
+    <div>
+      <span class="eyebrow">La cuidadora</span>
+      <h2>La misma persona siempre. Con nombre, con cara.</h2>
+      <p style="color:var(--c4);margin-top:14px">Otros mandan a quien esté disponible. Aquí tu mamá tiene a <b>su</b> cuidadora: la conoce, la espera con el café colado, le abre la puerta sin miedo. Y tú sabes exactamente quién entró a su casa.</p>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Certificado de antecedentes penales</b>, dos referencias y entrevista con nuestra coordinadora.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Entrenada</b> en trato al adulto mayor y en qué señales avisarte.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Nunca maneja efectivo.</b> Todo pasa por tu billetera. Foto y recibo de cada entrega.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Tú y tu mamá la califican.</b> Una queja seria y sale de la plataforma.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>¿Ya hay una vecina que la ayuda?</b> La traemos a Contigo: se verifica, cobra formal y tú ves las fotos.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="pedidos">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Lo que le puedes mandar</span>
+      <h2>Ella lo pide por teléfono. Tú lo apruebas con un toque.</h2>
+      <p>Precio claro antes de pedir. Sin cargos por minuto, sin sorpresas en la billetera.</p>
+    </div>
+    <div class="ped">
+      <div class="pd"><h3>Compra de supermercado</h3><p>Luz compra con la lista, trae el recibo y la deja en la cocina.</p><span class="pr num">costo + $9 de servicio</span></div>
+      <div class="pd"><h3>Farmacia y recetas</h3><p>Coordinamos con su farmacia de siempre y se lo llevamos.</p><span class="pr num">$7 de servicio</span></div>
+      <div class="pd"><h3>Plato caliente</h3><p>El plato del día de una cocina de su pueblo, entregado.</p><span class="pr num">$12 a $15</span></div>
+      <div class="pd"><h3>Transporte a la cita</h3><p>La llevan, la esperan y la acompañan adentro si tú lo pides.</p><span class="pr num">$35 a $60</span></div>
+      <div class="pd"><h3>Visita y compañía</h3><p>Una o dos horas: conversar, dominó, caminar, ayudar con algo.</p><span class="pr num">$25 a $45</span></div>
+      <div class="pd"><h3>Pagos y gestiones</h3><p>La luz, el agua, el correo, llevar un documento.</p><span class="pr num">$15</span></div>
+      <div class="pd"><h3>Arreglos de la casa</h3><p>Plomería y aire con Resuelto, precio fijo antes de llegar.</p><span class="pr">precio de Resuelto</span></div>
+      <div class="pd"><h3>Solo quiere hablar</h3><p>Carmen conversa. Si pide una persona, la pasamos.</p><span class="pr">incluido</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="zonas" class="zonas">
+  <div class="wrap">
+    <div class="zgrid">
+      <div>
+        <div class="sec-head">
+          <span class="eyebrow" style="color:rgba(255,255,255,.7)">Dónde estamos</span>
+          <h2>Abrimos por territorio, no por toda la isla a la vez.</h2>
+          <p>La llamada diaria funciona en cualquier pueblo desde el primer día. Las visitas y entregas se abren cuando hay cuidadoras verificadas en tu zona.</p>
+        </div>
+        <ul class="terr">
+          <li>Metro Norte <span class="st on">Activo</span></li>
+          <li>Metro Oeste <span class="st on">Activo</span></li>
+          <li>Caguas <span class="st soon">Pronto</span></li>
+          <li>Ponce <span class="st soon">Pronto</span></li>
+          <li>Arecibo <span class="st soon">Pronto</span></li>
+          <li>Mayagüez <span class="st soon">Pronto</span></li>
+          <li>Aguadilla <span class="st soon">Pronto</span></li>
+          <li>Fajardo <span class="st soon">Pronto</span></li>
+        </ul>
+      </div>
+      <form class="espera" id="espera" novalidate>
+        <h3>¿Tu mamá vive en un pueblo que dice "Pronto"?</h3>
+        <p class="fine" style="margin-bottom:4px">Déjanos tus datos. Cuando abramos visitas en su zona, te avisamos primero. La llamada diaria la puedes activar hoy mismo.</p>
+        <input name="nombre" placeholder="Tu nombre" required autocomplete="name">
+        <input name="whatsapp" placeholder="Tu WhatsApp" required inputmode="tel" autocomplete="tel">
+        <input name="pueblo" placeholder="Pueblo donde vive tu mamá o papá" required>
+        <select name="plan" aria-label="Plan que te interesa">
+          <option value="">¿Qué plan te interesa?</option>
+          <option>Contigo ($39)</option>
+          <option>Contigo Cuidado ($149)</option>
+          <option>Contigo Plus ($299)</option>
+          <option>Todavía no sé</option>
+        </select>
+        <button class="btn" type="submit">Avísenme cuando abran</button>
+        <div class="gracias" id="gracias">Anotado. Te escribimos por WhatsApp cuando abramos en tu zona.</div>
+        <p class="fine">Solo usamos tus datos para avisarte. Nada de listas ni spam.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Preguntas</span>
+      <h2>Lo que nos preguntan antes de activar.</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Mi mamá no va a hablar con una máquina.</summary>
+        <p>Carmen es una asistente por teléfono con voz boricua, que se presenta por su nombre, se acuerda de lo de ayer y conversa de verdad. Si tu mamá pide una persona, la pasamos con nuestra coordinadora. Y si después del primer mes ella no quiere seguir, te devolvemos el dinero. Ella decide.</p>
+      </details>
+      <details>
+        <summary>¿Es seguro dejar entrar a alguien a su casa?</summary>
+        <p>Cada cuidadora pasa certificado de antecedentes penales, dos referencias, entrevista y entrenamiento. Llega con su tarjeta y su polo. Nunca maneja efectivo. Tú ves foto y recibo de cada visita, y tú y tu mamá la califican. Una queja seria y sale.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa si no contesta la llamada?</summary>
+        <p>Lo intentamos tres veces en 45 minutos. Si no contesta, te avisamos al momento por WhatsApp. Si tampoco tú das con ella, nuestra coordinadora la llama y, si hace falta, una cuidadora pasa por la casa. Si es una emergencia, llamamos al 911 y a ti. Todo queda registrado con hora.</p>
+      </details>
+      <details>
+        <summary>Ya la llamo todos los días. ¿Para qué?</summary>
+        <p>Sigue llamándola. Nosotros la llamamos cuando tú no puedes, a la misma hora, y te resolvemos lo que ella te pide y tú no puedes hacer desde donde estás: la compra, la farmacia, la cita, alguien que pase.</p>
+      </details>
+      <details>
+        <summary>Somos varios hermanos. ¿Cómo funciona?</summary>
+        <p>Una sola cuenta familiar. Todos reciben el reporte, todos ven la misma billetera y cada uno aporta lo que quiera. Se acaba el "¿y tú cuándo la llamaste?".</p>
+      </details>
+      <details>
+        <summary>¿Es un servicio médico o de emergencia?</summary>
+        <p>No. Contigo es compañía, coordinación y logística. No damos medicinas ni consejos médicos y no sustituimos al 911 ni a un botón de emergencia. Si tu mamá tiene riesgo de caídas o una condición seria, combínalo con un servicio de emergencia médica.</p>
+      </details>
+      <details>
+        <summary>¿Puedo pagar desde Estados Unidos?</summary>
+        <p>Sí. Tarjeta de crédito o débito de cualquier banco, y ATH Móvil si tienes cuenta en Puerto Rico. Los precios están en dólares y no hay cargos escondidos.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="fund">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow" style="color:var(--c5);opacity:.7">Apadrina un abuelo</span>
+      <h2>Hay abuelos que no tienen quien les active esto.</h2>
+      <p>Por $99 al mes, un abuelo sin familia recibe la llamada diaria, una visita y la despensa del mes. Tú recibes el mismo resumen semanal. Nadie se queda solo.</p>
+    </div>
+    <a class="btn js-wa" href="#" data-saludo="Hola, quiero apadrinar a un abuelo con Contigo">Quiero apadrinar</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="aviso">
+      <b>Contigo PR</b> · Nadie se queda solo.<br>
+      Contigo no es un servicio médico ni de emergencia. Escalamos a la familia y al 911; no los sustituimos.
+    </div>
+    <nav aria-label="Enlaces">
+      <a class="js-wa" href="#">Escríbenos por WhatsApp</a>
+      <a class="js-wa" href="#" data-saludo="Hola, quiero ser cuidadora en Contigo">¿Quieres ser cuidadora?</a>
+      <a href="#faq">Preguntas frecuentes</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var cfg = window.CONTIGO || {};
+  function wa(saludo){ return 'https://wa.me/' + (cfg.whatsapp||'') + '?text=' + encodeURIComponent(saludo || cfg.saludo || 'Hola'); }
+  var links = document.querySelectorAll('.js-wa');
+  for (var i=0;i<links.length;i++){
+    links[i].setAttribute('href', wa(links[i].getAttribute('data-saludo')));
+    links[i].setAttribute('target','_blank');
+    links[i].setAttribute('rel','noopener');
+  }
+  var form = document.getElementById('espera');
+  if (form) form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var data = {};
+    var els = form.elements;
+    for (var j=0;j<els.length;j++){ if (els[j].name) data[els[j].name] = els[j].value; }
+    if (!data.nombre || !data.whatsapp || !data.pueblo){ form.reportValidity(); return; }
+    data.origen = 'landing-contigo-espera';
+    var done = function(){ document.getElementById('gracias').style.display='block'; form.querySelector('button').disabled = true; };
+    if (cfg.webhookEspera){
+      fetch(cfg.webhookEspera,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(done,done);
+    } else { done(); }
+  });
+})();
+</script>
+</body>
+</html>

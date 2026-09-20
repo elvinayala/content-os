@@ -1,0 +1,64 @@
+{
+  "marca": {
+    "handle": "@tenfoldmarc",
+    "nombre": "Tenfold Marc",
+    "nicho": "IA para creadores y marketing de contenido",
+    "tono": "Cercano, directo, con data. Nada de relleno.",
+    "audiencia": "Creadores y emprendedores que quieren crecer con contenido y usar IA.",
+    "oferta": "Plantillas, sistemas y mentoría para crear contenido que convierte.",
+    "cta": "Guardá este reel / Seguime para más"
+  },
+  "cuentas": [
+    {
+      "plataforma": "Instagram",
+      "handle": "@tenfoldmarc",
+      "conectada": false
+    },
+    {
+      "plataforma": "TikTok",
+      "handle": "@tenfoldmarc",
+      "conectada": false
+    },
+    {
+      "plataforma": "YouTube",
+      "handle": "@tenfoldmarc",
+      "conectada": false
+    }
+  ],
+  "competidores": [
+    "@growthlab",
+    "@creatorx",
+    "@datayango",
+    "@marcaviva",
+    "@brandirlab"
+  ],
+  "fuentes": [
+    "Blog de Anthropic",
+    "Blog de OpenAI",
+    "Google DeepMind",
+    "Hugging Face",
+    "Listas de X · IA",
+    "Listas de X · Creators",
+    "The Rundown AI",
+    "Ben's Bites",
+    "TLDR AI",
+    "MIT Tech Review",
+    "Product Hunt",
+    "Nicho · Creator economy"
+  ],
+  "reglas": {
+    "mixSemanal": {
+      "reels": 3,
+      "carruseles": 2,
+      "youtube": 1
+    },
+    "horariosPublicacion": [
+      "12:30",
+      "18:00",
+      "21:00"
+    ],
+    "umbralBombazo": 2,
+    "resumenSlackHora": "07:00",
+    "ideasPorSemana": 7
+  }
+}

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es-PR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aplicar · Quilla</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  .intro { padding: 36px 0 26px; display: grid; gap: 12px; }
+  .intro h1 { font-size: clamp(32px, 5.4vw, 48px); }
+  .step h2 { font-size: clamp(24px, 3.6vw, 32px); margin-bottom: 4px; }
+  .step { display: grid; gap: 18px; padding-bottom: 40px; }
+  .q { display: grid; gap: 8px; }
+  .checks { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .check { display: flex; gap: 10px; align-items: center; background: var(--bg); border: 1.5px solid var(--line); padding: 10px 12px; border-radius: 4px; font-size: 15px; cursor: pointer; }
+  .check.on { border-color: var(--accent); background: var(--foam); }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .redes { display: grid; gap: 10px; }
+  .red { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 8px; align-items: center; }
+  .red .lbl { font-size: 15px; }
+  @media (max-width: 560px) { .red { grid-template-columns: 1fr; } .red .lbl { margin-top: 6px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../" aria-label="Quilla">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 24h52"/><path d="M14 27c4 12 10 20 18 20s14-8 18-20"/><path d="M32 47v9"/></svg>
+      Quilla
+    </a>
+    <span class="small">Aplicación</span>
+  </header>
+</div>
+<div class="waterline"></div>
+
+<main class="wrap" id="app">
+
+  <!-- ================= PANTALLA 0 · CAPTURA ================= -->
+  <section data-screen="captura">
+    <div class="intro">
+      <p class="eyebrow">Cinco pasos · diez minutos</p>
+      <h1>Cuéntanos quién eres y qué has construido.</h1>
+      <p class="lede">Leemos cada aplicación. Si encajas, te llamamos en 24 horas hábiles. Si no, te lo decimos de frente.</p>
+    </div>
+    <div class="card">
+      <div class="honeypot" aria-hidden="true"><label for="q-web">No completar</label><input id="q-web" type="text" tabindex="-1" autocomplete="off"></div>
+      <div class="field"><label for="f-nombre">Tu nombre</label><input id="f-nombre" class="input" data-f="nombre" autocomplete="name"><span class="errmsg" hidden>Escribe tu nombre</span></div>
+      <div class="field"><label for="f-email">Tu email</label><input id="f-email" class="input" data-f="email" type="email" autocomplete="email" inputmode="email"><span class="errmsg" hidden>Escribe un email válido</span></div>
+      <div class="field"><label for="f-tel">Tu WhatsApp</label>
+        <div class="phone">
+          <select class="input" data-f="pais" aria-label="País">
+            <option value="+1" data-min="10" data-max="10" data-name="Puerto Rico / EE. UU." selected>🇵🇷 +1</option>
+            <option value="+1809" data-min="7" data-max="7" data-name="Rep. Dominicana">🇩🇴 +1</option>
+            <option value="+52" data-min="10" data-max="10" data-name="México">🇲🇽 +52</option>
+            <option value="+57" data-min="10" data-max="10" data-name="Colombia">🇨🇴 +57</option>
+            <option value="+34" data-min="9" data-max="9" data-name="España">🇪🇸 +34</option>
+            <option value="+54" data-min="10" data-max="11" data-name="Argentina">🇦🇷 +54</option>
+            <option value="+56" data-min="9" data-max="9" data-name="Chile">🇨🇱 +56</option>
+            <option value="+51" data-min="9" data-max="9" data-name="Perú">🇵🇪 +51</option>
+            <option value="+507" data-min="8" data-max="8" data-name="Panamá">🇵🇦 +507</option>
+          </select>
+          <input id="f-tel" class="input" data-f="telefono" type="tel" autocomplete="tel-national" inputmode="tel">
+        </div><span class="errmsg" hidden>Escribe un número válido</span></div>
+      <div class="field"><label for="f-ig">Tu usuario de Instagram</label><input id="f-ig" class="input" data-f="instagram" placeholder="@" autocapitalize="none" autocomplete="off"><span class="errmsg" hidden>Escribe tu usuario de Instagram</span></div>
+      <label class="optin"><input type="checkbox" data-f="optin"><span>Acepto que Quilla evalúe mi perfil y me contacte por email o WhatsApp. Puedo pedir que borren mis datos cuando quiera.</span></label>
+      <span class="errmsg" data-err="optin" hidden>Necesitas aceptar para continuar</span>
+      <button class="btn full" data-action="start">Empezar la aplicación <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      <p class="small">Sin costo. Sin compromiso. Nadie ve tu puntaje: lo revisa una persona.</p>
+    </div>
+  </section>
+
+  <!-- ================= PASOS ================= -->
+  <section data-screen="pasos" hidden>
+    <div class="topbar"><span class="eyebrow" data-titulo>Tus redes</span><span class="counter" data-counter>1/5</span></div>
+    <div class="progress"><i data-progress></i></div>
+
+    <div class="step" data-step="redes">
+      <h2>Tus redes</h2>
+      <p class="hint">Pon el número que ves hoy en cada perfil. Deja en "no tengo" las que no uses.</p>
+      <div class="redes">
+        <div class="red"><span class="lbl">Instagram</span><select class="input" data-q="seg_instagram"></select><span class="hint">(usuario: <span data-ig-echo>@</span>)</span></div>
+        <div class="red"><span class="lbl">TikTok</span><select class="input" data-q="seg_tiktok"></select><input class="input" data-q="tiktok" placeholder="@usuario (opcional)" autocapitalize="none"></div>
+        <div class="red"><span class="lbl">YouTube</span><select class="input" data-q="seg_youtube"></select><input class="input" data-q="youtube" placeholder="canal (opcional)"></div>
+        <div class="red"><span class="lbl">Facebook</span><select class="input" data-q="seg_facebook"></select><input class="input" data-q="facebook" placeholder="página (opcional)"></div>
+        <div class="red"><span class="lbl">X</span><select class="input" data-q="seg_x"></select><input class="input" data-q="x" placeholder="@usuario (opcional)" autocapitalize="none"></div>
+      </div>
+      <div class="q"><span class="lbl">¿Cuál es tu plataforma principal?</span>
+        <div class="radios two" data-q="principal" role="radiogroup">
+          <button type="button" class="radio" data-v="instagram">Instagram</button><button type="button" class="radio" data-v="tiktok">TikTok</button><button type="button" class="radio" data-v="youtube">YouTube</button><button type="button" class="radio" data-v="facebook">Facebook</button><button type="button" class="radio" data-v="x">X</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="alcance" hidden>
+      <h2>Tu alcance</h2>
+      <div class="grid2">
+        <div class="q"><label for="q-vistas">Vistas promedio de tus últimos 10 reels o videos</label><select id="q-vistas" class="input" data-q="vistas"><option value="">Elige</option><option value="500">menos de 1,000</option><option value="2000">1,000–3,000</option><option value="6000">3,000–10,000</option><option value="15000">10,000–25,000</option><option value="40000">25,000–60,000</option><option value="100000">más de 60,000</option></select></div>
+        <div class="q"><label for="q-eng">Tu engagement aproximado (si lo sabes)</label><select id="q-eng" class="input" data-q="engagement_pct"><option value="">Elige</option><option value="0.5">menos de 1 %</option><option value="1.5">1–2 %</option><option value="3">2–4 %</option><option value="5">más de 4 %</option><option value="nose">no lo sé</option></select></div>
+      </div>
+      <div class="q"><span class="lbl">¿Dónde está tu audiencia?</span>
+        <div class="radios two" data-q="ubicacion" role="radiogroup">
+          <button type="button" class="radio" data-v="pr">Puerto Rico <small>70 % o más en la isla</small></button>
+          <button type="button" class="radio" data-v="mixta">Mixta <small>Puerto Rico y Estados Unidos</small></button>
+          <button type="button" class="radio" data-v="us">Hispanos en EE. UU. <small>la mayoría vive allá</small></button>
+          <button type="button" class="radio" data-v="latam">Latinoamérica <small>la mayoría fuera de PR y EE. UU.</small></button>
+          <button type="button" class="radio" data-v="nose">No lo sé</button>
+        </div>
+      </div>
+      <div class="q"><label for="q-nicho">Tu nicho principal</label><select id="q-nicho" class="input" data-q="nicho"><option value="">Elige</option><option value="salud">Salud y bienestar (médico, psicólogo, nutrición)</option><option value="finanzas">Finanzas, negocios, emprendimiento</option><option value="fitness">Fitness y entrenamiento</option><option value="belleza">Belleza, estética, moda</option><option value="tech">Tecnología, IA, marketing</option><option value="comida">Comida y cocina</option><option value="familia">Familia, maternidad, crianza</option><option value="entretenimiento">Entretenimiento y comedia</option><option value="musica">Música y arte</option><option value="deportes">Deportes</option><option value="lifestyle">Lifestyle y viajes</option><option value="otro">Otro</option></select></div>
+    </div>
+
+    <div class="step" data-step="dinero" hidden>
+      <h2>Tu dinero</h2>
+      <div class="q"><label for="q-ing">¿Cuánto te genera tu audiencia al mes hoy? (todo incluido)</label><select id="q-ing" class="input" data-q="ingresos"><option value="">Elige</option><option value="0">Nada todavía</option><option value="250">Menos de $500</option><option value="1000">$500 – $1,500</option><option value="3000">$1,500 – $5,000</option><option value="7500">$5,000 – $10,000</option><option value="15000">$10,000 – $20,000</option><option value="30000">Más de $20,000</option></select></div>
+      <div class="q"><span class="lbl">¿Cómo monetizas hoy? (marca todas)</span>
+        <div class="checks" data-q="monetizacion">
+          <label class="check"><input type="checkbox" value="patrocinios">Patrocinios / marcas</label><label class="check"><input type="checkbox" value="afiliados">Afiliados</label><label class="check"><input type="checkbox" value="productos">Productos físicos</label><label class="check"><input type="checkbox" value="cursos">Cursos o programas</label><label class="check"><input type="checkbox" value="eventos">Eventos o shows</label><label class="check"><input type="checkbox" value="ugc">Contenido para marcas (UGC)</label><label class="check"><input type="checkbox" value="adsense">Monetización de plataforma</label><label class="check" data-none><input type="checkbox" value="ninguna">Ninguna</label>
+        </div>
+      </div>
+      <div class="q"><span class="lbl">Credibilidad fuera de redes (marca todas)</span>
+        <div class="checks" data-q="credibilidad">
+          <label class="check"><input type="checkbox" value="tv">Televisión</label><label class="check"><input type="checkbox" value="radio">Radio</label><label class="check"><input type="checkbox" value="podcast">Podcast propio</label><label class="check"><input type="checkbox" value="profesion">Profesión con licencia (médico, abogado, CPA…)</label><label class="check"><input type="checkbox" value="autor">Autor / conferencista</label><label class="check" data-none><input type="checkbox" value="ninguna">Ninguna</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="compromiso" hidden>
+      <h2>Tu compromiso</h2>
+      <div class="q"><span class="lbl">¿Qué quieres lograr?</span>
+        <div class="radios" data-q="objetivo" role="radiogroup">
+          <button type="button" class="radio" data-v="negocio">Construir una empresa alrededor de mi audiencia</button>
+          <button type="button" class="radio" data-v="producto">Lanzar algo propio (programa, membresía, producto)</button>
+          <button type="button" class="radio" data-v="patrocinios">Mejores acuerdos con marcas</button>
+          <button type="button" class="radio" data-v="delegar">Que alguien maneje lo comercial por mí</button>
+          <button type="button" class="radio" data-v="crecer">Crecer mi audiencia</button>
+        </div>
+      </div>
+      <div class="q"><label for="q-disp">Horas a la semana que puedes dedicar</label><select id="q-disp" class="input" data-q="disponibilidad"><option value="">Elige</option><option value="2">Menos de 4</option><option value="6">4 – 8</option><option value="12">8 – 15</option><option value="25">Más de 15</option></select></div>
+      <div class="grid2">
+        <div class="q"><span class="lbl">¿Trabajarías con participación en los ingresos en vez de pagar un fee?</span>
+          <div class="radios two" data-q="revshare" role="radiogroup"><button type="button" class="radio" data-v="si">Sí</button><button type="button" class="radio" data-v="depende">Depende</button><button type="button" class="radio" data-v="no">No</button></div>
+        </div>
+        <div class="q"><span class="lbl">¿Aceptarías exclusividad limitada al proyecto que construyamos juntos?</span>
+          <div class="radios two" data-q="exclusividad" role="radiogroup"><button type="button" class="radio" data-v="si">Sí</button><button type="button" class="radio" data-v="depende">Depende</button><button type="button" class="radio" data-v="no">No</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="porque" hidden>
+      <h2>Por qué ahora</h2>
+      <div class="q"><label for="q-porque">Cuéntanos por qué aplicas ahora (opcional)</label><textarea id="q-porque" class="input" data-q="porque_ahora" maxlength="600" placeholder="Qué has intentado, qué te frena, qué quieres que sea distinto en 12 meses."></textarea><span class="hint">Máximo 600 caracteres.</span></div>
+    </div>
+
+    <div class="alert" data-alert hidden>Te falta contestar algo en este paso.</div>
+    <div class="nav">
+      <button class="btn line" data-action="back">Atrás</button>
+      <button class="btn" data-action="next">Siguiente</button>
+      <button class="btn" data-action="finish" hidden>Enviar aplicación</button>
+    </div>
+  </section>
+
+  <!-- ================= LOADER ================= -->
+  <section data-screen="loader" hidden>
+    <div class="loader">
+      <p class="eyebrow">Revisando</p>
+      <h2>Estamos leyendo tu aplicación.</h2>
+      <ul><li data-ls>Audiencia y plataformas</li><li data-ls>Interacción real</li><li data-ls>Potencial de negocio</li><li data-ls>Encaje con Quilla</li></ul>
+      <div class="progress"><i data-loadbar></i></div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTADOS ================= -->
+  <section data-screen="resultado" hidden>
+    <div class="result" data-r="llamada" hidden>
+      <p class="eyebrow">Tu aplicación</p>
+      <h2>Tu perfil encaja con lo que buscamos.</h2>
+      <p>El siguiente paso es una llamada de 20 minutos con el equipo de Quilla para ver si tiene sentido trabajar juntos. No es una venta: es una conversación sobre tu audiencia y lo que se podría construir.</p>
+      <a class="btn" data-calendario href="#" target="_blank" rel="noopener">Agendar la llamada</a>
+      <p class="small">También te llega por email y WhatsApp.</p>
+      <div class="model"><p class="eyebrow">Por dónde empezaríamos</p><p data-modelo></p></div>
+    </div>
+    <div class="result" data-r="revision" hidden>
+      <p class="eyebrow">Tu aplicación</p>
+      <h2>Recibimos tu aplicación. La revisamos a mano.</h2>
+      <p>Cada perfil lo revisa una persona del equipo. Te contestamos en 5 días hábiles, sea que sí o que no.</p>
+      <p class="small">Mientras tanto, puedes ver cómo trabajamos en <a data-ig href="#">Instagram</a>.</p>
+    </div>
+    <div class="result" data-r="no-califica" hidden>
+      <p class="eyebrow">Tu aplicación</p>
+      <h2>Gracias por aplicar. Hoy no es el momento.</h2>
+      <p>Trabajamos con pocos creadores a la vez y con un perfil muy específico: audiencia principalmente en Puerto Rico, engagement real y disposición a construir un negocio en conjunto. Tu perfil todavía no está ahí, y preferimos decírtelo de frente.</p>
+      <div><p class="eyebrow" style="margin-bottom:8px">Qué te acercaría</p><ul data-gates></ul></div>
+      <p class="small">Puedes volver a aplicar en 90 días.</p>
+    </div>
+  </section>
+
+  <footer><span>Quilla · Puerto Rico</span><a data-email href="#">hola@quillagroup.com</a><span>Privacidad · Términos</span></footer>
+</main>
+
+<script src="../config.js"></script>
+<script src="../scoring.js"></script>
+<script>
+(function () {
+  'use strict';
+  var C = window.QUILLA || {}; var KEY = C.storageKey || 'quilla_aplicacion_v1';
+  var root = document.getElementById('app');
+  var $ = function (s, c) { return (c || root).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || root).querySelectorAll(s)); };
+  var screens = {}; $$('[data-screen]').forEach(function (el) { screens[el.getAttribute('data-screen')] = el; });
+  var e = $('[data-email]'); if (C.email) { e.href = 'mailto:' + C.email; e.textContent = C.email; }
+  $$('[data-ig]').forEach(function (a) { if (C.instagram) a.href = C.instagram; else a.removeAttribute('href'); });
+
+  // ---- datos
+  var d = { nombre: '', email: '', pais: '+1', telefono: '', instagram: '', optin: false,
+    seg_instagram: '0', seg_tiktok: '0', seg_youtube: '0', seg_facebook: '0', seg_x: '0', tiktok: '', youtube: '', facebook: '', x: '', principal: '',
+    vistas: '', engagement_pct: '', ubicacion: '', nicho: '', ingresos: '', monetizacion: [], credibilidad: [],
+    objetivo: '', disponibilidad: '', revshare: '', exclusividad: '', porque_ahora: '' };
+  try { var prev = JSON.parse(localStorage.getItem(KEY) || 'null'); if (prev && prev.datos) for (var k in prev.datos) if (k in d) d[k] = prev.datos[k]; } catch (x) {}
+
+  // ---- selects de seguidores (punto medio del rango como valor)
+  var RANGOS = [['0', 'no tengo / menos de 5K'], ['2500', 'menos de 5K'], ['7500', '5K – 10K'], ['17500', '10K – 25K'], ['37500', '25K – 50K'], ['75000', '50K – 100K'], ['150000', '100K – 200K'], ['350000', '200K – 500K'], ['750000', 'más de 500K']];
+  $$('select[data-q^="seg_"]').forEach(function (s) {
+    RANGOS.forEach(function (r, i) { if (i === 1) return; var o = document.createElement('option'); o.value = r[0]; o.textContent = i === 0 ? 'no tengo' : r[1]; s.appendChild(o); });
+    var o2 = document.createElement('option'); o2.value = '2500'; o2.textContent = 'menos de 5K'; s.insertBefore(o2, s.children[1]);
+    s.value = d[s.getAttribute('data-q')] || '0';
+  });
+
+  function tracking() {
+    var t = {};
+    try { var p = new URLSearchParams(location.search);
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ttclid'].forEach(function (k) { if (p.get(k)) t[k] = p.get(k).slice(0, 200); });
+      t.landing_url = location.href.slice(0, 500); if (document.referrer) t.referrer = document.referrer.slice(0, 500); } catch (x) {}
+    return t;
+  }
+  function guardar(paso) { try { localStorage.setItem(KEY, JSON.stringify({ paso: paso, datos: d, tracking: tracking(), ts: new Date().toISOString() })); } catch (x) {} }
+  function mostrar(n) { Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== n; }); window.scrollTo(0, 0); }
+
+  // ---- envío a GHL (payload plano). Sin webhook: modo local.
+  function payload(evento, r) {
+    var t = tracking();
+    var p = { evento: evento, origen: 'landing-quilla', fecha: new Date().toISOString(), nombre: d.nombre, email: d.email, telefono: d.telefonoCompleto || '', instagram: d.instagram, tiktok: d.tiktok, youtube: d.youtube, facebook: d.facebook, x: d.x,
+      seg_instagram: +d.seg_instagram, seg_tiktok: +d.seg_tiktok, seg_youtube: +d.seg_youtube, seg_facebook: +d.seg_facebook, seg_x: +d.seg_x,
+      seg_total: (+d.seg_instagram) + (+d.seg_tiktok) + (+d.seg_youtube) + (+d.seg_facebook) + (+d.seg_x), plataforma_principal: d.principal,
+      vistas_promedio: d.vistas, engagement_pct: d.engagement_pct, audiencia_ubicacion: d.ubicacion, nicho: d.nicho, ingresos_mes: d.ingresos,
+      monetizacion: d.monetizacion.join(','), credibilidad: d.credibilidad.join(','), objetivo: d.objetivo, disponibilidad_h: d.disponibilidad, revshare: d.revshare, exclusividad: d.exclusividad, porque_ahora: d.porque_ahora };
+    if (r) { p.score = r.score; p.banda = r.banda; p.calificado = r.calificado; p.modelo_sugerido = r.modeloSugerido; p.motivos = r.motivos.join(' · '); p.gates = r.gates.join(','); }
+    for (var k in t) p[k] = t[k];
+    return p;
+  }
+  function enviar(evento, r) {
+    var p = payload(evento, r);
+    try { root.dispatchEvent(new CustomEvent('quilla:aplicacion', { detail: p, bubbles: true })); } catch (x) {}
+    if (!C.webhook) {
+      console.info('[quilla] webhook vacío · payload ' + evento, p);
+      try { var pend = JSON.parse(localStorage.getItem(KEY + '_pendientes') || '[]'); pend.push(p); localStorage.setItem(KEY + '_pendientes', JSON.stringify(pend)); } catch (x) {}
+      return Promise.resolve(null);
+    }
+    return fetch(C.webhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p), keepalive: true }).then(function (res) { return res.ok; }).catch(function () { return false; });
+  }
+
+  // ---- captura
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()); };
+  $$('[data-f]').forEach(function (el) {
+    if (el.type === 'checkbox') el.checked = !!d[el.getAttribute('data-f')]; else if (d[el.getAttribute('data-f')]) el.value = d[el.getAttribute('data-f')];
+    var h = function () { d[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (capIntentado) pintarCaptura(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  function validarCaptura() {
+    var sel = $('[data-f="pais"]'); var opt = sel.options[sel.selectedIndex]; var dig = String(d.telefono).replace(/\D/g, '');
+    var min = +opt.getAttribute('data-min'), max = +opt.getAttribute('data-max');
+    return { nombre: d.nombre.trim() !== '', email: emailOk(d.email), telefono: dig.length >= min && dig.length <= max, instagram: d.instagram.replace('@', '').trim() !== '', optin: !!d.optin, _min: min, _max: max, _pais: opt.getAttribute('data-name') };
+  }
+  var capIntentado = false;
+  function pintarCaptura() {
+    var v = validarCaptura();
+    ['nombre', 'email', 'telefono', 'instagram'].forEach(function (k) { var el = $('[data-f="' + k + '"]'); el.classList.toggle('err', !v[k]); var m = el.closest('.field').querySelector('.errmsg'); m.hidden = v[k]; if (k === 'telefono') m.textContent = 'Escribe un número válido (' + (v._min === v._max ? v._min : v._min + ' a ' + v._max) + ' dígitos, ' + v._pais + ')'; });
+    $('[data-err="optin"]').hidden = v.optin;
+  }
+  $('[data-action="start"]').addEventListener('click', function () {
+    if ($('#q-web').value) return; // honeypot
+    capIntentado = true; var v = validarCaptura();
+    if (!(v.nombre && v.email && v.telefono && v.instagram && v.optin)) { pintarCaptura(); return; }
+    d.instagram = '@' + d.instagram.replace(/^@+/, '').trim();
+    d.telefonoCompleto = d.pais.replace('+1809', '+1') + String(d.telefono).replace(/\D/g, '');
+    $('[data-ig-echo]').textContent = d.instagram;
+    guardar(0); enviar('lead'); idx = 0; intentado = false; mostrar('pasos'); render();
+  });
+
+  // ---- pasos
+  var PASOS = ['redes', 'alcance', 'dinero', 'compromiso', 'porque'];
+  var TITULOS = { redes: 'Tus redes', alcance: 'Tu alcance', dinero: 'Tu dinero', compromiso: 'Tu compromiso', porque: 'Por qué ahora' };
+  var idx = 0, intentado = false, resultado = null;
+  function faltantes() {
+    var p = PASOS[idx]; var f = [];
+    if (p === 'redes') { if (!d.principal) f.push('principal'); if (!(+d.seg_instagram || +d.seg_tiktok || +d.seg_youtube || +d.seg_facebook || +d.seg_x)) f.push('seg_instagram'); }
+    if (p === 'alcance') { if (!d.vistas && !d.engagement_pct) { f.push('vistas'); f.push('engagement_pct'); } if (!d.ubicacion) f.push('ubicacion'); if (!d.nicho) f.push('nicho'); }
+    if (p === 'dinero') { if (d.ingresos === '') f.push('ingresos'); if (!d.monetizacion.length) f.push('monetizacion'); if (!d.credibilidad.length) f.push('credibilidad'); }
+    if (p === 'compromiso') { ['objetivo', 'disponibilidad', 'revshare', 'exclusividad'].forEach(function (k) { if (!d[k]) f.push(k); }); }
+    return f;
+  }
+  function pintar() {
+    var f = intentado ? faltantes() : [];
+    $$('[data-q]').forEach(function (el) { el.classList.toggle('err', f.indexOf(el.getAttribute('data-q')) >= 0); });
+    $('[data-alert]').hidden = f.length === 0;
+  }
+  function render() {
+    var p = PASOS[idx];
+    $$('[data-step]').forEach(function (el) { el.hidden = el.getAttribute('data-step') !== p; });
+    $('[data-titulo]').textContent = TITULOS[p]; $('[data-counter]').textContent = (idx + 1) + '/' + PASOS.length;
+    $('[data-progress]').style.width = ((idx + 1) / PASOS.length * 100) + '%';
+    $('[data-action="back"]').disabled = idx === 0;
+    var ultimo = idx === PASOS.length - 1; $('[data-action="next"]').hidden = ultimo; $('[data-action="finish"]').hidden = !ultimo;
+    pintar(); window.scrollTo(0, 0);
+  }
+  $$('select[data-q], input[data-q], textarea[data-q]').forEach(function (el) {
+    var k = el.getAttribute('data-q'); if (d[k] && !/^seg_/.test(k)) el.value = d[k];
+    var h = function () { d[k] = el.value; if (k === 'engagement_pct' || k === 'vistas') { /* uno u otro */ } pintar(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  $$('.radios').forEach(function (g) {
+    var k = g.getAttribute('data-q');
+    $$('.radio', g).forEach(function (b) {
+      if (d[k] === b.getAttribute('data-v')) b.classList.add('on');
+      b.addEventListener('click', function () { d[k] = b.getAttribute('data-v'); $$('.radio', g).forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); }); pintar(); });
+    });
+  });
+  $$('.checks').forEach(function (g) {
+    var k = g.getAttribute('data-q');
+    $$('input', g).forEach(function (c) {
+      c.checked = d[k].indexOf(c.value) >= 0; c.closest('.check').classList.toggle('on', c.checked);
+      c.addEventListener('change', function () {
+        if (c.value === 'ninguna' && c.checked) $$('input', g).forEach(function (o) { if (o !== c) o.checked = false; });
+        if (c.value !== 'ninguna' && c.checked) { var n = $('[data-none] input', g); if (n) n.checked = false; }
+        d[k] = $$('input', g).filter(function (o) { return o.checked; }).map(function (o) { return o.value; });
+        $$('input', g).forEach(function (o) { o.closest('.check').classList.toggle('on', o.checked); }); pintar();
+      });
+    });
+  });
+  $('[data-action="back"]').addEventListener('click', function () { intentado = false; idx = Math.max(0, idx - 1); render(); });
+  $('[data-action="next"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintar(); return; } guardar(idx + 1); intentado = false; idx++; render(); });
+  $('[data-action="finish"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintar(); return; } intentado = false; guardar(idx + 1); loader(); });
+
+  // ---- loader + resultado
+  function loader() {
+    mostrar('loader'); var bar = $('[data-loadbar]'); var items = $$('[data-ls]'); var ms = C.loaderMs || 2600; bar.style.width = '8%';
+    items.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); bar.style.width = (20 + (i + 1) * 18) + '%'; }, 400 + i * (ms - 800) / items.length); });
+    setTimeout(function () { bar.style.width = '100%'; }, ms - 300);
+    setTimeout(function () {
+      resultado = window.QUILLA_SCORING.calcular(d);
+      enviar('aplicacion', resultado);
+      try { localStorage.setItem(KEY + '_resultado', JSON.stringify({ banda: resultado.banda, modelo: resultado.modeloSugerido, ts: Date.now() })); } catch (x) {}
+      renderResultado(resultado); mostrar('resultado');
+    }, ms);
+  }
+  var MODELOS = { management: 'Representar tus acuerdos con marcas: negociar, cerrar y cobrar por ti.', monetizacion: 'Construir un producto propio sobre tu audiencia y operarlo juntos.', partnerships: 'Acuerdos de largo plazo con marcas que encajen con lo que ya haces.', 'business-building': 'Una empresa completa alrededor de tu marca, con participación definida.' };
+  var GATES = { audiencia: 'Pasar de 25,000 en tu plataforma principal, o sumar credibilidad fuera de redes (TV, radio, tu profesión).', engagement: 'Que tus últimos 10 videos promedien al menos el 20 % de tus seguidores en vistas.', revshare: 'Un modelo de participación en los ingresos, no un fee: así trabajamos.', disponibilidad: 'Al menos 4 horas a la semana para grabar, aparecer y aprobar.' };
+  function renderResultado(r) {
+    $$('[data-r]').forEach(function (el) { el.hidden = el.getAttribute('data-r') !== r.banda; });
+    if (r.banda === 'llamada') { var cal = $('[data-calendario]'); if (C.calendario) cal.href = C.calendario; else cal.hidden = true; $('[data-modelo]').textContent = MODELOS[r.modeloSugerido] || ''; }
+    if (r.banda === 'no-califica') { var ul = $('[data-gates]'); ul.innerHTML = ''; var gs = r.gates.length ? r.gates : ['audiencia']; gs.forEach(function (g) { var li = document.createElement('li'); li.textContent = GATES[g] || g; ul.appendChild(li); }); }
+  }
+
+  // hook para pruebas
+  window.QUILLA_APP = { calcular: window.QUILLA_SCORING.calcular, datos: d, payload: payload };
+})();
+</script>
+</body>
+</html>

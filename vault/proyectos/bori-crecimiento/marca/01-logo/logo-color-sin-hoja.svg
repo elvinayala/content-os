@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 200" width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bori" style="display:block">
+<defs>
+<linearGradient id="bsd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8733A"/><stop offset="1" stop-color="#8E5124"/></linearGradient>
+<linearGradient id="hsd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1FB6A6"/><stop offset="0.55" stop-color="#35C06F"/><stop offset="1" stop-color="#7BE08A"/></linearGradient>
+<linearGradient id="wsd" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#35C06F"/><stop offset="1" stop-color="#7BE08A"/></linearGradient>
+</defs>
+
+<path d="M64 114 C46 110, 30 118, 26 134" fill="none" stroke="#6A3A17" stroke-width="15" stroke-linecap="round"/>
+<path d="M26 134 C30 150, 44 160, 62 158" fill="none" stroke="#8E5124" stroke-width="12" stroke-linecap="round"/>
+<path d="M62 158 C78 158, 92 152, 104 146" fill="none" stroke="#8E5124" stroke-width="9" stroke-linecap="round"/>
+<circle cx="106" cy="145" r="6.5" fill="#EAD7B2"/><circle cx="96" cy="154" r="5" fill="#EAD7B2"/>
+<circle cx="124" cy="116" r="23" fill="#EAD7B2"/>
+<path d="M52 110 C44 88, 62 62, 96 56 C126 50, 156 56, 176 72 L186 78 C180 86, 168 96, 152 104 C128 116, 98 124, 74 122 C62 120, 56 116, 52 110 Z" fill="url(#bsd)"/>
+<path d="M62 118 C88 124, 118 118, 148 104 C132 118, 100 126, 74 122 Z" fill="#EAD7B2" opacity="0.92"/>
+<path d="M72 74 C102 62, 138 62, 168 76" fill="none" stroke="#EAD7B2" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="150" cy="74" r="14" fill="#0A0806"/><circle cx="150" cy="74" r="11" fill="#E0A93C"/><circle cx="150" cy="75" r="6" fill="#0A0806"/><circle cx="153" cy="71" r="2.2" fill="#fff"/>
+<path d="M134 110 C136 124, 142 134, 156 136" fill="none" stroke="#8E5124" stroke-width="10" stroke-linecap="round"/>
+<circle cx="160" cy="136" r="6" fill="#EAD7B2"/><circle cx="152" cy="142" r="4.5" fill="#EAD7B2"/>
+<path d="M180 58 C186 50, 188 40, 186 30" fill="none" stroke="url(#wsd)" stroke-width="6.5" stroke-linecap="round"/><path d="M192 70 C200 58, 202 44, 198 28" fill="none" stroke="url(#wsd)" stroke-width="6.5" stroke-linecap="round" opacity="0.6"/>
+</svg>

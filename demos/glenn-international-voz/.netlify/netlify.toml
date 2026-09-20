@@ -1,0 +1,36 @@
+functionsDirectory = "/Users/elvinayala/AGENTE CONTENIDO/demos/glenn-international-voz/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
+headers = []
+redirects = []
+
+[build]
+publish = "/Users/elvinayala/AGENTE CONTENIDO/demos/glenn-international-voz/public"
+publishOrigin = "config"
+commandOrigin = "ui"
+base = "/Users/elvinayala/AGENTE CONTENIDO/demos/glenn-international-voz"
+command = "npm run build"
+functions = "/Users/elvinayala/AGENTE CONTENIDO/demos/glenn-international-voz/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[plugins]]
+origin = "default"
+package = "@netlify/plugin-nextjs"
+
+[plugins.inputs]

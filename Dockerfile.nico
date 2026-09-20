@@ -1,0 +1,18 @@
+# NICO (el vibecoder) en Railway, para que no dependa de la Mac. Node 22 + git + Python 3 (Cortex)
+# + Claude Code CLI + CLIs de deploy. Al arrancar, scripts/nico-nube.sh clona/actualiza los repos
+# desde GitHub en el volumen /estado/repos y corre el puente desde el clon de content-os.
+# Deploy: npx @railway/cli up --service nico --detach   (RAILWAY_DOCKERFILE_PATH=Dockerfile.nico)
+FROM node:22-slim
+ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git openssh-client zip \
+    python3 python3-pip python3-venv ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+RUN npm install -g @anthropic-ai/claude-code@latest vercel@latest @railway/cli@latest netlify-cli@latest && claude --version
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY . .
+ENV PUENTE_BOT=nico PUENTE_ESTADO_DIR=/estado HOME=/estado NICO_REPOS_DIR=/estado/repos SEMILLA_DIR=/app \
+    CLAUDE_BIN=/usr/local/bin/claude PUENTE_EN_NUBE=1
+RUN mkdir -p /estado
+CMD ["bash", "scripts/nico-nube.sh"]

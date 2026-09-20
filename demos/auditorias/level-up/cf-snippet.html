@@ -1,0 +1,757 @@
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* Full-bleed dentro de ClickFunnels: fondo oscuro en toda la pagina y sin margenes del contenedor */
+  body { background: #0b0b0b !important; }
+  .lu-audit-bleed { max-width: none !important; width: 100% !important; padding: 0 !important; margin: 0 !important; background: transparent !important; }
+</style>
+<script>
+  (function () {
+    var el = document.getElementById('lu-audit');
+    if (!el) { document.addEventListener('DOMContentLoaded', function () { el = document.getElementById('lu-audit'); walk(el); }); } else walk(el);
+    function walk(n) { if (!n) return; var p = n.parentElement; while (p && p !== document.body) { p.classList.add('lu-audit-bleed'); p = p.parentElement; } document.body.style.margin = '0'; }
+  })();
+</script>
+<style>
+  #lu-audit, #lu-audit * { box-sizing: border-box; }
+  #lu-audit {
+    --bg: #0b0b0b; --card: #151515; --card-2: #1c1c1c; --border: #2a2a2a;
+    --fg: #f5f1e8; --muted: #a3a3a3; --accent: #f2c14e; --accent-fg: #0b0b0b;
+    --danger: #ff5a4e; --radius-card: 24px; --radius-input: 14px;
+    --font-head: 'Sora', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--bg); color: var(--fg); font-family: var(--font-body);
+    min-height: 100vh; width: 100%; -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  #lu-audit .hero { position: relative; overflow: hidden; padding: 48px 20px 16px; text-align: center; }
+  #lu-audit .hero::before {
+    content: ""; position: absolute; inset: 0; opacity: .32; pointer-events: none;
+    background-image: linear-gradient(to right, rgba(242,193,78,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(242,193,78,.16) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 20%, #000, transparent);
+    mask-image: radial-gradient(ellipse 75% 60% at 50% 20%, #000, transparent);
+  }
+  #lu-audit .hero > * { position: relative; }
+  #lu-audit .eyebrow { display: inline-block; margin: 0 auto 14px; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--accent); }
+  #lu-audit .eyebrow[hidden] { display: none; }
+  #lu-audit h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(30px, 6vw, 58px); line-height: 1.06; letter-spacing: -.02em; margin: 0 auto; max-width: 900px; text-wrap: balance; }
+  #lu-audit h1 em { font-style: normal; color: var(--accent); font-weight: 800; }
+  #lu-audit .sub { max-width: 720px; margin: 16px auto 0; color: var(--muted); font-size: clamp(16px, 2.2vw, 20px); line-height: 1.55; text-wrap: pretty; }
+  #lu-audit .sub b { color: var(--fg); font-weight: 600; }
+  #lu-audit .sub2 { margin: 20px auto 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(18px, 2.6vw, 24px); letter-spacing: -.01em; max-width: 560px; text-wrap: balance; }
+  #lu-audit .wrap { max-width: 576px; margin: 0 auto; padding: 8px 16px 40px; }
+  #lu-audit .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  @media (min-width: 640px) { #lu-audit .card { padding: 32px; } }
+  #lu-audit .field { display: block; margin-bottom: 14px; }
+  #lu-audit .label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 6px; }
+  #lu-audit .hint { display: block; font-size: 12px; color: var(--muted); margin: -4px 0 6px; }
+  #lu-audit .input, #lu-audit select.input, #lu-audit textarea.input {
+    width: 100%; height: 48px; border-radius: var(--radius-input); border: 1px solid var(--border); background: var(--bg);
+    color: var(--fg); padding: 0 16px; font: 500 15px var(--font-body); outline: none; transition: border-color .15s; appearance: none; -webkit-appearance: none;
+  }
+  #lu-audit textarea.input { height: auto; padding: 12px 16px; resize: vertical; }
+  #lu-audit .input::placeholder { color: rgba(163,163,163,.6); }
+  #lu-audit .input:focus { border-color: var(--fg); }
+  #lu-audit .input.err { border-color: var(--danger); background: rgba(255,90,78,.06); }
+  #lu-audit select.input { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a3a3a3' stroke-width='2' viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+  #lu-audit select.input option { background: #151515; color: #f5f1e8; }
+  #lu-audit .errmsg { display: block; margin-top: 4px; font-size: 12px; font-weight: 500; color: var(--danger); }
+  #lu-audit .phone { display: flex; gap: 8px; }
+  #lu-audit .phone select { width: 112px; flex: none; padding-left: 12px; }
+  #lu-audit .optin { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; margin: 4px 0 14px; }
+  #lu-audit .optin input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+  #lu-audit .optin span { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  #lu-audit .optin.err { outline: 2px solid var(--danger); outline-offset: 6px; border-radius: 6px; }
+  #lu-audit .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 28px; border-radius: 999px; border: 0;
+    background: var(--accent); color: var(--accent-fg); font: 600 16px var(--font-head); cursor: pointer; transition: transform .15s, opacity .15s; letter-spacing: .01em; white-space: nowrap; }
+  #lu-audit a.btn, #lu-audit a.btn:hover, #lu-audit a.btn:visited { text-decoration: none; color: var(--accent-fg); }
+  #lu-audit .btn:hover { transform: translateY(-2px); }
+  #lu-audit .btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+  #lu-audit .btn.full { width: 100%; font-size: 18px; }
+  #lu-audit .btn.big { min-height: 56px; height: auto; font-size: 17px; padding: 14px 28px; text-transform: uppercase; letter-spacing: .03em; white-space: normal; line-height: 1.2; text-align: center; }
+  #lu-audit .btn svg { width: 18px; height: 18px; }
+  #lu-audit .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); font: 500 14px var(--font-body); padding: 12px 14px; border-radius: 999px; cursor: pointer; }
+  #lu-audit .btn-ghost:hover { color: var(--fg); }
+  #lu-audit .btn-ghost:disabled { color: rgba(163,163,163,.35); cursor: not-allowed; }
+  #lu-audit .btn-ghost svg { width: 16px; height: 16px; }
+  #lu-audit .bullet { display: flex; gap: 10px; align-items: flex-start; max-width: 576px; margin: 28px auto 0; padding: 0 16px; font-size: 16px; line-height: 1.55; }
+  #lu-audit .bullet i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; margin-top: 10px; }
+  #lu-audit .quote { max-width: 1100px; margin: 44px auto 0; padding: 32px 20px; border-radius: 24px; background: #050505; border: 1px solid var(--border); text-align: center; }
+  #lu-audit .casos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  @media (min-width: 720px) { #lu-audit .casos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
+  #lu-audit .caso { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; display: grid; gap: 4px; }
+  #lu-audit .caso small { font-size: 12px; color: var(--muted); line-height: 1.3; }
+  #lu-audit .caso strong { font-family: var(--font-head); font-size: clamp(20px, 2.6vw, 26px); letter-spacing: -.02em; color: var(--fg); line-height: 1.1; }
+  #lu-audit .caso strong i { font-style: normal; color: var(--accent); font-weight: 600; }
+  #lu-audit .caso span { font-size: 12px; color: var(--muted); }
+  #lu-audit .who { margin: 18px auto 0; max-width: 620px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  #lu-audit .legal { max-width: 640px; margin: 0 auto; padding: 24px 20px 32px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  #lu-audit .badge { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+  #lu-audit .badge.muted { background: var(--card-2); color: var(--muted); border: 1px solid var(--border); }
+  #lu-audit .topbar { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
+  #lu-audit .counter { font: 600 14px var(--font-mono); color: var(--muted); }
+  #lu-audit .progress { height: 6px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-bottom: 22px; }
+  #lu-audit .progress i { display: block; height: 100%; border-radius: 999px; background: var(--accent); transition: width .35s ease; }
+  #lu-audit h2 { font-family: var(--font-head); font-weight: 700; font-size: 24px; letter-spacing: -.02em; margin: 0 0 4px; line-height: 1.2; }
+  #lu-audit .lead { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+  #lu-audit .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  #lu-audit .alert { margin-top: 14px; border: 1px solid var(--danger); background: rgba(255,90,78,.06); color: var(--danger); border-radius: 12px; padding: 10px 12px; font-size: 14px; font-weight: 500; }
+  #lu-audit .radios { display: flex; flex-direction: column; gap: 10px; }
+  #lu-audit .radio { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; font: 500 15px var(--font-body); line-height: 1.35; transition: border-color .15s, background .15s; }
+  #lu-audit .radio:hover { border-color: rgba(245,241,232,.4); }
+  #lu-audit .radio.on { border-color: var(--accent); background: rgba(242,193,78,.06); }
+  #lu-audit .radio i { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(163,163,163,.4); margin-top: 1px; display: grid; place-items: center; }
+  #lu-audit .radio.on i { border-color: var(--accent); background: var(--accent); }
+  #lu-audit .radio i svg { width: 12px; height: 12px; stroke: var(--accent-fg); stroke-width: 3.5; display: none; }
+  #lu-audit .radio.on i svg { display: block; }
+  #lu-audit .radios.err { outline: 1px solid rgba(255,90,78,.4); border-radius: 16px; outline-offset: 4px; }
+  /* loader */
+  #lu-audit .loader { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  #lu-audit .loader .card { width: 100%; max-width: 420px; text-align: center; padding: 40px 28px; }
+  #lu-audit .orb { width: 64px; height: 64px; border-radius: 50%; background: rgba(242,193,78,.15); display: grid; place-items: center; margin: 0 auto; }
+  #lu-audit .orb svg { width: 28px; height: 28px; stroke: var(--accent); animation: lu-pulse 1.4s ease-in-out infinite; }
+  @keyframes lu-pulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .45; transform: scale(.92);} }
+  #lu-audit .loader h2 { margin-top: 20px; }
+  #lu-audit .loader p { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+  #lu-audit .loadbar { height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-top: 24px; }
+  #lu-audit .loadbar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width .6s ease; }
+  #lu-audit .loadsteps { margin: 18px 0 0; padding: 0; list-style: none; text-align: left; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+  #lu-audit .loadsteps li { display: flex; gap: 8px; align-items: center; opacity: .35; transition: opacity .3s; }
+  #lu-audit .loadsteps li.on { opacity: 1; color: var(--fg); }
+  #lu-audit .loadsteps li svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 3; }
+  /* result */
+  #lu-audit .result { max-width: 768px; margin: 0 auto; padding: 16px 16px 120px; display: grid; gap: 24px; }
+  @media (min-width: 640px) { #lu-audit .result { padding: 32px 32px 120px; } }
+  #lu-audit .rhead { text-align: center; display: grid; gap: 12px; justify-items: center; padding-top: 24px; }
+  #lu-audit .rhead h1 { font-size: clamp(28px, 5vw, 40px); }
+  #lu-audit .rhead p { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0; text-wrap: pretty; }
+  #lu-audit .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  #lu-audit .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font-size: 14px; font-weight: 600; }
+  #lu-audit .chip.sec { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+  #lu-audit .diag { margin: 16px 0 0; line-height: 1.6; font-size: 16px; }
+  #lu-audit .diag b { color: var(--accent); font-weight: 600; }
+  #lu-audit .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  @media (min-width: 640px) { #lu-audit .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  #lu-audit .kpi { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+  #lu-audit .kpi small { display: block; font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+  #lu-audit .kpi strong { display: block; font-family: var(--font-head); font-size: clamp(19px, 5.5vw, 22px); letter-spacing: -.02em; margin-top: 4px; overflow-wrap: anywhere; }
+  #lu-audit .kpi strong.accent { color: var(--accent); }
+  #lu-audit .score { display: flex; align-items: center; gap: 18px; margin-top: 18px; padding: 16px; border-radius: 16px; background: var(--bg); border: 1px solid var(--border); min-width: 0; }
+  #lu-audit .score p { min-width: 0; }
+  #lu-audit .ring { width: 84px; height: 84px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--card-2) 0); }
+  #lu-audit .ring b { width: 68px; height: 68px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font: 700 22px var(--font-head); letter-spacing: -.02em; }
+  #lu-audit .ring b small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 1px; }
+  #lu-audit .score p { margin: 0; font-size: 14px; color: var(--muted); }
+  #lu-audit .score p b { color: var(--fg); display: block; font-size: 16px; margin-bottom: 2px; }
+  #lu-audit .locked-wrap { position: relative; }
+  #lu-audit .locked { filter: blur(7px); pointer-events: none; user-select: none; }
+  #lu-audit .plan-card { border-color: rgba(242,193,78,.3); }
+  #lu-audit .plan-card p.lead { margin: 8px 0 16px; }
+  #lu-audit .plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  #lu-audit .plan li { display: flex; gap: 12px; font-size: 14px; line-height: 1.5; }
+  #lu-audit .plan li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font: 700 11px var(--font-mono); margin-top: 1px; }
+  #lu-audit .north { margin-top: 24px; border: 1px solid var(--border); background: var(--card-2); border-radius: 16px; padding: 16px; }
+  #lu-audit .north small { display: flex; align-items: center; gap: 6px; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+  #lu-audit .north small svg { width: 14px; height: 14px; stroke: var(--accent); }
+  #lu-audit .north strong { display: block; margin-top: 6px; font-family: var(--font-head); font-size: 18px; letter-spacing: -.01em; }
+  #lu-audit .unlock { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; border-radius: var(--radius-card); background: linear-gradient(to bottom, rgba(11,11,11,.2), rgba(11,11,11,.75) 40%, var(--bg)); }
+  #lu-audit .unlock .card { max-width: 440px; width: 100%; text-align: center; border-color: rgba(242,193,78,.35); background: rgba(21,21,21,.96); backdrop-filter: blur(6px); }
+  #lu-audit .unlock .orb { width: 56px; height: 56px; }
+  #lu-audit .unlock .orb svg { animation: none; width: 24px; height: 24px; }
+  #lu-audit .unlock h3 { font-family: var(--font-head); font-size: 22px; letter-spacing: -.02em; margin: 16px 0 6px; line-height: 1.2; }
+  #lu-audit .unlock p { color: var(--muted); font-size: 14px; margin: 0 auto; max-width: 340px; line-height: 1.55; }
+  #lu-audit .unlock ul { list-style: none; margin: 18px auto 0; padding: 0; max-width: 300px; display: grid; gap: 10px; text-align: left; font-size: 14px; }
+  #lu-audit .unlock ul li { display: flex; gap: 10px; align-items: center; }
+  #lu-audit .unlock ul li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(242,193,78,.15); display: grid; place-items: center; }
+  #lu-audit .unlock ul li i svg { width: 12px; height: 12px; stroke: var(--accent); stroke-width: 3; }
+  #lu-audit .unlock .btn { margin-top: 22px; }
+  #lu-audit .unlock .fine { margin-top: 10px; font-size: 12px; }
+  #lu-audit .alt { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+  #lu-audit .alt:hover { color: var(--fg); }
+  #lu-audit .alt svg { width: 14px; height: 14px; }
+  #lu-audit .final { border-radius: 24px; background: #050505; padding: 32px 24px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+  #lu-audit .final h3 { font-family: var(--font-head); font-size: clamp(22px, 4vw, 28px); letter-spacing: -.02em; margin: 0; line-height: 1.2; text-wrap: balance; }
+  #lu-audit .final p { color: rgba(245,241,232,.7); font-size: 14px; margin: 0; max-width: 460px; }
+  #lu-audit .final .fine { color: rgba(245,241,232,.5); font-size: 12px; }
+  #lu-audit .again { background: none; border: 0; color: var(--muted); text-decoration: underline; font: 500 14px var(--font-body); cursor: pointer; }
+  #lu-audit .sticky { position: fixed; left: 0; right: 0; bottom: 16px; z-index: 40; display: flex; justify-content: center; padding: 0 16px; transition: transform .3s, opacity .3s; }
+  #lu-audit .sticky.hide { transform: translateY(24px); opacity: 0; pointer-events: none; }
+  #lu-audit .sticky > div { width: 100%; max-width: 900px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); background: #050505; border-radius: 16px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+  #lu-audit .sticky p { flex: 1; margin: 0; font-weight: 600; font-size: 14px; line-height: 1.25; min-width: 0; overflow-wrap: anywhere; }
+  #lu-audit .sticky p em { font-style: normal; color: var(--accent); }
+  #lu-audit .sticky .btn { height: 44px; padding: 0 18px; font-size: 14px; }
+  @media (max-width: 639px) { #lu-audit .sticky .btn span { display: none; } #lu-audit .sticky .btn { width: 44px; padding: 0; } }
+  @media (min-width: 640px) { #lu-audit .sticky > div { padding: 20px 28px; gap: 20px; } #lu-audit .sticky p { font-size: 18px; } }
+  /* footer estilo referencia */
+  #lu-audit .footer { max-width: 1100px; margin: 24px auto 0; padding: 40px 20px 28px; border-top: 1px solid var(--border); }
+  #lu-audit .fgrid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { #lu-audit .fgrid { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+  #lu-audit .fbrand img { height: 44px; width: auto; display: block; }
+  #lu-audit .fbrand p { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 34ch; }
+  #lu-audit .fbrand .tm { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px; font: 600 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  #lu-audit .fbrand .tm i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  #lu-audit .fcontact h4 { margin: 0 0 6px; font: 600 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  #lu-audit .fcontact a { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); color: var(--fg); text-decoration: none; font-size: 16px; }
+  #lu-audit .fcontact a:last-child { border-bottom: 1px solid var(--border); }
+  #lu-audit .fcontact a:hover { color: var(--accent); }
+  #lu-audit .fcontact svg { width: 18px; height: 18px; flex: none; stroke: currentColor; }
+  #lu-audit .fbottom { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); font: 500 11px var(--font-mono); letter-spacing: .06em; color: var(--muted); }
+  #lu-audit .honeypot { position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
+  #lu-audit [hidden] { display: none !important; }
+</style>
+
+<div id="lu-audit">
+  <!-- ==================== PANTALLA 0 · LANDING + CAPTURA ==================== -->
+  <section data-screen="landing">
+    <div class="hero">
+      <p class="eyebrow" data-eyebrow hidden>Para coaches, mentores, infoproductores y dueños de agencias en Puerto Rico</p>
+      <h1>Audita tu negocio y recibe un <em>plan de acción de 14 días</em>… en menos de 1 minuto.</h1>
+      <p class="sub">Entra los números de tu negocio y te decimos exactamente <b>cuál es el problema que te está frenando</b>, cuánto dinero estás dejando en la mesa y qué hacer para destrabarlo.</p>
+      <p class="sub2">Llena la información y en 1 minuto tienes tu auditoría</p>
+    </div>
+
+    <div class="wrap">
+      <div class="card">
+        <div class="honeypot" aria-hidden="true"><label for="lu-web">No completar</label><input id="lu-web" name="empresa_web" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="field">
+          <input class="input" data-f="nombre" placeholder="Tu nombre" autocomplete="given-name">
+          <span class="errmsg" hidden>Escribe tu nombre</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="email" type="email" placeholder="Tu mejor email" autocomplete="email" inputmode="email">
+          <span class="errmsg" hidden>Escribe un email válido (ej: nombre@email.com)</span>
+        </div>
+        <div class="field">
+          <div class="phone">
+            <select class="input" data-f="pais" aria-label="País">
+              <option value="+1" data-min="10" data-max="10" data-name="Puerto Rico / EE.UU." selected>🇵🇷 +1</option>
+              <option value="+1809" data-min="7" data-max="7" data-name="Rep. Dominicana">🇩🇴 +1</option>
+              <option value="+52" data-min="10" data-max="10" data-name="México">🇲🇽 +52</option>
+              <option value="+57" data-min="10" data-max="10" data-name="Colombia">🇨🇴 +57</option>
+              <option value="+34" data-min="9" data-max="9" data-name="España">🇪🇸 +34</option>
+              <option value="+54" data-min="10" data-max="11" data-name="Argentina">🇦🇷 +54</option>
+              <option value="+56" data-min="9" data-max="9" data-name="Chile">🇨🇱 +56</option>
+              <option value="+51" data-min="9" data-max="9" data-name="Perú">🇵🇪 +51</option>
+              <option value="+593" data-min="9" data-max="9" data-name="Ecuador">🇪🇨 +593</option>
+              <option value="+507" data-min="8" data-max="8" data-name="Panamá">🇵🇦 +507</option>
+            </select>
+            <input class="input" data-f="telefono" type="tel" placeholder="Tu WhatsApp" autocomplete="tel-national" inputmode="tel">
+          </div>
+          <span class="errmsg" hidden>Escribe un número válido (10 dígitos)</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="negocio" placeholder="Nombre de tu negocio" autocomplete="organization">
+          <span class="errmsg" hidden>Escribe el nombre de tu negocio</span>
+        </div>
+        <label class="optin">
+          <input type="checkbox" data-f="optin">
+          <span>Acepto recibir el resultado de mi auditoría y ser contactado por el equipo de Level Up Media.</span>
+        </label>
+        <span class="errmsg" data-err="optin" hidden style="margin:-8px 0 12px">Necesitas aceptar para continuar con la auditoría</span>
+        <button class="btn full" data-action="start">Empezar mi auditoría <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      </div>
+
+      <p class="bullet"><i></i><span><b>Mapa de Adquisición de Clientes:</b> una guía para resolver el 99% de los problemas de tu negocio con un sistema de anuncios + IA, y cómo meter al menos <b>$30K extras por mes en 90 días</b> con nuestros sistemas.</span></p>
+    </div>
+
+    <div class="wrap" style="max-width:1100px;padding-top:0">
+      <div class="quote">
+        <span class="badge">Resultados reales de clientes de Level Up</span>
+        <div class="casos">
+          <div class="caso"><small>Tinos · restaurante, Cabo Rojo</small><strong>$30K <i>→</i> $100K</strong><span>al mes</span></div>
+          <div class="caso"><small>Coralis · La Garita</small><strong>$25K <i>→</i> $70K</strong><span>al mes</span></div>
+          <div class="caso"><small>RK Automatic · taller</small><strong>$30K <i>→</i> $100K</strong><span>al mes</span></div>
+          <div class="caso"><small>Dr. Bryan Vega · quiropráctico</small><strong>25</strong><span>pacientes nuevos al mes</span></div>
+        </div>
+        <p class="who">Mismo sistema en cada caso: oferta → estrategia → anuncios con IA → automatización de leads → escalar lo que funciona.</p>
+      </div>
+    </div>
+    <p class="legal">Al cargar tus datos aceptas que el equipo de Level Up Media pueda contactarte para revisar tu situación. No compartimos tu información con terceros.</p>
+  </section>
+
+  <!-- ==================== PASOS DE PREGUNTAS ==================== -->
+  <section data-screen="quiz" hidden>
+    <div class="wrap">
+      <div class="topbar"><span class="badge">Auditoría de Negocio</span><span class="counter" data-counter>1/4</span></div>
+      <div class="progress"><i data-progress style="width:25%"></i></div>
+      <div class="card">
+        <!-- Paso: negocio -->
+        <div data-step="negocio">
+          <h2 data-title-negocio>Tu negocio</h2>
+          <p class="lead">Las bases. Sin esto, el resto no se puede leer.</p>
+          <label class="field"><span class="label">¿Qué tipo de negocio tienes?</span>
+            <select class="input" data-q="tipo">
+              <option value="">Elige una opción...</option>
+              <option value="salud">Clínica / profesional de la salud</option>
+              <option value="estetica">Estética / medspa / bienestar</option>
+              <option value="profesional">Servicios profesionales (legal, contable, seguros)</option>
+              <option value="hogar">Servicios al hogar / contratistas</option>
+              <option value="local">Restaurante / retail local</option>
+              <option value="ecommerce">Ecommerce / tienda online</option>
+              <option value="otro">Otro</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuál es tu ticket promedio por cliente? (USD)</span><span class="hint">Lo que te deja un cliente promedio</span>
+            <input class="input" data-q="ticket" placeholder="1500" inputmode="numeric"></label>
+          <label class="field"><span class="label">¿Cuánto factura tu negocio al mes?</span>
+            <select class="input" data-q="facturacion">
+              <option value="">Elige tu rango...</option>
+              <option value="6000">Menos de $10,000 / mes</option>
+              <option value="17500">$10,000 a $25,000 / mes</option>
+              <option value="37500">$25,000 a $50,000 / mes</option>
+              <option value="75000">$50,000 a $100,000 / mes</option>
+              <option value="175000">$100,000 a $250,000 / mes</option>
+              <option value="300000">Más de $250,000 / mes</option>
+            </select></label>
+        </div>
+        <!-- Paso: adquisición -->
+        <div data-step="adquisicion" hidden>
+          <h2>Tu adquisición de clientes</h2>
+          <p class="lead">Cuánta agua entra a la tubería. Estima el último mes.</p>
+          <label class="field"><span class="label">¿De dónde llegan tus clientes hoy?</span>
+            <select class="input" data-q="fuente">
+              <option value="">Elige una opción...</option>
+              <option value="referidos">Referidos / boca a boca</option>
+              <option value="organico">Redes sociales orgánicas</option>
+              <option value="ads">Anuncios pagos (Meta / Google)</option>
+              <option value="seo">Google / búsquedas</option>
+              <option value="mixto">Mezcla de varios</option>
+              <option value="nada">No tengo una fuente estable</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuánto inviertes en marketing al mes?</span><span class="hint">Anuncios + agencia + herramientas</span>
+            <select class="input" data-q="inversion">
+              <option value="">Elige un rango...</option>
+              <option value="0">$0, no invierto</option>
+              <option value="500">Menos de $1,000</option>
+              <option value="2000">$1,000 a $3,000</option>
+              <option value="6500">$3,000 a $10,000</option>
+              <option value="15000">Más de $10,000</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántos leads u oportunidades nuevas recibes al mes?</span><span class="hint">Personas que te escriben, llaman o llenan un formulario</span>
+            <select class="input" data-q="leads">
+              <option value="">Elige un rango...</option>
+              <option value="10">Menos de 20</option>
+              <option value="35">20 a 50</option>
+              <option value="85">50 a 120</option>
+              <option value="210">120 a 300</option>
+              <option value="400">Más de 300</option>
+            </select></label>
+        </div>
+        <!-- Paso: ventas -->
+        <div data-step="ventas" hidden>
+          <h2>Tus ventas</h2>
+          <p class="lead">El resultado del último mes. Con esto ubicamos en qué escala estás.</p>
+          <label class="field"><span class="label">¿Cuántos clientes nuevos cierras al mes?</span>
+            <select class="input" data-q="clientes">
+              <option value="">Elige un rango...</option>
+              <option value="3">0 a 5</option>
+              <option value="10">5 a 15</option>
+              <option value="22">15 a 30</option>
+              <option value="45">30 a 60</option>
+              <option value="80">Más de 60</option>
+            </select></label>
+        </div>
+        <!-- Paso condicional: meta (solo si factura ≥ 10K) -->
+        <div data-step="meta" hidden>
+          <h2>Tu meta</h2>
+          <p class="lead">A dónde quieres llegar. Esto separa un negocio que escala de uno que se estanca.</p>
+          <label class="field"><span class="label">¿A cuánto quieres llegar al mes?</span>
+            <select class="input" data-q="meta">
+              <option value="">Elige tu meta...</option>
+              <option value="25000">$25,000 / mes</option>
+              <option value="50000">$50,000 / mes</option>
+              <option value="100000">$100,000 / mes</option>
+              <option value="250000">$250,000 / mes</option>
+              <option value="500000">$500,000+ / mes</option>
+            </select></label>
+          <label class="field"><span class="label">¿Tienes capacidad para atender más clientes hoy?</span>
+            <select class="input" data-q="capacidad">
+              <option value="">Elige una opción...</option>
+              <option value="mucha">Sí, mucha. Puedo duplicar sin contratar</option>
+              <option value="algo">Algo. Tendría que ajustar equipo o procesos</option>
+              <option value="limite">Estoy al límite</option>
+            </select></label>
+        </div>
+        <!-- Paso: cuello de botella -->
+        <div data-step="cuello" hidden>
+          <h2>¿Qué crees que te frena hoy?</h2>
+          <p class="lead">Elige el que más te frena. Con esto armamos tu auditoría y el plan puntual para resolverlo.</p>
+          <div class="radios" role="radiogroup" data-q="cuello" aria-label="Tu mayor cuello de botella">
+            <button type="button" class="radio" role="radio" data-v="leads"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>No me llegan suficientes leads</span></button>
+            <button type="button" class="radio" role="radio" data-v="calidad"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Me llegan leads pero no califican (no pueden pagar o no encajan)</span></button>
+            <button type="button" class="radio" role="radio" data-v="conversion"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Llegan leads pero no los convierto en clientes</span></button>
+            <button type="button" class="radio" role="radio" data-v="seguimiento"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>No hago seguimiento y se me enfrían</span></button>
+            <button type="button" class="radio" role="radio" data-v="inconsistente"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Mi marketing es inconsistente: un mes sí, otro no</span></button>
+            <button type="button" class="radio" role="radio" data-v="otro"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Otro (explícame)</span></button>
+          </div>
+          <div data-otro hidden style="margin-top:16px">
+            <label class="field"><span class="label">Cuéntame en tus palabras qué te frena</span>
+              <textarea class="input" data-q="frustracion" rows="4" placeholder="Describe lo más concreto posible qué es lo que hoy te tiene trabado en el negocio."></textarea></label>
+          </div>
+        </div>
+        <p class="alert" data-alert hidden>Completa todos los campos para seguir. Elige la opción que más se acerque a tu caso.</p>
+        <div class="nav">
+          <button class="btn-ghost" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Atrás</button>
+          <button class="btn" data-action="next">Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <button class="btn" data-action="finish" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Auditar mi negocio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PANTALLA DE CARGA ==================== -->
+  <section data-screen="loading" hidden>
+    <div class="loader">
+      <div class="card">
+        <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h2>El Auditor está analizando tu negocio...</h2>
+        <p>Comparando tus números contra los negocios que hemos auditado en Puerto Rico y Estados Unidos. Esto toma unos segundos.</p>
+        <div class="loadbar"><i data-loadbar></i></div>
+        <ul class="loadsteps">
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Calculando tu brecha de facturación</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Midiendo tu tasa de conversión</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Detectando el cuello de botella</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Armando tu plan de acción de 14 días</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESULTADO ==================== -->
+  <section data-screen="result" hidden>
+    <div class="result">
+      <div class="rhead">
+        <span class="badge" data-r="badge">Tu Auditoría de Negocio · Level Up Media</span>
+        <h1 data-r="titulo"></h1>
+        <p data-r="intro"></p>
+      </div>
+
+      <div class="card">
+        <span class="badge">Tu problema principal</span>
+        <div class="chips"><span class="chip" data-r="chip1"></span><span class="chip sec" data-r="chip2" hidden></span></div>
+        <p class="diag" data-r="diagnostico"></p>
+        <div class="kpis" data-r="kpis"></div>
+        <div class="score">
+          <div class="ring" data-r="ring" style="--p:0"><b><span data-r="score">0</span><small>/100</small></b></div>
+          <p><b data-r="scoreTitulo"></b><span data-r="scoreTexto"></span></p>
+        </div>
+      </div>
+
+      <div class="locked-wrap">
+        <div class="locked">
+          <div class="card plan-card">
+            <span class="badge">Plan de acción rápido · 14 días</span>
+            <p class="lead">Para implementar ya y ver movimiento en 2 semanas. Ataca esto en orden, todo apunta a tu problema principal.</p>
+            <ul class="plan" data-r="plan"></ul>
+            <div class="north"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>Tu métrica norte (mírala cada semana)</small><strong data-r="norte"></strong></div>
+          </div>
+        </div>
+        <div class="unlock">
+          <div class="card">
+            <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Tu plan de acción ya está listo</h3>
+            <p>Escríbenos por WhatsApp y te enviamos el material completo de tu auditoría.</p>
+            <ul>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu plan de acción de 14 días</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu métrica norte para medir el avance</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Cuántos leads necesitas para tu meta</li>
+            </ul>
+            <a class="btn big full" data-cta href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg> Quiero un plan para escalar</a>
+            <p class="fine">Te responde una persona del equipo en menos de 24 horas</p>
+            <a class="alt" data-wa target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Prefiero hablar por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="final" data-final>
+        <span class="badge">Desbloquea tu material</span>
+        <h3 data-r="finalTitulo">¿Quieres que miremos tu operación juntos?</h3>
+        <p>Escríbenos por WhatsApp y te enviamos tu plan de acción de 14 días, tu métrica norte y el cálculo de leads que necesitas para llegar a tu meta.</p>
+        <a class="btn big" data-cta href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg> Quiero un plan para escalar</a>
+        <a class="alt" data-wa target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Prefiero hablar por WhatsApp</a>
+      </div>
+      <div style="text-align:center"><button class="again" data-action="again">Hacer otra auditoría</button></div>
+    </div>
+    <div class="sticky hide" data-sticky>
+      <div>
+        <img src="https://content-os-chi-seven.vercel.app/marcas/level-up-icon-dark.png" alt="" aria-hidden="true" style="width:40px;height:auto;flex:none">
+        <p>Tu auditoría y tu plan de acción están <em>listos</em>. Te los enviamos por WhatsApp.</p>
+        <a class="btn" data-cta href="#"><span>Quiero un plan para escalar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="fgrid">
+      <div class="fbrand">
+        <img src="https://content-os-chi-seven.vercel.app/marcas/level-up-logo-dark.png" alt="Level Up Media" width="900" height="652" loading="lazy">
+        <span class="tm"><i></i>Agencia de crecimiento · Puerto Rico</span>
+        <p>Instalamos sistemas de adquisición de clientes para negocios establecidos en Puerto Rico y Estados Unidos.</p>
+      </div>
+      <div class="fcontact">
+        <h4>Contacto</h4>
+        <a href="https://wa.me/17874092812" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Hablemos por WhatsApp</a>
+        <a href="mailto:info@levelupmediapr.net"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>info@levelupmediapr.net</a>
+      </div>
+    </div>
+    <div class="fbottom">© <span data-year></span> Level Up Media · Todos los derechos reservados.</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  /* ================== CONFIGURACIÓN (editar aquí) ================== */
+  var CONFIG = {
+    marca: 'Level Up Media',
+    // WhatsApp de Level Up en formato internacional sin "+" ni espacios. confirmado por Elvin 12/sep/2026.
+    whatsapp: '17874092812',
+    // Paso 2 del funnel (video de Frankie + agenda Calendly). Relativo al mismo dominio del funnel. Vacío = CTA directo a WhatsApp.
+    siguiente: '',
+    // Endpoint que crea el lead en Pipedrive (app/api/auditoria/route.ts del Content OS). Vacío = no envía.
+    endpoint: 'https://content-os-chi-seven.vercel.app/api/auditoria',
+    marcaId: 'level-up',
+    // Clave para guardar progreso en el navegador
+    storageKey: 'lu_diagnostico_v1',
+    // Umbral para mostrar el paso condicional de "meta" (factura ≥ 10K)
+    umbralMeta: 10000,
+    // Duración del loader en ms
+    loaderMs: 3200
+  };
+
+  var root = document.getElementById('lu-audit');
+  var $ = function (sel, ctx) { return (ctx || root).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); };
+  var screens = { landing: $('[data-screen="landing"]'), quiz: $('[data-screen="quiz"]'), loading: $('[data-screen="loading"]'), result: $('[data-screen="result"]') };
+  $('[data-year]').textContent = new Date().getFullYear();
+
+  var datos = { nombre: '', email: '', pais: '+1', telefono: '', negocio: '', optin: false,
+    tipo: '', ticket: '', facturacion: '', fuente: '', inversion: '', leads: '', clientes: '', meta: '', capacidad: '', cuello: '', frustracion: '' };
+  var pasoIdx = 0; var intentado = false; var resultado = null;
+
+  /* ================== TRACKING (UTMs / clids) ================== */
+  // event_id estable por visita: el pixel lo manda en Lead/DiagnosticoCompletado y el
+  // servidor (/api/auditoria) podrá reenviar el mismo evento por CAPI sin duplicar.
+  var eventBase = (function () { try { var k = CONFIG.storageKey + '_eid'; var v = sessionStorage.getItem(k); if (!v) { v = 'lu-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); sessionStorage.setItem(k, v); } return v; } catch (e) { return 'lu-' + Date.now().toString(36); } })();
+  function eventId(evento) { return eventBase + '-' + evento; }
+  function tracking() {
+    var t = {};
+    try {
+      var p = new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid','gclid','ttclid'].forEach(function (k) { if (p.get(k)) t[k] = p.get(k).slice(0, 200); });
+      t.landing_url = location.href.slice(0, 500); if (document.referrer) t.referrer = document.referrer.slice(0, 500);
+      t.event_base = eventBase; try { var fbp = document.cookie.match(/_fbp=([^;]+)/); var fbc = document.cookie.match(/_fbc=([^;]+)/); if (fbp) t.fbp = fbp[1].slice(0, 100); if (fbc) t.fbc = fbc[1].slice(0, 200); } catch (e) {}
+    } catch (e) {}
+    return t;
+  }
+
+  /* ================== PASOS ================== */
+  function pasos() {
+    var base = ['negocio', 'adquisicion', 'ventas'];
+    if (Number(datos.facturacion) >= CONFIG.umbralMeta) base.push('meta');
+    base.push('cuello');
+    return base;
+  }
+  var requeridos = { negocio: ['tipo','ticket','facturacion'], adquisicion: ['fuente','inversion','leads'], ventas: ['clientes'], meta: ['meta','capacidad'], cuello: ['cuello'] };
+
+  function mostrar(nombre) { Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== nombre; }); window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' }); }
+
+  function renderPaso() {
+    var lista = pasos(); var actual = lista[pasoIdx];
+    $$('[data-step]').forEach(function (el) { el.hidden = el.getAttribute('data-step') !== actual; });
+    $('[data-counter]').textContent = (pasoIdx + 1) + '/' + lista.length;
+    $('[data-progress]').style.width = ((pasoIdx + 1) / lista.length * 100) + '%';
+    $('[data-action="back"]').disabled = pasoIdx === 0;
+    var ultimo = pasoIdx === lista.length - 1;
+    $('[data-action="next"]').hidden = ultimo; $('[data-action="finish"]').hidden = !ultimo;
+    $('[data-title-negocio]').textContent = datos.nombre ? 'Dale ' + datos.nombre.split(' ')[0] + ', hablemos de tu negocio' : 'Tu negocio';
+    pintarErrores();
+  }
+  function faltantes() {
+    var actual = pasos()[pasoIdx];
+    var f = requeridos[actual].filter(function (k) { return String(datos[k] || '').trim() === ''; });
+    if (actual === 'cuello' && datos.cuello === 'otro' && !datos.frustracion.trim()) f.push('frustracion');
+    return f;
+  }
+  function pintarErrores() {
+    var f = intentado ? faltantes() : [];
+    $$('[data-q]').forEach(function (el) { el.classList.toggle('err', f.indexOf(el.getAttribute('data-q')) >= 0); });
+    $('[data-alert]').hidden = f.length === 0;
+  }
+
+  /* ================== GUARDAR PROGRESO ================== */
+  function guardar(paso) {
+    var payload = { paso: paso, datos: datos, tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('lu:progreso', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.LU_AUDIT && typeof window.LU_AUDIT.onProgreso === 'function') { try { window.LU_AUDIT.onProgreso(payload); } catch (e) {} }
+  }
+  var crm = { dealId: null };
+  try { crm.dealId = Number(localStorage.getItem(CONFIG.storageKey + '_deal')) || null; } catch (e) {}
+  function enviarCRM(evento, extra) {
+    if (!CONFIG.endpoint) return Promise.resolve(null);
+    var payload = { marca: CONFIG.marcaId, evento: evento, datos: datos, tracking: tracking(), dealId: crm.dealId, ts: new Date().toISOString() };
+    for (var k in (extra || {})) payload[k] = extra[k];
+    return fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j && j.dealId) { crm.dealId = j.dealId; try { localStorage.setItem(CONFIG.storageKey + '_deal', String(j.dealId)); } catch (e) {} } return j; })
+      .catch(function () { return null; });
+  }
+
+  /* ================== LANDING ================== */
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()); };
+  function validarLanding() {
+    var sel = $('[data-f="pais"]'); var opt = sel.options[sel.selectedIndex]; var dig = datos.telefono.replace(/\D/g, '');
+    var min = Number(opt.getAttribute('data-min')), max = Number(opt.getAttribute('data-max'));
+    return { nombre: datos.nombre.trim() !== '', email: emailOk(datos.email), telefono: dig.length >= min && dig.length <= max, negocio: datos.negocio.trim() !== '', optin: !!datos.optin, _min: min, _max: max, _pais: opt.getAttribute('data-name') };
+  }
+  $$('[data-f]').forEach(function (el) {
+    el.addEventListener('input', function () { datos[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (landingIntentado) pintarLanding(); });
+    el.addEventListener('change', function () { datos[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (landingIntentado) pintarLanding(); });
+  });
+  var landingIntentado = false;
+  function pintarLanding() {
+    var v = validarLanding();
+    ['nombre','email','telefono','negocio'].forEach(function (k) { var el = $('[data-f="' + k + '"]'); el.classList.toggle('err', !v[k]); var m = el.closest('.field').querySelector('.errmsg'); m.hidden = v[k]; if (k === 'telefono') m.textContent = 'Escribe un número válido para ' + v._pais + ' (' + v._min + (v._max !== v._min ? '–' + v._max : '') + ' dígitos)'; });
+    $('.optin').classList.toggle('err', !v.optin); $('[data-err="optin"]').hidden = v.optin;
+  }
+  // Tráfico pagado al nicho de coaches/agencias: muestra el eyebrow del avatar.
+  try { var _t = tracking(); if (/lu-diagnostico|coach/i.test((_t.utm_campaign || '') + ' ' + (_t.utm_content || '') + ' ' + (_t.utm_term || ''))) { var _eb = $('[data-eyebrow]'); if (_eb) _eb.hidden = false; } } catch (e) {}
+  $('[data-action="start"]').addEventListener('click', function () {
+    if ($('#lu-web').value) return; // honeypot
+    landingIntentado = true; var v = validarLanding();
+    if (!(v.nombre && v.email && v.telefono && v.negocio && v.optin)) { pintarLanding(); return; }
+    datos.telefonoCompleto = datos.pais.replace('+1809', '+1') + datos.telefono.replace(/\D/g, '');
+    guardar(0); enviarCRM('lead'); try { if (window.fbq) fbq('track', 'Lead', { content_name: 'Auditoría de Negocio' }, { eventID: eventId('lead') }); } catch (e) {} pasoIdx = 0; intentado = false; mostrar('quiz'); renderPaso();
+  });
+
+  /* ================== QUIZ ================== */
+  $$('[data-q]').forEach(function (el) {
+    if (el.classList.contains('radios')) return;
+    var k = el.getAttribute('data-q');
+    el.addEventListener('input', function () { if (k === 'ticket') el.value = el.value.replace(/[^0-9]/g, ''); datos[k] = el.value; pintarErrores(); });
+    el.addEventListener('change', function () { datos[k] = el.value; pintarErrores(); });
+  });
+  $$('.radio').forEach(function (b) {
+    b.addEventListener('click', function () {
+      datos.cuello = b.getAttribute('data-v');
+      $$('.radio').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
+      $('[data-otro]').hidden = datos.cuello !== 'otro'; pintarErrores();
+    });
+  });
+  $('[data-action="back"]').addEventListener('click', function () { intentado = false; pasoIdx = Math.max(0, pasoIdx - 1); renderPaso(); });
+  $('[data-action="next"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } guardar(pasoIdx + 1); intentado = false; pasoIdx++; renderPaso(); });
+  $('[data-action="finish"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } intentado = false; guardar(pasoIdx + 1); correrLoader(); });
+  $('[data-action="again"]').addEventListener('click', function () { location.reload(); });
+
+  /* ================== LOADER ================== */
+  function correrLoader() {
+    mostrar('loading'); var bar = $('[data-loadbar]'); var items = $$('[data-ls]'); bar.style.width = '8%';
+    items.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); bar.style.width = (20 + (i + 1) * 18) + '%'; }, 500 + i * (CONFIG.loaderMs - 900) / items.length); });
+    setTimeout(function () { bar.style.width = '100%'; }, CONFIG.loaderMs - 350);
+    setTimeout(function () { resultado = calcular(datos); renderResultado(resultado); mostrar('result'); }, CONFIG.loaderMs);
+  }
+
+  /* ================== SCORING + DIAGNÓSTICO ================== */
+  var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pct = function (x) { return Math.round(x * 100) + '%'; };
+  var NOMBRES = { leads: 'Falta de leads', calidad: 'Leads que no califican', conversion: 'Baja conversión', seguimiento: 'Falta de seguimiento', inconsistente: 'Marketing inconsistente', sistema: 'Sin sistema predecible de adquisición', escalar: 'Listo para escalar', otro: 'Cuello de botella específico' };
+
+  function calcular(d) {
+    var fact = Number(d.facturacion), ticket = Math.max(Number(d.ticket) || 0, 1), inv = Number(d.inversion), leads = Number(d.leads), clientes = Number(d.clientes);
+    var pidioMeta = d.meta !== ''; var meta = pidioMeta ? Number(d.meta) : Math.max(fact * 2, 10000);
+    var cap = d.capacidad || 'algo';
+    var brecha = Math.max(meta - fact, 0);
+    var clientesExtra = Math.ceil(brecha / ticket);
+    var conv = Math.min(clientes / Math.max(leads, 1), 1);
+    var leadsNecesarios = conv > 0 ? Math.ceil(clientesExtra / conv) : clientesExtra * 10;
+    var leadsExtra = Math.max(leadsNecesarios - leads, 0);
+    var cpl = leads > 0 && inv > 0 ? inv / leads : 0;
+    var ratio = meta / Math.max(fact, 1);
+
+    // Score 0-100 (6 factores)
+    var s = 0;
+    s += ({ 10: 2, 35: 6, 85: 11, 210: 16, 400: 20 })[leads] || 0;
+    s += ({ 0: 0, 500: 4, 2000: 8, 6500: 13, 15000: 15 })[inv] || 0;
+    s += conv >= .3 ? 20 : conv >= .2 ? 16 : conv >= .1 ? 11 : conv >= .05 ? 6 : 2;
+    s += ({ 6000: 2, 17500: 5, 37500: 8, 75000: 11, 175000: 13, 300000: 15 })[fact] || 0;
+    s += ratio <= 1.5 ? 15 : ratio <= 2 ? 11 : ratio <= 3 ? 7 : 3;
+    s += ({ mucha: 15, algo: 10, limite: 5 })[cap];
+    s = Math.max(0, Math.min(100, s));
+
+    // Cuello detectado por reglas (prioridad)
+    var det;
+    if (d.fuente === 'nada' || (inv === 0 && d.fuente !== 'ads')) det = 'sistema';
+    else if (leads < 50) det = 'leads';
+    else if (conv < .1) det = 'conversion';
+    else if (d.cuello === 'seguimiento' || (leads >= 120 && conv < .2)) det = 'seguimiento';
+    else if ((d.fuente === 'organico' || d.fuente === 'referidos') && inv < 1000) det = 'inconsistente';
+    else if (s >= 70 && cap !== 'limite') det = 'escalar';
+    else det = d.cuello === 'otro' ? 'conversion' : d.cuello;
+    var sec = (d.cuello && d.cuello !== det && d.cuello !== 'otro') ? d.cuello : null;
+
+    return { fact: fact, ticket: ticket, inv: inv, leads: leads, clientes: clientes, meta: meta, pidioMeta: pidioMeta, cap: cap, brecha: brecha, clientesExtra: clientesExtra, conv: conv, leadsNecesarios: leadsNecesarios, leadsExtra: leadsExtra, cpl: cpl, ratio: ratio, score: s, cuello: det, secundario: sec, calificado: fact >= 10000 };
+  }
+
+  function textos(r, d) {
+    var nombre = d.nombre.split(' ')[0]; var neg = d.negocio;
+    var base = 'Hoy <b>' + neg + '</b> factura alrededor de <b>' + fmt(r.fact) + '</b> al mes y recibe unos <b>' + r.leads + ' leads</b>, de los que cierra cerca de <b>' + r.clientes + ' clientes</b> (una conversión aproximada del <b>' + pct(r.conv) + '</b>). ';
+    var metaTxt = 'Para llegar a <b>' + fmt(r.meta) + '</b>' + (r.pidioMeta ? '' : ' (el doble de hoy)') + ' con un ticket de <b>' + fmt(r.ticket) + '</b> necesitas cerrar <b>' + r.clientesExtra + ' clientes adicionales</b> al mes' + (r.conv > 0 ? ', lo que a tu conversión actual equivale a unos <b>' + r.leadsNecesarios + ' leads</b> mensuales' : '') + '. ';
+    var T = {
+      sistema: { titulo: nombre + ', tu negocio no tiene una máquina de clientes. Depende de la suerte.', diag: base + 'El problema no es que no vendas: es que <b>no controlas de dónde llegan los clientes</b>. ' + (r.inv === 0 ? 'Sin inversión en marketing, cada mes empiezas de cero. ' : '') + metaTxt + 'Esa brecha no se cierra esperando referidos; se cierra con un sistema predecible de adquisición.',
+        plan: ['Define UNA oferta principal con precio y promesa clara (la que más margen te deja).', 'Lanza una campaña de Meta Ads con presupuesto fijo de prueba y un solo objetivo: conversaciones.', 'Instala un formulario de calificación de 30 segundos antes de cada cita o llamada.', 'Responde todo lead en menos de 5 minutos: asigna a una persona o automatízalo.', 'Mide semanalmente leads, citas y cierres en una sola hoja.'], norte: 'Leads nuevos por semana desde una fuente que TÚ controlas' },
+      leads: { titulo: nombre + ', tu cuello de botella es el volumen: te faltan leads.', diag: base + metaTxt + 'Con <b>' + r.leads + ' leads</b> al mes no hay forma de llegar: aunque cerraras el doble, te quedarías corto. Tu prioridad número uno es abrir la llave de leads' + (r.inv < 1000 ? ' con una inversión real en anuncios' : ' con una estrategia de anuncios que sí convierta') + '.',
+        plan: ['Elige un solo servicio "puerta de entrada" para anunciar (el más fácil de decir sí).', 'Crea 3 anuncios de video hablando del problema de tu cliente, no de ti.', 'Lanza en Meta Ads con objetivo de mensajes o formulario instantáneo.', 'Prepara la respuesta automática de bienvenida + 2 preguntas de calificación.', 'Revisa costo por lead cada 3 días y apaga lo que no funciona.'], norte: 'Leads calificados por semana (meta: ' + Math.ceil(r.leadsNecesarios / 4.3) + ')' },
+      calidad: { titulo: nombre + ', te llegan leads pero no son los correctos.', diag: base + 'Te llegan oportunidades, pero el filtro está roto: <b>atraes gente que no puede pagar o no encaja</b>. ' + metaTxt + 'El arreglo no es más leads: es mejor mensaje y un filtro antes de la cita.',
+        plan: ['Reescribe tu anuncio principal nombrando a quién SÍ es y a quién NO es.', 'Muestra rango de precio o inversión mínima antes de agendar.', 'Agrega 3 preguntas de calificación al formulario (presupuesto, urgencia, decisor).', 'Segmenta audiencias por ingreso/zona y excluye a quienes ya descartaste.', 'Mide la tasa de leads calificados vs. totales cada semana.'], norte: 'Porcentaje de leads que califican (meta: más del 50%)' },
+      conversion: { titulo: nombre + ', tu problema no es de leads: es de conversión.', diag: base + 'Con <b>' + r.leads + ' leads</b> y solo <b>' + r.clientes + ' cierres</b> estás convirtiendo al <b>' + pct(r.conv) + '</b>. ' + metaTxt + 'Si subieras tu conversión al 20%, cerrarías <b>' + Math.round(r.leads * .2) + ' clientes</b> con los mismos leads que ya pagas. El dinero ya está entrando por la puerta; se está escapando en el proceso.',
+        plan: ['Escucha o lee las últimas 10 conversaciones con leads y anota dónde se cayeron.', 'Define un guion de respuesta: saludo, pregunta de calificación, cita en menos de 3 mensajes.', 'Reduce el tiempo de primera respuesta a menos de 5 minutos.', 'Agrega recordatorios automáticos 24h y 1h antes de cada cita.', 'Mide tasa lead→cita y cita→cierre por separado cada semana.'], norte: 'Tasa de conversión lead → cliente (meta: 20%)' },
+      seguimiento: { titulo: nombre + ', estás dejando dinero en la mesa por falta de seguimiento.', diag: base + 'El volumen está: <b>' + r.leads + ' oportunidades</b> al mes. El problema es lo que pasa después del primer contacto: <b>sin seguimiento, la mayoría se enfría</b>. ' + metaTxt + 'Un seguimiento de 5 toques suele recuperar entre 15% y 30% de los leads que hoy das por perdidos.',
+        plan: ['Lista todos los leads de los últimos 60 días que no cerraron y contáctalos esta semana.', 'Diseña una secuencia de 5 toques (día 0, 1, 3, 7, 14) por WhatsApp.', 'Automatiza los toques con tu CRM o una herramienta de mensajería.', 'Asigna un responsable único de seguimiento con meta diaria.', 'Mide cuántos cierres vienen de seguimiento vs. primer contacto.'], norte: 'Clientes cerrados que venían de seguimiento (meta: 25% del total)' },
+      inconsistente: { titulo: nombre + ', tu marketing va a rachas y por eso tus ventas también.', diag: base + 'Dependes de <b>' + ({ organico: 'redes orgánicas', referidos: 'referidos' })[d.fuente] + '</b>' + (r.inv < 1000 ? ' casi sin inversión' : '') + ', así que un mes hay clientes y otro no. ' + metaTxt + 'La única forma de tener ventas consistentes es tener marketing consistente: presupuesto fijo, mensaje fijo, medición fija.',
+        plan: ['Fija un presupuesto mensual de marketing que no se toque (mínimo 5% de tu facturación).', 'Elige un solo canal principal de pago para los próximos 90 días.', 'Crea un banco de 10 anuncios para no depender de "inspiración".', 'Programa una revisión semanal de 20 minutos de números.', 'Sistematiza pedir referidos a cada cliente que cierras.'], norte: 'Leads por semana con variación menor al 20% mes a mes' },
+      escalar: { titulo: nombre + ', tu negocio está listo para escalar. Toca apretar el acelerador.', diag: base + 'Tus números son sanos: conversión del <b>' + pct(r.conv) + '</b>, inversión activa y capacidad para atender más. ' + metaTxt + 'No tienes un problema; tienes una oportunidad. El riesgo ahora es escalar sin sistema y romper lo que funciona.',
+        plan: ['Duplica el presupuesto en los anuncios que ya funcionan, 20% cada semana.', 'Documenta tu proceso de ventas para que no dependa de ti.', 'Abre un segundo canal (Google o YouTube) con la misma oferta.', 'Instala un CRM con seguimiento automático para no perder volumen.', 'Define el punto donde contratas al próximo cerrador o técnico.'], norte: 'Costo por cliente adquirido (mantenerlo por debajo de ' + fmt(r.ticket * .3) + ')' }
+    };
+    return T[r.cuello] || T.conversion;
+  }
+
+  function renderResultado(r) {
+    var t = textos(r, datos);
+    $('[data-r="badge"]').textContent = r.calificado ? 'Auditoría · Negocio en escala' : 'Tu Auditoría de Negocio · Level Up Media';
+    $('[data-r="titulo"]').textContent = t.titulo;
+    $('[data-r="intro"]').textContent = r.calificado ? 'Ya facturas. Esto no es sobre "empezar": es sobre destrabar el punto exacto que te tiene estancado y desbloquear la próxima escala.' : 'Esta auditoría está armada con los números que acabas de entrar, no con una plantilla.';
+    $('[data-r="chip1"]').textContent = NOMBRES[r.cuello];
+    var c2 = $('[data-r="chip2"]'); c2.hidden = !r.secundario; if (r.secundario) c2.textContent = '+ ' + NOMBRES[r.secundario];
+    $('[data-r="diagnostico"]').innerHTML = t.diag;
+    $('[data-r="kpis"]').innerHTML = [
+      ['Brecha mensual', fmt(r.brecha), true], ['Clientes que faltan / mes', String(r.clientesExtra), false], ['Conversión actual', pct(r.conv), false], ['Leads necesarios / mes', String(r.leadsNecesarios), false]
+    ].map(function (k) { return '<div class="kpi"><small>' + k[0] + '</small><strong class="' + (k[2] ? 'accent' : '') + '">' + k[1] + '</strong></div>'; }).join('');
+    $('[data-r="ring"]').style.setProperty('--p', r.score); $('[data-r="score"]').textContent = r.score;
+    $('[data-r="scoreTitulo"]').textContent = r.score >= 70 ? 'Capacidad de escala: alta' : r.score >= 45 ? 'Capacidad de escala: media' : 'Capacidad de escala: baja';
+    $('[data-r="scoreTexto"]').textContent = r.score >= 70 ? 'Tienes base para crecer rápido. Falta sistematizar.' : r.score >= 45 ? 'Hay base, pero un eslabón del sistema está frenando el resto.' : 'Hoy el crecimiento depende de la suerte. Primero hay que construir el sistema.';
+    $('[data-r="plan"]').innerHTML = t.plan.map(function (p, i) { return '<li><i>' + (i + 1) + '</i><span>' + p + '</span></li>'; }).join('');
+    $('[data-r="norte"]').textContent = t.norte;
+    $('[data-r="finalTitulo"]').textContent = r.calificado ? '¿Quieres que miremos tu operación juntos?' : 'Escríbenos y te enviamos todo el material';
+    var msg = 'Hola, soy ' + datos.nombre + ' de ' + datos.negocio + '. Ya completé mi auditoría de negocio: problema principal "' + NOMBRES[r.cuello] + '", brecha de ' + fmt(r.brecha) + '/mes, ' + r.clientesExtra + ' clientes adicionales necesarios, capacidad de escala ' + r.score + '/100. Quiero ver el material y mi plan de acción.';
+    var wa = 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg);
+    var q = '?nombre=' + encodeURIComponent(datos.nombre.split(' ')[0]) + '&cuello=' + encodeURIComponent(r.cuello) + '&score=' + r.score + '&brecha=' + Math.round(r.brecha) + (crm.dealId ? '&deal=' + crm.dealId : '');
+    var sig = CONFIG.siguiente ? CONFIG.siguiente + q : wa;
+    $$('[data-cta]').forEach(function (a) { a.href = sig; if (!CONFIG.siguiente) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } a.addEventListener('click', function () { try { if (window.fbq) fbq('track', 'Contact', { content_name: 'WhatsApp desde diagnóstico' }); } catch (e) {} }); });
+    $$('[data-wa]').forEach(function (a) { a.href = wa; a.hidden = !CONFIG.siguiente; });
+    var payload = { evento: 'resultado', marca: CONFIG.marca, datos: datos, resultado: r, cuelloNombre: NOMBRES[r.cuello], tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey + '_resultado', JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('lu:resultado', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.LU_AUDIT && typeof window.LU_AUDIT.onResultado === 'function') { try { window.LU_AUDIT.onResultado(payload); } catch (e) {} }
+    enviarCRM('resultado', { resultado: r, cuelloNombre: NOMBRES[r.cuello] });
+    try { if (window.fbq) fbq('trackCustom', 'DiagnosticoCompletado', { cuello: r.cuello, score: r.score, brecha: Math.round(r.brecha) }, { eventID: eventId('resultado') }); } catch (e) {}
+    // sticky CTA: aparece al scrollear, se esconde cuando el CTA final está visible
+    var sticky = $('[data-sticky]'); var finalEl = $('[data-final]'); var finalVisible = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { finalVisible = e.isIntersecting; }); upd(); }, { threshold: 0 }).observe(finalEl);
+    function upd() { sticky.classList.toggle('hide', !(window.scrollY > 300 && !finalVisible)); }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  }
+
+  // API pública mínima para integraciones (ClickFunnels / GHL)
+  window.LU_AUDIT = window.LU_AUDIT || {};
+  window.LU_AUDIT.config = CONFIG; window.LU_AUDIT.datos = datos; window.LU_AUDIT.calcular = calcular;
+})();
+</script>
+<script>(function(){var n=document.getElementById('lu-audit');var p=n&&n.parentElement;while(p&&p!==document.body){p.classList.add('lu-audit-bleed');p=p.parentElement;}})();</script>

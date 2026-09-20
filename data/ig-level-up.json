@@ -1,0 +1,123 @@
+{
+  "handle": "level_upmediapr",
+  "actualizadoEl": "2026-07-18T14:07:25-04:00",
+  "fuente": "apify",
+  "seguidores": 10338,
+  "totalPosts": 117,
+  "posts": [
+    {
+      "url": "https://www.instagram.com/p/Da8R4Q8lPer/",
+      "tipo": "carrusel",
+      "caption": "¿Cuántas veces has escuchado el típico \"lo voy a pensar\" y ese lead nunca vuelve? 💸  El problema real casi nunca es el precio; es que tu ofe",
+      "publicadoEl": "2026-07-18",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da6WYeiROGg/",
+      "tipo": "reel",
+      "caption": "Lo que Meta NO quiere que sepas sobre el botón azul... 🤫  ​Ese botón de \"promocionar\" está diseñado para que gastes rápido, no para que gane",
+      "publicadoEl": "2026-07-17",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da3xrDfFEOz/",
+      "tipo": "carrusel",
+      "caption": "¿Sigues testeando solo 2 creativos por campaña y esperando milagros? 📉  El verdadero cuello de botella de tus anuncios no es el presupuesto;",
+      "publicadoEl": "2026-07-16",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da1HAFWlEVU/",
+      "tipo": "carrusel",
+      "caption": "¿Tus anuncios no venden y culpas al presupuesto? 💸 El 90% de las veces, el problema es tu creativo, no tu billetera.  Desliza 👉 para descubr",
+      "publicadoEl": "2026-07-15",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Dayd49ylIHx/",
+      "tipo": "carrusel",
+      "caption": "¿Estás tirando dinero en publicidad? 💸 Atraer leads no sirve de nada si se pierden por responder tarde o no hacer seguimiento. Estás perdien",
+      "publicadoEl": "2026-07-14",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/Dav83sEFCnQ/",
+      "tipo": "carrusel",
+      "caption": "💣 ¿Tu negocio depende de la suerte o de un sistema?  El \"boca a boca\" es genial, pero tiene un problema: es impredecible. Si marcaste más de",
+      "publicadoEl": "2026-07-13",
+      "vistas": null,
+      "likes": 5,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DatbFWJFMNi/",
+      "tipo": "carrusel",
+      "caption": "¿El boca a boca tiene un techo? Sí, y el mundo digital no.  Tino Rest llevaba 40 años siendo una institución en Cabo Rojo, pero la tradición",
+      "publicadoEl": "2026-07-12",
+      "vistas": null,
+      "likes": 6,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/Daor972AAVB/",
+      "tipo": "carrusel",
+      "caption": "​¿Dependes de referidos para conseguir clientes? ¿Tu facturación es una montaña rusa?  ​¡Se acabó la lotería! Es hora de tomar el control y ",
+      "publicadoEl": "2026-07-10",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Dagv8UJFE7b/",
+      "tipo": "carrusel",
+      "caption": "Te pagaste una agencia por meses. Sin cliente nuevo 🚫  Tinos la probó y terminó igual. Reportes bonitos, likes que no pagan nada, cero resul",
+      "publicadoEl": "2026-07-07",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaWiBwHFBu9/",
+      "tipo": "carrusel",
+      "caption": "🚨 WhatsApp destronó al DM de Instagram en LATAM  El DM es ideal para DESCUBRIR, pero WhatsApp es la herramienta para CERRAR. Si dejas a tu p",
+      "publicadoEl": "2026-07-03",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaQh5KIFCNP/",
+      "tipo": "carrusel",
+      "caption": "Intentó con otras agencias. Ninguna le funcionó. Hasta que descubrió que el problema no era el producto 📊  Edgar vende garantías extendidas ",
+      "publicadoEl": "2026-07-01",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DMsRaQKNSXC/",
+      "tipo": "carrusel",
+      "caption": "🧠 La habilidad más poderosa en marketing no es un secreto: es el copywriting. Las palabras que capturan, convencen y venden. Dominarlo no es",
+      "publicadoEl": "2025-07-29",
+      "vistas": null,
+      "likes": 61,
+      "comentarios": 0
+    }
+  ],
+  "hallazgos": [
+    "El contenido de mayor tracción sigue siendo el carrusel de copywriting (\"la habilidad más poderosa en marketing\", 61 likes) — el ángulo de habilidad/skill resuena más que los carruseles recientes de sistema y ads (3-6 likes).",
+    "Los carruseles recientes (\"boca a boca vs sistema\", \"testeas 2 creativos y esperas milagros\") generan poca interacción: falta un hook más contundente en el slide 1 o migrar el mensaje a reel.",
+    "Solo 1 reel en los últimos 12 posts: Level Up está sobre-indexado en carrusel. Sumar reels de talking head (estilo Jason Wojo) para ganar alcance orgánico que el carrusel ya no da.",
+    "Todo el feed reciente es carrusel, sin vistas medibles: sin video no hay señal de alcance ni base para comparar performance. Incorporar reels también resuelve la medición."
+  ]
+}

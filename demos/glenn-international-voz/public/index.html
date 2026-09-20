@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Glenn International · Valentina — Asistente de voz (AutoFlow)</title>
+<meta name="description" content="Asistente de voz de Glenn International: recibe tu llamada, te orienta y te pasa con el experto del área. Demo por AI Borinquen (AutoFlow)." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23C0161D'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff7a4d'/%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#0d0b0b;            /* negro cálido */
+    --bg-2:#151010;
+    --panel:#1b1514;
+    --line:rgba(255,255,255,.09);
+    --ink:#f3ede9;           /* blanco cálido */
+    --muted:#a99f98;
+    --muted-2:#6f665f;
+    --red:#c0161d;           /* Glenn */
+    --red-2:#e0242e;
+    --amber:#ff7a3d;         /* brasa / energía */
+    --amber-2:#ffb020;
+    --bori:#10b981;          /* AI Borinquen */
+    --level:0;               /* 0..1 volumen del micrófono (lo mueve el JS) */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 620px at 50% -8%, rgba(192,22,29,.28), transparent 60%),
+      radial-gradient(900px 700px at 88% 112%, rgba(255,122,61,.14), transparent 55%),
+      radial-gradient(700px 600px at 6% 8%, rgba(120,20,20,.18), transparent 55%),
+      var(--bg);
+    min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:26px 18px 84px;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+
+  /* Placa del logo */
+  .plate{background:#fbfaf9;border-radius:16px;padding:16px 22px;box-shadow:0 12px 40px rgba(0,0,0,.45);margin-top:6px}
+  .plate img{display:block;width:210px;max-width:62vw;height:auto}
+
+  .eyebrow{margin-top:22px;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted-2);font-weight:600}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(34px,9vw,50px);line-height:1.05;margin-top:8px;letter-spacing:.5px;text-wrap:balance;text-align:center}
+  h1 em{font-style:italic;color:transparent;background:linear-gradient(92deg,var(--red-2),var(--amber-2));-webkit-background-clip:text;background-clip:text}
+  .sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.6;text-align:center;max-width:30rem}
+
+  /* Toggle idioma */
+  .lang{display:flex;gap:4px;margin-top:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .lang button{appearance:none;border:0;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;letter-spacing:.04em;
+    padding:6px 14px;border-radius:999px;cursor:pointer;transition:.18s}
+  .lang button.on{background:linear-gradient(92deg,var(--red),var(--amber));color:#fff}
+
+  /* Orbe */
+  .stage{position:relative;margin-top:26px;width:260px;height:260px;display:flex;align-items:center;justify-content:center}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,122,61,.16)}
+  .ring.r2{inset:26px;border-color:rgba(224,36,46,.14)}
+  .ring.r3{inset:52px;border-color:rgba(255,176,32,.10)}
+  .pulse{position:absolute;inset:34px;border-radius:50%;
+    background:radial-gradient(circle at 50% 42%, rgba(255,122,61,.5), rgba(192,22,29,.25) 55%, transparent 72%);
+    filter:blur(6px);opacity:.7;transition:transform .12s ease-out}
+  .orb{position:relative;width:168px;height:168px;border-radius:50%;cursor:pointer;border:0;
+    background:
+      radial-gradient(circle at 50% 34%, #ffd9b0 0%, var(--amber) 26%, var(--red-2) 60%, #7d0f13 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,.14) inset, 0 10px 44px rgba(224,36,46,.5), 0 0 90px rgba(255,122,61,.35);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff;
+    transition:transform .15s ease;overflow:hidden}
+  .orb:hover{transform:scale(1.02)}
+  .orb:active{transform:scale(.98)}
+  .orb:focus-visible{outline:3px solid #fff;outline-offset:4px}
+  .orb .mic{width:34px;height:34px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+  .orb .cta{font-family:Georgia,serif;font-style:italic;font-size:15px;letter-spacing:.3px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .orb .waves{position:absolute;inset:0;display:none;align-items:center;justify-content:center;gap:5px}
+  .orb .waves i{width:5px;height:22px;border-radius:3px;background:rgba(255,255,255,.92);animation:wave 1s infinite ease-in-out}
+  .orb .waves i:nth-child(2){animation-delay:.12s}.orb .waves i:nth-child(3){animation-delay:.24s}
+  .orb .waves i:nth-child(4){animation-delay:.36s}.orb .waves i:nth-child(5){animation-delay:.48s}
+  @keyframes wave{0%,100%{height:12px}50%{height:40px}}
+
+  /* Estados del orbe */
+  .stage.idle .pulse{animation:breathe 3.6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.12);opacity:.85}}
+  .stage.listening .pulse{transform:scale(calc(1 + var(--level)*.9));opacity:calc(.55 + var(--level)*.45)}
+  .stage.listening .orb{box-shadow:0 0 0 1px rgba(255,255,255,.14) inset,0 10px 44px rgba(224,36,46,.55),0 0 calc(80px + var(--level)*120px) rgba(255,176,32,.55)}
+  .stage.speaking .orb .mic,.stage.speaking .orb .cta{display:none}
+  .stage.speaking .orb .waves{display:flex}
+  .stage.speaking .pulse{animation:breathe 1.1s ease-in-out infinite}
+  .stage.thinking .pulse{animation:breathe 1s ease-in-out infinite}
+  .stage.connecting .cta{opacity:.6}
+
+  .statusline{margin-top:16px;height:20px;color:var(--amber-2);font-size:13px;font-weight:600;letter-spacing:.03em}
+  .hint{margin-top:2px;color:var(--muted-2);font-size:12px;text-align:center;min-height:16px}
+
+  /* Transcript */
+  .transcript{margin-top:20px;width:100%;display:flex;flex-direction:column;gap:8px}
+  .msg{max-width:88%;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.4;animation:rise .2s ease-out}
+  .msg.bot{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.you{align-self:flex-end;background:linear-gradient(92deg,rgba(192,22,29,.9),rgba(255,122,61,.85));color:#fff;border-bottom-right-radius:4px}
+  .msg .who{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Cómo funciona */
+  .how{margin-top:30px;width:100%;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px}
+  .how h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted-2);font-weight:700;text-align:center}
+  .how ol{list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+  .how li{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:13.5px;line-height:1.5}
+  .how li::before{counter-increment:s;content:counter(s);flex-shrink:0;width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(92deg,var(--red),var(--amber));color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;margin-top:1px}
+
+  .unsupported{display:none;margin-top:16px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.25);
+    color:#ffd39a;font-size:13px;line-height:1.5;padding:12px 14px;border-radius:12px;text-align:center;max-width:30rem}
+
+  /* Crédito */
+  .credit{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;
+    padding:10px;background:linear-gradient(to top,rgba(8,7,7,.95),transparent);color:#b9b2ab;font-size:12.5px;z-index:10}
+  .credit .dot{width:8px;height:8px;border-radius:50%;background:var(--bori);box-shadow:0 0 0 3px rgba(16,185,129,.2),0 0 12px rgba(16,185,129,.6)}
+  .credit b{color:#fff;font-weight:600}
+  .credit .sep{opacity:.4}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="plate"><img src="data:image/png;base64,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" alt="Glenn International — electrical · lighting · telecom · since 1967" /></div>
+
+    <div class="eyebrow">Le presentamos</div>
+    <h1>Conoce a <em>Valentina</em></h1>
+    <p class="sub" id="sub">Tu asistente de voz. Recibe tu llamada, te orienta sobre lo que buscas y te pasa con el experto del área.</p>
+
+    <div class="lang" role="tablist" aria-label="Idioma">
+      <button id="lang-es" class="on" role="tab">Español</button>
+      <button id="lang-en" role="tab">English</button>
+    </div>
+
+    <div class="stage idle" id="stage">
+      <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+      <div class="pulse"></div>
+      <button class="orb" id="orb" aria-label="Hablar con Valentina">
+        <svg class="mic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12z"/></svg>
+        <span class="cta" id="orb-cta">Hablar con Valentina</span>
+        <span class="waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      </button>
+    </div>
+
+    <div class="statusline" id="status"></div>
+    <div class="hint" id="hint">Toca el orbe y permite el micrófono</div>
+
+    <div class="transcript" id="transcript" aria-live="polite"></div>
+
+    <div class="unsupported" id="unsupported">
+      Para hablar con Valentina usa <b>Chrome</b> o <b>Edge</b> en computadora o Android (el micrófono de voz no está disponible en este navegador). Igual puedes leer cómo funciona abajo.
+    </div>
+
+    <div class="how">
+      <h2>Cómo funciona</h2>
+      <ol>
+        <li>Toca el orbe y permite el acceso al micrófono cuando el navegador lo pida.</li>
+        <li>Habla con Valentina con naturalidad, como si llamaras a la oficina — en español o inglés.</li>
+        <li>Ella te orienta y te ofrece pasarte con el experto del departamento (energía renovable, eléctrico, iluminación o telecom).</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="credit"><span class="dot"></span><span>Desarrollado por <b>AI Borinquen</b></span><span class="sep">·</span><span>AutoFlow</span></div>
+
+<script>
+(function(){
+  "use strict";
+  // ===================== CONFIG =====================
+  // PREMIUM (Retell): pega tus llaves públicas del dashboard para usar la voz
+  // real de Glenn (ElevenLabs caribeña) en vez del demo del navegador. Ver
+  // retell-agente.md para montar el agente y de dónde sacar estas llaves.
+  var RETELL = { agentId: "agent_a42595e72c3dcd00c74e8f0a2c", endpoint: "/api/webcall" };
+  // ==================================================
+
+  var ASSISTANT = "Valentina";
+  var el = function(id){ return document.getElementById(id); };
+  var stage=el('stage'), orb=el('orb'), status=el('status'), hint=el('hint'),
+      transcript=el('transcript'), cta=el('orb-cta'), sub=el('sub'), unsupported=el('unsupported');
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var SS = window.speechSynthesis;
+  var lang = 'es';            // 'es' | 'en'
+  var running = false, rec = null, lastArea = null, awaitingYesNo = false;
+  var voices = [];
+
+  // ---------- Copys UI por idioma ----------
+  var UI = {
+    es:{ sub:'Tu asistente de voz. Recibe tu llamada, te orienta sobre lo que buscas y te pasa con el experto del área.',
+         cta:'Hablar con '+ASSISTANT, hint:'Toca el orbe y permite el micrófono',
+         listening:'Escuchando…', thinking:'Un momento…', speaking:ASSISTANT+' está hablando…',
+         connecting:'Conectando…', tapStop:'Toca para terminar' },
+    en:{ sub:'Your voice assistant. She takes your call, guides you on what you need and connects you with the right expert.',
+         cta:'Talk to '+ASSISTANT, hint:'Tap the orb and allow the microphone',
+         listening:'Listening…', thinking:'One moment…', speaking:ASSISTANT+' is speaking…',
+         connecting:'Connecting…', tapStop:'Tap to end' }
+  };
+  function applyUI(){ sub.textContent=UI[lang].sub; if(!running){ cta.textContent=UI[lang].cta; hint.textContent=UI[lang].hint; } }
+
+  // ---------- Base de conocimiento hablada (info REAL de Glenn) ----------
+  // area: 'renovable' | 'electrico' | 'iluminacion' | 'telecom'
+  var AREAS = {
+    renovable:{ ext:'201',
+      es:'En energía renovable somos líderes hace más de diez años: paneles y baterías como SMA, Canadian Solar y Tesla Powerwall, y cargadores para autos eléctricos.',
+      en:'In renewable energy we have led for over ten years: solar panels and batteries like SMA, Canadian Solar and Tesla Powerwall, plus EV chargers.' },
+    electrico:{ ext:'202',
+      es:'En la parte eléctrica representamos las mejores marcas de Estados Unidos, como Hubbell, Southwire y Unistrut.',
+      en:'On the electrical side we carry the top U.S. brands, like Hubbell, Southwire and Unistrut.' },
+    iluminacion:{ ext:'203',
+      es:'En iluminación vamos desde componentes hasta sistemas completos, con marcas como Lutron y Zumtobel, y consultores certificados LEED.',
+      en:'In lighting we go from components to complete systems, with brands like Lutron and Zumtobel, and LEED-certified consultants.' },
+    telecom:{ ext:'204',
+      es:'En telecomunicaciones ofrecemos cableado estructurado y hasta un centro de certificación en cobre y fibra.',
+      en:'In telecom we offer structured cabling and even a certification center for copper and fiber.' }
+  };
+  function offerTransfer(area){
+    lastArea = area; awaitingYesNo = true;
+    var name = { renovable:{es:'energía renovable',en:'renewable energy'}, electrico:{es:'material eléctrico',en:'electrical'},
+      iluminacion:{es:'iluminación',en:'lighting'}, telecom:{es:'telecomunicaciones',en:'telecom'} }[area][lang];
+    return lang==='es'
+      ? ' ¿Te parece si te paso con un especialista de '+name+'? En esta demostración no puedo completar la transferencia, pero en la versión final te conecto directo a la extensión '+AREAS[area].ext+'. Mientras, ¿te tomo tu nombre y teléfono?'
+      : ' Shall I connect you with a '+name+' specialist? In this demo I can’t complete the transfer, but in the full version I route you straight to extension '+AREAS[area].ext+'. Meanwhile, may I take your name and phone?';
+  }
+
+  function detectArea(t){
+    if(/(solar|panel|placa|bater|powerwall|renov|carga|electric car|ev\b|fotovol)/.test(t)) return 'renovable';
+    if(/(iluminaci|light|lumin|led|bombill|lampara|lutron)/.test(t)) return 'iluminacion';
+    if(/(telecom|fibra|fiber|cable|red\b|network|estructurad)/.test(t)) return 'telecom';
+    if(/(electric|eléctric|breaker|conduit|hubbell|southwire|material el)/.test(t)) return 'electrico';
+    return null;
+  }
+  function isEnglishMsg(t){
+    if(/[¿¡ñáéíóú]/.test(t)) return false;
+    return /\b(the|you|do|does|what|where|how|hi|hello|hey|price|quote|hours|need|want|looking|lighting|electrical|solar|shipping|thanks|address|contact|yes|no)\b/.test(t) &&
+      !/\b(hola|buenas|gracias|precio|donde|cuando|necesito|quiero|busco|si|para|con)\b/.test(t);
+  }
+
+  function respond(text){
+    var t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+    if(isEnglishMsg(t) && lang==='es'){ setLang('en'); }        // sigue al usuario si cambia a inglés
+    var L = lang;
+    // 1) ¿dejó teléfono/nombre? -> lead capturado
+    if(/\d{3}[\d\s.\-]{4,}/.test(text)){
+      awaitingYesNo=false;
+      return L==='es' ? '¡Gracias! Ya registré tus datos y un especialista te va a devolver la llamada. ¿Algo más en lo que te pueda ayudar?'
+                      : 'Thank you! I’ve logged your details and a specialist will call you back. Anything else I can help with?';
+    }
+    // 2) respuesta a la oferta de transferencia
+    if(awaitingYesNo && /\b(si|sí|claro|dale|ok|okay|yes|sure|perfecto|bueno)\b/.test(t)){
+      awaitingYesNo=false;
+      return L==='es' ? 'Perfecto. Dime tu nombre y un teléfono, y el especialista de esa área te devuelve la llamada enseguida.'
+                      : 'Perfect. Tell me your name and a phone number, and the specialist for that area will call you right back.';
+    }
+    if(awaitingYesNo && /\b(no|luego|despues|later|not now)\b/.test(t)){
+      awaitingYesNo=false;
+      return L==='es' ? 'Sin problema. ¿Hay algo más en lo que te pueda orientar?' : 'No problem. Anything else I can help you with?';
+    }
+    // 3) área de producto -> orientar + ofrecer transferencia
+    var area = detectArea(t);
+    if(area){ return AREAS[area][L] + offerTransfer(area); }
+    // 4) info general
+    if(/(ubicaci|direccion|donde|carolina|location|address|where)/.test(t))
+      return L==='es' ? 'Estamos en Carolina, Puerto Rico, con un almacén de noventa mil pies cuadrados. El teléfono es 7 8 7, 7 5 7, 6 0 0 0.'
+                      : 'We’re in Carolina, Puerto Rico, with a ninety-thousand square-foot warehouse. Our phone is 7 8 7, 7 5 7, 6 0 0 0.';
+    if(/(horario|hora|abren|open|hours)/.test(t))
+      return L==='es' ? 'Con gusto un asesor te confirma el horario de mostrador. Puedes llamar al 7 8 7, 7 5 7, 6 0 0 0.'
+                      : 'An advisor will gladly confirm our counter hours. You can call 7 8 7, 7 5 7, 6 0 0 0.';
+    if(/(telefono|numero|contacto|correo|email|phone|contact)/.test(t))
+      return L==='es' ? 'Nuestro teléfono es 7 8 7, 7 5 7, 6 0 0 0, y el correo es info arroba glenninternational punto com.'
+                      : 'Our phone is 7 8 7, 7 5 7, 6 0 0 0, and the email is info at glenninternational dot com.';
+    if(/(envio|entrega|caribe|dominicana|trinidad|ship|deliver|caribbean)/.test(t))
+      return L==='es' ? 'Servimos todo el Caribe y Centroamérica, con oficinas de apoyo en República Dominicana y Trinidad.'
+                      : 'We serve the entire Caribbean and Central America, with support offices in the Dominican Republic and Trinidad.';
+    if(/(empresa|historia|desde|1967|quienes|company|about|years)/.test(t))
+      return L==='es' ? 'Glenn International es suplidor líder para el Caribe desde 1967, en energía renovable, eléctrico, iluminación y telecomunicaciones.'
+                      : 'Glenn International has been a leading Caribbean supplier since 1967 in renewable energy, electrical, lighting and telecom.';
+    if(/(gracias|thank|bye|adios|nada mas|eso es todo)/.test(t))
+      return L==='es' ? '¡Con mucho gusto! Gracias por comunicarte con Glenn International. Que tengas buen día.'
+                      : 'My pleasure! Thanks for contacting Glenn International. Have a great day.';
+    // 5) fallback: re-filtra
+    return L==='es' ? 'Con gusto te oriento. ¿Qué estás buscando: energía solar, material eléctrico, iluminación o telecomunicaciones?'
+                    : 'Happy to help. What are you looking for: solar energy, electrical, lighting or telecom?';
+  }
+
+  function greeting(){
+    return lang==='es'
+      ? '¡Gracias por comunicarte con Glenn International! Te habla '+ASSISTANT+'. Dime, ¿en qué te puedo ayudar? ¿Buscas energía solar, material eléctrico, iluminación o telecomunicaciones?'
+      : 'Thank you for contacting Glenn International! This is '+ASSISTANT+', your assistant. Tell me, how can I help — are you looking for solar energy, electrical, lighting or telecom?';
+  }
+
+  // ---------- Voz (TTS) ----------
+  function loadVoices(){ voices = (SS && SS.getVoices) ? SS.getVoices() : []; }
+  if(SS){ loadVoices(); SS.onvoiceschanged = loadVoices; }
+  function pickVoice(){
+    var pref = lang==='es'
+      ? ['es-US','es-MX','es-419','es-CO','es-AR','es-','es']
+      : ['en-US','en-GB','en-'];
+    for(var i=0;i<pref.length;i++){
+      var v = voices.find(function(x){ return (x.lang||'').toLowerCase().indexOf(pref[i].toLowerCase())===0; });
+      if(v) return v;
+    }
+    return voices.find(function(x){ return (x.lang||'').toLowerCase().indexOf(lang)===0; }) || null;
+  }
+  function chunk(text){ // Chrome corta enunciados largos: partir por oración
+    var parts = text.match(/[^.!?…]+[.!?…]*/g) || [text];
+    var out=[], cur='';
+    parts.forEach(function(p){ if((cur+p).length>180){ if(cur)out.push(cur.trim()); cur=p; } else cur+=p; });
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  }
+  function speak(text, done){
+    stopShimmer();
+    if(!SS){ if(done){ setTimeout(done, Math.min(4000, 400+text.length*22)); } return; }
+    SS.cancel();
+    setState('speaking');
+    var v = pickVoice(), parts = chunk(text), i=0;
+    function next(){
+      if(i>=parts.length){ if(done)done(); return; }
+      var u = new SpeechSynthesisUtterance(parts[i++]);
+      if(v){ u.voice=v; u.lang=v.lang; } else { u.lang = lang==='es'?'es-US':'en-US'; }
+      u.rate=1.02; u.pitch=1.02;
+      u.onend=next; u.onerror=next;
+      SS.speak(u);
+    }
+    next();
+  }
+
+  // ---------- Transcript ----------
+  function addMsg(who, text){
+    var d=document.createElement('div'); d.className='msg '+(who==='you'?'you':'bot');
+    var label = who==='you' ? (lang==='es'?'Tú':'You') : ASSISTANT;
+    d.innerHTML='<span class="who"></span>'+'<span class="tx"></span>';
+    d.querySelector('.who').textContent=label; d.querySelector('.tx').textContent=text;
+    transcript.appendChild(d); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  }
+
+  // ---------- Estados ----------
+  function setState(s){
+    stage.className='stage '+s;
+    status.textContent = UI[lang][s] ? UI[lang][s] : (UI[lang][s==='listening'?'listening':'']||'');
+    if(s==='listening') status.textContent=UI[lang].listening;
+    else if(s==='thinking') status.textContent=UI[lang].thinking;
+    else if(s==='speaking') status.textContent=UI[lang].speaking;
+    else if(s==='connecting') status.textContent=UI[lang].connecting;
+    else status.textContent='';
+    if(running){ hint.textContent = UI[lang].tapStop; }
+  }
+
+  // ---------- Shimmer del orbe (sintético; sin getUserMedia para no duplicar
+  // el permiso de micrófono ni bloquear el saludo) ----------
+  var shimId=null, shimT=0;
+  function startShimmer(){ stopShimmer(); (function loop(){ shimT+=0.09;
+    var lvl=0.28+0.22*Math.abs(Math.sin(shimT))+0.14*Math.abs(Math.sin(shimT*2.7));
+    document.documentElement.style.setProperty('--level', Math.min(1,lvl).toFixed(3));
+    shimId=requestAnimationFrame(loop); })(); }
+  function stopShimmer(){ if(shimId)cancelAnimationFrame(shimId); shimId=null; document.documentElement.style.setProperty('--level',0); }
+
+  // ---------- Reconocimiento (STT) ----------
+  function listen(){
+    if(!SR){ return; }
+    try{ rec = new SR(); }catch(e){ return; }
+    rec.lang = lang==='es' ? 'es-US' : 'en-US';
+    rec.interimResults = false; rec.maxAlternatives = 1; rec.continuous = false;
+    setState('listening'); startShimmer();
+    var got=false;
+    rec.onresult=function(e){
+      got=true;
+      var text = e.results[0][0].transcript.trim();
+      if(!text) return;
+      stopShimmer();
+      addMsg('you', text);
+      setState('thinking');
+      var reply = respond(text);
+      setTimeout(function(){ if(!running) return; addMsg('bot', reply); speak(reply, function(){ if(running) listen(); }); }, 350);
+    };
+    rec.onerror=function(ev){ if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){ micDenied(); } };
+    rec.onend=function(){ if(running && !got){ /* silencio: volver a escuchar */ try{ if(stage.classList.contains('listening')) rec.start(); }catch(e){} } };
+    try{ rec.start(); }catch(e){}
+  }
+
+  function micDenied(){
+    stop();
+    hint.textContent = lang==='es' ? 'Necesito el micrófono para escucharte. Actívalo y toca otra vez.' : 'I need microphone access. Enable it and tap again.';
+  }
+
+  // ---------- Arranque / fin de la conversación ----------
+  var premiumClient = null;
+  function start(){
+    if(running) return;
+    if(RETELL.agentId){ startPremium(); return; }   // voz real de Valentina (Retell)
+    startKeyless();                                   // demo del navegador (sin llaves)
+  }
+  function startKeyless(){
+    running=true; transcript.innerHTML=''; lastArea=null; awaitingYesNo=false;
+    orb.setAttribute('aria-label', lang==='es'?'Terminar':'End');
+    if(!SR){ unsupported.style.display='block'; }  // sin STT: al menos saluda
+    var g=greeting(); addMsg('bot',g);             // el saludo sale de inmediato
+    speak(g, function(){ if(running && SR) listen(); });
+  }
+  function stop(){
+    running=false; awaitingYesNo=false;
+    if(premiumClient){ try{ premiumClient.stopCall(); }catch(e){} premiumClient=null; }
+    if(rec){ try{ rec.onend=null; rec.onresult=null; rec.stop(); }catch(e){} rec=null; }
+    if(SS) SS.cancel();
+    stopShimmer(); setState('idle');
+    cta.textContent=UI[lang].cta; hint.textContent=UI[lang].hint;
+    orb.setAttribute('aria-label','Hablar con '+ASSISTANT);
+  }
+  orb.addEventListener('click', function(){ running ? stop() : start(); });
+
+  // ---------- Idioma ----------
+  function setLang(l){
+    lang=l; el('lang-es').classList.toggle('on',l==='es'); el('lang-en').classList.toggle('on',l==='en');
+    applyUI();
+  }
+  el('lang-es').addEventListener('click', function(){ if(!running) setLang('es'); });
+  el('lang-en').addEventListener('click', function(){ if(!running) setLang('en'); });
+
+  // ---------- Premium: voz real de Valentina (Retell) manejando TU orbe ----------
+  // Usa la Netlify Function (/api/webcall) para un token efímero + RetellWebClient.
+  // Si la función no está (abrir el archivo local sin deploy) cae al demo del navegador.
+  var _lastSig='';
+  function renderRetellTranscript(arr){
+    if(!Array.isArray(arr)) return;
+    var sig = arr.map(function(t){ return (t.role||'')+':'+(t.content||''); }).join('|');
+    if(sig===_lastSig) return;            // nada cambió → no re-render
+    _lastSig=sig;
+    var addedNew=false;
+    for(var i=0;i<arr.length;i++){
+      var who = arr[i].role==='agent' ? 'bot' : 'you';
+      var txt = arr[i].content||'';
+      var row = transcript.children[i];
+      if(row && row.classList.contains('msg')){   // reusar el nodo (sin re-animar)
+        var isBot = row.classList.contains('bot');
+        if((who==='bot')!==isBot){
+          row.className='msg '+who;
+          row.querySelector('.who').textContent = who==='bot'?ASSISTANT:(lang==='es'?'Tú':'You');
+        }
+        var tx=row.querySelector('.tx');
+        if(tx.textContent!==txt) tx.textContent=txt;   // solo cambia el texto
+      } else {
+        addMsg(who, txt); addedNew=true;
+      }
+    }
+    while(transcript.children.length>arr.length){ transcript.lastChild.remove(); }
+    if(addedNew){ window.scrollTo({top:document.body.scrollHeight}); }
+  }
+  async function startPremium(){
+    running=true; transcript.innerHTML='';
+    orb.setAttribute('aria-label', lang==='es'?'Terminar':'End');
+    setState('connecting');
+    hint.textContent = lang==='es' ? 'Conectando con '+ASSISTANT+'…' : 'Connecting to '+ASSISTANT+'…';
+    try{
+      var mod = await import('https://esm.sh/retell-client-js-sdk');
+      var RetellWebClient = mod.RetellWebClient;
+      var res = await fetch(RETELL.endpoint, { method:'POST' });
+      if(!res.ok) throw new Error('endpoint '+res.status);
+      var data = await res.json();
+      if(!data.access_token) throw new Error('sin token');
+      premiumClient = new RetellWebClient();
+      premiumClient.on('call_started', function(){ setState('listening'); startShimmer(); });
+      premiumClient.on('agent_start_talking', function(){ setState('speaking'); });
+      premiumClient.on('agent_stop_talking', function(){ setState('listening'); startShimmer(); });
+      premiumClient.on('update', function(u){ if(u&&u.transcript) renderRetellTranscript(u.transcript); });
+      premiumClient.on('call_ended', function(){ stop(); });
+      premiumClient.on('error', function(){ stop(); });
+      await premiumClient.startCall({ accessToken: data.access_token });
+    }catch(e){
+      // sin función / sin red → usa el demo del navegador
+      running=false; premiumClient=null;
+      startKeyless();
+    }
+  }
+
+  // ---------- Init ----------
+  applyUI();
+  if(!SR && !SS){ unsupported.style.display='block'; }
+  // Hook de prueba (solo con ?debug) — verificar la lógica sin micrófono.
+  try{ if(location.search.indexOf('debug')>-1){ window.__valeria={respond:respond,greeting:greeting,detectArea:detectArea,setLang:setLang}; } }catch(e){}
+})();
+</script>
+</body>
+</html>

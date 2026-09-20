@@ -1,0 +1,181 @@
+{
+  "actualizadoEl": "2026-07-30T21:47:00-04:00",
+  "prioridades": [
+    {
+      "id": "prio-empalme-ventas-operaciones",
+      "titulo": "Brecha entre ventas y operaciones: empalme formal con closers y tráfico",
+      "categoria": "equipo",
+      "severidad": "alta",
+      "detalle": "Reunión General Level Up (30/07): revisando clientes con problemas de conversión salió una brecha crítica entre lo que promete/vende ventas y lo que ejecuta operaciones — casos como Kenneth (el tráfico funciona pero él no gestiona los leads) y el video de Elina entregado con assets equivocados son síntomas del mismo hueco. Elvin aprobó y priorizó una sesión de empalme formal entre las dos áreas, con los closers, Juan Diego y 2 reps de tráfico, para esta semana o la próxima. En la misma reunión reforzó la regla de gobierno: todo cambio de contrato va por escrito y autorizado por él (ver prio-gobierno-contratos).",
+      "metrica": "sesión de empalme agendada esta semana o la próxima; clientes que reclaman por expectativas mal seteadas",
+      "accionSugerida": "Carilin coordina y agenda la sesión (t-empalme-ventas-operaciones-30jul); Aure manda la información previa. Salir de la sesión con un handoff escrito ventas→ops: qué se promete, qué se entrega y quién avisa cuando el cliente no hace su parte.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-30"
+    },
+    {
+      "id": "prio-producto-entrada-ticket-bajo",
+      "titulo": "Producto de entrada de ticket bajo ($200–$800) para no perder leads que no califican al high ticket",
+      "categoria": "ventas",
+      "severidad": "media",
+      "detalle": "Sesión con Alejo (25/07): Elvin decidió crear un producto de entrada de ticket bajo ($200–$800) para capturar a los leads que no califican para el high ticket (done-for-you / consultoría), en vez de dejarlos ir. Señal de tracción: durante la misma sesión se vendió la primera suscripción ($99). Complementa la taxonomía de precios ya fijada (prio-precios-packaging-autoflow) con un peldaño más bajo como puerta de entrada al ecosistema. Solo Elvin puede definir la oferta, el alcance y el pricing de este tier.",
+      "metrica": "producto de entrada definido ($200–$800); primeras suscripciones vendidas (ya 1 a $99)",
+      "accionSugerida": "Elvin define el alcance y pricing del tier de entrada (t-producto-ticket-bajo-25jul) y cómo se conecta con el ascenso al high ticket; validar con las primeras ventas antes de escalar.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-25"
+    },
+    {
+      "id": "prio-estabilidad-producto-aib",
+      "titulo": "Estabilidad del producto de AIB (Railway + Retell): el agente de voz sigue cayéndose y ahora se quedó mudo otra vez",
+      "categoria": "producto",
+      "severidad": "alta",
+      "detalle": "El servicio 'bori' en Railway (believable-amazement / production) sigue en crash-loop desde el 22/07. Encima, Retell avisó el 27/07 que 8 organizaciones usan endpoints deprecados que van a retirar, Y AHORA (28/07 01:40 AM) la cuenta de Retell se volvió a pausar por balance $0 — la MISMA situación del 22/07 repitiéndose, o sea que el auto-recharge nunca quedó resuelto. Mientras dure, los agentes de voz de los clientes de AutoFlow están mudos por partida doble (Railway caído + Retell sin fondos). El producto que Elvin quiere dogfoodear a diario sigue sin estar disponible de forma confiable.",
+      "metrica": "5 crashes de 'bori' el 27/07 (09:07-15:57 AST); Retell pausada por $0 dos veces en 6 días (22/07 y 28/07); 20 avisos de endpoints deprecados sobre 8 orgs (27/07).",
+      "accionSugerida": "Reunión de desarrolladores del 29/07 10:00 AM con causa raíz POR ESCRITO y logs en mano. Si no hay causa raíz, congelar el deploy en la última versión estable. Activar auto-recharge en Retell de una vez (no seguir recargando manualmente) y migrar los endpoints deprecados en el mismo bloque de trabajo. Aplica el criterio que Elvin ya fijó: confiabilidad, observabilidad y evidencia antes que velocidad.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-10"
+    },
+    {
+      "id": "prio-gobierno-contratos",
+      "titulo": "Gobierno de contratos: no onboarding sin firma + documentar excepciones",
+      "categoria": "administrativo",
+      "severidad": "alta",
+      "detalle": "Reunión General AIB (07/07): hubo fallas de comunicación interna en contratos y negociaciones. Elvin fijó regla sin excepciones: no se agenda llamada de onboarding si el cliente no firmó el contrato. Además, todo acuerdo fuera de contrato aprobado por Elvin debe quedar documentado en un canal visible para operaciones (Ana, David, etc.) para evitar promesas sueltas y disputas. | REFUERZO 30/07 (Reunión General Level Up): a raíz del caso Dave Castillo (óptica que no paga ni respeta al equipo), Elvin fijó que CUALQUIER cambio adicional al contrato debe quedar por escrito y autorizado por él — nunca de palabra — y confirmó que el contrato está blindado: si el cliente no paga, no hay obligación de seguir dando servicio.",
+      "metrica": "onboardings agendados sin contrato firmado = 0",
+      "accionSugerida": "Ventas (Juan) aplica la regla de inmediato. Crear el canal/documento de excepciones aprobadas por Elvin. Ana revisa la grabación de Damaris para ver qué se prometió fuera de contrato.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-07"
+    },
+    {
+      "id": "prio-churn-julio",
+      "titulo": "Churn del mes pasó 100% — atacar retención YA",
+      "categoria": "churn",
+      "severidad": "alta",
+      "detalle": "El churn de este mes superó el 100% (se fueron más clientes de los que entraron). Hay que atacarlo en dos frentes: (1) administrativo — revisar por qué se van (calidad, resultados, comunicación) y cerrar los huecos del fulfillment; (2) ventas — armar una campaña de reactivación: llamar uno por uno a los que se fueron y ofrecerles un trato especial (descuento, mes de cortesía, o revamp de estrategia sin costo) para recuperarlos. | 21/07: Milton confirmado como baja (impago); Rebeca pidió devolución; Genia dio plazo hasta fin de julio. | 22/07: Milton pasa de riesgo a BAJA confirmada (impago, se le finaliza el servicio en 24h). Genia sigue con plazo hasta fin de julio; Rebeca sin novedad. Patrón AIB de clientes que pagan y desaparecen (Sandra Pérez, Neil, Constantino) suma fuga silenciosa.",
+      "metrica": "Bajas de julio: Milton CONFIRMADO ($1,750 impago, finalización en 24h) + riesgo Rebeca (reembolso) y Genia (plazo fin de julio). Del lado AIB, Sandra Pérez y Neil pagaron y no responden.",
+      "accionSugerida": "1) Lista de clientes que se fueron en el mes con motivo. 2) Guion de reactivación + oferta especial por cliente. 3) Asignar closer para las llamadas. 4) Revisar el proceso de onboarding/fulfillment para frenar la fuga.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-05"
+    },
+    {
+      "id": "prio-calidad-fulfillment",
+      "titulo": "Calidad de contenido/ads inconsistente (riesgo de escalada)",
+      "categoria": "producto",
+      "severidad": "alta",
+      "detalle": "Michael González y otros marcaron mala edición y diseños de ads genéricos. Ya se había señalado antes y siguió igual — riesgo de churn en cadena. Definir estándar de calidad y control antes de entregar.",
+      "metrica": "2+ clientes con la misma queja de calidad",
+      "accionSugerida": "Checklist de calidad obligatorio pre-entrega + revisión de un senior. Auditar los últimos entregables de los clientes en riesgo.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-05"
+    },
+    {
+      "id": "prio-cuello-diseno-creativos",
+      "titulo": "Cuello de botella de diseño/creativos frena entregas",
+      "categoria": "producto",
+      "severidad": "alta",
+      "detalle": "Varios clientes de Level Up trabados esperando artes: Félix Vázquez (pagó 2/06, 20 días sin flyers porque Manuel no entregó), Ángel Ruiz ($6k, flyers/títulos malos), Rebeca (disputa de flyers → reembolso) y Luis Santiago (guiones aprobados, el trafficker no mandó flyers). Elvin ya avisó el riesgo de 'quedar sin diseñadores'.",
+      "metrica": "4+ clientes activos atrasados por diseño en una sola revisión (21/07); Félix 20 días.",
+      "accionSugerida": "Reforzar/ampliar el equipo de diseño y ponerle SLA de entrega por cliente; redistribuir la carga entre los 3 diseñadores y priorizar los atrasados (Félix, Ángel Ruiz). Es capacidad + calidad, decisión de CEO sobre contratar/ordenar el pipeline creativo.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-21"
+    },
+    {
+      "id": "prio-observabilidad-asistentes",
+      "titulo": "Cero medición de los asistentes de IA (riesgo sistémico)",
+      "categoria": "producto",
+      "severidad": "alta",
+      "detalle": "No hay observabilidad por asistente (latencia ~1300-1400ms, costo/min, duración, errores, escalamientos, EVALs). Lo destapó Alejo y lo reforzó Carilin el 21/07. Sin métricas no se puede detectar por qué fallan asistentes como el de Yeremi ni controlar costos. Elvin monta el dashboard (PostHog/similar) con cuenta MSP; Carilin le pasa credenciales.",
+      "metrica": "0 dashboards de observabilidad hoy; producto AIB en crash-loop ~3 semanas sin telemetría por servicio.",
+      "accionSugerida": "Montar el dashboard de observabilidad por asistente antes de conectar más clientes; que los devs lo revisen en el daily de las 8 AM. Se cruza con el pase de estabilización del 22/07.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-21"
+    },
+    {
+      "id": "prio-precios-packaging-autoflow",
+      "titulo": "Reestructurar precios y packaging de AutoFlow: agentes por rol + planes de mantenimiento $297/$497",
+      "categoria": "ventas",
+      "severidad": "media",
+      "detalle": "Mentoría con Alejo (18/07): Elvin fijó una nueva estrategia de packaging y precios para AutoFlow/Borinquen. (1) Vender los agentes POR ROL (recepción, cobros, servicio, etc.) en vez de un asistente todo-en-uno, para reducir la confusión del cliente y habilitar upsell. (2) Planes de mantenimiento definidos en $297/mo y $497/mo; los clientes nuevos entran a estos planes — los actuales estaban subpreciados. (3) Dar el tier gratuito de Borinquen (~10 flyers + 1 video) como bono a los clientes existentes de la agencia, como puente de valor. Conecta con la decisión de enfocarse primero en el asistente de voz (Camila). | REFUERZO 22/07 (reunión de productos): fijada la taxonomía de venta — 3 niveles de agentes de WhatsApp: (1) reglas/botones = NO se vende; (2) chatbot con IA + memoria pero SIN conexión a sistemas = $800-1,000; (3) agente CONECTADO a calendario/CRM vía API (AutoFlow) = $1,500-2,500+. Cambiar el vocabulario: dejar de vender ‘chatbot’ y vender ‘un empleado/agente de inteligencia artificial’. Vender cada asistente POR ROL (dental/Camila, abogado, hotel/reservas, encuestas, cobros/cobrador, atención al cliente, taller…) — ya hay ~15 asistentes por rol, no un asistente universal. La comunidad/curso del done-for-you se reemplaza por Boris (el cliente recibe Boris en vez de acceso a un curso).",
+      "metrica": "clientes nuevos en planes $297/$497; upsell por rol vendido",
+      "accionSugerida": "Documentar el nuevo packaging por rol y los tiers de mantenimiento; migrar a los clientes actuales subpreciados en la próxima renovación; preparar el bono de tier gratuito para clientes existentes de la agencia.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-18"
+    },
+    {
+      "id": "prio-aib-core-direccion",
+      "titulo": "AI Borinquen Core: agente AI-native de uso diario (producto antes que infraestructura)",
+      "categoria": "producto",
+      "severidad": "media",
+      "detalle": "Elvin fijó por DM (15–16/07) la constitución del proyecto AI Borinquen Core. Directivas permanentes: (1) el norte es llegar al primer USO REAL — un agente que Elvin use todos los días desde WhatsApp; (2) 'producto antes que infraestructura' — si se está construyendo infra sin valor inmediato, detener y proponer camino más corto; (3) AI-First / AI-native — todo expuesto vía API/tools para humanos Y agentes, desacoplado del proveedor; (4) dogfooding: usar el Core dentro de AIB lo antes posible; (5) 'sistema operativo de agentes' (CEO/CTO/Sales/Marketing/Ops/Finance/Research/Builder) desde la arquitectura; (6) 'Builder Kernel' incremental (Analizar→Planificar→Generar→Probar→Corregir→Documentar→Entregar), nunca código desechable; (7) demos con nombre de producto cada 5 tareas: Assistant→Executive→Analyst→Operator→Builder. Documentos base: CONSTITUTION.md + BUSINESS.md. Primer hito: por WhatsApp 'construye un dashboard de ventas de Level Up' de punta a punta. REFUERZO 17/07 (DM 9:07 AM): 'dogfooding EXTREMO' — una función que no usemos nosotros varias semanas NO pasa a producción de clientes; 6 preguntas obligatorias antes de cualquier feature (¿problema real? ¿frecuencia? ¿qué dejo de hacer? ¿qué KPI? ¿cómo medir éxito? ¿forma más simple?); y un reporte semanal PRODUCT REVIEW (features más/nunca usadas, deuda técnica, simplificaciones, ideas descartadas, recomendaciones). El dev actúa como CTO + Product Manager.",
+      "metrica": "North Star: ¿cuántas tareas reales hace AI Borinquen Core por Elvin cada día? (no líneas de código ni features)",
+      "accionSugerida": "Alinear al dev/Claude Code con CONSTITUTION.md + BUSINESS.md, el flujo tarea-por-tarea, las 6 preguntas antes de construir, dogfooding extremo y el PRODUCT REVIEW semanal automático. Cada 5 tareas: demo usable + auditoría (qué puedo dejar de hacer yo).",
+      "estado": "abierta",
+      "creadoEl": "2026-07-16"
+    },
+    {
+      "id": "prio-foco-producto-voz",
+      "titulo": "Foco de producto: priorizar el asistente de voz (Camila) y validar data-first antes de escalar",
+      "categoria": "producto",
+      "severidad": "media",
+      "detalle": "Mentoría de IA con Alejo (14/07): decisión de enfocar en UN producto a la vez, empezando por el asistente de voz (Camila) en vez de dispersarse entre voz y la plataforma de marketing. Enfoque data-first, no AI-first: correr una beta con 100-200 usuarios de la lista de clientes actual, recolectar y analizar data antes de invertir en ads. Visión: un agente especializado por rol de negocio (recepción, cobros, servicio, encuestas, reservas), apuntando a 15-20 verticales optimizados antes de escalar. Evitar la trampa de '100 cosas a medio construir'; calidad y confianza por encima de velocidad.",
+      "metrica": "beta objetivo: 100-200 usuarios de la lista actual antes de invertir en ads",
+      "accionSugerida": "Confirmarle a Alejo el miércoles que se arranca por el asistente de voz. Armar la beta con clientes existentes, definir las métricas a recolectar y validar product-market fit antes de escalar o pagar tráfico.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-14"
+    },
+    {
+      "id": "prio-estructura-corporativa",
+      "titulo": "Estructura corporativa: IA Market como empresa madre; Borinquen y Level Up como marcas",
+      "categoria": "administrativo",
+      "severidad": "media",
+      "detalle": "Reunión de IA/estrategia (09/07): Elvin decidió reorganizar el ecosistema con IA Market como empresa madre y AI Borinquen y Level Up Media como marcas debajo. Impacta verificación en Meta (Borinquen en plan Plus, Level Up por separado), portafolio de Meta (depurar a máx. 10 usuarios) y el posicionamiento de la plataforma propia ($39/$99/$250/mes).",
+      "metrica": "estructura legal/operativa definida y aplicada en Meta",
+      "accionSugerida": "Documentar la estructura (empresa madre + marcas), separar la verificación de Meta por marca y alinear branding/precios de la plataforma bajo IA Market.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-09"
+    },
+    {
+      "id": "prio-scope-asistente-ia",
+      "titulo": "Scope of work del asistente de IA (qué puede y qué no)",
+      "categoria": "producto",
+      "severidad": "media",
+      "detalle": "Reunión General AIB (07/07): ventas está inflando expectativas presentando el asistente de IA casi como un closer. Decisión: crear un documento claro de scope of work — qué incluye y qué NO incluye el asistente (no es agente de ventas/closer) — para alinear a ventas y fulfillment y evitar clientes decepcionados (riesgo de churn).",
+      "metrica": "quejas por expectativas mal manejadas del asistente",
+      "accionSugerida": "El equipo (Aure/Ana/Karilín) redacta el scope of work y lo comparte con ventas y operaciones como referencia obligatoria.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-07"
+    },
+    {
+      "id": "prio-reactivacion-ventas",
+      "titulo": "Estrategia de reactivación de leads no cerrados",
+      "categoria": "ventas",
+      "severidad": "media",
+      "detalle": "Hay un canal de 'leads no cerrados' en Borinquen y volumen alto de leads en Pipedrive sin cerrar. Armar secuencia de re-contacto con oferta puntual para exprimir el pipeline existente antes de gastar en más tráfico.",
+      "metrica": "leads abiertos acumulados en Pipedrive",
+      "accionSugerida": "Secuencia de re-engagement (WhatsApp + llamada) para leads de 15-30 días con una oferta con fecha límite.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-05"
+    },
+    {
+      "id": "prio-boris-go-to-market",
+      "titulo": "Lanzar Boris como marca independiente (ads fin de agosto, ventas en septiembre)",
+      "categoria": "ventas",
+      "severidad": "media",
+      "detalle": "Revisión de clientes con Carilin (21/07): Elvin decidió posicionar la plataforma Boris como marca INDEPENDIENTE, sin atarla a Level Up ni a AI Borinquen, para proteger la marca si una relación se deteriora. Estrategia de ventas fijada: ofrecer SIEMPRE el plan anual primero (ej. $2,500/año vs $1,000/mes) con bono de 2–3 meses, y caer al mensual solo si es necesario. Requiere branding propio, embudo y creativos listos antes del lanzamiento.",
+      "metrica": "ads de Boris listos para fin de agosto; primeras ventas en septiembre",
+      "accionSugerida": "Definir dueños del lanzamiento: branding/creativos (Maria del Carmen), embudo/tráfico (Juan Diego), oferta y pricing anual (Elvin/Ops). Preparar la landing y los ads durante agosto para arrancar ventas en septiembre con el pitch de plan anual primero.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-21"
+    },
+    {
+      "id": "prio-consultoria-negocios-digitales",
+      "titulo": "Nueva oferta: consultoría done-with-you para negocios digitales ($4k / +staff agency $6k)",
+      "categoria": "ventas",
+      "severidad": "media",
+      "detalle": "Reunión de productos (22/07): Elvin lanza un modelo de CONSULTORÍA (done-with-you) aprendido de Ramiro, para NEGOCIOS DIGITALES (coaches, infoproductores, consultores, agencias), separado del done-for-you (negocios físicos/locales). Se califica el lead: digital → consultoría; físico → done-for-you. Precio base $4,000 por 4 meses; +$2,000 = $6,000 si suma ‘staff agency’ (setter/closer/capacitaciones). Se les monta el MISMO sistema de Level Up (setter, closer, Calendly, Slack, oferta, anuncios, secuencias) + sesiones grupales + 2 sesiones 1-a-1 (una con Elvin, otra con su socio) + coaches especializados (Mateo mini-chat, Bárbara anuncios los jueves, un creador de contenido). Promesa: escalar un negocio digital de ~$5k a $20k/mes; garantía condicionada a que el cliente siga la estrategia (mínimo 5k→10k en 4 meses; si el closer no funciona en 6 meses, es tema de producto del cliente). Testimonio ancla: Yadiel (pasó de $5k a $40-50k tras meterle setter+closer+mentoría). Valentina será creadora de contenido para los anuncios de esta oferta; mercado PR + latino en EE.UU.",
+      "metrica": "validar el producto a $4k base (medir mercado) antes de subir precio; primeros cierres de consultoría documentados con testimonios de $20-30k",
+      "accionSugerida": "Elvin arma las slides/oferta por producto (t-slides-productos) y define cláusulas de garantía; lanzar los anuncios de captación de negocios digitales (Valentina crea el contenido); calificar cada lead como digital vs físico desde la llamada. Validar con los primeros cierres antes de subir el precio base.",
+      "estado": "abierta",
+      "creadoEl": "2026-07-22"
+    }
+  ]
+}

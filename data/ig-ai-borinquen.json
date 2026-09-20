@@ -1,0 +1,123 @@
+{
+  "handle": "ai_borinquen",
+  "actualizadoEl": "2026-07-18T14:07:25-04:00",
+  "fuente": "apify",
+  "seguidores": 8484,
+  "totalPosts": 56,
+  "posts": [
+    {
+      "url": "https://www.instagram.com/p/Da8Yd-1FIso/",
+      "tipo": "carrusel",
+      "caption": "¿Sigues pensando cuál es la \"mejor\"   Inteligencia Artificial para tu negocio? 🧠  La verdad es que las tres son excelentes, pero cada una br",
+      "publicadoEl": "2026-07-18",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da32E3YFPDZ/",
+      "tipo": "carrusel",
+      "caption": "¿Y si creas la app de tu negocio hoy mismo y sin saber programar? 💻⚡️  Con Claude Code, solo describes lo que necesitas en español y la IA l",
+      "publicadoEl": "2026-07-16",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DayeGOAD1Rb/",
+      "tipo": "carrusel",
+      "caption": "¿Dejando ventas en el aire porque no respondes a tiempo? 📲 En WhatsApp, un lead frío no compra.  No necesitas un equipo enorme de atención p",
+      "publicadoEl": "2026-07-14",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/DasxaXyjgVr/",
+      "tipo": "carrusel",
+      "caption": "¿Te sientes esclavo de tu propio negocio? 😫 Las tareas manuales como agendar citas, responder correos repetitivos y calificar prospectos te ",
+      "publicadoEl": "2026-07-12",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/DamAEC9FNrL/",
+      "tipo": "carrusel",
+      "caption": "¿Cuántos clientes estás perdiendo sin darte cuenta? 📉👇  ​Cada mensaje que llega a tu negocio y no se responde a tiempo es dinero que dejas s",
+      "publicadoEl": "2026-07-09",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/DagwbTNlAcb/",
+      "tipo": "carrusel",
+      "caption": "El 80% de tus ventas está en el seguimiento que nunca haces 💤  300 leads durmiendo en tu CRM.  Cotizaron, preguntaron, se interesaron.   Per",
+      "publicadoEl": "2026-07-07",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaWiPL5FIzz/",
+      "tipo": "carrusel",
+      "caption": "¿Tareas perdidas entre miles de mensajes?🤯  Eso quedó en el pasado. Con Claude Tag de Anthropic, la IA deja de ser solo un chatbot para conv",
+      "publicadoEl": "2026-07-03",
+      "vistas": null,
+      "likes": 2,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaOr7FjlMGm/",
+      "tipo": "carrusel",
+      "caption": "Un CRM sin automatización es solo una agenda digital muy cara💸  ​Guardar contactos e importar leads no sirve de nada si tu equipo no puede r",
+      "publicadoEl": "2026-06-30",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 1
+    },
+    {
+      "url": "https://www.instagram.com/p/DaJd3h4FObK/",
+      "tipo": "carrusel",
+      "caption": "Tu empleado que trabaja 8 horas copiando datos acaba de quedar sin trabajo 🤖  Anthropic activó Computer Use: Claude ve tu pantalla, navega w",
+      "publicadoEl": "2026-06-28",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaDh9ufDm-T/",
+      "tipo": "carrusel",
+      "caption": "Tu CRM es una tumba de leads 💀  Tienes 340 contactos ahí adentro. Gente que escribió, que preguntó, que mostró interés real. Todos durmiendo",
+      "publicadoEl": "2026-06-26",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DZ_KFNSlNrs/",
+      "tipo": "carrusel",
+      "caption": "9-10 ventas se cierran ESTA NOCHE sin ti 🌙  El 91% de tus leads que escriben de noche nunca recibe respuesta. Escriben con intención de comp",
+      "publicadoEl": "2026-06-24",
+      "vistas": null,
+      "likes": 5,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DUWPqA1D-tR/",
+      "tipo": "reel",
+      "caption": "5 Herramientas de IA. Comenta “YO” y te lo envío",
+      "publicadoEl": "2026-02-04",
+      "vistas": 43564,
+      "likes": 187,
+      "comentarios": 1028
+    }
+  ],
+  "hallazgos": [
+    "El reel de lead-magnet (\"5 herramientas de IA, comenta YO\") es el bombazo de la cuenta: 43,564 vistas y 1,028 comentarios, ~100x más que cualquier carrusel reciente. El formato reel + CTA de comentario es lo que escala.",
+    "Los carruseles recientes de dolor B2B (\"tu CRM es una tumba de leads\", \"tu empleado quedó sin trabajo\", \"ventas que se cierran de noche\") apenas llegan a 3-5 likes: el ángulo engancha en texto pero no en carrusel; probarlo como reel/talking head.",
+    "La cuenta viró a publicar casi solo carruseles (11 de los últimos 12) y la interacción se desplomó. Recuperar cadencia semanal de reels con hook fuerte + CTA \"comenta X\" para reactivar alcance.",
+    "El mecanismo de captura por comentario ya probó funcionar (1,028 comentarios en el reel top): replicarlo de forma recurrente en video corto es la palanca más clara de leads."
+  ]
+}

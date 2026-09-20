@@ -1,0 +1,127 @@
+{
+  "fecha": "2026-09-20T15:14:02.742Z",
+  "texto": "🔧 Nico · dom 20/sep\n\n🔴 Los quiz están caídos por ClickFunnels, no por el código: la CUENTA del workspace está en pausa (\"This account has been temporarily paused by its owner\"). Tumba los DOS: class.levelupmediapr.net/crecimiento (Level Up) y auditoria.aiborinquen.co/automatizacion (AI Borinquen). Reactivar la cuenta es tuyo — es cobro y no lo toco.\nMientras tanto te lo dejé corriendo fuera de CF: https://diagnostico-crecimiento-lu.netlify.app — es el mismo quiz del repo, mismo WhatsApp y mismo endpoint a Pipedrive. Verificado: carga, el JS corre, los logos cargan y los stages de Pipedrive (12/122) están vivos. Si quieres que use tu dominio, cambio el CNAME cuando me digas. El de AIB lo pongo igual en un minuto.\n\nSalud: Bori ✅ · Plagas ✅ · Cortex ✅ · Content OS ✅ · Resuelto ✅ · Voz ✅\nBugs nuevos: 2 — Bori: error de JS en el front (M_ID) 3 veces, 1 usuario que no paga · Puente de Telegram: no despliega a producción (el token de Vercel es inválido), lo que Sofi cambia desde tu celular se queda en Railway.\nCasos abiertos: 4 en Bori, 3 tocan clientes que pagan: Lumière Boutique se dio de baja a los 16 días y pregunta por reembolso · uno conecta Facebook y Bori no le ve la página de Instagram · error de JS al abrir la app · el registro sigue sin captcha.\nPlagas: sin quejas nuevas, el agente contestando. Los 9 trabajos con error son del 11/sep (Evolution), no de ahora.\nAjustes: 13 commits en Bori en 24 h — tuyos: editor con Cortex, post-venta y guías. Míos 2, verificados en producción: (1) npm test estaba ROJO desde la cacería de seguridad del 18/sep, o sea que el candado de antes de subir no servía — arreglado, 1349 pruebas verdes; (2) la ronda no podía ver el panel de Fallos de Bori, le puse acceso de solo lectura sin datos de clientes.\nTe toca a ti: reactivar ClickFunnels · token nuevo de Vercel para el puente · CORS de R2 en Cloudflare (desde el 16/sep) · qué hacemos con Lumière (el reembolso solo en Stripe) · Railway de Plagas seguía en past due el 17/sep.\n\nNo pude ver: tu DM con Sofi en Slack (el bot no tiene permiso de leer DMs) y no probé un lead real de punta a punta en el quiz para no meter basura en tu Pipedrive — dime y lo corro.\n— Nico",
+  "salud": {
+    "bori": "ok",
+    "plagas": "ok",
+    "cortex": "ok",
+    "content-os": "ok",
+    "resuelto": "ok",
+    "voz": "ok",
+    "quiz-funnels": "ok",
+    "bori-superplataforma": "ok"
+  },
+  "bugs": [
+    {
+      "plataforma": "quiz-funnels",
+      "que": "Cuenta de ClickFunnels en pausa: los dos diagnósticos (LU y AIB) sirven la pantalla de CF en vez del quiz",
+      "critico": true,
+      "respaldo": "https://diagnostico-crecimiento-lu.netlify.app"
+    },
+    {
+      "plataforma": "bori",
+      "que": "Error de JS en el front: Cannot read properties of undefined (reading 'M_ID')",
+      "veces": 3,
+      "pagando": false
+    },
+    {
+      "plataforma": "puente-telegram",
+      "que": "deploy-snapshots falla en Railway: VERCEL_TOKEN inválido (User not found) — los cambios de data/vault desde Telegram no llegan a producción",
+      "veces": 2,
+      "pagando": false
+    }
+  ],
+  "casos": [
+    {
+      "plataforma": "bori",
+      "que": "Lumière Boutique (Agencia, 16 días) se dio de baja y pregunta por reembolso",
+      "decideElvin": true
+    },
+    {
+      "plataforma": "bori",
+      "que": "Cliente conecta Facebook pero Bori no ve la página de Instagram (Business Portfolio)"
+    },
+    {
+      "plataforma": "bori",
+      "que": "Error de JS 'toUpperCase' en un cliente que paga"
+    },
+    {
+      "plataforma": "bori",
+      "que": "Registro sin captcha en producción (TURNSTILE_* ausentes) y sin verificación de email"
+    }
+  ],
+  "ajustes": [
+    {
+      "plataforma": "quiz-funnels",
+      "que": "Quiz de Level Up publicado en Netlify como respaldo mientras CF está en pausa",
+      "verificado": true,
+      "commit": "—"
+    },
+    {
+      "plataforma": "bori",
+      "que": "npm test rojo desde el 18/sep (anti-SSRF vs infra.test.js) — arreglado",
+      "verificado": true,
+      "commit": "fb234e6"
+    },
+    {
+      "plataforma": "bori",
+      "que": "GET /api/fallos-abiertos de solo lectura para la ronda",
+      "verificado": true,
+      "commit": "62b0304"
+    },
+    {
+      "plataforma": "content-os",
+      "que": "la ronda ya lee fallos de Bori y el soporte de Plagas",
+      "verificado": true,
+      "commit": "9e47b93"
+    }
+  ],
+  "pendientesElvin": [
+    {
+      "que": "Reactivar la cuenta de ClickFunnels (está en pausa por el dueño): tumba los dos diagnósticos, el de Level Up y el de AI Borinquen. Es cuenta/cobro, no lo toco yo.",
+      "desde": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Si quieres que el diagnóstico de LU siga en class.levelupmediapr.net mientras CF está en pausa: cambiar el CNAME de us-east-shard-3.myclickfunnels.com a Netlify (dime y lo dejo listo con el dominio en el sitio)",
+      "desde": "2026-09-20",
+      "plataforma": "quiz-funnels",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Cloudflare → R2 → bori-media → CORS (origen https://www.heybori.ai, PUT/GET/HEAD) para que la subida directa de creativos vuelva a funcionar",
+      "desde": "2026-09-16",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Configurar correo transaccional en Bori ('olvidé mi contraseña' no funciona) y borrar OWNER_BOOTSTRAP_PASSWORD de Railway",
+      "desde": "2026-08-27",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Railway mostró 'subscription past due' el 17/sep: si no se paga apagan Plagas (app + Evolution + Postgres)",
+      "desde": "2026-09-17",
+      "plataforma": "plagas",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Token de Vercel válido para el puente de Telegram en Railway: el que está es vcp_… y Vercel responde \"User not found\", así que lo que Sofi cambia en data/ o vault/ desde el celular NO llega a producción. Hacer uno en Vercel → Settings → Tokens y ponerlo en Railway (servicio puente, VERCEL_TOKEN)",
+      "desde": "2026-09-19",
+      "plataforma": "puente-telegram",
+      "estado": "pendiente"
+    },
+    {
+      "que": "Decidir qué se hace con Lumière Boutique (plan Agencia, 16 días, se dio de baja y pregunta por reembolso): el reembolso solo lo tocas tú en Stripe",
+      "desde": "2026-09-19",
+      "plataforma": "bori",
+      "estado": "pendiente"
+    }
+  ],
+  "noRevisado": [
+    "DM de Slack con Sofi (sin permiso im:history)",
+    "#office-6-problemas-onboarding-clientes: sin mensajes en 24 h"
+  ]
+}

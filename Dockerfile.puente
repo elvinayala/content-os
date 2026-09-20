@@ -1,0 +1,20 @@
+# Puente Telegram ↔ agentes (scripts/telegram-puente.mjs) en Railway, para que el control
+# remoto desde el celular no dependa de la Mac de Elvin. Node 22 + Claude Code CLI + el repo.
+# Deploy: npx @railway/cli up --detach (respeta .railwayignore). Variables en Railway:
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID, ANTHROPIC_API_KEY, SLACK_BOT_TOKEN, CEO_SLACK_ID,
+#   VERCEL_TOKEN (para deploy-snapshots), CRON_SECRET (sync-data), PUENTE_MODO, más las keys que
+#   usen los scripts que quieras correr desde Telegram (RETELL_API_KEY, NETLIFY_AUTH_TOKEN,
+#   PIPEDRIVE_*, ACTIVECAMPAIGN_*…).
+FROM node:22-slim
+ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git zip python3 \
+    && rm -rf /var/lib/apt/lists/*
+RUN npm install -g @anthropic-ai/claude-code@latest vercel@latest && claude --version
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY . .
+# Estado del puente (offset de Telegram, sesión) y sesiones de Claude en el volumen /estado.
+ENV PUENTE_ESTADO_DIR=/estado HOME=/estado CLAUDE_BIN=/usr/local/bin/claude PUENTE_EN_NUBE=1
+RUN mkdir -p /estado
+CMD ["node", "scripts/telegram-puente.mjs"]

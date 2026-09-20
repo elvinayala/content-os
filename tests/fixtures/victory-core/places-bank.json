@@ -1,0 +1,8 @@
+[
+ {"placeId":"ChIJaaa111","title":"First Citizens Bank","phone":"(910) 555-0101","website":"https://www.firstcitizens.com/","address":"200 Hay St, Fayetteville, NC 28301","city":"Fayetteville","postalCode":"28301","totalScore":4.1,"reviewsCount":31,"categoryName":"Bank","emails":[],"linkedIns":["https://linkedin.com/company/first-citizens"]},
+ {"placeId":"ChIJbbb222","title":"Bragg Mutual Federal Credit Union","phone":"910-555-0102","website":"braggmutual.org","address":"1712 Ramsey St, Fayetteville, NC 28301","city":"Fayetteville","postalCode":"28301","totalScore":4.6,"reviewsCount":58,"categoryName":"Credit union","emails":["info@braggmutual.org"]},
+ {"placeId":"ChIJccc333","title":"Sparkle Janitorial","phone":"910-555-0103","website":"https://sparklejan.com","address":"1 Main St, Fayetteville, NC","city":"Fayetteville","totalScore":5,"reviewsCount":12,"categoryName":"Commercial cleaning service"},
+ {"placeId":"ChIJddd444","title":"Raleigh Savings","phone":"919-555-0104","website":"https://raleighsavings.com","address":"5 Oak Ave, Raleigh, NC","city":"Raleigh","totalScore":4.2,"reviewsCount":40,"categoryName":"Bank"},
+ {"placeId":"ChIJeee555","title":"ATM Only Kiosk","phone":null,"website":null,"address":"Hope Mills, NC","city":"Hope Mills","totalScore":3.1,"reviewsCount":2,"categoryName":"ATM"},
+ {"placeId":"ChIJfff666","title":"First Citizens Bank - Skibo","phone":"(910) 555-0101","website":"https://www.firstcitizens.com/locations/skibo","address":"9 Skibo Rd, Fayetteville, NC","city":"Fayetteville","totalScore":4.0,"reviewsCount":15,"categoryName":"Bank"}
+]

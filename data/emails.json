@@ -1,0 +1,75 @@
+{
+  "actualizadoEl": "2026-07-28T21:43:00-04:00",
+  "cuentas": [
+    "elvin@levelupmediapr.net"
+  ],
+  "resumen": "Retell AI se volvió a pausar de madrugada por balance $0 (mismo problema del 22/07, otra vez mudo el canal de voz). Aparte, una venta nueva de $200 en AI Borinquen, un lead entrante por el formulario de Shopify (Restora Aesthetics), y Aure formalizó por escrito una amonestación a Jessica por manejo de objeciones con clientes. (aiborinquen@gmail.com e info@levelupmediapr.net sin conector.)",
+  "emails": [
+    {
+      "id": "email-retell-pausada-28jul",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "billing@retellai.com",
+      "asunto": "Your Retell AI account has been paused — credit balance is $0",
+      "resumen": "La cuenta de Retell se pausó otra vez por falta de fondos — llamadas y API bloqueadas, agentes de voz de clientes mudos. Es la misma situación del 22/07 repitiéndose.",
+      "categoria": "urgente",
+      "accion": "Recargar Retell y activar auto-recharge de una vez para que no vuelva a pasar; David Quiroga confirma que los agentes de voz volvieron a responder.",
+      "fecha": "2026-07-28T01:40:06-04:00",
+      "noLeido": false
+    },
+    {
+      "id": "email-jessica-amonestacion",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "aure@levelupmediapr.net",
+      "asunto": "Amonestación formal por oportunidades de mejora en la atención al cliente",
+      "resumen": "Aure formalizó por escrito una amonestación a Jessica (CSM) por falta de empatía al manejar objeciones de clientes — queda en su expediente laboral.",
+      "categoria": "operativo",
+      "accion": "Tema de RRHH ya gestionado por Aure; sin acción pendiente salvo dar seguimiento a que mejore.",
+      "fecha": "2026-07-28T19:15:07-04:00",
+      "noLeido": false
+    },
+    {
+      "id": "email-venta-aib-200",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "no-reply@mail.commas.com",
+      "asunto": "New Sale — AI Borinquen $200.00",
+      "resumen": "Venta nueva de $200 en AI Borinquen a Carl Pantoja (borilangos@gmail.com).",
+      "categoria": "venta",
+      "accion": "",
+      "fecha": "2026-07-28T16:52:54-04:00",
+      "noLeido": false
+    },
+    {
+      "id": "email-lead-shopify-restora",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "mailer@shopify.com",
+      "asunto": "New customer message — Restora Aesthetics",
+      "resumen": "Lead entrante por el formulario de contacto de la tienda: Kenia Carreras De la Rosa (Restora Aesthetics, 787-328-0497).",
+      "categoria": "venta",
+      "accion": "Pasarlo a ventas/CSM para dar seguimiento.",
+      "fecha": "2026-07-28T16:44:05-04:00",
+      "noLeido": true
+    },
+    {
+      "id": "email-godaddy-renovacion",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "donotreply@godaddy.com",
+      "asunto": "Recibo de renovación del pedido #4150341360",
+      "resumen": "Llegó el recibo de renovación automática — sugiere que el cargo que había fallado el 27/07 sí pasó y el correo corporativo no está en riesgo inmediato.",
+      "categoria": "finanzas",
+      "accion": "María confirma directo en la cuenta de GoDaddy que todo quedó al día (no por el link del correo).",
+      "fecha": "2026-07-28T17:22:38-04:00",
+      "noLeido": true
+    },
+    {
+      "id": "email-retell-deprecated-mas-orgs",
+      "cuenta": "elvin@levelupmediapr.net",
+      "de": "no-reply@retellai.com",
+      "asunto": "[ACTION REQUIRED] Deprecated API usage detected (endpoints legacy, varias organizaciones)",
+      "resumen": "Siguen llegando avisos de endpoints legacy que Retell va a retirar — mismo tema que ya está en el tablero de prioridades (migración pendiente de David Quiroga).",
+      "categoria": "operativo",
+      "accion": "Ya tracked — David Quiroga migra la integración antes del retiro.",
+      "fecha": "2026-07-27T16:14:50-04:00",
+      "noLeido": true
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+# Qué NO sube al deploy. OJO: este archivo REEMPLAZA a .gitignore para el
+# upload de Vercel — así los snapshots data/*.json y el vault/ (gitignoreados
+# por sensibles) SÍ viajan al portal, pero los secretos jamás.
+node_modules
+.next
+.git
+.env*
+!.env.example
+*.tsbuildinfo
+.claude/settings.local.json

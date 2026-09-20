@@ -1,0 +1,55 @@
+{
+  "_nota": "Las 8 categorías de Resuelto Proyectos. ticket_plausible es el rango conservador con el que el agente califica y pone expectativas; NO es cotización. El precio sale del Cost Book en la visita.",
+  "visita_gratis": true,
+  "categorias": [
+    {
+      "id": "poda-arboles", "nombre": "Poda y remoción de árboles", "ticket_plausible": [400, 6000], "tramo": "pequeno", "tiempo_tipico_dias": [1, 2],
+      "preguntas": ["¿Cuántos árboles y de qué altura aproximada (más o menos que la casa)?", "¿Es poda o remoción completa, con o sin tocón?", "¿Está cerca de cables, techo o de la casa del vecino?", "¿Hay acceso para camión y trituradora?"],
+      "permisos": "Especies protegidas y árboles en zona urbana pueden requerir permiso del DRNA o del municipio. El Cost Book lleva la línea; el contrato dice quién lo tramita.",
+      "cross_sell": ["exteriores", "piscinas"], "alias": ["arbol", "árbol", "poda", "podar", "cortar arbol", "tumbar arbol", "remover arbol", "palma", "ramas", "tocon"]
+    },
+    {
+      "id": "banos", "nombre": "Remodelación de baños", "ticket_plausible": [5000, 25000], "tramo": "intermedio", "tiempo_tipico_dias": [7, 15],
+      "preguntas": ["¿Cuántos baños y de qué tamaño aproximado?", "¿Remodelación completa o solo piezas (ducha, piso, losas, vanity)?", "¿Se mueven la ducha, el inodoro o el lavamanos de lugar?", "¿Tienes idea del estilo o terminaciones que quieres?"],
+      "permisos": "Plomería y electricidad las ejecutan licenciados (red de Resuelto).",
+      "cross_sell": ["banos", "remodelacion-general", "pisos"], "alias": ["baño", "bano", "ducha", "losas del baño", "vanity", "remodelar el baño"]
+    },
+    {
+      "id": "cocinas", "nombre": "Remodelación de cocinas", "ticket_plausible": [8000, 40000], "tramo": "intermedio", "tiempo_tipico_dias": [10, 25],
+      "preguntas": ["¿Tamaño aproximado de la cocina (en pies o en gabinetes)?", "¿Cambias gabinetes, countertops, o la cocina completa?", "¿Se mueven la fregadera o la estufa de lugar?", "¿Qué tipo de countertop te gusta (cuarzo, granito, laminado)?"],
+      "permisos": "Plomería y electricidad por licenciados. Gas si aplica.",
+      "cross_sell": ["pisos", "remodelacion-general", "puertas-ventanas"], "alias": ["cocina", "gabinetes", "countertop", "tope", "isla", "remodelar la cocina"]
+    },
+    {
+      "id": "pisos", "nombre": "Instalación de pisos", "ticket_plausible": [2500, 15000], "tramo": "pequeno", "tiempo_tipico_dias": [2, 7],
+      "preguntas": ["¿Cuántos pies cuadrados aproximados o qué áreas?", "¿Qué tipo de piso: losa, porcelanato, vinilo (LVP), madera?", "¿Hay que remover el piso actual?", "¿El piso actual está nivelado o tiene grietas?"],
+      "permisos": "Ninguno típico.", "cross_sell": ["banos", "cocinas"], "alias": ["piso", "pisos", "losa", "porcelanato", "vinil", "vinilo", "lvp", "madera"]
+    },
+    {
+      "id": "puertas-ventanas", "nombre": "Puertas y ventanas", "ticket_plausible": [1500, 20000], "tramo": "pequeno", "tiempo_tipico_dias": [1, 5],
+      "preguntas": ["¿Cuántas puertas o ventanas y de qué tamaños aproximados?", "¿Reemplazo en la misma abertura o aberturas nuevas?", "¿Buscas resistencia a huracanes (impacto) o estándar?", "¿Material: aluminio, PVC, madera, acero?"],
+      "permisos": "Aberturas nuevas en muros estructurales pueden requerir permiso.", "cross_sell": ["remodelacion-general", "exteriores"], "alias": ["puerta", "ventana", "tormenteras", "ventanas de impacto", "portón", "porton", "screen"]
+    },
+    {
+      "id": "remodelacion-general", "nombre": "Remodelaciones generales", "ticket_plausible": [6000, 60000], "tramo": "intermedio", "tiempo_tipico_dias": [10, 45],
+      "preguntas": ["¿Qué áreas de la casa incluye?", "¿Hay demolición o cambios de paredes?", "¿Incluye plomería, electricidad o techo?", "¿Tienes planos o es a partir de la visita?"],
+      "permisos": "Cambios estructurales o de uso requieren permiso de OGPe/municipio.", "cross_sell": ["pisos", "banos", "cocinas", "puertas-ventanas"], "alias": ["remodelación", "remodelacion", "remodelar", "ampliación", "ampliacion", "cuarto", "marquesina", "habitación", "sala"]
+    },
+    {
+      "id": "piscinas", "nombre": "Piscinas y remodelación de piscinas", "ticket_plausible": [8000, 80000], "tramo": "grande", "tiempo_tipico_dias": [10, 60],
+      "preguntas": ["¿Piscina nueva o remodelar la que tienes?", "¿Tamaño aproximado (pies) y tipo (hormigón, fibra, vinilo)?", "¿Incluye deck, iluminación, bomba o calentador?", "¿Hay acceso de maquinaria al patio?"],
+      "permisos": "Piscina nueva requiere permiso de construcción (OGPe/municipio) y electricidad por perito.", "cross_sell": ["exteriores"], "alias": ["piscina", "pool", "jacuzzi", "deck de piscina", "resanar piscina"]
+    },
+    {
+      "id": "exteriores", "nombre": "Terrazas, gazebos y áreas exteriores", "ticket_plausible": [3000, 35000], "tramo": "intermedio", "tiempo_tipico_dias": [3, 20],
+      "preguntas": ["¿Qué quieres construir o mejorar: terraza, gazebo, pérgola, BBQ, patio?", "¿Tamaño aproximado en pies?", "¿Techado o abierto? ¿Material: hormigón, madera, aluminio?", "¿Necesita electricidad o agua?"],
+      "permisos": "Estructuras techadas o pegadas a la casa pueden requerir permiso.", "cross_sell": ["poda-arboles", "piscinas", "pisos"], "alias": ["terraza", "gazebo", "pergola", "pérgola", "patio", "bbq", "barbacoa", "exterior", "deck"]
+    }
+  ],
+  "descarte": {
+    "no_propietario_ni_autorizado": "Si no es dueño ni tiene autorización del dueño, no se agenda.",
+    "fuera_de_territorio": "Lista de espera con categoría y municipio.",
+    "presupuesto_muy_bajo": "Si el presupuesto declarado es menor a la mitad del mínimo plausible, el agente lo dice con honestidad y ofrece alternativas o lista de espera.",
+    "categorias_no_incluidas": ["pintura", "sellado de techo", "impermeabilización", "construcción nueva completa"]
+  }
+}

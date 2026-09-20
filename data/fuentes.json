@@ -1,0 +1,83 @@
+{
+  "slack": {
+    "level-up": {
+      "workspace": "Level Up",
+      "conectado": true,
+      "canales": {
+        "wins": { "id": "C0B4K58DUSD", "nombre": "#clientes-wins" },
+        "criticos": {
+          "id": "C09ERUWPLJ2",
+          "nombre": "#office-6-problemas-onboarding-clientes"
+        },
+        "csm": {
+          "id": "C08T8BWTH1P",
+          "nombre": "#office-5-fullfilment-csm"
+        },
+        "onboarding": {
+          "id": "C07VCFWV283",
+          "nombre": "#office-3-onboarding"
+        },
+        "extras": []
+      }
+    },
+    "ai-borinquen": {
+      "workspace": "AI Borinquen",
+      "conectado": false,
+      "canales": { "wins": null, "criticos": null }
+    }
+  },
+  "calendar": {
+    "cuenta": "elvin@levelupmediapr.net",
+    "calendarios": ["primary", "Level up media"],
+    "timezone": "America/Puerto_Rico",
+    "ventanaDias": 7,
+    "prefijoAgente": "[CEO-AGENT]",
+    "crearEventos": false
+  },
+  "instagram": {
+    "ai-borinquen": { "handle": "ai_borinquen", "metodo": "apify" },
+    "level-up": { "handle": "level_upmediapr", "metodo": "apify" },
+    "shadow-operator": { "handle": "shadowoperator.elvin", "metodo": "apify" }
+  },
+  "pipedrive": {
+    "level-up": { "valorEs": "mensual", "stageMap": {} },
+    "ai-borinquen": { "valorEs": "mensual", "stageMap": {} }
+  },
+  "portales": {
+    "zoom-intelligence": {
+      "url": "https://portal.levelupmediapr.net/levelup-clientes/zoom-intelligence/",
+      "nombre": "Zoom Intelligence"
+    },
+    "ea-market": {
+      "url": "https://dashboard-ea-market.netlify.app/",
+      "nombre": "EA Market · Ventas consolidadas"
+    }
+  },
+  "competencia": [
+    "ramiro.cubria",
+    "imangadzhi",
+    "fedecaball",
+    "dotcsv",
+    "lucas.foscaldi",
+    "alejo.munoz",
+    "felipevergara",
+    "joancarreno",
+    "adrian.martinez.s",
+    "guiliano.c",
+    "niksetting",
+    "thejasonwojo",
+    "juan_adss"
+  ],
+  "tendenciasIA": [
+    "openai",
+    "claudeai",
+    "rowancheung",
+    "elevenlabsio",
+    "godofprompt",
+    "lovable.dev",
+    "gregisenberg",
+    "heygen_official",
+    "midjourney",
+    "aiwarper"
+  ]
+}

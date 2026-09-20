@@ -1,0 +1,5 @@
+# El sitio estático vive en public/. La carpeta netlify/functions la corre Netlify como
+# función del servidor (ahí se usa RETELL_API_KEY, que pones como variable de entorno).
+[build]
+  publish = "public"
+  functions = "netlify/functions"

@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditoría de Negocio Digital · Shadow Operator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<!-- AUDITORIA DE NEGOCIO DIGITAL - SHADOW OPERATOR (marca personal de Elvin)
+     Archivo autocontenido (HTML + CSS + JS). Para ClickFunnels 2.0: pegar TODO lo que esta
+     entre los marcadores CF:INICIO y CF:FIN dentro de un elemento "Custom JS/HTML" de la pagina. -->
+<style>html,body{margin:0;background:#0f1115}</style>
+</head>
+<body>
+<!-- CF:INICIO -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  body { background: #0f1115 !important; }
+  .so-audit-bleed { max-width: none !important; width: 100% !important; padding: 0 !important; margin: 0 !important; background: transparent !important; }
+</style>
+<script>
+  (function () {
+    var el = document.getElementById('so-audit');
+    if (!el) { document.addEventListener('DOMContentLoaded', function () { el = document.getElementById('so-audit'); walk(el); }); } else walk(el);
+    function walk(n) { if (!n) return; var p = n.parentElement; while (p && p !== document.body) { p.classList.add('so-audit-bleed'); p = p.parentElement; } document.body.style.margin = '0'; }
+  })();
+</script>
+<style>
+  #so-audit, #so-audit * { box-sizing: border-box; }
+  #so-audit {
+    /* Tema Shadow Operator: carbón neutro + papel + marcador amarillo + tinta azul de bolígrafo */
+    --bg: #0f1115; --card: #171a21; --card-2: #1d212a; --border: #2b303b;
+    --fg: #f2efe8; --muted: #9aa0ad; --accent: #ffe14d; --accent-fg: #14120a; --ink: #5b8cff; --ink-soft: rgba(91,140,255,.16);
+    --danger: #ff6b6b; --radius-card: 22px; --radius-input: 12px;
+    --font-head: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-hand: 'Caveat', 'Bradley Hand', cursive;
+    background: var(--bg); color: var(--fg); font-family: var(--font-body);
+    min-height: 100vh; width: 100%; -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  #so-audit .hero { position: relative; overflow: hidden; padding: 52px 20px 16px; text-align: center; }
+  #so-audit .hero::before {
+    /* papel rayado: líneas horizontales finas, como la libreta */
+    content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none;
+    background-image: linear-gradient(to bottom, rgba(242,239,232,.07) 1px, transparent 1px);
+    background-size: 100% 34px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 25%, #000, transparent);
+    mask-image: radial-gradient(ellipse 70% 65% at 50% 25%, #000, transparent);
+  }
+  #so-audit .hero::after { content: ""; position: absolute; left: 50%; top: -160px; width: 640px; height: 380px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(255,225,77,.16), transparent); pointer-events: none; }
+  #so-audit .hero .glow2 { position: absolute; left: -140px; bottom: -120px; width: 520px; height: 360px; background: radial-gradient(closest-side, rgba(91,140,255,.22), transparent); pointer-events: none; }
+  #so-audit .hero > * { position: relative; }
+  #so-audit .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 7px 14px; border: 1px solid rgba(91,140,255,.5); border-radius: 999px; font: 600 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); background: var(--ink-soft); }
+  #so-audit .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 10px var(--ink); }
+  #so-audit h1 { font-family: var(--font-head); font-weight: 800; font-size: clamp(31px, 6vw, 60px); line-height: 1.04; letter-spacing: -.025em; margin: 0 auto; max-width: 900px; text-wrap: balance; }
+  #so-audit h1 mark { background: linear-gradient(transparent 8%, var(--accent) 8%, var(--accent) 92%, transparent 92%); color: var(--accent-fg); padding: 0 .12em; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  #so-audit h1 em { font-style: normal; color: var(--ink); }
+  #so-audit .sub { max-width: 720px; margin: 18px auto 0; color: var(--muted); font-size: clamp(16px, 2.2vw, 20px); line-height: 1.55; text-wrap: pretty; }
+  #so-audit .sub b { color: var(--fg); font-weight: 600; }
+  #so-audit .sub2 { margin: 20px auto 0; font-family: var(--font-head); font-weight: 700; font-size: clamp(18px, 2.6vw, 24px); letter-spacing: -.01em; max-width: 560px; text-wrap: balance; }
+  #so-audit .sub2 .warm { color: var(--accent); }
+  #so-audit .wrap { max-width: 576px; margin: 0 auto; padding: 8px 16px 40px; }
+  #so-audit .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (min-width: 640px) { #so-audit .card { padding: 32px; } }
+  #so-audit .card.lead { position: relative; overflow: hidden; }
+  #so-audit .card.lead::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--ink), var(--accent)); }
+  #so-audit .field { display: block; margin-bottom: 14px; }
+  #so-audit .label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 6px; }
+  #so-audit .hint { display: block; font-size: 12px; color: var(--muted); margin: -4px 0 6px; }
+  #so-audit .input, #so-audit select.input, #so-audit textarea.input {
+    width: 100%; height: 48px; border-radius: var(--radius-input); border: 1px solid var(--border); background: var(--bg);
+    color: var(--fg); padding: 0 16px; font: 500 15px var(--font-body); outline: none; transition: border-color .15s; appearance: none; -webkit-appearance: none;
+  }
+  #so-audit textarea.input { height: auto; padding: 12px 16px; resize: vertical; }
+  #so-audit .input::placeholder { color: rgba(154,160,173,.6); }
+  #so-audit .input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--ink-soft); }
+  #so-audit .input.err { border-color: var(--danger); background: rgba(255,107,107,.06); }
+  #so-audit select.input { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239aa0ad' stroke-width='2' viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+  #so-audit select.input option { background: #171a21; color: #f2efe8; }
+  #so-audit .errmsg { display: block; margin-top: 4px; font-size: 12px; font-weight: 500; color: var(--danger); }
+  #so-audit .phone { display: flex; gap: 8px; }
+  #so-audit .phone select { width: 112px; flex: none; padding-left: 12px; }
+  #so-audit .ig { position: relative; }
+  #so-audit .ig::before { content: "@"; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; }
+  #so-audit .ig .input { padding-left: 34px; }
+  #so-audit .optin { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; margin: 4px 0 14px; }
+  #so-audit .optin input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+  #so-audit .optin span { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  #so-audit .optin.err { outline: 2px solid var(--danger); outline-offset: 6px; border-radius: 6px; }
+  #so-audit .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 28px; border-radius: 999px; border: 0;
+    background: var(--accent); color: var(--accent-fg); font: 700 16px var(--font-head); cursor: pointer; transition: transform .15s, box-shadow .15s; letter-spacing: .01em; white-space: nowrap; box-shadow: 0 8px 30px rgba(255,225,77,.22); }
+  #so-audit a.btn, #so-audit a.btn:hover, #so-audit a.btn:visited { text-decoration: none; color: var(--accent-fg); }
+  #so-audit .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,225,77,.34); }
+  #so-audit .btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+  #so-audit .btn.full { width: 100%; font-size: 18px; }
+  #so-audit .btn.big { min-height: 56px; height: auto; font-size: 17px; padding: 14px 28px; text-transform: uppercase; letter-spacing: .03em; white-space: normal; line-height: 1.2; text-align: center; }
+  #so-audit .btn svg { width: 18px; height: 18px; }
+  #so-audit .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); font: 500 14px var(--font-body); padding: 12px 14px; border-radius: 999px; cursor: pointer; }
+  #so-audit .btn-ghost:hover { color: var(--fg); }
+  #so-audit .btn-ghost:disabled { color: rgba(154,160,173,.35); cursor: not-allowed; }
+  #so-audit .btn-ghost svg { width: 16px; height: 16px; }
+  #so-audit .bullet { display: flex; gap: 10px; align-items: flex-start; max-width: 576px; margin: 28px auto 0; padding: 0 16px; font-size: 16px; line-height: 1.55; }
+  #so-audit .bullet i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; margin-top: 10px; box-shadow: 0 0 10px var(--accent); }
+  /* nota manuscrita (la libreta) */
+  #so-audit .nota { max-width: 1100px; margin: 44px auto 0; padding: 36px 28px; border-radius: 22px; background: #f2efe8; color: #1b1d24; border: 1px solid #e3ded2; text-align: center; position: relative; overflow: hidden;
+    background-image: linear-gradient(to bottom, rgba(27,29,36,.08) 1px, transparent 1px); background-size: 100% 32px; }
+  #so-audit .nota::before { content: ""; position: absolute; left: 44px; top: 0; bottom: 0; width: 2px; background: rgba(255,107,107,.45); }
+  #so-audit .nota .hand { font-family: var(--font-hand); font-size: clamp(24px, 3.4vw, 34px); line-height: 1.25; color: #1e3a8a; margin: 0 auto; max-width: 820px; }
+  #so-audit .nota .firma { margin-top: 14px; font: 600 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: #5b6070; }
+  #so-audit .legal { max-width: 640px; margin: 0 auto; padding: 24px 20px 32px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  #so-audit .badge { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+  #so-audit .badge.ink { background: var(--ink); color: #fff; }
+  #so-audit .topbar { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
+  #so-audit .counter { font: 600 14px var(--font-mono); color: var(--ink); }
+  #so-audit .progress { height: 6px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-bottom: 22px; }
+  #so-audit .progress i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--ink), var(--accent)); transition: width .35s ease; }
+  #so-audit h2 { font-family: var(--font-head); font-weight: 700; font-size: 24px; letter-spacing: -.02em; margin: 0 0 4px; line-height: 1.2; }
+  #so-audit .lead { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+  #so-audit .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+  #so-audit .alert { margin-top: 14px; border: 1px solid var(--danger); background: rgba(255,107,107,.06); color: var(--danger); border-radius: 12px; padding: 10px 12px; font-size: 14px; font-weight: 500; }
+  #so-audit .radios { display: flex; flex-direction: column; gap: 10px; }
+  #so-audit .radio { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; font: 500 15px var(--font-body); line-height: 1.35; transition: border-color .15s, background .15s; }
+  #so-audit .radio:hover { border-color: rgba(91,140,255,.6); }
+  #so-audit .radio.on { border-color: var(--accent); background: rgba(255,225,77,.07); }
+  #so-audit .radio i { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(154,160,173,.4); margin-top: 1px; display: grid; place-items: center; }
+  #so-audit .radio.on i { border-color: var(--accent); background: var(--accent); }
+  #so-audit .radio i svg { width: 12px; height: 12px; stroke: var(--accent-fg); stroke-width: 3.5; display: none; }
+  #so-audit .radio.on i svg { display: block; }
+  #so-audit .radios.err { outline: 1px solid rgba(255,107,107,.4); border-radius: 16px; outline-offset: 4px; }
+  /* loader */
+  #so-audit .loader { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  #so-audit .loader .card { width: 100%; max-width: 420px; text-align: center; padding: 40px 28px; }
+  #so-audit .orb { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,225,77,.12); display: grid; place-items: center; margin: 0 auto; box-shadow: 0 0 32px rgba(255,225,77,.2); }
+  #so-audit .orb svg { width: 28px; height: 28px; stroke: var(--accent); animation: so-pulse 1.4s ease-in-out infinite; }
+  @keyframes so-pulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .45; transform: scale(.92);} }
+  #so-audit .loader h2 { margin-top: 20px; }
+  #so-audit .loader p { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+  #so-audit .loadbar { height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; margin-top: 24px; }
+  #so-audit .loadbar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ink), var(--accent)); border-radius: 999px; transition: width .6s ease; }
+  #so-audit .loadsteps { margin: 18px 0 0; padding: 0; list-style: none; text-align: left; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+  #so-audit .loadsteps li { display: flex; gap: 8px; align-items: center; opacity: .35; transition: opacity .3s; }
+  #so-audit .loadsteps li.on { opacity: 1; color: var(--fg); }
+  #so-audit .loadsteps li svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 3; }
+  /* result */
+  #so-audit .result { max-width: 768px; margin: 0 auto; padding: 16px 16px 120px; display: grid; gap: 24px; }
+  @media (min-width: 640px) { #so-audit .result { padding: 32px 32px 120px; } }
+  #so-audit .rhead { text-align: center; display: grid; gap: 12px; justify-items: center; padding-top: 24px; }
+  #so-audit .rhead h1 { font-size: clamp(28px, 5vw, 40px); }
+  #so-audit .rhead p { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0; text-wrap: pretty; }
+  #so-audit .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  #so-audit .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 14px; font-size: 14px; font-weight: 600; }
+  #so-audit .chip.sec { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+  #so-audit .diag { margin: 16px 0 0; line-height: 1.6; font-size: 16px; }
+  #so-audit .diag b { color: var(--accent); font-weight: 600; }
+  #so-audit .diag b.ink { color: var(--ink); }
+  #so-audit .diag b.fact { color: var(--fg); }
+  /* los 4 fundamentos */
+  #so-audit .fund { margin-top: 18px; display: grid; gap: 10px; }
+  #so-audit .fund li { list-style: none; display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 12px; font-size: 14px; }
+  @media (max-width: 480px) { #so-audit .fund li { grid-template-columns: 92px 1fr 40px; } }
+  #so-audit .fund { padding: 0; }
+  #so-audit .fund b { font-family: var(--font-head); font-weight: 700; letter-spacing: -.01em; }
+  #so-audit .fund .bar { height: 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+  #so-audit .fund .bar i { display: block; height: 100%; border-radius: 999px; background: var(--ink); transition: width .6s ease; }
+  #so-audit .fund li.weak .bar i { background: var(--accent); }
+  #so-audit .fund li.weak b::after { content: " ←"; color: var(--accent); }
+  #so-audit .fund small { font: 600 12px var(--font-mono); color: var(--muted); text-align: right; }
+  #so-audit .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  @media (min-width: 640px) { #so-audit .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  #so-audit .kpi { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+  #so-audit .kpi small { display: block; font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+  #so-audit .kpi strong { display: block; font-family: var(--font-head); font-size: clamp(19px, 5.5vw, 22px); letter-spacing: -.02em; margin-top: 4px; overflow-wrap: anywhere; }
+  #so-audit .kpi strong.accent { color: var(--accent); }
+  #so-audit .score { display: flex; align-items: center; gap: 18px; margin-top: 18px; padding: 16px; border-radius: 16px; background: var(--bg); border: 1px solid var(--border); min-width: 0; }
+  #so-audit .ring { width: 84px; height: 84px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--card-2) 0); box-shadow: 0 0 24px rgba(255,225,77,.18); }
+  #so-audit .ring b { width: 68px; height: 68px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font: 700 22px var(--font-head); letter-spacing: -.02em; }
+  #so-audit .ring b small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 1px; }
+  #so-audit .score p { margin: 0; font-size: 14px; color: var(--muted); min-width: 0; }
+  #so-audit .score p b { color: var(--fg); display: block; font-size: 16px; margin-bottom: 2px; }
+  #so-audit .locked-wrap { position: relative; }
+  #so-audit .locked { filter: blur(7px); pointer-events: none; user-select: none; }
+  #so-audit .plan-card { border-color: rgba(255,225,77,.3); }
+  #so-audit .plan-card p.lead { margin: 8px 0 16px; }
+  #so-audit .plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  #so-audit .plan li { display: flex; gap: 12px; font-size: 14px; line-height: 1.5; }
+  #so-audit .plan li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font: 700 11px var(--font-mono); margin-top: 1px; }
+  #so-audit .north { margin-top: 24px; border: 1px solid var(--border); background: var(--card-2); border-radius: 16px; padding: 16px; }
+  #so-audit .north small { display: flex; align-items: center; gap: 6px; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+  #so-audit .north small svg { width: 14px; height: 14px; stroke: var(--accent); }
+  #so-audit .north strong { display: block; margin-top: 6px; font-family: var(--font-head); font-size: 18px; letter-spacing: -.01em; }
+  #so-audit .north.camino { margin-top: 18px; }
+  #so-audit .north.camino strong { font: 600 15px/1.45 var(--font-body); margin-top: 8px; }
+  #so-audit .fine { font-size: 12px; color: var(--muted); }
+  #so-audit .unlock { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; border-radius: var(--radius-card); background: linear-gradient(to bottom, rgba(15,17,21,.2), rgba(15,17,21,.75) 40%, var(--bg)); }
+  #so-audit .unlock .card { max-width: 440px; width: 100%; text-align: center; border-color: rgba(255,225,77,.35); background: rgba(23,26,33,.96); backdrop-filter: blur(6px); }
+  #so-audit .unlock .orb { width: 56px; height: 56px; }
+  #so-audit .unlock .orb svg { animation: none; width: 24px; height: 24px; }
+  #so-audit .unlock h3 { font-family: var(--font-head); font-size: 22px; letter-spacing: -.02em; margin: 16px 0 6px; line-height: 1.2; }
+  #so-audit .unlock p { color: var(--muted); font-size: 14px; margin: 0 auto; max-width: 340px; line-height: 1.55; }
+  #so-audit .unlock ul { list-style: none; margin: 18px auto 0; padding: 0; max-width: 300px; display: grid; gap: 10px; text-align: left; font-size: 14px; }
+  #so-audit .unlock ul li { display: flex; gap: 10px; align-items: center; }
+  #so-audit .unlock ul li i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,225,77,.15); display: grid; place-items: center; }
+  #so-audit .unlock ul li i svg { width: 12px; height: 12px; stroke: var(--accent); stroke-width: 3; }
+  #so-audit .unlock .btn { margin-top: 22px; }
+  #so-audit .unlock .fine { margin-top: 10px; }
+  #so-audit .final { border-radius: 24px; background: #0a0c10; border: 1px solid var(--border); padding: 32px 24px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+  #so-audit .final h3 { font-family: var(--font-head); font-size: clamp(22px, 4vw, 28px); letter-spacing: -.02em; margin: 0; line-height: 1.2; text-wrap: balance; }
+  #so-audit .final p { color: rgba(242,239,232,.7); font-size: 14px; margin: 0; max-width: 460px; }
+  #so-audit .final .fine { color: rgba(242,239,232,.5); }
+  #so-audit .again { background: none; border: 0; color: var(--muted); text-decoration: underline; font: 500 14px var(--font-body); cursor: pointer; }
+  #so-audit .sticky { position: fixed; left: 0; right: 0; bottom: 16px; z-index: 40; display: flex; justify-content: center; padding: 0 16px; transition: transform .3s, opacity .3s; }
+  #so-audit .sticky.hide { transform: translateY(24px); opacity: 0; pointer-events: none; }
+  #so-audit .sticky > div { width: 100%; max-width: 900px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); background: #0a0c10; border-radius: 16px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+  #so-audit .sticky p { flex: 1; margin: 0; font-weight: 600; font-size: 14px; line-height: 1.25; min-width: 0; overflow-wrap: anywhere; }
+  #so-audit .sticky p em { font-style: normal; color: var(--accent); }
+  #so-audit .sticky .btn { height: 44px; padding: 0 18px; font-size: 14px; }
+  #so-audit .sticky .mono { font: 700 12px var(--font-mono); letter-spacing: .1em; color: var(--ink); flex: none; }
+  @media (max-width: 639px) { #so-audit .sticky .btn span { display: none; } #so-audit .sticky .btn { width: 44px; padding: 0; } #so-audit .sticky .mono { display: none; } }
+  @media (min-width: 640px) { #so-audit .sticky > div { padding: 20px 28px; gap: 20px; } #so-audit .sticky p { font-size: 18px; } }
+  /* footer */
+  #so-audit .footer { max-width: 1100px; margin: 24px auto 0; padding: 40px 20px 28px; border-top: 1px solid var(--border); }
+  #so-audit .fgrid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { #so-audit .fgrid { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+  #so-audit .fbrand .logo { font-family: var(--font-head); font-weight: 800; font-size: 26px; letter-spacing: -.03em; line-height: 1; }
+  #so-audit .fbrand .logo span { color: var(--accent); }
+  #so-audit .fbrand .hand { font-family: var(--font-hand); font-size: 24px; color: var(--ink); margin: 10px 0 0; }
+  #so-audit .fbrand p { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 36ch; }
+  #so-audit .fbrand .tm { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px; font: 600 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  #so-audit .fbrand .tm i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  #so-audit .fcontact h4 { margin: 0 0 6px; font: 600 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  #so-audit .fcontact a { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); color: var(--fg); text-decoration: none; font-size: 16px; }
+  #so-audit .fcontact a:last-child { border-bottom: 1px solid var(--border); }
+  #so-audit .fcontact a:hover { color: var(--accent); }
+  #so-audit .fcontact svg { width: 18px; height: 18px; flex: none; stroke: currentColor; }
+  #so-audit .fbottom { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); font: 500 11px var(--font-mono); letter-spacing: .06em; color: var(--muted); }
+  #so-audit .honeypot { position: absolute; left: -9999px; width: 0; height: 0; overflow: hidden; }
+  #so-audit [hidden] { display: none !important; }
+</style>
+
+<div id="so-audit">
+  <!-- ==================== PANTALLA 0 · LANDING + CAPTURA ==================== -->
+  <section data-screen="landing">
+    <div class="hero"><div class="glow2" aria-hidden="true"></div>
+      <p class="eyebrow"><i></i>Auditoría de negocio digital · Shadow Operator</p>
+      <h1>Audita tu negocio digital y recibe un <mark>plan de 14 días</mark> para llegar a tus <em>primeros $10K al mes</em>… en menos de 1 minuto.</h1>
+      <p class="sub">Entra tus números (o tu idea, si todavía no vendes) y te digo exactamente <b>cuál de los 4 fundamentos tienes flojo</b>: nicho, oferta, contenido o estrategia. <b>Cuántas conversaciones te faltan</b>, cuánto dinero estás dejando en la mesa y qué arreglar primero.</p>
+      <p class="sub2">Llena la información y en <span class="warm">1 minuto</span> tienes tu auditoría</p>
+    </div>
+
+    <div class="wrap">
+      <div class="card lead">
+        <div class="honeypot" aria-hidden="true"><label for="so-web">No completar</label><input id="so-web" name="empresa_web" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="field">
+          <input class="input" data-f="nombre" placeholder="Tu nombre" autocomplete="given-name">
+          <span class="errmsg" hidden>Escribe tu nombre</span>
+        </div>
+        <div class="field">
+          <input class="input" data-f="email" type="email" placeholder="Tu mejor email" autocomplete="email" inputmode="email">
+          <span class="errmsg" hidden>Escribe un email válido (ej: nombre@email.com)</span>
+        </div>
+        <div class="field">
+          <div class="phone">
+            <select class="input" data-f="pais" aria-label="País">
+              <option value="+1" data-min="10" data-max="10" data-name="Puerto Rico / EE.UU." selected>🇵🇷 +1</option>
+              <option value="+1809" data-min="7" data-max="7" data-name="Rep. Dominicana">🇩🇴 +1</option>
+              <option value="+52" data-min="10" data-max="10" data-name="México">🇲🇽 +52</option>
+              <option value="+57" data-min="10" data-max="10" data-name="Colombia">🇨🇴 +57</option>
+              <option value="+34" data-min="9" data-max="9" data-name="España">🇪🇸 +34</option>
+              <option value="+54" data-min="10" data-max="11" data-name="Argentina">🇦🇷 +54</option>
+              <option value="+56" data-min="9" data-max="9" data-name="Chile">🇨🇱 +56</option>
+              <option value="+51" data-min="9" data-max="9" data-name="Perú">🇵🇪 +51</option>
+              <option value="+593" data-min="9" data-max="9" data-name="Ecuador">🇪🇨 +593</option>
+              <option value="+507" data-min="8" data-max="8" data-name="Panamá">🇵🇦 +507</option>
+            </select>
+            <input class="input" data-f="telefono" type="tel" placeholder="Tu WhatsApp" autocomplete="tel-national" inputmode="tel">
+          </div>
+          <span class="errmsg" hidden>Escribe un número válido (10 dígitos)</span>
+        </div>
+        <div class="field">
+          <div class="ig"><input class="input" data-f="negocio" placeholder="tu usuario de Instagram" autocomplete="off" autocapitalize="none"></div>
+          <span class="errmsg" hidden>Escribe tu usuario de Instagram (así te mando el plan por DM)</span>
+        </div>
+        <label class="optin">
+          <input type="checkbox" data-f="optin">
+          <span>Acepto recibir el resultado de mi auditoría y que Elvin o su equipo me escriban por DM o WhatsApp.</span>
+        </label>
+        <span class="errmsg" data-err="optin" hidden style="margin:-8px 0 12px">Necesitas aceptar para continuar con la auditoría</span>
+        <button class="btn full" data-action="start">Empezar mi auditoría <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      </div>
+
+      <p class="bullet"><i></i><span><b>Mapa de los 4 fundamentos:</b> la guía que uso con mis alumnos para ordenar <b>nicho, oferta, contenido y estrategia</b>, con la matemática de tus primeros $10K al mes, los 3 embudos que han generado millones y el pitch exacto para conseguir <b>tu primer cliente</b> en 30 días.</span></p>
+    </div>
+
+    <div class="wrap" style="max-width:1100px;padding-top:0">
+      <div class="nota">
+        <p class="hand">“Yo he sido un fantasma. Dos agencias, $1.5M al año, y nadie sabía mi nombre. Pagué más de $100K en mentorías para aprender esto. Lo que aprendí cabe en 4 palabras: nicho, oferta, contenido, estrategia.”</p>
+        <p class="firma">— Elvin · Shadow Operator</p>
+      </div>
+    </div>
+    <p class="legal">Al cargar tus datos aceptas que Elvin o su equipo puedan contactarte para revisar tu negocio. No compartimos tu información con terceros.</p>
+  </section>
+
+  <!-- ==================== PASOS DE PREGUNTAS ==================== -->
+  <section data-screen="quiz" hidden>
+    <div class="wrap">
+      <div class="topbar"><span class="badge">Auditoría de negocio digital</span><span class="counter" data-counter>1/4</span></div>
+      <div class="progress"><i data-progress style="width:25%"></i></div>
+      <div class="card">
+        <!-- Paso: negocio -->
+        <div data-step="negocio">
+          <h2 data-title-negocio>Tu negocio</h2>
+          <p class="lead">Las bases. Si todavía no vendes, contesta con lo que tienes en mente.</p>
+          <label class="field"><span class="label">¿En qué etapa estás?</span>
+            <select class="input" data-q="etapa">
+              <option value="">Elige una opción...</option>
+              <option value="0">Tengo una idea o una habilidad, pero todavía no vendo</option>
+              <option value="500">Ya vendo, pero menos de $1,000 / mes</option>
+              <option value="2000">Entre $1,000 y $3,000 / mes</option>
+              <option value="6000">Entre $3,000 y $10,000 / mes</option>
+              <option value="15000">Más de $10,000 / mes</option>
+            </select></label>
+          <label class="field"><span class="label">¿Qué vendes (o venderías)?</span>
+            <select class="input" data-q="tipo">
+              <option value="">Elige una opción...</option>
+              <option value="servicio">Un servicio (agencia, freelance, operar el marketing de otros)</option>
+              <option value="coaching">Coaching, mentoría o consultoría</option>
+              <option value="curso">Un curso o producto digital</option>
+              <option value="comunidad">Una comunidad o membresía</option>
+              <option value="fisico">Un producto físico / tienda online</option>
+              <option value="nose">Todavía no lo sé</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuál es (o sería) tu ticket promedio?</span><span class="hint">Lo que cobras por cliente o por venta, en USD. Si todavía no sabes, déjalo vacío y lo estimo.</span>
+            <input class="input" data-q="ticket" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej: 1500"></label>
+        </div>
+        <!-- Paso: nicho y oferta -->
+        <div data-step="oferta" hidden>
+          <h2>Tu nicho y tu oferta</h2>
+          <p class="lead">Aquí es donde más falla la gente. Sé honesto: nadie más ve esto.</p>
+          <label class="field"><span class="label">¿A quién le vendes?</span>
+            <select class="input" data-q="nicho">
+              <option value="">Elige una opción...</option>
+              <option value="claro">A un nicho específico con un dolor claro y dinero para resolverlo</option>
+              <option value="amplio">A un público amplio ("a todo el que lo necesite")</option>
+              <option value="cambio">Cambio de nicho cada par de meses</option>
+              <option value="nodef">Todavía no lo tengo definido</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántos de estos 4 ingredientes tiene tu oferta hoy?</span><span class="hint">1) Una promesa concreta ("te llevo de X a Y") · 2) Un paquete de valor, no un solo producto · 3) Prueba o casos de que funciona · 4) Una garantía que quite el miedo</span>
+            <select class="input" data-q="ingredientes">
+              <option value="">Elige una opción...</option>
+              <option value="0">Ninguno, todavía no tengo una oferta armada</option>
+              <option value="1">Uno</option>
+              <option value="2">Dos</option>
+              <option value="3">Tres</option>
+              <option value="4">Los cuatro</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuánto tiempo llevas intentando vivir de esto?</span>
+            <select class="input" data-q="tiempo">
+              <option value="">Elige una opción...</option>
+              <option value="1">Menos de 3 meses</option>
+              <option value="6">Entre 3 meses y 1 año</option>
+              <option value="24">Entre 1 y 3 años</option>
+              <option value="48">Más de 3 años</option>
+            </select></label>
+        </div>
+        <!-- Paso: contenido y ventas -->
+        <div data-step="ventas" hidden>
+          <h2>Tu contenido y tus ventas</h2>
+          <p class="lead">Las conversaciones son dinero. Estima el último mes.</p>
+          <label class="field"><span class="label">¿Cómo te llegan los clientes hoy?</span>
+            <select class="input" data-q="fuente">
+              <option value="">Elige una opción...</option>
+              <option value="organico">Contenido orgánico (reels, historias, carruseles)</option>
+              <option value="ads">Anuncios pagos</option>
+              <option value="referidos">Referidos / boca a boca</option>
+              <option value="dm">Prospección directa (DMs, mensajes, llamadas)</option>
+              <option value="ninguna">No me llegan clientes todavía</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántas conversaciones de venta tienes al mes?</span><span class="hint">DMs, llamadas o reuniones donde alguien pregunta por lo que vendes</span>
+            <select class="input" data-q="conversaciones">
+              <option value="">Elige un rango...</option>
+              <option value="0">Ninguna</option>
+              <option value="3">1 a 5</option>
+              <option value="10">5 a 15</option>
+              <option value="27">15 a 40</option>
+              <option value="60">Más de 40</option>
+            </select></label>
+          <label class="field"><span class="label">¿Cuántos clientes cierras al mes?</span>
+            <select class="input" data-q="cierres">
+              <option value="">Elige un rango...</option>
+              <option value="0">Ninguno</option>
+              <option value="1.5">1 a 2</option>
+              <option value="4">3 a 5</option>
+              <option value="8">6 a 10</option>
+              <option value="14">Más de 10</option>
+            </select></label>
+        </div>
+        <!-- Paso condicional: sistema (solo si ya vende) -->
+        <div data-step="sistema" hidden>
+          <h2>Tu sistema</h2>
+          <p class="lead">Ya vendes. Esto separa a quien vive de picos de quien tiene un negocio.</p>
+          <label class="field"><span class="label">¿Tienes un sistema de seguimiento?</span><span class="hint">Setter, secuencia de mensajes, CRM, algo que escriba a los que no cerraron</span>
+            <select class="input" data-q="seguimiento">
+              <option value="">Elige una opción...</option>
+              <option value="si">Sí, funciona sin que yo me acuerde</option>
+              <option value="medio">A medias: le escribo cuando puedo</option>
+              <option value="no">No, el que no compra se pierde</option>
+            </select></label>
+          <label class="field"><span class="label">¿Tu contenido tiene estructura y llamado a la acción?</span>
+            <select class="input" data-q="cta">
+              <option value="">Elige una opción...</option>
+              <option value="si">Sí: gancho, problema, prueba y CTA en cada pieza</option>
+              <option value="aveces">A veces; publico lo que se me ocurre</option>
+              <option value="sincta">Publico seguido, pero sin CTA ni estructura</option>
+              <option value="nopublico">Casi no publico</option>
+            </select></label>
+        </div>
+        <!-- Paso: cuello de botella declarado -->
+        <div data-step="cuello" hidden>
+          <h2>¿Qué crees que te frena hoy?</h2>
+          <p class="lead">Elige lo que más te duele. Lo cruzo con tus números para armar tu auditoría.</p>
+          <div class="radios" role="radiogroup" data-q="cuello" aria-label="Qué te frena">
+            <button type="button" class="radio" role="radio" data-v="oferta"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>No tengo una oferta clara que la gente quiera pagar</span></button>
+            <button type="button" class="radio" role="radio" data-v="nicho"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>No sé a quién venderle ni por dónde empezar</span></button>
+            <button type="button" class="radio" role="radio" data-v="contenido"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Publico y no pasa nada: no me llegan conversaciones</span></button>
+            <button type="button" class="radio" role="radio" data-v="estrategia"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Me llegan conversaciones, pero no cierro o no doy seguimiento</span></button>
+            <button type="button" class="radio" role="radio" data-v="tiempo"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Me falta tiempo, sistema o herramientas para hacerlo solo</span></button>
+            <button type="button" class="radio" role="radio" data-v="otro"><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i><span>Otro (cuéntame)</span></button>
+          </div>
+          <div data-otro hidden style="margin-top:16px">
+            <label class="field"><span class="label">Cuéntame en tus palabras qué te está frenando</span>
+              <textarea class="input" data-q="frustracion" rows="4" placeholder="Lo más concreto posible: qué has intentado, qué pasó y dónde te trancas."></textarea></label>
+          </div>
+        </div>
+        <p class="alert" data-alert hidden>Completa todos los campos para seguir. Elige la opción que más se acerque a tu caso.</p>
+        <div class="nav">
+          <button class="btn-ghost" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Atrás</button>
+          <button class="btn" data-action="next">Siguiente <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <button class="btn" data-action="finish" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Auditar mi negocio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PANTALLA DE CARGA ==================== -->
+  <section data-screen="loading" hidden>
+    <div class="loader">
+      <div class="card">
+        <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h2>Revisando tus 4 fundamentos...</h2>
+        <p>Comparando tus números con lo que he visto operando decenas de cuentas</p>
+        <div class="loadbar"><i data-loadbar></i></div>
+        <ul class="loadsteps">
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Midiendo nicho, oferta, contenido y estrategia</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Calculando la matemática de tus $10K al mes</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Detectando el fundamento que te está frenando</li>
+          <li data-ls><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Armando tu plan de 14 días</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RESULTADO ==================== -->
+  <section data-screen="result" hidden>
+    <div class="result">
+      <div class="rhead">
+        <span class="badge" data-r="badge">Tu auditoría de negocio digital</span>
+        <h1 data-r="titulo"></h1>
+        <p data-r="intro"></p>
+      </div>
+
+      <div class="card">
+        <span class="badge ink">Tu fundamento flojo</span>
+        <div class="chips"><span class="chip" data-r="chip1"></span><span class="chip sec" data-r="chip2" hidden></span></div>
+        <p class="diag" data-r="diagnostico"></p>
+        <ul class="fund" data-r="fund"></ul>
+        <div class="kpis" data-r="kpis"></div>
+        <div class="score">
+          <div class="ring" data-r="ring" style="--p:0"><b><span data-r="score">0</span><small>/100</small></b></div>
+          <p><b data-r="scoreTitulo"></b><span data-r="scoreTexto"></span></p>
+        </div>
+        <div class="north camino"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5-3 6.5V17H8v-1.5C7 14 5 12 5 9a7 7 0 0 1 7-7z"/><path d="M9 21h6"/></svg>Por dónde empezar</small><strong data-r="camino"></strong></div>
+      </div>
+
+      <div class="locked-wrap">
+        <div class="locked">
+          <div class="card plan-card">
+            <span class="badge">Plan de acción · 14 días</span>
+            <p class="lead">Para ejecutar ya y ver movimiento en 2 semanas. En orden, sin saltarte pasos.</p>
+            <ul class="plan" data-r="plan"></ul>
+            <div class="north"><small><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>Tu métrica norte (mírala cada semana)</small><strong data-r="norte"></strong></div>
+          </div>
+        </div>
+        <div class="unlock">
+          <div class="card">
+            <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Tu plan de 14 días está listo</h3>
+            <p>Escríbeme por DM y te lo mando completo, con la matemática de tus $10K hecha con tus números.</p>
+            <ul>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu plan de acción de 14 días</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>Tu métrica norte para medir el avance</li>
+              <li><i><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>El Mapa de los 4 fundamentos</li>
+            </ul>
+            <a class="btn big full" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Quiero mi plan por DM</a>
+            <p class="fine" data-r="ctaFine">Te contesto yo o alguien de mi equipo. Escribe la palabra <b>PLAN</b> y te lo mando.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="final" data-final>
+        <span class="badge">Desbloquea tu plan</span>
+        <h3 data-r="finalTitulo">¿Quieres que lo veamos juntos?</h3>
+        <p>Escríbeme por DM con la palabra <b>PLAN</b> y te mando tu plan de 14 días, tu métrica norte y el Mapa de los 4 fundamentos.</p>
+        <a class="btn big" data-cta target="_blank" rel="noopener noreferrer" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Quiero mi plan por DM</a>
+        <p class="fine">Te contesto yo o alguien de mi equipo.</p>
+      </div>
+      <div style="text-align:center"><button class="again" data-action="again">Hacer otra auditoría</button></div>
+    </div>
+    <div class="sticky hide" data-sticky>
+      <div>
+        <span class="mono">SHADOW</span>
+        <p>Tu plan de 14 días está <em>listo</em>. Te lo mando por DM.</p>
+        <a class="btn" data-cta target="_blank" rel="noopener noreferrer" href="#"><span>Quiero mi plan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="fgrid">
+      <div class="fbrand">
+        <div class="logo">SHADOW<span>.</span>OPERATOR</div>
+        <p class="hand">nicho · oferta · contenido · estrategia</p>
+        <span class="tm"><i></i>Elvin Ayala · Puerto Rico</span>
+        <p>Dos agencias construidas en silencio. Ahora te enseño a montar tu negocio digital: nicho, oferta, contenido y estrategia, operando con IA, hasta tu primer cliente y tus primeros $10K al mes.</p>
+      </div>
+      <div class="fcontact">
+        <h4>Contacto</h4>
+        <a href="https://instagram.com/shadowoperator.elvin" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@shadowoperator.elvin</a>
+        <a href="https://ig.me/m/shadowoperator.elvin" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Escríbeme por DM</a>
+      </div>
+    </div>
+    <div class="fbottom">© <span data-year></span> Shadow Operator · Elvin Ayala · Todos los derechos reservados.</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  /* ================== CONFIGURACIÓN (editar aquí) ================== */
+  var CONFIG = {
+    marca: 'Shadow Operator',
+    // CTA del resultado: DM de Instagram (el embudo de Shadow cierra por DM). Para WhatsApp: pon el número aquí y deja dm en ''.
+    dm: 'https://ig.me/m/shadowoperator.elvin',
+    whatsapp: '',
+    // Endpoint que crea el lead en Pipedrive (app/api/auditoria/route.ts del Content OS). Vacío = no envía.
+    endpoint: 'https://content-os-chi-seven.vercel.app/api/auditoria',
+    marcaId: 'shadow-operator',
+    storageKey: 'so_auditoria_v1',
+    meta: 10000,            // la promesa: primeros $10K al mes
+    ticketDefault: 1500,    // si no sabe su ticket
+    cierreDefault: 0.2,     // tasa de cierre por defecto (1 de 5 conversaciones)
+    umbralSistema: 500,     // muestra el paso "sistema" si ya vende (etapa >= $500/mes)
+    loaderMs: 3200
+  };
+
+  var root = document.getElementById('so-audit');
+  var $ = function (sel, ctx) { return (ctx || root).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); };
+  var screens = { landing: $('[data-screen="landing"]'), quiz: $('[data-screen="quiz"]'), loading: $('[data-screen="loading"]'), result: $('[data-screen="result"]') };
+  $('[data-year]').textContent = new Date().getFullYear();
+
+  var datos = { nombre: '', email: '', pais: '+1', telefono: '', negocio: '', optin: false,
+    etapa: '', tipo: '', ticket: '', nicho: '', ingredientes: '', tiempo: '', fuente: '', conversaciones: '', cierres: '', seguimiento: '', cta: '', cuello: '', frustracion: '' };
+  var pasoIdx = 0; var intentado = false; var resultado = null;
+
+  function tracking() {
+    var t = {};
+    try {
+      var p = new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid','gclid','ttclid'].forEach(function (k) { if (p.get(k)) t[k] = p.get(k).slice(0, 200); });
+      t.landing_url = location.href.slice(0, 500); if (document.referrer) t.referrer = document.referrer.slice(0, 500);
+    } catch (e) {}
+    return t;
+  }
+
+  /* ================== PASOS ================== */
+  function pasos() {
+    var base = ['negocio', 'oferta', 'ventas'];
+    if (Number(datos.etapa) >= CONFIG.umbralSistema) base.push('sistema');
+    base.push('cuello');
+    return base;
+  }
+  var requeridos = { negocio: ['etapa','tipo'], oferta: ['nicho','ingredientes','tiempo'], ventas: ['fuente','conversaciones','cierres'], sistema: ['seguimiento','cta'], cuello: ['cuello'] };
+
+  function mostrar(nombre) { Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== nombre; }); window.scrollTo(0, 0); }
+
+  function renderPaso() {
+    var lista = pasos(); var actual = lista[pasoIdx];
+    $$('[data-step]').forEach(function (el) { el.hidden = el.getAttribute('data-step') !== actual; });
+    $('[data-counter]').textContent = (pasoIdx + 1) + '/' + lista.length;
+    $('[data-progress]').style.width = ((pasoIdx + 1) / lista.length * 100) + '%';
+    $('[data-action="back"]').disabled = pasoIdx === 0;
+    var ultimo = pasoIdx === lista.length - 1;
+    $('[data-action="next"]').hidden = ultimo; $('[data-action="finish"]').hidden = !ultimo;
+    $('[data-title-negocio]').textContent = datos.nombre ? 'Dale ' + datos.nombre.split(' ')[0] + ', hablemos de tu negocio' : 'Tu negocio';
+    pintarErrores();
+  }
+  function faltantes() {
+    var actual = pasos()[pasoIdx];
+    var f = requeridos[actual].filter(function (k) { return String(datos[k] || '').trim() === ''; });
+    if (actual === 'cuello' && datos.cuello === 'otro' && !datos.frustracion.trim()) f.push('frustracion');
+    return f;
+  }
+  function pintarErrores() {
+    var f = intentado ? faltantes() : [];
+    $$('[data-q]').forEach(function (el) { el.classList.toggle('err', f.indexOf(el.getAttribute('data-q')) >= 0); });
+    $('[data-alert]').hidden = f.length === 0;
+  }
+
+  /* ================== GUARDAR PROGRESO ================== */
+  function guardar(paso) {
+    var payload = { paso: paso, datos: datos, tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('so:progreso', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.SO_AUDIT && typeof window.SO_AUDIT.onProgreso === 'function') { try { window.SO_AUDIT.onProgreso(payload); } catch (e) {} }
+  }
+  var crm = { dealId: null };
+  try { crm.dealId = Number(localStorage.getItem(CONFIG.storageKey + '_deal')) || null; } catch (e) {}
+  function enviarCRM(evento, extra) {
+    if (!CONFIG.endpoint) return Promise.resolve(null);
+    var payload = { marca: CONFIG.marcaId, evento: evento, datos: datos, tracking: tracking(), dealId: crm.dealId, ts: new Date().toISOString() };
+    for (var k in (extra || {})) payload[k] = extra[k];
+    return fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j && j.dealId) { crm.dealId = j.dealId; try { localStorage.setItem(CONFIG.storageKey + '_deal', String(j.dealId)); } catch (e) {} } return j; })
+      .catch(function () { return null; });
+  }
+
+  /* ================== LANDING ================== */
+  var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim()); };
+  function validarLanding() {
+    var sel = $('[data-f="pais"]'); var opt = sel.options[sel.selectedIndex]; var dig = datos.telefono.replace(/\D/g, '');
+    var min = Number(opt.getAttribute('data-min')), max = Number(opt.getAttribute('data-max'));
+    return { nombre: datos.nombre.trim() !== '', email: emailOk(datos.email), telefono: dig.length >= min && dig.length <= max, negocio: datos.negocio.replace('@', '').trim() !== '', optin: !!datos.optin, _min: min, _max: max, _pais: opt.getAttribute('data-name') };
+  }
+  var landingIntentado = false;
+  $$('[data-f]').forEach(function (el) {
+    var h = function () { datos[el.getAttribute('data-f')] = el.type === 'checkbox' ? el.checked : el.value; if (landingIntentado) pintarLanding(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  function pintarLanding() {
+    var v = validarLanding();
+    ['nombre','email','telefono','negocio'].forEach(function (k) { var el = $('[data-f="' + k + '"]'); el.classList.toggle('err', !v[k]); var m = el.closest('.field').querySelector('.errmsg'); m.hidden = v[k]; if (k === 'telefono') m.textContent = 'Escribe un número válido (' + (v._min === v._max ? v._min : v._min + ' a ' + v._max) + ' dígitos, ' + v._pais + ')'; });
+    $('.optin').classList.toggle('err', !v.optin); $('[data-err="optin"]').hidden = v.optin;
+  }
+  $('[data-action="start"]').addEventListener('click', function () {
+    if ($('#so-web').value) return; // honeypot
+    landingIntentado = true; var v = validarLanding();
+    if (!(v.nombre && v.email && v.telefono && v.negocio && v.optin)) { pintarLanding(); return; }
+    datos.negocio = '@' + datos.negocio.replace(/^@+/, '').trim();
+    datos.telefonoCompleto = datos.pais.replace('+1809', '+1') + datos.telefono.replace(/\D/g, '');
+    guardar(0); enviarCRM('lead'); try { if (window.fbq) fbq('track', 'Lead', { content_name: 'Auditoría de Negocio Digital' }); } catch (e) {} pasoIdx = 0; intentado = false; mostrar('quiz'); renderPaso();
+  });
+
+  /* ================== QUIZ ================== */
+  $$('[data-q]').forEach(function (el) {
+    if (el.classList.contains('radios')) return;
+    var k = el.getAttribute('data-q');
+    var h = function () { datos[k] = el.value; pintarErrores(); };
+    el.addEventListener('input', h); el.addEventListener('change', h);
+  });
+  $$('.radio').forEach(function (b) {
+    b.addEventListener('click', function () {
+      datos.cuello = b.getAttribute('data-v');
+      $$('.radio').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
+      $('[data-otro]').hidden = datos.cuello !== 'otro'; pintarErrores();
+    });
+  });
+  $('[data-action="back"]').addEventListener('click', function () { intentado = false; pasoIdx = Math.max(0, pasoIdx - 1); renderPaso(); });
+  $('[data-action="next"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } guardar(pasoIdx + 1); intentado = false; pasoIdx++; renderPaso(); });
+  $('[data-action="finish"]').addEventListener('click', function () { intentado = true; if (faltantes().length) { pintarErrores(); return; } intentado = false; guardar(pasoIdx + 1); correrLoader(); });
+  $('[data-action="again"]').addEventListener('click', function () { location.reload(); });
+
+  /* ================== LOADER ================== */
+  function correrLoader() {
+    mostrar('loading'); var bar = $('[data-loadbar]'); var items = $$('[data-ls]'); bar.style.width = '8%';
+    items.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); bar.style.width = (20 + (i + 1) * 18) + '%'; }, 500 + i * (CONFIG.loaderMs - 900) / items.length); });
+    setTimeout(function () { bar.style.width = '100%'; }, CONFIG.loaderMs - 350);
+    setTimeout(function () { resultado = calcular(datos); renderResultado(resultado); mostrar('result'); }, CONFIG.loaderMs);
+  }
+
+  /* ================== SCORING: LOS 4 FUNDAMENTOS ================== */
+  var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pct = function (x) { return Math.round(x * 100) + '%'; };
+  var NOMBRES = { nicho: 'Nicho', oferta: 'Oferta', contenido: 'Contenido', estrategia: 'Estrategia' };
+  var CUELLOS = { oferta: 'oferta', nicho: 'nicho', contenido: 'contenido', estrategia: 'estrategia', tiempo: 'estrategia' };
+  var clamp = function (x) { return Math.max(0, Math.min(100, Math.round(x))); };
+
+  function calcular(d) {
+    var etapa = Number(d.etapa); var vende = etapa >= CONFIG.umbralSistema;
+    var ticket = Number(d.ticket) > 0 ? Number(d.ticket) : CONFIG.ticketDefault; var ticketEstimado = !(Number(d.ticket) > 0);
+    var conv = Number(d.conversaciones), cierres = Number(d.cierres), ingr = Number(d.ingredientes), tiempo = Number(d.tiempo);
+    var tasa = conv > 0 ? Math.min(1, cierres / conv) : (cierres > 0 ? 0.5 : CONFIG.cierreDefault);
+    var tasaEstimada = conv === 0;
+
+    // Puntuaciones 0-100 por fundamento
+    var nicho = ({ claro: 90, amplio: 35, cambio: 20, nodef: 10 })[d.nicho] || 10;
+    if (d.tipo === 'nose') nicho -= 10;
+    if (ticket >= 1000 && d.nicho === 'claro') nicho += 10;
+    var oferta = ({ 0: 8, 1: 30, 2: 55, 3: 78, 4: 96 })[ingr] || 8;
+    if (ticket < 300 && ingr >= 2) oferta -= 10;
+    var contenido = ({ organico: 80, ads: 65, dm: 55, referidos: 40, ninguna: 10 })[d.fuente] || 10;
+    if (d.cta) contenido = Math.round(contenido * .6 + (({ si: 100, aveces: 50, sincta: 35, nopublico: 10 })[d.cta] || 10) * .4);
+    if (conv >= 15) contenido += 8; if (conv === 0) contenido -= 10;
+    var estrategia = 20;
+    estrategia += conv >= 40 ? 30 : conv >= 15 ? 24 : conv >= 5 ? 15 : conv > 0 ? 8 : 0;
+    estrategia += !tasaEstimada ? (tasa >= .3 ? 30 : tasa >= .15 ? 20 : tasa > 0 ? 10 : 0) : 8;
+    if (d.seguimiento) estrategia += ({ si: 20, medio: 8, no: 0 })[d.seguimiento] || 0; else estrategia += vende ? 0 : 6;
+    if (etapa >= 6000) estrategia += 8;
+    var F = { nicho: clamp(nicho), oferta: clamp(oferta), contenido: clamp(contenido), estrategia: clamp(estrategia) };
+    var score = clamp((F.nicho + F.oferta + F.contenido + F.estrategia) / 4);
+
+    // Fundamento flojo = el más bajo; empate → el que declaró
+    var orden = ['nicho', 'oferta', 'contenido', 'estrategia'].sort(function (a, b) { return F[a] - F[b]; });
+    var declarado = CUELLOS[d.cuello] || null;
+    var principal = orden[0];
+    if (declarado && F[declarado] - F[orden[0]] <= 12) principal = declarado;
+    var secundario = orden.filter(function (k) { return k !== principal; })[0];
+    if (F[secundario] >= 70) secundario = null;
+
+    // La matemática de los $10K
+    var meta = CONFIG.meta;
+    var actual = etapa;
+    var brecha = Math.max(0, meta - actual);
+    var clientesMeta = Math.ceil(meta / ticket);
+    var convMeta = Math.ceil(clientesMeta / Math.max(tasa, 0.05));
+    var convFaltan = Math.max(0, convMeta - conv);
+    var ingresoActual = cierres * ticket;
+    var mesesEnEsto = tiempo;
+
+    return { etapa: etapa, vende: vende, ticket: ticket, ticketEstimado: ticketEstimado, conv: conv, cierres: cierres, tasa: tasa, tasaEstimada: tasaEstimada, F: F, score: score,
+      principal: principal, secundario: secundario, declarado: declarado, meta: meta, brecha: brecha, clientesMeta: clientesMeta, convMeta: convMeta, convFaltan: convFaltan, ingresoActual: ingresoActual, meses: mesesEnEsto,
+      calificado: etapa >= 2000 || (ticket >= 1000 && conv >= 5) };
+  }
+
+  function textos(r, d) {
+    var nombre = d.nombre.split(' ')[0];
+    var TIPO = { servicio: 'un servicio', coaching: 'coaching o consultoría', curso: 'un producto digital', comunidad: 'una comunidad', fisico: 'un producto físico', nose: 'algo que todavía no defines' };
+    var ETAPA = { 0: 'todavía no vendes', 500: 'vendes menos de $1,000 al mes', 2000: 'vendes entre $1,000 y $3,000 al mes', 6000: 'vendes entre $3,000 y $10,000 al mes', 15000: 'ya pasas de $10,000 al mes' };
+    var CONV = { 0: 'ninguna conversación de venta', 3: '1 a 5 conversaciones', 10: '5 a 15 conversaciones', 27: '15 a 40 conversaciones', 60: 'más de 40 conversaciones' };
+    var CIER = { 0: 'ningún cierre', 1.5: '1 o 2 cierres', 4: '3 a 5 cierres', 8: '6 a 10 cierres', 14: 'más de 10 cierres' };
+    var base = '<b class="fact">' + nombre + '</b>, vendes <b class="fact">' + (TIPO[d.tipo] || 'algo') + '</b>' + (r.ticketEstimado ? ' (asumí un ticket de ' + fmt(r.ticket) + ' porque no lo definiste)' : ' a <b class="fact">' + fmt(r.ticket) + '</b>') + ', ' + (ETAPA[String(r.etapa)] || '') + ', con <b class="fact">' + (CONV[r.conv] || r.conv + ' conversaciones') + '</b> y <b class="fact">' + (CIER[r.cierres] || r.cierres + ' cierres') + '</b> al mes. ';
+    var mate = 'Para llegar a <b class="ink">' + fmt(r.meta) + ' al mes</b> con tu ticket necesitas <b>' + r.clientesMeta + ' clientes</b>' + (r.tasaEstimada ? ' y, con una tasa de cierre normal de 1 en 5, ' : ' y, con tu tasa de cierre de ' + pct(r.tasa) + ', ') + '<b>' + r.convMeta + ' conversaciones al mes</b>. Hoy te faltan <b>' + r.convFaltan + '</b>. ';
+    var T = {
+      oferta: { titulo: nombre + ', tu problema no es tráfico ni seguidores. Es la oferta.', diag: base + mate + 'Casi nadie tiene una buena oferta, y la tuya tiene ' + (Number(d.ingredientes) || 0) + ' de los 4 ingredientes. Puedes tener el mejor contenido y el mejor embudo: si la oferta es débil, no vas a vender. Si la persona entiende el valor, le suena barato; si no lo entiende, te dice que es caro.',
+        plan: ['Escribe tu promesa en una línea: "te llevo de [dónde está] a [dónde quiere estar] en [tiempo]".', 'Empaqueta 4 o 5 componentes que juntos valgan mucho más que el precio (programa, sesiones, plantillas, soporte, revisión).', 'Consigue una prueba real: si no tienes casos, ofrécele a tu primer cliente asociarte al 50% a cambio de ser tu caso de éxito.', 'Agrega una reducción de riesgo: garantía o condición clara que le quite el miedo a comprar.', 'Valídala vendiendo: preséntala en 10 conversaciones esta semana y ajusta con lo que te digan.'],
+        norte: 'Conversaciones donde presentas la oferta completa (meta: 10 por semana)', camino: 'Arreglar la oferta antes de hacer más contenido. Con la oferta correcta, el mismo tráfico te compra.' },
+      nicho: { titulo: nombre + ', le estás hablando a todos, y cuando le hablas a todos no le hablas a nadie.', diag: base + mate + 'Un buen nicho tiene dos cosas: dolor y dinero. Un problema real y urgente, y gente dispuesta y capaz de pagar por resolverlo. Sin eso, la oferta no se puede escribir y el contenido no engancha a nadie. Mientras más caro el nicho, más fácil todo lo demás.',
+        plan: ['Lista 5 nichos donde ya tienes acceso o experiencia y márcales dolor (1 a 5) y dinero (1 a 5).', 'Elige el que sume más y escribe su dolor #1 en una frase, con sus palabras.', 'Habla con 5 personas de ese nicho esta semana: qué intentaron, qué les frustra, cuánto pagarían.', 'Reescribe tu promesa solo para ellos, aunque pierdas al resto.', 'Publica 3 piezas que hablen de ese dolor y mide si te escriben personas de ese nicho.'],
+        norte: 'Conversaciones al mes que vienen del nicho elegido (meta: 10)', camino: 'Definir el nicho antes de tocar la oferta o el contenido. Todo lo demás depende de esta decisión.' },
+      contenido: { titulo: nombre + ', tienes algo que vender pero nadie llega a la puerta.', diag: base + mate + 'El contenido no es para hacer contenido: es estratégico. Reels y carruseles no venden; traen y calientan. Se vende con historias y con conversaciones. Cada pieza necesita gancho, problema, prueba y un llamado a la acción; sin CTA no hay intención de compra. Viral no es ventas.',
+        plan: ['Define tus 3 ángulos ganadores: los 3 problemas de tu nicho que, cuando hablas de ellos, la gente pregunta.', 'Escribe 15 guiones con IA en una tarde usando la estructura gancho → problema → prueba → CTA.', 'Publica 1 reel al día con CTA de comentario ("comenta [PALABRA]") y contesta cada comentario por DM.', 'Sube 3 historias al día: una que califique, una que eduque y una que cierre con botón.', 'Haz el abridor: escríbele a quien vio tu historia y no te escribió. Las conversaciones son dinero.'],
+        norte: 'Conversaciones nuevas por semana que salen de tu contenido (meta: 10)', camino: 'Contenido con estructura y CTA, más el abridor en historias. Primero conversaciones, después volumen.' },
+      estrategia: { titulo: nombre + ', te llega gente. Lo que falta es el sistema que la convierta.', diag: base + mate + 'Tienes conversaciones, pero sin un sistema de seguimiento el que no compra hoy se pierde, y sin un proceso de venta cada llamada se improvisa. Tú no necesitas al lead: él te necesita a ti. Vender es un deporte; se entrena todos los días.',
+        plan: ['Anota en un CRM sencillo cada conversación de los últimos 60 días con su etapa (nuevo, habló, agendó, no compró).', 'Diseña 5 toques de seguimiento (día 0, 1, 3, 7, 14) y prográmalos; el que no compró recibe los 5.', 'Escribe tu guion de venta: qué te trajo aquí, con qué te identificaste, dónde te duele, la oferta, el precio y seguir.', 'Practica el guion en voz alta 15 minutos diarios antes de cada llamada.', 'Mide cada semana: conversaciones, agendas, cierres. Sube el 10% de lo que funciona.'],
+        norte: 'Tasa de cierre (meta: 1 de cada 3 conversaciones) y seguimiento completo (100%)', camino: 'Sistema de seguimiento y guion de venta. Con lo que ya te llega puedes duplicar sin producir más.' }
+    };
+    var t = T[r.principal] || T.oferta;
+    if (r.etapa >= 15000) { t.titulo = nombre + ', ya pasas de $10K. El siguiente nivel es el sistema y el equipo.'; t.camino = 'Delegar el sistema: setter, closer y contenido operado por otros o por IA, para que el negocio crezca sin ti en cada llamada.'; }
+    return t;
+  }
+
+  function renderResultado(r) {
+    var t = textos(r, datos);
+    $('[data-r="badge"]').textContent = r.calificado ? 'Auditoría · Negocio con tracción' : 'Tu auditoría de negocio digital';
+    $('[data-r="titulo"]').textContent = t.titulo;
+    $('[data-r="intro"]').textContent = r.vende ? 'Ya vendes. Esto no es sobre "más contenido": es sobre el fundamento que te tiene trancado.' : 'Esta auditoría está armada con lo que acabas de entrar, no con una plantilla. Empezar desde cero es más fácil de lo que te hicieron creer.';
+    $('[data-r="chip1"]').textContent = NOMBRES[r.principal];
+    var c2 = $('[data-r="chip2"]'); c2.hidden = !r.secundario; if (r.secundario) c2.textContent = '+ ' + NOMBRES[r.secundario];
+    $('[data-r="diagnostico"]').innerHTML = t.diag;
+    $('[data-r="fund"]').innerHTML = ['nicho', 'oferta', 'contenido', 'estrategia'].map(function (k) { return '<li class="' + (k === r.principal ? 'weak' : '') + '"><b>' + NOMBRES[k] + '</b><span class="bar"><i style="width:' + r.F[k] + '%"></i></span><small>' + r.F[k] + '</small></li>'; }).join('');
+    $('[data-r="kpis"]').innerHTML = [
+      ['Conversaciones que te faltan / mes', String(r.convFaltan), true], ['Brecha hasta $10K / mes', fmt(r.brecha), false], ['Clientes para $10K', String(r.clientesMeta), false], ['Tu tasa de cierre', r.tasaEstimada ? '~' + pct(r.tasa) : pct(r.tasa), false]
+    ].map(function (k) { return '<div class="kpi"><small>' + k[0] + '</small><strong class="' + (k[2] ? 'accent' : '') + '">' + k[1] + '</strong></div>'; }).join('');
+    $('[data-r="ring"]').style.setProperty('--p', r.score); $('[data-r="score"]').textContent = r.score;
+    $('[data-r="scoreTitulo"]').textContent = 'Fundamentos: ' + (r.score >= 70 ? 'sólidos' : r.score >= 40 ? 'a medias' : 'por construir');
+    $('[data-r="scoreTexto"]').textContent = r.score >= 70 ? 'Tienes base. Te falta afinar uno y escalar lo que ya funciona.' : r.score >= 40 ? 'Dos de los cuatro están bien; uno te está tumbando el resto.' : 'Hoy el negocio se sostiene en esfuerzo, no en fundamentos. La buena noticia: esto se arregla en semanas, no en años.';
+    $('[data-r="plan"]').innerHTML = t.plan.map(function (p, i) { return '<li><i>' + (i + 1) + '</i><span>' + p + '</span></li>'; }).join('');
+    $('[data-r="norte"]').textContent = t.norte;
+    $('[data-r="camino"]').textContent = t.camino;
+    $('[data-r="finalTitulo"]').textContent = r.calificado ? '¿Quieres que lo veamos juntos?' : 'Escríbeme y te mando tu plan completo';
+    var msg = 'Hola Elvin, soy ' + datos.nombre + ' (' + datos.negocio + '). Ya hice mi auditoría de negocio digital: fundamento flojo ' + NOMBRES[r.principal] + ', ' + r.score + '/100, me faltan ' + r.convFaltan + ' conversaciones al mes para llegar a $10K. PLAN';
+    var href = CONFIG.whatsapp ? 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg) : CONFIG.dm;
+    $$('[data-cta]').forEach(function (a) { a.href = href; if (!a.__fbq) { a.__fbq = true; a.addEventListener('click', function () { try { if (window.fbq) fbq('track', 'Contact', { content_name: 'DM desde auditoría' }); } catch (e) {} }); } });
+    try { if (window.fbq) fbq('trackCustom', 'AuditoriaCompletada', { fundamento: r.principal, score: r.score, faltan: r.convFaltan }); } catch (e) {}
+    var payload = { evento: 'resultado', marca: CONFIG.marca, datos: datos, resultado: r, principalNombre: NOMBRES[r.principal], tracking: tracking(), ts: new Date().toISOString() };
+    try { localStorage.setItem(CONFIG.storageKey + '_resultado', JSON.stringify(payload)); } catch (e) {}
+    try { root.dispatchEvent(new CustomEvent('so:resultado', { detail: payload, bubbles: true })); } catch (e) {}
+    if (window.SO_AUDIT && typeof window.SO_AUDIT.onResultado === 'function') { try { window.SO_AUDIT.onResultado(payload); } catch (e) {} }
+    enviarCRM('resultado', { resultado: r, principalNombre: NOMBRES[r.principal] });
+    var sticky = $('[data-sticky]'); var finalEl = $('[data-final]'); var finalVisible = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { finalVisible = e.isIntersecting; }); upd(); }, { threshold: 0 }).observe(finalEl);
+    function upd() { sticky.classList.toggle('hide', !(window.scrollY > 300 && !finalVisible)); }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  }
+
+  window.SO_AUDIT = window.SO_AUDIT || {};
+  window.SO_AUDIT.config = CONFIG; window.SO_AUDIT.datos = datos; window.SO_AUDIT.calcular = calcular;
+})();
+</script>
+<script>(function(){var n=document.getElementById('so-audit');var p=n&&n.parentElement;while(p&&p!==document.body){p.classList.add('so-audit-bleed');p=p.parentElement;}})();</script>
+<!-- CF:FIN -->
+</body>
+</html>

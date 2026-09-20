@@ -1,0 +1,59 @@
+{
+  "Trabajos · Plomería": {
+    "id": "q7eD2DCp5Bcoeqg09Ome",
+    "etapas": {
+      "Nuevo": "ff50ca72-221e-4339-8de6-a1573d88ea14",
+      "Agendado": "48c413a2-e3b9-4f27-9e11-049afb3427c4",
+      "Asignado": "ab246733-e09d-4671-b4a4-019d1b814a35",
+      "En sitio": "82d4f908-9c40-41bc-87db-99c450e87965",
+      "Completado": "5addbe15-b21b-4dee-834e-818dc8acf937",
+      "Pagado": "ebd2b22f-5ae2-4eb0-b11f-5801fa43d88f",
+      "Cancelado": "46c4bb35-a6a7-419d-a70f-bb43d7e23766"
+    }
+  },
+  "Proyectos · Remodelación": {
+    "id": "N5l7TD69NspS3mE2uevb",
+    "etapas": {
+      "Lead": "9d3c1c01-5aac-4752-807b-9ade71649035",
+      "Precalificado": "83b8f02f-97e5-4fd4-b14e-561ffcdbe2a5",
+      "Visita agendada": "8948032c-490f-4fab-95df-102640fc5f2c",
+      "Visita realizada": "bc569f60-303e-4cbf-9f41-842cc13e887a",
+      "Propuesta enviada": "c6e0dc31-bcd8-4dff-95e6-c076fcf8f424",
+      "Aprobación pendiente": "e9aa8cce-c116-42da-9ff6-ad810f15f029",
+      "Pendiente depósito": "a8bb5775-8798-4587-9bdd-fb302bfc77bb",
+      "Cerrado (depósito recibido)": "f167f502-dcd7-4e5f-ad90-139cde0e2390",
+      "En ejecución": "43f74fd0-8a80-4259-b8bb-869e28a6f203",
+      "Completado": "70eb0fca-c62a-4bed-a6c8-a5ce07e4e42d",
+      "Perdido / Recovery": "d06abd16-3bef-4b14-a830-eb90b8ccde80"
+    }
+  },
+  "Candidatos · Plomeros": {
+    "id": "yzCPsNrmo9Er4RwVSkIn",
+    "etapas": {
+      "Aplicó": "9e4b2405-59fe-4422-ba20-06fcfdd93d73",
+      "Documentos (licencia, ID, vehículo)": "bb248f84-4b8c-4075-ae22-d60a7100e3a6",
+      "Entrevista agendada": "c497bca4-de17-440b-8b7a-c0a88c984474",
+      "Entrevistado": "5aae81cb-4fdc-477f-9a72-6974a67f06d9",
+      "Contrato enviado (DocuSign)": "7d594a18-9b10-48e9-b763-e70dee31c53f",
+      "Primer trabajo acompañado": "5df8a1a0-9eb9-47a7-b3de-1c990329c77a",
+      "Activo": "b78b9c50-1b1e-428e-a208-55d40b8c913c",
+      "Lista de espera": "8977aa20-b394-44fd-821e-5cd454e71d5e",
+      "Descartado": "fa9bd6af-9539-4e50-ac84-b6bb0495ad15"
+    }
+  },
+  "Contratistas · Resuelto Verified": {
+    "id": "1jGHX6nqiUkgAipcudLp",
+    "etapas": {
+      "Aplicó": "f55ee56f-e955-4982-9a52-eb2e6e572feb",
+      "Documentos (DACO, seguro, fotos)": "58404b42-740c-45a4-927f-511b23c6234d",
+      "Entrevista agendada": "49351daf-3fd1-4929-aa76-e77d5ad4beff",
+      "Entrevistado": "669dcabf-f243-4a53-a9ab-6049a806aab4",
+      "Sesión de costos (Cost Book)": "474906a6-1c64-4f19-89c0-45fcdb07f90f",
+      "Acuerdo marco firmado": "aeb49619-c4ca-4af0-b4f2-7c2a11038b37",
+      "Verified": "17973e4b-5d2e-464c-a348-3c6a5fa8278d",
+      "Preferido": "d6f98bca-39ea-4842-b6ee-81e558874eac",
+      "Lista de espera": "e50a5fc5-7ac4-405c-ab0a-23860a7bc61f",
+      "Descartado / Suspendido": "c9c9a60c-70fe-4ba4-8fff-59c342ad660c"
+    }
+  }
+}

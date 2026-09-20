@@ -1,0 +1,214 @@
+{
+  "level-up": {
+    "periodo": "Junio 2026",
+    "fuente": "Tesorería (xlsx)",
+    "cac": 1546.28,
+    "cacDetalle": {
+      "costoTotal": 30925.5,
+      "clientesNuevos": 20,
+      "ads": 19455.74,
+      "comisiones": 5469.76,
+      "herramientas": 6000.0,
+      "pagoRealizado": 36950.0
+    },
+    "churn": 115.0,
+    "churnDetalle": {
+      "clientesInicio": 20,
+      "clientesSeFueron": 23
+    },
+    "ltvPromedio": 8668.42,
+    "ltvTotal": 329400.0,
+    "ltvPorCliente": [
+      {
+        "cliente": "George Ortiz",
+        "negocio": "Jadaluz Construction INC",
+        "total": 2400.0
+      },
+      {
+        "cliente": "Joshua Santana",
+        "negocio": "Xtilos Door",
+        "total": 4700.0
+      },
+      {
+        "cliente": "Nitza Sanchez",
+        "negocio": "Fancy Halo By Nixalee Corp",
+        "total": 4800.0
+      },
+      {
+        "cliente": "Joy Rivera",
+        "negocio": "Joii Air Conditioning",
+        "total": 4900.0
+      },
+      {
+        "cliente": "Shaidimar Berrios",
+        "negocio": "Shai Shai",
+        "total": 5000.0
+      },
+      {
+        "cliente": "Christopher Taveras",
+        "negocio": "K.Clothing",
+        "total": 5450.0
+      },
+      {
+        "cliente": "Josean Martinez",
+        "negocio": "Tu Casa Segura",
+        "total": 5700.0
+      },
+      {
+        "cliente": "Valeria Perez",
+        "negocio": "West Pain Douler SG Institute",
+        "total": 6000.0
+      },
+      {
+        "cliente": "Luis Daniel Rodriguez",
+        "negocio": "Rodriguez Accounting Services",
+        "total": 6500.0
+      },
+      {
+        "cliente": "Jemil Vasquez",
+        "negocio": "Autolux",
+        "total": 6700.0
+      },
+      {
+        "cliente": "Angel Gary",
+        "negocio": "Wild Encantos",
+        "total": 7000.0
+      },
+      {
+        "cliente": "Lorelys Mojica",
+        "negocio": "Dra.Lorelys Mojica",
+        "total": 7000.0
+      },
+      {
+        "cliente": "Magdalys Perez",
+        "negocio": "Magdalys Salon",
+        "total": 7000.0
+      },
+      {
+        "cliente": "Reina Marrero",
+        "negocio": "Mister Iphone Innovations",
+        "total": 7000.0
+      },
+      {
+        "cliente": "Saul Figueroa",
+        "negocio": "EcoSun Energy",
+        "total": 7000.0
+      },
+      {
+        "cliente": "Jonathan Joel",
+        "negocio": "JT Air Conditioning",
+        "total": 7300.0
+      },
+      {
+        "cliente": "Gabriel Martinez",
+        "negocio": "Proactive Quiropractice & Wellness",
+        "total": 7500.0
+      },
+      {
+        "cliente": "Coralys Vargas",
+        "negocio": "La Garita",
+        "total": 8000.0
+      },
+      {
+        "cliente": "Jesly Villegas",
+        "negocio": "Policlinica Vazquez Y Villegasgm comm",
+        "total": 8500.0
+      },
+      {
+        "cliente": "Roberto Quintana",
+        "negocio": "Salud Vital VIP",
+        "total": 8800.0
+      },
+      {
+        "cliente": "Deborah Soler",
+        "negocio": "Farmacias Deborah",
+        "total": 9000.0
+      },
+      {
+        "cliente": "Grisell Villanueva",
+        "negocio": "Oficina Medica Dra Grisell Villanueva-Medspa",
+        "total": 9000.0
+      },
+      {
+        "cliente": "Julio Santiago",
+        "negocio": "JJ Aluminum Contractors",
+        "total": 9000.0
+      },
+      {
+        "cliente": "Linette Lugo",
+        "negocio": "Home ID",
+        "total": 9000.0
+      },
+      {
+        "cliente": "Roberto Canales",
+        "negocio": "NotaGestión Express LLC",
+        "total": 9300.0
+      },
+      {
+        "cliente": "Marie Pagan",
+        "negocio": "RK Automatic Transmission",
+        "total": 9800.0
+      },
+      {
+        "cliente": "Jack Cardoza",
+        "negocio": "Bukaino",
+        "total": 10000.0
+      },
+      {
+        "cliente": "Jaqueline Galarza",
+        "negocio": "Pauli´s Development Center",
+        "total": 10100.0
+      },
+      {
+        "cliente": "Gerardo Cartagena",
+        "negocio": "Universidad Teológica Vida Abundante",
+        "total": 10450.0
+      },
+      {
+        "cliente": "Bryan Vega",
+        "negocio": "Topchiro",
+        "total": 10500.0
+      },
+      {
+        "cliente": "Carlos Rivera",
+        "negocio": "Rivera Auto Corp",
+        "total": 11200.0
+      },
+      {
+        "cliente": "Katiusca Casado",
+        "negocio": "Peluche Professional Institute - TDM",
+        "total": 11500.0
+      },
+      {
+        "cliente": "Luis Maldonado",
+        "negocio": "LM Desing",
+        "total": 11500.0
+      },
+      {
+        "cliente": "Rafael Caban",
+        "negocio": "Vida Divina",
+        "total": 12600.0
+      },
+      {
+        "cliente": "Emilio Jimenez",
+        "negocio": "Reawaken Upper Cervical",
+        "total": 13200.0
+      },
+      {
+        "cliente": "Edgard Cortes",
+        "negocio": "Claro FI Communications",
+        "total": 14000.0
+      },
+      {
+        "cliente": "Edgar Lugo",
+        "negocio": "Warranty Plus",
+        "total": 16000.0
+      },
+      {
+        "cliente": "Gerald Butler",
+        "negocio": "Arbys PR/ Armeria",
+        "total": 16000.0
+      }
+    ]
+  }
+}

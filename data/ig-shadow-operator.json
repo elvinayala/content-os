@@ -1,0 +1,123 @@
+{
+  "handle": "shadowoperator.elvin",
+  "actualizadoEl": "2026-07-18T14:07:25-04:00",
+  "fuente": "apify",
+  "seguidores": 23,
+  "totalPosts": 21,
+  "posts": [
+    {
+      "url": "https://www.instagram.com/p/Da6YdaZJN84/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇  #shadowoperator #negociodigital #marketingdigital",
+      "publicadoEl": "2026-07-17",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da3yIPgpNYO/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇👇  #ShadowOperator #negociodigital #negociosdigitales",
+      "publicadoEl": "2026-07-16",
+      "vistas": null,
+      "likes": 4,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Da1CKBIp_ks/",
+      "tipo": "reel",
+      "caption": "Comenta: Shadow👇👇👇  #ShadowOperator #emprendedordigital",
+      "publicadoEl": "2026-07-15",
+      "vistas": null,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DavdLiAp0-b/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇",
+      "publicadoEl": "2026-07-13",
+      "vistas": null,
+      "likes": 4,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DatJln5Bius/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇🚀  #ShadowOperator #negociodigital #emprendimientodigital",
+      "publicadoEl": "2026-07-12",
+      "vistas": null,
+      "likes": 4,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DarPcm0NfUw/",
+      "tipo": "reel",
+      "caption": "Comenta \"Shadow\" aquí 👇👇👇🚀  #shadowoperator #negociodigital #marketingdigital #emprendimientodigital",
+      "publicadoEl": "2026-07-11",
+      "vistas": null,
+      "likes": 4,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaopDwaND0a/",
+      "tipo": "reel",
+      "caption": "Comenta Shadow👇👇👇  #ShadowOperator ##negociodigital ##marketingdigital",
+      "publicadoEl": "2026-07-10",
+      "vistas": null,
+      "likes": 4,
+      "comentarios": 2
+    },
+    {
+      "url": "https://www.instagram.com/p/DajersXtcWi/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇👇😎  #shadowoperator #negociodigital #emprendedordigital",
+      "publicadoEl": "2026-07-08",
+      "vistas": null,
+      "likes": 1,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/Dag2PyyuRE4/",
+      "tipo": "reel",
+      "caption": "Comenta: SHADOW aquí en comentarios👇👇😉  #shadowoperator #negociodigital #emprendedordigital #creadordecontenido",
+      "publicadoEl": "2026-07-07",
+      "vistas": 58,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaZPtuitIIm/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇👇🚀  #ShadowOperator #negociodigital #marketingdigital #productosdigitales",
+      "publicadoEl": "2026-07-04",
+      "vistas": 89,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaWjGSMpE8Z/",
+      "tipo": "reel",
+      "caption": "Comenta SHADOW👇👇👇🚀  #negociodigital #emprendimientodigital #creadordecontenido #productosdigitales",
+      "publicadoEl": "2026-07-03",
+      "vistas": 71,
+      "likes": 3,
+      "comentarios": 0
+    },
+    {
+      "url": "https://www.instagram.com/p/DaT938CtP9v/",
+      "tipo": "reel",
+      "caption": "Comenta \"SHADOW\"👇👇👇  #habilidades #negociodigital #emprendedordigital #ShadowOperator",
+      "publicadoEl": "2026-07-02",
+      "vistas": 93,
+      "likes": 5,
+      "comentarios": 0
+    }
+  ],
+  "hallazgos": [
+    "Cuenta en arranque (23 seguidores, 21 posts): publica reels casi a diario pero la interacción es mínima (1-5 likes, 58-93 vistas). El volumen está, falta tracción.",
+    "Los 12 reels usan el mismo gancho/CTA genérico (\"Comenta SHADOW\"): sin variar el hook por video, la cuenta choca contra un techo de ~90 vistas. Rotar ángulos (dolor, resultado, contraste).",
+    "Casi cero comentarios (0 en 10 de 12) pese al CTA de comentar: el llamado no da razón suficiente. Ofrecer algo concreto a cambio (guía/plantilla) para activar el comentario.",
+    "El formato es correcto (100% reels verticales), pero falta consistencia de mensaje y prueba social. Priorizar hooks variados y una promesa clara antes de esperar crecimiento."
+  ]
+}

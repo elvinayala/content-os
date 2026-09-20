@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{NEGOCIO}} · Así se ve tu sistema por dentro — AutoFlow</title>
+<style>
+  :root{ --accent:{{COLOR}}; --bg:#0b0f14; --panel:#121820; --panel-2:#18212b; --line:rgba(255,255,255,.08); --text:#e8edf3; --muted:#8b98a8; --bori:#35C06F; --wa:#25d366; --ig:#e1306c; --tel:#60a5fa; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:36px 20px 100px}
+  .eyebrow{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--bori);font-weight:700}
+  h1{font-size:clamp(26px,4.4vw,40px);letter-spacing:-.02em;margin:8px 0 8px}
+  .lead{color:var(--muted);max-width:640px;margin-bottom:26px}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+  .steps button{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px;cursor:pointer;font-weight:600}
+  .steps button.on{background:color-mix(in srgb,var(--bori) 18%,var(--panel));color:#fff;border-color:color-mix(in srgb,var(--bori) 50%,transparent)}
+  .app{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .bar{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  .bar .brand{font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+  .bar .brand .sq{width:22px;height:22px;border-radius:6px;background:var(--accent)}
+  .bar nav{display:flex;gap:4px;margin-left:8px}
+  .bar nav span{padding:6px 10px;border-radius:8px;font-size:13px;color:var(--muted)}
+  .bar nav span.on{background:rgba(255,255,255,.06);color:#fff}
+  .bar .me{margin-left:auto;font-size:12px;color:var(--muted)}
+  .view{display:none;padding:18px}
+  .view.on{display:block}
+  .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  @media(min-width:720px){.kpis{grid-template-columns:repeat(4,1fr)}}
+  .kpi{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kpi small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .kpi b{font-size:22px;font-family:ui-monospace,Menlo,monospace}
+  .kpi b.g{color:var(--bori)}
+  .board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:10px;overflow-x:auto;padding-bottom:6px}
+  .col{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:220px}
+  .col h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:8px}
+  .col h4 i{font-style:normal;background:rgba(255,255,255,.08);border-radius:999px;padding:1px 7px;font-size:11px;color:#fff}
+  .lead-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;font-size:13px;animation:rise .35s ease-out both}
+  .lead-card b{display:block;color:#fff}
+  .lead-card .ch{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:999px;margin-top:4px;color:#fff}
+  .ch.wa{background:color-mix(in srgb,var(--wa) 35%,transparent)}.ch.ig{background:color-mix(in srgb,var(--ig) 45%,transparent)}.ch.tel{background:color-mix(in srgb,var(--tel) 45%,transparent)}
+  .lead-card small{display:block;color:var(--muted);margin-top:3px}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .inbox{display:grid;gap:12px}
+  @media(min-width:820px){.inbox{grid-template-columns:280px 1fr}}
+  .list{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .list .it{padding:11px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+  .list .it b{display:block;color:#fff}
+  .list .it.on{background:rgba(255,255,255,.05)}
+  .thread{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:300px}
+  .msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:14px;line-height:1.4;animation:rise .3s ease-out both}
+  .msg.c{align-self:flex-end;background:color-mix(in srgb,var(--wa) 22%,var(--panel));border-bottom-right-radius:4px}
+  .msg.a{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg .who{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .msg .who.ai{color:var(--bori)}
+  .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--bori);background:color-mix(in srgb,var(--bori) 12%,transparent);border:1px solid color-mix(in srgb,var(--bori) 30%,transparent);padding:4px 10px;border-radius:999px;margin-top:6px;align-self:flex-start}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal div{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;min-height:64px;padding:6px;font-size:11px;color:var(--muted)}
+  .cal div.h{min-height:auto;text-align:center;background:transparent;border:0;letter-spacing:.1em;text-transform:uppercase}
+  .cal .ev{margin-top:4px;background:color-mix(in srgb,var(--accent) 40%,var(--panel));color:#fff;border-radius:6px;padding:3px 5px;font-size:10.5px;line-height:1.25}
+  .cal .ev.ai{background:color-mix(in srgb,var(--bori) 35%,var(--panel))}
+  .agents{display:grid;gap:12px}
+  @media(min-width:720px){.agents{grid-template-columns:1fr 1fr}}
+  .agent{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .agent h3{display:flex;align-items:center;gap:8px;font-size:16px}
+  .agent h3 .on{width:8px;height:8px;border-radius:50%;background:var(--bori);box-shadow:0 0 0 3px rgba(53,192,111,.2)}
+  .agent p{color:var(--muted);font-size:13.5px;margin-top:6px}
+  .agent dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin-top:10px}
+  .agent dt{color:var(--muted)}
+  .agent a{color:var(--bori);font-size:13px}
+  .expl{margin-top:16px;background:color-mix(in srgb,var(--bori) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--bori) 25%,transparent);border-radius:12px;padding:14px 16px;font-size:14.5px}
+  .expl b{color:var(--bori)}
+  .foot{margin-top:26px;color:var(--muted);font-size:13px}
+  .credit{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;background:rgba(11,15,20,.95);color:#8b98a8;font-size:12.5px;z-index:20}
+  .credit .dot{width:8px;height:8px;border-radius:50%;background:var(--bori);box-shadow:0 0 0 3px rgba(53,192,111,.2),0 0 12px rgba(53,192,111,.6)}
+  .credit b{color:#fff}.credit a{color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Por dentro · {{NEGOCIO}}</div>
+  <h1>Así se ve tu sistema cuando está funcionando.</h1>
+  <p class="lead">Esto es lo que verías cada mañana: los clientes que entraron de noche, lo que el asistente les respondió, las citas que agendó y confirmó. Los nombres son de ejemplo; el flujo es exactamente el tuyo.</p>
+
+  <div class="steps" role="tablist">
+    <button class="on" data-v="v1">1 · Entran los clientes</button>
+    <button data-v="v2">2 · El asistente responde</button>
+    <button data-v="v3">3 · Cita agendada y confirmada</button>
+    <button data-v="v4">4 · Tus agentes</button>
+  </div>
+
+  <div class="app">
+    <div class="bar"><div class="brand"><span class="sq"></span>{{NEGOCIO}}</div>
+      <nav><span class="on" id="n1">Embudo</span><span id="n2">Conversaciones</span><span id="n3">Agenda</span><span id="n4">Agentes</span></nav>
+      <div class="me">{{CONTACTO}} · Hoy</div></div>
+
+    <div class="view on" id="v1">
+      <div class="kpis">
+        <div class="kpi"><small>Clientes nuevos hoy</small><b>{{N_LEADS}}</b></div>
+        <div class="kpi"><small>Respondidos en</small><b class="g">10 s</b></div>
+        <div class="kpi"><small>Citas agendadas</small><b>{{N_CITAS}}</b></div>
+        <div class="kpi"><small>Sin responder</small><b class="g">0</b></div>
+      </div>
+      <div class="board">{{COLUMNAS}}</div>
+      <div class="expl"><b>Lo que pasa acá:</b> cada mensaje de WhatsApp, Instagram o llamada entra solo al embudo con su servicio de interés, y avanza de etapa según lo que el asistente logró. No se te pierde nadie en el celular.</div>
+    </div>
+
+    <div class="view" id="v2">
+      <div class="inbox">
+        <div class="list">{{LISTA_CONV}}</div>
+        <div class="thread">{{CONVERSACION}}<span class="tag">✓ Datos guardados en el embudo · cita creada en la agenda</span></div>
+      </div>
+      <div class="expl"><b>Lo que pasa acá:</b> el asistente responde en la voz de {{NEGOCIO}}, toma nombre y teléfono, y agenda. Si alguien pide hablar con una persona, te avisa y tú entras a la conversación desde aquí.</div>
+    </div>
+
+    <div class="view" id="v3">
+      <div class="cal">{{CALENDARIO}}</div>
+      <div class="expl"><b>Lo que pasa acá:</b> {{CITA_TEXTO}} La confirmación sale sola 24 horas antes y 2 horas antes. Las citas que nadie confirma son las que se caen; estas ya no.</div>
+    </div>
+
+    <div class="view" id="v4">
+      <div class="agents">
+        <div class="agent"><h3><span class="on"></span>{{ASISTENTE}} · chat</h3><p>Atiende WhatsApp, Instagram y Messenger de {{NEGOCIO}}, 24/7.</p>
+          <dl><dt>Entrenada con</dt><dd>tus servicios, tono y preguntas frecuentes</dd><dt>Hace</dt><dd>responde, precalifica, toma datos, agenda</dd><dt>Escala a humano</dt><dd>cuando el cliente lo pide o hay queja</dd></dl>
+          <p style="margin-top:10px"><a href="../chat/">Probarla ahora →</a></p></div>
+        <div class="agent"><h3><span class="on"></span>{{ASISTENTE}} · voz</h3><p>Contesta el teléfono de {{NEGOCIO}} cuando nadie puede, con voz natural en español de Puerto Rico e inglés.</p>
+          <dl><dt>Responde en</dt><dd>menos de 1 segundo</dd><dt>Hace</dt><dd>orienta, toma nombre y teléfono, agenda</dd><dt>Transferencias</dt><dd>a tu equipo cuando corresponde</dd></dl>
+          <p style="margin-top:10px"><a href="../voz/">Hablar con ella →</a></p></div>
+      </div>
+      <div class="expl"><b>Lo que pasa acá:</b> tus dos agentes viven en el mismo lugar que tu embudo y tu agenda. Se reentrenan cuando cambias un servicio o un precio, sin que tengas que tocar nada técnico.</div>
+    </div>
+  </div>
+
+  <p class="foot">Este recorrido es una simulación con datos de ejemplo. En la llamada te lo mostramos en vivo con tu cuenta.</p>
+</div>
+<div class="credit"><span class="dot"></span><span>Hecho por <b>AI Borinquen</b> · AutoFlow</span><span>·</span><a href="../">Volver al MVP</a></div>
+<script>
+(function(){
+  var bs=document.querySelectorAll('.steps button'), vs=document.querySelectorAll('.view'), ns=['n1','n2','n3','n4'];
+  bs.forEach(function(b,i){ b.addEventListener('click', function(){
+    bs.forEach(function(x){x.classList.remove('on')}); b.classList.add('on');
+    vs.forEach(function(v){ v.classList.remove('on'); }); var v=document.getElementById(b.dataset.v); v.classList.add('on');
+    ns.forEach(function(n,j){ document.getElementById(n).classList.toggle('on', j===i); });
+    v.querySelectorAll('.lead-card,.msg').forEach(function(el,k){ el.style.animation='none'; void el.offsetWidth; el.style.animation=''; el.style.animationDelay=(k*90)+'ms'; });
+  }); });
+  document.querySelectorAll('#v1 .lead-card').forEach(function(el,k){ el.style.animationDelay=(k*120)+'ms'; });
+})();
+</script>
+</body>
+</html>

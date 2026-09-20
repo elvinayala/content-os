@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Dr. Alfred J. Haber Crespo · Caguas — Demo de atención por chat</title>
+<meta name="description" content="Demo de atención al paciente por WhatsApp para la oficina del Dr. Alfred J. Haber Crespo (Caguas, PR), con AutoFlow de AI Borinquen." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%232e5da8'/%3E%3Cpath d='M13 8h6v5h5v6h-5v5h-6v-5H8v-6h5z' fill='%23fff'/%3E%3C/svg%3E" />
+<style>
+  :root{
+    /* WhatsApp */
+    --wa-header:#008069;
+    --wa-header-2:#017561;
+    --wa-body:#efe7de;
+    --wa-in:#ffffff;      /* incoming (negocio) */
+    --wa-out:#d9fdd3;     /* outgoing (cliente) */
+    --wa-tick:#53bdeb;    /* leído */
+    --wa-time:#667781;
+    --wa-text:#111b21;
+    --wa-sub:rgba(255,255,255,.85);
+    /* Dr. Alfred (medspa) */
+    --med:#2e5da8;
+    --med-deep:#16345f;
+    --med-gold:#4ca546;
+    /* AI Borinquen */
+    --bori:#10b981;
+    --bori-2:#22d3ee;
+    font-synthesis:none;
+    -webkit-font-smoothing:antialiased;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--wa-text);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(46,93,168,.22), transparent 60%),
+      radial-gradient(1000px 700px at 100% 120%, rgba(76,165,70,.14), transparent 55%),
+      #0c0d10;
+    min-height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:28px 16px 18px;
+    gap:16px;
+  }
+
+  /* ---------- Device frame (desktop) ---------- */
+  .stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .device{
+    width:392px;height:812px;max-height:calc(100dvh - 96px);
+    background:#000;border-radius:46px;padding:11px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 0 2px #2a2a2e inset, 0 2px 0 rgba(255,255,255,.06) inset;
+    position:relative;
+  }
+  .device::after{ /* notch */
+    content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:128px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:6;
+  }
+  .screen{
+    position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;
+    background:var(--wa-body);display:flex;flex-direction:column;
+  }
+
+  /* ---------- Header ---------- */
+  .wa-head{
+    background:var(--wa-header);color:#fff;z-index:4;
+    box-shadow:0 1px 2px rgba(0,0,0,.15);
+  }
+  .statusbar{display:flex;justify-content:space-between;align-items:center;
+    padding:9px 20px 1px;font-size:13px;font-weight:600;letter-spacing:.3px}
+  .statusbar .sb-ic{display:flex;align-items:center;gap:6px}
+  .statusbar .sb-ic svg{height:13px;width:auto;fill:#fff;display:block}
+  .head-row{display:flex;align-items:center;gap:7px;padding:5px 10px 10px}
+  .wa-head .back{opacity:.95;display:flex;flex-shrink:0}
+  .wa-head .back svg{width:20px;height:20px}
+  .avatar{
+    width:40px;height:40px;border-radius:50%;flex-shrink:0;
+    background:var(--med);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 2px rgba(255,255,255,.25);
+    overflow:hidden;
+  }
+  .avatar svg{width:26px;height:26px}
+  .who{flex:1;min-width:0;line-height:1.2;margin-left:2px}
+  .who .name{display:flex;align-items:center;gap:5px;font-weight:600;font-size:15px;min-width:0}
+  .who .name .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who .name .verified{width:15px;height:15px;flex-shrink:0}
+  .who .status{font-size:12.5px;color:var(--wa-sub);height:15px;overflow:hidden}
+  .who .status .typing-txt{color:#c9f7d8}
+  .head-actions{display:flex;align-items:center;gap:14px;padding:0 2px 0 4px;opacity:.95;flex-shrink:0}
+  .head-actions svg{width:19px;height:19px}
+
+  /* ---------- Chat body ---------- */
+  .wa-body{
+    position:relative;flex:1;overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    padding:10px 8px 8px;
+  }
+  .doodle{position:absolute;inset:0;width:100%;height:100%;opacity:.05;pointer-events:none;z-index:0}
+  .thread{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px;padding-bottom:6px}
+
+  .chip{align-self:center;background:#e2f7cb;color:#54656f;font-size:12px;
+    padding:5px 12px;border-radius:8px;margin:8px 0;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+  .notice{align-self:center;max-width:85%;text-align:center;background:#fff6d6;color:#54656f;
+    font-size:11.5px;line-height:1.5;padding:6px 12px;border-radius:8px;margin:2px 0 6px;
+    box-shadow:0 1px .5px rgba(0,0,0,.13)}
+  .notice b{color:#3b4a54}
+
+  /* Business profile card */
+  .bizcard{align-self:center;width:min(320px,92%);background:#fff;border-radius:12px;
+    padding:16px 16px 14px;margin:2px 0 10px;text-align:center;
+    box-shadow:0 1px 1px rgba(0,0,0,.1)}
+  .bizcard img{width:190px;max-width:78%;height:auto;display:block;margin:2px auto 9px}
+  .lockup{margin:4px auto 10px}
+  .lk-name{font-family:Georgia,'Times New Roman',serif;font-size:20px;color:var(--med-deep);letter-spacing:.5px}
+  .lk-sub{margin-top:3px;font-size:9.5px;letter-spacing:.18em;color:var(--med-gold);font-weight:700}
+  .bizcard .tag{font-size:12px;color:#54656f;line-height:1.5}
+  .bizcard .meta{margin-top:9px;font-size:11.5px;color:var(--wa-header-2);
+    display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600}
+  .bizcard .meta .dot{width:7px;height:7px;border-radius:50%;background:#25d366;box-shadow:0 0 0 3px rgba(37,211,102,.18)}
+
+  /* Bubbles */
+  .row{display:flex;width:100%}
+  .row.in{justify-content:flex-start}
+  .row.out{justify-content:flex-end}
+  .bubble{
+    position:relative;max-width:80%;padding:6px 9px 8px;border-radius:8px;
+    font-size:14.4px;line-height:1.34;word-wrap:break-word;
+    box-shadow:0 1px .5px rgba(0,0,0,.13);animation:pop .18s ease-out;
+  }
+  .bubble b{font-weight:600}
+  .row.in .bubble{background:var(--wa-in);border-top-left-radius:2px}
+  .row.out .bubble{background:var(--wa-out);border-top-right-radius:2px}
+  .bubble .tail{position:absolute;top:0;width:9px;height:13px}
+  .row.in .bubble .tail{left:-8px}
+  .row.out .bubble .tail{right:-8px}
+  .bubble .txt{white-space:normal}
+  .bubble .stamp{float:right;margin:5px 0 -2px 10px;font-size:10.5px;color:var(--wa-time);
+    display:flex;align-items:center;gap:3px;line-height:1;user-select:none}
+  .bubble .stamp .checks{width:15px;height:11px;color:#8696a0;transition:color .3s}
+  .bubble .stamp .checks.read{color:var(--wa-tick)}
+  @keyframes pop{from{transform:translateY(4px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+
+  /* Typing indicator bubble */
+  .typing{display:flex;gap:4px;align-items:center;padding:11px 12px}
+  .typing span{width:8px;height:8px;border-radius:50%;background:#9aa6ac;animation:blink 1.3s infinite ease-in-out}
+  .typing span:nth-child(2){animation-delay:.18s}
+  .typing span:nth-child(3){animation-delay:.36s}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+  /* ---------- Composer ---------- */
+  .wa-foot{padding:7px 8px 9px;display:flex;align-items:flex-end;gap:7px;background:transparent;z-index:3}
+  .composer{flex:1;background:#fff;border-radius:22px;display:flex;align-items:center;gap:8px;
+    padding:9px 12px;min-height:44px;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+  .composer .ic{color:#54656f;display:flex;flex-shrink:0}
+  .composer .ic svg{width:22px;height:22px}
+  .field{flex:1;font-size:14.5px;color:var(--wa-text);min-height:20px;line-height:20px;
+    max-height:96px;overflow-y:auto;cursor:text;
+    outline:none;white-space:pre-wrap;word-break:break-word}
+  .field.empty::before{content:"Escribe un mensaje";color:#8696a0;pointer-events:none}
+  .sendbtn{cursor:pointer}
+  .caret{display:inline-block;width:1.5px;height:17px;background:var(--wa-header);
+    vertical-align:-3px;margin-left:1px;animation:caret 1s steps(1) infinite}
+  @keyframes caret{50%{opacity:0}}
+  .sendbtn{width:44px;height:44px;border-radius:50%;background:var(--wa-header);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .sendbtn svg{width:22px;height:22px}
+
+  /* Replay pill */
+  .replay{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);
+    white-space:nowrap;background:rgba(17,27,33,.92);color:#fff;font-size:13px;font-weight:600;
+    padding:10px 18px;border-radius:22px;display:none;align-items:center;gap:8px;
+    cursor:pointer;z-index:5;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+  .replay.show{display:flex;animation:pop .25s ease-out}
+  .replay svg{width:15px;height:15px}
+
+  /* ---------- AI Borinquen credit ---------- */
+  .credit{display:flex;align-items:center;gap:9px;color:#c9cdd6;font-size:12.5px;letter-spacing:.2px}
+  .credit .bori-dot{width:8px;height:8px;border-radius:50%;background:var(--bori);
+    box-shadow:0 0 0 3px rgba(16,185,129,.22), 0 0 12px rgba(16,185,129,.65)}
+  .credit b{color:#fff;font-weight:600}
+  .credit .sep{opacity:.4}
+
+  /* ---------- Mobile: full-bleed ---------- */
+  @media (max-width:480px){
+    body{padding:0;background:var(--wa-body);gap:0}
+    .stage{gap:0;width:100%;height:100dvh}
+    .device{width:100%;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none}
+    .device::after{display:none}
+    .screen{border-radius:0}
+    .statusbar{display:none}
+    .wa-head{padding-top:env(safe-area-inset-top,0)}
+    .credit{position:fixed;bottom:0;left:0;right:0;justify-content:center;
+      padding:6px;background:rgba(12,13,16,.9);z-index:20;backdrop-filter:blur(6px)}
+    .wa-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom,0))}
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="device">
+      <div class="screen">
+        <!-- Header -->
+        <div class="wa-head">
+          <div class="statusbar" aria-hidden="true">
+            <span class="sb-time">9:41</span>
+            <span class="sb-ic">
+              <svg viewBox="0 0 20 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4.5" width="3" height="7.5" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+              <svg viewBox="0 0 18 13"><path d="M9 13 .3 4.3a12 12 0 0 1 17.4 0L9 13Zm0-4a4 4 0 0 0-2.8 1.2L9 13l2.8-2.8A4 4 0 0 0 9 9Z"/></svg>
+              <svg viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#fff" stroke-width="1.2"/><rect x="3" y="3" width="16" height="7" rx="1.5"/><rect x="23" y="4.5" width="2" height="4" rx="1"/></svg>
+            </span>
+          </div>
+          <div class="head-row">
+          <span class="back" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M15.6 6 14.2 4.6 6.8 12l7.4 7.4 1.4-1.4-6-6z"/></svg>
+          </span>
+          <div class="avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.3 5 13.4a4.6 4.6 0 0 1 0-6.6 4.7 4.7 0 0 1 6.6 0l.4.4.4-.4a4.7 4.7 0 0 1 6.6 0 4.6 4.6 0 0 1 0 6.6z" fill="#fff"/><path d="M4.5 12h4l1.5-3 2.5 5 1.5-2h5.5" stroke="#2e5da8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </div>
+          <div class="who">
+            <div class="name">
+              <span class="nm">Dr. Haber Crespo</span>
+              <svg class="verified" viewBox="0 0 24 24" fill="none" aria-label="verificado"><path d="M12 2l2.2 1.6 2.7-.2 1 2.5 2.3 1.4-.6 2.6.9 2.6-2 1.8.1 2.7-2.6.7-1.5 2.3-2.6-.6L12 22l-2.4-1.3-2.6.6-1.5-2.3-2.6-.7.1-2.7-2-1.8.9-2.6L1.8 7.3l2.3-1.4 1-2.5 2.7.2z" fill="#4fc3f7"/><path d="M10.6 14.6 8 12l-1.1 1.1 3.7 3.7 6.5-6.5L16 9.2z" fill="#fff"/></svg>
+            </div>
+            <div class="status"><span id="status">en línea</span></div>
+          </div>
+          <div class="head-actions" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.5c-1.2 0-2.4-.2-3.5-.6a1 1 0 0 0-1 .2l-2.2 2.2a15.1 15.1 0 0 1-6.6-6.6l2.2-2.2a1 1 0 0 0 .2-1C8.7 6.4 8.5 5.2 8.5 4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1 17 17 0 0 0 17 17 1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+          </div>
+          </div><!-- /head-row -->
+        </div>
+
+        <!-- Body -->
+        <div class="wa-body" id="body">
+          <svg class="doodle" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <pattern id="p" width="150" height="150" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
+                <g fill="none" stroke="#7a6a58" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- corazón --><path d="M26 22c-2.5-2.6-6.5-2.6-9 0s-2.5 6.6 0 9l9 9 9-9c2.5-2.4 2.5-6.4 0-9s-6.5-2.6-9 0z"/>
+                  <!-- hoja --><path d="M104 18c8 0 14 6 14 14 0 6-4 10-10 10-5 0-9-4-9-9 0-6 5-15 5-15z"/><path d="M107 27c2 3 5 6 8 8"/>
+                  <!-- gota (suero) --><path d="M30 96c0-5 8-14 8-14s8 9 8 14a8 8 0 1 1-16 0z"/>
+                  <!-- cruz médica --><path d="M112 112h8v8h8v8h-8v8h-8v-8h-8v-8h8z"/>
+                  <!-- destello --><path d="M70 60l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+                </g>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#p)"/>
+          </svg>
+
+          <div class="thread" id="thread">
+            <div class="chip">HOY</div>
+            <div class="notice">🔒 Los mensajes están cifrados de extremo a extremo. Nadie fuera de este chat, ni siquiera la oficina del Dr. Haber Crespo, puede leerlos.</div>
+            <div class="bizcard">
+              <div class="lockup"><div class="lk-name">Dr. Alfred J. Haber Crespo</div><div class="lk-sub">MEDICINA&nbsp;GENERAL&nbsp;·&nbsp;ESTÉTICA&nbsp;·&nbsp;CAGUAS,&nbsp;PR</div></div>
+              <div class="tag">Medicina primaria y preventiva · Botox y fillers · Control de peso · Sueros vitamínicos · Suplementos · Estética · Vacunas — Urb. Turabo Gardens, Caguas, PR</div>
+              <div class="meta"><span class="dot"></span> Cuenta de empresa · Responde al instante · 24/7</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Composer -->
+        <div class="wa-foot">
+          <div class="composer">
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-3.5 7a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM12 18c-2.3 0-4.3-1.4-5.2-3.5h10.4C16.3 16.6 14.3 18 12 18z"/></svg></span>
+            <div class="field empty" id="field" contenteditable="true" role="textbox" aria-label="Escribe un mensaje" spellcheck="false"></div>
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11a4.5 4.5 0 0 1-9 0V5a3 3 0 0 1 6 0v11a1.5 1.5 0 0 1-3 0V6H6v10a3 3 0 0 0 6 0V5a4.5 4.5 0 0 0-9 0v12a6 6 0 0 0 12 0V6z"/></svg></span>
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm8-3h-3l-1.4-1.6A2 2 0 0 0 14 4h-4a2 2 0 0 0-1.6.8L7 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-8 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></span>
+          </div>
+          <div class="sendbtn" id="sendbtn" role="button" tabindex="0" aria-label="Enviar">
+            <svg id="send-mic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crédito AI Borinquen -->
+    <div class="credit">
+      <span class="bori-dot"></span>
+      <span>Desarrollado por <b>AI Borinquen</b></span>
+      <span class="sep">·</span>
+      <span>AutoFlow</span>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var thread  = document.getElementById('thread');
+  var body    = document.getElementById('body');
+  var status  = document.getElementById('status');
+  var field   = document.getElementById('field');
+  var sendbtn = document.getElementById('sendbtn');
+
+  var TAIL_IN  = '<svg class="tail" viewBox="0 0 9 13"><path d="M9 0H1.5C.4 0 0 1 0 2v11c0-6 4-9 9-11z" fill="#fff"/></svg>';
+  var TAIL_OUT = '<svg class="tail" viewBox="0 0 9 13"><path d="M0 0h7.5C8.6 0 9 1 9 2v11c0-6-4-9-9-11z" fill="#d9fdd3"/></svg>';
+  var CHECKS   = '<svg class="checks" viewBox="0 0 18 12" fill="none"><path d="M1 6.5 4.2 10 11 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 9.6 7.5 10.6 14.5 2.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var SEND_ARROW = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg>';
+  var MIC = document.getElementById('send-mic').outerHTML;
+
+  function stamp(){ var d=new Date(),h=d.getHours(),m=d.getMinutes(),ap=h<12?'a.m.':'p.m.'; h=h%12||12; return h+':'+String(m).padStart(2,'0')+' '+ap; }
+  var sleep=function(ms){ return new Promise(function(r){ setTimeout(r,ms); }); };
+  var toBottom=function(){ body.scrollTop=body.scrollHeight; };
+
+  // ---------- Render ----------
+  function addBot(html){
+    var row=document.createElement('div'); row.className='row in';
+    row.innerHTML='<div class="bubble">'+TAIL_IN+'<span class="txt">'+html+'</span><span class="stamp">'+stamp()+'</span></div>';
+    thread.appendChild(row); toBottom();
+  }
+  function addCli(text){
+    var row=document.createElement('div'); row.className='row out';
+    row.innerHTML='<div class="bubble">'+TAIL_OUT+'<span class="txt"></span><span class="stamp">'+stamp()+'<span class="ck">'+CHECKS+'</span></span></div>';
+    row.querySelector('.txt').textContent=text;
+    thread.appendChild(row); toBottom();
+    return row;
+  }
+  function showTyping(){
+    status.innerHTML='<span class="typing-txt">escribiendo…</span>';
+    var row=document.createElement('div'); row.className='row in';
+    row.innerHTML='<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+    thread.appendChild(row); toBottom(); return row;
+  }
+  function clearTyping(row){ if(row) row.remove(); status.textContent='en línea'; }
+
+  // ---------- Idioma / matching ----------
+  function norm(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+  function has(t, arr){ for(var i=0;i<arr.length;i++){ if(t.indexOf(arr[i])>-1) return true; } return false; }
+  function isEnglish(t){
+    if(/[¿¡ñ]/.test(t)) return false;
+    var en=/\b(the|you|your|do|does|what|where|when|how|hi|hello|hey|thanks|thank|please|need|want|looking|appointment|schedule|book|price|cost|hours|open|insurance|weight|botox|filler|iv|drip|vitamins|supplements|facial|doctor|primary care|checkup)\b/;
+    var es=/\b(hola|buenas|gracias|donde|cuando|cuanto|necesito|quiero|busco|cita|precio|horario|seguro|plan|bajar|peso|suero|suplemento|facial|doctor|medicina|para|con|una|el|la|si)\b/;
+    return en.test(t) && !es.test(t);
+  }
+
+  // ---------- Servicios (oferta de cita al final de cada uno) ----------
+  var awaitingYesNo=false;
+  function offerCita(topic){
+    awaitingYesNo=true;
+    var n={ botox:{es:'una evaluación estética',en:'an aesthetic evaluation'},
+            peso:{es:'tu evaluación inicial del programa de peso',en:'your initial weight-program evaluation'},
+            sueros:{es:'tu suero',en:'your IV drip'},
+            estetica:{es:'tu tratamiento',en:'your treatment'},
+            primaria:{es:'tu cita de medicina primaria',en:'your primary care appointment'},
+            general:{es:'una cita',en:'an appointment'} }[topic]||{es:'una cita',en:'an appointment'};
+    return lang==='es'
+      ? ' ¿Te gustaría que te coordine '+n.es+'? 📅'
+      : ' Would you like me to schedule '+n.en+'? 📅';
+  }
+
+  var intents=[
+    { k:['emergencia','urgencia','dolor de pecho','no puedo respirar','desmay','sangrado fuerte','emergency','chest pain','cant breathe',"can't breathe",'unconscious','severe bleeding'],
+      es:'⚠️ Si es una <b>emergencia médica</b>, por favor llama al <b>9-1-1</b> o ve a la sala de emergencias más cercana ahora mismo. Este chat no atiende emergencias.<br><br>Si no es una emergencia, dime en qué te puedo ayudar.',
+      en:'⚠️ If this is a <b>medical emergency</b>, please call <b>9-1-1</b> or go to the nearest emergency room right now. This chat does not handle emergencies.<br><br>If it isn’t an emergency, tell me how I can help.' },
+    { k:['botox','filler','fillers','relleno','arrugas','labios','lineas de expresion','wrinkle','lips'],
+      es:'✨ Sí — hacemos <b>Botox y fillers</b>, aplicados por nuestro equipo médico. Todo empieza con una <b>evaluación</b> para diseñar un plan seguro y natural para ti.{CITA}',
+      en:'✨ Yes — we offer <b>Botox and fillers</b>, administered by our medical team. Everything starts with an <b>evaluation</b> to design a safe, natural plan for you.{CITA}',
+      topic:'botox' },
+    { k:['peso','bajar de peso','adelgazar','obesidad','weight','lose weight','diet','dieta'],
+      es:'💪 ¡Los resultados sí se logran! Tenemos un <b>programa de control de peso supervisado por el doctor</b>: evaluación inicial, plan personalizado y seguimiento. Sin fórmulas mágicas — con acompañamiento médico real.{CITA}',
+      en:'💪 We have a <b>physician-supervised weight management program</b>: initial evaluation, a personalized plan and follow-up. No magic formulas — real medical guidance.{CITA}',
+      topic:'peso' },
+    { k:['suero','sueros','vitaminico','intravenos','iv drip','iv therapy','vitamin drip','hidratacion','energia'],
+      es:'💧 Ofrecemos <b>sueros vitamínicos IV</b> — hidratación y vitaminas según tu necesidad (energía, recuperación, bienestar). Antes de tu primer suero hacemos una evaluación breve.{CITA}',
+      en:'💧 We offer <b>IV vitamin drips</b> — hydration and vitamins based on your needs (energy, recovery, wellness). A brief evaluation comes before your first drip.{CITA}',
+      topic:'sueros' },
+    { k:['suplemento','suplementos','naturales','vitaminas para comprar','supplements','natural'],
+      es:'🌿 Sí, vendemos <b>suplementos naturales</b> en la oficina y te orientamos según tu meta (energía, inmunidad, bienestar). Pasa por la oficina o pregúntame por alguno en específico.',
+      en:'🌿 Yes, we sell <b>natural supplements</b> at the office and guide you according to your goal (energy, immunity, wellness). Stop by the office or ask me about a specific one.' },
+    { k:['estetica','facial','faciales','corporal','corporales','limpieza','tratamiento','piel','skin','body treatment'],
+      es:'🌸 Nuestra área de <b>estética</b> ofrece tratamientos <b>faciales y corporales</b> personalizados según tu piel y tu meta.{CITA}',
+      en:'🌸 Our <b>aesthetics</b> area offers personalized <b>facial and body treatments</b> based on your skin and your goal.{CITA}',
+      topic:'estetica' },
+    { k:['medicina primaria','medico primario','doctor de cabecera','chequeo','primary care','physical','checkup','consulta general'],
+      es:'🩺 El <b>Dr. Haber Crespo</b> atiende <b>medicina primaria y preventiva</b>: chequeos, seguimiento y el cuidado general de tu salud. Aceptamos planes médicos.{CITA}',
+      en:'🩺 <b>Dr. Haber Crespo</b> offers <b>primary and preventive care</b>: checkups, follow-ups and general health care. We accept medical plans.{CITA}',
+      topic:'primaria' },
+{ k:['cita','agendar','reservar','appointment','schedule','book','disponibilidad','availability'],
+      es:'¡Con mucho gusto! 📅 Dime para qué servicio la quieres — <b>Botox y fillers</b>, <b>control de peso</b>, <b>sueros vitamínicos</b>, <b>estética</b> o <b>medicina primaria</b> — y déjame tu <b>nombre y teléfono</b>. El equipo te contacta para coordinar día y hora.',
+      en:'With pleasure! 📅 Tell me which service — <b>Botox & fillers</b>, <b>weight management</b>, <b>IV vitamin drips</b>, <b>aesthetics</b> or <b>primary care</b> — and leave me your <b>name and phone</b>. Our team will reach out to coordinate day and time.' },
+    { k:['vacuna','vacunas','vaccine','vaccines','influenza','flu','tetano','hpv','covid','hepatitis','neumonia','culebrilla','varicela','rsv','meningitis','zoster'],
+      es:'💉 Sí — ofrecemos <b>vacunas</b>: tétano, HPV, neumonía, hepatitis, meningitis, culebrilla (herpes zóster), RSV, COVID-19 y varicela. Según tu plan médico, muchas pueden ir sin copago — el equipo te lo confirma.{CITA}',
+      en:'💉 Yes — we offer <b>vaccines</b>: tetanus, HPV, pneumonia, hepatitis, meningitis, shingles, RSV, COVID-19 and chickenpox. Depending on your medical plan, many may have no copay — our team will confirm.{CITA}' },
+    { k:['telefono','llamar','contacto','correo','email','phone','call','contact'],
+      es:'📞 Puedes llamarnos al <b>939-715-0009</b> o al <b>787-456-1775</b>. Y por aquí te atiendo <b>24/7</b>.{CITA}',
+      en:'📞 You can call us at <b>939-715-0009</b> or <b>787-456-1775</b>. And I am here for you <b>24/7</b>.{CITA}' },
+    { k:['seguro','plan medico','aseguradora','insurance','plan de salud','mcs','triple s','humana','first medical','vital'],
+      es:'Para <b>medicina primaria</b> trabajamos con planes médicos — el equipo te confirma si aceptamos el tuyo. ¿Cuál es tu plan? Déjame también tu <b>teléfono</b> y te confirmamos enseguida. 📋',
+      en:'For <b>primary care</b> we work with medical plans — our team will confirm if we accept yours. Which plan do you have? Leave me your <b>phone</b> and we’ll confirm right away. 📋' },
+    { k:['precio','costo','cuanto cuesta','cuanto vale','price','cost','how much'],
+      es:'Los precios varían según el tratamiento y tu plan personalizado 📝. En tu <b>evaluación</b> te damos el detalle completo, sin compromiso.{CITA}',
+      en:'Prices vary by treatment and your personalized plan 📝. At your <b>evaluation</b> we’ll give you full details, no strings attached.{CITA}',
+      topic:'general' },
+    { k:['horario','hora','abren','abierto','hours','open','schedule of the office'],
+      es:'🕒 Nuestro horario:<br>• Lunes: 10:00am – 6:00pm<br>• Martes a viernes: 8:00am – 4:00pm<br>• Sábado: 9:00am – 3:00pm (estética)<br><br>📞 939-715-0009 · 787-456-1775{CITA}',
+      en:'🕒 Our hours:<br>• Monday: 10:00am – 6:00pm<br>• Tuesday–Friday: 8:00am – 4:00pm<br>• Saturday: 9:00am – 3:00pm (aesthetics)<br><br>📞 939-715-0009 · 787-456-1775{CITA}' },
+    { k:['ubicacion','direccion','donde estan','donde queda','location','address','where are you'],
+      es:'📍 Estamos en <b>Caguas</b>: Urb. Turabo Gardens, 5ta Sección, Calle 42 L-1, Caguas PR 00727 — frente a la Farmacia Santa Ana. 📞 939-715-0009{CITA}',
+      en:'📍 We are in <b>Caguas</b>: Urb. Turabo Gardens, 5ta Sección, Calle 42 L-1, Caguas PR 00727 — across from Farmacia Santa Ana. 📞 939-715-0009{CITA}' },
+    { k:['gracias','thank','muchas gracias','bye','adios','hasta luego'],
+      es:'¡Con mucho gusto! 💛 Gracias por escribir a la oficina del <b>Dr. Haber Crespo</b>. Aquí estamos 24/7 para lo que necesites.',
+      en:'My pleasure! 💛 Thanks for contacting <b>Dr. Alfred’s</b> office. We’re here 24/7 whenever you need us.' },
+    { k:['hola','buenas','buenos dias','buenas tardes','buenas noches','saludos','hi','hello','hey','good morning','good afternoon'],
+      es:'👋 ¡Hola! ¿En qué te puedo ayudar hoy? Puedo orientarte y coordinarte citas de <b>Botox y fillers</b>, <b>control de peso</b>, <b>sueros vitamínicos</b>, <b>suplementos</b>, <b>estética</b> o <b>medicina primaria</b>.',
+      en:'👋 Hi! How can I help you today? I can guide you and book appointments for <b>Botox & fillers</b>, <b>weight management</b>, <b>IV vitamin drips</b>, <b>supplements</b>, <b>aesthetics</b> or <b>primary care</b>.' }
+  ];
+  var fallback={
+    es:'Puedo ayudarte con <b>Botox y fillers</b>, <b>control de peso</b>, <b>sueros vitamínicos</b>, <b>suplementos naturales</b>, <b>estética facial y corporal</b> o <b>medicina primaria</b>. ¿Cuál te interesa? 🙂',
+    en:'I can help with <b>Botox & fillers</b>, <b>weight management</b>, <b>IV vitamin drips</b>, <b>natural supplements</b>, <b>facial & body aesthetics</b> or <b>primary care</b>. Which one interests you? 🙂'
+  };
+  var leadReply={
+    es:'¡Gracias! ✅ Registré tus datos y el equipo de la oficina del <b>Dr. Haber Crespo</b> te contacta pronto para confirmar tu cita. ¿Algo más en lo que te pueda ayudar?',
+    en:'Thank you! ✅ I’ve logged your details and <b>Dr. Alfred’s</b> team will contact you shortly to confirm your appointment. Anything else I can help with?'
+  };
+  var yesReply={
+    es:'¡Perfecto! 📅 Déjame tu <b>nombre y teléfono</b> y el equipo te contacta para coordinar el día y la hora que mejor te convengan.',
+    en:'Perfect! 📅 Leave me your <b>name and phone</b> and our team will contact you to coordinate the day and time that work best for you.'
+  };
+  var noReply={
+    es:'Sin problema 🙂 ¿Hay algo más en lo que te pueda orientar?',
+    en:'No problem 🙂 Anything else I can help you with?'
+  };
+
+  function respond(text){
+    var t=norm(text);
+    var en=isEnglish(t);
+    if(en && lang==='es'){ setLang('en'); }
+    var L=lang;
+    // 0) emergencia SIEMPRE primero
+    if(has(t,intents[0].k)){ awaitingYesNo=false; return en?intents[0].en:intents[0].es; }
+    // 1) teléfono/email -> lead
+    if(/\b\d[\d\s().-]{6,}\d\b/.test(text) || /@/.test(text)){ awaitingYesNo=false; return L==='en'?leadReply.en:leadReply.es; }
+    // 2) sí/no a la oferta de cita
+    if(awaitingYesNo && /\b(si|sí|claro|dale|ok|okay|yes|sure|perfecto|bueno)\b/.test(t)){ awaitingYesNo=false; return L==='en'?yesReply.en:yesReply.es; }
+    if(awaitingYesNo && /\b(no|luego|despues|later|not now|todavia no)\b/.test(t)){ awaitingYesNo=false; return L==='en'?noReply.en:noReply.es; }
+    // 3) intents
+    for(var i=1;i<intents.length;i++){
+      if(has(t,intents[i].k)){
+        var msg = L==='en'?intents[i].en:intents[i].es;
+        if(msg.indexOf('{CITA}')>-1){ msg = msg.replace('{CITA}', offerCita(intents[i].topic||'general')); }
+        else { awaitingYesNo=false; }
+        return msg;
+      }
+    }
+    return L==='en'?fallback.en:fallback.es;
+  }
+
+  // ---------- Idioma ----------
+  var lang='es';
+  function setLang(l){ lang=l; }
+
+  // ---------- Composer ----------
+  var busy=false;
+  function fieldText(){ return (field.innerText||'').replace(/ /g,' ').replace(/\n+$/,'').trim(); }
+  function refresh(){
+    if(fieldText()){ field.classList.remove('empty'); sendbtn.innerHTML=SEND_ARROW; }
+    else { field.classList.add('empty'); if(!field.textContent) field.innerHTML=''; sendbtn.innerHTML=MIC; }
+  }
+  field.addEventListener('input', refresh);
+  field.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+  sendbtn.addEventListener('click', send);
+  sendbtn.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); send(); } });
+
+  async function send(){
+    var text=fieldText();
+    if(!text || busy) return;
+    busy=true;
+    field.innerHTML=''; field.classList.add('empty'); sendbtn.innerHTML=MIC;
+    var row=addCli(text);
+    await sleep(400);
+    var ck=row.querySelector('.checks'); if(ck) ck.classList.add('read');
+    var reply=respond(text);
+    var t=showTyping();
+    await sleep(650+Math.min(1500, reply.length*8));
+    clearTyping(t);
+    addBot(reply);
+    busy=false;
+    field.focus();
+  }
+
+  // ---------- Saludo inicial ----------
+  (async function(){
+    await sleep(500);
+    var t=showTyping(); await sleep(1150); clearTyping(t);
+    addBot('👋 ¡Hola! Soy <b>Camila</b>, la asistente virtual de la oficina del <b>Dr. Alfred J. Haber Crespo</b> en Caguas.<br><br>Te puedo orientar y coordinar citas de: <b>Botox y fillers</b> ✨, <b>control de peso</b> 💪, <b>sueros vitamínicos</b> 💧, <b>suplementos naturales</b> 🌿, <b>estética facial y corporal</b> 🌸, <b>vacunas</b> 💉 y <b>medicina primaria</b> 🩺.<br><br>¿En qué te ayudo hoy? <i>I can also help you in English.</i>');
+  })();
+
+  // Hook de prueba (solo con ?debug)
+  try{ if(location.search.indexOf('debug')>-1){ window.__camila={respond:respond,setLang:setLang}; } }catch(e){}
+})();
+</script>
+</body>
+</html>

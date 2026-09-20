@@ -1,0 +1,320 @@
+{
+  "actualizadoEl": "2026-09-18",
+  "trimestre": "Q4 2026 · 18 sep → 12 dic",
+  "reglas": [
+    "Ninguna empresa nueva hasta el 12/dic. Toda idea va a vault/ideas/ con su trigger de reapertura.",
+    "La coordinación de producción la hace Sofi (agente): /coordinar-produccion 7:30 AM. Elvin escribe guiones y decide marketing; no se contrata productor/a.",
+    "Level Up no escala pauta hasta churn <8%/mes.",
+    "Elvin aprueba solo gastos >$5K, contrataciones, estrategia y contratos de creadores.",
+    "Hora de cierre: 8 PM."
+  ],
+  "compuertas": [
+    {
+      "fecha": "2026-10-15",
+      "que": "10 demos enviadas · productora contratada · 25 posts de Shadow"
+    },
+    {
+      "fecha": "2026-11-15",
+      "que": "Compuerta de Resuelto (≥3 plomeros y ≥30 trabajos) · Skool abierto · churn LU 2 meses"
+    },
+    {
+      "fecha": "2026-12-12",
+      "que": "Cierre del trimestre contra las metas · decisión de reaperturas Q1 2027"
+    }
+  ],
+  "unidades": [
+    {
+      "id": "level-up",
+      "nombre": "Level Up Media",
+      "capa": "motor",
+      "resumen": "El cash principal. Balde con hueco: churn 115% en junio, ventas nuevas cayeron a $26–27K.",
+      "meta": "Churn <8%/mes · $125K/mes · ventas nuevas $60K",
+      "horasElvin": "4 h/sem",
+      "jugada": "Jugada 1: cerrar el balde (onboarding captura contenido, scoreboard por closer, cross-sell AutoFlow)",
+      "numeros": [
+        {
+          "label": "FACTURA",
+          "valor": "$80–125K/mes"
+        },
+        {
+          "label": "CHURN JUN",
+          "valor": "115%"
+        },
+        {
+          "label": "CAC",
+          "valor": "$1,546"
+        },
+        {
+          "label": "VENTAS NUEVAS",
+          "valor": "$26–27K"
+        },
+        {
+          "label": "WINS 25D",
+          "valor": "0"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "Dashboard",
+          "href": "/dashboard"
+        },
+        {
+          "label": "Pipeline",
+          "href": "/ceo/pipeline"
+        }
+      ]
+    },
+    {
+      "id": "ai-borinquen",
+      "nombre": "AI Borinquen (AutoFlow)",
+      "capa": "motor",
+      "resumen": "El producto innovador. No tiene problema de producto, tiene problema de demostración: 3 cierres/mes, 50% no-show.",
+      "meta": "$30K/mes · 6 cierres/mes con demo · no-show <30%",
+      "horasElvin": "4 h/sem",
+      "jugada": "Jugada 3: la Fábrica de Demos (/demo-cliente) + setter boricua + auditoría de respuesta",
+      "numeros": [
+        {
+          "label": "FACTURA",
+          "valor": "$15–20K/mes"
+        },
+        {
+          "label": "SOBRA",
+          "valor": "$1–5K"
+        },
+        {
+          "label": "CIERRES",
+          "valor": "3/mes"
+        },
+        {
+          "label": "NO-SHOW",
+          "valor": "50%"
+        },
+        {
+          "label": "DMs SIN LEER",
+          "valor": "2,444"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "Core (demos + CRM)",
+          "href": "/borinquen"
+        },
+        {
+          "label": "Auditoría",
+          "href": "https://auditoria.aiborinquen.co/automatizacion"
+        }
+      ]
+    },
+    {
+      "id": "bori",
+      "nombre": "Bori (heybori.ai)",
+      "capa": "producto",
+      "resumen": "SaaS con clientes pagando. Se explota después de activación ≥40% (hoy 6%). Plan de 90 días vigente.",
+      "meta": "1,000 usuarios al día 60 · activación ≥40% · Head de Crecimiento contratado",
+      "horasElvin": "6 h/sem",
+      "jugada": "Jugada 4: piloto automático con compuertas (pago ≤$50/día hasta activación ≥40%)",
+      "numeros": [
+        {
+          "label": "USUARIOS",
+          "valor": "57"
+        },
+        {
+          "label": "PAGANDO",
+          "valor": "12"
+        },
+        {
+          "label": "MRR AGO",
+          "valor": "~$810"
+        },
+        {
+          "label": "ACTIVACIÓN",
+          "valor": "6%"
+        },
+        {
+          "label": "LEADS PERDIDOS",
+          "valor": "13,267"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "heybori.ai",
+          "href": "https://www.heybori.ai"
+        }
+      ]
+    },
+    {
+      "id": "cortex",
+      "nombre": "Cortex (edit.heybori.ai)",
+      "capa": "producto",
+      "resumen": "El editor de video con IA. Ya en producción en Railway con el estándar Daren/Yulianna. Sin features nuevas este trimestre.",
+      "meta": "Edita el 100% de LU/AIB · entra a Bori como servicio",
+      "horasElvin": "1 h/sem",
+      "jugada": "Jugada 4: solo uso, sin features",
+      "numeros": [
+        {
+          "label": "ESTADO",
+          "valor": "Prod"
+        },
+        {
+          "label": "CLIENTES",
+          "valor": "LU · AIB"
+        },
+        {
+          "label": "USUARIOS",
+          "valor": "Carilin + estrategas"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "edit.heybori.ai",
+          "href": "https://edit.heybori.ai"
+        }
+      ]
+    },
+    {
+      "id": "shadow-operator",
+      "nombre": "Shadow Operator",
+      "capa": "producto",
+      "resumen": "La marca personal = el departamento de marketing del holding. Viable; lo caro ya está (casos, quiz, curriculum). Falta publicar 50 posts.",
+      "meta": "50 posts · 3K seguidores · Skool $55 con 30 fundadores · cohorte consultoría $3,500 en ene",
+      "horasElvin": "1 día de grabación/mes + 30 min de audio/sem",
+      "jugada": "Jugada 5: oct 50 posts → nov Skool fundadores → ene cohorte 1",
+      "numeros": [
+        {
+          "label": "SEGUIDORES",
+          "valor": "23"
+        },
+        {
+          "label": "REELS B-ROLL",
+          "valor": "20"
+        },
+        {
+          "label": "HISTORIAS",
+          "valor": "41"
+        },
+        {
+          "label": "CASOS",
+          "valor": "20+"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "Quiz",
+          "href": "https://myworkspace2d96f.myclickfunnels.com/auditoria"
+        },
+        {
+          "label": "Entregas",
+          "href": "/ceo/entregas"
+        }
+      ]
+    },
+    {
+      "id": "resuelto",
+      "nombre": "Resuelto (home services)",
+      "capa": "piloto",
+      "resumen": "Único proyecto nuevo que sigue vivo, en piloto mínimo: Luis + Metro, ads de reclutamiento $50/día × 7 días.",
+      "meta": "Compuerta 15/nov: ≥3 plomeros y ≥30 trabajos, o se congela",
+      "horasElvin": "2 h/sem",
+      "compuerta": {
+        "fecha": "2026-11-15",
+        "condicion": "≥3 plomeros licenciados activos y ≥30 trabajos cerrados"
+      },
+      "trigger": "Si pasa la compuerta: contratar Coordinador/a de Ops",
+      "numeros": [
+        {
+          "label": "PLOMEROS",
+          "valor": "1"
+        },
+        {
+          "label": "TRABAJOS",
+          "valor": "0"
+        },
+        {
+          "label": "LANDING",
+          "valor": "Live"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "resueltopr.com",
+          "href": "https://resueltopr.com"
+        }
+      ]
+    },
+    {
+      "id": "quilla",
+      "nombre": "Quilla (holding de creadores)",
+      "capa": "congelado",
+      "resumen": "18 docs listos, $40K de caja requeridos, vocero y Scout por contratar. Compite por la atención de Elvin con Shadow.",
+      "trigger": "Shadow Operator ≥10K seguidores Y Level Up con churn <8%/mes por 2 meses seguidos",
+      "horasElvin": "0",
+      "numeros": [
+        {
+          "label": "CAJA REQ.",
+          "valor": "$40K"
+        }
+      ],
+      "enlaces": []
+    },
+    {
+      "id": "contigo-pr",
+      "nombre": "Contigo PR (adultos mayores)",
+      "capa": "congelado",
+      "resumen": "Planificado (6/sep). Reusa el stack de voz + WhatsApp; se reabre cuando ese stack sea una pieza probada.",
+      "trigger": "El stack voz + WhatsApp de Resuelto lleva 60 días funcionando como pieza reutilizable",
+      "horasElvin": "0",
+      "numeros": [],
+      "enlaces": []
+    },
+    {
+      "id": "staff-agency",
+      "nombre": "Staff Agency",
+      "capa": "congelado",
+      "resumen": "Como plataforma se congela; como práctica se absorbe en Revenue (reclutar setters PR para uso propio).",
+      "trigger": "≥5 empresas externas pidiendo setters",
+      "horasElvin": "0",
+      "numeros": [],
+      "enlaces": []
+    },
+    {
+      "id": "1000x",
+      "nombre": "1000X (trading con Richy)",
+      "capa": "congelado",
+      "resumen": "Richy lo opera. Elvin graba solo si se lo pide.",
+      "trigger": "Richy trae 50 miembros solo",
+      "horasElvin": "0",
+      "numeros": [],
+      "enlaces": [
+        {
+          "label": "Landing",
+          "href": "https://1000x-trading.vercel.app"
+        }
+      ]
+    },
+    {
+      "id": "ventaja",
+      "nombre": "Ventaja (apuestas +EV)",
+      "capa": "congelado",
+      "resumen": "PASO 01 mock en otro repo.",
+      "trigger": "Q2 2027",
+      "horasElvin": "0",
+      "numeros": [],
+      "enlaces": []
+    },
+    {
+      "id": "victory-core",
+      "nombre": "Victory Core (leads B2B)",
+      "capa": "entregado",
+      "resumen": "Entregado a Néstor para que lo corra con su Apify. Nosotros seguimos la tarea diaria con tope $2.50/día hasta que lo instale.",
+      "trigger": "—",
+      "horasElvin": "0",
+      "numeros": [
+        {
+          "label": "PRECIO",
+          "valor": "$500 + $147/mes"
+        }
+      ],
+      "enlaces": []
+    }
+  ]
+}

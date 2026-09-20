@@ -1,0 +1,31 @@
+{
+  "moneda": "USD",
+  "cargo_coordinacion": 19,
+  "recargo_emergencia": 99,
+  "manejo_materiales_pct": 20,
+  "garantia_meses": 12,
+  "servicios": [
+    { "id": "diagnostico", "nivel": "P", "nombre": "Visita y diagnóstico", "precio": 69, "nota": "Se acredita al trabajo si se hace con nosotros", "alias": ["visita", "diagnostico", "revisar", "ver el problema", "estimado"] },
+    { "id": "reparacion-inodoro", "nivel": "P", "nombre": "Reparación de inodoro", "precio": 99, "nota": "Flapper, válvula de llenado o sello de cera", "alias": ["inodoro gotea", "inodoro corre", "toilet", "flapper", "el inodoro no para"] },
+    { "id": "valvula-paso", "nivel": "P", "nombre": "Reemplazo de válvula de paso o llave de ángulo", "precio": 119, "alias": ["llave de paso", "valvula", "angle stop", "llave de angulo"] },
+    { "id": "llave-mezcladora", "nivel": "P", "nombre": "Reemplazo de llave o mezcladora", "precio": 129, "nota": "Cocina o baño", "alias": ["llave", "grifo", "pluma", "mezcladora", "faucet", "la pluma gotea"] },
+    { "id": "destape-simple", "nivel": "P", "nombre": "Destape simple", "precio": 149, "nota": "Fregadero, lavamanos, ducha o inodoro", "alias": ["tapado", "destape", "no baja el agua", "fregadero tapado", "lavamanos tapado", "ducha tapada", "inodoro tapado", "drenaje lento"] },
+    { "id": "cabezal-ducha", "nivel": "P", "nombre": "Reemplazo de cabezal de ducha o brazo", "precio": 89, "alias": ["cabezal", "regadera", "ducha", "shower head"] },
+    { "id": "instalacion-lavamanos", "nivel": "P", "nombre": "Instalación de lavamanos o fregadero", "precio": 179, "nota": "Con conexiones existentes", "alias": ["instalar lavamanos", "instalar fregadero", "sink"] },
+    { "id": "disposal", "nivel": "P", "nombre": "Instalación de triturador de desperdicios", "precio": 149, "alias": ["disposal", "triturador"] },
+    { "id": "inodoro-completo", "nivel": "M", "nombre": "Reemplazo de inodoro completo", "precio": 219, "alias": ["cambiar inodoro", "inodoro nuevo", "instalar toilet"] },
+    { "id": "bomba-cisterna", "nivel": "M", "nombre": "Reemplazo de bomba de cisterna", "precio": 249, "alias": ["bomba", "la bomba no prende", "bomba de agua", "cisterna no bombea"] },
+    { "id": "calentador-tanque", "nivel": "M", "nombre": "Instalación de calentador de tanque", "precio": 279, "alias": ["calentador", "water heater", "no hay agua caliente", "calentador de tanque"] },
+    { "id": "destape-maquina", "nivel": "M", "nombre": "Destape de línea principal con máquina", "precio": 299, "nota": "Incluye cámara si hace falta", "alias": ["linea principal", "todo tapado", "se tapa toda la casa", "maquina de destape", "sale agua por el piso"] },
+    { "id": "deteccion-filtracion", "nivel": "M", "nombre": "Detección de filtración", "precio": 199, "nota": "Con equipo y cámara. La reparación se cotiza desde $349", "alias": ["filtracion", "gotera", "humedad", "la factura de agua subio", "mancha en la pared", "leak"] },
+    { "id": "calentador-linea", "nivel": "M", "nombre": "Instalación de calentador de línea (tankless)", "precio": 349, "alias": ["tankless", "calentador de linea", "calentador electrico de paso"] },
+    { "id": "filtro-casa", "nivel": "M", "nombre": "Instalación de filtro de agua para toda la casa", "precio": 349, "alias": ["filtro", "filtro de agua"] },
+    { "id": "reparacion-filtracion", "nivel": "M", "nombre": "Reparación de filtración en pared o piso", "rango": [349, 499], "nota": "Hasta 1 punto. Precio fijo en sitio antes de romper", "alias": ["arreglar filtracion", "reparar gotera"] },
+    { "id": "cisterna-bomba", "nivel": "G", "nombre": "Instalación de cisterna con bomba y conexiones", "rango": [899, 1299], "nota": "Precio fijo en sitio, firmado antes de empezar", "alias": ["cisterna", "instalar cisterna", "tanque de agua", "cortes de agua"] },
+    { "id": "calentador-solar", "nivel": "G", "nombre": "Instalación de calentador solar", "rango": [699, 999], "alias": ["calentador solar", "solar"] },
+    { "id": "linea-principal-agua", "nivel": "G", "nombre": "Reemplazo de línea principal de agua", "rango": [800, 2000], "nota": "Del contador a la casa", "alias": ["tuberia principal", "del contador", "linea de agua"] },
+    { "id": "retuberia-bano", "nivel": "G", "nombre": "Re-tubería completa de un baño", "rango": [1200, 3500], "alias": ["tuberia nueva", "cambiar toda la tuberia", "repiping"] },
+    { "id": "remodelacion", "nivel": "G", "nombre": "Plomería de remodelación de baño o cocina", "rango": [1500, 4000], "alias": ["remodelacion", "remodelar bano", "remodelar cocina"] },
+    { "id": "comercial", "nivel": "G", "nombre": "Comercial, condominios y certificaciones AAA", "cotizacion": true, "nota": "Requiere firma del Maestro Plomero", "alias": ["comercial", "condominio", "certificacion aaa", "negocio", "restaurante"] }
+  ]
+}

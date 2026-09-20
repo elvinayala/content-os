@@ -1,0 +1,254 @@
+{
+ "bienvenida": [
+  {
+   "dia": 0,
+   "asunto": [
+    "Lo que pediste (y quién soy)",
+    "Aquí tienes lo tuyo + una pregunta"
+   ],
+   "preview": "Antes de nada: quién te escribe.",
+   "cuerpo": "Hola {{FIRSTNAME|amigo}},\n\nAquí tienes lo que pediste: [ENTREGA: link al diagnóstico / al recurso / al reel].\n\nY en una línea, quién soy. Me llamo Elvin. Por años fui un fantasma: escribía los guiones, corría los anuncios y otro daba la cara. Así construí dos agencias que hoy facturan más de $100K al mes, sin salir en cámara. Level Up Media es una de ellas.\n\nNo te escribo para venderte hoy. Te escribo para entender qué tienes: ¿de qué es tu negocio y de dónde llegan tus clientes ahora?\n\nResponde este correo con una línea. Lo leo yo.",
+   "cta": "Responde con tu negocio en una línea",
+   "angulo": "historia + entrega",
+   "utm": "utm_source=bienvenida"
+  },
+  {
+   "dia": 2,
+   "asunto": [
+    "Si tu plan es que alguien te recomiende, no tienes un plan",
+    "El mes que los referidos no llegan"
+   ],
+   "preview": "Los referidos son un regalo, no un sistema.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nLos referidos se sienten cómodos hasta el mes que no llega ninguno. No puedes subirlos cuando necesitas más ni bajarlos cuando estás lleno. Por eso tantos negocios buenos viven pegados en el mismo número.\n\nUn sistema es distinto: sabes cuánto inviertes, cuántas personas te ven, cuántas te escriben y cuántas cierran. Y lo puedes subir.\n\n[SI avatar:coach → \"Publicas por publicar: contenido sin estructura no trae clientes, trae likes.\"]\n\nEste reel lo explica en 40 segundos: [LINK AL REEL].",
+   "cta": "Ver el reel",
+   "angulo": "1 · Depender de referidos es frágil",
+   "utm": "utm_source=bienvenida"
+  },
+  {
+   "dia": 4,
+   "asunto": [
+    "De $30K a $100K al mes: qué hicimos exactamente",
+    "Tinos, Coralis, RK: el mismo sistema"
+   ],
+   "preview": "No fue un anuncio. Fue un orden.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nTinos, un restaurante en Cabo Rojo, estaba en $30K al mes. Coralis, en La Garita, en $25K. RK Automatic, un taller, en $30K. Hoy: $100K, $70K y $100K.\n\nNo cambió el negocio. Cambió el orden: primero la oferta, después la estrategia, después el contenido con estructura, después los anuncios con IA, después la automatización de los leads, y al final escalar lo que funcionó. Seis pasos.\n\n[SI avatar:coach → \"Yadiel, coach, pasó de $5K a $40K con esos mismos seis pasos.\"]\n\nSi quieres ver cuál de los seis te falta, agenda 20 minutos: https://calendly.com/levelupmediapr?utm_source=bienvenida",
+   "cta": "Agendar 20 minutos",
+   "angulo": "Caso real + el sistema de 6 pasos",
+   "utm": "utm_source=bienvenida"
+  },
+  {
+   "dia": 7,
+   "asunto": [
+    "La IA no reemplaza al estratega. Lo hace 10 veces más rápido",
+    "Para quién NO es esto"
+   ],
+   "preview": "Tráfico + sistema de ventas + automatización.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nTe lo digo directo para que no perdamos tiempo ninguno de los dos.\n\nLo que hacemos: tráfico con estrategia, un sistema de ventas y la automatización de tus leads, con IA para que todo salga diez veces más rápido. No \"anuncios sueltos\".\n\nPara quién no es: si no puedes invertir en pauta, si quieres resultados en una semana, o si nadie en tu negocio va a contestar los leads. Ahí no te sirvo.\n\nSi sí encajas, el Diagnóstico de Crecimiento te dice en un minuto cuál es tu cuello de botella: https://class.levelupmediapr.net/diagnostico-crecimiento",
+   "cta": "Hacer el diagnóstico",
+   "angulo": "5 · IA + estrategia (filtro honesto)",
+   "utm": "utm_source=bienvenida"
+  },
+  {
+   "dia": 10,
+   "asunto": [
+    "¿Cuánto dinero estás dejando en la mesa este mes?",
+    "Tu número (si hiciste el diagnóstico)"
+   ],
+   "preview": "Cupos de la semana.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\n[SI quiz:resultado → \"Según tu diagnóstico, tu cuello de botella es {{Score diagnóstico}}. Eso tiene arreglo, y es más rápido de lo que crees.\"]\n\nLa cuenta es simple: cada lead que no contestas a tiempo, cada mes que dependes de un referido, cada anuncio sin estrategia, es dinero que ya estaba en tu mesa.\n\nEsta semana tenemos 4 cupos de llamada. Si quieres uno, agenda aquí: https://calendly.com/levelupmediapr?utm_source=bienvenida\n\nSi no es el momento, no pasa nada: te seguiré escribiendo los jueves con algo útil.",
+   "cta": "Agendar",
+   "angulo": "3 · Plata en la mesa + cupos",
+   "utm": "utm_source=bienvenida"
+  }
+ ],
+ "lead-agenda": [
+  {
+   "dia": 0,
+   "asunto": [
+    "Tu resultado (y el siguiente paso)",
+    "Lo que vimos en tu negocio"
+   ],
+   "preview": "Aquí está, corto.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\n[SI quiz → resumen del resultado en 2 líneas. SI NO → el caso de su avatar en 2 líneas.]\n\nEl siguiente paso es una llamada de 20 minutos donde te decimos qué haríamos primero y por qué. Sin compromiso: https://calendly.com/levelupmediapr?utm_source=lead-agenda",
+   "cta": "Agendar",
+   "angulo": "resultado / caso",
+   "utm": "utm_source=lead-agenda"
+  },
+  {
+   "dia": 1,
+   "asunto": [
+    "\"Los anuncios no funcionan para mi negocio\"",
+    "Sí funcionan. Esto es lo que falló."
+   ],
+   "preview": "La objeción más común, de frente.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nLa escucho todas las semanas: \"ya probé anuncios y no funcionaron\". Casi siempre pasó lo mismo: se prendió un anuncio sin oferta, sin público y sin nadie que siguiera a los que escribieron. Eso no es que los anuncios no funcionen; es que no había estrategia.\n\nCuando la hay, el anuncio deja de ser un gasto. Te muestro cómo en 20 minutos: https://calendly.com/levelupmediapr?utm_source=lead-agenda",
+   "cta": "Agendar",
+   "angulo": "6 · Los ads no funcionan para mi nicho",
+   "utm": "utm_source=lead-agenda"
+  },
+  {
+   "dia": 3,
+   "asunto": [
+    "El botón azul es la forma más cara de tirar dinero",
+    "Promocionar vs estrategia"
+   ],
+   "preview": "Qué cambió cuando Coralis dejó de promocionar.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nCoralis le daba a \"promocionar\" cada vez que un post pegaba. Alcance arriba, clientes cero. Cuando armamos su estrategia (a quién, con qué oferta, qué pasa cuando escriben) pasó de $25K a $70K al mes con la misma tarjeta.\n\nSi todavía le das al botón azul, hablemos antes de que gastes otro mes: https://calendly.com/levelupmediapr?utm_source=lead-agenda",
+   "cta": "Agendar",
+   "angulo": "2 · El botón azul vs estrategia",
+   "utm": "utm_source=lead-agenda"
+  },
+  {
+   "dia": 6,
+   "asunto": [
+    "No necesitas más clientes. Pierdes los que ya te llegan",
+    "Última por aquí (por ahora)"
+   ],
+   "preview": "Cupos de la semana.",
+   "cuerpo": "{{FIRSTNAME|Hola}},\n\nAntes de traer más gente, mira los que ya te escriben: ¿cuántos quedan sin respuesta en la noche o el fin de semana? Ahí hay clientes que ya pagaste.\n\nEsta semana quedan 3 cupos de llamada. Si quieres uno: https://calendly.com/levelupmediapr?utm_source=lead-agenda\n\nSi no, te sigo escribiendo los jueves. Sin presión.",
+   "cta": "Agendar",
+   "angulo": "3 · Pierdes los leads por contestar tarde + cupos",
+   "utm": "utm_source=lead-agenda"
+  }
+ ],
+ "pre-llamada": [
+  {
+   "dia": 0,
+   "asunto": [
+    "Confirmado: tu llamada con Level Up Media",
+    "Qué va a pasar en la llamada"
+   ],
+   "preview": "20 minutos, sin rodeos.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, quedó agendada tu llamada: [FECHA Y HORA] con [CLOSER].\n\nQué vas a recibir: un diagnóstico honesto de tu embudo (oferta, contenido, anuncios, seguimiento) y qué haríamos primero. Si no encajas, te lo decimos.\n\nPara que aproveches el tiempo: ten a mano cuántos clientes nuevos entran al mes y de dónde.\n\nAquí Elvin te lo explica en 1 minuto: [VIDEO DE ELVIN]",
+   "cta": "Ver el video",
+   "angulo": "6b · Asume que el lead no te conoce",
+   "utm": "utm_source=pre-llamada"
+  },
+  {
+   "dia": 1,
+   "asunto": [
+    "Mañana hablamos: 3 cosas antes de la llamada",
+    "Quiénes somos (por si no nos conoces)"
+   ],
+   "preview": "+50 negocios en PR, 12 meses operando cuentas.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, mañana es tu llamada.\n\nTres cosas por si no nos conoces: más de 50 negocios en Puerto Rico han trabajado con nosotros; operamos las cuentas con contrato claro y reporte semanal; y los resultados los medimos en clientes nuevos, no en likes. [CASO DEL AVATAR en 1 línea].\n\nSi necesitas mover la hora, usa el link de tu confirmación. Nos vemos mañana.",
+   "cta": "Confirmar",
+   "angulo": "prueba social + caso del avatar",
+   "utm": "utm_source=pre-llamada"
+  },
+  {
+   "dia": 2,
+   "asunto": [
+    "[SMS/WhatsApp 1 h antes] Tu llamada es en 1 hora",
+    ""
+   ],
+   "preview": "",
+   "cuerpo": "{{FIRSTNAME}}, en 1 hora es tu llamada con [CLOSER] de Level Up Media. Link: [ZOOM]. Si no puedes, responde este mensaje y la movemos.",
+   "cta": "Entrar a la llamada",
+   "angulo": "recordatorio",
+   "utm": "utm_source=pre-llamada"
+  }
+ ],
+ "no-show": [
+  {
+   "dia": 0,
+   "asunto": [
+    "Te esperamos y no pudiste: sin problema",
+    "¿Movemos la llamada?"
+   ],
+   "preview": "Te dejo el link para reagendar.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, hoy te esperamos en la llamada y no pudiste. Pasa. Aquí tienes el link para escoger otra hora: https://calendly.com/levelupmediapr?utm_source=no-show",
+   "cta": "Reagendar",
+   "angulo": "seguimiento",
+   "utm": "utm_source=no-show"
+  },
+  {
+   "dia": 1,
+   "asunto": [
+    "Lo que ibas a ver en la llamada (en 2 minutos)",
+    "Un adelanto"
+   ],
+   "preview": "Para que no te lo pierdas.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, esto era lo que íbamos a mirar: tu oferta, tu contenido, tus anuncios y tu seguimiento, y cuál de los cuatro te está frenando. Te lo muestro igual en 20 minutos: https://calendly.com/levelupmediapr?utm_source=no-show",
+   "cta": "Reagendar",
+   "angulo": "el sistema de 6 pasos",
+   "utm": "utm_source=no-show"
+  },
+  {
+   "dia": 3,
+   "asunto": [
+    "Última por aquí: te dejo el link abierto",
+    "Cuando quieras"
+   ],
+   "preview": "Sin presión.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, no te vuelvo a escribir por esto. Te dejo el link abierto para cuando sea buen momento: https://calendly.com/levelupmediapr?utm_source=no-show. Mientras, te sigo mandando algo útil los jueves.",
+   "cta": "Reagendar",
+   "angulo": "cierre suave",
+   "utm": "utm_source=no-show"
+  }
+ ],
+ "no-compro": [
+  {
+   "dia": 1,
+   "asunto": [
+    "¿Qué te frenó?",
+    "Una pregunta honesta"
+   ],
+   "preview": "Solo quiero entender.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, hablaste con nosotros y decidiste no seguir por ahora. Está bien. Una sola pregunta, sin vender: ¿qué te frenó? ¿El momento, el precio, la confianza, otra cosa? Responde con una palabra. Me ayuda a mejorar.",
+   "cta": "Responder",
+   "angulo": "objeción real",
+   "utm": "utm_source=no-compro"
+  },
+  {
+   "dia": 4,
+   "asunto": [
+    "\"Mándame una propuesta\" (lo que eso significa de verdad)",
+    "Dos objeciones que escucho cada semana"
+   ],
+   "preview": "Te las respondo de frente.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, las dos frases que más escucho después de una llamada: \"mándame una propuesta\" y \"estoy comparando con otras agencias\". Te las respondo de frente: la propuesta es el sistema de 6 pasos que ya viste; y comparar está bien, pero compara resultados medidos en clientes nuevos, no en cuántos posts te hacen. Si quieres retomar: https://calendly.com/levelupmediapr?utm_source=no-compro",
+   "cta": "Retomar",
+   "angulo": "objeciones reales (Mariano)",
+   "utm": "utm_source=no-compro"
+  },
+  {
+   "dia": 9,
+   "asunto": [
+    "Coralis también dudó",
+    "El caso que más se parece al tuyo"
+   ],
+   "preview": "De $25K a $70K después de decir 'déjame pensarlo'.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, Coralis dijo \"déjame pensarlo\" en su primera llamada. Tres meses después arrancó. Hoy factura $70K al mes. No te cuento esto para presionarte; te lo cuento porque el costo de esperar también se paga. Si quieres, retomamos donde quedamos: https://calendly.com/levelupmediapr?utm_source=no-compro",
+   "cta": "Retomar",
+   "angulo": "prueba social",
+   "utm": "utm_source=no-compro"
+  },
+  {
+   "dia": 20,
+   "asunto": [
+    "Una beca de $250 para arrancar (cupos limitados)",
+    "Solo esta semana"
+   ],
+   "preview": "Para los que hablaron con nosotros y no arrancaron.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, una vez cada tres meses abrimos una beca de $250 para negocios que ya hablaron con nosotros y no arrancaron por presupuesto. Cupos limitados, esta semana. Si te interesa, responde \"BECA\" y te digo cómo aplica: https://calendly.com/levelupmediapr?utm_source=no-compro",
+   "cta": "Responder BECA",
+   "angulo": "beca $250",
+   "utm": "utm_source=no-compro"
+  }
+ ],
+ "newsletter": [
+  {
+   "dia": 0,
+   "asunto": [
+    "El Sistema #1: por qué el botón azul te sale caro",
+    "Lo más caro que puedes hacer con $50"
+   ],
+   "preview": "Newsletter semanal de Level Up Media.",
+   "cuerpo": "{{FIRSTNAME|Hola}}, esto es *El Sistema*: cada jueves, un ángulo, un caso, una acción. Cinco minutos.\n\n**El ángulo:** darle a \"promocionar\" es la forma más cara de tirar dinero. No elige a quién le hablas, no tiene oferta y no tiene seguimiento. Solo gasta.\n\n**El caso:** Coralis (La Garita) promocionaba posts y estaba en $25K. Con estrategia, a quién, con qué oferta y qué pasa cuando escriben, llegó a $70K al mes. Misma tarjeta.\n\n**La acción de esta semana:** antes de promocionar nada, escribe en una línea a quién le hablas y qué le ofreces. Si no puedes escribirlo, no lo promociones.\n\nSi quieres que lo miremos juntos: https://calendly.com/levelupmediapr?utm_source=newsletter",
+   "cta": "Agendar",
+   "angulo": "2 · El botón azul vs estrategia",
+   "utm": "utm_source=newsletter"
+  }
+ ]
+}

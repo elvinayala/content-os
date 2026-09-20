@@ -1,0 +1,8 @@
+{
+  "_nota": "Cotizadores (estimador + closer) por territorio. calendar_id es el calendario de Google del cotizador; el agente agenda visitas ahí. 'territorios' usa los ids de territorios.json.",
+  "ventanas_visita": ["09:00-11:00", "11:00-13:00", "14:00-16:00", "16:00-18:00"],
+  "visitas_max_dia": 5,
+  "cotizadores": [
+    { "id": "cot-metro", "nombre": "Cotizador Metro (por contratar)", "territorios": ["T1", "T2", "T3"], "calendar_id": "CAMBIAR@group.calendar.google.com", "whatsapp": "", "estado": "por-contratar" }
+  ]
+}

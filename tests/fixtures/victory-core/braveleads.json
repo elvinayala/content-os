@@ -1,0 +1,6 @@
+[
+ {"first_name":"Dana","last_name":"Whitfield","title":"Facilities Manager","email":"dana.whitfield@firstcitizens.com","email_status":"verified","phone":"+1 919 555 0200","linkedin_url":"https://linkedin.com/in/danaw","company_domain":"firstcitizens.com","company_name":"First Citizens Bank"},
+ {"first_name":"Luis","last_name":"Ortega","title":"Branch Manager","email":"lortega@braggmutual.org","email_status":"guessed","company_domain":"www.braggmutual.org"},
+ {"first_name":"Kim","last_name":"Reyes","title":"Marketing Intern","email":"kim@braggmutual.org","company_domain":"braggmutual.org"},
+ {"first_name":"Sam","last_name":"Lee","title":"CEO","company_domain":"otherbank.com"}
+]
