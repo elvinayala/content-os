@@ -7,7 +7,7 @@ import { usuarioActual } from "@/lib/pulse/auth";
 import { hashPassword, verificarPassword } from "@/lib/pulse/password";
 import { buscarUsuarioPorEmail } from "@/lib/pulse/repo";
 import { ipActual, limiteIp, limpiarFallos, registrarEvento, registrarFallo } from "@/lib/pulse/seguridad";
-import { COOKIE_PULSE, TTL_SESION, firmarSesion } from "@/lib/pulse/session";
+import { COOKIE_PULSE, TTL_SESION, TTL_SESION_LARGA, firmarSesion } from "@/lib/pulse/session";
 
 // Hash de sacrificio: cuando el email no existe igual se calcula un scrypt para que el
 // tiempo de respuesta no delate si la cuenta existe (anti-enumeración).
@@ -17,6 +17,8 @@ export async function loginPulseAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase().slice(0, 200);
   const password = String(formData.get("password") ?? "").slice(0, 200);
   const desde = String(formData.get("desde") ?? "");
+  const recordar = formData.get("recordar") === "1";
+  const ttl = recordar ? TTL_SESION_LARGA : TTL_SESION;
   const destinoValido = desde.startsWith("/pulse") && !desde.startsWith("//");
   const volver = (error: string) => redirect(`/pulse/login?error=${error}${desde ? `&desde=${encodeURIComponent(desde)}` : ""}`);
   const ip = await ipActual();
@@ -47,11 +49,11 @@ export async function loginPulseAction(formData: FormData) {
   await limpiarFallos(u!.id);
   await registrarEvento({ tipo: "login_ok", email, userId: u!.id, ip });
   const jar = await cookies();
-  jar.set(COOKIE_PULSE, await firmarSesion(u!.id), {
+  jar.set(COOKIE_PULSE, await firmarSesion(u!.id, undefined, ttl), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: TTL_SESION,
+    maxAge: ttl,
     path: "/",
   });
   redirect(destinoValido ? desde : "/pulse");

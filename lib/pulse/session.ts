@@ -4,7 +4,8 @@
 // chequea usuarioActual, que sí toca la base). Sin PULSE_SESSION_SECRET nunca hay sesión.
 
 export const COOKIE_PULSE = "pulse-session";
-export const TTL_SESION = 60 * 60 * 24 * 14; // 14 días
+export const TTL_SESION = 60 * 60 * 24 * 14; // 14 días (sin "recordarme")
+export const TTL_SESION_LARGA = 60 * 60 * 24 * 90; // 90 días (con "recordarme")
 
 async function hmac(secret: string, payload: string): Promise<string> {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
@@ -14,10 +15,10 @@ async function hmac(secret: string, payload: string): Promise<string> {
     .join("");
 }
 
-export async function firmarSesion(userId: string, secret = process.env.PULSE_SESSION_SECRET): Promise<string> {
+export async function firmarSesion(userId: string, secret = process.env.PULSE_SESSION_SECRET, ttl = TTL_SESION): Promise<string> {
   if (!secret) throw new Error("Falta PULSE_SESSION_SECRET");
   const iat = Math.floor(Date.now() / 1000);
-  const exp = iat + TTL_SESION;
+  const exp = iat + ttl;
   const payload = `${userId}.${exp}.${iat}`;
   return `${payload}.${await hmac(secret, payload)}`;
 }

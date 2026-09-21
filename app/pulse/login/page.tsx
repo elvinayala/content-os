@@ -35,12 +35,16 @@ export default async function PulseLoginPage({
             <input type="hidden" name="desde" value={desde ?? ""} />
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" name="email" placeholder="tu@levelupmediapr.net" autoFocus required />
+              <Input id="email" type="email" name="email" placeholder="tu@levelupmediapr.net" autoComplete="username email" autoFocus required />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="password">Contraseña</Label>
-              <Input id="password" type="password" name="password" required />
+              <Input id="password" type="password" name="password" autoComplete="current-password" required />
             </div>
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground select-none">
+              <input type="checkbox" name="recordar" value="1" defaultChecked className="size-4 accent-primary" />
+              Mantener la sesión iniciada en este dispositivo (90 días)
+            </label>
             {error ? (
               <p className="text-sm text-destructive">
                 {error === "bloqueado" ? "Demasiados intentos. Esperá 15 minutos y volvé a probar." : error === "limite" ? "Demasiadas solicitudes desde tu conexión. Probá en un minuto." : "E-mail o contraseña incorrectos."}
