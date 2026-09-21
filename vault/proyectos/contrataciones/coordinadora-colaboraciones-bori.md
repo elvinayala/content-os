@@ -136,3 +136,17 @@ código de referido por creador (Nico).
 > marca de seis cifras al mes). Remoto. Prueba pagada de 48 h. Escribe con el asunto "Bori":
 > 3 colaboraciones que cerraste con resultado, a qué 3 creadores de PR le propondrías Bori y por
 > qué, y tu tarifa. Cierro el 29/sep.
+
+## 12. ¿Contratar o dárselo a Lis/Aure? (recomendación, 21/sep noche)
+Elvin: Lis (asistente de proyectos, EA Market) y Aure (ventas, reclutamiento y admin, EA Market)
+tienen menos carga que antes por la baja de ventas. **Recomendación: piloto interno de 30 días con
+Lis como coordinadora + Aure de respaldo en negociación/pagos, antes de contratar a nadie.**
+Razones: (1) en el mes 1 el puesto son ~10–15 h/semana (4 colaboraciones), no un tiempo completo —
+la parte de "proyectos de crecimiento" y el orgánico ya la hacen los agentes; (2) Lis ya va a llevar
+el Canal, el soporte y los leads perdidos de Bori: mismo producto, misma audiencia; (3) Aure ya
+recluta, entrevista y negocia (setters, videógrafo, locaciones): la mecánica es idéntica; (4) cuesta
+$500–700/mes extra en vez de $2,000–3,000 y no se pierde nada si no funciona. La contratación
+externa se abre si al día 30 no hay 4 colaboraciones publicadas, o cuando el ritmo pida 8–10/mes.
+Pago del piloto: Lis +$400/mes fijo + $50 por colaboración publicada + $10 por pagante que traiga su
+código; Aure +$50 por colaboración cerrada que ella negoció. Prueba de arranque = la misma de la
+vacante: la tabla del viernes con 3 creadores reales contactados. Se reevalúa el 6/nov.
