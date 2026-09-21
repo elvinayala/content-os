@@ -113,3 +113,16 @@ Se mandaron los 917 clientes de Pulse por el webhook en simulación. n8n decidi�
 - Regla agregada al workflow: si Pulse no trae persona/industria, el link existente en NocoDB se
   respeta (nunca se quita). Solo se pone o reemplaza con valor.
 - Tiempo: ~90 s para 917 clientes (917 consultas a NocoDB). OK para la nocturna.
+
+## Puente en modo REAL (20/sep/2026 22:16, ejecuciones 60864 + 60866)
+
+Elvin dio el OK; `PULSE_N8N_MODO=real` en Vercel. Primera corrida real con los 917 clientes:
+- Corrida 1 (60864): 27 filas actualizadas, Dariel Hernandez creado, 1 fecha de campaña; se cayó en
+  los links por un **502 de NocoDB** (ráfaga). Fix: 150 ms entre llamadas, 3 reintentos, un link
+  fallido no tumba la corrida; la búsqueda por ID-monday sí para todo (evita duplicados).
+- Corrida 2 (60866, tras el fix): `success`, 0 campos por cambiar, 1 link pendiente puesto.
+- **NocoDB después**: 98 activos · admin **93/98** (antes 17) · traffiker **51/98** (antes 35) ·
+  industria 98/98 · **0** IDs de cuenta con basura (antes 19). Los 11 estrategas que faltan son
+  personas que Pulse tiene pero no existen en la tabla `equipo` de NocoDB (se resuelve en el paso 2).
+- Desde ahora **Pulse es la fuente** de los agentes; Migración v5 (Monday) sigue activa en paralelo
+  como doble corrida hasta apagarla.
