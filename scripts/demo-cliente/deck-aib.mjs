@@ -44,13 +44,18 @@ function base(s, eyebrow) {
 
 // 1 · Quiénes somos
 let s = pptx.addSlide(); base(s, "Quiénes somos");
-s.addText("Agentes de inteligencia artificial\nhechos en Puerto Rico.", { x: 0.7, y: 1.3, w: 8.6, h: 1.6, fontSize: 34, color: TXT, bold: true, fontFace: F, valign: "top" });
-s.addText("Instalamos el empleado digital que contesta, precalifica y agenda por tu negocio.\nNo un chatbot.", { x: 0.7, y: 3.15, w: 8.2, h: 1.1, fontSize: 16, color: MUT, fontFace: F, valign: "top" });
+s.addText("Agentes de IA personalizados\npara tu negocio.\nHechos en Puerto Rico.", { x: 0.7, y: 1.05, w: 8.6, h: 1.9, fontSize: 30, color: TXT, bold: true, fontFace: F, valign: "top" });
+s.addText("Diseñamos, entrenamos e instalamos el agente que tu negocio necesita:\nrecepción, ventas, WhatsApp, citas, seguimiento, inventario, cobros… el que te haga falta.", { x: 0.7, y: 3.0, w: 8.6, h: 1.0, fontSize: 15, color: MUT, fontFace: F, valign: "top" });
+const usos = ["Recepción y citas", "Ventas por WhatsApp", "Seguimiento de clientes", "Inventario y pedidos", "Cobros y recordatorios", "El tuyo"];
+usos.forEach((u, i) => {
+  const x = 0.7 + (i % 3) * 2.95, y = 4.1 + Math.floor(i / 3) * 0.42;
+  s.addText("· " + u, { x, y, w: 2.8, h: 0.35, fontSize: 12, color: i === 5 ? BORI : TXT, bold: i === 5, fontFace: F });
+});
 
 // 2 · Nuestra visión
 s = pptx.addSlide(); base(s, "Nuestra visión");
-s.addText("Que ningún negocio de la isla\npierda un cliente por no contestar a tiempo.", { x: 0.7, y: 1.3, w: 8.6, h: 1.6, fontSize: 30, color: TXT, bold: true, fontFace: F, valign: "top" });
-const pilares = [["Digitalizar", "Lo instalamos por ti."], ["Capacitar", "O te enseñamos a hacerlo tú."], ["Medir", "Tú ves cada llamada y cada lead."]];
+s.addText("Que cada negocio de la isla\ntenga su propio equipo de IA.", { x: 0.7, y: 1.3, w: 8.6, h: 1.6, fontSize: 30, color: TXT, bold: true, fontFace: F, valign: "top" });
+const pilares = [["Personalizar", "Agentes a la medida de tu operación, no plantillas."], ["Digitalizar y capacitar", "Lo instalamos por ti, o te enseñamos a hacerlo tú."], ["Medir", "Tú ves lo que tu agente hace, cada día."]];
 pilares.forEach(([t, d], i) => {
   const x = 0.7 + i * 2.95;
   s.addShape(pptx.ShapeType.line, { x, y: 3.3, w: 2.6, h: 0, line: { color: BORI, width: 1.5 } });
