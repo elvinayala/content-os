@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-09-21T14:29:16.300Z",
+  "exportadoEl": "2026-09-21T14:48:37.121Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 100,
   "workflows": [
@@ -242,13 +242,6 @@
       "actualizadoEl": "2026-01-06T13:51:48.848Z"
     },
     {
-      "id": "K73epIq7mbOTPL1t",
-      "nombre": "A-) Migracion de datos de monday v5",
-      "activo": true,
-      "archivo": "K73epIq7mbOTPL1t-a-migracion-de-datos-de-monday-v5.json",
-      "actualizadoEl": "2026-04-10T18:35:43.663Z"
-    },
-    {
       "id": "eoGkQJiljDgVjFz1",
       "nombre": "D-) Limpiador de minio",
       "activo": true,
@@ -296,13 +289,6 @@
       "activo": true,
       "archivo": "LN08xR2hD3GGSEW8-a-trigger-v1-1-safe.json",
       "actualizadoEl": "2026-09-09T18:42:47.219Z"
-    },
-    {
-      "id": "8Af1xIlR1QJzIP6L",
-      "nombre": "C-) actualizacion diaria de estratega",
-      "activo": true,
-      "archivo": "8Af1xIlR1QJzIP6L-c-actualizacion-diaria-de-estratega.json",
-      "actualizadoEl": "2026-09-21T00:54:42.707Z"
     },
     {
       "id": "qXDEK5MdK5Zpwpzr",
@@ -599,6 +585,13 @@
       "actualizadoEl": "2026-01-06T14:11:43.940Z"
     },
     {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
+      "activo": false,
+      "archivo": "K73epIq7mbOTPL1t-a-migracion-de-datos-de-monday-v5.json",
+      "actualizadoEl": "2026-04-10T18:35:43.663Z"
+    },
+    {
       "id": "HkjdzsysScaeszpR",
       "nombre": "Reminder Tasks",
       "activo": false,
@@ -653,6 +646,13 @@
       "activo": false,
       "archivo": "9MqLiz6lfEKcErPP-x-agente-rh-backup.json",
       "actualizadoEl": "2026-01-06T13:53:06.634Z"
+    },
+    {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
+      "activo": false,
+      "archivo": "8Af1xIlR1QJzIP6L-c-actualizacion-diaria-de-estratega.json",
+      "actualizadoEl": "2026-09-21T00:54:42.707Z"
     },
     {
       "id": "80QA8Tpv4sLIcNku",
