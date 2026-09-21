@@ -73,7 +73,7 @@ function CellTexto({ item, column, vertical }: CellProps) {
     setEditando(false);
     if (borrador !== valor) await setValor(item.id, column, borrador);
   };
-  const href = column.type === "email" ? `mailto:${valor}` : column.type === "phone" ? `tel:${valor.replace(/[^\d+]/g, "")}` : null;
+  const href = !valor ? null : column.type === "email" ? `mailto:${valor}` : column.type === "phone" ? `tel:${valor.replace(/[^\d+]/g, "")}` : null;
 
   if (editando) {
     return (
@@ -338,9 +338,29 @@ function CellFecha({ item, column, vertical }: CellProps) {
   const { setValor } = useBoardActions();
   const valor = (item.values[column.id] as string | undefined) ?? "";
   const ref = useRef<HTMLInputElement>(null);
+  const abrir = () => {
+    try {
+      ref.current?.showPicker?.();
+    } catch {
+      ref.current?.focus();
+    }
+  };
   return (
-    <div className={cn("relative flex h-7 w-full min-w-0 items-center", vertical ? "justify-start" : "justify-center")} onClick={() => ref.current?.showPicker?.()}>
+    <div className={cn("group/fecha relative flex h-7 w-full min-w-0 items-center gap-1", vertical ? "justify-start" : "justify-center")} onClick={abrir}>
       <span className={cn("truncate text-[13px]", !valor && "text-muted-foreground/50")}>{valor ? fmtFechaCorta(valor) : vertical ? "—" : ""}</span>
+      {valor ? (
+        <button
+          type="button"
+          title="Quitar fecha"
+          className="relative z-10 hidden shrink-0 rounded text-muted-foreground hover:text-destructive group-hover/fecha:inline"
+          onClick={(e) => {
+            e.stopPropagation();
+            setValor(item.id, column, null);
+          }}
+        >
+          <X className="size-3" />
+        </button>
+      ) : null}
       <input
         ref={ref}
         type="date"

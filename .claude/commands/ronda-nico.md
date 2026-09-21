@@ -10,7 +10,8 @@ tocas). Hora: America/Puerto_Rico. Tuteo de Puerto Rico, corto, sin jerga. Firma
 ## 1. Juntar los hechos (no supongas nada)
 1. Corre `node scripts/nico-ronda.mjs --guardar` y lee `data/nico-ronda-crudo.json`:
    salud HTTP de cada plataforma, errores en logs de Railway (24 h), fallos abiertos de Bori,
-   quejas en el soporte de Plagas, commits de las últimas 24 h por repo, tu bitácora
+   quejas en el soporte de Plagas, workflows de n8n con error en 24 h (campo `n8n`: nodo y
+   mensaje de la última falla + activos que no corrieron), commits de las últimas 24 h por repo, tu bitácora
    (`data/nico-bitacora.json`) y los pendientes de Elvin.
 2. Con el MCP de Slack, lee las últimas 24 h de:
    - `#office-6-problemas-onboarding-clientes` (C09ERUWPLJ2) → casos de clientes.
@@ -21,7 +22,8 @@ tocas). Hora: America/Puerto_Rico. Tuteo de Puerto Rico, corto, sin jerga. Firma
 
 ## 2. Clasificar (esto es lo que Elvin quiere leer)
 - **Salud**: ✅ / 🔴 por plataforma (solo las que tienen prod).
-- **Bugs nuevos**: errores repetidos en logs, fallos nuevos en el panel de Bori, jobs con error
+- **Bugs nuevos**: errores repetidos en logs, fallos nuevos en el panel de Bori, workflows de n8n
+  que fallaron (nombre + nodo), jobs con error
   en Plagas, reinicios. Un error que aparece 1 vez no es bug; 3+ veces o en algo crítico, sí.
 - **Casos abiertos**: quejas de clientes (Slack, soporte de Plagas), fallos de Bori sin marcar
   "arreglado", pedidos técnicos de Elvin/Sofi sin resolver.

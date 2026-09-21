@@ -134,6 +134,7 @@ export interface Item {
   position: number;
   values: Record<string, ValorCelda>;
   updatedAt: string; // ISO
+  parcial?: boolean; // true = vino sin `values` (grupo colapsado); se cargan al abrir el grupo
 }
 
 export interface ArchivoPulse {

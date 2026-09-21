@@ -62,6 +62,13 @@ for (const u of users) {
     mapaUsuarios.set(String(u.id), `dry-${u.id}`);
     continue;
   }
+  // Ya fusionado bajo otro email (scripts/pulse-fusionar-usuarios.mjs): respetar.
+  const porMonday = await db.query(`SELECT id FROM pulse_users WHERE monday_id = $1`, [String(u.id)]);
+  if (porMonday.length) {
+    mapaUsuarios.set(String(u.id), porMonday[0].id);
+    reporte.usuarios.existentes++;
+    continue;
+  }
   const existente = await db.query(`SELECT id FROM pulse_users WHERE email = $1`, [u.email.toLowerCase()]);
   const fila = await upsertUsuario(db, { email: u.email, nombre: u.name, activo: existente.length > 0 ? undefined : false, mondayId: String(u.id) });
   // upsertUsuario con activo=undefined: mantiene el valor actual (activo OR NULL → activo)

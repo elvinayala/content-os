@@ -35,7 +35,7 @@ export const ItemCard = memo(function ItemCard({
   return (
     <div
       onClick={() => abrirItem(item.id)}
-      className={cn("cursor-pointer rounded-md border bg-background p-2.5 text-sm shadow-xs transition hover:shadow-md", arrastrando && "rotate-1 shadow-lg", className)}
+      className={cn("tarjeta-item cursor-pointer rounded-lg border bg-background p-2.5 text-sm", arrastrando && "rotate-1 shadow-xl", className)}
       style={colorGrupo ? { borderLeft: `4px solid ${colorGrupo}` } : undefined}
     >
       <div className="flex items-start gap-2">

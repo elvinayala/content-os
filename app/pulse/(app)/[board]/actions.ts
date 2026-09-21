@@ -77,6 +77,13 @@ export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{
   });
 }
 
+export async function leerItemsGrupoAction(p: { groupId: string }): Promise<R<{ items: Item[] }>> {
+  return envolver(async () => {
+    await requiereUsuario();
+    return { items: await repo.leerItemsGrupo(p.groupId) };
+  });
+}
+
 // ---------- columnas ----------
 
 export async function crearColumnaAction(p: { boardId: string; title: string; type: TipoColumna; settings?: SettingsColumna }): Promise<R<{ column: Columna }>> {

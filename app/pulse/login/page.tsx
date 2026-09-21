@@ -1,10 +1,12 @@
 import { Activity } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import { loginPulseAction } from "@/app/pulse/login/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { usuarioActual } from "@/lib/pulse/auth";
 import { NOMBRE_APP, SUBTITULO_APP } from "@/lib/pulse/types";
 
 export const metadata = { title: `Entrar · ${NOMBRE_APP}` };
@@ -15,6 +17,7 @@ export default async function PulseLoginPage({
   searchParams: Promise<{ error?: string; desde?: string }>;
 }) {
   const { error, desde } = await searchParams;
+  if (!error && (await usuarioActual())) redirect(desde?.startsWith("/pulse") ? desde : "/pulse");
   return (
     <div className="fondo-malla flex min-h-svh w-full items-center justify-center p-4">
       <Card className="w-full max-w-sm border-white/60 shadow-xl shadow-primary/10">

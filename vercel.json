@@ -12,5 +12,8 @@
       "path": "/api/cron/wins-borinquen",
       "schedule": "0 4,12,20 * * *"
     }
+  ],
+  "regions": [
+    "pdx1"
   ]
 }

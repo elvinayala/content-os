@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-19T00:00:00-04:00",
+  "actualizadoEl": "2026-09-20T00:00:00-04:00",
   "nota": "Inventario de TODO lo que Nico (vibecoder) puede tocar. Lo lee scripts/nico-ronda.mjs (salud diaria) y el puente de Telegram (--add-dir). Si nace un proyecto nuevo, se agrega aquí y Nico ya lo ve.",
   "plataformas": [
     {
@@ -212,6 +212,23 @@
       ],
       "critico": false,
       "notas": "Congelado en el plan de guerra Q4 (no construir features nuevas sin pedido de Elvin)."
+    },
+    {
+      "id": "n8n",
+      "nombre": "n8n v2 — automatizaciones de Level Up (agentes y workflows de la agencia)",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO",
+      "prod": "https://n8nv2.levelupmediapr.net",
+      "salud": "https://n8nv2.levelupmediapr.net/healthz",
+      "hosting": "externo (montado por el proveedor de soporte; falta confirmar dónde corre y quién tiene el N8N_ENCRYPTION_KEY)",
+      "deploy": "no se despliega código: los workflows se editan en la UI o por API; respaldo en data/n8n/workflows/ (node scripts/n8n.mjs exportar)",
+      "logs": "node scripts/n8n.mjs ejecuciones 1  (ejecuciones con error por workflow, con nodo y mensaje)",
+      "tests": "node scripts/n8n.mjs salud",
+      "leerPrimero": [
+        "data/n8n/inventario.json",
+        "vault/proyectos/n8n/README.md"
+      ],
+      "critico": true,
+      "notas": "Acceso SOLO por API key (N8N_API_KEY en .env.local), nunca con la contraseña de la UI. Nada de activar/desactivar workflows ni tocar credenciales sin OK de Elvin. Objetivo: independizarse del soporte externo ($500/mes): respaldo en el repo + monitoreo diario + arreglar los que fallan."
     }
   ],
   "casosAbiertos": {

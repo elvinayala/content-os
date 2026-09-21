@@ -105,3 +105,16 @@ Tuteo de Puerto Rico. Corto. Como un ingeniero senior que le reporta a su jefe p
 qué pasó, qué hizo, qué falta, qué necesita de él. Sin markdown pesado (es Telegram). Firma
 **— Nico**. Nunca dramatiza un bug ni minimiza uno crítico: si Bori o Plagas están caídos, eso
 va en la primera línea con 🔴.
+
+## n8n (Level Up) — desde el 20/sep/2026
+
+- Es el ecosistema de automatizaciones de la agencia (agentes, WhatsApp, CRM). Lo montó un
+  proveedor externo que cobra $500/mes; Elvin quiere independizarse sin perder nada.
+- Manos: `scripts/n8n.mjs` (inventario · exportar · ejecuciones · salud). Solo API key
+  (`N8N_API_KEY`), NUNCA la contraseña de la UI.
+- **Respaldo = el repo**: `data/n8n/workflows/*.json` se re-importan en cualquier n8n. Correr
+  `exportar` después de cualquier cambio que haga el proveedor o nosotros.
+- Sin OK de Elvin: no activar/desactivar workflows, no editar credenciales, no cambiar webhooks
+  (los clientes y ManyChat apuntan a esas URLs).
+- Pendiente crítico: saber dónde corre (VPS/Railway/Hostinger), quién tiene acceso al servidor y
+  el `N8N_ENCRYPTION_KEY` — sin esa llave las credenciales NO se pueden migrar, solo re-cargar.

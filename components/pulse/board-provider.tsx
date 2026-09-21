@@ -14,6 +14,7 @@ import {
   eliminarColumnaAction,
   eliminarGrupoAction,
   eliminarItemsAction,
+  leerItemsGrupoAction,
   moverItemsAction,
   renombrarItemAction,
   reordenarColumnasAction,
@@ -64,6 +65,7 @@ type Accion =
   | { type: "valor"; itemId: string; columnId: string; value: ValorCelda; updatedAt?: string }
   | { type: "nombre"; itemId: string; name: string }
   | { type: "item:agregar"; item: Item }
+  | { type: "items:cargar"; items: Item[] }
   | { type: "item:quitar"; itemIds: string[] }
   | { type: "item:mover"; itemIds: string[]; groupId: string }
   | { type: "columna:agregar"; column: Columna }
@@ -88,6 +90,7 @@ type Accion =
   | { type: "agruparPor"; columnId: string | null }
   | { type: "abrir"; itemId: string | null }
   | { type: "vista"; vista: Vista }
+  | { type: "board:actualizar"; patch: Partial<Board> }
   | { type: "reemplazar"; data: BoardCompleto };
 
 function reducer(s: EstadoBoard, a: Accion): EstadoBoard {
@@ -106,6 +109,15 @@ function reducer(s: EstadoBoard, a: Accion): EstadoBoard {
     }
     case "item:agregar":
       return { ...s, items: { ...s.items, [a.item.id]: a.item } };
+    case "items:cargar": {
+      const items = { ...s.items };
+      for (const it of a.items) {
+        // si el usuario ya editó algo del item parcial, conservar lo suyo
+        const previo = items[it.id];
+        items[it.id] = previo && !previo.parcial ? previo : { ...it, values: { ...it.values, ...(previo?.values ?? {}) } };
+      }
+      return { ...s, items };
+    }
     case "item:quitar": {
       const items = { ...s.items };
       const seleccion = new Set(s.seleccion);
@@ -187,10 +199,15 @@ function reducer(s: EstadoBoard, a: Accion): EstadoBoard {
       return { ...s, itemAbierto: a.itemId };
     case "vista":
       return { ...s, vista: a.vista };
+    case "board:actualizar":
+      return { ...s, board: { ...s.board, ...a.patch } };
     case "reemplazar": {
       // Datos frescos del server (otra usuaria editó): conserva estado de UI.
       const items: Record<string, Item> = {};
-      for (const i of a.data.items) items[i.id] = i;
+      for (const i of a.data.items) {
+        const previo = s.items[i.id];
+        items[i.id] = i.parcial && previo && !previo.parcial ? previo : i;
+      }
       const archivos: Record<string, ArchivoPulse> = {};
       for (const f of a.data.archivos) archivos[f.id] = f;
       return { ...s, board: a.data.board, columns: a.data.columns, groups: a.data.groups, items, usuarios: a.data.usuarios, archivos };
@@ -310,6 +327,25 @@ export function BoardProvider({
       localStorage.setItem(claveColapsados(state.board.slug), JSON.stringify([...state.colapsados]));
     } catch {}
   }, [state.colapsados, state.board.slug, state.groups]);
+
+  // Grupos parciales (sin values): cargarlos cuando se expanden o cuando hace falta verlos
+  // todos (búsqueda, filtros, orden, agrupar por columna, kanban/tarjetas).
+  const cargando = useRef(new Set<string>());
+  useEffect(() => {
+    const necesitaTodo = !!state.busqueda.trim() || state.filtros.length > 0 || !!state.filtroPersona || !!state.orden || !!state.agruparPor || state.vista !== "tabla";
+    const pendientes = new Set<string>();
+    for (const it of Object.values(state.items)) {
+      if (it.parcial && (necesitaTodo || !state.colapsados.has(it.groupId))) pendientes.add(it.groupId);
+    }
+    for (const groupId of pendientes) {
+      if (cargando.current.has(groupId)) continue;
+      cargando.current.add(groupId);
+      leerItemsGrupoAction({ groupId }).then((r) => {
+        cargando.current.delete(groupId);
+        if (r.ok) dispatch({ type: "items:cargar", items: r.items });
+      });
+    }
+  }, [state.items, state.colapsados, state.busqueda, state.filtros, state.filtroPersona, state.orden, state.agruparPor, state.vista]);
 
   // Al volver el foco a la pestaña, traer lo que haya cambiado la otra usuaria.
   useEffect(() => {

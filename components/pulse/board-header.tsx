@@ -38,7 +38,8 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
     if (!n || n === board.nombre) return setNombre(board.nombre);
     const { actualizarBoardAction } = await import("@/app/pulse/(app)/[board]/actions");
     const r = await actualizarBoardAction({ boardId: board.id, patch: { nombre: n } });
-    if (r.ok) dispatch({ type: "reemplazar", data: { board: { ...board, nombre: n }, columns: [], groups: [], items: [], usuarios: [], archivos: [] } });
+    if (r.ok) dispatch({ type: "board:actualizar", patch: { nombre: n } });
+    else setNombre(board.nombre);
     router.refresh();
   };
 
@@ -54,7 +55,8 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
             value={board.color ?? "grey"}
             onChange={async (c) => {
               const { actualizarBoardAction } = await import("@/app/pulse/(app)/[board]/actions");
-              await actualizarBoardAction({ boardId: board.id, patch: { color: c } });
+              const r = await actualizarBoardAction({ boardId: board.id, patch: { color: c } });
+              if (r.ok) dispatch({ type: "board:actualizar", patch: { color: c } });
               router.refresh();
             }}
           />

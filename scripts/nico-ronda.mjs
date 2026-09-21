@@ -133,14 +133,34 @@ async function soportePlagas(p) {
   } catch (e) { return { error: e.message.slice(0, 120) }; }
 }
 
+async function saludN8n(p) {
+  if (p.id !== "n8n") return null;
+  if (!env("N8N_API_KEY")) return { nota: "sin N8N_API_KEY en .env.local: n8n → Settings → n8n API → Create API key" };
+  // Reusa scripts/n8n.mjs (últimas 24 h): workflows con error, nodo y mensaje de la última falla.
+  const out = await sh("node", ["scripts/n8n.mjs", "ejecuciones", "1"], ROOT, 90000);
+  if (out.startsWith("__ERR__")) return { error: out.slice(8, 300) };
+  try {
+    const s = JSON.parse(fs.readFileSync(path.join(ROOT, "data/n8n/salud.json"), "utf8"));
+    const con = s.workflows.filter((w) => w.ok + w.error + w.otras > 0);
+    const rotos = con.filter((w) => w.error > 0);
+    return {
+      activos: s.workflows.filter((w) => w.activo).length,
+      conActividad24h: con.length,
+      conErrores: rotos.length,
+      muestra: rotos.slice(0, 6).map((w) => `${w.nombre}: ${w.error} error / ${w.ok} ok${w.ultimoError?.nodo ? ` — "${w.ultimoError.nodo}": ${String(w.ultimoError.mensaje || "").slice(0, 140)}` : ""}`),
+      activosSinEjecuciones: s.workflows.filter((w) => w.activo && w.ok + w.error + w.otras === 0).map((w) => w.nombre).slice(0, 10),
+    };
+  } catch (e) { return { error: e.message.slice(0, 120) }; }
+}
+
 const bitacora = (() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, "data/nico-bitacora.json"), "utf8")); } catch { return { entradas: [] }; } })();
 const ajustes24h = (bitacora.entradas || []).filter((e) => new Date(e.fecha) > desde);
 const pendientesElvin = (bitacora.pendientesElvin || []).filter((p) => p.estado !== "hecho");
 
 const resultado = { generadoEl: new Date().toISOString(), desde: desde.toISOString(), plataformas: [], ajustes24h, pendientesElvin };
 for (const p of INV.plataformas) {
-  const [s, g, l, f, sp] = await Promise.all([salud(p), gitUltimas24h(p), logsRailway(p), fallosBori(p), soportePlagas(p)]);
-  resultado.plataformas.push({ id: p.id, nombre: p.nombre, critico: p.critico, salud: s, git: g, logs: l, fallos: f, soporte: sp });
+  const [s, g, l, f, sp, n8] = await Promise.all([salud(p), gitUltimas24h(p), logsRailway(p), fallosBori(p), soportePlagas(p), saludN8n(p)]);
+  resultado.plataformas.push({ id: p.id, nombre: p.nombre, critico: p.critico, salud: s, git: g, logs: l, fallos: f, soporte: sp, n8n: n8 });
 }
 const json = JSON.stringify(resultado, null, 2);
 if (process.argv.includes("--guardar")) fs.writeFileSync(path.join(ROOT, "data/nico-ronda-crudo.json"), json + "\n");

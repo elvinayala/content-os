@@ -41,7 +41,7 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
       <SheetContent side="right" className="pulse flex w-full flex-col gap-0 p-0 sm:max-w-[640px]" showCloseButton onOpenAutoFocus={(e) => e.preventDefault()}>
         {item ? (
           <>
-            <SheetHeader className="border-b px-5 pt-4 pb-3 pr-12">
+            <SheetHeader className="border-b px-5 pt-4 pb-3 pr-12" style={{ boxShadow: `inset 0 3px 0 ${cssColor(grupo?.color)}`, background: `linear-gradient(180deg, color-mix(in srgb, ${cssColor(grupo?.color)} 7%, white), white)` }}>
               <SheetTitle asChild>
                 <input
                   className="w-full rounded px-1 text-lg font-semibold outline-none hover:bg-muted focus:bg-background focus:ring-2 focus:ring-primary"
@@ -73,9 +73,10 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="campos" className="min-h-0 flex-1 overflow-auto px-5 py-3">
+                {item.parcial ? <p className="mb-2 text-xs text-muted-foreground">Cargando campos…</p> : null}
                 <div className="flex flex-col divide-y">
                   {s.columns.map((c) => (
-                    <div key={c.id} className="flex min-h-10 items-center gap-3 py-1.5">
+                    <div key={c.id} className="campo-ficha -mx-2 flex min-h-10 items-center gap-3 rounded-md px-2 py-1.5">
                       <div className="flex w-44 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
                         <TipoColumnaIcon tipo={c.type} className="size-3.5 opacity-70" />
                         <span className="truncate" title={c.title}>
@@ -194,9 +195,9 @@ function Actividades({ itemId, boardId, columns }: { itemId: string; boardId: st
       <div className="min-h-0 flex-1 overflow-auto px-5 py-3">
         {lista === null ? <p className="text-sm text-muted-foreground">Cargando…</p> : null}
         {lista?.length === 0 ? <p className="text-sm text-muted-foreground">Sin actividad todavía.</p> : null}
-        <ol className="flex flex-col gap-3">
+        <ol className="linea-tiempo flex flex-col gap-4">
           {lista?.map((a) => (
-            <li key={a.id} className="flex gap-2 text-sm">
+            <li key={a.id} className="relative flex gap-2 text-sm">
               {a.usuario ? <UserAvatar nombre={a.usuario.nombre} color={a.usuario.color} className="mt-0.5" /> : <span className="mt-0.5 size-6 rounded-full bg-muted" />}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">

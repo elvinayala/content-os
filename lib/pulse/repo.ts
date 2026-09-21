@@ -82,14 +82,25 @@ export async function listarBoards(): Promise<BoardResumen[]> {
   });
 }
 
-export async function leerBoardCompleto(slug: string): Promise<BoardCompleto | null> {
+// Los items de los grupos que arrancan colapsados (`colapsadoDefault`, p. ej. OFFBOARDED con
+// 700+ filas) viajan SIN `values` (parcial: true) para que el tablero abra rápido; el cliente
+// los pide con leerItemsGrupo al expandir el grupo o al buscar/filtrar.
+export async function leerBoardCompleto(slug: string, opciones: { liviano?: boolean } = {}): Promise<BoardCompleto | null> {
   const d = await db();
   const b = await d.query.pulseBoards.findFirst({ where: eq(pulseBoards.slug, slug) });
   if (!b) return null;
-  const [columns, groups, items, usuarios, archivos] = await Promise.all([
+  const groups = await d.select().from(pulseGroups).where(eq(pulseGroups.boardId, b.id)).orderBy(asc(pulseGroups.position));
+  const livianos = opciones.liviano === false ? [] : groups.filter((g) => g.colapsadoDefault).map((g) => g.id);
+  const valuesExpr = livianos.length
+    ? sql<Record<string, ValorCelda>>`case when ${pulseItems.groupId} in ${livianos} then '{}'::jsonb else ${pulseItems.values} end`
+    : pulseItems.values;
+  const [columns, items, usuarios, archivos] = await Promise.all([
     d.select().from(pulseColumns).where(eq(pulseColumns.boardId, b.id)).orderBy(asc(pulseColumns.position)),
-    d.select().from(pulseGroups).where(eq(pulseGroups.boardId, b.id)).orderBy(asc(pulseGroups.position)),
-    d.select().from(pulseItems).where(eq(pulseItems.boardId, b.id)).orderBy(asc(pulseItems.groupId), asc(pulseItems.position)),
+    d
+      .select({ id: pulseItems.id, boardId: pulseItems.boardId, groupId: pulseItems.groupId, name: pulseItems.name, position: pulseItems.position, values: valuesExpr, updatedAt: pulseItems.updatedAt })
+      .from(pulseItems)
+      .where(eq(pulseItems.boardId, b.id))
+      .orderBy(asc(pulseItems.groupId), asc(pulseItems.position)),
     d.select().from(pulseUsers).where(eq(pulseUsers.activo, true)).orderBy(asc(pulseUsers.nombre)),
     d
       .select({ f: pulseFiles })
@@ -97,14 +108,21 @@ export async function leerBoardCompleto(slug: string): Promise<BoardCompleto | n
       .innerJoin(pulseItems, eq(pulseItems.id, pulseFiles.itemId))
       .where(eq(pulseItems.boardId, b.id)),
   ]);
+  const parciales = new Set(livianos);
   return {
     board: aBoard(b),
     columns: columns.map(aColumna),
     groups: groups.map(aGrupo),
-    items: items.map(aItem),
+    items: items.map((i) => ({ ...aItem({ ...i, mondayId: null, createdBy: null, createdAt: i.updatedAt }), ...(parciales.has(i.groupId) ? { parcial: true } : {}) })),
     usuarios: usuarios.map(aUsuario),
     archivos: archivos.map((r) => aArchivo(r.f)),
   };
+}
+
+export async function leerItemsGrupo(groupId: string): Promise<Item[]> {
+  const d = await db();
+  const rows = await d.select().from(pulseItems).where(eq(pulseItems.groupId, groupId)).orderBy(asc(pulseItems.position));
+  return rows.map(aItem);
 }
 
 export async function crearBoard(p: { nombre: string; slug: string; color?: ColorPulse }): Promise<Board> {

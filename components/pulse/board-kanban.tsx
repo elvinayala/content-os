@@ -1,7 +1,8 @@
 "use client";
 
 import { DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { useBoard, useBoardActions, useGruposVisibles } from "@/components/pulse/board-provider";
 import { ItemCard } from "@/components/pulse/item-card";
@@ -18,17 +19,23 @@ export function BoardKanban() {
   const grupos = useGruposVisibles();
   const statusCols = s.columns.filter((c) => c.type === "status");
   const clave = `pulse:${s.board.slug}:kanban`;
-  const [colId, setColId] = useState<string>(() => {
-    try {
-      const v = localStorage.getItem(clave);
-      if (v && (v === "__grupo" || statusCols.some((c) => c.id === v))) return v;
-    } catch {}
-    return statusCols[0]?.id ?? "__grupo";
-  });
+  const [colId, setColId] = useState<string>(statusCols[0]?.id ?? "__grupo");
+  const montado = useRef(false);
   useEffect(() => {
+    if (!montado.current) {
+      montado.current = true;
+      try {
+        const v = localStorage.getItem(clave);
+        if (v && (v === "__grupo" || statusCols.some((c) => c.id === v))) {
+          setColId(v);
+          return;
+        }
+      } catch {}
+    }
     try {
       localStorage.setItem(clave, colId);
     } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clave, colId]);
 
   const col: Columna | undefined = statusCols.find((c) => c.id === colId);
@@ -63,17 +70,24 @@ export function BoardKanban() {
     if (col) {
       const actual = (item.values[col.id] as string | undefined) ?? "__sin";
       if (actual === destino) return;
-      await setValor(item.id, col, destino === "__sin" ? null : destino);
+      const ok = await setValor(item.id, col, destino === "__sin" ? null : destino);
+      if (ok) {
+        const nombre = col.settings.labels?.find((l) => l.id === destino)?.label ?? "Sin estado";
+        toast(`${item.name} → ${nombre}`, { className: "pulse", action: { label: "Deshacer", onClick: () => setValor(item.id, col, actual === "__sin" ? null : actual) } });
+      }
     } else if (item.groupId !== destino) {
+      const origen = item.groupId;
       await moverItems([item.id], destino);
+      const nombre = s.groups.find((g) => g.id === destino)?.title ?? "otro grupo";
+      toast(`${item.name} → ${nombre}`, { className: "pulse", action: { label: "Deshacer", onClick: () => moverItems([item.id], origen) } });
     }
   };
 
   const numero = s.columns.find((c) => c.type === "number");
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b px-4 py-2 text-sm">
+    <div className="fondo-malla flex h-full flex-col">
+      <div className="vidrio flex items-center gap-2 border-b px-4 py-2 text-sm">
         <span className="text-muted-foreground">Columnas por</span>
         <select value={colId} onChange={(e) => setColId(e.target.value)} className="h-8 rounded-md border bg-background px-2 text-sm">
           {statusCols.map((c) => (
@@ -100,21 +114,28 @@ function ColumnaKanban({ id, titulo, color, items, suma, formato }: { id: string
   const { setNodeRef, isOver } = useDroppable({ id });
   const s = useBoard();
   return (
-    <div ref={setNodeRef} className={cn("flex w-64 shrink-0 flex-col rounded-lg bg-secondary", isOver && "ring-2 ring-primary")}>
-      <div className="flex items-center gap-2 rounded-t-lg px-3 py-2 text-sm font-medium text-white" style={{ background: cssColor(color) }}>
+    <div
+      ref={setNodeRef}
+      className={cn("columna-kanban flex w-64 shrink-0 flex-col", isOver && "ring-2 ring-primary ring-offset-2")}
+      style={{ ["--tarjeta-color" as string]: cssColor(color) }}
+    >
+      <div className="flex items-center gap-2 px-3 pt-3 pb-2 text-sm font-semibold" style={{ color: cssColor(color) }}>
+        <span className="size-2.5 shrink-0 rounded-full" style={{ background: cssColor(color), boxShadow: `0 0 0 3px color-mix(in srgb, ${cssColor(color)} 22%, transparent)` }} />
         <span className="truncate">{titulo}</span>
-        <span className="ml-auto rounded bg-white/25 px-1.5 text-xs">{items.length}</span>
+        <span className="ml-auto rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ background: `color-mix(in srgb, ${cssColor(color)} 14%, transparent)` }}>
+          {items.length}
+        </span>
       </div>
       {suma !== null && items.length ? (
-        <div className="px-3 pt-2 text-xs text-muted-foreground">
-          Suma: <b className="text-foreground">{new Intl.NumberFormat("en-US", formato === "moneda" ? { style: "currency", currency: "USD", maximumFractionDigits: 0 } : {}).format(suma)}</b>
+        <div className="px-3 pb-1 text-[11px] text-muted-foreground">
+          Suma <b className="text-foreground">{new Intl.NumberFormat("en-US", formato === "moneda" ? { style: "currency", currency: "USD", maximumFractionDigits: 0 } : {}).format(suma)}</b>
         </div>
       ) : null}
       <div className="scroll-fino flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2">
         {items.map((it) => (
           <TarjetaArrastrable key={it.id} item={it} colorGrupo={cssColor(s.groups.find((g) => g.id === it.groupId)?.color)} />
         ))}
-        {items.length === 0 ? <p className="py-6 text-center text-xs text-muted-foreground">Soltá acá</p> : null}
+        {items.length === 0 ? <p className="rounded-md border border-dashed py-6 text-center text-xs text-muted-foreground">Soltá acá</p> : null}
       </div>
     </div>
   );
