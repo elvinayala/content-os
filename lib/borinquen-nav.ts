@@ -1,6 +1,7 @@
 import {
   AudioLines,
   Bot,
+  Globe,
   Home,
   MessageSquare,
   Plug,
@@ -48,6 +49,12 @@ export const borinquenNav: BorinquenNavItem[] = [
     href: "/borinquen/autoflow",
     icon: Workflow,
     descripcion: "Las instancias DFY de cada cliente: chat + voz + CRM.",
+  },
+  {
+    titulo: "Portales",
+    href: "/borinquen/portales",
+    icon: Globe,
+    descripcion: "El portal de cada prospecto o cliente: agentes, llamadas, CRM y solicitudes.",
   },
   {
     titulo: "Asistente Personal",

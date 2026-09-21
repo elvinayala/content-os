@@ -89,6 +89,7 @@
     <button data-v="v4">4 · Tus agentes</button>
   </div>
 
+  {{PORTAL_BANNER}}
   <div class="app">
     <div class="bar"><div class="brand"><span class="sq"></span>{{NEGOCIO}}</div>
       <nav><span class="on" id="n1">Embudo</span><span id="n2">Conversaciones</span><span id="n3">Agenda</span><span id="n4">Agentes</span></nav>
@@ -97,9 +98,9 @@
     <div class="view on" id="v1">
       <div class="kpis">
         <div class="kpi"><small>Clientes nuevos hoy</small><b>{{N_LEADS}}</b></div>
-        <div class="kpi"><small>Respondidos en</small><b class="g">10 s</b></div>
+        <div class="kpi"><small>Respondidos en</small><b class="g">{{RESPUESTA}}</b></div>
         <div class="kpi"><small>Citas agendadas</small><b>{{N_CITAS}}</b></div>
-        <div class="kpi"><small>Sin responder</small><b class="g">0</b></div>
+        <div class="kpi"><small>Sin responder</small><b class="g">{{SIN_RESPONDER}}</b></div>
       </div>
       <div class="board">{{COLUMNAS}}</div>
       <div class="expl"><b>Lo que pasa acá:</b> cada mensaje de WhatsApp, Instagram o llamada entra solo al embudo con su servicio de interés, y avanza de etapa según lo que el asistente logró. No se te pierde nadie en el celular.</div>
@@ -131,7 +132,7 @@
     </div>
   </div>
 
-  <p class="foot">Este recorrido es una simulación con datos de ejemplo. En la llamada te lo mostramos en vivo con tu cuenta.</p>
+  <p class="foot">Este recorrido es una simulación con datos de ejemplo (los números de arriba también). Lo real, con tus llamadas transcritas y tus leads, está en tu portal AutoFlow.</p>
 </div>
 <div class="credit"><span class="dot"></span><span>Hecho por <b>AI Borinquen</b> · AutoFlow</span><span>·</span><a href="../">Volver al MVP</a></div>
 <script>

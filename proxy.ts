@@ -6,12 +6,15 @@ import {
   sesionContenidoValida,
   sesionValida,
 } from "@/lib/auth";
+import { COOKIE_PORTAL, SLUG_RE, TTL_PORTAL, firmarAccesoPortal, tokenPortalValido, verificarAccesoPortal } from "@/lib/portal/acceso";
 import { COOKIE_PULSE, verificarSesion } from "@/lib/pulse/session";
 
 // Protege el portal con login. Dos roles:
 //  - CEO (CEO_PORTAL_PASSWORD): acceso total.
 //  - Contenido (CONTENIDO_PORTAL_PASSWORD): SOLO /pedir + /api/pedir-chat
 //    (equipo de contenido: Valentina, Juan Diego, creadores).
+//  - Portal AutoFlow (/portal/<slug>): el prospecto/cliente de AI Borinquen entra con el
+//    token ?k= de su link (HMAC por slug, lib/portal/acceso.ts) y queda con cookie propia.
 // Sin CEO_PORTAL_PASSWORD (dev local), el portal está abierto.
 
 function esRutaContenido(pathname: string): boolean {
@@ -36,6 +39,11 @@ export default async function proxy(request: NextRequest) {
   // Voz de las demos de AutoFlow (Fábrica de Demos): las páginas en Netlify piden acá
   // el token efímero de Retell. Sin sesión, con CORS abierto; valida el agente adentro.
   if (pathname === "/api/demo-webcall") return NextResponse.next();
+  // Portal AutoFlow: webhook de Retell (valida RETELL_WEBHOOK_SECRET adentro), leads del chat
+  // de demo (público con rate limit) y registro de portales desde la fábrica (CRON_SECRET).
+  if (pathname === "/api/retell-webhook") return NextResponse.next();
+  if (pathname === "/api/demo-lead") return NextResponse.next();
+  if (pathname === "/api/autoflow/portales") return NextResponse.next();
   // Webhook de Telegram (canal directo de Elvin con Sofi). Valida el secreto adentro.
   if (pathname === "/api/telegram") return NextResponse.next();
   // Snapshots de data/ para sincronizar Mac ↔ Railway (valida CRON_SECRET adentro).
@@ -69,6 +77,31 @@ export default async function proxy(request: NextRequest) {
     const login = new URL("/pulse/login", request.url);
     login.searchParams.set("desde", pathname);
     return NextResponse.redirect(login);
+  }
+
+  // Portal AutoFlow del prospecto/cliente: /portal/<slug>[?k=token].
+  if (pathname.startsWith("/portal/")) {
+    const slug = pathname.split("/")[2] ?? "";
+    if (!SLUG_RE.test(slug)) return NextResponse.redirect(new URL("/login", request.url));
+    const k = request.nextUrl.searchParams.get("k");
+    if (k && (await tokenPortalValido(slug, k))) {
+      const limpia = new URL(request.url);
+      limpia.searchParams.delete("k");
+      const res = NextResponse.redirect(limpia);
+      res.cookies.set(COOKIE_PORTAL, await firmarAccesoPortal(slug), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/portal",
+        maxAge: TTL_PORTAL,
+      });
+      return res;
+    }
+    if (await sesionValida(request.cookies.get(COOKIE_SESION)?.value)) return NextResponse.next(); // closer / CEO
+    const acceso = await verificarAccesoPortal(request.cookies.get(COOKIE_PORTAL)?.value);
+    if (acceso?.slug === slug) return NextResponse.next();
+    if (pathname.endsWith("/acceso")) return NextResponse.next();
+    return NextResponse.redirect(new URL(`/portal/${slug}/acceso`, request.url));
   }
 
   const ceoCookie = request.cookies.get(COOKIE_SESION)?.value;

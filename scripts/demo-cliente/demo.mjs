@@ -13,9 +13,17 @@
 //   node scripts/demo-cliente/demo.mjs construir <slug>   # arma el sitio (propuesta + landing + chat + voz + sistema)
 //   node scripts/demo-cliente/demo.mjs deck      <slug>   # presentación .pptx personalizada (pptxgenjs)
 //   node scripts/demo-cliente/demo.mjs desplegar <slug>   # Netlify (zip deploy) → URL
+//   node scripts/demo-cliente/demo.mjs portal    <slug>   # registra el Portal AutoFlow en Content OS (+ webhook de Retell)
 //   node scripts/demo-cliente/demo.mjs nota      <slug>   # nota (o deal) en Pipedrive AIB
 //   node scripts/demo-cliente/demo.mjs todo      <slug>   # todo lo anterior en orden
 //   node scripts/demo-cliente/demo.mjs listar
+//   deck acepta --via implementacion|capacitacion (default implementacion): la vía B es la
+//   Academia AIB (grupal $2,500 · 1:1 $4,000/4 meses) para el dueño que quiere aprender.
+//
+// Portal AutoFlow (21/sep/2026): además del sitio estático, cada prospecto tiene un portal vivo en
+// Content OS (/portal/<slug>?k=token) con sus agentes, llamadas REALES transcritas, CRM y
+// "solicitar cambio". El token es HMAC(AUTOFLOW_PORTAL_SECRET, slug): este script lo calcula igual
+// que la app, así el link va en la propuesta, el deck y la nota sin llamar a ninguna API.
 //
 // Archivos: data/demos/<slug>/{config.json, generado.json, retell.json, site/} y data/demos/index.json.
 // Plantillas: demos/_plantilla-autoflow/{chat,voz,propuesta}.html (copias congeladas de Glenn).
@@ -24,6 +32,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { execSync } from "node:child_process";
 
 const ROOT = process.cwd();
@@ -35,6 +44,16 @@ const WEBCALL_URL =
   process.env.DEMO_WEBCALL_URL ||
   "https://content-os-chi-seven.vercel.app/api/demo-webcall";
 const WA_AIB = "19393040491";
+const CONTENT_OS_URL = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+// Escalera vigente (Elvin, 21/sep/2026): mensualidad $147 chat · $297 voz · $497 ambos.
+const PRECIOS = {
+  chat: { nombre: "Agente de chat", inicial: "$1,500", mensual: "$147/mes", desc: "WhatsApp e Instagram atendidos 24/7. Responde, precalifica, toma datos y agenda. CRM incluido." },
+  voz: { nombre: "Agente de voz", inicial: "$2,500", mensual: "$297/mes", desc: "Contesta el teléfono con voz de Puerto Rico. Orienta, toma datos y agenda. Escala a tu equipo." },
+  completo: { nombre: "AutoFlow completo", inicial: "$3,500", mensual: "$497/mes", desc: "Chat + voz + CRM configurado (no en blanco) + agenda + portal. Los 2 sistemas: citas y atención." },
+  academia: { nombre: "Academia AIB · grupal", inicial: "$2,500", mensual: "3 meses", desc: "12 sesiones en vivo + implementación guiada de tu primer agente + comunidad. Pago único o 3 × $997." },
+  uno: { nombre: "Acompañamiento 1:1", inicial: "$4,000", mensual: "4 meses", desc: "Lo construyes tú con nosotros al lado: sesiones semanales, revisión de tu sistema y tu equipo." },
+};
+const GARANTIA = "Garantía: funcionando en 21 días o no corre la mensualidad · sin permanencia · financiable (inicial + 2 pagos a 30 días)";
 const VOICE_ID = "custom_voice_ac0ebbc0d0419afa7cd1882530"; // voz "Valentina" (workspace AIB)
 const VOICE_MODEL = "eleven_v3";
 const PIPEDRIVE_PIPELINE = 3; // "DIAGNÓSTICO DE AUTOMATIZACIÓN" (cuenta AIB)
@@ -70,6 +89,28 @@ function hexToRgb(hex) {
   const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
+// Portal AutoFlow: mismo token que lib/portal/acceso.ts (HMAC-SHA256 hex, 32 chars).
+function tokenPortal(slug) {
+  const secreto = env("AUTOFLOW_PORTAL_SECRET");
+  if (!secreto) return "";
+  return crypto.createHmac("sha256", secreto).update(`portal:${slug}`).digest("hex").slice(0, 32);
+}
+function portalUrl(slug) {
+  const k = tokenPortal(slug);
+  return k ? `${CONTENT_OS_URL}/portal/${slug}?k=${k}` : "";
+}
+function webhookRetell() {
+  const s = env("RETELL_WEBHOOK_SECRET");
+  return s ? `${CONTENT_OS_URL}/api/retell-webhook?s=${s}` : "";
+}
+// Lo que el agente extrae al terminar la llamada; el portal lo convierte en lead.
+const POST_CALL_ANALYSIS = [
+  { type: "string", name: "nombre", description: "Nombre de la persona que llamó, si lo dijo." },
+  { type: "string", name: "telefono", description: "Teléfono que dejó la persona, con dígitos, si lo dio." },
+  { type: "string", name: "interes", description: "Servicio, producto o tratamiento por el que preguntó." },
+  { type: "boolean", name: "quiere_cita", description: "true si pidió o aceptó una cita, visita o llamada de seguimiento." },
+  { type: "string", name: "fecha_preferida", description: "Día u horario que prefirió para la cita, si lo dijo." },
+];
 function actualizarIndice(slug, patch) {
   const idx = readJSON(INDEX, { actualizadoEl: "", demos: [] });
   const i = idx.demos.findIndex((x) => x.slug === slug);
@@ -291,6 +332,8 @@ async function voz(slug) {
     interruption_sensitivity: 0.6, responsiveness: 0.8, voice_speed: 1.12, voice_temperature: 0.7,
     enable_backchannel: true, max_call_duration_ms: 180000, end_call_after_silence_ms: 90000,
     boosted_keywords: (generado.voz.boosted || []).slice(0, 40),
+    post_call_analysis_data: POST_CALL_ANALYSIS,
+    ...(webhookRetell() ? { webhook_url: webhookRetell() } : {}),
   });
   const out = { agent_id: agent.agent_id, llm_id: llm.llm_id, voice_id: config.voiceId || VOICE_ID, created_at: new Date().toISOString() };
   writeJSON(path.join(d, "retell.json"), out);
@@ -357,44 +400,99 @@ function construirSistema(c, g) {
     NEGOCIO: escHtml(c.negocio), COLOR: c.color, CONTACTO: escHtml(c.contacto || "Tú"), ASISTENTE: escHtml(g.asistente),
     N_LEADS: String(leads.length), N_CITAS: String(citas.length || (cita.servicio ? 1 : 0)),
     COLUMNAS: columnas, LISTA_CONV: lista, CONVERSACION: conversacion, CALENDARIO: cal,
+    RESPUESTA: "seg.", SIN_RESPONDER: "—",
+    PORTAL_BANNER: portalUrl(c.slug) ? `<div class="expl" style="margin:0 0 18px"><b>Esto es una simulación.</b> Tu portal con tus llamadas y leads reales está aquí: <a href="${escHtml(portalUrl(c.slug))}" style="color:var(--bori)">entrar a tu portal AutoFlow →</a></div>` : "",
     CITA_TEXTO: cita.servicio ? `${escHtml(primero?.nombre || "El cliente")} quedó con cita de ${escHtml(cita.servicio)} el ${escHtml(cita.cuando)}, confirmada por ${escHtml(cita.confirmadaPor)}.` : "Cada cita entra a la agenda con el servicio y el canal por el que llegó.",
   });
 }
 
 // ---------- deck (.pptx personalizado) ----------
-async function deck(slug) {
+// Apertura PR de 3 slides (quiénes somos · visión · a quién hemos ayudado) → lo que vimos → lo
+// que cuesta → el sistema → pruébalo (links + portal) → la cuenta → niveles/precios → primera
+// semana → próximo paso. Con --via capacitacion, la oferta es la Academia AIB (vía B).
+// Regla: solo cifras y testimonios respaldados (vault/estilo/testimonios-ai-borinquen.md).
+const APERTURA = {
+  quienes: [
+    "Agencia de automatización con IA, 100 % de Puerto Rico. Hablas con personas de aquí.",
+    "Parte de IA Market, la casa de Level Up Media (Meta Ads) y AI Borinquen (agentes de IA).",
+    "Desarrolladores propios: los agentes se entrenan con tu negocio, no se copian y pegan.",
+    "No vendemos un chatbot: instalamos un empleado digital con un trabajo concreto.",
+  ],
+  vision: [
+    "Que ningún negocio de la isla pierda un cliente por no contestar a tiempo.",
+    "Digitalizar Y capacitar: lo instalamos por ti, o te enseñamos a hacerlo tú.",
+    "Agentes por rol (recepción, ventas, citas), en tu voz y en tu idioma.",
+    "Todo medible: tú ves las llamadas, los mensajes y los leads en tu portal.",
+  ],
+  casos: [
+    ["Teo · Mano Santa PR (terapista)", "Respondía solo el 20 % de sus leads. Hoy responde en segundos, precalifica y agenda.", "\u201cMe da tranquilidad saber que las conversaciones se siguen atendiendo.\u201d"],
+    ["Milton · Caribe Paint", "Asistente de atención y seguimiento instalado sin fricción.", "\u201cPensé que la implementación sería mucho más complicada, pero ha sido bastante fácil.\u201d"],
+    ["Clínicas, dentistas, contratistas y oficinas de servicio en toda la isla", "Recepción por voz, WhatsApp atendido 24/7 y CRM que no se entrega en blanco.", "Te presentamos al cliente de tu mismo rubro en la llamada."],
+  ],
+};
+const ACADEMIA = {
+  situacion: ["Quieres usar la IA en tu negocio y no sabes por dónde empezar.", "Has probado herramientas sueltas y ninguna quedó funcionando.", "No quieres depender de nadie para cambiar un precio o un horario.", "Tienes tiempo para aprender, no presupuesto para que lo hagan todo por ti."],
+  programa: ["Semanas 1-2 · Fundamentos: cómo piensa un agente y qué trabajo le vas a dar.", "Semanas 3-5 · Tu agente de chat: entrenado con tu negocio, en WhatsApp e Instagram.", "Semanas 6-8 · Tu agente de voz: la recepcionista que contesta cuando nadie puede.", "Semanas 9-12 · Tu embudo y tu seguimiento: CRM, confirmaciones, medición."],
+  construyes: ["Un agente de chat funcionando en tu número.", "Un agente de voz con tu información y tu tono.", "Tu embudo con etapas y confirmaciones automáticas.", "El criterio para seguir mejorándolo tú, sin jerga."],
+  diaUno: ["Sesión 1 en vivo (grupal, 90 min) + tu espacio en la comunidad.", "Plantillas y accesos de las herramientas que vamos a usar.", "Tu primer agente de chat en borrador antes de la semana 3.", "Acompañamiento por WhatsApp entre sesiones."],
+};
+async function deck(slug, via = "implementacion") {
   const { d, config: c, generado: g } = cargar(slug);
   if (!g) die("Corre 'generar' primero");
+  const academia = /capac|academ/i.test(via || "");
   const reg = (readJSON(INDEX, { demos: [] }).demos || []).find((x) => x.slug === slug) || {};
   const urls = reg.urls || { propuesta: "(link al MVP)", chat: "chat/", voz: "voz/" };
+  const uPortal = portalUrl(slug);
   const { default: PptxGenJS } = await import("pptxgenjs");
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_16x9";
-  pptx.author = "AI Borinquen"; pptx.company = "AI Borinquen"; pptx.title = `${c.negocio} · AutoFlow`;
+  pptx.author = "AI Borinquen"; pptx.company = "AI Borinquen"; pptx.title = `${c.negocio} · ${academia ? "Academia AIB" : "AutoFlow"}`;
   const ACC = c.color.replace("#", ""), BG = "07160F", PANEL = "0D2118", TXT = "E9F5EE", MUT = "9DB8AA", BORI = "35C06F", GOLD = "E0A93C";
   const F = "Helvetica";
-  const base = (s) => { s.background = { color: BG }; s.addText("AI Borinquen · AutoFlow", { x: 0.4, y: 5.2, w: 4, h: 0.3, fontSize: 9, color: MUT, fontFace: F }); s.addText(c.negocio, { x: 5.6, y: 5.2, w: 4, h: 0.3, fontSize: 9, color: MUT, align: "right", fontFace: F }); };
+  const base = (s) => { s.background = { color: BG }; s.addText(`AI Borinquen · ${academia ? "Academia AIB" : "AutoFlow"} · Puerto Rico`, { x: 0.4, y: 5.2, w: 5, h: 0.3, fontSize: 9, color: MUT, fontFace: F }); s.addText(c.negocio, { x: 5.6, y: 5.2, w: 4, h: 0.3, fontSize: 9, color: MUT, align: "right", fontFace: F }); };
   const titulo = (s, eyebrow, t) => { s.addText(eyebrow.toUpperCase(), { x: 0.5, y: 0.35, w: 9, h: 0.3, fontSize: 10, color: BORI, bold: true, charSpacing: 3, fontFace: F }); s.addText(t, { x: 0.5, y: 0.65, w: 9, h: 0.8, fontSize: 28, color: TXT, bold: true, fontFace: F }); };
   const bullets = (s, items, y = 1.6, h = 3.3, size = 16) => s.addText((items || []).map((t) => ({ text: t, options: { bullet: { code: "25CF" }, breakLine: true } })), { x: 0.6, y, w: 8.8, h, fontSize: size, color: TXT, fontFace: F, paraSpaceAfter: 8, valign: "top" });
+  const tarjetas = (s, items, y = 1.6, h = 3.0) => items.forEach(([t, pr, desc, hot], i) => {
+    const x = 0.5 + i * 3.1;
+    s.addShape(pptx.ShapeType.roundRect, { x, y, w: 2.9, h, fill: { color: PANEL }, line: { color: hot ? GOLD : "1F3A2B", width: hot ? 2 : 1 }, rectRadius: 0.1 });
+    if (hot) s.addText(typeof hot === "string" ? hot : "LO QUE PROBASTE", { x: x + 0.2, y: y + 0.05, w: 2.5, h: 0.3, fontSize: 9, bold: true, color: GOLD, charSpacing: 2, fontFace: F });
+    s.addText(t, { x: x + 0.2, y: y + 0.35, w: 2.5, h: 0.6, fontSize: 15, bold: true, color: TXT, fontFace: F });
+    s.addText(pr, { x: x + 0.2, y: y + 0.95, w: 2.5, h: 0.4, fontSize: 14, bold: true, color: hot ? BORI : MUT, fontFace: F });
+    s.addText(desc, { x: x + 0.2, y: y + 1.4, w: 2.5, h: h - 1.5, fontSize: 11, color: MUT, fontFace: F, valign: "top" });
+  });
+  let n = 0;
 
   // 1 Portada
-  let s = pptx.addSlide(); base(s);
+  let s = pptx.addSlide(); base(s); n++;
   s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.25, h: 5.625, fill: { color: ACC } });
-  s.addText("PROPUESTA PERSONALIZADA · " + hoy(), { x: 0.6, y: 1.2, w: 9, h: 0.3, fontSize: 10, color: BORI, bold: true, charSpacing: 3, fontFace: F });
-  s.addText(`${c.negocio}: tu equipo digital`, { x: 0.6, y: 1.55, w: 8.8, h: 1.2, fontSize: 36, color: TXT, bold: true, fontFace: F });
+  s.addText((academia ? "PROGRAMA PERSONALIZADO · " : "PROPUESTA PERSONALIZADA · ") + hoy(), { x: 0.6, y: 1.2, w: 9, h: 0.3, fontSize: 10, color: BORI, bold: true, charSpacing: 3, fontFace: F });
+  s.addText(academia ? `${c.negocio}: aprende a poner la IA a trabajar` : `${c.negocio}: tu equipo digital`, { x: 0.6, y: 1.55, w: 8.8, h: 1.2, fontSize: 36, color: TXT, bold: true, fontFace: F });
   s.addText(g.deck?.subtitulo || g.propuesta?.titular || "", { x: 0.6, y: 2.8, w: 8.4, h: 0.9, fontSize: 16, color: MUT, fontFace: F });
-  s.addText(`Preparado para ${c.contacto || c.negocio}`, { x: 0.6, y: 4.2, w: 8, h: 0.4, fontSize: 12, color: MUT, fontFace: F });
-  // 2 Lo que vimos
-  s = pptx.addSlide(); base(s); titulo(s, "Lo que vimos", `Lo que está pasando hoy en ${c.negocio}`); bullets(s, g.deck?.situacion);
-  // 3 Lo que cuesta
-  s = pptx.addSlide(); base(s); titulo(s, "Lo que cuesta", "Cada hora sin responder tiene un precio"); bullets(s, g.deck?.costo, 1.6, 2.2);
+  s.addText(`Preparado para ${c.contacto || c.negocio} · Hecho en Puerto Rico`, { x: 0.6, y: 4.2, w: 8, h: 0.4, fontSize: 12, color: MUT, fontFace: F });
+  // 2-4 Apertura PR
+  s = pptx.addSlide(); base(s); n++; titulo(s, "Quiénes somos", "AI Borinquen: de Puerto Rico, para negocios de Puerto Rico"); bullets(s, APERTURA.quienes);
+  s = pptx.addSlide(); base(s); n++; titulo(s, "Nuestra visión", "Digitalizar y capacitar los negocios de la isla"); bullets(s, APERTURA.vision);
+  s = pptx.addSlide(); base(s); n++; titulo(s, "A quién hemos ayudado", "Clientes de aquí, con resultados que puedes verificar");
+  APERTURA.casos.forEach(([t, r, q], i) => {
+    const x = 0.5 + i * 3.1;
+    s.addShape(pptx.ShapeType.roundRect, { x, y: 1.6, w: 2.9, h: 3.2, fill: { color: PANEL }, line: { color: "1F3A2B" }, rectRadius: 0.1 });
+    s.addText(t, { x: x + 0.2, y: 1.7, w: 2.5, h: 0.7, fontSize: 13, bold: true, color: TXT, fontFace: F });
+    s.addText(r, { x: x + 0.2, y: 2.4, w: 2.5, h: 1.1, fontSize: 11.5, color: BORI, fontFace: F, valign: "top" });
+    s.addText(q, { x: x + 0.2, y: 3.5, w: 2.5, h: 1.2, fontSize: 10.5, italic: true, color: MUT, fontFace: F, valign: "top" });
+  });
+  // 5 Lo que vimos
+  s = pptx.addSlide(); base(s); n++; titulo(s, "Lo que vimos", `Lo que está pasando hoy en ${c.negocio}`); bullets(s, academia ? ACADEMIA.situacion : g.deck?.situacion);
+  // 6 Lo que cuesta
+  s = pptx.addSlide(); base(s); n++; titulo(s, "Lo que cuesta", "Cada hora sin responder tiene un precio"); bullets(s, g.deck?.costo, 1.6, 2.2);
   s.addShape(pptx.ShapeType.rect, { x: 0.6, y: 3.9, w: 8.8, h: 1.0, fill: { color: PANEL }, line: { color: "1F3A2B" } });
   s.addText("78% de los clientes cierran con el primero que responde · 67% se van tras una mala experiencia", { x: 0.8, y: 3.95, w: 8.4, h: 0.9, fontSize: 13, color: GOLD, fontFace: F, valign: "middle" });
-  // 4 El sistema
-  s = pptx.addSlide(); base(s); titulo(s, "El sistema", `Así queda ${c.negocio} con AutoFlow`); bullets(s, g.deck?.sistema);
-  // 5 Pruébalo (links)
-  s = pptx.addSlide(); base(s); titulo(s, "Pruébalo tú mismo", "Ya está construido para ti");
-  const cards = [["💬 Chat", `Escríbele a ${g.asistente} como cliente`, urls.chat], ["📞 Voz", `Habla con ${g.asistente}`, urls.voz], ["🖥️ Por dentro", "Embudo, conversaciones y agenda", (urls.propuesta || "") + (urls.propuesta?.endsWith("/") ? "sistema/" : "/sistema/")]];
+  // 7 El sistema / El programa
+  s = pptx.addSlide(); base(s); n++;
+  if (academia) { titulo(s, "El programa", "12 semanas, de cero a tus agentes funcionando"); bullets(s, ACADEMIA.programa); }
+  else { titulo(s, "El sistema", `Así queda ${c.negocio} con AutoFlow`); bullets(s, g.deck?.sistema); }
+  // 8 Pruébalo (links + portal)
+  s = pptx.addSlide(); base(s); n++; titulo(s, academia ? "Esto es lo que vas a saber construir" : "Pruébalo tú mismo", academia ? "Ya te lo montamos para que lo toques" : "Ya está construido para ti");
+  const cards = [["💬 Chat", `Escríbele a ${g.asistente} como cliente`, urls.chat], ["📞 Voz", `Habla con ${g.asistente}`, urls.voz], ["🖥️ Tu portal", uPortal ? "Agentes, llamadas y CRM en vivo" : "Embudo, conversaciones y agenda", uPortal || ((urls.propuesta || "") + (urls.propuesta?.endsWith("/") ? "sistema/" : "/sistema/"))]];
   cards.forEach(([t, sub, url], i) => {
     const x = 0.5 + i * 3.1;
     s.addShape(pptx.ShapeType.roundRect, { x, y: 1.7, w: 2.9, h: 2.4, fill: { color: PANEL }, line: { color: "1F3A2B" }, rectRadius: 0.1 });
@@ -402,41 +500,50 @@ async function deck(slug) {
     s.addText(sub, { x: x + 0.2, y: 2.35, w: 2.5, h: 0.8, fontSize: 12, color: MUT, fontFace: F });
     s.addText(url, { x: x + 0.2, y: 3.3, w: 2.5, h: 0.6, fontSize: 9, color: BORI, fontFace: F, hyperlink: { url } });
   });
-  // 6 La cuenta
-  s = pptx.addSlide(); base(s); titulo(s, "La cuenta que nadie te hace", "Empleado 24/7 vs AutoFlow");
-  s.addTable([
-    [{ text: "", options: { fill: { color: PANEL } } }, { text: "Empleado 24/7", options: { bold: true, color: TXT, fill: { color: PANEL } } }, { text: "AutoFlow", options: { bold: true, color: BORI, fill: { color: PANEL } } }],
-    ["Costo al año", "~$58,000", { text: "~$9,500", options: { color: BORI, bold: true } }],
-    ["Horas cubiertas", "2,080", { text: "8,736 (24/7)", options: { color: BORI, bold: true } }],
-    ["Tiempo de respuesta", "~4 horas", { text: "~10 segundos", options: { color: BORI, bold: true } }],
-    ["Ahorro año 1", "—", { text: "~$48,000", options: { color: BORI, bold: true } }],
-  ], { x: 0.6, y: 1.6, w: 8.8, colW: [3, 2.9, 2.9], fontSize: 14, color: TXT, fontFace: F, border: { type: "solid", color: "1F3A2B", pt: 1 }, fill: { color: BG }, rowH: 0.5 });
-  // 7 Niveles
-  s = pptx.addSlide(); base(s); titulo(s, "Los 3 niveles", "Para que compares bien");
-  const niveles = [["Botones y reglas", "No lo vendemos", "Menús fijos. Se rompe cuando el cliente escribe distinto.", false], ["Chatbot con IA", "$800–1,000 único", "Conversa bien pero no está conectado: no agenda, no guarda, no avisa.", false], ["Agente conectado · AutoFlow", "$2,500–3,000 + $147/mes", "Chat + voz + CRM configurado + agenda. Precalifica y te avisa. Pro $297/mes.", true]];
-  niveles.forEach(([t, pr, desc, hot], i) => {
-    const x = 0.5 + i * 3.1;
-    s.addShape(pptx.ShapeType.roundRect, { x, y: 1.6, w: 2.9, h: 3.0, fill: { color: PANEL }, line: { color: hot ? GOLD : "1F3A2B", width: hot ? 2 : 1 }, rectRadius: 0.1 });
-    if (hot) s.addText("LO QUE PROBASTE", { x: x + 0.2, y: 1.65, w: 2.5, h: 0.3, fontSize: 9, bold: true, color: GOLD, charSpacing: 2, fontFace: F });
-    s.addText(t, { x: x + 0.2, y: 1.95, w: 2.5, h: 0.6, fontSize: 15, bold: true, color: TXT, fontFace: F });
-    s.addText(pr, { x: x + 0.2, y: 2.55, w: 2.5, h: 0.4, fontSize: 14, bold: true, color: hot ? BORI : MUT, fontFace: F });
-    s.addText(desc, { x: x + 0.2, y: 3.0, w: 2.5, h: 1.4, fontSize: 11, color: MUT, fontFace: F, valign: "top" });
-  });
-  s.addText("Garantía: funcionando en 21 días o no corre la mensualidad · sin permanencia · financiable (inicial + 2 pagos a 30 días)", { x: 0.6, y: 4.7, w: 8.8, h: 0.4, fontSize: 11, color: MUT, fontFace: F });
-  // 8 La primera semana
-  s = pptx.addSlide(); base(s); titulo(s, "La primera semana", "Qué pasa desde que dices que sí"); bullets(s, g.deck?.diaUno);
-  // 9 Próximo paso
-  s = pptx.addSlide(); base(s);
+  if (academia) {
+    // 9 Lo que construyes
+    s = pptx.addSlide(); base(s); n++; titulo(s, "Lo que construyes", "Al terminar, esto queda funcionando en tu negocio"); bullets(s, ACADEMIA.construyes);
+    // 10 Las dos vías
+    s = pptx.addSlide(); base(s); n++; titulo(s, "Cómo lo hacemos", "Tú eliges cuánto quieres aprender y cuánto delegar");
+    tarjetas(s, [
+      [PRECIOS.academia.nombre, `${PRECIOS.academia.inicial} · ${PRECIOS.academia.mensual}`, PRECIOS.academia.desc, "RECOMENDADO PARA TI"],
+      [PRECIOS.uno.nombre, `${PRECIOS.uno.inicial} · ${PRECIOS.uno.mensual}`, PRECIOS.uno.desc, false],
+      ["Lo hacemos por ti · AutoFlow", `${PRECIOS.completo.inicial} + ${PRECIOS.completo.mensual}`, PRECIOS.completo.desc, false],
+    ]);
+    s.addText("Cupos por cohorte limitados · pago único o 3 pagos · si al terminar no tienes tu agente funcionando, seguimos contigo sin costo hasta que lo tengas", { x: 0.6, y: 4.7, w: 8.8, h: 0.4, fontSize: 11, color: MUT, fontFace: F });
+  } else {
+    // 9 La cuenta
+    s = pptx.addSlide(); base(s); n++; titulo(s, "La cuenta que nadie te hace", "Empleado 24/7 vs AutoFlow");
+    s.addTable([
+      [{ text: "", options: { fill: { color: PANEL } } }, { text: "Empleado 24/7", options: { bold: true, color: TXT, fill: { color: PANEL } } }, { text: "AutoFlow", options: { bold: true, color: BORI, fill: { color: PANEL } } }],
+      ["Costo al año", "~$58,000", { text: "~$9,500", options: { color: BORI, bold: true } }],
+      ["Horas cubiertas", "2,080", { text: "8,736 (24/7)", options: { color: BORI, bold: true } }],
+      ["Tiempo de respuesta", "~4 horas", { text: "segundos", options: { color: BORI, bold: true } }],
+      ["Ahorro año 1", "—", { text: "~$48,000", options: { color: BORI, bold: true } }],
+    ], { x: 0.6, y: 1.6, w: 8.8, colW: [3, 2.9, 2.9], fontSize: 14, color: TXT, fontFace: F, border: { type: "solid", color: "1F3A2B", pt: 1 }, fill: { color: BG }, rowH: 0.5 });
+    // 10 Niveles / precios
+    s = pptx.addSlide(); base(s); n++; titulo(s, "Tu equipo digital", "Elige el agente que necesitas primero");
+    tarjetas(s, [
+      [PRECIOS.chat.nombre, `${PRECIOS.chat.inicial} + ${PRECIOS.chat.mensual}`, PRECIOS.chat.desc, false],
+      [PRECIOS.voz.nombre, `${PRECIOS.voz.inicial} + ${PRECIOS.voz.mensual}`, PRECIOS.voz.desc, false],
+      [PRECIOS.completo.nombre, `${PRECIOS.completo.inicial} + ${PRECIOS.completo.mensual}`, PRECIOS.completo.desc, true],
+    ]);
+    s.addText(GARANTIA, { x: 0.6, y: 4.7, w: 8.8, h: 0.4, fontSize: 11, color: MUT, fontFace: F });
+  }
+  // 11 La primera semana
+  s = pptx.addSlide(); base(s); n++; titulo(s, "La primera semana", "Qué pasa desde que dices que sí"); bullets(s, academia ? ACADEMIA.diaUno : g.deck?.diaUno);
+  // 12 Próximo paso
+  s = pptx.addSlide(); base(s); n++;
   s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.25, h: 5.625, fill: { color: ACC } });
   s.addText("PRÓXIMO PASO", { x: 0.6, y: 1.4, w: 9, h: 0.3, fontSize: 10, color: BORI, bold: true, charSpacing: 3, fontFace: F });
-  s.addText(g.deck?.proximoPaso || g.propuesta?.primerPaso || "", { x: 0.6, y: 1.8, w: 8.6, h: 1.4, fontSize: 24, color: TXT, bold: true, fontFace: F });
-  s.addText(`WhatsApp AI Borinquen · +1 (939) 304-0491 · ${urls.propuesta}`, { x: 0.6, y: 3.5, w: 8.6, h: 0.5, fontSize: 13, color: MUT, fontFace: F });
+  s.addText(academia ? "Reserva tu cupo en la próxima cohorte y sal de la sesión 1 con tu primer agente en borrador." : (g.deck?.proximoPaso || g.propuesta?.primerPaso || ""), { x: 0.6, y: 1.8, w: 8.6, h: 1.4, fontSize: 24, color: TXT, bold: true, fontFace: F });
+  s.addText(`WhatsApp AI Borinquen · +1 (939) 304-0491 · ${uPortal || urls.propuesta || ""}`, { x: 0.6, y: 3.5, w: 8.6, h: 0.5, fontSize: 13, color: MUT, fontFace: F });
 
   const site = path.join(d, "site"); fs.mkdirSync(site, { recursive: true });
-  const nombre = `${slug}-autoflow.pptx`;
+  const nombre = academia ? `${slug}-academia.pptx` : `${slug}-autoflow.pptx`;
   await pptx.writeFile({ fileName: path.join(site, nombre) });
-  actualizarIndice(slug, { deck: nombre });
-  log(`✓ Presentación: data/demos/${slug}/site/${nombre} (9 slides)`);
+  if (!academia) actualizarIndice(slug, { deck: nombre }); else actualizarIndice(slug, { deckAcademia: nombre });
+  log(`✓ Presentación: data/demos/${slug}/site/${nombre} (${n} slides · vía ${academia ? "capacitación" : "implementación"})`);
   return nombre;
 }
 
@@ -458,6 +565,20 @@ function construirChat(c, g) {
     .replace(/\/\/ -{6,} Base de conocimiento[\s\S]*?(?=\n\s*function respond\()/,
       `// ---------- Base de conocimiento (${c.negocio}) ----------\n  var intents=${JSON.stringify(g.intents)};\n  var fallback=${JSON.stringify(g.fallback)};\n  var leadReply=${JSON.stringify(g.leadReply)};\n`)
     .replace(/addBot\('👋[^\n]*\);/, `addBot(${JSON.stringify(g.saludo)});`)
+    // Portal AutoFlow: el chat avisa a Content OS cada mensaje y cada lead (sesión anónima por navegador).
+    .replace(/\n\s*function respond\(text\)\{/, `\n  var PORTAL = { slug: ${JSON.stringify(c.slug)}, endpoint: ${JSON.stringify(CONTENT_OS_URL + "/api/demo-lead")} };
+  var PORTAL_SESION = (function(){ try { var k='portal-sesion'; var v=sessionStorage.getItem(k); if(!v){ v=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2)).replace(/[^a-z0-9-]/gi,''); sessionStorage.setItem(k,v);} return v; } catch(e){ return 's'+Date.now(); } })();
+  var PORTAL_N = 0, PORTAL_ULTIMO = null;
+  function portalAvisar(tipo, texto){
+    try {
+      var esLead = tipo==='lead'; var tel = (texto.match(/\\b\\d[\\d\\s().-]{6,}\\d\\b/)||[null])[0]; var em = (texto.match(/[\\w.+-]+@[\\w-]+\\.[\\w.]+/)||[null])[0];
+      fetch(PORTAL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
+        body: JSON.stringify({ slug: PORTAL.slug, sesion: PORTAL_SESION, tipo: tipo, mensajes: PORTAL_N, texto: esLead ? texto.slice(0,500) : undefined, telefono: esLead ? tel : undefined, email: esLead ? em : undefined, interes: esLead ? PORTAL_ULTIMO : undefined }) }).catch(function(){});
+    } catch(e) {}
+  }
+  function respond(text){`)
+    .replace(/for\(var i=0;i<intents.length;i\+\+\)\{ if\(has\(t,intents\[i\]\.k\)\) return en\?intents\[i\]\.en:intents\[i\]\.es; \}/, `for(var i=0;i<intents.length;i++){ if(has(t,intents[i].k)){ PORTAL_ULTIMO = (intents[i].k||[])[0] || null; return en?intents[i].en:intents[i].es; } }`)
+    .replace(/var reply=respond\(text\);/, `PORTAL_N++; var esLeadMsg = /\\b\\d[\\d\\s().-]{6,}\\d\\b/.test(text) || /@/.test(text); var reply=respond(text); portalAvisar(esLeadMsg ? 'lead' : 'mensaje', text);`)
     .replace(/Glenn International/g, escHtml(c.negocio)).replace(/glenninternational\.com/g, "");
   return h;
 }
@@ -504,7 +625,7 @@ function construirVoz(c, g, retell) {
     .replace(/--red:#c0161d;/, `--red:${c.color};`).replace(/rgba\(192,22,29,/g, rgba("")).replace(/rgba\(224,36,46,/g, rgba(""))
     .replace(/<div class="plate">[\s\S]*?<\/div>/, `<div class="plate" style="background:transparent;box-shadow:none;padding:0;font-weight:800;font-size:24px;letter-spacing:.02em;color:#fff">${escHtml(c.negocio)}</div>`)
     .replace(/var RETELL = \{[^}]*\};/, `var RETELL = { agentId: ${JSON.stringify(retell?.agent_id || "")}, endpoint: ${JSON.stringify(WEBCALL_URL)} };`)
-    .replace(/fetch\(RETELL\.endpoint, \{ method:'POST' \}\)/, `fetch(RETELL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ agent_id: RETELL.agentId }) })`)
+    .replace(/fetch\(RETELL\.endpoint, \{ method:'POST' \}\)/, `fetch(RETELL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ agent_id: RETELL.agentId, slug: ${JSON.stringify(c.slug)} }) })`)
     .replace(/\/\/ -{6,} Base de conocimiento hablada[\s\S]*?(?=\/\/ -{6,} Voz \(TTS\))/, bloque)
     .replace(/te pasa con el experto del área\./g, "toma tus datos o te agenda.")
     .replace(/connects you with the right expert\./g, "takes your details or books you in.")
@@ -523,6 +644,11 @@ function construirPropuesta(c, g, urls) {
     PRIMER_PASO: escHtml(p.primerPaso || "Instalación en 21 días con tu número actual."),
     URL_CHAT: urls.chat, URL_VOZ: urls.voz, URL_LANDING: urls.landing || "landing/", URL_SISTEMA: urls.sistema || "sistema/",
     DECK_BTN: urls.deck ? `<a class="btn ghost" href="${escHtml(urls.deck)}" download>Descargar la presentación (.pptx)</a>` : "",
+    PORTAL_CARD: portalUrl(c.slug)
+      ? `<div class="card demo" style="border-color:rgba(53,192,111,.45)"><h3>🖥️ Tu portal AutoFlow</h3><p>Tus agentes, las llamadas que hagas de prueba (con transcripción), tu embudo y un botón para pedir cambios. Es tuyo: guárdalo.</p><a class="btn" href="${escHtml(portalUrl(c.slug))}">Entrar a tu portal</a></div>`
+      : "",
+    P_CHAT_INI: PRECIOS.chat.inicial, P_CHAT_MES: PRECIOS.chat.mensual, P_VOZ_INI: PRECIOS.voz.inicial, P_VOZ_MES: PRECIOS.voz.mensual,
+    P_COMP_INI: PRECIOS.completo.inicial, P_COMP_MES: PRECIOS.completo.mensual, GARANTIA,
     WA_LINK: wa,
   };
   for (const [k, v] of Object.entries(tokens)) h = h.split(`{{${k}}}`).join(v);
@@ -625,8 +751,9 @@ async function nota(slug) {
     `Propuesta: <a href="${reg.urls.propuesta}">${reg.urls.propuesta}</a><br>` +
     `Chat: <a href="${reg.urls.chat}">${reg.urls.chat}</a> · Voz: <a href="${reg.urls.voz}">${reg.urls.voz}</a>${reg.agentId ? " (voz real)" : " (modo navegador)"}<br>` +
     `Landing: <a href="${reg.urls.landing}">${reg.urls.landing}</a> · Por dentro: <a href="${reg.urls.sistema}">${reg.urls.sistema}</a>${reg.deck ? ` · Deck: <a href="${reg.urls.propuesta}${reg.deck}">.pptx</a>` : ""}<br>` +
+    (portalUrl(slug) ? `Portal AutoFlow (vivo): <a href="${portalUrl(slug)}">${portalUrl(slug)}</a><br>` : "") +
     `Asistente: ${escHtml(generado?.asistente || "")} · Dolor: ${escHtml(p.dolor || config.dolor || "")}<br>` +
-    `<i>Mandar el link de la propuesta por WhatsApp ANTES de la llamada. En la llamada: abrir la demo, no slides.</i>`;
+    `<i>Mandar el link de la propuesta y el del portal por WhatsApp ANTES de la llamada. En la llamada: abrir el portal, no slides.</i>`;
   await pd("POST", "notes", { content, deal_id: dealId, pinned_to_deal_flag: 1 });
   actualizarIndice(slug, { dealId, notaEl: new Date().toISOString() });
   log(`✓ Nota fijada en el deal ${dealId} de Pipedrive AIB`);
@@ -645,7 +772,34 @@ async function todo(slug) {
   construir(slug);
   await desplegar(slug);
   await deck(slug); // segunda pasada con las URLs públicas en las slides
+  if (env("CRON_SECRET")) { try { await portal(slug); } catch (e) { log(`  ⚠️ Portal: ${e.message}`); } }
   if (env("PIPEDRIVE_AIB_TOKEN")) { try { await nota(slug); } catch (e) { log(`  ⚠️ Pipedrive: ${e.message}`); } }
+}
+
+// ---------- portal (Content OS) ----------
+// Registra el portal vivo del prospecto en Content OS y deja el agente de Retell con webhook +
+// análisis post-llamada, para que las llamadas de prueba aparezcan transcritas en el portal.
+async function portal(slug) {
+  const { config, generado, retell } = cargar(slug);
+  const secreto = env("CRON_SECRET");
+  if (!secreto) die("Falta CRON_SECRET en .env.local (el mismo de Vercel)");
+  if (!env("AUTOFLOW_PORTAL_SECRET")) log("  ⚠️ Sin AUTOFLOW_PORTAL_SECRET: el portal se registra pero el link del prospecto lo genera la app.");
+  const reg = (readJSON(INDEX, { demos: [] }).demos || []).find((x) => x.slug === slug) || {};
+  const urls = { ...(reg.urls || {}) };
+  if (reg.deck && urls.propuesta) urls.deck = urls.propuesta.replace(/\/?$/, "/") + reg.deck;
+  const payload = {
+    slug, negocio: config.negocio, nicho: config.nicho, contacto: config.contacto, color: config.color,
+    asistente: generado?.asistente, agentIdVoz: retell?.agent_id || reg.agentId || null, urls,
+    pipedriveDealId: reg.dealId != null ? String(reg.dealId) : null,
+    leadsEjemplo: generado?.sistema?.leads || [],
+  };
+  const r = await fetch(`${CONTENT_OS_URL}/api/autoflow/portales`, { method: "POST", headers: { "Content-Type": "application/json", "x-cron-secret": secreto }, body: JSON.stringify(payload) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`Content OS ${r.status}: ${JSON.stringify(j).slice(0, 300)}`);
+  const url = j.url || portalUrl(slug);
+  actualizarIndice(slug, { portal: { url, registradoEl: new Date().toISOString(), agentePreparado: j.agentePreparado } });
+  log(`✓ Portal registrado${j.agentePreparado === false ? " (⚠️ el agente de Retell no quedó con webhook: revisa RETELL_WEBHOOK_SECRET en Vercel)" : j.agentePreparado ? " · agente de Retell con webhook" : ""}`);
+  if (url) log(`  Link del prospecto: ${url}`);
 }
 
 // ---------- main ----------
@@ -657,10 +811,11 @@ try {
   else if (cmd === "generar") await generar(slug || die("Falta <slug>"));
   else if (cmd === "voz") await voz(slug || die("Falta <slug>"));
   else if (cmd === "construir") construir(slug || die("Falta <slug>"));
-  else if (cmd === "deck") await deck(slug || die("Falta <slug>"));
+  else if (cmd === "deck") await deck(slug || die("Falta <slug>"), a.via);
   else if (cmd === "desplegar") await desplegar(slug || die("Falta <slug>"));
+  else if (cmd === "portal") await portal(slug || die("Falta <slug>"));
   else if (cmd === "nota") await nota(slug || die("Falta <slug>"));
   else if (cmd === "todo") await todo(slug || die("Falta <slug>"));
   else if (cmd === "listar") listar();
-  else { log("Uso: demo.mjs nuevo|generar|voz|deck|construir|desplegar|nota|todo|listar (ver cabecera del archivo)"); process.exit(1); }
+  else { log("Uso: demo.mjs nuevo|generar|voz|deck|construir|desplegar|portal|nota|todo|listar (ver cabecera del archivo)"); process.exit(1); }
 } catch (e) { die(e.message); }

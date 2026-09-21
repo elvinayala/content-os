@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/pulse-respaldo",
       "schedule": "30 8 * * *"
+    },
+    {
+      "path": "/api/cron/autoflow-llamadas",
+      "schedule": "*/15 * * * *"
     }
   ],
   "regions": [

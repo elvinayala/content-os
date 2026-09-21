@@ -397,7 +397,7 @@
     try{
       var mod = await import('https://esm.sh/retell-client-js-sdk');
       var RetellWebClient = mod.RetellWebClient;
-      var res = await fetch(RETELL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ agent_id: RETELL.agentId }) });
+      var res = await fetch(RETELL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ agent_id: RETELL.agentId, slug: "skin-clinic-pr" }) });
       if(!res.ok) throw new Error('endpoint '+res.status);
       var data = await res.json();
       if(!data.access_token) throw new Error('sin token');

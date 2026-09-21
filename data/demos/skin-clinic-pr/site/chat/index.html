@@ -330,13 +330,21 @@
   var intents=[{"k":["precio","precios","costo","cuanto cuesta","cotizacion","cuanto vale","price","cost","how much"],"es":"Los precios varían según el tratamiento y lo que necesites. 💬 Déjame tu nombre y WhatsApp y un miembro del equipo te confirma el costo exacto.","en":"Prices vary depending on the treatment. Leave me your name and phone number and our team will confirm the exact cost."},{"k":["facial","tratamiento facial","limpieza facial","facials"],"es":"Ofrecemos tratamientos faciales personalizados para el cuidado de tu piel. ✨ ¿Quieres que te ayude a agendar una consulta?","en":"We offer personalized facial treatments for your skin. Would you like me to help you book a consultation?"},{"k":["botox","bótox"],"es":"Sí, hacemos aplicaciones de Botox con la Dra. Kasey Ruiz. 💉 Déjame tu nombre y WhatsApp para coordinar tu cita.","en":"Yes, we offer Botox treatments with Dr. Kasey Ruiz. Leave me your name and phone number to coordinate your appointment."},{"k":["relleno","rellenos","filler","fillers"],"es":"Trabajamos rellenos dérmicos para realzar tus facciones de forma natural. ¿Te ayudo a agendar tu cita?","en":"We offer dermal fillers to enhance your features naturally. Would you like me to help you book an appointment?"},{"k":["laser","láser","laser treatment"],"es":"Contamos con tratamientos láser para distintas necesidades de la piel. 🔬 ¿Quieres que te agende una consulta?","en":"We offer laser treatments for different skin needs. Would you like me to schedule a consultation for you?"},{"k":["dermatologia","dermatologa","piel","dermatology","skin doctor"],"es":"La Dra. Kasey Ruiz Vega atiende dermatología estética. Cuéntame qué necesitas y te ayudo a agendar.","en":"Dr. Kasey Ruiz Vega provides aesthetic dermatology care. Tell me what you need and I'll help you schedule."},{"k":["ubicacion","direccion","donde estan","donde quedan","location","address"],"es":"Estamos en San Juan. 📍 Un miembro del equipo te confirma la dirección exacta al coordinar tu cita.","en":"We're located in San Juan. Our team will confirm the exact address when we coordinate your appointment."},{"k":["horario","horas","abren","cierran","hours","schedule","open"],"es":"Escríbenos y te confirmamos el horario disponible para tu cita. 🕒","en":"Message us and we'll confirm the available schedule for your appointment."},{"k":["contacto","telefono","numero","llamar","contact","phone number"],"es":"Con gusto te conecto. 📞 Déjame tu nombre y WhatsApp y te contactamos enseguida.","en":"Happy to help. Leave me your name and phone number and we'll contact you right away."},{"k":["cita","agendar","reservar","appointment","book","schedule appointment"],"es":"Perfecto, para agendar tu cita solo necesito tu nombre y WhatsApp. 📅","en":"Great, to book your appointment I just need your name and phone number."},{"k":["humano","persona","representante","hablar con alguien","human","agent","representative"],"es":"Claro, te conecto con el equipo. 🙋‍♀️ Déjame tu nombre y WhatsApp y te contactan enseguida.","en":"Of course, I'll connect you with our team. Leave me your name and phone number and they'll reach out shortly."},{"k":["gracias","muchas gracias","thank you","thanks"],"es":"¡Con mucho gusto! 💕 Cualquier otra pregunta, aquí estoy.","en":"You're very welcome! Let me know if you have any other questions."},{"k":["hola","buenas","buenos dias","buenas tardes","hi","hello","good morning"],"es":"¡Hola! 👋 Bienvenido/a a Skin Clinic PR. ¿En qué te puedo ayudar hoy?","en":"Hello! Welcome to Skin Clinic PR. How can I help you today?"}];
   var fallback={"es":"No estoy segura de esa información, pero un miembro del equipo te la confirma. 💬 Déjame tu nombre y WhatsApp y te contactamos pronto.","en":"I'm not sure about that, but our team can confirm it for you. Leave me your name and phone number and we'll reach out soon."};
   var leadReply={"es":"¡Gracias! 🙌 Ya tomé tus datos. Un miembro del equipo de Skin Clinic PR te va a contactar en breve para confirmar tu cita.","en":"Thank you! I've got your information. A Skin Clinic PR team member will contact you shortly to confirm your appointment."};
-
-
+  var PORTAL = { slug: "skin-clinic-pr", endpoint: "https://content-os-chi-seven.vercel.app/api/demo-lead" };
+  var PORTAL_SESION = (function(){ try { var k='portal-sesion'; var v=sessionStorage.getItem(k); if(!v){ v=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2)).replace(/[^a-z0-9-]/gi,''); sessionStorage.setItem(k,v);} return v; } catch(e){ return 's'+Date.now(); } })();
+  var PORTAL_N = 0, PORTAL_ULTIMO = null;
+  function portalAvisar(tipo, texto){
+    try {
+      var esLead = tipo==='lead'; var tel = (texto.match(/\b\d[\d\s().-]{6,}\d\b/)||[null])[0]; var em = (texto.match(/[\w.+-]+@[\w-]+\.[\w.]+/)||[null])[0];
+      fetch(PORTAL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
+        body: JSON.stringify({ slug: PORTAL.slug, sesion: PORTAL_SESION, tipo: tipo, mensajes: PORTAL_N, texto: esLead ? texto.slice(0,500) : undefined, telefono: esLead ? tel : undefined, email: esLead ? em : undefined, interes: esLead ? PORTAL_ULTIMO : undefined }) }).catch(function(){});
+    } catch(e) {}
+  }
   function respond(text){
     var t=norm(text);
     var en=isEnglish(t);
     if(/\b\d[\d\s().-]{6,}\d\b/.test(text) || /@/.test(text)){ return en?leadReply.en:leadReply.es; }
-    for(var i=0;i<intents.length;i++){ if(has(t,intents[i].k)) return en?intents[i].en:intents[i].es; }
+    for(var i=0;i<intents.length;i++){ if(has(t,intents[i].k)){ PORTAL_ULTIMO = (intents[i].k||[])[0] || null; return en?intents[i].en:intents[i].es; } }
     return en?fallback.en:fallback.es;
   }
 
@@ -360,7 +368,7 @@
     var row=addCli(text);
     await sleep(400);
     var ck=row.querySelector('.checks'); if(ck) ck.classList.add('read');
-    var reply=respond(text);
+    PORTAL_N++; var esLeadMsg = /\b\d[\d\s().-]{6,}\d\b/.test(text) || /@/.test(text); var reply=respond(text); portalAvisar(esLeadMsg ? 'lead' : 'mensaje', text);
     var t=showTyping();
     await sleep(650+Math.min(1500, reply.length*8));
     clearTyping(t);

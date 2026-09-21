@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-19T00:59:35.620Z",
+  "actualizadoEl": "2026-09-21T15:43:22.352Z",
   "demos": [
     {
       "slug": "skin-clinic-pr",
@@ -10,7 +10,13 @@
       "asistente": "Nicole",
       "agentId": "agent_e0efaaf9a29d4e95591e230f42",
       "vozReal": true,
-      "deck": "skin-clinic-pr-autoflow.pptx"
+      "deck": "skin-clinic-pr-autoflow.pptx",
+      "deckAcademia": "skin-clinic-pr-academia.pptx",
+      "portal": {
+        "url": "https://content-os-chi-seven.vercel.app/portal/skin-clinic-pr?k=850528a55e0b4c9dd9f068942354d57b",
+        "registradoEl": "2026-09-21T15:43:22.351Z",
+        "agentePreparado": true
+      }
     }
   ]
 }

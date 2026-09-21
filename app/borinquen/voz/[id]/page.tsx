@@ -5,7 +5,10 @@ import { ArrowLeft, Gauge, Phone } from "lucide-react";
 import { leerAgenteVoz } from "@/lib/voz/store";
 import { PRESUPUESTO_LATENCIA } from "@/lib/voz/preset";
 import { transcriptosMock } from "@/lib/mock/borinquen";
+import { listarLlamadasPorAgente } from "@/lib/portal/repo";
 import { AgenteAcciones } from "@/components/borinquen/agente-acciones";
+import { Dato } from "@/components/borinquen/dato";
+import { TranscriptoCard, type TranscriptoVista } from "@/components/borinquen/transcripto-card";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,7 +34,12 @@ export default async function AgenteVozPage({
   if (!a) notFound();
 
   const c = a.config;
-  const transcriptos = transcriptosMock.filter((t) => t.agenteId === id);
+  // Llamadas reales (autoflow_llamadas, las trae el webhook de Retell) si el agente es real;
+  // si no hay ninguna, el mock de siempre.
+  const reales = a.externalId ? await listarLlamadasPorAgente(a.externalId).catch(() => []) : [];
+  const transcriptos: TranscriptoVista[] = reales.length
+    ? reales.map((l) => ({ id: l.id, fecha: l.inicio ?? l.creadoEl, duracionSeg: l.duracionSeg, turnos: l.turnos, resultado: l.resultado, resumen: l.resumen, grabacionUrl: l.grabacionUrl, estado: l.estado, sentimiento: l.sentimiento }))
+    : transcriptosMock.filter((t) => t.agenteId === id).map((t) => ({ id: t.id, fecha: t.fecha, duracionSeg: t.duracionSeg, turnos: t.turnos, resultado: t.resultado }));
 
   return (
     <>
@@ -116,6 +124,11 @@ export default async function AgenteVozPage({
 
           {/* Transcripciones */}
           <TabsContent value="transcripciones" className="mt-4 space-y-4">
+            {reales.length ? (
+              <Badge variant="outline" className="label-mono text-[var(--status-working)]">
+                Retell · {reales.length} llamadas reales
+              </Badge>
+            ) : null}
             {transcriptos.length === 0 ? (
               <Card className="bg-gradient-to-b from-card to-background/40">
                 <CardContent className="p-6 text-sm text-muted-foreground">
@@ -123,46 +136,7 @@ export default async function AgenteVozPage({
                 </CardContent>
               </Card>
             ) : (
-              transcriptos.map((t) => (
-                <Card key={t.id} className="bg-gradient-to-b from-card to-background/40">
-                  <CardContent className="p-5">
-                    <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{Math.round(t.duracionSeg / 60)} min · {t.turnos.length} turnos</span>
-                      {t.resultado ? (
-                        <Badge variant="outline" className="label-mono text-[var(--status-working)]">
-                          {t.resultado}
-                        </Badge>
-                      ) : null}
-                    </div>
-                    <div className="space-y-2">
-                      {t.turnos.map((turno, i) => (
-                        <div
-                          key={i}
-                          className={
-                            turno.rol === "agente" ? "flex justify-start" : "flex justify-end"
-                          }
-                        >
-                          <div
-                            className={
-                              "max-w-[80%] rounded-2xl px-3 py-2 text-sm " +
-                              (turno.rol === "agente"
-                                ? "rounded-bl-sm bg-muted/70"
-                                : "rounded-br-sm bg-primary text-primary-foreground")
-                            }
-                          >
-                            {turno.texto}
-                            {turno.latenciaMs ? (
-                              <span className="ml-2 font-mono text-[0.65rem] opacity-70">
-                                {turno.latenciaMs}ms
-                              </span>
-                            ) : null}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+              transcriptos.map((t) => <TranscriptoCard key={t.id} t={t} />)
             )}
           </TabsContent>
 
@@ -206,28 +180,6 @@ export default async function AgenteVozPage({
         </Tabs>
       </main>
     </>
-  );
-}
-
-function Dato({
-  label,
-  valor,
-  icono,
-}: {
-  label: string;
-  valor: string;
-  icono?: React.ReactNode;
-}) {
-  return (
-    <Card className="bg-gradient-to-b from-card to-background/40">
-      <CardContent className="p-4">
-        <p className="label-mono text-muted-foreground">{label}</p>
-        <p className="mt-1 flex items-center gap-1.5 font-mono text-lg font-semibold capitalize">
-          {icono}
-          {valor}
-        </p>
-      </CardContent>
-    </Card>
   );
 }
 
