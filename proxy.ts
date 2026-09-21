@@ -39,6 +39,9 @@ export default async function proxy(request: NextRequest) {
   // Voz de las demos de AutoFlow (Fábrica de Demos): las páginas en Netlify piden acá
   // el token efímero de Retell. Sin sesión, con CORS abierto; valida el agente adentro.
   if (pathname === "/api/demo-webcall") return NextResponse.next();
+  // Sitios estáticos de la Fábrica de MVPs servidos desde public/demos/ (respaldo cuando Netlify
+  // no está disponible): propuesta, chat, voz, landing y "por dentro" del prospecto. Públicos.
+  if (pathname.startsWith("/demos/")) return NextResponse.next();
   // Portal AutoFlow: webhook de Retell (valida RETELL_WEBHOOK_SECRET adentro), leads del chat
   // de demo (público con rate limit) y registro de portales desde la fábrica (CRON_SECRET).
   if (pathname === "/api/retell-webhook") return NextResponse.next();

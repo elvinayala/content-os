@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Skin Clinic PR · Nicole — Asistente de voz (AutoFlow)</title>
+<meta name="description" content="Asistente de voz de Skin Clinic PR: recibe tu llamada, te orienta y toma tus datos." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23C0161D'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff7a4d'/%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#0d0b0b;            /* negro cálido */
+    --bg-2:#151010;
+    --panel:#1b1514;
+    --line:rgba(255,255,255,.09);
+    --ink:#f3ede9;           /* blanco cálido */
+    --muted:#a99f98;
+    --muted-2:#6f665f;
+    --red:#b76e79;           /* Glenn */
+    --red-2:#e0242e;
+    --amber:#ff7a3d;         /* brasa / energía */
+    --amber-2:#ffb020;
+    --bori:#10b981;          /* AI Borinquen */
+    --level:0;               /* 0..1 volumen del micrófono (lo mueve el JS) */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 620px at 50% -8%, rgba(183,110,121,.28), transparent 60%),
+      radial-gradient(900px 700px at 88% 112%, rgba(255,122,61,.14), transparent 55%),
+      radial-gradient(700px 600px at 6% 8%, rgba(120,20,20,.18), transparent 55%),
+      var(--bg);
+    min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:26px 18px 84px;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+
+  /* Placa del logo */
+  .plate{background:#fbfaf9;border-radius:16px;padding:16px 22px;box-shadow:0 12px 40px rgba(0,0,0,.45);margin-top:6px}
+  .plate img{display:block;width:210px;max-width:62vw;height:auto}
+
+  .eyebrow{margin-top:22px;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted-2);font-weight:600}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(34px,9vw,50px);line-height:1.05;margin-top:8px;letter-spacing:.5px;text-wrap:balance;text-align:center}
+  h1 em{font-style:italic;color:transparent;background:linear-gradient(92deg,var(--red-2),var(--amber-2));-webkit-background-clip:text;background-clip:text}
+  .sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.6;text-align:center;max-width:30rem}
+
+  /* Toggle idioma */
+  .lang{display:flex;gap:4px;margin-top:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .lang button{appearance:none;border:0;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;letter-spacing:.04em;
+    padding:6px 14px;border-radius:999px;cursor:pointer;transition:.18s}
+  .lang button.on{background:linear-gradient(92deg,var(--red),var(--amber));color:#fff}
+
+  /* Orbe */
+  .stage{position:relative;margin-top:26px;width:260px;height:260px;display:flex;align-items:center;justify-content:center}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,122,61,.16)}
+  .ring.r2{inset:26px;border-color:rgba(183,110,121,.14)}
+  .ring.r3{inset:52px;border-color:rgba(255,176,32,.10)}
+  .pulse{position:absolute;inset:34px;border-radius:50%;
+    background:radial-gradient(circle at 50% 42%, rgba(255,122,61,.5), rgba(183,110,121,.25) 55%, transparent 72%);
+    filter:blur(6px);opacity:.7;transition:transform .12s ease-out}
+  .orb{position:relative;width:168px;height:168px;border-radius:50%;cursor:pointer;border:0;
+    background:
+      radial-gradient(circle at 50% 34%, #ffd9b0 0%, var(--amber) 26%, var(--red-2) 60%, #7d0f13 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,.14) inset, 0 10px 44px rgba(183,110,121,.5), 0 0 90px rgba(255,122,61,.35);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff;
+    transition:transform .15s ease;overflow:hidden}
+  .orb:hover{transform:scale(1.02)}
+  .orb:active{transform:scale(.98)}
+  .orb:focus-visible{outline:3px solid #fff;outline-offset:4px}
+  .orb .mic{width:34px;height:34px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+  .orb .cta{font-family:Georgia,serif;font-style:italic;font-size:15px;letter-spacing:.3px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .orb .waves{position:absolute;inset:0;display:none;align-items:center;justify-content:center;gap:5px}
+  .orb .waves i{width:5px;height:22px;border-radius:3px;background:rgba(255,255,255,.92);animation:wave 1s infinite ease-in-out}
+  .orb .waves i:nth-child(2){animation-delay:.12s}.orb .waves i:nth-child(3){animation-delay:.24s}
+  .orb .waves i:nth-child(4){animation-delay:.36s}.orb .waves i:nth-child(5){animation-delay:.48s}
+  @keyframes wave{0%,100%{height:12px}50%{height:40px}}
+
+  /* Estados del orbe */
+  .stage.idle .pulse{animation:breathe 3.6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.12);opacity:.85}}
+  .stage.listening .pulse{transform:scale(calc(1 + var(--level)*.9));opacity:calc(.55 + var(--level)*.45)}
+  .stage.listening .orb{box-shadow:0 0 0 1px rgba(255,255,255,.14) inset,0 10px 44px rgba(183,110,121,.55),0 0 calc(80px + var(--level)*120px) rgba(255,176,32,.55)}
+  .stage.speaking .orb .mic,.stage.speaking .orb .cta{display:none}
+  .stage.speaking .orb .waves{display:flex}
+  .stage.speaking .pulse{animation:breathe 1.1s ease-in-out infinite}
+  .stage.thinking .pulse{animation:breathe 1s ease-in-out infinite}
+  .stage.connecting .cta{opacity:.6}
+
+  .statusline{margin-top:16px;height:20px;color:var(--amber-2);font-size:13px;font-weight:600;letter-spacing:.03em}
+  .hint{margin-top:2px;color:var(--muted-2);font-size:12px;text-align:center;min-height:16px}
+
+  /* Transcript */
+  .transcript{margin-top:20px;width:100%;display:flex;flex-direction:column;gap:8px}
+  .msg{max-width:88%;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.4;animation:rise .2s ease-out}
+  .msg.bot{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.you{align-self:flex-end;background:linear-gradient(92deg,rgba(183,110,121,.9),rgba(255,122,61,.85));color:#fff;border-bottom-right-radius:4px}
+  .msg .who{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Cómo funciona */
+  .how{margin-top:30px;width:100%;border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px}
+  .how h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted-2);font-weight:700;text-align:center}
+  .how ol{list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+  .how li{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:13.5px;line-height:1.5}
+  .how li::before{counter-increment:s;content:counter(s);flex-shrink:0;width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(92deg,var(--red),var(--amber));color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;margin-top:1px}
+
+  .unsupported{display:none;margin-top:16px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.25);
+    color:#ffd39a;font-size:13px;line-height:1.5;padding:12px 14px;border-radius:12px;text-align:center;max-width:30rem}
+
+  /* Crédito */
+  .credit{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;
+    padding:10px;background:linear-gradient(to top,rgba(8,7,7,.95),transparent);color:#b9b2ab;font-size:12.5px;z-index:10}
+  .credit .dot{width:8px;height:8px;border-radius:50%;background:var(--bori);box-shadow:0 0 0 3px rgba(16,185,129,.2),0 0 12px rgba(16,185,129,.6)}
+  .credit b{color:#fff;font-weight:600}
+  .credit .sep{opacity:.4}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="plate" style="background:transparent;box-shadow:none;padding:0;font-weight:800;font-size:24px;letter-spacing:.02em;color:#fff">Skin Clinic PR</div>
+
+    <div class="eyebrow">Le presentamos</div>
+    <h1>Conoce a <em>Nicole</em></h1>
+    <p class="sub" id="sub">Tu asistente de voz. Recibe tu llamada, te orienta sobre lo que buscas y toma tus datos o te agenda.</p>
+
+    <div class="lang" role="tablist" aria-label="Idioma">
+      <button id="lang-es" class="on" role="tab">Español</button>
+      <button id="lang-en" role="tab">English</button>
+    </div>
+
+    <div class="stage idle" id="stage">
+      <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+      <div class="pulse"></div>
+      <button class="orb" id="orb" aria-label="Hablar con Nicole">
+        <svg class="mic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12z"/></svg>
+        <span class="cta" id="orb-cta">Hablar con Nicole</span>
+        <span class="waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      </button>
+    </div>
+
+    <div class="statusline" id="status"></div>
+    <div class="hint" id="hint">Toca el orbe y permite el micrófono</div>
+
+    <div class="transcript" id="transcript" aria-live="polite"></div>
+
+    <div class="unsupported" id="unsupported">
+      Para hablar con Nicole usa <b>Chrome</b> o <b>Edge</b> en computadora o Android (el micrófono de voz no está disponible en este navegador). Igual puedes leer cómo funciona abajo.
+    </div>
+
+    <div class="how">
+      <h2>Cómo funciona</h2>
+      <ol>
+        <li>Toca el orbe y permite el acceso al micrófono cuando el navegador lo pida.</li>
+        <li>Habla con Nicole con naturalidad, como si llamaras a la oficina — en español o inglés.</li>
+        <li>Ella responde lo que necesitas y toma tus datos para que Skin Clinic PR te devuelva la llamada o te agende.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="credit"><span class="dot"></span><span>Desarrollado por <b>AI Borinquen</b></span><span class="sep">·</span><span>AutoFlow</span></div>
+
+<script>
+(function(){
+  "use strict";
+  // ===================== CONFIG =====================
+  // PREMIUM (Retell): pega tus llaves públicas del dashboard para usar la voz
+  // real de Glenn (ElevenLabs caribeña) en vez del demo del navegador. Ver
+  // retell-agente.md para montar el agente y de dónde sacar estas llaves.
+  var RETELL = { agentId: "agent_e0efaaf9a29d4e95591e230f42", endpoint: "https://content-os-chi-seven.vercel.app/api/demo-webcall" };
+  // ==================================================
+
+  var ASSISTANT = "Nicole";
+  var el = function(id){ return document.getElementById(id); };
+  var stage=el('stage'), orb=el('orb'), status=el('status'), hint=el('hint'),
+      transcript=el('transcript'), cta=el('orb-cta'), sub=el('sub'), unsupported=el('unsupported');
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var SS = window.speechSynthesis;
+  var lang = 'es';            // 'es' | 'en'
+  var running = false, rec = null, lastArea = null, awaitingYesNo = false;
+  var voices = [];
+
+  // ---------- Copys UI por idioma ----------
+  var UI = {
+    es:{ sub:'Tu asistente de voz. Recibe tu llamada, te orienta sobre lo que buscas y toma tus datos o te agenda.',
+         cta:'Hablar con '+ASSISTANT, hint:'Toca el orbe y permite el micrófono',
+         listening:'Escuchando…', thinking:'Un momento…', speaking:ASSISTANT+' está hablando…',
+         connecting:'Conectando…', tapStop:'Toca para terminar' },
+    en:{ sub:'Your voice assistant. She takes your call, guides you on what you need and takes your details or books you in.',
+         cta:'Talk to '+ASSISTANT, hint:'Tap the orb and allow the microphone',
+         listening:'Listening…', thinking:'One moment…', speaking:ASSISTANT+' is speaking…',
+         connecting:'Connecting…', tapStop:'Tap to end' }
+  };
+  function applyUI(){ sub.textContent=UI[lang].sub; if(!running){ cta.textContent=UI[lang].cta; hint.textContent=UI[lang].hint; } }
+
+  // ---------- Base de conocimiento hablada (Skin Clinic PR) ----------
+  var KB = [{"k":["precio","costo","cuanto cuesta","price","cost"],"es":"Los precios varian segun el tratamiento. Un miembro del equipo te confirma el costo exacto.","en":"Prices vary depending on the treatment. Our team will confirm the exact cost.","ofrecerCita":true},{"k":["facial","tratamiento facial","facials"],"es":"Ofrecemos tratamientos faciales personalizados. Te puedo ayudar a agendar una consulta.","en":"We offer personalized facial treatments. I can help you book a consultation.","ofrecerCita":true},{"k":["botox"],"es":"Hacemos aplicaciones de botox con la doctora Kasey Ruiz. Te ayudo a coordinar tu cita.","en":"We offer botox treatments with doctor Kasey Ruiz. I can help you set up your appointment.","ofrecerCita":true},{"k":["relleno","rellenos","filler"],"es":"Trabajamos rellenos derMicos para realzar tus facciones. Te puedo agendar una cita.","en":"We offer dermal fillers to enhance your features. I can schedule an appointment for you.","ofrecerCita":true},{"k":["laser"],"es":"Contamos con tratamientos laser para distintas necesidades de la piel. Te ayudo a agendar.","en":"We offer laser treatments for different skin needs. I can help you schedule.","ofrecerCita":true},{"k":["dermatologia","piel"],"es":"La doctora Kasey Ruiz Vega atiende dermatologia estetica. Cuentame que necesitas.","en":"Doctor Kasey Ruiz Vega provides aesthetic dermatology care. Tell me what you need.","ofrecerCita":true},{"k":["ubicacion","direccion","donde estan"],"es":"Estamos en San Juan. Un miembro del equipo te confirma la direccion exacta.","en":"We're located in San Juan. Our team will confirm the exact address.","ofrecerCita":false},{"k":["horario","horas","abren"],"es":"Escribenos y te confirmamos el horario disponible para tu cita.","en":"Message us and we'll confirm the available schedule for your appointment.","ofrecerCita":false},{"k":["cita","agendar","appointment"],"es":"Perfecto, para agendar tu cita solo necesito tu nombre y tu numero de telefono.","en":"Great, to book your appointment I just need your name and phone number.","ofrecerCita":true},{"k":["humano","persona","representante"],"es":"Claro, te conecto con el equipo. Dejame tu nombre y numero y te contactan enseguida.","en":"Of course, I'll connect you with our team. Leave me your name and number.","ofrecerCita":false}];
+  var KB_FALLBACK = {"es":"No tengo esa informacion en este momento, pero un miembro del equipo te la confirma. Dejame tu nombre y numero de telefono.","en":"I don't have that information right now, but our team can confirm it. Leave me your name and phone number."};
+  var KB_LEAD = {"es":"Perfecto, ya tome tus datos. Un miembro del equipo de Skin Clinic PR te va a llamar pronto para confirmar.","en":"Great, I've got your information. A Skin Clinic PR team member will call you soon to confirm."};
+  var KB_SALUDO = {"es":"Hola, gracias por llamar a Skin Clinic PR, soy Nicole, en que te puedo ayudar hoy.","en":"Hello, thank you for calling Skin Clinic PR, this is Nicole, how can I help you today."};
+  function normVoz(s){ return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+  function hasVoz(t, arr){ for(var i=0;i<arr.length;i++){ if(t.indexOf(arr[i])>-1) return true; } return false; }
+  function detectArea(){ return null; }
+  function isEnglishMsg(t){
+    if(/[¿¡ñáéíóú]/.test(t)) return false;
+    return /\b(the|you|do|does|what|where|how|hi|hello|hey|price|quote|hours|need|want|looking|appointment|book|thanks|address|contact|yes|no)\b/.test(t) &&
+      !/\b(hola|buenas|gracias|precio|donde|cuando|necesito|quiero|busco|si|para|con|cita)\b/.test(t);
+  }
+  function respond(text){
+    var t = normVoz(text);
+    if(isEnglishMsg(t) && lang==='es'){ setLang('en'); }
+    var L = lang;
+    if(/\d{3}[\d\s.\-]{4,}/.test(text)){ awaitingYesNo=false; return KB_LEAD[L]; }
+    if(awaitingYesNo && /\b(si|sí|claro|dale|ok|okay|yes|sure|perfecto|bueno)\b/.test(t)){
+      awaitingYesNo=false;
+      return L==='es' ? 'Perfecto. Dime tu nombre y un teléfono, y te confirmamos enseguida.' : 'Perfect. Tell me your name and a phone number and we will confirm right away.';
+    }
+    if(awaitingYesNo && /\b(no|luego|despues|later|not now)\b/.test(t)){
+      awaitingYesNo=false;
+      return L==='es' ? 'Sin problema. ¿Hay algo más en lo que te pueda ayudar?' : 'No problem. Anything else I can help you with?';
+    }
+    for(var i=0;i<KB.length;i++){ if(hasVoz(t, KB[i].k)){ awaitingYesNo = !!KB[i].ofrecerCita; return KB[i][L]; } }
+    return KB_FALLBACK[L];
+  }
+  function greeting(){ return KB_SALUDO[lang]; }
+
+  // ---------- Voz (TTS) ----------
+  function loadVoices(){ voices = (SS && SS.getVoices) ? SS.getVoices() : []; }
+  if(SS){ loadVoices(); SS.onvoiceschanged = loadVoices; }
+  function pickVoice(){
+    var pref = lang==='es'
+      ? ['es-US','es-MX','es-419','es-CO','es-AR','es-','es']
+      : ['en-US','en-GB','en-'];
+    for(var i=0;i<pref.length;i++){
+      var v = voices.find(function(x){ return (x.lang||'').toLowerCase().indexOf(pref[i].toLowerCase())===0; });
+      if(v) return v;
+    }
+    return voices.find(function(x){ return (x.lang||'').toLowerCase().indexOf(lang)===0; }) || null;
+  }
+  function chunk(text){ // Chrome corta enunciados largos: partir por oración
+    var parts = text.match(/[^.!?…]+[.!?…]*/g) || [text];
+    var out=[], cur='';
+    parts.forEach(function(p){ if((cur+p).length>180){ if(cur)out.push(cur.trim()); cur=p; } else cur+=p; });
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  }
+  function speak(text, done){
+    stopShimmer();
+    if(!SS){ if(done){ setTimeout(done, Math.min(4000, 400+text.length*22)); } return; }
+    SS.cancel();
+    setState('speaking');
+    var v = pickVoice(), parts = chunk(text), i=0;
+    function next(){
+      if(i>=parts.length){ if(done)done(); return; }
+      var u = new SpeechSynthesisUtterance(parts[i++]);
+      if(v){ u.voice=v; u.lang=v.lang; } else { u.lang = lang==='es'?'es-US':'en-US'; }
+      u.rate=1.02; u.pitch=1.02;
+      u.onend=next; u.onerror=next;
+      SS.speak(u);
+    }
+    next();
+  }
+
+  // ---------- Transcript ----------
+  function addMsg(who, text){
+    var d=document.createElement('div'); d.className='msg '+(who==='you'?'you':'bot');
+    var label = who==='you' ? (lang==='es'?'Tú':'You') : ASSISTANT;
+    d.innerHTML='<span class="who"></span>'+'<span class="tx"></span>';
+    d.querySelector('.who').textContent=label; d.querySelector('.tx').textContent=text;
+    transcript.appendChild(d); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  }
+
+  // ---------- Estados ----------
+  function setState(s){
+    stage.className='stage '+s;
+    status.textContent = UI[lang][s] ? UI[lang][s] : (UI[lang][s==='listening'?'listening':'']||'');
+    if(s==='listening') status.textContent=UI[lang].listening;
+    else if(s==='thinking') status.textContent=UI[lang].thinking;
+    else if(s==='speaking') status.textContent=UI[lang].speaking;
+    else if(s==='connecting') status.textContent=UI[lang].connecting;
+    else status.textContent='';
+    if(running){ hint.textContent = UI[lang].tapStop; }
+  }
+
+  // ---------- Shimmer del orbe (sintético; sin getUserMedia para no duplicar
+  // el permiso de micrófono ni bloquear el saludo) ----------
+  var shimId=null, shimT=0;
+  function startShimmer(){ stopShimmer(); (function loop(){ shimT+=0.09;
+    var lvl=0.28+0.22*Math.abs(Math.sin(shimT))+0.14*Math.abs(Math.sin(shimT*2.7));
+    document.documentElement.style.setProperty('--level', Math.min(1,lvl).toFixed(3));
+    shimId=requestAnimationFrame(loop); })(); }
+  function stopShimmer(){ if(shimId)cancelAnimationFrame(shimId); shimId=null; document.documentElement.style.setProperty('--level',0); }
+
+  // ---------- Reconocimiento (STT) ----------
+  function listen(){
+    if(!SR){ return; }
+    try{ rec = new SR(); }catch(e){ return; }
+    rec.lang = lang==='es' ? 'es-US' : 'en-US';
+    rec.interimResults = false; rec.maxAlternatives = 1; rec.continuous = false;
+    setState('listening'); startShimmer();
+    var got=false;
+    rec.onresult=function(e){
+      got=true;
+      var text = e.results[0][0].transcript.trim();
+      if(!text) return;
+      stopShimmer();
+      addMsg('you', text);
+      setState('thinking');
+      var reply = respond(text);
+      setTimeout(function(){ if(!running) return; addMsg('bot', reply); speak(reply, function(){ if(running) listen(); }); }, 350);
+    };
+    rec.onerror=function(ev){ if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){ micDenied(); } };
+    rec.onend=function(){ if(running && !got){ /* silencio: volver a escuchar */ try{ if(stage.classList.contains('listening')) rec.start(); }catch(e){} } };
+    try{ rec.start(); }catch(e){}
+  }
+
+  function micDenied(){
+    stop();
+    hint.textContent = lang==='es' ? 'Necesito el micrófono para escucharte. Actívalo y toca otra vez.' : 'I need microphone access. Enable it and tap again.';
+  }
+
+  // ---------- Arranque / fin de la conversación ----------
+  var premiumClient = null;
+  function start(){
+    if(running) return;
+    if(RETELL.agentId){ startPremium(); return; }   // voz real de Nicole (Retell)
+    startKeyless();                                   // demo del navegador (sin llaves)
+  }
+  function startKeyless(){
+    running=true; transcript.innerHTML=''; lastArea=null; awaitingYesNo=false;
+    orb.setAttribute('aria-label', lang==='es'?'Terminar':'End');
+    if(!SR){ unsupported.style.display='block'; }  // sin STT: al menos saluda
+    var g=greeting(); addMsg('bot',g);             // el saludo sale de inmediato
+    speak(g, function(){ if(running && SR) listen(); });
+  }
+  function stop(){
+    running=false; awaitingYesNo=false;
+    if(premiumClient){ try{ premiumClient.stopCall(); }catch(e){} premiumClient=null; }
+    if(rec){ try{ rec.onend=null; rec.onresult=null; rec.stop(); }catch(e){} rec=null; }
+    if(SS) SS.cancel();
+    stopShimmer(); setState('idle');
+    cta.textContent=UI[lang].cta; hint.textContent=UI[lang].hint;
+    orb.setAttribute('aria-label','Hablar con '+ASSISTANT);
+  }
+  orb.addEventListener('click', function(){ running ? stop() : start(); });
+
+  // ---------- Idioma ----------
+  function setLang(l){
+    lang=l; el('lang-es').classList.toggle('on',l==='es'); el('lang-en').classList.toggle('on',l==='en');
+    applyUI();
+  }
+  el('lang-es').addEventListener('click', function(){ if(!running) setLang('es'); });
+  el('lang-en').addEventListener('click', function(){ if(!running) setLang('en'); });
+
+  // ---------- Premium: voz real de Nicole (Retell) manejando TU orbe ----------
+  // Usa la Netlify Function (/api/webcall) para un token efímero + RetellWebClient.
+  // Si la función no está (abrir el archivo local sin deploy) cae al demo del navegador.
+  var _lastSig='';
+  function renderRetellTranscript(arr){
+    if(!Array.isArray(arr)) return;
+    var sig = arr.map(function(t){ return (t.role||'')+':'+(t.content||''); }).join('|');
+    if(sig===_lastSig) return;            // nada cambió → no re-render
+    _lastSig=sig;
+    var addedNew=false;
+    for(var i=0;i<arr.length;i++){
+      var who = arr[i].role==='agent' ? 'bot' : 'you';
+      var txt = arr[i].content||'';
+      var row = transcript.children[i];
+      if(row && row.classList.contains('msg')){   // reusar el nodo (sin re-animar)
+        var isBot = row.classList.contains('bot');
+        if((who==='bot')!==isBot){
+          row.className='msg '+who;
+          row.querySelector('.who').textContent = who==='bot'?ASSISTANT:(lang==='es'?'Tú':'You');
+        }
+        var tx=row.querySelector('.tx');
+        if(tx.textContent!==txt) tx.textContent=txt;   // solo cambia el texto
+      } else {
+        addMsg(who, txt); addedNew=true;
+      }
+    }
+    while(transcript.children.length>arr.length){ transcript.lastChild.remove(); }
+    if(addedNew){ window.scrollTo({top:document.body.scrollHeight}); }
+  }
+  async function startPremium(){
+    running=true; transcript.innerHTML='';
+    orb.setAttribute('aria-label', lang==='es'?'Terminar':'End');
+    setState('connecting');
+    hint.textContent = lang==='es' ? 'Conectando con '+ASSISTANT+'…' : 'Connecting to '+ASSISTANT+'…';
+    try{
+      var mod = await import('https://esm.sh/retell-client-js-sdk');
+      var RetellWebClient = mod.RetellWebClient;
+      var res = await fetch(RETELL.endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ agent_id: RETELL.agentId, slug: "skin-clinic-pr" }) });
+      if(!res.ok) throw new Error('endpoint '+res.status);
+      var data = await res.json();
+      if(!data.access_token) throw new Error('sin token');
+      premiumClient = new RetellWebClient();
+      premiumClient.on('call_started', function(){ setState('listening'); startShimmer(); });
+      premiumClient.on('agent_start_talking', function(){ setState('speaking'); });
+      premiumClient.on('agent_stop_talking', function(){ setState('listening'); startShimmer(); });
+      premiumClient.on('update', function(u){ if(u&&u.transcript) renderRetellTranscript(u.transcript); });
+      premiumClient.on('call_ended', function(){ stop(); });
+      premiumClient.on('error', function(){ stop(); });
+      await premiumClient.startCall({ accessToken: data.access_token });
+    }catch(e){
+      // sin función / sin red → usa el demo del navegador
+      running=false; premiumClient=null;
+      startKeyless();
+    }
+  }
+
+  // ---------- Init ----------
+  applyUI();
+  if(!SR && !SS){ unsupported.style.display='block'; }
+  // Hook de prueba (solo con ?debug) — verificar la lógica sin micrófono.
+  try{ if(location.search.indexOf('debug')>-1){ window.__valeria={respond:respond,greeting:greeting,detectArea:detectArea,setLang:setLang}; } }catch(e){}
+})();
+</script>
+</body>
+</html>
