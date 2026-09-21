@@ -145,8 +145,10 @@ if (plan.tabla === '${T.equipo}') {
   hit = n ? filas.find((f) => String(f.nombre || '').trim().toLowerCase() === n) || null : null;
 }
 const nuevoId = hit ? hit.Id : null;
+// Regla v1: si Pulse no trae a la persona/industria, el link que ya tenía NocoDB se respeta
+// (nunca 'quitar'). Solo se pone o se reemplaza cuando Pulse sí tiene un valor.
 let accionLink = 'nada';
-if (nuevoId !== plan.actual) accionLink = plan.actual ? (nuevoId ? 'reemplazar' : 'quitar') : (nuevoId ? 'poner' : 'nada');
+if (nuevoId && nuevoId !== plan.actual) accionLink = plan.actual ? 'reemplazar' : 'poner';
 return { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, accionLink } };` }, pos(11, -1)),
     nodo("¿Link?", "n8n-nodes-base.switch", 3.2, { rules: { values: [
       { conditions: { options: opts, conditions: [cond("={{ $json.accionLink }}", "poner")], combinator: "and" }, renameOutput: true, outputKey: "poner" },

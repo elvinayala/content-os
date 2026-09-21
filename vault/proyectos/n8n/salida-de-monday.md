@@ -98,3 +98,18 @@ Excepciones (leen Monday directo):
   cobros se quedan en n8n), doble corrida 2 semanas, apagar webhooks de Monday.
 - Dato: en NocoDB hay filas con `ID-cuenta-publicitaria` contaminado (ej. Edgar Lugo tenía texto de
   pagos); Pulse trae el id correcto → la primera corrida real lo corrige.
+
+## Primera simulación completa (20/sep/2026 21:22, ejecución 60863 de n8n)
+
+Se mandaron los 917 clientes de Pulse por el webhook en simulación. n8n decidió:
+- **819 nada** (no activos, sin fila) · **97 actualizar** · **1 crear** (Dariel Hernandez: activo en
+  Monday/Pulse pero NocoDB nunca lo recibió) · 0 borrar. 70 de los 97 sin cambios de campos.
+- **ID-cuenta-publicitaria**: 19 filas de NocoDB tienen basura ("NUEVO ACUERDO 27 DE FEBRERO…",
+  "PAGÓ $1000…") — el flujo del proveedor leía la columna equivocada. Pulse trae el id real.
+- **Emails**: 7 con espacios o duplicados ("a@x.com - a@x.com"); Pulse los trae limpios.
+- **El hallazgo grande**: en NocoDB solo **17 de 97** clientes activos tienen `admin` (account manager)
+  y **35 de 97** tienen `traffiker`. Pulse trae 92 y 62. O sea, los agentes de alertas no podían
+  avisar al responsable en el 80 % de los casos. El puente lo corrige en la primera corrida real.
+- Regla agregada al workflow: si Pulse no trae persona/industria, el link existente en NocoDB se
+  respeta (nunca se quita). Solo se pone o reemplaza con valor.
+- Tiempo: ~90 s para 917 clientes (917 consultas a NocoDB). OK para la nocturna.

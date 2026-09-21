@@ -35,7 +35,7 @@
       "webhookId": "pulse-cliente-sync",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "PENDIENTE",
+          "id": "vDGtt7BxftPjeHjM",
           "name": "Pulse ↔ n8n (x-pulse-secret)"
         }
       }
@@ -79,7 +79,7 @@
       },
       "credentials": {
         "httpHeaderAuth": {
-          "id": "PENDIENTE",
+          "id": "vDGtt7BxftPjeHjM",
           "name": "Pulse ↔ n8n (x-pulse-secret)"
         }
       }
@@ -436,7 +436,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const plan = $('Plan de links').item.json;\nconst filas = ($json.list) || [];\nlet hit = null;\nif (plan.tabla === 'm0uib6kq4i1gelp') {\n  const p = plan.persona || {};\n  hit = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))\n     || (p.email && filas.find((f) => String(f.email || '').trim().toLowerCase() === String(p.email).trim().toLowerCase()))\n     || null;\n} else {\n  const n = String(plan.valor || '').trim().toLowerCase();\n  hit = n ? filas.find((f) => String(f.nombre || '').trim().toLowerCase() === n) || null : null;\n}\nconst nuevoId = hit ? hit.Id : null;\nlet accionLink = 'nada';\nif (nuevoId !== plan.actual) accionLink = plan.actual ? (nuevoId ? 'reemplazar' : 'quitar') : (nuevoId ? 'poner' : 'nada');\nreturn { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, accionLink } };"
+        "jsCode": "const plan = $('Plan de links').item.json;\nconst filas = ($json.list) || [];\nlet hit = null;\nif (plan.tabla === 'm0uib6kq4i1gelp') {\n  const p = plan.persona || {};\n  hit = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))\n     || (p.email && filas.find((f) => String(f.email || '').trim().toLowerCase() === String(p.email).trim().toLowerCase()))\n     || null;\n} else {\n  const n = String(plan.valor || '').trim().toLowerCase();\n  hit = n ? filas.find((f) => String(f.nombre || '').trim().toLowerCase() === n) || null : null;\n}\nconst nuevoId = hit ? hit.Id : null;\n// Regla v1: si Pulse no trae a la persona/industria, el link que ya tenía NocoDB se respeta\n// (nunca 'quitar'). Solo se pone o se reemplaza cuando Pulse sí tiene un valor.\nlet accionLink = 'nada';\nif (nuevoId && nuevoId !== plan.actual) accionLink = plan.actual ? 'reemplazar' : 'poner';\nreturn { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, accionLink } };"
       }
     },
     {
