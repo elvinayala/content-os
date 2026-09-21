@@ -105,6 +105,8 @@ export interface Board {
   descripcion: string | null;
   color: ColorPulse | null;
   position: number;
+  privado: boolean;
+  miembros?: string[]; // ids de usuario (solo se llena para admins)
 }
 
 export interface Columna {

@@ -6,6 +6,7 @@ import { aUsuario } from "./auth";
 import { db } from "./db";
 import {
   pulseActivity,
+  pulseBoardMembers,
   pulseBoards,
   pulseColumns,
   pulseFiles,
@@ -44,7 +45,56 @@ function aBoard(b: typeof pulseBoards.$inferSelect): Board {
     descripcion: b.descripcion,
     color: (b.color as ColorPulse) ?? null,
     position: b.position,
+    privado: b.privado,
   };
+}
+
+// ---------- Acceso a tableros ----------
+// Un tablero privado lo ven los admins y los usuarios en pulse_board_members. Todo lo
+// demás (lectura y escritura) pasa por acá: la UI solo esconde, esto es lo que protege.
+
+export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
+  const d = await db();
+  const rows = await d.select({ id: pulseBoards.id, privado: pulseBoards.privado }).from(pulseBoards);
+  const visibles = new Set(rows.filter((b) => !b.privado).map((b) => b.id));
+  if (u.rol === "admin") return new Set(rows.map((b) => b.id));
+  const m = await d.select({ boardId: pulseBoardMembers.boardId }).from(pulseBoardMembers).where(eq(pulseBoardMembers.userId, u.id));
+  for (const r of m) visibles.add(r.boardId);
+  return visibles;
+}
+
+export async function puedeVerBoard(u: UsuarioPulse, boardId: string): Promise<boolean> {
+  const d = await db();
+  const [b] = await d.select({ privado: pulseBoards.privado }).from(pulseBoards).where(eq(pulseBoards.id, boardId));
+  if (!b) return false;
+  if (!b.privado || u.rol === "admin") return true;
+  const [m] = await d.select({ userId: pulseBoardMembers.userId }).from(pulseBoardMembers).where(and(eq(pulseBoardMembers.boardId, boardId), eq(pulseBoardMembers.userId, u.id)));
+  return !!m;
+}
+
+// Resuelve el tablero al que pertenece cada tipo de cosa (para verificar acceso en actions).
+export async function boardDe(ref: { itemId?: string; groupId?: string; columnId?: string; fileId?: string }): Promise<string | null> {
+  const d = await db();
+  if (ref.itemId) return (await d.select({ b: pulseItems.boardId }).from(pulseItems).where(eq(pulseItems.id, ref.itemId)))[0]?.b ?? null;
+  if (ref.groupId) return (await d.select({ b: pulseGroups.boardId }).from(pulseGroups).where(eq(pulseGroups.id, ref.groupId)))[0]?.b ?? null;
+  if (ref.columnId) return (await d.select({ b: pulseColumns.boardId }).from(pulseColumns).where(eq(pulseColumns.id, ref.columnId)))[0]?.b ?? null;
+  if (ref.fileId) {
+    const [r] = await d.select({ b: pulseItems.boardId }).from(pulseFiles).innerJoin(pulseItems, eq(pulseItems.id, pulseFiles.itemId)).where(eq(pulseFiles.id, ref.fileId));
+    return r?.b ?? null;
+  }
+  return null;
+}
+
+export async function leerMiembrosBoard(boardId: string): Promise<string[]> {
+  const d = await db();
+  return (await d.select({ userId: pulseBoardMembers.userId }).from(pulseBoardMembers).where(eq(pulseBoardMembers.boardId, boardId))).map((r) => r.userId);
+}
+
+export async function guardarAccesoBoard(boardId: string, p: { privado: boolean; miembros: string[] }): Promise<void> {
+  const d = await db();
+  await d.update(pulseBoards).set({ privado: p.privado }).where(eq(pulseBoards.id, boardId));
+  await d.delete(pulseBoardMembers).where(eq(pulseBoardMembers.boardId, boardId));
+  if (p.miembros.length) await d.insert(pulseBoardMembers).values(p.miembros.map((userId) => ({ boardId, userId })));
 }
 function aColumna(c: typeof pulseColumns.$inferSelect): Columna {
   return { id: c.id, boardId: c.boardId, title: c.title, type: c.type as TipoColumna, settings: c.settings ?? {}, position: c.position, width: c.width };
@@ -63,9 +113,10 @@ function aArchivo(f: typeof pulseFiles.$inferSelect): ArchivoPulse {
 
 export type BoardResumen = Board & { items: number; grupos: { id: string; title: string; color: ColorPulse; items: number }[]; actualizadoEl: string | null };
 
-export async function listarBoards(): Promise<BoardResumen[]> {
+export async function listarBoards(u?: UsuarioPulse): Promise<BoardResumen[]> {
   const d = await db();
-  const [boards, porGrupo, ultimos] = await Promise.all([
+  const visibles = u ? await boardsVisibles(u) : null;
+  const [todos, porGrupo, ultimos] = await Promise.all([
     d.select().from(pulseBoards).orderBy(asc(pulseBoards.position), asc(pulseBoards.nombre)),
     d
       .select({ g: pulseGroups, items: count(pulseItems.id) })
@@ -75,6 +126,7 @@ export async function listarBoards(): Promise<BoardResumen[]> {
       .orderBy(asc(pulseGroups.position)),
     d.select({ boardId: pulseItems.boardId, max: sql<Date>`max(${pulseItems.updatedAt})` }).from(pulseItems).groupBy(pulseItems.boardId),
   ]);
+  const boards = visibles ? todos.filter((b) => visibles.has(b.id)) : todos;
   return boards.map((b) => {
     const grupos = porGrupo.filter((r) => r.g.boardId === b.id).map((r) => ({ id: r.g.id, title: r.g.title, color: r.g.color as ColorPulse, items: Number(r.items) }));
     const u = ultimos.find((r) => r.boardId === b.id)?.max;
@@ -85,10 +137,12 @@ export async function listarBoards(): Promise<BoardResumen[]> {
 // Los items de los grupos que arrancan colapsados (`colapsadoDefault`, p. ej. OFFBOARDED con
 // 700+ filas) viajan SIN `values` (parcial: true) para que el tablero abra rápido; el cliente
 // los pide con leerItemsGrupo al expandir el grupo o al buscar/filtrar.
-export async function leerBoardCompleto(slug: string, opciones: { liviano?: boolean } = {}): Promise<BoardCompleto | null> {
+export async function leerBoardCompleto(slug: string, opciones: { liviano?: boolean; usuario?: UsuarioPulse } = {}): Promise<BoardCompleto | null> {
   const d = await db();
   const b = await d.query.pulseBoards.findFirst({ where: eq(pulseBoards.slug, slug) });
   if (!b) return null;
+  if (opciones.usuario && !(await puedeVerBoard(opciones.usuario, b.id))) return null;
+  const miembros = opciones.usuario?.rol === "admin" ? await leerMiembrosBoard(b.id) : undefined;
   const groups = await d.select().from(pulseGroups).where(eq(pulseGroups.boardId, b.id)).orderBy(asc(pulseGroups.position));
   const livianos = opciones.liviano === false ? [] : groups.filter((g) => g.colapsadoDefault).map((g) => g.id);
   const valuesExpr = livianos.length
@@ -110,7 +164,7 @@ export async function leerBoardCompleto(slug: string, opciones: { liviano?: bool
   ]);
   const parciales = new Set(livianos);
   return {
-    board: aBoard(b),
+    board: { ...aBoard(b), ...(miembros ? { miembros } : {}) },
     columns: columns.map(aColumna),
     groups: groups.map(aGrupo),
     items: items.map((i) => ({ ...aItem({ ...i, mondayId: null, createdBy: null, createdAt: i.updatedAt }), ...(parciales.has(i.groupId) ? { parcial: true } : {}) })),

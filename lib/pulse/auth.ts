@@ -61,6 +61,15 @@ export async function requiereAdmin(): Promise<UsuarioPulse> {
   return u;
 }
 
+// Usuario con acceso al tablero (público, o privado y es admin/miembro).
+export async function requiereAccesoBoard(boardId: string | null): Promise<UsuarioPulse> {
+  const u = await requiereUsuario();
+  if (!boardId) throw new Error("No existe");
+  const { puedeVerBoard } = await import("./repo");
+  if (!(await puedeVerBoard(u, boardId))) throw new Error("No tenés acceso a este tablero");
+  return u;
+}
+
 // Admin o editor: pueden dar de alta / clave / activar gente.
 export async function requiereGestor(): Promise<UsuarioPulse> {
   const u = await requiereUsuario();

@@ -1,11 +1,12 @@
 "use client";
 
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Lock, MoreHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { eliminarBoardAction } from "@/app/pulse/(app)/[board]/actions";
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
+import { BoardAcceso } from "@/components/pulse/board-acceso";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import {
   AlertDialog,
@@ -30,6 +31,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
   const [editando, setEditando] = useState(false);
   const [nombre, setNombre] = useState(board.nombre);
   const [confirmar, setConfirmar] = useState(false);
+  const [acceso, setAcceso] = useState(false);
   useEffect(() => setNombre(board.nombre), [board.nombre]);
 
   const guardar = async () => {
@@ -65,8 +67,9 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
       {editando ? (
         <input autoFocus className="h-8 rounded border px-2 text-lg font-semibold outline-none ring-2 ring-primary" value={nombre} onChange={(e) => setNombre(e.target.value)} onBlur={guardar} onKeyDown={(e) => e.key === "Enter" && guardar()} />
       ) : (
-        <h1 className="text-lg font-semibold" onDoubleClick={() => setEditando(true)} title="Doble click para renombrar">
+        <h1 className="flex items-center gap-2 text-lg font-semibold" onDoubleClick={() => setEditando(true)} title="Doble click para renombrar">
           {board.nombre}
+          {board.privado ? <Lock className="size-3.5 text-muted-foreground" aria-label="Tablero privado" /> : null}
         </h1>
       )}
       <span className="flex items-center gap-2 rounded-full border bg-background/70 px-2.5 py-0.5 text-xs text-muted-foreground">
@@ -83,6 +86,9 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
             <DropdownMenuItem onClick={() => setEditando(true)}>Renombrar tablero</DropdownMenuItem>
             {usuario.rol === "admin" ? (
               <>
+                <DropdownMenuItem onClick={() => setAcceso(true)}>
+                  <Lock /> Acceso…
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => setConfirmar(true)}>
                   <Trash2 /> Eliminar tablero
@@ -92,6 +98,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      {usuario.rol === "admin" && acceso ? <BoardAcceso open={acceso} onOpenChange={setAcceso} /> : null}
       <AlertDialog open={confirmar} onOpenChange={setConfirmar}>
         <AlertDialogContent className="pulse">
           <AlertDialogHeader>

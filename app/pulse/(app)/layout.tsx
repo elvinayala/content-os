@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function PulseAppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const usuario = await usuarioActual();
   if (!usuario) redirect("/pulse/login");
-  const boards = await listarBoards();
+  const boards = await listarBoards(usuario);
   return (
     <SidebarProvider>
       <PulseSidebar boards={boards} usuario={usuario} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ArrowLeft, LayoutGrid, LogOut, Settings } from "lucide-react";
+import { Activity, ArrowLeft, LayoutGrid, Lock, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -26,7 +26,7 @@ export function PulseSidebar({
   boards,
   usuario,
 }: {
-  boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items">[];
+  boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items" | "privado">[];
   usuario: UsuarioPulse;
 }) {
   const pathname = usePathname();
@@ -69,6 +69,7 @@ export function PulseSidebar({
                     <Link href={href}>
                       <span className="size-2.5 shrink-0 rounded-full" style={{ background: cssColor(b.color), boxShadow: `0 0 0 3px color-mix(in srgb, ${cssColor(b.color)} 22%, transparent)` }} />
                       <span className="truncate">{b.nombre}</span>
+                      {b.privado ? <Lock className="size-3 shrink-0 text-muted-foreground" /> : null}
                       <span className="ml-auto text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{b.items}</span>
                     </Link>
                   </SidebarMenuButton>

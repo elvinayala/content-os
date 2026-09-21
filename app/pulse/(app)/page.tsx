@@ -30,7 +30,8 @@ function hace(iso: string | null): string {
 }
 
 export default async function PulseHome() {
-  const [boards, usuario] = await Promise.all([listarBoards(), usuarioActual()]);
+  const usuario = await usuarioActual();
+  const boards = await listarBoards(usuario ?? undefined);
   const totalItems = boards.reduce((a, b) => a + b.items, 0);
   const totalGrupos = boards.reduce((a, b) => a + b.grupos.length, 0);
 

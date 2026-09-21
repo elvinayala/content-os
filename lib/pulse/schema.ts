@@ -65,10 +65,25 @@ export const pulseBoards = pgTable(
     descripcion: text("descripcion"),
     color: text("color"),
     position: integer("position").notNull().default(0),
+    privado: boolean("privado").notNull().default(false), // true = solo admins + pulse_board_members
     mondayId: text("monday_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("pulse_boards_slug").on(t.slug), uniqueIndex("pulse_boards_monday").on(t.mondayId)],
+);
+
+// Quién puede ver un tablero privado (los admins siempre pueden).
+export const pulseBoardMembers = pgTable(
+  "pulse_board_members",
+  {
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => pulseBoards.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  },
+  (t) => [uniqueIndex("pulse_board_members_pk").on(t.boardId, t.userId)],
 );
 
 export const pulseColumns = pgTable(

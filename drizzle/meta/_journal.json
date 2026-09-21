@@ -15,6 +15,13 @@
       "when": 1789948111538,
       "tag": "0001_rol_editor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789953617989,
+      "tag": "0002_boards_privados",
+      "breakpoints": true
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 
-import { requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
+import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
@@ -35,7 +35,7 @@ export async function actualizarValorAction(p: {
   value: unknown;
 }): Promise<R<{ updatedAt: string; value: ValorCelda }>> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     const value = validarValor(p.tipo, p.value, p.settings);
     const r = await repo.actualizarValor({ itemId: p.itemId, columnId: p.columnId, value, userId: u.id });
     avisarCambio({ itemIds: [p.itemId], motivo: "valor" });
@@ -45,7 +45,7 @@ export async function actualizarValorAction(p: {
 
 export async function renombrarItemAction(p: { itemId: string; name: string }): Promise<R> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     const name = p.name.trim().slice(0, 300);
     if (!name) throw new Error("El nombre no puede quedar vacío");
     await repo.renombrarItem({ itemId: p.itemId, name, userId: u.id });
@@ -56,7 +56,7 @@ export async function renombrarItemAction(p: { itemId: string; name: string }): 
 
 export async function crearItemAction(p: { boardId: string; groupId: string; name: string; alInicio?: boolean; values?: Record<string, ValorCelda> }): Promise<R<{ item: Item }>> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(p.boardId);
     const name = p.name.trim().slice(0, 300) || "Nuevo elemento";
     const item = await repo.crearItem({ boardId: p.boardId, groupId: p.groupId, name, userId: u.id, alInicio: p.alInicio, values: p.values });
     avisarCambio({ itemIds: [item.id], motivo: "crear" });
@@ -66,7 +66,7 @@ export async function crearItemAction(p: { boardId: string; groupId: string; nam
 
 export async function moverItemsAction(p: { itemIds: string[]; groupId: string }): Promise<R> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(await repo.boardDe({ groupId: p.groupId }));
     await repo.moverItems({ itemIds: p.itemIds, groupId: p.groupId, userId: u.id });
     avisarCambio({ itemIds: p.itemIds, motivo: "mover" });
     return {};
@@ -75,7 +75,7 @@ export async function moverItemsAction(p: { itemIds: string[]; groupId: string }
 
 export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{ n: number }>> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemIds[0] }));
     const { bajas, afectados } = await prepararBaja(p.itemIds);
     const n = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
     avisarCambio({ itemIds: afectados, bajas, motivo: "eliminar" });
@@ -86,7 +86,7 @@ export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{
 
 export async function leerItemsGrupoAction(p: { groupId: string }): Promise<R<{ items: Item[] }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ groupId: p.groupId }));
     return { items: await repo.leerItemsGrupo(p.groupId) };
   });
 }
@@ -95,7 +95,7 @@ export async function leerItemsGrupoAction(p: { groupId: string }): Promise<R<{ 
 
 export async function crearColumnaAction(p: { boardId: string; title: string; type: TipoColumna; settings?: SettingsColumna }): Promise<R<{ column: Columna }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(p.boardId);
     const title = p.title.trim().slice(0, 100) || "Nueva columna";
     const column = await repo.crearColumna({ boardId: p.boardId, title, type: p.type, settings: p.settings });
     return { column };
@@ -104,7 +104,7 @@ export async function crearColumnaAction(p: { boardId: string; title: string; ty
 
 export async function actualizarColumnaAction(p: { columnId: string; patch: { title?: string; settings?: SettingsColumna; width?: number } }): Promise<R<{ column: Columna }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
     const patch = { ...p.patch };
     if (patch.title !== undefined) patch.title = patch.title.trim().slice(0, 100) || "Columna";
     if (patch.width !== undefined) patch.width = Math.max(70, Math.min(800, Math.round(patch.width)));
@@ -115,7 +115,7 @@ export async function actualizarColumnaAction(p: { columnId: string; patch: { ti
 
 export async function eliminarColumnaAction(p: { columnId: string }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
     await repo.eliminarColumna(p.columnId);
     return {};
   });
@@ -123,7 +123,7 @@ export async function eliminarColumnaAction(p: { columnId: string }): Promise<R>
 
 export async function reordenarColumnasAction(p: { boardId: string; ids: string[] }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(p.boardId);
     await repo.reordenarColumnas(p.boardId, p.ids);
     return {};
   });
@@ -133,7 +133,7 @@ export async function reordenarColumnasAction(p: { boardId: string; ids: string[
 
 export async function crearGrupoAction(p: { boardId: string; title: string; color: ColorPulse; despuesDe?: string }): Promise<R<{ group: Grupo }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(p.boardId);
     const group = await repo.crearGrupo({ boardId: p.boardId, title: p.title.trim().slice(0, 100) || "Nuevo grupo", color: p.color, despuesDe: p.despuesDe });
     return { group };
   });
@@ -141,7 +141,7 @@ export async function crearGrupoAction(p: { boardId: string; title: string; colo
 
 export async function actualizarGrupoAction(p: { groupId: string; patch: { title?: string; color?: ColorPulse; colapsadoDefault?: boolean } }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ groupId: p.groupId }));
     const patch = { ...p.patch };
     if (patch.title !== undefined) patch.title = patch.title.trim().slice(0, 100) || "Grupo";
     await repo.actualizarGrupo(p.groupId, patch);
@@ -151,7 +151,7 @@ export async function actualizarGrupoAction(p: { groupId: string; patch: { title
 
 export async function reordenarGruposAction(p: { boardId: string; ids: string[] }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(p.boardId);
     await repo.reordenarGrupos(p.boardId, p.ids);
     return {};
   });
@@ -159,7 +159,7 @@ export async function reordenarGruposAction(p: { boardId: string; ids: string[] 
 
 export async function eliminarGrupoAction(p: { groupId: string }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ groupId: p.groupId }));
     await repo.eliminarGrupo(p.groupId);
     return {};
   });
@@ -169,10 +169,19 @@ export async function eliminarGrupoAction(p: { groupId: string }): Promise<R> {
 
 export async function actualizarBoardAction(p: { boardId: string; patch: { nombre?: string; descripcion?: string | null; color?: ColorPulse } }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(p.boardId);
     const patch = { ...p.patch };
     if (patch.nombre !== undefined) patch.nombre = patch.nombre.trim().slice(0, 100) || "Tablero";
     await repo.actualizarBoard(p.boardId, patch);
+    refresh();
+    return {};
+  });
+}
+
+export async function guardarAccesoBoardAction(p: { boardId: string; privado: boolean; miembros: string[] }): Promise<R> {
+  return envolver(async () => {
+    await requiereAdmin();
+    await repo.guardarAccesoBoard(p.boardId, { privado: p.privado, miembros: [...new Set(p.miembros)] });
     refresh();
     return {};
   });
@@ -191,14 +200,14 @@ export async function eliminarBoardAction(p: { boardId: string }): Promise<R> {
 
 export async function leerActividadAction(p: { itemId: string }): Promise<R<{ actividad: Actividad[] }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     return { actividad: await repo.leerActividad(p.itemId) };
   });
 }
 
 export async function comentarAction(p: { itemId: string; boardId: string; texto: string }): Promise<R<{ actividad: Actividad }>> {
   return envolver(async () => {
-    const u = await requiereUsuario();
+    const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     const texto = p.texto.trim().slice(0, 5000);
     if (!texto) throw new Error("El comentario está vacío");
     return { actividad: await repo.comentar({ itemId: p.itemId, boardId: p.boardId, texto, userId: u.id }) };
@@ -209,12 +218,12 @@ export async function comentarAction(p: { itemId: string; boardId: string; texto
 
 export async function subirArchivoAction(formData: FormData): Promise<R<{ archivo: ArchivoPulse }>> {
   return envolver(async () => {
-    const u = await requiereUsuario();
     const itemId = String(formData.get("itemId") ?? "");
     const columnId = String(formData.get("columnId") ?? "");
     const boardId = String(formData.get("boardId") ?? "");
     const file = formData.get("file");
     if (!(file instanceof File) || !itemId || !columnId || !boardId) throw new Error("Falta el archivo");
+    const u = await requiereAccesoBoard(await repo.boardDe({ itemId }));
     if (file.size > 10 * 1024 * 1024) throw new Error("El archivo supera los 10 MB");
     const nombre = file.name.replace(/[^\w.\-() ]+/g, "_").slice(0, 150) || "archivo";
     const storagePath = `${boardId}/${itemId}/${crypto.randomUUID()}-${nombre}`;
@@ -227,7 +236,7 @@ export async function subirArchivoAction(formData: FormData): Promise<R<{ archiv
 
 export async function urlArchivoAction(p: { fileId: string }): Promise<R<{ url: string; nombre: string }>> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ fileId: p.fileId }));
     const f = await repo.leerArchivo(p.fileId);
     if (!f) throw new Error("El archivo no existe");
     return { url: await urlArchivo(f.storagePath, f.id), nombre: f.nombre };
@@ -236,7 +245,7 @@ export async function urlArchivoAction(p: { fileId: string }): Promise<R<{ url: 
 
 export async function eliminarArchivoAction(p: { fileId: string }): Promise<R> {
   return envolver(async () => {
-    await requiereUsuario();
+    await requiereAccesoBoard(await repo.boardDe({ fileId: p.fileId }));
     await repo.eliminarArchivo(p.fileId);
     return {};
   });
