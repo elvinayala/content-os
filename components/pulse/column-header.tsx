@@ -78,7 +78,7 @@ export function ColumnHeader({ column }: { column: Columna }) {
   const conLabels = column.type === "status" || column.type === "dropdown";
 
   return (
-    <div className="group/col relative flex h-full w-full items-center justify-center gap-1 px-1 text-xs font-medium text-muted-foreground" style={{ width: column.width }}>
+    <div className="group/col relative flex h-full w-full items-center justify-center gap-1 px-1 font-medium" style={{ width: column.width }}>
       {editando ? (
         <input
           autoFocus

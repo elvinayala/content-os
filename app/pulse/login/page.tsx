@@ -20,7 +20,7 @@ export default async function PulseLoginPage({
   if (!error && (await usuarioActual())) redirect(desde?.startsWith("/pulse") ? desde : "/pulse");
   return (
     <div className="fondo-malla flex min-h-svh w-full items-center justify-center p-4">
-      <Card className="w-full max-w-sm border-white/60 shadow-xl shadow-primary/10">
+      <Card className="w-full max-w-sm border-white/70 bg-white/85 shadow-2xl shadow-primary/10 backdrop-blur-md">
         <CardContent className="flex flex-col gap-5 p-6">
           <div className="flex items-center gap-3">
             <div className="logo-pulse flex size-10 items-center justify-center rounded-xl text-white">

@@ -33,7 +33,7 @@ export function PulseSidebar({
   return (
     // className="pulse": el Sheet mobile portalea a <body> y sale del scope del tema
     <Sidebar collapsible="icon" className="pulse">
-      <SidebarHeader className="border-b border-sidebar-border">
+      <SidebarHeader className="border-b border-sidebar-border/70 py-3">
         <div className="flex items-center gap-3 px-1 py-2">
           <div className="logo-pulse flex size-9 shrink-0 items-center justify-center rounded-xl text-white">
             <Activity className="size-5" />

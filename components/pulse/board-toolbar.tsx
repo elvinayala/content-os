@@ -42,13 +42,14 @@ export function BoardToolbar() {
 
   return (
     <div className="vidrio sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b px-4 py-2">
-      <div className="mr-2 flex rounded-md border p-0.5">
+      <div className="segmentado mr-2 flex">
         {VISTAS.map((v) => (
           <button
             key={v.id}
             type="button"
             onClick={() => setVista(v.id)}
-            className={cn("flex items-center gap-1 rounded px-2 py-1 text-xs", s.vista === v.id ? "bg-accent font-medium" : "text-muted-foreground hover:text-foreground")}
+            data-activo={s.vista === v.id}
+            className={cn("flex items-center gap-1 rounded-[7px] px-2.5 py-1 text-xs transition", s.vista === v.id ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground")}
           >
             <v.icon className="size-3.5" /> {v.nombre}
           </button>

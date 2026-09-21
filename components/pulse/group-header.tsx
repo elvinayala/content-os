@@ -30,7 +30,7 @@ export function GroupHeader({ grupo, colapsado, onToggle }: { grupo: GrupoVisibl
   };
   const c = cssColor(grupo.color);
   return (
-    <div className="group/grupo flex h-10 items-center gap-1.5 pr-4 pl-1" style={{ color: c }}>
+    <div className="group/grupo flex h-11 items-center gap-1.5 pr-4 pl-1" style={{ color: c }}>
       <button type="button" onClick={onToggle} className="rounded p-0.5 hover:bg-accent" aria-label={colapsado ? "Expandir" : "Colapsar"}>
         {colapsado ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
       </button>
@@ -50,7 +50,7 @@ export function GroupHeader({ grupo, colapsado, onToggle }: { grupo: GrupoVisibl
           }}
         />
       ) : (
-        <span className="truncate text-sm font-semibold" onDoubleClick={() => real && setEditando(true)} title={real ? "Doble click para renombrar" : undefined}>
+        <span className="truncate text-[15px] font-semibold tracking-tight" onDoubleClick={() => real && setEditando(true)} title={real ? "Doble click para renombrar" : undefined}>
           {grupo.titulo}
         </span>
       )}
