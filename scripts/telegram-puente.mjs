@@ -204,12 +204,36 @@ function huboCambios(desde) {
   try { return dirs.some((d) => fs.existsSync(d) && mira(d)); } catch { return false; }
 }
 
+const ADS_COMANDOS = new Set(["resultados", "campanas", "arbol", "cuentas", "publicos", "videos", "intereses", "pixel", "plantilla", "crear", "pausar"]);
+function correrAds(linea) {
+  return new Promise((res) => {
+    const partes = (linea.match(/"[^"]*"|\S+/g) || []).map((x) => x.replace(/^"|"$/g, ""));
+    const [cmd, marca, ...rest] = partes;
+    if (!cmd || cmd === "ayuda") return res("Agente de Meta Ads (sin gastar tokens):\n/ads resultados <marca> [last_3d]\n/ads campanas <marca>\n/ads arbol <marca> <campaignId>\n/ads plantilla <marca> follow-me --reels a,b --presupuesto 15 --edad 18-35\n/ads plantilla <marca> trafico-url --url … --reels a --presupuesto 10\n/ads plantilla <marca> dm-instagram --videos a,b --presupuesto 30\n/ads pausar <marca> <id>\nMarcas: level-up, ai-borinquen, mauro, resuelto, shadow-operator. Todo lo que crea queda EN PAUSA; publica tú en Ads Manager.\nPara pedirlo en lenguaje natural, escríbeme sin /ads y lo armo yo.");
+    if (!ADS_COMANDOS.has(cmd) || !marca) return res("No entendí. Formato: /ads <comando> <marca> …  (/ads ayuda)");
+    const child = spawn(process.execPath, ["scripts/meta-ads.mjs", marca, cmd, ...rest], { cwd: ROOT, env: process.env });
+    let out = "";
+    child.stdout.on("data", (d) => { out += String(d); });
+    child.stderr.on("data", (d) => { out += String(d); });
+    const timer = setTimeout(() => { child.kill(); out += "\n⏱ se pasó de 90 s"; }, 90000);
+    child.on("close", () => { clearTimeout(timer); res(out.replace(/[│┌┐└┘├┤┬┴┼─]+/g, " ").replace(/[ \t]+/g, " ").trim().slice(0, 3800) || "(sin salida)"); });
+    child.on("error", (e) => { clearTimeout(timer); res("Error: " + e.message); });
+  });
+}
+
 async function procesar(token, chat, texto, st) {
   const t = texto.trim();
   if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (ES_NICO && t === "/plataformas") { try { const inv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/plataformas.json"), "utf8")); return enviar(token, chat, inv.plataformas.map((p) => `- ${p.nombre}${p.critico ? " 🔴crítica" : ""}${p.prod ? ` · ${p.prod}` : ""}`).join("\n")); } catch { return enviar(token, chat, "No pude leer data/plataformas.json."); } }
-  if (t === "/ayuda" || t === "/start") return enviar(token, chat, "Puente activo. Escríbeme lo que quieras y lo hago en el Content OS.\n\n/sofi … — hablar con Sofi (producción)\n/jarvis … — métricas y operaciones\n/estado — qué falta hoy\n/nuevo — empezar conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
+  if (t === "/ayuda" || t === "/start") return enviar(token, chat, "Puente activo. Escríbeme lo que quieras y lo hago en el Content OS.\n\n/sofi … — hablar con Sofi (producción)\n/jarvis … — métricas y operaciones\n/estado — qué falta hoy\n/ads … — Meta Ads sin gastar tokens (/ads ayuda)\n/nuevo — empezar conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (t === "/nuevo") { st.sesion = null; guardarEstado(st); return enviar(token, chat, "Listo, conversación nueva."); }
+  // /ads → el agente de Meta Ads sin pasar por Claude (0 tokens): corre scripts/meta-ads.mjs
+  // y devuelve la salida. Escritura solo en pausa (plantilla/crear) o pausar; nunca activa.
+  //   /ads resultados mauro [last_3d]        /ads campanas level-up
+  //   /ads plantilla mauro follow-me --reels 18…,18… --presupuesto 15 --edad 18-35
+  //   /ads plantilla mauro trafico-url --url https://youtu.be/… --reels 18… --presupuesto 10
+  //   /ads pausar mauro <id>                  /ads ayuda
+  if (/^\/ads\b/i.test(t)) return enviar(token, chat, await correrAds(t.replace(/^\/ads\s*/i, "")));
   if (t === "/estado") {
     try {
       const e = JSON.parse(fs.readFileSync(path.join(ROOT, "data/estudio.json"), "utf8"));

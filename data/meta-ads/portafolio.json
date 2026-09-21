@@ -1,18 +1,18 @@
 {
-  "actualizadoEl": "2026-09-18",
+  "actualizadoEl": "2026-09-21",
   "apiVersion": "v25.0",
   "app": {
     "nombre": "Hey Bori",
     "id": "27337036735966798",
-    "nota": "App aprobada (ads_management, ads_read, business_management). Los tokens de usuario del sistema se generan con esta app."
+    "nota": "App aprobada. Token actual = token largo del dueño conectado en Bori (levelupmediapr@gmail.com), copiado con scripts/meta-ads/token-desde-bori.mjs; dura 60 días, se re-corre el script al vencer. Ve 72 cuentas (LU, AIB, Mauro, Resuelto y clientes)."
   },
   "marcas": {
     "level-up": {
       "nombre": "Level Up Media",
-      "negocioId": "100872629602980",
+      "negocioId": "989015235153696",
       "cuentaId": "2010206776851",
       "cuentaNombre": "Level Up Official 2025",
-      "pageId": null,
+      "pageId": "103458229415869",
       "igUserId": null,
       "pixelId": "27706808412306198",
       "pixelNombre": "Level Up Media PR",
@@ -48,18 +48,20 @@
         "943949588521782",
         "885023842490900"
       ],
-      "publicosInventario": "data/meta-ads/publicos-level-up.json"
+      "publicosInventario": "data/meta-ads/publicos-level-up.json",
+      "negocioNombre": "LEVEL UP MEDIA PR",
+      "etiqueta": "LU"
     },
     "ai-borinquen": {
       "nombre": "AI Borinquen",
       "negocioId": "492090353646087",
       "cuentaId": "1114829350772277",
       "cuentaNombre": "AI BORINQUEN",
-      "pageId": null,
+      "pageId": "716302001576221",
       "igUserId": null,
       "pixelId": "2203459307257468",
       "pixelNombre": "AI Borinquen Auditoría",
-      "tokenEnv": "META_ADS_TOKEN_AIB",
+      "tokenEnv": "META_ADS_TOKEN",
       "landing": {
         "url": "https://auditoria.aiborinquen.co/automatizacion",
         "utmBase": "utm_source=meta&utm_medium=paid"
@@ -72,7 +74,8 @@
       "publicosClave": {},
       "campanasExistentes": {
         "juliana": "120248911627010250"
-      }
+      },
+      "etiqueta": "AIB"
     },
     "shadow-operator": {
       "nombre": "Shadow Operator",
@@ -92,16 +95,17 @@
         "diasPrueba": 7
       },
       "publicosClave": {},
-      "nota": "Sin cuenta ni pixel documentados: correr `cuentas` para descubrir y completar."
+      "nota": "Sin cuenta ni pixel documentados: correr `cuentas` para descubrir y completar.",
+      "etiqueta": "SHADOW"
     },
     "resuelto": {
       "nombre": "Resuelto Home Services",
       "negocioId": null,
-      "cuentaId": null,
+      "cuentaId": "1564735818086768",
       "pageId": null,
       "igUserId": null,
       "pixelId": null,
-      "tokenEnv": "META_ADS_TOKEN_RESUELTO",
+      "tokenEnv": "META_ADS_TOKEN",
       "landing": {
         "url": null,
         "utmBase": "utm_source=meta&utm_medium=paid"
@@ -112,7 +116,44 @@
         "diasPrueba": 7
       },
       "publicosClave": {},
-      "nota": "Business Manager propio (ver vault/proyectos/plomeria-pr/). Completar con `cuentas`."
+      "nota": "Business Manager propio (ver vault/proyectos/plomeria-pr/). Completar con `cuentas`.",
+      "cuentaNombre": "Resuelto Home Services",
+      "negocioNombre": "Resuelto Home Services LLC",
+      "etiqueta": "RESUELTO"
+    },
+    "mauro": {
+      "nombre": "Mauro PR",
+      "negocioId": null,
+      "cuentaId": "503566678495233",
+      "cuentaNombre": "Elvin Ayala Pérez (Mauro)",
+      "pageId": "686366657897015",
+      "igUserId": "17841404146064202",
+      "pixelId": null,
+      "pixelNombre": null,
+      "tokenEnv": "META_ADS_TOKEN",
+      "landing": {
+        "url": "https://youtu.be/J9AxsDIkhOw",
+        "utmBase": "utm_source=meta&utm_medium=paid"
+      },
+      "compuertas": {
+        "costoPorSeguidorMax": 1.0,
+        "cpcMax": 0.2,
+        "ctrMin": 1.0
+      },
+      "negocioNombre": null,
+      "igHandle": "_mauropr",
+      "reglas": {
+        "edad": [
+          18,
+          35
+        ],
+        "ubicaciones": "instagram",
+        "soloReelsExistentes": true,
+        "fbOrganicoManual": true,
+        "minPorConjunto": 5
+      },
+      "publicosClave": {},
+      "etiqueta": "MAURO"
     }
   }
 }

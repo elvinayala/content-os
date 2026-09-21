@@ -126,3 +126,104 @@ test("resumirInsights: CPL, mediana y recomendaciones", () => {
   assert.ok(r.filas[2].recomendacion.includes("sin leads"));
   assert.equal(r.leadsTotal, 5);
 });
+
+// ---------- plantillas (tráfico / DM con publicaciones existentes) ----------
+import { buildAdSetBody as adsetBody, buildCreativeExistente, OPTIMIZACIONES } from "../scripts/meta-ads/core.mjs";
+import { planFollowMe, planTraficoUrl, planDmInstagram, planQuiz, repartir, opcionesDesdeFlags } from "../scripts/meta-ads/plantillas.mjs";
+
+const cfgMauro = { clave: "mauro", nombre: "Mauro PR", etiqueta: "MAURO", cuentaId: "503566678495233", pageId: "686366657897015", igUserId: "17841404146064202", igHandle: "_mauropr", reglas: { edad: [18, 35], ubicaciones: "instagram", minPorConjunto: 5 } };
+const cfgLU = { clave: "level-up", nombre: "Level Up Media", etiqueta: "LU", cuentaId: "2010206776851", pageId: "103458229415869", igUserId: "222", pixelId: "27706808412306198", landing: { url: "https://class.levelupmediapr.net/crecimiento", utmBase: "utm_source=meta&utm_medium=paid" }, exclusionesBase: ["111", "222"] };
+
+test("repartir respeta el mínimo por conjunto", () => {
+  assert.equal(repartir(15, 2, 5), 7.5);
+  assert.throws(() => repartir(15, 2, 10), /mínimo \$10/);
+});
+
+test("follow-me: perfil IG, reels existentes, tope de edad → público original (Meta no acepta age_max con Advantage+)", () => {
+  const plan = planFollowMe(cfgMauro, { reels: ["18166493623461894", "18164515909468572"], presupuesto: 15 });
+  assert.equal(plan.modo, "perfil-ig");
+  assert.equal(plan.conjuntos.length, 2);
+  assert.equal(plan.conjuntos[0].presupuestoDiario, 7.5);
+  assert.equal(plan.publicos.P1.advantage, false);
+  assert.equal(plan.publicos.P1.amplio, true);
+  assert.deepEqual(validarPlan(plan), []);
+  const arbol = expandirPlan(plan);
+  assert.equal(arbol.campana.objective, "OUTCOME_TRAFFIC");
+  const a = arbol.conjuntos[0].adset;
+  assert.equal(a.optimization_goal, "PROFILE_VISIT");
+  assert.equal(a.destination_type, "INSTAGRAM_PROFILE");
+  assert.deepEqual(a.promoted_object, { page_id: "686366657897015" });
+  assert.deepEqual(a.targeting.publisher_platforms, ["instagram"]);
+  assert.equal(a.targeting.age_max, 35);
+  const cr = arbol.conjuntos[0].creativo.body(plan.pageId, plan.igUserId, null);
+  assert.equal(cr.source_instagram_media_id, "18166493623461894");
+  assert.equal(cr.instagram_user_id, "17841404146064202");
+  assert.deepEqual(cr.call_to_action, { type: "VIEW_INSTAGRAM_PROFILE", value: { link: "https://www.instagram.com/_mauropr/" } });
+  assert.equal(arbol.conjuntos[0].creativo.existente, "reel 18166493623461894");
+});
+
+test("trafico-url: clics al enlace con CTA y link; sin pixel no es error", () => {
+  const plan = planTraficoUrl(cfgMauro, { url: "https://youtu.be/J9AxsDIkhOw", reels: ["1"], presupuesto: 10 });
+  assert.deepEqual(validarPlan(plan), []);
+  const n = expandirPlan(plan).conjuntos[0];
+  assert.equal(n.adset.optimization_goal, "LINK_CLICKS");
+  assert.equal(n.adset.destination_type, "WEBSITE");
+  assert.equal(n.adset.promoted_object, undefined);
+  assert.deepEqual(n.creativo.body("p", "ig", null).call_to_action, { type: "WATCH_MORE", value: { link: "https://youtu.be/J9AxsDIkhOw" } });
+  assert.throws(() => planTraficoUrl(cfgMauro, { reels: ["1"] }), /--url/);
+});
+
+test("dm-instagram: conversaciones por DM con promoted_object de página y exclusiones de la marca", () => {
+  const plan = planDmInstagram(cfgLU, { videos: ["v1", "v2"], copias: [{ textoPrincipal: "Hola" }], presupuesto: 30, edad: [25, 55] });
+  assert.equal(plan.modo, "dm-ig");
+  assert.deepEqual(plan.publicos.P1.excluir, ["111", "222"]);
+  assert.deepEqual(validarPlan(plan), []);
+  const a = expandirPlan(plan).conjuntos[1].adset;
+  assert.equal(a.optimization_goal, "CONVERSATIONS");
+  assert.equal(a.destination_type, "INSTAGRAM_DIRECT");
+  assert.deepEqual(a.promoted_object, { page_id: "103458229415869" });
+  assert.equal(a.daily_budget, "1500");
+});
+
+test("quiz: leads del pixel con UTMs dinámicos y mínimo $10", () => {
+  const plan = planQuiz(cfgLU, { videos: ["v1", "v2", "v3"], copias: [{ textoPrincipal: "Tú decides" }], presupuesto: 39 });
+  assert.equal(plan.modo, "leads");
+  assert.match(plan.urlTags, /utm_campaign=level-up-quiz&utm_content=\{\{ad\.name\}\}/);
+  assert.deepEqual(validarPlan(plan), []);
+  assert.throws(() => planQuiz(cfgLU, { videos: ["a", "b", "c", "d"], copias: [{ textoPrincipal: "x" }], presupuesto: 30 }), /mínimo \$10/);
+  assert.throws(() => planQuiz({ ...cfgLU, pixelId: null }, { videos: ["a"], copias: [{ textoPrincipal: "x" }] }), /pixelId/);
+});
+
+test("validarPlan: reel existente sin igUserId es error; público amplio explícito pasa", () => {
+  const plan = planFollowMe({ ...cfgMauro, igUserId: null }, { reels: ["1"], presupuesto: 5 });
+  assert.ok(validarPlan(plan).some((e) => /igUserId/.test(e)));
+});
+
+test("buildAdSetBody / buildCreativeExistente: validaciones y formas", () => {
+  assert.throws(() => adsetBody({ nombre: "x", campaignId: "c", presupuestoDiario: 5, optimizacion: "PROFILE_VISIT", destino: "INSTAGRAM_PROFILE", targeting: {} }), /pageId/);
+  assert.throws(() => buildCreativeExistente({ nombre: "x", pageId: "p", igMediaId: "m" }), /igUserId/);
+  const post = buildCreativeExistente({ nombre: "x", pageId: "p", postId: "q", cta: "LEARN_MORE", link: "https://a.b" });
+  assert.equal(post.object_story_id, "p_q");
+  assert.equal(OPTIMIZACIONES["dm-ig"].objetivo, "OUTCOME_SALES");
+});
+
+test("opcionesDesdeFlags parsea reels/presupuesto/edad y rechaza edad mal escrita", () => {
+  const o = opcionesDesdeFlags({ reels: "1,2 3", presupuesto: "15", edad: "18-35", url: "https://x.y" });
+  assert.deepEqual(o.reels, ["1", "2", "3"]);
+  assert.equal(o.presupuesto, 15);
+  assert.deepEqual(o.edad, [18, 35]);
+  assert.throws(() => opcionesDesdeFlags({ edad: "18" }), /--edad/);
+});
+
+test("resumirInsights: seguidores y costo por seguidor con compuerta ≤ $1", () => {
+  const rows = [
+    { adset_id: "1", adset_name: "FM-1", spend: "12", impressions: "5000", clicks: "50", ctr: "1", cpc: "0.24", actions: [{ action_type: "follow", value: "4" }] },
+    { adset_id: "2", adset_name: "FM-2", spend: "12", impressions: "5000", clicks: "50", ctr: "1", cpc: "0.24", actions: [{ action_type: "instagram_profile_follow", value: "24" }] },
+  ];
+  const r = resumirInsights(rows, { compuertas: { costoPorSeguidorMax: 1 } });
+  assert.equal(r.filas[0].seguidores, 4);
+  assert.equal(r.filas[0].costoSeguidor, 3);
+  assert.match(r.filas[0].recomendacion, /seguidor > 2× meta/);
+  assert.equal(r.filas[1].costoSeguidor, 0.5);
+  assert.equal(r.filas[1].recomendacion, "seguir");
+});

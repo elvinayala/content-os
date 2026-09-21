@@ -13,6 +13,8 @@
 //   node scripts/meta-ads.mjs <marca> resultados [campaignId] [last_7d|last_3d|yesterday|last_14d]
 //   node scripts/meta-ads.mjs <marca> campanas                lista campañas de la cuenta
 //   node scripts/meta-ads.mjs <marca> pausar <id>             pausa campaña/conjunto/anuncio (única escritura de estado permitida)
+//   node scripts/meta-ads.mjs <marca> plantilla <tipo> [--reels a,b] [--videos a,b] [--presupuesto 15] [--edad 18-35] [--url …] [--nombre …] [--dry-run]
+//       tipos: follow-me | trafico-url | dm-instagram | quiz  → escribe data/meta-ads/campanas/<marca>-<tipo>-<fecha>.json y la monta EN PAUSA
 //
 // Token: variable de entorno que indica portafolio.json (META_ADS_TOKEN…); si no está en el
 // entorno se lee de .env.local. Nunca se imprime.
@@ -21,12 +23,23 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as M from "./meta-ads/core.mjs";
+import { PLANTILLAS, opcionesDesdeFlags } from "./meta-ads/plantillas.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const PORTAFOLIO = resolve(ROOT, "data/meta-ads/portafolio.json");
 const args = process.argv.slice(2);
-const flags = new Set(args.filter((a) => a.startsWith("--")));
-const [marca, cmd, ...rest] = args.filter((a) => !a.startsWith("--"));
+// Flags booleanas (--dry-run) y con valor (--reels a,b · --presupuesto 15 · --edad 18-35 · --url …).
+const CON_VALOR = new Set(["reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir"]);
+const flags = new Set();
+const valores = {};
+const posicionales = [];
+for (let i = 0; i < args.length; i++) {
+  const a = args[i];
+  if (!a.startsWith("--")) { posicionales.push(a); continue; }
+  const [k, inline] = a.slice(2).split("=");
+  if (CON_VALOR.has(k)) valores[k] = inline ?? args[++i]; else flags.add(a);
+}
+let [marca, cmd, ...rest] = posicionales;
 const dry = flags.has("--dry-run");
 
 const portafolio = JSON.parse(readFileSync(PORTAFOLIO, "utf8"));
@@ -117,16 +130,30 @@ try {
     const preset = rest.find((r) => /^(last_|yesterday|today|this_)/.test(r)) || "last_7d";
     const rows = await M.insights(c, cfg.cuentaId, { campaignId, nivel: flags.has("--ads") ? "ad" : "adset", preset });
     const r = M.resumirInsights(rows, { compuertas: cfg.compuertas });
-    tabla(r.filas.map((f) => ({ nombre: f.nombre.slice(0, 40), gasto: usd(f.gasto), impr: num(f.impresiones), ctr: f.ctr.toFixed(2) + "%", cpc: usd(f.cpc), leads: f.leads, cpl: f.cpl == null ? "—" : usd(f.cpl), contact: f.contact, recomendacion: f.recomendacion })));
-    console.log(`Total ${preset}: gasto ${usd(r.gastoTotal)} · leads ${r.leadsTotal} · CPL mediana ${r.mediana == null ? "—" : usd(r.mediana)} · compuertas CPL ≤ $${cfg.compuertas.cplMax}, CTR ≥ ${cfg.compuertas.ctrMin}%`);
+    tabla(r.filas.map((f) => ({ nombre: f.nombre.slice(0, 40), gasto: usd(f.gasto), impr: num(f.impresiones), ctr: f.ctr.toFixed(2) + "%", cpc: usd(f.cpc), clics: f.clicsEnlace, seguidores: f.seguidores, "$/seguidor": f.costoSeguidor == null ? "—" : usd(f.costoSeguidor), conv: f.conversaciones, leads: f.leads, cpl: f.cpl == null ? "—" : usd(f.cpl), recomendacion: f.recomendacion })));
+    const cp = cfg.compuertas || {};
+    console.log(`Total ${preset}: gasto ${usd(r.gastoTotal)} · leads ${r.leadsTotal} · CPL mediana ${r.mediana == null ? "—" : usd(r.mediana)} · compuertas ${[cp.cplMax && "CPL ≤ $" + cp.cplMax, cp.ctrMin && "CTR ≥ " + cp.ctrMin + "%", cp.costoPorSeguidorMax && "≤ $" + cp.costoPorSeguidorMax + "/seguidor"].filter(Boolean).join(", ")}`);
     if (flags.has("--json")) console.log(JSON.stringify(r, null, 2));
   } else if (cmd === "pausar") {
     if (!rest[0]) throw new Error("Falta el id");
     await c.graph("POST", "/" + rest[0], { status: "PAUSED" });
     console.log("Pausado", rest[0]);
-  } else if (cmd === "crear" || cmd === "crear-publicos") {
-    const planPath = resolve(ROOT, rest[0] || "");
-    const plan = JSON.parse(readFileSync(planPath, "utf8"));
+  } else if (cmd === "crear" || cmd === "crear-publicos" || cmd === "plantilla") {
+    let planPath, plan;
+    if (cmd === "plantilla") {
+      const tipo = rest[0];
+      if (!PLANTILLAS[tipo]) throw new Error("Plantilla desconocida: " + tipo + " (" + Object.keys(PLANTILLAS).join(" | ") + ")");
+      plan = PLANTILLAS[tipo]({ ...cfg, clave: marca }, opcionesDesdeFlags(valores));
+      planPath = resolve(ROOT, `data/meta-ads/campanas/${marca}-${tipo}-${new Date().toISOString().slice(0, 10)}${valores.nombre ? "" : ""}.json`);
+      let n = 2; const basePath = planPath;
+      while (existsSync(planPath) && JSON.parse(readFileSync(planPath, "utf8")).meta?.campaignId) planPath = basePath.replace(/\.json$/, `-${n++}.json`);
+      writeFileSync(planPath, JSON.stringify(plan, null, 2) + "\n");
+      console.log("Plan:", planPath.replace(ROOT + "/", ""));
+      cmd = "crear";
+    } else {
+      planPath = resolve(ROOT, rest[0] || "");
+      plan = JSON.parse(readFileSync(planPath, "utf8"));
+    }
     plan.cuentaId ||= cfg.cuentaId; plan.pixelId ||= cfg.pixelId; plan.pageId ||= cfg.pageId; plan.igUserId ||= cfg.igUserId;
     const disponibles = new Map(Object.entries(cfg.publicosClave || {}));
     if (cmd === "crear-publicos") {
@@ -147,15 +174,15 @@ try {
       if (errores.length) { console.error("Plan inválido:\n - " + errores.join("\n - ")); process.exit(3); }
       const arbol = M.expandirPlan(plan, { publicosDisponibles: disponibles });
       const suma = plan.conjuntos.reduce((s, x) => s + Number(x.presupuestoDiario), 0);
-      console.log(`Campaña: ${plan.nombre} · ${plan.objetivo} · ${arbol.conjuntos.length} conjuntos · $${suma}/día (tope $${plan.topeDiario})`);
+      console.log(`Campaña: ${plan.nombre} · ${arbol.campana.objective} · ${plan.modo || "leads"} · ${arbol.conjuntos.length} conjuntos · $${suma}/día (tope $${plan.topeDiario})`);
       tabla(arbol.conjuntos.map((n) => ({
-        clave: n.clave, conjunto: n.adset.name.slice(0, 50), "$/día": Number(n.adset.daily_budget) / 100, creativo: n.creativo.clave, video: n.creativo.videoId || "marcador",
+        clave: n.clave, conjunto: n.adset.name.slice(0, 50), "$/día": Number(n.adset.daily_budget) / 100, creativo: n.creativo.clave, video: n.creativo.existente || n.creativo.videoId || "marcador",
         incluye: (n.adset.targeting.custom_audiences || []).map((x) => x.id).join("|"), excluye: (n.adset.targeting.excluded_custom_audiences || []).map((x) => x.id).join("|"),
         intereses: (n.adset.targeting.flexible_spec?.[0]?.interests || []).map((i) => i.name).join(",").slice(0, 40), advantage: n.adset.targeting.targeting_automation.advantage_audience,
       })));
       if (dry) { console.log("[dry-run] no se creó nada."); process.exit(0); }
       let marcador = plan.videoMarcador || null;
-      if (!marcador && plan.creativos.some((x) => !x.videoId)) {
+      if (!marcador && plan.creativos.some((x) => !x.videoId && !x.igMediaId && !x.postId)) {
         const vids = await M.listarVideos(c, plan.cuentaId, 5);
         marcador = vids[0]?.id || null;
         console.log("Video marcador:", marcador, vids[0]?.title || "");

@@ -180,11 +180,23 @@ export function buildTargeting({
   return t;
 }
 
+// Formas verificadas contra campañas montadas a mano (Mauro/LU, 19-20/sep/2026):
+//   perfil IG  → PROFILE_VISIT + INSTAGRAM_PROFILE + promoted_object {page_id}
+//   enlace     → LINK_CLICKS + WEBSITE (sin promoted_object)
+//   DM IG      → CONVERSATIONS + INSTAGRAM_DIRECT + promoted_object {page_id}
+//   leads web  → OFFSITE_CONVERSIONS + WEBSITE + promoted_object {pixel_id, custom_event_type}
+export const OPTIMIZACIONES = {
+  "perfil-ig": { optimizacion: "PROFILE_VISIT", destino: "INSTAGRAM_PROFILE", objetivo: "OUTCOME_TRAFFIC" },
+  "enlace": { optimizacion: "LINK_CLICKS", destino: "WEBSITE", objetivo: "OUTCOME_TRAFFIC" },
+  "dm-ig": { optimizacion: "CONVERSATIONS", destino: "INSTAGRAM_DIRECT", objetivo: "OUTCOME_SALES" },
+  "leads": { optimizacion: "OFFSITE_CONVERSIONS", destino: "WEBSITE", objetivo: "OUTCOME_LEADS" },
+};
 export function buildAdSetBody({
-  nombre, campaignId, presupuestoDiario, pixelId, evento = "LEAD",
+  nombre, campaignId, presupuestoDiario, pixelId, pageId, evento = "LEAD",
   optimizacion = "OFFSITE_CONVERSIONS", targeting, destino = "WEBSITE",
 }) {
   if (!pixelId && optimizacion === "OFFSITE_CONVERSIONS") throw new Error("Optimizar a conversiones requiere pixelId");
+  if (!pageId && (optimizacion === "PROFILE_VISIT" || optimizacion === "CONVERSATIONS")) throw new Error(`${optimizacion} requiere pageId`);
   const body = {
     name: nombre,
     campaign_id: campaignId,
@@ -197,6 +209,29 @@ export function buildAdSetBody({
     status: "PAUSED",
   };
   if (optimizacion === "OFFSITE_CONVERSIONS") body.promoted_object = { pixel_id: String(pixelId), custom_event_type: evento };
+  if (optimizacion === "PROFILE_VISIT" || optimizacion === "CONVERSATIONS") body.promoted_object = { page_id: String(pageId) };
+  return body;
+}
+
+// Creativo a partir de una publicación que YA existe (reel de Instagram o post de
+// Facebook): no se sube video ni se escribe copy; se promociona el post tal cual
+// (conserva likes/comentarios). `igMediaId` = id del reel en IG (18…); `postId`
+// = id del post de FB (page_post). CTA: VIEW_INSTAGRAM_PROFILE (Follow Me),
+// WATCH_MORE / LEARN_MORE con `link` (tráfico a URL), MESSAGE_PAGE… (DM).
+export function buildCreativeExistente({ nombre, pageId, igUserId, igMediaId, postId, cta = "VIEW_INSTAGRAM_PROFILE", link, urlTags }) {
+  if (!pageId) throw new Error("Falta pageId para el creativo");
+  if (!igMediaId && !postId) throw new Error("El creativo existente necesita igMediaId o postId");
+  const body = { name: nombre, object_id: String(pageId) };
+  if (igMediaId) {
+    if (!igUserId) throw new Error("Un reel existente necesita igUserId (portafolio.json)");
+    body.source_instagram_media_id = String(igMediaId);
+    body.instagram_user_id = String(igUserId);
+  } else {
+    body.object_story_id = `${pageId}_${postId}`;
+    if (igUserId) body.instagram_user_id = String(igUserId);
+  }
+  body.call_to_action = link ? { type: cta, value: { link } } : { type: cta };
+  if (urlTags) body.url_tags = urlTags;
   return body;
 }
 
@@ -290,13 +325,16 @@ export function validarPlan(plan, { publicosDisponibles = new Map() } = {}) {
   const errores = [];
   if (!plan.marca) errores.push("plan.marca vacío");
   if (!plan.nombre) errores.push("plan.nombre vacío");
-  if (!plan.pixelId) errores.push("plan.pixelId vacío");
-  if (!plan.landing) errores.push("plan.landing vacío");
+  const modo = plan.modo || "leads";
+  if (modo === "leads" && !plan.pixelId) errores.push("plan.pixelId vacío");
+  if ((modo === "leads" || modo === "enlace") && !plan.landing) errores.push("plan.landing vacío");
   if (!plan.pageId) errores.push("plan.pageId vacío (corre `cuentas` y guárdalo en portafolio.json)");
+  if (!OPTIMIZACIONES[modo]) errores.push(`plan.modo "${modo}" desconocido (${Object.keys(OPTIMIZACIONES).join("|")})`);
   const suma = (plan.conjuntos || []).reduce((s, cj) => s + Number(cj.presupuestoDiario || 0), 0);
   if (plan.topeDiario && suma > plan.topeDiario) errores.push(`suma de presupuestos $${suma}/día > tope $${plan.topeDiario}/día`);
+  const minimo = plan.minPorConjunto ?? 10;
   for (const cj of plan.conjuntos || []) {
-    if (Number(cj.presupuestoDiario) < 10) errores.push(`conjunto ${cj.clave}: presupuesto < $10/día`);
+    if (Number(cj.presupuestoDiario) < minimo) errores.push(`conjunto ${cj.clave}: presupuesto < $${minimo}/día`);
     if (!plan.publicos?.[cj.publico]) errores.push(`conjunto ${cj.clave}: público "${cj.publico}" no definido en plan.publicos`);
     if (!(plan.creativos || []).some((cr) => cr.clave === cj.creativo)) errores.push(`conjunto ${cj.clave}: creativo "${cj.creativo}" no definido`);
   }
@@ -304,9 +342,10 @@ export function validarPlan(plan, { publicosDisponibles = new Map() } = {}) {
     for (const ref of [...(p.incluir || []), ...(p.excluir || [])]) {
       if (!/^\d+$/.test(String(ref)) && !publicosDisponibles.has(ref)) errores.push(`público ${k}: "${ref}" no está en publicosClave ni es un id`);
     }
-    if (!(p.incluir || []).length && !(p.intereses || []).length && !p.advantage) errores.push(`público ${k}: sin incluir/intereses/advantage → sería todo PR`);
+    if (!(p.incluir || []).length && !(p.intereses || []).length && !p.advantage && !p.amplio) errores.push(`público ${k}: sin incluir/intereses/advantage → sería todo PR (pon "amplio": true si es a propósito)`);
   }
   for (const cr of plan.creativos || []) {
+    if (cr.igMediaId || cr.postId) { if (cr.igMediaId && !plan.igUserId) errores.push(`creativo ${cr.clave}: reel existente sin igUserId en el plan/portafolio`); continue; }
     if (!cr.copy?.textoPrincipal) errores.push(`creativo ${cr.clave}: sin textoPrincipal`);
     if (/\bgratis\b|gratuit/i.test(JSON.stringify(cr.copy || {}))) errores.push(`creativo ${cr.clave}: usa "gratis" (regla dura)`);
     if (/\b(vos|tenés|querés|podés|mirá|dejá)\b/i.test(JSON.stringify(cr.copy || {}))) errores.push(`creativo ${cr.clave}: voseo detectado (tuteo PR obligatorio)`);
@@ -318,7 +357,8 @@ const resolverRef = (ref, disponibles) => (/^\d+$/.test(String(ref)) ? String(re
 
 // Árbol que se va a crear (sin red). Sirve para --dry-run y para crear.
 export function expandirPlan(plan, { publicosDisponibles = new Map() } = {}) {
-  const campana = buildCampaignBody({ nombre: plan.nombre, objetivo: plan.objetivo });
+  const opt = OPTIMIZACIONES[plan.modo || "leads"];
+  const campana = buildCampaignBody({ nombre: plan.nombre, objetivo: plan.objetivo || opt.objetivo });
   const base = plan.targetingBase || {};
   const conjuntos = (plan.conjuntos || []).map((cj) => {
     const pub = plan.publicos[cj.publico];
@@ -334,17 +374,23 @@ export function expandirPlan(plan, { publicosDisponibles = new Map() } = {}) {
     const nombreConjunto = cj.nombre || `${cj.clave} · ${pub.nombre} · ${cr.clave}`;
     return {
       clave: cj.clave,
-      adset: buildAdSetBody({ nombre: nombreConjunto, campaignId: "<campaña>", presupuestoDiario: cj.presupuestoDiario, pixelId: plan.pixelId, evento: plan.evento || "LEAD", targeting }),
+      adset: buildAdSetBody({ nombre: nombreConjunto, campaignId: "<campaña>", presupuestoDiario: cj.presupuestoDiario, pixelId: plan.pixelId, pageId: plan.pageId, evento: plan.evento || "LEAD", optimizacion: opt.optimizacion, destino: opt.destino, targeting }),
       creativo: {
         clave: cr.clave,
         videoId: cr.videoId || null,
-        body: (pageId, igUserId, videoId) => buildCreativeBody({
+        existente: cr.igMediaId ? `reel ${cr.igMediaId}` : cr.postId ? `post ${cr.postId}` : null,
+        body: (pageId, igUserId, videoId) => (cr.igMediaId || cr.postId) ? buildCreativeExistente({
+          nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, igMediaId: cr.igMediaId, postId: cr.postId,
+          cta: cr.cta || (opt.optimizacion === "PROFILE_VISIT" ? "VIEW_INSTAGRAM_PROFILE" : opt.optimizacion === "CONVERSATIONS" ? "MESSAGE_PAGE" : "LEARN_MORE"),
+          // VIEW_INSTAGRAM_PROFILE también exige `link` (error 2061015): la URL del perfil.
+          link: opt.destino === "WEBSITE" ? plan.landing : opt.destino === "INSTAGRAM_PROFILE" && plan.igHandle ? `https://www.instagram.com/${plan.igHandle}/` : undefined, urlTags: plan.urlTags,
+        }) : buildCreativeBody({
           nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, videoId, thumbUrl: cr.thumbUrl,
           link: plan.landing, textoPrincipal: cr.copy.textoPrincipal, titulo: cr.copy.titulo, descripcion: cr.copy.descripcion,
           cta: cr.copy.cta || "LEARN_MORE", urlTags: plan.urlTags,
         }),
       },
-      ad: { nombre: cj.nombreAnuncio || `${cr.clave}${cr.videoId ? "" : " · ⚠ reemplazar video"} · ${cj.clave}` },
+      ad: { nombre: cj.nombreAnuncio || `${cr.clave}${cr.videoId || cr.igMediaId || cr.postId ? "" : " · ⚠ reemplazar video"} · ${cj.clave}` },
     };
   });
   return { campana, conjuntos };
@@ -369,9 +415,9 @@ export async function crearEnMeta(c, plan, { publicosDisponibles = new Map(), vi
       plan.meta.conjuntos[n.clave] = j.id;
       log("conjunto", n.clave, j.id);
     }
-    const videoId = n.creativo.videoId || videoMarcador;
-    if (!videoId) throw new Error(`creativo ${n.creativo.clave}: sin videoId ni video marcador en la cuenta`);
-    const kCre = `${n.creativo.clave}@${videoId}`;
+    const videoId = n.creativo.existente ? null : (n.creativo.videoId || videoMarcador);
+    if (!videoId && !n.creativo.existente) throw new Error(`creativo ${n.creativo.clave}: sin videoId ni video marcador en la cuenta`);
+    const kCre = `${n.creativo.clave}@${videoId || n.creativo.existente}`;
     if (!plan.meta.creativos[kCre]) {
       const j = await c.graph("POST", a + "/adcreatives", n.creativo.body(plan.pageId, plan.igUserId, videoId));
       plan.meta.creativos[kCre] = j.id;
@@ -400,8 +446,15 @@ export function resumirInsights(rows, { compuertas = {} } = {}) {
       clics: Number(r.clicks || 0), ctr: Number(r.ctr || 0), ctrUnico: Number(r.unique_ctr || 0), cpc: Number(r.cpc || 0),
       leads, cpl, contact: accion(r, "contact") || accion(r, "offsite_conversion.fb_pixel_contact"),
       costoLead: costo(r, "lead") || null,
+      // Tráfico/DM: seguidores (Meta lo reporta con nombres distintos según la cuenta),
+      // visitas al perfil, clics al enlace y conversaciones iniciadas.
+      seguidores: Number((r.actions || []).find((x) => /follow/i.test(x.action_type))?.value || 0),
+      visitasPerfil: accion(r, "profile_visit") || accion(r, "onsite_conversion.ig_profile_visit"),
+      clicsEnlace: accion(r, "link_click"),
+      conversaciones: accion(r, "onsite_conversion.messaging_conversation_started_7d") || accion(r, "onsite_conversion.total_messaging_connection"),
     };
   });
+  for (const f of filas) f.costoSeguidor = f.seguidores ? f.gasto / f.seguidores : null;
   const cpls = filas.map((f) => f.cpl).filter((x) => x != null).sort((a, b) => a - b);
   const mediana = cpls.length ? cpls[Math.floor(cpls.length / 2)] : null;
   for (const f of filas) {
@@ -410,6 +463,7 @@ export function resumirInsights(rows, { compuertas = {} } = {}) {
     if (f.cpl != null && mediana && f.cpl > 2 * mediana) razones.push(`CPL ${f.cpl.toFixed(2)} > 2× mediana ${mediana.toFixed(2)}`);
     if (f.cpl != null && compuertas.cplMax && f.cpl > compuertas.cplMax) razones.push(`CPL > tope $${compuertas.cplMax}`);
     if (f.impresiones >= 1000 && compuertas.ctrMin && f.ctr < compuertas.ctrMin) razones.push(`CTR ${f.ctr.toFixed(2)}% < ${compuertas.ctrMin}%`);
+    if (f.costoSeguidor != null && compuertas.costoPorSeguidorMax && f.gasto >= 10 && f.costoSeguidor > 2 * compuertas.costoPorSeguidorMax) razones.push(`$${f.costoSeguidor.toFixed(2)}/seguidor > 2× meta $${compuertas.costoPorSeguidorMax}`);
     f.recomendacion = razones.length ? "pausar: " + razones.join("; ") : (f.cpl != null && mediana && f.cpl <= mediana ? "ganador: duplicar a públicos nuevos" : "seguir");
   }
   return { filas, mediana, gastoTotal: filas.reduce((s, f) => s + f.gasto, 0), leadsTotal: filas.reduce((s, f) => s + f.leads, 0) };
