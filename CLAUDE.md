@@ -285,6 +285,22 @@ cualquiera de esos 4 repos (`deploy-snapshots.sh` ya lo hace); commitear y subir
 Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
 `npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
+## Los agentes se hablan entre sí y con el equipo (20/sep/2026)
+
+Elvin: "Sofi le pide algo a Nico, Max le pide algo a Nico, y con mi equipo personal también".
+**Buzón compartido** `app/api/agentes/route.ts` (tabla `agentes_mensajes` en la base de Pulse,
+auth `CRON_SECRET`, público en `proxy.ts`) — el único punto común entre los contenedores de
+Railway y la Mac. **Herramienta** `scripts/agentes.mjs` (identidad = `PUENTE_BOT`, sin él = Sofi):
+`mensaje <sofi|nico|max|lola> "…"` · `buzon` · `atendido <id> "respuesta"` (la respuesta vuelve al
+buzón del que preguntó) · `historial` · `equipo` (directorio Slack) · `slack <nombre> "…"` (DM por
+Slack con el bot Command Center, firmado; el bot SÍ puede escribirle directo a cualquiera del
+equipo) · `elvin "…"` (Telegram del bot + espejo Slack). El puente (`buzonLoop`, cada 20 s) atiende
+lo que le llega como un mensaje de Telegram — en serie con Telegram (`enSerie`, una sola sesión de
+Claude por agente) — y cierra/responde solo si Claude no lo hizo. Todo se espeja al DM de Slack de
+Elvin como `[Agentes] X → Y`. Reglas de comunicación en el sufijo `COMUNICACION` de todas las
+personas: libre entre agentes y con Elvin; al equipo humano solo lo que el cerebro de cada uno
+permite; nunca a clientes; nunca secretos.
+
 ## Lola — la Creadora de Contenido con IA (20/sep/2026)
 
 El puesto que faltaba: Sofi coordina, Cami idea, Lauti escribe, Facu publica, **Lola produce**
