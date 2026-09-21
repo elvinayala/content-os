@@ -314,7 +314,10 @@ Token = el largo del dueño conectado en Bori, copiado con `scripts/meta-ads/tok
 follow-me|trafico-url|dm-instagram|quiz --reels a,b --videos a,b --presupuesto N --edad 18-35 --url …`
 → plan JSON + campaña EN PAUSA en ~10 s (reels existentes por `source_instagram_media_id`; perfil
 IG = PROFILE_VISIT/INSTAGRAM_PROFILE; DM = CONVERSATIONS/INSTAGRAM_DIRECT). Por Telegram:
-`/ads plantilla|resultados|campanas|arbol|pausar <marca> …` (corre el script, 0 tokens). Reglas:
+**Max**, el media buyer con bot propio (`PUENTE_BOT=max`, servicio `max` en Railway, token
+`TELEGRAM_BOT_TOKEN_MAX`, cerebro `vault/ceo/cerebro-max.md`, guía `vault/proyectos/estudio/
+telegram-max-pasos.md`): lenguaje natural → plantilla; solo puede Read/Grep + `node scripts/meta-ads.mjs`.
+Atajo sin tokens en cualquier bot: `/ads plantilla|resultados|campanas|arbol|pausar <marca> …`. Reglas:
 nunca activar ni subir presupuesto por API, 1 creativo por conjunto ≥ mínimo de la marca ($10; Mauro $5),
 tope diario por campaña, tuteo PR, sin "gratis", sin promesas de ingreso. Traffickers de Level Up
 usan **Bori** (rol `trafficker`, `POST /api/admin/crear-trafficker` como dueño).

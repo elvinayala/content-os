@@ -42,8 +42,13 @@ const ROOT = process.cwd();
 // (--add-dir). Sin PUENTE_BOT es el de Sofi.
 const BOT = (process.env.PUENTE_BOT || "").toLowerCase();
 const ES_NICO = BOT === "nico";
+// TERCER BOT — MAX, el media buyer (21/sep/2026): PUENTE_BOT=max node scripts/telegram-puente.mjs
+//   Bot propio (TELEGRAM_BOT_TOKEN_MAX). Habla en lenguaje natural de campañas y las monta EN
+//   PAUSA con scripts/meta-ads.mjs (plantillas) o lee resultados; cerebro en vault/ceo/cerebro-max.md.
+//   Modo seguro + Bash solo del script de Meta Ads. Nunca activa ni sube presupuesto.
+const ES_MAX = BOT === "max";
 // En Railway el estado vive en el volumen /estado (PUENTE_ESTADO_DIR); en la Mac, en data/.
-const ESTADO = path.join(process.env.PUENTE_ESTADO_DIR || path.join(ROOT, "data"), ES_NICO ? "telegram-puente-nico.json" : "telegram-puente.json");
+const ESTADO = path.join(process.env.PUENTE_ESTADO_DIR || path.join(ROOT, "data"), ES_NICO ? "telegram-puente-nico.json" : ES_MAX ? "telegram-puente-max.json" : "telegram-puente.json");
 const EN_NUBE = process.env.PUENTE_EN_NUBE === "1";
 const CLAUDE = process.env.CLAUDE_BIN || path.join(process.env.HOME, ".npm-global", "bin", "claude");
 const LOG = (...a) => console.log(new Date().toISOString(), ...a);
@@ -89,6 +94,7 @@ const PERSONAS = {
   claude: "Sos el Content OS de Elvin Ayala respondiendo desde su Telegram (está en el celular, lejos de la computadora). Hacé el trabajo completo que te pide en este repo (skills, comandos de .claude/commands, memoria, vault) y respondé CORTO: qué hiciste, qué falta, una pregunta si hace falta. Sin markdown pesado (es Telegram): párrafos cortos, viñetas con guion. Tuteo de Puerto Rico. Nunca digas que algo está hecho si no lo verificaste. REGLAS DURAS: (1) NO corras el deploy ni edites scripts/deploy-snapshots.sh: el puente hace el deploy solo después de tu respuesta si tocaste data/ o vault/. (2) Si un script o comando falla, NO intentes arreglarlo editando infraestructura: reportá el error en una línea y seguí. (3) Máximo 15 acciones por pedido; si necesitás más, resumí lo hecho y preguntá.",
   sofi: "Actuá como SOFI, la Coordinadora de Producción. Antes de responder leé vault/ceo/cerebro-sofi.md y data/estudio.json, y actualizá data/estudio.json con lo que Elvin te cuente (guiones listos, fecha de grabación, respuestas de creadores, locación elegida). Regla: contenido no sale a nadie sin su OK; logística directo con Aure por Slack. Respondé corto, tuteo PR, firmá — Sofi.",
   jarvis: "Actuá como JARVIS (métricas, operaciones, pipeline, vault). Leé los data/*.json y el vault que necesites. Respondé con números y corto.",
+  max: "Eres MAX, el media buyer de IA Market (Level Up Media, AI Borinquen, Mauro, Resuelto, Shadow Operator). Elvin te escribe desde el celular por Telegram. ANTES de actuar lee vault/ceo/cerebro-max.md (tu criterio, las reglas de Elvin, las plantillas y los ids por marca en data/meta-ads/portafolio.json). Tus manos son SOLO `node scripts/meta-ads.mjs <marca> …` (resultados, campanas, arbol, plantilla, videos, publicos, pausar): nunca edites código ni infraestructura. Cuando Elvin pida una campaña: identifica marca + plantilla (follow-me, trafico-url, dm-instagram, quiz) + creativos + presupuesto + edad; si falta un dato clave (ids de reels/videos, presupuesto, URL) pregúntalo en UNA sola pregunta corta con las opciones; si lo tienes, corre primero `--dry-run`, resume el árbol en 3 líneas y monta EN PAUSA; devuelve el enlace de Ads Manager y recuérdale que la publica él. Cuando pida estadísticas: `resultados <marca> [campaignId] [last_3d|last_7d|last_14d]` y responde con los números que importan (gasto, costo por seguidor/CPL/CPC, CTR, recomendación de la compuerta), máximo 8 líneas. PROHIBIDO: activar campañas, subir presupuestos, borrar nada, tocar cuentas que no estén en portafolio.json, inventar ids o resultados, imprimir tokens. Nunca digas que algo quedó si el script no lo confirmó. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado (Telegram): párrafos cortos y viñetas con guion. Firma — Max.",
   nico: "Eres NICO, el vibecoder de Elvin (ingeniero de guardia de todas sus plataformas) y socio técnico de Sofi. Elvin te escribe desde el celular. ANTES de tocar nada lee vault/ceo/cerebro-nico.md y data/plataformas.json; el repo de cada plataforma está en ese inventario (tienes acceso a todos: Bori/heybori.ai, Plagas, Cortex, Resuelto, voz Retell, quiz funnels, Content OS) y cada uno tiene su CLAUDE.md o TRASPASO.md con las trampas que ya rompieron producción: léelo primero. Haz el ajuste completo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo (salud HTTP, logs) → anotar en data/nico-bitacora.json {fecha, plataforma, que, porque, verificado, commit}. Nunca digas que algo quedó si no lo verificaste. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/tablas/archivos, migraciones destructivas, tocar cobros/Stripe/precios, editar prompts de agentes de voz en producción, imprimir o pegar secretos, escribirle a clientes/equipo/Heidy (solo le hablas a Elvin), activar ads, redeploy de Cortex con renders en cola. Si dudas entre dos caminos, el reversible. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué pasó, qué hiciste, qué verificaste, qué falta. Firma — Nico.",
 };
 
@@ -149,9 +155,11 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso) {
   return new Promise((resolve) => {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
-    const modo = ES_NICO ? "total" : env("PUENTE_MODO") || "seguro";
-    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? "60" : "20", "--append-system-prompt", PERSONAS[persona] || PERSONAS.claude];
+    const modo = ES_NICO ? "total" : ES_MAX ? "seguro" : env("PUENTE_MODO") || "seguro";
+    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? "60" : ES_MAX ? "25" : "20", "--append-system-prompt", PERSONAS[persona] || PERSONAS.claude];
     if (modo === "total") args.push("--dangerously-skip-permissions");
+    // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
+    else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
     else args.push("--permission-mode", "acceptEdits", "--allowedTools", ...SEGURO);
     if (ES_NICO) for (const d of dirsNico()) args.push("--add-dir", d);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
@@ -225,6 +233,7 @@ async function procesar(token, chat, texto, st) {
   const t = texto.trim();
   if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (ES_NICO && t === "/plataformas") { try { const inv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/plataformas.json"), "utf8")); return enviar(token, chat, inv.plataformas.map((p) => `- ${p.nombre}${p.critico ? " 🔴crítica" : ""}${p.prod ? ` · ${p.prod}` : ""}`).join("\n")); } catch { return enviar(token, chat, "No pude leer data/plataformas.json."); } }
+  if (ES_MAX && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Max, tu media buyer. Háblame normal, por ejemplo:\n- \"Móntame un Follow Me a Mauro con estos dos reels, $15 al día\"\n- \"¿Cómo van las campañas de Mauro?\"\n- \"Tráfico al YouTube de Mauro con el reel 18164…, $10\"\n- \"Pausa el conjunto 1202…\"\n\nTodo lo que monto queda EN PAUSA: lo publicas tú en Ads Manager. Nunca activo ni subo presupuesto.\n\nAtajos sin gastar tokens: /ads resultados <marca> · /ads campanas <marca> · /ads plantilla <marca> follow-me --reels a,b --presupuesto 15 --edad 18-35 · /ads ayuda\n/nuevo — conversación nueva");
   if (t === "/ayuda" || t === "/start") return enviar(token, chat, "Puente activo. Escríbeme lo que quieras y lo hago en el Content OS.\n\n/sofi … — hablar con Sofi (producción)\n/jarvis … — métricas y operaciones\n/estado — qué falta hoy\n/ads … — Meta Ads sin gastar tokens (/ads ayuda)\n/nuevo — empezar conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (t === "/nuevo") { st.sesion = null; guardarEstado(st); return enviar(token, chat, "Listo, conversación nueva."); }
   // /ads → el agente de Meta Ads sin pasar por Claude (0 tokens): corre scripts/meta-ads.mjs
@@ -242,7 +251,7 @@ async function procesar(token, chat, texto, st) {
       return enviar(token, chat, `*Te toca a ti:*\n${pend || "- nada pendiente"}\n\n${loc}\nGrabación: ${e.diaDeGrabacion?.proximo || "sin fecha"}\nCreadores: ${(e.creadores?.pipeline || []).filter((c) => c.estado !== "mes 2").map((c) => `${c.handle} (${c.estado})`).join(", ")}`);
     } catch { return enviar(token, chat, "No pude leer data/estudio.json."); }
   }
-  let persona = ES_NICO ? "nico" : "claude", prompt = t;
+  let persona = ES_NICO ? "nico" : ES_MAX ? "max" : "claude", prompt = t;
   const m = t.match(/^\/(sofi|jarvis|nico)\s+([\s\S]+)/i);
   if (m) { persona = m[1].toLowerCase(); prompt = m[2]; }
   if (ES_NICO && t === "/ronda") { persona = "nico"; prompt = "Haz tu ronda ahora: sigue .claude/commands/ronda-nico.md completo (con envío del reporte)."; }
@@ -272,7 +281,8 @@ async function procesar(token, chat, texto, st) {
   if (subidos.length) LOG("git push:", subidos.join(", "));
   // Si Claude tocó data/ (o vault/), subirlo a producción para que la Mac y el Command Center
   // lo vean. Se hace en segundo plano; el deploy tarda ~2 min.
-  if (huboCambios(inicio) && (process.env.VERCEL_TOKEN || env("VERCEL_TOKEN") || !EN_NUBE)) {
+  // Max solo escribe planes en data/meta-ads/campanas (la campaña real vive en Meta): sin deploy.
+  if (!ES_MAX && huboCambios(inicio) && (process.env.VERCEL_TOKEN || env("VERCEL_TOKEN") || !EN_NUBE)) {
     LOG("cambios en data/vault → deploy-snapshots");
     const dep = spawn("bash", ["scripts/deploy-snapshots.sh"], { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, VERCEL_TOKEN: process.env.VERCEL_TOKEN || env("VERCEL_TOKEN") } });
     let salida = ""; dep.stdout.on("data", (d) => (salida += d)); dep.stderr.on("data", (d) => (salida += d));
@@ -282,12 +292,12 @@ async function procesar(token, chat, texto, st) {
 }
 
 async function main() {
-  const VAR_TOKEN = ES_NICO ? "TELEGRAM_BOT_TOKEN_NICO" : "TELEGRAM_BOT_TOKEN";
+  const VAR_TOKEN = ES_NICO ? "TELEGRAM_BOT_TOKEN_NICO" : ES_MAX ? "TELEGRAM_BOT_TOKEN_MAX" : "TELEGRAM_BOT_TOKEN";
   let token = env(VAR_TOKEN), chatCEO = env("TELEGRAM_CEO_CHAT_ID");
   while (!token) { LOG(`Esperando ${VAR_TOKEN} en .env.local…`); await new Promise((r) => setTimeout(r, 60000)); token = env(VAR_TOKEN); }
   if (!fs.existsSync(CLAUDE)) LOG(`⚠️ No encuentro el CLI de Claude en ${CLAUDE} (npm install -g @anthropic-ai/claude-code con prefix ~/.npm-global)`);
   await tg(token, "deleteWebhook", { drop_pending_updates: false }).catch(() => {});
-  LOG(ES_NICO ? "Puente de NICO arrancó." : "Puente Telegram arrancó.", EN_NUBE ? "En Railway." : "En la Mac.", "Modo:", ES_NICO ? "total" : env("PUENTE_MODO") || "seguro", ES_NICO ? `· repos extra: ${dirsNico().length}` : "", "· CEO chat:", chatCEO || "(sin configurar: respondo el chat id a quien escriba /start)");
+  LOG(ES_NICO ? "Puente de NICO arrancó." : ES_MAX ? "Puente de MAX (media buyer) arrancó." : "Puente Telegram arrancó.", EN_NUBE ? "En Railway." : "En la Mac.", "Modo:", ES_NICO ? "total" : env("PUENTE_MODO") || "seguro", ES_NICO ? `· repos extra: ${dirsNico().length}` : "", "· CEO chat:", chatCEO || "(sin configurar: respondo el chat id a quien escriba /start)");
   // Chequeo de salud del CLI (no bloquea el loop): si falla, queda en el log el porqué.
   correrClaude("Responde solo: ok", "claude", randomUUID(), true).then((r) => LOG("salud claude:", r.code === 0 && r.out ? "ok · " + r.out.slice(0, 40) : "FALLÓ · " + (r.err || "sin salida").slice(0, 300)));
   const st = leerEstado();
