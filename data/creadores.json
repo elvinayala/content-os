@@ -1,0 +1,43 @@
+{
+  "actualizadoEl": "2026-09-21T18:51:22.404Z",
+  "creadores": [
+    {
+      "handle": "bikinijeweler",
+      "url": "https://instagram.com/bikinijeweler",
+      "estado": "vetado",
+      "marca": "bori",
+      "propuestoPor": "elvin",
+      "nota": "prueba del sistema",
+      "agregadoEl": "2026-09-21",
+      "historial": [
+        {
+          "fecha": "2026-09-21",
+          "que": "vetado: 55 pts Tier B"
+        }
+      ],
+      "nombre": "Bikini Jeweler",
+      "seguidores": 13676,
+      "posts": 578,
+      "bio": "",
+      "categoria": null,
+      "verificado": false,
+      "negocio": false,
+      "metricas": {
+        "engagementMediano": 0.0239,
+        "alcanceReels": 0.19,
+        "comentariosPorLike": 0.078,
+        "postsPorMes": 2,
+        "diasDesdeUltimoPost": 346,
+        "proporcionVideo": 0.58,
+        "esPR": true
+      },
+      "puntos": 55,
+      "tier": "B",
+      "alertas": [
+        "inactivo: último post hace 346 días"
+      ],
+      "resumen": "13,676 seg · ER 2.4 % · reels 19.0 % de sus seguidores · 2/mes · último hace 346 d · PR → 55 pts, Tier B ⚠️ inactivo: último post hace 346 días",
+      "vetadoEl": "2026-09-21"
+    }
+  ]
+}

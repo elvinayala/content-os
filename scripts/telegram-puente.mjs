@@ -334,6 +334,17 @@ async function procesar(token, chat, texto, st) {
   if (ES_MAX && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Max, tu media buyer. Mi trabajo: identificar y escalar anuncios ganadores para llevar el portafolio de $100K a $300K con ROAS 6-8x. Háblame normal, por ejemplo:\n- \"Móntame un Follow Me a Mauro con estos dos reels, $15 al día\"\n- \"¿Cómo van las campañas de Mauro?\"\n- \"Tráfico al YouTube de Mauro con el reel 18164…, $10\"\n- \"Pausa el conjunto 1202…\"\n- \"¿Qué escalamos esta semana?\" / \"¿Qué ángulo está vendiendo?\" / \"¿Hacemos un webinar?\"\n- \"Hazme 3 versiones de este anuncio con otra persona\" (Higgsfield: Ad Multiplier, UGC, fotos de producto, thumbnails; te pido OK antes de gastar créditos)\n\nRutinas: reporte semanal los lunes 8 AM, alertas para escalar mar/jue/sáb, trazabilidad con Aure viernes y lunes.\n\nTodo lo que monto queda EN PAUSA: lo publicas tú en Ads Manager. Nunca activo ni subo presupuesto.\n\nAtajos sin gastar tokens: /ads resultados <marca> · /ads campanas <marca> · /ads plantilla <marca> follow-me --reels a,b --presupuesto 15 --edad 18-35 · /ads ayuda\n/nuevo — conversación nueva");
   if (t === "/ayuda" || t === "/start") return enviar(token, chat, "Puente activo. Escríbeme lo que quieras y lo hago en el Content OS.\n\n/sofi … — hablar con Sofi (producción)\n/jarvis … — métricas y operaciones\n/iris … — la vigía de Cortex (edición de video); \"/iris\" sola corre su ronda ahora\n/estado — qué falta hoy\n/ads … — Meta Ads sin gastar tokens (/ads ayuda)\n/nuevo — empezar conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (t === "/nuevo") { st.sesion = null; guardarEstado(st); return enviar(token, chat, "Listo, conversación nueva."); }
+  // Atajo sin Claude: "creador @a @b [nota]" → entra al pipeline de creadores (data/creadores.json)
+  // como por-vetar; /creadores (Apify) lo veta después. Elvin (21/sep): él los identifica a ojo.
+  const mc = t.match(/^creador(?:es|a)?\s+([\s\S]+)/i);
+  if (mc) {
+    const hs = [...mc[1].matchAll(/(?:@|instagram\.com\/)([A-Za-z0-9._]{2,30})/g)].map((m) => m[1]);
+    if (hs.length) {
+      const nota = mc[1].replace(/(?:@|https?:\/\/(?:www\.)?instagram\.com\/)[A-Za-z0-9._]{2,30}\/?/g, "").trim();
+      const r = spawnSync(process.execPath, ["scripts/creadores.mjs", "agregar", ...hs.map((h) => "@" + h), "--por", ES_NICO ? "nico" : "elvin", ...(nota ? ["--nota", nota] : [])], { cwd: ROOT, encoding: "utf8" });
+      return enviar(token, chat, (r.stdout || r.stderr || "").trim() + "\nLos veto en la próxima corrida de /creadores y te digo cuáles valen.");
+    }
+  }
   // /ads → el agente de Meta Ads sin pasar por Claude (0 tokens): corre scripts/meta-ads.mjs
   // y devuelve la salida. Escritura solo en pausa (plantilla/crear) o pausar; nunca activa.
   //   /ads resultados mauro [last_3d]        /ads campanas level-up
