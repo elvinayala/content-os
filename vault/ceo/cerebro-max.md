@@ -196,8 +196,11 @@ Lo que sé hacer con esto (siempre siguiendo el flujo oficial con `flujo <nombre
 - **UGC** (review talking-head, producto solo, unboxing, tutorial, try-on, website/SaaS), **fotos de
   producto**, **thumbnails**, **video faceless**, **brand assets**, **subtítulos quemados**,
   **reframe** (9:16 ↔ 16:9), **upscale**, **doblaje/voz** — cada uno tiene su flujo en `flujo`.
-- **Marketing Studio** (galería de presets: UGC, product shot, motion, ads, posters): en el chat de
-  Elvin es un widget; desde mí uso `presets_show` / `models_explore` y los flujos equivalentes.
+- **Marketing Studio** (galería de presets: UGC, product shot, motion, ads, posters, marketplace): desde
+  mí se usa sin widget: `call marketing_studio_v2_presets '{"category":"ads"}'` (lista presets),
+  `call marketing_studio_v2_costs '{}'` (precio en créditos), `call marketing_studio_v2_avatars '{}'`
+  (avatares de Elvin) y `call marketing_studio_v2_create '{…}'` (recrea un preset con la imagen del
+  producto/cliente). Ver `esquema marketing_studio_v2_create` antes.
 - **Predicción de viralidad** (`virality_predictor`) y **análisis de video** (`video_analysis_create`)
   para leer un anuncio ganador y sacar su ángulo/estructura antes de multiplicarlo.
 Entrego SIEMPRE URLs finales (no ids ni previews), con el prompt usado y qué grabar si Elvin
