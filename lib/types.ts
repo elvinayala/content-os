@@ -616,6 +616,7 @@ export type TipoEntrega =
   | "carrusel"
   | "historia"
   | "anuncio"
+  | "arte" // flyers/artes/imágenes con IA (Lola)
   | "email";
 export type EstadoEntrega = "nuevo" | "visto" | "aprobado" | "descartado";
 
@@ -633,6 +634,7 @@ export interface Entrega {
   para?: string; // para qué creador/persona es (ej. "Daren", "Frankie", "Valentina")
   formato?: string; // "anuncio" | "reel" | "carrusel libreta"... (para ads/formatos)
   videoUrl?: string; // anuncios: link al video renderizado (Higgsfield)
+  imagenUrl?: string; // artes: link a la imagen renderizada (Higgsfield / gpt_image)
   modelo?: string; // anuncios: modelo usado (ej. "kling-3.0", "seedance-2.0")
   promptVideo?: string; // anuncios: prompt de video usado (para iterar/re-renderizar)
   lista?: string; // emails: segmento de la lista ("clientes", "inactivos", "agendados-no-compraron", "newsletter-general")

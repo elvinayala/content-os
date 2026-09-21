@@ -26,6 +26,7 @@ const TIPO_LABEL: Record<TipoEntrega, string> = {
   carrusel: "carruseles",
   historia: "historias",
   anuncio: "anuncios",
+  arte: "artes",
   email: "emails",
 };
 

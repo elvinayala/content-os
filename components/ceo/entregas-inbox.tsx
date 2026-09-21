@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Check,
   ChevronDown,
+  Image as ImageIcon,
   Clapperboard,
   GalleryHorizontalEnd,
   Lightbulb,
@@ -36,6 +37,7 @@ const TIPO_META: Record<
   carrusel: { label: "Carruseles", icon: GalleryHorizontalEnd },
   historia: { label: "Historias", icon: MessageSquareText },
   anuncio: { label: "Anuncios", icon: Megaphone },
+  arte: { label: "Artes", icon: ImageIcon },
   email: { label: "Emails", icon: Mail },
 };
 
@@ -698,6 +700,12 @@ export function EntregasInbox({ entregas }: { entregas: Entrega[] }) {
                     <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground/90">
                       {conEdicion(e).contenido}
                     </pre>
+                    {e.imagenUrl ? (
+                      <a href={e.imagenUrl} target="_blank" rel="noreferrer" className="mt-3 block">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={e.imagenUrl} alt={e.titulo} className="max-h-96 rounded-md border border-border" />
+                      </a>
+                    ) : null}
                     {e.videoUrl ? (
                       <p className="mt-3 text-sm">
                         <a

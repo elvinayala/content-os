@@ -111,7 +111,14 @@
         "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "nocoDbApiToken",
-        "options": {},
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        },
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -131,7 +138,11 @@
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "stopWorkflow"
     },
     {
       "id": "n-decidir",
@@ -255,14 +266,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ ...$json.campos, 'doble-verificacion': true }) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n-despu-s-de-crear",
@@ -329,14 +351,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, ...$json.campos }]) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n-despu-s-de-actualizar",
@@ -369,14 +402,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId }]) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n-simulaci-n-no-escribe-",
@@ -416,14 +460,25 @@
         "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/{{ $json.tabla }}/records?limit=500",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "nocoDbApiToken",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n-elegir-destino",
@@ -532,14 +587,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ Id: $json.actual }) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n--hay-nuevo-",
@@ -592,14 +658,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ Id: $('Elegir destino').item.json.nuevoId }) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     },
     {
       "id": "n--buscar-campa-as-",
@@ -740,14 +817,25 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, 'fecha-inicio-campaña': $json.fecha }]) }}",
-        "options": {}
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
       },
       "credentials": {
         "nocoDbApiToken": {
           "id": "V2awKCkA1AJCFG27",
           "name": "NocoDB Token account"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {

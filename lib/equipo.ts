@@ -4,6 +4,7 @@ import {
   Lightbulb,
   PenLine,
   Send,
+  Sparkles,
   Target,
   type LucideIcon,
 } from "lucide-react";
@@ -123,5 +124,24 @@ export const equipo: Agente[] = [
     entrega: "Publicaciones en todas las redes",
     href: "/community",
     seccion: "Community Manager + Calendario",
+  },
+  // Lola nació el 20/sep/2026 porque Elvin no tenía quién le PRODUJERA: Cami idea, Lauti
+  // escribe, pero nadie hacía flyers, artes ni video con IA. Su especialidad es Higgsfield
+  // (y plataformas similares); los guiones los escribe cuando se los piden a ella directo.
+  {
+    id: "lola",
+    nombre: "Lola",
+    rol: "Creadora de Contenido con IA",
+    icon: Sparkles,
+    responsabilidades: [
+      "Flyers y artes para redes y anuncios (Higgsfield, gpt_image, Marketing Studio)",
+      "Videos UGC / cinemáticos / animados con IA listos para pauta u orgánico",
+      "Guiones cuando Elvin se los pide a ella directo (estructura fija de la marca)",
+      "Deja todo en la bandeja de Entregas con el archivo y el prompt usado",
+    ],
+    consume: "Pedidos de Elvin (Telegram / bandeja) + estilo de la marca",
+    entrega: "Artes, flyers, videos y guiones listos",
+    href: "/ceo/entregas",
+    seccion: "Entregas (artes, videos, guiones)",
   },
 ];

@@ -168,3 +168,38 @@ trazabilidad) · copy con "gratis" o promesas de ingreso · voseo (siempre tuteo
 - Meta deja "En revisión" unos minutos tras publicar/editar público: normal.
 - IG follows no siempre salen en `actions` de la API; si sale "—", cotejar con la columna
   "costo por seguidor" de Ads Manager.
+
+## 9. Higgsfield — mis manos creativas (21/sep/2026)
+
+Elvin tiene plan **Ultra** de Higgsfield (~8,700 créditos). Yo genero creativos ahí cuando él me lo
+pide o cuando propongo renovar un creativo; **nunca gasto créditos sin su OK explícito** (antes
+de generar: qué, cuántas versiones, costo estimado; lotes de 1-3, nunca más sin nuevo OK).
+
+Manos: `node scripts/higgsfield.mjs …` (cliente del MCP oficial con la sesión de Elvin):
+```
+node scripts/higgsfield.mjs tools [filtro]           qué herramientas hay (generate_image, generate_video, ad-multiplier…)
+node scripts/higgsfield.mjs esquema <tool>           parámetros exactos antes de llamar
+node scripts/higgsfield.mjs flujo <nombre>           instrucciones de un flujo (ad-multiplier, ugc-review-video, thumbnail-generation, product-photoshoot…)
+node scripts/higgsfield.mjs call <tool> '<json>'     cualquier herramienta (generate_image/generate_video/jobs_wait/media_import_url/video_analysis_create/reframe/upscale_video/dubbing…)
+node scripts/higgsfield.mjs imagen "<prompt>" --modelo soul_2 --ar 9:16      atajo
+node scripts/higgsfield.mjs video "<prompt>" --modelo <id> --img <media|job> --dur 8 --ar 9:16
+node scripts/higgsfield.mjs esperar <job_id>         devuelve la URL del resultado
+node scripts/higgsfield.mjs subir <url>              importa un video/imagen (media_id)
+```
+Lo que sé hacer con esto (siempre siguiendo el flujo oficial con `flujo <nombre>` antes de generar):
+- **Ad Multiplier = "traducir" un anuncio a otras versiones**: de UN video ganador (4-30 s) saco N
+  versiones editadas de forma independiente — cambiar la persona (otra cara/edad/estilo), el
+  producto, la ropa, el fondo, un texto en pantalla — conservando movimiento, cortes, tiempo y audio.
+  Es la forma más barata de renovar creativos cada 10 días sin regrabar: el ángulo ganador con caras
+  y contextos nuevos. Flujo: `flujo ad-multiplier` (sube el video con `subir`, análisis, referencias,
+  un prompt por versión, `generate_video` con `model:"ad_multiplier"`, `mode:"video_edit"`).
+- **UGC** (review talking-head, producto solo, unboxing, tutorial, try-on, website/SaaS), **fotos de
+  producto**, **thumbnails**, **video faceless**, **brand assets**, **subtítulos quemados**,
+  **reframe** (9:16 ↔ 16:9), **upscale**, **doblaje/voz** — cada uno tiene su flujo en `flujo`.
+- **Marketing Studio** (galería de presets: UGC, product shot, motion, ads, posters): en el chat de
+  Elvin es un widget; desde mí uso `presets_show` / `models_explore` y los flujos equivalentes.
+- **Predicción de viralidad** (`virality_predictor`) y **análisis de video** (`video_analysis_create`)
+  para leer un anuncio ganador y sacar su ángulo/estructura antes de multiplicarlo.
+Entrego SIEMPRE URLs finales (no ids ni previews), con el prompt usado y qué grabar si Elvin
+prefiere hacerlo él. Si `tokenVigente` falla ("Sin sesión de Higgsfield"), le pido a Elvin que corra
+`node scripts/higgsfield.mjs login` en la Mac y luego `exportar` para Railway.

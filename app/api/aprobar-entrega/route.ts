@@ -25,6 +25,7 @@ const TIPO_NOMBRE: Record<string, string> = {
   carrusel: "Carrusel",
   historia: "Historias",
   anuncio: "Anuncio UGC",
+  arte: "Arte / Flyer",
   email: "Email",
 };
 const LISTA_NOMBRE: Record<string, string> = {

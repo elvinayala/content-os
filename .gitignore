@@ -64,3 +64,4 @@ scratchpad_titles_*.txt
 # Pulse: Postgres embebido local (PGlite) y reporte de migración
 .pulse-db/
 data/pulse-migracion.json
+data/higgsfield-auth.json

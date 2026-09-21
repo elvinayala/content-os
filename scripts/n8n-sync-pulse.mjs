@@ -58,8 +58,11 @@ const pos = (col, fila) => [col * 260, fila * 200];
 const cond = (left, right, operation = "equals", type = "string") => ({ id: `c${++x}`, leftValue: left, rightValue: right, operator: { type, operation, ...(operation === "true" || operation === "exists" || operation === "notEmpty" ? { singleValue: true } : {}) } });
 const opts = { caseSensitive: true, leftValue: "", typeValidation: "loose", version: 2 };
 const nodo = (name, type, typeVersion, parameters, p, extra = {}) => ({ id: `n-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, name, type, typeVersion, position: p, parameters, ...extra });
+// NocoDB (Easypanel) devuelve 502 cuando le pegamos en ráfaga: 3 reintentos con pausa, y si
+// igual falla el item sigue por la salida de error (la nocturna lo vuelve a intentar mañana).
+const ROBUSTO = { retryOnFail: true, maxTries: 3, waitBetweenTries: 2000, onError: "continueRegularOutput" };
 const nocoHttp = (name, method, url, p, body, extra = {}) =>
-  nodo(name, "n8n-nodes-base.httpRequest", 4.2, { method, url, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", ...(body ? { sendBody: true, specifyBody: "json", jsonBody: body } : {}), options: {} }, p, { credentials: { nocoDbApiToken: CRED_NOCODB }, ...extra });
+  nodo(name, "n8n-nodes-base.httpRequest", 4.2, { method, url, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", ...(body ? { sendBody: true, specifyBody: "json", jsonBody: body } : {}), options: { batching: { batch: { batchSize: 1, batchInterval: 150 } } } }, p, { credentials: { nocoDbApiToken: CRED_NOCODB }, ...ROBUSTO, ...extra });
 
 function armarWorkflow(credId) {
   const credHeader = { httpHeaderAuth: { id: credId, name: NOMBRE_CRED } };
@@ -83,7 +86,9 @@ for (const item of $input.all()) {
 }
 return salida;` }, pos(2, 0)),
 
-    nocoHttp("Buscar en NocoDB", "GET", `${NOCODB}/tables/${T.clientes}/records`, pos(3, 0), null, {}),
+    // La búsqueda NO continúa en error: una búsqueda fallida se vería como "no existe" y crearía
+    // un duplicado. Mejor que la corrida se caiga y la nocturna reintente.
+    nocoHttp("Buscar en NocoDB", "GET", `${NOCODB}/tables/${T.clientes}/records`, pos(3, 0), null, { onError: "stopWorkflow" }),
 
     nodo("Decidir", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('Normalizar').item.json;
 const fila = (($json.list) || [])[0] || null;
