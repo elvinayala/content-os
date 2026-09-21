@@ -76,7 +76,7 @@ ofrece Agencia. Eso es lo que evita que Bori se vuelva un servicio.
 | Número de WhatsApp Business de soporte de Bori | Aure | pedido 21/sep (pendiente desde el 19) |
 | Canal de WhatsApp "Bori" creado, con foto y descripción, enlace + admins (Lis, Ángela, Elvin) | Aure | pedido 21/sep |
 | `WHATSAPP_SOPORTE` y `CANAL_WHATSAPP` en Railway (servicio bori) + enlace del canal en bienvenida/Primeros pasos/correo | Nico | cuando Aure entregue |
-| Ruta post-venta y este guion enviados a Lis (y a Ángela cuando entre a Slack) | Elvin OK → Sofi | borrador listo |
+| Ruta post-venta y este guion enviados a Lis (y a Ángela cuando entre a Slack) | Elvin | **enviado a Lis el 21/sep** (DM desde la cuenta de Elvin); Ángela cuando entre a Slack |
 | Ángela en Slack (#bori-clientes) | Aure | pendiente desde el 19 |
 | Calendario semanal de mensajes del Canal | Sofi | arranca cuando exista el canal |
 
