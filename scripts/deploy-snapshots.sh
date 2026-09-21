@@ -16,6 +16,12 @@ node scripts/sync-data.mjs pull 2>/dev/null || true
 if git remote get-url origin >/dev/null 2>&1; then
   git pull --rebase --autostash -q origin main 2>/dev/null || echo "⚠️ git pull con conflicto: resolver a mano (git status)"
 fi
+# El puente pasa PUENTE_PENDIENTES: lo que escribió y todavía no llegó a producción. Va DESPUÉS
+# del pull para que el snapshot de prod no pise el cambio recién hecho (así se perdió la locación
+# del Ritz el 21/sep). En la Mac la variable no existe y esto no hace nada.
+if [ -n "${PUENTE_PENDIENTES:-}" ] && [ -d "${PUENTE_PENDIENTES}" ]; then
+  ( cd "$PUENTE_PENDIENTES" && tar cf - . ) | tar xf - -C . && echo "↻ cambios pendientes del volumen puestos encima"
+fi
 echo "▶ Desplegando snapshots a producción…"
 if [ -n "${VERCEL_TOKEN:-}" ]; then
   if [ ! -f .vercel/project.json ]; then

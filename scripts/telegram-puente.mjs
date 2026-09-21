@@ -229,10 +229,82 @@ async function respaldoAPI(prompt, persona) {
   } catch (e) { LOG("respaldo API:", e.message); return ""; }
 }
 
-function huboCambios(desde) {
-  const dirs = [path.join(ROOT, "data"), path.join(ROOT, "vault")];
-  const mira = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (mira(p)) return true; } else if (fs.statSync(p).mtimeMs > desde && !p.endsWith("telegram-puente.json")) return true; } return false; };
-  try { return dirs.some((d) => fs.existsSync(d) && mira(d)); } catch { return false; }
+// Lo que Claude escribió en data/ o vault/ desde `desde` (rutas relativas a ROOT).
+function cambios(desde) {
+  const out = [];
+  const mira = (dir, rel) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name), r = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) mira(p, r);
+      else if (!/telegram-puente(-\w+)?\.json$/.test(e.name) && fs.statSync(p).mtimeMs > desde) out.push(r);
+    }
+  };
+  for (const sub of ["data", "vault"]) { const d = path.join(ROOT, sub); try { if (fs.existsSync(d)) mira(d, sub); } catch {} }
+  return out;
+}
+function huboCambios(desde) { return cambios(desde).length > 0; }
+
+// Bandeja de salida en el volumen. En Railway el repo vive en /app: NO es un clon de git ni está
+// en el volumen, así que todo lo que Claude escribe se borra cuando el contenedor reinicia, y la
+// única forma de que sobreviva es el deploy a producción. El 21/sep se perdió así la locación del
+// Ritz que Sofi había dejado en data/estudio.json (el VERCEL_TOKEN estaba vencido → el deploy
+// falló → un redeploy borró el contenedor). Ahora cada cambio se copia al volumen y se restaura
+// hasta que un deploy confirme que llegó a producción.
+const PENDIENTES = EN_NUBE ? path.join(path.dirname(ESTADO), `pendientes${ES_NICO ? "-nico" : ES_MAX ? "-max" : ES_LOLA ? "-lola" : ""}`) : "";
+function guardarPendientes(desde) {
+  if (!PENDIENTES) return 0;
+  let n = 0;
+  for (const rel of cambios(desde)) {
+    try { const dst = path.join(PENDIENTES, rel); fs.mkdirSync(path.dirname(dst), { recursive: true }); fs.copyFileSync(path.join(ROOT, rel), dst); n++; } catch (e) { LOG("pendiente", rel, e.message.slice(0, 80)); }
+  }
+  return n;
+}
+function restaurarPendientes() {
+  if (!PENDIENTES || !fs.existsSync(PENDIENTES)) return 0;
+  let n = 0;
+  const mira = (dir, rel) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name), r = rel ? path.join(rel, e.name) : e.name;
+      if (e.isDirectory()) { mira(p, r); continue; }
+      const dst = path.join(ROOT, r);
+      try { if (fs.existsSync(dst) && fs.readFileSync(dst).equals(fs.readFileSync(p))) continue; } catch {}
+      try { fs.mkdirSync(path.dirname(dst), { recursive: true }); fs.copyFileSync(p, dst); n++; } catch (e) { LOG("restaurar", r, e.message.slice(0, 80)); }
+    }
+  };
+  try { mira(PENDIENTES, ""); } catch (e) { LOG("restaurar:", e.message.slice(0, 120)); }
+  if (n) LOG(`↻ ${n} archivo(s) que no habían llegado a producción, restaurados del volumen`);
+  return n;
+}
+function limpiarPendientes() { if (PENDIENTES) try { fs.rmSync(PENDIENTES, { recursive: true, force: true }); } catch {} }
+
+// Antes de trabajar: bajar de producción lo que otro lado cambió y volver a poner encima lo
+// nuestro que todavía no llegó allá (lo pendiente siempre gana: es lo más nuevo).
+async function traerDatos() {
+  await new Promise((res) => {
+    const c = spawn(process.execPath, ["scripts/sync-data.mjs", "pull"], { cwd: ROOT, stdio: "ignore" });
+    const t = setTimeout(() => { c.kill(); res(); }, 20000);
+    c.on("close", () => { clearTimeout(t); res(); });
+    c.on("error", () => { clearTimeout(t); res(); });
+  });
+  return restaurarPendientes();
+}
+
+// Después de trabajar: si se tocó data/ o vault/, subirlo a producción (el único lugar durable
+// para el contenedor). Lo usan los dos caminos — Telegram y el buzón de agentes.
+function publicarCambios(desde, forzar, avisar) {
+  if (ES_MAX) return; // Max solo escribe planes de campaña; la campaña real vive en Meta.
+  if (!huboCambios(desde) && !forzar) return;
+  guardarPendientes(desde);
+  if (EN_NUBE && !(process.env.VERCEL_TOKEN || env("VERCEL_TOKEN"))) { LOG("sin VERCEL_TOKEN: los cambios quedan en el volumen hasta que haya token"); return; }
+  LOG("cambios en data/vault → deploy-snapshots");
+  const dep = spawn("bash", ["scripts/deploy-snapshots.sh"], { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, VERCEL_TOKEN: process.env.VERCEL_TOKEN || env("VERCEL_TOKEN"), PUENTE_PENDIENTES: PENDIENTES } });
+  let salida = ""; dep.stdout.on("data", (d) => (salida += d)); dep.stderr.on("data", (d) => (salida += d));
+  dep.on("close", (code) => {
+    LOG("deploy-snapshots:", code === 0 ? "ok" : "falló", salida.trim().split("\n").slice(-2).join(" | "));
+    if (code === 0) limpiarPendientes();
+    else if (avisar) avisar("⚠️ Guardé los cambios y quedaron a salvo en el volumen, pero el deploy a producción falló; lo reintento en el próximo pedido.");
+  });
+  dep.on("error", (e) => LOG("deploy:", e.message));
 }
 
 const ADS_COMANDOS = new Set(["resultados", "campanas", "arbol", "cuentas", "publicos", "videos", "intereses", "pixel", "plantilla", "crear", "pausar"]);
@@ -281,8 +353,9 @@ async function procesar(token, chat, texto, st) {
   if (m) { persona = m[1].toLowerCase(); prompt = m[2]; }
   if (ES_NICO && t === "/ronda") { persona = "nico"; prompt = "Haz tu ronda ahora: sigue .claude/commands/ronda-nico.md completo (con envío del reporte)."; }
   await slackEspejo(`[Telegram] Elvin → ${persona}: ${prompt}`);
-  // Antes de trabajar, bajar de producción lo que otro lado (la Mac / Railway) haya cambiado (máx 20 s).
-  await new Promise((res) => { const c = spawn(process.execPath, ["scripts/sync-data.mjs", "pull"], { cwd: ROOT, stdio: "ignore" }); const t = setTimeout(() => { c.kill(); res(); }, 20000); c.on("close", () => { clearTimeout(t); res(); }); c.on("error", () => { clearTimeout(t); res(); }); });
+  // Antes de trabajar, bajar de producción lo que otro lado (la Mac / Railway) haya cambiado (máx
+  // 20 s) y recuperar lo nuestro que quedó sin publicar.
+  const pendientesPrevios = await traerDatos();
   gitBajar();
   const inicio = Date.now();
   const hoy = new Date().toISOString().slice(0, 10);
@@ -305,15 +378,9 @@ async function procesar(token, chat, texto, st) {
   const subidos = gitSubir(prompt);
   if (subidos.length) LOG("git push:", subidos.join(", "));
   // Si Claude tocó data/ (o vault/), subirlo a producción para que la Mac y el Command Center
-  // lo vean. Se hace en segundo plano; el deploy tarda ~2 min.
-  // Max solo escribe planes en data/meta-ads/campanas (la campaña real vive en Meta): sin deploy.
-  if (!ES_MAX && huboCambios(inicio) && (process.env.VERCEL_TOKEN || env("VERCEL_TOKEN") || !EN_NUBE)) {
-    LOG("cambios en data/vault → deploy-snapshots");
-    const dep = spawn("bash", ["scripts/deploy-snapshots.sh"], { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, VERCEL_TOKEN: process.env.VERCEL_TOKEN || env("VERCEL_TOKEN") } });
-    let salida = ""; dep.stdout.on("data", (d) => (salida += d)); dep.stderr.on("data", (d) => (salida += d));
-    dep.on("close", (code) => { LOG("deploy-snapshots:", code === 0 ? "ok" : "falló", salida.trim().split("\n").slice(-2).join(" | ")); if (code !== 0) enviar(token, chat, "⚠️ Guardé los cambios pero el deploy a producción falló; se sube en el próximo intento.").catch(() => {}); });
-    dep.on("error", (e) => LOG("deploy:", e.message));
-  }
+  // lo vean. Se hace en segundo plano; el deploy tarda ~2 min. `pendientesPrevios` reintenta lo
+  // que quedó colgado de un deploy que falló antes.
+  publicarCambios(inicio, pendientesPrevios > 0, (aviso) => enviar(token, chat, aviso).catch(() => {}));
 }
 
 // Un solo Claude a la vez por agente: Telegram y el buzón comparten la sesión del día, y dos
@@ -335,6 +402,11 @@ async function atenderBuzon(token, chatCEO, st) {
         ? `Es la respuesta de ${de} a algo que pediste: úsala para seguir tu trabajo. Marca este mensaje con \`node scripts/agentes.mjs atendido ${m.id}\` (sin texto) salvo que de verdad necesites pedirle algo más. Si el resultado le importa a Elvin, avísale con \`node scripts/agentes.mjs elvin "…"\`.`
         : `Haz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`.`);
     LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
+    // Mismo ciclo que por Telegram: traer lo de producción antes y publicar lo escrito después.
+    // Sin esto, lo que un agente escribía atendiendo a otro moría con el contenedor (21/sep).
+    const pendientesPrevios = await traerDatos();
+    gitBajar();
+    const inicio = Date.now();
     const hoy = new Date().toISOString().slice(0, 10);
     const nueva = !st.sesion || st.sesionDia !== hoy;
     if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
@@ -356,7 +428,8 @@ async function atenderBuzon(token, chatCEO, st) {
       }
     } catch (e) { LOG("buzón cierre:", e.message.slice(0, 120)); }
     gitSubir(`buzón #${m.id} de ${m.de}`);
-    if (chatCEO && !esRespuesta) await enviar(token, chatCEO, `💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
+    publicarCambios(inicio, pendientesPrevios > 0, chatCEO ? (aviso) => enviar(token, chatCEO, aviso).catch(() => {}) : null);
+    if (chatCEO && !esRespuesta) await enviar(token, chatCEO,`💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
   }
 }
 function buzonLoop(token, getChat, st) {
@@ -374,6 +447,9 @@ async function main() {
   // Chequeo de salud del CLI (no bloquea el loop): si falla, queda en el log el porqué.
   correrClaude("Responde solo: ok", "claude", randomUUID(), true).then((r) => LOG("salud claude:", r.code === 0 && r.out ? "ok · " + r.out.slice(0, 40) : "FALLÓ · " + (r.err || "sin salida").slice(0, 300)));
   const st = leerEstado();
+  // Si el contenedor se reinició con cambios sin publicar, volverlos a poner (y que el próximo
+  // pedido los suba). /app es efímero: el volumen es lo único que sobrevive un redeploy.
+  restaurarPendientes();
   buzonLoop(token, () => chatCEO || env("TELEGRAM_CEO_CHAT_ID"), st);
   // Vigía: si el polling falla 6 veces seguidas (la red quedó pegada, p. ej. la Mac durmió), el
   // proceso sale y launchd/Railway lo levantan limpio. Sin esto, el 20/sep quedó "vivo" sin oír.
