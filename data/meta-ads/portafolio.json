@@ -24,7 +24,10 @@
       "compuertas": {
         "cplMax": 10,
         "ctrMin": 1,
-        "diasPrueba": 7
+        "diasPrueba": 7,
+        "roasMeta": 6,
+        "frecuenciaMax": 2.5,
+        "ctrEscalar": 2
       },
       "publicosClave": {
         "clientes": "6950438101193",
@@ -69,7 +72,10 @@
       "compuertas": {
         "cplMax": 10,
         "ctrMin": 1,
-        "diasPrueba": 7
+        "diasPrueba": 7,
+        "roasMeta": 6,
+        "frecuenciaMax": 2.5,
+        "ctrEscalar": 2
       },
       "publicosClave": {},
       "campanasExistentes": {
@@ -92,7 +98,10 @@
       "compuertas": {
         "cplMax": 8,
         "ctrMin": 1,
-        "diasPrueba": 7
+        "diasPrueba": 7,
+        "roasMeta": 6,
+        "frecuenciaMax": 2.5,
+        "ctrEscalar": 2
       },
       "publicosClave": {},
       "nota": "Sin cuenta ni pixel documentados: correr `cuentas` para descubrir y completar.",
@@ -113,7 +122,10 @@
       "compuertas": {
         "cplMax": 15,
         "ctrMin": 1,
-        "diasPrueba": 7
+        "diasPrueba": 7,
+        "roasMeta": 6,
+        "frecuenciaMax": 2.5,
+        "ctrEscalar": 2
       },
       "publicosClave": {},
       "nota": "Business Manager propio (ver vault/proyectos/plomeria-pr/). Completar con `cuentas`.",
@@ -138,7 +150,10 @@
       "compuertas": {
         "costoPorSeguidorMax": 1.0,
         "cpcMax": 0.2,
-        "ctrMin": 1.0
+        "ctrMin": 1.0,
+        "roasMeta": 6,
+        "frecuenciaMax": 2.5,
+        "ctrEscalar": 2
       },
       "negocioNombre": null,
       "igHandle": "_mauropr",
@@ -155,5 +170,26 @@
       "publicosClave": {},
       "etiqueta": "MAURO"
     }
+  },
+  "metodo": {
+    "meta": "escalar el portafolio de $100K a $300K/mes con ROAS 6-8x",
+    "renovarCreativosDias": 10,
+    "analizarCadaDias": [
+      3,
+      7
+    ],
+    "escalarPorcentaje": [
+      10,
+      20
+    ],
+    "ctrMinimoEngancha": 2,
+    "costoPorSeguidorMeta": 1,
+    "embudos": [
+      "instagram-follow-me",
+      "whatsapp",
+      "quiz",
+      "dm-instagram"
+    ],
+    "cerebro": "vault/ceo/cerebro-max.md"
   }
 }

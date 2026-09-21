@@ -227,3 +227,19 @@ test("resumirInsights: seguidores y costo por seguidor con compuerta ≤ $1", ()
   assert.equal(r.filas[1].costoSeguidor, 0.5);
   assert.equal(r.filas[1].recomendacion, "seguir");
 });
+
+test("resumirInsights: ROAS, señal de ESCALAR y frecuencia quemada", () => {
+  const rows = [
+    { adset_id: "1", adset_name: "gana", spend: "100", impressions: "20000", frequency: "1.5", clicks: "600", ctr: "3", cpc: "0.17", actions: [{ action_type: "lead", value: "20" }, { action_type: "purchase", value: "3" }], action_values: [{ action_type: "purchase", value: "800" }], purchase_roas: [{ action_type: "omni_purchase", value: "8" }] },
+    { adset_id: "2", adset_name: "quemado", spend: "60", impressions: "9000", frequency: "3.1", clicks: "90", ctr: "1", cpc: "0.66", actions: [{ action_type: "lead", value: "6" }] },
+    { adset_id: "3", adset_name: "flojo", spend: "15", impressions: "2000", frequency: "1.2", clicks: "20", ctr: "1", cpc: "0.75", actions: [{ action_type: "lead", value: "2" }] },
+  ];
+  const r = resumirInsights(rows, { compuertas: { cplMax: 10, ctrMin: 1, roasMeta: 6 } });
+  assert.equal(r.filas[0].roas, 8);
+  assert.match(r.filas[0].recomendacion, /^ESCALAR/);
+  assert.match(r.filas[1].recomendacion, /^pausar.*frecuencia 3\.1/);
+  assert.match(r.filas[2].aviso, /CTR 1\.00% < 2 %/);
+  assert.equal(r.escalar.length, 1);
+  assert.equal(r.ventasTotal, 3);
+  assert.equal(r.roasTotal, 800 / 175);
+});

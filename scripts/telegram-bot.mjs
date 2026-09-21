@@ -21,7 +21,8 @@ function env(n) {
   } catch {}
   return "";
 }
-const TOKEN = env("TELEGRAM_BOT_TOKEN");
+// PUENTE_BOT=max → manda como Max (TELEGRAM_BOT_TOKEN_MAX); lo usan los reportes del media buyer.
+const TOKEN = (process.env.PUENTE_BOT || "").toLowerCase() === "max" ? env("TELEGRAM_BOT_TOKEN_MAX") || env("TELEGRAM_BOT_TOKEN") : env("TELEGRAM_BOT_TOKEN");
 if (!TOKEN) { console.error("❌ Falta TELEGRAM_BOT_TOKEN en .env.local (créalo con @BotFather → /newbot)"); process.exit(1); }
 const api = async (m, body) => {
   const r = await fetch(`https://api.telegram.org/bot${TOKEN}/${m}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });

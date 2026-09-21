@@ -317,6 +317,11 @@ IG = PROFILE_VISIT/INSTAGRAM_PROFILE; DM = CONVERSATIONS/INSTAGRAM_DIRECT). Por 
 **Max**, el media buyer con bot propio (`PUENTE_BOT=max`, servicio `max` en Railway, token
 `TELEGRAM_BOT_TOKEN_MAX`, cerebro `vault/ceo/cerebro-max.md`, guía `vault/proyectos/estudio/
 telegram-max-pasos.md`): lenguaje natural → plantilla; solo puede Read/Grep + `node scripts/meta-ads.mjs`.
+Rutinas de Max (tareas programadas): `max-reporte-semanal` (lunes 8 AM, `/reporte-max semanal`),
+`max-alertas-escalar` (mar/jue/sáb 8:30, `/reporte-max alertas`), `max-trazabilidad-aure` (vie/lun 9 AM,
+`/trazabilidad-aure`: le pide a Aure por Slack ventas↔anuncio de LU/AIB y registra en
+`data/meta-ads/trazabilidad.json`). Meta del método: $100K→$300K con ROAS 6-8x, renovar creativos cada
+10 días, analizar cada 3-7, escalar ganadores 10-20 %; `resultados` marca ESCALAR/pausar/CTR<2 %.
 Atajo sin tokens en cualquier bot: `/ads plantilla|resultados|campanas|arbol|pausar <marca> …`. Reglas:
 nunca activar ni subir presupuesto por API, 1 creativo por conjunto ≥ mínimo de la marca ($10; Mauro $5),
 tope diario por campaña, tuteo PR, sin "gratis", sin promesas de ingreso. Traffickers de Level Up

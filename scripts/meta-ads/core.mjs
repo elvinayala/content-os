@@ -127,7 +127,7 @@ export async function arbolCampana(c, campaignId) {
 export async function insights(c, cuentaId, { campaignId, nivel = "adset", preset = "last_7d", desde, hasta } = {}) {
   const params = {
     level: nivel,
-    fields: "campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,spend,impressions,reach,frequency,clicks,unique_clicks,ctr,unique_ctr,cpc,cpm,actions,cost_per_action_type",
+    fields: "campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,spend,impressions,reach,frequency,clicks,unique_clicks,ctr,unique_ctr,cpc,cpm,actions,cost_per_action_type,action_values,purchase_roas",
   };
   if (desde && hasta) params.time_range = { since: desde, until: hasta }; else params.date_preset = preset;
   if (campaignId) params.filtering = [{ field: "campaign.id", operator: "IN", value: [String(campaignId)] }];
@@ -455,6 +455,14 @@ export function resumirInsights(rows, { compuertas = {} } = {}) {
     };
   });
   for (const f of filas) f.costoSeguidor = f.seguidores ? f.gasto / f.seguidores : null;
+  // Ventas por pixel (purchase) y ROAS: "el ROAS mata todo" (Elvin); meta 6-8.
+  rows.forEach((r, i) => {
+    const f = filas[i];
+    f.ventas = accion(r, "purchase") || accion(r, "offsite_conversion.fb_pixel_purchase") || accion(r, "omni_purchase");
+    f.ingresos = Number((r.action_values || []).find((x) => /purchase/.test(x.action_type))?.value || 0);
+    f.roas = Number((r.purchase_roas || []).find((x) => /purchase/.test(x.action_type))?.value || 0) || (f.ingresos && f.gasto ? f.ingresos / f.gasto : null);
+    f.frecuencia = Number(r.frequency || 0);
+  });
   const cpls = filas.map((f) => f.cpl).filter((x) => x != null).sort((a, b) => a - b);
   const mediana = cpls.length ? cpls[Math.floor(cpls.length / 2)] : null;
   for (const f of filas) {
@@ -464,7 +472,20 @@ export function resumirInsights(rows, { compuertas = {} } = {}) {
     if (f.cpl != null && compuertas.cplMax && f.cpl > compuertas.cplMax) razones.push(`CPL > tope $${compuertas.cplMax}`);
     if (f.impresiones >= 1000 && compuertas.ctrMin && f.ctr < compuertas.ctrMin) razones.push(`CTR ${f.ctr.toFixed(2)}% < ${compuertas.ctrMin}%`);
     if (f.costoSeguidor != null && compuertas.costoPorSeguidorMax && f.gasto >= 10 && f.costoSeguidor > 2 * compuertas.costoPorSeguidorMax) razones.push(`$${f.costoSeguidor.toFixed(2)}/seguidor > 2× meta $${compuertas.costoPorSeguidorMax}`);
-    f.recomendacion = razones.length ? "pausar: " + razones.join("; ") : (f.cpl != null && mediana && f.cpl <= mediana ? "ganador: duplicar a públicos nuevos" : "seguir");
+    // Señales de ESCALAR (el trabajo del media buyer): gana en su métrica, engancha (CTR ≥ 2%) y ya tiene
+    // gasto suficiente para que el dato sea real. Subir 10-20 % o duplicar a público nuevo; nunca de golpe.
+    const engancha = f.ctr >= (compuertas.ctrEscalar ?? 2);
+    const escalar = [];
+    if (f.roas && f.roas >= (compuertas.roasMeta ?? 6)) escalar.push(`ROAS ${f.roas.toFixed(1)}x ≥ meta ${compuertas.roasMeta ?? 6}x`);
+    if (f.cpl != null && compuertas.cplMax && f.cpl <= 0.7 * compuertas.cplMax && f.leads >= 5 && engancha) escalar.push(`CPL $${f.cpl.toFixed(2)} ≤ 70 % del tope con ${f.leads} leads`);
+    if (f.costoSeguidor != null && compuertas.costoPorSeguidorMax && f.costoSeguidor <= 0.7 * compuertas.costoPorSeguidorMax && f.gasto >= 20 && engancha) escalar.push(`$${f.costoSeguidor.toFixed(2)}/seguidor ≤ 70 % de la meta con $${f.gasto.toFixed(0)} gastados`);
+    if (f.frecuencia >= (compuertas.frecuenciaMax ?? 2.5) && f.gasto >= 20) razones.push(`frecuencia ${f.frecuencia.toFixed(1)} (quemado: renovar creativo)`);
+    if (f.impresiones >= 1000 && f.ctr < 2 && !razones.length) f.aviso = `CTR ${f.ctr.toFixed(2)}% < 2 %: el anuncio no engancha, revisar gancho/creativo`;
+    f.recomendacion = razones.length ? "pausar: " + razones.join("; ")
+      : escalar.length ? "ESCALAR +10-20 %: " + escalar.join("; ")
+      : (f.cpl != null && mediana && f.cpl <= mediana ? "ganador: duplicar a públicos nuevos" : "seguir");
   }
-  return { filas, mediana, gastoTotal: filas.reduce((s, f) => s + f.gasto, 0), leadsTotal: filas.reduce((s, f) => s + f.leads, 0) };
+  const gastoTotal = filas.reduce((s, f) => s + f.gasto, 0), ingresosTotal = filas.reduce((s, f) => s + (f.ingresos || 0), 0);
+  return { filas, mediana, gastoTotal, leadsTotal: filas.reduce((s, f) => s + f.leads, 0), ventasTotal: filas.reduce((s, f) => s + (f.ventas || 0), 0), ingresosTotal, roasTotal: gastoTotal && ingresosTotal ? ingresosTotal / gastoTotal : null,
+    escalar: filas.filter((f) => /^ESCALAR/.test(f.recomendacion)), pausar: filas.filter((f) => /^pausar/.test(f.recomendacion)) };
 }

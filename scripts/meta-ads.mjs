@@ -130,9 +130,11 @@ try {
     const preset = rest.find((r) => /^(last_|yesterday|today|this_)/.test(r)) || "last_7d";
     const rows = await M.insights(c, cfg.cuentaId, { campaignId, nivel: flags.has("--ads") ? "ad" : "adset", preset });
     const r = M.resumirInsights(rows, { compuertas: cfg.compuertas });
-    tabla(r.filas.map((f) => ({ nombre: f.nombre.slice(0, 40), gasto: usd(f.gasto), impr: num(f.impresiones), ctr: f.ctr.toFixed(2) + "%", cpc: usd(f.cpc), clics: f.clicsEnlace, seguidores: f.seguidores, "$/seguidor": f.costoSeguidor == null ? "—" : usd(f.costoSeguidor), conv: f.conversaciones, leads: f.leads, cpl: f.cpl == null ? "—" : usd(f.cpl), recomendacion: f.recomendacion })));
+    tabla(r.filas.map((f) => ({ nombre: f.nombre.slice(0, 40), gasto: usd(f.gasto), impr: num(f.impresiones), ctr: f.ctr.toFixed(2) + "%", frec: f.frecuencia.toFixed(1), cpc: usd(f.cpc), clics: f.clicsEnlace, seguidores: f.seguidores, "$/seguidor": f.costoSeguidor == null ? "—" : usd(f.costoSeguidor), conv: f.conversaciones, leads: f.leads, cpl: f.cpl == null ? "—" : usd(f.cpl), ventas: f.ventas, roas: f.roas ? f.roas.toFixed(1) + "x" : "—", recomendacion: f.recomendacion + (f.aviso ? " · ⚠ " + f.aviso : "") })));
+    if (r.escalar.length) console.log("🚀 ESCALAR:", r.escalar.map((f) => f.nombre).join(" | "));
+    if (r.pausar.length) console.log("⛔ PAUSAR:", r.pausar.map((f) => f.nombre).join(" | "));
     const cp = cfg.compuertas || {};
-    console.log(`Total ${preset}: gasto ${usd(r.gastoTotal)} · leads ${r.leadsTotal} · CPL mediana ${r.mediana == null ? "—" : usd(r.mediana)} · compuertas ${[cp.cplMax && "CPL ≤ $" + cp.cplMax, cp.ctrMin && "CTR ≥ " + cp.ctrMin + "%", cp.costoPorSeguidorMax && "≤ $" + cp.costoPorSeguidorMax + "/seguidor"].filter(Boolean).join(", ")}`);
+    console.log(`Total ${preset}: gasto ${usd(r.gastoTotal)} · leads ${r.leadsTotal} · ventas ${r.ventasTotal} · ROAS ${r.roasTotal ? r.roasTotal.toFixed(1) + "x" : "—"} · CPL mediana ${r.mediana == null ? "—" : usd(r.mediana)} · compuertas ${[cp.cplMax && "CPL ≤ $" + cp.cplMax, cp.ctrMin && "CTR ≥ " + cp.ctrMin + "%", cp.costoPorSeguidorMax && "≤ $" + cp.costoPorSeguidorMax + "/seguidor"].filter(Boolean).join(", ")}`);
     if (flags.has("--json")) console.log(JSON.stringify(r, null, 2));
   } else if (cmd === "pausar") {
     if (!rest[0]) throw new Error("Falta el id");
