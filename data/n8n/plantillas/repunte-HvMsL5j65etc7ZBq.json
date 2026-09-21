@@ -128,13 +128,15 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "boardItem",
-        "operation": "get",
-        "itemId": "={{ $json[\"ID-monday\"] }}"
+        "url": "=https://content-os-chi-seven.vercel.app/api/pulse/n8n/tablero/level-up-media?idMonday={{ encodeURIComponent($json['ID-monday']) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
       },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
         1056,
         336
@@ -142,11 +144,13 @@
       "id": "ff953f87-8d4a-4cb4-953a-c71ccf460492",
       "name": "Get an item",
       "credentials": {
-        "mondayComOAuth2Api": {
-          "id": "7emakKOqBk6HAsSo",
-          "name": "Monday.com levelup"
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
         }
-      }
+      },
+      "notes": "Nico 21/sep/2026: antes leía el item de Monday; ahora lee Pulse (misma forma).",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -352,7 +356,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ==========================================\n// 1. OBTENCIÓN DE DATOS (INPUTS BLINDADOS)\n// ==========================================\n\n// A. Obtener el Presupuesto Mensual del Cliente\n// Usamos try/catch o valores por defecto para evitar crash si falta la columna\nlet userMonthlyBudget = 0;\ntry {\n    if ($input.item.json.column_values && $input.item.json.column_values[3]) {\n        userMonthlyBudget = parseFloat($input.item.json.column_values[3].text || \"0\");\n    }\n} catch (e) {\n    userMonthlyBudget = 0;\n}\n\n// B. Obtener la Data de la Campaña (Webhook/Trigger)\n// Verificamos si el nodo existe antes de pedir .json\nconst triggerNode = $('When Executed by Another Workflow').first();\nconst rawPayload = triggerNode ? triggerNode.json : {};\n\n// C. BÚSQUEDA DE CAMPAÑAS (A prueba de balas)\n// Buscamos el array en las ubicaciones más probables.\n// Si no encuentra nada, asigna un array vacío [] para que el bucle no explote.\nlet campaigns = [];\n\nif (rawPayload.body && Array.isArray(rawPayload.body.campaigns)) {\n    // Caso estándar según tu JSON\n    campaigns = rawPayload.body.campaigns;\n} else if (Array.isArray(rawPayload.campaigns)) {\n    // Caso donde el body se aplanó\n    campaigns = rawPayload.campaigns;\n} else if (rawPayload.body && rawPayload.body.strategy && Array.isArray(rawPayload.body.strategy.campaigns)) {\n    // Caso rebuscado (dentro de strategy)\n    campaigns = rawPayload.body.strategy.campaigns;\n}\n\n// ==========================================\n// 2. LÓGICA DE CÁLCULO (Motor Financiero)\n// ==========================================\n\nlet totalDailyCents = 0;\nlet calculationLog = []; \n\n// El bucle ahora es seguro porque 'campaigns' siempre será un array (aunque esté vacío)\nfor (const campaign of campaigns) {\n    let campaignCents = 0;\n    let budgetType = \"ABO\"; \n\n    // Normalizar detección de CBO/GLOBAL\n    const typeStr = (campaign.budgetType || \"\").toUpperCase();\n    \n    if (typeStr.includes(\"CBO\") || typeStr.includes(\"GLOBAL\")) {\n        budgetType = \"CBO\";\n        // En CBO tomamos el budget directo. Si no existe, 0.\n        campaignCents = parseInt(campaign.budget || 0);\n    } else {\n        budgetType = \"ABO\";\n        // En ABO sumamos los adsets. Validamos que adsets sea un array.\n        if (Array.isArray(campaign.adsets)) {\n            campaignCents = campaign.adsets.reduce((sum, adset) => {\n                return sum + parseInt(adset.budget || 0);\n            }, 0);\n        }\n    }\n\n    // Acumular\n    totalDailyCents += campaignCents;\n\n    // Log\n    calculationLog.push({\n        campaign_name: campaign.name || \"Sin Nombre\",\n        type: budgetType,\n        cents: campaignCents,\n        usd: (campaignCents / 100).toFixed(2)\n    });\n}\n\n// ==========================================\n// 3. PROYECCIONES Y COMPLIANCE\n// ==========================================\n\nconst dailySpendUSD = totalDailyCents / 100;\nconst projectedMonthlySpend = dailySpendUSD * 30;\n\nlet percentageUsed = 0;\nif (userMonthlyBudget > 0) {\n    percentageUsed = (projectedMonthlySpend / userMonthlyBudget) * 100;\n}\n\n// Validación Binaria (8% - 12%)\nlet status = \"FAIL\";\n// Nota: Si el gasto es 0 (porque no leyó campañas), fallará por estar debajo del 8%.\nif (percentageUsed >= 8.00 && percentageUsed <= 12.00) {\n    status = \"PASS\";\n}\n\nlet analysisMessage = \"\";\nif (status === \"PASS\") {\n    analysisMessage = `Correcto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) es el ${percentageUsed.toFixed(2)}% del presupuesto ($${userMonthlyBudget}).`;\n} else {\n    analysisMessage = `Fallo de Presupuesto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) representa el ${percentageUsed.toFixed(2)}% del presupuesto declarado ($${userMonthlyBudget}). Está fuera del rango permitido (8%-12%).`;\n}\n\n// ==========================================\n// 4. SALIDA FINAL\n// ==========================================\n\nreturn {\n    json: {\n        budget_audit: {\n            status: status,\n            metrics: {\n                user_budget_limit: userMonthlyBudget,\n                daily_spend_usd: dailySpendUSD,\n                projected_monthly_spend: projectedMonthlySpend,\n                percentage_used: parseFloat(percentageUsed.toFixed(2))\n            },\n            analysis: analysisMessage,\n            breakdown_log: calculationLog,\n            debug_info: {\n                campaigns_found: campaigns.length // Para saber si encontró las campañas\n            }\n        }\n    }\n};"
+        "jsCode": "// ==========================================\n// 1. OBTENCIÓN DE DATOS (INPUTS BLINDADOS)\n// ==========================================\n\n// A. Obtener el Presupuesto Mensual del Cliente\n// Usamos try/catch o valores por defecto para evitar crash si falta la columna\nlet userMonthlyBudget = 0;\ntry {\n    const colP = ($input.item.json.column_values || []).find(c => c.column && c.column.title === 'Presupuesto mensual');\n    if (colP) { userMonthlyBudget = parseFloat(String(colP.text || \"0\").replace(/[^0-9.]/g, \"\") || \"0\"); }\n} catch (e) {\n    userMonthlyBudget = 0;\n}\n\n// B. Obtener la Data de la Campaña (Webhook/Trigger)\n// Verificamos si el nodo existe antes de pedir .json\nconst triggerNode = $('When Executed by Another Workflow').first();\nconst rawPayload = triggerNode ? triggerNode.json : {};\n\n// C. BÚSQUEDA DE CAMPAÑAS (A prueba de balas)\n// Buscamos el array en las ubicaciones más probables.\n// Si no encuentra nada, asigna un array vacío [] para que el bucle no explote.\nlet campaigns = [];\n\nif (rawPayload.body && Array.isArray(rawPayload.body.campaigns)) {\n    // Caso estándar según tu JSON\n    campaigns = rawPayload.body.campaigns;\n} else if (Array.isArray(rawPayload.campaigns)) {\n    // Caso donde el body se aplanó\n    campaigns = rawPayload.campaigns;\n} else if (rawPayload.body && rawPayload.body.strategy && Array.isArray(rawPayload.body.strategy.campaigns)) {\n    // Caso rebuscado (dentro de strategy)\n    campaigns = rawPayload.body.strategy.campaigns;\n}\n\n// ==========================================\n// 2. LÓGICA DE CÁLCULO (Motor Financiero)\n// ==========================================\n\nlet totalDailyCents = 0;\nlet calculationLog = []; \n\n// El bucle ahora es seguro porque 'campaigns' siempre será un array (aunque esté vacío)\nfor (const campaign of campaigns) {\n    let campaignCents = 0;\n    let budgetType = \"ABO\"; \n\n    // Normalizar detección de CBO/GLOBAL\n    const typeStr = (campaign.budgetType || \"\").toUpperCase();\n    \n    if (typeStr.includes(\"CBO\") || typeStr.includes(\"GLOBAL\")) {\n        budgetType = \"CBO\";\n        // En CBO tomamos el budget directo. Si no existe, 0.\n        campaignCents = parseInt(campaign.budget || 0);\n    } else {\n        budgetType = \"ABO\";\n        // En ABO sumamos los adsets. Validamos que adsets sea un array.\n        if (Array.isArray(campaign.adsets)) {\n            campaignCents = campaign.adsets.reduce((sum, adset) => {\n                return sum + parseInt(adset.budget || 0);\n            }, 0);\n        }\n    }\n\n    // Acumular\n    totalDailyCents += campaignCents;\n\n    // Log\n    calculationLog.push({\n        campaign_name: campaign.name || \"Sin Nombre\",\n        type: budgetType,\n        cents: campaignCents,\n        usd: (campaignCents / 100).toFixed(2)\n    });\n}\n\n// ==========================================\n// 3. PROYECCIONES Y COMPLIANCE\n// ==========================================\n\nconst dailySpendUSD = totalDailyCents / 100;\nconst projectedMonthlySpend = dailySpendUSD * 30;\n\nlet percentageUsed = 0;\nif (userMonthlyBudget > 0) {\n    percentageUsed = (projectedMonthlySpend / userMonthlyBudget) * 100;\n}\n\n// Validación Binaria (8% - 12%)\nlet status = \"FAIL\";\n// Nota: Si el gasto es 0 (porque no leyó campañas), fallará por estar debajo del 8%.\nif (percentageUsed >= 8.00 && percentageUsed <= 12.00) {\n    status = \"PASS\";\n}\n\nlet analysisMessage = \"\";\nif (status === \"PASS\") {\n    analysisMessage = `Correcto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) es el ${percentageUsed.toFixed(2)}% del presupuesto ($${userMonthlyBudget}).`;\n} else {\n    analysisMessage = `Fallo de Presupuesto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) representa el ${percentageUsed.toFixed(2)}% del presupuesto declarado ($${userMonthlyBudget}). Está fuera del rango permitido (8%-12%).`;\n}\n\n// ==========================================\n// 4. SALIDA FINAL\n// ==========================================\n\nreturn {\n    json: {\n        budget_audit: {\n            status: status,\n            metrics: {\n                user_budget_limit: userMonthlyBudget,\n                daily_spend_usd: dailySpendUSD,\n                projected_monthly_spend: projectedMonthlySpend,\n                percentage_used: parseFloat(percentageUsed.toFixed(2))\n            },\n            analysis: analysisMessage,\n            breakdown_log: calculationLog,\n            debug_info: {\n                campaigns_found: campaigns.length // Para saber si encontró las campañas\n            }\n        }\n    }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -361,7 +365,9 @@
         112
       ],
       "id": "6ebaee34-d018-4c2f-9fce-416013ac1e4e",
-      "name": "Code in JavaScript"
+      "name": "Code in JavaScript",
+      "notes": "Nico 21/sep/2026: presupuesto por título de columna (Pulse) en vez del índice 3 de Monday.",
+      "notesInFlow": true
     },
     {
       "parameters": {},
@@ -424,6 +430,20 @@
       ],
       "id": "018ec15e-78f0-4805-81b3-ea295a419663",
       "name": "Structured Output Parser1"
+    },
+    {
+      "id": "n-item-de-pulse",
+      "name": "Item de Pulse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1276,
+        336
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const it = (($json.items) || [])[0];\nreturn { json: it || { id: null, name: '', column_values: [] } };"
+      }
     }
   ],
   "connections": {
@@ -479,12 +499,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Basic LLM Chain",
+            "node": "Item de Pulse",
             "type": "main",
             "index": 0
           }
@@ -636,6 +651,22 @@
         [
           {
             "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item de Pulse": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
             "type": "main",
             "index": 0
           }

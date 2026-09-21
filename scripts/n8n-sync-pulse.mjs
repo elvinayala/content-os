@@ -231,6 +231,7 @@ for (const p of personas) {
   const fila = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))
     || (p.email && filas.find((f) => norm(f.email) === norm(p.email)))
     || (p.idColumnaCumpleanos && filas.find((f) => String(f['ID-columna-cumpleaños'] || '') === String(p.idColumnaCumpleanos)))
+    || filas.find((f) => norm(f.nombre) && norm(f.nombre) === norm(p.nombre))
     || null;
   const campos = { nombre: p.nombre || '', email: p.email || '', 'ID-slack': p.idSlack || '' };
   if (p.idMonday) campos['ID-monday'] = String(p.idMonday);

@@ -171,7 +171,11 @@ export async function exportarEquipo(): Promise<PersonaEquipo[]> {
   for (const u of todos) {
     if (!u.mondayId) continue;
     const k = u.mondayId;
-    const existente = porClave.get(k) ?? [...porClave.values()].find((p) => p.email && p.email === u.email.toLowerCase());
+    const norm = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+    const existente =
+      porClave.get(k) ??
+      [...porClave.values()].find((p) => (p.email && p.email === u.email.toLowerCase()) || norm(p.nombre) === norm(u.nombre));
+    if (existente && !existente.email) existente.email = u.email.toLowerCase();
     if (existente) {
       if (!existente.idMonday) existente.idMonday = u.mondayId;
       continue;

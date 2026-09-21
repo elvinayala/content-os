@@ -1,7 +1,7 @@
 {
-  "exportadoEl": "2026-09-21T00:55:27.869Z",
+  "exportadoEl": "2026-09-21T14:19:21.028Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
-  "total": 98,
+  "total": 99,
   "workflows": [
     {
       "id": "0mEMnsMxnuy3SGjh",
@@ -338,6 +338,13 @@
       "activo": true,
       "archivo": "pNMZF1Fb4r6yHfGk-a-recibir-webhook-chatwoot-v1.json",
       "actualizadoEl": "2026-03-18T14:11:50.118Z"
+    },
+    {
+      "id": "RyeQFDXnB429XG0Q",
+      "nombre": "A-) Sync Pulse → NocoDB v1",
+      "activo": true,
+      "archivo": "RyeQFDXnB429XG0Q-a-sync-pulse-nocodb-v1.json",
+      "actualizadoEl": "2026-09-21T02:16:03.361Z"
     },
     {
       "id": "yQPhJCGiqwZqBS9X",

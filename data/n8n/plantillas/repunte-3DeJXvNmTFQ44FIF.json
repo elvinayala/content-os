@@ -9,20 +9,12 @@
   "nodes": [
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.monday.com/v2",
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/tablero/tesoreria",
         "authentication": "genericCredentialType",
-        "genericAuthType": "oAuth2Api",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "query",
-              "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (\n      limit: 500,\n      query_params: {\n        operator: and,\n        rules: [\n          {\n            column_id: \"text_mkpqm0g9\",\n            operator: not_contains_text,\n            compare_value: [\"saldo completo\"]\n          },\n          {\n            column_id: \"group\",\n            operator: not_any_of,\n            compare_value: [\"group_mkqxsqsk\"]\n          }\n        ]\n      }\n    ) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n\n          ... on MirrorValue {\n            display_value\n          }\n\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}\n"
-            }
-          ]
-        },
-        "options": {}
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
@@ -33,15 +25,17 @@
       "id": "28e77f94-bc47-48dc-9603-fdc9d2485ba9",
       "name": "HTTP Request",
       "credentials": {
-        "oAuth2Api": {
-          "id": "WKPprnBqgbub4iWX",
-          "name": "monday.com Credentials"
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
         }
-      }
+      },
+      "notes": "Nico 21/sep/2026: antes leía el tablero TESORERÍA de Monday (GraphQL); ahora lee Pulse con la misma forma.",
+      "notesInFlow": true
     },
     {
       "parameters": {
-        "fieldToSplitOut": "data.boards[0].items_page.items",
+        "fieldToSplitOut": "items",
         "options": {}
       },
       "type": "n8n-nodes-base.splitOut",
@@ -97,28 +91,6 @@
         "slackOAuth2Api": {
           "id": "RPZcJdneOoqIBClJ",
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "authentication": "oAuth2",
-        "resource": "boardItem",
-        "operation": "get",
-        "itemId": "={{ $json.id }}"
-      },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
-      "position": [
-        960,
-        -192
-      ],
-      "id": "503a8b00-6bae-4425-92ab-4b39fd5acf81",
-      "name": "Get an item1",
-      "credentials": {
-        "mondayComOAuth2Api": {
-          "id": "7emakKOqBk6HAsSo",
-          "name": "Monday.com levelup"
         }
       }
     },
@@ -202,7 +174,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy').setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                    "leftValue": "={{ String(($json.column_values.find(c => c.column && c.column.title === 'finaliza acuerdo') || {}).display_value || '').toDateTime('dd/MM/yyyy').setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
                     "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
                     "operator": {
                       "type": "string",
@@ -227,7 +199,7 @@
                 "conditions": [
                   {
                     "id": "2fe30572-1e67-4a1d-979f-cebd6dba1d28",
-                    "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy') }}",
+                    "leftValue": "={{ String(($json.column_values.find(c => c.column && c.column.title === 'finaliza acuerdo') || {}).display_value || '').toDateTime('dd/MM/yyyy') }}",
                     "rightValue": "={{ $today.setZone('America/Puerto_Rico').plus(30, 'days') }}",
                     "operator": {
                       "type": "string",
@@ -315,28 +287,6 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "boardItem",
-        "operation": "get",
-        "itemId": "={{ $json.id }}"
-      },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
-      "position": [
-        960,
-        192
-      ],
-      "id": "a0bf9628-fa9b-47ad-9c94-219ead84ff6f",
-      "name": "Get an item",
-      "credentials": {
-        "mondayComOAuth2Api": {
-          "id": "7emakKOqBk6HAsSo",
-          "name": "Monday.com levelup"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -381,6 +331,49 @@
       ],
       "id": "8ad1aa21-d385-41a3-acea-62ee3538b1df",
       "name": "Stop and Error1"
+    },
+    {
+      "id": "n-filtro-tesorer-a-pulse-",
+      "name": "Filtro tesorería (Pulse)",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        616,
+        8
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ $json.group.id }}",
+              "rightValue": "group_mkqxsqsk",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c4",
+              "leftValue": "={{ !/saldo completo/i.test(String(($json.column_values.find(c => c.column && c.column.title === 'COMENTARIOS') || {}).text || '')) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
     }
   ],
   "connections": {
@@ -399,7 +392,7 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Filtro tesorería (Pulse)",
             "type": "main",
             "index": 0
           }
@@ -411,17 +404,6 @@
         [
           {
             "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get an item1": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -461,14 +443,14 @@
       "main": [
         [
           {
-            "node": "Get an item1",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Get an item",
+            "node": "Code in JavaScript1",
             "type": "main",
             "index": 0
           }
@@ -493,17 +475,6 @@
         ]
       ]
     },
-    "Get an item": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If1": {
       "main": [
         [
@@ -516,6 +487,17 @@
         [
           {
             "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro tesorería (Pulse)": {
+      "main": [
+        [
+          {
+            "node": "Switch",
             "type": "main",
             "index": 0
           }

@@ -821,12 +821,12 @@
               "authed_user": {
                 "id": "U096Y3TRT5E",
                 "scope": "channels:read,files:read,groups:read,im:read,mpim:read,reactions:read,stars:read,users:read,usergroups:read,users.profile:read,channels:write,chat:write,files:write,reactions:write,stars:write,usergroups:write,users.profile:write",
-                "access_token": "xox_-REDACTADO",
+                "access_token": "xoxb-REDACTADO",
                 "token_type": "user"
               },
               "scope": "app_mentions:read,assistant:write,links.embed:write,channels:read,bookmarks:read,canvases:read,calls:read,chat:write,workflows.templates:write,groups:read,groups:write",
               "token_type": "bot",
-              "access_token": "xox_-REDACTADO",
+              "access_token": "xoxb-REDACTADO",
               "bot_user_id": "U09657GM0HZ",
               "team": {
                 "id": "T07V7MUDA9H",
@@ -870,7 +870,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "updatedAt": "2026-09-21T12:00:42.696Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -898,7 +898,7 @@
               },
               "disabled": false,
               "mfaEnabled": false,
-              "lastActiveAt": "2026-09-20",
+              "lastActiveAt": "2026-09-21",
               "isPending": false
             }
           }
