@@ -13,6 +13,7 @@
 //   node scripts/demo-cliente/demo.mjs construir <slug>   # arma el sitio (propuesta + landing + chat + voz + sistema)
 //   node scripts/demo-cliente/demo.mjs deck      <slug>   # presentación .pptx personalizada (pptxgenjs)
 //   node scripts/demo-cliente/demo.mjs desplegar <slug>   # Netlify (zip deploy) → URL
+//   node scripts/demo-cliente/demo.mjs pdf       <slug>   # exporta los .pptx a PDF con Keynote (macOS) → site/pdf/
 //   node scripts/demo-cliente/demo.mjs portal    <slug>   # registra el Portal AutoFlow en Content OS (+ webhook de Retell)
 //   node scripts/demo-cliente/demo.mjs nota      <slug>   # nota (o deal) en Pipedrive AIB
 //   node scripts/demo-cliente/demo.mjs todo      <slug>   # todo lo anterior en orden
@@ -776,6 +777,28 @@ async function todo(slug) {
   if (env("PIPEDRIVE_AIB_TOKEN")) { try { await nota(slug); } catch (e) { log(`  ⚠️ Pipedrive: ${e.message}`); } }
 }
 
+// ---------- pdf (Keynote, solo macOS) ----------
+// El closer pide la presentación en PDF: exporta cada .pptx del demo con Keynote por AppleScript.
+function pdf(slug) {
+  const { d } = cargar(slug);
+  const site = path.join(d, "site");
+  const outDir = path.join(site, "pdf"); fs.mkdirSync(outDir, { recursive: true });
+  const script = path.join(ROOT, "scripts", "demo-cliente", "pptx-a-pdf.applescript");
+  const decks = fs.readdirSync(site).filter((f) => f.endsWith(".pptx"));
+  if (!decks.length) die("No hay .pptx: corre 'deck' primero");
+  if (!fs.existsSync("/Applications/Keynote.app")) die("Falta Keynote (la exportación a PDF usa Keynote en macOS)");
+  const hechos = [];
+  for (const f of decks) {
+    const out = path.join(outDir, f.replace(/\.pptx$/, ".pdf"));
+    try {
+      execSync(`osascript ${JSON.stringify(script)} ${JSON.stringify(path.join(site, f))} ${JSON.stringify(out)}`, { stdio: "pipe", timeout: 120000 });
+      hechos.push(path.relative(ROOT, out));
+    } catch (e) { log(`  ⚠️ ${f}: ${String(e.stderr || e.message).trim().slice(0, 200)}`); }
+  }
+  try { execSync(`osascript -e 'tell application "Keynote" to quit'`, { stdio: "ignore" }); } catch {}
+  if (hechos.length) { actualizarIndice(slug, { pdf: hechos.map((h) => path.basename(h)) }); log(`✓ PDF: ${hechos.join(" · ")}`); }
+}
+
 // ---------- portal (Content OS) ----------
 // Registra el portal vivo del prospecto en Content OS y deja el agente de Retell con webhook +
 // análisis post-llamada, para que las llamadas de prueba aparezcan transcritas en el portal.
@@ -813,9 +836,10 @@ try {
   else if (cmd === "construir") construir(slug || die("Falta <slug>"));
   else if (cmd === "deck") await deck(slug || die("Falta <slug>"), a.via);
   else if (cmd === "desplegar") await desplegar(slug || die("Falta <slug>"));
+  else if (cmd === "pdf") pdf(slug || die("Falta <slug>"));
   else if (cmd === "portal") await portal(slug || die("Falta <slug>"));
   else if (cmd === "nota") await nota(slug || die("Falta <slug>"));
   else if (cmd === "todo") await todo(slug || die("Falta <slug>"));
   else if (cmd === "listar") listar();
-  else { log("Uso: demo.mjs nuevo|generar|voz|deck|construir|desplegar|portal|nota|todo|listar (ver cabecera del archivo)"); process.exit(1); }
+  else { log("Uso: demo.mjs nuevo|generar|voz|deck|pdf|construir|desplegar|portal|nota|todo|listar (ver cabecera del archivo)"); process.exit(1); }
 } catch (e) { die(e.message); }
