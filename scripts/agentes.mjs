@@ -17,7 +17,7 @@
 //
 // El buzón vive en la base de Pulse vía POST/GET /api/agentes (CONTENT_OS_URL + CRON_SECRET), el
 // único punto que comparten los contenedores de Railway y la Mac. Cada puente lo revisa cada
-// ~20 s y atiende lo que le llegó (ver telegram-puente.mjs → buzonLoop). Todo mensaje se espeja al
+// ~90 s y atiende lo que le llegó; las RESPUESTAS no disparan a Claude (se guardan y van como contexto en el próximo pedido) (ver telegram-puente.mjs → buzonLoop). Todo mensaje se espeja al
 // DM de Slack de Elvin como [Agentes] para que él vea la conversación.
 //
 // Reglas (van también en cada cerebro): a Elvin y a los otros agentes, libre. Al EQUIPO HUMANO

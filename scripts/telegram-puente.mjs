@@ -115,7 +115,7 @@ const COMUNICACION = `
 
 CÓMO TE COMUNICAS (herramienta: node scripts/agentes.mjs — ya tienes permiso para correrla):
 - Con otro agente (Sofi = contenido/producción · Nico = código y plataformas · Max = Meta Ads · Lola = flyers/artes/videos/guiones con IA): \`node scripts/agentes.mjs mensaje <sofi|nico|max|lola> "<pedido claro, con contexto y qué esperas de vuelta>"\`. Le llega a su buzón, lo atiende en ≤ 1 min y su respuesta cae en TU buzón (\`node scripts/agentes.mjs buzon\`). Úsalo cuando el pedido de Elvin necesita a otro (ej. Sofi necesita un arreglo técnico → Nico; Max necesita un creativo → Lola; Nico ve que algo afecta contenido → Sofi). Delega y dile a Elvin que lo delegaste; no inventes que el otro ya lo hizo.
-- Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y responde con \`node scripts/agentes.mjs atendido <id> "<respuesta corta con el resultado o lo que falta>"\`. Si es una respuesta a algo que tú pediste (dice "responde a #n"), tómala y sigue tu trabajo; no abras un ping-pong.
+- Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y ciérralo con \`node scripts/agentes.mjs atendido <id> "<respuesta corta con el resultado o lo que falta>"\`. Las respuestas que otros te dan NO te llegan como pedido (para no gastar tokens): aparecen como contexto al inicio de tu próximo pedido. No abras ping-pong: un pedido, una respuesta. ECONOMÍA DE TOKENS: escribe a otro agente solo cuando de verdad necesites algo de él; nunca para confirmar, agradecer o avisar que lo vas a hacer.
 - Con el equipo humano de Elvin (Carilin, Aure, Jessica, Juan Diego, María del Carmen, Heidy, Yaileen, David…; lista: \`node scripts/agentes.mjs equipo\`): \`node scripts/agentes.mjs slack <nombre> "<texto>"\` manda un DM por Slack firmado con tu nombre. SOLO dentro de lo que tu cerebro permite (Sofi: logística con Aure/Carilin; Max: trazabilidad con Aure; Nico y Lola: nada sin OK de Elvin) y NUNCA a clientes ni con secretos. Tuteo de Puerto Rico, corto, con contexto de por qué escribes.
 - Con Elvin: \`node scripts/agentes.mjs elvin "<texto>"\` (Telegram + Slack). Todo mensaje entre agentes o al equipo queda espejado en el DM de Slack de Elvin: escribe como si él lo leyera.`;
 
@@ -365,7 +365,7 @@ async function procesar(token, chat, texto, st) {
   await tg(token, "sendChatAction", { chat_id: chat, action: "typing" });
   // Elvin (19/sep): sin avisos de progreso; solo "escribiendo…" y la respuesta cuando esté todo.
   const onProgreso = null;
-  let r = await correrClaude(prompt, persona, st.sesion, nueva, onProgreso);
+  let r = await correrClaude(contextoRespuestas(st) + prompt, persona, st.sesion, nueva, onProgreso);
   if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, onProgreso); }
   clearInterval(typing);
   let resp = r.out;
@@ -390,17 +390,34 @@ function enSerie(fn) { const r = colaClaude.then(fn, fn); colaClaude = r.catch((
 
 // El buzón: cada ~20 s mira si otro agente le dejó algo y lo atiende como si fuera un mensaje
 // de Telegram (misma persona, misma sesión). La respuesta vuelve al buzón del que preguntó.
+// Respuestas de otros agentes acumuladas sin gastar tokens; se pegan como contexto al próximo
+// pedido (Telegram o buzón) y se vacían.
+function contextoRespuestas(st) {
+  const rs = st.respuestasPendientes || [];
+  if (!rs.length) return "";
+  st.respuestasPendientes = []; guardarEstado(st);
+  return "Respuestas que te llegaron de otros agentes desde tu último pedido (ya están marcadas atendidas; úsalas si aplican, no las respondas):\n" + rs.map((r) => `- ${NOMBRES[r.de] || r.de} (a tu #${r.hilo}): ${r.texto}`).join("\n") + "\n\n";
+}
+
 async function atenderBuzon(token, chatCEO, st) {
   let lista;
   try { lista = await buzonPendientes(YO); } catch (e) { LOG("buzón:", e.message.slice(0, 120)); return; }
   for (const m of lista) {
-    try { await buzonMarcar(m.id, "en-curso"); } catch {}
     const de = NOMBRES[m.de] || m.de;
     const esRespuesta = Boolean(m.hilo);
-    const prompt = `[Buzón · de ${de} #${m.id}${esRespuesta ? ` · responde a #${m.hilo}` : ""}]\n${m.texto}\n\n` +
-      (esRespuesta
-        ? `Es la respuesta de ${de} a algo que pediste: úsala para seguir tu trabajo. Marca este mensaje con \`node scripts/agentes.mjs atendido ${m.id}\` (sin texto) salvo que de verdad necesites pedirle algo más. Si el resultado le importa a Elvin, avísale con \`node scripts/agentes.mjs elvin "…"\`.`
-        : `Haz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`.`);
+    // Economía de tokens (Elvin, 21/sep): una RESPUESTA de otro agente NO dispara a Claude. Se
+    // guarda en st.respuestasPendientes y se inyecta como contexto en el próximo pedido real (de
+    // Elvin o de otro agente). Solo se le avisa a Elvin, que es quien decide.
+    if (esRespuesta) {
+      try { await buzonMarcar(m.id, "atendido"); } catch {}
+      st.respuestasPendientes = [...(st.respuestasPendientes || []).slice(-9), { id: m.id, de: m.de, hilo: m.hilo, texto: m.texto.slice(0, 1500), ts: new Date().toISOString() }];
+      guardarEstado(st);
+      LOG("buzón ‹ respuesta de", m.de, `#${m.id} (sin Claude)`);
+      if (chatCEO) await enviar(token, chatCEO, `📩 ${de} le respondió a ${NOMBRES[YO]} (#${m.hilo}):\n${m.texto.slice(0, 900)}`).catch(() => {});
+      continue;
+    }
+    try { await buzonMarcar(m.id, "en-curso"); } catch {}
+    const prompt = contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`. Sé breve: es un mensaje entre agentes, no un informe.`;
     LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
     // Mismo ciclo que por Telegram: traer lo de producción antes y publicar lo escrito después.
     // Sin esto, lo que un agente escribía atendiendo a otro moría con el contenedor (21/sep).
@@ -433,8 +450,8 @@ async function atenderBuzon(token, chatCEO, st) {
   }
 }
 function buzonLoop(token, getChat, st) {
-  const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 20000); };
-  setTimeout(tick, 8000);
+  const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 90000); };
+  setTimeout(tick, 15000);
 }
 
 async function main() {
@@ -445,7 +462,8 @@ async function main() {
   await tg(token, "deleteWebhook", { drop_pending_updates: false }).catch(() => {});
   LOG(ES_NICO ? "Puente de NICO arrancó." : ES_MAX ? "Puente de MAX (media buyer) arrancó." : ES_LOLA ? "Puente de LOLA (creadora con IA) arrancó." : "Puente Telegram arrancó.", EN_NUBE ? "En Railway." : "En la Mac.", "Modo:", ES_NICO ? "total" : env("PUENTE_MODO") || "seguro", ES_NICO ? `· repos extra: ${dirsNico().length}` : "", "· CEO chat:", chatCEO || "(sin configurar: respondo el chat id a quien escriba /start)");
   // Chequeo de salud del CLI (no bloquea el loop): si falla, queda en el log el porqué.
-  correrClaude("Responde solo: ok", "claude", randomUUID(), true).then((r) => LOG("salud claude:", r.code === 0 && r.out ? "ok · " + r.out.slice(0, 40) : "FALLÓ · " + (r.err || "sin salida").slice(0, 300)));
+  // Chequeo de salud SIN tokens (antes era una corrida real de Claude, ~$0.20 por reinicio).
+  try { const v = spawnSync(CLAUDE, ["--version"], { encoding: "utf8", timeout: 20000 }); LOG("salud claude:", v.status === 0 ? "ok · " + String(v.stdout || "").trim().slice(0, 40) : "FALLÓ · " + String(v.stderr || "sin salida").slice(0, 200)); } catch (e) { LOG("salud claude: FALLÓ ·", e.message.slice(0, 200)); }
   const st = leerEstado();
   // Si el contenedor se reinició con cambios sin publicar, volverlos a poner (y que el próximo
   // pedido los suba). /app es efímero: el volumen es lo único que sobrevive un redeploy.
