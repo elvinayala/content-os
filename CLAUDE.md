@@ -296,8 +296,11 @@ entrega). Comando `/crear-contenido <pedido>` (usa el MCP de Higgsfield de la ap
 muestra) o `anuncio`/`guion`, `agente: "Lola"`. Bot de Telegram `PUENTE_BOT=lola`
 (`TELEGRAM_BOT_TOKEN_LOLA`, modo seguro: Read/Edit/Write + `scripts/higgsfield.mjs` +
 `validar-voz`); renderiza directo si hay sesión (`node scripts/higgsfield.mjs login` una vez en la
-Mac), si no encola. Plist: `scripts/launchd/com.iamarket.lola-puente.plist`. Lola nunca le manda
-nada a nadie que no sea Elvin. Está en el roster de `lib/equipo.ts`.
+Mac), si no encola. **Lola vive en Railway** (servicio `lola` del proyecto `puente-telegram`, `Dockerfile.puente`, volumen
+`/estado`, variables por referencia `${{max.VAR}}` incl. `HIGGSFIELD_OAUTH_JSON`, así que renderiza
+directo sin la Mac; deploy `npx @railway/cli up --service lola --detach`). El plist de la Mac queda
+como respaldo, descargado. Lola nunca le manda nada a nadie que no sea Elvin. Está en el roster de
+`lib/equipo.ts`.
 
 ## El ecosistema de email (ActiveCampaign)
 

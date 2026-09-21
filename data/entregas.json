@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-21T02:13:32.883Z",
+  "actualizadoEl": "2026-09-21T02:26:17.042Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -10163,6 +10163,54 @@
       "angulo": "A · ¿Cuánto dinero está perdiendo?",
       "agente": "Lola",
       "creadoEl": "2026-09-21T02:13:32.883Z",
+      "estado": "nuevo"
+    },
+    {
+      "id": "arte-lola-lu-boton-azul-01",
+      "tipo": "arte",
+      "marca": "level-up",
+      "titulo": "El botón azul no es estrategia",
+      "contenido": "FLYER 4:5 · Ángulo 2 (El botón azul vs. estrategia) · pilar problema\n\nHOOK: El botón azul no es estrategia.\nSUB: Promocionar quema tu presupuesto. Un sistema lo multiplica.\nCTA: Comenta SISTEMA y te muestro cómo.\n\nCONCEPTO: primer plano del dedo dándole al botón azul de \"promocionar\"; la luz azul quema billetes hasta ceniza. Fondo carbón, brasas naranja. El enemigo es el botón, no el dueño.\n\nUSO: post/anuncio estático 4:5. Créditos: 1 (gpt_image_2_5, calidad high).",
+      "formato": "flyer 4:5",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260921_022452_bf8d462f-6f4a-4449-adeb-ab16277523df.png",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Bold editorial ad poster for a Puerto Rican performance marketing agency. Extreme close-up of a thumb pressing a glowing blue 'Boost post' button on a smartphone screen, blue light bleeding into the dark scene, dollar bills burning to ash where the light touches. Dark charcoal background, warm orange embers. Clean modern bold sans-serif Spanish headline in white at the top, perfectly spelled: 'EL BOTON AZUL NO ES ESTRATEGIA'. Small white line at the bottom: 'Comenta SISTEMA'. Minimal, high contrast, premium agency look, no extra text anywhere.",
+      "pilar": "problema",
+      "angulo": "2 · El botón azul vs. estrategia",
+      "agente": "Lola",
+      "creadoEl": "2026-09-21T02:26:17.042Z",
+      "estado": "nuevo"
+    },
+    {
+      "id": "arte-lola-lu-boton-azul-02",
+      "tipo": "arte",
+      "marca": "level-up",
+      "titulo": "Promocionar no es hacer anuncios",
+      "contenido": "FLYER 4:5 · Ángulo 2 (El botón azul vs. estrategia) · pilar problema\n\nHOOK: Promocionar no es hacer anuncios.\nSUB: Uno te da likes. El otro te da clientes todos los días.\nCTA: Comenta SISTEMA y te muestro cómo.\n\nCONCEPTO: pantalla partida — izquierda azul fría con el botón \"Boost\" y una línea plana; derecha ámbar con el dashboard, la curva subiendo y los leads entrando. Contraste puro, sin caras.\n\nUSO: post/anuncio estático 4:5. Créditos: 1 (gpt_image_2_5, calidad high).",
+      "formato": "flyer 4:5",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260921_022500_74bdf6ea-6f72-4661-9737-c6c64baec8cb.png",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Split-screen editorial ad poster, dark premium look, for a Puerto Rico Meta Ads agency. Left half: a cold blue glowing smartphone screen with a single 'Boost' button and a flat empty line chart, cold blue tones. Right half: a warm amber dashboard on a laptop with a steep rising line chart and pins of incoming leads, warm orange glow. A hard vertical split line between both. Bold white Spanish headline across the top, perfectly spelled, big: 'PROMOCIONAR NO ES HACER ANUNCIOS'. Small white line at the bottom: 'Comenta SISTEMA'. Modern, minimal, no people, no extra text.",
+      "pilar": "problema",
+      "angulo": "2 · El botón azul vs. estrategia",
+      "agente": "Lola",
+      "creadoEl": "2026-09-21T02:26:17.042Z",
+      "estado": "nuevo"
+    },
+    {
+      "id": "arte-lola-lu-boton-azul-03",
+      "tipo": "arte",
+      "marca": "level-up",
+      "titulo": "El botón azul es una lotería",
+      "contenido": "FLYER 4:5 · Ángulo 2 (El botón azul vs. estrategia) · pilar problema\n\nHOOK: El botón azul es una lotería.\nSUB: Un sistema es predecible: sabes de dónde sale cada cliente.\nCTA: Comenta SISTEMA y te muestro cómo.\n\nCONCEPTO: palanca de tragamonedas con luz azul fría, las monedas caen al vacío; detrás, el plano del embudo en naranja. Le pega al azar, no al dueño.\n\nUSO: post/anuncio estático 4:5. Créditos: 1 (gpt_image_2_5, calidad high).",
+      "formato": "flyer 4:5",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260921_022510_14953f65-ef83-4080-891b-9bf8b106388b.png",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Premium dark editorial ad poster for a Puerto Rico marketing agency. A slot machine lever glowing cold blue being pulled, coins falling into a dark void and vanishing, versus a faint blueprint of a funnel system drawn in warm orange lines behind it. Dark charcoal background, cinematic lighting, high contrast. Bold white Spanish headline at the top, perfectly spelled: 'EL BOTON AZUL ES UNA LOTERIA'. Second smaller warm-orange line under it: 'Un sistema es predecible'. Small white line at the bottom: 'Comenta SISTEMA'. Minimal, no people, no extra text anywhere.",
+      "pilar": "problema",
+      "angulo": "2 · El botón azul vs. estrategia",
+      "agente": "Lola",
+      "creadoEl": "2026-09-21T02:26:17.042Z",
       "estado": "nuevo"
     }
   ]

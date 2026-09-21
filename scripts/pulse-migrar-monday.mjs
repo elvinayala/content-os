@@ -230,12 +230,25 @@ console.log(`\n→ Relaciones: ${relacionesPendientes.length} celdas`);
 for (const [, b] of mapaBoards) {
   for (const col of b.columnas.values()) {
     if (col.type !== "relation") continue;
-    const destino = (col.settings.mondayBoardIds ?? []).map((id) => mapaBoards.get(String(id))?.id).find(Boolean);
+    // El tablero destino puede haberse migrado en otra corrida: se busca en la base por monday_id.
+    let destino = (col.settings.mondayBoardIds ?? []).map((id) => mapaBoards.get(String(id))?.id).find(Boolean);
+    if (!destino && !DRY) {
+      for (const id of col.settings.mondayBoardIds ?? []) {
+        const [fila] = await db.query(`SELECT id FROM pulse_boards WHERE monday_id = $1`, [String(id)]);
+        if (fila) { destino = fila.id; break; }
+      }
+    }
     const settings = { multiple: true, ...(destino ? { boardId: destino } : {}) };
     if (!DRY) await db.query(`UPDATE pulse_columns SET settings = $1 WHERE id = $2`, [settings, col.id]);
   }
 }
 let relOk = 0;
+// Items de otros tableros ya migrados (p. ej. TESORERÍA → LEVEL UP MEDIA): se resuelven por monday_id en la base.
+const faltantes = [...new Set(relacionesPendientes.flatMap((r) => r.mondayItemIds.map(String)).filter((id) => !mapaItems.has(id)))];
+if (faltantes.length && !DRY) {
+  const filas = await db.query(`SELECT id, monday_id FROM pulse_items WHERE monday_id = ANY($1)`, [faltantes]);
+  for (const f of filas) mapaItems.set(String(f.monday_id), f.id);
+}
 for (const r of relacionesPendientes) {
   const ids = r.mondayItemIds.map((id) => mapaItems.get(String(id))).filter(Boolean);
   if (!ids.length) continue;
