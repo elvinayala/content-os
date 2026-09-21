@@ -285,6 +285,20 @@ cualquiera de esos 4 repos (`deploy-snapshots.sh` ya lo hace); commitear y subir
 Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
 `npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
+## Lola — la Creadora de Contenido con IA (20/sep/2026)
+
+El puesto que faltaba: Sofi coordina, Cami idea, Lauti escribe, Facu publica, **Lola produce**
+(flyers/artes, videos con Higgsfield, guiones a pedido). Cerebro: `vault/ceo/cerebro-lola.md`
+(modelos por defecto, tope de créditos 3 img / 2 videos por pedido, reglas de marca, cómo
+entrega). Comando `/crear-contenido <pedido>` (usa el MCP de Higgsfield de la app) y
+`/crear-contenido atender` (vacía `data/pedidos-lola.json`; tarea `lola-atender-pedidos` cada
+30 min). Entregas: `tipo: "arte"` (nuevo en `TipoEntrega`, con `imagenUrl`; la bandeja lo
+muestra) o `anuncio`/`guion`, `agente: "Lola"`. Bot de Telegram `PUENTE_BOT=lola`
+(`TELEGRAM_BOT_TOKEN_LOLA`, modo seguro: Read/Edit/Write + `scripts/higgsfield.mjs` +
+`validar-voz`); renderiza directo si hay sesión (`node scripts/higgsfield.mjs login` una vez en la
+Mac), si no encola. Plist: `scripts/launchd/com.iamarket.lola-puente.plist`. Lola nunca le manda
+nada a nadie que no sea Elvin. Está en el roster de `lib/equipo.ts`.
+
 ## El ecosistema de email (ActiveCampaign)
 
 `lib/activecampaign.ts` (`upsertContacto` v3: contacto + lista de la marca + tags; `crearCampana`

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.iamarket.lola-puente</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/local/bin/node</string>
+    <string>--dns-result-order=ipv4first</string>
+    <string>/Users/elvinayala/AGENTE CONTENIDO/scripts/telegram-puente.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/elvinayala/AGENTE CONTENIDO</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PUENTE_BOT</key><string>lola</string>
+    <key>PATH</key><string>/Users/elvinayala/.npm-global/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>HOME</key><string>/Users/elvinayala</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/Users/elvinayala/Library/Logs/lola-puente.log</string>
+  <key>StandardErrorPath</key><string>/Users/elvinayala/Library/Logs/lola-puente.err.log</string>
+</dict></plist>

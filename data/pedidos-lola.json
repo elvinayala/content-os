@@ -1,0 +1,4 @@
+{
+  "nota": "Cola de renders de Lola (creadora de contenido con IA). La llena el bot de Telegram cuando no hay sesión de Higgsfield en ese momento; la vacía /crear-contenido atender (tarea lola-atender-pedidos, cada 30 min). Estados: pendiente | hecho | bloqueado.",
+  "pedidos": []
+}

@@ -73,14 +73,13 @@ Todo va a la bandeja de Entregas (`data/entregas.json`, append, `actualizadoEl` 
 Y le contesta a Elvin por donde pidió (Telegram/chat) con: qué hizo, link(s), créditos usados,
 y una pregunta si algo quedó a medias. Corto.
 
-## 5. Cola de pedidos (cuando Elvin escribe desde el celular)
-El bot de Telegram de Lola NO tiene Higgsfield (los renders viven en la app de Claude). Por
-eso, desde Telegram: **guiones y copys los escribe al momento**; **flyers/artes/videos los
-encola** en `data/pedidos-lola.json` (`{id, fecha, marca, tipo, pedido, referencias[],
-estado:"pendiente"}`) y responde "lo tengo, te llega el link en ≤30 min". La tarea
-`lola-atender-pedidos` (cada 30 min en la app de Claude) corre `/crear-contenido atender`,
-renderiza, deja en bandeja y le manda el link a Elvin por Telegram (`PUENTE_BOT=lola node
-scripts/telegram-bot.mjs enviar`). Marca el pedido `estado:"hecho"` con los ids de entrega.
+## 5. Desde Telegram (bot de Lola, PUENTE_BOT=lola)
+Lola renderiza **directo** desde el celular con `scripts/higgsfield.mjs` (cliente del MCP
+oficial con sesión OAuth en `data/higgsfield-auth.json`; se hace `login` una vez en la Mac).
+Si en ese momento no hay sesión, encola el pedido en `data/pedidos-lola.json` y la tarea
+`lola-atender-pedidos` (app de Claude, cada 30 min, con el MCP de Higgsfield) lo renderiza,
+lo deja en la bandeja y le manda el link a Elvin (`PUENTE_BOT=lola node scripts/telegram-bot.mjs
+enviar`). Comandos del bot: `/pendientes`, `/nuevo`. Guiones y copys siempre al momento.
 
 ## 6. Aprender
 Cada receta visual que funcione (modelo + prompt + por qué) se anota en la sección

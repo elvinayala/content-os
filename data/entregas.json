@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-19T01:30:00-04:00",
+  "actualizadoEl": "2026-09-21T02:13:32.883Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -10148,6 +10148,22 @@
       "creadoEl": "2026-09-19T01:30:00-04:00",
       "estado": "nuevo",
       "para": "ActiveCampaign"
+    },
+    {
+      "id": "arte-lola-aib-01",
+      "tipo": "arte",
+      "marca": "ai-borinquen",
+      "titulo": "Su competencia no le ganó por mejor. Le ganó por más rápido.",
+      "contenido": "FLYER 4:5 · Ángulo A (¿Cuánto dinero está perdiendo?) · pilar problema\n\nHOOK: Su competencia no le ganó por mejor. Le ganó por más rápido.\nSUB: Respondemos sus leads en segundos, 24/7.\nCTA: Escríbanos por WhatsApp\n\nCONCEPTO: dueño de negocio boricua de noche en su local mirando el WhatsApp lleno de mensajes sin contestar; overlay navy abajo con el copy. Registro de usted (ads AIB).\n\nUSO: post/anuncio estático 4:5. Créditos: 1 (gpt_image_2_5).",
+      "formato": "flyer 4:5",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260921_021251_5ed62d44-0c26-477d-8a07-df2ce71a00c7.png",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Clean, premium social media flyer for a Puerto Rican AI automation agency, 4:5 portrait. Photorealistic scene: a small business owner (Puerto Rican man, 40s, polo shirt) at his shop counter at night, looking at a smartphone showing many unread WhatsApp messages, warm but slightly dramatic lighting, shallow depth of field. Dark navy overlay on the lower third with modern sans-serif typography. Large bold white headline in Spanish, exactly: \"Su competencia no le ganó por mejor. Le ganó por más rápido.\" Smaller line below in light gray, exactly: \"Respondemos sus leads en segundos, 24/7.\" Small accent pill button in bright green with text exactly: \"Escríbanos por WhatsApp\". Minimal, no clutter, no logos, no extra text, perfect Spanish spelling, editorial ad quality.",
+      "pilar": "problema",
+      "angulo": "A · ¿Cuánto dinero está perdiendo?",
+      "agente": "Lola",
+      "creadoEl": "2026-09-21T02:13:32.883Z",
+      "estado": "nuevo"
     }
   ]
 }

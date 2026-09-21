@@ -70,7 +70,8 @@ async function login() {
     const srv = createServer((req, r) => {
       const u = new URL(req.url, REDIRECT);
       if (u.pathname !== "/cb") { r.writeHead(404); return r.end(); }
-      if (u.searchParams.get("state") !== state) { r.writeHead(400); r.end("state incorrecto"); return rej(new Error("state incorrecto")); }
+      // Un enlace viejo (de un intento anterior) llega con otro state: se avisa y se sigue esperando el bueno.
+      if (u.searchParams.get("state") !== state) { r.writeHead(400, { "content-type": "text/html; charset=utf-8" }); r.end("<h2>Ese enlace era de un intento anterior. Usa el enlace más reciente que te dio el script.</h2>"); console.log("⚠ llegó una autorización de un intento anterior; sigo esperando la del enlace nuevo"); return; }
       r.writeHead(200, { "content-type": "text/html; charset=utf-8" }); r.end("<h2>Listo. Max ya puede usar Higgsfield. Puedes cerrar esta pestaña.</h2>");
       srv.close(); res(u.searchParams.get("code"));
     });
@@ -79,7 +80,7 @@ async function login() {
       const abrir = process.platform === "darwin" ? "open" : "xdg-open";
       try { spawn(abrir, [url], { stdio: "ignore", detached: true }).unref(); } catch {}
     });
-    setTimeout(() => { srv.close(); rej(new Error("Se acabó el tiempo (5 min) esperando la autorización")); }, 300000);
+    setTimeout(() => { srv.close(); rej(new Error("Se acabó el tiempo (" + (Number(process.env.HIGGSFIELD_LOGIN_MIN) || 20) + " min) esperando la autorización")); }, (Number(process.env.HIGGSFIELD_LOGIN_MIN) || 20) * 60000);
   });
   const t = await form(AUTH.token, { grant_type: "authorization_code", code, redirect_uri: REDIRECT, client_id, code_verifier: verifier, resource: MCP });
   const auth = { client_id, access_token: t.access_token, refresh_token: t.refresh_token || null, expires_at: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000, scope: t.scope || SCOPE, creado: new Date().toISOString() };
