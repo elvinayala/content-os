@@ -397,6 +397,14 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   Asignación de Estrategas al webhook `pulse-cliente` (after(), `PULSE_N8N_SECRET`, `N8N_URL`) y
   expone `GET /api/pulse/n8n/clientes` para la corrida nocturna. El workflow lo genera
   `scripts/n8n-sync-pulse.mjs`. `PULSE_N8N_MODO=real` para escribir; si no, simulación.
+- **Seguridad** (`lib/pulse/seguridad.ts`, 21/sep): cookie `userId.exp.iat.hmac` (14 días) y
+  `pulse_users.sesiones_desde` — cambiar clave/rol o desactivar cierra las sesiones; bloqueo 15 min
+  tras 5 intentos fallidos (`intentos_fallidos`/`bloqueado_hasta`) + límite 10/min por IP; scrypt
+  de sacrificio anti-enumeración; clave ≥ 8; `pulse_security_log` (se ve en /pulse/configuracion,
+  solo admin); `secretoValido()` (timing-safe) para n8n/cron; cabeceras HSTS/CSP/X-Frame en
+  `next.config.ts` (CSP solo en /pulse; si se agrega un CDN hay que sumarlo a `img-src`/`connect-src`);
+  respaldo diario `api/cron/pulse-respaldo` (8:30 UTC) → Storage `pulse/respaldos/YYYY-MM-DD.json`,
+  conserva 30, sin password_hash.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
