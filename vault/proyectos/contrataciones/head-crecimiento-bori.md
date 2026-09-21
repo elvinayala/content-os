@@ -3,7 +3,7 @@ fecha: 2026-09-21
 fuente: manual
 unidad: bori
 tags: [contrataciones, bori, head-de-crecimiento, creadores, influencers, organico, remoto]
-estado: v2 (21/sep) · vacante lista para publicar · meta: firmado el 6/oct/2026
+estado: SUPERSEDIDA el 21/sep (tarde) por coordinadora-colaboraciones-bori.md — el puesto es Coordinadora de Colaboraciones y Crecimiento
 ---
 
 # Head de Crecimiento · Bori (heybori.ai) — perfil creador/a + colaboraciones con creadores
