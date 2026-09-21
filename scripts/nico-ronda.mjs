@@ -29,10 +29,15 @@ function env(n) {
 }
 
 // ---- envío del reporte final ----
+// enviar "<texto>" [agente]  — agente = "nico" (default) | "iris" | … cualquiera con su propio
+// TELEGRAM_BOT_TOKEN_<AGENTE en mayúsculas>; sin ese token cae al genérico TELEGRAM_BOT_TOKEN.
 if (process.argv[2] === "enviar") {
-  const texto = process.argv.slice(3).join(" ").trim();
+  const args = process.argv.slice(3);
+  const agentes = new Set(["nico", "iris", "max", "lola", "sofi"]);
+  const agente = args.length > 1 && agentes.has(args[args.length - 1].toLowerCase()) ? args.pop().toLowerCase() : "nico";
+  const texto = args.join(" ").trim();
   if (!texto) { console.error("Falta el texto."); process.exit(1); }
-  const token = env("TELEGRAM_BOT_TOKEN_NICO") || env("TELEGRAM_BOT_TOKEN");
+  const token = env(`TELEGRAM_BOT_TOKEN_${agente.toUpperCase()}`) || env("TELEGRAM_BOT_TOKEN");
   const chat = env("TELEGRAM_CEO_CHAT_ID");
   let tg = false;
   if (token && chat) {
@@ -42,10 +47,10 @@ if (process.argv[2] === "enviar") {
   let slack = false;
   const st = env("SLACK_BOT_TOKEN");
   if (st) {
-    const r = await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${st}` }, body: JSON.stringify({ channel: env("CEO_SLACK_ID") || "U08U9777PUY", text: `[Nico] ${texto}` }) }).then((r) => r.json()).catch(() => ({}));
+    const r = await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${st}` }, body: JSON.stringify({ channel: env("CEO_SLACK_ID") || "U08U9777PUY", text: `[${agente[0].toUpperCase()}${agente.slice(1)}] ${texto}` }) }).then((r) => r.json()).catch(() => ({}));
     slack = Boolean(r.ok);
   }
-  console.log(JSON.stringify({ telegram: tg, slack }));
+  console.log(JSON.stringify({ telegram: tg, slack, agente }));
   process.exit(tg || slack ? 0 : 1);
 }
 
