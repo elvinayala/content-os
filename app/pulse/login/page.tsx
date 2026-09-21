@@ -1,5 +1,6 @@
-import { Activity } from "lucide-react";
 import { redirect } from "next/navigation";
+
+import { PulseLogo } from "@/components/pulse/logo";
 
 import { loginPulseAction } from "@/app/pulse/login/actions";
 import { Button } from "@/components/ui/button";
@@ -23,12 +24,10 @@ export default async function PulseLoginPage({
       <Card className="w-full max-w-sm border-white/70 bg-white/85 shadow-2xl shadow-primary/10 backdrop-blur-md">
         <CardContent className="flex flex-col gap-5 p-6">
           <div className="flex items-center gap-3">
-            <div className="logo-pulse flex size-10 items-center justify-center rounded-xl text-white">
-              <Activity className="size-5" />
-            </div>
-            <div className="leading-tight">
-              <h1 className="text-lg font-semibold">{NOMBRE_APP}</h1>
-              <p className="text-xs text-muted-foreground">{SUBTITULO_APP} · CRM de clientes</p>
+            <PulseLogo size={44} className="drop-shadow-[0_8px_18px_rgba(200,86,45,0.4)]" />
+            <div className="leading-none">
+              <h1 className="text-xl font-semibold tracking-[-0.02em]">{NOMBRE_APP}</h1>
+              <p className="mt-1 text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase">{SUBTITULO_APP} · CRM de clientes</p>
             </div>
           </div>
 

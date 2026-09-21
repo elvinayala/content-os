@@ -1,6 +1,8 @@
 "use client";
 
-import { Activity, ArrowLeft, LayoutGrid, Lock, LogOut, Settings } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Lock, LogOut, Settings } from "lucide-react";
+
+import { PulseLogo } from "@/components/pulse/logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -34,13 +36,11 @@ export function PulseSidebar({
     // className="pulse": el Sheet mobile portalea a <body> y sale del scope del tema
     <Sidebar collapsible="icon" className="pulse">
       <SidebarHeader className="border-b border-sidebar-border/70 py-3">
-        <div className="flex items-center gap-3 px-1 py-2">
-          <div className="logo-pulse flex size-9 shrink-0 items-center justify-center rounded-xl text-white">
-            <Activity className="size-5" />
-          </div>
-          <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="font-semibold">{NOMBRE_APP}</span>
-            <span className="text-xs text-muted-foreground">{SUBTITULO_APP}</span>
+        <div className="flex items-center gap-3 px-1 py-1.5">
+          <PulseLogo size={36} className="drop-shadow-[0_6px_14px_rgba(200,86,45,0.35)]" />
+          <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
+            <span className="text-[17px] font-semibold tracking-[-0.02em]">{NOMBRE_APP}</span>
+            <span className="mt-1 text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase">{SUBTITULO_APP}</span>
           </div>
         </div>
       </SidebarHeader>
