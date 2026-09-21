@@ -30,6 +30,7 @@ import type { EtiquetaStatus, ValorCelda } from "./types";
 
 export const SLUG_CLIENTES = "level-up-media";
 export const SLUG_ESTRATEGAS = "asignacion-estrategas";
+export const SLUG_EQUIPO = "cumpleanos"; // el tablero "Cumpleaños" de Monday = la gente del equipo
 const GRUPO_ACTIVO_MONDAY = "grupo_nuevo__1"; // CLIENTE ACTIVO
 
 // Columnas de Monday que alimentaban NocoDB (por monday_id; título como respaldo).
@@ -225,6 +226,11 @@ export function avisarCambio(p: { itemIds?: string[]; bajas?: ClienteSync[]; mot
           .where(eq(pulseItems.id, ids[0]));
         if (fila?.slug === SLUG_CLIENTES) objetivo = ids;
         else if (fila?.slug === SLUG_ESTRATEGAS) objetivo = await clientesDeAsignaciones(ids);
+        else if (fila?.slug === SLUG_EQUIPO) {
+          // Cambió alguien del equipo: n8n repasa la tabla `equipo` entera (son ~50 filas).
+          await avisarEquipo(p.motivo);
+          if (!bajas.length) return;
+        }
       }
       const clientes = objetivo.length ? await armarClientes(objetivo) : [];
       await enviarAN8n([...clientes, ...bajas], p.motivo);
@@ -243,5 +249,22 @@ export async function prepararBaja(itemIds: string[]): Promise<{ bajas: ClienteS
     return { bajas, afectados };
   } catch {
     return { bajas: [], afectados: [] };
+  }
+}
+
+
+// Webhook `pulse-equipo`: n8n vuelve a leer /api/pulse/n8n/equipo y hace el upsert en NocoDB.
+export async function avisarEquipo(motivo: string): Promise<void> {
+  if (!puenteActivo()) return;
+  try {
+    const r = await fetch(`${process.env.N8N_URL!.replace(/\/$/, "")}/webhook/pulse-equipo`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-pulse-secret": process.env.PULSE_N8N_SECRET! },
+      body: JSON.stringify({ origen: "pulse", motivo, simulacion: process.env.PULSE_N8N_MODO !== "real", enviadoEl: new Date().toISOString() }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok) console.error(`[puente-n8n] equipo ${r.status} (${motivo})`);
+  } catch (e) {
+    console.error(`[puente-n8n] equipo ${e instanceof Error ? e.message : e}`);
   }
 }

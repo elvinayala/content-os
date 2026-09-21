@@ -246,7 +246,8 @@ let relOk = 0;
 // Items de otros tableros ya migrados (p. ej. TESORERÍA → LEVEL UP MEDIA): se resuelven por monday_id en la base.
 const faltantes = [...new Set(relacionesPendientes.flatMap((r) => r.mondayItemIds.map(String)).filter((id) => !mapaItems.has(id)))];
 if (faltantes.length && !DRY) {
-  const filas = await db.query(`SELECT id, monday_id FROM pulse_items WHERE monday_id = ANY($1)`, [faltantes]);
+  // (el wrapper serializa arrays como jsonb: se pasa una lista separada por comas)
+  const filas = await db.query(`SELECT id, monday_id FROM pulse_items WHERE monday_id = ANY(string_to_array($1, ','))`, [faltantes.join(",")]);
   for (const f of filas) mapaItems.set(String(f.monday_id), f.id);
 }
 for (const r of relacionesPendientes) {

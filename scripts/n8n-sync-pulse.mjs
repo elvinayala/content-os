@@ -212,6 +212,121 @@ return { json: { filaId: d.filaId, fecha, actual: d.fila ? d.fila['fecha-inicio-
   return { name: NOMBRE, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW } };
 }
 
+// ---------- workflow 2: equipo (tabla `equipo` de NocoDB desde Cumpleaños + usuarios de Pulse) ----------
+const NOMBRE_EQUIPO = "A-) Sync Pulse → NocoDB equipo v1";
+function armarWorkflowEquipo(credId) {
+  const credHeader = { httpHeaderAuth: { id: credId, name: NOMBRE_CRED } };
+  const nodes = [
+    nodo("Nota", "n8n-nodes-base.stickyNote", 1, { width: 480, height: 200, content: `## Sync Pulse → NocoDB equipo v1\nMantiene la tabla **equipo** de NocoDB (ID-monday, nombre, email, ID-slack, ID-columna-cumpleaños) desde Pulse: tablero Cumpleaños + usuarios asignados a clientes. Antes lo hacía Migración v5 con los webhooks del tablero Cumpleaños de Monday.\n\nWebhook \`pulse-equipo\` (Pulse avisa al tocar Cumpleaños) + cada noche 5:00. Nunca borra filas. Fuente: scripts/n8n-sync-pulse.mjs.` }, pos(0, -2)),
+    nodo("Webhook Pulse equipo", "n8n-nodes-base.webhook", 2.1, { httpMethod: "POST", path: "pulse-equipo", authentication: "headerAuth", responseMode: "onReceived", options: {} }, pos(0, 0), { webhookId: "pulse-equipo-sync", credentials: credHeader }),
+    nodo("Cada noche 5:00", "n8n-nodes-base.scheduleTrigger", 1.2, { rule: { interval: [{ triggerAtHour: 5, triggerAtMinute: 0 }] } }, pos(0, 1)),
+    nodo("Traer equipo de Pulse", "n8n-nodes-base.httpRequest", 4.2, { url: `${URL_PULSE}/api/pulse/n8n/equipo`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", options: { timeout: 60000 } }, pos(1, 0), { credentials: credHeader }),
+    nocoHttp("Equipo en NocoDB", "GET", `${NOCODB}/tables/${T.equipo}/records?limit=500`, pos(2, 0), null, { onError: "stopWorkflow" }),
+    nodo("Decidir equipo", "n8n-nodes-base.code", 2, { jsCode: `const pulse = $('Traer equipo de Pulse').first().json;
+const personas = Array.isArray(pulse.personas) ? pulse.personas : [];
+const filas = ($input.first().json.list) || [];
+const norm = (s) => String(s || '').trim().toLowerCase();
+const out = [];
+for (const p of personas) {
+  const fila = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))
+    || (p.email && filas.find((f) => norm(f.email) === norm(p.email)))
+    || (p.idColumnaCumpleanos && filas.find((f) => String(f['ID-columna-cumpleaños'] || '') === String(p.idColumnaCumpleanos)))
+    || null;
+  const campos = { nombre: p.nombre || '', email: p.email || '', 'ID-slack': p.idSlack || '' };
+  if (p.idMonday) campos['ID-monday'] = String(p.idMonday);
+  if (p.idColumnaCumpleanos) campos['ID-columna-cumpleaños'] = String(p.idColumnaCumpleanos);
+  let accion = fila ? 'actualizar' : 'crear';
+  const cambios = fila ? Object.keys(campos).filter((k) => String(fila[k] ?? '') !== String(campos[k] ?? '')) : Object.keys(campos);
+  if (fila && !cambios.length) accion = 'nada';
+  if (pulse.simulacion && accion !== 'nada') accion = 'simular';
+  out.push({ json: { accion, filaId: fila ? fila.Id : null, campos, cambios, resumen: accion + ' ' + (p.nombre || '') + (cambios.length ? ' [' + cambios.join(', ') + ']' : '') } });
+}
+return out;` }, pos(3, 0)),
+    nodo("¿Qué hacer?", "n8n-nodes-base.switch", 3.2, { rules: { values: ["crear", "actualizar"].map((k) => ({ conditions: { options: opts, conditions: [cond("={{ $json.accion }}", k)], combinator: "and" }, renameOutput: true, outputKey: k })) }, options: { fallbackOutput: "extra" } }, pos(4, 0)),
+    nocoHttp("Crear persona", "POST", `${NOCODB}/tables/${T.equipo}/records`, pos(5, -1), "={{ JSON.stringify($json.campos) }}"),
+    nocoHttp("Actualizar persona", "PATCH", `${NOCODB}/tables/${T.equipo}/records`, pos(5, 0), "={{ JSON.stringify([{ Id: $json.filaId, ...$json.campos }]) }}"),
+    nodo("Nada / simulación", "n8n-nodes-base.noOp", 1, {}, pos(5, 1)),
+  ];
+  const to = (n, i = 0) => ({ node: n, type: "main", index: i });
+  const connections = {
+    "Webhook Pulse equipo": { main: [[to("Traer equipo de Pulse")]] },
+    "Cada noche 5:00": { main: [[to("Traer equipo de Pulse")]] },
+    "Traer equipo de Pulse": { main: [[to("Equipo en NocoDB")]] },
+    "Equipo en NocoDB": { main: [[to("Decidir equipo")]] },
+    "Decidir equipo": { main: [[to("¿Qué hacer?")]] },
+    "¿Qué hacer?": { main: [[to("Crear persona")], [to("Actualizar persona")], [to("Nada / simulación")]] },
+  };
+  return { name: NOMBRE_EQUIPO, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW } };
+}
+
+// ---------- repunte de los workflows que leían Monday directo ----------
+// Cobros y Recordatorio: HTTP a Monday (GraphQL) → HTTP a Pulse (misma forma de items); los nodos
+// "Get an item" de Monday se puentean (Pulse ya trae column.title); los índices fijos pasan a búsqueda
+// por título. Supervisor: "Get an item" de Monday → HTTP a Pulse por idMonday.
+const REPUNTES = {
+  gYdcVTS1dmuZRp0W: { nombre: "Agente Cobros", tipo: "tesoreria" },
+  "3DeJXvNmTFQ44FIF": { nombre: "Recordatorio60-90DiasTrabajandoJuntos", tipo: "tesoreria" },
+  HvMsL5j65etc7ZBq: { nombre: "E-) Agente supervisor", tipo: "supervisor" },
+};
+const POR_TITULO = (titulo) => `column_values.find(c => c.column && c.column.title === '${titulo}')`;
+function repuntar(w, credId, tipo) {
+  const credHeader = { httpHeaderAuth: { id: credId, name: NOMBRE_CRED } };
+  const byName = Object.fromEntries(w.nodes.map((n) => [n.name, n]));
+  const reconectar = (quitar) => {
+    // Une lo que entraba a `quitar` con lo que salía de él y elimina el nodo.
+    const salidas = (w.connections[quitar]?.main?.[0]) || [];
+    for (const [src, c] of Object.entries(w.connections)) for (const rama of c.main || []) {
+      for (let i = rama.length - 1; i >= 0; i--) if (rama[i].node === quitar) rama.splice(i, 1, ...salidas);
+    }
+    delete w.connections[quitar];
+    w.nodes = w.nodes.filter((n) => n.name !== quitar);
+  };
+  const nota = (n, txt) => { n.notes = `Nico 21/sep/2026: ${txt}`; n.notesInFlow = true; };
+  if (tipo === "tesoreria") {
+    const h = byName["HTTP Request"];
+    // Mismos filtros que la query GraphQL: sin "saldo completo" en COMENTARIOS y fuera del grupo INACTIVOS.
+    h.parameters = { url: `${URL_PULSE}/api/pulse/n8n/tablero/tesoreria`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", options: { timeout: 60000 } };
+    h.credentials = { httpHeaderAuth: credHeader.httpHeaderAuth };
+    nota(h, "antes leía el tablero TESORERÍA de Monday (GraphQL); ahora lee Pulse con la misma forma.");
+    byName["Split Out"].parameters.fieldToSplitOut = "items";
+    const filtroPulse = nodo("Filtro tesorería (Pulse)", "n8n-nodes-base.filter", 2.2, { conditions: { options: opts, conditions: [
+      cond("={{ $json.group.id }}", "group_mkqxsqsk", "notEquals"),
+      cond(`={{ !/saldo completo/i.test(String(($json.${POR_TITULO("COMENTARIOS")} || {}).text || '')) }}`, "", "true", "boolean"),
+    ], combinator: "and" }, options: {} }, [byName["Split Out"].position[0] + 200, byName["Split Out"].position[1] + 200]);
+    w.nodes.push(filtroPulse);
+    const despuesDeSplit = w.connections["Split Out"].main[0];
+    w.connections["Split Out"] = { main: [[{ node: filtroPulse.name, type: "main", index: 0 }]] };
+    w.connections[filtroPulse.name] = { main: [despuesDeSplit] };
+    for (const n of w.nodes) {
+      const s = JSON.stringify(n.parameters)
+        .replaceAll("$json.column_values[5].text", `($json.${POR_TITULO("Próximo pago")} || {}).text`)
+        .replaceAll("$json.column_values[3].display_value", `String(($json.${POR_TITULO("finaliza acuerdo")} || {}).display_value || '')`);
+      n.parameters = JSON.parse(s);
+    }
+    for (const q of ["Get an item1", "Get an item"]) if (byName[q]) reconectar(q);
+  }
+  if (tipo === "supervisor") {
+    const g = byName["Get an item"];
+    g.type = "n8n-nodes-base.httpRequest"; g.typeVersion = 4.2;
+    g.parameters = { url: `=${URL_PULSE}/api/pulse/n8n/tablero/level-up-media?idMonday={{ encodeURIComponent($json['ID-monday']) }}`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", options: { timeout: 60000 } };
+    g.credentials = { httpHeaderAuth: credHeader.httpHeaderAuth };
+    nota(g, "antes leía el item de Monday; ahora lee Pulse (misma forma).");
+    // El item viene envuelto: { items: [item] } → se aplana para que el resto vea column_values/name/id.
+    const aplanar = nodo("Item de Pulse", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: "const it = (($json.items) || [])[0];\nreturn { json: it || { id: null, name: '', column_values: [] } };" }, [g.position[0] + 220, g.position[1]]);
+    w.nodes.push(aplanar);
+    const salidas = w.connections["Get an item"].main[0];
+    w.connections["Get an item"] = { main: [[{ node: aplanar.name, type: "main", index: 0 }]] };
+    w.connections[aplanar.name] = { main: [salidas] };
+    const code = byName["Code in JavaScript"];
+    code.parameters.jsCode = code.parameters.jsCode.replace(
+      /if \(\$input\.item\.json\.column_values && \$input\.item\.json\.column_values\[3\]\) \{\s*userMonthlyBudget = parseFloat\(\$input\.item\.json\.column_values\[3\]\.text \|\| "0"\);\s*\}/,
+      `const colP = ($input.item.json.column_values || []).find(c => c.column && c.column.title === 'Presupuesto mensual');\n    if (colP) { userMonthlyBudget = parseFloat(String(colP.text || "0").replace(/[^0-9.]/g, "") || "0"); }`,
+    );
+    nota(code, "presupuesto por título de columna (Pulse) en vez del índice 3 de Monday.");
+  }
+  return w;
+}
+
 async function credencial() {
   const est = leerEstado();
   if (est.credencialId) return est.credencialId;
@@ -256,6 +371,40 @@ try {
   } else if (cmd === "probar") {
     const r = await fetch(`${URL_N8N}/webhook/pulse-cliente`, { method: "POST", headers: { "Content-Type": "application/json", "x-pulse-secret": SECRETO }, body: JSON.stringify({ origen: "pulse", motivo: "prueba", simulacion: true, enviadoEl: new Date().toISOString(), clientes: [{ idMonday: "pulse:prueba-nico", pulseId: "prueba", nombre: "Cliente de prueba (Nico)", empresa: "Prueba", industria: "Otro", idCuenta: "", email: "prueba@example.com", telefono: "7875550000", admin: { idMonday: "68180590", nombre: "Carilin Consuegra", email: "carilin@levelupmediapr.net" }, traffiker: { idMonday: null, nombre: null, email: null }, activo: true, grupo: "CLIENTE ACTIVO", actualizadoEl: new Date().toISOString() }] }) });
     console.log(`Webhook → ${r.status} ${(await r.text()).slice(0, 200)}`);
+  } else if (cmd === "crear-equipo") {
+    const credId = await credencial();
+    const w = armarWorkflowEquipo(credId);
+    fs.writeFileSync(path.join(path.dirname(PLANTILLA), "sync-pulse-equipo.json"), JSON.stringify(w, null, 2) + "\n");
+    const est = leerEstado();
+    if (est.equipoWorkflowId) {
+      const r = await api(`/workflows/${est.equipoWorkflowId}`, { method: "PUT", body: JSON.stringify(w) });
+      console.log(`Equipo actualizado: ${r.name} (activo=${r.active})`);
+    } else {
+      const r = await api("/workflows", { method: "POST", body: JSON.stringify(w) });
+      guardarEstado({ equipoWorkflowId: r.id });
+      console.log(`Equipo creado (inactivo): ${r.name} → ${URL_N8N}/workflow/${r.id}`);
+    }
+  } else if (cmd === "activar-equipo") {
+    const est = leerEstado();
+    const r = await api(`/workflows/${est.equipoWorkflowId}/activate`, { method: "POST" });
+    console.log(`Activado: ${r.name}`);
+  } else if (cmd === "repuntar") {
+    // Parchea los 3 workflows que leían Monday para que lean Pulse y los sube (PUT). Antes exporta
+    // (scripts/n8n.mjs exportar) para partir del JSON actual del servidor.
+    const credId = await credencial();
+    const dir = path.join(ROOT, "data/n8n/workflows");
+    for (const [id, r] of Object.entries(REPUNTES)) {
+      const archivo = fs.readdirSync(dir).find((f) => f.startsWith(`${id}-`));
+      if (!archivo) { console.log(`✗ ${r.nombre}: no está exportado`); continue; }
+      const w = JSON.parse(fs.readFileSync(path.join(dir, archivo), "utf8"));
+      if (JSON.stringify(w).includes("/api/pulse/n8n/")) { console.log(`= ${r.nombre}: ya apunta a Pulse`); continue; }
+      const nuevo = repuntar(w, credId, r.tipo);
+      fs.writeFileSync(path.join(path.dirname(PLANTILLA), `repunte-${id}.json`), JSON.stringify(nuevo, null, 2) + "\n");
+      const PERMITIDAS = ["saveExecutionProgress", "saveManualExecutions", "saveDataErrorExecution", "saveDataSuccessExecution", "executionTimeout", "errorWorkflow", "timezone", "executionOrder"];
+      const settings = Object.fromEntries(Object.entries(nuevo.settings || {}).filter(([k]) => PERMITIDAS.includes(k)));
+      const res = await api(`/workflows/${id}`, { method: "PUT", body: JSON.stringify({ name: nuevo.name, nodes: nuevo.nodes, connections: nuevo.connections, settings, staticData: nuevo.staticData ?? null }) });
+      console.log(`✓ ${res.name} → Pulse (activo=${res.active})`);
+    }
   } else if (cmd === "reporte") {
     // Qué decidió n8n en las últimas ejecuciones (sirve igual en simulación): crear/actualizar/borrar
     // por cliente, con los campos que cambian. Es el "diff" Pulse vs NocoDB de la doble corrida.
@@ -277,5 +426,5 @@ try {
       const err = full.data?.resultData?.error;
       if (err) console.log(`  ERROR en "${full.data.resultData.lastNodeExecuted}": ${err.message}`);
     }
-  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n]"); process.exit(1); }
+  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n] | crear-equipo | activar-equipo | repuntar"); process.exit(1); }
 } catch (e) { console.error(`sync-pulse: ${e.message}`); process.exit(1); }
