@@ -3,7 +3,7 @@ fecha: 2026-09-21
 fuente: manual
 unidad: portafolio
 tags: [telegram, botfather, max, meta-ads, railway]
-estado: guía para Elvin · el servicio `max` ya existe en Railway (proyecto puente-telegram) con todas las variables menos el token del bot
+estado: HECHO 21/sep/2026 · bot @eamarket_max_bot · servicio `max` en Railway con todas las variables
 ---
 
 # Conectar a MAX (tu media buyer) en Telegram — 5 minutos desde el celular
