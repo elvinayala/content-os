@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { secretoValido } from "@/lib/pulse/seguridad";
+
 import { exportarTablero } from "@/lib/pulse/export-n8n";
 
 // Un tablero de Pulse con la forma de la API de Monday (items[].column_values con column.title,
@@ -9,8 +11,7 @@ import { exportarTablero } from "@/lib/pulse/export-n8n";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: string }> }) {
-  const secreto = process.env.PULSE_N8N_SECRET;
-  if (!secreto || req.headers.get("x-pulse-secret") !== secreto) {
+  if (!secretoValido(req.headers.get("x-pulse-secret"), process.env.PULSE_N8N_SECRET)) {
     return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
   }
   const { slug } = await ctx.params;

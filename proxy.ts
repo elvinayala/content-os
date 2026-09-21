@@ -40,6 +40,9 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/telegram") return NextResponse.next();
   // Snapshots de data/ para sincronizar Mac ↔ Railway (valida CRON_SECRET adentro).
   if (pathname === "/api/snapshot") return NextResponse.next();
+  // Buzón entre agentes (Sofi ↔ Nico ↔ Max ↔ Lola), lo consultan los puentes en Railway
+  // (valida CRON_SECRET adentro).
+  if (pathname === "/api/agentes") return NextResponse.next();
 
   // Webhook de Calendly (citas de los closers → Pipedrive): lo llama Calendly,
   // sin cookie; se autentica por firma adentro (CALENDLY_WEBHOOK_SIGNING_KEY).

@@ -41,7 +41,11 @@ export default async function PulseLoginPage({
               <Label htmlFor="password">Contraseña</Label>
               <Input id="password" type="password" name="password" required />
             </div>
-            {error ? <p className="text-sm text-destructive">E-mail o contraseña incorrectos.</p> : null}
+            {error ? (
+              <p className="text-sm text-destructive">
+                {error === "bloqueado" ? "Demasiados intentos. Esperá 15 minutos y volvé a probar." : error === "limite" ? "Demasiadas solicitudes desde tu conexión. Probá en un minuto." : "E-mail o contraseña incorrectos."}
+              </p>
+            ) : null}
             <Button type="submit" className="mt-1 w-full">
               Entrar
             </Button>

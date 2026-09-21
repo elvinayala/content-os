@@ -5,6 +5,7 @@ import { refresh } from "next/cache";
 import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
+import { registrarEvento } from "@/lib/pulse/seguridad";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
 import type { Actividad, ArchivoPulse, ColorPulse, Columna, Grupo, Item, SettingsColumna, TipoColumna, ValorCelda } from "@/lib/pulse/types";
 import { validarValor } from "@/lib/pulse/valores";
@@ -180,8 +181,9 @@ export async function actualizarBoardAction(p: { boardId: string; patch: { nombr
 
 export async function guardarAccesoBoardAction(p: { boardId: string; privado: boolean; miembros: string[] }): Promise<R> {
   return envolver(async () => {
-    await requiereAdmin();
+    const admin = await requiereAdmin();
     await repo.guardarAccesoBoard(p.boardId, { privado: p.privado, miembros: [...new Set(p.miembros)] });
+    await registrarEvento({ tipo: "acceso_tablero", actorId: admin.id, email: admin.email, detalle: `${p.boardId}: ${p.privado ? `privado (${p.miembros.length} miembros)` : "para todos"}` });
     refresh();
     return {};
   });
@@ -189,8 +191,9 @@ export async function guardarAccesoBoardAction(p: { boardId: string; privado: bo
 
 export async function eliminarBoardAction(p: { boardId: string }): Promise<R> {
   return envolver(async () => {
-    await requiereAdmin();
+    const admin = await requiereAdmin();
     await repo.eliminarBoard(p.boardId);
+    await registrarEvento({ tipo: "tablero_eliminado", actorId: admin.id, email: admin.email, detalle: p.boardId });
     refresh();
     return {};
   });

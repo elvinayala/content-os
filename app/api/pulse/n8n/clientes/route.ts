@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { secretoValido } from "@/lib/pulse/seguridad";
+
 import { armarClientes } from "@/lib/pulse/puente-n8n";
 
 // Export para n8n ("A-) Sync Pulse → NocoDB v1", corrida nocturna): todos los clientes del
@@ -9,8 +11,7 @@ import { armarClientes } from "@/lib/pulse/puente-n8n";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const secreto = process.env.PULSE_N8N_SECRET;
-  if (!secreto || req.headers.get("x-pulse-secret") !== secreto) {
+  if (!secretoValido(req.headers.get("x-pulse-secret"), process.env.PULSE_N8N_SECRET)) {
     return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
   }
   const clientes = await armarClientes();

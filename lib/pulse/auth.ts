@@ -36,7 +36,8 @@ export const usuarioActual = cache(async (): Promise<UsuarioPulse | null> => {
     const u = await d.query.pulseUsers.findFirst({
       where: and(eq(pulseUsers.id, s.userId), eq(pulseUsers.activo, true)),
     });
-    if (u) return aUsuario(u);
+    // Sesión emitida antes del último cambio de clave/rol → no vale.
+    if (u && s.iat * 1000 >= new Date(u.sesionesDesde).getTime() - 1000) return aUsuario(u);
   }
   if (await sesionValida(jar.get(COOKIE_SESION)?.value)) {
     const email = process.env.PULSE_ADMIN_EMAIL?.toLowerCase();

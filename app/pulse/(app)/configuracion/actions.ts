@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 
 import { requiereGestor } from "@/lib/pulse/auth";
+import { cerrarSesiones, registrarEvento } from "@/lib/pulse/seguridad";
 import { hashPassword } from "@/lib/pulse/password";
 import { actualizarUsuario, buscarUsuarioPorEmail, crearUsuario, leerUsuario } from "@/lib/pulse/repo";
 import type { ColorPulse, RolUsuario } from "@/lib/pulse/types";
@@ -20,9 +21,10 @@ export async function crearUsuarioAction(formData: FormData): Promise<R> {
     if (rol === "admin" && gestor.rol !== "admin") return { ok: false, error: "Solo un admin puede crear admins" };
     const color = String(formData.get("color") ?? "blue") as ColorPulse;
     if (!email || !nombre) return { ok: false, error: "Faltan nombre o e-mail" };
-    if (password.length < 6) return { ok: false, error: "La clave debe tener al menos 6 caracteres" };
+    if (password.length < 8) return { ok: false, error: "La clave debe tener al menos 8 caracteres" };
     if (await buscarUsuarioPorEmail(email)) return { ok: false, error: "Ya existe un usuario con ese e-mail" };
-    await crearUsuario({ email, nombre, rol, passwordHash: hashPassword(password), color });
+    const nuevo = await crearUsuario({ email, nombre, rol, passwordHash: hashPassword(password), color });
+    await registrarEvento({ tipo: "usuario_creado", email, userId: nuevo.id, actorId: gestor.id, detalle: rol });
     refresh();
     return { ok: true };
   } catch (e) {
@@ -44,11 +46,25 @@ export async function actualizarUsuarioAction(p: { id: string; nombre?: string; 
     if (p.activo !== undefined) patch.activo = p.activo;
     if (p.color !== undefined) patch.color = p.color;
     if (p.password !== undefined) {
-      if (p.password.length < 6) return { ok: false, error: "La clave debe tener al menos 6 caracteres" };
+      if (p.password.length < 8) return { ok: false, error: "La clave debe tener al menos 8 caracteres" };
       patch.passwordHash = hashPassword(p.password);
       patch.activo = patch.activo ?? true;
     }
     await actualizarUsuario(p.id, patch);
+    // Cambios sensibles cierran las sesiones abiertas de ese usuario y quedan registrados.
+    if (p.password !== undefined) {
+      await cerrarSesiones(p.id);
+      await registrarEvento({ tipo: "clave_cambiada", email: objetivo.email, userId: p.id, actorId: gestor.id, detalle: gestor.id === p.id ? "propia" : `por ${gestor.email}` });
+    }
+    if (p.rol !== undefined && p.rol !== objetivo.rol) {
+      await cerrarSesiones(p.id);
+      await registrarEvento({ tipo: "rol_cambiado", email: objetivo.email, userId: p.id, actorId: gestor.id, detalle: `${objetivo.rol} → ${p.rol}` });
+    }
+    if (p.activo === false) {
+      await cerrarSesiones(p.id);
+      await registrarEvento({ tipo: "usuario_desactivado", email: objetivo.email, userId: p.id, actorId: gestor.id });
+    }
+    if (p.activo === true && !objetivo.activo) await registrarEvento({ tipo: "usuario_activado", email: objetivo.email, userId: p.id, actorId: gestor.id });
     refresh();
     return { ok: true };
   } catch (e) {

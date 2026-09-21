@@ -35,6 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar } from "./agentes.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -53,6 +54,9 @@ const ES_MAX = BOT === "max";
 //   Entregas. Si no hay sesión de Higgsfield, encola el pedido en data/pedidos-lola.json y la tarea
 //   lola-atender-pedidos (app de Claude, cada 30 min) lo renderiza. Cerebro: vault/ceo/cerebro-lola.md.
 const ES_LOLA = BOT === "lola";
+// Nombre de este agente en el buzón compartido (scripts/agentes.mjs). Sin PUENTE_BOT es Sofi.
+const YO = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
+const NOMBRES = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", elvin: "Elvin" };
 // En Railway el estado vive en el volumen /estado (PUENTE_ESTADO_DIR); en la Mac, en data/.
 const ESTADO = path.join(process.env.PUENTE_ESTADO_DIR || path.join(ROOT, "data"), ES_NICO ? "telegram-puente-nico.json" : ES_MAX ? "telegram-puente-max.json" : ES_LOLA ? "telegram-puente-lola.json" : "telegram-puente.json");
 const EN_NUBE = process.env.PUENTE_EN_NUBE === "1";
@@ -105,6 +109,16 @@ const PERSONAS = {
   nico: "Eres NICO, el vibecoder de Elvin (ingeniero de guardia de todas sus plataformas) y socio técnico de Sofi. Elvin te escribe desde el celular. ANTES de tocar nada lee vault/ceo/cerebro-nico.md y data/plataformas.json; el repo de cada plataforma está en ese inventario (tienes acceso a todos: Bori/heybori.ai, Plagas, Cortex, Resuelto, voz Retell, quiz funnels, Content OS) y cada uno tiene su CLAUDE.md o TRASPASO.md con las trampas que ya rompieron producción: léelo primero. Haz el ajuste completo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo (salud HTTP, logs) → anotar en data/nico-bitacora.json {fecha, plataforma, que, porque, verificado, commit}. Nunca digas que algo quedó si no lo verificaste. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/tablas/archivos, migraciones destructivas, tocar cobros/Stripe/precios, editar prompts de agentes de voz en producción, imprimir o pegar secretos, escribirle a clientes/equipo/Heidy (solo le hablas a Elvin), activar ads, redeploy de Cortex con renders en cola. Si dudas entre dos caminos, el reversible. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué pasó, qué hiciste, qué verificaste, qué falta. Firma — Nico.",
 };
 
+// Cómo se comunican (Elvin, 20/sep/2026: "los agentes tienen que poder hablar entre sí y con mi
+// equipo"). Se agrega al system prompt de TODAS las personas.
+const COMUNICACION = `
+
+CÓMO TE COMUNICAS (herramienta: node scripts/agentes.mjs — ya tienes permiso para correrla):
+- Con otro agente (Sofi = contenido/producción · Nico = código y plataformas · Max = Meta Ads · Lola = flyers/artes/videos/guiones con IA): \`node scripts/agentes.mjs mensaje <sofi|nico|max|lola> "<pedido claro, con contexto y qué esperas de vuelta>"\`. Le llega a su buzón, lo atiende en ≤ 1 min y su respuesta cae en TU buzón (\`node scripts/agentes.mjs buzon\`). Úsalo cuando el pedido de Elvin necesita a otro (ej. Sofi necesita un arreglo técnico → Nico; Max necesita un creativo → Lola; Nico ve que algo afecta contenido → Sofi). Delega y dile a Elvin que lo delegaste; no inventes que el otro ya lo hizo.
+- Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y responde con \`node scripts/agentes.mjs atendido <id> "<respuesta corta con el resultado o lo que falta>"\`. Si es una respuesta a algo que tú pediste (dice "responde a #n"), tómala y sigue tu trabajo; no abras un ping-pong.
+- Con el equipo humano de Elvin (Carilin, Aure, Jessica, Juan Diego, María del Carmen, Heidy, Yaileen, David…; lista: \`node scripts/agentes.mjs equipo\`): \`node scripts/agentes.mjs slack <nombre> "<texto>"\` manda un DM por Slack firmado con tu nombre. SOLO dentro de lo que tu cerebro permite (Sofi: logística con Aure/Carilin; Max: trazabilidad con Aure; Nico y Lola: nada sin OK de Elvin) y NUNCA a clientes ni con secretos. Tuteo de Puerto Rico, corto, con contexto de por qué escribes.
+- Con Elvin: \`node scripts/agentes.mjs elvin "<texto>"\` (Telegram + Slack). Todo mensaje entre agentes o al equipo queda espejado en el DM de Slack de Elvin: escribe como si él lo leyera.`;
+
 // Repos extra que Nico puede tocar (--add-dir), sacados del inventario. Solo los que existen.
 // En la nube (Railway) no existen las rutas de la Mac: cada plataforma con campo `github` vive
 // clonada en NICO_REPOS_DIR/<id> (las clona scripts/nico-nube.sh al arrancar).
@@ -154,7 +168,7 @@ function gitSubir(motivo) {
 
 // Herramientas permitidas en modo seguro: editar el repo y correr SOLO sus scripts.
 const SEGURO = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch",
-  "Bash(node scripts/*)", "Bash(bash scripts/deploy-snapshots.sh*)", "Bash(npm test*)", "Bash(npx tsc*)", "Bash(git status*)", "Bash(git diff*)"];
+  "Bash(node scripts/*)", "Bash(node scripts/agentes.mjs*)", "Bash(bash scripts/deploy-snapshots.sh*)", "Bash(npm test*)", "Bash(npx tsc*)", "Bash(git status*)", "Bash(git diff*)"];
 
 // Corre Claude Code en modo stream-json para poder contar qué está haciendo (herramientas,
 // texto parcial) mientras trabaja. onProgreso recibe líneas cortas ("leyendo data/estudio.json").
@@ -163,12 +177,12 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso) {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
     const modo = ES_NICO ? "total" : ES_MAX || ES_LOLA ? "seguro" : env("PUENTE_MODO") || "seguro";
-    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? "60" : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", PERSONAS[persona] || PERSONAS.claude];
+    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? "60" : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
     if (modo === "total") args.push("--dangerously-skip-permissions");
     // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
-    else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/higgsfield.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
+    else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/higgsfield.mjs*)", "Bash(node scripts/agentes.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
     // Lola: lee el vault, escribe en data/ (entregas, pedidos) y solo corre Higgsfield + validar-voz.
-    else if (ES_LOLA) args.push("--permission-mode", "acceptEdits", "--allowedTools", "Read", "Glob", "Grep", "Edit", "Write", "Bash(node scripts/higgsfield.mjs*)", "Bash(node scripts/validar-voz.mjs*)", "Bash(node -e*)", "--disallowedTools", "WebFetch", "WebSearch");
+    else if (ES_LOLA) args.push("--permission-mode", "acceptEdits", "--allowedTools", "Read", "Glob", "Grep", "Edit", "Write", "Bash(node scripts/higgsfield.mjs*)", "Bash(node scripts/validar-voz.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node -e*)", "--disallowedTools", "WebFetch", "WebSearch");
     else args.push("--permission-mode", "acceptEdits", "--allowedTools", ...SEGURO);
     if (ES_NICO) for (const d of dirsNico()) args.push("--add-dir", d);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
@@ -210,7 +224,7 @@ async function respaldoAPI(prompt, persona) {
   try { contexto = fs.readFileSync(path.join(ROOT, "vault/ceo/cerebro-sofi.md"), "utf8").slice(0, 8000) + "\n\nESTADO: " + fs.readFileSync(path.join(ROOT, "data/estudio.json"), "utf8").slice(0, 6000); } catch {}
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model: "claude-sonnet-5", max_tokens: 900, system: (PERSONAS[persona] || PERSONAS.claude) + "\n(Modo respaldo: no tenés herramientas ahora; respondé con lo que sabés y decí qué harías.)\n\n" + contexto, messages: [{ role: "user", content: prompt }] }), signal: AbortSignal.timeout(60000) });
+      body: JSON.stringify({ model: "claude-sonnet-5", max_tokens: 900, system: (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION + "\n(Modo respaldo: no tenés herramientas ahora; respondé con lo que sabés y decí qué harías.)\n\n" + contexto, messages: [{ role: "user", content: prompt }] }), signal: AbortSignal.timeout(60000) });
     const j = await r.json(); return j.content?.find((c) => c.type === "text")?.text || "";
   } catch (e) { LOG("respaldo API:", e.message); return ""; }
 }
@@ -302,6 +316,49 @@ async function procesar(token, chat, texto, st) {
   }
 }
 
+// Un solo Claude a la vez por agente: Telegram y el buzón comparten la sesión del día, y dos
+// `--resume` simultáneos se pisan. Todo pasa por esta cola.
+let colaClaude = Promise.resolve();
+function enSerie(fn) { const r = colaClaude.then(fn, fn); colaClaude = r.catch(() => {}); return r; }
+
+// El buzón: cada ~20 s mira si otro agente le dejó algo y lo atiende como si fuera un mensaje
+// de Telegram (misma persona, misma sesión). La respuesta vuelve al buzón del que preguntó.
+async function atenderBuzon(token, chatCEO, st) {
+  let lista;
+  try { lista = await buzonPendientes(YO); } catch (e) { LOG("buzón:", e.message.slice(0, 120)); return; }
+  for (const m of lista) {
+    try { await buzonMarcar(m.id, "en-curso"); } catch {}
+    const de = NOMBRES[m.de] || m.de;
+    const esRespuesta = Boolean(m.hilo);
+    const prompt = `[Buzón · de ${de} #${m.id}${esRespuesta ? ` · responde a #${m.hilo}` : ""}]\n${m.texto}\n\n` +
+      (esRespuesta
+        ? `Es la respuesta de ${de} a algo que pediste: úsala para seguir tu trabajo. Marca este mensaje con \`node scripts/agentes.mjs atendido ${m.id}\` (sin texto) salvo que de verdad necesites pedirle algo más. Si el resultado le importa a Elvin, avísale con \`node scripts/agentes.mjs elvin "…"\`.`
+        : `Haz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`.`);
+    LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
+    const hoy = new Date().toISOString().slice(0, 10);
+    const nueva = !st.sesion || st.sesionDia !== hoy;
+    if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
+    const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
+    let r = await correrClaude(prompt, persona, st.sesion, nueva, null);
+    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, null); }
+    const resp = (r.out || "").trim();
+    st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona, de: m.de, prompt: m.texto.slice(0, 300), resp: resp.slice(0, 300) }];
+    guardarEstado(st);
+    // Si Claude no cerró el mensaje él mismo, lo cerramos con su respuesta (y se la mandamos al
+    // que preguntó, salvo que fuera ya una respuesta: ahí no hay ping-pong).
+    try {
+      await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
+      if (!esRespuesta && resp) await buzonEnviar(YO, m.de, resp.slice(0, 4000), m.id);
+    } catch (e) { LOG("buzón cierre:", e.message.slice(0, 120)); }
+    gitSubir(`buzón #${m.id} de ${m.de}`);
+    if (chatCEO && !esRespuesta) await enviar(token, chatCEO, `💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
+  }
+}
+function buzonLoop(token, getChat, st) {
+  const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 20000); };
+  setTimeout(tick, 8000);
+}
+
 async function main() {
   const VAR_TOKEN = ES_NICO ? "TELEGRAM_BOT_TOKEN_NICO" : ES_MAX ? "TELEGRAM_BOT_TOKEN_MAX" : ES_LOLA ? "TELEGRAM_BOT_TOKEN_LOLA" : "TELEGRAM_BOT_TOKEN";
   let token = env(VAR_TOKEN), chatCEO = env("TELEGRAM_CEO_CHAT_ID");
@@ -312,6 +369,7 @@ async function main() {
   // Chequeo de salud del CLI (no bloquea el loop): si falla, queda en el log el porqué.
   correrClaude("Responde solo: ok", "claude", randomUUID(), true).then((r) => LOG("salud claude:", r.code === 0 && r.out ? "ok · " + r.out.slice(0, 40) : "FALLÓ · " + (r.err || "sin salida").slice(0, 300)));
   const st = leerEstado();
+  buzonLoop(token, () => chatCEO || env("TELEGRAM_CEO_CHAT_ID"), st);
   // Vigía: si el polling falla 6 veces seguidas (la red quedó pegada, p. ej. la Mac durmió), el
   // proceso sale y launchd/Railway lo levantan limpio. Sin esto, el 20/sep quedó "vivo" sin oír.
   let fallos = 0;
@@ -329,7 +387,7 @@ async function main() {
           if (msg.text.startsWith("/start") || !chatCEO) await enviar(token, chat, `Tu chat id es ${chat}. Ponlo en TELEGRAM_CEO_CHAT_ID (.env.local) y vuelve a escribirme.`);
           continue;
         }
-        try { await procesar(token, chat, msg.text, st); } catch (e) { LOG("error:", e.message); await enviar(token, chat, `Se rompió algo: ${e.message.slice(0, 300)}`); }
+        try { await enSerie(() => procesar(token, chat, msg.text, st)); } catch (e) { LOG("error:", e.message); await enviar(token, chat, `Se rompió algo: ${e.message.slice(0, 300)}`); }
       }
     } catch (e) {
       LOG("loop:", e.message);

@@ -51,9 +51,30 @@ export const pulseUsers = pgTable(
     activo: boolean("activo").notNull().default(true),
     color: text("color"),
     mondayId: text("monday_id"),
+    // Seguridad: las sesiones emitidas antes de `sesionesDesde` no valen (cambio de clave/rol/
+    // desactivación las cierra); `intentosFallidos` + `bloqueadoHasta` frenan fuerza bruta.
+    sesionesDesde: timestamp("sesiones_desde", { withTimezone: true }).notNull().defaultNow(),
+    intentosFallidos: integer("intentos_fallidos").notNull().default(0),
+    bloqueadoHasta: timestamp("bloqueado_hasta", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("pulse_users_email").on(t.email), uniqueIndex("pulse_users_monday").on(t.mondayId)],
+);
+
+// Registro de eventos de seguridad (login ok/fallido, bloqueos, cambios de clave/rol/acceso).
+export const pulseSecurityLog = pgTable(
+  "pulse_security_log",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tipo: text("tipo").notNull(),
+    email: text("email"),
+    userId: uuid("user_id"),
+    actorId: uuid("actor_id"),
+    ip: text("ip"),
+    detalle: text("detalle"),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("pulse_security_log_at").on(t.at)],
 );
 
 export const pulseBoards = pgTable(
