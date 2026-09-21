@@ -55,7 +55,7 @@
       "que": "VERCEL_TOKEN de Railway estaba muerto (api.vercel.com devolvía user not_found): lo reemplacé por el token válido de la sesión del CLI en la Mac en el servicio puente y dejé nico apuntando por referencia ${{puente.VERCEL_TOKEN}}; redeploy de puente y nico para que lo tomaran",
       "porque": "el deploy desde Telegram (scripts/deploy-snapshots.sh en el contenedor) fallaba, así que nada de lo que Sofi/Nico cambiaban en data/ o vault/ llegaba a producción",
       "verificado": "sí — dentro del contenedor el token responde OK (elvin@levelupmediapr.net), deploy-snapshots.sh corrió completo desde el puente y aliaseó content-os-chi-seven.vercel.app; /login 200. Ojo: es token de sesión del CLI, si Elvin hace vercel logout se cae (lo durable es un token del dashboard)",
-      "commit": "9192e6a"
+      "commit": "676bea9"
     },
     {
       "fecha": "2026-09-21",
@@ -63,7 +63,7 @@
       "que": "revisado el reclamo de que falta scripts/slack-sofi.mjs: no existe ninguna referencia a ese archivo en el repo, vault/, .claude/, data/ ni en la memoria — la memoria ya cita scripts/agentes.mjs slack. Nada que restituir ni que corregir",
       "porque": "Sofi reportó que la memoria apuntaba a un script perdido",
       "verificado": "sí — grep -rI slack-sofi en todo el repo y en la carpeta de memoria: 0 resultados; SLACK_BOT_TOKEN presente en los 4 servicios y válido (auth.test ok, scopes chat:write + users:read)",
-      "commit": "9192e6a"
+      "commit": "676bea9"
     }
   ],
   "pendientesElvin": [
