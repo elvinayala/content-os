@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-21T18:28:43.531Z",
+  "actualizadoEl": "2026-09-21T18:30:41.756Z",
   "demos": [
     {
       "slug": "skin-clinic-pr",
@@ -14,15 +14,15 @@
       "deckAcademia": "skin-clinic-pr-academia.pptx",
       "portal": {
         "url": "https://content-os-chi-seven.vercel.app/portal/skin-clinic-pr?k=850528a55e0b4c9dd9f068942354d57b",
-        "registradoEl": "2026-09-21T18:28:25.741Z",
+        "registradoEl": "2026-09-21T18:30:41.754Z",
         "agentePreparado": true
       },
       "urls": {
-        "propuesta": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/",
-        "chat": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/chat/",
-        "voz": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/voz/",
-        "landing": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/landing/",
-        "sistema": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/sistema/"
+        "propuesta": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/index.html",
+        "chat": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/chat/index.html",
+        "voz": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/voz/index.html",
+        "landing": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/landing/index.html",
+        "sistema": "https://content-os-chi-seven.vercel.app/demos/skin-clinic-pr/sistema/index.html"
       },
       "hostingRespaldo": "vercel-public"
     }
