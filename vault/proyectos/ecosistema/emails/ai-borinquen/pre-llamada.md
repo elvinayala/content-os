@@ -40,7 +40,7 @@ Somos AI Borinquen: agentes de IA para negocios de Puerto Rico, funcionando en 2
 
 
 ## Día 2 · recordatorio
-**Asunto A:** [SMS/WhatsApp 1 h antes] Tu demo es en 1 hora  
+**Asunto A:** Tu demo es en 1 hora  
 **Asunto B:**   
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`

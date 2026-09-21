@@ -469,3 +469,58 @@ agendas de Instagram** (orgánico + anuncios que Elvin va a meter pronto). Manua
 en [[proyectos/ecosistema/manual-chat-instagram]]. Mensaje para Aure (Directora Comercial,
 Slack U08HA9QCJBG) quedó como **borrador en su DM** para que Elvin lo envíe; Aure se reúne con
 el chat y le entrega el manual.
+
+### 21/sep/2026 · ActiveCampaign ENCENDIDO
+- Cuenta `levelupmediapr17748.activehosted.com` reactivada (Billing la desarchivó el 21/sep,
+  Elvin pagó). Conservó todo lo de julio: **2,484 contactos** (847 Clientes-Pagaron · 1,250
+  Agendados-sin-comprar · 387 No-Show), 15 tags viejos, 14 campos, 2 automatizaciones viejas
+  apagadas y 2 campañas de reagenda en borrador.
+- API key en `.env.local` + Vercel (5 vars) → **deploy hecho**: los cables quiz → AC, Calendly →
+  AC y aprobar-newsletter → AC están vivos en prod.
+- `setup` corrido: listas Level Up (8), AI Borinquen (9), Shadow Operator (10); todos los tags
+  del blueprint; campos Negocio/WhatsApp/Dolor/Score. Prueba: contacto 2488 entró en lista 8
+  con `origen:quiz`.
+- Los 2,484 contactos viejos quedan en sus listas y reciben además `etapa:cliente|no-compro|noshow`
+  + `marca:lu` + `origen:importado` (job por API, ~7,500 llamadas).
+- **Bloqueo real:** el dominio `levelupmediapr.net` figura **Not authenticated** (sin DKIM/SPF
+  de AC; el SPF actual solo incluye ClickFunnels). AC no envía campañas hasta autenticarlo. El
+  DNS está en **domain.com**; el modal de AC (Entri) no responde a automatización → lo hace Elvin
+  a mano (Settings → Advanced → Resolve Issues → Setup manually → pegar 3 registros en domain.com).
+- Las automatizaciones no se crean por API (405): guía para Jessica en
+  `emails/MONTAR-AUTOMATIZACIONES.md`; borrador de Slack para Jessica listo (Elvin lo envía).
+
+### 21/sep/2026 (tarde) · Las 10 automatizaciones de AC montadas SIN Jessica
+Elvin pagó completo y pidió "deja el ecosistema listo" y "¿podemos hacerlo sin Jessica?" → sí.
+- Las 10 automatizaciones se armaron con el **asistente de IA de AC** (caja "Tell us what you
+  want to automate") y luego **todos los emails se reemplazaron** con el copy del vault vía
+  `scripts/activecampaign/cargar-secuencia.mjs` (v1 `message_edit`/`message_add`).
+- Mapa automatización → campañas (AC): **3** LU·Bienvenida (camps 11-15) · **4** LU·Lead a
+  agenda (16-19) · **5** LU·Pre-llamada (20-22) · **6** LU·No show (23-25, renombradas "LU NoShow
+  1-3") · **7** LU·No compro (26-29) · **8** AIB·Bienvenida (41-45 → msgs 57-61) · **9** AIB·Lead a
+  agenda (31-34) · **10** AIB·Pre-llamada (35-37) · **11** AIB·No show (38-40) · **12** AIB·No
+  compro (46-49 → msgs 62-65). Esperas: bienvenida 2/2/3/3 d · lead-agenda 1/2/3 d · no-show
+  1/2 d · no-compro 1 d antes del 1º y 3/5/11 d · pre-llamada 1/1 d. Cada una termina en un
+  **Goal "Agendo"** (tag etapa:agendo → salta al final) y bienvenida agrega `Bienvenida-Terminada`
+  antes del goal (así el que agenda no cae en lead-agenda).
+- **Triggers segmentados por lista** (para que LU y AIB no se pisen con el mismo tag): 4-7 →
+  "Is subscribed to list Level Up Media"; 9-12 → "Is subscribed to list AI Borinquen". 3 y 8
+  disparan por suscripción a la lista, no hace falta.
+- **Gotchas resueltos:** (a) las campañas que crea el asistente nacen `type:automation, status:0`
+  ("in draft, will not be sent") → `PUT /api/3/campaigns/{id}` con
+  `{status:1,type:"single",seriesid:<auto>,addressid:1,laststep:"type"}` las deja listas;
+  (b) `POST campaignMessages` no enlazó 45-49 (quedaron `messageid:0`) → `PUT
+  /api/3/campaignMessages/{campaignid}` con `{campaignid,messageid}`; (c) el asistente cambió
+  AIB·Pre-llamada a "Daily 8 AM" → vuelto a "Tag etapa:agendo is added"; (d) la instancia se
+  satura con ráfagas → 1 llamada a la vez con `--max-time`, nunca en paralelo.
+- Helper de sesión: `scratchpad/ac.mjs v3 <METHOD> <path> [json]` (lee la key de `.env.local`,
+  nunca la imprime).
+- **Las 10 están ACTIVE desde las 4:23 PM.** Prueba e2e: contacto 2490 → lista LU → entró a
+  "LU · Bienvenida" y el email 1 ("Lo que pediste (y quién soy)", Elvin Ayala) salió en 1 min.
+- Dominios: `levelupmediapr.net` tiene los 2 CNAME DKIM de AC en DNS (acdkim1/2) pero AC lo marca
+  "Not authenticated" porque falta el CNAME del mailserver → **Elvin en domain.com:** CNAME
+  `em-4160056` → `cmd.emsend1.com`. `aiborinquen.co` agregado a AC (verificación enviada a
+  hola@aiborinquen.co, hay que hacer clic) → **Elvin en GoDaddy:** 3 CNAME `acdkim1._domainkey` →
+  `dkim.acdkim1.acems1.com`, `acdkim2._domainkey` → `dkim.acdkim2.acems1.com`, `em-4160056` →
+  `cmd.emsend1.com`. Hasta entonces AC envía igual, con peor entregabilidad.
+- Campaña 30 ("¿Listo para escalar tu…", serie 8) quedó huérfana del asistente — no está cableada
+  a ningún bloque; se puede borrar desde Campaigns.

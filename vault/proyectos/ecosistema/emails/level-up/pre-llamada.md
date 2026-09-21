@@ -44,7 +44,7 @@ Si necesitas mover la hora, usa el link de tu confirmación. Nos vemos mañana.
 
 
 ## Día 2 · recordatorio
-**Asunto A:** [SMS/WhatsApp 1 h antes] Tu llamada es en 1 hora  
+**Asunto A:** Tu llamada es en 1 hora  
 **Asunto B:**   
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`
