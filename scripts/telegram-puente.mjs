@@ -35,7 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar } from "./agentes.mjs";
+import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado } from "./agentes.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -346,9 +346,14 @@ async function atenderBuzon(token, chatCEO, st) {
     guardarEstado(st);
     // Si Claude no cerró el mensaje él mismo, lo cerramos con su respuesta (y se la mandamos al
     // que preguntó, salvo que fuera ya una respuesta: ahí no hay ping-pong).
+    // Si Claude ya lo cerró con `agentes.mjs atendido <id> "…"` (que además responde), no se
+    // duplica; solo se cierra lo que quedó abierto.
     try {
-      await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
-      if (!esRespuesta && resp) await buzonEnviar(YO, m.de, resp.slice(0, 4000), m.id);
+      const estado = await buzonEstado(m.id);
+      if (estado !== "atendido" && estado !== "fallido") {
+        await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
+        if (!esRespuesta && resp) await buzonEnviar(YO, m.de, resp.slice(0, 4000), m.id);
+      }
     } catch (e) { LOG("buzón cierre:", e.message.slice(0, 120)); }
     gitSubir(`buzón #${m.id} de ${m.de}`);
     if (chatCEO && !esRespuesta) await enviar(token, chatCEO, `💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});

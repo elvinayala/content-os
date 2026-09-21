@@ -96,6 +96,11 @@ export async function pendientes(agente) {
   const j = await api("GET", { para: agente, pendientes: 1 });
   return j.mensajes || [];
 }
+export async function estadoMensaje(id) {
+  const j = await api("GET", { ultimos: 200 });
+  const m = (j.mensajes || []).find((x) => x.id === Number(id));
+  return m ? m.estado : null;
+}
 export async function marcar(id, estado, respuesta) {
   return api("POST", {}, { id, estado, respuesta });
 }
