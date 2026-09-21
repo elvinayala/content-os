@@ -1,0 +1,353 @@
+{
+  "updatedAt": "2026-07-29T01:06:05.964Z",
+  "createdAt": "2025-07-15T03:21:36.270Z",
+  "id": "fEOX9Q3Szkf6bLQq",
+  "name": "Notificación Error",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bd4e8d3d-b746-4165-88dd-d1d0f9610701",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $json.execution.url }}\nTimestap: {{ $now }}\nNombre del Flujo: {{ $json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\n\n-------------------------------------------",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        96
+      ],
+      "id": "0a8b7eaa-abde-47f6-aaf1-56f19356bf75",
+      "name": "Send a message",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "chatMessage",
+        "chatId": {
+          "__rl": true,
+          "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+          "mode": "list",
+          "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+          "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+        },
+        "contentType": "html",
+        "message": "=----------------------------------------\nSe encontró error en el siguiente flujo:\nCliente: Level Up Media\nTimestap: {{ $now }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\nNodo que fallo: {{ $json.execution.lastNodeExecuted }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+        "options": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "cfaa95ed-5525-4970-89f6-16b573e6f368",
+      "name": "Create chat message",
+      "webhookId": "6845e396-bcb2-478c-8b0b-31f5e973e1fb",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "bQfmQjHop2MXmbIN",
+          "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "365",
+            "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/workflow/zHqLHcFFgClZuUK5/executions/365",
+            "error": {
+              "level": "error",
+              "tags": {},
+              "description": null,
+              "lineNumber": 2,
+              "message": "Module 'luxon' is disallowed [line 2]",
+              "stack": "Error: Module 'luxon' is disallowed\n    at /opt/runners/task-runner-javascript/dist/js-task-runner/require-resolver.js:16:27\n    at VmCodeWrapper (evalmachine.<anonymous>:2:22)\n    at evalmachine.<anonymous>:104:2\n    at Script.runInContext (node:vm:149:12)\n    at runInContext (node:vm:301:6)\n    at result (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:185:61)\n    at new Promise (<anonymous>)\n    at JsTaskRunner.runForAllItems (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:178:34)\n    at JsTaskRunner.executeTask (/opt/runners/task-runner-javascript/dist/js-task-runner/js-task-runner.js:128:26)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+            },
+            "lastNodeExecuted": "Code1",
+            "mode": "trigger",
+            "executionContext": {
+              "version": 1,
+              "establishedAt": 1768247584396,
+              "source": "trigger",
+              "triggerNode": {
+                "name": "Gmail Trigger",
+                "type": "n8n-nodes-base.gmailTrigger"
+              }
+            }
+          },
+          "workflow": {
+            "id": "zHqLHcFFgClZuUK5",
+            "name": "E-) citas automaticas v4"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+  "activeVersionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+  "versionCounter": 31,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "fEOX9Q3Szkf6bLQq",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-07-29T01:06:08.214Z",
+    "createdAt": "2026-07-29T01:06:05.970Z",
+    "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+    "workflowId": "fEOX9Q3Szkf6bLQq",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "bd4e8d3d-b746-4165-88dd-d1d0f9610701",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $json.execution.url }}\nTimestap: {{ $now }}\nNombre del Flujo: {{ $json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\n\n-------------------------------------------",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          240,
+          96
+        ],
+        "id": "0a8b7eaa-abde-47f6-aaf1-56f19356bf75",
+        "name": "Send a message",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "resource": "chatMessage",
+          "chatId": {
+            "__rl": true,
+            "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+            "mode": "list",
+            "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+            "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+          },
+          "contentType": "html",
+          "message": "=----------------------------------------\nSe encontró error en el siguiente flujo:\nCliente: Level Up Media\nTimestap: {{ $now }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\nNodo que fallo: {{ $json.execution.lastNodeExecuted }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+          "options": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.microsoftTeams",
+        "typeVersion": 2,
+        "position": [
+          224,
+          -96
+        ],
+        "id": "cfaa95ed-5525-4970-89f6-16b573e6f368",
+        "name": "Create chat message",
+        "webhookId": "6845e396-bcb2-478c-8b0b-31f5e973e1fb",
+        "credentials": {
+          "microsoftTeamsOAuth2Api": {
+            "id": "bQfmQjHop2MXmbIN",
+            "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 5fa10e63",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-07-29T01:06:08.199Z",
+        "id": 215,
+        "workflowId": "fEOX9Q3Szkf6bLQq",
+        "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

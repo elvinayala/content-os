@@ -1,0 +1,1099 @@
+{
+  "updatedAt": "2026-01-06T14:11:33.825Z",
+  "createdAt": "2025-09-16T23:43:10.367Z",
+  "id": "mVYdARFPPkMyJXNn",
+  "name": "Subworkflows",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        1408
+      ],
+      "id": "75004880-5e78-497c-ad64-55e63acfd1dc",
+      "name": "Todos los dias a las 2pm"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "fields": [],
+          "where": ""
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        304,
+        1408
+      ],
+      "id": "81126fca-f73d-4af1-96b9-492f99b6463e",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        1616
+      ],
+      "id": "81135eeb-a6b9-4d43-bf8c-0f8733ef1051",
+      "name": "Testing"
+    },
+    {
+      "parameters": {
+        "content": "## Pseudo codigo\n- Schedule trigger todos los dias a las 2pm\n- Recolectar los datos de nocoDB.\n- Identificar la ultima fecha del reporte y los dias para el siguiente reporte.\n- Identificar que tipo de reporte se necesita (El de 15 dias o el de 30 dias)\n* Recuperar la información desde la API de Meta.\n* Colocar los datos necesarios en la plantilla de Docs.\n* Descargar el documento como PDF.\n* Enviar el PDF por WhatsApp y por correo electrónico.\n* para el envio de Whatsapp por medio de Evolution API es necesario Un bucle con un nodo wait (2 minutos)\n\n## A Solucionar\n* Donde encuentro el numero de whatsapp para enviarle el mensaje?\n* Donde encuentro el Email para enviar el mensaje?\n* Que informacion necesito de NocoDB y cual informacion de Meta API debo usar para el reporte?\n* Debo hacer un reporte para cada campaign o intentar por medio de codigo unir todos los reportes de cada campaign?\n\n\n\n## Tareas\n* Revisar la info que puedo recuperar de la API de meta.\n* Hacer el Template para el reporte.\n\n\n\n\n\n",
+        "height": 672,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "74a39213-754a-4dd0-b785-6254f4d69bc4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Distincion de tipo de reportes\nTenemos que hacer un metadato boolean en nocoDB llamado reporte-mensual si es verdadero el siguiente reporte sera para los ultimos 30 dias\n\n##### if {{ fecha-creacion + 15 dias == today }} then crear_reporte & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(True)\n\n* Empieza desde la fecha de la creacion de la campaign, 15 dias despues se hace el primer reporte y se actualiza el campo ultimo-reporte a la fecha de hoy y tambien el campo de mo \n\n##### if {{ fecha-ultimo-reporte + 15 == Today && reporte_mensual == false }} then crear_reporte(ultimos 15 dias) & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(True)\n\n##### else:\n\n##### {{ fecha-ultimo-reporte + 15 == Today && reporte_mensual == true }} then crear_reporte(ultimos 30 dias) & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(false)\n\n* Despues se calcula la fecha del ultimo reporte se se suma 15 dias y si ese dia es hoy entonces se ve si toca el reporte mensual o no, segun esos condicionales se envia el reporte correspondiente (15 o 30 dias)",
+        "height": 560,
+        "width": 624,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        1200
+      ],
+      "typeVersion": 1,
+      "id": "bcff12c9-b681-40eb-adf4-ba808889ad0c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "179bed58-dfc5-43ee-a784-11f6ae347c99",
+              "leftValue": "={{ DateTime.fromISO($json['fecha-ultimo-reporte']).plus({days: 15}).toFormat('yyyy-MM-dd') }}",
+              "rightValue": "={{ $today.toFormat('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        1424
+      ],
+      "id": "732e93b3-1538-4c16-8e6a-5609785ee657",
+      "name": "Report Required?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+              "leftValue": "={{ $json['reporte-mensual'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        1424
+      ],
+      "id": "1de35ce6-d476-4b24-877c-8912085ebfd6",
+      "name": "Monthly Report?"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        1232
+      ],
+      "id": "efa94a18-eac6-4861-bc87-a2204189f97a",
+      "name": "Get Campaigns Info (30 Days Report)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        1568
+      ],
+      "id": "38a90b9a-f0fb-46c4-96e0-49b1c8077a95",
+      "name": "Get Campaigns Info (15 Days Report)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        208
+      ],
+      "id": "3131c19a-47e1-4187-9515-d13c9061eb87",
+      "name": "Enviar Reporte (WhatsApp)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "UFSStT4QeviGsJ37",
+          "name": "Evolution account de alex - borrar cuando termine la fase de onboarding"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        208
+      ],
+      "id": "b22fb213-c985-4ffc-a2ed-18b4f7eb73e2",
+      "name": "Wait 2 mins",
+      "webhookId": "15fadeea-0b0f-43e6-8e5b-8cbb3180f261"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $('Get many rows').item.json.Id }}"
+            },
+            {
+              "fieldName": "reporte-mensual",
+              "fieldValue": "False"
+            },
+            {
+              "fieldName": "fecha-ultimo-reporte",
+              "fieldValue": "={{ $today.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2016,
+        1024
+      ],
+      "id": "d190d0ec-eb1f-40a2-8607-bad73ab30c09",
+      "name": "Update (reporte-mensual: False)",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $('Get many rows').item.json.Id }}"
+            },
+            {
+              "fieldName": "reporte-mensual",
+              "fieldValue": "True"
+            },
+            {
+              "fieldName": "fecha-ultimo-reporte",
+              "fieldValue": "={{ $today.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2032,
+        1392
+      ],
+      "id": "ddceb9de-78ff-4388-a885-6ece6d980d56",
+      "name": "Update (reporte-mensual: True)",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "232cc693-1243-4bf0-9d96-37387a1896ec",
+              "leftValue": "={{ DateTime.fromISO($json['fecha-inicio-campaña']).plus({days: 15}).day }}",
+              "rightValue": "={{ $today.day }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        1632
+      ],
+      "id": "38b69240-fbf2-4ace-a591-cea1bb191f73",
+      "name": "Elegible para el Primer Reporte?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        1408
+      ],
+      "id": "dec30d8d-8f01-418f-a7ac-e30a10aeb8df",
+      "name": "Cuenta Publicitaria?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "edb1df48-35d5-4c8f-8a36-f4dbb68a45aa",
+              "leftValue": "={{ $json['fecha-ultimo-reporte'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        1424
+      ],
+      "id": "4f3c3971-c0dc-4c5e-a48c-9ed7acd8e744",
+      "name": "Ultimo Reporte?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"🚨 Error: Falta ID de Cuenta Publicitaria\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se detectó un registro de cliente en NocoDB al que le falta el *ID de la cuenta publicitaria*. No se puede generar un reporte sin esta información.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa || 'Nombre no encontrado' }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta (Problemático):*\\n`No encontrado o vacío`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Actualizar el registro del cliente en la base de datos con el ID de cuenta correcto.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "text": "Error: No Cuenta Publicitaria",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        992,
+        1616
+      ],
+      "id": "3dc6206c-e17e-4439-b682-5c0750aee0f6",
+      "name": "Send Error Message (No Cuenta Publicitaria)",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Imposible Programar Primer Reporte\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"No se pudo determinar cuándo generar el primer reporte para un cliente. El campo `fecha-ultimo-reporte` está vacío, pero también falta la `fecha-inicio-campaña` para poder calcularlo.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json['ID-cuenta-publicitaria'] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🗓️ Fecha Inicio (Problemático):*\\n`No encontrada o vacía`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Asegurarse de que el cliente tenga una `fecha-inicio-campaña` registrada en NocoDB.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "text": "Error: No fecha de inicio",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2048,
+        1792
+      ],
+      "id": "0af5746b-9472-4c37-b5e6-e1e9fc4dfb86",
+      "name": "Send Error Message (No Fecha Inicio)",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "15",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2208,
+        1552
+      ],
+      "id": "0fd62c16-2695-4a1a-bb6c-2f522f666d0a",
+      "name": "Set Report Details (15 Days)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+              "name": "periodo_reporte",
+              "value": "={{ $json.periodo_reporte }}",
+              "type": "string"
+            },
+            {
+              "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+              "name": "fecha_fin_formato",
+              "value": "={{ $json.fecha_fin_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+              "name": "fecha_inicio_formato",
+              "value": "={{ $json.fecha_inicio_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "b1017923-616c-470b-996c-39a539f81961",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2416,
+        1376
+      ],
+      "id": "3070d687-63c9-4f3f-81c1-82a7647e27be",
+      "name": "Get Report Details"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "30",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2208,
+        1216
+      ],
+      "id": "1cdc7b6e-ab93-4cfb-9796-8299f3217e67",
+      "name": "Set Report Details (30 Days)"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "1139828774",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        208
+      ],
+      "id": "8e232dbc-83b3-4bd0-af73-80e94e8a4f1c",
+      "name": "test",
+      "webhookId": "f12daf84-61df-40fd-9a21-8f2ec4dd0942",
+      "credentials": {
+        "telegramApi": {
+          "id": "ctOfYe155yui72ZL",
+          "name": "Pruebas John"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "T1t4OYwVW7QTJ1ml",
+          "mode": "list",
+          "cachedResultName": "Get Campaigns"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2656,
+        1376
+      ],
+      "name": "Call Get Campaigns",
+      "id": "d352d3b1-1c39-45d4-aa17-637557f396c4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8c23b2ad-8b1b-4c28-9a47-74c4dbadef7a",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        1408
+      ],
+      "id": "a0f67431-2ed6-4f8b-8633-d3878d5624a4",
+      "name": "Correo?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Correo de Cliente no Encontrado\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se intentó realizar una acción que requiere el correo electrónico del cliente (como el envío de un reporte), pero este campo se encuentra vacío en la base de datos.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json['ID-cuenta-publicitaria'] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*✉️ Correo Electrónico (Faltante):*\\n`No encontrado o vacío`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Registrar el correo electrónico del cliente en la base de datos (NocoDB) para poder continuar.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "text": "Error: No correo",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        1568
+      ],
+      "id": "177417d9-da3e-4cd0-bf16-1cb7fb011d26",
+      "name": "Send Error Message (No Correo)",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Correo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Testing": {
+      "main": [
+        []
+      ]
+    },
+    "Report Required?": {
+      "main": [
+        [
+          {
+            "node": "Monthly Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Report?": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns Info (30 Days Report)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Campaigns Info (15 Days Report)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (30 Days Report)": {
+      "main": [
+        [
+          {
+            "node": "Update (reporte-mensual: False)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Report Details (30 Days)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (15 Days Report)": {
+      "main": [
+        [
+          {
+            "node": "Update (reporte-mensual: True)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Report Details (15 Days)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 mins": {
+      "main": [
+        [
+          {
+            "node": "test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegible para el Primer Reporte?": {
+      "main": [
+        [
+          {
+            "node": "Monthly Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cuenta Publicitaria?": {
+      "main": [
+        [
+          {
+            "node": "Ultimo Reporte?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Cuenta Publicitaria)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ultimo Reporte?": {
+      "main": [
+        [
+          {
+            "node": "Report Required?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Elegible para el Primer Reporte?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (15 Days)": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Report Details": {
+      "main": [
+        [
+          {
+            "node": "Call Get Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (30 Days)": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "test": {
+      "main": [
+        [
+          {
+            "node": "Enviar Reporte (WhatsApp)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Get Campaigns": {
+      "main": [
+        []
+      ]
+    },
+    "Todos los dias a las 2pm": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correo?": {
+      "main": [
+        [
+          {
+            "node": "Cuenta Publicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Correo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Todos los dias a las 2pm": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {
+    "Testing": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "82f8dbc6-2c12-4982-90ce-2d17ce24559e",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "mVYdARFPPkMyJXNn",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

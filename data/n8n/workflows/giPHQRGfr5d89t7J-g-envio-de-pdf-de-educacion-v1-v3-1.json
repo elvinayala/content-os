@@ -1,0 +1,1607 @@
+{
+  "updatedAt": "2026-01-06T14:05:35.674Z",
+  "createdAt": "2025-10-20T20:09:15.046Z",
+  "id": "giPHQRGfr5d89t7J",
+  "name": "G-) Envio de pdf de educacion v1 (v3.1)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        96
+      ],
+      "id": "612fa900-a68a-4725-ad68-a0e37e97f55a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        112
+      ],
+      "id": "849b559e-2a95-4bb4-85ba-8c6007812d6d"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64cf91c5-5188-453b-bed8-211723634968",
+              "leftValue": "={{ $json.meta.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        112
+      ],
+      "id": "e19fe395-fdb5-4760-8931-a5ec65e581c9",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        112
+      ],
+      "id": "3676731f-a3f5-4373-984a-b4b76c15df0b",
+      "name": "set-data-into-loop"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(fecha-formateada,eq,{{ $now.minus(5, 'days').format('yyyy-MM-dd') }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        96
+      ],
+      "id": "d42760ac-c3d4-4fbe-ac5b-ae35696f9c0e",
+      "name": "get-clients-data",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.email }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        880,
+        112
+      ],
+      "id": "19341a2d-2f57-48ea-bec9-492f51b6d8dc",
+      "name": "contact-search",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload[0].id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        112
+      ],
+      "id": "76f76525-6106-4c05-8f5d-5ff67ea7c317",
+      "name": "get-contact-conversation",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2416,
+        112
+      ],
+      "id": "3d9b2fc1-188e-4cbd-959b-561e79f8afef",
+      "name": "Wait1",
+      "webhookId": "d5b1b346-7d63-454c-9d1f-ced1f7b64ec2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ $json.sessionId }},{{ $json.messageJsonString }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2224,
+        112
+      ],
+      "id": "7e69c6f5-ceeb-4872-9024-9096441b3e48",
+      "name": "save-in-agent-memory",
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "18H7QJf_PoOI1ax4QibnmasTvTJICtcYX",
+          "mode": "list",
+          "cachedResultName": "Guia-practica-para-manejar-tus-leads-y-convertir-mas-ventas.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/18H7QJf_PoOI1ax4QibnmasTvTJICtcYX/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        112
+      ],
+      "id": "78d93d92-d881-4454-8bde-670c74403410",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "h0ERGqExku4WZAmd",
+          "name": "GoogleDriveLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtenemos el dato del mensaje original desde un nodo anterior.\n// Usar .first() es una buena práctica para asegurar que solo procesas un ítem.\nconst mensajeOriginal = $input.first().json.message.documentMessage.caption;\n\n// 2. Construimos el objeto JavaScript con la estructura CORRECTA.\n// El 'content' está al mismo nivel que 'type', sin el objeto 'data'.\nconst messageObject = {\n  type: \"ai\",\n  content: mensajeOriginal,\n  // -------------------------------------------------------------------\n  // Estas claves adicionales hacen que tu mensaje sea idéntico a uno\n  // generado por el agente, aunque no siempre son estrictamente necesarias.\n  additional_kwargs: {},\n  tool_calls: [],\n  invalid_tool_calls: [],\n  response_metadata: {}\n  // -------------------------------------------------------------------\n};\n\n// 3. Convertimos el objeto a un string JSON para pasarlo al nodo de PostgreSQL.\nconst jsonParaPostgres = JSON.stringify(messageObject);\n\n// 4. Devolvemos los datos que usará el siguiente nodo (PostgreSQL).\nreturn [\n  {\n    json: {\n      messageJsonString: jsonParaPostgres,\n      // Pasamos también el session_id para usarlo en la consulta SQL.\n      sessionId: $input.first().json.key.remoteJid\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        112
+      ],
+      "id": "fd1950a1-4d18-46bc-8647-782d7041fa18",
+      "name": "format-data5"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $('contact-search').item.json.payload[0].identifier }}",
+        "media": "={{ $json.data }}",
+        "caption": "Buenas, te compartimos este documento educativo de como tratar a los leads, en pro de cerrar mas ventas apoyandote del flujo constante de clientes potenciales que estaremos generando con nuestro servicios para ti.",
+        "fileName": "Guia-practica-para-manejar-tus-leads-y-convertir-mas-ventas.pdf",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        112
+      ],
+      "id": "3b79c9d6-fac3-42de-9017-94475e7682d5",
+      "name": "Enviar documento",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        112
+      ],
+      "id": "44224d7f-cbfd-4e74-9812-ac2df134a676",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "data",
+        "key": "educacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        96
+      ],
+      "id": "b4182df9-43fb-46e7-9480-ef9c3113598e",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9a5eb9f6-2b77-4f51-b6a8-d8e3ceaca718",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        96
+      ],
+      "id": "afdc03dd-5ca0-41d4-8183-afb4f06d5bc4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "educacion",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        80,
+        96
+      ],
+      "id": "265d8499-98d9-4058-a8c5-f9e075ff1907",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "educacion"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -112
+      ],
+      "id": "eaeaea8a-2254-48c3-9b58-7e9410694b6a",
+      "name": "Redis2",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -256
+      ],
+      "id": "a43309a6-15c2-4fe4-8e0b-0d68dd37b47a",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "chatMessage",
+        "chatId": {
+          "__rl": true,
+          "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+          "mode": "list",
+          "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+          "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+        },
+        "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+        "options": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -256
+      ],
+      "id": "a9761800-af1d-4d94-8583-004ebcf7afa6",
+      "name": "Create chat message",
+      "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "bQfmQjHop2MXmbIN",
+          "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        -256
+      ],
+      "id": "1f6447b9-0160-4f84-b36d-0fd6f276959a",
+      "name": "Send a message1",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "educacion"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -256
+      ],
+      "id": "a623b94e-7fb5-42f7-a97d-3b0a8061d1ec",
+      "name": "Redis6",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        96
+      ],
+      "id": "c5d93b87-e675-4388-8a30-40ddca0c18a3",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set-data-into-loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "get-contact-conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data-into-loop": {
+      "main": [
+        [
+          {
+            "node": "contact-search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients-data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact-search": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-contact-conversation": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-in-agent-memory": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data5": {
+      "main": [
+        [
+          {
+            "node": "save-in-agent-memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar documento": {
+      "main": [
+        [
+          {
+            "node": "format-data5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Enviar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "get-clients-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create chat message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create chat message": {
+      "main": [
+        [
+          {
+            "node": "Redis6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis6": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "giPHQRGfr5d89t7J",
+    "timezone": "America/Puerto_Rico",
+    "timeSavedPerExecution": 5
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "34135",
+            "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/workflow/giPHQRGfr5d89t7J/executions/34135",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "Try changing the type of the comparison.",
+              "timestamp": 1763647253303,
+              "context": {
+                "itemIndex": 0
+              },
+              "functionality": "regular",
+              "name": "NodeOperationError",
+              "node": {
+                "parameters": {
+                  "conditions": {
+                    "options": {
+                      "caseSensitive": true,
+                      "leftValue": "",
+                      "typeValidation": "loose",
+                      "version": 2
+                    },
+                    "conditions": [
+                      {
+                        "id": "9a5eb9f6-2b77-4f51-b6a8-d8e3ceaca718",
+                        "leftValue": "={{ $json.data }}",
+                        "rightValue": "",
+                        "operator": {
+                          "type": "object",
+                          "operation": "empty",
+                          "singleValue": true
+                        }
+                      }
+                    ],
+                    "combinator": "and"
+                  },
+                  "looseTypeValidation": true,
+                  "options": {}
+                },
+                "type": "n8n-nodes-base.if",
+                "typeVersion": 2.2,
+                "position": [
+                  -112,
+                  96
+                ],
+                "id": "afdc03dd-5ca0-41d4-8183-afb4f06d5bc4",
+                "name": "If"
+              },
+              "messages": [],
+              "message": "Conversion error: the object '1' can't be converted to an object [condition 0, item 0]",
+              "stack": "NodeOperationError: Conversion error: the object '1' can't be converted to an object [condition 0, item 0]\n    at extractValue (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/extract-value.ts:211:9)\n    at ExecuteContext._getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/node-execution-context.ts:453:29)\n    at ExecuteContext.getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/execute-context.ts:126:9)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:96:18\n    at Array.forEach (<anonymous>)\n    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:88:23)\n    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1212:32)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1582:38\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:2158:11"
+            },
+            "lastNodeExecuted": "If",
+            "mode": "trigger"
+          },
+          "workflow": {
+            "id": "giPHQRGfr5d89t7J",
+            "name": "G-) Envio de pdf de educacion v1 (v3.1)"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "b524f003-fd8c-4e86-a9cc-03cd69c7ed3e",
+  "activeVersionId": "b524f003-fd8c-4e86-a9cc-03cd69c7ed3e",
+  "versionCounter": 23,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "giPHQRGfr5d89t7J",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.872Z",
+    "createdAt": "2026-01-06T13:21:36.872Z",
+    "versionId": "b524f003-fd8c-4e86-a9cc-03cd69c7ed3e",
+    "workflowId": "giPHQRGfr5d89t7J",
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          480,
+          96
+        ],
+        "id": "612fa900-a68a-4725-ad68-a0e37e97f55a",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          2560,
+          112
+        ],
+        "id": "849b559e-2a95-4bb4-85ba-8c6007812d6d"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "64cf91c5-5188-453b-bed8-211723634968",
+                "leftValue": "={{ $json.meta.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1024,
+          112
+        ],
+        "id": "e19fe395-fdb5-4760-8931-a5ec65e581c9",
+        "name": "Filter"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json.toJsonString() }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          704,
+          112
+        ],
+        "id": "3676731f-a3f5-4373-984a-b4b76c15df0b",
+        "name": "set-data-into-loop"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(fecha-formateada,eq,{{ $now.minus(5, 'days').format('yyyy-MM-dd') }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          272,
+          96
+        ],
+        "id": "d42760ac-c3d4-4fbe-ac5b-ae35696f9c0e",
+        "name": "get-clients-data",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.email }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          880,
+          112
+        ],
+        "id": "19341a2d-2f57-48ea-bec9-492f51b6d8dc",
+        "name": "contact-search",
+        "alwaysOutputData": true,
+        "retryOnFail": true,
+        "waitBetweenTries": 3000
+      },
+      {
+        "parameters": {
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload[0].id }}/conversations/",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1200,
+          112
+        ],
+        "id": "76f76525-6106-4c05-8f5d-5ff67ea7c317",
+        "name": "get-contact-conversation",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2416,
+          112
+        ],
+        "id": "3d9b2fc1-188e-4cbd-959b-561e79f8afef",
+        "name": "Wait1",
+        "webhookId": "d5b1b346-7d63-454c-9d1f-ced1f7b64ec2"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+          "options": {
+            "queryReplacement": "={{ $json.sessionId }},{{ $json.messageJsonString }}"
+          }
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          2224,
+          112
+        ],
+        "id": "7e69c6f5-ceeb-4872-9024-9096441b3e48",
+        "name": "save-in-agent-memory",
+        "credentials": {
+          "postgres": {
+            "id": "GGHKaTkcxaueFMNW",
+            "name": "PostgresLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "18H7QJf_PoOI1ax4QibnmasTvTJICtcYX",
+            "mode": "list",
+            "cachedResultName": "Guia-practica-para-manejar-tus-leads-y-convertir-mas-ventas.pdf",
+            "cachedResultUrl": "https://drive.google.com/file/d/18H7QJf_PoOI1ax4QibnmasTvTJICtcYX/view?usp=drivesdk"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          112
+        ],
+        "id": "78d93d92-d881-4454-8bde-670c74403410",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "h0ERGqExku4WZAmd",
+            "name": "GoogleDriveLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// 1. Obtenemos el dato del mensaje original desde un nodo anterior.\n// Usar .first() es una buena práctica para asegurar que solo procesas un ítem.\nconst mensajeOriginal = $input.first().json.message.documentMessage.caption;\n\n// 2. Construimos el objeto JavaScript con la estructura CORRECTA.\n// El 'content' está al mismo nivel que 'type', sin el objeto 'data'.\nconst messageObject = {\n  type: \"ai\",\n  content: mensajeOriginal,\n  // -------------------------------------------------------------------\n  // Estas claves adicionales hacen que tu mensaje sea idéntico a uno\n  // generado por el agente, aunque no siempre son estrictamente necesarias.\n  additional_kwargs: {},\n  tool_calls: [],\n  invalid_tool_calls: [],\n  response_metadata: {}\n  // -------------------------------------------------------------------\n};\n\n// 3. Convertimos el objeto a un string JSON para pasarlo al nodo de PostgreSQL.\nconst jsonParaPostgres = JSON.stringify(messageObject);\n\n// 4. Devolvemos los datos que usará el siguiente nodo (PostgreSQL).\nreturn [\n  {\n    json: {\n      messageJsonString: jsonParaPostgres,\n      // Pasamos también el session_id para usarlo en la consulta SQL.\n      sessionId: $input.first().json.key.remoteJid\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2000,
+          112
+        ],
+        "id": "fd1950a1-4d18-46bc-8647-782d7041fa18",
+        "name": "format-data5"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "operation": "send-document",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "={{ $('contact-search').item.json.payload[0].identifier }}",
+          "media": "={{ $json.data }}",
+          "caption": "Buenas, te compartimos este documento educativo de como tratar a los leads, en pro de cerrar mas ventas apoyandote del flujo constante de clientes potenciales que estaremos generando con nuestro servicios para ti.",
+          "fileName": "Guia-practica-para-manejar-tus-leads-y-convertir-mas-ventas.pdf",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1776,
+          112
+        ],
+        "id": "3b79c9d6-fac3-42de-9017-94475e7682d5",
+        "name": "Enviar documento",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1552,
+          112
+        ],
+        "id": "44224d7f-cbfd-4e74-9812-ac2df134a676",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "data",
+          "key": "educacion",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          -256,
+          96
+        ],
+        "id": "b4182df9-43fb-46e7-9480-ef9c3113598e",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "9a5eb9f6-2b77-4f51-b6a8-d8e3ceaca718",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -112,
+          96
+        ],
+        "id": "afdc03dd-5ca0-41d4-8183-afb4f06d5bc4",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "educacion",
+          "messageData": "1"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          80,
+          96
+        ],
+        "id": "265d8499-98d9-4058-a8c5-f9e075ff1907",
+        "name": "Redis1",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "educacion"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          704,
+          -112
+        ],
+        "id": "eaeaea8a-2254-48c3-9b58-7e9410694b6a",
+        "name": "Redis2",
+        "executeOnce": true,
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -384,
+          -256
+        ],
+        "id": "a43309a6-15c2-4fe4-8e0b-0d68dd37b47a",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "resource": "chatMessage",
+          "chatId": {
+            "__rl": true,
+            "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+            "mode": "list",
+            "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+            "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+          },
+          "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+          "options": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.microsoftTeams",
+        "typeVersion": 2,
+        "position": [
+          -160,
+          -256
+        ],
+        "id": "a9761800-af1d-4d94-8583-004ebcf7afa6",
+        "name": "Create chat message",
+        "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+        "credentials": {
+          "microsoftTeamsOAuth2Api": {
+            "id": "bQfmQjHop2MXmbIN",
+            "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          192,
+          -256
+        ],
+        "id": "1f6447b9-0160-4f84-b36d-0fd6f276959a",
+        "name": "Send a message1",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "educacion"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          16,
+          -256
+        ],
+        "id": "a623b94e-7fb5-42f7-a97d-3b0a8061d1ec",
+        "name": "Redis6",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -448,
+          96
+        ],
+        "id": "c5d93b87-e675-4388-8a30-40ddca0c18a3",
+        "name": "Schedule Trigger1",
+        "disabled": true
+      }
+    ],
+    "connections": {
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Redis2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "set-data-into-loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "get-contact-conversation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set-data-into-loop": {
+        "main": [
+          [
+            {
+              "node": "contact-search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients-data": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "contact-search": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-contact-conversation": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "save-in-agent-memory": {
+        "main": [
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data5": {
+        "main": [
+          [
+            {
+              "node": "save-in-agent-memory",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar documento": {
+        "main": [
+          [
+            {
+              "node": "format-data5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Enviar documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Redis1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis1": {
+        "main": [
+          [
+            {
+              "node": "get-clients-data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Create chat message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create chat message": {
+        "main": [
+          [
+            {
+              "node": "Redis6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis6": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-12-02T18:03:29.000Z",
+        "id": 20,
+        "workflowId": "giPHQRGfr5d89t7J",
+        "versionId": "b524f003-fd8c-4e86-a9cc-03cd69c7ed3e",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

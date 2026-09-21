@@ -1,0 +1,241 @@
+{
+  "updatedAt": "2026-01-06T13:52:44.278Z",
+  "createdAt": "2025-11-14T03:09:27.756Z",
+  "id": "HPJYdfjD28yw5u4t",
+  "name": "E-) Notificacion  Personas Infracción",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        0
+      ],
+      "id": "c614a3aa-6cbe-4117-9af5-1d1245f87ae2",
+      "name": "get_slackID_users",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "={{ $json['ID-slack'] }}",
+          "mode": "id"
+        },
+        "text": "=¿Has visto una conducta no ética en la empresa?\n\nFraude, acoso, uso indebido de recursos, conflictos de interés o cualquier situación que viole nuestras políticas pueden reportarse de forma completamente confidencial respondiendo por la aplicación de Slack de Recursos Humanos.\n\nTu identidad está protegida y solo RRHH tiene acceso. Si tu información verifica una conducta no ética, recibirás $250. Gracias por mantener la integridad de Level Up Media.\n\nRecursos Humanos\n\nLevel Up Media LLC.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        752,
+        0
+      ],
+      "id": "48f82f4e-33d9-45c1-8d92-95ee21ef4a7e",
+      "name": "send_messge_RH",
+      "webhookId": "0938c056-1a80-46df-b357-2a96c0f27b96",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51384401-f07b-4110-a790-a17f09e983a0",
+              "leftValue": "={{ $json['ID-slack'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        0
+      ],
+      "id": "60bbddc3-ceb6-4e36-b70f-3961b490b9c6",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 15,
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        0
+      ],
+      "id": "7936594a-d391-4489-b051-af943d953b5c",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "get_slackID_users": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_messge_RH": {
+      "main": [
+        []
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "send_messge_RH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get_slackID_users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "timezone": "America/Puerto_Rico"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        2
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b0d55344-4bf4-4c32-bd7b-e8d7be3bc466",
+  "activeVersionId": null,
+  "versionCounter": 11,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "HPJYdfjD28yw5u4t",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

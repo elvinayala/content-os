@@ -1,0 +1,1995 @@
+{
+  "updatedAt": "2026-01-07T03:35:00.407Z",
+  "createdAt": "2025-11-26T18:20:28.942Z",
+  "id": "HvMsL5j65etc7ZBq",
+  "name": "E-) Agente supervisor",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        416,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "text": "={{ $('If').item.json.output.final_decision.notification_message }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        3120,
+        256
+      ],
+      "id": "586913de-87f2-46d6-a3c4-4cc87e366bd6",
+      "name": "Send a message1",
+      "webhookId": "bd496ff9-9995-4b09-80c3-b3a2bc579d77",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=EMPLOYEE: {{ $('When Executed by Another Workflow').item.json.body.user.userName }}\n\nDATA:{{ $('When Executed by Another Workflow').item.json.toJsonString() }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# ROLE\nAct as a Senior Meta Ads Auditor & Strategic Copywriter.\n\n# INPUT DATA PROCESSING\nYou will receive a single message containing:\n1.  **JSON Payload:** The raw campaign configuration.\n\n# DATA MAPPING & NAVIGATION INSTRUCTIONS (STRICT)\nTo ensure accuracy and avoid hallucinations:\n* **Root Access:** Data is located in `body.campaigns` (or `campaigns` at root).\n* **Multi-Campaign Handling:** You must expect and process MULTIPLE campaign objects in the array.\n* **AdSets:** Found inside each campaign object.\n* **Creatives:** Found in the root `creatives` array. Link them to AdSets matching `creatives[].targetId` === `adsets[].id`.\n* **Copy Variations:** Look INSIDE each creative at `creative.copyPrompt.copies`.\n\n# LOGIC & RULES\n\n## 1. Data Normalization (Structure Mapping)\n* **Goal:** Create a clean map of the campaign structure for the report.\n* **Linking:** Flatten the list of AdSets from all campaigns and map the corresponding creative to each AdSet so the user knows exactly which ad uses which text.\n\n## 2. Compliance Audit (The Rules)\n\n### A. Objective Rule (Strategic Coherence)\n* Iterate through all campaigns. If ANY campaign violates this, `objective_compliance` is FAIL.\n* **Rule:**\n    * IF `campaign.objective` is `OUTCOME_AWARENESS`:\n    * THEN `campaign.optimizationGoal` MUST be `THRUPLAY`.\n    * ELSE (if objective is Engagement, Sales, etc.) -> Rule N/A (PASS).\n\n### B. Creative & Copywriting Audit (Quality Check)\n**Context:** Auditing text variations in `creative.copyPrompt.copies`.\n\n1.  **Quantity Check:** Count items in the `copies` array.\n2.  **Quality Check:** Analyze `text` fields for **AIDA**, **PAS**, or **BAB** (Before-After-Bridge) structure.\n3.  **Final Logic:**\n    * **PASS:** At least **1 text found** AND that text adheres to a valid structure (AIDA, PAS, or BAB).\n    * **FAIL:** 0 texts found OR text does not match any valid structure.\n\n## 3. Manager Alert Logic (EXCEPTION REPORTING)\n* **Trigger:** `overall_status` = FAIL.\n* **Constraint:** **ONLY report rules that FAILED.**\n* **Prohibition:** NEVER mention a rule that resulted in PASS in the alert message.\n* **Format:** \"URGENTE [Client] ([AdAccountID]): Revisión requerida en '[Strategy]'. Publicado por: [User]. Fallos: 1) [Error A], 2) [Error B].\"\n\n# OUTPUT INSTRUCTIONS\n* Respond strictly with a VALID JSON object based on the template below.\n* **Strictness:** Pure binary logic.\n* **Language:** Spanish.\n* Include every fail analysis in manager_alert_message.\n\n# JSON RESPONSE TEMPLATE\n{\n  \"synthesis\": {\n    \"client_info\": {\n      \"name\": \"Extract Name\",\n      \"instagram_handle\": \"Extract Handle\",\n      \"ad_account_id\": \"Extract ID\",\n      \"strategy_name\": \"Extract Strategy Name\",\n      \"published_by\": \"Extract User Name\"\n    },\n    \"campaign_details\": {\n      \"name\": \"List Campaign Names (comma separated)\",\n      \"objective\": \"List Objectives or 'Mixed'\",\n      \"optimization_goal\": \"List Goals or 'Mixed'\"\n    },\n    \"adsets\": [\n      {\n        \"name\": \"Adset Name (Campaign Name)\",\n        \"targeting_summary\": \"Readable summary\",\n        \"creatives\": [\n          {\n            \"reference_title\": \"Creative Title\",\n            \"total_copies_found\": 0,\n            \"valid_copies_count\": 0,\n            \"detected_structures_summary\": \"e.g., 1 BAB found\"\n          }\n        ]\n      }\n    ]\n  },\n  \"audit\": {\n    \"overall_status\": \"PASS or FAIL\",\n    \"manager_alert_message\": \"URGENTE... (or null if PASS)\",\n    \"objective_compliance\": {\n      \"status\": \"PASS or FAIL\",\n      \"analysis\": \"Explanation in Spanish\"\n    },\n    \"creative_compliance\": {\n      \"status\": \"PASS or FAIL\",\n      \"analysis\": \"Explanation in Spanish\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1264,
+        336
+      ],
+      "id": "3f234e54-6fde-41ec-8da0-88830ce0990c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        768
+      ],
+      "id": "896c515b-c08f-4427-ac1a-6223ca3df802",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-cuenta-publicitaria,eq,{{ $json.body.manualClientData.adAccountId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        624,
+        336
+      ],
+      "id": "e4557136-091a-41fd-80a5-7411e6c95e80",
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json[\"ID-monday\"] }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        336
+      ],
+      "id": "ff953f87-8d4a-4cb4-953a-c71ccf460492",
+      "name": "Get an item",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\n    \"synthesis\",\n    \"audit\"\n  ],\n  \"properties\": {\n    \"synthesis\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"client_info\",\n        \"campaign_details\",\n        \"adsets\"\n      ],\n      \"properties\": {\n        \"client_info\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"name\",\n            \"instagram_handle\",\n            \"ad_account_id\",\n            \"strategy_name\",\n            \"published_by\"\n          ],\n          \"properties\": {\n            \"name\": { \"type\": [\"string\", \"null\"] },\n            \"instagram_handle\": { \"type\": [\"string\", \"null\"] },\n            \"ad_account_id\": { \"type\": \"string\" },\n            \"strategy_name\": { \"type\": \"string\" },\n            \"published_by\": { \"type\": \"string\" }\n          }\n        },\n        \"campaign_details\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"name\",\n            \"objective\",\n            \"optimization_goal\"\n          ],\n          \"properties\": {\n            \"name\": { \"type\": \"string\" },\n            \"objective\": { \"type\": \"string\" },\n            \"optimization_goal\": { \"type\": \"string\" }\n          }\n        },\n        \"adsets\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\n              \"name\",\n              \"targeting_summary\",\n              \"creatives\"\n            ],\n            \"properties\": {\n              \"name\": { \"type\": \"string\" },\n              \"targeting_summary\": { \"type\": \"string\" },\n              \"creatives\": {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"object\",\n                  \"required\": [\n                    \"reference_title\",\n                    \"total_copies_found\",\n                    \"valid_copies_count\",\n                    \"detected_structures_summary\"\n                  ],\n                  \"properties\": {\n                    \"reference_title\": { \"type\": \"string\" },\n                    \"total_copies_found\": { \"type\": \"integer\" },\n                    \"valid_copies_count\": { \"type\": \"integer\" },\n                    \"detected_structures_summary\": { \"type\": \"string\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"audit\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"overall_status\",\n        \"manager_alert_message\",\n        \"objective_compliance\",\n        \"creative_compliance\"\n      ],\n      \"properties\": {\n        \"overall_status\": {\n          \"type\": \"string\",\n          \"enum\": [\"PASS\", \"FAIL\"]\n        },\n        \"manager_alert_message\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"objective_compliance\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"status\",\n            \"analysis\"\n          ],\n          \"properties\": {\n            \"status\": {\n              \"type\": \"string\",\n              \"enum\": [\"PASS\", \"FAIL\"]\n            },\n            \"analysis\": { \"type\": \"string\" }\n          }\n        },\n        \"creative_compliance\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"status\",\n            \"analysis\"\n          ],\n          \"properties\": {\n            \"status\": {\n              \"type\": \"string\",\n              \"enum\": [\"PASS\", \"FAIL\"]\n            },\n            \"analysis\": { \"type\": \"string\" }\n          }\n        }\n      }\n    }\n  }\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        544
+      ],
+      "id": "7498d048-64bd-4af4-8afe-6609cf126f61",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ec1ce3f5-610f-44ad-b6f9-40e915197f4a",
+              "leftValue": "={{ $json.output.final_decision.status }}",
+              "rightValue": "FAIL",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2288,
+        368
+      ],
+      "id": "bf524714-5a2f-4e38-bdf1-54b61331f6ff",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mqay6rta18lp139",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "json_body",
+              "fieldValue": "={{ $('When Executed by Another Workflow').first().json.body.toJsonString() }}"
+            },
+            {
+              "fieldName": "client_data",
+              "fieldValue": "={{ $('When Executed by Another Workflow').first().json.clientData.toJsonString() }}"
+            },
+            {
+              "fieldName": "alert_message",
+              "fieldValue": "={{ $('If').first().json.output.final_decision.notification_message }}"
+            },
+            {
+              "fieldName": "campaign_id",
+              "fieldValue": "={{ $('When Executed by Another Workflow').first().json.camapign_id.values().toJsonString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2944,
+        256
+      ],
+      "id": "0dd13b0f-94df-4d52-bad6-276cec36263e",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "295c8a70-15c5-4334-a2b1-6f2a7a029751",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "03e774cd-ed75-457c-b037-bd7103b8c19c",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        352
+      ],
+      "id": "f7afa85e-3df7-4605-badb-e84715a0278c",
+      "name": "If1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "ACTIVE"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3440,
+        528
+      ],
+      "id": "05f2e759-dd6e-4092-af59-87f129edff65",
+      "name": "HTTP Request",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3040,
+        512
+      ],
+      "id": "baf01aa7-c080-40f5-8c54-f71344fb0043",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtenemos el array de IDs basándonos en tu referencia y la imagen\n// Nota: Respeto el typo 'camapign_id' que aparece en tu estructura\nconst idList = $('When Executed by Another Workflow').first().json.camapign_id.propertyName;\n\n// Iteramos sobre el array para devolver un item por cada ID\nreturn idList.map(id => {\n  return {\n    json: {\n      id: id\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2784,
+        528
+      ],
+      "id": "efb981db-75c0-45d5-b3f0-1431991e987d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ==========================================\n// 1. OBTENCIÓN DE DATOS (INPUTS BLINDADOS)\n// ==========================================\n\n// A. Obtener el Presupuesto Mensual del Cliente\n// Usamos try/catch o valores por defecto para evitar crash si falta la columna\nlet userMonthlyBudget = 0;\ntry {\n    if ($input.item.json.column_values && $input.item.json.column_values[3]) {\n        userMonthlyBudget = parseFloat($input.item.json.column_values[3].text || \"0\");\n    }\n} catch (e) {\n    userMonthlyBudget = 0;\n}\n\n// B. Obtener la Data de la Campaña (Webhook/Trigger)\n// Verificamos si el nodo existe antes de pedir .json\nconst triggerNode = $('When Executed by Another Workflow').first();\nconst rawPayload = triggerNode ? triggerNode.json : {};\n\n// C. BÚSQUEDA DE CAMPAÑAS (A prueba de balas)\n// Buscamos el array en las ubicaciones más probables.\n// Si no encuentra nada, asigna un array vacío [] para que el bucle no explote.\nlet campaigns = [];\n\nif (rawPayload.body && Array.isArray(rawPayload.body.campaigns)) {\n    // Caso estándar según tu JSON\n    campaigns = rawPayload.body.campaigns;\n} else if (Array.isArray(rawPayload.campaigns)) {\n    // Caso donde el body se aplanó\n    campaigns = rawPayload.campaigns;\n} else if (rawPayload.body && rawPayload.body.strategy && Array.isArray(rawPayload.body.strategy.campaigns)) {\n    // Caso rebuscado (dentro de strategy)\n    campaigns = rawPayload.body.strategy.campaigns;\n}\n\n// ==========================================\n// 2. LÓGICA DE CÁLCULO (Motor Financiero)\n// ==========================================\n\nlet totalDailyCents = 0;\nlet calculationLog = []; \n\n// El bucle ahora es seguro porque 'campaigns' siempre será un array (aunque esté vacío)\nfor (const campaign of campaigns) {\n    let campaignCents = 0;\n    let budgetType = \"ABO\"; \n\n    // Normalizar detección de CBO/GLOBAL\n    const typeStr = (campaign.budgetType || \"\").toUpperCase();\n    \n    if (typeStr.includes(\"CBO\") || typeStr.includes(\"GLOBAL\")) {\n        budgetType = \"CBO\";\n        // En CBO tomamos el budget directo. Si no existe, 0.\n        campaignCents = parseInt(campaign.budget || 0);\n    } else {\n        budgetType = \"ABO\";\n        // En ABO sumamos los adsets. Validamos que adsets sea un array.\n        if (Array.isArray(campaign.adsets)) {\n            campaignCents = campaign.adsets.reduce((sum, adset) => {\n                return sum + parseInt(adset.budget || 0);\n            }, 0);\n        }\n    }\n\n    // Acumular\n    totalDailyCents += campaignCents;\n\n    // Log\n    calculationLog.push({\n        campaign_name: campaign.name || \"Sin Nombre\",\n        type: budgetType,\n        cents: campaignCents,\n        usd: (campaignCents / 100).toFixed(2)\n    });\n}\n\n// ==========================================\n// 3. PROYECCIONES Y COMPLIANCE\n// ==========================================\n\nconst dailySpendUSD = totalDailyCents / 100;\nconst projectedMonthlySpend = dailySpendUSD * 30;\n\nlet percentageUsed = 0;\nif (userMonthlyBudget > 0) {\n    percentageUsed = (projectedMonthlySpend / userMonthlyBudget) * 100;\n}\n\n// Validación Binaria (8% - 12%)\nlet status = \"FAIL\";\n// Nota: Si el gasto es 0 (porque no leyó campañas), fallará por estar debajo del 8%.\nif (percentageUsed >= 8.00 && percentageUsed <= 12.00) {\n    status = \"PASS\";\n}\n\nlet analysisMessage = \"\";\nif (status === \"PASS\") {\n    analysisMessage = `Correcto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) es el ${percentageUsed.toFixed(2)}% del presupuesto ($${userMonthlyBudget}).`;\n} else {\n    analysisMessage = `Fallo de Presupuesto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) representa el ${percentageUsed.toFixed(2)}% del presupuesto declarado ($${userMonthlyBudget}). Está fuera del rango permitido (8%-12%).`;\n}\n\n// ==========================================\n// 4. SALIDA FINAL\n// ==========================================\n\nreturn {\n    json: {\n        budget_audit: {\n            status: status,\n            metrics: {\n                user_budget_limit: userMonthlyBudget,\n                daily_spend_usd: dailySpendUSD,\n                projected_monthly_spend: projectedMonthlySpend,\n                percentage_used: parseFloat(percentageUsed.toFixed(2))\n            },\n            analysis: analysisMessage,\n            breakdown_log: calculationLog,\n            debug_info: {\n                campaigns_found: campaigns.length // Para saber si encontró las campañas\n            }\n        }\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        112
+      ],
+      "id": "6ebaee34-d018-4c2f-9fce-416013ac1e4e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1632,
+        336
+      ],
+      "id": "5fac8171-76d1-4ef9-9af2-79ca098b6532",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        336
+      ],
+      "id": "aafb679d-e1bf-490a-9614-15c24b89665c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.toJsonString() }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# ROLE\nAct as a **Final Campaign Approval Authority**.\nYour goal is to consolidate two separate audit reports (Budget Audit + Strategy QA) into a single final status and a unified notification message.\n\n# INPUT DATA STRUCTURE\nYou will receive a JSON object containing an array (usually under the key `data`). You must locate two distinct data blocks within this array:\n1.  **Budget Block:** Contains `budget_audit` (Generated by code).\n2.  **QA Block:** Contains `output` (Generated by the previous AI Agent).\n\n# LOGIC & RULES\n\n## 1. Context Extraction\nExtract the following details from the **QA Block** (`output.synthesis.client_info`) to build the message header:\n* Client Name\n* Ad Account ID\n* Strategy Name\n* User Name (`published_by`)\n\n## 2. Status Determination (Strict AND Logic)\n* **Check Budget Status:** Look at `budget_audit.status`.\n* **Check QA Status:** Look at `output.audit.overall_status`.\n* **FINAL CALCULATION:**\n    * IF (`Budget_Status` == \"PASS\") **AND** (`QA_Status` == \"PASS\") -> **FINAL STATUS = \"PASS\"**.\n    * IF **ANY** of them is \"FAIL\" -> **FINAL STATUS = \"FAIL\"**.\n\n## 3. Message Construction (Conditional)\n* **CASE: FINAL STATUS = PASS**\n    * `message`: \"Aprobado: La estrategia '[Strategy Name]' de [Client Name] cumple con todas las reglas de presupuesto y calidad. (Presupuesto validado + QA validado).\"\n\n* **CASE: FINAL STATUS = FAIL**\n    * Construct a consolidated alert message.\n    * **Header:** \"URGENTE [Client Name] ([Ad Account ID]): Revisión requerida en '[Strategy Name]'. Publicado por: [User Name].\"\n    * **Body:** \"Se encontraron los siguientes errores bloqueantes:\"\n    * **Error Source A (Budget):** IF `budget_audit.status` is FAIL -> Append the text from `budget_audit.analysis`.\n    * **Error Source B (QA):** IF `output.audit.overall_status` is FAIL -> Extract the error details from `output.audit.manager_alert_message` (remove the \"URGENTE...\" header from this specific string to avoid duplication, keep only the list of failures).\n\n# OUTPUT INSTRUCTIONS\n* Return a SINGLE JSON object.\n* Language: Spanish.\n* Do not explain your reasoning outside the JSON.\n\n# JSON RESPONSE TEMPLATE\n{\n  \"final_decision\": {\n    \"status\": \"PASS or FAIL\",\n    \"notification_message\": \"The consolidated string generated in Logic Step 3\"\n  }\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1936,
+        336
+      ],
+      "id": "6532afdf-b105-46ec-b35c-a4001b9ee560",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"final_decision\": {\n    \"status\": \"PASS or FAIL\",\n    \"notification_message\": \"The consolidated string generated in Logic Step 3\"\n  }\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2080,
+        544
+      ],
+      "id": "018ec15e-78f0-4805-81b3-ea295a419663",
+      "name": "Structured Output Parser1"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get an item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "body": {
+            "action": "publish_campaign",
+            "client": null,
+            "isManualClient": true,
+            "manualClientData": {
+              "adAccountId": "686115924229043",
+              "pageId": "756025347601940",
+              "instagramAccountId": "17841477875028893",
+              "verified": true
+            },
+            "strategy": {
+              "template": {
+                "templateName": "Probando todo",
+                "description": "a",
+                "structure": {
+                  "campaigns": [
+                    {
+                      "id": "campaign-1",
+                      "name": "Campaña 1",
+                      "objective": "OUTCOME_AWARENESS",
+                      "optimizationGoal": "REACH",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-1-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "ADVANTAGE+",
+                          "hasInterests": false
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-2",
+                      "name": "Campaña 2",
+                      "objective": "OUTCOME_AWARENESS",
+                      "optimizationGoal": "IMPRESSIONS",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-2-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "ADVANTAGE+",
+                          "hasInterests": false
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-3",
+                      "name": "Campaña 3",
+                      "objective": "OUTCOME_AWARENESS",
+                      "optimizationGoal": "THRUPLAY",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-3-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "INTERESTS",
+                          "hasInterests": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-4",
+                      "name": "Campaña 4",
+                      "objective": "OUTCOME_TRAFFIC",
+                      "optimizationGoal": "LINK_CLICKS",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-4-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "INTERESTS",
+                          "hasInterests": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-5",
+                      "name": "Campaña 5",
+                      "objective": "OUTCOME_TRAFFIC",
+                      "optimizationGoal": "LANDING_PAGE_VIEWS",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-5-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "INTERESTS",
+                          "hasInterests": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-6",
+                      "name": "Campaña 6",
+                      "objective": "OUTCOME_TRAFFIC",
+                      "optimizationGoal": "IMPRESSIONS",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-6-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "ADVANTAGE+",
+                          "hasInterests": false
+                        }
+                      ]
+                    },
+                    {
+                      "id": "campaign-7",
+                      "name": "Campaña 7",
+                      "objective": "OUTCOME_TRAFFIC",
+                      "optimizationGoal": "REACH",
+                      "budgetType": "CBO",
+                      "adsetsCount": 1,
+                      "adsets": [
+                        {
+                          "id": "adset-7-1",
+                          "name": "Conjunto 1",
+                          "audienceType": "ADVANTAGE+",
+                          "hasInterests": false
+                        }
+                      ]
+                    }
+                  ],
+                  "adsPerAdset": 1,
+                  "duplicateAds": {
+                    "count": 1,
+                    "scope": "global",
+                    "campaignIds": []
+                  }
+                },
+                "createdAt": "2025-12-12 14:19:52+00:00",
+                "id": "28"
+              },
+              "campaigns": [
+                {
+                  "id": "campaign-1",
+                  "name": "Campaña 1",
+                  "objective": "OUTCOME_AWARENESS",
+                  "optimizationGoal": "REACH",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-1-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-2",
+                  "name": "Campaña 2",
+                  "objective": "OUTCOME_AWARENESS",
+                  "optimizationGoal": "IMPRESSIONS",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-2-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-3",
+                  "name": "Campaña 3",
+                  "objective": "OUTCOME_AWARENESS",
+                  "optimizationGoal": "THRUPLAY",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-3-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "INTERESTS",
+                      "hasInterests": true,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [],
+                        "flexible_spec": [
+                          {
+                            "interests": [
+                              {
+                                "id": "6003269553527",
+                                "name": "Deportes (deportes)",
+                                "audience_size_lower_bound": 1446967517,
+                                "audience_size_upper_bound": 1701633800,
+                                "path": [
+                                  "Intereses",
+                                  "Deportes (deportes)"
+                                ],
+                                "description": "",
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003450241842",
+                                "name": "Automovilismo (deportes)",
+                                "audience_size_lower_bound": 289278852,
+                                "audience_size_upper_bound": 340191930,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Automovilismo (deportes)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003402262239",
+                                "name": "eSports (videojuegos)",
+                                "audience_size_lower_bound": 41591352,
+                                "audience_size_upper_bound": 48911430,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "eSports (videojuegos)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003218188176",
+                                "name": "Remo",
+                                "audience_size_lower_bound": 34088035,
+                                "audience_size_upper_bound": 40087530,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Remo"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              }
+                            ]
+                          },
+                          {
+                            "interests": []
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-4",
+                  "name": "Campaña 4",
+                  "objective": "OUTCOME_TRAFFIC",
+                  "optimizationGoal": "LINK_CLICKS",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-4-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "INTERESTS",
+                      "hasInterests": true,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [],
+                        "flexible_spec": [
+                          {
+                            "interests": [
+                              {
+                                "id": "6003269553527",
+                                "name": "Deportes (deportes)",
+                                "audience_size_lower_bound": 1446967517,
+                                "audience_size_upper_bound": 1701633800,
+                                "path": [
+                                  "Intereses",
+                                  "Deportes (deportes)"
+                                ],
+                                "description": "",
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003450241842",
+                                "name": "Automovilismo (deportes)",
+                                "audience_size_lower_bound": 289278852,
+                                "audience_size_upper_bound": 340191930,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Automovilismo (deportes)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003402262239",
+                                "name": "eSports (videojuegos)",
+                                "audience_size_lower_bound": 41591352,
+                                "audience_size_upper_bound": 48911430,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "eSports (videojuegos)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003218188176",
+                                "name": "Remo",
+                                "audience_size_lower_bound": 34088035,
+                                "audience_size_upper_bound": 40087530,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Remo"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              }
+                            ]
+                          },
+                          {
+                            "interests": []
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-5",
+                  "name": "Campaña 5",
+                  "objective": "OUTCOME_TRAFFIC",
+                  "optimizationGoal": "LANDING_PAGE_VIEWS",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-5-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "INTERESTS",
+                      "hasInterests": true,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [],
+                        "flexible_spec": [
+                          {
+                            "interests": [
+                              {
+                                "id": "6003269553527",
+                                "name": "Deportes (deportes)",
+                                "audience_size_lower_bound": 1446967517,
+                                "audience_size_upper_bound": 1701633800,
+                                "path": [
+                                  "Intereses",
+                                  "Deportes (deportes)"
+                                ],
+                                "description": "",
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003450241842",
+                                "name": "Automovilismo (deportes)",
+                                "audience_size_lower_bound": 289278852,
+                                "audience_size_upper_bound": 340191930,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Automovilismo (deportes)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003402262239",
+                                "name": "eSports (videojuegos)",
+                                "audience_size_lower_bound": 41591352,
+                                "audience_size_upper_bound": 48911430,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "eSports (videojuegos)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003218188176",
+                                "name": "Remo",
+                                "audience_size_lower_bound": 34088035,
+                                "audience_size_upper_bound": 40087530,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Remo"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              }
+                            ]
+                          },
+                          {
+                            "interests": []
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-6",
+                  "name": "Campaña 6",
+                  "objective": "OUTCOME_TRAFFIC",
+                  "optimizationGoal": "IMPRESSIONS",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-6-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-7",
+                  "name": "Campaña 7",
+                  "objective": "OUTCOME_TRAFFIC",
+                  "optimizationGoal": "REACH",
+                  "budgetType": "CBO",
+                  "budget": 200,
+                  "adsets": [
+                    {
+                      "id": "adset-7-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.261998579067697,
+                            "longitude": -66.58916096700281,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": []
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "creatives": [
+              {
+                "id": "creative-dup-1",
+                "referenceTitle": "Prueba final",
+                "title": "aasd",
+                "description": "asasd",
+                "copyPrompt": {
+                  "copies": [
+                    {
+                      "format": "PAS",
+                      "text": "¿Sigues postergando ese cambio que tu cuerpo necesita? ❌\\n\\nCada día que pasa, te alejas de la energía, salud y confianza que deseas. El cansancio se acumula, el estrés no baja y la motivación se esfuma. ¿Hasta cuándo vas a esperar para sentirte mejor contigo mismo?\\n\\nÚnete a la Carrera Increíble 5K y da el primer paso hacia una versión más fuerte y feliz de ti. 🚀 Inscríbete hoy, tu salud no puede esperar."
+                    }
+                  ],
+                  "summary": {
+                    "total": 1,
+                    "bySize": {
+                      "small": 0,
+                      "mid": 0,
+                      "large": 0
+                    },
+                    "byFormat": {
+                      "AIDA": 0,
+                      "PAS": 1,
+                      "BAB": 0
+                    }
+                  }
+                },
+                "useDirectCopy": false,
+                "directCopy": "",
+                "shortDescription": "",
+                "cta": "SHOP_NOW",
+                "ctaUrl": "https://alexmor.lat",
+                "fileUrl": "https://levelup-media-project-minio.ksnxqw.easypanel.host/creatives/creative-dup-1/1765549265321_1764702906257_10e34bb8-727b-4a9e-b241-7bf0879fb31a.mp4",
+                "targeting": "global",
+                "targetId": "global",
+                "isGlobal": true,
+                "campaignId": null,
+                "adsetId": null
+              }
+            ],
+            "settings": {
+              "budget": 1400,
+              "totalAds": 1,
+              "duplicateAds": {
+                "count": 1,
+                "scope": "global",
+                "campaignIds": []
+              },
+              "adsPerAdset": 1
+            },
+            "metadata": {
+              "createdAt": "2025-12-12T14:21:17.597Z",
+              "status": "pending",
+              "platform": "meta"
+            },
+            "user": {
+              "clerkId": "user_33Qj7bdw6kABFJexrqaetI5WW4L",
+              "userName": "Dev Test"
+            }
+          },
+          "clientData": {
+            "name": "Testinglum",
+            "instagram_business_account": {
+              "username": "test_lum",
+              "name": "Level Up Media Pr",
+              "id": "17841477875028893"
+            },
+            "id": "756025347601940"
+          },
+          "camapign_id": {
+            "campaigns": [
+              "120243223872420212",
+              "120243223803210212",
+              "120243223755640212",
+              "120243223716910212",
+              "120243223677470212",
+              "120243223674520212",
+              "120243223672820212"
+            ]
+          },
+          "execution_id": 42494
+        }
+      }
+    ]
+  },
+  "versionId": "c4cabbcd-b0f0-480a-a629-bff3b2ac82c1",
+  "activeVersionId": "c4cabbcd-b0f0-480a-a629-bff3b2ac82c1",
+  "versionCounter": 34,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "HvMsL5j65etc7ZBq",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "c4cabbcd-b0f0-480a-a629-bff3b2ac82c1",
+    "workflowId": "HvMsL5j65etc7ZBq",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "id": "c055762a-8fe7-4141-a639-df2372f30060",
+        "typeVersion": 1.1,
+        "name": "When Executed by Another Workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "position": [
+          416,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09B2B4AM16",
+            "mode": "list",
+            "cachedResultName": "canal_de_pruebas"
+          },
+          "text": "={{ $('If').item.json.output.final_decision.notification_message }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          3120,
+          256
+        ],
+        "id": "586913de-87f2-46d6-a3c4-4cc87e366bd6",
+        "name": "Send a message1",
+        "webhookId": "bd496ff9-9995-4b09-80c3-b3a2bc579d77",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=EMPLOYEE: {{ $('When Executed by Another Workflow').item.json.body.user.userName }}\n\nDATA:{{ $('When Executed by Another Workflow').item.json.toJsonString() }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=# ROLE\nAct as a Senior Meta Ads Auditor & Strategic Copywriter.\n\n# INPUT DATA PROCESSING\nYou will receive a single message containing:\n1.  **JSON Payload:** The raw campaign configuration.\n\n# DATA MAPPING & NAVIGATION INSTRUCTIONS (STRICT)\nTo ensure accuracy and avoid hallucinations:\n* **Root Access:** Data is located in `body.campaigns` (or `campaigns` at root).\n* **Multi-Campaign Handling:** You must expect and process MULTIPLE campaign objects in the array.\n* **AdSets:** Found inside each campaign object.\n* **Creatives:** Found in the root `creatives` array. Link them to AdSets matching `creatives[].targetId` === `adsets[].id`.\n* **Copy Variations:** Look INSIDE each creative at `creative.copyPrompt.copies`.\n\n# LOGIC & RULES\n\n## 1. Data Normalization (Structure Mapping)\n* **Goal:** Create a clean map of the campaign structure for the report.\n* **Linking:** Flatten the list of AdSets from all campaigns and map the corresponding creative to each AdSet so the user knows exactly which ad uses which text.\n\n## 2. Compliance Audit (The Rules)\n\n### A. Objective Rule (Strategic Coherence)\n* Iterate through all campaigns. If ANY campaign violates this, `objective_compliance` is FAIL.\n* **Rule:**\n    * IF `campaign.objective` is `OUTCOME_AWARENESS`:\n    * THEN `campaign.optimizationGoal` MUST be `THRUPLAY`.\n    * ELSE (if objective is Engagement, Sales, etc.) -> Rule N/A (PASS).\n\n### B. Creative & Copywriting Audit (Quality Check)\n**Context:** Auditing text variations in `creative.copyPrompt.copies`.\n\n1.  **Quantity Check:** Count items in the `copies` array.\n2.  **Quality Check:** Analyze `text` fields for **AIDA**, **PAS**, or **BAB** (Before-After-Bridge) structure.\n3.  **Final Logic:**\n    * **PASS:** At least **1 text found** AND that text adheres to a valid structure (AIDA, PAS, or BAB).\n    * **FAIL:** 0 texts found OR text does not match any valid structure.\n\n## 3. Manager Alert Logic (EXCEPTION REPORTING)\n* **Trigger:** `overall_status` = FAIL.\n* **Constraint:** **ONLY report rules that FAILED.**\n* **Prohibition:** NEVER mention a rule that resulted in PASS in the alert message.\n* **Format:** \"URGENTE [Client] ([AdAccountID]): Revisión requerida en '[Strategy]'. Publicado por: [User]. Fallos: 1) [Error A], 2) [Error B].\"\n\n# OUTPUT INSTRUCTIONS\n* Respond strictly with a VALID JSON object based on the template below.\n* **Strictness:** Pure binary logic.\n* **Language:** Spanish.\n* Include every fail analysis in manager_alert_message.\n\n# JSON RESPONSE TEMPLATE\n{\n  \"synthesis\": {\n    \"client_info\": {\n      \"name\": \"Extract Name\",\n      \"instagram_handle\": \"Extract Handle\",\n      \"ad_account_id\": \"Extract ID\",\n      \"strategy_name\": \"Extract Strategy Name\",\n      \"published_by\": \"Extract User Name\"\n    },\n    \"campaign_details\": {\n      \"name\": \"List Campaign Names (comma separated)\",\n      \"objective\": \"List Objectives or 'Mixed'\",\n      \"optimization_goal\": \"List Goals or 'Mixed'\"\n    },\n    \"adsets\": [\n      {\n        \"name\": \"Adset Name (Campaign Name)\",\n        \"targeting_summary\": \"Readable summary\",\n        \"creatives\": [\n          {\n            \"reference_title\": \"Creative Title\",\n            \"total_copies_found\": 0,\n            \"valid_copies_count\": 0,\n            \"detected_structures_summary\": \"e.g., 1 BAB found\"\n          }\n        ]\n      }\n    ]\n  },\n  \"audit\": {\n    \"overall_status\": \"PASS or FAIL\",\n    \"manager_alert_message\": \"URGENTE... (or null if PASS)\",\n    \"objective_compliance\": {\n      \"status\": \"PASS or FAIL\",\n      \"analysis\": \"Explanation in Spanish\"\n    },\n    \"creative_compliance\": {\n      \"status\": \"PASS or FAIL\",\n      \"analysis\": \"Explanation in Spanish\"\n    }\n  }\n}"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          1264,
+          336
+        ],
+        "id": "3f234e54-6fde-41ec-8da0-88830ce0990c",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1312,
+          768
+        ],
+        "id": "896c515b-c08f-4427-ac1a-6223ca3df802",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-cuenta-publicitaria,eq,{{ $json.body.manualClientData.adAccountId }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          624,
+          336
+        ],
+        "id": "e4557136-091a-41fd-80a5-7411e6c95e80",
+        "name": "Get many rows",
+        "alwaysOutputData": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "boardItem",
+          "operation": "get",
+          "itemId": "={{ $json[\"ID-monday\"] }}"
+        },
+        "type": "n8n-nodes-base.mondayCom",
+        "typeVersion": 1,
+        "position": [
+          1056,
+          336
+        ],
+        "id": "ff953f87-8d4a-4cb4-953a-c71ccf460492",
+        "name": "Get an item",
+        "credentials": {
+          "mondayComOAuth2Api": {
+            "id": "7emakKOqBk6HAsSo",
+            "name": "Monday.com levelup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schemaType": "manual",
+          "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\n    \"synthesis\",\n    \"audit\"\n  ],\n  \"properties\": {\n    \"synthesis\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"client_info\",\n        \"campaign_details\",\n        \"adsets\"\n      ],\n      \"properties\": {\n        \"client_info\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"name\",\n            \"instagram_handle\",\n            \"ad_account_id\",\n            \"strategy_name\",\n            \"published_by\"\n          ],\n          \"properties\": {\n            \"name\": { \"type\": [\"string\", \"null\"] },\n            \"instagram_handle\": { \"type\": [\"string\", \"null\"] },\n            \"ad_account_id\": { \"type\": \"string\" },\n            \"strategy_name\": { \"type\": \"string\" },\n            \"published_by\": { \"type\": \"string\" }\n          }\n        },\n        \"campaign_details\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"name\",\n            \"objective\",\n            \"optimization_goal\"\n          ],\n          \"properties\": {\n            \"name\": { \"type\": \"string\" },\n            \"objective\": { \"type\": \"string\" },\n            \"optimization_goal\": { \"type\": \"string\" }\n          }\n        },\n        \"adsets\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\n              \"name\",\n              \"targeting_summary\",\n              \"creatives\"\n            ],\n            \"properties\": {\n              \"name\": { \"type\": \"string\" },\n              \"targeting_summary\": { \"type\": \"string\" },\n              \"creatives\": {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"object\",\n                  \"required\": [\n                    \"reference_title\",\n                    \"total_copies_found\",\n                    \"valid_copies_count\",\n                    \"detected_structures_summary\"\n                  ],\n                  \"properties\": {\n                    \"reference_title\": { \"type\": \"string\" },\n                    \"total_copies_found\": { \"type\": \"integer\" },\n                    \"valid_copies_count\": { \"type\": \"integer\" },\n                    \"detected_structures_summary\": { \"type\": \"string\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"audit\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"overall_status\",\n        \"manager_alert_message\",\n        \"objective_compliance\",\n        \"creative_compliance\"\n      ],\n      \"properties\": {\n        \"overall_status\": {\n          \"type\": \"string\",\n          \"enum\": [\"PASS\", \"FAIL\"]\n        },\n        \"manager_alert_message\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"objective_compliance\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"status\",\n            \"analysis\"\n          ],\n          \"properties\": {\n            \"status\": {\n              \"type\": \"string\",\n              \"enum\": [\"PASS\", \"FAIL\"]\n            },\n            \"analysis\": { \"type\": \"string\" }\n          }\n        },\n        \"creative_compliance\": {\n          \"type\": \"object\",\n          \"required\": [\n            \"status\",\n            \"analysis\"\n          ],\n          \"properties\": {\n            \"status\": {\n              \"type\": \"string\",\n              \"enum\": [\"PASS\", \"FAIL\"]\n            },\n            \"analysis\": { \"type\": \"string\" }\n          }\n        }\n      }\n    }\n  }\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          1424,
+          544
+        ],
+        "id": "7498d048-64bd-4af4-8afe-6609cf126f61",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "ec1ce3f5-610f-44ad-b6f9-40e915197f4a",
+                "leftValue": "={{ $json.output.final_decision.status }}",
+                "rightValue": "FAIL",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2288,
+          368
+        ],
+        "id": "bf524714-5a2f-4e38-bdf1-54b61331f6ff",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "create",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mqay6rta18lp139",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "json_body",
+                "fieldValue": "={{ $('When Executed by Another Workflow').first().json.body.toJsonString() }}"
+              },
+              {
+                "fieldName": "client_data",
+                "fieldValue": "={{ $('When Executed by Another Workflow').first().json.clientData.toJsonString() }}"
+              },
+              {
+                "fieldName": "alert_message",
+                "fieldValue": "={{ $('If').first().json.output.final_decision.notification_message }}"
+              },
+              {
+                "fieldName": "campaign_id",
+                "fieldValue": "={{ $('When Executed by Another Workflow').first().json.camapign_id.values().toJsonString() }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          2944,
+          256
+        ],
+        "id": "0dd13b0f-94df-4d52-bad6-276cec36263e",
+        "name": "Create a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "295c8a70-15c5-4334-a2b1-6f2a7a029751",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "03e774cd-ed75-457c-b037-bd7103b8c19c",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          816,
+          352
+        ],
+        "id": "f7afa85e-3df7-4605-badb-e84715a0278c",
+        "name": "If1",
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "status",
+                "value": "ACTIVE"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3440,
+          528
+        ],
+        "id": "05f2e759-dd6e-4092-af59-87f129edff65",
+        "name": "HTTP Request",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          3040,
+          512
+        ],
+        "id": "baf01aa7-c080-40f5-8c54-f71344fb0043",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtenemos el array de IDs basándonos en tu referencia y la imagen\n// Nota: Respeto el typo 'camapign_id' que aparece en tu estructura\nconst idList = $('When Executed by Another Workflow').first().json.camapign_id.propertyName;\n\n// Iteramos sobre el array para devolver un item por cada ID\nreturn idList.map(id => {\n  return {\n    json: {\n      id: id\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2784,
+          528
+        ],
+        "id": "efb981db-75c0-45d5-b3f0-1431991e987d",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ==========================================\n// 1. OBTENCIÓN DE DATOS (INPUTS BLINDADOS)\n// ==========================================\n\n// A. Obtener el Presupuesto Mensual del Cliente\n// Usamos try/catch o valores por defecto para evitar crash si falta la columna\nlet userMonthlyBudget = 0;\ntry {\n    if ($input.item.json.column_values && $input.item.json.column_values[3]) {\n        userMonthlyBudget = parseFloat($input.item.json.column_values[3].text || \"0\");\n    }\n} catch (e) {\n    userMonthlyBudget = 0;\n}\n\n// B. Obtener la Data de la Campaña (Webhook/Trigger)\n// Verificamos si el nodo existe antes de pedir .json\nconst triggerNode = $('When Executed by Another Workflow').first();\nconst rawPayload = triggerNode ? triggerNode.json : {};\n\n// C. BÚSQUEDA DE CAMPAÑAS (A prueba de balas)\n// Buscamos el array en las ubicaciones más probables.\n// Si no encuentra nada, asigna un array vacío [] para que el bucle no explote.\nlet campaigns = [];\n\nif (rawPayload.body && Array.isArray(rawPayload.body.campaigns)) {\n    // Caso estándar según tu JSON\n    campaigns = rawPayload.body.campaigns;\n} else if (Array.isArray(rawPayload.campaigns)) {\n    // Caso donde el body se aplanó\n    campaigns = rawPayload.campaigns;\n} else if (rawPayload.body && rawPayload.body.strategy && Array.isArray(rawPayload.body.strategy.campaigns)) {\n    // Caso rebuscado (dentro de strategy)\n    campaigns = rawPayload.body.strategy.campaigns;\n}\n\n// ==========================================\n// 2. LÓGICA DE CÁLCULO (Motor Financiero)\n// ==========================================\n\nlet totalDailyCents = 0;\nlet calculationLog = []; \n\n// El bucle ahora es seguro porque 'campaigns' siempre será un array (aunque esté vacío)\nfor (const campaign of campaigns) {\n    let campaignCents = 0;\n    let budgetType = \"ABO\"; \n\n    // Normalizar detección de CBO/GLOBAL\n    const typeStr = (campaign.budgetType || \"\").toUpperCase();\n    \n    if (typeStr.includes(\"CBO\") || typeStr.includes(\"GLOBAL\")) {\n        budgetType = \"CBO\";\n        // En CBO tomamos el budget directo. Si no existe, 0.\n        campaignCents = parseInt(campaign.budget || 0);\n    } else {\n        budgetType = \"ABO\";\n        // En ABO sumamos los adsets. Validamos que adsets sea un array.\n        if (Array.isArray(campaign.adsets)) {\n            campaignCents = campaign.adsets.reduce((sum, adset) => {\n                return sum + parseInt(adset.budget || 0);\n            }, 0);\n        }\n    }\n\n    // Acumular\n    totalDailyCents += campaignCents;\n\n    // Log\n    calculationLog.push({\n        campaign_name: campaign.name || \"Sin Nombre\",\n        type: budgetType,\n        cents: campaignCents,\n        usd: (campaignCents / 100).toFixed(2)\n    });\n}\n\n// ==========================================\n// 3. PROYECCIONES Y COMPLIANCE\n// ==========================================\n\nconst dailySpendUSD = totalDailyCents / 100;\nconst projectedMonthlySpend = dailySpendUSD * 30;\n\nlet percentageUsed = 0;\nif (userMonthlyBudget > 0) {\n    percentageUsed = (projectedMonthlySpend / userMonthlyBudget) * 100;\n}\n\n// Validación Binaria (8% - 12%)\nlet status = \"FAIL\";\n// Nota: Si el gasto es 0 (porque no leyó campañas), fallará por estar debajo del 8%.\nif (percentageUsed >= 8.00 && percentageUsed <= 12.00) {\n    status = \"PASS\";\n}\n\nlet analysisMessage = \"\";\nif (status === \"PASS\") {\n    analysisMessage = `Correcto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) es el ${percentageUsed.toFixed(2)}% del presupuesto ($${userMonthlyBudget}).`;\n} else {\n    analysisMessage = `Fallo de Presupuesto: El gasto proyectado ($${projectedMonthlySpend.toFixed(2)}) representa el ${percentageUsed.toFixed(2)}% del presupuesto declarado ($${userMonthlyBudget}). Está fuera del rango permitido (8%-12%).`;\n}\n\n// ==========================================\n// 4. SALIDA FINAL\n// ==========================================\n\nreturn {\n    json: {\n        budget_audit: {\n            status: status,\n            metrics: {\n                user_budget_limit: userMonthlyBudget,\n                daily_spend_usd: dailySpendUSD,\n                projected_monthly_spend: projectedMonthlySpend,\n                percentage_used: parseFloat(percentageUsed.toFixed(2))\n            },\n            analysis: analysisMessage,\n            breakdown_log: calculationLog,\n            debug_info: {\n                campaigns_found: campaigns.length // Para saber si encontró las campañas\n            }\n        }\n    }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1312,
+          112
+        ],
+        "id": "6ebaee34-d018-4c2f-9fce-416013ac1e4e",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1632,
+          336
+        ],
+        "id": "5fac8171-76d1-4ef9-9af2-79ca098b6532",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          336
+        ],
+        "id": "aafb679d-e1bf-490a-9614-15c24b89665c",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.toJsonString() }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=# ROLE\nAct as a **Final Campaign Approval Authority**.\nYour goal is to consolidate two separate audit reports (Budget Audit + Strategy QA) into a single final status and a unified notification message.\n\n# INPUT DATA STRUCTURE\nYou will receive a JSON object containing an array (usually under the key `data`). You must locate two distinct data blocks within this array:\n1.  **Budget Block:** Contains `budget_audit` (Generated by code).\n2.  **QA Block:** Contains `output` (Generated by the previous AI Agent).\n\n# LOGIC & RULES\n\n## 1. Context Extraction\nExtract the following details from the **QA Block** (`output.synthesis.client_info`) to build the message header:\n* Client Name\n* Ad Account ID\n* Strategy Name\n* User Name (`published_by`)\n\n## 2. Status Determination (Strict AND Logic)\n* **Check Budget Status:** Look at `budget_audit.status`.\n* **Check QA Status:** Look at `output.audit.overall_status`.\n* **FINAL CALCULATION:**\n    * IF (`Budget_Status` == \"PASS\") **AND** (`QA_Status` == \"PASS\") -> **FINAL STATUS = \"PASS\"**.\n    * IF **ANY** of them is \"FAIL\" -> **FINAL STATUS = \"FAIL\"**.\n\n## 3. Message Construction (Conditional)\n* **CASE: FINAL STATUS = PASS**\n    * `message`: \"Aprobado: La estrategia '[Strategy Name]' de [Client Name] cumple con todas las reglas de presupuesto y calidad. (Presupuesto validado + QA validado).\"\n\n* **CASE: FINAL STATUS = FAIL**\n    * Construct a consolidated alert message.\n    * **Header:** \"URGENTE [Client Name] ([Ad Account ID]): Revisión requerida en '[Strategy Name]'. Publicado por: [User Name].\"\n    * **Body:** \"Se encontraron los siguientes errores bloqueantes:\"\n    * **Error Source A (Budget):** IF `budget_audit.status` is FAIL -> Append the text from `budget_audit.analysis`.\n    * **Error Source B (QA):** IF `output.audit.overall_status` is FAIL -> Extract the error details from `output.audit.manager_alert_message` (remove the \"URGENTE...\" header from this specific string to avoid duplication, keep only the list of failures).\n\n# OUTPUT INSTRUCTIONS\n* Return a SINGLE JSON object.\n* Language: Spanish.\n* Do not explain your reasoning outside the JSON.\n\n# JSON RESPONSE TEMPLATE\n{\n  \"final_decision\": {\n    \"status\": \"PASS or FAIL\",\n    \"notification_message\": \"The consolidated string generated in Logic Step 3\"\n  }\n}"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          1936,
+          336
+        ],
+        "id": "6532afdf-b105-46ec-b35c-a4001b9ee560",
+        "name": "Basic LLM Chain1"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n  \"final_decision\": {\n    \"status\": \"PASS or FAIL\",\n    \"notification_message\": \"The consolidated string generated in Logic Step 3\"\n  }\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          2080,
+          544
+        ],
+        "id": "018ec15e-78f0-4805-81b3-ea295a419663",
+        "name": "Structured Output Parser1"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Get many rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Structured Output Parser",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Structured Output Parser1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get an item": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Create a row",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create a row": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Get an item",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain1": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-12-12T14:34:48.000Z",
+        "id": 9,
+        "workflowId": "HvMsL5j65etc7ZBq",
+        "versionId": "c4cabbcd-b0f0-480a-a629-bff3b2ac82c1",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,3631 @@
+{
+  "updatedAt": "2026-09-09T18:42:47.219Z",
+  "createdAt": "2025-09-13T23:09:56.186Z",
+  "id": "LN08xR2hD3GGSEW8",
+  "name": "A-) Trigger v1.1 safe",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        816,
+        144
+      ],
+      "id": "fec8d272-5476-4bf9-b3bc-9994e66d6b9c",
+      "name": "get-clients",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f58f5ae0-290a-46ad-a0b3-721f74e19692",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Monday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "185a3de4-410c-46f3-a586-ef195a3fde98",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Wednesday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "aac79d34-71de-42a1-936c-aedecc8f3d99",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Friday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        160
+      ],
+      "id": "701da537-3122-4e97-ad68-1c2504742bc6",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "vvXRpzCDaYehJDYf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/vvXRpzCDaYehJDYf",
+          "cachedResultName": "E-) Alerta falta de fases v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        224
+      ],
+      "id": "98386fa2-cbf3-4264-abb0-21f5132399aa",
+      "name": "alerta-remarketing-cantidad-campañas"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "qXDEK5MdK5Zpwpzr",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/qXDEK5MdK5Zpwpzr",
+          "cachedResultName": "B-) Agente de monitoreo v3"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        480
+      ],
+      "id": "4b5ddb0d-d60e-43ab-b903-bee76b9e339f",
+      "name": "alerta-metricas",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2384,
+        336
+      ],
+      "id": "cc940ef7-65c9-463c-bbe7-eb0e517dec98",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        448
+      ],
+      "id": "bfafdca0-1509-4c75-b46d-5d60bb600258",
+      "name": "limit-items",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        240
+      ],
+      "id": "f27937e5-51bb-4acf-aaf1-98b262abbd69",
+      "name": "limit-items1",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "batchSize": 25,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        128
+      ],
+      "id": "2f4e4a35-186a-44e5-a141-dbd3f8bb3d01",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2848,
+        784
+      ],
+      "id": "29bdb92b-e4ba-4c9d-bdca-68ab3aa0f38d"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        -160
+      ],
+      "id": "ed8fd42a-f9dd-4b04-9fb8-13906852c346",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        -256
+      ],
+      "id": "b4b3361e-4896-4985-9ecb-7a57a780f0a8",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29430c0a-33a9-4425-92a3-90e8575234c9",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        -256
+      ],
+      "id": "52780ddd-41da-4fbc-bffe-76e7131f32dd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2176,
+        -400
+      ],
+      "id": "fbacfab7-0ddf-4832-8369-f6341ed4e166",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "alertas",
+        "key": "={{ $json['ID-cuenta-publicitaria'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        -304
+      ],
+      "id": "15ad09e3-ec2d-44fc-be80-689f2b187706",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 0. INICIALIZACIÓN DE RESULTADOS ---\nconst resultadosFinales = [];\nconst todosLosItemsDeAlertas = $('If1').all();\nconst todosLosItemsDeTags = $input.all();\n\n// --- BUCLE PRINCIPAL ---\nfor (let i = 0; i < todosLosItemsDeAlertas.length; i++) {\n    const itemAlertas = todosLosItemsDeAlertas[i];\n    const itemTag = todosLosItemsDeTags[i];\n\n    // --- 1. INICIALIZACIÓN POR ITEM ---\n    const alertasTexto = itemAlertas.json.alertas || [];\n    const mensajeEtiquetado = itemTag.json.final || \"\";\n    let listaCampañasActivasSimple = null; \n\n    const reporteConsolidado = {\n        cliente: null,\n        empresa: null,\n        idCuenta: null,\n        alertasMetricas: [],\n        alertasEstructurales: [],\n        avisoFases: { // Objeto para el aviso de fases faltantes\n            faltantes: null,\n            activas: null\n        },\n        avisoProgreso: [] // <-- NUEVO: Para alertas de \"Listo para Fase 5\"\n    };\n\n    // --- 2. EXPRESIONES REGULARES ---\n    const regexCliente = /\\*Cliente:\\* (.*?)\\n/;\n    const regexEmpresa = /\\*Empresa:\\* (.*?)\\n/;\n    // Regex de ID modificada para aceptar ambos formatos\n    const regexIdCuenta = /\\*ID Cuenta(?: Publicitaria)?:\\* (.*?)\\n/;\n    const regexCampañaMetrica = /\\*Campaña:\\* (.*?)\\n\\*Fecha de creación:\\* (.*?)\\n\\*Estado:\\* (.*?)\\n\\*Razón:\\* (.*)/;\n    const regexAlertaEstructuralSimple = /AVISO: (.*?)\\n/;\n    const regexCampañasActivasSimple = /\\*Campañas Activas:\\*\\n((?:• .+\\n?)+)/m;\n    const regexFasesFaltantes = /\\*Fases Faltantes:\\*\\n((?:❌ .+\\n?)+)/m;\n    const regexCampañasActivasEnAvisoFases = /\\*Campañas Activas Actualmente:\\*\\n((?:• .+\\n?)+)/m;\n    \n    // --- NUEVA REGEX ---\n    // Captura el título (Grupo 1) y el motivo (Grupo 2) de la alerta de progreso\n    const regexAvisoProgreso = /✅ (Listo para Fase 5)\\n\\n(?:[\\s\\S]*?)\\*Motivo:\\* ([\\s\\S]*)/;\n\n\n    // --- 3. ANÁLISIS Y CONSOLIDACIÓN DE ALERTAS (LÓGICA MEJORADA) ---\n    for (const texto of alertasTexto) {\n        \n        // --- Lógica de extracción de datos MEJORADA ---\n        // Intenta llenar los campos faltantes en CADA iteración\n        if (!reporteConsolidado.cliente) {\n            reporteConsolidado.cliente = texto.match(regexCliente)?.[1] || null;\n        }\n        if (!reporteConsolidado.empresa) {\n            reporteConsolidado.empresa = texto.match(regexEmpresa)?.[1] || null;\n        }\n        if (!reporteConsolidado.idCuenta) {\n            reporteConsolidado.idCuenta = texto.match(regexIdCuenta)?.[1] || null;\n        }\n        // --- Fin de la lógica de extracción ---\n\n\n        // Se prioriza la búsqueda del aviso más complejo primero\n        if (texto.includes(\"Faltan Fases de Campañas Activas\")) {\n            reporteConsolidado.alertasEstructurales.push({ descripcion: \"Faltan Fases de Campañas Activas\" });\n            const matchFaltantes = texto.match(regexFasesFaltantes);\n            if (matchFaltantes) {\n                reporteConsolidado.avisoFases.faltantes = matchFaltantes[1].trim();\n            }\n            const matchActivas = texto.match(regexCampañasActivasEnAvisoFases);\n            if (matchActivas) {\n                reporteConsolidado.avisoFases.activas = matchActivas[1].trim();\n            }\n        \n        // --- NUEVO BLOQUE \"ELSE IF\" ---\n        } else if (texto.startsWith(\"✅ Listo para Fase 5\")) {\n            const matchProgreso = texto.match(regexAvisoProgreso);\n            if (matchProgreso) {\n                reporteConsolidado.avisoProgreso.push({\n                    titulo: matchProgreso[1].trim(), // \"Listo para Fase 5\"\n                    motivo: matchProgreso[2].trim()  // \"Han pasado +7 días...\"\n                });\n            }\n        // --- FIN NUEVO BLOQUE ---\n\n        } else if (texto.includes(\"*Razón:*\")) { // Alertas de métricas\n            const esRepetida = texto.startsWith(\"ALERTA REPETIDA\");\n            const campañasIndividuales = texto.split('-----------------------------------');\n            for (const seccionCampaña of campañasIndividuales) {\n                const match = seccionCampaña.match(regexCampañaMetrica);\n                if (match) {\n                    reporteConsolidado.alertasMetricas.push({\n                        esRepetida: esRepetida,\n                        campaña: match[1].trim(),\n                        razon: match[4].trim()\n                    });\n                }\n            }\n        } else { // Otros avisos estructurales simples\n            const match = texto.match(regexAlertaEstructuralSimple);\n            if (match) {\n                reporteConsolidado.alertasEstructurales.push({\n                    descripcion: match[1].trim()\n                });\n            }\n            const matchActivasSimple = texto.match(regexCampañasActivasSimple);\n            if (matchActivasSimple) {\n                listaCampañasActivasSimple = matchActivasSimple[1].trim();\n            }\n        }\n    }\n\n    // --- 4. CONSTRUCCIÓN DEL MENSAJE DE SLACK ---\n    const blocks = [];\n    // Header modificado para usar empresa o cliente como fallback\n    const nombreDisplay = reporteConsolidado.empresa || reporteConsolidado.cliente || 'Cliente';\n    blocks.push({ \"type\": \"header\", \"text\": { \"type\": \"plain_text\", \"text\": `🚨 Alertas para ${nombreDisplay}`, \"emoji\": true } });\n\n    if (mensajeEtiquetado) {\n        blocks.push({ \"type\": \"context\", \"elements\": [{ \"type\": \"mrkdwn\", \"text\": mensajeEtiquetado }] });\n    }\n\n    // Usar fallbacks por si algún dato no se encontró\n    blocks.push({ \"type\": \"section\", \"fields\": [{ \"type\": \"mrkdwn\", \"text\": `*Cliente:*\\n${reporteConsolidado.cliente || 'No encontrado'}` }, { \"type\": \"mrkdwn\", \"text\": `*ID Cuenta:*\\n${reporteConsolidado.idCuenta || 'No encontrado'}` }] });\n    blocks.push({ \"type\": \"divider\" });\n\n    // --- NUEVO BLOQUE PARA AVISO DE PROGRESO (Fase 5) ---\n    if (reporteConsolidado.avisoProgreso.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"🚀 *Acciones Recomendadas*\" } });\n        for (const aviso of reporteConsolidado.avisoProgreso) {\n            // Se muestra el título y el motivo capturados por la regex\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `*${aviso.titulo}*\\n${aviso.motivo}` } });\n        }\n        blocks.push({ \"type\": \"divider\" });\n    }\n    // --- FIN NUEVO BLOQUE ---\n\n    if (reporteConsolidado.alertasMetricas.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*🔎 Alertas de Métricas (Prioritarias)*\" } });\n        for (const alerta of reporteConsolidado.alertasMetricas) {\n            const etiquetaRepetida = alerta.esRepetida ? \"`REPETIDA` \" : \"\";\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `${etiquetaRepetida}*Campaña:* ${alerta.campaña}\\n*Razón:* ${alerta.razon}` } });\n        }\n        blocks.push({ \"type\": \"divider\" });\n    }\n\n    if (reporteConsolidado.alertasEstructurales.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*🔧 Alertas de Estructura*\" } });\n        for (const alerta of reporteConsolidado.alertasEstructurales) {\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `• ${alerta.descripcion}` } });\n        }\n        // No se pone divider aquí para que el detalle de fases aparezca junto\n    }\n    \n    // Bloque para el aviso detallado de FASES FALTANTES\n    if (reporteConsolidado.avisoFases.faltantes) {\n        let detallesTexto = `\\n*Fases Faltantes:*\\n${reporteConsolidado.avisoFases.faltantes}`;\n        if (reporteConsolidado.avisoFases.activas) {\n            detallesTexto += `\\n\\n*Campañas Activas Actualmente:*\\n${reporteConsolidado.avisoFases.activas}`;\n        }\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": detallesTexto } });\n        blocks.push({ \"type\": \"divider\" });\n    }\n\n    // Bloque para la lista de campañas de avisos simples\n    if (listaCampañasActivasSimple) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*📊 Campañas Activas en la Cuenta*\" } });\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": listaCampañasActivasSimple } });\n        blocks.push({ \"type\": \"divider\" });\n    }\n    \n    // Lógica de botones (no se modifica)\n    if (reporteConsolidado.alertasMetricas.length > 0 || reporteConsolidado.alertasEstructurales.length > 0 || reporteConsolidado.avisoProgreso.length > 0) {\n      // Se añade avisoProgreso a la condición para mostrar botones\n      blocks.push({ \"type\": \"actions\", \"elements\": [ { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Campañas Ajustadas\", \"emoji\": true }, \"style\": \"primary\", \"value\": `revisado_${reporteConsolidado.idCuenta}`, \"action_id\": \"approve_button\" }, { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Dependencia\", \"emoji\": true }, \"value\": `dependencia_${reporteConsolidado.idCuenta}`, \"action_id\": \"dependencia_button\" } ] });\n    }\n\n    resultadosFinales.push({ json: { slack_block: { \"blocks\": blocks } } });\n}\n\n// --- 6. RETORNAR TODOS LOS RESULTADOS ---\nreturn resultadosFinales;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        -256
+      ],
+      "id": "2c023eb5-0c00-4981-a146-341816cf2ad4",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095BBYBHHA",
+          "mode": "list",
+          "cachedResultName": "office-6-agente-monitoreo-ads"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ JSON.stringify($json.slack_block) }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        3840,
+        -256
+      ],
+      "id": "6bcf7c5d-876b-487d-95c9-7b476538b008",
+      "name": "Send a message",
+      "webhookId": "334acc78-63f6-4436-965c-8ad59f421c04",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6bbc1cef-e446-4702-bfb0-affbec597fad",
+              "leftValue": "={{ $('Edit Fields').item.json.alertas }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2752,
+        -304
+      ],
+      "id": "c0c913dd-c8ed-447d-8848-835c9a8866ff",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Edit Fields').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        3136,
+        -320
+      ],
+      "id": "fa54ea63-45fa-437f-a2b3-a1b29349ca19",
+      "name": "get-data-to-tag-member3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3216,
+        -144
+      ],
+      "id": "d808817c-f075-4002-84b1-2875cc897915",
+      "name": "lack-of-traffiker-message1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('If1').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('If1').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2944,
+        -320
+      ],
+      "id": "a7585900-c6ca-4359-a703-99a8d654f6d0",
+      "name": "hay-traffiker?4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3504,
+        -256
+      ],
+      "id": "0df59d4f-052c-4bef-9b30-c0b8c7e0cb29",
+      "name": "set-final-messages4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3312,
+        -320
+      ],
+      "id": "f9b55a89-81ef-4576-a377-9dbd5f19e12a",
+      "name": "set-member-slack-id5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00e41a7b-9c8b-4d56-82bd-71786a9496f3",
+              "name": "data",
+              "value": "={{ $('Loop Over Items1').item.json}}",
+              "type": "object"
+            },
+            {
+              "id": "979c947f-95f2-489c-8e6a-3073fd0c9cce",
+              "name": "alertas",
+              "value": "={{ $json.alertas }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2592,
+        -304
+      ],
+      "id": "e317bc48-ae30-4af0-9c7e-dea908647815",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2400,
+        -640
+      ],
+      "id": "44698469-907c-482c-b5cb-b3a72be0b2a3",
+      "name": "get-clients1",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 2000,
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $json['ID-cuenta-publicitaria'] }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -64
+      ],
+      "id": "39b016b5-e41b-4ac8-82e1-c6695a7c2075",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $json['ID-cuenta-publicitaria'] }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        -656
+      ],
+      "id": "7fd59aab-8035-4d83-9d44-93dd5825983d",
+      "name": "Redis3",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        208
+      ],
+      "id": "e1a1a32f-fb7f-48c5-87bf-baedd9700c71",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        448
+      ],
+      "id": "62eda2ff-7022-432a-b523-e2ea309793d3",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4400,
+        -112
+      ],
+      "id": "bdd5a21f-9bbf-439f-81aa-8bd37d40084c",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('If1').item.json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        4256,
+        -256
+      ],
+      "id": "6128b2b4-876e-4965-9c4b-67401ba99626",
+      "name": "Update a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m8v320mexdfjjou",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "={{ $json.message.text }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "={{ $('Loop Over Items1').item.json['ID-monday'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message').item.json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message').item.json.channel }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Loop Over Items1').item.json['ID-cuenta-publicitaria'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        4048,
+        -256
+      ],
+      "id": "850ac7f6-bf1d-4d2e-b0a8-ddb14fbf4484",
+      "name": "save-message-log",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        144
+      ],
+      "id": "21103bc3-ffa7-40b2-9ed8-1f57d3cf09bb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dsrJpJi1MTr4mCOZ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dsrJpJi1MTr4mCOZ",
+          "cachedResultName": "F-) Alerta para fase 5"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        656
+      ],
+      "id": "42e1c6cc-e0d6-4086-8b6e-ad1fcb44b13b",
+      "name": "alerta-metricas1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        640
+      ],
+      "id": "57773ae4-a45b-449f-9ef3-43a65e734f24",
+      "name": "limit-items2",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        640
+      ],
+      "id": "59b967f7-5d52-478f-852a-1be7adb07974",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "trabajo-metricas",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        624,
+        144
+      ],
+      "id": "14227f2c-fd38-487a-885b-cfe4fb43c98f",
+      "name": "Redis2",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "data",
+        "key": "trabajo-metricas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        192,
+        144
+      ],
+      "id": "01e3200e-6f0e-4f1b-87c0-848c68bdd627",
+      "name": "Redis4",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51897156-6cf1-4289-8bad-0db783780607",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        128
+      ],
+      "id": "d2237c7d-5c31-4aab-98a8-b48f51f55008",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "trabajo-metricas"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        -656
+      ],
+      "id": "c5af0326-a082-4d9b-a856-56e66600f0af",
+      "name": "Redis5",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        560
+      ],
+      "id": "8b1570d9-2161-4a35-a585-599eeafad62a",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "chatMessage",
+        "chatId": {
+          "__rl": true,
+          "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+          "mode": "list",
+          "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+          "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+        },
+        "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+        "options": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [
+        16,
+        560
+      ],
+      "id": "2cbc1443-595d-495f-95ee-8f1d65b219fd",
+      "name": "Create chat message",
+      "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "bQfmQjHop2MXmbIN",
+          "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        560
+      ],
+      "id": "a61aed0e-bc70-4afe-b95b-e23750f306dd",
+      "name": "Send a message1",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "trabajo-metricas"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        192,
+        560
+      ],
+      "id": "d8335451-233c-4749-aa49-9a2f04302872",
+      "name": "Redis6",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        240
+      ],
+      "id": "42befec9-b1b1-4b0b-9828-8c61623bdbf5",
+      "name": "Wait",
+      "webhookId": "1064db7a-c02a-4ace-9cc7-82526201e143"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        448
+      ],
+      "id": "78b7d168-e318-4b25-b514-abcdd7ae31de",
+      "name": "Wait1",
+      "webhookId": "1122a80b-b296-4895-9ee1-0a32d48bc647"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        640
+      ],
+      "id": "a4bc929c-6fde-4c6b-99e9-524c6a745715",
+      "name": "Wait2",
+      "webhookId": "3ec3bcd3-e9dd-4517-a4da-1e6c080013dc"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "trabajo-metricas"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -528
+      ],
+      "id": "97c10289-c164-4d65-829d-8753366738fd",
+      "name": "Redis7",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "id": "708"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        736,
+        368
+      ],
+      "id": "288faadd-e2a7-4521-80ec-0ce5c12ec277",
+      "name": "Get a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        -656
+      ],
+      "id": "93d1a6ec-362e-409d-89cb-8e240fdac5f2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "id": "708"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        -416
+      ],
+      "id": "14f3f68b-8e79-4922-a24e-88b4a654ac77",
+      "name": "Get a row1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "alertas",
+        "key": "={{ $json['ID-cuenta-publicitaria'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        -480
+      ],
+      "id": "2e78a35e-ac9a-4a83-9ebe-cd9b03f8f735",
+      "name": "Redis8",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Redis4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alerta-remarketing-cantidad-campañas": {
+      "main": [
+        [
+          {
+            "node": "limit-items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alerta-metricas": {
+      "main": [
+        [
+          {
+            "node": "limit-items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "limit-items": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limit-items1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "get-clients1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "save-message-log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "hay-traffiker?4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member3": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message1": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?4": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id5": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages4": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients1": {
+      "main": [
+        [
+          {
+            "node": "Redis3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "alerta-remarketing-cantidad-campañas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "alerta-metricas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-message-log": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alerta-metricas1": {
+      "main": [
+        [
+          {
+            "node": "limit-items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "alerta-metricas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limit-items2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis2": {
+      "main": [
+        [
+          {
+            "node": "get-clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis4": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis3": {
+      "main": [
+        [
+          {
+            "node": "Redis5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create chat message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create chat message": {
+      "main": [
+        [
+          {
+            "node": "Redis6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis6": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "get-clients1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        []
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "LN08xR2hD3GGSEW8",
+    "timezone": "America/Puerto_Rico"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "33030",
+            "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/workflow/LN08xR2hD3GGSEW8/executions/33030",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "\n<p>Try either:</p>\n<ol>\n  <li>Enabling 'Convert types where required'</li>\n  <li>Converting the first field to a string by adding <code>.toString()</code></li>\n</ol>\n\t\t\t",
+              "timestamp": 1763389359306,
+              "context": {
+                "itemIndex": 0
+              },
+              "functionality": "regular",
+              "name": "NodeOperationError",
+              "node": {
+                "parameters": {
+                  "conditions": {
+                    "options": {
+                      "caseSensitive": true,
+                      "leftValue": "",
+                      "typeValidation": "strict",
+                      "version": 2
+                    },
+                    "conditions": [
+                      {
+                        "id": "51897156-6cf1-4289-8bad-0db783780607",
+                        "leftValue": "={{ $json.data }}",
+                        "rightValue": "",
+                        "operator": {
+                          "type": "string",
+                          "operation": "notEmpty",
+                          "singleValue": true
+                        }
+                      }
+                    ],
+                    "combinator": "and"
+                  },
+                  "looseTypeValidation": false,
+                  "options": {}
+                },
+                "type": "n8n-nodes-base.if",
+                "typeVersion": 2.2,
+                "position": [
+                  224,
+                  144
+                ],
+                "id": "d2237c7d-5c31-4aab-98a8-b48f51f55008",
+                "name": "If3"
+              },
+              "messages": [],
+              "message": "Wrong type: '1' is an object but was expecting a string [condition 0, item 0]",
+              "stack": "NodeOperationError: Wrong type: '1' is an object but was expecting a string [condition 0, item 0]\n    at extractValue (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/extract-value.ts:211:9)\n    at ExecuteContext._getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/node-execution-context.ts:453:29)\n    at ExecuteContext.getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/execute-context.ts:126:9)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:96:18\n    at Array.forEach (<anonymous>)\n    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:88:23)\n    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1212:32)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1582:38\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:2158:11"
+            },
+            "lastNodeExecuted": "If3",
+            "mode": "webhook"
+          },
+          "workflow": {
+            "id": "LN08xR2hD3GGSEW8",
+            "name": "A-) Trigger v1.1 safe"
+          }
+        }
+      }
+    ],
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-09-09T07:45:01.015-04:00",
+          "Readable date": "September 9th 2026, 7:45:01 am",
+          "Readable time": "7:45:01 am",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "September",
+          "Day of month": "09",
+          "Hour": "07",
+          "Minute": "45",
+          "Second": "01",
+          "Timezone": "America/Puerto_Rico (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "53c1d91d-3608-48f0-b9e1-32609e8d9e76",
+  "activeVersionId": "53c1d91d-3608-48f0-b9e1-32609e8d9e76",
+  "versionCounter": 70,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "LN08xR2hD3GGSEW8",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-09-09T18:42:52.826Z",
+    "createdAt": "2026-09-09T18:42:47.223Z",
+    "versionId": "53c1d91d-3608-48f0-b9e1-32609e8d9e76",
+    "workflowId": "LN08xR2hD3GGSEW8",
+    "nodes": [
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          816,
+          144
+        ],
+        "id": "fec8d272-5476-4bf9-b3bc-9994e66d6b9c",
+        "name": "get-clients",
+        "retryOnFail": true,
+        "maxTries": 5,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f58f5ae0-290a-46ad-a0b3-721f74e19692",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Monday",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              },
+              {
+                "id": "185a3de4-410c-46f3-a586-ef195a3fde98",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Wednesday",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              },
+              {
+                "id": "aac79d34-71de-42a1-936c-aedecc8f3d99",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Friday",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          160
+        ],
+        "id": "701da537-3122-4e97-ad68-1c2504742bc6",
+        "name": "If2"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "vvXRpzCDaYehJDYf",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/vvXRpzCDaYehJDYf",
+            "cachedResultName": "E-) Alerta falta de fases v1"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1600,
+          224
+        ],
+        "id": "98386fa2-cbf3-4264-abb0-21f5132399aa",
+        "name": "alerta-remarketing-cantidad-campañas"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "qXDEK5MdK5Zpwpzr",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/qXDEK5MdK5Zpwpzr",
+            "cachedResultName": "B-) Agente de monitoreo v3"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1552,
+          480
+        ],
+        "id": "4b5ddb0d-d60e-43ab-b903-bee76b9e339f",
+        "name": "alerta-metricas",
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "numberInputs": 3
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          2384,
+          336
+        ],
+        "id": "cc940ef7-65c9-463c-bbe7-eb0e517dec98",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1792,
+          448
+        ],
+        "id": "bfafdca0-1509-4c75-b46d-5d60bb600258",
+        "name": "limit-items",
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1792,
+          240
+        ],
+        "id": "f27937e5-51bb-4acf-aaf1-98b262abbd69",
+        "name": "limit-items1",
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "batchSize": 25,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1056,
+          128
+        ],
+        "id": "2f4e4a35-186a-44e5-a141-dbd3f8bb3d01",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          2848,
+          784
+        ],
+        "id": "29bdb92b-e4ba-4c9d-bdca-68ab3aa0f38d"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1312,
+          -160
+        ],
+        "id": "ed8fd42a-f9dd-4b04-9fb8-13906852c346",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1520,
+          -256
+        ],
+        "id": "b4b3361e-4896-4985-9ecb-7a57a780f0a8",
+        "name": "Get many rows",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "29430c0a-33a9-4425-92a3-90e8575234c9",
+                "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1744,
+          -256
+        ],
+        "id": "52780ddd-41da-4fbc-bffe-76e7131f32dd",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2176,
+          -400
+        ],
+        "id": "fbacfab7-0ddf-4832-8369-f6341ed4e166",
+        "name": "Loop Over Items1"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "alertas",
+          "key": "={{ $json['ID-cuenta-publicitaria'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2384,
+          -304
+        ],
+        "id": "15ad09e3-ec2d-44fc-be80-689f2b187706",
+        "name": "Redis1",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 0. INICIALIZACIÓN DE RESULTADOS ---\nconst resultadosFinales = [];\nconst todosLosItemsDeAlertas = $('If1').all();\nconst todosLosItemsDeTags = $input.all();\n\n// --- BUCLE PRINCIPAL ---\nfor (let i = 0; i < todosLosItemsDeAlertas.length; i++) {\n    const itemAlertas = todosLosItemsDeAlertas[i];\n    const itemTag = todosLosItemsDeTags[i];\n\n    // --- 1. INICIALIZACIÓN POR ITEM ---\n    const alertasTexto = itemAlertas.json.alertas || [];\n    const mensajeEtiquetado = itemTag.json.final || \"\";\n    let listaCampañasActivasSimple = null; \n\n    const reporteConsolidado = {\n        cliente: null,\n        empresa: null,\n        idCuenta: null,\n        alertasMetricas: [],\n        alertasEstructurales: [],\n        avisoFases: { // Objeto para el aviso de fases faltantes\n            faltantes: null,\n            activas: null\n        },\n        avisoProgreso: [] // <-- NUEVO: Para alertas de \"Listo para Fase 5\"\n    };\n\n    // --- 2. EXPRESIONES REGULARES ---\n    const regexCliente = /\\*Cliente:\\* (.*?)\\n/;\n    const regexEmpresa = /\\*Empresa:\\* (.*?)\\n/;\n    // Regex de ID modificada para aceptar ambos formatos\n    const regexIdCuenta = /\\*ID Cuenta(?: Publicitaria)?:\\* (.*?)\\n/;\n    const regexCampañaMetrica = /\\*Campaña:\\* (.*?)\\n\\*Fecha de creación:\\* (.*?)\\n\\*Estado:\\* (.*?)\\n\\*Razón:\\* (.*)/;\n    const regexAlertaEstructuralSimple = /AVISO: (.*?)\\n/;\n    const regexCampañasActivasSimple = /\\*Campañas Activas:\\*\\n((?:• .+\\n?)+)/m;\n    const regexFasesFaltantes = /\\*Fases Faltantes:\\*\\n((?:❌ .+\\n?)+)/m;\n    const regexCampañasActivasEnAvisoFases = /\\*Campañas Activas Actualmente:\\*\\n((?:• .+\\n?)+)/m;\n    \n    // --- NUEVA REGEX ---\n    // Captura el título (Grupo 1) y el motivo (Grupo 2) de la alerta de progreso\n    const regexAvisoProgreso = /✅ (Listo para Fase 5)\\n\\n(?:[\\s\\S]*?)\\*Motivo:\\* ([\\s\\S]*)/;\n\n\n    // --- 3. ANÁLISIS Y CONSOLIDACIÓN DE ALERTAS (LÓGICA MEJORADA) ---\n    for (const texto of alertasTexto) {\n        \n        // --- Lógica de extracción de datos MEJORADA ---\n        // Intenta llenar los campos faltantes en CADA iteración\n        if (!reporteConsolidado.cliente) {\n            reporteConsolidado.cliente = texto.match(regexCliente)?.[1] || null;\n        }\n        if (!reporteConsolidado.empresa) {\n            reporteConsolidado.empresa = texto.match(regexEmpresa)?.[1] || null;\n        }\n        if (!reporteConsolidado.idCuenta) {\n            reporteConsolidado.idCuenta = texto.match(regexIdCuenta)?.[1] || null;\n        }\n        // --- Fin de la lógica de extracción ---\n\n\n        // Se prioriza la búsqueda del aviso más complejo primero\n        if (texto.includes(\"Faltan Fases de Campañas Activas\")) {\n            reporteConsolidado.alertasEstructurales.push({ descripcion: \"Faltan Fases de Campañas Activas\" });\n            const matchFaltantes = texto.match(regexFasesFaltantes);\n            if (matchFaltantes) {\n                reporteConsolidado.avisoFases.faltantes = matchFaltantes[1].trim();\n            }\n            const matchActivas = texto.match(regexCampañasActivasEnAvisoFases);\n            if (matchActivas) {\n                reporteConsolidado.avisoFases.activas = matchActivas[1].trim();\n            }\n        \n        // --- NUEVO BLOQUE \"ELSE IF\" ---\n        } else if (texto.startsWith(\"✅ Listo para Fase 5\")) {\n            const matchProgreso = texto.match(regexAvisoProgreso);\n            if (matchProgreso) {\n                reporteConsolidado.avisoProgreso.push({\n                    titulo: matchProgreso[1].trim(), // \"Listo para Fase 5\"\n                    motivo: matchProgreso[2].trim()  // \"Han pasado +7 días...\"\n                });\n            }\n        // --- FIN NUEVO BLOQUE ---\n\n        } else if (texto.includes(\"*Razón:*\")) { // Alertas de métricas\n            const esRepetida = texto.startsWith(\"ALERTA REPETIDA\");\n            const campañasIndividuales = texto.split('-----------------------------------');\n            for (const seccionCampaña of campañasIndividuales) {\n                const match = seccionCampaña.match(regexCampañaMetrica);\n                if (match) {\n                    reporteConsolidado.alertasMetricas.push({\n                        esRepetida: esRepetida,\n                        campaña: match[1].trim(),\n                        razon: match[4].trim()\n                    });\n                }\n            }\n        } else { // Otros avisos estructurales simples\n            const match = texto.match(regexAlertaEstructuralSimple);\n            if (match) {\n                reporteConsolidado.alertasEstructurales.push({\n                    descripcion: match[1].trim()\n                });\n            }\n            const matchActivasSimple = texto.match(regexCampañasActivasSimple);\n            if (matchActivasSimple) {\n                listaCampañasActivasSimple = matchActivasSimple[1].trim();\n            }\n        }\n    }\n\n    // --- 4. CONSTRUCCIÓN DEL MENSAJE DE SLACK ---\n    const blocks = [];\n    // Header modificado para usar empresa o cliente como fallback\n    const nombreDisplay = reporteConsolidado.empresa || reporteConsolidado.cliente || 'Cliente';\n    blocks.push({ \"type\": \"header\", \"text\": { \"type\": \"plain_text\", \"text\": `🚨 Alertas para ${nombreDisplay}`, \"emoji\": true } });\n\n    if (mensajeEtiquetado) {\n        blocks.push({ \"type\": \"context\", \"elements\": [{ \"type\": \"mrkdwn\", \"text\": mensajeEtiquetado }] });\n    }\n\n    // Usar fallbacks por si algún dato no se encontró\n    blocks.push({ \"type\": \"section\", \"fields\": [{ \"type\": \"mrkdwn\", \"text\": `*Cliente:*\\n${reporteConsolidado.cliente || 'No encontrado'}` }, { \"type\": \"mrkdwn\", \"text\": `*ID Cuenta:*\\n${reporteConsolidado.idCuenta || 'No encontrado'}` }] });\n    blocks.push({ \"type\": \"divider\" });\n\n    // --- NUEVO BLOQUE PARA AVISO DE PROGRESO (Fase 5) ---\n    if (reporteConsolidado.avisoProgreso.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"🚀 *Acciones Recomendadas*\" } });\n        for (const aviso of reporteConsolidado.avisoProgreso) {\n            // Se muestra el título y el motivo capturados por la regex\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `*${aviso.titulo}*\\n${aviso.motivo}` } });\n        }\n        blocks.push({ \"type\": \"divider\" });\n    }\n    // --- FIN NUEVO BLOQUE ---\n\n    if (reporteConsolidado.alertasMetricas.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*🔎 Alertas de Métricas (Prioritarias)*\" } });\n        for (const alerta of reporteConsolidado.alertasMetricas) {\n            const etiquetaRepetida = alerta.esRepetida ? \"`REPETIDA` \" : \"\";\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `${etiquetaRepetida}*Campaña:* ${alerta.campaña}\\n*Razón:* ${alerta.razon}` } });\n        }\n        blocks.push({ \"type\": \"divider\" });\n    }\n\n    if (reporteConsolidado.alertasEstructurales.length > 0) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*🔧 Alertas de Estructura*\" } });\n        for (const alerta of reporteConsolidado.alertasEstructurales) {\n            blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": `• ${alerta.descripcion}` } });\n        }\n        // No se pone divider aquí para que el detalle de fases aparezca junto\n    }\n    \n    // Bloque para el aviso detallado de FASES FALTANTES\n    if (reporteConsolidado.avisoFases.faltantes) {\n        let detallesTexto = `\\n*Fases Faltantes:*\\n${reporteConsolidado.avisoFases.faltantes}`;\n        if (reporteConsolidado.avisoFases.activas) {\n            detallesTexto += `\\n\\n*Campañas Activas Actualmente:*\\n${reporteConsolidado.avisoFases.activas}`;\n        }\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": detallesTexto } });\n        blocks.push({ \"type\": \"divider\" });\n    }\n\n    // Bloque para la lista de campañas de avisos simples\n    if (listaCampañasActivasSimple) {\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*📊 Campañas Activas en la Cuenta*\" } });\n        blocks.push({ \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": listaCampañasActivasSimple } });\n        blocks.push({ \"type\": \"divider\" });\n    }\n    \n    // Lógica de botones (no se modifica)\n    if (reporteConsolidado.alertasMetricas.length > 0 || reporteConsolidado.alertasEstructurales.length > 0 || reporteConsolidado.avisoProgreso.length > 0) {\n      // Se añade avisoProgreso a la condición para mostrar botones\n      blocks.push({ \"type\": \"actions\", \"elements\": [ { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Campañas Ajustadas\", \"emoji\": true }, \"style\": \"primary\", \"value\": `revisado_${reporteConsolidado.idCuenta}`, \"action_id\": \"approve_button\" }, { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Dependencia\", \"emoji\": true }, \"value\": `dependencia_${reporteConsolidado.idCuenta}`, \"action_id\": \"dependencia_button\" } ] });\n    }\n\n    resultadosFinales.push({ json: { slack_block: { \"blocks\": blocks } } });\n}\n\n// --- 6. RETORNAR TODOS LOS RESULTADOS ---\nreturn resultadosFinales;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3664,
+          -256
+        ],
+        "id": "2c023eb5-0c00-4981-a146-341816cf2ad4",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C095BBYBHHA",
+            "mode": "list",
+            "cachedResultName": "office-6-agente-monitoreo-ads"
+          },
+          "messageType": "block",
+          "blocksUi": "={{ JSON.stringify($json.slack_block) }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          3840,
+          -256
+        ],
+        "id": "6bcf7c5d-876b-487d-95c9-7b476538b008",
+        "name": "Send a message",
+        "webhookId": "334acc78-63f6-4436-965c-8ad59f421c04",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6bbc1cef-e446-4702-bfb0-affbec597fad",
+                "leftValue": "={{ $('Edit Fields').item.json.alertas }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2752,
+          -304
+        ],
+        "id": "c0c913dd-c8ed-447d-8848-835c9a8866ff",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m0uib6kq4i1gelp",
+          "id": "={{ $('Edit Fields').item.json.data.traffiker.Id }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          3136,
+          -320
+        ],
+        "id": "fa54ea63-45fa-437f-a2b3-a1b29349ca19",
+        "name": "get-data-to-tag-member3",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+                "name": "mensaje",
+                "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3216,
+          -144
+        ],
+        "id": "d808817c-f075-4002-84b1-2875cc897915",
+        "name": "lack-of-traffiker-message1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+                "leftValue": "={{ $('If1').item.json.data.traffiker }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+                "leftValue": "={{ $('If1').item.json.data.traffiker }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2944,
+          -320
+        ],
+        "id": "a7585900-c6ca-4359-a703-99a8d654f6d0",
+        "name": "hay-traffiker?4"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+                "name": "final",
+                "value": "={{ $json.mensaje }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3504,
+          -256
+        ],
+        "id": "0df59d4f-052c-4bef-9b30-c0b8c7e0cb29",
+        "name": "set-final-messages4"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+                "name": "mensaje",
+                "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3312,
+          -320
+        ],
+        "id": "f9b55a89-81ef-4576-a377-9dbd5f19e12a",
+        "name": "set-member-slack-id5"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "00e41a7b-9c8b-4d56-82bd-71786a9496f3",
+                "name": "data",
+                "value": "={{ $('Loop Over Items1').item.json}}",
+                "type": "object"
+              },
+              {
+                "id": "979c947f-95f2-489c-8e6a-3073fd0c9cce",
+                "name": "alertas",
+                "value": "={{ $json.alertas }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2592,
+          -304
+        ],
+        "id": "e317bc48-ae30-4af0-9c7e-dea908647815",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          2400,
+          -640
+        ],
+        "id": "44698469-907c-482c-b5cb-b3a72be0b2a3",
+        "name": "get-clients1",
+        "retryOnFail": true,
+        "maxTries": 4,
+        "waitBetweenTries": 2000,
+        "executeOnce": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "={{ $json['ID-cuenta-publicitaria'] }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          960,
+          -64
+        ],
+        "id": "39b016b5-e41b-4ac8-82e1-c6695a7c2075",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "={{ $json['ID-cuenta-publicitaria'] }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2592,
+          -656
+        ],
+        "id": "7fd59aab-8035-4d83-9d44-93dd5825983d",
+        "name": "Redis3",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          208
+        ],
+        "id": "e1a1a32f-fb7f-48c5-87bf-baedd9700c71",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          448
+        ],
+        "id": "62eda2ff-7022-432a-b523-e2ea309793d3",
+        "name": "Aggregate1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4400,
+          -112
+        ],
+        "id": "bdd5a21f-9bbf-439f-81aa-8bd37d40084c",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "Id",
+                "fieldValue": "={{ $('If1').item.json.data.Id }}"
+              },
+              {
+                "fieldName": "ultima-alerta",
+                "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          4256,
+          -256
+        ],
+        "id": "6128b2b4-876e-4965-9c4b-67401ba99626",
+        "name": "Update a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "create",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m8v320mexdfjjou",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "mensaje",
+                "fieldValue": "={{ $json.message.text }}"
+              },
+              {
+                "fieldName": "fecha",
+                "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+              },
+              {
+                "fieldName": "ID-monday",
+                "fieldValue": "={{ $('Loop Over Items1').item.json['ID-monday'] }}"
+              },
+              {
+                "fieldName": "ID-mensaje-slack-ts",
+                "fieldValue": "={{ $('Send a message').item.json.message.ts }}"
+              },
+              {
+                "fieldName": "ID-mensaje-slack-channel",
+                "fieldValue": "={{ $('Send a message').item.json.channel }}"
+              },
+              {
+                "fieldName": "ID-cuenta-publicitaria",
+                "fieldValue": "={{ $('Loop Over Items1').item.json['ID-cuenta-publicitaria'] }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          4048,
+          -256
+        ],
+        "id": "850ac7f6-bf1d-4d2e-b0a8-ddb14fbf4484",
+        "name": "save-message-log",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 7,
+                "triggerAtMinute": 45
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -192,
+          144
+        ],
+        "id": "21103bc3-ffa7-40b2-9ed8-1f57d3cf09bb",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "dsrJpJi1MTr4mCOZ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/dsrJpJi1MTr4mCOZ",
+            "cachedResultName": "F-) Alerta para fase 5"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1552,
+          656
+        ],
+        "id": "42e1c6cc-e0d6-4086-8b6e-ad1fcb44b13b",
+        "name": "alerta-metricas1",
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1792,
+          640
+        ],
+        "id": "57773ae4-a45b-449f-9ef3-43a65e734f24",
+        "name": "limit-items2",
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          640
+        ],
+        "id": "59b967f7-5d52-478f-852a-1be7adb07974",
+        "name": "Aggregate2"
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "trabajo-metricas",
+          "messageData": "1"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          624,
+          144
+        ],
+        "id": "14227f2c-fd38-487a-885b-cfe4fb43c98f",
+        "name": "Redis2",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "data",
+          "key": "trabajo-metricas",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          192,
+          144
+        ],
+        "id": "01e3200e-6f0e-4f1b-87c0-848c68bdd627",
+        "name": "Redis4",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "51897156-6cf1-4289-8bad-0db783780607",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          416,
+          128
+        ],
+        "id": "d2237c7d-5c31-4aab-98a8-b48f51f55008",
+        "name": "If3"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "trabajo-metricas"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2800,
+          -656
+        ],
+        "id": "c5af0326-a082-4d9b-a856-56e66600f0af",
+        "name": "Redis5",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -208,
+          560
+        ],
+        "id": "8b1570d9-2161-4a35-a585-599eeafad62a",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "resource": "chatMessage",
+          "chatId": {
+            "__rl": true,
+            "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+            "mode": "list",
+            "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+            "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+          },
+          "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+          "options": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.microsoftTeams",
+        "typeVersion": 2,
+        "position": [
+          16,
+          560
+        ],
+        "id": "2cbc1443-595d-495f-95ee-8f1d65b219fd",
+        "name": "Create chat message",
+        "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+        "credentials": {
+          "microsoftTeamsOAuth2Api": {
+            "id": "bQfmQjHop2MXmbIN",
+            "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          368,
+          560
+        ],
+        "id": "a61aed0e-bc70-4afe-b95b-e23750f306dd",
+        "name": "Send a message1",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "trabajo-metricas"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          192,
+          560
+        ],
+        "id": "d8335451-233c-4749-aa49-9a2f04302872",
+        "name": "Redis6",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 0.5
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2000,
+          240
+        ],
+        "id": "42befec9-b1b1-4b0b-9828-8c61623bdbf5",
+        "name": "Wait",
+        "webhookId": "1064db7a-c02a-4ace-9cc7-82526201e143"
+      },
+      {
+        "parameters": {
+          "amount": 0.5
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2000,
+          448
+        ],
+        "id": "78b7d168-e318-4b25-b514-abcdd7ae31de",
+        "name": "Wait1",
+        "webhookId": "1122a80b-b296-4895-9ee1-0a32d48bc647"
+      },
+      {
+        "parameters": {
+          "amount": 0.5
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2000,
+          640
+        ],
+        "id": "a4bc929c-6fde-4c6b-99e9-524c6a745715",
+        "name": "Wait2",
+        "webhookId": "3ec3bcd3-e9dd-4517-a4da-1e6c080013dc"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "trabajo-metricas"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          976,
+          -528
+        ],
+        "id": "97c10289-c164-4d65-829d-8753366738fd",
+        "name": "Redis7",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "id": "708"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          736,
+          368
+        ],
+        "id": "288faadd-e2a7-4521-80ec-0ce5c12ec277",
+        "name": "Get a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          2064,
+          -656
+        ],
+        "id": "93d1a6ec-362e-409d-89cb-8e240fdac5f2",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "id": "708"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1472,
+          -416
+        ],
+        "id": "14f3f68b-8e79-4922-a24e-88b4a654ac77",
+        "name": "Get a row1",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "alertas",
+          "key": "={{ $json['ID-cuenta-publicitaria'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2592,
+          -480
+        ],
+        "id": "2e78a35e-ac9a-4a83-9ebe-cd9b03f8f735",
+        "name": "Redis8",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "Redis4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alerta-remarketing-cantidad-campañas": {
+        "main": [
+          [
+            {
+              "node": "limit-items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alerta-metricas": {
+        "main": [
+          [
+            {
+              "node": "limit-items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "limit-items": {
+        "main": [
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "limit-items1": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Aggregate1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Aggregate2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Get many rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [
+            {
+              "node": "get-clients1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Redis1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          [
+            {
+              "node": "save-message-log",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "hay-traffiker?4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-data-to-tag-member3": {
+        "main": [
+          [
+            {
+              "node": "set-member-slack-id5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "lack-of-traffiker-message1": {
+        "main": [
+          [
+            {
+              "node": "set-final-messages4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "hay-traffiker?4": {
+        "main": [
+          [
+            {
+              "node": "get-data-to-tag-member3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "lack-of-traffiker-message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set-member-slack-id5": {
+        "main": [
+          [
+            {
+              "node": "set-final-messages4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set-final-messages4": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients1": {
+        "main": [
+          [
+            {
+              "node": "Redis3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "alerta-remarketing-cantidad-campañas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate1": {
+        "main": [
+          [
+            {
+              "node": "alerta-metricas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "No Operation, do nothing": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a row": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "save-message-log": {
+        "main": [
+          [
+            {
+              "node": "Update a row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alerta-metricas1": {
+        "main": [
+          [
+            {
+              "node": "limit-items2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Aggregate2": {
+        "main": [
+          [
+            {
+              "node": "alerta-metricas1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "limit-items2": {
+        "main": [
+          [
+            {
+              "node": "Wait2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis2": {
+        "main": [
+          [
+            {
+              "node": "get-clients",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis4": {
+        "main": [
+          [
+            {
+              "node": "If3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If3": {
+        "main": [
+          [
+            {
+              "node": "Redis2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis3": {
+        "main": [
+          [
+            {
+              "node": "Redis5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Create chat message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create chat message": {
+        "main": [
+          [
+            {
+              "node": "Redis6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis6": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Wait2": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "get-clients1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a row": {
+        "main": [
+          []
+        ]
+      },
+      "Get a row1": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 53c1d91d",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-09-09T18:42:52.813Z",
+        "id": 220,
+        "workflowId": "LN08xR2hD3GGSEW8",
+        "versionId": "53c1d91d-3608-48f0-b9e1-32609e8d9e76",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

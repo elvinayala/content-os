@@ -1,0 +1,320 @@
+{
+  "updatedAt": "2026-03-04T00:56:24.802Z",
+  "createdAt": "2025-11-12T18:28:12.607Z",
+  "id": "M7Gunj0t3umBrgjP",
+  "name": "D-) Escalar a elvin",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user"
+            },
+            {
+              "name": "mensaje"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "user",
+        "operation": "getProfile",
+        "user": {
+          "__rl": true,
+          "value": "={{ $json.user }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        352
+      ],
+      "id": "fdf8f814-9c35-43f6-8482-89fdb3533a36",
+      "name": "Get a user's profile",
+      "webhookId": "ed86521c-8f1a-4bf1-b349-7d671e4b2690",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U08U9777PUY",
+          "mode": "list",
+          "cachedResultName": "elvin"
+        },
+        "text": "=Has recibido un mensaje confidencial de un miembro de Level Up Media LLC: \n\n{{ '*'+$json.display_name + ' dice:* ' + $('When Executed by Another Workflow').item.json.mensaje}}\n\nAtentamente: \nAgente de Recursos Humanos",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        352
+      ],
+      "id": "bca61d3e-f335-4eb3-bef9-928dd2422912",
+      "name": "Send a message",
+      "webhookId": "1eb4e869-260e-41a3-9457-d6d28c820371",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get a user's profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a user's profile": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "40a11a0f-6a76-413e-8da5-29cdbbba98e3",
+  "activeVersionId": "40a11a0f-6a76-413e-8da5-29cdbbba98e3",
+  "versionCounter": 21,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "M7Gunj0t3umBrgjP",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "40a11a0f-6a76-413e-8da5-29cdbbba98e3",
+    "workflowId": "M7Gunj0t3umBrgjP",
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "user"
+              },
+              {
+                "name": "mensaje"
+              }
+            ]
+          }
+        },
+        "id": "c055762a-8fe7-4141-a639-df2372f30060",
+        "typeVersion": 1.1,
+        "name": "When Executed by Another Workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "position": [
+          272,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "user",
+          "operation": "getProfile",
+          "user": {
+            "__rl": true,
+            "value": "={{ $json.user }}",
+            "mode": "id"
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          480,
+          352
+        ],
+        "id": "fdf8f814-9c35-43f6-8482-89fdb3533a36",
+        "name": "Get a user's profile",
+        "webhookId": "ed86521c-8f1a-4bf1-b349-7d671e4b2690",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U08U9777PUY",
+            "mode": "list",
+            "cachedResultName": "elvin"
+          },
+          "text": "=Has recibido un mensaje confidencial de un miembro de Level Up Media LLC: \n\n{{ '*'+$json.display_name + ' dice:* ' + $('When Executed by Another Workflow').item.json.mensaje}}\n\nAtentamente: \nAgente de Recursos Humanos",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          688,
+          352
+        ],
+        "id": "bca61d3e-f335-4eb3-bef9-928dd2422912",
+        "name": "Send a message",
+        "webhookId": "1eb4e869-260e-41a3-9457-d6d28c820371",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Get a user's profile",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a user's profile": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-12-12T16:26:29.000Z",
+        "id": 13,
+        "workflowId": "M7Gunj0t3umBrgjP",
+        "versionId": "40a11a0f-6a76-413e-8da5-29cdbbba98e3",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

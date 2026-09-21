@@ -1,0 +1,1538 @@
+{
+  "updatedAt": "2026-01-06T14:05:21.755Z",
+  "createdAt": "2025-08-07T02:09:14.850Z",
+  "id": "zQPgMRoWkmrca8f6",
+  "name": "B2.2) Agente Onboarding - Citas automaticas",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "no-reply@calendly.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -752,
+        -48
+      ],
+      "id": "df3186fb-b803-40a1-b09f-bee86eac6d0a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Importamos la librería DateTime de Luxon, que está disponible en n8n.\nconst { DateTime } = require('luxon');\n\n// Obtiene los datos de entrada.\nconst inputText = $input.first().json.text;\nconst actionType = $input.first().json.subject;\n\n// Si no hay texto, devuelve un objeto vacío para evitar errores.\nif (!inputText) {\n  return [{ json: {} }];\n}\n\n// Objeto para almacenar los datos extraídos.\nconst extractedData = {};\n\n// Divide el texto en líneas para procesarlo una por una.\nconst lines = inputText.split('\\n');\n\n// Itera sobre cada línea del texto.\nfor (const line of lines) {\n  let match;\n\n  // Extracción de datos generales\n  if ((match = line.match(/^First-name:\\s*(.*)/))) {\n    extractedData.nombre = match[1].trim();\n    continue;\n  }\n  if ((match = line.match(/^Last-name:\\s*(.*)/))) {\n    extractedData.apellido = match[1].trim();\n    continue;\n  }\n  if ((match = line.match(/^invitee-email:\\s*(.*)/))) {\n    extractedData.email = match[1].trim();\n    continue;\n  }\n  if ((match = line.match(/^uuid:\\s*(.*)/))) {\n  extractedData.uuid = match[1].trim();\n    continue;\n  }\n  if ((match = line.match(/^event-name:\\s*(.*)/))) {\n    extractedData.eventName = match[1].trim() || 'No especificado';\n    continue;\n  }\n  if ((match = line.match(/^invitee-phone-number:\\s*(.*)/))) {\n    extractedData.telefono = match[1].trim() || 'No especificado';\n    continue;\n  }\n  if ((match = line.match(/^Password:\\s*(\\S+)/))) {\n    extractedData.zoomPassword = match[1].trim();\n    continue;\n  }\n  if ((match = line.match(/^(https:\\/\\/\\S*zoom\\.us\\/j\\/\\S+)/))) {\n    extractedData.zoomLink = match[1].trim();\n    continue;\n  }\n\n  // --- SECCIÓN DE FECHA CON LÓGICA PARA 4 FORMATOS ---\n  const dateRegex = /^event-date:\\s*(.*?)\\s\\((.*?)\\)/;\n  match = line.match(dateRegex);\n  \n  if (match) {\n    const fechaParte = match[1].trim();\n    const zonaHorariaParte = match[2].trim();\n    \n    // Lista de todos los formatos de fecha posibles que envía Calendly.\n    const formatosPosibles = [\n      // NUEVO formato en español añadido:\n      \"EEEE, d 'de' MMMM 'de' yyyy HH:mm\", // Ej: Wednesday, 13 de August de 2025 14:00\n      'EEEE, MMMM d, yyyy h:mma',   // Formato 12h con am/pm (ej: 01:30pm)\n      'EEEE, MMMM d, yyyy HH:mm',  // Formato 24h con espacio (ej: 13:30)\n      'EEEE, MMMM d, yyyy:HH:mm'   // Formato 24h con dos puntos (ej: 2025:13:30)\n    ];\n\n    let fechaCorrecta = null;\n\n    // Itera sobre la lista de formatos y prueba cada uno.\n    for (const formato of formatosPosibles) {\n      // Usamos 'en-US' como locale para asegurar que 'August' se entienda.\n      const fechaIntentada = DateTime.fromFormat(fechaParte, formato, { zone: zonaHorariaParte, locale: 'en-US' });\n      if (fechaIntentada.isValid) {\n        fechaCorrecta = fechaIntentada;\n        break; // Si un formato funciona, salimos del bucle.\n      }\n    }\n\n    // Comprueba si alguno de los formatos funcionó.\n    if (fechaCorrecta) {\n      extractedData.fecha = fechaCorrecta.toISO();\n    } else {\n      // Si ninguno funcionó, reporta el error.\n      extractedData.fecha = `FALLÓ PARSEO: ${fechaParte} (Zona: ${zonaHorariaParte})`;\n    }\n    continue;\n  }\n}\n\n// Añade el tipo de acción.\nextractedData.actionType = actionType;\n\n// Devuelve el objeto JSON formateado.\nreturn [{\n  json: extractedData\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -48
+      ],
+      "id": "3818fb7d-68e2-462e-88aa-82ee8c1814be",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.actionType }}",
+                    "rightValue": "24_hours_before",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cdeab8be-6967-490d-bce0-cf47d08a6454"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "24-hours-before"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "475eb622-d99c-48e9-8f26-2fd4fa10d43b",
+                    "leftValue": "={{ $json.actionType }}",
+                    "rightValue": "15_minutes_before",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "15-minutes-before"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4148404d-40c2-473f-98d2-f93c61e721b7",
+                    "leftValue": "={{ $json.actionType }}",
+                    "rightValue": "register_into_calendar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "register_into_calendar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        -64
+      ],
+      "id": "cf9f0af6-9f45-4f85-8353-5fca2c9f4312",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "start": "={{ $json.fecha }}",
+        "end": "={{ $json.fecha.toDateTime().plus(1, 'hours') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.email }}"
+          ],
+          "description": "={\n\"First-name\": \"{{ $json.nombre }}\",\"Last-name\": \"{{ $json.apellido }}\",\"phone-number\": \"{{ $json.telefono }}\",\"meeting-zoom\": \"{{ $json.zoomLink }}\",\"zoom-pass\": \"{{ $json.zoomPassword }}\", \"uuid\": \"{{ $json.uuid }}\"\n}",
+          "location": "={{ $json.zoomLink }}",
+          "summary": "={{ $json.eventName }} - {{ $json.nombre }} {{ $json.apellido }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        144
+      ],
+      "id": "52482137-2c2e-4d21-affd-6b96211ab33a",
+      "name": "Create an event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8",
+          "mode": "list",
+          "cachedResultName": "LevelUpMedia Registros Formulario",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.attendees[0].email }}",
+            "Nombre": "={{ $('Code1').item.json.nombre }} {{ $('Code1').item.json.apellido }}",
+            "Telefono": "={{ $('Switch1').item.json.telefono.replaceAll('+' , '').replaceAll(' ', '').replaceAll('-', '') }}",
+            "Fecha": "={{ $('Switch1').item.json.fecha }}",
+            "event-id": "={{ $json.id }}",
+            "Created at": "={{ $now.format('yyyy-MM-dd').toString() }}",
+            "Evento": "={{ $('Switch1').item.json.eventName }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "event-id",
+              "displayName": "event-id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Evento",
+              "displayName": "Evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pais",
+              "displayName": "Pais",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Servicio",
+              "displayName": "Servicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comprobante",
+              "displayName": "Comprobante",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Created at",
+              "displayName": "Created at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        144
+      ],
+      "id": "fc6a1541-3188-420b-8e45-122e2542365b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hah6ZiOBP9x0ROJD",
+          "name": "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8",
+          "mode": "list",
+          "cachedResultName": "LevelUpMedia Registros Formulario",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('Code1').first().json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        -240
+      ],
+      "id": "3792db33-8ee7-4faf-8f1a-a91adadd6eab",
+      "name": "get_rows_by_mail",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PrtrlNLxbn1XNJA2",
+          "name": "GoogleSheetsLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "eventId": "={{ $json['event-id'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        -240
+      ],
+      "id": "9383fa73-dfab-48a8-bf2f-71e431fba2e1",
+      "name": "Get an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08e60013-7d5a-497d-a7dd-001f2f96335c",
+              "name": "=email cliente",
+              "value": "={{ $json.attendees[0].email }}",
+              "type": "string"
+            },
+            {
+              "id": "3a5fcf7d-af7d-4264-ad86-4df4f75f919b",
+              "name": "summary",
+              "value": "={{ $json.summary.split('- ') }}",
+              "type": "array"
+            },
+            {
+              "id": "55988034-eee2-430f-9dc8-0ec8ba92ec65",
+              "name": "start.dateTime",
+              "value": "={{ $('Get an event').first().json.start.dateTime.toDateTime().format(\"dd MMMM HH:mm\") }}",
+              "type": "string"
+            },
+            {
+              "id": "9fcd9d48-9d2c-43e0-9089-d862ec3cb527",
+              "name": "=htmlLink",
+              "value": "={{ $json.htmlLink }}",
+              "type": "string"
+            },
+            {
+              "id": "daad83cb-9cda-47b7-b300-6bda3332b2ac",
+              "name": "LinkReunion",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        -240
+      ],
+      "id": "b699aeef-aeb6-4267-9d06-432daa1794f6",
+      "name": "fields_for_mail_daily"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1fe245f8-6649-41e7-90d9-fc527007d396",
+              "name": "subject",
+              "value": "¿Listo para mañana? - Level Up Media",
+              "type": "string"
+            },
+            {
+              "id": "1e698745-adf8-47c9-acd9-5be935d3c843",
+              "name": "Respuesta",
+              "value": "=<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>🔔 Recordatorio de tu Reunión</title>\n  <style>\n    body {\n      margin: 0;\n      padding: 0;\n      font-family: Arial, sans-serif;\n      background-color: #F2F2F2;\n      color: #0D0D0D;\n    }\n\n    .container {\n      width: 500px;\n      margin: 20px auto;\n      background-color: #FFFFFF;\n      border: 1px solid #734B02;\n      border-radius: 8px;\n      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n    }\n\n    .header {\n      background-color: #0D0D0D;\n      padding: 20px;\n      border-radius: 8px 8px 0 0;\n      text-align: center;\n    }\n\n    .header h1 {\n      margin: 0;\n      font-size: 24px;\n      font-weight: bold;\n      color: #F2F2F2;\n    }\n\n    .content {\n      padding: 20px;\n    }\n\n    .content p {\n      margin: 10px 0;\n      font-size: 16px;\n    }\n\n    .content h2 {\n      margin: 10px 0;\n      font-size: 20px;\n      font-weight: bold;\n      color: #734B02;\n    }\n\n    .details {\n      background-color: #F2D027;\n      padding: 10px;\n      border-radius: 8px;\n      margin: 20px 0;\n    }\n\n    .details p {\n      margin: 8px 0;\n      font-size: 16px;\n      font-weight: bold;\n    }\n\n    .buttons {\n      display: flex;\n      justify-content: space-between;\n      margin: 20px 0;\n    }\n\n    .buttons a {\n      display: inline-block;\n      width: 48%;\n      background-color: #0D0D0D;\n      color: #F2F2F2;\n      text-decoration: none;\n      padding: 10px 0;\n      border-radius: 8px;\n      font-weight: bold;\n      text-align: center;\n    }\n\n    .footer {\n      padding: 20px;\n      text-align: center;\n    }\n\n    .footer p {\n      margin: 0;\n      font-size: 14px;\n      font-weight: bold;\n      color: #734B02;\n    }\n\n    .preparacion {\n      background-color: #f8f6f1;\n      border-left: 4px solid #734B02;\n      padding: 15px;\n      margin-top: 20px;\n      border-radius: 6px;\n    }\n\n    .preparacion ul {\n      margin: 10px 0 0 20px;\n      padding: 0;\n    }\n\n    .preparacion li {\n      margin-bottom: 8px;\n      font-size: 15px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>🔔 Recordatorio de tu Reunión</h1>\n    </div>\n    <div class=\"content\">\n      <p>👋 Hola {{ $('fields_for_mail_daily').item.json['email cliente'] }} </p>\n      <h2>Tu reunión está por comenzar ⏰</h2>\n      <p>Este es un recordatorio de que tienes una reunión programada para el día de MAÑANA. Aquí tienes los detalles:</p>\n\n      <div class=\"details\">\n        <p>📌 Nombre: {{ $('fields_for_mail_daily').item.json.summary[1] }}</p>\n        <p>🕒 Hora de inicio mañana: {{ $('fields_for_mail_daily').item.json.start.dateTime }}</p>\n      </div>\n\n      <div class=\"buttons\">\n        <a href=\"{{ $('fields_for_mail_daily').item.json.LinkReunion }}\">Ir a la reunión</a>\n        <a href=\"{{ $('fields_for_mail_daily').item.json.htmlLink }}\">Ver en Google Calendar</a>\n      </div>\n\n      <div class=\"preparacion\">\n        <h2>✅ Recomendaciones para tu reunión</h2>\n        <ul>\n          <li>Busca un espacio tranquilo, sin interrupciones.</li>\n          <li>Utiliza una computadora si es posible (mejor que el celular).</li>\n          <li>Ten a la mano tus credenciales o enlaces de acceso.</li>\n        </ul>\n      </div>\n\n      <p>✔️ Asegúrate de estar listo y de tener todo lo necesario para la reunión.</p>\n    </div>\n    <div class=\"footer\">\n      <p>El equipo de LevelUpMedia 🚀</p>\n    </div>\n  </div>\n</body>\n</html>\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        -240
+      ],
+      "id": "eda13e34-8714-4171-96d4-27f15fe5692e",
+      "name": "template_mail_daily"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('fields_for_mail_daily').item.json['email cliente'] }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.Respuesta }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        -240
+      ],
+      "id": "9770ff9f-68a7-460d-abd7-2ef5d3fb4c5b",
+      "name": "Send_a_mail_daily",
+      "webhookId": "ff8d24d6-6243-480b-97b2-1753db0edac5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d03a9f01-d0ed-4035-92a7-4153c7021f3b",
+              "name": "phone-number",
+              "value": "={{ $('Get an event').item.json.description.parseJson()['phone-number'].replaceAll('+','').replaceAll('-','').replaceAll(' ','') + '@s.whatsapp.net' }}",
+              "type": "string"
+            },
+            {
+              "id": "6f39fb6f-c74d-42dd-9dc7-591c3b1021a0",
+              "name": "instance.name",
+              "value": "Level-Up-Media-Whatsapp",
+              "type": "string"
+            },
+            {
+              "id": "b4306fbc-b23c-4e2f-9fc0-17bcce4732f1",
+              "name": "whatsapp_message",
+              "value": "=📌 Recordatorio de reunión  \nHola {{ $('fields_for_mail_daily').item.json.summary[1] }}.  Este es un recordatorio de tu reunión agendada con nosotros para *MAÑANA*.\n📌 Tema: {{ $('fields_for_mail_daily').item.json.summary[0] }}\n🔔 Hora: {{ $('fields_for_mail_daily').item.json.start.dateTime }}\n\n📍 Link de la reunión: {{ $('fields_for_mail_daily').item.json.LinkReunion }}\n\n📅 Ver en Google Calendar: {{ $('fields_for_mail_daily').item.json.htmlLink }}\n\n✅ Para que tengas una buena experiencia, te recomendamos:\n- Conectarte desde un lugar tranquilo y sin distracciones.\n- Usar una computadora si es posible (mejor experiencia que en celular).\n- Tener a la mano tus credenciales o el enlace de acceso a la reunión.\n\nSi necesitas reprogramar o cancelar, por favor contáctanos con anticipación.\n¡Te esperamos! 😊",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2064,
+        -240
+      ],
+      "id": "b0364671-82ea-4799-9eff-f072926512ce",
+      "name": "set-phone-number"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $json.instance.name }}",
+        "remoteJid": "={{ $json['phone-number'] }}",
+        "messageText": "={{ $json.whatsapp_message }}",
+        "options_message": {
+          "delay": 3200,
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        -240
+      ],
+      "id": "4457f783-e352-4058-b972-a8b85c87ed6c",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8",
+          "mode": "list",
+          "cachedResultName": "LevelUpMedia Registros Formulario",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('Code1').first().json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        -48
+      ],
+      "id": "f8d1149f-70a1-46f6-ae08-b402d535caca",
+      "name": "get_rows_by_mail1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PrtrlNLxbn1XNJA2",
+          "name": "GoogleSheetsLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "eventId": "={{ $json['event-id'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        -48
+      ],
+      "id": "e9a35d80-ec41-45a5-930c-37fa28f0576e",
+      "name": "Get an event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08e60013-7d5a-497d-a7dd-001f2f96335c",
+              "name": "=email cliente",
+              "value": "={{ $json.attendees[0].email }}",
+              "type": "string"
+            },
+            {
+              "id": "3a5fcf7d-af7d-4264-ad86-4df4f75f919b",
+              "name": "summary",
+              "value": "={{ $json.summary.split('- ') }}",
+              "type": "array"
+            },
+            {
+              "id": "55988034-eee2-430f-9dc8-0ec8ba92ec65",
+              "name": "start.dateTime",
+              "value": "={{ $('Get an event1').first().json.start.dateTime.toDateTime().format(\"dd MMMM HH:mm\") }}",
+              "type": "string"
+            },
+            {
+              "id": "9fcd9d48-9d2c-43e0-9089-d862ec3cb527",
+              "name": "=htmlLink",
+              "value": "={{ $json.htmlLink }}",
+              "type": "string"
+            },
+            {
+              "id": "daad83cb-9cda-47b7-b300-6bda3332b2ac",
+              "name": "LinkReunion",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        -48
+      ],
+      "id": "4e24aef5-4beb-42ea-90b3-251fc04ae3dc",
+      "name": "fields_for_mail_daily1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1fe245f8-6649-41e7-90d9-fc527007d396",
+              "name": "subject",
+              "value": "¡Nos vemos en 15 minutos! - Level Up Media",
+              "type": "string"
+            },
+            {
+              "id": "1e698745-adf8-47c9-acd9-5be935d3c843",
+              "name": "Respuesta",
+              "value": "=<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>🔔 Recordatorio de tu Reunión</title>\n  <style>\n    body {\n      margin: 0;\n      padding: 0;\n      font-family: Arial, sans-serif;\n      background-color: #F2F2F2;\n      color: #0D0D0D;\n    }\n\n    .container {\n      width: 500px;\n      margin: 20px auto;\n      background-color: #FFFFFF;\n      border: 1px solid #734B02;\n      border-radius: 8px;\n      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n    }\n\n    .header {\n      background-color: #0D0D0D;\n      padding: 20px;\n      border-radius: 8px 8px 0 0;\n      text-align: center;\n    }\n\n    .header h1 {\n      margin: 0;\n      font-size: 24px;\n      font-weight: bold;\n      color: #F2F2F2;\n    }\n\n    .content {\n      padding: 20px;\n    }\n\n    .content p {\n      margin: 10px 0;\n      font-size: 16px;\n    }\n\n    .content h2 {\n      margin: 10px 0;\n      font-size: 20px;\n      font-weight: bold;\n      color: #734B02;\n    }\n\n    .details {\n      background-color: #F2D027;\n      padding: 10px;\n      border-radius: 8px;\n      margin: 20px 0;\n    }\n\n    .details p {\n      margin: 8px 0;\n      font-size: 16px;\n      font-weight: bold;\n    }\n\n    .buttons {\n      display: flex;\n      justify-content: space-between;\n      margin: 20px 0;\n    }\n\n    .buttons a {\n      display: inline-block;\n      width: 48%;\n      background-color: #0D0D0D;\n      color: #F2F2F2;\n      text-decoration: none;\n      padding: 10px 0;\n      border-radius: 8px;\n      font-weight: bold;\n      text-align: center;\n    }\n\n    .footer {\n      padding: 20px;\n      text-align: center;\n    }\n\n    .footer p {\n      margin: 0;\n      font-size: 14px;\n      font-weight: bold;\n      color: #734B02;\n    }\n\n    .preparacion {\n      background-color: #f8f6f1;\n      border-left: 4px solid #734B02;\n      padding: 15px;\n      margin-top: 20px;\n      border-radius: 6px;\n    }\n\n    .preparacion ul {\n      margin: 10px 0 0 20px;\n      padding: 0;\n    }\n\n    .preparacion li {\n      margin-bottom: 8px;\n      font-size: 15px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>🔔 Recordatorio de tu Reunión</h1>\n    </div>\n    <div class=\"content\">\n      <p>👋 Hola {{ $('fields_for_mail_daily1').item.json['email cliente'] }} </p>\n       <h2 class=\"alert\">Tu reunión está por comenzar ⏰</h2>\n            <p>Este es un recordatorio de que tienes una reunión programada en <h2>15 MINUTOS</h2>. Aquí tienes los detalles:</p>\n\n      <div class=\"details\">\n        <p>📌 Nombre: {{ $('fields_for_mail_daily1').item.json.summary[1] }}</p>\n        <p>🕒 Hora de inicio mañana: {{ $('fields_for_mail_daily1').item.json.start.dateTime }}</p>\n      </div>\n\n      <div class=\"buttons\">\n        <a href=\"{{ $('fields_for_mail_daily1').item.json.LinkReunion }}\">Ir a la reunión</a>\n        <a href=\"{{ $('fields_for_mail_daily1').item.json.htmlLink }}\">Ver en Google Calendar</a>\n      </div>\n\n      <div class=\"preparacion\">\n        <h2>✅ Recomendaciones para tu reunión</h2>\n        <ul>\n          <li>Busca un espacio tranquilo, sin interrupciones.</li>\n          <li>Utiliza una computadora si es posible (mejor que el celular).</li>\n          <li>Ten a la mano tus credenciales o enlaces de acceso.</li>\n        </ul>\n      </div>\n\n      <p>✔️ Asegúrate de estar listo y de tener todo lo necesario para la reunión.</p>\n    </div>\n    <div class=\"footer\">\n      <p>El equipo de LevelUpMedia 🚀</p>\n    </div>\n  </div>\n</body>\n</html>\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        -48
+      ],
+      "id": "d5c21100-9fca-4f37-a203-8a039ea67e4c",
+      "name": "template_mail_daily1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('fields_for_mail_daily1').item.json['email cliente'] }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.Respuesta }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        -48
+      ],
+      "id": "5f2496af-e2b1-4893-81ca-c5558ccca038",
+      "name": "Send_a_mail_daily1",
+      "webhookId": "ff8d24d6-6243-480b-97b2-1753db0edac5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d03a9f01-d0ed-4035-92a7-4153c7021f3b",
+              "name": "phone-number",
+              "value": "={{ $('Get an event1').item.json.description.parseJson()['phone-number'].replaceAll('+','').replaceAll('-','').replaceAll(' ','') + '@s.whatsapp.net' }}",
+              "type": "string"
+            },
+            {
+              "id": "6f39fb6f-c74d-42dd-9dc7-591c3b1021a0",
+              "name": "instance.name",
+              "value": "Level-Up-Media-Whatsapp",
+              "type": "string"
+            },
+            {
+              "id": "b4306fbc-b23c-4e2f-9fc0-17bcce4732f1",
+              "name": "whatsapp_message",
+              "value": "=📌 Recordatorio de reunión\nHola {{ $('fields_for_mail_daily1').item.json.summary[1] }}. Este es un recordatorio de tu reunión agendada con nosotros en \n\n*15 MINUTOS*.\n📌 Tema: {{ $('fields_for_mail_daily1').item.json.summary[0] }}\n🔔 Hora: {{ $('fields_for_mail_daily1').item.json.start.dateTime }}\n\n📍 Link Reunion: {{ $('fields_for_mail_daily1').item.json.LinkReunion }}\n\n📅 Link en calendar: {{ $('fields_for_mail_daily1').item.json.htmlLink }}\n\n✅ Para que tengas una buena experiencia, te recomendamos:\n- Conectarte desde un lugar tranquilo y sin distracciones.  \n- Usar una computadora si es posible (mejor experiencia que en celular).  \n- Tener a la mano tus credenciales o el enlace de acceso a la reunión.  \n\nSi necesitas reprogramar o cancelar, por favor contáctanos con anticipación.  \n¡Te esperamos! 😊",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2064,
+        -48
+      ],
+      "id": "9b1d8953-f817-451f-a5fa-036cda27a03f",
+      "name": "set-phone-number1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $json.instance.name }}",
+        "remoteJid": "={{ $json['phone-number'] }}",
+        "messageText": "={{ $json.whatsapp_message }}",
+        "options_message": {
+          "delay": 3200,
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        -48
+      ],
+      "id": "aec03348-32fc-4e98-bf46-325006b1f21d",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9f387f9d-cd3a-4b86-a798-8caa8798870b",
+              "leftValue": "={{ $json.Fecha }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        -240
+      ],
+      "id": "d445f77d-50e7-48a3-aad1-13376b169b81",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "519b2793-948a-4acd-a3a8-3f8c4266adb6",
+              "leftValue": "={{ $json.Fecha }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        -48
+      ],
+      "id": "33ff06dd-01c6-473e-879b-bc1f5c065346",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cef56588-89b9-4c95-9ad5-4807fce04012",
+              "name": "whatsapp_message",
+              "value": "🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo",
+              "type": "string"
+            },
+            {
+              "id": "7dfffbb5-aa7f-4c36-a098-6d7e0bc559a9",
+              "name": "phone-number",
+              "value": "={{ $json.Telefono.replaceAll('+','').replaceAll('-','').replaceAll(' ','') + '@s.whatsapp.net' }}",
+              "type": "string"
+            },
+            {
+              "id": "b8a9481b-d6b9-46bc-bfaa-b124d6926a0a",
+              "name": "instance.name",
+              "value": "Level-Up-Media-Whatsapp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        144
+      ],
+      "id": "f8cfea69-1b54-47a5-82a6-ddaaf6cf0451",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $json.instance.name }}",
+        "remoteJid": "={{ $json['phone-number'] }}",
+        "messageText": "={{ $json.whatsapp_message }}",
+        "options_message": {
+          "delay": 3200,
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        144
+      ],
+      "id": "5c9a6cae-8c52-4f3a-92f9-0776ec48dd2d",
+      "name": "Enviar texto2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "194e5196-407d-4a58-b52d-243afcc39bec",
+              "leftValue": "={{ $json.fecha }}",
+              "rightValue": "FALLÓ",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        -48
+      ],
+      "id": "06b6cd04-2a2c-45d6-b796-4291315451d8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fecha }}",
+        "options": {
+          "systemMessage": "# Contexto\nTe llega una fecha que tiene que parsear a ISO\n# Regla\n- Omite \"FALLÓ PARSEAO\"\n- Convierte la fecha a ISO"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        80
+      ],
+      "id": "683a7392-6683-4937-8b94-d4966aac8cde",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        304
+      ],
+      "id": "7761c36e-7e16-4f09-b691-e305ce85921a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ded38aa7-9689-4701-966f-a88a4fafa2d6",
+              "name": "eventName",
+              "value": "={{ $('Code1').item.json.eventName }}",
+              "type": "string"
+            },
+            {
+              "id": "781405fa-f13c-4e86-a751-56eb5f52bd88",
+              "name": "uuid",
+              "value": "={{ $('Code1').item.json.uuid }}",
+              "type": "string"
+            },
+            {
+              "id": "b62e60d6-a0f7-4e7f-8873-fd199cbf2270",
+              "name": "nombre",
+              "value": "={{ $('Code1').item.json.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "354bd54e-46af-4073-a9af-3b1535ae9476",
+              "name": "apellido",
+              "value": "={{ $('Code1').item.json.apellido }}",
+              "type": "string"
+            },
+            {
+              "id": "42772f30-4f6f-4d85-bd62-97d6b3cf4408",
+              "name": "email",
+              "value": "={{ $('Code1').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "1d2c02fb-2c8f-4d2d-99f5-020ba335729a",
+              "name": "telefono",
+              "value": "={{ $('Code1').item.json.telefono }}",
+              "type": "string"
+            },
+            {
+              "id": "4fccebbc-88fb-4c7b-bd98-da79265195fc",
+              "name": "zoomLink",
+              "value": "={{ $('Code1').item.json.zoomLink }}",
+              "type": "string"
+            },
+            {
+              "id": "6fc545d8-7804-4e26-9273-fed952a80245",
+              "name": "actionType",
+              "value": "={{ $('Code1').item.json.actionType }}",
+              "type": "string"
+            },
+            {
+              "id": "c1672d0b-529b-4dcc-9b63-49c9fd82fda5",
+              "name": "fecha",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        80
+      ],
+      "id": "eca9f7f1-2fe7-4566-960b-7202cc20c631",
+      "name": "Edit Fields1"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "get_rows_by_mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get_rows_by_mail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create an event1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_rows_by_mail": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an event": {
+      "main": [
+        [
+          {
+            "node": "fields_for_mail_daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fields_for_mail_daily": {
+      "main": [
+        [
+          {
+            "node": "template_mail_daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "template_mail_daily": {
+      "main": [
+        [
+          {
+            "node": "Send_a_mail_daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send_a_mail_daily": {
+      "main": [
+        [
+          {
+            "node": "set-phone-number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-phone-number": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_rows_by_mail1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an event1": {
+      "main": [
+        [
+          {
+            "node": "fields_for_mail_daily1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fields_for_mail_daily1": {
+      "main": [
+        [
+          {
+            "node": "template_mail_daily1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "template_mail_daily1": {
+      "main": [
+        [
+          {
+            "node": "Send_a_mail_daily1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send_a_mail_daily1": {
+      "main": [
+        [
+          {
+            "node": "set-phone-number1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-phone-number1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Get an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Get an event1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto2": {
+      "main": [
+        []
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        []
+      ]
+    },
+    "Enviar texto1": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1757337353,
+        "possibleDuplicates": [
+          "199297800a79ae64",
+          "19925c5c464f8c50"
+        ]
+      }
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "1991a200b2729c7c",
+          "threadId": "1991a200b2729c7c",
+          "labelIds": [
+            "UNREAD",
+            "CATEGORY_UPDATES",
+            "INBOX"
+          ],
+          "sizeEstimate": 15166,
+          "headers": {
+            "delivered-to": "Delivered-To: agenteia@levelupmediapr.net",
+            "received": "Received: from MTM3NjY0OTc (unknown)\r\n\tby geopod-ismtpd-30 (SG) with HTTP\r\n\tid bUQNshI0QuqQPlb66cAlxg\r\n\tFri, 05 Sep 2025 13:45:30.763 +0000 (UTC)",
+            "x-google-smtp-source": "X-Google-Smtp-Source: AGHT+IEl7eYqpxjka6Ia7he+IoNSRHBElBz6vU5KQ/eLAfMci/nJOzGga3gbS0Zl2VshknMtMufC",
+            "x-received": "X-Received: by 2002:a05:622a:4cc:b0:4b1:72a2:5f0f with SMTP id d75a77b69052e-4b31d80cafcmr259547231cf.10.1757079931726;\r\n        Fri, 05 Sep 2025 06:45:31 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1757079931; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=UcHBLDn8XnPDyP1ln5vNSFN/345FS3n6LwkUrR4/eAI1RrR81UkIcE8Qe+dqZcf/cn\r\n         Qz6eF+wa4WI2ogYIuaG0eCnrs2lZugrfd6mqXhPl/hMdCVOaAqw+f5gg0bOgQFal9dDt\r\n         x7rLDFb/hpSjnhe8mcNu3D/WksCT8sxSydZ8T50Tb2tv0qK5HMoW6oS7dX666cJWM8KL\r\n         WM2h5QonQq6FgM3T9PRDjtUbWjynixrfZybCFnqNQWrn20bwdxtueNJ6lEbmo1Gj65XX\r\n         Zp+NVP7JbQOldXfsxzGdEndE60ROcvu6+88Winp4xzxJ6VYL+c3SkSEYPEdUMt+DlOd8\r\n         syOQ==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:categories:list-unsubscribe:reply-to:subject:message-id\r\n         :mime-version:from:date:content-transfer-encoding:dkim-signature;\r\n        bh=SWhH9dbfFmM98/u7t05ZRfKz/CO0dK5xFncprtzV1fw=;\r\n        fh=nPYrfmZvgzAhKr1kjNK57QlKlqus5C1i7nnIDSBC+tA=;\r\n        b=FQOuUlCJqTLSGpLAOFx8gIkiJo4tWJ5Kb4njiQ6kef9lEcWFaq72WI8EAA5BuVe8KE\r\n         Kr2r4cZ17puyixX8vjis5MPy2bEp6VCBCgMrlihqXpuTWMwBZJZ9pWLbdT6Vm7G1Nv6G\r\n         vlvVQLEKmIqoHGcAm4U07nCAbusFnCUo6PKFylGNB57DPnzByF6l54dnjjjfUsCcjjfM\r\n         ajGKkUXzki/iqGRhV59Z4cpPlhiVpPjI8eVmzz8233GaSDWF7aNFzTfXLXHBhvUI7dmQ\r\n         XAAx0fCmo5Tcl8AZekABBTSjOLzky9TVGF5tc0CrE7tr8TU6DTno5i1stQ8RtaRPnA74\r\n         tF8w==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@calendly.com header.s=d header.b=RZJRv11e;\r\n       spf=pass (google.com: domain of bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com designates 149.72.200.43 as permitted sender) smtp.mailfrom=\"bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com\";\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=calendly.com",
+            "return-path": "Return-Path: <bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com>",
+            "received-spf": "Received-SPF: pass (google.com: domain of bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com designates 149.72.200.43 as permitted sender) client-ip=149.72.200.43;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@calendly.com header.s=d header.b=RZJRv11e;\r\n       spf=pass (google.com: domain of bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com designates 149.72.200.43 as permitted sender) smtp.mailfrom=\"bounces+13766497-7e9c-agenteia=levelupmediapr.net@em1618.calendly.com\";\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=calendly.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=calendly.com;\r\n\th=content-transfer-encoding:content-type:date:from:mime-version:subject:\r\n\treply-to:list-unsubscribe:to:cc:content-type:date:from:subject:to;\r\n\ts=d; bh=SWhH9dbfFmM98/u7t05ZRfKz/CO0dK5xFncprtzV1fw=;\r\n\tb=RZJRv11eeVRhE4PXjrYVNEJIeQvOStGp8ctYk6hv7ZlGi5l1oR8CaTIcyvBtW6IelvIc\r\n\tgr1pqRR44gr/Ae1oUFlINur0zG5zY/GVUj9Zu+dJR0hvvZTYsgAK639W1ckHpcSgcbvHCv\r\n\t+PfAp7SkZ1yEEaZVjmbGkM9zTMqz3NOLI=",
+            "content-transfer-encoding": "Content-Transfer-Encoding: quoted-printable",
+            "content-type": "Content-Type: text/html; charset=us-ascii",
+            "date": "Date: Fri, 05 Sep 2025 13:45:30 +0000 (UTC)",
+            "from": "From: Calendly <no-reply@calendly.com>",
+            "mime-version": "Mime-Version: 1.0",
+            "message-id": "Message-ID: <bUQNshI0QuqQPlb66cAlxg@geopod-ismtpd-30>",
+            "subject": "Subject: 15_minutes_before",
+            "reply-to": "Reply-To: Calendly <no-reply@calendly.com>",
+            "list-unsubscribe": "List-Unsubscribe: \r\n =?us-ascii?Q?=3Chttps=3A=2F=2Fcalendly=2Ecom=2Fnotification=5Fsubscriptions=2F625f745c-5d75?=\r\n =?us-ascii?Q?-47bb-8325-a3d89beeb18c=2Fopt=5Fout=3Fowner=5Fu?=\r\n =?us-ascii?Q?uid=3D31a063bc-fcc0-42a7-b2ce-33311a1ef42?=\r\n =?us-ascii?Q?3&recipient=5Fuuid=3D625f745c-5d75-47bb-832?=\r\n =?us-ascii?Q?5-a3d89beeb18c&recipient=5Femail=3Djocrespo?=\r\n =?us-ascii?Q?%40planetsolarpr=2Enet&opt=5Fout=5Fmethod=3D1-c?=\r\n =?us-ascii?Q?lick&event=5Fuuid=3D8605a437-f0de-456c-825e?=\r\n =?us-ascii?Q?-72089659ee27&event=5Ftype=5Fuuid=3Dc0856469-?=\r\n =?us-ascii?Q?e0db-4b50-9449-f662f7b8e366=3E?=",
+            "categories": "categories: workflows/booking/event_to_someone_else/build",
+            "x-sg-eid": "X-SG-EID: \r\n =?us-ascii?Q?u001=2EPb69MZZIXej1vY6FJpl0HrmHbqxhKSTqAKqNIr2M2Jn9jmVPO=2F61NjdJZ?=\r\n =?us-ascii?Q?tb3zPzRd6nG8RToAMA0hzquJDoeJNDIceU3UO1U?=\r\n =?us-ascii?Q?uu4yet2fs4eC5bkfiSnaGSt2+XIUlVIvCuy14NN?=\r\n =?us-ascii?Q?7DuP5akkhkyFn8EbSdCjgpoByewcq+M10Yudcdi?=\r\n =?us-ascii?Q?kzSUnvOmqYIBk8SQiycIdFnSK4P0Wnx9fgLz9Py?=\r\n =?us-ascii?Q?nMFXkIS2rbA+pDOVYxdCyFK0yalaB2Si7jTQ1KX?= =?us-ascii?Q?7b0q?=",
+            "to": "To: agenteia@levelupmediapr.net",
+            "x-entity-id": "X-Entity-ID: u001.WmdW7KwdgwZ3/goc1xTppw=="
+          },
+          "html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n  <head style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n  <meta name=\"viewport\" content=\"width=device-width\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n  <title style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>Calendly</title>\n\n  \n\n<style>a:visited{color:rgb(0, 105, 255)}\na:link{color:rgb(0, 105, 255)}\n@media only screen and (max-width: 600px) {\na[class=\"btn\"]{display:block !important;margin-bottom:10px !important;background-image:none !important;margin-right:0 !important}\ndiv[class=\"column\"]{width:auto !important;float:none !important}\ntable.social div[class=\"column\"]{width:auto !important}\n}</style></head>\n\n\n  \n\n  <body bgcolor=\"#fcfcfc\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:none;height:100%;width:100% !important;background-color: #fcfcfc'>\n    <div class=\"main-wrapper\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;background-color: #fcfcfc; padding: 20px 0;'>\n      <div class=\"content-wrapper\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;max-width:520px;padding:0 20px;margin:0 auto;color:#666A73;font-size:16px'>\n        <div style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;margin-bottom: 30px;'>\n          \n        </div>\n\n        <div class=\"preview-label\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:14px;color:#A8A8A8;font-weight:bold;margin-bottom:10px'>\n          \n        </div>\n\n        <div class=\"preview\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;border:1px solid #DADADA;background:#ffffff;border-radius:3px;line-height:22px;padding:20px'>\n          \n\n<table class=\"body-wrap\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;width:80%;margin:20px auto 0;width:100% !important;margin: 0 auto 0; font-size: 16px;'>\n  <tr style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n    <td style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;color: rgb(26, 26, 26); line-height: 22px; padding-top: 30px;'>\n      \n            <div class=\"user-customizable-area\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;margin-bottom: 40px;'>\n  <p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>event-name: Onboarding</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>First-name: Jose</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>Last-name: Crespo</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>invitee-email: jocrespo@planetsolarpr.net</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>invitee-phone-number: +1 787-354-8370</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>event-date: Friday, September 5, 2025 09:00 (America/Bogota)</p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important'>location: <strong style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:14px !important'>Location:</strong>\n    </p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important;margin-bottom: 10px'>This is a Zoom web conference.</p>\n    <div style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;border-left: 4px solid #dadada; padding-left: 20px; padding-top: 5px; padding-bottom: 18px;'>\n      <p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:16px;margin-top:12px;font-size:14px !important;font-size: 86%'>\n        <strong style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:14px !important'>You can join this meeting from your computer, tablet, or smartphone.</strong><br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          <a href=\"https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;color:rgb(0, 105, 255)'>https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1</a><br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          <br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          <strong style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size:14px !important'>Password:</strong>\n          039221\n          <br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          <br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          You can also dial in using your phone.<br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          US: +1 305 224 1968, +1 309 205 3325, +1 312 626 6799, +1 646 876 9923, +1 646 931 3860, +1 301 715 8592, +1 253 215 8782, +1 346 248 7799, +1 360 209 5623, +1 386 347 5053, +1 408 638 0968, +1 507 473 4847, +1 564 217 2000, +1 669 444 9171, +1 669 900 6833, +16892781000, +1 719 359 4580, +1 253 205 0468<br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n          Meeting ID: 854-579-75603<br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n      </p>\n    </div>\n</div>\n\n    </td>\n  </tr>\n</table>\n\n  <table class=\"footer-wrap\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;width:80%;margin:0 auto;clear:both !important;width:100% !important;margin: 30px auto 0; border-top: 1px dashed #dadada;'>\n  <tr style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n    <td style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;color: rgba(26, 26, 26, 0.6); padding-top: 15px;'>\n      <p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size: 12px; text-align: center;'>\n        <img alt=\"Calendly\" src=\"https://assets.calendly.com/assets/emails/workflows-service/media/logo-email.png\" width=\"60\" height=\"60\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;max-width:100%'>\n        <br style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif'>\n        <a href=\"https://calendly.com/?utm_source=invitee&amp;utm_medium=email&amp;utm_campaign=sign_up\" style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;color:rgb(0, 105, 255)'>Sign up for your own Calendly page</a>\n          </p><p style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;font-size: 12px; text-align: center;'>\n            <a style='font-family:\"Proxima Nova\", \"proxima-nova\", Helvetica, Arial sans-serif;color:rgb(0, 105, 255);color: rgba(26, 26, 26, 0.61);' href=\"https://calendly.com/notification_subscriptions/625f745c-5d75-47bb-8325-a3d89beeb18c/opt_out?owner_uuid=31a063bc-fcc0-42a7-b2ce-33311a1ef423&amp;recipient_uuid=625f745c-5d75-47bb-8325-a3d89beeb18c&amp;recipient_email=jocrespo%40planetsolarpr.net&amp;opt_out_method=button&amp;event_uuid=8605a437-f0de-456c-825e-72089659ee27&amp;event_type_uuid=c0856469-e0db-4b50-9449-f662f7b8e366\">Unsubscribe from notifications about this event</a>\n          </p>\n      \n    </td>\n  </tr>\n</table>\n\n\n        </div>\n      </div>\n    </div>\n  <img src=\"https://click.calendly.com/wf/open?upn=u001.nqz59-2FlAociFAso-2Fh-2By-2BVQMXHEghPKI6jwoi-2FwP9QvkoWBGVkcvXINQHi4my4XO6KgkrXK0PGGiUQV-2F4Tqr0-2B3wTPTOFXzHi-2F1Sg1tNZZTrzwe-2BrhNAOsy3em85Yz0ZxvxgNzGKGfehPuDkTI87CX6V66y1DHR7lgCKdvB-2FcJVvmtSX0-2BSDs680CjJwiMRdu-2BBnXLt3Ry6uCPe5c4yvt9BIOcjVSJLr5XQIMKbNy4uw-3D\" alt=\"\" width=\"1\" height=\"1\" border=\"0\" style=\"height:1px !important;width:1px !important;border-width:0 !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;\"/></body>\n</html>\n",
+          "text": "event-name: Onboarding\n\nFirst-name: Jose\n\nLast-name: Crespo\n\ninvitee-email: jocrespo@planetsolarpr.net\n\ninvitee-phone-number: +1 787-354-8370\n\nevent-date: Friday, September 5, 2025 09:00 (America/Bogota)\n\nlocation: Location:\n\nThis is a Zoom web conference.\n\nYou can join this meeting from your computer, tablet, or smartphone.\nhttps://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1\n[https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1]\n\nPassword: 039221\n\nYou can also dial in using your phone.\nUS: +1 305 224 1968, +1 309 205 3325, +1 312 626 6799, +1 646 876 9923, +1 646\n931 3860, +1 301 715 8592, +1 253 215 8782, +1 346 248 7799, +1 360 209 5623, +1\n386 347 5053, +1 408 638 0968, +1 507 473 4847, +1 564 217 2000, +1 669 444\n9171, +1 669 900 6833, +16892781000, +1 719 359 4580, +1 253 205 0468\nMeeting ID: 854-579-75603\n\n\nCalendly\n[https://assets.calendly.com/assets/emails/workflows-service/media/logo-email.png]\nSign up for your own Calendly page\n[https://calendly.com/?utm_source=invitee&utm_medium=email&utm_campaign=sign_up]\n\nUnsubscribe from notifications about this event\n[https://calendly.com/notification_subscriptions/625f745c-5d75-47bb-8325-a3d89beeb18c/opt_out?owner_uuid=31a063bc-fcc0-42a7-b2ce-33311a1ef423&recipient_uuid=625f745c-5d75-47bb-8325-a3d89beeb18c&recipient_email=jocrespo%40planetsolarpr.net&opt_out_method=button&event_uuid=8605a437-f0de-456c-825e-72089659ee27&event_type_uuid=c0856469-e0db-4b50-9449-f662f7b8e366]\n\n[https://click.calendly.com/wf/open?upn=u001.nqz59-2FlAociFAso-2Fh-2By-2BVQMXHEghPKI6jwoi-2FwP9QvkoWBGVkcvXINQHi4my4XO6KgkrXK0PGGiUQV-2F4Tqr0-2B3wTPTOFXzHi-2F1Sg1tNZZTrzwe-2BrhNAOsy3em85Yz0ZxvxgNzGKGfehPuDkTI87CX6V66y1DHR7lgCKdvB-2FcJVvmtSX0-2BSDs680CjJwiMRdu-2BBnXLt3Ry6uCPe5c4yvt9BIOcjVSJLr5XQIMKbNy4uw-3D]",
+          "textAsHtml": "<p>event-name: Onboarding</p><p>First-name: Jose</p><p>Last-name: Crespo</p><p>invitee-email: <a href=\"mailto:jocrespo@planetsolarpr.net\">jocrespo@planetsolarpr.net</a></p><p>invitee-phone-number: +1 787-354-8370</p><p>event-date: Friday, September 5, 2025 09:00 (America/Bogota)</p><p>location: Location:</p><p>This is a Zoom web conference.</p><p>You can join this meeting from your computer, tablet, or smartphone.<br/><a href=\"https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1\">https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1</a><br/>[<a href=\"https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1\">https://us06web.zoom.us/j/85457975603?pwd=a9vLdkJJhs0ZQ6Duk72kEXIx3UCQ2M.1</a>]</p><p>Password: 039221</p><p>You can also dial in using your phone.<br/>US: +1 305 224 1968, +1 309 205 3325, +1 312 626 6799, +1 646 876 9923, +1 646<br/>931 3860, +1 301 715 8592, +1 253 215 8782, +1 346 248 7799, +1 360 209 5623, +1<br/>386 347 5053, +1 408 638 0968, +1 507 473 4847, +1 564 217 2000, +1 669 444<br/>9171, +1 669 900 6833, +16892781000, +1 719 359 4580, +1 253 205 0468<br/>Meeting ID: 854-579-75603</p><p>Calendly<br/>[<a href=\"https://assets.calendly.com/assets/emails/workflows-service/media/logo-email.png\">https://assets.calendly.com/assets/emails/workflows-service/media/logo-email.png</a>]<br/>Sign up for your own Calendly page<br/>[<a href=\"https://calendly.com/?utm_source=invitee&utm_medium=email&utm_campaign=sign_up\">https://calendly.com/?utm_source=invitee&utm_medium=email&utm_campaign=sign_up</a>]</p><p>Unsubscribe from notifications about this event<br/>[<a href=\"https://calendly.com/notification_subscriptions/625f745c-5d75-47bb-8325-a3d89beeb18c/opt_out?owner_uuid=31a063bc-fcc0-42a7-b2ce-33311a1ef423&recipient_uuid=625f745c-5d75-47bb-8325-a3d89beeb18c&recipient_email=jocrespo%40planetsolarpr.net&opt_out_method=button&event_uuid=8605a437-f0de-456c-825e-72089659ee27&event_type_uuid=c0856469-e0db-4b50-9449-f662f7b8e366\">https://calendly.com/notification_subscriptions/625f745c-5d75-47bb-8325-a3d89beeb18c/opt_out?owner_uuid=31a063bc-fcc0-42a7-b2ce-33311a1ef423&recipient_uuid=625f745c-5d75-47bb-8325-a3d89beeb18c&recipient_email=jocrespo%40planetsolarpr.net&opt_out_method=button&event_uuid=8605a437-f0de-456c-825e-72089659ee27&event_type_uuid=c0856469-e0db-4b50-9449-f662f7b8e366</a>]</p><p>[<a href=\"https://click.calendly.com/wf/open?upn=u001.nqz59-2FlAociFAso-2Fh-2By-2BVQMXHEghPKI6jwoi-2FwP9QvkoWBGVkcvXINQHi4my4XO6KgkrXK0PGGiUQV-2F4Tqr0-2B3wTPTOFXzHi-2F1Sg1tNZZTrzwe-2BrhNAOsy3em85Yz0ZxvxgNzGKGfehPuDkTI87CX6V66y1DHR7lgCKdvB-2FcJVvmtSX0-2BSDs680CjJwiMRdu-2BBnXLt3Ry6uCPe5c4yvt9BIOcjVSJLr5XQIMKbNy4uw-3D\">https://click.calendly.com/wf/open?upn=u001.nqz59-2FlAociFAso-2Fh-2By-2BVQMXHEghPKI6jwoi-2FwP9QvkoWBGVkcvXINQHi4my4XO6KgkrXK0PGGiUQV-2F4Tqr0-2B3wTPTOFXzHi-2F1Sg1tNZZTrzwe-2BrhNAOsy3em85Yz0ZxvxgNzGKGfehPuDkTI87CX6V66y1DHR7lgCKdvB-2FcJVvmtSX0-2BSDs680CjJwiMRdu-2BBnXLt3Ry6uCPe5c4yvt9BIOcjVSJLr5XQIMKbNy4uw-3D</a>]</p>",
+          "subject": "15_minutes_before",
+          "date": "2025-09-05T13:45:30.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "agenteia@levelupmediapr.net",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:agenteia@levelupmediapr.net\" class=\"mp_address_email\">agenteia@levelupmediapr.net</a></span>",
+            "text": "agenteia@levelupmediapr.net"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "no-reply@calendly.com",
+                "name": "Calendly"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Calendly</span> &lt;<a href=\"mailto:no-reply@calendly.com\" class=\"mp_address_email\">no-reply@calendly.com</a>&gt;</span>",
+            "text": "\"Calendly\" <no-reply@calendly.com>"
+          },
+          "messageId": "<bUQNshI0QuqQPlb66cAlxg@geopod-ismtpd-30>",
+          "replyTo": {
+            "value": [
+              {
+                "address": "no-reply@calendly.com",
+                "name": "Calendly"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Calendly</span> &lt;<a href=\"mailto:no-reply@calendly.com\" class=\"mp_address_email\">no-reply@calendly.com</a>&gt;</span>",
+            "text": "\"Calendly\" <no-reply@calendly.com>"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "7ad5c04e-7ca4-41c0-846c-b29044c09ea9",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "zQPgMRoWkmrca8f6",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    }
+  ],
+  "activeVersion": null
+}

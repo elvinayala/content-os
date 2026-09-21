@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 
 import { requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
+import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
 import type { Actividad, ArchivoPulse, ColorPulse, Columna, Grupo, Item, SettingsColumna, TipoColumna, ValorCelda } from "@/lib/pulse/types";
@@ -37,6 +38,7 @@ export async function actualizarValorAction(p: {
     const u = await requiereUsuario();
     const value = validarValor(p.tipo, p.value, p.settings);
     const r = await repo.actualizarValor({ itemId: p.itemId, columnId: p.columnId, value, userId: u.id });
+    avisarCambio({ itemIds: [p.itemId], motivo: "valor" });
     return { updatedAt: r.updatedAt, value };
   });
 }
@@ -47,6 +49,7 @@ export async function renombrarItemAction(p: { itemId: string; name: string }): 
     const name = p.name.trim().slice(0, 300);
     if (!name) throw new Error("El nombre no puede quedar vacío");
     await repo.renombrarItem({ itemId: p.itemId, name, userId: u.id });
+    avisarCambio({ itemIds: [p.itemId], motivo: "nombre" });
     return {};
   });
 }
@@ -56,6 +59,7 @@ export async function crearItemAction(p: { boardId: string; groupId: string; nam
     const u = await requiereUsuario();
     const name = p.name.trim().slice(0, 300) || "Nuevo elemento";
     const item = await repo.crearItem({ boardId: p.boardId, groupId: p.groupId, name, userId: u.id, alInicio: p.alInicio, values: p.values });
+    avisarCambio({ itemIds: [item.id], motivo: "crear" });
     return { item };
   });
 }
@@ -64,6 +68,7 @@ export async function moverItemsAction(p: { itemIds: string[]; groupId: string }
   return envolver(async () => {
     const u = await requiereUsuario();
     await repo.moverItems({ itemIds: p.itemIds, groupId: p.groupId, userId: u.id });
+    avisarCambio({ itemIds: p.itemIds, motivo: "mover" });
     return {};
   });
 }
@@ -71,7 +76,9 @@ export async function moverItemsAction(p: { itemIds: string[]; groupId: string }
 export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{ n: number }>> {
   return envolver(async () => {
     const u = await requiereUsuario();
+    const { bajas, afectados } = await prepararBaja(p.itemIds);
     const n = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
+    avisarCambio({ itemIds: afectados, bajas, motivo: "eliminar" });
     refresh();
     return { n };
   });

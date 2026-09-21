@@ -52,6 +52,8 @@ export default async function proxy(request: NextRequest) {
   // Pulse (CRM, reemplazo de Monday): usuarios propios en Postgres (Jessica, Carly…).
   // Entra con cookie pulse válida o con la cookie CEO. La sesión de contenido NO entra.
   if (pathname === "/pulse/login") return NextResponse.next();
+  // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
+  if (pathname.startsWith("/api/pulse/n8n/")) return NextResponse.next();
   if (pathname === "/pulse" || pathname.startsWith("/pulse/") || pathname.startsWith("/api/pulse/")) {
     const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
     const ceoOk = await sesionValida(request.cookies.get(COOKIE_SESION)?.value);

@@ -1,0 +1,2115 @@
+{
+  "updatedAt": "2026-01-07T14:29:38.167Z",
+  "createdAt": "2025-08-15T02:20:45.742Z",
+  "id": "g7mkm3TKkjQYpopk",
+  "name": "B-) Slack button logic v2",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recibir-data-slack-boton",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        256
+      ],
+      "id": "7e15f840-124f-4d79-b942-158039d68b3d",
+      "name": "Webhook",
+      "webhookId": "c53f71f1-2687-409a-a4b1-be02d0075934"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel_id }}",
+          "mode": "id"
+        },
+        "ts": "={{ $json.message_ts }}",
+        "messageType": "block",
+        "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+        "text": "=",
+        "updateFields": {},
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        -32
+      ],
+      "id": "083a0c07-d632-49a0-99c1-c6b5c41daaf5",
+      "name": "Update a message",
+      "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "reaction",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "id"
+        },
+        "timestamp": "={{ $('Switch').item.json.message_ts }}",
+        "name": "white_check_mark"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "3ca95328-864f-4929-8de3-a3343b8006de",
+      "name": "Add a reaction",
+      "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "reaction",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "id"
+        },
+        "timestamp": "={{ $('Switch').item.json.message_ts }}",
+        "name": "eyes"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        160
+      ],
+      "id": "cceaf080-f6f3-4bde-8bae-2aab0cac72d2",
+      "name": "Add a reaction1",
+      "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel_id }}",
+          "mode": "id"
+        },
+        "ts": "={{ $json.message_ts }}",
+        "messageType": "block",
+        "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+        "text": "=",
+        "updateFields": {},
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        160
+      ],
+      "id": "bf1de219-6421-466b-8644-9ea580815e86",
+      "name": "Update a message2",
+      "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m8v320mexdfjjou",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        896,
+        -32
+      ],
+      "id": "1a4ef267-d2c0-43e8-a373-af562ab8bcd0",
+      "name": "get-message-log",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        -32
+      ],
+      "id": "68b0755b-0bd9-4126-9679-6aef5b48f7d1",
+      "name": "get-client-data",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m8v320mexdfjjou",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        896,
+        160
+      ],
+      "id": "94c0eb86-63a5-4f13-bbfb-e42ed65413f1",
+      "name": "get-message-log1",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        160
+      ],
+      "id": "68ca9563-c28d-454d-9403-4993ced69e59",
+      "name": "get-client-data1",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ultimo-revisado",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        -32
+      ],
+      "id": "3d13d26f-dfd2-491f-8d7e-73fe3aae85e3",
+      "name": "update-last-review",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "dependencia",
+              "fieldValue": "=true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        160
+      ],
+      "id": "cb2c97a7-324f-4eec-9c53-77cd4df62623",
+      "name": "update-last-dependency",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_id }}",
+                    "rightValue": "approve_button",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ea68772e-0b0e-49ff-9fcb-713a65e53b39"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "revisado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d1a72a1c-e352-40de-af91-6f2d83a6de76",
+                    "leftValue": "={{ $json.action_id }}",
+                    "rightValue": "dependencia_button",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "dependencia"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6c4f5894-bd86-43f0-ae04-94b6a9e738cd",
+                    "leftValue": "={{ $json.action_id }}",
+                    "rightValue": "id-revisado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "id-revisado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dc370db5-1fcc-41b1-b8eb-7e0994c0665d",
+                    "leftValue": "={{ $json.action_id }}",
+                    "rightValue": "para-despues",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "para-despues"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        64,
+        224
+      ],
+      "id": "8e349f2e-b5fc-4578-8987-1e14931ac329",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "reaction",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "id"
+        },
+        "timestamp": "={{ $('Switch').item.json.message_ts }}",
+        "name": "white_check_mark"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        352
+      ],
+      "id": "e7ce1f5e-c2db-435f-a5bf-4070025f36c4",
+      "name": "Add a reaction2",
+      "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel_id }}",
+          "mode": "id"
+        },
+        "ts": "={{ $json.message_ts }}",
+        "messageType": "block",
+        "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+        "text": "=",
+        "updateFields": {},
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        352
+      ],
+      "id": "004ab1b9-7d67-4821-be15-03ee63628f69",
+      "name": "Update a message3",
+      "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('get-client-data3').first().json.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{$now.format('yyyy-MM-dd')}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        352
+      ],
+      "id": "0299f563-aecf-496c-8673-af035bf7c7f3",
+      "name": "update-last-alert",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m8v320mexdfjjou",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.jsonmessage_ts }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        896,
+        352
+      ],
+      "id": "8966acfe-2854-4539-ad32-195a099eb58c",
+      "name": "get-message-log2",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        352
+      ],
+      "id": "af4da10d-c65d-47d2-8ad1-f672169f7dbb",
+      "name": "get-client-data3",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "reaction",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "id"
+        },
+        "timestamp": "={{ $('Switch').item.json.message_ts }}",
+        "name": "red_circle"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        544
+      ],
+      "id": "2113f4cb-fc3e-4da3-b2e5-41f9e84c58d5",
+      "name": "Add a reaction3",
+      "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel_id }}",
+          "mode": "id"
+        },
+        "ts": "={{ $json.message_ts }}",
+        "messageType": "block",
+        "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+        "text": "=",
+        "updateFields": {},
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        544
+      ],
+      "id": "1a2b48e5-6381-4e4a-b7e9-c0cd12b9abe7",
+      "name": "Update a message4",
+      "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('get-client-data4').first().json.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{$now.format('yyyy-MM-dd')}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        544
+      ],
+      "id": "4b94e9c8-f568-4bb4-abef-b737a1bc6c99",
+      "name": "update-last-alert1",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m8v320mexdfjjou",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        896,
+        544
+      ],
+      "id": "fd2d7132-6dbd-4657-bc31-80722546d705",
+      "name": "get-message-log3",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        544
+      ],
+      "id": "5ced014a-68fd-42f0-9f6d-3325f1688f59",
+      "name": "get-client-data4",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// El input JSON completo que llega al webhook\nconst webhookInput = $input.item.json;\n\n// 1. Parsear el 'payload' que viene como un string\nconst payload = JSON.parse(webhookInput.body.payload);\n\n// 2. Extraer los datos clave que necesitas\nconst channelId = payload.container.channel_id;\nconst messageTs = payload.container.message_ts;\nconst actionId = payload.actions[0].action_id;\n\n// 3. Obtener los bloques del mensaje original y filtrarlos\nconst originalBlocks = payload.message.blocks;\n\n// Creamos un nuevo array de bloques, excluyendo el que tiene type: \"actions\"\nconst blocksSinBotones = originalBlocks.filter(block => block.type !== 'actions');\n\n// 4. Devolver un único objeto JSON con toda la información formateada\nreturn {\n  channel_id: channelId,\n  message_ts: messageTs,\n  action_id: actionId,\n  // [CAMBIO CLAVE] El array ahora está dentro de un objeto con la clave \"blocks\"\n  blocks_actualizados: {\n    \"blocks\": blocksSinBotones\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        256
+      ],
+      "id": "32ce14bb-eec8-4c54-a102-715e151d80c2",
+      "name": "Code"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a message": {
+      "main": [
+        [
+          {
+            "node": "Add a reaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a reaction": {
+      "main": [
+        [
+          {
+            "node": "get-message-log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a reaction1": {
+      "main": [
+        [
+          {
+            "node": "get-message-log1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a message2": {
+      "main": [
+        [
+          {
+            "node": "Add a reaction1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-message-log": {
+      "main": [
+        [
+          {
+            "node": "get-client-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data": {
+      "main": [
+        [
+          {
+            "node": "update-last-review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-message-log1": {
+      "main": [
+        [
+          {
+            "node": "get-client-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data1": {
+      "main": [
+        [
+          {
+            "node": "update-last-dependency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Update a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a reaction2": {
+      "main": [
+        [
+          {
+            "node": "get-message-log2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a message3": {
+      "main": [
+        [
+          {
+            "node": "Add a reaction2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-message-log2": {
+      "main": [
+        [
+          {
+            "node": "get-client-data3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data3": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a reaction3": {
+      "main": [
+        [
+          {
+            "node": "get-message-log3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a message4": {
+      "main": [
+        [
+          {
+            "node": "Add a reaction3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-message-log3": {
+      "main": [
+        [
+          {
+            "node": "get-client-data4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data4": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
+            "content-length": "5945",
+            "accept": "application/json,*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "54.174.247.228",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "55eaedbb4168",
+            "x-real-ip": "54.174.247.228",
+            "x-slack-request-timestamp": "1767795916",
+            "x-slack-signature": "v0=3bd29094a19deabd3d62e356cfc351c0c143e6e98be0d653e75198eeda38577b"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U096Y3TRT5E\",\"username\":\"agenteia\",\"name\":\"agenteia\",\"team_id\":\"T07V7MUDA9H\"},\"api_app_id\":\"A0968PDQU5T\",\"token\":\"xl1KDf3L9vmyMSX6r3gBWcxv\",\"container\":{\"type\":\"message\",\"message_ts\":\"1767786817.345279\",\"channel_id\":\"C095BBYBHHA\",\"is_ephemeral\":false},\"trigger_id\":\"10252272658100.7993742452323.3a3cd5ba0d26f565e72eb52860ffa313\",\"team\":{\"id\":\"T07V7MUDA9H\",\"domain\":\"levelupmediaespacio\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C095BBYBHHA\",\"name\":\"office-6-agente-monitoreo-ads\"},\"message\":{\"user\":\"U096Y3TRT5E\",\"type\":\"message\",\"ts\":\"1767786817.345279\",\"bot_id\":\"B096C5Q68Q4\",\"app_id\":\"A0968PDQU5T\",\"text\":\":rotating_light: Alertas para Dra. Lorelys Mojica <@U091C0586HK> <@U07V7MVJ18B> *Cliente:*\\nLorelys Mojica *ID Cuenta:*\\n1051106542045444 :rocket: *Acciones Recomendadas* *Listo para Fase 5*\\nHan pasado +7 d\\u00edas con todas las fases activas. *:mag_right: Alertas de M\\u00e9tricas (Prioritarias)* `REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ VID \\/ LEVEL UP \\/ 20\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.06) `REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ IMG \\/ LEVEL UP \\/ 18\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.16) `REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ IMG \\/ LEVEL UP \\/ 18\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.00) Bot\\u00f3n Campa\\u00f1as Ajustadas Bot\\u00f3n Dependencia\",\"team\":\"T07V7MUDA9H\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"JEJTs\",\"text\":{\"type\":\"plain_text\",\"text\":\":rotating_light: Alertas para Dra. Lorelys Mojica\",\"emoji\":true}},{\"type\":\"context\",\"block_id\":\"PBGU3\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\"<@U091C0586HK> <@U07V7MVJ18B>\",\"verbatim\":false}]},{\"type\":\"section\",\"block_id\":\"BpESL\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Cliente:*\\nLorelys Mojica\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*ID Cuenta:*\\n1051106542045444\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"y5dPU\"},{\"type\":\"section\",\"block_id\":\"WPTQh\",\"text\":{\"type\":\"mrkdwn\",\"text\":\":rocket: *Acciones Recomendadas*\",\"verbatim\":false}},{\"type\":\"section\",\"block_id\":\"I1zih\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Listo para Fase 5*\\nHan pasado +7 d\\u00edas con todas las fases activas.\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"z4\\/kN\"},{\"type\":\"section\",\"block_id\":\"VD1O8\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*:mag_right: Alertas de M\\u00e9tricas (Prioritarias)*\",\"verbatim\":false}},{\"type\":\"section\",\"block_id\":\"VCyP+\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"`REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ VID \\/ LEVEL UP \\/ 20\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.06)\",\"verbatim\":false}},{\"type\":\"section\",\"block_id\":\"1+oqZ\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"`REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ IMG \\/ LEVEL UP \\/ 18\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.16)\",\"verbatim\":false}},{\"type\":\"section\",\"block_id\":\"8eTbB\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"`REPETIDA` *Campa\\u00f1a:* FASE 2 \\/ VENTAS \\/ IA \\/ WAP \\/ IMG \\/ LEVEL UP \\/ 18\\/12\\n*Raz\\u00f3n:* Costo por Conversaci\\u00f3n bajo ($1.00)\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"Gj+i0\"},{\"type\":\"actions\",\"block_id\":\"h4ux1\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve_button\",\"text\":{\"type\":\"plain_text\",\"text\":\"Campa\\u00f1as Ajustadas\",\"emoji\":true},\"style\":\"primary\",\"value\":\"revisado_1051106542045444\"},{\"type\":\"button\",\"action_id\":\"dependencia_button\",\"text\":{\"type\":\"plain_text\",\"text\":\"Dependencia\",\"emoji\":true},\"value\":\"dependencia_1051106542045444\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T07V7MUDA9H\\/10276988364464\\/pI7KpVSBKuCL6v6Ywqh4ak4Y\",\"actions\":[{\"action_id\":\"approve_button\",\"block_id\":\"h4ux1\",\"text\":{\"type\":\"plain_text\",\"text\":\"Campa\\u00f1as Ajustadas\",\"emoji\":true},\"value\":\"revisado_1051106542045444\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1767795916.531708\"}]}"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/recibir-data-slack-boton",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "973ae93b-9649-4dee-8c28-c14261a115cd",
+  "activeVersionId": "973ae93b-9649-4dee-8c28-c14261a115cd",
+  "versionCounter": 22,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "g7mkm3TKkjQYpopk",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    },
+    {
+      "updatedAt": "2025-10-30T12:52:31.942Z",
+      "createdAt": "2025-10-30T12:52:31.942Z",
+      "id": "JCwRBa9I67fZX6F0",
+      "name": "Global"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-07T14:23:21.666Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "973ae93b-9649-4dee-8c28-c14261a115cd",
+    "workflowId": "g7mkm3TKkjQYpopk",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "recibir-data-slack-boton",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -432,
+          256
+        ],
+        "id": "7e15f840-124f-4d79-b942-158039d68b3d",
+        "name": "Webhook",
+        "webhookId": "c53f71f1-2687-409a-a4b1-be02d0075934"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "update",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel_id }}",
+            "mode": "id"
+          },
+          "ts": "={{ $json.message_ts }}",
+          "messageType": "block",
+          "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+          "text": "=",
+          "updateFields": {},
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          448,
+          -32
+        ],
+        "id": "083a0c07-d632-49a0-99c1-c6b5c41daaf5",
+        "name": "Update a message",
+        "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "reaction",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel }}",
+            "mode": "id"
+          },
+          "timestamp": "={{ $('Switch').item.json.message_ts }}",
+          "name": "white_check_mark"
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          -32
+        ],
+        "id": "3ca95328-864f-4929-8de3-a3343b8006de",
+        "name": "Add a reaction",
+        "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "reaction",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel }}",
+            "mode": "id"
+          },
+          "timestamp": "={{ $('Switch').item.json.message_ts }}",
+          "name": "eyes"
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          160
+        ],
+        "id": "cceaf080-f6f3-4bde-8bae-2aab0cac72d2",
+        "name": "Add a reaction1",
+        "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "update",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel_id }}",
+            "mode": "id"
+          },
+          "ts": "={{ $json.message_ts }}",
+          "messageType": "block",
+          "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+          "text": "=",
+          "updateFields": {},
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          448,
+          160
+        ],
+        "id": "bf1de219-6421-466b-8644-9ea580815e86",
+        "name": "Update a message2",
+        "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m8v320mexdfjjou",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          896,
+          -32
+        ],
+        "id": "1a4ef267-d2c0-43e8-a373-af562ab8bcd0",
+        "name": "get-message-log",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1120,
+          -32
+        ],
+        "id": "68b0755b-0bd9-4126-9679-6aef5b48f7d1",
+        "name": "get-client-data",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m8v320mexdfjjou",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          896,
+          160
+        ],
+        "id": "94c0eb86-63a5-4f13-bbfb-e42ed65413f1",
+        "name": "get-message-log1",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1120,
+          160
+        ],
+        "id": "68ca9563-c28d-454d-9403-4993ced69e59",
+        "name": "get-client-data1",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "Id",
+                "fieldValue": "={{ $json.Id }}"
+              },
+              {
+                "fieldName": "ultimo-revisado",
+                "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          -32
+        ],
+        "id": "3d13d26f-dfd2-491f-8d7e-73fe3aae85e3",
+        "name": "update-last-review",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "Id",
+                "fieldValue": "={{ $json.Id }}"
+              },
+              {
+                "fieldName": "dependencia",
+                "fieldValue": "=true"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          160
+        ],
+        "id": "cb2c97a7-324f-4eec-9c53-77cd4df62623",
+        "name": "update-last-dependency",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_id }}",
+                      "rightValue": "approve_button",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "ea68772e-0b0e-49ff-9fcb-713a65e53b39"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "revisado"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "d1a72a1c-e352-40de-af91-6f2d83a6de76",
+                      "leftValue": "={{ $json.action_id }}",
+                      "rightValue": "dependencia_button",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "dependencia"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "6c4f5894-bd86-43f0-ae04-94b6a9e738cd",
+                      "leftValue": "={{ $json.action_id }}",
+                      "rightValue": "id-revisado",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "id-revisado"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "dc370db5-1fcc-41b1-b8eb-7e0994c0665d",
+                      "leftValue": "={{ $json.action_id }}",
+                      "rightValue": "para-despues",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "para-despues"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          64,
+          224
+        ],
+        "id": "8e349f2e-b5fc-4578-8987-1e14931ac329",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "reaction",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel }}",
+            "mode": "id"
+          },
+          "timestamp": "={{ $('Switch').item.json.message_ts }}",
+          "name": "white_check_mark"
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          352
+        ],
+        "id": "e7ce1f5e-c2db-435f-a5bf-4070025f36c4",
+        "name": "Add a reaction2",
+        "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "update",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel_id }}",
+            "mode": "id"
+          },
+          "ts": "={{ $json.message_ts }}",
+          "messageType": "block",
+          "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+          "text": "=",
+          "updateFields": {},
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          448,
+          352
+        ],
+        "id": "004ab1b9-7d67-4821-be15-03ee63628f69",
+        "name": "Update a message3",
+        "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "Id",
+                "fieldValue": "={{ $('get-client-data3').first().json.Id }}"
+              },
+              {
+                "fieldName": "ultima-alerta",
+                "fieldValue": "={{$now.format('yyyy-MM-dd')}}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          352
+        ],
+        "id": "0299f563-aecf-496c-8673-af035bf7c7f3",
+        "name": "update-last-alert",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m8v320mexdfjjou",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.jsonmessage_ts }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          896,
+          352
+        ],
+        "id": "8966acfe-2854-4539-ad32-195a099eb58c",
+        "name": "get-message-log2",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1120,
+          352
+        ],
+        "id": "af4da10d-c65d-47d2-8ad1-f672169f7dbb",
+        "name": "get-client-data3",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "reaction",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel }}",
+            "mode": "id"
+          },
+          "timestamp": "={{ $('Switch').item.json.message_ts }}",
+          "name": "red_circle"
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          544
+        ],
+        "id": "2113f4cb-fc3e-4da3-b2e5-41f9e84c58d5",
+        "name": "Add a reaction3",
+        "webhookId": "e002648f-0612-4df9-88b6-cb18288edd94",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "update",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $json.channel_id }}",
+            "mode": "id"
+          },
+          "ts": "={{ $json.message_ts }}",
+          "messageType": "block",
+          "blocksUi": "={{ $json.blocks_actualizados.toJsonString() }}",
+          "text": "=",
+          "updateFields": {},
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          448,
+          544
+        ],
+        "id": "1a2b48e5-6381-4e4a-b7e9-c0cd12b9abe7",
+        "name": "Update a message4",
+        "webhookId": "55d95a40-17dd-4ad1-8ebd-3b2dd7be17e2",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "Id",
+                "fieldValue": "={{ $('get-client-data4').first().json.Id }}"
+              },
+              {
+                "fieldName": "ultima-alerta",
+                "fieldValue": "={{$now.format('yyyy-MM-dd')}}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          544
+        ],
+        "id": "4b94e9c8-f568-4bb4-abef-b737a1bc6c99",
+        "name": "update-last-alert1",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "m8v320mexdfjjou",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-mensaje-slack-ts,eq,{{ $('Switch').item.json.message_ts }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          896,
+          544
+        ],
+        "id": "fd2d7132-6dbd-4657-bc31-80722546d705",
+        "name": "get-message-log3",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-monday,eq,{{ $json['ID-monday'] }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          1120,
+          544
+        ],
+        "id": "5ced014a-68fd-42f0-9f6d-3325f1688f59",
+        "name": "get-client-data4",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// El input JSON completo que llega al webhook\nconst webhookInput = $input.item.json;\n\n// 1. Parsear el 'payload' que viene como un string\nconst payload = JSON.parse(webhookInput.body.payload);\n\n// 2. Extraer los datos clave que necesitas\nconst channelId = payload.container.channel_id;\nconst messageTs = payload.container.message_ts;\nconst actionId = payload.actions[0].action_id;\n\n// 3. Obtener los bloques del mensaje original y filtrarlos\nconst originalBlocks = payload.message.blocks;\n\n// Creamos un nuevo array de bloques, excluyendo el que tiene type: \"actions\"\nconst blocksSinBotones = originalBlocks.filter(block => block.type !== 'actions');\n\n// 4. Devolver un único objeto JSON con toda la información formateada\nreturn {\n  channel_id: channelId,\n  message_ts: messageTs,\n  action_id: actionId,\n  // [CAMBIO CLAVE] El array ahora está dentro de un objeto con la clave \"blocks\"\n  blocks_actualizados: {\n    \"blocks\": blocksSinBotones\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -224,
+          256
+        ],
+        "id": "32ce14bb-eec8-4c54-a102-715e151d80c2",
+        "name": "Code"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a message": {
+        "main": [
+          [
+            {
+              "node": "Add a reaction",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add a reaction": {
+        "main": [
+          [
+            {
+              "node": "get-message-log",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add a reaction1": {
+        "main": [
+          [
+            {
+              "node": "get-message-log1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a message2": {
+        "main": [
+          [
+            {
+              "node": "Add a reaction1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-message-log": {
+        "main": [
+          [
+            {
+              "node": "get-client-data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-client-data": {
+        "main": [
+          [
+            {
+              "node": "update-last-review",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-message-log1": {
+        "main": [
+          [
+            {
+              "node": "get-client-data1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-client-data1": {
+        "main": [
+          [
+            {
+              "node": "update-last-dependency",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Update a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update a message2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update a message3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update a message4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add a reaction2": {
+        "main": [
+          [
+            {
+              "node": "get-message-log2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a message3": {
+        "main": [
+          [
+            {
+              "node": "Add a reaction2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-message-log2": {
+        "main": [
+          [
+            {
+              "node": "get-client-data3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-client-data3": {
+        "main": [
+          [
+            {
+              "node": "update-last-alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add a reaction3": {
+        "main": [
+          [
+            {
+              "node": "get-message-log3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a message4": {
+        "main": [
+          [
+            {
+              "node": "Add a reaction3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-message-log3": {
+        "main": [
+          [
+            {
+              "node": "get-client-data4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-client-data4": {
+        "main": [
+          [
+            {
+              "node": "update-last-alert1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": "Version 973ae93b",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-07T14:23:21.656Z",
+        "id": 61,
+        "workflowId": "g7mkm3TKkjQYpopk",
+        "versionId": "973ae93b-9649-4dee-8c28-c14261a115cd",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

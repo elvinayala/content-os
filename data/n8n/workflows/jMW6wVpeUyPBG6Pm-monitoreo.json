@@ -1,0 +1,1167 @@
+{
+  "updatedAt": "2025-10-30T12:54:17.000Z",
+  "createdAt": "2025-07-02T03:59:27.865Z",
+  "id": "jMW6wVpeUyPBG6Pm",
+  "name": "monitoreo",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "errorMessage": "={{ $json.error.cause.message }}"
+      },
+      "id": "1ebf8d80-0a26-4001-825a-3a8dbf0ac3eb",
+      "name": "No Recording/Transcript available",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        -4300,
+        1040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "type": "scheduled"
+        }
+      },
+      "id": "37317efe-b253-45a0-a958-6be0864063d4",
+      "name": "Zoom: Get data of last meeting",
+      "type": "n8n-nodes-base.zoom",
+      "position": [
+        -4960,
+        820
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "MImpR5MAgI2JQWIE",
+          "name": "Zoom LevelUp Media account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef149af8-7f9d-4e5a-8ccf-4a5f1e09eecc",
+              "name": "transcript_file",
+              "type": "string",
+              "value": "={{ $json.recording_files.find(f => f.file_type === 'TRANSCRIPT').download_url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "98b00346-b35e-4967-b414-c694e07da901",
+      "name": "Filter transcript URL",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -4300,
+        700
+      ],
+      "typeVersion": 3.4,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2629f8ed-b572-4dc0-8d62-97aaaf8bf0bc",
+      "name": "Filter: Only 1 item",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -3940,
+        800
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.transcript_file }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zoomOAuth2Api",
+        "options": {}
+      },
+      "id": "6785c42a-3281-4078-8eca-8be1a49a9152",
+      "name": "Zoom: Get transcript file",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -3680,
+        820
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "MImpR5MAgI2JQWIE",
+          "name": "Zoom LevelUp Media account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "b0006788-cc59-47c9-b575-f7e6ac8bd741",
+      "name": "Extract text from transcript file",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        -3500,
+        820
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70019192-02ef-4b0a-a747-3ca5f46aeeaa",
+              "name": "transcript",
+              "type": "string",
+              "value": "={{ $json.data.split('\\r\\n\\r\\n').slice(1).map(block => {\n    const lines = block.split('\\r\\n');\n    return lines.slice(2).join(' ');\n}).join('\\n') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "91c23641-cf86-4466-b59d-72138f43bc73",
+      "name": "Format transcript text",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -3340,
+        820
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://api.zoom.us/v2/past_meetings/{{ $('Filter: Last 24 hours').item.json.id }}/participants",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zoomOAuth2Api",
+        "options": {}
+      },
+      "id": "85cdeefd-c956-4152-864f-c067ce359719",
+      "name": "Zoom: Get participants data",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -3160,
+        820
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "MImpR5MAgI2JQWIE",
+          "name": "Zoom LevelUp Media account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc51b7e4-d5c2-4cd4-9488-4d181eaaa02e",
+              "name": "subject",
+              "type": "string",
+              "value": "=Meeting summary: {{ $('Zoom: Get data of last meeting').item.json.topic }} on {{ DateTime.fromISO($('Zoom: Get data of last meeting').item.json.start_time).toFormat('yyyy-MM-dd HH:mm') }}"
+            },
+            {
+              "id": "f3940ea2-9084-4c25-828e-5ddaa428ec83",
+              "name": "=to",
+              "type": "string",
+              "value": "={{ $('Zoom: Get participants data').item.json.participants[0].user_email }}"
+            },
+            {
+              "id": "1211af5b-2240-44ce-9df7-63d93f57806e",
+              "name": "body",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e92f4fd4-73b4-4c23-a314-cb787fae4f9c",
+      "name": "Sort for mail delivery",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -2600,
+        820
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = [];\n\nfor (const item of $input.all()) {\n  const body = item.json.body;\n  if (!body) continue;\n\n  // Simple split approach\n  const sections = body.split('\\n\\n');\n  const title = sections[0].replace(/\\*\\*/g, '');\n  const participants = sections[1].split('\\n').slice(1).join('\\n');\n  const summary = sections[2].split('\\n').slice(1).join('\\n');\n  const tasks = sections[3].split('\\n').slice(1).join('\\n');\n  const dates = sections[4].split('\\n').slice(1).join('\\n');\n\n  const html = `<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 800px; margin: 20px;\">\n<h1 style=\"color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;\">${title}</h1>\n<h2 style=\"color: #2c3e50; margin-top: 20px;\">Participants:</h2>\n<ul style=\"list-style-type: none; padding-left: 20px;\">\n${participants.split('\\n').map(p => `<li>${p.replace('- ', '')}</li>`).join('\\n')}\n</ul>\n<h2 style=\"color: #2c3e50; margin-top: 20px;\">Meeting Summary:</h2>\n<p style=\"margin-left: 20px;\">${summary}</p>\n<h2 style=\"color: #2c3e50; margin-top: 20px;\">Tasks:</h2>\n<ul style=\"margin-left: 20px;\">\n${tasks.split('\\n').map(t => `<li>${t.replace('- ', '')}</li>`).join('\\n')}\n</ul>\n<h2 style=\"color: #2c3e50; margin-top: 20px;\">Important Dates:</h2>\n<ul style=\"margin-left: 20px;\">\n${dates.split('\\n').map(d => `<li>${d.replace('- ', '')}</li>`).join('\\n')}\n</ul>\n</body>\n</html>`;\n\n  items.push({\n    json: {\n      html,\n      to: item.json.to,\n      subject: item.json.subject\n    }\n  });\n}\n\nreturn items;"
+      },
+      "id": "ac18b512-8537-4c50-b3bd-10f8dbdc1e9b",
+      "name": "Format to html",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -2460,
+        820
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "fromEmail": "friedemann.schuetz@posteo.de",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "1e7e01d4-cee6-4489-844d-972a558ed6fc",
+      "name": "Send meeting summary",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [
+        -2280,
+        820
+      ],
+      "webhookId": "81c4f081-f3d1-44c3-a344-3f735f1873b5",
+      "typeVersion": 2.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "create_task",
+        "description": "=Use this tool to create a task. \nFor task creation use only action items for me Friedemann, don't use action items for other participants.",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "zSKQLEObdU9RiThI",
+          "cachedResultName": "create_task"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"type\": \"object\",\n    \"properties\": {\n      \"items\": {\n        \"type\": \"array\",\n        \"description\": \"An array of tasks\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"name\": {\n              \"type\": \"string\",\n              \"description\": \"The name of the task\"\n            },\n            \"description\": {\n              \"type\": \"string\",\n              \"description\": \"A detailed description of the task\"\n            },\n            \"due_date\": {\n              \"type\": \"string\",\n              \"description\": \"Due Date\"\n            },\n            \"priority\": {\n              \"type\": \"string\",\n              \"description\": \"Priority. . Please capitalize first letter\"\n            },\n            \"project_name\": {\n              \"type\": \"string\",\n              \"description\": \"Name of the project. Word 'Project' shouldn't be included\"\n            }\n          },\n          \"required\": [\n            \"name\",\n            \"description\",\n            \"due_date\",\n            \"priority\"\n          ],\n          \"additionalProperties\": false\n        }\n      }\n    },\n    \"required\": [\n      \"items\"\n    ],\n    \"additionalProperties\": false\n}"
+      },
+      "id": "56909c7a-3604-4309-9174-5eb0234a9321",
+      "name": "Create tasks",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        -2420,
+        1680
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<system_prompt>\n\nTODAY IS: {{ $now }}\n\nYOU ARE A MEETING ASSISTANT FOR AUTOMATION IN N8N. YOUR TASK IS TO EFFICIENTLY AND PRECISELY PROCESS INFORMATION FROM ZOOM MEETINGS TO GENERATE TO-DOS AND SCHEDULE FOLLOW-UP MEETINGS. YOU HAVE ACCESS TO THE FOLLOWING DATA:\n\n### INPUTS ###\n- **MEETING TITLE**: {{ $('Zoom: Get data of last meeting').item.json.topic }}\n- **PARTICIPANTS**: {{ $('Zoom: Get participants data').item.json.participants[0].name }}\n- **TRANSCRIPT**: {{ $('Format transcript text').item.json.transcript }}\n\n### YOUR TASKS ###\n1. **CREATE TO-DOS**:\n   - IDENTIFY TASKS AND TO-DOS IN THE TRANSCRIPT.\n   - FORMULATE CLEAR, CONCRETE TASKS.\n   - PASS THESE TASKS TO THE TOOL \"Create tasks\" TO SAVE THEM IN CLICKUP. \n   - DATA STRUCTURE:\n     - **TASK DESCRIPTION**: Brief description of the task.\n     - **ASSIGNED PERSON**: First name from the participant list.\n     - **DUE DATE**: Use any date mentioned in the transcript; otherwise, set to \"Not specified.\"\n\n2. **CREATE MEETING**:\n   - ANALYZE THE TRANSCRIPT TO IDENTIFY INFORMATION ABOUT THE NEXT MEETING (DATE, TIME, AND TOPIC).\n   - PASS THIS INFORMATION TO THE TOOL \"Create follow-up call.\"\n   - DATA STRUCTURE:\n     - **MEETING TITLE**: \"Follow-up: [Meeting Title]\"\n     - **DATE AND TIME**: Determined from the transcript or set to \"Next Tuesday at 10:00 AM\" if no information is provided.\n     - **PARTICIPANTS**: Add all participants from the list.\n\n### CHAIN OF THOUGHTS ###\n1. **UNDERSTAND**: Read and analyze the provided inputs (title, participants, transcript).\n2. **IDENTIFY**: Extract relevant information for the to-dos and the next meeting.\n3. **DIVIDE**: Split the task into two separate processes: creating to-dos and creating the meeting.\n4. **STRUCTURE**: Format the results in the required structure for the respective tools.\n5. **TRANSMIT**: Pass the data to the designated tools in n8n.\n6. **VERIFY**: Ensure the data is correct and complete.\n\n### WHAT YOU SHOULD NOT DO ###\n- **NEVER**: Create unclear or vague to-dos.\n- **NEVER**: Ignore missing data – use default values where uncertain.\n- **NEVER**: Overlook information from the inputs or make incorrect connections.\n- **NEVER**: Transmit tasks or meetings without proper formatting.\n\n### OUTPUT EXAMPLES ###\n1. **TO-DO**:\n   - **TASK DESCRIPTION**: \"Prepare presentation for the next meeting.\"\n   - **ASSIGNED PERSON**: \"John Doe.\"\n   - **DUE DATE**: \"2025-01-25.\"\n\n2. **MEETING**:\n   - **MEETING TITLE**: \"Follow-up: Project Discussion.\"\n   - **DATE AND TIME**: \"2025-01-28 at 10:00 AM.\"\n   - **PARTICIPANTS**: \"John Doe, Jane Example.\"\n\n### NOTES ###\n- EXECUTE YOUR TASKS WITH THE HIGHEST PRECISION AND CONTEXT SENSITIVITY.\n- RELY ON THE PROVIDED DATA AND DEFAULT VALUES WHERE NECESSARY.\n</system_prompt>\n",
+        "options": {}
+      },
+      "id": "26efc5e8-955d-43ff-9131-ccbb5d36930b",
+      "name": "Create tasks and follow-up call",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -2600,
+        1400
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use tool to create Outlook Calendar Event. Use this tool only when transcript contains information that call should be scheduled.",
+        "resource": "event",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AQMkADAwATNiZmYAZC1jYjE5LWExMzQtMDACLTAwCgBGAAAD1gD8iHcpKEiYQc0w4fCLUgcA-79r8r8ac0aInYGVxRUqCwAAAgEGAAAA-79r8r8ac0aInYGVxRUqCwAAAkH-AAAA",
+          "cachedResultName": "Calendar"
+        },
+        "subject": "={{ $fromAI(\"meeting_name\",\"Meeting name\",\"string\") }}",
+        "startDateTime": "={{ $fromAI(\"start_date_time\",\"Date and time of meeting start\",\"string\") }}",
+        "endDateTime": "={{ $fromAI(\"end_date_time\",\"Date and time of meeting end\",\"string\") }}",
+        "additionalFields": {
+          "timeZone": "Europe/Berlin"
+        }
+      },
+      "id": "1d3195e0-6ce6-40ee-9220-122b35f8f51a",
+      "name": "Create follow-up call",
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "position": [
+        -2260,
+        1680
+      ],
+      "webhookId": "04587796-f979-450d-b9ab-0103cdbf1861",
+      "typeVersion": 2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "de097a4f-1f3e-4dc0-9ab6-139311ff4676",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              },
+              "leftValue": "={{ $json.start_time }}",
+              "rightValue": "={{$now.minus({ hours: 24 }).toISO()}}"
+            },
+            {
+              "id": "b22e726e-b68a-433b-a19b-22bb0b008b9b",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              },
+              "leftValue": "={{ $json.start_time }}",
+              "rightValue": "={{ $now }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0cb64be1-9601-4177-a71f-7ff470233000",
+      "name": "Filter: Last 24 hours",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        -4720,
+        820
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "query.items",
+        "options": {}
+      },
+      "id": "01e549d2-ffc4-4b1e-9a17-fc801e0aecaf",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -2560,
+        2160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Sub workflow: Crear tarea en clickup",
+        "height": 280,
+        "width": 1000
+      },
+      "id": "695d9b6c-6d57-4dfa-ac63-be6f6c7ed383",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2960,
+        2080
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://api.zoom.us/v2/meetings/{{json.id}}/recordings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zoomOAuth2Api",
+        "options": {}
+      },
+      "id": "d5cb5f73-697e-488e-9a56-f3482e60deb6",
+      "name": "Zoom: Get transcripts data",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -4500,
+        820
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "MImpR5MAgI2JQWIE",
+          "name": "Zoom LevelUp Media account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {}
+      },
+      "id": "7b9f9208-06e3-4efa-8dd8-2515d1d8555e",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "position": [
+        -2920,
+        1520
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "anthropicApi": {
+          "id": "kU17MwuhDRPfrnPo",
+          "name": "Anthropic account PymesAI Borrar"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "328208cb-8e2b-4b52-9ee1-cb73a36b1671",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "position": [
+        -2720,
+        1680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a formal meeting minutes document from the following transcript and meeting details.\n\nMeeting Date: {{ $('Zoom: Get data of last meeting').item.json.start_time }} // This needs to be formatted from the meeting details\nParticipants: {{ $json.participants.map(p => p.name + ' (' + p.user_email + ')').join(', ') }}\n\nTranscript:\n{{ $('Format transcript text').item.json.transcript }}\n\nPlease create the minutes in the following format:\n\nMeeting on [Date]\n\nParticipants:\n[List of participants with email addresses]\n\nSummary of the Meeting:\n[Brief and concise summary of the topics discussed]\n\nTasks:\n- [Task] (Responsible: [Name])\n- ...\n\nImportant Dates:\n- [Date] ([Context])\n- ...\n",
+        "options": {}
+      },
+      "id": "8d79e029-d183-4d43-85ae-5558e361c0f2",
+      "name": "Create meeting summary",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -2920,
+        820
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -2380,
+        2160
+      ],
+      "id": "6d72c361-f1e4-4370-a0ba-a5f12b42e9bd",
+      "name": "Create a channel",
+      "webhookId": "a843d8ee-7058-4dca-9e73-51fe995a7e24",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.zoom.us/v2/meetings/87179184681/recordings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6985245c-6d02-4d72-bee4-eaae054f2b7f",
+      "name": "Zoom: Get transcripts data2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -4720,
+        1780
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "id": "02febc8b-9bed-4e70-870f-19d773fb06b0",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -2740,
+        2160
+      ],
+      "typeVersion": 1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Conect with Zoom",
+        "height": 600,
+        "width": 960,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5040,
+        660
+      ],
+      "id": "5704d1b9-a78c-44d1-b6aa-b62a575e5f2e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "id": "c3e6c94e-45de-40dd-b1ff-4dde7e5f9070",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -5180,
+        1780
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Filter\n",
+        "height": 600,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4020,
+        660
+      ],
+      "id": "7a41f85e-a39d-466d-a1eb-6f78abbd24fa",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Agent summary\n",
+        "height": 600,
+        "width": 900,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2960,
+        660
+      ],
+      "id": "6699b30d-3397-4fb9-87dc-59e3b71bd938",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Agent tasks\n\n",
+        "height": 600,
+        "width": 900,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2960,
+        1340
+      ],
+      "id": "5374acec-2946-4153-9ce3-e50901b5eaff",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $json.error.cause.message }}"
+      },
+      "id": "14038c6e-26f3-4f2e-9163-7292a10d1903",
+      "name": "No Recording/Transcript available1",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        -4480,
+        1900
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {}
+      },
+      "id": "dadf5304-283b-424e-87af-3e113cd44997",
+      "name": "Zoom: Get data of last meeting1",
+      "type": "n8n-nodes-base.zoom",
+      "position": [
+        -4920,
+        1780
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "zoomOAuth2Api": {
+          "id": "MImpR5MAgI2JQWIE",
+          "name": "Zoom LevelUp Media account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4500,
+        1680
+      ],
+      "id": "8a3368c9-54e7-42d9-98c1-9f7fe246f052",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "U8qGVwhaCbl4dyVf",
+          "name": "GoogleSheetsLevelUpMedia(agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -3480,
+        1380
+      ],
+      "id": "d059b041-9f4b-43d5-9fa9-f62e61664ff0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "af26241a-8565-4c8d-8051-c13d809f1692",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        -4660,
+        2620
+      ],
+      "webhookId": "3917af54-131f-41c5-a250-b32e0ff9dc5f",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-05-20",
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "14f37870-c608-4732-b721-7f5d8e9f6ba5",
+      "name": "gemini-2.5",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        -4360,
+        3040
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PrsFpC7IowhsaIwh",
+          "name": "Google Gemini(PaLM) Api account PymesAI Borrar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 100
+      },
+      "id": "2517a97e-6bf9-40e4-974b-99978bdd4001",
+      "name": "mem",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        -3320,
+        3120
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "code": {
+          "supplyData": {
+            "code": "const { CallbackHandler } = require('langfuse-langchain');\nconst { initChatModel } = require(\"langchain/chat_models/universal\");\n\n// Get connected model\nconst model = await this.getInputConnectionData(\"ai_languageModel\", 0);\nconst modelProvider = model.lc_namespace[2].replace(\"_\", \"-\");\nconst modelName = model.model;\nconst temperature = model.temperature;\n\n// Initialize Langfuse callback handler\nconst sessionId = $input.item.json.sessionId;\nconst langfuseHandler = new CallbackHandler({\n  sessionId,\n});\n\nconst llm = await initChatModel(modelName, {\n  temperature,\n  modelProvider,\n  callbacks: [langfuseHandler],\n});\n\nreturn llm;\n"
+          }
+        },
+        "inputs": {
+          "input": [
+            {
+              "type": "ai_languageModel",
+              "maxConnections": 1,
+              "required": true
+            }
+          ]
+        },
+        "outputs": {
+          "output": [
+            {
+              "type": "ai_languageModel"
+            }
+          ]
+        }
+      },
+      "id": "cb932842-cb09-49a2-b7f0-c868d47ba274",
+      "name": "Langfuse LLM",
+      "type": "@n8n/n8n-nodes-langchain.code",
+      "position": [
+        -4440,
+        2860
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2fdfb4b1-e9a6-4202-86de-2a97e46dd285",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -4340,
+        2620
+      ],
+      "typeVersion": 2
+    }
+  ],
+  "connections": {
+    "Zoom: Get data of last meeting": {
+      "main": [
+        [
+          {
+            "node": "Filter: Last 24 hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter transcript URL": {
+      "main": [
+        [
+          {
+            "node": "Filter: Only 1 item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoom: Get transcript file": {
+      "main": [
+        [
+          {
+            "node": "Extract text from transcript file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text from transcript file": {
+      "main": [
+        [
+          {
+            "node": "Format transcript text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format transcript text": {
+      "main": [
+        [
+          {
+            "node": "Zoom: Get participants data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoom: Get participants data": {
+      "main": [
+        [
+          {
+            "node": "Create meeting summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort for mail delivery": {
+      "main": [
+        [
+          {
+            "node": "Format to html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format to html": {
+      "main": [
+        [
+          {
+            "node": "Send meeting summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "Create tasks and follow-up call",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create follow-up call": {
+      "ai_tool": [
+        [
+          {
+            "node": "Create tasks and follow-up call",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Last 24 hours": {
+      "main": [
+        [
+          {
+            "node": "Zoom: Get transcripts data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoom: Get transcripts data": {
+      "main": [
+        [
+          {
+            "node": "Filter transcript URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Recording/Transcript available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create tasks and follow-up call",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Create meeting summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Create tasks and follow-up call",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Create meeting summary",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create meeting summary": {
+      "main": [
+        [
+          {
+            "node": "Sort for mail delivery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create tasks and follow-up call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Only 1 item": {
+      "main": [
+        [
+          {
+            "node": "Filter: Only 1 item",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zoom: Get transcript file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Create a channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Zoom: Get data of last meeting1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoom: Get transcripts data2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Recording/Transcript available1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoom: Get data of last meeting1": {
+      "main": [
+        [
+          {
+            "node": "Zoom: Get transcripts data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "mem": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "gemini-2.5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Langfuse LLM",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Langfuse LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "items": [
+              {
+                "name": "Partner abtelefonieren",
+                "due_date": "2025-01-06",
+                "priority": "High",
+                "description": "Am 6. Januar alle Partner anrufen, um zu klären, ob Interesse an einer weiteren Kooperation besteht und wie diese dargestellt werden kann.",
+                "project_name": "Partnerkooperationen"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "3e299194-adcd-4c80-b3db-13caff9dd547",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "jMW6wVpeUyPBG6Pm",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    },
+    {
+      "updatedAt": "2025-07-29T18:59:57.261Z",
+      "createdAt": "2025-07-29T18:59:57.261Z",
+      "id": "S4k0fO0sHWc9ycPK",
+      "name": "testing"
+    }
+  ],
+  "activeVersion": null
+}

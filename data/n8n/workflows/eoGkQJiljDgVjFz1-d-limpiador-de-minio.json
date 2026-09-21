@@ -1,0 +1,292 @@
+{
+  "updatedAt": "2026-01-06T13:50:45.654Z",
+  "createdAt": "2025-10-20T19:13:04.845Z",
+  "id": "eoGkQJiljDgVjFz1",
+  "name": "D-) Limpiador de minio",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "command": "mc rb --force myminio/creatives",
+        "cwd": "~/"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0d57a1cc-5234-49cc-8a64-cfc46bc6ad1e",
+      "name": "Execute a command",
+      "credentials": {
+        "sshPassword": {
+          "id": "2Uin7a2pgkFQAxis",
+          "name": "SSH Password account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "mc mb myminio/creatives",
+        "cwd": "~/"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4ebce68d-3631-4fbb-b44e-00c6bd770b98",
+      "name": "Execute a command1",
+      "credentials": {
+        "sshPassword": {
+          "id": "2Uin7a2pgkFQAxis",
+          "name": "SSH Password account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0ea62de8-3b64-4483-a457-bc0236fa3dfe",
+      "name": "Schedule Trigger1"
+    }
+  ],
+  "connections": {
+    "Execute a command": {
+      "main": [
+        [
+          {
+            "node": "Execute a command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a command1": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Execute a command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        337
+      ]
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": [
+        346
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "58311917-57ec-4fa9-a37f-27230018dfbf",
+  "activeVersionId": "58311917-57ec-4fa9-a37f-27230018dfbf",
+  "versionCounter": 29,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "eoGkQJiljDgVjFz1",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T15:41:47.710Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "58311917-57ec-4fa9-a37f-27230018dfbf",
+    "workflowId": "eoGkQJiljDgVjFz1",
+    "nodes": [
+      {
+        "parameters": {
+          "command": "mc rb --force myminio/creatives",
+          "cwd": "~/"
+        },
+        "type": "n8n-nodes-base.ssh",
+        "typeVersion": 1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "0d57a1cc-5234-49cc-8a64-cfc46bc6ad1e",
+        "name": "Execute a command",
+        "credentials": {
+          "sshPassword": {
+            "id": "2Uin7a2pgkFQAxis",
+            "name": "SSH Password account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "command": "mc mb myminio/creatives",
+          "cwd": "~/"
+        },
+        "type": "n8n-nodes-base.ssh",
+        "typeVersion": 1,
+        "position": [
+          416,
+          0
+        ],
+        "id": "4ebce68d-3631-4fbb-b44e-00c6bd770b98",
+        "name": "Execute a command1",
+        "credentials": {
+          "sshPassword": {
+            "id": "2Uin7a2pgkFQAxis",
+            "name": "SSH Password account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "months"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          0
+        ],
+        "id": "0ea62de8-3b64-4483-a457-bc0236fa3dfe",
+        "name": "Schedule Trigger1"
+      }
+    ],
+    "connections": {
+      "Execute a command": {
+        "main": [
+          [
+            {
+              "node": "Execute a command1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute a command1": {
+        "main": [
+          []
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Execute a command",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": "Version 58311917",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-06T15:41:47.703Z",
+        "id": 54,
+        "workflowId": "eoGkQJiljDgVjFz1",
+        "versionId": "58311917-57ec-4fa9-a37f-27230018dfbf",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

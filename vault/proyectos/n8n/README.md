@@ -36,3 +36,6 @@ cuando deje de pagar.
 - `data/n8n/inventario.json` — resumen por workflow (triggers, servicios, credenciales, modelos IA)
 - `data/n8n/workflows/*.json` — respaldo re-importable (+ `_indice.json`)
 - `data/n8n/salud.json` — ok/error por workflow, última falla con nodo y mensaje
+- `scripts/n8n-sync-pulse.mjs` — generar · crear · actualizar · activar · probar · reporte del workflow
+  "A-) Sync Pulse → NocoDB v1" (plantilla en `data/n8n/plantillas/`, ids en `data/n8n/sync-pulse.json`)
+- `lib/pulse/puente-n8n.ts` + `app/api/pulse/n8n/clientes` — el lado Pulse del puente (ver salida-de-monday.md)

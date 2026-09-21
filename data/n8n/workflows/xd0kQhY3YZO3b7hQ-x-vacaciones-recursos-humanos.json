@@ -1,0 +1,627 @@
+{
+  "updatedAt": "2026-01-06T13:52:58.606Z",
+  "createdAt": "2025-10-08T21:38:45.639Z",
+  "id": "xd0kQhY3YZO3b7hQ",
+  "name": "X-) Vacaciones Recursos Humanos",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "17b763c9-34f2-464b-a8b7-0c41d4e76246",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "67debafb-f47e-4e9d-86a5-1b921ee20a5f",
+      "name": "Webhook",
+      "webhookId": "17b763c9-34f2-464b-a8b7-0c41d4e76246"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FE3WS9Tlt0QYT3t_jYvtWatQ3Z-yMGjoDGkRKokUuhs",
+          "mode": "list",
+          "cachedResultName": "Base de Datos RRHH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FE3WS9Tlt0QYT3t_jYvtWatQ3Z-yMGjoDGkRKokUuhs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Empleados",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FE3WS9Tlt0QYT3t_jYvtWatQ3Z-yMGjoDGkRKokUuhs/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.body.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fe2261cb-4263-43a1-a185-a6d76f399a7a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hah6ZiOBP9x0ROJD",
+          "name": "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.FechaIngreso }}",
+        "format": "yyyy/MM/dd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "42cced63-246a-4898-a520-dd48c762e291",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b462cf0-eb5a-4924-bd68-0b034cb5b959",
+              "leftValue": "={{ $json.formattedDate }}",
+              "rightValue": "={{ $now.minus({ months: 3 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "5353b9cc-942c-4451-8aba-b32a955d4866",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU",
+          "mode": "list",
+          "cachedResultName": "Registro de Vacaciones",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Departamento",
+              "lookupValue": "={{ $('Get row(s) in sheet').item.json.Departamento }}"
+            },
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Aprobada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        -192
+      ],
+      "id": "65457892-0199-465d-ab63-cf2878460a95",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hah6ZiOBP9x0ROJD",
+          "name": "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtenemos los datos de la nueva solicitud desde el Webhook inicial.\nconst nuevaSolicitud = $node[\"Webhook\"].json.body;\nconst newStartDate = new Date(nuevaSolicitud.fechaInicio);\nconst newEndDate = new Date(nuevaSolicitud.fechaFin);\n\n// Obtenemos la lista de vacaciones ya aprobadas del nodo anterior.\nconst vacacionesAprobadas = $items(\"Get row(s) in sheet1\");\n\nlet overlapFound = false;\n\n// Revisamos cada una de las vacaciones ya aprobadas.\nfor (const vacacion of vacacionesAprobadas) {\n  const existingStartDate = new Date(vacacion.json.FechaInicio);\n  const existingEndDate = new Date(vacacion.json.FechaFin);\n\n  // Esta es la lógica clave para detectar si los rangos se solapan.\n  if (newStartDate <= existingEndDate && newEndDate >= existingStartDate) {\n    overlapFound = true;\n    break; // Si encontramos un solapamiento, no necesitamos seguir buscando.\n  }\n}\n\n// Devolvemos un resultado simple: ¿hubo solapamiento o no?\nreturn [{\n  json: {\n    solapamiento: overlapFound\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -192
+      ],
+      "id": "615fd3be-c980-4dd8-ba08-c8efd7b11305",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ecd02969-a7e8-4175-a2d9-6012f527724b",
+              "leftValue": "={{ $json.solapamiento }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        -192
+      ],
+      "id": "ba5ee3b1-5b91-47f1-a3f7-faeda77d1aad",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f3c9140b-43ba-46ce-9c92-82e2407a4c71",
+              "name": "mensajeParaManager",
+              "value": "=Nueva solicitud de vacaciones para aprobación:\n\nEmpleado: {{ $node[\"Get row(s) in sheet\"].json[\"NombreCompleto\"] }}\nFechas Solicitadas: {{ $node[\"Webhook\"].json.body.fechaInicio }} al {{ $node[\"Webhook\"].json.body.fechaFin }}\n\nPor favor, aprueba o rechaza la solicitud.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "9cf1e5ea-1878-41de-8aca-5ccbb87268c1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU",
+          "mode": "list",
+          "cachedResultName": "Registro de Vacaciones",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IkGrY0DBsMdjXdn0TMoOz3MZUZpRev5hORiV4qtjRsU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "EmailSolicitante": "={{ $node[\"Webhook\"].json.body.email }}",
+            "NombreSolicitante": "={{ $node[\"Get row(s) in sheet\"].json[\"NombreCompleto\"] }}",
+            "Departamento": "={{ $node[\"Get row(s) in sheet\"].json[\"Departamento\"] }}",
+            "FechaInicio": "={{ $node[\"Webhook\"].json.body.fechaInicio }}",
+            "FechaFin": "={{ $node[\"Webhook\"].json.body.fechaFin }}",
+            "Estado": "Pendiente",
+            "ManagerNotificado": "Sí"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EmailSolicitante",
+              "displayName": "EmailSolicitante",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NombreSolicitante",
+              "displayName": "NombreSolicitante",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Departamento",
+              "displayName": "Departamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FechaInicio",
+              "displayName": "FechaInicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FechaFin",
+              "displayName": "FechaFin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ManagerNotificado",
+              "displayName": "ManagerNotificado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "e694851b-d54a-4fd5-bf9a-a10b0ea6081d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hah6ZiOBP9x0ROJD",
+          "name": "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 208,
+        "width": 1696,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        96
+      ],
+      "id": "64c01785-f94a-497b-a78c-91d81125f131",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "width": 1024,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -352
+      ],
+      "id": "d31c0d33-bea0-47cb-ac3f-670f6b99805f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1664,
+        -192
+      ],
+      "id": "37e859aa-a631-4974-bfcd-c4e9c73d91e7",
+      "name": "Wait",
+      "webhookId": "fc4013c0-d33d-45bb-a51c-a1d76f56e9be"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "616bdef5-7fa1-431a-bb29-ae157a4f02c4",
+              "name": "resultado",
+              "value": "Solicitud de vacaciones procesada con éxito.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        -544
+      ],
+      "id": "9cabdc22-0cb1-42b0-a004-0082056e7fba",
+      "name": "Edit Fields1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"La solicitud de vacaciones fue procesada y registrada en la base de datos.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1872,
+        -192
+      ],
+      "id": "d7710179-3336-44e3-bde2-e87f36a0fa92",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "006051c3-9de9-4704-9fef-fff4c3659ff9",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "xd0kQhY3YZO3b7hQ",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

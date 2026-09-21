@@ -13,6 +13,9 @@
 //                                        última falla de cada uno → data/n8n/salud.json
 //   node scripts/n8n.mjs salud        → resumen corto (lo que lee la ronda de Nico)
 //   node scripts/n8n.mjs todo         → inventario + exportar + ejecuciones + salud
+//   node scripts/n8n.mjs subir <id>   → sube data/n8n/workflows/<id>-*.json al servidor (PUT). Es la
+//                                        única escritura: editar el JSON local, subir, y volver a
+//                                        exportar. No activa ni desactiva nada.
 //
 // Env (.env.local): N8N_API_KEY (Settings → n8n API → Create API key), N8N_URL opcional.
 import fs from "node:fs";
@@ -154,6 +157,25 @@ async function ejecuciones(dias = 7) {
   return res;
 }
 
+// Escribe un workflow parcheado localmente. La API solo acepta name/nodes/connections/settings/staticData.
+async function subir(id) {
+  const dir = path.join(OUT, "workflows");
+  const archivo = fs.readdirSync(dir).find((f) => f.startsWith(`${id}-`));
+  if (!archivo) throw new Error(`No hay data/n8n/workflows/${id}-*.json (corré exportar primero).`);
+  const w = JSON.parse(fs.readFileSync(path.join(dir, archivo), "utf8"));
+  // La API pública rechaza llaves nuevas de settings (timeSavedMode, callerPolicy, availableInMCP…):
+  // se mandan solo las del esquema; las demás las conserva el servidor.
+  const PERMITIDAS = ["saveExecutionProgress", "saveManualExecutions", "saveDataErrorExecution", "saveDataSuccessExecution", "executionTimeout", "errorWorkflow", "timezone", "executionOrder"];
+  const settings = Object.fromEntries(Object.entries(w.settings || {}).filter(([k]) => PERMITIDAS.includes(k)));
+  const body = { name: w.name, nodes: w.nodes, connections: w.connections, settings, staticData: w.staticData ?? null };
+  const r = await fetch(`${URL_BASE}/api/v1/workflows/${id}`, { method: "PUT", headers: { "X-N8N-API-KEY": KEY, "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(30000) });
+  const txt = await r.text();
+  if (!r.ok) throw new Error(`${r.status} al subir ${id}: ${txt.slice(0, 300)}`);
+  const j = JSON.parse(txt);
+  console.log(`Subido: ${j.name} (activo=${j.active}, versión ${j.versionId})`);
+  return j;
+}
+
 // Lo que consume la ronda de Nico: pocas líneas, sin tocar nada.
 async function salud() {
   let s;
@@ -172,6 +194,7 @@ try {
   else if (cmd === "exportar") await exportar();
   else if (cmd === "ejecuciones") await ejecuciones(Number(process.argv[3]) || 7);
   else if (cmd === "salud") await salud();
+  else if (cmd === "subir") await subir(process.argv[3]);
   else if (cmd === "todo") { await inventario(); await exportar(); await ejecuciones(Number(process.argv[3]) || 7); await salud(); }
-  else { console.error("Comandos: inventario | exportar | ejecuciones [dias] | salud | todo"); process.exit(1); }
+  else { console.error("Comandos: inventario | exportar | ejecuciones [dias] | salud | subir <id> | todo"); process.exit(1); }
 } catch (e) { console.error(`n8n: ${e.message}`); process.exit(1); }

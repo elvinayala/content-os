@@ -1,0 +1,475 @@
+{
+  "updatedAt": "2025-11-28T21:09:19.000Z",
+  "createdAt": "2025-11-28T21:07:06.289Z",
+  "id": "eAz3TdAqZ9k3oLgQ",
+  "name": "F-) Mensaje de bienvenida onboarding",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        96
+      ],
+      "id": "1e088051-cfda-4744-8817-b03717031fa9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        688,
+        96
+      ],
+      "id": "9a2771f5-22a4-466f-8b20-7119235b5edc",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        112
+      ],
+      "id": "eaff030d-2587-48cf-8bd3-554ab5a83289"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"conversation\": {\n    \"id\": \"{{ $json.payload[0].id }}\",\n    \"contact_inbox\": {\n      \"contact_id\": \"{{ $('Contact update1').item.json.payload.id }}\"\n    },\n    \"messages\": [\n      {\n        \"content\": \"\",\n        \"message_type\": 0,\n        \"account_id\": \"2\",\n        \"inbox_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].inbox.id }}\",\n        \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\",\n        \"conversation\": {\n          \"contact_inbox\": {\n            \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\"\n          }\n        },\n        \"sender\": {\n          \"identifier\": \"{{ $('Contact update1').item.json.payload.identifier }}\",\n          \"custom_attributes\": {{ JSON.stringify($('Contact update1').item.json.payload.custom_attributes) }}\n        }\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        112
+      ],
+      "id": "91b2722b-8214-4150-b9d6-770d7b4789e7",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+        "operation": "contactUpdate",
+        "contactId": "={{ $json.payload[0].id }}",
+        "contactIdentifier": "={{ $json.payload[0].identifier }}",
+        "name": "={{ $json.payload[0].name }}",
+        "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+        "phoneNumber": "={{ $json.payload[0].phone_number }}",
+        "email": "={{ $json.payload[0].email }}",
+        "customAttributes": {
+          "attribute": [
+            {
+              "key": "10dias",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        112
+      ],
+      "id": "c3bb7108-ded1-4642-a419-4dc7bb10d372",
+      "name": "Contact update1",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64cf91c5-5188-453b-bed8-211723634968",
+              "leftValue": "={{ $json.meta.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        112
+      ],
+      "id": "473ef9d4-0732-4f2e-bf08-036a72ca53e9",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        112
+      ],
+      "id": "282bf098-c356-4e13-addb-007428420bde",
+      "name": "set-data-into-loop"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(fecha-formateada,eq,{{ $now.format('yyyy-MM-dd') }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        480,
+        96
+      ],
+      "id": "c2745533-3b22-4c16-8b2c-02304039f20d",
+      "name": "get-clients-data",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.telefono }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "f421cce1-5fa0-45dc-9b2f-5e4a9c199d0e",
+      "name": "contact-search",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload.id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        112
+      ],
+      "id": "bf3008aa-40e5-404e-aa36-a7dae0fd9317",
+      "name": "get-contact-conversation",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6rO64iU0NO49Dtf6",
+          "name": "token-meta-creator"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1968,
+        112
+      ],
+      "id": "93a38221-2d4e-40db-9d66-3c133b9e5d19",
+      "name": "Wait1",
+      "webhookId": "20064dfd-9090-4c59-be46-5066797ff986"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get-clients-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "set-data-into-loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact update1": {
+      "main": [
+        [
+          {
+            "node": "get-contact-conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Contact update1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data-into-loop": {
+      "main": [
+        [
+          {
+            "node": "contact-search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients-data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact-search": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-contact-conversation": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-11-13T10:00:42.021-05:00",
+          "Readable date": "November 13th 2025, 10:00:42 am",
+          "Readable time": "10:00:42 am",
+          "Day of week": "Thursday",
+          "Year": "2025",
+          "Month": "November",
+          "Day of month": "13",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "42",
+          "Timezone": "America/New_York (UTC-05:00)"
+        }
+      }
+    ]
+  },
+  "versionId": "1da31aae-3a03-4eb7-90a5-978860e639d1",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "eAz3TdAqZ9k3oLgQ",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": null
+}

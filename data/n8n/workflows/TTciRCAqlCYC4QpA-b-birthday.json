@@ -1,0 +1,401 @@
+{
+  "updatedAt": "2026-01-06T14:08:38.929Z",
+  "createdAt": "2025-09-24T18:38:21.573Z",
+  "id": "TTciRCAqlCYC4QpA",
+  "name": "B-) Birthday",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        -176
+      ],
+      "id": "2cee5edc-1a82-468d-8639-726b53dc27ba",
+      "name": "trigger-daily-birthday-check"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "a65fc710-0b61-43d1-9508-03ad11c4c582",
+      "name": "trigger-manual-test"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mue5ek79odksa3y",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d9a7323c-3136-401e-a467-13a3b1deb931",
+      "name": "get-all-clients-from-db",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5792b277-73af-4eeb-8e63-5997c22982b8",
+              "leftValue": "={{ $json[\"fecha-cumple\"].slice(5) }}",
+              "rightValue": "={{ $now.setZone('America/Bogota').toFormat('MM-dd') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "82059dc2-af09-4ec7-9167-5878bfd5fda6",
+      "name": "filter-clients-by-birthday"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"email\"] }}",
+        "subject": "=¡Feliz Cumpleaños, {{ $json[\"nombre\"] }}!",
+        "message": "=<h3>¡Hola, {{ $json[\"nombre\"] }}! 👋</h3>  <p>De parte de todo el equipo de LevelUp Media, queremos desearte un muy feliz cumpleaños.</p> <p>Gracias por ser un cliente tan valioso. ¡Esperamos que tengas un día increíble!</p> <br> <p>Un saludo cordial,</p> <p><strong>El Equipo de LevelUp Media</strong></p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        -192
+      ],
+      "id": "8c189f33-24e6-4bfe-a737-eed874c97de4",
+      "name": "send-birthday-email",
+      "webhookId": "82e93fc4-27e2-4af6-bf55-f854291e9de7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $('set-phone-number').first().json['phone-number'].split('@')[0] }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -192
+      ],
+      "id": "d5611802-1865-422c-af8c-614a1ad20397",
+      "name": "Contact search2"
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload[0].id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -192
+      ],
+      "id": "5384af9a-8f04-4fdf-bcdd-1a58acf89c0f",
+      "name": "get-conversation1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/conversations/{{ $json.payload[0].id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($('set-phone-number').item.json.whatsapp_message) }},\n  \"message_type\": \"outgoing\",\n  \"private\": false,\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -192
+      ],
+      "id": "d0c234a0-129e-428c-b924-9810377f8a02",
+      "name": "send-message2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E79qGyvxGtoggEN8",
+          "name": "Chatwoot LUM bot agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtenemos el dato del mensaje original desde un nodo anterior.\n// Usar .first() es una buena práctica para asegurar que solo procesas un ítem.\nconst mensajeOriginal = $input.first().json.content;\n\n// 2. Construimos el objeto JavaScript con la estructura CORRECTA.\n// El 'content' está al mismo nivel que 'type', sin el objeto 'data'.\nconst messageObject = {\n  type: \"ai\",\n  content: mensajeOriginal,\n  // -------------------------------------------------------------------\n  // Estas claves adicionales hacen que tu mensaje sea idéntico a uno\n  // generado por el agente, aunque no siempre son estrictamente necesarias.\n  additional_kwargs: {},\n  tool_calls: [],\n  invalid_tool_calls: [],\n  response_metadata: {}\n  // -------------------------------------------------------------------\n};\n\n// 3. Convertimos el objeto a un string JSON para pasarlo al nodo de PostgreSQL.\nconst jsonParaPostgres = JSON.stringify(messageObject);\n\n// 4. Devolvemos los datos que usará el siguiente nodo (PostgreSQL).\nreturn [\n  {\n    json: {\n      messageJsonString: jsonParaPostgres,\n      // Pasamos también el session_id para usarlo en la consulta SQL.\n      sessionId: $('set-phone-number').first().json[\"phone-number\"]\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -192
+      ],
+      "id": "d1eb76e4-0e0b-43b0-92bf-7c876c4ba195",
+      "name": "format-data3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_222 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ $json.sessionId }},{{ $json.messageJsonString }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1760,
+        -192
+      ],
+      "id": "7245c5d5-044e-425d-b7c0-bd4c0c05b5a4",
+      "name": "save-in-agent-memory1",
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "trigger-daily-birthday-check": {
+      "main": [
+        [
+          {
+            "node": "get-all-clients-from-db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "trigger-manual-test": {
+      "main": [
+        [
+          {
+            "node": "get-all-clients-from-db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-all-clients-from-db": {
+      "main": [
+        [
+          {
+            "node": "filter-clients-by-birthday",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-clients-by-birthday": {
+      "main": [
+        [
+          {
+            "node": "send-birthday-email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact search2": {
+      "main": [
+        [
+          {
+            "node": "get-conversation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-conversation1": {
+      "main": [
+        [
+          {
+            "node": "send-message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send-message2": {
+      "main": [
+        [
+          {
+            "node": "format-data3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data3": {
+      "main": [
+        [
+          {
+            "node": "save-in-agent-memory1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Bogota",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {
+    "node:trigger-daily-birthday-check": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3051e636-c414-4c24-9d71-9cfee9211937",
+  "activeVersionId": null,
+  "versionCounter": 22,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "TTciRCAqlCYC4QpA",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": null
+}

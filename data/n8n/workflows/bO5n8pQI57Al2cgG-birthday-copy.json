@@ -1,0 +1,391 @@
+{
+  "updatedAt": "2025-10-13T13:48:40.000Z",
+  "createdAt": "2025-10-13T13:48:11.666Z",
+  "id": "bO5n8pQI57Al2cgG",
+  "name": "Birthday copy",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        -176
+      ],
+      "id": "c56d44f9-6e35-4adc-80b4-a59254b1a847",
+      "name": "trigger-daily-birthday-check"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "0466dbd0-14e9-42c3-a279-ab9bc23e29d9",
+      "name": "trigger-manual-test"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mue5ek79odksa3y",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2c36a69c-7998-4512-a696-512e1e9356a1",
+      "name": "get-all-clients-from-db",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5792b277-73af-4eeb-8e63-5997c22982b8",
+              "leftValue": "={{ $json[\"fecha-cumple\"].slice(5) }}",
+              "rightValue": "={{ $now.setZone('America/Bogota').toFormat('MM-dd') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "bd23a34c-01a9-4a9e-9359-6824c900c7cc",
+      "name": "filter-clients-by-birthday"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"email\"] }}",
+        "subject": "=¡Feliz Cumpleaños, {{ $json[\"nombre\"] }}!",
+        "message": "=<h3>¡Hola, {{ $json[\"nombre\"] }}! 👋</h3>  <p>De parte de todo el equipo de LevelUp Media, queremos desearte un muy feliz cumpleaños.</p> <p>Gracias por ser un cliente tan valioso. ¡Esperamos que tengas un día increíble!</p> <br> <p>Un saludo cordial,</p> <p><strong>El Equipo de LevelUp Media</strong></p>",
+        "options": {
+          "appendAttribution": false
+        },
+        "path": "b2244280-b982-45f6-be1c-5a0854d7dd01"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        -192
+      ],
+      "id": "5728e31b-aa76-4c06-b50e-14a8cbd7d95d",
+      "name": "send-birthday-email",
+      "webhookId": "b2244280-b982-45f6-be1c-5a0854d7dd01",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $('set-phone-number').first().json['phone-number'].split('@')[0] }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -192
+      ],
+      "id": "da381fac-dae9-4459-bcb2-b6a76eca93a6",
+      "name": "Contact search2"
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload[0].id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -192
+      ],
+      "id": "cbe7ce45-834b-4f1f-a00b-1b1eda00860c",
+      "name": "get-conversation1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/conversations/{{ $json.payload[0].id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($('set-phone-number').item.json.whatsapp_message) }},\n  \"message_type\": \"outgoing\",\n  \"private\": false,\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -192
+      ],
+      "id": "f7961699-a04f-4c94-b610-d10a56da0fe8",
+      "name": "send-message2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E79qGyvxGtoggEN8",
+          "name": "Chatwoot LUM bot agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtenemos el dato del mensaje original desde un nodo anterior.\n// Usar .first() es una buena práctica para asegurar que solo procesas un ítem.\nconst mensajeOriginal = $input.first().json.content;\n\n// 2. Construimos el objeto JavaScript con la estructura CORRECTA.\n// El 'content' está al mismo nivel que 'type', sin el objeto 'data'.\nconst messageObject = {\n  type: \"ai\",\n  content: mensajeOriginal,\n  // -------------------------------------------------------------------\n  // Estas claves adicionales hacen que tu mensaje sea idéntico a uno\n  // generado por el agente, aunque no siempre son estrictamente necesarias.\n  additional_kwargs: {},\n  tool_calls: [],\n  invalid_tool_calls: [],\n  response_metadata: {}\n  // -------------------------------------------------------------------\n};\n\n// 3. Convertimos el objeto a un string JSON para pasarlo al nodo de PostgreSQL.\nconst jsonParaPostgres = JSON.stringify(messageObject);\n\n// 4. Devolvemos los datos que usará el siguiente nodo (PostgreSQL).\nreturn [\n  {\n    json: {\n      messageJsonString: jsonParaPostgres,\n      // Pasamos también el session_id para usarlo en la consulta SQL.\n      sessionId: $('set-phone-number').first().json[\"phone-number\"]\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -192
+      ],
+      "id": "05ebddfc-34ca-42b5-be95-7c20d29a3494",
+      "name": "format-data3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_222 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ $json.sessionId }},{{ $json.messageJsonString }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1760,
+        -192
+      ],
+      "id": "e10e4cd1-7fce-45cd-9bab-26768ed216cd",
+      "name": "save-in-agent-memory1",
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "trigger-daily-birthday-check": {
+      "main": [
+        [
+          {
+            "node": "get-all-clients-from-db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "trigger-manual-test": {
+      "main": [
+        [
+          {
+            "node": "get-all-clients-from-db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-all-clients-from-db": {
+      "main": [
+        [
+          {
+            "node": "filter-clients-by-birthday",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-clients-by-birthday": {
+      "main": [
+        [
+          {
+            "node": "send-birthday-email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact search2": {
+      "main": [
+        [
+          {
+            "node": "get-conversation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-conversation1": {
+      "main": [
+        [
+          {
+            "node": "send-message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send-message2": {
+      "main": [
+        [
+          {
+            "node": "format-data3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data3": {
+      "main": [
+        [
+          {
+            "node": "save-in-agent-memory1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Bogota",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "aae61ba9-f84f-4a67-bba7-c31eae808a7e",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "bO5n8pQI57Al2cgG",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

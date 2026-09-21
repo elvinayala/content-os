@@ -1,0 +1,568 @@
+{
+  "updatedAt": "2026-01-06T13:55:49.879Z",
+  "createdAt": "2025-08-30T04:49:40.177Z",
+  "id": "jOgVxxtD2fJQeOgg",
+  "name": "Seguimiento tareas",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "b2c46ced-c8a2-42ab-aa77-5c2f6e305a9c",
+      "name": "Due Date Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132286199",
+        "space": "90139741839",
+        "folderless": true,
+        "list": "={{ $json['ID EQUIPO'] }}",
+        "filters": {}
+      },
+      "id": "2285ac3a-a5c2-4acb-901f-2cf08f15bac2",
+      "name": "ClickUp: Get Tasks",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        800,
+        144
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const today = new Date();\nreturn items.map(item => {\n  // 1) Convertir la cadena a número de milisegundos\n  const millis = Number(item.json.due_date);\n  // 2) Crear la fecha correctamente\n  const due = new Date(millis);\n  // 3) Calcular diferencia en días\n  const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));\n  return { json: { ...item.json, diffDays } };\n});\n"
+      },
+      "id": "616abf5d-aa2c-429f-8bbb-f76fa93518b7",
+      "name": "Calculate diffDays",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.diffDays }}",
+              "operation": "equal",
+              "value2": 2
+            }
+          ]
+        }
+      },
+      "id": "bd736da7-76e9-4c08-9f21-5789c515a3a4",
+      "name": "IF: Reminder?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.diffDays }}",
+              "operation": "largerEqual"
+            }
+          ]
+        }
+      },
+      "id": "1372de75-6a63-466c-bef6-de905b8bf3c9",
+      "name": "IF: Due Date?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "operation": "notEqual",
+              "value2": "completed"
+            }
+          ]
+        }
+      },
+      "id": "a245b631-3fd5-4e5f-86cf-74c5311ad913",
+      "name": "IF: Not Completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.diffDays }}",
+              "operation": "largerEqual",
+              "value2": -1
+            }
+          ]
+        }
+      },
+      "id": "8642e72e-3ecc-48cf-bc15-53b8f4b327f1",
+      "name": "IF: Due Date?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2074960720,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys/edit#gid=2074960720"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -32,
+        32
+      ],
+      "id": "2d5eedbf-42db-4522-8f04-36a5b7701b01",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TbE2yI5rb8cHSzni",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        240,
+        32
+      ],
+      "id": "d8971d2e-e774-4315-a68e-910019896d6b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.assignees[0].email }}",
+        "subject": "=Recordatorio tarea:  {{ $json.name }}",
+        "message": "=Recuerda que tienes una tarea pendiente que vencerá en 2 días:\nTarea\n{{ $json.name }}\nDetalle\n{{ $json.description }}\nFecha vencimiento\n{{ $json.due_date.toDateTime('ms').setZone('UTC-5') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2080,
+        96
+      ],
+      "id": "d13bb9a3-1392-46d3-ba1c-7b43de6a67b5",
+      "name": "Send a message",
+      "webhookId": "d10a71cc-32dd-42d1-9506-2399f041de4b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.assignees[0].email }}",
+        "subject": "=Recordatorio tarea:  {{ $json.name }}",
+        "message": "=Recuerda que tienes una tarea pendiente que vencerá en hoy:\nTarea\n{{ $json.name }}\nDetalle\n{{ $json.description }}\nFecha vencimiento\n{{ $json.due_date.toDateTime('ms').setZone('UTC-5') }}\n\nSi no la reportas como terminada, acumularas 1 strike",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2048,
+        432
+      ],
+      "id": "340511bf-8e0a-43a3-b732-b66d5f56975e",
+      "name": "Send a message1",
+      "webhookId": "d10a71cc-32dd-42d1-9506-2399f041de4b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.assignees[0].email }}",
+        "subject": "=Recordatorio tarea:  {{ $json.name }}",
+        "message": "=Tu tarea se reportó como finalizada el día de ayer, por lo que en estos momentos estoy informando a Elvin. Recuerda que esto implica 1 Strike para ti.\n\nTarea\n{{ $json.name }}\n\nDetalle\n{{ $json.description }}\n\nFecha vencimiento\n{{ $json.due_date.toDateTime('ms').setZone('UTC-5') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1952,
+        832
+      ],
+      "id": "0f9b9789-1937-42eb-a255-8d6f66b84aa9",
+      "name": "Send a message2",
+      "webhookId": "d10a71cc-32dd-42d1-9506-2399f041de4b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        960
+      ],
+      "id": "6f5e8dda-9cb0-4b42-bfea-edc2c34a380d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "sendTo": "=elvin@levelupmediapr.net",
+        "subject": "=Aviso Incumplimiento Tarea por parte de {{ $('IF: Due Date?1').item.json.watchers[1].email }}",
+        "message": "={{ $('IF: Due Date?1').item.json.watchers[1].email }} incumplio la siguiente tarea: \n\nTarea\n{{ $('IF: Due Date?1').item.json.name }}\nDetalle\n{{ $('IF: Due Date?1').item.json.description }}\nFecha vencimiento\n{{ $('IF: Due Date?1').item.json.due_date.toDateTime('ms').setZone('UTC-5') }}",
+        "options": {
+          "ccList": "carilin@levelupmediapr.net"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2160,
+        832
+      ],
+      "id": "a4be086b-bbf7-4a08-b2ae-ded53e125d0b",
+      "name": "Correo Elvin",
+      "webhookId": "d10a71cc-32dd-42d1-9506-2399f041de4b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Due Date Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp: Get Tasks": {
+      "main": [
+        [
+          {
+            "node": "Calculate diffDays",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate diffDays": {
+      "main": [
+        [
+          {
+            "node": "IF: Reminder?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF: Due Date?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Reminder?": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Due Date?": {
+      "main": [
+        [
+          {
+            "node": "IF: Not Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF: Due Date?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Not Completed?": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Due Date?1": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "ClickUp: Get Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Correo Elvin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correo Elvin": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Due Date Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "401638fe-85cf-4cea-8e71-03e116e10b48",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "jOgVxxtD2fJQeOgg",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

@@ -1,0 +1,1646 @@
+{
+  "updatedAt": "2026-06-27T18:14:56.392Z",
+  "createdAt": "2025-08-23T00:31:50.728Z",
+  "id": "uelcZVSQvpl2hetY",
+  "name": "F-) Lector de seguimientos v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        96
+      ],
+      "id": "52aa7cf8-4be9-4382-98b2-715c950f6572",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        688,
+        96
+      ],
+      "id": "cd480917-d51d-4c9f-9a21-47032b330e59",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        112
+      ],
+      "id": "57c2ac90-316e-41c9-8028-81c7484e7b45"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"conversation\": {\n    \"id\": \"{{ $json.payload[0].id }}\",\n    \"contact_inbox\": {\n      \"contact_id\": \"{{ $('Contact update1').item.json.payload.id }}\"\n    },\n    \"messages\": [\n      {\n        \"content\": \"Voy a hacer la encuesta del dia 10\",\n        \"message_type\": 0,\n        \"account_id\": \"2\",\n        \"inbox_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].inbox.id }}\",\n        \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\",\n        \"conversation\": {\n          \"contact_inbox\": {\n            \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\"\n          }\n        },\n        \"sender\": {\n          \"identifier\": \"{{ $('Contact update1').item.json.payload.identifier }}\",\n          \"custom_attributes\": {{ JSON.stringify($('Contact update1').item.json.payload.custom_attributes) }}\n        }\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        112
+      ],
+      "id": "d99a12fb-3674-4913-b3c8-47b66cf03654",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+        "operation": "contactUpdate",
+        "contactId": "={{ $json.payload[0].id }}",
+        "contactIdentifier": "={{ $json.payload[0].identifier }}",
+        "name": "={{ $json.payload[0].name }}",
+        "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+        "phoneNumber": "={{ $json.payload[0].phone_number }}",
+        "email": "={{ $json.payload[0].email }}",
+        "customAttributes": {
+          "attribute": [
+            {
+              "key": "10dias",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        112
+      ],
+      "id": "fdbb1168-974b-400a-8417-4cbdefd7ec8f",
+      "name": "Contact update1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64cf91c5-5188-453b-bed8-211723634968",
+              "leftValue": "={{ $json.meta.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        112
+      ],
+      "id": "84431c58-8149-410c-9613-e95855775b8b",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        112
+      ],
+      "id": "dc7289f7-1ab3-4a49-bc0a-11b6e705bcef",
+      "name": "set-data-into-loop"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(fecha-formateada,eq,{{ $now.minus(10, 'days').format('yyyy-MM-dd') }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        480,
+        96
+      ],
+      "id": "d5c0dba4-bbd2-436d-be13-5f0a7305abf2",
+      "name": "get-clients-data",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.telefono }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "c71f3eaa-496e-4b5c-a35a-9f4200d7d1a4",
+      "name": "contact-search",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload.id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        112
+      ],
+      "id": "d45cb18f-da5b-41f8-9c95-ccf9d0569d5f",
+      "name": "get-contact-conversation",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        480
+      ],
+      "id": "0b115f1e-1dd9-4614-b057-75b79cbd69ed",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        480
+      ],
+      "id": "86830bc2-deff-4f71-8d7f-19205ed944a0",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        496
+      ],
+      "id": "222e71fc-d5cb-467f-8cd4-12ed28d648c8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"conversation\": {\n    \"id\": \"{{ $json.payload[0].id }}\",\n    \"contact_inbox\": {\n      \"contact_id\": \"{{ $('Contact update').item.json.payload.id }}\"\n    },\n    \"messages\": [\n      {\n        \"content\": \"Voy a hacer la encuesta del dia 30\",\n        \"message_type\": 0,\n        \"account_id\": \"2\",\n        \"inbox_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].inbox.id }}\",\n        \"source_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].source_id }}\",\n        \"conversation\": {\n          \"contact_inbox\": {\n            \"source_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].source_id }}\"\n          }\n        },\n        \"sender\": {\n          \"identifier\": \"{{ $('Contact update').item.json.payload.identifier }}\",\n          \"custom_attributes\": {{ JSON.stringify($('Contact update').item.json.payload.custom_attributes) }}\n        }\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        496
+      ],
+      "id": "e6a3f527-be9c-443d-a57c-e0e3dcbd7ad2",
+      "name": "HTTP Request1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+        "operation": "contactUpdate",
+        "contactId": "={{ $json.payload[0].id }}",
+        "contactIdentifier": "={{ $json.payload[0].identifier }}",
+        "name": "={{ $json.payload[0].name }}",
+        "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+        "phoneNumber": "={{ $json.payload[0].phone_number }}",
+        "email": "={{ $json.payload[0].email }}",
+        "customAttributes": {
+          "attribute": [
+            {
+              "key": "10dias",
+              "value": "false"
+            },
+            {
+              "key": "30dias",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        496
+      ],
+      "id": "139ed964-8f66-4287-aa6e-52d9bc56c95e",
+      "name": "Contact update",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64cf91c5-5188-453b-bed8-211723634968",
+              "leftValue": "={{ $json.meta.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        496
+      ],
+      "id": "188f74a9-26b1-4af7-b44b-3e79f39a6beb",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        496
+      ],
+      "id": "ccb4e872-841e-4296-a014-99b689bc573e",
+      "name": "set-data-into-loop1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(fecha-formateada,eq,{{ $now.minus(30, 'days').format('yyyy-MM-dd') }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        480
+      ],
+      "id": "79b04b8b-0b14-4e90-ab1e-c7dd502b1e48",
+      "name": "get-clients-data1",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.telefono }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        880,
+        496
+      ],
+      "id": "c2d6ea0f-4fa3-4ecd-88f3-a6903ee52c95",
+      "name": "contact-search1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload.id }}/conversations/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        496
+      ],
+      "id": "94ce7aae-6359-49e5-8ace-5e0040955c01",
+      "name": "get-contact-conversation1",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1760,
+        496
+      ],
+      "id": "0da960fc-b896-4092-a4c8-d5835a7fe19b",
+      "name": "Wait",
+      "webhookId": "687af6f7-650a-40ae-a911-3758a59b00ec"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1968,
+        112
+      ],
+      "id": "41feb72f-2bd5-4848-a970-6c095009b036",
+      "name": "Wait1",
+      "webhookId": "65881c06-308e-4f86-bc8a-cd7b9fdfd643"
+    },
+    {
+      "parameters": {
+        "content": "ajuste, en la parte de content añadimos esta frase: \"\"\nVoy a hacer la encuesta del dia 30\n\"\"\n\nhttp request  y http request 1"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        720
+      ],
+      "id": "094b0fd2-44bc-4114-bc78-682c7b4d5efd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        304
+      ],
+      "id": "67159649-5228-4862-83c0-a492349de9c7",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get-clients-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "set-data-into-loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact update1": {
+      "main": [
+        [
+          {
+            "node": "get-contact-conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Contact update1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data-into-loop": {
+      "main": [
+        [
+          {
+            "node": "contact-search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients-data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact-search": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-contact-conversation": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "get-clients-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "set-data-into-loop1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact update": {
+      "main": [
+        [
+          {
+            "node": "get-contact-conversation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Contact update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data-into-loop1": {
+      "main": [
+        [
+          {
+            "node": "contact-search1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients-data1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contact-search1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-contact-conversation1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger1": [
+      {
+        "json": {
+          "timestamp": "2026-01-21T10:00:36.209-04:00",
+          "Readable date": "January 21st 2026, 10:00:36 am",
+          "Readable time": "10:00:36 am",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "January",
+          "Day of month": "21",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "36",
+          "Timezone": "America/Caracas (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-06-27T10:00:47.014-04:00",
+          "Readable date": "June 27th 2026, 10:00:47 am",
+          "Readable time": "10:00:47 am",
+          "Day of week": "Saturday",
+          "Year": "2026",
+          "Month": "June",
+          "Day of month": "27",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "47",
+          "Timezone": "America/Caracas (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "23c0cbec-98b2-415d-b9f2-5845a779a3a0",
+  "activeVersionId": "23c0cbec-98b2-415d-b9f2-5845a779a3a0",
+  "versionCounter": 39,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "uelcZVSQvpl2hetY",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-06-27T18:14:58.385Z",
+    "createdAt": "2026-06-27T18:14:56.395Z",
+    "versionId": "23c0cbec-98b2-415d-b9f2-5845a779a3a0",
+    "workflowId": "uelcZVSQvpl2hetY",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          80,
+          96
+        ],
+        "id": "52aa7cf8-4be9-4382-98b2-715c950f6572",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "batchSize": 5,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          688,
+          96
+        ],
+        "id": "cd480917-d51d-4c9f-9a21-47032b330e59",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          2224,
+          112
+        ],
+        "id": "57c2ac90-316e-41c9-8028-81c7484e7b45"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"conversation\": {\n    \"id\": \"{{ $json.payload[0].id }}\",\n    \"contact_inbox\": {\n      \"contact_id\": \"{{ $('Contact update1').item.json.payload.id }}\"\n    },\n    \"messages\": [\n      {\n        \"content\": \"Voy a hacer la encuesta del dia 10\",\n        \"message_type\": 0,\n        \"account_id\": \"2\",\n        \"inbox_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].inbox.id }}\",\n        \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\",\n        \"conversation\": {\n          \"contact_inbox\": {\n            \"source_id\": \"{{ $('Contact update1').item.json.payload.contact_inboxes[0].source_id }}\"\n          }\n        },\n        \"sender\": {\n          \"identifier\": \"{{ $('Contact update1').item.json.payload.identifier }}\",\n          \"custom_attributes\": {{ JSON.stringify($('Contact update1').item.json.payload.custom_attributes) }}\n        }\n      }\n    ]\n  }\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          112
+        ],
+        "id": "d99a12fb-3674-4913-b3c8-47b66cf03654",
+        "name": "HTTP Request",
+        "retryOnFail": true,
+        "maxTries": 5,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+          "operation": "contactUpdate",
+          "contactId": "={{ $json.payload[0].id }}",
+          "contactIdentifier": "={{ $json.payload[0].identifier }}",
+          "name": "={{ $json.payload[0].name }}",
+          "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+          "phoneNumber": "={{ $json.payload[0].phone_number }}",
+          "email": "={{ $json.payload[0].email }}",
+          "customAttributes": {
+            "attribute": [
+              {
+                "key": "10dias",
+                "value": "true"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          1408,
+          112
+        ],
+        "id": "fdbb1168-974b-400a-8417-4cbdefd7ec8f",
+        "name": "Contact update1",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "64cf91c5-5188-453b-bed8-211723634968",
+                "leftValue": "={{ $json.meta.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1232,
+          112
+        ],
+        "id": "84431c58-8149-410c-9613-e95855775b8b",
+        "name": "Filter"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json.toJsonString() }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          912,
+          112
+        ],
+        "id": "dc7289f7-1ab3-4a49-bc0a-11b6e705bcef",
+        "name": "set-data-into-loop"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(fecha-formateada,eq,{{ $now.minus(10, 'days').format('yyyy-MM-dd') }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          480,
+          96
+        ],
+        "id": "d5c0dba4-bbd2-436d-be13-5f0a7305abf2",
+        "name": "get-clients-data",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.telefono }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          112
+        ],
+        "id": "c71f3eaa-496e-4b5c-a35a-9f4200d7d1a4",
+        "name": "contact-search",
+        "alwaysOutputData": true,
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload.id }}/conversations/",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1584,
+          112
+        ],
+        "id": "d45cb18f-da5b-41f8-9c95-ccf9d0569d5f",
+        "name": "get-contact-conversation",
+        "retryOnFail": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          64,
+          480
+        ],
+        "id": "0b115f1e-1dd9-4614-b057-75b79cbd69ed",
+        "name": "Schedule Trigger1"
+      },
+      {
+        "parameters": {
+          "batchSize": 5,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          480,
+          480
+        ],
+        "id": "86830bc2-deff-4f71-8d7f-19205ed944a0",
+        "name": "Loop Over Items1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me1",
+        "typeVersion": 1,
+        "position": [
+          2016,
+          496
+        ],
+        "id": "222e71fc-d5cb-467f-8cd4-12ed28d648c8"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"conversation\": {\n    \"id\": \"{{ $json.payload[0].id }}\",\n    \"contact_inbox\": {\n      \"contact_id\": \"{{ $('Contact update').item.json.payload.id }}\"\n    },\n    \"messages\": [\n      {\n        \"content\": \"Voy a hacer la encuesta del dia 30\",\n        \"message_type\": 0,\n        \"account_id\": \"2\",\n        \"inbox_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].inbox.id }}\",\n        \"source_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].source_id }}\",\n        \"conversation\": {\n          \"contact_inbox\": {\n            \"source_id\": \"{{ $('Contact update').item.json.payload.contact_inboxes[0].source_id }}\"\n          }\n        },\n        \"sender\": {\n          \"identifier\": \"{{ $('Contact update').item.json.payload.identifier }}\",\n          \"custom_attributes\": {{ JSON.stringify($('Contact update').item.json.payload.custom_attributes) }}\n        }\n      }\n    ]\n  }\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1552,
+          496
+        ],
+        "id": "e6a3f527-be9c-443d-a57c-e0e3dcbd7ad2",
+        "name": "HTTP Request1",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+          "operation": "contactUpdate",
+          "contactId": "={{ $json.payload[0].id }}",
+          "contactIdentifier": "={{ $json.payload[0].identifier }}",
+          "name": "={{ $json.payload[0].name }}",
+          "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+          "phoneNumber": "={{ $json.payload[0].phone_number }}",
+          "email": "={{ $json.payload[0].email }}",
+          "customAttributes": {
+            "attribute": [
+              {
+                "key": "10dias",
+                "value": "false"
+              },
+              {
+                "key": "30dias",
+                "value": "true"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          496
+        ],
+        "id": "139ed964-8f66-4287-aa6e-52d9bc56c95e",
+        "name": "Contact update",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "64cf91c5-5188-453b-bed8-211723634968",
+                "leftValue": "={{ $json.meta.count }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1024,
+          496
+        ],
+        "id": "188f74a9-26b1-4af7-b44b-3e79f39a6beb",
+        "name": "Filter1"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json.toJsonString() }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          704,
+          496
+        ],
+        "id": "ccb4e872-841e-4296-a014-99b689bc573e",
+        "name": "set-data-into-loop1"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(fecha-formateada,eq,{{ $now.minus(30, 'days').format('yyyy-MM-dd') }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          272,
+          480
+        ],
+        "id": "79b04b8b-0b14-4e90-ab1e-c7dd502b1e48",
+        "name": "get-clients-data1",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.telefono }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          880,
+          496
+        ],
+        "id": "c2d6ea0f-4fa3-4ecd-88f3-a6903ee52c95",
+        "name": "contact-search1",
+        "alwaysOutputData": true,
+        "retryOnFail": true,
+        "waitBetweenTries": 1500
+      },
+      {
+        "parameters": {
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.payload.id }}/conversations/",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1360,
+          496
+        ],
+        "id": "94ce7aae-6359-49e5-8ace-5e0040955c01",
+        "name": "get-contact-conversation1",
+        "retryOnFail": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1760,
+          496
+        ],
+        "id": "0da960fc-b896-4092-a4c8-d5835a7fe19b",
+        "name": "Wait",
+        "webhookId": "687af6f7-650a-40ae-a911-3758a59b00ec"
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1968,
+          112
+        ],
+        "id": "41feb72f-2bd5-4848-a970-6c095009b036",
+        "name": "Wait1",
+        "webhookId": "65881c06-308e-4f86-bc8a-cd7b9fdfd643"
+      },
+      {
+        "parameters": {
+          "content": "ajuste, en la parte de content añadimos esta frase: \"\"\nVoy a hacer la encuesta del dia 30\n\"\"\n\nhttp request  y http request 1"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1552,
+          720
+        ],
+        "id": "094b0fd2-44bc-4114-bc78-682c7b4d5efd",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          304
+        ],
+        "id": "67159649-5228-4862-83c0-a492349de9c7",
+        "name": "Enviar texto",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "get-clients-data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "set-data-into-loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contact update1": {
+        "main": [
+          [
+            {
+              "node": "get-contact-conversation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "Contact update1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set-data-into-loop": {
+        "main": [
+          [
+            {
+              "node": "contact-search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients-data": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "contact-search": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-contact-conversation": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "get-clients-data1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "set-data-into-loop1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contact update": {
+        "main": [
+          [
+            {
+              "node": "get-contact-conversation1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter1": {
+        "main": [
+          [
+            {
+              "node": "Contact update",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set-data-into-loop1": {
+        "main": [
+          [
+            {
+              "node": "contact-search1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients-data1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "contact-search1": {
+        "main": [
+          [
+            {
+              "node": "Filter1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-contact-conversation1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Replace Me1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 23c0cbec",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-06-27T18:14:58.373Z",
+        "id": 203,
+        "workflowId": "uelcZVSQvpl2hetY",
+        "versionId": "23c0cbec-98b2-415d-b9f2-5845a779a3a0",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

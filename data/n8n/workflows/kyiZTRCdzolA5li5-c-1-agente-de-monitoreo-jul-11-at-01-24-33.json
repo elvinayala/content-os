@@ -1,0 +1,3043 @@
+{
+  "updatedAt": "2025-07-14T08:36:08.000Z",
+  "createdAt": "2025-07-11T21:28:50.202Z",
+  "id": "kyiZTRCdzolA5li5",
+  "name": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
+  "description": null,
+  "active": true,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        140,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/{{ $json.data.id }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,effective_status,objective,status,daily_budget,lifetime_budget,budget_remaining,start_time,stop_time"
+            },
+            {
+              "name": "level",
+              "value": "campaign"
+            },
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1960,
+        2220
+      ],
+      "id": "2b1cd83f-44b7-4d82-b1e1-1030c04a7f12",
+      "name": "get campaign data",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "okUb9pvZdNdsS317",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/{{ $('Bucle por campañas start').first().json.id }}/insights?fields=adset_id,adset_name,campaign_id,campaign_name,spend,ctr,cpm,cost_per_action_type",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "level",
+              "value": "adset"
+            },
+            {
+              "name": "filtering",
+              "value": "[   {\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]},   {\"field\":\"action_type\",\"operator\":\"IN\",\"value\":[\"lead\",\"offsite_conversion.fb_pixel_lead\",\"onsite_conversion.messaging_conversation_started_7d\"]} ]"
+            },
+            {
+              "name": "time_range",
+              "value": "={\"since\":\"{{ $('Setear time range1').first().json.since }}\",\"until\":\"{{ $('Setear time range1').first().json.until }}\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -860,
+        1980
+      ],
+      "id": "6c288831-2168-4c2b-be27-bc3175854a29",
+      "name": "get adset data",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SiycXDmaeVzr9dFK",
+          "name": "Facebook Graph account back up"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=  https://graph.facebook.com/v23.0/{{ $('Bucle por conjunto start').first().json.adset_id }}/insights?fields=ad_id,ad_name,adset_id,campaign_id,campaign_name,account_name,spend,ctr,cpm,cost_per_action_type\n\n",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "level",
+              "value": "ad"
+            },
+            {
+              "name": "filtering",
+              "value": "[   {\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]},   {\"field\":\"action_type\",\"operator\":\"IN\",\"value\":[\"lead\",\"offsite_conversion.fb_pixel_lead\",\"onsite_conversion.messaging_conversation_started_7d\"]} ]"
+            },
+            {
+              "name": "time_range",
+              "value": "={\"since\":\"{{ $json.since }}\",\"until\":\"{{ $json.until }}\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        1920
+      ],
+      "id": "e95bd781-3cd8-4424-9871-c48a16abd896",
+      "name": "get ad data",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SiycXDmaeVzr9dFK",
+          "name": "Facebook Graph account back up"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Bucle por busines manager",
+      "typeVersion": 1,
+      "position": [
+        -1300,
+        2240
+      ],
+      "id": "c4cfbec1-2306-410b-9792-d125ed783475"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Bucle por campaña",
+      "typeVersion": 1,
+      "position": [
+        240,
+        2120
+      ],
+      "id": "97df4a4a-523c-4881-a6a3-d6e4f1ee5c5d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2180,
+        2340
+      ],
+      "id": "3520a22c-0c12-46d7-b68e-977b2912da63",
+      "name": "Bucle por busines manager start"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1520,
+        2220
+      ],
+      "id": "272ddd8e-5cd7-4d45-97eb-14a55162a66a",
+      "name": "Bucle por campañas start"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Bucle por conjunto",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        1920
+      ],
+      "id": "9d051fb6-ef1c-4f69-88f5-f18156bf50ca"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Bucle por anuncio",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        1980
+      ],
+      "id": "09a95c85-e011-4ac9-a446-26730a092ab2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        1980
+      ],
+      "id": "2cd0c3f2-469e-403c-a1c6-a4fe334c3e97",
+      "name": "Bucle por conjunto start"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        1920
+      ],
+      "id": "e4a13309-90fa-4ce8-b896-e58585c5506e",
+      "name": "Bucle por anuncio start"
+    },
+    {
+      "parameters": {
+        "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 3 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1300,
+        1980
+      ],
+      "id": "410cc1be-b5e0-47ad-af6b-331dd070ebba",
+      "name": "Setear time range1"
+    },
+    {
+      "parameters": {
+        "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 3 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        1920
+      ],
+      "id": "76bb9918-24ff-4213-a1cb-7e6bc2cc998e",
+      "name": "Setear time range2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98613008-a503-4e6d-b90a-0b17a245c81f",
+              "name": "Mensaje",
+              "value": "=Estado: {{ $json.estado }}\nRazon: {{ $json.motivo }}\nAnuncio: {{ $json.ad_name }}\nCampaña: {{ $json.campaign_name }}\nCuenta publicitaria: {{ $json.account_name }}\nPresupuesto diario: {{ $json.daily_budget_formatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        1720
+      ],
+      "id": "bf33f1ea-c1bf-41ab-9854-7835abfd6d22",
+      "name": "Simulacion de envio de mensaje"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98613008-a503-4e6d-b90a-0b17a245c81f",
+              "name": "Mensaje",
+              "value": "=Estado: {{ $json.estado }}\nRazon: {{ $json.motivo }}\nAnuncio: {{ $json.ad_name }}\nCampaña: {{ $json.campaign_name }}\nCuenta publicitaria: {{ $json.account_name }}\nPresupuesto diario: {{ $json.daily_budget_formatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1540
+      ],
+      "id": "c4f5863f-ad83-43c3-99d7-da3241529a8f",
+      "name": "Simulacion de envio de mensaje1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CONFIGURACIÓN DE UMBRALES (Negocio Local) ---\nconst UMBRALES = {\n  COSTE_POR_CONVERSACION_MAX: 4.00,\n  COSTE_POR_LEAD_MAX: 6.00,\n  CTR_MIN: 1.5,\n  // CPM_MAX: 50.00 // Umbral de ejemplo si decides usarlo en el futuro\n};\n\n// --- LÓGICA DEL NODO ---\n\n// Obtiene el item de entrada con los datos del anuncio\nconst ad = $input.item.json;\n\n// --- Módulo de Presupuesto Diario ---\nlet daily_budget_formatted = \"N/A\";\ntry {\n  // Obtiene el presupuesto desde el nodo HTTP Request\n  const rawBudget = $('Get daily budget').first().json.daily_budget;\n  if (rawBudget) {\n    // Formatea el número: 1500 -> 15.00\n    daily_budget_formatted = (parseInt(rawBudget) / 100).toFixed(2);\n  }\n} catch (error) {\n  // No hace nada si el nodo o el dato no existen, para evitar que el workflow falle.\n}\nad.daily_budget_formatted = daily_budget_formatted;\n\n\n// Variables para el análisis\nconst motivosParaParar = [];\nlet leadInfo = null;\n\n\n// --- Análisis de Métricas Principales ---\n\n// 1. Análisis de CTR (Click-Through Rate)\nconst ctr = parseFloat(ad.ctr);\nif (ctr < UMBRALES.CTR_MIN) {\n  motivosParaParar.push(`CTR bajo (${ctr.toFixed(2)}%)`);\n}\n\n// 2. Análisis de Costo por Acción (Conversaciones y Leads)\nif (ad.cost_per_action_type && ad.cost_per_action_type.length > 0) {\n  for (const action of ad.cost_per_action_type) {\n    const costValue = parseFloat(action.value);\n\n    // Análisis de Costo por Conversación\n    if (action.action_type === 'onsite_conversion.messaging_conversation_started_7d') {\n      if (costValue > UMBRALES.COSTE_POR_CONVERSACION_MAX) {\n        motivosParaParar.push(`Costo por Conversación alto ($${costValue.toFixed(2)})`);\n      }\n    }\n\n    // --- Módulo de Análisis de Leads (Opcional) ---\n    // Esta sección solo se ejecuta si la API devuelve un \"action_type\" de tipo \"lead\".\n    if (action.action_type === 'lead') {\n      // Se registra la información del lead para seguimiento.\n      leadInfo = {\n        ad_id: ad.ad_id,\n        account_name: ad.account_name,\n        costo_lead: costValue.toFixed(2)\n      };\n      if (costValue > UMBRALES.COSTE_POR_LEAD_MAX) {\n        motivosParaParar.push(`Costo por Lead alto ($${costValue.toFixed(2)})`);\n      }\n    }\n    // --- Fin del Módulo de Leads ---\n  }\n}\n\n\n// --- Decisión Final ---\n\n// Si encontramos algún motivo para parar, cambiamos el estado.\nif (motivosParaParar.length > 0) {\n  ad.estado = 'PARAR ANUNCIO';\n  ad.motivo = motivosParaParar.join(', ');\n} else {\n  ad.estado = 'OK';\n  ad.motivo = 'Rendimiento dentro de los umbrales.';\n}\n\n// Si se encontró un lead, se añade la información al objeto de salida.\nif (leadInfo) {\n  ad.lead_info = leadInfo;\n}\n\n// Devuelve el objeto original del anuncio, pero con los nuevos campos añadidos.\nreturn ad;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1880,
+        1620
+      ],
+      "id": "15574d72-c6fe-4e2c-8fed-968d60cfe1a3",
+      "name": "Analisis de metricas en anuncio"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "88568bb7-6158-4b34-9369-61bb260f843a",
+              "leftValue": "={{ $json.estado }}",
+              "rightValue": "OK",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        1640
+      ],
+      "id": "ba0f9520-12bc-440a-96fb-94fc4d430d05",
+      "name": "Verificacion de si el anuncio esta saludable"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CONFIGURACIÓN DE UMBRALES (Negocio Local) ---\nconst UMBRALES = {\n  COSTE_POR_CONVERSACION_MAX: 4.00,\n  COSTE_POR_LEAD_MAX: 6.00,\n  CTR_MIN: 1.5,\n  // CPM_MAX: 50.00 // Umbral de ejemplo si decides usarlo en el futuro\n};\n\n// --- LÓGICA DEL NODO ---\n\n// Obtiene el item de entrada con los datos del anuncio\nconst ad = $input.item.json;\n\n// --- Módulo de Presupuesto Diario ---\nlet daily_budget_formatted = \"N/A\";\ntry {\n  // Obtiene el presupuesto desde el nodo HTTP Request\n  const rawBudget = $('Get daily budget').first().json.daily_budget;\n  if (rawBudget) {\n    // Formatea el número: 1500 -> 15.00\n    daily_budget_formatted = (parseInt(rawBudget) / 100).toFixed(2);\n  }\n} catch (error) {\n  // No hace nada si el nodo o el dato no existen, para evitar que el workflow falle.\n}\nad.daily_budget_formatted = daily_budget_formatted;\n\n\n// Variables para el análisis\nconst motivosParaParar = [];\nlet leadInfo = null;\n\n\n// --- Análisis de Métricas Principales ---\n\n// 1. Análisis de CTR (Click-Through Rate)\nconst ctr = parseFloat(ad.ctr);\nif (ctr < UMBRALES.CTR_MIN) {\n  motivosParaParar.push(`CTR bajo (${ctr.toFixed(2)}%)`);\n}\n\n// 2. Análisis de Costo por Acción (Conversaciones y Leads)\nif (ad.cost_per_action_type && ad.cost_per_action_type.length > 0) {\n  for (const action of ad.cost_per_action_type) {\n    const costValue = parseFloat(action.value);\n\n    // Análisis de Costo por Conversación\n    if (action.action_type === 'onsite_conversion.messaging_conversation_started_7d') {\n      if (costValue > UMBRALES.COSTE_POR_CONVERSACION_MAX) {\n        motivosParaParar.push(`Costo por Conversación alto ($${costValue.toFixed(2)})`);\n      }\n    }\n\n    // --- Módulo de Análisis de Leads (Opcional) ---\n    // Esta sección solo se ejecuta si la API devuelve un \"action_type\" de tipo \"lead\".\n    if (action.action_type === 'lead') {\n      // Se registra la información del lead para seguimiento.\n      leadInfo = {\n        ad_id: ad.ad_id,\n        account_name: ad.account_name,\n        costo_lead: costValue.toFixed(2)\n      };\n      if (costValue > UMBRALES.COSTE_POR_LEAD_MAX) {\n        motivosParaParar.push(`Costo por Lead alto ($${costValue.toFixed(2)})`);\n      }\n    }\n    // --- Fin del Módulo de Leads ---\n  }\n}\n\n\n// --- Decisión Final ---\n\n// Si encontramos algún motivo para parar, cambiamos el estado.\nif (motivosParaParar.length > 0) {\n  ad.estado = 'PARAR ANUNCIO';\n  ad.motivo = motivosParaParar.join(', ');\n} else {\n  ad.estado = 'OK';\n  ad.motivo = 'Rendimiento dentro de los umbrales.';\n}\n\n// Si se encontró un lead, se añade la información al objeto de salida.\nif (leadInfo) {\n  ad.lead_info = leadInfo;\n}\n\n// Devuelve el objeto original del anuncio, pero con los nuevos campos añadidos.\nreturn ad;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        1760
+      ],
+      "id": "0f0495ac-c7b0-49dd-915d-0147f12fe713",
+      "name": "Analisis de metrica de conjunto"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "88568bb7-6158-4b34-9369-61bb260f843a",
+              "leftValue": "={{ $json.estado }}",
+              "rightValue": "OK",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        1760
+      ],
+      "id": "347f4d26-04aa-44c0-a7c0-3298b954c01b",
+      "name": "Verificacion de si conjunto esta saludable"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1920
+      ],
+      "id": "1f43b381-b00d-4f7e-90ee-421f33df915c",
+      "name": "Divide en items separados si hay varios anuncios",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        1980
+      ],
+      "id": "de7c82ef-dcd7-4f8c-b05e-c9df7eeb3f92",
+      "name": "Divide en items separados si hay varios conjuntos",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/{{ $('Bucle por campañas start').first().json.id }}?fields=daily_budget",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1080,
+        1980
+      ],
+      "id": "05cfad2e-64bb-4226-b135-fec8034d670f",
+      "name": "Get daily budget",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SiycXDmaeVzr9dFK",
+          "name": "Facebook Graph account back up"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1740,
+        2220
+      ],
+      "id": "8c9de6a5-be4b-42ca-9642-a1e82fb2944c",
+      "name": "Divide campañs en items separados"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5376a51f-24f4-4aa5-ad01-3979593ff70a",
+              "leftValue": "={{ $json.data.name }}",
+              "rightValue": "={{ $json.searchPattern }}",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        -40
+      ],
+      "id": "5e9e03e6-3a69-4c82-bff5-485558c65165",
+      "name": "Separar nicho solar"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2200,
+        -40
+      ],
+      "id": "4170e771-4ea2-4f62-8007-5f82e3472209",
+      "name": "Forrzar ejecutar ambas ramas"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtiene todos los items que llegan al nodo\nconst items = $items();\n\n// Extrae el texto de la columna 'text8' de cada item\nconst solarKeywords = items.map(item => {\n  // CAMBIO CLAVE: Se accede a item.json.data en lugar de item.json\n  const columnValues = item.json.data.column_values;\n  \n  // Encuentra el objeto correcto en el array de column_values\n  const text8Column = columnValues.find(col => col.id === 'text8');\n  \n  // Si se encuentra la columna y no está vacía, la devuelve\n  return text8Column && text8Column.text ? text8Column.text : '';\n}).filter(keyword => keyword !== ''); // Filtra cualquier resultado vacío\n\n// Crea un patrón Regex para buscar cualquiera de las palabras clave, ignorando mayúsculas/minúsculas\n// Ejemplo: (Palabra1|Palabra2|Otra Palabra)\nconst regexPattern = `(${solarKeywords.join('|')})`;\n\n// Devuelve un solo item con el patrón de búsqueda listo para usar\nreturn [{\n  json: {\n    searchPattern: regexPattern\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        220
+      ],
+      "id": "af29a8f3-d511-4f00-8433-a0bb0e83cf9a",
+      "name": "Regex de todos los nombres de nicho \"Solar\""
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "12ae3947-2db0-4daa-88a9-0e326a7043d6",
+              "leftValue": "={{ $json.data.column_values[1].text }}",
+              "rightValue": "Solar",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1580,
+        240
+      ],
+      "id": "e0aabe66-8b07-4557-a7c0-13581e0ad0e5",
+      "name": "Separar nicho solar1"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        220
+      ],
+      "id": "15458c6a-12c3-4903-be13-2bdd91ad0445",
+      "name": "Espera para completar rama superior",
+      "webhookId": "a0b6a312-bf91-461e-8593-e65c4033a6fc"
+    },
+    {
+      "parameters": {
+        "endpoint": "https://api.monday.com/v2",
+        "query": "=query {\n  boards(ids: [7784685790]) {\n    groups(ids: [\"grupo_nuevo__1\"]) {\n      items_page(limit: 500) {\n        cursor\n        items {\n          id\n          name\n          # Pide los valores de ambas columnas\n          column_values(ids: [\"estado__1\", \"text8\"]) {\n            id\n            text\n          }\n        }\n      }\n    }\n  }\n}",
+        "headerParametersUi": {
+          "parameter": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjUzNjkxMzEzOSwiYWFpIjoxMSwidWlkIjo3ODE1Mjg0NSwiaWFkIjoiMjAyNS0wNy0wOVQxMzozODowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNDA0MzcsInJnbiI6InVzZTEifQ.mD9mbJTobN482O03lso5rXbk8nYBs76Q9dWWHjRx9yU"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.graphql",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        -60
+      ],
+      "id": "e44cc0bc-5db4-41ed-a033-558f9c03d9a2",
+      "name": "Traer clientes activos de monday",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "acd75b99-8185-47ea-ab1b-ee6266ee78d5",
+              "name": "data",
+              "value": "={{ $json.data.boards[0].groups[0].items_page.items }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        -60
+      ],
+      "id": "62cd8493-9ac0-4e07-896d-897d7c0ca3b3",
+      "name": "Formatear los datos"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -60
+      ],
+      "id": "4154e7dc-c444-4177-9454-c77782ee679e",
+      "name": "Dividir en items separados a cada cliente"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -380
+      ],
+      "id": "1e1279dc-3963-455d-b801-ff5bf9349f0c",
+      "name": "Dividir en items separados las cuentas publicitarias"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "941b50da-83dc-4685-8de3-797370ce014f",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -380
+      ],
+      "id": "b9dd4ae0-5187-42a8-b0b2-552156119968",
+      "name": "Formatear los datos1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "cuentas_publicitarias",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -380
+      ],
+      "id": "161eb8d0-06c8-4b7c-89a4-ae7a4f598606",
+      "name": "Juntar datos en una lista"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "clietnes_activos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -180
+      ],
+      "id": "ff900c7a-9b54-4df6-b5a9-25237d146dd7",
+      "name": "Juntar datos en una lista1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1240,
+        -260
+      ],
+      "id": "6660e300-d085-4b42-8f2a-3a81a695a11f",
+      "name": "Formar que se ejecuten ambas ramas"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36425865-85b3-40ea-8aac-44370b365de5",
+              "name": "cuentas",
+              "value": "={{ $('Juntar datos en una lista').first().json.cuentas_publicitarias }}",
+              "type": "array"
+            },
+            {
+              "id": "973fab59-50f4-4783-8592-452ebee01327",
+              "name": "clientes",
+              "value": "={{ $('Juntar datos en una lista1').first().json.clietnes_activos }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1460,
+        -260
+      ],
+      "id": "7a268364-4f0d-4d24-966f-16aa7f440bbc",
+      "name": "formatear los datos",
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -260
+      ],
+      "id": "9ad1a7ca-8717-48e9-b63b-18b69913e4fb",
+      "name": "Limitar por posibles duplicados"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- LISTA DE PALABRAS A IGNORAR ---\n// Esta lista se usa para eliminar palabras comunes antes de la comparación.\nconst stopWords = [\n  'ads', 'ad', 'ADS', '(ADS)'\n  // Puedes añadir más palabras aquí si es necesario\n  // 'solar', 'llc', 'inc', 'corp', 'by', 'pr', 'de', 'la', 'los'\n];\n\n// --- LÓGICA DEL NODO ---\n\n// Función para \"limpiar\" y \"normalizar\" un nombre de forma agresiva\nfunction cleanAndNormalize(name) {\n  if (!name) return '';\n\n  let normalized = name.toLowerCase();\n\n  // 1. Eliminar las \"stop words\" como palabras completas.\n  // Esto evita que \"solar\" en \"solaris\" sea eliminado.\n  stopWords.forEach(word => {\n    // Se crea un RegExp para cada palabra para asegurar que se reemplace como palabra completa\n    const regex = new RegExp(`\\\\b${word}\\\\b`, 'g');\n    normalized = normalized.replace(regex, '');\n  });\n\n  // 2. Eliminar TODOS los caracteres que no sean letras o números.\n  // Esto incluye espacios, puntos, guiones, etc., para compactar el nombre.\n  // Ejemplo: \"doctor ramirez\" -> \"doctorramirez\"\n  return normalized.replace(/[^\\w]/gi, '');\n}\n\n// El nodo recibe un único item con los dos arrays.\nconst inputData = $input.first().json;\n\n// Se accede a los arrays usando las claves del JSON de entrada.\nconst adAccounts = inputData.cuentas;\nconst crmClients = inputData.clientes;\n\n// Validación final\nif (!adAccounts || !crmClients) {\n  return [{ json: { error: \"Los arrays 'cuentas' o 'clientes' no se encontraron en el item de entrada.\" } }];\n}\n\n// Creamos un Set con los nombres limpios del CRM para una búsqueda súper rápida.\nconst normalizedCrmNames = new Set(\n  crmClients.map(item => {\n    // Ruta para el nombre del cliente del CRM\n    const clientName = item.data.column_values[0].text;\n    return cleanAndNormalize(clientName);\n  })\n);\n\n// Filtramos la lista de cuentas de Facebook\nconst matchedAccounts = adAccounts.filter(adAccount => {\n  // Ruta para el nombre de la cuenta publicitaria\n  const adAccountName = adAccount.data.name;\n  const normalizedAdName = cleanAndNormalize(adAccountName);\n  \n  // Se verifica si el nombre compactado de la cuenta existe en el Set de nombres compactados del CRM.\n  return normalizedCrmNames.has(normalizedAdName);\n});\n\n// Devolvemos solo las cuentas que hicieron match.\n// La estructura de cada item se mantiene intacta.\nreturn matchedAccounts;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        -260
+      ],
+      "id": "e5ebf857-6f34-40a6-87d2-36aec6106bdc",
+      "name": "Cruzar cuentas publicitarias con clientes activos",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "content": "# Cruce de datos de cuentas publicitarias y clietnes activos en crm",
+        "height": 680,
+        "width": 1760
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        300,
+        -540
+      ],
+      "id": "db54f05a-7fa0-4365-b8cc-ddf3761b7d1a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Filtrado de clietnes activos por nicho \"Solar\"",
+        "height": 280,
+        "width": 820,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        140
+      ],
+      "id": "cc43523d-60e1-4dda-ac59-e3dc714ac8a2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Bifurcar datos entre nicho solar y demsas nichos",
+        "height": 340,
+        "width": 400,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        -160
+      ],
+      "id": "49d0679b-f3c7-4ba9-9f53-085d9f4a7c62",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Obtener campañas",
+        "height": 400,
+        "width": 580,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2200,
+        2140
+      ],
+      "id": "fbf51821-236d-454e-85de-9a05322ac6e1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Obtener conjuntos",
+        "height": 460,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1560,
+        1920
+      ],
+      "id": "77cd5329-38f2-4642-8dd6-0463f80e7d65",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Obtener campañas",
+        "height": 620,
+        "width": 900,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1600
+      ],
+      "id": "5570bbc3-50bc-4c59-8816-a9283b917046",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Analisar conjuntos",
+        "height": 240,
+        "width": 740,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1680
+      ],
+      "id": "ff6bf6e0-dc8a-4ba8-bcf1-2707fc3405f7",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Obtener anuncios",
+        "height": 300,
+        "width": 1040,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        1840
+      ],
+      "id": "4c20d12f-6eb6-454a-8824-16523eb3e542",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Analisar anuncios",
+        "height": 300,
+        "width": 780,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        1520
+      ],
+      "id": "92d759af-e812-4076-a004-5949cc955ae5",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "03b3f1c4-5b5d-46c1-afb6-035a6368570d",
+              "name": "next",
+              "value": "={{ $('When Executed by Another Workflow').first().json.paging.next }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1840,
+        2580
+      ],
+      "id": "22547101-7c5f-4a59-ace5-a81b5984364c",
+      "name": "Enviar data para siguiente iteración"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a2a95d9b-9880-4df5-8899-d30e5eb4cfbe",
+              "leftValue": "={{ $json.isEmpty() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -420,
+        1980
+      ],
+      "id": "d67d538d-f11f-42fe-b5c0-4558b325f07c",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Dividir en items separados las cuentas publicitarias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Traer clientes activos de monday",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign data": {
+      "main": [
+        [
+          {
+            "node": "Divide campañs en items separados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get adset data": {
+      "main": [
+        [
+          {
+            "node": "Divide en items separados si hay varios conjuntos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get ad data": {
+      "main": [
+        [
+          {
+            "node": "Divide en items separados si hay varios anuncios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por busines manager": {
+      "main": [
+        [
+          {
+            "node": "Bucle por busines manager start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por campaña": {
+      "main": [
+        [
+          {
+            "node": "Bucle por campañas start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por busines manager start": {
+      "main": [
+        [
+          {
+            "node": "Enviar data para siguiente iteración",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get campaign data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por campañas start": {
+      "main": [
+        [
+          {
+            "node": "Bucle por busines manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Setear time range1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por conjunto": {
+      "main": [
+        [
+          {
+            "node": "Bucle por conjunto start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por anuncio": {
+      "main": [
+        [
+          {
+            "node": "Bucle por anuncio start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por conjunto start": {
+      "main": [
+        [
+          {
+            "node": "Bucle por campaña",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analisis de metrica de conjunto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle por anuncio start": {
+      "main": [
+        [
+          {
+            "node": "Bucle por conjunto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analisis de metricas en anuncio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setear time range1": {
+      "main": [
+        [
+          {
+            "node": "Get daily budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setear time range2": {
+      "main": [
+        [
+          {
+            "node": "get ad data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulacion de envio de mensaje": {
+      "main": [
+        [
+          {
+            "node": "Bucle por conjunto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulacion de envio de mensaje1": {
+      "main": [
+        [
+          {
+            "node": "Bucle por anuncio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis de metricas en anuncio": {
+      "main": [
+        [
+          {
+            "node": "Verificacion de si el anuncio esta saludable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificacion de si el anuncio esta saludable": {
+      "main": [
+        [
+          {
+            "node": "Simulacion de envio de mensaje1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bucle por anuncio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis de metrica de conjunto": {
+      "main": [
+        [
+          {
+            "node": "Verificacion de si conjunto esta saludable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificacion de si conjunto esta saludable": {
+      "main": [
+        [
+          {
+            "node": "Simulacion de envio de mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Setear time range2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Divide en items separados si hay varios anuncios": {
+      "main": [
+        [
+          {
+            "node": "Bucle por anuncio start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Divide en items separados si hay varios conjuntos": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get daily budget": {
+      "main": [
+        [
+          {
+            "node": "get adset data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Divide campañs en items separados": {
+      "main": [
+        [
+          {
+            "node": "Bucle por campañas start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar nicho solar": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Forrzar ejecutar ambas ramas": {
+      "main": [
+        [
+          {
+            "node": "Separar nicho solar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Regex de todos los nombres de nicho \"Solar\"": {
+      "main": [
+        [
+          {
+            "node": "Forrzar ejecutar ambas ramas",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Separar nicho solar1": {
+      "main": [
+        [
+          {
+            "node": "Regex de todos los nombres de nicho \"Solar\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera para completar rama superior": {
+      "main": [
+        [
+          {
+            "node": "Separar nicho solar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer clientes activos de monday": {
+      "main": [
+        [
+          {
+            "node": "Formatear los datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear los datos": {
+      "main": [
+        [
+          {
+            "node": "Dividir en items separados a cada cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dividir en items separados a cada cliente": {
+      "main": [
+        [
+          {
+            "node": "Juntar datos en una lista1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Espera para completar rama superior",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dividir en items separados las cuentas publicitarias": {
+      "main": [
+        [
+          {
+            "node": "Formatear los datos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear los datos1": {
+      "main": [
+        [
+          {
+            "node": "Juntar datos en una lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar datos en una lista": {
+      "main": [
+        [
+          {
+            "node": "Formar que se ejecuten ambas ramas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar datos en una lista1": {
+      "main": [
+        [
+          {
+            "node": "Formar que se ejecuten ambas ramas",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Formar que se ejecuten ambas ramas": {
+      "main": [
+        [
+          {
+            "node": "formatear los datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatear los datos": {
+      "main": [
+        [
+          {
+            "node": "Limitar por posibles duplicados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limitar por posibles duplicados": {
+      "main": [
+        [
+          {
+            "node": "Cruzar cuentas publicitarias con clientes activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cruzar cuentas publicitarias con clientes activos": {
+      "main": [
+        [
+          {
+            "node": "Forrzar ejecutar ambas ramas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Bucle por conjunto start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bucle por campaña",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0c0fbc65-06e5-4561-b07b-34193070124a",
+  "activeVersionId": "0c0fbc65-06e5-4561-b07b-34193070124a",
+  "versionCounter": 14,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "kyiZTRCdzolA5li5",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "0c0fbc65-06e5-4561-b07b-34193070124a",
+    "workflowId": "kyiZTRCdzolA5li5",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "id": "c055762a-8fe7-4141-a639-df2372f30060",
+        "typeVersion": 1.1,
+        "name": "When Executed by Another Workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "position": [
+          140,
+          -160
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/{{ $json.data.id }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "id,name,effective_status,objective,status,daily_budget,lifetime_budget,budget_remaining,start_time,stop_time"
+              },
+              {
+                "name": "level",
+                "value": "campaign"
+              },
+              {
+                "name": "filtering",
+                "value": "[{\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1960,
+          2220
+        ],
+        "id": "2b1cd83f-44b7-4d82-b1e1-1030c04a7f12",
+        "name": "get campaign data",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "okUb9pvZdNdsS317",
+            "name": "Facebook Graph account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/{{ $('Bucle por campañas start').first().json.id }}/insights?fields=adset_id,adset_name,campaign_id,campaign_name,spend,ctr,cpm,cost_per_action_type",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "level",
+                "value": "adset"
+              },
+              {
+                "name": "filtering",
+                "value": "[   {\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]},   {\"field\":\"action_type\",\"operator\":\"IN\",\"value\":[\"lead\",\"offsite_conversion.fb_pixel_lead\",\"onsite_conversion.messaging_conversation_started_7d\"]} ]"
+              },
+              {
+                "name": "time_range",
+                "value": "={\"since\":\"{{ $('Setear time range1').first().json.since }}\",\"until\":\"{{ $('Setear time range1').first().json.until }}\"}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -860,
+          1980
+        ],
+        "id": "6c288831-2168-4c2b-be27-bc3175854a29",
+        "name": "get adset data",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "SiycXDmaeVzr9dFK",
+            "name": "Facebook Graph account back up"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=  https://graph.facebook.com/v23.0/{{ $('Bucle por conjunto start').first().json.adset_id }}/insights?fields=ad_id,ad_name,adset_id,campaign_id,campaign_name,account_name,spend,ctr,cpm,cost_per_action_type\n\n",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "level",
+                "value": "ad"
+              },
+              {
+                "name": "filtering",
+                "value": "[   {\"field\":\"campaign.effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]},   {\"field\":\"action_type\",\"operator\":\"IN\",\"value\":[\"lead\",\"offsite_conversion.fb_pixel_lead\",\"onsite_conversion.messaging_conversation_started_7d\"]} ]"
+              },
+              {
+                "name": "time_range",
+                "value": "={\"since\":\"{{ $json.since }}\",\"until\":\"{{ $json.until }}\"}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1180,
+          1920
+        ],
+        "id": "e95bd781-3cd8-4424-9871-c48a16abd896",
+        "name": "get ad data",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "SiycXDmaeVzr9dFK",
+            "name": "Facebook Graph account back up"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Bucle por busines manager",
+        "typeVersion": 1,
+        "position": [
+          -1300,
+          2240
+        ],
+        "id": "c4cfbec1-2306-410b-9792-d125ed783475"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Bucle por campaña",
+        "typeVersion": 1,
+        "position": [
+          240,
+          2120
+        ],
+        "id": "97df4a4a-523c-4881-a6a3-d6e4f1ee5c5d"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2180,
+          2340
+        ],
+        "id": "3520a22c-0c12-46d7-b68e-977b2912da63",
+        "name": "Bucle por busines manager start"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -1520,
+          2220
+        ],
+        "id": "272ddd8e-5cd7-4d45-97eb-14a55162a66a",
+        "name": "Bucle por campañas start"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Bucle por conjunto",
+        "typeVersion": 1,
+        "position": [
+          1840,
+          1920
+        ],
+        "id": "9d051fb6-ef1c-4f69-88f5-f18156bf50ca"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Bucle por anuncio",
+        "typeVersion": 1,
+        "position": [
+          2640,
+          1980
+        ],
+        "id": "09a95c85-e011-4ac9-a446-26730a092ab2"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          0,
+          1980
+        ],
+        "id": "2cd0c3f2-469e-403c-a1c6-a4fe334c3e97",
+        "name": "Bucle por conjunto start"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1540,
+          1920
+        ],
+        "id": "e4a13309-90fa-4ce8-b896-e58585c5506e",
+        "name": "Bucle por anuncio start"
+      },
+      {
+        "parameters": {
+          "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 3 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1300,
+          1980
+        ],
+        "id": "410cc1be-b5e0-47ad-af6b-331dd070ebba",
+        "name": "Setear time range1"
+      },
+      {
+        "parameters": {
+          "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 3 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1000,
+          1920
+        ],
+        "id": "76bb9918-24ff-4213-a1cb-7e6bc2cc998e",
+        "name": "Setear time range2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "98613008-a503-4e6d-b90a-0b17a245c81f",
+                "name": "Mensaje",
+                "value": "=Estado: {{ $json.estado }}\nRazon: {{ $json.motivo }}\nAnuncio: {{ $json.ad_name }}\nCampaña: {{ $json.campaign_name }}\nCuenta publicitaria: {{ $json.account_name }}\nPresupuesto diario: {{ $json.daily_budget_formatted }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          660,
+          1720
+        ],
+        "id": "bf33f1ea-c1bf-41ab-9854-7835abfd6d22",
+        "name": "Simulacion de envio de mensaje"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "98613008-a503-4e6d-b90a-0b17a245c81f",
+                "name": "Mensaje",
+                "value": "=Estado: {{ $json.estado }}\nRazon: {{ $json.motivo }}\nAnuncio: {{ $json.ad_name }}\nCampaña: {{ $json.campaign_name }}\nCuenta publicitaria: {{ $json.account_name }}\nPresupuesto diario: {{ $json.daily_budget_formatted }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2300,
+          1540
+        ],
+        "id": "c4f5863f-ad83-43c3-99d7-da3241529a8f",
+        "name": "Simulacion de envio de mensaje1"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- CONFIGURACIÓN DE UMBRALES (Negocio Local) ---\nconst UMBRALES = {\n  COSTE_POR_CONVERSACION_MAX: 4.00,\n  COSTE_POR_LEAD_MAX: 6.00,\n  CTR_MIN: 1.5,\n  // CPM_MAX: 50.00 // Umbral de ejemplo si decides usarlo en el futuro\n};\n\n// --- LÓGICA DEL NODO ---\n\n// Obtiene el item de entrada con los datos del anuncio\nconst ad = $input.item.json;\n\n// --- Módulo de Presupuesto Diario ---\nlet daily_budget_formatted = \"N/A\";\ntry {\n  // Obtiene el presupuesto desde el nodo HTTP Request\n  const rawBudget = $('Get daily budget').first().json.daily_budget;\n  if (rawBudget) {\n    // Formatea el número: 1500 -> 15.00\n    daily_budget_formatted = (parseInt(rawBudget) / 100).toFixed(2);\n  }\n} catch (error) {\n  // No hace nada si el nodo o el dato no existen, para evitar que el workflow falle.\n}\nad.daily_budget_formatted = daily_budget_formatted;\n\n\n// Variables para el análisis\nconst motivosParaParar = [];\nlet leadInfo = null;\n\n\n// --- Análisis de Métricas Principales ---\n\n// 1. Análisis de CTR (Click-Through Rate)\nconst ctr = parseFloat(ad.ctr);\nif (ctr < UMBRALES.CTR_MIN) {\n  motivosParaParar.push(`CTR bajo (${ctr.toFixed(2)}%)`);\n}\n\n// 2. Análisis de Costo por Acción (Conversaciones y Leads)\nif (ad.cost_per_action_type && ad.cost_per_action_type.length > 0) {\n  for (const action of ad.cost_per_action_type) {\n    const costValue = parseFloat(action.value);\n\n    // Análisis de Costo por Conversación\n    if (action.action_type === 'onsite_conversion.messaging_conversation_started_7d') {\n      if (costValue > UMBRALES.COSTE_POR_CONVERSACION_MAX) {\n        motivosParaParar.push(`Costo por Conversación alto ($${costValue.toFixed(2)})`);\n      }\n    }\n\n    // --- Módulo de Análisis de Leads (Opcional) ---\n    // Esta sección solo se ejecuta si la API devuelve un \"action_type\" de tipo \"lead\".\n    if (action.action_type === 'lead') {\n      // Se registra la información del lead para seguimiento.\n      leadInfo = {\n        ad_id: ad.ad_id,\n        account_name: ad.account_name,\n        costo_lead: costValue.toFixed(2)\n      };\n      if (costValue > UMBRALES.COSTE_POR_LEAD_MAX) {\n        motivosParaParar.push(`Costo por Lead alto ($${costValue.toFixed(2)})`);\n      }\n    }\n    // --- Fin del Módulo de Leads ---\n  }\n}\n\n\n// --- Decisión Final ---\n\n// Si encontramos algún motivo para parar, cambiamos el estado.\nif (motivosParaParar.length > 0) {\n  ad.estado = 'PARAR ANUNCIO';\n  ad.motivo = motivosParaParar.join(', ');\n} else {\n  ad.estado = 'OK';\n  ad.motivo = 'Rendimiento dentro de los umbrales.';\n}\n\n// Si se encontró un lead, se añade la información al objeto de salida.\nif (leadInfo) {\n  ad.lead_info = leadInfo;\n}\n\n// Devuelve el objeto original del anuncio, pero con los nuevos campos añadidos.\nreturn ad;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1880,
+          1620
+        ],
+        "id": "15574d72-c6fe-4e2c-8fed-968d60cfe1a3",
+        "name": "Analisis de metricas en anuncio"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "88568bb7-6158-4b34-9369-61bb260f843a",
+                "leftValue": "={{ $json.estado }}",
+                "rightValue": "OK",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2080,
+          1640
+        ],
+        "id": "ba0f9520-12bc-440a-96fb-94fc4d430d05",
+        "name": "Verificacion de si el anuncio esta saludable"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- CONFIGURACIÓN DE UMBRALES (Negocio Local) ---\nconst UMBRALES = {\n  COSTE_POR_CONVERSACION_MAX: 4.00,\n  COSTE_POR_LEAD_MAX: 6.00,\n  CTR_MIN: 1.5,\n  // CPM_MAX: 50.00 // Umbral de ejemplo si decides usarlo en el futuro\n};\n\n// --- LÓGICA DEL NODO ---\n\n// Obtiene el item de entrada con los datos del anuncio\nconst ad = $input.item.json;\n\n// --- Módulo de Presupuesto Diario ---\nlet daily_budget_formatted = \"N/A\";\ntry {\n  // Obtiene el presupuesto desde el nodo HTTP Request\n  const rawBudget = $('Get daily budget').first().json.daily_budget;\n  if (rawBudget) {\n    // Formatea el número: 1500 -> 15.00\n    daily_budget_formatted = (parseInt(rawBudget) / 100).toFixed(2);\n  }\n} catch (error) {\n  // No hace nada si el nodo o el dato no existen, para evitar que el workflow falle.\n}\nad.daily_budget_formatted = daily_budget_formatted;\n\n\n// Variables para el análisis\nconst motivosParaParar = [];\nlet leadInfo = null;\n\n\n// --- Análisis de Métricas Principales ---\n\n// 1. Análisis de CTR (Click-Through Rate)\nconst ctr = parseFloat(ad.ctr);\nif (ctr < UMBRALES.CTR_MIN) {\n  motivosParaParar.push(`CTR bajo (${ctr.toFixed(2)}%)`);\n}\n\n// 2. Análisis de Costo por Acción (Conversaciones y Leads)\nif (ad.cost_per_action_type && ad.cost_per_action_type.length > 0) {\n  for (const action of ad.cost_per_action_type) {\n    const costValue = parseFloat(action.value);\n\n    // Análisis de Costo por Conversación\n    if (action.action_type === 'onsite_conversion.messaging_conversation_started_7d') {\n      if (costValue > UMBRALES.COSTE_POR_CONVERSACION_MAX) {\n        motivosParaParar.push(`Costo por Conversación alto ($${costValue.toFixed(2)})`);\n      }\n    }\n\n    // --- Módulo de Análisis de Leads (Opcional) ---\n    // Esta sección solo se ejecuta si la API devuelve un \"action_type\" de tipo \"lead\".\n    if (action.action_type === 'lead') {\n      // Se registra la información del lead para seguimiento.\n      leadInfo = {\n        ad_id: ad.ad_id,\n        account_name: ad.account_name,\n        costo_lead: costValue.toFixed(2)\n      };\n      if (costValue > UMBRALES.COSTE_POR_LEAD_MAX) {\n        motivosParaParar.push(`Costo por Lead alto ($${costValue.toFixed(2)})`);\n      }\n    }\n    // --- Fin del Módulo de Leads ---\n  }\n}\n\n\n// --- Decisión Final ---\n\n// Si encontramos algún motivo para parar, cambiamos el estado.\nif (motivosParaParar.length > 0) {\n  ad.estado = 'PARAR ANUNCIO';\n  ad.motivo = motivosParaParar.join(', ');\n} else {\n  ad.estado = 'OK';\n  ad.motivo = 'Rendimiento dentro de los umbrales.';\n}\n\n// Si se encontró un lead, se añade la información al objeto de salida.\nif (leadInfo) {\n  ad.lead_info = leadInfo;\n}\n\n// Devuelve el objeto original del anuncio, pero con los nuevos campos añadidos.\nreturn ad;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          1760
+        ],
+        "id": "0f0495ac-c7b0-49dd-915d-0147f12fe713",
+        "name": "Analisis de metrica de conjunto"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "88568bb7-6158-4b34-9369-61bb260f843a",
+                "leftValue": "={{ $json.estado }}",
+                "rightValue": "OK",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          440,
+          1760
+        ],
+        "id": "347f4d26-04aa-44c0-a7c0-3298b954c01b",
+        "name": "Verificacion de si conjunto esta saludable"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          1920
+        ],
+        "id": "1f43b381-b00d-4f7e-90ee-421f33df915c",
+        "name": "Divide en items separados si hay varios anuncios",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          -640,
+          1980
+        ],
+        "id": "de7c82ef-dcd7-4f8c-b05e-c9df7eeb3f92",
+        "name": "Divide en items separados si hay varios conjuntos",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/{{ $('Bucle por campañas start').first().json.id }}?fields=daily_budget",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1080,
+          1980
+        ],
+        "id": "05cfad2e-64bb-4226-b135-fec8034d670f",
+        "name": "Get daily budget",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "SiycXDmaeVzr9dFK",
+            "name": "Facebook Graph account back up"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          -1740,
+          2220
+        ],
+        "id": "8c9de6a5-be4b-42ca-9642-a1e82fb2944c",
+        "name": "Divide campañs en items separados"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5376a51f-24f4-4aa5-ad01-3979593ff70a",
+                "leftValue": "={{ $json.data.name }}",
+                "rightValue": "={{ $json.searchPattern }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2400,
+          -40
+        ],
+        "id": "5e9e03e6-3a69-4c82-bff5-485558c65165",
+        "name": "Separar nicho solar"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combineBy": "combineAll",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          2200,
+          -40
+        ],
+        "id": "4170e771-4ea2-4f62-8007-5f82e3472209",
+        "name": "Forrzar ejecutar ambas ramas"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtiene todos los items que llegan al nodo\nconst items = $items();\n\n// Extrae el texto de la columna 'text8' de cada item\nconst solarKeywords = items.map(item => {\n  // CAMBIO CLAVE: Se accede a item.json.data en lugar de item.json\n  const columnValues = item.json.data.column_values;\n  \n  // Encuentra el objeto correcto en el array de column_values\n  const text8Column = columnValues.find(col => col.id === 'text8');\n  \n  // Si se encuentra la columna y no está vacía, la devuelve\n  return text8Column && text8Column.text ? text8Column.text : '';\n}).filter(keyword => keyword !== ''); // Filtra cualquier resultado vacío\n\n// Crea un patrón Regex para buscar cualquiera de las palabras clave, ignorando mayúsculas/minúsculas\n// Ejemplo: (Palabra1|Palabra2|Otra Palabra)\nconst regexPattern = `(${solarKeywords.join('|')})`;\n\n// Devuelve un solo item con el patrón de búsqueda listo para usar\nreturn [{\n  json: {\n    searchPattern: regexPattern\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1820,
+          220
+        ],
+        "id": "af29a8f3-d511-4f00-8433-a0bb0e83cf9a",
+        "name": "Regex de todos los nombres de nicho \"Solar\""
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "12ae3947-2db0-4daa-88a9-0e326a7043d6",
+                "leftValue": "={{ $json.data.column_values[1].text }}",
+                "rightValue": "Solar",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1580,
+          240
+        ],
+        "id": "e0aabe66-8b07-4557-a7c0-13581e0ad0e5",
+        "name": "Separar nicho solar1"
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1380,
+          220
+        ],
+        "id": "15458c6a-12c3-4903-be13-2bdd91ad0445",
+        "name": "Espera para completar rama superior",
+        "webhookId": "a0b6a312-bf91-461e-8593-e65c4033a6fc"
+      },
+      {
+        "parameters": {
+          "endpoint": "https://api.monday.com/v2",
+          "query": "=query {\n  boards(ids: [7784685790]) {\n    groups(ids: [\"grupo_nuevo__1\"]) {\n      items_page(limit: 500) {\n        cursor\n        items {\n          id\n          name\n          # Pide los valores de ambas columnas\n          column_values(ids: [\"estado__1\", \"text8\"]) {\n            id\n            text\n          }\n        }\n      }\n    }\n  }\n}",
+          "headerParametersUi": {
+            "parameter": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjUzNjkxMzEzOSwiYWFpIjoxMSwidWlkIjo3ODE1Mjg0NSwiaWFkIjoiMjAyNS0wNy0wOVQxMzozODowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNDA0MzcsInJnbiI6InVzZTEifQ.mD9mbJTobN482O03lso5rXbk8nYBs76Q9dWWHjRx9yU"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.graphql",
+        "typeVersion": 1.1,
+        "position": [
+          360,
+          -60
+        ],
+        "id": "e44cc0bc-5db4-41ed-a033-558f9c03d9a2",
+        "name": "Traer clientes activos de monday",
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "acd75b99-8185-47ea-ab1b-ee6266ee78d5",
+                "name": "data",
+                "value": "={{ $json.data.boards[0].groups[0].items_page.items }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          580,
+          -60
+        ],
+        "id": "62cd8493-9ac0-4e07-896d-897d7c0ca3b3",
+        "name": "Formatear los datos"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          800,
+          -60
+        ],
+        "id": "4154e7dc-c444-4177-9454-c77782ee679e",
+        "name": "Dividir en items separados a cada cliente"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "include": "allOtherFields",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          580,
+          -380
+        ],
+        "id": "1e1279dc-3963-455d-b801-ff5bf9349f0c",
+        "name": "Dividir en items separados las cuentas publicitarias"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "941b50da-83dc-4685-8de3-797370ce014f",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "object"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          800,
+          -380
+        ],
+        "id": "b9dd4ae0-5187-42a8-b0b2-552156119968",
+        "name": "Formatear los datos1"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "cuentas_publicitarias",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          -380
+        ],
+        "id": "161eb8d0-06c8-4b7c-89a4-ae7a4f598606",
+        "name": "Juntar datos en una lista"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "clietnes_activos",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          -180
+        ],
+        "id": "ff900c7a-9b54-4df6-b5a9-25237d146dd7",
+        "name": "Juntar datos en una lista1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1240,
+          -260
+        ],
+        "id": "6660e300-d085-4b42-8f2a-3a81a695a11f",
+        "name": "Formar que se ejecuten ambas ramas"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "36425865-85b3-40ea-8aac-44370b365de5",
+                "name": "cuentas",
+                "value": "={{ $('Juntar datos en una lista').first().json.cuentas_publicitarias }}",
+                "type": "array"
+              },
+              {
+                "id": "973fab59-50f4-4783-8592-452ebee01327",
+                "name": "clientes",
+                "value": "={{ $('Juntar datos en una lista1').first().json.clietnes_activos }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1460,
+          -260
+        ],
+        "id": "7a268364-4f0d-4d24-966f-16aa7f440bbc",
+        "name": "formatear los datos",
+        "executeOnce": true
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          -260
+        ],
+        "id": "9ad1a7ca-8717-48e9-b63b-18b69913e4fb",
+        "name": "Limitar por posibles duplicados"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- LISTA DE PALABRAS A IGNORAR ---\n// Esta lista se usa para eliminar palabras comunes antes de la comparación.\nconst stopWords = [\n  'ads', 'ad', 'ADS', '(ADS)'\n  // Puedes añadir más palabras aquí si es necesario\n  // 'solar', 'llc', 'inc', 'corp', 'by', 'pr', 'de', 'la', 'los'\n];\n\n// --- LÓGICA DEL NODO ---\n\n// Función para \"limpiar\" y \"normalizar\" un nombre de forma agresiva\nfunction cleanAndNormalize(name) {\n  if (!name) return '';\n\n  let normalized = name.toLowerCase();\n\n  // 1. Eliminar las \"stop words\" como palabras completas.\n  // Esto evita que \"solar\" en \"solaris\" sea eliminado.\n  stopWords.forEach(word => {\n    // Se crea un RegExp para cada palabra para asegurar que se reemplace como palabra completa\n    const regex = new RegExp(`\\\\b${word}\\\\b`, 'g');\n    normalized = normalized.replace(regex, '');\n  });\n\n  // 2. Eliminar TODOS los caracteres que no sean letras o números.\n  // Esto incluye espacios, puntos, guiones, etc., para compactar el nombre.\n  // Ejemplo: \"doctor ramirez\" -> \"doctorramirez\"\n  return normalized.replace(/[^\\w]/gi, '');\n}\n\n// El nodo recibe un único item con los dos arrays.\nconst inputData = $input.first().json;\n\n// Se accede a los arrays usando las claves del JSON de entrada.\nconst adAccounts = inputData.cuentas;\nconst crmClients = inputData.clientes;\n\n// Validación final\nif (!adAccounts || !crmClients) {\n  return [{ json: { error: \"Los arrays 'cuentas' o 'clientes' no se encontraron en el item de entrada.\" } }];\n}\n\n// Creamos un Set con los nombres limpios del CRM para una búsqueda súper rápida.\nconst normalizedCrmNames = new Set(\n  crmClients.map(item => {\n    // Ruta para el nombre del cliente del CRM\n    const clientName = item.data.column_values[0].text;\n    return cleanAndNormalize(clientName);\n  })\n);\n\n// Filtramos la lista de cuentas de Facebook\nconst matchedAccounts = adAccounts.filter(adAccount => {\n  // Ruta para el nombre de la cuenta publicitaria\n  const adAccountName = adAccount.data.name;\n  const normalizedAdName = cleanAndNormalize(adAccountName);\n  \n  // Se verifica si el nombre compactado de la cuenta existe en el Set de nombres compactados del CRM.\n  return normalizedCrmNames.has(normalizedAdName);\n});\n\n// Devolvemos solo las cuentas que hicieron match.\n// La estructura de cada item se mantiene intacta.\nreturn matchedAccounts;\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1900,
+          -260
+        ],
+        "id": "e5ebf857-6f34-40a6-87d2-36aec6106bdc",
+        "name": "Cruzar cuentas publicitarias con clientes activos",
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "content": "# Cruce de datos de cuentas publicitarias y clietnes activos en crm",
+          "height": 680,
+          "width": 1760
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          300,
+          -540
+        ],
+        "id": "db54f05a-7fa0-4365-b8cc-ddf3761b7d1a",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "# Filtrado de clietnes activos por nicho \"Solar\"",
+          "height": 280,
+          "width": 820,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1240,
+          140
+        ],
+        "id": "cc43523d-60e1-4dda-ac59-e3dc714ac8a2",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Bifurcar datos entre nicho solar y demsas nichos",
+          "height": 340,
+          "width": 400,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2140,
+          -160
+        ],
+        "id": "49d0679b-f3c7-4ba9-9f53-085d9f4a7c62",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "## Obtener campañas",
+          "height": 400,
+          "width": 580,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -2200,
+          2140
+        ],
+        "id": "fbf51821-236d-454e-85de-9a05322ac6e1",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "content": "## Obtener conjuntos",
+          "height": 460,
+          "width": 1060,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1560,
+          1920
+        ],
+        "id": "77cd5329-38f2-4642-8dd6-0463f80e7d65",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "## Obtener campañas",
+          "height": 620,
+          "width": 900,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -240,
+          1600
+        ],
+        "id": "5570bbc3-50bc-4c59-8816-a9283b917046",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "content": "## Analisar conjuntos",
+          "height": 240,
+          "width": 740,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          1680
+        ],
+        "id": "ff6bf6e0-dc8a-4ba8-bcf1-2707fc3405f7",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "content": "## Obtener anuncios",
+          "height": 300,
+          "width": 1040,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          740,
+          1840
+        ],
+        "id": "4c20d12f-6eb6-454a-8824-16523eb3e542",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "content": "## Analisar anuncios",
+          "height": 300,
+          "width": 780,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1580,
+          1520
+        ],
+        "id": "92d759af-e812-4076-a004-5949cc955ae5",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "03b3f1c4-5b5d-46c1-afb6-035a6368570d",
+                "name": "next",
+                "value": "={{ $('When Executed by Another Workflow').first().json.paging.next }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -1840,
+          2580
+        ],
+        "id": "22547101-7c5f-4a59-ace5-a81b5984364c",
+        "name": "Enviar data para siguiente iteración"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "a2a95d9b-9880-4df5-8899-d30e5eb4cfbe",
+                "leftValue": "={{ $json.isEmpty() }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "false",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -420,
+          1980
+        ],
+        "id": "d67d538d-f11f-42fe-b5c0-4558b325f07c",
+        "name": "If"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Dividir en items separados las cuentas publicitarias",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Traer clientes activos de monday",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get campaign data": {
+        "main": [
+          [
+            {
+              "node": "Divide campañs en items separados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get adset data": {
+        "main": [
+          [
+            {
+              "node": "Divide en items separados si hay varios conjuntos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get ad data": {
+        "main": [
+          [
+            {
+              "node": "Divide en items separados si hay varios anuncios",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por busines manager": {
+        "main": [
+          [
+            {
+              "node": "Bucle por busines manager start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por campaña": {
+        "main": [
+          [
+            {
+              "node": "Bucle por campañas start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por busines manager start": {
+        "main": [
+          [
+            {
+              "node": "Enviar data para siguiente iteración",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "get campaign data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por campañas start": {
+        "main": [
+          [
+            {
+              "node": "Bucle por busines manager",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Setear time range1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por conjunto": {
+        "main": [
+          [
+            {
+              "node": "Bucle por conjunto start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por anuncio": {
+        "main": [
+          [
+            {
+              "node": "Bucle por anuncio start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por conjunto start": {
+        "main": [
+          [
+            {
+              "node": "Bucle por campaña",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Analisis de metrica de conjunto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle por anuncio start": {
+        "main": [
+          [
+            {
+              "node": "Bucle por conjunto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Analisis de metricas en anuncio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Setear time range1": {
+        "main": [
+          [
+            {
+              "node": "Get daily budget",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Setear time range2": {
+        "main": [
+          [
+            {
+              "node": "get ad data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simulacion de envio de mensaje": {
+        "main": [
+          [
+            {
+              "node": "Bucle por conjunto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simulacion de envio de mensaje1": {
+        "main": [
+          [
+            {
+              "node": "Bucle por anuncio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analisis de metricas en anuncio": {
+        "main": [
+          [
+            {
+              "node": "Verificacion de si el anuncio esta saludable",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificacion de si el anuncio esta saludable": {
+        "main": [
+          [
+            {
+              "node": "Simulacion de envio de mensaje1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Bucle por anuncio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analisis de metrica de conjunto": {
+        "main": [
+          [
+            {
+              "node": "Verificacion de si conjunto esta saludable",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificacion de si conjunto esta saludable": {
+        "main": [
+          [
+            {
+              "node": "Simulacion de envio de mensaje",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Setear time range2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Divide en items separados si hay varios anuncios": {
+        "main": [
+          [
+            {
+              "node": "Bucle por anuncio start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Divide en items separados si hay varios conjuntos": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get daily budget": {
+        "main": [
+          [
+            {
+              "node": "get adset data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Divide campañs en items separados": {
+        "main": [
+          [
+            {
+              "node": "Bucle por campañas start",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separar nicho solar": {
+        "main": [
+          [],
+          []
+        ]
+      },
+      "Forrzar ejecutar ambas ramas": {
+        "main": [
+          [
+            {
+              "node": "Separar nicho solar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Regex de todos los nombres de nicho \"Solar\"": {
+        "main": [
+          [
+            {
+              "node": "Forrzar ejecutar ambas ramas",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Separar nicho solar1": {
+        "main": [
+          [
+            {
+              "node": "Regex de todos los nombres de nicho \"Solar\"",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Espera para completar rama superior": {
+        "main": [
+          [
+            {
+              "node": "Separar nicho solar1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Traer clientes activos de monday": {
+        "main": [
+          [
+            {
+              "node": "Formatear los datos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear los datos": {
+        "main": [
+          [
+            {
+              "node": "Dividir en items separados a cada cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dividir en items separados a cada cliente": {
+        "main": [
+          [
+            {
+              "node": "Juntar datos en una lista1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Espera para completar rama superior",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dividir en items separados las cuentas publicitarias": {
+        "main": [
+          [
+            {
+              "node": "Formatear los datos1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear los datos1": {
+        "main": [
+          [
+            {
+              "node": "Juntar datos en una lista",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Juntar datos en una lista": {
+        "main": [
+          [
+            {
+              "node": "Formar que se ejecuten ambas ramas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Juntar datos en una lista1": {
+        "main": [
+          [
+            {
+              "node": "Formar que se ejecuten ambas ramas",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Formar que se ejecuten ambas ramas": {
+        "main": [
+          [
+            {
+              "node": "formatear los datos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "formatear los datos": {
+        "main": [
+          [
+            {
+              "node": "Limitar por posibles duplicados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limitar por posibles duplicados": {
+        "main": [
+          [
+            {
+              "node": "Cruzar cuentas publicitarias con clientes activos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cruzar cuentas publicitarias con clientes activos": {
+        "main": [
+          [
+            {
+              "node": "Forrzar ejecutar ambas ramas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Bucle por conjunto start",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Bucle por campaña",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-07-14T08:36:08.000Z",
+        "id": 21,
+        "workflowId": "kyiZTRCdzolA5li5",
+        "versionId": "0c0fbc65-06e5-4561-b07b-34193070124a",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,4455 @@
+{
+  "updatedAt": "2026-05-27T19:04:10.720Z",
+  "createdAt": "2025-08-24T19:15:30.941Z",
+  "id": "KWSsCZWE3CLmT7Dj",
+  "name": "C-) Tools agente principal v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "correo",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        48
+      ],
+      "id": "69ec9d98-e282-4b73-b54f-e6d3b1f4cd5e",
+      "name": "field_for_mail_direction"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93482c9f-7bcb-4bf8-9d17-809d198b79f0",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "0db55b72-3bee-41d4-ba12-89dc53765699",
+              "leftValue": "={{ $json.fecha.toDateTime() }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        48
+      ],
+      "id": "89722cac-485b-46a4-94a5-105b934c409b",
+      "name": "exist?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=🔎 Tu correo no se encuentra en nuestra base de datos. Favor verifica con un tu agente al siguiente chat\n\nhttps://wa.link/owlgwj",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        144
+      ],
+      "id": "f3fcdacd-44ed-4045-8b8e-bb2f90b72aa9",
+      "name": "no_record"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=Su cita ha sido preparada para su reagenda, le pedimos ingrese al siguiente link para escoja el horario deseado o si encuentra uno mejor para usted. Uno de nuestros administradores ya ha sido comunicado de su reagenda en caso de que ud no pueda realizarla.\n\nhttps://calendly.com/jessica-levelupmediapr/onboarding",
+              "type": "string"
+            },
+            {
+              "id": "fd16c25d-1b4d-44ff-a369-1f3928c7241f",
+              "name": "mensaje",
+              "value": "=El cliente {{ $('Get many rows1').first().json.nombre }} quiere reagendar para {{ $('reagendar').item.json.body['fecha-deseada'] }}. Favor reagendar en https://calendly.com/jessica-levelupmediapr/onboarding",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        -176
+      ],
+      "id": "4a733294-0378-44fa-873b-d6f6c9b3f391",
+      "name": "agendado_client"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "eventId": "={{ $('Sort').first().json['event-id'] }}",
+        "updateFields": {
+          "start": "="
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        928,
+        -48
+      ],
+      "id": "97b24b51-f634-4062-b0b0-dabe3bab8fcd",
+      "name": "get_events_by_mail",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reagendar-cita",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        48
+      ],
+      "id": "0c0e02c5-c0a0-404b-803f-9556ec3bfd0f",
+      "name": "reagendar",
+      "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cancelar-cita",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -416
+      ],
+      "id": "d08c07ec-743c-4f03-bd4a-b37e4bd89619",
+      "name": "cancelar",
+      "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "disponibilidad",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        368
+      ],
+      "id": "e3e3fe88-6187-489c-9334-25090c52de98",
+      "name": "buscar-disponibilidad",
+      "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "13a81043-f15a-40cd-96b0-62743949c879",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        144
+      ],
+      "id": "ad304481-2a2a-4e0d-9bb0-682ec2f153b2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "fecha-formateada",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -48
+      ],
+      "id": "2f148960-8023-476c-a53a-e50b40cdfa1f",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "url": "https://api.calendly.com/scheduled_events",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "organization",
+              "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+            },
+            {
+              "name": "invitee_email",
+              "value": "={{ $json.attendees[0].email }}"
+            },
+            {
+              "name": "status",
+              "value": "active"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -48
+      ],
+      "id": "7b93a797-6a88-4e32-8a6c-6b460d316074",
+      "name": "HTTP Request1",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f6892dc-f0e7-4fec-89d6-70159f42e96d",
+              "leftValue": "={{ $('HTTP Request1').item.json.collection[0].name }}",
+              "rightValue": "Onboarding",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1552,
+        -48
+      ],
+      "id": "71892ed9-fc6f-4407-88c9-63c432ce8b37",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=Su cita ha sido preparada para su reagenda, le pedimos ingrese al siguiente link para escoja el horario deseado o si encuentra uno mejor para usted.\n\nUno de nuestros administradores ya ha sido comunicado de su reagenda en caso de que ud no pueda realizarla.\n\nhttps://calendly.com/carilin-levelupmediapr/onboarding",
+              "type": "string"
+            },
+            {
+              "id": "6754d896-4d48-4069-a470-7aa04530eb2a",
+              "name": "mensaje",
+              "value": "=El cliente {{ $('Get many rows1').first().json.nombre }} quiere reagendar para {{ $('reagendar').item.json.body.fecha-deseada }}.   Favor reagendar en https://calendly.com/jessica-levelupmediapr/onboarding",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        16
+      ],
+      "id": "9bb6ccc2-8fc3-4824-a3fa-c94c1a22382c",
+      "name": "agendado_client1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "correo",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        -416
+      ],
+      "id": "8a8662a2-76e1-40ee-bcec-5d90d85c33af",
+      "name": "field_for_mail_direction1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93482c9f-7bcb-4bf8-9d17-809d198b79f0",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "0db55b72-3bee-41d4-ba12-89dc53765699",
+              "leftValue": "={{ $json.fecha.toDateTime() }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -416
+      ],
+      "id": "5d14c5a1-7e22-4996-883b-0d154a9ed221",
+      "name": "exist?1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=🔎 Tu correo no se encuentra en nuestra base de datos o la fecha de tu cita ya ha ocurrido. Favor verifica con un tu agente al siguiente chat\n\nhttps://wa.link/owlgwj",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        -336
+      ],
+      "id": "be6ba72a-5912-41e5-8d70-b2e5dd7d3632",
+      "name": "no_record1",
+      "alwaysOutputData": false,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=Su cita ha sido cancelada tu cita, si estas buscando reagendar en el siguiente link puedes ver la disponibilidad de horarios.\nUno de nuestros administradores estará comunicandose con usted a la brevedad.\n\nhttps://calendly.com/jessica-levelupmediapr/onboarding",
+              "type": "string"
+            },
+            {
+              "id": "3e6caa35-d566-4b60-b8c2-e0ae6644e70d",
+              "name": "mensaje",
+              "value": "=El cliente {{ $('Get many rows').first().json.nombre }} ha cancelado su cita de onboarding del {{ $('Sort1').first().json.fecha.toDateTime().format('yyyy-MM-dd HH:mm')}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        -640
+      ],
+      "id": "af09933a-6b9f-42cc-9930-bb3b675e7ec2",
+      "name": "agendado_client2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "eventId": "={{ $('Sort1').first().json['event-id'] }}",
+        "updateFields": {
+          "start": "="
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        896,
+        -512
+      ],
+      "id": "22a218fe-3e62-4fd6-9052-6719e1e40142",
+      "name": "get_events_by_mail1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "13a81043-f15a-40cd-96b0-62743949c879",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -288
+      ],
+      "id": "028a0073-a105-44c8-bf3f-74bb10c46257",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "fecha-formateada",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -512
+      ],
+      "id": "f07a9a7c-6121-4ba5-9e82-b18c599d27cc",
+      "name": "Sort1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.calendly.com/scheduled_events",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "organization",
+              "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+            },
+            {
+              "name": "invitee_email",
+              "value": "={{ $json.attendees[0].email }}"
+            },
+            {
+              "name": "status",
+              "value": "active"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        -512
+      ],
+      "id": "404576a9-8224-4886-808a-8d1d4235f9e8",
+      "name": "HTTP Request3",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f6892dc-f0e7-4fec-89d6-70159f42e96d",
+              "leftValue": "={{ $('HTTP Request3').item.json.collection[0].name }}",
+              "rightValue": "Onboarding",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        -512
+      ],
+      "id": "f69dc543-cb5d-4ea7-86ce-660c8022424d",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=Su cita ha sido cancelada tu cita, si estas buscando reagendar en el siguiente link puedes ver la disponibilidad de horarios.\nUno de nuestros administradores estará comunicandose con usted a la brevedad.\n\nhttps://calendly.com/carilin-levelupmediapr/onboarding",
+              "type": "string"
+            },
+            {
+              "id": "d491af2f-da11-40d8-a073-8fe70b49c1c5",
+              "name": "mensaje",
+              "value": "=El cliente {{ $('Get many rows').first().json.nombre }} ha cancelado su cita de onboarding del {{ $('Sort1').first().json.fecha.toDateTime().format('yyyy-MM-dd HH:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        -448
+      ],
+      "id": "c661168b-791e-4058-828f-2c0a1bcfbea5",
+      "name": "agendado_client3"
+    },
+    {
+      "parameters": {
+        "url": "https://api.calendly.com/event_types",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "organization",
+              "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        368
+      ],
+      "id": "f1b65bd7-48dc-410a-92ee-a8672a135115",
+      "name": "HTTP Request4",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "fecha-formateada",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        208,
+        368
+      ],
+      "id": "068ed14b-3769-4478-bc0a-88feef686a5c",
+      "name": "Sort2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        416,
+        368
+      ],
+      "id": "6a49c14e-0d5a-46c4-be45-007c612fad50",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "collection",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        816,
+        368
+      ],
+      "id": "75380ba8-0411-49e2-98de-2fb6ff1b85e6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a77bf42-3037-4e0e-8ac3-2028b92d1c6a",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "={{ $('Limit').item.json.evento }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        368
+      ],
+      "id": "89081820-2ab2-413d-b9e5-4985df00973b",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.calendly.com/event_type_available_times",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "end_time",
+              "value": "={{ $('buscar-disponibilidad').first().json.body.end_time.toDateTime().setZone('UTC') }}"
+            },
+            {
+              "name": "event_type",
+              "value": "={{ $json.uri }}"
+            },
+            {
+              "name": "start_time",
+              "value": "={{ $('buscar-disponibilidad').first().json.body.start_time.toDateTime().setZone('UTC') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1232,
+        368
+      ],
+      "id": "84d135b6-4855-4985-b492-08aec9a502ef",
+      "name": "HTTP Request5",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// El JSON de entrada viene del nodo anterior usando la expresión correcta de n8n\nconst allSlots = $input.first().json.collection;\n\n// Obtiene la fecha y hora actual de forma robusta\nconst now = new Date();\n\n// 1. Calcular el inicio del día de mañana en UTC para una comparación precisa\nconst tomorrowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));\n\n// Verificamos que allSlots sea un array válido\nif (!allSlots || !Array.isArray(allSlots)) {\n  return [{ json: { error: \"La estructura del JSON de entrada no es la esperada o la colección está vacía.\" } }];\n}\n\n// 2. Filtrar los slots para que sean a partir de mañana (comparando en UTC)\nconst futureSlots = allSlots.filter(slot => {\n  const slotDate = new Date(slot.start_time);\n  return slotDate >= tomorrowUTC;\n});\n\n// 3. Ordenar y tomar los 3 más próximos\nconst closestThreeSlots = futureSlots\n  .sort((a, b) => new Date(a.start_time) - new Date(b.start_time))\n  .slice(0, 3);\n\n// 4. Formatear las fechas a la zona horaria de Puerto Rico\nconst formatter = new Intl.DateTimeFormat('es-PR', {\n  timeZone: 'America/Puerto_Rico',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric',\n  hour: 'numeric',\n  minute: 'numeric',\n  hour12: true,\n});\n\nconst formattedSlots = closestThreeSlots.map(slot => {\n  const slotDate = new Date(slot.start_time);\n  return formatter.format(slotDate);\n});\n\n// Devolver el resultado final\nreturn [{\n  json: {\n    slotsDisponibles: formattedSlots\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        368
+      ],
+      "id": "06e86bb9-7e18-41a3-a9e6-82b20c4a7615",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alerta-asesor",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -896
+      ],
+      "id": "8d731e92-679c-4a04-836d-ef8ee216bf06",
+      "name": "alertar asesor",
+      "webhookId": "08770871-3965-4a60-b83f-0683242943b0"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(email,eq,{{ $json.correo }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        240,
+        -416
+      ],
+      "id": "cb7146be-7bbd-4172-a558-e4151a5dc7e9",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.calendly.com/scheduled_events/{{ $json.collection[0].uri.split('/').last() }}/cancellation",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1312,
+        -512
+      ],
+      "id": "087a0ad5-881e-4d09-9cb3-02f5e05be9f9",
+      "name": "cancelar-evento",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(email,eq,{{ $json.correo }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        192,
+        48
+      ],
+      "id": "2ac12158-1098-4cd8-a199-25667ecddccd",
+      "name": "Get many rows1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Razon: {{ $('alertar asesor').item.json.body.razon }}\nNombre del cliente: {{ $json.body.nombre }}\nTelefono del usuario: +{{ $json.body.telefono }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#Rol\nEres un subagente que apoya a al agente principal en la clasificación de los errores que se presentan al flujo\n\n#Función\n- Clasificar los erroes en\n  - Tecnicos: cuando son errores del flujo, debe estar especificado en el mensaje que el agente principal te envia\n  - No tecnicos: cuando son dudas, dificultades para conectar cuentas de instagram o de facebook o para entrar a llamadas o problemas netamente con el cliente o el servicio que no tienen nada que ver con problemas tecnicos del sistema.\n\n# Output\n{\n\"tecnico\": true | false\n\"no_tecnico\": true | false\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\"\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}\n\n- Debes utilizar las claves segun los errores especificados\n  Si en el mensaje hay un error con el cliente y un error tecnico, debes enviar las claves correspondientes con los mensajes correspondientes\n\n# Reglas\n\n- **NUNCA** incluir datos tecnicos en los mensajes de error no tecnico\n-  Si hay enlaces estos deben estar en el output, son importante en caso de estar presentes"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        304,
+        -896
+      ],
+      "id": "428d11da-32e0-40e1-9fa3-8d201637c4e1",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        -688
+      ],
+      "id": "b7d1aacc-5e9e-41da-8b7a-cedd97f030f7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\"tecnico\": \"true | false\",\n\"no_tecnico\": \"true | false\",\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\",\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        -672
+      ],
+      "id": "79b16741-1593-4321-860a-0c2d9344a1df",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.tecnico }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "772321b5-d6d4-4b23-a0f9-1619bd9c9f86"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tecnico"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "761faa0c-d519-445d-9908-d6ee6d096667",
+                    "leftValue": "={{ $json.output.no_tecnico }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "no_tecnico"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        656,
+        -896
+      ],
+      "id": "17c4c7c6-c1c1-47ad-a8cd-879a47452dd5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.calendly.com/scheduled_events/{{ $json.collection[0].uri.split('/').last() }}/cancellation",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -48
+      ],
+      "id": "864805d6-94fb-4789-86ca-4c13726322c8",
+      "name": "cancela-evento",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "messageType": "block",
+        "blocksUi": "={\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🔴 Nueva solicitud de reagendamiento 🔴\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08SN35L2UX>\\n\\n*Mensaje:{{$json.mensaje}}*\\n\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    }\n  ]\n}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2096,
+        -80
+      ],
+      "id": "e947d165-cf73-4a18-8b92-775b7dba5bed",
+      "name": "Send a message2",
+      "webhookId": "1d666f6d-34e1-4040-9cc3-560ca9b61848",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U096Y3TRT5E",
+          "mode": "list",
+          "cachedResultName": "agenteia"
+        },
+        "text": "={{ $json.output.mensaje_por_error_tecnico }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        -1056
+      ],
+      "id": "c6125c40-12b3-4256-92ac-fbe015a4e873",
+      "name": "error-tecnico",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "text": "={{ $json.output.mensaje }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        -864
+      ],
+      "id": "66458cfb-82af-4dfb-b637-f2c81961cd48",
+      "name": "duda-del-cliente",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "text": "={{ $json.mensaje }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2032,
+        -560
+      ],
+      "id": "4e84d3fd-a940-4f6b-acab-dd07f7304aef",
+      "name": "Send a message",
+      "webhookId": "1d666f6d-34e1-4040-9cc3-560ca9b61848",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "piehks983q2cfu6",
+        "table": "mc5m2od7vy71g6z",
+        "returnAll": true,
+        "options": {
+          "where": "=(email,eq,{{ $json.body.email }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        16,
+        368
+      ],
+      "id": "03ae6c8c-02f1-498f-81e5-828230fa29e1",
+      "name": "Get many rows3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.calendly.com/invitees",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"{{ $('HTTP Request1').item.json.collection[0].event_type }}\",\n  \"start_time\": \"2026-04-29T15:00:00-04:00\",\n  \"invitee\": {\n    \"name\": \"{{ $('Get many rows1').item.json.nombre }}\",\n    \"email\": \"{{ $('Get many rows1').item.json.email }}\",\n    \"timezone\": \"America/Puerto_Rico\",\n    \"text_reminder_number\": \"+{{ $('Get many rows1').item.json.telefono }}\"\n  },\n  \"location\": {\n    \"kind\": \"physical\",\n    \"location\": \"Medellin\"\n  },\n  \"questions_and_answers\": [\n    {\n      \"question\": \"string\",\n      \"answer\": \"string\",\n      \"position\": 0\n    }\n  ],\n  \"tracking\": {\n    \"utm_campaign\": \"string\",\n    \"utm_source\": \"string\",\n    \"utm_medium\": \"string\",\n    \"utm_content\": \"string\",\n    \"utm_term\": \"string\",\n    \"salesforce_uuid\": \"string\"\n  },\n  \"event_guests\": [\n    \"{{ $('Get many rows1').item.json.email }}\"\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2144,
+        320
+      ],
+      "id": "ee60054f-2a12-4815-80ec-4c7b0306d331",
+      "name": "agendar_cita_demo",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "api de agendar cita:\nhttps://developer.calendly.com/api-docs/p3ghrxrwbl8kqe-create-event-invitee-scheduling-api",
+        "height": 256,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        224
+      ],
+      "id": "13fba6a7-7dfe-42ae-8b99-7e5e1c7bc3ba",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "messageType": "block",
+        "blocksUi": "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08SN35L2UX>\"\n      }\n    }\n  ]\n}",
+        "text": "={{ $json.output.mensaje }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1152,
+        -864
+      ],
+      "id": "422d2763-ed48-40fc-8a20-6b8a0777b79b",
+      "name": "etiquetando_jessica",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Razon: {{ $('alertar-asesor-setter').item.json.body.razon }}\nNombre del cliente: {{ $json.body.nombre }}\nTelefono del usuario: +{{ $json.body.telefono }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#Rol\nEres un subagente que apoya a al agente principal en la clasificación de los errores que se presentan al flujo\n\n#Función\n- Clasificar los erroes en\n  - Tecnicos: cuando son errores del flujo, debe estar especificado en el mensaje que el agente principal te envia\n  - No tecnicos: cuando son dudas, dificultades para conectar cuentas de instagram o de facebook o para entrar a llamadas o problemas netamente con el cliente o el servicio que no tienen nada que ver con problemas tecnicos del sistema.\n\n# Output\n{\n\"tecnico\": true | false\n\"no_tecnico\": true | false\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\"\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}\n\n- Debes utilizar las claves segun los errores especificados\n  Si en el mensaje hay un error con el cliente y un error tecnico, debes enviar las claves correspondientes con los mensajes correspondientes\n\n# Reglas\n\n- **NUNCA** incluir datos tecnicos en los mensajes de error no tecnico\n-  Si hay enlaces estos deben estar en el output, son importante en caso de estar presentes"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        256,
+        -1456
+      ],
+      "id": "371f093a-98ea-422b-9542-f9ac5ad7a472",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        -1248
+      ],
+      "id": "49d89aaf-e83e-4b86-b2c2-97be75b2d260",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\"tecnico\": \"true | false\",\n\"no_tecnico\": \"true | false\",\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\",\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        -1232
+      ],
+      "id": "ce1d6418-a44b-4347-ae56-975c8fd10c1e",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.tecnico }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "772321b5-d6d4-4b23-a0f9-1619bd9c9f86"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tecnico"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "761faa0c-d519-445d-9908-d6ee6d096667",
+                    "leftValue": "={{ $json.output.no_tecnico }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "no_tecnico"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        -1456
+      ],
+      "id": "98347bcf-5bfc-4289-bb65-9e292cf2e6d7",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U096Y3TRT5E",
+          "mode": "list",
+          "cachedResultName": "agenteia"
+        },
+        "text": "={{ $json.output.mensaje_por_error_tecnico }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -1616
+      ],
+      "id": "5b43f497-7af9-4576-b2a2-4bdb351837f7",
+      "name": "error-tecnico1",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0B6NEV7JSY",
+          "mode": "list",
+          "cachedResultName": "office-6-agentedeseguimiento-setting-clientes"
+        },
+        "text": "={{ $json.output.mensaje }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -1424
+      ],
+      "id": "c31b9cc5-4f91-4a2d-875f-927243221017",
+      "name": "duda-del-cliente1",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alerta-asesor-setter",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        -1456
+      ],
+      "id": "a1d68873-23a1-4b6a-b43d-b417092f52d7",
+      "name": "alertar-asesor-setter",
+      "webhookId": "08770871-3965-4a60-b83f-0683242943b0"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0B6NEV7JSY",
+          "mode": "list",
+          "cachedResultName": "office-6-agentedeseguimiento-setting-clientes"
+        },
+        "messageType": "block",
+        "blocksUi": "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08HA9QCJBG>\"\n      }\n    }\n  ]\n}",
+        "text": "={{ $json.output.mensaje }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        -1424
+      ],
+      "id": "96a61479-d1d3-4b12-85d4-bdf9c1b0e0b3",
+      "name": "etiquetando_aure",
+      "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "field_for_mail_direction": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "exist?": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_events_by_mail": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reagendar": {
+      "main": [
+        [
+          {
+            "node": "field_for_mail_direction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "no_record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "get_events_by_mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "cancela-evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "agendado_client",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "agendado_client1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "field_for_mail_direction1": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "exist?1": {
+      "main": [
+        [
+          {
+            "node": "Sort1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_events_by_mail1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "no_record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Sort1": {
+      "main": [
+        [
+          {
+            "node": "get_events_by_mail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "cancelar-evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "agendado_client2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "agendado_client3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cancelar": {
+      "main": [
+        [
+          {
+            "node": "field_for_mail_direction1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar-disponibilidad": {
+      "main": [
+        [
+          {
+            "node": "Get many rows3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort2": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alertar asesor": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "exist?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cancelar-evento": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "error-tecnico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "duda-del-cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cancela-evento": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "agendado_client": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendado_client1": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendado_client3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendado_client2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows3": {
+      "main": [
+        [
+          {
+            "node": "Sort2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "error-tecnico": {
+      "main": [
+        []
+      ]
+    },
+    "duda-del-cliente": {
+      "main": [
+        [
+          {
+            "node": "etiquetando_jessica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "error-tecnico1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "duda-del-cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "duda-del-cliente1": {
+      "main": [
+        [
+          {
+            "node": "etiquetando_aure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alertar-asesor-setter": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "cancelar": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "33",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "alexmora@pymes-ai.com"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/cancelar-cita",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "buscar-disponibilidad": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "123",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "start_time": "2025-09-22T08:00:00-04:00",
+            "email": "hectorivanberrios1972@gmail.com",
+            "end_time": "2025-09-22T18:00:00-04:00"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/disponibilidad",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "alertar asesor": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "350",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "harmonygrouppr@gmail.com",
+            "razon": "Cliente reporta que no puede añadir su Instagram al portafolio comercial. Enlace compartido: https://www.instagram.com/harmonyaudiovisualspr?igsh=bTFnZ3IzM3k1am5s&utm_source=qr. Teléfono: +1 787-550-7579. Solicita asistencia y que un asesor lo contacte para resolver el problema.",
+            "nombre": "Noel Ramos"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/alerta-asesor",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "reagendar": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.12.0",
+            "content-length": "79",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "ace249993801",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "sunrisedock89@gmail.com",
+            "fecha-deseada": "2026-04-28T15:00:00-04:00"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/reagendar-cita",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "alertar-asesor-setter": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "350",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "harmonygrouppr@gmail.com",
+            "razon": "Cliente reporta que no puede añadir su Instagram al portafolio comercial. Enlace compartido: https://www.instagram.com/harmonyaudiovisualspr?igsh=bTFnZ3IzM3k1am5s&utm_source=qr. Teléfono: +1 787-550-7579. Solicita asistencia y que un asesor lo contacte para resolver el problema.",
+            "nombre": "Noel Ramos"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/alerta-asesor",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "1e7507b3-4da6-487e-b926-ddb642727cd0",
+  "activeVersionId": "1e7507b3-4da6-487e-b926-ddb642727cd0",
+  "versionCounter": 38,
+  "triggerCount": 5,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "KWSsCZWE3CLmT7Dj",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-05-27T19:04:14.878Z",
+    "createdAt": "2026-05-27T19:04:10.724Z",
+    "versionId": "1e7507b3-4da6-487e-b926-ddb642727cd0",
+    "workflowId": "KWSsCZWE3CLmT7Dj",
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "correo",
+                "value": "={{ $json.body.email }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -16,
+          48
+        ],
+        "id": "69ec9d98-e282-4b73-b54f-e6d3b1f4cd5e",
+        "name": "field_for_mail_direction"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "93482c9f-7bcb-4bf8-9d17-809d198b79f0",
+                "leftValue": "={{ $json['event-id'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "0db55b72-3bee-41d4-ba12-89dc53765699",
+                "leftValue": "={{ $json.fecha.toDateTime() }}",
+                "rightValue": "={{ $now }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "after"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          464,
+          48
+        ],
+        "id": "89722cac-485b-46a4-94a5-105b934c409b",
+        "name": "exist?"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=🔎 Tu correo no se encuentra en nuestra base de datos. Favor verifica con un tu agente al siguiente chat\n\nhttps://wa.link/owlgwj",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          928,
+          144
+        ],
+        "id": "f3fcdacd-44ed-4045-8b8e-bb2f90b72aa9",
+        "name": "no_record"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=Su cita ha sido preparada para su reagenda, le pedimos ingrese al siguiente link para escoja el horario deseado o si encuentra uno mejor para usted. Uno de nuestros administradores ya ha sido comunicado de su reagenda en caso de que ud no pueda realizarla.\n\nhttps://calendly.com/jessica-levelupmediapr/onboarding",
+                "type": "string"
+              },
+              {
+                "id": "fd16c25d-1b4d-44ff-a369-1f3928c7241f",
+                "name": "mensaje",
+                "value": "=El cliente {{ $('Get many rows1').first().json.nombre }} quiere reagendar para {{ $('reagendar').item.json.body['fecha-deseada'] }}. Favor reagendar en https://calendly.com/jessica-levelupmediapr/onboarding",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1888,
+          -176
+        ],
+        "id": "4a733294-0378-44fa-873b-d6f6c9b3f391",
+        "name": "agendado_client"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "value": "agenteia@levelupmediapr.net",
+            "mode": "list",
+            "cachedResultName": "agenteia@levelupmediapr.net"
+          },
+          "eventId": "={{ $('Sort').first().json['event-id'] }}",
+          "updateFields": {
+            "start": "="
+          }
+        },
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          928,
+          -48
+        ],
+        "id": "97b24b51-f634-4062-b0b0-dabe3bab8fcd",
+        "name": "get_events_by_mail",
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "OnmhBZjsVglHy8qy",
+            "name": "GoogleCalendarLevelUpMedia"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "reagendar-cita",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -192,
+          48
+        ],
+        "id": "0c0e02c5-c0a0-404b-803f-9556ec3bfd0f",
+        "name": "reagendar",
+        "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "cancelar-cita",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -160,
+          -416
+        ],
+        "id": "d08c07ec-743c-4f03-bd4a-b37e4bd89619",
+        "name": "cancelar",
+        "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "disponibilidad",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -176,
+          368
+        ],
+        "id": "e3e3fe88-6187-489c-9334-25090c52de98",
+        "name": "buscar-disponibilidad",
+        "webhookId": "4ac7a428-90a7-40ca-a117-a5f290093319"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "13a81043-f15a-40cd-96b0-62743949c879",
+                "leftValue": "={{ $json['event-id'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notExists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          704,
+          144
+        ],
+        "id": "ad304481-2a2a-4e0d-9bb0-682ec2f153b2",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "fecha-formateada",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          720,
+          -48
+        ],
+        "id": "2f148960-8023-476c-a53a-e50b40cdfa1f",
+        "name": "Sort"
+      },
+      {
+        "parameters": {
+          "url": "https://api.calendly.com/scheduled_events",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "organization",
+                "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+              },
+              {
+                "name": "invitee_email",
+                "value": "={{ $json.attendees[0].email }}"
+              },
+              {
+                "name": "status",
+                "value": "active"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1136,
+          -48
+        ],
+        "id": "7b93a797-6a88-4e32-8a6c-6b460d316074",
+        "name": "HTTP Request1",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8f6892dc-f0e7-4fec-89d6-70159f42e96d",
+                "leftValue": "={{ $('HTTP Request1').item.json.collection[0].name }}",
+                "rightValue": "Onboarding",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1552,
+          -48
+        ],
+        "id": "71892ed9-fc6f-4407-88c9-63c432ce8b37",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=Su cita ha sido preparada para su reagenda, le pedimos ingrese al siguiente link para escoja el horario deseado o si encuentra uno mejor para usted.\n\nUno de nuestros administradores ya ha sido comunicado de su reagenda en caso de que ud no pueda realizarla.\n\nhttps://calendly.com/carilin-levelupmediapr/onboarding",
+                "type": "string"
+              },
+              {
+                "id": "6754d896-4d48-4069-a470-7aa04530eb2a",
+                "name": "mensaje",
+                "value": "=El cliente {{ $('Get many rows1').first().json.nombre }} quiere reagendar para {{ $('reagendar').item.json.body.fecha-deseada }}.   Favor reagendar en https://calendly.com/jessica-levelupmediapr/onboarding",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1888,
+          16
+        ],
+        "id": "9bb6ccc2-8fc3-4824-a3fa-c94c1a22382c",
+        "name": "agendado_client1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "correo",
+                "value": "={{ $json.body.email }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          32,
+          -416
+        ],
+        "id": "8a8662a2-76e1-40ee-bcec-5d90d85c33af",
+        "name": "field_for_mail_direction1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "93482c9f-7bcb-4bf8-9d17-809d198b79f0",
+                "leftValue": "={{ $json['event-id'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "0db55b72-3bee-41d4-ba12-89dc53765699",
+                "leftValue": "={{ $json.fecha.toDateTime() }}",
+                "rightValue": "={{ $now }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "after"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          -416
+        ],
+        "id": "5d14c5a1-7e22-4996-883b-0d154a9ed221",
+        "name": "exist?1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=🔎 Tu correo no se encuentra en nuestra base de datos o la fecha de tu cita ya ha ocurrido. Favor verifica con un tu agente al siguiente chat\n\nhttps://wa.link/owlgwj",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          -336
+        ],
+        "id": "be6ba72a-5912-41e5-8d70-b2e5dd7d3632",
+        "name": "no_record1",
+        "alwaysOutputData": false,
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=Su cita ha sido cancelada tu cita, si estas buscando reagendar en el siguiente link puedes ver la disponibilidad de horarios.\nUno de nuestros administradores estará comunicandose con usted a la brevedad.\n\nhttps://calendly.com/jessica-levelupmediapr/onboarding",
+                "type": "string"
+              },
+              {
+                "id": "3e6caa35-d566-4b60-b8c2-e0ae6644e70d",
+                "name": "mensaje",
+                "value": "=El cliente {{ $('Get many rows').first().json.nombre }} ha cancelado su cita de onboarding del {{ $('Sort1').first().json.fecha.toDateTime().format('yyyy-MM-dd HH:mm')}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1808,
+          -640
+        ],
+        "id": "af09933a-6b9f-42cc-9930-bb3b675e7ec2",
+        "name": "agendado_client2"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "value": "agenteia@levelupmediapr.net",
+            "mode": "list",
+            "cachedResultName": "agenteia@levelupmediapr.net"
+          },
+          "eventId": "={{ $('Sort1').first().json['event-id'] }}",
+          "updateFields": {
+            "start": "="
+          }
+        },
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          896,
+          -512
+        ],
+        "id": "22a218fe-3e62-4fd6-9052-6719e1e40142",
+        "name": "get_events_by_mail1",
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "OnmhBZjsVglHy8qy",
+            "name": "GoogleCalendarLevelUpMedia"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "13a81043-f15a-40cd-96b0-62743949c879",
+                "leftValue": "={{ $json['event-id'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notExists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          656,
+          -288
+        ],
+        "id": "028a0073-a105-44c8-bf3f-74bb10c46257",
+        "name": "If2"
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "fecha-formateada",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          688,
+          -512
+        ],
+        "id": "f07a9a7c-6121-4ba5-9e82-b18c599d27cc",
+        "name": "Sort1"
+      },
+      {
+        "parameters": {
+          "url": "https://api.calendly.com/scheduled_events",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "organization",
+                "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+              },
+              {
+                "name": "invitee_email",
+                "value": "={{ $json.attendees[0].email }}"
+              },
+              {
+                "name": "status",
+                "value": "active"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1104,
+          -512
+        ],
+        "id": "404576a9-8224-4886-808a-8d1d4235f9e8",
+        "name": "HTTP Request3",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8f6892dc-f0e7-4fec-89d6-70159f42e96d",
+                "leftValue": "={{ $('HTTP Request3').item.json.collection[0].name }}",
+                "rightValue": "Onboarding",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1520,
+          -512
+        ],
+        "id": "f69dc543-cb5d-4ea7-86ce-660c8022424d",
+        "name": "If3"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+                "name": "Retorno",
+                "value": "=Su cita ha sido cancelada tu cita, si estas buscando reagendar en el siguiente link puedes ver la disponibilidad de horarios.\nUno de nuestros administradores estará comunicandose con usted a la brevedad.\n\nhttps://calendly.com/carilin-levelupmediapr/onboarding",
+                "type": "string"
+              },
+              {
+                "id": "d491af2f-da11-40d8-a073-8fe70b49c1c5",
+                "name": "mensaje",
+                "value": "=El cliente {{ $('Get many rows').first().json.nombre }} ha cancelado su cita de onboarding del {{ $('Sort1').first().json.fecha.toDateTime().format('yyyy-MM-dd HH:mm') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1808,
+          -448
+        ],
+        "id": "c661168b-791e-4058-828f-2c0a1bcfbea5",
+        "name": "agendado_client3"
+      },
+      {
+        "parameters": {
+          "url": "https://api.calendly.com/event_types",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "organization",
+                "value": "https://api.calendly.com/organizations/a6ea0798-eda3-4c65-b601-9d6b723c8a8e"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          608,
+          368
+        ],
+        "id": "f1b65bd7-48dc-410a-92ee-a8672a135115",
+        "name": "HTTP Request4",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "fecha-formateada",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          208,
+          368
+        ],
+        "id": "068ed14b-3769-4478-bc0a-88feef686a5c",
+        "name": "Sort2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          416,
+          368
+        ],
+        "id": "6a49c14e-0d5a-46c4-be45-007c612fad50",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "collection",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          816,
+          368
+        ],
+        "id": "75380ba8-0411-49e2-98de-2fb6ff1b85e6",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "1a77bf42-3037-4e0e-8ac3-2028b92d1c6a",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "={{ $('Limit').item.json.evento }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1024,
+          368
+        ],
+        "id": "89081820-2ab2-413d-b9e5-4985df00973b",
+        "name": "Filter"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.calendly.com/event_type_available_times",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "end_time",
+                "value": "={{ $('buscar-disponibilidad').first().json.body.end_time.toDateTime().setZone('UTC') }}"
+              },
+              {
+                "name": "event_type",
+                "value": "={{ $json.uri }}"
+              },
+              {
+                "name": "start_time",
+                "value": "={{ $('buscar-disponibilidad').first().json.body.start_time.toDateTime().setZone('UTC') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1232,
+          368
+        ],
+        "id": "84d135b6-4855-4985-b492-08aec9a502ef",
+        "name": "HTTP Request5",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// El JSON de entrada viene del nodo anterior usando la expresión correcta de n8n\nconst allSlots = $input.first().json.collection;\n\n// Obtiene la fecha y hora actual de forma robusta\nconst now = new Date();\n\n// 1. Calcular el inicio del día de mañana en UTC para una comparación precisa\nconst tomorrowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));\n\n// Verificamos que allSlots sea un array válido\nif (!allSlots || !Array.isArray(allSlots)) {\n  return [{ json: { error: \"La estructura del JSON de entrada no es la esperada o la colección está vacía.\" } }];\n}\n\n// 2. Filtrar los slots para que sean a partir de mañana (comparando en UTC)\nconst futureSlots = allSlots.filter(slot => {\n  const slotDate = new Date(slot.start_time);\n  return slotDate >= tomorrowUTC;\n});\n\n// 3. Ordenar y tomar los 3 más próximos\nconst closestThreeSlots = futureSlots\n  .sort((a, b) => new Date(a.start_time) - new Date(b.start_time))\n  .slice(0, 3);\n\n// 4. Formatear las fechas a la zona horaria de Puerto Rico\nconst formatter = new Intl.DateTimeFormat('es-PR', {\n  timeZone: 'America/Puerto_Rico',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric',\n  hour: 'numeric',\n  minute: 'numeric',\n  hour12: true,\n});\n\nconst formattedSlots = closestThreeSlots.map(slot => {\n  const slotDate = new Date(slot.start_time);\n  return formatter.format(slotDate);\n});\n\n// Devolver el resultado final\nreturn [{\n  json: {\n    slotsDisponibles: formattedSlots\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1440,
+          368
+        ],
+        "id": "06e86bb9-7e18-41a3-a9e6-82b20c4a7615",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "alerta-asesor",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -160,
+          -896
+        ],
+        "id": "8d731e92-679c-4a04-836d-ef8ee216bf06",
+        "name": "alertar asesor",
+        "webhookId": "08770871-3965-4a60-b83f-0683242943b0"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(email,eq,{{ $json.correo }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          240,
+          -416
+        ],
+        "id": "cb7146be-7bbd-4172-a558-e4151a5dc7e9",
+        "name": "Get many rows",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.calendly.com/scheduled_events/{{ $json.collection[0].uri.split('/').last() }}/cancellation",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1312,
+          -512
+        ],
+        "id": "087a0ad5-881e-4d09-9cb3-02f5e05be9f9",
+        "name": "cancelar-evento",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(email,eq,{{ $json.correo }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          192,
+          48
+        ],
+        "id": "2ac12158-1098-4cd8-a199-25667ecddccd",
+        "name": "Get many rows1",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Razon: {{ $('alertar asesor').item.json.body.razon }}\nNombre del cliente: {{ $json.body.nombre }}\nTelefono del usuario: +{{ $json.body.telefono }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=#Rol\nEres un subagente que apoya a al agente principal en la clasificación de los errores que se presentan al flujo\n\n#Función\n- Clasificar los erroes en\n  - Tecnicos: cuando son errores del flujo, debe estar especificado en el mensaje que el agente principal te envia\n  - No tecnicos: cuando son dudas, dificultades para conectar cuentas de instagram o de facebook o para entrar a llamadas o problemas netamente con el cliente o el servicio que no tienen nada que ver con problemas tecnicos del sistema.\n\n# Output\n{\n\"tecnico\": true | false\n\"no_tecnico\": true | false\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\"\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}\n\n- Debes utilizar las claves segun los errores especificados\n  Si en el mensaje hay un error con el cliente y un error tecnico, debes enviar las claves correspondientes con los mensajes correspondientes\n\n# Reglas\n\n- **NUNCA** incluir datos tecnicos en los mensajes de error no tecnico\n-  Si hay enlaces estos deben estar en el output, son importante en caso de estar presentes"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          304,
+          -896
+        ],
+        "id": "428d11da-32e0-40e1-9fa3-8d201637c4e1",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          208,
+          -688
+        ],
+        "id": "b7d1aacc-5e9e-41da-8b7a-cedd97f030f7",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schemaType": "manual",
+          "inputSchema": "{\n\"tecnico\": \"true | false\",\n\"no_tecnico\": \"true | false\",\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\",\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          544,
+          -672
+        ],
+        "id": "79b16741-1593-4321-860a-0c2d9344a1df",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.output.tecnico }}",
+                      "rightValue": "true",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      },
+                      "id": "772321b5-d6d4-4b23-a0f9-1619bd9c9f86"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "tecnico"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "761faa0c-d519-445d-9908-d6ee6d096667",
+                      "leftValue": "={{ $json.output.no_tecnico }}",
+                      "rightValue": "true",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "no_tecnico"
+              }
+            ]
+          },
+          "options": {
+            "allMatchingOutputs": true
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          656,
+          -896
+        ],
+        "id": "17c4c7c6-c1c1-47ad-a8cd-879a47452dd5",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.calendly.com/scheduled_events/{{ $json.collection[0].uri.split('/').last() }}/cancellation",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1344,
+          -48
+        ],
+        "id": "864805d6-94fb-4789-86ca-4c13726322c8",
+        "name": "cancela-evento",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "messageType": "block",
+          "blocksUi": "={\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🔴 Nueva solicitud de reagendamiento 🔴\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08SN35L2UX>\\n\\n*Mensaje:{{$json.mensaje}}*\\n\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    }\n  ]\n}",
+          "text": "=",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          2096,
+          -80
+        ],
+        "id": "e947d165-cf73-4a18-8b92-775b7dba5bed",
+        "name": "Send a message2",
+        "webhookId": "1d666f6d-34e1-4040-9cc3-560ca9b61848",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U096Y3TRT5E",
+            "mode": "list",
+            "cachedResultName": "agenteia"
+          },
+          "text": "={{ $json.output.mensaje_por_error_tecnico }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          928,
+          -1056
+        ],
+        "id": "c6125c40-12b3-4256-92ac-fbe015a4e873",
+        "name": "error-tecnico",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "text": "={{ $json.output.mensaje }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          928,
+          -864
+        ],
+        "id": "66458cfb-82af-4dfb-b637-f2c81961cd48",
+        "name": "duda-del-cliente",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "text": "={{ $json.mensaje }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          2032,
+          -560
+        ],
+        "id": "4e84d3fd-a940-4f6b-acab-dd07f7304aef",
+        "name": "Send a message",
+        "webhookId": "1d666f6d-34e1-4040-9cc3-560ca9b61848",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "piehks983q2cfu6",
+          "table": "mc5m2od7vy71g6z",
+          "returnAll": true,
+          "options": {
+            "where": "=(email,eq,{{ $json.body.email }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          16,
+          368
+        ],
+        "id": "03ae6c8c-02f1-498f-81e5-828230fa29e1",
+        "name": "Get many rows3",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.calendly.com/invitees",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "calendlyOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"event_type\": \"{{ $('HTTP Request1').item.json.collection[0].event_type }}\",\n  \"start_time\": \"2026-04-29T15:00:00-04:00\",\n  \"invitee\": {\n    \"name\": \"{{ $('Get many rows1').item.json.nombre }}\",\n    \"email\": \"{{ $('Get many rows1').item.json.email }}\",\n    \"timezone\": \"America/Puerto_Rico\",\n    \"text_reminder_number\": \"+{{ $('Get many rows1').item.json.telefono }}\"\n  },\n  \"location\": {\n    \"kind\": \"physical\",\n    \"location\": \"Medellin\"\n  },\n  \"questions_and_answers\": [\n    {\n      \"question\": \"string\",\n      \"answer\": \"string\",\n      \"position\": 0\n    }\n  ],\n  \"tracking\": {\n    \"utm_campaign\": \"string\",\n    \"utm_source\": \"string\",\n    \"utm_medium\": \"string\",\n    \"utm_content\": \"string\",\n    \"utm_term\": \"string\",\n    \"salesforce_uuid\": \"string\"\n  },\n  \"event_guests\": [\n    \"{{ $('Get many rows1').item.json.email }}\"\n  ]\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2144,
+          320
+        ],
+        "id": "ee60054f-2a12-4815-80ec-4c7b0306d331",
+        "name": "agendar_cita_demo",
+        "credentials": {
+          "calendlyOAuth2Api": {
+            "id": "pT1T7OUgTcH5tiXh",
+            "name": "CalendlyLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "api de agendar cita:\nhttps://developer.calendly.com/api-docs/p3ghrxrwbl8kqe-create-event-invitee-scheduling-api",
+          "height": 256,
+          "width": 336
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2016,
+          224
+        ],
+        "id": "13fba6a7-7dfe-42ae-8b99-7e5e1c7bc3ba",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "messageType": "block",
+          "blocksUi": "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08SN35L2UX>\"\n      }\n    }\n  ]\n}",
+          "text": "={{ $json.output.mensaje }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1152,
+          -864
+        ],
+        "id": "422d2763-ed48-40fc-8a20-6b8a0777b79b",
+        "name": "etiquetando_jessica",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Razon: {{ $('alertar-asesor-setter').item.json.body.razon }}\nNombre del cliente: {{ $json.body.nombre }}\nTelefono del usuario: +{{ $json.body.telefono }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=#Rol\nEres un subagente que apoya a al agente principal en la clasificación de los errores que se presentan al flujo\n\n#Función\n- Clasificar los erroes en\n  - Tecnicos: cuando son errores del flujo, debe estar especificado en el mensaje que el agente principal te envia\n  - No tecnicos: cuando son dudas, dificultades para conectar cuentas de instagram o de facebook o para entrar a llamadas o problemas netamente con el cliente o el servicio que no tienen nada que ver con problemas tecnicos del sistema.\n\n# Output\n{\n\"tecnico\": true | false\n\"no_tecnico\": true | false\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\"\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}\n\n- Debes utilizar las claves segun los errores especificados\n  Si en el mensaje hay un error con el cliente y un error tecnico, debes enviar las claves correspondientes con los mensajes correspondientes\n\n# Reglas\n\n- **NUNCA** incluir datos tecnicos en los mensajes de error no tecnico\n-  Si hay enlaces estos deben estar en el output, son importante en caso de estar presentes"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          256,
+          -1456
+        ],
+        "id": "371f093a-98ea-422b-9542-f9ac5ad7a472",
+        "name": "Basic LLM Chain1"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          -1248
+        ],
+        "id": "49d89aaf-e83e-4b86-b2c2-97be75b2d260",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schemaType": "manual",
+          "inputSchema": "{\n\"tecnico\": \"true | false\",\n\"no_tecnico\": \"true | false\",\n\"mensaje\": \"Aca va la duda del cliente directamente si aplica\",\n\"mensaje_por_error_tecnico\": \"Mensaje especifico del error tecnico\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          496,
+          -1232
+        ],
+        "id": "ce1d6418-a44b-4347-ae56-975c8fd10c1e",
+        "name": "Structured Output Parser1"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.output.tecnico }}",
+                      "rightValue": "true",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      },
+                      "id": "772321b5-d6d4-4b23-a0f9-1619bd9c9f86"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "tecnico"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "761faa0c-d519-445d-9908-d6ee6d096667",
+                      "leftValue": "={{ $json.output.no_tecnico }}",
+                      "rightValue": "true",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "no_tecnico"
+              }
+            ]
+          },
+          "options": {
+            "allMatchingOutputs": true
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          608,
+          -1456
+        ],
+        "id": "98347bcf-5bfc-4289-bb65-9e292cf2e6d7",
+        "name": "Switch1"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U096Y3TRT5E",
+            "mode": "list",
+            "cachedResultName": "agenteia"
+          },
+          "text": "={{ $json.output.mensaje_por_error_tecnico }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          896,
+          -1616
+        ],
+        "id": "5b43f497-7af9-4576-b2a2-4bdb351837f7",
+        "name": "error-tecnico1",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0B6NEV7JSY",
+            "mode": "list",
+            "cachedResultName": "office-6-agentedeseguimiento-setting-clientes"
+          },
+          "text": "={{ $json.output.mensaje }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          896,
+          -1424
+        ],
+        "id": "c31b9cc5-4f91-4a2d-875f-927243221017",
+        "name": "duda-del-cliente1",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "alerta-asesor-setter",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -208,
+          -1456
+        ],
+        "id": "a1d68873-23a1-4b6a-b43d-b417092f52d7",
+        "name": "alertar-asesor-setter",
+        "webhookId": "08770871-3965-4a60-b83f-0683242943b0"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0B6NEV7JSY",
+            "mode": "list",
+            "cachedResultName": "office-6-agentedeseguimiento-setting-clientes"
+          },
+          "messageType": "block",
+          "blocksUi": "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"<@U08HA9QCJBG>\"\n      }\n    }\n  ]\n}",
+          "text": "={{ $json.output.mensaje }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1120,
+          -1424
+        ],
+        "id": "96a61479-d1d3-4b12-85d4-bdf9c1b0e0b3",
+        "name": "etiquetando_aure",
+        "webhookId": "8879333e-97ee-4fa1-a970-ad09e0fb5ff7",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "field_for_mail_direction": {
+        "main": [
+          [
+            {
+              "node": "Get many rows1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "exist?": {
+        "main": [
+          [
+            {
+              "node": "Sort",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_events_by_mail": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "reagendar": {
+        "main": [
+          [
+            {
+              "node": "field_for_mail_direction",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "no_record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sort": {
+        "main": [
+          [
+            {
+              "node": "get_events_by_mail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "cancela-evento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "agendado_client",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "agendado_client1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "field_for_mail_direction1": {
+        "main": [
+          [
+            {
+              "node": "Get many rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "exist?1": {
+        "main": [
+          [
+            {
+              "node": "Sort1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_events_by_mail1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "no_record1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Sort1": {
+        "main": [
+          [
+            {
+              "node": "get_events_by_mail1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request3": {
+        "main": [
+          [
+            {
+              "node": "cancelar-evento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If3": {
+        "main": [
+          [
+            {
+              "node": "agendado_client2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "agendado_client3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cancelar": {
+        "main": [
+          [
+            {
+              "node": "field_for_mail_direction1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar-disponibilidad": {
+        "main": [
+          [
+            {
+              "node": "Get many rows3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sort2": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request4": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request5": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alertar asesor": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows": {
+        "main": [
+          [
+            {
+              "node": "exist?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cancelar-evento": {
+        "main": [
+          [
+            {
+              "node": "If3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows1": {
+        "main": [
+          [
+            {
+              "node": "exist?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "error-tecnico",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "duda-del-cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cancela-evento": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "agendado_client": {
+        "main": [
+          [
+            {
+              "node": "Send a message2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agendado_client1": {
+        "main": [
+          [
+            {
+              "node": "Send a message2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agendado_client3": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agendado_client2": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows3": {
+        "main": [
+          [
+            {
+              "node": "Sort2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "error-tecnico": {
+        "main": [
+          []
+        ]
+      },
+      "duda-del-cliente": {
+        "main": [
+          [
+            {
+              "node": "etiquetando_jessica",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain1": {
+        "main": [
+          [
+            {
+              "node": "Switch1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch1": {
+        "main": [
+          [
+            {
+              "node": "error-tecnico1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "duda-del-cliente1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "duda-del-cliente1": {
+        "main": [
+          [
+            {
+              "node": "etiquetando_aure",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alertar-asesor-setter": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 1e7507b3",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-05-27T19:04:14.873Z",
+        "id": 183,
+        "workflowId": "KWSsCZWE3CLmT7Dj",
+        "versionId": "1e7507b3-4da6-487e-b926-ddb642727cd0",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

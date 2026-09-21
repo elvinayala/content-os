@@ -19,7 +19,7 @@ const args = process.argv.slice(2);
 const DRY = args.includes("--dry-run");
 const SIN_ARCHIVOS = args.includes("--sin-archivos");
 const soloBoard = args[args.indexOf("--board") + 1];
-const BOARDS = args.includes("--board") ? [soloBoard] : (process.env.MONDAY_BOARDS ?? "7784685790,18399101258,9506323087").split(",").map((s) => s.trim());
+const BOARDS = args.includes("--board") ? [soloBoard] : (process.env.MONDAY_BOARDS ?? "7784685790,18399101258,9506323087,9070558597,18402767012,18390947680").split(",").map((s) => s.trim());
 const COLAPSAR_DESDE = 200;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

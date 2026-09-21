@@ -1,0 +1,4437 @@
+{
+  "updatedAt": "2025-09-11T21:06:54.000Z",
+  "createdAt": "2025-09-09T14:10:35.324Z",
+  "id": "C42vSaciGbLjE3vI",
+  "name": "v3 Agente de monitoreo - Levelito",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cd7ea699-978b-4209-b248-adff18692407",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        -688
+      ],
+      "id": "23a0a89c-04ef-484a-8c8f-9e97825b71b0",
+      "name": "Separar por id presente"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        -688
+      ],
+      "id": "e520577a-5c17-48d0-ae0b-c823a6dbd4a2",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2605e86a-e268-49f1-ac55-4a4a3a55e950",
+              "leftValue": "={{ $json['ultimo-revisado']?.toDateTime() }}",
+              "rightValue": "={{ $now.minus(10, 'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2144,
+        -848
+      ],
+      "id": "fde3d083-39de-43bd-a9e4-149eeebe44bd",
+      "name": "esta revisado?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4aea6691-6800-4261-b752-0436135a237a",
+              "leftValue": "={{ $json['ultima-alerta'] }}",
+              "rightValue": "={{ $now.minus(4,'days').format('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3264,
+        -752
+      ],
+      "id": "ad6bfebb-bf0c-4d03-a2a5-0e7af2af4479",
+      "name": "tiene alerta repetida?",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85943a78-df91-4224-939c-43e8ef742255",
+              "name": "data",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "b07e4bc2-af8a-425b-b9cd-520b0ee3e216",
+              "name": "data.status",
+              "value": "repetido",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3696,
+        -928
+      ],
+      "id": "7da70784-1faa-4527-97cd-99ecf81f22ba",
+      "name": "set-status-repetido"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85943a78-df91-4224-939c-43e8ef742255",
+              "name": "data",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "7f4bef54-dbcf-4ae5-ab70-18eec8321ec2",
+              "name": "data.status",
+              "value": "ok",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3696,
+        -608
+      ],
+      "id": "b1b42980-94e1-47b6-a95a-0de2a254ae4f",
+      "name": "set-status-ok"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3904,
+        -752
+      ],
+      "id": "a7282403-3ed6-4aec-a31c-e33427b74aec",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 7 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5008,
+        -1424
+      ],
+      "id": "722a5f4f-c8b1-4bbc-aceb-e9baae28184b",
+      "name": "Setear time range3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4608,
+        -1408
+      ],
+      "id": "913fc355-e5e3-4814-bf48-d7f8810b6279",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CONFIGURACIÓN DE UMBRALES ---\nconst UMBRALES = {\n  COSTE_POR_ACCION_MAX: 16.00,\n  COSTE_POR_ACCION_MIN: 10.00,\n  DIAS_MIN_ANTIGUEDAD: 10\n};\n\n// --- 1. OBTENER DATOS DE NODOS ANTERIORES ---\nlet nombreCliente = \"N/A\", nombreEmpresa = \"N/A\", idCuentaPublicitaria = \"N/A\", esAlertaRepetida = false;\nlet idUsuarioSlack = \"\";\nlet mensajeEspecialEstratega = \"\"; // [CAMBIO CLAVE] Variable para el mensaje de estratega no encontrado\n\ntry {\n  const datosEstratega = $input.first().json;\n  const mensajeEstratega = datosEstratega.mensaje || \"\";\n  \n  // [CAMBIO CLAVE] Detecta si es la frase de advertencia\n  if (mensajeEstratega.includes(\"No existe un estratega registrado\")) {\n    mensajeEspecialEstratega = mensajeEstratega; // Guarda la frase completa\n  }\n  \n  // La extracción del ID sigue funcionando para ambos casos\n  const match = mensajeEstratega.match(/<@(.*?)>/);\n  idUsuarioSlack = (match && match[0]) ? match[0] : \"equipo\";\n  \n} catch (error) {\n  idUsuarioSlack = \"equipo\";\n}\n\ntry {\n  const datosEntrantes = $('Data-entrante3').first().json.data;\n  nombreCliente = datosEntrantes.nombre;\n  nombreEmpresa = datosEntrantes.empresa || \"No encontrado\";\n  idCuentaPublicitaria = datosEntrantes[\"ID-cuenta-publicitaria\"] || \"No encontrado\";\n  if (datosEntrantes.status === 'repetido') {\n    esAlertaRepetida = true;\n  }\n} catch (error) {\n  // Usar valores por defecto.\n}\n\n// --- 2. PROCESAR CAMPAÑAS ---\nlet campaigns = [];\nconst inputJson = $('Aggregate3').first().json;\n\nif (Array.isArray(inputJson) && inputJson.length > 0 && inputJson[0].data) {\n  campaigns = inputJson[0].data;\n} else if (inputJson && inputJson.data) {\n  campaigns = inputJson.data;\n}\n\nconst campaignAlertBlocks = [];\n\nfor (const campaign of campaigns) {\n  let estadoFinal, motivoFinal;\n\n  const ahora = new Date($now.toISO());\n  const fechaCreacion = new Date(campaign.created_time);\n  const fechaLimite = new Date(ahora);\n  fechaLimite.setDate(ahora.getDate() - UMBRALES.DIAS_MIN_ANTIGUEDAD);\n\n  if (fechaCreacion >= fechaLimite) {\n    estadoFinal = 'Fuera de pool de alertas';\n  } else {\n    const metrics = campaign.insights?.data[0];\n    if (!metrics) {\n      estadoFinal = 'REQUIERE REVISIÓN';\n      motivoFinal = 'No se encontraron datos de métricas. Posible error de entrega.';\n    } else {\n      let esCampanaAnalizable = false;\n      if (metrics.cost_per_result && metrics.cost_per_result.length > 0) {\n        for (const result of metrics.cost_per_result) {\n          const actionType = result.indicator || \"\";\n          if (actionType.includes('messaging_conversation') || actionType.includes('lead')) {\n            esCampanaAnalizable = true;\n            break;\n          }\n        }\n      }\n\n      if (!esCampanaAnalizable) {\n        estadoFinal = 'No Analizable';\n      } else {\n        const alertas = [];\n        for (const result of metrics.cost_per_result) {\n          if (result.values && result.values.length > 0) {\n            const costValue = parseFloat(result.values[0].value);\n            const actionType = result.indicator || \"\";\n            const tipo = actionType.includes('lead') ? 'Lead' : 'Conversación';\n\n            if (actionType.includes('messaging_conversation') || actionType.includes('lead')) {\n              if (costValue > UMBRALES.COSTE_POR_ACCION_MAX) {\n                alertas.push(`Costo por ${tipo} alto ($${costValue.toFixed(2)})`);\n              } else if (costValue < UMBRALES.COSTE_POR_ACCION_MIN) {\n                alertas.push(`Costo por ${tipo} bajo ($${costValue.toFixed(2)})`);\n              }\n            }\n          }\n        }\n\n        if (alertas.length > 0) {\n          estadoFinal = 'REQUIERE REVISIÓN';\n          motivoFinal = alertas.join(', ');\n        } else {\n          estadoFinal = 'OK';\n        }\n      }\n    }\n  }\n\n  if (estadoFinal === 'REQUIERE REVISIÓN') {\n    const fechaCreacionObj = new Date(campaign.created_time);\n    const opcionesFormato = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };\n    const fechaFormateada = fechaCreacionObj.toLocaleDateString('es-ES', opcionesFormato);\n\n    const campaignSection = {\n      \"type\": \"section\",\n      \"text\": { \"type\": \"mrkdwn\", \"text\": `*Campaña:* ${campaign.name}\\n*Fecha de creación:* ${fechaFormateada}\\n*Estado:* \\`${estadoFinal}\\`\\n*Razón:* ${motivoFinal}` }\n    };\n    const divider = { \"type\": \"divider\" };\n    campaignAlertBlocks.push(campaignSection, divider);\n  }\n}\n\n// --- 3. ENSAMBLAJE FINAL DEL REPORTE Y DEL JSON DE SLACK ---\nlet estadoGeneral = \"\";\nlet slackBlock = null;\n\nif (campaignAlertBlocks.length > 0) {\n  estadoGeneral = \"Reporte Existente\";\n\n  let textoIntroduccion;\n  if (esAlertaRepetida) {\n    textoIntroduccion = `Hola ${idUsuarioSlack}, esta alerta *sigue activa* y requiere tu atención.`;\n  } else {\n    textoIntroduccion = `Hola ${idUsuarioSlack}, se ha detectado una *nueva alerta* que requiere tu atención.`;\n  }\n  \n  // [CAMBIO CLAVE] Se crea un bloque de contexto si hay un mensaje especial\n  const extraBlocks = [];\n  if (mensajeEspecialEstratega) {\n    extraBlocks.push({\n      \"type\": \"context\",\n      \"elements\": [{ \"type\": \"mrkdwn\", \"text\": `*Nota:* ${mensajeEspecialEstratega}` }]\n    });\n    extraBlocks.push({ \"type\": \"divider\" });\n  }\n\n  slackBlock = {\n    \"blocks\": [\n      {\n        \"type\": \"header\",\n        \"text\": { \"type\": \"plain_text\", \"text\": esAlertaRepetida ? \"🚨 ALERTA REPETIDA 🚨\" : \"🚨 Alerta de Campaña Nueva\", \"emoji\": true }\n      },\n      {\n        \"type\": \"section\",\n        \"text\": { \"type\": \"mrkdwn\", \"text\": textoIntroduccion }\n      },\n      { \"type\": \"divider\" },\n      {\n        \"type\": \"section\",\n        \"fields\": [\n          { \"type\": \"mrkdwn\", \"text\": `*Cliente:*\\n${nombreCliente}` },\n          { \"type\": \"mrkdwn\", \"text\": `*Empresa:*\\n${nombreEmpresa}` },\n          { \"type\": \"mrkdwn\", \"text\": `*ID Cuenta Publicitaria:*\\n${idCuentaPublicitaria}` }\n        ]\n      },\n      // [CAMBIO CLAVE] Se insertan los bloques extra aquí\n      ...extraBlocks,\n      ...campaignAlertBlocks,\n      {\n        \"type\": \"actions\",\n        \"elements\": [\n          { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Campañas Ajustadas\", \"emoji\": true }, \"style\": \"primary\", \"value\": \"revisado\", \"action_id\": \"approve_button\" },\n          { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Dependencia\", \"emoji\": true }, \"value\": \"dependencia\", \"action_id\": \"dependencia_button\" }\n        ]\n      }\n    ]\n  };\n\n} else {\n  estadoGeneral = \"Todo OK\";\n}\n\nreturn [{\n  json: {\n    estado_general: estadoGeneral,\n    slack_block: slackBlock\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7472,
+        -1424
+      ],
+      "id": "86e4bdf2-f28f-40e1-9682-5e85d9d32ddf",
+      "name": "Analisis de metricas en anuncio3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "504a7b59-a739-488e-b355-9aa257fd4fa5",
+              "leftValue": "={{ $json.estado_general }}",
+              "rightValue": "Reporte Existente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        7664,
+        -1424
+      ],
+      "id": "d25b1cb0-1467-48ac-a9bf-f185d690a2fd",
+      "name": "If5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4752,
+        -1168
+      ],
+      "id": "35c28e69-3a82-47fa-8e41-a699cc267318",
+      "name": "Final del proceso3"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5184,
+        -1424
+      ],
+      "id": "643cdfec-1825-4cb5-819d-ab09f9aaa3d2",
+      "name": "Wait3",
+      "webhookId": "0b22a2e8-4c2a-45de-9cc4-373813713605"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        8432,
+        -1216
+      ],
+      "id": "bd227d53-5a25-4d2a-ad30-b9ee8e087b20",
+      "name": "Vaciar input3",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Salida del bucle3",
+      "typeVersion": 1,
+      "position": [
+        8464,
+        -864
+      ],
+      "id": "7674ca6e-2820-46ca-97bc-8a5ae7d46ee7",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095BBYBHHA",
+          "mode": "list",
+          "cachedResultName": "monitoreo-metricas-fb-ads"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"🟡 Alerta: Cliente Sin Campañas Activas\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Cliente:*\\n{{$('Data-entrante3').first().json.data.nombre}}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Empresa:*\\n{{$('Data-entrante3').first().json.data.empresa}}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*ID Cuenta Publicitaria:*\\n{{$('Data-entrante3').first().json.data['ID-cuenta-publicitaria']}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"Asignado a: {{$('set-final-messages2').first().json.final}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"actions\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Revisado\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\"action_id\": \"approve_button\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Dependencia\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"action_id\": \"dependencia_button\"\n\t\t\t}\n\t\t]\n\t}\n]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        6944,
+        -1072
+      ],
+      "id": "d9366693-9e56-4472-92ab-a20ea9a991c0",
+      "name": "Send a message7",
+      "webhookId": "08b24ba5-5d22-45b4-93cd-96217fe109e6",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095BBYBHHA",
+          "mode": "list",
+          "cachedResultName": "monitoreo-metricas-fb-ads"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.slack_block.toJsonString() }}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        7856,
+        -1440
+      ],
+      "id": "67b31cbe-16b4-418a-b67f-215dcfbc448a",
+      "name": "Send a message8",
+      "webhookId": "c6126928-305a-4eb3-bed2-f47e2a5b285e",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09C500JTRB",
+          "mode": "list",
+          "cachedResultName": "fb-ads-gestión-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"🔴 ERROR CON LA CUENTA: {{$('Data-entrante3').first().json.data.nombre}}\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Empresa:*\\n{{$('Data-entrante3').first().json.data.empresa}}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*ID de la cuenta publicitaria:*\\n`{{$('Data-entrante3').first().json.data['ID-cuenta-publicitaria']}}`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Es posible que no este asignada al agente de monitoreo. Por favor seguir las instrucciones para asignarlo correctamente.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"1. Ir a cuenta de BackUp\\n2. Ir a usuarios de sistema\\n3. Usuario \\\"Agente Monitoreo\\\"\\n4. Ir al meno desplegable a la derecha de \\\"Revocar token\\\"\\n5. Ir a \\\"Asignar activo\\\"\\n6. Ir en el meno de la izquiera a \\\"Cuentas Publicitarias\\\"\\n7. Ingresar el ID de la cuenta publicitaria que se va a asignar\\n8. En el menu a la derecha que se abre encender \\\"Administrar Campañas\\\" y \\\"Ver Rendimiento\\\"\\n9. En al zona inferior clickar en \\\"Asignar Activo\\\"\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"Asignado a: {{$('set-final-messages1').item.json.final}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"actions\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Revisado\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\"action_id\": \"approve_button\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Para despues\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"danger\",\n\t\t\t\t\"action_id\": \"para-despues\"\n\t\t\t}\n\t\t]\n\t}\n]}\n",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        6048,
+        -880
+      ],
+      "id": "68524d44-842f-4c0c-b2ac-9b1ef2a94d1f",
+      "name": "Send a message13",
+      "webhookId": "2a84d649-ef16-4ae6-b288-6f1c72b748e8",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{$('Data-entrante3').first().json.data['ID-cuenta-publicitaria']}}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({\"since\":\"{{ $json.since }}\",\"until\":\"{{ $json.until }}\"}){spend,ctr,cpm,cost_per_result}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5344,
+        -1424
+      ],
+      "id": "a8e4d8da-0f63-4b45-9940-188042d7b707",
+      "name": "get campaign3",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6080,
+        -1440
+      ],
+      "id": "88bb0890-0240-45e1-b66f-0d854c70bced",
+      "name": "Verificar si hay campañas activas3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        6288,
+        -1440
+      ],
+      "id": "477dd5bd-359b-48e2-bdc0-96da9bc22d7a",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ff42b61-58b8-46f8-85d4-b9b9f081edd2",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/level up/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "bb463723-718a-4849-8def-8a1ae288f3d3",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        6432,
+        -1440
+      ],
+      "id": "ce0fbc91-a024-4536-aeec-915c25d5452b",
+      "name": "Filter3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        6624,
+        -1440
+      ],
+      "id": "4788d4bc-3f4b-4fd7-a11a-bc2d36f9ecbf",
+      "name": "Aggregate3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data-entrante3').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        5728,
+        -1296
+      ],
+      "id": "16487e19-3ff7-4c2d-9fdb-f4452feeacc6",
+      "name": "get-data-to-tag-member",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data-entrante3').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6464,
+        -1232
+      ],
+      "id": "b91e1c5d-21c9-4fe3-9b95-b7d434fc9750",
+      "name": "get-data-to-tag-member1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        -688
+      ],
+      "id": "78ab501f-b2fd-44d9-bfde-35bbdd646067",
+      "name": "get-clients",
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "dependencia",
+              "fieldValue": "false"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2800,
+        -896
+      ],
+      "id": "3ff08c18-22f9-4276-a4b3-654e716a9ccf",
+      "name": "put-false-dependency",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2960,
+        -992
+      ],
+      "id": "cc2f4057-18a6-44b4-b8a0-8d883e991399",
+      "name": "get-client-data2",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0e3637c0-3c80-4f40-b609-f8949fc95219",
+              "leftValue": "={{ $json.dependencia }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1d48027b-180c-43cc-8a4b-1da217a9a76f",
+              "leftValue": "={{ $json['ultima-alerta'] }}",
+              "rightValue": "={{ $now.minus(5, 'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2304,
+        -768
+      ],
+      "id": "28e26ed7-eebe-4596-a37a-4a452468bc8d",
+      "name": "tiene dependencia activa?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89291049-3952-4a55-baa4-0c4a3df7c5ce",
+              "leftValue": "={{ $json.dependencia }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2448,
+        -656
+      ],
+      "id": "71002f51-2ecd-45ef-aa65-ef3e96549949",
+      "name": "filter-for-dependecy",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09C500JTRB",
+          "mode": "list",
+          "cachedResultName": "fb-ads-gestión-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Falta ID de Cuenta Publicitaria\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Cliente:*\\n{{ $('Separar por id presente').item.json.nombre }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Empresa:*\\n{{ $('Separar por id presente').item.json.empresa }}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"Asignado a: {{$('set-final-messages3').first().json.final}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"actions\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"ID puesto en CRM\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\"action_id\": \"id-revisado\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Para después\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"danger\",\n\t\t\t\t\"action_id\": \"para-despues\"\n\t\t\t}\n\t\t]\n\t}\n]}\n",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2864,
+        -368
+      ],
+      "id": "045b68fb-1bc9-4b9b-b3a3-094edadb3f2d",
+      "name": "Send a message",
+      "webhookId": "1bb29fa5-cabf-483c-8cc8-66efa9a9b99b",
+      "executeOnce": false,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b1df9e9-8b04-4de7-9f1d-33d914d9fa65",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2576,
+        -752
+      ],
+      "id": "72a16e88-4655-407e-841b-6015a2ced092",
+      "name": "void?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b1df9e9-8b04-4de7-9f1d-33d914d9fa65",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3520,
+        -880
+      ],
+      "id": "24a04e90-35dd-4696-84b4-d9d60c4632a7",
+      "name": "void?1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        -528
+      ],
+      "id": "b03f803a-2497-42fa-85fb-d51de4727288",
+      "name": "Telegram Trigger",
+      "webhookId": "63a73f57-0047-4621-a49a-18762a10bf60"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        -528
+      ],
+      "id": "03e9777e-20f6-4404-b1c7-364896a3cc1f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3152,
+        -368
+      ],
+      "id": "60b2ff0e-cf18-417b-8eac-f43fdc828212",
+      "name": "Wait",
+      "webhookId": "85f7287f-f7a7-4efb-b6e3-8259d6f3a879"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5808,
+        -1104
+      ],
+      "id": "975c498a-64a9-4753-908a-3014d4b2f8df",
+      "name": "lack-of-traffiker-message3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5536,
+        -1296
+      ],
+      "id": "0b9c9d10-e273-43c8-a100-48fe143cbcda",
+      "name": "hay-traffiker?1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6032,
+        -1136
+      ],
+      "id": "083b9a71-b085-4e4d-93bb-8698e005d45e",
+      "name": "set-final-messages1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data-entrante3').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7040,
+        -1536
+      ],
+      "id": "a7073bd7-047d-4ce5-b57f-a08e4d537cf9",
+      "name": "get-data-to-tag-member6",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6864,
+        -1440
+      ],
+      "id": "cfc5e5da-9509-412a-8dc2-868249937f55",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7248,
+        -1344
+      ],
+      "id": "332f2a42-46fc-43d6-93b3-1feaf4448b3b",
+      "name": "lack-of-traffiker-message4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6544,
+        -1024
+      ],
+      "id": "af44c565-5685-4f44-8bb1-1aada9ab42fb",
+      "name": "lack-of-traffiker-message"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data-entrante3').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6272,
+        -1232
+      ],
+      "id": "0eb2a5c2-a152-4535-824e-bc06382431d8",
+      "name": "hay-traffiker?2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6784,
+        -1072
+      ],
+      "id": "2c93a2b5-a451-4a91-ae6a-199fed3edb7a",
+      "name": "set-final-messages2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2464,
+        -320
+      ],
+      "id": "3d973a16-6be6-45ae-a7ca-1c457cf102a0",
+      "name": "lack-of-traffiker-message5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('data-entry').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('data-entry').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        -512
+      ],
+      "id": "499ac814-a234-4ef3-ab00-f703312ed5f3",
+      "name": "hay-traffiker?3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2720,
+        -368
+      ],
+      "id": "6468b00e-949e-43df-ae34-f748cfa35f8c",
+      "name": "set-final-messages3"
+    },
+    {
+      "parameters": {
+        "jsCode": "{{\n  // Hoy\n  const until = $now.toFormat('yyyy-MM-dd');\n  // Hoy menos 2 días (para cubrir un rango de 3 días en total)\n  const since = $now.minus({ days: 7 }).toFormat('yyyy-MM-dd');\n  // Devuelve el objeto en el formato que la API necesita\n  return { since, until };\n}}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5056,
+        -480
+      ],
+      "id": "c8e93530-faff-4932-9475-92b5f4b3ac79",
+      "name": "Setear time range"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4656,
+        -464
+      ],
+      "id": "942a363a-a31d-4463-8880-def7fe88335e",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98f22bd5-515f-4992-9e88-dfeeb7478f65",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4880,
+        -480
+      ],
+      "id": "b7435dfb-2948-4e74-b675-d464f9eba775",
+      "name": "Data entrante"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CONFIGURACIÓN DE UMBRALES ---\nconst UMBRALES = {\n  COSTE_POR_ACCION_MAX: 5.00,\n  COSTE_POR_ACCION_MIN: 2.00,\n  DIAS_MIN_ANTIGUEDAD: 10\n};\n\n// --- 1. OBTENER DATOS DE NODOS ANTERIORES ---\nlet nombreCliente = \"N/A\", nombreEmpresa = \"N/A\", idCuentaPublicitaria = \"N/A\", esAlertaRepetida = false;\nlet idUsuarioSlack = \"\";\nlet mensajeEspecialEstratega = \"\"; // [CAMBIO CLAVE] Variable para el mensaje de estratega no encontrado\n\ntry {\n  const datosEstratega = $input.first().json;\n  const mensajeEstratega = datosEstratega.mensaje || \"\";\n  \n  // [CAMBIO CLAVE] Detecta si es la frase de advertencia\n  if (mensajeEstratega.includes(\"No existe un estratega registrado\")) {\n    mensajeEspecialEstratega = mensajeEstratega; // Guarda la frase completa\n  }\n  \n  // La extracción del ID sigue funcionando para ambos casos\n  const match = mensajeEstratega.match(/<@(.*?)>/);\n  idUsuarioSlack = (match && match[0]) ? match[0] : \"equipo\";\n  \n} catch (error) {\n  idUsuarioSlack = \"equipo\";\n}\n\ntry {\n  const datosEntrantes = $('Data entrante').first().json.data;\n  nombreCliente = datosEntrantes.nombre;\n  nombreEmpresa = datosEntrantes.empresa || \"No encontrado\";\n  idCuentaPublicitaria = datosEntrantes[\"ID-cuenta-publicitaria\"] || \"No encontrado\";\n  if (datosEntrantes.status === 'repetido') {\n    esAlertaRepetida = true;\n  }\n} catch (error) {\n  // Usar valores por defecto.\n}\n\n// --- 2. PROCESAR CAMPAÑAS ---\nlet campaigns = [];\nconst inputJson = $('Aggregate').first().json;\n\nif (Array.isArray(inputJson) && inputJson.length > 0 && inputJson[0].data) {\n  campaigns = inputJson[0].data;\n} else if (inputJson && inputJson.data) {\n  campaigns = inputJson.data;\n}\n\nconst campaignAlertBlocks = [];\n\nfor (const campaign of campaigns) {\n  let estadoFinal, motivoFinal;\n\n  const ahora = new Date($now.toISO());\n  const fechaCreacion = new Date(campaign.created_time);\n  const fechaLimite = new Date(ahora);\n  fechaLimite.setDate(ahora.getDate() - UMBRALES.DIAS_MIN_ANTIGUEDAD);\n\n  if (fechaCreacion >= fechaLimite) {\n    estadoFinal = 'Fuera de pool de alertas';\n  } else {\n    const metrics = campaign.insights?.data[0];\n    if (!metrics) {\n      estadoFinal = 'REQUIERE REVISIÓN';\n      motivoFinal = 'No se encontraron datos de métricas. Posible error de entrega.';\n    } else {\n      let esCampanaAnalizable = false;\n      if (metrics.cost_per_result && metrics.cost_per_result.length > 0) {\n        for (const result of metrics.cost_per_result) {\n          const actionType = result.indicator || \"\";\n          if (actionType.includes('messaging_conversation') || actionType.includes('lead')) {\n            esCampanaAnalizable = true;\n            break;\n          }\n        }\n      }\n\n      if (!esCampanaAnalizable) {\n        estadoFinal = 'No Analizable';\n      } else {\n        const alertas = [];\n        for (const result of metrics.cost_per_result) {\n          if (result.values && result.values.length > 0) {\n            const costValue = parseFloat(result.values[0].value);\n            const actionType = result.indicator || \"\";\n            const tipo = actionType.includes('lead') ? 'Lead' : 'Conversación';\n\n            if (actionType.includes('messaging_conversation') || actionType.includes('lead')) {\n              if (costValue > UMBRALES.COSTE_POR_ACCION_MAX) {\n                alertas.push(`Costo por ${tipo} alto ($${costValue.toFixed(2)})`);\n              } else if (costValue < UMBRALES.COSTE_POR_ACCION_MIN) {\n                alertas.push(`Costo por ${tipo} bajo ($${costValue.toFixed(2)})`);\n              }\n            }\n          }\n        }\n\n        if (alertas.length > 0) {\n          estadoFinal = 'REQUIERE REVISIÓN';\n          motivoFinal = alertas.join(', ');\n        } else {\n          estadoFinal = 'OK';\n        }\n      }\n    }\n  }\n\n  if (estadoFinal === 'REQUIERE REVISIÓN') {\n    const fechaCreacionObj = new Date(campaign.created_time);\n    const opcionesFormato = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };\n    const fechaFormateada = fechaCreacionObj.toLocaleDateString('es-ES', opcionesFormato);\n\n    const campaignSection = {\n      \"type\": \"section\",\n      \"text\": { \"type\": \"mrkdwn\", \"text\": `*Campaña:* ${campaign.name}\\n*Fecha de creación:* ${fechaFormateada}\\n*Estado:* \\`${estadoFinal}\\`\\n*Razón:* ${motivoFinal}` }\n    };\n    const divider = { \"type\": \"divider\" };\n    campaignAlertBlocks.push(campaignSection, divider);\n  }\n}\n\n// --- 3. ENSAMBLAJE FINAL DEL REPORTE Y DEL JSON DE SLACK ---\nlet estadoGeneral = \"\";\nlet slackBlock = null;\n\nif (campaignAlertBlocks.length > 0) {\n  estadoGeneral = \"Reporte Existente\";\n\n  let textoIntroduccion;\n  if (esAlertaRepetida) {\n    textoIntroduccion = `Hola ${idUsuarioSlack}, esta alerta *sigue activa* y requiere tu atención.`;\n  } else {\n    textoIntroduccion = `Hola ${idUsuarioSlack}, se ha detectado una *nueva alerta* que requiere tu atención.`;\n  }\n  \n  // [CAMBIO CLAVE] Se crea un bloque de contexto si hay un mensaje especial\n  const extraBlocks = [];\n  if (mensajeEspecialEstratega) {\n    extraBlocks.push({\n      \"type\": \"context\",\n      \"elements\": [{ \"type\": \"mrkdwn\", \"text\": `*Nota:* ${mensajeEspecialEstratega}` }]\n    });\n    extraBlocks.push({ \"type\": \"divider\" });\n  }\n\n  slackBlock = {\n    \"blocks\": [\n      {\n        \"type\": \"header\",\n        \"text\": { \"type\": \"plain_text\", \"text\": esAlertaRepetida ? \"🚨 ALERTA REPETIDA 🚨\" : \"🚨 Alerta de Campaña Nueva\", \"emoji\": true }\n      },\n      {\n        \"type\": \"section\",\n        \"text\": { \"type\": \"mrkdwn\", \"text\": textoIntroduccion }\n      },\n      { \"type\": \"divider\" },\n      {\n        \"type\": \"section\",\n        \"fields\": [\n          { \"type\": \"mrkdwn\", \"text\": `*Cliente:*\\n${nombreCliente}` },\n          { \"type\": \"mrkdwn\", \"text\": `*Empresa:*\\n${nombreEmpresa}` },\n          { \"type\": \"mrkdwn\", \"text\": `*ID Cuenta Publicitaria:*\\n${idCuentaPublicitaria}` }\n        ]\n      },\n      // [CAMBIO CLAVE] Se insertan los bloques extra aquí\n      ...extraBlocks,\n      ...campaignAlertBlocks,\n      {\n        \"type\": \"actions\",\n        \"elements\": [\n          { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Campañas Ajustadas\", \"emoji\": true }, \"style\": \"primary\", \"value\": \"revisado\", \"action_id\": \"approve_button\" },\n          { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"Dependencia\", \"emoji\": true }, \"value\": \"dependencia\", \"action_id\": \"dependencia_button\" }\n        ]\n      }\n    ]\n  };\n\n} else {\n  estadoGeneral = \"Todo OK\";\n}\n\nreturn [{\n  json: {\n    estado_general: estadoGeneral,\n    slack_block: slackBlock\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7520,
+        -480
+      ],
+      "id": "1c1d42c9-95c4-443f-abfb-54c2e04b7bc0",
+      "name": "Analisis de metricas en anuncio"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "504a7b59-a739-488e-b355-9aa257fd4fa5",
+              "leftValue": "={{ $json.estado_general }}",
+              "rightValue": "Reporte Existente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        7712,
+        -480
+      ],
+      "id": "03a7f478-42c4-44d4-85a2-849e686ecbd1",
+      "name": "If6"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4800,
+        -224
+      ],
+      "id": "3270743c-e440-447b-b00f-16c05b38f2be",
+      "name": "Final del proceso"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5232,
+        -480
+      ],
+      "id": "12284d04-ec78-41e8-ac12-9dd1a826be88",
+      "name": "Wait4",
+      "webhookId": "7ca4e496-7b0c-410e-a398-b9d14b9c1276"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        8480,
+        -272
+      ],
+      "id": "6a21155a-3552-4eb8-ab4e-0cc74ad495de",
+      "name": "Vaciar input",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Salida del bucle",
+      "typeVersion": 1,
+      "position": [
+        8512,
+        80
+      ],
+      "id": "646880ec-614b-43fa-97f6-0460819b6b6b",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095BBYBHHA",
+          "mode": "list",
+          "cachedResultName": "monitoreo-metricas-fb-ads"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"🟡 Alerta: Cliente Sin Campañas Activas\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Cliente:*\\n{{$('Data entrante').first().json.data.nombre}}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*Empresa:*\\n{{$('Data entrante').first().json.data.empresa}}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*ID Cuenta Publicitaria:*\\n{{$('Data entrante').first().json.data['ID-cuenta-publicitaria']}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"Asignado a: {{$('set-final-messages4').first().json.final}}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"actions\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Revisado\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\"action_id\": \"approve_button\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"button\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\"text\": \"Dependencia\",\n\t\t\t\t\t\"emoji\": true\n\t\t\t\t},\n\t\t\t\t\"action_id\": \"dependencia_button\"\n\t\t\t}\n\t\t]\n\t}\n]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        6992,
+        -128
+      ],
+      "id": "21544056-5d38-4368-80ba-de4477ab6691",
+      "name": "Send a message9",
+      "webhookId": "8767290b-c4b3-4c76-9973-7f757575022c",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095BBYBHHA",
+          "mode": "list",
+          "cachedResultName": "monitoreo-metricas-fb-ads"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.slack_block.toJsonString() }}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        7904,
+        -496
+      ],
+      "id": "7c8f0fdf-4d7b-49f4-98de-caa6624f6946",
+      "name": "Send a message10",
+      "webhookId": "38f0c00a-aa5c-409c-9d23-7993f714eea8",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09C500JTRB",
+          "mode": "list",
+          "cachedResultName": "fb-ads-gestión-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 ERROR CON LA CUENTA: {{$('Data entrante').first().json.data.nombre}}\",\"emoji\":true}},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Empresa:*\\n{{$('Data entrante').first().json.data.empresa}}\"},{\"type\":\"mrkdwn\",\"text\":\"*ID de la cuenta publicitaria:*\\n`{{$('Data entrante').first().json.data['ID-cuenta-publicitaria']}}`\"}]},{\"type\":\"divider\"},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Es posible que no este asignada al agente de monitoreo. Por favor seguir las instrucciones para asignarlo correctamente.\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"1. Ir a cuenta de BackUp\\n2. Ir a usuarios de sistema\\n3. Usuario \\\"Agente Monitoreo\\\"\\n4. Ir al meno desplegable a la derecha de \\\"Revocar token\\\"\\n5. Ir a \\\"Asignar activo\\\"\\n6. Ir en el meno de la izquiera a \\\"Cuentas Publicitarias\\\"\\n7. Ingresar el ID de la cuenta publicitaria que se va a asignar\\n8. En el menu a la derecha que se abre encender \\\"Administrar Campañas\\\" y \\\"Ver Rendimiento\\\"\\n9. En al zona inferior clickar en \\\"Asignar Activo\\\"\"}},{\"type\":\"context\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\"Asignado a: {{$('set-final-messages').item.json.final}}\"}]},{\"type\":\"actions\",\"elements\":[{\"type\":\"button\",\"text\":{\"type\":\"plain_text\",\"text\":\"Revisado\",\"emoji\":true},\"style\":\"primary\",\"action_id\":\"approve_button\"},{\"type\":\"button\",\"text\":{\"type\":\"plain_text\",\"text\":\"Para despues\",\"emoji\":true},\"style\":\"danger\",\"action_id\":\"para-despues\"}]}]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        6096,
+        64
+      ],
+      "id": "72f4bde1-007f-47db-8509-3d0df9b5e67f",
+      "name": "Send a message14",
+      "webhookId": "2e329a6b-37eb-4221-b491-c5e7fbde81f4",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{$('Data entrante').first().json.data['ID-cuenta-publicitaria']}}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({\"since\":\"{{ $json.since }}\",\"until\":\"{{ $json.until }}\"}){spend,ctr,cpm,cost_per_result}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5392,
+        -480
+      ],
+      "id": "31a5f787-dc6b-4dd0-a8a5-15dd97f066c0",
+      "name": "get campaign",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6128,
+        -496
+      ],
+      "id": "7a5b9397-aecb-454c-8edb-2d6811385370",
+      "name": "Verificar si hay campañas activas"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        6336,
+        -496
+      ],
+      "id": "745bbc30-bfb0-43c6-8d20-48395a2500d7",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ff42b61-58b8-46f8-85d4-b9b9f081edd2",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/level up/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "bb463723-718a-4849-8def-8a1ae288f3d3",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        6480,
+        -496
+      ],
+      "id": "c3e987e7-9fdd-489e-83cb-0ac604b1ab87",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        6672,
+        -496
+      ],
+      "id": "5bd4ea41-aeaa-4f0f-9186-ea4c41865789",
+      "name": "Aggregate",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data entrante').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        5776,
+        -352
+      ],
+      "id": "c7573ab5-fd39-4884-b8cb-67c27eddca3d",
+      "name": "get-data-to-tag-member2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data entrante').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6512,
+        -288
+      ],
+      "id": "edccab46-099a-4f57-8310-3f826352c14b",
+      "name": "get-data-to-tag-member3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5856,
+        -160
+      ],
+      "id": "ccb686ec-1ae4-4ba4-94a3-0a7ddacbe8bd",
+      "name": "lack-of-traffiker-message6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5584,
+        -352
+      ],
+      "id": "5757e80b-ca43-43b8-ab7a-df88d538a4e2",
+      "name": "hay-traffiker?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6080,
+        -192
+      ],
+      "id": "2f266e52-3f11-44f4-a0c9-9a9d15aa55b2",
+      "name": "set-final-messages"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $('Data entrante').item.json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7088,
+        -592
+      ],
+      "id": "466d35a2-237b-40a4-bfc8-341563fbf95a",
+      "name": "get-data-to-tag-member7",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6912,
+        -496
+      ],
+      "id": "c5d2614e-a42e-4657-a5ba-b9958748676a",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7296,
+        -400
+      ],
+      "id": "2fc6eb66-1431-4202-b4c8-9ece1cb68a59",
+      "name": "lack-of-traffiker-message7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efe6a7fe-00c3-4dc2-b25a-a1a9bdfcd454",
+              "name": "mensaje",
+              "value": "=No existe un estratega registrado <@U07V7MVJ18B> <@U08U9777PUY>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6592,
+        -80
+      ],
+      "id": "329a6e49-43f8-4203-a1ec-6bfe01628ed1",
+      "name": "lack-of-traffiker-message1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1f51f0cc-5559-431f-9749-35f99aa6eb5a",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "962d329b-15e6-4047-a46e-0ae6853775aa",
+              "leftValue": "={{ $('Data entrante').item.json.data.traffiker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6320,
+        -288
+      ],
+      "id": "58808e8f-1aa3-46bb-8e33-a3281fb8e764",
+      "name": "hay-traffiker?4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a4c12dd-e713-42fd-8fa9-ee91c0c8422e",
+              "name": "final",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6832,
+        -128
+      ],
+      "id": "aeacbc41-2cb6-4ba2-ad8f-54ea5b78a6eb",
+      "name": "set-final-messages4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf2da2b4-bdcc-4f3c-a8c0-695963f7a4f4",
+              "name": "data",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        -512
+      ],
+      "id": "ed0c32ca-ee68-428d-97f4-9af89ba8f598",
+      "name": "data-entry"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        8432,
+        -1440
+      ],
+      "id": "790d2dd3-3c93-4b57-96c4-cce1570a74c4",
+      "name": "update-last-alert",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7312,
+        -1072
+      ],
+      "id": "33d0e55c-269c-4737-93a5-340881fcb3cd",
+      "name": "update-last-alert5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6432,
+        -880
+      ],
+      "id": "1738ef9a-4a18-4ece-82d4-9852989c62a5",
+      "name": "update-last-alert1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data entrante').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        8480,
+        -496
+      ],
+      "id": "3149c54d-064f-43d2-997f-699ca9b7945e",
+      "name": "update-last-alert2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data entrante').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7344,
+        -128
+      ],
+      "id": "1e1515ca-315f-48cf-b62e-0c4ee87292b0",
+      "name": "update-last-alert3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Data entrante').first().json.data.Id }}"
+            },
+            {
+              "fieldName": "ultima-alerta",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6448,
+        64
+      ],
+      "id": "57703ea8-2786-4351-82d8-0e0206d3e3a9",
+      "name": "update-last-alert4",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $json.data.traffiker.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2384,
+        -512
+      ],
+      "id": "ddd46674-7c53-4f36-8475-1f18a59fbd20",
+      "name": "get-team-member",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "={{ $json.message.text }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "={{ $('Separar por id presente').item.json['ID-monday'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message').item.json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message').item.json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        3008,
+        -368
+      ],
+      "id": "70161c5e-3f04-47b6-b3f7-841371c6b005",
+      "name": "save-message-log",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2fb84660-cb6b-4666-8ce7-c98a1c2facb0",
+              "leftValue": "={{ $json.data.industrias.nombre }}",
+              "rightValue": "Solar",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        -912
+      ],
+      "id": "cf8ba2c9-93a3-47ef-8a38-79113bf9ac35",
+      "name": "solar?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98f22bd5-515f-4992-9e88-dfeeb7478f65",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4832,
+        -1424
+      ],
+      "id": "b2ed9d9b-3867-4d8e-8cff-ffb14e19a645",
+      "name": "Data-entrante3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3120,
+        -752
+      ],
+      "id": "3f2a2689-3a95-480a-b92a-34d7952a7c80",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9190846f-e2f5-467d-b1f0-fa3aac0dd390",
+              "leftValue": "={{ $json.Id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3472,
+        -640
+      ],
+      "id": "b9a0313f-2e40-4635-816b-5f8382968cf9",
+      "name": "filter-error-always-data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5904,
+        -1296
+      ],
+      "id": "e7a7dc9a-a1a0-4b3e-bf67-4e1dd575c3e2",
+      "name": "set-member-slack-id"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2560,
+        -512
+      ],
+      "id": "6af10cc6-f125-4749-a9d6-6c93a5c6d063",
+      "name": "set-member-slack-id1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6608,
+        -1232
+      ],
+      "id": "e091b8bd-e49f-4b7c-9dfa-c6be472c1e1e",
+      "name": "set-member-slack-id2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "=ERROR CON LA CUENTA: {{ $('Data-entrante3').first().json.data.nombre }}\nEMPRESA: {{ $('Data-entrante3').first().json.data.empresa }}. \nFECHA DE CREACIÓN: {{ $('get campaign3').item.json.data[0].created_time.toDateTime().format('ff') }}\nID de la cuenta publicitaria: {{ $('Data-entrante3').first().json.data['ID-cuenta-publicitaria'] }}\n\nEs posible que no este asignada al agente de monitoreo. Por favor seguir las instrucciones para asignarlo correctamente.\n\n1. Ir a cuenta de BackUp\n2. Ir a usuarios de sistema\n3. Usuario \"Agente Monitoreo\"\n4. Ir al meno desplegable a la derecha de \"Revocar token\"\n5. Ir a \"Asignar activo\"\n6. Ir en el meno de la izquiera a \"Cuentas Publicitarias\"\n7. Ingregar el ID de la cuenta publicitaria que se va a asignar\n8. En el menu a la derecha que se abre encender \"Administrar Campañas\" y \"Ver Rendimiento\"\n9. En al zona inferior clickar en \"Asignar Activo\"\n\nAsignacion de cuenta publicitaria terminado"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message13').first().json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message13').first().json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6240,
+        -880
+      ],
+      "id": "0cf7c6b7-9b8d-4dd7-b55f-655456d6fb3d",
+      "name": "create-message-log",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "=NO HAY CONJUNTOS DE ANUNCIOS ACTIVOS PARA: {{ $('Data-entrante3').first().json.data.nombre }}\nEMPRESA: {{ $('Data-entrante3').first().json.data.empresa }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message7').item.json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message7').item.json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7120,
+        -1072
+      ],
+      "id": "6392adb9-4cbe-4afc-a603-7f2773a2a0fd",
+      "name": "create-message-log1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31b4ad2a-d74a-47ea-81c5-92d7072b2d8a",
+              "name": "mensaje",
+              "value": "=<@{{ $json[\"ID-slack\"] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7248,
+        -1536
+      ],
+      "id": "a23b16c6-c165-4db2-b260-99921bc85cfa",
+      "name": "set-member-slack-id3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a5c3c83-b109-4005-a908-ca42c32fbe41",
+              "name": "ts",
+              "value": "={{ $json.message_timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "051fa943-3b2b-4ab1-9e1c-ddbbdcc1e69b",
+              "name": "channel",
+              "value": "={{ $json.channel }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        8016,
+        -1440
+      ],
+      "id": "b0c1e3b8-711e-4783-b456-05e21f157357",
+      "name": "set-slack-data"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "={{ $('Analisis de metricas en anuncio3').first().json.reporte_final }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data-entrante3').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $json.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        8224,
+        -1440
+      ],
+      "id": "75dc12be-cdba-4255-86e1-dd03bbde0e09",
+      "name": "create-message-log2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "={{ $('Analisis de metricas en anuncio').first().json.reporte_final }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data entrante').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $json.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        8272,
+        -496
+      ],
+      "id": "0bb98864-3c2f-44e9-b783-c2519a2ca08e",
+      "name": "create-message-log3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a5c3c83-b109-4005-a908-ca42c32fbe41",
+              "name": "ts",
+              "value": "={{ $json.message_timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "051fa943-3b2b-4ab1-9e1c-ddbbdcc1e69b",
+              "name": "channel",
+              "value": "={{ $json.channel }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        8064,
+        -496
+      ],
+      "id": "7a1818d5-46ed-41f3-8b73-e8964d8aaddf",
+      "name": "set-slack-data1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31b4ad2a-d74a-47ea-81c5-92d7072b2d8a",
+              "name": "mensaje",
+              "value": "=<@{{ $json[\"ID-slack\"] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7296,
+        -592
+      ],
+      "id": "32287344-2120-4c88-a206-37e86abc565c",
+      "name": "set-member-slack-id4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "=NO HAY CONJUNTOS DE ANUNCIOS ACTIVOS PARA: {{ $('Data entrante').first().json.data.nombre }}\nEMPRESA: {{ $('Data entrante').first().json.data.empresa }}"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data entrante').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message9').item.json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message9').item.json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        7168,
+        -128
+      ],
+      "id": "67b54295-26b1-46c5-8e9c-77e89529e14e",
+      "name": "create-message-log4",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6656,
+        -288
+      ],
+      "id": "61d8e054-2d2f-44dc-a32c-5ff1a67f91d6",
+      "name": "set-member-slack-id5"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mc6wkmvclmdbyed",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "mensaje",
+              "fieldValue": "=ERROR CON LA CUENTA: {{ $('Data entrante').first().json.data.nombre }}\nEMPRESA: {{ $('Data entrante').first().json.data.empresa }}. \nFECHA DE CREACIÓN: {{ $('get campaign').item.json.data[0].created_time.toDateTime().format('ff') }}\nID de la cuenta publicitaria: {{ $('Data entrante').first().json.data['ID-cuenta-publicitaria'] }}\n\nEs posible que no este asignada al agente de monitoreo. Por favor seguir las instrucciones para asignarlo correctamente.\n\n1. Ir a cuenta de BackUp\n2. Ir a usuarios de sistema\n3. Usuario \"Agente Monitoreo\"\n4. Ir al meno desplegable a la derecha de \"Revocar token\"\n5. Ir a \"Asignar activo\"\n6. Ir en el meno de la izquiera a \"Cuentas Publicitarias\"\n7. Ingregar el ID de la cuenta publicitaria que se va a asignar\n8. En el menu a la derecha que se abre encender \"Administrar Campañas\" y \"Ver Rendimiento\"\n9. En al zona inferior clickar en \"Asignar Activo\"\n\nAsignacion de cuenta publicitaria terminado"
+            },
+            {
+              "fieldName": "fecha",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Data entrante').first().json.data['ID-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-ts",
+              "fieldValue": "={{ $('Send a message14').first().json.message.ts }}"
+            },
+            {
+              "fieldName": "ID-mensaje-slack-channel",
+              "fieldValue": "={{ $('Send a message14').first().json.channel }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        6288,
+        64
+      ],
+      "id": "9075cc27-0c0f-4857-b61d-2370e1505443",
+      "name": "create-message-log5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d4e722-b6a8-434b-ba4a-019bf0523ec0",
+              "name": "mensaje",
+              "value": "=<@{{ $json['ID-slack'] }}> <@U07V7MVJ18B>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5952,
+        -352
+      ],
+      "id": "b8a77068-8848-49f6-827c-f92b95e79daa",
+      "name": "set-member-slack-id6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f58f5ae0-290a-46ad-a0b3-721f74e19692",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Monday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "185a3de4-410c-46f3-a586-ef195a3fde98",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Wednesday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "aac79d34-71de-42a1-936c-aedecc8f3d99",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Friday",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        -688
+      ],
+      "id": "b2bce9fd-488f-4949-bb03-8de58ae25ee8",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82a0acd7-b20c-4d64-87d3-af946f62a045",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4288,
+        -816
+      ],
+      "id": "55d5c9b1-6e0a-47b4-8006-83135a0b1c78",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82a0acd7-b20c-4d64-87d3-af946f62a045",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4288,
+        -1008
+      ],
+      "id": "346f4b18-cb67-4852-a2f1-2db3c7eb222a",
+      "name": "Filter2"
+    }
+  ],
+  "connections": {
+    "Separar por id presente": {
+      "main": [
+        [
+          {
+            "node": "esta revisado?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "esta revisado?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "tiene dependencia activa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tiene alerta repetida?": {
+      "main": [
+        [
+          {
+            "node": "void?1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "filter-error-always-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-status-repetido": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-status-ok": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "solar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setear time range3": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Final del proceso3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data-entrante3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis de metricas en anuncio3": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Send a message8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vaciar input3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "get campaign3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vaciar input3": {
+      "main": [
+        [
+          {
+            "node": "Salida del bucle3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salida del bucle3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message7": {
+      "main": [
+        [
+          {
+            "node": "create-message-log1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message8": {
+      "main": [
+        [
+          {
+            "node": "set-slack-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message13": {
+      "main": [
+        [
+          {
+            "node": "create-message-log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign3": {
+      "main": [
+        [
+          {
+            "node": "Verificar si hay campañas activas3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hay-traffiker?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si hay campañas activas3": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hay-traffiker?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member1": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients": {
+      "main": [
+        [
+          {
+            "node": "Separar por id presente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "put-false-dependency": {
+      "main": [
+        [
+          {
+            "node": "get-client-data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tiene dependencia activa?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "filter-for-dependecy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-for-dependecy": {
+      "main": [
+        [
+          {
+            "node": "void?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "save-message-log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void?": {
+      "main": [
+        [
+          {
+            "node": "put-false-dependency",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void?1": {
+      "main": [
+        [
+          {
+            "node": "set-status-repetido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "get-clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "data-entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message3": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?1": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages1": {
+      "main": [
+        [
+          {
+            "node": "Send a message13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message4": {
+      "main": [
+        [
+          {
+            "node": "Analisis de metricas en anuncio3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member6": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?2": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages2": {
+      "main": [
+        [
+          {
+            "node": "Send a message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message5": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?3": {
+      "main": [
+        [
+          {
+            "node": "get-team-member",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setear time range": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "Final del proceso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data entrante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data entrante": {
+      "main": [
+        [
+          {
+            "node": "Setear time range",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis de metricas en anuncio": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Send a message10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vaciar input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "get campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vaciar input": {
+      "main": [
+        [
+          {
+            "node": "Salida del bucle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salida del bucle": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message9": {
+      "main": [
+        [
+          {
+            "node": "create-message-log4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message10": {
+      "main": [
+        [
+          {
+            "node": "set-slack-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message14": {
+      "main": [
+        [
+          {
+            "node": "create-message-log5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign": {
+      "main": [
+        [
+          {
+            "node": "Verificar si hay campañas activas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hay-traffiker?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si hay campañas activas": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hay-traffiker?4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member2": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member3": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message6": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages": {
+      "main": [
+        [
+          {
+            "node": "Send a message14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-data-to-tag-member7": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message7": {
+      "main": [
+        [
+          {
+            "node": "Analisis de metricas en anuncio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lack-of-traffiker-message1": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-traffiker?4": {
+      "main": [
+        [
+          {
+            "node": "get-data-to-tag-member3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lack-of-traffiker-message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-final-messages4": {
+      "main": [
+        [
+          {
+            "node": "Send a message9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data-entry": {
+      "main": [
+        [
+          {
+            "node": "hay-traffiker?3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert5": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert1": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert2": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert3": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-last-alert4": {
+      "main": [
+        [
+          {
+            "node": "Vaciar input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-team-member": {
+      "main": [
+        [
+          {
+            "node": "set-member-slack-id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-message-log": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "solar?": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data-entrante3": {
+      "main": [
+        [
+          {
+            "node": "Setear time range3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "tiene alerta repetida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-error-always-data": {
+      "main": [
+        [
+          {
+            "node": "set-status-ok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id1": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id2": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log1": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id3": {
+      "main": [
+        [
+          {
+            "node": "Analisis de metricas en anuncio3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-slack-data": {
+      "main": [
+        [
+          {
+            "node": "create-message-log2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log2": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log3": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-slack-data1": {
+      "main": [
+        [
+          {
+            "node": "create-message-log3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id4": {
+      "main": [
+        [
+          {
+            "node": "Analisis de metricas en anuncio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log4": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id5": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-message-log5": {
+      "main": [
+        [
+          {
+            "node": "update-last-alert4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-member-slack-id6": {
+      "main": [
+        [
+          {
+            "node": "set-final-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "get-clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/Puerto_Rico",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-08-25T07:00:45.059-04:00",
+          "Readable date": "August 25th 2025, 7:00:45 am",
+          "Readable time": "7:00:45 am",
+          "Day of week": "Monday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "25",
+          "Hour": "07",
+          "Minute": "00",
+          "Second": "45",
+          "Timezone": "America/Puerto_Rico (UTC-04:00)"
+        }
+      }
+    ],
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 924182079,
+          "message": {
+            "message_id": 22,
+            "from": {
+              "id": 712393478,
+              "is_bot": false,
+              "first_name": "Alexander",
+              "last_name": "Musso",
+              "username": "Picax_alex",
+              "language_code": "es"
+            },
+            "chat": {
+              "id": 712393478,
+              "first_name": "Alexander",
+              "last_name": "Musso",
+              "username": "Picax_alex",
+              "type": "private"
+            },
+            "date": 1756121004,
+            "text": "A"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "d236b272-7ce9-45c0-b2c9-1344578f56ce",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "C42vSaciGbLjE3vI",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-29T18:59:57.261Z",
+      "createdAt": "2025-07-29T18:59:57.261Z",
+      "id": "S4k0fO0sHWc9ycPK",
+      "name": "testing"
+    }
+  ],
+  "activeVersion": null
+}

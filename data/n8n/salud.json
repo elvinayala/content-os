@@ -1,0 +1,1000 @@
+{
+  "generadoEl": "2026-09-21T00:36:06.120Z",
+  "dias": 7,
+  "desde": "2026-09-14T00:35:58.999Z",
+  "ejecucionesVistas": 1483,
+  "workflows": [
+    {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
+      "activo": true,
+      "ok": 0,
+      "error": 7,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": {
+        "id": "60703",
+        "cuando": "2026-09-20T09:00:49.045Z",
+        "modo": "trigger",
+        "nodo": "Get an item",
+        "mensaje": "Cannot read properties of null (reading 'split')"
+      }
+    },
+    {
+      "id": "qXDEK5MdK5Zpwpzr",
+      "nombre": "B-) Agente de monitoreo v3",
+      "activo": true,
+      "ok": 9,
+      "error": 3,
+      "otras": 0,
+      "ultimaOk": "2026-09-18T11:51:09.983Z",
+      "ultimoError": {
+        "id": "60367",
+        "cuando": "2026-09-18T11:46:16.902Z",
+        "modo": "integrated",
+        "nodo": "Send a message14",
+        "mensaje": "Parameter 'blocksUi' could not be parsed"
+      }
+    },
+    {
+      "id": "pNSgghJY7mLA9GnB",
+      "nombre": "BackUp Workflows",
+      "activo": true,
+      "ok": 1008,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T12:01:27.994Z",
+      "ultimoError": null
+    },
+    {
+      "id": "rb5SOZw8rT5YXKg8",
+      "nombre": "B-) Agente de onboarding v5",
+      "activo": true,
+      "ok": 103,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-17T16:31:12.985Z",
+      "ultimoError": null
+    },
+    {
+      "id": "pNMZF1Fb4r6yHfGk",
+      "nombre": "A-) Recibir webhook chatwoot v1",
+      "activo": true,
+      "ok": 100,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-17T16:31:11.810Z",
+      "ultimoError": null
+    },
+    {
+      "id": "Sb6dLyiZnMJtc6AC",
+      "nombre": "C-) Lógica envío de reportes v5",
+      "activo": true,
+      "ok": 63,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-15T13:05:56.917Z",
+      "ultimoError": null
+    },
+    {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
+      "activo": true,
+      "ok": 60,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T09:00:04.210Z",
+      "ultimoError": null
+    },
+    {
+      "id": "uelcZVSQvpl2hetY",
+      "nombre": "F-) Lector de seguimientos v1",
+      "activo": true,
+      "ok": 14,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T14:00:49.120Z",
+      "ultimoError": null
+    },
+    {
+      "id": "vvXRpzCDaYehJDYf",
+      "nombre": "E-) Alerta falta de fases v1",
+      "activo": true,
+      "ok": 12,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-18T11:50:48.803Z",
+      "ultimoError": null
+    },
+    {
+      "id": "dsrJpJi1MTr4mCOZ",
+      "nombre": "F-) Alerta para fase 5",
+      "activo": true,
+      "ok": 12,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-18T11:51:59.712Z",
+      "ultimoError": null
+    },
+    {
+      "id": "fEOX9Q3Szkf6bLQq",
+      "nombre": "Notificación Error",
+      "activo": true,
+      "ok": 10,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T09:00:53.622Z",
+      "ultimoError": null
+    },
+    {
+      "id": "I8u1vHBsHTeF74nd",
+      "nombre": "I-) Envio de pdf de ciberseguridad v1",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T14:00:57.063Z",
+      "ultimoError": null
+    },
+    {
+      "id": "Z9LnpNMTFKRl3CIg",
+      "nombre": "C-) Alerta por falta de pago v1",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T12:00:23.081Z",
+      "ultimoError": null
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T13:00:08.086Z",
+      "ultimoError": null
+    },
+    {
+      "id": "3NpTfPN4uQseNhq5",
+      "nombre": "BackUp Credential",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T12:00:09.053Z",
+      "ultimoError": null
+    },
+    {
+      "id": "76PxSWzFembacRcK",
+      "nombre": "A-) Mensajes de bienestar",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T15:00:09.077Z",
+      "ultimoError": null
+    },
+    {
+      "id": "3DeJXvNmTFQ44FIF",
+      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T13:00:44.091Z",
+      "ultimoError": null
+    },
+    {
+      "id": "MLp39LO5jJmzk9Vp",
+      "nombre": "A) RevisionInstanciaEvoAPI",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T11:00:35.149Z",
+      "ultimoError": null
+    },
+    {
+      "id": "LN08xR2hD3GGSEW8",
+      "nombre": "A-) Trigger v1.1 safe",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T11:45:50.099Z",
+      "ultimoError": null
+    },
+    {
+      "id": "yQPhJCGiqwZqBS9X",
+      "nombre": "A-) Trigger v1",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T13:00:46.037Z",
+      "ultimoError": null
+    },
+    {
+      "id": "7DRJJjTva38GSoGg",
+      "nombre": "J-) Envio de mensaje de bienvenida",
+      "activo": true,
+      "ok": 7,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-20T21:00:45.149Z",
+      "ultimoError": null
+    },
+    {
+      "id": "g7mkm3TKkjQYpopk",
+      "nombre": "B-) Slack button logic v2",
+      "activo": true,
+      "ok": 6,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-18T15:03:21.578Z",
+      "ultimoError": null
+    },
+    {
+      "id": "GB0T58QINudPFtEZ",
+      "nombre": "D-) Tools encuestador v1",
+      "activo": true,
+      "ok": 4,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-17T16:30:53.306Z",
+      "ultimoError": null
+    },
+    {
+      "id": "yltCftFKOPFbreUt",
+      "nombre": "B-) V3",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-15T13:00:46.102Z",
+      "ultimoError": null
+    },
+    {
+      "id": "0mEMnsMxnuy3SGjh",
+      "nombre": "My Sub-Workflow 2",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "KWSsCZWE3CLmT7Dj",
+      "nombre": "C-) Tools agente principal v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "61jM0xZxj4LvFEtX",
+      "nombre": "C-) Creador de copy(s) v1 - devflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HvMsL5j65etc7ZBq",
+      "nombre": "E-) Agente supervisor",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "J6gK0AYy7Bbz4NC2",
+      "nombre": "C-) Herramienta - Procesar Vacaciones",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "OyXhxbche4d60nOW",
+      "nombre": "My Sub-Workflow 3",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "M7Gunj0t3umBrgjP",
+      "nombre": "D-) Escalar a elvin",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "UIOeMjnuHwMaMyoX",
+      "nombre": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Vaxl6v0kVZW9tIHN",
+      "nombre": "Create PDF",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "ZhcAhenK4DTDHehN",
+      "nombre": "Generacion de tareas sub worflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "zHqLHcFFgClZuUK5",
+      "nombre": "E-) citas automaticas v4",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "gbjp6DIimQwwgYEt",
+      "nombre": "C-) Creador de copy(s) v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "kyiZTRCdzolA5li5",
+      "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "rTRe0OKhXPAKrFzs",
+      "nombre": "H-) Felicitaciones a los 100 - 200 leads v1 (v3.1)",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "oJvf4D4IELGNBQqo",
+      "nombre": "B-) Publicador de campañas v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "wqgZHdFtQ07PQg2q",
+      "nombre": "Gotenberg (Create PDF)",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "wsmfSEQa0GYGHqjA",
+      "nombre": "B-) Publicador de campañas v1 - devflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "zzaIVNQVp7rkKyo0",
+      "nombre": "My Sub-Workflow 1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "giPHQRGfr5d89t7J",
+      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "RXMCAuLoLhZCE2Sv",
+      "nombre": "My workflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "txUzpGmbiSu8Zc4J",
+      "nombre": "B-) Agente de Setting V5",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "WiNvceWGgPIVlOF6",
+      "nombre": "D) Comprobante Pago",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HlYjwOCuSEKfTsSi",
+      "nombre": "A-) Agente de RH",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "MjQHPb1GpuYo55l9",
+      "nombre": "A-) Webhooks central v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "eoGkQJiljDgVjFz1",
+      "nombre": "D-) Limpiador de minio",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "WgDRwK7RgmzqezhK",
+      "nombre": "A-) Webhooks central v2 - devflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "cEPWfieOs6tWBdWa",
+      "nombre": "prueba",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "1TaG7dgh54hTcLRm",
+      "nombre": "graficos",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "zXZLXX4WRFy87qNj",
+      "nombre": "Agente de onboarding v4 out-of-servide",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "zQPgMRoWkmrca8f6",
+      "nombre": "B2.2) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "zFQkFlCjCbZ9KMJk",
+      "nombre": "out-of-service B2.1) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "yEQPJCDIUKy3VMek",
+      "nombre": "v2 Levelito - Agente de monitoreo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "xd0kQhY3YZO3b7hQ",
+      "nombre": "X-) Vacaciones Recursos Humanos",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "nWAzRYgLFuJi1kaG",
+      "nombre": "C) Agente Monitoreo de anuncios",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "mVYdARFPPkMyJXNn",
+      "nombre": "Subworkflows",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "lb3at6DIzuJqs1V8",
+      "nombre": "C) 1.2 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "ktzh4xweoJzWmWQD",
+      "nombre": "V1",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "jOgVxxtD2fJQeOgg",
+      "nombre": "Seguimiento tareas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "jMW6wVpeUyPBG6Pm",
+      "nombre": "monitoreo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "gLB0tPkVHaZBZ7tI",
+      "nombre": "V3",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "fkc5VuZtjx2NUCvZ",
+      "nombre": "B1) Agente Onboarding - Validacion en excel",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "ez1JVuJ11RaOQA3X",
+      "nombre": "X-) Agente RH",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "eXipGv9n5GSHMCag",
+      "nombre": "C) 1.1 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "eWSMgXi9uW3E9gCy",
+      "nombre": "P-) Mantenimiento de desfase en los estrategas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "eAz3TdAqZ9k3oLgQ",
+      "nombre": "F-) Mensaje de bienvenida onboarding",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "bs9GFWlptCe1lLBj",
+      "nombre": "out-of-service Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "bO5n8pQI57Al2cgG",
+      "nombre": "Birthday copy",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "aZADKypvqlgg9xMh",
+      "nombre": "Actualizar correctamente chatwoot",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "a5FgDWKAfmqv40PM",
+      "nombre": "D-) Limpiador de minio - devflow",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Uk4m1c65HaC2MfFK",
+      "nombre": "Detectar workflows",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "TTciRCAqlCYC4QpA",
+      "nombre": "B-) Birthday",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "TAtsmX9ozs2mPvCe",
+      "nombre": "B) Agente Onboarding - Orquestador v2 alexVersion",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "T1t4OYwVW7QTJ1ml",
+      "nombre": "Get Campaigns",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "S0or6AyoMq9KszB3",
+      "nombre": "D-) Actualización fecha primera campaña",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "NyEQfFh6Lz0TBJ0E",
+      "nombre": "X-) page_id ig_id - tests",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Lkb4xQg9G0y16FOj",
+      "nombre": "V2 poco eficiente",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "LWZ3ILy8CzZFj9fO",
+      "nombre": "A-) Migracion de datos de monday v5 copy",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "L51yWcEJXkSrloeK",
+      "nombre": "A-) Enviar noticias al canal",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "L1OI3ULrh2yXJqP3",
+      "nombre": "V3 backUP",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HkjdzsysScaeszpR",
+      "nombre": "Reminder Tasks",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HPJYdfjD28yw5u4t",
+      "nombre": "E-) Notificacion  Personas Infracción",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "GeQUkgLSTCQYmWjP",
+      "nombre": "Encuestador",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Eo6BrnFxtLDXSEo0",
+      "nombre": "V3 copy john",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "EEE1FGzB76wwEsyx",
+      "nombre": "Agente IA Area Onboarding",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "C42vSaciGbLjE3vI",
+      "nombre": "v3 Agente de monitoreo - Levelito",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "At91U3Emd50tyaVh",
+      "nombre": "Verificacion de meta - app demo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "9MqLiz6lfEKcErPP",
+      "nombre": "X-) Agente RH Backup",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "80QA8Tpv4sLIcNku",
+      "nombre": "C) Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "7TYGDiWlJY2jqHX9",
+      "nombre": "A) Resumen Reuniones",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "6eUUg47MueSRhizz",
+      "nombre": "v2 Agente de monitoreo - Levelito",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "5fTSuLxgCjMbnRSm",
+      "nombre": "ads-read",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "4IaE51EipJb2ZJNY",
+      "nombre": "Docusing",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "0f2Ak2Z7Vft62F74",
+      "nombre": "Generador de Tareas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "0O7mXpxvFSjaLtlU",
+      "nombre": "ads-management",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    }
+  ]
+}

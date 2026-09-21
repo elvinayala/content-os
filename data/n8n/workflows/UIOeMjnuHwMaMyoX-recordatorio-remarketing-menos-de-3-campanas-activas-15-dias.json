@@ -1,0 +1,2703 @@
+{
+  "updatedAt": "2026-01-06T14:10:43.246Z",
+  "createdAt": "2025-09-12T20:14:25.498Z",
+  "id": "UIOeMjnuHwMaMyoX",
+  "name": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U096Y3TRT5E",
+          "mode": "list",
+          "cachedResultName": "agenteia"
+        },
+        "text": "=La cuenta de {{ $json.nombre }} esta en tiempo para la creación de los publicos personalizados para remarketing",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        -528
+      ],
+      "id": "e2bdedb1-0132-4710-91b4-0f72f2fbc485",
+      "name": "Send a message",
+      "webhookId": "1b7d6de2-b3f2-4563-aaa5-5449591151ec",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        672,
+        -80
+      ],
+      "id": "0a9123e0-2125-47d0-b28a-271dfa915e51",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        272
+      ],
+      "id": "2a0061be-0dc5-4c7e-97a6-6ade6cd0d1e9"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        -80
+      ],
+      "id": "c5f6b8f3-7762-49b2-a420-fad7ffa151af",
+      "name": "data-entry"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "=/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1600,
+        -80
+      ],
+      "id": "26c7ee7f-65a0-448c-9ac4-d92c346140ce",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -80
+      ],
+      "id": "fdafad96-9edb-4b9c-95e0-385dafcf900a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "campañas",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "insights",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        -80
+      ],
+      "id": "77dc1ff2-6e2a-474e-b831-939b43c1b38b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.campañas) }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Tarea\n- Tu tarea es analizar un json entrante que trae en payload de campañas publicitarias. \n- Contar la cantidad de campañas activas\n\n# Objetivo\n\n- El objetivo que analices cada campañas buscando aquellas que sean de remarketing. \n- Determinar la cantidad de campañas que hay\n\n# Contexto\n- No siempre diran remarketing, algunas veces se mostrará como abreviados del ti \"rmkt\" o por el estilo\n- Las campañas vienen dividas en el json por objetos \"campañas.campañas[]\"\n- Todas las campañas que llegan son activas, por ende el si hay menos 2 campañas ya se infiere que hay menos de 2 de campañas activas\n\n# Ouput\n- Debes soltar un json estructurado de la siguiente forma\n{\n\"existe-remarketing\": \"true or false\",\n\"menos-de-2-campañas\": \"true or false\",\n\"campaña-remarketing\" \"en caso de existir campaña de remarketing retornar toda la data aqui, caso contrario 'false'\",\n\"campañas\": \"retornar la data integra de todas las campañas entrantes en json string\"\n}\n\n# Reglas\n- No añadir información\n- Retornar siempre el json completo\n- Apegate a tus instrucciones\n- No tienes permiso de hacer, responder, agregar, eliminar información\n- Se conciso, directo y manten la data entrante integra en todo momento\n- Estructura correctamente el json, abriendo y cerrando correctamente todas las \"{}\" \"[]\""
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2192,
+        -80
+      ],
+      "id": "025370aa-2102-4c02-ad6b-a1c47cdca4ed",
+      "name": "Basic LLM Chain",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"existe-remarketing\": \"true\",\n\"menos-de-2-campañas\": \"true or false\",\n\"campaña-remarketing\": \"en caso de existir campaña de remarketing retornar toda la data aqui, caso contrario 'false'\",\n\"campañas\": \"retornar la data integra de todas las campañas entrantes\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2256,
+        -304
+      ],
+      "id": "b91d8b3b-d83c-454a-9a9f-93a140d4ce62",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2144,
+        -240
+      ],
+      "id": "22879ff4-6c5e-4555-9ebe-fda15b4455b9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0e5a802-9788-4e8b-9b02-e05c2b9bb456",
+              "name": "existe-remarketing",
+              "value": "={{ $json.output['existe-remarketing'] }}",
+              "type": "boolean"
+            },
+            {
+              "id": "5c82b7fc-c86b-4389-97b4-8159409b130e",
+              "name": "campaña-remarketing",
+              "value": "={{ $json.output['campaña-remarketing'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e2340ba9-c0b7-4ed2-b9c2-9fe9e9c226c6",
+              "name": "campañas",
+              "value": "={{ $json.output['campañas'] }}",
+              "type": "array"
+            },
+            {
+              "id": "e6ce08f6-d304-416d-94e3-12b40a852e1e",
+              "name": "menos-de-2-campañas",
+              "value": "={{ $json.output['menos-de-2-campañas'] }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true,
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2608,
+        -80
+      ],
+      "id": "7951712f-59c6-4259-97df-6cd3592e44ca",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b28d9de-94a6-4a14-953f-c14fe0dbba00",
+              "name": "a",
+              "value": "a",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2224,
+        272
+      ],
+      "id": "54c48cc0-24d2-4889-88c3-0ca61bd4cb54",
+      "name": "void",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2d92bcb8-69a9-4436-98a9-5e451c6597ba",
+              "leftValue": "={{ $now.format('yyyy-MM-dd') }}",
+              "rightValue": "={{ $json['fecha-inicio-campaña']?.toDateTime().plus('15', 'days').format('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -384
+      ],
+      "id": "b26e82b4-d1b0-4928-b0c7-5c6bb7359ce6",
+      "name": "alert-15-days-after-first-campaign"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -80
+      ],
+      "id": "a4cbbbb6-4f32-4c47-85ca-9fe8c2bc75b1",
+      "name": "there's-id?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Acceso a los datos de entrada ---\n// Se eliminó la entrada 'taggingData', ya que no es necesaria.\nconst campaignData = $('campañas-action').first().json;\nconst clientData = $('data-entry').first().json;\n\n\n// --- 2. Extracción de Datos ---\nconst { campañas: todasLasCampanas, action } = campaignData;\nconst { nombre: clienteNombre, empresa: clienteEmpresa, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\n\n\n// --- 3. Construcción del Texto de Análisis ---\nlet estadoGeneral = \"Reporte Existente\";\nlet textoFinal = null;\n\n// 3.1. Se define un título de análisis basado en el 'action'.\nlet tituloAnalisis;\nswitch (action) {\n    case 'remarketing_menos_3': // Asumo que el valor podría ser _3 como en el código de Python.\n    case 'remarketing_menos_2':\n        tituloAnalisis = \"ALERTA: Ausencia de Remarketing y <3 Campañas Activas\";\n        break;\n    case 'remarketing':\n        tituloAnalisis = \"ALERTA: Ausencia de Campaña de Remarketing\";\n        break;\n    case 'menos_3': // Asumo que el valor podría ser _3 como en el código de Python.\n    case 'menos_2':\n        tituloAnalisis = \"AVISO: Menos de 3 Campañas Activas\";\n        break;\n    default:\n        tituloAnalisis = \"INFORME GENERAL DE CAMPAÑAS\";\n        break;\n}\n\n// 3.2. Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*Empresa:* ${clienteEmpresa}\\n*ID Cuenta Publicitaria:* ${idCuentaPublicitaria}`;\n\n// 3.3. Se prepara la lista de campañas activas.\nlet listaCampañasTexto = \"\\n*Campañas Activas:*\";\nif (todasLasCampanas && todasLasCampanas.length > 0) {\n    todasLasCampanas.forEach(campana => {\n        listaCampañasTexto += `\\n• ${campana.name}`;\n    });\n} else {\n    listaCampañasTexto += \"\\n_No hay campañas activas para mostrar._\";\n}\n\n// 3.4. Se ensambla el texto final.\ntextoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${listaCampañasTexto}`;\n\n\n// --- 4. Objeto de Salida ---\n// Se retorna un objeto estandarizado para ser usado por el siguiente nodo.\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        112
+      ],
+      "id": "eae2c68f-4910-4909-988f-5491506c1095",
+      "name": "build-message"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nlet action;\n\nconst existe = data['existe-remarketing'];\nconst menos = data['menos-de-2-campañas'];\n\nif (!existe && menos) {\n  action = 'remarketing_menos_2';\n} else if (!existe && !menos) {\n  action = 'remarketing';\n} else if (existe && menos) {\n  action = 'menos_2';\n} else {\n  action = 'no-action';\n}\n\nreturn { action };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        288
+      ],
+      "id": "c8aa6495-27a5-42ad-b039-fbc1d0c228fb",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c82b7fc-c86b-4389-97b4-8159409b130e",
+              "name": "campaña-remarketing",
+              "value": "={{ $('Edit Fields').item.json['campaña-remarketing'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e2340ba9-c0b7-4ed2-b9c2-9fe9e9c226c6",
+              "name": "campañas",
+              "value": "={{ $('Edit Fields').item.json['campañas'] }}",
+              "type": "array"
+            },
+            {
+              "id": "27ff2ad1-d640-49bf-9f2f-be208670e73a",
+              "name": "action",
+              "value": "={{ $json.action }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        288
+      ],
+      "id": "f62d2c98-fad1-43cd-b0c4-1d41381ea2d5",
+      "name": "campañas-action"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b0979699-2deb-4d09-a99e-a54220f4443c",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "no-action",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        288
+      ],
+      "id": "708b1af1-d917-4cab-9aa4-6263ea1b0592",
+      "name": "no-action?"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 10}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'})"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1024,
+        -96
+      ],
+      "id": "e05bcb52-cee4-44df-8794-b04aa3ee5bf9",
+      "name": "Get Campaigns",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        -80
+      ],
+      "id": "9e5789cd-16b5-4352-b43c-a32dbe885036",
+      "name": "Verificar si hay campañas activas"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -80
+      ],
+      "id": "b03d310b-6ddb-4c65-81e9-4cd96a6c03e2",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+        "messageData": "={{ $json.texto_final }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        96
+      ],
+      "id": "a74b0f70-db7b-4ef6-b73d-87151753da57",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        96
+      ],
+      "id": "3cfa72e4-8e09-4b9c-b45a-600c948550ce",
+      "name": "Edit Fields1",
+      "executeOnce": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        -320
+      ],
+      "id": "cb6afaf7-801b-4d92-986b-8cca927f2db4",
+      "name": "Edit Fields2",
+      "executeOnce": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -80
+      ],
+      "id": "1269d49a-34ad-478c-b05b-2edf0d482b85",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        -80
+      ],
+      "id": "16db3dc6-efb2-4b76-82c6-ac3972644804",
+      "name": "hay-campañas-levelup?"
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "data-entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data-entry": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "hay-campañas-levelup?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alert-15-days-after-first-campaign": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "there's-id?": {
+      "main": [
+        [
+          {
+            "node": "alert-15-days-after-first-campaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-message": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "campañas-action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "campañas-action": {
+      "main": [
+        [
+          {
+            "node": "no-action?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "no-action?": {
+      "main": [
+        [
+          {
+            "node": "build-message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Verificar si hay campañas activas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si hay campañas activas": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "there's-id?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-campañas-levelup?": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "data": [
+            {
+              "Id": 416,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:55+00:00",
+              "ID-cuenta-publicitaria": "593434983782486",
+              "nombre": "Elsica Lugo",
+              "empresa": "Glass Master",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9234921831",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-27",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-06-07",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 417,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:56+00:00",
+              "ID-cuenta-publicitaria": "546869405039455",
+              "nombre": "Luis Alvarado",
+              "empresa": "Elegance Garage Door PR",
+              "team-monitory-agent_id": 25,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "8466629022",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-05",
+              "ultima-alerta": "2025-09-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-05",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 25,
+                "nombre": "Marcela Salgado"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria C. García"
+              }
+            },
+            {
+              "Id": 418,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:56+00:00",
+              "ID-cuenta-publicitaria": "1232247895083607",
+              "nombre": "Kermit Rodriguez",
+              "empresa": "Bubblelabpr",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 9,
+              "ID-monday": "9252703327",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2025-09-08",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-13",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 9,
+                "nombre": "Car Wash"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 419,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:57+00:00",
+              "ID-cuenta-publicitaria": "1417923736298112",
+              "nombre": "Hector Cotto",
+              "empresa": "Regen",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9269470067",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-13",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 420,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:41+00:00",
+              "ID-cuenta-publicitaria": "1217193669569080",
+              "nombre": "Ricardo Carrau",
+              "empresa": "Sisan Group Communications Inc",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9243105166",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-16",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 421,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:58+00:00",
+              "ID-cuenta-publicitaria": "736747175964561",
+              "nombre": "Ferdinand Figueroa",
+              "empresa": "Ferdinand by windmar home",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": null,
+              "industrias-monitory-agent_id": 3,
+              "ID-monday": "9273140321",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-06-17",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "admin": null,
+              "industrias": {
+                "Id": 3,
+                "nombre": "Solar"
+              }
+            },
+            {
+              "Id": 422,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:42+00:00",
+              "ID-cuenta-publicitaria": "1241685330395123",
+              "nombre": "Gerald Butler",
+              "empresa": "ARBYS PR / ARMERIAS",
+              "team-monitory-agent_id": 18,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "9007688601",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-27",
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": null,
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 423,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:59+00:00",
+              "ID-cuenta-publicitaria": "2145974352540922",
+              "nombre": "Emanuel Ortiz",
+              "empresa": "Safety Occupational Training",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9263464100",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-18",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 426,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:11:59+00:00",
+              "ID-cuenta-publicitaria": "1704960040108664",
+              "nombre": "Roberto Quintana",
+              "empresa": "Salud vital.vip",
+              "team-monitory-agent_id": 25,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9083417957",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-05",
+              "ultima-alerta": "2025-09-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-19",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 25,
+                "nombre": "Marcela Salgado"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 427,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:00+00:00",
+              "ID-cuenta-publicitaria": "586671680738952",
+              "nombre": "Juan Dionis",
+              "empresa": "La mia pizza",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "8246706595",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": null,
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-01-15",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 430,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:00+00:00",
+              "ID-cuenta-publicitaria": "1750207722203050",
+              "nombre": "George Ortiz",
+              "empresa": "Jadaluz Construction INC",
+              "team-monitory-agent_id": 25,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 16,
+              "ID-monday": "8669386708",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-11",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-31",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 25,
+                "nombre": "Marcela Salgado"
+              },
+              "industrias": {
+                "Id": 16,
+                "nombre": "Remodelación"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria C. García"
+              }
+            },
+            {
+              "Id": 431,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-12 11:00:47+00:00",
+              "ID-cuenta-publicitaria": "1415877092884773",
+              "nombre": "Adriana Rodriguez",
+              "empresa": "Asesoria de la buena",
+              "team-monitory-agent_id": 28,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 3,
+              "ID-monday": "9344793652",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-12",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-20",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 28,
+                "nombre": "Barbara Quero"
+              },
+              "industrias": {
+                "Id": 3,
+                "nombre": "Solar"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 432,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:02+00:00",
+              "ID-cuenta-publicitaria": "1017432078991480",
+              "nombre": "Suheil Acevedo",
+              "empresa": "Enhance Your Place",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 16,
+              "ID-monday": "9316843587",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-06-20",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 16,
+                "nombre": "Remodelación"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 433,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:46+00:00",
+              "ID-cuenta-publicitaria": "686115924229043",
+              "nombre": "Luz Guzman Maldonado",
+              "empresa": "Building on People",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9286948460",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-20",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 434,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:05+00:00",
+              "ID-cuenta-publicitaria": "1202872911076982",
+              "nombre": "Robert Villanueva",
+              "empresa": "RV Refrigeration Services Corp",
+              "team-monitory-agent_id": 25,
+              "team-monitory-agent_id1": null,
+              "industrias-monitory-agent_id": 5,
+              "ID-monday": "9172092920",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-11",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-21",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "admin": null,
+              "traffiker": {
+                "Id": 25,
+                "nombre": "Marcela Salgado"
+              },
+              "industrias": {
+                "Id": 5,
+                "nombre": "Aires Acondicionado"
+              }
+            },
+            {
+              "Id": 436,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:06+00:00",
+              "ID-cuenta-publicitaria": "1329734997550573",
+              "nombre": "Marangely Villanueva",
+              "empresa": "Dr. Alfred J. Haber Crespo",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9263504809",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-10",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-22",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 437,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-08-25 11:20:39+00:00",
+              "ID-cuenta-publicitaria": "",
+              "nombre": "Adalberto Baez",
+              "empresa": "Loop Experience",
+              "team-monitory-agent_id": 25,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 36,
+              "ID-monday": "9196391018",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": null,
+              "dependencia": false,
+              "fecha-inicio-campaña": null,
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 25,
+                "nombre": "Marcela Salgado"
+              },
+              "industrias": {
+                "Id": 36,
+                "nombre": "Renta de vehiculo"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 438,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-12 11:01:28+00:00",
+              "ID-cuenta-publicitaria": "1104169344949634",
+              "nombre": "Hector Cotto",
+              "empresa": "Lega Nova Consulting",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9446509805",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-12",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-18",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 439,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:49+00:00",
+              "ID-cuenta-publicitaria": "550915481433848",
+              "nombre": "Edgardo Ortiz",
+              "empresa": "Dr.Edgardo Ortiz Medicina Primaria",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9326292153",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-03",
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-27",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 440,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:51+00:00",
+              "ID-cuenta-publicitaria": "494766287027186",
+              "nombre": "Luis Trinidad Rodriguez",
+              "empresa": "Conozca tus derechos",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9325933055",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-30",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 442,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:09+00:00",
+              "ID-cuenta-publicitaria": "1680029672593360",
+              "nombre": "Abdiel Figueroa",
+              "empresa": "Nova Auto Collection",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 25,
+              "ID-monday": "8519388485",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-10",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-12",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 25,
+                "nombre": "Venta de vehiculos"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria C. García"
+              }
+            },
+            {
+              "Id": 444,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-12 22:39:07+00:00",
+              "ID-cuenta-publicitaria": "1058155566382426",
+              "nombre": "Josean Martinez",
+              "empresa": "Tu Casa Segura",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9408807513",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-12",
+              "ultima-alerta": "2025-09-12",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-30",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 445,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:10+00:00",
+              "ID-cuenta-publicitaria": "1760901784834619",
+              "nombre": "Roberto Canales",
+              "empresa": "NotaGestión Express, LLC.",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9415897271",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-10",
+              "ultima-alerta": "2025-09-10",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-02",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jesica de la Cruz"
+              }
+            },
+            {
+              "Id": 446,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-11 22:12:10+00:00",
+              "ID-cuenta-publicitaria": "24753375467598783",
+              "nombre": "Johanny Guzman",
+              "empresa": "LaborPay, LLC",
+              "team-monitory-agent_id": null,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9413373580",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2025-09-10",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-07-03",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": null,
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            },
+            {
+              "Id": 447,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2025-09-14 06:25:53+00:00",
+              "ID-cuenta-publicitaria": "640484891668300",
+              "nombre": "Juan Gonzalez",
+              "empresa": "Innova Psicological Institute / Dr. Juan Aníbal",
+              "team-monitory-agent_id": 17,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "8241368542",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-08-25",
+              "ultima-alerta": "2025-09-14",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-01-22",
+              "proximo-reporte": null,
+              "fecha-ultimo-reporte": null,
+              "traffiker": {
+                "Id": 17,
+                "nombre": "Elvin Ayala"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+  "activeVersionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+  "versionCounter": 17,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "UIOeMjnuHwMaMyoX",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    },
+    {
+      "updatedAt": "2025-07-29T18:59:57.261Z",
+      "createdAt": "2025-07-29T18:59:57.261Z",
+      "id": "S4k0fO0sHWc9ycPK",
+      "name": "testing"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+    "workflowId": "UIOeMjnuHwMaMyoX",
+    "nodes": [
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "user",
+          "user": {
+            "__rl": true,
+            "value": "U096Y3TRT5E",
+            "mode": "list",
+            "cachedResultName": "agenteia"
+          },
+          "text": "=La cuenta de {{ $json.nombre }} esta en tiempo para la creación de los publicos personalizados para remarketing",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          928,
+          -528
+        ],
+        "id": "e2bdedb1-0132-4710-91b4-0f72f2fbc485",
+        "name": "Send a message",
+        "webhookId": "1b7d6de2-b3f2-4563-aaa5-5449591151ec",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          672,
+          -80
+        ],
+        "id": "0a9123e0-2125-47d0-b28a-271dfa915e51",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          2432,
+          272
+        ],
+        "id": "2a0061be-0dc5-4c7e-97a6-6ade6cd0d1e9"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          864,
+          -80
+        ],
+        "id": "c5f6b8f3-7762-49b2-a420-fad7ffa151af",
+        "name": "data-entry"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "=/(level up|levelup)/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1600,
+          -80
+        ],
+        "id": "26c7ee7f-65a0-448c-9ac4-d92c346140ce",
+        "name": "Filter",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1424,
+          -80
+        ],
+        "id": "fdafad96-9edb-4b9c-95e0-385dafcf900a",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "campañas",
+          "include": "allFieldsExcept",
+          "fieldsToExclude": "insights",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1984,
+          -80
+        ],
+        "id": "77dc1ff2-6e2a-474e-b831-939b43c1b38b",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ JSON.stringify($json.campañas) }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=# Tarea\n- Tu tarea es analizar un json entrante que trae en payload de campañas publicitarias. \n- Contar la cantidad de campañas activas\n\n# Objetivo\n\n- El objetivo que analices cada campañas buscando aquellas que sean de remarketing. \n- Determinar la cantidad de campañas que hay\n\n# Contexto\n- No siempre diran remarketing, algunas veces se mostrará como abreviados del ti \"rmkt\" o por el estilo\n- Las campañas vienen dividas en el json por objetos \"campañas.campañas[]\"\n- Todas las campañas que llegan son activas, por ende el si hay menos 2 campañas ya se infiere que hay menos de 2 de campañas activas\n\n# Ouput\n- Debes soltar un json estructurado de la siguiente forma\n{\n\"existe-remarketing\": \"true or false\",\n\"menos-de-2-campañas\": \"true or false\",\n\"campaña-remarketing\" \"en caso de existir campaña de remarketing retornar toda la data aqui, caso contrario 'false'\",\n\"campañas\": \"retornar la data integra de todas las campañas entrantes en json string\"\n}\n\n# Reglas\n- No añadir información\n- Retornar siempre el json completo\n- Apegate a tus instrucciones\n- No tienes permiso de hacer, responder, agregar, eliminar información\n- Se conciso, directo y manten la data entrante integra en todo momento\n- Estructura correctamente el json, abriendo y cerrando correctamente todas las \"{}\" \"[]\""
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          2192,
+          -80
+        ],
+        "id": "025370aa-2102-4c02-ad6b-a1c47cdca4ed",
+        "name": "Basic LLM Chain",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\"existe-remarketing\": \"true\",\n\"menos-de-2-campañas\": \"true or false\",\n\"campaña-remarketing\": \"en caso de existir campaña de remarketing retornar toda la data aqui, caso contrario 'false'\",\n\"campañas\": \"retornar la data integra de todas las campañas entrantes\"\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          2256,
+          -304
+        ],
+        "id": "b91d8b3b-d83c-454a-9a9f-93a140d4ce62",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          2144,
+          -240
+        ],
+        "id": "22879ff4-6c5e-4555-9ebe-fda15b4455b9",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d0e5a802-9788-4e8b-9b02-e05c2b9bb456",
+                "name": "existe-remarketing",
+                "value": "={{ $json.output['existe-remarketing'] }}",
+                "type": "boolean"
+              },
+              {
+                "id": "5c82b7fc-c86b-4389-97b4-8159409b130e",
+                "name": "campaña-remarketing",
+                "value": "={{ $json.output['campaña-remarketing'] }}",
+                "type": "string"
+              },
+              {
+                "id": "e2340ba9-c0b7-4ed2-b9c2-9fe9e9c226c6",
+                "name": "campañas",
+                "value": "={{ $json.output['campañas'] }}",
+                "type": "array"
+              },
+              {
+                "id": "e6ce08f6-d304-416d-94e3-12b40a852e1e",
+                "name": "menos-de-2-campañas",
+                "value": "={{ $json.output['menos-de-2-campañas'] }}",
+                "type": "boolean"
+              }
+            ]
+          },
+          "options": {
+            "ignoreConversionErrors": true,
+            "dotNotation": true
+          }
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2608,
+          -80
+        ],
+        "id": "7951712f-59c6-4259-97df-6cd3592e44ca",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3b28d9de-94a6-4a14-953f-c14fe0dbba00",
+                "name": "a",
+                "value": "a",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2224,
+          272
+        ],
+        "id": "54c48cc0-24d2-4889-88c3-0ca61bd4cb54",
+        "name": "void",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "2d92bcb8-69a9-4436-98a9-5e451c6597ba",
+                "leftValue": "={{ $now.format('yyyy-MM-dd') }}",
+                "rightValue": "={{ $json['fecha-inicio-campaña']?.toDateTime().plus('15', 'days').format('yyyy-MM-dd') }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          656,
+          -384
+        ],
+        "id": "b26e82b4-d1b0-4928-b0c7-5c6bb7359ce6",
+        "name": "alert-15-days-after-first-campaign"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+                "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          288,
+          -80
+        ],
+        "id": "a4cbbbb6-4f32-4c47-85ca-9fe8c2bc75b1",
+        "name": "there's-id?"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 1. Acceso a los datos de entrada ---\n// Se eliminó la entrada 'taggingData', ya que no es necesaria.\nconst campaignData = $('campañas-action').first().json;\nconst clientData = $('data-entry').first().json;\n\n\n// --- 2. Extracción de Datos ---\nconst { campañas: todasLasCampanas, action } = campaignData;\nconst { nombre: clienteNombre, empresa: clienteEmpresa, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\n\n\n// --- 3. Construcción del Texto de Análisis ---\nlet estadoGeneral = \"Reporte Existente\";\nlet textoFinal = null;\n\n// 3.1. Se define un título de análisis basado en el 'action'.\nlet tituloAnalisis;\nswitch (action) {\n    case 'remarketing_menos_3': // Asumo que el valor podría ser _3 como en el código de Python.\n    case 'remarketing_menos_2':\n        tituloAnalisis = \"ALERTA: Ausencia de Remarketing y <3 Campañas Activas\";\n        break;\n    case 'remarketing':\n        tituloAnalisis = \"ALERTA: Ausencia de Campaña de Remarketing\";\n        break;\n    case 'menos_3': // Asumo que el valor podría ser _3 como en el código de Python.\n    case 'menos_2':\n        tituloAnalisis = \"AVISO: Menos de 3 Campañas Activas\";\n        break;\n    default:\n        tituloAnalisis = \"INFORME GENERAL DE CAMPAÑAS\";\n        break;\n}\n\n// 3.2. Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*Empresa:* ${clienteEmpresa}\\n*ID Cuenta Publicitaria:* ${idCuentaPublicitaria}`;\n\n// 3.3. Se prepara la lista de campañas activas.\nlet listaCampañasTexto = \"\\n*Campañas Activas:*\";\nif (todasLasCampanas && todasLasCampanas.length > 0) {\n    todasLasCampanas.forEach(campana => {\n        listaCampañasTexto += `\\n• ${campana.name}`;\n    });\n} else {\n    listaCampañasTexto += \"\\n_No hay campañas activas para mostrar._\";\n}\n\n// 3.4. Se ensambla el texto final.\ntextoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${listaCampañasTexto}`;\n\n\n// --- 4. Objeto de Salida ---\n// Se retorna un objeto estandarizado para ser usado por el siguiente nodo.\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1296,
+          112
+        ],
+        "id": "eae2c68f-4910-4909-988f-5491506c1095",
+        "name": "build-message"
+      },
+      {
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\nlet action;\n\nconst existe = data['existe-remarketing'];\nconst menos = data['menos-de-2-campañas'];\n\nif (!existe && menos) {\n  action = 'remarketing_menos_2';\n} else if (!existe && !menos) {\n  action = 'remarketing';\n} else if (existe && menos) {\n  action = 'menos_2';\n} else {\n  action = 'no-action';\n}\n\nreturn { action };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          752,
+          288
+        ],
+        "id": "c8aa6495-27a5-42ad-b039-fbc1d0c228fb",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5c82b7fc-c86b-4389-97b4-8159409b130e",
+                "name": "campaña-remarketing",
+                "value": "={{ $('Edit Fields').item.json['campaña-remarketing'] }}",
+                "type": "string"
+              },
+              {
+                "id": "e2340ba9-c0b7-4ed2-b9c2-9fe9e9c226c6",
+                "name": "campañas",
+                "value": "={{ $('Edit Fields').item.json['campañas'] }}",
+                "type": "array"
+              },
+              {
+                "id": "27ff2ad1-d640-49bf-9f2f-be208670e73a",
+                "name": "action",
+                "value": "={{ $json.action }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          912,
+          288
+        ],
+        "id": "f62d2c98-fad1-43cd-b0c4-1d41381ea2d5",
+        "name": "campañas-action"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b0979699-2deb-4d09-a99e-a54220f4443c",
+                "leftValue": "={{ $json.action }}",
+                "rightValue": "no-action",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1104,
+          288
+        ],
+        "id": "708b1af1-d917-4cab-9aa4-6263ea1b0592",
+        "name": "no-action?"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 10}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'})"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1024,
+          -96
+        ],
+        "id": "e05bcb52-cee4-44df-8794-b04aa3ee5bf9",
+        "name": "Get Campaigns",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          -80
+        ],
+        "id": "9e5789cd-16b5-4352-b43c-a32dbe885036",
+        "name": "Verificar si hay campañas activas"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -128,
+          -80
+        ],
+        "id": "b03d310b-6ddb-4c65-81e9-4cd96a6c03e2",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+          "messageData": "={{ $json.texto_final }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          1456,
+          96
+        ],
+        "id": "a74b0f70-db7b-4ef6-b73d-87151753da57",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          432,
+          96
+        ],
+        "id": "3cfa72e4-8e09-4b9c-b45a-600c948550ce",
+        "name": "Edit Fields1",
+        "executeOnce": true,
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          912,
+          -320
+        ],
+        "id": "cb6afaf7-801b-4d92-986b-8cca927f2db4",
+        "name": "Edit Fields2",
+        "executeOnce": true,
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          48,
+          -80
+        ],
+        "id": "1269d49a-34ad-478c-b05b-2edf0d482b85",
+        "name": "Split Out1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1776,
+          -80
+        ],
+        "id": "16db3dc6-efb2-4b76-82c6-ac3972644804",
+        "name": "hay-campañas-levelup?"
+      }
+    ],
+    "connections": {
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "data-entry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "data-entry": {
+        "main": [
+          [
+            {
+              "node": "Get Campaigns",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "hay-campañas-levelup?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Structured Output Parser",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "void": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alert-15-days-after-first-campaign": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "there's-id?": {
+        "main": [
+          [
+            {
+              "node": "alert-15-days-after-first-campaign",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "build-message": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "campañas-action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "campañas-action": {
+        "main": [
+          [
+            {
+              "node": "no-action?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "no-action?": {
+        "main": [
+          [
+            {
+              "node": "build-message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns": {
+        "main": [
+          [
+            {
+              "node": "Verificar si hay campañas activas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar si hay campañas activas": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Split Out1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis": {
+        "main": [
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out1": {
+        "main": [
+          [
+            {
+              "node": "there's-id?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "hay-campañas-levelup?": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-12-05T13:01:12.000Z",
+        "id": 2,
+        "workflowId": "UIOeMjnuHwMaMyoX",
+        "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

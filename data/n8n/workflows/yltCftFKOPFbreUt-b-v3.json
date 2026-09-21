@@ -1,0 +1,4379 @@
+{
+  "updatedAt": "2026-07-01T11:44:02.172Z",
+  "createdAt": "2025-10-08T01:22:30.342Z",
+  "id": "yltCftFKOPFbreUt",
+  "name": "B-) V3",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        1312
+      ],
+      "id": "d7a97d20-460d-4aa4-bc8a-8b8b19f891f4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+              "leftValue": "={{ $json.report }}",
+              "rightValue": "full",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2096,
+        1280
+      ],
+      "id": "a677eeef-aa60-4a98-99f2-cd1b911ad03e",
+      "name": "Monthly Report?1"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2336,
+        1104
+      ],
+      "id": "9a88e886-2710-4900-80da-220597f72c68",
+      "name": "Get Campaigns Info (30 Days Report)1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        1456
+      ],
+      "id": "f309a2ea-fcd6-455b-9031-29c0bd70a366",
+      "name": "Get Campaigns Info (15 Days Report)1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "text": "=Error con reporte de {{ $json.data.nombre }}\n\nID-Cuenta: {{ $json.data['ID-cuenta-publicitaria'] }}\n\nerror sobre: {{ $json.error.description }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2496,
+        1584
+      ],
+      "id": "b7a67632-e5d8-4632-9a8d-9129c376bdd2",
+      "name": "Send Error Message (No Fecha Inicio)1",
+      "webhookId": "bf792451-a1ad-4c4a-b0cf-91a2995a45bd",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?1').item.json.data.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "15",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2672,
+        1440
+      ],
+      "id": "462ee1cf-9f7b-44c9-aa22-11013fcb86c3",
+      "name": "Set Report Details (15 Days)1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+              "name": "periodo_reporte",
+              "value": "={{ $json.periodo_reporte }}",
+              "type": "string"
+            },
+            {
+              "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+              "name": "fecha_fin_formato",
+              "value": "={{ $json.fecha_fin_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+              "name": "fecha_inicio_formato",
+              "value": "={{ $json.fecha_inicio_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "b1017923-616c-470b-996c-39a539f81961",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2880,
+        1264
+      ],
+      "id": "aa1053ca-51f1-4913-87c8-4fae97824eef",
+      "name": "Get Report Details1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?1').item.json.data.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "30",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2672,
+        1104
+      ],
+      "id": "416af47c-7d74-4130-bd89-36b20885c136",
+      "name": "Set Report Details (30 Days)1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d21d0be8-c552-47b8-969c-598b10e313f4",
+              "name": "data",
+              "value": "={{ ($('Get many rows').item.json) }}",
+              "type": "object"
+            },
+            {
+              "id": "174340b4-76a9-497e-890e-f5c9aaa7a1b5",
+              "name": "report",
+              "value": "={{ $('When Executed by Another Workflow').first().json.report }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1008,
+        1264
+      ],
+      "id": "3b17af35-e390-4d2f-9726-911c2845e6ad",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b78ca2c0-67f8-4af3-83d7-e929253ae897",
+              "leftValue": "={{ $json['fecha-inicio-campaña'] }}",
+              "rightValue": "={{ $now.minus(29, 'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        1184
+      ],
+      "id": "a9d8e928-f005-49db-a94e-35d827a5f075",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Sb6dLyiZnMJtc6AC",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Sb6dLyiZnMJtc6AC",
+          "cachedResultName": "C-) Lógica envío de reportes v5"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_fin_formato": "={{ $('Get Report Details1').item.json.fecha_fin_formato }}",
+            "periodo_reporte": "={{ $('Get Report Details1').item.json.periodo_reporte }}",
+            "empresa": "={{ $('Get Report Details1').item.json.empresa }}",
+            "data_nombre_firstItem": "={{ $('Monthly Report?1').item.json.data.nombre }}",
+            "data_firstItem": "={{ $('Monthly Report?1').item.json.data }}",
+            "data": "={{ $json.data }}",
+            "fecha_inicio_formato": "={{ $('Get Report Details1').item.json.fecha_inicio_formato }}",
+            "report": "={{ $('Loop Over Items2').item.json.report }}"
+          },
+          "matchingColumns": [
+            "fecha_fin_formato",
+            "periodo_reporte",
+            "empresa",
+            "data_empresa_firstItem",
+            "data_nombre_firstItem",
+            "data_firstItem",
+            "Cuenta_Publicitaria1_data_empresa_firstItem",
+            "Cuenta_Publicitaria1_data_nombre_firstItem"
+          ],
+          "schema": [
+            {
+              "id": "fecha_fin_formato",
+              "displayName": "fecha_fin_formato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "periodo_reporte",
+              "displayName": "periodo_reporte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "empresa",
+              "displayName": "empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data_nombre_firstItem",
+              "displayName": "data_nombre_firstItem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data_firstItem",
+              "displayName": "data_firstItem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio_formato",
+              "displayName": "fecha_inicio_formato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "report",
+              "displayName": "report",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3104,
+        1264
+      ],
+      "name": "Call My Sub-workflow",
+      "id": "87fe8e83-c76f-4736-ad6f-a3cf5b915e1c"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        1280
+      ],
+      "id": "349feaec-e10e-454f-950c-719c3714388f",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        4432,
+        1616
+      ],
+      "id": "bbb72dcc-c548-485b-9271-439eb04015ce"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        560,
+        1280
+      ],
+      "id": "cc0302fe-37fb-42a6-af3c-991ace6a5752",
+      "name": "Get many rows",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "cantidad",
+        "key": "listo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3504,
+        1264
+      ],
+      "id": "39562ea7-98da-4b44-959c-1969737cf208",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.cantidad.length }}",
+                    "rightValue": "={{ $('Call My Sub-workflow').all().length }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "f4315f9f-93a5-4d7c-b81a-4104d4700d63"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a96ef229-5bce-4692-adb9-c8e20e3af43e",
+                    "leftValue": "={{ $json.cantidad.length }}",
+                    "rightValue": "={{ $('Call My Sub-workflow').all().length }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3680,
+        1264
+      ],
+      "id": "9d96da60-a9f4-41f8-bc83-e04188ec8a03",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3888,
+        1392
+      ],
+      "id": "d9ce6a6d-f3e0-471e-a790-b164f88bb6ea",
+      "name": "Wait1",
+      "webhookId": "60c498c5-a304-48b2-8d14-44e96c91065f"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "listo"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3888,
+        1168
+      ],
+      "id": "d0bb7b5c-b279-41c5-9cb5-f33de02fbbbd",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "listo",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3312,
+        1264
+      ],
+      "id": "7a94749a-9dec-4a31-80c8-307f5848ba65",
+      "name": "Redis2",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+              "leftValue": "={{ $json.data['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        1280
+      ],
+      "id": "5f34fdf3-6d02-403c-9f5b-b684fde242d5",
+      "name": "Cuenta Publicitaria?1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8c23b2ad-8b1b-4c28-9a47-74c4dbadef7a",
+              "leftValue": "={{ $json.data.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        1280
+      ],
+      "id": "87cc540a-6a6e-4586-883e-76d6870ac8c0",
+      "name": "Correo?1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08QL4MRSBU",
+          "mode": "list",
+          "cachedResultName": "office-1-fullfilment-reportes"
+        },
+        "messageType": "block",
+        "blocksUi": "=[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Correo de Cliente no Encontrado\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se intentó enviar el reporte del cliente, pero no tiene un correo asignado o el formato es incorrecto\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.data.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json.data['ID-cuenta-publicitaria'] }}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Registrar el correo electrónico del cliente en monday.com `<U07V7MVJ18B>`\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "text": "=Error No correo: {{ $json.data.nombre }} / {{ $json.data.empresa }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1392,
+        1456
+      ],
+      "id": "dc7fc217-5b20-4b75-8913-3fa032603e94",
+      "name": "Send Error Message (No Correo)1",
+      "webhookId": "7e48b7a2-e6f4-43d2-9b4a-6bd694537dae",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "listo"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        336,
+        1296
+      ],
+      "id": "8e2de77b-3da9-48b5-98d3-14dfbf28aa41",
+      "name": "Redis3",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "id": "638"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        560,
+        1552
+      ],
+      "id": "27ccf026-a350-4e08-bf22-f311ab7d6418",
+      "name": "Get a row",
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+              "leftValue": "={{ $json.report }}",
+              "rightValue": "full",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2256,
+        2224
+      ],
+      "id": "eee162ab-ea26-4881-8874-3a7da04efb47",
+      "name": "Monthly Report?"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2496,
+        2048
+      ],
+      "id": "e9a9a03b-80f0-4417-a794-4c4b1192ecbe",
+      "name": "Get Campaigns Info (30 Days Report)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        2400
+      ],
+      "id": "f7f3c57d-de72-4ecb-a786-07f0b88b6b73",
+      "name": "Get Campaigns Info (15 Days Report)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "text": "=Error con reporte de {{ $json.data.nombre }}\n\nID-Cuenta: {{ $json.data['ID-cuenta-publicitaria'] }}\n\nerror sobre: {{ $json.error.description }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2656,
+        2528
+      ],
+      "id": "5b62af61-a619-4409-b907-32978a301f44",
+      "name": "Send Error Message (No Fecha Inicio)",
+      "webhookId": "bf792451-a1ad-4c4a-b0cf-91a2995a45bd",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.data.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "15",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2832,
+        2384
+      ],
+      "id": "82f5f1f4-3515-49b9-8fb3-bb0a26303148",
+      "name": "Set Report Details (15 Days)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+              "name": "periodo_reporte",
+              "value": "={{ $json.periodo_reporte }}",
+              "type": "string"
+            },
+            {
+              "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+              "name": "fecha_fin_formato",
+              "value": "={{ $json.fecha_fin_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+              "name": "fecha_inicio_formato",
+              "value": "={{ $json.fecha_inicio_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "b1017923-616c-470b-996c-39a539f81961",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3040,
+        2208
+      ],
+      "id": "9974bc3a-f121-432e-b9fd-00da37835bbd",
+      "name": "Get Report Details"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.data.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "30",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2832,
+        2048
+      ],
+      "id": "d020985e-2460-4994-863b-979c8d9470da",
+      "name": "Set Report Details (30 Days)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d21d0be8-c552-47b8-969c-598b10e313f4",
+              "name": "data",
+              "value": "={{ ($('Get a row').item.json) }}",
+              "type": "object"
+            },
+            {
+              "id": "174340b4-76a9-497e-890e-f5c9aaa7a1b5",
+              "name": "report",
+              "value": "={{ $('When Executed by Another Workflow').first().json.report }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        2208
+      ],
+      "id": "27d18754-9a87-4c03-bf29-3d3282f70052",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Sb6dLyiZnMJtc6AC",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Sb6dLyiZnMJtc6AC",
+          "cachedResultName": "C-) Lógica envío de reportes v5"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_fin_formato": "={{ $('Get Report Details').item.json.fecha_fin_formato }}",
+            "periodo_reporte": "={{ $('Get Report Details').item.json.periodo_reporte }}",
+            "empresa": "={{ $('Get Report Details').item.json.empresa }}",
+            "data_nombre_firstItem": "={{ $('Monthly Report?').item.json.data.nombre }}",
+            "data_firstItem": "={{ $('Monthly Report?').item.json.data }}",
+            "data": "={{ $json.data }}",
+            "fecha_inicio_formato": "={{ $('Get Report Details').item.json.fecha_inicio_formato }}",
+            "report": "={{ $('Loop Over Items').item.json.report }}"
+          },
+          "matchingColumns": [
+            "fecha_fin_formato",
+            "periodo_reporte",
+            "empresa",
+            "data_empresa_firstItem",
+            "data_nombre_firstItem",
+            "data_firstItem",
+            "Cuenta_Publicitaria1_data_empresa_firstItem",
+            "Cuenta_Publicitaria1_data_nombre_firstItem"
+          ],
+          "schema": [
+            {
+              "id": "fecha_fin_formato",
+              "displayName": "fecha_fin_formato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "periodo_reporte",
+              "displayName": "periodo_reporte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "empresa",
+              "displayName": "empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data_nombre_firstItem",
+              "displayName": "data_nombre_firstItem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data_firstItem",
+              "displayName": "data_firstItem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio_formato",
+              "displayName": "fecha_inicio_formato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "report",
+              "displayName": "report",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3264,
+        2208
+      ],
+      "name": "Call My Sub-workflow1",
+      "id": "de6e4e7e-64f0-4ff5-9c2d-db665b817994"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2000,
+        2224
+      ],
+      "id": "1ca3456e-a940-4073-8d6b-e5f813cdcde8",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        4592,
+        2560
+      ],
+      "id": "95f1ab50-91c8-44ce-878e-6f08e9f898ad"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "cantidad",
+        "key": "listo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3664,
+        2208
+      ],
+      "id": "d757e16b-c14b-4d15-a027-5cf0bec216ef",
+      "name": "Redis4",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.cantidad.length }}",
+                    "rightValue": "={{ $('Call My Sub-workflow1').all().length }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "f4315f9f-93a5-4d7c-b81a-4104d4700d63"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a96ef229-5bce-4692-adb9-c8e20e3af43e",
+                    "leftValue": "={{ $json.cantidad.length }}",
+                    "rightValue": "={{ $('Call My Sub-workflow1').all().length }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3840,
+        2208
+      ],
+      "id": "c0370476-a11b-4741-8229-9bc4c71d5283",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4048,
+        2336
+      ],
+      "id": "e3fe41d3-be68-4f74-a7c8-0f8c73d5285f",
+      "name": "Wait",
+      "webhookId": "60c498c5-a304-48b2-8d14-44e96c91065f"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "listo"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        4048,
+        2112
+      ],
+      "id": "b53ff63e-f1f5-4bb8-a3e3-397c3eae11a3",
+      "name": "Redis5",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "listo",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3472,
+        2208
+      ],
+      "id": "0e2dacab-4e35-46c5-899e-f19ea96aef49",
+      "name": "Redis6",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+              "leftValue": "={{ $json.data['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        2224
+      ],
+      "id": "0ec599f9-e5c4-47af-8e9e-59d70ef3427a",
+      "name": "Cuenta Publicitaria?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8c23b2ad-8b1b-4c28-9a47-74c4dbadef7a",
+              "leftValue": "={{ $json.data.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        2224
+      ],
+      "id": "0437cd9b-9f94-405c-81e4-8b74cbe3dcef",
+      "name": "Correo?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08QL4MRSBU",
+          "mode": "list",
+          "cachedResultName": "office-1-fullfilment-reportes"
+        },
+        "messageType": "block",
+        "blocksUi": "=[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Correo de Cliente no Encontrado\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se intentó enviar el reporte del cliente, pero no tiene un correo asignado o el formato es incorrecto\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.data.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json.data['ID-cuenta-publicitaria'] }}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Registrar el correo electrónico del cliente en monday.com `<U07V7MVJ18B>`\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "text": "Error No correo",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1552,
+        2400
+      ],
+      "id": "1a04318d-f76a-4d73-a5f0-4e234ec803d9",
+      "name": "Send Error Message (No Correo)",
+      "webhookId": "7e48b7a2-e6f4-43d2-9b4a-6bd694537dae",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        1520
+      ],
+      "id": "adc80342-bfe4-4c19-86e4-49094cdff763",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "Este se corre cuando a un cliente no llega reporte y toca hacerlo de manera manual, editas el campo ID en NocoDB"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        288,
+        1696
+      ],
+      "id": "9fb5cbdd-0ada-478e-b01d-d8202361f100",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_709449288541334/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        1872
+      ],
+      "id": "afb64fa7-034a-43f2-a065-4f4ce9e76d24",
+      "name": "Get Campaigns Info (30 Days Report)2",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Redis3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Report?1": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns Info (30 Days Report)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Campaigns Info (15 Days Report)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (30 Days Report)1": {
+      "main": [
+        [
+          {
+            "node": "Set Report Details (30 Days)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (15 Days Report)1": {
+      "main": [
+        [
+          {
+            "node": "Set Report Details (15 Days)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Message (No Fecha Inicio)1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (15 Days)1": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Report Details1": {
+      "main": [
+        [
+          {
+            "node": "Call My Sub-workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (30 Days)1": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Correo?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Monthly Report?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call My Sub-workflow": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis2": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correo?1": {
+      "main": [
+        [
+          {
+            "node": "Cuenta Publicitaria?1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Correo)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cuenta Publicitaria?1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis3": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Report?": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns Info (30 Days Report)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Campaigns Info (15 Days Report)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (30 Days Report)": {
+      "main": [
+        [
+          {
+            "node": "Set Report Details (30 Days)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (15 Days Report)": {
+      "main": [
+        [
+          {
+            "node": "Set Report Details (15 Days)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Message (No Fecha Inicio)": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (15 Days)": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Report Details": {
+      "main": [
+        [
+          {
+            "node": "Call My Sub-workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (30 Days)": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Correo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call My Sub-workflow1": {
+      "main": [
+        [
+          {
+            "node": "Redis6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Monthly Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis4": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Redis5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Redis4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis5": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis6": {
+      "main": [
+        [
+          {
+            "node": "Redis4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cuenta Publicitaria?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correo?": {
+      "main": [
+        [
+          {
+            "node": "Cuenta Publicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Correo)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cuenta Publicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Message (No Correo)": {
+      "main": [
+        []
+      ]
+    },
+    "Get Campaigns Info (30 Days Report)2": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v0",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Todos los dias a las 2pm": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "report": "mid"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+  "activeVersionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+  "versionCounter": 40,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "yltCftFKOPFbreUt",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-07-01T11:44:04.366Z",
+    "createdAt": "2026-07-01T11:44:02.183Z",
+    "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+    "workflowId": "yltCftFKOPFbreUt",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          144,
+          1312
+        ],
+        "id": "d7a97d20-460d-4aa4-bc8a-8b8b19f891f4",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+                "leftValue": "={{ $json.report }}",
+                "rightValue": "full",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2096,
+          1280
+        ],
+        "id": "a677eeef-aa60-4a98-99f2-cd1b911ad03e",
+        "name": "Monthly Report?1"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2336,
+          1104
+        ],
+        "id": "9a88e886-2710-4900-80da-220597f72c68",
+        "name": "Get Campaigns Info (30 Days Report)1",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2320,
+          1456
+        ],
+        "id": "f309a2ea-fcd6-455b-9031-29c0bd70a366",
+        "name": "Get Campaigns Info (15 Days Report)1",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09B2B4AM16",
+            "mode": "list",
+            "cachedResultName": "canal_de_pruebas"
+          },
+          "text": "=Error con reporte de {{ $json.data.nombre }}\n\nID-Cuenta: {{ $json.data['ID-cuenta-publicitaria'] }}\n\nerror sobre: {{ $json.error.description }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          2496,
+          1584
+        ],
+        "id": "b7a67632-e5d8-4632-9a8d-9129c376bdd2",
+        "name": "Send Error Message (No Fecha Inicio)1",
+        "webhookId": "bf792451-a1ad-4c4a-b0cf-91a2995a45bd",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+                "name": "empresa",
+                "value": "={{ $('Monthly Report?1').item.json.data.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+                "name": "periodo_reporte",
+                "value": "15",
+                "type": "string"
+              },
+              {
+                "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+                "name": "fecha_fin_formato",
+                "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+                "name": "fecha_inicio_formato",
+                "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              },
+              {
+                "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+                "name": "subjet",
+                "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2672,
+          1440
+        ],
+        "id": "462ee1cf-9f7b-44c9-aa22-11013fcb86c3",
+        "name": "Set Report Details (15 Days)1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+                "name": "empresa",
+                "value": "={{ $json.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+                "name": "periodo_reporte",
+                "value": "={{ $json.periodo_reporte }}",
+                "type": "string"
+              },
+              {
+                "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+                "name": "fecha_fin_formato",
+                "value": "={{ $json.fecha_fin_formato }}",
+                "type": "string"
+              },
+              {
+                "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+                "name": "fecha_inicio_formato",
+                "value": "={{ $json.fecha_inicio_formato }}",
+                "type": "string"
+              },
+              {
+                "id": "b1017923-616c-470b-996c-39a539f81961",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2880,
+          1264
+        ],
+        "id": "aa1053ca-51f1-4913-87c8-4fae97824eef",
+        "name": "Get Report Details1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+                "name": "empresa",
+                "value": "={{ $('Monthly Report?1').item.json.data.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+                "name": "periodo_reporte",
+                "value": "30",
+                "type": "string"
+              },
+              {
+                "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+                "name": "fecha_fin_formato",
+                "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+                "name": "fecha_inicio_formato",
+                "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              },
+              {
+                "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+                "name": "subjet",
+                "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2672,
+          1104
+        ],
+        "id": "416af47c-7d74-4130-bd89-36b20885c136",
+        "name": "Set Report Details (30 Days)1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d21d0be8-c552-47b8-969c-598b10e313f4",
+                "name": "data",
+                "value": "={{ ($('Get many rows').item.json) }}",
+                "type": "object"
+              },
+              {
+                "id": "174340b4-76a9-497e-890e-f5c9aaa7a1b5",
+                "name": "report",
+                "value": "={{ $('When Executed by Another Workflow').first().json.report }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1008,
+          1264
+        ],
+        "id": "3b17af35-e390-4d2f-9726-911c2845e6ad",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b78ca2c0-67f8-4af3-83d7-e929253ae897",
+                "leftValue": "={{ $json['fecha-inicio-campaña'] }}",
+                "rightValue": "={{ $now.minus(29, 'days') }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "before"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          768,
+          1184
+        ],
+        "id": "a9d8e928-f005-49db-a94e-35d827a5f075",
+        "name": "If5"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "Sb6dLyiZnMJtc6AC",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/Sb6dLyiZnMJtc6AC",
+            "cachedResultName": "C-) Lógica envío de reportes v5"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "fecha_fin_formato": "={{ $('Get Report Details1').item.json.fecha_fin_formato }}",
+              "periodo_reporte": "={{ $('Get Report Details1').item.json.periodo_reporte }}",
+              "empresa": "={{ $('Get Report Details1').item.json.empresa }}",
+              "data_nombre_firstItem": "={{ $('Monthly Report?1').item.json.data.nombre }}",
+              "data_firstItem": "={{ $('Monthly Report?1').item.json.data }}",
+              "data": "={{ $json.data }}",
+              "fecha_inicio_formato": "={{ $('Get Report Details1').item.json.fecha_inicio_formato }}",
+              "report": "={{ $('Loop Over Items2').item.json.report }}"
+            },
+            "matchingColumns": [
+              "fecha_fin_formato",
+              "periodo_reporte",
+              "empresa",
+              "data_empresa_firstItem",
+              "data_nombre_firstItem",
+              "data_firstItem",
+              "Cuenta_Publicitaria1_data_empresa_firstItem",
+              "Cuenta_Publicitaria1_data_nombre_firstItem"
+            ],
+            "schema": [
+              {
+                "id": "fecha_fin_formato",
+                "displayName": "fecha_fin_formato",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "periodo_reporte",
+                "displayName": "periodo_reporte",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "empresa",
+                "displayName": "empresa",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data_nombre_firstItem",
+                "displayName": "data_nombre_firstItem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data_firstItem",
+                "displayName": "data_firstItem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio_formato",
+                "displayName": "fecha_inicio_formato",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data",
+                "displayName": "data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "report",
+                "displayName": "report",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "mode": "each",
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          3104,
+          1264
+        ],
+        "name": "Call My Sub-workflow",
+        "id": "87fe8e83-c76f-4736-ad6f-a3cf5b915e1c"
+      },
+      {
+        "parameters": {
+          "batchSize": 5,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1840,
+          1280
+        ],
+        "id": "349feaec-e10e-454f-950c-719c3714388f",
+        "name": "Loop Over Items2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me1",
+        "typeVersion": 1,
+        "position": [
+          4432,
+          1616
+        ],
+        "id": "bbb72dcc-c548-485b-9271-439eb04015ce"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          560,
+          1280
+        ],
+        "id": "cc0302fe-37fb-42a6-af3c-991ace6a5752",
+        "name": "Get many rows",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "cantidad",
+          "key": "listo",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          3504,
+          1264
+        ],
+        "id": "39562ea7-98da-4b44-959c-1969737cf208",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.cantidad.length }}",
+                      "rightValue": "={{ $('Call My Sub-workflow').all().length }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "gt"
+                      },
+                      "id": "f4315f9f-93a5-4d7c-b81a-4104d4700d63"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "a96ef229-5bce-4692-adb9-c8e20e3af43e",
+                      "leftValue": "={{ $json.cantidad.length }}",
+                      "rightValue": "={{ $('Call My Sub-workflow').all().length }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "lte"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          3680,
+          1264
+        ],
+        "id": "9d96da60-a9f4-41f8-bc83-e04188ec8a03",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "amount": 15
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          3888,
+          1392
+        ],
+        "id": "d9ce6a6d-f3e0-471e-a790-b164f88bb6ea",
+        "name": "Wait1",
+        "webhookId": "60c498c5-a304-48b2-8d14-44e96c91065f"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "listo"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          3888,
+          1168
+        ],
+        "id": "d0bb7b5c-b279-41c5-9cb5-f33de02fbbbd",
+        "name": "Redis1",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "listo",
+          "messageData": "1"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          3312,
+          1264
+        ],
+        "id": "7a94749a-9dec-4a31-80c8-307f5848ba65",
+        "name": "Redis2",
+        "executeOnce": true,
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+                "leftValue": "={{ $json.data['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1568,
+          1280
+        ],
+        "id": "5f34fdf3-6d02-403c-9f5b-b684fde242d5",
+        "name": "Cuenta Publicitaria?1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8c23b2ad-8b1b-4c28-9a47-74c4dbadef7a",
+                "leftValue": "={{ $json.data.email }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1216,
+          1280
+        ],
+        "id": "87cc540a-6a6e-4586-883e-76d6870ac8c0",
+        "name": "Correo?1"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C08QL4MRSBU",
+            "mode": "list",
+            "cachedResultName": "office-1-fullfilment-reportes"
+          },
+          "messageType": "block",
+          "blocksUi": "=[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Correo de Cliente no Encontrado\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se intentó enviar el reporte del cliente, pero no tiene un correo asignado o el formato es incorrecto\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.data.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json.data['ID-cuenta-publicitaria'] }}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Registrar el correo electrónico del cliente en monday.com `<U07V7MVJ18B>`\"\n\t\t\t}\n\t\t]\n\t}\n]",
+          "text": "=Error No correo: {{ $json.data.nombre }} / {{ $json.data.empresa }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1392,
+          1456
+        ],
+        "id": "dc7fc217-5b20-4b75-8913-3fa032603e94",
+        "name": "Send Error Message (No Correo)1",
+        "webhookId": "7e48b7a2-e6f4-43d2-9b4a-6bd694537dae",
+        "retryOnFail": true,
+        "waitBetweenTries": 3000,
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "listo"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          336,
+          1296
+        ],
+        "id": "8e2de77b-3da9-48b5-98d3-14dfbf28aa41",
+        "name": "Redis3",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "id": "638"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          560,
+          1552
+        ],
+        "id": "27ccf026-a350-4e08-bf22-f311ab7d6418",
+        "name": "Get a row",
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+                "leftValue": "={{ $json.report }}",
+                "rightValue": "full",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2256,
+          2224
+        ],
+        "id": "eee162ab-ea26-4881-8874-3a7da04efb47",
+        "name": "Monthly Report?"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2496,
+          2048
+        ],
+        "id": "e9a9a03b-80f0-4417-a794-4c4b1192ecbe",
+        "name": "Get Campaigns Info (30 Days Report)",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json.data['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2480,
+          2400
+        ],
+        "id": "f7f3c57d-de72-4ecb-a786-07f0b88b6b73",
+        "name": "Get Campaigns Info (15 Days Report)",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09B2B4AM16",
+            "mode": "list",
+            "cachedResultName": "canal_de_pruebas"
+          },
+          "text": "=Error con reporte de {{ $json.data.nombre }}\n\nID-Cuenta: {{ $json.data['ID-cuenta-publicitaria'] }}\n\nerror sobre: {{ $json.error.description }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          2656,
+          2528
+        ],
+        "id": "5b62af61-a619-4409-b907-32978a301f44",
+        "name": "Send Error Message (No Fecha Inicio)",
+        "webhookId": "bf792451-a1ad-4c4a-b0cf-91a2995a45bd",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+                "name": "empresa",
+                "value": "={{ $('Monthly Report?').item.json.data.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+                "name": "periodo_reporte",
+                "value": "15",
+                "type": "string"
+              },
+              {
+                "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+                "name": "fecha_fin_formato",
+                "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+                "name": "fecha_inicio_formato",
+                "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              },
+              {
+                "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+                "name": "subjet",
+                "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2832,
+          2384
+        ],
+        "id": "82f5f1f4-3515-49b9-8fb3-bb0a26303148",
+        "name": "Set Report Details (15 Days)"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+                "name": "empresa",
+                "value": "={{ $json.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+                "name": "periodo_reporte",
+                "value": "={{ $json.periodo_reporte }}",
+                "type": "string"
+              },
+              {
+                "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+                "name": "fecha_fin_formato",
+                "value": "={{ $json.fecha_fin_formato }}",
+                "type": "string"
+              },
+              {
+                "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+                "name": "fecha_inicio_formato",
+                "value": "={{ $json.fecha_inicio_formato }}",
+                "type": "string"
+              },
+              {
+                "id": "b1017923-616c-470b-996c-39a539f81961",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3040,
+          2208
+        ],
+        "id": "9974bc3a-f121-432e-b9fd-00da37835bbd",
+        "name": "Get Report Details"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+                "name": "empresa",
+                "value": "={{ $('Monthly Report?').item.json.data.empresa }}",
+                "type": "string"
+              },
+              {
+                "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+                "name": "periodo_reporte",
+                "value": "30",
+                "type": "string"
+              },
+              {
+                "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+                "name": "fecha_fin_formato",
+                "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+                "name": "fecha_inicio_formato",
+                "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+                "type": "string"
+              },
+              {
+                "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              },
+              {
+                "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+                "name": "subjet",
+                "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2832,
+          2048
+        ],
+        "id": "d020985e-2460-4994-863b-979c8d9470da",
+        "name": "Set Report Details (30 Days)"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d21d0be8-c552-47b8-969c-598b10e313f4",
+                "name": "data",
+                "value": "={{ ($('Get a row').item.json) }}",
+                "type": "object"
+              },
+              {
+                "id": "174340b4-76a9-497e-890e-f5c9aaa7a1b5",
+                "name": "report",
+                "value": "={{ $('When Executed by Another Workflow').first().json.report }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1168,
+          2208
+        ],
+        "id": "27d18754-9a87-4c03-bf29-3d3282f70052",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "Sb6dLyiZnMJtc6AC",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/Sb6dLyiZnMJtc6AC",
+            "cachedResultName": "C-) Lógica envío de reportes v5"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "fecha_fin_formato": "={{ $('Get Report Details').item.json.fecha_fin_formato }}",
+              "periodo_reporte": "={{ $('Get Report Details').item.json.periodo_reporte }}",
+              "empresa": "={{ $('Get Report Details').item.json.empresa }}",
+              "data_nombre_firstItem": "={{ $('Monthly Report?').item.json.data.nombre }}",
+              "data_firstItem": "={{ $('Monthly Report?').item.json.data }}",
+              "data": "={{ $json.data }}",
+              "fecha_inicio_formato": "={{ $('Get Report Details').item.json.fecha_inicio_formato }}",
+              "report": "={{ $('Loop Over Items').item.json.report }}"
+            },
+            "matchingColumns": [
+              "fecha_fin_formato",
+              "periodo_reporte",
+              "empresa",
+              "data_empresa_firstItem",
+              "data_nombre_firstItem",
+              "data_firstItem",
+              "Cuenta_Publicitaria1_data_empresa_firstItem",
+              "Cuenta_Publicitaria1_data_nombre_firstItem"
+            ],
+            "schema": [
+              {
+                "id": "fecha_fin_formato",
+                "displayName": "fecha_fin_formato",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "periodo_reporte",
+                "displayName": "periodo_reporte",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "empresa",
+                "displayName": "empresa",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data_nombre_firstItem",
+                "displayName": "data_nombre_firstItem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data_firstItem",
+                "displayName": "data_firstItem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio_formato",
+                "displayName": "fecha_inicio_formato",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "data",
+                "displayName": "data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "report",
+                "displayName": "report",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "mode": "each",
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          3264,
+          2208
+        ],
+        "name": "Call My Sub-workflow1",
+        "id": "de6e4e7e-64f0-4ff5-9c2d-db665b817994"
+      },
+      {
+        "parameters": {
+          "batchSize": 5,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2000,
+          2224
+        ],
+        "id": "1ca3456e-a940-4073-8d6b-e5f813cdcde8",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          4592,
+          2560
+        ],
+        "id": "95f1ab50-91c8-44ce-878e-6f08e9f898ad"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "cantidad",
+          "key": "listo",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          3664,
+          2208
+        ],
+        "id": "d757e16b-c14b-4d15-a027-5cf0bec216ef",
+        "name": "Redis4",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.cantidad.length }}",
+                      "rightValue": "={{ $('Call My Sub-workflow1').all().length }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "gt"
+                      },
+                      "id": "f4315f9f-93a5-4d7c-b81a-4104d4700d63"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "a96ef229-5bce-4692-adb9-c8e20e3af43e",
+                      "leftValue": "={{ $json.cantidad.length }}",
+                      "rightValue": "={{ $('Call My Sub-workflow1').all().length }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "lte"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          3840,
+          2208
+        ],
+        "id": "c0370476-a11b-4741-8229-9bc4c71d5283",
+        "name": "Switch1"
+      },
+      {
+        "parameters": {
+          "amount": 15
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          4048,
+          2336
+        ],
+        "id": "e3fe41d3-be68-4f74-a7c8-0f8c73d5285f",
+        "name": "Wait",
+        "webhookId": "60c498c5-a304-48b2-8d14-44e96c91065f"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "listo"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          4048,
+          2112
+        ],
+        "id": "b53ff63e-f1f5-4bb8-a3e3-397c3eae11a3",
+        "name": "Redis5",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "listo",
+          "messageData": "1"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          3472,
+          2208
+        ],
+        "id": "0e2dacab-4e35-46c5-899e-f19ea96aef49",
+        "name": "Redis6",
+        "executeOnce": true,
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+                "leftValue": "={{ $json.data['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1728,
+          2224
+        ],
+        "id": "0ec599f9-e5c4-47af-8e9e-59d70ef3427a",
+        "name": "Cuenta Publicitaria?"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8c23b2ad-8b1b-4c28-9a47-74c4dbadef7a",
+                "leftValue": "={{ $json.data.email }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1376,
+          2224
+        ],
+        "id": "0437cd9b-9f94-405c-81e4-8b74cbe3dcef",
+        "name": "Correo?"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C08QL4MRSBU",
+            "mode": "list",
+            "cachedResultName": "office-1-fullfilment-reportes"
+          },
+          "messageType": "block",
+          "blocksUi": "=[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Correo de Cliente no Encontrado\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se intentó enviar el reporte del cliente, pero no tiene un correo asignado o el formato es incorrecto\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.data.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json.data['ID-cuenta-publicitaria'] }}\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Registrar el correo electrónico del cliente en monday.com `<U07V7MVJ18B>`\"\n\t\t\t}\n\t\t]\n\t}\n]",
+          "text": "Error No correo",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1552,
+          2400
+        ],
+        "id": "1a04318d-f76a-4d73-a5f0-4e234ec803d9",
+        "name": "Send Error Message (No Correo)",
+        "webhookId": "7e48b7a2-e6f4-43d2-9b4a-6bd694537dae",
+        "retryOnFail": true,
+        "waitBetweenTries": 3000,
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          288,
+          1520
+        ],
+        "id": "adc80342-bfe4-4c19-86e4-49094cdff763",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "content": "Este se corre cuando a un cliente no llega reporte y toca hacerlo de manera manual, editas el campo ID en NocoDB"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          288,
+          1696
+        ],
+        "id": "9fb5cbdd-0ada-478e-b01d-d8202361f100",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_709449288541334/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2320,
+          1872
+        ],
+        "id": "afb64fa7-034a-43f2-a065-4f4ce9e76d24",
+        "name": "Get Campaigns Info (30 Days Report)2",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Redis3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Monthly Report?1": {
+        "main": [
+          [
+            {
+              "node": "Get Campaigns Info (30 Days Report)1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Campaigns Info (15 Days Report)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns Info (30 Days Report)1": {
+        "main": [
+          [
+            {
+              "node": "Set Report Details (30 Days)1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Fecha Inicio)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns Info (15 Days Report)1": {
+        "main": [
+          [
+            {
+              "node": "Set Report Details (15 Days)1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Fecha Inicio)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Error Message (No Fecha Inicio)1": {
+        "main": [
+          [
+            {
+              "node": "Replace Me1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Report Details (15 Days)1": {
+        "main": [
+          [
+            {
+              "node": "Get Report Details1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Report Details1": {
+        "main": [
+          [
+            {
+              "node": "Call My Sub-workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Report Details (30 Days)1": {
+        "main": [
+          [
+            {
+              "node": "Get Report Details1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Correo?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If5": {
+        "main": [
+          []
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Monthly Report?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call My Sub-workflow": {
+        "main": [
+          [
+            {
+              "node": "Redis2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Redis1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis1": {
+        "main": [
+          [
+            {
+              "node": "Replace Me1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis2": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Correo?1": {
+        "main": [
+          [
+            {
+              "node": "Cuenta Publicitaria?1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Correo)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cuenta Publicitaria?1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis3": {
+        "main": [
+          [
+            {
+              "node": "Get many rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a row": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Monthly Report?": {
+        "main": [
+          [
+            {
+              "node": "Get Campaigns Info (30 Days Report)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Campaigns Info (15 Days Report)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns Info (30 Days Report)": {
+        "main": [
+          [
+            {
+              "node": "Set Report Details (30 Days)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Fecha Inicio)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns Info (15 Days Report)": {
+        "main": [
+          [
+            {
+              "node": "Set Report Details (15 Days)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Fecha Inicio)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Error Message (No Fecha Inicio)": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Report Details (15 Days)": {
+        "main": [
+          [
+            {
+              "node": "Get Report Details",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Report Details": {
+        "main": [
+          [
+            {
+              "node": "Call My Sub-workflow1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Report Details (30 Days)": {
+        "main": [
+          [
+            {
+              "node": "Get Report Details",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Correo?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call My Sub-workflow1": {
+        "main": [
+          [
+            {
+              "node": "Redis6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Monthly Report?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis4": {
+        "main": [
+          [
+            {
+              "node": "Switch1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch1": {
+        "main": [
+          [
+            {
+              "node": "Redis5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Redis4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis5": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis6": {
+        "main": [
+          [
+            {
+              "node": "Redis4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cuenta Publicitaria?": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Correo?": {
+        "main": [
+          [
+            {
+              "node": "Cuenta Publicitaria?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Error Message (No Correo)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Cuenta Publicitaria?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Get a row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Error Message (No Correo)": {
+        "main": [
+          []
+        ]
+      },
+      "Get Campaigns Info (30 Days Report)2": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 9b173e86",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-07-01T11:44:04.360Z",
+        "id": 207,
+        "workflowId": "yltCftFKOPFbreUt",
+        "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

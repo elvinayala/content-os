@@ -1,0 +1,1252 @@
+{
+  "updatedAt": "2026-01-06T14:05:20.053Z",
+  "createdAt": "2025-07-11T16:40:04.347Z",
+  "id": "TAtsmX9ozs2mPvCe",
+  "name": "B) Agente Onboarding - Orquestador v2 alexVersion",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recibir-mensaje-final",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        560
+      ],
+      "id": "aeaf94a2-a9dc-4c75-be65-70a4d03c76ac",
+      "name": "whatsapp_webhook",
+      "webhookId": "c2c751c0-2be8-4f96-8027-97b579699571"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['agent-input'] }}",
+        "options": {
+          "systemMessage": "=prompt_orquestabot:\n  titulo: \"🧠 Prompt: <OrquestaBot> (Versión Extendida + Validación Total)\"\n\n  rol:\n    descripcion: \"Eres <OrquestaBot>, un asistente virtual que SOLO atiende:\"\n    funciones:\n      - \"<Citas>: solo consultas (no agendas, modificas ni cancelas).\"\n      - \"<Onboarding>: dudas sobre procesos, CRM o documentación del SOP.\"\n      - \"<Otros temas>: No tienes permiso para responder.\"\n\n  herramientas:\n    - nombre: \"<postgres_memory>\"\n      activacion: \"Siempre activo para registrar y recuperar contexto (emails, citas, nombres).\"\n      excluye: \"No responder directamente con esta herramienta.\"\n    - nombre: \"<validation_mail>\"\n      activacion: \"Si hay intención de cita y al menos un correo válido.\"\n      excluye: \"No usar si falta el correo o hay intención de agendar/modificar/cancelar.\"\n    - nombre: \"<consultar_onboarding_doc>\"\n      activacion: \"Si se menciona onboarding, CRM o SOP.\"\n      excluye: \"Ignorar mensajes irrelevantes.\"\n    - nombre: \"<Structured_Output_Parser>\"\n      activacion: \"Siempre activo para retornar respuesta segmentada en JSON.\"\n      excluye: \"No usar para texto plano.\"\n    - nombre: \"<openai_model>\"\n      activacion: \"Solo en flujos específicos.\"\n      excluye: \"No invocar directamente.\"\n\n  comportamiento_saludo:\n    palabras_clave_cita:\n      - \"<Hola>\"\n      - \"<Buen día>\"\n      - \"<Buenos días>\"\n      - \"<¿Qué tal?>\"\n    condiciones:\n      - mensaje_con_saludo_o_agradecimiento:\n          respuesta: \"😊 Buenos días, bienvenido a Level Up Media. Soy un asistente para consultas sobre citas y onboarding. ¿En qué puedo ayudarte hoy?\"\n      - mensaje_solo_agradecimiento:\n          respuesta: \"Es un placer ayudarte.\"\n      - mensaje_saludo_y_consulta:\n          comportamiento: \"Omitir saludo y responder directamente.\"\n      - mensaje_sin_saludo_ni_agradecimiento:\n          comportamiento: \"Responder directamente.\"\n\n  palabras_clave_cita:\n    - \"<cita>\"\n    - \"<Busca>\"\n    - \"<programar>\"\n    - \"<consulta>\"\n    - \"<reunión>\"\n    - \"<correo>\"\n    - \"<email>\"\n    - \"<tengo una cita>\"\n\n  palabras_clave_funciones_agente:\n    - \"<qué funciones tienes>\"\n    - \"<qué puedes hacer>\"\n    - \"<en qué me ayudas>\"\n    - \"<cómo me puedes ayudar>\"\n    - \"<cuáles son tus funciones>\"\n    - \"<qué haces?>\"\n    - \"<función>\"\n\n  palabras_clave_agendar_modificar_cancelar:\n    - \"<agendar>\"\n    - \"<crear cita>\"\n    - \"<cancelar cita>\"\n    - \"<modificar cita>\"\n    - \"<cambiar cita>\"\n    - \"<reprogramar>\"\n\n  procesamiento_multiple:\n    descripcion: \"Capacidad de clasificar múltiples intenciones en un mismo mensaje.\"\n    ejemplo:\n      entrada: [\"alejandroqa04@gmail.com\", \"¿Qué funciones tienes?\", \"Quiero agendar una cita\"]\n      clasificacion:\n        - cita\n        - funciones_agente\n        - intento_agendar\n\n  formato_envio_postgres:\n    descripcion: \"Formato estructurado para registro en postgres_memory.\"\n    ejemplo:\n      key: \"<conversation_id o contact_id>\"\n      input:\n        type: \"<human>\"\n        content: \"<mensaje completo del usuario>\"\n        additional_kwargs: {}\n        response_metadata: {}\n\n  flujo:\n    - saludo:\n        accion: \"Saludar según reglas, luego analizar intención.\"\n    - clasificar:\n        descripcion: \"Clasifica cada intención detectada.\"\n        categorias:\n          - cita: \"→ paso_3_cita\"\n          - onboarding: \"→ paso_4_onboarding\"\n          - funciones_agente: \"→ paso_6_funciones_agente\"\n          - intento_agendar: \"→ paso_7_redireccion_agendar\"\n          - fuera_alcance: \"→ paso_5_fuera_alcance\"\n\n    - paso_3_cita:\n        condiciones:\n          - sin_correo: \"Usar plantilla 'solicitar_correo'.\"\n          - con_correo: \"Invocar <validation_mail> y devolver solo su respuesta.\"\n        restricciones:\n          - \"Nunca agendar, modificar ni cancelar.\"\n\n    - paso_4_onboarding:\n        descripcion: \"Invoca <consultar_onboarding_doc> si se detecta tema relacionado.\"\n        parametros:\n          - tolerancia_ortografica: \"50%\"\n        respuesta_no_resultado: \"No encontré información específica en el SOP actual; puedo verificar con otro equipo si lo necesitas.\"\n\n    - paso_5_fuera_alcance:\n        mensaje: |\n          🙋‍♂️ Lo siento, no puedo ayudarte con esa consulta.\n          Actualmente, solo estoy capacitado para ayudarte con:\n\n          - Consultas sobre citas (sin agendar, modificar ni cancelar).\n          - Dudas sobre onboarding.\n\n          📞 Puedes contactar a un asesor humano: https://wa.link/owlgwj\n\n    - paso_6_funciones_agente:\n        respuesta: |\n          Puedo ayudarte con dos cosas: consultas sobre citas (sin agendar, modificar ni cancelar)\n          y dudas sobre onboarding (CRM, procesos y documentación en Level Up Media).\n\n    - paso_7_redireccion_agendar:\n        mensaje: |\n          📌 No tengo autorización para agendar, modificar o cancelar citas.\n          Pero puedes contactar a un asesor humano: 👉 https://wa.link/owlgwj\n\n    - error:\n        mensaje: \"Ha ocurrido un error procesando tu solicitud. Por favor, intenta nuevamente o contacta al soporte.\"\n\n  plantillas:\n    - solicitar_correo: \"Para verificar tu cita, por favor indícame tu correo.\"\n    - fuera_alcance: \"Estoy diseñado para ayudar con citas y onboarding. ¿En cuál puedo asistirte?\"\n    - funciones_agente: |\n        Puedo ayudarte con consultas sobre citas (sin agendar, modificar ni cancelar)\n        y con dudas de onboarding (CRM, procesos, documentación).\n    - redireccion_agendar: |\n        📌 No tengo autorización para agendar, modificar o cancelar citas.\n        Puedes contactar a un asesor humano: https://wa.link/owlgwj\n    - error: \"Ha ocurrido un error procesando tu solicitud. Por favor, intenta nuevamente o contacta al soporte.\"\n\n  limitaciones:\n    - \"Responder siempre en español.\"\n    - \"No agendar, modificar ni cancelar citas.\"\n    - \"No responder fuera de citas y onboarding.\"\n    - \"Evitar saludos repetitivos.\"\n    - \"Ignorar temas irrelevantes (ej. política, medicina, astronomía).\"\n    - \"Manejar múltiples intenciones por mensaje.\"\n    - \"Nunca omitir respuesta: si falla el flujo, usar mensaje de error.\"\n\nformato_respuesta_instrucciones:\n  Realiza un conteo aproximado de palabras antes de segmentar la respuesta.\n\n  objetivos:\n    - Si la respuesta tiene ≤ 20 palabras → 1 fragmento.\n    - Entre 21 y 70 palabras → 2 fragmentos.\n    - Más de 70 palabras → 3 fragmentos.\n    - Permitir múltiples intenciones en una misma respuesta.\n    - Si no se puede clasificar, usar mensaje de error.\n\n  🧩 FORMATO DE RESPUESTA (obligatorio):\n\n  - Si tiene menos de 50 palabras:\n    ```json\n    {\n      \"Response\": {\n        \"Parte 1\": \"{respuesta completa}\",\n        \"Parte 2\": null,\n        \"Parte 3\": null\n      }\n    }\n    ```\n\n  - Si tiene entre 50 y 100 palabras:\n    ```json\n    {\n      \"Response\": {\n        \"Parte 1\": \"{mitad 1}\",\n        \"Parte 2\": \"{mitad 2}\",\n        \"Parte 3\": null\n      }\n    }\n    ```\n\n  - Si tiene más de 100 palabras:\n    ```json\n    {\n      \"Response\": {\n        \"Parte 1\": \"{tercio 1}\",\n        \"Parte 2\": \"{tercio 2}\",\n        \"Parte 3\": \"{tercio 3}\"\n      }\n    }\n    ```\n\n  ⚠️ Reglas:\n    - No usar `\"\"` como valor vacío: usar `null`.\n    - JSON debe estar bien estructurado.\n    - Si no cumple este formato, el parser rechazará el mensaje.\n    - Cada vez que no puedas ayudar con algo, envia el link de whatsapp para que se comuniquen con un gerente\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1200
+      ],
+      "id": "55c81b4d-e920-462f-82da-d1e2049ca912",
+      "name": "main_chatbot",
+      "alwaysOutputData": true,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        1376
+      ],
+      "id": "c0cf1e7f-833d-409b-a7fb-45265b2afe5a",
+      "name": "OpenAI_Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9Tmh9mDq8l0bUp9T",
+          "name": "OpenAi new apikey"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('format-data').item.json.chat.id }}",
+        "tableName": "n8n_chat_histories_33"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        1424
+      ],
+      "id": "68ced66a-a324-4b02-8c15-294d6d3c0f2b",
+      "name": "Postgres_Memory",
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Llama a esta herramienta cuando el usuario haya enviado un correo y se necesite validar",
+        "workflowId": {
+          "__rl": true,
+          "value": "fkc5VuZtjx2NUCvZ",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "correo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('correo', `el email debe ir todo en minúsculas`, 'string') }}"
+          },
+          "matchingColumns": [
+            "cedula"
+          ],
+          "schema": [
+            {
+              "id": "correo",
+              "displayName": "correo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        1424
+      ],
+      "id": "67aca439-ec40-4410-a591-3320c3cfd7ad",
+      "name": "validation_mail"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1ZALNUOnjLBW6_MeZEyvPLXCXXqZqeEPHfjPlAe_56XE/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1408
+      ],
+      "id": "df7d44ba-ae0d-4a4e-9a5a-7e4dc2609372",
+      "name": "get_document_onboarding",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "3ywjj6ZUkzhuHn9Z",
+          "name": "DocOnboardingLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.response",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1200
+      ],
+      "id": "56e99532-536d-4b94-9bc3-9a3b557b5218",
+      "name": "output_division"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1552,
+        1200
+      ],
+      "id": "d296c1f4-b590-4b81-9c6f-4ec149081ece",
+      "name": "Loop_Over_Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4061b43b-91c1-4aea-b49e-42e31d4f4632",
+              "leftValue": "={{ $json['output.response'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        1200
+      ],
+      "id": "1fa7546a-d068-4570-b19a-15eb82b18319",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6441ea12-5d73-42fa-b3e4-76ba515a9cdf",
+              "name": "chat.id",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "25233347-c587-4cd1-9ae8-7a8723caf289",
+              "name": "chat.body.text",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "3491df63-5b93-4917-9959-950120029353",
+              "name": "chat.body.timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "fdbea02b-9eb3-4479-89f9-933b2f01f148",
+              "name": "apikey",
+              "value": "={{ $json.body.apikey }}",
+              "type": "string"
+            },
+            {
+              "id": "828005b2-48fc-4e68-807a-1375ef31e183",
+              "name": "server-url",
+              "value": "={{ $json.body.server_url }}",
+              "type": "string"
+            },
+            {
+              "id": "d585efe5-34dc-4c5d-999d-fd66e565975e",
+              "name": "instance.name",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "26ab2201-b759-4fbb-9725-9fa8e589669b",
+              "name": "message.id",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        560
+      ],
+      "id": "e080bc5d-e8d1-4147-b66e-891c2f0ca0c6",
+      "name": "format-data"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('get-messages').first().json.mensajes.last().parseJson().body.text }}",
+                    "rightValue": "={{ $('format-data').item.json.chat.body.text }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "869444c5-ced1-4c40-b51f-319121cc7c4c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "do-nothing"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "abebfdff-d484-4b39-8253-863a1d8c5511",
+                    "leftValue": "={{ $('get-messages').first().json.mensajes.last().parseJson().body.timestamp }}",
+                    "rightValue": "={{ $now.minus(7, 'seconds') }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "before"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "follow"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Esperar"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        992,
+        560
+      ],
+      "id": "552b1988-19f4-4e83-92d4-638704f90a02",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "mensajes",
+        "key": "={{ $('format-data').first().json.chat.id }}_buffer",
+        "keyType": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        832,
+        560
+      ],
+      "id": "5ef476d4-1c89-4496-9ec2-0b707b3c0187",
+      "name": "get-messages",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('format-data').first().json.chat.id }}_buffer",
+        "messageData": "={{ $('format-data').first().json.chat.toJsonString() }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        672,
+        560
+      ],
+      "id": "cc5b9117-b86d-46c0-9e2e-d6b4e3607a99",
+      "name": "save-messages",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        368
+      ],
+      "id": "18ceed7b-9d65-4b0e-a44a-813192e6898e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed0c8a64-4a70-4483-8341-19616c0cbce4",
+              "name": "agent-input",
+              "value": "={{ $json.mensajes.join('\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1984,
+        560
+      ],
+      "id": "1de4d0d8-561d-4976-aa84-98e1db8e1aaf",
+      "name": "agent-input"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "timestamp"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        560
+      ],
+      "id": "22468e38-2ef7-4cd1-8744-826fa587da5b",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7dd438a-2d39-43e7-a77f-d2b9af077e11",
+              "name": "content",
+              "value": "={{ $json.body.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3637748b-d97e-41a7-bacb-63afef104d67",
+              "name": "timestamp",
+              "value": "={{ $json.body.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "b48ddf24-9d1a-4a2d-8fd8-3ac665603b5f",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1552,
+        560
+      ],
+      "id": "057e62b3-1216-44cd-97ee-317545164e7a",
+      "name": "format-messages"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.parse($json.mensajes) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        560
+      ],
+      "id": "684a8352-c491-4af6-93fb-eb334152f79c",
+      "name": "JSON-parser"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "mensajes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        560
+      ],
+      "id": "128a458d-7d33-4d3c-b3b2-5aee36a4b79f",
+      "name": "Split-Out"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('format-data').first().json.chat.id }}_buffer"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        560
+      ],
+      "id": "c12795da-487a-4cb5-bce5-5f74444ecca0",
+      "name": "delete-list-messages",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content",
+              "renameField": true,
+              "outputFieldName": "mensajes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        560
+      ],
+      "id": "a353cb34-1270-4f46-b60b-d7409c90cb38",
+      "name": "convert-to-one-list"
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        768
+      ],
+      "id": "6ae34ebd-d50f-4f1a-8f2c-fa4c0bb83d9e",
+      "name": "Wait",
+      "webhookId": "aa8c720f-1a19-4b38-9a58-b571a8aad37b"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('format-data').first().json.instance.name }}",
+        "remoteJid": "={{ $('format-data').first().json.chat.id}}",
+        "messageText": "={{ $json['output.response'] }}",
+        "options_message": {
+          "delay": 3200,
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        1216
+      ],
+      "id": "7ee51c98-f67a-40ed-85ed-080d03ebde62",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('main_chatbot').first().json.output }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n  \"response\": {\n    \"part_1\": \"Contenido de la primera parte de la respuesta.\",\n    \"part_2\": \"Contenido de la segunda parte de la respuesta.\",\n    \"part_3\": \"Contenido de la tercera parte de la respuesta (opcional).\"\n  }\n}",
+        "options": {
+          "systemPromptTemplate": "=# Tarea\n\nDetermina y divide el mensaje en varias partes segun las indicaciones que vienen directamente en el mensaje\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1200
+      ],
+      "id": "699d9028-634b-4563-895d-0bf3a3101cd9",
+      "name": "agent-response-formatter"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        1424
+      ],
+      "id": "ba657165-4154-46bd-bfea-750f36538a74",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "77e34aa7-d910-45b9-ae31-9cb8e2f74039",
+              "leftValue": "={{ $json.body.data.key.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        560
+      ],
+      "id": "b2376a3e-e1ac-4e3a-962c-ac9bb0a129ff",
+      "name": "is-from-me?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3ac6fc92-0ef6-4e49-ace8-a9310b99aac9",
+              "leftValue": "={{ $json.body.data.messageType }}",
+              "rightValue": "conversation",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        560
+      ],
+      "id": "82bd2e95-ac45-43ef-81ac-624b27de1cd9",
+      "name": "is-text-messages?"
+    },
+    {
+      "parameters": {
+        "content": "## Separar y enviar en partes",
+        "height": 500,
+        "width": 1280,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        1072
+      ],
+      "id": "61dd8aa4-dffe-4696-87bb-4270dbf3367d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Agente",
+        "height": 500,
+        "width": 540,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        272,
+        1072
+      ],
+      "id": "1d619d84-9174-4441-ac88-d67b0353725c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Buffer de mensajes",
+        "height": 680,
+        "width": 1500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        624,
+        320
+      ],
+      "id": "ef671d11-01d5-4daf-b2ab-f8c7c2b7c7d8",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Input - Whatsapp",
+        "height": 240,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        480
+      ],
+      "id": "d0f649a5-0fa3-46a4-94bb-03370ad2582a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        1216
+      ],
+      "id": "ca8abcfb-8122-4318-9520-dcc85636bba2",
+      "name": "Wait1",
+      "webhookId": "06f5f82c-0b96-4dde-9b61-1e822ed4cc25"
+    }
+  ],
+  "connections": {
+    "whatsapp_webhook": {
+      "main": [
+        [
+          {
+            "node": "is-text-messages?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "main_chatbot": {
+      "main": [
+        [
+          {
+            "node": "agent-response-formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI_Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "main_chatbot",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres_Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "main_chatbot",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validation_mail": {
+      "ai_tool": [
+        [
+          {
+            "node": "main_chatbot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_document_onboarding": {
+      "ai_tool": [
+        [
+          {
+            "node": "main_chatbot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output_division": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop_Over_Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop_Over_Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data": {
+      "main": [
+        [
+          {
+            "node": "save-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "delete-list-messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-messages": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-messages": {
+      "main": [
+        [
+          {
+            "node": "get-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "convert-to-one-list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-messages": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON-parser": {
+      "main": [
+        [
+          {
+            "node": "format-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split-Out": {
+      "main": [
+        [
+          {
+            "node": "JSON-parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete-list-messages": {
+      "main": [
+        [
+          {
+            "node": "Split-Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert-to-one-list": {
+      "main": [
+        [
+          {
+            "node": "agent-input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "get-messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agent-input": {
+      "main": [
+        [
+          {
+            "node": "main_chatbot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "Loop_Over_Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agent-response-formatter": {
+      "main": [
+        [
+          {
+            "node": "output_division",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "agent-response-formatter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-from-me?": {
+      "main": [
+        [
+          {
+            "node": "format-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-text-messages?": {
+      "main": [
+        [
+          {
+            "node": "is-from-me?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Hourly trigger": {
+      "recurrenceRules": []
+    },
+    "node:15min trigger": {
+      "recurrenceRules": []
+    },
+    "node:Calendly Trigger": {},
+    "node:Daily Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Calendly_Trigger": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "whatsapp_webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.10.0",
+            "content-length": "1139",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a6b51f5d3f6f",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "Level-Up-Media-Whatsapp",
+            "data": {
+              "key": {
+                "remoteJid": "584247058978@s.whatsapp.net",
+                "fromMe": false,
+                "id": "3EB073F778AB54090326AE",
+                "senderLid": "121955596415080@lid"
+              },
+              "pushName": "Alex Mora",
+              "status": "DELIVERY_ACK",
+              "message": {
+                "conversation": "alexmora@pymes-ai.com",
+                "messageContextInfo": {
+                  "deviceListMetadata": {
+                    "senderKeyHash": "1C+wqOKVsl/4yw==",
+                    "senderTimestamp": "1755625091",
+                    "senderAccountType": "E2EE",
+                    "receiverAccountType": "E2EE",
+                    "recipientKeyHash": "RWvfTov0FyU+FA==",
+                    "recipientTimestamp": "1754155508"
+                  },
+                  "deviceListMetadataVersion": 2,
+                  "messageSecret": "SbLY+rXDKhTgG5qkQc9VWKpp/x0HGx4BiJulIh7RNSo="
+                }
+              },
+              "messageType": "conversation",
+              "messageTimestamp": 1755966311,
+              "instanceId": "fdac25b8-a9ff-4f74-9b5b-f21ac85d4a0a",
+              "source": "web",
+              "chatwootMessageId": 2763,
+              "chatwootInboxId": 6,
+              "chatwootConversationId": 28
+            },
+            "destination": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/recibir-mensaje-final",
+            "date_time": "2025-08-23T13:25:12.469Z",
+            "sender": "19392444237@s.whatsapp.net",
+            "server_url": "https://levelup-media-project-evolution-api.ksnxqw.easypanel.host",
+            "apikey": "A3D9FEC6015A-4E1E-A7B5-A218FFB4F0D2"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/recibir-mensaje-final",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "28257194-4866-4aea-966b-fb370503dd66",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "TAtsmX9ozs2mPvCe",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    }
+  ],
+  "activeVersion": null
+}

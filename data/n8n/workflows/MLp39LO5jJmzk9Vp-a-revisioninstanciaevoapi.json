@@ -1,0 +1,1461 @@
+{
+  "updatedAt": "2026-08-31T02:52:49.815Z",
+  "createdAt": "2026-03-27T13:37:02.960Z",
+  "id": "MLp39LO5jJmzk9Vp",
+  "name": "A) RevisionInstanciaEvoAPI",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "e1b85d80-00a3-4651-b551-26607c0e8371",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "fetch-instances",
+        "instanceName": "Level Up Whatsapp 1"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -160
+      ],
+      "id": "4c1222ad-d628-4845-99a0-89fdba101f3b",
+      "name": "Buscar instancia",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d376c788-a51c-4298-b350-f351632edfff",
+              "leftValue": "={{ $('Buscar instancia').item.json.data[0].connectionStatus }}",
+              "rightValue": "close",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -160
+      ],
+      "id": "01f39455-2ac4-40de-97cf-a54daa06ad7b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1184,
+        256
+      ],
+      "id": "e91217a8-a575-45ee-a4d1-f5926abbfdfe",
+      "name": "Send a message",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        32
+      ],
+      "id": "9d117929-6ad0-4949-882f-0de28dcc23c9",
+      "name": "Send a message1",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "fetch-instances",
+        "instanceName": "Level-Up-Media-Whatsapp"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        176,
+        272
+      ],
+      "id": "49a525a6-71a7-4a14-8d83-fb4131b1fcfe",
+      "name": "Buscar instancia1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d376c788-a51c-4298-b350-f351632edfff",
+              "leftValue": "={{ $('Buscar instancia1').item.json.data[0].connectionStatus }}",
+              "rightValue": "close",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        288
+      ],
+      "id": "df8d8821-9ada-4ca9-a86e-ee3aa9ba79a7",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_1231212848637152/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({\"since\":\"2026-02-13\",\"until\":\"2026-02-20\"}){spend,ctr,cpm,cost_per_result}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        144,
+        480
+      ],
+      "id": "04c264cc-46c1-4257-a228-0baff3f2b254",
+      "name": "get campaign1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA FACEBOOK 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*\\n*`\\n\"}},{\"type\":\"divider\"}]}",
+        "text": "=",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        464
+      ],
+      "id": "950f368a-2365-4440-b580-abc740184595",
+      "name": "Send a message2",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v25.0/oauth/access_token",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "fb_exchange_token"
+            },
+            {
+              "name": "client_id",
+              "value": "907230552045448"
+            },
+            {
+              "name": "client_secret",
+              "value": "5d292190fe02106404712fd9e03a1d4b"
+            },
+            {
+              "name": "fb_exchange_token",
+              "value": "EAAM5HxLIt4gBRfWfIZC60dKS6vGDIuL1Yv10tWIA9qZCPWPUWkL5Ks91cq9vR4oJOTtqiZBA2iiegBYnb6cu0IVRTwnLP5ctmvuZBHiU7tbyWEkoYoZAVN58bRrRZBwKlvquURBvp9bAsIrMjp3ZAxYMIQnn39qw2bYA23tRIK3ZBcMfZAM3nMifle8Ri0ZCtxYTgO011jCQaSTZBtDLGjjZA9OeJnGhDlWTepErsqU7WepeAKAqZCcpZCvbzPEKWJq6LMj0M4fzMzXfZAf6X7iJcpu90gxXVymqQZDZD"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        384,
+        -512
+      ],
+      "id": "6a655055-3b33-4a0d-a1a1-7a32f05e3035",
+      "name": "renovacion_token_fb_ads"
+    },
+    {
+      "parameters": {
+        "content": "La renovación del token se debe hacer cada 59 dias, aca encuentras el endpoint para renovarlo, importante, debes generar el acces token de facebook graph api: \n\nhttps://developers.facebook.com/tools/explorer/907230552045448/?method=GET&path=me%3Ffields%3Did%2Cname&version=v25.0",
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -560
+      ],
+      "id": "a2ab5130-9205-4252-9ec4-02a06f155d3f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Para mas información:\nhttps://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -576
+      ],
+      "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "818e13f3-2cfb-4a16-ad65-6d5a802e353c",
+              "leftValue": "={{ $now.format('dd-MM-yyyy') }}",
+              "rightValue": "27-06-2026",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        80,
+        752
+      ],
+      "id": "bed74acc-4184-4cfe-bdb6-e9f875475293",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "office-6-monitoreo-agentes-ia"
+        },
+        "text": "=🔴 MAÑANA SE VENCE TOKEN DE META: Como Renovarlo: https://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        288,
+        656
+      ],
+      "id": "7689635b-ca22-4083-bb25-f7f19bfea669",
+      "name": "Send a message3",
+      "webhookId": "37b9263c-1b8d-4e49-80a7-83eccaaac7db",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "+573226724582",
+        "messageText": "Mañana se vence token meta Level Up",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        656
+      ],
+      "id": "1b8f5a45-16ba-432d-96a7-575a2175e4b3",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fetch-instances",
+        "instanceName": "Level-Up-Media-Setters"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -320
+      ],
+      "id": "e944f6c2-dc9a-4fd9-82b1-68bc2b5329c6",
+      "name": "Buscar instancia2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d376c788-a51c-4298-b350-f351632edfff",
+              "leftValue": "={{ $('Buscar instancia2').item.json.data[0].connectionStatus }}",
+              "rightValue": "close",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        -304
+      ],
+      "id": "4cb3b693-2b3e-45f7-bd0b-1a1a914dc979",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Setters",
+        "remoteJid": "+573226724582",
+        "messageText": "Hola",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -272
+      ],
+      "id": "52a03919-fbd8-4bbd-8e9b-818e1ca09b27",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar instancia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar instancia1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get campaign1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar instancia2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar instancia": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar instancia1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar instancia2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+  "activeVersionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+  "versionCounter": 45,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-27T13:37:02.960Z",
+      "createdAt": "2026-03-27T13:37:02.960Z",
+      "role": "workflow:owner",
+      "workflowId": "MLp39LO5jJmzk9Vp",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-31T02:51:54.365Z",
+    "createdAt": "2026-08-31T02:51:47.206Z",
+    "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+    "workflowId": "MLp39LO5jJmzk9Vp",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 7
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -176,
+          0
+        ],
+        "id": "e1b85d80-00a3-4651-b551-26607c0e8371",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "operation": "fetch-instances",
+          "instanceName": "Level Up Whatsapp 1"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          160,
+          -160
+        ],
+        "id": "4c1222ad-d628-4845-99a0-89fdba101f3b",
+        "name": "Buscar instancia",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d376c788-a51c-4298-b350-f351632edfff",
+                "leftValue": "={{ $('Buscar instancia').item.json.data[0].connectionStatus }}",
+                "rightValue": "close",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          384,
+          -160
+        ],
+        "id": "01f39455-2ac4-40de-97cf-a54daa06ad7b",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "messageType": "block",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+          "text": "=",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1184,
+          256
+        ],
+        "id": "e91217a8-a575-45ee-a4d1-f5926abbfdfe",
+        "name": "Send a message",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "messageType": "block",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+          "text": "=",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          560,
+          32
+        ],
+        "id": "9d117929-6ad0-4949-882f-0de28dcc23c9",
+        "name": "Send a message1",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "fetch-instances",
+          "instanceName": "Level-Up-Media-Whatsapp"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          176,
+          272
+        ],
+        "id": "49a525a6-71a7-4a14-8d83-fb4131b1fcfe",
+        "name": "Buscar instancia1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d376c788-a51c-4298-b350-f351632edfff",
+                "leftValue": "={{ $('Buscar instancia1').item.json.data[0].connectionStatus }}",
+                "rightValue": "close",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          384,
+          288
+        ],
+        "id": "df8d8821-9ada-4ca9-a86e-ee3aa9ba79a7",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_1231212848637152/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=id,name,objective,created_time,insights.time_range({\"since\":\"2026-02-13\",\"until\":\"2026-02-20\"}){spend,ctr,cpm,cost_per_result}"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          144,
+          480
+        ],
+        "id": "04c264cc-46c1-4257-a228-0baff3f2b254",
+        "name": "get campaign1",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "messageType": "block",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA FACEBOOK 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*\\n*`\\n\"}},{\"type\":\"divider\"}]}",
+          "text": "=",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          624,
+          464
+        ],
+        "id": "950f368a-2365-4440-b580-abc740184595",
+        "name": "Send a message2",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "url": "https://graph.facebook.com/v25.0/oauth/access_token",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "grant_type",
+                "value": "fb_exchange_token"
+              },
+              {
+                "name": "client_id",
+                "value": "907230552045448"
+              },
+              {
+                "name": "client_secret",
+                "value": "5d292190fe02106404712fd9e03a1d4b"
+              },
+              {
+                "name": "fb_exchange_token",
+                "value": "EAAM5HxLIt4gBRfWfIZC60dKS6vGDIuL1Yv10tWIA9qZCPWPUWkL5Ks91cq9vR4oJOTtqiZBA2iiegBYnb6cu0IVRTwnLP5ctmvuZBHiU7tbyWEkoYoZAVN58bRrRZBwKlvquURBvp9bAsIrMjp3ZAxYMIQnn39qw2bYA23tRIK3ZBcMfZAM3nMifle8Ri0ZCtxYTgO011jCQaSTZBtDLGjjZA9OeJnGhDlWTepErsqU7WepeAKAqZCcpZCvbzPEKWJq6LMj0M4fzMzXfZAf6X7iJcpu90gxXVymqQZDZD"
+              }
+            ]
+          },
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          384,
+          -512
+        ],
+        "id": "6a655055-3b33-4a0d-a1a1-7a32f05e3035",
+        "name": "renovacion_token_fb_ads"
+      },
+      {
+        "parameters": {
+          "content": "La renovación del token se debe hacer cada 59 dias, aca encuentras el endpoint para renovarlo, importante, debes generar el acces token de facebook graph api: \n\nhttps://developers.facebook.com/tools/explorer/907230552045448/?method=GET&path=me%3Ffields%3Did%2Cname&version=v25.0",
+          "width": 640
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -352,
+          -560
+        ],
+        "id": "a2ab5130-9205-4252-9ec4-02a06f155d3f",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "Para mas información:\nhttps://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          640,
+          -576
+        ],
+        "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "818e13f3-2cfb-4a16-ad65-6d5a802e353c",
+                "leftValue": "={{ $now.format('dd-MM-yyyy') }}",
+                "rightValue": "27-06-2026",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          80,
+          752
+        ],
+        "id": "bed74acc-4184-4cfe-bdb6-e9f875475293",
+        "name": "If2"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "office-6-monitoreo-agentes-ia"
+          },
+          "text": "=🔴 MAÑANA SE VENCE TOKEN DE META: Como Renovarlo: https://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          288,
+          656
+        ],
+        "id": "7689635b-ca22-4083-bb25-f7f19bfea669",
+        "name": "Send a message3",
+        "webhookId": "37b9263c-1b8d-4e49-80a7-83eccaaac7db",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "+573226724582",
+          "messageText": "Mañana se vence token meta Level Up",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          560,
+          656
+        ],
+        "id": "1b8f5a45-16ba-432d-96a7-575a2175e4b3",
+        "name": "Enviar texto",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "fetch-instances",
+          "instanceName": "Level-Up-Media-Setters"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          160,
+          -320
+        ],
+        "id": "e944f6c2-dc9a-4fd9-82b1-68bc2b5329c6",
+        "name": "Buscar instancia2",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d376c788-a51c-4298-b350-f351632edfff",
+                "leftValue": "={{ $('Buscar instancia2').item.json.data[0].connectionStatus }}",
+                "rightValue": "close",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          416,
+          -304
+        ],
+        "id": "4cb3b693-2b3e-45f7-bd0b-1a1a914dc979",
+        "name": "If3"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Setters",
+          "remoteJid": "+573226724582",
+          "messageText": "Hola",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -336,
+          -272
+        ],
+        "id": "52a03919-fbd8-4bbd-8e9b-818e1ca09b27",
+        "name": "Enviar texto1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Buscar instancia",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Buscar instancia1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "get campaign1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Buscar instancia2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar instancia": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar instancia1": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get campaign1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Send a message2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "Send a message3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message3": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar instancia2": {
+        "main": [
+          [
+            {
+              "node": "If3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If3": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version aa337e4b",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-08-31T02:51:54.353Z",
+        "id": 219,
+        "workflowId": "MLp39LO5jJmzk9Vp",
+        "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

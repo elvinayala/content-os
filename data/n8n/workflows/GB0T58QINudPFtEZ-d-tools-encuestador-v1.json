@@ -1,0 +1,1182 @@
+{
+  "updatedAt": "2026-01-06T14:05:28.167Z",
+  "createdAt": "2025-09-04T00:11:22.543Z",
+  "id": "GB0T58QINudPFtEZ",
+  "name": "D-) Tools encuestador v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "f0e1d273-a0be-4c0d-b7a6-14abf75501cd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('enviar-alerta-slack').item.json.body.Destinatario }}",
+                    "rightValue": "/Jessica/i",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "e291ddb9-0ede-460d-8ae1-38e03a783b63"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jessica"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "75c2d392-ef92-4e6d-9fc8-14458083dffb",
+                    "leftValue": "={{ $('enviar-alerta-slack').item.json.body.Destinatario }}",
+                    "rightValue": "/Carilin/i",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "carilin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        176,
+        -256
+      ],
+      "id": "5c2fc959-db87-4e24-a382-acd8f4ca0ad1",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -240
+      ],
+      "id": "38476d89-2243-46cc-a778-e02f8a0ca1b7",
+      "name": "Contact search"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del cliente: {{ $('alertar-asesor').first().json.body.Mensaje }}\nNombre del cliente: {{ $('Contact search1').first().json.payload[0].name }}\nTelefono: {{ $('alertar-asesor').item.json.body.telefono }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#Rol\nEres un subagente de un agente principal, recibes los mensajes que deben entregarse a los responsables del cliente\n\nEstos mensajes que recibes son directamente de la encuesta que ocurre a los 10 dias de iniciado el servicio o los 30 dias de haber iniciado el servicio.\n\n# Funciones\n- Debes entender el mensaje y reformatearlo para explicar detallamente las dudas del cliente\\\n\n# Reglas\n\n- Debes ser conciso y breve en tu resumen/detallado de las dudas y reclamaciones del cliente\n- No enviar texto largos\n- No des sugerencias, solo sintetiza el mensaje del cliente para mejor entendimiento sin ser versobo\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -144,
+        80
+      ],
+      "id": "78849cfe-2067-4c31-9bb7-1cdc30341ae8",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        80
+      ],
+      "id": "51698bdb-f452-4238-9b49-56b77850fbf7",
+      "name": "Contact search1"
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "operation": "contactSearch",
+        "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        320
+      ],
+      "id": "214b056c-c908-4c51-adc4-8297c94fcda7",
+      "name": "Contact search2"
+    },
+    {
+      "parameters": {
+        "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+        "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+        "resource": "contact",
+        "accountId": "2",
+        "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+        "operation": "contactUpdate",
+        "contactId": "={{ $json.payload[0].id }}",
+        "contactIdentifier": "={{ $json.payload[0].identifier }}",
+        "name": "={{ $json.payload[0].name }}",
+        "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+        "phoneNumber": "={{ $json.payload[0].phone_number }}",
+        "email": "={{ $json.payload[0].email }}",
+        "customAttributes": {
+          "attribute": [
+            {
+              "key": "10dias",
+              "value": "false"
+            },
+            {
+              "key": "30dias",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-chatwoot.chatwoot",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        320
+      ],
+      "id": "90201786-8fb0-45fe-ae75-af99bdf51247",
+      "name": "Contact update"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enviar-alerta-slack",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -576,
+        -240
+      ],
+      "id": "28db3412-b4e6-486d-b9d7-cb7631770fcd",
+      "name": "enviar-alerta-slack",
+      "webhookId": "7c55479d-0dbc-4fa0-887f-173de2f18003"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del cliente: {{ $('enviar-alerta-slack').first().json.body.Mensaje }}\nNombre del cliente: {{ $('Contact search').first().json.payload[0].name }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#Rol\nEres un subagente de un agente principal, recibes los mensajes que deben entregarse a los responsables del cliente\n\nEstos mensajes que recibes son directamente de la encuesta que ocurre a los 10 dias de iniciado el servicio o los 30 dias de haber iniciado el servicio.\n\n# Funciones\n- Debes entender el mensaje y reformatearlo para explicar detallamente las dudas del cliente\\\n\n# Reglas\n\n- Debes ser conciso y breve en tu resumen/detallado de las dudas y reclamaciones del cliente\n- No enviar texto largos\n- No des sugerencias, solo sintetiza el mensaje del cliente para mejor entendimiento sin ser versobo\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -144,
+        -240
+      ],
+      "id": "73ce5ec1-9c3b-48e0-a38f-98e37eae0f83",
+      "name": "Resumidor-formateador"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "text": "={{ $json.text }} <@U08SN35L2UX>",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "mrkdwn": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        -336
+      ],
+      "id": "a0ff183b-274b-46c2-a22b-9f2c2d6188dd",
+      "name": "jessica",
+      "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "text": "={{ $json.text }} <@U07V7MVJ18B>",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "mrkdwn": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        -128
+      ],
+      "id": "f87047ba-ed92-4c98-907d-2b1dd05881b9",
+      "name": "carilin",
+      "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "asesor",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        80
+      ],
+      "id": "090e07ef-cf97-4583-83f8-3e513e217967",
+      "name": "alertar-asesor",
+      "webhookId": "7c55479d-0dbc-4fa0-887f-173de2f18003"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "finalizar-encuesta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        320
+      ],
+      "id": "10c2ab38-4797-4442-b108-d3097bb1cba2",
+      "name": "finalizar-encuesta",
+      "webhookId": "ae4e65dc-9369-4b56-b2fc-a474c53cc752"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ERUWPLJ2",
+          "mode": "list",
+          "cachedResultName": "office-6-problemas-onboarding-clientes"
+        },
+        "text": "={{ $json.text }} <@U08SN35L2UX> <@U07V7MVJ18B>",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        80
+      ],
+      "id": "03963b3b-57f1-4357-8831-81977af4154d",
+      "name": "send-jessica",
+      "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resumidor-formateador",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "jessica",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "carilin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact search": {
+      "main": [
+        [
+          {
+            "node": "Resumidor-formateador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "send-jessica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact search1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact search2": {
+      "main": [
+        [
+          {
+            "node": "Contact update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviar-alerta-slack": {
+      "main": [
+        [
+          {
+            "node": "Contact search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumidor-formateador": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alertar-asesor": {
+      "main": [
+        [
+          {
+            "node": "Contact search1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "finalizar-encuesta": {
+      "main": [
+        [
+          {
+            "node": "Contact search2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "enviar-alerta-slack": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "130",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a6b51f5d3f6f",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Destinatario": "JESSICA",
+            "Mensaje": "El cliente indica: 'si pero no se como grabr lo que me pidieron'",
+            "telefono": "+584247058978"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/enviar-alerta-slack",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "alertar-asesor": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "281",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a6b51f5d3f6f",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Mensaje": "Cliente solicita ser elevado a un asesor humano (quiere hablar con Elvin). Mensaje del cliente: \"no te voy a responder hasta que me eleves a alguien que no seas tu\". Por favor, contactar al cliente por WhatsApp y gestionar la escalación.",
+            "telefono": "+584247058978"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/asesor",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "finalizar-encuesta": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.8.3",
+            "content-length": "281",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a6b51f5d3f6f",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Mensaje": "Cliente solicita ser elevado a un asesor humano (quiere hablar con Elvin). Mensaje del cliente: \"no te voy a responder hasta que me eleves a alguien que no seas tu\". Por favor, contactar al cliente por WhatsApp y gestionar la escalación.",
+            "telefono": "+584247058978"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/asesor",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ce2764a4-b28f-42e0-8e10-19bc7036e151",
+  "activeVersionId": "ce2764a4-b28f-42e0-8e10-19bc7036e151",
+  "versionCounter": 21,
+  "triggerCount": 3,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "GB0T58QINudPFtEZ",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T15:33:02.747Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "ce2764a4-b28f-42e0-8e10-19bc7036e151",
+    "workflowId": "GB0T58QINudPFtEZ",
+    "nodes": [
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -144,
+          -64
+        ],
+        "id": "f0e1d273-a0be-4c0d-b7a6-14abf75501cd",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('enviar-alerta-slack').item.json.body.Destinatario }}",
+                      "rightValue": "/Jessica/i",
+                      "operator": {
+                        "type": "string",
+                        "operation": "regex"
+                      },
+                      "id": "e291ddb9-0ede-460d-8ae1-38e03a783b63"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "jessica"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "75c2d392-ef92-4e6d-9fc8-14458083dffb",
+                      "leftValue": "={{ $('enviar-alerta-slack').item.json.body.Destinatario }}",
+                      "rightValue": "/Carilin/i",
+                      "operator": {
+                        "type": "string",
+                        "operation": "regex"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "carilin"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          176,
+          -256
+        ],
+        "id": "5c2fc959-db87-4e24-a382-acd8f4ca0ad1",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          -240
+        ],
+        "id": "38476d89-2243-46cc-a778-e02f8a0ca1b7",
+        "name": "Contact search"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensaje del cliente: {{ $('alertar-asesor').first().json.body.Mensaje }}\nNombre del cliente: {{ $('Contact search1').first().json.payload[0].name }}\nTelefono: {{ $('alertar-asesor').item.json.body.telefono }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=#Rol\nEres un subagente de un agente principal, recibes los mensajes que deben entregarse a los responsables del cliente\n\nEstos mensajes que recibes son directamente de la encuesta que ocurre a los 10 dias de iniciado el servicio o los 30 dias de haber iniciado el servicio.\n\n# Funciones\n- Debes entender el mensaje y reformatearlo para explicar detallamente las dudas del cliente\\\n\n# Reglas\n\n- Debes ser conciso y breve en tu resumen/detallado de las dudas y reclamaciones del cliente\n- No enviar texto largos\n- No des sugerencias, solo sintetiza el mensaje del cliente para mejor entendimiento sin ser versobo\n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          -144,
+          80
+        ],
+        "id": "78849cfe-2067-4c31-9bb7-1cdc30341ae8",
+        "name": "Basic LLM Chain1"
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          80
+        ],
+        "id": "51698bdb-f452-4238-9b49-56b77850fbf7",
+        "name": "Contact search1"
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "operation": "contactSearch",
+          "contactSearchQuery": "={{ $json.body.telefono.replaceAll('+','') }}"
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          320
+        ],
+        "id": "214b056c-c908-4c51-adc4-8297c94fcda7",
+        "name": "Contact search2"
+      },
+      {
+        "parameters": {
+          "baseUrl": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/",
+          "accessToken": "DhwrzhoGc9mrtDrtHSwtHQe2",
+          "resource": "contact",
+          "accountId": "2",
+          "sourceId": "={{ $json.payload[0].contact_inboxes[0].source_id }}",
+          "operation": "contactUpdate",
+          "contactId": "={{ $json.payload[0].id }}",
+          "contactIdentifier": "={{ $json.payload[0].identifier }}",
+          "name": "={{ $json.payload[0].name }}",
+          "inboxId": "={{ $json.payload[0].contact_inboxes[0].inbox.id }}",
+          "phoneNumber": "={{ $json.payload[0].phone_number }}",
+          "email": "={{ $json.payload[0].email }}",
+          "customAttributes": {
+            "attribute": [
+              {
+                "key": "10dias",
+                "value": "false"
+              },
+              {
+                "key": "30dias",
+                "value": "false"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-chatwoot.chatwoot",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          320
+        ],
+        "id": "90201786-8fb0-45fe-ae75-af99bdf51247",
+        "name": "Contact update"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "enviar-alerta-slack",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -576,
+          -240
+        ],
+        "id": "28db3412-b4e6-486d-b9d7-cb7631770fcd",
+        "name": "enviar-alerta-slack",
+        "webhookId": "7c55479d-0dbc-4fa0-887f-173de2f18003"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensaje del cliente: {{ $('enviar-alerta-slack').first().json.body.Mensaje }}\nNombre del cliente: {{ $('Contact search').first().json.payload[0].name }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=#Rol\nEres un subagente de un agente principal, recibes los mensajes que deben entregarse a los responsables del cliente\n\nEstos mensajes que recibes son directamente de la encuesta que ocurre a los 10 dias de iniciado el servicio o los 30 dias de haber iniciado el servicio.\n\n# Funciones\n- Debes entender el mensaje y reformatearlo para explicar detallamente las dudas del cliente\\\n\n# Reglas\n\n- Debes ser conciso y breve en tu resumen/detallado de las dudas y reclamaciones del cliente\n- No enviar texto largos\n- No des sugerencias, solo sintetiza el mensaje del cliente para mejor entendimiento sin ser versobo\n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          -144,
+          -240
+        ],
+        "id": "73ce5ec1-9c3b-48e0-a38f-98e37eae0f83",
+        "name": "Resumidor-formateador"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "text": "={{ $json.text }} <@U08SN35L2UX>",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "mrkdwn": true
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          416,
+          -336
+        ],
+        "id": "a0ff183b-274b-46c2-a22b-9f2c2d6188dd",
+        "name": "jessica",
+        "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "text": "={{ $json.text }} <@U07V7MVJ18B>",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "mrkdwn": true
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          416,
+          -128
+        ],
+        "id": "f87047ba-ed92-4c98-907d-2b1dd05881b9",
+        "name": "carilin",
+        "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "asesor",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -592,
+          80
+        ],
+        "id": "090e07ef-cf97-4583-83f8-3e513e217967",
+        "name": "alertar-asesor",
+        "webhookId": "7c55479d-0dbc-4fa0-887f-173de2f18003"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "finalizar-encuesta",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -592,
+          320
+        ],
+        "id": "10c2ab38-4797-4442-b108-d3097bb1cba2",
+        "name": "finalizar-encuesta",
+        "webhookId": "ae4e65dc-9369-4b56-b2fc-a474c53cc752"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ERUWPLJ2",
+            "mode": "list",
+            "cachedResultName": "office-6-problemas-onboarding-clientes"
+          },
+          "text": "={{ $json.text }} <@U08SN35L2UX> <@U07V7MVJ18B>",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          224,
+          80
+        ],
+        "id": "03963b3b-57f1-4357-8831-81977af4154d",
+        "name": "send-jessica",
+        "webhookId": "2470103b-2e8b-420f-8d18-f8659bbd3861",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Resumidor-formateador",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "jessica",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "carilin",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contact search": {
+        "main": [
+          [
+            {
+              "node": "Resumidor-formateador",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain1": {
+        "main": [
+          [
+            {
+              "node": "send-jessica",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contact search1": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contact search2": {
+        "main": [
+          [
+            {
+              "node": "Contact update",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "enviar-alerta-slack": {
+        "main": [
+          [
+            {
+              "node": "Contact search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resumidor-formateador": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "alertar-asesor": {
+        "main": [
+          [
+            {
+              "node": "Contact search1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "finalizar-encuesta": {
+        "main": [
+          [
+            {
+              "node": "Contact search2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": "Version ce2764a4",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-06T15:33:02.720Z",
+        "id": 45,
+        "workflowId": "GB0T58QINudPFtEZ",
+        "versionId": "ce2764a4-b28f-42e0-8e10-19bc7036e151",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

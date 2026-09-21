@@ -1,0 +1,1049 @@
+{
+  "name": "A-) Sync Pulse → NocoDB v1",
+  "nodes": [
+    {
+      "id": "n-nota",
+      "name": "Nota",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "width": 520,
+        "height": 260,
+        "content": "## Sync Pulse → NocoDB v1\nReemplaza a \"A-) Migracion de datos de monday v5\" como alimentador de la tabla **clientes** de NocoDB (la que leen todos los agentes).\n\n- **Webhook Pulse**: Pulse avisa en caliente cada cambio (crear/editar/mover/borrar) en LEVEL UP MEDIA o Asignación de Estrategas.\n- **Cada noche 5:10**: repasa todos los clientes desde Pulse (GET /api/pulse/n8n/clientes).\n- Fila = solo si está en CLIENTE ACTIVO; si sale del grupo o se borra, se elimina.\n- Links: traffiker/admin por ID-monday o email en `equipo`; industria por nombre.\n- `simulacion: true` (PULSE_N8N_MODO ≠ real) → no escribe nada, solo pasa por \"Simulación\".\n\nFuente: scripts/n8n-sync-pulse.mjs (content-os). No editar a mano: regenerar y `actualizar`."
+      }
+    },
+    {
+      "id": "n-webhook-pulse",
+      "name": "Webhook Pulse",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pulse-cliente",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "pulse-cliente-sync",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PENDIENTE",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "n-cada-noche-5-10",
+      "name": "Cada noche 5:10",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n-traer-clientes-de-pulse",
+      "name": "Traer clientes de Pulse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        200
+      ],
+      "parameters": {
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/clientes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PENDIENTE",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "n-normalizar",
+      "name": "Normalizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Un item por cliente, venga del webhook (body.clientes) o de la corrida nocturna (clientes).\nconst salida = [];\nfor (const item of $input.all()) {\n  const j = item.json || {};\n  const cuerpo = j.body && typeof j.body === 'object' ? j.body : j;\n  const lote = Array.isArray(cuerpo.clientes) ? cuerpo.clientes : [];\n  for (const c of lote) {\n    if (!c || !c.idMonday) continue;\n    salida.push({ json: { ...c, simulacion: cuerpo.simulacion !== false, motivo: cuerpo.motivo || 'nocturna' } });\n  }\n}\nreturn salida;"
+      }
+    },
+    {
+      "id": "n-buscar-en-nocodb",
+      "name": "Buscar en NocoDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "where",
+              "value": "=(ID-monday,eq,{{ $json.idMonday }})"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n-decidir",
+      "name": "Decidir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const c = $('Normalizar').item.json;\nconst fila = (($json.list) || [])[0] || null;\nconst tel = String(c.telefono || '').replace(/\\D/g, '');\nconst campos = {\n  'ID-monday': String(c.idMonday),\n  nombre: c.nombre || '',\n  empresa: c.empresa || '',\n  'ID-cuenta-publicitaria': c.idCuenta || '',\n  email: c.email || '',\n  telefono: tel ? Number(tel) : null,\n};\nlet accion = 'nada';\nif (c.activo && !fila) accion = 'crear';\nelse if (c.activo && fila) accion = 'actualizar';\nelse if (!c.activo && fila) accion = 'borrar';\nconst cambios = fila\n  ? Object.keys(campos).filter((k) => k !== 'ID-monday' && String(fila[k] ?? '') !== String(campos[k] ?? ''))\n  : Object.keys(campos);\nif (c.simulacion && accion !== 'nada') accion = 'simular';\nconst cuentaCambio = !fila || String(fila['ID-cuenta-publicitaria'] ?? '') !== campos['ID-cuenta-publicitaria'];\nreturn { json: { accion, motivo: c.motivo, cliente: c, fila, filaId: fila ? fila.Id : null, campos, cambios, cuentaCambio, resumen: accion + ' ' + c.nombre + (cambios.length ? ' [' + cambios.join(', ') + ']' : '') } };"
+      }
+    },
+    {
+      "id": "n--qu-hacer-",
+      "name": "¿Qué hacer?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1300,
+        0
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "crear",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crear"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c2",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "actualizar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "actualizar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c3",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "borrar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "borrar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      }
+    },
+    {
+      "id": "n-crear-fila",
+      "name": "Crear fila",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ...$json.campos, 'doble-verificacion': true }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n-despu-s-de-crear",
+      "name": "Después de crear",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        -200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: { ...$('Decidir').item.json, filaId: $json.Id, cuentaCambio: true } };"
+      }
+    },
+    {
+      "id": "n--cambi-algo-",
+      "name": "¿Cambió algo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c4",
+              "leftValue": "={{ $json.cambios.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-actualizar-fila",
+      "name": "Actualizar fila",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1820,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, ...$json.campos }]) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n-despu-s-de-actualizar",
+      "name": "Después de actualizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: $('Decidir').item.json };"
+      }
+    },
+    {
+      "id": "n-borrar-fila",
+      "name": "Borrar fila",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        200
+      ],
+      "parameters": {
+        "method": "DELETE",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId }]) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n-simulaci-n-no-escribe-",
+      "name": "Simulación (no escribe)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        400
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "n-plan-de-links",
+      "name": "Plan de links",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "// Por cliente: 3 links (traffiker, admin → equipo; industria → industrias).\nconst out = [];\nfor (const it of $input.all()) {\n  const { cliente: c, fila, filaId } = it.json;\n  if (!filaId) continue;\n  out.push({ json: { filaId, nombre: 'traffiker', linkCol: 'ct33f49i8som5rx', tabla: 'm0uib6kq4i1gelp', persona: c.traffiker || {}, actual: fila && fila.traffiker ? fila.traffiker.Id : null } });\n  out.push({ json: { filaId, nombre: 'admin', linkCol: 'c2c88wzry5od96o', tabla: 'm0uib6kq4i1gelp', persona: c.admin || {}, actual: fila && fila.admin ? fila.admin.Id : null } });\n  out.push({ json: { filaId, nombre: 'industrias', linkCol: 'c7xyj70esnqjve0', tabla: 'mur2zaymbw5791i', valor: c.industria || '', actual: fila && fila.industrias ? fila.industrias.Id : null } });\n}\nreturn out;"
+      }
+    },
+    {
+      "id": "n-buscar-destino",
+      "name": "Buscar destino",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2600,
+        -200
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/{{ $json.tabla }}/records?limit=500",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n-elegir-destino",
+      "name": "Elegir destino",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        -200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const plan = $('Plan de links').item.json;\nconst filas = ($json.list) || [];\nlet hit = null;\nif (plan.tabla === 'm0uib6kq4i1gelp') {\n  const p = plan.persona || {};\n  hit = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))\n     || (p.email && filas.find((f) => String(f.email || '').trim().toLowerCase() === String(p.email).trim().toLowerCase()))\n     || null;\n} else {\n  const n = String(plan.valor || '').trim().toLowerCase();\n  hit = n ? filas.find((f) => String(f.nombre || '').trim().toLowerCase() === n) || null : null;\n}\nconst nuevoId = hit ? hit.Id : null;\nlet accionLink = 'nada';\nif (nuevoId !== plan.actual) accionLink = plan.actual ? (nuevoId ? 'reemplazar' : 'quitar') : (nuevoId ? 'poner' : 'nada');\nreturn { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, accionLink } };"
+      }
+    },
+    {
+      "id": "n--link-",
+      "name": "¿Link?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3120,
+        -200
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c5",
+                    "leftValue": "={{ $json.accionLink }}",
+                    "rightValue": "poner",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "poner"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c6",
+                    "leftValue": "={{ $json.accionLink }}",
+                    "rightValue": "quitar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "id": "c7",
+                    "leftValue": "={{ $json.accionLink }}",
+                    "rightValue": "reemplazar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              },
+              "renameOutput": true,
+              "outputKey": "quitar/reemplazar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      }
+    },
+    {
+      "id": "n-desenlazar-viejo",
+      "name": "Desenlazar viejo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3380,
+        0
+      ],
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/{{ $json.linkCol }}/records/{{ $json.filaId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ Id: $json.actual }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n--hay-nuevo-",
+      "name": "¿Hay nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3640,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c8",
+              "leftValue": "={{ !!$('Elegir destino').item.json.nuevoId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-enlazar",
+      "name": "Enlazar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3900,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/{{ $('Elegir destino').item.json.linkCol }}/records/{{ $('Elegir destino').item.json.filaId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ Id: $('Elegir destino').item.json.nuevoId }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "id": "n--buscar-campa-as-",
+      "name": "¿Buscar campañas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2340,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c9",
+              "leftValue": "={{ $json.cuentaCambio === true && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-campa-as-de-meta",
+      "name": "Campañas de Meta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2600,
+        200
+      ],
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.campos['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\",\"PAUSED\",\"DELETED\",\"ARCHIVED\",\"IN_PROCESS\",\"WITH_ISSUES\"]}]"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "fields",
+              "value": "id,name,created_time,status,account_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "n-primera-campa-a-level-up",
+      "name": "Primera campaña Level Up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const d = $('¿Buscar campañas?').item.json;\nconst lista = Array.isArray($json.data) ? $json.data : [];\nconst lu = lista.filter((c) => /level ?up/i.test(c.name || '')).sort((a, b) => String(a.created_time).localeCompare(String(b.created_time)));\nconst fecha = lu.length ? String(lu[0].created_time).slice(0, 10) : null;\nreturn { json: { filaId: d.filaId, fecha, actual: d.fila ? d.fila['fecha-inicio-campaña'] : null } };"
+      }
+    },
+    {
+      "id": "n--fecha-nueva-",
+      "name": "¿Fecha nueva?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c10",
+              "leftValue": "={{ !!$json.fecha && $json.fecha !== $json.actual }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-guardar-fecha-campa-a",
+      "name": "Guardar fecha campaña",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3380,
+        200
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, 'fecha-inicio-campaña': $json.fecha }]) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Pulse": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cada noche 5:10": {
+      "main": [
+        [
+          {
+            "node": "Traer clientes de Pulse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer clientes de Pulse": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "Buscar en NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Decidir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir": {
+      "main": [
+        [
+          {
+            "node": "¿Qué hacer?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Qué hacer?": {
+      "main": [
+        [
+          {
+            "node": "Crear fila",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Cambió algo?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Borrar fila",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simulación (no escribe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear fila": {
+      "main": [
+        [
+          {
+            "node": "Después de crear",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Después de crear": {
+      "main": [
+        [
+          {
+            "node": "Plan de links",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Buscar campañas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cambió algo?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar fila",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Después de actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar fila": {
+      "main": [
+        [
+          {
+            "node": "Después de actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Después de actualizar": {
+      "main": [
+        [
+          {
+            "node": "Plan de links",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Buscar campañas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan de links": {
+      "main": [
+        [
+          {
+            "node": "Buscar destino",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar destino": {
+      "main": [
+        [
+          {
+            "node": "Elegir destino",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir destino": {
+      "main": [
+        [
+          {
+            "node": "¿Link?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Link?": {
+      "main": [
+        [
+          {
+            "node": "Enlazar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Desenlazar viejo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desenlazar viejo": {
+      "main": [
+        [
+          {
+            "node": "¿Hay nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Enlazar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "¿Buscar campañas?": {
+      "main": [
+        [
+          {
+            "node": "Campañas de Meta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Campañas de Meta": {
+      "main": [
+        [
+          {
+            "node": "Primera campaña Level Up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Primera campaña Level Up": {
+      "main": [
+        [
+          {
+            "node": "¿Fecha nueva?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Fecha nueva?": {
+      "main": [
+        [
+          {
+            "node": "Guardar fecha campaña",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  }
+}

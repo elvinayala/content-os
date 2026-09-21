@@ -1,0 +1,516 @@
+{
+  "updatedAt": "2026-01-06T14:07:50.173Z",
+  "createdAt": "2025-07-25T07:07:05.280Z",
+  "id": "zFQkFlCjCbZ9KMJk",
+  "name": "out-of-service B2.1) Agente Onboarding - Citas automaticas",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Creacion de eventos en Google calendar\n",
+        "height": 280,
+        "width": 700,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -520
+      ],
+      "id": "10d89694-98a2-413e-981d-054af96d2576",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "scope": "organization",
+        "events": [
+          "invitee.created"
+        ]
+      },
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        -380
+      ],
+      "id": "6d6e40d6-cab4-4e0a-ba57-6e42ea735293",
+      "name": "Calendly_Trigger",
+      "webhookId": "8a222172-68a8-457f-a098-8b69fff4a298",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "pT1T7OUgTcH5tiXh",
+          "name": "CalendlyLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0433fcd8-1e87-41c1-95f6-b5c35a4be74b",
+              "leftValue": "={{ $json.payload.scheduled_event.name }}",
+              "rightValue": "Onboarding",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "bb5bd09f-f7ab-44d2-98c3-5211ec4b6aa7",
+              "leftValue": "={{ $json.payload.scheduled_event.name }}",
+              "rightValue": "VIP Onboarding",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -580,
+        -380
+      ],
+      "id": "546e4714-383f-4c77-bdc7-532b3684ed8f",
+      "name": "onboarding_or_VIP?"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "start": "={{ $json.payload.scheduled_event.start_time }}",
+        "end": "={{ $json.payload.scheduled_event.end_time }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.payload.scheduled_event.event_memberships[0].user_email }}",
+            "={{ $json.payload.email }}"
+          ],
+          "color": "5",
+          "description": "={{ $json.payload.scheduled_event.name }}",
+          "id": "={{ $json.payload.scheduled_event.location.data.id }}",
+          "location": "={{ $json.payload.scheduled_event.location.join_url }}",
+          "summary": "={{ $json.payload.name }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -380,
+        -460
+      ],
+      "id": "52dedd21-bf61-48d0-ba59-9cd24b98a6da",
+      "name": "Create_an_event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ajustes \n- no depender del nodo excel para enviar los recordatorios (usar calendly)\n- Modificar el calendly para pedir el numero del lead"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -520
+      ],
+      "id": "5bc48703-f62a-431a-9573-34b484d31d21",
+      "name": "Sticky Note7"
+    }
+  ],
+  "connections": {
+    "Calendly_Trigger": {
+      "main": [
+        [
+          {
+            "node": "onboarding_or_VIP?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "onboarding_or_VIP?": {
+      "main": [
+        [
+          {
+            "node": "Create_an_event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Bogota",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {
+    "node:Calendly Trigger": {},
+    "node:15min trigger": {
+      "recurrenceRules": []
+    },
+    "node:Daily Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Calendly_Trigger": {},
+    "node:15min_trigger": {
+      "recurrenceRules": []
+    },
+    "node:Daily_Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Calendly_Trigger": [
+      {
+        "json": {
+          "created_at": "2025-08-03T16:17:55.000000Z",
+          "created_by": "https://api.calendly.com/users/965612c6-4818-4ffd-ad9c-65d8cb906752",
+          "event": "invitee.created",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/af55b03b-5d7d-46eb-a8bd-814156833819",
+            "created_at": "2025-08-03T16:17:52.214651Z",
+            "email": "gesteras04@gmail.com",
+            "event": "https://api.calendly.com/scheduled_events/140d9fab-07d3-4ef9-9d1a-d33a15fcfa4c",
+            "first_name": null,
+            "invitee_scheduled_by": "https://api.calendly.com/users/965612c6-4818-4ffd-ad9c-65d8cb906752",
+            "last_name": null,
+            "name": "Gabriel Esteras ",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [
+              {
+                "answer": "contratista Caguas, 20 años, 2 años reincorporado",
+                "position": 0,
+                "question": "¿Tienes un negocio? ¿Qué servicio o producto ofreces?\n(Incluye nombre del negocio, redes sociales, pueblo)"
+              },
+              {
+                "answer": "actualmente mantengo referidos, quiero aumentar mi presencia en redes sociales ",
+                "position": 1,
+                "question": "¿Qué es lo que más te gustaría mejorar o cambiar en tu negocio en este momento?\n"
+              },
+              {
+                "answer": "duplicar  ",
+                "position": 2,
+                "question": "¿Cuál es tu meta de ventas en los próximos 3 a 6 meses?"
+              },
+              {
+                "answer": "$3,000 - $5000\n$5,000 - $10,000",
+                "position": 3,
+                "question": "¿Qué tan lejos estas de esa meta? ¿Cuánto estás generando en ventas mensuales actualmente?"
+              },
+              {
+                "answer": "Si",
+                "position": 4,
+                "question": "¿Invertir en tu negocio es prioridad para ti?"
+              },
+              {
+                "answer": "Sí, tengo AL MENOS 20 USD diarios para invertir en ads (este NO es el valor TOTAL del programa, es lo MÍNIMO que necesitas para EMPEZAR a trabajar)",
+                "position": 5,
+                "question": "¿Tienes para invertir en tu negocio un monto MÍNIMO de 20 USD diarios en ads?"
+              },
+              {
+                "answer": "Si, he trabajado con redes sociales pero sin ads",
+                "position": 6,
+                "question": "¿Has intentado con marketing digital antes? ¿Has hecho anuncios en redes sociales? "
+              },
+              {
+                "answer": "mi compañera",
+                "position": 7,
+                "question": "10. ¿Puedes tomar una decisión financiera sin consultar con tu pareja, socio o alguien más?\n(Si necesitas hacerlo con alguien, agenda la llamada para cuando ambos estén disponibles)"
+              },
+              {
+                "answer": "Hoy Mismo\nNo estoy seguro",
+                "position": 8,
+                "question": "Si te cualificas para nuestro programa, ¿cuándo podrías comenzar?"
+              },
+              {
+                "answer": "787 400 1590",
+                "position": 9,
+                "question": "Número de contacto"
+              }
+            ],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/af55b03b-5d7d-46eb-a8bd-814156833819",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "created_at": "2025-08-03T16:17:52.196572Z",
+              "end_time": "2025-08-04T17:00:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/6d43a44d-b1d8-49c7-ac12-793fce1c989d",
+                  "user_email": "juandavid@levelupmediapr.net",
+                  "user_name": "Juan David"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/e4e2fad2-ad67-44f5-94b6-14d53cdecabc",
+              "invitees_counter": {
+                "total": 1,
+                "active": 1,
+                "limit": 1
+              },
+              "location": {
+                "data": {
+                  "id": 83902450693,
+                  "settings": {
+                    "global_dial_in_numbers": [
+                      {
+                        "country_name": "US",
+                        "number": "+1 646 931 3860",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "Washington DC",
+                        "number": "+1 301 715 8592",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 305 224 1968",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 309 205 3325",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "Chicago",
+                        "number": "+1 312 626 6799",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "New York",
+                        "number": "+1 646 876 9923",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 719 359 4580",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 253 205 0468",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "Tacoma",
+                        "number": "+1 253 215 8782",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "Houston",
+                        "number": "+1 346 248 7799",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 360 209 5623",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 386 347 5053",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "San Jose",
+                        "number": "+1 408 638 0968",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 507 473 4847",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 564 217 2000",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 669 444 9171",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "city": "San Jose",
+                        "number": "+1 669 900 6833",
+                        "type": "toll",
+                        "country": "US"
+                      },
+                      {
+                        "country_name": "US",
+                        "number": "+1 689 278 1000",
+                        "type": "toll",
+                        "country": "US"
+                      }
+                    ]
+                  },
+                  "extra": {
+                    "intl_numbers_url": "https://us06web.zoom.us/u/ky97fHqxr"
+                  },
+                  "password": "910460"
+                },
+                "join_url": "https://us06web.zoom.us/j/83902450693?pwd=ihD1O8ZfWFUi5VJNcrjKhyDn2etrmf.1",
+                "status": "pushed",
+                "type": "zoom"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "VIDEOLLAMADA POR ZOOM",
+              "start_time": "2025-08-04T16:00:00.000000Z",
+              "status": "active",
+              "updated_at": "2025-08-03T16:17:52.196572Z",
+              "uri": "https://api.calendly.com/scheduled_events/140d9fab-07d3-4ef9-9d1a-d33a15fcfa4c"
+            },
+            "scheduling_method": null,
+            "status": "active",
+            "text_reminder_number": null,
+            "timezone": "America/Campo_Grande",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": "Andres",
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2025-08-03T16:17:52.214651Z",
+            "uri": "https://api.calendly.com/scheduled_events/140d9fab-07d3-4ef9-9d1a-d33a15fcfa4c/invitees/af55b03b-5d7d-46eb-a8bd-814156833819"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "72fad6dc-8b97-44bd-a99f-36691cfc765f",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "zFQkFlCjCbZ9KMJk",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    }
+  ],
+  "activeVersion": null
+}

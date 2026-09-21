@@ -1,0 +1,1053 @@
+{
+  "updatedAt": "2026-01-06T14:11:32.020Z",
+  "createdAt": "2025-09-16T23:44:53.332Z",
+  "id": "T1t4OYwVW7QTJ1ml",
+  "name": "Get Campaigns",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "619c7389-9775-47d2-b000-8f962cbf5d34",
+              "name": "textoFormateadoCampaña",
+              "value": "=<div class=\"campaign-report\">\n  <!-- Título de la Campaña -->\n  <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns').item.json.name }}</h2>\n  <p class=\"meta-info\">\n    <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns').item.json.objective }} | \n    <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n  </p>\n\n  <!-- KPIs Principales -->\n  <h3>KPIs Principales (Resultados de Negocio)</h3>\n  <div class=\"kpi-grid\">\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💰 Presupuesto Gastado</div>\n      <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].spend || 0).toFixed(2) }} USD</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">🎯 Resultados Principales</div>\n      <div class=\"kpi-value\">{{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💸 Costo por Resultado</div>\n      <div class=\"kpi-value\">${{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result ? parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result[0].values[0].value).toFixed(2) : '0.00' }}</div>\n    </div>\n  </div>\n\n  <!-- Métricas Detalladas en Tablas -->\n  <div class=\"metrics-container\">\n    <div class=\"metric-table\">\n      <h3>Métricas de Audiencia y Alcance</h3>\n      <table>\n        <tr>\n          <td>👀 Alcance (Personas Únicas)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>📰 Impresiones</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🔄 Frecuencia</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n    <div class=\"metric-table\">\n      <h3>Métricas de Interacción y Eficiencia</h3>\n      <table>\n        <tr>\n          <td>🖱️ Clics Totales (Todos)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🚀 CTR (Tasa de Clics)</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td>\n        </tr>\n        <tr>\n          <td>💲 CPM (Costo por 1,000 Impresiones)</td>\n          <td>${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n  </div>\n  \n  <!-- Desglose de Acciones y Costos -->\n  <h3>Desglose Detallado</h3>\n  <div class=\"actions-container\">\n    <div class=\"action-table\">\n      <h4>Acciones del Usuario</h4>\n      <table>\n        {{\n          // Usamos una función auto-ejecutable para asegurar que la lógica funcione correctamente\n          (() => {\n            const actions = $('Get Only LevelUp Campaigns').item.json.insights.data[0].actions;\n            if (!actions || actions.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron acciones detalladas.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return actions.map(action => {\n              const nombreTraducido = traducciones[action.action_type] || action.action_type.replace(/_/g, ' ');\n              return `<tr><td>${nombreTraducido}</td><td>${parseInt(action.value).toLocaleString('es-MX')}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n    <div class=\"action-table\">\n      <h4>Costos por Acción</h4>\n      <table>\n        {{\n          (() => {\n            const costPerAction = $('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_action_type;\n            if (!costPerAction || costPerAction.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron costos por acción.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return costPerAction.map(cpa => {\n              const nombreTraducido = traducciones[cpa.action_type] || cpa.action_type.replace(/_/g, ' ');\n              return `<tr><td>Costo por ${nombreTraducido}</td><td>$${parseFloat(cpa.value).toFixed(2)}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n  </div>\n\n  <!-- Observaciones de la IA (Esto está correcto, usa $json porque viene del nodo anterior inmediato) -->\n  <div class=\"ai-insights\">\n    <h3>Observaciones y Recomendaciones</h3>\n    <p>{{ $json.message.content.replace(/\\n/g, '<br>') }}</p>\n  </div>\n</div>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2848,
+        1376
+      ],
+      "id": "d4458398-c7da-485f-864a-0b8efb01422d",
+      "name": "Format Data Insights"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        1376
+      ],
+      "id": "c48ec7de-65f6-4b84-9e76-0a8f52cebaa8",
+      "name": "Get Single Campaign"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Actúa como un experto en análisis de métricas de campañas publicitarias para Meta Ads. Con base en la información proporcionada, genera un informe conciso y fácil de entender sobre el rendimiento de las campañas. Enfócate en los resultados clave y los costos asociados, y brinda recomendaciones específicas para optimizar las campañas. El informe debe tener un máximo de dos párrafos y estar redactado en un lenguaje claro y directo, adaptado para la comprensión de un cliente. Evita cualquier mención sobre pruebas A/B, campañas de bajo rendimiento o terminología técnica compleja. El informe está dirigido directamente a tu cliente.\n\nejemplo de input:\n\n## 📈 Reporte de Campaña: [Nombre de la Campaña]\n\n**Objetivo Principal:** [Objetivo de la Campaña]\n_Creada el: [Fecha de Creación]_\n\n---\n\n### KPIs Principales (Resultados de Negocio)\n- **💰 Presupuesto Gastado:** $[Presupuesto Gastado] USD\n- **🎯 Resultados Principales (Conversiones):** [Número de Conversiones]\n- **💸 Costo por Resultado Principal:** $[Costo por Conversión]\n\n---\n\n### Métricas de Audiencia y Alcance\n- **👀 Alcance (Personas Únicas):** [Alcance]\n- **📰 Impresiones (Anuncios Mostrados):** [Impresiones]\n- **🔄 Frecuencia (Promedio de Vistas por Persona):** [Frecuencia]\n\n---\n\n[Detalle de Acciones del Usuario y Costos por Acción, según la información proporcionada]\n\nExample Output (Generated Report):\n\"Las campañas publicitarias han logrado [Número de Conversiones] resultados clave con un costo promedio de $[Costo por Conversión]. Esto demuestra que sus anuncios están generando interacciones importantes. El presupuesto invertido ha sido $[Presupuesto Gastado] USD, logrando un alcance de [Alcance] personas, lo que indica una buena visibilidad de su mensaje.\nPara potenciar aún más estos resultados, le sugerimos [Recomendación basada en los datos, por ejemplo: “continuar enfocándose en las campañas que mejor rendimiento están dando” o “evaluar la posibilidad de optimizar el mensaje y la segmentación para llegar a un público aún más relevante.”]. Esto le permitirá maximizar el retorno de su inversión y alcanzar sus objetivos de marketing.\"",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json['textoFormateadoCampaña'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3072,
+        1376
+      ],
+      "id": "9441ca54-7ca8-4fe7-aba6-7e866414b233",
+      "name": "Get AI Report",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3664,
+        1376
+      ],
+      "id": "5c78ac95-af23-40c7-9983-5b2a246919c5",
+      "name": "Aggregate All Campaigns"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "256a02f3-6240-4768-a226-14e10284b612",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        1376
+      ],
+      "id": "8d13b1ca-6f49-48e6-9a3f-1ef5e61d6eae",
+      "name": "Get Only LevelUp Campaigns"
+    },
+    {
+      "parameters": {
+        "html": "<div class=\"campaign-report\">\n    <!-- Título de la Campaña -->\n    <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns').item.json.name }}</h2>\n    <p class=\"meta-info\">\n        <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns').item.json.objective }} | \n        <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n    </p>\n\n    <!-- KPIs Principales -->\n    <h3>KPIs de Negocio</h3>\n    <div class=\"kpi-grid\">\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💰 Gasto Total</div>\n            <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].spend || 0).toFixed(2) }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">🎯 Resultados Principales (Clientes Potenciales)</div>\n            <div class=\"kpi-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights?.data?.[0]?.results?.[0]?.values?.[0]?.value ?? '0').toLocaleString('es-MX') }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💸 Costo por Resultado</div>\n            <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights?.data?.[0]?.cost_per_result?.[0]?.values?.[0]?.value ?? '0.00').toFixed(2) }}</div>\n        </div>\n    </div>\n\n    <!-- GRÁFICAS CON HTML/CSS - VERSIÓN MEJORADA CON PORCENTAJES -->\n    <h3>Visualización del Embudo de Rendimiento</h3>\n    <div class=\"charts-container-css\">\n        <div class=\"chart-wrapper-css\">\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Impresiones</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill impressions\" style=\"width: 100%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">(100%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Alcance</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill reach\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(1) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Clics</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill clicks\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Resultados</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill results\" style=\"width: {{ ((($('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((($('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n        </div>\n    </div>\n    \n    <!-- Métricas Detalladas en Tablas -->\n    <h3>Métricas Detalladas</h3>\n    <div class=\"metrics-container\">\n        <div class=\"metric-table\">\n            <h4>Audiencia y Eficiencia</h4>\n            <table>\n                <tr><td>🚀 CTR (Tasa de Clics)</td><td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td></tr>\n                <tr><td>💲 CPM (Costo por 1,000 Imp.)</td><td>${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td></tr>\n                <tr><td>🔄 Frecuencia</td><td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td></tr>\n            </table>\n        </div>\n        <div class=\"metric-table\">\n            <h4>Acciones Principales</h4>\n            <table>\n                {{\n                    (() => {\n                        const actions = $('Get Only LevelUp Campaigns').item.json.insights.data[0].actions;\n                        if (!actions || actions.length === 0) return '<tr><td colspan=\"2\">No se registraron acciones.</td></tr>';\n                        \n                        // --- DICCIONARIO DE TRADUCCIONES AMPLIADO ---\n                        const t = { \n                            'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas',\n                            'onsite_conversion.total_messaging_connection': 'Conexiones por Mensaje',\n                            'onsite_conversion.lead': 'Leads (Formulario)',\n                            'post_engagement': 'Interacciones con Publicación', \n                            'link_click': 'Clics en Enlace', \n                            'video_view': 'Vistas de Video', \n                            'lead': 'Leads (General)',\n                            'page_engagement': 'Interacción con Página',\n                            'comment': 'Comentarios',\n                            'post_reaction': 'Reacciones',\n                            'post_save': 'Guardados'\n                        };\n                        // Muestra hasta 3 acciones principales\n                        return actions.slice(0, 3).map(a => `<tr><td>${t[a.action_type] || a.action_type.replace(/_/g, ' ')}</td><td>${parseInt(a.value).toLocaleString('es-MX')}</td></tr>`).join('');\n                    })()\n                }}\n            </table>\n        </div>\n    </div>\n\n    <!-- Observaciones de la IA -->\n    <div class=\"ai-insights\">\n        <h3>💡 Observaciones y Recomendaciones</h3>\n        <p>{{ $json.message.content ? $json.message.content.replace(/\\n/g, '<br>') : 'Análisis no disponible.' }}</p>\n    </div>\n</div>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        3424,
+        1376
+      ],
+      "id": "dbe19858-4282-459e-a058-28037749ad0d",
+      "name": "Create Campaign Report"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "eaceaefa-a87e-43c7-8092-7dc74a208752",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        2224,
+        1376
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Monthly Report?').item.json.email }}",
+        "subject": "={{ $('Get Report Details').item.json.empresa }} Reporte Del {{ $('Get Report Details').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details').item.json.periodo_reporte }} días)",
+        "emailType": "text",
+        "message": "=Hola Dejo adunto el reporte Reporte del {{ $('Get Report Details').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details').item.json.periodo_reporte }} días)",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4720,
+        1264
+      ],
+      "id": "3e12fe1b-f5f4-4adf-90f3-ffe0f320effb",
+      "name": "Send Report (Email)",
+      "webhookId": "7532f9b9-ca07-44bb-81f1-2b2352475926",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "053d24b0-7686-4e02-997f-56722685ae86",
+              "name": "Unified_Report",
+              "value": "={{ $items(\"Aggregate All Campaigns\").map(item => item.json.html).join('') }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3872,
+        1376
+      ],
+      "id": "47e4ff0c-e2c9-4f26-a409-564d4249a478",
+      "name": "Get Final Report"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reporte de Rendimiento de Campañas</title>\n    <style>\n        /* --- ESTILOS GLOBALES Y FUENTES --- */\n        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n        body {\n            font-family: 'Roboto', sans-serif;\n            background-color: #f0f2f5;\n            color: #333;\n            margin: 0;\n            padding: 0;\n            font-size: 14px;\n        }\n\n        /* --- CONTENEDOR PRINCIPAL --- */\n        .container {\n            max-width: 800px;\n            margin: 20px auto;\n            padding: 25px;\n            background-color: white;\n            border-radius: 12px;\n            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);\n        }\n\n        /* --- ENCABEZADO DEL REPORTE --- */\n        .report-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            border-bottom: 3px solid #F3D535;\n            padding-bottom: 20px;\n            margin-bottom: 30px;\n        }\n        .report-header .logo img {\n            width: 160px;\n            height: auto;\n            display: block;\n        }\n        .report-header .title-section {\n            text-align: left;\n        }\n        .report-header h1 {\n            margin: 0;\n            color: #1c2a39;\n            font-size: 28px;\n            font-weight: 700;\n        }\n        .report-header p {\n            margin: 5px 0 0;\n            font-size: 16px;\n            color: #555;\n        }\n\n        /* --- ESTILO PARA CADA REPORTE DE CAMPAÑA INDIVIDUAL --- */\n        .campaign-report {\n            margin-bottom: 30px;\n            padding: 25px;\n            border: 1px solid #e0e6ed;\n            border-radius: 12px;\n            background-color: #ffffff;\n            page-break-after: always;\n        }\n        .campaign-report:last-child {\n            page-break-after: avoid;\n        }\n\n        h2, h3, h4 {\n            color: #2c3e50;\n            font-weight: 700;\n        }\n        h2 {\n            border-bottom: 2px solid #F3D535;\n            padding-bottom: 10px;\n            font-size: 22px;\n            margin-top: 0;\n        }\n        h3 {\n            font-size: 18px;\n            margin-top: 30px;\n            margin-bottom: 20px;\n        }\n        h4 {\n            font-size: 16px;\n            margin-top: 0;\n            margin-bottom: 15px;\n            color: #34495e;\n            font-weight: 500;\n        }\n        p.meta-info {\n            font-style: italic;\n            color: #7f8c8d;\n            margin-bottom: 25px;\n        }\n\n        /* --- KPIs GRID --- */\n        .kpi-grid {\n            display: grid;\n            grid-template-columns: repeat(3, 1fr);\n            gap: 20px;\n            margin-bottom: 30px;\n        }\n        .kpi-card {\n            background: rgba(245, 247, 250, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-radius: 10px;\n            padding: 20px;\n            text-align: center;\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);\n        }\n        .kpi-label {\n            font-size: 14px;\n            color: #555;\n            margin-bottom: 8px;\n            font-weight: 500;\n        }\n        .kpi-value {\n            font-size: 26px;\n            font-weight: 700;\n            color: #2c3e50;\n        }\n\n        /* --- GRÁFICAS CSS --- */\n        .charts-container-css {\n            display: flex;\n            flex-direction: column;\n            gap: 25px;\n            margin-bottom: 25px;\n        }\n        .chart-wrapper-css {\n            padding: 20px;\n            border: 1px solid #e0e6ed;\n            border-radius: 8px;\n            background-color: #fdfdfd;\n        }\n        .chart-bar-row {\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            margin-bottom: 12px;\n        }\n        .chart-bar-row:last-child {\n            margin-bottom: 0;\n        }\n        .bar-label {\n            width: 110px;\n            flex-shrink: 0;\n            font-size: 13px;\n            color: #555;\n        }\n        .bar-bg {\n            flex-grow: 1;\n            height: 22px;\n            background-color: #e9ecef;\n            border-radius: 6px;\n            overflow: hidden;\n        }\n        .bar-fill {\n            height: 100%;\n            border-radius: 6px;\n        }\n        .bar-fill.impressions { background: linear-gradient(90deg, #36a2eb, #61c0ff); }\n        .bar-fill.reach      { background: linear-gradient(90deg, #4bc0c0, #69d1d1); }\n        .bar-fill.clicks     { background: linear-gradient(90deg, #ffcd56, #ffe08c); }\n        .bar-fill.results    { background: linear-gradient(90deg, #9966ff, #b38dff); }\n        .bar-value {\n            width: 75px;\n            flex-shrink: 0;\n            text-align: right;\n            font-weight: 700;\n            font-size: 14px;\n            color: #2c3e50;\n        }\n        .bar-percentage {\n            width: 60px;\n            flex-shrink: 0;\n            text-align: left;\n            font-size: 13px;\n            color: #7f8c8d;\n        }\n        \n        /* --- TABLAS --- */\n        .metrics-container {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 5px;\n        }\n        table td {\n            padding: 12px;\n            border: 1px solid #e0e6ed;\n            font-size: 13px;\n        }\n        table tr:nth-child(even) {\n            background-color: #f9fafb;\n        }\n        table td:first-child {\n            font-weight: 500;\n            color: #34495e;\n            width: 65%;\n        }\n\n        /* --- OBSERVACIONES DE LA IA --- */\n        .ai-insights {\n            margin-top: 30px;\n            padding: 20px;\n            background: rgba(234, 242, 248, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-left: 5px solid #3498db;\n            border-radius: 8px;\n        }\n        .ai-insights p {\n            line-height: 1.7;\n            margin: 0;\n            font-size: 14px;\n        }\n        .ai-insights h3 {\n            margin-top: 0;\n        }\n\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <!-- ENCABEZADO CORREGIDO -->\n        <header class=\"report-header\">\n            <div class=\"title-section\">\n                <h1>Reporte de Rendimiento</h1>\n                <p><strong>Empresa:</strong> {{ $('Start').item.json.empresa }}</p>\n                <p><strong>Periodo:</strong> Del {{ $('Start').item.json.fecha_inicio_formato }} al {{ $('Start').item.json.fecha_fin_formato }} (Últimos {{ $('Start').item.json.periodo_reporte }} días)</p>\n            </div>\n            <div class=\"logo\">\n                <!-- ========================================================= -->\n                <!--    EL LOGO AHORA ES UNA IMAGEN EXTERNA DE GITHUB          -->\n                <!-- ========================================================= -->\n                <img src=\"https://github.com/JarsRat/Images/blob/main/LevelUpLogo.png?raw=true\" alt=\"Logo de la Empresa\" />\n            </div>\n        </header>\n\n        <main>\n            <!-- AQUÍ SE INSERTAN TODOS LOS REPORTES DE CAMPAÑA UNIFICADOS -->\n            {{ $json.Unified_Report }}\n        </main>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        4080,
+        1376
+      ],
+      "id": "a950f12c-922b-4d9a-b338-642b28411053",
+      "name": "Create Final Report"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "index.html"
+        }
+      },
+      "id": "083dbde9-34a5-4dbd-a387-865d97c450fe",
+      "name": "Create index.html",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        4304,
+        1376
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "options": {
+          "channelId": "C09ERUWPLJ2"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        4720,
+        1504
+      ],
+      "id": "15273b4f-4bf5-4c75-9443-846ac7e76a89",
+      "name": "Upload a file",
+      "webhookId": "93966429-12ac-4a19-a2f7-c603190df435",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-gotenberg.ksnxqw.easypanel.host/forms/chromium/convert/html",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "={{ $('Start').item.json.empresa }} Reporte Del {{ $('Start').item.json.fecha_fin_formato }} (Últimos {{ $('Start').item.json.periodo_reporte }} días)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "form file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "scale",
+              "value": "1"
+            },
+            {
+              "name": "metadata",
+              "value": "={\"Author\":\"IA2S\",\"Copyright\":\"IA2S\",\"CreateDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"Creator\":\"IA2S\",\"Keywords\":[],\"ModDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"PDFVersion\":1.7,\"Producer\":\"IA2S\",\"Subject\":\"PDF\",\"Title\":\"IA2S PDF\"}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 60000
+            }
+          }
+        }
+      },
+      "id": "86983f21-efa3-4b80-9472-99d5f14ef346",
+      "name": "Convert to PDF with Gotenberg",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4496,
+        1376
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Format Data Insights": {
+      "main": [
+        [
+          {
+            "node": "Get AI Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Single Campaign": {
+      "main": [
+        [
+          {
+            "node": "Get Only LevelUp Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get AI Report": {
+      "main": [
+        [
+          {
+            "node": "Create Campaign Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Only LevelUp Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Format Data Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Campaign Report": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get Single Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Report": {
+      "main": [
+        [
+          {
+            "node": "Create Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Final Report": {
+      "main": [
+        [
+          {
+            "node": "Create index.html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create index.html": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF with Gotenberg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Get Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF with Gotenberg": {
+      "main": [
+        [
+          {
+            "node": "Send Report (Email)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "empresa": "Topchiro",
+          "periodo_reporte": "30",
+          "fecha_fin_formato": "26 de septiembre de 2025",
+          "fecha_inicio_formato": "27 de agosto de 2025",
+          "data": [
+            {
+              "id": "120229520259830014",
+              "name": "LevelUp Campaign",
+              "objective": "OUTCOME_SALES",
+              "created_time": "2025-08-18T10:08:59-0400",
+              "insights": {
+                "data": [
+                  {
+                    "reach": "10593",
+                    "impressions": "57005",
+                    "spend": "244.07",
+                    "results": [
+                      {
+                        "indicator": "actions:onsite_conversion.messaging_conversation_started_7d",
+                        "values": [
+                          {
+                            "value": "31",
+                            "attribution_windows": [
+                              "default"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "cost_per_result": [
+                      {
+                        "indicator": "actions:onsite_conversion.messaging_conversation_started_7d",
+                        "values": [
+                          {
+                            "value": "7.87322581",
+                            "attribution_windows": [
+                              "default"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "frequency": "5.381384",
+                    "ctr": "2.438383",
+                    "cpm": "4.281554",
+                    "clicks": "1390",
+                    "actions": [
+                      {
+                        "action_type": "onsite_conversion.total_messaging_connection",
+                        "value": "36"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "offsite_complete_registration_add_meta_leads",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "link_click",
+                        "value": "500"
+                      },
+                      {
+                        "action_type": "page_engagement",
+                        "value": "6872"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_welcome_message_view",
+                        "value": "10"
+                      },
+                      {
+                        "action_type": "post_engagement",
+                        "value": "6866"
+                      },
+                      {
+                        "action_type": "onsite_conversion.post_save",
+                        "value": "2"
+                      },
+                      {
+                        "action_type": "comment",
+                        "value": "13"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_2_message_send",
+                        "value": "15"
+                      },
+                      {
+                        "action_type": "offsite_content_view_add_meta_leads",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "lead",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_3_message_send",
+                        "value": "7"
+                      },
+                      {
+                        "action_type": "offsite_search_add_meta_leads",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_5_message_send",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "onsite_web_lead",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "post",
+                        "value": "28"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_first_reply",
+                        "value": "30"
+                      },
+                      {
+                        "action_type": "post_interaction_gross",
+                        "value": "172"
+                      },
+                      {
+                        "action_type": "like",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_started_7d",
+                        "value": "31"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_replied_7d",
+                        "value": "4"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead_grouped",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "video_view",
+                        "value": "6194"
+                      },
+                      {
+                        "action_type": "post_reaction",
+                        "value": "129"
+                      }
+                    ],
+                    "cost_per_action_type": [
+                      {
+                        "action_type": "onsite_conversion.lead",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "onsite_conversion.total_messaging_connection",
+                        "value": "6.779722"
+                      },
+                      {
+                        "action_type": "offsite_search_add_meta_leads",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "offsite_complete_registration_add_meta_leads",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "video_view",
+                        "value": "0.039404"
+                      },
+                      {
+                        "action_type": "link_click",
+                        "value": "0.48814"
+                      },
+                      {
+                        "action_type": "like",
+                        "value": "40.678333"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead_grouped",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "post_interaction_gross",
+                        "value": "1.419012"
+                      },
+                      {
+                        "action_type": "onsite_web_lead",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_5_message_send",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_2_message_send",
+                        "value": "16.271333"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_replied_7d",
+                        "value": "61.0175"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_3_message_send",
+                        "value": "34.867143"
+                      },
+                      {
+                        "action_type": "lead",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "post_engagement",
+                        "value": "0.035548"
+                      },
+                      {
+                        "action_type": "offsite_content_view_add_meta_leads",
+                        "value": "244.07"
+                      },
+                      {
+                        "action_type": "page_engagement",
+                        "value": "0.035517"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_first_reply",
+                        "value": "8.135667"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_welcome_message_view",
+                        "value": "24.407"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_started_7d",
+                        "value": "7.873226"
+                      }
+                    ],
+                    "date_start": "2025-08-27",
+                    "date_stop": "2025-09-26"
+                  }
+                ],
+                "paging": {
+                  "cursors": {
+                    "before": "MAZDZD",
+                    "after": "MAZDZD"
+                  }
+                }
+              }
+            },
+            {
+              "id": "120213969664870014",
+              "name": "LEVEL UP CAMPAIGN",
+              "objective": "OUTCOME_ENGAGEMENT",
+              "created_time": "2025-01-11T13:01:10-0400",
+              "insights": {
+                "data": [
+                  {
+                    "reach": "21272",
+                    "impressions": "83024",
+                    "spend": "276.22",
+                    "results": [
+                      {
+                        "indicator": "actions:onsite_conversion.messaging_conversation_started_7d",
+                        "values": [
+                          {
+                            "value": "135",
+                            "attribution_windows": [
+                              "default"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "cost_per_result": [
+                      {
+                        "indicator": "actions:onsite_conversion.messaging_conversation_started_7d",
+                        "values": [
+                          {
+                            "value": "2.04607407",
+                            "attribution_windows": [
+                              "default"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "frequency": "3.902971",
+                    "ctr": "3.479717",
+                    "cpm": "3.32699",
+                    "clicks": "2889",
+                    "actions": [
+                      {
+                        "action_type": "onsite_conversion.total_messaging_connection",
+                        "value": "157"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "offsite_complete_registration_add_meta_leads",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_block",
+                        "value": "10"
+                      },
+                      {
+                        "action_type": "omni_purchase",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "link_click",
+                        "value": "1067"
+                      },
+                      {
+                        "action_type": "onsite_app_purchase",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "page_engagement",
+                        "value": "16070"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_welcome_message_view",
+                        "value": "413"
+                      },
+                      {
+                        "action_type": "post_engagement",
+                        "value": "16022"
+                      },
+                      {
+                        "action_type": "onsite_conversion.post_save",
+                        "value": "25"
+                      },
+                      {
+                        "action_type": "comment",
+                        "value": "37"
+                      },
+                      {
+                        "action_type": "onsite_web_app_purchase",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_2_message_send",
+                        "value": "95"
+                      },
+                      {
+                        "action_type": "offsite_content_view_add_meta_leads",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "lead",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_3_message_send",
+                        "value": "73"
+                      },
+                      {
+                        "action_type": "onsite_conversion.purchase",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "offsite_search_add_meta_leads",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_5_message_send",
+                        "value": "14"
+                      },
+                      {
+                        "action_type": "onsite_web_lead",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "post",
+                        "value": "74"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_first_reply",
+                        "value": "121"
+                      },
+                      {
+                        "action_type": "post_interaction_gross",
+                        "value": "399"
+                      },
+                      {
+                        "action_type": "like",
+                        "value": "48"
+                      },
+                      {
+                        "action_type": "onsite_web_purchase",
+                        "value": "1"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_started_7d",
+                        "value": "135"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_replied_7d",
+                        "value": "90"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead_grouped",
+                        "value": "6"
+                      },
+                      {
+                        "action_type": "video_view",
+                        "value": "14556"
+                      },
+                      {
+                        "action_type": "post_reaction",
+                        "value": "263"
+                      }
+                    ],
+                    "cost_per_action_type": [
+                      {
+                        "action_type": "onsite_conversion.lead",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "onsite_conversion.total_messaging_connection",
+                        "value": "1.759363"
+                      },
+                      {
+                        "action_type": "omni_purchase",
+                        "value": "276.22"
+                      },
+                      {
+                        "action_type": "offsite_search_add_meta_leads",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "offsite_complete_registration_add_meta_leads",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "video_view",
+                        "value": "0.018976"
+                      },
+                      {
+                        "action_type": "link_click",
+                        "value": "0.258875"
+                      },
+                      {
+                        "action_type": "like",
+                        "value": "5.754583"
+                      },
+                      {
+                        "action_type": "onsite_conversion.lead_grouped",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "post_interaction_gross",
+                        "value": "0.692281"
+                      },
+                      {
+                        "action_type": "onsite_web_lead",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_5_message_send",
+                        "value": "19.73"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_2_message_send",
+                        "value": "2.907579"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_replied_7d",
+                        "value": "3.069111"
+                      },
+                      {
+                        "action_type": "onsite_web_purchase",
+                        "value": "276.22"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_user_depth_3_message_send",
+                        "value": "3.783836"
+                      },
+                      {
+                        "action_type": "lead",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "post_engagement",
+                        "value": "0.01724"
+                      },
+                      {
+                        "action_type": "offsite_content_view_add_meta_leads",
+                        "value": "46.036667"
+                      },
+                      {
+                        "action_type": "page_engagement",
+                        "value": "0.017189"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_first_reply",
+                        "value": "2.28281"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_welcome_message_view",
+                        "value": "0.668814"
+                      },
+                      {
+                        "action_type": "onsite_conversion.messaging_conversation_started_7d",
+                        "value": "2.046074"
+                      }
+                    ],
+                    "date_start": "2025-08-27",
+                    "date_stop": "2025-09-26"
+                  }
+                ],
+                "paging": {
+                  "cursors": {
+                    "before": "MAZDZD",
+                    "after": "MAZDZD"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "versionId": "1939e72f-90eb-45cf-9b23-22658843bcef",
+  "activeVersionId": null,
+  "versionCounter": 7,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "T1t4OYwVW7QTJ1ml",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

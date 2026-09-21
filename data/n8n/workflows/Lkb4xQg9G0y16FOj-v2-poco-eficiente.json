@@ -1,0 +1,2031 @@
+{
+  "updatedAt": "2026-01-06T14:11:37.240Z",
+  "createdAt": "2025-09-12T19:21:16.787Z",
+  "id": "Lkb4xQg9G0y16FOj",
+  "name": "V2 poco eficiente",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        1104
+      ],
+      "id": "53d69a62-0ed7-4853-ac58-1dc490a938e3",
+      "name": "Todos los dias a las 2pm"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "fields": [],
+          "where": "(nombre,eq,Alex Mora)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        480,
+        1280
+      ],
+      "id": "02614f71-2f84-431a-af61-ae2c2a6c1cef",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        1280
+      ],
+      "id": "5acc790f-61bc-4ba4-ad45-b0f26d51a741",
+      "name": "Testing"
+    },
+    {
+      "parameters": {
+        "content": "## Pseudo codigo\n- Schedule trigger todos los dias a las 2pm\n- Recolectar los datos de nocoDB.\n- Identificar la ultima fecha del reporte y los dias para el siguiente reporte.\n- Identificar que tipo de reporte se necesita (El de 15 dias o el de 30 dias)\n* Recuperar la información desde la API de Meta.\n* Colocar los datos necesarios en la plantilla de Docs.\n* Descargar el documento como PDF.\n* Enviar el PDF por WhatsApp y por correo electrónico.\n* para el envio de Whatsapp por medio de Evolution API es necesario Un bucle con un nodo wait (2 minutos)\n\n## A Solucionar\n* Donde encuentro el numero de whatsapp para enviarle el mensaje?\n* Donde encuentro el Email para enviar el mensaje?\n* Que informacion necesito de NocoDB y cual informacion de Meta API debo usar para el reporte?\n* Debo hacer un reporte para cada campaign o intentar por medio de codigo unir todos los reportes de cada campaign?\n\n\n\n## Tareas\n* Revisar la info que puedo recuperar de la API de meta.\n* Hacer el Template para el reporte.\n\n\n\n\n\n",
+        "height": 672,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "188a5680-4772-4d9c-87c5-57e9bb2d37df",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Distincion de tipo de reportes\nTenemos que hacer un metadato boolean en nocoDB llamado reporte-mensual si es verdadero el siguiente reporte sera para los ultimos 30 dias\n\n##### if {{ fecha-creacion + 15 dias == today }} then crear_reporte & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(True)\n\n* Empieza desde la fecha de la creacion de la campaign, 15 dias despues se hace el primer reporte y se actualiza el campo ultimo-reporte a la fecha de hoy y tambien el campo de mo \n\n##### if {{ fecha-ultimo-reporte + 15 == Today && reporte_mensual == false }} then crear_reporte(ultimos 15 dias) & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(True)\n\n##### else:\n\n##### {{ fecha-ultimo-reporte + 15 == Today && reporte_mensual == true }} then crear_reporte(ultimos 30 dias) & actualizar_fecha_ultimo_reporte(Today) & actualizar_reporte_mensual(false)\n\n* Despues se calcula la fecha del ultimo reporte se se suma 15 dias y si ese dia es hoy entonces se ve si toca el reporte mensual o no, segun esos condicionales se envia el reporte correspondiente (15 o 30 dias)",
+        "height": 560,
+        "width": 624,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -384,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "b9b98df8-893b-435a-8f03-c079c07bc6ab",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "179bed58-dfc5-43ee-a784-11f6ae347c99",
+              "leftValue": "={{ DateTime.fromISO($json['fecha-ultimo-reporte']).plus({days: 15}).toFormat('yyyy-MM-dd') }}",
+              "rightValue": "={{ $today.toFormat('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        1280
+      ],
+      "id": "f0cf9257-325a-42ea-9eaf-cfc596fc0d59",
+      "name": "Report Required?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5706a777-4c80-4003-9b0b-8bdd9d397d35",
+              "leftValue": "={{ $json['reporte-mensual'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        1280
+      ],
+      "id": "c1907ae6-cb78-4d6e-bf8a-cd6ba9126f06",
+      "name": "Monthly Report?"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 15}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        1456
+      ],
+      "id": "3c0efe57-b9b2-4d0b-a647-d1e8a4f98ea2",
+      "name": "Get Campaigns Info (15 Days Report)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Monthly Report?').item.json.email }}",
+        "subject": "={{ $('Get Report Details').item.json.empresa }} Reporte Del {{ $('Get Report Details').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details').item.json.periodo_reporte }} días)",
+        "message": "=Hola buenas, adjuntamos el reporte correspondiente a la fecha {{ $now.format('DDDD') }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        5248,
+        1168
+      ],
+      "id": "f7159b43-c42c-40d8-921a-2749f7b791bf",
+      "name": "Send Report (Email)",
+      "webhookId": "7532f9b9-ca07-44bb-81f1-2b2352475926",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5760,
+        1440
+      ],
+      "id": "1b3deac9-8d75-4d6b-934f-de1c76172f00",
+      "name": "Enviar Reporte (WhatsApp)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "UFSStT4QeviGsJ37",
+          "name": "Evolution account de alex - borrar cuando termine la fase de onboarding"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5248,
+        1440
+      ],
+      "id": "4075a312-2201-46b1-b581-f9861de7d66c",
+      "name": "Wait 2 mins",
+      "webhookId": "15fadeea-0b0f-43e6-8e5b-8cbb3180f261"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $('Get many rows').item.json.Id }}"
+            },
+            {
+              "fieldName": "reporte-mensual",
+              "fieldValue": "True"
+            },
+            {
+              "fieldName": "fecha-ultimo-reporte",
+              "fieldValue": "={{ $today.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2320,
+        1296
+      ],
+      "id": "adf629a8-ef95-47b1-80c0-ccf2b8a72704",
+      "name": "Update (reporte-mensual: True)",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "619c7389-9775-47d2-b000-8f962cbf5d34",
+              "name": "textoFormateadoCampaña",
+              "value": "=<div class=\"campaign-report\">\n  <!-- Título de la Campaña -->\n  <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns').item.json.name }}</h2>\n  <p class=\"meta-info\">\n    <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns').item.json.objective }} | \n    <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n  </p>\n\n  <!-- KPIs Principales -->\n  <h3>KPIs Principales (Resultados de Negocio)</h3>\n  <div class=\"kpi-grid\">\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💰 Presupuesto Gastado</div>\n      <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].spend || 0).toFixed(2) }} USD</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">🎯 Resultados Principales</div>\n      <div class=\"kpi-value\">{{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💸 Costo por Resultado</div>\n      <div class=\"kpi-value\">${{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result ? parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result[0].values[0].value).toFixed(2) : '0.00' }}</div>\n    </div>\n  </div>\n\n  <!-- Métricas Detalladas en Tablas -->\n  <div class=\"metrics-container\">\n    <div class=\"metric-table\">\n      <h3>Métricas de Audiencia y Alcance</h3>\n      <table>\n        <tr>\n          <td>👀 Alcance (Personas Únicas)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>📰 Impresiones</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🔄 Frecuencia</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n    <div class=\"metric-table\">\n      <h3>Métricas de Interacción y Eficiencia</h3>\n      <table>\n        <tr>\n          <td>🖱️ Clics Totales (Todos)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🚀 CTR (Tasa de Clics)</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td>\n        </tr>\n        <tr>\n          <td>💲 CPM (Costo por 1,000 Impresiones)</td>\n          <td>${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n  </div>\n  \n  <!-- Desglose de Acciones y Costos -->\n  <h3>Desglose Detallado</h3>\n  <div class=\"actions-container\">\n    <div class=\"action-table\">\n      <h4>Acciones del Usuario</h4>\n      <table>\n        {{\n          // Usamos una función auto-ejecutable para asegurar que la lógica funcione correctamente\n          (() => {\n            const actions = $('Get Only LevelUp Campaigns').item.json.insights.data[0].actions;\n            if (!actions || actions.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron acciones detalladas.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return actions.map(action => {\n              const nombreTraducido = traducciones[action.action_type] || action.action_type.replace(/_/g, ' ');\n              return `<tr><td>${nombreTraducido}</td><td>${parseInt(action.value).toLocaleString('es-MX')}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n    <div class=\"action-table\">\n      <h4>Costos por Acción</h4>\n      <table>\n        {{\n          (() => {\n            const costPerAction = $('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_action_type;\n            if (!costPerAction || costPerAction.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron costos por acción.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return costPerAction.map(cpa => {\n              const nombreTraducido = traducciones[cpa.action_type] || cpa.action_type.replace(/_/g, ' ');\n              return `<tr><td>Costo por ${nombreTraducido}</td><td>$${parseFloat(cpa.value).toFixed(2)}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n  </div>\n\n  <!-- Observaciones de la IA (Esto está correcto, usa $json porque viene del nodo anterior inmediato) -->\n  <div class=\"ai-insights\">\n    <h3>Observaciones y Recomendaciones</h3>\n    <p>{{ $json.message.content.replace(/\\n/g, '<br>') }}</p>\n  </div>\n</div>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3344,
+        1264
+      ],
+      "id": "7ac825f9-e65a-4383-8054-ba4f633f9227",
+      "name": "Format Data Insights"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        1264
+      ],
+      "id": "af4d9ac6-7e4a-47cd-b8a4-28cf4fde064c",
+      "name": "Get Single Campaign"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Actúa como un experto en análisis de métricas de campañas publicitarias para Meta Ads. Con base en la información proporcionada, genera un informe conciso y fácil de entender sobre el rendimiento de las campañas. Enfócate en los resultados clave y los costos asociados, y brinda recomendaciones específicas para optimizar las campañas. El informe debe tener un máximo de dos párrafos y estar redactado en un lenguaje claro y directo, adaptado para la comprensión de un cliente. Evita cualquier mención sobre pruebas A/B, campañas de bajo rendimiento o terminología técnica compleja. El informe está dirigido directamente a tu cliente.\n\nejemplo de input:\n\n## 📈 Reporte de Campaña: [Nombre de la Campaña]\n\n**Objetivo Principal:** [Objetivo de la Campaña]\n_Creada el: [Fecha de Creación]_\n\n---\n\n### KPIs Principales (Resultados de Negocio)\n- **💰 Presupuesto Gastado:** $[Presupuesto Gastado] USD\n- **🎯 Resultados Principales (Conversiones):** [Número de Conversiones]\n- **💸 Costo por Resultado Principal:** $[Costo por Conversión]\n\n---\n\n### Métricas de Audiencia y Alcance\n- **👀 Alcance (Personas Únicas):** [Alcance]\n- **📰 Impresiones (Anuncios Mostrados):** [Impresiones]\n- **🔄 Frecuencia (Promedio de Vistas por Persona):** [Frecuencia]\n\n---\n\n[Detalle de Acciones del Usuario y Costos por Acción, según la información proporcionada]\n\nExample Output (Generated Report):\n\"Las campañas publicitarias han logrado [Número de Conversiones] resultados clave con un costo promedio de $[Costo por Conversión]. Esto demuestra que sus anuncios están generando interacciones importantes. El presupuesto invertido ha sido $[Presupuesto Gastado] USD, logrando un alcance de [Alcance] personas, lo que indica una buena visibilidad de su mensaje.\nPara potenciar aún más estos resultados, le sugerimos [Recomendación basada en los datos, por ejemplo: “continuar enfocándose en las campañas que mejor rendimiento están dando” o “evaluar la posibilidad de optimizar el mensaje y la segmentación para llegar a un público aún más relevante.”]. Esto le permitirá maximizar el retorno de su inversión y alcanzar sus objetivos de marketing.\"",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json['textoFormateadoCampaña'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3568,
+        1264
+      ],
+      "id": "6fcf9325-9ddf-4d08-9c47-15daa748181f",
+      "name": "Get AI Report",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        1264
+      ],
+      "id": "77e19120-a3e4-4aac-883c-6ca0e510a4df",
+      "name": "Aggregate All Campaigns"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "053d24b0-7686-4e02-997f-56722685ae86",
+              "name": "Unified_Report",
+              "value": "={{ $items(\"Create Campaign Report\").map(item => item.json.html).join('') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4368,
+        1264
+      ],
+      "id": "3416f27d-64fc-4ed7-8aba-0629247a5b17",
+      "name": "Get Final Report"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reporte de Rendimiento de Campañas</title>\n    <style>\n        /* --- ESTILOS GLOBALES Y FUENTES --- */\n        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n        body {\n            font-family: 'Roboto', sans-serif;\n            background-color: #f0f2f5;\n            color: #333;\n            margin: 0;\n            padding: 0;\n            font-size: 14px;\n        }\n\n        /* --- CONTENEDOR PRINCIPAL --- */\n        .container {\n            max-width: 800px;\n            margin: 20px auto;\n            padding: 25px;\n            background-color: white;\n            border-radius: 12px;\n            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);\n        }\n\n        /* --- ENCABEZADO DEL REPORTE --- */\n        .report-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            border-bottom: 3px solid #F3D535;\n            padding-bottom: 20px;\n            margin-bottom: 30px;\n        }\n        .report-header .logo img {\n            width: 160px;\n            height: auto;\n            display: block;\n        }\n        .report-header .title-section {\n            text-align: left;\n        }\n        .report-header h1 {\n            margin: 0;\n            color: #1c2a39;\n            font-size: 28px;\n            font-weight: 700;\n        }\n        .report-header p {\n            margin: 5px 0 0;\n            font-size: 16px;\n            color: #555;\n        }\n\n        /* --- ESTILO PARA CADA REPORTE DE CAMPAÑA INDIVIDUAL --- */\n        .campaign-report {\n            margin-bottom: 30px;\n            padding: 25px;\n            border: 1px solid #e0e6ed;\n            border-radius: 12px;\n            background-color: #ffffff;\n            page-break-after: always;\n        }\n        .campaign-report:last-child {\n            page-break-after: avoid;\n        }\n\n        h2, h3, h4 {\n            color: #2c3e50;\n            font-weight: 700;\n        }\n        h2 {\n            border-bottom: 2px solid #F3D535;\n            padding-bottom: 10px;\n            font-size: 22px;\n            margin-top: 0;\n        }\n        h3 {\n            font-size: 18px;\n            margin-top: 30px;\n            margin-bottom: 20px;\n        }\n        h4 {\n            font-size: 16px;\n            margin-top: 0;\n            margin-bottom: 15px;\n            color: #34495e;\n            font-weight: 500;\n        }\n        p.meta-info {\n            font-style: italic;\n            color: #7f8c8d;\n            margin-bottom: 25px;\n        }\n\n        /* --- KPIs GRID --- */\n        .kpi-grid {\n            display: grid;\n            grid-template-columns: repeat(3, 1fr);\n            gap: 20px;\n            margin-bottom: 30px;\n        }\n        .kpi-card {\n            background: rgba(245, 247, 250, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-radius: 10px;\n            padding: 20px;\n            text-align: center;\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);\n        }\n        .kpi-label {\n            font-size: 14px;\n            color: #555;\n            margin-bottom: 8px;\n            font-weight: 500;\n        }\n        .kpi-value {\n            font-size: 26px;\n            font-weight: 700;\n            color: #2c3e50;\n        }\n\n        /* --- GRÁFICAS CSS --- */\n        .charts-container-css {\n            display: flex;\n            flex-direction: column;\n            gap: 25px;\n            margin-bottom: 25px;\n        }\n        .chart-wrapper-css {\n            padding: 20px;\n            border: 1px solid #e0e6ed;\n            border-radius: 8px;\n            background-color: #fdfdfd;\n        }\n        .chart-bar-row {\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            margin-bottom: 12px;\n        }\n        .chart-bar-row:last-child {\n            margin-bottom: 0;\n        }\n        .bar-label {\n            width: 110px;\n            flex-shrink: 0;\n            font-size: 13px;\n            color: #555;\n        }\n        .bar-bg {\n            flex-grow: 1;\n            height: 22px;\n            background-color: #e9ecef;\n            border-radius: 6px;\n            overflow: hidden;\n        }\n        .bar-fill {\n            height: 100%;\n            border-radius: 6px;\n        }\n        .bar-fill.impressions { background: linear-gradient(90deg, #36a2eb, #61c0ff); }\n        .bar-fill.reach      { background: linear-gradient(90deg, #4bc0c0, #69d1d1); }\n        .bar-fill.clicks     { background: linear-gradient(90deg, #ffcd56, #ffe08c); }\n        .bar-fill.results    { background: linear-gradient(90deg, #9966ff, #b38dff); }\n        .bar-value {\n            width: 75px;\n            flex-shrink: 0;\n            text-align: right;\n            font-weight: 700;\n            font-size: 14px;\n            color: #2c3e50;\n        }\n        .bar-percentage {\n            width: 60px;\n            flex-shrink: 0;\n            text-align: left;\n            font-size: 13px;\n            color: #7f8c8d;\n        }\n        \n        /* --- TABLAS --- */\n        .metrics-container {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 5px;\n        }\n        table td {\n            padding: 12px;\n            border: 1px solid #e0e6ed;\n            font-size: 13px;\n        }\n        table tr:nth-child(even) {\n            background-color: #f9fafb;\n        }\n        table td:first-child {\n            font-weight: 500;\n            color: #34495e;\n            width: 65%;\n        }\n\n        /* --- OBSERVACIONES DE LA IA --- */\n        .ai-insights {\n            margin-top: 30px;\n            padding: 20px;\n            background: rgba(234, 242, 248, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-left: 5px solid #3498db;\n            border-radius: 8px;\n        }\n        .ai-insights p {\n            line-height: 1.7;\n            margin: 0;\n            font-size: 14px;\n        }\n        .ai-insights h3 {\n            margin-top: 0;\n        }\n\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <!-- ENCABEZADO CORREGIDO -->\n        <header class=\"report-header\">\n            <div class=\"title-section\">\n                <h1>Reporte de Rendimiento</h1>\n                <p><strong>Empresa:</strong> {{ $('Get Report Details').item.json.empresa }}</p>\n                <p><strong>Periodo:</strong> Del {{ $('Get Report Details').item.json.fecha_inicio_formato }} al {{ $('Get Report Details').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details').item.json.periodo_reporte }} días)</p>\n            </div>\n            <div class=\"logo\">\n                <!-- ========================================================= -->\n                <!--    EL LOGO AHORA ES UNA IMAGEN EXTERNA DE GITHUB          -->\n                <!-- ========================================================= -->\n                <img src=\"https://github.com/JarsRat/Images/blob/main/LevelUpLogo.png?raw=true\" alt=\"Logo de la Empresa\" />\n            </div>\n        </header>\n\n        <main>\n            <!-- AQUÍ SE INSERTAN TODOS LOS REPORTES DE CAMPAÑA UNIFICADOS -->\n            {{ $json.Unified_Report }}\n        </main>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        4576,
+        1264
+      ],
+      "id": "c01b1196-8f6a-4038-ad6a-5caa1c0890f1",
+      "name": "Create Final Report"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "index.html"
+        }
+      },
+      "id": "9a99efbf-0620-4f03-b4e6-5105867348c2",
+      "name": "Create index.html",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        4800,
+        1264
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-gotenberg.ksnxqw.easypanel.host/forms/chromium/convert/html",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "={{ $('Get Report Details').item.json.empresa }} Reporte Del {{ $('Get Report Details').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details').item.json.periodo_reporte }} días)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "form file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "scale",
+              "value": "1"
+            },
+            {
+              "name": "metadata",
+              "value": "={\"Author\":\"IA2S\",\"Copyright\":\"IA2S\",\"CreateDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"Creator\":\"IA2S\",\"Keywords\":[],\"ModDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"PDFVersion\":1.7,\"Producer\":\"IA2S\",\"Subject\":\"PDF\",\"Title\":\"IA2S PDF\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7ecc3ba-0d6b-4eb8-a937-117b8751c68e",
+      "name": "Convert to PDF with Gotenberg",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        5024,
+        1264
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "256a02f3-6240-4768-a226-14e10284b612",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        3136,
+        1264
+      ],
+      "id": "f66c3e1f-36ff-42a1-aa33-9953500724c6",
+      "name": "Get Only LevelUp Campaigns"
+    },
+    {
+      "parameters": {
+        "html": "<div class=\"campaign-report\">\n    <!-- Título de la Campaña -->\n    <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns').item.json.name }}</h2>\n    <p class=\"meta-info\">\n        <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns').item.json.objective }} | \n        <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n    </p>\n\n    <!-- KPIs Principales -->\n    <h3>KPIs de Negocio</h3>\n    <div class=\"kpi-grid\">\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💰 Gasto Total</div>\n            <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].spend || 0).toFixed(2) }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">🎯 Resultados Principales (Clientes Potenciales)</div>\n            <div class=\"kpi-value\">{{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💸 Costo por Resultado</div>\n            <div class=\"kpi-value\">${{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result ? parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cost_per_result[0].values[0].value).toFixed(2) : '0.00' }}</div>\n        </div>\n    </div>\n\n    <!-- GRÁFICAS CON HTML/CSS - VERSIÓN MEJORADA CON PORCENTAJES -->\n    <h3>Visualización del Embudo de Rendimiento</h3>\n    <div class=\"charts-container-css\">\n        <div class=\"chart-wrapper-css\">\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Impresiones</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill impressions\" style=\"width: 100%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">(100%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Alcance</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill reach\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(1) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Clics</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill clicks\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Resultados</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill results\" style=\"width: {{ ((($('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ $('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((($('Get Only LevelUp Campaigns').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n        </div>\n    </div>\n    \n    <!-- Métricas Detalladas en Tablas -->\n    <h3>Métricas Detalladas</h3>\n    <div class=\"metrics-container\">\n        <div class=\"metric-table\">\n            <h4>Audiencia y Eficiencia</h4>\n            <table>\n                <tr><td>🚀 CTR (Tasa de Clics)</td><td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td></tr>\n                <tr><td>💲 CPM (Costo por 1,000 Imp.)</td><td>${{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td></tr>\n                <tr><td>🔄 Frecuencia</td><td>{{ parseFloat($('Get Only LevelUp Campaigns').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td></tr>\n            </table>\n        </div>\n        <div class=\"metric-table\">\n            <h4>Acciones Principales</h4>\n            <table>\n                {{\n                    (() => {\n                        const actions = $('Get Only LevelUp Campaigns').item.json.insights.data[0].actions;\n                        if (!actions || actions.length === 0) return '<tr><td colspan=\"2\">No se registraron acciones.</td></tr>';\n                        \n                        // --- DICCIONARIO DE TRADUCCIONES AMPLIADO ---\n                        const t = { \n                            'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas',\n                            'onsite_conversion.total_messaging_connection': 'Conexiones por Mensaje',\n                            'onsite_conversion.lead': 'Leads (Formulario)',\n                            'post_engagement': 'Interacciones con Publicación', \n                            'link_click': 'Clics en Enlace', \n                            'video_view': 'Vistas de Video', \n                            'lead': 'Leads (General)',\n                            'page_engagement': 'Interacción con Página',\n                            'comment': 'Comentarios',\n                            'post_reaction': 'Reacciones',\n                            'post_save': 'Guardados'\n                        };\n                        // Muestra hasta 3 acciones principales\n                        return actions.slice(0, 3).map(a => `<tr><td>${t[a.action_type] || a.action_type.replace(/_/g, ' ')}</td><td>${parseInt(a.value).toLocaleString('es-MX')}</td></tr>`).join('');\n                    })()\n                }}\n            </table>\n        </div>\n    </div>\n\n    <!-- Observaciones de la IA -->\n    <div class=\"ai-insights\">\n        <h3>💡 Observaciones y Recomendaciones</h3>\n        <p>{{ $json.message.content ? $json.message.content.replace(/\\n/g, '<br>') : 'Análisis no disponible.' }}</p>\n    </div>\n</div>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        3920,
+        1264
+      ],
+      "id": "acbf03f1-fea8-46be-91c9-8cdd6dd23293",
+      "name": "Create Campaign Report"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "232cc693-1243-4bf0-9d96-37387a1896ec",
+              "leftValue": "={{ DateTime.fromISO($json['fecha-inicio-campaña']).plus({days: 15}).day }}",
+              "rightValue": "={{ $today.day }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        1488
+      ],
+      "id": "2608bcc7-e383-450c-a398-55c96f3467ea",
+      "name": "Elegible para el Primer Reporte?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fce912b-ed74-494a-9fc1-3b2292639037",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        1280
+      ],
+      "id": "a404924f-4dbd-411a-9741-93773cea558a",
+      "name": "Cuenta Publicitaria?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "edb1df48-35d5-4c8f-8a36-f4dbb68a45aa",
+              "leftValue": "={{ $json['fecha-ultimo-reporte'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        1280
+      ],
+      "id": "00b98145-bd7d-4797-bcfd-e385956be3b4",
+      "name": "Ultimo Reporte?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"🚨 Error: Falta ID de Cuenta Publicitaria\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"Se detectó un registro de cliente en NocoDB al que le falta el *ID de la cuenta publicitaria*. No se puede generar un reporte sin esta información.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa || 'Nombre no encontrado' }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta (Problemático):*\\n`No encontrado o vacío`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Actualizar el registro del cliente en la base de datos con el ID de cuenta correcto.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        1536
+      ],
+      "id": "49a7f2ad-29ca-48e4-9df5-2e58d22536fe",
+      "name": "Send Error Message (No Cuenta Publicitaria)",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Imposible Programar Primer Reporte\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"No se pudo determinar cuándo generar el primer reporte para un cliente. El campo `fecha-ultimo-reporte` está vacío, pero también falta la `fecha-inicio-campaña` para poder calcularlo.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json['ID-cuenta-publicitaria'] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🗓️ Fecha Inicio (Problemático):*\\n`No encontrada o vacía`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Asegurarse de que el cliente tenga una `fecha-inicio-campaña` registrada en NocoDB.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2304,
+        1680
+      ],
+      "id": "0ba72086-8e98-410f-afd4-5e2467f2c8b2",
+      "name": "Send Error Message (No Fecha Inicio)",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "15",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 15}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "396a10ba-54b4-456c-bb5c-d111e1c7b29a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "43bff8b5-2e0f-4035-a3d3-4cf4d8ba3e4a",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 30 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2496,
+        1440
+      ],
+      "id": "66b74555-df22-4381-bad1-147f5e0e1102",
+      "name": "Set Report Details (15 Days)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+              "name": "periodo_reporte",
+              "value": "={{ $json.periodo_reporte }}",
+              "type": "string"
+            },
+            {
+              "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+              "name": "fecha_fin_formato",
+              "value": "={{ $json.fecha_fin_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+              "name": "fecha_inicio_formato",
+              "value": "={{ $json.fecha_inicio_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "b1017923-616c-470b-996c-39a539f81961",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2704,
+        1264
+      ],
+      "id": "76f75f6d-86fc-4fe1-9c40-46c6523fe4f6",
+      "name": "Get Report Details"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "1139828774",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5504,
+        1440
+      ],
+      "id": "2577b53c-2e69-490e-92ee-f67b9c5a7128",
+      "name": "test",
+      "webhookId": "f12daf84-61df-40fd-9a21-8f2ec4dd0942",
+      "credentials": {
+        "telegramApi": {
+          "id": "ctOfYe155yui72ZL",
+          "name": "Pruebas John"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        1424
+      ],
+      "id": "5cb46b94-3e28-4b9d-af54-55eb2143f154",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6048,
+        1696
+      ],
+      "id": "1706d257-4a15-4650-9a9d-2efdf8c1447d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Monthly Report?').item.json.email }}",
+        "subject": "={{ $('Get Report Details1').item.json.empresa }} Reporte Del {{ $('Get Report Details1').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details1').item.json.periodo_reporte }} días)",
+        "message": "=Hola buenas, adjuntamos el reporte correspondiente a la fecha {{ $now.format('DDDD') }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        5248,
+        240
+      ],
+      "id": "2aa0e75b-47bf-47df-be8a-ef2737aeff7c",
+      "name": "Send Report (Email)1",
+      "webhookId": "7532f9b9-ca07-44bb-81f1-2b2352475926",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xjmlaBKGSU3OcA2Q",
+          "name": "GmailAccountLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5760,
+        512
+      ],
+      "id": "1869048d-2380-48f3-a764-2af774af7916",
+      "name": "Enviar Reporte (WhatsApp)1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "UFSStT4QeviGsJ37",
+          "name": "Evolution account de alex - borrar cuando termine la fase de onboarding"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5248,
+        512
+      ],
+      "id": "ef6e52d4-5f64-48b1-8ff0-07749ef0006e",
+      "name": "Wait 2 mins1",
+      "webhookId": "15fadeea-0b0f-43e6-8e5b-8cbb3180f261"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "619c7389-9775-47d2-b000-8f962cbf5d34",
+              "name": "textoFormateadoCampaña",
+              "value": "=<div class=\"campaign-report\">\n  <!-- Título de la Campaña -->\n  <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns1').item.json.name }}</h2>\n  <p class=\"meta-info\">\n    <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns1').item.json.objective }} | \n    <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns1').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n  </p>\n\n  <!-- KPIs Principales -->\n  <h3>KPIs Principales (Resultados de Negocio)</h3>\n  <div class=\"kpi-grid\">\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💰 Presupuesto Gastado</div>\n      <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].spend || 0).toFixed(2) }} USD</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">🎯 Resultados Principales</div>\n      <div class=\"kpi-value\">{{ $('Get Only LevelUp Campaigns1').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</div>\n    </div>\n    <div class=\"kpi-card\">\n      <div class=\"kpi-label\">💸 Costo por Resultado</div>\n      <div class=\"kpi-value\">${{ $('Get Only LevelUp Campaigns1').item.json.insights.data[0].cost_per_result ? parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].cost_per_result[0].values[0].value).toFixed(2) : '0.00' }}</div>\n    </div>\n  </div>\n\n  <!-- Métricas Detalladas en Tablas -->\n  <div class=\"metrics-container\">\n    <div class=\"metric-table\">\n      <h3>Métricas de Audiencia y Alcance</h3>\n      <table>\n        <tr>\n          <td>👀 Alcance (Personas Únicas)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>📰 Impresiones</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🔄 Frecuencia</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n    <div class=\"metric-table\">\n      <h3>Métricas de Interacción y Eficiencia</h3>\n      <table>\n        <tr>\n          <td>🖱️ Clics Totales (Todos)</td>\n          <td>{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</td>\n        </tr>\n        <tr>\n          <td>🚀 CTR (Tasa de Clics)</td>\n          <td>{{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td>\n        </tr>\n        <tr>\n          <td>💲 CPM (Costo por 1,000 Impresiones)</td>\n          <td>${{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td>\n        </tr>\n      </table>\n    </div>\n  </div>\n  \n  <!-- Desglose de Acciones y Costos -->\n  <h3>Desglose Detallado</h3>\n  <div class=\"actions-container\">\n    <div class=\"action-table\">\n      <h4>Acciones del Usuario</h4>\n      <table>\n        {{\n          // Usamos una función auto-ejecutable para asegurar que la lógica funcione correctamente\n          (() => {\n            const actions = $('Get Only LevelUp Campaigns1').item.json.insights.data[0].actions;\n            if (!actions || actions.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron acciones detalladas.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return actions.map(action => {\n              const nombreTraducido = traducciones[action.action_type] || action.action_type.replace(/_/g, ' ');\n              return `<tr><td>${nombreTraducido}</td><td>${parseInt(action.value).toLocaleString('es-MX')}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n    <div class=\"action-table\">\n      <h4>Costos por Acción</h4>\n      <table>\n        {{\n          (() => {\n            const costPerAction = $('Get Only LevelUp Campaigns1').item.json.insights.data[0].cost_per_action_type;\n            if (!costPerAction || costPerAction.length === 0) {\n              return '<tr><td colspan=\"2\">No se registraron costos por acción.</td></tr>';\n            }\n            const traducciones = {\n              'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas por Mensaje',\n              'post_engagement': 'Interacciones con la Publicación', 'page_engagement': 'Interacciones con la Página',\n              'link_click': 'Clics en el Enlace', 'video_view': 'Reproducciones de Video',\n              'onsite_conversion.total_messaging_connection': 'Conexiones Totales por Mensaje', 'comment': 'Comentarios',\n              'like': 'Me Gusta (Reacciones)', 'post_reaction': 'Reacciones a la Publicación',\n              'onsite_conversion.messaging_first_reply': 'Primeras Respuestas a Mensajes', 'onsite_conversion.post_save': 'Guardados de Publicación',\n              'lead': 'Leads (General)', 'onsite_conversion.lead': 'Leads (en el sitio)', 'onsite_web_lead': 'Leads (desde la web)',\n              'onsite_conversion.messaging_conversation_replied_7d': 'Conversaciones con Respuesta', 'onsite_conversion.lead_grouped': 'Leads (Agrupados)',\n              'offsite_complete_registration_add_meta_leads': 'Registros Completados (Form. Meta)', 'post_interaction_gross': 'Interacciones Brutas con Publicación'\n            };\n            return costPerAction.map(cpa => {\n              const nombreTraducido = traducciones[cpa.action_type] || cpa.action_type.replace(/_/g, ' ');\n              return `<tr><td>Costo por ${nombreTraducido}</td><td>$${parseFloat(cpa.value).toFixed(2)}</td></tr>`;\n            }).join('');\n          })()\n        }}\n      </table>\n    </div>\n  </div>\n\n  <!-- Observaciones de la IA (Esto está correcto, usa $json porque viene del nodo anterior inmediato) -->\n  <div class=\"ai-insights\">\n    <h3>Observaciones y Recomendaciones</h3>\n    <p>{{ $json.message.content.replace(/\\n/g, '<br>') }}</p>\n  </div>\n</div>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3344,
+        336
+      ],
+      "id": "7d186c8e-70a2-4566-afae-b53ab23656fa",
+      "name": "Format Data Insights1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        336
+      ],
+      "id": "c2c9ab89-ea44-497c-a4f2-a0e665df0bef",
+      "name": "Get Single Campaign1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Actúa como un experto en análisis de métricas de campañas publicitarias para Meta Ads. Con base en la información proporcionada, genera un informe conciso y fácil de entender sobre el rendimiento de las campañas. Enfócate en los resultados clave y los costos asociados, y brinda recomendaciones específicas para optimizar las campañas. El informe debe tener un máximo de dos párrafos y estar redactado en un lenguaje claro y directo, adaptado para la comprensión de un cliente. Evita cualquier mención sobre pruebas A/B, campañas de bajo rendimiento o terminología técnica compleja. El informe está dirigido directamente a tu cliente.\n\nejemplo de input:\n\n## 📈 Reporte de Campaña: [Nombre de la Campaña]\n\n**Objetivo Principal:** [Objetivo de la Campaña]\n_Creada el: [Fecha de Creación]_\n\n---\n\n### KPIs Principales (Resultados de Negocio)\n- **💰 Presupuesto Gastado:** $[Presupuesto Gastado] USD\n- **🎯 Resultados Principales (Conversiones):** [Número de Conversiones]\n- **💸 Costo por Resultado Principal:** $[Costo por Conversión]\n\n---\n\n### Métricas de Audiencia y Alcance\n- **👀 Alcance (Personas Únicas):** [Alcance]\n- **📰 Impresiones (Anuncios Mostrados):** [Impresiones]\n- **🔄 Frecuencia (Promedio de Vistas por Persona):** [Frecuencia]\n\n---\n\n[Detalle de Acciones del Usuario y Costos por Acción, según la información proporcionada]\n\nExample Output (Generated Report):\n\"Las campañas publicitarias han logrado [Número de Conversiones] resultados clave con un costo promedio de $[Costo por Conversión]. Esto demuestra que sus anuncios están generando interacciones importantes. El presupuesto invertido ha sido $[Presupuesto Gastado] USD, logrando un alcance de [Alcance] personas, lo que indica una buena visibilidad de su mensaje.\nPara potenciar aún más estos resultados, le sugerimos [Recomendación basada en los datos, por ejemplo: “continuar enfocándose en las campañas que mejor rendimiento están dando” o “evaluar la posibilidad de optimizar el mensaje y la segmentación para llegar a un público aún más relevante.”]. Esto le permitirá maximizar el retorno de su inversión y alcanzar sus objetivos de marketing.\"",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json['textoFormateadoCampaña'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3568,
+        336
+      ],
+      "id": "c3191a2e-e70b-4851-b37c-b427dabe8f61",
+      "name": "Get AI Report1",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        336
+      ],
+      "id": "c3514af3-0bc1-4d52-8fdf-a210e8870eab",
+      "name": "Aggregate All Campaigns1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "053d24b0-7686-4e02-997f-56722685ae86",
+              "name": "Unified_Report",
+              "value": "={{ $items(\"Create Campaign Report1\").map(item => item.json.html).join('') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4368,
+        336
+      ],
+      "id": "7e82c1e6-9a26-4096-9e69-a4f92fa9ca63",
+      "name": "Get Final Report1"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reporte de Rendimiento de Campañas</title>\n    <style>\n        /* --- ESTILOS GLOBALES Y FUENTES --- */\n        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n        body {\n            font-family: 'Roboto', sans-serif;\n            background-color: #f0f2f5;\n            color: #333;\n            margin: 0;\n            padding: 0;\n            font-size: 14px;\n        }\n\n        /* --- CONTENEDOR PRINCIPAL --- */\n        .container {\n            max-width: 800px;\n            margin: 20px auto;\n            padding: 25px;\n            background-color: white;\n            border-radius: 12px;\n            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);\n        }\n\n        /* --- ENCABEZADO DEL REPORTE --- */\n        .report-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            border-bottom: 3px solid #F3D535;\n            padding-bottom: 20px;\n            margin-bottom: 30px;\n        }\n        .report-header .logo img {\n            width: 160px;\n            height: auto;\n            display: block;\n        }\n        .report-header .title-section {\n            text-align: left;\n        }\n        .report-header h1 {\n            margin: 0;\n            color: #1c2a39;\n            font-size: 28px;\n            font-weight: 700;\n        }\n        .report-header p {\n            margin: 5px 0 0;\n            font-size: 16px;\n            color: #555;\n        }\n\n        /* --- ESTILO PARA CADA REPORTE DE CAMPAÑA INDIVIDUAL --- */\n        .campaign-report {\n            margin-bottom: 30px;\n            padding: 25px;\n            border: 1px solid #e0e6ed;\n            border-radius: 12px;\n            background-color: #ffffff;\n            page-break-after: always;\n        }\n        .campaign-report:last-child {\n            page-break-after: avoid;\n        }\n\n        h2, h3, h4 {\n            color: #2c3e50;\n            font-weight: 700;\n        }\n        h2 {\n            border-bottom: 2px solid #F3D535;\n            padding-bottom: 10px;\n            font-size: 22px;\n            margin-top: 0;\n        }\n        h3 {\n            font-size: 18px;\n            margin-top: 30px;\n            margin-bottom: 20px;\n        }\n        h4 {\n            font-size: 16px;\n            margin-top: 0;\n            margin-bottom: 15px;\n            color: #34495e;\n            font-weight: 500;\n        }\n        p.meta-info {\n            font-style: italic;\n            color: #7f8c8d;\n            margin-bottom: 25px;\n        }\n\n        /* --- KPIs GRID --- */\n        .kpi-grid {\n            display: grid;\n            grid-template-columns: repeat(3, 1fr);\n            gap: 20px;\n            margin-bottom: 30px;\n        }\n        .kpi-card {\n            background: rgba(245, 247, 250, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-radius: 10px;\n            padding: 20px;\n            text-align: center;\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);\n        }\n        .kpi-label {\n            font-size: 14px;\n            color: #555;\n            margin-bottom: 8px;\n            font-weight: 500;\n        }\n        .kpi-value {\n            font-size: 26px;\n            font-weight: 700;\n            color: #2c3e50;\n        }\n\n        /* --- GRÁFICAS CSS --- */\n        .charts-container-css {\n            display: flex;\n            flex-direction: column;\n            gap: 25px;\n            margin-bottom: 25px;\n        }\n        .chart-wrapper-css {\n            padding: 20px;\n            border: 1px solid #e0e6ed;\n            border-radius: 8px;\n            background-color: #fdfdfd;\n        }\n        .chart-bar-row {\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            margin-bottom: 12px;\n        }\n        .chart-bar-row:last-child {\n            margin-bottom: 0;\n        }\n        .bar-label {\n            width: 110px;\n            flex-shrink: 0;\n            font-size: 13px;\n            color: #555;\n        }\n        .bar-bg {\n            flex-grow: 1;\n            height: 22px;\n            background-color: #e9ecef;\n            border-radius: 6px;\n            overflow: hidden;\n        }\n        .bar-fill {\n            height: 100%;\n            border-radius: 6px;\n        }\n        .bar-fill.impressions { background: linear-gradient(90deg, #36a2eb, #61c0ff); }\n        .bar-fill.reach      { background: linear-gradient(90deg, #4bc0c0, #69d1d1); }\n        .bar-fill.clicks     { background: linear-gradient(90deg, #ffcd56, #ffe08c); }\n        .bar-fill.results    { background: linear-gradient(90deg, #9966ff, #b38dff); }\n        .bar-value {\n            width: 75px;\n            flex-shrink: 0;\n            text-align: right;\n            font-weight: 700;\n            font-size: 14px;\n            color: #2c3e50;\n        }\n        .bar-percentage {\n            width: 60px;\n            flex-shrink: 0;\n            text-align: left;\n            font-size: 13px;\n            color: #7f8c8d;\n        }\n        \n        /* --- TABLAS --- */\n        .metrics-container {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 5px;\n        }\n        table td {\n            padding: 12px;\n            border: 1px solid #e0e6ed;\n            font-size: 13px;\n        }\n        table tr:nth-child(even) {\n            background-color: #f9fafb;\n        }\n        table td:first-child {\n            font-weight: 500;\n            color: #34495e;\n            width: 65%;\n        }\n\n        /* --- OBSERVACIONES DE LA IA --- */\n        .ai-insights {\n            margin-top: 30px;\n            padding: 20px;\n            background: rgba(234, 242, 248, 0.7);\n            border: 1px solid rgba(255, 255, 255, 0.5);\n            border-left: 5px solid #3498db;\n            border-radius: 8px;\n        }\n        .ai-insights p {\n            line-height: 1.7;\n            margin: 0;\n            font-size: 14px;\n        }\n        .ai-insights h3 {\n            margin-top: 0;\n        }\n\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <!-- ENCABEZADO CORREGIDO -->\n        <header class=\"report-header\">\n            <div class=\"title-section\">\n                <h1>Reporte de Rendimiento</h1>\n                <p><strong>Empresa:</strong> {{ $('Get Report Details1').item.json.empresa }}</p>\n                <p><strong>Periodo:</strong> Del {{ $('Get Report Details1').item.json.fecha_inicio_formato }} al {{ $('Get Report Details1').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details1').item.json.periodo_reporte }} días)</p>\n            </div>\n            <div class=\"logo\">\n                <!-- ========================================================= -->\n                <!--    EL LOGO AHORA ES UNA IMAGEN EXTERNA DE GITHUB          -->\n                <!-- ========================================================= -->\n                <img src=\"https://github.com/JarsRat/Images/blob/main/LevelUpLogo.png?raw=true\" alt=\"Logo de la Empresa\" />\n            </div>\n        </header>\n\n        <main>\n            <!-- AQUÍ SE INSERTAN TODOS LOS REPORTES DE CAMPAÑA UNIFICADOS -->\n            {{ $json.Unified_Report }}\n        </main>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        4576,
+        336
+      ],
+      "id": "74a9eef9-8925-4f82-970f-60756d092765",
+      "name": "Create Final Report1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "index.html"
+        }
+      },
+      "id": "79e08422-b110-41a1-aec1-85df8b955f40",
+      "name": "Create index.html1",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        4800,
+        336
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-gotenberg.ksnxqw.easypanel.host/forms/chromium/convert/html",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "={{ $('Get Report Details1').item.json.empresa }} Reporte Del {{ $('Get Report Details1').item.json.fecha_fin_formato }} (Últimos {{ $('Get Report Details1').item.json.periodo_reporte }} días)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "form file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "scale",
+              "value": "1"
+            },
+            {
+              "name": "metadata",
+              "value": "={\"Author\":\"IA2S\",\"Copyright\":\"IA2S\",\"CreateDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"Creator\":\"IA2S\",\"Keywords\":[],\"ModDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"PDFVersion\":1.7,\"Producer\":\"IA2S\",\"Subject\":\"PDF\",\"Title\":\"IA2S PDF\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f5025f23-a694-4f00-a465-597741e9ff58",
+      "name": "Convert to PDF with Gotenberg1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        5024,
+        336
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "256a02f3-6240-4768-a226-14e10284b612",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        3136,
+        336
+      ],
+      "id": "95d93378-2e9e-4e25-951e-e6dd31637a0b",
+      "name": "Get Only LevelUp Campaigns1"
+    },
+    {
+      "parameters": {
+        "html": "<div class=\"campaign-report\">\n    <!-- Título de la Campaña -->\n    <h2>📈 Reporte de Campaña: {{ $('Get Only LevelUp Campaigns1').item.json.name }}</h2>\n    <p class=\"meta-info\">\n        <strong>Objetivo:</strong> {{ $('Get Only LevelUp Campaigns1').item.json.objective }} | \n        <strong>Creada el:</strong> {{ new Date($('Get Only LevelUp Campaigns1').item.json.created_time).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) }}\n    </p>\n\n    <!-- KPIs Principales -->\n    <h3>KPIs de Negocio</h3>\n    <div class=\"kpi-grid\">\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💰 Gasto Total</div>\n            <div class=\"kpi-value\">${{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].spend || 0).toFixed(2) }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">🎯 Resultados Principales (Clientes Potenciales)</div>\n            <div class=\"kpi-value\">{{ $('Get Only LevelUp Campaigns1').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">💸 Costo por Resultado</div>\n            <div class=\"kpi-value\">${{ $('Get Only LevelUp Campaigns1').item.json.insights.data[0].cost_per_result ? parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].cost_per_result[0].values[0].value).toFixed(2) : '0.00' }}</div>\n        </div>\n    </div>\n\n    <!-- GRÁFICAS CON HTML/CSS - VERSIÓN MEJORADA CON PORCENTAJES -->\n    <h3>Visualización del Embudo de Rendimiento</h3>\n    <div class=\"charts-container-css\">\n        <div class=\"chart-wrapper-css\">\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Impresiones</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill impressions\" style=\"width: 100%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">(100%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Alcance</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill reach\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].reach || 0).toLocaleString('es-MX') }}</span>\n                <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].reach || 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(1) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Clics</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill clicks\" style=\"width: {{ ((parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].clicks || 0).toLocaleString('es-MX') }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].clicks || 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n            <div class=\"chart-bar-row\">\n                <span class=\"bar-label\">Resultados</span>\n                <div class=\"bar-bg\">\n                    <div class=\"bar-fill results\" style=\"width: {{ ((($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%;\"></div>\n                </div>\n                <span class=\"bar-value\">{{ $('Get Only LevelUp Campaigns1').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results[0].values[0].value).toLocaleString('es-MX') : '0' }}</span>\n                 <!-- NUEVO: Indicador de Porcentaje -->\n                <span class=\"bar-percentage\">({{ ((($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results ? parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].results[0].values[0].value) : 0) / parseInt($('Get Only LevelUp Campaigns1').item.json.insights.data[0].impressions || 1)) * 100).toFixed(2) }}%)</span>\n            </div>\n        </div>\n    </div>\n    \n    <!-- Métricas Detalladas en Tablas -->\n    <h3>Métricas Detalladas</h3>\n    <div class=\"metrics-container\">\n        <div class=\"metric-table\">\n            <h4>Audiencia y Eficiencia</h4>\n            <table>\n                <tr><td>🚀 CTR (Tasa de Clics)</td><td>{{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].ctr || 0).toFixed(2) }}%</td></tr>\n                <tr><td>💲 CPM (Costo por 1,000 Imp.)</td><td>${{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].cpm || 0).toFixed(2) }}</td></tr>\n                <tr><td>🔄 Frecuencia</td><td>{{ parseFloat($('Get Only LevelUp Campaigns1').item.json.insights.data[0].frequency || 0).toFixed(2) }}</td></tr>\n            </table>\n        </div>\n        <div class=\"metric-table\">\n            <h4>Acciones Principales</h4>\n            <table>\n                {{\n                    (() => {\n                        const actions = $('Get Only LevelUp Campaigns1').item.json.insights.data[0].actions;\n                        if (!actions || actions.length === 0) return '<tr><td colspan=\"2\">No se registraron acciones.</td></tr>';\n                        \n                        // --- DICCIONARIO DE TRADUCCIONES AMPLIADO ---\n                        const t = { \n                            'onsite_conversion.messaging_conversation_started_7d': 'Conversaciones Iniciadas',\n                            'onsite_conversion.total_messaging_connection': 'Conexiones por Mensaje',\n                            'onsite_conversion.lead': 'Leads (Formulario)',\n                            'post_engagement': 'Interacciones con Publicación', \n                            'link_click': 'Clics en Enlace', \n                            'video_view': 'Vistas de Video', \n                            'lead': 'Leads (General)',\n                            'page_engagement': 'Interacción con Página',\n                            'comment': 'Comentarios',\n                            'post_reaction': 'Reacciones',\n                            'post_save': 'Guardados'\n                        };\n                        // Muestra hasta 3 acciones principales\n                        return actions.slice(0, 3).map(a => `<tr><td>${t[a.action_type] || a.action_type.replace(/_/g, ' ')}</td><td>${parseInt(a.value).toLocaleString('es-MX')}</td></tr>`).join('');\n                    })()\n                }}\n            </table>\n        </div>\n    </div>\n\n    <!-- Observaciones de la IA -->\n    <div class=\"ai-insights\">\n        <h3>💡 Observaciones y Recomendaciones</h3>\n        <p>{{ $json.message.content ? $json.message.content.replace(/\\n/g, '<br>') : 'Análisis no disponible.' }}</p>\n    </div>\n</div>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        3920,
+        336
+      ],
+      "id": "daac6e47-0bc2-4e6a-8647-7f6acaacbf6e",
+      "name": "Create Campaign Report1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09B2B4AM16",
+          "mode": "list",
+          "cachedResultName": "canal_de_pruebas"
+        },
+        "messageType": "block",
+        "blocksUi": "[\n\t{\n\t\t\"type\": \"header\",\n\t\t\"text\": {\n\t\t\t\"type\": \"plain_text\",\n\t\t\t\"text\": \"⚠️ Alerta: Imposible Programar Primer Reporte\",\n\t\t\t\"emoji\": true\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"divider\"\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"text\": {\n\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\"text\": \"No se pudo determinar cuándo generar el primer reporte para un cliente. El campo `fecha-ultimo-reporte` está vacío, pero también falta la `fecha-inicio-campaña` para poder calcularlo.\"\n\t\t}\n\t},\n\t{\n\t\t\"type\": \"section\",\n\t\t\"fields\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🏢 Empresa:*\\n{{ $json.empresa }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🆔 ID Cuenta Publicitaria:*\\n{{ $json['ID-cuenta-publicitaria'] }}\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"*🗓️ Fecha Inicio (Problemático):*\\n`No encontrada o vacía`\"\n\t\t\t}\n\t\t]\n\t},\n\t{\n\t\t\"type\": \"context\",\n\t\t\"elements\": [\n\t\t\t{\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"🔎 *Acción Requerida:* Asegurarse de que el cliente tenga una `fecha-inicio-campaña` registrada en NocoDB.\"\n\t\t\t}\n\t\t]\n\t}\n]",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2304,
+        752
+      ],
+      "id": "3d6cb9d9-e458-4eec-bfcd-8d4fcfe4d750",
+      "name": "Send Error Message (No Fecha Inicio)1",
+      "webhookId": "e0dc5480-b577-4df6-b491-66eca82cb794",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca161967-e999-4c1c-9e7e-dd7971297af6",
+              "name": "empresa",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "d3ef1d19-7166-4fc3-b851-b33276159f14",
+              "name": "periodo_reporte",
+              "value": "={{ $json.periodo_reporte }}",
+              "type": "string"
+            },
+            {
+              "id": "90902beb-d98e-4d40-81d9-b5069871eb14",
+              "name": "fecha_fin_formato",
+              "value": "={{ $json.fecha_fin_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "267b85bc-5bfe-4db4-9261-1c4624414d2d",
+              "name": "fecha_inicio_formato",
+              "value": "={{ $json.fecha_inicio_formato }}",
+              "type": "string"
+            },
+            {
+              "id": "b1017923-616c-470b-996c-39a539f81961",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2704,
+        336
+      ],
+      "id": "e0814a4e-5a87-4024-bf62-c18bf5275447",
+      "name": "Get Report Details1"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "1139828774",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5504,
+        512
+      ],
+      "id": "d8f7765b-af99-42de-a485-2a7aeb380104",
+      "name": "test1",
+      "webhookId": "f12daf84-61df-40fd-9a21-8f2ec4dd0942",
+      "credentials": {
+        "telegramApi": {
+          "id": "ctOfYe155yui72ZL",
+          "name": "Pruebas John"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82bd6f5a-65da-425d-9e74-d3522c8276d1",
+              "name": "empresa",
+              "value": "={{ $('Monthly Report?').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "08a0f3ba-3714-4c42-b1ea-9290ba69b42b",
+              "name": "periodo_reporte",
+              "value": "30",
+              "type": "string"
+            },
+            {
+              "id": "8d2edc85-5781-49a2-9694-e882c876a7b5",
+              "name": "fecha_fin_formato",
+              "value": "={{ DateTime.now().setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "214817e7-8da6-4ff4-aa41-f0c5e845f9cc",
+              "name": "fecha_inicio_formato",
+              "value": "={{ DateTime.now().minus({days: 30}).setLocale('es').toFormat('dd \\'de\\' MMMM \\'de\\' yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "3d6a26c4-4372-47f5-ab57-686ca686d17c",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "cdcecbb5-588e-4f25-920a-08515ef0c1c6",
+              "name": "subjet",
+              "value": "Reporte de rendimiento últimos 15 días - Level Up Media",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2544,
+        336
+      ],
+      "id": "86d525c0-afce-4135-bf84-49033085c9ef",
+      "name": "Set Report Details (30 Days)1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $('Get many rows').item.json.Id }}"
+            },
+            {
+              "fieldName": "reporte-mensual",
+              "fieldValue": "False"
+            },
+            {
+              "fieldName": "fecha-ultimo-reporte",
+              "fieldValue": "={{ $today.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2336,
+        256
+      ],
+      "id": "08e39697-cb8e-4bdd-bbe7-7ee31c965297",
+      "name": "Update (reporte-mensual: False)1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,objective,created_time,insights.time_range({'since':'{{ $today.minus({days: 30}).toFormat('yyyy-MM-dd') }}','until':'{{ $today.toFormat('yyyy-MM-dd') }}'}){reach,impressions,spend,results,cost_per_result,frequency,ctr,cpm,clicks,actions,cost_per_action_type}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2176,
+        464
+      ],
+      "id": "f583f6ad-0fd9-4aec-aada-0fd9c4abb44d",
+      "name": "Get Campaigns Info (30 Days Report)1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        496
+      ],
+      "id": "e449ea77-ae7c-434e-86e9-d5da56786277",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6048,
+        768
+      ],
+      "id": "9d787014-a620-430b-bbf9-4753f424b650",
+      "name": "No Operation, do nothing1"
+    }
+  ],
+  "connections": {
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Cuenta Publicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Testing": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Required?": {
+      "main": [
+        [
+          {
+            "node": "Monthly Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Report?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (15 Days Report)": {
+      "main": [
+        [
+          {
+            "node": "Update (reporte-mensual: True)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Report Details (15 Days)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Reporte (WhatsApp)": {
+      "main": [
+        []
+      ]
+    },
+    "Wait 2 mins": {
+      "main": [
+        [
+          {
+            "node": "test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Data Insights": {
+      "main": [
+        [
+          {
+            "node": "Get AI Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Single Campaign": {
+      "main": [
+        [
+          {
+            "node": "Get Only LevelUp Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get AI Report": {
+      "main": [
+        [
+          {
+            "node": "Create Campaign Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Get Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Report": {
+      "main": [
+        [
+          {
+            "node": "Create Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Final Report": {
+      "main": [
+        [
+          {
+            "node": "Create index.html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create index.html": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF with Gotenberg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF with Gotenberg": {
+      "main": [
+        [
+          {
+            "node": "Send Report (Email)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Only LevelUp Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Format Data Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Campaign Report": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegible para el Primer Reporte?": {
+      "main": [
+        [
+          {
+            "node": "Monthly Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cuenta Publicitaria?": {
+      "main": [
+        [
+          {
+            "node": "Ultimo Reporte?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Cuenta Publicitaria)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ultimo Reporte?": {
+      "main": [
+        [
+          {
+            "node": "Report Required?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Elegible para el Primer Reporte?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (15 Days)": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Report Details": {
+      "main": [
+        [
+          {
+            "node": "Get Single Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "test": {
+      "main": [
+        [
+          {
+            "node": "Enviar Reporte (WhatsApp)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Campaigns Info (15 Days Report)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Message (No Fecha Inicio)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Report (Email)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Report (Email)1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 mins1": {
+      "main": [
+        [
+          {
+            "node": "test1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Data Insights1": {
+      "main": [
+        [
+          {
+            "node": "Get AI Report1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Single Campaign1": {
+      "main": [
+        [
+          {
+            "node": "Get Only LevelUp Campaigns1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get AI Report1": {
+      "main": [
+        [
+          {
+            "node": "Create Campaign Report1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Campaigns1": {
+      "main": [
+        [
+          {
+            "node": "Get Final Report1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Report1": {
+      "main": [
+        [
+          {
+            "node": "Create Final Report1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Final Report1": {
+      "main": [
+        [
+          {
+            "node": "Create index.html1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create index.html1": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF with Gotenberg1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF with Gotenberg1": {
+      "main": [
+        [
+          {
+            "node": "Send Report (Email)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Only LevelUp Campaigns1": {
+      "main": [
+        [
+          {
+            "node": "Format Data Insights1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Campaign Report1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Campaigns1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Message (No Fecha Inicio)1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Report Details1": {
+      "main": [
+        [
+          {
+            "node": "Get Single Campaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "test1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Reporte (WhatsApp)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Report Details (30 Days)1": {
+      "main": [
+        [
+          {
+            "node": "Get Report Details1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns Info (30 Days Report)1": {
+      "main": [
+        [
+          {
+            "node": "Set Report Details (30 Days)1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update (reporte-mensual: False)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message (No Fecha Inicio)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Campaigns Info (30 Days Report)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "e09ac967-7d78-485f-841e-824c86c7f92b",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "Lkb4xQg9G0y16FOj",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

@@ -1,0 +1,850 @@
+{
+  "updatedAt": "2026-02-02T02:15:02.996Z",
+  "createdAt": "2025-12-09T13:02:41.951Z",
+  "id": "gYdcVTS1dmuZRp0W",
+  "name": "Agente Cobros",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.monday.com/v2",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (limit: 500, query_params: {operator: and, rules: [{column_id: \"text_mkpqm0g9\", operator: not_contains_text, compare_value: [\"saldo completo\"]}, {column_id: \"group\", operator: not_any_of, compare_value: [\"group_mkqxsqsk\"]}]}) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        672,
+        -384
+      ],
+      "id": "6b346181-aa71-4e8d-a4f5-0b5c09c3009c",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "WKPprnBqgbub4iWX",
+          "name": "monday.com Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.boards[0].items_page.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -384
+      ],
+      "id": "2f96e7eb-78f3-46ee-9da7-fb443324e3be",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  proximoPago: getColValue(\"Próximo pago\") || \"Pendiente\",\n  \n  // Status Específicos\n  estadoAds: getColValue(\"STATUS DE LOS ADS\"), \n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Emitir cobro para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*📊 Estado General:*\\n${getStatusEmoji(data.estadoGeneral)} ${data.estadoGeneral}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*📅 Próximo Pago:*\\n${data.proximoPago}`\n      }\n    ]\n  }\n];\n\n// 5. Bloques Dinámicos (Solo aparecen si hay datos)\n\n// A. Estado de ADS\nif (data.estadoAds) {\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `*📢 Status Ads:* ${getStatusEmoji(data.estadoAds)} *${data.estadoAds}*`\n    }\n  });\n}\n\n// B. Columna \"status\" (Texto extra)\nif (data.statusTexto) {\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `*ℹ️ Info Status:* ${data.statusTexto}`\n    }\n  });\n}\n\n// C. Comentarios\nif (data.comentario) {\n  const cleanComment = data.comentario.replace(/^\"|\"$/g, ''); \n  blocks.push({\n    \"type\": \"context\",\n    \"elements\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `> 📝 *Comentario:* ${cleanComment}`\n      }\n    ]\n  });\n}\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        -384
+      ],
+      "id": "a8f6bb14-979d-409d-b216-bf11793a9365",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A5F3K7G01",
+          "mode": "list",
+          "cachedResultName": "office-9-agenteia-tesoreria"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.toJsonString() }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "link_names": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2128,
+        -384
+      ],
+      "id": "19835708-914f-48e5-afad-4cf1aa5434a2",
+      "name": "Send a message",
+      "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -384
+      ],
+      "id": "c9869815-56aa-4e42-9044-d245aa8003a3",
+      "name": "Get an item1",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cc1cb883-b571-4ccd-aed6-a18be5eb7ccc",
+              "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+              "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "8706eb06-f804-4386-96e5-043563aa1eeb",
+              "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        -384
+      ],
+      "id": "7e682dc4-042b-4f96-aa8e-758ce3c69987",
+      "name": "Filter",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        -384
+      ],
+      "id": "0f72ceef-2fc8-41da-a131-18bf150966d8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Objeto vacio desde monday"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        -176
+      ],
+      "id": "6ccf5022-45e3-48b6-81b5-4f91b18f7b99",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        -384
+      ],
+      "id": "ab9f2d2b-8c46-4a7f-ac88-c94139af48c8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "731d45ea-a9ba-48d8-bd24-4ffa1bd3b480",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Saturday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "60b9205c-f664-4f50-a745-08330ebf1654",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Sunday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -384
+      ],
+      "id": "fb897a64-1ce4-4549-9de1-92a07825a453",
+      "name": "If1"
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Get an item1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+  "activeVersionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+  "versionCounter": 34,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "gYdcVTS1dmuZRp0W",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-13T22:38:37.691Z",
+    "createdAt": "2026-01-13T22:38:20.732Z",
+    "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+    "workflowId": "gYdcVTS1dmuZRp0W",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.monday.com/v2",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "oAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "query",
+                "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (limit: 500, query_params: {operator: and, rules: [{column_id: \"text_mkpqm0g9\", operator: not_contains_text, compare_value: [\"saldo completo\"]}, {column_id: \"group\", operator: not_any_of, compare_value: [\"group_mkqxsqsk\"]}]}) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          672,
+          -384
+        ],
+        "id": "6b346181-aa71-4e8d-a4f5-0b5c09c3009c",
+        "name": "HTTP Request",
+        "credentials": {
+          "oAuth2Api": {
+            "id": "WKPprnBqgbub4iWX",
+            "name": "monday.com Credentials"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data.boards[0].items_page.items",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          880,
+          -384
+        ],
+        "id": "2f96e7eb-78f3-46ee-9da7-fb443324e3be",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  proximoPago: getColValue(\"Próximo pago\") || \"Pendiente\",\n  \n  // Status Específicos\n  estadoAds: getColValue(\"STATUS DE LOS ADS\"), \n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Emitir cobro para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*📊 Estado General:*\\n${getStatusEmoji(data.estadoGeneral)} ${data.estadoGeneral}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*📅 Próximo Pago:*\\n${data.proximoPago}`\n      }\n    ]\n  }\n];\n\n// 5. Bloques Dinámicos (Solo aparecen si hay datos)\n\n// A. Estado de ADS\nif (data.estadoAds) {\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `*📢 Status Ads:* ${getStatusEmoji(data.estadoAds)} *${data.estadoAds}*`\n    }\n  });\n}\n\n// B. Columna \"status\" (Texto extra)\nif (data.statusTexto) {\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `*ℹ️ Info Status:* ${data.statusTexto}`\n    }\n  });\n}\n\n// C. Comentarios\nif (data.comentario) {\n  const cleanComment = data.comentario.replace(/^\"|\"$/g, ''); \n  blocks.push({\n    \"type\": \"context\",\n    \"elements\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `> 📝 *Comentario:* ${cleanComment}`\n      }\n    ]\n  });\n}\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1648,
+          -384
+        ],
+        "id": "a8f6bb14-979d-409d-b216-bf11793a9365",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0A5F3K7G01",
+            "mode": "list",
+            "cachedResultName": "office-9-agenteia-tesoreria"
+          },
+          "messageType": "block",
+          "blocksUi": "={{ $json.toJsonString() }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "link_names": true
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          2128,
+          -384
+        ],
+        "id": "19835708-914f-48e5-afad-4cf1aa5434a2",
+        "name": "Send a message",
+        "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "boardItem",
+          "operation": "get",
+          "itemId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.mondayCom",
+        "typeVersion": 1,
+        "position": [
+          1424,
+          -384
+        ],
+        "id": "c9869815-56aa-4e42-9044-d245aa8003a3",
+        "name": "Get an item1",
+        "credentials": {
+          "mondayComOAuth2Api": {
+            "id": "7emakKOqBk6HAsSo",
+            "name": "Monday.com levelup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "cc1cb883-b571-4ccd-aed6-a18be5eb7ccc",
+                "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "equals"
+                }
+              },
+              {
+                "id": "8706eb06-f804-4386-96e5-043563aa1eeb",
+                "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1088,
+          -384
+        ],
+        "id": "7e682dc4-042b-4f96-aa8e-758ce3c69987",
+        "name": "Filter",
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+                "leftValue": "={{ $json.error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notExists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1856,
+          -384
+        ],
+        "id": "0f72ceef-2fc8-41da-a131-18bf150966d8",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "errorMessage": "Objeto vacio desde monday"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          2144,
+          -176
+        ],
+        "id": "6ccf5022-45e3-48b6-81b5-4f91b18f7b99",
+        "name": "Stop and Error"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          224,
+          -384
+        ],
+        "id": "ab9f2d2b-8c46-4a7f-ac88-c94139af48c8",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "731d45ea-a9ba-48d8-bd24-4ffa1bd3b480",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Saturday",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "60b9205c-f664-4f50-a745-08330ebf1654",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Sunday",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          -384
+        ],
+        "id": "fb897a64-1ce4-4549-9de1-92a07825a453",
+        "name": "If1"
+      }
+    ],
+    "connections": {
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get an item1": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "Get an item1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 44413b93",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-13T22:38:37.685Z",
+        "id": 79,
+        "workflowId": "gYdcVTS1dmuZRp0W",
+        "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      },
+      {
+        "createdAt": "2026-01-23T12:52:27.568Z",
+        "id": 105,
+        "workflowId": "gYdcVTS1dmuZRp0W",
+        "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

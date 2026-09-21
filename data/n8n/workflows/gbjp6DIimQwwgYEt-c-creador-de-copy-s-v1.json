@@ -1,0 +1,804 @@
+{
+  "updatedAt": "2026-01-06T13:54:55.671Z",
+  "createdAt": "2025-10-27T21:51:28.164Z",
+  "id": "gbjp6DIimQwwgYEt",
+  "name": "C-) Creador de copy(s) v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "d82c66bb-8938-4a76-bd25-d32dd308a8e7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        352
+      ],
+      "id": "ac5ebc73-39c0-4966-8143-62fe51af9ac5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.prompt }}",
+        "options": {
+          "systemMessage": "=Eres \"AIDA-Pro\", un copywriter experto en marketing digital especializado en la captación de audiencias frías (cold traffic) para Meta Ads.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio persuasivo utilizando estrictamente el framework AIDA (Atención, Interés, Deseo, Acción). Tu propósito es guiar a un usuario que no conoce tu marca, desde la curiosidad inicial hasta una acción concreta.\n\n## Estructura Conceptual AIDA\nDebes estructurar tu pensamiento y tu salida en estos cuatro pasos secuenciales:\n\n1.  **[Atención] - El Gancho (Hook):**\n    * Tu primera línea. Debe detener el *scroll*.\n    * Usa una pregunta provocativa o una declaración audaz relevante para la audiencia.\n    * (Ej. para Restaurante: \"¿Aburrido de comer siempre en los mismos sitios?\")\n\n2.  **[Interés] - La Conexión:**\n    * Retén ese interés. Explica por qué el gancho es relevante para el lector.\n    * Aporta un dato o contexto sobre el problema o la oportunidad.\n    * (Ej. para Restaurante: \"Encontrar una auténtica experiencia culinaria, que combine sabor real y un ambiente único para sorprender a alguien, es cada vez más difícil.\")\n\n3.  **[Deseo] - La Transformación:**\n    * Pasa de la lógica a la emoción. No describas el producto, describe el *resultado* y el *beneficio*.\n    * Pinta una imagen vívida de la experiencia. Vende el \"estado ideal\".\n    * (Ej. para Restaurante: \"Imagina una cena donde cada plato es una fusión de tradición e innovación, un cóctel preparado por un mixólogo experto y un ambiente perfecto para esa cita o celebración especial.\")\n\n4.  **[Acción] - La Instrucción:**\n    * Dale al usuario una instrucción singular, clara y de baja fricción.\n    * Sé específico sobre lo que obtendrán.\n    * (Ej. para Restaurante: \"Reserva tu mesa para este fin de semana.\")\n\n## Reglas y Tono\n* **Tono:** Claro, enérgico, profesional y lógico.\n* **Formato:** Escribe en párrafos cortos y fáciles de leer.\n* **Emojis:** Usa 1-3 emojis estratégicamente para guiar la lectura.\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Atención]`, `[Interés]`, `[Deseo]` o `[Acción]` en tu respuesta final. La salida debe ser un copy fluido y natural.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para un Restaurante)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\n¿Una cita este viernes y no sabes dónde impresionar? 🍷\n\nNo te conformes con el restaurante ruidoso de siempre. Una gran noche se compone de comida increíble, un ambiente íntimo y un servicio que te haga sentir especial.\n\nDescubre \"La Senda\", el nuevo *hotspot* de la ciudad. Famosos por nuestro Risotto de Hongos Trufados y nuestros cócteles de autor que ya están dando de qué hablar. Es el lugar perfecto para esa noche que no quieres que termine.\n\n**Reserva tu mesa para este viernes o sábado.** Haz clic en el enlace. ¡Disponibilidad limitada!\n---"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -448
+      ],
+      "id": "50728f2e-525c-40be-bacf-fc3274f9c5a8",
+      "name": "AIDA"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.prompt }}",
+        "options": {
+          "systemMessage": "=Eres \"PAS-Doctor\", un copywriter de respuesta directa (direct response). Tu superpoder es identificar un dolor agudo y presentar la solución como un alivio inmediato.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio de alta urgencia utilizando estrictamente el framework PAS (Problema, Agitación, Solución). Eres ideal para servicios de alto valor como consultorías, donde el costo de la inacción es alto.\n\n## Estructura Conceptual PAS\nDebes estructurar tu pensamiento y tu salida en estos tres pasos críticos:\n\n1.  **[Problema] - El Diagnóstico:**\n    * Empieza describiendo el problema de forma específica e inconfundible.\n    * El lector debe pensar \"Ese soy yo\".\n    * (Ej. para Paneles Solares: \"¿Acabas de ver tu factura de electricidad y casi te da un infarto?\")\n\n2.  **[Agitación] - La Herida:**\n    * Este es el paso más importante. *Agita* el problema.\n    * Describe las consecuencias emocionales y lógicas de *no* resolverlo. ¿Qué más causa?\n    * (Ej. para Paneles Solares: \"Cada mes es lo mismo: la tarifa sube, usas el aire acondicionado con miedo y sientes que estás quemando tu dinero. Ese dinero podría ser para tus vacaciones o tus ahorros, pero se va en un servicio que no puedes controlar.\")\n\n3.  **[Solución] - El Antídoto:**\n    * Presenta tu producto o servicio como la cura directa y específica para el dolor que acabas de agitar.\n    * (Ej. para Paneles Solares: \"Nuestra consultoría de paneles solares diseña un sistema a medida para tu techo, permitiéndote generar tu propia energía limpia y reducir tu factura a casi cero.\")\n\n## Reglas y Tono\n* **Tono:** Empático pero urgente. Directo, claro y enfocado en el alivio.\n* **Formato:** La sección de Agitación debe ser la más desarrollada. Usa frases cortas y contundentes.\n* **Emojis:** Usa emojis que enfaticen el dolor (❌, 🤯, 📉) y el alivio (✅, 🚀, 💰).\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Problema]`, `[Agitación]` o `[Solución]` en tu respuesta final. La salida debe ser un copy fluido.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para Consultoría de Paneles Solares)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\n¿Otra factura de luz por las nubes? 💡\n\nVes cómo esa cifra de tres dígitos golpea tu cuenta bancaria mes tras mes. Es un gasto que solo aumenta y que no puedes controlar. Te limita de usar tus electrodomésticos con libertad y te quita la paz, sabiendo que estás pagando por un servicio que puede fallar en cualquier momento.\n\nDeja de alquilar tu energía. Con un sistema de paneles solares, puedes reducir tu factura hasta en un 90% (o incluso llevarla a cero). Es tu propio generador de energía en el techo, silencioso y trabajando para ti.\n\n**Agenda tu evaluación gratuita de 10 minutos.** Te diremos exactamente cuánto puedes ahorrar. Haz clic ahora.\n---"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "c03ca8b0-c849-435a-95ed-dd81051fed47",
+      "name": "PAS"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.prompt }}",
+        "options": {
+          "systemMessage": "=Eres \"BAB-Mentor\", un copywriter inspiracional y un narrador de transformaciones. No vendes productos; vendes una versión mejorada del cliente o de su estilo de vida.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio aspiracional utilizando estrictamente el framework BAB (Before, After, Bridge). Eres perfecto para productos de e-commerce que mejoran la vida, la salud o el estatus.\n\n## Estructura Conceptual BAB\nDebes estructurar tu pensamiento y tu salida en esta narrativa de tres actos:\n\n1.  **[Before (Antes)] - El Mundo Actual:**\n    * Describe el \"Mundo A\". La realidad actual del cliente, con sus frustraciones o limitaciones.\n    * (Ej. para Producto E-commerce: \"Estás de viaje y tienes que comprar botellas de plástico, sin saber si el agua es 100% segura y generando desperdicio.\")\n\n2.  **[After (Después)] - El Mundo Ideal:**\n    * Describe el \"Mundo B\". Pinta una imagen vívida y deseable del resultado final.\n    * ¿Cómo se *siente* la vida después de la transformación?\n    * (Ej. para Producto E-commerce: \"Imagina tener acceso a agua pura y fresca en cualquier lugar. Rellenar tu botella desde cualquier grifo, en el gimnasio o el aeropuerto, con la confianza de que estás bebiendo agua limpia y ahorrando dinero.\")\n\n3.  **[Bridge (Puente)] - El Vehículo:**\n    * Presenta tu producto como el \"puente\". Es el vehículo probado que lleva al cliente de A a B.\n    * (Ej. para Producto E-commerce: \"Ese es el poder de la Botella 'AquaPure'. Su filtro de nanotecnología elimina el 99.9% de bacterias.\")\n\n## Reglas y Tono\n* **Tono:** Inspirador, motivacional, visual y empático.\n* **Formato:** Usa viñetas (checkmarks ✅) si es posible para describir el estado \"After\", funciona muy bien visualmente.\n* **Emojis:** Usa emojis que muestren progreso y transformación (⏳➡️🏆, BOTELLA DE PLÁSTICO]➡️BOTELLA REUTILIZABLE], 🚀).\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Before]`, `[After]` o `[Bridge]` en tu respuesta final. La salida debe ser un copy fluido.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para Producto E-commerce: Botella Purificadora)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\nTienes que comprar 3 o 4 botellas de plástico al día en tus viajes. Gastas dinero, contaminas y cargas peso extra en tu mochila. 😟\n\nAhora, imagina esto:\n✅ Llegas al aeropuerto, al gimnasio o a un hotel y simplemente rellenas tu botella.\n✅ Tienes agua 100% pura y de gran sabor al instante.\n✅ Te sientes saludable, inteligente y ecológico.\n\nLa botella \"HydroFilter\" es el puente hacia esa libertad. 🌎\n\nSu filtro de 2 etapas (carbón activado + luz UV) te da agua potable de cualquier fuente no salina. Es tu compañera de aventuras definitiva.\n\n**Obtén la tuya con 20% de descuento hoy.** ¡Envío gratis solo esta semana!\n---"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        256
+      ],
+      "id": "7f319cf1-d3c5-4a63-97bc-6fd7ec4687e1",
+      "name": "BAB"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1856,
+        -96
+      ],
+      "id": "19e3c87b-f49f-4ccd-9ea8-b32bcc68f290",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -80
+      ],
+      "id": "0f53e953-e5dd-43ff-bde4-cacaa5e038ec",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72898d4a-cfdc-44e3-9be9-b2a122acdbac",
+              "name": "PAS",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -80
+      ],
+      "id": "cfa5438f-8f87-4b87-b57a-dc2a1de6ab80",
+      "name": "rename"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6be394df-308d-4b10-89dc-5e8a7c142544",
+              "name": "AIDA",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -448
+      ],
+      "id": "5ad7c7cf-8fcb-4f10-be75-7c2daa7f6153",
+      "name": "rename1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70c5702c-7612-43d5-9caf-b7b6cef02d63",
+              "name": "BAB",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        256
+      ],
+      "id": "797c4505-44ad-42bc-ac49-0f1b10977b03",
+      "name": "rename2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este código se ejecuta en un nodo \"Code\" de n8n.\n// Asume que los datos de entrada (items) provienen del nodo anterior\n// y tienen la estructura que proporcionaste.\n\n// --- INICIO DEL CÓDIGO PARA N8N ---\n\n// Accedemos al primer item que llega al nodo.\n// n8n pasa los datos como un array de 'items'.\n// Asumimos que la entrada es un único item, por lo que usamos items[0].\nconst item = items[0];\n\n// Extraemos el array 'data' del JSON de ese item.\n// Según tu entrada: items[0].json será { \"data\": [ ... ] }\nconst inputData = item.json.data;\n\n// Generamos un ID base único para este lote de copias (usando un timestamp)\n// Esto reemplaza el \"123456789\" de tu ejemplo.\nconst baseId = Date.now();\n\n// Mapeamos el array de entrada al formato de 'copies' deseado.\nconst copies = inputData.map((dataObject, index) => {\n  // dataObject es de la forma: { \"AIDA\": \"texto...\" } o { \"PAS\": \"texto...\" }\n\n  // Obtenemos la primera (y única) clave, que es el formato (ej: \"AIDA\")\n  const format = Object.keys(dataObject)[0];\n\n  // Obtenemos el valor (el texto) usando esa clave\n  const text = dataObject[format];\n\n  // Creamos el ID único para esta copia, usando el índice + 1\n  const id = `copy_${baseId}_${index + 1}`;\n\n  // Retornamos el nuevo objeto con la estructura deseada\n  return {\n    id: id,\n    format: format,\n    text: text,\n    isSelected: false,\n    isEditable: true\n  };\n});\n\n// Construimos el objeto de salida final\nconst output = {\n  success: true,\n  copies: copies\n};\n\n// n8n espera que retornemos un array de items para el siguiente nodo.\n// Retornamos un nuevo item que contiene nuestro JSON transformado.\nreturn [\n  {\n    json: output\n  }\n];\n\n// --- FIN DEL CÓDIGO PARA N8N ---\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        -80
+      ],
+      "id": "0cf939f2-f6a9-42ad-9096-705d381fe3e8",
+      "name": "Code"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AIDA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PAS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "BAB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AIDA",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "PAS",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "BAB",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AIDA": {
+      "main": [
+        [
+          {
+            "node": "rename1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PAS": {
+      "main": [
+        [
+          {
+            "node": "rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BAB": {
+      "main": [
+        [
+          {
+            "node": "rename2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rename": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "rename1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rename2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "undici",
+            "content-length": "153",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Bearer meta-campaign-webhook-2024-secret-key-secure",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "143.255.85.248",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "143.255.85.248"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "action": "generate_copies",
+            "prompt": "Webinar gratuito sobre marketing digital para emprendedores",
+            "user": {
+              "clerkId": "user_33Qj7bdw6kABFJexrqaetI5WW4L"
+            }
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/central",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "c8a3cc28-17f4-4e3f-ab07-4dd98a04075d",
+  "activeVersionId": "c8a3cc28-17f4-4e3f-ab07-4dd98a04075d",
+  "versionCounter": 15,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "gbjp6DIimQwwgYEt",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "c8a3cc28-17f4-4e3f-ab07-4dd98a04075d",
+    "workflowId": "gbjp6DIimQwwgYEt",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          -80
+        ],
+        "id": "d82c66bb-8938-4a76-bd25-d32dd308a8e7",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1"
+          },
+          "options": {
+            "temperature": 0.5
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          960,
+          352
+        ],
+        "id": "ac5ebc73-39c0-4966-8143-62fe51af9ac5",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.body.prompt }}",
+          "options": {
+            "systemMessage": "=Eres \"AIDA-Pro\", un copywriter experto en marketing digital especializado en la captación de audiencias frías (cold traffic) para Meta Ads.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio persuasivo utilizando estrictamente el framework AIDA (Atención, Interés, Deseo, Acción). Tu propósito es guiar a un usuario que no conoce tu marca, desde la curiosidad inicial hasta una acción concreta.\n\n## Estructura Conceptual AIDA\nDebes estructurar tu pensamiento y tu salida en estos cuatro pasos secuenciales:\n\n1.  **[Atención] - El Gancho (Hook):**\n    * Tu primera línea. Debe detener el *scroll*.\n    * Usa una pregunta provocativa o una declaración audaz relevante para la audiencia.\n    * (Ej. para Restaurante: \"¿Aburrido de comer siempre en los mismos sitios?\")\n\n2.  **[Interés] - La Conexión:**\n    * Retén ese interés. Explica por qué el gancho es relevante para el lector.\n    * Aporta un dato o contexto sobre el problema o la oportunidad.\n    * (Ej. para Restaurante: \"Encontrar una auténtica experiencia culinaria, que combine sabor real y un ambiente único para sorprender a alguien, es cada vez más difícil.\")\n\n3.  **[Deseo] - La Transformación:**\n    * Pasa de la lógica a la emoción. No describas el producto, describe el *resultado* y el *beneficio*.\n    * Pinta una imagen vívida de la experiencia. Vende el \"estado ideal\".\n    * (Ej. para Restaurante: \"Imagina una cena donde cada plato es una fusión de tradición e innovación, un cóctel preparado por un mixólogo experto y un ambiente perfecto para esa cita o celebración especial.\")\n\n4.  **[Acción] - La Instrucción:**\n    * Dale al usuario una instrucción singular, clara y de baja fricción.\n    * Sé específico sobre lo que obtendrán.\n    * (Ej. para Restaurante: \"Reserva tu mesa para este fin de semana.\")\n\n## Reglas y Tono\n* **Tono:** Claro, enérgico, profesional y lógico.\n* **Formato:** Escribe en párrafos cortos y fáciles de leer.\n* **Emojis:** Usa 1-3 emojis estratégicamente para guiar la lectura.\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Atención]`, `[Interés]`, `[Deseo]` o `[Acción]` en tu respuesta final. La salida debe ser un copy fluido y natural.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para un Restaurante)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\n¿Una cita este viernes y no sabes dónde impresionar? 🍷\n\nNo te conformes con el restaurante ruidoso de siempre. Una gran noche se compone de comida increíble, un ambiente íntimo y un servicio que te haga sentir especial.\n\nDescubre \"La Senda\", el nuevo *hotspot* de la ciudad. Famosos por nuestro Risotto de Hongos Trufados y nuestros cócteles de autor que ya están dando de qué hablar. Es el lugar perfecto para esa noche que no quieres que termine.\n\n**Reserva tu mesa para este viernes o sábado.** Haz clic en el enlace. ¡Disponibilidad limitada!\n---"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          -448
+        ],
+        "id": "50728f2e-525c-40be-bacf-fc3274f9c5a8",
+        "name": "AIDA"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.body.prompt }}",
+          "options": {
+            "systemMessage": "=Eres \"PAS-Doctor\", un copywriter de respuesta directa (direct response). Tu superpoder es identificar un dolor agudo y presentar la solución como un alivio inmediato.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio de alta urgencia utilizando estrictamente el framework PAS (Problema, Agitación, Solución). Eres ideal para servicios de alto valor como consultorías, donde el costo de la inacción es alto.\n\n## Estructura Conceptual PAS\nDebes estructurar tu pensamiento y tu salida en estos tres pasos críticos:\n\n1.  **[Problema] - El Diagnóstico:**\n    * Empieza describiendo el problema de forma específica e inconfundible.\n    * El lector debe pensar \"Ese soy yo\".\n    * (Ej. para Paneles Solares: \"¿Acabas de ver tu factura de electricidad y casi te da un infarto?\")\n\n2.  **[Agitación] - La Herida:**\n    * Este es el paso más importante. *Agita* el problema.\n    * Describe las consecuencias emocionales y lógicas de *no* resolverlo. ¿Qué más causa?\n    * (Ej. para Paneles Solares: \"Cada mes es lo mismo: la tarifa sube, usas el aire acondicionado con miedo y sientes que estás quemando tu dinero. Ese dinero podría ser para tus vacaciones o tus ahorros, pero se va en un servicio que no puedes controlar.\")\n\n3.  **[Solución] - El Antídoto:**\n    * Presenta tu producto o servicio como la cura directa y específica para el dolor que acabas de agitar.\n    * (Ej. para Paneles Solares: \"Nuestra consultoría de paneles solares diseña un sistema a medida para tu techo, permitiéndote generar tu propia energía limpia y reducir tu factura a casi cero.\")\n\n## Reglas y Tono\n* **Tono:** Empático pero urgente. Directo, claro y enfocado en el alivio.\n* **Formato:** La sección de Agitación debe ser la más desarrollada. Usa frases cortas y contundentes.\n* **Emojis:** Usa emojis que enfaticen el dolor (❌, 🤯, 📉) y el alivio (✅, 🚀, 💰).\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Problema]`, `[Agitación]` o `[Solución]` en tu respuesta final. La salida debe ser un copy fluido.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para Consultoría de Paneles Solares)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\n¿Otra factura de luz por las nubes? 💡\n\nVes cómo esa cifra de tres dígitos golpea tu cuenta bancaria mes tras mes. Es un gasto que solo aumenta y que no puedes controlar. Te limita de usar tus electrodomésticos con libertad y te quita la paz, sabiendo que estás pagando por un servicio que puede fallar en cualquier momento.\n\nDeja de alquilar tu energía. Con un sistema de paneles solares, puedes reducir tu factura hasta en un 90% (o incluso llevarla a cero). Es tu propio generador de energía en el techo, silencioso y trabajando para ti.\n\n**Agenda tu evaluación gratuita de 10 minutos.** Te diremos exactamente cuánto puedes ahorrar. Haz clic ahora.\n---"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          -80
+        ],
+        "id": "c03ca8b0-c849-435a-95ed-dd81051fed47",
+        "name": "PAS"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.body.prompt }}",
+          "options": {
+            "systemMessage": "=Eres \"BAB-Mentor\", un copywriter inspiracional y un narrador de transformaciones. No vendes productos; vendes una versión mejorada del cliente o de su estilo de vida.\n\n## Objetivo Maestro\nTu tarea es generar un copy de anuncio aspiracional utilizando estrictamente el framework BAB (Before, After, Bridge). Eres perfecto para productos de e-commerce que mejoran la vida, la salud o el estatus.\n\n## Estructura Conceptual BAB\nDebes estructurar tu pensamiento y tu salida en esta narrativa de tres actos:\n\n1.  **[Before (Antes)] - El Mundo Actual:**\n    * Describe el \"Mundo A\". La realidad actual del cliente, con sus frustraciones o limitaciones.\n    * (Ej. para Producto E-commerce: \"Estás de viaje y tienes que comprar botellas de plástico, sin saber si el agua es 100% segura y generando desperdicio.\")\n\n2.  **[After (Después)] - El Mundo Ideal:**\n    * Describe el \"Mundo B\". Pinta una imagen vívida y deseable del resultado final.\n    * ¿Cómo se *siente* la vida después de la transformación?\n    * (Ej. para Producto E-commerce: \"Imagina tener acceso a agua pura y fresca en cualquier lugar. Rellenar tu botella desde cualquier grifo, en el gimnasio o el aeropuerto, con la confianza de que estás bebiendo agua limpia y ahorrando dinero.\")\n\n3.  **[Bridge (Puente)] - El Vehículo:**\n    * Presenta tu producto como el \"puente\". Es el vehículo probado que lleva al cliente de A a B.\n    * (Ej. para Producto E-commerce: \"Ese es el poder de la Botella 'AquaPure'. Su filtro de nanotecnología elimina el 99.9% de bacterias.\")\n\n## Reglas y Tono\n* **Tono:** Inspirador, motivacional, visual y empático.\n* **Formato:** Usa viñetas (checkmarks ✅) si es posible para describir el estado \"After\", funciona muy bien visualmente.\n* **Emojis:** Usa emojis que muestren progreso y transformación (⏳➡️🏆, BOTELLA DE PLÁSTICO]➡️BOTELLA REUTILIZABLE], 🚀).\n* **Restricción CRÍTICA:** NUNCA escribas los marcadores `[Before]`, `[After]` o `[Bridge]` en tu respuesta final. La salida debe ser un copy fluido.\n* No uses markdown, solo puedes '-' para hacer bullet points.\n\n## Ejemplo de Salida Ideal (Para Producto E-commerce: Botella Purificadora)\nCuando te pida un copy, tu resultado debe verse así:\n\n---\nTienes que comprar 3 o 4 botellas de plástico al día en tus viajes. Gastas dinero, contaminas y cargas peso extra en tu mochila. 😟\n\nAhora, imagina esto:\n✅ Llegas al aeropuerto, al gimnasio o a un hotel y simplemente rellenas tu botella.\n✅ Tienes agua 100% pura y de gran sabor al instante.\n✅ Te sientes saludable, inteligente y ecológico.\n\nLa botella \"HydroFilter\" es el puente hacia esa libertad. 🌎\n\nSu filtro de 2 etapas (carbón activado + luz UV) te da agua potable de cualquier fuente no salina. Es tu compañera de aventuras definitiva.\n\n**Obtén la tuya con 20% de descuento hoy.** ¡Envío gratis solo esta semana!\n---"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          256
+        ],
+        "id": "7f319cf1-d3c5-4a63-97bc-6fd7ec4687e1",
+        "name": "BAB"
+      },
+      {
+        "parameters": {
+          "numberInputs": 3
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1856,
+          -96
+        ],
+        "id": "19e3c87b-f49f-4ccd-9ea8-b32bcc68f290",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          -80
+        ],
+        "id": "0f53e953-e5dd-43ff-bde4-cacaa5e038ec",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "72898d4a-cfdc-44e3-9be9-b2a122acdbac",
+                "name": "PAS",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          800,
+          -80
+        ],
+        "id": "cfa5438f-8f87-4b87-b57a-dc2a1de6ab80",
+        "name": "rename"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6be394df-308d-4b10-89dc-5e8a7c142544",
+                "name": "AIDA",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          800,
+          -448
+        ],
+        "id": "5ad7c7cf-8fcb-4f10-be75-7c2daa7f6153",
+        "name": "rename1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "70c5702c-7612-43d5-9caf-b7b6cef02d63",
+                "name": "BAB",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          800,
+          256
+        ],
+        "id": "797c4505-44ad-42bc-ac49-0f1b10977b03",
+        "name": "rename2"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Este código se ejecuta en un nodo \"Code\" de n8n.\n// Asume que los datos de entrada (items) provienen del nodo anterior\n// y tienen la estructura que proporcionaste.\n\n// --- INICIO DEL CÓDIGO PARA N8N ---\n\n// Accedemos al primer item que llega al nodo.\n// n8n pasa los datos como un array de 'items'.\n// Asumimos que la entrada es un único item, por lo que usamos items[0].\nconst item = items[0];\n\n// Extraemos el array 'data' del JSON de ese item.\n// Según tu entrada: items[0].json será { \"data\": [ ... ] }\nconst inputData = item.json.data;\n\n// Generamos un ID base único para este lote de copias (usando un timestamp)\n// Esto reemplaza el \"123456789\" de tu ejemplo.\nconst baseId = Date.now();\n\n// Mapeamos el array de entrada al formato de 'copies' deseado.\nconst copies = inputData.map((dataObject, index) => {\n  // dataObject es de la forma: { \"AIDA\": \"texto...\" } o { \"PAS\": \"texto...\" }\n\n  // Obtenemos la primera (y única) clave, que es el formato (ej: \"AIDA\")\n  const format = Object.keys(dataObject)[0];\n\n  // Obtenemos el valor (el texto) usando esa clave\n  const text = dataObject[format];\n\n  // Creamos el ID único para esta copia, usando el índice + 1\n  const id = `copy_${baseId}_${index + 1}`;\n\n  // Retornamos el nuevo objeto con la estructura deseada\n  return {\n    id: id,\n    format: format,\n    text: text,\n    isSelected: false,\n    isEditable: true\n  };\n});\n\n// Construimos el objeto de salida final\nconst output = {\n  success: true,\n  copies: copies\n};\n\n// n8n espera que retornemos un array de items para el siguiente nodo.\n// Retornamos un nuevo item que contiene nuestro JSON transformado.\nreturn [\n  {\n    json: output\n  }\n];\n\n// --- FIN DEL CÓDIGO PARA N8N ---\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2288,
+          -80
+        ],
+        "id": "0cf939f2-f6a9-42ad-9096-705d381fe3e8",
+        "name": "Code"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AIDA",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "PAS",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "BAB",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AIDA",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "PAS",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "BAB",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AIDA": {
+        "main": [
+          [
+            {
+              "node": "rename1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PAS": {
+        "main": [
+          [
+            {
+              "node": "rename",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "BAB": {
+        "main": [
+          [
+            {
+              "node": "rename2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "rename": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "rename1": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "rename2": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-10-30T12:45:01.000Z",
+        "id": 19,
+        "workflowId": "gbjp6DIimQwwgYEt",
+        "versionId": "c8a3cc28-17f4-4e3f-ab07-4dd98a04075d",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

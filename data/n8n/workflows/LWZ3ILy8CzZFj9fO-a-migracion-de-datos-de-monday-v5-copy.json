@@ -1,0 +1,5065 @@
+{
+  "updatedAt": "2025-11-18T15:20:45.000Z",
+  "createdAt": "2025-11-18T13:36:29.091Z",
+  "id": "LWZ3ILy8CzZFj9fO",
+  "name": "A-) Migracion de datos de monday v5 copy",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "01515792-673f-498d-a022-80874a8f114e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        48,
+        592
+      ],
+      "id": "ca3efaf9-12bf-4f35-91c7-347be683bbca",
+      "name": "Webhook",
+      "webhookId": "01515792-673f-498d-a022-80874a8f114e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7211a26f-639b-4eaf-a86f-13ea87548cb9",
+              "leftValue": "={{ $json.body.event.sourceGroupId }}",
+              "rightValue": "grupo_nuevo__1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        592
+      ],
+      "id": "520c73da-72e1-4c4a-bda1-fdbcb036d292",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cb9fd72-22de-4e40-a440-e81126fa5336",
+              "name": "client-id",
+              "value": "={{ $json.body.event.pulseId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        592
+      ],
+      "id": "bb595b3a-6997-4c4e-a064-3a78041211a1",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "fields": [],
+          "where": "=(ID-monday,eq,{{ $json['client-id'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        784,
+        592
+      ],
+      "id": "41ec0552-c53b-4eb6-8635-50700197026f",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        992,
+        592
+      ],
+      "id": "96196a67-b015-4433-b635-5f993b5a56b9",
+      "name": "Delete a row",
+      "retryOnFail": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Actualizar cuando un cliente va offboarded, deja de estar activo",
+        "height": 260,
+        "width": 1300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        512
+      ],
+      "id": "51cc018c-a16b-4590-82aa-3a66013da334",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7211a26f-639b-4eaf-a86f-13ea87548cb9",
+              "leftValue": "={{ $json.body.event.destGroup.title }}",
+              "rightValue": "CLIENTE ACTIVO",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        1600
+      ],
+      "id": "91564125-a1fc-442e-8eb0-b28a4de0a440",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cb9fd72-22de-4e40-a440-e81126fa5336",
+              "name": "client-id",
+              "value": "={{ $json.body.event.pulseId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        1600
+      ],
+      "id": "8db0fc75-c672-4faf-a502-bc8062a10847",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "fields": [],
+          "where": "=(ID-monday,eq,{{ $json['client-id'] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        640,
+        1600
+      ],
+      "id": "eb0b3f6f-771f-4d66-bd48-02d7a83b2102",
+      "name": "Get many rows1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34750a60-3b4a-4f4c-a19e-30ec9eec2902",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        1600
+      ],
+      "id": "c69c4bfe-4e3e-43d3-8b63-36e601467330",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $('Edit Fields4').item.json['client-id'] }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        944,
+        1600
+      ],
+      "id": "8c9af666-ecbc-4f54-8ba3-e82a7b22017f",
+      "name": "Get an item1",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const incomingItems = $input.all();\n\n// 1. Define el ORDEN EXACTO que quieres en la salida.\n// He reordenado esta lista para que coincida con tu JSON de ejemplo.\nconst orderedColumnIds = [\n  'personas__1',              // Personas\n  'text8',                    // Empresa\n  'estado__1',                // Industria\n  'text_mksx2nnx',            // Id cuenta publicitaria\n  'board_relation_mktnkez8',  // Asignación de Estrategas\n  'contact_phone',            // Teléfono\n  'contact_email'             // E-mail\n];\n\nconst formattedItems = incomingItems.map(item => {\n  const mondayItem = item.json;\n\n  // 2. Construye el array 'column_values' en el orden definido.\n  const orderedColumns = orderedColumnIds.map(columnId => {\n    // 3. Por cada ID en nuestro orden, busca la columna correspondiente en los datos de entrada.\n    const foundColumn = mondayItem.column_values.find(c => c.id === columnId);\n\n    // Si la columna no existe en este item, no la añade.\n    if (!foundColumn) {\n      return null;\n    }\n\n    // 4. Procesa la columna encontrada (lógica que ya tenías).\n    const titulo = foundColumn.column.title;\n    const newColumn = {\n      id: titulo,\n      text: foundColumn.text,\n    };\n\n    if (titulo === 'Personas') {\n      newColumn.value = foundColumn.value;\n    }\n    if (titulo === 'Asignación de Estrategas') {\n      newColumn.value = foundColumn.value;\n    }\n    if (titulo === 'Industria') {\n      newColumn.tags = foundColumn.column.settings_str;\n    }\n\n    return newColumn;\n  }).filter(Boolean); // Elimina cualquier valor 'null' si una columna no fue encontrada.\n\n  const desiredFormat = {\n    \"data\": {\n      \"id\": mondayItem.id,\n      \"name\": mondayItem.name,\n      \"column_values\": orderedColumns // Usa el nuevo array ordenado.\n    }\n  };\n\n  return {\n    json: desiredFormat\n  };\n});\n\nreturn formattedItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        1600
+      ],
+      "id": "1d8abdb0-b41e-4440-abc6-0daa5beb49fe",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be44a564-6837-4b76-88c3-cae8006d2a0c",
+              "name": "client-name",
+              "value": "={{ $json.data.name }}",
+              "type": "string"
+            },
+            {
+              "id": "3aa5757b-6bf9-4c0f-84a4-62ab4ca45683",
+              "name": "people.crm.name",
+              "value": "={{ $json.data.column_values[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "94a1c475-056a-41b8-9759-16f30ff21ff4",
+              "name": "people.crm.id",
+              "value": "={{ $json.data.column_values[0].value?.parseJson().personsAndTeams[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "e6b27499-36ff-48fe-bf03-63e1f65dd5f4",
+              "name": "empresa",
+              "value": "={{ $json.data.column_values[1].text }}",
+              "type": "string"
+            },
+            {
+              "id": "37588eda-a0dd-4653-af2c-bfb31fc4039c",
+              "name": "industria",
+              "value": "={{ $json.data.column_values[2].text }}",
+              "type": "string"
+            },
+            {
+              "id": "5d981371-b27f-4dda-aff7-ff15867396b5",
+              "name": "setting-str",
+              "value": "={{ $json.data.column_values[2].tags?.parseJson().labels.toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4e8714-e086-405d-b5df-eb627d23b8ae",
+              "name": "id-cuenta-publicitaria",
+              "value": "={{ $json.data.column_values[3].text }}",
+              "type": "string"
+            },
+            {
+              "id": "101f7eb0-96d1-4afa-b672-803c59fff92e",
+              "name": "estratega-board-id",
+              "value": "={{ $json.data.column_values[4].value?.parseJson().linkedPulseIds[0].linkedPulseId }}",
+              "type": "string"
+            },
+            {
+              "id": "28a0cb91-700f-4f45-bd4d-262b14dcc316",
+              "name": "client.id",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "215461da-0b1e-40d1-9b5a-1b35c47093ad",
+              "name": "email",
+              "value": "={{ $json.data.column_values[6].text }}",
+              "type": "string"
+            },
+            {
+              "id": "63534d17-76e4-4f4e-9d98-d34264625c25",
+              "name": "telefono",
+              "value": "={{ $json.data.column_values[5].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        1600
+      ],
+      "id": "706d5add-628c-444b-823f-42357c1e3f10",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json['estratega-board-id'] }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        1520
+      ],
+      "id": "7a33601a-d3de-4100-854b-639960752ba0",
+      "name": "Get an item2",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be44a564-6837-4b76-88c3-cae8006d2a0c",
+              "name": "client-name",
+              "value": "={{ $('Edit Fields5').item.json['client-name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3aa5757b-6bf9-4c0f-84a4-62ab4ca45683",
+              "name": "people.crm.name",
+              "value": "={{ $('Edit Fields5').item.json.people.crm.name }}",
+              "type": "string"
+            },
+            {
+              "id": "94a1c475-056a-41b8-9759-16f30ff21ff4",
+              "name": "people.crm.id",
+              "value": "={{ $('Edit Fields5').item.json.people.crm.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e6b27499-36ff-48fe-bf03-63e1f65dd5f4",
+              "name": "empresa",
+              "value": "={{ $('Edit Fields5').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "37588eda-a0dd-4653-af2c-bfb31fc4039c",
+              "name": "industria",
+              "value": "={{ $('Edit Fields5').item.json.industria }}",
+              "type": "string"
+            },
+            {
+              "id": "5d981371-b27f-4dda-aff7-ff15867396b5",
+              "name": "setting-str",
+              "value": "={{ $('Edit Fields5').item.json['setting-str'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4e8714-e086-405d-b5df-eb627d23b8ae",
+              "name": "id-cuenta-publicitaria",
+              "value": "={{ $('Edit Fields5').item.json['id-cuenta-publicitaria'] }}",
+              "type": "string"
+            },
+            {
+              "id": "101f7eb0-96d1-4afa-b672-803c59fff92e",
+              "name": "estratega.people-id",
+              "value": "={{ $json.column_values[0].value?.parseJson().personsAndTeams[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "97b750c9-2e0b-4c43-90ec-17928012cedd",
+              "name": "estratega.people-name",
+              "value": "={{ $json.column_values[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "02a87b63-18d6-46a3-8816-91d9844a7229",
+              "name": "status",
+              "value": "ok",
+              "type": "string"
+            },
+            {
+              "id": "d0778746-2a45-4f06-b8aa-7ac36dd2164b",
+              "name": "client.id",
+              "value": "={{ $('Edit Fields5').item.json.client.id }}",
+              "type": "string"
+            },
+            {
+              "id": "b3c9301c-ea85-4dbd-9ee8-52fac8089c9e",
+              "name": "email",
+              "value": "={{ $('If4').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "6adad88b-fe11-45e3-9bad-3bc687bbcc94",
+              "name": "telefono",
+              "value": "={{ $('If4').item.json.telefono }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1632,
+        1520
+      ],
+      "id": "bafc7180-d490-41a7-afcf-753343c15a14",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cfc3c800-0d65-44da-b4a5-a434ff983faf",
+              "leftValue": "={{ $json['estratega-board-id'] }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        1600
+      ],
+      "id": "ef29e3b2-4f18-422d-b866-fe2f4a2da008",
+      "name": "If4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        1632
+      ],
+      "id": "5b7a4a76-28f4-4439-86d7-f506d53b98c7",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be44a564-6837-4b76-88c3-cae8006d2a0c",
+              "name": "client-name",
+              "value": "={{ $('Edit Fields5').item.json['client-name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3aa5757b-6bf9-4c0f-84a4-62ab4ca45683",
+              "name": "people.crm.name",
+              "value": "={{ $('Edit Fields5').item.json.people.crm.name }}",
+              "type": "string"
+            },
+            {
+              "id": "94a1c475-056a-41b8-9759-16f30ff21ff4",
+              "name": "people.crm.id",
+              "value": "={{ $('Edit Fields5').item.json.people.crm.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e6b27499-36ff-48fe-bf03-63e1f65dd5f4",
+              "name": "empresa",
+              "value": "={{ $('Edit Fields5').item.json.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "37588eda-a0dd-4653-af2c-bfb31fc4039c",
+              "name": "industria",
+              "value": "={{ $('Edit Fields5').item.json.industria }}",
+              "type": "string"
+            },
+            {
+              "id": "5d981371-b27f-4dda-aff7-ff15867396b5",
+              "name": "setting-str",
+              "value": "={{ $('Edit Fields5').item.json['setting-str'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4e8714-e086-405d-b5df-eb627d23b8ae",
+              "name": "id-cuenta-publicitaria",
+              "value": "={{ $('Edit Fields5').item.json['id-cuenta-publicitaria'] }}",
+              "type": "string"
+            },
+            {
+              "id": "101f7eb0-96d1-4afa-b672-803c59fff92e",
+              "name": "estratega.people-id",
+              "value": "={{ $json.column_values[0].value?.parseJson().personsAndTeams[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "97b750c9-2e0b-4c43-90ec-17928012cedd",
+              "name": "estratega.people-name",
+              "value": "={{ $json.column_values[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "02a87b63-18d6-46a3-8816-91d9844a7229",
+              "name": "status",
+              "value": "falta-por-estratega",
+              "type": "string"
+            },
+            {
+              "id": "ac97bfaa-7503-45b1-8849-cb57c19cadc7",
+              "name": "client.id",
+              "value": "={{ $('Edit Fields5').item.json.client.id }}",
+              "type": "string"
+            },
+            {
+              "id": "8dd30c36-ece7-4380-8edb-856d40abf3af",
+              "name": "email",
+              "value": "={{ $('If4').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "cd84d482-0fea-432d-a71d-600caef0531a",
+              "name": "telefono",
+              "value": "={{ $('If4').item.json.telefono }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1632,
+        1728
+      ],
+      "id": "340621ce-37c7-4682-a5b1-90d1113296ad",
+      "name": "Edit Fields8"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $json['id-cuenta-publicitaria'] }}"
+            },
+            {
+              "fieldName": "nombre",
+              "fieldValue": "={{ $json['client-name'] }}"
+            },
+            {
+              "fieldName": "empresa",
+              "fieldValue": "={{ $json.empresa }}"
+            },
+            {
+              "fieldName": "industria",
+              "fieldValue": "={{ $json.industria }}"
+            },
+            {
+              "fieldName": "traffiker",
+              "fieldValue": "={{ $json.estratega['people-id'] }}"
+            },
+            {
+              "fieldName": "admin",
+              "fieldValue": "={{ $json.people.crm.id }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "={{ $json.client.id}}"
+            },
+            {
+              "fieldName": "doble-verificacion",
+              "fieldValue": "false"
+            },
+            {
+              "fieldName": "email",
+              "fieldValue": "={{ $json.email }}"
+            },
+            {
+              "fieldName": "telefono",
+              "fieldValue": "={{ $json.telefono.toNumber() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1888,
+        1632
+      ],
+      "id": "16b87e0d-df87-42e7-beb4-cd01470459a1",
+      "name": "Create a row3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.traffiker }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2032,
+        1520
+      ],
+      "id": "98b71e90-43bf-4aad-b55b-4f82bced4422",
+      "name": "get-team-users2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mur2zaymbw5791i",
+        "returnAll": true,
+        "options": {
+          "where": "=(nombre,eq,{{ $json.industria }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2160,
+        1712
+      ],
+      "id": "e85d56f0-4ace-47b5-8950-93df1f535bd0",
+      "name": "get-industries1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2528,
+        1632
+      ],
+      "id": "d0b792b2-68ae-4068-a53d-5e70e8caa60f",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $('Create a row3').item.json.admin }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2272,
+        1520
+      ],
+      "id": "ee4e5fe5-bf8b-4fb4-aaaf-b18aaa5757a5",
+      "name": "get-team-users3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $('Create a row3').item.json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        1520
+      ],
+      "id": "d6b10a4f-82ce-4811-ba8b-961e38c37981",
+      "name": "traffiker1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/c7xyj70esnqjve0/records/{{ $('Create a row3').item.json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2384,
+        1712
+      ],
+      "id": "2b5e94d3-7b4f-4128-b799-2254403a1e2f",
+      "name": "industry1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/c2c88wzry5od96o/records/{{ $('Create a row3').item.json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2384,
+        1520
+      ],
+      "id": "4b7b8ef7-9774-42b6-863a-82036deda4eb",
+      "name": "admin1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        2080
+      ],
+      "id": "f05e96c3-4c1e-4e38-bfe5-c1775e0513d3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84272da4-1080-4fb5-bcd7-3b55732cfbfc",
+              "name": "id",
+              "value": "={{ $json.column_values[14].value?.parseJson().linkedPulseIds[0].linkedPulseId }}",
+              "type": "string"
+            },
+            {
+              "id": "bf93fa79-2c30-47ce-bf39-e7e4fdd7fa51",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        2304
+      ],
+      "id": "6383d232-ff11-44b0-8945-4110d8f4d870",
+      "name": "id-estratega-board"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.column_values[0].value?.parseJson().personsAndTeams[0].id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        2304
+      ],
+      "id": "174be2a8-2e1d-4cbd-8479-5355a2870c44",
+      "name": "Get many rows3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $('get-item-crm1').item.json.column_values[1].value?.parseJson().personsAndTeams[0].id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1424,
+        2144
+      ],
+      "id": "a9725351-c756-490e-82e6-4d514455b82b",
+      "name": "get-team-users5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.column_values[13].text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "562ecf44-c367-4cc3-85f2-26b43dfc89e3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hay-cuenta"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "000ced64-9232-4861-92f7-097f0e72049f",
+                    "leftValue": "={{ $json.column_values[1].value }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hay-admin"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5314c853-04fd-4acc-b83b-41bd9871fb5c",
+                    "leftValue": "={{ $json.column_values[14].value?.parseJson().linkedPulseIds }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hay-estratega"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        2080
+      ],
+      "id": "23ba3e11-e43e-454d-800e-e2e6a312f032",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        2160
+      ],
+      "id": "281ee5a5-b130-431f-9685-f7b130a44673",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('data-entry').first().json.Id }}"
+            },
+            {
+              "fieldName": "doble-verificacion",
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2048,
+        2160
+      ],
+      "id": "bf6738c1-8c55-40ab-886f-61efc0776b95",
+      "name": "Update a row1",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        2160
+      ],
+      "id": "fe49a0b5-654c-40b4-bcfc-5726e0048a3c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('data-entry').first().json.Id }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('get-item-crm1').first().json.column_values[13].text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        2000
+      ],
+      "id": "e813bb6a-9efa-4c0d-b2a3-35a09b18846f",
+      "name": "update-id-cuenta",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/c2c88wzry5od96o/records/{{ $('data-entry').first().json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        2144
+      ],
+      "id": "e5dc81ea-1079-4273-8be7-24f38aeefe63",
+      "name": "update-admin",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $('data-entry').first().json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        2304
+      ],
+      "id": "ea813744-0d1c-46c4-9796-0b949d313bdf",
+      "name": "update-traffiker",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        2144
+      ],
+      "id": "416ccec4-ea81-4924-bf0a-c230d14decfb",
+      "name": "get-item-crm",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        2304
+      ],
+      "id": "f09b5f99-45e5-4426-9b82-6cfb088616fc",
+      "name": "get-item-asignacion",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json['ID-monday'] }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        800,
+        2080
+      ],
+      "id": "21b8a264-bc7e-40d4-9c25-588fe1818abf",
+      "name": "get-item-crm1",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "(doble-verificacion,is,false)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        288,
+        2080
+      ],
+      "id": "d44027a3-a4e8-47cd-b940-ea8e61970977",
+      "name": "get-all-false-rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        464,
+        2080
+      ],
+      "id": "a7d138e3-9c1e-454b-b241-d289246ac6f1",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        2160
+      ],
+      "id": "5b585cb0-ccfa-4318-a1af-99f91102cb12"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        2080
+      ],
+      "id": "d162443b-0aed-4e6a-875c-33288ab0d3b1",
+      "name": "data-entry"
+    },
+    {
+      "parameters": {
+        "content": "## Doble verificacion",
+        "height": 560,
+        "width": 2340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        1952
+      ],
+      "id": "4e8129ab-77e4-4e76-a71b-2eb221c630ee",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "30cbbaf8-d05b-467c-8a7e-d54291e6d793",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        2736
+      ],
+      "id": "b0225dd6-4594-4ca6-ac15-758bacf8643c",
+      "name": "Webhook2",
+      "webhookId": "30cbbaf8-d05b-467c-8a7e-d54291e6d793"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.event.columnId }}",
+                    "rightValue": "text_mksx2nnx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "713f4646-6a26-420d-8b73-ec734199a0c6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID-cuenta-publicitaria"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "58fb7a26-d6ea-45e8-ae27-f5e1e73a4748",
+                    "leftValue": "={{ $json.body.event.columnTitle }}",
+                    "rightValue": "Estratega",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Estratega"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "96a03ea0-b1aa-4605-8461-54275234301e",
+                    "leftValue": "={{ $json.body.event.columnTitle }}",
+                    "rightValue": "Asignación de Estrategas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Asignación de Estrategas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a2a93b12-f4e9-4be8-ad72-5abab5bed99a",
+                    "leftValue": "={{ $json.body.event.type }}",
+                    "rightValue": "create_pulse",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Nuevo miembro"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "876eb863-de02-42b4-aecf-70dde4616d4f",
+                    "leftValue": "={{ $json.body.event.columnId }}",
+                    "rightValue": "multiple_person_mkv04fa3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Persona"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "be4e76c9-6f13-42d1-9989-7e9e072a1fd7",
+                    "leftValue": "={{ $json.body.event.columnId }}",
+                    "rightValue": "text_mktwg0h3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "slack"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fa4e8ea2-fda2-405d-a032-de7258a1186b",
+                    "leftValue": "={{ $json.body.event.type }}",
+                    "rightValue": "update_name",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "nombre"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5751e7c-3894-4e59-8824-88503f8e9ee8",
+                    "leftValue": "={{ $json.body.event.type }}",
+                    "rightValue": "delete_pulse",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "borrar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b6c3a913-1856-4efc-8105-96ce17089e38",
+                    "leftValue": "={{ $json.body.event.columnId }}",
+                    "rightValue": "contact_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "65c7490a-29f0-443b-b30a-087386f44937",
+                    "leftValue": "={{ $json.body.event.columnId }}",
+                    "rightValue": "contact_phone",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "phone"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        128,
+        2688
+      ],
+      "id": "8e267f7d-c903-49b5-80d8-29f3c04c7c3a",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        992,
+        2592
+      ],
+      "id": "dccc3a78-7099-451e-80ed-e109ba233cbd",
+      "name": "Get many rows2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-cuenta-publicitaria",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.value }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1168,
+        2592
+      ],
+      "id": "df565273-9e84-47b8-81e3-e0516f5faa1d",
+      "name": "Update a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.body.event.pulseId.toString() }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        992,
+        2800
+      ],
+      "id": "9a7b7c64-9596-4c05-96ea-7b7623f1ca46",
+      "name": "Get an item3",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "column_values",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        2800
+      ],
+      "id": "611cad80-e7dd-424f-b71b-b4ec0ce31195",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9278f129-f367-457a-91a9-2bed01312e84",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "board_relation_mktnvshm",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        2800
+      ],
+      "id": "bfaafc39-33f9-46f1-a2c1-a4bfd014ae0e",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $('void?').first().json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $('void?').first().json.traffiker.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1888,
+        2944
+      ],
+      "id": "48d97361-7f9e-4ddf-ad55-38f037da6944",
+      "name": "update-traffiker1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $('ge-clients-data').first().json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $('get-teams-data').item.json.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2128,
+        2784
+      ],
+      "id": "d1ad9a90-3377-4a9e-ba0e-5dc06f71a563",
+      "name": "update-traffiker2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.value?.parseJson().linkedPulseIds[0].linkedPulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        2800
+      ],
+      "id": "3f3b1b2f-68ff-4718-a0f9-7ddb7ec4dc33",
+      "name": "ge-clients-data",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ad8758f-94ef-4502-a5d8-5f5670ee83b5",
+              "leftValue": "={{ $('Webhook2').item.json.body.event.value }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        2800
+      ],
+      "id": "af16b8a7-355e-407a-8d1e-beabdde79b3f",
+      "name": "void?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $('Webhook2').first().json.body.event.value.personsAndTeams[0].id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1888,
+        2784
+      ],
+      "id": "6c48541c-5234-4af4-9c3a-57fbabfb4cbb",
+      "name": "get-teams-data",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "455187b7-6c78-419d-b2cf-11c91017369c",
+              "leftValue": "={{ $json.body.event.value.linkedPulseIds[0].linkedPulseId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        3088
+      ],
+      "id": "590ca32b-3472-407e-a197-2027c65c9a54",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "column_values",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        3008
+      ],
+      "id": "440f73fb-0e58-4e74-bc21-5faae754c4d4",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "388fb6ce-5803-4fa5-a9a4-88c1b6063b50",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "person",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        3008
+      ],
+      "id": "027568c3-1bfa-4390-921e-2cc4d0c000c8",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "limit": 1,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.value?.parseJson().personsAndTeams[0].id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1696,
+        3008
+      ],
+      "id": "968299fe-0b9e-4016-9f21-f28447cc2577",
+      "name": "get-traffiker-data",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1840,
+        3152
+      ],
+      "id": "ad737ebc-5dcf-4cd1-96c1-4bce2b65c19a",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        3152
+      ],
+      "id": "ed58244c-1ab3-4050-a4c4-7549ac797c98",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $json['client-id'] }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json['traffiker-id'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        3152
+      ],
+      "id": "81663467-2b10-4358-9fab-e23413871815",
+      "name": "update-traffiker3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "limit": 1,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        3168
+      ],
+      "id": "9c6f7195-c2a3-4c6d-9d85-9c478015ff65",
+      "name": "get-client-data",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "limit": 1,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        3312
+      ],
+      "id": "21998908-b4a2-4bfa-a5ef-36753d6addd3",
+      "name": "get-client-data1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/links/ct33f49i8som5rx/records/{{ $json.Id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Id",
+              "value": "={{ $json.traffiker.Id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        3312
+      ],
+      "id": "a1a2238d-69f7-43ca-bc5d-ec142c236e4d",
+      "name": "delete-traffiker-link",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.body.event.value.linkedPulseIds[0].linkedPulseId.toString() }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        3008
+      ],
+      "id": "6ad1718a-40c8-4dd0-ae50-471213dc66c0",
+      "name": "get-trafikker-data",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d9b1bfe2-44d2-4f7d-850b-5c871fecf133",
+              "name": "traffiker-id",
+              "value": "={{ $json.data[0].Id }}",
+              "type": "string"
+            },
+            {
+              "id": "95509d07-f2b8-43a7-94bd-ef84049937bb",
+              "name": "client-id",
+              "value": "={{ $json.data[1].Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        3152
+      ],
+      "id": "8b516bb4-9911-4b6c-b61f-7102f2ad630b",
+      "name": "set-data-to-link"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\",\"PAUSED\",\"DELETED\",\"ARCHIVED\",\"IN_PROCESS\",\"WITH_ISSUES\"]}]"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "fields",
+              "value": "id,name,created_time,status,account_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        2592
+      ],
+      "id": "01b9bd1f-57bc-47d8-8687-a424196ecf68",
+      "name": "get-campaigns",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        2592
+      ],
+      "id": "a8a007cf-4fcc-4def-b480-3a19f37ca716",
+      "name": "split-in-separate-items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "256a02f3-6240-4768-a226-14e10284b612",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        2592
+      ],
+      "id": "ace91cbb-e936-4836-88ce-8df4899f75a2",
+      "name": "filter-for-levelup-campaign"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "created_time"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        2592
+      ],
+      "id": "9032322b-2381-4620-b8f8-f82aa672969f",
+      "name": "sort-first-historic-campaign"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Get many rows2').first().json.Id }}"
+            },
+            {
+              "fieldName": "=fecha-inicio-campaña",
+              "fieldValue": "={{ $('sort-first-historic-campaign').first().json.created_time.toDateTime().format('yyyy-MM-dd').toString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2208,
+        2592
+      ],
+      "id": "81a228b2-11bc-421f-ac52-d4cce27906d4",
+      "name": "update-created-campaign-date",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        1936
+      ],
+      "id": "53c8888a-d19e-4189-b351-59ef1348b4a1",
+      "name": "Edit Fields9"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\",\"PAUSED\",\"DELETED\",\"ARCHIVED\",\"IN_PROCESS\",\"WITH_ISSUES\"]}]"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "fields",
+              "value": "id,name,created_time,status,account_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        2000
+      ],
+      "id": "8e95e19d-4f9c-4514-986c-4bfb1b13b122",
+      "name": "get-campaigns1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        2000
+      ],
+      "id": "2f46e932-09b9-4245-9404-edc0f70510fd",
+      "name": "split-in-separate-items1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "256a02f3-6240-4768-a226-14e10284b612",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/(level up|levelup)/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        2000
+      ],
+      "id": "e56a4ad2-e5fd-4158-a519-cd178847beac",
+      "name": "filter-for-levelup-campaign1"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "created_time"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        2000
+      ],
+      "id": "b2ec79d5-dc3d-4925-b5a6-b7668212f071",
+      "name": "sort-first-historic-campaign1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('data-entry').first().json.Id }}"
+            },
+            {
+              "fieldName": "=fecha-inicio-campaña",
+              "fieldValue": "={{ $('sort-first-historic-campaign1').first().json.created_time.toDateTime().format('yyyy-MM-dd').toString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2256,
+        2000
+      ],
+      "id": "5a2198c0-ccbe-4580-8e3f-14c451389ec8",
+      "name": "update-created-campaign-date1",
+      "executeOnce": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "nombre",
+              "fieldValue": "={{ $json.body.event.pulseName }}"
+            },
+            {
+              "fieldName": "ID-columna-cumpleaños",
+              "fieldValue": "={{ $json.body.event.pulseId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        3552
+      ],
+      "id": "dd21f3ff-97f5-4fbd-b201-7c81271c5248",
+      "name": "Create a row4",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "21646a20-ce37-4ad5-a9d4-33d9468ccaf2",
+              "leftValue": "={{ $json.body.event.groupName }}",
+              "rightValue": "Cumpleañeros",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        3568
+      ],
+      "id": "41f9227a-ae87-475e-bf32-6e68f709d745",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "options": {
+          "where": "=(ID-columna-cumpleaños,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        832,
+        3728
+      ],
+      "id": "786fb3ec-72ce-47b5-b74c-f118037e430d",
+      "name": "Get many rows5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.personsAndTeams[0].id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1616,
+        3552
+      ],
+      "id": "632f67eb-578f-46f0-a7f0-818c2f4648b9",
+      "name": "Update a row2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "options": {
+          "where": "=(ID-columna-cumpleaños,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        832,
+        3888
+      ],
+      "id": "e399d257-5c23-49f4-b99c-f3b6c345e212",
+      "name": "Get many rows6",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-slack",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.value }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        3856
+      ],
+      "id": "21fe8238-1272-4cb4-ac63-0e2e731c7b21",
+      "name": "Update a row3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "options": {
+          "where": "=(ID-columna-cumpleaños,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        832,
+        4048
+      ],
+      "id": "b83330dd-c3eb-4db4-81b6-7de92520a836",
+      "name": "Get many rows7",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "nombre",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.name}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        4048
+      ],
+      "id": "2749a40f-e5cb-4e36-9041-0440017d2d41",
+      "name": "Update a row4",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "options": {
+          "where": "=(ID-columna-cumpleaños,eq,{{ $json.body.event.itemId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        832,
+        4208
+      ],
+      "id": "32c6cbff-8682-4dfe-a871-a7db16c449d9",
+      "name": "Get many rows8",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        4208
+      ],
+      "id": "bc51481d-d6c3-48e7-9290-211eb356900d",
+      "name": "Delete a row1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "getAll",
+        "boardId": "9347526990",
+        "groupId": "topics"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -320
+      ],
+      "id": "453adf05-503f-4957-9976-961621053ba2",
+      "name": "Get many items2",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        736,
+        -320
+      ],
+      "id": "bc3eebc4-0f78-4cfc-bebe-c5e39b4e1ea7",
+      "name": "Get many rows9",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Obtener los datos de entrada ---\nconst primerJson = $('Aggregate2').first().json['primer-json'];\nconst segundoJson = $input.first().json['segundo-json'];\n\n// --- 2. Crear un índice de búsqueda rápida a partir del segundo JSON ---\nconst idsSlackExistentes = new Set();\nconst nombresExistentes = new Set();\n\nfor (const item of segundoJson) {\n  if (item['ID-slack']) {\n    idsSlackExistentes.add(item['ID-slack']);\n  }\n  if (item.nombre) {\n    nombresExistentes.add(item.nombre);\n  }\n}\n\n// --- 3. Inicializar los arrays para las dos salidas ---\nconst itemsSinCoincidencia = []; // Para la primera salida (Output 0)\nconst itemsConCoincidencia = []; // Para la segunda salida (Output 1)\n\n// --- 4. Clasificar cada item del primer JSON ---\nfor (const itemPrimerJson of primerJson) {\n  \n  // Extraemos el nombre y el ID de Slack\n  const nombrePrimerJson = itemPrimerJson.name;\n  const columnaSlack = itemPrimerJson.column_values.find(col => col.id === 'text_mktwg0h3');\n  const idSlackPrimerJson = columnaSlack ? columnaSlack.text : null;\n  \n  // Verificamos si existe en el segundo JSON\n  const nombreExiste = nombresExistentes.has(nombrePrimerJson);\n  const idSlackExiste = idSlackPrimerJson ? idsSlackExistentes.has(idSlackPrimerJson) : false;\n\n  // Si hay alguna coincidencia (por nombre O por ID de Slack)...\n  if (nombreExiste || idSlackExiste) {\n    // ...lo añadimos a la lista de coincidencias.\n    itemsConCoincidencia.push(itemPrimerJson);\n  } else {\n    // ...de lo contrario, lo añadimos a la lista de NO coincidencias.\n    itemsSinCoincidencia.push(itemPrimerJson);\n  }\n}\n\n// --- 5. Devolver los dos resultados para las dos salidas ---\n// El primer objeto del array va a la primera salida, el segundo objeto a la segunda, y así sucesivamente.\nreturn [\n  {\n    json: {\n      // Este objeto JSON completo irá a la salida 0\n      items_sin_coincidencia: itemsSinCoincidencia\n    }\n  },\n  {\n    json: {\n      // Este objeto JSON completo irá a la salida 1\n      items_con_coincidencia: itemsConCoincidencia\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -320
+      ],
+      "id": "9568612b-0dc8-40ed-a454-c0d7da03c929",
+      "name": "Code2",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "primer-json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -320
+      ],
+      "id": "1fc01c8e-09f8-4721-96e1-8f5907b1f3a3",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "segundo-json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -320
+      ],
+      "id": "5076abb8-6210-460e-8bec-a5ebf1538d6e",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items_sin_coincidencia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        -432
+      ],
+      "id": "225856a7-2981-4db9-913b-ad925e11715d",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items_con_coincidencia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        -240
+      ],
+      "id": "3b388c6c-2c88-4c83-8ca4-73468a2e7c7d",
+      "name": "Split Out4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.column_values[0].value.parseJson().personsAndTeams[0].id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        -240
+      ],
+      "id": "3649bce1-5ff3-4f10-bb50-2e494b9b8ae5",
+      "name": "Get many rows10",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-columna-cumpleaños",
+              "fieldValue": "={{ $('Split Out4').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1856,
+        -240
+      ],
+      "id": "6695440a-9c6e-4231-bed1-4c08eff705ef",
+      "name": "Update a row5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "ID-columna-cumpleaños",
+              "fieldValue": "={{ $('Split Out1').item.json.id }}"
+            },
+            {
+              "fieldName": "nombre",
+              "fieldValue": "={{ $json.name }}"
+            },
+            {
+              "fieldName": "ID-slack",
+              "fieldValue": "={{ $json.column_values[3].text }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "={{ $json.column_values[0].value?.parseJson().personsAndTeams[0].id }}"
+            },
+            {
+              "fieldName": "email",
+              "fieldValue": "={{ $json.column_values[4].text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1664,
+        -432
+      ],
+      "id": "b5c8a2df-3016-4498-abf7-47d012b72886",
+      "name": "Create a row5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "094ffb85-bab8-4d96-b88a-b45fc19ad02e",
+              "leftValue": "={{ $('Switch1').item.json.body.event.value.personsAndTeams[0].id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        3728
+      ],
+      "id": "17c3929d-eb20-4dc9-b05a-967aedf3a27e",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-monday",
+              "fieldValue": "="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1616,
+        3712
+      ],
+      "id": "3ff03a9f-fe7f-4919-9d14-4f9b1a56c8e5",
+      "name": "Update a row6",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "735a401b-b43c-4839-9256-3f2d045a42f0",
+              "leftValue": "={{ $('Switch1').item.json.body.event.value.value }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        3888
+      ],
+      "id": "b2d2dc47-8744-4595-bd40-ec5394204b52",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "m0uib6kq4i1gelp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "ID-slack",
+              "fieldValue": "="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        4000
+      ],
+      "id": "4066cecf-5267-4225-a041-187be9dc70ca",
+      "name": "Update a row7",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1668c242-20eb-47e7-9831-6405741a218a",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        1600
+      ],
+      "id": "b62c7698-db67-4a7c-8dd2-0549e28e643c",
+      "name": "clientes-activos",
+      "webhookId": "1668c242-20eb-47e7-9831-6405741a218a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "be49b231-05f3-4333-b8bf-0c8ede57ed9b",
+              "leftValue": "={{ $json.body.event.groupId }}",
+              "rightValue": "grupo_nuevo__1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        3088
+      ],
+      "id": "944634ab-237d-472c-b70c-5800fd6fb016",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardGroup",
+        "operation": "getAll",
+        "boardId": "7784685790"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        1248
+      ],
+      "id": "61f17693-941c-466e-b742-65ab3c0c1022",
+      "name": "Get many board groups",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        848,
+        4384
+      ],
+      "id": "489850c8-a05e-4fa0-9614-d5c08a3af590",
+      "name": "Get many rows11",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "email",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        4352
+      ],
+      "id": "036dd85b-660b-42c9-aa16-4d5acd5121ae",
+      "name": "Update a row8",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "735a401b-b43c-4839-9256-3f2d045a42f0",
+              "leftValue": "={{ $('Switch1').item.json.body.event.value }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        4384
+      ],
+      "id": "05461d01-e53d-4a2c-a65a-73449968c50a",
+      "name": "If11"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "email",
+              "fieldValue": "="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        4496
+      ],
+      "id": "6a24e3dd-0e40-4ef6-9d15-70e1c4b1ef02",
+      "name": "Update a row9",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "options": {
+          "where": "=(ID-monday,eq,{{ $json.body.event.pulseId }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        848,
+        4688
+      ],
+      "id": "d4a8d0c2-5807-4088-910e-6609370db122",
+      "name": "Get many rows12",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "telefono",
+              "fieldValue": "={{ $('Switch1').item.json.body.event.value.phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        4656
+      ],
+      "id": "7d97b5b4-ee84-42a6-b9d9-d3e50fa13888",
+      "name": "Update a row10",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "735a401b-b43c-4839-9256-3f2d045a42f0",
+              "leftValue": "={{ $('Switch1').item.json.body.event.value.phone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        4688
+      ],
+      "id": "a2b8328f-3db8-4fe3-ad33-88ab5ea9b646",
+      "name": "If12"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "telefono",
+              "fieldValue": "0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        4800
+      ],
+      "id": "2c006651-63a2-4fe5-a6f4-56fbaf5aee6f",
+      "name": "Update a row11",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "clientes-activos",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        496,
+        1408
+      ],
+      "id": "92de07e1-2754-4d76-a8c4-02703da14148",
+      "name": "Redis2",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "data",
+        "key": "=clientes-activos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        64,
+        1408
+      ],
+      "id": "15168983-338c-423b-b7c4-ebf26b0c8543",
+      "name": "Redis4",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51897156-6cf1-4289-8bad-0db783780607",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        1408
+      ],
+      "id": "f1c6f59f-19cd-443b-8631-6e351b5b98cb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "- cliente-activos"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        1424
+      ],
+      "id": "643ac8ba-7515-4643-9c47-7ad953e66091",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get an item1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Get an item2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Create a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields8": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create a row3": {
+      "main": [
+        [
+          {
+            "node": "get-team-users2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get-industries1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-team-users2": {
+      "main": [
+        [
+          {
+            "node": "traffiker1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-industries1": {
+      "main": [
+        [
+          {
+            "node": "industry1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-team-users3": {
+      "main": [
+        [
+          {
+            "node": "admin1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "traffiker1": {
+      "main": [
+        [
+          {
+            "node": "get-team-users3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "industry1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "admin1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get-all-false-rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "id-estratega-board": {
+      "main": [
+        [
+          {
+            "node": "get-item-asignacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-team-users5": {
+      "main": [
+        [
+          {
+            "node": "update-admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows3": {
+      "main": [
+        [
+          {
+            "node": "update-traffiker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "update-id-cuenta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-item-crm",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "id-estratega-board",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-id-cuenta": {
+      "main": [
+        [
+          {
+            "node": "get-campaigns1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-admin": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "update-traffiker": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "get-item-crm": {
+      "main": [
+        [
+          {
+            "node": "get-team-users5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-item-asignacion": {
+      "main": [
+        [
+          {
+            "node": "Get many rows3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-item-crm1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-all-false-rows": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "data-entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data-entry": {
+      "main": [
+        [
+          {
+            "node": "get-item-crm1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Get many rows2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get an item3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows2": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item3": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "ge-clients-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ge-clients-data": {
+      "main": [
+        [
+          {
+            "node": "void?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void?": {
+      "main": [
+        [
+          {
+            "node": "get-teams-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "update-traffiker1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-teams-data": {
+      "main": [
+        [
+          {
+            "node": "update-traffiker2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "get-trafikker-data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get-client-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-client-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "get-traffiker-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-traffiker-data": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "set-data-to-link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-client-data": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "get-client-data1": {
+      "main": [
+        [
+          {
+            "node": "delete-traffiker-link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-trafikker-data": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data-to-link": {
+      "main": [
+        [
+          {
+            "node": "update-traffiker3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "get-campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-campaigns": {
+      "main": [
+        [
+          {
+            "node": "split-in-separate-items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-in-separate-items": {
+      "main": [
+        [
+          {
+            "node": "filter-for-levelup-campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-for-levelup-campaign": {
+      "main": [
+        [
+          {
+            "node": "sort-first-historic-campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sort-first-historic-campaign": {
+      "main": [
+        [
+          {
+            "node": "update-created-campaign-date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-campaigns1": {
+      "main": [
+        [
+          {
+            "node": "split-in-separate-items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-in-separate-items1": {
+      "main": [
+        [
+          {
+            "node": "filter-for-levelup-campaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter-for-levelup-campaign1": {
+      "main": [
+        [
+          {
+            "node": "sort-first-historic-campaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sort-first-historic-campaign1": {
+      "main": [
+        [
+          {
+            "node": "update-created-campaign-date1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-created-campaign-date1": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Create a row4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows5": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows6": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows7": {
+      "main": [
+        [
+          {
+            "node": "Update a row4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows8": {
+      "main": [
+        [
+          {
+            "node": "Delete a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many items2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows9": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Get many rows9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Get many rows10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows10": {
+      "main": [
+        [
+          {
+            "node": "Update a row5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Create a row5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Update a row3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clientes-activos": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows11": {
+      "main": [
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "Update a row8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows12": {
+      "main": [
+        [
+          {
+            "node": "If12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If12": {
+      "main": [
+        [
+          {
+            "node": "Update a row10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis4": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-09-23T05:00:45.068-04:00",
+          "Readable date": "September 23rd 2025, 5:00:45 am",
+          "Readable time": "5:00:45 am",
+          "Day of week": "Tuesday",
+          "Year": "2025",
+          "Month": "September",
+          "Day of month": "23",
+          "Hour": "05",
+          "Minute": "00",
+          "Second": "45",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ],
+    "Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
+            "content-length": "516",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json",
+            "traceparent": "00-6c055bd1cf6f0b9a92330e62e2c1bd7f-528c343b2a4ba99d-01",
+            "x-forwarded-for": "185.237.4.5",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "185.237.4.5",
+            "x-request-start": "1759936686272"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": {
+              "app": "monday",
+              "type": "update_column_value",
+              "triggerTime": "2025-10-08T15:18:05.934Z",
+              "subscriptionId": 587455349,
+              "isRetry": false,
+              "userId": 78152845,
+              "originalTriggerUuid": null,
+              "boardId": 7784685790,
+              "groupId": "grupo_nuevo__1",
+              "pulseId": 18134081280,
+              "pulseName": "Prueba de agente",
+              "columnId": "contact_phone",
+              "columnType": "phone",
+              "columnTitle": "Teléfono",
+              "value": {
+                "phone": ""
+              },
+              "previousValue": {
+                "phone": "12345678"
+              },
+              "changedAt": 1759936685.4731638,
+              "isTopGroup": false,
+              "triggerUuid": "c1ad5e07e2e8c538ded2525f808befdc"
+            }
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/update-something",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "clientes-activos": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
+            "content-length": "442",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json",
+            "traceparent": "00-aefc134fc214276c38d986a8e3e70432-2fba107ec04ee221-01",
+            "x-forwarded-for": "185.237.4.4",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "185.237.4.4",
+            "x-request-start": "1761767214539"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": {
+              "app": "monday",
+              "type": "move_pulse_into_group",
+              "triggerTime": "2025-10-29T19:46:54.494Z",
+              "subscriptionId": 556408771,
+              "isRetry": false,
+              "userId": 70197488,
+              "originalTriggerUuid": null,
+              "boardId": 7784685790,
+              "pulseId": 18127663187,
+              "sourceGroupId": "group_mkqx55r8",
+              "destGroupId": "grupo_nuevo__1",
+              "destGroup": {
+                "id": "grupo_nuevo__1",
+                "title": "CLIENTE ACTIVO",
+                "color": "#00c875",
+                "is_top_group": false
+              },
+              "triggerUuid": "2bc21f841fcc6229a2f6e5193f066685"
+            }
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/actualizar-nocodb-clientes-activos-nuevos",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
+            "content-length": "441",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json",
+            "x-forwarded-for": "185.237.4.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "185.237.4.1",
+            "x-request-start": "1762361992186"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": {
+              "app": "monday",
+              "type": "move_pulse_into_group",
+              "triggerTime": "2025-11-05T16:59:52.123Z",
+              "subscriptionId": 587146272,
+              "isRetry": false,
+              "userId": -4,
+              "originalTriggerUuid": null,
+              "boardId": 7784685790,
+              "pulseId": 9644684059,
+              "sourceGroupId": "grupo_nuevo__1",
+              "destGroupId": "grupo_nuevo97524__1",
+              "destGroup": {
+                "id": "grupo_nuevo97524__1",
+                "title": "OFFBOARDED",
+                "color": "#66ccff",
+                "is_top_group": false
+              },
+              "triggerUuid": "5931ff9251f32ec22bb8345d2d4ca762"
+            }
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/actualizar-nocodb-clientes-activos",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "09cc4ede-e817-4a5d-974b-cfe36a076755",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 4,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "LWZ3ILy8CzZFj9fO",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

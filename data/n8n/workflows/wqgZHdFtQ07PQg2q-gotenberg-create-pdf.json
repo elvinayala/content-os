@@ -1,0 +1,305 @@
+{
+  "updatedAt": "2025-09-26T22:35:35.000Z",
+  "createdAt": "2025-09-26T22:33:14.631Z",
+  "id": "wqgZHdFtQ07PQg2q",
+  "name": "Gotenberg (Create PDF)",
+  "description": null,
+  "active": true,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "curlImport": "",
+        "method": "POST",
+        "url": "https://levelup-media-project-gotenberg.ksnxqw.easypanel.host/forms/chromium/convert/html",
+        "authentication": "none",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "={{ $('Start').item.json.empresa }} Reporte Del {{ $('Start').item.json.fecha_fin_formato }} (Últimos {{ $('Start').item.json.periodo_reporte }} días)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "form file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "parameterType": "formData",
+              "name": "scale",
+              "value": "1"
+            },
+            {
+              "parameterType": "formData",
+              "name": "metadata",
+              "value": "={\"Author\":\"IA2S\",\"Copyright\":\"IA2S\",\"CreateDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"Creator\":\"IA2S\",\"Keywords\":[],\"ModDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"PDFVersion\":1.7,\"Producer\":\"IA2S\",\"Subject\":\"PDF\",\"Title\":\"IA2S PDF\"}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 60000
+            }
+          }
+        },
+        "infoMessage": ""
+      },
+      "id": "aa1b55af-dfc7-48c9-8152-983eb1ee0de2",
+      "name": "Convert to PDF with Gotenberg",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3552,
+        1376
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "5eba4557-aef8-4815-ba1f-84f5c6045451",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        3344,
+        1376
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "fecha_fin_formato",
+              "type": "any"
+            },
+            {
+              "name": "periodo_reporte",
+              "type": "any"
+            },
+            {
+              "name": "empresa",
+              "type": "any"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF with Gotenberg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "123785e6-e698-435f-8017-a1a9353b83df",
+  "activeVersionId": "123785e6-e698-435f-8017-a1a9353b83df",
+  "versionCounter": 14,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "wqgZHdFtQ07PQg2q",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "123785e6-e698-435f-8017-a1a9353b83df",
+    "workflowId": "wqgZHdFtQ07PQg2q",
+    "nodes": [
+      {
+        "parameters": {
+          "curlImport": "",
+          "method": "POST",
+          "url": "https://levelup-media-project-gotenberg.ksnxqw.easypanel.host/forms/chromium/convert/html",
+          "authentication": "none",
+          "provideSslCertificates": false,
+          "sendQuery": false,
+          "sendHeaders": true,
+          "specifyHeaders": "keypair",
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Gotenberg-Output-Filename",
+                "value": "={{ $('Start').item.json.empresa }} Reporte Del {{ $('Start').item.json.fecha_fin_formato }} (Últimos {{ $('Start').item.json.periodo_reporte }} días)"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "form file",
+                "inputDataFieldName": "data"
+              },
+              {
+                "parameterType": "formData",
+                "name": "scale",
+                "value": "1"
+              },
+              {
+                "parameterType": "formData",
+                "name": "metadata",
+                "value": "={\"Author\":\"IA2S\",\"Copyright\":\"IA2S\",\"CreateDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"Creator\":\"IA2S\",\"Keywords\":[],\"ModDate\":\"{{ $now.format('yyyy-MM-dd') }}\",\"PDFVersion\":1.7,\"Producer\":\"IA2S\",\"Subject\":\"PDF\",\"Title\":\"IA2S PDF\"}"
+              }
+            ]
+          },
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 60000
+              }
+            }
+          },
+          "infoMessage": ""
+        },
+        "id": "aa1b55af-dfc7-48c9-8152-983eb1ee0de2",
+        "name": "Convert to PDF with Gotenberg",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          3552,
+          1376
+        ],
+        "typeVersion": 4.2,
+        "retryOnFail": true,
+        "waitBetweenTries": 5000
+      },
+      {
+        "id": "5eba4557-aef8-4815-ba1f-84f5c6045451",
+        "typeVersion": 1.1,
+        "name": "Start",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "position": [
+          3344,
+          1376
+        ],
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "fecha_fin_formato",
+                "type": "any"
+              },
+              {
+                "name": "periodo_reporte",
+                "type": "any"
+              },
+              {
+                "name": "empresa",
+                "type": "any"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Start": {
+        "main": [
+          [
+            {
+              "node": "Convert to PDF with Gotenberg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-09-26T22:35:35.000Z",
+        "id": 26,
+        "workflowId": "wqgZHdFtQ07PQg2q",
+        "versionId": "123785e6-e698-435f-8017-a1a9353b83df",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

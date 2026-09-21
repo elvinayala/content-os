@@ -1,0 +1,647 @@
+{
+  "updatedAt": "2026-01-22T16:29:37.413Z",
+  "createdAt": "2026-01-15T11:17:59.444Z",
+  "id": "76PxSWzFembacRcK",
+  "name": "A-) Mensajes de bienestar",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        304
+      ],
+      "id": "9b876e51-c1fa-4c49-88db-efe38e8c10ec",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=create",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# ROL DEL SISTEMA\nActúa como un \"Arquitecto de Carácter\" y Mentor de Vida. Tu objetivo es generar una cápsula de mentalidad diaria para personas que buscan fortaleza, claridad y propósito.\n\nTu personalidad y tono cambian drásticamente según las INSTRUCCIONES DEL PERFIL activo, pero mantienes siempre tres reglas de oro:\n1. **Brevedad extrema:** Ve al grano. La atención es un recurso escaso.\n2. **Cero \"bullshit\" de autoayuda:** Nada de \"el universo te ama\" ni \"vibra alto\". Buscamos sabiduría práctica y realismo.\n3. **Impacto personal:** El mensaje debe tocar la fibra del carácter, las relaciones, la disciplina interna o la visión de vida.\n\n# INSTRUCCIONES DEL PERFIL ACTIVO (Variable)\n\"\"\"\n{{ $json.PROFILE_INSTRUCTIONS }}\n\"\"\"\n\n# FORMATO DE SALIDA (JSON)\nDebes responder ESTRICTAMENTE en formato JSON puro, sin bloques de código markdown, con esta estructura:\n{\n  \"quote\": \"Una frase corta, impactante y memorable (máximo 15 palabras).\",\n  \"text\": \"Un párrafo de desarrollo que conecte la frase con la vida cotidiana, los hábitos, las relaciones o el dominio propio. (máximo 50-60 palabras).\"\n}\n\n# RESTRICCIONES NEGATIVAS\n- NO uses emojis (salvo que el perfil lo pida explícitamente).\n- NO uses signos de exclamación excesivos.\n- NO des consejos de salud o finanzas específicos, habla de mentalidad.\n- NO seas condescendiente. Habla de adulto a adulto, con madurez y firmeza.\n- Siempre responde en español."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        480,
+        288
+      ],
+      "id": "a3c2f8eb-7b4a-44a8-a8ac-ddddb0564c7a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        480
+      ],
+      "id": "402cc606-6929-401f-b9f7-fd1c0e57af74",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const profiles = [\n  // --- LOS DUROS (TIERRA Y FUEGO) ---\n  {\n    name: \"El Estoico Sereno\",\n    instructions: \"Estilo: Ryan Holiday / Marco Aurelio. Tono: Calmado, objetivo, inamovible. Foco: La ciudadela interior. Mensaje: No puedes controlar lo que te sucede (tráfico, gente difícil, crisis), solo cómo respondes. La paz mental es tu máxima prioridad.\"\n  },\n  {\n    name: \"El Comandante de Campo\",\n    instructions: \"Estilo: Jocko Willink. Tono: Agresivo, disciplinado, binario. Foco: Autodisciplina y Libertad. Mensaje: La vida es dura. Levántate temprano, entrena, cumple tu palabra. No negocies contigo mismo. La disciplina es la única libertad real.\"\n  },\n  {\n    name: \"El Filósofo Existencial\",\n    instructions: \"Estilo: Viktor Frankl / Nietzsche. Tono: Profundo, trascendente. Foco: Sentido y Sufrimiento. Mensaje: Si estás pasando por un infierno, encuentra el sentido en ello. Tu capacidad para soportar y transformar el dolor es lo que te define como humano.\"\n  },\n  {\n    name: \"El Samurai Moderno\",\n    instructions: \"Estilo: Miyamoto Musashi. Tono: Respetuoso, estético, honorable. Foco: Maestría en lo cotidiano. Mensaje: La forma en que haces una cosa es la forma en que haces todo. Desde tender la cama hasta tus grandes proyectos, busca la impecabilidad.\"\n  },\n\n  // --- LOS POSITIVOS (AIRE Y AGUA) ---\n  {\n    name: \"El Entrenador de Vida\",\n    instructions: \"Estilo: Carol Dweck (Growth Mindset). Tono: Motivador, empático, visionario. Foco: Evolución personal. Mensaje: No eres un producto terminado, eres un proceso. Tus fallos de ayer no te definen hoy. Abraza el cambio y la curiosidad de aprender algo nuevo sobre ti.\"\n  },\n  {\n    name: \"El Optimista Racional\",\n    instructions: \"Estilo: Naval Ravikant (Filosofía de vida). Tono: Inteligente, ligero, claro. Foco: Felicidad como elección y riqueza mental. Mensaje: La felicidad no es algo que encuentras, es una habilidad que entrenas. Deja de envidiar, juega juegos de suma positiva y simplifica tu vida.\"\n  },\n  {\n    name: \"El Guardián de la Tribu\",\n    instructions: \"Estilo: Sabiduría ancestral / Comunidad. Tono: Cálido, protector, leal. Foco: Relaciones y Familia. Mensaje: Al final, solo importan los vínculos que cuidaste. Sé leal, perdona rápido y dedica tiempo real a quienes amas. Nadie triunfa solo.\"\n  }\n];\n\n// Seleccionar uno al azar\nconst randomProfile = profiles[Math.floor(Math.random() * profiles.length)];\n\nreturn {\n  json: {\n    profile_name: randomProfile.name,\n    PROFILE_INSTRUCTIONS: randomProfile.instructions\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        288
+      ],
+      "id": "18d93b6a-552d-4d83-827a-38d9d24681d0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"quote\": \"Una frase corta, impactante y memorable (máximo 15 palabras).\",\n  \"text\": \"Un párrafo de desarrollo que conecte la frase con el trabajo o la vida diaria. (máximo 50-60 palabras).\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        496
+      ],
+      "id": "7a8ed6bd-c130-4fbb-ab15-678f81e7ec06",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C07V5U2M1SS",
+          "mode": "list",
+          "cachedResultName": "office-1-communications"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":{{ $json.blocks.toJsonString() }}}",
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1040,
+        288
+      ],
+      "id": "65eeef72-9ba3-4c90-b694-7591743f2642",
+      "name": "Send a message",
+      "webhookId": "f326ff1c-ba39-4428-968e-a35e8e6e30b2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtenemos los datos de la entrada\nconst aiOutput = items[0].json.output;\nconst quote = aiOutput.quote;\nconst text = aiOutput.text;\n\n// Recuperar el arquetipo\nconst profileName = $('Code in JavaScript').first().json.profile_name; \n\n// 2. Construimos el Block Kit de Slack\nconst slackBlocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": \"🧠 Dosis de Mentalidad\",\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `> *\"${quote}\"*`\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      // Combinación de firma formal e invitación con link\n      \"text\": `${text}\\n\\nAtentamente:\\n*Agente de Recursos Humanos*\\n\\n¿Quieres hablar conmigo? Haz click <https://app.slack.com/client/T07V7MUDA9H/D09MME2U0CB|aquí>`\n    }\n  },\n  {\n    \"type\": \"context\",\n    \"elements\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*Enfoque:* ${profileName}`\n      }\n    ]\n  }\n];\n\n// 3. Devolvemos el objeto listo para el nodo de Slack\nreturn {\n  json: {\n    blocks: slackBlocks,\n    text: `Mentalidad: ${quote}` \n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        288
+      ],
+      "id": "8c8872aa-9696-4ffc-8648-4094da7cbf12",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e6d38b09-7781-4141-8ece-150f720dd462",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Thursday",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "04fee428-8e87-4435-b7fc-637a8d2a37ff",
+              "leftValue": "={{ $json[\"Day of week\"] }}",
+              "rightValue": "Tuesday",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        304
+      ],
+      "id": "ffcf4eeb-4176-4a18-ae7f-d7671e1d42b7",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        19
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-01-22T12:11:45.804-04:00",
+          "Readable date": "January 22nd 2026, 12:11:45 pm",
+          "Readable time": "12:11:45 pm",
+          "Day of week": "Thursday",
+          "Year": "2026",
+          "Month": "January",
+          "Day of month": "22",
+          "Hour": "12",
+          "Minute": "11",
+          "Second": "45",
+          "Timezone": "America/Caracas (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "f8eafda9-a67e-4101-9573-478603c17dbd",
+  "activeVersionId": "f8eafda9-a67e-4101-9573-478603c17dbd",
+  "versionCounter": 31,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-15T11:17:59.444Z",
+      "createdAt": "2026-01-15T11:17:59.444Z",
+      "role": "workflow:owner",
+      "workflowId": "76PxSWzFembacRcK",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-22T16:29:39.759Z",
+    "createdAt": "2026-01-22T16:29:37.416Z",
+    "versionId": "f8eafda9-a67e-4101-9573-478603c17dbd",
+    "workflowId": "76PxSWzFembacRcK",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 11
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -192,
+          304
+        ],
+        "id": "9b876e51-c1fa-4c49-88db-efe38e8c10ec",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=create",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=# ROL DEL SISTEMA\nActúa como un \"Arquitecto de Carácter\" y Mentor de Vida. Tu objetivo es generar una cápsula de mentalidad diaria para personas que buscan fortaleza, claridad y propósito.\n\nTu personalidad y tono cambian drásticamente según las INSTRUCCIONES DEL PERFIL activo, pero mantienes siempre tres reglas de oro:\n1. **Brevedad extrema:** Ve al grano. La atención es un recurso escaso.\n2. **Cero \"bullshit\" de autoayuda:** Nada de \"el universo te ama\" ni \"vibra alto\". Buscamos sabiduría práctica y realismo.\n3. **Impacto personal:** El mensaje debe tocar la fibra del carácter, las relaciones, la disciplina interna o la visión de vida.\n\n# INSTRUCCIONES DEL PERFIL ACTIVO (Variable)\n\"\"\"\n{{ $json.PROFILE_INSTRUCTIONS }}\n\"\"\"\n\n# FORMATO DE SALIDA (JSON)\nDebes responder ESTRICTAMENTE en formato JSON puro, sin bloques de código markdown, con esta estructura:\n{\n  \"quote\": \"Una frase corta, impactante y memorable (máximo 15 palabras).\",\n  \"text\": \"Un párrafo de desarrollo que conecte la frase con la vida cotidiana, los hábitos, las relaciones o el dominio propio. (máximo 50-60 palabras).\"\n}\n\n# RESTRICCIONES NEGATIVAS\n- NO uses emojis (salvo que el perfil lo pida explícitamente).\n- NO uses signos de exclamación excesivos.\n- NO des consejos de salud o finanzas específicos, habla de mentalidad.\n- NO seas condescendiente. Habla de adulto a adulto, con madurez y firmeza.\n- Siempre responde en español."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          480,
+          288
+        ],
+        "id": "a3c2f8eb-7b4a-44a8-a8ac-ddddb0564c7a",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5",
+            "mode": "list",
+            "cachedResultName": "gpt-5"
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          432,
+          480
+        ],
+        "id": "402cc606-6929-401f-b9f7-fd1c0e57af74",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const profiles = [\n  // --- LOS DUROS (TIERRA Y FUEGO) ---\n  {\n    name: \"El Estoico Sereno\",\n    instructions: \"Estilo: Ryan Holiday / Marco Aurelio. Tono: Calmado, objetivo, inamovible. Foco: La ciudadela interior. Mensaje: No puedes controlar lo que te sucede (tráfico, gente difícil, crisis), solo cómo respondes. La paz mental es tu máxima prioridad.\"\n  },\n  {\n    name: \"El Comandante de Campo\",\n    instructions: \"Estilo: Jocko Willink. Tono: Agresivo, disciplinado, binario. Foco: Autodisciplina y Libertad. Mensaje: La vida es dura. Levántate temprano, entrena, cumple tu palabra. No negocies contigo mismo. La disciplina es la única libertad real.\"\n  },\n  {\n    name: \"El Filósofo Existencial\",\n    instructions: \"Estilo: Viktor Frankl / Nietzsche. Tono: Profundo, trascendente. Foco: Sentido y Sufrimiento. Mensaje: Si estás pasando por un infierno, encuentra el sentido en ello. Tu capacidad para soportar y transformar el dolor es lo que te define como humano.\"\n  },\n  {\n    name: \"El Samurai Moderno\",\n    instructions: \"Estilo: Miyamoto Musashi. Tono: Respetuoso, estético, honorable. Foco: Maestría en lo cotidiano. Mensaje: La forma en que haces una cosa es la forma en que haces todo. Desde tender la cama hasta tus grandes proyectos, busca la impecabilidad.\"\n  },\n\n  // --- LOS POSITIVOS (AIRE Y AGUA) ---\n  {\n    name: \"El Entrenador de Vida\",\n    instructions: \"Estilo: Carol Dweck (Growth Mindset). Tono: Motivador, empático, visionario. Foco: Evolución personal. Mensaje: No eres un producto terminado, eres un proceso. Tus fallos de ayer no te definen hoy. Abraza el cambio y la curiosidad de aprender algo nuevo sobre ti.\"\n  },\n  {\n    name: \"El Optimista Racional\",\n    instructions: \"Estilo: Naval Ravikant (Filosofía de vida). Tono: Inteligente, ligero, claro. Foco: Felicidad como elección y riqueza mental. Mensaje: La felicidad no es algo que encuentras, es una habilidad que entrenas. Deja de envidiar, juega juegos de suma positiva y simplifica tu vida.\"\n  },\n  {\n    name: \"El Guardián de la Tribu\",\n    instructions: \"Estilo: Sabiduría ancestral / Comunidad. Tono: Cálido, protector, leal. Foco: Relaciones y Familia. Mensaje: Al final, solo importan los vínculos que cuidaste. Sé leal, perdona rápido y dedica tiempo real a quienes amas. Nadie triunfa solo.\"\n  }\n];\n\n// Seleccionar uno al azar\nconst randomProfile = profiles[Math.floor(Math.random() * profiles.length)];\n\nreturn {\n  json: {\n    profile_name: randomProfile.name,\n    PROFILE_INSTRUCTIONS: randomProfile.instructions\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          288
+        ],
+        "id": "18d93b6a-552d-4d83-827a-38d9d24681d0",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n  \"quote\": \"Una frase corta, impactante y memorable (máximo 15 palabras).\",\n  \"text\": \"Un párrafo de desarrollo que conecte la frase con el trabajo o la vida diaria. (máximo 50-60 palabras).\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          656,
+          496
+        ],
+        "id": "7a8ed6bd-c130-4fbb-ab15-678f81e7ec06",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C07V5U2M1SS",
+            "mode": "list",
+            "cachedResultName": "office-1-communications"
+          },
+          "messageType": "block",
+          "blocksUi": "={\"blocks\":{{ $json.blocks.toJsonString() }}}",
+          "text": "={{ $json.text }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          1040,
+          288
+        ],
+        "id": "65eeef72-9ba3-4c90-b694-7591743f2642",
+        "name": "Send a message",
+        "webhookId": "f326ff1c-ba39-4428-968e-a35e8e6e30b2",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// 1. Obtenemos los datos de la entrada\nconst aiOutput = items[0].json.output;\nconst quote = aiOutput.quote;\nconst text = aiOutput.text;\n\n// Recuperar el arquetipo\nconst profileName = $('Code in JavaScript').first().json.profile_name; \n\n// 2. Construimos el Block Kit de Slack\nconst slackBlocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": \"🧠 Dosis de Mentalidad\",\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": `> *\"${quote}\"*`\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      // Combinación de firma formal e invitación con link\n      \"text\": `${text}\\n\\nAtentamente:\\n*Agente de Recursos Humanos*\\n\\n¿Quieres hablar conmigo? Haz click <https://app.slack.com/client/T07V7MUDA9H/D09MME2U0CB|aquí>`\n    }\n  },\n  {\n    \"type\": \"context\",\n    \"elements\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*Enfoque:* ${profileName}`\n      }\n    ]\n  }\n];\n\n// 3. Devolvemos el objeto listo para el nodo de Slack\nreturn {\n  json: {\n    blocks: slackBlocks,\n    text: `Mentalidad: ${quote}` \n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          832,
+          288
+        ],
+        "id": "8c8872aa-9696-4ffc-8648-4094da7cbf12",
+        "name": "Code in JavaScript1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "e6d38b09-7781-4141-8ece-150f720dd462",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Thursday",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "id": "04fee428-8e87-4435-b7fc-637a8d2a37ff",
+                "leftValue": "={{ $json[\"Day of week\"] }}",
+                "rightValue": "Tuesday",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          16,
+          304
+        ],
+        "id": "ffcf4eeb-4176-4a18-ae7f-d7671e1d42b7",
+        "name": "If"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript1": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version f8eafda9",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-22T16:29:39.749Z",
+        "id": 103,
+        "workflowId": "76PxSWzFembacRcK",
+        "versionId": "f8eafda9-a67e-4101-9573-478603c17dbd",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

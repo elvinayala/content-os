@@ -1,0 +1,509 @@
+{
+  "updatedAt": "2026-03-18T14:11:50.118Z",
+  "createdAt": "2025-09-04T02:41:53.716Z",
+  "id": "pNMZF1Fb4r6yHfGk",
+  "name": "A-) Recibir webhook chatwoot v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chatwoot",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "8c75609a-e79f-4e04-a554-d60612cea634",
+      "name": "Webhook",
+      "webhookId": "52d677dd-03cf-41fd-8af1-0d099e592176"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3ac6fc92-0ef6-4e49-ace8-a9310b99aac9",
+              "leftValue": "={{ $json.body.content_type }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "193168da-1b53-49f0-b74b-a7677320e026",
+              "leftValue": "={{ $json.body.conversation.messages[0].content }}",
+              "rightValue": "EvolutionAPI",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        16
+      ],
+      "id": "8b7bd7bd-36fe-4d8a-ba5d-06a52ec034fb",
+      "name": "is-text-messages?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        864,
+        -32
+      ],
+      "id": "4ab607ae-70e8-4a2e-9b96-d00a34b8194b",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        -80
+      ],
+      "id": "50b0e738-0cf4-48e0-89ce-f8b37c26d9ae",
+      "name": "Wait",
+      "webhookId": "f70e6e89-2d98-4fed-a1c2-9ceea3b7662a"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "is-text-messages?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-text-messages?": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "rest-client/2.1.0 (linux-musl x86_64) ruby/3.4.4p34",
+            "content-length": "2426",
+            "accept": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "ace249993801",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account": {
+              "id": 2,
+              "name": "LevelUp Media"
+            },
+            "additional_attributes": {},
+            "content_attributes": {},
+            "content_type": "text",
+            "content": "Si en algún momento deseas ampliar tu feedback o necesitas asistencia, por favor contáctanos. Que tengas un excelente día.",
+            "conversation": {
+              "additional_attributes": {},
+              "can_reply": true,
+              "channel": "Channel::Api",
+              "contact_inbox": {
+                "id": 326,
+                "contact_id": 253,
+                "inbox_id": 6,
+                "source_id": "a68fd23a-b6d7-4fc9-a3eb-64c81924a5f6",
+                "created_at": "2026-02-13T14:08:52.790Z",
+                "updated_at": "2026-02-13T14:08:52.790Z",
+                "hmac_verified": false,
+                "pubsub_token": "bsYYicLSwnFKpBf17fMiLEmC"
+              },
+              "id": 204,
+              "inbox_id": 6,
+              "messages": [
+                {
+                  "id": 7398,
+                  "content": "Si en algún momento deseas ampliar tu feedback o necesitas asistencia, por favor contáctanos. Que tengas un excelente día.",
+                  "account_id": 2,
+                  "inbox_id": 6,
+                  "conversation_id": 204,
+                  "message_type": 1,
+                  "created_at": 1773843029,
+                  "updated_at": "2026-03-18T14:10:30.637Z",
+                  "private": false,
+                  "status": "read",
+                  "source_id": null,
+                  "content_type": "text",
+                  "content_attributes": {},
+                  "sender_type": "AgentBot",
+                  "sender_id": 1,
+                  "external_source_ids": {},
+                  "additional_attributes": {},
+                  "processed_message_content": "Si en algún momento deseas ampliar tu feedback o necesitas asistencia, por favor contáctanos. Que tengas un excelente día.",
+                  "sentiment": {},
+                  "conversation": {
+                    "assignee_id": null,
+                    "unread_count": 2,
+                    "last_activity_at": 1773843029,
+                    "contact_inbox": {
+                      "source_id": "a68fd23a-b6d7-4fc9-a3eb-64c81924a5f6"
+                    }
+                  },
+                  "sender": {
+                    "id": 1,
+                    "name": "Onboarding",
+                    "avatar_url": "",
+                    "type": "agent_bot"
+                  }
+                }
+              ],
+              "labels": [],
+              "meta": {
+                "sender": {
+                  "additional_attributes": {},
+                  "custom_attributes": {
+                    "10dias": "false",
+                    "30dias": "false"
+                  },
+                  "email": "nixaleelopez13@gmail.com",
+                  "id": 253,
+                  "identifier": "17872413720@s.whatsapp.net",
+                  "name": "Nitza Sanchez Cartagena",
+                  "phone_number": "+17872413720",
+                  "thumbnail": "",
+                  "blocked": false,
+                  "type": "contact"
+                },
+                "assignee": null,
+                "team": null,
+                "hmac_verified": false
+              },
+              "status": "pending",
+              "custom_attributes": {},
+              "snoozed_until": null,
+              "unread_count": 2,
+              "first_reply_created_at": "2026-02-19T14:01:14.496Z",
+              "priority": null,
+              "waiting_since": 1773842963,
+              "agent_last_seen_at": 0,
+              "contact_last_seen_at": 1773843030,
+              "last_activity_at": 1773843029,
+              "timestamp": 1773843029,
+              "created_at": 1770991732,
+              "updated_at": 1773843030.6423097
+            },
+            "created_at": "2026-03-18T14:10:29.582Z",
+            "id": 7398,
+            "inbox": {
+              "id": 6,
+              "name": "Level-Up-Final"
+            },
+            "message_type": "outgoing",
+            "private": false,
+            "sender": {
+              "id": 1,
+              "name": "Onboarding",
+              "type": "agent_bot"
+            },
+            "source_id": null,
+            "event": "message_updated"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "5078100a-ad28-4a75-8ac1-49052212a4ad",
+  "activeVersionId": "5078100a-ad28-4a75-8ac1-49052212a4ad",
+  "versionCounter": 48,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "pNMZF1Fb4r6yHfGk",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-18T14:11:06.955Z",
+    "createdAt": "2026-03-18T14:11:04.500Z",
+    "versionId": "5078100a-ad28-4a75-8ac1-49052212a4ad",
+    "workflowId": "pNMZF1Fb4r6yHfGk",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "chatwoot",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          16
+        ],
+        "id": "8c75609a-e79f-4e04-a554-d60612cea634",
+        "name": "Webhook",
+        "webhookId": "52d677dd-03cf-41fd-8af1-0d099e592176"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3ac6fc92-0ef6-4e49-ace8-a9310b99aac9",
+                "leftValue": "={{ $json.body.content_type }}",
+                "rightValue": "text",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              },
+              {
+                "id": "193168da-1b53-49f0-b74b-a7677320e026",
+                "leftValue": "={{ $json.body.conversation.messages[0].content }}",
+                "rightValue": "EvolutionAPI",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          208,
+          16
+        ],
+        "id": "8b7bd7bd-36fe-4d8a-ba5d-06a52ec034fb",
+        "name": "is-text-messages?"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/chatwoot-limpio",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.body) }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          864,
+          -32
+        ],
+        "id": "4ab607ae-70e8-4a2e-9b96-d00a34b8194b",
+        "name": "HTTP Request",
+        "retryOnFail": true,
+        "waitBetweenTries": 2000
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          416,
+          -80
+        ],
+        "id": "50b0e738-0cf4-48e0-89ce-f8b37c26d9ae",
+        "name": "Wait",
+        "webhookId": "f70e6e89-2d98-4fed-a1c2-9ceea3b7662a"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "is-text-messages?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "is-text-messages?": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 5078100a",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-18T14:11:06.950Z",
+        "id": 127,
+        "workflowId": "pNMZF1Fb4r6yHfGk",
+        "versionId": "5078100a-ad28-4a75-8ac1-49052212a4ad",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

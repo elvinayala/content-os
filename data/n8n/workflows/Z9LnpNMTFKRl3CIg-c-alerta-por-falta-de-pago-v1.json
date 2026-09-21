@@ -1,0 +1,1487 @@
+{
+  "updatedAt": "2026-03-24T15:15:59.155Z",
+  "createdAt": "2025-09-10T19:10:58.448Z",
+  "id": "Z9LnpNMTFKRl3CIg",
+  "name": "C-) Alerta por falta de pago v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1152,
+        -80
+      ],
+      "id": "490b2931-29bf-40dd-97dd-22ba5d8ef2d9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        -80
+      ],
+      "id": "cfb74d1b-33b0-407c-adc8-3f6a2147ec63",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -736,
+        -48
+      ],
+      "id": "0038a6e6-5c38-4e23-be09-da1bbcc46ef4",
+      "name": "8am"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e8f9eb5c-5598-471a-ba7a-019f366f1375",
+              "leftValue": "={{ $('8am').item.json[\"Day of week\"] }}",
+              "rightValue": "Saturday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "a8eda15b-57bb-4d67-b625-a37643aa0f3d",
+              "leftValue": "={{ $('8am').item.json[\"Day of week\"] }}",
+              "rightValue": "Sunday",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -48
+      ],
+      "id": "1c736b38-79f1-419f-be06-dd7dc2048e02",
+      "name": "Weekday"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        176,
+        -48
+      ],
+      "id": "2ae05965-388c-44d6-94df-b39555db5d56",
+      "name": "get-all-clients",
+      "retryOnFail": true,
+      "waitBetweenTries": 2500,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}?fields=account_status,disable_reason,balance,funding_source,funding_source_details,spend_cap",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        -48
+      ],
+      "id": "e599e431-1e29-4d40-be8f-3333380c9e37",
+      "name": "get-accounts-status",
+      "retryOnFail": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "10d88c46-3515-4424-97af-2eb43c8a0d32",
+              "leftValue": "={{ $json.account_status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -48
+      ],
+      "id": "ee5abd69-e91d-441c-9bd0-d6efb5c794fd",
+      "name": "there-a-problem?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {
+          "where": "=(ID-cuenta-publicitaria,eq,{{ $json.id.split('_')[1] }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        896,
+        -192
+      ],
+      "id": "af08a82a-87a1-4397-912a-9e6b1a902edb",
+      "name": "get-clients-data",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const combinedData = items[0].json.data;\n\nif (!combinedData || combinedData.length === 0) {\n  return [];\n}\n\n// ## 1. Mapear los datos para una búsqueda eficiente\nconst clientDataMap = new Map();\nconst metaAccounts = [];\n\nfor (const item of combinedData) {\n  if (item.empresa) {\n    clientDataMap.set(item['ID-cuenta-publicitaria'], item);\n  } else if (item.account_status) {\n    metaAccounts.push(item);\n  }\n}\n\n// Mapeo de los códigos de estado\nconst statusMap = {\n  1: { text: 'Activa', emoji: '🟢' },\n  2: { text: 'Desactivada', emoji: '🔴' },\n  3: { text: 'Por Pagar', emoji: '🟠' },\n  9: { text: 'En Período de Gracia', emoji: '🟡' },\n};\n\nconst outputItems = [];\n\n// ## 2. Procesar cada cuenta y generar un item de salida si hay problemas\nfor (const account of metaAccounts) {\n  const status = account.account_status;\n\n  if (status !== 1) {\n    const individualBlocks = [];\n    const accountId = account.id.replace('act_', '');\n    const clientInfo = clientDataMap.get(accountId);\n\n    const statusInfo = statusMap[account.account_status] || { text: `Desconocido (${account.account_status})`, emoji: '⚫' };\n    const balanceFormatted = (parseInt(account.balance) / 100).toFixed(2);\n\n    let titleBlock = `*${clientInfo ? clientInfo.nombre : 'Cliente No Identificado'}* | ${clientInfo ? clientInfo.empresa : ''}`;\n    let idBlock = `*ID de Cuenta:* \\`${accountId}\\``;\n    let detailsBlock = `*Estado:* ${statusInfo.text}\\n*Saldo Pendiente:* $${balanceFormatted} USD`;\n\n    // Construye el mensaje para esta cuenta\n    individualBlocks.push({\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🔴 PROBLEMAS CON EL PAGO 🔴\",\n        \"emoji\": true\n      }\n    });\n\n    individualBlocks.push({\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": `<!channel> <@U08U9777PUY>\\n\\n${titleBlock}\\n${idBlock}\\n\\n${detailsBlock}`\n      }\n    });\n\n    individualBlocks.push({ \"type\": \"divider\" });\n\n\n    // Añade el mensaje completo como un nuevo item al array de salida\n    outputItems.push({\n      json: {\n        text: `Alerta para ${clientInfo ? clientInfo.nombre : accountId}: ${statusInfo.text}`,\n        blocks: individualBlocks\n      }\n    });\n  }\n}\n\n// ## 3. Retornar el array de items\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        -80
+      ],
+      "id": "cd220480-84fb-4ad5-a409-1a875e634d68",
+      "name": "build-message"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09ENA29LKG",
+          "mode": "list",
+          "cachedResultName": "office-6-agente-campaña-problemas-pago"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\":{{ JSON.stringify($json.blocks) }}}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1696,
+        -80
+      ],
+      "id": "9ba873a6-2c67-4bea-a744-104e54029da9",
+      "name": "send-alert",
+      "webhookId": "e464aa3e-86e0-4877-9fd1-ddcf6fc7bddb",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "error-pago",
+        "messageData": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -208
+      ],
+      "id": "fb08f79a-52f9-45c3-9ebf-fae4bf214da5",
+      "name": "Redis2",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "data",
+        "key": "error-pago",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -192
+      ],
+      "id": "205ec76c-93c6-4618-9c32-b59b1698db76",
+      "name": "Redis4",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51897156-6cf1-4289-8bad-0db783780607",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -192
+      ],
+      "id": "47d19857-8531-460e-84e8-a86e838084af",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "error-pago"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        -80
+      ],
+      "id": "28f36b14-9ca0-4114-8eea-b4243dcef16d",
+      "name": "Redis5",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        256
+      ],
+      "id": "7f69f726-2805-4294-92f9-c575074720a1",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "chatMessage",
+        "chatId": {
+          "__rl": true,
+          "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+          "mode": "list",
+          "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+          "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+        },
+        "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+        "options": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        256
+      ],
+      "id": "93d788fe-2e2a-4a69-aa3c-c3e5a5c76732",
+      "name": "Create chat message",
+      "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "bQfmQjHop2MXmbIN",
+          "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0954DHQV99",
+          "mode": "list",
+          "cachedResultName": "monitoreo-agentes-ia"
+        },
+        "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "🤖"
+            }
+          },
+          "link_names": false,
+          "unfurl_links": false,
+          "unfurl_media": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -400,
+        256
+      ],
+      "id": "e25f6794-9517-4c6c-9e4c-f3790670241e",
+      "name": "Send a message1",
+      "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "error-pago"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        256
+      ],
+      "id": "c893883f-3cf6-48b9-a196-3b1d26f4ab61",
+      "name": "Redis6",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_774914158395576?fields=account_status,disable_reason,balance,funding_source,funding_source_details,spend_cap",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        192
+      ],
+      "id": "a101b522-37e6-46c2-8143-475e425ce90b",
+      "name": "get-accounts-status1",
+      "retryOnFail": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "build-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8am": {
+      "main": [
+        [
+          {
+            "node": "Weekday",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekday": {
+      "main": [
+        [
+          {
+            "node": "get-all-clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-all-clients": {
+      "main": [
+        [
+          {
+            "node": "get-accounts-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-accounts-status": {
+      "main": [
+        [
+          {
+            "node": "there-a-problem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "there-a-problem?": {
+      "main": [
+        [
+          {
+            "node": "get-clients-data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "get-clients-data": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-message": {
+      "main": [
+        [
+          {
+            "node": "send-alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send-alert": {
+      "main": [
+        []
+      ]
+    },
+    "Redis4": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis2": {
+      "main": [
+        []
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create chat message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create chat message": {
+      "main": [
+        [
+          {
+            "node": "Redis6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis6": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Puerto_Rico",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:8am": {
+      "recurrenceRules": []
+    },
+    "node:12pm": {
+      "recurrenceRules": []
+    },
+    "node:5pm": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "33030",
+            "url": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/workflow/LN08xR2hD3GGSEW8/executions/33030",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "\n<p>Try either:</p>\n<ol>\n  <li>Enabling 'Convert types where required'</li>\n  <li>Converting the first field to a string by adding <code>.toString()</code></li>\n</ol>\n\t\t\t",
+              "timestamp": 1763389359306,
+              "context": {
+                "itemIndex": 0
+              },
+              "functionality": "regular",
+              "name": "NodeOperationError",
+              "node": {
+                "parameters": {
+                  "conditions": {
+                    "options": {
+                      "caseSensitive": true,
+                      "leftValue": "",
+                      "typeValidation": "strict",
+                      "version": 2
+                    },
+                    "conditions": [
+                      {
+                        "id": "51897156-6cf1-4289-8bad-0db783780607",
+                        "leftValue": "={{ $json.data }}",
+                        "rightValue": "",
+                        "operator": {
+                          "type": "string",
+                          "operation": "notEmpty",
+                          "singleValue": true
+                        }
+                      }
+                    ],
+                    "combinator": "and"
+                  },
+                  "looseTypeValidation": false,
+                  "options": {}
+                },
+                "type": "n8n-nodes-base.if",
+                "typeVersion": 2.2,
+                "position": [
+                  224,
+                  144
+                ],
+                "id": "d2237c7d-5c31-4aab-98a8-b48f51f55008",
+                "name": "If3"
+              },
+              "messages": [],
+              "message": "Wrong type: '1' is an object but was expecting a string [condition 0, item 0]",
+              "stack": "NodeOperationError: Wrong type: '1' is an object but was expecting a string [condition 0, item 0]\n    at extractValue (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/extract-value.ts:211:9)\n    at ExecuteContext._getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/node-execution-context.ts:453:29)\n    at ExecuteContext.getNodeParameter (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/node-execution-context/execute-context.ts:126:9)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:96:18\n    at Array.forEach (<anonymous>)\n    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/If/V2/IfV2.node.ts:88:23)\n    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1212:32)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1582:38\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_0c275070fd0434c00ffd62213b2bcae4/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:2158:11"
+            },
+            "lastNodeExecuted": "If3",
+            "mode": "webhook"
+          },
+          "workflow": {
+            "id": "LN08xR2hD3GGSEW8",
+            "name": "A-) Trigger v1.1 safe"
+          }
+        }
+      }
+    ],
+    "8am": [
+      {
+        "json": {
+          "timestamp": "2026-03-22T08:00:30.016-04:00",
+          "Readable date": "March 22nd 2026, 8:00:30 am",
+          "Readable time": "8:00:30 am",
+          "Day of week": "Sunday",
+          "Year": "2026",
+          "Month": "March",
+          "Day of month": "22",
+          "Hour": "08",
+          "Minute": "00",
+          "Second": "30",
+          "Timezone": "America/Puerto_Rico (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "13bfa3a7-4633-4ed4-bea3-42074fc19562",
+  "activeVersionId": "13bfa3a7-4633-4ed4-bea3-42074fc19562",
+  "versionCounter": 36,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "Z9LnpNMTFKRl3CIg",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T15:16:01.361Z",
+    "createdAt": "2026-03-24T15:15:59.159Z",
+    "versionId": "13bfa3a7-4633-4ed4-bea3-42074fc19562",
+    "workflowId": "Z9LnpNMTFKRl3CIg",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1152,
+          -80
+        ],
+        "id": "490b2931-29bf-40dd-97dd-22ba5d8ef2d9",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1312,
+          -80
+        ],
+        "id": "cfb74d1b-33b0-407c-adc8-3f6a2147ec63",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 8
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -736,
+          -48
+        ],
+        "id": "0038a6e6-5c38-4e23-be09-da1bbcc46ef4",
+        "name": "8am"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e8f9eb5c-5598-471a-ba7a-019f366f1375",
+                "leftValue": "={{ $('8am').item.json[\"Day of week\"] }}",
+                "rightValue": "Saturday",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "a8eda15b-57bb-4d67-b625-a37643aa0f3d",
+                "leftValue": "={{ $('8am').item.json[\"Day of week\"] }}",
+                "rightValue": "Sunday",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          16,
+          -48
+        ],
+        "id": "1c736b38-79f1-419f-be06-dd7dc2048e02",
+        "name": "Weekday"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          176,
+          -48
+        ],
+        "id": "2ae05965-388c-44d6-94df-b39555db5d56",
+        "name": "get-all-clients",
+        "retryOnFail": true,
+        "waitBetweenTries": 2500,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json['ID-cuenta-publicitaria'] }}?fields=account_status,disable_reason,balance,funding_source,funding_source_details,spend_cap",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          384,
+          -48
+        ],
+        "id": "e599e431-1e29-4d40-be8f-3333380c9e37",
+        "name": "get-accounts-status",
+        "retryOnFail": true,
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "10d88c46-3515-4424-97af-2eb43c8a0d32",
+                "leftValue": "={{ $json.account_status }}",
+                "rightValue": 1,
+                "operator": {
+                  "type": "number",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          624,
+          -48
+        ],
+        "id": "ee5abd69-e91d-441c-9bd0-d6efb5c794fd",
+        "name": "there-a-problem?"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {
+            "where": "=(ID-cuenta-publicitaria,eq,{{ $json.id.split('_')[1] }})"
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          896,
+          -192
+        ],
+        "id": "af08a82a-87a1-4397-912a-9e6b1a902edb",
+        "name": "get-clients-data",
+        "retryOnFail": true,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const combinedData = items[0].json.data;\n\nif (!combinedData || combinedData.length === 0) {\n  return [];\n}\n\n// ## 1. Mapear los datos para una búsqueda eficiente\nconst clientDataMap = new Map();\nconst metaAccounts = [];\n\nfor (const item of combinedData) {\n  if (item.empresa) {\n    clientDataMap.set(item['ID-cuenta-publicitaria'], item);\n  } else if (item.account_status) {\n    metaAccounts.push(item);\n  }\n}\n\n// Mapeo de los códigos de estado\nconst statusMap = {\n  1: { text: 'Activa', emoji: '🟢' },\n  2: { text: 'Desactivada', emoji: '🔴' },\n  3: { text: 'Por Pagar', emoji: '🟠' },\n  9: { text: 'En Período de Gracia', emoji: '🟡' },\n};\n\nconst outputItems = [];\n\n// ## 2. Procesar cada cuenta y generar un item de salida si hay problemas\nfor (const account of metaAccounts) {\n  const status = account.account_status;\n\n  if (status !== 1) {\n    const individualBlocks = [];\n    const accountId = account.id.replace('act_', '');\n    const clientInfo = clientDataMap.get(accountId);\n\n    const statusInfo = statusMap[account.account_status] || { text: `Desconocido (${account.account_status})`, emoji: '⚫' };\n    const balanceFormatted = (parseInt(account.balance) / 100).toFixed(2);\n\n    let titleBlock = `*${clientInfo ? clientInfo.nombre : 'Cliente No Identificado'}* | ${clientInfo ? clientInfo.empresa : ''}`;\n    let idBlock = `*ID de Cuenta:* \\`${accountId}\\``;\n    let detailsBlock = `*Estado:* ${statusInfo.text}\\n*Saldo Pendiente:* $${balanceFormatted} USD`;\n\n    // Construye el mensaje para esta cuenta\n    individualBlocks.push({\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🔴 PROBLEMAS CON EL PAGO 🔴\",\n        \"emoji\": true\n      }\n    });\n\n    individualBlocks.push({\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": `<!channel> <@U08U9777PUY>\\n\\n${titleBlock}\\n${idBlock}\\n\\n${detailsBlock}`\n      }\n    });\n\n    individualBlocks.push({ \"type\": \"divider\" });\n\n\n    // Añade el mensaje completo como un nuevo item al array de salida\n    outputItems.push({\n      json: {\n        text: `Alerta para ${clientInfo ? clientInfo.nombre : accountId}: ${statusInfo.text}`,\n        blocks: individualBlocks\n      }\n    });\n  }\n}\n\n// ## 3. Retornar el array de items\nreturn outputItems;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1520,
+          -80
+        ],
+        "id": "cd220480-84fb-4ad5-a409-1a875e634d68",
+        "name": "build-message"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C09ENA29LKG",
+            "mode": "list",
+            "cachedResultName": "office-6-agente-campaña-problemas-pago"
+          },
+          "messageType": "block",
+          "blocksUi": "={\"blocks\":{{ JSON.stringify($json.blocks) }}}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1696,
+          -80
+        ],
+        "id": "9ba873a6-2c67-4bea-a744-104e54029da9",
+        "name": "send-alert",
+        "webhookId": "e464aa3e-86e0-4877-9fd1-ddcf6fc7bddb",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "error-pago",
+          "messageData": "1"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          -128,
+          -208
+        ],
+        "id": "fb08f79a-52f9-45c3-9ebf-fae4bf214da5",
+        "name": "Redis2",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "data",
+          "key": "error-pago",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          -576,
+          -192
+        ],
+        "id": "205ec76c-93c6-4618-9c32-b59b1698db76",
+        "name": "Redis4",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "51897156-6cf1-4289-8bad-0db783780607",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -352,
+          -192
+        ],
+        "id": "47d19857-8531-460e-84e8-a86e838084af",
+        "name": "If3"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "error-pago"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          1936,
+          -80
+        ],
+        "id": "28f36b14-9ca0-4114-8eea-b4243dcef16d",
+        "name": "Redis5",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -976,
+          256
+        ],
+        "id": "7f69f726-2805-4294-92f9-c575074720a1",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "resource": "chatMessage",
+          "chatId": {
+            "__rl": true,
+            "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
+            "mode": "list",
+            "cachedResultName": "Gestion de Incidentes PymesAI (group)",
+            "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
+          },
+          "message": "=----------------------------------------<br>\nSe encontró error en el siguiente flujo: <br>\nCliente: Level Up Media<br>\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}<br>\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}<br>\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}<br>\nDetalles del error:{{ $json.execution.error.message }}<br>\nEn el nodo: {{ $('Error Trigger').item.json.execution.error.node.name }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
+          "options": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.microsoftTeams",
+        "typeVersion": 2,
+        "position": [
+          -752,
+          256
+        ],
+        "id": "93d788fe-2e2a-4a69-aa3c-c3e5a5c76732",
+        "name": "Create chat message",
+        "webhookId": "4a12e281-70dd-41f5-9a6d-8196af727994",
+        "credentials": {
+          "microsoftTeamsOAuth2Api": {
+            "id": "bQfmQjHop2MXmbIN",
+            "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0954DHQV99",
+            "mode": "list",
+            "cachedResultName": "monitoreo-agentes-ia"
+          },
+          "text": "=----------------------------------------\nSe encontró error en el siguiente flujo: \nCliente: Level Up Media\nFlujo del error: {{ $('Error Trigger').item.json.execution.url }}\nTimestap: {{ $('Error Trigger').item.json.execution.error.timestamp }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $('Error Trigger').item.json.execution.error.message }}\n\n-------------------------------------------",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "botProfile": {
+              "imageValues": {
+                "profilePhotoType": "emoji",
+                "icon_emoji": "🤖"
+              }
+            },
+            "link_names": false,
+            "unfurl_links": false,
+            "unfurl_media": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          -400,
+          256
+        ],
+        "id": "e25f6794-9517-4c6c-9e4c-f3790670241e",
+        "name": "Send a message1",
+        "webhookId": "c663f709-9067-48a7-8c1d-af20022d8813",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "error-pago"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          -576,
+          256
+        ],
+        "id": "c893883f-3cf6-48b9-a196-3b1d26f4ab61",
+        "name": "Redis6",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_774914158395576?fields=account_status,disable_reason,balance,funding_source,funding_source_details,spend_cap",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          368,
+          192
+        ],
+        "id": "a101b522-37e6-46c2-8143-475e425ce90b",
+        "name": "get-accounts-status1",
+        "retryOnFail": true,
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "build-message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "8am": {
+        "main": [
+          [
+            {
+              "node": "Weekday",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Weekday": {
+        "main": [
+          [
+            {
+              "node": "get-all-clients",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-all-clients": {
+        "main": [
+          [
+            {
+              "node": "get-accounts-status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-accounts-status": {
+        "main": [
+          [
+            {
+              "node": "there-a-problem?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "there-a-problem?": {
+        "main": [
+          [
+            {
+              "node": "get-clients-data",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "get-clients-data": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "build-message": {
+        "main": [
+          [
+            {
+              "node": "send-alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "send-alert": {
+        "main": [
+          []
+        ]
+      },
+      "Redis4": {
+        "main": [
+          [
+            {
+              "node": "If3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If3": {
+        "main": [
+          [
+            {
+              "node": "Redis2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis2": {
+        "main": [
+          []
+        ]
+      },
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Create chat message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create chat message": {
+        "main": [
+          [
+            {
+              "node": "Redis6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis6": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 13bfa3a7",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-24T15:16:01.353Z",
+        "id": 133,
+        "workflowId": "Z9LnpNMTFKRl3CIg",
+        "versionId": "13bfa3a7-4633-4ed4-bea3-42074fc19562",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

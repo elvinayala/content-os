@@ -1,0 +1,5965 @@
+{
+  "updatedAt": "2026-01-07T08:19:02.426Z",
+  "createdAt": "2025-11-20T19:27:44.875Z",
+  "id": "WgDRwK7RgmzqezhK",
+  "name": "A-) Webhooks central v2 - devflow",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"clients\": {{ JSON.stringify($json.clients) }}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        -384
+      ],
+      "id": "dd51a3c0-3720-4e02-84ec-7b5ca0477284",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "clients",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -384
+      ],
+      "id": "55d162d6-d24b-4ec1-a4fe-428ba2804bb7",
+      "name": "Aggregate",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b57dbdcb-2f79-462d-b135-1229dce5b677",
+              "name": "id",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            },
+            {
+              "id": "61af7d6e-c49a-4f7b-ac08-267fb10b0520",
+              "name": "name",
+              "value": "={{ $json.empresa }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        -384
+      ],
+      "id": "f6a1d8c2-ed47-42da-a095-c2ca546d44e7",
+      "name": "Edit Fields",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "get_strategy_templates",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "516eff18-ffe7-4622-8e88-7176e9b4e2df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": " get_strategy_templates"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "83c9738e-29e8-4fc9-82a1-eba901044fed",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "get_clients",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_clients"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4ae1b306-c11f-4c0b-a0f2-3f512f6b41fa",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "get_interests_templates",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_interests_templates"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "980ccd42-fe54-4744-8cf2-41ea53100b3b",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "get_queue",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_queue"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ca640182-c5f4-40ce-ae78-0ab471c69367",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "save_strategy_template",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "save_strategy_template"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7897826a-9381-414d-bcc3-29599ef550a0",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "search_interests",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "search_interests"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d06c6103-12b9-44b5-9ff5-fd18434ccfab",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "save_interests_template",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "save_interests_template"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9baae770-3a4a-48d8-99a9-1e496ca1da9a",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "delete_interests_template",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "delete_interests_template"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "93357470-3b26-40c7-aba8-e71af4641476",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "delete_strategy_template",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "delete_strategy_template"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "70dbfb16-40e0-4976-87a6-09073ee9d80a",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "publish_campaign",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "publish_campaign"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6f79bd7a-0091-42ba-91c5-6513bd8db72c",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "verify_client_ids",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verify_client_ids"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c075d896-37c9-4029-a595-8f285f8fdde3",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "generate_copies",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "generate_copies"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "81f50e29-5ff9-4170-aab5-9359f1ac8048",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "get_campaign_requests",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_campaign_requests"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cab39650-2584-4f65-b2f1-2f03849f7c6c",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "campaign_request_action",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "campaign_request_action"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        -240
+      ],
+      "id": "9ddf91b5-0b4d-4298-ae7d-5a756e1c3a12",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dev",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1264,
+        -160
+      ],
+      "id": "4918b250-2251-4eba-a105-be5c6aefa566",
+      "name": "central",
+      "webhookId": "79ecb199-8dac-4c02-af38-d8db2f328d4f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6rO64iU0NO49Dtf6",
+          "name": "token-meta-creator"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"templateId\": \"{{$json.Id}}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        480
+      ],
+      "id": "43eb3235-faf9-4b31-bdcf-a11b8ffc820a",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "templates",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        816,
+        -608
+      ],
+      "id": "0374a7dd-b299-4177-b06b-79c277939c43",
+      "name": "Aggregate1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"templates\": {{ JSON.stringify($json.templates) }}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1024,
+        -608
+      ],
+      "id": "19d7d81c-1899-4aa8-88f1-34ee98b8de2c",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77871701-6a7f-4690-9d38-09baa1ec96e4",
+              "name": "templateName",
+              "value": "={{ $json.templateName }}",
+              "type": "string"
+            },
+            {
+              "id": "df86810a-fc01-47b9-8858-a7f6270320b8",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "5b3416d1-e9fb-415f-9950-ec251b5f25bd",
+              "name": "structure",
+              "value": "={{ $json.structure }}",
+              "type": "object"
+            },
+            {
+              "id": "653ec2b1-f0b2-4a27-8820-6989bdc4303b",
+              "name": "createdAt",
+              "value": "={{ $json.CreatedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1f826a-0271-4bf0-8a63-a65f262c2d26",
+              "name": "id",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        -608
+      ],
+      "id": "a0806f89-3125-4573-80f6-db68f91fd087",
+      "name": "Edit Fields2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        544,
+        -160
+      ],
+      "id": "13846b2e-80d8-4b9a-a35c-7d382eabf74e",
+      "name": "Split Out1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "audience_size_lower_bound",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -192
+      ],
+      "id": "9ed8e289-4d4b-45d8-9bd3-b8374e328b4a",
+      "name": "Sort1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -192
+      ],
+      "id": "77bc4545-bf03-4cc5-b5f9-f6f8bf43d312",
+      "name": "Aggregate3",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json.toJsonString()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1632,
+        -176
+      ],
+      "id": "6b8325c2-8e23-4d17-adea-3e1588994078",
+      "name": "Respond to Webhook5"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"templateId\": \"{{ $json.Id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        256
+      ],
+      "id": "ad6761e2-fbf8-4b1a-9ad9-40a12b927052",
+      "name": "Respond to Webhook6"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "templates",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        784,
+        64
+      ],
+      "id": "f79d5ba2-2ff5-4f4e-8410-f20d29827d3a",
+      "name": "Aggregate4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1248,
+        64
+      ],
+      "id": "b01cc38b-8fb9-46f4-9186-e204a4e9bc4c",
+      "name": "Respond to Webhook7"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mtzj3c60eg49twt",
+        "id": "={{ $json.body.templateId }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        336,
+        704
+      ],
+      "id": "253b2fd4-7d16-4ce7-b9b1-b3c7501f16db",
+      "name": "Delete a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        544,
+        704
+      ],
+      "id": "599235b4-c0ed-44c4-be6d-3817765001ed",
+      "name": "Respond to Webhook8"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mikt6ede5k9qm8i",
+        "id": "={{ $json.body.templateId }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        352,
+        896
+      ],
+      "id": "625c485f-ced9-413d-af3a-bb4c0d392467",
+      "name": "Delete a row1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        896
+      ],
+      "id": "84e33bfc-7776-4e3c-bf25-7556e8b25512",
+      "name": "Respond to Webhook9"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1648,
+        1408
+      ],
+      "id": "54e1e5ca-9922-4f5a-88fc-84d7f82ceed8",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.toJsonString() }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2224,
+        1488
+      ],
+      "id": "4c4a189e-86ab-49c8-b87f-465f69ade991",
+      "name": "Respond to Webhook10"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1232,
+        -800
+      ],
+      "id": "5c55b521-284a-49d2-98d5-23550a3343f8",
+      "name": "Respond to Webhook11"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "campaigns",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -800
+      ],
+      "id": "81bd1184-0ede-43c9-89fe-1197f23da497",
+      "name": "Aggregate2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77871701-6a7f-4690-9d38-09baa1ec96e4",
+              "name": "clientName",
+              "value": "={{ $json.clientName }}",
+              "type": "string"
+            },
+            {
+              "id": "df86810a-fc01-47b9-8858-a7f6270320b8",
+              "name": "submittedAt",
+              "value": "={{ $json.CreatedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "5b3416d1-e9fb-415f-9950-ec251b5f25bd",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            },
+            {
+              "id": "653ec2b1-f0b2-4a27-8820-6989bdc4303b",
+              "name": "submittedBy",
+              "value": "={{ $json.submittedBy }}",
+              "type": "string"
+            },
+            {
+              "id": "03e1ac25-1d3b-4003-aa31-6c69a680e1ad",
+              "name": "jobId",
+              "value": "={{ $json.jobId }}",
+              "type": "string"
+            },
+            {
+              "id": "6cf6369b-f089-4fcb-a10e-7ae73aad6224",
+              "name": "errorMessage",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            },
+            {
+              "id": "ce3bfd64-6266-483a-bbca-245221412183",
+              "name": "id",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -800
+      ],
+      "id": "0e6cfc9d-1402-43ba-a350-4e3cbd350656",
+      "name": "Edit Fields13",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wsmfSEQa0GYGHqjA",
+          "mode": "list",
+          "cachedResultName": "B-) Publicador de campañas v1 - devflow"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -1264
+      ],
+      "id": "8042c0f2-1837-425a-90a8-ffe6324b5caf",
+      "name": "publicador"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "61jM0xZxj4LvFEtX",
+          "mode": "list",
+          "cachedResultName": "C-) Creador de copy(s) v1 - devflow"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -1040
+      ],
+      "id": "9a1d68ca-b58d-428f-ab93-0296a465ea62",
+      "name": "creador de copies"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        624,
+        -1040
+      ],
+      "id": "f55bcb60-4739-4471-8e84-13bfc3b4c42a",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/act_{{ $json.body.clientData.adAccountId }}?fields=name",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        1408
+      ],
+      "id": "ed2081c9-1e74-4f65-ba16-8b2769cf4b25",
+      "name": "is-ad-account-valid?",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"adAccountResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.id }}\",\n    \"name\": \"{{ $json.name }}\"}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        1408
+      ],
+      "id": "223a1110-95df-4519-bbab-f7066b30cf7d",
+      "name": "format-data-success"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"adAccountResult\": {\n    \"valid\": false,\n    \"id\": \"act_{{ $json.body.clientData.adAccountId }}\",\n    \"name\": \"null\"},\n    \"error\": \"WITHOUT_PERMISSIONS\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1664
+      ],
+      "id": "dfdb9ea0-3280-4b95-9cab-804e26068c0c",
+      "name": "format-data-error"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $('Switch').item.json.body.clientData.pageId }}?fields=name",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        304,
+        1408
+      ],
+      "id": "1461cca0-524f-42f9-ae8d-3a75f295dd1c",
+      "name": "is-page-id-valid?",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"pageResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.id }}\",\n    \"name\": \"{{ $json.name }}\"}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        1408
+      ],
+      "id": "a543dc4d-a2d7-40ab-ba99-0dffd678eac0",
+      "name": "format-data-success1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"pageResult\": {\n    \"valid\": false,\n    \"id\": \"{{ $('Switch').item.json.body.clientData.pageId }}\",\n    \"name\": \"null\"},\n    \"error\": \"PAGE_NOT_FOUND\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        1648
+      ],
+      "id": "ea38c8e1-728a-4144-b298-1281922bbd01",
+      "name": "format-data-error1"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $json.pageResult.id }}?fields=instagram_business_account{name}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        1408
+      ],
+      "id": "05d725bd-b0c9-44d3-afb6-e071e64e626d",
+      "name": "is-ig-valid? (from_page_id)",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"instagramAccountResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.instagram_business_account.id }}\",\n    \"name\": \"{{ $json.instagram_business_account.name }}\"}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        1392
+      ],
+      "id": "72b3bf92-f403-4b51-9c32-43738567cfb3",
+      "name": "format-data-success2"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"instagramAccountResult\": {\n    \"valid\": false,\n    \"id\": \"{{ $('Switch').item.json.body.clientData.instagramAccountId }}\",\n    \"name\": \"null\"},\n    \"error\": \"NOT_CONNECTED\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1648
+      ],
+      "id": "1986d71f-3f4a-47c2-83ce-1f64853080e9",
+      "name": "format-data-error2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+              "name": "pageResult",
+              "value": "={{ $json.pageResult }}",
+              "type": "object"
+            },
+            {
+              "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+              "name": "adAccountResult",
+              "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        1648
+      ],
+      "id": "1458cdf8-4353-4879-8153-7a50731111b8",
+      "name": "account_no-page-no-ig"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5a782175-da80-4e18-982f-1c08ed68a74c",
+              "name": "instagramAccountResult",
+              "value": "={{ $json.instagramAccountResult }}",
+              "type": "object"
+            },
+            {
+              "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+              "name": "pageResult",
+              "value": "={{ $('format-data-success1').item.json.pageResult }}",
+              "type": "object"
+            },
+            {
+              "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+              "name": "adAccountResult",
+              "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        1392
+      ],
+      "id": "f012b444-e6ac-482c-98bd-60c319cbe4dd",
+      "name": "all-is-valid"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5a782175-da80-4e18-982f-1c08ed68a74c",
+              "name": "instagramAccountResult",
+              "value": "={{ $json.instagramAccountResult }}",
+              "type": "object"
+            },
+            {
+              "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+              "name": "pageResult",
+              "value": "={{ $('format-data-success1').item.json.pageResult }}",
+              "type": "object"
+            },
+            {
+              "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+              "name": "adAccountResult",
+              "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        1632
+      ],
+      "id": "a603e6ca-13d0-49fa-8282-a78528d24e41",
+      "name": "account_page_no-ig"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener los resultados de la validación del input del nodo.\nconst inputData = $input.first().json;\n\n// Inicializar la estructura de la respuesta.\nconst response = {\n  success: false,\n  overallStatus: 'failed',\n  message: '',\n  details: {}\n};\n\n// Contadores para determinar el estado general.\nlet validCount = 0;\nlet totalCount = 0;\n\n// --- 1. Procesar Ad Account ID ---\nif (inputData.adAccountResult) {\n  totalCount++;\n  const res = inputData.adAccountResult;\n  response.details.adAccountId = {\n    valid: res.valid,\n    message: res.valid ? \"Cuenta publicitaria válida y activa\" : (res.error ? `Error: ${res.error}` : \"La cuenta publicitaria no es válida\"),\n    accountId: res.id,\n    accountName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.adAccountId.error = res.error;\n  }\n  if (res.additionalInfo) {\n    response.details.adAccountId.additionalInfo = res.additionalInfo;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 2. Procesar Page ID ---\nif (inputData.pageResult) {\n  totalCount++;\n  const res = inputData.pageResult;\n  response.details.pageId = {\n    valid: res.valid,\n    message: res.valid ? \"Página de Facebook válida y accesible\" : (res.error ? `Error: ${res.error}` : \"La página de Facebook no es válida\"),\n    pageId: res.id,\n    pageName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.pageId.error = res.error;\n  }\n  if (res.additionalInfo) {\n    response.details.pageId.additionalInfo = res.additionalInfo;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 3. Procesar Instagram Account ID (si existe) ---\nif (inputData.instagramAccountResult) {\n  totalCount++;\n  const res = inputData.instagramAccountResult;\n  response.details.instagramAccountId = {\n    valid: res.valid,\n    message: res.valid ? \"Cuenta de Instagram vinculada y activa\" : (res.error ? `Error: ${res.error}` : \"La cuenta de Instagram no es válida\"),\n    accountId: res.id,\n    accountName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.instagramAccountId.error = res.error;\n  }\n  if (res.suggestion) {\n    response.details.instagramAccountId.suggestion = res.suggestion;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 4. Calcular el Estado General y el Mensaje Principal ---\nif (totalCount > 0) {\n  if (validCount === totalCount) {\n    response.overallStatus = 'success';\n    response.success = true;\n    response.message = 'Todos los IDs han sido verificados correctamente';\n  } else if (validCount > 0) {\n    response.overallStatus = 'partial';\n    response.success = true; // Aún se considera un éxito de la operación\n    response.message = 'Verificación parcial: algunos IDs requieren atención';\n  } else {\n    response.overallStatus = 'failed';\n    response.success = false;\n    response.message = 'Ninguno de los IDs proporcionados es válido';\n  }\n} else {\n    response.message = 'No se proporcionaron IDs para verificar.';\n}\n\n\n// --- 5. Añadir error global de la API de Meta (si existe) ---\nif (inputData.metaApiError) {\n  response.metaApiError = inputData.metaApiError;\n  response.success = false;\n  response.overallStatus = 'failed';\n  response.message = inputData.metaApiError.message || \"Error de autenticación con Meta API\";\n}\n\n// --- 6. Devolver el objeto JSON construido ---\nreturn { json: response };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1968,
+        1440
+      ],
+      "id": "ce6b3705-a950-40f4-b0a8-92994063ffe8",
+      "name": "final-format-data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24fbb968-ef28-4661-8dd5-c5a4a419fec0",
+              "name": "name",
+              "value": "={{ $json.body.templateName }}",
+              "type": "string"
+            },
+            {
+              "id": "bec51f33-9bf2-458e-88ab-7b0f44a94f63",
+              "name": "description",
+              "value": "={{ $json.body.description }}",
+              "type": "string"
+            },
+            {
+              "id": "3da6dc71-3be9-4c8d-9c80-b8c4a98b9123",
+              "name": "data",
+              "value": "={{ $json.body.structure }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        480
+      ],
+      "id": "5d478aae-b8ca-4aae-b07e-0555bda5b397",
+      "name": "format-data"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mtzj3c60eg49twt",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "templateName",
+              "fieldValue": "={{ $json.name }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.description }}"
+            },
+            {
+              "fieldName": "structure",
+              "fieldValue": "={{ $json.data }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        592,
+        480
+      ],
+      "id": "6a133b1e-dd6f-43a9-bbf1-8afed8142f7d",
+      "name": "save-template",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mikt6ede5k9qm8i",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "templateName",
+              "fieldValue": "={{ $json.body.templateName }}"
+            },
+            {
+              "fieldName": "interests",
+              "fieldValue": "={{ JSON.stringify($json.body.flexible_spec[0].interests) }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.body.description}}"
+            },
+            {
+              "fieldName": "acotados",
+              "fieldValue": "={{ $json.body.flexible_spec[1].interests.toJsonString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        368,
+        256
+      ],
+      "id": "4c7897a7-792c-4cb5-8442-3fb9dbb07654",
+      "name": "save-template1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mikt6ede5k9qm8i",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        368,
+        64
+      ],
+      "id": "5818aecc-c3c7-4bd8-9ba7-b63f6714b01f",
+      "name": "get-templates",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7491466c-529d-4962-9140-4eedebc487b9",
+              "name": "id",
+              "value": "={{ $json.Id }}",
+              "type": "string"
+            },
+            {
+              "id": "a299f094-8c46-48dc-b34b-525d8614b968",
+              "name": "templateName",
+              "value": "={{ $json.templateName }}",
+              "type": "string"
+            },
+            {
+              "id": "51164bb6-f315-468a-9781-0ed5aa188742",
+              "name": "interests",
+              "value": "={{ $json.interests?.parseJson() }}",
+              "type": "array"
+            },
+            {
+              "id": "a0c642a1-f1de-4aec-a076-e47a6db210f6",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "11dad985-d135-4ece-922f-1a6d54dfd50d",
+              "name": "createdAt",
+              "value": "={{ $json.CreatedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "3cd9b615-7b44-41bf-bc2e-30e8d5b8c837",
+              "name": "acotados",
+              "value": "={{ $json.acotados?.parseJson() }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        64
+      ],
+      "id": "f42ba0d2-e929-4ec1-82d8-6d4b2fa99984",
+      "name": "format-data1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// El input ('items') es un array que contiene un solo objeto.\n// Accedemos al array de templates que está en 'items[0].json.templates'.\nconst rawTemplateArray = items[0].json.templates;\n\n// Verificamos si el array existe para evitar errores.\nif (!rawTemplateArray || !Array.isArray(rawTemplateArray)) {\n  // Si no hay templates, devolvemos una estructura vacía.\n  return { json: { templates: [] } };\n}\n\n// Mapeamos sobre cada template en el array para transformarlo.\nconst transformedTemplates = rawTemplateArray.map(template => {\n  return {\n    id: template.id,\n    templateName: template.templateName,\n    description: template.description,\n    flexible_spec: [\n      {\n        // El primer segmento contiene la lista original de intereses.\n        interests: template.interests || []\n      },\n      {\n        // El segundo segmento ahora usa los intereses de acotación si existen\n        interests: template.acotados || []\n      }\n    ],\n    createdAt: template.createdAt,\n    // Asignamos createdAt a updatedAt como en el ejemplo anterior.\n    updatedAt: template.createdAt\n  };\n});\n\n// Devolvemos el resultado final envuelto en la estructura deseada,\n// coincidiendo con el formato de respuesta de tu API.\nreturn {\n  json: {\n    templates: transformedTemplates\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        64
+      ],
+      "id": "87d4ea50-ec55-463c-bfbd-e0ec4a6beaa9",
+      "name": "final-format-data1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v24.0/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "adinterest"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.body.keyword }}"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        -160
+      ],
+      "id": "0c22778c-deb9-49ec-9b78-c10249d610b2",
+      "name": "search-interest",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pyinwak5zvazh9h",
+        "table": "mom1ynk05ap3m1l",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        400,
+        -384
+      ],
+      "id": "a6b6885d-c9e8-41bb-9b31-b0e848b6f94b",
+      "name": "get-clients",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mtzj3c60eg49twt",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        400,
+        -608
+      ],
+      "id": "71b78eb8-f84a-4c43-9c59-5e94c3e37982",
+      "name": "get-templates1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "ppck6swsptpw07h",
+        "table": "ml5zjkmpkh9iwkx",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        400,
+        -800
+      ],
+      "id": "fe9dba80-8ef1-4441-a208-a98847cc9234",
+      "name": "get-logs",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/act_1933672073876053/adsets",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\n  \"name\": \"Validate\",\n\n  \"campaign_id\": \"120240799316600212\",\n\n  \"status\": \"ACTIVE\",\n\n  \"billing_event\": \"IMPRESSIONS\",\n\n  \"optimization_goal\": \"LINK_CLICKS\",\n\n  \"bid_strategy\": \"LOWEST_COST_WITHOUT_CAP\",\n\n  \"execution_options\": [\"validate_only\"],\n\n  \"targeting\": {\n\n    \"age_min\": 18,\n\n    \"age_max\": 65,\n\n    \"geo_locations\": {\n\n      \"custom_locations\":[{\"latitude\":18.221234501572816,\"longitude\":-66.62863346154643,\"radius\":12,\"distance_unit\":\"mile\"}]\n    \n    },\n\n    \"excluded_geo_locations\": {\n\n        \"custom_locations\": []\n\n    },\n\n    \"flexible_spec\":[{\"interests\":[{\"id\":\"{{ $json.id }}\"}]}]\n\n    }\n\n  }\n\n\n\n ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        -160
+      ],
+      "id": "c54716fd-44ba-4c65-84ad-6e1f0c087c59",
+      "name": "create-adset",
+      "alwaysOutputData": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Split Out1').item.json.toJsonString()}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        -192
+      ],
+      "id": "4189e011-eba7-4ecd-bb42-2698431c8759",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mqay6rta18lp139",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        352,
+        1072
+      ],
+      "id": "7d6b5954-b653-4943-bcf3-4bff599c9cfa",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        736,
+        1072
+      ],
+      "id": "bceee31c-8b12-482a-b91c-64e4a71d082e",
+      "name": "Respond to Webhook12"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "campaigns_requests",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        528,
+        1072
+      ],
+      "id": "13258990-bce6-4cb7-81be-07aa7ad568dc",
+      "name": "Aggregate5",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "submittedAt",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        832,
+        -800
+      ],
+      "id": "1c322fd6-c6ae-4ed3-b984-94167b1fb4ce",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e7d53459-89f2-4c1e-bb69-a251952d86cf",
+              "leftValue": "={{ $json.body.action_type }}",
+              "rightValue": "accept",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        -1776
+      ],
+      "id": "d3b07a23-3852-4641-a5eb-76285df97f7c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "ACTIVE"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        -1808
+      ],
+      "id": "fedc2e81-b3fb-40e4-99c1-ac0a7d310272",
+      "name": "HTTP Request",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -1824
+      ],
+      "id": "8bb7d5b7-6526-4fa3-bfe1-0d259769f30d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. OBTENCIÓN Y NORMALIZACIÓN DE DATOS\nconst rawInput = $input.first().json.campaign_id;\n\nlet idList = [];\n\n// Validación: Si es string, parseamos. Si es array, usamos directo.\nif (typeof rawInput === 'string') {\n  try {\n    // Convertimos \"[[\\\"123\\\"]]\" a un array real [[\"123\"]]\n    const parsed = JSON.parse(rawInput);\n    \n    // Usamos .flat() para convertir [[\"123\"]] en [\"123\"]\n    // Esto es vital porque tu input tiene doble anidación\n    idList = Array.isArray(parsed) ? parsed.flat() : [parsed];\n    \n  } catch (e) {\n    // Si no es un JSON válido, asumimos que es un ID suelto\n    idList = [rawInput];\n  }\n} else if (Array.isArray(rawInput)) {\n  // Si ya llega como array, aplanamos por seguridad\n  idList = rawInput.flat();\n} else {\n  // Fallback por si llega nulo o undefined\n  idList = rawInput ? [rawInput] : [];\n}\n\n// 2. RETORNO ITERADO\nreturn idList.map(id => {\n  return {\n    json: {\n      id: String(id).trim() // Limpieza final del ID\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -1824
+      ],
+      "id": "12142307-c557-4b60-bf7a-eda01ca1a8de",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mqay6rta18lp139",
+        "id": "={{ $json.body.request_id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        -1824
+      ],
+      "id": "c0317c34-5d38-41e0-aee8-e48ef45dc13d",
+      "name": "Get a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mqay6rta18lp139",
+        "id": "={{ $json.body.request_id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        -1600
+      ],
+      "id": "f74a8f7d-4b71-4df8-8668-18c7d36799b4",
+      "name": "Get a row1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. OBTENCIÓN Y NORMALIZACIÓN DE DATOS\nconst rawInput = $input.first().json.campaign_id;\n\nlet idList = [];\n\n// Validación: Si es string, parseamos. Si es array, usamos directo.\nif (typeof rawInput === 'string') {\n  try {\n    // Convertimos \"[[\\\"123\\\"]]\" a un array real [[\"123\"]]\n    const parsed = JSON.parse(rawInput);\n    \n    // Usamos .flat() para convertir [[\"123\"]] en [\"123\"]\n    // Esto es vital porque tu input tiene doble anidación\n    idList = Array.isArray(parsed) ? parsed.flat() : [parsed];\n    \n  } catch (e) {\n    // Si no es un JSON válido, asumimos que es un ID suelto\n    idList = [rawInput];\n  }\n} else if (Array.isArray(rawInput)) {\n  // Si ya llega como array, aplanamos por seguridad\n  idList = rawInput.flat();\n} else {\n  // Fallback por si llega nulo o undefined\n  idList = rawInput ? [rawInput] : [];\n}\n\n// 2. RETORNO ITERADO\nreturn idList.map(id => {\n  return {\n    json: {\n      id: String(id).trim() // Limpieza final del ID\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -1600
+      ],
+      "id": "9cba6d65-7aa8-4afc-8b87-c7b04e31c87d",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "ARCHIVED"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        -1568
+      ],
+      "id": "2315b19c-cec1-44c9-9861-4c84024775fe",
+      "name": "HTTP Request2",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -1584
+      ],
+      "id": "5b4567c0-7d54-4a63-910c-d442ab3fb4d7",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "ppck6swsptpw07h",
+        "table": "mqay6rta18lp139",
+        "id": "={{ $('Get a row').first().json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        928,
+        -1920
+      ],
+      "id": "c951426e-befa-425b-abe2-c730a05a3a3b",
+      "name": "Delete a row2",
+      "executeOnce": true,
+      "retryOnFail": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "central": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "get-templates1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-clients",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-templates",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-logs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "search-interest",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "save-template1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a row1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "publicador",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "is-ad-account-valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "creador de copies",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "create-adset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate4": {
+      "main": [
+        [
+          {
+            "node": "final-format-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "final-format-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields13": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "creador de copies": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-ad-account-valid?": {
+      "main": [
+        [
+          {
+            "node": "format-data-success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-data-error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-success": {
+      "main": [
+        [
+          {
+            "node": "is-page-id-valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-error": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "is-page-id-valid?": {
+      "main": [
+        [
+          {
+            "node": "format-data-success1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-data-error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-success1": {
+      "main": [
+        [
+          {
+            "node": "is-ig-valid? (from_page_id)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-error1": {
+      "main": [
+        [
+          {
+            "node": "account_no-page-no-ig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is-ig-valid? (from_page_id)": {
+      "main": [
+        [
+          {
+            "node": "format-data-success2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "format-data-error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-success2": {
+      "main": [
+        [
+          {
+            "node": "all-is-valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data-error2": {
+      "main": [
+        [
+          {
+            "node": "account_page_no-ig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "account_no-page-no-ig": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "all-is-valid": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "account_page_no-ig": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "final-format-data": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data": {
+      "main": [
+        [
+          {
+            "node": "save-template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-template": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-template1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-templates": {
+      "main": [
+        [
+          {
+            "node": "format-data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-data1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "final-format-data1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search-interest": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-clients": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-templates1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-logs": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-adset": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Sort1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate5": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Aggregate5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Delete a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Delete a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "central": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "node",
+            "content-length": "10242",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Bearer meta-campaign-webhook-2024-secret-key-secure",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "143.255.85.248",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "55eaedbb4168",
+            "x-real-ip": "143.255.85.248"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "action": "campaign_request_action",
+            "action_type": "accept",
+            "request_id": "9",
+            "campaign_body": {
+              "action": "publish_campaign",
+              "isManualClient": true,
+              "manualClientData": {
+                "adAccountId": "756025347601940",
+                "pageId": "756025347601940",
+                "instagramAccountId": "17841477875028893",
+                "verified": true
+              },
+              "campaigns": [
+                {
+                  "id": "campaign-1",
+                  "name": "Campaña 1",
+                  "objective": "OUTCOME_ENGAGEMENT",
+                  "optimizationGoal": "POST_ENGAGEMENT",
+                  "budgetType": "ABO",
+                  "budget": 2500,
+                  "adsets": [
+                    {
+                      "id": "adset-1-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "INTERESTS",
+                      "hasInterests": true,
+                      "budget": 1300,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.0061,
+                            "longitude": -66.606,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [
+                          {
+                            "latitude": 18.0599,
+                            "longitude": -66.5278,
+                            "radius": 3,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "flexible_spec": [
+                          {
+                            "interests": [
+                              {
+                                "id": "6003269553527",
+                                "name": "Deportes (deportes)",
+                                "audience_size_lower_bound": 1446967517,
+                                "audience_size_upper_bound": 1701633800,
+                                "path": [
+                                  "Intereses",
+                                  "Deportes (deportes)"
+                                ],
+                                "description": "",
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003450241842",
+                                "name": "Automovilismo (deportes)",
+                                "audience_size_lower_bound": 289278852,
+                                "audience_size_upper_bound": 340191930,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Automovilismo (deportes)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003402262239",
+                                "name": "eSports (videojuegos)",
+                                "audience_size_lower_bound": 41591352,
+                                "audience_size_upper_bound": 48911430,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "eSports (videojuegos)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003218188176",
+                                "name": "Remo",
+                                "audience_size_lower_bound": 34088035,
+                                "audience_size_upper_bound": 40087530,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Remo"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              }
+                            ]
+                          },
+                          {
+                            "interests": []
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "adset-1-2",
+                      "name": "Conjunto 2",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "budget": 1300,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.0061,
+                            "longitude": -66.606,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [
+                          {
+                            "latitude": 18.0599,
+                            "longitude": -66.5278,
+                            "radius": 3,
+                            "distance_unit": "mile"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "campaign-2",
+                  "name": "Campaña 2",
+                  "objective": "OUTCOME_AWARENESS",
+                  "optimizationGoal": "THRUPLAY",
+                  "budgetType": "CBO",
+                  "budget": 2500,
+                  "adsets": [
+                    {
+                      "id": "adset-2-1",
+                      "name": "Conjunto 1",
+                      "audienceType": "INTERESTS",
+                      "hasInterests": true,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.0061,
+                            "longitude": -66.606,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [
+                          {
+                            "latitude": 18.0599,
+                            "longitude": -66.5278,
+                            "radius": 3,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "flexible_spec": [
+                          {
+                            "interests": [
+                              {
+                                "id": "6003269553527",
+                                "name": "Deportes (deportes)",
+                                "audience_size_lower_bound": 1446967517,
+                                "audience_size_upper_bound": 1701633800,
+                                "path": [
+                                  "Intereses",
+                                  "Deportes (deportes)"
+                                ],
+                                "description": "",
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003450241842",
+                                "name": "Automovilismo (deportes)",
+                                "audience_size_lower_bound": 289278852,
+                                "audience_size_upper_bound": 340191930,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Automovilismo (deportes)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003402262239",
+                                "name": "eSports (videojuegos)",
+                                "audience_size_lower_bound": 41591352,
+                                "audience_size_upper_bound": 48911430,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "eSports (videojuegos)"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              },
+                              {
+                                "id": "6003218188176",
+                                "name": "Remo",
+                                "audience_size_lower_bound": 34088035,
+                                "audience_size_upper_bound": 40087530,
+                                "path": [
+                                  "Intereses",
+                                  "Intereses adicionales",
+                                  "Remo"
+                                ],
+                                "description": null,
+                                "topic": "Sports and outdoors"
+                              }
+                            ]
+                          },
+                          {
+                            "interests": []
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "adset-2-2",
+                      "name": "Conjunto 2",
+                      "audienceType": "ADVANTAGE+",
+                      "hasInterests": false,
+                      "targeting": {
+                        "age_min": 18,
+                        "age_max": 65,
+                        "genders": [],
+                        "custom_locations": [
+                          {
+                            "latitude": 18.0061,
+                            "longitude": -66.606,
+                            "radius": 12,
+                            "distance_unit": "mile"
+                          }
+                        ],
+                        "excluded_custom_locations": [
+                          {
+                            "latitude": 18.0599,
+                            "longitude": -66.5278,
+                            "radius": 3,
+                            "distance_unit": "mile"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "creatives": [
+                {
+                  "id": "creative-dup-ai-1",
+                  "referenceTitle": "IA: Servicios Digitales - Regístrate Ahora",
+                  "title": "Regístrate Ahora",
+                  "description": "Aprende a tu propio ritmo",
+                  "copyPrompt": {
+                    "copies": [
+                      {
+                        "size": "mid",
+                        "format": "BAB",
+                        "text": "Antes: ¿Te sientes frustrado con Servicio de backup automático en la nube? \\n\\nDespués: Imagina tener el control total y los resultados que siempre has deseado. \\n\\nPuente: Nuestra solución es el puente entre tu frustración actual y el éxito que mereces. Descubre cómo miles como tú han transformado su realidad."
+                      }
+                    ],
+                    "summary": {
+                      "total": 1,
+                      "bySize": {
+                        "small": 0,
+                        "mid": 1,
+                        "large": 0
+                      },
+                      "byFormat": {
+                        "AIDA": 0,
+                        "PAS": 0,
+                        "BAB": 1
+                      }
+                    }
+                  },
+                  "useDirectCopy": false,
+                  "directCopy": "",
+                  "shortDescription": "Aprende a tu propio ritmo",
+                  "cta": "LEARN_MORE",
+                  "ctaUrl": "https://alexmora.lat",
+                  "fileUrl": "https://levelup-media-project-minio.ksnxqw.easypanel.host/creatives/creative-dup-ai-1/1765464710011_1764702906257_10e34bb8-727b-4a9e-b241-7bf0879fb31a.mp4",
+                  "targeting": "global",
+                  "targetId": "global",
+                  "isGlobal": true,
+                  "campaignId": null,
+                  "adsetId": null
+                }
+              ],
+              "settings": {
+                "budget": 5100,
+                "totalAds": 1
+              },
+              "metadata": {
+                "createdAt": "2025-12-11T14:55:33.628Z",
+                "status": "pending",
+                "platform": "meta"
+              },
+              "user": {
+                "clerkId": "user_33Qj7bdw6kABFJexrqaetI5WW4L",
+                "userName": "Dev Test"
+              },
+              "strategy": {
+                "template": {
+                  "templateName": "dos",
+                  "description": "dos pa todo",
+                  "structure": {
+                    "campaigns": [
+                      {
+                        "id": "campaign-1",
+                        "name": "Campaña 1",
+                        "objective": "OUTCOME_ENGAGEMENT",
+                        "optimizationGoal": "POST_ENGAGEMENT",
+                        "budgetType": "ABO",
+                        "adsetsCount": 2,
+                        "adsets": [
+                          {
+                            "id": "adset-1-1",
+                            "name": "Conjunto 1",
+                            "audienceType": "INTERESTS",
+                            "hasInterests": true
+                          },
+                          {
+                            "id": "adset-1-2",
+                            "name": "Conjunto 2",
+                            "audienceType": "ADVANTAGE+",
+                            "hasInterests": false
+                          }
+                        ]
+                      },
+                      {
+                        "id": "campaign-2",
+                        "name": "Campaña 2",
+                        "objective": "OUTCOME_AWARENESS",
+                        "optimizationGoal": "THRUPLAY",
+                        "budgetType": "CBO",
+                        "adsetsCount": 2,
+                        "adsets": [
+                          {
+                            "id": "adset-2-1",
+                            "name": "Conjunto 1",
+                            "audienceType": "INTERESTS",
+                            "hasInterests": true
+                          },
+                          {
+                            "id": "adset-2-2",
+                            "name": "Conjunto 2",
+                            "audienceType": "ADVANTAGE+",
+                            "hasInterests": false
+                          }
+                        ]
+                      }
+                    ],
+                    "adsPerAdset": 1,
+                    "duplicateAds": {
+                      "count": 1,
+                      "scope": "global",
+                      "campaignIds": []
+                    }
+                  },
+                  "createdAt": "2025-12-11 14:51:26+00:00",
+                  "id": "23"
+                },
+                "campaigns": [
+                  {
+                    "id": "campaign-1",
+                    "name": "Campaña 1",
+                    "objective": "OUTCOME_ENGAGEMENT",
+                    "optimizationGoal": "POST_ENGAGEMENT",
+                    "budgetType": "ABO",
+                    "budget": 2500,
+                    "adsets": [
+                      {
+                        "id": "adset-1-1",
+                        "name": "Conjunto 1",
+                        "audienceType": "INTERESTS",
+                        "hasInterests": true,
+                        "budget": 1300,
+                        "targeting": {
+                          "age_min": 18,
+                          "age_max": 65,
+                          "genders": [],
+                          "custom_locations": [
+                            {
+                              "latitude": 18.0061,
+                              "longitude": -66.606,
+                              "radius": 12,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "excluded_custom_locations": [
+                            {
+                              "latitude": 18.0599,
+                              "longitude": -66.5278,
+                              "radius": 3,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "flexible_spec": [
+                            {
+                              "interests": [
+                                {
+                                  "id": "6003269553527",
+                                  "name": "Deportes (deportes)",
+                                  "audience_size_lower_bound": 1446967517,
+                                  "audience_size_upper_bound": 1701633800,
+                                  "path": [
+                                    "Intereses",
+                                    "Deportes (deportes)"
+                                  ],
+                                  "description": "",
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003450241842",
+                                  "name": "Automovilismo (deportes)",
+                                  "audience_size_lower_bound": 289278852,
+                                  "audience_size_upper_bound": 340191930,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "Automovilismo (deportes)"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003402262239",
+                                  "name": "eSports (videojuegos)",
+                                  "audience_size_lower_bound": 41591352,
+                                  "audience_size_upper_bound": 48911430,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "eSports (videojuegos)"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003218188176",
+                                  "name": "Remo",
+                                  "audience_size_lower_bound": 34088035,
+                                  "audience_size_upper_bound": 40087530,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "Remo"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                }
+                              ]
+                            },
+                            {
+                              "interests": []
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "adset-1-2",
+                        "name": "Conjunto 2",
+                        "audienceType": "ADVANTAGE+",
+                        "hasInterests": false,
+                        "budget": 1300,
+                        "targeting": {
+                          "age_min": 18,
+                          "age_max": 65,
+                          "genders": [],
+                          "custom_locations": [
+                            {
+                              "latitude": 18.0061,
+                              "longitude": -66.606,
+                              "radius": 12,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "excluded_custom_locations": [
+                            {
+                              "latitude": 18.0599,
+                              "longitude": -66.5278,
+                              "radius": 3,
+                              "distance_unit": "mile"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "campaign-2",
+                    "name": "Campaña 2",
+                    "objective": "OUTCOME_AWARENESS",
+                    "optimizationGoal": "THRUPLAY",
+                    "budgetType": "CBO",
+                    "budget": 2500,
+                    "adsets": [
+                      {
+                        "id": "adset-2-1",
+                        "name": "Conjunto 1",
+                        "audienceType": "INTERESTS",
+                        "hasInterests": true,
+                        "targeting": {
+                          "age_min": 18,
+                          "age_max": 65,
+                          "genders": [],
+                          "custom_locations": [
+                            {
+                              "latitude": 18.0061,
+                              "longitude": -66.606,
+                              "radius": 12,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "excluded_custom_locations": [
+                            {
+                              "latitude": 18.0599,
+                              "longitude": -66.5278,
+                              "radius": 3,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "flexible_spec": [
+                            {
+                              "interests": [
+                                {
+                                  "id": "6003269553527",
+                                  "name": "Deportes (deportes)",
+                                  "audience_size_lower_bound": 1446967517,
+                                  "audience_size_upper_bound": 1701633800,
+                                  "path": [
+                                    "Intereses",
+                                    "Deportes (deportes)"
+                                  ],
+                                  "description": "",
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003450241842",
+                                  "name": "Automovilismo (deportes)",
+                                  "audience_size_lower_bound": 289278852,
+                                  "audience_size_upper_bound": 340191930,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "Automovilismo (deportes)"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003402262239",
+                                  "name": "eSports (videojuegos)",
+                                  "audience_size_lower_bound": 41591352,
+                                  "audience_size_upper_bound": 48911430,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "eSports (videojuegos)"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                },
+                                {
+                                  "id": "6003218188176",
+                                  "name": "Remo",
+                                  "audience_size_lower_bound": 34088035,
+                                  "audience_size_upper_bound": 40087530,
+                                  "path": [
+                                    "Intereses",
+                                    "Intereses adicionales",
+                                    "Remo"
+                                  ],
+                                  "description": null,
+                                  "topic": "Sports and outdoors"
+                                }
+                              ]
+                            },
+                            {
+                              "interests": []
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "adset-2-2",
+                        "name": "Conjunto 2",
+                        "audienceType": "ADVANTAGE+",
+                        "hasInterests": false,
+                        "targeting": {
+                          "age_min": 18,
+                          "age_max": 65,
+                          "genders": [],
+                          "custom_locations": [
+                            {
+                              "latitude": 18.0061,
+                              "longitude": -66.606,
+                              "radius": 12,
+                              "distance_unit": "mile"
+                            }
+                          ],
+                          "excluded_custom_locations": [
+                            {
+                              "latitude": 18.0599,
+                              "longitude": -66.5278,
+                              "radius": 3,
+                              "distance_unit": "mile"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "templateInfo": {
+                "templateName": "dos",
+                "description": "dos pa todo"
+              },
+              "alert_message": "URGENTE Testinglum (1933672073876053): Revisión requerida en 'dos'. Publicado por: Dev Test.\nSe encontraron los siguientes errores bloqueantes:\nFallo de Presupuesto: El gasto proyectado ($1530.00) representa el 382.50% del presupuesto declarado ($400). Está fuera del rango permitido (8%-12%)."
+            },
+            "user": {
+              "clerkId": "user_33Qj7bdw6kABFJexrqaetI5WW4L",
+              "userName": "Dev Test"
+            }
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/dev",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "c78a52e4-3ea6-443e-916b-5f4df92c83e5",
+  "activeVersionId": "c78a52e4-3ea6-443e-916b-5f4df92c83e5",
+  "versionCounter": 34,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "WgDRwK7RgmzqezhK",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T15:42:17.461Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "c78a52e4-3ea6-443e-916b-5f4df92c83e5",
+    "workflowId": "WgDRwK7RgmzqezhK",
+    "nodes": [
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\"clients\": {{ JSON.stringify($json.clients) }}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          928,
+          -384
+        ],
+        "id": "dd51a3c0-3720-4e02-84ec-7b5ca0477284",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "clients",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          768,
+          -384
+        ],
+        "id": "55d162d6-d24b-4ec1-a4fe-428ba2804bb7",
+        "name": "Aggregate",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "b57dbdcb-2f79-462d-b135-1229dce5b677",
+                "name": "id",
+                "value": "={{ $json.Id }}",
+                "type": "string"
+              },
+              {
+                "id": "61af7d6e-c49a-4f7b-ac08-267fb10b0520",
+                "name": "name",
+                "value": "={{ $json.empresa }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          608,
+          -384
+        ],
+        "id": "f6a1d8c2-ed47-42da-a095-c2ca546d44e7",
+        "name": "Edit Fields",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "get_strategy_templates",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "516eff18-ffe7-4622-8e88-7176e9b4e2df"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": " get_strategy_templates"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "83c9738e-29e8-4fc9-82a1-eba901044fed",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "get_clients",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "get_clients"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "4ae1b306-c11f-4c0b-a0f2-3f512f6b41fa",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "get_interests_templates",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "get_interests_templates"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "980ccd42-fe54-4744-8cf2-41ea53100b3b",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "get_queue",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "get_queue"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "ca640182-c5f4-40ce-ae78-0ab471c69367",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "save_strategy_template",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "save_strategy_template"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "7897826a-9381-414d-bcc3-29599ef550a0",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "search_interests",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "search_interests"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "d06c6103-12b9-44b5-9ff5-fd18434ccfab",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "save_interests_template",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "save_interests_template"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "9baae770-3a4a-48d8-99a9-1e496ca1da9a",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "delete_interests_template",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "delete_interests_template"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "93357470-3b26-40c7-aba8-e71af4641476",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "delete_strategy_template",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "delete_strategy_template"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "70dbfb16-40e0-4976-87a6-09073ee9d80a",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "publish_campaign",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "publish_campaign"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "6f79bd7a-0091-42ba-91c5-6513bd8db72c",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "verify_client_ids",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "verify_client_ids"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "c075d896-37c9-4029-a595-8f285f8fdde3",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "generate_copies",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "generate_copies"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "81f50e29-5ff9-4170-aab5-9359f1ac8048",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "get_campaign_requests",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "get_campaign_requests"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "cab39650-2584-4f65-b2f1-2f03849f7c6c",
+                      "leftValue": "={{ $json.body.action }}",
+                      "rightValue": "campaign_request_action",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "campaign_request_action"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -944,
+          -240
+        ],
+        "id": "9ddf91b5-0b4d-4298-ae7d-5a756e1c3a12",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "dev",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -1264,
+          -160
+        ],
+        "id": "4918b250-2251-4eba-a105-be5c6aefa566",
+        "name": "central",
+        "webhookId": "79ecb199-8dac-4c02-af38-d8db2f328d4f",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "6rO64iU0NO49Dtf6",
+            "name": "token-meta-creator"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"status\": \"success\",\n  \"templateId\": \"{{$json.Id}}\"\n}",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          800,
+          480
+        ],
+        "id": "43eb3235-faf9-4b31-bdcf-a11b8ffc820a",
+        "name": "Respond to Webhook3"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "templates",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          816,
+          -608
+        ],
+        "id": "0374a7dd-b299-4177-b06b-79c277939c43",
+        "name": "Aggregate1",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"templates\": {{ JSON.stringify($json.templates) }}\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          1024,
+          -608
+        ],
+        "id": "19d7d81c-1899-4aa8-88f1-34ee98b8de2c",
+        "name": "Respond to Webhook4"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "77871701-6a7f-4690-9d38-09baa1ec96e4",
+                "name": "templateName",
+                "value": "={{ $json.templateName }}",
+                "type": "string"
+              },
+              {
+                "id": "df86810a-fc01-47b9-8858-a7f6270320b8",
+                "name": "description",
+                "value": "={{ $json.description }}",
+                "type": "string"
+              },
+              {
+                "id": "5b3416d1-e9fb-415f-9950-ec251b5f25bd",
+                "name": "structure",
+                "value": "={{ $json.structure }}",
+                "type": "object"
+              },
+              {
+                "id": "653ec2b1-f0b2-4a27-8820-6989bdc4303b",
+                "name": "createdAt",
+                "value": "={{ $json.CreatedAt }}",
+                "type": "string"
+              },
+              {
+                "id": "7a1f826a-0271-4bf0-8a63-a65f262c2d26",
+                "name": "id",
+                "value": "={{ $json.Id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          608,
+          -608
+        ],
+        "id": "a0806f89-3125-4573-80f6-db68f91fd087",
+        "name": "Edit Fields2",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          544,
+          -160
+        ],
+        "id": "13846b2e-80d8-4b9a-a35c-7d382eabf74e",
+        "name": "Split Out1",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "audience_size_lower_bound",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          1216,
+          -192
+        ],
+        "id": "9ed8e289-4d4b-45d8-9bd3-b8374e328b4a",
+        "name": "Sort1",
+        "alwaysOutputData": true,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1424,
+          -192
+        ],
+        "id": "77bc4545-bf03-4cc5-b5f9-f6f8bf43d312",
+        "name": "Aggregate3",
+        "alwaysOutputData": true,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{$json.toJsonString()\n}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          1632,
+          -176
+        ],
+        "id": "6b8325c2-8e23-4d17-adea-3e1588994078",
+        "name": "Respond to Webhook5"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"status\": \"success\",\n  \"templateId\": \"{{ $json.Id }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          560,
+          256
+        ],
+        "id": "ad6761e2-fbf8-4b1a-9ad9-40a12b927052",
+        "name": "Respond to Webhook6"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "templates",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          784,
+          64
+        ],
+        "id": "f79d5ba2-2ff5-4f4e-8410-f20d29827d3a",
+        "name": "Aggregate4",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          1248,
+          64
+        ],
+        "id": "b01cc38b-8fb9-46f4-9186-e204a4e9bc4c",
+        "name": "Respond to Webhook7"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "delete",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mtzj3c60eg49twt",
+          "id": "={{ $json.body.templateId }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          336,
+          704
+        ],
+        "id": "253b2fd4-7d16-4ce7-b9b1-b3c7501f16db",
+        "name": "Delete a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"status\": \"success\"\n}",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          544,
+          704
+        ],
+        "id": "599235b4-c0ed-44c4-be6d-3817765001ed",
+        "name": "Respond to Webhook8"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "delete",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mikt6ede5k9qm8i",
+          "id": "={{ $json.body.templateId }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          352,
+          896
+        ],
+        "id": "625c485f-ced9-413d-af3a-bb4c0d392467",
+        "name": "Delete a row1",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"status\": \"success\"\n}",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          560,
+          896
+        ],
+        "id": "84e33bfc-7776-4e3c-bf25-7556e8b25512",
+        "name": "Respond to Webhook9"
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1648,
+          1408
+        ],
+        "id": "54e1e5ca-9922-4f5a-88fc-84d7f82ceed8",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json.toJsonString() }}",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          2224,
+          1488
+        ],
+        "id": "4c4a189e-86ab-49c8-b87f-465f69ade991",
+        "name": "Respond to Webhook10"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          1232,
+          -800
+        ],
+        "id": "5c55b521-284a-49d2-98d5-23550a3343f8",
+        "name": "Respond to Webhook11"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "campaigns",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1024,
+          -800
+        ],
+        "id": "81bd1184-0ede-43c9-89fe-1197f23da497",
+        "name": "Aggregate2",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "77871701-6a7f-4690-9d38-09baa1ec96e4",
+                "name": "clientName",
+                "value": "={{ $json.clientName }}",
+                "type": "string"
+              },
+              {
+                "id": "df86810a-fc01-47b9-8858-a7f6270320b8",
+                "name": "submittedAt",
+                "value": "={{ $json.CreatedAt }}",
+                "type": "string"
+              },
+              {
+                "id": "5b3416d1-e9fb-415f-9950-ec251b5f25bd",
+                "name": "status",
+                "value": "={{ $json.status }}",
+                "type": "string"
+              },
+              {
+                "id": "653ec2b1-f0b2-4a27-8820-6989bdc4303b",
+                "name": "submittedBy",
+                "value": "={{ $json.submittedBy }}",
+                "type": "string"
+              },
+              {
+                "id": "03e1ac25-1d3b-4003-aa31-6c69a680e1ad",
+                "name": "jobId",
+                "value": "={{ $json.jobId }}",
+                "type": "string"
+              },
+              {
+                "id": "6cf6369b-f089-4fcb-a10e-7ae73aad6224",
+                "name": "errorMessage",
+                "value": "={{ $json.message }}",
+                "type": "string"
+              },
+              {
+                "id": "ce3bfd64-6266-483a-bbca-245221412183",
+                "name": "id",
+                "value": "={{ $json.Id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          624,
+          -800
+        ],
+        "id": "0e6cfc9d-1402-43ba-a350-4e3cbd350656",
+        "name": "Edit Fields13",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "wsmfSEQa0GYGHqjA",
+            "mode": "list",
+            "cachedResultName": "B-) Publicador de campañas v1 - devflow"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          416,
+          -1264
+        ],
+        "id": "8042c0f2-1837-425a-90a8-ffe6324b5caf",
+        "name": "publicador"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "61jM0xZxj4LvFEtX",
+            "mode": "list",
+            "cachedResultName": "C-) Creador de copy(s) v1 - devflow"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          416,
+          -1040
+        ],
+        "id": "9a1d68ca-b58d-428f-ab93-0296a465ea62",
+        "name": "creador de copies"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json.toJsonString() }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          624,
+          -1040
+        ],
+        "id": "f55bcb60-4739-4471-8e84-13bfc3b4c42a",
+        "name": "Respond to Webhook1"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v24.0/act_{{ $json.body.clientData.adAccountId }}?fields=name",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -128,
+          1408
+        ],
+        "id": "ed2081c9-1e74-4f65-ba16-8b2769cf4b25",
+        "name": "is-ad-account-valid?",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"adAccountResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.id }}\",\n    \"name\": \"{{ $json.name }}\"}\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          80,
+          1408
+        ],
+        "id": "223a1110-95df-4519-bbab-f7066b30cf7d",
+        "name": "format-data-success"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"adAccountResult\": {\n    \"valid\": false,\n    \"id\": \"act_{{ $json.body.clientData.adAccountId }}\",\n    \"name\": \"null\"},\n    \"error\": \"WITHOUT_PERMISSIONS\"\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          1664
+        ],
+        "id": "dfdb9ea0-3280-4b95-9cab-804e26068c0c",
+        "name": "format-data-error"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v24.0/{{ $('Switch').item.json.body.clientData.pageId }}?fields=name",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          304,
+          1408
+        ],
+        "id": "1461cca0-524f-42f9-ae8d-3a75f295dd1c",
+        "name": "is-page-id-valid?",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"pageResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.id }}\",\n    \"name\": \"{{ $json.name }}\"}\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          512,
+          1408
+        ],
+        "id": "a543dc4d-a2d7-40ab-ba99-0dffd678eac0",
+        "name": "format-data-success1"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"pageResult\": {\n    \"valid\": false,\n    \"id\": \"{{ $('Switch').item.json.body.clientData.pageId }}\",\n    \"name\": \"null\"},\n    \"error\": \"PAGE_NOT_FOUND\"\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          528,
+          1648
+        ],
+        "id": "ea38c8e1-728a-4144-b298-1281922bbd01",
+        "name": "format-data-error1"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v24.0/{{ $json.pageResult.id }}?fields=instagram_business_account{name}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          704,
+          1408
+        ],
+        "id": "05d725bd-b0c9-44d3-afb6-e071e64e626d",
+        "name": "is-ig-valid? (from_page_id)",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"instagramAccountResult\": {\n    \"valid\": true,\n    \"id\": \"{{ $json.instagram_business_account.id }}\",\n    \"name\": \"{{ $json.instagram_business_account.name }}\"}\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          1392
+        ],
+        "id": "72b3bf92-f403-4b51-9c32-43738567cfb3",
+        "name": "format-data-success2"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"instagramAccountResult\": {\n    \"valid\": false,\n    \"id\": \"{{ $('Switch').item.json.body.clientData.instagramAccountId }}\",\n    \"name\": \"null\"},\n    \"error\": \"NOT_CONNECTED\"\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          960,
+          1648
+        ],
+        "id": "1986d71f-3f4a-47c2-83ce-1f64853080e9",
+        "name": "format-data-error2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+                "name": "pageResult",
+                "value": "={{ $json.pageResult }}",
+                "type": "object"
+              },
+              {
+                "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+                "name": "adAccountResult",
+                "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+                "type": "object"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          704,
+          1648
+        ],
+        "id": "1458cdf8-4353-4879-8153-7a50731111b8",
+        "name": "account_no-page-no-ig"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5a782175-da80-4e18-982f-1c08ed68a74c",
+                "name": "instagramAccountResult",
+                "value": "={{ $json.instagramAccountResult }}",
+                "type": "object"
+              },
+              {
+                "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+                "name": "pageResult",
+                "value": "={{ $('format-data-success1').item.json.pageResult }}",
+                "type": "object"
+              },
+              {
+                "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+                "name": "adAccountResult",
+                "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+                "type": "object"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1104,
+          1392
+        ],
+        "id": "f012b444-e6ac-482c-98bd-60c319cbe4dd",
+        "name": "all-is-valid"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5a782175-da80-4e18-982f-1c08ed68a74c",
+                "name": "instagramAccountResult",
+                "value": "={{ $json.instagramAccountResult }}",
+                "type": "object"
+              },
+              {
+                "id": "363c3700-3cd8-410b-a8e1-150df70c3431",
+                "name": "pageResult",
+                "value": "={{ $('format-data-success1').item.json.pageResult }}",
+                "type": "object"
+              },
+              {
+                "id": "976184bd-4543-4e28-822a-1f3866b31e25",
+                "name": "adAccountResult",
+                "value": "={{ $('format-data-success').item.json.adAccountResult }}",
+                "type": "object"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1200,
+          1632
+        ],
+        "id": "a603e6ca-13d0-49fa-8282-a78528d24e41",
+        "name": "account_page_no-ig"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtener los resultados de la validación del input del nodo.\nconst inputData = $input.first().json;\n\n// Inicializar la estructura de la respuesta.\nconst response = {\n  success: false,\n  overallStatus: 'failed',\n  message: '',\n  details: {}\n};\n\n// Contadores para determinar el estado general.\nlet validCount = 0;\nlet totalCount = 0;\n\n// --- 1. Procesar Ad Account ID ---\nif (inputData.adAccountResult) {\n  totalCount++;\n  const res = inputData.adAccountResult;\n  response.details.adAccountId = {\n    valid: res.valid,\n    message: res.valid ? \"Cuenta publicitaria válida y activa\" : (res.error ? `Error: ${res.error}` : \"La cuenta publicitaria no es válida\"),\n    accountId: res.id,\n    accountName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.adAccountId.error = res.error;\n  }\n  if (res.additionalInfo) {\n    response.details.adAccountId.additionalInfo = res.additionalInfo;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 2. Procesar Page ID ---\nif (inputData.pageResult) {\n  totalCount++;\n  const res = inputData.pageResult;\n  response.details.pageId = {\n    valid: res.valid,\n    message: res.valid ? \"Página de Facebook válida y accesible\" : (res.error ? `Error: ${res.error}` : \"La página de Facebook no es válida\"),\n    pageId: res.id,\n    pageName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.pageId.error = res.error;\n  }\n  if (res.additionalInfo) {\n    response.details.pageId.additionalInfo = res.additionalInfo;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 3. Procesar Instagram Account ID (si existe) ---\nif (inputData.instagramAccountResult) {\n  totalCount++;\n  const res = inputData.instagramAccountResult;\n  response.details.instagramAccountId = {\n    valid: res.valid,\n    message: res.valid ? \"Cuenta de Instagram vinculada y activa\" : (res.error ? `Error: ${res.error}` : \"La cuenta de Instagram no es válida\"),\n    accountId: res.id,\n    accountName: res.name || null\n  };\n  if (!res.valid && res.error) {\n    response.details.instagramAccountId.error = res.error;\n  }\n  if (res.suggestion) {\n    response.details.instagramAccountId.suggestion = res.suggestion;\n  }\n  if (res.valid) validCount++;\n}\n\n// --- 4. Calcular el Estado General y el Mensaje Principal ---\nif (totalCount > 0) {\n  if (validCount === totalCount) {\n    response.overallStatus = 'success';\n    response.success = true;\n    response.message = 'Todos los IDs han sido verificados correctamente';\n  } else if (validCount > 0) {\n    response.overallStatus = 'partial';\n    response.success = true; // Aún se considera un éxito de la operación\n    response.message = 'Verificación parcial: algunos IDs requieren atención';\n  } else {\n    response.overallStatus = 'failed';\n    response.success = false;\n    response.message = 'Ninguno de los IDs proporcionados es válido';\n  }\n} else {\n    response.message = 'No se proporcionaron IDs para verificar.';\n}\n\n\n// --- 5. Añadir error global de la API de Meta (si existe) ---\nif (inputData.metaApiError) {\n  response.metaApiError = inputData.metaApiError;\n  response.success = false;\n  response.overallStatus = 'failed';\n  response.message = inputData.metaApiError.message || \"Error de autenticación con Meta API\";\n}\n\n// --- 6. Devolver el objeto JSON construido ---\nreturn { json: response };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1968,
+          1440
+        ],
+        "id": "ce6b3705-a950-40f4-b0a8-92994063ffe8",
+        "name": "final-format-data"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "24fbb968-ef28-4661-8dd5-c5a4a419fec0",
+                "name": "name",
+                "value": "={{ $json.body.templateName }}",
+                "type": "string"
+              },
+              {
+                "id": "bec51f33-9bf2-458e-88ab-7b0f44a94f63",
+                "name": "description",
+                "value": "={{ $json.body.description }}",
+                "type": "string"
+              },
+              {
+                "id": "3da6dc71-3be9-4c8d-9c80-b8c4a98b9123",
+                "name": "data",
+                "value": "={{ $json.body.structure }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          384,
+          480
+        ],
+        "id": "5d478aae-b8ca-4aae-b07e-0555bda5b397",
+        "name": "format-data"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "create",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mtzj3c60eg49twt",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "templateName",
+                "fieldValue": "={{ $json.name }}"
+              },
+              {
+                "fieldName": "description",
+                "fieldValue": "={{ $json.description }}"
+              },
+              {
+                "fieldName": "structure",
+                "fieldValue": "={{ $json.data }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          592,
+          480
+        ],
+        "id": "6a133b1e-dd6f-43a9-bbf1-8afed8142f7d",
+        "name": "save-template",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "create",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mikt6ede5k9qm8i",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "templateName",
+                "fieldValue": "={{ $json.body.templateName }}"
+              },
+              {
+                "fieldName": "interests",
+                "fieldValue": "={{ JSON.stringify($json.body.flexible_spec[0].interests) }}"
+              },
+              {
+                "fieldName": "description",
+                "fieldValue": "={{ $json.body.description}}"
+              },
+              {
+                "fieldName": "acotados",
+                "fieldValue": "={{ $json.body.flexible_spec[1].interests.toJsonString() }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          368,
+          256
+        ],
+        "id": "4c7897a7-792c-4cb5-8442-3fb9dbb07654",
+        "name": "save-template1",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mikt6ede5k9qm8i",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          368,
+          64
+        ],
+        "id": "5818aecc-c3c7-4bd8-9ba7-b63f6714b01f",
+        "name": "get-templates",
+        "alwaysOutputData": false,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7491466c-529d-4962-9140-4eedebc487b9",
+                "name": "id",
+                "value": "={{ $json.Id }}",
+                "type": "string"
+              },
+              {
+                "id": "a299f094-8c46-48dc-b34b-525d8614b968",
+                "name": "templateName",
+                "value": "={{ $json.templateName }}",
+                "type": "string"
+              },
+              {
+                "id": "51164bb6-f315-468a-9781-0ed5aa188742",
+                "name": "interests",
+                "value": "={{ $json.interests?.parseJson() }}",
+                "type": "array"
+              },
+              {
+                "id": "a0c642a1-f1de-4aec-a076-e47a6db210f6",
+                "name": "description",
+                "value": "={{ $json.description }}",
+                "type": "string"
+              },
+              {
+                "id": "11dad985-d135-4ece-922f-1a6d54dfd50d",
+                "name": "createdAt",
+                "value": "={{ $json.CreatedAt }}",
+                "type": "string"
+              },
+              {
+                "id": "3cd9b615-7b44-41bf-bc2e-30e8d5b8c837",
+                "name": "acotados",
+                "value": "={{ $json.acotados?.parseJson() }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          576,
+          64
+        ],
+        "id": "f42ba0d2-e929-4ec1-82d8-6d4b2fa99984",
+        "name": "format-data1",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "jsCode": "// El input ('items') es un array que contiene un solo objeto.\n// Accedemos al array de templates que está en 'items[0].json.templates'.\nconst rawTemplateArray = items[0].json.templates;\n\n// Verificamos si el array existe para evitar errores.\nif (!rawTemplateArray || !Array.isArray(rawTemplateArray)) {\n  // Si no hay templates, devolvemos una estructura vacía.\n  return { json: { templates: [] } };\n}\n\n// Mapeamos sobre cada template en el array para transformarlo.\nconst transformedTemplates = rawTemplateArray.map(template => {\n  return {\n    id: template.id,\n    templateName: template.templateName,\n    description: template.description,\n    flexible_spec: [\n      {\n        // El primer segmento contiene la lista original de intereses.\n        interests: template.interests || []\n      },\n      {\n        // El segundo segmento ahora usa los intereses de acotación si existen\n        interests: template.acotados || []\n      }\n    ],\n    createdAt: template.createdAt,\n    // Asignamos createdAt a updatedAt como en el ejemplo anterior.\n    updatedAt: template.createdAt\n  };\n});\n\n// Devolvemos el resultado final envuelto en la estructura deseada,\n// coincidiendo con el formato de respuesta de tu API.\nreturn {\n  json: {\n    templates: transformedTemplates\n  }\n};\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          992,
+          64
+        ],
+        "id": "87d4ea50-ec55-463c-bfbd-e0ec4a6beaa9",
+        "name": "final-format-data1",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "url": "https://graph.facebook.com/v24.0/search",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "type",
+                "value": "adinterest"
+              },
+              {
+                "name": "q",
+                "value": "={{ $json.body.keyword }}"
+              },
+              {
+                "name": "limit",
+                "value": "50"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          384,
+          -160
+        ],
+        "id": "0c22778c-deb9-49ec-9b78-c10249d610b2",
+        "name": "search-interest",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "pyinwak5zvazh9h",
+          "table": "mom1ynk05ap3m1l",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          400,
+          -384
+        ],
+        "id": "a6b6885d-c9e8-41bb-9b31-b0e848b6f94b",
+        "name": "get-clients",
+        "alwaysOutputData": false,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mtzj3c60eg49twt",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          400,
+          -608
+        ],
+        "id": "71b78eb8-f84a-4c43-9c59-5e94c3e37982",
+        "name": "get-templates1",
+        "alwaysOutputData": false,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "ppck6swsptpw07h",
+          "table": "ml5zjkmpkh9iwkx",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          400,
+          -800
+        ],
+        "id": "fe9dba80-8ef1-4441-a208-a98847cc9234",
+        "name": "get-logs",
+        "alwaysOutputData": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://graph.facebook.com/v24.0/act_1933672073876053/adsets",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n\n  \"name\": \"Validate\",\n\n  \"campaign_id\": \"120240799316600212\",\n\n  \"status\": \"ACTIVE\",\n\n  \"billing_event\": \"IMPRESSIONS\",\n\n  \"optimization_goal\": \"LINK_CLICKS\",\n\n  \"bid_strategy\": \"LOWEST_COST_WITHOUT_CAP\",\n\n  \"execution_options\": [\"validate_only\"],\n\n  \"targeting\": {\n\n    \"age_min\": 18,\n\n    \"age_max\": 65,\n\n    \"geo_locations\": {\n\n      \"custom_locations\":[{\"latitude\":18.221234501572816,\"longitude\":-66.62863346154643,\"radius\":12,\"distance_unit\":\"mile\"}]\n    \n    },\n\n    \"excluded_geo_locations\": {\n\n        \"custom_locations\": []\n\n    },\n\n    \"flexible_spec\":[{\"interests\":[{\"id\":\"{{ $json.id }}\"}]}]\n\n    }\n\n  }\n\n\n\n ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          704,
+          -160
+        ],
+        "id": "c54716fd-44ba-4c65-84ad-6e1f0c087c59",
+        "name": "create-adset",
+        "alwaysOutputData": true,
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $('Split Out1').item.json.toJsonString()}}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          992,
+          -192
+        ],
+        "id": "4189e011-eba7-4ecd-bb42-2698431c8759",
+        "name": "Edit Fields1",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "getAll",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mqay6rta18lp139",
+          "returnAll": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          352,
+          1072
+        ],
+        "id": "7d6b5954-b653-4943-bcf3-4bff599c9cfa",
+        "name": "Get many rows",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          736,
+          1072
+        ],
+        "id": "bceee31c-8b12-482a-b91c-64e4a71d082e",
+        "name": "Respond to Webhook12"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "campaigns_requests",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          528,
+          1072
+        ],
+        "id": "13258990-bce6-4cb7-81be-07aa7ad568dc",
+        "name": "Aggregate5",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "submittedAt",
+                "order": "descending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          832,
+          -800
+        ],
+        "id": "1c322fd6-c6ae-4ed3-b984-94167b1fb4ce",
+        "name": "Sort"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e7d53459-89f2-4c1e-bb69-a251952d86cf",
+                "leftValue": "={{ $json.body.action_type }}",
+                "rightValue": "accept",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -16,
+          -1776
+        ],
+        "id": "d3b07a23-3852-4641-a5eb-76285df97f7c",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "status",
+                "value": "ACTIVE"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1120,
+          -1808
+        ],
+        "id": "fedc2e81-b3fb-40e4-99c1-ac0a7d310272",
+        "name": "HTTP Request",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          720,
+          -1824
+        ],
+        "id": "8bb7d5b7-6526-4fa3-bfe1-0d259769f30d",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "jsCode": "// 1. OBTENCIÓN Y NORMALIZACIÓN DE DATOS\nconst rawInput = $input.first().json.campaign_id;\n\nlet idList = [];\n\n// Validación: Si es string, parseamos. Si es array, usamos directo.\nif (typeof rawInput === 'string') {\n  try {\n    // Convertimos \"[[\\\"123\\\"]]\" a un array real [[\"123\"]]\n    const parsed = JSON.parse(rawInput);\n    \n    // Usamos .flat() para convertir [[\"123\"]] en [\"123\"]\n    // Esto es vital porque tu input tiene doble anidación\n    idList = Array.isArray(parsed) ? parsed.flat() : [parsed];\n    \n  } catch (e) {\n    // Si no es un JSON válido, asumimos que es un ID suelto\n    idList = [rawInput];\n  }\n} else if (Array.isArray(rawInput)) {\n  // Si ya llega como array, aplanamos por seguridad\n  idList = rawInput.flat();\n} else {\n  // Fallback por si llega nulo o undefined\n  idList = rawInput ? [rawInput] : [];\n}\n\n// 2. RETORNO ITERADO\nreturn idList.map(id => {\n  return {\n    json: {\n      id: String(id).trim() // Limpieza final del ID\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          -1824
+        ],
+        "id": "12142307-c557-4b60-bf7a-eda01ca1a8de",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mqay6rta18lp139",
+          "id": "={{ $json.body.request_id }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          272,
+          -1824
+        ],
+        "id": "c0317c34-5d38-41e0-aee8-e48ef45dc13d",
+        "name": "Get a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mqay6rta18lp139",
+          "id": "={{ $json.body.request_id }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          272,
+          -1600
+        ],
+        "id": "f74a8f7d-4b71-4df8-8668-18c7d36799b4",
+        "name": "Get a row1",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// 1. OBTENCIÓN Y NORMALIZACIÓN DE DATOS\nconst rawInput = $input.first().json.campaign_id;\n\nlet idList = [];\n\n// Validación: Si es string, parseamos. Si es array, usamos directo.\nif (typeof rawInput === 'string') {\n  try {\n    // Convertimos \"[[\\\"123\\\"]]\" a un array real [[\"123\"]]\n    const parsed = JSON.parse(rawInput);\n    \n    // Usamos .flat() para convertir [[\"123\"]] en [\"123\"]\n    // Esto es vital porque tu input tiene doble anidación\n    idList = Array.isArray(parsed) ? parsed.flat() : [parsed];\n    \n  } catch (e) {\n    // Si no es un JSON válido, asumimos que es un ID suelto\n    idList = [rawInput];\n  }\n} else if (Array.isArray(rawInput)) {\n  // Si ya llega como array, aplanamos por seguridad\n  idList = rawInput.flat();\n} else {\n  // Fallback por si llega nulo o undefined\n  idList = rawInput ? [rawInput] : [];\n}\n\n// 2. RETORNO ITERADO\nreturn idList.map(id => {\n  return {\n    json: {\n      id: String(id).trim() // Limpieza final del ID\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          -1600
+        ],
+        "id": "9cba6d65-7aa8-4afc-8b87-c7b04e31c87d",
+        "name": "Code1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://graph.facebook.com/v24.0/{{ $json.id }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "status",
+                "value": "ARCHIVED"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1120,
+          -1568
+        ],
+        "id": "2315b19c-cec1-44c9-9861-4c84024775fe",
+        "name": "HTTP Request2",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          720,
+          -1584
+        ],
+        "id": "5b4567c0-7d54-4a63-910c-d442ab3fb4d7",
+        "name": "Loop Over Items2"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "delete",
+          "projectId": "ppck6swsptpw07h",
+          "table": "mqay6rta18lp139",
+          "id": "={{ $('Get a row').first().json.Id }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          928,
+          -1920
+        ],
+        "id": "c951426e-befa-425b-abe2-c730a05a3a3b",
+        "name": "Delete a row2",
+        "executeOnce": true,
+        "retryOnFail": true,
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "central": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "get-templates1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "get-clients",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "get-templates",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "get-logs",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "format-data",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "search-interest",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "save-template1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Delete a row1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Delete a row",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "publicador",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "is-ad-account-valid?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "creador de copies",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get many rows",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields2": {
+        "main": [
+          [
+            {
+              "node": "Aggregate1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out1": {
+        "main": [
+          [
+            {
+              "node": "create-adset",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sort1": {
+        "main": [
+          [
+            {
+              "node": "Aggregate3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate3": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate4": {
+        "main": [
+          [
+            {
+              "node": "final-format-data1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete a row": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete a row1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook9",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "final-format-data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate2": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields13": {
+        "main": [
+          [
+            {
+              "node": "Sort",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "creador de copies": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "is-ad-account-valid?": {
+        "main": [
+          [
+            {
+              "node": "format-data-success",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "format-data-error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-success": {
+        "main": [
+          [
+            {
+              "node": "is-page-id-valid?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-error": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "is-page-id-valid?": {
+        "main": [
+          [
+            {
+              "node": "format-data-success1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "format-data-error1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-success1": {
+        "main": [
+          [
+            {
+              "node": "is-ig-valid? (from_page_id)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-error1": {
+        "main": [
+          [
+            {
+              "node": "account_no-page-no-ig",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "is-ig-valid? (from_page_id)": {
+        "main": [
+          [
+            {
+              "node": "format-data-success2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "format-data-error2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-success2": {
+        "main": [
+          [
+            {
+              "node": "all-is-valid",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data-error2": {
+        "main": [
+          [
+            {
+              "node": "account_page_no-ig",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "account_no-page-no-ig": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "all-is-valid": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "account_page_no-ig": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "final-format-data": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data": {
+        "main": [
+          [
+            {
+              "node": "save-template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "save-template": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "save-template1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-templates": {
+        "main": [
+          [
+            {
+              "node": "format-data1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "format-data1": {
+        "main": [
+          [
+            {
+              "node": "Aggregate4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "final-format-data1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "search-interest": {
+        "main": [
+          [
+            {
+              "node": "Split Out1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-clients": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-templates1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get-logs": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields13",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "create-adset": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Sort1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate5": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook12",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many rows": {
+        "main": [
+          [
+            {
+              "node": "Aggregate5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sort": {
+        "main": [
+          [
+            {
+              "node": "Aggregate2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Get a row",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get a row1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Delete a row2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a row": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a row1": {
+        "main": [
+          [
+            {
+              "node": "Code1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [
+            {
+              "node": "Delete a row2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "HTTP Request2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": "Version c78a52e4",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-06T15:42:17.454Z",
+        "id": 56,
+        "workflowId": "WgDRwK7RgmzqezhK",
+        "versionId": "c78a52e4-3ea6-443e-916b-5f4df92c83e5",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

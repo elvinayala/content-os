@@ -1,0 +1,182 @@
+{
+  "updatedAt": "2026-01-07T03:38:22.340Z",
+  "createdAt": "2025-11-12T14:41:18.271Z",
+  "id": "L51yWcEJXkSrloeK",
+  "name": "A-) Enviar noticias al canal",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recibir-noticias",
+        "authentication": "basicAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "20991d5f-d87c-4478-bc97-b22773af07d8",
+      "name": "Webhook",
+      "webhookId": "285409cc-de8d-46c2-a755-14da5b999985",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "vs9HLLK4cuNiUEuX",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C099AKK90R3",
+          "mode": "list",
+          "cachedResultName": "office-6-news-ia"
+        },
+        "text": "={{ $json.body.message_news}}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "link_names": true,
+          "mrkdwn": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        0
+      ],
+      "id": "b7401bf3-6438-4d69-8089-149539161f22",
+      "name": "Send a message",
+      "webhookId": "85775276-fa9b-4551-ac81-ba9fd8e960e2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "axios/1.12.0",
+            "content-length": "3635",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "authorization": "Basic cHltZXMtYWk6Um9kcmlnbzIwMjUt",
+            "content-type": "application/json",
+            "x-forwarded-for": "5.189.187.5",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "54da0dd713dc",
+            "x-real-ip": "5.189.187.5"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "message_news": "*¡Buenos días comunidad! Estas son nuestras 10 noticias más relevantes de hoy sobre Inteligencia Artificial (12/11/25)*\nReacciona con un emoji si leiste el mensaje @canal @Elvin A\n\n1) *<https://arstechnica.com/ai/2025/11/study-finds-ai-models-store-memories-and-logic-in-different-neural-regions/|Estudio revela que los modelos de IA almacenan memorias y lógica en regiones neuronales separadas.*\nUn nuevo estudio muestra que diferentes áreas del modelo de IA se encargan por separado de las memorias y la lógica, lo que puede ayudar a mejorar la eficiencia y el diseño de futuros sistemas de IA.*\n\n2) *<https://techcrunch.com/2025/11/10/vc-jennifer-neundorfer-explains-how-founders-can-stand-out-in-a-crowded-ai-market/|Jennifer Neundorfer da consejos para que fundadores destaquen en el mercado saturado de IA.*\nLa inversionista explica estrategias clave para que startups de IA consigan éxito y visibilidad en un sector cada vez más competitivo.*\n\n3) *<https://techcrunch.com/video/the-circular-money-problem-at-the-heart-of-ais-biggest-deals/|Problema del dinero circular en las mayores transacciones de IA.*\nUn análisis profundo revela cómo el flujo del dinero alrededor de grandes acuerdos en el sector de IA puede crear complicaciones financieras y éticas.*\n\n4) *<https://www.wired.com/story/the-big-interview-podcast-steven-adler-openai-erotica/|Entrevista con Steven Adler sobre la relación entre OpenAI y el contenido erótico.*\nUna conversación que explora las controversias y desafíos en el manejo de contenido sensible generados por modelos avanzados de IA.*\n\n5) *<https://www.technologyreview.com/2025/11/11/1127866/the-download-surviving-extreme-temperatures-and-the-big-whale-wind-turbine-conspiracy/|Sobrevivir a temperaturas extremas y teorías conspiranóicas sobre turbinas eólicas gigantes.*\nUn repaso a innovaciones para adaptarse a climas extremos y cómo las conspiraciones afectan la percepción pública de tecnologías limpias.*\n\n6) *<https://techcrunch.com/2025/11/11/a-former-physician-has-launched-robyn-an-empathetic-ai-companion/|Un ex médico lanza Robyn, un compañero de IA empático.*\nRobyn busca ofrecer apoyo emocional personalizado mediante inteligencia artificial, con aplicaciones en salud mental y bienestar.*\n\n7) *<https://techcrunch.com/2025/11/11/metas-chief-ai-scientist-yann-lecun-reportedly-plans-to-leave-to-build-his-own-startup/|Yann LeCun, jefe de IA en Meta, planea dejar la empresa para fundar su propia startup.*\nLa noticia apunta a posibles cambios y nuevas innovaciones en el panorama de la IA con la salida de una figura clave.*\n\n8) *<https://arstechnica.com/cars/2025/11/tires-that-talk-to-your-town-about-the-state-of-roads-are-on-the-way/|Llantas inteligentes comunicarán el estado de las carreteras a las ciudades.*\nEsta innovación abrirá la puerta a una mejor gestión urbana y mantenimiento vial mediante dispositivos conectados y automatización.*\n\n9) *<https://arstechnica.com/tech-policy/2025/11/lawyers-keep-giving-weak-sauce-excuses-for-fake-ai-citations-in-court-docs/|Abogados continúan usando excusas poco convincentes para citas falsas de IA en documentos legales.*\nUn problema creciente afecta la veracidad y confianza en el uso de IA en entornos jurídicos.*\n\n10) *<https://techcrunch.com/2025/11/11/wonderful-raised-100m-series-a-to-put-ai-agents-on-the-front-lines-of-customer-service/|Wonderful recauda $100M para llevar agentes de IA a la atención al cliente.*\nLa startup planea transformar la experiencia del usuario con agentes inteligentes que manejan interacciones en tiempo real.*"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/recibir-noticias",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "c5f69da2-2889-4e95-b987-f0e92367d020",
+  "activeVersionId": null,
+  "versionCounter": 18,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "L51yWcEJXkSrloeK",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

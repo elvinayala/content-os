@@ -1,0 +1,2280 @@
+{
+  "updatedAt": "2026-01-06T15:04:47.551Z",
+  "createdAt": "2025-09-23T08:51:12.290Z",
+  "id": "vvXRpzCDaYehJDYf",
+  "name": "E-) Alerta falta de fases v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -80
+      ],
+      "id": "85cb6095-42c5-46fc-be69-f3de1aca9d80",
+      "name": "there's-id?"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -80
+      ],
+      "id": "c3049a93-8cf4-455b-8b56-d47bc4bab5f0",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -80
+      ],
+      "id": "0c3910f2-75dc-405f-9684-f9d0357337e3",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a90e386a-7d9a-4f51-a9f8-b3d5b0d8764b",
+              "name": "fases_requeridas",
+              "value": "={{ [\n  { \"nombre\": \"Fase 1\", \"regex\": \"FASE 1\" },\n  { \"nombre\": \"Fase 2\", \"regex\": \"FASE 2\" },\n  { \"nombre\": \"Fase 3\", \"regex\": \"FASE 3\" },\n  { \"nombre\": \"Fase 4\", \"regex\": \"FASE 4\" }\n] }}",
+              "type": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        -96
+      ],
+      "id": "c974dbc8-e0f2-483c-9455-3016e3cc1ad2",
+      "name": "Configuración de Fases"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Obtener datos de entrada ---\nconst fasesRequeridas = $('Configuración de Fases').first().json.fases_requeridas;\nconst campañasActivas = $('Aggregate').first().json.campañas;\n\nconst nombresDeCampañas = campañasActivas.map(c => c.name.toUpperCase());\nconst fasesFaltantes = [];\n\n// --- 2. Lógica de Verificación ---\nfor (const fase of fasesRequeridas) {\n  const regex = new RegExp(fase.regex, 'i');\n  const faseEncontrada = nombresDeCampañas.some(nombre => regex.test(nombre));\n  \n  if (!faseEncontrada) {\n    fasesFaltantes.push(fase.nombre);\n  }\n}\n\n// --- 3. Salida Booleana para Tratamiento ---\n// Determinamos si requiere tratamiento (si hay faltantes)\nconst requiereTratamiento = fasesFaltantes.length > 0;\n\nreturn [{\n  json: {\n    // Si es true, el nodo IF posterior dejará pasar el flujo.\n    // Si es false, el flujo se detiene o va por la rama 'false'.\n    action: requiereTratamiento, \n    \n    // Datos útiles para el tratamiento (si action es true)\n    fases_faltantes: fasesFaltantes,\n    campañas_activas_nombres: nombresDeCampañas.map(nombre => `• ${nombre}`).join('\\n')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        128
+      ],
+      "id": "51594670-bf8d-4e69-9bbb-122ee58076e6",
+      "name": "Verificar Fases de Campañas"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "d1e5da8f-a7d8-4dc0-b3d7-c7dc4a185d21",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        -96
+      ],
+      "id": "856a64ce-bf89-4a17-9c40-8cdf7c1adc64",
+      "name": "data-entry"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/level up/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "05961909-759f-43c9-bfaf-9dc79e12ab0f",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/levelup/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2224,
+        -80
+      ],
+      "id": "1b4320e4-8d0e-448e-9a61-1bd2e80a7b70",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        -80
+      ],
+      "id": "ddd8b836-e0be-40a4-ae8c-7fccc8a7adf6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "campañas",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "insights",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        -80
+      ],
+      "id": "a0e6b42a-fb42-410a-94c7-006a87f1d661",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2624,
+        144
+      ],
+      "id": "d91e8917-59a3-4495-b0d1-8d51f8662541",
+      "name": "void",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Acceso a los datos de entrada ---\n// Datos del cliente\nconst clientData = $('data-entry').first().json;\n// Datos de la verificación de fases (nuestro nuevo nodo)\nconst analisisFases = $input.first().json;\n\n// --- 2. Extracción de Datos ---\nconst { nombre: clienteNombre, empresa: clienteEmpresa, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\nconst { fases_faltantes, campañas_activas_nombres } = analisisFases;\n\n// --- 3. Construcción del Texto de Análisis ---\nconst estadoGeneral = \"Reporte Existente\";\n\n// El título de la alerta es ahora más específico.\nconst tituloAnalisis = \"AVISO: Faltan Fases de Campañas Activas\";\n\n// Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*Empresa:* ${clienteEmpresa}\\n*ID Cuenta Publicitaria:* ${idCuentaPublicitaria}`;\n\n// Se prepara la lista de fases faltantes.\nconst listaFasesFaltantesTexto = `\\n*Fases Faltantes:*\\n${fases_faltantes.map(fase => `❌ ${fase}`).join('\\n')}`;\n\n// Se prepara la lista de campañas activas actuales para dar contexto.\nconst listaCampañasTexto = `\\n*Campañas Activas Actualmente:*\\n${campañas_activas_nombres}`;\n\n// Se ensambla el texto final.\nconst textoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${listaFasesFaltantesTexto}\\n${listaCampañasTexto}`;\n\n// --- 4. Objeto de Salida ---\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        128
+      ],
+      "id": "13d492a2-253d-4e08-88fa-35fc479ded74",
+      "name": "build-message"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $('data-entry').item.json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -80
+      ],
+      "id": "64bc72f6-4d6a-48f4-9a82-9e8a5436391f",
+      "name": "Get Campaigns",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        -96
+      ],
+      "id": "05206cc0-649d-4362-ab2e-a49781566a9c",
+      "name": "Verificar si hay campañas activas"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+        "messageData": "={{ $json.texto_final }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        128
+      ],
+      "id": "7e935bb9-7587-4953-8a28-cf374392caa4",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        -80
+      ],
+      "id": "0fd34001-4986-4dad-b31c-9c64b70cf956",
+      "name": "hay-campañas-levelup?"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -96
+      ],
+      "id": "c1584d03-d9a9-49ef-b75f-640082e8fca0",
+      "name": "Wait",
+      "webhookId": "1912a782-4224-420a-8d3a-e5590549c0d6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dc8b8595-58f3-4037-be4b-35b1a2bcc2a6",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1952,
+        128
+      ],
+      "id": "d5ba2449-5d4a-4295-80d0-aa52531301d3",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "there's-id?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "there's-id?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración de Fases": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Fases de Campañas": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "data-entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data-entry": {
+      "main": [
+        [
+          {
+            "node": "Configuración de Fases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "hay-campañas-levelup?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Verificar Fases de Campañas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-message": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Verificar si hay campañas activas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si hay campañas activas": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-campañas-levelup?": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "build-message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "data": [
+            {
+              "Id": 379,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:33+00:00",
+              "ID-cuenta-publicitaria": "1588319795184399",
+              "nombre": "Edgar Lugo",
+              "empresa": "Warranty plus",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "8418963055",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-01",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-10",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "elugo@edgarlugoinsurance.com",
+              "telefono": 17876401068,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              }
+            },
+            {
+              "Id": 381,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:35+00:00",
+              "ID-cuenta-publicitaria": "1063260688377316",
+              "nombre": "Marvin Arguello",
+              "empresa": "Arguello Plastic Surgery",
+              "team-monitory-agent_id": 17,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 13,
+              "ID-monday": "8627149323",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-10",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-07",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "arguello.plastic.surgey@gmail.com",
+              "telefono": 12019688809,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 17,
+                "nombre": "Elvin Ayala"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 13,
+                "nombre": "Belleza"
+              }
+            },
+            {
+              "Id": 382,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:38+00:00",
+              "ID-cuenta-publicitaria": "9711549922285671",
+              "nombre": "Emmanuel Torres",
+              "empresa": "Farmacia Los Angeles de Isabela",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "8875196419",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-19",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-04-30",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "emmanuel.torres.1010@gmail.com",
+              "telefono": 19392780708,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 386,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:41+00:00",
+              "ID-cuenta-publicitaria": "3528907970694160",
+              "nombre": "Oliver Sotillo",
+              "empresa": "Tinos Restaurant / OLIVER HANDYMAN",
+              "team-monitory-agent_id": 17,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "7818510404",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-10",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2024-11-28",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "Oliver_1650@live.com",
+              "telefono": 17875977474,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 17,
+                "nombre": "Elvin Ayala"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 387,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:43+00:00",
+              "ID-cuenta-publicitaria": "709449288541334",
+              "nombre": "Carlos Rivera Auto Corp",
+              "empresa": "Rivera Auto Corp",
+              "team-monitory-agent_id": 28,
+              "team-monitory-agent_id1": 17,
+              "industrias-monitory-agent_id": 25,
+              "ID-monday": "8144881546",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-11-21",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-11",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "",
+              "telefono": 17873818882,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 28,
+                "nombre": "Barbara Quero"
+              },
+              "admin": {
+                "Id": 17,
+                "nombre": "Elvin Ayala"
+              },
+              "industrias": {
+                "Id": 25,
+                "nombre": "Venta de vehiculos"
+              }
+            },
+            {
+              "Id": 388,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:45+00:00",
+              "ID-cuenta-publicitaria": "1279660746569043",
+              "nombre": "Joy Rivera",
+              "empresa": "JOII Air Conditioning",
+              "team-monitory-agent_id": 17,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 5,
+              "ID-monday": "7924324993",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-09-03",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2024-11-28",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "kevinjoel107@gmail.com",
+              "telefono": 17874581007,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 17,
+                "nombre": "Elvin Ayala"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 5,
+                "nombre": "Aires Acondicionado"
+              }
+            },
+            {
+              "Id": 389,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:47+00:00",
+              "ID-cuenta-publicitaria": "900146285567780",
+              "nombre": "Christopher Taveras",
+              "empresa": "K. Clothing",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "8103455446",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-12",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-01-04",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "ctaveras0512@gmail.com",
+              "telefono": 17873883207,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 390,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:49+00:00",
+              "ID-cuenta-publicitaria": "624294363353547",
+              "nombre": "Bryan Vega",
+              "empresa": "Topchiro",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "8134255164",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-08",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-01-11",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "dr.bryanvega@gmail.com",
+              "telefono": 0,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 396,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:51+00:00",
+              "ID-cuenta-publicitaria": "1034995044803174",
+              "nombre": "Roberto Rodriguez",
+              "empresa": "Area Code Sport Bar & Grill",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "9003311299",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-19",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-05-14",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " sielrodriguezpr@gmail.com ",
+              "telefono": 19392185894,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 401,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:53+00:00",
+              "ID-cuenta-publicitaria": "9583029841825545",
+              "nombre": "Emilio Jimenez",
+              "empresa": "ReAwaken Upper Cervical",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9125154651",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-05-24",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " Emilio.jimenezvizca157@gmail.com ",
+              "telefono": 17876302611,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 407,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:55+00:00",
+              "ID-cuenta-publicitaria": "2701038673440189",
+              "nombre": "Mario Casanova",
+              "empresa": "CGC Security PR",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "8610919939",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-19",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-03-11",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "cgcpr@outlook.com",
+              "telefono": 17873462589,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 422,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:57+00:00",
+              "ID-cuenta-publicitaria": "1241685330395123",
+              "nombre": "Gerald Butler",
+              "empresa": "ARBYS PR / ARMERIAS",
+              "team-monitory-agent_id": 18,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "9007688601",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-10-01",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": null,
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": null,
+              "email": "gbutler@carrilfoodservices.com",
+              "telefono": 17876160853,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 426,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:45:59+00:00",
+              "ID-cuenta-publicitaria": "1704960040108664",
+              "nombre": "Roberto Quintana",
+              "empresa": "Salud vital.vip",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9083417957",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-12",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-19",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " rquintana5@hotmail.com ",
+              "telefono": 17879627878,
+              "pages-id": 1,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 433,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:01+00:00",
+              "ID-cuenta-publicitaria": "686115924229043",
+              "nombre": "Luz Guzman Maldonado",
+              "empresa": "Building on People",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9286948460",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-20",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " lyguzman@buildingonpeople.org ",
+              "telefono": 19394939870,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 440,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:04+00:00",
+              "ID-cuenta-publicitaria": "494766287027186",
+              "nombre": "Luis Trinidad Rodriguez",
+              "empresa": "Conozca tus derechos",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9325933055",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-30",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " ltrinidad1@gmail.com ",
+              "telefono": 17873871232,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              }
+            },
+            {
+              "Id": 444,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:06+00:00",
+              "ID-cuenta-publicitaria": "1058155566382426",
+              "nombre": "Josean Martinez",
+              "empresa": "Tu Casa Segura",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9408807513",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-06-30",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " joseandmartinez@gmail.com ",
+              "telefono": 19392238844,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 445,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:08+00:00",
+              "ID-cuenta-publicitaria": "1760901784834619",
+              "nombre": "Roberto Canales",
+              "empresa": "NotaGestión Express, LLC.",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9415897271",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-02",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " notagestion.exp@gmail.com ",
+              "telefono": 17873812046,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              }
+            },
+            {
+              "Id": 446,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:10+00:00",
+              "ID-cuenta-publicitaria": "24753375467598783",
+              "nombre": "Johanny Guzman",
+              "empresa": "LaborPay, LLC",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 20,
+              "ID-monday": "9413373580",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-10-10",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-03",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " jguzman@laborpay.com ",
+              "telefono": 17874663297,
+              "pages-id": 1,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 20,
+                "nombre": "Asesorias, servicios legales"
+              }
+            },
+            {
+              "Id": 453,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:13+00:00",
+              "ID-cuenta-publicitaria": "1108051071143885",
+              "nombre": "Edgardo Cortes",
+              "empresa": "Claro FI Communications",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9565527500",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-10",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-09",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "edgar.cortes@claropr.com",
+              "telefono": 17873902053,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 454,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:15+00:00",
+              "ID-cuenta-publicitaria": "1399980857812421",
+              "nombre": "Pedro Torres Vergara",
+              "empresa": "PT Pest Control LLC",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9110520404",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-10",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-10",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " ptpestcontrolllc@gmail.com ",
+              "telefono": 17873996968,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 461,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:17+00:00",
+              "ID-cuenta-publicitaria": "1218054079490011",
+              "nombre": "Alexis Soto",
+              "empresa": "Deco Data Group",
+              "team-monitory-agent_id": 18,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 6,
+              "ID-monday": "9295289070",
+              "doble-verificacion": null,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-11",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " alex@decodatapr.com ",
+              "telefono": 17877175134,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 6,
+                "nombre": "Otro"
+              }
+            },
+            {
+              "Id": 462,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:19+00:00",
+              "ID-cuenta-publicitaria": "1086530752502675",
+              "nombre": "Marie Pagan",
+              "empresa": "Rk Automatic Transmission",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 29,
+              "ID-monday": "9509971022",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-12",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-07-15",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " rkautomatictrans@gmail.com ",
+              "telefono": 17875163272,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 29,
+                "nombre": "Inspección de vehiculos"
+              }
+            },
+            {
+              "Id": 497,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:21+00:00",
+              "ID-cuenta-publicitaria": "2274742116303456",
+              "nombre": "Jonathan Joel",
+              "empresa": "j.t air conditioning",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 5,
+              "ID-monday": "9576045517",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-15",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-08-08",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "jonathan_joel86@hotmail.com",
+              "telefono": 17875170140,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 5,
+                "nombre": "Aires Acondicionado"
+              }
+            },
+            {
+              "Id": 501,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:46:24+00:00",
+              "ID-cuenta-publicitaria": "1292490595819441",
+              "nombre": "Veronica Torres",
+              "empresa": "Servicios medicos Dr Dennis O. Cardona Cardona",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9731592308",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-19",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-08-13",
+              "reporte-mensual": true,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": " vtorres.federales@gmail.com ",
+              "telefono": 19397770504,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 502,
+              "CreatedAt": "2025-08-18 19:21:50+00:00",
+              "UpdatedAt": "2026-01-05 11:47:09+00:00",
+              "ID-cuenta-publicitaria": "892208046339833",
+              "nombre": "Axel Suarez",
+              "empresa": "AJ Detailing",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 9,
+              "ID-monday": "9804869463",
+              "doble-verificacion": null,
+              "ultimo-revisado": "2025-12-12",
+              "ultima-alerta": "2026-01-05",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2024-10-30",
+              "reporte-mensual": null,
+              "fecha-ultimo-reporte": "2025-12-15",
+              "email": "suameja1525@gmail.com",
+              "telefono": 17872348791,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "industrias": {
+                "Id": 9,
+                "nombre": "Car Wash"
+              }
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "88454809-a955-466a-8061-b147f31e711b",
+  "activeVersionId": "88454809-a955-466a-8061-b147f31e711b",
+  "versionCounter": 21,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "vvXRpzCDaYehJDYf",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T15:09:52.145Z",
+    "createdAt": "2026-01-06T15:04:47.557Z",
+    "versionId": "88454809-a955-466a-8061-b147f31e711b",
+    "workflowId": "vvXRpzCDaYehJDYf",
+    "nodes": [
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+                "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          288,
+          -80
+        ],
+        "id": "85cb6095-42c5-46fc-be69-f3de1aca9d80",
+        "name": "there's-id?"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -128,
+          -80
+        ],
+        "id": "c3049a93-8cf4-455b-8b56-d47bc4bab5f0",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          48,
+          -80
+        ],
+        "id": "0c3910f2-75dc-405f-9684-f9d0357337e3",
+        "name": "Split Out1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a90e386a-7d9a-4f51-a9f8-b3d5b0d8764b",
+                "name": "fases_requeridas",
+                "value": "={{ [\n  { \"nombre\": \"Fase 1\", \"regex\": \"FASE 1\" },\n  { \"nombre\": \"Fase 2\", \"regex\": \"FASE 2\" },\n  { \"nombre\": \"Fase 3\", \"regex\": \"FASE 3\" },\n  { \"nombre\": \"Fase 4\", \"regex\": \"FASE 4\" }\n] }}",
+                "type": "json"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          944,
+          -96
+        ],
+        "id": "c974dbc8-e0f2-483c-9455-3016e3cc1ad2",
+        "name": "Configuración de Fases"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 1. Obtener datos de entrada ---\nconst fasesRequeridas = $('Configuración de Fases').first().json.fases_requeridas;\nconst campañasActivas = $('Aggregate').first().json.campañas;\n\nconst nombresDeCampañas = campañasActivas.map(c => c.name.toUpperCase());\nconst fasesFaltantes = [];\n\n// --- 2. Lógica de Verificación ---\nfor (const fase of fasesRequeridas) {\n  const regex = new RegExp(fase.regex, 'i');\n  const faseEncontrada = nombresDeCampañas.some(nombre => regex.test(nombre));\n  \n  if (!faseEncontrada) {\n    fasesFaltantes.push(fase.nombre);\n  }\n}\n\n// --- 3. Salida Booleana para Tratamiento ---\n// Determinamos si requiere tratamiento (si hay faltantes)\nconst requiereTratamiento = fasesFaltantes.length > 0;\n\nreturn [{\n  json: {\n    // Si es true, el nodo IF posterior dejará pasar el flujo.\n    // Si es false, el flujo se detiene o va por la rama 'false'.\n    action: requiereTratamiento, \n    \n    // Datos útiles para el tratamiento (si action es true)\n    fases_faltantes: fasesFaltantes,\n    campañas_activas_nombres: nombresDeCampañas.map(nombre => `• ${nombre}`).join('\\n')\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          128
+        ],
+        "id": "51594670-bf8d-4e69-9bbb-122ee58076e6",
+        "name": "Verificar Fases de Campañas"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          624,
+          -96
+        ],
+        "id": "d1e5da8f-a7d8-4dc0-b3d7-c7dc4a185d21",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          784,
+          -96
+        ],
+        "id": "856a64ce-bf89-4a17-9c40-8cdf7c1adc64",
+        "name": "data-entry"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "/level up/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              },
+              {
+                "id": "05961909-759f-43c9-bfaf-9dc79e12ab0f",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "/levelup/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2224,
+          -80
+        ],
+        "id": "1b4320e4-8d0e-448e-9a61-1bd2e80a7b70",
+        "name": "Filter",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          2048,
+          -80
+        ],
+        "id": "ddd8b836-e0be-40a4-ae8c-7fccc8a7adf6",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "campañas",
+          "include": "allFieldsExcept",
+          "fieldsToExclude": "insights",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          2608,
+          -80
+        ],
+        "id": "a0e6b42a-fb42-410a-94c7-006a87f1d661",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2624,
+          144
+        ],
+        "id": "d91e8917-59a3-4495-b0d1-8d51f8662541",
+        "name": "void",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 1. Acceso a los datos de entrada ---\n// Datos del cliente\nconst clientData = $('data-entry').first().json;\n// Datos de la verificación de fases (nuestro nuevo nodo)\nconst analisisFases = $input.first().json;\n\n// --- 2. Extracción de Datos ---\nconst { nombre: clienteNombre, empresa: clienteEmpresa, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\nconst { fases_faltantes, campañas_activas_nombres } = analisisFases;\n\n// --- 3. Construcción del Texto de Análisis ---\nconst estadoGeneral = \"Reporte Existente\";\n\n// El título de la alerta es ahora más específico.\nconst tituloAnalisis = \"AVISO: Faltan Fases de Campañas Activas\";\n\n// Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*Empresa:* ${clienteEmpresa}\\n*ID Cuenta Publicitaria:* ${idCuentaPublicitaria}`;\n\n// Se prepara la lista de fases faltantes.\nconst listaFasesFaltantesTexto = `\\n*Fases Faltantes:*\\n${fases_faltantes.map(fase => `❌ ${fase}`).join('\\n')}`;\n\n// Se prepara la lista de campañas activas actuales para dar contexto.\nconst listaCampañasTexto = `\\n*Campañas Activas Actualmente:*\\n${campañas_activas_nombres}`;\n\n// Se ensambla el texto final.\nconst textoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${listaFasesFaltantesTexto}\\n${listaCampañasTexto}`;\n\n// --- 4. Objeto de Salida ---\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2160,
+          128
+        ],
+        "id": "13d492a2-253d-4e08-88fa-35fc479ded74",
+        "name": "build-message"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $('data-entry').item.json['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "id,name"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1344,
+          -80
+        ],
+        "id": "64bc72f6-4d6a-48f4-9a82-9e8a5436391f",
+        "name": "Get Campaigns",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1520,
+          -96
+        ],
+        "id": "05206cc0-649d-4362-ab2e-a49781566a9c",
+        "name": "Verificar si hay campañas activas"
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+          "messageData": "={{ $json.texto_final }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2336,
+          128
+        ],
+        "id": "7e935bb9-7587-4953-8a28-cf374392caa4",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2400,
+          -80
+        ],
+        "id": "0fd34001-4986-4dad-b31c-9c64b70cf956",
+        "name": "hay-campañas-levelup?"
+      },
+      {
+        "parameters": {
+          "amount": 0.5
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1152,
+          -96
+        ],
+        "id": "c1584d03-d9a9-49ef-b75f-640082e8fca0",
+        "name": "Wait",
+        "webhookId": "1912a782-4224-420a-8d3a-e5590549c0d6"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "dc8b8595-58f3-4037-be4b-35b1a2bcc2a6",
+                "leftValue": "={{ $json.action }}",
+                "rightValue": "true",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          1952,
+          128
+        ],
+        "id": "d5ba2449-5d4a-4295-80d0-aa52531301d3",
+        "name": "If"
+      }
+    ],
+    "connections": {
+      "there's-id?": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Split Out1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out1": {
+        "main": [
+          [
+            {
+              "node": "there's-id?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Configuración de Fases": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar Fases de Campañas": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "data-entry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "data-entry": {
+        "main": [
+          [
+            {
+              "node": "Configuración de Fases",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "hay-campañas-levelup?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Verificar Fases de Campañas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "void": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "build-message": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns": {
+        "main": [
+          [
+            {
+              "node": "Verificar si hay campañas activas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar si hay campañas activas": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis": {
+        "main": [
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "hay-campañas-levelup?": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Get Campaigns",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "build-message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 88454809",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-06T15:09:52.096Z",
+        "id": 35,
+        "workflowId": "vvXRpzCDaYehJDYf",
+        "versionId": "88454809-a955-466a-8061-b147f31e711b",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

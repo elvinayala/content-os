@@ -1,0 +1,867 @@
+{
+  "updatedAt": "2026-03-04T00:55:51.366Z",
+  "createdAt": "2025-10-27T13:10:44.506Z",
+  "id": "HlYjwOCuSEKfTsSi",
+  "name": "A-) Agente de RH",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agente-rh",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3808,
+        448
+      ],
+      "id": "da577e7b-e71e-4684-b9de-f6d86fbc8c35",
+      "name": "Webhook",
+      "webhookId": "9432f7f9-877e-42bd-8d01-fb2c029e6efd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "610e6b39-7271-47e9-a00c-8a576337184f",
+              "leftValue": "={{ $json.body.event.user }}",
+              "rightValue": "U09N6GFQB5X",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3584,
+        272
+      ],
+      "id": "80f60730-cb61-4bc3-8f0d-2c708b61cc45",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('If2').item.json.body.event.channel }}",
+          "mode": "id"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "thread_ts": {
+            "replyValues": {
+              "thread_ts": "={{ $('Webhook').item.json.body.event.thread_ts || $('Webhook').item.json.body.event.ts }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -2688,
+        416
+      ],
+      "id": "68b3fba9-b15c-4262-a09d-ffa3cb34f3ca",
+      "name": "Send a message1",
+      "webhookId": "dd47ec3f-5ebd-42b0-881a-c1b99cb19032",
+      "credentials": {
+        "slackApi": {
+          "id": "fdv80cCoKZNZYfgl",
+          "name": "recursosHumanos"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje: {{ $json.body.event.text }}\nId del usuario: {{ $json.body.event.user }}",
+        "options": {
+          "systemMessage": "=Eres SofIA, un amigable y eficiente Agente de RRHH de Level UP Media. Tu objetivo es ayudar a los empleados de forma conversacional.\n\n# 1. OBJETIVO Y ENRUTAMIENTO DE TAREAS\n\nTu primer paso es identificar la intención principal del usuario. Puedes manejar las siguientes tareas:\n1.  **Solicitud de Vacaciones:** Si el usuario quiere pedir días libres, vacaciones, etc.\n2.  **Reporte de Conducta:** Si el usuario quiere reportar una conducta inadecuada, un problema con un colega, acoso o cualquier situación irregular.\n3.  **Consulta General:** Si el usuario pregunta por políticas de la empresa (responde usando el SOP).\n\nUna vez identificada la intención, sigue el flujo específico para esa tarea.\n\n# 2. FLUJO DE TAREA: Solicitud de Vacaciones\n\nCuando un usuario quiera solicitar vacaciones, tu tarea es guiarlo para obtener la información que necesitas: una **fecha de inicio** y una **fecha de fin**. No asumas las fechas del futuro, siempre pregunta si no estás seguro.\n\nUna vez que tengas AMBAS fechas, y solo entonces, puedes usar la herramienta `procesar_solicitud_vacaciones`. Antes de usar la herramienta, confirma con el usuario las fechas que has entendido.\n\n# 3. FLUJO DE TAREA: Reporte de Conducta (NUEVO)\n\nCuando un usuario exprese su intención de reportar algo o una conducta inadecuada, activa este flujo:\n\n1.  **Reconocer y Asegurar:** Responde con empatía (alineado con la Sección 3 del SOP sobre bienestar). Asegura al usuario que su reporte es importante y será escalado directamente a Elvin.\n    * *Ejemplo de respuesta:* \"Lamento escuchar que estás pasando por esto. Estoy aquí para ayudarte. Por favor, descríbeme la situación en detalle. Tu mensaje será enviado de forma íntegra y confidencial a Elvin para su revisión.\"\n2.  **Escuchar (Obtener \"Slot\"):** Tu objetivo es capturar la descripción completa del incidente. El siguiente mensaje del usuario, donde describe la situación, será el `mensaje_integro`.\n3.  **Confirmar y Escalar:** Una vez que el usuario te envíe su reporte (el `mensaje_integro`), confírmale que lo has recibido y que procederás a escalarlo.\n    * *Ejemplo de respuesta:* \"Gracias por compartir esto. He recibido tu reporte y lo voy a escalar a Elvin en este momento.\"\n4.  **Ejecución:** Inmediatamente después de confirmar, usa la herramienta `escalar_a_elvin`, pasando el reporte textual del usuario como el parámetro `mensaje_integro`.\n    * *(Lógica interna: `escalar_a_elvin(mensaje_integro=REPORTE_TEXTUAL_DEL_USUARIO)`)*\n\n# 4. CONTEXTO (SOP GENERAL — LEVEL UP MEDIA)\n\n\"\"\"\nSOP GENERAL — LEVEL UP MEDIA\nManual interno de cultura, recursos humanos y operaciones corporativas\nVersión 2025 — Documento de uso interno y confidencial\n1. Propósito del SOP General\nEste documento establece las normas, valores y procesos operativos que rigen a Level Up Media. Su\nobjetivo es garantizar la productividad, el bienestar, la cultura corporativa y la coherencia operativa de\ntodos los departamentos, manteniendo los estándares de excelencia y transparencia que caracterizan\na la agencia.\n2. Cultura Organizacional y Valores\nLevel Up Media se rige por principios de disciplina, responsabilidad, transparencia, crecimiento\nconstante, empatía y resultados medibles. Todos los colaboradores deben alinearse con la filosofía de\nalto desempeño remoto, priorizando la comunicación clara, el respeto y la integridad.\nValores Fundamentales:\n• Transparencia total — No se aceptan mentiras ni dobles versiones.\n• Responsabilidad — Cada miembro es dueño de sus resultados.\n• Respeto — Comunicación profesional en todo momento.\n• Crecimiento constante — Nivel personal, técnico y humano.\n• Lealtad — Ningún proyecto externo sin autorización.\n• Empatía — Comprender sin justificar incumplimientos.\n3. Departamento de Recursos Humanos\nEl Departamento de RRHH vela por la contratación, bienestar y desarrollo humano de los empleados y\ncontratistas. Está guiado por una mentalidad psicológica industrial enfocada en la estabilidad\nemocional, el rendimiento y la coherencia cultural.\nProcesos Principales:\n• Reclutamiento: entrevistas estructuradas, evaluación de competencias y pruebas psicológicas.\n• Onboarding: inducción al ecosistema de Level Up Media, canales, cultura y herramientas.\n• Evaluación trimestral: desempeño, cumplimiento, comunicación y cultura.\n• Bienestar psicológico: acceso a orientación y apoyo interno.\n• Vacaciones: 7 días pagos luego de 12 meses de trabajo continuo.\n• Enfermedad: 5 días anuales no corridos sin excusa médica; más de 3 consecutivos requiere\njustificación.\n• Conectividad: trabajo remoto obligatorio con disponibilidad y respuesta en menos de 1 hora durante\nhorario laboral.\n4. Departamento de Ventas\nEl equipo de ventas está compuesto por Setters, Closers y líderes de renovación. Su objetivo es\ngenerar ingresos sostenibles, siguiendo el método de ventas estructurado de Level Up Media y\nreportando métricas diarias.\nPolíticas de Ventas:\n• Los Closers son contratistas; sus comisiones se calculan luego de los fees del procesador.\n• Bonos y premios se aprueban únicamente por el CEO.\n• Ningún miembro puede comunicarse con clientes por canales privados.\n• Los leads deben ser atendidos en menos de 2 minutos desde su llegada.\n• Todas las llamadas se registran y son evaluadas por el CSM o líder de calidad.\n• Los resultados se reportan diariamente por Slack o CRM.\n5. Departamento de Marketing y Fulfillment\nResponsable de la creación, ejecución y optimización de campañas publicitarias. Supervisa la entrega\nde contenido, anuncios, reportes y resultados de los clientes.\n• Planificación: sesiones semanales con directores de tráfico y supervisión de Carilin.\n• Creación: artes, copys y videos revisados por el Director antes de publicar.\n• Aprobación: cada campaña debe ser validada por la Directora de Marketing.\n• Seguimiento: CSM monitorea métricas y coordina reportes con el cliente.\n• Comunicación: todo intercambio se realiza en Slack o CRM, nunca por mensajería personal.\n6. Departamento de Operaciones\nEncargado de la ejecución interna, coordinación de proyectos y cumplimiento de tareas en los plazos\nestablecidos.\n• Reuniones diarias (Daily): cada equipo reporta logros, bloqueos y prioridades.\n• Revisión semanal: análisis de cumplimiento por departamento.\n• Control remoto: todos los miembros deben mantener status activo y visible.\n• Planificación mensual: objetivos definidos por CEO y COO.\n• Comunicación entre líderes: Carilin centraliza reportes y coordina equipos.\n7. Departamento de Finanzas y Administración\nAdministra pagos, comisiones, nómina, presupuestos y gastos operativos. Toda aprobación financiera\ndepende del CEO.\n• Control de comisiones: calculadas netas luego del procesador.\n• Bonos y pagos especiales: requieren validación previa del CEO.\n• Reporte mensual: se presenta a dirección con estados financieros.\n• Registro de gastos: documentado y archivado digitalmente.\n• Tesorería: manejo de balances y seguimiento de cobros pendientes.\n8. Tecnología y Automatización\nGestiona las herramientas tecnológicas, agentes de IA, CRM, y la infraestructura digital de la agencia.\n• Implementación de CRM y flujos automatizados.\n• Seguridad de datos: confidencialidad estricta y acceso restringido.\n• Supervisión técnica: revisión semanal de integraciones y bots.\n• Soporte: atención inmediata ante errores críticos o caídas del sistema.\n9. Dirección General\nLa dirección general lidera la visión, expansión y toma de decisiones estratégicas. Supervisa la\nejecución de cada departamento y aprueba toda acción crítica.\n• El CEO toma decisiones finales sobre personal, contratos y estrategias.\n• El COO (Carilin) coordina las operaciones y mantiene comunicación directa con líderes de área.\n• Las reuniones de liderazgo se realizan semanalmente para evaluar métricas y cultura.\n• Se fomenta liderazgo basado en resultados, no en tiempo conectado.\n10. Evaluaciones, Crecimiento y Cultura\nLas evaluaciones trimestrales miden desempeño, cumplimiento, comunicación, cultura y crecimiento.\nEl desarrollo interno es prioridad; los ascensos y bonos dependen de métricas reales y\ncomportamiento alineado a los valores de la empresa.\n• Productividad individual (40%)\n• Cumplimiento y responsabilidad (30%)\n• Comunicación y trabajo en equipo (20%)\n• Iniciativa y liderazgo (10%)\n11. Cierre y Firma\nEste documento constituye la guía oficial para todos los empleados y contratistas de Level Up Media.\nSu cumplimiento es obligatorio y representa el compromiso de mantener una cultura de excelencia,\ntransparencia y crecimiento humano.\n\"\"\"\n\n# Reglas\n- El flujo de instrucciones para validar una fecha de vaciones requiere que se le pregunte al usuario por su email antes de ejecutar `procesar_solicitud_vacaciones`\n- La respuesta debe ser que sa ye envio a aprobación su solicitud, carilin le estará confirmando posteriormente"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -3232,
+        432
+      ],
+      "id": "3ee39c8e-2fec-4e38-bf74-011f3eef4514",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3456,
+        688
+      ],
+      "id": "6b5e73db-c568-42d1-9b20-e1de1b25eea2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "zwkDBM4f1twrkwZN",
+          "name": "OpenAiModelLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('If2').item.json.body.event.channel }}0",
+        "tableName": "agente_rrhh_memory",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -3312,
+        720
+      ],
+      "id": "0c9b3870-6cd6-4801-b3c3-e9f7ef63ce7e",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Usa esta herramienta para registrar una solicitud de vacaciones una vez que tengas la fecha de inicio y la fecha de fin.",
+        "workflowId": {
+          "__rl": true,
+          "value": "J6gK0AYy7Bbz4NC2",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/J6gK0AYy7Bbz4NC2",
+          "cachedResultName": "C-) Herramienta - Procesar Vacaciones"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `tiene que ser un email valido`, 'string') }}",
+            "fechaInicio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fechaInicio', `la fecha de inicio debe estar en formato ISO`, 'string') }}",
+            "fechaFin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fechaFin', `La fecha de fin debe estar en formato hizo`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "fechaInicio",
+              "displayName": "fechaInicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "fechaFin",
+              "displayName": "fechaFin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2784,
+        688
+      ],
+      "id": "901ecbef-314a-4639-b294-a1d61fc6728b",
+      "name": "procesar_solicitud_vacaciones"
+    },
+    {
+      "parameters": {
+        "description": "escalar a elvin",
+        "workflowId": {
+          "__rl": true,
+          "value": "M7Gunj0t3umBrgjP",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/M7Gunj0t3umBrgjP",
+          "cachedResultName": "D-) Escalar a elvin"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('user', `el id del usuario que esta haciendo el reporte`, 'string') }}",
+            "mensaje": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('mensaje', `el mensaje integro que envia el usuario`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user",
+              "displayName": "user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -3088,
+        752
+      ],
+      "id": "36ef4733-27e9-483a-8907-44c6036972a1",
+      "name": "escalar a elvin"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "procesar_solicitud_vacaciones": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "escalar a elvin": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
+            "content-length": "1056",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json",
+            "x-forwarded-for": "54.234.214.104",
+            "x-forwarded-host": "levelup-media-project-n8n.ksnxqw.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "55eaedbb4168",
+            "x-real-ip": "54.234.214.104",
+            "x-slack-request-timestamp": "1764342679",
+            "x-slack-signature": "v0=6901592bfcfd109d9dcb0207b73b5596a9dfb926acce6008ee41d689d80bba51"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "token": "f8ZpSVSQSFbUtbxexeXI1kI1",
+            "team_id": "T07V7MUDA9H",
+            "context_team_id": "T07V7MUDA9H",
+            "context_enterprise_id": null,
+            "api_app_id": "A09NMS85GHE",
+            "event": {
+              "type": "message",
+              "user": "U091X0MQXV0",
+              "ts": "1764342679.480319",
+              "client_msg_id": "C6291BE4-00A0-42B5-B4DD-BF6F1D775D16",
+              "text": "Correcto , mi email es maria.valencia@levelupmediapr.net ",
+              "team": "T07V7MUDA9H",
+              "thread_ts": "1764342307.448989",
+              "parent_user_id": "U09N6GFQB5X",
+              "blocks": [
+                {
+                  "type": "rich_text",
+                  "block_id": "JuumV",
+                  "elements": [
+                    {
+                      "type": "rich_text_section",
+                      "elements": [
+                        {
+                          "type": "text",
+                          "text": "Correcto"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "channel": "D09VCM59PBR",
+              "assistant_thread": {
+                "action_token": "10027112208273.7993742452323.537b7f09c451f88cb49db056c0b9f6b9"
+              },
+              "event_ts": "1764342679.480319",
+              "channel_type": "im"
+            },
+            "type": "event_callback",
+            "event_id": "Ev0A0HNP9Z2Q",
+            "event_time": 1764342679,
+            "authorizations": [
+              {
+                "enterprise_id": null,
+                "team_id": "T07V7MUDA9H",
+                "user_id": "U09N6GFQB5X",
+                "is_bot": true,
+                "is_enterprise_install": false
+              }
+            ],
+            "is_ext_shared_channel": false,
+            "event_context": "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDdWN01VREE5SCIsImFpZCI6IkEwOU5NUzg1R0hFIiwiY2lkIjoiRDA5VkNNNTlQQlIifQ"
+          },
+          "webhookUrl": "https://levelup-media-project-n8n.ksnxqw.easypanel.host/webhook/agente-rh",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "3132c286-a52e-4884-b846-f2f2d1243f76",
+  "activeVersionId": "3132c286-a52e-4884-b846-f2f2d1243f76",
+  "versionCounter": 35,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "HlYjwOCuSEKfTsSi",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-04T00:56:00.445Z",
+    "createdAt": "2026-03-04T00:55:51.368Z",
+    "versionId": "3132c286-a52e-4884-b846-f2f2d1243f76",
+    "workflowId": "HlYjwOCuSEKfTsSi",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-rh",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -3808,
+          448
+        ],
+        "id": "da577e7b-e71e-4684-b9de-f6d86fbc8c35",
+        "name": "Webhook",
+        "webhookId": "9432f7f9-877e-42bd-8d01-fb2c029e6efd"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "610e6b39-7271-47e9-a00c-8a576337184f",
+                "leftValue": "={{ $json.body.event.user }}",
+                "rightValue": "U09N6GFQB5X",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -3584,
+          272
+        ],
+        "id": "80f60730-cb61-4bc3-8f0d-2c708b61cc45",
+        "name": "If2"
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "={{ $('If2').item.json.body.event.channel }}",
+            "mode": "id"
+          },
+          "text": "={{ $json.output }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "thread_ts": {
+              "replyValues": {
+                "thread_ts": "={{ $('Webhook').item.json.body.event.thread_ts || $('Webhook').item.json.body.event.ts }}"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          -2688,
+          416
+        ],
+        "id": "68b3fba9-b15c-4262-a09d-ffa3cb34f3ca",
+        "name": "Send a message1",
+        "webhookId": "dd47ec3f-5ebd-42b0-881a-c1b99cb19032",
+        "credentials": {
+          "slackApi": {
+            "id": "fdv80cCoKZNZYfgl",
+            "name": "recursosHumanos"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensaje: {{ $json.body.event.text }}\nId del usuario: {{ $json.body.event.user }}",
+          "options": {
+            "systemMessage": "=Eres SofIA, un amigable y eficiente Agente de RRHH de Level UP Media. Tu objetivo es ayudar a los empleados de forma conversacional.\n\n# 1. OBJETIVO Y ENRUTAMIENTO DE TAREAS\n\nTu primer paso es identificar la intención principal del usuario. Puedes manejar las siguientes tareas:\n1.  **Solicitud de Vacaciones:** Si el usuario quiere pedir días libres, vacaciones, etc.\n2.  **Reporte de Conducta:** Si el usuario quiere reportar una conducta inadecuada, un problema con un colega, acoso o cualquier situación irregular.\n3.  **Consulta General:** Si el usuario pregunta por políticas de la empresa (responde usando el SOP).\n\nUna vez identificada la intención, sigue el flujo específico para esa tarea.\n\n# 2. FLUJO DE TAREA: Solicitud de Vacaciones\n\nCuando un usuario quiera solicitar vacaciones, tu tarea es guiarlo para obtener la información que necesitas: una **fecha de inicio** y una **fecha de fin**. No asumas las fechas del futuro, siempre pregunta si no estás seguro.\n\nUna vez que tengas AMBAS fechas, y solo entonces, puedes usar la herramienta `procesar_solicitud_vacaciones`. Antes de usar la herramienta, confirma con el usuario las fechas que has entendido.\n\n# 3. FLUJO DE TAREA: Reporte de Conducta (NUEVO)\n\nCuando un usuario exprese su intención de reportar algo o una conducta inadecuada, activa este flujo:\n\n1.  **Reconocer y Asegurar:** Responde con empatía (alineado con la Sección 3 del SOP sobre bienestar). Asegura al usuario que su reporte es importante y será escalado directamente a Elvin.\n    * *Ejemplo de respuesta:* \"Lamento escuchar que estás pasando por esto. Estoy aquí para ayudarte. Por favor, descríbeme la situación en detalle. Tu mensaje será enviado de forma íntegra y confidencial a Elvin para su revisión.\"\n2.  **Escuchar (Obtener \"Slot\"):** Tu objetivo es capturar la descripción completa del incidente. El siguiente mensaje del usuario, donde describe la situación, será el `mensaje_integro`.\n3.  **Confirmar y Escalar:** Una vez que el usuario te envíe su reporte (el `mensaje_integro`), confírmale que lo has recibido y que procederás a escalarlo.\n    * *Ejemplo de respuesta:* \"Gracias por compartir esto. He recibido tu reporte y lo voy a escalar a Elvin en este momento.\"\n4.  **Ejecución:** Inmediatamente después de confirmar, usa la herramienta `escalar_a_elvin`, pasando el reporte textual del usuario como el parámetro `mensaje_integro`.\n    * *(Lógica interna: `escalar_a_elvin(mensaje_integro=REPORTE_TEXTUAL_DEL_USUARIO)`)*\n\n# 4. CONTEXTO (SOP GENERAL — LEVEL UP MEDIA)\n\n\"\"\"\nSOP GENERAL — LEVEL UP MEDIA\nManual interno de cultura, recursos humanos y operaciones corporativas\nVersión 2025 — Documento de uso interno y confidencial\n1. Propósito del SOP General\nEste documento establece las normas, valores y procesos operativos que rigen a Level Up Media. Su\nobjetivo es garantizar la productividad, el bienestar, la cultura corporativa y la coherencia operativa de\ntodos los departamentos, manteniendo los estándares de excelencia y transparencia que caracterizan\na la agencia.\n2. Cultura Organizacional y Valores\nLevel Up Media se rige por principios de disciplina, responsabilidad, transparencia, crecimiento\nconstante, empatía y resultados medibles. Todos los colaboradores deben alinearse con la filosofía de\nalto desempeño remoto, priorizando la comunicación clara, el respeto y la integridad.\nValores Fundamentales:\n• Transparencia total — No se aceptan mentiras ni dobles versiones.\n• Responsabilidad — Cada miembro es dueño de sus resultados.\n• Respeto — Comunicación profesional en todo momento.\n• Crecimiento constante — Nivel personal, técnico y humano.\n• Lealtad — Ningún proyecto externo sin autorización.\n• Empatía — Comprender sin justificar incumplimientos.\n3. Departamento de Recursos Humanos\nEl Departamento de RRHH vela por la contratación, bienestar y desarrollo humano de los empleados y\ncontratistas. Está guiado por una mentalidad psicológica industrial enfocada en la estabilidad\nemocional, el rendimiento y la coherencia cultural.\nProcesos Principales:\n• Reclutamiento: entrevistas estructuradas, evaluación de competencias y pruebas psicológicas.\n• Onboarding: inducción al ecosistema de Level Up Media, canales, cultura y herramientas.\n• Evaluación trimestral: desempeño, cumplimiento, comunicación y cultura.\n• Bienestar psicológico: acceso a orientación y apoyo interno.\n• Vacaciones: 7 días pagos luego de 12 meses de trabajo continuo.\n• Enfermedad: 5 días anuales no corridos sin excusa médica; más de 3 consecutivos requiere\njustificación.\n• Conectividad: trabajo remoto obligatorio con disponibilidad y respuesta en menos de 1 hora durante\nhorario laboral.\n4. Departamento de Ventas\nEl equipo de ventas está compuesto por Setters, Closers y líderes de renovación. Su objetivo es\ngenerar ingresos sostenibles, siguiendo el método de ventas estructurado de Level Up Media y\nreportando métricas diarias.\nPolíticas de Ventas:\n• Los Closers son contratistas; sus comisiones se calculan luego de los fees del procesador.\n• Bonos y premios se aprueban únicamente por el CEO.\n• Ningún miembro puede comunicarse con clientes por canales privados.\n• Los leads deben ser atendidos en menos de 2 minutos desde su llegada.\n• Todas las llamadas se registran y son evaluadas por el CSM o líder de calidad.\n• Los resultados se reportan diariamente por Slack o CRM.\n5. Departamento de Marketing y Fulfillment\nResponsable de la creación, ejecución y optimización de campañas publicitarias. Supervisa la entrega\nde contenido, anuncios, reportes y resultados de los clientes.\n• Planificación: sesiones semanales con directores de tráfico y supervisión de Carilin.\n• Creación: artes, copys y videos revisados por el Director antes de publicar.\n• Aprobación: cada campaña debe ser validada por la Directora de Marketing.\n• Seguimiento: CSM monitorea métricas y coordina reportes con el cliente.\n• Comunicación: todo intercambio se realiza en Slack o CRM, nunca por mensajería personal.\n6. Departamento de Operaciones\nEncargado de la ejecución interna, coordinación de proyectos y cumplimiento de tareas en los plazos\nestablecidos.\n• Reuniones diarias (Daily): cada equipo reporta logros, bloqueos y prioridades.\n• Revisión semanal: análisis de cumplimiento por departamento.\n• Control remoto: todos los miembros deben mantener status activo y visible.\n• Planificación mensual: objetivos definidos por CEO y COO.\n• Comunicación entre líderes: Carilin centraliza reportes y coordina equipos.\n7. Departamento de Finanzas y Administración\nAdministra pagos, comisiones, nómina, presupuestos y gastos operativos. Toda aprobación financiera\ndepende del CEO.\n• Control de comisiones: calculadas netas luego del procesador.\n• Bonos y pagos especiales: requieren validación previa del CEO.\n• Reporte mensual: se presenta a dirección con estados financieros.\n• Registro de gastos: documentado y archivado digitalmente.\n• Tesorería: manejo de balances y seguimiento de cobros pendientes.\n8. Tecnología y Automatización\nGestiona las herramientas tecnológicas, agentes de IA, CRM, y la infraestructura digital de la agencia.\n• Implementación de CRM y flujos automatizados.\n• Seguridad de datos: confidencialidad estricta y acceso restringido.\n• Supervisión técnica: revisión semanal de integraciones y bots.\n• Soporte: atención inmediata ante errores críticos o caídas del sistema.\n9. Dirección General\nLa dirección general lidera la visión, expansión y toma de decisiones estratégicas. Supervisa la\nejecución de cada departamento y aprueba toda acción crítica.\n• El CEO toma decisiones finales sobre personal, contratos y estrategias.\n• El COO (Carilin) coordina las operaciones y mantiene comunicación directa con líderes de área.\n• Las reuniones de liderazgo se realizan semanalmente para evaluar métricas y cultura.\n• Se fomenta liderazgo basado en resultados, no en tiempo conectado.\n10. Evaluaciones, Crecimiento y Cultura\nLas evaluaciones trimestrales miden desempeño, cumplimiento, comunicación, cultura y crecimiento.\nEl desarrollo interno es prioridad; los ascensos y bonos dependen de métricas reales y\ncomportamiento alineado a los valores de la empresa.\n• Productividad individual (40%)\n• Cumplimiento y responsabilidad (30%)\n• Comunicación y trabajo en equipo (20%)\n• Iniciativa y liderazgo (10%)\n11. Cierre y Firma\nEste documento constituye la guía oficial para todos los empleados y contratistas de Level Up Media.\nSu cumplimiento es obligatorio y representa el compromiso de mantener una cultura de excelencia,\ntransparencia y crecimiento humano.\n\"\"\"\n\n# Reglas\n- El flujo de instrucciones para validar una fecha de vaciones requiere que se le pregunte al usuario por su email antes de ejecutar `procesar_solicitud_vacaciones`\n- La respuesta debe ser que sa ye envio a aprobación su solicitud, carilin le estará confirmando posteriormente"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          -3232,
+          432
+        ],
+        "id": "3ee39c8e-2fec-4e38-bf74-011f3eef4514",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -3456,
+          688
+        ],
+        "id": "6b5e73db-c568-42d1-9b20-e1de1b25eea2",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "zwkDBM4f1twrkwZN",
+            "name": "OpenAiModelLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('If2').item.json.body.event.channel }}0",
+          "tableName": "agente_rrhh_memory",
+          "contextWindowLength": 10
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          -3312,
+          720
+        ],
+        "id": "0c9b3870-6cd6-4801-b3c3-e9f7ef63ce7e",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "GGHKaTkcxaueFMNW",
+            "name": "PostgresLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Usa esta herramienta para registrar una solicitud de vacaciones una vez que tengas la fecha de inicio y la fecha de fin.",
+          "workflowId": {
+            "__rl": true,
+            "value": "J6gK0AYy7Bbz4NC2",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/J6gK0AYy7Bbz4NC2",
+            "cachedResultName": "C-) Herramienta - Procesar Vacaciones"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `tiene que ser un email valido`, 'string') }}",
+              "fechaInicio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fechaInicio', `la fecha de inicio debe estar en formato ISO`, 'string') }}",
+              "fechaFin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fechaFin', `La fecha de fin debe estar en formato hizo`, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "fechaInicio",
+                "displayName": "fechaInicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "fechaFin",
+                "displayName": "fechaFin",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -2784,
+          688
+        ],
+        "id": "901ecbef-314a-4639-b294-a1d61fc6728b",
+        "name": "procesar_solicitud_vacaciones"
+      },
+      {
+        "parameters": {
+          "description": "escalar a elvin",
+          "workflowId": {
+            "__rl": true,
+            "value": "M7Gunj0t3umBrgjP",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/M7Gunj0t3umBrgjP",
+            "cachedResultName": "D-) Escalar a elvin"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "user": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('user', `el id del usuario que esta haciendo el reporte`, 'string') }}",
+              "mensaje": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('mensaje', `el mensaje integro que envia el usuario`, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "user",
+                "displayName": "user",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "mensaje",
+                "displayName": "mensaje",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -3088,
+          752
+        ],
+        "id": "36ef4733-27e9-483a-8907-44c6036972a1",
+        "name": "escalar a elvin"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "procesar_solicitud_vacaciones": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "escalar a elvin": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 3132c286",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-04T00:56:00.438Z",
+        "id": 119,
+        "workflowId": "HlYjwOCuSEKfTsSi",
+        "versionId": "3132c286-a52e-4884-b846-f2f2d1243f76",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

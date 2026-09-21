@@ -1,0 +1,3706 @@
+{
+  "generadoEl": "2026-09-21T00:35:26.054Z",
+  "servidor": "https://n8nv2.levelupmediapr.net",
+  "total": 98,
+  "activos": 50,
+  "workflows": [
+    {
+      "id": "HlYjwOCuSEKfTsSi",
+      "nombre": "A-) Agente de RH",
+      "activo": true,
+      "actualizadoEl": "2026-03-04T00:55:51.366Z",
+      "creadoEl": "2025-10-27T13:10:44.506Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 8,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/agente-rh"
+      ],
+      "servicios": [
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "ai:toolWorkflow",
+        "if",
+        "slack",
+        "webhook"
+      ],
+      "credenciales": [
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "recursosHumanos"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "76PxSWzFembacRcK",
+      "nombre": "A-) Mensajes de bienestar",
+      "activo": true,
+      "actualizadoEl": "2026-01-22T16:29:37.413Z",
+      "creadoEl": "2026-01-15T11:17:59.444Z",
+      "tags": [],
+      "nodos": 8,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "if",
+        "scheduleTrigger",
+        "slack"
+      ],
+      "credenciales": [
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
+      "activo": true,
+      "actualizadoEl": "2026-04-10T18:35:43.663Z",
+      "creadoEl": "2025-08-08T16:15:12.286Z",
+      "tags": [
+        "Produccion",
+        "Global"
+      ],
+      "nodos": 117,
+      "triggers": [
+        "Webhook (webhook)",
+        "Schedule Trigger (scheduleTrigger)",
+        "Webhook2 (webhook)",
+        "clientes-activos (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/actualizar-nocodb-clientes-activos",
+        "POST /webhook/update-something",
+        "POST /webhook/actualizar-nocodb-clientes-activos-nuevos"
+      ],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "mondayCom",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com levelup",
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "pNMZF1Fb4r6yHfGk",
+      "nombre": "A-) Recibir webhook chatwoot v1",
+      "activo": true,
+      "actualizadoEl": "2026-03-18T14:11:50.118Z",
+      "creadoEl": "2025-09-04T02:41:53.716Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 4,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/chatwoot"
+      ],
+      "servicios": [
+        "httpRequest",
+        "if",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "yQPhJCGiqwZqBS9X",
+      "nombre": "A-) Trigger v1",
+      "activo": true,
+      "actualizadoEl": "2026-07-01T12:23:57.611Z",
+      "creadoEl": "2025-10-08T15:21:36.037Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 6,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflow",
+        "if",
+        "scheduleTrigger",
+        "set",
+        "switch"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "LN08xR2hD3GGSEW8",
+      "nombre": "A-) Trigger v1.1 safe",
+      "activo": true,
+      "actualizadoEl": "2026-09-09T18:42:47.219Z",
+      "creadoEl": "2025-09-13T23:09:56.186Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 51,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)",
+        "Error Trigger (errorTrigger)",
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "errorTrigger",
+        "executeWorkflow",
+        "if",
+        "limit",
+        "manualTrigger",
+        "merge",
+        "microsoftTeams",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "wait"
+      ],
+      "credenciales": [
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "MjQHPb1GpuYo55l9",
+      "nombre": "A-) Webhooks central v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:51:48.848Z",
+      "creadoEl": "2025-09-25T21:31:11.276Z",
+      "tags": [],
+      "nodos": 53,
+      "triggers": [
+        "Respond to Webhook (respondToWebhook)",
+        "central (webhook)",
+        "Respond to Webhook3 (respondToWebhook)",
+        "Respond to Webhook4 (respondToWebhook)",
+        "Respond to Webhook5 (respondToWebhook)",
+        "Respond to Webhook6 (respondToWebhook)",
+        "Respond to Webhook7 (respondToWebhook)",
+        "Respond to Webhook8 (respondToWebhook)",
+        "Respond to Webhook9 (respondToWebhook)",
+        "Respond to Webhook10 (respondToWebhook)",
+        "Respond to Webhook11 (respondToWebhook)",
+        "Respond to Webhook1 (respondToWebhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/central"
+      ],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflow",
+        "httpRequest",
+        "merge",
+        "nocoDb",
+        "respondToWebhook",
+        "set",
+        "sort",
+        "splitOut",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "token-meta-creator"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "WgDRwK7RgmzqezhK",
+      "nombre": "A-) Webhooks central v2 - devflow",
+      "activo": true,
+      "actualizadoEl": "2026-01-07T08:19:02.426Z",
+      "creadoEl": "2025-11-20T19:27:44.875Z",
+      "tags": [],
+      "nodos": 67,
+      "triggers": [
+        "Respond to Webhook (respondToWebhook)",
+        "central (webhook)",
+        "Respond to Webhook3 (respondToWebhook)",
+        "Respond to Webhook4 (respondToWebhook)",
+        "Respond to Webhook5 (respondToWebhook)",
+        "Respond to Webhook6 (respondToWebhook)",
+        "Respond to Webhook7 (respondToWebhook)",
+        "Respond to Webhook8 (respondToWebhook)",
+        "Respond to Webhook9 (respondToWebhook)",
+        "Respond to Webhook10 (respondToWebhook)",
+        "Respond to Webhook11 (respondToWebhook)",
+        "Respond to Webhook1 (respondToWebhook)",
+        "Respond to Webhook12 (respondToWebhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/dev"
+      ],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflow",
+        "httpRequest",
+        "if",
+        "merge",
+        "nocoDb",
+        "respondToWebhook",
+        "set",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "token-meta-creator"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "MLp39LO5jJmzk9Vp",
+      "nombre": "A) RevisionInstanciaEvoAPI",
+      "activo": true,
+      "actualizadoEl": "2026-08-31T02:52:49.815Z",
+      "creadoEl": "2026-03-27T13:37:02.960Z",
+      "tags": [],
+      "nodos": 18,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "httpRequest",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "scheduleTrigger",
+        "slack",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "Evolution account",
+        "Levelito Acoount management",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "actualizadoEl": "2026-02-02T02:15:02.996Z",
+      "creadoEl": "2025-12-09T13:02:41.951Z",
+      "tags": [],
+      "nodos": 10,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "mondayCom",
+        "scheduleTrigger",
+        "slack",
+        "splitOut",
+        "stopAndError"
+      ],
+      "credenciales": [
+        "Monday.com levelup",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "monday.com Credentials"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "qXDEK5MdK5Zpwpzr",
+      "nombre": "B-) Agente de monitoreo v3",
+      "activo": true,
+      "actualizadoEl": "2026-07-01T11:53:19.316Z",
+      "creadoEl": "2025-09-13T04:35:10.608Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 60,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "test(app)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "rb5SOZw8rT5YXKg8",
+      "nombre": "B-) Agente de onboarding v5",
+      "activo": true,
+      "actualizadoEl": "2026-07-01T01:18:07.181Z",
+      "creadoEl": "2025-11-03T11:59:44.265Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 54,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/chatwoot-limpio"
+      ],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatGoogleGemini",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "ai:openAi",
+        "ai:outputParserStructured",
+        "code",
+        "googleDocsTool",
+        "httpRequest",
+        "httpRequestTool",
+        "if",
+        "merge",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "postgres",
+        "redis",
+        "set",
+        "slack",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "switch",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "DocOnboardingLevelUpMedia",
+        "Evolution account",
+        "Google Gemini(PaLM) Api account 2",
+        "OpenAi new apikey",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini",
+        "gpt-4.1-mini",
+        "@n8n/n8n-nodes-langchain.openAi",
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "txUzpGmbiSu8Zc4J",
+      "nombre": "B-) Agente de Setting V5",
+      "activo": true,
+      "actualizadoEl": "2026-06-20T15:02:47.257Z",
+      "creadoEl": "2026-05-27T15:23:17.937Z",
+      "tags": [],
+      "nodos": 90,
+      "triggers": [
+        "Webhook (webhook)",
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [
+        "POST /webhook/agente-setting"
+      ],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatGoogleGemini",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "ai:openAi",
+        "ai:outputParserStructured",
+        "code",
+        "convertToFile",
+        "googleDocsTool",
+        "googleDrive",
+        "httpRequest",
+        "httpRequestTool",
+        "if",
+        "manualTrigger",
+        "merge",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "postgres",
+        "redis",
+        "set",
+        "slack",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "switch",
+        "telegram",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "DocOnboardingLevelUpMedia",
+        "Evolution account",
+        "Google Gemini(PaLM) Api account 2",
+        "GoogleDriveLevelUpMedia",
+        "OpenAi new apikey",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini",
+        "gpt-4.1-mini",
+        "@n8n/n8n-nodes-langchain.openAi",
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "oJvf4D4IELGNBQqo",
+      "nombre": "B-) Publicador de campañas v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:52:35.677Z",
+      "creadoEl": "2025-10-14T21:28:30.178Z",
+      "tags": [],
+      "nodos": 112,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)",
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:lmChatGoogleGemini",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "errorTrigger",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "limit",
+        "merge",
+        "microsoftTeams",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "s3",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "ssh",
+        "stickyNote",
+        "switch"
+      ],
+      "credenciales": [
+        "Google Gemini(PaLM) Api account 2",
+        "Levelito Acoount management",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "RedisLevelUpMedia",
+        "S3 account",
+        "SSH Password account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-nano",
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "wsmfSEQa0GYGHqjA",
+      "nombre": "B-) Publicador de campañas v1 - devflow",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:14:21.865Z",
+      "creadoEl": "2025-11-20T19:28:00.197Z",
+      "tags": [],
+      "nodos": 137,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)",
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "dataTable",
+        "errorTrigger",
+        "executeWorkflow",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "limit",
+        "merge",
+        "microsoftTeams",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "s3",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "ssh",
+        "switch",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "RedisLevelUpMedia",
+        "S3 account",
+        "SSH Password account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-nano"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "g7mkm3TKkjQYpopk",
+      "nombre": "B-) Slack button logic v2",
+      "activo": true,
+      "actualizadoEl": "2026-01-07T14:29:38.167Z",
+      "creadoEl": "2025-08-15T02:20:45.742Z",
+      "tags": [
+        "Produccion",
+        "Global"
+      ],
+      "nodos": 23,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/recibir-data-slack-boton"
+      ],
+      "servicios": [
+        "code",
+        "nocoDb",
+        "slack",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "yltCftFKOPFbreUt",
+      "nombre": "B-) V3",
+      "activo": true,
+      "actualizadoEl": "2026-07-01T11:44:02.172Z",
+      "creadoEl": "2025-10-08T01:22:30.342Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 46,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)",
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflow",
+        "executeWorkflowTrigger",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "set",
+        "slack",
+        "splitInBatches",
+        "stickyNote",
+        "switch",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "3NpTfPN4uQseNhq5",
+      "nombre": "BackUp Credential",
+      "activo": true,
+      "actualizadoEl": "2026-01-22T16:22:31.240Z",
+      "creadoEl": "2025-09-17T22:31:19.714Z",
+      "tags": [],
+      "nodos": 10,
+      "triggers": [
+        "On clicking 'execute' (manualTrigger)",
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "executeCommand",
+        "executeWorkflow",
+        "manualTrigger",
+        "n8n",
+        "scheduleTrigger",
+        "splitInBatches",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "n8n-backup"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "pNSgghJY7mLA9GnB",
+      "nombre": "BackUp Workflows",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:55:39.096Z",
+      "creadoEl": "2025-09-17T22:31:43.278Z",
+      "tags": [],
+      "nodos": 23,
+      "triggers": [
+        "Execute Workflow Trigger (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "executeWorkflowTrigger",
+        "github",
+        "httpRequest",
+        "if",
+        "merge",
+        "noOp",
+        "set",
+        "stickyNote",
+        "switch"
+      ],
+      "credenciales": [
+        "GitHub account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
+      "activo": true,
+      "actualizadoEl": "2026-09-10T01:48:29.665Z",
+      "creadoEl": "2025-11-12T12:51:51.668Z",
+      "tags": [
+        "Produccion",
+        "Global"
+      ],
+      "nodos": 9,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "filter",
+        "httpRequest",
+        "mondayCom",
+        "nocoDb",
+        "scheduleTrigger"
+      ],
+      "credenciales": [
+        "Monday.com levelup",
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "Z9LnpNMTFKRl3CIg",
+      "nombre": "C-) Alerta por falta de pago v1",
+      "activo": true,
+      "actualizadoEl": "2026-03-24T15:15:59.155Z",
+      "creadoEl": "2025-09-10T19:10:58.448Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 19,
+      "triggers": [
+        "8am (scheduleTrigger)",
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "errorTrigger",
+        "httpRequest",
+        "if",
+        "merge",
+        "microsoftTeams",
+        "nocoDb",
+        "redis",
+        "scheduleTrigger",
+        "slack"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "gbjp6DIimQwwgYEt",
+      "nombre": "C-) Creador de copy(s) v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:54:55.671Z",
+      "creadoEl": "2025-10-27T21:51:28.164Z",
+      "tags": [],
+      "nodos": 11,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "code",
+        "executeWorkflowTrigger",
+        "merge",
+        "set"
+      ],
+      "credenciales": [
+        "OpenAiModelLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-4.1"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "61jM0xZxj4LvFEtX",
+      "nombre": "C-) Creador de copy(s) v1 - devflow",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:14:23.574Z",
+      "creadoEl": "2025-11-20T19:28:16.988Z",
+      "tags": [],
+      "nodos": 20,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "executeWorkflowTrigger",
+        "merge",
+        "set"
+      ],
+      "credenciales": [
+        "OpenAiModelLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-4.1"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "J6gK0AYy7Bbz4NC2",
+      "nombre": "C-) Herramienta - Procesar Vacaciones",
+      "activo": true,
+      "actualizadoEl": "2026-03-04T00:57:50.958Z",
+      "creadoEl": "2025-10-27T13:12:18.089Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 21,
+      "triggers": [
+        "Input (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "compareDatasets",
+        "dateTime",
+        "executeWorkflowTrigger",
+        "filter",
+        "if",
+        "mondayCom",
+        "set",
+        "slack",
+        "splitOut"
+      ],
+      "credenciales": [
+        "Monday.com levelup",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "Sb6dLyiZnMJtc6AC",
+      "nombre": "C-) Lógica envío de reportes v5",
+      "activo": true,
+      "actualizadoEl": "2026-04-15T17:21:44.451Z",
+      "creadoEl": "2025-10-08T19:28:37.111Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 36,
+      "triggers": [
+        "Start (executeWorkflowTrigger)",
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "code",
+        "errorTrigger",
+        "executeWorkflowTrigger",
+        "filter",
+        "gmail",
+        "html",
+        "if",
+        "limit",
+        "merge",
+        "microsoftTeams",
+        "n8n-nodes-gotenberg-pdf.gotenberg",
+        "nocoDb",
+        "redis",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "GmailAccountLevelUpMedia",
+        "Gotenberg account",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "OpenAi new apikey",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "KWSsCZWE3CLmT7Dj",
+      "nombre": "C-) Tools agente principal v1",
+      "activo": true,
+      "actualizadoEl": "2026-05-27T19:04:10.720Z",
+      "creadoEl": "2025-08-24T19:15:30.941Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 55,
+      "triggers": [
+        "reagendar (webhook)",
+        "cancelar (webhook)",
+        "buscar-disponibilidad (webhook)",
+        "alertar asesor (webhook)",
+        "alertar-asesor-setter (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/reagendar-cita",
+        "POST /webhook/cancelar-cita",
+        "POST /webhook/disponibilidad",
+        "POST /webhook/alerta-asesor",
+        "POST /webhook/alerta-asesor-setter"
+      ],
+      "servicios": [
+        "ai:chainLlm",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "filter",
+        "googleCalendar",
+        "httpRequest",
+        "if",
+        "limit",
+        "nocoDb",
+        "set",
+        "slack",
+        "sort",
+        "splitOut",
+        "stickyNote",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "CalendlyLevelUpMedia",
+        "GoogleCalendarLevelUpMedia",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "kyiZTRCdzolA5li5",
+      "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
+      "activo": true,
+      "actualizadoEl": "2025-07-14T08:36:08.000Z",
+      "creadoEl": "2025-07-11T21:28:50.202Z",
+      "tags": [],
+      "nodos": 51,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflowTrigger",
+        "graphql",
+        "httpRequest",
+        "if",
+        "limit",
+        "merge",
+        "noOp",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Facebook Graph account",
+        "Facebook Graph account back up"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "Vaxl6v0kVZW9tIHN",
+      "nombre": "Create PDF",
+      "activo": true,
+      "actualizadoEl": "2025-09-26T22:59:22.000Z",
+      "creadoEl": "2025-09-26T22:35:59.138Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "Start (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "httpRequest"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "M7Gunj0t3umBrgjP",
+      "nombre": "D-) Escalar a elvin",
+      "activo": true,
+      "actualizadoEl": "2026-03-04T00:56:24.802Z",
+      "creadoEl": "2025-11-12T18:28:12.607Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 3,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "slack"
+      ],
+      "credenciales": [
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "eoGkQJiljDgVjFz1",
+      "nombre": "D-) Limpiador de minio",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:50:45.654Z",
+      "creadoEl": "2025-10-20T19:13:04.845Z",
+      "tags": [],
+      "nodos": 3,
+      "triggers": [
+        "Schedule Trigger1 (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "scheduleTrigger",
+        "ssh"
+      ],
+      "credenciales": [
+        "SSH Password account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "GB0T58QINudPFtEZ",
+      "nombre": "D-) Tools encuestador v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:05:28.167Z",
+      "creadoEl": "2025-09-04T00:11:22.543Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 14,
+      "triggers": [
+        "enviar-alerta-slack (webhook)",
+        "alertar-asesor (webhook)",
+        "finalizar-encuesta (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/enviar-alerta-slack",
+        "POST /webhook/asesor",
+        "POST /webhook/finalizar-encuesta"
+      ],
+      "servicios": [
+        "ai:chainLlm",
+        "ai:lmChatOpenAi",
+        "n8n-nodes-chatwoot.chatwoot",
+        "slack",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "WiNvceWGgPIVlOF6",
+      "nombre": "D) Comprobante Pago",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:05:26.379Z",
+      "creadoEl": "2025-07-30T07:26:50.980Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 11,
+      "triggers": [
+        "start-manual-trigger (manualTrigger)",
+        "enviar-formulario (formTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "formTrigger",
+        "gmail",
+        "googleDocs",
+        "googleDrive",
+        "googleSheets",
+        "limit",
+        "manualTrigger",
+        "slack",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "DocOnboardingLevelUpMedia",
+        "GmailAccountLevelUpMedia",
+        "GoogleDriveLevelUpMedia",
+        "GoogleSheetsLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "HvMsL5j65etc7ZBq",
+      "nombre": "E-) Agente supervisor",
+      "activo": true,
+      "actualizadoEl": "2026-01-07T03:35:00.407Z",
+      "creadoEl": "2025-11-26T18:20:28.942Z",
+      "tags": [],
+      "nodos": 18,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:chainLlm",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "executeWorkflowTrigger",
+        "httpRequest",
+        "if",
+        "merge",
+        "mondayCom",
+        "nocoDb",
+        "slack",
+        "splitInBatches"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com levelup",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "vvXRpzCDaYehJDYf",
+      "nombre": "E-) Alerta falta de fases v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T15:04:47.551Z",
+      "creadoEl": "2025-09-23T08:51:12.290Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 18,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "noOp",
+        "redis",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "RedisLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "zHqLHcFFgClZuUK5",
+      "nombre": "E-) citas automaticas v4",
+      "activo": true,
+      "actualizadoEl": "2026-07-12T22:57:40.457Z",
+      "creadoEl": "2025-08-23T15:59:49.431Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 143,
+      "triggers": [
+        "Gmail Trigger (gmailTrigger)",
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "code",
+        "filter",
+        "gmail",
+        "gmailTrigger",
+        "googleCalendar",
+        "googleDrive",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "nocoDb",
+        "postgres",
+        "set",
+        "slack",
+        "stickyNote",
+        "stopAndError",
+        "switch"
+      ],
+      "credenciales": [
+        "Chatwoot LUM bot agent",
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "GmailAccountLevelUpMedia",
+        "GoogleCalendarLevelUpMedia",
+        "GoogleDriveLevelUpMedia",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [
+        "Send a message"
+      ],
+      "notas": [
+        "If9: inbox=12 (es el de setter)\ninbox=6 (es el de onboarding)",
+        "If10: inbox=6 (es el de onboarding)\ninbox=12 (es el de setter)\n",
+        "If11: inbox=12 (es el de setter)\ninbox=6 (es el de onboarding)",
+        "If12: inbox=12 (es el de setter)\ninbox=6 (es el de onboarding)",
+        "If13: inbox=6 (es el de onboarding)\ninbox=12 (es el de setter)\n",
+        "If14: inbox=6 (es el de onboarding)\ninbox=12 (es el de setter)\n",
+        "nodoAnteriorComoEra: JSON.stringify (esa es la diff)"
+      ]
+    },
+    {
+      "id": "dsrJpJi1MTr4mCOZ",
+      "nombre": "F-) Alerta para fase 5",
+      "activo": true,
+      "actualizadoEl": "2026-04-15T20:47:02.932Z",
+      "creadoEl": "2025-11-11T18:28:50.185Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 19,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "noOp",
+        "redis",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "RedisLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "uelcZVSQvpl2hetY",
+      "nombre": "F-) Lector de seguimientos v1",
+      "activo": true,
+      "actualizadoEl": "2026-06-27T18:14:56.392Z",
+      "creadoEl": "2025-08-23T00:31:50.728Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 24,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)",
+        "Schedule Trigger1 (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "httpRequest",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "splitInBatches",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "giPHQRGfr5d89t7J",
+      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:05:35.674Z",
+      "creadoEl": "2025-10-20T20:09:15.046Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 22,
+      "triggers": [
+        "Error Trigger (errorTrigger)",
+        "Schedule Trigger1 (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "errorTrigger",
+        "extractFromFile",
+        "filter",
+        "googleDrive",
+        "httpRequest",
+        "if",
+        "microsoftTeams",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "postgres",
+        "redis",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "wait"
+      ],
+      "credenciales": [
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "GoogleDriveLevelUpMedia",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Schedule Trigger1"
+      ],
+      "notas": []
+    },
+    {
+      "id": "ZhcAhenK4DTDHehN",
+      "nombre": "Generacion de tareas sub worflow",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T13:55:53.545Z",
+      "creadoEl": "2025-08-27T03:59:27.242Z",
+      "tags": [],
+      "nodos": 37,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:chainLlm",
+        "ai:lmChatGoogleGemini",
+        "ai:outputParserStructured",
+        "clickUp",
+        "executeWorkflowTrigger",
+        "filter",
+        "googleSheets",
+        "if",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "supabase",
+        "wait"
+      ],
+      "credenciales": [
+        "ClickUp account",
+        "Google Gemini(PaLM) Api account 2",
+        "Google Sheets account",
+        "Supabase account"
+      ],
+      "modelosIA": [
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "wqgZHdFtQ07PQg2q",
+      "nombre": "Gotenberg (Create PDF)",
+      "activo": true,
+      "actualizadoEl": "2025-09-26T22:35:35.000Z",
+      "creadoEl": "2025-09-26T22:33:14.631Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "Start (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "httpRequest"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "rTRe0OKhXPAKrFzs",
+      "nombre": "H-) Felicitaciones a los 100 - 200 leads v1 (v3.1)",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:05:41.971Z",
+      "creadoEl": "2025-09-18T20:13:00.454Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 58,
+      "triggers": [
+        "Schedule Trigger1 (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "postgres",
+        "scheduleTrigger",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "switch",
+        "wait"
+      ],
+      "credenciales": [
+        "Chatwoot LUM bot agent",
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "I8u1vHBsHTeF74nd",
+      "nombre": "I-) Envio de pdf de ciberseguridad v1",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:07:40.470Z",
+      "creadoEl": "2025-11-12T13:48:57.562Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 14,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "extractFromFile",
+        "filter",
+        "googleDrive",
+        "httpRequest",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "postgres",
+        "scheduleTrigger",
+        "set",
+        "splitInBatches",
+        "wait"
+      ],
+      "credenciales": [
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "GoogleDriveLevelUpMedia",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "7DRJJjTva38GSoGg",
+      "nombre": "J-) Envio de mensaje de bienvenida",
+      "activo": true,
+      "actualizadoEl": "2026-01-21T21:38:41.085Z",
+      "creadoEl": "2025-11-28T21:09:37.577Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 20,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)",
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "errorTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "microsoftTeams",
+        "n8n-nodes-chatwoot.chatwoot",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "postgres",
+        "redis",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "wait"
+      ],
+      "credenciales": [
+        "Chatwoot LUM token perfil",
+        "Evolution account",
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "zzaIVNQVp7rkKyo0",
+      "nombre": "My Sub-Workflow 1",
+      "activo": true,
+      "actualizadoEl": "2025-07-09T03:38:34.000Z",
+      "creadoEl": "2025-07-09T03:37:02.636Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "noOp"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "0mEMnsMxnuy3SGjh",
+      "nombre": "My Sub-Workflow 2",
+      "activo": true,
+      "actualizadoEl": "2025-10-20T19:14:09.000Z",
+      "creadoEl": "2025-10-14T21:28:31.842Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "noOp"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "OyXhxbche4d60nOW",
+      "nombre": "My Sub-Workflow 3",
+      "activo": true,
+      "actualizadoEl": "2025-10-27T21:51:06.000Z",
+      "creadoEl": "2025-10-27T21:50:54.695Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "noOp"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "RXMCAuLoLhZCE2Sv",
+      "nombre": "My workflow",
+      "activo": true,
+      "actualizadoEl": "2026-07-31T01:53:53.882Z",
+      "creadoEl": "2026-07-31T01:52:20.597Z",
+      "tags": [],
+      "nodos": 3,
+      "triggers": [
+        "When chat message received (@n8n/n8n-nodes-langchain.chatTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:chatTrigger",
+        "ai:lmChatOpenAi"
+      ],
+      "credenciales": [
+        "OpenAi new apikey"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "fEOX9Q3Szkf6bLQq",
+      "nombre": "Notificación Error",
+      "activo": true,
+      "actualizadoEl": "2026-07-29T01:06:05.964Z",
+      "creadoEl": "2025-07-15T03:21:36.270Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 3,
+      "triggers": [
+        "Error Trigger (errorTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "errorTrigger",
+        "microsoftTeams",
+        "slack"
+      ],
+      "credenciales": [
+        "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "UIOeMjnuHwMaMyoX",
+      "nombre": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
+      "activo": true,
+      "actualizadoEl": "2026-01-06T14:10:43.246Z",
+      "creadoEl": "2025-09-12T20:14:25.498Z",
+      "tags": [
+        "out-of-service",
+        "testing"
+      ],
+      "nodos": 26,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:chainLlm",
+        "ai:lmChatOpenAi",
+        "ai:outputParserStructured",
+        "code",
+        "executeWorkflowTrigger",
+        "filter",
+        "httpRequest",
+        "if",
+        "noOp",
+        "redis",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "OpenAiModelLevelUpMedia",
+        "RedisLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "3DeJXvNmTFQ44FIF",
+      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
+      "activo": true,
+      "actualizadoEl": "2026-02-02T03:22:58.706Z",
+      "creadoEl": "2026-02-02T02:14:26.013Z",
+      "tags": [],
+      "nodos": 15,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "httpRequest",
+        "if",
+        "mondayCom",
+        "noOp",
+        "scheduleTrigger",
+        "slack",
+        "splitOut",
+        "stopAndError",
+        "switch"
+      ],
+      "credenciales": [
+        "Monday.com levelup",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "monday.com Credentials"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "L51yWcEJXkSrloeK",
+      "nombre": "A-) Enviar noticias al canal",
+      "activo": false,
+      "actualizadoEl": "2026-01-07T03:38:22.340Z",
+      "creadoEl": "2025-11-12T14:41:18.271Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/recibir-noticias"
+      ],
+      "servicios": [
+        "slack",
+        "webhook"
+      ],
+      "credenciales": [
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "Unnamed credential"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "LWZ3ILy8CzZFj9fO",
+      "nombre": "A-) Migracion de datos de monday v5 copy",
+      "activo": false,
+      "actualizadoEl": "2025-11-18T15:20:45.000Z",
+      "creadoEl": "2025-11-18T13:36:29.091Z",
+      "tags": [],
+      "nodos": 119,
+      "triggers": [
+        "Webhook (webhook)",
+        "Schedule Trigger (scheduleTrigger)",
+        "Webhook2 (webhook)",
+        "clientes-activos (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/01515792-673f-498d-a022-80874a8f114e",
+        "POST /webhook/30cbbaf8-d05b-467c-8a7e-d54291e6d793",
+        "POST /webhook/1668c242-20eb-47e7-9831-6405741a218a"
+      ],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "mondayCom",
+        "noOp",
+        "nocoDb",
+        "redis",
+        "scheduleTrigger",
+        "set",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "switch",
+        "webhook"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com levelup",
+        "NocoDB Token account",
+        "RedisLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "7TYGDiWlJY2jqHX9",
+      "nombre": "A) Resumen Reuniones",
+      "activo": false,
+      "actualizadoEl": "2025-10-01T19:32:08.000Z",
+      "creadoEl": "2025-06-28T17:55:17.626Z",
+      "tags": [
+        "testing"
+      ],
+      "nodos": 29,
+      "triggers": [
+        "When clicking ‘Test workflow’ (manualTrigger)",
+        "Execute Workflow Trigger (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:lmChatAnthropic",
+        "ai:lmChatGoogleGemini",
+        "ai:toolThink",
+        "ai:toolWorkflow",
+        "clickUp",
+        "code",
+        "executeWorkflowTrigger",
+        "extractFromFile",
+        "filter",
+        "gmail",
+        "httpRequest",
+        "limit",
+        "manualTrigger",
+        "microsoftOutlookTool",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "stopAndError",
+        "zoom"
+      ],
+      "credenciales": [
+        "Anthropic account PymesAI Borrar",
+        "Google Gemini(PaLM) Api account PymesAI Borrar",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "Zoom LevelUp Media account"
+      ],
+      "modelosIA": [
+        "claude-3-7-sonnet-20250219",
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [
+        "Create follow-up call",
+        "Execute Workflow Trigger",
+        "Send a message",
+        "Send a message1"
+      ],
+      "notas": []
+    },
+    {
+      "id": "aZADKypvqlgg9xMh",
+      "nombre": "Actualizar correctamente chatwoot",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:54:22.699Z",
+      "creadoEl": "2025-09-04T20:03:30.125Z",
+      "tags": [
+        "testing"
+      ],
+      "nodos": 10,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-chatwoot.chatwoot",
+        "noOp",
+        "nocoDb",
+        "set",
+        "splitInBatches"
+      ],
+      "credenciales": [
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "0O7mXpxvFSjaLtlU",
+      "nombre": "ads-management",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:55:28.035Z",
+      "creadoEl": "2025-09-25T09:20:57.458Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "httpRequest",
+        "manualTrigger"
+      ],
+      "credenciales": [
+        "Meta permission apply"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "5fTSuLxgCjMbnRSm",
+      "nombre": "ads-read",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:55:25.317Z",
+      "creadoEl": "2025-09-25T09:18:01.729Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "httpRequest",
+        "manualTrigger"
+      ],
+      "credenciales": [
+        "LevelUpMediaAccessToken"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "zXZLXX4WRFy87qNj",
+      "nombre": "Agente de onboarding v4 out-of-servide",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:05:17.482Z",
+      "creadoEl": "2025-08-22T19:03:25.772Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 37,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/chatwoot-limpio"
+      ],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "code",
+        "googleDocsTool",
+        "httpRequest",
+        "httpRequestTool",
+        "if",
+        "noOp",
+        "redis",
+        "set",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "switch",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "DocOnboardingLevelUpMedia",
+        "OpenAi new apikey",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-5-mini",
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "EEE1FGzB76wwEsyx",
+      "nombre": "Agente IA Area Onboarding",
+      "activo": false,
+      "actualizadoEl": "2025-07-06T22:21:28.000Z",
+      "creadoEl": "2025-07-02T22:40:45.742Z",
+      "tags": [],
+      "nodos": 1,
+      "triggers": [
+        "On form submission (formTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "formTrigger"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "TTciRCAqlCYC4QpA",
+      "nombre": "B-) Birthday",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:08:38.929Z",
+      "creadoEl": "2025-09-24T18:38:21.573Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 10,
+      "triggers": [
+        "trigger-daily-birthday-check (scheduleTrigger)",
+        "trigger-manual-test (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "gmail",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-chatwoot.chatwoot",
+        "nocoDb",
+        "postgres",
+        "scheduleTrigger"
+      ],
+      "credenciales": [
+        "Chatwoot LUM bot agent",
+        "Chatwoot LUM token perfil",
+        "GmailAccountLevelUpMedia",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "TAtsmX9ozs2mPvCe",
+      "nombre": "B) Agente Onboarding - Orquestador v2 alexVersion",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:05:20.053Z",
+      "creadoEl": "2025-07-11T16:40:04.347Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 32,
+      "triggers": [
+        "whatsapp_webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/recibir-mensaje-final"
+      ],
+      "servicios": [
+        "aggregate",
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "ai:toolWorkflow",
+        "googleDocsTool",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "redis",
+        "set",
+        "sort",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "switch",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "DocOnboardingLevelUpMedia",
+        "Evolution account",
+        "OpenAi new apikey",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia",
+        "RedisLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini",
+        "gpt-4.1-nano"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "fkc5VuZtjx2NUCvZ",
+      "nombre": "B1) Agente Onboarding - Validacion en excel",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:07:52.140Z",
+      "creadoEl": "2025-07-11T22:30:27.975Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 10,
+      "triggers": [
+        "When_Executed_by_Another_Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflowTrigger",
+        "googleCalendar",
+        "googleSheets",
+        "if",
+        "set",
+        "sort"
+      ],
+      "credenciales": [
+        "GoogleCalendarLevelUpMedia",
+        "GoogleSheetsLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "zQPgMRoWkmrca8f6",
+      "nombre": "B2.2) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:05:21.755Z",
+      "creadoEl": "2025-08-07T02:09:14.850Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 27,
+      "triggers": [
+        "Gmail Trigger (gmailTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:lmChatOpenAi",
+        "code",
+        "filter",
+        "gmail",
+        "gmailTrigger",
+        "googleCalendar",
+        "googleSheets",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "set",
+        "switch"
+      ],
+      "credenciales": [
+        "Evolution account",
+        "GmailAccountLevelUpMedia",
+        "GoogleCalendarLevelUpMedia",
+        "GoogleSheetsLevelUpMedia",
+        "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)",
+        "OpenAiModelLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "bO5n8pQI57Al2cgG",
+      "nombre": "Birthday copy",
+      "activo": false,
+      "actualizadoEl": "2025-10-13T13:48:40.000Z",
+      "creadoEl": "2025-10-13T13:48:11.666Z",
+      "tags": [],
+      "nodos": 10,
+      "triggers": [
+        "trigger-daily-birthday-check (scheduleTrigger)",
+        "trigger-manual-test (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "gmail",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-chatwoot.chatwoot",
+        "nocoDb",
+        "postgres",
+        "scheduleTrigger"
+      ],
+      "credenciales": [
+        "Chatwoot LUM bot agent",
+        "Chatwoot LUM token perfil",
+        "GmailAccountLevelUpMedia",
+        "NocoDB Token account",
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "eXipGv9n5GSHMCag",
+      "nombre": "C) 1.1 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:10:23.087Z",
+      "creadoEl": "2025-07-23T01:19:58.752Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 48,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "baserow",
+        "code",
+        "graphql",
+        "httpRequest",
+        "if",
+        "noOp",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Agente de monitoreo - Baserow testing selfhosted",
+        "Levelito Acoount management",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "lb3at6DIzuJqs1V8",
+      "nombre": "C) 1.2 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:10:25.717Z",
+      "creadoEl": "2025-07-29T18:59:59.704Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 49,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "mondayCom",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com account",
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "nWAzRYgLFuJi1kaG",
+      "nombre": "C) Agente Monitoreo de anuncios",
+      "activo": false,
+      "actualizadoEl": "2025-07-17T18:34:23.000Z",
+      "creadoEl": "2025-07-09T12:12:23.326Z",
+      "tags": [],
+      "nodos": 7,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)",
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflow",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "scheduleTrigger"
+      ],
+      "credenciales": [
+        "Facebook Graph account back up"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "80QA8Tpv4sLIcNku",
+      "nombre": "C) Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:10:28.223Z",
+      "creadoEl": "2025-07-09T17:24:47.508Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 72,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "graphql",
+        "httpRequest",
+        "if",
+        "noOp",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Agente de monitoreo - Facebook Token",
+        "Levelito Acoount management",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "S0or6AyoMq9KszB3",
+      "nombre": "D-) Actualización fecha primera campaña",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:10:35.115Z",
+      "creadoEl": "2025-09-11T21:11:33.357Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 15,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)",
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "sort",
+        "splitInBatches",
+        "splitOut"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "a5FgDWKAfmqv40PM",
+      "nombre": "D-) Limpiador de minio - devflow",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T15:42:51.468Z",
+      "creadoEl": "2025-11-20T19:28:34.119Z",
+      "tags": [],
+      "nodos": 3,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "scheduleTrigger",
+        "ssh"
+      ],
+      "credenciales": [
+        "SSH Password account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "Uk4m1c65HaC2MfFK",
+      "nombre": "Detectar workflows",
+      "activo": false,
+      "actualizadoEl": "2025-12-10T12:43:32.000Z",
+      "creadoEl": "2025-11-11T13:03:41.599Z",
+      "tags": [],
+      "nodos": 2,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "manualTrigger",
+        "postgres"
+      ],
+      "credenciales": [
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "4IaE51EipJb2ZJNY",
+      "nombre": "Docusing",
+      "activo": false,
+      "actualizadoEl": "2026-01-12T21:18:44.491Z",
+      "creadoEl": "2025-09-04T23:47:29.498Z",
+      "tags": [],
+      "nodos": 8,
+      "triggers": [
+        "Google Sheets Trigger (googleSheetsTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "googleSheetsTrigger",
+        "httpRequest",
+        "jwt",
+        "set",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "Agente IA",
+        "JWT Auth account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Google Sheets Trigger"
+      ],
+      "notas": []
+    },
+    {
+      "id": "HPJYdfjD28yw5u4t",
+      "nombre": "E-) Notificacion  Personas Infracción",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:52:44.278Z",
+      "creadoEl": "2025-11-14T03:09:27.756Z",
+      "tags": [],
+      "nodos": 4,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "nocoDb",
+        "scheduleTrigger",
+        "slack"
+      ],
+      "credenciales": [
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "GeQUkgLSTCQYmWjP",
+      "nombre": "Encuestador",
+      "activo": false,
+      "actualizadoEl": "2025-09-06T14:44:09.000Z",
+      "creadoEl": "2025-08-29T16:11:08.620Z",
+      "tags": [],
+      "nodos": 13,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/seguimientos-10-dias"
+      ],
+      "servicios": [
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatOpenAi",
+        "ai:memoryPostgresChat",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "webhook"
+      ],
+      "credenciales": [
+        "Evolution account 2",
+        "OpenAiModelLevelUpMedia",
+        "PostgresLevelUpMedia"
+      ],
+      "modelosIA": [
+        "gpt-5-mini",
+        "gpt-4.1-nano"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "eAz3TdAqZ9k3oLgQ",
+      "nombre": "F-) Mensaje de bienvenida onboarding",
+      "activo": false,
+      "actualizadoEl": "2025-11-28T21:09:19.000Z",
+      "creadoEl": "2025-11-28T21:07:06.289Z",
+      "tags": [
+        "Produccion"
+      ],
+      "nodos": 11,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "httpRequest",
+        "n8n-nodes-chatwoot.chatwoot",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "splitInBatches",
+        "wait"
+      ],
+      "credenciales": [
+        "NocoDB Token account",
+        "token-meta-creator"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "0f2Ak2Z7Vft62F74",
+      "nombre": "Generador de Tareas",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:55:45.827Z",
+      "creadoEl": "2025-08-30T04:44:12.677Z",
+      "tags": [],
+      "nodos": 23,
+      "triggers": [
+        "Cron Trigger1 (cron)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "cron",
+        "executeWorkflow",
+        "extractFromFile",
+        "filter",
+        "function",
+        "httpRequest",
+        "if",
+        "noOp",
+        "set",
+        "splitInBatches",
+        "stickyNote",
+        "supabase",
+        "zoom"
+      ],
+      "credenciales": [
+        "Supabase account",
+        "Zoom account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "T1t4OYwVW7QTJ1ml",
+      "nombre": "Get Campaigns",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:32.020Z",
+      "creadoEl": "2025-09-16T23:44:53.332Z",
+      "tags": [],
+      "nodos": 13,
+      "triggers": [
+        "Start (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "convertToFile",
+        "executeWorkflowTrigger",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "set",
+        "slack",
+        "splitOut"
+      ],
+      "credenciales": [
+        "GmailAccountLevelUpMedia",
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [
+        "Send Report (Email)",
+        "Upload a file"
+      ],
+      "notas": []
+    },
+    {
+      "id": "1TaG7dgh54hTcLRm",
+      "nombre": "graficos",
+      "activo": false,
+      "actualizadoEl": "2026-06-27T00:39:40.653Z",
+      "creadoEl": "2026-01-07T13:24:57.991Z",
+      "tags": [],
+      "nodos": 20,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "googleDrive",
+        "httpRequest",
+        "limit",
+        "manualTrigger",
+        "merge",
+        "set",
+        "splitOut",
+        "switch"
+      ],
+      "credenciales": [
+        "GoogleDriveLevelUpMedia",
+        "Levelito Acoount management"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "jMW6wVpeUyPBG6Pm",
+      "nombre": "monitoreo",
+      "activo": false,
+      "actualizadoEl": "2025-10-30T12:54:17.000Z",
+      "creadoEl": "2025-07-02T03:59:27.865Z",
+      "tags": [
+        "out-of-service",
+        "testing"
+      ],
+      "nodos": 38,
+      "triggers": [
+        "Execute Workflow Trigger (executeWorkflowTrigger)",
+        "When clicking ‘Test workflow’ (manualTrigger)",
+        "When chat message received (@n8n/n8n-nodes-langchain.chatTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "ai:agent",
+        "ai:chatTrigger",
+        "ai:code",
+        "ai:lmChatAnthropic",
+        "ai:lmChatGoogleGemini",
+        "ai:memoryBufferWindow",
+        "ai:toolThink",
+        "ai:toolWorkflow",
+        "code",
+        "emailSend",
+        "executeWorkflowTrigger",
+        "extractFromFile",
+        "filter",
+        "googleSheets",
+        "httpRequest",
+        "manualTrigger",
+        "microsoftOutlookTool",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "stopAndError",
+        "zoom"
+      ],
+      "credenciales": [
+        "Anthropic account PymesAI Borrar",
+        "Google Gemini(PaLM) Api account PymesAI Borrar",
+        "GoogleSheetsLevelUpMedia(agenteia@levelupmediapr.net)",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "Zoom LevelUp Media account"
+      ],
+      "modelosIA": [
+        "claude-3-7-sonnet-20250219",
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+      ],
+      "desactivadosDentro": [
+        "Zoom: Get transcript file",
+        "Zoom: Get participants data",
+        "Send meeting summary",
+        "Create follow-up call",
+        "Anthropic Chat Model",
+        "Execute Workflow Trigger"
+      ],
+      "notas": []
+    },
+    {
+      "id": "bs9GFWlptCe1lLBj",
+      "nombre": "out-of-service Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:07:48.304Z",
+      "creadoEl": "2025-08-06T20:43:30.150Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 39,
+      "triggers": [
+        "15min_trigger (scheduleTrigger)",
+        "Daily_Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "gmail",
+        "googleCalendar",
+        "googleSheets",
+        "httpRequest",
+        "if",
+        "scheduleTrigger",
+        "set",
+        "splitOut",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "GmailAccountLevelUpMedia",
+        "GoogleCalendarLevelUpMedia",
+        "GoogleSheetsLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "zFQkFlCjCbZ9KMJk",
+      "nombre": "out-of-service B2.1) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:07:50.173Z",
+      "creadoEl": "2025-07-25T07:07:05.280Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 5,
+      "triggers": [
+        "Calendly_Trigger (calendlyTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "calendlyTrigger",
+        "googleCalendar",
+        "if",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "CalendlyLevelUpMedia",
+        "GoogleCalendarLevelUpMedia"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "eWSMgXi9uW3E9gCy",
+      "nombre": "P-) Mantenimiento de desfase en los estrategas",
+      "activo": false,
+      "actualizadoEl": "2026-01-07T21:11:38.027Z",
+      "creadoEl": "2025-10-07T18:34:38.581Z",
+      "tags": [
+        "Mantenimiento"
+      ],
+      "nodos": 13,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "code",
+        "compareDatasets",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "mondayCom",
+        "nocoDb",
+        "set"
+      ],
+      "credenciales": [
+        "Monday.com levelup",
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "cEPWfieOs6tWBdWa",
+      "nombre": "prueba",
+      "activo": false,
+      "actualizadoEl": "2026-03-25T12:59:11.463Z",
+      "creadoEl": "2026-03-20T22:33:42.558Z",
+      "tags": [],
+      "nodos": 1,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/b692c74c-1e20-4b73-94c9-c15b3f75c442"
+      ],
+      "servicios": [
+        "webhook"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "HkjdzsysScaeszpR",
+      "nombre": "Reminder Tasks",
+      "activo": false,
+      "actualizadoEl": "2025-07-03T04:19:03.000Z",
+      "creadoEl": "2025-06-29T02:38:28.736Z",
+      "tags": [],
+      "nodos": 1,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "scheduleTrigger"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Schedule Trigger"
+      ],
+      "notas": []
+    },
+    {
+      "id": "jOgVxxtD2fJQeOgg",
+      "nombre": "Seguimiento tareas",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:55:49.879Z",
+      "creadoEl": "2025-08-30T04:49:40.177Z",
+      "tags": [],
+      "nodos": 14,
+      "triggers": [
+        "Due Date Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "clickUp",
+        "function",
+        "gmail",
+        "googleSheets",
+        "if",
+        "noOp",
+        "scheduleTrigger",
+        "splitInBatches"
+      ],
+      "credenciales": [
+        "ClickUp account",
+        "GmailAccountLevelUpMedia",
+        "Google Sheets account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "mVYdARFPPkMyJXNn",
+      "nombre": "Subworkflows",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:33.825Z",
+      "creadoEl": "2025-09-16T23:43:10.367Z",
+      "tags": [],
+      "nodos": 25,
+      "triggers": [
+        "Todos los dias a las 2pm (scheduleTrigger)",
+        "Testing (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "executeWorkflow",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "stickyNote",
+        "telegram",
+        "wait"
+      ],
+      "credenciales": [
+        "Evolution account de alex - borrar cuando termine la fase de onboarding",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "Pruebas John",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Enviar Reporte (WhatsApp)",
+        "Send Error Message (No Cuenta Publicitaria)",
+        "Send Error Message (No Fecha Inicio)",
+        "Send Error Message (No Correo)"
+      ],
+      "notas": []
+    },
+    {
+      "id": "ktzh4xweoJzWmWQD",
+      "nombre": "V1",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:35.427Z",
+      "creadoEl": "2025-09-10T19:26:57.147Z",
+      "tags": [],
+      "nodos": 35,
+      "triggers": [
+        "Todos los dias a las 2pm (scheduleTrigger)",
+        "Testing (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "convertToFile",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "merge",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Evolution account de alex - borrar cuando termine la fase de onboarding",
+        "GmailAccountLevelUpMedia",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [
+        "Loop Over Items",
+        "Send Report (Email)",
+        "Enviar Reporte (WhatsApp)",
+        "Wait 2 mins",
+        "Update (reporte-mensual: False)",
+        "Update (reporte-mensual: True)",
+        "Convert to PDF with Gotenberg"
+      ],
+      "notas": []
+    },
+    {
+      "id": "6eUUg47MueSRhizz",
+      "nombre": "v2 Agente de monitoreo - Levelito",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:09.653Z",
+      "creadoEl": "2025-08-11T17:51:58.793Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 107,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)",
+        "Telegram Trigger (telegramTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "telegramTrigger",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)",
+        "Telegram account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "yEQPJCDIUKy3VMek",
+      "nombre": "v2 Levelito - Agente de monitoreo",
+      "activo": false,
+      "actualizadoEl": "2025-08-22T19:07:04.000Z",
+      "creadoEl": "2025-08-10T09:04:21.289Z",
+      "tags": [
+        "testing"
+      ],
+      "nodos": 50,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "baserow",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "mondayCom",
+        "noOp",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com levelup",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Send a message",
+        "Send a message3",
+        "Send a message10",
+        "Create a row3",
+        "Create a row4",
+        "Create a row5",
+        "Send a message1",
+        "Send a message4",
+        "Send a message11",
+        "Create a row",
+        "Create a row6",
+        "Create a row7"
+      ],
+      "notas": []
+    },
+    {
+      "id": "Lkb4xQg9G0y16FOj",
+      "nombre": "V2 poco eficiente",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:37.240Z",
+      "creadoEl": "2025-09-12T19:21:16.787Z",
+      "tags": [],
+      "nodos": 53,
+      "triggers": [
+        "Todos los dias a las 2pm (scheduleTrigger)",
+        "Testing (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "convertToFile",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "if",
+        "manualTrigger",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "telegram",
+        "wait"
+      ],
+      "credenciales": [
+        "Evolution account de alex - borrar cuando termine la fase de onboarding",
+        "GmailAccountLevelUpMedia",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Pruebas John",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [
+        "Enviar Reporte (WhatsApp)",
+        "Send Error Message (No Cuenta Publicitaria)",
+        "Enviar Reporte (WhatsApp)1"
+      ],
+      "notas": []
+    },
+    {
+      "id": "gLB0tPkVHaZBZ7tI",
+      "nombre": "V3",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:40.521Z",
+      "creadoEl": "2025-09-16T22:37:44.460Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 39,
+      "triggers": [
+        "Todos los dias a las 2pm (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "convertToFile",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "telegram",
+        "wait"
+      ],
+      "credenciales": [
+        "Evolution account de alex - borrar cuando termine la fase de onboarding",
+        "GmailAccountLevelUpMedia",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Pruebas John",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [
+        "Enviar Reporte (WhatsApp)",
+        "Send Error Message (No Correo)"
+      ],
+      "notas": []
+    },
+    {
+      "id": "C42vSaciGbLjE3vI",
+      "nombre": "v3 Agente de monitoreo - Levelito",
+      "activo": false,
+      "actualizadoEl": "2025-09-11T21:06:54.000Z",
+      "creadoEl": "2025-09-09T14:10:35.324Z",
+      "tags": [
+        "testing"
+      ],
+      "nodos": 107,
+      "triggers": [
+        "Schedule Trigger (scheduleTrigger)",
+        "Telegram Trigger (telegramTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "code",
+        "filter",
+        "httpRequest",
+        "if",
+        "merge",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "telegramTrigger",
+        "wait"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "L1OI3ULrh2yXJqP3",
+      "nombre": "V3 backUP",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:43.940Z",
+      "creadoEl": "2025-10-03T20:33:32.017Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 36,
+      "triggers": [
+        "Todos los dias a las 2pm (scheduleTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "convertToFile",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "if",
+        "n8n-nodes-evolution-api.evolutionApi",
+        "noOp",
+        "nocoDb",
+        "scheduleTrigger",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "telegram",
+        "wait"
+      ],
+      "credenciales": [
+        "Evolution account de alex - borrar cuando termine la fase de onboarding",
+        "GmailAccountLevelUpMedia",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Pruebas John",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5"
+      ],
+      "desactivadosDentro": [
+        "Enviar Reporte (WhatsApp)"
+      ],
+      "notas": []
+    },
+    {
+      "id": "Eo6BrnFxtLDXSEo0",
+      "nombre": "V3 copy john",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T14:11:46.402Z",
+      "creadoEl": "2025-10-08T20:13:24.954Z",
+      "tags": [
+        "out-of-service"
+      ],
+      "nodos": 54,
+      "triggers": [
+        "When Executed by Another Workflow (executeWorkflowTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "aggregate",
+        "ai:openAi",
+        "code",
+        "executeWorkflow",
+        "executeWorkflowTrigger",
+        "filter",
+        "gmail",
+        "html",
+        "httpRequest",
+        "if",
+        "limit",
+        "n8n-nodes-gotenberg-pdf.gotenberg",
+        "noOp",
+        "nocoDb",
+        "set",
+        "slack",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote"
+      ],
+      "credenciales": [
+        "GmailAccountLevelUpMedia",
+        "Gotenberg account",
+        "Levelito Acoount management",
+        "NocoDB Token account",
+        "OpenAiModelLevelUpMedia",
+        "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+      ],
+      "modelosIA": [
+        "gpt-5-mini"
+      ],
+      "desactivadosDentro": [
+        "Update (reporte-mensual: False)1",
+        "Update (reporte-mensual: True)1"
+      ],
+      "notas": []
+    },
+    {
+      "id": "At91U3Emd50tyaVh",
+      "nombre": "Verificacion de meta - app demo",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:55:31.733Z",
+      "creadoEl": "2025-09-25T08:40:50.324Z",
+      "tags": [],
+      "nodos": 3,
+      "triggers": [
+        "Webhook (webhook)",
+        "Respond to Webhook (respondToWebhook)"
+      ],
+      "webhooks": [
+        "GET /webhook/app-demo"
+      ],
+      "servicios": [
+        "httpRequest",
+        "respondToWebhook",
+        "webhook"
+      ],
+      "credenciales": [],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "ez1JVuJ11RaOQA3X",
+      "nombre": "X-) Agente RH",
+      "activo": false,
+      "actualizadoEl": "2026-07-31T02:10:53.297Z",
+      "creadoEl": "2025-10-13T18:10:22.272Z",
+      "tags": [],
+      "nodos": 25,
+      "triggers": [
+        "Webhook (webhook)",
+        "When fetching a dataset row (evaluationTrigger)"
+      ],
+      "webhooks": [
+        "POST /webhook/agente-rh"
+      ],
+      "servicios": [
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatOpenAi",
+        "ai:textClassifier",
+        "code",
+        "dateTime",
+        "evaluation",
+        "evaluationTrigger",
+        "googleSheets",
+        "if",
+        "set",
+        "slack",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)",
+        "OpenAiModelLevelUpMedia",
+        "recursosHumanos"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "9MqLiz6lfEKcErPP",
+      "nombre": "X-) Agente RH Backup",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:53:06.634Z",
+      "creadoEl": "2025-10-15T17:25:42.628Z",
+      "tags": [],
+      "nodos": 20,
+      "triggers": [
+        "Webhook (webhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/agente-rh"
+      ],
+      "servicios": [
+        "ai:agent",
+        "ai:informationExtractor",
+        "ai:lmChatOpenAi",
+        "ai:textClassifier",
+        "code",
+        "dateTime",
+        "googleSheets",
+        "if",
+        "set",
+        "slack",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)",
+        "OpenAiModelLevelUpMedia",
+        "recursosHumanos"
+      ],
+      "modelosIA": [
+        "gpt-4.1-mini"
+      ],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "NyEQfFh6Lz0TBJ0E",
+      "nombre": "X-) page_id ig_id - tests",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:54:53.556Z",
+      "creadoEl": "2025-09-26T16:23:00.311Z",
+      "tags": [],
+      "nodos": 41,
+      "triggers": [
+        "When clicking ‘Execute workflow’ (manualTrigger)"
+      ],
+      "webhooks": [],
+      "servicios": [
+        "filter",
+        "httpRequest",
+        "if",
+        "limit",
+        "manualTrigger",
+        "merge",
+        "mondayCom",
+        "noOp",
+        "nocoDb",
+        "set",
+        "splitInBatches",
+        "splitOut",
+        "stickyNote",
+        "switch"
+      ],
+      "credenciales": [
+        "Levelito Acoount management",
+        "Monday.com levelup",
+        "NocoDB Token account"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [],
+      "notas": []
+    },
+    {
+      "id": "xd0kQhY3YZO3b7hQ",
+      "nombre": "X-) Vacaciones Recursos Humanos",
+      "activo": false,
+      "actualizadoEl": "2026-01-06T13:52:58.606Z",
+      "creadoEl": "2025-10-08T21:38:45.639Z",
+      "tags": [],
+      "nodos": 14,
+      "triggers": [
+        "Webhook (webhook)",
+        "Respond to Webhook (respondToWebhook)"
+      ],
+      "webhooks": [
+        "POST /webhook/17b763c9-34f2-464b-a8b7-0c41d4e76246"
+      ],
+      "servicios": [
+        "code",
+        "dateTime",
+        "googleSheets",
+        "if",
+        "respondToWebhook",
+        "set",
+        "stickyNote",
+        "wait",
+        "webhook"
+      ],
+      "credenciales": [
+        "GoogleSheetsLevelUpMedia(agentesia@levelupmediapr.net)"
+      ],
+      "modelosIA": [],
+      "desactivadosDentro": [
+        "Edit Fields1"
+      ],
+      "notas": []
+    }
+  ]
+}

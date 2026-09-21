@@ -1,0 +1,1149 @@
+{
+  "updatedAt": "2026-02-02T03:22:58.706Z",
+  "createdAt": "2026-02-02T02:14:26.013Z",
+  "id": "3DeJXvNmTFQ44FIF",
+  "name": "Recordatorio60-90DiasTrabajandoJuntos",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.monday.com/v2",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (\n      limit: 500,\n      query_params: {\n        operator: and,\n        rules: [\n          {\n            column_id: \"text_mkpqm0g9\",\n            operator: not_contains_text,\n            compare_value: [\"saldo completo\"]\n          },\n          {\n            column_id: \"group\",\n            operator: not_any_of,\n            compare_value: [\"group_mkqxsqsk\"]\n          }\n        ]\n      }\n    ) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n\n          ... on MirrorValue {\n            display_value\n          }\n\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        112,
+        -192
+      ],
+      "id": "28e77f94-bc47-48dc-9603-fdc9d2485ba9",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "WKPprnBqgbub4iWX",
+          "name": "monday.com Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.boards[0].items_page.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -192
+      ],
+      "id": "cc4c447a-2ff8-4e43-8f34-3ab2624052dd",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  finalizaAcuerdo: getColValue(\"finaliza acuerdo\") || new Date().toISOString().slice(0, 10).replace(/-/g, \"-\"),\n\n  \n  // Status Específicos\n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Acuerdo se venció (90 dias) para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🔖 Finalizacion Acuerdo:*\\n${data.finalizaAcuerdo}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      }\n    ]\n  }\n];\n\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `Recuerda hablar con el cliente, hoy se vence el contrato. `,\n      \"emoji\": true\n    }\n  ]\n});\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -192
+      ],
+      "id": "9137464e-90a0-4828-bacc-b85fa947daec",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A5F3K7G01",
+          "mode": "list",
+          "cachedResultName": "office-9-agenteia-tesoreria"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.toJsonString() }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "link_names": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1664,
+        -192
+      ],
+      "id": "20f9dbb0-2d4c-44ff-b937-6945c2cd6ae9",
+      "name": "Send a message",
+      "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -192
+      ],
+      "id": "503a8b00-6bae-4425-92ab-4b39fd5acf81",
+      "name": "Get an item1",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        -192
+      ],
+      "id": "fa5793cc-64c0-4c02-bbdf-fe7a3f12e4f1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Objeto vacio desde monday"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        16
+      ],
+      "id": "1fc525d1-cb00-4435-9b06-4376b0b74f8b",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        -192
+      ],
+      "id": "9cf301fe-a8c0-4711-aeab-16bf039f5e48",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy').setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                    "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fe609938-4730-47aa-9526-f539155fba2d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Llevan 90 dias Trabajando (renovar contrato)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2fe30572-1e67-4a1d-979f-cebd6dba1d28",
+                    "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy') }}",
+                    "rightValue": "={{ $today.setZone('America/Puerto_Rico').plus(30, 'days') }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Llevan 60 dias Trabajando "
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -192
+      ],
+      "id": "ec3e6954-5b13-4b4f-9514-6b485ac4958d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        608,
+        448
+      ],
+      "id": "dc49b3a3-c4b1-47ac-919f-36fcb9ecf458",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  finalizaAcuerdo: getColValue(\"finaliza acuerdo\") \n  || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)\n       .toISOString()\n       .slice(0, 10)\n       .replace(/-/g, \"-\"),\n\n\n  \n  // Status Específicos\n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Acuerdo se vencerá en 30 dias para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🔖 Finalizacion Acuerdo:*\\n${data.finalizaAcuerdo}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      }\n    ]\n  }\n];\n\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `Asegurate el cliente tenga buenos resultados, pues le quedan 30 dias para renovar contrato `,\n      \"emoji\": true\n    }\n  ]\n});\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        192
+      ],
+      "id": "3a31c332-e14a-48ed-97be-e485c3aa1328",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A5F3K7G01",
+          "mode": "list",
+          "cachedResultName": "office-9-agenteia-tesoreria"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.toJsonString() }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "link_names": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1664,
+        192
+      ],
+      "id": "8a51a7b8-70ff-44a2-8ccd-fc249cbf1fdb",
+      "name": "Send a message1",
+      "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RPZcJdneOoqIBClJ",
+          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "boardItem",
+        "operation": "get",
+        "itemId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        960,
+        192
+      ],
+      "id": "a0bf9628-fa9b-47ad-9c94-219ead84ff6f",
+      "name": "Get an item",
+      "credentials": {
+        "mondayComOAuth2Api": {
+          "id": "7emakKOqBk6HAsSo",
+          "name": "Monday.com levelup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        192
+      ],
+      "id": "40793735-7cf6-4dfb-9ad4-8eb20f643ba0",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Objeto vacio desde monday"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        400
+      ],
+      "id": "8ad1aa21-d385-41a3-acea-62ee3538b1df",
+      "name": "Stop and Error1"
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get an item1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get an item",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an item": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {},
+  "versionId": "92a724fa-41cb-46c1-b27f-a02437f61cf4",
+  "activeVersionId": "92a724fa-41cb-46c1-b27f-a02437f61cf4",
+  "versionCounter": 16,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-02T02:14:26.013Z",
+      "createdAt": "2026-02-02T02:14:26.013Z",
+      "role": "workflow:owner",
+      "workflowId": "3DeJXvNmTFQ44FIF",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-02T03:22:35.787Z",
+    "createdAt": "2026-02-02T03:21:52.426Z",
+    "versionId": "92a724fa-41cb-46c1-b27f-a02437f61cf4",
+    "workflowId": "3DeJXvNmTFQ44FIF",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.monday.com/v2",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "oAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "query",
+                "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (\n      limit: 500,\n      query_params: {\n        operator: and,\n        rules: [\n          {\n            column_id: \"text_mkpqm0g9\",\n            operator: not_contains_text,\n            compare_value: [\"saldo completo\"]\n          },\n          {\n            column_id: \"group\",\n            operator: not_any_of,\n            compare_value: [\"group_mkqxsqsk\"]\n          }\n        ]\n      }\n    ) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n\n          ... on MirrorValue {\n            display_value\n          }\n\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}\n"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          112,
+          -192
+        ],
+        "id": "28e77f94-bc47-48dc-9603-fdc9d2485ba9",
+        "name": "HTTP Request",
+        "credentials": {
+          "oAuth2Api": {
+            "id": "WKPprnBqgbub4iWX",
+            "name": "monday.com Credentials"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data.boards[0].items_page.items",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          416,
+          -192
+        ],
+        "id": "cc4c447a-2ff8-4e43-8f34-3ab2624052dd",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  finalizaAcuerdo: getColValue(\"finaliza acuerdo\") || new Date().toISOString().slice(0, 10).replace(/-/g, \"-\"),\n\n  \n  // Status Específicos\n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Acuerdo se venció (90 dias) para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🔖 Finalizacion Acuerdo:*\\n${data.finalizaAcuerdo}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      }\n    ]\n  }\n];\n\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `Recuerda hablar con el cliente, hoy se vence el contrato. `,\n      \"emoji\": true\n    }\n  ]\n});\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1184,
+          -192
+        ],
+        "id": "9137464e-90a0-4828-bacc-b85fa947daec",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0A5F3K7G01",
+            "mode": "list",
+            "cachedResultName": "office-9-agenteia-tesoreria"
+          },
+          "messageType": "block",
+          "blocksUi": "={{ $json.toJsonString() }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "link_names": true
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1664,
+          -192
+        ],
+        "id": "20f9dbb0-2d4c-44ff-b937-6945c2cd6ae9",
+        "name": "Send a message",
+        "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "boardItem",
+          "operation": "get",
+          "itemId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.mondayCom",
+        "typeVersion": 1,
+        "position": [
+          960,
+          -192
+        ],
+        "id": "503a8b00-6bae-4425-92ab-4b39fd5acf81",
+        "name": "Get an item1",
+        "credentials": {
+          "mondayComOAuth2Api": {
+            "id": "7emakKOqBk6HAsSo",
+            "name": "Monday.com levelup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+                "leftValue": "={{ $json.error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notExists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1392,
+          -192
+        ],
+        "id": "fa5793cc-64c0-4c02-bbdf-fe7a3f12e4f1",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "errorMessage": "Objeto vacio desde monday"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          16
+        ],
+        "id": "1fc525d1-cb00-4435-9b06-4376b0b74f8b",
+        "name": "Stop and Error"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -240,
+          -192
+        ],
+        "id": "9cf301fe-a8c0-4711-aeab-16bf039f5e48",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy').setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                      "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "fe609938-4730-47aa-9526-f539155fba2d"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Llevan 90 dias Trabajando (renovar contrato)"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2fe30572-1e67-4a1d-979f-cebd6dba1d28",
+                      "leftValue": "={{ $json.column_values[3].display_value.toDateTime('dd/MM/yyyy') }}",
+                      "rightValue": "={{ $today.setZone('America/Puerto_Rico').plus(30, 'days') }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Llevan 60 dias Trabajando "
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          624,
+          -192
+        ],
+        "id": "ec3e6954-5b13-4b4f-9514-6b485ac4958d",
+        "name": "Switch"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          608,
+          448
+        ],
+        "id": "dc49b3a3-c4b1-47ac-919f-36fcb9ecf458",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Asumimos que la entrada viene de un nodo anterior de n8n o webhook\nconst item = $input.item.json;\n\nif (!item) {\n  return { error: \"No data received\" };\n}\n\n// 1. Helper blindado para extraer valores por título exacto\nconst getColValue = (colTitle) => {\n  if (!item.column_values) return null;\n  const col = item.column_values.find(c => c.column && c.column.title === colTitle);\n  return (col && col.text && col.text !== \"\") ? col.text : null;\n};\n\n// 2. Extracción de datos\nconst data = {\n  nombre: item.name || \"Sin Nombre\",\n  negocio: getColValue(\"Negocio\") || \"Sin Negocio\",\n  acuerdo: getColValue(\"ACUERDO OFRECIDO\") || \"—\",\n  finalizaAcuerdo: getColValue(\"finaliza acuerdo\") \n  || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)\n       .toISOString()\n       .slice(0, 10)\n       .replace(/-/g, \"-\"),\n\n\n  \n  // Status Específicos\n  estadoGeneral: (item.column_values.find(c => c.id === 'status') || {}).text || getColValue(\"Estado\") || \"Sin estado\",\n  \n  // Textos largos\n  comentario: getColValue(\"COMENTARIOS\"),\n  statusTexto: getColValue(\"status\") // Columna de texto final\n};\n\n// 3. Lógica visual de Emojis\nconst getStatusEmoji = (status) => {\n  if (!status) return \"⚪\";\n  const s = status.toUpperCase();\n  if (s.includes(\"ON\") || s.includes(\"PAGÓ\") || s.includes(\"LISTO\")) return \"🟢\";\n  if (s.includes(\"OFF\") || s.includes(\"PROBLEMAS\") || s.includes(\"ERROR\")) return \"🔴\";\n  if (s.includes(\"PENDIENTE\") || s.includes(\"REVISIÓN\")) return \"🟡\";\n  return \"🔵\";\n};\n\n// 4. Construcción de Bloques Fijos\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": `Acuerdo se vencerá en 30 dias para: ${data.nombre}`,\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"<@U091X0MQXV0>\"\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🏢 Negocio:*\\n${data.negocio}`\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🔖 Finalizacion Acuerdo:*\\n${data.finalizaAcuerdo}`\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": `*🤝 Acuerdo:*\\n${data.acuerdo}`\n      }\n    ]\n  }\n];\n\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `Asegurate el cliente tenga buenos resultados, pues le quedan 30 dias para renovar contrato `,\n      \"emoji\": true\n    }\n  ]\n});\n\n// 6. Footer Limpio (Solo ID)\nblocks.push({\n  \"type\": \"context\",\n  \"elements\": [\n    {\n      \"type\": \"plain_text\",\n      \"text\": `ID: ${item.id}`,\n      \"emoji\": true\n    }\n  ]\n});\n\nreturn { blocks };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1184,
+          192
+        ],
+        "id": "3a31c332-e14a-48ed-97be-e485c3aa1328",
+        "name": "Code in JavaScript1"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0A5F3K7G01",
+            "mode": "list",
+            "cachedResultName": "office-9-agenteia-tesoreria"
+          },
+          "messageType": "block",
+          "blocksUi": "={{ $json.toJsonString() }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false,
+            "link_names": true
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          1664,
+          192
+        ],
+        "id": "8a51a7b8-70ff-44a2-8ccd-fc249cbf1fdb",
+        "name": "Send a message1",
+        "webhookId": "bb93f174-794a-43ec-9144-f1a77ae40df1",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "RPZcJdneOoqIBClJ",
+            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "boardItem",
+          "operation": "get",
+          "itemId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.mondayCom",
+        "typeVersion": 1,
+        "position": [
+          960,
+          192
+        ],
+        "id": "a0bf9628-fa9b-47ad-9c94-219ead84ff6f",
+        "name": "Get an item",
+        "credentials": {
+          "mondayComOAuth2Api": {
+            "id": "7emakKOqBk6HAsSo",
+            "name": "Monday.com levelup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "3198f064-24ad-4f7c-8ded-98fd0775aea6",
+                "leftValue": "={{ $json.error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notExists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1392,
+          192
+        ],
+        "id": "40793735-7cf6-4dfb-9ad4-8eb20f643ba0",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "errorMessage": "Objeto vacio desde monday"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          400
+        ],
+        "id": "8ad1aa21-d385-41a3-acea-62ee3538b1df",
+        "name": "Stop and Error1"
+      }
+    ],
+    "connections": {
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get an item1": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Get an item1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get an item",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript1": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get an item": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Send a message1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Stop and Error1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 92a724fa",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-02T03:22:35.781Z",
+        "id": 111,
+        "workflowId": "3DeJXvNmTFQ44FIF",
+        "versionId": "92a724fa-41cb-46c1-b27f-a02437f61cf4",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      },
+      {
+        "createdAt": "2026-02-02T03:22:58.836Z",
+        "id": 112,
+        "workflowId": "3DeJXvNmTFQ44FIF",
+        "versionId": "92a724fa-41cb-46c1-b27f-a02437f61cf4",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

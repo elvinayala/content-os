@@ -1,0 +1,2506 @@
+{
+  "updatedAt": "2026-01-06T13:55:53.545Z",
+  "createdAt": "2025-08-27T03:59:27.242Z",
+  "id": "ZhcAhenK4DTDHehN",
+  "name": "Generacion de tareas sub worflow",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TODAY IS: {{ $now.setZone('UTC-5')}}\nThis is the compilation that you have to analyze and create task. Think step by step the details of the task ,create task only plas necessary people to create You must be attentive and more important when someone in the meeting say that others have a responsibility you must take out that task remember YOUR RESPOSNABULITY is to create tasks.\n\nThe \"name\": \"[Task Name]\",\n    \"description\": \"[Detailed Task Description]\",\nHAVE TO VE IN SPANISH THE CONTENT NOT the key \nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n{{ $('When Executed by Another Workflow').item.json.participants }}\n\n### INPUTS ###\n- **MEETING TITLE**: {{ $('When Executed by Another Workflow').item.json.topic }}\n- **PARTICIPANTS**: {{ $('When Executed by Another Workflow').item.json.participants }}\n- **TRANSCRIPT**: {{ $('When Executed by Another Workflow').item.json.transcript }}\n\n\n\nPending TASK :\nYou have the next job with these tasks:\n-If the task isn´t clear, do´t annote him\n-If the task is duplicated, you should delete the second one\n-If a task is created you can´t create a same one\n-If the state of a task is finished, you can´t create again the same task\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=TODAY IS: {{ $now.setZone('UTC-5')}}\n\nYOU ARE A MEETING ASSISTANT FOR AUTOMATION IN N8N. YOUR TASK IS TO EFFICIENTLY AND PRECISELY PROCESS INFORMATION FROM ZOOM MEETINGS TO GENERATE TO-DOS AND SCHEDULE FOLLOW-UP MEETINGS. YOU HAVE ACCESS TO THE FOLLOWING DATA:\n\n### YOUR TASKS ###\n1. **CREATE TO-DOS**:\n   - IDENTIFY TASKS AND TO-DOS IN THE TRANSCRIPT.\n   - FORMULATE CLEAR, CONCRETE TASKS.\n   - PASS THESE TASKS TO THE TOOL \"Create tasks\" TO SAVE THEM IN CLICKUP. \n   - DATA STRUCTURE:\n     - **TASK DESCRIPTION**: Brief description of the task(put details about what is expected to do).\n     - **ASSIGNED PERSON**: First name from the participant list.\n     - **DUE DATE**: Use any date mentioned in the transcript; otherwise, set to \"Not specified.\"\n\n2. **CREATE MEETING**:\n   - ANALYZE THE TRANSCRIPT TO IDENTIFY INFORMATION ABOUT THE NEXT MEETING (DATE, TIME, AND TOPIC).\n   - PASS THIS INFORMATION TO THE TOOL \"Create follow-up call.\"\n   - DATA STRUCTURE:\n     - **MEETING TITLE**: \"Follow-up: [Meeting Title]\"\n     - **DATE AND TIME**: Determined from the transcript or set to \"Next Tuesday at 10:00 AM\" if no information is provided.\n     - **PARTICIPANTS**: Add all participants from the list.\n\n### CHAIN OF THOUGHTS ###\n1. **UNDERSTAND**: Read and analyze the provided inputs (title, participants, transcript).\n2. **IDENTIFY**: Extract relevant information for the to-dos and the next meeting.\n3. **DIVIDE**: Split the task into two separate processes: creating to-dos and creating the meeting.\n4. **STRUCTURE**: Format the results in the required structure for the respective tools.\n5. **TRANSMIT**: Pass the data to the designated tools in n8n.\n6. **VERIFY**: Ensure the data is correct and complete.\n\n### WHAT YOU SHOULD NOT DO ###\n- **NEVER**: Create unclear or vague to-dos.\n- **NEVER**: Ignore missing data – use default values where uncertain.\n- **NEVER**: Overlook information from the inputs or make incorrect connections.\n- **NEVER**: Transmit tasks or meetings without proper formatting.\n\n### OUTPUT EXAMPLES ###\n1. **TO-DO**:\n   - **TASK DESCRIPTION**: \"Prepare presentation for the next meeting.\"\n   - **ASSIGNED PERSON**: \"John Doe.\"\n   - **DUE DATE**: \"2025-01-25.\"\n\n2. **MEETING**:\n   - **MEETING TITLE**: \"Follow-up: Project Discussion.\"\n   - **DATE AND TIME**: \"2025-01-28 at 10:00 AM.\"\n   - **PARTICIPANTS**: \"John Doe, Jane Example.\"\n\n### NOTES ###\n- EXECUTE YOUR TASKS WITH THE HIGHEST PRECISION AND CONTEXT SENSITIVITY.\n- RELY ON THE PROVIDED DATA AND DEFAULT VALUES WHERE NECESSARY.\nThe priority have to be like this but just send the number\n 1 : Urgent, 2 : High, 3 : Normal, 4 : Low\nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        928,
+        1744
+      ],
+      "id": "8b44da56-825f-44a8-8234-6364dea449b1",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {
+          "maxOutputTokens": 65536,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        896,
+        1984
+      ],
+      "id": "82066eba-c873-461f-b679-8e8ec39515c5",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cjSy8N1BuWZXGbDk",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"name\": \"[Task Name SPANISH]\",\n    \"description\": \"[Detailed Task Description in SPANISH]\",\n    \"due_date\": \"[Due Date]\",\n    \"priority\": \"[Priority Number]\",\n    \"mail_responsible\": \"[Email if available]\",\n    \"name_responsible\": \"[Assigned Person]\"\n  }, \n  {\n    \"name\": \"[Task Name]\",\n    \"description\": \"[Detailed Task Description]\",\n    \"due_date\": \"[Due Date]\",\n    \"priority\": \"[Priority Number]\",\n    \"mail_responsible\": \"[Email if available]\",\n    \"name_responsible\": \"[Assigned Person]\"\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        1968
+      ],
+      "id": "a60659c2-d7e9-4855-a3d5-ec8c5e445654",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "47ac136c-b28d-42c7-a6bf-1725d0f354b6",
+              "leftValue": "={{ (() => {\n    const items = $('ClickUpTeam').item.json.data; \n    const match = items.find(item => item.email === $json.mail_responsible);\n    return match ? match.id : false;\n  })() }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2832,
+        1648
+      ],
+      "id": "53c2484c-e001-4ff7-a25d-d5a8e9ac3a7c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Responsable de la tarea:{{ $json.name_responsible }}\n\nEQUIPO OFICIAL:\n{{ $('OficialTeam').item.json.data.map(p => p.Nombre + ' (' + p.Correo + ')').join(', ')  }}\n\nEQUIPO EN CLICK UP:\n{{ $('ClickUpTeam').item.json.data.map(p => p.username + ' (email:' + p.email + ' || idClickUp: ' + p.id+ ')').join(', ')  }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un expeto analisando contenido y determinando sobre el EQUIPO OFICIAL debes buscar quien seria en el EQUIPO EN CLICK UP y sacar su correo y su identificador en CLICK UP segun el responsable de la tarea por nombre"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        3056,
+        1664
+      ],
+      "id": "275f8b78-3646-4a20-91bf-d8e200291810",
+      "name": "Basic LLM Chain1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-05-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3008,
+        1856
+      ],
+      "id": "53c8cf23-b306-4733-a8b0-4f4495f29b2e",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cjSy8N1BuWZXGbDk",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"email\": \"example@gmail.com\",\n\t\"idClickUp\": 42345662\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3232,
+        1856
+      ],
+      "id": "9bf2698e-e383-47c3-970a-09b132151b37",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        1616
+      ],
+      "id": "80165b37-0615-4b96-819e-902a5f8f35d6",
+      "name": "Split Out",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        224
+      ],
+      "id": "74471e1c-883c-44e8-afe7-75a271462e37",
+      "name": "OficialTeam"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "55ddbb0b-09cc-4898-bf9c-cc3c67e5bd8f",
+      "name": "Wait",
+      "webhookId": "bd40e9f3-7507-4626-aba1-2d369795bdbf"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        64
+      ],
+      "id": "ed3ae49a-93aa-401c-a57a-7e0dcc630f14",
+      "name": "Team Task"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        192
+      ],
+      "id": "4b48106a-e03e-4174-a8b1-b45dcd822903",
+      "name": "ClickUpTeam"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132286199",
+        "space": "90139741839",
+        "folderless": true,
+        "list": "={{ $('Basic LLM Chain2').item.json.output[\"ID EQUIPO\"] }}",
+        "filters": {}
+      },
+      "id": "b1bb011c-e6f2-410e-85f4-56d2cb755a5a",
+      "name": "ClickUp: Get All Tasks",
+      "type": "n8n-nodes-base.clickUp",
+      "position": [
+        128,
+        592
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=### DATOS DE LAS TAREAS ABIERTAS ###\n{{ JSON.stringify($json, null, 2) }}\n\n\nTODAY IS: {{ $now.setZone('UTC-5')}}\nThis is the compilation that you have to analyze and create task. Think step by step the details of the task ,create task only plas necessary people to create You must be attentive and more important when someone in the meeting say that others have a responsibility you must take out that task remember YOUR RESPOSNABULITY is to create tasks.\nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n{{ $('When Executed by Another Workflow').item.json.participants }}\n\n### INPUTS ###\n- **MEETING TITLE**: {{ $('When Executed by Another Workflow').item.json.topic }}\n- **PARTICIPANTS**: {{ $('When Executed by Another Workflow').item.json.participants }}\n- **TRANSCRIPT**: {{ $('When Executed by Another Workflow').item.json.transcript }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Analiza las tareas proporcionadas y determina cuáles deben ser cerradas según los criterios establecidos. Sé preciso y cuidadoso en tu análisis.\n\n\nEres un asistente experto en análisis de tareas y gestión de proyectos. Tu trabajo es analizar las tareas de ClickUp y determinar cuáles deben ser cerradas basándote en los siguientes criterios:\n\n### CRITERIOS PARA CERRAR TAREAS ###\n1. **TAREAS COMPLETADAS**: Tareas que tienen status 'done', 'completed', 'finished', 'closed'\n2. **TAREAS VENCIDAS**: Tareas con fecha de vencimiento anterior a hoy ({{ $now.setZone('UTC-5').toFormat('yyyy-MM-dd') }})\n3. **TAREAS OBSOLETAS**: Tareas con más de 30 días sin actividad\n4. **TAREAS DUPLICADAS**: Tareas con nombres muy similares donde una ya está completada\n\n### INSTRUCCIONES ###\n- Analiza cada tarea cuidadosamente\n- Identifica las tareas que cumplen los criterios de cierre\n- Proporciona una razón clara para cada tarea que debe cerrarse\n- NO cierres tareas que están en progreso activo\n- Ten especial cuidado con tareas asignadas a personas específicas\n\n### FORMATO DE SALIDA ###\nDevuelve un array JSON con las tareas que deben cerrarse, cada una con:\n- task_id: ID de la tarea\n- name: Nombre de la tarea\n- reason: Razón por la cual debe cerrarse\n- current_status: Estado actual de la tarea\n- assignee: Persona asignada (si existe)\n\nSi no hay tareas por cerrar no pasa nada simplemente no cierres ninguna no fuerces un cierre\n\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "e449cfdb-7d5a-49e4-82ee-aaa26f214d75",
+      "name": "Analyze Tasks for Closure",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        96,
+        960
+      ],
+      "typeVersion": 1.7,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "id": "d5f2c60e-27c6-40ad-860b-c21016837d54",
+      "name": "Split Tasks to Close",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        464,
+        960
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "task-validation",
+              "leftValue": "={{ $json.task_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "662478bc-1cc5-4fb8-a01e-44cd95952192",
+      "name": "Validate Task ID",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        656,
+        960
+      ],
+      "typeVersion": 2.2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $json.task_id }}",
+        "updateFields": {
+          "status": "closed"
+        }
+      },
+      "id": "c421a0f0-cb66-4fe1-9a3d-cae35e657120",
+      "name": "ClickUp: Close Task",
+      "type": "n8n-nodes-base.clickUp",
+      "position": [
+        864,
+        960
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "task-closure-log",
+              "name": "closure_log",
+              "type": "object",
+              "value": "={\n  \"task_id\": \"{{ $('Split Tasks to Close').item.json.task_id }}\",\n  \"task_name\": \"{{ $('Split Tasks to Close').item.json.name }}\",\n  \"closure_reason\": \"{{ $('Split Tasks to Close').item.json.reason }}\",\n  \"previous_status\": \"{{ $('Split Tasks to Close').item.json.current_status }}\",\n  \"assignee\": \"{{ $('Split Tasks to Close').item.json.assignee }}\",\n  \"closed_at\": \"{{ $now.setZone('UTC-5').toISO() }}\",\n  \"success\": {{ $json.success || false }}\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ee032c62-8fd7-4624-a9c9-04dd8007216f",
+      "name": "Log Task Closure",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1056,
+        960
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "57f89f87-97a7-4db5-afcd-da88794a4238",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        1200,
+        960
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "summary-report",
+              "name": "summary_report",
+              "type": "object",
+              "value": "={\n  \"total_tasks_processed\": {{ $json.data.length }},\n  \"successful_closures\": {{ $json.data.filter(item => item.closure_log.success === true).length }},\n  \"failed_closures\": {{ $json.data.filter(item => item.closure_log.success === false).length }},\n  \"processed_at\": \"{{ $now.setZone('UTC-5').toISO() }}\",\n  \"details\": {{ JSON.stringify($json.data.map(item => item.closure_log)) }}\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fab1627e-7c3f-42a0-951f-7d4106b9a945",
+      "name": "Create Summary Report",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        704,
+        1744
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {
+          "maxOutputTokens": 65536,
+          "topP": 1
+        }
+      },
+      "id": "07440d2e-efd3-45c1-bf81-2de7c8661e9e",
+      "name": "Google Gemini Chat Model3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        16,
+        1216
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cjSy8N1BuWZXGbDk",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"task_id\": \"task_123456\",\n    \"name\": \"Tarea ejemplo\",\n    \"reason\": \"Tarea completada hace más de 7 días\",\n    \"current_status\": \"done\",\n    \"assignee\": \"John Doe\"\n  },\n  {\n    \"task_id\": \"task_789012\",\n    \"name\": \"Otra tarea\",\n    \"reason\": \"Tarea vencida desde hace 5 días\",\n    \"current_status\": \"in progress\",\n    \"assignee\": \"Jane Smith\"\n  }\n]"
+      },
+      "id": "c920643b-8c4b-48f6-8c0d-9d258567f4b5",
+      "name": "Structured Output Parser2",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        288,
+        1216
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        336,
+        592
+      ],
+      "id": "ba2ffc03-3f6c-47d2-b0da-f337f59a8698",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1904,
+        464
+      ],
+      "id": "9f04c197-ee4d-44ef-92e4-55a4e4a5b23e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Identifi the team base on this\n metting topic:\n\n{{ $('When Executed by Another Workflow').item.json.topic }}\n\n\nTEAMS:\n{{ $json.data.toJsonString() }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=<SystemPrompt>\n  <Role>You are a precise, deterministic data matcher that maps a meeting topic to one or more team records.</Role>\n\n  <Task>\n    Given:\n      1) A JSON array of team records. Each record has (at minimum) fields:\n         - \"NOMBRE\" (string)\n         - \"ID EQUIPO\" (number or string)\n         - \"MEETINGS\" (string with zero or more meeting names, typically comma-separated)\n      2) An input \"topic\" string representing a single meeting title.\n\n    Return the team(s) whose \"MEETINGS\" contains that topic according to the matching rules below.\n  </Task>\n\n  <Data>\n    <!-- Inject your data here -->\n    <TeamArray>{{TEAM_ARRAY}}</TeamArray>\n  </Data>\n\n  <Inputs>\n    <Topic>{{TOPIC}}</Topic>\n  </Inputs>\n\n  <NormalizationRules>\n    - Work case-insensitively.\n    - Trim leading/trailing spaces.\n    - Collapse internal runs of whitespace to a single space.\n    - Normalize diacritics (accent folding): e.g., \"EDUCACIÓN\" ~ \"EDUCACION\".\n    - Treat the \"MEETINGS\" field as a list of meeting names by splitting on commas (\",\"), then trim each item after splitting.\n    - Ignore empty items after splitting.\n  </NormalizationRules>\n\n  <MatchingRules priority=\"high-to-low\">\n    1) exact: The normalized topic equals a normalized meeting item.\n    2) contains: The normalized topic is a substring of a normalized meeting item, or vice versa.\n    3) tolerant: Allow minor punctuation or spacing differences (e.g., extra spaces, hyphen vs. space, trailing numbers with the same core name).\n       - Do NOT invent or hallucinate meetings; only match against what exists in \"MEETINGS\".\n    If multiple records match at the same highest priority level, return all of them.\n  </MatchingRules>\n\n  <ConfidenceScoring>\n    - exact => 1.0\n    - contains => 0.8\n    - tolerant => 0.6\n  </ConfidenceScoring>\n\n  <OutputSchema>\n    Return a single JSON object with this shape (and nothing else in the output):\n    {\n      \"query\": {\n        \"topic\": \"<original topic string>\"\n      },\n      \"matches\": [\n        {\n          \"team_name\": \"<NOMBRE>\",\n          \"team_id\": \"<ID EQUIPO as string>\",\n          \"meeting_matched\": \"<the meeting item as it appears in the data>\",\n          \"match_type\": \"exact|contains|tolerant\",\n          \"confidence\": <number>\n        }\n      ],\n      \"not_found\": <true|false>,\n      \"reason_if_not_found\": \"<short explanation or empty string>\"\n    }\n\n    Conventions:\n    - \"team_id\" must be serialized as a string (preserves large integers).\n    - Sort \"matches\" by confidence desc, then by team_name asc.\n    - Set \"not_found\" = true if and only if \"matches\" is empty; otherwise false.\n  </OutputSchema>\n\n  <EdgeCases>\n    - If \"MEETINGS\" is empty/null/only spaces for a team, it does not match.\n    - If a team repeats the same meeting multiple times, deduplicate meeting items internally before matching.\n    - If \"MEETINGS\" contains multiple meetings and more than one matches, pick the strongest match type for that team (e.g., exact beats contains).\n    - If topic is empty after normalization, return not_found with a reason.\n  </EdgeCases>\n\n  <Constraints>\n    - Do not infer teams based on \"NOMBRE\"; match strictly via \"MEETINGS\".\n    - Do not modify the input array other than normalization for matching purposes.\n    - Do not fabricate meetings that are not present.\n  </Constraints>\n\nFORMAT\n\n{\"row_number\":2,\"NOMBRE\":\"NOMBRE\",\"ID EQUIPO\":0,\"METTING\":\"\"}\n\n  <Algorithm>\n    1) Read {{TOPIC}} and {{TEAM_ARRAY}}.\n    2) Normalize the topic per <NormalizationRules>.\n    3) For each record:\n       a) Extract and normalize \"MEETINGS\" as a list of items.\n       b) For each meeting item, compute match type according to <MatchingRules>.\n       c) Keep the best match type for that team (if any) and the associated original meeting string.\n    4) Convert \"ID EQUIPO\" to string.\n    5) Score confidence per <ConfidenceScoring>; prepare the \"matches\" array.\n    6) Sort and output strictly following <OutputSchema>.\n  </Algorithm>\n\n  <Verification>\n    - Double-check: If matches array is empty, \"not_found\" must be true and \"reason_if_not_found\" non-empty.\n    - Double-check: No extra keys; valid JSON only.\n    - Double-check: Team IDs are strings.\n  </Verification>\n\nIF THER IS NOT FIT RETORN AND EMPTY RESPONSE\n</SystemPrompt>\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1120,
+        464
+      ],
+      "id": "49890d16-f977-4b26-9ced-918c963cd6ff",
+      "name": "Basic LLM Chain2",
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        464
+      ],
+      "id": "3f0ecd16-c198-4661-91a0-e1a217e217b4",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"row_number\":2,\"NOMBRE\":\"NOMBRE\",\"ID EQUIPO\":0,\"METTING\":\"\"}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        688
+      ],
+      "id": "dba21e10-bbe3-4207-bb98-4c0b7ef61e43",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        672
+      ],
+      "id": "b7a9300d-5200-4128-8f51-71ac977449e6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cjSy8N1BuWZXGbDk",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "tableId": "transcriptions_zoom",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "zoom_meeting_id",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.zoom_meeting_id }}"
+            },
+            {
+              "fieldId": "topic",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.topic }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2624,
+        1472
+      ],
+      "id": "d6bef30b-0920-494b-8f45-be471896bb6e",
+      "name": "crea en la bd1",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "C6cv4jbIWpLK3JK2",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        1504
+      ],
+      "id": "60183d6d-c041-4e7c-a4cf-bbafa2fb8fd0",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2000,
+        1680
+      ],
+      "id": "efe6c4d4-c96d-454f-9726-5d4c50a75f68",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2074960720,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys/edit#gid=2074960720"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1600,
+        464
+      ],
+      "id": "95821365-65fb-4f0a-a992-55ead5701a01",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TbE2yI5rb8cHSzni",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "list",
+        "operation": "member",
+        "id": "={{ $json.output[\"ID EQUIPO\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        464
+      ],
+      "id": "53352f8a-6c42-4686-aebe-ef50893ac8d7",
+      "name": "Get list members",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132286199",
+        "space": "90139741839",
+        "folderless": true,
+        "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        400
+      ],
+      "id": "d556e952-503f-4810-b2a3-ad230853a032",
+      "name": "Get many tasks",
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1399583622,
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys/edit#gid=1399583622"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -112,
+        352
+      ],
+      "id": "e0211171-32a6-47f7-a70d-96750ee7be21",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TbE2yI5rb8cHSzni",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132286199",
+        "space": "90139741839",
+        "folderless": true,
+        "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+        "name": "={{ $json.name }}",
+        "additionalFields": {
+          "assignees": "={{ [(() => {\n    const items = $('ClickUpTeam').item.json.data; \n    const match = items.find(item => item.email === $json.mail_responsible);\n    return match ? match.id : false;\n  })()] }}",
+          "content": "={{ $json.description }}",
+          "dueDate": "={{ $json.due_date }}",
+          "priority": "={{ $json.priority }}"
+        }
+      },
+      "id": "6fdbe6d5-eb62-4f12-a419-37625664ccb7",
+      "name": "Create a task",
+      "type": "n8n-nodes-base.clickUp",
+      "position": [
+        2800,
+        1936
+      ],
+      "typeVersion": 1,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132286199",
+        "space": "90139741839",
+        "folderless": true,
+        "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+        "name": "={{ $('Loop Over Items').item.json.name }}",
+        "additionalFields": {
+          "assignees": "={{ [$json.output.idClickUp] }}",
+          "content": "={{ $('Loop Over Items').item.json.description }}",
+          "dueDate": "={{ $('Loop Over Items').item.json.due_date }}",
+          "priority": "={{ $('Loop Over Items').item.json.priority }}"
+        }
+      },
+      "id": "06071507-b372-4aa7-b436-daaac0706cc8",
+      "name": "Create a task1",
+      "type": "n8n-nodes-base.clickUp",
+      "position": [
+        3632,
+        1968
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "WXyGUCZIR4kPDiiZ",
+          "name": "ClickUp account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Create a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OficialTeam": {
+      "main": [
+        [
+          {
+            "node": "ClickUp: Get All Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "OficialTeam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team Task": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUpTeam": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp: Get All Tasks": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Tasks for Closure": {
+      "main": [
+        [
+          {
+            "node": "Split Tasks to Close",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Tasks to Close": {
+      "main": [
+        [
+          {
+            "node": "Validate Task ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Task ID": {
+      "main": [
+        [
+          {
+            "node": "ClickUp: Close Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp: Close Task": {
+      "main": [
+        [
+          {
+            "node": "Log Task Closure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Task Closure": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Create Summary Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Summary Report": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Tasks for Closure",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Analyze Tasks for Closure",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Analyze Tasks for Closure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Get list members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "crea en la bd1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get list members": {
+      "main": [
+        [
+          {
+            "node": "ClickUpTeam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "main": [
+        [
+          {
+            "node": "Team Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "participants": "Aure Diaz (aure@levelupmediapr.net), Sebastian Sanchez (sebastian.sanchez@levelupmediapr.net), read.ai meeting notes (), Maria del Carmen Valencia (maria.valencia@levelupmediapr.net), Juan Diego (), Marcela Salgado (marcela.salgado@levelupmediapr.net), Santiago Ramirez (santiago.ramirez@levelupmediapr.net), Barbara Quero (barbara.quero@levelupmediapr.net), Maria del Carmen Valencia (maria.valencia@levelupmediapr.net), Aure Diaz (aure@levelupmediapr.net), Santiago Ramirez (santiago.ramirez@levelupmediapr.net), Elvin Ayala (elvin@levelupmediapr.net), Santiago Ramirez (santiago.ramirez@levelupmediapr.net)  ",
+          "topic": "Daily Estrategas Digitales ",
+          "transcript": "Barbara Quero: Mhm.\nMaria del Carmen Valencia: Hola. Buenos días. Me escuchan. Bien.\nBarbara Quero: Sí, Sí.\nMaria del Carmen Valencia: Polis.\nMarcela Salgado: Mhm.\nSantiago Ramirez: Hola, buenas.\nMarcela Salgado: Ya escuchamos.\nBarbara Quero: Sí. Mari.\nMaria del Carmen Valencia: Okay, ya.\nJuan Diego: Buenos días.\nMarcela Salgado: Con la.\nMaria del Carmen Valencia: Yo no sé si fue que se me fue el Internet o o qué\nMaria del Carmen Valencia: me ven.\nMaria del Carmen Valencia: Yo los veo también.\nMarcela Salgado: Bien claro.\nMarcela Salgado: También debemos.\nMaria del Carmen Valencia: Ah okay. Bueno, bueno, compañeros, iniciemos con\nMaria del Carmen Valencia: iniciemos con el proceso de la reunión. Empieza normalmente martes, cierto marce.\nMarcela Salgado: Sí, siempre es normal.\nMaria del Carmen Valencia: Sí. Okay.\nMarcela Salgado: Ciao.\nMaria del Carmen Valencia: No creo que quede trazabilidad en el en el en el vídeo para que nos lleguen reporte de la I a.\nMarcela Salgado: Vale. O entonces comienzo te el viernes 5 de septiembre tuve que revisar 6 cuentas. La primera fue salud vital, la cual tenía, Estaba pagada por viaje del del cliente como tal. Pero el mismo día, el mismo viernes se prendió con 3 campañas si no.\nMarcela Salgado: él es un cliente para phone. Ya lo hicimos con con Barbie. Entonces él está Ok, con 3 campañas. Actualmente\nMarcela Salgado: ya a luz es un cliente ya un poco más antiguo. En ese momento tiene 3 campañas activas por presupuesto. No puedo lanzarle máximo 4, ya hablé con él, pero pues está como pendiente de aceptarme un poco más de presupuesto para realizar otra estrategia.\nMarcela Salgado: R b refrigeration Logré crear 3 campañas. Actualmente todavía está en grabación de vídeos para venta de unidad de aire acondicionado, entonces actualmente está con 3 campañas, logrando así que el día de hoy o mañana pueda armar 4 campañas.\nMarcela Salgado: La nueva ponceña es una cafetería que vende almuerzos tipo Buffet en este momento tiene 2 campañas activas.\nMarcela Salgado: Hace unas semanas atrás, cuando le lancé la campaña, pues ha mejorado sus conversaciones. Es un poco difícil que mande material en foto o vídeo del plato como tal, simplemente banda vídeo de la vitrina. Pero pues tampoco es que sea muy de calidad y se pueda hacer como mayor cosas.\nMarcela Salgado: Trato de investigar frecuentemente su su fanpage de negocio, pero no no hay contenido que pueda de pronto salvar y poder realizar alguna estrategia. Pero, pues estoy en constante constante comunicación con él\nMarcela Salgado: Juanda Ribera. Ella es, creo que coordinadora un tema más de asesoría de ventas de servicio de energía solar.\nMarcela Salgado: Actualmente ya tiene una campaña activa para reclutamiento. He estado en contacto con ella frecuentemente refiere que, pues está enviando unos vídeos.\nMarcela Salgado: Este fin de semana había un vídeo ayer exactamente que creo que me puede servir para una estrategia para una campaña de ventas. Entonces, el día de hoy quedaría con 2 campañas de ventas activas, sí\nMarcela Salgado: dándole seguimiento de que me envíen más material para poder poder crear las campañas que con el nuevo lineamiento tenemos que crear, ¿sí?\nMarcela Salgado: Y Music Wave es de Joe Torres. Actualmente tiene ya 4 campañas activas. Ha sido un poco más fácil el material de con él. Entonces, pues, tenía como buenos resultados en el tiempo.\nMarcela Salgado: Eso fue lo que hice el viernes. ¿qué voy a hacer el día de hoy? Farmacia? Wilson: son los 6\nMarcela Salgado: clientes que tengo que revisar hoy. Farmacia Wilson quedó con 4 campañas\nMarcela Salgado: queseiros. También quedo con 4 campañas\nMarcela Salgado: Best Power Home que es de Juan Carlos Negrón. Estoy tratando de sacar unos paquetes de artes que él pagó adicional. Son 4 artes y un reel\nMarcela Salgado: y poder modificar algunas campañas que tiene activas por parte de la Agencia Cronica Policlínica Villegas. Es una clienta que realmente no contesta. Estoy detrás de ellas desde hace la semana pasada. Ahí le volví a hablar entonces como que estoy dándole seguimiento para poder crear una tercera campaña estratégica\nMarcela Salgado: peluche y T. D, M que son 2 cuentas de la misma persona una vez de tor una vez de tormenteras y la otra vez de un curso de creación de puertas y ventanas. Les está yendo muy bien. Pero desde la semana pasada les pedí material\nMarcela Salgado: y hoy le hago seguimiento para poder crear las campañas con el nuevo lineamiento.\nMarcela Salgado: ¿es eso.\nMaria del Carmen Valencia: Okay Marcel. Muchas gracias.\nMarcela Salgado: Mhm.\nMaria del Carmen Valencia: ¿quién sigue? Santi, ¿cierto?\nMaria del Carmen Valencia: Santi olis\nMaria del Carmen Valencia: o me escuchan, o puedo.\nJuan Diego: Nosotros escuchamos, pero Santi normalmente se conecta con 2 dedos.\nMarcela Salgado: Como es el celular y el del computador, pero creo que no solo está desde 1.\nMaria del Carmen Valencia: Okay. Bueno, pues puedes seguir Barbie o o continúo yo mientras Santiago se.\nBarbara Quero: Vale, yo puedo seguir.\nMaria del Carmen Valencia: Gracias. Bueno.\nBarbara Quero: Déjame abrir la Hoja\nBarbara Quero: Ajá. Yo tenía pendiente de mis optimizaciones a Jekywald Highwan Reed.\nBarbara Quero: Ella le hice 3 campañas. Le dejé 3 campañas en total, pero ella solamente tiene 10 dólares de presupuesto. No piensa subirlo hasta tener ventas. Y lo que hice fue que lo segmento como 6 dólares, ventas, 2 dólares, tráfico y 2 dólares\nBarbara Quero: visualizaciones del contenido rayo energético. Lo dejé con 2 campañas porque él le faltaba nuevo contenido. Yo seleccioné algunos de Hamphower\nBarbara Quero: como de la del banco de contenido, pero todavía no los he mandado a hacer nuevos. Y también tengo que consultar con él si esas ofertas son válidas para para él, porque habitualmente él no las entrega y no es como que yo las selecciono y sino que él nos las entrega. Nos dice como que este mes voy a tener activo. Esto\nBarbara Quero: sur maldonado se fue ribera, autocor Tenía 2 campañas. Quedó con 3 campañas prendidas entre ellas. Reciclé un vídeo de bastante generalizado que habla como que sí tiene, está el puntaje de crédito. Ese lo usé para interacción. Y la otra quedó en ventas. Y la otra en remarketing.\nBarbara Quero: asesoría de la buena. Ella tiene 4 campañas\nBarbara Quero: porque una es especializada de solar, una es de reclutamiento y otra es de venta de aguas y otra es de Remarket.\nBarbara Quero: Doctor Lechón. Tenía una campaña, quedó con 2. Él, solamente tiene 2 dólares, 2 dólares, 7 dólares de presupuesto. Entonces quedaron como 4 dólares, venta 3 dólares. Interacción\nBarbara Quero: para algo de una cata de whisky. No tengo mucho para jugar ahí porque de hecho, él recientemente subió a 7. Entonces estaba. Creo que en 2, dólares, 3 dólares.\nBarbara Quero: B, p. M estética, ella no no tiene contenido, solamente tiene 2 campañas. Ella tiene un problema con porque ya pensaba que se le nosotros lo íbamos a hacer el contenido. Y apenas el sábado Jessica le aclaró que eso cuesta. Eso. Tiene un costo adicional.\nBarbara Quero: porque estaba como a la espera de que fueran a grabar. Pero ella no compró ese servicio\nBarbara Quero: veroarte. Tiene 3 campañas activas, una de ventas, una de interacción para un evento donde ya va a estar presente y una de tráfico al sitio web.\nBarbara Quero: pero su sitio web es bueno, ellos no saben usarlo mucho. Entonces está ahí. Como de re está representativo y roa solar. Ellos quedaron en reunirse porque ellos son 4 socios. Entonces a la reunión entraron solamente 2.\nBarbara Quero: Supuestamente, ellos se iban a reunir para tomar una decisión de si continúa continúa o no, pero no nos han dicho nada. Entonces tengo que preguntarles a ver qué\nBarbara Quero: esos son los que dejé como Enea Enea, Enea, Enea, Enea, Enea. Esta Hoy tengo pendiente hacerle un reporte a de Pmética para que vea que sus resultados han sido buenos y se motive a compartirnos así: sean fotos de antes y después de resultados. Y tengo pendiente.\nBarbara Quero: creo que déjame revisar aquí en los grupos.\nBarbara Quero: Creo que ninguna otra cosa así. Por lo General\nBarbara Quero: Bueno, hacerle nuevo contenido, a ver o arte.\nBarbara Quero: Porque le quiero preguntar qué otros abanicos tiene, ya que ella siempre está como haciendo nuevos diseños de eso.\nMaria del Carmen Valencia: Okay Barbie. Muchas gracias. Okay Barbie Omar. ¿se tienen de pronto algún inconveniente con algún cliente o algo así que queramos dejar trazabilidad en el vídeo, pues en la grabación, perdón.\nMarcela Salgado: Y\nMarcela Salgado: pues, más que problemas. Estoy en constante trabajo con Juan Carlos negrón es de West power. Holl\nMarcela Salgado: es un cliente un poco complicadito. Me cambia muchas cosas en el transcurso del momento. Entonces, pues, bueno, tengo que ir a cambiar con diseñadores, pero pues ahí vamos\nMarcela Salgado: como para tenerlo en cuenta.\nMaria del Carmen Valencia: Okay. Merce Gracias.\nMaria del Carmen Valencia: Okay. Continuemos. Santi, ya estás por acá.\nSantiago Ramirez: Hola maricilla. Estoy por acá.\nMaria del Carmen Valencia: Okay Santi. Entonces porfa déjanos saber qué hiciste el sábado y el perdón el el viernes y el sábado y ¿Y qué vas a hacer el día de hoy.\nSantiago Ramirez: Vogue también. No sé, no.\nMaria del Carmen Valencia: Dalí.\nSantiago Ramirez: Bueno a ver el viernes\nSantiago Ramirez: y\nSantiago Ramirez: estuve adelantando lo que teníamos pendientes que están en el cuadro de excel Prendí una campaña con los anuncios para aver Nazario.\nSantiago Ramirez: Aprendí una campaña de ganancias para regin\nSantiago Ramirez: envió otra campaña, cuando dan para todo estelar.\nSantiago Ramirez: y una como si fuera Carlos Cruz.\nSantiago Ramirez: prendí una campaña contra fuego solar, bancolón\nSantiago Ramirez: también otra noche con otra campaña para\nSantiago Ramirez: Google Lab.\nSantiago Ramirez: Eso fue el viernes\nSantiago Ramirez: y el sábado\nSantiago Ramirez: no agregas los anuncios. Tú no paras tu casa, se cura.\nSantiago Ramirez: y otro para verano.\nSantiago Ramirez: Y bueno, tengo pendiente que me envíen\nSantiago Ramirez: 2 vídeos que tengo en edición con María.\nSantiago Ramirez: y también unos Flyes que mandé a editar con marcos. Y Manuel\nSantiago Ramirez: entonces hoy espero recibirlo para seguir agregando y y ver si hace falta\nSantiago Ramirez: de lo que tengo un caso tal pendiente o lo que tengo asignado para.\nMaria del Carmen Valencia: Okay Santi. Muchas gracias.\nMaria del Carmen Valencia: Juan Juan Diego Porfa\nMaria del Carmen Valencia: Cuéntanos.\nJuan Diego: Hola, mari. ¿cómo estás? Bueno, les voy a contar el día viernes y sábado estaba terminando de poder hacer los creativos de la granja del abuelo. Ya me entregaron lo que pedí que era un carrusel\nJuan Diego: con 4 slides y otras 2 artes para poder pautar. También mandé hacer los scripts de los 3 vídeos que tienen con los con el contenido que me pudieron subir en la carpeta. Entonces me dijeron que el día de ma de martes\nJuan Diego: el día de mañana, pero no me lo entregaron entonces como esperando aparte para ya poder montar campaña con autorre autoridad de energía solar. Pr Ellos tienen derecho nomás a un arte igual que él mismo que le enviara, como por lo menos otras 2, y que hablara con Jessica para\nJuan Diego: para mirar, si porque es muy poco contenido, la verdad, y para hablar con Jessicas. Y ellos pueden comprar otro paquete, Pues para poder ya literalmente, montar campañas de audiencia con bellas artes que nosotros le vamos a regalar.\nJuan Diego: Pero pues queda la constancia como que es muy poco contenido, entre ellas, poder tener más energy Factory, también realicé ya todos los artes. El día de hoy tengo una reunión con ellos a la una Pr con Solution Heyman Company para\nJuan Diego: y estamos ahí porque no hemos podido hacer el Setter.\nJuan Diego: pero creo que ya el día de hoy queda todo listo con safety ocupacional de lo mismo. Estamos ahí pendientes de que un cliente que me acabaron de pasar y que podamos nuevamente subirle presupuesto porque\nJuan Diego: no más tiene derecho a 10 dólares diarios y aparte, pues no es posible con esos 10 dólares montar por ahí 3 o 4 campañas, la verdad. Entonces la idea es como que el cliente me pueda aprobar para poder subirle el presupuesto y así poder dividir las campañas.\nJuan Diego: Por lo último me carne para el último cliente que llama Santiago Teams. Es una persona que se encarga de vender membresías y generar ingresos extra para los cruceros también. Entonces, el día sábado realicé la investigación de mercado, y hoy yo mismo la envío, pues, para ya proceder a hablar con ellos. Creo que el día de hoy me puedo\nJuan Diego: con el Beat, si bien porque la verdad sí es importante tener el número, porque la comunicación con los clientes va a ser un poco más certera que protestar haciéndolo mediante Jessica. Entonces, bueno, eso fue todo lo que realicé.\nMaria del Carmen Valencia: Algún la situación o dificultad con algún cliente.\nJuan Diego: No yo por el momento, por el momento, no lo único es que sí. La idea es poder tener contacto directo con ellos para hacer eso. Y como las cositas de ser el ir adelantándolas un poco.\nMaria del Carmen Valencia: Okay. Muchas gracias, Juan Santi. Ves Santi Sebas. Buenos días.\nSebastian Sanchez: Hablamos de.\nMaria del Carmen Valencia: Él por acá.\nSebastian Sanchez: Que trabajaste el viernes y el sábado y que vas a trabajar el día de hoy.\nSebastian Sanchez: Okay listo entonces yendo en fitness ya están estrategias en materiales. Solamente nos hace falta. Solo nos hace falta el Business Manager. Entonces\nSebastian Sanchez: quedaría pendiente de eso. Jessica me está colaborando porque todavía no tengo como las credenciales todavía para acceder a colon. Tengo que compartir las imágenes, ya se ya las tengo listas con con el diseñador, entonces solamente es que las apruebe para poder implementarlas.\nSebastian Sanchez: El 5 se envi el 5 de septiembre se enviaron guiones de producción, por lo cual, en teoría, ese material debería estar listo para el 12 de septiembre\nSebastian Sanchez: sodar triangule. Tengo que validar qué ofertas tiene para generar las ideas de imágenes. Y en cuanto a los vídeos, ya se compartieron los guiones. Sin embargo, tengo que validar.\nSebastian Sanchez: porque no sé si ya se le comunicó al cliente el día de hoy. En teoría ya tendría la la línea lista, y pues ahí ya me quedaría mucho más fácil contactarme con ellos para\nSebastian Sanchez: resolver esas preguntitas\nSebastian Sanchez: Hoy yo trabajar en la propuesta de control Enterprise, entonces hoy dejo todo super planchado. Eso\nSebastian Sanchez: En cuanto a Sisam Group, validé lo que hay en el en el Drive, por ejemplo, para Seam group, hay 5 fotos, 2 logos y un vídeo de 44 s.\nSebastian Sanchez: No sé ahí, bárbara te pregunte si tienen de pronto las propuestas o algo, si no, pues desarrollarlas\nSebastian Sanchez: en estos días en cuanto a rufianestar.\nSebastian Sanchez: hay fotos y vídeos de paneles solares, pero pues realmente con una calidad muy mala, que realmente no la veo apropiada para montarla en campañas, entonces los materiales que hay realmente no\nSebastian Sanchez: no serían como buenos o o se podrían aprovechar.\nSebastian Sanchez: También tengo que paliar si ya hay alguna propuesta\nSebastian Sanchez: y listo.\nSebastian Sanchez: Eso es un poco como el estatus. Y ya.\nMaria del Carmen Valencia: Okay, Muchas gracias. ¿te tuviste algún problema o tienes algún problema con algún cliente o alguna cuenta.\nSebastian Sanchez: No realmente por el momento, no todo como que se ha alineado bastante bien. El único inconveniente que, pues yo creo que ya se ha solucionado hoy es tener la línea para poder comunicarme y resolver dudas. Lo más pronto.\nMaria del Carmen Valencia: Claro que sí. Esperemos que eso se pueda solucionar pronto Okay para dejar trazabilidad. En esta reunión voy a dejar presente que el día viernes, 5 de septiembre para varios pizza creé una compañía de reconocimiento, creé para matos Marín, una campaña de ventas\nMaria del Carmen Valencia: con un arte para James cuevas, creé una compañía nueva de reconocimiento e hice un ajuste en un arte\nMaria del Carmen Valencia: para\nMaria del Carmen Valencia: Michel Tourreyas, creé una campaña de reconocimiento para el solar, luz verde. Creé una campaña perdón. Activé una campaña de ventas que tenía con error. El día sábado hice alrededor de\nMaria del Carmen Valencia: 1, 2, 3, 4, 5, 6, 7, 8, 9,\nMaria del Carmen Valencia: 10, 11, Hice 14\nMaria del Carmen Valencia: informes reportes de métricas\nMaria del Carmen Valencia: a cada una de las cuentas que tenían más de 2 000 en el pago.\nMaria del Carmen Valencia: El día de hoy tengo que trabajar en\nMaria del Carmen Valencia: chao chao.\nMaria del Carmen Valencia: Tengo que trabajar con hablar con Lee para lo del pago. Lo de primera, emprender el manos, placa prender a eduardo de la torre, prender a a J A ir con un\nMaria del Carmen Valencia: arte, a pagar por completo a Daniel drir, mirar los artes de Bella Brown Prender en los 3\nMaria del Carmen Valencia: creativos de Forever Cream mandar a hacer arte de Maut Auton en Llamará James cuevas, crear arte para Blaskapi. Corregir arte de Josua López\nMaria del Carmen Valencia: mandar a hacer los artes de estética y trenzado de m. 38 contactar a ucaino revisar contenido exótico Net y cambiar los 2 artes de L y P,\nMaria del Carmen Valencia: Y por el momento no he tenido inconvenientes con\nMaria del Carmen Valencia: con ningún cliente.\nMaria del Carmen Valencia: Y ya.\nMaria del Carmen Valencia: Ah, bueno, compañero no sé si de pronto Elvin va a aportar algo o alguien tiene algo más por decir, sino para dar por terminada esta reunión.\nElvin Ayala: Gracias. María. No estamos súper bien. Entiendo que.\nElvin Ayala: pues eso es lo más importante, siempre verificar que hicimos ayer, que vamos a trabajar hoy. Si tenemos algo pendiente, pues darle prioridad si se nos quedó algo del fin de semana de viernes o sábado pues comenzar temprano con eso. Y luego, pues, ir poniéndonos al día con los casos, pues que tenemos del día.\nElvin Ayala: vamos a resolver lo de las lo de los números. Hoy de Sebastián y de Juan, el sábado se me salió de las manos. Tuve demasiadas reuniones demasiado de de trabajo y pues, literalmente, a las 6 de la tarde viene a tenerlas. Pero ya hoy, pues ya las tenemos que ahora, cuando terminemos, nos quedamos con Sebastián y con Juan para entonces conectarlos.\nMaria del Carmen Valencia: Okay, Muchas.\nMaria del Carmen Valencia: Entonces les desea todos un feliz. Día nos vemos cualquier cosita chao.\nMaria del Carmen Valencia: Ay.\nElvin Ayala: Creo que.\nBarbara Quero: Preguntarte Evin si de casualidad tendrías tiempo de que en antes de bueno, ya son las 10\nBarbara Quero: revisar el caso de Sisam. Te acuerdas que el tenemos como que una trazabilidad bastante larga en cuanto a su estrategia, y todo eso.\nElvin Ayala: Sí, déjame. Tengo que trabajar con Juan y Sebastián, rapidito o algo Dame unos 30 min y a las 10 y media, 11 nos podemos verlo. Yo los reviso y te y te escribo, está bien.\nBarbara Quero: Dale: Gracias.\nElvin Ayala: Sí.\nBarbara Quero: Más va a estar encargado del.\nElvin Ayala: Perfecto. Gracias, Manuel\nElvin Ayala: Juan y Sebastián. Ya mismo. Estamos en unos minutos. Les voy a enviar un enlace. Por eso la.\nJuan Diego: Dale: Gracias.\nMaria del Carmen Valencia: Hasta.\nJuan Diego: Chao.\n",
+          "zoom_meeting_id": "89476287500 2025-09-08"
+        }
+      }
+    ]
+  },
+  "versionId": "9fa7e6e4-eb3c-4777-98d4-27577c7b4639",
+  "activeVersionId": "9fa7e6e4-eb3c-4777-98d4-27577c7b4639",
+  "versionCounter": 15,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "ZhcAhenK4DTDHehN",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-06T13:21:36.607Z",
+    "createdAt": "2026-01-06T13:21:36.607Z",
+    "versionId": "9fa7e6e4-eb3c-4777-98d4-27577c7b4639",
+    "workflowId": "ZhcAhenK4DTDHehN",
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=TODAY IS: {{ $now.setZone('UTC-5')}}\nThis is the compilation that you have to analyze and create task. Think step by step the details of the task ,create task only plas necessary people to create You must be attentive and more important when someone in the meeting say that others have a responsibility you must take out that task remember YOUR RESPOSNABULITY is to create tasks.\n\nThe \"name\": \"[Task Name]\",\n    \"description\": \"[Detailed Task Description]\",\nHAVE TO VE IN SPANISH THE CONTENT NOT the key \nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n{{ $('When Executed by Another Workflow').item.json.participants }}\n\n### INPUTS ###\n- **MEETING TITLE**: {{ $('When Executed by Another Workflow').item.json.topic }}\n- **PARTICIPANTS**: {{ $('When Executed by Another Workflow').item.json.participants }}\n- **TRANSCRIPT**: {{ $('When Executed by Another Workflow').item.json.transcript }}\n\n\n\nPending TASK :\nYou have the next job with these tasks:\n-If the task isn´t clear, do´t annote him\n-If the task is duplicated, you should delete the second one\n-If a task is created you can´t create a same one\n-If the state of a task is finished, you can´t create again the same task\n",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=TODAY IS: {{ $now.setZone('UTC-5')}}\n\nYOU ARE A MEETING ASSISTANT FOR AUTOMATION IN N8N. YOUR TASK IS TO EFFICIENTLY AND PRECISELY PROCESS INFORMATION FROM ZOOM MEETINGS TO GENERATE TO-DOS AND SCHEDULE FOLLOW-UP MEETINGS. YOU HAVE ACCESS TO THE FOLLOWING DATA:\n\n### YOUR TASKS ###\n1. **CREATE TO-DOS**:\n   - IDENTIFY TASKS AND TO-DOS IN THE TRANSCRIPT.\n   - FORMULATE CLEAR, CONCRETE TASKS.\n   - PASS THESE TASKS TO THE TOOL \"Create tasks\" TO SAVE THEM IN CLICKUP. \n   - DATA STRUCTURE:\n     - **TASK DESCRIPTION**: Brief description of the task(put details about what is expected to do).\n     - **ASSIGNED PERSON**: First name from the participant list.\n     - **DUE DATE**: Use any date mentioned in the transcript; otherwise, set to \"Not specified.\"\n\n2. **CREATE MEETING**:\n   - ANALYZE THE TRANSCRIPT TO IDENTIFY INFORMATION ABOUT THE NEXT MEETING (DATE, TIME, AND TOPIC).\n   - PASS THIS INFORMATION TO THE TOOL \"Create follow-up call.\"\n   - DATA STRUCTURE:\n     - **MEETING TITLE**: \"Follow-up: [Meeting Title]\"\n     - **DATE AND TIME**: Determined from the transcript or set to \"Next Tuesday at 10:00 AM\" if no information is provided.\n     - **PARTICIPANTS**: Add all participants from the list.\n\n### CHAIN OF THOUGHTS ###\n1. **UNDERSTAND**: Read and analyze the provided inputs (title, participants, transcript).\n2. **IDENTIFY**: Extract relevant information for the to-dos and the next meeting.\n3. **DIVIDE**: Split the task into two separate processes: creating to-dos and creating the meeting.\n4. **STRUCTURE**: Format the results in the required structure for the respective tools.\n5. **TRANSMIT**: Pass the data to the designated tools in n8n.\n6. **VERIFY**: Ensure the data is correct and complete.\n\n### WHAT YOU SHOULD NOT DO ###\n- **NEVER**: Create unclear or vague to-dos.\n- **NEVER**: Ignore missing data – use default values where uncertain.\n- **NEVER**: Overlook information from the inputs or make incorrect connections.\n- **NEVER**: Transmit tasks or meetings without proper formatting.\n\n### OUTPUT EXAMPLES ###\n1. **TO-DO**:\n   - **TASK DESCRIPTION**: \"Prepare presentation for the next meeting.\"\n   - **ASSIGNED PERSON**: \"John Doe.\"\n   - **DUE DATE**: \"2025-01-25.\"\n\n2. **MEETING**:\n   - **MEETING TITLE**: \"Follow-up: Project Discussion.\"\n   - **DATE AND TIME**: \"2025-01-28 at 10:00 AM.\"\n   - **PARTICIPANTS**: \"John Doe, Jane Example.\"\n\n### NOTES ###\n- EXECUTE YOUR TASKS WITH THE HIGHEST PRECISION AND CONTEXT SENSITIVITY.\n- RELY ON THE PROVIDED DATA AND DEFAULT VALUES WHERE NECESSARY.\nThe priority have to be like this but just send the number\n 1 : Urgent, 2 : High, 3 : Normal, 4 : Low\nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n\n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          928,
+          1744
+        ],
+        "id": "8b44da56-825f-44a8-8234-6364dea449b1",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-pro",
+          "options": {
+            "maxOutputTokens": 65536,
+            "topP": 1
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          896,
+          1984
+        ],
+        "id": "82066eba-c873-461f-b679-8e8ec39515c5",
+        "name": "Google Gemini Chat Model1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "cjSy8N1BuWZXGbDk",
+            "name": "Google Gemini(PaLM) Api account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "[\n  {\n    \"name\": \"[Task Name SPANISH]\",\n    \"description\": \"[Detailed Task Description in SPANISH]\",\n    \"due_date\": \"[Due Date]\",\n    \"priority\": \"[Priority Number]\",\n    \"mail_responsible\": \"[Email if available]\",\n    \"name_responsible\": \"[Assigned Person]\"\n  }, \n  {\n    \"name\": \"[Task Name]\",\n    \"description\": \"[Detailed Task Description]\",\n    \"due_date\": \"[Due Date]\",\n    \"priority\": \"[Priority Number]\",\n    \"mail_responsible\": \"[Email if available]\",\n    \"name_responsible\": \"[Assigned Person]\"\n  }\n]\n"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.2,
+        "position": [
+          1136,
+          1968
+        ],
+        "id": "a60659c2-d7e9-4855-a3d5-ec8c5e445654",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "47ac136c-b28d-42c7-a6bf-1725d0f354b6",
+                "leftValue": "={{ (() => {\n    const items = $('ClickUpTeam').item.json.data; \n    const match = items.find(item => item.email === $json.mail_responsible);\n    return match ? match.id : false;\n  })() }}",
+                "rightValue": "=true",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2832,
+          1648
+        ],
+        "id": "53c2484c-e001-4ff7-a25d-d5a8e9ac3a7c",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Responsable de la tarea:{{ $json.name_responsible }}\n\nEQUIPO OFICIAL:\n{{ $('OficialTeam').item.json.data.map(p => p.Nombre + ' (' + p.Correo + ')').join(', ')  }}\n\nEQUIPO EN CLICK UP:\n{{ $('ClickUpTeam').item.json.data.map(p => p.username + ' (email:' + p.email + ' || idClickUp: ' + p.id+ ')').join(', ')  }}\n",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "Eres un expeto analisando contenido y determinando sobre el EQUIPO OFICIAL debes buscar quien seria en el EQUIPO EN CLICK UP y sacar su correo y su identificador en CLICK UP segun el responsable de la tarea por nombre"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.6,
+        "position": [
+          3056,
+          1664
+        ],
+        "id": "275f8b78-3646-4a20-91bf-d8e200291810",
+        "name": "Basic LLM Chain1",
+        "alwaysOutputData": true,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash-preview-05-20",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          3008,
+          1856
+        ],
+        "id": "53c8cf23-b306-4733-a8b0-4f4495f29b2e",
+        "name": "Google Gemini Chat Model2",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "cjSy8N1BuWZXGbDk",
+            "name": "Google Gemini(PaLM) Api account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"email\": \"example@gmail.com\",\n\t\"idClickUp\": 42345662\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.2,
+        "position": [
+          3232,
+          1856
+        ],
+        "id": "9bf2698e-e383-47c3-970a-09b132151b37",
+        "name": "Structured Output Parser1"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "output",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1680,
+          1616
+        ],
+        "id": "80165b37-0615-4b96-819e-902a5f8f35d6",
+        "name": "Split Out",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          160,
+          224
+        ],
+        "id": "74471e1c-883c-44e8-afe7-75a271462e37",
+        "name": "OficialTeam"
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "55ddbb0b-09cc-4898-bf9c-cc3c67e5bd8f",
+        "name": "Wait",
+        "webhookId": "bd40e9f3-7507-4626-aba1-2d369795bdbf"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -240,
+          64
+        ],
+        "id": "ed3ae49a-93aa-401c-a57a-7e0dcc630f14",
+        "name": "Team Task"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -544,
+          192
+        ],
+        "id": "4b48106a-e03e-4174-a8b1-b45dcd822903",
+        "name": "ClickUpTeam"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "getAll",
+          "team": "90132286199",
+          "space": "90139741839",
+          "folderless": true,
+          "list": "={{ $('Basic LLM Chain2').item.json.output[\"ID EQUIPO\"] }}",
+          "filters": {}
+        },
+        "id": "b1bb011c-e6f2-410e-85f4-56d2cb755a5a",
+        "name": "ClickUp: Get All Tasks",
+        "type": "n8n-nodes-base.clickUp",
+        "position": [
+          128,
+          592
+        ],
+        "typeVersion": 1,
+        "alwaysOutputData": true,
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=### DATOS DE LAS TAREAS ABIERTAS ###\n{{ JSON.stringify($json, null, 2) }}\n\n\nTODAY IS: {{ $now.setZone('UTC-5')}}\nThis is the compilation that you have to analyze and create task. Think step by step the details of the task ,create task only plas necessary people to create You must be attentive and more important when someone in the meeting say that others have a responsibility you must take out that task remember YOUR RESPOSNABULITY is to create tasks.\nPARTICIPANTS:\nparticipant's email addresses or names to send mail_responsible or name_responsible\n{{ $('When Executed by Another Workflow').item.json.participants }}\n\n### INPUTS ###\n- **MEETING TITLE**: {{ $('When Executed by Another Workflow').item.json.topic }}\n- **PARTICIPANTS**: {{ $('When Executed by Another Workflow').item.json.participants }}\n- **TRANSCRIPT**: {{ $('When Executed by Another Workflow').item.json.transcript }}\n",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=Analiza las tareas proporcionadas y determina cuáles deben ser cerradas según los criterios establecidos. Sé preciso y cuidadoso en tu análisis.\n\n\nEres un asistente experto en análisis de tareas y gestión de proyectos. Tu trabajo es analizar las tareas de ClickUp y determinar cuáles deben ser cerradas basándote en los siguientes criterios:\n\n### CRITERIOS PARA CERRAR TAREAS ###\n1. **TAREAS COMPLETADAS**: Tareas que tienen status 'done', 'completed', 'finished', 'closed'\n2. **TAREAS VENCIDAS**: Tareas con fecha de vencimiento anterior a hoy ({{ $now.setZone('UTC-5').toFormat('yyyy-MM-dd') }})\n3. **TAREAS OBSOLETAS**: Tareas con más de 30 días sin actividad\n4. **TAREAS DUPLICADAS**: Tareas con nombres muy similares donde una ya está completada\n\n### INSTRUCCIONES ###\n- Analiza cada tarea cuidadosamente\n- Identifica las tareas que cumplen los criterios de cierre\n- Proporciona una razón clara para cada tarea que debe cerrarse\n- NO cierres tareas que están en progreso activo\n- Ten especial cuidado con tareas asignadas a personas específicas\n\n### FORMATO DE SALIDA ###\nDevuelve un array JSON con las tareas que deben cerrarse, cada una con:\n- task_id: ID de la tarea\n- name: Nombre de la tarea\n- reason: Razón por la cual debe cerrarse\n- current_status: Estado actual de la tarea\n- assignee: Persona asignada (si existe)\n\nSi no hay tareas por cerrar no pasa nada simplemente no cierres ninguna no fuerces un cierre\n\n\n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "id": "e449cfdb-7d5a-49e4-82ee-aaa26f214d75",
+        "name": "Analyze Tasks for Closure",
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "position": [
+          96,
+          960
+        ],
+        "typeVersion": 1.7,
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "output",
+          "options": {}
+        },
+        "id": "d5f2c60e-27c6-40ad-860b-c21016837d54",
+        "name": "Split Tasks to Close",
+        "type": "n8n-nodes-base.splitOut",
+        "position": [
+          464,
+          960
+        ],
+        "typeVersion": 1,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "task-validation",
+                "leftValue": "={{ $json.task_id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "662478bc-1cc5-4fb8-a01e-44cd95952192",
+        "name": "Validate Task ID",
+        "type": "n8n-nodes-base.filter",
+        "position": [
+          656,
+          960
+        ],
+        "typeVersion": 2.2,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "update",
+          "id": "={{ $json.task_id }}",
+          "updateFields": {
+            "status": "closed"
+          }
+        },
+        "id": "c421a0f0-cb66-4fe1-9a3d-cae35e657120",
+        "name": "ClickUp: Close Task",
+        "type": "n8n-nodes-base.clickUp",
+        "position": [
+          864,
+          960
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "task-closure-log",
+                "name": "closure_log",
+                "type": "object",
+                "value": "={\n  \"task_id\": \"{{ $('Split Tasks to Close').item.json.task_id }}\",\n  \"task_name\": \"{{ $('Split Tasks to Close').item.json.name }}\",\n  \"closure_reason\": \"{{ $('Split Tasks to Close').item.json.reason }}\",\n  \"previous_status\": \"{{ $('Split Tasks to Close').item.json.current_status }}\",\n  \"assignee\": \"{{ $('Split Tasks to Close').item.json.assignee }}\",\n  \"closed_at\": \"{{ $now.setZone('UTC-5').toISO() }}\",\n  \"success\": {{ $json.success || false }}\n}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ee032c62-8fd7-4624-a9c9-04dd8007216f",
+        "name": "Log Task Closure",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1056,
+          960
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "57f89f87-97a7-4db5-afcd-da88794a4238",
+        "name": "Aggregate Results",
+        "type": "n8n-nodes-base.aggregate",
+        "position": [
+          1200,
+          960
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "summary-report",
+                "name": "summary_report",
+                "type": "object",
+                "value": "={\n  \"total_tasks_processed\": {{ $json.data.length }},\n  \"successful_closures\": {{ $json.data.filter(item => item.closure_log.success === true).length }},\n  \"failed_closures\": {{ $json.data.filter(item => item.closure_log.success === false).length }},\n  \"processed_at\": \"{{ $now.setZone('UTC-5').toISO() }}\",\n  \"details\": {{ JSON.stringify($json.data.map(item => item.closure_log)) }}\n}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "fab1627e-7c3f-42a0-951f-7d4106b9a945",
+        "name": "Create Summary Report",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          704,
+          1744
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-pro",
+          "options": {
+            "maxOutputTokens": 65536,
+            "topP": 1
+          }
+        },
+        "id": "07440d2e-efd3-45c1-bf81-2de7c8661e9e",
+        "name": "Google Gemini Chat Model3",
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "position": [
+          16,
+          1216
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "googlePalmApi": {
+            "id": "cjSy8N1BuWZXGbDk",
+            "name": "Google Gemini(PaLM) Api account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "[\n  {\n    \"task_id\": \"task_123456\",\n    \"name\": \"Tarea ejemplo\",\n    \"reason\": \"Tarea completada hace más de 7 días\",\n    \"current_status\": \"done\",\n    \"assignee\": \"John Doe\"\n  },\n  {\n    \"task_id\": \"task_789012\",\n    \"name\": \"Otra tarea\",\n    \"reason\": \"Tarea vencida desde hace 5 días\",\n    \"current_status\": \"in progress\",\n    \"assignee\": \"Jane Smith\"\n  }\n]"
+        },
+        "id": "c920643b-8c4b-48f6-8c0d-9d258567f4b5",
+        "name": "Structured Output Parser2",
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "position": [
+          288,
+          1216
+        ],
+        "typeVersion": 1.2
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          336,
+          592
+        ],
+        "id": "ba2ffc03-3f6c-47d2-b0da-f337f59a8698",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -1904,
+          464
+        ],
+        "id": "9f04c197-ee4d-44ef-92e4-55a4e4a5b23e",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Identifi the team base on this\n metting topic:\n\n{{ $('When Executed by Another Workflow').item.json.topic }}\n\n\nTEAMS:\n{{ $json.data.toJsonString() }}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=<SystemPrompt>\n  <Role>You are a precise, deterministic data matcher that maps a meeting topic to one or more team records.</Role>\n\n  <Task>\n    Given:\n      1) A JSON array of team records. Each record has (at minimum) fields:\n         - \"NOMBRE\" (string)\n         - \"ID EQUIPO\" (number or string)\n         - \"MEETINGS\" (string with zero or more meeting names, typically comma-separated)\n      2) An input \"topic\" string representing a single meeting title.\n\n    Return the team(s) whose \"MEETINGS\" contains that topic according to the matching rules below.\n  </Task>\n\n  <Data>\n    <!-- Inject your data here -->\n    <TeamArray>{{TEAM_ARRAY}}</TeamArray>\n  </Data>\n\n  <Inputs>\n    <Topic>{{TOPIC}}</Topic>\n  </Inputs>\n\n  <NormalizationRules>\n    - Work case-insensitively.\n    - Trim leading/trailing spaces.\n    - Collapse internal runs of whitespace to a single space.\n    - Normalize diacritics (accent folding): e.g., \"EDUCACIÓN\" ~ \"EDUCACION\".\n    - Treat the \"MEETINGS\" field as a list of meeting names by splitting on commas (\",\"), then trim each item after splitting.\n    - Ignore empty items after splitting.\n  </NormalizationRules>\n\n  <MatchingRules priority=\"high-to-low\">\n    1) exact: The normalized topic equals a normalized meeting item.\n    2) contains: The normalized topic is a substring of a normalized meeting item, or vice versa.\n    3) tolerant: Allow minor punctuation or spacing differences (e.g., extra spaces, hyphen vs. space, trailing numbers with the same core name).\n       - Do NOT invent or hallucinate meetings; only match against what exists in \"MEETINGS\".\n    If multiple records match at the same highest priority level, return all of them.\n  </MatchingRules>\n\n  <ConfidenceScoring>\n    - exact => 1.0\n    - contains => 0.8\n    - tolerant => 0.6\n  </ConfidenceScoring>\n\n  <OutputSchema>\n    Return a single JSON object with this shape (and nothing else in the output):\n    {\n      \"query\": {\n        \"topic\": \"<original topic string>\"\n      },\n      \"matches\": [\n        {\n          \"team_name\": \"<NOMBRE>\",\n          \"team_id\": \"<ID EQUIPO as string>\",\n          \"meeting_matched\": \"<the meeting item as it appears in the data>\",\n          \"match_type\": \"exact|contains|tolerant\",\n          \"confidence\": <number>\n        }\n      ],\n      \"not_found\": <true|false>,\n      \"reason_if_not_found\": \"<short explanation or empty string>\"\n    }\n\n    Conventions:\n    - \"team_id\" must be serialized as a string (preserves large integers).\n    - Sort \"matches\" by confidence desc, then by team_name asc.\n    - Set \"not_found\" = true if and only if \"matches\" is empty; otherwise false.\n  </OutputSchema>\n\n  <EdgeCases>\n    - If \"MEETINGS\" is empty/null/only spaces for a team, it does not match.\n    - If a team repeats the same meeting multiple times, deduplicate meeting items internally before matching.\n    - If \"MEETINGS\" contains multiple meetings and more than one matches, pick the strongest match type for that team (e.g., exact beats contains).\n    - If topic is empty after normalization, return not_found with a reason.\n  </EdgeCases>\n\n  <Constraints>\n    - Do not infer teams based on \"NOMBRE\"; match strictly via \"MEETINGS\".\n    - Do not modify the input array other than normalization for matching purposes.\n    - Do not fabricate meetings that are not present.\n  </Constraints>\n\nFORMAT\n\n{\"row_number\":2,\"NOMBRE\":\"NOMBRE\",\"ID EQUIPO\":0,\"METTING\":\"\"}\n\n  <Algorithm>\n    1) Read {{TOPIC}} and {{TEAM_ARRAY}}.\n    2) Normalize the topic per <NormalizationRules>.\n    3) For each record:\n       a) Extract and normalize \"MEETINGS\" as a list of items.\n       b) For each meeting item, compute match type according to <MatchingRules>.\n       c) Keep the best match type for that team (if any) and the associated original meeting string.\n    4) Convert \"ID EQUIPO\" to string.\n    5) Score confidence per <ConfidenceScoring>; prepare the \"matches\" array.\n    6) Sort and output strictly following <OutputSchema>.\n  </Algorithm>\n\n  <Verification>\n    - Double-check: If matches array is empty, \"not_found\" must be true and \"reason_if_not_found\" non-empty.\n    - Double-check: No extra keys; valid JSON only.\n    - Double-check: Team IDs are strings.\n  </Verification>\n\nIF THER IS NOT FIT RETORN AND EMPTY RESPONSE\n</SystemPrompt>\n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          -1120,
+          464
+        ],
+        "id": "49890d16-f977-4b26-9ced-918c963cd6ff",
+        "name": "Basic LLM Chain2",
+        "retryOnFail": true,
+        "alwaysOutputData": false,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -1344,
+          464
+        ],
+        "id": "3f0ecd16-c198-4661-91a0-e1a217e217b4",
+        "name": "Aggregate1"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\"row_number\":2,\"NOMBRE\":\"NOMBRE\",\"ID EQUIPO\":0,\"METTING\":\"\"}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          -960,
+          688
+        ],
+        "id": "dba21e10-bbe3-4207-bb98-4c0b7ef61e43",
+        "name": "Structured Output Parser3"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          -1184,
+          672
+        ],
+        "id": "b7a9300d-5200-4128-8f51-71ac977449e6",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "cjSy8N1BuWZXGbDk",
+            "name": "Google Gemini(PaLM) Api account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "tableId": "transcriptions_zoom",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "zoom_meeting_id",
+                "fieldValue": "={{ $('When Executed by Another Workflow').item.json.zoom_meeting_id }}"
+              },
+              {
+                "fieldId": "topic",
+                "fieldValue": "={{ $('When Executed by Another Workflow').item.json.topic }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          2624,
+          1472
+        ],
+        "id": "d6bef30b-0920-494b-8f45-be471896bb6e",
+        "name": "crea en la bd1",
+        "alwaysOutputData": false,
+        "retryOnFail": false,
+        "executeOnce": false,
+        "credentials": {
+          "supabaseApi": {
+            "id": "C6cv4jbIWpLK3JK2",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldsToAggregate": {
+            "fieldToAggregate": [
+              {}
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          2272,
+          1504
+        ],
+        "id": "60183d6d-c041-4e7c-a4cf-bbafa2fb8fd0",
+        "name": "Aggregate2"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2000,
+          1680
+        ],
+        "id": "efe6c4d4-c96d-454f-9726-5d4c50a75f68",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2074960720,
+            "mode": "list",
+            "cachedResultName": "Hoja 2",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys/edit#gid=2074960720"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -1600,
+          464
+        ],
+        "id": "95821365-65fb-4f0a-a992-55ead5701a01",
+        "name": "Get row(s) in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "TbE2yI5rb8cHSzni",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "list",
+          "operation": "member",
+          "id": "={{ $json.output[\"ID EQUIPO\"] }}"
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          -656,
+          464
+        ],
+        "id": "53352f8a-6c42-4686-aebe-ef50893ac8d7",
+        "name": "Get list members",
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "operation": "getAll",
+          "team": "90132286199",
+          "space": "90139741839",
+          "folderless": true,
+          "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          -352,
+          400
+        ],
+        "id": "d556e952-503f-4810-b2a3-ad230853a032",
+        "name": "Get many tasks",
+        "alwaysOutputData": true,
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1399583622,
+            "mode": "list",
+            "cachedResultName": "Hoja 1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1up359cJEVBbSPW1ZH_HhYgndGItamL6IUrdXpogkmys/edit#gid=1399583622"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -112,
+          352
+        ],
+        "id": "e0211171-32a6-47f7-a70d-96750ee7be21",
+        "name": "Get row(s) in sheet1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "TbE2yI5rb8cHSzni",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "team": "90132286199",
+          "space": "90139741839",
+          "folderless": true,
+          "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+          "name": "={{ $json.name }}",
+          "additionalFields": {
+            "assignees": "={{ [(() => {\n    const items = $('ClickUpTeam').item.json.data; \n    const match = items.find(item => item.email === $json.mail_responsible);\n    return match ? match.id : false;\n  })()] }}",
+            "content": "={{ $json.description }}",
+            "dueDate": "={{ $json.due_date }}",
+            "priority": "={{ $json.priority }}"
+          }
+        },
+        "id": "6fdbe6d5-eb62-4f12-a419-37625664ccb7",
+        "name": "Create a task",
+        "type": "n8n-nodes-base.clickUp",
+        "position": [
+          2800,
+          1936
+        ],
+        "typeVersion": 1,
+        "retryOnFail": true,
+        "maxTries": 2,
+        "alwaysOutputData": true,
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "team": "90132286199",
+          "space": "90139741839",
+          "folderless": true,
+          "list": "={{ $('Basic LLM Chain2').item.json.output['ID EQUIPO'] }}",
+          "name": "={{ $('Loop Over Items').item.json.name }}",
+          "additionalFields": {
+            "assignees": "={{ [$json.output.idClickUp] }}",
+            "content": "={{ $('Loop Over Items').item.json.description }}",
+            "dueDate": "={{ $('Loop Over Items').item.json.due_date }}",
+            "priority": "={{ $('Loop Over Items').item.json.priority }}"
+          }
+        },
+        "id": "06071507-b372-4aa7-b436-daaac0706cc8",
+        "name": "Create a task1",
+        "type": "n8n-nodes-base.clickUp",
+        "position": [
+          3632,
+          1968
+        ],
+        "typeVersion": 1,
+        "alwaysOutputData": true,
+        "credentials": {
+          "clickUpOAuth2Api": {
+            "id": "WXyGUCZIR4kPDiiZ",
+            "name": "ClickUp account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Create a task",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain1": {
+        "main": [
+          [
+            {
+              "node": "Create a task1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain1",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OficialTeam": {
+        "main": [
+          [
+            {
+              "node": "ClickUp: Get All Tasks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "OficialTeam",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Team Task": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ClickUpTeam": {
+        "main": [
+          [
+            {
+              "node": "Get many tasks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ClickUp: Get All Tasks": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analyze Tasks for Closure": {
+        "main": [
+          [
+            {
+              "node": "Split Tasks to Close",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Tasks to Close": {
+        "main": [
+          [
+            {
+              "node": "Validate Task ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate Task ID": {
+        "main": [
+          [
+            {
+              "node": "ClickUp: Close Task",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ClickUp: Close Task": {
+        "main": [
+          [
+            {
+              "node": "Log Task Closure",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Task Closure": {
+        "main": [
+          [
+            {
+              "node": "Aggregate Results",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate Results": {
+        "main": [
+          [
+            {
+              "node": "Create Summary Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Summary Report": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model3": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Analyze Tasks for Closure",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser2": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Analyze Tasks for Closure",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Analyze Tasks for Closure",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain2": {
+        "main": [
+          [
+            {
+              "node": "Get list members",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate1": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser3": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Basic LLM Chain2",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain2",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate2": {
+        "main": [
+          [
+            {
+              "node": "crea en la bd1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Aggregate2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "Aggregate1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get list members": {
+        "main": [
+          [
+            {
+              "node": "ClickUpTeam",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many tasks": {
+        "main": [
+          [
+            {
+              "node": "Team Task",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet1": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create a task": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create a task1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-09-09T12:33:39.000Z",
+        "id": 16,
+        "workflowId": "ZhcAhenK4DTDHehN",
+        "versionId": "9fa7e6e4-eb3c-4777-98d4-27577c7b4639",
+        "event": "activated",
+        "userId": null
+      }
+    ]
+  }
+}

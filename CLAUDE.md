@@ -308,10 +308,16 @@ crear-publicos|subir-lista|arbol|resultados|campanas|pausar`; builders puros en
 `scripts/meta-ads/core.mjs` (tests: `npm test`). Config por marca en
 `data/meta-ads/portafolio.json` (cuenta, página, IG, pixel, compuertas, `publicosClave`);
 planes de campaña en `data/meta-ads/campanas/*.json` (idempotentes: guardan los ids de Meta).
-Tokens = usuarios del sistema generados por Elvin con la app Hey Bori (`META_ADS_TOKEN`,
-`META_ADS_TOKEN_AIB`) solo en `.env.local`. Reglas: nunca activar ni subir presupuesto por
-API, 1 creativo por conjunto ≥ $10/día, tope diario por campaña, tuteo PR, sin "gratis", sin
-promesas de ingreso. Primera campaña: `vault/proyectos/level-up/campana-diagnostico-meta.md`.
+Token = el largo del dueño conectado en Bori, copiado con `scripts/meta-ads/token-desde-bori.mjs`
+(lo corre Elvin; ~60 días; ve las 72 cuentas) → `META_ADS_TOKEN` en `.env.local` y en Railway
+(`puente`, `nico`). **Plantillas** (`scripts/meta-ads/plantillas.mjs`): `plantilla <marca>
+follow-me|trafico-url|dm-instagram|quiz --reels a,b --videos a,b --presupuesto N --edad 18-35 --url …`
+→ plan JSON + campaña EN PAUSA en ~10 s (reels existentes por `source_instagram_media_id`; perfil
+IG = PROFILE_VISIT/INSTAGRAM_PROFILE; DM = CONVERSATIONS/INSTAGRAM_DIRECT). Por Telegram:
+`/ads plantilla|resultados|campanas|arbol|pausar <marca> …` (corre el script, 0 tokens). Reglas:
+nunca activar ni subir presupuesto por API, 1 creativo por conjunto ≥ mínimo de la marca ($10; Mauro $5),
+tope diario por campaña, tuteo PR, sin "gratis", sin promesas de ingreso. Traffickers de Level Up
+usan **Bori** (rol `trafficker`, `POST /api/admin/crear-trafficker` como dueño).
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
@@ -345,8 +351,22 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   LEVEL UP MEDIA 7784685790 → `/pulse/level-up-media`, AI BORINQUEN 18399101258, Asignación de
   Estrategas 9506323087. Mapeo puro y testeado en `scripts/pulse/monday-mapeo.mjs`
   (`tests/pulse-valores.test.mjs`). Reporte en `data/pulse-migracion.json`.
+- **Puente a n8n/NocoDB** (`lib/pulse/puente-n8n.ts`): los agentes de n8n de Level Up leen la tabla
+  `clientes` de NocoDB, que antes alimentaba Monday. Pulse avisa cada cambio de LEVEL UP MEDIA /
+  Asignación de Estrategas al webhook `pulse-cliente` (after(), `PULSE_N8N_SECRET`, `N8N_URL`) y
+  expone `GET /api/pulse/n8n/clientes` para la corrida nocturna. El workflow lo genera
+  `scripts/n8n-sync-pulse.mjs`. `PULSE_N8N_MODO=real` para escribir; si no, simulación.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
+
+## n8n de Level Up (`scripts/n8n.mjs`)
+
+El back office de la agencia (98 workflows, Chatwoot, Evolution, NocoDB) vive en un VPS Contabo con
+Easypanel montado por un proveedor externo. Nico lo toma: `node scripts/n8n.mjs inventario|exportar|
+ejecuciones|salud|subir <id>|todo` (solo `N8N_API_KEY`, nunca la clave de la UI). Respaldo en
+`data/n8n/workflows/` (re-exportar tras cada cambio); la ronda de Nico reporta workflows con error.
+Plan y diagnóstico en `vault/proyectos/n8n/`. Regla: sin OK de Elvin no se activa/desactiva nada ni
+se tocan credenciales o webhooks.
 
 ## Conectar datos reales (próximos pasos)
 

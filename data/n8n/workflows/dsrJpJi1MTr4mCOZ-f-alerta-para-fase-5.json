@@ -1,0 +1,2379 @@
+{
+  "updatedAt": "2026-04-15T20:47:02.932Z",
+  "createdAt": "2025-11-11T18:28:50.185Z",
+  "id": "dsrJpJi1MTr4mCOZ",
+  "name": "F-) Alerta para fase 5",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+              "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -80
+      ],
+      "id": "58790327-e1f8-4c07-a4fb-26f25849af2d",
+      "name": "there's-id?"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -80
+      ],
+      "id": "86a99bb4-b487-4de0-bbf4-f2ce79b06ef8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -80
+      ],
+      "id": "238ee4c3-36b6-42cd-8c22-f84b0024a50b",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a90e386a-7d9a-4f51-a9f8-b3d5b0d8764b",
+              "name": "fases_requeridas",
+              "value": "={{ [\n  { \"nombre\": \"Fase 1\", \"regex\": \"FASE 1\" },\n  { \"nombre\": \"Fase 2\", \"regex\": \"FASE 2\" },\n  { \"nombre\": \"Fase 3\", \"regex\": \"FASE 3\" },\n  { \"nombre\": \"Fase 4\", \"regex\": \"FASE 4\" }\n] }}",
+              "type": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        -96
+      ],
+      "id": "5e278d4a-dd05-48c7-80e7-15d537f000d5",
+      "name": "Configuración de Fases"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Obtener datos de entrada ---\n// El array de fases requeridas desde el nodo de configuración.\nconst fasesRequeridas = $('Configuración de Fases').first().json.fases_requeridas;\n// El array de campañas activas que vienen del nodo Aggregate.\nconst campañasActivas = $('Aggregate').first().json.campañas;\n\n// --- 2. Variables de estado ---\nlet ready = false; // Valor por defecto\nlet todasLasFasesPresentes = true; // Asumimos que están todas hasta que se demuestre lo contrario\n\n// Si no hay campañas activas o no se definieron fases, no puede estar listo.\nif (!campañasActivas || campañasActivas.length === 0 || !fasesRequeridas || fasesRequeridas.length === 0) {\n  todasLasFasesPresentes = false;\n}\n\n// --- 3. Lógica de Verificación de Fases ---\nif (todasLasFasesPresentes) {\n  const nombresDeCampañas = campañasActivas.map(c => c.name.toUpperCase());\n  \n  for (const fase of fasesRequeridas) {\n    const regex = new RegExp(fase.regex, 'i'); // 'i' para que no distinga mayúsculas/minúsculas\n    \n    // Busca si al menos UNA campaña activa coincide con la regex de la fase.\n    const faseEncontrada = nombresDeCampañas.some(nombre => regex.test(nombre));\n    \n    // Si no se encontró, marcamos como falso y rompemos el bucle.\n    if (!faseEncontrada) {\n      todasLasFasesPresentes = false;\n      break;\n    }\n  }\n}\n\n// --- 4. Lógica de Verificación de Fecha (Solo si todas las fases están presentes) ---\n// Este bloque solo se ejecuta si la validación anterior fue exitosa.\nif (todasLasFasesPresentes) {\n  \n  // 1. Encontrar la fecha de creación más reciente\n  const todosLosTimestamps = campañasActivas.map(c => new Date(c.created_time).getTime());\n  const timestampMasReciente = Math.max(...todosLosTimestamps);\n  const fechaMasReciente = new Date(timestampMasReciente);\n  fechaMasReciente.setHours(0, 0, 0, 0); // <-- LÍNEA MODIFICADA (Ignoramos la hora)\n\n  // 2. Calcular la fecha de \"hace 7 días\"\n  const hoy = new Date();\n  const hace7Dias = new Date();\n  hace7Dias.setDate(hoy.getDate() - 7);\n  hace7Dias.setHours(0, 0, 0, 0); // <-- LÍNEA MODIFICADA (Ignoramos la hora)\n\n  // 3. Comparar.\n  // \"ready\" es true solo si han pasado MÁS de 7 días,\n  // es decir, la fecha más reciente es ANTERIOR a \"hace 7 días\".\n  if (fechaMasReciente < hace7Dias) {\n    ready = true;\n  }\n  // Si la fecha más reciente es igual o posterior a \"hace 7 días\", 'ready' se queda en 'false'.\n}\n\n// --- 5. Salida ---\n// Siempre retorna un item con el estado de 'ready'.\nreturn [{\n  json: {\n    ready: ready\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        128
+      ],
+      "id": "6cdc68e5-4494-4877-a5b0-b3d407a29234",
+      "name": "Verificar Fases de Campañas"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "807f452c-1ff5-4466-ac3e-d0a0b9bd6fe6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        -96
+      ],
+      "id": "562b531a-3095-43f5-b192-a125c7c6c3cd",
+      "name": "data-entry"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/level up/i",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "311a5e44-d4bc-4d23-af4c-4392b2ff5925",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "/levelup/i",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2224,
+        -80
+      ],
+      "id": "a1674fc3-8c87-42f4-b097-7e2ba0129f5e",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        -80
+      ],
+      "id": "2870a489-9938-4789-b6dd-9fa1f430c03d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "campañas",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "insights",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        -80
+      ],
+      "id": "dedb76de-18b9-4905-8c25-4e2af1548fca",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        144
+      ],
+      "id": "096d9315-4d89-412a-88ad-f72185d059b2",
+      "name": "void",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. Acceso a los datos de entrada ---\n\n// Datos del cliente\nconst clientData = $('data-entry').first().json;\n// Datos de la verificación (del nodo anterior)\nconst analisisFases = $input.first().json;\n\n// --- 2. Filtro de Seguridad ---\n// Este nodo solo debe construir el mensaje si 'ready' es true.\nif (!analisisFases.ready) {\n  return []; \n}\n\n// --- 3. Extracción de Datos ---\nconst { nombre: clienteNombre, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\n\n// --- 4. Construcción del Texto de Análisis ---\nconst estadoGeneral = \"Acción Requerida\";\nconst tituloAnalisis = \"✅ Listo para Fase 5\";\n\n// Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*ID Cuenta:* ${idCuentaPublicitaria}`;\n\n// Se prepara el contexto (simplificado).\nconst motivoAlerta = `\\n*Motivo:* Han pasado +7 días con todas las fases activas.`;\n\n// Se ensambla el texto final.\nconst textoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${motivoAlerta}`;\n\n// --- 5. Objeto de Salida ---\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        128
+      ],
+      "id": "2fe173f8-2b35-44ab-93fc-a913d922a92d",
+      "name": "build-message"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $('data-entry').item.json['ID-cuenta-publicitaria'] }}/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,created_time"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -80
+      ],
+      "id": "b2bd9cb2-0b38-40c0-adaa-0c9f18db39bf",
+      "name": "Get Campaigns",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        -96
+      ],
+      "id": "53007cd9-e919-47be-aca3-c14891548b84",
+      "name": "Verificar si hay campañas activas"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+        "messageData": "={{ $json.texto_final }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        128
+      ],
+      "id": "a55e82cd-6ec3-4ed2-b1bd-a4bb8eedbd86",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "8Nd6QMp2Z6pt9eIZ",
+          "name": "RedisLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        -80
+      ],
+      "id": "3d51cdc6-9f00-4b8f-99a7-88f10435fc60",
+      "name": "hay-campañas-levelup?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "02ab7cce-6be3-4c90-873b-ceb8e2b054f3",
+              "leftValue": "={{ $json.ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        128
+      ],
+      "id": "1b40f2b5-6f5a-4651-a531-c0984ad5be06",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -96
+      ],
+      "id": "603f3019-fd50-401c-96b3-31cd316cd6cb",
+      "name": "Wait",
+      "webhookId": "4a65dec0-f554-416d-87ec-cea3d55d2c2a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "84778b5d-f1b0-4d01-814b-3fa6a11ca444",
+              "leftValue": "={{ $json['campañas'].toJsonString() }}",
+              "rightValue": "/FASE 5/i",
+              "operator": {
+                "type": "string",
+                "operation": "notRegex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2816,
+        -80
+      ],
+      "id": "032c8794-87cd-45ee-af0b-e5ee225d3abb",
+      "name": "there fase 5?"
+    }
+  ],
+  "connections": {
+    "there's-id?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "there's-id?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración de Fases": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Fases de Campañas": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "data-entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data-entry": {
+      "main": [
+        [
+          {
+            "node": "Configuración de Fases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "hay-campañas-levelup?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "there fase 5?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "void": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build-message": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Verificar si hay campañas activas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si hay campañas activas": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay-campañas-levelup?": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "build-message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "there fase 5?": {
+      "main": [
+        [
+          {
+            "node": "Verificar Fases de Campañas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "void",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "data": [
+            {
+              "Id": 556,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-30 19:24:39+00:00",
+              "ID-cuenta-publicitaria": "169593177197140",
+              "nombre": "Felix Alba",
+              "empresa": "Félix Alba by Freedompros",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 3,
+              "ID-monday": "10013674534",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-09-24",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "felix.alba84@icloud.com",
+              "telefono": 19393243787,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 3,
+                "nombre": "Solar"
+              }
+            },
+            {
+              "Id": 558,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-30 19:23:41+00:00",
+              "ID-cuenta-publicitaria": "2199664867194418",
+              "nombre": "Francisco Jimenez",
+              "empresa": "Induxtrial LLC",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 5,
+              "ID-monday": "10012606007",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-09-26",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "induxtrialservices@gmail.com",
+              "telefono": 19393133133,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 5,
+                "nombre": "Aires Acondicionado"
+              }
+            },
+            {
+              "Id": 560,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-30 19:26:52+00:00",
+              "ID-cuenta-publicitaria": "774914158395576",
+              "nombre": "Anani Mari Pabon",
+              "empresa": "Centro Terapéutico de Bienestar Emocional",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9012010605",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-26",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-09-17",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": " info@ctbeam.com ",
+              "telefono": 17874032802,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 562,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-28 12:32:23+00:00",
+              "ID-cuenta-publicitaria": "1450532559401290",
+              "nombre": "Keila Martinez",
+              "empresa": "Cute Desings By Keila",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "10002999641",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-29",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-09-30",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": null,
+              "email": "keilisss10@gmail.com",
+              "telefono": 17876338953,
+              "pages-id": 2,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 564,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-30 19:26:37+00:00",
+              "ID-cuenta-publicitaria": "1711357866193102",
+              "nombre": "Grisell Villanueva",
+              "empresa": "Oficina Medica Dra Grisell Villanueva - Medspa",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9973124677",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-01",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "dravillanuevarespeto1707@gmail.com",
+              "telefono": 17876908364,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 566,
+              "CreatedAt": "2025-10-07 19:11:28+00:00",
+              "UpdatedAt": "2025-11-30 19:26:45+00:00",
+              "ID-cuenta-publicitaria": "1284787396717216",
+              "nombre": "Maria de los angeles  Garcia",
+              "empresa": "Healing Harmony Therapies",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "10044403984",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-09-27",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "mari07angie@gmail.com",
+              "telefono": 17872181776,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 568,
+              "CreatedAt": "2025-10-08 16:11:35+00:00",
+              "UpdatedAt": "2025-11-30 19:27:05+00:00",
+              "ID-cuenta-publicitaria": "1100985762160745",
+              "nombre": "Gadriel Rivera",
+              "empresa": "mr goat",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9414215246",
+              "doble-verificacion": true,
+              "ultimo-revisado": null,
+              "ultima-alerta": "2025-11-28",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-09-23",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "mr.goatwear@gmail.com",
+              "telefono": 17875497764,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 569,
+              "CreatedAt": "2025-10-08 16:16:24+00:00",
+              "UpdatedAt": "2025-11-30 19:28:59+00:00",
+              "ID-cuenta-publicitaria": "572887725846729",
+              "nombre": "Dariel Hernandez",
+              "empresa": "Daguda Restaurant and Launches",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "10067456698",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-12",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-07",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "hernandez14@hotmail.com",
+              "telefono": 17874471827,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 571,
+              "CreatedAt": "2025-10-08 19:45:34+00:00",
+              "UpdatedAt": "2025-11-30 19:28:30+00:00",
+              "ID-cuenta-publicitaria": "1950350458838923",
+              "nombre": "Eric Cruz",
+              "empresa": "El Escondite Bar and Grill",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "10044658018",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-06",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "eric.cruz93@yahoo.com",
+              "telefono": 17874846019,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 574,
+              "CreatedAt": "2025-10-10 16:13:09+00:00",
+              "UpdatedAt": "2025-11-30 19:29:16+00:00",
+              "ID-cuenta-publicitaria": "2045664486242045",
+              "nombre": "Jan Santiago",
+              "empresa": "Platos by chef Santiago",
+              "team-monitory-agent_id": 54,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "9874472994",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-28",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-01",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "yampy712@gmail.com",
+              "telefono": 17879235343,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "traffiker": {
+                "Id": 54,
+                "nombre": "Maria del Carmen Valencia"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 576,
+              "CreatedAt": "2025-10-14 23:52:41+00:00",
+              "UpdatedAt": "2025-11-30 19:28:39+00:00",
+              "ID-cuenta-publicitaria": "1768023027162709",
+              "nombre": "Deborah Soler",
+              "empresa": "Farmacias Deborah",
+              "team-monitory-agent_id": 52,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "18037431930",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-20",
+              "ultima-alerta": null,
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-11",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "dsoler.gdrpharmacare@outlook.com",
+              "telefono": 17874556888,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 52,
+                "nombre": "Sebastian Sanchez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 579,
+              "CreatedAt": "2025-10-17 02:27:19+00:00",
+              "UpdatedAt": "2025-11-30 19:28:04+00:00",
+              "ID-cuenta-publicitaria": "1906826473497427",
+              "nombre": "Andrea Arroyo Edgardo maldonado",
+              "empresa": "Energy Factory",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "9946063551",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-12",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-09-12",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "emaldonado.1225@gmail.com",
+              "telefono": 17874444167,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 581,
+              "CreatedAt": "2025-10-17 02:30:52+00:00",
+              "UpdatedAt": "2025-11-30 19:32:24+00:00",
+              "ID-cuenta-publicitaria": "936310000142070",
+              "nombre": "Ricardo Guerrero",
+              "empresa": "DR. Ricardo Guerrero",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "10071956444",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-24",
+              "ultima-alerta": "2025-11-24",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-16",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "chamotron@icloud.com",
+              "telefono": 17873689592,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 582,
+              "CreatedAt": "2025-10-17 16:16:29+00:00",
+              "UpdatedAt": "2025-11-30 19:31:07+00:00",
+              "ID-cuenta-publicitaria": "1289799282891246",
+              "nombre": "Zuleika Muñoz",
+              "empresa": "Sabor a Gloria Restaurante",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "9989146015",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-24",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-09",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "munozzuleika@gmail.com",
+              "telefono": 17873687516,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 583,
+              "CreatedAt": "2025-10-17 18:45:51+00:00",
+              "UpdatedAt": "2025-11-30 19:30:14+00:00",
+              "ID-cuenta-publicitaria": "528231076684714",
+              "nombre": "Joshua Santana",
+              "empresa": "Xtilos Door",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "8505336280",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-19",
+              "ultima-alerta": "2025-11-19",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-03-14",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "joshuasantana211@gmail.com",
+              "telefono": 17874511634,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 585,
+              "CreatedAt": "2025-10-20 21:36:59+00:00",
+              "UpdatedAt": "2025-11-30 19:31:47+00:00",
+              "ID-cuenta-publicitaria": "1115620410552364",
+              "nombre": "Kenia Carrera",
+              "empresa": "Restora Wellness & Aesthetic Medicine",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 13,
+              "ID-monday": "10010338941",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-24",
+              "ultima-alerta": "2025-11-24",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-17",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "nsuarez@restoraaesthetics.com",
+              "telefono": 17873280497,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 13,
+                "nombre": "Belleza"
+              }
+            },
+            {
+              "Id": 588,
+              "CreatedAt": "2025-10-21 00:56:48+00:00",
+              "UpdatedAt": "2025-11-30 19:31:00+00:00",
+              "ID-cuenta-publicitaria": "1915398325697460",
+              "nombre": "Ivette Cuadrado",
+              "empresa": "Brain Boutique",
+              "team-monitory-agent_id": 57,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "9861308058",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-19",
+              "ultima-alerta": "2025-11-19",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-20",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "drcuadradomd@gmail.com",
+              "telefono": 17878101420,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "traffiker": {
+                "Id": 57,
+                "nombre": "Santiago Gutierrez"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 589,
+              "CreatedAt": "2025-10-23 22:04:28+00:00",
+              "UpdatedAt": "2025-11-30 19:34:22+00:00",
+              "ID-cuenta-publicitaria": "1000213578901031",
+              "nombre": "Susan Olivera",
+              "empresa": "Skin by Susan & Brow Studio",
+              "team-monitory-agent_id": 84,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 13,
+              "ID-monday": "18087303391",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-21",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-10-16",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "skinbysusan1@gmail.com",
+              "telefono": 17873123257,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 84,
+                "nombre": "Daisy Buendia"
+              },
+              "industrias": {
+                "Id": 13,
+                "nombre": "Belleza"
+              }
+            },
+            {
+              "Id": 590,
+              "CreatedAt": "2025-10-23 22:28:34+00:00",
+              "UpdatedAt": "2025-11-30 19:32:52+00:00",
+              "ID-cuenta-publicitaria": "1140946934821128",
+              "nombre": "Derick Rodriguez",
+              "empresa": "HRR CONTRUCTION LLC",
+              "team-monitory-agent_id": 84,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "18054910115",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-24",
+              "ultima-alerta": "2025-11-26",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-16",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "deryckjael@icloud.com",
+              "telefono": 17879660219,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 84,
+                "nombre": "Daisy Buendia"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 591,
+              "CreatedAt": "2025-10-23 22:29:16+00:00",
+              "UpdatedAt": "2025-11-30 19:33:46+00:00",
+              "ID-cuenta-publicitaria": "1447735613158189",
+              "nombre": "Jessica Mendoza",
+              "empresa": "Mendoza Gordills Acounting",
+              "team-monitory-agent_id": 18,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "18100749946",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-24",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-23",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "mendozagordilsbookkeeper@gmail.com",
+              "telefono": 17875056877,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 592,
+              "CreatedAt": "2025-10-24 13:41:53+00:00",
+              "UpdatedAt": "2025-11-28 12:32:43+00:00",
+              "ID-cuenta-publicitaria": "24551443751132830",
+              "nombre": "Shaidimar Berrios",
+              "empresa": "Shai Shai",
+              "team-monitory-agent_id": 28,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 13,
+              "ID-monday": "18098872287",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-29",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": null,
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": null,
+              "email": "shaiberrios@gmail.com",
+              "telefono": 17873670224,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 28,
+                "nombre": "Barbara Quero"
+              },
+              "industrias": {
+                "Id": 13,
+                "nombre": "Belleza"
+              }
+            },
+            {
+              "Id": 594,
+              "CreatedAt": "2025-10-24 15:10:12+00:00",
+              "UpdatedAt": "2025-11-30 19:33:57+00:00",
+              "ID-cuenta-publicitaria": "1950350458838923",
+              "nombre": "Solmayra Santiago",
+              "empresa": "Hacienda Mi Escondite",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 12,
+              "ID-monday": "18120397885",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-19",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": true,
+              "fecha-inicio-campaña": "2025-10-06",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "miesconditearecibo@gmail.com",
+              "telefono": 19394562536,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 12,
+                "nombre": "Comercio"
+              }
+            },
+            {
+              "Id": 595,
+              "CreatedAt": "2025-10-24 20:23:46+00:00",
+              "UpdatedAt": "2025-11-30 19:33:40+00:00",
+              "ID-cuenta-publicitaria": "871669675170404",
+              "nombre": "Zuneimy Diaz",
+              "empresa": "Madero Clinic Estetic",
+              "team-monitory-agent_id": 28,
+              "team-monitory-agent_id1": 27,
+              "industrias-monitory-agent_id": 14,
+              "ID-monday": "18051737304",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-10-29",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-23",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "zuneimydiaz@live.com",
+              "telefono": 17874542541,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 27,
+                "nombre": "Jessica de la Cruz"
+              },
+              "traffiker": {
+                "Id": 28,
+                "nombre": "Barbara Quero"
+              },
+              "industrias": {
+                "Id": 14,
+                "nombre": "Bienestar"
+              }
+            },
+            {
+              "Id": 596,
+              "CreatedAt": "2025-10-27 23:22:06+00:00",
+              "UpdatedAt": "2025-11-30 19:36:23+00:00",
+              "ID-cuenta-publicitaria": "1206866450328961",
+              "nombre": "Elian Fernandez",
+              "empresa": "Vegan Délice",
+              "team-monitory-agent_id": 22,
+              "team-monitory-agent_id1": 19,
+              "industrias-monitory-agent_id": 2,
+              "ID-monday": "8733474540",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-28",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-04-04",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "vegandelice.pr@gmail.com",
+              "telefono": 19392458827,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 19,
+                "nombre": "Maria García"
+              },
+              "traffiker": {
+                "Id": 22,
+                "nombre": "Santiago Ramirez"
+              },
+              "industrias": {
+                "Id": 2,
+                "nombre": "Restaurante"
+              }
+            },
+            {
+              "Id": 597,
+              "CreatedAt": "2025-10-27 23:56:16+00:00",
+              "UpdatedAt": "2025-11-30 19:35:29+00:00",
+              "ID-cuenta-publicitaria": "1107526672995093",
+              "nombre": "Luz Ruiz Vargas",
+              "empresa": "Strong Energy Solutions",
+              "team-monitory-agent_id": 53,
+              "team-monitory-agent_id1": 18,
+              "industrias-monitory-agent_id": 3,
+              "ID-monday": "18123340670",
+              "doble-verificacion": true,
+              "ultimo-revisado": "2025-11-24",
+              "ultima-alerta": "2025-11-28",
+              "dependencia": false,
+              "fecha-inicio-campaña": "2025-10-27",
+              "reporte-mensual": false,
+              "fecha-ultimo-reporte": "2025-11-30",
+              "email": "lruiz1118@gmail.com",
+              "telefono": 17875542828,
+              "pages-id": 0,
+              "felicitaciones": null,
+              "referido": false,
+              "admin": {
+                "Id": 18,
+                "nombre": "Carilin Consuegra"
+              },
+              "traffiker": {
+                "Id": 53,
+                "nombre": "Juan Diego Guzman"
+              },
+              "industrias": {
+                "Id": 3,
+                "nombre": "Solar"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "versionId": "247af259-2354-4114-8786-8542bd60efbf",
+  "activeVersionId": "247af259-2354-4114-8786-8542bd60efbf",
+  "versionCounter": 23,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "dsrJpJi1MTr4mCOZ",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-17T22:20:31.504Z",
+      "createdAt": "2025-07-17T22:20:31.504Z",
+      "id": "F8NmWMVgKZNUyFB8",
+      "name": "Produccion"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-15T20:47:05.570Z",
+    "createdAt": "2026-04-15T20:47:02.936Z",
+    "versionId": "247af259-2354-4114-8786-8542bd60efbf",
+    "workflowId": "dsrJpJi1MTr4mCOZ",
+    "nodes": [
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "d7b645ba-fa40-4b41-8571-277435413c5e",
+                "leftValue": "={{ $json['ID-cuenta-publicitaria'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          288,
+          -80
+        ],
+        "id": "58790327-e1f8-4c07-a4fb-26f25849af2d",
+        "name": "there's-id?"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -128,
+          -80
+        ],
+        "id": "86a99bb4-b487-4de0-bbf4-f2ce79b06ef8",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          48,
+          -80
+        ],
+        "id": "238ee4c3-36b6-42cd-8c22-f84b0024a50b",
+        "name": "Split Out1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a90e386a-7d9a-4f51-a9f8-b3d5b0d8764b",
+                "name": "fases_requeridas",
+                "value": "={{ [\n  { \"nombre\": \"Fase 1\", \"regex\": \"FASE 1\" },\n  { \"nombre\": \"Fase 2\", \"regex\": \"FASE 2\" },\n  { \"nombre\": \"Fase 3\", \"regex\": \"FASE 3\" },\n  { \"nombre\": \"Fase 4\", \"regex\": \"FASE 4\" }\n] }}",
+                "type": "json"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          944,
+          -96
+        ],
+        "id": "5e278d4a-dd05-48c7-80e7-15d537f000d5",
+        "name": "Configuración de Fases"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 1. Obtener datos de entrada ---\n// El array de fases requeridas desde el nodo de configuración.\nconst fasesRequeridas = $('Configuración de Fases').first().json.fases_requeridas;\n// El array de campañas activas que vienen del nodo Aggregate.\nconst campañasActivas = $('Aggregate').first().json.campañas;\n\n// --- 2. Variables de estado ---\nlet ready = false; // Valor por defecto\nlet todasLasFasesPresentes = true; // Asumimos que están todas hasta que se demuestre lo contrario\n\n// Si no hay campañas activas o no se definieron fases, no puede estar listo.\nif (!campañasActivas || campañasActivas.length === 0 || !fasesRequeridas || fasesRequeridas.length === 0) {\n  todasLasFasesPresentes = false;\n}\n\n// --- 3. Lógica de Verificación de Fases ---\nif (todasLasFasesPresentes) {\n  const nombresDeCampañas = campañasActivas.map(c => c.name.toUpperCase());\n  \n  for (const fase of fasesRequeridas) {\n    const regex = new RegExp(fase.regex, 'i'); // 'i' para que no distinga mayúsculas/minúsculas\n    \n    // Busca si al menos UNA campaña activa coincide con la regex de la fase.\n    const faseEncontrada = nombresDeCampañas.some(nombre => regex.test(nombre));\n    \n    // Si no se encontró, marcamos como falso y rompemos el bucle.\n    if (!faseEncontrada) {\n      todasLasFasesPresentes = false;\n      break;\n    }\n  }\n}\n\n// --- 4. Lógica de Verificación de Fecha (Solo si todas las fases están presentes) ---\n// Este bloque solo se ejecuta si la validación anterior fue exitosa.\nif (todasLasFasesPresentes) {\n  \n  // 1. Encontrar la fecha de creación más reciente\n  const todosLosTimestamps = campañasActivas.map(c => new Date(c.created_time).getTime());\n  const timestampMasReciente = Math.max(...todosLosTimestamps);\n  const fechaMasReciente = new Date(timestampMasReciente);\n  fechaMasReciente.setHours(0, 0, 0, 0); // <-- LÍNEA MODIFICADA (Ignoramos la hora)\n\n  // 2. Calcular la fecha de \"hace 7 días\"\n  const hoy = new Date();\n  const hace7Dias = new Date();\n  hace7Dias.setDate(hoy.getDate() - 7);\n  hace7Dias.setHours(0, 0, 0, 0); // <-- LÍNEA MODIFICADA (Ignoramos la hora)\n\n  // 3. Comparar.\n  // \"ready\" es true solo si han pasado MÁS de 7 días,\n  // es decir, la fecha más reciente es ANTERIOR a \"hace 7 días\".\n  if (fechaMasReciente < hace7Dias) {\n    ready = true;\n  }\n  // Si la fecha más reciente es igual o posterior a \"hace 7 días\", 'ready' se queda en 'false'.\n}\n\n// --- 5. Salida ---\n// Siempre retorna un item con el estado de 'ready'.\nreturn [{\n  json: {\n    ready: ready\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          128
+        ],
+        "id": "6cdc68e5-4494-4877-a5b0-b3d407a29234",
+        "name": "Verificar Fases de Campañas"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          624,
+          -96
+        ],
+        "id": "807f452c-1ff5-4466-ac3e-d0a0b9bd6fe6",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          784,
+          -96
+        ],
+        "id": "562b531a-3095-43f5-b192-a125c7c6c3cd",
+        "name": "data-entry"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4fd1a497-9e39-46dc-82be-87af03871bef",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "/level up/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              },
+              {
+                "id": "311a5e44-d4bc-4d23-af4c-4392b2ff5925",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "/levelup/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2224,
+          -80
+        ],
+        "id": "a1674fc3-8c87-42f4-b097-7e2ba0129f5e",
+        "name": "Filter",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          2048,
+          -80
+        ],
+        "id": "2870a489-9938-4789-b6dd-9fa1f430c03d",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "destinationFieldName": "campañas",
+          "include": "allFieldsExcept",
+          "fieldsToExclude": "insights",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          2608,
+          -80
+        ],
+        "id": "dedb76de-18b9-4905-8c25-4e2af1548fca",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2832,
+          144
+        ],
+        "id": "096d9315-4d89-412a-88ad-f72185d059b2",
+        "name": "void",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- 1. Acceso a los datos de entrada ---\n\n// Datos del cliente\nconst clientData = $('data-entry').first().json;\n// Datos de la verificación (del nodo anterior)\nconst analisisFases = $input.first().json;\n\n// --- 2. Filtro de Seguridad ---\n// Este nodo solo debe construir el mensaje si 'ready' es true.\nif (!analisisFases.ready) {\n  return []; \n}\n\n// --- 3. Extracción de Datos ---\nconst { nombre: clienteNombre, \"ID-cuenta-publicitaria\": idCuentaPublicitaria } = clientData;\n\n// --- 4. Construcción del Texto de Análisis ---\nconst estadoGeneral = \"Acción Requerida\";\nconst tituloAnalisis = \"✅ Listo para Fase 5\";\n\n// Se prepara la información del cliente.\nconst infoCliente = `*Cliente:* ${clienteNombre}\\n*ID Cuenta:* ${idCuentaPublicitaria}`;\n\n// Se prepara el contexto (simplificado).\nconst motivoAlerta = `\\n*Motivo:* Han pasado +7 días con todas las fases activas.`;\n\n// Se ensambla el texto final.\nconst textoFinal = `${tituloAnalisis}\\n\\n${infoCliente}\\n${motivoAlerta}`;\n\n// --- 5. Objeto de Salida ---\nreturn [{\n    json: {\n        estado_general: estadoGeneral,\n        texto_final: textoFinal\n    }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2160,
+          128
+        ],
+        "id": "2fe173f8-2b35-44ab-93fc-a913d922a92d",
+        "name": "build-message"
+      },
+      {
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $('data-entry').item.json['ID-cuenta-publicitaria'] }}/campaigns",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "id,name,created_time"
+              },
+              {
+                "name": "filtering",
+                "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1344,
+          -80
+        ],
+        "id": "b2bd9cb2-0b38-40c0-adaa-0c9f18db39bf",
+        "name": "Get Campaigns",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8ca4ee3c-bc40-45d3-8fb4-cd969914cedc",
+                "leftValue": "={{ $json.data }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1520,
+          -96
+        ],
+        "id": "53007cd9-e919-47be-aca3-c14891548b84",
+        "name": "Verificar si hay campañas activas"
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "={{ $('data-entry').first().json['ID-cuenta-publicitaria'] }}",
+          "messageData": "={{ $json.texto_final }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2336,
+          128
+        ],
+        "id": "a55e82cd-6ec3-4ed2-b1bd-a4bb8eedbd86",
+        "name": "Redis",
+        "credentials": {
+          "redis": {
+            "id": "8Nd6QMp2Z6pt9eIZ",
+            "name": "RedisLevelUpMedia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "56a37a30-b140-4f20-b31d-c870a9e079c9",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2400,
+          -80
+        ],
+        "id": "3d51cdc6-9f00-4b8f-99a7-88f10435fc60",
+        "name": "hay-campañas-levelup?"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "02ab7cce-6be3-4c90-873b-ceb8e2b054f3",
+                "leftValue": "={{ $json.ready }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1968,
+          128
+        ],
+        "id": "1b40f2b5-6f5a-4651-a531-c0984ad5be06",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1152,
+          -96
+        ],
+        "id": "603f3019-fd50-401c-96b3-31cd316cd6cb",
+        "name": "Wait",
+        "webhookId": "4a65dec0-f554-416d-87ec-cea3d55d2c2a"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "84778b5d-f1b0-4d01-814b-3fa6a11ca444",
+                "leftValue": "={{ $json['campañas'].toJsonString() }}",
+                "rightValue": "/FASE 5/i",
+                "operator": {
+                  "type": "string",
+                  "operation": "notRegex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2816,
+          -80
+        ],
+        "id": "032c8794-87cd-45ee-af0b-e5ee225d3abb",
+        "name": "there fase 5?"
+      }
+    ],
+    "connections": {
+      "there's-id?": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Split Out1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out1": {
+        "main": [
+          [
+            {
+              "node": "there's-id?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Configuración de Fases": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar Fases de Campañas": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "data-entry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "data-entry": {
+        "main": [
+          [
+            {
+              "node": "Configuración de Fases",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "hay-campañas-levelup?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "there fase 5?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "void": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "build-message": {
+        "main": [
+          [
+            {
+              "node": "Redis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Campaigns": {
+        "main": [
+          [
+            {
+              "node": "Verificar si hay campañas activas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar si hay campañas activas": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redis": {
+        "main": [
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "hay-campañas-levelup?": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "build-message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Get Campaigns",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "there fase 5?": {
+        "main": [
+          [
+            {
+              "node": "Verificar Fases de Campañas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "void",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": "Version 247af259",
+    "description": "",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-04-15T20:47:05.564Z",
+        "id": 153,
+        "workflowId": "dsrJpJi1MTr4mCOZ",
+        "versionId": "247af259-2354-4114-8786-8542bd60efbf",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

@@ -1,0 +1,475 @@
+{
+  "updatedAt": "2026-01-06T14:07:52.140Z",
+  "createdAt": "2025-07-11T22:30:27.975Z",
+  "id": "fkc5VuZtjx2NUCvZ",
+  "name": "B1) Agente Onboarding - Validacion en excel",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "correo"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -880,
+        320
+      ],
+      "id": "4296470d-e58c-4c0b-85c8-133c6c3af19e",
+      "name": "When_Executed_by_Another_Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "correo",
+              "value": "={{ $json.correo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        320
+      ],
+      "id": "db3698cb-80d6-4b1c-9f55-741aeee9905b",
+      "name": "field_for_mail_direction"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8",
+          "mode": "list",
+          "cachedResultName": "LevelUpMedia Registros Formulario",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kq74RE_IlHY5kgodLnI06yV55DKnAs1bjImbe--6Wv8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('field_for_mail_direction').item.json.correo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -320,
+        320
+      ],
+      "id": "67c631d0-8294-4e27-ae54-492f5ea4e3ee",
+      "name": "get_rows_by_mail",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PrtrlNLxbn1XNJA2",
+          "name": "GoogleSheetsLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=🔎 Tu correo no se encuentra en nuestra base de datos. Favor verifica con un tu agente",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        416
+      ],
+      "id": "6e03710f-8ca9-4120-a1b3-24df0fa27877",
+      "name": "no_record"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "={{ $('get_events_by_mail1').item.json.summary }}\n{{ $('get_events_by_mail1').item.json.start.dateTime }}\n{{ $('get_events_by_mail1').item.json.htmlLink }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        224
+      ],
+      "id": "277cd48c-357c-45d0-a680-1beb92ae60a4",
+      "name": "agendado_client"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "13a81043-f15a-40cd-96b0-62743949c879",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        416
+      ],
+      "id": "66789551-40ec-41ed-9a41-6c4bfe05a070",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Created at",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "d7775808-e8de-4a6b-b909-b5dc05b4e97d",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93482c9f-7bcb-4bf8-9d17-809d198b79f0",
+              "leftValue": "={{ $json['event-id'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "0db55b72-3bee-41d4-ba12-89dc53765699",
+              "leftValue": "={{ $json.Fecha.toDateTime() }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        320
+      ],
+      "id": "156cb2a0-cb7e-45cd-bd90-3003343cc7e7",
+      "name": "exist?1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "agenteia@levelupmediapr.net",
+          "mode": "list",
+          "cachedResultName": "agenteia@levelupmediapr.net"
+        },
+        "eventId": "={{ $('Sort').first().json['event-id'] }}",
+        "updateFields": {
+          "start": "="
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        224
+      ],
+      "id": "bce02ea8-82b8-4a96-86a9-bf18e6ea9358",
+      "name": "get_events_by_mail1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "OnmhBZjsVglHy8qy",
+          "name": "GoogleCalendarLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e745ab19-606b-4868-99d9-7399c9229e74",
+              "name": "Retorno",
+              "value": "=Tus cita ya ocurrió, si necesitas comnunicarte con un gerente, escribe a https://wa.link/owlgwj",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        608
+      ],
+      "id": "52903bc4-9929-441f-8bc0-43bcd628bc2f",
+      "name": "no_record1",
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "When_Executed_by_Another_Workflow": {
+      "main": [
+        [
+          {
+            "node": "field_for_mail_direction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "field_for_mail_direction": {
+      "main": [
+        [
+          {
+            "node": "get_rows_by_mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_rows_by_mail": {
+      "main": [
+        [
+          {
+            "node": "exist?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "no_record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "no_record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "get_events_by_mail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "exist?1": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_events_by_mail1": {
+      "main": [
+        [
+          {
+            "node": "agendado_client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When_Executed_by_Another_Workflow": [
+      {
+        "json": {
+          "correo": "alexmora@pymes-ai.com"
+        }
+      }
+    ]
+  },
+  "versionId": "a1a00e31-0e7f-4c89-bba5-932f05abcc5c",
+  "activeVersionId": null,
+  "versionCounter": 10,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "fkc5VuZtjx2NUCvZ",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2025-07-23T21:40:18.390Z",
+      "createdAt": "2025-07-23T21:40:18.390Z",
+      "id": "2q1kXZVIQJcq4JWp",
+      "name": "out-of-service"
+    }
+  ],
+  "activeVersion": null
+}

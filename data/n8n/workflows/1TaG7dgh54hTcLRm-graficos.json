@@ -1,0 +1,756 @@
+{
+  "updatedAt": "2026-06-27T00:39:40.653Z",
+  "createdAt": "2026-01-07T13:24:57.991Z",
+  "id": "1TaG7dgh54hTcLRm",
+  "name": "graficos",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -112
+      ],
+      "id": "39cd9145-798f-4e12-aa16-7c3d357cf186",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v23.0/act_1997879434318226/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,ads{id,name,creative{id,image_url,object_story_spec{page_id,link_data{picture,link},photo_data{image_hash},video_data{video_id,image_url}},effective_object_story_id}}"
+            },
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        112
+      ],
+      "id": "80391473-4b00-4a70-a476-9a05d426fa03",
+      "name": "get campaign",
+      "retryOnFail": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. FILTRADO INICIAL (Añadido para evitar el error)\n// Filtramos para quedarnos solo con campañas que tengan insights y datos dentro\nconst campaigns = $input.first().json.data.filter(c => \n  c.insights && \n  c.insights.data && \n  c.insights.data.length > 0\n);\n\nconst labels = [];\nconst dataSpend = [];\nconst dataImpressions = [];\nconst dataCPM = [];\n\ncampaigns.forEach(camp => {\n  // LOGICA DE NOMBRES\n  const parts = camp.name.split('/').map(s => s.trim());\n  let shortName = parts[1] || camp.name; // Fallback por si el split falla\n  const format = parts.find(p => ['IMG', 'VID', 'CARRUSEL'].includes(p));\n  if (format) shortName += ` ${format}`;\n   \n  labels.push(shortName);\n\n  // AQUI YA ES SEGURO ACCEDER\n  const insights = camp.insights.data[0];\n   \n  // LIMPIEZA DE DATOS\n  dataSpend.push(Math.round(parseFloat(insights.spend || 0)));\n  dataImpressions.push(Math.round(parseFloat(insights.impressions || 0)));\n  dataCPM.push(Number(parseFloat(insights.cpm || 0).toFixed(2)));\n});\n\n// Colores\nconst colorSpend = '#003768'; \nconst colorImp = '#60A5FA';    \nconst colorCPM = '#6B7280';    \n\nconst chartConfig = {\n  type: 'bar',\n  data: {\n    labels: labels,\n    datasets: [\n      {\n        type: 'bar',\n        label: 'Inversión',\n        backgroundColor: colorSpend,\n        data: dataSpend,\n        yAxisID: 'y-spend',\n        order: 2,\n        barPercentage: 0.8,\n        categoryPercentage: 0.8,\n        datalabels: {\n          align: 'end',\n          anchor: 'end',\n          color: colorSpend,\n          font: { weight: 'bold', size: 11 }\n        }\n      },\n      {\n        type: 'bar',\n        label: 'Impresiones',\n        backgroundColor: colorImp,\n        data: dataImpressions,\n        yAxisID: 'y-imp',\n        order: 3,\n        barPercentage: 0.8,\n        categoryPercentage: 0.8,\n        datalabels: { display: false }\n      },\n      {\n        type: 'line',\n        label: 'CPM',\n        borderColor: colorCPM,\n        backgroundColor: 'white',\n        pointBorderColor: colorCPM,\n        pointBorderWidth: 3,\n        pointRadius: 5,\n        borderWidth: 3,\n        fill: false,\n        data: dataCPM,\n        yAxisID: 'y-cpm',\n        tension: 0.1,\n        order: 1,\n        datalabels: {\n          align: 'top',\n          color: 'white',\n          backgroundColor: colorCPM,\n          borderRadius: 4,\n          font: { weight: 'bold', size: 10 },\n          padding: 6,\n          offset: 4\n        }\n      }\n    ]\n  },\n  options: {\n    title: {\n      display: true,\n      text: 'META ADS - RENDIMIENTO ($ USD)',\n      fontSize: 22,\n      fontColor: '#111827',\n      padding: 24,\n      fontStyle: 'bold',\n      fontFamily: 'sans-serif'\n    },\n    legend: {\n      position: 'bottom',\n      labels: { padding: 20, usePointStyle: true }\n    },\n    layout: {\n      padding: { top: 40, left: 10, right: 10, bottom: 10 }\n    },\n    scales: {\n      xAxes: [{\n        gridLines: { display: false },\n        ticks: { fontStyle: 'bold', fontSize: 11, fontColor: '#374151' }\n      }],\n      yAxes: [\n        {\n          id: 'y-spend',\n          type: 'linear',\n          position: 'left',\n          gridLines: { display: true, color: '#F3F4F6', borderDash: [5, 5] },\n          ticks: { \n            beginAtZero: true,\n            fontColor: colorSpend\n          },\n          scaleLabel: { display: true, labelString: 'Inversión ($)', fontColor: colorSpend }\n        },\n        {\n          id: 'y-imp',\n          type: 'linear',\n          position: 'right',\n          gridLines: { display: false },\n          ticks: { beginAtZero: true, fontColor: colorImp }, \n          scaleLabel: { display: true, labelString: 'Impresiones', fontColor: colorImp }\n        },\n        {\n          id: 'y-cpm',\n          type: 'linear',\n          position: 'right',\n          display: false, \n          ticks: { beginAtZero: false, suggestedMin: 0, suggestedMax: 20 }\n        }\n      ]\n    },\n    plugins: {\n      datalabels: { display: true }\n    }\n  }\n};\n\nreturn { json: { chartConfig } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -384
+      ],
+      "id": "ad6b121a-0e26-44a9-9cc6-f2c54b07893e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://quickchart:3400/chart",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chart\": {{ JSON.stringify($json.chartConfig) }},\n  \"width\": 1000,\n  \"height\": 600,\n  \"backgroundColor\": \"white\",\n  \"format\": \"png\",\n  \"devicePixelRatio\": 2.0\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        656,
+        -384
+      ],
+      "id": "eb1af6a5-a98a-4318-93dc-bf30cfecb1fd",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_1997879434318226/campaigns",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=id,name,insights.time_range({\"since\":\"2025-12-01\",\"until\":\"2026-01-06\"}){spend,impressions,reach,frequency,cpm,cpp}"
+            },
+            {
+              "name": "filtering",
+              "value": "[\n    {\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\"]}\n  ]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        -368
+      ],
+      "id": "c6918725-d57b-4708-8102-c7ae3a39ecc7",
+      "name": "get campaign2",
+      "retryOnFail": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        336,
+        96
+      ],
+      "id": "0b74fe52-11c8-4a45-acd5-8624241b4fa6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ads.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        576,
+        96
+      ],
+      "id": "57af0040-bbfd-429d-b831-43384b434e35",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.creative.object_story_spec.video_data }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "9d13d7c2-7ca6-4cd4-b696-38d49eb230d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1c74de48-9813-49d0-96dd-06f3dd75c0cd",
+                    "leftValue": "={{ $json.creative.image_url }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        80
+      ],
+      "id": "18345f91-97b0-44c1-811a-cfba17bffc59",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.creative.image_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1360,
+        160
+      ],
+      "id": "dc4ac9e5-4681-4eaf-b733-4fe5093033d8",
+      "name": "HTTP Request1",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $json.creative.object_story_spec.video_data.video_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "source"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1184,
+        -32
+      ],
+      "id": "7bfac36c-a087-4c1d-b2a5-bdd1989fb6dd",
+      "name": "HTTP Request2",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.source }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1392,
+        -32
+      ],
+      "id": "6349cded-81af-4b85-ad1d-4e9537568c01",
+      "name": "HTTP Request3",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "id": "095f9fed-ff99-45e1-91e5-b8165534a27d",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1728,
+        -240
+      ],
+      "id": "58a91449-4a5f-417c-855a-a26c3d9590e6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "12p0c2e0rL7n8WD_iqQUDyF1yaOZfGGjz",
+          "mode": "list",
+          "cachedResultName": "template.pptx",
+          "cachedResultUrl": "https://docs.google.com/presentation/d/12p0c2e0rL7n8WD_iqQUDyF1yaOZfGGjz/edit?usp=drivesdk&ouid=105306089138547900374&rtpof=true&sd=true"
+        },
+        "options": {
+          "binaryPropertyName": "template"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2256,
+        -336
+      ],
+      "id": "d183e12f-da0c-4836-97b2-290a63ddf885",
+      "name": "Download file",
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "h0ERGqExku4WZAmd",
+          "name": "GoogleDriveLevelUpMedia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {
+          "includeBinaries": true
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        -80
+      ],
+      "id": "e3b16d3d-952c-4a91-81d1-f898d1ab5581",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2608,
+        -176
+      ],
+      "id": "64b376b6-c0f1-4e08-8822-278eefab2d47",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {
+          "includeBinaries": true
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2816,
+        -176
+      ],
+      "id": "58b28605-7ef6-480e-8a5d-0b53f3c924cf",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2096,
+        -336
+      ],
+      "id": "da4884f7-cd4e-4481-b4d9-2fa6d4aea783",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener todos los binarios del item actual\nconst binaries = items[0].binary;\nconst dataPayload = { anuncios: [] };\n\n// Helper para convertir Buffer a Data URI\nfunction bufferToDataURI(buffer, mimeType) {\n  return `data:${mimeType};base64,${buffer.toString('base64')}`;\n}\n\n// 1. Procesar Template (PPTX)\n// Carbone suele querer el base64 sin prefijo para el template\nif (binaries.template) {\n  const buffer = await this.helpers.getBinaryDataBuffer(0, 'template');\n  // Guardamos solo el base64 raw\n  items[0].json.templateBase64 = buffer.toString('base64');\n}\n\n// 2. Procesar Gráfica Principal ('data')\nif (binaries.data) {\n  const buffer = await this.helpers.getBinaryDataBuffer(0, 'data');\n  dataPayload.grafico_principal = bufferToDataURI(buffer, binaries.data.mimeType);\n}\n\n// 3. Procesar Anuncios ('data_1', 'data_2', etc.)\nfor (let i = 1; i <= 4; i++) {\n  const key = `data_${i}`;\n  if (binaries[key]) {\n    const buffer = await this.helpers.getBinaryDataBuffer(0, key);\n    \n    // DETECCIÓN DE VIDEO: Si es MP4, ponemos un placeholder por ahora\n    if (binaries[key].mimeType.includes('video')) {\n       // OJO: Carbone Community no renderiza video base64. \n       // Aquí podrías poner una imagen estática \"play icon\" en base64 si quieres.\n       // Por ahora lo mandamos igual a ver si tu versión lo acepta o lo ignora.\n       dataPayload.anuncios.push({ \n         imagen: bufferToDataURI(buffer, binaries[key].mimeType) \n       });\n    } else {\n       // Es imagen, todo ok\n       dataPayload.anuncios.push({ \n         imagen: bufferToDataURI(buffer, binaries[key].mimeType) \n       });\n    }\n  }\n}\n\n// 4. Salida final\nreturn {\n  json: {\n    template: items[0].json.templateBase64,\n    data: dataPayload\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        -176
+      ],
+      "id": "1f8f14c0-8317-4fde-879e-90cda9a87a3f",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://109.199.117.39:4000/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3232,
+        -176
+      ],
+      "id": "2d301213-4b9a-43eb-95a6-76d8bcc26aa0",
+      "name": "HTTP Request4"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "get campaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get campaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get campaign2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "e57d31e6-ac17-456a-b504-37bcd9ce860d",
+  "activeVersionId": null,
+  "versionCounter": 31,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T13:24:57.991Z",
+      "createdAt": "2026-01-07T13:24:57.991Z",
+      "role": "workflow:owner",
+      "workflowId": "1TaG7dgh54hTcLRm",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

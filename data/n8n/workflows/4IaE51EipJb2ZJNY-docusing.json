@@ -1,0 +1,523 @@
+{
+  "updatedAt": "2026-01-12T21:18:44.491Z",
+  "createdAt": "2025-09-04T23:47:29.498Z",
+  "id": "4IaE51EipJb2ZJNY",
+  "name": "Docusing",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://account.docusign.com/oauth/token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "urn:ietf:params:oauth:grant-type:jwt-bearer"
+            },
+            {
+              "name": "assertion",
+              "value": "={{ $json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        0
+      ],
+      "id": "d916efb7-197e-482c-b435-fb0ef933e1a4",
+      "name": "Get Access Token"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://na4.docusign.net/restapi/v2.1/accounts/2b49b60d-ab7b-4b8b-a002-b32b49b7c3/envelopes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json[\"access_token\"]}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"status\": \"sent\",\n    \"compositeTemplates\": [\n      {\n        \"serverTemplates\": [\n          {\n            \"sequence\": \"1\",\n            \"templateId\": \"25d26f81-26be-4f06-bc3f-fda32db06ad8\"\n          }\n        ],\n        \"inlineTemplates\": [\n          {\n            \"sequence\": \"1\",\n            \"recipients\": {\n              \"signers\": [\n                {\n                  \"email\": {{ JSON.stringify($('Set Variables').item.json.CorreoElectronico || '') }},\n                  \"name\": {{ JSON.stringify($('Set Variables').item.json.NombreCompleto || '') }},\n                  \"roleName\": \"Signer\",\n                  \"recipientId\": \"1\",\n                  \"tabs\": {\n                    \"textTabs\": [\n                      { \"tabLabel\": \"NombreCompleto\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreCompleto || '') }} },\n                      { \"tabLabel\": \"CorreoElectronico\", \"value\": {{ JSON.stringify($('Set Variables').item.json.CorreoElectronico || '') }} },\n                      { \"tabLabel\": \"Telefono\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Telefono || '') }} },\n                      { \"tabLabel\": \"Servicios\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Servicios || '') }} },\n                      { \"tabLabel\": \"MontoTotal\", \"value\": {{ JSON.stringify($('Set Variables').item.json.MontoTotal || '') }} },\n                      { \"tabLabel\": \"NumeroDias\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroDias || '') }} },\n                      { \"tabLabel\": \"Mensualidad\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Mensualidad || '') }} },\n                      { \"tabLabel\": \"PagoInicial\", \"value\": {{ JSON.stringify($('Set Variables').item.json.PagoInicial || '') }} },\n                      { \"tabLabel\": \"FechaPagoInicial\", \"value\": {{ JSON.stringify($('Set Variables').item.json.FechaPagoInicial || '') }} },\n                      { \"tabLabel\": \"PagoProgramado\", \"value\": {{ JSON.stringify($('Set Variables').item.json.PagoProgramado || '') }} },\n                      { \"tabLabel\": \"FechaPagoProgramado\", \"value\": {{ JSON.stringify($('Set Variables').item.json.FechaPagoProgramado || '') }} },\n                      { \"tabLabel\": \"ResumenPago\", \"value\": {{ JSON.stringify($('Set Variables').item.json['Resumen de pago'] || '') }} },\n                      { \"tabLabel\": \"DireccionPostal\", \"value\": {{ JSON.stringify($('Set Variables').item.json['DirecciónPostal'] || '') }} },\n                      { \"tabLabel\": \"NumeroTarjeta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroTarjeta || '') }} },\n                      { \"tabLabel\": \"FechaExpiracion\", \"value\": {{ JSON.stringify($('Set Variables').item.json['FechaExpiración'] || '') }} },\n                      { \"tabLabel\": \"CVV\", \"value\": {{ JSON.stringify($('Set Variables').item.json.CVV || '') }} },\n                      { \"tabLabel\": \"NombreTitularTarjeta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreTitularTarjeta || '') }} },\n                      { \"tabLabel\": \"DireccionCalle\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Calle || '') }} },\n                      { \"tabLabel\": \"DireccionCiudad\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Ciudad || '') }} },\n                      { \"tabLabel\": \"DireccionEstado\", \"value\": {{ JSON.stringify($('Set Variables').item.json['Estado/Provincia'] || '') }} },\n                      { \"tabLabel\": \"DireccionCodigoPostal\", \"value\": {{ JSON.stringify($('Set Variables').item.json['CódigoPostal'] || '') }} },\n                      { \"tabLabel\": \"ACHNombreTitular\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreTitular || '') }} },\n                      { \"tabLabel\": \"ACHNombreBanco\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreBanco || '') }} },\n                      { \"tabLabel\": \"ACHRutaBancaria\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroBancaria || '') }} },\n                      { \"tabLabel\": \"ACHNumeroCuenta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroCuenta || '') }} }\n                    ],\n                    \"checkboxTabs\": [\n                      { \"tabLabel\": \"CheckTarjetaCredito\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'tarjeta de crédito') ? true : false }} },\n                      { \"tabLabel\": \"CheckTarjetaDebito\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'tarjeta de débito') ? true : false }} },\n                      { \"tabLabel\": \"CheckACH\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'ach') ? true : false }} },\n                      { \"tabLabel\": \"CheckAffirm\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'affirm') ? true : false }} },\n                      { \"tabLabel\": \"CheckPayPalCredit\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'paypal') ? true : false }} },\n                      { \"tabLabel\": \"CheckKlarna\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'klarna') ? true : false }} },\n                      { \"tabLabel\": \"CheckVisa\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'visa') ? true : false }} },\n                      { \"tabLabel\": \"CheckMasterCard\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'mastercard') ? true : false }} },\n                      { \"tabLabel\": \"CheckAmericanExpress\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'american express') ? true : false }} },\n                      { \"tabLabel\": \"CheckDiscover\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'discover') ? true : false }} },\n                      { \"tabLabel\": \"CheckAhorros\", \"selected\": {{ ($('Set Variables').item.json.TipoCuenta?.toLowerCase() == 'ahorros') ? true : false }} },\n                      { \"tabLabel\": \"CheckCorriente\", \"selected\": {{ ($('Set Variables').item.json.TipoCuenta?.toLowerCase() == 'corriente') ? true : false }} }\n                    ]\n                  }\n                }\n              ]\n            }\n          }\n        ]\n      }\n    ]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "349c9eab-f67b-4899-8ff6-b22bb4449b4e",
+      "name": "Send Envelope"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "af38c897-9d76-459c-a90e-8061d80f1d99",
+              "name": "NombreCompleto",
+              "value": "={{ $json['Nombre Completo, (Ejemplo: John Smith) Requerido'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aa06c24b-81cc-40d1-9716-a9ea64418480",
+              "name": "CorreoElectronico",
+              "value": "={{ $json['Correo Electrónico (Ejemplo: john_smith@mail.com) Requerido'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7ef3d870-d96d-4ec9-a9f7-9a321014505b",
+              "name": "Telefono",
+              "value": "={{ $json['Teléfono, (Ejemplo: +1 234 567 8901) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a6506760-fa0d-496a-8d6e-963bab3f0f60",
+              "name": "Servicios",
+              "value": "={{ $json['Servicios, (Ejemplo: Incluye el Servicio “Done for You”, Configuración completa de cuenta publicitaria...) Requerido'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1f1ca0cb-a68c-4aa6-a25d-fcc5316099d8",
+              "name": "MontoTotal",
+              "value": "={{ $json['Monto Total, (Solo el numero sin signos de $ Ejemplo: 1500) Requerido'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4519d6e9-f113-497e-b711-47f92033b573",
+              "name": "NumeroDias",
+              "value": "=Acordado a pagar en {{ $json['Numero de dias para pagar, (Ejemplo: 24) Opcional'] }} dias.",
+              "type": "string"
+            },
+            {
+              "id": "272cbbad-afc0-4a62-978f-f6b1a41e143e",
+              "name": "Mensualidad",
+              "value": "=Mensualidad de ${{ $json['Mensualidad, (Solo el numero sin signos de $ Ejemplo: 1200) Opcional'] }}.",
+              "type": "string"
+            },
+            {
+              "id": "e524c9c9-878d-4545-9603-510077917c8d",
+              "name": "PagoInicial",
+              "value": "={{ $json['Pago Inicial, (Solo el numero sin signos de $, Ejemplo: 980) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bad3a167-42f2-47e8-8f05-710ab7693b7d",
+              "name": "FechaPagoInicial",
+              "value": "={{ $json['Fecha Pago Inicial, (Selecciona la fecha para el pago inicial en el calendario de abajo) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7cffc1ab-90fb-44a3-a308-ffa8f01537ee",
+              "name": "PagoProgramado",
+              "value": "={{ $json['Pago Programado (Solo el numero sin signos de $ Ejemplo: 260) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7cba9778-51ea-476e-b8c2-3bc2b290d0f3",
+              "name": "FechaPagoProgramado",
+              "value": "={{ $json['Fecha Pago Programado, (Selecciona la fecha para el pago programado en el calendario de abajo) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f81714f5-e83a-4825-9998-7c96d8ca0872",
+              "name": "Resumen de pago",
+              "value": "={{ $json['Resumen de pago, (Ejemplo: John Smith va a pagar $1300 a lo largo de 30 dias con su cuenta corriente) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e5ec4d38-fc59-4e76-8abb-19a3e82b8a48",
+              "name": "DirecciónPostal",
+              "value": "={{ $json['Dirección Postal, (Ejemplo:  1600 Pennsylvania Ave. NW, Washington, DC 20500) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4d274c41-2820-4638-a471-6bde71177fda",
+              "name": "MetodoPago",
+              "value": "={{ $json['Metodo de pago, Requerido'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b390d4bf-7910-4b89-ab3c-340cef86e5f9",
+              "name": "TipoTarjeta",
+              "value": "={{ $json['Tipo de tarjeta, Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b4d1c1bb-211e-482d-995a-b394b4bd808d",
+              "name": "NombreTitularTarjeta",
+              "value": "={{ $json['Nombre del titular de la tarjeta, (Ejemplo: Jane Smith) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2e11a918-ff7b-4058-bc20-929a1fc2137a",
+              "name": "NumeroTarjeta",
+              "value": "={{ $json['Numero de la tarjeta (ejemplo: 1234 5678 9012 3456) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3313544e-e6e3-43cf-b548-b23f52da033c",
+              "name": "FechaExpiración",
+              "value": "={{ $json['Fecha de expiración, (en formato MM/AA, ejemplo: 03/26) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "648f5760-7262-41ea-bb03-aba812b04c07",
+              "name": "CVV",
+              "value": "={{ $json['CVV, (Ejemplo: 123) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "27ec7fae-8af4-4a84-abb4-05915a65813c",
+              "name": "Calle",
+              "value": "={{ $json['Calle, (Ejemplo: 1600 Pennsylvania Ave NW) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "56c67cef-00c9-4e0b-828c-053e61494f5e",
+              "name": "Ciudad",
+              "value": "={{ $json['Ciudad, (Ejemplo:  Washington) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cb5ea6df-d7ee-4bfc-b446-bea7c032a9a0",
+              "name": "Estado/Provincia",
+              "value": "={{ $json['Estado/Provincia, (Ejemplo: D.C.) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "32113a1e-003c-4312-82db-00995b49f388",
+              "name": "CódigoPostal",
+              "value": "={{ $json['Código Postal, (Ejemplo:  20500) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cc4ebdf4-e043-42d7-bda0-4a82bef072fd",
+              "name": "NombreTitular",
+              "value": "={{ $json['Nombre del titular, (Ejemplo: Jane Smith) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a547c965-223f-430c-bf57-110e56cb009e",
+              "name": "NombreBanco",
+              "value": "={{ $json['Nombre del banco, (Ejemplo: Bank of America), Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ecf525d1-ea8f-4425-9134-faa9b965c507",
+              "name": "NumeroRutaBancaria",
+              "value": "={{ $json['Numero de ruta bancaria, (Ejemplo: 123000045) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cb0d4907-c545-4cad-8be8-a3292cd7ca8a",
+              "name": "NumeroCuenta",
+              "value": "={{ $json['Numero de cuenta, (Ejemplo: 12345678) Opcional'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c0f76d44-b99c-4073-8583-994c1c938d23",
+              "name": "TipoCuenta",
+              "value": "={{ $json['Tipo de Cuenta, Opcional'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1d25d991-2c9b-4227-a2fc-61190cc13455",
+      "name": "Set Variables"
+    },
+    {
+      "parameters": {
+        "useJson": true,
+        "claimsJson": "={\n  \"iss\": \"179fe7e4-52aa-42e9-8524-4acc2725a9d7\",\n  \"sub\": \"09f27c16-0e1a-4530-b614-250ceaa123ca\",\n  \"aud\": \"account.docusign.com\",\n  \"scope\": \"signature impersonation\",\n  \"exp\": {{ Math.floor(Date.now() / 1000) + 3600 }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.jwt",
+      "typeVersion": 1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "008bf7be-2634-4982-bace-1686e62bc812",
+      "name": "JWT",
+      "credentials": {
+        "jwtAuth": {
+          "id": "kkTOgni7FdERy5A3",
+          "name": "JWT Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1dC4iUFjt48Aj6Ga1wmCPzLepel6bnBPY7dzAlctDZAM",
+          "mode": "list",
+          "cachedResultName": "Contratos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dC4iUFjt48Aj6Ga1wmCPzLepel6bnBPY7dzAlctDZAM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1550304890,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dC4iUFjt48Aj6Ga1wmCPzLepel6bnBPY7dzAlctDZAM/edit#gid=1550304890"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "f7b856de-4bd9-4227-909b-f99ed1d4fe09",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "78sJbZnPV5AK16YC",
+          "name": "Agente IA"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "las credenciales estan dando error cada minuto al intentar revisar el sheets por las respuestas (cada minuto)\ntenemos que conectarnos nuevamente con las credenciales de Alex\n\n\ndesactive el flujo por ahora\n\nEAUTH - The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client",
+        "height": 304,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        -352
+      ],
+      "typeVersion": 1,
+      "id": "66849664-5cea-4b17-9761-1fedb61990d9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "useJson": true,
+        "claimsJson": "={\n  \"iss\": \"179fe7e4-52aa-42e9-8524-4acc2725a9d7\",\n  \"sub\": \"c0b0c8ca-7556-4c91-8f8b-2476065b5fb2\",\n  \"aud\": \"account-d.docusign.com\",\n  \"scope\": \"signature impersonation\",\n  \"exp\": {{ Math.floor(Date.now() / 1000) + 3600 }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.jwt",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -320
+      ],
+      "id": "ecb14d46-6def-4720-9225-a1bc9fb06d05",
+      "name": "Test",
+      "credentials": {
+        "jwtAuth": {
+          "id": "kkTOgni7FdERy5A3",
+          "name": "JWT Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://demo.docusign.net/restapi/v2.1/accounts/791f0641-5686-4831-9971-3375de326f0a/envelopes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json[\"access_token\"]}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"status\": \"sent\",\n    \"compositeTemplates\": [\n      {\n        \"serverTemplates\": [\n          {\n            \"sequence\": \"1\",\n            \"templateId\": \"c4987cc5-bbaa-4da4-b4e3-fc7a89ee005c\"\n          }\n        ],\n        \"inlineTemplates\": [\n          {\n            \"sequence\": \"1\",\n            \"recipients\": {\n              \"signers\": [\n                {\n                  \"email\": {{ JSON.stringify($('Set Variables').item.json.CorreoElectronico || '') }},\n                  \"name\": {{ JSON.stringify($('Set Variables').item.json.NombreCompleto || '') }},\n                  \"roleName\": \"Signer\",\n                  \"recipientId\": \"1\",\n                  \"tabs\": {\n                    \"textTabs\": [\n                      { \"tabLabel\": \"NombreCompleto\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreCompleto || '') }} },\n                      { \"tabLabel\": \"CorreoElectronico\", \"value\": {{ JSON.stringify($('Set Variables').item.json.CorreoElectronico || '') }} },\n                      { \"tabLabel\": \"Telefono\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Telefono || '') }} },\n                      { \"tabLabel\": \"Servicios\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Servicios || '') }} },\n                      { \"tabLabel\": \"MontoTotal\", \"value\": {{ JSON.stringify($('Set Variables').item.json.MontoTotal || '') }} },\n                      { \"tabLabel\": \"NumeroDias\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroDias || '') }} },\n                      { \"tabLabel\": \"Mensualidad\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Mensualidad || '') }} },\n                      { \"tabLabel\": \"PagoInicial\", \"value\": {{ JSON.stringify($('Set Variables').item.json.PagoInicial || '') }} },\n                      { \"tabLabel\": \"FechaPagoInicial\", \"value\": {{ JSON.stringify($('Set Variables').item.json.FechaPagoInicial || '') }} },\n                      { \"tabLabel\": \"PagoProgramado\", \"value\": {{ JSON.stringify($('Set Variables').item.json.PagoProgramado || '') }} },\n                      { \"tabLabel\": \"FechaPagoProgramado\", \"value\": {{ JSON.stringify($('Set Variables').item.json.FechaPagoProgramado || '') }} },\n                      { \"tabLabel\": \"ResumenPago\", \"value\": {{ JSON.stringify($('Set Variables').item.json['Resumen de pago'] || '') }} },\n                      { \"tabLabel\": \"DireccionPostal\", \"value\": {{ JSON.stringify($('Set Variables').item.json['DirecciónPostal'] || '') }} },\n                      { \"tabLabel\": \"NumeroTarjeta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroTarjeta || '') }} },\n                      { \"tabLabel\": \"FechaExpiracion\", \"value\": {{ JSON.stringify($('Set Variables').item.json['FechaExpiración'] || '') }} },\n                      { \"tabLabel\": \"CVV\", \"value\": {{ JSON.stringify($('Set Variables').item.json.CVV || '') }} },\n                      { \"tabLabel\": \"NombreTitularTarjeta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreTitularTarjeta || '') }} },\n                      { \"tabLabel\": \"DireccionCalle\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Calle || '') }} },\n                      { \"tabLabel\": \"DireccionCiudad\", \"value\": {{ JSON.stringify($('Set Variables').item.json.Ciudad || '') }} },\n                      { \"tabLabel\": \"DireccionEstado\", \"value\": {{ JSON.stringify($('Set Variables').item.json['Estado/Provincia'] || '') }} },\n                      { \"tabLabel\": \"DireccionCodigoPostal\", \"value\": {{ JSON.stringify($('Set Variables').item.json['CódigoPostal'] || '') }} },\n                      { \"tabLabel\": \"ACHNombreTitular\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreTitular || '') }} },\n                      { \"tabLabel\": \"ACHNombreBanco\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NombreBanco || '') }} },\n                      { \"tabLabel\": \"ACHRutaBancaria\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroBancaria || '') }} },\n                      { \"tabLabel\": \"ACHNumeroCuenta\", \"value\": {{ JSON.stringify($('Set Variables').item.json.NumeroCuenta || '') }} }\n                    ],\n                    \"checkboxTabs\": [\n                      { \"tabLabel\": \"CheckTarjetaCredito\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'tarjeta de crédito') ? true : false }} },\n                      { \"tabLabel\": \"CheckTarjetaDebito\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'tarjeta de débito') ? true : false }} },\n                      { \"tabLabel\": \"CheckACH\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'ach') ? true : false }} },\n                      { \"tabLabel\": \"CheckAffirm\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'affirm') ? true : false }} },\n                      { \"tabLabel\": \"CheckPayPalCredit\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'paypal') ? true : false }} },\n                      { \"tabLabel\": \"CheckKlarna\", \"selected\": {{ ($('Set Variables').item.json.MetodoPago?.toLowerCase() == 'klarna') ? true : false }} },\n                      { \"tabLabel\": \"CheckVisa\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'visa') ? true : false }} },\n                      { \"tabLabel\": \"CheckMasterCard\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'mastercard') ? true : false }} },\n                      { \"tabLabel\": \"CheckAmericanExpress\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'american express') ? true : false }} },\n                      { \"tabLabel\": \"CheckDiscover\", \"selected\": {{ ($('Set Variables').item.json.TipoTarjeta?.toLowerCase() == 'discover') ? true : false }} },\n                      { \"tabLabel\": \"CheckAhorros\", \"selected\": {{ ($('Set Variables').item.json.TipoCuenta?.toLowerCase() == 'ahorros') ? true : false }} },\n                      { \"tabLabel\": \"CheckCorriente\", \"selected\": {{ ($('Set Variables').item.json.TipoCuenta?.toLowerCase() == 'corriente') ? true : false }} }\n                    ]\n                  }\n                }\n              ]\n            }\n          }\n        ]\n      }\n    ]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        -320
+      ],
+      "id": "b52f5e6e-9a66-47d3-b0eb-3a1ff024fe47",
+      "name": "Development"
+    }
+  ],
+  "connections": {
+    "Get Access Token": {
+      "main": [
+        [
+          {
+            "node": "Send Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "JWT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JWT": {
+      "main": [
+        [
+          {
+            "node": "Get Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Puerto_Rico",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1dC4iUFjt48Aj6Ga1wmCPzLepel6bnBPY7dzAlctDZAM",
+      "sheetId": 1550304890,
+      "lastIndexChecked": 2
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "85265161-0274-44da-9846-2c12afa6cc53",
+  "activeVersionId": null,
+  "versionCounter": 27,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-06T13:19:52.225Z",
+      "createdAt": "2026-01-06T13:19:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "4IaE51EipJb2ZJNY",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-20T12:00:42.162Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
