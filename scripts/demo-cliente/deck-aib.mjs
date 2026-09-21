@@ -2,6 +2,7 @@
 // Deck genérico de AI Borinquen para la apertura de la llamada del closer (Elvin, 21/sep/2026):
 // 3 slides, minimalista, pocas palabras. NO es personalizado por prospecto.
 //   1 · Quiénes somos (Puerto Rico)   2 · Nuestra visión   3 · A quién hemos ayudado (4 espacios)
+//   4 · Testimonios en video (4 marcos vacíos: los videos se insertan a mano en PowerPoint)
 // Los testimonios salen de TESTIMONIOS: los que están vacíos quedan como espacio en blanco para que
 // Elvin los llene a mano (o me dice el texto y lo pongo aquí). Solo casos verificados.
 //
@@ -77,10 +78,23 @@ TESTIMONIOS.forEach((t, i) => {
   s.addText(t.frase, { x: x + 0.2, y: y + 0.68, w: w - 0.4, h: 0.68, fontSize: 11, color: MUT, italic: t.frase.startsWith("“"), fontFace: F, valign: "top" });
 });
 
+// 4 · Testimonios en video (espacio: Elvin inserta los videos en PowerPoint/Keynote)
+s = pptx.addSlide(); base(s, "Lo dicen ellos");
+s.addText("Testimonios en video.", { x: 0.7, y: 1.0, w: 8, h: 0.6, fontSize: 28, color: TXT, bold: true, fontFace: F });
+const NOMBRES_VIDEO = ["Lcdo. Ernest Crison", "Teo · Mano Santa PR", "Milton · Caribe Paint", ""];
+NOMBRES_VIDEO.forEach((n, i) => {
+  // 4 marcos verticales (9:16) en fila: el video va encima del marco.
+  const w = 1.95, h = 3.05, x = 0.7 + i * 2.2, y = 1.75;
+  s.addShape(pptx.ShapeType.roundRect, { x, y, w, h, fill: { color: PANEL }, line: { color: LINE, width: 1, dashType: "dash" }, rectRadius: 0.1 });
+  s.addShape(pptx.ShapeType.ellipse, { x: x + w / 2 - 0.3, y: y + h / 2 - 0.3, w: 0.6, h: 0.6, fill: { color: BG }, line: { color: BORI, width: 1.5 } });
+  s.addText("▶", { x: x + w / 2 - 0.3, y: y + h / 2 - 0.3, w: 0.6, h: 0.6, fontSize: 16, color: BORI, align: "center", valign: "middle", fontFace: F });
+  if (n) s.addText(n, { x, y: y + h + 0.05, w, h: 0.3, fontSize: 10, color: MUT, align: "center", fontFace: F });
+});
+
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const pptxPath = path.join(OUT_DIR, "ai-borinquen.pptx");
 await pptx.writeFile({ fileName: pptxPath });
-console.log(`✓ ${path.relative(ROOT, pptxPath)} (3 slides)`);
+console.log(`✓ ${path.relative(ROOT, pptxPath)} (4 slides)`);
 
 if (process.argv.includes("--pdf")) {
   const script = path.join(ROOT, "scripts", "demo-cliente", "pptx-a-pdf.applescript");
