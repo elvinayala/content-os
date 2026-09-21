@@ -1,0 +1,4553 @@
+{
+ "engine": "whisperx/large-v3",
+ "language": "es",
+ "words": [
+  {
+   "text": "¿Cómo",
+   "start": 0.432,
+   "end": 0.632,
+   "conf": 0.723,
+   "speaker": null
+  },
+  {
+   "text": "le",
+   "start": 0.713,
+   "end": 0.833,
+   "conf": 0.734,
+   "speaker": null
+  },
+  {
+   "text": "fue",
+   "start": 0.853,
+   "end": 1.033,
+   "conf": 0.68,
+   "speaker": null
+  },
+  {
+   "text": "trabajando",
+   "start": 1.073,
+   "end": 1.394,
+   "conf": 0.82,
+   "speaker": null
+  },
+  {
+   "text": "con",
+   "start": 1.434,
+   "end": 1.535,
+   "conf": 0.813,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 1.575,
+   "end": 1.655,
+   "conf": 0.886,
+   "speaker": null
+  },
+  {
+   "text": "equipo",
+   "start": 1.695,
+   "end": 1.976,
+   "conf": 0.877,
+   "speaker": null
+  },
+  {
+   "text": "estos",
+   "start": 2.056,
+   "end": 2.216,
+   "conf": 0.808,
+   "speaker": null
+  },
+  {
+   "text": "primeros",
+   "start": 2.276,
+   "end": 2.637,
+   "conf": 0.566,
+   "speaker": null
+  },
+  {
+   "text": "cuatro",
+   "start": 2.697,
+   "end": 2.918,
+   "conf": 0.773,
+   "speaker": null
+  },
+  {
+   "text": "meses?",
+   "start": 2.978,
+   "end": 3.279,
+   "conf": 0.863,
+   "speaker": null
+  },
+  {
+   "text": "Pues",
+   "start": 4.662,
+   "end": 5.524,
+   "conf": 0.619,
+   "speaker": null
+  },
+  {
+   "text": "te",
+   "start": 5.544,
+   "end": 5.604,
+   "conf": 0.758,
+   "speaker": null
+  },
+  {
+   "text": "tengo",
+   "start": 5.644,
+   "end": 5.805,
+   "conf": 0.875,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 5.825,
+   "end": 5.925,
+   "conf": 0.67,
+   "speaker": null
+  },
+  {
+   "text": "decir",
+   "start": 5.985,
+   "end": 6.165,
+   "conf": 0.926,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 6.226,
+   "end": 6.526,
+   "conf": 0.842,
+   "speaker": null
+  },
+  {
+   "text": "para",
+   "start": 7.428,
+   "end": 7.589,
+   "conf": 0.91,
+   "speaker": null
+  },
+  {
+   "text": "mí",
+   "start": 7.669,
+   "end": 7.769,
+   "conf": 0.782,
+   "speaker": null
+  },
+  {
+   "text": "fue",
+   "start": 7.889,
+   "end": 8.03,
+   "conf": 0.825,
+   "speaker": null
+  },
+  {
+   "text": "Llenaron",
+   "start": 9.897,
+   "end": 10.238,
+   "conf": 0.809,
+   "speaker": null
+  },
+  {
+   "text": "mis",
+   "start": 10.278,
+   "end": 10.398,
+   "conf": 0.807,
+   "speaker": null
+  },
+  {
+   "text": "expectativas",
+   "start": 10.478,
+   "end": 11.079,
+   "conf": 0.875,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 11.099,
+   "end": 11.119,
+   "conf": 0.006,
+   "speaker": null
+  },
+  {
+   "text": "las",
+   "start": 11.739,
+   "end": 11.819,
+   "conf": 0.681,
+   "speaker": null
+  },
+  {
+   "text": "superaron.",
+   "start": 11.879,
+   "end": 12.34,
+   "conf": 0.786,
+   "speaker": null
+  },
+  {
+   "text": "Realmente",
+   "start": 13.061,
+   "end": 13.721,
+   "conf": 0.99,
+   "speaker": null
+  },
+  {
+   "text": "eran",
+   "start": 16.044,
+   "end": 16.244,
+   "conf": 0.926,
+   "speaker": null
+  },
+  {
+   "text": "dos",
+   "start": 16.264,
+   "end": 16.384,
+   "conf": 0.746,
+   "speaker": null
+  },
+  {
+   "text": "áreas.",
+   "start": 16.465,
+   "end": 16.685,
+   "conf": 0.348,
+   "speaker": null
+  },
+  {
+   "text": "Primero",
+   "start": 16.725,
+   "end": 16.985,
+   "conf": 0.833,
+   "speaker": null
+  },
+  {
+   "text": "era",
+   "start": 17.065,
+   "end": 17.185,
+   "conf": 0.773,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 17.225,
+   "end": 17.326,
+   "conf": 0.728,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 17.386,
+   "end": 18.247,
+   "conf": 0.732,
+   "speaker": null
+  },
+  {
+   "text": "las",
+   "start": 18.287,
+   "end": 18.367,
+   "conf": 0.871,
+   "speaker": null
+  },
+  {
+   "text": "plataformas",
+   "start": 18.427,
+   "end": 18.987,
+   "conf": 0.853,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 19.047,
+   "end": 19.308,
+   "conf": 0.944,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 19.388,
+   "end": 19.508,
+   "conf": 0.807,
+   "speaker": null
+  },
+  {
+   "text": "AI,",
+   "start": 19.788,
+   "end": 20.109,
+   "conf": 0.725,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 20.189,
+   "end": 20.289,
+   "conf": 0.911,
+   "speaker": null
+  },
+  {
+   "text": "pods",
+   "start": 20.389,
+   "end": 20.609,
+   "conf": 0.583,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 20.669,
+   "end": 20.709,
+   "conf": 0.935,
+   "speaker": null
+  },
+  {
+   "text": "demás.",
+   "start": 20.749,
+   "end": 21.01,
+   "conf": 0.621,
+   "speaker": null
+  },
+  {
+   "text": "Y",
+   "start": 21.59,
+   "end": 21.871,
+   "conf": 0.947,
+   "speaker": null
+  },
+  {
+   "text": "pues",
+   "start": 22.011,
+   "end": 22.131,
+   "conf": 0.432,
+   "speaker": null
+  },
+  {
+   "text": "todo",
+   "start": 22.171,
+   "end": 22.331,
+   "conf": 0.894,
+   "speaker": null
+  },
+  {
+   "text": "eso",
+   "start": 22.371,
+   "end": 22.451,
+   "conf": 0.299,
+   "speaker": null
+  },
+  {
+   "text": "ha",
+   "start": 22.491,
+   "end": 22.591,
+   "conf": 0.724,
+   "speaker": null
+  },
+  {
+   "text": "funcionado",
+   "start": 22.632,
+   "end": 23.032,
+   "conf": 0.928,
+   "speaker": null
+  },
+  {
+   "text": "perfectamente,",
+   "start": 23.112,
+   "end": 23.893,
+   "conf": 0.906,
+   "speaker": null
+  },
+  {
+   "text": "bien",
+   "start": 23.913,
+   "end": 23.993,
+   "conf": 0.0,
+   "speaker": null
+  },
+  {
+   "text": "dispuestos",
+   "start": 24.714,
+   "end": 25.154,
+   "conf": 0.79,
+   "speaker": null
+  },
+  {
+   "text": "todos",
+   "start": 25.235,
+   "end": 25.415,
+   "conf": 0.802,
+   "speaker": null
+  },
+  {
+   "text": "siempre",
+   "start": 25.475,
+   "end": 25.755,
+   "conf": 0.804,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 25.815,
+   "end": 25.855,
+   "conf": 0.649,
+   "speaker": null
+  },
+  {
+   "text": "ir",
+   "start": 25.935,
+   "end": 26.015,
+   "conf": 0.296,
+   "speaker": null
+  },
+  {
+   "text": "trabajando",
+   "start": 26.076,
+   "end": 26.816,
+   "conf": 0.933,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 27.077,
+   "end": 27.137,
+   "conf": 0.933,
+   "speaker": null
+  },
+  {
+   "text": "sobre",
+   "start": 27.197,
+   "end": 27.377,
+   "conf": 0.875,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 27.417,
+   "end": 27.477,
+   "conf": 0.799,
+   "speaker": null
+  },
+  {
+   "text": "mancha",
+   "start": 27.517,
+   "end": 27.737,
+   "conf": 0.899,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 27.778,
+   "end": 27.818,
+   "conf": 0.656,
+   "speaker": null
+  },
+  {
+   "text": "corrigiendo",
+   "start": 27.858,
+   "end": 28.298,
+   "conf": 0.804,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 28.358,
+   "end": 28.418,
+   "conf": 0.773,
+   "speaker": null
+  },
+  {
+   "text": "que...",
+   "start": 28.458,
+   "end": 28.598,
+   "conf": 0.803,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 29.299,
+   "end": 29.379,
+   "conf": 0.621,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 29.419,
+   "end": 29.54,
+   "conf": 0.893,
+   "speaker": null
+  },
+  {
+   "text": "necesitábamos",
+   "start": 29.84,
+   "end": 30.481,
+   "conf": 0.706,
+   "speaker": null
+  },
+  {
+   "text": "para",
+   "start": 30.561,
+   "end": 30.681,
+   "conf": 0.883,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 30.721,
+   "end": 30.821,
+   "conf": 0.711,
+   "speaker": null
+  },
+  {
+   "text": "funcionara",
+   "start": 30.881,
+   "end": 31.322,
+   "conf": 0.806,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 32.023,
+   "end": 32.443,
+   "conf": 0.99,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 32.584,
+   "end": 32.684,
+   "conf": 0.369,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 32.724,
+   "end": 33.104,
+   "conf": 0.715,
+   "speaker": null
+  },
+  {
+   "text": "cuanto",
+   "start": 33.164,
+   "end": 33.385,
+   "conf": 0.928,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 33.445,
+   "end": 33.485,
+   "conf": 0.873,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 33.525,
+   "end": 33.765,
+   "conf": 0.691,
+   "speaker": null
+  },
+  {
+   "text": "anuncios",
+   "start": 34.085,
+   "end": 34.506,
+   "conf": 0.79,
+   "speaker": null
+  },
+  {
+   "text": "o",
+   "start": 34.586,
+   "end": 34.606,
+   "conf": 0.953,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 34.666,
+   "end": 34.726,
+   "conf": 0.968,
+   "speaker": null
+  },
+  {
+   "text": "marketing",
+   "start": 34.786,
+   "end": 35.287,
+   "conf": 0.738,
+   "speaker": null
+  },
+  {
+   "text": "pues",
+   "start": 35.307,
+   "end": 35.507,
+   "conf": 0.515,
+   "speaker": null
+  },
+  {
+   "text": "también",
+   "start": 35.567,
+   "end": 35.928,
+   "conf": 0.921,
+   "speaker": null
+  },
+  {
+   "text": "o",
+   "start": 36.048,
+   "end": 36.068000000000005,
+   "conf": 0.157,
+   "speaker": null
+  },
+  {
+   "text": "sea",
+   "start": 36.188,
+   "end": 36.428,
+   "conf": 0.709,
+   "speaker": null
+  },
+  {
+   "text": "yo",
+   "start": 36.989,
+   "end": 37.109,
+   "conf": 0.908,
+   "speaker": null
+  },
+  {
+   "text": "nunca",
+   "start": 37.169,
+   "end": 37.39,
+   "conf": 0.851,
+   "speaker": null
+  },
+  {
+   "text": "había",
+   "start": 37.45,
+   "end": 37.81,
+   "conf": 0.733,
+   "speaker": null
+  },
+  {
+   "text": "trabajado",
+   "start": 37.89,
+   "end": 38.411,
+   "conf": 0.867,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 38.451,
+   "end": 38.511,
+   "conf": 0.509,
+   "speaker": null
+  },
+  {
+   "text": "marketing",
+   "start": 38.571,
+   "end": 39.032,
+   "conf": 0.695,
+   "speaker": null
+  },
+  {
+   "text": "con",
+   "start": 39.855,
+   "end": 39.975,
+   "conf": 0.969,
+   "speaker": null
+  },
+  {
+   "text": "alguien",
+   "start": 40.075,
+   "end": 40.456,
+   "conf": 0.56,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 40.797,
+   "end": 40.977,
+   "conf": 0.982,
+   "speaker": null
+  },
+  {
+   "text": "tampoco",
+   "start": 41.097,
+   "end": 41.457,
+   "conf": 0.845,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 41.498,
+   "end": 41.558,
+   "conf": 0.762,
+   "speaker": null
+  },
+  {
+   "text": "había",
+   "start": 41.578,
+   "end": 41.738,
+   "conf": 0.888,
+   "speaker": null
+  },
+  {
+   "text": "trabajado",
+   "start": 41.798,
+   "end": 42.239,
+   "conf": 0.861,
+   "speaker": null
+  },
+  {
+   "text": "tan",
+   "start": 42.319,
+   "end": 42.459,
+   "conf": 0.888,
+   "speaker": null
+  },
+  {
+   "text": "intensamente",
+   "start": 42.519,
+   "end": 43.34,
+   "conf": 0.883,
+   "speaker": null
+  },
+  {
+   "text": "ninguno",
+   "start": 43.36,
+   "end": 44.582,
+   "conf": 0.414,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 44.602,
+   "end": 44.642,
+   "conf": 0.102,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 44.662,
+   "end": 44.742,
+   "conf": 0.59,
+   "speaker": null
+  },
+  {
+   "text": "canales,",
+   "start": 44.782,
+   "end": 45.103,
+   "conf": 0.742,
+   "speaker": null
+  },
+  {
+   "text": "ni",
+   "start": 45.123,
+   "end": 45.203,
+   "conf": 0.764,
+   "speaker": null
+  },
+  {
+   "text": "Facebook",
+   "start": 45.263,
+   "end": 45.664,
+   "conf": 0.578,
+   "speaker": null
+  },
+  {
+   "text": "ni",
+   "start": 45.704,
+   "end": 45.824,
+   "conf": 0.73,
+   "speaker": null
+  },
+  {
+   "text": "Instagram,",
+   "start": 45.884,
+   "end": 46.345,
+   "conf": 0.717,
+   "speaker": null
+  },
+  {
+   "text": "así",
+   "start": 46.905,
+   "end": 47.026,
+   "conf": 0.868,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 47.046,
+   "end": 47.126,
+   "conf": 0.835,
+   "speaker": null
+  },
+  {
+   "text": "pues",
+   "start": 47.186,
+   "end": 47.266,
+   "conf": 0.478,
+   "speaker": null
+  },
+  {
+   "text": "tenía",
+   "start": 47.286,
+   "end": 47.486,
+   "conf": 0.821,
+   "speaker": null
+  },
+  {
+   "text": "mis",
+   "start": 47.526,
+   "end": 47.626,
+   "conf": 0.545,
+   "speaker": null
+  },
+  {
+   "text": "reseñas",
+   "start": 47.666,
+   "end": 47.987,
+   "conf": 0.543,
+   "speaker": null
+  },
+  {
+   "text": "pero",
+   "start": 48.067,
+   "end": 48.187,
+   "conf": 0.971,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 48.247,
+   "end": 48.307,
+   "conf": 0.992,
+   "speaker": null
+  },
+  {
+   "text": "tiré",
+   "start": 48.347,
+   "end": 48.528,
+   "conf": 0.834,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 48.568,
+   "end": 48.628,
+   "conf": 0.722,
+   "speaker": null
+  },
+  {
+   "text": "charco",
+   "start": 48.668,
+   "end": 49.069,
+   "conf": 0.665,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 49.109,
+   "end": 49.169,
+   "conf": 0.604,
+   "speaker": null
+  },
+  {
+   "text": "pues",
+   "start": 49.209,
+   "end": 49.409,
+   "conf": 0.495,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 49.99,
+   "end": 50.010000000000005,
+   "conf": 0.914,
+   "speaker": null
+  },
+  {
+   "text": "ver",
+   "start": 50.03,
+   "end": 50.13,
+   "conf": 0.75,
+   "speaker": null
+  },
+  {
+   "text": "qué",
+   "start": 50.17,
+   "end": 50.27,
+   "conf": 0.782,
+   "speaker": null
+  },
+  {
+   "text": "pasaba",
+   "start": 50.33,
+   "end": 50.571,
+   "conf": 0.747,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 51.368,
+   "end": 51.909,
+   "conf": 0.951,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 52.71,
+   "end": 52.77,
+   "conf": 0.906,
+   "speaker": null
+  },
+  {
+   "text": "dieron",
+   "start": 52.81,
+   "end": 53.01,
+   "conf": 0.623,
+   "speaker": null
+  },
+  {
+   "text": "mucha",
+   "start": 53.07,
+   "end": 53.23,
+   "conf": 0.827,
+   "speaker": null
+  },
+  {
+   "text": "seguridad",
+   "start": 53.31,
+   "end": 53.591,
+   "conf": 0.861,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 53.631,
+   "end": 53.671,
+   "conf": 0.95,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 53.711,
+   "end": 53.751,
+   "conf": 0.985,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 53.771,
+   "end": 53.851,
+   "conf": 0.835,
+   "speaker": null
+  },
+  {
+   "text": "estaban",
+   "start": 53.871,
+   "end": 54.131,
+   "conf": 0.828,
+   "speaker": null
+  },
+  {
+   "text": "haciendo",
+   "start": 54.171,
+   "end": 54.532,
+   "conf": 0.729,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 54.572,
+   "end": 54.652,
+   "conf": 0.483,
+   "speaker": null
+  },
+  {
+   "text": "gustó",
+   "start": 54.672,
+   "end": 54.892,
+   "conf": 0.659,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 54.932,
+   "end": 55.072,
+   "conf": 0.857,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 55.092,
+   "end": 55.153,
+   "conf": 0.467,
+   "speaker": null
+  },
+  {
+   "text": "estaban",
+   "start": 55.173,
+   "end": 55.413,
+   "conf": 0.812,
+   "speaker": null
+  },
+  {
+   "text": "haciendo",
+   "start": 55.433,
+   "end": 55.773,
+   "conf": 0.888,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 55.793,
+   "end": 55.813,
+   "conf": 0.015,
+   "speaker": null
+  },
+  {
+   "text": "te",
+   "start": 56.874,
+   "end": 56.935,
+   "conf": 0.468,
+   "speaker": null
+  },
+  {
+   "text": "tengo",
+   "start": 56.975,
+   "end": 57.155,
+   "conf": 0.918,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 57.175,
+   "end": 57.275,
+   "conf": 0.506,
+   "speaker": null
+  },
+  {
+   "text": "decir",
+   "start": 57.295,
+   "end": 57.535,
+   "conf": 0.766,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 57.595,
+   "end": 57.976,
+   "conf": 0.941,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 58.156,
+   "end": 58.236,
+   "conf": 0.967,
+   "speaker": null
+  },
+  {
+   "text": "números",
+   "start": 58.316,
+   "end": 58.536,
+   "conf": 0.668,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 58.596,
+   "end": 59.097,
+   "conf": 0.745,
+   "speaker": null
+  },
+  {
+   "text": "realmente",
+   "start": 59.698,
+   "end": 60.098,
+   "conf": 0.746,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 60.138,
+   "end": 60.218,
+   "conf": 0.818,
+   "speaker": null
+  },
+  {
+   "text": "doy",
+   "start": 60.238,
+   "end": 60.398,
+   "conf": 0.295,
+   "speaker": null
+  },
+  {
+   "text": "abasto",
+   "start": 60.438,
+   "end": 60.779,
+   "conf": 0.672,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 62.262,
+   "end": 62.303,
+   "conf": 0.3,
+   "speaker": null
+  },
+  {
+   "text": "cuestión",
+   "start": 62.343,
+   "end": 62.664,
+   "conf": 0.577,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 62.684,
+   "end": 62.765,
+   "conf": 0.71,
+   "speaker": null
+  },
+  {
+   "text": "llamadas",
+   "start": 62.845,
+   "end": 63.307,
+   "conf": 0.792,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 63.327,
+   "end": 63.368,
+   "conf": 0.003,
+   "speaker": null
+  },
+  {
+   "text": "cuestión",
+   "start": 63.669,
+   "end": 63.991,
+   "conf": 0.709,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 64.071,
+   "end": 64.151,
+   "conf": 0.828,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 65.872,
+   "end": 65.992,
+   "conf": 0.89,
+   "speaker": null
+  },
+  {
+   "text": "citas",
+   "start": 66.092,
+   "end": 66.373,
+   "conf": 0.7,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 66.413,
+   "end": 66.513,
+   "conf": 0.84,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 66.553,
+   "end": 66.653,
+   "conf": 0.86,
+   "speaker": null
+  },
+  {
+   "text": "han",
+   "start": 67.053,
+   "end": 67.414,
+   "conf": 0.585,
+   "speaker": null
+  },
+  {
+   "text": "calendarizado",
+   "start": 67.614,
+   "end": 68.235,
+   "conf": 0.937,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 68.255,
+   "end": 68.295,
+   "conf": 0.113,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 68.315,
+   "end": 68.355,
+   "conf": 0.786,
+   "speaker": null
+  },
+  {
+   "text": "han",
+   "start": 68.375,
+   "end": 68.475,
+   "conf": 0.733,
+   "speaker": null
+  },
+  {
+   "text": "coordinado.",
+   "start": 68.515,
+   "end": 69.015,
+   "conf": 0.888,
+   "speaker": null
+  },
+  {
+   "text": "Tanto",
+   "start": 69.776,
+   "end": 69.956,
+   "conf": 0.951,
+   "speaker": null
+  },
+  {
+   "text": "así",
+   "start": 70.016,
+   "end": 70.197,
+   "conf": 0.68,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 70.237,
+   "end": 70.477,
+   "conf": 0.896,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 70.677,
+   "end": 70.737,
+   "conf": 0.934,
+   "speaker": null
+  },
+  {
+   "text": "secretaria",
+   "start": 70.797,
+   "end": 71.278,
+   "conf": 0.836,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 71.298,
+   "end": 71.338,
+   "conf": 0.155,
+   "speaker": null
+  },
+  {
+   "text": "ha",
+   "start": 71.358,
+   "end": 71.418,
+   "conf": 0.562,
+   "speaker": null
+  },
+  {
+   "text": "tenido",
+   "start": 71.458,
+   "end": 71.698,
+   "conf": 0.572,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 71.718,
+   "end": 71.798,
+   "conf": 0.801,
+   "speaker": null
+  },
+  {
+   "text": "envolver",
+   "start": 71.858,
+   "end": 72.159,
+   "conf": 0.661,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 72.199,
+   "end": 72.359,
+   "conf": 0.541,
+   "speaker": null
+  },
+  {
+   "text": "eso",
+   "start": 72.399,
+   "end": 72.519,
+   "conf": 0.723,
+   "speaker": null
+  },
+  {
+   "text": "para",
+   "start": 72.579,
+   "end": 72.699,
+   "conf": 0.964,
+   "speaker": null
+  },
+  {
+   "text": "darle",
+   "start": 72.719,
+   "end": 72.919,
+   "conf": 0.458,
+   "speaker": null
+  },
+  {
+   "text": "seguimiento",
+   "start": 72.959,
+   "end": 73.48,
+   "conf": 0.885,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 73.5,
+   "end": 73.52,
+   "conf": 0.285,
+   "speaker": null
+  },
+  {
+   "text": "las",
+   "start": 73.56,
+   "end": 73.64,
+   "conf": 0.855,
+   "speaker": null
+  },
+  {
+   "text": "llamadas",
+   "start": 73.68,
+   "end": 74.081,
+   "conf": 0.888,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 74.101,
+   "end": 74.121,
+   "conf": 0.02,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 74.161,
+   "end": 74.221,
+   "conf": 0.411,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 74.741,
+   "end": 74.801,
+   "conf": 0.844,
+   "speaker": null
+  },
+  {
+   "text": "agenda.",
+   "start": 74.861,
+   "end": 75.142,
+   "conf": 0.823,
+   "speaker": null
+  },
+  {
+   "text": "Así",
+   "start": 75.882,
+   "end": 76.043,
+   "conf": 0.979,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 76.103,
+   "end": 76.383,
+   "conf": 0.816,
+   "speaker": null
+  },
+  {
+   "text": "ciertamente",
+   "start": 76.783,
+   "end": 77.584,
+   "conf": 0.928,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 78.185,
+   "end": 78.265,
+   "conf": 0.975,
+   "speaker": null
+  },
+  {
+   "text": "ha",
+   "start": 78.345,
+   "end": 78.445,
+   "conf": 0.635,
+   "speaker": null
+  },
+  {
+   "text": "visto",
+   "start": 78.505,
+   "end": 79.026,
+   "conf": 0.856,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 79.707,
+   "end": 79.767,
+   "conf": 0.998,
+   "speaker": null
+  },
+  {
+   "text": "promoción,",
+   "start": 79.847,
+   "end": 80.427,
+   "conf": 0.865,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 80.447,
+   "end": 80.487,
+   "conf": 0.001,
+   "speaker": null
+  },
+  {
+   "text": "gente",
+   "start": 80.507,
+   "end": 81.068,
+   "conf": 0.68,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 81.128,
+   "end": 81.208,
+   "conf": 0.401,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 81.248,
+   "end": 81.348,
+   "conf": 0.689,
+   "speaker": null
+  },
+  {
+   "text": "dice.",
+   "start": 81.388,
+   "end": 81.789,
+   "conf": 0.763,
+   "speaker": null
+  },
+  {
+   "text": "Hay",
+   "start": 83.953,
+   "end": 84.073,
+   "conf": 0.731,
+   "speaker": null
+  },
+  {
+   "text": "veces",
+   "start": 84.093,
+   "end": 84.294,
+   "conf": 0.424,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 84.334,
+   "end": 84.394,
+   "conf": 0.044,
+   "speaker": null
+  },
+  {
+   "text": "ahora",
+   "start": 84.434,
+   "end": 84.554,
+   "conf": 0.123,
+   "speaker": null
+  },
+  {
+   "text": "hay",
+   "start": 84.574,
+   "end": 84.654,
+   "conf": 0.165,
+   "speaker": null
+  },
+  {
+   "text": "compañeros",
+   "start": 84.735,
+   "end": 85.236,
+   "conf": 0.911,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 85.296,
+   "end": 85.817,
+   "conf": 0.872,
+   "speaker": null
+  },
+  {
+   "text": "trabajo",
+   "start": 85.877,
+   "end": 86.319,
+   "conf": 0.821,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 86.399,
+   "end": 86.459,
+   "conf": 0.558,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 86.479,
+   "end": 86.519,
+   "conf": 0.028,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 86.579,
+   "end": 86.639,
+   "conf": 0.465,
+   "speaker": null
+  },
+  {
+   "text": "tribunal",
+   "start": 86.68,
+   "end": 87.0,
+   "conf": 0.867,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 87.04,
+   "end": 87.101,
+   "conf": 0.696,
+   "speaker": null
+  },
+  {
+   "text": "dicen,",
+   "start": 87.121,
+   "end": 87.522,
+   "conf": 0.652,
+   "speaker": null
+  },
+  {
+   "text": "ah,",
+   "start": 87.542,
+   "end": 87.602,
+   "conf": 0.16,
+   "speaker": null
+  },
+  {
+   "text": "vi",
+   "start": 87.682,
+   "end": 87.762,
+   "conf": 0.436,
+   "speaker": null
+  },
+  {
+   "text": "tu",
+   "start": 87.782,
+   "end": 87.862,
+   "conf": 0.564,
+   "speaker": null
+  },
+  {
+   "text": "promoción",
+   "start": 87.923,
+   "end": 88.304,
+   "conf": 0.864,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 88.324,
+   "end": 88.344,
+   "conf": 0.024,
+   "speaker": null
+  },
+  {
+   "text": "yo",
+   "start": 88.364,
+   "end": 88.544,
+   "conf": 0.485,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 88.584,
+   "end": 88.644,
+   "conf": 0.746,
+   "speaker": null
+  },
+  {
+   "text": "sé",
+   "start": 88.684,
+   "end": 88.745,
+   "conf": 0.541,
+   "speaker": null
+  },
+  {
+   "text": "ni",
+   "start": 88.785,
+   "end": 88.865,
+   "conf": 0.203,
+   "speaker": null
+  },
+  {
+   "text": "qué",
+   "start": 88.885,
+   "end": 88.945,
+   "conf": 0.284,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 88.965,
+   "end": 89.005,
+   "conf": 0.0,
+   "speaker": null
+  },
+  {
+   "text": "está...",
+   "start": 89.045,
+   "end": 89.206,
+   "conf": 0.074,
+   "speaker": null
+  },
+  {
+   "text": "Al",
+   "start": 89.226,
+   "end": 89.286,
+   "conf": 0.633,
+   "speaker": null
+  },
+  {
+   "text": "principio",
+   "start": 89.306,
+   "end": 89.587,
+   "conf": 0.39,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 89.607,
+   "end": 89.647,
+   "conf": 0.808,
+   "speaker": null
+  },
+  {
+   "text": "sabía",
+   "start": 89.667,
+   "end": 89.847,
+   "conf": 0.396,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 89.867,
+   "end": 89.928,
+   "conf": 0.938,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 89.948,
+   "end": 90.008,
+   "conf": 0.167,
+   "speaker": null
+  },
+  {
+   "text": "estaban",
+   "start": 90.028,
+   "end": 90.288,
+   "conf": 0.428,
+   "speaker": null
+  },
+  {
+   "text": "hablando",
+   "start": 90.309,
+   "end": 90.529,
+   "conf": 0.747,
+   "speaker": null
+  },
+  {
+   "text": "hasta",
+   "start": 90.569,
+   "end": 90.71,
+   "conf": 0.915,
+   "speaker": null
+  },
+  {
+   "text": "que...",
+   "start": 90.77,
+   "end": 90.93,
+   "conf": 0.507,
+   "speaker": null
+  },
+  {
+   "text": "Finalmente",
+   "start": 91.571,
+   "end": 91.911,
+   "conf": 0.904,
+   "speaker": null
+  },
+  {
+   "text": "cae",
+   "start": 91.931,
+   "end": 92.192,
+   "conf": 0.055,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 92.212,
+   "end": 92.272,
+   "conf": 0.808,
+   "speaker": null
+  },
+  {
+   "text": "cuenta,",
+   "start": 92.292,
+   "end": 92.572,
+   "conf": 0.9,
+   "speaker": null
+  },
+  {
+   "text": "pero",
+   "start": 93.312,
+   "end": 93.752,
+   "conf": 0.924,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 95.534,
+   "end": 95.614,
+   "conf": 0.769,
+   "speaker": null
+  },
+  {
+   "text": "está",
+   "start": 95.974,
+   "end": 96.114,
+   "conf": 0.72,
+   "speaker": null
+  },
+  {
+   "text": "llegando",
+   "start": 96.134,
+   "end": 96.454,
+   "conf": 0.903,
+   "speaker": null
+  },
+  {
+   "text": "al",
+   "start": 96.494,
+   "end": 96.554,
+   "conf": 0.365,
+   "speaker": null
+  },
+  {
+   "text": "mercado,",
+   "start": 96.614,
+   "end": 97.014,
+   "conf": 0.819,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 97.034,
+   "end": 98.055,
+   "conf": 0.457,
+   "speaker": null
+  },
+  {
+   "text": "llegando",
+   "start": 98.095,
+   "end": 98.395,
+   "conf": 0.819,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 98.415,
+   "end": 98.435,
+   "conf": 0.591,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 98.475,
+   "end": 98.515,
+   "conf": 0.896,
+   "speaker": null
+  },
+  {
+   "text": "oficina",
+   "start": 98.535,
+   "end": 98.996,
+   "conf": 0.836,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 99.016,
+   "end": 99.036,
+   "conf": 0.007,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 99.196,
+   "end": 99.256,
+   "conf": 0.746,
+   "speaker": null
+  },
+  {
+   "text": "está",
+   "start": 99.296,
+   "end": 99.436,
+   "conf": 0.862,
+   "speaker": null
+  },
+  {
+   "text": "traduciendo",
+   "start": 99.496,
+   "end": 99.976,
+   "conf": 0.898,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 99.996,
+   "end": 100.016,
+   "conf": 0.021,
+   "speaker": null
+  },
+  {
+   "text": "nivel",
+   "start": 100.036,
+   "end": 100.216,
+   "conf": 0.246,
+   "speaker": null
+  },
+  {
+   "text": "de...",
+   "start": 100.256,
+   "end": 100.517,
+   "conf": 0.843,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 101.68,
+   "end": 102.02,
+   "conf": 0.956,
+   "speaker": null
+  },
+  {
+   "text": "contrataciones",
+   "start": 102.461,
+   "end": 103.121,
+   "conf": 0.793,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 103.141,
+   "end": 103.161,
+   "conf": 0.637,
+   "speaker": null
+  },
+  {
+   "text": "obviamente",
+   "start": 103.181,
+   "end": 103.602,
+   "conf": 0.526,
+   "speaker": null
+  },
+  {
+   "text": "después",
+   "start": 103.622,
+   "end": 103.862,
+   "conf": 0.518,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 103.882,
+   "end": 103.942,
+   "conf": 0.709,
+   "speaker": null
+  },
+  {
+   "text": "ingresos",
+   "start": 103.982,
+   "end": 104.282,
+   "conf": 0.635,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 104.342,
+   "end": 104.402,
+   "conf": 0.86,
+   "speaker": null
+  },
+  {
+   "text": "es",
+   "start": 104.422,
+   "end": 104.502,
+   "conf": 0.332,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 104.542,
+   "end": 104.582,
+   "conf": 0.974,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 104.622,
+   "end": 104.803,
+   "conf": 0.806,
+   "speaker": null
+  },
+  {
+   "text": "uno",
+   "start": 104.823,
+   "end": 105.123,
+   "conf": 0.231,
+   "speaker": null
+  },
+  {
+   "text": "siempre",
+   "start": 105.143,
+   "end": 105.363,
+   "conf": 0.76,
+   "speaker": null
+  },
+  {
+   "text": "espera",
+   "start": 105.423,
+   "end": 105.743,
+   "conf": 0.646,
+   "speaker": null
+  },
+  {
+   "text": "así",
+   "start": 105.783,
+   "end": 105.923,
+   "conf": 0.628,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 105.944,
+   "end": 106.024,
+   "conf": 0.711,
+   "speaker": null
+  },
+  {
+   "text": "estoy",
+   "start": 106.044,
+   "end": 106.304,
+   "conf": 0.586,
+   "speaker": null
+  },
+  {
+   "text": "bien",
+   "start": 106.324,
+   "end": 106.464,
+   "conf": 0.837,
+   "speaker": null
+  },
+  {
+   "text": "contento",
+   "start": 106.524,
+   "end": 106.944,
+   "conf": 0.947,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 106.964,
+   "end": 107.044,
+   "conf": 0.56,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 107.084,
+   "end": 107.124,
+   "conf": 0.98,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 107.164,
+   "end": 107.225,
+   "conf": 0.993,
+   "speaker": null
+  },
+  {
+   "text": "ha",
+   "start": 107.265,
+   "end": 107.345,
+   "conf": 0.58,
+   "speaker": null
+  },
+  {
+   "text": "pasado",
+   "start": 107.365,
+   "end": 107.585,
+   "conf": 0.898,
+   "speaker": null
+  },
+  {
+   "text": "Qué",
+   "start": 108.648,
+   "end": 108.788,
+   "conf": 0.186,
+   "speaker": null
+  },
+  {
+   "text": "bueno,",
+   "start": 108.848,
+   "end": 109.349,
+   "conf": 0.593,
+   "speaker": null
+  },
+  {
+   "text": "qué",
+   "start": 109.369,
+   "end": 109.449,
+   "conf": 0.58,
+   "speaker": null
+  },
+  {
+   "text": "bueno,",
+   "start": 109.489,
+   "end": 109.689,
+   "conf": 0.509,
+   "speaker": null
+  },
+  {
+   "text": "licenciado,",
+   "start": 109.729,
+   "end": 110.15,
+   "conf": 0.423,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 110.21,
+   "end": 110.31,
+   "conf": 0.322,
+   "speaker": null
+  },
+  {
+   "text": "escuchar",
+   "start": 110.33,
+   "end": 110.731,
+   "conf": 0.643,
+   "speaker": null
+  },
+  {
+   "text": "eso.",
+   "start": 110.771,
+   "end": 111.011,
+   "conf": 0.9,
+   "speaker": null
+  },
+  {
+   "text": "Sé",
+   "start": 112.453,
+   "end": 112.533,
+   "conf": 0.874,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 112.553,
+   "end": 112.673,
+   "conf": 0.598,
+   "speaker": null
+  },
+  {
+   "text": "igual",
+   "start": 112.713,
+   "end": 112.853,
+   "conf": 0.883,
+   "speaker": null
+  },
+  {
+   "text": "usted",
+   "start": 112.913,
+   "end": 113.073,
+   "conf": 0.356,
+   "speaker": null
+  },
+  {
+   "text": "tiene",
+   "start": 113.113,
+   "end": 113.294,
+   "conf": 0.664,
+   "speaker": null
+  },
+  {
+   "text": "dos",
+   "start": 113.394,
+   "end": 113.474,
+   "conf": 0.913,
+   "speaker": null
+  },
+  {
+   "text": "servicios",
+   "start": 113.534,
+   "end": 113.954,
+   "conf": 0.861,
+   "speaker": null
+  },
+  {
+   "text": "contratados",
+   "start": 114.075,
+   "end": 114.555,
+   "conf": 0.904,
+   "speaker": null
+  },
+  {
+   "text": "con",
+   "start": 114.635,
+   "end": 114.775,
+   "conf": 0.817,
+   "speaker": null
+  },
+  {
+   "text": "nosotros,",
+   "start": 114.835,
+   "end": 115.236,
+   "conf": 0.85,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 115.256,
+   "end": 115.316,
+   "conf": 0.003,
+   "speaker": null
+  },
+  {
+   "text": "es",
+   "start": 115.336,
+   "end": 115.696,
+   "conf": 0.59,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 115.717,
+   "end": 115.797,
+   "conf": 0.79,
+   "speaker": null
+  },
+  {
+   "text": "servicio",
+   "start": 115.817,
+   "end": 116.097,
+   "conf": 0.71,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 116.157,
+   "end": 116.217,
+   "conf": 0.673,
+   "speaker": null
+  },
+  {
+   "text": "marketing.",
+   "start": 116.257,
+   "end": 116.678,
+   "conf": 0.708,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 117.078,
+   "end": 117.138,
+   "conf": 0.421,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 117.178,
+   "end": 117.239,
+   "conf": 0.806,
+   "speaker": null
+  },
+  {
+   "text": "servicio",
+   "start": 117.279,
+   "end": 117.579,
+   "conf": 0.79,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 117.639,
+   "end": 117.699,
+   "conf": 0.742,
+   "speaker": null
+  },
+  {
+   "text": "las",
+   "start": 117.719,
+   "end": 117.82,
+   "conf": 0.686,
+   "speaker": null
+  },
+  {
+   "text": "automatizaciones",
+   "start": 117.88,
+   "end": 118.721,
+   "conf": 0.873,
+   "speaker": null
+  },
+  {
+   "text": "usted",
+   "start": 118.782,
+   "end": 118.962,
+   "conf": 0.982,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 119.042,
+   "end": 119.182,
+   "conf": 0.935,
+   "speaker": null
+  },
+  {
+   "text": "tal",
+   "start": 119.262,
+   "end": 119.443,
+   "conf": 0.98,
+   "speaker": null
+  },
+  {
+   "text": "tiene",
+   "start": 119.523,
+   "end": 119.763,
+   "conf": 0.75,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 119.784,
+   "end": 119.904,
+   "conf": 0.588,
+   "speaker": null
+  },
+  {
+   "text": "asistente",
+   "start": 119.944,
+   "end": 120.365,
+   "conf": 0.774,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 120.385,
+   "end": 120.445,
+   "conf": 0.248,
+   "speaker": null
+  },
+  {
+   "text": "chat",
+   "start": 120.505,
+   "end": 120.785,
+   "conf": 0.636,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 121.266,
+   "end": 121.327,
+   "conf": 0.726,
+   "speaker": null
+  },
+  {
+   "text": "tiene",
+   "start": 121.447,
+   "end": 121.767,
+   "conf": 0.741,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 121.827,
+   "end": 121.908,
+   "conf": 0.518,
+   "speaker": null
+  },
+  {
+   "text": "recepcionista",
+   "start": 121.988,
+   "end": 122.629,
+   "conf": 0.921,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 122.689,
+   "end": 122.769,
+   "conf": 0.889,
+   "speaker": null
+  },
+  {
+   "text": "voz",
+   "start": 122.849,
+   "end": 123.03,
+   "conf": 0.631,
+   "speaker": null
+  },
+  {
+   "text": "¿verdad?",
+   "start": 123.05,
+   "end": 123.451,
+   "conf": 0.536,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 123.491,
+   "end": 123.611,
+   "conf": 0.723,
+   "speaker": null
+  },
+  {
+   "text": "básicamente",
+   "start": 123.671,
+   "end": 124.092,
+   "conf": 0.866,
+   "speaker": null
+  },
+  {
+   "text": "tenemos",
+   "start": 124.152,
+   "end": 124.453,
+   "conf": 0.942,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 124.573,
+   "end": 124.813,
+   "conf": 0.917,
+   "speaker": null
+  },
+  {
+   "text": "todos",
+   "start": 125.314,
+   "end": 125.555,
+   "conf": 0.881,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 125.615,
+   "end": 125.695,
+   "conf": 0.804,
+   "speaker": null
+  },
+  {
+   "text": "canales",
+   "start": 125.775,
+   "end": 126.096,
+   "conf": 0.638,
+   "speaker": null
+  },
+  {
+   "text": "cubiertos",
+   "start": 126.256,
+   "end": 126.697,
+   "conf": 0.774,
+   "speaker": null
+  },
+  {
+   "text": "Usted",
+   "start": 127.378,
+   "end": 127.539,
+   "conf": 0.703,
+   "speaker": null
+  },
+  {
+   "text": "nos",
+   "start": 127.619,
+   "end": 127.739,
+   "conf": 0.486,
+   "speaker": null
+  },
+  {
+   "text": "comenta",
+   "start": 127.799,
+   "end": 128.24,
+   "conf": 0.801,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 128.32,
+   "end": 128.46,
+   "conf": 0.777,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 128.521,
+   "end": 128.641,
+   "conf": 0.811,
+   "speaker": null
+  },
+  {
+   "text": "da",
+   "start": 128.921,
+   "end": 129.002,
+   "conf": 0.672,
+   "speaker": null
+  },
+  {
+   "text": "abasto.",
+   "start": 129.022,
+   "end": 129.402,
+   "conf": 0.781,
+   "speaker": null
+  },
+  {
+   "text": "Si",
+   "start": 129.763,
+   "end": 129.863,
+   "conf": 0.883,
+   "speaker": null
+  },
+  {
+   "text": "quiero",
+   "start": 129.923,
+   "end": 130.144,
+   "conf": 0.738,
+   "speaker": null
+  },
+  {
+   "text": "saber,",
+   "start": 130.184,
+   "end": 130.424,
+   "conf": 0.902,
+   "speaker": null
+  },
+  {
+   "text": "digamos,",
+   "start": 130.485,
+   "end": 130.825,
+   "conf": 0.832,
+   "speaker": null
+  },
+  {
+   "text": "si",
+   "start": 130.865,
+   "end": 131.046,
+   "conf": 0.438,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 131.066,
+   "end": 131.146,
+   "conf": 0.89,
+   "speaker": null
+  },
+  {
+   "text": "pronto",
+   "start": 131.186,
+   "end": 131.326,
+   "conf": 0.18,
+   "speaker": null
+  },
+  {
+   "text": "usted",
+   "start": 131.346,
+   "end": 131.507,
+   "conf": 0.392,
+   "speaker": null
+  },
+  {
+   "text": "tiene",
+   "start": 131.547,
+   "end": 131.647,
+   "conf": 0.361,
+   "speaker": null
+  },
+  {
+   "text": "una",
+   "start": 131.667,
+   "end": 131.767,
+   "conf": 0.487,
+   "speaker": null
+  },
+  {
+   "text": "métrica",
+   "start": 131.807,
+   "end": 132.188,
+   "conf": 0.882,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 132.228,
+   "end": 132.308,
+   "conf": 0.564,
+   "speaker": null
+  },
+  {
+   "text": "cuántas",
+   "start": 132.388,
+   "end": 132.709,
+   "conf": 0.759,
+   "speaker": null
+  },
+  {
+   "text": "llamadas",
+   "start": 132.749,
+   "end": 133.31,
+   "conf": 0.858,
+   "speaker": null
+  },
+  {
+   "text": "o",
+   "start": 133.39,
+   "end": 133.43,
+   "conf": 0.177,
+   "speaker": null
+  },
+  {
+   "text": "mensajes",
+   "start": 133.47,
+   "end": 133.851,
+   "conf": 0.854,
+   "speaker": null
+  },
+  {
+   "text": "recibe",
+   "start": 133.931,
+   "end": 134.212,
+   "conf": 0.808,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 134.232,
+   "end": 134.312,
+   "conf": 0.886,
+   "speaker": null
+  },
+  {
+   "text": "día,",
+   "start": 134.372,
+   "end": 134.713,
+   "conf": 0.694,
+   "speaker": null
+  },
+  {
+   "text": "cuántas",
+   "start": 135.134,
+   "end": 135.474,
+   "conf": 0.853,
+   "speaker": null
+  },
+  {
+   "text": "citas",
+   "start": 135.575,
+   "end": 135.915,
+   "conf": 0.64,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 135.935,
+   "end": 136.136,
+   "conf": 0.748,
+   "speaker": null
+  },
+  {
+   "text": "logrando",
+   "start": 136.176,
+   "end": 136.476,
+   "conf": 0.899,
+   "speaker": null
+  },
+  {
+   "text": "agendar.",
+   "start": 136.496,
+   "end": 136.797,
+   "conf": 0.518,
+   "speaker": null
+  },
+  {
+   "text": "para",
+   "start": 137.519,
+   "end": 137.7,
+   "conf": 0.895,
+   "speaker": null
+  },
+  {
+   "text": "también",
+   "start": 137.781,
+   "end": 137.982,
+   "conf": 0.867,
+   "speaker": null
+  },
+  {
+   "text": "poder",
+   "start": 138.042,
+   "end": 138.203,
+   "conf": 0.575,
+   "speaker": null
+  },
+  {
+   "text": "tener",
+   "start": 138.303,
+   "end": 138.524,
+   "conf": 0.837,
+   "speaker": null
+  },
+  {
+   "text": "nosotros",
+   "start": 138.585,
+   "end": 138.987,
+   "conf": 0.718,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 139.067,
+   "end": 139.409,
+   "conf": 0.959,
+   "speaker": null
+  },
+  {
+   "text": "esa",
+   "start": 139.429,
+   "end": 139.67,
+   "conf": 0.603,
+   "speaker": null
+  },
+  {
+   "text": "métrica",
+   "start": 139.69,
+   "end": 139.992,
+   "conf": 0.94,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 140.032,
+   "end": 140.153,
+   "conf": 0.877,
+   "speaker": null
+  },
+  {
+   "text": "parte",
+   "start": 140.213,
+   "end": 140.374,
+   "conf": 0.987,
+   "speaker": null
+  },
+  {
+   "text": "suya.",
+   "start": 140.434,
+   "end": 140.655,
+   "conf": 0.637,
+   "speaker": null
+  },
+  {
+   "text": "Yo",
+   "start": 141.246,
+   "end": 141.346,
+   "conf": 0.788,
+   "speaker": null
+  },
+  {
+   "text": "entiendo",
+   "start": 141.387,
+   "end": 141.767,
+   "conf": 0.381,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 141.827,
+   "end": 141.948,
+   "conf": 0.457,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 141.968,
+   "end": 142.288,
+   "conf": 0.725,
+   "speaker": null
+  },
+  {
+   "text": "entrando",
+   "start": 142.369,
+   "end": 142.99,
+   "conf": 0.918,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 143.491,
+   "end": 143.551,
+   "conf": 0.691,
+   "speaker": null
+  },
+  {
+   "text": "nivel",
+   "start": 143.611,
+   "end": 143.912,
+   "conf": 0.886,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 145.335,
+   "end": 145.435,
+   "conf": 0.966,
+   "speaker": null
+  },
+  {
+   "text": "WhatsApp,",
+   "start": 145.515,
+   "end": 145.996,
+   "conf": 0.592,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 146.116,
+   "end": 146.217,
+   "conf": 0.519,
+   "speaker": null
+  },
+  {
+   "text": "es",
+   "start": 146.237,
+   "end": 146.317,
+   "conf": 0.755,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 146.357,
+   "end": 146.417,
+   "conf": 0.82,
+   "speaker": null
+  },
+  {
+   "text": "más",
+   "start": 146.457,
+   "end": 146.557,
+   "conf": 0.962,
+   "speaker": null
+  },
+  {
+   "text": "fácil",
+   "start": 146.597,
+   "end": 146.858,
+   "conf": 0.899,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 146.898,
+   "end": 146.958,
+   "conf": 0.988,
+   "speaker": null
+  },
+  {
+   "text": "medir,",
+   "start": 147.038,
+   "end": 147.339,
+   "conf": 0.935,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 149.463,
+   "end": 149.523,
+   "conf": 0.249,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 149.543,
+   "end": 149.583,
+   "conf": 0.422,
+   "speaker": null
+  },
+  {
+   "text": "menos",
+   "start": 149.624,
+   "end": 149.844,
+   "conf": 0.646,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 149.864,
+   "end": 149.924,
+   "conf": 0.706,
+   "speaker": null
+  },
+  {
+   "text": "indagaciones",
+   "start": 149.984,
+   "end": 150.525,
+   "conf": 0.862,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 150.565,
+   "end": 150.666,
+   "conf": 0.917,
+   "speaker": null
+  },
+  {
+   "text": "desean",
+   "start": 151.227,
+   "end": 151.568,
+   "conf": 0.904,
+   "speaker": null
+  },
+  {
+   "text": "una",
+   "start": 151.648,
+   "end": 151.848,
+   "conf": 0.434,
+   "speaker": null
+  },
+  {
+   "text": "consulta.",
+   "start": 151.928,
+   "end": 152.53,
+   "conf": 0.852,
+   "speaker": null
+  },
+  {
+   "text": "Diariamente",
+   "start": 153.402,
+   "end": 154.024,
+   "conf": 0.894,
+   "speaker": null
+  },
+  {
+   "text": "yo",
+   "start": 154.044,
+   "end": 154.084,
+   "conf": 0.001,
+   "speaker": null
+  },
+  {
+   "text": "entiendo",
+   "start": 154.224,
+   "end": 154.444,
+   "conf": 0.821,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 154.485,
+   "end": 154.565,
+   "conf": 0.822,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 154.585,
+   "end": 154.785,
+   "conf": 0.732,
+   "speaker": null
+  },
+  {
+   "text": "entrando",
+   "start": 154.845,
+   "end": 155.326,
+   "conf": 0.932,
+   "speaker": null
+  },
+  {
+   "text": "entre",
+   "start": 155.346,
+   "end": 155.507,
+   "conf": 0.229,
+   "speaker": null
+  },
+  {
+   "text": "25",
+   "start": 155.527,
+   "end": 155.567,
+   "conf": 0.508,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 155.627,
+   "end": 155.667,
+   "conf": 0.457,
+   "speaker": null
+  },
+  {
+   "text": "50",
+   "start": 155.727,
+   "end": 155.787,
+   "conf": 0.638,
+   "speaker": null
+  },
+  {
+   "text": "mensajes.",
+   "start": 155.807,
+   "end": 156.148,
+   "conf": 0.418,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 161.759,
+   "end": 161.859,
+   "conf": 0.938,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 161.899,
+   "end": 161.96,
+   "conf": 0.997,
+   "speaker": null
+  },
+  {
+   "text": "horario",
+   "start": 161.98,
+   "end": 162.461,
+   "conf": 0.866,
+   "speaker": null
+  },
+  {
+   "text": "casi",
+   "start": 162.481,
+   "end": 163.184,
+   "conf": 0.724,
+   "speaker": null
+  },
+  {
+   "text": "siempre",
+   "start": 163.224,
+   "end": 163.445,
+   "conf": 0.896,
+   "speaker": null
+  },
+  {
+   "text": "es",
+   "start": 163.505,
+   "end": 163.545,
+   "conf": 0.008,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 163.625,
+   "end": 163.666,
+   "conf": 0.019,
+   "speaker": null
+  },
+  {
+   "text": "madrugada",
+   "start": 163.686,
+   "end": 164.228,
+   "conf": 0.82,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 164.288,
+   "end": 164.368,
+   "conf": 0.973,
+   "speaker": null
+  },
+  {
+   "text": "sé",
+   "start": 164.408,
+   "end": 164.509,
+   "conf": 0.701,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 164.609,
+   "end": 164.729,
+   "conf": 0.609,
+   "speaker": null
+  },
+  {
+   "text": "qué",
+   "start": 164.75,
+   "end": 164.91,
+   "conf": 0.687,
+   "speaker": null
+  },
+  {
+   "text": "pero",
+   "start": 164.93,
+   "end": 165.131,
+   "conf": 0.454,
+   "speaker": null
+  },
+  {
+   "text": "entran",
+   "start": 165.191,
+   "end": 165.452,
+   "conf": 0.834,
+   "speaker": null
+  },
+  {
+   "text": "muchas",
+   "start": 165.512,
+   "end": 165.813,
+   "conf": 0.737,
+   "speaker": null
+  },
+  {
+   "text": "llamadas",
+   "start": 165.914,
+   "end": 166.275,
+   "conf": 0.808,
+   "speaker": null
+  },
+  {
+   "text": "Gracias",
+   "start": 167.859,
+   "end": 168.18,
+   "conf": 0.714,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 168.2,
+   "end": 168.24,
+   "conf": 0.48,
+   "speaker": null
+  },
+  {
+   "text": "Dios",
+   "start": 168.26,
+   "end": 168.401,
+   "conf": 0.446,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 168.441,
+   "end": 168.521,
+   "conf": 0.644,
+   "speaker": null
+  },
+  {
+   "text": "está",
+   "start": 168.541,
+   "end": 168.681,
+   "conf": 0.798,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 168.701,
+   "end": 168.741,
+   "conf": 0.048,
+   "speaker": null
+  },
+  {
+   "text": "sistema,",
+   "start": 168.761,
+   "end": 169.162,
+   "conf": 0.829,
+   "speaker": null
+  },
+  {
+   "text": "porque",
+   "start": 169.202,
+   "end": 169.403,
+   "conf": 0.835,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 169.804,
+   "end": 169.884,
+   "conf": 0.754,
+   "speaker": null
+  },
+  {
+   "text": "otra",
+   "start": 169.904,
+   "end": 170.064,
+   "conf": 0.809,
+   "speaker": null
+  },
+  {
+   "text": "manera",
+   "start": 170.124,
+   "end": 170.385,
+   "conf": 0.921,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 170.706,
+   "end": 170.766,
+   "conf": 0.943,
+   "speaker": null
+  },
+  {
+   "text": "habría",
+   "start": 170.806,
+   "end": 170.986,
+   "conf": 0.921,
+   "speaker": null
+  },
+  {
+   "text": "manera.",
+   "start": 171.027,
+   "end": 171.307,
+   "conf": 0.819,
+   "speaker": null
+  },
+  {
+   "text": "Yo",
+   "start": 171.448,
+   "end": 171.528,
+   "conf": 0.518,
+   "speaker": null
+  },
+  {
+   "text": "estoy",
+   "start": 171.548,
+   "end": 171.848,
+   "conf": 0.32,
+   "speaker": null
+  },
+  {
+   "text": "durmiendo.",
+   "start": 171.868,
+   "end": 172.289,
+   "conf": 0.849,
+   "speaker": null
+  },
+  {
+   "text": "Pero",
+   "start": 172.791,
+   "end": 172.951,
+   "conf": 0.854,
+   "speaker": null
+  },
+  {
+   "text": "sí",
+   "start": 173.051,
+   "end": 173.131,
+   "conf": 0.708,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 173.171,
+   "end": 173.252,
+   "conf": 0.824,
+   "speaker": null
+  },
+  {
+   "text": "veo",
+   "start": 173.352,
+   "end": 173.532,
+   "conf": 0.777,
+   "speaker": null
+  },
+  {
+   "text": "cuando",
+   "start": 173.572,
+   "end": 173.753,
+   "conf": 0.92,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 173.893,
+   "end": 173.973,
+   "conf": 0.924,
+   "speaker": null
+  },
+  {
+   "text": "despierto",
+   "start": 174.013,
+   "end": 174.414,
+   "conf": 0.893,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 174.474,
+   "end": 174.575,
+   "conf": 0.413,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 174.615,
+   "end": 174.695,
+   "conf": 0.831,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 174.715,
+   "end": 174.775,
+   "conf": 0.751,
+   "speaker": null
+  },
+  {
+   "text": "sistema",
+   "start": 174.815,
+   "end": 175.116,
+   "conf": 0.984,
+   "speaker": null
+  },
+  {
+   "text": "ha",
+   "start": 175.136,
+   "end": 175.176,
+   "conf": 0.005,
+   "speaker": null
+  },
+  {
+   "text": "seguido",
+   "start": 175.236,
+   "end": 175.477,
+   "conf": 0.468,
+   "speaker": null
+  },
+  {
+   "text": "generando.",
+   "start": 175.517,
+   "end": 175.978,
+   "conf": 0.902,
+   "speaker": null
+  },
+  {
+   "text": "contactando,",
+   "start": 176.659,
+   "end": 177.22,
+   "conf": 0.6,
+   "speaker": null
+  },
+  {
+   "text": "respondiendo",
+   "start": 177.621,
+   "end": 178.121,
+   "conf": 0.894,
+   "speaker": null
+  },
+  {
+   "text": "al",
+   "start": 178.582,
+   "end": 178.682,
+   "conf": 0.902,
+   "speaker": null
+  },
+  {
+   "text": "cliente.",
+   "start": 178.742,
+   "end": 179.163,
+   "conf": 0.91,
+   "speaker": null
+  },
+  {
+   "text": "Pero",
+   "start": 179.743,
+   "end": 179.864,
+   "conf": 0.896,
+   "speaker": null
+  },
+  {
+   "text": "yo",
+   "start": 179.964,
+   "end": 180.044,
+   "conf": 0.514,
+   "speaker": null
+  },
+  {
+   "text": "entiendo",
+   "start": 180.064,
+   "end": 180.304,
+   "conf": 0.811,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 180.364,
+   "end": 180.424,
+   "conf": 0.989,
+   "speaker": null
+  },
+  {
+   "text": "sí",
+   "start": 180.484,
+   "end": 180.565,
+   "conf": 0.844,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 180.585,
+   "end": 180.665,
+   "conf": 0.775,
+   "speaker": null
+  },
+  {
+   "text": "está",
+   "start": 180.685,
+   "end": 181.025,
+   "conf": 0.624,
+   "speaker": null
+  },
+  {
+   "text": "entre",
+   "start": 181.085,
+   "end": 181.486,
+   "conf": 0.41,
+   "speaker": null
+  },
+  {
+   "text": "25",
+   "start": 181.506,
+   "end": 181.546,
+   "conf": 0.727,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 181.566,
+   "end": 181.586,
+   "conf": 0.067,
+   "speaker": null
+  },
+  {
+   "text": "50,",
+   "start": 181.666,
+   "end": 182.027,
+   "conf": 0.637,
+   "speaker": null
+  },
+  {
+   "text": "dependiendo",
+   "start": 182.067,
+   "end": 182.447,
+   "conf": 0.645,
+   "speaker": null
+  },
+  {
+   "text": "del",
+   "start": 182.467,
+   "end": 182.567,
+   "conf": 0.322,
+   "speaker": null
+  },
+  {
+   "text": "día,",
+   "start": 182.607,
+   "end": 182.808,
+   "conf": 0.83,
+   "speaker": null
+  },
+  {
+   "text": "no",
+   "start": 182.848,
+   "end": 182.908,
+   "conf": 0.751,
+   "speaker": null
+  },
+  {
+   "text": "importa",
+   "start": 182.968,
+   "end": 183.288,
+   "conf": 0.693,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 183.328,
+   "end": 183.368,
+   "conf": 0.1,
+   "speaker": null
+  },
+  {
+   "text": "día",
+   "start": 183.408,
+   "end": 183.529,
+   "conf": 0.828,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 183.549,
+   "end": 183.609,
+   "conf": 0.927,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 183.649,
+   "end": 183.709,
+   "conf": 0.773,
+   "speaker": null
+  },
+  {
+   "text": "semana,",
+   "start": 183.789,
+   "end": 184.069,
+   "conf": 0.876,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 184.089,
+   "end": 184.29,
+   "conf": 0.243,
+   "speaker": null
+  },
+  {
+   "text": "siete",
+   "start": 184.31,
+   "end": 184.53,
+   "conf": 0.741,
+   "speaker": null
+  },
+  {
+   "text": "días",
+   "start": 184.61,
+   "end": 185.091,
+   "conf": 0.686,
+   "speaker": null
+  },
+  {
+   "text": "está",
+   "start": 185.872,
+   "end": 186.032,
+   "conf": 0.804,
+   "speaker": null
+  },
+  {
+   "text": "llegando.",
+   "start": 186.092,
+   "end": 186.513,
+   "conf": 0.581,
+   "speaker": null
+  },
+  {
+   "text": "De",
+   "start": 187.465,
+   "end": 187.646,
+   "conf": 0.916,
+   "speaker": null
+  },
+  {
+   "text": "eso",
+   "start": 187.806,
+   "end": 188.126,
+   "conf": 0.858,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 188.407,
+   "end": 188.627,
+   "conf": 0.898,
+   "speaker": null
+  },
+  {
+   "text": "cuántos",
+   "start": 188.867,
+   "end": 189.468,
+   "conf": 0.91,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 189.989,
+   "end": 190.129,
+   "conf": 0.834,
+   "speaker": null
+  },
+  {
+   "text": "convierten",
+   "start": 190.229,
+   "end": 190.93,
+   "conf": 0.891,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 191.09,
+   "end": 191.17,
+   "conf": 0.651,
+   "speaker": null
+  },
+  {
+   "text": "los",
+   "start": 191.23,
+   "end": 191.351,
+   "conf": 0.821,
+   "speaker": null
+  },
+  {
+   "text": "últimos",
+   "start": 191.471,
+   "end": 191.871,
+   "conf": 0.898,
+   "speaker": null
+  },
+  {
+   "text": "dos",
+   "start": 192.112,
+   "end": 192.272,
+   "conf": 0.94,
+   "speaker": null
+  },
+  {
+   "text": "meses,",
+   "start": 192.372,
+   "end": 192.652,
+   "conf": 0.964,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 192.712,
+   "end": 192.833,
+   "conf": 0.535,
+   "speaker": null
+  },
+  {
+   "text": "decirlo",
+   "start": 192.933,
+   "end": 193.293,
+   "conf": 0.727,
+   "speaker": null
+  },
+  {
+   "text": "así.",
+   "start": 193.353,
+   "end": 193.614,
+   "conf": 0.714,
+   "speaker": null
+  },
+  {
+   "text": "provenientes",
+   "start": 195.483,
+   "end": 196.364,
+   "conf": 0.878,
+   "speaker": null
+  },
+  {
+   "text": "han",
+   "start": 196.885,
+   "end": 197.005,
+   "conf": 0.932,
+   "speaker": null
+  },
+  {
+   "text": "contratado",
+   "start": 197.065,
+   "end": 197.566,
+   "conf": 0.938,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 197.586,
+   "end": 197.666,
+   "conf": 0.002,
+   "speaker": null
+  },
+  {
+   "text": "algunos",
+   "start": 197.966,
+   "end": 198.367,
+   "conf": 0.779,
+   "speaker": null
+  },
+  {
+   "text": "10",
+   "start": 198.387,
+   "end": 198.427,
+   "conf": 0.964,
+   "speaker": null
+  },
+  {
+   "text": "personas.",
+   "start": 198.807,
+   "end": 199.188,
+   "conf": 0.94,
+   "speaker": null
+  },
+  {
+   "text": "La",
+   "start": 199.508,
+   "end": 199.568,
+   "conf": 0.975,
+   "speaker": null
+  },
+  {
+   "text": "avalancha",
+   "start": 199.608,
+   "end": 200.189,
+   "conf": 0.832,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 200.209,
+   "end": 200.389,
+   "conf": 0.61,
+   "speaker": null
+  },
+  {
+   "text": "consultas",
+   "start": 200.529,
+   "end": 201.17,
+   "conf": 0.803,
+   "speaker": null
+  },
+  {
+   "text": "fue",
+   "start": 201.25,
+   "end": 201.43,
+   "conf": 0.755,
+   "speaker": null
+  },
+  {
+   "text": "tanta",
+   "start": 201.49,
+   "end": 201.811,
+   "conf": 0.905,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 201.931,
+   "end": 202.031,
+   "conf": 0.936,
+   "speaker": null
+  },
+  {
+   "text": "entonces",
+   "start": 202.111,
+   "end": 202.592,
+   "conf": 0.803,
+   "speaker": null
+  },
+  {
+   "text": "tuve",
+   "start": 202.612,
+   "end": 202.872,
+   "conf": 0.837,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 202.912,
+   "end": 203.072,
+   "conf": 0.77,
+   "speaker": null
+  },
+  {
+   "text": "cambiar",
+   "start": 203.593,
+   "end": 203.933,
+   "conf": 0.838,
+   "speaker": null
+  },
+  {
+   "text": "el",
+   "start": 203.973,
+   "end": 204.033,
+   "conf": 0.528,
+   "speaker": null
+  },
+  {
+   "text": "formato",
+   "start": 204.193,
+   "end": 204.534,
+   "conf": 0.835,
+   "speaker": null
+  },
+  {
+   "text": "para",
+   "start": 204.774,
+   "end": 204.914,
+   "conf": 0.554,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 204.954,
+   "end": 205.035,
+   "conf": 0.824,
+   "speaker": null
+  },
+  {
+   "text": "pagaran",
+   "start": 205.095,
+   "end": 205.555,
+   "conf": 0.868,
+   "speaker": null
+  },
+  {
+   "text": "la",
+   "start": 205.616,
+   "end": 205.676,
+   "conf": 0.894,
+   "speaker": null
+  },
+  {
+   "text": "consulta.",
+   "start": 205.736,
+   "end": 206.277,
+   "conf": 0.912,
+   "speaker": null
+  },
+  {
+   "text": "Y",
+   "start": 206.537,
+   "end": 206.577,
+   "conf": 0.455,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 206.617,
+   "end": 206.677,
+   "conf": 0.47,
+   "speaker": null
+  },
+  {
+   "text": "las",
+   "start": 206.697,
+   "end": 206.798,
+   "conf": 0.869,
+   "speaker": null
+  },
+  {
+   "text": "consultas",
+   "start": 206.858,
+   "end": 207.258,
+   "conf": 0.928,
+   "speaker": null
+  },
+  {
+   "text": "se",
+   "start": 207.298,
+   "end": 207.358,
+   "conf": 0.77,
+   "speaker": null
+  },
+  {
+   "text": "están",
+   "start": 207.399,
+   "end": 207.559,
+   "conf": 0.601,
+   "speaker": null
+  },
+  {
+   "text": "entrando",
+   "start": 207.659,
+   "end": 208.48,
+   "conf": 0.933,
+   "speaker": null
+  },
+  {
+   "text": "consultas",
+   "start": 209.582,
+   "end": 210.043,
+   "conf": 0.86,
+   "speaker": null
+  },
+  {
+   "text": "pagas",
+   "start": 210.163,
+   "end": 210.444,
+   "conf": 0.842,
+   "speaker": null
+  },
+  {
+   "text": "alrededor",
+   "start": 210.504,
+   "end": 211.145,
+   "conf": 0.595,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 211.786,
+   "end": 211.886,
+   "conf": 0.831,
+   "speaker": null
+  },
+  {
+   "text": "dos",
+   "start": 211.966,
+   "end": 212.086,
+   "conf": 0.788,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 212.126,
+   "end": 212.166,
+   "conf": 0.486,
+   "speaker": null
+  },
+  {
+   "text": "cuatro",
+   "start": 212.227,
+   "end": 212.487,
+   "conf": 0.846,
+   "speaker": null
+  },
+  {
+   "text": "diarias.",
+   "start": 212.547,
+   "end": 212.948,
+   "conf": 0.746,
+   "speaker": null
+  },
+  {
+   "text": "Ya,",
+   "start": 213.391,
+   "end": 213.632,
+   "conf": 0.719,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 213.652,
+   "end": 213.752,
+   "conf": 0.872,
+   "speaker": null
+  },
+  {
+   "text": "último,",
+   "start": 213.832,
+   "end": 214.092,
+   "conf": 0.867,
+   "speaker": null
+  },
+  {
+   "text": "sí",
+   "start": 214.513,
+   "end": 214.593,
+   "conf": 0.398,
+   "speaker": null
+  },
+  {
+   "text": "me",
+   "start": 214.633,
+   "end": 214.693,
+   "conf": 0.396,
+   "speaker": null
+  },
+  {
+   "text": "gustaría",
+   "start": 214.713,
+   "end": 215.054,
+   "conf": 0.33,
+   "speaker": null
+  },
+  {
+   "text": "mucho",
+   "start": 215.114,
+   "end": 215.294,
+   "conf": 0.82,
+   "speaker": null
+  },
+  {
+   "text": "saber,",
+   "start": 215.335,
+   "end": 215.695,
+   "conf": 0.779,
+   "speaker": null
+  },
+  {
+   "text": "digamos,",
+   "start": 216.016,
+   "end": 216.336,
+   "conf": 0.631,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 216.376,
+   "end": 216.39600000000002,
+   "conf": 0.966,
+   "speaker": null
+  },
+  {
+   "text": "nivel",
+   "start": 216.437,
+   "end": 216.617,
+   "conf": 0.774,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 216.657,
+   "end": 216.697,
+   "conf": 0.976,
+   "speaker": null
+  },
+  {
+   "text": "ingresos,",
+   "start": 216.737,
+   "end": 217.118,
+   "conf": 0.809,
+   "speaker": null
+  },
+  {
+   "text": "solo",
+   "start": 217.358,
+   "end": 217.538,
+   "conf": 0.897,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 217.579,
+   "end": 217.739,
+   "conf": 0.859,
+   "speaker": null
+  },
+  {
+   "text": "por",
+   "start": 217.799,
+   "end": 217.959,
+   "conf": 0.633,
+   "speaker": null
+  },
+  {
+   "text": "tener",
+   "start": 217.999,
+   "end": 218.18,
+   "conf": 0.876,
+   "speaker": null
+  },
+  {
+   "text": "un",
+   "start": 218.22,
+   "end": 218.28,
+   "conf": 0.82,
+   "speaker": null
+  },
+  {
+   "text": "promedio,",
+   "start": 218.3,
+   "end": 218.741,
+   "conf": 0.763,
+   "speaker": null
+  },
+  {
+   "text": "cómo",
+   "start": 218.801,
+   "end": 218.941,
+   "conf": 0.807,
+   "speaker": null
+  },
+  {
+   "text": "estaba",
+   "start": 219.001,
+   "end": 219.422,
+   "conf": 0.665,
+   "speaker": null
+  },
+  {
+   "text": "antes",
+   "start": 219.502,
+   "end": 219.682,
+   "conf": 0.819,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 219.722,
+   "end": 219.782,
+   "conf": 0.719,
+   "speaker": null
+  },
+  {
+   "text": "empezar",
+   "start": 219.802,
+   "end": 220.063,
+   "conf": 0.386,
+   "speaker": null
+  },
+  {
+   "text": "a",
+   "start": 220.123,
+   "end": 220.163,
+   "conf": 0.534,
+   "speaker": null
+  },
+  {
+   "text": "trabajar",
+   "start": 220.203,
+   "end": 220.484,
+   "conf": 0.77,
+   "speaker": null
+  },
+  {
+   "text": "con",
+   "start": 220.604,
+   "end": 220.724,
+   "conf": 0.787,
+   "speaker": null
+  },
+  {
+   "text": "nosotros",
+   "start": 220.744,
+   "end": 221.185,
+   "conf": 0.861,
+   "speaker": null
+  },
+  {
+   "text": "y",
+   "start": 221.205,
+   "end": 221.305,
+   "conf": 0.053,
+   "speaker": null
+  },
+  {
+   "text": "cómo",
+   "start": 221.385,
+   "end": 221.526,
+   "conf": 0.731,
+   "speaker": null
+  },
+  {
+   "text": "estamos",
+   "start": 221.566,
+   "end": 221.806,
+   "conf": 0.848,
+   "speaker": null
+  },
+  {
+   "text": "al",
+   "start": 221.826,
+   "end": 221.926,
+   "conf": 0.553,
+   "speaker": null
+  },
+  {
+   "text": "día",
+   "start": 221.966,
+   "end": 222.087,
+   "conf": 0.84,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 222.127,
+   "end": 222.227,
+   "conf": 0.804,
+   "speaker": null
+  },
+  {
+   "text": "hoy,",
+   "start": 222.267,
+   "end": 222.427,
+   "conf": 0.826,
+   "speaker": null
+  },
+  {
+   "text": "hablando",
+   "start": 222.587,
+   "end": 222.888,
+   "conf": 0.775,
+   "speaker": null
+  },
+  {
+   "text": "solo",
+   "start": 222.928,
+   "end": 223.128,
+   "conf": 0.899,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 223.189,
+   "end": 223.309,
+   "conf": 0.699,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 223.369,
+   "end": 223.429,
+   "conf": 0.965,
+   "speaker": null
+  },
+  {
+   "text": "un",
+   "start": 223.469,
+   "end": 223.549,
+   "conf": 0.939,
+   "speaker": null
+  },
+  {
+   "text": "promedio.",
+   "start": 223.589,
+   "end": 223.93,
+   "conf": 0.503,
+   "speaker": null
+  },
+  {
+   "text": "puede",
+   "start": 224.35,
+   "end": 224.53,
+   "conf": 0.747,
+   "speaker": null
+  },
+  {
+   "text": "estar",
+   "start": 224.55,
+   "end": 224.73,
+   "conf": 0.784,
+   "speaker": null
+  },
+  {
+   "text": "representando",
+   "start": 224.79,
+   "end": 225.491,
+   "conf": 0.857,
+   "speaker": null
+  },
+  {
+   "text": "como",
+   "start": 225.551,
+   "end": 225.711,
+   "conf": 0.991,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 225.731,
+   "end": 225.771,
+   "conf": 0.002,
+   "speaker": null
+  },
+  {
+   "text": "algunos",
+   "start": 226.271,
+   "end": 226.651,
+   "conf": 0.864,
+   "speaker": null
+  },
+  {
+   "text": "cerca",
+   "start": 226.691,
+   "end": 226.851,
+   "conf": 0.365,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 226.891,
+   "end": 227.091,
+   "conf": 0.501,
+   "speaker": null
+  },
+  {
+   "text": "algunos",
+   "start": 227.151,
+   "end": 227.492,
+   "conf": 0.784,
+   "speaker": null
+  },
+  {
+   "text": "5",
+   "start": 227.792,
+   "end": 228.032,
+   "conf": 0.541,
+   "speaker": null
+  },
+  {
+   "text": "mil",
+   "start": 228.092,
+   "end": 228.232,
+   "conf": 0.666,
+   "speaker": null
+  },
+  {
+   "text": "dólares",
+   "start": 228.252,
+   "end": 228.612,
+   "conf": 0.643,
+   "speaker": null
+  },
+  {
+   "text": "más",
+   "start": 228.632,
+   "end": 228.752,
+   "conf": 0.898,
+   "speaker": null
+  },
+  {
+   "text": "mensuales.",
+   "start": 228.792,
+   "end": 229.433,
+   "conf": 0.704,
+   "speaker": null
+  },
+  {
+   "text": "Buenísimo,",
+   "start": 229.633,
+   "end": 229.953,
+   "conf": 0.289,
+   "speaker": null
+  },
+  {
+   "text": "que",
+   "start": 229.973,
+   "end": 230.053,
+   "conf": 0.257,
+   "speaker": null
+  },
+  {
+   "text": "en",
+   "start": 230.073,
+   "end": 230.133,
+   "conf": 0.195,
+   "speaker": null
+  },
+  {
+   "text": "cuatro",
+   "start": 230.173,
+   "end": 230.393,
+   "conf": 0.775,
+   "speaker": null
+  },
+  {
+   "text": "meses",
+   "start": 230.473,
+   "end": 230.653,
+   "conf": 0.9,
+   "speaker": null
+  },
+  {
+   "text": "eso",
+   "start": 230.673,
+   "end": 230.733,
+   "conf": 0.001,
+   "speaker": null
+  },
+  {
+   "text": "representaría",
+   "start": 230.993,
+   "end": 231.474,
+   "conf": 0.833,
+   "speaker": null
+  },
+  {
+   "text": "20",
+   "start": 231.574,
+   "end": 231.634,
+   "conf": 0.766,
+   "speaker": null
+  },
+  {
+   "text": "mil",
+   "start": 231.694,
+   "end": 231.774,
+   "conf": 0.961,
+   "speaker": null
+  },
+  {
+   "text": "dólares",
+   "start": 231.794,
+   "end": 232.074,
+   "conf": 0.842,
+   "speaker": null
+  },
+  {
+   "text": "de",
+   "start": 232.514,
+   "end": 232.574,
+   "conf": 0.956,
+   "speaker": null
+  },
+  {
+   "text": "lo",
+   "start": 232.614,
+   "end": 232.674,
+   "conf": 0.944,
+   "speaker": null
+  },
+  {
+   "text": "que...",
+   "start": 232.734,
+   "end": 233.114,
+   "conf": 0.838,
+   "speaker": null
+  },
+  {
+   "text": "Más",
+   "start": 233.495,
+   "end": 233.615,
+   "conf": 0.223,
+   "speaker": null
+  },
+  {
+   "text": "o",
+   "start": 233.635,
+   "end": 233.655,
+   "conf": 0.007,
+   "speaker": null
+  },
+  {
+   "text": "menos.",
+   "start": 233.675,
+   "end": 233.875,
+   "conf": 0.357,
+   "speaker": null
+  }
+ ],
+ "segments": [
+  {
+   "start": 0.432,
+   "end": 3.279,
+   "text": " ¿Cómo le fue trabajando con el equipo estos primeros cuatro meses?"
+  },
+  {
+   "start": 4.662,
+   "end": 8.03,
+   "text": "Pues te tengo que decir que para mí fue"
+  },
+  {
+   "start": 9.897,
+   "end": 12.34,
+   "text": " Llenaron mis expectativas y las superaron."
+  },
+  {
+   "start": 13.061,
+   "end": 16.685,
+   "text": "Realmente eran dos áreas."
+  },
+  {
+   "start": 16.725,
+   "end": 21.01,
+   "text": "Primero era lo de las plataformas de los AI, los pods y demás."
+  },
+  {
+   "start": 21.59,
+   "end": 28.598,
+   "text": " Y pues todo eso ha funcionado perfectamente, bien dispuestos todos siempre a ir trabajando y sobre la mancha y corrigiendo lo que..."
+  },
+  {
+   "start": 29.299,
+   "end": 39.032,
+   "text": " lo que necesitábamos para que funcionara y por lo cuanto a los anuncios o el marketing pues también o sea yo nunca había trabajado en marketing"
+  },
+  {
+   "start": 39.855,
+   "end": 50.571,
+   "text": " con alguien y tampoco lo había trabajado tan intensamente ninguno de los canales, ni Facebook ni Instagram, así que pues tenía mis reseñas pero me tiré el charco y pues a ver qué pasaba"
+  },
+  {
+   "start": 51.368,
+   "end": 60.779,
+   "text": " y me dieron mucha seguridad en lo que estaban haciendo me gustó como lo estaban haciendo y te tengo que decir que los números están realmente no doy abasto"
+  },
+  {
+   "start": 62.262,
+   "end": 64.151,
+   "text": " en cuestión de llamadas en cuestión de"
+  },
+  {
+   "start": 65.872,
+   "end": 69.015,
+   "text": " de citas que se han calendarizado y se han coordinado."
+  },
+  {
+   "start": 69.776,
+   "end": 75.142,
+   "text": "Tanto así que la secretaria se ha tenido que envolver en eso para darle seguimiento a las llamadas y a la agenda."
+  },
+  {
+   "start": 75.882,
+   "end": 81.789,
+   "text": " Así que ciertamente se ha visto la promoción, la gente me lo dice."
+  },
+  {
+   "start": 83.953,
+   "end": 90.93,
+   "text": " Hay veces que ahora hay compañeros de trabajo y en el tribunal me dicen, ah, vi tu promoción y yo no sé ni qué me está... Al principio no sabía que me estaban hablando hasta que..."
+  },
+  {
+   "start": 91.571,
+   "end": 100.517,
+   "text": " Finalmente cae en cuenta, pero se está llegando al mercado, están llegando a la oficina y se está traduciendo a nivel de..."
+  },
+  {
+   "start": 101.68,
+   "end": 107.585,
+   "text": " de contrataciones y obviamente después de ingresos que es lo que uno siempre espera así que estoy bien contento de lo que ha pasado"
+  },
+  {
+   "start": 108.648,
+   "end": 111.011,
+   "text": " Qué bueno, qué bueno, licenciado, de escuchar eso."
+  },
+  {
+   "start": 112.453,
+   "end": 116.678,
+   "text": "Sé que igual usted tiene dos servicios contratados con nosotros, que es el servicio de marketing."
+  },
+  {
+   "start": 117.078,
+   "end": 123.451,
+   "text": " y el servicio de las automatizaciones usted como tal tiene el asistente de chat y tiene el recepcionista de voz ¿verdad?"
+  },
+  {
+   "start": 123.491,
+   "end": 126.697,
+   "text": "que básicamente tenemos como todos los canales cubiertos"
+  },
+  {
+   "start": 127.378,
+   "end": 129.402,
+   "text": " Usted nos comenta que no da abasto."
+  },
+  {
+   "start": 129.763,
+   "end": 136.797,
+   "text": "Si quiero saber, digamos, si de pronto usted tiene una métrica de cuántas llamadas o mensajes recibe el día, cuántas citas están logrando agendar."
+  },
+  {
+   "start": 137.519,
+   "end": 140.655,
+   "text": " para también poder tener nosotros como esa métrica por parte suya."
+  },
+  {
+   "start": 141.246,
+   "end": 152.53,
+   "text": " Yo entiendo que están entrando a nivel de WhatsApp, que es el más fácil de medir, por lo menos de indagaciones que desean una consulta."
+  },
+  {
+   "start": 153.402,
+   "end": 156.148,
+   "text": " Diariamente yo entiendo que están entrando entre 25 a 50 mensajes."
+  },
+  {
+   "start": 161.759,
+   "end": 166.275,
+   "text": " en el horario casi siempre es de madrugada no sé por qué pero entran muchas llamadas"
+  },
+  {
+   "start": 167.859,
+   "end": 171.307,
+   "text": " Gracias a Dios que está el sistema, porque de otra manera no habría manera."
+  },
+  {
+   "start": 171.448,
+   "end": 172.289,
+   "text": "Yo estoy durmiendo."
+  },
+  {
+   "start": 172.791,
+   "end": 175.978,
+   "text": "Pero sí lo veo cuando me despierto de que el sistema ha seguido generando."
+  },
+  {
+   "start": 176.659,
+   "end": 179.163,
+   "text": " contactando, respondiendo al cliente."
+  },
+  {
+   "start": 179.743,
+   "end": 186.513,
+   "text": "Pero yo entiendo que sí que está entre 25 a 50, dependiendo del día, no importa el día de la semana, los siete días está llegando."
+  },
+  {
+   "start": 187.465,
+   "end": 193.614,
+   "text": " De eso a cuántos se convierten en los últimos dos meses, por decirlo así."
+  },
+  {
+   "start": 195.483,
+   "end": 199.188,
+   "text": " provenientes han contratado como algunos 10 personas."
+  },
+  {
+   "start": 199.508,
+   "end": 204.534,
+   "text": "La avalancha de consultas fue tanta que entonces tuve que cambiar el formato"
+  },
+  {
+   "start": 204.774,
+   "end": 206.277,
+   "text": " para que pagaran la consulta."
+  },
+  {
+   "start": 206.537,
+   "end": 212.948,
+   "text": "Y en las consultas se están entrando consultas pagas alrededor de dos a cuatro diarias."
+  },
+  {
+   "start": 213.391,
+   "end": 223.93,
+   "text": " Ya, por último, sí me gustaría mucho saber, digamos, a nivel de ingresos, solo como por tener un promedio, cómo estaba antes de empezar a trabajar con nosotros y cómo estamos al día de hoy, hablando solo como en un promedio."
+  },
+  {
+   "start": 224.35,
+   "end": 229.433,
+   "text": " puede estar representando como de algunos cerca de algunos 5 mil dólares más mensuales."
+  },
+  {
+   "start": 229.633,
+   "end": 233.875,
+   "text": "Buenísimo, que en cuatro meses eso representaría 20 mil dólares de lo que... Más o menos."
+  }
+ ],
+ "duration": 234.496875,
+ "seconds": 1012.5,
+ "cost_usd": 0.0
+}

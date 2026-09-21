@@ -70,3 +70,22 @@ Fuente del dato: Elvin (14/08). El resto es textual del cliente.
    cliente nuestro".
 3. **Una prueba por pieza.** No apilar los dos testimonios en el mismo guion.
 4. Registro **de usted** en ads (ver [[estilo/ai-borinquen]]).
+
+
+---
+
+## Lcdo. Ernest Crison — oficina legal (chat + voz + CRM + marketing)
+
+**Fuente:** video-entrevista (21/09/2026, `~/Downloads/copy_CDEADEED….MOV`, transcrito con Cortex/whisperx). A los 4 meses. Tiene los DOS servicios: marketing (Level Up) y automatizaciones (AIB: asistente de chat + recepcionista de voz).
+
+**Los datos duros (textuales del cliente):**
+> "Llenaron mis expectativas y las superaron."
+> "Realmente no doy abasto en cuestión de llamadas, en cuestión de citas que se han calendarizado y coordinado. Tanto así que la secretaria se ha tenido que envolver en eso."
+> "Diariamente están entrando entre 25 a 50 mensajes… casi siempre de madrugada. Gracias a Dios que está el sistema, porque de otra manera no habría manera. Yo estoy durmiendo, pero lo veo cuando me despierto: el sistema ha seguido contactando, respondiendo al cliente."
+> "En los últimos dos meses han contratado unas 10 personas. La avalancha de consultas fue tanta que tuve que cambiar el formato para que pagaran la consulta: entran consultas pagas alrededor de dos a cuatro diarias."
+> "Puede estar representando cerca de unos 5 mil dólares más mensuales." (≈ $20K en 4 meses)
+> "Compañeros en el tribunal me dicen: vi tu promoción."
+
+**Para qué sirve cada parte:** *25–50 mensajes/día de madrugada + "yo estoy durmiendo"* → Ángulo 4 (noche y fin de semana) y #7 (speed to lead). *"No doy abasto… la secretaria se tuvo que envolver"* → Ángulo 3 (el humano no da abasto, la IA sí). *"$5K más al mes"* → la cuenta que nadie te hace. *"Superaron mis expectativas / bien dispuestos a corregir sobre la marcha"* → Ángulo D (no desaparecemos).
+
+⚠️ Es el mejor testimonio de AIB hasta hoy y está en VIDEO: cortar 30–45 s para pre-call y anuncios (con su permiso).

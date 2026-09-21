@@ -21,7 +21,7 @@ const LOGO = path.join(ROOT, "public", "marcas", "ai-borinquen-logo-dark.png");
 const TESTIMONIOS = [
   { nombre: "Teo · Mano Santa PR", rubro: "Terapia", frase: "Respondía el 20 % de sus leads. Hoy responde en segundos y agenda solo." },
   { nombre: "Milton · Caribe Paint", rubro: "Pintura", frase: "“Pensé que sería mucho más complicado. Ha sido bastante fácil.”" },
-  { nombre: "Lcdo. Ernest Crison", rubro: "Oficina legal", frase: "Ecosistema completo: agente de chat, agente de voz y CRM. Ningún cliente se queda sin respuesta." },
+  { nombre: "Lcdo. Ernest Crison", rubro: "Oficina legal · chat + voz + CRM", frase: "“Llenaron mis expectativas y las superaron. No doy abasto en llamadas y citas. Entran 25 a 50 mensajes al día, casi siempre de madrugada… gracias a Dios que está el sistema.”" },
   { nombre: "", rubro: "", frase: "" },
 ];
 
