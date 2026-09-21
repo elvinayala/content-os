@@ -4,7 +4,7 @@ import { NOMBRE_APP, SUBTITULO_APP } from "@/lib/pulse/types";
 
 export const metadata: Metadata = {
   title: `${NOMBRE_APP} · ${SUBTITULO_APP}`,
-  description: "El CRM de clientes de Level Up Media y AI Borinquen.",
+  description: "CRM de clientes · EA Market LLC",
 };
 
 // La clase .pulse scopea el tema claro (app/globals.css). El shell con sidebar vive en

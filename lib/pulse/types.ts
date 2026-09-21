@@ -3,7 +3,7 @@
 // items con `values` = { [columnId]: ValorCelda }.
 
 export const NOMBRE_APP = "Pulse";
-export const SUBTITULO_APP = "Level Up Media";
+export const SUBTITULO_APP = "EA Market LLC";
 
 export type TipoColumna =
   | "text"
