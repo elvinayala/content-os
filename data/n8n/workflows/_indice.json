@@ -1,8 +1,15 @@
 {
-  "exportadoEl": "2026-09-21T14:19:21.028Z",
+  "exportadoEl": "2026-09-21T14:29:16.300Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
-  "total": 99,
+  "total": 100,
   "workflows": [
+    {
+      "id": "3DeJXvNmTFQ44FIF",
+      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
+      "activo": true,
+      "archivo": "3DeJXvNmTFQ44FIF-recordatorio60-90diastrabajandojuntos.json",
+      "actualizadoEl": "2026-09-21T14:19:29.638Z"
+    },
     {
       "id": "0mEMnsMxnuy3SGjh",
       "nombre": "My Sub-Workflow 2",
@@ -23,13 +30,6 @@
       "activo": true,
       "archivo": "61jM0xZxj4LvFEtX-c-creador-de-copy-s-v1-devflow.json",
       "actualizadoEl": "2026-01-06T14:14:23.574Z"
-    },
-    {
-      "id": "HvMsL5j65etc7ZBq",
-      "nombre": "E-) Agente supervisor",
-      "activo": true,
-      "archivo": "HvMsL5j65etc7ZBq-e-agente-supervisor.json",
-      "actualizadoEl": "2026-01-07T03:35:00.407Z"
     },
     {
       "id": "J6gK0AYy7Bbz4NC2",
@@ -179,13 +179,6 @@
       "actualizadoEl": "2026-07-31T01:53:53.882Z"
     },
     {
-      "id": "gYdcVTS1dmuZRp0W",
-      "nombre": "Agente Cobros",
-      "activo": true,
-      "archivo": "gYdcVTS1dmuZRp0W-agente-cobros.json",
-      "actualizadoEl": "2026-02-02T02:15:02.996Z"
-    },
-    {
       "id": "Sb6dLyiZnMJtc6AC",
       "nombre": "C-) Lógica envío de reportes v5",
       "activo": true,
@@ -284,13 +277,6 @@
       "actualizadoEl": "2026-06-27T18:14:56.392Z"
     },
     {
-      "id": "3DeJXvNmTFQ44FIF",
-      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
-      "activo": true,
-      "archivo": "3DeJXvNmTFQ44FIF-recordatorio60-90diastrabajandojuntos.json",
-      "actualizadoEl": "2026-02-02T03:22:58.706Z"
-    },
-    {
       "id": "rb5SOZw8rT5YXKg8",
       "nombre": "B-) Agente de onboarding v5",
       "activo": true,
@@ -359,6 +345,27 @@
       "activo": true,
       "archivo": "7DRJJjTva38GSoGg-j-envio-de-mensaje-de-bienvenida.json",
       "actualizadoEl": "2026-01-21T21:38:41.085Z"
+    },
+    {
+      "id": "g7hZaosZ24Dgifbg",
+      "nombre": "A-) Sync Pulse → NocoDB equipo v1",
+      "activo": true,
+      "archivo": "g7hZaosZ24Dgifbg-a-sync-pulse-nocodb-equipo-v1.json",
+      "actualizadoEl": "2026-09-21T14:19:27.799Z"
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "archivo": "gYdcVTS1dmuZRp0W-agente-cobros.json",
+      "actualizadoEl": "2026-09-21T14:19:29.285Z"
+    },
+    {
+      "id": "HvMsL5j65etc7ZBq",
+      "nombre": "E-) Agente supervisor",
+      "activo": true,
+      "archivo": "HvMsL5j65etc7ZBq-e-agente-supervisor.json",
+      "actualizadoEl": "2026-09-21T14:19:29.992Z"
     },
     {
       "id": "cEPWfieOs6tWBdWa",

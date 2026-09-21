@@ -126,3 +126,27 @@ Elvin dio el OK; `PULSE_N8N_MODO=real` en Vercel. Primera corrida real con los 9
   personas que Pulse tiene pero no existen en la tabla `equipo` de NocoDB (se resuelve en el paso 2).
 - Desde ahora **Pulse es la fuente** de los agentes; Migración v5 (Monday) sigue activa en paralelo
   como doble corrida hasta apagarla.
+
+## 21/sep/2026 — TODO migrado en un día (pedido de Elvin: "tiene que quedar hoy")
+
+- ✅ **Tesorería** (338 items, 328 relaciones a clientes) y **Cumpleaños** (48) migrados a Pulse
+  (`/pulse/tesoreria`, `/pulse/cumpleanos`). El migrador ahora resuelve relaciones contra la base.
+- ✅ `GET /api/pulse/n8n/tablero/<slug>[?idMonday=]` devuelve cualquier tablero **con la forma de la
+  API de Monday** (column_values con column.title/text/display_value; mirror "finaliza acuerdo"
+  recalculado). `GET /api/pulse/n8n/equipo` = Cumpleaños + usuarios asignados a clientes.
+- ✅ Workflow **"A-) Sync Pulse → NocoDB equipo v1"** (g7hZaosZ24Dgifbg): webhook `pulse-equipo` +
+  nocturna 5:00. Primera corrida: 10 personas nuevas (Juan José Cruz, Dehivy, Juan David, Ángela…),
+  5 actualizadas. Luego clientes: +17 links de estratega. Cruce por ID-monday, email, ID-columna-
+  cumpleaños o nombre (las filas viejas de Monday sin ID-monday quedan como huérfanas inofensivas).
+- ✅ **Repunte a Pulse** (`repuntar`): Agente Cobros, Recordatorio 60-90 y Agente supervisor leen
+  Pulse en vez de Monday (nodos Monday eliminados, índices → búsqueda por título, filtros de la query
+  GraphQL replicados en un nodo Filter). **Paridad verificada**: la corrida de las 9 AM con Monday
+  posteó Xavier Rufino (cobro) y Gabriel Martinez (60 días); la simulación con Pulse da los mismos.
+- ✅ `apagar-monday`: desactiva Migración v5 y actualización de estratega. Pulse = única fuente.
+- Dormidos con Monday (0 corridas, nadie los llama): "C-) Herramienta - Procesar Vacaciones" (tool
+  del Agente RH inactivo; HR ya está en Pulse — si se despierta el RH, repuntar) y "C.1) Agente de
+  monitoreo (Jul 11)" (copia vieja; el vivo es B-) v3 con NocoDB). Se pueden archivar.
+- **Monday se puede cancelar** cuando Elvin quiera. Antes: exportar respaldo final (ya hay
+  `data/pulse-migracion.json` + los JSON de n8n) y avisar al equipo que Pulse es el tablero.
+- Corte con el proveedor: Aure cambia accesos hoy antes de las 7 PM y avisa a Luis a las 7 PM
+  (tarea `recordatorio-aure-n8n-accesos` 9/13/17 h).

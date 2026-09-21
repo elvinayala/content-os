@@ -1,0 +1,838 @@
+{
+  "updatedAt": "2026-09-21T14:19:27.799Z",
+  "createdAt": "2026-09-21T14:19:27.799Z",
+  "id": "g7hZaosZ24Dgifbg",
+  "name": "A-) Sync Pulse → NocoDB equipo v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "n-nota",
+      "name": "Nota",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "width": 480,
+        "height": 200,
+        "content": "## Sync Pulse → NocoDB equipo v1\nMantiene la tabla **equipo** de NocoDB (ID-monday, nombre, email, ID-slack, ID-columna-cumpleaños) desde Pulse: tablero Cumpleaños + usuarios asignados a clientes. Antes lo hacía Migración v5 con los webhooks del tablero Cumpleaños de Monday.\n\nWebhook `pulse-equipo` (Pulse avisa al tocar Cumpleaños) + cada noche 5:00. Nunca borra filas. Fuente: scripts/n8n-sync-pulse.mjs."
+      }
+    },
+    {
+      "id": "n-webhook-pulse-equipo",
+      "name": "Webhook Pulse equipo",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pulse-equipo",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "pulse-equipo-sync",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "n-cada-noche-5-00",
+      "name": "Cada noche 5:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n-traer-equipo-de-pulse",
+      "name": "Traer equipo de Pulse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/equipo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "n-equipo-en-nocodb",
+      "name": "Equipo en NocoDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records?limit=500",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "stopWorkflow"
+    },
+    {
+      "id": "n-decidir-equipo",
+      "name": "Decidir equipo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const pulse = $('Traer equipo de Pulse').first().json;\nconst personas = Array.isArray(pulse.personas) ? pulse.personas : [];\nconst filas = ($input.first().json.list) || [];\nconst norm = (s) => String(s || '').trim().toLowerCase();\nconst out = [];\nfor (const p of personas) {\n  const fila = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))\n    || (p.email && filas.find((f) => norm(f.email) === norm(p.email)))\n    || (p.idColumnaCumpleanos && filas.find((f) => String(f['ID-columna-cumpleaños'] || '') === String(p.idColumnaCumpleanos)))\n    || null;\n  const campos = { nombre: p.nombre || '', email: p.email || '', 'ID-slack': p.idSlack || '' };\n  if (p.idMonday) campos['ID-monday'] = String(p.idMonday);\n  if (p.idColumnaCumpleanos) campos['ID-columna-cumpleaños'] = String(p.idColumnaCumpleanos);\n  let accion = fila ? 'actualizar' : 'crear';\n  const cambios = fila ? Object.keys(campos).filter((k) => String(fila[k] ?? '') !== String(campos[k] ?? '')) : Object.keys(campos);\n  if (fila && !cambios.length) accion = 'nada';\n  if (pulse.simulacion && accion !== 'nada') accion = 'simular';\n  out.push({ json: { accion, filaId: fila ? fila.Id : null, campos, cambios, resumen: accion + ' ' + (p.nombre || '') + (cambios.length ? ' [' + cambios.join(', ') + ']' : '') } });\n}\nreturn out;"
+      }
+    },
+    {
+      "id": "n--qu-hacer-",
+      "name": "¿Qué hacer?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1040,
+        0
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "crear",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crear"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c2",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "actualizar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "actualizar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      }
+    },
+    {
+      "id": "n-crear-persona",
+      "name": "Crear persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.campos) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "n-actualizar-persona",
+      "name": "Actualizar persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, ...$json.campos }]) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "n-nada-simulaci-n",
+      "name": "Nada / simulación",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        200
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Webhook Pulse equipo": {
+      "main": [
+        [
+          {
+            "node": "Traer equipo de Pulse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cada noche 5:00": {
+      "main": [
+        [
+          {
+            "node": "Traer equipo de Pulse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer equipo de Pulse": {
+      "main": [
+        [
+          {
+            "node": "Equipo en NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Equipo en NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Decidir equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir equipo": {
+      "main": [
+        [
+          {
+            "node": "¿Qué hacer?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Qué hacer?": {
+      "main": [
+        [
+          {
+            "node": "Crear persona",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar persona",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nada / simulación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Cada noche 5:00": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "ee97a933-6721-426d-9775-4eb9b2faa9e3",
+  "activeVersionId": "ee97a933-6721-426d-9775-4eb9b2faa9e3",
+  "versionCounter": 4,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-09-21T14:19:27.799Z",
+      "createdAt": "2026-09-21T14:19:27.799Z",
+      "role": "workflow:owner",
+      "workflowId": "g7hZaosZ24Dgifbg",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-21T12:00:42.696Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-09-21T14:19:27.835Z",
+    "createdAt": "2026-09-21T14:19:27.835Z",
+    "versionId": "ee97a933-6721-426d-9775-4eb9b2faa9e3",
+    "workflowId": "g7hZaosZ24Dgifbg",
+    "nodes": [
+      {
+        "id": "n-nota",
+        "name": "Nota",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -400
+        ],
+        "parameters": {
+          "width": 480,
+          "height": 200,
+          "content": "## Sync Pulse → NocoDB equipo v1\nMantiene la tabla **equipo** de NocoDB (ID-monday, nombre, email, ID-slack, ID-columna-cumpleaños) desde Pulse: tablero Cumpleaños + usuarios asignados a clientes. Antes lo hacía Migración v5 con los webhooks del tablero Cumpleaños de Monday.\n\nWebhook `pulse-equipo` (Pulse avisa al tocar Cumpleaños) + cada noche 5:00. Nunca borra filas. Fuente: scripts/n8n-sync-pulse.mjs."
+        }
+      },
+      {
+        "id": "n-webhook-pulse-equipo",
+        "name": "Webhook Pulse equipo",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "pulse-equipo",
+          "authentication": "headerAuth",
+          "responseMode": "onReceived",
+          "options": {}
+        },
+        "webhookId": "pulse-equipo-sync",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
+          }
+        }
+      },
+      {
+        "id": "n-cada-noche-5-00",
+        "name": "Cada noche 5:00",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 5,
+                "triggerAtMinute": 0
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "n-traer-equipo-de-pulse",
+        "name": "Traer equipo de Pulse",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          260,
+          0
+        ],
+        "parameters": {
+          "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/equipo",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
+          }
+        }
+      },
+      {
+        "id": "n-equipo-en-nocodb",
+        "name": "Equipo en NocoDB",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          520,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records?limit=500",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 150
+              }
+            }
+          }
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "stopWorkflow"
+      },
+      {
+        "id": "n-decidir-equipo",
+        "name": "Decidir equipo",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          780,
+          0
+        ],
+        "parameters": {
+          "jsCode": "const pulse = $('Traer equipo de Pulse').first().json;\nconst personas = Array.isArray(pulse.personas) ? pulse.personas : [];\nconst filas = ($input.first().json.list) || [];\nconst norm = (s) => String(s || '').trim().toLowerCase();\nconst out = [];\nfor (const p of personas) {\n  const fila = (p.idMonday && filas.find((f) => String(f['ID-monday'] || '') === String(p.idMonday)))\n    || (p.email && filas.find((f) => norm(f.email) === norm(p.email)))\n    || (p.idColumnaCumpleanos && filas.find((f) => String(f['ID-columna-cumpleaños'] || '') === String(p.idColumnaCumpleanos)))\n    || null;\n  const campos = { nombre: p.nombre || '', email: p.email || '', 'ID-slack': p.idSlack || '' };\n  if (p.idMonday) campos['ID-monday'] = String(p.idMonday);\n  if (p.idColumnaCumpleanos) campos['ID-columna-cumpleaños'] = String(p.idColumnaCumpleanos);\n  let accion = fila ? 'actualizar' : 'crear';\n  const cambios = fila ? Object.keys(campos).filter((k) => String(fila[k] ?? '') !== String(campos[k] ?? '')) : Object.keys(campos);\n  if (fila && !cambios.length) accion = 'nada';\n  if (pulse.simulacion && accion !== 'nada') accion = 'simular';\n  out.push({ json: { accion, filaId: fila ? fila.Id : null, campos, cambios, resumen: accion + ' ' + (p.nombre || '') + (cambios.length ? ' [' + cambios.join(', ') + ']' : '') } });\n}\nreturn out;"
+        }
+      },
+      {
+        "id": "n--qu-hacer-",
+        "name": "¿Qué hacer?",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1040,
+          0
+        ],
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "c1",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "crear",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "crear"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "c2",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "actualizar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "actualizar"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        }
+      },
+      {
+        "id": "n-crear-persona",
+        "name": "Crear persona",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1300,
+          -200
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.campos) }}",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 150
+              }
+            }
+          }
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "n-actualizar-persona",
+        "name": "Actualizar persona",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1300,
+          0
+        ],
+        "parameters": {
+          "method": "PATCH",
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/m0uib6kq4i1gelp/records",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify([{ Id: $json.filaId, ...$json.campos }]) }}",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 150
+              }
+            }
+          }
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "n-nada-simulaci-n",
+        "name": "Nada / simulación",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1300,
+          200
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Webhook Pulse equipo": {
+        "main": [
+          [
+            {
+              "node": "Traer equipo de Pulse",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cada noche 5:00": {
+        "main": [
+          [
+            {
+              "node": "Traer equipo de Pulse",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Traer equipo de Pulse": {
+        "main": [
+          [
+            {
+              "node": "Equipo en NocoDB",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Equipo en NocoDB": {
+        "main": [
+          [
+            {
+              "node": "Decidir equipo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir equipo": {
+        "main": [
+          [
+            {
+              "node": "¿Qué hacer?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Qué hacer?": {
+        "main": [
+          [
+            {
+              "node": "Crear persona",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Actualizar persona",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Nada / simulación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-09-21T14:19:28.594Z",
+        "id": 228,
+        "workflowId": "g7hZaosZ24Dgifbg",
+        "versionId": "ee97a933-6721-426d-9775-4eb9b2faa9e3",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}

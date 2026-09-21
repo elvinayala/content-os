@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-02T02:15:02.996Z",
+  "updatedAt": "2026-09-21T14:19:29.285Z",
   "createdAt": "2025-12-09T13:02:41.951Z",
   "id": "gYdcVTS1dmuZRp0W",
   "name": "Agente Cobros",
@@ -9,20 +9,12 @@
   "nodes": [
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.monday.com/v2",
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/tablero/tesoreria",
         "authentication": "genericCredentialType",
-        "genericAuthType": "oAuth2Api",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "query",
-              "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (limit: 500, query_params: {operator: and, rules: [{column_id: \"text_mkpqm0g9\", operator: not_contains_text, compare_value: [\"saldo completo\"]}, {column_id: \"group\", operator: not_any_of, compare_value: [\"group_mkqxsqsk\"]}]}) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}"
-            }
-          ]
-        },
-        "options": {}
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
@@ -33,15 +25,17 @@
       "id": "6b346181-aa71-4e8d-a4f5-0b5c09c3009c",
       "name": "HTTP Request",
       "credentials": {
-        "oAuth2Api": {
-          "id": "WKPprnBqgbub4iWX",
-          "name": "monday.com Credentials"
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
         }
-      }
+      },
+      "notes": "Nico 21/sep/2026: antes leía el tablero TESORERÍA de Monday (GraphQL); ahora lee Pulse con la misma forma.",
+      "notesInFlow": true
     },
     {
       "parameters": {
-        "fieldToSplitOut": "data.boards[0].items_page.items",
+        "fieldToSplitOut": "items",
         "options": {}
       },
       "type": "n8n-nodes-base.splitOut",
@@ -102,28 +96,6 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "boardItem",
-        "operation": "get",
-        "itemId": "={{ $json.id }}"
-      },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
-      "position": [
-        1424,
-        -384
-      ],
-      "id": "c9869815-56aa-4e42-9044-d245aa8003a3",
-      "name": "Get an item1",
-      "credentials": {
-        "mondayComOAuth2Api": {
-          "id": "7emakKOqBk6HAsSo",
-          "name": "Monday.com levelup"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -134,7 +106,7 @@
           "conditions": [
             {
               "id": "cc1cb883-b571-4ccd-aed6-a18be5eb7ccc",
-              "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+              "leftValue": "={{ ($json.column_values.find(c => c.column && c.column.title === 'Próximo pago') || {}).text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
               "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
               "operator": {
                 "type": "dateTime",
@@ -143,7 +115,7 @@
             },
             {
               "id": "8706eb06-f804-4386-96e5-043563aa1eeb",
-              "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+              "leftValue": "={{ ($json.column_values.find(c => c.column && c.column.title === 'Próximo pago') || {}).text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
               "rightValue": "",
               "operator": {
                 "type": "dateTime",
@@ -274,6 +246,49 @@
       ],
       "id": "fb897a64-1ce4-4549-9de1-92a07825a453",
       "name": "If1"
+    },
+    {
+      "id": "n-filtro-tesorer-a-pulse-",
+      "name": "Filtro tesorería (Pulse)",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        -184
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.group.id }}",
+              "rightValue": "group_mkqxsqsk",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{ !/saldo completo/i.test(String(($json.column_values.find(c => c.column && c.column.title === 'COMENTARIOS') || {}).text || '')) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
     }
   ],
   "connections": {
@@ -292,7 +307,7 @@
       "main": [
         [
           {
-            "node": "Filter",
+            "node": "Filtro tesorería (Pulse)",
             "type": "main",
             "index": 0
           }
@@ -310,22 +325,11 @@
         ]
       ]
     },
-    "Get an item1": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Filter": {
       "main": [
         [
           {
-            "node": "Get an item1",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -371,6 +375,17 @@
           }
         ]
       ]
+    },
+    "Filtro tesorería (Pulse)": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -388,9 +403,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
-  "activeVersionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
-  "versionCounter": 34,
+  "versionId": "8290d393-5e08-4a84-90c2-624b4e58f8d1",
+  "activeVersionId": "8290d393-5e08-4a84-90c2-624b4e58f8d1",
+  "versionCounter": 37,
   "triggerCount": 1,
   "shared": [
     {
@@ -453,27 +468,19 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-01-13T22:38:37.691Z",
-    "createdAt": "2026-01-13T22:38:20.732Z",
-    "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+    "updatedAt": "2026-09-21T14:19:29.288Z",
+    "createdAt": "2026-09-21T14:19:29.288Z",
+    "versionId": "8290d393-5e08-4a84-90c2-624b4e58f8d1",
     "workflowId": "gYdcVTS1dmuZRp0W",
     "nodes": [
       {
         "parameters": {
-          "method": "POST",
-          "url": "https://api.monday.com/v2",
+          "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/tablero/tesoreria",
           "authentication": "genericCredentialType",
-          "genericAuthType": "oAuth2Api",
-          "sendBody": true,
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "query",
-                "value": "query {\n  boards (ids: [8862995033]) {\n    items_page (limit: 500, query_params: {operator: and, rules: [{column_id: \"text_mkpqm0g9\", operator: not_contains_text, compare_value: [\"saldo completo\"]}, {column_id: \"group\", operator: not_any_of, compare_value: [\"group_mkqxsqsk\"]}]}) {\n      items {\n        id\n        name\n        group {\n          id\n          title\n        }\n        column_values {\n          id\n          type\n          text\n          value\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            linked_item_ids\n            display_value\n          }\n          ... on StatusValue {\n            label\n          }\n        }\n      }\n    }\n  }\n}"
-              }
-            ]
-          },
-          "options": {}
+          "genericAuthType": "httpHeaderAuth",
+          "options": {
+            "timeout": 60000
+          }
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
@@ -484,15 +491,17 @@
         "id": "6b346181-aa71-4e8d-a4f5-0b5c09c3009c",
         "name": "HTTP Request",
         "credentials": {
-          "oAuth2Api": {
-            "id": "WKPprnBqgbub4iWX",
-            "name": "monday.com Credentials"
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
           }
-        }
+        },
+        "notes": "Nico 21/sep/2026: antes leía el tablero TESORERÍA de Monday (GraphQL); ahora lee Pulse con la misma forma.",
+        "notesInFlow": true
       },
       {
         "parameters": {
-          "fieldToSplitOut": "data.boards[0].items_page.items",
+          "fieldToSplitOut": "items",
           "options": {}
         },
         "type": "n8n-nodes-base.splitOut",
@@ -553,28 +562,6 @@
       },
       {
         "parameters": {
-          "authentication": "oAuth2",
-          "resource": "boardItem",
-          "operation": "get",
-          "itemId": "={{ $json.id }}"
-        },
-        "type": "n8n-nodes-base.mondayCom",
-        "typeVersion": 1,
-        "position": [
-          1424,
-          -384
-        ],
-        "id": "c9869815-56aa-4e42-9044-d245aa8003a3",
-        "name": "Get an item1",
-        "credentials": {
-          "mondayComOAuth2Api": {
-            "id": "7emakKOqBk6HAsSo",
-            "name": "Monday.com levelup"
-          }
-        }
-      },
-      {
-        "parameters": {
           "conditions": {
             "options": {
               "caseSensitive": true,
@@ -585,7 +572,7 @@
             "conditions": [
               {
                 "id": "cc1cb883-b571-4ccd-aed6-a18be5eb7ccc",
-                "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                "leftValue": "={{ ($json.column_values.find(c => c.column && c.column.title === 'Próximo pago') || {}).text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
                 "rightValue": "={{ $now.setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
                 "operator": {
                   "type": "dateTime",
@@ -594,7 +581,7 @@
               },
               {
                 "id": "8706eb06-f804-4386-96e5-043563aa1eeb",
-                "leftValue": "={{ $json.column_values[5].text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
+                "leftValue": "={{ ($json.column_values.find(c => c.column && c.column.title === 'Próximo pago') || {}).text?.toDateTime().setZone('America/Puerto_Rico').format('yyyy-MM-dd') }}",
                 "rightValue": "",
                 "operator": {
                   "type": "dateTime",
@@ -725,6 +712,49 @@
         ],
         "id": "fb897a64-1ce4-4549-9de1-92a07825a453",
         "name": "If1"
+      },
+      {
+        "id": "n-filtro-tesorer-a-pulse-",
+        "name": "Filtro tesorería (Pulse)",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1080,
+          -184
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.group.id }}",
+                "rightValue": "group_mkqxsqsk",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              },
+              {
+                "id": "c2",
+                "leftValue": "={{ !/saldo completo/i.test(String(($json.column_values.find(c => c.column && c.column.title === 'COMENTARIOS') || {}).text || '')) }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
       }
     ],
     "connections": {
@@ -743,7 +773,7 @@
         "main": [
           [
             {
-              "node": "Filter",
+              "node": "Filtro tesorería (Pulse)",
               "type": "main",
               "index": 0
             }
@@ -761,22 +791,11 @@
           ]
         ]
       },
-      "Get an item1": {
-        "main": [
-          [
-            {
-              "node": "Code in JavaScript",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Filter": {
         "main": [
           [
             {
-              "node": "Get an item1",
+              "node": "Code in JavaScript",
               "type": "main",
               "index": 0
             }
@@ -822,26 +841,29 @@
             }
           ]
         ]
+      },
+      "Filtro tesorería (Pulse)": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 44413b93",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-01-13T22:38:37.685Z",
-        "id": 79,
+        "createdAt": "2026-09-21T14:19:29.381Z",
+        "id": 229,
         "workflowId": "gYdcVTS1dmuZRp0W",
-        "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
-        "event": "activated",
-        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
-      },
-      {
-        "createdAt": "2026-01-23T12:52:27.568Z",
-        "id": 105,
-        "workflowId": "gYdcVTS1dmuZRp0W",
-        "versionId": "44413b93-ac64-4f52-ac20-7ea2662e8ebb",
+        "versionId": "8290d393-5e08-4a84-90c2-624b4e58f8d1",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

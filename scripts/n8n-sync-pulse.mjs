@@ -406,6 +406,16 @@ try {
       const res = await api(`/workflows/${id}`, { method: "PUT", body: JSON.stringify({ name: nuevo.name, nodes: nuevo.nodes, connections: nuevo.connections, settings, staticData: nuevo.staticData ?? null }) });
       console.log(`✓ ${res.name} → Pulse (activo=${res.active})`);
     }
+  } else if (cmd === "apagar-monday") {
+    // El corte: desactiva los workflows que alimentaban NocoDB desde Monday. Desde acá Pulse es la
+    // única fuente. (Procesar Vacaciones y C.1 monitoreo quedan activos pero dormidos: nadie los llama.)
+    const APAGAR = { K73epIq7mbOTPL1t: "A-) Migracion de datos de monday v5", "8Af1xIlR1QJzIP6L": "C-) actualizacion diaria de estratega" };
+    for (const [id, nombre] of Object.entries(APAGAR)) {
+      const r = await api(`/workflows/${id}/deactivate`, { method: "POST" });
+      console.log(`⏸ ${r.name} (activo=${r.active})`);
+    }
+    guardarEstado({ mondayApagadoEl: new Date().toISOString() });
+    console.log("Monday ya no alimenta NocoDB. Pulse es la fuente. Los webhooks de Monday quedan apuntando a workflows inactivos (inofensivo).");
   } else if (cmd === "reporte") {
     // Qué decidió n8n en las últimas ejecuciones (sirve igual en simulación): crear/actualizar/borrar
     // por cliente, con los campos que cambian. Es el "diff" Pulse vs NocoDB de la doble corrida.
@@ -427,5 +437,5 @@ try {
       const err = full.data?.resultData?.error;
       if (err) console.log(`  ERROR en "${full.data.resultData.lastNodeExecuted}": ${err.message}`);
     }
-  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n] | crear-equipo | activar-equipo | repuntar"); process.exit(1); }
+  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n] | crear-equipo | activar-equipo | repuntar | apagar-monday"); process.exit(1); }
 } catch (e) { console.error(`sync-pulse: ${e.message}`); process.exit(1); }
