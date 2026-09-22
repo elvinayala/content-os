@@ -99,12 +99,22 @@ async function montar(aplicar) {
       // WhatsApp", subcode 2446886): el número se vinculó a mano en Ads Manager y esa vinculación
       // vive en los conjuntos que se crearon ahí. Por eso se COPIA W2 (ya optimiza conversaciones)
       // sin sus anuncios, en pausa, y después se le cambia región, presupuesto y nombre.
+      // (Ya no se usa: /copies falla por la atribución de 7 días de W2. Las copias se hacen en
+      // Ads Manager y sus ids se ponen en el plan antes de correr esto.)
+      throw new Error("Falta adsetId para " + r.slug + ": duplica W2 en Ads Manager y pon el id en el plan");
       const j = await c.graph("POST", `/${ADSET_MOLDE}/copies`, { deep_copy: false, status_option: "PAUSED" });
       n.adsetId = j.copied_adset_id; guardar();
     }
     if (!n.adsetListo) {
       await c.graph("POST", `/${n.adsetId}`, { name: `R · ${r.corto} · WhatsApp · Conversaciones`, daily_budget: r.dia * 100, targeting, end_time: FIN, status: "PAUSED" });
       n.adsetListo = true; guardar();
+    }
+    // Las copias de Ads Manager heredaron LINK_CLICKS del borrador viejo de W2: se pasa a
+    // CONVERSATIONS (lo que pidió Elvin). Si Meta no lo permite, queda en clics y se reporta.
+    if (!n.optimizacion) {
+      try { await c.graph("POST", `/${n.adsetId}`, { optimization_goal: "CONVERSATIONS" }); n.optimizacion = "CONVERSATIONS"; }
+      catch (e) { n.optimizacion = "LINK_CLICKS (Meta no dejó cambiar: " + e.message.slice(0, 120) + ")"; }
+      guardar();
     }
     if (!n.creativeId) {
       const cp = copy(r);
@@ -115,7 +125,9 @@ async function montar(aplicar) {
       const j = await c.graph("POST", `/${CUENTA}/ads`, { name: `R · ${r.corto} · Flyer regional`, adset_id: n.adsetId, creative: { creative_id: n.creativeId }, status: "PAUSED" });
       n.adId = j.id; guardar();
     }
-    console.log(`   ✔ adset ${n.adsetId} · ad ${n.adId} (EN PAUSA)`);
+    // El anuncio del flyer $1,950 (con cifras) que vino en la copia: se pausa.
+    if (n.adCopiadoId && !n.adCopiadoPausado) { await c.graph("POST", `/${n.adCopiadoId}`, { status: "PAUSED" }); n.adCopiadoPausado = true; guardar(); }
+    console.log(`   ✔ adset ${n.adsetId} · ad ${n.adId} (EN PAUSA) · objetivo ${n.optimizacion}`);
   }
   console.log(`Total: $${suma}/día · fin ${FIN}`);
   // Lo que no sirve: se pausa, no se borra (queda el historial).

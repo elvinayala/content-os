@@ -15,6 +15,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { config } from "./config.js";
 import { almacen, RAIZ } from "./almacen.js";
+import { upsertContacto } from "./integraciones/crm.js";
+import * as nina from "./community/nina.js";
+import { DIR_MEDIA } from "./community/render.js";
+import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
@@ -65,6 +69,11 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   }
   const contacto = almacen.obtenerOCrearContacto("whatsapp", m.de);
   if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
+  // Todo el que escribe queda en GHL desde el primer mensaje (aunque abandone a mitad). El agente lo clasifica después.
+  if (!contacto.ghlContactId) {
+    const ghlId = await upsertContacto({ nombre: contacto.nombre, telefono: m.de, tags: ["whatsapp-entrante"], fuente: "whatsapp" }).catch(() => undefined);
+    if (ghlId) { contacto.ghlContactId = ghlId; contacto.telefono = contacto.telefono ?? m.de; almacen.guardarContacto(contacto); }
+  }
   // Un humano tomó el chat (escalación o contestó desde el inbox); pasadas HUMANO_HORAS sin actividad humana, el agente retoma.
   if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
     contacto.humano = false; almacen.guardarContacto(contacto);
@@ -186,6 +195,34 @@ app.get("/proveedores", (_req, res) => { res.type("html").send(fs.readFileSync(p
 // PWA: manifest, service worker e íconos
 app.get("/manifest.webmanifest", (_req, res) => { res.type("application/manifest+json").send(fs.readFileSync(path.join(RAIZ, "portal", "manifest.webmanifest"))); });
 app.get("/sw.js", (_req, res) => { res.type("application/javascript").set("Service-Worker-Allowed", "/").send(fs.readFileSync(path.join(RAIZ, "portal", "sw.js"))); });
+// Material interno del equipo (decks de entrevista). Ruta no enlazada, noindex; el nombre del archivo hace de llave.
+// Los binarios se guardan en base64 (.b64) porque el CLI de Railway no sube archivos binarios.
+app.get("/equipo/:archivo", (req, res) => {
+  const nombre = path.basename(req.params.archivo);
+  const f = path.join(RAIZ, "portal", "equipo", nombre + ".b64");
+  if (!fs.existsSync(f)) return res.status(404).end();
+  const buf = Buffer.from(fs.readFileSync(f, "utf8").replace(/\s+/g, ""), "base64");
+  res.set("X-Robots-Tag", "noindex, nofollow").attachment(nombre.replace(/-k7m2p9/, "")).type("application/vnd.openxmlformats-officedocument.presenninaonml.presenninaon").send(buf);
+});
+// ── Nina · Community Manager (Zernio + Telegram) ──
+app.get("/community/media/:archivo", (req, res) => {
+  const f = path.join(DIR_MEDIA, path.basename(req.params.archivo));
+  if (!fs.existsSync(f)) return res.status(404).end();
+  res.type("png").set("Cache-Control", "public, max-age=31536000").send(fs.readFileSync(f));
+});
+app.get("/admin/nina/plan", (_req, res) => res.json({ hoy: nina.planDeHoy(), historial: nina.historial().publicaciones.slice(-10) }));
+app.post("/admin/nina/ejecutar", async (req: any, res) => {
+  const modo = (req.query.modo ?? req.body?.modo ?? "borrador") as "publicar" | "programar" | "borrador";
+  // Overrides opcionales: ?creativo=f01 (id de biblioteca) y ?fecha=YYYY-MM-DD (para programar otro día)
+  let plan = nina.planDeHoy(undefined, req.query.fecha ? String(req.query.fecha) : undefined);
+  if (req.query.creativo) {
+    const c = BIBLIOTECA.find((x) => x.id === String(req.query.creativo));
+    if (!c) return res.status(400).json({ error: "creativo no existe" });
+    plan = { ...plan, pilar: c.pilar, formato: c.formato, creativo: c, generar: false, angulo: c.tema };
+  }
+  try { res.json(await nina.ejecutar(modo, plan)); } catch (e) { res.status(500).json({ error: (e as Error).message }); }
+});
+app.post("/admin/nina/preaviso", async (_req, res) => { await nina.preaviso(); res.json({ ok: true }); });
 app.get(["/icon-192.png", "/icon-512.png"], (req, res) => { res.type("png").send(fs.readFileSync(path.join(RAIZ, "portal", path.basename(req.path)))); });
 // Push
 app.get("/api/proveedores/push/clave", (_req, res) => res.json({ clave: push.clavePublica() || null }));
@@ -225,5 +262,6 @@ function categoriasProyectos(): { id: string; nombre: string }[] { return (JSON.
 app.get("/widget.js", (_req, res) => { res.type("application/javascript"); res.send(fs.readFileSync(path.join(RAIZ, "widget", "resuelto-chat.js"), "utf8").replace("__API__", config.urlPublica)); });
 
 despacho.reanudarTimers();
-setInterval(() => encuestas.revisarPendientes().catch(console.error), 30 * 60_000); // encuestas post-visita cada 30 min
+setInterval(() => encuestas.revisarPendientes().catch(console.error), 30 * 60_000);
+nina.arrancarReloj(); // encuestas post-visita cada 30 min
 app.listen(config.port, () => console.log(`Resuelto agente escuchando en :${config.port} · modelo ${config.modelo}`));

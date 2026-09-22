@@ -257,3 +257,19 @@ Benchmarks de Meta en PR para click-to-WhatsApp con creativo decente (los uso pa
 4. Reservar 45 min diarios D1–D7 para entrevistas por video (20 min cada una). Sin ese bloque, el sprint no sirve.
 
 Fuera de este sprint, los otros canales de la Fase 0 siguen igual (`marketing-fase-0.md` §4): visitas a suplidores, grupos de Facebook y referidos son los que más entregan por dólar; los anuncios son el acelerador, no la base.
+
+
+### 22/sep (tarde) — 7 copias de W2 creadas en Ads Manager, APAGADAS
+- Duplicadas en Chrome (sin la extensión bloqueadora ya no se trabó) y publicadas **apagadas** solo desde
+  el editor del lote (el borrador viejo de W2 sigue SIN publicar). Nacieron con objetivo LINK_CLICKS
+  (heredado de ese borrador) y el anuncio "$1,950" adentro.
+- Ids (conjunto / anuncio copiado): Metro 120255069505370029 / 120255069505270029 · Caguas 120255069505320029 /
+  120255069505280029 · Ponce 120255069505330029 / 120255069505360029 · Arecibo 120255069505260029 /
+  120255069505390029 · Mayagüez 120255069505340029 / 120255069505290029 · Aguadilla 120255069505350029 /
+  120255069505300029 · Fajardo 120255069505380029 / 120255069505310029 (también en
+  `data/meta-ads/campanas/resuelto-regiones-2026-09.json`).
+- **Bloqueo**: el token (Bori) no tiene la página Resuelto PR → Meta rechaza hasta pausar un anuncio de
+  WhatsApp de esa página (subcode 2446880). Arreglo: Elvin reconecta Meta en heybori.ai marcando la
+  página Resuelto PR y corre `token-desde-bori.mjs`; luego `node scripts/meta-ads/resuelto-regiones.mjs
+  montar --aplicar` hace nombre/presupuesto/municipios/fin/objetivo CONVERSATIONS, flyer regional,
+  anuncio nuevo en pausa, pausa el $1,950 copiado y pausa W1/W2.

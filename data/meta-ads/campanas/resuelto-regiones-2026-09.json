@@ -2,7 +2,34 @@
   "campana": "120255016399820029",
   "conjuntos": {
     "metro": {
-      "imageHash": "67e57a65c3d2f13085951ca1f02b942b"
+      "imageHash": "67e57a65c3d2f13085951ca1f02b942b",
+      "adsetId": "120255069505370029",
+      "adCopiadoId": "120255069505270029"
+    },
+    "caguas": {
+      "adsetId": "120255069505320029",
+      "adCopiadoId": "120255069505280029"
+    },
+    "ponce": {
+      "adsetId": "120255069505330029",
+      "adCopiadoId": "120255069505360029"
+    },
+    "arecibo": {
+      "adsetId": "120255069505260029",
+      "adCopiadoId": "120255069505390029"
+    },
+    "mayaguez": {
+      "adsetId": "120255069505340029",
+      "adCopiadoId": "120255069505290029"
+    },
+    "aguadilla": {
+      "adsetId": "120255069505350029",
+      "adCopiadoId": "120255069505300029"
+    },
+    "fajardo": {
+      "adsetId": "120255069505380029",
+      "adCopiadoId": "120255069505310029"
     }
-  }
+  },
+  "copiasAdsManager": "22/sep/2026: 7 copias de W2 duplicadas en Ads Manager (Chrome) y publicadas APAGADAS; nacieron con LINK_CLICKS (heredado del borrador viejo de W2) y el anuncio $1,950 copiado"
 }
