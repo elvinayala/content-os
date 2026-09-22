@@ -283,7 +283,8 @@ return { json: {
   email: String(b.email || '').trim().toLowerCase(),
   telefono: tel,
   fecha: b.fecha,
-  fechaFormateada: String(b.fecha || '').slice(0, 10),
+  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.
+  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',
   eventName: b.eventName || 'Onboarding',
   zoomLink: b.zoomLink || '',
   uri: b.uri || '',
