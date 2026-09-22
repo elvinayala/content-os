@@ -43,3 +43,13 @@ test("firma HMAC-SHA256 hex del cuerpo crudo", () => {
   assert.equal(z.firmaValida(raw, "0".repeat(64)), false);
   assert.equal(z.firmaValida(raw, undefined), false);
 });
+
+test("partesDeAviso arma los 3 parámetros sin saltos de línea ni vacíos", () => {
+  const [t, q, d] = z.partesDeAviso("🔧 Candidato P-001: Benito Rivera (oficial 8842) · Bayamón\n12 años de experiencia\n\nEntrevista: miércoles 1:00pm");
+  assert.equal(t, "🔧 Candidato P-001"); assert.equal(q, "Benito Rivera (oficial 8842) · Bayamón");
+  assert.equal(d, "12 años de experiencia · Entrevista: miércoles 1:00pm");
+  for (const p of [t, q, d]) assert.ok(!/\n/.test(p) && p.trim() && p.length <= 300);
+  assert.deepEqual(z.partesDeAviso("Aviso suelto"), ["Aviso suelto", "—", "—"]);
+  assert.deepEqual(z.partesDeAviso(""), ["Aviso", "—", "—"]);
+  assert.ok(z.partesDeAviso("x: " + "y".repeat(900))[1].length <= 300);
+});

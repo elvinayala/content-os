@@ -24,6 +24,9 @@ base: "[[marketing-fase-0]] · [[ESTADO]] · [[kit/campana-reclutamiento]] · [[
 >
 > Copy, título, descripción, CTA y URL con UTM son idénticos dentro de cada campaña; solo cambia el creativo. Sin imágenes generadas por IA ni "Agregar música" de Meta (se apagó en W2). El flyer se subió a la biblioteca de la cuenta como `01-cuanto-ganas.png` (1080×1350); los recortes 1:1 y 1,91:1 cortaban el titular, así que va en **Original** (feed 4:5) y Meta avisa que no saldrá en algunas ubicaciones — aceptable. **Regla de decisión al día 3:** el conjunto con CPL/costo por conversación ≥ 2× del otro se apaga y su presupuesto pasa al ganador (sin superar $65/día). Pendiente igual: tarjeta, número de WhatsApp en W1 y W2 (y desmarcar Messenger en ambos), Instagram.
 
+> **PUBLICADAS 21/sep/2026 ~22:30 AST.** Las 4 (A1, A2, W1, W2) entraron en revisión de Meta. Lo que hubo que resolver para publicar: (1) el error "Ningún método de pago" era cache de Ads Manager — la Visa •7932 del portafolio se vinculó a la cuenta publicitaria por "Método de pago del negocio" (sin teclear tarjeta); (2) el video 9:16 no cumple 4:5–1,91:1 para el feed de IG — se dejó Advantage+ automático (Meta simplemente no lo sirve ahí) y se publicó con "Intentar publicar elementos con errores"; intentar excluir a mano las ubicaciones de IG generó errores en cascada (#2238294/#2490406/#2490494) porque Explorar/Buscar/Threads dependen del feed — NO volver a hacerlo. Meta impuso **límite de gasto de $50/día** (cuenta nueva): los primeros días el gasto real será ≤ $50, no $65. WhatsApp: W1 y W2 con el 939-247-9234 (WABA `2594942544291294`) como único destino; los chats los contesta el agente propio vía Zernio.
+
+
 
 > **Para qué existe este documento:** cuando Elvin conecte el usuario de Resuelto en Bori (con anuncios habilitados y Meta conectada), montar esto es correr **4 comandos** (§9) y activar en Ads Manager. Todo lo demás —creativos, copys, públicos, saludo de WhatsApp, reglas de decisión, reporte— ya está decidido aquí.
 
@@ -82,6 +85,14 @@ Bori publica cada Relámpago como campaña + conjunto + anuncios, **todo en paus
 | B | Flyer ad Meta | `kit/flyers-contratistas/k5-ad-meta.png` | https://resueltopr.com/flyers/k5-ad-meta.png |
 | B | Flyer $9,000 / $12,000 | `kit/flyers-contratistas/k2-nueve-mil.png` | https://resueltopr.com/flyers/k2-nueve-mil.png |
 
+> ⚠️ **Creativos que todavía contradicen al chat (22/sep).** El flyer `01-cuanto-ganas.png` ($1,950 semanal)
+> y el segmento del contador en `resuelto-plomeros-15s.mp4` gritan una cifra que el chat ya no discute
+> hasta la entrevista. Antes de activar el sprint, una de dos: (a) **sacarlos del set** y correr A con el
+> video recortado + `05-ad-meta.png`, o (b) **regenerarlos** — el flyer se rehace desde su fuente y el video
+> tiene su guion editable al lado (`kit/videos/*.edit.jsx`), cambiando el contador por "2 cupos por área".
+> Lo mismo aplica a `03-buscamos-10` si se vuelve a usar: hoy el mensaje es **2 plomeros por área**.
+> Los creativos de contratistas (B) no tienen este problema: ahí el pago por hitos sí se explica de frente.
+
 Los guiones de los videos (`kit/videos/*.edit.jsx`) están guardados: cambiar un número o una frase y re-renderizar toma 5 minutos. Cuando el dominio apunte, las URLs pasan a `resueltopr.com/...` sin mover nada.
 
 **Nota sobre video en Bori:** el flujo Relámpago de Bori se probó con imágenes. Si al publicar rechaza la URL `.mp4`, se publica con los 2 flyers y Elvin **añade el video como anuncio dentro del mismo conjunto** desde Ads Manager (Duplicar anuncio → cambiar creativo → subir el mp4; 3 minutos). Está en el checklist de §9.
@@ -101,18 +112,23 @@ Límite de Bori para el texto principal: 500 caracteres. Emojis: máximo 1. Requ
 
 ### Campaña A · Plomeros
 
+> ⚠️ **Regla del 22/sep (Elvin):** el anuncio NO promete porcentajes, cifras semanales ni cuándo se paga.
+> El chat califica y agenda; **los números se explican en la entrevista** (ver `agente/src/prompt.ts`,
+> flujo del plomero candidato). Si el anuncio los grita, el lead llega preguntando justo lo que el chat
+> no contesta. Lo que sí se dice: nosotros ponemos los clientes y la publicidad, y **2 cupos por área**.
+
 **Texto principal · versión 1 (días 1–3):**
 > Para plomeros licenciados en PR: tú haces la plomería, nosotros hacemos el resto.
-> Resuelto te trae los clientes, cotiza, cobra y te paga todos los viernes. Tú te quedas con el 65% de la mano de obra y $0 de publicidad de tu bolsillo. Sigues con tus clientes propios.
-> Estamos abriendo 10 cupos, uno por zona. Escríbenos por WhatsApp y aplica en 2 minutos.
+> Resuelto te trae los clientes, cotiza y cobra. Tú trabajas y cobras por tu trabajo; sigues con tus clientes propios y no pones un peso en publicidad.
+> Estamos tomando 2 plomeros por área. Escríbenos por WhatsApp: te hacemos 4 preguntas y coordinamos la entrevista.
 
 **Texto principal · versión 2 (rotar el día 4 si la 1 no llega a 1.5% CTR):**
 > ¿Cansado de cotizar, perseguir y cobrar? Con Resuelto solo trabajas.
-> Cliente confirmado, precio cerrado y pago los viernes. 65% de la mano de obra para ti. Requisito: licencia de plomero vigente.
-> Aplica por WhatsApp. Cupos por zona: Metro Norte, Metro Oeste y Caguas primero.
+> Cliente confirmado, precio cerrado y el cobro lo hacemos nosotros. Requisito: licencia de plomero vigente.
+> 2 cupos por área y vamos por orden de llegada. Aplica por WhatsApp y coordinamos la entrevista.
 
 **Titular (si Bori lo pide):** `Plomero licenciado: tenemos tus próximos clientes`
-**Descripción corta:** `65% de la mano de obra · pago los viernes · $0 en publicidad`
+**Descripción corta:** `Tú trabajas, nosotros conseguimos y cobramos · 2 cupos por área`
 **Botón:** Enviar mensaje de WhatsApp
 
 ### Campaña B · Contratistas
@@ -137,10 +153,10 @@ Bori configura el **saludo** (lo que aparece prellenado cuando la persona toca e
 
 | | Saludo prellenado (`--saludo`) | Botones (`--botones`) |
 |---|---|---|
-| **A · Plomeros** | `Hola, soy plomero y quiero aplicar a Resuelto.` | `Tengo licencia vigente` · `Quiero saber cómo funciona el pago` · `¿En qué zonas están?` |
+| **A · Plomeros** | `Hola, soy plomero y quiero aplicar a Resuelto.` | `Tengo licencia vigente` · `¿Cómo funciona?` · `¿En qué zonas están?` |
 | **B · Contratistas** | `Hola, soy contratista y quiero aplicar a Resuelto Verified.` | `Tengo registro DACO` · `¿Cómo funciona el pago por hitos?` · `¿Qué categorías buscan?` |
 
-**Lo que hace el agente en los primeros 3 mensajes (ya programado en `agente/src/prompt.ts`):** saluda como Resuelto · confirma el requisito (licencia / DACO) · pregunta municipio y categorías · registra al candidato (`registrar_candidato` / `registrar_contratista`) · ofrece 2 horarios para la videollamada de 20 min. Sin licencia/DACO: lo anota en lista de espera con respeto y le dice qué necesita para volver.
+**Lo que hace el agente con un plomero (ya programado en `agente/src/prompt.ts`, reescrito el 22/sep):** pregunta lo básico de dos en dos — nombre · años de experiencia · área · nivel y número de licencia · vehículo y herramientas — y con eso va al grano: reclutamos en toda la isla, nosotros ponemos clientes y publicidad, **2 plomeros por área**, y el siguiente paso es una **entrevista por videollamada de 20 min** que él mismo cuadra por chat. **No da porcentajes ni cuándo se paga**: "el trato completo con números te lo explicamos en la entrevista". Si el plomero insiste una segunda vez, dice el 65% y pago semanal, y vuelve a la entrevista — no queda evasivo dos veces. Registra siempre con `registrar_candidato` (con los años de experiencia). Con contratistas el flujo sigue igual (DACO primero).
 
 **Tiempo de respuesta humano cuando el agente escala:** < 1 hora en horario 8 AM–8 PM. Un candidato que espera 4 horas ya no es candidato.
 
@@ -178,7 +194,7 @@ Devuelve una URL por archivo (o se usan directamente las de `resueltopr.netlify.
 
 **Paso 3 · Campaña A · Plomeros · $30/día (en pausa)**
 ```bash
-cd "/Users/elvinayala/AGENTE CONTENIDO/vault/proyectos/plomeria-pr/agente" && npm run bori -- --relampago --presupuesto 30 --imagenes "https://resueltopr.com/videos/resuelto-plomeros-15s.mp4,https://resueltopr.com/flyers/05-ad-meta.png,https://resueltopr.com/flyers/01-cuanto-ganas.png" --mensaje "Para plomeros licenciados en PR: tú haces la plomería, nosotros hacemos el resto. Resuelto te trae los clientes, cotiza, cobra y te paga todos los viernes. Tú te quedas con el 65% de la mano de obra y \$0 de publicidad de tu bolsillo. Sigues con tus clientes propios. Estamos abriendo 10 cupos, uno por zona. Escríbenos por WhatsApp y aplica en 2 minutos." --link "https://resueltopr.com/plomeros" --saludo "Hola, soy plomero y quiero aplicar a Resuelto." --botones "Tengo licencia vigente|Quiero saber cómo funciona el pago|¿En qué zonas están?"
+cd "/Users/elvinayala/AGENTE CONTENIDO/vault/proyectos/plomeria-pr/agente" && npm run bori -- --relampago --presupuesto 30 --imagenes "https://resueltopr.com/videos/resuelto-plomeros-15s.mp4,https://resueltopr.com/flyers/05-ad-meta.png,https://resueltopr.com/flyers/01-cuanto-ganas.png" --mensaje "Para plomeros licenciados en PR: tú haces la plomería, nosotros hacemos el resto. Resuelto te trae los clientes, cotiza y cobra. Tú trabajas y cobras por tu trabajo; sigues con tus clientes propios y no pones un peso en publicidad. Estamos tomando 2 plomeros por área. Escríbenos por WhatsApp: te hacemos 4 preguntas y coordinamos la entrevista." --link "https://resueltopr.com/plomeros" --saludo "Hola, soy plomero y quiero aplicar a Resuelto." --botones "Tengo licencia vigente|¿Cómo funciona?|¿En qué zonas están?"
 ```
 
 **Paso 4 · Campaña B · Contratistas · $20/día (en pausa)** — lleva `--forzar` porque Bori protege contra publicar dos Relámpagos seguidos.

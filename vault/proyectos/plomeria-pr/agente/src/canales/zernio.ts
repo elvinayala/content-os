@@ -75,6 +75,31 @@ export async function descargarMedia(url: string): Promise<Adjunto | null> {
   return { tipo: clasificarMime(mime), mime, datos: Buffer.from(await r.arrayBuffer()) };
 }
 
+/** Meta no deja abrir una conversación con texto libre (DIRECT_SEND_NOT_ELIGIBLE): fuera de la ventana
+ *  de 24 h hace falta una plantilla aprobada. `aviso_equipo_resuelto` (UTILITY, es) tiene 3 variables:
+ *  titular · quién · detalle. Meta rechaza parámetros vacíos o con saltos de línea, así que se aplanan. */
+const PLANTILLA_AVISO = process.env.ZERNIO_PLANTILLA_AVISO || "aviso_equipo_resuelto";
+export function partesDeAviso(texto: string): [string, string, string] {
+  const limpio = (v: string) => v.replace(/\s+/g, " ").trim().slice(0, 300);
+  const lineas = String(texto ?? "").split("\n").map(limpio).filter(Boolean);
+  const primera = lineas[0] ?? "Aviso";
+  const corte = primera.indexOf(":");
+  const titular = corte > 0 ? limpio(primera.slice(0, corte)) : primera;
+  const quien = corte > 0 ? limpio(primera.slice(corte + 1)) : "—";
+  const detalle = limpio(lineas.slice(1).join(" · "));
+  return [titular || "Aviso", quien || "—", detalle || "—"];
+}
+
+/** Abre una conversación con la plantilla aprobada. Devuelve true si Meta la aceptó. */
+export async function enviarPlantillaAviso(telefono: string, texto: string): Promise<boolean> {
+  const tel = normalizar(telefono);
+  const r = await api(`/inbox/conversations`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, participantId: tel, templateName: PLANTILLA_AVISO, templateLanguage: "es", templateParams: partesDeAviso(texto) }) });
+  if (!r.ok) { console.error("Zernio plantilla", r.status, (await r.text()).slice(0, 200)); return false; }
+  const j = (await r.json().catch(() => null)) as { data?: { conversationId?: string } } | null;
+  if (j?.data?.conversationId) recordarConversacion(tel, j.data.conversationId);
+  return true;
+}
+
 /** Aviso al humano: Telegram si está configurado (llega siempre), y WhatsApp al coordinador si hay número. */
 export async function avisarCoordinador(texto: string) {
   const { botToken, coordinadorChatId } = config.telegram;
@@ -84,7 +109,11 @@ export async function avisarCoordinador(texto: string) {
     avisado = !!r?.ok;
     if (!avisado) console.error("Telegram aviso", r?.status);
   }
-  if (config.coordinadorWhatsapp) { await enviarTexto(config.coordinadorWhatsapp, texto); avisado = true; }
+  if (config.coordinadorWhatsapp && config.tiene.whatsapp()) {
+    // Si ya hay conversación abierta con el coordinador, texto libre; si no, la plantilla aprobada.
+    if (conversacionDe(config.coordinadorWhatsapp)) { await enviarTexto(config.coordinadorWhatsapp, texto); avisado = true; }
+    else if (await enviarPlantillaAviso(config.coordinadorWhatsapp, texto)) avisado = true;
+  }
   if (!avisado) console.log(`[Aviso al coordinador] ${texto}`);
 }
 
