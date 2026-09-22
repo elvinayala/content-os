@@ -4,32 +4,67 @@
     "metro": {
       "imageHash": "67e57a65c3d2f13085951ca1f02b942b",
       "adsetId": "120255069505370029",
-      "adCopiadoId": "120255069505270029"
+      "adCopiadoId": "120255069505270029",
+      "presupuestoDia": 15,
+      "municipios": "Bayamón, Toa Alta, Trujillo Alto, Toa Baja, Cataño, Carolina, Dorado, Guaynabo, San Juan",
+      "listo": true
     },
     "caguas": {
       "adsetId": "120255069505320029",
-      "adCopiadoId": "120255069505280029"
+      "adCopiadoId": "120255069505280029",
+      "imageHash": "c79cb51f1dcd39170d7e4143186bff29",
+      "presupuestoDia": 10,
+      "municipios": "Caguas, Aguas Buenas, Gurabo, Juncos, San Lorenzo, Cayey",
+      "listo": true
     },
     "ponce": {
       "adsetId": "120255069505330029",
-      "adCopiadoId": "120255069505360029"
+      "adCopiadoId": "120255069505360029",
+      "imageHash": "49146607a538700263d70ff52f3ef57c",
+      "presupuestoDia": 10,
+      "municipios": "Ponce, Guayanilla, Juana Díaz, Peñuelas, Santa Isabel",
+      "listo": true
     },
     "arecibo": {
       "adsetId": "120255069505260029",
-      "adCopiadoId": "120255069505390029"
+      "adCopiadoId": "120255069505390029",
+      "imageHash": "ec748080932955054c9e39f078c09f31",
+      "presupuestoDia": 10,
+      "municipios": "Arecibo, Manatí, Barceloneta, Vega Baja, Vega Alta, Hatillo, Camuy",
+      "listo": true
     },
     "mayaguez": {
       "adsetId": "120255069505340029",
-      "adCopiadoId": "120255069505290029"
+      "adCopiadoId": "120255069505290029",
+      "imageHash": "6235072c7d04ac204fa2cee2d6abfa17",
+      "presupuestoDia": 10,
+      "municipios": "Mayagüez, Cabo Rojo, San Germán, Añasco, Hormigueros",
+      "listo": true
     },
     "aguadilla": {
       "adsetId": "120255069505350029",
-      "adCopiadoId": "120255069505300029"
+      "adCopiadoId": "120255069505300029",
+      "imageHash": "0387eeb0d2063ed4602cf43c651029f7",
+      "presupuestoDia": 10,
+      "municipios": "Aguadilla, Isabela, Moca, San Sebastián, Aguada",
+      "listo": true
     },
     "fajardo": {
       "adsetId": "120255069505380029",
-      "adCopiadoId": "120255069505310029"
+      "adCopiadoId": "120255069505310029",
+      "imageHash": "45aefd0a25627411572a3517de1d7503",
+      "presupuestoDia": 10,
+      "municipios": "Fajardo, Luquillo, Río Grande, Ceiba, Humacao, Naguabo",
+      "listo": true
     }
   },
-  "copiasAdsManager": "22/sep/2026: 7 copias de W2 duplicadas en Ads Manager (Chrome) y publicadas APAGADAS; nacieron con LINK_CLICKS (heredado del borrador viejo de W2) y el anuncio $1,950 copiado"
+  "copiasAdsManager": "22/sep/2026: 7 copias de W2 duplicadas en Ads Manager (Chrome) y publicadas APAGADAS; nacieron con LINK_CLICKS (heredado del borrador viejo de W2) y el anuncio $1,950 copiado",
+  "estado": {
+    "fecha": "2026-09-22",
+    "resumen": "7 conjuntos R· listos en PAUSA ($75/día, fin 29/sep 17:59, hombres 25-65, municipios por región); anuncio de cada uno = flyer regional sin cifras + texto regional, mejoras IA apagadas. W1 y W2 PAUSADOS (copy con $1,950/65%). Optimización LINK_CLICKS (no se puede cambiar a CONVERSATIONS en copias publicadas). Falta: Elvin activa los 7 conjuntos.",
+    "viejosPausados": [
+      "120255016399830029",
+      "120255018289310029"
+    ]
+  }
 }

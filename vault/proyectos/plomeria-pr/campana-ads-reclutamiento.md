@@ -273,3 +273,31 @@ Fuera de este sprint, los otros canales de la Fase 0 siguen igual (`marketing-fa
   página Resuelto PR y corre `token-desde-bori.mjs`; luego `node scripts/meta-ads/resuelto-regiones.mjs
   montar --aplicar` hace nombre/presupuesto/municipios/fin/objetivo CONVERSATIONS, flyer regional,
   anuncio nuevo en pausa, pausa el $1,950 copiado y pausa W1/W2.
+
+### 22/sep (noche) — Reestructura LISTA: 7 regiones en pausa, W1/W2 pausados
+Hecho en Ads Manager (editor de cada anuncio/conjunto, nunca "Revisar y publicar"; el borrador viejo de W2
+sigue sin publicar) y verificado por API (`arbol 120255016399820029`):
+
+| Conjunto | $/día | Municipios |
+|---|---|---|
+| R · Área Metro | 15 | San Juan, Bayamón, Carolina, Guaynabo, Cataño, Toa Baja, Toa Alta, Trujillo Alto, Dorado |
+| R · Caguas | 10 | Caguas, Aguas Buenas, Gurabo, Juncos, San Lorenzo, Cayey |
+| R · Ponce | 10 | Ponce, Guayanilla, Juana Díaz, Peñuelas, Santa Isabel |
+| R · Arecibo | 10 | Arecibo, Manatí, Barceloneta, Vega Baja, Vega Alta, Hatillo, Camuy |
+| R · Mayagüez | 10 | Mayagüez, Cabo Rojo, San Germán, Añasco, Hormigueros |
+| R · Aguadilla | 10 | Aguadilla, Isabela, Moca, San Sebastián, Aguada |
+| R · Fajardo | 10 | Fajardo, Luquillo, Río Grande, Ceiba, Humacao, Naguabo |
+
+- **Total $75/día**, fin 29/sep 17:59, hombres 25-65, solo WhatsApp (+1 939-247-9234), todos **EN PAUSA**.
+- Anuncio de cada conjunto = "R · <Región> · Flyer regional": flyer regional sin cifras, texto "Buscamos plomero
+  en <Región>… Solo 2 cupos… licencia vigente… 4 preguntas y coordinamos la entrevista", título "Buscamos plomero
+  en <Región>", descripción "Solo 2 cupos en la región · Licencia vigente". Mejoras de IA de Meta apagadas.
+- **W1 (120255016399830029) y W2 (120255018289310029) PAUSADOS** por API (copy con $1,950 / 65 %, fuera de la
+  regla "sin cifras"). Nada gasta hasta que Elvin active los 7 conjuntos.
+- Límites: la optimización quedó en **clics al enlace** (las copias heredaron LINK_CLICKS y Meta no deja cambiarla
+  después de publicar; para "Conversaciones" puras habría que crear conjuntos nuevos desde cero). El mensaje de
+  bienvenida es el genérico de Meta. El token de Bori sigue sin la página Resuelto PR: toda edición de anuncios
+  de WhatsApp va por Ads Manager (pausar conjuntos por API sí funciona).
+- Gotcha: la búsqueda masiva de lugares trae homónimos extranjeros (Mozambique, Brasil, Reino Unido…); hay que
+  borrar toda fila que no diga "Puerto Rico". Y verificar por API después de publicar: Mayagüez se guardó una
+  vez con "Puerto Rico" entero y hubo que rehacerlo.

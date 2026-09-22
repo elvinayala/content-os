@@ -89,6 +89,8 @@ async function montar(aplicar) {
     const targeting = { geo_locations: { regions: claves, location_types: ["home", "recent"] }, age_min: 25, age_max: 65, genders: [1], flexible_spec: INTERESES, targeting_automation: { advantage_audience: 1 } };
     console.log(`${r.slug.padEnd(10)} $${r.dia}/día · ${r.municipios.length} municipios (${r.municipios.join(", ")}) · flyer plomero-${r.slug}-feed.png`);
     if (!aplicar) continue;
+    // 22/sep: los 7 quedaron terminados a mano en Ads Manager (listo:true) → no se tocan más.
+    if (n.listo) { console.log(`   ✔ ya listo (${n.adsetId})`); continue; }
     if (!n.imageHash) {
       const bytes = readFileSync(resolve(FLYERS, `plomero-${r.slug}-feed.png`)).toString("base64");
       const j = await c.graph("POST", `/${CUENTA}/adimages`, { bytes });
@@ -105,33 +107,34 @@ async function montar(aplicar) {
       const j = await c.graph("POST", `/${ADSET_MOLDE}/copies`, { deep_copy: false, status_option: "PAUSED" });
       n.adsetId = j.copied_adset_id; guardar();
     }
-    if (!n.adsetListo) {
-      await c.graph("POST", `/${n.adsetId}`, { name: `R · ${r.corto} · WhatsApp · Conversaciones`, daily_budget: r.dia * 100, targeting, end_time: FIN, status: "PAUSED" });
-      n.adsetListo = true; guardar();
-    }
-    // Las copias de Ads Manager heredaron LINK_CLICKS del borrador viejo de W2: se pasa a
-    // CONVERSATIONS (lo que pidió Elvin). Si Meta no lo permite, queda en clics y se reporta.
+    // Meta: máx. 1 cambio cada 30 s por conjunto (#613) → se espera entre llamadas al mismo conjunto.
+    const esperar = () => new Promise((x) => setTimeout(x, 32000));
+    const paso = async (clave, body) => {
+      if (n[clave]) return;
+      for (let i = 0; i < 3; i++) {
+        try { await c.graph("POST", `/${n.adsetId}`, body); n[clave] = true; guardar(); await esperar(); return; }
+        catch (e) { if (e.subcode === 4841018 || /rate limit/i.test(e.message)) { await esperar(); continue; } throw e; }
+      }
+    };
+    await paso("nombreListo", { name: `R · ${r.corto} · WhatsApp · Conversaciones` });
+    await paso("presupuestoListo", { daily_budget: r.dia * 100, end_time: FIN });
+    await paso("segmentacionListo", { targeting });
+    // Las copias heredaron LINK_CLICKS del borrador viejo de W2. Pasar a CONVERSATIONS exige
+    // cambiar también la atribución (7 días de clic ya no se admite con ese objetivo).
     if (!n.optimizacion) {
-      try { await c.graph("POST", `/${n.adsetId}`, { optimization_goal: "CONVERSATIONS" }); n.optimizacion = "CONVERSATIONS"; }
-      catch (e) { n.optimizacion = "LINK_CLICKS (Meta no dejó cambiar: " + e.message.slice(0, 120) + ")"; }
-      guardar();
+      try { await c.graph("POST", `/${n.adsetId}`, { optimization_goal: "CONVERSATIONS", attribution_spec: [{ event_type: "CLICK_THROUGH", window_days: 1 }] }); n.optimizacion = "CONVERSATIONS"; }
+      catch (e) { n.optimizacion = "LINK_CLICKS (Meta: " + e.message.slice(0, 140) + ")"; }
+      guardar(); await esperar();
     }
-    if (!n.creativeId) {
-      const cp = copy(r);
-      const j = await c.graph("POST", `/${CUENTA}/adcreatives`, { name: `Resuelto · Plomero ${r.corto} · WA`, object_story_spec: { page_id: PAGE, instagram_user_id: IG, link_data: { link: "https://api.whatsapp.com/send", image_hash: n.imageHash, message: cp.message, name: cp.name, description: cp.description, call_to_action: { type: "WHATSAPP_MESSAGE", value: { app_destination: "WHATSAPP" } }, page_welcome_message: saludo(r) } } });
-      n.creativeId = j.id; guardar();
-    }
-    if (!n.adId) {
-      const j = await c.graph("POST", `/${CUENTA}/ads`, { name: `R · ${r.corto} · Flyer regional`, adset_id: n.adsetId, creative: { creative_id: n.creativeId }, status: "PAUSED" });
-      n.adId = j.id; guardar();
-    }
-    // El anuncio del flyer $1,950 (con cifras) que vino en la copia: se pausa.
-    if (n.adCopiadoId && !n.adCopiadoPausado) { await c.graph("POST", `/${n.adCopiadoId}`, { status: "PAUSED" }); n.adCopiadoPausado = true; guardar(); }
-    console.log(`   ✔ adset ${n.adsetId} · ad ${n.adId} (EN PAUSA) · objetivo ${n.optimizacion}`);
+    // Los ANUNCIOS no se pueden tocar por API con el token de Bori (la página Resuelto PR no está
+    // en sus permisos → subcode 2446880): el flyer, textos y saludo se cambian en Ads Manager
+    // sobre el anuncio copiado (imagen ya subida a la biblioteca con este hash).
+    console.log(`   ✔ conjunto ${n.adsetId} listo (apagado) · objetivo ${n.optimizacion} · imagen ${n.imageHash} · anuncio a editar en Ads Manager: ${n.adCopiadoId}`);
   }
   console.log(`Total: $${suma}/día · fin ${FIN}`);
   // Lo que no sirve: se pausa, no se borra (queda el historial).
-  const pausar = [["adset W1 · video · optimiza clics", "120255016399830029"], ["adset W2 · flyer $1,950", "120255018289310029"], ["campaña Leads a la web", CAMP_LEADS]];
+  // W1/W2 ya se pausaron el 22/sep (copy con cifras); el flag queda por si se reactivan por error.
+  const pausar = resto.includes("--pausar-viejos") ? [["adset W1 · video · optimiza clics", "120255016399830029"], ["adset W2 · flyer $1,950", "120255018289310029"]] : [];
   for (const [que, id] of pausar) {
     console.log(`${aplicar ? "pausando" : "pausaría"}: ${que} (${id})`);
     if (aplicar) await c.graph("POST", "/" + id, { status: "PAUSED" });
