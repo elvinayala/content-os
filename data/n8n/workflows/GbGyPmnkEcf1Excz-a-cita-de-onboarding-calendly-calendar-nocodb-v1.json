@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-22T01:56:06.908Z",
+  "updatedAt": "2026-09-22T23:14:46.119Z",
   "createdAt": "2026-09-22T01:56:06.908Z",
   "id": "GbGyPmnkEcf1Excz",
   "name": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
@@ -57,7 +57,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  fechaFormateada: String(b.fecha || '').slice(0, 10),\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
+        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
       }
     },
     {
@@ -326,9 +326,9 @@
   "staticData": null,
   "meta": null,
   "pinData": null,
-  "versionId": "0645aa0a-c876-425b-995f-d70897e0e8d5",
-  "activeVersionId": "0645aa0a-c876-425b-995f-d70897e0e8d5",
-  "versionCounter": 3,
+  "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
+  "activeVersionId": "0bc03776-b979-4928-9602-57d8973764a2",
+  "versionCounter": 6,
   "triggerCount": 1,
   "shared": [
     {
@@ -353,7 +353,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-21T20:49:58.220Z",
+              "updatedAt": "2026-09-22T12:00:41.271Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -381,7 +381,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-21",
+              "lastActiveAt": "2026-09-22",
               "isPending": false
             }
           }
@@ -391,9 +391,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-22T01:56:06.938Z",
-    "createdAt": "2026-09-22T01:56:06.938Z",
-    "versionId": "0645aa0a-c876-425b-995f-d70897e0e8d5",
+    "updatedAt": "2026-09-22T23:14:46.123Z",
+    "createdAt": "2026-09-22T23:14:46.123Z",
+    "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
     "workflowId": "GbGyPmnkEcf1Excz",
     "nodes": [
       {
@@ -446,7 +446,7 @@
         ],
         "parameters": {
           "mode": "runOnceForEachItem",
-          "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  fechaFormateada: String(b.fecha || '').slice(0, 10),\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
+          "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
         }
       },
       {
@@ -712,10 +712,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-22T01:56:07.283Z",
-        "id": 234,
+        "createdAt": "2026-09-22T23:14:46.307Z",
+        "id": 243,
         "workflowId": "GbGyPmnkEcf1Excz",
-        "versionId": "0645aa0a-c876-425b-995f-d70897e0e8d5",
+        "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

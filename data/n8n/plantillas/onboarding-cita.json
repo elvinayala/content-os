@@ -51,7 +51,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  fechaFormateada: String(b.fecha || '').slice(0, 10),\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
+        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
       }
     },
     {

@@ -1,291 +1,167 @@
 {
-  "generadoEl": "2026-09-22T01:41:11.288Z",
-  "dias": 30,
-  "desde": "2026-08-23T01:40:59.960Z",
-  "ejecucionesVistas": 2741,
+  "generadoEl": "2026-09-22T23:12:18.709Z",
+  "dias": 1,
+  "desde": "2026-09-21T23:12:16.586Z",
+  "ejecucionesVistas": 279,
   "workflows": [
     {
-      "id": "8Af1xIlR1QJzIP6L",
-      "nombre": "C-) actualizacion diaria de estratega",
-      "activo": false,
-      "ok": 2,
-      "error": 13,
+      "id": "pNSgghJY7mLA9GnB",
+      "nombre": "BackUp Workflows",
+      "activo": true,
+      "ok": 148,
+      "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T09:00:27.046Z",
-      "ultimoError": {
-        "id": "60703",
-        "cuando": "2026-09-20T09:00:49.045Z",
-        "modo": "trigger",
-        "nodo": "Get an item",
-        "mensaje": "Cannot read properties of null (reading 'split')"
-      }
-    },
-    {
-      "id": "qXDEK5MdK5Zpwpzr",
-      "nombre": "B-) Agente de monitoreo v3",
-      "activo": true,
-      "ok": 20,
-      "error": 5,
-      "otras": 1,
-      "ultimaOk": "2026-09-21T11:51:54.938Z",
-      "ultimoError": {
-        "id": "60367",
-        "cuando": "2026-09-18T11:46:16.902Z",
-        "modo": "integrated",
-        "nodo": "Send a message14",
-        "mensaje": "Parameter 'blocksUi' could not be parsed"
-      }
-    },
-    {
-      "id": "LN08xR2hD3GGSEW8",
-      "nombre": "A-) Trigger v1.1 safe",
-      "activo": true,
-      "ok": 18,
-      "error": 2,
-      "otras": 1,
-      "ultimaOk": "2026-09-21T11:45:50.086Z",
-      "ultimoError": {
-        "id": "58512",
-        "cuando": "2026-09-09T11:45:30.004Z",
-        "modo": "error",
-        "nodo": "Create chat message",
-        "mensaje": "Failed to get license information for the user. Ensure user has a valid Office365 license assigned to them."
-      }
+      "ultimaOk": "2026-09-22T12:01:51.014Z",
+      "ultimoError": null
     },
     {
       "id": "RyeQFDXnB429XG0Q",
       "nombre": "A-) Sync Pulse → NocoDB v1",
       "activo": true,
-      "ok": 28,
-      "error": 1,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T19:48:03.362Z",
-      "ultimoError": {
-        "id": "60864",
-        "cuando": "2026-09-21T02:03:18.576Z",
-        "modo": "webhook",
-        "nodo": "Enlazar",
-        "mensaje": "Bad gateway - the service failed to handle your request"
-      }
-    },
-    {
-      "id": "pNSgghJY7mLA9GnB",
-      "nombre": "BackUp Workflows",
-      "activo": true,
-      "ok": 2018,
+      "ok": 93,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T12:01:36.086Z",
+      "ultimaOk": "2026-09-22T20:27:55.736Z",
       "ultimoError": null
     },
     {
       "id": "rb5SOZw8rT5YXKg8",
       "nombre": "B-) Agente de onboarding v5",
       "activo": true,
-      "ok": 115,
+      "ok": 9,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-17T16:31:12.985Z",
+      "ultimaOk": "2026-09-22T13:31:37.016Z",
       "ultimoError": null
     },
     {
       "id": "pNMZF1Fb4r6yHfGk",
       "nombre": "A-) Recibir webhook chatwoot v1",
       "activo": true,
-      "ok": 110,
+      "ok": 9,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-17T16:31:11.810Z",
+      "ultimaOk": "2026-09-22T13:31:35.893Z",
       "ultimoError": null
     },
     {
-      "id": "K73epIq7mbOTPL1t",
-      "nombre": "A-) Migracion de datos de monday v5",
-      "activo": false,
-      "ok": 101,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T13:13:09.492Z",
-      "ultimoError": null
-    },
-    {
-      "id": "Sb6dLyiZnMJtc6AC",
-      "nombre": "C-) Lógica envío de reportes v5",
+      "id": "GbGyPmnkEcf1Excz",
+      "nombre": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
       "activo": true,
-      "ok": 63,
+      "ok": 4,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-15T13:05:56.917Z",
+      "ultimaOk": "2026-09-22T19:30:38.767Z",
+      "ultimoError": null
+    },
+    {
+      "id": "KWSsCZWE3CLmT7Dj",
+      "nombre": "C-) Tools agente principal v1",
+      "activo": true,
+      "ok": 2,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T13:31:32.284Z",
       "ultimoError": null
     },
     {
       "id": "uelcZVSQvpl2hetY",
       "nombre": "F-) Lector de seguimientos v1",
       "activo": true,
-      "ok": 28,
+      "ok": 2,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T14:00:49.115Z",
-      "ultimoError": null
-    },
-    {
-      "id": "vvXRpzCDaYehJDYf",
-      "nombre": "E-) Alerta falta de fases v1",
-      "activo": true,
-      "ok": 26,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T11:51:33.393Z",
-      "ultimoError": null
-    },
-    {
-      "id": "dsrJpJi1MTr4mCOZ",
-      "nombre": "F-) Alerta para fase 5",
-      "activo": true,
-      "ok": 24,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T11:52:46.397Z",
-      "ultimoError": null
-    },
-    {
-      "id": "fEOX9Q3Szkf6bLQq",
-      "nombre": "Notificación Error",
-      "activo": true,
-      "ok": 17,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T02:05:42.156Z",
+      "ultimaOk": "2026-09-22T14:00:49.105Z",
       "ultimoError": null
     },
     {
       "id": "3DeJXvNmTFQ44FIF",
       "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T13:00:44.109Z",
+      "ultimaOk": "2026-09-22T13:00:23.075Z",
+      "ultimoError": null
+    },
+    {
+      "id": "LN08xR2hD3GGSEW8",
+      "nombre": "A-) Trigger v1.1 safe",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T11:45:35.106Z",
       "ultimoError": null
     },
     {
       "id": "I8u1vHBsHTeF74nd",
       "nombre": "I-) Envio de pdf de ciberseguridad v1",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T14:00:57.044Z",
-      "ultimoError": null
-    },
-    {
-      "id": "Z9LnpNMTFKRl3CIg",
-      "nombre": "C-) Alerta por falta de pago v1",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T12:00:23.075Z",
-      "ultimoError": null
-    },
-    {
-      "id": "3NpTfPN4uQseNhq5",
-      "nombre": "BackUp Credential",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T12:00:09.046Z",
-      "ultimoError": null
-    },
-    {
-      "id": "76PxSWzFembacRcK",
-      "nombre": "A-) Mensajes de bienestar",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T15:00:09.062Z",
-      "ultimoError": null
-    },
-    {
-      "id": "MLp39LO5jJmzk9Vp",
-      "nombre": "A) RevisionInstanciaEvoAPI",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T11:00:35.187Z",
-      "ultimoError": null
-    },
-    {
-      "id": "yQPhJCGiqwZqBS9X",
-      "nombre": "A-) Trigger v1",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T13:00:46.067Z",
+      "ultimaOk": "2026-09-22T14:00:57.082Z",
       "ultimoError": null
     },
     {
       "id": "7DRJJjTva38GSoGg",
       "nombre": "J-) Envio de mensaje de bienvenida",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T21:00:45.104Z",
+      "ultimaOk": "2026-09-22T21:00:30.092Z",
       "ultimoError": null
     },
     {
-      "id": "gYdcVTS1dmuZRp0W",
-      "nombre": "Agente Cobros",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T13:00:08.102Z",
-      "ultimoError": null
-    },
-    {
-      "id": "g7mkm3TKkjQYpopk",
-      "nombre": "B-) Slack button logic v2",
-      "activo": true,
-      "ok": 11,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-18T15:03:21.578Z",
-      "ultimoError": null
-    },
-    {
-      "id": "GB0T58QINudPFtEZ",
-      "nombre": "D-) Tools encuestador v1",
-      "activo": true,
-      "ok": 5,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-17T16:30:53.306Z",
-      "ultimoError": null
-    },
-    {
-      "id": "HlYjwOCuSEKfTsSi",
-      "nombre": "A-) Agente de RH",
-      "activo": true,
-      "ok": 4,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T20:51:59.992Z",
-      "ultimoError": null
-    },
-    {
-      "id": "yltCftFKOPFbreUt",
-      "nombre": "B-) V3",
+      "id": "Z9LnpNMTFKRl3CIg",
+      "nombre": "C-) Alerta por falta de pago v1",
       "activo": true,
       "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-15T13:00:46.102Z",
+      "ultimaOk": "2026-09-22T12:00:58.040Z",
+      "ultimoError": null
+    },
+    {
+      "id": "3NpTfPN4uQseNhq5",
+      "nombre": "BackUp Credential",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T12:00:09.045Z",
+      "ultimoError": null
+    },
+    {
+      "id": "76PxSWzFembacRcK",
+      "nombre": "A-) Mensajes de bienestar",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T15:00:09.062Z",
+      "ultimoError": null
+    },
+    {
+      "id": "MLp39LO5jJmzk9Vp",
+      "nombre": "A) RevisionInstanciaEvoAPI",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T11:00:35.244Z",
+      "ultimoError": null
+    },
+    {
+      "id": "yQPhJCGiqwZqBS9X",
+      "nombre": "A-) Trigger v1",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T13:00:46.114Z",
       "ultimoError": null
     },
     {
@@ -295,22 +171,22 @@
       "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-21T14:19:48.758Z",
+      "ultimaOk": "2026-09-22T09:00:59.178Z",
+      "ultimoError": null
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-09-22T13:00:53.050Z",
       "ultimoError": null
     },
     {
       "id": "0mEMnsMxnuy3SGjh",
       "nombre": "My Sub-Workflow 2",
-      "activo": true,
-      "ok": 0,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": null,
-      "ultimoError": null
-    },
-    {
-      "id": "KWSsCZWE3CLmT7Dj",
-      "nombre": "C-) Tools agente principal v1",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -331,6 +207,26 @@
     {
       "id": "J6gK0AYy7Bbz4NC2",
       "nombre": "C-) Herramienta - Procesar Vacaciones",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Sb6dLyiZnMJtc6AC",
+      "nombre": "C-) Lógica envío de reportes v5",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "fEOX9Q3Szkf6bLQq",
+      "nombre": "Notificación Error",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -379,8 +275,28 @@
       "ultimoError": null
     },
     {
+      "id": "giPHQRGfr5d89t7J",
+      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
       "id": "ZhcAhenK4DTDHehN",
       "nombre": "Generacion de tareas sub worflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "wsmfSEQa0GYGHqjA",
+      "nombre": "B-) Publicador de campañas v1 - devflow",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -409,6 +325,16 @@
       "ultimoError": null
     },
     {
+      "id": "g7mkm3TKkjQYpopk",
+      "nombre": "B-) Slack button logic v2",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
       "id": "kyiZTRCdzolA5li5",
       "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
       "activo": true,
@@ -429,28 +355,8 @@
       "ultimoError": null
     },
     {
-      "id": "oJvf4D4IELGNBQqo",
-      "nombre": "B-) Publicador de campañas v1",
-      "activo": true,
-      "ok": 0,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": null,
-      "ultimoError": null
-    },
-    {
       "id": "wqgZHdFtQ07PQg2q",
       "nombre": "Gotenberg (Create PDF)",
-      "activo": true,
-      "ok": 0,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": null,
-      "ultimoError": null
-    },
-    {
-      "id": "wsmfSEQa0GYGHqjA",
-      "nombre": "B-) Publicador de campañas v1 - devflow",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -469,8 +375,8 @@
       "ultimoError": null
     },
     {
-      "id": "giPHQRGfr5d89t7J",
-      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
+      "id": "RXMCAuLoLhZCE2Sv",
+      "nombre": "My workflow",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -479,8 +385,18 @@
       "ultimoError": null
     },
     {
-      "id": "RXMCAuLoLhZCE2Sv",
-      "nombre": "My workflow",
+      "id": "vvXRpzCDaYehJDYf",
+      "nombre": "E-) Alerta falta de fases v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "dsrJpJi1MTr4mCOZ",
+      "nombre": "F-) Alerta para fase 5",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -501,6 +417,26 @@
     {
       "id": "WiNvceWGgPIVlOF6",
       "nombre": "D) Comprobante Pago",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "GB0T58QINudPFtEZ",
+      "nombre": "D-) Tools encuestador v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HlYjwOCuSEKfTsSi",
+      "nombre": "A-) Agente de RH",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -531,6 +467,36 @@
     {
       "id": "WgDRwK7RgmzqezhK",
       "nombre": "A-) Webhooks central v2 - devflow",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "oJvf4D4IELGNBQqo",
+      "nombre": "B-) Publicador de campañas v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "qXDEK5MdK5Zpwpzr",
+      "nombre": "B-) Agente de monitoreo v3",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "yltCftFKOPFbreUt",
+      "nombre": "B-) V3",
       "activo": true,
       "ok": 0,
       "error": 0,
@@ -879,6 +845,16 @@
       "ultimoError": null
     },
     {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
       "id": "HkjdzsysScaeszpR",
       "nombre": "Reminder Tasks",
       "activo": false,
@@ -951,6 +927,16 @@
     {
       "id": "9MqLiz6lfEKcErPP",
       "nombre": "X-) Agente RH Backup",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
       "activo": false,
       "ok": 0,
       "error": 0,
