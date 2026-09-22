@@ -305,6 +305,40 @@ function marcaDe(inv: CalendlyInvitee): "level-up" | "ai-borinquen" {
   return MARCA_AIB.test(texto) ? "ai-borinquen" : "level-up";
 }
 
+// Webhook `onboarding-cita` de n8n (workflow "A-) Cita de onboarding v1", generado por
+// scripts/n8n-sync-pulse.mjs crear-citas). Mismo secreto que el puente de Pulse. No-op sin env.
+async function avisarOnboardingN8n(inv: CalendlyInvitee): Promise<{ enviado: boolean; status?: number; motivo?: string }> {
+  const base = process.env.N8N_URL?.replace(/\/$/, "");
+  const secreto = process.env.PULSE_N8N_SECRET;
+  if (!base || !secreto) return { enviado: false, motivo: "sin N8N_URL/PULSE_N8N_SECRET" };
+  const ev = inv.scheduled_event;
+  const partes = inv.name.trim().split(/\s+/);
+  const cuerpo = {
+    nombre: inv.first_name?.trim() || partes[0] || "",
+    apellido: inv.last_name?.trim() || partes.slice(1).join(" "),
+    email: inv.email.trim().toLowerCase(),
+    telefono: telefonoDe(inv),
+    fecha: ev.start_time,
+    eventName: ev.name,
+    zoomLink: ev.location?.join_url || ev.location?.location || "",
+    uri: ev.uri,
+    reagenda: Boolean(inv.old_invitee),
+  };
+  try {
+    const r = await fetch(`${base}/webhook/onboarding-cita`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-pulse-secret": secreto },
+      body: JSON.stringify(cuerpo),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!r.ok) console.error("[calendly] onboarding n8n", r.status);
+    return { enviado: r.ok, status: r.status };
+  } catch (e) {
+    console.error("[calendly] onboarding n8n", e instanceof Error ? e.message : e);
+    return { enviado: false, motivo: String(e).slice(0, 120) };
+  }
+}
+
 async function procesarCreado(inv: CalendlyInvitee) {
   const ev = inv.scheduled_event;
   const email = inv.email.trim().toLowerCase();
@@ -319,7 +353,15 @@ async function procesarCreado(inv: CalendlyInvitee) {
   );
   const esReagenda = Boolean(inv.old_invitee);
 
-  if (IGNORAR.test(ev.name)) return { ok: true, ignorado: `tipo-evento:${ev.name}` };
+  // Onboarding (cliente que ya pagó): no es un lead para CLOSERS, pero sí arranca su experiencia
+  // por WhatsApp. Se le avisa a n8n para que cree el evento en el Calendar de agenteia@ y la fila
+  // en la base de onboarding (bienvenida, PDFs, encuestas 10/30 días). Antes lo hacía "citas
+  // automáticas v4" leyendo los correos de Calendly en Gmail; dejó de correr en agosto 2026.
+  if (IGNORAR.test(ev.name)) {
+    if (vistoRecien(ev.uri)) return { ok: true, duplicado: true };
+    const onb = await avisarOnboardingN8n(inv);
+    return { ok: true, onboarding: onb, ignoradoPipedrive: `tipo-evento:${ev.name}` };
+  }
 
   // Idempotencia: Calendly reintenta si no respondemos 2xx a tiempo.
   if (vistoRecien(ev.uri)) return { ok: true, duplicado: true };

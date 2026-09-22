@@ -27,6 +27,11 @@ function esRutaContenido(pathname: string): boolean {
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  // Dominio bonito de Pulse (pulse-eamarket.vercel.app): la raíz va directo al CRM.
+  const host = request.headers.get("host") ?? "";
+  if (host.startsWith("pulse-") && (pathname === "/" || pathname === "/login")) {
+    return NextResponse.redirect(new URL("/pulse", request.url));
+  }
   if (pathname === "/login") return NextResponse.next();
 
   // Webhook público de Slack (lo llama Slack, sin cookie): se autentica por firma

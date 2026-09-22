@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-29T01:06:05.964Z",
+  "updatedAt": "2026-09-22T01:56:11.426Z",
   "createdAt": "2025-07-15T03:21:36.270Z",
   "id": "fEOX9Q3Szkf6bLQq",
   "name": "Notificación Error",
@@ -58,38 +58,6 @@
         }
       },
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "resource": "chatMessage",
-        "chatId": {
-          "__rl": true,
-          "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
-          "mode": "list",
-          "cachedResultName": "Gestion de Incidentes PymesAI (group)",
-          "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
-        },
-        "contentType": "html",
-        "message": "=----------------------------------------\nSe encontró error en el siguiente flujo:\nCliente: Level Up Media\nTimestap: {{ $now }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\nNodo que fallo: {{ $json.execution.lastNodeExecuted }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
-        "options": {
-          "includeLinkToWorkflow": false
-        }
-      },
-      "type": "n8n-nodes-base.microsoftTeams",
-      "typeVersion": 2,
-      "position": [
-        224,
-        -96
-      ],
-      "id": "cfaa95ed-5525-4970-89f6-16b573e6f368",
-      "name": "Create chat message",
-      "webhookId": "6845e396-bcb2-478c-8b0b-31f5e973e1fb",
-      "credentials": {
-        "microsoftTeamsOAuth2Api": {
-          "id": "bQfmQjHop2MXmbIN",
-          "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
-        }
-      }
     }
   ],
   "connections": {
@@ -111,7 +79,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
@@ -155,9 +125,9 @@
       }
     ]
   },
-  "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
-  "activeVersionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
-  "versionCounter": 31,
+  "versionId": "b814bf3d-d5fe-4e75-905a-9b1c99233832",
+  "activeVersionId": "b814bf3d-d5fe-4e75-905a-9b1c99233832",
+  "versionCounter": 34,
   "triggerCount": 0,
   "shared": [
     {
@@ -182,7 +152,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-21T12:00:42.696Z",
+              "updatedAt": "2026-09-21T20:49:58.220Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -209,7 +179,7 @@
                 }
               },
               "disabled": false,
-              "mfaEnabled": false,
+              "mfaEnabled": true,
               "lastActiveAt": "2026-09-21",
               "isPending": false
             }
@@ -227,9 +197,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-07-29T01:06:08.214Z",
-    "createdAt": "2026-07-29T01:06:05.970Z",
-    "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+    "updatedAt": "2026-09-22T01:56:11.428Z",
+    "createdAt": "2026-09-22T01:56:11.428Z",
+    "versionId": "b814bf3d-d5fe-4e75-905a-9b1c99233832",
     "workflowId": "fEOX9Q3Szkf6bLQq",
     "nodes": [
       {
@@ -283,38 +253,6 @@
           }
         },
         "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "resource": "chatMessage",
-          "chatId": {
-            "__rl": true,
-            "value": "19:5d3e93a3bb504ddd8a91380cb2c7f4d2@thread.v2",
-            "mode": "list",
-            "cachedResultName": "Gestion de Incidentes PymesAI (group)",
-            "cachedResultUrl": "https://teams.microsoft.com/l/chat/19%3A5d3e93a3bb504ddd8a91380cb2c7f4d2%40thread.v2/0?tenantId=95ce9295-0ea2-42b4-91bb-aaecc51d4b01"
-          },
-          "contentType": "html",
-          "message": "=----------------------------------------\nSe encontró error en el siguiente flujo:\nCliente: Level Up Media\nTimestap: {{ $now }}\nNombre del Flujo: {{ $('Error Trigger').item.json.workflow.name }}\nDetalles del error:{{ $json.execution.error.message }}\nNodo que fallo: {{ $json.execution.lastNodeExecuted }}\nEjecución: {{ $('Error Trigger').item.json.execution.url }}\n-------------------------------------------",
-          "options": {
-            "includeLinkToWorkflow": false
-          }
-        },
-        "type": "n8n-nodes-base.microsoftTeams",
-        "typeVersion": 2,
-        "position": [
-          224,
-          -96
-        ],
-        "id": "cfaa95ed-5525-4970-89f6-16b573e6f368",
-        "name": "Create chat message",
-        "webhookId": "6845e396-bcb2-478c-8b0b-31f5e973e1fb",
-        "credentials": {
-          "microsoftTeamsOAuth2Api": {
-            "id": "bQfmQjHop2MXmbIN",
-            "name": "MicrosoftTeamsPymesAI(gerencia@pymes-ai.com)"
-          }
-        }
       }
     ],
     "connections": {
@@ -336,15 +274,15 @@
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 5fa10e63",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-07-29T01:06:08.199Z",
-        "id": 215,
+        "createdAt": "2026-09-22T01:56:11.516Z",
+        "id": 239,
         "workflowId": "fEOX9Q3Szkf6bLQq",
-        "versionId": "5fa10e63-194f-4206-a0ca-dc3a57f3ff1c",
+        "versionId": "b814bf3d-d5fe-4e75-905a-9b1c99233832",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

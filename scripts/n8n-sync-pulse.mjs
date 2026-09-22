@@ -260,6 +260,60 @@ return out;` }, pos(3, 0)),
   return { name: NOMBRE_EQUIPO, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW } };
 }
 
+// ---------- workflow 3: citas de onboarding (reemplaza el lector de correos de Calendly) ----------
+// "E-) citas automaticas v4" leía los emails de Calendly en Gmail (muerto desde agosto 2026). Ahora
+// /api/calendly (Content OS) recibe el webhook oficial de Calendly y, si el evento es de Onboarding,
+// llama acá. Hace lo mismo que el viejo: evento en el Google Calendar de agenteia@ (lo usan los
+// recordatorios y el agente) + fila en la base NocoDB de onboarding (la que leen bienvenida, PDFs y
+// encuestas 10/30 días). Dedupe por email o teléfono (misma regla del viejo).
+const NOMBRE_CITAS = "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1";
+const NOCODB_ONB = { projectId: "piehks983q2cfu6", table: "mc5m2od7vy71g6z" };
+const CRED_GCAL = { id: "OnmhBZjsVglHy8qy", name: "GoogleCalendarLevelUpMedia" };
+function armarWorkflowCitas(credId) {
+  const credHeader = { httpHeaderAuth: { id: credId, name: NOMBRE_CRED } };
+  const nodes = [
+    nodo("Nota", "n8n-nodes-base.stickyNote", 1, { width: 520, height: 220, content: `## Cita de onboarding v1\nReemplaza a "E-) citas automaticas v4" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\nFuente: scripts/n8n-sync-pulse.mjs.` }, pos(0, -2)),
+    nodo("Webhook cita", "n8n-nodes-base.webhook", 2.1, { httpMethod: "POST", path: "onboarding-cita", authentication: "headerAuth", responseMode: "onReceived", options: {} }, pos(0, 0), { webhookId: "onboarding-cita-v1", credentials: credHeader }),
+    nodo("Normalizar cita", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const b = $json.body || $json;
+const tel = String(b.telefono || '').replace(/[^0-9]/g, '');
+const nombre = String(b.nombre || '').trim();
+const apellido = String(b.apellido || '').trim();
+return { json: {
+  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),
+  email: String(b.email || '').trim().toLowerCase(),
+  telefono: tel,
+  fecha: b.fecha,
+  fechaFormateada: String(b.fecha || '').slice(0, 10),
+  eventName: b.eventName || 'Onboarding',
+  zoomLink: b.zoomLink || '',
+  uri: b.uri || '',
+  simulacion: b.simulacion === true,
+} };` }, pos(1, 0)),
+    nocoHttp("¿Ya existe?", "GET", `${NOCODB}/tables/${NOCODB_ONB.table}/records`, pos(2, 0), null, { onError: "stopWorkflow" }),
+    nodo("Decidir cita", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('Normalizar cita').item.json;
+const filas = ($json.list) || [];
+const existe = filas.length > 0;
+return { json: { ...c, existe, accion: c.simulacion ? 'simular' : (existe ? 'nada' : 'crear'), filaExistente: filas[0] || null } };` }, pos(3, 0)),
+    nodo("¿Crear?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.accion }}", "crear")], combinator: "and" }, options: {} }, pos(4, 0)),
+    nodo("Evento en Calendar", "n8n-nodes-base.googleCalendar", 1.3, { calendar: { __rl: true, value: "agenteia@levelupmediapr.net", mode: "list", cachedResultName: "agenteia@levelupmediapr.net" }, start: "={{ $json.fecha }}", end: "={{ $json.fecha.toDateTime().plus(1, 'hours') }}", useDefaultReminders: false, additionalFields: { attendees: ["={{ $json.email }}"], description: "={{ JSON.stringify({ 'First-name': $json.nombre, 'Last-name': $json.apellido, 'phone-number': $json.telefono, 'meeting-zoom': $json.zoomLink, 'uuid-event': $json.uri }) }}", location: "={{ $json.zoomLink }}", summary: "={{ $json.eventName }} - {{ $json.nombreCompleto }}" } }, pos(5, -1), { credentials: { googleCalendarOAuth2Api: CRED_GCAL }, retryOnFail: true, maxTries: 2, waitBetweenTries: 3000, onError: "continueRegularOutput" }),
+    nocoHttp("Fila en onboarding", "POST", `${NOCODB}/tables/${NOCODB_ONB.table}/records`, pos(6, -1), `={{ JSON.stringify({ nombre: $('Decidir cita').item.json.nombreCompleto, email: $('Decidir cita').item.json.email, fecha: $('Decidir cita').item.json.fecha, 'event-id': $json.id || '', evento: $('Decidir cita').item.json.eventName, telefono: $('Decidir cita').item.json.telefono, 'fecha-formateada': $('Decidir cita').item.json.fechaFormateada }) }}`),
+    nodo("Nada / ya existía", "n8n-nodes-base.noOp", 1, {}, pos(5, 1)),
+  ];
+  const buscar = nodes.find((n) => n.name === "¿Ya existe?");
+  buscar.parameters.sendQuery = true;
+  buscar.parameters.queryParameters = { parameters: [{ name: "where", value: "=({{ $json.telefono ? '(telefono,eq,' + $json.telefono + ')~or' : '' }}(email,eq,{{ $json.email }}))" }, { name: "limit", value: "1" }] };
+  const to = (n, i = 0) => ({ node: n, type: "main", index: i });
+  const connections = {
+    "Webhook cita": { main: [[to("Normalizar cita")]] },
+    "Normalizar cita": { main: [[to("¿Ya existe?")]] },
+    "¿Ya existe?": { main: [[to("Decidir cita")]] },
+    "Decidir cita": { main: [[to("¿Crear?")]] },
+    "¿Crear?": { main: [[to("Evento en Calendar")], [to("Nada / ya existía")]] },
+    "Evento en Calendar": { main: [[to("Fila en onboarding")]] },
+  };
+  return { name: NOMBRE_CITAS, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW } };
+}
+
 // ---------- repunte de los workflows que leían Monday directo ----------
 // Cobros y Recordatorio: HTTP a Monday (GraphQL) → HTTP a Pulse (misma forma de items); los nodos
 // "Get an item" de Monday se puentean (Pulse ya trae column.title); los índices fijos pasan a búsqueda
@@ -389,6 +443,23 @@ try {
     const est = leerEstado();
     const r = await api(`/workflows/${est.equipoWorkflowId}/activate`, { method: "POST" });
     console.log(`Activado: ${r.name}`);
+  } else if (cmd === "crear-citas") {
+    const credId = await credencial();
+    const w = armarWorkflowCitas(credId);
+    fs.writeFileSync(path.join(path.dirname(PLANTILLA), "onboarding-cita.json"), JSON.stringify(w, null, 2) + "\n");
+    const est = leerEstado();
+    if (est.citasWorkflowId) {
+      const r = await api(`/workflows/${est.citasWorkflowId}`, { method: "PUT", body: JSON.stringify(w) });
+      console.log(`Citas actualizado: ${r.name} (activo=${r.active})`);
+    } else {
+      const r = await api("/workflows", { method: "POST", body: JSON.stringify(w) });
+      guardarEstado({ citasWorkflowId: r.id });
+      const a = await api(`/workflows/${r.id}/activate`, { method: "POST" });
+      console.log(`Citas creado y activo: ${a.name} → ${URL_N8N}/workflow/${r.id}`);
+    }
+  } else if (cmd === "probar-citas") {
+    const r = await fetch(`${URL_N8N}/webhook/onboarding-cita`, { method: "POST", headers: { "Content-Type": "application/json", "x-pulse-secret": SECRETO }, body: JSON.stringify({ nombre: "Prueba", apellido: "Nico", email: "prueba-nico@example.com", telefono: "+1 787-555-0100", fecha: new Date(Date.now() + 86400000).toISOString(), eventName: "Onboarding (prueba)", zoomLink: "https://zoom.us/j/000", uri: "https://api.calendly.com/scheduled_events/prueba", simulacion: true }) });
+    console.log(`Webhook citas → ${r.status} ${(await r.text()).slice(0, 200)}`);
   } else if (cmd === "repuntar") {
     // Parchea los 3 workflows que leían Monday para que lean Pulse y los sube (PUT). Antes exporta
     // (scripts/n8n.mjs exportar) para partir del JSON actual del servidor.
@@ -405,6 +476,29 @@ try {
       const settings = Object.fromEntries(Object.entries(nuevo.settings || {}).filter(([k]) => PERMITIDAS.includes(k)));
       const res = await api(`/workflows/${id}`, { method: "PUT", body: JSON.stringify({ name: nuevo.name, nodes: nuevo.nodes, connections: nuevo.connections, settings, staticData: nuevo.staticData ?? null }) });
       console.log(`✓ ${res.name} → Pulse (activo=${res.active})`);
+    }
+  } else if (cmd === "quitar-teams") {
+    // Los nodos de Microsoft Teams eran la copia que el proveedor (pymes-ai) se mandaba a sí mismo de
+    // cada error/alerta. Hoy fallan por licencia y ya no queremos que reciba nada. Se puentean
+    // (entrada → salida) y se suben. Antes: scripts/n8n.mjs exportar.
+    const dir = path.join(ROOT, "data/n8n/workflows");
+    const PERMITIDAS = ["saveExecutionProgress", "saveManualExecutions", "saveDataErrorExecution", "saveDataSuccessExecution", "executionTimeout", "errorWorkflow", "timezone", "executionOrder"];
+    for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".json") && !x.startsWith("_"))) {
+      const w = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+      if (!w.nodes || w.isArchived) continue;
+      const teams = w.nodes.filter((n) => n.type.endsWith("microsoftTeams"));
+      if (!teams.length) continue;
+      for (const t of teams) {
+        const salidas = (w.connections[t.name]?.main?.[0]) || [];
+        for (const [, c] of Object.entries(w.connections)) for (const rama of c.main || []) {
+          for (let i = rama.length - 1; i >= 0; i--) if (rama[i].node === t.name) rama.splice(i, 1, ...salidas);
+        }
+        delete w.connections[t.name];
+        w.nodes = w.nodes.filter((n) => n.name !== t.name);
+      }
+      const settings = Object.fromEntries(Object.entries(w.settings || {}).filter(([k]) => PERMITIDAS.includes(k)));
+      const r = await api(`/workflows/${w.id}`, { method: "PUT", body: JSON.stringify({ name: w.name, nodes: w.nodes, connections: w.connections, settings, staticData: w.staticData ?? null }) });
+      console.log(`✓ ${r.name}: ${teams.length} nodo(s) Teams quitado(s) (activo=${r.active})`);
     }
   } else if (cmd === "apagar-monday") {
     // El corte: desactiva los workflows que alimentaban NocoDB desde Monday. Desde acá Pulse es la
@@ -437,5 +531,5 @@ try {
       const err = full.data?.resultData?.error;
       if (err) console.log(`  ERROR en "${full.data.resultData.lastNodeExecuted}": ${err.message}`);
     }
-  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n] | crear-equipo | activar-equipo | repuntar | apagar-monday"); process.exit(1); }
+  } else { console.error("Comandos: generar | crear | actualizar | activar | probar | reporte [n] | crear-equipo | activar-equipo | crear-citas | probar-citas | repuntar | quitar-teams | apagar-monday"); process.exit(1); }
 } catch (e) { console.error(`sync-pulse: ${e.message}`); process.exit(1); }

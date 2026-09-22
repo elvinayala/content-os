@@ -58,7 +58,9 @@ async function todas(ruta, params = {}) {
 }
 
 const slug = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
-const guardar = (nombre, obj) => { fs.mkdirSync(path.dirname(path.join(OUT, nombre)), { recursive: true }); fs.writeFileSync(path.join(OUT, nombre), JSON.stringify(obj, null, 2) + "\n"); };
+// Los respaldos van a GitHub: nunca con secretos adentro (tokens de Slack xox…, keys).
+const redactar = (txt) => txt.replace(/xox[abpors]-[0-9A-Za-z-]{10,}/g, "xox_-REDACTADO").replace(/sk-[A-Za-z0-9]{20,}/g, "sk-REDACTADO");
+const guardar = (nombre, obj) => { fs.mkdirSync(path.dirname(path.join(OUT, nombre)), { recursive: true }); fs.writeFileSync(path.join(OUT, nombre), redactar(JSON.stringify(obj, null, 2)) + "\n"); };
 
 // Resume un workflow a lo que Nico necesita para entenderlo sin abrir n8n.
 function resumir(w) {
@@ -108,7 +110,7 @@ async function exportar() {
     const full = await api(`/workflows/${w.id}`);
     // Se guarda tal cual lo devuelve n8n: se re-importa con "Import from file" o POST /workflows.
     const archivo = `${w.id}-${slug(w.name)}.json`;
-    fs.writeFileSync(path.join(dir, archivo), JSON.stringify(full, null, 2) + "\n");
+    fs.writeFileSync(path.join(dir, archivo), redactar(JSON.stringify(full, null, 2)) + "\n");
     indice.push({ id: w.id, nombre: w.name, activo: w.active, archivo, actualizadoEl: w.updatedAt });
   }
   guardar("workflows/_indice.json", { exportadoEl: new Date().toISOString(), servidor: URL_BASE, total: indice.length, workflows: indice });

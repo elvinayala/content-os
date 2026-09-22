@@ -1,10 +1,11 @@
 {
   "credencialId": "vDGtt7BxftPjeHjM",
   "credencialNombre": "Pulse ↔ n8n (x-pulse-secret)",
-  "actualizadoEl": "2026-09-21T14:47:51.751Z",
+  "actualizadoEl": "2026-09-22T01:56:06.913Z",
   "workflowId": "RyeQFDXnB429XG0Q",
   "nombre": "A-) Sync Pulse → NocoDB v1",
   "activadoEl": "2026-09-21T01:21:28.862Z",
   "equipoWorkflowId": "g7hZaosZ24Dgifbg",
-  "mondayApagadoEl": "2026-09-21T14:47:51.748Z"
+  "mondayApagadoEl": "2026-09-21T22:49:17.083Z",
+  "citasWorkflowId": "GbGyPmnkEcf1Excz"
 }
