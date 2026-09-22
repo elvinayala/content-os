@@ -2,6 +2,15 @@
   "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
   "entradas": [
     {
+      "fecha": "2026-09-22",
+      "plataforma": "bori",
+      "que": "Revisado el pago anual no completado (Agencia anual $2,388, serranoaletorres@gmail.com, 22/sep 6:54 PM). No hubo rechazo de tarjeta: el cliente eligió KLARNA en el checkout; Klarna pide aprobacion externa (next_action redirect_to_url) y el flujo quedo en requires_action -> invoice.payment_action_required + invoice.payment_failed. Suscripcion sub_1UIcaI en estado incomplete, factura in_1UIcaI abierta, sesion cs_live_a1gKtp aun OPEN (expira 23/sep ~6:54 PM): si vuelve al link y paga con tarjeta, entra solo.",
+      "porque": "Elvin preguntó por qué no se aceptó el pago anual y si Stripe tiene los productos anuales.",
+      "verificado": "Sí — API de Stripe (solo lectura): los 4 precios anuales existen y estan activos (bori_creador_anual $180, bori_starter_anual $372, bori_pro_anual $948, bori_agencia_anual $2,388) sobre los mismos productos del mensual; /api/status de Bori = 200.",
+      "commit": "(sin cambios de código)",
+      "pendienteElvin": "Decidir si se apagan Klarna/Cash App/Amazon Pay como metodos para suscripciones en Stripe (hoy salen automaticos en el checkout y para montos altos Klarna casi nunca aprueba). No lo toco sin su OK."
+    },
+    {
       "fecha": "2026-09-20",
       "plataforma": "quiz-funnels",
       "que": "Decisión de Elvin: NO se mueve el CNAME ni nada más — se espera a que Aure pague ClickFunnels. El respaldo en Netlify queda parado sin tráfico apuntado.",
