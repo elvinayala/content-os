@@ -28,6 +28,18 @@ base: "[[marketing-fase-0]] · [[ESTADO]] · [[kit/campana-reclutamiento]] · [[
 
 
 
+> **22/sep — Reestructura por región (Elvin):** todo a **WhatsApp**, objetivo Ventas, optimización
+> **conversaciones**, solo botón de WhatsApp, **$75/día × 7 días**. 7 conjuntos, uno por región, cada uno con
+> su flyer sin cifras (`kit/flyers-regiones/`, publicados en `resueltopr.com/flyers/regiones/`):
+> Área Metro (San Juan + Bayamón, 9 municipios) $15 · Caguas · Ponce · Arecibo · Mayagüez · Aguadilla ·
+> Fajardo $10 c/u. Segmentación por **municipio** (región de Meta), hombres 25-65 + intereses de plomería con
+> Advantage+. Saludo del chat: "Hola, soy plomero de <región> y quiero aplicar." Montaje:
+> `node scripts/meta-ads/resuelto-regiones.mjs montar [--aplicar]` (idempotente, ids en
+> `data/meta-ads/campanas/resuelto-regiones-2026-09.json`). **Campaña de Leads pausada el 22/sep.**
+> ⚠️ Bloqueo: el token de Meta (el de Bori) no tiene la página Resuelto PR → Meta rechaza crear conjuntos
+> a WhatsApp por API ("tu página no está vinculada a una cuenta de WhatsApp") y no deja clonar W2 (su
+> atribución de 7 días ya no se permite). Se monta desde Ads Manager o reconectando Meta en Bori con la página.
+
 > **Para qué existe este documento:** cuando Elvin conecte el usuario de Resuelto en Bori (con anuncios habilitados y Meta conectada), montar esto es correr **4 comandos** (§9) y activar en Ads Manager. Todo lo demás —creativos, copys, públicos, saludo de WhatsApp, reglas de decisión, reporte— ya está decidido aquí.
 
 ## 1. La jugada en 10 líneas
