@@ -37,6 +37,7 @@ export interface Contacto {
   tipo?: "cliente" | "plomero-candidato" | "cliente-proyecto" | "contratista" | "otro";
   notas: string[];
   ghlContactId?: string;
+  ghlOpportunityId?: string; // tarjeta en el pipeline (Candidatos / Contratistas / Trabajos) creada al clasificar
   humano: boolean;         // true = un humano tomó la conversación; el agente calla
   humanoDesde?: string;    // cuándo contestó por última vez un humano (para retomar solo pasadas HUMANO_HORAS)
   creado: string;
@@ -84,6 +85,7 @@ export interface Candidato {
   nivelLicencia: string;
   numeroLicencia?: string;
   municipio: string;
+  experiencia?: string;    // años que lleva de plomero (texto tal como lo dijo)
   equipo: string;
   disponibilidad: string;
   entrevista?: string;     // ISO

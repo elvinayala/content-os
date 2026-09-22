@@ -71,11 +71,11 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
   },
   {
     name: "registrar_candidato",
-    description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la videollamada de 20 minutos.",
+    description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la entrevista por videollamada de 20 minutos. Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
     input_schema: {
       type: "object",
-      properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la videollamada acordada; vacío si aún no" } },
-      required: ["nombre", "whatsapp", "nivel_licencia", "numero_licencia", "municipio", "equipo", "disponibilidad", "entrevista"],
+      properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la videollamada acordada; vacío si aún no" } },
+      required: ["nombre", "whatsapp", "nivel_licencia", "numero_licencia", "municipio", "experiencia", "equipo", "disponibilidad", "entrevista"],
       additionalProperties: false,
     },
   },
@@ -83,6 +83,11 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
     name: "agregar_lista_espera",
     description: "Anota a alguien de un municipio sin cobertura para avisarle cuando abramos su zona.",
     input_schema: { type: "object", properties: { municipio: { type: "string" }, nombre: { type: "string" } }, required: ["municipio", "nombre"], additionalProperties: false },
+  },
+  {
+    name: "clasificar_contacto",
+    description: "Llámala EN CUANTO sepas qué tipo de persona escribe (normalmente en el 1er o 2º mensaje): cliente de plomería, dueño con proyecto, plomero candidato o contratista candidato. Crea la tarjeta en el CRM de inmediato para que el equipo la vea aunque la persona no termine la conversación. Llámala una sola vez por contacto (o de nuevo solo si cambia el tipo).",
+    input_schema: { type: "object", properties: { tipo: { type: "string", enum: ["cliente", "cliente-proyecto", "plomero-candidato", "contratista"] }, nombre: { type: "string", description: "vacío si aún no lo dio" }, municipio: { type: "string", description: "vacío si aún no lo dio" }, resumen: { type: "string", description: "1 línea: qué quiere o qué dijo" } }, required: ["tipo", "nombre", "municipio", "resumen"], additionalProperties: false },
   },
   {
     name: "guardar_nota_cliente",
@@ -231,18 +236,46 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       return { total, desglose: { mano_obra: input.mano_obra, coordinacion: t.fee, emergencia: t.emergencia ? menu.recargo_emergencia : 0, materiales_costo: input.materiales_costo, materiales_cobrados: materialesCobrados }, link_tarjeta: link.url ?? null, ath_movil: link.athMovil, simulado: link.simulado };
     }
     case "registrar_candidato": {
-      const c: Candidato = { id: "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: new Date().toISOString() };
+      const c: Candidato = { id: "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: new Date().toISOString() };
       almacen.guardarCandidato(c);
       const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: ["plomero-candidato", c.nivelLicencia], fuente: ctx.contacto.canal });
       almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tipo: "plomero-candidato", ghlContactId: ghlId });
-      await avisarCoordinador(`🔧 Candidato ${c.id}: ${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " " + c.numeroLicencia : ""}) · ${c.municipio} · ${c.equipo}${c.entrevista ? `\nEntrevista: ${new Date(c.entrevista).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}` : ""}`);
+      // Misma tarjeta que crea el formulario web (netlify/functions/lead.mjs): pipeline Candidatos → Aplicó.
+      if (ghlId) {
+        if (!ctx.contacto.ghlOpportunityId) { const op = await crearOportunidad({ contactId: ghlId, nombre: c.nombre, valor: 0, trabajoId: c.id, pipelineId: process.env.GHL_PIPELINE_CANDIDATOS_ID, stageId: process.env.GHL_STAGE_CANDIDATO_APLICO }); if (op) { ctx.contacto.ghlOpportunityId = op; almacen.guardarContacto(ctx.contacto); } }
+        await agregarNota(ghlId, `Aplicó por WhatsApp (agente). Licencia: ${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""} · Municipio: ${c.municipio}${c.experiencia ? " · Experiencia: " + c.experiencia : ""} · Equipo: ${c.equipo} · Disponibilidad: ${c.disponibilidad}${c.entrevista ? " · Entrevista acordada: " + c.entrevista : ""}`);
+      }
+      await avisarCoordinador(`🔧 Candidato ${c.id}: ${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " " + c.numeroLicencia : ""}) · ${c.municipio}${c.experiencia ? " · " + c.experiencia + " de experiencia" : ""} · ${c.equipo}${c.entrevista ? `\nEntrevista: ${new Date(c.entrevista).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}` : ""}`);
       const t = territorioDeMunicipio(c.municipio);
-      return { ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre} (${t.estado})` : "fuera de los territorios definidos", apto_por_licencia: ["maestro", "oficial"].includes(c.nivelLicencia) };
+      return { ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: ["maestro", "oficial"].includes(c.nivelLicencia) };
     }
     case "agregar_lista_espera": {
       almacen.agregarListaEspera({ municipio: input.municipio, nombre: input.nombre, contactoId: ctx.contacto.id, creado: new Date().toISOString() });
       await upsertContacto({ nombre: input.nombre, telefono: ctx.contacto.telefono, municipio: input.municipio, tags: ["lista-espera", `espera-${norm(input.municipio).replace(/\s+/g, "-")}`], fuente: ctx.contacto.canal });
       return { ok: true };
+    }
+    case "clasificar_contacto": {
+      const c = ctx.contacto;
+      if (input.nombre) c.nombre = input.nombre;
+      if (input.municipio) c.municipio = input.municipio;
+      c.tipo = input.tipo;
+      const tagTipo = input.tipo === "cliente" ? "cliente" : input.tipo === "cliente-proyecto" ? "cliente-proyecto" : input.tipo === "plomero-candidato" ? "plomero-candidato" : "contratista-candidato";
+      const ghlId = c.ghlContactId ?? (await upsertContacto({ nombre: c.nombre, telefono: c.telefono ?? c.identificador, municipio: c.municipio, tags: [tagTipo], fuente: c.canal }));
+      if (ghlId && !c.ghlContactId) c.ghlContactId = ghlId;
+      else if (ghlId) await upsertContacto({ nombre: c.nombre, telefono: c.telefono ?? c.identificador, municipio: c.municipio, tags: [tagTipo], fuente: c.canal });
+      // Tarjeta en el pipeline que corresponda, una sola vez.
+      if (ghlId && !c.ghlOpportunityId) {
+        const etiqueta = c.nombre || (c.telefono ?? c.identificador);
+        const pipe = input.tipo === "plomero-candidato" ? { pipelineId: process.env.GHL_PIPELINE_CANDIDATOS_ID, stageId: process.env.GHL_STAGE_CANDIDATO_APLICO }
+          : input.tipo === "contratista" ? { pipelineId: process.env.GHL_PIPELINE_CONTRATISTAS_ID, stageId: process.env.GHL_STAGE_CONTRATISTA_APLICO }
+          : input.tipo === "cliente-proyecto" ? { pipelineId: process.env.GHL_PIPELINE_PROYECTOS_ID, stageId: process.env.GHL_STAGE_VISITA_AGENDADA }
+          : { pipelineId: config.ghl.pipelineId, stageId: process.env.GHL_STAGE_NUEVO };
+        const op = await crearOportunidad({ contactId: ghlId, nombre: etiqueta, valor: 0, trabajoId: "WA", ...pipe });
+        if (op) c.ghlOpportunityId = op;
+        await agregarNota(ghlId, `Escribió por ${c.canal}. ${input.resumen}`);
+      }
+      almacen.guardarContacto(c);
+      return { ok: true, en_crm: !!ghlId, tarjeta: !!c.ghlOpportunityId };
     }
     case "guardar_nota_cliente": {
       const c = { ...ctx.contacto };
@@ -303,6 +336,10 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       almacen.guardarContratista(c);
       const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, tags: ["contratista-candidato", ...c.categorias], fuente: ctx.contacto.canal });
       almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: c.whatsapp, tipo: "contratista", ghlContactId: ghlId });
+      if (ghlId) {
+        if (!ctx.contacto.ghlOpportunityId) { const op = await crearOportunidad({ contactId: ghlId, nombre: c.nombre, valor: 0, trabajoId: c.id, pipelineId: process.env.GHL_PIPELINE_CONTRATISTAS_ID, stageId: process.env.GHL_STAGE_CONTRATISTA_APLICO }); if (op) { ctx.contacto.ghlOpportunityId = op; almacen.guardarContacto(ctx.contacto); } }
+        await agregarNota(ghlId, `Aplicó por WhatsApp (agente). ${c.empresa ? "Empresa: " + c.empresa + " · " : ""}Categorías: ${c.categorias.join(", ")} · Zonas: ${c.zonas.join(", ")} · DACO: ${c.registroDaco ?? "NO"} · Seguro: ${c.seguro ?? "no indica"} · Exp: ${c.experienciaAnos ?? "?"} años`);
+      }
       await avisarCoordinador(`🧱 Contratista ${c.id}: ${c.nombre}${c.empresa ? ` (${c.empresa})` : ""}\nCategorías: ${c.categorias.join(", ")} · Zonas: ${c.zonas.join(", ")}\nDACO: ${c.registroDaco ?? "NO"} · Seguro: ${c.seguro ?? "no indica"} · Exp: ${c.experienciaAnos ?? "?"} años · Capacidad: ${c.capacidadMensual ?? "?"}`);
       return { ok: true, contratista_id: c.id, apto_documental: !!c.registroDaco, faltantes: [!c.registroDaco ? "registro DACO (requisito)" : null, !c.seguro ? "seguro de responsabilidad" : null, !c.portfolio ? "portfolio o fotos de trabajos" : null].filter(Boolean), siguiente_paso: c.registroDaco ? "verificación documental y entrevista de 20 min; ofrecer 2 horarios" : "explicar que el registro DACO es requisito y cómo obtenerlo (daco.pr.gov, ~$205 + fianza); anotar para cuando lo tenga" };
     }
