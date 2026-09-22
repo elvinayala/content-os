@@ -257,8 +257,9 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       return { ok: true };
     }
     case "escalar_a_humano": {
-      almacen.guardarContacto({ ...ctx.contacto, humano: true });
-      ctx.contacto.humano = true;
+      const humanoDesde = new Date().toISOString();
+      almacen.guardarContacto({ ...ctx.contacto, humano: true, humanoDesde });
+      Object.assign(ctx.contacto, { humano: true, humanoDesde });
       await avisarCoordinador(`${input.urgente ? "🚨 URGENTE" : "🙋 Escalado"} · ${input.motivo}\nContacto: ${ctx.contacto.nombre ?? ""} ${ctx.contacto.telefono ?? ctx.contacto.identificador} (${ctx.contacto.canal})\n${input.resumen}\n\nPara devolver al agente: ${config.urlPublica}/admin/liberar/${encodeURIComponent(ctx.contacto.id)}`);
       return { ok: true, mensaje_para_cliente: "Dile que en unos minutos le escribe alguien del equipo. No sigas cotizando." };
     }

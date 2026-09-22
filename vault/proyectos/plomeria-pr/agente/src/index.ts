@@ -1,7 +1,8 @@
 /**
  * Servidor del agente de Resuelto.
  *  GET  /health
- *  GET  /webhook/meta            verificación de Meta (WhatsApp, Instagram, Messenger)
+ *  POST /webhook/zernio          WhatsApp vía Zernio (default): message.received / message.sent
+ *  GET  /webhook/meta            verificación de Meta (WhatsApp directo, Instagram, Messenger)
  *  POST /webhook/meta            mensajes entrantes de los tres canales
  *  POST /api/chat                widget web de las landings  { sessionId, texto, adjuntos?[] }
  *  POST /webhook/stripe          pago recibido → trabajo cobrado
@@ -16,6 +17,8 @@ import { config } from "./config.js";
 import { almacen, RAIZ } from "./almacen.js";
 import { responder } from "./agente.js";
 import * as wa from "./canales/whatsapp.js";
+import * as waMeta from "./canales/whatsapp-meta.js";
+import * as zernio from "./canales/zernio.js";
 import * as meta from "./canales/meta.js";
 import { verificarEventoStripe } from "./integraciones/cobros.js";
 import type { Adjunto } from "./integraciones/media.js";
@@ -28,7 +31,7 @@ import { router as cotizadorRouter, cerrarConDeposito, linkCotizador } from "./c
 import * as encuestas from "./encuestas.js";
 import { dashboardHTML } from "./dashboard.js";
 
-const LINK_WA = `https://wa.me/${process.env.WA_NUMERO_PUBLICO ?? ""}?text=${encodeURIComponent("Hola, quiero cotizar un trabajo")}`;
+const LINK_WA = `https://wa.me/${config.wa.numeroPublico}?text=${encodeURIComponent("Hola, quiero cotizar un trabajo")}`;
 const app = express();
 app.set("trust proxy", true);
 
@@ -50,7 +53,52 @@ app.use((req, res, next) => {
 const vistos = new Set<string>();
 function yaVisto(id: string) { if (vistos.has(id)) return true; vistos.add(id); if (vistos.size > 5000) vistos.clear(); return false; }
 
-app.get("/health", (_req, res) => res.json({ ok: true, modelo: config.modelo, integraciones: { whatsapp: config.tiene.whatsapp(), meta: config.tiene.meta(), calendario: config.tiene.calendario(), stripe: config.tiene.stripe(), ghl: config.tiene.ghl(), whisper: config.tiene.whisper() } }));
+app.get("/health", (_req, res) => res.json({ ok: true, modelo: config.modelo, whatsapp: config.wa.proveedor, integraciones: { whatsapp: config.tiene.whatsapp(), meta: config.tiene.meta(), calendario: config.tiene.calendario(), stripe: config.tiene.stripe(), ghl: config.tiene.ghl(), whisper: config.tiene.whisper() } }));
+
+// ── WhatsApp: un mensaje entrante, venga de Zernio o de Meta directo ──
+async function atenderWhatsApp(m: wa.MensajeWA) {
+  // Proveedor aceptando una oferta por WhatsApp: "ACEPTO OF-0001"
+  const acepto = m.texto?.match(/acepto\s+(OF-\d{4})/i);
+  if (acepto) {
+    const prov = proveedorPorWhatsapp(m.de);
+    if (prov) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await wa.enviarTexto(m.de, r.motivo); return; }
+  }
+  const contacto = almacen.obtenerOCrearContacto("whatsapp", m.de);
+  if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
+  // Un humano tomó el chat (escalación o contestó desde el inbox); pasadas HUMANO_HORAS sin actividad humana, el agente retoma.
+  if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
+    contacto.humano = false; almacen.guardarContacto(contacto);
+  }
+  const adjuntos = (await Promise.all(m.mediaIds.map((ref) => wa.descargarMedia(ref)))).filter((a): a is Adjunto => !!a);
+  const texto = [m.texto, m.ubicacion ? `[Ubicación compartida: ${m.ubicacion.direccion ?? ""} (${m.ubicacion.lat}, ${m.ubicacion.lng})]` : ""].filter(Boolean).join("\n");
+  const respuestas = await responder(contacto, { texto, adjuntos });
+  for (const r of respuestas) await wa.enviarTexto(m.de, r);
+}
+
+// ── Zernio: WhatsApp (message.received) + detección de que un humano contestó (message.sent) ──
+app.post("/webhook/zernio", async (req: any, res) => {
+  if (!zernio.firmaValida(req.rawBody, req.headers["x-zernio-signature"])) return res.sendStatus(401);
+  res.sendStatus(200); // Zernio exige 2xx en 5 s; procesamos después
+  try {
+    const evento = String(req.body?.event ?? "");
+    if (evento === "webhook.test") return console.log("Zernio: webhook de prueba recibido");
+    if (req.body?.id && yaVisto(`zernio:${req.body.id}`)) return; // entrega at-least-once
+    const toma = zernio.tomaHumana(req.body);
+    if (toma) {
+      zernio.recordarConversacion(toma.telefono, toma.conversationId);
+      const c = almacen.obtenerOCrearContacto("whatsapp", toma.telefono);
+      almacen.guardarContacto({ ...c, humano: true, humanoDesde: new Date().toISOString() });
+      return console.log(`WA: humano contestó a ${toma.telefono}; el agente calla ${config.humanoHoras} h`);
+    }
+    for (const m of zernio.parsearWebhook(req.body)) {
+      if (m.standby) continue; // Meta Business Agent está contestando; no le quitamos el chat
+      if (yaVisto(m.id)) continue;
+      zernio.recordarConversacion(m.de, m.conversationId);
+      await zernio.marcarLeido(m.conversationId);
+      await atenderWhatsApp(m);
+    }
+  } catch (e) { console.error("webhook/zernio", e); }
+});
 
 // ── Meta: verificación del webhook ──
 app.get("/webhook/meta", (req, res) => {
@@ -63,22 +111,12 @@ app.post("/webhook/meta", async (req: any, res) => {
   res.sendStatus(200); // Meta exige respuesta rápida; procesamos después
   try {
     if (req.body?.object === "whatsapp_business_account") {
-      if (!wa.firmaValida(req.rawBody, req.headers["x-hub-signature-256"])) return console.warn("WA firma inválida");
-      for (const m of wa.parsearWebhook(req.body)) {
+      if (config.wa.proveedor !== "meta") return console.warn("WA: llegó webhook de Meta pero WA_PROVEEDOR=zernio");
+      if (!waMeta.firmaValida(req.rawBody, req.headers["x-hub-signature-256"])) return console.warn("WA firma inválida");
+      for (const m of waMeta.parsearWebhook(req.body)) {
         if (yaVisto(m.id)) continue;
-        await wa.marcarLeido(m.id);
-        // Proveedor aceptando una oferta por WhatsApp: "ACEPTO OF-0001"
-        const acepto = m.texto?.match(/acepto\s+(OF-\d{4})/i);
-        if (acepto) {
-          const prov = proveedorPorWhatsapp(m.de);
-          if (prov) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await wa.enviarTexto(m.de, r.motivo); continue; }
-        }
-        const contacto = almacen.obtenerOCrearContacto("whatsapp", m.de);
-        if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
-        const adjuntos = (await Promise.all(m.mediaIds.map((id) => wa.descargarMedia(id)))).filter((a): a is Adjunto => !!a);
-        const texto = [m.texto, m.ubicacion ? `[Ubicación compartida: ${m.ubicacion.direccion ?? ""} (${m.ubicacion.lat}, ${m.ubicacion.lng})]` : ""].filter(Boolean).join("\n");
-        const respuestas = await responder(contacto, { texto, adjuntos });
-        for (const r of respuestas) await wa.enviarTexto(m.de, r);
+        await waMeta.marcarLeido(m.id);
+        await atenderWhatsApp(m);
       }
     } else if (req.body?.object === "instagram" || req.body?.object === "page") {
       // Decisión de Elvin (6/sep): toda la atención es por WhatsApp. En IG y Messenger

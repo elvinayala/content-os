@@ -8,7 +8,7 @@ function req(nombre: string, porDefecto?: string): string {
 const opt = (nombre: string, porDefecto = ""): string => process.env[nombre] ?? porDefecto;
 
 export const config = {
-  modelo: opt("MODELO", "claude-opus-5"),
+  modelo: opt("MODELO", "claude-sonnet-5"),   // rápido y barato para chat; MODELO=claude-opus-5 si quieres más finura
   esfuerzo: opt("ESFUERZO", "medium") as "low" | "medium" | "high",
   port: Number(opt("PORT", "3100")),
   urlPublica: opt("URL_PUBLICA", "http://localhost:3100"),
@@ -16,10 +16,25 @@ export const config = {
   zonaHoraria: opt("ZONA_HORARIA", "America/Puerto_Rico"),
 
   wa: {
+    /** zernio (default si hay ZERNIO_API_KEY) | meta (Cloud API directa). */
+    proveedor: (opt("WA_PROVEEDOR") || (process.env.ZERNIO_API_KEY ? "zernio" : "meta")) as "zernio" | "meta",
+    numeroPublico: opt("WA_NUMERO_PUBLICO"),
     token: opt("WA_TOKEN"),
     phoneNumberId: opt("WA_PHONE_NUMBER_ID"),
     verifyToken: opt("WA_VERIFY_TOKEN", "resuelto"),
     appSecret: opt("META_APP_SECRET"),
+  },
+  zernio: {
+    apiKey: opt("ZERNIO_API_KEY"),
+    accountId: opt("ZERNIO_ACCOUNT_ID"),
+    webhookSecret: opt("ZERNIO_WEBHOOK_SECRET"),
+    base: opt("ZERNIO_API_BASE", "https://zernio.com/api/v1"),
+  },
+  /** Horas que el agente calla después de que un humano contesta desde el inbox; luego retoma solo. */
+  humanoHoras: Number(opt("HUMANO_HORAS", "3")),
+  telegram: {
+    botToken: opt("TELEGRAM_BOT_TOKEN"),
+    coordinadorChatId: opt("COORDINADOR_TELEGRAM_CHAT_ID"),
   },
   meta: {
     pageToken: opt("PAGE_ACCESS_TOKEN"),
@@ -43,7 +58,7 @@ export const config = {
 
   /** true cuando la integración tiene credenciales; si no, la herramienta responde en modo simulado y lo dice. */
   tiene: {
-    whatsapp: () => !!(process.env.WA_TOKEN && process.env.WA_PHONE_NUMBER_ID),
+    whatsapp: () => config.wa.proveedor === "zernio" ? !!(process.env.ZERNIO_API_KEY && process.env.ZERNIO_ACCOUNT_ID) : !!(process.env.WA_TOKEN && process.env.WA_PHONE_NUMBER_ID),
     meta: () => !!process.env.PAGE_ACCESS_TOKEN,
     calendario: () => !!process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
     stripe: () => !!process.env.STRIPE_SECRET_KEY,

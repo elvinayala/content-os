@@ -13,7 +13,7 @@ src/
   prompt.ts           system prompt estable (se cachea) + menú + territorios
   herramientas.ts     11 herramientas: definición para Claude + ejecución
   almacen.ts          contactos, conversaciones, trabajos, candidatos (JSON → luego Postgres)
-  canales/whatsapp.ts WhatsApp Cloud API
+  canales/whatsapp.ts facade WhatsApp → zernio.ts (default) o whatsapp-meta.ts (Cloud API directa)
   canales/meta.ts     Instagram + Messenger
   integraciones/      calendario (Google), cobros (Stripe + ATH Móvil), crm (GoHighLevel), media (fotos/audio/PDF)
   cli.ts              chat de prueba en la terminal
@@ -38,13 +38,44 @@ Prueba en la terminal: *"Hola, tengo el fregadero tapado en Caguas"* y luego *"S
 
 ## Conectar cada canal
 
-### 1. WhatsApp (Meta Cloud API)
+### 1. WhatsApp por Zernio (default, sin app de Meta)
+
+El número **939-247-9234** vive solo en la Cloud API (no se instala WhatsApp en la línea) y se conecta
+desde el dashboard de Zernio: gratis (2 cuentas / 10K mensajes), con inbox web para que un humano tome el
+chat. El agente corre en Railway (proyecto `resuelto`, servicio `agente`, dominio
+`https://agente-production-684f.up.railway.app`).
+
+1. Activa la línea (Meta manda un código por SMS/llamada). **No instales WhatsApp ni WhatsApp Business con
+   ese número.**
+2. [zernio.com](https://zernio.com) → Connections → tarjeta **WhatsApp** → **+ Connect** → **Use my own
+   number** → login de Facebook con el portafolio *Resuelto Home Services LLC* → crea un WABA nuevo →
+   escribe el número → código SMS. En la ventana de Meta **no** elijas "Connect existing WhatsApp Business
+   app account" (eso es coexistencia y te ata al teléfono).
+3. Dashboard → **API keys** → `ZERNIO_API_KEY`. Connections → WhatsApp → el id de la cuenta →
+   `ZERNIO_ACCOUNT_ID`.
+4. Dashboard → **Webhooks** → nuevo: URL `https://agente-production-684f.up.railway.app/webhook/zernio`,
+   eventos `message.received` y `message.sent`, y un secreto inventado por ti → `ZERNIO_WEBHOOK_SECRET`.
+   (Lo mismo por API: `POST /v1/webhooks/settings`.) El botón "Test" tiene que devolver 200.
+5. Variables en Railway (dashboard del servicio `agente` o `railway variables --set`): `ANTHROPIC_API_KEY`
+   (key propia de Resuelto), `ZERNIO_API_KEY`, `ZERNIO_ACCOUNT_ID`, `ZERNIO_WEBHOOK_SECRET`,
+   `TELEGRAM_BOT_TOKEN` + `COORDINADOR_TELEGRAM_CHAT_ID` (avisos de escalación) y `PORTAL_SECRETO`.
+   `GET /health` debe decir `"whatsapp":"zernio"` e `integraciones.whatsapp: true`.
+6. Perfil del número (Connections → WhatsApp → Business Profile): foto `kit/perfiles/avatar-naranja.png`,
+   nombre "Resuelto", descripción "Plomería con precio fijo en Puerto Rico".
+
+**Cómo se reparten humano y agente.** Si alguien contesta desde el inbox de Zernio (evento `message.sent`
+con `sentVia: human`) o el agente escala con `escalar_a_humano`, el agente calla en esa conversación
+`HUMANO_HORAS` (3 por defecto) contadas desde la última actividad humana y luego retoma solo; el link
+`/admin/liberar/:id` del aviso lo devuelve antes. Los envíos a alguien que nunca nos escribió (ofertas a
+plomeros, recordatorios) salen como *utility* por Meta Direct Send; si Meta lo rechaza, hace falta una
+plantilla aprobada (Connections → WhatsApp → Settings → Templates).
+
+**Plan B: Cloud API directa** (`WA_PROVEEDOR=meta`, código en `src/canales/whatsapp-meta.ts`):
 1. [developers.facebook.com](https://developers.facebook.com) → Crear app → tipo **Business** → agregar producto **WhatsApp**.
 2. En WhatsApp → API Setup: agrega el número de Resuelto (o usa el de prueba). Copia el **Phone number ID** → `WA_PHONE_NUMBER_ID`.
 3. Business Settings → System Users → crea uno con rol Admin → Generate token con permisos `whatsapp_business_messaging` y `whatsapp_business_management`, sin expiración → `WA_TOKEN`.
 4. App Settings → Basic → **App Secret** → `META_APP_SECRET`.
 5. WhatsApp → Configuration → Webhook: URL `https://TU-DOMINIO/webhook/meta`, Verify token = `WA_VERIFY_TOKEN`. Suscribe el campo **messages**.
-6. Perfil del número: foto L5 sobre naranja, nombre "Resuelto", descripción "Plomería con precio fijo en Puerto Rico".
 
 ### 2. Instagram y Messenger
 1. En la misma app → agregar producto **Messenger**. Conecta la página de Facebook de Resuelto (que tiene vinculada la cuenta profesional de Instagram).
@@ -76,17 +107,30 @@ Pon el dominio de las landings en `CORS_ORIGENES`.
 
 ## Desplegar
 
-Railway o Render (Node 20+). Variables de `.env` en el panel. Dominio: `agente.resueltopr.com` → `URL_PUBLICA`. Un solo proceso aguanta cientos de conversaciones al día; cuando haya 3+ plomeros, mueve `data/estado/*.json` a Postgres cambiando solo `almacen.ts`.
+Railway, proyecto `resuelto` · servicio `agente` (`Dockerfile` + `railway.toml`, healthcheck `/health`,
+volumen en `/app/data/estado` para que el estado sobreviva a los deploys). Desde esta carpeta:
+
+```bash
+npx @railway/cli up --detach          # build + deploy
+npx @railway/cli logs                 # logs del servicio
+npx @railway/cli variables --set "X=Y"  # variables (secretos: mejor desde el dashboard)
+```
+
+Dominio actual `https://agente-production-684f.up.railway.app` (`URL_PUBLICA`); `agente.resueltopr.com`
+cuando se quiera (CNAME en Netlify DNS + `railway domain`). Un solo proceso aguanta cientos de
+conversaciones al día; cuando haya 3+ plomeros, mueve `data/estado/*.json` a Postgres cambiando solo `almacen.ts`.
+
+Tests del canal: `node --test tests/` (después de `npm run build`).
 
 ## Operar
 
 - `GET /admin/estado` — trabajos, candidatos y lista de espera.
-- Cuando el agente escala, avisa al `COORDINADOR_WHATSAPP` con un link `/admin/liberar/:id`. Mientras la conversación está escalada, el agente no responde (el humano habla desde WhatsApp Business o el inbox de GHL). Al abrir el link, el agente retoma.
+- Cuando el agente escala, avisa por Telegram (`COORDINADOR_TELEGRAM_CHAT_ID`) y/o WhatsApp (`COORDINADOR_WHATSAPP`) con un link `/admin/liberar/:id`. Mientras la conversación está escalada, el agente no responde (el humano contesta desde el inbox de Zernio). Al abrir el link, o pasadas `HUMANO_HORAS`, el agente retoma.
 - Para cambiar precios: edita `data/menu.json` y reinicia. Para abrir un territorio: pon `"estado": "activo"` y agrega el plomero con su `calendar_id`.
 
 ## Cómo piensa el agente
 
-El system prompt está en `src/prompt.ts`. Fija la voz (tuteo PR), las reglas de negocio (35/65 no se menciona al cliente; fee $19 siempre en la misma frase; el cliente le paga a Resuelto; materiales confirmados antes), los dos flujos (cliente / plomero candidato) y las condiciones de escalación. Usa `claude-opus-5` con esfuerzo `medium` para respuestas rápidas; sube a `high` si quieres más finura en la conversación. El prompt se cachea, así que las conversaciones largas cuestan poco.
+El system prompt está en `src/prompt.ts`. Fija la voz (tuteo PR), las reglas de negocio (35/65 no se menciona al cliente; fee $19 siempre en la misma frase; el cliente le paga a Resuelto; materiales confirmados antes), los dos flujos (cliente / plomero candidato) y las condiciones de escalación. Usa `claude-sonnet-5` con esfuerzo `medium` (rápido y barato para chat); `MODELO=claude-opus-5` y `ESFUERZO=high` si quieres más finura en la conversación. El prompt se cachea, así que las conversaciones largas cuestan poco.
 
 Los precios y la cobertura **nunca** salen de la cabeza del modelo: siempre pasan por `buscar_precio` y `verificar_cobertura`, que leen los JSON. Si cambias un precio en el JSON, el agente lo usa de inmediato.
 

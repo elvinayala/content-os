@@ -1,7 +1,7 @@
 ---
 proyecto: Resuelto
 tipo: estado-maestro
-actualizado: 2026-09-13
+actualizado: 2026-09-21
 ---
 
 # Resuelto · Estado del proyecto y cómo empezamos
@@ -86,21 +86,23 @@ Todo el sistema está **construido y probado en simulado**. Nada está conectado
 | # | Qué | Quién | Desbloquea |
 |---|---|---|---|
 | 1 | ~~DNS en GoDaddy~~ **Hecho 14/sep**: A `@` → 75.2.60.5, `www` alias, SSL emitido | — | `resueltopr.com` carga la web oficial |
-| 2 | **Número de WhatsApp** (línea prepago nueva) + WhatsApp Business | Elvin | Que el botón de todos los flyers y landings lleve a alguien; el agente |
+| 2 | **Número de WhatsApp** — **939-247-9234 comprado (21/sep)**. Falta: activar la línea (SIN instalar WhatsApp) y conectarla en Zernio → `agente/README.md` §1 (10 min de Elvin). Después Claude redespliega las landings (ya tienen el número) | Elvin | Que el botón de todos los flyers y landings lleve a alguien; el agente |
 | 3 | **Datos de Luis**: municipio, licencia (número/nivel), vehículo, herramientas, WhatsApp, email | Elvin, 5 min | Territorio de lanzamiento, `proveedores.json`, la primera alerta real |
 | 4 | **Cuentas de redes creadas** (IG/FB/TikTok/YouTube @resueltopr) con perfil y bio | Elvin (dijo que ya) | Publicar |
 | 5 | **Social Planner de GHL** (reemplaza a Zernio, decisión 14/sep): conectar IG + FB (+TikTok) de Resuelto en la sub-cuenta → Marketing → Social Planner → Connect | Elvin, 10 min | Que yo programe el orgánico (12 posts, reels, stories) desde GHL con el mismo token |
-| 6 | **Meta** — simplificado: WhatsApp va por GHL (GHL es el Tech Provider). Solo hace falta Business Manager de Resuelto + verificación del negocio + número dedicado (NO instalado en la app de WhatsApp) | Elvin | WhatsApp real en GHL; el agente entra por webhook |
+| 6 | **Meta** — ~~WhatsApp por GHL~~ **cambiado 21/sep: WhatsApp por Zernio** (Embedded Signup con el portafolio Resuelto `157965986805918`; sin app de Meta, sin verificación de negocio para arrancar, inbox web incluido). Verificación del negocio queda para después (nombre visible + tier >250) | Elvin (10 min) | WhatsApp real; el agente entra por `/webhook/zernio` |
 | 7 | **Bori**: usuario `marketing@resueltopr.com`, habilitar anuncios, conectar Meta desde ese usuario | Elvin, 15 min | Que yo monte campañas en pausa |
 | 8 | **Abogado**: LLC + encuadre Ley 59 + registro DACO + contratos (plomero, contratista, cliente) | Elvin agenda | Banco, Stripe, ATH Móvil Business, seguro, y vender legalmente |
-| 9 | **Desplegar el agente** en Railway (`agente.resueltopr.com`) con variables | Claude, cuando exista 2 y 6 | Todo el sistema en producción |
-| 10 | **GoHighLevel** — **hecho 14/sep**: sub-cuenta `Resuelto Home Services LLC` (id `GzQT638S6w7qi4dnZoU9`), integración privada "Agente Resuelto" (token en `agente/.env`), 4 pipelines (Trabajos · Proyectos · Candidatos · Contratistas), 15 campos, 14 etiquetas. Falta: Elvin como usuario de la sub-cuenta → `node agente/scripts/ghl-calendarios.mjs` crea los 3 calendarios; WhatsApp ($10/mes) + número + Meta Business | Elvin (usuario + compra) · Claude (resto) | CRM, agenda de trabajos y WhatsApp en un solo lugar |
+| 9 | ~~Desplegar el agente en Railway~~ **Hecho 21/sep**: proyecto `resuelto` · servicio `agente` · `https://agente-production-684f.up.railway.app` (`/health` OK, volumen para el estado). Faltan las variables secretas (`ANTHROPIC_API_KEY` propia, `ZERNIO_*`, Telegram del coordinador) que pone Elvin | Elvin (variables) | Todo el sistema en producción |
+| 10 | **GoHighLevel** — **hecho 14/sep**: sub-cuenta `Resuelto Home Services LLC` (id `GzQT638S6w7qi4dnZoU9`), integración privada "Agente Resuelto" (token en `agente/.env`), 4 pipelines (Trabajos · Proyectos · Candidatos · Contratistas), 15 campos, 14 etiquetas. Falta: Elvin como usuario de la sub-cuenta → `node agente/scripts/ghl-calendarios.mjs` crea los 3 calendarios. (WhatsApp ya NO va por GHL, ver 6) | Elvin (usuario + compra) · Claude (resto) | CRM, agenda de trabajos y WhatsApp en un solo lugar |
 
 **Para publicar orgánico** bastan 4 y 5 (el 1 ya está) (dos horas de tu parte). **Para anuncios en Bori** hacen falta además 6 y 7. **Para vender** hace falta 8.
 
-## 5b. Arquitectura decidida (14/sep/2026)
+## 5b. Arquitectura decidida (14/sep/2026 · WhatsApp cambiado el 21/sep)
 
-Mismo patrón que AutoFlow: **WhatsApp y CRM en GHL** (sub-cuenta propia de Resuelto) → Workflow "Customer Replied" → webhook → **agente en Cloudflare con Claude (API de Anthropic)** → responde por `conversations/messages` y mueve oportunidades en los pipelines. Calendarios de GHL = agenda real de trabajos (ventanas de 2 h, cupos por plomero), visitas de cotización y entrevistas. La web sigue en Netlify; sus botones hablan con GHL. IDs en `agente/data/ghl-*.json` y `agente/.env`.
+**WhatsApp (21/sep): el número 939-247-9234 se conecta por Zernio** (envoltorio de la Cloud API: Embedded Signup desde su dashboard, gratis 2 cuentas / 10K mensajes, inbox web para que un humano tome el chat) → webhook `message.received` → **el agente propio en Railway** (`agente/`, Node + Claude `claude-sonnet-5`, canal `src/canales/zernio.ts`; Meta directa queda como plan B en `whatsapp-meta.ts`). Si un humano contesta desde el inbox, el agente calla 3 h y retoma. Motivo del cambio: es lo más simple (sin app de Meta ni verificación del negocio, que exige la LLC), el agente ya estaba hecho con 16 herramientas, y Zernio sirve de piloto para el chat de los clientes de AutoFlow ($6/mes por cuenta a partir de la 3ª). Decisión de Elvin tras ver el carrusel de @soyenriquerocha (Claude Code + Zernio).
+
+**CRM y agenda en GHL** (sub-cuenta propia de Resuelto): el agente mueve oportunidades en los pipelines por API (`GHL_TOKEN`). Calendarios de GHL = agenda real de trabajos (ventanas de 2 h, cupos por plomero), visitas de cotización y entrevistas. La web sigue en Netlify; sus botones hablan con GHL. IDs en `agente/data/ghl-*.json` y `agente/.env`.
 
 ## 6. Próximos pasos
 1. Plan de marketing de Fase 0 en `marketing-fase-0.md` (reclutamiento de plomeros y contratistas); las piezas de la cola reciben fecha real cuando Elvin confirme el día de arranque.

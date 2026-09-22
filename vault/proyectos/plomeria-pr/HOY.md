@@ -9,10 +9,10 @@ Orden correcto: **dominio → WhatsApp → web en vivo → perfiles → publicar
 ## Bloque 1 · Lo que desbloquea todo (90 minutos)
 
 - [x] **`resueltopr.com` registrado** en GoDaddy (6/sep, vence 6/sep/2027). Nameservers de GoDaddy: los DNS se configuran ahí.
-- [ ] **Conseguir el número de WhatsApp.** Dos opciones:
-  - Línea prepago nueva de Claro/T-Mobile (~$20). Es la más simple y la que recomiendo.
-  - Un número que ya tengas y no uses, siempre que **nunca** haya tenido WhatsApp personal.
-  - No uses tu número personal: cuando conectes la Cloud API pierdes el WhatsApp normal en esa línea.
+- [x] **Número de WhatsApp: 939-247-9234** (comprado 21/sep). Falta:
+  - [ ] Activar la línea (tiene que recibir el SMS de Meta). **No instales WhatsApp ni WhatsApp Business** en ella.
+  - [ ] Conectarla en Zernio + variables en Railway: pasos exactos en `agente/README.md` §1 (10 min).
+  - [ ] Avísame cuando esté conectada y redespliego las landings (ya tienen el número) y lo pongo en las campañas W1/W2 de Bori.
 - [ ] **Reservar los handles**: `@resueltopr` en Instagram, Facebook, TikTok y YouTube. Aunque no publiques hoy, resérvalos antes de que alguien más los tome.
 - [ ] **Llamar al abogado** para la LLC y el encuadre de la Ley 59-2022. Solo agendar, no hace falta que sea hoy.
 - [ ] **Pasarme los datos de Luis**: municipio, número y nivel de licencia, vehículo, herramientas. Con eso cierro el territorio de lanzamiento y ajusto el agente.
@@ -25,7 +25,7 @@ Orden correcto: **dominio → WhatsApp → web en vivo → perfiles → publicar
   - **A** · nombre `@` · valor `75.2.60.5`
   - **CNAME** · nombre `www` · valor `resueltopr.netlify.app`
   En 10–30 min carga `https://resueltopr.com` y Netlify emite el SSL solo.
-- [ ] Avísame el número de WhatsApp y redespliego con el número real (hoy tienen `17870000000` de relleno).
+- [x] Landings con el número real `19392479234` en el código (21/sep); se redespliegan cuando el número esté conectado (antes, el link de wa.me diría que no existe).
 
 Para redesplegar (lo hago yo): `cd kit/landing && npx netlify-cli deploy --prod --dir . --no-build --site 2a72cf58-73cd-4946-86fc-2da7daa928ed`
 

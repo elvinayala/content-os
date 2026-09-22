@@ -38,6 +38,7 @@ export interface Contacto {
   notas: string[];
   ghlContactId?: string;
   humano: boolean;         // true = un humano tomó la conversación; el agente calla
+  humanoDesde?: string;    // cuándo contestó por última vez un humano (para retomar solo pasadas HUMANO_HORAS)
   creado: string;
   actualizado: string;
 }
