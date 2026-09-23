@@ -290,11 +290,12 @@
       "tests": "npm test",
       "leerPrimero": [
         "README.md",
-        "docs/ESTADO-DEL-PROYECTO.md",
+        "docs/SOP-AutoFlow.md (v3)",
+        "docs/ghl-subcuenta.md",
         "RUNBOOK.md"
       ],
       "critico": true,
-      "notas": "Cliente médico real: atiende pacientes por WhatsApp/IG/FB. Nada de datos de pacientes en Slack/Telegram. Prompt en producción = como voz: sin OK de Elvin no se cambia.",
+      "notas": "Cliente médico real: atiende pacientes por WhatsApp/IG/FB. Nada de datos de pacientes en Slack/Telegram. Prompt en producción = como voz: sin OK de Elvin no se cambia. SOP v3 (23/sep/2026): mismo código corre en Railway con server.mjs (default para clientes nuevos) y canal CANAL_MODO=zernio además de oficial/goghl. Ángelo sigue en Cloudflare.",
       "github": "elvinayala/autoflow-quality-care"
     },
     {

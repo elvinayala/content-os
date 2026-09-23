@@ -13,11 +13,12 @@ Pedido: $ARGUMENTS
 
 ## 0. Antes de empezar (5 min, sin gastar)
 
-1. Lee `~/autoflow-quality-care/docs/SOP-AutoFlow-v2.md` (o `/estado/repos/autoflow-quality-care/…`
-   en la nube) completo: arquitectura, checklist de go-live, política Meta vs GoGHL y el registro
+1. Lee `~/autoflow-quality-care/docs/SOP-AutoFlow.md` (v3; en la nube
+   `/estado/repos/autoflow-quality-care/docs/SOP-AutoFlow.md`) completo: arquitectura, checklist de go-live, política Meta vs GoGHL y el registro
    de fallas. **Es la ley.** Y `docs/ghl-subcuenta.md` para la parte de GHL.
-2. La plantilla es **Ángelo** (`autoflow-quality-care`): Worker de Cloudflare + Claude + GHL +
-   Retell. Todo lo que cambia por cliente vive en `cliente.config.js` + `conocimiento/`. Ojo: está
+2. La plantilla es **Ángelo** (`autoflow-quality-care`, en GitHub): Claude + GHL + Retell, y el
+   mismo código corre en **Railway** (`npm start` → `server.mjs`, default para clientes nuevos) o
+   en Cloudflare (solo Ángelo). SOP §1b. Todo lo que cambia por cliente vive en `cliente.config.js` + `conocimiento/`. Ojo: está
    hecha para una **oficina médica** (MEDICOS, SEDES, PLANES, referidos). Para otro giro, adapta
    `conocimiento/` y los imports de `lib/agente.js`, `lib/respuestas.js`, `lib/voz.js` a los datos
    de ESE negocio — sin romper las reglas del SOP §4.
@@ -32,10 +33,11 @@ Regla del SOP: si un dato no está en `conocimiento/`, el agente escala; no adiv
 
 ## 2. El repo del cliente
 
-Copia la plantilla (sin `node_modules`, `.dev.vars`, `.wrangler`, `retell.ids.json`,
+Copia la plantilla (sin `node_modules`, `.dev.vars`, `.wrangler`, `.datos`, `retell.ids.json`,
 `conocimiento/` de QCP) a `~/autoflow-clientes/<slug>/` (en la nube: `/estado/clientes/<slug>/`),
-`git init`, y llena `cliente.config.js` + `conocimiento/`. Nombre del Worker: `autoflow-<slug>`.
-KV propio por cliente (nunca compartir sesiones entre clientes).
+`git init`, y llena `cliente.config.js` + `conocimiento/`. Pídele a Elvin el repo
+`github.com/new?name=autoflow-<slug>&visibility=private` (tú no puedes crearlo) y súbelo ahí.
+Sesiones aisladas por cliente (cada servicio tiene su propio volumen).
 
 ## 3. GoHighLevel (el centro)
 
@@ -55,7 +57,7 @@ KV propio por cliente (nunca compartir sesiones entre clientes).
 | Opción | Cuándo | Cómo |
 |---|---|---|
 | **Meta oficial dentro de GHL** | El cliente tiene Business Manager sano y puede verificar | Conectar en GHL → Integraciones. Es el default del SOP. |
-| **Zernio** | Quiere salir hoy, número nuevo o Meta trabado | Como Resuelto: `vault/proyectos/plomeria-pr/agente/src/canales/zernio.ts` (firma HMAC, `/webhook/zernio`, plantillas). |
+| **Zernio** | Quiere salir hoy, número nuevo o Meta trabado | Ya está en la plantilla: `CANAL_MODO=zernio` + `ZERNIO_API_KEY`/`ZERNIO_ACCOUNT_ID`/`ZERNIO_WEBHOOK_SECRET`, webhook `/webhook/zernio` (SOP §5.1). |
 | **GoGHL (QR)** | La oficial falló tras el checklist del SOP §5 | `CANAL_MODO=goghl` + `GHL_CONVERSATION_PROVIDER_ID` (SOP §5). |
 
 Recomiéndale una a Elvin en una línea con el porqué; si no contesta en 10 min, sigue con la
@@ -69,8 +71,10 @@ voz que ya atiende clientes reales sin OK** (cerebro §3). Número nuevo = gasto
 
 ## 6. Desplegar y probar (nada se marca sin probar)
 
-`npx wrangler deploy` (necesita `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`), secretos con
-`wrangler secret put`. Corre `npm run verificar` y `npm run evals`; prueba el demo `/api/chat`
+**Railway (default):** proyecto `autoflow`, servicio `autoflow-<slug>` (`npx @railway/cli add` /
+`up --service autoflow-<slug> --detach` desde la carpeta del cliente), volumen en `/app/.datos`,
+variables con `railway variables --service autoflow-<slug> --set` (nunca las imprimas), dominio
+con `railway domain`. Cloudflare solo si Elvin lo pide (necesita `CLOUDFLARE_API_TOKEN`). Corre `npm run verificar` y `npm run evals`; prueba el demo `/api/chat`
 de punta a punta (pregunta → respuesta → contacto + oportunidad + cita en GHL). Checklist de
 go-live del SOP §2, los 8 puntos.
 

@@ -195,7 +195,8 @@ Carilin o Aure sigue pasando por el OK de Elvin (§3b).
 
 Pedido tipo "créame un AutoFlow para X" → `.claude/commands/autoflow.md`. Plantilla: Ángelo
 (`autoflow-quality-care`, SOP v2 en `docs/`). GHL es el centro (subcuenta, pipeline, custom fields,
-calendario); canal de WhatsApp por Meta oficial en GHL, Zernio (como Resuelto) o GoGHL, el más fácil
-para ese cliente; voz con Retell. Llaves que necesita en Railway: `GHL_AGENCY_TOKEN`,
-`CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, `ZERNIO_API_KEY` (si va por Zernio),
-`RETELL_API_KEY` (ya está).
+calendario); canal de WhatsApp por Meta oficial en GHL, Zernio (`CANAL_MODO=zernio`, ya en la
+plantilla) o GoGHL, el más fácil para ese cliente; voz con Retell. SOP v3 (23/sep): el cerebro corre en **Railway por defecto** (`server.mjs`,
+un servicio `autoflow-<slug>` por cliente con su volumen); Cloudflare solo para Ángelo. Llaves que
+necesita: `GHL_AGENCY_TOKEN` y `ZERNIO_API_KEY` (si va por Zernio); `RETELL_API_KEY` y
+`RAILWAY_API_TOKEN` ya están. Ya no hace falta Cloudflare.
