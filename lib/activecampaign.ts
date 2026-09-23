@@ -59,6 +59,17 @@ async function idDeTag(nombre: string): Promise<number> {
   return id;
 }
 
+// Campos personalizados por su "personalization tag" (p. ej. CITA_FECHA → %CITA_FECHA% en el
+// email). El id se resuelve una vez por instancia; si el campo no existe en AC, se ignora.
+const campoCache = new Map<string, number>();
+async function idsDeCampos(perstags: string[]): Promise<Map<string, number>> {
+  if (perstags.some((t) => !campoCache.has(t))) {
+    const r = await v3<{ fields: { id: string; perstag: string }[] }>("GET", "fields?limit=100");
+    for (const f of r.fields) campoCache.set(f.perstag.toUpperCase(), Number(f.id));
+  }
+  return new Map(perstags.filter((t) => campoCache.has(t)).map((t) => [t, campoCache.get(t)!]));
+}
+
 export interface ContactoAC {
   email: string;
   nombre?: string;
@@ -66,6 +77,7 @@ export interface ContactoAC {
   marca: MarcaAC;
   tags?: string[]; // "origen:quiz", "etapa:agendo", "avatar:coach"…
   campos?: Record<string, string>; // custom fields por id numérico (string) → valor
+  camposPorTag?: Record<string, string>; // custom fields por perstag (CITA_FECHA…) → valor
 }
 
 // Upsert del contacto + tags + lista de la marca. Idempotente. Nunca tira: devuelve ok:false.
@@ -79,7 +91,15 @@ export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?:
     const [first, ...rest] = (c.nombre ?? "").trim().split(/\s+/);
     const contact: Record<string, unknown> = { email: c.email.toLowerCase(), firstName: first ?? "", lastName: rest.join(" ") };
     if (c.telefono) contact.phone = c.telefono;
-    if (c.campos) contact.fieldValues = Object.entries(c.campos).map(([field, value]) => ({ field, value }));
+    const fieldValues = Object.entries(c.campos ?? {}).map(([field, value]) => ({ field, value }));
+    if (c.camposPorTag && Object.keys(c.camposPorTag).length) {
+      const ids = await idsDeCampos(Object.keys(c.camposPorTag).map((t) => t.toUpperCase())).catch(() => new Map<string, number>());
+      for (const [tag, value] of Object.entries(c.camposPorTag)) {
+        const id = ids.get(tag.toUpperCase());
+        if (id) fieldValues.push({ field: String(id), value });
+      }
+    }
+    if (fieldValues.length) contact.fieldValues = fieldValues;
     const r = await v3<{ contact: { id: string } }>("POST", "contact/sync", { contact });
     const id = Number(r.contact.id);
     const fallos: string[] = [];

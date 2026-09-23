@@ -26,24 +26,24 @@ Antes de la llamada vas a recibir un link con tu negocio ya montado: un asistent
 
 
 ## Día 1 · MVP antes de la llamada
-**Asunto A:** Mañana hablamos: aquí está tu demo  
+**Asunto A:** Antes de tu demo: pruébalo tú  
 **Asunto B:** Tu asistente ya contesta  
 **Preview:** Pruébalo antes de la llamada.  
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME|Hola}}, mañana es tu demo. Tu negocio ya montado te llega por WhatsApp antes de la llamada. Escríbele al chat como si fueras un cliente tuyo y, si puedes, toca el orbe y habla con tu asistente de voz.
+{{FIRSTNAME|Hola}}, antes de tu demo: tu negocio ya montado te llega por WhatsApp antes de la llamada. Escríbele al chat como si fueras un cliente tuyo y, si puedes, toca el orbe y habla con tu asistente de voz.
 
-Somos AI Borinquen: agentes de IA para negocios de Puerto Rico, funcionando en 21 días o no corre la mensualidad. Nos vemos mañana.
+Somos AI Borinquen: agentes de IA para negocios de Puerto Rico, funcionando en 21 días o no corre la mensualidad. Nos vemos pronto.
 
 **CTA:** Probar mi demo
 
 
 ## Día 2 · recordatorio
-**Asunto A:** Tu demo es en 1 hora  
+**Asunto A:** Tu demo con AI Borinquen  
 **Asunto B:**   
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME}}, en 1 hora es tu demo con AI Borinquen. El link de Zoom está en tu invitación de Calendly. Si no puedes, responde y la movemos.
+{{FIRSTNAME|Hola}}, te recuerdo tu demo con AI Borinquen. La hora y el link de Zoom están en tu invitación de Calendly. Si no puedes llegar, responde y la movemos.
 
 **CTA:** Entrar a la demo

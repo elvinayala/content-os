@@ -242,6 +242,14 @@ const esc = (s: unknown) =>
 
 const TZ = "America/Puerto_Rico";
 
+// "martes 23 de septiembre, 2:00 PM" — para los emails (%CITA_FECHA%).
+function fechaLegiblePR(iso: string) {
+  const d = new Date(iso);
+  const dia = new Intl.DateTimeFormat("es-PR", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" }).format(d);
+  const hora = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit", hour12: true }).format(d);
+  return `${dia.replace(",", "")}, ${hora}`;
+}
+
 function fechaPR(iso: string) {
   const d = new Date(iso);
   const f = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(d); // YYYY-MM-DD
@@ -391,8 +399,17 @@ async function procesarCreado(inv: CalendlyInvitee) {
 
   // ActiveCampaign: el que agenda entra a la base con `etapa:agendo` (dispara la
   // pre-llamada y corta lead→agenda). No-op sin ACTIVECAMPAIGN_*.
+  const host = ev.event_memberships?.[0]?.user_name ?? "";
   after(() => upsertContacto({
     email, nombre, telefono, marca: marcaDe(inv),
+    // Para los emails de pre-llamada: %CITA_FECHA% (texto PR), %CITA_CLOSER%, %CITA_ZOOM% y
+    // CITA_ISO (fecha/hora) para las esperas "hasta 1 día / 1 hora antes de la cita".
+    camposPorTag: {
+      CITA_FECHA: fechaLegiblePR(ev.start_time),
+      CITA_ISO: ev.start_time,
+      ...(host ? { CITA_CLOSER: host } : {}),
+      ...(ev.location?.join_url ? { CITA_ZOOM: ev.location.join_url } : {}),
+    },
     tags: ["origen:calendly", esReagenda ? "etapa:reagendo" : "etapa:agendo", ...(inv.tracking?.utm_source ? [`agendo-por:${String(inv.tracking.utm_source).slice(0, 30)}`] : [])],
   }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
   const yaExiste = await buscarDealPorEvento(ev.uri);

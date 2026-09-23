@@ -28,26 +28,26 @@ Para que aproveches el tiempo: ten a mano cuántos clientes nuevos entran al mes
 
 
 ## Día 1 · prueba social + caso del avatar
-**Asunto A:** Mañana hablamos: 3 cosas antes de la llamada  
+**Asunto A:** 3 cosas antes de tu llamada  
 **Asunto B:** Quiénes somos (por si no nos conoces)  
 **Preview:** +50 negocios en PR, 12 meses operando cuentas.  
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME|Hola}}, mañana es tu llamada.
+{{FIRSTNAME|Hola}}, antes de tu llamada con nosotros:
 
 Tres cosas por si no nos conoces: más de 50 negocios en Puerto Rico han trabajado con nosotros; operamos las cuentas con contrato claro y reporte semanal; y los resultados los medimos en clientes nuevos, no en likes.
 
-Si necesitas mover la hora, usa el link de tu confirmación. Nos vemos mañana.
+Si necesitas mover la hora, usa el link de tu confirmación de Calendly. Nos vemos pronto.
 
 **CTA:** Confirmar
 
 
 ## Día 2 · recordatorio
-**Asunto A:** Tu llamada es en 1 hora  
+**Asunto A:** Tu llamada con Level Up Media  
 **Asunto B:**   
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME}}, en 1 hora es tu llamada con Level Up Media. El link de Zoom está en tu invitación de Calendly. Si no puedes, responde este mensaje y la movemos.
+{{FIRSTNAME|Hola}}, te recuerdo tu llamada con Level Up Media. La hora y el link de Zoom están en tu invitación de Calendly. Si no puedes llegar, responde este mensaje y la movemos.
 
 **CTA:** Entrar a la llamada
