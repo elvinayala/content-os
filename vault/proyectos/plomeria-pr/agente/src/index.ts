@@ -20,6 +20,7 @@ import * as nina from "./community/nina.js";
 import { DIR_MEDIA } from "./community/render.js";
 import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
+import { humanizar } from "./humanizar.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
 import * as zernio from "./canales/zernio.js";
@@ -81,7 +82,11 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   const adjuntos = (await Promise.all(m.mediaIds.map((ref) => wa.descargarMedia(ref)))).filter((a): a is Adjunto => !!a);
   const texto = [m.texto, m.ubicacion ? `[Ubicación compartida: ${m.ubicacion.direccion ?? ""} (${m.ubicacion.lat}, ${m.ubicacion.lng})]` : ""].filter(Boolean).join("\n");
   const respuestas = await responder(contacto, { texto, adjuntos });
-  for (const r of respuestas) await wa.enviarTexto(m.de, r);
+  // Se envía humanizado (minúsculas, sin "¡", un error leve de tilde en el 3º-4º mensaje);
+  // el historial de la conversación guarda la versión limpia del modelo.
+  let n = contacto.enviadosWa ?? 0;
+  for (const r of respuestas) { n++; await wa.enviarTexto(m.de, humanizar(r, n, contacto.id)); }
+  if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
 }
 
 // ── Zernio: WhatsApp (message.received) + detección de que un humano contestó (message.sent) ──

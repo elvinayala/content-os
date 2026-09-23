@@ -120,7 +120,9 @@ Dominio actual `https://agente-production-684f.up.railway.app` (`URL_PUBLICA`); 
 cuando se quiera (CNAME en Netlify DNS + `railway domain`). Un solo proceso aguanta cientos de
 conversaciones al día; cuando haya 3+ plomeros, mueve `data/estado/*.json` a Postgres cambiando solo `almacen.ts`.
 
-Tests del canal: `node --test tests/` (después de `npm run build`).
+Tests: `npm run build && node --test tests/*.mjs` (canal Zernio + humanizador).
+
+**Probar el cerebro real sin ensuciar producción:** una simulación con las variables de Railway (`railway run`) escribe de verdad en GHL y manda avisos por Telegram (pasó el 22/sep: 2 contactos falsos, etiquetados `prueba`). En el script de prueba, borra `GHL_TOKEN`, `TELEGRAM_BOT_TOKEN`, `COORDINADOR_WHATSAPP` y `ZERNIO_API_KEY` de `process.env` ANTES de importar `dist/`.
 
 ## Operar
 
