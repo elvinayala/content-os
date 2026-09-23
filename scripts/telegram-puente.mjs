@@ -35,7 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado } from "./agentes.mjs";
+import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -56,7 +56,10 @@ const ES_MAX = BOT === "max";
 const ES_LOLA = BOT === "lola";
 // Nombre de este agente en el buzón compartido (scripts/agentes.mjs). Sin PUENTE_BOT es Sofi.
 const YO = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
-const NOMBRES = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", elvin: "Elvin" };
+const NOMBRES = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
+// Equipo humano que le pide cambios a Nico por Slack (23/sep/2026). Nico NUNCA ejecuta lo que
+// ellas piden sin el OK de Elvin: diagnostica en solo lectura, le pasa el plan y espera "ok <id>".
+const EQUIPO_NICO = new Set(["carilin", "aure"]);
 // En Railway el estado vive en el volumen /estado (PUENTE_ESTADO_DIR); en la Mac, en data/.
 const ESTADO = path.join(process.env.PUENTE_ESTADO_DIR || path.join(ROOT, "data"), ES_NICO ? "telegram-puente-nico.json" : ES_MAX ? "telegram-puente-max.json" : ES_LOLA ? "telegram-puente-lola.json" : "telegram-puente.json");
 const EN_NUBE = process.env.PUENTE_EN_NUBE === "1";
@@ -107,7 +110,7 @@ const PERSONAS = {
   jarvis: "Actuá como JARVIS (métricas, operaciones, pipeline, vault). Leé los data/*.json y el vault que necesites. Respondé con números y corto.",
   max: "Eres MAX, el media buyer de IA Market (Level Up Media, AI Borinquen, Mauro, Resuelto, Shadow Operator). Piensas como Elvin: el marketing es la vena del negocio; la meta es escalar de $100K a $300K/mes con ROAS 6-8x; tu trabajo es identificar y ESCALAR anuncios ganadores (renovar creativos cada 10 días, analizar cada 3-7 días, escalar 10-20 %, matar rápido lo que no engancha: CTR < 2 %). Elvin te escribe desde el celular por Telegram. ANTES de actuar lee vault/ceo/cerebro-max.md (su método, sus tres embudos — Instagram/Follow Me, WhatsApp, quiz —, sus pepitas, los mentores Hormozi/Gadzhi/Shackelford/Ramiro, tus rutinas) y data/meta-ads/portafolio.json (ids, reglas y compuertas por marca). Tus manos son SOLO `node scripts/meta-ads.mjs <marca> …` (resultados, campanas, arbol, plantilla, videos, publicos, pausar) y `node scripts/higgsfield.mjs …` (creativos: Ad Multiplier = versiones de un anuncio ganador, UGC, fotos de producto, thumbnails; lee cerebro §9 y `flujo <nombre>` antes; NUNCA gastes créditos sin OK explícito de Elvin en este chat: propón qué/cuántas/costo y espera): nunca edites código ni infraestructura. Campañas: identifica marca + plantilla (follow-me, trafico-url, dm-instagram, quiz) + creativos + presupuesto + edad; si falta un dato clave pregúntalo en UNA pregunta con opciones; si lo tienes, `--dry-run`, resume en 3 líneas y monta EN PAUSA; devuelve el enlace de Ads Manager y recuérdale que la publica él. Estadísticas: `resultados <marca> [id] [last_3d|last_7d|last_14d]` y responde con lo que decide (gasto, $seguidor/CPL/CPC, CTR, frecuencia, ROAS, ESCALAR/pausar) en ≤ 8 líneas. SIEMPRE cierra con una recomendación con número (escalar X, pedir contenido de tal ángulo, renovar creativo, webinar mensual, lanzamiento, evento, VSL oculto, retargeting): Elvin no quiere que te limites, quiere estrategia; pero recomendar ≠ ejecutar: él decide y publica. PROHIBIDO: activar campañas, subir presupuestos, borrar, tocar cuentas fuera del portafolio, inventar ids/ángulos/resultados, imprimir tokens, escribirle a alguien que no sea Elvin. Nunca digas que algo quedó si el script no lo confirmó. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado (Telegram): párrafos cortos y viñetas con guion. Firma — Max.",
   iris: "Eres IRIS, la vigía de Cortex (el editor de video con IA). Elvin te escribe desde el celular. ANTES de responder lee vault/ceo/cerebro-iris.md completo (tu criterio y tus límites) y, si el pedido es sobre un proyecto puntual, entra a ~/ai-video-editor y lee su CLAUDE.md. Tu trabajo normal es una ronda automática cada ~20 min sobre #cortex-bori-edit-videos (.claude/commands/iris.md la describe entera); por Telegram Elvin puede pedirte una ronda ahora ('/iris ronda' o 'revisa el canal'), preguntarte el estado de un proyecto, o pedirte que investigues un caso puntual. Diagnostica con overrides.json/revisions.json/timeline.ai.json/ave/reglas.py del proyecto, arregla lo que sea seguro y chico (re-correr una revisión, limpiar un override pegado, aplicar una regla), y si es un bug de código real: cambio chico → test (uv run pytest) → deploy (npx @railway/cli up --detach) → VERIFICAR (/health + un render real, nunca solo el código) antes de decir que quedó. Registra en data/iris-bitacora.json. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/proyectos, tocar cobros, escribirle a un cliente final (solo a los estrategas del canal de Cortex y a Elvin), redeploy con renders en cola, imprimir o pegar secretos. Si algo excede lo que puedes decidir sola, anótalo en data/nico-bitacora.json con el prefijo '[Iris → Nico]' para que se resuelva sin esperarte a ti. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado. Firma — Iris.",
-  nico: "Eres NICO, el vibecoder de Elvin (ingeniero de guardia de todas sus plataformas) y socio técnico de Sofi. Elvin te escribe desde el celular. ANTES de tocar nada lee vault/ceo/cerebro-nico.md y data/plataformas.json; el repo de cada plataforma está en ese inventario (tienes acceso a todos: Bori/heybori.ai, Plagas, Cortex, Resuelto, voz Retell, quiz funnels, Content OS) y cada uno tiene su CLAUDE.md o TRASPASO.md con las trampas que ya rompieron producción: léelo primero. Haz el ajuste completo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo (salud HTTP, logs) → anotar en data/nico-bitacora.json {fecha, plataforma, que, porque, verificado, commit}. Nunca digas que algo quedó si no lo verificaste. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/tablas/archivos, migraciones destructivas, tocar cobros/Stripe/precios, editar prompts de agentes de voz en producción, imprimir o pegar secretos, escribirle a clientes/equipo/Heidy (solo le hablas a Elvin), activar ads, redeploy de Cortex con renders en cola. Si dudas entre dos caminos, el reversible. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué pasó, qué hiciste, qué verificaste, qué falta. Firma — Nico.",
+  nico: "Eres NICO, el vibecoder de Elvin (ingeniero de guardia de todas sus plataformas) y socio técnico de Sofi. Elvin te escribe desde el celular. ANTES de tocar nada lee vault/ceo/cerebro-nico.md y data/plataformas.json; el repo de cada plataforma está en ese inventario (tienes acceso a todos: Bori/heybori.ai, Plagas, Cortex, Resuelto, voz Retell, quiz funnels, Content OS) y cada uno tiene su CLAUDE.md o TRASPASO.md con las trampas que ya rompieron producción: léelo primero. Haz el ajuste completo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo (salud HTTP, logs) → anotar en data/nico-bitacora.json {fecha, plataforma, que, porque, verificado, commit}. Nunca digas que algo quedó si no lo verificaste. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/tablas/archivos, migraciones destructivas, tocar cobros/Stripe/precios, editar prompts de agentes de voz en producción, imprimir o pegar secretos, escribirle a clientes/equipo/Heidy (solo le hablas a Elvin; la única excepción son Carilin y Aure sobre SUS solicitudes, ver abajo), activar ads, redeploy de Cortex con renders en cola. Si dudas entre dos caminos, el reversible. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué pasó, qué hiciste, qué verificaste, qué falta. Firma — Nico. SOLICITUDES DEL EQUIPO: Carilin (Operaciones) y Aure (Comercial) te piden cambios por Slack; te llegan como [Solicitud del equipo …]. Regla de Elvin (23/sep/2026): NINGÚN cambio de lo que ellas pidan se hace sin su OK. Primero diagnosticas en solo lectura y le pasas el plan; cuando Elvin aprueba (\"ok <id>\" o en palabras, p. ej. \"dale a lo de Carilin\"), lo ejecutas completo y cierras con \`node scripts/agentes.mjs atendido <id> \"<qué quedó>\"\`. Si Elvin aprueba en palabras, ejecuta y cierra igual; si no sabes el id: \`node scripts/agentes.mjs solicitudes\`.",
 };
 
 // Cómo se comunican (Elvin, 20/sep/2026: "los agentes tienen que poder hablar entre sí y con mi
@@ -117,7 +120,7 @@ const COMUNICACION = `
 CÓMO TE COMUNICAS (herramienta: node scripts/agentes.mjs — ya tienes permiso para correrla):
 - Con otro agente (Sofi = contenido/producción · Nico = código y plataformas · Max = Meta Ads · Lola = flyers/artes/videos/guiones con IA): \`node scripts/agentes.mjs mensaje <sofi|nico|max|lola> "<pedido claro, con contexto y qué esperas de vuelta>"\`. Le llega a su buzón, lo atiende en ≤ 1 min y su respuesta cae en TU buzón (\`node scripts/agentes.mjs buzon\`). Úsalo cuando el pedido de Elvin necesita a otro (ej. Sofi necesita un arreglo técnico → Nico; Max necesita un creativo → Lola; Nico ve que algo afecta contenido → Sofi). Delega y dile a Elvin que lo delegaste; no inventes que el otro ya lo hizo.
 - Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y ciérralo con \`node scripts/agentes.mjs atendido <id> "<respuesta corta con el resultado o lo que falta>"\`. Las respuestas que otros te dan NO te llegan como pedido (para no gastar tokens): aparecen como contexto al inicio de tu próximo pedido. No abras ping-pong: un pedido, una respuesta. ECONOMÍA DE TOKENS: escribe a otro agente solo cuando de verdad necesites algo de él; nunca para confirmar, agradecer o avisar que lo vas a hacer.
-- Con el equipo humano de Elvin (Carilin, Aure, Jessica, Juan Diego, María del Carmen, Heidy, Yaileen, David…; lista: \`node scripts/agentes.mjs equipo\`): \`node scripts/agentes.mjs slack <nombre> "<texto>"\` manda un DM por Slack firmado con tu nombre. SOLO dentro de lo que tu cerebro permite (Sofi: logística con Aure/Carilin; Max: trazabilidad con Aure; Nico y Lola: nada sin OK de Elvin) y NUNCA a clientes ni con secretos. Tuteo de Puerto Rico, corto, con contexto de por qué escribes.
+- Con el equipo humano de Elvin (Carilin, Aure, Jessica, Juan Diego, María del Carmen, Heidy, Yaileen, David…; lista: \`node scripts/agentes.mjs equipo\`): \`node scripts/agentes.mjs slack <nombre> "<texto>"\` manda un DM por Slack firmado con tu nombre. SOLO dentro de lo que tu cerebro permite (Sofi: logística con Aure/Carilin; Max: trazabilidad con Aure; Nico: solo a Carilin/Aure sobre sus propias solicitudes — acuse, una pregunta de aclaración, resultado —; Lola: nada sin OK de Elvin) y NUNCA a clientes ni con secretos. Tuteo de Puerto Rico, corto, con contexto de por qué escribes.
 - Con Elvin: \`node scripts/agentes.mjs elvin "<texto>"\` (Telegram + Slack). Todo mensaje entre agentes o al equipo queda espejado en el DM de Slack de Elvin: escribe como si él lo leyera.`;
 
 // Repos extra que Nico puede tocar (--add-dir), sacados del inventario. Solo los que existen.
@@ -173,13 +176,16 @@ const SEGURO = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch"
 
 // Corre Claude Code en modo stream-json para poder contar qué está haciendo (herramientas,
 // texto parcial) mientras trabaja. onProgreso recibe líneas cortas ("leyendo data/estudio.json").
-function correrClaude(prompt, persona, sesion, nueva, onProgreso) {
+// Solo lectura (Nico diagnosticando una solicitud del equipo): mira todo, no cambia nada.
+const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)"];
+function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
   return new Promise((resolve) => {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
     const modo = ES_NICO ? "total" : ES_MAX || ES_LOLA ? "seguro" : env("PUENTE_MODO") || "seguro";
     const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? "60" : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
-    if (modo === "total") args.push("--dangerously-skip-permissions");
+    if (opts.soloLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    else if (modo === "total") args.push("--dangerously-skip-permissions");
     // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
     else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/higgsfield.mjs*)", "Bash(node scripts/agentes.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
     // Lola: lee el vault, escribe en data/ (entregas, pedidos) y solo corre Higgsfield + validar-voz.
@@ -327,7 +333,15 @@ function correrAds(linea) {
 
 async function procesar(token, chat, texto, st) {
   const t = texto.trim();
-  if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
+  if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/solicitudes — lo que Carilin o Aure pidieron y espera tu OK (ok <id> · no <id>)\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
+  if (ES_NICO && t === "/solicitudes") {
+    const l = await esperandoOk().catch(() => []);
+    return enviar(token, chat, l.length ? l.map((x) => `#${x.id} · ${NOMBRES[x.de] || x.de}: ${x.texto.replace(/^\[[^\]]*\]\n?/, "").slice(0, 160)}\n→ ok ${x.id} · no ${x.id}`).join("\n\n") : "Sin solicitudes del equipo esperando tu OK.");
+  }
+  // "ok 12" / "sí #12 pero sin tocar X" / "no 12 todavía no" → decisión sobre una solicitud del equipo.
+  const dec = ES_NICO && t.match(/^(ok|okay|s[ií]|dale|aprob\w*|no|rechaz\w*)\s*#?(\d+)\b\s*([\s\S]*)$/i);
+  // Solo si ese número es de verdad una solicitud abierta; si no, es un mensaje normal ("no 3 veces…").
+  if (dec && (await esperandoOk().catch(() => [])).some((x) => x.id === Number(dec[2]))) return resolverSolicitud(token, chat, st, Number(dec[2]), !/^(no|rechaz)/i.test(dec[1]), dec[3].trim());
   if (ES_NICO && t === "/plataformas") { try { const inv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/plataformas.json"), "utf8")); return enviar(token, chat, inv.plataformas.map((p) => `- ${p.nombre}${p.critico ? " 🔴crítica" : ""}${p.prod ? ` · ${p.prod}` : ""}`).join("\n")); } catch { return enviar(token, chat, "No pude leer data/plataformas.json."); } }
   if (ES_LOLA && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Lola, tu creadora de contenido con IA. Pídeme flyers, artes, videos (Higgsfield) o guiones para cualquiera de tus marcas, por ejemplo:\n- \"3 flyers para AI Borinquen, ángulo cuánto dinero está perdiendo, 4:5\"\n- \"Video UGC de Level Up contra el botón azul, 9:16\"\n- \"Guion de Shadow sobre operadores, estructura fija\"\n- \"Pack de la semana de Resuelto: guion + flyer + video\"\n\nTodo queda en tu bandeja de Entregas para que lo apruebes; no se lo mando a nadie. Tope por pedido sin tu OK: 3 imágenes o 2 videos.\n/pendientes — cola de renders\n/nuevo — conversación nueva");
   if (ES_LOLA && t === "/pendientes") { try { const q = JSON.parse(fs.readFileSync(path.join(ROOT, "data/pedidos-lola.json"), "utf8")); const pend = (q.pedidos || []).filter((x) => x.estado === "pendiente"); return enviar(token, chat, pend.length ? pend.map((x) => `- ${x.marca} · ${x.tipo}: ${x.pedido.slice(0, 80)} (${x.fecha.slice(0, 10)})`).join("\n") : "Sin renders pendientes."); } catch { return enviar(token, chat, "Sin renders pendientes."); } }
@@ -429,6 +443,13 @@ async function atenderBuzon(token, chatCEO, st) {
       if (chatCEO) await enviar(token, chatCEO, `📩 ${de} le respondió a ${NOMBRES[YO]} (#${m.hilo}):\n${m.texto.slice(0, 900)}`).catch(() => {});
       continue;
     }
+    if (ES_NICO && EQUIPO_NICO.has(m.de)) { await diagnosticarSolicitud(token, chatCEO, st, m); continue; }
+    const dec = ES_NICO && m.de === "elvin" && m.texto.match(/^\[APROBACIÓN\]\s*(ok|no)\s*#?(\d+)\s*([\s\S]*)$/i);
+    if (dec) {
+      await buzonMarcar(m.id, "atendido").catch(() => {});
+      await resolverSolicitud(token, chatCEO, st, Number(dec[2]), dec[1].toLowerCase() === "ok", dec[3].trim());
+      continue;
+    }
     try { await buzonMarcar(m.id, "en-curso"); } catch {}
     const prompt = contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`. Sé breve: es un mensaje entre agentes, no un informe.`;
     LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
@@ -462,6 +483,90 @@ async function atenderBuzon(token, chatCEO, st) {
     if (chatCEO && !esRespuesta) await enviar(token, chatCEO,`💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
   }
 }
+// ── Solicitudes del equipo → Nico, con OK de Elvin (23/sep/2026) ──────────────────────────────
+// Elvin: "que Nico tenga un enlace directo con Carilin y Aure… no hace el cambio sin yo
+// confirmar. Que me avise: Carilin solicitó este cambio, y cuando yo dé el OK, él lo hace."
+// 1) Llega por Slack (app/api/slack-eventos) al buzón como de: carilin|aure.
+// 2) Nico lo diagnostica en SOLO LECTURA (no puede editar ni desplegar) → estado esperando-ok,
+//    con el plan en `respuesta`, y le llega a Elvin por Telegram + Slack.
+// 3) Elvin responde "ok <id>" / "no <id> [nota]" (Telegram de Nico, o "nico ok <id>" en Slack).
+// 4) Con el OK, Nico lo ejecuta en modo total, cierra el mensaje y le avisa a quien lo pidió.
+async function dmEquipo(quien, texto) {
+  const tok = env("SLACK_BOT_TOKEN"); const persona = resolverPersona(quien);
+  if (!tok || !persona) return;
+  try {
+    await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${tok}` }, body: JSON.stringify({ channel: persona.id, text: `${texto}\n— Nico`.slice(0, 3900), username: "Nico · Plataformas" }), signal: AbortSignal.timeout(8000) });
+  } catch {}
+  await slackEspejo(`[Agentes] Nico → ${persona.nombre} (Slack DM): ${texto.slice(0, 1500)}`);
+}
+
+// Corre a Claude dentro de la sesión del día con el mismo ciclo de datos/git que Telegram.
+async function turnoNico(prompt, opts = {}) {
+  const st = opts.st;
+  const pendientesPrevios = opts.soloLectura ? 0 : await traerDatos();
+  gitBajar();
+  const inicio = Date.now();
+  const hoy = new Date().toISOString().slice(0, 10);
+  const nueva = !st.sesion || st.sesionDia !== hoy;
+  if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
+  let r = await correrClaude(prompt, "nico", st.sesion, nueva, null, opts);
+  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, "nico", st.sesion, true, null, opts); }
+  if (!opts.soloLectura) {
+    gitSubir(opts.motivo || "solicitud del equipo");
+    publicarCambios(inicio, pendientesPrevios > 0, opts.avisar || null);
+  }
+  return r;
+}
+
+async function diagnosticarSolicitud(token, chatCEO, st, m) {
+  const quien = NOMBRES[m.de] || m.de;
+  const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
+  try { await buzonMarcar(m.id, "en-curso"); } catch {}
+  LOG("solicitud ›", `de ${m.de} #${m.id}`, pedido.slice(0, 80));
+  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
+  const r = await turnoNico(prompt, { st, soloLectura: true });
+  const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
+  try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
+  const aviso = `🟡 ${quien} solicitó un cambio (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
+  if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
+  await slackEspejo(`[Nico] ${aviso}`);
+  const pregunta = plan.match(new RegExp(`Pregunta para ${quien}:\\s*(.+)`, "i"));
+  if (pregunta) await dmEquipo(m.de, `Sobre tu solicitud #${m.id}: ${pregunta[1].trim()} (respóndeme empezando con "Nico").`);
+}
+
+async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
+  const avisarCEO = (t) => (chatCEO ? enviar(token, chatCEO, t).catch(() => {}) : Promise.resolve());
+  let m;
+  try { m = await buzonObtener(id); } catch (e) { return avisarCEO(`No pude leer la solicitud #${id}: ${e.message.slice(0, 200)}`); }
+  if (!m || !EQUIPO_NICO.has(m.de)) return avisarCEO(`#${id} no es una solicitud del equipo. Pendientes: ${(await esperandoOk().catch(() => [])).map((x) => `#${x.id} (${NOMBRES[x.de] || x.de})`).join(", ") || "ninguna"}.`);
+  if (!["esperando-ok", "en-curso", "pendiente"].includes(m.estado)) return avisarCEO(`La solicitud #${id} ya está ${m.estado}.`);
+  const quien = NOMBRES[m.de] || m.de;
+  const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
+  if (!aprobado) {
+    await buzonMarcar(id, "rechazado", `Elvin: no${nota ? ` — ${nota}` : ""}`).catch(() => {});
+    await dmEquipo(m.de, `Elvin revisó tu solicitud #${id} y por ahora no va.${nota ? ` Nota de Elvin: ${nota}` : ""}`);
+    await slackEspejo(`[Nico] Solicitud #${id} de ${quien} rechazada por Elvin.`);
+    return avisarCEO(`Listo, la #${id} de ${quien} no se hace. Ya le avisé.`);
+  }
+  await buzonMarcar(id, "aprobado").catch(() => {});
+  await dmEquipo(m.de, `Elvin aprobó tu solicitud #${id}. Ya estoy en eso; te aviso cuando quede.`);
+  await avisarCEO(`✅ Aprobada #${id} de ${quien}. Manos a la obra; te aviso cuando esté verificada.`);
+  const nombreMay = quien.toUpperCase();
+  const prompt = `Elvin APROBÓ la solicitud #${id} de ${quien}${nota ? ` con esta nota: "${nota}"` : ""}.\nPedido de ${quien}: ${pedido}\nTu plan (el que Elvin aprobó): ${m.respuesta || "(sin plan previo: diagnostica y ejecútalo)"}\n\nEjecútalo completo como cualquier ajuste tuyo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo → anotar en data/nico-bitacora.json (que empiece con "[Solicitud de ${quien} #${id}]"). Tus prohibiciones siguen: si el plan choca con una (borrar datos, cobros, prompt de voz en prod, secretos…), no lo hagas y dile a Elvin por qué. No le escribas a ${quien}: el puente le avisa. Tu respuesta va a Elvin (corta: qué hiciste, qué verificaste). Al final agrega UNA línea que empiece con "PARA ${nombreMay}:" con 1-2 oraciones sencillas, sin jerga, de lo que quedó.`;
+  const r = await turnoNico(prompt, { st, motivo: `solicitud #${id} de ${m.de}`, avisar: avisarCEO });
+  let resp = (r.out || "").trim();
+  const re = new RegExp(`^\\s*PARA ${nombreMay}:\\s*(.+)$`, "im");
+  const paraEquipo = resp.match(re)?.[1]?.trim();
+  resp = resp.replace(re, "").trim();
+  const ok = Boolean(resp) && r.code === 0;
+  await buzonMarcar(id, ok ? "atendido" : "fallido", (resp || r.err || "sin respuesta").slice(0, 4000)).catch(() => {});
+  st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona: "nico", de: m.de, prompt: `solicitud #${id}: ${pedido.slice(0, 250)}`, resp: resp.slice(0, 300) }];
+  guardarEstado(st);
+  await avisarCEO(ok ? `🔧 Solicitud #${id} de ${quien}:\n${resp}` : `⚠️ No pude terminar la #${id} de ${quien}: ${(r.err || resp || "sin respuesta").slice(0, 600)}`);
+  await slackEspejo(`[Nico] Solicitud #${id} de ${quien} → ${ok ? "hecha" : "falló"}: ${(resp || r.err || "").slice(0, 1500)}`);
+  await dmEquipo(m.de, ok ? `Listo ✅ tu solicitud #${id}: ${paraEquipo || "ya quedó hecha y verificada."}` : `Tu solicitud #${id} se complicó; ya se lo reporté a Elvin y te aviso.`);
+}
+
 function buzonLoop(token, getChat, st) {
   const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 90000); };
   setTimeout(tick, 15000);

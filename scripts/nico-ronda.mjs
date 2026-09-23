@@ -187,7 +187,18 @@ const bitacora = (() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT
 const ajustes24h = (bitacora.entradas || []).filter((e) => new Date(e.fecha) > desde);
 const pendientesElvin = (bitacora.pendientesElvin || []).filter((p) => p.estado !== "hecho");
 
-const resultado = { generadoEl: new Date().toISOString(), desde: desde.toISOString(), plataformas: [], ajustes24h, pendientesElvin };
+// Solicitudes de Carilin/Aure que esperan el OK de Elvin (buzón compartido, /api/agentes).
+const solicitudesEquipo = await (async () => {
+  const secreto = env("CRON_SECRET"); if (!secreto) return { error: "sin CRON_SECRET" };
+  try {
+    const url = new URL("/api/agentes", env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app");
+    url.searchParams.set("estado", "esperando-ok"); url.searchParams.set("para", "nico");
+    const j = await fetch(url, { headers: { "x-cron-secret": secreto }, signal: AbortSignal.timeout(15000) }).then((r) => r.json());
+    return (j.mensajes || []).map((m) => ({ id: m.id, de: m.de, pedido: m.texto.replace(/^\[[^\]]*\]\n?/, "").slice(0, 200), desde: m.creado_el }));
+  } catch (e) { return { error: e.message.slice(0, 120) }; }
+})();
+
+const resultado = { generadoEl: new Date().toISOString(), desde: desde.toISOString(), plataformas: [], ajustes24h, pendientesElvin, solicitudesEquipo };
 for (const p of INV.plataformas) {
   const [s, g, l, f, sp, n8] = await Promise.all([salud(p), gitUltimas24h(p), logsRailway(p), fallosBori(p), soportePlagas(p), saludN8n(p)]);
   resultado.plataformas.push({ id: p.id, nombre: p.nombre, critico: p.critico, salud: s, git: g, logs: l, fallos: f, soporte: sp, n8n: n8 });

@@ -281,6 +281,38 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
   if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) await postearRespuesta(channel, respuesta, raiz, false, IDENTIDAD_DIRECTOR);
 }
 
+// Enlace directo Carilin/Aure → Nico (Elvin, 23/sep/2026). Si alguien de esta lista le escribe
+// al bot empezando con "Nico" (DM o mención), el pedido NO va a Sofi: entra al buzón de Nico
+// (/api/agentes, de: carilin|aure). Nico lo diagnostica sin tocar nada, le pasa el plan a Elvin y
+// solo lo ejecuta cuando Elvin da el OK (scripts/telegram-puente.mjs → solicitudes del equipo).
+// Override: NICO_EQUIPO="Uxxxx=carilin,Uyyyy=aure".
+const EQUIPO_NICO: Record<string, string> = Object.fromEntries(
+  (process.env.NICO_EQUIPO || "U07V7MVJ18B=carilin,U08HA9QCJBG=aure")
+    .split(",")
+    .map((x) => x.split("=").map((y) => y.trim()))
+    .filter(([id, nombre]) => id && nombre),
+);
+const PARA_NICO = /^\s*(?:@?nico\b|para\s+nico\b)[\s,:.\-—]*/i;
+const IDENTIDAD_NICO: Identidad = { username: "Nico · Plataformas" };
+const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure" };
+
+async function pasarANico(de: string, userId: string, texto: string): Promise<number | null> {
+  const secreto = process.env.CRON_SECRET;
+  if (!secreto) return null;
+  const r = await fetch(`${ORIGEN}/api/agentes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-cron-secret": secreto },
+    body: JSON.stringify({
+      de,
+      para: "nico",
+      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})]\n${texto}`,
+    }),
+    signal: AbortSignal.timeout(10000),
+  });
+  const j = (await r.json().catch(() => ({}))) as { ok?: boolean; id?: number };
+  return j.ok && j.id ? j.id : null;
+}
+
 export async function POST(req: NextRequest) {
   const raw = await req.text();
 
@@ -370,6 +402,64 @@ export async function POST(req: NextRequest) {
 
   const texto = limpiar(ev.text ?? "");
   if (!texto) return NextResponse.json({ ok: true });
+
+  // Elvin decide una solicitud desde Slack: "nico ok 12" / "nico no 12 [nota]".
+  const decision = ev.user === CEO_SLACK && texto.match(/^\s*@?nico\s+(ok|s[ií]|dale|no)\s*#?(\d+)\s*([\s\S]*)$/i);
+  if (decision) {
+    const channel = ev.channel;
+    const hilo = ev.thread_ts;
+    const aprobado = decision[1].toLowerCase() !== "no";
+    const id = decision[2];
+    const nota = decision[3].trim();
+    after(async () => {
+      const secreto = process.env.CRON_SECRET;
+      const r = secreto
+        ? await fetch(`${ORIGEN}/api/agentes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-cron-secret": secreto },
+            body: JSON.stringify({ de: "elvin", para: "nico", texto: `[APROBACIÓN] ${aprobado ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` }),
+            signal: AbortSignal.timeout(10000),
+          }).then((x) => x.json() as Promise<{ ok?: boolean }>).catch(() => ({ ok: false }))
+        : { ok: false };
+      await postearRespuesta(
+        channel,
+        r.ok
+          ? aprobado
+            ? `Anotado: la #${id} va. La hago en ≤ 2 min y te aviso cuando esté verificada.\n— Nico`
+            : `Anotado: la #${id} no va. Le aviso a quien la pidió.\n— Nico`
+          : "No pude pasarle la decisión a Nico; mándasela por su Telegram (ok/no + número).",
+        hilo,
+        false,
+        IDENTIDAD_NICO,
+      );
+    });
+    return NextResponse.json({ ok: true });
+  }
+
+  const deEquipo = EQUIPO_NICO[ev.user];
+  if (deEquipo && PARA_NICO.test(texto) && (ev.channel_type === "im" || ev.type === "app_mention")) {
+    const pedido = texto.replace(PARA_NICO, "").trim() || texto;
+    const channel = ev.channel;
+    const hilo = ev.thread_ts;
+    const userId = ev.user;
+    after(async () => {
+      try {
+        const id = await pasarANico(deEquipo, userId, pedido);
+        await postearRespuesta(
+          channel,
+          id
+            ? `Recibido ✅ (solicitud #${id}). La reviso ahora y se la paso a Elvin con el plan; en cuanto él dé el OK la hago y te aviso por aquí.\n— Nico`
+            : "No pude registrar tu solicitud ahora mismo. Vuelve a mandarla en un momento, por favor.\n— Nico",
+          hilo,
+          false,
+          IDENTIDAD_NICO,
+        );
+      } catch (e) {
+        console.error("[nico] no pude pasar la solicitud", e instanceof Error ? e.message : e);
+      }
+    });
+    return NextResponse.json({ ok: true });
+  }
 
   // Slack exige un 200 en < 3s o reintenta (y termina desactivando la suscripción).
   // Generar la respuesta de Sofi tarda varios segundos, así que le contestamos a

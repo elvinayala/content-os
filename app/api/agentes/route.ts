@@ -14,11 +14,19 @@ import { db } from "@/lib/pulse/db";
 //   GET  /api/agentes?ultimos=50                   → historial (para el panel)
 //   POST /api/agentes  { de, para, texto, hilo? } → deja un mensaje
 //   POST /api/agentes  { id, estado, respuesta? } → marca atendido / responde
+//   GET  /api/agentes?estado=esperando-ok          → solicitudes del equipo esperando OK de Elvin
+//   GET  /api/agentes?id=123                        → un mensaje
 // Auth: header x-cron-secret (o ?secret=) = CRON_SECRET, igual que /api/snapshot.
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin"]);
+// Equipo humano que puede dejarle solicitudes a Nico desde Slack (Elvin, 23/sep/2026: "que Nico
+// tenga un enlace directo con Carilin y Aure"). Solo como remitente: nadie les deja nada aquí.
+const EQUIPO_REMITENTE = new Set(["carilin", "aure"]);
+// esperando-ok: solicitud del equipo que Nico ya diagnosticó y espera el OK de Elvin.
+// aprobado: Elvin dijo que sí y Nico la está ejecutando. rechazado: Elvin dijo que no.
+const ESTADOS = ["pendiente", "en-curso", "esperando-ok", "aprobado", "atendido", "fallido", "rechazado"];
 
 function autorizado(req: NextRequest): boolean {
   const secreto = process.env.CRON_SECRET;
@@ -62,6 +70,18 @@ export async function GET(req: NextRequest) {
   const para = (req.nextUrl.searchParams.get("para") ?? "").toLowerCase();
   const pendientes = req.nextUrl.searchParams.get("pendientes") === "1";
   const ultimos = Math.min(200, Number(req.nextUrl.searchParams.get("ultimos") ?? 50));
+  const id = Number(req.nextUrl.searchParams.get("id") ?? 0);
+  if (id) {
+    const r = await d.execute(sql`SELECT * FROM agentes_mensajes WHERE id = ${id}`);
+    return NextResponse.json({ ok: true, mensajes: filas(r) });
+  }
+  const estado = req.nextUrl.searchParams.get("estado") ?? "";
+  if (estado) {
+    const r = para
+      ? await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} AND para = ${para} ORDER BY id ASC LIMIT ${ultimos}`)
+      : await d.execute(sql`SELECT * FROM agentes_mensajes WHERE estado = ${estado} ORDER BY id ASC LIMIT ${ultimos}`);
+    return NextResponse.json({ ok: true, mensajes: filas(r) });
+  }
   if (para && pendientes) {
     const r = await d.execute(sql`SELECT id, de, para, texto, hilo, estado, creado_el FROM agentes_mensajes WHERE para = ${para} AND estado = 'pendiente' ORDER BY id ASC LIMIT 20`);
     return NextResponse.json({ ok: true, mensajes: filas(r) });
@@ -82,15 +102,15 @@ export async function POST(req: NextRequest) {
   // Actualización de estado (atendido / respondido / fallido).
   if (b.id) {
     const estado = String(b.estado ?? "atendido");
-    if (!["pendiente", "en-curso", "atendido", "fallido"].includes(estado)) return NextResponse.json({ error: "estado" }, { status: 400 });
-    await d.execute(sql`UPDATE agentes_mensajes SET estado = ${estado}, respuesta = COALESCE(${b.respuesta ?? null}, respuesta), atendido_el = CASE WHEN ${estado} IN ('atendido','fallido') THEN now() ELSE atendido_el END WHERE id = ${b.id}`);
+    if (!ESTADOS.includes(estado)) return NextResponse.json({ error: "estado" }, { status: 400 });
+    await d.execute(sql`UPDATE agentes_mensajes SET estado = ${estado}, respuesta = COALESCE(${b.respuesta ?? null}, respuesta), atendido_el = CASE WHEN ${estado} IN ('atendido','fallido','rechazado') THEN now() ELSE atendido_el END WHERE id = ${b.id}`);
     return NextResponse.json({ ok: true, id: b.id, estado });
   }
 
   const de = String(b.de ?? "").toLowerCase().trim();
   const para = String(b.para ?? "").toLowerCase().trim();
   const texto = String(b.texto ?? "").trim();
-  if (!AGENTES.has(de) || !AGENTES.has(para)) return NextResponse.json({ error: "agente-desconocido", agentes: [...AGENTES] }, { status: 400 });
+  if (!(AGENTES.has(de) || (EQUIPO_REMITENTE.has(de) && para === "nico")) || !AGENTES.has(para)) return NextResponse.json({ error: "agente-desconocido", agentes: [...AGENTES] }, { status: 400 });
   if (!texto || texto.length > 8000) return NextResponse.json({ error: "texto" }, { status: 400 });
   const r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto, hilo) VALUES (${de}, ${para}, ${texto}, ${b.hilo ?? null}) RETURNING id, creado_el`);
   const fila = filas<{ id: number; creado_el: string }>(r)[0];

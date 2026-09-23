@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-20T00:00:00-04:00",
+  "actualizadoEl": "2026-09-23T00:00:00-04:00",
   "nota": "Inventario de TODO lo que Nico (vibecoder) puede tocar. Lo lee scripts/nico-ronda.mjs (salud diaria) y el puente de Telegram (--add-dir). Si nace un proyecto nuevo, se agrega aquí y Nico ya lo ve.",
   "plataformas": [
     {
@@ -65,7 +65,7 @@
         "docs/guia-uso-equipo.md"
       ],
       "critico": true,
-      "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto.",
+      "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto. ⚠️ (23/sep/2026) El repo de GitHub todavía NO existe y la copia de la Mac no tiene remote: hasta que Elvin lo cree y se suba, Nico solo lo toca desde la Mac, no desde Railway.",
       "github": "elvinayala/plagas-puerto-rico"
     },
     {
@@ -87,7 +87,7 @@
         "docs/adr/"
       ],
       "critico": false,
-      "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor).",
+      "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor). ⚠️ (23/sep/2026) El repo de GitHub todavía NO existe y la copia de la Mac no tiene remote: hasta que Elvin lo cree y se suba, Nico solo lo toca desde la Mac, no desde Railway.",
       "github": "elvinayala/cortex"
     },
     {
@@ -198,7 +198,7 @@
     {
       "id": "victory-leads",
       "nombre": "Victory Core — scrapper de leads (cliente Néstor)",
-      "repo": "/Users/elvinayala/AGENTE CONTENIDO/scripts/victory-core",
+      "repo": "/Users/elvinayala/Documents/Claude/Projects/victory-core-leads",
       "prod": "",
       "salud": "",
       "hosting": "local",
@@ -206,7 +206,7 @@
       "logs": "—",
       "tests": "—",
       "leerPrimero": [
-        ".claude/commands/victory-leads.md"
+        "README.md"
       ],
       "critico": false,
       "notas": "Elvin pidió NO sobre-ingenierizar."
@@ -243,6 +243,163 @@
       ],
       "critico": true,
       "notas": "Acceso SOLO por API key (N8N_API_KEY en .env.local), nunca con la contraseña de la UI. Nada de activar/desactivar workflows ni tocar credenciales sin OK de Elvin. Objetivo: independizarse del soporte externo ($500/mes): respaldo en el repo + monitoreo diario + arreglar los que fallan."
+    },
+    {
+      "id": "pulse",
+      "nombre": "Pulse — CRM de clientes de Level Up (reemplazo de Monday; lo usan Jessica y Carilin)",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO",
+      "prod": "https://content-os-chi-seven.vercel.app/pulse",
+      "salud": "https://content-os-chi-seven.vercel.app/pulse/login",
+      "hosting": "vercel (dentro de Content OS) + Supabase (Postgres + Storage)",
+      "deploy": "npx vercel --prod --yes (es el mismo deploy de Content OS)",
+      "logs": "npx vercel logs content-os-chi-seven.vercel.app",
+      "tests": "npm test",
+      "leerPrimero": [
+        "CLAUDE.md (sección Pulse)",
+        "lib/pulse/schema.ts"
+      ],
+      "critico": true,
+      "notas": "Tableros LEVEL UP MEDIA, AI BORINQUEN, Asignación de Estrategas. Columnas/etiquetas/grupos se agregan desde la UI (lo pueden hacer Jessica/Carilin). Cambios de esquema = migración Drizzle (npm run db:generate + db:migrate). Cada cambio de LUM / Estrategas se replica a NocoDB por el puente n8n (lib/pulse/puente-n8n.ts): cuidado con renombrar columnas. PROHIBIDO sin OK: borrar items/tableros/usuarios, tocar claves de otros usuarios. Respaldo diario en Storage pulse/respaldos/."
+    },
+    {
+      "id": "gohighlevel",
+      "nombre": "GoHighLevel — subcuentas (Resuelto, Quality Care/Angelorum) y lo que viva en GHL",
+      "repo": null,
+      "prod": "https://app.gohighlevel.com",
+      "salud": null,
+      "hosting": "GoHighLevel (SaaS)",
+      "deploy": "— (se cambia por API v2 services.leadconnectorhq.com o en la UI)",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "vault/proyectos/plomeria-pr/agente/README.md",
+        "~/autoflow-quality-care/docs/ESTADO-DEL-PROYECTO.md"
+      ],
+      "critico": true,
+      "notas": "Tokens por subcuenta: GHL_TOKEN/GHL_LOCATION_ID en el env del agente de Resuelto (Railway, proyecto resuelto) y en autoflow-quality-care (Cloudflare secrets). Pipelines/etapas/calendarios por id (GHL_PIPELINE_*, GHL_STAGE_*, GHL_CALENDAR_*). PROHIBIDO sin OK: borrar contactos/oportunidades, cambiar pipelines o workflows que disparan mensajes a clientes, tocar pagos."
+    },
+    {
+      "id": "autoflow-quality-care",
+      "nombre": "Ángelo — asistente de Quality Care Physicians / Angelorum (cliente AIB)",
+      "repo": "/Users/elvinayala/autoflow-quality-care",
+      "prod": "https://autoflow-quality-care.elvin-29e.workers.dev",
+      "salud": "https://autoflow-quality-care.elvin-29e.workers.dev",
+      "hosting": "Cloudflare Workers + GoHighLevel + Retell (voz); demo en angelo-quality-care.netlify.app",
+      "deploy": "npx wrangler deploy (ver RUNBOOK.md)",
+      "logs": "npx wrangler tail",
+      "tests": "npm test",
+      "leerPrimero": [
+        "README.md",
+        "docs/ESTADO-DEL-PROYECTO.md",
+        "RUNBOOK.md"
+      ],
+      "critico": true,
+      "notas": "Cliente médico real: atiende pacientes por WhatsApp/IG/FB. Nada de datos de pacientes en Slack/Telegram. Prompt en producción = como voz: sin OK de Elvin no se cambia.",
+      "github": null
+    },
+    {
+      "id": "ai-borinquen-voz",
+      "nombre": "AI Borinquen — agentes de voz (6 demos en vivo + llamadas reales, Retell)",
+      "repo": "/Users/elvinayala/ai-borinquen-voz",
+      "prod": null,
+      "salud": null,
+      "hosting": "ver README.md",
+      "deploy": "ver README.md",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "README.md",
+        "revision-agentes-retell-clientes.md"
+      ],
+      "critico": false,
+      "notas": "Complementa la entrada 'voz'. Los agentes de CLIENTES en Retell son producción: sin OK no se edita su prompt.",
+      "github": null
+    },
+    {
+      "id": "ai-borinquen-saas",
+      "nombre": "AI Borinquen SaaS — agente que crea agentes de voz (self-service)",
+      "repo": "/Users/elvinayala/ai-borinquen-saas",
+      "prod": null,
+      "salud": null,
+      "hosting": "ver TRASPASO.md / RUNBOOK-ACTIVACION.md",
+      "deploy": "ver RUNBOOK-ACTIVACION.md",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "TRASPASO.md",
+        "app/AGENTS.md",
+        "app/SECURITY.md"
+      ],
+      "critico": false,
+      "notas": "Next.js 16. Revisar si está activo antes de tocar.",
+      "github": null
+    },
+    {
+      "id": "ai-borinquen-core",
+      "nombre": "AI Borinquen Core — sistema operativo de agentes (Builder)",
+      "repo": "/Users/elvinayala/Desktop/Proyectos/ai-borinquen-core",
+      "prod": null,
+      "salud": null,
+      "hosting": "Docker (docker-compose)",
+      "deploy": "ver README.md",
+      "logs": "—",
+      "tests": "npm test",
+      "leerPrimero": [
+        "CLAUDE.md",
+        "docs/CONSTITUTION.md"
+      ],
+      "critico": false,
+      "notas": "Constitución de producto de Elvin: lo simple y confiable gana.",
+      "github": "ai-borinquen/ai-borinquen-core"
+    },
+    {
+      "id": "dashboard-ventas",
+      "nombre": "Dashboard de ventas EA Market LLC (+ páginas: granja, salud, staff-agency, voice-agents, reel-studio…)",
+      "repo": "/Users/elvinayala/Desktop/Proyectos/dashboard ventas ea market llc",
+      "prod": null,
+      "salud": null,
+      "hosting": "netlify",
+      "deploy": "npx netlify-cli deploy --prod (ver netlify.toml)",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "netlify.toml"
+      ],
+      "critico": false,
+      "notas": "Estático en Netlify.",
+      "github": "elvinayala/dashboard-ventas-ea-market-llc"
+    },
+    {
+      "id": "sistema-hora-fija",
+      "nombre": "Sistema Hora Fija — ejecución automática de futuros (MNQ, 5 prop firms) · 1000X",
+      "repo": "/Users/elvinayala/sistema-hora-fija",
+      "prod": null,
+      "salud": null,
+      "hosting": "cloud (TradingView → webhooks), ver README.md",
+      "deploy": "ver README.md",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [
+        "README.md"
+      ],
+      "critico": true,
+      "notas": "MUEVE DINERO REAL (órdenes en cuentas de fondeo). PROHIBIDO sin OK explícito de Elvin: cambiar horarios, tamaños, SL/TP, cuentas o activar/desactivar la ejecución. Solo diagnóstico.",
+      "github": null
+    },
+    {
+      "id": "1000x-fuente",
+      "nombre": "1000X — fuente (indicador Pine, demo, deploy de la marca de trading con Richy)",
+      "repo": "/Users/elvinayala/1000x-fuente",
+      "prod": null,
+      "salud": null,
+      "hosting": "netlify",
+      "deploy": "ver deploy-1000x/",
+      "logs": "—",
+      "tests": "—",
+      "leerPrimero": [],
+      "critico": false,
+      "notas": "Proyecto congelado en el plan de guerra (trigger). Sin cambios salvo pedido de Elvin.",
+      "github": null
     }
   ],
   "casosAbiertos": {
@@ -265,5 +422,12 @@
   "nube": {
     "nota": "Nico corre en Railway (servicio nico): clona los repos con campo github en /estado/repos/<id>, hace git pull antes de cada pedido y commit+push después. La Mac es una copia: git pull antes de trabajar.",
     "repos": "/estado/repos"
+  },
+  "solicitudesEquipo": {
+    "nota": "Carilin y Aure le piden cambios a Nico por Slack (DM al bot empezando con 'Nico …'). Nico diagnostica sin tocar nada y le pasa el plan a Elvin; solo ejecuta con 'ok <id>' (Telegram de Nico) o 'nico ok <id>' (Slack). Ver vault/ceo/cerebro-nico.md §3b.",
+    "quien": {
+      "carilin": "U07V7MVJ18B",
+      "aure": "U08HA9QCJBG"
+    }
   }
 }

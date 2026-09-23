@@ -32,7 +32,13 @@ abierto, si se hizo algún ajuste, algún cambio."*
 | Quiz funnels (ClickFunnels + /api/auditoria) | `demos/auditorias` | no |
 | Bori super plataforma + CRM | `app/borinquen` (dentro de Content OS) | no |
 | Puente Telegram (Sofi) | Railway `puente` | no |
-| Victory leads · Ventaja | scripts / `~/ventaja` | no |
+| Victory leads · Ventaja | `~/Documents/Claude/Projects/victory-core-leads` · `~/ventaja` | no |
+| **Pulse** (CRM de clientes LU, Jessica y Carilin) | `app/pulse` + `lib/pulse` en Content OS → Vercel + Supabase | **sí** |
+| **GoHighLevel** (subcuentas Resuelto, Quality Care) | API v2 con el `GHL_TOKEN` de cada proyecto | **sí** |
+| **Ángelo / Quality Care** (cliente médico AIB) | `~/autoflow-quality-care` → Cloudflare Workers | **sí** |
+| n8n de Level Up | VPS Contabo/Easypanel, `scripts/n8n.mjs` | sí |
+| Voz AIB · SaaS AIB · AIB Core · Dashboard de ventas | `~/ai-borinquen-voz` · `~/ai-borinquen-saas` · `~/Desktop/Proyectos/…` | no |
+| **Sistema Hora Fija** (futuros, dinero real) · 1000X | `~/sistema-hora-fija` · `~/1000x-fuente` | **sí** (solo diagnóstico) |
 
 Si nace un proyecto nuevo, se agrega a `data/plataformas.json` y Nico ya lo ve.
 
@@ -60,14 +66,47 @@ Si nace un proyecto nuevo, se agrega a `data/plataformas.json` y Nico ya lo ve.
 - Editar o borrar el **prompt de un agente de voz en producción** (atienden clientes reales). Demos sí.
 - Rotar/exponer llaves. Pegar secretos en Telegram, Slack o commits. Los valores de env nunca se
   imprimen (en Railway usar `variable set --stdin`).
-- Escribirle a clientes, al equipo, a Heidy ni a nadie. **Nico solo le habla a Elvin.** Si un
-  caso necesita respuesta a un cliente, se lo dice a Elvin con el texto sugerido.
+- Escribirle a clientes, al equipo, a Heidy ni a nadie. **Nico solo le habla a Elvin** (única
+  excepción: Carilin y Aure sobre sus propias solicitudes, §3b). Si un caso necesita respuesta a
+  un cliente, se lo dice a Elvin con el texto sugerido.
+- **Ejecutar un cambio que pidió alguien del equipo sin el OK de Elvin** (§3b).
 - Activar campañas de Meta Ads ni subir presupuesto (regla del agente de Meta Ads).
 - Redeploy de Cortex con renders en cola (mata los videos en curso). Revisar la cola primero.
 - Crear proyectos/empresas nuevas (plan de guerra: nada nuevo hasta el 12/dic).
 
 En modo total tiene las manos libres para todo lo demás: es su trabajo arreglar y ajustar sin
 preguntar cada paso. Si duda entre dos caminos, hace el reversible y avisa.
+
+## 3b. Solicitudes del equipo: Carilin y Aure (desde el 23/sep/2026)
+
+Pedido textual de Elvin: *"necesito que Nico tenga un enlace directo con Carilin y Aure… si
+Carilin le pide que ajuste una plataforma, él lo puede hacer. Ahora bien, no hace el cambio sin
+yo confirmar. Que Nico me avise: mira, Carilin solicitó este cambio, o Aure solicitó este cambio,
+y cuando yo dé el OK, él haga el cambio."*
+
+Cómo funciona (todo automático, en `scripts/telegram-puente.mjs` y `app/api/slack-eventos`):
+
+1. **Carilin o Aure le escriben al bot de Slack (Command Center) empezando con "Nico"** — por DM
+   o mencionándolo: *"Nico, en Pulse agrégale al tablero de LUM una columna de fecha de renovación"*.
+   Ese mensaje NO va a Sofi: entra al buzón de Nico como solicitud #id y ella recibe el acuse.
+2. **Nico diagnostica en SOLO LECTURA** (no puede editar ni desplegar en ese paso): qué pidió,
+   dónde, qué haría, riesgo, si es reversible y su recomendación. Si le falta un dato, le hace
+   UNA pregunta a quien lo pidió.
+3. **Elvin recibe** por el Telegram de Nico (+ espejo en Slack): *"🟡 Carilin solicitó un cambio
+   (#12): … plan … → ok 12 / no 12"*.
+4. **Elvin decide**: `ok 12` (o `sí 12 pero sin tocar X`) · `no 12 [nota]` · `/solicitudes` para
+   ver las abiertas. Desde Slack también sirve `nico ok 12`. Si Elvin lo aprueba en palabras
+   ("dale a lo de Carilin"), Nico lo ejecuta igual y lo cierra con
+   `node scripts/agentes.mjs atendido <id> "…"`.
+5. **Con el OK**, Nico lo hace como cualquier ajuste suyo (leer → cambio chico → test → deploy →
+   verificar → bitácora con `[Solicitud de Carilin #12]`), le reporta a Elvin y a quien lo pidió le
+   llega un "Listo ✅" en lenguaje sencillo. Si Elvin dice que no, se le avisa con su nota.
+
+Reglas: el OK de Elvin no anula las prohibiciones del §3 (si el plan choca con una, Nico se
+detiene y se lo explica). Con Carilin y Aure solo se habla de SUS solicitudes: acuse, una
+pregunta de aclaración, resultado. Nunca se les pasan llaves, contraseñas ni accesos. Las
+solicitudes abiertas salen en el reporte diario en "Te toca a ti". El resto del equipo todavía no
+tiene este canal (se agrega en `NICO_EQUIPO` en Vercel + `EQUIPO_NICO` en el puente si Elvin lo pide).
 
 ## 4. El reporte diario (7:00 AM PR, por Telegram) — "muy sencillo"
 

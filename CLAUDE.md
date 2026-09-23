@@ -343,6 +343,17 @@ cualquiera de esos 4 repos (`deploy-snapshots.sh` ya lo hace); commitear y subir
 Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
 `npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
+**Enlace directo Carilin/Aure → Nico, con OK de Elvin (23/sep/2026)**: si Carilin o Aure le
+escriben al bot de Slack empezando con "Nico…" (DM o mención), `app/api/slack-eventos` lo manda al
+buzón de Nico (`de: carilin|aure`, no pasa por Sofi) y les da acuse con el #id. El puente de Nico
+lo diagnostica en **solo lectura** (`SOLO_LECTURA`, sin Edit/Write/deploy), lo deja `esperando-ok`
+con el plan y se lo manda a Elvin; **solo ejecuta** con `ok <id>` / `no <id> [nota]` en su
+Telegram, `nico ok <id>` en Slack o `node scripts/agentes.mjs aprobar|rechazar <id>`. Al terminar le
+avisa a quien lo pidió. `/solicitudes` lista las abiertas; la ronda las pone en "Te toca a ti".
+Lista de quién puede pedir: `NICO_EQUIPO` (Vercel) + `EQUIPO_NICO` (puente). Detalle en
+`vault/ceo/cerebro-nico.md` §3b. Inventario ampliado (Pulse, GoHighLevel, Ángelo/Quality Care,
+voz/SaaS/Core de AIB, dashboard de ventas, Hora Fija, 1000X) en `data/plataformas.json`.
+
 ## Los agentes se hablan entre sí y con el equipo (20/sep/2026)
 
 Elvin: "Sofi le pide algo a Nico, Max le pide algo a Nico, y con mi equipo personal también".

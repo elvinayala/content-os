@@ -14,6 +14,9 @@
 //                                                              (firma automática "— <Agente>")
 //   node scripts/agentes.mjs elvin "<texto>"                   avisarle a Elvin (Telegram del bot
 //                                                              actual + espejo Slack)
+//   node scripts/agentes.mjs solicitudes                       pedidos de Carilin/Aure a Nico que
+//                                                              esperan el OK de Elvin
+//   node scripts/agentes.mjs aprobar|rechazar <id> ["nota"]    la decisión de Elvin sobre una solicitud
 //
 // El buzón vive en la base de Pulse vía POST/GET /api/agentes (CONTENT_OS_URL + CRON_SECRET), el
 // único punto que comparten los contenedores de Railway y la Mac. Cada puente lo revisa cada
@@ -23,6 +26,10 @@
 // Reglas (van también en cada cerebro): a Elvin y a los otros agentes, libre. Al EQUIPO HUMANO
 // solo lo que su cerebro permite (Sofi: logística con Aure; Max: trazabilidad con Aure; Nico y
 // Lola: nada sin OK de Elvin). Nunca a clientes. Nunca secretos.
+//
+// Solicitudes del equipo (23/sep/2026): Carilin y Aure le escriben al bot de Slack empezando con
+// "Nico…" → entra aquí como de: carilin|aure → Nico diagnostica SIN tocar nada, deja el plan
+// (estado esperando-ok) y se lo pasa a Elvin; solo ejecuta cuando Elvin responde "ok <id>".
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -38,7 +45,7 @@ function env(n) {
 }
 
 const YO = (process.env.PUENTE_BOT || process.env.AGENTE || "sofi").toLowerCase();
-const NOMBRE = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin" };
+const NOMBRE = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");
 const CEO_SLACK = env("CEO_SLACK_ID") || "U08U9777PUY";
@@ -104,6 +111,15 @@ export async function estadoMensaje(id) {
 export async function marcar(id, estado, respuesta) {
   return api("POST", {}, { id, estado, respuesta });
 }
+export async function obtener(id) {
+  const j = await api("GET", { id });
+  return (j.mensajes || [])[0] || null;
+}
+// Solicitudes del equipo (Carilin/Aure → Nico) que esperan el OK de Elvin.
+export async function esperandoOk() {
+  const j = await api("GET", { estado: "esperando-ok", para: "nico" });
+  return j.mensajes || [];
+}
 
 // ---- CLI ----
 const [cmd, ...rest] = process.argv.slice(2);
@@ -144,10 +160,20 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
       if (!r.ok) throw new Error(`Slack: ${r.error}`);
       await espejoElvin(`[Agentes] ${NOMBRE[YO] || YO} → ${persona.nombre} (Slack DM): ${texto.slice(0, 1500)}`);
       console.log(`✓ DM enviado a ${persona.nombre} (${r.channel}).`);
+    } else if (cmd === "solicitudes") {
+      const m = await esperandoOk();
+      if (!m.length) console.log("Sin solicitudes del equipo esperando OK de Elvin.");
+      for (const x of m) console.log(`#${x.id} · ${NOMBRE[x.de] || x.de} · ${String(x.creado_el).slice(0, 16)}\n${x.texto}\n↳ plan: ${(x.respuesta || "").slice(0, 600)}\n`);
+    } else if (cmd === "aprobar" || cmd === "rechazar") {
+      // Lo usa Elvin (o el webhook de Slack en su nombre): deja la decisión en el buzón de Nico.
+      const id = Number(String(rest[0] || "").replace("#", "")); const nota = rest.slice(1).join(" ").trim();
+      if (!id) throw new Error(`Uso: ${cmd} <id> ["nota"]`);
+      const j = await api("POST", {}, { de: "elvin", para: "nico", texto: `[APROBACIÓN] ${cmd === "aprobar" ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` });
+      console.log(`✓ Decisión #${j.id} dejada a Nico (${cmd} solicitud #${id}).`);
     } else if (cmd === "elvin") {
       await avisarElvin(rest.join(" ").trim());
     } else {
-      console.log(fs.readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").filter((l) => l.startsWith("//")).slice(0, 24).map((l) => l.slice(3)).join("\n"));
+      console.log(fs.readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").filter((l) => l.startsWith("//")).slice(0, 28).map((l) => l.slice(3)).join("\n"));
     }
   } catch (e) { console.error(`✖ ${e.message}`); process.exit(1); }
 }

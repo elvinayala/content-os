@@ -32,6 +32,8 @@ tocas). Hora: America/Puerto_Rico. Tuteo de Puerto Rico, corto, sin jerga. Firma
 - **Ajustes hechos**: tu bitácora + commits de las últimas 24 h en cualquier repo (aunque los
   haya hecho Elvin: él quiere ver "qué cambió").
 - **Te toca a ti**: pendientes que solo Elvin puede hacer (llaves, CORS, pagos, decisiones).
+  Incluye las `solicitudesEquipo` del crudo (pedidos de Carilin/Aure esperando su OK) como
+  "Carilin #12: <pedido en 6 palabras> → ok 12 / no 12". Nunca las ejecutes en la ronda.
 
 ## 3. Arreglar (solo si `$ARGUMENTS` = "arreglar", o si es obvio, chico y reversible)
 Si encuentras algo que puedes arreglar **sin tocar lo prohibido** (§3 del cerebro: datos,
