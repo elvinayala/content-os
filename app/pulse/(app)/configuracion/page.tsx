@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { EventosSeguridad } from "@/components/pulse/eventos-seguridad";
+import { TablaPermisos } from "@/components/pulse/tabla-permisos";
 import { UsuariosAdmin } from "@/components/pulse/usuarios-admin";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usuarioActual } from "@/lib/pulse/auth";
@@ -23,6 +24,7 @@ export default async function ConfiguracionPage() {
       </header>
       <main className="mx-auto w-full max-w-4xl p-4 sm:p-6">
         <UsuariosAdmin usuarios={usuarios} yo={u} />
+        <TablaPermisos />
         {u.rol === "admin" ? <EventosSeguridad eventos={eventos} /> : null}
       </main>
     </>

@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 
 import { requiereGestor } from "@/lib/pulse/auth";
+import { poderes } from "@/lib/pulse/permisos";
 import { cerrarSesiones, registrarEvento } from "@/lib/pulse/seguridad";
 import { hashPassword } from "@/lib/pulse/password";
 import { actualizarUsuario, buscarUsuarioPorEmail, crearUsuario, leerUsuario } from "@/lib/pulse/repo";
@@ -18,7 +19,7 @@ export async function crearUsuarioAction(formData: FormData): Promise<R> {
     const password = String(formData.get("password") ?? "");
     const pedido = String(formData.get("rol") ?? "miembro");
     const rol: RolUsuario = pedido === "admin" ? "admin" : pedido === "editor" ? "editor" : "miembro";
-    if (rol === "admin" && gestor.rol !== "admin") return { ok: false, error: "Solo un admin puede crear admins" };
+    if (!poderes(gestor.rol).rolesQuePuedeAsignar.includes(rol)) return { ok: false, error: `No podés crear usuarios con rol ${rol}` };
     const color = String(formData.get("color") ?? "blue") as ColorPulse;
     if (!email || !nombre) return { ok: false, error: "Faltan nombre o e-mail" };
     if (password.length < 8) return { ok: false, error: "La clave debe tener al menos 8 caracteres" };
@@ -39,7 +40,10 @@ export async function actualizarUsuarioAction(p: { id: string; nombre?: string; 
     const objetivo = await leerUsuario(p.id);
     if (!objetivo) return { ok: false, error: "El usuario no existe" };
     // Un editor no toca admins ni crea admins.
-    if (gestor.rol !== "admin" && (objetivo.rol === "admin" || p.rol === "admin")) return { ok: false, error: "Solo un admin puede modificar admins" };
+    const mios = poderes(gestor.rol).rolesQuePuedeAsignar;
+    // Un gestor solo toca a quien puede crear: un editor administra miembros, nada más.
+    if (gestor.id !== p.id && !mios.includes(objetivo.rol)) return { ok: false, error: `No podés modificar a un ${objetivo.rol}` };
+    if (p.rol !== undefined && !mios.includes(p.rol)) return { ok: false, error: `No podés asignar el rol ${p.rol}` };
     const patch: Parameters<typeof actualizarUsuario>[1] = {};
     if (p.nombre !== undefined) patch.nombre = p.nombre.trim().slice(0, 100) || undefined;
     if (p.rol !== undefined) patch.rol = p.rol;

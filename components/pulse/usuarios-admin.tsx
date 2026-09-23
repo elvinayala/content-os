@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { poderes } from "@/lib/pulse/permisos";
 import { NOMBRE_ROL, type RolUsuario, type UsuarioPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
 export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: UsuarioPulse }) {
+  const mis = poderes(yo.rol);
   const [abierto, setAbierto] = useState(false);
   const [claveDe, setClaveDe] = useState<UsuarioPulse | null>(null);
   const [clave, setClave] = useState("");
@@ -67,9 +69,9 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
               <div className="flex flex-col gap-1.5">
                 <Label>Rol</Label>
                 <select name="rol" className="h-9 rounded-md border bg-background px-2 text-sm" defaultValue="miembro">
-                  <option value="miembro">Miembro (usa y edita los tableros)</option>
-                  <option value="editor">Editor (además da de alta gente y claves)</option>
-                  {yo.rol === "admin" ? <option value="admin">Admin (todo, incluso eliminar tableros)</option> : null}
+                  {mis.rolesQuePuedeAsignar.includes("miembro") ? <option value="miembro">Miembro (usa y edita los tableros)</option> : null}
+                  {mis.rolesQuePuedeAsignar.includes("editor") ? <option value="editor">Editor (además da de alta gente y claves)</option> : null}
+                  {mis.rolesQuePuedeAsignar.includes("admin") ? <option value="admin">Admin (todo, incluso eliminar tableros)</option> : null}
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
@@ -114,6 +116,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
 }
 
 function Lista({ titulo, usuarios, yo, onClave, aviso }: { titulo: string; usuarios: UsuarioPulse[]; yo: UsuarioPulse; onClave: (u: UsuarioPulse) => void; aviso: (r: { ok: true } | { ok: false; error: string }, m: string) => void }) {
+  const mis = poderes(yo.rol);
   return (
     <section>
       <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">{titulo}</h3>
@@ -131,18 +134,18 @@ function Lista({ titulo, usuarios, yo, onClave, aviso }: { titulo: string; usuar
             </div>
             <select
               value={u.rol}
-              disabled={u.id === yo.id || (yo.rol !== "admin" && u.rol === "admin")}
+              disabled={u.id === yo.id || !mis.rolesQuePuedeAsignar.includes(u.rol)}
               onChange={async (e) => aviso(await actualizarUsuarioAction({ id: u.id, rol: e.target.value as RolUsuario }), "Rol actualizado")}
               className="h-8 rounded-md border bg-background px-2 text-xs"
             >
               <option value="miembro">Miembro</option>
-              <option value="editor">Editor</option>
-              {yo.rol === "admin" || u.rol === "admin" ? <option value="admin">Admin</option> : null}
+              {mis.rolesQuePuedeAsignar.includes("editor") || u.rol === "editor" ? <option value="editor">Editor</option> : null}
+              {mis.rolesQuePuedeAsignar.includes("admin") || u.rol === "admin" ? <option value="admin">Admin</option> : null}
             </select>
-            <Button variant="outline" size="sm" disabled={yo.rol !== "admin" && u.rol === "admin" && u.id !== yo.id} onClick={() => onClave(u)}>
+            <Button variant="outline" size="sm" disabled={u.id !== yo.id && !mis.rolesQuePuedeAsignar.includes(u.rol)} onClick={() => onClave(u)}>
               <KeyRound /> {u.tieneClave ? "Cambiar clave" : "Poner clave"}
             </Button>
-            {u.id !== yo.id && !(yo.rol !== "admin" && u.rol === "admin") ? (
+            {u.id !== yo.id && mis.rolesQuePuedeAsignar.includes(u.rol) ? (
               <Button variant="ghost" size="sm" onClick={async () => aviso(await actualizarUsuarioAction({ id: u.id, activo: !u.activo }), u.activo ? "Usuario desactivado" : "Usuario activado")}>
                 {u.activo ? (
                   <>

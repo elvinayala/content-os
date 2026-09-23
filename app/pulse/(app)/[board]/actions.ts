@@ -5,6 +5,7 @@ import { refresh } from "next/cache";
 import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
+import { poderes } from "@/lib/pulse/permisos";
 import { registrarEvento } from "@/lib/pulse/seguridad";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
 import type { Actividad, ArchivoPulse, ColorPulse, Columna, Grupo, Item, SettingsColumna, TipoColumna, ValorCelda } from "@/lib/pulse/types";
@@ -77,8 +78,11 @@ export async function moverItemsAction(p: { itemIds: string[]; groupId: string }
 export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{ n: number }>> {
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemIds[0] }));
+    const tope = poderes(u.rol).topeBorradoItems;
+    if (tope !== null && p.itemIds.length > tope) throw new Error(`Solo un admin puede eliminar más de ${tope} elementos a la vez`);
     const { bajas, afectados } = await prepararBaja(p.itemIds);
     const n = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
+    if (n > 5) await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `${n} elementos` });
     avisarCambio({ itemIds: afectados, bajas, motivo: "eliminar" });
     refresh();
     return { n };

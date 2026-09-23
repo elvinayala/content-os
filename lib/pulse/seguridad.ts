@@ -22,7 +22,9 @@ export type TipoEventoSeguridad =
   | "usuario_desactivado"
   | "usuario_activado"
   | "acceso_tablero"
-  | "tablero_eliminado";
+  | "tablero_eliminado"
+  | "borrado_masivo"
+  | "archivo_descargado";
 
 export const MAX_INTENTOS = 5;
 export const BLOQUEO_MIN = 15;
