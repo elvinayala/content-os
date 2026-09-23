@@ -175,32 +175,51 @@ async function historialConversacion(
   }
 }
 
+// Identidad propia por mensaje (nombre + foto) sin renombrar la app Command Center, que
+// comparten Sofi y los avisos. Necesita el scope chat:write.customize; sin él, Slack responde
+// missing_scope y reintentamos sin identidad para no perder la respuesta.
+interface Identidad {
+  username: string;
+  icon_url?: string;
+}
+
 async function postearRespuesta(
   channel: string,
   text: string,
   thread_ts?: string,
   broadcast = false,
+  identidad?: Identidad,
 ): Promise<void> {
   const token = process.env.SLACK_BOT_TOKEN;
   if (!token) return;
-  try {
-    await fetch("https://slack.com/api/chat.postMessage", {
+  const base = thread_ts
+    ? { channel, text, thread_ts, ...(broadcast ? { reply_broadcast: true } : {}) }
+    : { channel, text };
+  const enviar = async (cuerpo: object) => {
+    const r = await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(
-        thread_ts
-          ? { channel, text, thread_ts, ...(broadcast ? { reply_broadcast: true } : {}) }
-          : { channel, text },
-      ),
+      body: JSON.stringify(cuerpo),
       signal: AbortSignal.timeout(8000),
     });
+    return (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+  };
+  try {
+    const r = await enviar(identidad ? { ...base, ...identidad } : base);
+    if (identidad && !r.ok && r.error === "missing_scope") await enviar(base);
   } catch {
     // no romper si Slack falla
   }
 }
+
+const ORIGEN = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+const IDENTIDAD_DIRECTOR: Identidad = {
+  username: process.env.DIRECTOR_NOMBRE || "Leo · Director Creativo",
+  icon_url: process.env.DIRECTOR_AVATAR_URL || `${ORIGEN}/marcas/leo/leo-avatar-512.png`,
+};
 
 // Quita la mención al bot (<@U...>) del texto de un app_mention.
 function limpiar(texto: string): string {
@@ -259,7 +278,7 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
   }
   const respuesta = await responderDirector(turnos);
   // Anuncios, saludos y conversación entre el equipo: el agente se queda callado.
-  if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) await postearRespuesta(channel, respuesta, raiz);
+  if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) await postearRespuesta(channel, respuesta, raiz, false, IDENTIDAD_DIRECTOR);
 }
 
 export async function POST(req: NextRequest) {
@@ -308,7 +327,7 @@ export async function POST(req: NextRequest) {
           await atenderDirector(channel, raiz);
         } catch (e) {
           console.error("[director] fallo", e instanceof Error ? e.message : e);
-          await postearRespuesta(channel, "Se me trabó la revisión. Vuelve a mandarla en un momento.", raiz);
+          await postearRespuesta(channel, "Se me trabó la revisión. Vuelve a mandarla en un momento.", raiz, false, IDENTIDAD_DIRECTOR);
         }
       });
     }
