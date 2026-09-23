@@ -22,16 +22,28 @@ export function listaDeMarca(marca: MarcaAC): number | null {
   return v && Number(v) ? Number(v) : null;
 }
 
+// La instancia de AC es lenta y a ratos devuelve 502/503: 3 intentos con 25 s cada uno.
+// Un 4xx (p. ej. 422 "ya existe") no se reintenta.
 async function v3<T = unknown>(method: "GET" | "POST", ruta: string, body?: unknown): Promise<T> {
-  const res = await fetch(`${URL()}/api/3/${ruta}`, {
-    method,
-    headers: { "Api-Token": KEY(), "Content-Type": "application/json" },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: AbortSignal.timeout(10000),
-  });
-  const data = (await res.json().catch(() => ({}))) as T & { errors?: { title: string }[] };
-  if (!res.ok) throw new Error(`AC ${method} ${ruta}: ${res.status} ${data.errors?.[0]?.title ?? ""}`);
-  return data;
+  let ultimo = "";
+  for (let intento = 0; intento < 3; intento++) {
+    try {
+      const res = await fetch(`${URL()}/api/3/${ruta}`, {
+        method,
+        headers: { "Api-Token": KEY(), "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: AbortSignal.timeout(25000),
+      });
+      const data = (await res.json().catch(() => ({}))) as T & { errors?: { title: string }[] };
+      if (res.ok) return data;
+      ultimo = `AC ${method} ${ruta}: ${res.status} ${data.errors?.[0]?.title ?? ""}`;
+      if (res.status < 500) break;
+    } catch (e) {
+      ultimo = `AC ${method} ${ruta}: ${String(e).slice(0, 120)}`;
+    }
+    await new Promise((r) => setTimeout(r, 1500 * (intento + 1)));
+  }
+  throw new Error(ultimo);
 }
 
 const tagCache = new Map<string, number>();
@@ -56,7 +68,11 @@ export interface ContactoAC {
   campos?: Record<string, string>; // custom fields por id numérico (string) → valor
 }
 
-// Upsert del contacto + lista de la marca + tags. Idempotente. Nunca tira: devuelve ok:false.
+// Upsert del contacto + tags + lista de la marca. Idempotente. Nunca tira: devuelve ok:false.
+// ORDEN IMPORTA: los tags van ANTES de la lista, porque la bienvenida dispara al suscribirse
+// y tiene que ver ya `etapa:agendo` / `origen:calendly` para no mandarle la bienvenida a
+// quien acaba de agendar. Los llamadores deben envolverlo en `after()` (no `void`): en Vercel
+// una promesa suelta se corta al responder y el contacto queda sin lista ni tags (22/sep).
 export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?: number; error?: string }> {
   if (!acListo()) return { ok: false, error: "ac-no-configurado" };
   try {
@@ -66,15 +82,23 @@ export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?:
     if (c.campos) contact.fieldValues = Object.entries(c.campos).map(([field, value]) => ({ field, value }));
     const r = await v3<{ contact: { id: string } }>("POST", "contact/sync", { contact });
     const id = Number(r.contact.id);
-    const lista = listaDeMarca(c.marca);
-    if (lista) {
-      await v3("POST", "contactLists", { contactList: { list: lista, contact: id, status: 1 } }).catch(() => {});
-    }
+    const fallos: string[] = [];
     const tags = [`marca:${{ "level-up": "lu", "ai-borinquen": "aib", "shadow-operator": "so", "1000x": "1000x" }[c.marca]}`, ...(c.tags ?? [])];
     for (const t of tags) {
-      const tagId = await idDeTag(t);
-      await v3("POST", "contactTags", { contactTag: { contact: id, tag: tagId } }).catch(() => {});
+      try {
+        const tagId = await idDeTag(t);
+        await v3("POST", "contactTags", { contactTag: { contact: id, tag: tagId } });
+      } catch (e) {
+        fallos.push(`tag ${t}: ${String(e).slice(0, 80)}`);
+      }
     }
+    const lista = listaDeMarca(c.marca);
+    if (lista) {
+      await v3("POST", "contactLists", { contactList: { list: lista, contact: id, status: 1 } }).catch((e) =>
+        fallos.push(`lista ${lista}: ${String(e).slice(0, 80)}`),
+      );
+    }
+    if (fallos.length) return { ok: false, id, error: fallos.join(" | ").slice(0, 300) };
     return { ok: true, id };
   } catch (e) {
     return { ok: false, error: String(e).slice(0, 200) };

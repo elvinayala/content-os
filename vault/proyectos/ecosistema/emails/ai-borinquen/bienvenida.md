@@ -12,14 +12,14 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 
 
 ## Día 0 · historia + entrega
-**Asunto A:** Lo que pediste (y quién te escribe)  
+**Asunto A:** Quién te escribe (y una pregunta)  
 **Asunto B:** Aquí tienes lo tuyo + una pregunta  
 **Preview:** Marketing + IA en la misma casa.  
 **UTM:** `utm_source=bienvenida`
 
 Hola {{FIRSTNAME|amigo}},
 
-Aquí tienes lo que pediste: [ENTREGA: link al diagnóstico / demo / reel].
+Gracias por dar el primer paso.
 
 Quién te escribe: Elvin. Tengo una agencia de anuncios (Level Up Media) y una de inteligencia artificial (AI Borinquen). Las junté porque vi el mismo problema en cientos de negocios de Puerto Rico: invierten en traer clientes y los pierden por no contestar a tiempo. Un mentor me dijo que soy "la única persona a la que no le puede decir que se aniche", porque resolvemos los dos lados.
 
@@ -40,7 +40,6 @@ Dato: el 78% de las personas se queda con el primero que le contesta. El 67% se 
 
 Un terapista con el que trabajamos perdía consultas todos los días a las 9 PM. Hoy un asistente de IA le contesta en 8 segundos, en su tono, y agenda. La agenda se llenó sola.
 
-Escúchalo tú: este es el asistente de una clínica contestando una llamada real: [LINK AL REEL / DEMO DE VOZ].
 
 **CTA:** Ver la demo
 
@@ -57,7 +56,6 @@ Viernes, 9:14 PM. Entra un mensaje: "¿cuánto cuesta el tratamiento?". La recep
 
 Tu gente es buena. Pero se enferma, renuncia, duerme y no puede contestar tres chats a la vez. Un asistente de IA sí: 24/7, en tu tono, toma los datos y agenda.
 
-Míralo funcionando con un negocio como el tuyo: [LINK A LA DEMO / MVP]
 
 **CTA:** Ver cómo contesta
 

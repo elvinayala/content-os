@@ -17,11 +17,10 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 **Preview:** Tu negocio, ya montado.  
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME|Hola}}, quedó agendada tu demo: [FECHA Y HORA] con [CLOSER].
+{{FIRSTNAME|Hola}}, quedó agendada tu demo. La hora y el link de Zoom están en la invitación de Calendly que te llegó a este mismo correo.
 
 Antes de la llamada vas a recibir un link con tu negocio ya montado: un asistente de chat y uno de voz con tu nombre, y cómo se ve tu sistema por dentro. Pruébalo antes; en la llamada lo revisamos y te decimos qué haríamos primero.
 
-Aquí Elvin te lo explica en 1 minuto: [VIDEO DE ELVIN]
 
 **CTA:** Ver el video
 
@@ -32,7 +31,7 @@ Aquí Elvin te lo explica en 1 minuto: [VIDEO DE ELVIN]
 **Preview:** Pruébalo antes de la llamada.  
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME|Hola}}, mañana es tu demo. Ya tienes tu negocio montado aquí: [LINK AL MVP]. Escríbele al chat como si fueras un cliente tuyo y, si puedes, toca el orbe y habla con tu asistente de voz.
+{{FIRSTNAME|Hola}}, mañana es tu demo. Tu negocio ya montado te llega por WhatsApp antes de la llamada. Escríbele al chat como si fueras un cliente tuyo y, si puedes, toca el orbe y habla con tu asistente de voz.
 
 Somos AI Borinquen: agentes de IA para negocios de Puerto Rico, funcionando en 21 días o no corre la mensualidad. Nos vemos mañana.
 
@@ -45,6 +44,6 @@ Somos AI Borinquen: agentes de IA para negocios de Puerto Rico, funcionando en 2
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME}}, en 1 hora es tu demo con [CLOSER] de AI Borinquen. Link: [ZOOM]. Tu asistente ya está listo aquí: [LINK MVP]. Si no puedes, responde y la movemos.
+{{FIRSTNAME}}, en 1 hora es tu demo con AI Borinquen. El link de Zoom está en tu invitación de Calendly. Si no puedes, responde y la movemos.
 
 **CTA:** Entrar a la demo

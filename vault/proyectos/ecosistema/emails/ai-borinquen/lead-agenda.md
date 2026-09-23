@@ -19,7 +19,6 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 
 {{FIRSTNAME|Hola}},
 
-[SI quiz → resumen del resultado en 2 líneas. SI NO → el caso de su rubro en 2 líneas.]
 
 El siguiente paso es una demo de 20 minutos con tu negocio ya montado (chat y voz, con tu nombre). La preparamos antes: https://calendly.com/aiborinquen?utm_source=lead-agenda
 

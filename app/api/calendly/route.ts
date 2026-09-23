@@ -1,7 +1,10 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
+
+// after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
+export const maxDuration = 60;
 
 // Webhook de Calendly (Level Up Media) → Pipedrive de Level Up, pipeline
 // "CLOSERS" (id 15). Cada cita agendada cae como deal en "Llamada agendada",
@@ -368,10 +371,10 @@ async function procesarCreado(inv: CalendlyInvitee) {
 
   // ActiveCampaign: el que agenda entra a la base con `etapa:agendo` (dispara la
   // pre-llamada y corta lead→agenda). No-op sin ACTIVECAMPAIGN_*.
-  void upsertContacto({
+  after(() => upsertContacto({
     email, nombre, telefono, marca: marcaDe(inv),
     tags: ["origen:calendly", esReagenda ? "etapa:reagendo" : "etapa:agendo", ...(inv.tracking?.utm_source ? [`agendo-por:${String(inv.tracking.utm_source).slice(0, 30)}`] : [])],
-  });
+  }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
   const yaExiste = await buscarDealPorEvento(ev.uri);
   if (yaExiste) return { ok: true, dealId: yaExiste, duplicado: true };
 
@@ -466,7 +469,7 @@ async function procesarCancelado(inv: CalendlyInvitee) {
 
   const reagendado = Boolean(inv.rescheduled);
   if (!reagendado) {
-    void upsertContacto({ email: inv.email.trim().toLowerCase(), nombre: inv.name, marca: marcaDe(inv), tags: ["etapa:cancelo"] });
+    after(() => upsertContacto({ email: inv.email.trim().toLowerCase(), nombre: inv.name, marca: marcaDe(inv), tags: ["etapa:cancelo"] }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
   }
   // Reagenda: el invitee.created siguiente mueve a 146 y pone la fecha nueva;
   // acá solo dejamos rastro. Cancelación real: stage 147.

@@ -17,13 +17,12 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 **Preview:** 20 minutos, sin rodeos.  
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME|Hola}}, quedó agendada tu llamada: [FECHA Y HORA] con [CLOSER].
+{{FIRSTNAME|Hola}}, quedó agendada tu llamada. La hora y el link de Zoom están en la invitación de Calendly que te llegó a este mismo correo.
 
 Qué vas a recibir: un diagnóstico honesto de tu embudo (oferta, contenido, anuncios, seguimiento) y qué haríamos primero. Si no encajas, te lo decimos.
 
 Para que aproveches el tiempo: ten a mano cuántos clientes nuevos entran al mes y de dónde.
 
-Aquí Elvin te lo explica en 1 minuto: [VIDEO DE ELVIN]
 
 **CTA:** Ver el video
 
@@ -36,7 +35,7 @@ Aquí Elvin te lo explica en 1 minuto: [VIDEO DE ELVIN]
 
 {{FIRSTNAME|Hola}}, mañana es tu llamada.
 
-Tres cosas por si no nos conoces: más de 50 negocios en Puerto Rico han trabajado con nosotros; operamos las cuentas con contrato claro y reporte semanal; y los resultados los medimos en clientes nuevos, no en likes. [CASO DEL AVATAR en 1 línea].
+Tres cosas por si no nos conoces: más de 50 negocios en Puerto Rico han trabajado con nosotros; operamos las cuentas con contrato claro y reporte semanal; y los resultados los medimos en clientes nuevos, no en likes.
 
 Si necesitas mover la hora, usa el link de tu confirmación. Nos vemos mañana.
 
@@ -49,6 +48,6 @@ Si necesitas mover la hora, usa el link de tu confirmación. Nos vemos mañana.
 **Preview:**   
 **UTM:** `utm_source=pre-llamada`
 
-{{FIRSTNAME}}, en 1 hora es tu llamada con [CLOSER] de Level Up Media. Link: [ZOOM]. Si no puedes, responde este mensaje y la movemos.
+{{FIRSTNAME}}, en 1 hora es tu llamada con Level Up Media. El link de Zoom está en tu invitación de Calendly. Si no puedes, responde este mensaje y la movemos.
 
 **CTA:** Entrar a la llamada

@@ -1,6 +1,9 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
+
+// after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
+export const maxDuration = 60;
 
 // Endpoint público que reciben los quiz funnels de ClickFunnels
 // (demos/auditorias/*): crea/actualiza el lead en Pipedrive.
@@ -344,7 +347,7 @@ export async function POST(req: NextRequest) {
         if (r.principal) tagsAC.push(`quiz-principal:${String(r.principal).slice(0, 40)}`);
       }
       if (marca === "level-up" && tracking.avatar) tagsAC.push(`avatar:${String(tracking.avatar).slice(0, 20)}`);
-      void upsertContacto({ email, nombre, telefono, marca, tags: tagsAC });
+      after(() => upsertContacto({ email, nombre, telefono, marca, tags: tagsAC }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
     }
 
     const contenido =

@@ -17,7 +17,7 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 **Preview:** Escoge otra hora.  
 **UTM:** `utm_source=no-show`
 
-{{FIRSTNAME|Hola}}, hoy te esperamos y no pudiste. Tu demo sigue montada: [LINK MVP]. Escoge otra hora aquí: https://calendly.com/aiborinquen?utm_source=no-show
+{{FIRSTNAME|Hola}}, hoy te esperamos y no pudiste. Tu demo sigue montada. Escoge otra hora aquí: https://calendly.com/aiborinquen?utm_source=no-show
 
 **CTA:** Reagendar
 
@@ -28,7 +28,7 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 **Preview:** Tu negocio, contestando solo.  
 **UTM:** `utm_source=no-show`
 
-{{FIRSTNAME|Hola}}, esto era la demo: un mensaje entra a las 9 PM y en 8 segundos tu asistente responde, califica y agenda. Míralo: [VIDEO/MVP]. Si quieres verlo con tus números: https://calendly.com/aiborinquen?utm_source=no-show
+{{FIRSTNAME|Hola}}, esto era la demo: un mensaje entra a las 9 PM y en 8 segundos tu asistente responde, califica y agenda. Si quieres verlo con tus números: https://calendly.com/aiborinquen?utm_source=no-show
 
 **CTA:** Reagendar
 

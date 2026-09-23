@@ -12,14 +12,14 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 
 
 ## Día 0 · historia + entrega
-**Asunto A:** Lo que pediste (y quién soy)  
+**Asunto A:** Quién te escribe (y una pregunta)  
 **Asunto B:** Aquí tienes lo tuyo + una pregunta  
 **Preview:** Antes de nada: quién te escribe.  
 **UTM:** `utm_source=bienvenida`
 
 Hola {{FIRSTNAME|amigo}},
 
-Aquí tienes lo que pediste: [ENTREGA: link al diagnóstico / al recurso / al reel].
+Gracias por dar el primer paso.
 
 Y en una línea, quién soy. Me llamo Elvin. Por años fui un fantasma: escribía los guiones, corría los anuncios y otro daba la cara. Así construí dos agencias que hoy facturan más de $100K al mes, sin salir en cámara. Level Up Media es una de ellas.
 
@@ -44,7 +44,6 @@ Un sistema es distinto: sabes cuánto inviertes, cuántas personas te ven, cuán
 
 [SI avatar:coach → "Publicas por publicar: contenido sin estructura no trae clientes, trae likes."]
 
-Este reel lo explica en 40 segundos: [LINK AL REEL].
 
 **CTA:** Ver el reel
 

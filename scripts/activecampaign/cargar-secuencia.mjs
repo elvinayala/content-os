@@ -25,6 +25,17 @@ const bloques = md.split(/^## /m).slice(1).map((b) => {
   return { titulo, asunto, preview, cuerpo, cta };
 }).filter((e) => e.asunto);
 
+// Candado (22/sep): el 21/sep subimos emails con [ENTREGA…], [FECHA Y HORA], [CLOSER] sin
+// rellenar y salieron así a leads reales. Cualquier hueco en MAYÚSCULAS entre corchetes que no
+// sea un condicional `[SI tag → "…"]` frena la carga entera.
+const huecos = bloques.flatMap((b) =>
+  ([b.asunto, b.preview, b.cuerpo, b.cta].join("\n").match(/\[(?!SI \S+ → ")[^\]]*[A-ZÁÉÍÓÚÑ]{3,}[^\]]*\]/g) ?? []).map((h) => `${b.titulo}: ${h}`),
+);
+if (huecos.length) {
+  console.error(`✗ No subo nada: hay ${huecos.length} hueco(s) sin rellenar:\n  ${huecos.join("\n  ")}`);
+  process.exit(1);
+}
+
 const ids = idsArg.split(",").map((s) => s.trim()).filter(Boolean);
 if (ids.length !== bloques.length) { console.error(`❌ ${bloques.length} emails en el .md pero ${ids.length} ids`); process.exit(1); }
 

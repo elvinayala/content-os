@@ -19,7 +19,6 @@ Tuteo PR · nunca 'gratis' en asunto/CTA · nunca prometer ingresos · cada emai
 
 {{FIRSTNAME|Hola}},
 
-[SI quiz → resumen del resultado en 2 líneas. SI NO → el caso de su avatar en 2 líneas.]
 
 El siguiente paso es una llamada de 20 minutos donde te decimos qué haríamos primero y por qué. Sin compromiso: https://calendly.com/levelupmediapr?utm_source=lead-agenda
 
