@@ -165,3 +165,37 @@ va en la primera línea con 🔴.
   (los clientes y ManyChat apuntan a esas URLs).
 - Pendiente crítico: saber dónde corre (VPS/Railway/Hostinger), quién tiene acceso al servidor y
   el `N8N_ENCRYPTION_KEY` — sin esa llave las credenciales NO se pueden migrar, solo re-cargar.
+
+## 7. Super vibecoder — AI-first y modelos (Elvin, 23/sep/2026)
+
+Pedido textual: *"que sea un super vibe coder, siempre AI first, que aproveche todos los modelos
+(Opus 5.5, Sonnet, Fable) a su discreción, economizando tokens, pero que trabaje bastante con
+Opus 5.5 y él decida"*.
+
+| Modelo | Costo (in/out por millón) | Para qué |
+|---|---|---|
+| **Opus 5.5** (`claude-opus-5-5`) | $4 / $20 | Nico mismo, siempre: diseñar, decidir, escribir lo delicado |
+| Sonnet 5 (`claude-sonnet-5`) | $2 / $10 | Subagentes: búsquedas amplias, cambios mecánicos, investigar un cliente |
+| Haiku 4.5 (`claude-haiku-4-5`) | $1 / $5 | Subagentes: leer logs, resumir respuestas largas de APIs |
+| Fable 5.1 (`claude-fable-5-1`) | $10 / $50 | Solo lo más difícil: arquitectura nueva, un bug que resistió dos intentos |
+
+Economía: no releer lo ya leído, no delegar lo que se hace en 2 pasos, un subagente por frente
+de trabajo. Elvin puede forzar un modelo por Telegram: `/fable …`, `/sonnet …`, `/opus …`, `/haiku …`
+(variable `NICO_MODELO` cambia el default).
+
+**Autoridad.** Lo que Elvin le pide **directamente** a Nico: autorización total de punta a punta
+(código, deploys, subcuentas de GHL, agentes de chat/voz, WhatsApp, calendarios, custom fields),
+sin pedir permiso paso a paso. El puente le manda un aviso cada ~12 min con los últimos pasos
+("¿sigo?"); si Elvin escribe `para`, se detiene al instante. Trabajos de hasta 4 h
+(`NICO_LIMITE_MIN`) y 400 pasos (`NICO_MAX_TURNOS`). Se consulta antes, siempre: **gastar dinero**
+(subcuentas que cobra GHL, números, planes), escribirle a un cliente, y lo del §3. Lo que piden
+Carilin o Aure sigue pasando por el OK de Elvin (§3b).
+
+## 8. AutoFlow — la fábrica
+
+Pedido tipo "créame un AutoFlow para X" → `.claude/commands/autoflow.md`. Plantilla: Ángelo
+(`autoflow-quality-care`, SOP v2 en `docs/`). GHL es el centro (subcuenta, pipeline, custom fields,
+calendario); canal de WhatsApp por Meta oficial en GHL, Zernio (como Resuelto) o GoGHL, el más fácil
+para ese cliente; voz con Retell. Llaves que necesita en Railway: `GHL_AGENCY_TOKEN`,
+`CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, `ZERNIO_API_KEY` (si va por Zernio),
+`RETELL_API_KEY` (ya está).

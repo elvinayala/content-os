@@ -280,7 +280,7 @@
     },
     {
       "id": "autoflow-quality-care",
-      "nombre": "Ángelo — asistente de Quality Care Physicians / Angelorum (cliente AIB)",
+      "nombre": "Ángelo — Quality Care Physicians / Angelorum (cliente AIB) · PLANTILLA de AutoFlow",
       "repo": "/Users/elvinayala/autoflow-quality-care",
       "prod": "https://autoflow-quality-care.elvin-29e.workers.dev",
       "salud": "https://autoflow-quality-care.elvin-29e.workers.dev",
@@ -295,7 +295,7 @@
       ],
       "critico": true,
       "notas": "Cliente médico real: atiende pacientes por WhatsApp/IG/FB. Nada de datos de pacientes en Slack/Telegram. Prompt en producción = como voz: sin OK de Elvin no se cambia.",
-      "github": null
+      "github": "elvinayala/autoflow-quality-care"
     },
     {
       "id": "ai-borinquen-voz",
@@ -424,6 +424,23 @@
       ],
       "critico": false,
       "notas": "El .mq5 del bot es el PRODUCTO (~$15K la licencia): NUNCA se publica ni se sube a un sitio. Quiz 'Diagnóstico de Trader 1000X' vive en demos/auditorias. Brand en brand/."
+    },
+    {
+      "id": "isla-run",
+      "nombre": "ISLA Run Series — landing + inscripción + pagos + admin (carreras por municipio)",
+      "repo": "/Users/elvinayala/isla-run",
+      "prod": null,
+      "salud": null,
+      "hosting": "por desplegar: Vercel + Supabase Postgres propios de ISLA (no los de las agencias)",
+      "deploy": "pendiente (npm run db:migrate contra Supabase + deploy en Vercel)",
+      "logs": null,
+      "tests": "npm test (node --test, lógica de precios/categorías/CSV) · npx tsc --noEmit · npm run build",
+      "leerPrimero": [
+        "README.md",
+        "content/eventos/cabo-rojo-2026.ts"
+      ],
+      "critico": false,
+      "notas": "Primera edición: ISLA Cabo Rojo 5K (13/dic/2026). Dinero real vía Stripe (webhook firma el pago). Nunca abrir inscripciones (estado 'abierta') sin OK de Elvin: relevo en BORRADOR hasta revisión legal, ruta por confirmar. Precio lo calcula el servidor; tope y escalones se editan en /admin/evento. Plan: vault/proyectos/isla-run/."
     }
   ],
   "casosAbiertos": {
