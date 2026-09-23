@@ -42,7 +42,7 @@ ACUERDO = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</sty
 {cab("Plomeros afiliados", "Acuerdo de afiliación")}
 <div class="aviso"><b>Acuerdo provisional.</b> Rige desde su firma hasta que las partes firmen el contrato definitivo que prepara el abogado de Resuelto, o por <b>90 días</b>, lo que ocurra primero. Si el contrato definitivo no se firma en ese plazo, este acuerdo termina sin penalidad para ninguna de las partes, salvo lo dispuesto en las secciones 5, 6 y 9.</div>
 
-<p><b>Entre</b> <b>Resuelto Home Services LLC</b> (en proceso de constitución), representada por Elvin Ayala ("Resuelto"), <b>y</b></p>
+<p><b>Entre</b> <b>Resuelto Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes del Estado Libre Asociado de Puerto Rico, representada por Elvin Ayala ("Resuelto"), <b>y</b></p>
 <p>Nombre: <span class="campo l"></span> &nbsp; Teléfono: <span class="campo s"></span><br>
 Dirección: <span class="campo l"></span> &nbsp; Municipio: <span class="campo s"></span><br>
 Licencia de plomero: ☐ Oficial ☐ Maestro · Núm. <span class="campo s"></span> · Colegiación núm. <span class="campo s"></span> ("el Plomero").<br>
