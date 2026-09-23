@@ -34,6 +34,8 @@ test("detecta cuando un humano contesta desde el inbox o la app", () => {
   assert.deepEqual(z.tomaHumana({ ...enviado, message: { conversationId: "conv1", sentVia: null, source: "whatsapp_business_app" } }), { telefono: "19395550000", conversationId: "conv1" });
   assert.equal(z.tomaHumana({ ...enviado, message: { conversationId: "conv1", sentVia: "api", source: "cloud_api" } }), null);
   assert.equal(z.tomaHumana(recibido), null);
+  assert.equal(z.tomaHumana({ ...enviado, account: { accountId: "bori" } }), null, "evento de otra cuenta del equipo (Bori)");
+  assert.deepEqual(z.tomaHumana({ ...enviado, account: { accountId: "acc1" } }), { telefono: "19395550000", conversationId: "conv1" });
 });
 test("firma HMAC-SHA256 hex del cuerpo crudo", () => {
   const raw = Buffer.from(JSON.stringify(recibido));

@@ -134,8 +134,11 @@ export function parsearWebhook(body: any): MensajeZernio[] {
 }
 
 /** `message.sent` escrito por una persona (inbox de Zernio o la app de WhatsApp Business en modo coexistencia). */
+// Los webhooks de Zernio son POR EQUIPO: aquí también llegan los eventos del WhatsApp de Bori
+// (misma cuenta de Zernio). Sin filtrar por cuenta, Lis contestando en Bori callaría a Resuelto.
 export function tomaHumana(body: any): { telefono: string; conversationId: string } | null {
   if (body?.event !== "message.sent") return null;
+  if (config.zernio.accountId && body.account?.accountId && body.account.accountId !== config.zernio.accountId) return null;
   const m = body.message ?? {};
   const humano = m.sentVia === "human" || m.source === "whatsapp_business_app";
   if (!humano) return null;
