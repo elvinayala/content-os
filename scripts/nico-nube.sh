@@ -9,6 +9,12 @@
 # GIT_SSH_KEY_B64 (llave privada en base64). Más las del puente (TELEGRAM_BOT_TOKEN_NICO,
 # TELEGRAM_CEO_CHAT_ID, ANTHROPIC_API_KEY, SLACK_BOT_TOKEN, CRON_SECRET, VERCEL_TOKEN…).
 set -uo pipefail
+# Railway monta el volumen como root. Como root solo se le da el volumen al usuario `nico` y se
+# vuelve a arrancar este script como él: Claude Code no acepta el modo total como root.
+if [ "$(id -u)" = 0 ] && id nico >/dev/null 2>&1; then
+  mkdir -p /estado && chown -R nico:nico /estado /app
+  exec runuser -u nico --preserve-environment -- bash "$0" "$@"
+fi
 export HOME="${HOME:-/estado}"
 REPOS="${NICO_REPOS_DIR:-/estado/repos}"
 SEMILLA="${SEMILLA_DIR:-/app}"   # copia del repo que viaja en la imagen (solo para arrancar)

@@ -14,5 +14,8 @@ RUN npm ci --omit=dev --ignore-scripts
 COPY . .
 ENV PUENTE_BOT=nico PUENTE_ESTADO_DIR=/estado HOME=/estado NICO_REPOS_DIR=/estado/repos SEMILLA_DIR=/app \
     CLAUDE_BIN=/usr/local/bin/claude PUENTE_EN_NUBE=1
+# Nico NO corre como root (Claude Code no acepta el modo total como root; el primer pedido real del
+# 23/sep falló por eso). nico-nube.sh arranca como root solo para darle el volumen y baja a `nico`.
+RUN useradd --create-home --home-dir /home/nico --shell /bin/bash nico
 RUN mkdir -p /estado
 CMD ["bash", "scripts/nico-nube.sh"]

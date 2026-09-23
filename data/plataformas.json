@@ -65,7 +65,7 @@
         "docs/guia-uso-equipo.md"
       ],
       "critico": true,
-      "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto. ⚠️ (23/sep/2026) El repo de GitHub todavía NO existe y la copia de la Mac no tiene remote: hasta que Elvin lo cree y se suba, Nico solo lo toca desde la Mac, no desde Railway.",
+      "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto.",
       "github": "elvinayala/plagas-puerto-rico"
     },
     {
@@ -87,7 +87,7 @@
         "docs/adr/"
       ],
       "critico": false,
-      "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor). ⚠️ (23/sep/2026) El repo de GitHub todavía NO existe y la copia de la Mac no tiene remote: hasta que Elvin lo cree y se suba, Nico solo lo toca desde la Mac, no desde Railway.",
+      "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor).",
       "github": "elvinayala/cortex"
     },
     {
@@ -420,7 +420,7 @@
     "plagas": "GET /api/operador/conversaciones (quejas de Kristian/Japhet en el chat) + canal de Slack del cliente si existe"
   },
   "nube": {
-    "nota": "Nico corre en Railway (servicio nico): clona los repos con campo github en /estado/repos/<id>, hace git pull antes de cada pedido y commit+push después. La Mac es una copia: git pull antes de trabajar.",
+    "nota": "Nico corre en Railway (servicio nico) desde el 23/sep/2026 con llave SSH propia (GIT_SSH_KEY_B64, agregada a la cuenta elvinayala): clona los repos con campo github en /estado/repos/<id>, pull antes de cada pedido y commit+push después. El Nico de la Mac (launchd) quedó apagado como respaldo. Repos sin github (Ángelo, voz, SaaS, Victory, Hora Fija, 1000X, Ventaja) solo se tocan desde la Mac.",
     "repos": "/estado/repos"
   },
   "solicitudesEquipo": {
