@@ -258,7 +258,8 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
     });
   }
   const respuesta = await responderDirector(turnos);
-  if (respuesta) await postearRespuesta(channel, respuesta, raiz);
+  // Anuncios, saludos y conversación entre el equipo: el agente se queda callado.
+  if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) await postearRespuesta(channel, respuesta, raiz);
 }
 
 export async function POST(req: NextRequest) {
