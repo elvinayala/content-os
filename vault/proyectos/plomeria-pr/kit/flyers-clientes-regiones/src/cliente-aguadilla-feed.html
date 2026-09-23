@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../feed/src/_base.css"><style>
+html,body{height:1350px}
+.chip{display:inline-block;background:#fff;border:1.5px solid var(--line);color:var(--c1);font-weight:600;font-size:23px;padding:10px 20px;border-radius:999px;margin:0 10px 12px 0}
+.nuevo{display:inline-flex;align-items:center;gap:14px;background:rgba(31,157,107,.12);border:2px solid rgba(31,157,107,.45);color:#157A53;font-weight:700;font-size:26px;padding:12px 24px;border-radius:999px}
+.nuevo b{width:14px;height:14px;border-radius:50%;background:#1F9D6B;display:inline-block}
+.precios{background:#fff;border-radius:28px;box-shadow:0 8px 30px rgba(8,36,58,.07);padding:22px 36px}
+.fila{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.fila:last-child{border-bottom:0}
+.fila b{display:block;font-family:'Sora';font-size:28px;letter-spacing:-.5px;color:var(--c1)}
+.fila small{display:block;font-size:19px;color:var(--c4);margin-top:3px}
+.fila span{font-family:'Sora';font-weight:800;font-size:42px;color:var(--c2);letter-spacing:-1px}
+.check{font-size:25px;color:var(--c1);margin-top:10px}
+.check i{background:#E3F4EC;width:38px;height:38px}
+.cta{display:flex;align-items:center;gap:16px;background:#1F9D6B;color:#fff;font-weight:700;font-size:30px;padding:20px 32px;border-radius:20px;font-family:'Sora'}
+</style></head><body class="cream"><div class="blob"></div>
+<div class="logo"><svg viewBox="0 0 64 64"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#F2621F"/><path d="M20 35 L29 44 L46 26" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>resuelto</div>
+<div style="margin-top:56px"><span class="nuevo"><b></b>Ya llegamos a tu zona</span></div>
+<h1 style="font-size:64px;margin-top:22px;color:var(--c1)">Plomero con precio fijo en</h1>
+<h1 class="o fit" style="font-size:150px;margin-top:4px;white-space:nowrap">Aguadilla.</h1>
+<div class="precios" style="margin-top:26px"><div class="fila"><div><b>Destape simple</b><small>Fregadero, lavamanos, ducha o inodoro</small></div><span>$149</span></div><div class="fila"><div><b>Reparación de inodoro</b><small>Flapper, válvula o sello</small></div><span>$99</span></div><div class="fila"><div><b>Llave o mezcladora</b><small>Cocina o baño</small></div><span>$129</span></div><div class="fila"><div><b>Instalación de calentador</b><small>De tanque</small></div><span>$279</span></div></div>
+<div style="margin-top:20px">
+  <div class="check"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1F9D6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Te decimos el precio antes de llegar</div>
+  <div class="check"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1F9D6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Plomero licenciado · 12 meses de garantía</div>
+</div>
+<div style="margin-top:20px"><span class="chip">Aguadilla</span><span class="chip">Isabela</span><span class="chip">Moca</span><span class="chip">San Sebastián</span><span class="chip">Aguada</span></div>
+<div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:24px">
+  <div class="muted" style="font-size:20px;line-height:1.35;max-width:400px">Mano de obra · materiales aparte<br>+ $19 de coordinación</div>
+  <div class="cta"><svg width="34" height="34" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>939-247-9234</div>
+</div>
+<script>document.fonts.ready.then(()=>{for(const el of document.querySelectorAll('.fit')){let t=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>el.clientWidth&&t>60){t-=2;el.style.fontSize=t+'px'}}})</script>
+</body></html>
