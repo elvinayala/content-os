@@ -2,6 +2,7 @@ import crypto from "crypto";
 
 import { after, type NextRequest, NextResponse } from "next/server";
 
+import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
 import {
   MARCADOR_BRIEF,
   pasarPedidoASlack,
@@ -10,7 +11,7 @@ import {
 } from "@/lib/sofi";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 120; // el Director Creativo lee imágenes/PDF y piensa (~20-60 s)
 
 // Slack two-way: el equipo de contenido le escribe a SOFI por DM (o la mencionan en un
 // canal) y ella responde ahí mismo. Slack manda un evento acá; verificamos la firma,
@@ -29,6 +30,10 @@ export const maxDuration = 30;
 //    (groups:history si privado) y files:write (el worker sube los videos)
 //  - Instalar la app y ponerla en el/los canal(es) que quieran usar.
 //  - Env: SLACK_UGC_CHANNEL_ID (canal del estudio) y SLACK_BOT_USER_ID (auth.test).
+//
+// Director Creativo (22/sep): en SLACK_DIRECTOR_CHANNEL_ID el equipo sube flyers (imagen/PDF),
+// guiones, hooks y CTAs; el bot responde en el hilo con el criterio de Elvin
+// (lib/director-creativo.ts). Necesita además el scope files:read para abrir los adjuntos.
 
 interface SlackEvent {
   type: string;
@@ -40,6 +45,15 @@ interface SlackEvent {
   channel_type?: string;
   ts?: string;
   thread_ts?: string;
+  files?: ArchivoSlack[];
+}
+
+interface ArchivoSlack {
+  name?: string;
+  mimetype?: string;
+  size?: number;
+  url_private?: string;
+  url_private_download?: string;
 }
 
 function firmaValida(raw: string, req: NextRequest): boolean {
@@ -193,6 +207,60 @@ function limpiar(texto: string): string {
   return texto.replace(/<@[^>]+>/g, "").trim();
 }
 
+// Director Creativo: arma el hilo completo (con adjuntos) y responde en él.
+const CEO_SLACK = process.env.CEO_SLACK_ID || "U08U9777PUY";
+const MAX_ADJUNTOS = 8;
+async function atenderDirector(channel: string, raiz: string): Promise<void> {
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) return;
+  const r = await fetch(
+    `https://slack.com/api/conversations.replies?channel=${encodeURIComponent(channel)}&ts=${encodeURIComponent(raiz)}&limit=50`,
+    { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(8000) },
+  );
+  const data = (await r.json()) as {
+    ok?: boolean;
+    messages?: { user?: string; bot_id?: string; text?: string; files?: ArchivoSlack[] }[];
+  };
+  const msgs = data.ok ? (data.messages ?? []) : [];
+  const botUser = process.env.SLACK_BOT_USER_ID;
+
+  // Los adjuntos más recientes primero hasta el tope; el resto solo se menciona.
+  let cupo = MAX_ADJUNTOS;
+  const turnos: TurnoDirector[] = [];
+  for (const m of [...msgs].reverse()) {
+    const esBot = Boolean(m.bot_id) || (botUser && m.user === botUser);
+    if (esBot) {
+      turnos.unshift({ rol: "director", texto: m.text ?? "" });
+      continue;
+    }
+    const notas: string[] = [];
+    const adjuntos = [];
+    for (const f of m.files ?? []) {
+      if (cupo <= 0) {
+        notas.push(`[adjunto anterior no reenviado: ${f.name}]`);
+        continue;
+      }
+      const a = await descargarDeSlack(f);
+      if (a === "no-soportado") notas.push(`[adjunto que no puedes ver (${f.mimetype}): ${f.name}]`);
+      else if (a === "muy-grande") notas.push(`[adjunto demasiado pesado para abrirlo: ${f.name}]`);
+      else if (a === "error") notas.push(`[no se pudo abrir el adjunto: ${f.name}]`);
+      else {
+        adjuntos.push(a);
+        cupo--;
+      }
+    }
+    turnos.unshift({
+      rol: "equipo",
+      autor: m.user ? await nombreDeUsuario(m.user) : "",
+      esCEO: m.user === CEO_SLACK,
+      texto: [limpiar(m.text ?? ""), ...notas].filter(Boolean).join("\n"),
+      adjuntos,
+    });
+  }
+  const respuesta = await responderDirector(turnos);
+  if (respuesta) await postearRespuesta(channel, respuesta, raiz);
+}
+
 export async function POST(req: NextRequest) {
   const raw = await req.text();
 
@@ -223,6 +291,29 @@ export async function POST(req: NextRequest) {
   }
 
   const ev = body.event;
+
+  // Canal del Director Creativo: cada mensaje de persona (texto y/o archivos) se revisa en su
+  // hilo. Solo `message` (llega por message.channels/groups); el app_mention se ignora aquí
+  // para no responder dos veces.
+  const canalDirector = process.env.SLACK_DIRECTOR_CHANNEL_ID;
+  if (canalDirector && ev?.channel === canalDirector) {
+    const humano = !ev.bot_id && ev.user && (!ev.subtype || ev.subtype === "file_share");
+    const conContenido = (ev.text ?? "").trim().length >= 4 || (ev.files?.length ?? 0) > 0;
+    if (ev.type === "message" && humano && conContenido) {
+      const channel = ev.channel;
+      const raiz = ev.thread_ts ?? ev.ts ?? "";
+      after(async () => {
+        try {
+          await atenderDirector(channel, raiz);
+        } catch (e) {
+          console.error("[director] fallo", e instanceof Error ? e.message : e);
+          await postearRespuesta(channel, "Se me trabó la revisión. Vuelve a mandarla en un momento.", raiz);
+        }
+      });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
   // Solo mensajes de personas: ignorar mensajes de bots (incluido el nuestro) y ediciones.
   const esMensaje = ev?.type === "message" || ev?.type === "app_mention";
   if (
