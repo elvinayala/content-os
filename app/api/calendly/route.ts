@@ -327,13 +327,14 @@ function vistoRecien(uri: string): boolean {
   return false;
 }
 
-// Marca del lead según el tipo de evento o el closer (Juan David = AI Borinquen). Override
-// con CALENDLY_MARCA_AIB_REGEX. Default: Level Up.
-const MARCA_AIB = new RegExp(process.env.CALENDLY_MARCA_AIB_REGEX ?? "borinquen|autoflow|automatiz|juan david", "i");
+// Marca del lead. Este webhook es del Calendly de LEVEL UP (organización levelupmediapr@):
+// todo lo que entra aquí es Level Up, sea cual sea el closer (Juan David y Roger cierran para
+// Level Up aquí). AI Borinquen tiene su propio Calendly y NO se mezcla (Elvin, 22/sep). Solo
+// si un tipo de evento de esta cuenta se llamara explícitamente "AI Borinquen/AutoFlow" iría a
+// AIB. Nunca por nombre de closer: el 22/sep eso metió 5 leads de LU en la lista de AIB.
+const MARCA_AIB = new RegExp(process.env.CALENDLY_MARCA_AIB_REGEX || "borinquen|autoflow", "i");
 function marcaDe(inv: CalendlyInvitee): "level-up" | "ai-borinquen" {
-  const host = inv.scheduled_event.event_memberships?.[0];
-  const texto = `${inv.scheduled_event.name} ${host?.user_name ?? ""} ${host?.user_email ?? ""}`;
-  return MARCA_AIB.test(texto) ? "ai-borinquen" : "level-up";
+  return MARCA_AIB.test(inv.scheduled_event.name) ? "ai-borinquen" : "level-up";
 }
 
 // Webhook `onboarding-cita` de n8n (workflow "A-) Cita de onboarding v1", generado por
