@@ -61,11 +61,11 @@ export async function huecosLibres(calendarId: string, desde: Date, hasta: Date)
 }
 
 /** Crea (o mueve, si ya hay `citaId`) la cita en GHL. GHL valida que el hueco esté libre. */
-export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string }): Promise<{ ok: boolean; id?: string; error?: string }> {
+export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string; lugar?: string }): Promise<{ ok: boolean; id?: string; error?: string }> {
   if (!config.tiene.ghl()) return { ok: false, error: "GHL sin configurar" };
   const inicio = new Date(datos.inicio);
   if (isNaN(inicio.getTime())) return { ok: false, error: "fecha inválida" };
-  const cuerpo = { calendarId: datos.calendarId, locationId: config.ghl.locationId, contactId: datos.contactId, startTime: inicio.toISOString(), endTime: new Date(inicio.getTime() + datos.minutos * 60_000).toISOString(), title: datos.titulo, appointmentStatus: "confirmed", assignedUserId: datos.asignadoA || undefined, address: "Videollamada", ignoreDateRange: false };
+  const cuerpo = { calendarId: datos.calendarId, locationId: config.ghl.locationId, contactId: datos.contactId, startTime: inicio.toISOString(), endTime: new Date(inicio.getTime() + datos.minutos * 60_000).toISOString(), title: datos.titulo, appointmentStatus: "confirmed", assignedUserId: datos.asignadoA || undefined, address: datos.lugar || "Videollamada", ignoreDateRange: false };
   const url = datos.citaId ? `${BASE}/calendars/events/appointments/${datos.citaId}` : `${BASE}/calendars/events/appointments`;
   const r = await fetch(url, { method: datos.citaId ? "PUT" : "POST", headers: hCal(), body: JSON.stringify(cuerpo) });
   const texto = await r.text();

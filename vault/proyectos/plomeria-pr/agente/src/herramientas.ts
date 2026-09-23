@@ -269,7 +269,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       // Entrevista acordada → cita en el calendario de GHL (asignada a la reclutadora) + DM corto por Slack.
       let cita: { ok: boolean; error?: string } | null = null;
       if (c.entrevista && ghlId && c.entrevista !== previo?.entrevista) {
-        cita = await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: 20, titulo: `Entrevista · ${c.nombre} (${c.nivelLicencia}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId });
+        cita = await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: 20, titulo: `Entrevista · ${c.nombre} (${c.nivelLicencia}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined });
         if (cita.ok) { almacen.guardarCandidato({ ...c, ghlCitaId: (cita as { id?: string }).id ?? previo?.ghlCitaId }); await dmSlack(config.slack.reclutamiento, mensajeCita(c, c.entrevista)); }
         else { almacen.guardarCandidato({ ...c, entrevista: previo?.entrevista, estado: previo?.entrevista ? "entrevista" : "nuevo" }); }
       } else if (previo?.ghlCitaId) almacen.guardarCandidato({ ...c, ghlCitaId: previo.ghlCitaId });
@@ -279,7 +279,9 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       }
       await avisarCoordinador(`🔧 Candidato ${c.id}: ${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " " + c.numeroLicencia : ""}) · ${c.municipio}${c.experiencia ? " · " + c.experiencia + " de experiencia" : ""} · ${c.equipo}${c.entrevista ? `\nEntrevista: ${new Date(c.entrevista).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}` : ""}`);
       const t = territorioDeMunicipio(c.municipio);
-      return { ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: ["maestro", "oficial"].includes(c.nivelLicencia) };
+      // Cita recién confirmada: el enlace de Zoom va en el mensaje de confirmación, tal cual.
+      const zoom = cita?.ok && config.zoomEntrevistas ? { enlace_videollamada: config.zoomEntrevistas, instruccion_enlace: "Confírmale día y hora y pégale este enlace de Zoom completo, tal cual, en una línea aparte. Dile que entre ahí a esa hora." } : {};
+      return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: ["maestro", "oficial"].includes(c.nivelLicencia) };
     }
     case "agregar_lista_espera": {
       almacen.agregarListaEspera({ municipio: input.municipio, nombre: input.nombre, contactoId: ctx.contacto.id, creado: new Date().toISOString() });

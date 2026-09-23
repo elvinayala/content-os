@@ -56,6 +56,8 @@ export const config = {
     pipelineId: opt("GHL_PIPELINE_ID"),
     stageAgendado: opt("GHL_STAGE_AGENDADO"),
   },
+  /** Enlace fijo de Zoom de la reclutadora (su sala personal). Se le manda al plomero al confirmar y va en la cita de GHL. */
+  zoomEntrevistas: opt("ZOOM_ENTREVISTAS_URL"),
   slack: {
     token: opt("SLACK_BOT_TOKEN"),
     /** A quién le llegan las entrevistas y los grandes candidatos (Yaileen, U08Q51UFLSH). */
