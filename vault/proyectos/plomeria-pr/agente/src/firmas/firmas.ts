@@ -25,6 +25,8 @@ export interface Firma {
   estado: "pendiente" | "firmado" | "anulado";
   emitido: { en: string; por: string };
   abierto?: { en: string; ip: string };
+  /** Cambios de contrato antes de firmar (p. ej. el candidato dice que no tiene licencia → ayudante). */
+  cambios?: { en: string; de: TipoContrato; a: TipoContrato; por: string }[];
   firmado?: { en: string; ip: string; ua: string; datos: DatosFirma; hashContenido: string; hashPdf: string; archivo: string };
 }
 
@@ -41,6 +43,15 @@ export function crear(d: { tipo: TipoContrato; nombre: string; telefono: string;
   const lista = leer();
   const f: Firma = { id: "F-" + String(lista.length + 1).padStart(4, "0"), token: crypto.randomBytes(18).toString("base64url"), tipo: d.tipo, nombre: d.nombre.trim(), telefono: d.telefono.replace(/\D/g, "").replace(/^(\d{10})$/, "1$1"), municipio: d.municipio?.trim() || undefined, estado: "pendiente", emitido: { en: new Date().toISOString(), por: d.por } };
   lista.push(f); guardar(lista); return f;
+}
+
+/** Cambia el contrato (plomero ⇄ ayudante) mientras no esté firmado. Lo usa el celular ("¿tienes licencia?") y el panel. */
+export function cambiarTipo(f: Firma, tipo: TipoContrato, por: string): { ok: true } | { ok: false; error: string } {
+  if (f.estado !== "pendiente") return { ok: false, error: "Este contrato ya no se puede cambiar." };
+  if (f.tipo === tipo) return { ok: true };
+  f.cambios = [...(f.cambios ?? []), { en: new Date().toISOString(), de: f.tipo, a: tipo, por }];
+  f.tipo = tipo; actualizar(f);
+  return { ok: true };
 }
 
 /** Lo que ve el celular al abrir el enlace (y se anota la primera apertura). */

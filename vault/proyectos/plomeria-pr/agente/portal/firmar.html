@@ -71,6 +71,11 @@
   <section id="p1" class="oculto">
     <h2>Tus datos</h2>
     <p class="sub">Así van a salir en el contrato.</p>
+    <div class="resumen" id="licencia">
+      <b>¿Tienes licencia de plomero en Puerto Rico?</b>
+      <div class="opciones" style="margin-top:10px"><button type="button" data-tipo="plomero">Sí, tengo licencia</button><button type="button" data-tipo="ayudante">No, todavía no</button></div>
+      <p class="ayuda" id="licenciaNota" style="margin:10px 0 0"></p>
+    </div>
     <form id="form" autocomplete="on"></form>
   </section>
 
@@ -160,6 +165,26 @@
       }
     }
   }
+  // ── ¿Licencia? Sin licencia firma el Acuerdo de ayudante; con licencia, el de plomero afiliado ──
+  function pintarLicencia() {
+    document.querySelectorAll("#licencia [data-tipo]").forEach((b) => b.classList.toggle("sel", b.dataset.tipo === doc.tipo));
+    $("#licenciaNota").textContent = doc.tipo === "plomero"
+      ? "Te toca el Acuerdo de afiliación de plomero. Vas a necesitar tu número de licencia."
+      : "Te toca el Acuerdo de ayudante: trabajas acompañado de un plomero licenciado de Resuelto. Cuando saques la licencia, pasas al de plomero.";
+    $("#saludo").textContent = `Hola ${doc.nombre.split(" ")[0]} · tu contrato ${doc.tipo === "plomero" ? "de plomero afiliado" : "de ayudante"}`;
+  }
+  document.querySelectorAll("#licencia [data-tipo]").forEach((b) => (b.onclick = async () => {
+    if (b.dataset.tipo === doc.tipo) return;
+    error(""); b.disabled = true;
+    try {
+      const r = await fetch(`/api/firmar/${token}/tipo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tipo: b.dataset.tipo }) });
+      const j = await r.json(); if (!j.ok) throw new Error(j.error || "No se pudo cambiar.");
+      const previos = { ...datos }; doc = j; datos = {};
+      for (const c of doc.campos) if (previos[c.id] !== undefined) datos[c.id] = previos[c.id]; // lo que ya escribió se queda
+      iniciadas = new Set(); pintarLicencia(); pintarFormulario();
+    } catch (e) { error(e.message); } finally { b.disabled = false; }
+  }));
+
   function validarPaso1() {
     for (const c of doc.campos) { const v = String(datos[c.id] ?? "").trim(); if (c.requerido && !v) return `Falta: ${c.etiqueta}.`; if (c.tipo === "tel" && v && v.replace(/\D/g, "").length < 10) return "El teléfono debe tener 10 dígitos."; }
     return "";
@@ -248,7 +273,7 @@
     doc = j; datos = {};
     $("#saludo").textContent = `Hola ${j.nombre.split(" ")[0]} · tu contrato ${j.tipo === "plomero" ? "de plomero afiliado" : "de ayudante"}`;
     if (j.estado === "firmado") { $("#descargar").href = j.pdf; return ir(5); }
-    pintarFormulario(); ir(1);
+    pintarLicencia(); pintarFormulario(); ir(1);
   }).catch(() => { $("#p-cargando").innerHTML = `<h2>Sin conexión</h2><p class="sub">Revisa tu señal y vuelve a abrir el enlace.</p>`; });
 })();
 </script>

@@ -89,6 +89,16 @@ app.post("/api/firmar/:token", async (req: any, res) => {
   try { res.json(await firmas.firmar(f, req.body, { ip: ipDe(req), ua: String(req.headers["user-agent"] ?? "") })); }
   catch (e) { console.error("firmar", e); res.status(500).json({ ok: false, error: "No pudimos generar tu copia. Vuelve a tocar Firmar." }); }
 });
+// El candidato contesta "¿tienes licencia de plomero?" en el celular: sin licencia → Acuerdo de ayudante (y viceversa).
+app.post("/api/firmar/:token/tipo", (req: any, res) => {
+  const f = firmas.porToken(String(req.params.token));
+  if (!f || f.estado === "anulado") return res.status(404).json({ ok: false, error: "Este enlace no existe." });
+  const tipo = req.body?.tipo === "ayudante" ? "ayudante" : req.body?.tipo === "plomero" ? "plomero" : null;
+  if (!tipo) return res.status(400).json({ ok: false, error: "Tipo inválido." });
+  const r = firmas.cambiarTipo(f, tipo, "firmante");
+  if (!r.ok) return res.status(409).json(r);
+  res.json({ ok: true, ...firmas.abrir(f, ipDe(req)) });
+});
 app.get("/firmado/:archivo", (req, res) => {
   const f = firmas.porToken(String(req.params.archivo).replace(/\.pdf$/, ""));
   const p = f ? firmas.archivoPdf(f) : null;
@@ -124,6 +134,11 @@ app.get("/equipo-firmas/prueba.pdf", async (_req, res) => {
   } catch (e) { console.error("prueba pdf", e); res.status(500).send("El generador de PDF falló: " + (e as Error).message); }
 });
 app.get("/equipo-firmas", (_req, res) => res.type("html").send(panelFirmasHTML(firmas.listar().map((f) => ({ ...f, link: firmas.enlace(f), pdf: firmas.enlacePdf(f) })))));
+app.post("/equipo-firmas/tipo", (req: any, res) => {
+  const f = firmas.listar().find((x) => x.id === String(req.body?.id ?? ""));
+  if (!f) return res.status(404).json({ ok: false, error: "No existe." });
+  res.json(firmas.cambiarTipo(f, req.body?.tipo === "ayudante" ? "ayudante" : "plomero", "panel de contratos"));
+});
 app.post("/equipo-firmas/nuevo", (req: any, res) => {
   const b = req.body ?? {};
   const tipo = b.tipo === "ayudante" ? "ayudante" : "plomero";

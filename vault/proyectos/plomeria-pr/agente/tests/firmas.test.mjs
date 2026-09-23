@@ -46,3 +46,15 @@ test("certificado: trae firmante, IPs, páginas iniciadas y la huella", () => {
   const c = D.certificado({ id: "F-0001", tipo: "plomero", nombre: "Charlie", telefono: "9399053116", emitido: { en: "2026-09-23T15:00:00Z", por: "panel" }, abierto: { en: "2026-09-23T15:10:00Z", ip: "1.2.3.4" }, firmado: { en: "2026-09-23T15:20:00Z", ip: "5.6.7.8", ua: "iPhone" }, hojasIniciadas: [1, 2, 3], hashContenido: "abc123" });
   for (const x of ["F-0001", "Charlie", "1.2.3.4", "5.6.7.8", "iPhone", "1, 2, 3", "abc123"]) assert.ok(c.includes(x), x);
 });
+
+test("cambiarTipo: sin licencia pasa a ayudante antes de firmar, y queda registrado", async () => {
+  const fs = await import("node:fs"); const path = await import("node:path"); const os = await import("node:os");
+  const F = await import("../dist/firmas/firmas.js");
+  const f = { id: "F-9999", token: "x", tipo: "plomero", nombre: "Prueba", telefono: "17875551234", estado: "pendiente", emitido: { en: new Date().toISOString(), por: "test" } };
+  const r = F.cambiarTipo(f, "ayudante", "firmante");
+  assert.ok(r.ok); assert.equal(f.tipo, "ayudante"); assert.equal(f.cambios.length, 1); assert.equal(f.cambios[0].de, "plomero");
+  assert.equal(F.cambiarTipo({ ...f, estado: "firmado" }, "plomero", "firmante").ok, false);
+  // limpiar el registro de prueba
+  const archivo = path.join(process.cwd(), "data", "estado", "firmas.json");
+  try { const l = JSON.parse(fs.readFileSync(archivo, "utf8")).filter((x) => x.id !== "F-9999"); fs.writeFileSync(archivo, JSON.stringify(l, null, 2)); } catch {}
+});
