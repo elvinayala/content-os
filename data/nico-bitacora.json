@@ -81,6 +81,14 @@
       "porque": "Carilin: en Monday los clientes bajaban solos de grupo al cambiar el status; en Pulse había que moverlos a mano.",
       "verificado": "PARCIAL: 43/43 tests (6 nuevos) y tipos OK; commit subido a GitHub. NO está en producción: el VERCEL_TOKEN de Railway (nico y puente) da 403 invalidToken y Vercel no despliega solo desde GitHub (prod sigue en dpl_2befHbHq2av2bVqng1vkfYgeAqZU). Falta deploy desde la Mac y probar con un cliente de prueba.",
       "commit": "4fb83f0"
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "railway (nico)",
+      "que": "VERCEL_TOKEN nuevo (Elvin, 5 PM) verificado: GET api.vercel.com/v2/user → 200.",
+      "porque": "El anterior daba 403 invalidToken y trancaba el deploy de Pulse #13.",
+      "verificado": "sí, HTTP 200 contra la API de Vercel",
+      "commit": null
     }
   ],
   "pendientesElvin": [
@@ -119,8 +127,7 @@
       "desde": "2026-09-19",
       "plataforma": "bori",
       "estado": "pendiente"
-    },
-    "2026-09-23: VERCEL_TOKEN de Railway (servicios nico y puente) está vencido/inválido (403). Generar uno nuevo en vercel.com/account/tokens y ponerlo en Railway; mientras, deployar Pulse #13 desde la Mac: git pull && bash scripts/deploy-snapshots.sh"
+    }
   ],
   "actualizadoEl": "2026-09-20T15:28:36.900Z"
 }
