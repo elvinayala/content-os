@@ -91,8 +91,11 @@ y cuando yo dé el OK, él haga el cambio."*
 
 Cómo funciona (todo automático, en `scripts/telegram-puente.mjs` y `app/api/slack-eventos`):
 
-1. **Carilin o Aure le escriben al bot de Slack (Command Center) empezando con "Nico"** — por DM
-   o mencionándolo: *"Nico, en Pulse agrégale al tablero de LUM una columna de fecha de renovación"*.
+1. **Canal propio: `#nico-desarrollo`** (privado: Elvin, Carilin, Aure y el bot; id en
+   `SLACK_NICO_CHANNEL_ID`). Todo lo que ellas escriben ahí es para Nico, sin prefijo, y Nico
+   contesta en el hilo (acuse, pregunta, "aprobado", "listo"). Elvin puede aprobar en el mismo
+   hilo con `ok 12` / `no 12`. Alternativa: DM al bot (Command Center) empezando con "Nico" —
+   por ejemplo: *"Nico, en Pulse agrégale al tablero de LUM una columna de fecha de renovación"*.
    Ese mensaje NO va a Sofi: entra al buzón de Nico como solicitud #id y ella recibe el acuse.
 2. **Nico diagnostica en SOLO LECTURA** (no puede editar ni desplegar en ese paso): qué pidió,
    dónde, qué haría, riesgo, si es reversible y su recomendación. Si le falta un dato, le hace

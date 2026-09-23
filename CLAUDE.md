@@ -343,8 +343,10 @@ cualquiera de esos 4 repos (`deploy-snapshots.sh` ya lo hace); commitear y subir
 Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
 `npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
-**Enlace directo Carilin/Aure → Nico, con OK de Elvin (23/sep/2026)**: si Carilin o Aure le
-escriben al bot de Slack empezando con "Nico…" (DM o mención), `app/api/slack-eventos` lo manda al
+**Enlace directo Carilin/Aure → Nico, con OK de Elvin (23/sep/2026)**: canal privado
+**#nico-desarrollo** (`SLACK_NICO_CHANNEL_ID`, Elvin + Carilin + Aure + bot): todo lo que ellas
+escriben ahí va a Nico sin prefijo y Nico responde en el hilo; Elvin aprueba ahí con `ok <id>`.
+También por DM al bot empezando con "Nico…" (DM o mención): `app/api/slack-eventos` lo manda al
 buzón de Nico (`de: carilin|aure`, no pasa por Sofi) y les da acuse con el #id. El puente de Nico
 lo diagnostica en **solo lectura** (`SOLO_LECTURA`, sin Edit/Write/deploy), lo deja `esperando-ok`
 con el plan y se lo manda a Elvin; **solo ejecuta** con `ok <id>` / `no <id> [nota]` en su

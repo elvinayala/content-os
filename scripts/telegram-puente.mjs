@@ -491,13 +491,19 @@ async function atenderBuzon(token, chatCEO, st) {
 //    con el plan en `respuesta`, y le llega a Elvin por Telegram + Slack.
 // 3) Elvin responde "ok <id>" / "no <id> [nota]" (Telegram de Nico, o "nico ok <id>" en Slack).
 // 4) Con el OK, Nico lo ejecuta en modo total, cierra el mensaje y le avisa a quien lo pidió.
-async function dmEquipo(quien, texto) {
+// Dónde contestarle: si la solicitud llegó por el canal de Nico, en su hilo; si no, por DM.
+function refSlack(texto) {
+  const m = String(texto).match(/^\[Solicitud del equipo[^\]]*· canal (\S+) · hilo ([\d.]+)\]/);
+  return m ? { canal: m[1], hilo: m[2] } : null;
+}
+async function dmEquipo(quien, texto, ref) {
   const tok = env("SLACK_BOT_TOKEN"); const persona = resolverPersona(quien);
   if (!tok || !persona) return;
+  const destino = ref ? { channel: ref.canal, thread_ts: ref.hilo } : { channel: persona.id };
   try {
-    await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${tok}` }, body: JSON.stringify({ channel: persona.id, text: `${texto}\n— Nico`.slice(0, 3900), username: "Nico · Plataformas" }), signal: AbortSignal.timeout(8000) });
+    await fetch("https://slack.com/api/chat.postMessage", { method: "POST", headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${tok}` }, body: JSON.stringify({ ...destino, text: `${ref ? `<@${persona.id}> ` : ""}${texto}\n— Nico`.slice(0, 3900), username: "Nico · Plataformas" }), signal: AbortSignal.timeout(8000) });
   } catch {}
-  await slackEspejo(`[Agentes] Nico → ${persona.nombre} (Slack DM): ${texto.slice(0, 1500)}`);
+  await slackEspejo(`[Agentes] Nico → ${persona.nombre} (${ref ? "canal de Nico" : "Slack DM"}): ${texto.slice(0, 1500)}`);
 }
 
 // Corre a Claude dentro de la sesión del día con el mismo ciclo de datos/git que Telegram.
@@ -523,7 +529,7 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
   try { await buzonMarcar(m.id, "en-curso"); } catch {}
   LOG("solicitud ›", `de ${m.de} #${m.id}`, pedido.slice(0, 80));
-  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
+  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
   const r = await turnoNico(prompt, { st, soloLectura: true });
   const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
   try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
@@ -531,7 +537,7 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
   await slackEspejo(`[Nico] ${aviso}`);
   const pregunta = plan.match(new RegExp(`Pregunta para ${quien}:\\s*(.+)`, "i"));
-  if (pregunta) await dmEquipo(m.de, `Sobre tu solicitud #${m.id}: ${pregunta[1].trim()} (respóndeme empezando con "Nico").`);
+  if (pregunta) await dmEquipo(m.de, `Sobre tu solicitud #${m.id}: ${pregunta[1].trim()}${refSlack(m.texto) ? " (contéstame aquí en el hilo)" : ' (respóndeme empezando con "Nico")'}`, refSlack(m.texto));
 }
 
 async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
@@ -544,12 +550,12 @@ async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
   const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
   if (!aprobado) {
     await buzonMarcar(id, "rechazado", `Elvin: no${nota ? ` — ${nota}` : ""}`).catch(() => {});
-    await dmEquipo(m.de, `Elvin revisó tu solicitud #${id} y por ahora no va.${nota ? ` Nota de Elvin: ${nota}` : ""}`);
+    await dmEquipo(m.de, `Elvin revisó tu solicitud #${id} y por ahora no va.${nota ? ` Nota de Elvin: ${nota}` : ""}`, refSlack(m.texto));
     await slackEspejo(`[Nico] Solicitud #${id} de ${quien} rechazada por Elvin.`);
     return avisarCEO(`Listo, la #${id} de ${quien} no se hace. Ya le avisé.`);
   }
   await buzonMarcar(id, "aprobado").catch(() => {});
-  await dmEquipo(m.de, `Elvin aprobó tu solicitud #${id}. Ya estoy en eso; te aviso cuando quede.`);
+  await dmEquipo(m.de, `Elvin aprobó tu solicitud #${id}. Ya estoy en eso; te aviso cuando quede.`, refSlack(m.texto));
   await avisarCEO(`✅ Aprobada #${id} de ${quien}. Manos a la obra; te aviso cuando esté verificada.`);
   const nombreMay = quien.toUpperCase();
   const prompt = `Elvin APROBÓ la solicitud #${id} de ${quien}${nota ? ` con esta nota: "${nota}"` : ""}.\nPedido de ${quien}: ${pedido}\nTu plan (el que Elvin aprobó): ${m.respuesta || "(sin plan previo: diagnostica y ejecútalo)"}\n\nEjecútalo completo como cualquier ajuste tuyo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo → anotar en data/nico-bitacora.json (que empiece con "[Solicitud de ${quien} #${id}]"). Tus prohibiciones siguen: si el plan choca con una (borrar datos, cobros, prompt de voz en prod, secretos…), no lo hagas y dile a Elvin por qué. No le escribas a ${quien}: el puente le avisa. Tu respuesta va a Elvin (corta: qué hiciste, qué verificaste). Al final agrega UNA línea que empiece con "PARA ${nombreMay}:" con 1-2 oraciones sencillas, sin jerga, de lo que quedó.`;
@@ -564,7 +570,7 @@ async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
   guardarEstado(st);
   await avisarCEO(ok ? `🔧 Solicitud #${id} de ${quien}:\n${resp}` : `⚠️ No pude terminar la #${id} de ${quien}: ${(r.err || resp || "sin respuesta").slice(0, 600)}`);
   await slackEspejo(`[Nico] Solicitud #${id} de ${quien} → ${ok ? "hecha" : "falló"}: ${(resp || r.err || "").slice(0, 1500)}`);
-  await dmEquipo(m.de, ok ? `Listo ✅ tu solicitud #${id}: ${paraEquipo || "ya quedó hecha y verificada."}` : `Tu solicitud #${id} se complicó; ya se lo reporté a Elvin y te aviso.`);
+  await dmEquipo(m.de, ok ? `Listo ✅ tu solicitud #${id}: ${paraEquipo || "ya quedó hecha y verificada."}` : `Tu solicitud #${id} se complicó; ya se lo reporté a Elvin y te aviso.`, refSlack(m.texto));
 }
 
 function buzonLoop(token, getChat, st) {

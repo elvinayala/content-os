@@ -296,7 +296,15 @@ const PARA_NICO = /^\s*(?:@?nico\b|para\s+nico\b)[\s,:.\-—]*/i;
 const IDENTIDAD_NICO: Identidad = { username: "Nico · Plataformas" };
 const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure" };
 
-async function pasarANico(de: string, userId: string, texto: string): Promise<number | null> {
+// Canal propio de Nico (Elvin, 23/sep: "que tengan un canal directo con Nico"): en
+// SLACK_NICO_CHANNEL_ID todo lo que escriban Carilin o Aure es para Nico, sin prefijo, y Nico
+// contesta en el hilo. Elvin puede aprobar ahí mismo con "ok 12" / "no 12".
+interface RefSlack {
+  canal: string;
+  hilo: string;
+}
+
+async function pasarANico(de: string, userId: string, texto: string, ref?: RefSlack): Promise<number | null> {
   const secreto = process.env.CRON_SECRET;
   if (!secreto) return null;
   const r = await fetch(`${ORIGEN}/api/agentes`, {
@@ -305,13 +313,30 @@ async function pasarANico(de: string, userId: string, texto: string): Promise<nu
     body: JSON.stringify({
       de,
       para: "nico",
-      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})]\n${texto}`,
+      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})${ref ? ` · canal ${ref.canal} · hilo ${ref.hilo}` : ""}]\n${texto}`,
     }),
     signal: AbortSignal.timeout(10000),
   });
   const j = (await r.json().catch(() => ({}))) as { ok?: boolean; id?: number };
   return j.ok && j.id ? j.id : null;
 }
+
+// Decisión de Elvin sobre una solicitud → buzón de Nico (el puente la ejecuta o la cierra).
+async function decidirSolicitud(aprobado: boolean, id: string, nota: string): Promise<boolean> {
+  const secreto = process.env.CRON_SECRET;
+  if (!secreto) return false;
+  const r = await fetch(`${ORIGEN}/api/agentes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-cron-secret": secreto },
+    body: JSON.stringify({ de: "elvin", para: "nico", texto: `[APROBACIÓN] ${aprobado ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` }),
+    signal: AbortSignal.timeout(10000),
+  })
+    .then((x) => x.json() as Promise<{ ok?: boolean }>)
+    .catch(() => ({ ok: false }));
+  return Boolean(r.ok);
+}
+
+const DECISION = /^\s*(?:@?nico\s+)?(ok|s[ií]|dale|aprobad[oa]|no)\s*#?(\d+)\s*([\s\S]*)$/i;
 
 export async function POST(req: NextRequest) {
   const raw = await req.text();
@@ -343,6 +368,48 @@ export async function POST(req: NextRequest) {
   }
 
   const ev = body.event;
+
+  const canalNico = process.env.SLACK_NICO_CHANNEL_ID;
+  if (canalNico && ev?.channel === canalNico) {
+    const humano = ev.type === "message" && !ev.bot_id && ev.user && (!ev.subtype || ev.subtype === "file_share");
+    const texto = limpiar(ev.text ?? "");
+    if (!humano || !texto) return NextResponse.json({ ok: true });
+    const channel = ev.channel;
+    const raiz = ev.thread_ts ?? ev.ts ?? "";
+    const userId = ev.user as string;
+    const decision = userId === CEO_SLACK ? texto.match(DECISION) : null;
+    const deEquipo = EQUIPO_NICO[userId];
+    if (!decision && !deEquipo) return NextResponse.json({ ok: true }); // Elvin conversando, u otros
+    after(async () => {
+      try {
+        if (decision) {
+          const aprobado = !/^no$/i.test(decision[1]);
+          const ok = await decidirSolicitud(aprobado, decision[2], decision[3].trim());
+          await postearRespuesta(
+            channel,
+            ok ? (aprobado ? `Anotado: la #${decision[2]} va. Te aviso cuando quede verificada.\n— Nico` : `Anotado: la #${decision[2]} no va.\n— Nico`) : "No pude registrar la decisión; mándamela por Telegram.\n— Nico",
+            raiz,
+            false,
+            IDENTIDAD_NICO,
+          );
+          return;
+        }
+        const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto, { canal: channel, hilo: raiz });
+        await postearRespuesta(
+          channel,
+          id
+            ? `Recibido ✅ (solicitud #${id}). La reviso y le paso el plan a Elvin; cuando dé el OK la hago y te aviso en este hilo.\n— Nico`
+            : "No pude registrar tu solicitud ahora mismo. Vuelve a mandarla en un momento, por favor.\n— Nico",
+          raiz,
+          false,
+          IDENTIDAD_NICO,
+        );
+      } catch (e) {
+        console.error("[nico canal]", e instanceof Error ? e.message : e);
+      }
+    });
+    return NextResponse.json({ ok: true });
+  }
 
   // Canal del Director Creativo: cada mensaje de persona (texto y/o archivos) se revisa en su
   // hilo. Solo `message` (llega por message.channels/groups); el app_mention se ignora aquí
@@ -412,15 +479,7 @@ export async function POST(req: NextRequest) {
     const id = decision[2];
     const nota = decision[3].trim();
     after(async () => {
-      const secreto = process.env.CRON_SECRET;
-      const r = secreto
-        ? await fetch(`${ORIGEN}/api/agentes`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "x-cron-secret": secreto },
-            body: JSON.stringify({ de: "elvin", para: "nico", texto: `[APROBACIÓN] ${aprobado ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` }),
-            signal: AbortSignal.timeout(10000),
-          }).then((x) => x.json() as Promise<{ ok?: boolean }>).catch(() => ({ ok: false }))
-        : { ok: false };
+      const r = { ok: await decidirSolicitud(aprobado, id, nota) };
       await postearRespuesta(
         channel,
         r.ok
