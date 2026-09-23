@@ -89,6 +89,14 @@
       "porque": "El anterior daba 403 invalidToken y trancaba el deploy de Pulse #13.",
       "verificado": "sí, HTTP 200 contra la API de Vercel",
       "commit": null
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "pulse (content-os)",
+      "que": "[Solicitud de Carilin #14] (incluye #13, #15, #16) Automatizaciones de Pulse completas en LEVEL UP MEDIA, columna Progreso: Onboarding Completado → CLIENTE ACTIVO (también desde OFFBOARDED y Accelerator), SET UP LISTO → ANÁLISIS Y ESTRATEGIA, Programa Acelerator → PROGRAMA ACCELERATOR, Decidió no continuar → OFFBOARDED. Inner Circle no se mueve con ninguna regla. Solo dispara cuando cambia el Progreso (no mueve retroactivo).",
+      "porque": "Carilin: que Pulse mueva los clientes de grupo solo, como Monday.",
+      "verificado": "Tests 43/43 (6 de automatizaciones); deploy dpl_CMVasHAak6ffdbeh4v3HfNH1Forb READY en producción (content-os-chi-seven, /pulse/login 200). No hice prueba con cliente falso para no mandarle un cliente inventado a n8n/NocoDB; la primera movida real queda en la actividad como ⚡ automatización (pulse_activity tipo mover con column_id).",
+      "commit": "3c01fc2 (sobre 4fb83f0)"
     }
   ],
   "pendientesElvin": [
