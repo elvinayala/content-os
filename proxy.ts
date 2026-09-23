@@ -63,6 +63,8 @@ export default async function proxy(request: NextRequest) {
   // Webhook de Calendly (citas de los closers → Pipedrive): lo llama Calendly,
   // sin cookie; se autentica por firma adentro (CALENDLY_WEBHOOK_SIGNING_KEY).
   if (pathname === "/api/calendly") return NextResponse.next();
+  // WhatsApp de onboarding de AI Borinquen (webhook de Zernio): valida la firma adentro.
+  if (pathname === "/api/aib/whatsapp") return NextResponse.next();
 
   // Jobs de Vercel Cron (los llama Vercel, sin cookie): se autentican por CRON_SECRET
   // dentro del propio endpoint.
