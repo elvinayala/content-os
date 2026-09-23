@@ -66,3 +66,6 @@ scratchpad_titles_*.txt
 data/pulse-migracion.json
 data/higgsfield-auth.json
 vault/proyectos/contrataciones/pdf/
+
+# Listas de clientes para encuestas manuales (teléfonos/emails): nunca al repo
+data/n8n/rezagados-*.json

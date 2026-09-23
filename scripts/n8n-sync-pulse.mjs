@@ -269,10 +269,16 @@ return out;` }, pos(3, 0)),
 const NOMBRE_CITAS = "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1";
 const NOCODB_ONB = { projectId: "piehks983q2cfu6", table: "mc5m2od7vy71g6z" };
 const CRED_GCAL = { id: "OnmhBZjsVglHy8qy", name: "GoogleCalendarLevelUpMedia" };
+const CRED_CW = { id: "pVHTvmpyURUnhFjQ", name: "Chatwoot LUM token perfil" };
+const CRED_EVO = { id: "o3VodCojIbc9QZ6C", name: "Evolution account" };
+const CRED_PG = { id: "GGHKaTkcxaueFMNW", name: "PostgresLevelUpMedia" };
+const CHATWOOT = "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2";
+// El mismo saludo que mandaba "citas automáticas v4" al agendar (el formal lo manda la bienvenida del día 3).
+const BIENVENIDA = "🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo";
 function armarWorkflowCitas(credId) {
   const credHeader = { httpHeaderAuth: { id: credId, name: NOMBRE_CRED } };
   const nodes = [
-    nodo("Nota", "n8n-nodes-base.stickyNote", 1, { width: 520, height: 220, content: `## Cita de onboarding v1\nReemplaza a "E-) citas automaticas v4" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\nFuente: scripts/n8n-sync-pulse.mjs.` }, pos(0, -2)),
+    nodo("Nota", "n8n-nodes-base.stickyNote", 1, { width: 520, height: 220, content: `## Cita de onboarding v1\nReemplaza a "E-) citas automaticas v4" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\n4. Cliente en Chatwoot (inbox 6) + conversación, y el saludo 🎉 por WhatsApp si es cita nueva (sinBienvenida:true lo salta, para rezagados).\n\nFuente: scripts/n8n-sync-pulse.mjs.` }, pos(0, -2)),
     nodo("Webhook cita", "n8n-nodes-base.webhook", 2.1, { httpMethod: "POST", path: "onboarding-cita", authentication: "headerAuth", responseMode: "onReceived", options: {} }, pos(0, 0), { webhookId: "onboarding-cita-v1", credentials: credHeader }),
     nodo("Normalizar cita", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const b = $json.body || $json;
 const tel = String(b.telefono || '').replace(/[^0-9]/g, '');
@@ -289,6 +295,7 @@ return { json: {
   zoomLink: b.zoomLink || '',
   uri: b.uri || '',
   simulacion: b.simulacion === true,
+  sinBienvenida: b.sinBienvenida === true,
 } };` }, pos(1, 0)),
     nocoHttp("¿Ya existe?", "GET", `${NOCODB}/tables/${NOCODB_ONB.table}/records`, pos(2, 0), null, { onError: "stopWorkflow" }),
     nodo("Decidir cita", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('Normalizar cita').item.json;
@@ -298,7 +305,32 @@ return { json: { ...c, existe, accion: c.simulacion ? 'simular' : (existe ? 'nad
     nodo("¿Crear?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.accion }}", "crear")], combinator: "and" }, options: {} }, pos(4, 0)),
     nodo("Evento en Calendar", "n8n-nodes-base.googleCalendar", 1.3, { calendar: { __rl: true, value: "agenteia@levelupmediapr.net", mode: "list", cachedResultName: "agenteia@levelupmediapr.net" }, start: "={{ $json.fecha }}", end: "={{ $json.fecha.toDateTime().plus(1, 'hours') }}", useDefaultReminders: false, additionalFields: { attendees: ["={{ $json.email }}"], description: "={{ JSON.stringify({ 'First-name': $json.nombre, 'Last-name': $json.apellido, 'phone-number': $json.telefono, 'meeting-zoom': $json.zoomLink, 'uuid-event': $json.uri }) }}", location: "={{ $json.zoomLink }}", summary: "={{ $json.eventName }} - {{ $json.nombreCompleto }}" } }, pos(5, -1), { credentials: { googleCalendarOAuth2Api: CRED_GCAL }, retryOnFail: true, maxTries: 2, waitBetweenTries: 3000, onError: "continueRegularOutput" }),
     nocoHttp("Fila en onboarding", "POST", `${NOCODB}/tables/${NOCODB_ONB.table}/records`, pos(6, -1), `={{ JSON.stringify({ nombre: $('Decidir cita').item.json.nombreCompleto, email: $('Decidir cita').item.json.email, fecha: $('Decidir cita').item.json.fecha, 'event-id': $json.id || '', evento: $('Decidir cita').item.json.eventName, telefono: $('Decidir cita').item.json.telefono, 'fecha-formateada': $('Decidir cita').item.json.fechaFormateada }) }}`),
-    nodo("Nada / ya existía", "n8n-nodes-base.noOp", 1, {}, pos(5, 1)),
+    nodo("Nada / simulación", "n8n-nodes-base.noOp", 1, {}, pos(6, 2)),
+    nodo("¿Simulación?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.accion }}", "simular")], combinator: "and" }, options: {} }, pos(5, 1)),
+
+    // --- Chatwoot: el cliente tiene que existir ahí (inbox 6 = WhatsApp de Level Up por Evolution) con
+    // una conversación, porque bienvenida, PDFs y encuestas lo buscan en Chatwoot. Lo hacía el viejo. ---
+    nodo("Datos contacto", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const d = $('Decidir cita').item.json;
+return { json: { ...d, nuevo: d.accion === 'crear', ultimos10: String(d.telefono || '').slice(-10) } };` }, pos(7, 0)),
+    nodo("Buscar en Chatwoot", "n8n-nodes-base.httpRequest", 4.2, { url: `=${CHATWOOT}/contacts/search`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", sendQuery: true, queryParameters: { parameters: [{ name: "q", value: "={{ $json.ultimos10 || $json.email }}" }] }, options: {} }, pos(8, 0), { credentials: { httpHeaderAuth: CRED_CW }, retryOnFail: true, maxTries: 3, waitBetweenTries: 2000 }),
+    nodo("Elegir contacto", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const d = $('Datos contacto').item.json;
+const lista = ($json.payload) || [];
+const dig = (x) => String(x || '').replace(/[^0-9]/g, '');
+const c = lista.find((x) => d.ultimos10 && dig(x.phone_number).endsWith(d.ultimos10)) || lista.find((x) => d.email && String(x.email || '').toLowerCase() === d.email) || null;
+const ci = c ? (c.contact_inboxes || []).find((i) => i.inbox && i.inbox.id === 6) : null;
+return { json: { contactId: c && ci ? c.id : null, sourceId: ci ? ci.source_id : null } };` }, pos(9, 0)),
+    nodo("¿Existe en Chatwoot?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ !!$json.contactId }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(10, 0)),
+    nodo("Crear contacto", "n8n-nodes-base.httpRequest", 4.2, { method: "POST", url: `${CHATWOOT}/contacts`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", sendBody: true, specifyBody: "json", jsonBody: "={{ JSON.stringify({ inbox_id: 6, name: $('Datos contacto').item.json.nombreCompleto, email: $('Datos contacto').item.json.email || undefined, phone_number: $('Datos contacto').item.json.telefono ? '+' + $('Datos contacto').item.json.telefono : undefined, identifier: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', custom_attributes: { '10dias': false, '30dias': false } }) }}", options: {} }, pos(11, 1), { credentials: { httpHeaderAuth: CRED_CW } }),
+    nodo("Contacto creado", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const p = $json.payload || {};
+return { json: { contactId: p.contact ? p.contact.id : null, sourceId: p.contact_inbox ? p.contact_inbox.source_id : null } };` }, pos(12, 1)),
+    nodo("Contacto listo", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: "return { json: { contactId: $json.contactId, sourceId: $json.sourceId } };" }, pos(13, 0)),
+    nodo("Conversaciones", "n8n-nodes-base.httpRequest", 4.2, { url: `=${CHATWOOT}/contacts/{{ $json.contactId }}/conversations`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", options: {} }, pos(14, 0), { credentials: { httpHeaderAuth: CRED_CW } }),
+    nodo("¿Sin conversación?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ (($json.payload) || []).length === 0 }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(15, 0)),
+    nodo("Crear conversación", "n8n-nodes-base.httpRequest", 4.2, { method: "POST", url: `${CHATWOOT}/conversations`, authentication: "genericCredentialType", genericAuthType: "httpHeaderAuth", sendBody: true, specifyBody: "json", jsonBody: "={{ JSON.stringify({ source_id: $('Contacto listo').item.json.sourceId, inbox_id: 6, contact_id: $('Contacto listo').item.json.contactId }) }}", options: {} }, pos(16, -1), { credentials: { httpHeaderAuth: CRED_CW } }),
+    nodo("¿Bienvenida?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $('Datos contacto').item.json.nuevo === true && $('Datos contacto').item.json.sinBienvenida !== true }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(17, 0)),
+    nodo("Enviar bienvenida", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $('Datos contacto').item.json.telefono }}@s.whatsapp.net", messageText: BIENVENIDA, options_message: {} }, pos(18, -1), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
+    nodo("Memoria del agente", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `return { json: { sessionId: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', messageJsonString: JSON.stringify({ type: 'ai', content: ${JSON.stringify(BIENVENIDA)}, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }) } };` }, pos(19, -1)),
+    nodo("Guardar en memoria", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);", options: { queryReplacement: "={{ [$json.sessionId, $json.messageJsonString] }}" } }, pos(20, -1), { credentials: { postgres: CRED_PG }, onError: "continueRegularOutput" }),
   ];
   const buscar = nodes.find((n) => n.name === "¿Ya existe?");
   buscar.parameters.sendQuery = true;
@@ -309,8 +341,23 @@ return { json: { ...c, existe, accion: c.simulacion ? 'simular' : (existe ? 'nad
     "Normalizar cita": { main: [[to("¿Ya existe?")]] },
     "¿Ya existe?": { main: [[to("Decidir cita")]] },
     "Decidir cita": { main: [[to("¿Crear?")]] },
-    "¿Crear?": { main: [[to("Evento en Calendar")], [to("Nada / ya existía")]] },
+    "¿Crear?": { main: [[to("Evento en Calendar")], [to("¿Simulación?")]] },
+    "¿Simulación?": { main: [[to("Nada / simulación")], [to("Datos contacto")]] },
     "Evento en Calendar": { main: [[to("Fila en onboarding")]] },
+    "Fila en onboarding": { main: [[to("Datos contacto")]] },
+    "Datos contacto": { main: [[to("Buscar en Chatwoot")]] },
+    "Buscar en Chatwoot": { main: [[to("Elegir contacto")]] },
+    "Elegir contacto": { main: [[to("¿Existe en Chatwoot?")]] },
+    "¿Existe en Chatwoot?": { main: [[to("Contacto listo")], [to("Crear contacto")]] },
+    "Crear contacto": { main: [[to("Contacto creado")]] },
+    "Contacto creado": { main: [[to("Contacto listo")]] },
+    "Contacto listo": { main: [[to("Conversaciones")]] },
+    "Conversaciones": { main: [[to("¿Sin conversación?")]] },
+    "¿Sin conversación?": { main: [[to("Crear conversación")], [to("¿Bienvenida?")]] },
+    "Crear conversación": { main: [[to("¿Bienvenida?")]] },
+    "¿Bienvenida?": { main: [[to("Enviar bienvenida")], []] },
+    "Enviar bienvenida": { main: [[to("Memoria del agente")]] },
+    "Memoria del agente": { main: [[to("Guardar en memoria")]] },
   };
   return { name: NOMBRE_CITAS, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW } };
 }
