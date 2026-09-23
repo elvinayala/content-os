@@ -24,6 +24,9 @@ if [ -n "${GH_TOKEN:-}" ]; then
 elif [ -n "${GIT_SSH_KEY_B64:-}" ]; then
   echo "$GIT_SSH_KEY_B64" | base64 -d > "$HOME/.ssh/id_ed25519"; chmod 600 "$HOME/.ssh/id_ed25519"
   ssh-keyscan -t ed25519 github.com >> "$HOME/.ssh/known_hosts" 2>/dev/null
+  # ssh NO usa $HOME: busca ~/.ssh del usuario de passwd (/root), así que la llave en /estado/.ssh
+  # nunca se leía y todo clon fallaba con "Permission denied" (23/sep/2026). Se le indica a mano.
+  export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_ed25519 -o IdentitiesOnly=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=accept-new"
 else
   echo "⚠️ Sin GH_TOKEN ni GIT_SSH_KEY_B64: no puedo clonar los repos privados."
 fi
