@@ -24,7 +24,7 @@ import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
-import { panelFirmasHTML } from "./firmas/panel.js";
+import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO } from "./reclutamiento.js";
 import { dmSlack } from "./integraciones/slack.js";
@@ -97,12 +97,20 @@ app.get("/firmado/:archivo", (req, res) => {
   res.send(fs.readFileSync(p));
 });
 // Panel del equipo: ?t=<FIRMAS_TOKEN o ADMIN_TOKEN> (deja cookie 30 días)
+// o la clave escrita en la pantalla de entrada (así el link que se comparte no lleva la clave).
+const claveFirmasOk = (dado: string) => [config.firmasToken, config.adminToken].filter(Boolean).some((t) => t.length === dado.length && crypto.timingSafeEqual(Buffer.from(t), Buffer.from(dado)));
+const cookieFirmas = (clave: string) => `efi=${clave}; Path=/equipo-firmas; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+app.post("/equipo-firmas/entrar", express.urlencoded({ extended: false }), (req: any, res) => {
+  const clave = String(req.body?.clave ?? "").trim();
+  if (!claveFirmasOk(clave)) return res.redirect(303, "/equipo-firmas?error=1");
+  res.setHeader("Set-Cookie", cookieFirmas(clave));
+  res.redirect(303, "/equipo-firmas");
+});
 app.use("/equipo-firmas", (req: any, res, next) => {
-  const validos = [config.firmasToken, config.adminToken].filter(Boolean);
   const cookie = /(?:^|;\s*)efi=([^;]+)/.exec(req.headers.cookie ?? "")?.[1];
   const dado = String(req.query.t ?? cookie ?? "");
-  if (!validos.some((t) => t.length === dado.length && crypto.timingSafeEqual(Buffer.from(t), Buffer.from(dado)))) return res.status(401).send("No autorizado");
-  if (req.query.t) res.setHeader("Set-Cookie", `efi=${dado}; Path=/equipo-firmas; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`);
+  if (!claveFirmasOk(dado)) return res.status(401).type("html").send(entrarFirmasHTML(Boolean(req.query.error)));
+  if (req.query.t) res.setHeader("Set-Cookie", cookieFirmas(dado));
   next();
 });
 // Prueba del generador (sin crear contratos): PDF de muestra marcado "PRUEBA". Sirve para confirmar Chromium en prod.

@@ -57,3 +57,19 @@ document.getElementById("f").onsubmit=async(e)=>{e.preventDefault();const d=Obje
  document.getElementById("cp").onclick=()=>navigator.clipboard.writeText(j.link);setTimeout(()=>{},0)};
 </script></body></html>`;
 }
+
+/** Pantalla de entrada al panel: una clave, nada más. La cookie dura 30 días. */
+export function entrarFirmasHTML(error: boolean): string {
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Contratos · Resuelto</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#FBF7F0;font-family:'DM Sans',system-ui,sans-serif;color:#1c2a36;padding:16px}
+form{background:#fff;border:1px solid #E6E1D8;border-radius:16px;padding:24px;width:100%;max-width:360px}
+h1{font-family:Sora;color:#0F3D5E;font-size:20px;margin:0 0 4px}p{color:#5C6670;font-size:14px;margin:0 0 16px}
+input{width:100%;font:inherit;padding:12px;border:1.5px solid #E6E1D8;border-radius:10px;margin-bottom:12px}
+button{width:100%;font:inherit;font-weight:700;padding:12px;border:0;border-radius:10px;background:#F2621F;color:#fff;cursor:pointer}
+.err{color:#B42318;font-size:13px;margin:-4px 0 12px}</style></head><body>
+<form method="post" action="/equipo-firmas/entrar"><h1>resuelto · contratos</h1><p>Escribe la clave del equipo.</p>
+<input name="clave" type="password" autocomplete="current-password" required autofocus>
+${error ? '<div class="err">Esa clave no es. Prueba otra vez.</div>' : ""}<button>Entrar</button></form></body></html>`;
+}
