@@ -105,6 +105,14 @@
       "porque": "Pedido de Elvin: el SOP no le había llegado a Aure como documento.",
       "verificado": "sí: conversations.history del DM muestra el mensaje 22:52 UTC con los 3 PDFs (81/85/116 KB); render del SOP revisado.",
       "commit": null
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "puente de Telegram (nico/sofi/max/lola)",
+      "que": "Los bots ahora ven fotos, imágenes y PDFs: el loop descartaba todo mensaje sin texto (if (!msg?.text) continue). Ahora baja el adjunto por getFile a .telegram-adjuntos/ (gitignored, 7 días), junta álbumes en un pedido y le pasa la ruta a Claude para abrirlo con Read. Caption = texto del pedido.",
+      "porque": "Elvin: cuando le manda foto a Nico no responde.",
+      "verificado": "PARCIAL: sintaxis OK, 53/53 tests, helper probado, token de Nico y getFile responden. El reinicio del servicio nico se programó para después de esta respuesta (el contenedor hace git pull al arrancar); falta que Elvin mande una foto de prueba. Sofi/Max/Lola toman el cambio en su próximo deploy/reinicio.",
+      "commit": "f29e67d"
     }
   ],
   "pendientesElvin": [
