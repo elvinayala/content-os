@@ -239,7 +239,10 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       return { total, desglose: { mano_obra: input.mano_obra, coordinacion: t.fee, emergencia: t.emergencia ? menu.recargo_emergencia : 0, materiales_costo: input.materiales_costo, materiales_cobrados: materialesCobrados }, link_tarjeta: link.url ?? null, ath_movil: link.athMovil, simulado: link.simulado };
     }
     case "registrar_candidato": {
-      const c: Candidato = { id: "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: new Date().toISOString() };
+      // Un candidato por contacto: si ya existe (el agente lo actualiza al cuadrar la entrevista o al saber más),
+      // se reusa su id en vez de crear otro P-xxx (22/sep: David quedó registrado dos veces).
+      const previo = almacen.candidatos().find((x) => x.contactoId === ctx.contacto.id);
+      const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: previo?.creado ?? new Date().toISOString() };
       almacen.guardarCandidato(c);
       const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: ["plomero-candidato", c.nivelLicencia], fuente: ctx.contacto.canal });
       almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tipo: "plomero-candidato", ghlContactId: ghlId });
