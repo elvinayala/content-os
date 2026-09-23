@@ -87,9 +87,12 @@ async function disparar(p, contacto) {
   if (!ci) throw new Error("el contacto no está en el inbox de WhatsApp (6)");
   const attrs = { ...(contacto.custom_attributes || {}), "10dias": p.grupo === "A", "30dias": p.grupo === "C" };
   await cw(`/contacts/${contacto.id}`, { method: "PUT", body: JSON.stringify({ custom_attributes: attrs }) });
+  // SOLO una conversación del buzón de WhatsApp de onboarding (6). Si no hay, se crea ahí: una de
+  // otro buzón (p. ej. Setters, 12) no le llega al cliente (le pasó a Héctor el 22/sep).
   const convs = (await cw(`/contacts/${contacto.id}/conversations`)).payload || [];
-  const conv = convs.find((c) => c.inbox_id === INBOX) || convs[0];
-  if (!conv) throw new Error("sin conversación en Chatwoot");
+  let conv = convs.find((c) => c.inbox_id === INBOX);
+  if (!conv) conv = await cw(`/conversations`, { method: "POST", body: JSON.stringify({ source_id: ci.source_id, inbox_id: INBOX, contact_id: contacto.id }) });
+  if (!conv?.id || conv.inbox_id !== INBOX) throw new Error("no se pudo abrir la conversación en el buzón de WhatsApp");
   const cuerpo = {
     conversation: {
       id: String(conv.id),
