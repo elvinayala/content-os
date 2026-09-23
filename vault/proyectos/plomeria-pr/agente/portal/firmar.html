@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Tu contrato · Resuelto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root { --azul:#0F3D5E; --naranja:#F2621F; --crema:#FBF7F0; --tinta:#1c2a36; --gris:#5C6670; --linea:#E6E1D8; --verde:#1F9D6B; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--crema); color: var(--tinta); font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.45; }
+  header { background: var(--azul); color: #fff; padding: 18px 20px 16px; border-bottom: 3px solid var(--naranja); }
+  header .marca { font-family: 'Sora'; font-weight: 800; font-size: 20px; letter-spacing: -.5px; display: flex; align-items: center; gap: 8px; }
+  header .marca svg { width: 22px; height: 22px; }
+  header p { margin: 6px 0 0; opacity: .85; font-size: 14px; }
+  main { max-width: 560px; margin: 0 auto; padding: 18px 16px 120px; }
+  .pasos { display: flex; gap: 6px; margin: 4px 0 18px; }
+  .pasos i { flex: 1; height: 4px; border-radius: 4px; background: var(--linea); }
+  .pasos i.on { background: var(--naranja); }
+  h2 { font-family: 'Sora'; font-size: 20px; color: var(--azul); margin: 0 0 4px; letter-spacing: -.3px; }
+  .sub { color: var(--gris); font-size: 14px; margin: 0 0 16px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 14px 0 6px; }
+  .ayuda { font-weight: 400; color: var(--gris); font-size: 12.5px; }
+  input[type=text], input[type=tel] { width: 100%; font: inherit; padding: 13px 14px; border: 1.5px solid var(--linea); border-radius: 12px; background: #fff; outline: none; }
+  input:focus { border-color: var(--azul); }
+  .opciones { display: flex; gap: 8px; }
+  .opciones button { flex: 1; }
+  button { font: inherit; font-weight: 700; border: 1.5px solid var(--linea); background: #fff; color: var(--azul); padding: 12px 14px; border-radius: 12px; cursor: pointer; }
+  button.sel { border-color: var(--azul); background: var(--azul); color: #fff; }
+  .principal { width: 100%; background: var(--naranja); border-color: var(--naranja); color: #fff; font-family: 'Sora'; font-size: 16px; padding: 15px; }
+  .principal:disabled { opacity: .45; }
+  .barra { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--crema) 30%); }
+  .barra > div { max-width: 560px; margin: 0 auto; display: flex; gap: 10px; }
+  .barra .atras { flex: 0 0 auto; }
+  .error { background: #FDECEA; color: #9B2C1F; padding: 10px 12px; border-radius: 10px; font-size: 14px; margin-top: 12px; display: none; }
+  .pad { position: relative; background: #fff; border: 1.5px dashed #b9c3cc; border-radius: 14px; touch-action: none; }
+  .pad canvas { display: block; width: 100%; border-radius: 14px; }
+  .pad .guia { position: absolute; left: 16px; right: 16px; bottom: 34%; border-bottom: 1px solid #d7dde2; pointer-events: none; }
+  .pad .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #aab4bd; pointer-events: none; font-size: 15px; }
+  .fila { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .link { background: none; border: 0; color: var(--azul); padding: 6px 0; text-decoration: underline; font-weight: 500; font-size: 14px; }
+  .escrita { font-family: 'Caveat', cursive; font-size: 30px !important; }
+  .hoja { background: #fff; border-radius: 14px; box-shadow: 0 1px 0 var(--linea), 0 6px 18px rgba(15,61,94,.06); margin: 0 0 14px; overflow: hidden; }
+  .hoja .cab { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f4f1ea; font-size: 13px; color: var(--gris); }
+  .hoja .cuerpo { padding: 14px 16px 6px; }
+  .hoja .pie { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 14px; border-top: 1px solid var(--linea); gap: 10px; }
+  .hoja .pie img { height: 34px; }
+  .ok { color: var(--verde); font-weight: 700; font-size: 14px; }
+  .check { display: flex; gap: 12px; align-items: flex-start; background: #fff; border-radius: 14px; padding: 14px; border: 1.5px solid var(--linea); font-size: 14px; font-weight: 400; margin: 0; }
+  .check input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--azul); }
+  .resumen { background: #fff; border-radius: 14px; padding: 14px 16px; margin: 0 0 14px; border: 1.5px solid var(--linea); font-size: 14px; }
+  .resumen img { height: 48px; display: block; margin: 6px 0; }
+  .listo { text-align: center; padding: 30px 8px; }
+  .listo .circulo { width: 72px; height: 72px; border-radius: 50%; background: var(--verde); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 14px; }
+  .cargando { display: none; text-align: center; color: var(--gris); font-size: 14px; margin-top: 10px; }
+  .oculto { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="marca"><svg viewBox="0 0 64 64"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#F2621F"/><path d="M20 35 L29 44 L46 26" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>resuelto</div>
+  <p id="saludo">Tu contrato · se completa y se firma aquí mismo</p>
+</header>
+<main>
+  <div class="pasos" id="pasos"><i></i><i></i><i></i><i></i></div>
+
+  <section id="p-cargando"><p class="sub">Cargando tu contrato…</p></section>
+
+  <section id="p1" class="oculto">
+    <h2>Tus datos</h2>
+    <p class="sub">Así van a salir en el contrato.</p>
+    <form id="form" autocomplete="on"></form>
+  </section>
+
+  <section id="p2" class="oculto">
+    <h2>Tu firma</h2>
+    <p class="sub">Dibújala con el dedo. Se usa al final del contrato.</p>
+    <div class="pad" id="padFirma"><div class="guia"></div><div class="ph">Firma aquí</div><canvas height="190"></canvas></div>
+    <div class="fila"><button class="link" data-borrar="padFirma">Borrar</button><button class="link" data-escribir="padFirma">Prefiero escribirla</button></div>
+    <div class="oculto" id="escribirFirma"><input type="text" class="escrita" placeholder="Tu nombre" maxlength="40"></div>
+    <label style="margin-top:22px">Tus iniciales <span class="ayuda">· van en cada página</span></label>
+    <div class="pad" id="padIniciales" style="max-width:220px"><div class="guia"></div><div class="ph">Iniciales</div><canvas height="120"></canvas></div>
+    <div class="fila" style="max-width:220px"><button class="link" data-borrar="padIniciales">Borrar</button><button class="link" data-escribir="padIniciales">Escribirlas</button></div>
+    <div class="oculto" id="escribirIniciales" style="max-width:220px"><input type="text" class="escrita" placeholder="J.P." maxlength="6"></div>
+  </section>
+
+  <section id="p3" class="oculto">
+    <h2>Lee e inicia cada página</h2>
+    <p class="sub" id="contador">Toca “Poner mis iniciales” al final de cada página.</p>
+    <div id="hojas"></div>
+  </section>
+
+  <section id="p4" class="oculto">
+    <h2>Firmar</h2>
+    <p class="sub">Revisa y firma. Recibes tu copia en PDF al instante.</p>
+    <div class="resumen" id="resumen"></div>
+    <label class="check"><input type="checkbox" id="acepto"><span>Acepto firmar este contrato electrónicamente. Mi firma y mis iniciales valen igual que en papel, y quedan registradas con la fecha, la hora y este dispositivo.</span></label>
+    <div class="cargando" id="cargando">Firmando y generando tu copia… (unos segundos)</div>
+  </section>
+
+  <section id="p5" class="oculto">
+    <div class="listo">
+      <div class="circulo">✓</div>
+      <h2>¡Contrato firmado!</h2>
+      <p class="sub">Bienvenido a Resuelto. Guarda tu copia; te escribimos por WhatsApp con los próximos pasos.</p>
+      <a id="descargar" class="principal" style="display:inline-block;text-decoration:none;border-radius:12px;padding:15px 22px" href="#" target="_blank" rel="noopener">Descargar mi copia (PDF)</a>
+    </div>
+  </section>
+
+  <div class="error" id="error"></div>
+</main>
+<div class="barra" id="barra"><div><button class="atras oculto" id="atras">Atrás</button><button class="principal" id="seguir">Seguir</button></div></div>
+
+<script>
+(() => {
+  const token = location.pathname.split("/").filter(Boolean).pop();
+  const $ = (s) => document.querySelector(s);
+  let doc, paso = 0, datos = {}, iniciadas = new Set();
+  const error = (t) => { const e = $("#error"); e.textContent = t || ""; e.style.display = t ? "block" : "none"; if (t) e.scrollIntoView({ behavior: "smooth", block: "center" }); };
+
+  // ── Pad de firma: trazo suave, alta resolución, se exporta recortado ──
+  function crearPad(id) {
+    const cont = document.getElementById(id), c = cont.querySelector("canvas"), ph = cont.querySelector(".ph"), ctx = c.getContext("2d");
+    let vacio = true, dibujando = false, pts = [], altoCss = Number(c.getAttribute("height"));
+    const ajustar = () => { const r = window.devicePixelRatio || 1, w = cont.clientWidth; const tmp = vacio ? null : c.toDataURL(); c.width = w * r; c.height = altoCss * r; c.style.height = altoCss + "px"; ctx.setTransform(r, 0, 0, r, 0, 0); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#0F3D5E"; ctx.lineWidth = 2.6; if (tmp) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0, w, altoCss); im.src = tmp; } };
+    const pos = (e) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    c.addEventListener("pointerdown", (e) => { e.preventDefault(); c.setPointerCapture(e.pointerId); dibujando = true; pts = [pos(e)]; ph.style.display = "none"; vacio = false; });
+    c.addEventListener("pointermove", (e) => { if (!dibujando) return; const p = pos(e); pts.push(p); if (pts.length === 2) { const [a] = pts; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo((a.x + p.x) / 2, (a.y + p.y) / 2); ctx.stroke(); return; } const [a, b] = pts.slice(-3); const m1 = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, m2 = { x: (b.x + p.x) / 2, y: (b.y + p.y) / 2 }; ctx.beginPath(); ctx.moveTo(m1.x, m1.y); ctx.quadraticCurveTo(b.x, b.y, m2.x, m2.y); ctx.stroke(); });
+    const fin = () => { if (dibujando && pts.length < 3 && pts[0]) { ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 1.4, 0, 7); ctx.fillStyle = "#0F3D5E"; ctx.fill(); } dibujando = false; };
+    c.addEventListener("pointerup", fin); c.addEventListener("pointercancel", fin);
+    window.addEventListener("resize", ajustar); ajustar();
+    return {
+      vacio: () => vacio,
+      borrar: () => { ctx.clearRect(0, 0, c.width, c.height); vacio = true; ph.style.display = "flex"; },
+      escribir: (texto, tam) => { ctx.clearRect(0, 0, c.width, c.height); vacio = !texto.trim(); ph.style.display = vacio ? "flex" : "none"; if (vacio) return; ctx.fillStyle = "#0F3D5E"; ctx.font = `600 ${tam}px Caveat`; ctx.textBaseline = "alphabetic"; ctx.fillText(texto, 16, altoCss * 0.62, cont.clientWidth - 32); },
+      png: () => { // recorta el espacio vacío para que la firma quede del tamaño justo
+        const w = c.width, h = c.height, d = ctx.getImageData(0, 0, w, h).data; let x0 = w, y0 = h, x1 = 0, y1 = 0;
+        for (let y = 0; y < h; y += 2) for (let x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+        if (x1 <= x0) return null; const m = 8, o = document.createElement("canvas"); o.width = Math.min(w, x1 - x0 + 2 * m); o.height = Math.min(h, y1 - y0 + 2 * m);
+        o.getContext("2d").drawImage(c, Math.max(0, x0 - m), Math.max(0, y0 - m), o.width, o.height, 0, 0, o.width, o.height); return o.toDataURL("image/png");
+      },
+    };
+  }
+  const pads = {};
+
+  // ── Paso 1: formulario desde los campos del contrato ──
+  function pintarFormulario() {
+    const f = $("#form"); f.innerHTML = "";
+    for (const c of doc.campos) {
+      const l = document.createElement("label"); l.innerHTML = `${c.etiqueta}${c.requerido ? "" : ' <span class="ayuda">· opcional</span>'}${c.ayuda ? `<br><span class="ayuda">${c.ayuda}</span>` : ""}`; f.appendChild(l);
+      if (c.tipo === "opcion") {
+        const g = document.createElement("div"); g.className = "opciones";
+        for (const o of c.opciones) { const b = document.createElement("button"); b.type = "button"; b.textContent = o.etiqueta; if (datos[c.id] === o.valor) b.classList.add("sel"); b.onclick = () => { datos[c.id] = o.valor; g.querySelectorAll("button").forEach((x) => x.classList.toggle("sel", x === b)); }; g.appendChild(b); }
+        f.appendChild(g);
+      } else {
+        const i = document.createElement("input"); i.type = c.tipo === "tel" ? "tel" : "text"; i.inputMode = c.tipo === "tel" ? "tel" : "text"; i.name = c.id; i.value = datos[c.id] ?? doc.previos[c.id] ?? ""; i.autocomplete = { nombre: "name", telefono: "tel", direccion: "street-address", municipio: "address-level2" }[c.id] || "off";
+        i.oninput = () => (datos[c.id] = i.value); datos[c.id] = i.value; f.appendChild(i);
+      }
+    }
+  }
+  function validarPaso1() {
+    for (const c of doc.campos) { const v = String(datos[c.id] ?? "").trim(); if (c.requerido && !v) return `Falta: ${c.etiqueta}.`; if (c.tipo === "tel" && v && v.replace(/\D/g, "").length < 10) return "El teléfono debe tener 10 dígitos."; }
+    return "";
+  }
+
+  // ── Paso 3: el contrato real, hoja por hoja, con los datos puestos ──
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  function llenarHoja(html) {
+    const hoy = new Date(); const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const val = { ...datos, nombre_firma: datos.nombre, lugar: datos.municipio || "", dia: String(hoy.getDate()), mes: meses[hoy.getMonth()], fecha: `${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}` };
+    const marcados = new Set(doc.campos.flatMap((c) => (c.opciones || []).filter((o) => o.valor === datos[c.id]).map((o) => o.check)));
+    return html
+      .replace(/<span class="campo([^"]*)" data-campo="([a-z_]+)"><\/span>/g, (_m, cl, id) => `<span class="campo${cl} lleno">${esc(val[id] || "") || "—"}</span>`)
+      .replace(/<span class="chk" data-check="([a-z_]+)">☐<\/span>/g, (_m, id) => `<span class="chk">${marcados.has(id) ? "☒" : "☐"}</span>`)
+      .replace(/(<div class="firma" data-firma="firmante"><div class="trazo">)/g, `$1<span class="pendiente">Tu firma va aquí</span>`)
+      .replace(/(<div class="firma" data-firma="resuelto"><div class="trazo">)/g, `$1<span class="firma-tipo">Elvin Ayala</span>`);
+  }
+  function pintarHojas() {
+    const cont = $("#hojas"); cont.innerHTML = "";
+    const css = doc.css.replace(/\bbody\s*\{/, ".doc {") + `.doc{font-size:14px;line-height:1.5}.campo{min-width:0!important;height:auto!important}.campo.lleno{border-bottom:1px solid #8a97a3;padding:0 3px;font-weight:700;color:#0F3D5E}.firmas{grid-template-columns:1fr!important;gap:14px!important}.firma-tipo{font-family:Caveat,cursive;font-size:26px;color:#0F3D5E}.pendiente{color:#aab4bd;font-size:12px}.top h1{font-size:22px}h2{font-size:15px}`;
+    for (const h of doc.hojas) {
+      const card = document.createElement("div"); card.className = "hoja";
+      card.innerHTML = `<div class="cab"><span>Página ${h.n} de ${doc.hojas.length}</span><span>${esc(h.titulo)}</span></div><div class="cuerpo"></div><div class="pie"><span class="estado">Sin iniciales</span><button type="button">Poner mis iniciales</button></div>`;
+      const raiz = card.querySelector(".cuerpo").attachShadow({ mode: "open" });
+      raiz.innerHTML = `<style>${css}</style><div class="doc">${llenarHoja(h.html)}</div>`;
+      const btn = card.querySelector("button"), est = card.querySelector(".estado");
+      const marcar = () => { iniciadas.add(h.n); est.innerHTML = `<img src="${pads.ini}" alt="Iniciales"> <span class="ok">✓</span>`; btn.textContent = "Quitar"; actualizar(); };
+      btn.onclick = () => { if (iniciadas.has(h.n)) { iniciadas.delete(h.n); est.textContent = "Sin iniciales"; btn.textContent = "Poner mis iniciales"; actualizar(); } else marcar(); };
+      if (iniciadas.has(h.n)) marcar();
+      cont.appendChild(card);
+    }
+    actualizar();
+  }
+  function actualizar() {
+    if (paso === 3) { const n = iniciadas.size, t = doc.hojas.length; $("#contador").textContent = n === t ? "Todas las páginas tienen tus iniciales." : `${n} de ${t} páginas con tus iniciales.`; $("#seguir").disabled = n !== t; }
+    if (paso === 4) $("#seguir").disabled = !$("#acepto").checked;
+  }
+
+  // ── Navegación ──
+  function ir(n) {
+    paso = n; error("");
+    ["#p-cargando", "#p1", "#p2", "#p3", "#p4", "#p5"].forEach((s, i) => $(s).classList.toggle("oculto", i !== n));
+    document.querySelectorAll("#pasos i").forEach((b, i) => b.classList.toggle("on", i < Math.min(n, 4)));
+    $("#atras").classList.toggle("oculto", n < 2 || n > 4);
+    $("#barra").classList.toggle("oculto", n === 0 || n === 5);
+    $("#seguir").textContent = n === 4 ? "Firmar contrato" : "Seguir";
+    $("#seguir").disabled = false;
+    if (n === 2 && !pads.firma) { pads.firma = crearPad("padFirma"); pads.iniciales = crearPad("padIniciales"); }
+    if (n === 3) pintarHojas();
+    if (n === 4) $("#resumen").innerHTML = `<b>${esc(datos.nombre)}</b> · ${esc(datos.telefono)}<br><span class="ayuda">Tu firma</span><img src="${pads.fir}" alt="Firma"><span class="ayuda">Iniciales en las ${doc.hojas.length} páginas</span>`;
+    actualizar(); window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  $("#acepto").addEventListener("change", actualizar);
+  $("#atras").onclick = () => ir(paso - 1);
+  $("#seguir").onclick = async () => {
+    if (paso === 1) { const e = validarPaso1(); if (e) return error(e); return ir(2); }
+    if (paso === 2) {
+      if (pads.firma.vacio()) return error("Falta tu firma."); if (pads.iniciales.vacio()) return error("Faltan tus iniciales.");
+      pads.fir = pads.firma.png(); pads.ini = pads.iniciales.png(); if (!pads.fir || !pads.ini) return error("Vuelve a dibujar tu firma.");
+      return ir(3);
+    }
+    if (paso === 3) return ir(4);
+    if (paso === 4) {
+      $("#seguir").disabled = true; $("#atras").disabled = true; $("#cargando").style.display = "block";
+      try {
+        const r = await fetch(`/api/firmar/${token}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ datos, firma: pads.fir, iniciales: pads.ini, hojasIniciadas: [...iniciadas], acepto: $("#acepto").checked }) });
+        const j = await r.json();
+        if (!j.ok) throw new Error(j.error || "No se pudo firmar.");
+        $("#descargar").href = j.pdf; ir(5);
+      } catch (e) { error(e.message + " Si sigue pasando, escríbenos al WhatsApp de Resuelto."); $("#seguir").disabled = false; }
+      finally { $("#atras").disabled = false; $("#cargando").style.display = "none"; }
+    }
+  };
+  document.querySelectorAll("[data-borrar]").forEach((b) => (b.onclick = () => pads[b.dataset.borrar === "padFirma" ? "firma" : "iniciales"].borrar()));
+  document.querySelectorAll("[data-escribir]").forEach((b) => (b.onclick = async () => {
+    const esFirma = b.dataset.escribir === "padFirma", caja = $(esFirma ? "#escribirFirma" : "#escribirIniciales"), input = caja.querySelector("input");
+    caja.classList.remove("oculto"); await document.fonts.load("600 40px Caveat");
+    if (!input.value) input.value = esFirma ? (datos.nombre || "") : (datos.nombre || "").split(/\s+/).filter(Boolean).slice(0, 3).map((p) => p[0].toUpperCase() + ".").join("");
+    const pintar = () => pads[esFirma ? "firma" : "iniciales"].escribir(input.value, esFirma ? 58 : 50);
+    input.oninput = pintar; pintar(); input.focus();
+  }));
+
+  // ── Carga ──
+  fetch(`/api/firmar/${token}`).then((r) => r.json()).then((j) => {
+    if (!j.ok) { $("#p-cargando").innerHTML = `<h2>Enlace no válido</h2><p class="sub">${esc(j.error || "Pídele a Resuelto un enlace nuevo.")}</p>`; return; }
+    doc = j; datos = {};
+    $("#saludo").textContent = `Hola ${j.nombre.split(" ")[0]} · tu contrato ${j.tipo === "plomero" ? "de plomero afiliado" : "de ayudante"}`;
+    if (j.estado === "firmado") { $("#descargar").href = j.pdf; return ir(5); }
+    pintarFormulario(); ir(1);
+  }).catch(() => { $("#p-cargando").innerHTML = `<h2>Sin conexión</h2><p class="sub">Revisa tu señal y vuelve a abrir el enlace.</p>`; });
+})();
+</script>
+</body>
+</html>

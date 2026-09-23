@@ -67,6 +67,8 @@ export const config = {
   coordinadorWhatsapp: opt("COORDINADOR_WHATSAPP"),
   /** Protege /admin/*. Los links que salen por Telegram lo llevan en ?t= */
   adminToken: opt("ADMIN_TOKEN"),
+  /** Clave del panel de contratos (/equipo-firmas): la usa la reclutadora sin darle todo el /admin. */
+  firmasToken: opt("FIRMAS_TOKEN"),
 
   /** true cuando la integración tiene credenciales; si no, la herramienta responde en modo simulado y lo dice. */
   tiene: {

@@ -23,9 +23,13 @@ h3 { font-size: 10.5pt; margin: 10px 0 4px; }
 .campo { display: inline-block; border-bottom: 1px solid #8a97a3; min-width: 190px; height: 14px; }
 .campo.l { min-width: 320px; } .campo.s { min-width: 110px; }
 ol, ul { margin: 4px 0 4px 26px; padding: 0; } li { margin: 2px 0; }
-.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 26px; }
+.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 16px; }
 .firma { border-top: 1px solid #1c2a36; padding-top: 6px; font-size: 9pt; }
-.pag { page-break-before: always; }
+.hoja + .hoja { page-break-before: always; }
+.trazo .campo { border-bottom: 0; }
+.firma .trazo { min-height: 30px; border-bottom: 1px solid #1c2a36; margin-bottom: 6px; }
+.firma { border-top: 0 !important; }
+.chk { font-size: 11pt; }
 table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
 td, th { border-bottom: 1px solid #e6e1d8; padding: 4px 6px; text-align: left; } th { color: #0F3D5E; font-family: 'Sora'; font-size: 9pt; }
 .num { text-align: right; white-space: nowrap; }
@@ -38,56 +42,61 @@ td, th { border-bottom: 1px solid #e6e1d8; padding: 4px 6px; text-align: left; }
 def cab(tag, titulo):
     return f'<div class="top"><div><div class="tag">{tag}</div><h1>{titulo}</h1></div></div>'
 
-ACUERDO = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>
-{cab("Plomeros afiliados", "Acuerdo de afiliación")}
-<div class="aviso"><b>Acuerdo provisional.</b> Rige desde su firma hasta que las partes firmen el contrato definitivo que prepara el abogado de Resuelto, o por <b>90 días</b>, lo que ocurra primero. Si el contrato definitivo no se firma en ese plazo, este acuerdo termina sin penalidad para ninguna de las partes, salvo lo dispuesto en las secciones 5, 6 y 9.</div>
+# ── Marcas que usa la firma electrónica (agente/src/firmas): el PDF en blanco las lleva igual (no se ven) ──
+def campo(nombre, clase=""):
+    return f'<span class="campo {clase}" data-campo="{nombre}"></span>'
+def chk(nombre, etiqueta):
+    return f'<span class="chk" data-check="{nombre}">☐</span> {etiqueta}'
+def firma(quien, etiqueta, extra=""):
+    return f'<div class="firma" data-firma="{quien}"><div class="trazo"></div>{etiqueta}{extra}</div>'
+def hoja(n, titulo, html):
+    return f'<section class="hoja" data-hoja="{n}" data-titulo="{titulo}">{html}</section>'
 
-<p><b>Entre</b> <b>Resuelto Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes del Estado Libre Asociado de Puerto Rico, representada por Elvin Ayala ("Resuelto"), <b>y</b></p>
-<p>Nombre: <span class="campo l"></span> &nbsp; Teléfono: <span class="campo s"></span><br>
-Dirección: <span class="campo l"></span> &nbsp; Municipio: <span class="campo s"></span><br>
-Licencia de plomero: ☐ Oficial ☐ Maestro · Núm. <span class="campo s"></span> · Colegiación núm. <span class="campo s"></span> ("el Plomero").<br>
-<i style="font-size:9pt">Si no tiene licencia, se firma el Anexo B (Ayudante) en lugar de este acuerdo.</i></p>
+PROVISIONAL = """<div class="aviso"><b>Acuerdo provisional.</b> Rige desde su firma hasta que las partes firmen el contrato definitivo que prepara el abogado de Resuelto, o por <b>90 días</b>, lo que ocurra primero. Si el contrato definitivo no se firma en ese plazo, este acuerdo termina sin penalidad para ninguna de las partes, salvo lo dispuesto en las secciones 5, 6 y 9.</div>"""
+RESUELTO_PARTE = """<b>Resuelto Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes del Estado Libre Asociado de Puerto Rico, representada por Elvin Ayala ("Resuelto")"""
+FIRMADO_EN = f"""<p>Firmado en {campo("lugar", "s")}, Puerto Rico, a {campo("dia", "s")} de {campo("mes", "s")} de 2026.</p>"""
+FIRMA_RESUELTO = firma("resuelto", "Por Resuelto Home Services LLC<br>Elvin Ayala, fundador")
 
-<h2>1. Relación</h2>
-<p>El Plomero trabaja como <b>contratista independiente</b>, no como empleado. Mantiene por su cuenta su licencia, colegiación, vehículo, herramientas y sus clientes propios fuera de Resuelto. Resuelto no garantiza un volumen mínimo de trabajos. Resuelto emitirá la declaración informativa que corresponda según las leyes contributivas de Puerto Rico.</p>
-
-<h2>2. Lo que pone Resuelto</h2>
-<p>Los clientes y la publicidad pagada, la marca, la atención al cliente por WhatsApp, la cotización con precios publicados, la agenda y el despacho, el cobro al cliente, la facturación, la garantía al cliente y el servicio post-venta.</p>
-
-<h2>3. Lo que pone el Plomero</h2>
-<p>El trabajo bien hecho dentro de la ventana acordada, con licencia vigente, identificación de Resuelto, fotos de antes y después, recibo de materiales y trato respetuoso al cliente, siguiendo las Reglas de Oro (Anexo A).</p>
-
-<h2>4. Pago</h2>
+SEC = {
+ 1: """<h2>1. Relación</h2>
+<p>El Plomero trabaja como <b>contratista independiente</b>, no como empleado. Mantiene por su cuenta su licencia, colegiación, vehículo, herramientas y sus clientes propios fuera de Resuelto. Resuelto no garantiza un volumen mínimo de trabajos. Resuelto emitirá la declaración informativa que corresponda según las leyes contributivas de Puerto Rico.</p>""",
+ 2: """<h2>2. Lo que pone Resuelto</h2>
+<p>Los clientes y la publicidad pagada, la marca, la atención al cliente por WhatsApp, la cotización con precios publicados, la agenda y el despacho, el cobro al cliente, la facturación, la garantía al cliente y el servicio post-venta.</p>""",
+ 3: """<h2>3. Lo que pone el Plomero</h2>
+<p>El trabajo bien hecho dentro de la ventana acordada, con licencia vigente, identificación de Resuelto, fotos de antes y después, recibo de materiales y trato respetuoso al cliente, siguiendo las Reglas de Oro (Anexo A).</p>""",
+ 4: f"""<h2>4. Pago</h2>
 <ul>
 <li><b>65% de la mano de obra</b> de cada trabajo completado y cobrado al cliente. Resuelto retiene el 35%.</li>
 <li>El cargo de coordinación que paga el cliente (${MENU['cargo_coordinacion']}) es de Resuelto. El recargo de emergencia (+${MENU['recargo_emergencia']}) se reparte 65% / 35% igual que la mano de obra.</li>
 <li><b>Materiales:</b> el Plomero los compra y entrega el recibo con foto. Resuelto le reembolsa el <b>100% del costo</b> y le paga un <b>10% adicional</b> por manejo. Si Resuelto suple un equipo mayor (cisterna, calentador, bomba), el Plomero cobra solo la mano de obra.</li>
 <li><b>Liquidación semanal los viernes</b>, por ATH Móvil o transferencia, con estado de cuenta por trabajo. Solo se liquidan trabajos ya cobrados al cliente.</li>
-</ul>
+</ul>""",
+ 5: """<h2>5. El cliente es de Resuelto</h2>
+<p>Todo cliente atendido por medio de Resuelto es cliente de Resuelto. El Plomero no le dará tarjetas, números personales, redes ni cotizaciones por fuera, ni lo atenderá directamente mientras dure la relación ni durante <b>24 meses</b> después. Toda comunicación con el cliente pasa por el WhatsApp de Resuelto. Incumplir esta sección es causa de terminación inmediata y de una penalidad de <b>$2,500 por cliente</b>, más los gastos de cobro.</p>""",
+ 6: """<h2>6. Nunca cobra el Plomero</h2>
+<p>El Plomero no cobra al cliente ni mano de obra ni materiales, por ningún medio. Todo pago va a Resuelto. Si un cliente insiste en pagar en efectivo, el Plomero lo recibe a nombre de Resuelto, lo reporta en el momento y lo deposita el mismo día.</p>""",
+ 7: f"""<h2>7. Garantía</h2>
+<p>La mano de obra tiene <b>{MENU['garantia_meses']} meses</b> de garantía al cliente. Si el fallo es por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>""",
+ 8: """<h2>8. Calidad y terminación</h2>
+<p>Calificación promedio mínima de <b>4.8</b>. <b>Tres faltas</b> (no presentarse sin aviso, cobrar directo, queja grave verificada, no enviar fotos de forma repetida) son causa de terminación. Cualquiera de las partes puede terminar con <b>15 días</b> de aviso por escrito (WhatsApp cuenta).</p>""",
+ 9: """<h2>9. Confidencialidad e imagen</h2>
+<p>Precios, procesos y listas de clientes de Resuelto son confidenciales. El Plomero autoriza a Resuelto a usar su nombre, foto y las fotos de sus trabajos en su comunicación.</p>""",
+ 10: """<h2>10. Cumplimiento y seguro</h2>
+<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto Home Services LLC como asegurado adicional</b>, y la mantendrá vigente. Si no la entrega en ese plazo, Resuelto pausará las ofertas de trabajo hasta que la entregue. Cada parte responde por sus propios actos.</p>""",
+}
 
-<h2>5. El cliente es de Resuelto</h2>
-<p>Todo cliente atendido por medio de Resuelto es cliente de Resuelto. El Plomero no le dará tarjetas, números personales, redes ni cotizaciones por fuera, ni lo atenderá directamente mientras dure la relación ni durante <b>24 meses</b> después. Toda comunicación con el cliente pasa por el WhatsApp de Resuelto. Incumplir esta sección es causa de terminación inmediata y de una penalidad de <b>$2,500 por cliente</b>, más los gastos de cobro.</p>
-
-<h2>6. Nunca cobra el Plomero</h2>
-<p>El Plomero no cobra al cliente ni mano de obra ni materiales, por ningún medio. Todo pago va a Resuelto. Si un cliente insiste en pagar en efectivo, el Plomero lo recibe a nombre de Resuelto, lo reporta en el momento y lo deposita el mismo día.</p>
-
-<h2>7. Garantía</h2>
-<p>La mano de obra tiene <b>{MENU['garantia_meses']} meses</b> de garantía al cliente. Si el fallo es por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>
-
-<h2>8. Calidad y terminación</h2>
-<p>Calificación promedio mínima de <b>4.8</b>. <b>Tres faltas</b> (no presentarse sin aviso, cobrar directo, queja grave verificada, no enviar fotos de forma repetida) son causa de terminación. Cualquiera de las partes puede terminar con <b>15 días</b> de aviso por escrito (WhatsApp cuenta).</p>
-
-<h2>9. Confidencialidad e imagen</h2>
-<p>Precios, procesos y listas de clientes de Resuelto son confidenciales. El Plomero autoriza a Resuelto a usar su nombre, foto y las fotos de sus trabajos en su comunicación.</p>
-
-<h2>10. Cumplimiento y seguro</h2>
-<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto Home Services LLC como asegurado adicional</b>, y la mantendrá vigente. Si no la entrega en ese plazo, Resuelto pausará las ofertas de trabajo hasta que la entregue. Cada parte responde por sus propios actos.</p>
-
-<p>Firmado en <span class="campo s"></span>, Puerto Rico, a <span class="campo s"></span> de <span class="campo s"></span> de 2026.</p>
-<div class="firmas"><div class="firma">El Plomero<br><br>Nombre:</div><div class="firma">Por Resuelto Home Services LLC<br>Elvin Ayala, fundador</div></div>
-
-<div class="pag"></div>
-{cab("Anexo A · Se firma aparte y va contigo", "Reglas de oro")}
+HOJA_ACUERDO_1 = f"""{cab("Plomeros afiliados", "Acuerdo de afiliación")}
+{PROVISIONAL}
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
+Dirección: {campo("direccion", "l")} &nbsp; Municipio: {campo("municipio", "s")}<br>
+Licencia de plomero: {chk("lic_oficial", "Oficial")} {chk("lic_maestro", "Maestro")} · Núm. {campo("lic_num", "s")} · Colegiación núm. {campo("colegiacion", "s")} ("el Plomero").<br>
+<i style="font-size:9pt">Si no tiene licencia, se firma el Acuerdo de ayudante (Anexo B) en lugar de este acuerdo.</i></p>
+{SEC[1]}{SEC[2]}{SEC[3]}{SEC[4]}"""
+HOJA_ACUERDO_2 = f"""{SEC[5]}{SEC[6]}{SEC[7]}{SEC[8]}{SEC[9]}{SEC[10]}
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Plomero", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+HOJA_REGLAS = f"""{cab("Anexo A · Se firma aparte y va contigo", "Reglas de oro")}
 <ol class="pasos" style="font-size:11.5pt">
 <li><b>El cliente es de Resuelto.</b> Ni tarjeta, ni número, ni cotización por fuera.</li>
 <li><b>Nunca cobras tú.</b> Todo pago va a Resuelto. Efectivo se reporta y se deposita el mismo día.</li>
@@ -100,13 +109,12 @@ Licencia de plomero: ☐ Oficial ☐ Maestro · Núm. <span class="campo s"></sp
 <li><b>Calificación mínima 4.8.</b> Tres faltas y sales.</li>
 <li><b>Te pagamos los viernes, siempre.</b></li>
 </ol>
-<div class="firmas"><div class="firma">Firma del Plomero / Ayudante</div><div class="firma">Fecha</div></div>
-
-<div class="pag"></div>
-{cab("Anexo B · Sin licencia de plomero", "Acuerdo de ayudante")}
+<div class="firmas">{firma("firmante", "Firma del Plomero / Ayudante")}<div class="firma"><div class="trazo">{campo("fecha")}</div>Fecha</div></div>"""
+HOJA_AYUDANTE = f"""{cab("Anexo B · Sin licencia de plomero", "Acuerdo de ayudante")}
 <div class="aviso">Para quien todavía no tiene licencia de plomero pero trae experiencia. En Puerto Rico la plomería la hace un plomero licenciado: el Ayudante trabaja <b>siempre acompañado y bajo la supervisión</b> de un plomero licenciado afiliado a Resuelto.</div>
-<p>Nombre: <span class="campo l"></span> &nbsp; Teléfono: <span class="campo s"></span><br>
-Municipio: <span class="campo s"></span> &nbsp; Años de experiencia: <span class="campo s"></span> &nbsp; ¿Está sacando la licencia? ☐ Sí ☐ No</p>
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
+Municipio: {campo("municipio", "s")} &nbsp; Años de experiencia: {campo("anos", "s")} &nbsp; ¿Está sacando la licencia? {chk("sacando_si", "Sí")} {chk("sacando_no", "No")}</p>
 <ol class="pasos">
 <li><b>Trabajo acompañado.</b> El Ayudante no hace trabajos solo, no firma ni certifica trabajos y sigue las instrucciones del plomero licenciado a cargo.</li>
 <li><b>Pago: $15 por hora</b> trabajada en trabajos de Resuelto, según las horas que confirme el plomero licenciado a cargo. Se liquida los viernes, por ATH Móvil o transferencia. Solo se liquidan trabajos cobrados al cliente.</li>
@@ -114,9 +122,23 @@ Municipio: <span class="campo s"></span> &nbsp; Años de experiencia: <span clas
 <li><b>Cuando saque la licencia</b>, avisa a Resuelto con copia y pasa a firmar el Acuerdo de afiliación de plomero.</li>
 <li>Este anexo también es provisional y sigue la misma vigencia del Acuerdo (90 días o el contrato definitivo).</li>
 </ol>
-<p>Firmado en <span class="campo s"></span>, Puerto Rico, a <span class="campo s"></span> de <span class="campo s"></span> de 2026.</p>
-<div class="firmas"><div class="firma">El Ayudante<br><br>Nombre:</div><div class="firma">Por Resuelto Home Services LLC<br>Elvin Ayala, fundador</div></div>
-</body></html>"""
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Ayudante", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+HOJA_AYUDANTE_SECCIONES = f"""{cab("Anexo B · Condiciones que aplican al ayudante", "Secciones del acuerdo")}
+{PROVISIONAL}
+<p style="font-size:9.5pt"><i>En estas secciones del Acuerdo de afiliación, "el Plomero" se refiere también al Ayudante.</i></p>
+{SEC[1]}{SEC[5]}{SEC[6]}{SEC[8]}{SEC[9]}"""
+
+def documento(hojas):
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>' + "".join(hojas) + "</body></html>"
+
+# PDF en blanco (para imprimir): acuerdo + reglas + ayudante, como antes
+ACUERDO = documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS), hoja(4, "Acuerdo de ayudante", HOJA_AYUDANTE)])
+# Plantillas de la firma electrónica
+PLANTILLAS = {
+ "plomero": documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
+ "ayudante": documento([hoja(1, "Acuerdo de ayudante", HOJA_AYUDANTE), hoja(2, "Secciones que te aplican", HOJA_AYUDANTE_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
+}
 
 def precio(s):
     if s.get("cotizacion"): return "cotización"
@@ -182,6 +204,13 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <div class="caja" style="margin-top:22px"><h2>¿Dudas?</h2>WhatsApp de Resuelto: <b>939-247-9234</b> · resueltopr.com/plomeros</div>
 <p class="pie">Resuelto Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>
 </body></html>"""
+
+DEST = AQUI / "../../agente/data/plantillas"
+DEST.mkdir(parents=True, exist_ok=True)
+import shutil
+shutil.copyfile(AQUI / "../logo/logo-horizontal-blanco.png", DEST / "logo-blanco.png")  # membrete del PDF firmado
+for tipo, html in PLANTILLAS.items():
+    (DEST / f"contrato-{tipo}.html").write_text(html, encoding="utf-8"); print("✔ plantilla", tipo)
 
 PIES = {"acuerdo-afiliacion-plomero": ("Acuerdo de afiliación de plomero · provisional · v1 sep 2026", True), "kit-bienvenida-plomero": ("Kit de bienvenida del plomero · v1 sep 2026", False)}
 for nombre, html in (("acuerdo-afiliacion-plomero", ACUERDO), ("kit-bienvenida-plomero", KIT)):

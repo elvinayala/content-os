@@ -1,0 +1,10 @@
+# El .railwayignore de la raíz del repo (el del puente) excluye vault/**/*.png|pdf|jpg; este agente vive
+# dentro de vault/ y SÍ los necesita (logo del PDF firmado, íconos de la app de proveedores).
+node_modules
+dist
+.env
+data/estado
+!*.png
+!**/*.png
+!**/*.jpg
+!**/*.pdf

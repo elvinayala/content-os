@@ -46,6 +46,15 @@
         "demos/auditorias"
       ],
       "port": 8794
+    },
+    {
+      "name": "resuelto-firmas-local",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/elvinayala/AGENTE CONTENIDO/vault/proyectos/plomeria-pr/agente' && env GHL_TOKEN= GHL_LOCATION_ID= TELEGRAM_BOT_TOKEN= COORDINADOR_TELEGRAM_CHAT_ID= COORDINADOR_WHATSAPP= SLACK_BOT_TOKEN= ZERNIO_API_KEY= WA_TOKEN= ANTHROPIC_API_KEY= FIRMAS_TOKEN=prueba URL_PUBLICA=http://localhost:3121 PORT=3121 node dist/index.js"
+      ],
+      "port": 3121
     }
   ]
 }

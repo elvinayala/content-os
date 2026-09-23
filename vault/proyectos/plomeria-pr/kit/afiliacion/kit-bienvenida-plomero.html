@@ -14,9 +14,13 @@ h3 { font-size: 10.5pt; margin: 10px 0 4px; }
 .campo { display: inline-block; border-bottom: 1px solid #8a97a3; min-width: 190px; height: 14px; }
 .campo.l { min-width: 320px; } .campo.s { min-width: 110px; }
 ol, ul { margin: 4px 0 4px 26px; padding: 0; } li { margin: 2px 0; }
-.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 26px; }
+.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 16px; }
 .firma { border-top: 1px solid #1c2a36; padding-top: 6px; font-size: 9pt; }
-.pag { page-break-before: always; }
+.hoja + .hoja { page-break-before: always; }
+.trazo .campo { border-bottom: 0; }
+.firma .trazo { min-height: 30px; border-bottom: 1px solid #1c2a36; margin-bottom: 6px; }
+.firma { border-top: 0 !important; }
+.chk { font-size: 11pt; }
 table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
 td, th { border-bottom: 1px solid #e6e1d8; padding: 4px 6px; text-align: left; } th { color: #0F3D5E; font-family: 'Sora'; font-size: 9pt; }
 .num { text-align: right; white-space: nowrap; }

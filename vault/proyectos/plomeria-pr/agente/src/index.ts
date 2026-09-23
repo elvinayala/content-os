@@ -23,6 +23,8 @@ import { DIR_MEDIA } from "./community/render.js";
 import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
+import * as firmas from "./firmas/firmas.js";
+import { panelFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO } from "./reclutamiento.js";
 import { dmSlack } from "./integraciones/slack.js";
@@ -71,6 +73,56 @@ app.use("/admin", (req: any, res, next) => {
   if (dado.length !== tok.length || !crypto.timingSafeEqual(Buffer.from(dado), Buffer.from(tok))) return res.status(401).send("No autorizado");
   if (req.query.t) res.setHeader("Set-Cookie", `adm=${tok}; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=43200`);
   next();
+});
+
+// ── Firma electrónica propia (src/firmas): el plomero firma desde el celular, sin DocuSign ──
+const ipDe = (req: any) => String(req.headers["x-forwarded-for"] ?? req.ip ?? "").split(",")[0].trim();
+app.get("/firmar/:token", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.setHeader("X-Robots-Tag", "noindex"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "firmar.html"), "utf8")); });
+app.get("/api/firmar/:token", (req: any, res) => {
+  const f = firmas.porToken(String(req.params.token));
+  if (!f || f.estado === "anulado") return res.status(404).json({ ok: false, error: "Este enlace no existe o ya no es válido. Pídele a Resuelto uno nuevo." });
+  res.json({ ok: true, ...firmas.abrir(f, ipDe(req)) });
+});
+app.post("/api/firmar/:token", async (req: any, res) => {
+  const f = firmas.porToken(String(req.params.token));
+  if (!f) return res.status(404).json({ ok: false, error: "Este enlace no existe." });
+  try { res.json(await firmas.firmar(f, req.body, { ip: ipDe(req), ua: String(req.headers["user-agent"] ?? "") })); }
+  catch (e) { console.error("firmar", e); res.status(500).json({ ok: false, error: "No pudimos generar tu copia. Vuelve a tocar Firmar." }); }
+});
+app.get("/firmado/:archivo", (req, res) => {
+  const f = firmas.porToken(String(req.params.archivo).replace(/\.pdf$/, ""));
+  const p = f ? firmas.archivoPdf(f) : null;
+  if (!f || !p) return res.status(404).send("No encontrado");
+  res.setHeader("X-Robots-Tag", "noindex"); res.type("pdf").setHeader("Content-Disposition", `inline; filename="Resuelto-${f.id}-${f.nombre.replace(/[^A-Za-z0-9]+/g, "-")}.pdf"`);
+  res.send(fs.readFileSync(p));
+});
+// Panel del equipo: ?t=<FIRMAS_TOKEN o ADMIN_TOKEN> (deja cookie 30 días)
+app.use("/equipo-firmas", (req: any, res, next) => {
+  const validos = [config.firmasToken, config.adminToken].filter(Boolean);
+  const cookie = /(?:^|;\s*)efi=([^;]+)/.exec(req.headers.cookie ?? "")?.[1];
+  const dado = String(req.query.t ?? cookie ?? "");
+  if (!validos.some((t) => t.length === dado.length && crypto.timingSafeEqual(Buffer.from(t), Buffer.from(dado)))) return res.status(401).send("No autorizado");
+  if (req.query.t) res.setHeader("Set-Cookie", `efi=${dado}; Path=/equipo-firmas; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`);
+  next();
+});
+// Prueba del generador (sin crear contratos): PDF de muestra marcado "PRUEBA". Sirve para confirmar Chromium en prod.
+app.get("/equipo-firmas/prueba.pdf", async (_req, res) => {
+  try {
+    const { plantilla, llenar } = await import("./firmas/documento.js");
+    const { htmlAPdf } = await import("./firmas/pdf.js");
+    const px = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+    const html = llenar("plomero", plantilla("plomero"), { nombre: "PRUEBA · no válido", telefono: "7870000000", direccion: "—", municipio: "San Juan", licencia: "oficial", lic_num: "0000", colegiacion: "" }, { firmante: px, resuelto: { nombre: "Elvin Ayala", cargo: "fundador", en: new Date().toISOString() } }, new Date().toISOString());
+    res.type("pdf").send(await htmlAPdf(html, { pie: "PRUEBA DEL GENERADOR · sin validez", iniciales: px }));
+  } catch (e) { console.error("prueba pdf", e); res.status(500).send("El generador de PDF falló: " + (e as Error).message); }
+});
+app.get("/equipo-firmas", (_req, res) => res.type("html").send(panelFirmasHTML(firmas.listar().map((f) => ({ ...f, link: firmas.enlace(f), pdf: firmas.enlacePdf(f) })))));
+app.post("/equipo-firmas/nuevo", (req: any, res) => {
+  const b = req.body ?? {};
+  const tipo = b.tipo === "ayudante" ? "ayudante" : "plomero";
+  if (!String(b.nombre ?? "").trim() || String(b.telefono ?? "").replace(/\D/g, "").length < 10) return res.json({ ok: false, error: "Pon el nombre y un WhatsApp de 10 dígitos." });
+  const f = firmas.crear({ tipo, nombre: String(b.nombre), telefono: String(b.telefono), municipio: b.municipio ? String(b.municipio) : undefined, por: "panel de contratos" });
+  const link = firmas.enlace(f);
+  res.json({ ok: true, id: f.id, link, whatsapp: `https://wa.me/${f.telefono}?text=${encodeURIComponent(`Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${link}`)}` });
 });
 
 // Evita procesar dos veces el mismo mensaje si Meta reintenta el webhook.
