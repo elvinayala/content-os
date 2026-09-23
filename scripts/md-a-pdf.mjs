@@ -2,6 +2,7 @@
 // Markdown → PDF con el estilo de EA Market, para entregar documentos al equipo (acuerdos, SOPs,
 // manuales). Usa `marked` (ya en el repo) + Chrome headless: no hace falta instalar nada más.
 //   node scripts/md-a-pdf.mjs <archivo.md> [más.md …] [--salida <carpeta>] [--marca "EA Market LLC"]
+// En Linux (Railway): CHROME_PATH=<chrome-headless-shell> CHROME_FLAGS=--no-sandbox node scripts/md-a-pdf.mjs …
 // El frontmatter YAML no se imprime; el título es el primer # del documento.
 import fs from "node:fs";
 import path from "node:path";
@@ -10,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import { marked } from "marked";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d; };
 const salida = path.resolve(ROOT, arg("salida", "vault/proyectos/contrataciones/pdf"));
 const marca = arg("marca", "EA Market LLC");
@@ -54,7 +55,7 @@ for (const f of archivos) {
   const tmp = path.join(salida, path.basename(f, ".md") + ".html");
   const pdf = path.join(salida, path.basename(f, ".md") + ".pdf");
   fs.writeFileSync(tmp, html);
-  const r = spawnSync(CHROME, ["--headless", "--disable-gpu", "--no-pdf-header-footer", `--print-to-pdf=${pdf}`, "file://" + tmp], { encoding: "utf8" });
+  const r = spawnSync(CHROME, [...(process.env.CHROME_FLAGS || "").split(" ").filter(Boolean), "--headless", "--disable-gpu", "--no-pdf-header-footer", `--print-to-pdf=${pdf}`, "file://" + tmp], { encoding: "utf8" });
   fs.unlinkSync(tmp);
   console.log(fs.existsSync(pdf) ? `✔ ${path.relative(ROOT, pdf)} (${Math.round(fs.statSync(pdf).size / 1024)} KB)` : `✗ falló ${f}: ${(r.stderr || "").slice(0, 200)}`);
 }
