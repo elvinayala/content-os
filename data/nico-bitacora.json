@@ -113,6 +113,14 @@
       "porque": "Elvin: cuando le manda foto a Nico no responde.",
       "verificado": "PARCIAL: sintaxis OK, 53/53 tests, helper probado, token de Nico y getFile responden. El reinicio del servicio nico se programó para después de esta respuesta (el contenedor hace git pull al arrancar); falta que Elvin mande una foto de prueba. Sofi/Max/Lola toman el cambio en su próximo deploy/reinicio.",
       "commit": "f29e67d"
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "railway (puente, max, lola, nico)",
+      "que": "Redeploy de los 4 bots con el arreglo de fotos por Telegram (f29e67d). El reinicio diferido de nico con sleep no sobrevivió (el puente mata el grupo del proceso al terminar), así que nico va con railway up --detach al final.",
+      "porque": "Elvin: dale a reiniciar los otros bots para que vean fotos.",
+      "verificado": "puente/max/lola: deploy SUCCESS y logs de arranque OK (salud claude ok) 23:54-23:55 UTC. nico: deploy lanzado al cerrar esta respuesta; falta foto de prueba de Elvin.",
+      "commit": "f29e67d"
     }
   ],
   "pendientesElvin": [
