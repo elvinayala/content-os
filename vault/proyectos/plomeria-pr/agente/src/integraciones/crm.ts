@@ -60,12 +60,13 @@ export async function huecosLibres(calendarId: string, desde: Date, hasta: Date)
   return Object.entries(j).filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && v && typeof v === "object").flatMap(([, v]) => (v as { slots?: string[] }).slots ?? []).sort();
 }
 
-/** Crea (o mueve, si ya hay `citaId`) la cita en GHL. GHL valida que el hueco esté libre. */
-export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string; lugar?: string }): Promise<{ ok: boolean; id?: string; error?: string }> {
+/** Crea (o mueve, si ya hay `citaId`) la cita en GHL. GHL valida que el hueco esté libre, salvo con `forzar`
+ *  (candidatos prioritarios: se les da la hora que pidan aunque esté fuera del horario del calendario). */
+export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string; lugar?: string; forzar?: boolean }): Promise<{ ok: boolean; id?: string; error?: string }> {
   if (!config.tiene.ghl()) return { ok: false, error: "GHL sin configurar" };
   const inicio = new Date(datos.inicio);
   if (isNaN(inicio.getTime())) return { ok: false, error: "fecha inválida" };
-  const cuerpo = { calendarId: datos.calendarId, locationId: config.ghl.locationId, contactId: datos.contactId, startTime: inicio.toISOString(), endTime: new Date(inicio.getTime() + datos.minutos * 60_000).toISOString(), title: datos.titulo, appointmentStatus: "confirmed", assignedUserId: datos.asignadoA || undefined, address: datos.lugar || "Videollamada", ignoreDateRange: false };
+  const cuerpo = { calendarId: datos.calendarId, locationId: config.ghl.locationId, contactId: datos.contactId, startTime: inicio.toISOString(), endTime: new Date(inicio.getTime() + datos.minutos * 60_000).toISOString(), title: datos.titulo, appointmentStatus: "confirmed", assignedUserId: datos.asignadoA || undefined, address: datos.lugar || "Videollamada", ignoreDateRange: false, ...(datos.forzar ? { ignoreFreeSlotValidation: true } : {}) };
   const url = datos.citaId ? `${BASE}/calendars/events/appointments/${datos.citaId}` : `${BASE}/calendars/events/appointments`;
   const r = await fetch(url, { method: datos.citaId ? "PUT" : "POST", headers: hCal(), body: JSON.stringify(cuerpo) });
   const texto = await r.text();

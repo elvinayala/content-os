@@ -26,6 +26,44 @@ export function esGranCandidato(c: Candidato): boolean {
   const a = anosExperiencia(c.experiencia);
   return tieneLicencia(c) && a !== null && a >= ANOS_GRAN_CANDIDATO;
 }
+/** Maestros y grandes candidatos: se les persigue y se les da la hora que pidan (Elvin, 23/sep: Abilo). */
+export const esPrioridad = (c: Pick<Candidato, "nivelLicencia" | "experiencia">) =>
+  String(c.nivelLicencia).toLowerCase() === "maestro" || esGranCandidato(c as Candidato);
+
+/** A un candidato prioritario se le da su hora si cae de lunes a sábado, 7:00 AM–6:00 PM, y en el futuro. */
+export function horaPrioritariaValida(iso: string, ahora = Date.now(), zona = "America/Puerto_Rico"): boolean {
+  const f = new Date(iso);
+  if (isNaN(f.getTime()) || f.getTime() < ahora + 30 * 60_000) return false;
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: zona, weekday: "short", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(f).map((x) => [x.type, x.value]));
+  const min = (Number(p.hour) % 24) * 60 + Number(p.minute);
+  return p.weekday !== "Sun" && min >= 7 * 60 && min <= 18 * 60;
+}
+
+const sinTildes = (t: string) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+/**
+ * ¿El último mensaje del plomero ACEPTA la hora `iso`? (23/sep: Abilo escribió "No tengo trabajo a esa hora"
+ * — quería decir "no, tengo trabajo" — y el agente lo agendó igual.) Acepta: un sí claro ("sí", "dale", "me
+ * sirve"…) o que él mismo diga esa hora ("mañana 8:00 am"). Cualquier "no", "tengo trabajo", "ocupado"… o algo
+ * que no se entienda = NO acepta: hay que preguntarle otra vez.
+ */
+export function aceptaHora(texto: string | undefined, iso: string, zona = "America/Puerto_Rico"): boolean {
+  let t = sinTildes(String(texto ?? ""));
+  if (!t) return false;
+  t = t.replace(/\b(no hay problema|no problem|como no|por que no|no te preocupes)\b/g, " ");
+  if (/\b(no|nop|nah|tengo trabajo|trabajando|ocupad[oa]|imposible|otra hora|otro dia|mas tarde|mas temprano|despues|luego)\b/.test(t)) return false;
+  const f = new Date(iso);
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: zona, hour: "numeric", minute: "numeric", hour12: false }).formatToParts(f).map((x) => [x.type, x.value]));
+  const hora = Number(p.hour) % 24, minuto = Number(p.minute);
+  for (const m of t.matchAll(/\b(\d{1,2})(?::(\d{2}))?\s*(y media|y cuarto)?\s*(a\.? ?m\.?|p\.? ?m\.?)?(?=\s|$|[,.!?])/g)) {
+    let h = Number(m[1]); const mi = m[2] ? Number(m[2]) : m[3] === "y media" ? 30 : m[3] === "y cuarto" ? 15 : 0;
+    if (h > 23) continue;
+    if (m[4]?.startsWith("p") && h < 12) h += 12;
+    if (m[4]?.startsWith("a") && h === 12) h = 0;
+    if (mi === minuto && (h === hora || (!m[4] && h % 12 === hora % 12))) return true;
+  }
+  return /\b(si|sii+|dale|ok|okay|oki|perfecto|esta bien|ta bien|me sirve|me funciona|me queda bien|de acuerdo|claro|listo|confirmo|confirmado|va|vale|bueno|excelente|seguro|correcto|ahi estare|alli estare|cuenta conmigo|genial|super|👍)\b|👍/.test(t);
+}
+
 export function pendienteSeguimiento(c: Candidato, ahora = Date.now()): boolean {
   const creado = new Date(c.creado).getTime();
   return esGranCandidato(c) && !c.entrevista && !c.avisadoSeguimiento && ahora - creado >= ESPERA_SEGUIMIENTO_MS && ahora - creado <= VENTANA_MS;
@@ -43,7 +81,10 @@ export function fechaCorta(iso: string, zona = "America/Puerto_Rico"): string {
 }
 const ficha = (c: Candidato) => [c.nombre, `${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""}`, c.experiencia, c.municipio, telefonoBonito(c.whatsapp)].filter(Boolean).join(" · ");
 
-export const mensajeCita = (c: Candidato, iso: string) => `🔧 Entrevista ${fechaCorta(iso)}: ${ficha(c)} (ya está en el calendario de GHL)`;
+export const mensajeCita = (c: Candidato, iso: string, fueraDeHorario = false) =>
+  esPrioridad(c)
+    ? `⭐ ${c.nivelLicencia === "maestro" ? "MAESTRO" : "Gran candidato"} — prioridad. Entrevista ${fechaCorta(iso)}${fueraDeHorario ? " (la hora que él pidió, fuera del horario normal)" : ""}: ${ficha(c)}. Atiéndelo a esa hora en punto (ya está en GHL).`
+    : `🔧 Entrevista ${fechaCorta(iso)}: ${ficha(c)} (ya está en el calendario de GHL)`;
 export const mensajeGranCandidato = (c: Candidato) => `⭐ Gran candidato sin cita: ${ficha(c)}. Llámalo y dale seguimiento especial.`;
 
 // ── Recordatorio el día de la entrevista (plantilla de Meta `recordatorio_entrevista_resuelto`) ──

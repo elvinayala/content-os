@@ -47,7 +47,7 @@ export async function responder(contacto: Contacto, entrada: Entrada): Promise<s
   bloques.push({ type: "text", text: entrada.texto?.trim() || "(sin texto)" });
 
   const mensajes: Anthropic.Beta.BetaMessageParam[] = [...conv.mensajes, { role: "user", content: bloques }];
-  const ctx = { contacto };
+  const ctx = { contacto, ultimoTexto: entrada.texto };
   let salida: string[] = [];
 
   for (let i = 0; i < MAX_ITERACIONES; i++) {

@@ -13,7 +13,7 @@ import { RAIZ, type Proyecto, type Contratista } from "./almacen.js";
 import { crearLinkPago } from "./integraciones/cobros.js";
 import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCita } from "./integraciones/crm.js";
 import { dmSlack } from "./integraciones/slack.js";
-import { mensajeCita } from "./reclutamiento.js";
+import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida } from "./reclutamiento.js";
 import { avisarCoordinador } from "./canales/whatsapp.js";
 import { config } from "./config.js";
 import { crearOferta } from "./despacho.js";
@@ -81,7 +81,7 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
     description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la entrevista por videollamada de 20 minutos. Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
     input_schema: {
       type: "object",
-      properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO EXACTO de uno de los huecos que devolvió horarios_entrevista y que el plomero confirmó; vacío si aún no" } },
+      properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la hora que el plomero ACEPTÓ en su último mensaje (un sí claro o que él mismo dijo esa hora): uno de los huecos de horarios_entrevista, o — solo si es maestro o gran candidato — la hora que él pidió (lun–sáb, 7 AM–6 PM, con -04:00). Vacío si aún no aceptó" } },
       required: ["nombre", "whatsapp", "nivel_licencia", "numero_licencia", "municipio", "experiencia", "equipo", "disponibilidad", "entrevista"],
       additionalProperties: false,
     },
@@ -158,7 +158,7 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
 
 // ─────────────────────────── ejecución ───────────────────────────
 
-type Ctx = { contacto: Contacto };
+type Ctx = { contacto: Contacto; ultimoTexto?: string };
 
 function buscarServicio(problema: string) {
   const p = norm(problema);
@@ -257,6 +257,13 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       // Un candidato por contacto: si ya existe (el agente lo actualiza al cuadrar la entrevista o al saber más),
       // se reusa su id en vez de crear otro P-xxx (22/sep: David quedó registrado dos veces).
       const previo = almacen.candidatos().find((x) => x.contactoId === ctx.contacto.id);
+      // Candado: solo se agenda si el plomero ACEPTÓ esa hora en su último mensaje (23/sep: Abilo dijo
+      // "No tengo trabajo a esa hora" y se le confirmó igual). Si no, se registra lo demás y no se agenda.
+      let sinAceptar: string | null = null;
+      if (input.entrevista && input.entrevista !== previo?.entrevista && !aceptaHora(ctx.ultimoTexto, input.entrevista, config.zonaHoraria)) {
+        sinAceptar = `No agendé: en su último mensaje ("${String(ctx.ultimoTexto ?? "").slice(0, 120)}") no aceptó esa hora. NO le confirmes nada. Si dijo que no puede o que tiene trabajo, pregúntale qué hora le sirve; si no está claro, pregúntale directo si le sirve o no.`;
+        input = { ...input, entrevista: previo?.entrevista ?? "" };
+      }
       const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: previo?.creado ?? new Date().toISOString() };
       almacen.guardarCandidato(c);
       const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: ["plomero-candidato", c.nivelLicencia], fuente: ctx.contacto.canal });
@@ -269,10 +276,19 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       // Entrevista acordada → cita en el calendario de GHL (asignada a la reclutadora) + DM corto por Slack.
       let cita: { ok: boolean; error?: string } | null = null;
       if (c.entrevista && ghlId && c.entrevista !== previo?.entrevista) {
-        cita = await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: 20, titulo: `Entrevista · ${c.nombre} (${c.nivelLicencia}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined });
-        if (cita.ok) { almacen.guardarCandidato({ ...c, ghlCitaId: (cita as { id?: string }).id ?? previo?.ghlCitaId }); await dmSlack(config.slack.reclutamiento, mensajeCita(c, c.entrevista)); }
+        // Maestros y grandes candidatos: se les da la hora que pidan (lun–sáb 7–6) aunque no sea un hueco libre.
+        const prioridad = esPrioridad(c);
+        let fueraDeHorario = false;
+        if (prioridad && horaPrioritariaValida(c.entrevista)) {
+          const dia = new Date(c.entrevista);
+          const libres = await huecosLibres(config.ghl.calEntrevista, new Date(dia.getTime() - 12 * 3600_000), new Date(dia.getTime() + 12 * 3600_000));
+          fueraDeHorario = !libres.some((h) => new Date(h).getTime() === dia.getTime());
+        }
+        cita = await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: 20, titulo: `${prioridad ? "⭐ " : ""}Entrevista · ${c.nombre} (${c.nivelLicencia}${c.experiencia ? ", " + c.experiencia : ""}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined, forzar: fueraDeHorario });
+        if (cita.ok) { almacen.guardarCandidato({ ...c, ghlCitaId: (cita as { id?: string }).id ?? previo?.ghlCitaId }); await dmSlack(config.slack.reclutamiento, mensajeCita(c, c.entrevista, fueraDeHorario)); }
         else { almacen.guardarCandidato({ ...c, entrevista: previo?.entrevista, estado: previo?.entrevista ? "entrevista" : "nuevo" }); }
       } else if (previo?.ghlCitaId) almacen.guardarCandidato({ ...c, ghlCitaId: previo.ghlCitaId });
+      if (sinAceptar) return { ok: false, candidato_id: c.id, registrado: true, error: sinAceptar };
       if (cita && !cita.ok) {
         const t = territorioDeMunicipio(c.municipio);
         return { ok: false, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "", error: "Esa hora ya no está libre en el calendario (o no es un hueco válido). NO le confirmes la cita: llama horarios_entrevista y ofrécele otra." };
