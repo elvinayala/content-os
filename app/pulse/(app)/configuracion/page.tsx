@@ -5,6 +5,7 @@ import { TablaPermisos } from "@/components/pulse/tabla-permisos";
 import { UsuariosAdmin } from "@/components/pulse/usuarios-admin";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usuarioActual } from "@/lib/pulse/auth";
+import { poderes } from "@/lib/pulse/permisos";
 import { listarUsuarios } from "@/lib/pulse/repo";
 import { leerEventos } from "@/lib/pulse/seguridad";
 import { NOMBRE_APP, puedeGestionarUsuarios } from "@/lib/pulse/types";
@@ -15,7 +16,7 @@ export const metadata = { title: `Configuración · ${NOMBRE_APP}` };
 export default async function ConfiguracionPage() {
   const u = await usuarioActual();
   if (!u || !puedeGestionarUsuarios(u.rol)) redirect("/pulse");
-  const [usuarios, eventos] = await Promise.all([listarUsuarios(), u.rol === "admin" ? leerEventos(60) : Promise.resolve([])]);
+  const [usuarios, eventos] = await Promise.all([listarUsuarios(), poderes(u.rol).verRegistroSeguridad ? leerEventos(80) : Promise.resolve([])]);
   return (
     <>
       <header className="flex h-14 items-center gap-3 border-b px-4">
@@ -25,7 +26,7 @@ export default async function ConfiguracionPage() {
       <main className="mx-auto w-full max-w-4xl p-4 sm:p-6">
         <UsuariosAdmin usuarios={usuarios} yo={u} />
         <TablaPermisos />
-        {u.rol === "admin" ? <EventosSeguridad eventos={eventos} /> : null}
+        {poderes(u.rol).verRegistroSeguridad ? <EventosSeguridad eventos={eventos} /> : null}
       </main>
     </>
   );

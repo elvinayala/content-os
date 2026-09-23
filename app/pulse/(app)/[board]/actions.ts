@@ -5,8 +5,8 @@ import { refresh } from "next/cache";
 import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
-import { poderes } from "@/lib/pulse/permisos";
-import { registrarEvento } from "@/lib/pulse/seguridad";
+import { etiquetasQuitadasEnUso, poderes } from "@/lib/pulse/permisos";
+import { alertarElvin, prohibido, registrarEvento } from "@/lib/pulse/seguridad";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
 import type { Actividad, ArchivoPulse, ColorPulse, Columna, Grupo, Item, SettingsColumna, TipoColumna, ValorCelda } from "@/lib/pulse/types";
 import { validarValor } from "@/lib/pulse/valores";
@@ -79,10 +79,13 @@ export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemIds[0] }));
     const tope = poderes(u.rol).topeBorradoItems;
-    if (tope !== null && p.itemIds.length > tope) throw new Error(`Solo un admin puede eliminar más de ${tope} elementos a la vez`);
+    if (tope !== null && p.itemIds.length > tope) await prohibido(u, `eliminar ${p.itemIds.length} elementos de golpe (tope ${tope})`);
     const { bajas, afectados } = await prepararBaja(p.itemIds);
     const n = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
-    if (n > 5) await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `${n} elementos` });
+    if (n > 5) {
+      await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `${n} elementos` });
+      await alertarElvin(`borrado:${u.id}:${Date.now()}`, `${u.nombre} eliminó ${n} elementos de un tablero.`);
+    }
     avisarCambio({ itemIds: afectados, bajas, motivo: "eliminar" });
     refresh();
     return { n };
@@ -109,8 +112,14 @@ export async function crearColumnaAction(p: { boardId: string; title: string; ty
 
 export async function actualizarColumnaAction(p: { columnId: string; patch: { title?: string; settings?: SettingsColumna; width?: number } }): Promise<R<{ column: Columna }>> {
   return envolver(async () => {
-    await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
+    const u = await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
     const patch = { ...p.patch };
+    if (patch.settings?.labels && !poderes(u.rol).quitarEtiquetasEnUso) {
+      const actual = await repo.leerColumna(p.columnId);
+      const enUso = await repo.valoresEnUso(p.columnId);
+      const quitadas = etiquetasQuitadasEnUso(actual?.settings.labels, patch.settings.labels, enUso);
+      if (quitadas.length) await prohibido(u, `quitar ${quitadas.length} etiqueta(s) que hoy usan elementos en «${actual?.title}»`);
+    }
     if (patch.title !== undefined) patch.title = patch.title.trim().slice(0, 100) || "Columna";
     if (patch.width !== undefined) patch.width = Math.max(70, Math.min(800, Math.round(patch.width)));
     const column = await repo.actualizarColumna(p.columnId, patch);
@@ -120,8 +129,11 @@ export async function actualizarColumnaAction(p: { columnId: string; patch: { ti
 
 export async function eliminarColumnaAction(p: { columnId: string }): Promise<R> {
   return envolver(async () => {
-    await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
+    const u = await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
+    const col = await repo.leerColumna(p.columnId);
+    if (!poderes(u.rol).eliminarColumnas) await prohibido(u, `eliminar la columna «${col?.title ?? "?"}» completa`);
     await repo.eliminarColumna(p.columnId);
+    await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `columna «${col?.title ?? "?"}»` });
     return {};
   });
 }

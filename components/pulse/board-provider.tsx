@@ -28,6 +28,7 @@ import type {
   Columna,
   Grupo,
   Item,
+  RolUsuario,
   SettingsColumna,
   TipoColumna,
   UsuarioPulse,
@@ -280,15 +281,23 @@ export function useBoardActions(): Acciones {
   return a;
 }
 
+// Rol de quien mira el tablero: la UI esconde lo que el servidor le negaría (lib/pulse/permisos.ts).
+const MiRolContext = createContext<RolUsuario>("miembro");
+export function useMiRol(): RolUsuario {
+  return useContext(MiRolContext);
+}
+
 export function BoardProvider({
   data,
   vistaInicial,
   itemInicial,
+  miRol = "miembro",
   children,
 }: {
   data: BoardCompleto;
   vistaInicial: Vista;
   itemInicial: string | null;
+  miRol?: RolUsuario;
   children: React.ReactNode;
 }) {
   const [state, dispatch] = useReducer(reducer, undefined, () => estadoInicial(data, vistaInicial, itemInicial));
@@ -545,9 +554,11 @@ export function BoardProvider({
   );
 
   return (
-    <AccionesCtx.Provider value={acciones}>
-      <EstadoCtx.Provider value={state}>{children}</EstadoCtx.Provider>
-    </AccionesCtx.Provider>
+    <MiRolContext.Provider value={miRol}>
+      <AccionesCtx.Provider value={acciones}>
+        <EstadoCtx.Provider value={state}>{children}</EstadoCtx.Provider>
+      </AccionesCtx.Provider>
+    </MiRolContext.Provider>
   );
 }
 

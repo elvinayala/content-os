@@ -8,6 +8,8 @@ const FILAS: { etiqueta: string; leer: (r: RolUsuario) => boolean | string }[] =
   { etiqueta: "Agregar personas y darles clave", leer: (r) => poderes(r).agregarUsuarios },
   { etiqueta: "Roles que puede asignar", leer: (r) => poderes(r).rolesQuePuedeAsignar.join(", ") || "—" },
   { etiqueta: "Eliminar elementos de golpe", leer: (r) => (poderes(r).topeBorradoItems === null ? "sin límite" : `hasta ${poderes(r).topeBorradoItems}`) },
+  { etiqueta: "Eliminar una columna completa", leer: (r) => poderes(r).eliminarColumnas },
+  { etiqueta: "Quitar etiquetas que ya se usan", leer: (r) => poderes(r).quitarEtiquetasEnUso },
   { etiqueta: "Exportar o sacar datos de Pulse", leer: (r) => poderes(r).exportarDatos },
   { etiqueta: "Elegir quién entra a un tablero privado", leer: (r) => poderes(r).administrarAccesoTableros },
   { etiqueta: "Eliminar un tablero completo", leer: (r) => poderes(r).eliminarTablero },
@@ -22,7 +24,7 @@ export function TablaPermisos() {
     <section className="mt-8 flex flex-col gap-3">
       <div>
         <h2 className="text-base font-semibold">Qué puede hacer cada rol</h2>
-        <p className="text-sm text-muted-foreground">Pulse no tiene exportación de datos: nadie puede bajarse la base. Las descargas de archivos y los borrados grandes quedan registrados abajo.</p>
+        <p className="text-sm text-muted-foreground">Pulse no tiene exportación de datos: nadie puede bajarse la base. Descargas de archivos, borrados grandes, acciones bloqueadas y conexiones nuevas quedan registradas, y lo raro le llega a Elvin por Telegram al instante.</p>
       </div>
       <div className="overflow-hidden rounded-xl border">
         <table className="w-full text-sm">

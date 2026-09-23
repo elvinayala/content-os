@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { usuarioActual } from "@/lib/pulse/auth";
 import { hashPassword, verificarPassword } from "@/lib/pulse/password";
 import { buscarUsuarioPorEmail } from "@/lib/pulse/repo";
-import { ipActual, limiteIp, limpiarFallos, registrarEvento, registrarFallo } from "@/lib/pulse/seguridad";
+import { ipActual, limiteIp, limpiarFallos, registrarEvento, registrarFallo, vigilarIpNueva } from "@/lib/pulse/seguridad";
 import { COOKIE_PULSE, TTL_SESION, TTL_SESION_LARGA, firmarSesion } from "@/lib/pulse/session";
 
 // Hash de sacrificio: cuando el email no existe igual se calcula un scrypt para que el
@@ -47,6 +47,7 @@ export async function loginPulseAction(formData: FormData) {
   }
 
   await limpiarFallos(u!.id);
+  await vigilarIpNueva({ id: u!.id, email, nombre: u!.nombre, rol: u!.rol }, ip);
   await registrarEvento({ tipo: "login_ok", email, userId: u!.id, ip });
   const jar = await cookies();
   jar.set(COOKIE_PULSE, await firmarSesion(u!.id, undefined, ttl), {

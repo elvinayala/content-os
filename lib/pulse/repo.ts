@@ -341,6 +341,27 @@ function anchoPorTipo(t: TipoColumna): number {
   return { text: 180, long_text: 260, number: 130, status: 160, dropdown: 200, date: 140, people: 120, checkbox: 90, link: 160, email: 220, phone: 150, file: 160, relation: 200 }[t];
 }
 
+export async function leerColumna(columnId: string): Promise<Columna | null> {
+  const d = await db();
+  const [c] = await d.select().from(pulseColumns).where(eq(pulseColumns.id, columnId));
+  return c ? aColumna(c) : null;
+}
+
+// Valores distintos que tiene hoy una columna en sus items (para no dejar huérfanas etiquetas).
+export async function valoresEnUso(columnId: string): Promise<Set<string>> {
+  const d = await db();
+  const rows = await d.execute(sql`select distinct values->>${columnId} as v from pulse_items where values ? ${columnId}`);
+  const lista = (Array.isArray(rows) ? rows : ((rows as { rows?: unknown[] }).rows ?? [])) as { v: string | null }[];
+  const out = new Set<string>();
+  for (const r of lista) {
+    if (!r.v) continue;
+    // dropdown guarda un array JSON de ids; status guarda el id directo
+    if (r.v.startsWith("[")) for (const id of JSON.parse(r.v) as string[]) out.add(id);
+    else out.add(r.v);
+  }
+  return out;
+}
+
 export async function actualizarColumna(columnId: string, patch: { title?: string; settings?: SettingsColumna; width?: number }): Promise<Columna> {
   const d = await db();
   const [c] = await d.update(pulseColumns).set(patch).where(eq(pulseColumns.id, columnId)).returning();

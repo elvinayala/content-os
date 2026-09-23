@@ -3,9 +3,10 @@
 import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUpAZ, ChevronDown, Pencil, Settings2, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
+import { useBoard, useBoardActions, useMiRol } from "@/components/pulse/board-provider";
 import { StatusLabelsEditor } from "@/components/pulse/status-labels-editor";
 import { TipoColumnaIcon } from "@/components/pulse/tipo-columna-icon";
+import { poderes } from "@/lib/pulse/permisos";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 // etiquetas, formato, eliminar) y tirador para el ancho.
 export function ColumnHeader({ column }: { column: Columna }) {
   const { orden, columns } = useBoard();
+  const miRol = useMiRol();
   const { actualizarColumna, eliminarColumna, reordenarColumnas, dispatch } = useBoardActions();
   const idx = columns.findIndex((c) => c.id === column.id);
   const mover = (delta: number) => {
@@ -140,10 +142,14 @@ export function ColumnHeader({ column }: { column: Columna }) {
                   <Settings2 /> {column.settings.formato === "moneda" ? "Mostrar sin $" : "Mostrar como $"}
                 </DropdownMenuItem>
               ) : null}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => setConfirmar(true)}>
-                <Trash2 /> Eliminar columna
-              </DropdownMenuItem>
+              {poderes(miRol).eliminarColumnas ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="destructive" onClick={() => setConfirmar(true)}>
+                    <Trash2 /> Eliminar columna
+                  </DropdownMenuItem>
+                </>
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </>

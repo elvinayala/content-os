@@ -30,7 +30,7 @@ export default async function BoardPage({
   const vista: Vista = sp.vista === "kanban" || sp.vista === "tarjetas" ? sp.vista : "tabla";
   return (
     <div className="flex h-svh flex-col">
-      <BoardProvider data={data} vistaInicial={vista} itemInicial={sp.item ?? null}>
+      <BoardProvider data={data} vistaInicial={vista} itemInicial={sp.item ?? null} miRol={usuario.rol}>
         <BoardHeader usuario={usuario} />
         <BoardView relacionados={relacionados} />
       </BoardProvider>
