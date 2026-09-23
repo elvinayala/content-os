@@ -138,6 +138,30 @@ async function soportePlagas(p) {
   } catch (e) { return { error: e.message.slice(0, 120) }; }
 }
 
+// Estado de los WhatsApp de Evolution según la revisión de las 7 AM ("A) RevisionInstanciaEvoAPI").
+// Esa revisión avisa en Slack, pero el 13/sep se cayó Setters (403 = WhatsApp restringió el número) y
+// pasaron 9 días sin que nadie lo viera: por eso también va en la ronda.
+async function whatsappN8n() {
+  const K = env("N8N_API_KEY");
+  const B = (env("N8N_URL") || "https://n8nv2.levelupmediapr.net").replace(/\/$/, "") + "/api/v1";
+  const h = { headers: { "X-N8N-API-KEY": K }, signal: AbortSignal.timeout(20000) };
+  try {
+    const lista = await fetch(`${B}/executions?workflowId=MLp39LO5jJmzk9Vp&limit=1`, h).then((r) => r.json());
+    const id = lista.data?.[0]?.id;
+    if (!id) return { nota: "sin corrida de RevisionInstanciaEvoAPI" };
+    const e = await fetch(`${B}/executions/${id}?includeData=true`, h).then((r) => r.json());
+    const rd = e.data?.resultData?.runData || {};
+    const out = [];
+    for (const [k, v] of Object.entries(rd)) {
+      if (!k.startsWith("Buscar instancia")) continue;
+      const it = v[0]?.data?.main?.[0]?.[0]?.json;
+      const x = Array.isArray(it?.data) ? it.data[0] : it;
+      if (x?.name) out.push({ instancia: x.name, estado: x.connectionStatus, numero: String(x.ownerJid || "").split("@")[0], motivo: x.connectionStatus === "open" ? null : `${x.disconnectionReasonCode ?? "?"} desde ${String(x.disconnectionAt || "").slice(0, 10)}` });
+    }
+    return { revisadoEl: e.startedAt, caidas: out.filter((x) => x.estado !== "open"), instancias: out };
+  } catch (err) { return { error: String(err).slice(0, 120) }; }
+}
+
 async function saludN8n(p) {
   if (p.id !== "n8n") return null;
   if (!env("N8N_API_KEY")) return { nota: "sin N8N_API_KEY en .env.local: n8n → Settings → n8n API → Create API key" };
@@ -154,6 +178,7 @@ async function saludN8n(p) {
       conErrores: rotos.length,
       muestra: rotos.slice(0, 6).map((w) => `${w.nombre}: ${w.error} error / ${w.ok} ok${w.ultimoError?.nodo ? ` — "${w.ultimoError.nodo}": ${String(w.ultimoError.mensaje || "").slice(0, 140)}` : ""}`),
       activosSinEjecuciones: s.workflows.filter((w) => w.activo && w.ok + w.error + w.otras === 0).map((w) => w.nombre).slice(0, 10),
+      whatsapp: await whatsappN8n(),
     };
   } catch (e) { return { error: e.message.slice(0, 120) }; }
 }

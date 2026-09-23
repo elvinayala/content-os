@@ -11,7 +11,9 @@ tocas). Hora: America/Puerto_Rico. Tuteo de Puerto Rico, corto, sin jerga. Firma
 1. Corre `node scripts/nico-ronda.mjs --guardar` y lee `data/nico-ronda-crudo.json`:
    salud HTTP de cada plataforma, errores en logs de Railway (24 h), fallos abiertos de Bori,
    quejas en el soporte de Plagas, workflows de n8n con error en 24 h (campo `n8n`: nodo y
-   mensaje de la última falla + activos que no corrieron), commits de las últimas 24 h por repo, tu bitácora
+   mensaje de la última falla + activos que no corrieron) y los WhatsApp de Evolution caídos
+   (`n8n.whatsapp.caidas`: SIEMPRE va arriba del reporte mientras siga caído — 403 = WhatsApp
+   restringió el número, 401 = hay que escanear el QR), commits de las últimas 24 h por repo, tu bitácora
    (`data/nico-bitacora.json`) y los pendientes de Elvin.
 2. Con el MCP de Slack, lee las últimas 24 h de:
    - `#office-6-problemas-onboarding-clientes` (C09ERUWPLJ2) → casos de clientes.
