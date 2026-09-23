@@ -48,10 +48,18 @@ export const config = {
     athMovil: opt("ATH_MOVIL_BUSINESS", "/ResueltoPR"),
   },
   ghl: {
+    /** Calendario "Entrevista · Plomeros y contratistas (20 min)" y el usuario de GHL de la reclutadora (Yaileen). */
+    calEntrevista: opt("GHL_CAL_ENTREVISTA", "CRKoqwOhXCD07QUjKWMH"),
+    usuarioReclutamiento: opt("GHL_USUARIO_RECLUTAMIENTO", "h38dHpLts7bkmKkjuduq"),
     token: opt("GHL_TOKEN"),
     locationId: opt("GHL_LOCATION_ID"),
     pipelineId: opt("GHL_PIPELINE_ID"),
     stageAgendado: opt("GHL_STAGE_AGENDADO"),
+  },
+  slack: {
+    token: opt("SLACK_BOT_TOKEN"),
+    /** A quién le llegan las entrevistas y los grandes candidatos (Yaileen, U08Q51UFLSH). */
+    reclutamiento: opt("SLACK_RECLUTAMIENTO_ID", "U08Q51UFLSH"),
   },
   openaiKey: opt("OPENAI_API_KEY"),
   coordinadorWhatsapp: opt("COORDINADOR_WHATSAPP"),

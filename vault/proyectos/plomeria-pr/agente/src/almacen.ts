@@ -104,6 +104,8 @@ export interface Candidato {
   equipo: string;
   disponibilidad: string;
   entrevista?: string;     // ISO
+  ghlCitaId?: string;      // la cita en el calendario de entrevistas de GHL
+  avisadoSeguimiento?: string; // cuándo se le avisó a la reclutadora que es un gran candidato sin cita
   estado: "nuevo" | "verificando" | "entrevista" | "prueba" | "activo" | "descartado";
   creado: string;
 }

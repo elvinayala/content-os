@@ -24,6 +24,8 @@ import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
+import { pendienteSeguimiento, mensajeGranCandidato } from "./reclutamiento.js";
+import { dmSlack } from "./integraciones/slack.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
 import * as zernio from "./canales/zernio.js";
@@ -375,5 +377,14 @@ app.get("/widget.js", (_req, res) => { res.type("application/javascript"); res.s
 
 despacho.reanudarTimers();
 setInterval(() => encuestas.revisarPendientes().catch(console.error), 30 * 60_000);
+// Grandes candidatos (licencia + 5 años) que no agendaron: DM a la reclutadora para que los llame. Cada 30 min.
+async function revisarGrandesCandidatos() {
+  for (const c of almacen.candidatos().filter((x) => pendienteSeguimiento(x))) {
+    await dmSlack(config.slack.reclutamiento, mensajeGranCandidato(c));
+    almacen.guardarCandidato({ ...c, avisadoSeguimiento: new Date().toISOString() });
+  }
+}
+setInterval(() => revisarGrandesCandidatos().catch(console.error), 30 * 60_000);
+setTimeout(() => revisarGrandesCandidatos().catch(console.error), 60_000);
 nina.arrancarReloj(); // encuestas post-visita cada 30 min
 app.listen(config.port, () => console.log(`Resuelto agente escuchando en :${config.port} · modelo ${config.modelo}`));

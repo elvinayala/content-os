@@ -45,3 +45,31 @@ export async function agregarNota(contactId: string, texto: string) {
   if (!config.tiene.ghl()) return;
   await fetch(`${BASE}/contacts/${contactId}/notes`, { method: "POST", headers: headers(), body: JSON.stringify({ body: texto }) }).catch(() => undefined);
 }
+
+// ── Calendario de entrevistas (23/sep/2026) ──
+// La API de calendarios usa otra versión de cabecera que la de contactos.
+const hCal = () => ({ ...headers(), Version: "2021-04-15" });
+
+/** Huecos libres reales del calendario (ISO con zona de PR), entre dos fechas. [] sin token. */
+export async function huecosLibres(calendarId: string, desde: Date, hasta: Date): Promise<string[]> {
+  if (!config.tiene.ghl() || !calendarId) return [];
+  const q = new URLSearchParams({ startDate: String(desde.getTime()), endDate: String(hasta.getTime()), timezone: config.zonaHoraria });
+  const r = await fetch(`${BASE}/calendars/${calendarId}/free-slots?${q}`, { headers: hCal() });
+  if (!r.ok) { console.error("GHL free-slots", r.status, (await r.text()).slice(0, 200)); return []; }
+  const j = (await r.json()) as Record<string, { slots?: string[] } | unknown>;
+  return Object.entries(j).filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && v && typeof v === "object").flatMap(([, v]) => (v as { slots?: string[] }).slots ?? []).sort();
+}
+
+/** Crea (o mueve, si ya hay `citaId`) la cita en GHL. GHL valida que el hueco esté libre. */
+export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string }): Promise<{ ok: boolean; id?: string; error?: string }> {
+  if (!config.tiene.ghl()) return { ok: false, error: "GHL sin configurar" };
+  const inicio = new Date(datos.inicio);
+  if (isNaN(inicio.getTime())) return { ok: false, error: "fecha inválida" };
+  const cuerpo = { calendarId: datos.calendarId, locationId: config.ghl.locationId, contactId: datos.contactId, startTime: inicio.toISOString(), endTime: new Date(inicio.getTime() + datos.minutos * 60_000).toISOString(), title: datos.titulo, appointmentStatus: "confirmed", assignedUserId: datos.asignadoA || undefined, address: "Videollamada", ignoreDateRange: false };
+  const url = datos.citaId ? `${BASE}/calendars/events/appointments/${datos.citaId}` : `${BASE}/calendars/events/appointments`;
+  const r = await fetch(url, { method: datos.citaId ? "PUT" : "POST", headers: hCal(), body: JSON.stringify(cuerpo) });
+  const texto = await r.text();
+  if (!r.ok) { console.error("GHL cita", r.status, texto.slice(0, 300)); return { ok: false, error: texto.slice(0, 200) }; }
+  let j: { id?: string } = {}; try { j = JSON.parse(texto); } catch { /* */ }
+  return { ok: true, id: j.id ?? datos.citaId };
+}
