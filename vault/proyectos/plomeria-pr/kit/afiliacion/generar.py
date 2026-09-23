@@ -9,20 +9,20 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
-@page { size: Letter; margin: 18mm 18mm 20mm; }
+
 * { box-sizing: border-box; }
 body { font-family: 'DM Sans', sans-serif; color: #1c2a36; font-size: 10.5pt; line-height: 1.45; margin: 0; }
 h1, h2, h3 { font-family: 'Sora', sans-serif; color: #0F3D5E; margin: 0; }
 h1 { font-size: 20pt; letter-spacing: -.5px; }
 h2 { font-size: 12pt; margin: 16px 0 6px; }
 h3 { font-size: 10.5pt; margin: 10px 0 4px; }
-.top { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #F2621F; padding-bottom: 10px; margin-bottom: 14px; }
+.top { border-bottom: 1px solid #e6e1d8; padding-bottom: 8px; margin-bottom: 12px; }
 .top img { height: 34px; }
 .tag { font-family: 'Sora'; font-size: 8pt; letter-spacing: 2px; text-transform: uppercase; color: #F2621F; font-weight: 700; }
 .aviso { background: #FBF7F0; border-left: 4px solid #F2621F; padding: 8px 12px; font-size: 9pt; margin: 10px 0 14px; }
 .campo { display: inline-block; border-bottom: 1px solid #8a97a3; min-width: 190px; height: 14px; }
 .campo.l { min-width: 320px; } .campo.s { min-width: 110px; }
-ol, ul { margin: 4px 0 4px 18px; padding: 0; } li { margin: 2px 0; }
+ol, ul { margin: 4px 0 4px 26px; padding: 0; } li { margin: 2px 0; }
 .firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 26px; }
 .firma { border-top: 1px solid #1c2a36; padding-top: 6px; font-size: 9pt; }
 .pag { page-break-before: always; }
@@ -36,7 +36,7 @@ td, th { border-bottom: 1px solid #e6e1d8; padding: 4px 6px; text-align: left; }
 """
 
 def cab(tag, titulo):
-    return f'<div class="top"><img src="{LOGO}"><div style="text-align:right"><div class="tag">{tag}</div><h1>{titulo}</h1></div></div>'
+    return f'<div class="top"><div><div class="tag">{tag}</div><h1>{titulo}</h1></div></div>'
 
 ACUERDO = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>
 {cab("Plomeros afiliados", "Acuerdo de afiliación")}
@@ -183,7 +183,8 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <p class="pie">Resuelto Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>
 </body></html>"""
 
+PIES = {"acuerdo-afiliacion-plomero": ("Acuerdo de afiliación de plomero · provisional · v1 sep 2026", True), "kit-bienvenida-plomero": ("Kit de bienvenida del plomero · v1 sep 2026", False)}
 for nombre, html in (("acuerdo-afiliacion-plomero", ACUERDO), ("kit-bienvenida-plomero", KIT)):
     h = AQUI / f"{nombre}.html"; h.write_text(html, encoding="utf-8")
-    subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--virtual-time-budget=8000", f"--print-to-pdf={AQUI / (nombre + '.pdf')}", h.as_uri()], check=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-    print("✔", nombre + ".pdf")
+    pie, ini = PIES[nombre]
+    subprocess.run(["node", str(AQUI / "render.mjs"), str(h), str(AQUI / (nombre + ".pdf")), pie] + (["--iniciales"] if ini else []), check=True)
