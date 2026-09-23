@@ -50,7 +50,8 @@ Sesiones aisladas por cliente (cada servicio tiene su propio volumen).
    Elvin los 2 min de pasos exactos (nombres idénticos a `cliente.config.js`).
 4. **Custom fields + calendarios** — `scripts/provisionar-ghl.mjs` (verifica nombres de etapas).
 5. **Flujos "Customer Replied"** (uno por canal) → webhook `/webhook/ghl?token=` (SOP §6 de
-   ghl-subcuenta). Antes: excepción de WAF en Cloudflare para `/webhook/*`.
+   ghl-subcuenta). Solo si el cerebro va en Cloudflare: antes, excepción de WAF para `/webhook/*`.
+   Con Zernio, el WhatsApp NO usa este flujo (entra directo a `/webhook/zernio`).
 
 ## 4. El canal de WhatsApp — escoge lo más fácil para ESE cliente
 
