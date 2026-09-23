@@ -3,7 +3,7 @@
 **Construido el 23/sep/2026.** Todo vive en el servicio `agente` de Railway (mismo lugar que el agente de WhatsApp), con los datos en su volumen.
 
 ## Portal (`/portal`) — para Elvin, el gerente de proyectos y reclutamiento
-`https://app.resueltopr.com/portal` (mientras propaga el DNS: `https://agente-production-684f.up.railway.app/portal`). Usuario y clave (30 días de sesión).
+`https://app.resueltopr.com/portal` (activo desde el 23/sep; el dominio de Railway `agente-production-684f.up.railway.app` sigue funcionando). Usuario y clave (30 días de sesión).
 - **Inicio:** trabajos de hoy, en curso, terminados por cobrar, garantías abiertas, plomeros activos, lo que se debe a plomeros + buscador.
 - **Clientes:** buscar por nombre, teléfono, dirección o municipio → **ficha**: contacto, notas internas, todos sus trabajos con la garantía (vigente hasta / venció), e **historial completo** (lo que dijo el cliente, lo que contestó el agente, cada paso del plomero, sus comentarios y lo que anotó el equipo). El historial es permanente (`data/estado/historial/<contacto>.jsonl`); arrancó el 23/sep.
 - **Trabajo:** datos del cliente, dinero (mano de obra, materiales, total cliente, pago plomero), línea de tiempo (agendado → aceptado → en camino → llegó → terminado), fotos antes/después, notas del plomero y del equipo; acciones: marcar cobrado, marcar pagado al plomero, cancelar, **abrir garantía**.
