@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-18",
+  "actualizadoEl": "2026-09-23",
   "trimestre": "Q4 2026 · 18 sep → 12 dic",
   "reglas": [
     "Ninguna empresa nueva hasta el 12/dic. Toda idea va a vault/ideas/ con su trigger de reapertura.",
@@ -12,6 +12,10 @@
     {
       "fecha": "2026-10-15",
       "que": "10 demos enviadas · productora contratada · 25 posts de Shadow"
+    },
+    {
+      "fecha": "2026-11-01",
+      "que": "ISLA Cabo Rojo 5K: ≥900 inscritos → orden de medallas (15/oct: ≥300)"
     },
     {
       "fecha": "2026-11-15",
@@ -238,6 +242,39 @@
         {
           "label": "resueltopr.com",
           "href": "https://resueltopr.com"
+        }
+      ]
+    },
+    {
+      "id": "isla-run",
+      "nombre": "ISLA Run Series (carreras)",
+      "capa": "piloto",
+      "resumen": "Marca premium de carreras por municipio. 1.ª edición: ISLA Cabo Rojo 5K, dom 13/dic/2026. Excepción a la regla del 12/dic aprobada el 23/sep: la operan los socios; Elvin solo aprueba presupuesto, precios, marca y compuertas.",
+      "meta": "Cabo Rojo 5K: base 1,800 · tope 2,500 (SOLD OUT) · equilibrio ~2,000 con $25/30/35/40",
+      "horasElvin": "1 h/sem",
+      "compuerta": {
+        "fecha": "2026-11-01",
+        "condicion": "≥900 inscritos pagados (15/oct: ≥300) → orden de medallas; si no, formato lean"
+      },
+      "trigger": "Tras el 13/dic: P&L real positivo → ISLA #2 (¿Ponce, marzo 2027?)",
+      "numeros": [
+        {
+          "label": "INSCRITOS",
+          "valor": "0"
+        },
+        {
+          "label": "CARRERA",
+          "valor": "13/dic"
+        },
+        {
+          "label": "PLATAFORMA",
+          "valor": "Por construir"
+        }
+      ],
+      "enlaces": [
+        {
+          "label": "Plan maestro",
+          "href": "/ceo/vault"
         }
       ]
     },
