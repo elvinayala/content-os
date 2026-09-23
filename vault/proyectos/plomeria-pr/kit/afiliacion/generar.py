@@ -81,7 +81,7 @@ Licencia de plomero: ☐ Oficial ☐ Maestro · Núm. <span class="campo s"></sp
 <p>Precios, procesos y listas de clientes de Resuelto son confidenciales. El Plomero autoriza a Resuelto a usar su nombre, foto y las fotos de sus trabajos en su comunicación.</p>
 
 <h2>10. Cumplimiento y seguro</h2>
-<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Antes de su primer trabajo entregará evidencia de seguro de responsabilidad pública por un mínimo de $<span class="campo s"></span>. Cada parte responde por sus propios actos.</p>
+<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto Home Services LLC como asegurado adicional</b>, y la mantendrá vigente. Si no la entrega en ese plazo, Resuelto pausará las ofertas de trabajo hasta que la entregue. Cada parte responde por sus propios actos.</p>
 
 <p>Firmado en <span class="campo s"></span>, Puerto Rico, a <span class="campo s"></span> de <span class="campo s"></span> de 2026.</p>
 <div class="firmas"><div class="firma">El Plomero<br><br>Nombre:</div><div class="firma">Por Resuelto Home Services LLC<br>Elvin Ayala, fundador</div></div>
@@ -109,7 +109,7 @@ Licencia de plomero: ☐ Oficial ☐ Maestro · Núm. <span class="campo s"></sp
 Municipio: <span class="campo s"></span> &nbsp; Años de experiencia: <span class="campo s"></span> &nbsp; ¿Está sacando la licencia? ☐ Sí ☐ No</p>
 <ol class="pasos">
 <li><b>Trabajo acompañado.</b> El Ayudante no hace trabajos solo, no firma ni certifica trabajos y sigue las instrucciones del plomero licenciado a cargo.</li>
-<li><b>Pago:</b> $<span class="campo s"></span> por <span class="campo s"></span>, liquidado los viernes junto con el trabajo del plomero licenciado con quien trabajó. Solo se liquidan trabajos cobrados al cliente.</li>
+<li><b>Pago: $15 por hora</b> trabajada en trabajos de Resuelto, según las horas que confirme el plomero licenciado a cargo. Se liquida los viernes, por ATH Móvil o transferencia. Solo se liquidan trabajos cobrados al cliente.</li>
 <li>Aplican igual las secciones <b>1</b> (relación), <b>5</b> (el cliente es de Resuelto), <b>6</b> (nunca cobra), <b>8</b> (calidad y terminación) y <b>9</b> (confidencialidad) del Acuerdo de afiliación, y las Reglas de Oro (Anexo A).</li>
 <li><b>Cuando saque la licencia</b>, avisa a Resuelto con copia y pasa a firmar el Acuerdo de afiliación de plomero.</li>
 <li>Este anexo también es provisional y sigue la misma vigencia del Acuerdo (90 días o el contrato definitivo).</li>
@@ -135,7 +135,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <li>Foto de tu <b>licencia</b> y de tu <b>colegiación</b> (el ayudante: identificación con foto).</li>
 <li>Foto de tu <b>identificación</b> con foto.</li>
 <li><b>Certificado de antecedentes penales</b> (se saca en línea, gratis, en el portal de la Policía de Puerto Rico).</li>
-<li>Evidencia de tu <b>seguro de responsabilidad</b>.</li>
+<li>Tu <b>seguro de responsabilidad</b> (mínimo $300,000, con Resuelto como asegurado adicional): tienes <b>60 días</b> para entregarlo.</li>
 <li>Cómo te pagamos: <b>ATH Móvil</b> o cuenta de banco (número de ruta y cuenta).</li>
 <li>Tu seguro social o EIN para la declaración informativa.</li>
 <li>Recibir tu <b>enlace de la app de Resuelto</b> e instalarla en el celular (te llegan los trabajos con aviso).</li>
