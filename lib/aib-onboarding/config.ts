@@ -10,6 +10,9 @@ import type { CuentaZernio } from "@/lib/zernio";
 //   AIB_ONBOARDING_SLACK_CANAL  canal donde avisa a Ángela (default #bori-clientes)
 //   ANGELA_SLACK_ID         para mencionarla en los avisos (Ángela aún no está en Slack)
 //   AIB_ONBOARDING_MODEL    override del modelo (default claude-opus-5)
+//   CALENDLY_TOKEN_AIB      personal access token del Calendly de AI Borinquen (NO es el de Level Up)
+//   AIB_CALENDLY_WEBHOOK_SIGNING_KEY  signing key del webhook de ese Calendly (/api/aib/calendly)
+//   AIB_CALENDLY_ONBOARDING_REGEX  qué tipos de evento son "onboarding" (default /onboarding/i)
 
 export function cuentaAib(): CuentaZernio {
   return {
@@ -25,16 +28,16 @@ export const MODELO = process.env.AIB_ONBOARDING_MODEL || "claude-opus-5";
 export const SLACK_CANAL = process.env.AIB_ONBOARDING_SLACK_CANAL || "C0C2YN5199B";
 export const HUMANO_HORAS = Number(process.env.AIB_HUMANO_HORAS || 3);
 
-/** Tablero de Pulse con los clientes que pagan en AI Borinquen (agentes y marketing). */
-export const SLUG_TABLERO = "ai-borinquen";
-/** Grupos del tablero que NO son clientes activos. */
-export const GRUPOS_FUERA = /offboarded|inner circle/i;
+// Igual que Level Up: quien agenda el onboarding en el Calendly de AI Borinquen ya es cliente.
+export const CALENDLY_TOKEN = () => process.env.CALENDLY_TOKEN_AIB || "";
+export const CALENDLY_SIGNING_KEY = () => process.env.AIB_CALENDLY_WEBHOOK_SIGNING_KEY || "";
+export const EVENTO_ONBOARDING = new RegExp(process.env.AIB_CALENDLY_ONBOARDING_REGEX || "onboarding", "i");
 
-/** Días desde el pago en que corre cada paso (y hasta cuándo se reintenta si no salió). */
+/** Días desde que agendó el onboarding en que corre cada paso (y hasta cuándo se reintenta si no salió). */
 export const VENTANAS = {
   bienvenida: { desde: 0, hasta: 3 },
   encuesta10: { desde: 10, hasta: 20 },
   encuesta30: { desde: 30, hasta: 40 },
 } as const;
-/** Quien llega al sistema con más días que esto desde el pago queda "histórico": no se le escribe. */
+/** Quien llega al sistema con más días que esto desde que agendó queda "histórico": no se le escribe. */
 export const DIAS_HISTORICO = 40;

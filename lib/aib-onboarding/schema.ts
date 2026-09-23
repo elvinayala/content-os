@@ -17,15 +17,19 @@ export const aibOnboardingClientes = pgTable(
   "aib_onboarding_clientes",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    // Item del tablero AI BORINQUEN en Pulse; null si nos escribió alguien que no está en el tablero.
+    // Legado de la primera versión (fuente = tablero de Pulse). Hoy la fuente es el Calendly de AIB.
     pulseItemId: text("pulse_item_id"),
+    // Invitee de Calendly que lo hizo cliente (agendó el onboarding en el Calendly de AI Borinquen).
+    calendlyInvitee: text("calendly_invitee"),
+    citaAt: timestamp("cita_at", { withTimezone: true }), // hora de la llamada de onboarding
+    evento: text("evento"), // nombre del tipo de evento de Calendly
     nombre: text("nombre").notNull(),
     empresa: text("empresa"),
     telefono: text("telefono").notNull(), // solo dígitos, con código de país
     email: text("email"),
-    servicio: text("servicio"), // grupo del tablero: MARKETING, DESARROLLO…
-    fechaPago: text("fecha_pago"), // YYYY-MM-DD (hora de PR)
-    estado: text("estado").notNull().default("activo"), // activo | historico | baja
+    servicio: text("servicio"), // lo que contestó en Calendly, si lo preguntan
+    fechaPago: text("fecha_pago"), // YYYY-MM-DD (hora de PR) del día que agendó el onboarding = día 0
+    estado: text("estado").notNull().default("activo"), // activo | historico | baja | desconocido
     bienvenidaAt: timestamp("bienvenida_at", { withTimezone: true }),
     encuesta10At: timestamp("encuesta10_at", { withTimezone: true }),
     encuesta30At: timestamp("encuesta30_at", { withTimezone: true }),
