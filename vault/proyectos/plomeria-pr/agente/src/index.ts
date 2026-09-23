@@ -24,7 +24,7 @@ import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
-import { pendienteSeguimiento, mensajeGranCandidato } from "./reclutamiento.js";
+import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO } from "./reclutamiento.js";
 import { dmSlack } from "./integraciones/slack.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
@@ -386,5 +386,14 @@ async function revisarGrandesCandidatos() {
 }
 setInterval(() => revisarGrandesCandidatos().catch(console.error), 30 * 60_000);
 setTimeout(() => revisarGrandesCandidatos().catch(console.error), 60_000);
+// Recordatorio de la entrevista 2 h antes, por plantilla aprobada (se marca solo si Meta la aceptó).
+async function recordarEntrevistas() {
+  if (config.wa.proveedor !== "zernio") return;
+  for (const c of almacen.candidatos().filter((x) => pendienteRecordatorio(x))) {
+    if (await zernio.enviarPlantilla(c.whatsapp, PLANTILLA_RECORDATORIO, paramsRecordatorio(c, config.zoomEntrevistas || undefined)))
+      almacen.guardarCandidato({ ...c, recordado: new Date().toISOString() });
+  }
+}
+setInterval(() => recordarEntrevistas().catch(console.error), 15 * 60_000);
 nina.arrancarReloj(); // encuestas post-visita cada 30 min
 app.listen(config.port, () => console.log(`Resuelto agente escuchando en :${config.port} · modelo ${config.modelo}`));

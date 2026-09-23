@@ -31,3 +31,17 @@ test("mensajes de una línea para Yaileen", () => {
   assert.ok(/10:00 AM/.test(cita), cita);
   assert.ok(/Llámalo/.test(gran));
 });
+
+test("recordatorio: 2 h antes, una vez, solo WhatsApp y con el Zoom si hay", () => {
+  const cita = "2026-09-24T10:00:00-04:00", t = Date.parse(cita);
+  const c = { ...base, entrevista: cita, contactoId: "whatsapp:17873682939", nombre: "Ernesto Colon" };
+  assert.ok(!R.pendienteRecordatorio(c, t - 3 * 3600_000), "muy temprano");
+  assert.ok(R.pendienteRecordatorio(c, t - 2 * 3600_000));
+  assert.ok(R.pendienteRecordatorio(c, t - 30 * 60_000));
+  assert.ok(!R.pendienteRecordatorio(c, t - 10 * 60_000), "muy tarde para avisar");
+  assert.ok(!R.pendienteRecordatorio({ ...c, recordado: "ya" }, t - 3600_000));
+  assert.ok(!R.pendienteRecordatorio({ ...c, contactoId: "web:x" }, t - 3600_000));
+  assert.deepEqual(R.paramsRecordatorio(c, "https://zoom.us/j/1"), ["Ernesto", "10:00 AM", "Entra por aquí a esa hora: https://zoom.us/j/1"]);
+  assert.equal(R.paramsRecordatorio(c)[2], "Te llamamos a este número a esa hora.");
+  for (const p of R.paramsRecordatorio(c, "https://zoom.us/j/1")) assert.ok(!p.includes("\n") && p.trim());
+});

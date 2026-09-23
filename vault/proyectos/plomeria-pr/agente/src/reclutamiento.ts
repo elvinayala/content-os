@@ -45,3 +45,21 @@ const ficha = (c: Candidato) => [c.nombre, `${c.nivelLicencia}${c.numeroLicencia
 
 export const mensajeCita = (c: Candidato, iso: string) => `🔧 Entrevista ${fechaCorta(iso)}: ${ficha(c)} (ya está en el calendario de GHL)`;
 export const mensajeGranCandidato = (c: Candidato) => `⭐ Gran candidato sin cita: ${ficha(c)}. Llámalo y dale seguimiento especial.`;
+
+// ── Recordatorio el día de la entrevista (plantilla de Meta `recordatorio_entrevista_resuelto`) ──
+// Va 2 h antes (a las 8 AM para una de las 10), una sola vez. WhatsApp no deja escribir texto libre si
+// pasaron más de 24 h desde el último mensaje del plomero: por eso es plantilla aprobada.
+export const PLANTILLA_RECORDATORIO = "recordatorio_entrevista_resuelto";
+export const ANTES_RECORDATORIO_MS = 2 * 3600_000;
+export function pendienteRecordatorio(c: Candidato, ahora = Date.now()): boolean {
+  if (!c.entrevista || c.recordado || !String(c.contactoId).startsWith("whatsapp:")) return false;
+  const t = new Date(c.entrevista).getTime();
+  return ahora >= t - ANTES_RECORDATORIO_MS && ahora < t - 15 * 60_000;
+}
+/** Los 3 parámetros de la plantilla: nombre · hora · cómo entrar. Sin saltos de línea (Meta los rechaza). */
+export function paramsRecordatorio(c: Candidato, zoom?: string, zona = "America/Puerto_Rico"): [string, string, string] {
+  const nombre = String(c.nombre || "").trim().split(/\s+/)[0] || "hola";
+  const hora = new Date(c.entrevista as string).toLocaleTimeString("en-US", { timeZone: zona, hour: "numeric", minute: "2-digit" });
+  const como = zoom ? `Entra por aquí a esa hora: ${zoom}` : "Te llamamos a este número a esa hora.";
+  return [nombre, hora, como];
+}

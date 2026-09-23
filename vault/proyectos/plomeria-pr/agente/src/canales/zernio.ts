@@ -90,14 +90,20 @@ export function partesDeAviso(texto: string): [string, string, string] {
   return [titular || "Aviso", quien || "—", detalle || "—"];
 }
 
-/** Abre una conversación con la plantilla aprobada. Devuelve true si Meta la aceptó. */
-export async function enviarPlantillaAviso(telefono: string, texto: string): Promise<boolean> {
+/** Abre (o retoma) una conversación con una plantilla aprobada. true si Meta la aceptó. */
+export async function enviarPlantilla(telefono: string, plantilla: string, params: string[]): Promise<boolean> {
+  if (!config.tiene.whatsapp()) { console.log(`[WA simulado → ${telefono}] plantilla ${plantilla}: ${params.join(" | ")}`); return false; }
   const tel = normalizar(telefono);
-  const r = await api(`/inbox/conversations`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, participantId: tel, templateName: PLANTILLA_AVISO, templateLanguage: "es", templateParams: partesDeAviso(texto) }) });
-  if (!r.ok) { console.error("Zernio plantilla", r.status, (await r.text()).slice(0, 200)); return false; }
+  const r = await api(`/inbox/conversations`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, participantId: tel, templateName: plantilla, templateLanguage: "es", templateParams: params }) });
+  if (!r.ok) { console.error("Zernio plantilla", plantilla, r.status, (await r.text()).slice(0, 200)); return false; }
   const j = (await r.json().catch(() => null)) as { data?: { conversationId?: string } } | null;
   if (j?.data?.conversationId) recordarConversacion(tel, j.data.conversationId);
   return true;
+}
+
+/** Abre una conversación con la plantilla de aviso al equipo. Devuelve true si Meta la aceptó. */
+export async function enviarPlantillaAviso(telefono: string, texto: string): Promise<boolean> {
+  return enviarPlantilla(telefono, PLANTILLA_AVISO, partesDeAviso(texto));
 }
 
 /** Aviso al humano: Telegram si está configurado (llega siempre), y WhatsApp al coordinador si hay número. */
