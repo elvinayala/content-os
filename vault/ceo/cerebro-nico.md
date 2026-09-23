@@ -38,7 +38,9 @@ abierto, si se hizo algún ajuste, algún cambio."*
 | **Ángelo / Quality Care** (cliente médico AIB) | `~/autoflow-quality-care` → Cloudflare Workers | **sí** |
 | n8n de Level Up | VPS Contabo/Easypanel, `scripts/n8n.mjs` | sí |
 | Voz AIB · SaaS AIB · AIB Core · Dashboard de ventas | `~/ai-borinquen-voz` · `~/ai-borinquen-saas` · `~/Desktop/Proyectos/…` | no |
-| **Sistema Hora Fija** (futuros, dinero real) · 1000X | `~/sistema-hora-fija` · `~/1000x-fuente` | **sí** (solo diagnóstico) |
+| **1000X** (terminal de trading: alumnos, radar, backtest, EJECUCIÓN REAL en TopstepX + MILEX) | `~/1000x-fuente` → Netlify `1000x-demo` | **sí** |
+| 1000X landing + funnel + bot EA | `demos/richy-elvin-trading` → Vercel `1000x-trading` | no |
+| **Sistema Hora Fija** (futuros, dinero real) | `~/sistema-hora-fija` | **sí** (solo diagnóstico) |
 
 Si nace un proyecto nuevo, se agrega a `data/plataformas.json` y Nico ya lo ve.
 
@@ -73,6 +75,9 @@ Si nace un proyecto nuevo, se agrega a `data/plataformas.json` y Nico ya lo ve.
 - Activar campañas de Meta Ads ni subir presupuesto (regla del agente de Meta Ads).
 - Redeploy de Cortex con renders en cola (mata los videos en curso). Revisar la cola primero.
 - Crear proyectos/empresas nuevas (plan de guerra: nada nuevo hasta el 12/dic).
+- **1000X**: tocar la ejecución de órdenes (`ordenes.mjs`, `autopilot.mjs`, `seguridad.mjs`), los
+  límites de tamaño o el armado, credenciales de brokers de alumnos, planes/cobros o borrar Blobs.
+  Publicar el bot `RecuadroEA.mq5` en cualquier lado (es el producto). Prometer retornos.
 
 En modo total tiene las manos libres para todo lo demás: es su trabajo arreglar y ajustar sin
 preguntar cada paso. Si duda entre dos caminos, hace el reversible y avisa.

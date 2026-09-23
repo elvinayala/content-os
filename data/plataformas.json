@@ -371,7 +371,7 @@
     },
     {
       "id": "sistema-hora-fija",
-      "nombre": "Sistema Hora Fija — ejecución automática de futuros (MNQ, 5 prop firms) · 1000X",
+      "nombre": "Sistema Hora Fija — ejecución automática de futuros (MNQ, 5 prop firms) · mundo 1000X/trading",
       "repo": "/Users/elvinayala/sistema-hora-fija",
       "prod": null,
       "salud": null,
@@ -387,19 +387,43 @@
       "github": null
     },
     {
-      "id": "1000x-fuente",
-      "nombre": "1000X — fuente (indicador Pine, demo, deploy de la marca de trading con Richy)",
+      "id": "1000x",
+      "nombre": "1000X — terminal de trading (Richy & Elvin Trading LLC): app con alumnos, evaluación, radar/journal, riesgo, backtest, psicología y EJECUCIÓN REAL de órdenes en TopstepX/ProjectX + indicador MILEX (TradingView)",
       "repo": "/Users/elvinayala/1000x-fuente",
-      "prod": null,
-      "salud": null,
+      "prod": "https://1000x-demo.netlify.app",
+      "salud": "https://1000x-demo.netlify.app",
       "hosting": "netlify",
-      "deploy": "ver deploy-1000x/",
-      "logs": "—",
-      "tests": "—",
-      "leerPrimero": [],
+      "netlify": {
+        "site": "1000x-demo",
+        "siteId": "d76a5a41-fbdb-4d35-bcd2-59256579d2fe"
+      },
+      "deploy": "cd deploy-1000x && npx netlify-cli deploy --prod --dir . --site d76a5a41-fbdb-4d35-bcd2-59256579d2fe",
+      "logs": "npx netlify-cli logs:function <nombre> --site d76a5a41-fbdb-4d35-bcd2-59256579d2fe",
+      "tests": "node verificacion/verificar.mjs (MILEX vs detector de producción, debe dar 220/220)",
+      "leerPrimero": [
+        "verificacion/README.md",
+        "deploy-1000x/netlify.toml",
+        "deploy-1000x/netlify/functions/ordenes.mjs (cabecera de seguridad)"
+      ],
+      "critico": true,
+      "notas": "Funciones Netlify: auth, ordenes (EJECUCIÓN REAL con el broker del propio usuario, armado explícito, tamaño 1-50, bitácora), alertas, backtest, psicologia, px, radar, tv; lib/ autopilot, evaluacion, mentor, radar, seguridad. Datos en Netlify Blobs. PROHIBIDO sin OK explícito de Elvin: tocar ordenes.mjs/autopilot.mjs/seguridad.mjs, límites de tamaño o el armado de ejecución, credenciales de brokers de usuarios, planes/cobros, borrar blobs de alumnos. Marca 1000X: nunca caras, verde #00FF87 solo acento, nunca prometer retornos (disclaimers de riesgo siempre).",
+      "github": "elvinayala/1000x-fuente"
+    },
+    {
+      "id": "1000x-landing",
+      "nombre": "1000X — landing pública + funnel + bot EA (RecuadroEA.mq5)",
+      "repo": "/Users/elvinayala/AGENTE CONTENIDO/demos/richy-elvin-trading",
+      "prod": "https://1000x-trading.vercel.app",
+      "salud": "https://1000x-trading.vercel.app",
+      "hosting": "vercel (proyecto 1000x-trading)",
+      "deploy": "copiar SOLO index.html a un dir limpio 1000x-trading/ y npx vercel deploy --prod --yes --scope elvin-7614s-projects",
+      "logs": null,
+      "tests": null,
+      "leerPrimero": [
+        "funnel/landing-1000x-copy.md"
+      ],
       "critico": false,
-      "notas": "Proyecto congelado en el plan de guerra (trigger). Sin cambios salvo pedido de Elvin.",
-      "github": null
+      "notas": "El .mq5 del bot es el PRODUCTO (~$15K la licencia): NUNCA se publica ni se sube a un sitio. Quiz 'Diagnóstico de Trader 1000X' vive en demos/auditorias. Brand en brand/."
     }
   ],
   "casosAbiertos": {
