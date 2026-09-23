@@ -197,7 +197,27 @@ async function usuarios() {
   return usuariosCache.lista;
 }
 
+// Closer real cuando no coincide con el dueño del calendario (sin asiento en
+// Pipedrive/Calendly): el deal queda del usuario del calendario, pero el campo
+// "Closer (Calendly)" y la nota dicen quién es. Laura (medio tiempo, 22/sep/2026)
+// toma las llamadas del calendario Level Up Media.
+//   CALENDLY_CLOSER_ALIAS="levelupmediapr@gmail.com=Laura"
+function closerAlias(email: string): string | undefined {
+  const pares = process.env.CALENDLY_CLOSER_ALIAS ?? "levelupmediapr@gmail.com=Laura";
+  for (const par of pares.split(",")) {
+    const [e, nombre] = par.split("=").map((s) => s?.trim());
+    if (e?.toLowerCase() === email && nombre) return nombre;
+  }
+  return undefined;
+}
+
 async function resolverOwner(inv: CalendlyInvitee): Promise<{ id?: number; nombre?: string; email?: string }> {
+  const r = await resolverOwnerBase(inv);
+  const alias = r.email ? closerAlias(r.email) : undefined;
+  return alias ? { ...r, nombre: alias } : r;
+}
+
+async function resolverOwnerBase(inv: CalendlyInvitee): Promise<{ id?: number; nombre?: string; email?: string }> {
   const host = inv.scheduled_event.event_memberships?.[0];
   const email = host?.user_email?.toLowerCase();
   if (!email) return {};
