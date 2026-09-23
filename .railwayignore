@@ -38,3 +38,5 @@ vault/proyectos/bori-crecimiento/marca
 vault/proyectos/bori-crecimiento/leads-perdidos
 .vercel/*
 !.vercel/project.json
+
+.telegram-adjuntos
