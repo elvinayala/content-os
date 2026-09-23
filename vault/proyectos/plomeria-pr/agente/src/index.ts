@@ -23,6 +23,7 @@ import { DIR_MEDIA } from "./community/render.js";
 import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
+import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
 import * as zernio from "./canales/zernio.js";
@@ -76,6 +77,7 @@ function yaVisto(id: string) { if (vistos.has(id)) return true; vistos.add(id); 
 app.get("/health", (_req, res) => res.json({ ok: true, modelo: config.modelo, whatsapp: config.wa.proveedor, integraciones: { whatsapp: config.tiene.whatsapp(), meta: config.tiene.meta(), calendario: config.tiene.calendario(), stripe: config.tiene.stripe(), ghl: config.tiene.ghl(), whisper: config.tiene.whisper() } }));
 
 // ── WhatsApp: un mensaje entrante, venga de Zernio o de Meta directo ──
+const ultimoNuestroPregunto = (contactoId: string) => ultimoPregunto(almacen.conversacion(contactoId).mensajes);
 async function atenderWhatsApp(m: wa.MensajeWA) {
   // Proveedor aceptando una oferta por WhatsApp: "ACEPTO OF-0001"
   const acepto = m.texto?.match(/acepto\s+(OF-\d{4})/i);
@@ -94,6 +96,9 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
     contacto.humano = false; almacen.guardarContacto(contacto);
   }
+  // Un "ok"/"gracias"/👍 después de que ya cerramos (nuestro último mensaje no preguntó nada) no se contesta:
+  // responderlo con otro "Wepa! Cuídate" es lo que delata al bot (caso David, 22/sep).
+  if (esSoloAcuse(m.texto) && !m.mediaIds.length && !ultimoNuestroPregunto(contacto.id)) return;
   const adjuntos = (await Promise.all(m.mediaIds.map((ref) => wa.descargarMedia(ref)))).filter((a): a is Adjunto => !!a);
   const texto = [m.texto, m.ubicacion ? `[Ubicación compartida: ${m.ubicacion.direccion ?? ""} (${m.ubicacion.lat}, ${m.ubicacion.lng})]` : ""].filter(Boolean).join("\n");
   const respuestas = await responder(contacto, { texto, adjuntos });
