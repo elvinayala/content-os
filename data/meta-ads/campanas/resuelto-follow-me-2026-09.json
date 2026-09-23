@@ -1,0 +1,32 @@
+{
+  "marca": "resuelto",
+  "nombre": "Resuelto · Follow Me · Tráfico a perfil IG · 3 días",
+  "pedido": "Elvin 22/sep/2026: Follow Me a @resueltoapp.pr, $10/día × 3 días, meta 50-100 seguidores de prueba social; segmentar como para vender; solo Instagram (ubicaciones manuales), sin Facebook/WhatsApp/otras audiencias.",
+  "creadoEn": "Ads Manager (Chrome) — el token de Bori no ve la página Resuelto PR; la geo se corrigió por API",
+  "campanaId": "120255070276990029",
+  "objetivo": "OUTCOME_TRAFFIC",
+  "estado": "PAUSED (la campaña; conjunto y anuncio adentro quedan activos → al prender la campaña arranca)",
+  "conjunto": {
+    "id": "120255070277000029",
+    "nombre": "FM-1 · Dueños de casa · Metro + Caguas · 28-65 · solo IG",
+    "presupuestoDia": 10,
+    "fin": "2026-09-25T20:21:00-04:00",
+    "optimizacion": "PROFILE_VISIT",
+    "destino": "INSTAGRAM_PROFILE",
+    "municipios": ["San Juan", "Guaynabo", "Carolina", "Trujillo Alto", "Bayamón", "Toa Baja", "Toa Alta", "Dorado", "Caguas", "Gurabo", "Juncos", "Cayey"],
+    "edad": [28, 65],
+    "sexo": "todos",
+    "intereses": ["Remodelaciones (hogar y jardinería)", "Vivienda (hogar y jardinería)", "The Home Depot (minorista)"],
+    "advantageAudience": 0,
+    "expansionGeo": 0,
+    "plataformas": ["instagram"],
+    "posicionesIG": ["stream", "story", "reels", "explore_home", "profile_feed", "ig_search"]
+  },
+  "anuncio": {
+    "id": "120255070276980029",
+    "nombre": "FM-1 · 2 posts clientes (Hola Somos Resuelto + El problema no es el precio)",
+    "cta": "VIEW_INSTAGRAM_PROFILE",
+    "mejorasIA": "apagadas (0/3)"
+  },
+  "compuerta": "≤ $1 por seguidor (método de Elvin). Con $30 lo realista es 30-60 seguidores con 3 posts y 0 seguidores de partida; si al día 2 va > $1, subir 1-2 reels y cambiar el creativo."
+}

@@ -301,3 +301,15 @@ sigue sin publicar) y verificado por API (`arbol 120255016399820029`):
 - Gotcha: la búsqueda masiva de lugares trae homónimos extranjeros (Mozambique, Brasil, Reino Unido…); hay que
   borrar toda fila que no diga "Puerto Rico". Y verificar por API después de publicar: Mayagüez se guardó una
   vez con "Puerto Rico" entero y hubo que rehacerlo.
+
+### 22/sep (noche) — Follow Me a @resueltoapp.pr (prueba social), EN PAUSA
+Pedido de Elvin: $10/día × 3 días, tráfico al perfil de IG, 50-100 seguidores, segmentado como para vender, solo Instagram.
+- Campaña `120255070276990029` (Tráfico, **PAUSADA**) → conjunto `120255070277000029` (PROFILE_VISIT → perfil IG,
+  $10/día, fin 25/sep 20:21) → anuncio `120255070276980029` con los 2 posts de clientes ("Hola. Somos Resuelto." y
+  "El problema no es el precio"), CTA "Ir al perfil de Instagram", mejoras de IA apagadas.
+- Público "dueños de casa" de `kit/campana-clientes.md`: los 12 municipios de los 3 territorios de arranque (Metro Norte,
+  Metro Oeste, Centro-Este), 28-65, intereses Remodelaciones + Vivienda + The Home Depot, Advantage+ público y expansión
+  geográfica APAGADOS; ubicaciones manuales solo Instagram (feed, perfil, stories, reels, explorar, búsqueda).
+- Trampa: en este objetivo Ads Manager vuelve a "Puerto Rico" entero cada vez que se toca otra parte del público (y al
+  desmarcar "Llegar a más personas"). La geo se fijó por API después de publicar (`targeting.geo_locations.regions` +
+  `individual_setting.geo:0`, sin `targeting_optimization`). Plan: `data/meta-ads/campanas/resuelto-follow-me-2026-09.json`.
