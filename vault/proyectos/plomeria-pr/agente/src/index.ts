@@ -32,8 +32,9 @@ import { verificarEventoStripe } from "./integraciones/cobros.js";
 import type { Adjunto } from "./integraciones/media.js";
 import { clasificarMime } from "./integraciones/media.js";
 import * as despacho from "./despacho.js";
-import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, listar as listarProveedores, plomeros as registroPlomeros, altaPlomero, cambiarEstadoPlomero, linkPortal } from "./proveedores.js";
+import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, listar as listarProveedores, plomeros as registroPlomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, linkLargo, verificarCorto } from "./proveedores.js";
 import * as ciclo from "./ciclo-trabajo.js";
+import { portal } from "./portal/rutas.js";
 import { panelPlomerosHTML, pagarHTML } from "./paginas-operacion.js";
 import { leerWebhook as leerWebhookDocusign } from "./integraciones/docusign.js";
 import * as push from "./push.js";
@@ -206,6 +207,20 @@ app.post("/admin/encuestas/revisar", async (_req, res) => { await encuestas.revi
 app.get("/admin/dashboard", (_req, res) => res.type("html").send(dashboardHTML()));
 
 app.get("/admin/estado", (_req, res) => res.json({ trabajos: almacen.trabajos().slice(-50), candidatos: almacen.candidatos(), listaEspera: almacen.listaEspera() }));
+
+// ── Portal de operación (/portal): clientes, trabajos, garantías, plomeros ──
+app.use(portal);
+app.get("/", (_req, res) => res.redirect("/portal"));
+
+// Link corto del plomero: /a/<id>/<código> → guarda su llave en el celular y abre la app
+app.get("/a/:id/:codigo", (req, res) => {
+  if (!verificarCorto(req.params.id, req.params.codigo) || !proveedorPorId(req.params.id)) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>Ese enlace no es válido. Pídele uno nuevo a Resuelto por WhatsApp.</p>");
+  res.redirect(linkLargo(req.params.id, ""));
+});
+app.post("/api/proveedores/trabajo/nota", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  res.json(await ciclo.agregarNotaPlomero(String(req.body?.oferta ?? ""), prov, String(req.body?.texto ?? "")));
+});
 
 // ── App del cotizador (tablet) + documentos del cliente ──
 app.use(cotizadorRouter);

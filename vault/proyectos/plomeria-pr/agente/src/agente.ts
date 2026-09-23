@@ -3,6 +3,7 @@
  * corre el bucle de herramientas con Claude y devuelve los textos a enviar.
  */
 import Anthropic from "@anthropic-ai/sdk";
+import { archivar } from "./historial.js";
 import { config } from "./config.js";
 import { almacen, type Contacto } from "./almacen.js";
 import { SYSTEM } from "./prompt.js";
@@ -37,6 +38,7 @@ export interface Entrada { texto?: string; adjuntos?: Adjunto[] }
 
 /** Devuelve la lista de mensajes a enviar (vacía si un humano tiene la conversación). */
 export async function responder(contacto: Contacto, entrada: Entrada): Promise<string[]> {
+  archivar(contacto.id, "cliente", [entrada.texto, entrada.adjuntos?.length ? `[${entrada.adjuntos.length} adjunto(s)]` : ""].filter(Boolean).join(" "));
   if (contacto.humano) return []; // un humano está atendiendo; el agente calla
 
   const conv = almacen.conversacion(contacto.id);
@@ -87,5 +89,7 @@ export async function responder(contacto: Contacto, entrada: Entrada): Promise<s
 
   almacen.guardarConversacion({ ...conv, mensajes });
   // Separador explícito para mandar varios mensajes por WhatsApp.
-  return salida.flatMap((t) => t.split(/\n---\n/).map((s) => s.trim()).filter(Boolean));
+  const partes = salida.flatMap((t) => t.split(/\n---\n/).map((s) => s.trim()).filter(Boolean));
+  for (const t of partes) archivar(contacto.id, "resuelto", t);
+  return partes;
 }

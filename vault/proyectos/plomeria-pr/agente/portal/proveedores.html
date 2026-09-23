@@ -66,10 +66,11 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
 <script>
 (function(){
   var q=new URLSearchParams(location.search), p=q.get('p'), k=q.get('k');
+  try{ if(p&&k){localStorage.setItem('resuelto_p',p);localStorage.setItem('resuelto_k',k);} else {p=localStorage.getItem('resuelto_p');k=localStorage.getItem('resuelto_k');} }catch(e){}
   var $=function(id){return document.getElementById(id)};
   var aviso=function(t,err){var a=$('aviso');a.textContent=t;a.className='aviso'+(err?' error':'');a.style.display='block';setTimeout(function(){a.style.display='none'},5000)};
   if(q.get('firmado')) aviso('Contrato '+q.get('firmado')+' firmado. ¡Listo para trabajar!');
-  if(!p||!k){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">Entra desde el enlace que te mandamos por WhatsApp.</div>';return;}
+  if(!p||!k){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">Abre una vez el enlace que te mandamos por WhatsApp (resueltopr) y la app te recuerda para siempre.</div>';return;}
   var money=function(n){return '$'+Number(n).toLocaleString('en-US')};
   var cuando=function(iso){return iso?new Date(iso).toLocaleString('es-PR',{timeZone:'America/Puerto_Rico',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'por coordinar'};
   function restante(iso){var ms=new Date(iso)-Date.now();if(ms<=0)return 'vencida';var m=Math.floor(ms/60000);return m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min'}
@@ -94,7 +95,8 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
       +'<div class="campo"><label>Nota (opcional)</label><input id="nota-'+o.id+'" placeholder="Qué hiciste / algo a tener en cuenta"></div>'
       +'<button class="btn" data-paso="terminado" data-of="'+o.id+'">✅ Terminé — cobrarle al cliente</button>';
     else acc='<div class="cli">✅ Terminado. El cliente paga <b>'+money(t.totalCliente)+'</b> a Resuelto'+(t.estado==='cobrado'?' <span class="tag ok">Cobrado</span>':' <span class="tag warn">Pendiente de pago</span>')+'<br>Tú cobras <b>'+money(t.pagoPlomero)+'</b> el viernes.</div>';
-    return '<div class="card">'+head+pasos+cli+firmaDe(o)+acc+'</div>';
+    var notaLibre=(t.estado!=='completado'&&t.estado!=='cobrado')?'<div class="campo"><label>Comentario para Resuelto (lo ve el gerente)</label><input id="com-'+o.id+'" placeholder="Ej: el cliente pidió cotizar otra cosa, falta una pieza…"></div><button class="btn line" data-com="'+o.id+'">Enviar comentario</button>':'';
+    return '<div class="card">'+head+pasos+cli+firmaDe(o)+acc+notaLibre+'</div>';
   }
   function achicar(file){return new Promise(function(ok,ko){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,s=Math.min(1,m/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',0.8))};img.onerror=ko;img.src=URL.createObjectURL(file)})}
   function enlazar(){
@@ -105,6 +107,8 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
       if(b.dataset.paso==='terminado'){var mo=$('mo-'+of),mat=$('mat-'+of),nt=$('nota-'+of);if(mo)body.mano_obra=Number(mo.value);body.materiales=Number(mat&&mat.value||0);body.nota=nt?nt.value:'';if(!confirm('¿Cerrar el trabajo y enviarle el cobro al cliente?'))return;}
       b.disabled=true;b.textContent='Enviando…';
       api('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){aviso(j.estado==='completado'?'✅ Listo. Le enviamos el cobro de '+money(j.total)+' al cliente. Tú cobras '+money(j.pago)+' el viernes.':(j.recordatorio||'✅ Listo'));}else{aviso(j.motivo||'No se pudo.',true);} cargar();cuenta();});};});
+    document.querySelectorAll('button[data-com]').forEach(function(b){b.onclick=function(){var of=b.dataset.com,i=$('com-'+of);if(!i||!i.value.trim())return;b.disabled=true;
+      api('/api/proveedores/trabajo/nota',{oferta:of,texto:i.value}).then(function(j){aviso(j.ok?'💬 Comentario enviado.':(j.motivo||'No se pudo'),!j.ok);i.value='';b.disabled=false;});};});
     document.querySelectorAll('input[data-foto]').forEach(function(inp){inp.onchange=function(){
       var files=[].slice.call(inp.files||[]);if(!files.length)return;aviso('Subiendo '+files.length+' foto(s)…');
       files.reduce(function(pr,f){return pr.then(function(){return achicar(f).then(function(d){return api('/api/proveedores/trabajo/foto',{oferta:inp.dataset.of,tipo:inp.dataset.foto,imagen:d}).then(function(j){if(!j.ok)aviso(j.motivo,true)})})})},Promise.resolve()).then(function(){aviso('📷 Fotos guardadas.');cargar();});};});

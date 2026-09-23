@@ -84,6 +84,8 @@ export interface Trabajo {
   fotosDespues?: string[];
   notaCierre?: string;
   pagadoAlPlomero?: string;   // fecha del viernes en que se le pagó
+  garantiaDe?: string;        // si es un re-trabajo de garantía: id del trabajo original
+  notasInternas?: { fecha: string; autor: string; texto: string }[];
   ghlOpportunityId?: string;
   linkPago?: string;
   fotos: string[];

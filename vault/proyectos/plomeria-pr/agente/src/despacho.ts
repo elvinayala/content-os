@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { RAIZ, almacen } from "./almacen.js";
 import { config } from "./config.js";
-import { elegibles, porId, linkPortal, TIEMPO_ACEPTAR_MIN, type Proveedor } from "./proveedores.js";
+import { elegibles, porId, linkPortal, listar as listarProv, TIEMPO_ACEPTAR_MIN, type Proveedor } from "./proveedores.js";
 import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
 import { contratoHTML } from "./contratos.js";
 import { enviarContrato } from "./integraciones/docusign.js";
@@ -64,10 +64,10 @@ function mensajeOferta(o: Oferta, p: Proveedor): string {
 }
 
 /** Crea la oferta y la anuncia a los elegibles. Si no hay elegibles, avisa al Coordinador de inmediato. */
-export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" | "avisados" | "expiraEn" | "creado">): Promise<Oferta> {
+export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" | "avisados" | "expiraEn" | "creado">, opc: { soloProveedor?: string; minutos?: number } = {}): Promise<Oferta> {
   const lista = leer();
-  const el = elegibles({ categoria: d.categoria, territorio: d.territorio });
-  const o: Oferta = { ...d, id: "OF-" + String(lista.length + 1).padStart(4, "0"), estado: "abierta", elegibles: el.map((p) => p.id), avisados: [], expiraEn: new Date(Date.now() + TIEMPO_ACEPTAR_MIN[d.tipo] * 60_000).toISOString(), creado: new Date().toISOString() };
+  const el = opc.soloProveedor ? listarProv().filter((p) => p.id === opc.soloProveedor) : elegibles({ categoria: d.categoria, territorio: d.territorio });
+  const o: Oferta = { ...d, id: "OF-" + String(lista.length + 1).padStart(4, "0"), estado: "abierta", elegibles: el.map((p) => p.id), avisados: [], expiraEn: new Date(Date.now() + (opc.minutos ?? TIEMPO_ACEPTAR_MIN[d.tipo]) * 60_000).toISOString(), creado: new Date().toISOString() };
   lista.push(o); guardar(lista);
   if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Asignar a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`); return o; }
   for (const p of el) {
@@ -75,7 +75,7 @@ export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" 
     notificar(p.id, { titulo: `Nuevo ${o.tipo === "trabajo" ? "trabajo" : "proyecto"} · ${$(o.pagoProveedor)}`, cuerpo: `${o.categoriaNombre} · ${o.municipio} · ${cuando(o.inicio)}. El primero que acepta se lo lleva.`, url: linkPortal(p.id, config.urlPublica), tag: o.id, ofertaId: o.id, urgente: true }).catch(() => undefined);
   }
   actualizar(o);
-  programarExpiracion(o.id, TIEMPO_ACEPTAR_MIN[d.tipo] * 60_000);
+  programarExpiracion(o.id, (opc.minutos ?? TIEMPO_ACEPTAR_MIN[d.tipo]) * 60_000);
   return o;
 }
 

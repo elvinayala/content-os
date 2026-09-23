@@ -16,6 +16,7 @@ import { actualizarOportunidad } from "./integraciones/crm.js";
 import { menu } from "./prompt.js";
 import { config } from "./config.js";
 import type { Proveedor } from "./proveedores.js";
+import { archivar } from "./historial.js";
 
 export const DIR_FOTOS = path.join(RAIZ, "data", "estado", "fotos-trabajos");
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
@@ -50,12 +51,14 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   if (paso === "en-camino") {
     if (t.estado !== "agendado") return { ok: false, motivo: "Ya marcaste este paso." };
     almacen.guardarTrabajo({ ...t, estado: "en-camino", enCaminoEn: ahora });
+    archivar(t.contactoId, "sistema", `${t.id}: ${p.nombre} marcó "voy en camino".`, t.id);
     await enviarTexto(t.telefono, `Hola ${t.nombre.split(" ")[0]} 👋 Te escribe Resuelto.\n\n${primer}, tu plomero licenciado, va en camino para tu ${t.servicio.toLowerCase()}. Llega dentro de tu ventana (${hora(t.inicio)}–${hora(t.fin)}).\n\nRecuerda: al final le pagas a Resuelto por link o ATH Móvil, nunca en efectivo al plomero. Cualquier cosa, escríbenos por aquí.`).catch(() => undefined);
     return { ok: true, estado: "en-camino" };
   }
   if (paso === "llegue") {
     if (t.estado !== "en-camino" && t.estado !== "agendado") return { ok: false, motivo: "Ya marcaste este paso." };
     almacen.guardarTrabajo({ ...t, estado: "en-sitio", llegadaEn: ahora, enCaminoEn: t.enCaminoEn ?? ahora });
+    archivar(t.contactoId, "sistema", `${t.id}: ${p.nombre} llegó.`, t.id);
     return { ok: true, estado: "en-sitio", recordatorio: "Toma fotos del ANTES antes de tocar nada." };
   }
 
@@ -70,12 +73,22 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     if (rango && mano > rango[1] && !d.nota?.trim()) return { ok: false, motivo: `Pasa del rango publicado ($${rango[0]}–$${rango[1]}). Explica por qué en la nota; el coordinador lo revisa.` };
   }
   const mat = Math.max(0, Number(d.materiales) || 0);
+  if (t.garantiaDe) {
+    // Re-trabajo de garantía: $0 al cliente; Resuelto reembolsa materiales (hasta $150, contrato del plomero).
+    const reembolso = r2(Math.min(mat, 150));
+    almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
+    archivar(t.contactoId, "sistema", `${t.id} (garantía de ${t.garantiaDe}) resuelto por ${p.nombre}. ${d.nota ?? ""}`.trim(), t.id);
+    await enviarTexto(t.telefono, `✅ ${t.nombre.split(" ")[0]}, ${primer} resolvió tu garantía (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
+    await avisarCoordinador(`🛡️ Garantía cerrada ${t.id} (de ${t.garantiaDe}) por ${p.nombre}${mat ? ` · materiales $${mat} (reembolso $${reembolso})` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
+    return { ok: true, estado: "completado", total: 0, pago: reembolso, garantia: true };
+  }
   const recargo = t.emergencia ? menu.recargo_emergencia : 0;
   const matCliente = r2(mat * (1 + menu.manejo_materiales_pct / 100));
   const total = r2(mano + t.fee + recargo + matCliente);
   const pago = r2(mano * 0.65 + recargo * 0.65 + mat * 1.1);
   const link = await crearLinkPago({ trabajoId: t.id, concepto: t.servicio, montoCentavos: Math.round(total * 100), telefono: t.telefono });
   almacen.guardarTrabajo({ ...t, estado: "completado", terminadoEn: ahora, manoObraFinal: mano, materialesCosto: mat, totalCliente: total, pagoPlomero: pago, linkPago: link.url, notaCierre: d.nota?.trim() || undefined });
+  archivar(t.contactoId, "sistema", `${t.id} terminado por ${p.nombre}. Cliente $${total.toFixed(2)} (mano de obra $${mano}${mat ? `, materiales $${matCliente}` : ""}). Pago plomero $${pago.toFixed(2)}.${d.nota ? " Nota: " + d.nota : ""}`, t.id);
   const desglose = [`Mano de obra: $${mano.toFixed(2)}`, recargo ? `Emergencia: $${recargo.toFixed(2)}` : "", mat ? `Materiales: $${matCliente.toFixed(2)}` : "", `Coordinación: $${t.fee.toFixed(2)}`].filter(Boolean).join("\n");
   await enviarTexto(t.telefono, `✅ ¡Listo, ${t.nombre.split(" ")[0]}! ${primer} terminó tu ${t.servicio.toLowerCase()}.\n\n${desglose}\n*Total: $${total.toFixed(2)}*\n\nPaga aquí: ${link.url ?? ""}\nO por ATH Móvil: ${link.athMovil}\n\nTu trabajo tiene garantía de ${menu.garantia_meses} meses en mano de obra. Mañana te escribimos para saber cómo te fue.`).catch(() => undefined);
   if (t.ghlOpportunityId && process.env.GHL_STAGE_COMPLETADO) await actualizarOportunidad(t.ghlOpportunityId, { stageId: process.env.GHL_STAGE_COMPLETADO, monetaryValue: total }).catch(() => undefined);
@@ -117,4 +130,15 @@ export function cuentaSemanal(p: Proveedor) {
   };
   const esta = lunesPR(new Date());
   return { estaSemana: semana(esta), anterior: semana(new Date(esta.getTime() - 7 * 86400_000)), acumulado: r2(mios.reduce((a, t) => a + (t.pagoPlomero ?? 0), 0)), trabajosTotales: mios.length };
+}
+
+/** Comentario del plomero sobre un trabajo suyo (lo ve el gerente en el portal y llega por Telegram). */
+export async function agregarNotaPlomero(ofertaId: string, p: Proveedor, texto: string) {
+  const r = trabajoDe(ofertaId, p); if ("error" in r) return { ok: false, motivo: r.error };
+  const limpio = String(texto ?? "").trim().slice(0, 1000); if (!limpio) return { ok: false, motivo: "Escribe el comentario." };
+  const t = r.t; const nota = { fecha: new Date().toISOString(), autor: `plomero:${p.nombre}`, texto: limpio };
+  almacen.guardarTrabajo({ ...t, notasInternas: [...(t.notasInternas ?? []), nota] });
+  archivar(t.contactoId, "plomero", `${p.nombre} sobre ${t.id}: ${limpio}`, t.id);
+  await avisarCoordinador(`💬 ${p.nombre} sobre ${t.id} (${t.nombre}): ${limpio}`).catch(() => undefined);
+  return { ok: true };
 }
