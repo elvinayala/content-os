@@ -213,7 +213,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           }
         }
       }
-      if (ev.type === "result") { final = ev.result || texto; if (ev.is_error) err = ev.result || "error"; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`); }
+      if (ev.type === "result") { final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`); }
     };
     child.stdout.on("data", (d) => { buf += d; const partes = buf.split("\n"); buf = partes.pop(); partes.forEach(onLinea); });
     child.stderr.on("data", (d) => { const t = String(d); if (!/Permission allow rule/.test(t)) { err += t; LOG("claude stderr:", t.slice(0, 200)); } });
