@@ -69,7 +69,7 @@ export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" 
   const el = elegibles({ categoria: d.categoria, territorio: d.territorio });
   const o: Oferta = { ...d, id: "OF-" + String(lista.length + 1).padStart(4, "0"), estado: "abierta", elegibles: el.map((p) => p.id), avisados: [], expiraEn: new Date(Date.now() + TIEMPO_ACEPTAR_MIN[d.tipo] * 60_000).toISOString(), creado: new Date().toISOString() };
   lista.push(o); guardar(lista);
-  if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Asignar a mano: ${config.urlPublica}/admin/ofertas`); return o; }
+  if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Asignar a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`); return o; }
   for (const p of el) {
     try { await enviarTexto(p.whatsapp, mensajeOferta(o, p)); o.avisados.push(p.id); } catch (e) { console.error("aviso oferta", p.id, e); }
     notificar(p.id, { titulo: `Nuevo ${o.tipo === "trabajo" ? "trabajo" : "proyecto"} · ${$(o.pagoProveedor)}`, cuerpo: `${o.categoriaNombre} · ${o.municipio} · ${cuando(o.inicio)}. El primero que acepta se lo lleva.`, url: linkPortal(p.id, config.urlPublica), tag: o.id, ofertaId: o.id, urgente: true }).catch(() => undefined);
@@ -87,7 +87,7 @@ function programarExpiracion(id: string, ms: number) {
 export async function expirarSiSigueAbierta(id: string) {
   const o = oferta(id); if (!o || o.estado !== "abierta") return;
   o.estado = "expirada"; actualizar(o);
-  await avisarCoordinador(`⏰ Nadie aceptó ${o.id} (${o.categoriaNombre}, ${o.municipio}, ${$(o.pagoProveedor)}). Asignar a mano: ${config.urlPublica}/admin/ofertas`);
+  await avisarCoordinador(`⏰ Nadie aceptó ${o.id} (${o.categoriaNombre}, ${o.municipio}, ${$(o.pagoProveedor)}). Asignar a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`);
 }
 /** Al arrancar el servidor, re-programa las ofertas abiertas (los timers viven en memoria). */
 export function reanudarTimers() { for (const o of leer()) if (o.estado === "abierta") programarExpiracion(o.id, Math.max(0, new Date(o.expiraEn).getTime() - Date.now())); }

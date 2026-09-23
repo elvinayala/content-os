@@ -1,15 +1,118 @@
 {
   "radio_minutos": 25,
-  "ventanas": ["08:00-10:00", "10:00-12:00", "13:00-15:00", "15:00-17:00"],
+  "ventanas": [
+    "08:00-10:00",
+    "10:00-12:00",
+    "13:00-15:00",
+    "15:00-17:00"
+  ],
   "territorios": [
-    { "id": "T1", "nombre": "Metro Norte", "estado": "activo", "municipios": ["San Juan", "Guaynabo", "Carolina", "Trujillo Alto"],
-      "plomeros": [ { "id": "luis", "nombre": "Luis", "licencia": "PENDIENTE", "calendar_id": "CAMBIAR@group.calendar.google.com", "whatsapp": "1787000000" } ] },
-    { "id": "T2", "nombre": "Metro Oeste", "estado": "reclutando", "municipios": ["Bayamón", "Toa Baja", "Toa Alta", "Cataño", "Dorado"], "plomeros": [] },
-    { "id": "T3", "nombre": "Centro-Este", "estado": "reclutando", "municipios": ["Caguas", "Gurabo", "Juncos", "San Lorenzo", "Cayey", "Aguas Buenas"], "plomeros": [] },
-    { "id": "T4", "nombre": "Sur", "estado": "pronto", "municipios": ["Ponce", "Juana Díaz", "Peñuelas", "Guayanilla", "Santa Isabel"], "plomeros": [] },
-    { "id": "T5", "nombre": "Norte", "estado": "pronto", "municipios": ["Arecibo", "Manatí", "Barceloneta", "Vega Baja", "Vega Alta", "Hatillo", "Camuy"], "plomeros": [] },
-    { "id": "T6", "nombre": "Oeste", "estado": "pronto", "municipios": ["Mayagüez", "Cabo Rojo", "San Germán", "Añasco", "Hormigueros"], "plomeros": [] },
-    { "id": "T7", "nombre": "Noroeste", "estado": "pronto", "municipios": ["Aguadilla", "Isabela", "Moca", "San Sebastián", "Aguada"], "plomeros": [] },
-    { "id": "T8", "nombre": "Este", "estado": "pronto", "municipios": ["Fajardo", "Luquillo", "Río Grande", "Ceiba", "Humacao", "Naguabo"], "plomeros": [] }
+    {
+      "id": "T1",
+      "nombre": "Metro Norte",
+      "estado": "reclutando",
+      "municipios": [
+        "San Juan",
+        "Guaynabo",
+        "Carolina",
+        "Trujillo Alto"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T2",
+      "nombre": "Metro Oeste",
+      "estado": "reclutando",
+      "municipios": [
+        "Bayamón",
+        "Toa Baja",
+        "Toa Alta",
+        "Cataño",
+        "Dorado"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T3",
+      "nombre": "Centro-Este",
+      "estado": "reclutando",
+      "municipios": [
+        "Caguas",
+        "Gurabo",
+        "Juncos",
+        "San Lorenzo",
+        "Cayey",
+        "Aguas Buenas"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T4",
+      "nombre": "Sur",
+      "estado": "pronto",
+      "municipios": [
+        "Ponce",
+        "Juana Díaz",
+        "Peñuelas",
+        "Guayanilla",
+        "Santa Isabel"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T5",
+      "nombre": "Norte",
+      "estado": "pronto",
+      "municipios": [
+        "Arecibo",
+        "Manatí",
+        "Barceloneta",
+        "Vega Baja",
+        "Vega Alta",
+        "Hatillo",
+        "Camuy"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T6",
+      "nombre": "Oeste",
+      "estado": "pronto",
+      "municipios": [
+        "Mayagüez",
+        "Cabo Rojo",
+        "San Germán",
+        "Añasco",
+        "Hormigueros"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T7",
+      "nombre": "Noroeste",
+      "estado": "pronto",
+      "municipios": [
+        "Aguadilla",
+        "Isabela",
+        "Moca",
+        "San Sebastián",
+        "Aguada"
+      ],
+      "plomeros": []
+    },
+    {
+      "id": "T8",
+      "nombre": "Este",
+      "estado": "pronto",
+      "municipios": [
+        "Fajardo",
+        "Luquillo",
+        "Río Grande",
+        "Ceiba",
+        "Humacao",
+        "Naguabo"
+      ],
+      "plomeros": []
+    }
   ]
 }

@@ -70,8 +70,20 @@ export interface Trabajo {
   referencia?: string;
   inicio: string;          // ISO
   fin: string;             // ISO
-  estado: "agendado" | "en-camino" | "completado" | "cobrado" | "cancelado";
+  estado: "agendado" | "en-camino" | "en-sitio" | "completado" | "cobrado" | "cancelado";
   eventoCalendarId?: string;
+  // Ciclo en la app del plomero (ciclo-trabajo.ts)
+  enCaminoEn?: string;
+  llegadaEn?: string;
+  terminadoEn?: string;
+  manoObraFinal?: number;
+  materialesCosto?: number;
+  totalCliente?: number;
+  pagoPlomero?: number;
+  fotosAntes?: string[];
+  fotosDespues?: string[];
+  notaCierre?: string;
+  pagadoAlPlomero?: string;   // fecha del viernes en que se le pagó
   ghlOpportunityId?: string;
   linkPago?: string;
   fotos: string[];

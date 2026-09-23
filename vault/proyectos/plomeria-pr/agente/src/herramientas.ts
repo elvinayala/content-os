@@ -180,8 +180,10 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "verificar_cobertura": {
       const t = territorioDeMunicipio(input.municipio);
       if (!t) return { estado: "sin-cobertura", municipio: input.municipio, accion: "lista de espera" };
+      // Cobertura REAL: hay servicio solo si hay un plomero ACTIVO en el registro para ese territorio.
       const pl = plomeroDeTerritorio(t.id);
-      return { estado: t.estado, territorio_id: t.id, territorio: t.nombre, plomero: pl ? { id: pl.id, nombre: pl.nombre } : null, accion: t.estado === "activo" && pl ? "agendar" : "lista de espera" };
+      const estado = pl ? "activo" : t.estado === "activo" ? "reclutando" : t.estado;
+      return { estado, territorio_id: t.id, territorio: t.nombre, plomero: pl ? { id: pl.id, nombre: pl.nombre } : null, accion: pl ? "agendar" : "lista de espera" };
     }
     case "consultar_disponibilidad": {
       const v = await ventanasLibres(input.territorio_id, input.fecha, !!input.emergencia);
@@ -192,6 +194,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       if (!servicio) return { error: "servicio_id inválido; usa buscar_precio" };
       const t = territorios.territorios.find((x) => x.id === input.territorio_id);
       if (!t) return { error: "territorio inválido" };
+      if (!plomeroDeTerritorio(t.id)) return { error: "sin_plomero_activo", accion: "No agendes. Todavía no hay plomero activo en esa zona: ofrece la lista de espera (agregar_lista_espera) y di que le avisamos apenas abramos." };
       const id = almacen.nuevoIdTrabajo();
       const manoObra = servicio.precio ?? null;
       const ghlId = ctx.contacto.ghlContactId ?? (await upsertContacto({ nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, tags: ["cliente", "agendado", t.id], fuente: ctx.contacto.canal }));
@@ -293,7 +296,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       const humanoDesde = new Date().toISOString();
       almacen.guardarContacto({ ...ctx.contacto, humano: true, humanoDesde });
       Object.assign(ctx.contacto, { humano: true, humanoDesde });
-      await avisarCoordinador(`${input.urgente ? "🚨 URGENTE" : "🙋 Escalado"} · ${input.motivo}\nContacto: ${ctx.contacto.nombre ?? ""} ${ctx.contacto.telefono ?? ctx.contacto.identificador} (${ctx.contacto.canal})\n${input.resumen}\n\nPara devolver al agente: ${config.urlPublica}/admin/liberar/${encodeURIComponent(ctx.contacto.id)}`);
+      await avisarCoordinador(`${input.urgente ? "🚨 URGENTE" : "🙋 Escalado"} · ${input.motivo}\nContacto: ${ctx.contacto.nombre ?? ""} ${ctx.contacto.telefono ?? ctx.contacto.identificador} (${ctx.contacto.canal})\n${input.resumen}\n\nPara devolver al agente: ${config.urlPublica}/admin/liberar/${encodeURIComponent(ctx.contacto.id)}?t=${config.adminToken}`);
       return { ok: true, mensaje_para_cliente: "Dile que en unos minutos le escribe alguien del equipo. No sigas cotizando." };
     }
     case "precalificar_proyecto": {

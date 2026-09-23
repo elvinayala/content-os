@@ -6,6 +6,7 @@
 import { google, calendar_v3 } from "googleapis";
 import { config } from "../config.js";
 import { territorios } from "../prompt.js";
+import { plomeroActivoDe } from "../proveedores.js";
 
 let cal: calendar_v3.Calendar | null = null;
 function cliente(): calendar_v3.Calendar | null {
@@ -17,9 +18,10 @@ function cliente(): calendar_v3.Calendar | null {
   return cal;
 }
 
+/** Plomero ACTIVO del territorio según el registro del volumen (no el JSON del repo). */
 export function plomeroDeTerritorio(territorioId: string) {
-  const t = territorios.territorios.find((x) => x.id === territorioId) as any;
-  return t?.plomeros?.[0] as { id: string; nombre: string; calendar_id: string; whatsapp: string } | undefined;
+  const p = plomeroActivoDe(territorioId);
+  return p ? { id: p.id, nombre: p.nombre, calendar_id: p.calendar_id ?? "CAMBIAR", whatsapp: p.whatsapp } : undefined;
 }
 
 /** Ventanas de 2 h con formato "HH:MM-HH:MM" → [inicioISO, finISO] en la zona de PR. */

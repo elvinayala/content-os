@@ -12,6 +12,8 @@
  */
 import express from "express";
 import fs from "node:fs";
+import crypto from "node:crypto";
+import sharp from "sharp";
 import path from "node:path";
 import { config } from "./config.js";
 import { almacen, RAIZ } from "./almacen.js";
@@ -29,7 +31,9 @@ import { verificarEventoStripe } from "./integraciones/cobros.js";
 import type { Adjunto } from "./integraciones/media.js";
 import { clasificarMime } from "./integraciones/media.js";
 import * as despacho from "./despacho.js";
-import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, listar as listarProveedores } from "./proveedores.js";
+import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, listar as listarProveedores, plomeros as registroPlomeros, altaPlomero, cambiarEstadoPlomero, linkPortal } from "./proveedores.js";
+import * as ciclo from "./ciclo-trabajo.js";
+import { panelPlomerosHTML, pagarHTML } from "./paginas-operacion.js";
 import { leerWebhook as leerWebhookDocusign } from "./integraciones/docusign.js";
 import * as push from "./push.js";
 import { router as cotizadorRouter, cerrarConDeposito, linkCotizador } from "./cotizador-app.js";
@@ -51,6 +55,17 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   }
   if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+// ── /admin protegido: ?t=<ADMIN_TOKEN> (deja cookie 12 h), header x-admin-token o cookie. Excepción: aprobaciones firmadas (?k=). ──
+app.use("/admin", (req: any, res, next) => {
+  const tok = config.adminToken;
+  if (!tok) return res.status(503).send("ADMIN_TOKEN no configurado");
+  if (/^\/proyectos\/[^/]+\/aprobar$/.test(req.path) && req.query.k) return next();
+  const cookie = /(?:^|;\s*)adm=([^;]+)/.exec(req.headers.cookie ?? "")?.[1];
+  const dado = String(req.query.t ?? req.headers["x-admin-token"] ?? cookie ?? "");
+  if (dado.length !== tok.length || !crypto.timingSafeEqual(Buffer.from(dado), Buffer.from(tok))) return res.status(401).send("No autorizado");
+  if (req.query.t) res.setHeader("Set-Cookie", `adm=${tok}; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=43200`);
   next();
 });
 
@@ -228,7 +243,16 @@ app.post("/admin/nina/ejecutar", async (req: any, res) => {
   try { res.json(await nina.ejecutar(modo, plan)); } catch (e) { res.status(500).json({ error: (e as Error).message }); }
 });
 app.post("/admin/nina/preaviso", async (_req, res) => { await nina.preaviso(); res.json({ ok: true }); });
-app.get(["/icon-192.png", "/icon-512.png"], (req, res) => { res.type("png").send(fs.readFileSync(path.join(RAIZ, "portal", path.basename(req.path)))); });
+// Íconos de la PWA: se generan del logo (SVG) con sharp — el CLI de Railway no sube binarios.
+const iconos = new Map<number, Buffer>();
+app.get(["/icon-192.png", "/icon-512.png"], async (req, res) => {
+  const n = req.path.includes("512") ? 512 : 192;
+  if (!iconos.has(n)) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#F2621F"/><path d="M32 12 L53 30 V52 A2 2 0 0 1 51 54 H13 A2 2 0 0 1 11 52 V30 Z" fill="#fff"/><path d="M22 36 L29 43 L43 28" stroke="#F2621F" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    iconos.set(n, await sharp(Buffer.from(svg)).resize(n, n).png().toBuffer());
+  }
+  res.type("png").set("Cache-Control", "public, max-age=604800").send(iconos.get(n));
+});
 // Push
 app.get("/api/proveedores/push/clave", (_req, res) => res.json({ clave: push.clavePublica() || null }));
 app.post("/api/proveedores/push/suscribir", (req: any, res) => {
@@ -238,7 +262,34 @@ app.post("/api/proveedores/push/suscribir", (req: any, res) => {
 });
 app.get("/api/proveedores/ofertas", (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido. Pide uno nuevo por WhatsApp." });
-  res.json({ proveedor: { id: prov.id, nombre: prov.nombre, tipo: prov.tipo }, ofertas: despacho.ofertasPara(prov) });
+  const ofertas = despacho.ofertasPara(prov).map((o) => {
+    if (o.aceptadoPor !== prov.id || o.tipo !== "trabajo") return o;
+    const t = almacen.trabajos().find((x) => x.id === o.referencia);
+    return t ? { ...o, trabajo: ciclo.resumenParaPlomero(t) } : o;
+  });
+  res.json({ proveedor: { id: prov.id, nombre: prov.nombre, tipo: prov.tipo }, ofertas });
+});
+// Ciclo del trabajo desde la app: voy en camino → llegué → fotos → terminé (cobro al cliente)
+app.post("/api/proveedores/trabajo/paso", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const paso = String(req.body?.paso ?? "") as "en-camino" | "llegue" | "terminado";
+  if (!["en-camino", "llegue", "terminado"].includes(paso)) return res.status(400).json({ ok: false, motivo: "Paso inválido." });
+  res.json(await ciclo.avanzar(String(req.body?.oferta ?? ""), prov, paso, { mano_obra: req.body?.mano_obra, materiales: req.body?.materiales, nota: req.body?.nota }));
+});
+app.post("/api/proveedores/trabajo/foto", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const tipo = req.body?.tipo === "antes" ? "antes" : "despues";
+  try { res.json(await ciclo.guardarFoto(String(req.body?.oferta ?? ""), prov, tipo, String(req.body?.imagen ?? ""))); } catch (e) { res.json({ ok: false, motivo: "No pude guardar la foto." }); }
+});
+app.get("/api/proveedores/cuenta", (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." });
+  res.json(ciclo.cuentaSemanal(prov));
+});
+// Página de pago del cliente (mientras no haya Stripe: ATH Móvil + total)
+app.get("/pagar/:id", (req, res) => {
+  const t = almacen.trabajos().find((x) => x.id === req.params.id);
+  if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos por WhatsApp al 939-247-9234.</p>");
+  res.type("html").send(pagarHTML(t, config.cobros.athMovil));
 });
 app.post("/api/proveedores/aceptar", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
@@ -248,6 +299,42 @@ app.post("/api/proveedores/aceptar", async (req: any, res) => {
 app.post("/webhook/docusign", (req, res) => { const w = leerWebhookDocusign(req.body); if (w.envelopeId && w.completado) despacho.marcarFirmado(w.envelopeId); res.sendStatus(200); });
 
 // ── Admin de despacho ──
+// ── Panel de plomeros (alta, links, estado) ──
+app.get("/admin/plomeros", (_req, res) => res.type("html").send(panelPlomerosHTML(registroPlomeros().map((p) => ({ ...p, link: linkPortal(p.id, config.urlPublica) })), despacho.ofertas().slice(-40).reverse(), almacen.trabajos().slice(-40).reverse())));
+app.post("/admin/plomeros", async (req: any, res) => {
+  const b = req.body ?? {};
+  if (!b.nombre || !b.whatsapp || !b.municipio) return res.status(400).json({ ok: false, motivo: "Faltan nombre, WhatsApp o municipio." });
+  const p = altaPlomero({ nombre: String(b.nombre).trim(), whatsapp: String(b.whatsapp), municipio: String(b.municipio).trim(), licencia: b.licencia ? String(b.licencia).trim() : undefined, email: b.email ? String(b.email).trim() : undefined });
+  const link = linkPortal(p.id, config.urlPublica);
+  if (!p.territorios.length) await wa.avisarCoordinador(`⚠️ ${p.nombre} dado de alta pero "${p.municipio}" no cae en ningún territorio: no recibirá trabajos hasta asignarle uno.`).catch(() => undefined);
+  const enviado = await wa.enviarTexto(p.whatsapp, bienvenidaPlomero(p.nombre, link)).then(() => true).catch(() => false);
+  await wa.avisarCoordinador(`🔧 Alta de plomero: ${p.nombre} · ${p.municipio} (${p.territorios.join(", ") || "sin territorio"})${p.licencia ? " · " + p.licencia : ""}
+Link de su app: ${link}
+Bienvenida por WhatsApp: ${enviado ? "enviada" : "NO se pudo (mándale el link a mano)"}`).catch(() => undefined);
+  res.json({ ok: true, plomero: p, link, bienvenidaEnviada: enviado });
+});
+app.post("/admin/plomeros/:id/estado", (req: any, res) => {
+  const e = String(req.body?.estado ?? "") as any; if (!["activo", "pausado", "pendiente"].includes(e)) return res.status(400).json({ ok: false });
+  res.json({ ok: !!cambiarEstadoPlomero(req.params.id, e) });
+});
+app.post("/admin/plomeros/:id/reenviar", async (req: any, res) => {
+  const p = registroPlomeros().find((x) => x.id === req.params.id); if (!p) return res.status(404).json({ ok: false });
+  const link = linkPortal(p.id, config.urlPublica);
+  const ok = await wa.enviarTexto(p.whatsapp, bienvenidaPlomero(p.nombre, link)).then(() => true).catch(() => false);
+  res.json({ ok, link });
+});
+app.get("/admin/fotos/:archivo", (req, res) => { const f = path.join(ciclo.DIR_FOTOS, path.basename(req.params.archivo)); if (!fs.existsSync(f)) return res.status(404).end(); res.type("jpg").send(fs.readFileSync(f)); });
+app.post("/admin/trabajos/:id/marcar", (req: any, res) => {
+  const t = almacen.trabajos().find((x) => x.id === req.params.id); if (!t) return res.status(404).json({ ok: false });
+  const que = String(req.body?.que ?? "");
+  if (que === "cobrado") almacen.guardarTrabajo({ ...t, estado: "cobrado" });
+  else if (que === "pagado-plomero") almacen.guardarTrabajo({ ...t, pagadoAlPlomero: new Date().toISOString().slice(0, 10) });
+  else return res.status(400).json({ ok: false });
+  res.json({ ok: true });
+});
+function bienvenidaPlomero(nombre: string, link: string) {
+  return `¡Bienvenido a Resuelto, ${nombre.split(" ")[0]}! 🔧\n\nEsta es tu app para recibir trabajos:\n${link}\n\n1️⃣ Ábrela y añádela a tu pantalla de inicio.\n2️⃣ Toca "Activar alertas" para que te avise al celular.\n3️⃣ Cuando salga un trabajo en tu zona te llega la alerta: el primero que acepta se lo lleva.\n4️⃣ En cada trabajo: "Voy en camino" → "Llegué" → fotos del antes y el después → "Terminé". Resuelto le cobra al cliente y tú cobras el viernes (65 % de la mano de obra + materiales con 10 %).\n\nGuarda este mensaje: ese link es tu llave. Cualquier duda, escríbenos por aquí.`;
+}
 app.get("/admin/ofertas", (_req, res) => res.json({ ofertas: despacho.ofertas().slice(-100).reverse(), proveedores: listarProveedores() }));
 app.get("/admin/cotizadores", (_req, res) => res.json({ cotizadores: (JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "cotizadores.json"), "utf8")) as any).cotizadores.map((c: any) => ({ ...c, link: linkCotizador(c.id) })) }));
 app.post("/admin/ofertas/:id/asignar", async (req, res) => { res.json(await despacho.aceptar(req.params.id, String(req.body?.proveedorId ?? ""), true)); });

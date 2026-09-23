@@ -81,6 +81,8 @@ Investigación de mercado y marco legal (Ley 59-2022 plomería, DACO contratista
 ## 4. Dónde estamos
 Todo el sistema está **construido y probado en simulado**. Nada está conectado a cuentas reales: no hay WhatsApp, no hay LLC, no hay credenciales de Meta/GHL/Stripe/DocuSign, el dominio no apunta a la web, y `proveedores.json` tiene a Luis con datos de relleno.
 
+> **Listos para dar trabajo (22/sep):** `PLAN-LISTOS-PARA-TRABAJOS.md` — app del plomero v2 en producción (ciclo en camino → fotos → terminé → cobro, Mi semana), panel `/admin/plomeros` para dar de alta, cobertura real por plomero activo; bloqueos de Elvin: cobro (ATH/Stripe), presupuesto de clientes, Google Ads/GBP, seguro.
+
 > **Nina, Community Manager (21/sep):** `NINA-COMMUNITY-MANAGER.md` — agente propio en Railway que publica 1×/día por Zernio (mezcla 50/20/20/10, post/carrusel/reel, feriados PR+EE. UU.) y reporta por Telegram. Falta: conectar IG/FB en Zernio + bot de Telegram.
 
 > **Operación diaria (desde 21/sep):** `OPERACION-RECLUTAMIENTO.md` — qué pasa cuando un plomero escribe, dónde cae (GHL → Candidatos), la rutina de 15 min 2×/día y los avisos. Léelo antes que nada.

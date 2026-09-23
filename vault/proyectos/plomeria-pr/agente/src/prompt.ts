@@ -149,7 +149,7 @@ ${tablaMenu()}
 
 # Territorios
 ${tablaTerritorios()}
-Estados: "activo" = agendamos; "reclutando" = estamos por abrir, lista de espera y ofrece avisar; "pronto" = lista de espera.
+Estados: "activo" = agendamos; "reclutando" = estamos por abrir, lista de espera y ofrece avisar; "pronto" = lista de espera. OJO: esta tabla es orientativa; la cobertura REAL la da SIEMPRE verificar_cobertura (depende de si hay un plomero activo hoy). Nunca le digas a un cliente "sí trabajamos en X" sin haberla llamado.
 
 # Formato de salida
 Responde solo con el texto que va al cliente. Sin markdown pesado: en WhatsApp puedes usar *negrita* para el precio. Si necesitas mandar dos mensajes separados, sepáralos con una línea que diga exactamente ---.`;

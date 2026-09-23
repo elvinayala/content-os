@@ -39,6 +39,11 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
 .banner{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:none;gap:12px;align-items:center;justify-content:space-between}
 .banner p{font-size:14px;color:var(--ink2);margin:0}.banner b{color:#fff;display:block;font-family:Sora;font-size:15px}
 .banner button{background:var(--c2);color:#fff;border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+.cli{background:rgba(255,255,255,.04);border-radius:12px;padding:12px;margin-top:12px;font-size:14.5px}.cli a{color:#FF9660;text-decoration:none;font-weight:600}
+.pasos{display:flex;gap:6px;margin-top:12px}.pasos span{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12)}.pasos span.on{background:var(--c2)}
+.fotos{display:flex;gap:8px;margin-top:12px}.fotos label{flex:1;text-align:center;border:1.5px dashed var(--line);border-radius:12px;padding:12px 6px;font-size:13.5px;cursor:pointer}.fotos input{display:none}
+.campo{margin-top:10px}.campo label{font-size:12.5px;color:var(--ink2);display:block;margin-bottom:4px}.campo input{width:100%;background:#0A2236;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px;font:inherit}
+.semana{font-family:Sora;font-size:30px;font-weight:800}.fila{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .pill-push{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#63D6A6}
 </style>
 </head>
@@ -55,6 +60,8 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
   <div id="abiertas"><div class="vacio">Cargando…</div></div>
   <h2>Mis trabajos</h2>
   <div id="mios"></div>
+  <h2>Mi semana</h2>
+  <div id="cuenta"><div class="vacio">Cargando…</div></div>
 </main>
 <script>
 (function(){
@@ -66,25 +73,62 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
   var money=function(n){return '$'+Number(n).toLocaleString('en-US')};
   var cuando=function(iso){return iso?new Date(iso).toLocaleString('es-PR',{timeZone:'America/Puerto_Rico',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'por coordinar'};
   function restante(iso){var ms=new Date(iso)-Date.now();if(ms<=0)return 'vencida';var m=Math.floor(ms/60000);return m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min'}
+  var api=function(u,b){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({p:p,k:k},b))}).then(function(r){return r.json()})};
+  var hora=function(iso){return new Date(iso).toLocaleTimeString('es-PR',{timeZone:'America/Puerto_Rico',hour:'numeric',minute:'2-digit'})};
+  var ORDEN={'agendado':1,'en-camino':2,'en-sitio':3,'completado':4,'cobrado':4};
+  function firmaDe(o){return o.contrato?(o.contrato.estado==='firmado'?'<span class="tag ok">Orden firmada</span>':(o.contrato.urlFirma?'<a class="btn line" href="'+o.contrato.urlFirma+'">✍️ Firmar orden de trabajo</a>':'')):''}
   function card(o,mia){
-    var firma=o.contrato?(o.contrato.estado==='firmado'?'<span class="tag ok">Contrato firmado</span>':(o.contrato.urlFirma?'<a class="btn" href="'+o.contrato.urlFirma+'">✍️ Firmar orden de trabajo</a>':'<span class="tag warn">Contrato pendiente de firma</span>')):'';
-    return '<div class="card"><div class="top"><div><b class="id">'+o.id+' · '+o.referencia+'</b><h3>'+o.categoriaNombre+'</h3><p>'+o.resumen+'</p></div><div class="pago">'+money(o.pagoProveedor)+'<small>tu pago</small></div></div>'
-      +'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span>'+(mia?'<span class="tag ok">'+(o.estado==='aceptada'?'Tuyo':'Asignado a ti')+'</span>':'<span>⏳ <span class="timer">'+restante(o.expiraEn)+'</span></span>')+'</div>'
-      +(mia?firma:'<button class="btn" data-id="'+o.id+'">Aceptar este trabajo</button>')+'</div>';
+    var t=o.trabajo;
+    var head='<div class="top"><div><b class="id">'+o.id+' · '+o.referencia+'</b><h3>'+o.categoriaNombre+'</h3><p>'+o.resumen+'</p></div><div class="pago">'+money(t&&t.pagoPlomero!=null?t.pagoPlomero:o.pagoProveedor)+'<small>tu pago</small></div></div>';
+    if(!mia) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span>⏳ <span class="timer">'+restante(o.expiraEn)+'</span></span></div><button class="btn" data-id="'+o.id+'">Aceptar este trabajo</button></div>';
+    if(!t) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span class="tag ok">Tuyo</span></div>'+firmaDe(o)+'</div>';
+    var n=ORDEN[t.estado]||1, pasos='<div class="pasos">'+[1,2,3,4].map(function(x){return '<span class="'+(x<=n?'on':'')+'"></span>'}).join('')+'</div>';
+    var tel=(t.telefono||'').replace(/\D/g,'');
+    var cli='<div class="cli"><b>'+t.cliente+'</b><br>📞 <a href="tel:+'+tel+'">'+t.telefono+'</a> · <a href="https://wa.me/'+tel+'">WhatsApp</a><br>📍 <a href="https://maps.google.com/?q='+encodeURIComponent(t.direccion+', '+t.municipio+', PR')+'">'+t.direccion+', '+t.municipio+'</a>'+(t.referencia?'<br><span style="color:var(--ink2)">Ref: '+t.referencia+'</span>':'')+'<br>🕑 '+cuando(t.inicio)+' – '+hora(t.fin)+(t.emergencia?' <span class="tag warn">Emergencia</span>':'')+'<br>💲 '+(t.precioFijo!=null?'Precio fijo: $'+t.precioFijo+' mano de obra':'Por rango: $'+t.rango[0]+'–$'+t.rango[1]+' (tú pones el final)')+'</div>';
+    var acc='';
+    if(t.estado==='agendado') acc='<button class="btn" data-paso="en-camino" data-of="'+o.id+'">🚗 Voy en camino</button><p style="font-size:13px;color:var(--ink2);margin-top:8px">Le avisamos al cliente que vas.</p>';
+    else if(t.estado==='en-camino') acc='<button class="btn" data-paso="llegue" data-of="'+o.id+'">📍 Llegué</button>';
+    else if(t.estado==='en-sitio') acc='<div class="fotos"><label>📷 Antes ('+t.fotosAntes+')<input type="file" accept="image/*" capture="environment" multiple data-foto="antes" data-of="'+o.id+'"></label><label>📷 Después ('+t.fotosDespues+')<input type="file" accept="image/*" capture="environment" multiple data-foto="despues" data-of="'+o.id+'"></label></div>'
+      +(t.precioFijo==null?'<div class="campo"><label>Mano de obra final ($'+t.rango[0]+'–$'+t.rango[1]+')</label><input type="number" inputmode="decimal" id="mo-'+o.id+'"></div>':'')
+      +'<div class="campo"><label>Materiales que compraste ($, costo real con recibo)</label><input type="number" inputmode="decimal" id="mat-'+o.id+'" placeholder="0"></div>'
+      +'<div class="campo"><label>Nota (opcional)</label><input id="nota-'+o.id+'" placeholder="Qué hiciste / algo a tener en cuenta"></div>'
+      +'<button class="btn" data-paso="terminado" data-of="'+o.id+'">✅ Terminé — cobrarle al cliente</button>';
+    else acc='<div class="cli">✅ Terminado. El cliente paga <b>'+money(t.totalCliente)+'</b> a Resuelto'+(t.estado==='cobrado'?' <span class="tag ok">Cobrado</span>':' <span class="tag warn">Pendiente de pago</span>')+'<br>Tú cobras <b>'+money(t.pagoPlomero)+'</b> el viernes.</div>';
+    return '<div class="card">'+head+pasos+cli+firmaDe(o)+acc+'</div>';
+  }
+  function achicar(file){return new Promise(function(ok,ko){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,s=Math.min(1,m/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',0.8))};img.onerror=ko;img.src=URL.createObjectURL(file)})}
+  function enlazar(){
+    document.querySelectorAll('button[data-id]').forEach(function(b){b.onclick=function(){b.disabled=true;b.textContent='Aceptando…';
+      api('/api/proveedores/aceptar',{oferta:b.dataset.id}).then(function(j){if(j.ok){aviso('✅ '+j.oferta.id+' es tuyo. Abajo en "Mis trabajos" tienes los datos del cliente.');}else{aviso(j.motivo||'No se pudo aceptar.',true);} cargar();});};});
+    document.querySelectorAll('button[data-paso]').forEach(function(b){b.onclick=function(){
+      var of=b.dataset.of,body={oferta:of,paso:b.dataset.paso};
+      if(b.dataset.paso==='terminado'){var mo=$('mo-'+of),mat=$('mat-'+of),nt=$('nota-'+of);if(mo)body.mano_obra=Number(mo.value);body.materiales=Number(mat&&mat.value||0);body.nota=nt?nt.value:'';if(!confirm('¿Cerrar el trabajo y enviarle el cobro al cliente?'))return;}
+      b.disabled=true;b.textContent='Enviando…';
+      api('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){aviso(j.estado==='completado'?'✅ Listo. Le enviamos el cobro de '+money(j.total)+' al cliente. Tú cobras '+money(j.pago)+' el viernes.':(j.recordatorio||'✅ Listo'));}else{aviso(j.motivo||'No se pudo.',true);} cargar();cuenta();});};});
+    document.querySelectorAll('input[data-foto]').forEach(function(inp){inp.onchange=function(){
+      var files=[].slice.call(inp.files||[]);if(!files.length)return;aviso('Subiendo '+files.length+' foto(s)…');
+      files.reduce(function(pr,f){return pr.then(function(){return achicar(f).then(function(d){return api('/api/proveedores/trabajo/foto',{oferta:inp.dataset.of,tipo:inp.dataset.foto,imagen:d}).then(function(j){if(!j.ok)aviso(j.motivo,true)})})})},Promise.resolve()).then(function(){aviso('📷 Fotos guardadas.');cargar();});};});
   }
   function cargar(){
     fetch('/api/proveedores/ofertas?p='+encodeURIComponent(p)+'&k='+k).then(function(r){return r.json()}).then(function(j){
       if(j.error){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">'+j.error+'</div>';return;}
       $('quien').textContent=j.proveedor.nombre+' · '+(j.proveedor.tipo==='plomero'?'Plomero':'Contratista');
       var ab=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==p}), mi=j.ofertas.filter(function(o){return o.aceptadoPor===p});
-      $('abiertas').innerHTML=ab.length?ab.map(function(o){return card(o,false)}).join(''):'<div class="vacio">Nada disponible ahora. Te avisamos por WhatsApp en cuanto salga algo en tu zona.</div>';
-      $('mios').innerHTML=mi.length?mi.map(function(o){return card(o,true)}).join(''):'<div class="vacio">Todavía no tienes trabajos asignados.</div>';
-      document.querySelectorAll('button[data-id]').forEach(function(b){b.onclick=function(){b.disabled=true;b.textContent='Aceptando…';
-        fetch('/api/proveedores/aceptar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p:p,k:k,oferta:b.dataset.id})}).then(function(r){return r.json()}).then(function(j){
-          if(j.ok){aviso('✅ '+j.oferta.id+' es tuyo. Revisa WhatsApp: ahí van los datos del cliente y tu orden de trabajo.');}else{aviso(j.motivo||'No se pudo aceptar.',true);} cargar();});};});
+      var activo=document.activeElement&&document.activeElement.tagName==='INPUT';if(activo)return;
+      $('abiertas').innerHTML=ab.length?ab.map(function(o){return card(o,false)}).join(''):'<div class="vacio">Nada disponible ahora. Te avisamos al celular en cuanto salga algo en tu zona.</div>';
+      $('mios').innerHTML=mi.length?mi.map(function(o){return card(o,true)}).join(''):'<div class="vacio">Todavía no tienes trabajos. Cuando aceptes uno, aquí ves al cliente y los pasos.</div>';
+      enlazar();
     }).catch(function(){$('abiertas').innerHTML='<div class="vacio">No pude conectar. Intenta otra vez.</div>'});
   }
-  cargar(); setInterval(cargar,20000);
+  function cuenta(){
+    fetch('/api/proveedores/cuenta?p='+encodeURIComponent(p)+'&k='+k).then(function(r){return r.json()}).then(function(c){
+      if(c.error)return; var s=c.estaSemana, f=new Date(s.pagoViernes+'T12:00:00').toLocaleDateString('es-PR',{weekday:'long',day:'numeric',month:'long'});
+      $('cuenta').innerHTML='<div class="card"><p style="color:var(--ink2)">Esta semana · se paga el '+f+'</p><div class="semana">'+money(s.total)+'</div>'
+        +(s.trabajos.length?s.trabajos.map(function(t){return '<div class="fila"><span>'+t.id+' · '+t.servicio+'</span><b>'+money(t.pago)+'</b></div>'}).join(''):'<p style="color:var(--ink3);margin-top:8px">Todavía no has cerrado trabajos esta semana.</p>')
+        +'<p style="color:var(--ink2);font-size:13px;margin-top:10px">Semana pasada: '+money(c.anterior.total)+' · Acumulado: '+money(c.acumulado)+' en '+c.trabajosTotales+' trabajos</p></div>';
+    });
+  }
+  cargar(); cuenta(); setInterval(cargar,20000);
 
   // ── App instalable + notificaciones push ──
   var urlB64=function(b){var p='='.repeat((4-b.length%4)%4),s=(b+p).replace(/-/g,'+').replace(/_/g,'/'),r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a};

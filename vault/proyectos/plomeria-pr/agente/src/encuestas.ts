@@ -49,7 +49,7 @@ export async function registrar(proyectoId: string, r: Partial<Encuesta>): Promi
     `A tiempo: ${e.llegoATiempo === undefined ? "?" : e.llegoATiempo ? "sí" : "NO"} · profesional ${e.profesional ?? "?"}/5 · explicó ${e.explicoBien ?? "?"}/5 · claridad ${e.cotizacionClara ?? "?"}/5`,
     `Contrató: ${e.contrato ? "sí" : "no"}${e.motivoNoContrato ? ` · motivo: ${e.motivoNoContrato}` : ""}${e.precioRecibido ? ` · precio que recuerda: $${e.precioRecibido}` : ""}${e.estaComparando ? " · está comparando" : ""}${e.interesFinanciamiento ? " · quiere financiamiento" : ""}`,
     e.comentario ? `"${e.comentario}"` : ""].filter(Boolean).join("\n");
-  if (e.senalRecovery) await avisarCoordinador(`🔁 RECOVERY · ${res}\nLlamar en 24 h: ${config.urlPublica}/admin/recovery`);
+  if (e.senalRecovery) await avisarCoordinador(`🔁 RECOVERY · ${res}\nLlamar en 24 h: ${config.urlPublica}/admin/recovery?t=${config.adminToken}`);
   else if (alertaRepresentante) await avisarCoordinador(`🚩 Alerta de representante · ${res}${e.problemaRepresentante ? `\nProblema: ${e.problemaRepresentante}` : ""}`);
   else await avisarCoordinador(res);
   return { ok: true, senalRecovery: !!e.senalRecovery, alertaRepresentante };
