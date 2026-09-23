@@ -23,12 +23,15 @@ if [ -n "${PUENTE_PENDIENTES:-}" ] && [ -d "${PUENTE_PENDIENTES}" ]; then
   ( cd "$PUENTE_PENDIENTES" && tar cf - . ) | tar xf - -C . && echo "↻ cambios pendientes del volumen puestos encima"
 fi
 echo "▶ Desplegando snapshots a producción…"
+# Sin --scope el CLI responde "Not authorized" (el proyecto vive en el equipo elvin-7614s-projects,
+# no en la cuenta personal). Visto el 23/sep/2026.
+SCOPE="--scope ${VERCEL_SCOPE:-elvin-7614s-projects}"
 if [ -n "${VERCEL_TOKEN:-}" ]; then
   if [ ! -f .vercel/project.json ]; then
-    npx --yes vercel link --yes --project content-os --token="$VERCEL_TOKEN" >/dev/null 2>&1 || true
+    npx --yes vercel link --yes --project content-os $SCOPE --token="$VERCEL_TOKEN" >/dev/null 2>&1 || true
   fi
-  npx --yes vercel --prod --yes --token="$VERCEL_TOKEN" 2>&1 | grep -iE "Aliased|Production|error" | tail -3
+  npx --yes vercel --prod --yes $SCOPE --token="$VERCEL_TOKEN" 2>&1 | grep -iE "Aliased|Production|error" | tail -3
 else
-  npx vercel --prod --yes 2>&1 | grep -iE "Aliased|Production|error" | tail -3
+  npx vercel --prod --yes $SCOPE 2>&1 | grep -iE "Aliased|Production|error" | tail -3
 fi
 echo "✔ Deploy terminado."
