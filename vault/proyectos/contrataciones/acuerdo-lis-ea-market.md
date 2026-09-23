@@ -76,13 +76,13 @@ aparte. La idea es simple: **si a EA Market le entra dinero por su gestión, ell
 | Incentivo | Cuándo se gana | Monto |
 |---|---|---|
 | **Colaboración lograda** | Un creador acepta, firma y publica la colaboración que ella consiguió y negoció | **$25–$50** por creador, según el tamaño del acuerdo: hasta $500 → $25 · $501–$1,000 → $35 · más de $1,000 → $50 |
-| **Venta propia de Bori** | Ella misma cierra la venta en un seguimiento, sin tener que devolver el lead a un closer | **$50** por venta |
+| **Venta propia de Bori** | Ella misma cierra la venta en un seguimiento, sin tener que devolver el lead a un closer | Según el plan: **Agencia ($249) → $50** · **Pro ($99) → $30** · **Starter ($39) o Creador ($19) → $25** |
 | **Cliente retenido** | Un cliente que avisó que se iba se queda y paga 30 días más | **$25** por cliente |
 | **Bono de seguimiento** | Cuando las ventas generadas por su gestión de seguimiento (LU + AIB) pasan de **$25,000 en el mes** | **$250**; y $250 adicionales por cada $25,000 extra en el mismo mes |
 | **Equipo** | — | **Computadora nueva** de la empresa para este trabajo |
 
-Mes de ejemplo con las metas cumplidas: $750 + 4 colaboraciones (~$140) + 1 venta propia ($50) +
-3 retenidos ($75) + bono de seguimiento ($250) = **$1,265**. Los incentivos no tienen tope:
+Mes de ejemplo con las metas cumplidas: $750 + 4 colaboraciones (~$140) + 1 venta propia de Pro
+($30) + 3 retenidos ($75) + bono de seguimiento ($250) = **$1,245**. Los incentivos no tienen tope:
 mientras más cierre, retenga y consiga, más gana.
 
 Reglas de los incentivos: se pagan con la nómina del mes siguiente, contra resultado verificado

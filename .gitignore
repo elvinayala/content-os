@@ -65,3 +65,4 @@ scratchpad_titles_*.txt
 .pulse-db/
 data/pulse-migracion.json
 data/higgsfield-auth.json
+vault/proyectos/contrataciones/pdf/
