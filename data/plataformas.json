@@ -9,7 +9,7 @@
       "prod": "https://content-os-chi-seven.vercel.app",
       "salud": "https://content-os-chi-seven.vercel.app/login",
       "hosting": "vercel",
-      "deploy": "bash scripts/deploy-snapshots.sh  (o npx vercel --prod --yes)",
+      "deploy": "bash scripts/deploy-snapshots.sh  (o npx vercel --prod --yes --scope elvin-7614s-projects — sin --scope da \"Not authorized\")",
       "logs": "npx vercel logs content-os-chi-seven.vercel.app",
       "tests": "npm test",
       "leerPrimero": [
