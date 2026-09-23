@@ -69,25 +69,43 @@ tablero y los códigos de referido, **Max** las Partnership Ads.
 | Closers | pipeline al día · no-shows perseguidos en 24 h | show rate +10 % |
 | Colaboraciones | **4 publicadas** · 40 creadores contactados | 6 publicadas · primeros pagos por código |
 
-## Compensación
-| Concepto | Monto |
-|---|---|
-| Base mensual | **$850** (sube de $750) |
-| Por colaboración publicada (en fecha y presupuesto) | **+$50** c/u |
-| Por cada cliente de Bori que paga con el código de un creador suyo | **+$10** c/u |
-| Por cada cliente retenido (avisó que se iba y se queda 30 días más) | **+$25** c/u |
-| Equipo | **Computadora nueva** (de la empresa, para este trabajo) |
+## Compensación — base fija + incentivos por resultado
+La base **no cambia: $750/mes**. Lo que cambia es que ahora todo lo que ella mueva le paga
+aparte. La idea es simple: **si a EA Market le entra dinero por su gestión, ella gana**.
 
-Mes típico con las metas cumplidas: $850 + 4 colabs ($200) + retenciones ($75) ≈ **$1,125**.
-Sin tope en las variables: mientras más colaboraciones y más clientes retenga, más gana.
+| Incentivo | Cuándo se gana | Monto |
+|---|---|---|
+| **Colaboración lograda** | Un creador acepta, firma y publica la colaboración que ella consiguió y negoció | **$25–$50** por creador, según el tamaño del acuerdo: hasta $500 → $25 · $501–$1,000 → $35 · más de $1,000 → $50 |
+| **Venta propia de Bori** | Ella misma cierra la venta en un seguimiento, sin tener que devolver el lead a un closer | **$50** por venta |
+| **Cliente retenido** | Un cliente que avisó que se iba se queda y paga 30 días más | **$25** por cliente |
+| **Bono de seguimiento** | Cuando las ventas generadas por su gestión de seguimiento (LU + AIB) pasan de **$25,000 en el mes** | **$250**; y $250 adicionales por cada $25,000 extra en el mismo mes |
+| **Equipo** | — | **Computadora nueva** de la empresa para este trabajo |
+
+Mes de ejemplo con las metas cumplidas: $750 + 4 colaboraciones (~$140) + 1 venta propia ($50) +
+3 retenidos ($75) + bono de seguimiento ($250) = **$1,265**. Los incentivos no tienen tope:
+mientras más cierre, retenga y consiga, más gana.
+
+Reglas de los incentivos: se pagan con la nómina del mes siguiente, contra resultado verificado
+(colaboración publicada, pago recibido, cliente activo a los 30 días). Una venta que ya venía
+trabajada por un closer es del closer; el bono de venta propia es solo cuando ella la origina y
+la cierra en su seguimiento. Las ventas del bono de seguimiento se cuentan de Pipedrive/Pulse,
+no de estimados.
+
+## Dedicación y flexibilidad
+El puesto es de **EA Market LLC**, no de una sola empresa. El tiempo que le dedica a cada frente
+(Level Up, AI Borinquen, Bori, o el negocio que haga falta) **sube o baja según la necesidad del
+holding**: un mes puede ser más retención, otro más colaboraciones, otro apoyar a los closers en
+un empuje de ventas. Elvin le dice cuál es la prioridad de la semana; los pesos de la sección
+anterior son la referencia normal, no una camisa de fuerza. Si aparece un proyecto nuevo dentro
+de EA Market que necesite su perfil, entra también.
 
 ## Cómo se mide y se revisa
 - **Lunes**, un mensaje a Elvin por Slack: clientes en riesgo y qué se hizo · pendientes de
   seguimiento · leads/no-shows · creadores contactados y en qué van.
 - **Viernes**, la tabla de 3 creadores cotizados.
-- **Revisión el 6/nov**: si las metas de octubre se cumplen, se ajusta base y variables hacia
-  arriba y el frente de colaboraciones puede crecer a 8–10 al mes. Si el volumen pide más manos,
-  se contrata debajo de ella, no encima.
+- **Revisión el 6/nov**: si las metas de octubre se cumplen, se revisan los incentivos (y la base)
+  hacia arriba y el frente de colaboraciones puede crecer a 8–10 al mes. Si el volumen pide más
+  manos, se contrata debajo de ella, no encima.
 
 ## Condiciones
 Contrato de servicios con EA Market LLC (no con una sola empresa). Horario de referencia
