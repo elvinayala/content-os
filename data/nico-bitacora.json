@@ -73,6 +73,14 @@
       "porque": "Sofi reportó que la memoria apuntaba a un script perdido",
       "verificado": "sí — grep -rI slack-sofi en todo el repo y en la carpeta de memoria: 0 resultados; SLACK_BOT_TOKEN presente en los 4 servicios y válido (auth.test ok, scopes chat:write + users:read)",
       "commit": "676bea9"
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "pulse (content-os)",
+      "que": "[Solicitud de Carilin #13] Automatizaciones tipo Monday en Pulse: en LEVEL UP MEDIA, Progreso = \"Onboarding Completado\" mueve el cliente a CLIENTE ACTIVO (no lo saca de Accelerator/Inner Circle) y Progreso = \"Decidió no continuar\" (el OFF de Monday; así están 640+ en OFFBOARDED) lo mueve a OFFBOARDED. Reglas por id en lib/pulse/automatizaciones.ts; la action actualizarValorAction las aplica, queda en la actividad como ⚡ automatización y avisa a n8n.",
+      "porque": "Carilin: en Monday los clientes bajaban solos de grupo al cambiar el status; en Pulse había que moverlos a mano.",
+      "verificado": "PARCIAL: 43/43 tests (6 nuevos) y tipos OK; commit subido a GitHub. NO está en producción: el VERCEL_TOKEN de Railway (nico y puente) da 403 invalidToken y Vercel no despliega solo desde GitHub (prod sigue en dpl_2befHbHq2av2bVqng1vkfYgeAqZU). Falta deploy desde la Mac y probar con un cliente de prueba.",
+      "commit": "4fb83f0"
     }
   ],
   "pendientesElvin": [
@@ -111,7 +119,8 @@
       "desde": "2026-09-19",
       "plataforma": "bori",
       "estado": "pendiente"
-    }
+    },
+    "2026-09-23: VERCEL_TOKEN de Railway (servicios nico y puente) está vencido/inválido (403). Generar uno nuevo en vercel.com/account/tokens y ponerlo en Railway; mientras, deployar Pulse #13 desde la Mac: git pull && bash scripts/deploy-snapshots.sh"
   ],
   "actualizadoEl": "2026-09-20T15:28:36.900Z"
 }
