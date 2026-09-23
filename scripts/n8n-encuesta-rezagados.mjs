@@ -134,9 +134,14 @@ for (const p of lista) {
     await registrar(p);
     if (p.grupo === "B") { hecho[clave] = { cuando: new Date().toISOString(), accion: "registrado" }; console.log(`✓ ${p.nombre}: registrado`); }
     else {
+      // Espera a que el flujo de citas lo deje en el buzón de WhatsApp (6) con su conversación.
       let contacto = null;
-      for (let i = 0; i < 6 && !contacto; i++) { await pausa(5000); contacto = await contactoDe(p); }
-      if (!contacto) throw new Error("no apareció en Chatwoot después de registrarlo");
+      for (let i = 0; i < 8; i++) {
+        await pausa(5000);
+        const c = await contactoDe(p);
+        if (c && (c.contact_inboxes || []).some((x) => x.inbox?.id === INBOX)) { contacto = c; break; }
+      }
+      if (!contacto) throw new Error("no quedó en el buzón de WhatsApp después de registrarlo");
       const conv = await disparar(p, contacto);
       hecho[clave] = { cuando: new Date().toISOString(), accion, conversacion: conv };
       console.log(`✓ ${p.nombre}: ${accion} (conversación ${conv})`);
