@@ -190,6 +190,8 @@ export const OPTIMIZACIONES = {
   "enlace": { optimizacion: "LINK_CLICKS", destino: "WEBSITE", objetivo: "OUTCOME_TRAFFIC" },
   "dm-ig": { optimizacion: "CONVERSATIONS", destino: "INSTAGRAM_DIRECT", objetivo: "OUTCOME_SALES" },
   "leads": { optimizacion: "OFFSITE_CONVERSIONS", destino: "WEBSITE", objetivo: "OUTCOME_LEADS" },
+  // Fase 4 del método de Elvin: reconocimiento a público 365 (no es venta). Sin destino.
+  "thruplay": { optimizacion: "THRUPLAY", destino: null, objetivo: "OUTCOME_AWARENESS" },
 };
 export function buildAdSetBody({
   nombre, campaignId, presupuestoDiario, pixelId, pageId, evento = "LEAD",
@@ -204,7 +206,7 @@ export function buildAdSetBody({
     billing_event: "IMPRESSIONS",
     optimization_goal: optimizacion,
     bid_strategy: "LOWEST_COST_WITHOUT_CAP",
-    destination_type: destino,
+    ...(destino ? { destination_type: destino } : {}),
     targeting,
     status: "PAUSED",
   };
@@ -230,7 +232,7 @@ export function buildCreativeExistente({ nombre, pageId, igUserId, igMediaId, po
     body.object_story_id = `${pageId}_${postId}`;
     if (igUserId) body.instagram_user_id = String(igUserId);
   }
-  body.call_to_action = link ? { type: cta, value: { link } } : { type: cta };
+  if (cta) body.call_to_action = link ? { type: cta, value: { link } } : { type: cta }; // ThruPlay: sin CTA
   if (urlTags) body.url_tags = urlTags;
   return body;
 }
@@ -282,6 +284,9 @@ export function specPublicoEngagement({ nombre, pageId, igUserId, dias = 365, ti
   const ig = igUserId ? { id: String(igUserId), type: "ig_business" } : null;
   if (tipo === "engagers") { add(fb, "page_engaged"); add(ig, "ig_business_profile_engaged"); }
   if (tipo === "mensajes") { add(fb, "page_messaged"); add(ig, "ig_business_messaged"); }
+  if (tipo === "video75") { add(fb, "video_watched", [{ field: "aggregation", operator: ">=", value: "75" }]); add(ig, "video_watched", [{ field: "aggregation", operator: ">=", value: "75" }]); }
+  if (tipo === "visitas") { add(fb, "page_visited"); add(ig, "ig_business_profile_visit"); }
+  if (tipo === "guardados") add(ig, "ig_business_saved");
   if (tipo === "video50") { add(fb, "video_watched", [{ field: "aggregation", operator: ">=", value: "50" }]); add(ig, "video_watched", [{ field: "aggregation", operator: ">=", value: "50" }]); }
   if (tipo === "video25") { add(fb, "video_watched", [{ field: "aggregation", operator: ">=", value: "25" }]); add(ig, "video_watched", [{ field: "aggregation", operator: ">=", value: "25" }]); }
   if (!rules.length) throw new Error("specPublicoEngagement: falta pageId/igUserId o tipo inválido");
@@ -381,7 +386,7 @@ export function expandirPlan(plan, { publicosDisponibles = new Map() } = {}) {
         existente: cr.igMediaId ? `reel ${cr.igMediaId}` : cr.postId ? `post ${cr.postId}` : null,
         body: (pageId, igUserId, videoId) => (cr.igMediaId || cr.postId) ? buildCreativeExistente({
           nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, igMediaId: cr.igMediaId, postId: cr.postId,
-          cta: cr.cta || (opt.optimizacion === "PROFILE_VISIT" ? "VIEW_INSTAGRAM_PROFILE" : opt.optimizacion === "CONVERSATIONS" ? "MESSAGE_PAGE" : "LEARN_MORE"),
+          cta: cr.cta !== undefined ? cr.cta : (opt.optimizacion === "PROFILE_VISIT" ? "VIEW_INSTAGRAM_PROFILE" : opt.optimizacion === "CONVERSATIONS" ? "MESSAGE_PAGE" : opt.optimizacion === "THRUPLAY" ? null : "LEARN_MORE"),
           // VIEW_INSTAGRAM_PROFILE también exige `link` (error 2061015): la URL del perfil.
           link: opt.destino === "WEBSITE" ? plan.landing : opt.destino === "INSTAGRAM_PROFILE" && plan.igHandle ? `https://www.instagram.com/${plan.igHandle}/` : undefined, urlTags: plan.urlTags,
         }) : buildCreativeBody({

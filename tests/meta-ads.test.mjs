@@ -243,3 +243,56 @@ test("resumirInsights: ROAS, señal de ESCALAR y frecuencia quemada", () => {
   assert.equal(r.ventasTotal, 3);
   assert.equal(r.roasTotal, 800 / 175);
 });
+
+// ---- Método de Elvin · 5 fases (23/sep/2026) ----
+import { planEstrategia5Fases, repartirFases, publicosMetodo } from "../scripts/meta-ads/plantillas.mjs";
+const cfg5 = { clave: "level-up", nombre: "Level Up Media", etiqueta: "LU", cuentaId: "1", pageId: "11", igUserId: "22", igHandle: "levelupmediapr", pixelId: "33", publicosClave: {} };
+
+test("5 fases: el presupuesto cuadra exacto, F2 ≥ 65 % y cada conjunto ≥ $10", () => {
+  for (const total of [60, 100, 150, 300, 1000]) {
+    const est = planEstrategia5Fases(cfg5, { destino: "dm-ig", presupuesto: total, reels: ["1", "2", "3", "4"] });
+    const suma = est.fases.flatMap((f) => f.conjuntos).reduce((s, c) => s + c.presupuestoDiario, 0);
+    assert.equal(suma, total, `total ${total}`);
+    const f2 = est.fases.find((f) => f.fase === "f2").conjuntos.reduce((s, c) => s + c.presupuestoDiario, 0);
+    assert.ok(f2 / total >= 0.65, `F2 ${f2}/${total}`);
+    for (const c of est.fases.flatMap((f) => f.conjuntos)) assert.ok(c.presupuestoDiario >= 10, `${c.clave} ${c.presupuestoDiario}`);
+  }
+});
+
+test("5 fases: públicos primero, F3 remarketing a ventas con caliente/tibio, F4 ThruPlay 365 sin CTA", () => {
+  const est = planEstrategia5Fases(cfg5, { destino: "leads", presupuesto: 300, reels: ["1", "2"], url: "https://x.com" });
+  assert.deepEqual(Object.keys(est.publicosACrear).sort(), ["engagers-365", "mensajes-365", "similar-engagers-1", "video25-365", "video75-365", "visitas-120", "web-180"].sort());
+  const [f1, f2, f3, f4] = est.fases;
+  assert.equal(f1.modo, "enlace");
+  assert.equal(f2.modo, "leads");
+  assert.equal(f3.modo, "leads");
+  assert.deepEqual(Object.keys(f3.publicos), ["CAL", "TIB"]);
+  assert.ok(f3.publicos.CAL.incluir.includes("video75-365") && f3.publicos.CAL.incluir.includes("web-180"));
+  assert.ok(f3.publicos.TIB.incluir.includes("similar-engagers-1"));
+  assert.equal(f4.modo, "thruplay");
+  assert.equal(f4.creativos[0].cta, null);
+  assert.ok(/Escalar/.test(est.f5));
+});
+
+test("5 fases: con poco presupuesto se omite F4 y luego F3 antes que bajar ventas", () => {
+  const { reparto, omitidas } = repartirFases(40);
+  assert.equal(reparto.f3, undefined);
+  assert.equal(reparto.f4, undefined);
+  assert.ok(omitidas.f3 && omitidas.f4);
+  assert.equal(reparto.f1 + reparto.f2, 40);
+  assert.throws(() => planEstrategia5Fases(cfg5, { destino: "whatsapp", presupuesto: 100, reels: ["1"] }), /Bori/);
+  assert.ok(!publicosMetodo({ ...cfg5, pixelId: null })["web-180"]);
+});
+
+test("ThruPlay: conjunto sin destination_type y creativo existente sin CTA", () => {
+  const est = planEstrategia5Fases(cfg5, { destino: "dm-ig", presupuesto: 100, reels: ["9"] });
+  const f4 = est.fases.find((f) => f.fase === "f4");
+  const disp = new Map([["engagers-365", "501"], ["video25-365", "502"]]);
+  const arbol = expandirPlan(f4, { publicosDisponibles: disp });
+  assert.equal(arbol.campana.objective, "OUTCOME_AWARENESS");
+  assert.equal(arbol.conjuntos[0].adset.optimization_goal, "THRUPLAY");
+  assert.ok(!("destination_type" in arbol.conjuntos[0].adset));
+  const body = arbol.conjuntos[0].creativo.body("11", "22", null);
+  assert.equal(body.call_to_action, undefined);
+  assert.equal(body.source_instagram_media_id, "9");
+});

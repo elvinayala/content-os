@@ -21,7 +21,7 @@ Si una marca da error 190, anota "token vencido" y sigue. Si no tiene campañas 
   del creativo; si no se puede, dilo: "ángulo por confirmar con Aure").
 - **Ángulos ganadores**: agrupa ganadores por ángulo; pide a Elvin 3-5 piezas nuevas de ese ángulo
   (gancho concreto, formato, CTA).
-- **Alertas para escalar**: lista `escalar` del JSON con acción sugerida (+10-20 % o duplicar a
+- **Alertas para escalar** (Fase 5 del método): lista `escalar` del JSON con acción sugerida y el comando listo para cuando Elvin diga que sí (`escalar <adsetId> --pct 15`; nunca con `--ok` en la rutina) (+10-20 % o duplicar a
   público nuevo) y la razón numérica.
 - **Pausar / revisar**: lista `pausar` y avisos de CTR < 2 % o frecuencia quemada.
 - **Creativos a renovar**: anuncios activos con ≥ 10 días (usa `arbol` si hace falta la fecha) →

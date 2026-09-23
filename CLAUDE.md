@@ -456,7 +456,7 @@ Rutinas de Max (tareas programadas): `max-reporte-semanal` (lunes 8 AM, `/report
 `/trazabilidad-aure`: le pide a Aure por Slack ventas↔anuncio de LU/AIB y registra en
 `data/meta-ads/trazabilidad.json`). Meta del método: $100K→$300K con ROAS 6-8x, renovar creativos cada
 10 días, analizar cada 3-7, escalar ganadores 10-20 %; `resultados` marca ESCALAR/pausar/CTR<2 %.
-Atajo sin tokens en cualquier bot: `/ads plantilla|resultados|campanas|arbol|pausar <marca> …`. Reglas:
+Atajo sin tokens en cualquier bot: `/ads plantilla|resultados|campanas|arbol|pausar <marca> …`. **23/sep/2026 — Max completo:** `estrategia` = el **Método 5 Fases** de Elvin (públicos primero → F1 tráfico ~10 % · F2 ventas ≥70 % · F3 remarketing ventas caliente/tibio · F4 ThruPlay 365 · F5 escalar), todo EN PAUSA en ~1 min (`plantillas.mjs` → `planEstrategia5Fases`, tests en `tests/meta-ads.test.mjs`); `escalar <adsetId> [--pct] [--ok]` (propone; `--ok` solo tras el sí de Elvin, ≤ 20 %); `competencia "<términos>"` + skill `espiar-competencia` (Biblioteca de Anuncios vía Apify `apify/facebook-ads-scraper`, ranking por días activos + variantes en código, `scripts/meta-ads/competencia.mjs`, necesita `APIFY_TOKEN`). **Max es el trafficker de los clientes de AI Borinquen en Bori** (heybori.ai → Estratega → modo "Max · trafficker": Sonnet 5, ficha de onboarding por espacio de cliente, mismo método, flyers Nano Banana, pedido de videos a la PM); cerebro §1b/§10/§11. Reglas:
 nunca activar ni subir presupuesto por API, 1 creativo por conjunto ≥ mínimo de la marca ($10; Mauro $5),
 tope diario por campaña, tuteo PR, sin "gratis", sin promesas de ingreso. Traffickers de Level Up
 usan **Bori** (rol `trafficker`, `POST /api/admin/crear-trafficker` como dueño).

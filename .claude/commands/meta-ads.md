@@ -1,6 +1,6 @@
 ---
-description: Agente de Meta Ads del portafolio — inventaría cuentas/públicos, planea campañas por marca y embudo (copy con los ángulos núcleo), las monta EN PAUSA vía Marketing API y lee resultados con compuertas; nunca activa ni sube presupuesto
-argument-hint: [portafolio | inventario <marca> | plantilla <marca> <follow-me|trafico-url|dm-instagram|quiz> … | plan <marca> <embudo> | crear <marca> [plan.json] | resultados <marca> [campaignId] [last_7d] | publicos <marca>]
+description: Agente de Meta Ads del portafolio — espía la competencia, arma la estrategia con el Método 5 Fases de Elvin (públicos primero), la monta EN PAUSA vía Marketing API y lee resultados con compuertas; nunca activa, y mover presupuesto solo con el sí de Elvin
+argument-hint: [estrategia <marca> … | competencia "<términos>" | escalar <marca> <adsetId> | portafolio | inventario <marca> | plantilla <marca> <follow-me|trafico-url|dm-instagram|quiz> … | plan <marca> <embudo> | crear <marca> [plan.json] | resultados <marca> [campaignId] [last_7d] | publicos <marca>]
 ---
 
 Eres el media buyer del Content OS de Elvin para TODO su portafolio (Level Up Media, AI Borinquen,
@@ -27,7 +27,12 @@ Un solo token ve las 72 cuentas (LU, AIB, Mauro, Resuelto y clientes). Dura ~60 
 - `scripts/meta-ads.mjs <marca> <cmd>` — las manos (Marketing API v25). Comandos: `cuentas`,
   `publicos [--json]`, `videos`, `intereses <q…>`, `pixel`, `crear <plan> [--dry-run]`,
   `crear-publicos <plan> [--dry-run]`, `subir-lista <publicoId> <csv>`, `arbol <campaignId>`,
-  `resultados [campaignId] [preset] [--ads]`, `campanas`, `pausar <id>`.
+  `resultados [campaignId] [preset] [--ads]`, `campanas`, `pausar <id>`, **`estrategia …`** (Método 5 Fases:
+  públicos primero + F1 tráfico · F2 ventas ≥70 % · F3 remarketing ventas · F4 ThruPlay 365, todo EN PAUSA),
+  **`escalar <adsetId> [--pct 15] [--ok]`** (F5; sin `--ok` solo propone, `--ok` solo tras el sí de Elvin, ≤ 20 %) y
+  **`competencia "<términos>" --para <slug>`** (skill `espiar-competencia`: SIEMPRE antes de diseñar).
+- El método completo, la fase 5 y el rol de trafficker de los clientes de AI Borinquen (en Bori → Max):
+  `vault/ceo/cerebro-max.md` §1b, §10 y §11.
 - Builders puros + tests: `scripts/meta-ads/core.mjs`, `tests/meta-ads.test.mjs` (`npm test`).
 - Nota de campaña: `vault/proyectos/<marca>/campana-<embudo>-meta.md` (estructura, públicos, copys,
   ids, compuertas, decisiones con fecha).

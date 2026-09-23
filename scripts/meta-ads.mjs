@@ -15,6 +15,10 @@
 //   node scripts/meta-ads.mjs <marca> pausar <id>             pausa campaña/conjunto/anuncio (única escritura de estado permitida)
 //   node scripts/meta-ads.mjs <marca> plantilla <tipo> [--reels a,b] [--videos a,b] [--presupuesto 15] [--edad 18-35] [--url …] [--nombre …] [--dry-run]
 //       tipos: follow-me | trafico-url | dm-instagram | quiz  → escribe data/meta-ads/campanas/<marca>-<tipo>-<fecha>.json y la monta EN PAUSA
+//   node scripts/meta-ads.mjs <marca> estrategia --destino dm-ig|leads|enlace --presupuesto 100 --reels a,b,c [--videos …] [--edad 25-55] [--intereses id:nombre,…] [--url …] [--nombre …] [--dry-run]
+//       EL MÉTODO DE ELVIN · 5 FASES: crea los públicos primero y monta F1 tráfico · F2 ventas (≥70 %) · F3 remarketing ventas · F4 ThruPlay 365, TODO EN PAUSA (~30-60 s)
+//   node scripts/meta-ads.mjs <marca> escalar <adsetId> [--pct 15] [--ok]   F5: sin --ok solo PROPONE; con --ok (tras el "dale" de Elvin) sube ≤ 20 %
+//   node scripts/meta-ads.mjs competencia "término, término" [--pais PR] [--para slug] [--paginas id,url]   espía la Biblioteca de Anuncios (APIFY_TOKEN)
 //
 // Token: variable de entorno que indica portafolio.json (META_ADS_TOKEN…); si no está en el
 // entorno se lee de .env.local. Nunca se imprime.
@@ -23,13 +27,13 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as M from "./meta-ads/core.mjs";
-import { PLANTILLAS, opcionesDesdeFlags } from "./meta-ads/plantillas.mjs";
+import { PLANTILLAS, opcionesDesdeFlags, planEstrategia5Fases } from "./meta-ads/plantillas.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const PORTAFOLIO = resolve(ROOT, "data/meta-ads/portafolio.json");
 const args = process.argv.slice(2);
 // Flags booleanas (--dry-run) y con valor (--reels a,b · --presupuesto 15 · --edad 18-35 · --url …).
-const CON_VALOR = new Set(["reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir"]);
+const CON_VALOR = new Set(["pct", "reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir", "pais", "max", "paginas", "para", "top", "destino", "flyers", "intereses"]);
 const flags = new Set();
 const valores = {};
 const posicionales = [];
@@ -41,6 +45,37 @@ for (let i = 0; i < args.length; i++) {
 }
 let [marca, cmd, ...rest] = posicionales;
 const dry = flags.has("--dry-run");
+
+// ESPIAR LA COMPETENCIA — no necesita marca ni token de Meta (usa APIFY_TOKEN):
+//   node scripts/meta-ads.mjs competencia "plomero, destape" [--pais PR] [--max 30] [--paginas id1,id2] [--para resuelto] [--excluir "Resuelto PR"]
+//   node scripts/meta-ads.mjs competencia resumir <raw.json> [--para …]   (items que bajó el MCP de Apify)
+if (marca === "competencia") {
+  const C = await import("./meta-ads/competencia.mjs");
+  const leerEnvLocal = (n) => process.env[n] || (existsSync(resolve(ROOT, ".env.local")) ? (readFileSync(resolve(ROOT, ".env.local"), "utf8").match(new RegExp(`^${n}=(.*)$`, "m"))?.[1] || "").trim().replace(/^["']|["']$/g, "") : "") || null;
+  try {
+    const hoy = new Date().toISOString().slice(0, 10);
+    let items, termino;
+    if (cmd === "resumir") { items = JSON.parse(readFileSync(resolve(ROOT, rest[0]), "utf8")); items = Array.isArray(items) ? items : items.items || items.crudos || []; termino = valores.nombre || rest[0]; }
+    else {
+      termino = [cmd, ...rest].filter(Boolean).join(" ");
+      const terminos = termino.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+      const paginas = (valores.paginas || "").split(",").map((s) => s.trim()).filter(Boolean);
+      console.error(`Buscando en la Biblioteca de Anuncios (${valores.pais || "PR"}): ${terminos.join(" | ")}${paginas.length ? " + " + paginas.length + " página(s)" : ""}…`);
+      items = await C.buscarEnBiblioteca({ terminos, paginas, pais: valores.pais || "PR", max: Number(valores.max) || 30, token: leerEnvLocal("APIFY_TOKEN") });
+    }
+    const excluir = (valores.excluir || "").split(",").map((s) => s.trim()).filter(Boolean);
+    const rank = C.rankear(items, { excluirPaginas: excluir });
+    const para = (valores.para || termino).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "mercado";
+    const dir = resolve(ROOT, "data/meta-ads/competencia");
+    const { mkdirSync } = await import("node:fs");
+    mkdirSync(dir, { recursive: true });
+    const archivo = resolve(dir, `${para}-${hoy}.json`);
+    writeFileSync(archivo, JSON.stringify({ termino, pais: valores.pais || "PR", fecha: hoy, total: items.length, ranking: rank.slice(0, 40) }, null, 2) + "\n");
+    console.log(C.resumen(rank, { termino, pais: valores.pais || "PR", top: Number(valores.top) || 10 }));
+    console.log(`\nGuardado: ${archivo.replace(ROOT + "/", "")} (top 40 con texto completo). Regla de Elvin: saca 1-3 cosas (gancho, oferta, formato, destino), no copies la estrategia entera.`);
+  } catch (e) { console.error("✖", e.message); process.exit(1); }
+  process.exit(0);
+}
 
 const portafolio = JSON.parse(readFileSync(PORTAFOLIO, "utf8"));
 const cfg = portafolio.marcas[marca];
@@ -136,10 +171,83 @@ try {
     const cp = cfg.compuertas || {};
     console.log(`Total ${preset}: gasto ${usd(r.gastoTotal)} · leads ${r.leadsTotal} · ventas ${r.ventasTotal} · ROAS ${r.roasTotal ? r.roasTotal.toFixed(1) + "x" : "—"} · CPL mediana ${r.mediana == null ? "—" : usd(r.mediana)} · compuertas ${[cp.cplMax && "CPL ≤ $" + cp.cplMax, cp.ctrMin && "CTR ≥ " + cp.ctrMin + "%", cp.costoPorSeguidorMax && "≤ $" + cp.costoPorSeguidorMax + "/seguidor"].filter(Boolean).join(", ")}`);
     if (flags.has("--json")) console.log(JSON.stringify(r, null, 2));
+  } else if (cmd === "escalar") {
+    // F5 · escalar VERTICAL un conjunto ganador. Regla de Elvin: Max PROPONE y pide permiso;
+    // solo corre con --ok (que Max pone únicamente después del "dale" explícito de Elvin en el chat).
+    // Tope +20 % por vez y no sobre conjuntos que no están activos o no tienen presupuesto propio.
+    const [adsetId] = rest;
+    const pct = Number(valores.pct || rest[1] || 15);
+    if (!adsetId) throw new Error("Uso: escalar <adsetId> [--pct 15] --ok");
+    if (!(pct > 0 && pct <= 20)) throw new Error("El método escala 10-20 % por vez (Ramiro: 10-15 %). Usa --pct entre 1 y 20.");
+    const a = await c.graph("GET", "/" + adsetId, { fields: "name,daily_budget,effective_status,campaign{name}" });
+    if (!a.daily_budget) throw new Error("Ese conjunto no tiene presupuesto propio (¿CBO?). Escala en la campaña a mano.");
+    const antes = Number(a.daily_budget) / 100, despues = Math.round(antes * (1 + pct / 100) * 100) / 100;
+    console.log(`${a.campaign?.name} → ${a.name} · ${a.effective_status} · $${antes}/día → $${despues}/día (+${pct} %)`);
+    if (!flags.has("--ok")) { console.log("Propuesta, no ejecutada. Pídele el OK a Elvin; con su \"dale\" corre lo mismo con --ok."); process.exit(0); }
+    await c.graph("POST", "/" + adsetId, { daily_budget: M.centavos(despues) });
+    console.log(`✔ Escalado: $${despues}/día. Próxima revisión en 3-4 días (no volver a subir antes).`);
   } else if (cmd === "pausar") {
     if (!rest[0]) throw new Error("Falta el id");
     await c.graph("POST", "/" + rest[0], { status: "PAUSED" });
     console.log("Pausado", rest[0]);
+  } else if (cmd === "estrategia") {
+    // EL MÉTODO DE ELVIN · 5 FASES: públicos primero → F1 tráfico · F2 ventas (≥70 %) · F3 remarketing ventas · F4 ThruPlay 365 · F5 escalar (operación).
+    const t0 = Date.now();
+    const opts = opcionesDesdeFlags(valores);
+    const est = planEstrategia5Fases({ ...cfg, clave: marca }, opts);
+    const archivo = resolve(ROOT, `data/meta-ads/campanas/${marca}-5fases-${est.fecha}${valores.nombre ? "-" + valores.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").slice(0, 30) : ""}.json`);
+    const guardarEst = () => writeFileSync(archivo, JSON.stringify(est, null, 2) + "\n");
+    if (existsSync(archivo)) { const previo = JSON.parse(readFileSync(archivo, "utf8")); if (previo.fases?.some((f) => f.meta?.campaignId)) { Object.assign(est, previo); console.log("Retomando la estrategia ya empezada (idempotente)."); } }
+    guardarEst();
+    const disponibles = new Map(Object.entries(cfg.publicosClave || {}));
+    console.log(`${est.nombre} · $${est.presupuestoDiario}/día · destino ${est.destino}`);
+    tabla(est.fases.map((f) => ({ fase: f.fase.toUpperCase(), campaña: f.nombre.slice(0, 55), modo: f.modo, conjuntos: f.conjuntos.length, "$/día": f.conjuntos.reduce((s, x) => s + Number(x.presupuestoDiario), 0), creativos: f.creativos.map((c) => c.clave).join(",") })));
+    for (const [f, motivo] of Object.entries(est.omitidas || {})) console.log(`⚠ ${f.toUpperCase()} omitida: ${motivo}`);
+    console.log("Públicos que se crean ANTES de lanzar:", Object.keys(est.publicosACrear).map((k) => (disponibles.has(k) ? k + " (ya existe)" : k)).join(" · "));
+    // 1) Públicos primero (regla de Elvin). Un público que Meta rechace no tumba la estrategia.
+    for (const [clave, def] of Object.entries(est.publicosACrear)) {
+      if (disponibles.has(clave)) continue;
+      if (dry) continue;
+      try {
+        let spec;
+        if (def.tipo === "web") spec = M.specPublicoWeb({ nombre: def.nombre, pixelId: cfg.pixelId, dias: def.dias, evento: def.evento });
+        else if (def.tipo === "similar") { const origen = disponibles.get(def.origen); if (!origen) throw new Error("origen " + def.origen + " no creado"); spec = M.specSimilar({ nombre: def.nombre, origenId: origen, ratio: def.ratio, pais: def.pais }); }
+        else spec = M.specPublicoEngagement({ nombre: def.nombre, pageId: cfg.pageId, igUserId: cfg.igUserId, dias: def.dias, tipo: def.tipo });
+        const id = await M.crearPublico(c, cfg.cuentaId, spec);
+        cfg.publicosClave ||= {}; cfg.publicosClave[clave] = id; disponibles.set(clave, id); guardarPortafolio();
+        console.log("  ✔ público", clave, id);
+      } catch (e) { (est.publicosFallidos ||= {})[clave] = e.message.slice(0, 160); console.log("  ⚠ público", clave, "no se creó:", e.message.slice(0, 120)); }
+    }
+    // Los públicos que no existen (todavía) se quitan de F3/F4 en vez de romper el plan.
+    const simulados = new Map([...disponibles, ...(dry ? Object.keys(est.publicosACrear).map((k) => [k, "nuevo"]) : [])]);
+    for (const f of est.fases) {
+      f.cuentaId ||= cfg.cuentaId; f.pixelId ||= cfg.pixelId; f.pageId ||= cfg.pageId; f.igUserId ||= cfg.igUserId;
+      for (const p of Object.values(f.publicos || {})) {
+        p.incluir = (p.incluir || []).filter((r) => /^\d+$/.test(String(r)) || simulados.has(r));
+        p.excluir = (p.excluir || []).filter((r) => /^\d+$/.test(String(r)) || simulados.has(r));
+      }
+      f.topeDiario = f.conjuntos.reduce((s, x) => s + Number(x.presupuestoDiario), 0);
+      const vacios = Object.entries(f.publicos || {}).filter(([, p]) => f.dependeDePublicos && !(p.incluir || []).length);
+      if (vacios.length) { f.omitida = "sin públicos de remarketing creados"; continue; }
+      const errores = M.validarPlan(f, { publicosDisponibles: new Map([...simulados].map(([k, v]) => [k, v === "nuevo" ? "0" : v])) });
+      if (errores.length) { f.errores = errores; console.log(`✖ ${f.fase.toUpperCase()} inválida:\n - ` + errores.join("\n - ")); }
+    }
+    guardarEst();
+    if (dry) { console.log(`[dry-run] no se creó nada · plan en ${archivo.replace(ROOT + "/", "")} · ${((Date.now() - t0) / 1000).toFixed(1)} s`); process.exit(0); }
+    // 2) Las campañas, EN PAUSA, en orden de fase.
+    for (const f of est.fases) {
+      if (f.omitida || f.errores?.length) { console.log(`⏭ ${f.fase.toUpperCase()}: ${f.omitida || "plan inválido"}`); continue; }
+      let marcador = null;
+      if (f.creativos.some((x) => !x.videoId && !x.igMediaId && !x.postId)) marcador = (await M.listarVideos(c, f.cuentaId, 5))[0]?.id || null;
+      try { await M.crearEnMeta(c, f, { publicosDisponibles: disponibles, videoMarcador: marcador, log: () => {} }); console.log(`✔ ${f.fase.toUpperCase()} campaña ${f.meta.campaignId} EN PAUSA`); }
+      catch (e) { f.errorMeta = e.message.slice(0, 300); console.log(`✖ ${f.fase.toUpperCase()}: ${e.message.slice(0, 200)}`); }
+      guardarEst();
+    }
+    est.creadoEl ||= new Date().toISOString(); guardarEst();
+    const ids = est.fases.filter((f) => f.meta?.campaignId).map((f) => f.meta.campaignId);
+    console.log(`Listo en ${((Date.now() - t0) / 1000).toFixed(0)} s · ${ids.length}/${est.fases.length} campañas EN PAUSA · plan ${archivo.replace(ROOT + "/", "")}`);
+    if (ids.length) console.log(`Ads Manager: https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${cfg.cuentaId}&selected_campaign_ids=${ids.join(",")}`);
+    console.log("F5 (escalar): " + est.f5);
   } else if (cmd === "crear" || cmd === "crear-publicos" || cmd === "plantilla") {
     let planPath, plan;
     if (cmd === "plantilla") {
