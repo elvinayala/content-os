@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 
 import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
+import { reglaQueAplica } from "@/lib/pulse/automatizaciones";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
 import { etiquetasQuitadasEnUso, poderes } from "@/lib/pulse/permisos";
@@ -35,13 +36,24 @@ export async function actualizarValorAction(p: {
   tipo: TipoColumna;
   settings: SettingsColumna;
   value: unknown;
-}): Promise<R<{ updatedAt: string; value: ValorCelda }>> {
+}): Promise<R<{ updatedAt: string; value: ValorCelda; movidoA?: { groupId: string; regla: string } }>> {
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     const value = validarValor(p.tipo, p.value, p.settings);
     const r = await repo.actualizarValor({ itemId: p.itemId, columnId: p.columnId, value, userId: u.id });
-    avisarCambio({ itemIds: [p.itemId], motivo: "valor" });
-    return { updatedAt: r.updatedAt, value };
+    // Automatizaciones (lib/pulse/automatizaciones.ts): si falla el movimiento, el valor ya quedó.
+    let movidoA: { groupId: string; regla: string } | undefined;
+    const regla = reglaQueAplica({ boardId: r.boardId, columnId: p.columnId, before: r.before, after: value, groupIdActual: r.groupId });
+    if (regla) {
+      try {
+        await repo.moverItems({ itemIds: [p.itemId], groupId: regla.groupId, userId: u.id, porColumna: p.columnId });
+        movidoA = { groupId: regla.groupId, regla: regla.nombre };
+      } catch (e) {
+        console.error("pulse automatización", regla.nombre, e);
+      }
+    }
+    avisarCambio({ itemIds: [p.itemId], motivo: movidoA ? "mover" : "valor" });
+    return { updatedAt: r.updatedAt, value, ...(movidoA ? { movidoA } : {}) };
   });
 }
 

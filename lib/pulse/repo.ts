@@ -255,11 +255,11 @@ export async function actualizarValor(p: {
   columnId: string;
   value: ValorCelda;
   userId: string;
-}): Promise<{ updatedAt: string; before: ValorCelda }> {
+}): Promise<{ updatedAt: string; before: ValorCelda; boardId: string; groupId: string }> {
   const d = await db();
   return d.transaction(async (tx) => {
     const [fila] = await tx
-      .select({ boardId: pulseItems.boardId, before: sql<ValorCelda>`${pulseItems.values} -> ${p.columnId}` })
+      .select({ boardId: pulseItems.boardId, groupId: pulseItems.groupId, before: sql<ValorCelda>`${pulseItems.values} -> ${p.columnId}` })
       .from(pulseItems)
       .where(eq(pulseItems.id, p.itemId))
       .for("update");
@@ -282,7 +282,7 @@ export async function actualizarValor(p: {
       after: p.value,
       userId: p.userId,
     });
-    return { updatedAt: u.updatedAt.toISOString(), before: fila.before ?? null };
+    return { updatedAt: u.updatedAt.toISOString(), before: fila.before ?? null, boardId: fila.boardId, groupId: fila.groupId };
   });
 }
 
@@ -294,7 +294,8 @@ export async function renombrarItem(p: { itemId: string; name: string; userId: s
   await registrarActividad({ itemId: p.itemId, boardId: antes.boardId, tipo: "nombre", before: antes.name, after: p.name, userId: p.userId });
 }
 
-export async function moverItems(p: { itemIds: string[]; groupId: string; userId: string }): Promise<void> {
+// `porColumna`: la movió una automatización disparada por esa columna (queda en la actividad).
+export async function moverItems(p: { itemIds: string[]; groupId: string; userId: string; porColumna?: string }): Promise<void> {
   if (!p.itemIds.length) return;
   const d = await db();
   const [g] = await d.select().from(pulseGroups).where(eq(pulseGroups.id, p.groupId));
@@ -306,7 +307,7 @@ export async function moverItems(p: { itemIds: string[]; groupId: string; userId
     pos += GAP;
     await d.update(pulseItems).set({ groupId: p.groupId, position: pos, updatedAt: new Date() }).where(eq(pulseItems.id, it.id));
     if (it.groupId !== p.groupId) {
-      await registrarActividad({ itemId: it.id, boardId: g.boardId, tipo: "mover", before: it.groupId, after: p.groupId, userId: p.userId });
+      await registrarActividad({ itemId: it.id, boardId: g.boardId, columnId: p.porColumna, tipo: "mover", before: it.groupId, after: p.groupId, userId: p.userId });
     }
   }
 }

@@ -389,6 +389,11 @@ export function BoardProvider({
       return false;
     }
     dispatch({ type: "valor", itemId, columnId: column.id, value: r.value, updatedAt: r.updatedAt });
+    if (r.movidoA) {
+      dispatch({ type: "item:mover", itemIds: [itemId], groupId: r.movidoA.groupId });
+      const destino = stateRef.current.groups.find((g) => g.id === r.movidoA!.groupId)?.title ?? "otro grupo";
+      toast.success(`Automatización: se movió a ${destino}`, { className: "pulse" });
+    }
     return true;
   }, []);
 

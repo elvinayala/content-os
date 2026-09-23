@@ -168,7 +168,8 @@ function Actividades({ itemId, boardId, columns }: { itemId: string; boardId: st
       case "mover":
         return (
           <>
-            movió de <b>{s.groups.find((g) => g.id === a.before)?.title ?? "otro grupo"}</b> a <b>{s.groups.find((g) => g.id === a.after)?.title ?? "otro grupo"}</b>
+            {a.columnId ? "⚡ automatización: " : ""}movió de <b>{s.groups.find((g) => g.id === a.before)?.title ?? "otro grupo"}</b> a <b>{s.groups.find((g) => g.id === a.after)?.title ?? "otro grupo"}</b>
+            {a.columnId && col ? <> (por <b>{col.title}</b>)</> : null}
           </>
         );
       case "valor":
