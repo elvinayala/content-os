@@ -75,6 +75,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/aib/whatsapp") return NextResponse.next();
   // Calendly de AI Borinquen (agendar onboarding = cliente): valida la firma adentro.
   if (pathname === "/api/aib/calendly") return NextResponse.next();
+  // Fathom → Slack (resúmenes de llamadas, solicitud de Aure #29): valida la firma adentro.
+  if (pathname === "/api/fathom") return NextResponse.next();
 
   // Jobs de Vercel Cron (los llama Vercel, sin cookie): se autentican por CRON_SECRET
   // dentro del propio endpoint.
