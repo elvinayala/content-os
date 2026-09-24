@@ -29,6 +29,10 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // Dominio bonito de Pulse (pulse-eamarket.vercel.app): la raíz va directo al CRM.
   const host = request.headers.get("host") ?? "";
+  // Dominio del onboarding de Level Up: la raíz va directo al formulario.
+  if (host.startsWith("bienvenida-levelup") && pathname === "/") {
+    return NextResponse.redirect(new URL("/onboarding/level-up", request.url));
+  }
   if (host.startsWith("pulse-") && (pathname === "/" || pathname === "/login")) {
     return NextResponse.redirect(new URL("/pulse", request.url));
   }
@@ -77,6 +81,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/pulse/login") return NextResponse.next();
   // Íconos de Pulse (favicon / apple-touch-icon): públicos, el navegador los pide sin cookie.
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
+  // Formulario público de onboarding de Level Up (lo llena el cliente, sin login).
+  if (pathname.startsWith("/onboarding/") || pathname.startsWith("/api/onboarding/")) return NextResponse.next();
   // Webhook del Typeform de onboarding → ficha del cliente en Pulse (valida la firma adentro).
   if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.

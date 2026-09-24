@@ -627,3 +627,114 @@
     @apply font-sans;
   }
 }
+
+/* ---------- Onboarding de Level Up (/onboarding/level-up) ----------
+   Marca LU: negro #0b0b0b + amarillo #f5ce1a, Sora (títulos) / Inter (texto). */
+.onboarding-lu {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+.onboarding-lu .lu-fondo {
+  background:
+    radial-gradient(60% 45% at 85% 0%, rgba(245, 206, 26, 0.13), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, rgba(245, 206, 26, 0.07), transparent 70%),
+    #0b0b0b;
+}
+.onboarding-lu .lu-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid rgba(245, 241, 232, 0.18);
+  padding: 0.5rem 0.1rem;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  color: #f5f1e8;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.onboarding-lu .lu-input::placeholder {
+  color: rgba(245, 241, 232, 0.25);
+}
+.onboarding-lu .lu-input:focus {
+  border-bottom-color: #f5ce1a;
+}
+.onboarding-lu .lu-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  background: #f5ce1a;
+  color: #0b0b0b;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.8rem 1.6rem;
+  box-shadow: 0 12px 30px -12px rgba(245, 206, 26, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.onboarding-lu .lu-boton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px -12px rgba(245, 206, 26, 0.85);
+}
+.onboarding-lu .lu-boton:disabled {
+  opacity: 0.7;
+}
+.onboarding-lu .lu-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 241, 232, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.8rem 1rem;
+  font-size: 1.05rem;
+  color: #f5f1e8;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.onboarding-lu .lu-opcion:hover {
+  border-color: rgba(245, 206, 26, 0.5);
+  background: rgba(245, 206, 26, 0.06);
+}
+.onboarding-lu .lu-opcion[data-on="true"] {
+  border-color: #f5ce1a;
+  background: rgba(245, 206, 26, 0.12);
+}
+.onboarding-lu .lu-letra {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 206, 26, 0.5);
+  color: #f5ce1a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.onboarding-lu .lu-opcion[data-on="true"] .lu-letra {
+  background: #f5ce1a;
+  color: #0b0b0b;
+}
+.onboarding-lu .lu-entra {
+  animation: lu-entra 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.onboarding-lu .lu-entra-atras {
+  animation: lu-entra-atras 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes lu-entra {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lu-entra-atras {
+  from { opacity: 0; transform: translateY(-28px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-lu .lu-entra,
+  .onboarding-lu .lu-entra-atras { animation: none; }
+}
+@media (max-width: 640px) {
+  .onboarding-lu .lu-input { font-size: 1.3rem; }
+}
