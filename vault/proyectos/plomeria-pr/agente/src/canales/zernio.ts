@@ -14,6 +14,7 @@ import { config } from "../config.js";
 import { RAIZ } from "../almacen.js";
 import { clasificarMime, type Adjunto } from "../integraciones/media.js";
 import type { MensajeWA } from "./whatsapp-meta.js";
+import { autorizar } from "./salud-wa.js";
 
 const ARCHIVO = path.join(RAIZ, "data", "estado", "zernio.json");
 interface Estado { conversaciones: Record<string, string> } // teléfono (sin +) → conversationId
@@ -48,10 +49,11 @@ export function firmaValida(rawBody: Buffer, firma?: string | string[]): boolean
 /** Envía texto a un teléfono. Si ya hay conversación (el cliente nos escribió), responde en ella;
  *  si no, intenta abrirla con Meta Direct Send (utility). Fuera de la ventana de 24 h Meta puede
  *  rechazarlo: en ese caso hace falta una plantilla aprobada (ver docs/templates). */
-export async function enviarTexto(a: string, texto: string) {
+export async function enviarTexto(a: string, texto: string, op: { respuesta?: boolean } = {}) {
   if (!config.tiene.whatsapp()) { console.log(`[WA simulado → ${a}] ${texto}`); return; }
   const tel = normalizar(a);
   const conv = conversacionDe(tel);
+  if (!autorizar(tel, !conv, !!op.respuesta)) return;
   const r = conv
     ? await api(`/inbox/conversations/${encodeURIComponent(conv)}/messages`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, message: texto }) })
     : await api(`/inbox/conversations`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, participantId: tel, message: texto, category: "utility" }) });
@@ -94,6 +96,7 @@ export function partesDeAviso(texto: string): [string, string, string] {
 export async function enviarPlantilla(telefono: string, plantilla: string, params: string[]): Promise<boolean> {
   if (!config.tiene.whatsapp()) { console.log(`[WA simulado → ${telefono}] plantilla ${plantilla}: ${params.join(" | ")}`); return false; }
   const tel = normalizar(telefono);
+  if (!autorizar(tel, true, false)) return false;
   const r = await api(`/inbox/conversations`, { method: "POST", body: JSON.stringify({ accountId: config.zernio.accountId, participantId: tel, templateName: plantilla, templateLanguage: "es", templateParams: params }) });
   if (!r.ok) { console.error("Zernio plantilla", plantilla, r.status, (await r.text()).slice(0, 200)); return false; }
   const j = (await r.json().catch(() => null)) as { data?: { conversationId?: string } } | null;

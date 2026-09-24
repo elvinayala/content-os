@@ -200,8 +200,9 @@ const solicitudesEquipo = await (async () => {
 
 const resultado = { generadoEl: new Date().toISOString(), desde: desde.toISOString(), plataformas: [], ajustes24h, pendientesElvin, solicitudesEquipo };
 for (const p of INV.plataformas) {
-  const [s, g, l, f, sp, n8] = await Promise.all([salud(p), gitUltimas24h(p), logsRailway(p), fallosBori(p), soportePlagas(p), saludN8n(p)]);
-  resultado.plataformas.push({ id: p.id, nombre: p.nombre, critico: p.critico, salud: s, git: g, logs: l, fallos: f, soporte: sp, n8n: n8 });
+  // p.agente.salud: el agente de WhatsApp de la plataforma (Resuelto: /salud/whatsapp da 503 si Meta restringió la cuenta).
+  const [s, g, l, f, sp, n8, sa] = await Promise.all([salud(p), gitUltimas24h(p), logsRailway(p), fallosBori(p), soportePlagas(p), saludN8n(p), p.agente?.salud ? salud(p.agente) : null]);
+  resultado.plataformas.push({ id: p.id, nombre: p.nombre, critico: p.critico, salud: s, ...(sa ? { saludAgente: sa } : {}), git: g, logs: l, fallos: f, soporte: sp, n8n: n8 });
 }
 const json = JSON.stringify(resultado, null, 2);
 if (process.argv.includes("--guardar")) fs.writeFileSync(path.join(ROOT, "data/nico-ronda-crudo.json"), json + "\n");

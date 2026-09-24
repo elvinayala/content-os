@@ -190,6 +190,10 @@ export const almacen = {
     return nuevo;
   },
 
+  /** Ids de contacto con conversación tocada desde `desdeMs` (epoch). */
+  conversacionesDesde(desdeMs: number): string[] {
+    return Object.values(leer<Record<string, Conversacion>>("conversaciones.json", {})).filter((c) => new Date(c.actualizado).getTime() >= desdeMs).map((c) => c.contactoId);
+  },
   conversacion(contactoId: string): Conversacion {
     return leer<Record<string, Conversacion>>("conversaciones.json", {})[contactoId] ?? { contactoId, mensajes: [], actualizado: ahora() };
   },

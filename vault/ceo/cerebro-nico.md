@@ -200,3 +200,13 @@ plantilla) o GoGHL, el más fácil para ese cliente; voz con Retell. SOP v3 (23/
 un servicio `autoflow-<slug>` por cliente con su volumen); Cloudflare solo para Ángelo. Llaves que
 necesita: `GHL_AGENCY_TOKEN` y `ZERNIO_API_KEY` (si va por Zernio); `RETELL_API_KEY` y
 `RAILWAY_API_TOKEN` ya están. Ya no hace falta Cloudflare.
+
+## WhatsApp de negocio restringido (lección del 23/sep/2026)
+- En la ronda, `saludAgente` de Resuelto = `app.resueltopr.com/salud/whatsapp`. **503 = Meta restringió la cuenta**
+  (violación, desconexión): va ARRIBA de "Te toca a ti" con el motivo. El agente ya avisa solo (Telegram a Elvin,
+  Slack a Yaileen) y pasa cada persona que escribe a Yaileen; lo tuyo es confirmar que la pauta a WhatsApp esté en
+  pausa y que Elvin haya pedido la revisión en WhatsApp Manager.
+- Causa real del bloqueo: el agente le mandaba a Elvin avisos por el MISMO WhatsApp del negocio (35 en 2 días, con
+  datos de candidatos, 1 respuesta). Regla para cualquier agente de WhatsApp: los avisos internos van por
+  Telegram/Slack, nunca por el número del negocio. El candado está en `agente/src/canales/salud-wa.ts`.
+- Cuando Meta devuelva la cuenta y el evento viejo siga en la ficha: `POST /admin/salud-wa/resuelto` (ADMIN_TOKEN).

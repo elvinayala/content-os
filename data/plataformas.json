@@ -112,7 +112,7 @@
       "notas": "Landing clientes (index.html) + reclutamiento plomeros (plomeros/index.html). Agente propio en agente/ (Node+TS). El nombre 'Bori' NUNCA de cara al cliente. Equipo 100% separado de las agencias. Agente de WhatsApp en Railway (ver 'agente'): /health debe decir whatsapp:zernio e integraciones.whatsapp:true; si un cliente escribe y no contesta, mirar logs y el webhook en zernio.com/dashboard/webhooks.",
       "agente": {
         "prod": "https://agente-production-684f.up.railway.app",
-        "salud": "https://agente-production-684f.up.railway.app/health",
+        "salud": "https://app.resueltopr.com/salud/whatsapp",
         "hosting": "railway",
         "railway": {
           "proyecto": "resuelto",

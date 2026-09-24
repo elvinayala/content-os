@@ -26,11 +26,12 @@ import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
-import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO } from "./reclutamiento.js";
+import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO, telefonoBonito } from "./reclutamiento.js";
 import { dmSlack } from "./integraciones/slack.js";
 import * as wa from "./canales/whatsapp.js";
 import * as waMeta from "./canales/whatsapp-meta.js";
 import * as zernio from "./canales/zernio.js";
+import * as saludWa from "./canales/salud-wa.js";
 import * as meta from "./canales/meta.js";
 import { verificarEventoStripe } from "./integraciones/cobros.js";
 import type { Adjunto } from "./integraciones/media.js";
@@ -161,7 +162,7 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   const acepto = m.texto?.match(/acepto\s+(OF-\d{4})/i);
   if (acepto) {
     const prov = proveedorPorWhatsapp(m.de);
-    if (prov) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await wa.enviarTexto(m.de, r.motivo); return; }
+    if (prov) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await wa.enviarTexto(m.de, r.motivo, { respuesta: true }); return; }
   }
   const contacto = almacen.obtenerOCrearContacto("whatsapp", m.de);
   if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
@@ -170,6 +171,9 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
     const ghlId = await upsertContacto({ nombre: contacto.nombre, telefono: m.de, tags: ["whatsapp-entrante"], fuente: "whatsapp" }).catch(() => undefined);
     if (ghlId) { contacto.ghlContactId = ghlId; contacto.telefono = contacto.telefono ?? m.de; almacen.guardarContacto(contacto); }
   }
+  // Cuenta de WhatsApp restringida por Meta: el agente no intenta contestar (fallaría y empeora el historial);
+  // la persona se le pasa a la reclutadora por Slack para que la llame desde su teléfono.
+  if (saludWa.caido()) { await pasarAReclutadora(contacto.id, m.texto || "[envió un archivo]"); return; }
   // Un humano tomó el chat (escalación o contestó desde el inbox); pasadas HUMANO_HORAS sin actividad humana, el agente retoma.
   if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
     contacto.humano = false; almacen.guardarContacto(contacto);
@@ -183,7 +187,7 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   // Se envía humanizado (minúsculas, sin "¡", un error leve de tilde en el 3º-4º mensaje);
   // el historial de la conversación guarda la versión limpia del modelo.
   let n = contacto.enviadosWa ?? 0;
-  for (const r of respuestas) { n++; await wa.enviarTexto(m.de, humanizar(r, n, contacto.id)); }
+  for (const r of respuestas) { n++; await wa.enviarTexto(m.de, humanizar(r, n, contacto.id), { respuesta: true }); }
   if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
 }
 
@@ -461,6 +465,49 @@ async function revisarGrandesCandidatos() {
 }
 setInterval(() => revisarGrandesCandidatos().catch(console.error), 30 * 60_000);
 setTimeout(() => revisarGrandesCandidatos().catch(console.error), 60_000);
+// ── Vigilante del WhatsApp del negocio (canales/salud-wa.ts). Cada 10 min. ──
+function ultimoTextoCliente(contactoId: string): string {
+  const ms = almacen.conversacion(contactoId).mensajes.filter((x) => x.role === "user");
+  for (const msj of [...ms].reverse()) {
+    const bloques = Array.isArray(msj.content) ? msj.content : [{ type: "text", text: String(msj.content) }];
+    const t = bloques.filter((b: any) => b.type === "text" && !String(b.text).startsWith("[Contexto")).map((b: any) => b.text).join(" ").trim();
+    if (t) return t;
+  }
+  return "";
+}
+async function pasarAReclutadora(contactoId: string, texto: string) {
+  const e = saludWa.leer();
+  if (e.pasados.includes(contactoId)) return;
+  const k = almacen.contacto(contactoId);
+  const c = almacen.candidatos().find((x) => x.contactoId === contactoId);
+  const quien = c ? `${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""}${c.experiencia ? ", " + c.experiencia : ""}, ${c.municipio})` : k?.nombre ?? "alguien";
+  await dmSlack(config.slack.reclutamiento, `📵 ${quien} · ${telefonoBonito(contactoId.replace(/^whatsapp:/, ""))} escribió al WhatsApp de Resuelto y no le podemos contestar: "${texto.replace(/\s+/g, " ").slice(0, 140)}". Llámalo o escríbele desde tu teléfono.`);
+  saludWa.guardar({ ...saludWa.leer(), pasados: [...saludWa.leer().pasados, contactoId] });
+}
+async function revisarSaludWa() {
+  if (config.wa.proveedor !== "zernio") return;
+  const s = await saludWa.consultar();
+  if (!s) return;
+  const e = saludWa.leer();
+  const antes = e.ultimo;
+  saludWa.guardar({ ...e, ultimo: s, caidoDesde: s.ok ? undefined : e.caidoDesde ?? s.eventoEn ?? s.revisado, pasados: s.ok ? [] : e.pasados });
+  if (!s.ok && (!antes || antes.ok)) {
+    await wa.avisarCoordinador(`🚨 WhatsApp de Resuelto CAÍDO: ${s.motivo}${s.eventoEn ? " (" + new Date(s.eventoEn).toLocaleString("es-PR", { timeZone: config.zonaHoraria }) + ")" : ""}. El agente dejó de contestar y lo que entre se lo paso a Yaileen por Slack. Qué hacer: business.facebook.com → WhatsApp Manager → Resuelto → Request review, y verificar el negocio (LLC) en el Centro de seguridad. Pausa la pauta que lleve a WhatsApp.`);
+    await dmSlack(config.slack.reclutamiento, `🚨 Meta bloqueó el WhatsApp de Resuelto (939-247-9234) mientras revisa la cuenta. No contestes desde Zernio (no sale). Te voy pasando aquí a cada persona que escriba para que la llames desde tu teléfono.`);
+    // Los que escribieron desde un poco antes de la caída y se quedaron sin respuesta.
+    const desde = new Date(s.eventoEn ?? s.revisado).getTime() - 15 * 60_000;
+    for (const id of almacen.conversacionesDesde(desde).filter((x) => x.startsWith("whatsapp:"))) await pasarAReclutadora(id, ultimoTextoCliente(id));
+  } else if (s.ok && antes && !antes.ok) {
+    await wa.avisarCoordinador(`✅ WhatsApp de Resuelto de vuelta (${s.motivo}). El agente volvió a contestar. Ya puedes reactivar la pauta de WhatsApp.`);
+    await dmSlack(config.slack.reclutamiento, `✅ El WhatsApp de Resuelto volvió. El agente contesta otra vez.`);
+  } else if (s.ok && s.alerta && s.alerta !== antes?.alerta) await wa.avisarCoordinador(`⚠️ WhatsApp de Resuelto: ${s.alerta}.`);
+}
+setInterval(() => revisarSaludWa().catch(console.error), 10 * 60_000);
+setTimeout(() => revisarSaludWa().catch(console.error), 20_000);
+app.get("/salud/whatsapp", (_req, res) => { const u = saludWa.leer().ultimo; res.status(!u || u.ok ? 200 : 503).json(u ?? { ok: true, motivo: "sin revisar aún" }); });
+// Cuando Meta devuelve la cuenta y el evento viejo sigue en la ficha: POST /admin/salud-wa/resuelto
+app.post("/admin/salud-wa/resuelto", (_req, res) => res.json(saludWa.marcarResuelto() ?? { ok: true }));
+
 // Recordatorio de la entrevista 2 h antes, por plantilla aprobada (se marca solo si Meta la aceptó).
 async function recordarEntrevistas() {
   if (config.wa.proveedor !== "zernio") return;
