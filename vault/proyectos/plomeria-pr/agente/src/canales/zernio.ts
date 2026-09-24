@@ -115,11 +115,8 @@ export async function avisarCoordinador(texto: string) {
     avisado = !!r?.ok;
     if (!avisado) console.error("Telegram aviso", r?.status);
   }
-  if (config.coordinadorWhatsapp && config.tiene.whatsapp()) {
-    // Si ya hay conversación abierta con el coordinador, texto libre; si no, la plantilla aprobada.
-    if (conversacionDe(config.coordinadorWhatsapp)) { await enviarTexto(config.coordinadorWhatsapp, texto); avisado = true; }
-    else if (await enviarPlantillaAviso(config.coordinadorWhatsapp, texto)) avisado = true;
-  }
+  // NUNCA por el WhatsApp del negocio (23/sep/2026): 35 avisos con datos de candidatos a un número que no
+  // contestaba → Meta marcó la cuenta de Resuelto por "SCAM" 5 minutos después del último. Solo Telegram (y Slack).
   if (!avisado) console.log(`[Aviso al coordinador] ${texto}`);
 }
 

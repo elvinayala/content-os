@@ -41,8 +41,10 @@ export async function descargarMedia(mediaId: string): Promise<Adjunto | null> {
 }
 
 export async function avisarCoordinador(texto: string) {
-  if (!config.coordinadorWhatsapp) { console.log(`[Aviso al coordinador] ${texto}`); return; }
-  await enviarTexto(config.coordinadorWhatsapp, texto);
+  // Nunca por el WhatsApp del negocio (ver canales/zernio.ts: así se bloqueó la cuenta el 23/sep/2026).
+  const { botToken, coordinadorChatId } = config.telegram;
+  const r = botToken && coordinadorChatId ? await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: coordinadorChatId, text: `Resuelto · ${texto}` }) }).catch(() => null) : null;
+  if (!r?.ok) console.log(`[Aviso al coordinador] ${texto}`);
 }
 
 /** Extrae los mensajes entrantes de un webhook de WhatsApp. */
