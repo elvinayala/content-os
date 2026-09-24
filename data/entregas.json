@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-21T02:26:17.042Z",
+  "actualizadoEl": "2026-09-24T16:06:43.586Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -10212,6 +10212,86 @@
       "agente": "Lola",
       "creadoEl": "2026-09-21T02:26:17.042Z",
       "estado": "nuevo"
+    },
+    {
+      "id": "arte-lola-bori-creadores-45",
+      "titulo": "Bori · Buscamos creador/a (feed 4:5)",
+      "formato": "flyer 4:5",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260924_000159_5b86e151-3f06-481b-8a04-c040ddc2647a.png",
+      "tipo": "arte",
+      "marca": "bori",
+      "contenido": "HOOK: BUSCAMOS CREADOR/A DE CONTENIDO\nPASTILLA: UGC · microinfluencers · influencers\nLÍNEA: ¿Creas contenido en Puerto Rico? Esto es pa ti.\nCTA: Escríbenos por DM\n\nCONCEPTO: adaptación de la ref. Hotel Las Dunas — fondo oscuro con creador boricua difuminado grabando un negocio local, marco dorado de línea fina, wordmark Bori arriba, titular serif.\n\nOJO: el kit de marca (vault/proyectos/bori-crecimiento/marca/) no existe en el repo → wordmark \"Bori\" generado por IA y acento dorado, NO el logo ni la paleta oficial. Montar el logo real encima en Canva antes de publicar. Texto sin verificar visualmente. Objetivo: respuestas por DM → Lis (pipeline 8–100K, PR). Créditos: 2 (gpt_image_2_5).",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Elegant recruitment social media poster, dark near-black background with a softly blurred photo of a young Puerto Rican content creator filming a local small business with a smartphone, thin golden fine-line frame, wordmark Bori top center, serif headline BUSCAMOS / CREADOR/A DE CONTENIDO, gold-outline pill UGC · microinfluencers · influencers, bottom lines ¿Creas contenido en Puerto Rico? Esto es pa ti. / Escríbenos por DM.",
+      "pilar": "reclutamiento",
+      "angulo": "Convocatoria de creadores",
+      "agente": "Lola",
+      "creadoEl": "2026-09-24T00:02:32.764Z",
+      "estado": "nuevo"
+    },
+    {
+      "id": "arte-lola-bori-creadores-916",
+      "titulo": "Bori · Buscamos creador/a (historia 9:16)",
+      "formato": "historia 9:16",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260924_000202_428cad55-938a-4240-a702-da2d3c8d505c.png",
+      "tipo": "arte",
+      "marca": "bori",
+      "contenido": "HOOK: BUSCAMOS CREADOR/A DE CONTENIDO\nPASTILLA: UGC · microinfluencers · influencers\nLÍNEA: ¿Creas contenido en Puerto Rico? Esto es pa ti.\nCTA: Escríbenos por DM\n\nCONCEPTO: adaptación de la ref. Hotel Las Dunas — fondo oscuro con creador boricua difuminado grabando un negocio local, marco dorado de línea fina, wordmark Bori arriba, titular serif.\n\nOJO: el kit de marca (vault/proyectos/bori-crecimiento/marca/) no existe en el repo → wordmark \"Bori\" generado por IA y acento dorado, NO el logo ni la paleta oficial. Montar el logo real encima en Canva antes de publicar. Texto sin verificar visualmente. Objetivo: respuestas por DM → Lis (pipeline 8–100K, PR). Créditos: 2 (gpt_image_2_5).",
+      "modelo": "gpt_image_2_5",
+      "promptVideo": "Elegant recruitment social media poster, dark near-black background with a softly blurred photo of a young Puerto Rican content creator filming a local small business with a smartphone, thin golden fine-line frame, wordmark Bori top center, serif headline BUSCAMOS / CREADOR/A DE CONTENIDO, gold-outline pill UGC · microinfluencers · influencers, bottom lines ¿Creas contenido en Puerto Rico? Esto es pa ti. / Escríbenos por DM.",
+      "pilar": "reclutamiento",
+      "angulo": "Convocatoria de creadores",
+      "agente": "Lola",
+      "creadoEl": "2026-09-24T00:02:32.764Z",
+      "estado": "nuevo"
+    },
+    {
+      "tipo": "arte",
+      "marca": "isla-run",
+      "modelo": "gpt_image_2_5",
+      "pilar": "marca",
+      "angulo": "Lanzamiento ISLA Cabo Rojo 5K",
+      "agente": "Lola",
+      "creadoEl": "2026-09-24T16:06:43.586Z",
+      "estado": "nuevo",
+      "id": "arte-lola-isla-logo",
+      "titulo": "ISLA · Logo (RUN SERIES) negro/blanco",
+      "formato": "logo 1:1",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260924_160605_74776495-0500-4f7e-ad22-cbb3b5f626d6.png",
+      "promptVideo": "Minimal brand logo on pure white: \"ISLA\" bold heavy condensed sans-serif all caps black, subtitle \"RUN SERIES\" wide-tracked caps; flat vector, premium sports brand.",
+      "contenido": "LOGO ISLA — condensada, fuerte, MAYÚSCULAS, bajada RUN SERIES, negro sobre blanco (invertir para fondos oscuros).\n\nOJO: vault/proyectos/isla-run/marca.md no está en el repo; hecho con la identidad descrita en el pedido. Logo/lockup generados por IA = concepto: vectorizar en Illustrator/Figma antes de imprimir. Texto sin verificar visualmente. Lanzamiento 8/oct · ISLA Cabo Rojo 5K, dom 13/dic/2026, 6 AM. Créditos: 1 (gpt_image_2_5, high). Tanda 1 de 2 (faltan mockups camisa/medalla y kit redes)."
+    },
+    {
+      "tipo": "arte",
+      "marca": "isla-run",
+      "modelo": "gpt_image_2_5",
+      "pilar": "marca",
+      "angulo": "Lanzamiento ISLA Cabo Rojo 5K",
+      "agente": "Lola",
+      "creadoEl": "2026-09-24T16:06:43.586Z",
+      "estado": "nuevo",
+      "id": "arte-lola-isla-lockup-cabo-rojo",
+      "titulo": "ISLA · Lockup Cabo Rojo 5K (faro + salinas)",
+      "formato": "lockup 1:1",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260924_160608_4aa5baad-3e6f-4714-9e5b-fce22b303594.png",
+      "promptVideo": "Flat line-art lighthouse (Los Morrillos) on cliff above salt-flat lines in #E0566F, bold condensed \"CABO ROJO\" black + \"5K\" #E0566F, white background, flat vector.",
+      "contenido": "LOCKUP CABO ROJO 5K — símbolo faro Los Morrillos + salinas en rosado salina #E0566F, CABO ROJO en negro, 5K en rosado.\n\nOJO: vault/proyectos/isla-run/marca.md no está en el repo; hecho con la identidad descrita en el pedido. Logo/lockup generados por IA = concepto: vectorizar en Illustrator/Figma antes de imprimir. Texto sin verificar visualmente. Lanzamiento 8/oct · ISLA Cabo Rojo 5K, dom 13/dic/2026, 6 AM. Créditos: 1 (gpt_image_2_5, high). Tanda 1 de 2 (faltan mockups camisa/medalla y kit redes)."
+    },
+    {
+      "tipo": "arte",
+      "marca": "isla-run",
+      "modelo": "gpt_image_2_5",
+      "pilar": "marca",
+      "angulo": "Lanzamiento ISLA Cabo Rojo 5K",
+      "agente": "Lola",
+      "creadoEl": "2026-09-24T16:06:43.586Z",
+      "estado": "nuevo",
+      "id": "arte-lola-isla-hero",
+      "titulo": "ISLA · Hero landing (provisional) — faro al amanecer",
+      "formato": "hero 16:9",
+      "imagenUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3APsoyk8vNIYYWl6uwLRCcVPJ0h/hf_20260924_160611_41c100c6-6619-4d62-8abb-90e5463bda7c.png",
+      "promptVideo": "Cinematic full-bleed sports photo: lone runner on red cliffs of Cabo Rojo PR at sunrise, Los Morrillos lighthouse, pink salt flats, Nike Running/ASICS aesthetic, empty sky left for headline, no text.",
+      "contenido": "HERO LANDING (provisional, IA — reemplazar con foto real del día de scouting). Cielo libre a la izquierda para el titular.\nTITULAR SUGERIDO: 5 kilómetros. Un faro. Una isla que se corre por pueblos.\nCTA: Asegura tu bib de Fundador\n\nOJO: vault/proyectos/isla-run/marca.md no está en el repo; hecho con la identidad descrita en el pedido. Logo/lockup generados por IA = concepto: vectorizar en Illustrator/Figma antes de imprimir. Texto sin verificar visualmente. Lanzamiento 8/oct · ISLA Cabo Rojo 5K, dom 13/dic/2026, 6 AM. Créditos: 1 (gpt_image_2_5, high). Tanda 1 de 2 (faltan mockups camisa/medalla y kit redes)."
     }
   ]
 }
