@@ -15,9 +15,9 @@ export const PLANTILLAS = {
     nombre: "aib_bienvenida",
     categoria: "UTILITY",
     texto:
-      "¡Hola {{1}}! Te damos la bienvenida a AI Borinquen. Ya recibimos tu pago y tu proyecto está en marcha. " +
-      "Ángela, tu project manager, se va a comunicar contigo para coordinar la llamada de arranque. " +
-      "Si tienes cualquier duda sobre los próximos pasos, escríbenos por aquí.",
+      "¡Hola {{1}}! Te damos la bienvenida a AI Borinquen. Ya tienes agendada tu videollamada de onboarding, " +
+      "que es donde arrancamos tu proyecto. Este es nuestro número de acompañamiento: si tienes dudas antes o " +
+      "después de la llamada, escríbenos por aquí.",
     ejemplo: ["Carlos"],
   },
   encuesta10: {
