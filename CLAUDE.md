@@ -520,6 +520,14 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   `next.config.ts` (CSP solo en /pulse; si se agrega un CDN hay que sumarlo a `img-src`/`connect-src`);
   respaldo diario `api/cron/pulse-respaldo` (8:30 UTC) → Storage `pulse/respaldos/YYYY-MM-DD.json`,
   conserva 30, sin password_hash.
+- **Typeform de onboarding → Pulse** (24/sep): el cliente paga, llena el "ONBOARDING TYPEFORM"
+  (`vlfCgUUP`) y el webhook `POST /api/pulse/typeform` (firma `Typeform-Signature` con
+  `TYPEFORM_WEBHOOK_SECRET`, público en `proxy.ts`) crea la ficha en LEVEL UP MEDIA → ONBOARDING & SETUP
+  (nombre del contacto, Empresa, Teléfono, E-mail, Pueblo) y deja TODAS las respuestas como comentario,
+  firmado por el usuario de sistema "Typeform (automático)". Si ya existe por e-mail/teléfono completa
+  solo lo vacío; idempotente por token. Mapeo puro en `lib/pulse/typeform.ts` (tests), alta en
+  `lib/pulse/alta-typeform.ts`. `scripts/typeform.mjs webhook|webhooks|importar --desde … [--real]|probar`
+  (necesita `TYPEFORM_TOKEN`; `?prueba=1` / sin `--real` escribe en el tablero Demo).
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
