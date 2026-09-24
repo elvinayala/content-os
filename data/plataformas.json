@@ -441,6 +441,7 @@
         "content/eventos/cabo-rojo-2026.ts"
       ],
       "critico": false,
+      "github": "elvinayala/isla-run",
       "notas": "Primera edición: ISLA Cabo Rojo 5K (13/dic/2026). Dinero real vía Stripe (webhook firma el pago). Nunca abrir inscripciones (estado 'abierta') sin OK de Elvin: relevo en BORRADOR hasta revisión legal, ruta por confirmar. Precio lo calcula el servidor; tope y escalones se editan en /admin/evento. Plan: vault/proyectos/isla-run/."
     }
   ],

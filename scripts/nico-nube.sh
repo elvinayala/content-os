@@ -67,5 +67,12 @@ if [ ! -d node_modules ] || ! cmp -s package-lock.json node_modules/.lock-instal
   npm ci --omit=dev --ignore-scripts >/dev/null 2>&1 && cp package-lock.json node_modules/.lock-instalado && echo "📦 deps instaladas"
 fi
 cd "$CO"
+# La memoria de Claude de la Mac (claude-memoria/, la sube scripts/sync-nube.sh cada 15 min) pasa a
+# ser la memoria automática de Nico: Claude Code la carga sola en cada pedido (MEMORY.md en contexto)
+# y lo que Nico aprende queda ahí, se sube con git y vuelve a la Mac. Elvin, 24/sep: "que Nico tenga
+# acceso a todo mi Claude".
+MEM_NICO="$HOME/.claude/projects/$(printf '%s' "$CO" | sed 's#[/ ]#-#g')/memory"
+mkdir -p "$(dirname "$MEM_NICO")" "$CO/claude-memoria"
+[ -L "$MEM_NICO" ] || { rm -rf "$MEM_NICO"; ln -s "$CO/claude-memoria" "$MEM_NICO"; }
 echo "▶ Nico arranca en $CO · repos: $(ls "$REPOS" 2>/dev/null | tr '\n' ' ')"
 exec node --dns-result-order=ipv4first scripts/telegram-puente.mjs

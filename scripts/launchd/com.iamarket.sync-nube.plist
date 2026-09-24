@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Cada 15 min: memoria de Claude + vault + comandos de la Mac → GitHub, para que Nico lo vea.
+     Instalar: cp este archivo a ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.iamarket.sync-nube.plist -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.iamarket.sync-nube</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/bash</string>
+    <string>/Users/elvinayala/AGENTE CONTENIDO/scripts/sync-nube.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/elvinayala/AGENTE CONTENIDO</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>HOME</key><string>/Users/elvinayala</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>900</integer>
+  <key>StandardOutPath</key><string>/Users/elvinayala/Library/Logs/sync-nube.log</string>
+  <key>StandardErrorPath</key><string>/Users/elvinayala/Library/Logs/sync-nube.err.log</string>
+</dict></plist>
