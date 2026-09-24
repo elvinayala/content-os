@@ -1,0 +1,17 @@
+{
+  "marca": "resuelto",
+  "creada": "2026-09-24",
+  "motivo": "Meta desactivó el WhatsApp de Resuelto (SCAM / uso aceptable, 23-sep). Reclutamiento pasa a Messenger + Instagram DM; el agente contesta ahí y pide el teléfono.",
+  "campana": { "id": "120255088992780029", "nombre": "Resuelto · Plomeros · Messenger+IG · Empleo · Ventas", "objetivo": "OUTCOME_SALES", "categoriaEspecial": "EMPLOYMENT", "estado": "PAUSED (Elvin activa)" },
+  "conjuntos": {
+    "Área Metro": { "adset": "120255088994000029", "ad": "120255089121570029", "diario": 15 },
+    "Caguas": { "adset": "120255088994750029", "ad": "120255089150040029", "diario": 10 },
+    "Arecibo": { "adset": "120255088995330029", "ad": "120255089147390029", "diario": 10 },
+    "Aguadilla": { "adset": "120255088995750029", "ad": "120255089143960029", "diario": 10 },
+    "Mayagüez": { "adset": "120255088996100029", "ad": "120255089139000029", "diario": 10 },
+    "Ponce": { "adset": "120255088996560029", "ad": "120255089133530029", "diario": 10 },
+    "Fajardo": { "adset": "120255088996830029", "ad": "120255089128880029", "diario": 10 }
+  },
+  "config": { "destino": "MESSAGING_INSTAGRAM_DIRECT_MESSENGER", "optimizacion": "CONVERSATIONS", "edad": "18-65", "genero": "todos (Empleo)", "creativo": "kit/flyers-regiones/plomero-<region>-feed.png (sin número, botón 'Escríbenos un mensaje')", "pagina": "1278171838721301", "instagram": "17841432209401518" },
+  "reemplaza": "120255016399820029 (Plomeros · WhatsApp · Sprint 1, PAUSADA; optimizaba LINK_CLICKS, sin categoría Empleo)"
+}
