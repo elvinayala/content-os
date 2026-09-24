@@ -47,7 +47,8 @@ const limpio = (s: string) => s.replace(/[<>&]/g, (c) => ({ "<": "‹", ">": "�
 export function textoAviso(marca: MarcaLlamada, inv: InviteeAviso, opts: { closer?: string; onboarding?: boolean } = {}): string {
   const ev = inv.scheduled_event;
   const closer = opts.closer || ev.event_memberships?.[0]?.user_name || "sin asignar";
-  const telefono = inv.text_reminder_number || respuesta(inv, /tel[eé]fono|whatsapp|celular|phone|n[uú]mero/i);
+  const telCrudo = inv.text_reminder_number || respuesta(inv, /tel[eé]fono|whatsapp|celular|phone|n[uú]mero/i);
+  const telefono = (telCrudo.match(/\d/g)?.length ?? 0) >= 7 ? telCrudo : ""; // "." o "n/a" no es un teléfono
   const negocio = respuesta(inv, /negocio|empresa|compa[ñn][ií]a|business|company|cl[ií]nica|marca/i);
   const agendo = inv.tracking?.utm_source?.trim();
   const titulo = opts.onboarding
