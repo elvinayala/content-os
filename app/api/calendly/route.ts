@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
+import { avisarLlamada } from "@/lib/aviso-llamadas";
 
 // after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
 export const maxDuration = 120;
@@ -391,12 +392,16 @@ async function procesarCreado(inv: CalendlyInvitee) {
   // automáticas v4" leyendo los correos de Calendly en Gmail; dejó de correr en agosto 2026.
   if (IGNORAR.test(ev.name)) {
     if (vistoRecien(ev.uri)) return { ok: true, duplicado: true };
+    after(() => avisarLlamada("level-up", inv, { onboarding: true }));
     const onb = await avisarOnboardingN8n(inv);
     return { ok: true, onboarding: onb, ignoradoPipedrive: `tipo-evento:${ev.name}` };
   }
 
   // Idempotencia: Calendly reintenta si no respondemos 2xx a tiempo.
   if (vistoRecien(ev.uri)) return { ok: true, duplicado: true };
+
+  // Aviso al canal de llamadas (#office-10-lum-calls) con el closer real (alias incluido).
+  after(() => avisarLlamada("level-up", inv, { closer: owner.nombre }));
 
   // ActiveCampaign: el que agenda entra a la base con `etapa:agendo` (dispara la
   // pre-llamada y corta lead→agenda). No-op sin ACTIVECAMPAIGN_*.

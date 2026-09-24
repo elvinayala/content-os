@@ -2,6 +2,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 
 import { esOnboarding, firmaCalendlyValida, onboardingDe, type InviteeCalendly } from "@/lib/aib-onboarding/calendly";
 import { enviarPendiente, registrarOnboarding } from "@/lib/aib-onboarding/proceso";
+import { avisarLlamada, type InviteeAviso } from "@/lib/aviso-llamadas";
 
 // Webhook del Calendly de AI Borinquen (cuenta aparte de la de Level Up, que va a /api/calendly).
 // Igual que en Level Up: agendar la llamada de onboarding = es cliente → se registra y sale la
@@ -24,7 +25,10 @@ export async function POST(req: NextRequest) {
   const inv = hook.payload;
   if (hook.event !== "invitee.created") return NextResponse.json({ ok: true, ignorado: hook.event });
   if (!inv?.scheduled_event?.name) return NextResponse.json({ error: "payload-incompleto" }, { status: 400 });
-  if (!esOnboarding(inv.scheduled_event.name)) return NextResponse.json({ ok: true, ignorado: `tipo-evento:${inv.scheduled_event.name}` });
+  // Toda cita de AIB (demo, llamada u onboarding) se avisa en el canal de llamadas.
+  const onboarding = esOnboarding(inv.scheduled_event.name);
+  after(() => avisarLlamada("ai-borinquen", inv as unknown as InviteeAviso, { onboarding }));
+  if (!onboarding) return NextResponse.json({ ok: true, avisado: true, ignorado: `tipo-evento:${inv.scheduled_event.name}` });
 
   const o = onboardingDe(inv);
   if (!o.telefono) {
