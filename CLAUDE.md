@@ -534,8 +534,9 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   solo lo vacío; idempotente por token. Mapeo puro en `lib/pulse/typeform.ts` (tests), alta en
   `lib/pulse/alta-typeform.ts`. `scripts/typeform.mjs webhook|webhooks|importar --desde … [--real]|probar`
   (necesita `TYPEFORM_TOKEN`; `?prueba=1` / sin `--real` escribe en el tablero Demo).
-- **Onboarding propio de Level Up** (24/sep, reemplaza al Typeform): `https://bienvenida-levelup.vercel.app`
-  → `/onboarding/level-up` (público en `proxy.ts`). Una pregunta por pantalla, marca LU (negro +
+- **Onboarding propio de Level Up** (24/sep, reemplaza al Typeform): **`https://levelupmedia.vercel.app`**
+  (raíz = formulario por rewrite; en ese dominio y en `bienvenida-levelup` cualquier otra ruta vuelve al
+  formulario, nunca a un login) → `/onboarding/level-up` (público en `proxy.ts`). Lo manda el CLOSER al cerrar. Una pregunta por pantalla, marca LU (negro +
   `#f5ce1a`, Sora/Inter, estilos `.onboarding-lu` en globals.css), borrador en localStorage. Preguntas y
   validación compartidas en `lib/onboarding/level-up.ts` (`columna` = título de la columna en Pulse;
   `ETIQUETA_VISIBLE` muestra bien escritas las etiquetas del CRM). `POST /api/onboarding/level-up`
