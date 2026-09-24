@@ -1,14 +1,24 @@
-// ActiveCampaign = la herramienta de email del ecosistema (una cuenta, dos marcas por lista +
-// tag). Sin ACTIVECAMPAIGN_URL + ACTIVECAMPAIGN_KEY todo es no-op (las rutas siguen andando).
+// ActiveCampaign = la herramienta de email del ecosistema. REGLA DE ELVIN (23/sep): cada marca
+// tiene SU PROPIA cuenta de AC y nunca se mezclan. ACTIVECAMPAIGN_URL/KEY = la cuenta de Level Up
+// (levelupmediapr17748); AI Borinquen usa ACTIVECAMPAIGN_URL_AIB/KEY_AIB. Si la marca no tiene su
+// cuenta configurada, todo es no-op para esa marca (nunca cae en la cuenta de otra).
 // v3 para contactos/tags/listas; v1 (admin/api.php) para crear campañas, que v3 no soporta.
 
 export type MarcaAC = "level-up" | "ai-borinquen" | "shadow-operator" | "1000x";
 
-const URL = () => (process.env.ACTIVECAMPAIGN_URL ?? "").replace(/\/$/, "");
-const KEY = () => process.env.ACTIVECAMPAIGN_KEY ?? "";
+let marcaActual: MarcaAC = "level-up";
+function cuenta(marca: MarcaAC = marcaActual): { url: string; key: string } {
+  const aib = marca === "ai-borinquen";
+  const url = (aib ? process.env.ACTIVECAMPAIGN_URL_AIB : process.env.ACTIVECAMPAIGN_URL) ?? "";
+  const key = (aib ? process.env.ACTIVECAMPAIGN_KEY_AIB : process.env.ACTIVECAMPAIGN_KEY) ?? "";
+  return { url: url.replace(/\/$/, ""), key };
+}
+const URL = () => cuenta().url;
+const KEY = () => cuenta().key;
 
-export function acListo(): boolean {
-  return Boolean(URL() && KEY());
+export function acListo(marca: MarcaAC = "level-up"): boolean {
+  const c = cuenta(marca);
+  return Boolean(c.url && c.key);
 }
 
 // Ids de lista por marca (los crea `scripts/activecampaign.mjs setup` y se pegan en .env).
@@ -47,15 +57,17 @@ async function v3<T = unknown>(method: "GET" | "POST", ruta: string, body?: unkn
 }
 
 const tagCache = new Map<string, number>();
-async function idDeTag(nombre: string): Promise<number> {
-  const c = tagCache.get(nombre);
+async function idDeTag(nombreTag: string): Promise<number> {
+  const nombre = nombreTag;
+  const clave = `${marcaActual === "ai-borinquen" ? "aib" : "lu"}|${nombre}`;
+  const c = tagCache.get(clave);
   if (c) return c;
   const r = await v3<{ tags: { id: string; tag: string }[] }>("GET", `tags?search=${encodeURIComponent(nombre)}&limit=100`);
   const existente = r.tags.find((t) => t.tag === nombre);
   const id = existente
     ? Number(existente.id)
     : Number((await v3<{ tag: { id: string } }>("POST", "tags", { tag: { tag: nombre, tagType: "contact" } })).tag.id);
-  tagCache.set(nombre, id);
+  tagCache.set(clave, id);
   return id;
 }
 
@@ -63,11 +75,12 @@ async function idDeTag(nombre: string): Promise<number> {
 // email). El id se resuelve una vez por instancia; si el campo no existe en AC, se ignora.
 const campoCache = new Map<string, number>();
 async function idsDeCampos(perstags: string[]): Promise<Map<string, number>> {
-  if (perstags.some((t) => !campoCache.has(t))) {
+  const pre = marcaActual === "ai-borinquen" ? "aib|" : "lu|";
+  if (perstags.some((t) => !campoCache.has(pre + t))) {
     const r = await v3<{ fields: { id: string; perstag: string }[] }>("GET", "fields?limit=100");
-    for (const f of r.fields) campoCache.set(f.perstag.toUpperCase(), Number(f.id));
+    for (const f of r.fields) campoCache.set(pre + f.perstag.toUpperCase(), Number(f.id));
   }
-  return new Map(perstags.filter((t) => campoCache.has(t)).map((t) => [t, campoCache.get(t)!]));
+  return new Map(perstags.filter((t) => campoCache.has(pre + t)).map((t) => [t, campoCache.get(pre + t)!]));
 }
 
 export interface ContactoAC {
@@ -88,7 +101,8 @@ export interface ContactoAC {
 // ninguna agenda de LU entró a LU · Pre-llamada). Los llamadores deben envolverlo en `after()` (no `void`): en Vercel
 // una promesa suelta se corta al responder y el contacto queda sin lista ni tags (22/sep).
 export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?: number; error?: string }> {
-  if (!acListo()) return { ok: false, error: "ac-no-configurado" };
+  if (!acListo(c.marca)) return { ok: false, error: `ac-no-configurado:${c.marca}` };
+  marcaActual = c.marca;
   try {
     const [first, ...rest] = (c.nombre ?? "").trim().split(/\s+/);
     const contact: Record<string, unknown> = { email: c.email.toLowerCase(), firstName: first ?? "", lastName: rest.join(" ") };
@@ -143,7 +157,8 @@ export async function crearCampana(opts: {
   fromName: string;
   sdate?: string;
 }): Promise<{ ok: boolean; campaignId?: string; error?: string }> {
-  if (!acListo()) return { ok: false, error: "ac-no-configurado" };
+  if (!acListo(opts.marca)) return { ok: false, error: `ac-no-configurado:${opts.marca}` };
+  marcaActual = opts.marca;
   const lista = listaDeMarca(opts.marca);
   if (!lista) return { ok: false, error: "sin-lista" };
   const v1 = async (action: string, form: Record<string, string>) => {

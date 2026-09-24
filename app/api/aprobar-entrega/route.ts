@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     // Newsletter aprobado → campaña en ActiveCampaign programada para el próximo
     // jueves 8:00 AM PR (o borrador si NEWSLETTER_AUTO=draft). Sin AC configurado,
     // sigue el camino de siempre (Slack al equipo para cargarlo a mano).
-    if (e.lista === "newsletter-general" && acListo() && (e.marca === "level-up" || e.marca === "ai-borinquen")) {
+    if (e.lista === "newsletter-general" && (e.marca === "level-up" || e.marca === "ai-borinquen") && acListo(e.marca)) {
       const md = e.contenido ?? "";
       const asunto = (md.match(/##\s*Asunto[^\n]*\n+\s*(?:1\.\s*)?([^\n]+)/i)?.[1] ?? e.titulo ?? "Newsletter").replace(/^["“]|["”]$/g, "").trim();
       const cuerpo = (md.split(/##\s*Cuerpo/i)[1] ?? md).split(/##\s*CTA/i)[0].trim();
