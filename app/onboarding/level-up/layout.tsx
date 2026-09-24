@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Bienvenido a Level Up Media",
-  description: "5 minutos para que arranquemos tu campaña.",
+  description: "5 minutos para preparar tu estrategia con Level Up Media.",
   robots: { index: false, follow: false },
 };
 export const viewport: Viewport = { themeColor: "#0b0b0b" };

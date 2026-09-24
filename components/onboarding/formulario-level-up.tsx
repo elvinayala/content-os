@@ -188,7 +188,7 @@ function Bienvenida({ onEmpezar, continuar }: { onEmpezar: () => void; continuar
       <span className="w-fit rounded-full border border-[#f5ce1a]/30 bg-[#f5ce1a]/10 px-3 py-1 text-xs font-semibold tracking-[0.16em] text-[#f5ce1a] uppercase">Onboarding · 5 minutos</span>
       <h1 className="font-[family-name:var(--font-sora)] text-4xl leading-[1.08] font-bold tracking-tight sm:text-6xl">
         Bienvenido a <span className="text-[#f5ce1a]">Level Up</span>.<br />
-        Vamos a preparar tu campaña.
+        Vamos a preparar tu estrategia.
       </h1>
       <p className="max-w-xl text-lg leading-relaxed text-[#bdbab2]">
         Con estas respuestas tu estratega arma los anuncios, el público y el presupuesto. Mientras más claro seas, más rápido salimos al aire.
