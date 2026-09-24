@@ -1,0 +1,23 @@
+---
+name: quilla-holding-creadores
+description: "Quilla — empresa nueva e independiente de Elvin (15/sep/2026) de creator management + monetization en PR (luego hispanos de EE. UU.): holding silencioso detrás de creadores; decisiones fijas (nombre, rev share, YouTube-only con vocero, GHL, marketplace condicional); docs en vault/proyectos/quilla/"
+metadata: 
+  node_type: memory
+  type: project
+  originSessionId: f93363f7-4f06-4f8b-a82e-3d1e5ed8a766
+  modified: 2026-09-15T04:54:55.498Z
+---
+
+**Qué es:** Quilla, empresa nueva de Elvin decidida el 15/sep/2026, inspirada en Genflow: "Convertimos creadores en empresas". Sin vínculo público con Level Up ni AI Borinquen (solo know-how interno; nunca nombrarlas en nada de Quilla). Holding silencioso: el creador mantiene la atención, Quilla construye y opera el negocio y participa del resultado. Laboratorio PR; luego hispanos de EE. UU. y Latam. Meta: 3–5 creadores extraordinarios en 6 meses → 1–2 casos → 10 → 25.
+
+**Decisiones fijas de Elvin (15/sep):** nombre **Quilla** (quillagroup.com / quillahq.com libres por DNS, pendiente registrar; búsqueda de marca con abogado) · caja $30K–50K (plan base $40K) · YouTube Ads ÚNICO canal pagado (nunca Meta para captar creadores) con un **vocero/socio en cámara, no Elvin** · CRM = sub-cuenta propia de GHL (receta Resuelto) + DocuSign + Netlify · kit de landing/aplicación queda como PASO 02 (solo especificación hoy) · marketplace creadores↔negocios = **roster concierge desde el mes 3; plataforma self-serve solo si ≥25 creadores y ≥30 briefs/mes** (le dije de frente que un marketplace en PR hoy no tiene liquidez y el % se evade; aceptó) · regla dura: **sin contrato firmado no se construye nada**.
+
+**Modelo (cifras en los docs):** management 20 % inbound / 25 % originado (12 m + sunset 6) · monetization 50/50 sobre ingreso neto definido (24 m, revisión a 12, build-lock 6, tail 50→25→10 % u opción de compra de la infraestructura) · partnerships 3/6/12 m desde $15K/$30K/$60K+ (agente 20–25 % o principal margen 30–40 %) · business building fee $10–50K + 30–50 % o equity 20–49 %. Elvin solo aprueba firma de creadores, acuerdos > $25K y estrategia. Scoring 0–100 con 4 gates (<25K y <50K total sin credibilidad; engagement <1 %; rev share no; <4 h/sem), bandas ≥70 llamada / 45–69 revisión / <45 no. Break-even base mes 7; regla de corte del burn si al mes 5 no hay venture lanzado.
+
+**Dónde vive:** `vault/proyectos/quilla/` (18 docs: plan-maestro, naming, servicios, ICP, adquisición, funnel-youtube, vocero, scoring, plataforma, proceso comercial, onboarding, organigrama, tecnología, contratos, plan financiero, roadmap, decisiones D1–D12, HOY) + entrada en `vault/indice.md`. Plan de la sesión: `~/.claude/plans/quiero-construir-desde-cero-majestic-wall.md`.
+
+**Corrección de Elvin (15/sep):** le dije que "PR solo no da 50 creadores" extrapolando la investigación de micro-influencers (que era SOLO nicho negocios/tech 10K–50K). Estaba mal: verificado en HypeAuditor/Heepsy, PR tiene cientos de creadores ≥50K (TikTok top-1000 con 105K en la posición 50; lifestyle IG 50 cuentas casi todas >250K) y miles entre 10K–50K. Nunca volver a decir que el mercado de creadores de PR es pequeño; lo escaso es el fit (vende, acepta rev share, audiencia que compra), no la cantidad. Docs corregidos.
+
+**PASO 02 hecho (15/sep, misma sesión):** Elvin dijo "all in" en Shadow + Quilla. Kit construido en `vault/proyectos/quilla/kit/`: `brand-kit.md` (motivo línea de agua; Sal #F3F0E8 / Carbón #14202A / Agua profunda #0F3B57 único acento; Newsreader + IBM Plex Sans + Plex Mono), `logo/` (ícono línea de agua + casco + quilla), `landing/` (index.html, aplicar/index.html, estilo.css, scoring.js UMD + test-scoring.mjs 8/8, config.js = único archivo a editar: webhook GHL, calendario, email, IG; netlify.toml; README). Verificado en navegador: flujo captura → 5 pasos → scoring → resultado, UTMs conservadas, payload plano con score/banda/modelo/motivos. Launch `quilla-landing` :8795. NO desplegado: falta OK de Elvin, dominio, sub-cuenta GHL. Deploy: `npx -y netlify-cli deploy --prod --dir . --no-build` desde kit/landing.
+
+**How to apply:** cualquier tarea de Quilla parte de `plan-maestro.md` y respeta las cifras de `servicios-y-revenue-share.md`; voz tuteo PR ([[voz-espanol-pr-tuteo]]), nunca "gratis" ni promesas de ingresos; cambios de landing/aplicación se hacen en `kit/landing/` (tokens en estilo.css, rúbrica en scoring.js + correr `node --test test-scoring.mjs`). Pendientes de Elvin en `HOY.md` y `decisiones.md`. Relacionado: [[elvin-ceo-perfil]] (prioridad 9: crecer por asociaciones con creadores), [[micro-influencers-pr]] (base empírica del ICP), [[plomeria-pr-vision]] (receta GHL/Netlify).
