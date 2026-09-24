@@ -97,6 +97,30 @@
       "porque": "Carilin: que Pulse mueva los clientes de grupo solo, como Monday.",
       "verificado": "Tests 43/43 (6 de automatizaciones); deploy dpl_CMVasHAak6ffdbeh4v3HfNH1Forb READY en producción (content-os-chi-seven, /pulse/login 200). No hice prueba con cliente falso para no mandarle un cliente inventado a n8n/NocoDB; la primera movida real queda en la actividad como ⚡ automatización (pulse_activity tipo mover con column_id).",
       "commit": "3c01fc2 (sobre 4fb83f0)"
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "slack / contrataciones",
+      "que": "Le envié a Aure por DM del bot (Command Center) el puesto nuevo de Lis en PDF: acuerdo de rol (Coordinadora de Retención y Alianzas, EA Market), SOP y manual de colaboraciones, para que se los discuta a Lis. md-a-pdf.mjs ahora acepta CHROME_PATH/CHROME_FLAGS para correr en Linux.",
+      "porque": "Pedido de Elvin: el SOP no le había llegado a Aure como documento.",
+      "verificado": "sí: conversations.history del DM muestra el mensaje 22:52 UTC con los 3 PDFs (81/85/116 KB); render del SOP revisado.",
+      "commit": null
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "puente de Telegram (nico/sofi/max/lola)",
+      "que": "Los bots ahora ven fotos, imágenes y PDFs: el loop descartaba todo mensaje sin texto (if (!msg?.text) continue). Ahora baja el adjunto por getFile a .telegram-adjuntos/ (gitignored, 7 días), junta álbumes en un pedido y le pasa la ruta a Claude para abrirlo con Read. Caption = texto del pedido.",
+      "porque": "Elvin: cuando le manda foto a Nico no responde.",
+      "verificado": "PARCIAL: sintaxis OK, 53/53 tests, helper probado, token de Nico y getFile responden. El reinicio del servicio nico se programó para después de esta respuesta (el contenedor hace git pull al arrancar); falta que Elvin mande una foto de prueba. Sofi/Max/Lola toman el cambio en su próximo deploy/reinicio.",
+      "commit": "f29e67d"
+    },
+    {
+      "fecha": "2026-09-23",
+      "plataforma": "railway (puente, max, lola, nico)",
+      "que": "Redeploy de los 4 bots con el arreglo de fotos por Telegram (f29e67d). El reinicio diferido de nico con sleep no sobrevivió (el puente mata el grupo del proceso al terminar), así que nico va con railway up --detach al final.",
+      "porque": "Elvin: dale a reiniciar los otros bots para que vean fotos.",
+      "verificado": "puente/max/lola: deploy SUCCESS y logs de arranque OK (salud claude ok) 23:54-23:55 UTC. nico: deploy lanzado al cerrar esta respuesta; falta foto de prueba de Elvin.",
+      "commit": "f29e67d"
     }
   ],
   "pendientesElvin": [

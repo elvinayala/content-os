@@ -69,3 +69,6 @@ vault/proyectos/contrataciones/pdf/
 
 # Listas de clientes para encuestas manuales (teléfonos/emails): nunca al repo
 data/n8n/rezagados-*.json
+
+# Fotos/PDFs que Elvin manda por Telegram (los baja el puente; se borran a los 7 días)
+.telegram-adjuntos/

@@ -81,6 +81,35 @@ async function tg(token, m, body) {
   const r = await fetch(`https://api.telegram.org/bot${token}/${m}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}), signal: AbortSignal.timeout(70000) });
   return r.json();
 }
+// Fotos/documentos de Elvin (23/sep: "le mando foto a Nico y no responde"). Antes el loop descartaba
+// todo mensaje sin texto. Ahora se bajan a ROOT/.telegram-adjuntos/ (dentro del cwd, así Read los
+// abre en todos los modos; gitignored) y el pedido lleva la ruta para que Claude los mire con Read.
+const ADJUNTOS = path.join(ROOT, ".telegram-adjuntos");
+async function bajarAdjunto(token, msg) {
+  const doc = msg.document && /^(image\/|application\/pdf)/.test(msg.document.mime_type || "") ? msg.document : null;
+  const f = msg.photo?.length ? msg.photo[msg.photo.length - 1] : doc; // la foto más grande
+  if (!f) return null;
+  if (f.file_size > 20e6) return { error: "pesa más de 20 MB (límite de Telegram para bots)" };
+  const info = await tg(token, "getFile", { file_id: f.file_id });
+  if (!info.ok) return { error: info.description || "getFile falló" };
+  const r = await fetch(`https://api.telegram.org/file/bot${token}/${info.result.file_path}`, { signal: AbortSignal.timeout(60000) });
+  if (!r.ok) return { error: `descarga ${r.status}` };
+  fs.mkdirSync(ADJUNTOS, { recursive: true });
+  for (const v of fs.readdirSync(ADJUNTOS)) { const q = path.join(ADJUNTOS, v); if (Date.now() - fs.statSync(q).mtimeMs > 7 * 864e5) fs.rmSync(q, { force: true }); }
+  const ext = path.extname(doc?.file_name || info.result.file_path) || ".jpg";
+  const destino = path.join(ADJUNTOS, `${new Date().toISOString().slice(0, 10)}-${f.file_unique_id}${ext}`);
+  fs.writeFileSync(destino, Buffer.from(await r.arrayBuffer()));
+  return { ruta: path.relative(ROOT, destino) };
+}
+// Un álbum llega como varios mensajes con el mismo media_group_id: se juntan en un solo pedido.
+const albumes = new Map();
+function textoConAdjuntos(texto, rutas, errores) {
+  const partes = [texto || "Mira esto que te mandé."];
+  if (rutas.length) partes.push(`[Elvin adjuntó ${rutas.length === 1 ? "una imagen" : rutas.length + " imágenes"} por Telegram. Ábrelas con Read antes de responder: ${rutas.join(", ")}]`);
+  if (errores.length) partes.push(`[No pude bajar ${errores.length} adjunto(s): ${errores.join("; ")}. Díselo a Elvin.]`);
+  return partes.join("\n\n");
+}
+
 // Markdown ligero → HTML de Telegram.
 const html = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   .replace(/```[a-z]*\n([\s\S]*?)```/g, (_, c) => `<pre>${c}</pre>`).replace(/`([^`\n]+)`/g, "<code>$1</code>")
@@ -629,7 +658,10 @@ async function main() {
       fallos = 0;
       for (const u of r.result) {
         st.offset = u.update_id + 1; guardarEstado(st);
-        const msg = u.message; if (!msg?.text) continue;
+        const msg = u.message; if (!msg) continue;
+        const tieneAdjunto = Boolean(msg.photo?.length || msg.document);
+        msg.text = msg.text ?? msg.caption ?? "";
+        if (!msg.text && !tieneAdjunto) continue;
         const chat = String(msg.chat.id);
         chatCEO = chatCEO || env("TELEGRAM_CEO_CHAT_ID");
         if (!chatCEO || chat !== chatCEO) {
@@ -643,6 +675,25 @@ async function main() {
           if (hijoActual) { hijoActual.detenido = true; hijoActual.kill("SIGTERM"); await enviar(token, chat, "🛑 Detenido. Lo que alcancé a hacer queda en git y en la bitácora; dime si lo reviso, lo termino o lo revierto."); }
           else await enviar(token, chat, "No estoy corriendo nada ahora mismo.");
           continue;
+        }
+        if (tieneAdjunto) {
+          const adj = await bajarAdjunto(token, msg).catch((e) => ({ error: e.message }));
+          if (!adj) { if (!msg.text) { await enviar(token, chat, "Ese tipo de archivo no lo puedo abrir todavía: mándamelo como foto, imagen o PDF."); continue; } }
+          else if (msg.media_group_id) {
+            // Álbum: se junta 2 s y sale como un solo pedido.
+            const a = albumes.get(msg.media_group_id) || { texto: "", rutas: [], errores: [] };
+            if (msg.text) a.texto = msg.text;
+            if (adj.ruta) a.rutas.push(adj.ruta); else a.errores.push(adj.error);
+            if (!albumes.has(msg.media_group_id)) {
+              albumes.set(msg.media_group_id, a);
+              setTimeout(() => {
+                albumes.delete(msg.media_group_id);
+                if (hijoActual) enviar(token, chat, "📥 Anotado. Estoy terminando lo anterior; esto va justo después.").catch(() => {});
+                enSerie(() => procesar(token, chat, textoConAdjuntos(a.texto, a.rutas, a.errores), st)).catch(async (e) => { LOG("error:", e.message); await enviar(token, chat, `Se rompió algo: ${e.message.slice(0, 300)}`).catch(() => {}); });
+              }, 2000);
+            }
+            continue;
+          } else msg.text = textoConAdjuntos(msg.text, adj.ruta ? [adj.ruta] : [], adj.error ? [adj.error] : []);
         }
         if (hijoActual) await enviar(token, chat, "📥 Anotado. Estoy terminando lo anterior; esto va justo después.");
         enSerie(() => procesar(token, chat, msg.text, st)).catch(async (e) => { LOG("error:", e.message); await enviar(token, chat, `Se rompió algo: ${e.message.slice(0, 300)}`).catch(() => {}); });
