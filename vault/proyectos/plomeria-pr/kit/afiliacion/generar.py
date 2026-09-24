@@ -149,7 +149,7 @@ filas = "".join(f"<tr><td>{s['nombre']}</td><td class='num'>{precio(s)}</td></tr
 KIT = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>
 {cab("Kit de bienvenida", "Bienvenido a Resuelto")}
 <div class="caja"><h2>Tú haces la plomería. Nosotros hacemos el resto.</h2>
-Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y le cobramos. Tú llegas, haces el trabajo bien y <b>cobras los viernes</b>. Cualquier cosa, escríbenos al WhatsApp de Resuelto: <b>939-247-9234</b>.</div>
+Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y le cobramos. Tú llegas, haces el trabajo bien y <b>cobras los viernes</b>. Cualquier cosa, escríbenos al WhatsApp de Resuelto: <b>787-956-1111</b>.</div>
 
 <h2>Tus primeros pasos (antes de tu primer trabajo)</h2>
 <ul class="check">
@@ -201,7 +201,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <li>Calificación 4.8 mínimo. Tres faltas y sales.</li>
 <li>Te pagamos los viernes, siempre.</li>
 </ol>
-<div class="caja" style="margin-top:22px"><h2>¿Dudas?</h2>WhatsApp de Resuelto: <b>939-247-9234</b> · resueltopr.com/plomeros</div>
+<div class="caja" style="margin-top:22px"><h2>¿Dudas?</h2>WhatsApp de Resuelto: <b>787-956-1111</b> · resueltopr.com/plomeros</div>
 <p class="pie">Resuelto Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>
 </body></html>"""
 

@@ -123,17 +123,35 @@ export async function avisarCoordinador(texto: string) {
   if (!avisado) console.log(`[Aviso al coordinador] ${texto}`);
 }
 
-export interface MensajeZernio extends MensajeWA { conversationId: string; standby: boolean }
+export interface MensajeZernio extends MensajeWA { conversationId: string; standby: boolean; canal: "whatsapp" | "messenger" | "instagram"; accountId: string }
+
+/** Canal de una cuenta de Zernio: la de WhatsApp, o la página/IG cuyos DMs también atiende el agente. */
+export function canalDeCuenta(accountId?: string): MensajeZernio["canal"] | null {
+  if (!accountId) return "whatsapp"; // eventos sin cuenta (formato viejo): WhatsApp, como antes
+  if (accountId === config.zernio.accountId) return "whatsapp";
+  if (accountId === config.zernio.cuentaMessenger) return "messenger";
+  if (accountId === config.zernio.cuentaInstagram) return "instagram";
+  return null;
+}
+
+/** Contesta un DM de Messenger/Instagram en su conversación (dentro de la ventana de 24 h de Meta). */
+export async function enviarDM(conversationId: string, accountId: string, texto: string) {
+  if (!config.zernio.apiKey) { console.log(`[DM simulado → ${conversationId}] ${texto}`); return; }
+  const r = await api(`/inbox/conversations/${encodeURIComponent(conversationId)}/messages`, { method: "POST", body: JSON.stringify({ accountId, message: texto }) });
+  if (!r.ok) console.error("Zernio DM", r.status, (await r.text()).slice(0, 200));
+}
 
 /** Mensajes entrantes de un evento `message.received`. */
 export function parsearWebhook(body: any): MensajeZernio[] {
   if (body?.event !== "message.received" || body?.message?.direction !== "incoming") return [];
-  if (config.zernio.accountId && body.account?.accountId && body.account.accountId !== config.zernio.accountId) return [];
+  const accountId = body.account?.accountId ?? body.message?.accountId ?? "";
+  const canal = canalDeCuenta(accountId);
+  if (!canal) return [];
   const m = body.message;
   const de = normalizar(m.sender?.phoneNumber ?? m.sender?.id ?? "");
   if (!de) return [];
   const meta = body.metadata ?? {};
-  const msg: MensajeZernio = { de, nombre: m.sender?.name, id: m.platformMessageId ?? m.id, mediaIds: [], texto: m.text ?? undefined, conversationId: m.conversationId, standby: !!meta.standby };
+  const msg: MensajeZernio = { de, nombre: m.sender?.name, id: m.platformMessageId ?? m.id, mediaIds: [], texto: m.text ?? undefined, conversationId: m.conversationId, standby: !!meta.standby, canal, accountId };
   for (const a of m.attachments ?? []) if (a?.url) msg.mediaIds.push(a.url);
   if (meta.location?.latitude) msg.ubicacion = { lat: meta.location.latitude, lng: meta.location.longitude, direccion: meta.location.address ?? meta.location.name };
   return [msg];
@@ -142,12 +160,13 @@ export function parsearWebhook(body: any): MensajeZernio[] {
 /** `message.sent` escrito por una persona (inbox de Zernio o la app de WhatsApp Business en modo coexistencia). */
 // Los webhooks de Zernio son POR EQUIPO: aquí también llegan los eventos del WhatsApp de Bori
 // (misma cuenta de Zernio). Sin filtrar por cuenta, Lis contestando en Bori callaría a Resuelto.
-export function tomaHumana(body: any): { telefono: string; conversationId: string } | null {
+export function tomaHumana(body: any): { telefono: string; conversationId: string; canal: MensajeZernio["canal"] } | null {
   if (body?.event !== "message.sent") return null;
-  if (config.zernio.accountId && body.account?.accountId && body.account.accountId !== config.zernio.accountId) return null;
+  const canal = canalDeCuenta(body.account?.accountId ?? body.message?.accountId);
+  if (!canal) return null;
   const m = body.message ?? {};
   const humano = m.sentVia === "human" || m.source === "whatsapp_business_app";
   if (!humano) return null;
   const tel = normalizar(body.conversation?.participantId ?? "");
-  return tel ? { telefono: tel, conversationId: m.conversationId } : null;
+  return tel ? { telefono: tel, conversationId: m.conversationId, canal } : null;
 }

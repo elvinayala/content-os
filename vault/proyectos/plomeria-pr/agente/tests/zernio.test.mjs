@@ -5,6 +5,8 @@ import crypto from "node:crypto";
 
 process.env.ZERNIO_WEBHOOK_SECRET = "secreto-de-prueba";
 process.env.ZERNIO_ACCOUNT_ID = "acc1";
+process.env.ZERNIO_FB_ACCOUNT_ID = "fb1";
+process.env.ZERNIO_IG_ACCOUNT_ID = "ig1";
 const z = await import("../dist/canales/zernio.js");
 
 const recibido = {
@@ -30,12 +32,12 @@ test("ignora otra cuenta, salientes y otros eventos", () => {
 });
 test("detecta cuando un humano contesta desde el inbox o la app", () => {
   const enviado = { event: "message.sent", message: { conversationId: "conv1", sentVia: "human", source: "cloud_api" }, conversation: { participantId: "19395550000" } };
-  assert.deepEqual(z.tomaHumana(enviado), { telefono: "19395550000", conversationId: "conv1" });
-  assert.deepEqual(z.tomaHumana({ ...enviado, message: { conversationId: "conv1", sentVia: null, source: "whatsapp_business_app" } }), { telefono: "19395550000", conversationId: "conv1" });
+  assert.deepEqual(z.tomaHumana(enviado), { telefono: "19395550000", conversationId: "conv1", canal: "whatsapp" });
+  assert.deepEqual(z.tomaHumana({ ...enviado, message: { conversationId: "conv1", sentVia: null, source: "whatsapp_business_app" } }), { telefono: "19395550000", conversationId: "conv1", canal: "whatsapp" });
   assert.equal(z.tomaHumana({ ...enviado, message: { conversationId: "conv1", sentVia: "api", source: "cloud_api" } }), null);
   assert.equal(z.tomaHumana(recibido), null);
   assert.equal(z.tomaHumana({ ...enviado, account: { accountId: "bori" } }), null, "evento de otra cuenta del equipo (Bori)");
-  assert.deepEqual(z.tomaHumana({ ...enviado, account: { accountId: "acc1" } }), { telefono: "19395550000", conversationId: "conv1" });
+  assert.deepEqual(z.tomaHumana({ ...enviado, account: { accountId: "acc1" } }), { telefono: "19395550000", conversationId: "conv1", canal: "whatsapp" });
 });
 test("firma HMAC-SHA256 hex del cuerpo crudo", () => {
   const raw = Buffer.from(JSON.stringify(recibido));
@@ -54,4 +56,13 @@ test("partesDeAviso arma los 3 parámetros sin saltos de línea ni vacíos", () 
   assert.deepEqual(z.partesDeAviso("Aviso suelto"), ["Aviso suelto", "—", "—"]);
   assert.deepEqual(z.partesDeAviso(""), ["Aviso", "—", "—"]);
   assert.ok(z.partesDeAviso("x: " + "y".repeat(900))[1].length <= 300);
+});
+
+test("DMs de Messenger e Instagram de Resuelto entran con su canal; los de otras cuentas no", () => {
+  const dm = (accountId) => ({ event: "message.received", account: { accountId }, message: { direction: "incoming", conversationId: "c9", platformMessageId: "m9", text: "Hola, soy plomero", sender: { id: "28082631238105179", name: "Santos" } } });
+  const [fb] = z.parsearWebhook(dm("fb1"));
+  assert.equal(fb.canal, "messenger"); assert.equal(fb.accountId, "fb1"); assert.equal(fb.de, "28082631238105179"); assert.equal(fb.conversationId, "c9");
+  assert.equal(z.parsearWebhook(dm("ig1"))[0].canal, "instagram");
+  assert.equal(z.parsearWebhook(dm("acc1"))[0].canal, "whatsapp");
+  assert.deepEqual(z.parsearWebhook(dm("bori")), []);
 });

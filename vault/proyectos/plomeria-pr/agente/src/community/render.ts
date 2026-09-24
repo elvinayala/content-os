@@ -27,7 +27,7 @@ export interface Tarjeta {
   titular: string;
   /** Texto de apoyo (opcional, máx ~140). */
   apoyo?: string;
-  /** Píldora naranja abajo (opcional): "resueltopr.com" / "WhatsApp 939-247-9234" / "Guarda este post". */
+  /** Píldora naranja abajo (opcional): "resueltopr.com" / "Escríbenos por WhatsApp" / "Guarda este post" (nunca un número de teléfono). */
   pill?: string;
   tema?: "navy" | "cream";
   /** Para carruseles: "1/5". */
@@ -58,7 +58,7 @@ function svgTarjeta(t: Tarjeta): string {
   ${t.indice ? `<text x="${W - P}" y="${P + 44}" text-anchor="end" font-family="'DM Sans', sans-serif" font-weight="700" font-size="30" fill="${sub}">${esc(t.indice)}</text>` : ""}
   <text x="${P}" y="${yTit - 110}" font-family="'DM Sans', sans-serif" font-weight="700" font-size="22" letter-spacing="4" fill="${C.orange}">${esc(t.eyebrow.toUpperCase())}</text>
   ${tit}${apoyo}${pill}
-  <text x="${P}" y="${H - 60}" font-family="'DM Sans', sans-serif" font-weight="500" font-size="24" fill="${sub}">resueltopr.com · WhatsApp 939-247-9234</text>
+  <text x="${P}" y="${H - 60}" font-family="'DM Sans', sans-serif" font-weight="500" font-size="24" fill="${sub}">resueltopr.com · Escríbenos por WhatsApp</text>
 </svg>`;
 }
 

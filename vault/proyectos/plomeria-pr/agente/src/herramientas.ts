@@ -310,9 +310,11 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       if (input.municipio) c.municipio = input.municipio;
       c.tipo = input.tipo;
       const tagTipo = input.tipo === "cliente" ? "cliente" : input.tipo === "cliente-proyecto" ? "cliente-proyecto" : input.tipo === "plomero-candidato" ? "plomero-candidato" : "contratista-candidato";
-      const ghlId = c.ghlContactId ?? (await upsertContacto({ nombre: c.nombre, telefono: c.telefono ?? c.identificador, municipio: c.municipio, tags: [tagTipo], fuente: c.canal }));
+      // En Messenger/Instagram el identificador es un id de Meta, no un teléfono: no se manda como teléfono a GHL.
+      const telGhl = c.telefono ?? (c.canal === "whatsapp" ? c.identificador : undefined);
+      const ghlId = c.ghlContactId ?? (telGhl ? await upsertContacto({ nombre: c.nombre, telefono: telGhl, municipio: c.municipio, tags: [tagTipo], fuente: c.canal }) : undefined);
       if (ghlId && !c.ghlContactId) c.ghlContactId = ghlId;
-      else if (ghlId) await upsertContacto({ nombre: c.nombre, telefono: c.telefono ?? c.identificador, municipio: c.municipio, tags: [tagTipo], fuente: c.canal });
+      else if (ghlId) await upsertContacto({ nombre: c.nombre, telefono: telGhl, municipio: c.municipio, tags: [tagTipo], fuente: c.canal });
       // Tarjeta en el pipeline que corresponda, una sola vez.
       if (ghlId && !c.ghlOpportunityId) {
         const etiqueta = c.nombre || (c.telefono ?? c.identificador);

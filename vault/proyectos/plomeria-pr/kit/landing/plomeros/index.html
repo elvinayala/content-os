@@ -202,7 +202,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href*="w
 <!-- ▸ CONFIGURA: WhatsApp de reclutamiento y webhook del formulario -->
 <script>
 window.RESUELTO_P = {
-  whatsapp: "19392479234",
+  whatsapp: "17879561111", chat: "https://m.me/1278171838721301",
   saludo: "Hola, soy plomero y quiero trabajar con Resuelto",
   webhook: "/api/lead",     // función Netlify → GHL (sub-cuenta Resuelto)
   urlSitio: "../index.html" // página oficial del servicio
@@ -494,7 +494,9 @@ window.RESUELTO_P = {
 <script>
 (function(){
   var cfg = window.RESUELTO_P || {};
-  var wa = 'https://wa.me/' + (cfg.whatsapp||'') + '?text=' + encodeURIComponent(cfg.saludo||'Hola');
+  // Mientras Meta revisa el WhatsApp (24/sep/2026): cfg.chat manda los botones a Messenger. Quitar chat = vuelve a WhatsApp.
+  var wa = cfg.chat ? cfg.chat : 'https://wa.me/' + (cfg.whatsapp||'') + '?text=' + encodeURIComponent(cfg.saludo||'Hola');
+  if(cfg.chat){var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nd;while((nd=tw.nextNode())){if(/WhatsApp/.test(nd.nodeValue))nd.nodeValue=nd.nodeValue.replace(/WhatsApp/g,'Messenger');}document.querySelectorAll('[aria-label*="WhatsApp"]').forEach(function(x){x.setAttribute('aria-label',x.getAttribute('aria-label').replace(/WhatsApp/g,'Messenger'));});}
   document.querySelectorAll('[data-wa]').forEach(function(a){ a.href=wa; a.target='_blank'; a.rel='noopener'; });
   document.querySelectorAll('[data-sitio]').forEach(function(a){ a.href = cfg.urlSitio || '../index.html'; });
 

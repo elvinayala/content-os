@@ -29,6 +29,9 @@ export const config = {
     accountId: opt("ZERNIO_ACCOUNT_ID"),
     webhookSecret: opt("ZERNIO_WEBHOOK_SECRET"),
     base: opt("ZERNIO_API_BASE", "https://zernio.com/api/v1"),
+    /** Messenger (página Resuelto PR) e Instagram (@resueltoapp.pr) en Zernio: el agente contesta sus DMs (24/sep/2026). */
+    cuentaMessenger: opt("ZERNIO_FB_ACCOUNT_ID"),
+    cuentaInstagram: opt("ZERNIO_IG_ACCOUNT_ID"),
   },
   /** Horas que el agente calla después de que un humano contesta desde el inbox; luego retoma solo. */
   humanoHoras: Number(opt("HUMANO_HORAS", "3")),

@@ -191,6 +191,22 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
 }
 
+// ── Messenger / Instagram (DMs de la página y del IG de Resuelto vía Zernio). Mientras Meta revisa el WhatsApp,
+// las campañas de reclutamiento mandan aquí (24/sep/2026). Mismo cerebro; se contesta en la misma conversación. ──
+async function atenderDM(m: zernio.MensajeZernio) {
+  const contacto = almacen.obtenerOCrearContacto(m.canal, m.de);
+  if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
+  if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
+    contacto.humano = false; almacen.guardarContacto(contacto);
+  }
+  if (esSoloAcuse(m.texto) && !m.mediaIds.length && !ultimoNuestroPregunto(contacto.id)) return;
+  const adjuntos = (await Promise.all(m.mediaIds.map((ref) => zernio.descargarMedia(ref)))).filter((a): a is Adjunto => !!a);
+  const respuestas = await responder(contacto, { texto: m.texto ?? "", adjuntos });
+  let n = contacto.enviadosWa ?? 0;
+  for (const r of respuestas) { n++; await zernio.enviarDM(m.conversationId, m.accountId, humanizar(r, n, contacto.id)); }
+  if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
+}
+
 // ── Zernio: WhatsApp (message.received) + detección de que un humano contestó (message.sent) ──
 app.post("/webhook/zernio", async (req: any, res) => {
   if (!zernio.firmaValida(req.rawBody, req.headers["x-zernio-signature"])) return res.sendStatus(401);
@@ -201,14 +217,15 @@ app.post("/webhook/zernio", async (req: any, res) => {
     if (req.body?.id && yaVisto(`zernio:${req.body.id}`)) return; // entrega at-least-once
     const toma = zernio.tomaHumana(req.body);
     if (toma) {
-      zernio.recordarConversacion(toma.telefono, toma.conversationId);
-      const c = almacen.obtenerOCrearContacto("whatsapp", toma.telefono);
+      if (toma.canal === "whatsapp") zernio.recordarConversacion(toma.telefono, toma.conversationId);
+      const c = almacen.obtenerOCrearContacto(toma.canal, toma.telefono);
       almacen.guardarContacto({ ...c, humano: true, humanoDesde: new Date().toISOString() });
       return console.log(`WA: humano contestó a ${toma.telefono}; el agente calla ${config.humanoHoras} h`);
     }
     for (const m of zernio.parsearWebhook(req.body)) {
       if (m.standby) continue; // Meta Business Agent está contestando; no le quitamos el chat
       if (yaVisto(m.id)) continue;
+      if (m.canal !== "whatsapp") { await zernio.marcarLeido(m.conversationId); await atenderDM(m); continue; }
       zernio.recordarConversacion(m.de, m.conversationId);
       await zernio.marcarLeido(m.conversationId);
       await atenderWhatsApp(m);
@@ -389,7 +406,7 @@ app.get("/api/proveedores/cuenta", (req: any, res) => {
 // Página de pago del cliente (mientras no haya Stripe: ATH Móvil + total)
 app.get("/pagar/:id", (req, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id);
-  if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos por WhatsApp al 939-247-9234.</p>");
+  if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos por WhatsApp al 787-956-1111.</p>");
   res.type("html").send(pagarHTML(t, config.cobros.athMovil));
 });
 app.post("/api/proveedores/aceptar", async (req: any, res) => {
@@ -493,7 +510,7 @@ async function revisarSaludWa() {
   saludWa.guardar({ ...e, ultimo: s, caidoDesde: s.ok ? undefined : e.caidoDesde ?? s.eventoEn ?? s.revisado, pasados: s.ok ? [] : e.pasados });
   if (!s.ok && (!antes || antes.ok)) {
     await wa.avisarCoordinador(`🚨 WhatsApp de Resuelto CAÍDO: ${s.motivo}${s.eventoEn ? " (" + new Date(s.eventoEn).toLocaleString("es-PR", { timeZone: config.zonaHoraria }) + ")" : ""}. El agente dejó de contestar y lo que entre se lo paso a Yaileen por Slack. Qué hacer: business.facebook.com → WhatsApp Manager → Resuelto → Request review, y verificar el negocio (LLC) en el Centro de seguridad. Pausa la pauta que lleve a WhatsApp.`);
-    await dmSlack(config.slack.reclutamiento, `🚨 Meta bloqueó el WhatsApp de Resuelto (939-247-9234) mientras revisa la cuenta. No contestes desde Zernio (no sale). Te voy pasando aquí a cada persona que escriba para que la llames desde tu teléfono.`);
+    await dmSlack(config.slack.reclutamiento, `🚨 Meta bloqueó el WhatsApp de Resuelto mientras revisa la cuenta. No contestes desde Zernio (no sale). Te voy pasando aquí a cada persona que escriba para que la llames desde tu teléfono.`);
     // Los que escribieron desde un poco antes de la caída y se quedaron sin respuesta.
     const desde = new Date(s.eventoEn ?? s.revisado).getTime() - 15 * 60_000;
     for (const id of almacen.conversacionesDesde(desde).filter((x) => x.startsWith("whatsapp:"))) await pasarAReclutadora(id, ultimoTextoCliente(id));

@@ -37,8 +37,9 @@ export const BIBLIOTECA: Creativo[] = [
   { id: "c13", formato: "post", pilar: "solucion", urls: [u("/flyers/c13-arreglalo-tu.png")], tema: "Arréglalo tú: cuándo sí y cuándo llamar", para: "clientes" },
   { id: "c14", formato: "post", pilar: "solucion", urls: [u("/flyers/c14-que-cisterna.png")], tema: "Guía: qué cisterna te conviene", para: "clientes" },
   // Plomeros (reclutamiento) — en TODO Puerto Rico
-  { id: "p01", formato: "post", pilar: "producto", urls: [u("/flyers/01-cuanto-ganas.png")], tema: "Plomeros: esto es lo que darías con nosotros ($1,950/semana)", para: "plomeros" },
-  { id: "p02", formato: "post", pilar: "producto", urls: [u("/flyers/02-el-trato.png")], tema: "El trato: 65% de la mano de obra, pago los viernes, $0 publicidad", para: "plomeros" },
+  // p01 y p02 fuera (23/sep/2026): cifras de pago a plomeros = señal de estafa para Meta. No volver a usarlos.
+  // { id: "p01", formato: "post", pilar: "producto", urls: [u("/flyers/01-cuanto-ganas.png")], tema: "Plomeros: esto es lo que darías con nosotros ($1,950/semana)", para: "plomeros" },
+  // { id: "p02", formato: "post", pilar: "producto", urls: [u("/flyers/02-el-trato.png")], tema: "El trato: 65% de la mano de obra, pago los viernes, $0 publicidad", para: "plomeros" },
   { id: "p03", formato: "post", pilar: "producto", urls: [u("/flyers/03-buscamos-10.png")], tema: "Buscamos plomeros licenciados en toda la isla", para: "plomeros" },
   // Contratistas
   { id: "k1", formato: "post", pilar: "producto", urls: [u("/flyers/k1-vendemos-el-proyecto.png")], tema: "Contratistas: nosotros vendemos el proyecto, tú lo ejecutas", para: "contratistas" },

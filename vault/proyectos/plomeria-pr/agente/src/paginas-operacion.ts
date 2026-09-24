@@ -60,5 +60,5 @@ export function pagarHTML(t: Trabajo, ath: string) {
 <div class="r"><span>Mano de obra</span><b>$${mano.toFixed(2)}</b></div>${t.emergencia ? `<div class="r"><span>Emergencia</span><b>$99.00</b></div>` : ""}${mat ? `<div class="r"><span>Materiales</span><b>$${mat.toFixed(2)}</b></div>` : ""}<div class="r"><span>Coordinación</span><b>$${t.fee.toFixed(2)}</b></div>
 <p style="margin-top:16px;color:var(--ink2)">Total</p><div class="tot">$${(t.totalCliente ?? 0).toFixed(2)}</div></div>
 ${t.estado === "cobrado" ? `<div class="card"><b>✅ Pagado. ¡Gracias!</b><p style="color:var(--ink2);margin-top:6px">Tu garantía de 12 meses en mano de obra está activa.</p></div>` : `<div class="card"><b>Paga por ATH Móvil</b><p style="margin-top:8px">${esc(ath)}</p><p style="color:var(--ink2);margin-top:6px">En el mensaje del pago escribe <b>${esc(t.id)}</b>. Nunca le pagues en efectivo al plomero.</p></div>`}
-<p style="color:var(--ink2);font-size:13px;margin-top:12px">¿Dudas? WhatsApp 939-247-9234 · resueltopr.com</p></main></body></html>`;
+<p style="color:var(--ink2);font-size:13px;margin-top:12px">¿Dudas? WhatsApp 787-956-1111 · resueltopr.com</p></main></body></html>`;
 }
