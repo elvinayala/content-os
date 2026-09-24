@@ -11,8 +11,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { RAIZ } from "../almacen.js";
 
-export type TipoContrato = "plomero" | "ayudante";
-export const TIPOS: TipoContrato[] = ["plomero", "ayudante"];
+// "aprendiz" reemplazó a "ayudante" el 24/sep/2026: la Ley 59-2022 no permite plomería sin certificado de aprendiz o licencia.
+export type TipoContrato = "plomero" | "aprendiz";
+export const TIPOS: TipoContrato[] = ["plomero", "aprendiz"];
 
 export interface CampoDef { id: string; etiqueta: string; tipo: "texto" | "tel" | "opcion"; opciones?: { valor: string; etiqueta: string; check: string }[]; requerido: boolean; ayuda?: string }
 const COMUNES_INICIO: CampoDef[] = [
@@ -28,11 +29,13 @@ export const CAMPOS: Record<TipoContrato, CampoDef[]> = {
     { id: "lic_num", etiqueta: "Número de licencia", tipo: "texto", requerido: true },
     { id: "colegiacion", etiqueta: "Número de colegiación", tipo: "texto", requerido: false, ayuda: "Si no lo tienes a mano, déjalo en blanco" },
   ],
-  ayudante: [
+  aprendiz: [
     ...COMUNES_INICIO,
     { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true },
     { id: "anos", etiqueta: "Años de experiencia", tipo: "texto", requerido: true },
-    { id: "sacando", etiqueta: "¿Estás sacando la licencia?", tipo: "opcion", requerido: true, opciones: [{ valor: "si", etiqueta: "Sí", check: "sacando_si" }, { valor: "no", etiqueta: "No", check: "sacando_no" }] },
+    { id: "cert_num", etiqueta: "Número de tu certificado de aprendiz", tipo: "texto", requerido: true, ayuda: "El que sale en el certificado de la Junta Examinadora" },
+    { id: "cert_vence", etiqueta: "Fecha en que vence el certificado", tipo: "texto", requerido: true },
+    { id: "escuela", etiqueta: "Escuela donde estás matriculado", tipo: "texto", requerido: true },
   ],
 };
 
@@ -115,7 +118,7 @@ export function certificado(a: Auditoria): string {
   const zona = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico", dateStyle: "long", timeStyle: "medium" }) + " (hora de PR)";
   return `<section class="hoja" data-hoja="99" data-titulo="Certificado"><div class="top"><div><div class="tag">Constancia de firma electrónica</div><h1>Certificado</h1></div></div>
 <p>Este documento fue firmado electrónicamente en la plataforma de Resuelto Home Services LLC. La persona firmante completó sus datos, dibujó su firma, puso sus iniciales en cada página y aceptó firmar electrónicamente, conforme a la ley de transacciones electrónicas de Puerto Rico.</p>
-<table class="cert">${fila("Documento", `${a.id} · ${a.tipo === "plomero" ? "Acuerdo de afiliación de plomero + Reglas de oro" : "Acuerdo de ayudante + secciones que aplican + Reglas de oro"}`)}
+<table class="cert">${fila("Documento", `${a.id} · ${a.tipo === "plomero" ? "Acuerdo de afiliación de plomero + Reglas de oro" : "Acuerdo de aprendiz + secciones que aplican + Reglas de oro"}`)}
 ${fila("Firmante", `${a.nombre} · ${a.telefono}`)}
 ${fila("Emitido por Resuelto", `${zona(a.emitido.en)} · ${a.emitido.por}`)}
 ${a.abierto ? fila("Abierto por el firmante", `${zona(a.abierto.en)} · IP ${a.abierto.ip}`) : ""}

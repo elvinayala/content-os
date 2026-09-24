@@ -90,11 +90,11 @@ app.post("/api/firmar/:token", async (req: any, res) => {
   try { res.json(await firmas.firmar(f, req.body, { ip: ipDe(req), ua: String(req.headers["user-agent"] ?? "") })); }
   catch (e) { console.error("firmar", e); res.status(500).json({ ok: false, error: "No pudimos generar tu copia. Vuelve a tocar Firmar." }); }
 });
-// El candidato contesta "¿tienes licencia de plomero?" en el celular: sin licencia → Acuerdo de ayudante (y viceversa).
+// El candidato contesta "¿tienes licencia de plomero?" en el celular: con certificado de aprendiz → Acuerdo de aprendiz (y viceversa).
 app.post("/api/firmar/:token/tipo", (req: any, res) => {
   const f = firmas.porToken(String(req.params.token));
   if (!f || f.estado === "anulado") return res.status(404).json({ ok: false, error: "Este enlace no existe." });
-  const tipo = req.body?.tipo === "ayudante" ? "ayudante" : req.body?.tipo === "plomero" ? "plomero" : null;
+  const tipo = req.body?.tipo === "aprendiz" ? "aprendiz" : req.body?.tipo === "plomero" ? "plomero" : null;
   if (!tipo) return res.status(400).json({ ok: false, error: "Tipo inválido." });
   const r = firmas.cambiarTipo(f, tipo, "firmante");
   if (!r.ok) return res.status(409).json(r);
@@ -138,11 +138,11 @@ app.get("/equipo-firmas", (_req, res) => res.type("html").send(panelFirmasHTML(f
 app.post("/equipo-firmas/tipo", (req: any, res) => {
   const f = firmas.listar().find((x) => x.id === String(req.body?.id ?? ""));
   if (!f) return res.status(404).json({ ok: false, error: "No existe." });
-  res.json(firmas.cambiarTipo(f, req.body?.tipo === "ayudante" ? "ayudante" : "plomero", "panel de contratos"));
+  res.json(firmas.cambiarTipo(f, req.body?.tipo === "aprendiz" ? "aprendiz" : "plomero", "panel de contratos"));
 });
 app.post("/equipo-firmas/nuevo", (req: any, res) => {
   const b = req.body ?? {};
-  const tipo = b.tipo === "ayudante" ? "ayudante" : "plomero";
+  const tipo = b.tipo === "aprendiz" ? "aprendiz" : "plomero";
   if (!String(b.nombre ?? "").trim() || String(b.telefono ?? "").replace(/\D/g, "").length < 10) return res.json({ ok: false, error: "Pon el nombre y un WhatsApp de 10 dígitos." });
   const f = firmas.crear({ tipo, nombre: String(b.nombre), telefono: String(b.telefono), municipio: b.municipio ? String(b.municipio) : undefined, por: "panel de contratos" });
   const link = firmas.enlace(f);

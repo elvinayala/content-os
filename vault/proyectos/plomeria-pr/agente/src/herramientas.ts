@@ -15,6 +15,9 @@ import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCit
 import { dmSlack } from "./integraciones/slack.js";
 import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida } from "./reclutamiento.js";
 import { avisarCoordinador } from "./canales/whatsapp.js";
+
+/** Quién puede hacer plomería en PR (Ley 59-2022): licencia de oficial o maestro, o certificado de aprendiz (con un maestro). */
+const PUEDE_TRABAJAR = ["maestro", "oficial", "aprendiz"];
 import { config } from "./config.js";
 import { crearOferta } from "./despacho.js";
 import { registrar as registrarEncuesta, MOTIVOS } from "./encuestas.js";
@@ -264,6 +267,13 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         sinAceptar = `No agendé: en su último mensaje ("${String(ctx.ultimoTexto ?? "").slice(0, 120)}") no aceptó esa hora. NO le confirmes nada. Si dijo que no puede o que tiene trabajo, pregúntale qué hora le sirve; si no está claro, pregúntale directo si le sirve o no.`;
         input = { ...input, entrevista: previo?.entrevista ?? "" };
       }
+      // Candado legal (24/sep, Ley 59-2022 Art. 29): sin licencia de oficial/maestro ni certificado de aprendiz no se
+      // puede hacer plomería, así que no hay entrevista. Se registra igual (ruta de aprendiz), pero no se agenda.
+      let sinLicencia: string | null = null;
+      if (input.entrevista && input.entrevista !== previo?.entrevista && !PUEDE_TRABAJAR.includes(String(input.nivel_licencia))) {
+        sinLicencia = `No agendé: sin licencia de oficial o maestro ni certificado de aprendiz, por ley (Ley 59-2022) no puede hacer plomería, así que no hay entrevista. NO le confirmes nada. Explícale la ruta del certificado de aprendiz (no lleva examen: curso de plomería de 3 meses en una escuela acreditada y lo solicita a la Junta) y que nos escriba cuando lo tenga.`;
+        input = { ...input, entrevista: previo?.entrevista ?? "" };
+      }
       const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: previo?.creado ?? new Date().toISOString() };
       almacen.guardarCandidato(c);
       const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: ["plomero-candidato", c.nivelLicencia], fuente: ctx.contacto.canal });
@@ -289,6 +299,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         else { almacen.guardarCandidato({ ...c, entrevista: previo?.entrevista, estado: previo?.entrevista ? "entrevista" : "nuevo" }); }
       } else if (previo?.ghlCitaId) almacen.guardarCandidato({ ...c, ghlCitaId: previo.ghlCitaId });
       if (sinAceptar) return { ok: false, candidato_id: c.id, registrado: true, error: sinAceptar };
+      if (sinLicencia) return { ok: false, candidato_id: c.id, registrado: true, error: sinLicencia };
       if (cita && !cita.ok) {
         const t = territorioDeMunicipio(c.municipio);
         return { ok: false, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "", error: "Esa hora ya no está libre en el calendario (o no es un hueco válido). NO le confirmes la cita: llama horarios_entrevista y ofrécele otra." };
@@ -297,7 +308,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       const t = territorioDeMunicipio(c.municipio);
       // Cita recién confirmada: el enlace de Zoom va en el mensaje de confirmación, tal cual.
       const zoom = cita?.ok && config.zoomEntrevistas ? { enlace_videollamada: config.zoomEntrevistas, instruccion_enlace: "Confírmale día y hora y pégale este enlace de Zoom completo, tal cual, en una línea aparte. Dile que entre ahí a esa hora." } : {};
-      return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: ["maestro", "oficial"].includes(c.nivelLicencia) };
+      return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: PUEDE_TRABAJAR.includes(c.nivelLicencia), ...(PUEDE_TRABAJAR.includes(c.nivelLicencia) ? {} : { nota_ley: "Sin licencia ni certificado de aprendiz: no hay entrevista. Ofrécele la ruta del certificado de aprendiz; no le prometas trabajos." }) };
     }
     case "agregar_lista_espera": {
       almacen.agregarListaEspera({ municipio: input.municipio, nombre: input.nombre, contactoId: ctx.contacto.id, creado: new Date().toISOString() });

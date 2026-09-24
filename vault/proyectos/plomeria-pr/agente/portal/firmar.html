@@ -27,6 +27,7 @@
   input:focus { border-color: var(--azul); }
   .opciones { display: flex; gap: 8px; }
   .opciones button { flex: 1; }
+  .opciones.apiladas { flex-direction: column; }
   button { font: inherit; font-weight: 700; border: 1.5px solid var(--linea); background: #fff; color: var(--azul); padding: 12px 14px; border-radius: 12px; cursor: pointer; }
   button.sel { border-color: var(--azul); background: var(--azul); color: #fff; }
   .principal { width: 100%; background: var(--naranja); border-color: var(--naranja); color: #fff; font-family: 'Sora'; font-size: 16px; padding: 15px; }
@@ -72,8 +73,8 @@
     <h2>Tus datos</h2>
     <p class="sub">Así van a salir en el contrato.</p>
     <div class="resumen" id="licencia">
-      <b>¿Tienes licencia de plomero en Puerto Rico?</b>
-      <div class="opciones" style="margin-top:10px"><button type="button" data-tipo="plomero">Sí, tengo licencia</button><button type="button" data-tipo="ayudante">No, todavía no</button></div>
+      <b>¿Qué tienes de la Junta de Plomeros?</b>
+      <div class="opciones apiladas" style="margin-top:10px"><button type="button" data-tipo="plomero">Licencia de oficial o maestro</button><button type="button" data-tipo="aprendiz">Certificado de aprendiz</button><button type="button" data-tipo="ninguno">Ninguno todavía</button></div>
       <p class="ayuda" id="licenciaNota" style="margin:10px 0 0"></p>
     </div>
     <form id="form" autocomplete="on"></form>
@@ -165,17 +166,27 @@
       }
     }
   }
-  // ── ¿Licencia? Sin licencia firma el Acuerdo de ayudante; con licencia, el de plomero afiliado ──
+  // ── ¿Licencia? Oficial/maestro firma el acuerdo de plomero; con certificado de aprendiz, el de aprendiz.
+  // Sin ninguno no hay contrato: la Ley 59-2022 (Art. 29) no permite hacer plomería sin certificado o licencia.
+  let sinCertificado = false;
+  const nombreDoc = (t) => (t === "plomero" ? "de plomero afiliado" : "de aprendiz");
   function pintarLicencia() {
-    document.querySelectorAll("#licencia [data-tipo]").forEach((b) => b.classList.toggle("sel", b.dataset.tipo === doc.tipo));
-    $("#licenciaNota").textContent = doc.tipo === "plomero"
-      ? "Te toca el Acuerdo de afiliación de plomero. Vas a necesitar tu número de licencia."
-      : "Te toca el Acuerdo de ayudante: trabajas acompañado de un plomero licenciado de Resuelto. Cuando saques la licencia, pasas al de plomero.";
-    $("#saludo").textContent = `Hola ${doc.nombre.split(" ")[0]} · tu contrato ${doc.tipo === "plomero" ? "de plomero afiliado" : "de ayudante"}`;
+    document.querySelectorAll("#licencia [data-tipo]").forEach((b) => b.classList.toggle("sel", sinCertificado ? b.dataset.tipo === "ninguno" : b.dataset.tipo === doc.tipo));
+    $("#licenciaNota").textContent = sinCertificado
+      ? "Por ley (Ley 59-2022), para trabajar en plomería en Puerto Rico necesitas al menos el certificado de aprendiz de la Junta Examinadora. No lleva examen: te matriculas en un curso de plomería de 3 meses en una escuela acreditada y lo solicitas. Cuando lo tengas, escríbenos y te mandamos tu contrato de aprendiz."
+      : doc.tipo === "plomero"
+        ? "Te toca el Acuerdo de afiliación de plomero. Vas a necesitar tu número de licencia."
+        : "Te toca el Acuerdo de aprendiz: trabajas siempre junto a un maestro plomero de Resuelto. Vas a necesitar el número de tu certificado. Cuando saques la licencia de oficial, pasas al de plomero.";
+    $("#form").classList.toggle("oculto", sinCertificado);
+    $("#seguir").disabled = sinCertificado;
+    $("#saludo").textContent = `Hola ${doc.nombre.split(" ")[0]} · tu contrato ${nombreDoc(doc.tipo)}`;
   }
   document.querySelectorAll("#licencia [data-tipo]").forEach((b) => (b.onclick = async () => {
-    if (b.dataset.tipo === doc.tipo) return;
-    error(""); b.disabled = true;
+    error("");
+    if (b.dataset.tipo === "ninguno") { sinCertificado = true; return pintarLicencia(); }
+    sinCertificado = false;
+    if (b.dataset.tipo === doc.tipo) return pintarLicencia();
+    b.disabled = true;
     try {
       const r = await fetch(`/api/firmar/${token}/tipo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tipo: b.dataset.tipo }) });
       const j = await r.json(); if (!j.ok) throw new Error(j.error || "No se pudo cambiar.");
@@ -240,7 +251,7 @@
   $("#acepto").addEventListener("change", actualizar);
   $("#atras").onclick = () => ir(paso - 1);
   $("#seguir").onclick = async () => {
-    if (paso === 1) { const e = validarPaso1(); if (e) return error(e); return ir(2); }
+    if (paso === 1) { if (sinCertificado) return; const e = validarPaso1(); if (e) return error(e); return ir(2); }
     if (paso === 2) {
       if (pads.firma.vacio()) return error("Falta tu firma."); if (pads.iniciales.vacio()) return error("Faltan tus iniciales.");
       pads.fir = pads.firma.png(); pads.ini = pads.iniciales.png(); if (!pads.fir || !pads.ini) return error("Vuelve a dibujar tu firma.");
@@ -271,7 +282,7 @@
   fetch(`/api/firmar/${token}`).then((r) => r.json()).then((j) => {
     if (!j.ok) { $("#p-cargando").innerHTML = `<h2>Enlace no válido</h2><p class="sub">${esc(j.error || "Pídele a Resuelto un enlace nuevo.")}</p>`; return; }
     doc = j; datos = {};
-    $("#saludo").textContent = `Hola ${j.nombre.split(" ")[0]} · tu contrato ${j.tipo === "plomero" ? "de plomero afiliado" : "de ayudante"}`;
+    $("#saludo").textContent = `Hola ${j.nombre.split(" ")[0]} · tu contrato ${nombreDoc(j.tipo)}`;
     if (j.estado === "firmado") { $("#descargar").href = j.pdf; return ir(5); }
     pintarLicencia(); pintarFormulario(); ir(1);
   }).catch(() => { $("#p-cargando").innerHTML = `<h2>Sin conexión</h2><p class="sub">Revisa tu señal y vuelve a abrir el enlace.</p>`; });

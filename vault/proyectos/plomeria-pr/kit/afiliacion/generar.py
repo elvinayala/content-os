@@ -91,7 +91,7 @@ HOJA_ACUERDO_1 = f"""{cab("Plomeros afiliados", "Acuerdo de afiliación")}
 <p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
 Dirección: {campo("direccion", "l")} &nbsp; Municipio: {campo("municipio", "s")}<br>
 Licencia de plomero: {chk("lic_oficial", "Oficial")} {chk("lic_maestro", "Maestro")} · Núm. {campo("lic_num", "s")} · Colegiación núm. {campo("colegiacion", "s")} ("el Plomero").<br>
-<i style="font-size:9pt">Si no tiene licencia, se firma el Acuerdo de ayudante (Anexo B) en lugar de este acuerdo.</i></p>
+<i style="font-size:9pt">Quien no tiene licencia de oficial o maestro pero sí certificado de aprendiz vigente de la Junta Examinadora firma el Acuerdo de aprendiz (Anexo B) en lugar de este acuerdo. Sin licencia ni certificado no se pueden hacer labores de plomería (Ley 59-2022, Art. 29).</i></p>
 {SEC[1]}{SEC[2]}{SEC[3]}{SEC[4]}"""
 HOJA_ACUERDO_2 = f"""{SEC[5]}{SEC[6]}{SEC[7]}{SEC[8]}{SEC[9]}{SEC[10]}
 {FIRMADO_EN}
@@ -109,35 +109,42 @@ HOJA_REGLAS = f"""{cab("Anexo A · Se firma aparte y va contigo", "Reglas de oro
 <li><b>Calificación mínima 4.8.</b> Tres faltas y sales.</li>
 <li><b>Te pagamos los viernes, siempre.</b></li>
 </ol>
-<div class="firmas">{firma("firmante", "Firma del Plomero / Ayudante")}<div class="firma"><div class="trazo">{campo("fecha")}</div>Fecha</div></div>"""
-HOJA_AYUDANTE = f"""{cab("Anexo B · Sin licencia de plomero", "Acuerdo de ayudante")}
-<div class="aviso">Para quien todavía no tiene licencia de plomero pero trae experiencia. En Puerto Rico la plomería la hace un plomero licenciado: el Ayudante trabaja <b>siempre acompañado y bajo la supervisión</b> de un plomero licenciado afiliado a Resuelto.</div>
+<div class="firmas">{firma("firmante", "Firma del Plomero / Aprendiz")}<div class="firma"><div class="trazo">{campo("fecha")}</div>Fecha</div></div>"""
+# Anexo B (24/sep/2026): antes era "ayudante sin licencia", pero la Ley 59-2022 no tiene esa figura y el Art. 29
+# castiga a quien tenga trabajando en plomería a alguien sin certificado de aprendiz ni licencia. El aprendiz
+# (Art. 2 y 6: certificado de la Junta, sin examen, matriculado en un curso de 3 meses; 1 año, renovable una vez)
+# trabaja "bajo la inmediata dirección y supervisión de un maestro plomero".
+HOJA_APRENDIZ = f"""{cab("Anexo B · Aprendiz con certificado de la Junta", "Acuerdo de aprendiz")}
+<div class="aviso">Para quien tiene <b>certificado de aprendiz de plomero vigente</b> de la Junta Examinadora de Maestros y Oficiales Plomeros. Por ley (Ley 59-2022), el Aprendiz trabaja <b>siempre bajo la inmediata dirección y supervisión de un maestro plomero</b>, en el mismo trabajo.</div>
 <p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
 <p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
-Municipio: {campo("municipio", "s")} &nbsp; Años de experiencia: {campo("anos", "s")} &nbsp; ¿Está sacando la licencia? {chk("sacando_si", "Sí")} {chk("sacando_no", "No")}</p>
+Municipio: {campo("municipio", "s")} &nbsp; Años de experiencia: {campo("anos", "s")}<br>
+Certificado de aprendiz núm. {campo("cert_num", "s")} &nbsp; Vence: {campo("cert_vence", "s")}<br>
+Escuela donde está matriculado: {campo("escuela", "l")} ("el Aprendiz").</p>
 <ol class="pasos">
-<li><b>Trabajo acompañado.</b> El Ayudante no hace trabajos solo, no firma ni certifica trabajos y sigue las instrucciones del plomero licenciado a cargo.</li>
-<li><b>Pago: $15 por hora</b> trabajada en trabajos de Resuelto, según las horas que confirme el plomero licenciado a cargo. Se liquida los viernes, por ATH Móvil o transferencia. Solo se liquidan trabajos cobrados al cliente.</li>
+<li><b>Certificado vigente.</b> El Aprendiz entrega copia de su certificado antes de su primer trabajo y avisa a Resuelto en 24 horas si vence, se suspende o deja el curso. El certificado dura un año y se renueva una sola vez; sin certificado vigente, Resuelto no le asigna trabajos.</li>
+<li><b>Siempre con un maestro.</b> Solo trabaja en trabajos de Resuelto donde esté presente el maestro plomero que Resuelto asigne, bajo su inmediata dirección y supervisión. Nunca trabaja solo, no firma ni certifica trabajos y no hace trabajos por su cuenta a clientes de Resuelto.</li>
+<li><b>Pago: $15 por hora</b> trabajada en trabajos de Resuelto, según las horas que confirme el maestro plomero a cargo. Se liquida los viernes, por ATH Móvil o transferencia. Solo se liquidan trabajos cobrados al cliente.</li>
 <li>Aplican igual las secciones <b>1</b> (relación), <b>5</b> (el cliente es de Resuelto), <b>6</b> (nunca cobra), <b>8</b> (calidad y terminación) y <b>9</b> (confidencialidad) del Acuerdo de afiliación, y las Reglas de Oro (Anexo A).</li>
-<li><b>Cuando saque la licencia</b>, avisa a Resuelto con copia y pasa a firmar el Acuerdo de afiliación de plomero.</li>
+<li><b>Cuando saque la licencia de oficial</b> (curso de 1,000 horas y examen de la Junta), avisa a Resuelto con copia y pasa a firmar el Acuerdo de afiliación de plomero.</li>
 <li>Este anexo también es provisional y sigue la misma vigencia del Acuerdo (90 días o el contrato definitivo).</li>
 </ol>
 {FIRMADO_EN}
-<div class="firmas">{firma("firmante", "El Ayudante", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
-HOJA_AYUDANTE_SECCIONES = f"""{cab("Anexo B · Condiciones que aplican al ayudante", "Secciones del acuerdo")}
+<div class="firmas">{firma("firmante", "El Aprendiz", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+HOJA_APRENDIZ_SECCIONES = f"""{cab("Anexo B · Condiciones que aplican al aprendiz", "Secciones del acuerdo")}
 {PROVISIONAL}
-<p style="font-size:9.5pt"><i>En estas secciones del Acuerdo de afiliación, "el Plomero" se refiere también al Ayudante.</i></p>
+<p style="font-size:9.5pt"><i>En estas secciones del Acuerdo de afiliación, "el Plomero" se refiere también al Aprendiz. Donde hablan de licencia, se entiende el certificado de aprendiz.</i></p>
 {SEC[1]}{SEC[5]}{SEC[6]}{SEC[8]}{SEC[9]}"""
 
 def documento(hojas):
     return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>' + "".join(hojas) + "</body></html>"
 
-# PDF en blanco (para imprimir): acuerdo + reglas + ayudante, como antes
-ACUERDO = documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS), hoja(4, "Acuerdo de ayudante", HOJA_AYUDANTE)])
+# PDF en blanco (para imprimir): acuerdo + reglas + aprendiz
+ACUERDO = documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS), hoja(4, "Acuerdo de aprendiz", HOJA_APRENDIZ)])
 # Plantillas de la firma electrónica
 PLANTILLAS = {
  "plomero": documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
- "ayudante": documento([hoja(1, "Acuerdo de ayudante", HOJA_AYUDANTE), hoja(2, "Secciones que te aplican", HOJA_AYUDANTE_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
+ "aprendiz": documento([hoja(1, "Acuerdo de aprendiz", HOJA_APRENDIZ), hoja(2, "Secciones que te aplican", HOJA_APRENDIZ_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
 }
 
 def precio(s):
@@ -154,7 +161,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <h2>Tus primeros pasos (antes de tu primer trabajo)</h2>
 <ul class="check">
 <li>Acuerdo firmado y Reglas de Oro firmadas (Anexo A).</li>
-<li>Foto de tu <b>licencia</b> y de tu <b>colegiación</b> (el ayudante: identificación con foto).</li>
+<li>Foto de tu <b>licencia</b> y de tu <b>colegiación</b> (el aprendiz: su certificado de aprendiz vigente de la Junta).</li>
 <li>Foto de tu <b>identificación</b> con foto.</li>
 <li><b>Certificado de antecedentes penales</b> (se saca en línea, gratis, en el portal de la Policía de Puerto Rico).</li>
 <li>Tu <b>seguro de responsabilidad</b> (mínimo $300,000, con Resuelto como asegurado adicional): tienes <b>60 días</b> para entregarlo.</li>

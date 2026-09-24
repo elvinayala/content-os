@@ -22,7 +22,10 @@ test("validarDatos: exige lo requerido, teléfono de 10 dígitos y opciones vál
   assert.equal(D.validarDatos("plomero", { ...bueno, lic_num: "" }).ok, false);
   assert.match(D.validarDatos("plomero", { ...bueno, telefono: "12345" }).error, /10 dígitos/);
   assert.match(D.validarDatos("plomero", { ...bueno, licencia: "jefe" }).error, /opción/);
-  assert.ok(D.validarDatos("ayudante", { nombre: "A", telefono: "7875551234", municipio: "Cayey", anos: "7", sacando: "si" }).ok);
+  const aprendiz = { nombre: "A", telefono: "7875551234", municipio: "Cayey", anos: "7", cert_num: "AP-1234", cert_vence: "10/2027", escuela: "Escuela de Plomería X" };
+  assert.ok(D.validarDatos("aprendiz", aprendiz).ok);
+  assert.match(D.validarDatos("aprendiz", { ...aprendiz, cert_num: "" }).error, /certificado/);
+  assert.ok(!D.TIPOS.includes("ayudante"), "el ayudante sin licencia ya no existe (Ley 59-2022)");
 });
 test("imagenValida: solo PNG en data URL, ni vacío ni gigante", () => {
   assert.ok(D.imagenValida(PNG));
@@ -47,12 +50,12 @@ test("certificado: trae firmante, IPs, páginas iniciadas y la huella", () => {
   for (const x of ["F-0001", "Charlie", "1.2.3.4", "5.6.7.8", "iPhone", "1, 2, 3", "abc123"]) assert.ok(c.includes(x), x);
 });
 
-test("cambiarTipo: sin licencia pasa a ayudante antes de firmar, y queda registrado", async () => {
+test("cambiarTipo: con certificado de aprendiz pasa a aprendiz antes de firmar, y queda registrado", async () => {
   const fs = await import("node:fs"); const path = await import("node:path"); const os = await import("node:os");
   const F = await import("../dist/firmas/firmas.js");
   const f = { id: "F-9999", token: "x", tipo: "plomero", nombre: "Prueba", telefono: "17875551234", estado: "pendiente", emitido: { en: new Date().toISOString(), por: "test" } };
-  const r = F.cambiarTipo(f, "ayudante", "firmante");
-  assert.ok(r.ok); assert.equal(f.tipo, "ayudante"); assert.equal(f.cambios.length, 1); assert.equal(f.cambios[0].de, "plomero");
+  const r = F.cambiarTipo(f, "aprendiz", "firmante");
+  assert.ok(r.ok); assert.equal(f.tipo, "aprendiz"); assert.equal(f.cambios.length, 1); assert.equal(f.cambios[0].de, "plomero");
   assert.equal(F.cambiarTipo({ ...f, estado: "firmado" }, "plomero", "firmante").ok, false);
   // limpiar el registro de prueba
   const archivo = path.join(process.cwd(), "data", "estado", "firmas.json");
