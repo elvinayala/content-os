@@ -77,6 +77,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/pulse/login") return NextResponse.next();
   // Íconos de Pulse (favicon / apple-touch-icon): públicos, el navegador los pide sin cookie.
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
+  // Webhook del Typeform de onboarding → ficha del cliente en Pulse (valida la firma adentro).
+  if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
   if (pathname.startsWith("/api/pulse/n8n/")) return NextResponse.next();
   if (pathname === "/pulse" || pathname.startsWith("/pulse/") || pathname.startsWith("/api/pulse/")) {
