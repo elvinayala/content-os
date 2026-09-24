@@ -29,9 +29,13 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // Dominio bonito de Pulse (pulse-eamarket.vercel.app): la raíz va directo al CRM.
   const host = request.headers.get("host") ?? "";
-  // Dominio del onboarding de Level Up: la raíz va directo al formulario.
-  if (host.startsWith("bienvenida-levelup") && pathname === "/") {
-    return NextResponse.redirect(new URL("/onboarding/level-up", request.url));
+  // Dominios de marca del onboarding de Level Up (levelupmedia.vercel.app, bienvenida-levelup…):
+  // ahí SOLO existe el formulario. La raíz lo muestra con la URL limpia y cualquier otra ruta
+  // (links con basura pegada, /ceo, /pulse…) vuelve a la raíz: nunca un login ni nada interno.
+  if (host === "levelupmedia.vercel.app" || host.startsWith("bienvenida-levelup")) {
+    if (pathname === "/") return NextResponse.rewrite(new URL("/onboarding/level-up", request.url));
+    if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
+    return NextResponse.redirect(new URL("/", request.url));
   }
   if (host.startsWith("pulse-") && (pathname === "/" || pathname === "/login")) {
     return NextResponse.redirect(new URL("/pulse", request.url));
