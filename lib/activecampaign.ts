@@ -81,9 +81,11 @@ export interface ContactoAC {
 }
 
 // Upsert del contacto + tags + lista de la marca. Idempotente. Nunca tira: devuelve ok:false.
-// ORDEN IMPORTA: los tags van ANTES de la lista, porque la bienvenida dispara al suscribirse
-// y tiene que ver ya `etapa:agendo` / `origen:calendly` para no mandarle la bienvenida a
-// quien acaba de agendar. Los llamadores deben envolverlo en `after()` (no `void`): en Vercel
+// ORDEN IMPORTA (3 pasos): 1) tags de contexto (marca:*, origen:*, agendo-por:*) ANTES de la
+// lista, para que la bienvenida —que dispara al suscribirse— ya vea origen:calendly; 2) la
+// lista; 3) los tags `etapa:*` DESPUÉS de la lista, porque las pre-llamada/no-show disparan con
+// el tag y su segmento exige estar en la lista de la marca (23/sep: con etapa antes de la lista
+// ninguna agenda de LU entró a LU · Pre-llamada). Los llamadores deben envolverlo en `after()` (no `void`): en Vercel
 // una promesa suelta se corta al responder y el contacto queda sin lista ni tags (22/sep).
 export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?: number; error?: string }> {
   if (!acListo()) return { ok: false, error: "ac-no-configurado" };
@@ -104,20 +106,24 @@ export async function upsertContacto(c: ContactoAC): Promise<{ ok: boolean; id?:
     const id = Number(r.contact.id);
     const fallos: string[] = [];
     const tags = [`marca:${{ "level-up": "lu", "ai-borinquen": "aib", "shadow-operator": "so", "1000x": "1000x" }[c.marca]}`, ...(c.tags ?? [])];
-    for (const t of tags) {
-      try {
-        const tagId = await idDeTag(t);
-        await v3("POST", "contactTags", { contactTag: { contact: id, tag: tagId } });
-      } catch (e) {
-        fallos.push(`tag ${t}: ${String(e).slice(0, 80)}`);
+    const ponerTags = async (lista: string[]) => {
+      for (const t of lista) {
+        try {
+          const tagId = await idDeTag(t);
+          await v3("POST", "contactTags", { contactTag: { contact: id, tag: tagId } });
+        } catch (e) {
+          fallos.push(`tag ${t}: ${String(e).slice(0, 80)}`);
+        }
       }
-    }
+    };
+    await ponerTags(tags.filter((t) => !t.startsWith("etapa:")));
     const lista = listaDeMarca(c.marca);
     if (lista) {
       await v3("POST", "contactLists", { contactList: { list: lista, contact: id, status: 1 } }).catch((e) =>
         fallos.push(`lista ${lista}: ${String(e).slice(0, 80)}`),
       );
     }
+    await ponerTags(tags.filter((t) => t.startsWith("etapa:")));
     if (fallos.length) return { ok: false, id, error: fallos.join(" | ").slice(0, 300) };
     return { ok: true, id };
   } catch (e) {
