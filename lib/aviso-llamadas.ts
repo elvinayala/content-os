@@ -1,6 +1,7 @@
-// Aviso de cada llamada agendada en Calendly → canal de Slack de llamadas (#office-10-lum-calls).
-// Lo usan los dos webhooks: /api/calendly (Calendly de Level Up) y /api/aib/calendly (Calendly de
-// AI Borinquen). Cada marca sale con su etiqueta; nunca se mezclan los datos, solo el canal.
+// Aviso de cada llamada agendada en Calendly → el canal de llamadas del Slack DE ESA MARCA.
+//   Level Up     → Slack de Level Up, #office-10-lum-calls (bot Command Center, SLACK_BOT_TOKEN)
+//   AI Borinquen → Slack de AI Borinquen, #borinquenia-calls (webhook entrante SLACK_AIB_CALLS_WEBHOOK)
+// Regla de Elvin (24/sep): cada marca en su propio Slack; una cita de AIB NUNCA va al Slack de LU.
 // Nunca tira: si Slack falla, la agenda sigue su curso (Pipedrive, AC, onboarding).
 
 export type MarcaLlamada = "level-up" | "ai-borinquen";
@@ -26,7 +27,7 @@ export interface InviteeAviso {
   };
 }
 
-const CANAL = () => process.env.SLACK_CALLS_CHANNEL_ID || "C08UMBSTJ03"; // #office-10-lum-calls
+const CANAL = () => process.env.SLACK_CALLS_CHANNEL_ID || "C08UMBSTJ03"; // #office-10-lum-calls (Slack de LU)
 const TZ = "America/Puerto_Rico";
 
 const ETIQUETA: Record<MarcaLlamada, string> = { "level-up": "Level Up", "ai-borinquen": "AI Borinquen" };
@@ -77,17 +78,29 @@ export async function avisarLlamada(
   opts: { closer?: string; onboarding?: boolean } = {},
 ): Promise<void> {
   const token = process.env.SLACK_BOT_TOKEN;
-  if (!token) return;
+  const webhookAib = process.env.SLACK_AIB_CALLS_WEBHOOK;
+  if (marca === "level-up" ? !token : !webhookAib) return;
   const clave = inv.uri || `${inv.email}|${inv.scheduled_event.start_time}`;
   const ahora = Date.now();
   for (const [k, t] of avisados) if (ahora - t > 30 * 60_000) avisados.delete(k);
   if (avisados.has(clave)) return;
   avisados.set(clave, ahora);
+  const text = textoAviso(marca, inv, opts);
   try {
+    if (marca === "ai-borinquen") {
+      const r = await fetch(webhookAib!, {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ text, unfurl_links: false }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!r.ok) console.error("[aviso-llamadas] ai-borinquen", r.status, await r.text().catch(() => ""));
+      return;
+    }
     const r = await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ channel: CANAL(), text: textoAviso(marca, inv, opts), unfurl_links: false }),
+      body: JSON.stringify({ channel: CANAL(), text, unfurl_links: false }),
       signal: AbortSignal.timeout(8000),
     });
     const d = (await r.json().catch(() => ({}))) as { ok?: boolean; error?: string };
