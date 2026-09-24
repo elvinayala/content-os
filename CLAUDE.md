@@ -207,6 +207,11 @@ neón cyan/violeta). PASO 01: todo mock salvo las ventas de Level Up (Sheets).
   Idempotente por URI del evento. Firma HMAC con `CALENDLY_WEBHOOK_SIGNING_KEY`.
   Registro/listado: `CALENDLY_TOKEN=… node scripts/calendly-webhook.mjs crear|listar|info`.
   ⚠️ Prod es `https://content-os-chi-seven.vercel.app` (content-os.vercel.app es de otro).
+  **Aviso en Slack (24/sep):** cada cita de los DOS Calendly (LU por `/api/calendly`, AIB por
+  `/api/aib/calendly`) sale en **#office-10-lum-calls** (`SLACK_CALLS_CHANNEL_ID`, default C08UMBSTJ03)
+  con etiqueta de marca: cliente, negocio, fecha/hora PR, closer (alias incluido), contacto y quién
+  agendó (utm_source); reagendas 🔁 y onboardings 🎉 marcados. `lib/aviso-llamadas.ts`. El bot
+  Command Center tiene que estar en el canal.
 - Tareas programadas activas: `brief-ceo-diario` (6:30 AM) y `worker-encargos`
   (cada 30 min). Corren mientras la app de Claude esté abierta.
 
