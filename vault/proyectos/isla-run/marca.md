@@ -2,10 +2,10 @@
 proyecto: ISLA Run Series
 tipo: marca
 actualizado: 2026-09-23
-estado: propuesta (falta aprobación de Elvin)
+estado: aprobada por Elvin (24/sep/2026)
 ---
 
-# ISLA: identidad (propuesta v1)
+# ISLA: identidad (v1 aprobada)
 
 **Posicionamiento:** la serie de carreras premium de Puerto Rico. Tiene producción de marca
 deportiva (ASICS/Nike Running) y alma de pueblo. No es "otro 5K municipal".
