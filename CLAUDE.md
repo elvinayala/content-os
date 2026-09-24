@@ -262,6 +262,17 @@ ideas van a `vault/ideas/`.
   Sofi hacen pull primero. El plist de la Mac (`scripts/launchd/`) queda como respaldo, descargado.
   Pasos de BotFather: `vault/proyectos/estudio/telegram-botfather-pasos.md`.
 
+## ISLA Run Series (piloto, 23/sep/2026)
+
+Marca premium de carreras por municipio, con socios; 1.ª edición **ISLA Cabo Rojo 5K** (dom 13/dic/2026,
+6 AM). Entró como **excepción con operador** a la regla del 12/dic: los socios la operan, Elvin aprueba
+y Claude/agentes ponen plataforma, contenido y pauta. Unidad `isla-run` en `data/portafolio.json`
+(compuerta 1/nov: ≥900 inscritos). Docs en `vault/proyectos/isla-run/` (`plan-maestro.md`, `marca.md`,
+PDF de gestiones y permisos generado por `scripts/isla-run/gestiones-pdf.py`). La plataforma
+(landing + inscripción + Stripe + admin, multi-ciudad; ATH Móvil en fase 1b) vive en un **repo propio**
+`/Users/elvinayala/isla-run`, no en Content OS (preview `isla-run` en `.claude/launch.json`, puerto
+3130, pagos demo). Su README tiene el checklist antes de abrir inscripciones.
+
 ## El Portal AutoFlow y la reestructuración de ventas de AIB (21/sep/2026)
 
 Diagnóstico aprobado por Elvin (ventas $15-20K → $4K/mes): no es producto, es demostración +
@@ -421,8 +432,11 @@ privado). Video no lo ve: pide guion o frame.
 
 ## El ecosistema de email (ActiveCampaign)
 
-`lib/activecampaign.ts` (`upsertContacto` v3: contacto + lista de la marca + tags; `crearCampana`
-v1: newsletter como borrador o programado). No-op sin `ACTIVECAMPAIGN_URL` + `ACTIVECAMPAIGN_KEY`;
+**Cada marca tiene SU cuenta de AC y nunca se mezclan (Elvin, 23/sep):** Level Up =
+`ACTIVECAMPAIGN_URL/KEY` (levelupmediapr17748); AI Borinquen = `ACTIVECAMPAIGN_URL_AIB/KEY_AIB`
+(sin eso, todo lo de AIB es no-op). Igual con Calendly: el de LU va a `/api/calendly`, el de AIB a
+`/api/aib/calendly`. `lib/activecampaign.ts` (`upsertContacto` v3: contacto + tags de contexto →
+lista → tags `etapa:*`; `crearCampana` v1: newsletter como borrador o programado);
 listas por marca en `AC_LISTA_LU|AIB|SO` (las crea `scripts/activecampaign.mjs setup`). Cables:
 quiz (`/api/auditoria` → `origen:quiz`, `quiz:*`, `avatar:*`), Calendly (`/api/calendly` →
 `origen:calendly`, `etapa:agendo|reagendo|cancelo`, marca por `CALENDLY_MARCA_AIB_REGEX`) y
