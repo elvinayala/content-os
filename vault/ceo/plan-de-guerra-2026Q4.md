@@ -74,6 +74,7 @@ Shadow Operator no es una cuarta empresa: es **el departamento de marketing del 
 | Cortex | PRODUCTO | edita el 100% de LU/AIB, entra a Bori como servicio | 1 | — |
 | Shadow Operator | PRODUCTO | 50 posts, 3K seguidores, Skool con 30 fundadores | 1 día/mes + 30 min/sem | — |
 | Resuelto | PILOTO | compuerta 15/nov: ≥3 plomeros y ≥30 trabajos, o se congela | 2 | pasa la compuerta → Coordinador/a de Ops |
+| ISLA Run Series | PILOTO (excepción 23/sep) | Cabo Rojo 5K el 13/dic: base 1,800, tope 2,500; compuerta 1/nov ≥900 inscritos | 1 | P&L real positivo → ISLA #2 |
 | Quilla | CONGELADO | — | 0 | Shadow ≥10K y LU churn <8% por 2 meses |
 | Contigo PR | CONGELADO | — | 0 | stack voz+WhatsApp de Resuelto 60 días reutilizable |
 | Staff Agency | CONGELADO (plataforma) | se absorbe en Revenue | 0 | ≥5 empresas externas pidiendo setters |
@@ -82,6 +83,11 @@ Shadow Operator no es una cuarta empresa: es **el departamento de marketing del 
 | Victory Core | ENTREGADO | Néstor lo corre | 0 | — |
 
 **Regla dura: ninguna empresa nueva hasta el 12/dic.**
+
+> **Excepción (23/sep/2026) — ISLA Run Series.** Elvin la aprobó como *excepción con operador*: la
+> carrera la operan sus socios (director de carrera) y el municipio de Cabo Rojo; Elvin solo aprueba
+> presupuesto >$5K, precios, marca y compuertas (~1 h/sem). Claude y los agentes ponen la plataforma, el contenido y
+> la pauta. Plan en [[proyectos/isla-run/plan-maestro]].
 
 ## 3. Las cinco jugadas
 
@@ -142,5 +148,6 @@ No se contrata: COO, director de ventas, diseñadores, traffickers, videógrafo,
 
 ## 6. Compuertas del trimestre (las mide el board meeting)
 - 15/oct: primeras 10 demos enviadas; productora contratada; 25 posts de Shadow publicados.
+- 1/nov: compuerta de ISLA Cabo Rojo 5K (≥900 inscritos → orden de medallas; 15/oct ≥300).
 - 15/nov: compuerta de Resuelto; Skool abierto con fundadores; churn LU medido 2 meses seguidos.
 - 12/dic: cierre del trimestre contra la tabla de §2; decisión de reaperturas para Q1 2027.
