@@ -4,7 +4,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 import { upsertContacto } from "@/lib/activecampaign";
 
 // after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 // Webhook de Calendly (Level Up Media) → Pipedrive de Level Up, pipeline
 // "CLOSERS" (id 15). Cada cita agendada cae como deal en "Llamada agendada",
