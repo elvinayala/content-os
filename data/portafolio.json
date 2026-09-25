@@ -223,7 +223,7 @@
         "fecha": "2026-11-15",
         "condicion": "≥3 plomeros licenciados activos y ≥30 trabajos cerrados"
       },
-      "trigger": "Si pasa la compuerta: contratar Coordinador/a de Ops",
+      "trigger": "Coordinador/a de Operaciones ADELANTADO (25/sep): se busca ya, sin esperar la compuerta — el piloto arrancó con plomero firmado y clientes entrando",
       "numeros": [
         {
           "label": "PLOMEROS",
