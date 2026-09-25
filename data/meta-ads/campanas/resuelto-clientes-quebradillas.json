@@ -19,7 +19,8 @@
    "video": "1834415847761669",
    "miniatura": "74ae9bc65db1b490d86729b62b7d9ee6",
    "creativo": "1068628912641621",
-   "ad": "120255119532690029"
+   "ad": "120255119532690029",
+   "estado": "PAUSED"
   },
   "A-flyer-ciudad": {
    "imagen": "e48c866ff4beff9d2f3f5fcfd5fff88f",
@@ -29,13 +30,15 @@
   "A-flyer-menu": {
    "imagen": "af63819d2bb52c338665ef27d37970b6",
    "creativo": "1089728473919177",
-   "ad": "120255119533320029"
+   "ad": "120255119533320029",
+   "estado": "PAUSED"
   },
   "B-video-destape": {
    "video": "1666416158487328",
    "miniatura": "88f8b3731861d83ee5374e1029074fbc",
    "creativo": "929565386510301",
-   "ad": "120255119538980029"
+   "ad": "120255119538980029",
+   "estado": "PAUSED"
   },
   "B-video-calentador": {
    "video": "1772997560703167",
@@ -57,23 +60,49 @@
    "video": "28641249108842034",
    "miniatura": "184fef328eb8151accb92eec3de85b7b",
    "creativo": "1792776955248827",
-   "ad": "120255119546660029"
+   "ad": "120255119546660029",
+   "estado": "PAUSED"
   },
   "C-flyer-promesa": {
    "imagen": "82e1bc92848521daade9ebc151b5d941",
    "creativo": "2529591520868383",
-   "ad": "120255119547170029"
+   "ad": "120255119547170029",
+   "estado": "PAUSED"
   },
   "C-flyer-problema": {
    "imagen": "abd30383c43ed5d071a590f41e22a9e2",
    "creativo": "1093294369966443",
-   "ad": "120255119547710029"
+   "ad": "120255119547710029",
+   "estado": "PAUSED"
   },
   "C-flyer-sorpresas": {
    "imagen": "36fa6064d739d316fe5c1eedd8578118",
    "creativo": "1336119161747685",
-   "ad": "120255119548750029"
+   "ad": "120255119548750029",
+   "estado": "PAUSED"
+  },
+  "A-flyer-cisterna": {
+   "imagen": "31be7885edb070e22fdc83f5d587ee76",
+   "creativo": "1019984241087787",
+   "ad": "120255121185540029"
+  },
+  "C-flyer-propiedades": {
+   "imagen": "867ecec88fbfa8a2d587ef1451516f34",
+   "creativo": "1408479074745718",
+   "ad": "120255121186330029"
   }
  },
- "estado": "Campaña EN PAUSA (Elvin la prende). 3 conjuntos × $10 = $30/día."
+ "estado": "Campaña EN PAUSA (Elvin la prende). 3 conjuntos × $10 = $30/día.",
+ "seleccion": {
+  "fecha": "2026-09-25",
+  "de": "Elvin",
+  "activos": [
+   "1 ciudad",
+   "3 destape",
+   "4 calentador",
+   "V3 video calentador",
+   "cisterna",
+   "23 propiedades"
+  ]
+ }
 }

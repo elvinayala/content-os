@@ -52,6 +52,7 @@ const PIEZAS = {
 <div style="margin-top:${s ? 44 : 26}px;display:grid;gap:${s ? 26 : 16}px">${[["Precios cerrados por adelantado", "El mismo menú publicado, para cada unidad."], ["Te contestamos por mensaje al momento", "Airbnb, alquileres y condominios."], ["Historial de cada trabajo", "Qué se arregló, cuándo, con fotos y lo que costó."], ["12 meses de garantía por escrito", "Si algo falla, volvemos en 48 horas."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>
 <div class="plan" style="margin-top:${s ? 40 : 22}px"><div class="k">Plan de mantenimiento</div><div class="n">desde $399<small>/mes</small></div></div>`,
 
+
   menu: (a, s) => {
     const filas = [["Destape simple", "Fregadero, lavamanos, ducha o inodoro", $("destape-simple")], ["Reparación de inodoro", "Flapper, válvula o sello", $("reparacion-inodoro")], ["Válvula de paso o llave de ángulo", "", $("valvula-paso")], ["Llave o mezcladora", "Cocina o baño", $("llave-mezcladora")], ["Reemplazo de inodoro completo", "", $("inodoro-completo")], ["Bomba de cisterna", "Reemplazo", $("bomba-cisterna")], ["Calentador de tanque", "Instalación", $("calentador-tanque")], ["Calentador de línea", "Instalación", $("calentador-linea")]];
     return `<div class="fila-top"><div class="eyebrow">Plomería en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
@@ -112,6 +113,10 @@ h1{color:var(--c1)}
 .num5{display:flex;gap:26px;align-items:flex-start;padding:${s ? 24 : 15}px 0;border-bottom:1px solid var(--line)}
 .num5 span{font-family:'Sora';font-weight:800;font-size:${s ? 44 : 36}px;color:var(--c2);width:44px}
 .num5 b{font-family:'Sora';font-size:${s ? 36 : 29}px;color:var(--c1);letter-spacing:-.5px}.num5 p{font-size:${s ? 25 : 21}px;color:var(--c4);margin-top:4px}
+.cuatro{display:grid;grid-template-columns:1fr 1fr;gap:16px}.c4{background:#fff;border-radius:22px;box-shadow:0 8px 26px rgba(8,36,58,.07);padding:${s ? "28px 30px" : "20px 24px"}}
+.c4 b{display:block;font-family:'Sora';font-weight:800;font-size:${s ? 78 : 60}px;color:var(--c2);letter-spacing:-2px;line-height:1}.c4 small{display:block;font-size:${s ? 24 : 20}px;color:var(--c4);margin-top:8px}
+.plan{background:var(--c1);color:#fff;border-radius:24px;padding:${s ? "30px 36px" : "22px 28px"}}.plan .k{font-size:18px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FFB48E}
+.plan .n{font-family:'Sora';font-weight:800;font-size:${s ? 84 : 66}px;letter-spacing:-2px}.plan .n small{font-size:${s ? 34 : 28}px;letter-spacing:0;color:#C9D6E0}
 .cuatro{display:grid;grid-template-columns:1fr 1fr;gap:16px}.c4{background:#fff;border-radius:22px;box-shadow:0 8px 26px rgba(8,36,58,.07);padding:${s ? "28px 30px" : "20px 24px"}}
 .c4 b{display:block;font-family:'Sora';font-weight:800;font-size:${s ? 78 : 60}px;color:var(--c2);letter-spacing:-2px;line-height:1}.c4 small{display:block;font-size:${s ? 24 : 20}px;color:var(--c4);margin-top:8px}
 .plan{background:var(--c1);color:#fff;border-radius:24px;padding:${s ? "30px 36px" : "22px 28px"}}.plan .k{font-size:18px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FFB48E}
