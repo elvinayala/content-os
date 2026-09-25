@@ -99,3 +99,9 @@ grabe y COMPARTA sus onboardings con el equipo, titulados "Onboarding · <Negoci
 prueba: filtro de voseo marcaba "sabes/haces"; alerta de dinero saltaba en todo plan. Mensajes reprogramados 25/sep
 (bot, firmados Max): Carilin guía completa 7:30 (Q0C46HJ4S75) + tarea Fathom/Jessica 7:31 (Q0C47N8FEBF), Jessica
 breve 8:00 (Q0C4EN9FMED).
+**24/sep ~11 PM — modelo, topes y Drive:** Max usa Opus 5.5 para planear/investigar/producir y Haiku 4.5 para
+mensajes (scripts/max-gasto.mjs); topes $10/día y $25/semana (lun-dom PR) para lo automático, Telegram de Elvin
+no se frena; Elvin quiere subirlos poco a poco con más clientes. Carpeta de Drive por cliente vía Apps Script
+(scripts/drive/max-drive.gs; DRIVE_SCRIPT_SECRETO ya en Vercel; FALTA que Elvin publique el script y pase la URL
+/exec → DRIVE_SCRIPT_URL). Otra sesión tenía cambios de Pulse sin commitear (automatizaciones): desplegué desde un
+worktree limpio de HEAD para no subir su trabajo a medias — hacer lo mismo mientras siga así.

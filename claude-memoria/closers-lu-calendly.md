@@ -31,3 +31,7 @@ que recoja las llamadas de Roger y Laura y las envíe al canal. Las llamadas de 
 lib/fathom.ts (override FATHOM_CLOSERS_EMAILS). Del equipo, lo que no es cierre ni onboarding se descarta;
 los onboardings etiquetados van solo a Max. Juan David y el resto fuera. Las de Elvin NUNCA (su webhook se ignora y cualquier reunión donde él esté se descarta: [[privacidad-reuniones-elvin]]). Requiere: Roger y Laura como usuarios
 del equipo en Fathom compartiendo sus grabaciones, y el plan Team pagado (trial vence ~29/sep).
+Ana Cecilio (ana.cecilio@levelupmediapr.net) es **setter**: sus grabaciones (p. ej. prácticas con Laura
+Bernal) NO van al canal de cierres — quedan descartadas por la regla, a propósito. Llamadas previas al
+webhook: `FATHOM_API_KEY=… CRON_SECRET=… node scripts/fathom.mjs reenviar <AAAA-MM-DD>` (mismas reglas);
+FATHOM_API_KEY guardada en Vercel y en Nico (24/sep). El 24/sep se trajeron las 9 de Roger desde el 23/sep.
