@@ -1,7 +1,7 @@
-# Pista del reel de CLIENTES por región (18 s = video de 15 s + 3 s de cierre "Ya llegamos a <pueblo>").
+# Pista de los reels de CLIENTES por área (19 s = cuerpo de 13.4 s + 3 s de cierre de la ciudad + 2.6 s de CTA).
 # Misma receta que pista-plomeros.py; escenas en 0 · 3.2 · 6.2 · 10.6 · 13.4 (cierre regional; el logo con "WhatsApp" del video base se corta, 25/sep).
 import numpy as np, wave, sys
-SR = 44100; DUR = 18.0; N = int(SR*DUR); t = np.arange(N)/SR
+SR = 44100; DUR = 19.0; N = int(SR*DUR); t = np.arange(N)/SR
 out = np.zeros(N)
 BPM = 100; beat = 60/BPM  # 0.6 s
 def env(n, a=0.005, d=0.3, s=0.0, r=0.05, sus=None):
@@ -72,7 +72,7 @@ def stinger(n=int(1.6*SR)):
 # ── Progresión (Am · F · C · G), 1 acorde por compás de 2.4 s; arranca suave, entra el beat en 3.2
 chords = [((220,261.6,329.6),110),((174.6,220,261.6),87.3),((261.6,329.6,392),130.8),((196,246.9,293.7),98)]
 bar = 4*beat
-for b in range(8):
+for b in range(8):  # 8 compases de 2.4 s = 19.2 s
     at=b*bar; freqs,root = chords[b%4]
     n=int(min(bar, DUR-at)*SR)
     if n<=0: break
@@ -101,7 +101,8 @@ for c in (6.9, 7.35, 7.8, 8.25): place(pop(), c, 0.5)
 for c in (10.8, 11.15, 11.5): place(pop(), c+0.3, 0.85)
 # ── Remate del logo + fade de todo
 place(kick(), 13.4, 1.0); place(stinger(), 13.4, 1.0)  # remate en el cierre regional
-fade_start=int(16.6*SR); out[fade_start:] *= np.linspace(1,0,N-fade_start)**1.5
+place(pop(), 16.45, 0.7)  # entra la tarjeta del CTA (16.4 s)
+fade_start=int(17.9*SR); out[fade_start:] *= np.linspace(1,0,N-fade_start)**1.5
 intro=int(0.25*SR); out[:intro]*=np.linspace(0,1,intro)
 # ── Master: compresión suave + límite
 out = np.tanh(out*1.4)/np.tanh(1.4)

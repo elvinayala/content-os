@@ -108,7 +108,8 @@ async function render(nombre, v, browser) {
   for (let f = 0; f < cuadros; f++) {
     const ms = (f / FPS) * 1000;
     await page.evaluate((t) => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = t; } }, ms);
-    const img = await page.screenshot({ type: "jpeg", quality: 92 });
+    const img = await page.screenshot({ type: "jpeg", quality: 92, optimizeForSpeed: true, captureBeyondViewport: false });
+    if (f % 60 === 0) console.log(`  ${nombre}: cuadro ${f}/${cuadros}`);
     if (!ff.stdin.write(img)) await new Promise((r) => ff.stdin.once("drain", r));
   }
   ff.stdin.end();
@@ -118,5 +119,5 @@ async function render(nombre, v, browser) {
 }
 
 const pedidos = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(VIDEOS);
-const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ["--hide-scrollbars", "--force-device-scale-factor=1"] });
+const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ["--hide-scrollbars", "--force-device-scale-factor=1", "--disable-background-timer-throttling", "--disable-renderer-backgrounding", "--disable-backgrounding-occluded-windows"], protocolTimeout: 60000 });
 try { for (const n of pedidos) await render(n, VIDEOS[n], browser); } finally { await browser.close(); }
