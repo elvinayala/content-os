@@ -1,0 +1,1421 @@
+{
+  "updatedAt": "2026-09-25T04:00:39.231Z",
+  "createdAt": "2026-09-25T03:59:53.152Z",
+  "id": "3ylIqOgWiiW37lWx",
+  "name": "H-) Felicitaciones por leads v2",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "f-nota",
+      "name": "Nota",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "width": 560,
+        "height": 280,
+        "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **simulacion**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
+      }
+    },
+    {
+      "id": "f-todos-los-d-as-4-20-pm",
+      "name": "Todos los días 4:20 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 16,
+              "triggerAtMinute": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f-simulaci-n-webhook-",
+      "name": "Simulación (webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "felicitaciones-leads",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "webhookId": "felicitaciones-leads",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "f-modo-programado",
+      "name": "Modo programado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m1",
+              "name": "real",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f-modo-simulaci-n",
+      "name": "Modo simulación",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        200
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m2",
+              "name": "real",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f-clientes-nocodb-",
+      "name": "Clientes (NocoDB)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "id": "f-candidatos",
+      "name": "Candidatos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real } });\n}\nreturn out;"
+      }
+    },
+    {
+      "id": "f-leads-en-meta",
+      "name": "Leads en Meta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        0
+      ],
+      "parameters": {
+        "url": "=https://graph.facebook.com/v23.0/act_{{ $json.cuenta }}/insights",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "actions"
+            },
+            {
+              "name": "level",
+              "value": "account"
+            },
+            {
+              "name": "time_range",
+              "value": "={{ JSON.stringify({ since: $json.inicio, until: $json.hoy }) }}"
+            },
+            {
+              "name": "filtering",
+              "value": "[{\"field\":\"campaign.name\",\"operator\":\"CONTAIN\",\"value\":\"level up\"}]"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 400
+            }
+          }
+        }
+      },
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "B89LULeA8wFpxWpo",
+          "name": "Levelito Acoount management"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-decidir",
+      "name": "Decidir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Cuenta los leads y decide qué felicitación toca (una por cliente y corrida).\nconst TIPOS = ['lead', 'onsite_conversion.messaging_conversation_started_7d'];\nconst out = [];\n$input.all().forEach((it, i) => {\n  const c = $('Candidatos').all()[i].json;\n  const acciones = (it.json.data && it.json.data[0] && it.json.data[0].actions) || [];\n  const error = it.json.error ? String(it.json.error.message || it.json.error).slice(0, 120) : null;\n  const leads = acciones.filter((a) => TIPOS.includes(a.action_type)).reduce((s, a) => s + Number(a.value || 0), 0);\n  // Como el viejo: si ya pasó de 200 sin haber sido felicitado, va directo la de 200.\n  let hito = null;\n  if (leads >= 200) hito = 200;\n  else if (leads >= 100 && !c.felicitaciones) hito = 100;\n  const primerNombre = (c.nombre.trim().split(/\\s+/)[0]) || '';\n  out.push({ json: { ...c, leads, hito, error, primerNombre, puedeEnviar: !!hito && c.telefono.length >= 10 } });\n});\nreturn out;"
+      }
+    },
+    {
+      "id": "f--env-o-real-",
+      "name": "¿Envío real?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.real === true && $json.puedeEnviar === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f--100-o-200-",
+      "name": "¿100 o 200?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        -200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.hito === 100 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f-felicitaci-n-100",
+      "name": "Felicitación 100",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -400
+      ],
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $json.telefono }}@s.whatsapp.net",
+        "messageText": "Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.",
+        "options_message": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-esperar-1-min",
+      "name": "Esperar 1 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2340,
+        -400
+      ],
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      }
+    },
+    {
+      "id": "f-referidos",
+      "name": "Referidos",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        -400
+      ],
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $('¿100 o 200?').item.json.telefono }}@s.whatsapp.net",
+        "messageText": "={{ \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', $('¿100 o 200?').item.json.primerNombre) }}",
+        "options_message": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-felicitaci-n-200",
+      "name": "Felicitación 200",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -200
+      ],
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $json.telefono }}@s.whatsapp.net",
+        "messageText": "Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.",
+        "options_message": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-lo-que-se-mand-",
+      "name": "Lo que se mandó",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        -200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const c = $('¿Envío real?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
+      }
+    },
+    {
+      "id": "f-memoria-del-agente",
+      "name": "Memoria del agente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3120,
+        -200
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ [$json.sessionId, JSON.stringify({ type: 'ai', content: $json.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} })] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-marcar-en-nocodb",
+      "name": "Marcar en NocoDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3380,
+        -200
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $('Lo que se mandó').item.json.id, felicitaciones: String($('Lo que se mandó').item.json.hito) }]) }}",
+        "options": {}
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-resumen",
+      "name": "Resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// Lo que habría pasado hoy (o por qué no le toca a nadie).\nconst filas = $input.all().map((i) => i.json);\nreturn [{ json: {\n  modo: filas.some((f) => f.real) ? 'real' : 'simulacion',\n  columnaFelicitaciones: (() => { const l = $('Clientes (NocoDB)').first().json.list || []; return l.length ? Object.prototype.hasOwnProperty.call(l[0], 'felicitaciones') : null; })(),\n  revisados: $('Decidir').all().length,\n  tocaHoy: filas.filter((f) => f.hito).map((f) => ({ cliente: f.nombre, empresa: f.empresa, leads: f.leads, hito: f.hito, desde: f.inicio, telefono: f.telefono ? '…' + f.telefono.slice(-4) : 'SIN TELÉFONO' })),\n  conError: filas.filter((f) => f.error).map((f) => ({ cliente: f.nombre, cuenta: f.cuenta, error: f.error })),\n  top: filas.filter((f) => !f.hito && !f.error).sort((a, b) => b.leads - a.leads).slice(0, 10).map((f) => ({ cliente: f.nombre, leads: f.leads, felicitaciones: f.felicitaciones || '—' })),\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Todos los días 4:20 PM": {
+      "main": [
+        [
+          {
+            "node": "Modo programado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modo programado": {
+      "main": [
+        [
+          {
+            "node": "Clientes (NocoDB)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clientes (NocoDB)": {
+      "main": [
+        [
+          {
+            "node": "Candidatos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Candidatos": {
+      "main": [
+        [
+          {
+            "node": "Leads en Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leads en Meta": {
+      "main": [
+        [
+          {
+            "node": "Decidir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir": {
+      "main": [
+        [
+          {
+            "node": "¿Envío real?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulación (webhook)": {
+      "main": [
+        [
+          {
+            "node": "Modo simulación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modo simulación": {
+      "main": [
+        [
+          {
+            "node": "Clientes (NocoDB)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Envío real?": {
+      "main": [
+        [
+          {
+            "node": "¿100 o 200?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿100 o 200?": {
+      "main": [
+        [
+          {
+            "node": "Felicitación 100",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Felicitación 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Felicitación 100": {
+      "main": [
+        [
+          {
+            "node": "Esperar 1 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar 1 min": {
+      "main": [
+        [
+          {
+            "node": "Referidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Referidos": {
+      "main": [
+        [
+          {
+            "node": "Lo que se mandó",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lo que se mandó": {
+      "main": [
+        [
+          {
+            "node": "Memoria del agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria del agente": {
+      "main": [
+        [
+          {
+            "node": "Marcar en NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Felicitación 200": {
+      "main": [
+        [
+          {
+            "node": "Lo que se mandó",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "timezone": "America/Puerto_Rico",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Todos los días 4:20 PM": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+  "activeVersionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+  "versionCounter": 10,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-09-25T03:59:53.152Z",
+      "createdAt": "2026-09-25T03:59:53.152Z",
+      "role": "workflow:owner",
+      "workflowId": "3ylIqOgWiiW37lWx",
+      "projectId": "Q08RCtzp2vXqwvix",
+      "project": {
+        "updatedAt": "2026-01-06T13:18:27.847Z",
+        "createdAt": "2026-01-06T13:15:40.468Z",
+        "id": "Q08RCtzp2vXqwvix",
+        "name": "Elvin  Ayala <agenteia@levelupmediapr.net>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-01-06T13:15:40.468Z",
+            "createdAt": "2026-01-06T13:15:40.468Z",
+            "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+            "projectId": "Q08RCtzp2vXqwvix",
+            "user": {
+              "updatedAt": "2026-09-25T04:00:39.197Z",
+              "createdAt": "2026-01-06T13:15:28.816Z",
+              "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
+              "email": "agenteia@levelupmediapr.net",
+              "firstName": "Elvin ",
+              "lastName": "Ayala",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-01-06T13:18:42.460Z",
+                "personalization_survey_n8n_version": "1.121.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "fEOX9Q3Szkf6bLQq",
+                "userActivatedAt": 1767705736885,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1788979367846
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": true,
+              "lastActiveAt": "2026-09-25",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-09-25T04:00:39.234Z",
+    "createdAt": "2026-09-25T04:00:39.234Z",
+    "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+    "workflowId": "3ylIqOgWiiW37lWx",
+    "nodes": [
+      {
+        "id": "f-nota",
+        "name": "Nota",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -400
+        ],
+        "parameters": {
+          "width": 560,
+          "height": 280,
+          "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **simulacion**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
+        }
+      },
+      {
+        "id": "f-todos-los-d-as-4-20-pm",
+        "name": "Todos los días 4:20 PM",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 16,
+                "triggerAtMinute": 20
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "f-simulaci-n-webhook-",
+        "name": "Simulación (webhook)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "felicitaciones-leads",
+          "authentication": "headerAuth",
+          "responseMode": "lastNode",
+          "responseData": "allEntries",
+          "options": {}
+        },
+        "webhookId": "felicitaciones-leads",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
+          }
+        }
+      },
+      {
+        "id": "f-modo-programado",
+        "name": "Modo programado",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          260,
+          0
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "m1",
+                "name": "real",
+                "value": false,
+                "type": "boolean"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f-modo-simulaci-n",
+        "name": "Modo simulación",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          260,
+          200
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "m2",
+                "name": "real",
+                "value": false,
+                "type": "boolean"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f-clientes-nocodb-",
+        "name": "Clientes (NocoDB)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          520,
+          0
+        ],
+        "parameters": {
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 3000
+      },
+      {
+        "id": "f-candidatos",
+        "name": "Candidatos",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          780,
+          0
+        ],
+        "parameters": {
+          "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real } });\n}\nreturn out;"
+        }
+      },
+      {
+        "id": "f-leads-en-meta",
+        "name": "Leads en Meta",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1040,
+          0
+        ],
+        "parameters": {
+          "url": "=https://graph.facebook.com/v23.0/act_{{ $json.cuenta }}/insights",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "actions"
+              },
+              {
+                "name": "level",
+                "value": "account"
+              },
+              {
+                "name": "time_range",
+                "value": "={{ JSON.stringify({ since: $json.inicio, until: $json.hoy }) }}"
+              },
+              {
+                "name": "filtering",
+                "value": "[{\"field\":\"campaign.name\",\"operator\":\"CONTAIN\",\"value\":\"level up\"}]"
+              }
+            ]
+          },
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 400
+              }
+            }
+          }
+        },
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "B89LULeA8wFpxWpo",
+            "name": "Levelito Acoount management"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-decidir",
+        "name": "Decidir",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1300,
+          0
+        ],
+        "parameters": {
+          "jsCode": "// Cuenta los leads y decide qué felicitación toca (una por cliente y corrida).\nconst TIPOS = ['lead', 'onsite_conversion.messaging_conversation_started_7d'];\nconst out = [];\n$input.all().forEach((it, i) => {\n  const c = $('Candidatos').all()[i].json;\n  const acciones = (it.json.data && it.json.data[0] && it.json.data[0].actions) || [];\n  const error = it.json.error ? String(it.json.error.message || it.json.error).slice(0, 120) : null;\n  const leads = acciones.filter((a) => TIPOS.includes(a.action_type)).reduce((s, a) => s + Number(a.value || 0), 0);\n  // Como el viejo: si ya pasó de 200 sin haber sido felicitado, va directo la de 200.\n  let hito = null;\n  if (leads >= 200) hito = 200;\n  else if (leads >= 100 && !c.felicitaciones) hito = 100;\n  const primerNombre = (c.nombre.trim().split(/\\s+/)[0]) || '';\n  out.push({ json: { ...c, leads, hito, error, primerNombre, puedeEnviar: !!hito && c.telefono.length >= 10 } });\n});\nreturn out;"
+        }
+      },
+      {
+        "id": "f--env-o-real-",
+        "name": "¿Envío real?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1560,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.real === true && $json.puedeEnviar === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f--100-o-200-",
+        "name": "¿100 o 200?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1820,
+          -200
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c2",
+                "leftValue": "={{ $json.hito === 100 }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f-felicitaci-n-100",
+        "name": "Felicitación 100",
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          -400
+        ],
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "={{ $json.telefono }}@s.whatsapp.net",
+          "messageText": "Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.",
+          "options_message": {}
+        },
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-esperar-1-min",
+        "name": "Esperar 1 min",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2340,
+          -400
+        ],
+        "parameters": {
+          "amount": 1,
+          "unit": "minutes"
+        }
+      },
+      {
+        "id": "f-referidos",
+        "name": "Referidos",
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2600,
+          -400
+        ],
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "={{ $('¿100 o 200?').item.json.telefono }}@s.whatsapp.net",
+          "messageText": "={{ \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', $('¿100 o 200?').item.json.primerNombre) }}",
+          "options_message": {}
+        },
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-felicitaci-n-200",
+        "name": "Felicitación 200",
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          -200
+        ],
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "={{ $json.telefono }}@s.whatsapp.net",
+          "messageText": "Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.",
+          "options_message": {}
+        },
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-lo-que-se-mand-",
+        "name": "Lo que se mandó",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2860,
+          -200
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const c = $('¿Envío real?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
+        }
+      },
+      {
+        "id": "f-memoria-del-agente",
+        "name": "Memoria del agente",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          3120,
+          -200
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+          "options": {
+            "queryReplacement": "={{ [$json.sessionId, JSON.stringify({ type: 'ai', content: $json.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} })] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "GGHKaTkcxaueFMNW",
+            "name": "PostgresLevelUpMedia"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-marcar-en-nocodb",
+        "name": "Marcar en NocoDB",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3380,
+          -200
+        ],
+        "parameters": {
+          "method": "PATCH",
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify([{ Id: $('Lo que se mandó').item.json.id, felicitaciones: String($('Lo que se mandó').item.json.hito) }]) }}",
+          "options": {}
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-resumen",
+        "name": "Resumen",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1820,
+          200
+        ],
+        "parameters": {
+          "jsCode": "// Lo que habría pasado hoy (o por qué no le toca a nadie).\nconst filas = $input.all().map((i) => i.json);\nreturn [{ json: {\n  modo: filas.some((f) => f.real) ? 'real' : 'simulacion',\n  columnaFelicitaciones: (() => { const l = $('Clientes (NocoDB)').first().json.list || []; return l.length ? Object.prototype.hasOwnProperty.call(l[0], 'felicitaciones') : null; })(),\n  revisados: $('Decidir').all().length,\n  tocaHoy: filas.filter((f) => f.hito).map((f) => ({ cliente: f.nombre, empresa: f.empresa, leads: f.leads, hito: f.hito, desde: f.inicio, telefono: f.telefono ? '…' + f.telefono.slice(-4) : 'SIN TELÉFONO' })),\n  conError: filas.filter((f) => f.error).map((f) => ({ cliente: f.nombre, cuenta: f.cuenta, error: f.error })),\n  top: filas.filter((f) => !f.hito && !f.error).sort((a, b) => b.leads - a.leads).slice(0, 10).map((f) => ({ cliente: f.nombre, leads: f.leads, felicitaciones: f.felicitaciones || '—' })),\n} }];"
+        }
+      }
+    ],
+    "connections": {
+      "Todos los días 4:20 PM": {
+        "main": [
+          [
+            {
+              "node": "Modo programado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Modo programado": {
+        "main": [
+          [
+            {
+              "node": "Clientes (NocoDB)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clientes (NocoDB)": {
+        "main": [
+          [
+            {
+              "node": "Candidatos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Candidatos": {
+        "main": [
+          [
+            {
+              "node": "Leads en Meta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Leads en Meta": {
+        "main": [
+          [
+            {
+              "node": "Decidir",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir": {
+        "main": [
+          [
+            {
+              "node": "¿Envío real?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simulación (webhook)": {
+        "main": [
+          [
+            {
+              "node": "Modo simulación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Modo simulación": {
+        "main": [
+          [
+            {
+              "node": "Clientes (NocoDB)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Envío real?": {
+        "main": [
+          [
+            {
+              "node": "¿100 o 200?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Resumen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿100 o 200?": {
+        "main": [
+          [
+            {
+              "node": "Felicitación 100",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Felicitación 200",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Felicitación 100": {
+        "main": [
+          [
+            {
+              "node": "Esperar 1 min",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Esperar 1 min": {
+        "main": [
+          [
+            {
+              "node": "Referidos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Referidos": {
+        "main": [
+          [
+            {
+              "node": "Lo que se mandó",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lo que se mandó": {
+        "main": [
+          [
+            {
+              "node": "Memoria del agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memoria del agente": {
+        "main": [
+          [
+            {
+              "node": "Marcar en NocoDB",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Felicitación 200": {
+        "main": [
+          [
+            {
+              "node": "Lo que se mandó",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Elvin  Ayala",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-09-25T04:00:39.408Z",
+        "id": 253,
+        "workflowId": "3ylIqOgWiiW37lWx",
+        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      },
+      {
+        "createdAt": "2026-09-25T04:00:39.712Z",
+        "id": 254,
+        "workflowId": "3ylIqOgWiiW37lWx",
+        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "event": "deactivated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      },
+      {
+        "createdAt": "2026-09-25T04:00:40.001Z",
+        "id": 255,
+        "workflowId": "3ylIqOgWiiW37lWx",
+        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "event": "activated",
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
+      }
+    ]
+  }
+}
