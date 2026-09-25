@@ -65,3 +65,16 @@ test("ok con cambio vs ok tal cual", () => {
   assert.equal(okConCambio("pero quita el precio del final"), true);
   assert.equal(okConCambio("cambia el gancho"), true);
 });
+
+test("límites con clientes: se bloquea lo grave, se marca lo dudoso", async () => {
+  const { revisarParaCliente, canalesPermitidos } = await import("../lib/max/operador.ts");
+  assert.deepEqual(revisarParaCliente("Hola Iván, para la fase 2 necesito 3 videos de 15 s del laboratorio. — Max"), { bloqueos: [], alertas: [] });
+  assert.equal(revisarParaCliente("Mándame la contraseña de Instagram").bloqueos.length, 1);
+  assert.equal(revisarParaCliente("Te garantizo 30 ventas").bloqueos.length, 1);
+  assert.equal(revisarParaCliente("la consulta es gratis").bloqueos.length, 1);
+  assert.equal(revisarParaCliente("¿Tenés los videos?").bloqueos.length, 1);
+  assert.equal(revisarParaCliente("El precio del paquete sube a $500").alertas.length, 1);
+  assert.equal(revisarParaCliente("¿Cómo está tu familia?").alertas.length, 1);
+  assert.equal(canalesPermitidos("").size, 0, "vacío = ningún canal de cliente");
+  assert.deepEqual([...canalesPermitidos("C0B8P00B5A9, basura")], ["C0B8P00B5A9"]);
+});

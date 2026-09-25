@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { after, type NextRequest, NextResponse } from "next/server";
 
 import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
-import { APROBADORES, CANAL_APROBACIONES, decidir, usuarioSlack } from "@/lib/max/flujo";
+import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, usuarioSlack } from "@/lib/max/flujo";
 import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
 import { alBuzonMax, clientePorCanal } from "@/lib/max/repo";
 import {
@@ -444,7 +444,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ ok: true });
   }
-  if (humanoMax && ev?.channel && ev.channel_type !== "im") {
+  if (humanoMax && ev?.channel && ev.channel_type !== "im" && canalClientePermitido(ev.channel)) {
     const clienteMax = await clientePorCanal(ev.channel).catch(() => null);
     if (clienteMax) {
       const channel = ev.channel;

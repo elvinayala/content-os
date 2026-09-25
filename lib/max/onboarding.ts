@@ -6,7 +6,9 @@ import { alBuzonMax, cliente, guardarCliente } from "./repo";
 // Formulario de onboarding de Level Up → Max abre el expediente del cliente y arranca el proceso
 // (ficha → llamada de venta → competencia → plan de marketing a #max-aprobaciones).
 export async function iniciarClienteMax(r: { nombre: string; negocio: string; resumen: string; itemId: string; estado: string }): Promise<void> {
-  if (process.env.MAX_ONBOARDING === "off") return;
+  // Apagado por defecto (24/sep): Elvin todavía no habilitó canales de clientes y cada arranque
+  // gasta (~$20-30 la primera semana). Se prende con MAX_ONBOARDING=on.
+  if (process.env.MAX_ONBOARDING !== "on") return;
   const nombre = r.negocio ? `${r.negocio} (${r.nombre})` : r.nombre;
   const slug = slugCliente(r.negocio || r.nombre);
   const previo = await cliente(slug);

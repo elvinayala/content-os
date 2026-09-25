@@ -91,7 +91,7 @@ export function validarDecision(
 
 // Mensaje que llega a #max-aprobaciones. Corto arriba (qué, para quién, cómo decidir) y el
 // contenido completo abajo, igual a lo que verá el cliente si va al cliente.
-export function textoAprobacion(i: { id: number; tipo: TipoItem; cliente: string; titulo: string; contenido: string; nota?: string }): string {
+export function textoAprobacion(i: { id: number; tipo: TipoItem; cliente: string; titulo: string; contenido: string; nota?: string; alertas?: string[] }): string {
   const etiqueta: Record<TipoItem, string> = {
     mensaje: "💬 Respuesta al cliente",
     plan: "🧭 Plan de marketing",
@@ -111,7 +111,7 @@ export function textoAprobacion(i: { id: number; tipo: TipoItem; cliente: string
   return [
     `*#${i.id} · ${etiqueta[i.tipo]} · ${i.cliente}*`,
     i.titulo ? `_${i.titulo}_` : "",
-    i.nota ? `Contexto: ${i.nota}` : "",
+    [i.nota ? `Contexto: ${i.nota}` : "", i.alertas?.length ? `⚠ Revisa con lupa: ${i.alertas.join(" · ")}` : ""].filter(Boolean).join("\n"),
     "",
     i.contenido,
     "",
@@ -160,4 +160,36 @@ export function encabezadoBuzon(t: "cliente" | "aprobacion" | "equipo" | "onboar
     .map(([k, v]) => `${k} ${v}`);
   const nombre = { cliente: "Slack cliente", aprobacion: "Max aprobación", equipo: "Max canal", onboarding: "Onboarding nuevo" }[t];
   return `[${nombre}${partes.length ? " · " + partes.join(" · ") : ""}]`;
+}
+
+// ── Límites con clientes (Elvin, 24/sep/2026) ──────────────────────────────────────────────────
+// "Ponle límites en lo que él pueda hablar con clientes sin supervisión: siempre estratégico y
+// orientado solo al negocio del cliente, nada de temas personales." Además del prompt, el servidor
+// revisa TODO texto que va al cliente antes de pedir aprobación: lo grave se bloquea (Max tiene que
+// reescribirlo) y lo dudoso sale marcado ⚠ para que Elvin/Carilin lo miren con lupa.
+//
+// Por ahora ningún canal de cliente está habilitado: MAX_CANALES_CLIENTES es la lista blanca
+// (ids separados por coma). Vacía = Max no lee ni le escribe a ningún canal de cliente.
+export function canalesPermitidos(env: string | undefined): Set<string> {
+  return new Set(String(env || "").split(",").map((x) => x.trim()).filter((x) => /^[CG][A-Z0-9]{6,}$/.test(x)));
+}
+
+const BLOQUEOS: [RegExp, string][] = [
+  [/\b(contraseñ\w*|password|passcode|clave de (acceso|tu cuenta|instagram|facebook|meta)|c[oó]digo de (verificaci[oó]n|seguridad|2fa)|n[uú]mero de (tarjeta|cuenta bancaria)|seguro social)\b/i, "pide credenciales o datos sensibles (los accesos van por invitación de socio en Meta, nunca con claves)"],
+  [/\b(te garantiz\w*|garantizad\w*|garantizamos|vas a (ganar|facturar|vender) \$?\d|resultados? (asegurad|garantizad)\w*)/i, "promete resultados o ingresos"],
+  [/\bgratis\b/i, "usa \"gratis\""],
+  [/\b(vos|ten[eé]s|pod[eé]s|sab[eé]s|quer[eé]s|hac[eé]s)\b/i, "vosea (tiene que ser tuteo de Puerto Rico)"],
+];
+const ALERTAS: [RegExp, string][] = [
+  [/\$\s?\d|\b\d+\s?(d[oó]lares|usd)\b|\bprecio|\bdescuento|\bfactura|\bpago|\breembolso|\bcontrato|\bcancelar|\brenovaci[oó]n/i, "toca dinero/contrato (confirma que Max no esté prometiendo algo que no le toca)"],
+  [/\b(familia|esposa?|novi[oa]|hij[oa]s?|salud|enferm\w*|m[eé]dico|pol[ií]tic\w*|religi[oó]n|iglesia|cumplea[nñ]os|vacaciones|fiesta|chisme)\b/i, "roza lo personal (Max solo habla del negocio del cliente)"],
+  [/\b(otro cliente|otros clientes|[a-z]+ (nos )?pag[oó]|tenemos un cliente que)\b/i, "menciona a otros clientes (nunca datos de otros)"],
+];
+
+export function revisarParaCliente(texto: string): { bloqueos: string[]; alertas: string[] } {
+  const t = String(texto ?? "");
+  return {
+    bloqueos: BLOQUEOS.filter(([re]) => re.test(t)).map(([, m]) => m),
+    alertas: ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m),
+  };
 }

@@ -2,9 +2,11 @@ import "server-only";
 
 import {
   aprobadores,
+  canalesPermitidos,
   type Decision,
   encabezadoBuzon,
   okConCambio,
+  revisarParaCliente,
   textoAprobacion,
   textoParaCliente,
   type TipoItem,
@@ -23,6 +25,11 @@ import { actualizarItem, alBuzonMax, cliente as leerCliente, crearItem, item as 
 const CEO = process.env.CEO_SLACK_ID || "U08U9777PUY";
 export const APROBADORES = () => aprobadores(process.env.MAX_APROBADORES, CEO);
 export const CANAL_APROBACIONES = () => process.env.SLACK_MAX_CHANNEL_ID || "";
+// Lista blanca de canales de clientes (Elvin, 24/sep: "que no añadan a Max a ningún canal de
+// ningún cliente aún"). Vacía = ninguno: Max no lee ni se le envía nada a ningún cliente.
+export const canalClientePermitido = (canal: string | null | undefined) => Boolean(canal) && canalesPermitidos(process.env.MAX_CANALES_CLIENTES).has(canal as string);
+
+export class BloqueoMax extends Error {}
 const IDENTIDAD = () => ({
   username: process.env.MAX_NOMBRE_SLACK || "Max · Estrategia Level Up",
   ...(process.env.MAX_AVATAR_URL ? { icon_url: process.env.MAX_AVATAR_URL } : {}),
@@ -58,10 +65,13 @@ export async function usuarioSlack(id: string): Promise<{ id: string; nombre: st
 // ── Proponer ───────────────────────────────────────────────────────────────────────────────────
 export async function proponer(p: { cliente: string; tipo: TipoItem; titulo?: string; contenido: string; hilo?: string | null; nota?: string | null; datos?: Record<string, unknown> }): Promise<{ item: ItemMax; aviso?: string }> {
   const c = await leerCliente(p.cliente);
+  // Límites con clientes: lo grave no llega ni a aprobación (Max lo reescribe); lo dudoso va con ⚠.
+  const revision = VAN_AL_CLIENTE.includes(p.tipo) ? revisarParaCliente(`${p.titulo ?? ""}\n${p.contenido}`) : { bloqueos: [], alertas: [] };
+  if (revision.bloqueos.length) throw new BloqueoMax(`No se puede proponer al cliente: ${revision.bloqueos.join(" · ")}. Reescríbelo.`);
   const i = await crearItem(p);
   const canal = CANAL_APROBACIONES();
   if (!canal) return { item: i, aviso: "Falta SLACK_MAX_CHANNEL_ID: la propuesta quedó guardada pero no llegó a #max-aprobaciones." };
-  const r = await publicar(canal, textoAprobacion({ id: i.id, tipo: p.tipo, cliente: c?.nombre || p.cliente, titulo: p.titulo || "", contenido: p.contenido, nota: p.nota || undefined }));
+  const r = await publicar(canal, textoAprobacion({ id: i.id, tipo: p.tipo, cliente: c?.nombre || p.cliente, titulo: p.titulo || "", contenido: p.contenido, nota: p.nota || undefined, alertas: revision.alertas }));
   if (r.ok && r.ts) await actualizarItem(i.id, { aprobacionTs: r.ts });
   return { item: i, aviso: r.ok ? undefined : `No pude postear en #max-aprobaciones (${r.error}).` };
 }
@@ -81,6 +91,9 @@ export async function enviarAprobado(id: number): Promise<{ ok: boolean; texto: 
   if (i.estado !== "aprobado") return { ok: false, texto: `La #${id} está ${i.estado}: solo se envía lo aprobado.` };
   const c = await leerCliente(i.cliente);
   if (!c?.canal) return { ok: false, texto: `Aprobada, pero no tengo vinculado el canal de ${c?.nombre || i.cliente}. En cuanto Max lo vincule se envía.` };
+  if (!canalClientePermitido(c.canal)) return { ok: false, texto: `Aprobada, pero el canal de ${c.nombre} no está habilitado para Max (MAX_CANALES_CLIENTES). No se envió nada; cópiasela tú si quieres.` };
+  const rev = revisarParaCliente(i.contenido);
+  if (rev.bloqueos.length) return { ok: false, texto: `No la envié: ${rev.bloqueos.join(" · ")}.` };
   const r = await publicar(c.canal, textoParaCliente(i.contenido), i.hilo);
   if (!r.ok) return { ok: false, texto: `No pude enviarla al canal del cliente (${r.error}).` };
   await actualizarItem(id, { estado: "enviado", resultado: `enviado ${r.ts}` });

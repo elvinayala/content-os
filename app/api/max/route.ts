@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buscarLlamadas, canalesDelBot, enviarAprobado, leerCanal, leerHilo, notaEnAprobaciones, proponer } from "@/lib/max/flujo";
+import { BloqueoMax, buscarLlamadas, canalClientePermitido, canalesDelBot, enviarAprobado, leerCanal, leerHilo, notaEnAprobaciones, proponer } from "@/lib/max/flujo";
 import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from "@/lib/max/operador";
 import { actualizarItem, cliente, guardarCliente, item, items, listarClientes } from "@/lib/max/repo";
 import { secretoValido } from "@/lib/pulse/seguridad";
@@ -39,11 +39,13 @@ export async function GET(req: NextRequest) {
   if (q.get("leer")) {
     const canal = await canalDe(q.get("leer"));
     if (!canal) return mal("ese cliente no tiene canal vinculado", 404);
+    if (!canalClientePermitido(canal)) return mal("ese canal no está habilitado para Max", 403);
     return NextResponse.json({ ok: true, texto: await leerCanal(canal, Number(q.get("n")) || 30) });
   }
   if (q.get("hilo")) {
     const canal = (await canalDe(q.get("canal"))) || process.env.SLACK_MAX_CHANNEL_ID || "";
     if (!canal) return mal("canal");
+    if (canal !== process.env.SLACK_MAX_CHANNEL_ID && !canalClientePermitido(canal)) return mal("ese canal no está habilitado para Max", 403);
     return NextResponse.json({ ok: true, texto: await leerHilo(canal, q.get("hilo")!) });
   }
   return mal("consulta");
@@ -69,6 +71,7 @@ export async function POST(req: NextRequest) {
       if (etapa && !(ETAPAS as readonly string[]).includes(etapa)) return mal(`etapa: ${ETAPAS.join(" | ")}`);
       const canal = s("canal", 20);
       if (canal && !/^[CG][A-Z0-9]{6,}$/.test(canal)) return mal("canal: id de Slack (C…)");
+      if (canal && !canalClientePermitido(canal)) return mal("ese canal no está habilitado para Max: por ahora ningún canal de cliente lo está (Elvin, 24/sep). Trabaja por #max-aprobaciones.", 403);
       return NextResponse.json({ ok: true, cliente: await guardarCliente({ slug, nombre, canal, etapa, ficha: obj("ficha"), meta: obj("meta") }) });
     }
     case "proponer": {
@@ -81,7 +84,13 @@ export async function POST(req: NextRequest) {
       // "publicar" solo lo crea meta-ads.mjs proponer-publicar, con los ids exactos a prender.
       const datos = obj("datos");
       if (tipo === "publicar" && !(Array.isArray(datos?.ids) && (datos!.ids as unknown[]).length)) return mal("publicar necesita datos.ids (usa meta-ads.mjs proponer-publicar)");
-      const r = await proponer({ cliente: slug, tipo, titulo: s("titulo", 200), contenido, hilo: s("hilo", 30), nota: s("nota", 1000), datos });
+      let r;
+      try {
+        r = await proponer({ cliente: slug, tipo, titulo: s("titulo", 200), contenido, hilo: s("hilo", 30), nota: s("nota", 1000), datos });
+      } catch (e) {
+        if (e instanceof BloqueoMax) return mal(e.message, 422);
+        throw e;
+      }
       return NextResponse.json({ ok: true, id: r.item.id, aviso: r.aviso });
     }
     case "nota": {
