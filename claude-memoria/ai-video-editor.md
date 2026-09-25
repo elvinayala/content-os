@@ -189,3 +189,5 @@ pregunta; si piden subtítulos/b-roll manda a "+ Nuevo".
 **23/sep/2026 — Opus 5.5.** Elvin pidió que el agente de edición use Claude Opus 5.5: `AVE_MODEL=claude-opus-5-5` en
 `.env` y en Railway, default en `ave/config.py`, precio $4/$20 en `jobs/costs.py`. Verificado en local y en prod
 (análisis de habla 16 s, revisión 8.5 s, taller). Todas las llamadas fijan effort explícito (5.5 default = medium).
+
+**Voz en off + tomas de apoyo (25/sep/2026, pedido de María del Carmen, EN PROD):** si entre lo subido hay audios (nota de voz WhatsApp/mp3/m4a/wav), la voz es el guion y los videos son apoyo → `ave/ingest/voz.py` comprime pausas, corta planos de ~3 s y Opus 5.5 asigna toma por frase; base `input/voz_base_<aspecto>.mp4` y sigue el pipeline normal. Con tomas reales, b-roll IA apagado (capa por encima de las reglas aprendidas; una revisión lo puede pedir). Panel, link del cliente e intake aceptan audio. Avisado a María en el hilo de #cortex-bori-edit-videos. Pendiente general (no de voz): la transcripción oye mal nombres de negocio ("Valle América" por Valle Médica); hoy se corrige con una revisión.
