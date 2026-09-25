@@ -22,6 +22,8 @@ const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const NOMBRE = { T1: "San Juan", T2: "Bayamón", T3: "Caguas", T4: "Ponce", T5: "Arecibo", T6: "Mayagüez", T7: "Aguadilla", T8: "Fajardo" };
 const SLUG = { T1: "metro", T2: "bayamon", T3: "caguas", T4: "ponce", T5: "arecibo", T6: "mayaguez", T7: "aguadilla", T8: "fajardo" };
 const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.precio) throw new Error(`Sin precio fijo: ${id}`); return s.precio; };
+// Trabajos grandes (nivel G): el menú trae un rango; el flyer dice "desde" el mínimo (el agente da el mismo rango).
+const desde = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.rango) throw new Error(`Sin rango: ${id}`); return s.rango[0]; };
 const FEE = MENU.cargo_coordinacion;
 
 const [soloT, pueblos, nombreArea] = process.argv.slice(2);
@@ -38,6 +40,18 @@ const CHAT = `<svg width="34" height="34" viewBox="0 0 24 24"><path d="M3.5 6A3 
 
 // Cada pieza devuelve el cuerpo (entre el logo y el pie). `s` = historia (1080×1920) o feed (1080×1350).
 const PIEZAS = {
+  // Elvin la escogió el 25/sep ("falta uno de cisterna que tenías antes"): c4 adaptado al área.
+  cisterna: (a, s) => `<div class="eyebrow">Cuando la AAA corta · ${a.nombre}</div>
+<h1 style="font-size:${s ? 116 : 90}px;margin-top:${s ? 26 : 16}px">Que el corte de agua sea <span class="o">problema de otro.</span></h1>
+<p class="nota" style="margin-top:${s ? 30 : 18}px">Instalamos tu cisterna con bomba y conexiones. El precio fijo te lo damos por escrito en sitio, y no se toca nada hasta que lo apruebes.</p>
+<div class="cuatro" style="margin-top:${s ? 40 : 24}px">${[[`$${desde("cisterna-bomba")}`, "Cisterna con bomba, desde"], [`$${$("bomba-cisterna")}`, "Reemplazo de bomba"], [`$${$("calentador-tanque")}`, "Instalación de calentador"], [`$${$("filtro-casa")}`, "Filtro para toda la casa"]].map(([n, d]) => `<div class="c4"><b>${n}</b><small>${d}</small></div>`).join("")}</div>
+<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo. 12 meses de garantía.</p>`,
+  // Elvin la escogió el 25/sep (c12 adaptado). Solo lo que se cumple hoy: sin "respuesta en 2 horas" ni factura consolidada.
+  propiedades: (a, s) => `<div class="eyebrow">Para quien administra propiedades en ${a.nombre}</div>
+<h1 style="font-size:${s ? 108 : 84}px;margin-top:${s ? 26 : 16}px">Un solo contacto para toda la plomería de <span class="o">tus propiedades.</span></h1>
+<div style="margin-top:${s ? 44 : 26}px;display:grid;gap:${s ? 26 : 16}px">${[["Precios cerrados por adelantado", "El mismo menú publicado, para cada unidad."], ["Te contestamos por mensaje al momento", "Airbnb, alquileres y condominios."], ["Historial de cada trabajo", "Qué se arregló, cuándo, con fotos y lo que costó."], ["12 meses de garantía por escrito", "Si algo falla, volvemos en 48 horas."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>
+<div class="plan" style="margin-top:${s ? 40 : 22}px"><div class="k">Plan de mantenimiento</div><div class="n">desde $399<small>/mes</small></div></div>`,
+
   menu: (a, s) => {
     const filas = [["Destape simple", "Fregadero, lavamanos, ducha o inodoro", $("destape-simple")], ["Reparación de inodoro", "Flapper, válvula o sello", $("reparacion-inodoro")], ["Válvula de paso o llave de ángulo", "", $("valvula-paso")], ["Llave o mezcladora", "Cocina o baño", $("llave-mezcladora")], ["Reemplazo de inodoro completo", "", $("inodoro-completo")], ["Bomba de cisterna", "Reemplazo", $("bomba-cisterna")], ["Calentador de tanque", "Instalación", $("calentador-tanque")], ["Calentador de línea", "Instalación", $("calentador-linea")]];
     return `<div class="fila-top"><div class="eyebrow">Plomería en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
@@ -98,6 +112,10 @@ h1{color:var(--c1)}
 .num5{display:flex;gap:26px;align-items:flex-start;padding:${s ? 24 : 15}px 0;border-bottom:1px solid var(--line)}
 .num5 span{font-family:'Sora';font-weight:800;font-size:${s ? 44 : 36}px;color:var(--c2);width:44px}
 .num5 b{font-family:'Sora';font-size:${s ? 36 : 29}px;color:var(--c1);letter-spacing:-.5px}.num5 p{font-size:${s ? 25 : 21}px;color:var(--c4);margin-top:4px}
+.cuatro{display:grid;grid-template-columns:1fr 1fr;gap:16px}.c4{background:#fff;border-radius:22px;box-shadow:0 8px 26px rgba(8,36,58,.07);padding:${s ? "28px 30px" : "20px 24px"}}
+.c4 b{display:block;font-family:'Sora';font-weight:800;font-size:${s ? 78 : 60}px;color:var(--c2);letter-spacing:-2px;line-height:1}.c4 small{display:block;font-size:${s ? 24 : 20}px;color:var(--c4);margin-top:8px}
+.plan{background:var(--c1);color:#fff;border-radius:24px;padding:${s ? "30px 36px" : "22px 28px"}}.plan .k{font-size:18px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#FFB48E}
+.plan .n{font-family:'Sora';font-weight:800;font-size:${s ? 84 : 66}px;letter-spacing:-2px}.plan .n small{font-size:${s ? 34 : 28}px;letter-spacing:0;color:#C9D6E0}
 .chip{display:inline-block;background:#fff;border:1.5px solid var(--line);color:var(--c1);font-weight:600;font-size:${s ? 25 : 21}px;padding:8px 18px;border-radius:999px;margin:0 8px 10px 0}
 .cta{display:flex;align-items:center;gap:14px;background:#F2621F;color:#fff;font-weight:700;font-size:${s ? 34 : 28}px;padding:${s ? "24px 36px" : "18px 28px"};border-radius:20px;font-family:'Sora';white-space:nowrap}
 </style></head><body class="cream"><div class="blob"></div>
