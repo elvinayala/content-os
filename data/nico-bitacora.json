@@ -153,6 +153,14 @@
       "porque": "Aure lo pidió; Elvin aprobó.",
       "verificado": "npm run build emite dist con el cambio; tests del agente 34/34 (incluye firmas). NO DESPLEGADO: el token de Railway de Nico no tiene acceso al proyecto resuelto (\"Service not found\"). Falta: en la Mac, git pull y cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach; luego verificar con un contrato de prueba.",
       "commit": "b35d560"
+    },
+    {
+      "fecha": "2026-09-25",
+      "plataforma": "Resuelto (agente en Railway · reclutamiento)",
+      "que": "[Solicitud de Aure #40] Entrevistas de Yaileen separadas: la cita en GHL ahora bloquea 60 min (antes 20); horarios_entrevista solo ofrece huecos a ≥1 h de las entrevistas agendadas y entre sí; registrar_candidato no agenda (ni forzado para gran candidato) si cae a < 1 h de otra y el agente ofrece la más cercana. Prompt del CHAT (no voz) dice \"hasta 1 hora\". Las citas ya agendadas del lun 28 (Rafael 9:00, Raymond 9:00, Luis Otero 9:30) NO se movieron.",
+      "porque": "Yaileen dura ~1 h por llamada y le cayeron 3 entrevistas entre 9:00 y 9:30. Elvin aprobó.",
+      "verificado": "Build OK; tests del agente 35/35 (test nuevo de separación). NO DESPLEGADO: sin acceso de Nico al Railway de Resuelto. Falta: deploy desde la Mac (git pull; cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach) y, opcional, en GHL poner el calendario Entrevista en 60 min (sin GHL_TOKEN de Resuelto no pude).",
+      "commit": "ver git log (entrevistas 1 h)"
     }
   ],
   "pendientesElvin": [
@@ -194,5 +202,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-25T19:51:47.647Z"
+  "actualizadoEl": "2026-09-25T19:55:59.804Z"
 }
