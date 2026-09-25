@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, LayoutGrid, Lock, LogOut, Settings } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Lock, LogOut, Settings, Sun } from "lucide-react";
 
 import { PulseLogo } from "@/components/pulse/logo";
 import Link from "next/link";
@@ -48,6 +48,14 @@ export function PulseSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/pulse/mi-dia"} tooltip="Mi día">
+                <Link href="/pulse/mi-dia">
+                  <Sun />
+                  <span>Mi día</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/pulse"} tooltip="Tableros">
                 <Link href="/pulse">

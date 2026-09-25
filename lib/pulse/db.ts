@@ -21,7 +21,9 @@ export type DbPulse = ReturnType<typeof drizzlePg<typeof schema>>;
 const g = globalThis as unknown as { __pulseDb?: Promise<DbPulse> };
 
 async function crear(): Promise<DbPulse> {
-  const url = process.env.DATABASE_URL;
+  // En dev local se usa el pooler de SESIÓN (:5432): el de transacciones (:6543) deja consultas
+  // trabadas en "ClientRead" cuando la Mac dispara varias en paralelo (24/sep/2026). Prod no cambia.
+  const url = process.env.NODE_ENV === "development" && process.env.DATABASE_URL_DIRECT ? process.env.DATABASE_URL_DIRECT : process.env.DATABASE_URL;
   if (url) {
     const sql = postgres(url, { prepare: false, max: 5, idle_timeout: 20, connect_timeout: 10 });
     return drizzlePg(sql, { schema });

@@ -27,6 +27,10 @@
     {
       "path": "/api/cron/max-programados",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/pulse-mi-dia",
+      "schedule": "0 12 * * 1-5"
     }
   ],
   "regions": [

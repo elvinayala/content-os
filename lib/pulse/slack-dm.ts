@@ -21,8 +21,26 @@ async function api<T>(metodo: string, body?: Record<string, unknown>, query?: Re
   }
 }
 
+// IDs verificados (24/sep/2026). El bot no tiene users:read.email, así que por e-mail no los
+// encuentra; se suman otros con PULSE_SLACK_IDS="correo=UXXXX,correo2=UYYYY".
+const CONOCIDOS: Record<string, string> = {
+  "elvin@levelupmediapr.net": "U08U9777PUY",
+  "jessica@levelupmediapr.net": "U08SN35L2UX",
+  "carilin@levelupmediapr.net": "U07V7MVJ18B",
+  "aure@levelupmediapr.net": "U08HA9QCJBG",
+};
+function deConfig(email: string): string | null {
+  for (const par of (process.env.PULSE_SLACK_IDS ?? "").split(",")) {
+    const [e, id] = par.split("=").map((x) => x?.trim());
+    if (e && id && e.toLowerCase() === email) return id;
+  }
+  return CONOCIDOS[email] ?? null;
+}
+
 export async function slackIdPorEmail(email: string): Promise<string | null> {
   const clave = email.toLowerCase();
+  const fijo = deConfig(clave);
+  if (fijo) return fijo;
   if (cache.has(clave)) return cache.get(clave) ?? null;
   const r = await api<{ ok: boolean; user?: { id: string } }>("users.lookupByEmail", undefined, { email: clave });
   let id = r?.ok ? (r.user?.id ?? null) : null;
