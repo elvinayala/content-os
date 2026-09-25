@@ -491,7 +491,11 @@ vuelve a subir) · `no <id> <corrección>` · `publica <id>`. **Max nunca le esc
 servidor (`lib/max/flujo.ts`) publica en el canal del cliente EXACTAMENTE lo aprobado. Clientes = los
 invitados de Slack (single-channel guests) en un canal vinculado → su mensaje va al buzón de Max, que
 prepara la respuesta y la manda a aprobación. Arranca con cada cliente nuevo del formulario de onboarding
-de LU (`lib/max/onboarding.ts`, solo si existe el canal). Datos: tablas `max_clientes` (expediente: canal,
+de LU: el formulario abre el expediente y **el Fathom de la reunión de onboarding de Jessica** (webhook de
+la cuenta de equipo, `fathom.mjs crear --equipo`; solo llamadas etiquetadas "Onboarding · <Negocio>", lo
+demás se descarta y no sale en ningún canal) despierta a Max y le pide a Jessica su resumen en el hilo
+(`lib/max/onboarding.ts`). Aprueban Elvin, Carilin o Jessica; publicar solo Elvin o Carilin. Hoy ningún
+canal de cliente habilitado (`MAX_CANALES_CLIENTES`) y límites de conversación en `revisarParaCliente`. Datos: tablas `max_clientes` (expediente: canal,
 etapa, ficha, ids de Meta) y `max_items` (propuestas) en la base de Pulse, `lib/max/repo.ts`; lógica pura
 testeada en `lib/max/operador.ts` (`tests/max-operador.test.mjs`); API `/api/max` (CRON_SECRET, pública
 en proxy). Manos de Max: `scripts/max.mjs` (clientes|alta|canales|vincular|etapa|ficha|meta|leer|hilo|

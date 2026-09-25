@@ -25,14 +25,11 @@ export async function iniciarClienteMax(r: { nombre: string; negocio: string; re
 const JESSICA = () => process.env.MAX_PM_SLACK_ID || "U08SN35L2UX";
 
 // prueba = true: lo mismo pero marcado 🧪, sin etiquetar a Jessica y sin despertar a Max (no gasta).
-export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones: { prueba?: boolean; motivo?: "titulo" | "pm" } = {}): Promise<{ slug: string; pedidoEnviado: boolean } | null> {
+export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones: { prueba?: boolean } = {}): Promise<{ slug: string; pedidoEnviado: boolean } | null> {
   const prueba = Boolean(opciones.prueba);
   if (process.env.MAX_FATHOM === "off" || !process.env.SLACK_MAX_CHANNEL_ID) return null;
   const { nombre, emails } = clienteDeReunion(r);
   const existente = await buscarCliente(emails, slugCliente(nombre));
-  // Grabada por Jessica sin "onboarding" en el título: solo si es un cliente que acaba de entrar
-  // (formulario llegó, todavía en onboarding). Sus seguimientos con clientes actuales no cuentan.
-  if (opciones.motivo === "pm" && existente?.etapa !== "onboarding") return null;
   const slug = existente?.slug ?? (prueba ? "prueba-fathom" : slugCliente(nombre));
   const resumen = r.default_summary?.markdown_formatted?.trim() || "(Fathom no generó resumen)";
   const tareas = (r.action_items ?? []).filter((t) => t.description?.trim()).map((t) => `- ${t.description!.trim()}${t.assignee?.name ? ` (${t.assignee.name})` : ""}`).join("\n");

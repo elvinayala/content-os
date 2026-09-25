@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { after, NextRequest, NextResponse } from "next/server";
 
-import { EMAILS_CANAL_LLAMADAS, esOnboarding, firmaValida, mensajeSlack, type ReunionFathom, vaAlCanalDeLlamadas } from "@/lib/fathom";
+import { esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
 import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -62,17 +62,21 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const cuerpo = await req.text();
   const prueba = req.nextUrl.searchParams.get("prueba") === "1";
+  // true = llegó por el webhook de EQUIPO (FATHOM_WEBHOOK_SECRET_EQUIPO u otra cuenta): de ahí solo
+  // interesan los onboardings de Jessica para Max; nada se publica en el canal de resúmenes.
+  let desdeEquipo = false;
 
   if (prueba) {
     if (!secretoCron(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
   } else {
     // Un webhook por cuenta de Fathom (Elvin, Jessica…), cada uno con su secreto:
     // FATHOM_WEBHOOK_SECRET y FATHOM_WEBHOOK_SECRET_<CUENTA>. Vale si firma con cualquiera.
-    const secretos = Object.entries(process.env).filter(([k, v]) => /^FATHOM_WEBHOOK_SECRET(_[A-Z0-9]+)?$/.test(k) && v).map(([, v]) => v as string);
+    const secretos = Object.entries(process.env).filter(([k, v]) => /^FATHOM_WEBHOOK_SECRET(_[A-Z0-9]+)?$/.test(k) && v) as [string, string][];
     if (!secretos.length) return NextResponse.json({ error: "sin-configurar" }, { status: 503 });
     const cabeceras = { id: req.headers.get("webhook-id"), timestamp: req.headers.get("webhook-timestamp"), firma: req.headers.get("webhook-signature") };
-    const ok = secretos.some((sec) => firmaValida(sec, cabeceras, cuerpo));
-    if (!ok) return NextResponse.json({ error: "firma-invalida" }, { status: 401 });
+    const valido = secretos.find(([, sec]) => firmaValida(sec, cabeceras, cuerpo));
+    if (!valido) return NextResponse.json({ error: "firma-invalida" }, { status: 401 });
+    desdeEquipo = valido[0] !== "FATHOM_WEBHOOK_SECRET";
   }
 
   let r: ReunionFathom;
@@ -89,8 +93,12 @@ export async function POST(req: NextRequest) {
 
   const mensaje = mensajeSlack(r);
   // ?prueba=1&max=1: además corre el arranque de Max en modo prueba (sin mención ni buzón).
-  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: await onboardingDesdeFathom(r, { prueba: true, motivo: esOnboarding(r) ?? undefined }) });
+  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: esOnboarding(r) ? await onboardingDesdeFathom(r, { prueba: true }) : null });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
+
+  // Del equipo, lo que no es onboarding se descarta sin guardar nada (Elvin: "más nada").
+  const onboarding = esOnboarding(r);
+  if (desdeEquipo && !onboarding) return NextResponse.json({ ok: true, ignorada: "no es onboarding" });
 
   const titulo = (r.meeting_title || r.title || "").slice(0, 300);
   await asegurarTabla();
@@ -107,20 +115,14 @@ export async function POST(req: NextRequest) {
   if (!tomada.length) return NextResponse.json({ ok: true, repetida: true });
 
   // Onboarding de un cliente (Elvin, 24/sep): Max arranca al instante, sin esperar a Slack.
-  const emailsOnboarding = (process.env.FATHOM_ONBOARDING_EMAILS || "jessica@levelupmediapr.net").split(",");
-  const motivo = esOnboarding(r, emailsOnboarding);
-  if (tomada[0].intentos === 1 && motivo) {
-    after(() => onboardingDesdeFathom(r, { motivo }).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
+  if (tomada[0].intentos === 1 && onboarding) {
+    after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
   }
-
-  // Con la cuenta de equipo (webhook "shared_team_recordings", 24/sep) llegan las llamadas de todos.
-  // Al canal de resúmenes van las de Elvin y las de los closers Roger y Laura; las demás solo sirven
-  // para detectar onboardings de Jessica → Max. Se registran como 'omitido'.
-  // Al canal: Elvin + los closers Roger y Laura (lib/fathom.ts). Override: FATHOM_SLACK_EMAILS.
-  const alCanal = process.env.FATHOM_SLACK_EMAILS ? process.env.FATHOM_SLACK_EMAILS.split(",") : EMAILS_CANAL_LLAMADAS;
-  if (!vaAlCanalDeLlamadas(r, alCanal)) {
-    await d.execute(sql`UPDATE fathom_llamadas SET estado = 'omitido', actualizado_el = now() WHERE recording_id = ${id}`);
-    return NextResponse.json({ ok: true, omitido: "no es de Elvin ni de los closers", onboarding: Boolean(motivo) });
+  // Lo del equipo (onboardings de Jessica) es solo para Max: no sale en el canal de resúmenes, que
+  // sigue siendo el de las llamadas de Elvin que pidió Aure (#29).
+  if (desdeEquipo) {
+    await d.execute(sql`UPDATE fathom_llamadas SET estado = 'max', actualizado_el = now() WHERE recording_id = ${id}`);
+    return NextResponse.json({ ok: true, max: true });
   }
 
   let error: string | null = null;

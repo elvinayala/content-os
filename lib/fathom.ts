@@ -134,24 +134,17 @@ export function mensajeSlack(r: ReunionFathom): { text: string; blocks: unknown[
 
 // ── Onboarding → Max (Elvin, 24/sep/2026) ──────────────────────────────────────────────────────
 // "Max debe recibir rápido el Fathom de la sesión de onboarding del cliente: que Jessica termine la
-// reunión y él comience a trabajar inmediatamente." Una reunión es de onboarding si su título lo
-// dice o si la grabó alguien de onboarding (FATHOM_ONBOARDING_EMAILS, default Jessica).
+// reunión y él comience a trabajar inmediatamente." Una reunión es de onboarding si su título lo dice.
 export interface ReunionConTranscripcion extends ReunionFathom {
   transcript?: { speaker?: { display_name?: string | null } | null; text?: string; timestamp?: string }[] | null;
 }
 
 const RE_ONBOARDING = /\b(onboarding|on-boarding|bienvenida|kick-?off|arranque|auditor[ií]a inicial)\b/i;
 
-// "titulo" = el título lo dice (seguro). "pm" = la grabó Jessica con un externo pero el título no lo
-// dice: solo cuenta si ese cliente está en etapa onboarding (sus seguimientos con clientes actuales NO
-// despiertan a Max). null = no es onboarding.
-export function esOnboarding(r: ReunionFathom, emailsOnboarding: string[] = ["jessica@levelupmediapr.net"]): "titulo" | "pm" | null {
-  const titulo = `${r.meeting_title ?? ""} ${r.title ?? ""}`;
-  if (RE_ONBOARDING.test(titulo)) return "titulo";
-  const quien = (r.recorded_by?.email || "").toLowerCase();
-  const esPm = Boolean(quien) && emailsOnboarding.map((e) => e.toLowerCase().trim()).includes(quien);
-  const conExterno = (r.calendar_invitees ?? []).some((i) => i.is_external === true);
-  return esPm && conExterno ? "pm" : null;
+// Elvin (24/sep): "las llamadas de Jessica son las llamadas etiquetadas de onboarding" — solo cuenta el
+// título. Una llamada sin la etiqueta no le llega a Max, la haya grabado quien la haya grabado.
+export function esOnboarding(r: ReunionFathom): boolean {
+  return RE_ONBOARDING.test(`${r.meeting_title ?? ""} ${r.title ?? ""}`);
 }
 
 // El cliente de la reunión = los invitados externos (no del equipo). Nombre para el expediente: el
@@ -176,19 +169,4 @@ export function clienteDeReunion(r: ReunionFathom, dominiosEquipo = ["levelupmed
 export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): string {
   const t = (r.transcript ?? []).map((x) => `${x.speaker?.display_name || "?"}: ${(x.text || "").trim()}`).filter((l) => l.length > 3).join("\n");
   return t.length > max ? `${t.slice(0, max)}\n…(sigue en Fathom)` : t;
-}
-
-// ── Qué va al canal de resúmenes de llamadas (#office-2-resumendellamadas) ─────────────────────
-// Aure (#29) pidió las llamadas de Elvin; Elvin (24/sep): "se tienen que ver todas las llamadas que
-// cogen los closers, Roger y Laura, específicamente ellos dos". Laura no tiene usuario propio: usa el
-// calendario/cuenta Level Up Media (levelupmediapr@gmail.com). Juan David NO (sin acceso desde 22/sep).
-// Entra si la grabó uno de ellos o si uno de ellos está en la invitación como parte del equipo.
-export const EMAILS_CANAL_LLAMADAS = ["elvin@levelupmediapr.net", "levelupmediapr@gmail.com", "roger.arteaga@levelupmediapr.net"];
-
-export function vaAlCanalDeLlamadas(r: ReunionFathom, emails: string[] = EMAILS_CANAL_LLAMADAS): boolean {
-  const lista = emails.map((e) => e.trim().toLowerCase()).filter(Boolean);
-  const grabo = (r.recorded_by?.email || "").toLowerCase();
-  if (!grabo) return true; // sin dato de quién grabó: como antes, se publica
-  if (lista.includes(grabo)) return true;
-  return (r.calendar_invitees ?? []).some((i) => i.is_external !== true && lista.includes((i.email || "").toLowerCase()));
 }

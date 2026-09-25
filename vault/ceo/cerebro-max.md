@@ -536,8 +536,9 @@ vacío = no leo ni se le envía nada a ningún cliente) y el arranque automátic
 **Arranque real = el Fathom del onboarding (Elvin, 24/sep).** *"Debe recibir rápido el Fathom de la sesión
 de onboarding: que Jessica termine la reunión y tú comiences a trabajar inmediatamente, y solicitarle a
 Jessica el resumen de ella. Con ese resumen armas todo para enviarlo a aprobación."* Flujo: el formulario
-abre el expediente (sin gastar) → Jessica termina la reunión → Fathom avisa (`/api/fathom`, onboarding =
-título "onboarding/bienvenida/kick-off" o grabada por Jessica) → el servidor guarda en la ficha el resumen,
+abre el expediente (sin gastar) → Jessica termina la reunión → Fathom avisa (`/api/fathom`, webhook de la
+cuenta de equipo; onboarding = SOLO la llamada etiquetada "Onboarding · <Negocio>" — Elvin: "las llamadas de
+Jessica son las etiquetadas de onboarding, más nada"; lo demás del equipo se descarta) → el servidor guarda en la ficha el resumen,
 las tareas, el link y la transcripción, abre un hilo en #max-aprobaciones pidiéndole a Jessica SU resumen,
 y me despierta. Arranco ya (expediente, llamada de venta, competencia, matemática); con el resumen de
 Jessica armo el plan y lo propongo. **Aprueban Jessica, Carilin o Elvin; publicar (prender pauta) solo
