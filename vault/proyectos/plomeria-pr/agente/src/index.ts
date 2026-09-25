@@ -24,6 +24,7 @@ import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
+import { revisarSeguimientos } from "./seguimiento.js";
 import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO, telefonoBonito } from "./reclutamiento.js";
@@ -535,6 +536,8 @@ async function revisarSaludWa() {
   } else if (s.ok && s.alerta && s.alerta !== antes?.alerta) await wa.avisarCoordinador(`⚠️ WhatsApp de Resuelto: ${s.alerta}.`);
 }
 setInterval(() => revisarSaludWa().catch(console.error), 10 * 60_000);
+// Seguimiento automático de clientes de Messenger/IG que pidieron precio y no agendaron (dentro de las 24 h de Meta).
+setInterval(() => revisarSeguimientos().catch(console.error), 10 * 60_000);
 setTimeout(() => revisarSaludWa().catch(console.error), 20_000);
 app.get("/salud/whatsapp", (_req, res) => { const u = saludWa.leer().ultimo; res.status(!u || u.ok ? 200 : 503).json(u ?? { ok: true, motivo: "sin revisar aún" }); });
 // Cuando Meta devuelve la cuenta y el evento viejo sigue en la ficha: POST /admin/salud-wa/resuelto
