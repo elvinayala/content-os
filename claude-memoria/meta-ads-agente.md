@@ -114,3 +114,10 @@ renombrado "Max · Estratega Level Up" (foto: BotFather, la pone Elvin). App pro
 scripts/slack/max-app-manifest.json, falta instalarla + el cambio de token/firma (evitar eventos duplicados con
 Command Center). Higgsfield: plan en "periodo de gracia" con límite diario (posible pago pendiente); la v2 se hizo con
 fal (FAL_API_KEY del Railway de Bori, nano-banana-pro/edit).
+**Primer cliente real de Max (25/sep):** el próximo cliente con pago inicial ≤ $2,000; Carilin se lo asigna como a
+un trafficker nuevo (ficha de equipo en el CRM, correo tipo max@levelupmediapr.net, asignación en Pulse, bienvenida) y
+se lo dice en #max-aprobaciones; a prueba: Carilin autoriza cada publicación. Max NO se reúne con clientes: está en el
+onboarding por Fathom (Jessica); la reunión de estrategia con el cliente la hace Carilin, o manda a Jessica por lo que
+Max pida. Regla nueva (cerebro §18): Max SIEMPRE pide material grabado por el cliente y recomienda UGC vs profesional;
+médicos/profesionales = las dos (profesional + UGC en colaboración). Recado a Carilin quedó como BORRADOR en el Slack de
+Elvin (el MCP pide borrador si Elvin no revisó el texto).
