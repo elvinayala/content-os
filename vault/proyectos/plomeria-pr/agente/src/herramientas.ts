@@ -15,6 +15,7 @@ import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCit
 import { dmSlack } from "./integraciones/slack.js";
 import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida } from "./reclutamiento.js";
 import { avisarCoordinador } from "./canales/whatsapp.js";
+import { programarLlamadaHumana } from "./llamar-cliente.js";
 
 /** Quién puede hacer plomería en PR (Ley 59-2022): licencia de oficial o maestro, o certificado de aprendiz (con un maestro). */
 const PUEDE_TRABAJAR = ["maestro", "oficial", "aprendiz"];
@@ -96,8 +97,8 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
   },
   {
     name: "clasificar_contacto",
-    description: "Llámala EN CUANTO sepas qué tipo de persona escribe (normalmente en el 1er o 2º mensaje): cliente de plomería, dueño con proyecto, plomero candidato o contratista candidato. Crea la tarjeta en el CRM de inmediato para que el equipo la vea aunque la persona no termine la conversación. Llámala una sola vez por contacto (o de nuevo solo si cambia el tipo).",
-    input_schema: { type: "object", properties: { tipo: { type: "string", enum: ["cliente", "cliente-proyecto", "plomero-candidato", "contratista"] }, nombre: { type: "string", description: "vacío si aún no lo dio" }, municipio: { type: "string", description: "vacío si aún no lo dio" }, resumen: { type: "string", description: "1 línea: qué quiere o qué dijo" } }, required: ["tipo", "nombre", "municipio", "resumen"], additionalProperties: false },
+    description: "Llámala EN CUANTO sepas qué tipo de persona escribe (normalmente en el 1er o 2º mensaje): cliente de plomería, dueño con proyecto, plomero candidato o contratista candidato. Crea la tarjeta en el CRM de inmediato para que el equipo la vea aunque la persona no termine la conversación. Llámala una vez por contacto, y de nuevo si cambia el tipo o cuando te dé su teléfono (pásalo en telefono).",
+    input_schema: { type: "object", properties: { tipo: { type: "string", enum: ["cliente", "cliente-proyecto", "plomero-candidato", "contratista"] }, nombre: { type: "string", description: "vacío si aún no lo dio" }, municipio: { type: "string", description: "vacío si aún no lo dio" }, resumen: { type: "string", description: "1 línea: qué quiere o qué dijo" }, telefono: { type: "string", description: "teléfono de 10 dígitos si ya lo dio (en Messenger/Instagram es la única forma de tenerlo); vacío si no" } }, required: ["tipo", "nombre", "municipio", "resumen"], additionalProperties: false },
   },
   {
     name: "guardar_nota_cliente",
@@ -317,6 +318,9 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     }
     case "clasificar_contacto": {
       const c = ctx.contacto;
+      const telNuevo = String(input.telefono ?? "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+      const primerTelefono = telNuevo.length === 10 && !c.telefono;
+      if (telNuevo.length === 10) c.telefono = telNuevo;
       if (input.nombre) c.nombre = input.nombre;
       if (input.municipio) c.municipio = input.municipio;
       c.tipo = input.tipo;
@@ -338,7 +342,12 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         await agregarNota(ghlId, `Escribió por ${c.canal}. ${input.resumen}`);
       }
       almacen.guardarContacto(c);
-      return { ok: true, en_crm: !!ghlId, tarjeta: !!c.ghlOpportunityId };
+      // Cliente que dejó su teléfono: si no agenda en 20 min, una persona lo llama y cierra a mano (Elvin, 25/sep).
+      if (primerTelefono && (input.tipo === "cliente" || input.tipo === "cliente-proyecto")) {
+        if (c.ghlContactId) await agregarNota(c.ghlContactId, `📞 Dio su teléfono (${c.telefono}) por ${c.canal}. Si no agenda, llamarlo para cerrar. ${input.resumen}`);
+        programarLlamadaHumana(c.id, input.resumen);
+      }
+      return { ok: true, en_crm: !!ghlId, tarjeta: !!c.ghlOpportunityId, ...(primerTelefono ? { telefono_guardado: true } : {}) };
     }
     case "guardar_nota_cliente": {
       const c = { ...ctx.contacto };
