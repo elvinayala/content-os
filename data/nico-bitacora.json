@@ -137,6 +137,14 @@
       "porque": "No había pedido nuevo; Elvin aprobó cerrarla.",
       "verificado": "No hubo nada que desplegar ni verificar; no queda ninguna solicitud esperando OK (agentes.mjs solicitudes).",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-25",
+      "plataforma": "Resuelto (agente en Railway)",
+      "que": "[Solicitud de Aure #34] Revisé si los plomeros se enteran de los trabajos. Sin cambios de código. Las ofertas (despacho.ts) se avisan por WhatsApp + notificación del app; el WhatsApp está BANNED por Meta, así que solo llega la notificación a quien la activó. El aviso al coordinador cuando nadie acepta sale por Telegram (ok).",
+      "porque": "Aure preguntó si los plomeros ya saben que tienen trabajos. Elvin aprobó la revisión.",
+      "verificado": "En vivo: app.resueltopr.com/salud/whatsapp → metaStatus BANNED (SCAM, 24/sep). NO pude leer ofertas.json ni las suscripciones: el RAILWAY_API_TOKEN de Nico no tiene acceso al proyecto resuelto y no hay ADMIN_TOKEN de Resuelto en el entorno de Nico.",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
@@ -178,5 +186,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-25T16:57:59.840Z"
+  "actualizadoEl": "2026-09-25T19:35:32.439Z"
 }
