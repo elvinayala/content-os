@@ -70,4 +70,10 @@ completados, facturado, por cobrar, deuda a plomeros, incidentes, pendientes). P
 que haya despachado servicios a domicilio, venda por teléfono, organizado; **nunca gente de las agencias**.
 Pedido a Yaileen por Slack el 25/sep: 3–5 candidatos, **sin mencionar sueldo** (referencia interna
 $2,000–2,500 cuando haya volumen; se define al ver candidatos). Proceso: entrevista corta + **prueba pagada
-de 3 días** despachando trabajos reales. Doc + PDF: `vault/proyectos/contrataciones/coordinador-operaciones-resuelto.md`.
+de 3 días** despachando trabajos reales. Doc: `vault/proyectos/contrataciones/coordinador-operaciones-resuelto.md`; **PDF para reclutamiento (sin la
+sección de compensación interna)** en `public/demos/resuelto/` → content-os-chi-seven.vercel.app/demos/resuelto/
+coordinador-operaciones-resuelto.pdf (el bot de Slack no puede subir archivos: se comparte por enlace).
+**Candidata preferida: Valentina** — Aure le pregunta primero por su disponibilidad real (empieza a estudiar);
+si no puede, sigue la búsqueda de Yaileen.
+
+**Ventas por chat, ajustes aprobados (25/sep/2026 noche, Elvin: "todo lo que recomiendas aplícalo"):** (1) el agente NO menciona el 20% de materiales si no preguntan (si preguntan, verdad en una línea; si el cliente los tiene, no se cobra); (2) cierra con horario: en el mensaje del precio ofrece 2 espacios concretos, pide teléfono al escoger; si "solo era el precio", una vez "¿te lo aparto?"; (3) `src/seguimiento.ts`: hasta 2 seguimientos por Messenger/IG dentro de las 24 h del último mensaje del cliente (≥2 h, 6 h entre uno y otro, 8 AM–8 PM, redacta Claude con la conversación, "NADA" si no aplica; nunca a pueblos sin plomero activo), tests en tests/seguimiento.test.mjs. Pasadas 24 h Messenger no deja escribir: con teléfono → llamada (setter). (4) Menú de precios interno para llamadas: `kit/menu-precios/generar.py` → PDF (precios, reglas, dónde hay servicio, guion de 6 pasos, objeciones, B2B), en https://app.resueltopr.com/kit/menu-precios-interno-r7q4.pdf (unlisted). **Elvin quiere crear otro portafolio de Meta para WhatsApp**: le advertí que es evasión (riesgo a su Facebook y a los portafolios de LU/AIB) y no lo ayudo por esa vía; alternativa legítima = verificar el negocio con la LLC #591463 + Solicitar revisión, y mientras operar por Messenger/IG + llamadas.
