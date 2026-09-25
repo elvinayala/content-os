@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { toast } from "sonner";
+
+import { RequisitoDialog } from "@/components/pulse/requisito-dialog";
 
 import {
   actualizarColumnaAction,
@@ -301,6 +303,8 @@ export function BoardProvider({
   children: React.ReactNode;
 }) {
   const [state, dispatch] = useReducer(reducer, undefined, () => estadoInicial(data, vistaInicial, itemInicial));
+  // Una automatización exige un campo antes del cambio: se pide en un diálogo y se reintenta.
+  const [requisito, setRequisito] = useState<{ columnId: string; itemIds: string[]; mensaje: string; reintentar: () => Promise<unknown> } | null>(null);
   const router = useRouter();
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -385,17 +389,25 @@ export function BoardProvider({
     const r = await actualizarValorAction({ itemId, columnId: column.id, tipo: column.type, settings: column.settings, value });
     if (!r.ok) {
       dispatch({ type: "valor", itemId, columnId: column.id, value: anterior });
+      if (r.requiere) {
+        setRequisito({ ...r.requiere, mensaje: r.error, reintentar: () => setValorRef.current(itemId, column, valorCrudo) });
+        return false;
+      }
       fallo(r.error);
       return false;
     }
     dispatch({ type: "valor", itemId, columnId: column.id, value: r.value, updatedAt: r.updatedAt });
-    if (r.movidoA) {
-      dispatch({ type: "item:mover", itemIds: [itemId], groupId: r.movidoA.groupId });
-      const destino = stateRef.current.groups.find((g) => g.id === r.movidoA!.groupId)?.title ?? "otro grupo";
-      toast.success(`Automatización: se movió a ${destino}`, { className: "pulse" });
+    if (r.item) dispatch({ type: "item:agregar", item: r.item });
+    else if (r.movidoA) dispatch({ type: "item:mover", itemIds: [itemId], groupId: r.movidoA.groupId });
+    if (r.automatizaciones?.length || r.movidoA) {
+      const destino = r.movidoA ? stateRef.current.groups.find((g) => g.id === r.movidoA!.groupId)?.title : null;
+      toast.success(`⚡ ${r.automatizaciones?.join(" · ") ?? "Automatización"}${destino ? ` · se movió a ${destino}` : ""}`, { className: "pulse" });
     }
     return true;
   }, []);
+
+  const setValorRef = useRef(setValor);
+  setValorRef.current = setValor;
 
   const renombrar = useCallback<Acciones["renombrar"]>(async (itemId, name) => {
     const anterior = stateRef.current.items[itemId]?.name ?? "";
@@ -426,9 +438,19 @@ export function BoardProvider({
     const r = await moverItemsAction({ itemIds, groupId });
     if (!r.ok) {
       for (const it of previos) dispatch({ type: "item:mover", itemIds: [it.id], groupId: it.groupId });
+      if (r.requiere) {
+        setRequisito({ ...r.requiere, mensaje: r.error, reintentar: () => moverItemsRef.current(itemIds, groupId) });
+        return;
+      }
       fallo(r.error);
+      return;
     }
+    for (const it of r.items) dispatch({ type: "item:agregar", item: it });
+    if (r.automatizaciones.length) toast.success(`⚡ ${r.automatizaciones.join(" · ")}`, { className: "pulse" });
   }, []);
+
+  const moverItemsRef = useRef(moverItems);
+  moverItemsRef.current = moverItems;
 
   const eliminarItems = useCallback<Acciones["eliminarItems"]>(async (itemIds) => {
     const previos = itemIds.map((id) => stateRef.current.items[id]).filter(Boolean);
@@ -561,7 +583,10 @@ export function BoardProvider({
   return (
     <MiRolContext.Provider value={miRol}>
       <AccionesCtx.Provider value={acciones}>
-        <EstadoCtx.Provider value={state}>{children}</EstadoCtx.Provider>
+        <EstadoCtx.Provider value={state}>
+          {children}
+          {requisito ? <RequisitoDialog requisito={requisito} onCerrar={() => setRequisito(null)} /> : null}
+        </EstadoCtx.Provider>
       </AccionesCtx.Provider>
     </MiRolContext.Provider>
   );

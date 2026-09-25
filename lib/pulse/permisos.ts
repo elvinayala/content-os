@@ -18,6 +18,7 @@ export interface Poderes {
   exportarDatos: boolean; // sacar la base fuera de Pulse (CSV, respaldo, API de n8n)
   verRegistroSeguridad: boolean;
   administrarAccesoTableros: boolean; // marcar un tablero como privado y elegir quién entra
+  editarAutomatizaciones: boolean; // crear/editar/apagar reglas del tablero
 }
 
 export function poderes(rol: RolUsuario): Poderes {
@@ -33,6 +34,7 @@ export function poderes(rol: RolUsuario): Poderes {
       exportarDatos: true,
       verRegistroSeguridad: true,
       administrarAccesoTableros: true,
+      editarAutomatizaciones: true,
     };
   }
   if (rol === "editor") {
@@ -47,6 +49,7 @@ export function poderes(rol: RolUsuario): Poderes {
       exportarDatos: false,
       verRegistroSeguridad: true,
       administrarAccesoTableros: false,
+      editarAutomatizaciones: true,
     };
   }
   return {
@@ -60,6 +63,7 @@ export function poderes(rol: RolUsuario): Poderes {
     exportarDatos: false,
     verRegistroSeguridad: false,
     administrarAccesoTableros: false,
+    editarAutomatizaciones: false,
   };
 }
 

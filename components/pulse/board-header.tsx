@@ -1,12 +1,13 @@
 "use client";
 
-import { Lock, MoreHorizontal, Trash2 } from "lucide-react";
+import { Lock, MoreHorizontal, Trash2, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { eliminarBoardAction } from "@/app/pulse/(app)/[board]/actions";
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
 import { BoardAcceso } from "@/components/pulse/board-acceso";
+import { BoardAutomatizaciones } from "@/components/pulse/board-automatizaciones";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import {
   AlertDialog,
@@ -32,6 +33,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
   const [nombre, setNombre] = useState(board.nombre);
   const [confirmar, setConfirmar] = useState(false);
   const [acceso, setAcceso] = useState(false);
+  const [automatizaciones, setAutomatizaciones] = useState(false);
   useEffect(() => setNombre(board.nombre), [board.nombre]);
 
   const guardar = async () => {
@@ -83,6 +85,9 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="pulse" align="end">
+            <DropdownMenuItem onClick={() => setAutomatizaciones(true)}>
+              <Zap /> Automatizaciones
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setEditando(true)}>Renombrar tablero</DropdownMenuItem>
             {usuario.rol === "admin" ? (
               <>
@@ -98,6 +103,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      {automatizaciones ? <BoardAutomatizaciones open={automatizaciones} onOpenChange={setAutomatizaciones} /> : null}
       {usuario.rol === "admin" && acceso ? <BoardAcceso open={acceso} onOpenChange={setAcceso} /> : null}
       <AlertDialog open={confirmar} onOpenChange={setConfirmar}>
         <AlertDialogContent className="pulse">

@@ -12,6 +12,7 @@ import {
   pulseFiles,
   pulseGroups,
   pulseItems,
+  pulseReglas,
   pulseUsers,
 } from "./schema";
 import { borrarArchivos } from "./storage";
@@ -321,6 +322,12 @@ export async function eliminarItems(p: { itemIds: string[]; userId: string }): P
   return borrados.length;
 }
 
+export async function leerItems(ids: string[]): Promise<Item[]> {
+  if (!ids.length) return [];
+  const d = await db();
+  return (await d.select().from(pulseItems).where(inArray(pulseItems.id, ids))).map(aItem);
+}
+
 export async function leerNombresItems(boardId: string): Promise<{ id: string; name: string }[]> {
   const d = await db();
   return d.select({ id: pulseItems.id, name: pulseItems.name }).from(pulseItems).where(eq(pulseItems.boardId, boardId)).orderBy(asc(pulseItems.name));
@@ -547,3 +554,41 @@ export async function leerUsuario(id: string): Promise<UsuarioPulse | null> {
   return u ? aUsuario(u) : null;
 }
 
+// ---------- Automatizaciones ----------
+
+export async function leerEstructura(boardId: string): Promise<{ columns: Columna[]; groups: Grupo[] }> {
+  const d = await db();
+  const [columns, groups] = await Promise.all([
+    d.select().from(pulseColumns).where(eq(pulseColumns.boardId, boardId)),
+    d.select().from(pulseGroups).where(eq(pulseGroups.boardId, boardId)),
+  ]);
+  return { columns: columns.map(aColumna), groups: groups.map(aGrupo) };
+}
+
+export async function guardarRegla(p: { id?: string; boardId: string; nombre: string; activa: boolean; cuando: unknown; entonces: unknown; userId: string }) {
+  const d = await db();
+  if (p.id) {
+    const [r] = await d.update(pulseReglas).set({ nombre: p.nombre, activa: p.activa, cuando: p.cuando, entonces: p.entonces }).where(and(eq(pulseReglas.id, p.id), eq(pulseReglas.boardId, p.boardId))).returning();
+    if (!r) throw new Error("La automatización no existe");
+    return r;
+  }
+  const [r] = await d.insert(pulseReglas).values({ boardId: p.boardId, nombre: p.nombre, activa: p.activa, cuando: p.cuando, entonces: p.entonces, creadaPor: p.userId }).returning();
+  return r;
+}
+
+export async function boardDeRegla(id: string): Promise<string | null> {
+  const d = await db();
+  const [r] = await d.select({ b: pulseReglas.boardId }).from(pulseReglas).where(eq(pulseReglas.id, id));
+  return r?.b ?? null;
+}
+
+export async function activarRegla(id: string, activa: boolean): Promise<void> {
+  const d = await db();
+  await d.update(pulseReglas).set({ activa }).where(eq(pulseReglas.id, id));
+}
+
+export async function eliminarRegla(id: string): Promise<string> {
+  const d = await db();
+  const [r] = await d.delete(pulseReglas).where(eq(pulseReglas.id, id)).returning({ nombre: pulseReglas.nombre });
+  return r?.nombre ?? "";
+}

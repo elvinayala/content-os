@@ -50,6 +50,13 @@
       "when": 1790199021095,
       "tag": "0006_aib_onboarding_calendly",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790304937851,
+      "tag": "0007_reglas_vistas",
+      "breakpoints": true
     }
   ]
 }

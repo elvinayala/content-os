@@ -210,3 +210,41 @@ export const pulseFiles = pgTable(
   },
   (t) => [index("pulse_files_item").on(t.itemId, t.columnId), uniqueIndex("pulse_files_monday").on(t.mondayAssetId)],
 );
+
+// Automatizaciones configurables desde la pantalla (lib/pulse/automatizaciones.ts).
+export const pulseReglas = pgTable(
+  "pulse_reglas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => pulseBoards.id, { onDelete: "cascade" }),
+    nombre: text("nombre").notNull(),
+    activa: boolean("activa").notNull().default(true),
+    cuando: jsonb("cuando").notNull(),
+    entonces: jsonb("entonces").notNull(),
+    veces: integer("veces").notNull().default(0),
+    ultimaVez: timestamp("ultima_vez", { withTimezone: true }),
+    creadaPor: uuid("creada_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("pulse_reglas_board").on(t.boardId)],
+);
+
+// Vistas guardadas por persona (filtros, orden, agrupar, vista, búsqueda).
+export const pulseVistas = pgTable(
+  "pulse_vistas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => pulseBoards.id, { onDelete: "cascade" }),
+    nombre: text("nombre").notNull(),
+    estado: jsonb("estado").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("pulse_vistas_user_board").on(t.userId, t.boardId)],
+);

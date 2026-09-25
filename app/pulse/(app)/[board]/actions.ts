@@ -3,7 +3,8 @@
 import { refresh } from "next/cache";
 
 import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse/auth";
-import { reglaQueAplica } from "@/lib/pulse/automatizaciones";
+import type { Accion, Cuando } from "@/lib/pulse/automatizaciones";
+import { aplicarReglas, leerReglas, RequisitoError, verificarRequisitos } from "@/lib/pulse/motor-reglas";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
 import * as repo from "@/lib/pulse/repo";
 import { etiquetasQuitadasEnUso, poderes } from "@/lib/pulse/permisos";
@@ -16,15 +17,18 @@ import { validarValor } from "@/lib/pulse/valores";
 // { ok, ... } (nunca lanzan hacia el cliente). Las de celda NO hacen revalidatePath: el
 // cliente ya actualizó su store de forma optimista; las estructurales llaman refresh().
 
-type R<T = object> = ({ ok: true } & T) | { ok: false; error: string };
+export type Requisito = { columnId: string; itemIds: string[] };
+type R<T = object> = ({ ok: true } & T) | { ok: false; error: string; requiere?: Requisito };
 
 async function envolver<T extends object>(fn: () => Promise<T>): Promise<R<T>> {
   try {
     const r = await fn();
     return { ok: true, ...r };
   } catch (e) {
+    // Una automatización exige un campo lleno antes del cambio: el cliente lo pide y reintenta.
+    if (e instanceof RequisitoError) return { ok: false, error: e.message, requiere: { columnId: e.columnId, itemIds: e.itemIds } };
     const msg = e instanceof Error ? e.message : "Error inesperado";
-    return { ok: false, error: msg === "no-autorizado" ? "Tu sesión venció: volvé a entrar" : msg };
+    return { ok: false, error: msg === "no-autorizado" ? "Tu sesión venció: vuelve a entrar" : msg };
   }
 }
 
@@ -36,24 +40,30 @@ export async function actualizarValorAction(p: {
   tipo: TipoColumna;
   settings: SettingsColumna;
   value: unknown;
-}): Promise<R<{ updatedAt: string; value: ValorCelda; movidoA?: { groupId: string; regla: string } }>> {
+}): Promise<R<{ updatedAt: string; value: ValorCelda; movidoA?: { groupId: string; regla: string }; item?: Item; automatizaciones?: string[] }>> {
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
     const value = validarValor(p.tipo, p.value, p.settings);
+    const [antes] = await repo.leerItems([p.itemId]);
+    if (!antes) throw new Error("El elemento no existe");
+    const evento = { tipo: "valor" as const, columnId: p.columnId, antes: antes.values[p.columnId] ?? null, despues: value, grupoActual: antes.groupId };
+    // Automatizaciones (tabla pulse_reglas): primero lo que exigen, después el cambio y sus acciones.
+    await verificarRequisitos(antes.boardId, [{ item: antes, evento, valoresTrasCambio: { ...antes.values, [p.columnId]: value } }]);
     const r = await repo.actualizarValor({ itemId: p.itemId, columnId: p.columnId, value, userId: u.id });
-    // Automatizaciones (lib/pulse/automatizaciones.ts): si falla el movimiento, el valor ya quedó.
-    let movidoA: { groupId: string; regla: string } | undefined;
-    const regla = reglaQueAplica({ boardId: r.boardId, columnId: p.columnId, before: r.before, after: value, groupIdActual: r.groupId });
-    if (regla) {
-      try {
-        await repo.moverItems({ itemIds: [p.itemId], groupId: regla.groupId, userId: u.id, porColumna: p.columnId });
-        movidoA = { groupId: regla.groupId, regla: regla.nombre };
-      } catch (e) {
-        console.error("pulse automatización", regla.nombre, e);
-      }
+    let efecto: { reglas: string[]; movidoA: string | null } = { reglas: [], movidoA: null };
+    try {
+      efecto = await aplicarReglas(r.boardId, { ...antes, values: { ...antes.values, [p.columnId]: value } }, evento, u.id);
+    } catch (e) {
+      console.error("pulse automatización", e); // el valor ya quedó guardado
     }
-    avisarCambio({ itemIds: [p.itemId], motivo: movidoA ? "mover" : "valor" });
-    return { updatedAt: r.updatedAt, value, ...(movidoA ? { movidoA } : {}) };
+    avisarCambio({ itemIds: [p.itemId], motivo: efecto.movidoA ? "mover" : "valor" });
+    const item = efecto.reglas.length ? (await repo.leerItems([p.itemId]))[0] : undefined;
+    return {
+      updatedAt: r.updatedAt,
+      value,
+      ...(efecto.movidoA ? { movidoA: { groupId: efecto.movidoA, regla: efecto.reglas.join(" · ") } } : {}),
+      ...(item ? { item, automatizaciones: efecto.reglas } : {}),
+    };
   });
 }
 
@@ -78,12 +88,26 @@ export async function crearItemAction(p: { boardId: string; groupId: string; nam
   });
 }
 
-export async function moverItemsAction(p: { itemIds: string[]; groupId: string }): Promise<R> {
+export async function moverItemsAction(p: { itemIds: string[]; groupId: string }): Promise<R<{ items: Item[]; automatizaciones: string[] }>> {
   return envolver(async () => {
-    const u = await requiereAccesoBoard(await repo.boardDe({ groupId: p.groupId }));
+    const boardId = await repo.boardDe({ groupId: p.groupId });
+    const u = await requiereAccesoBoard(boardId);
+    const antes = await repo.leerItems(p.itemIds);
+    const eventos = antes.map((item) => ({ item, evento: { tipo: "grupo" as const, desde: item.groupId, hacia: p.groupId } }));
+    await verificarRequisitos(boardId!, eventos);
     await repo.moverItems({ itemIds: p.itemIds, groupId: p.groupId, userId: u.id });
+    const automatizaciones = new Set<string>();
+    for (const { item, evento } of eventos) {
+      try {
+        const e = await aplicarReglas(boardId!, { ...item, groupId: p.groupId }, evento, u.id);
+        e.reglas.forEach((x) => automatizaciones.add(x));
+      } catch (err) {
+        console.error("pulse automatización", err);
+      }
+    }
     avisarCambio({ itemIds: p.itemIds, motivo: "mover" });
-    return {};
+    const items = automatizaciones.size ? await repo.leerItems(p.itemIds) : [];
+    return { items, automatizaciones: [...automatizaciones] };
   });
 }
 
@@ -278,6 +302,69 @@ export async function eliminarArchivoAction(p: { fileId: string }): Promise<R> {
   return envolver(async () => {
     await requiereAccesoBoard(await repo.boardDe({ fileId: p.fileId }));
     await repo.eliminarArchivo(p.fileId);
+    return {};
+  });
+}
+
+// ---------- automatizaciones (pulse_reglas) ----------
+
+export async function listarReglasAction(p: { boardId: string }) {
+  return envolver(async () => {
+    await requiereAccesoBoard(p.boardId);
+    return { reglas: await leerReglas(p.boardId) };
+  });
+}
+
+function validarRegla(cuando: Cuando, entonces: Accion[], columnas: Set<string>, grupos: Set<string>) {
+  const col = (id: string) => {
+    if (!columnas.has(id)) throw new Error("La regla apunta a una columna que no existe");
+  };
+  const grp = (id: string) => {
+    if (!grupos.has(id)) throw new Error("La regla apunta a un grupo que no existe");
+  };
+  if (cuando.tipo === "valor") col(cuando.columnId);
+  else if (cuando.tipo === "grupo") grp(cuando.groupId);
+  else throw new Error("Disparador inválido");
+  cuando.excepto?.forEach(grp);
+  if (!entonces.length) throw new Error("La regla necesita al menos una acción");
+  for (const a of entonces) {
+    if (a.tipo === "mover") grp(a.groupId);
+    else if (a.tipo === "fecha" || a.tipo === "valor" || a.tipo === "persona" || a.tipo === "exigir") col(a.columnId);
+    else if (a.tipo !== "avisar") throw new Error("Acción inválida");
+    if (a.tipo === "fecha" && (!Number.isInteger(a.dias) || Math.abs(a.dias) > 365)) throw new Error("Los días deben estar entre -365 y 365");
+  }
+}
+
+export async function guardarReglaAction(p: { boardId: string; id?: string; nombre: string; activa: boolean; cuando: Cuando; entonces: Accion[] }) {
+  return envolver(async () => {
+    const u = await requiereAccesoBoard(p.boardId);
+    if (!poderes(u.rol).editarAutomatizaciones) await prohibido(u, "editar automatizaciones");
+    const tablero = await repo.leerEstructura(p.boardId);
+    validarRegla(p.cuando, p.entonces, new Set(tablero.columns.map((c) => c.id)), new Set(tablero.groups.map((g) => g.id)));
+    const nombre = p.nombre.trim().slice(0, 120) || "Automatización";
+    const regla = await repo.guardarRegla({ id: p.id, boardId: p.boardId, nombre, activa: p.activa, cuando: p.cuando, entonces: p.entonces, userId: u.id });
+    await registrarEvento({ tipo: "automatizacion", email: u.email, actorId: u.id, detalle: `${p.id ? "editó" : "creó"} «${nombre}»` });
+    return { regla };
+  });
+}
+
+export async function activarReglaAction(p: { id: string; activa: boolean }) {
+  return envolver(async () => {
+    const boardId = await repo.boardDeRegla(p.id);
+    const u = await requiereAccesoBoard(boardId);
+    if (!poderes(u.rol).editarAutomatizaciones) await prohibido(u, "editar automatizaciones");
+    await repo.activarRegla(p.id, p.activa);
+    return {};
+  });
+}
+
+export async function eliminarReglaAction(p: { id: string }) {
+  return envolver(async () => {
+    const boardId = await repo.boardDeRegla(p.id);
+    const u = await requiereAccesoBoard(boardId);
+    if (!poderes(u.rol).editarAutomatizaciones) await prohibido(u, "borrar automatizaciones");
+    const nombre = await repo.eliminarRegla(p.id);
+    await registrarEvento({ tipo: "automatizacion", email: u.email, actorId: u.id, detalle: `borró «${nombre}»` });
     return {};
   });
 }
