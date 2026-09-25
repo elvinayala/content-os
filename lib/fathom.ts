@@ -142,11 +142,16 @@ export interface ReunionConTranscripcion extends ReunionFathom {
 
 const RE_ONBOARDING = /\b(onboarding|on-boarding|bienvenida|kick-?off|arranque|auditor[ií]a inicial)\b/i;
 
-export function esOnboarding(r: ReunionFathom, emailsOnboarding: string[] = ["jessica@levelupmediapr.net"]): boolean {
+// "titulo" = el título lo dice (seguro). "pm" = la grabó Jessica con un externo pero el título no lo
+// dice: solo cuenta si ese cliente está en etapa onboarding (sus seguimientos con clientes actuales NO
+// despiertan a Max). null = no es onboarding.
+export function esOnboarding(r: ReunionFathom, emailsOnboarding: string[] = ["jessica@levelupmediapr.net"]): "titulo" | "pm" | null {
   const titulo = `${r.meeting_title ?? ""} ${r.title ?? ""}`;
-  if (RE_ONBOARDING.test(titulo)) return true;
+  if (RE_ONBOARDING.test(titulo)) return "titulo";
   const quien = (r.recorded_by?.email || "").toLowerCase();
-  return Boolean(quien) && emailsOnboarding.map((e) => e.toLowerCase().trim()).includes(quien);
+  const esPm = Boolean(quien) && emailsOnboarding.map((e) => e.toLowerCase().trim()).includes(quien);
+  const conExterno = (r.calendar_invitees ?? []).some((i) => i.is_external === true);
+  return esPm && conExterno ? "pm" : null;
 }
 
 // El cliente de la reunión = los invitados externos (no del equipo). Nombre para el expediente: el

@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
   const mensaje = mensajeSlack(r);
   // ?prueba=1&max=1: además corre el arranque de Max en modo prueba (sin mención ni buzón).
-  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: await onboardingDesdeFathom(r, { prueba: true }) });
+  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: await onboardingDesdeFathom(r, { prueba: true, motivo: esOnboarding(r) ?? undefined }) });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
 
   const titulo = (r.meeting_title || r.title || "").slice(0, 300);
@@ -108,8 +108,19 @@ export async function POST(req: NextRequest) {
 
   // Onboarding de un cliente (Elvin, 24/sep): Max arranca al instante, sin esperar a Slack.
   const emailsOnboarding = (process.env.FATHOM_ONBOARDING_EMAILS || "jessica@levelupmediapr.net").split(",");
-  if (tomada[0].intentos === 1 && esOnboarding(r, emailsOnboarding)) {
-    after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
+  const motivo = esOnboarding(r, emailsOnboarding);
+  if (tomada[0].intentos === 1 && motivo) {
+    after(() => onboardingDesdeFathom(r, { motivo }).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
+  }
+
+  // Con la cuenta de equipo (webhook "shared_team_recordings", 24/sep) llegan las llamadas de todos.
+  // Al canal de resúmenes de Aure siguen yendo SOLO las de Elvin (lo que pidió Aure, #29); las demás
+  // solo sirven para detectar onboardings de Jessica → Max. Se registran como 'omitido'.
+  const alCanal = (process.env.FATHOM_SLACK_EMAILS || "elvin@levelupmediapr.net,levelupmediapr@gmail.com").split(",").map((e) => e.trim().toLowerCase());
+  const grabo = (r.recorded_by?.email || "").toLowerCase();
+  if (grabo && !alCanal.includes(grabo)) {
+    await d.execute(sql`UPDATE fathom_llamadas SET estado = 'omitido', actualizado_el = now() WHERE recording_id = ${id}`);
+    return NextResponse.json({ ok: true, omitido: "no es de Elvin", onboarding: Boolean(motivo) });
   }
 
   let error: string | null = null;

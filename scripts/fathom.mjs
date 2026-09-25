@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Fathom → Slack (Solicitud de Aure #29): registra el webhook de Fathom que apunta a /api/fathom.
 //   FATHOM_API_KEY=… node scripts/fathom.mjs crear     → crea el webhook y guarda el secreto en Vercel
+//   FATHOM_API_KEY=… node scripts/fathom.mjs crear --equipo → 2.º webhook: grabaciones compartidas del equipo (Jessica → Max)
 //   node scripts/fathom.mjs probar                        → manda una llamada de ejemplo en modo prueba (no publica)
 //   node scripts/fathom.mjs registro                      → últimas llamadas procesadas (enviadas / con error)
 //   FATHOM_API_KEY=… node scripts/fathom.mjs borrar <id> → apaga el webhook
@@ -14,11 +15,16 @@ const args = process.argv.slice(2);
 const iCuenta = args.indexOf("--cuenta");
 // --cuenta jessica → usa FATHOM_API_KEY_JESSICA, guarda FATHOM_WEBHOOK_SECRET_JESSICA e incluye la
 // transcripción (para que Max arranque el onboarding con todo). Sin --cuenta = la de Elvin.
-const CUENTA = iCuenta >= 0 ? String(args.splice(iCuenta, 2)[1] || "").toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+let CUENTA = iCuenta >= 0 ? String(args.splice(iCuenta, 2)[1] || "").toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+// --equipo (24/sep): con la llave de Elvin, un 2.º webhook con las grabaciones que el EQUIPO comparte
+// (Jessica y los demás en la cuenta de equipo de Fathom), con transcripción. Secreto aparte:
+// FATHOM_WEBHOOK_SECRET_EQUIPO. Al canal de Aure solo van las de Elvin; esto es para Max (onboardings).
+const EQUIPO = args.includes("--equipo");
+if (EQUIPO) args.splice(args.indexOf("--equipo"), 1);
 const [cmd, arg] = args;
 
 async function fathom(path, init = {}) {
-  const nombreKey = CUENTA ? `FATHOM_API_KEY_${CUENTA}` : "FATHOM_API_KEY";
+  const nombreKey = CUENTA && !EQUIPO ? `FATHOM_API_KEY_${CUENTA}` : "FATHOM_API_KEY";
   const key = process.env[nombreKey];
   if (!key) throw new Error(`Falta ${nombreKey} (Fathom → Settings → API Access de esa cuenta)`);
   const r = await fetch(`${API}${path}`, { ...init, headers: { "X-Api-Key": key, "Content-Type": "application/json", ...init.headers } });
@@ -32,15 +38,15 @@ if (cmd === "crear") {
     method: "POST",
     body: JSON.stringify({
       destination_url: `${PROD}/api/fathom`,
-      triggered_for: ["my_recordings"],
+      triggered_for: EQUIPO ? ["shared_team_recordings"] : ["my_recordings"],
       include_summary: true,
       include_action_items: true,
-      ...(CUENTA ? { include_transcript: true } : {}),
+      ...(CUENTA || EQUIPO ? { include_transcript: true } : {}),
     }),
   });
   console.log(`✓ Webhook creado: id ${w.id} → ${w.url}`);
   if (!w.secret) throw new Error("Fathom no devolvió el secreto");
-  const nombreSecreto = CUENTA ? `FATHOM_WEBHOOK_SECRET_${CUENTA}` : "FATHOM_WEBHOOK_SECRET";
+  const nombreSecreto = EQUIPO ? "FATHOM_WEBHOOK_SECRET_EQUIPO" : CUENTA ? `FATHOM_WEBHOOK_SECRET_${CUENTA}` : "FATHOM_WEBHOOK_SECRET";
   const vc = ["vercel", "env", "add", nombreSecreto, "production", "--force", "--scope", "elvin-7614s-projects"];
   if (process.env.VERCEL_TOKEN) vc.push("--token", process.env.VERCEL_TOKEN);
   execFileSync("npx", ["--yes", ...vc], { input: w.secret, stdio: ["pipe", "ignore", "inherit"] });
