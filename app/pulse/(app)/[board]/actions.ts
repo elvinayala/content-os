@@ -368,3 +368,30 @@ export async function eliminarReglaAction(p: { id: string }) {
     return {};
   });
 }
+
+// ---------- vistas guardadas (cada persona las suyas) ----------
+
+export async function listarVistasAction(p: { boardId: string }) {
+  return envolver(async () => {
+    const u = await requiereAccesoBoard(p.boardId);
+    return { vistas: await repo.listarVistas(u.id, p.boardId) };
+  });
+}
+
+export async function guardarVistaAction(p: { boardId: string; nombre: string; estado: Record<string, unknown> }) {
+  return envolver(async () => {
+    const u = await requiereAccesoBoard(p.boardId);
+    const nombre = p.nombre.trim().slice(0, 60);
+    if (!nombre) throw new Error("Ponle un nombre a la vista");
+    if (JSON.stringify(p.estado).length > 8000) throw new Error("La vista es demasiado grande");
+    return { vista: await repo.guardarVista({ userId: u.id, boardId: p.boardId, nombre, estado: p.estado }) };
+  });
+}
+
+export async function eliminarVistaAction(p: { boardId: string; id: string }) {
+  return envolver(async () => {
+    const u = await requiereAccesoBoard(p.boardId);
+    await repo.eliminarVista(u.id, p.id);
+    return {};
+  });
+}

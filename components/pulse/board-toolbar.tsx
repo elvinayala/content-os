@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowUpDown, ChevronDown, Eye, EyeOff, Filter, LayoutGrid, Plus, Search, Table2, Columns3, User, X } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Eye, EyeOff, Filter, LayoutGrid, Plus, Search, SlidersHorizontal, Table2, Columns3, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
 import { NuevaColumnaPopover } from "@/components/pulse/nueva-columna";
+import { VistasGuardadas } from "@/components/pulse/vistas-guardadas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ const VISTAS: { id: Vista; nombre: string; icon: typeof Table2 }[] = [
 export function BoardToolbar() {
   const s = useBoard();
   const { dispatch, crearItem, setVista, actualizarColumna } = useBoardActions();
+  const [mas, setMas] = useState(false);
   const [q, setQ] = useState(s.busqueda);
   useEffect(() => {
     const t = setTimeout(() => dispatch({ type: "busqueda", texto: q }), 150);
@@ -53,18 +55,20 @@ export function BoardToolbar() {
             data-activo={s.vista === v.id}
             className={cn("flex items-center gap-1 rounded-[7px] px-2.5 py-1 text-xs transition", s.vista === v.id ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground")}
           >
-            <v.icon className="size-3.5" /> {v.nombre}
+            <v.icon className="size-3.5" /> <span className="hidden sm:inline">{v.nombre}</span>
           </button>
         ))}
       </div>
+      <VistasGuardadas />
 
       <Button size="sm" onClick={() => s.groups[0] && crearItem(s.groups[0].id, "Nuevo elemento", true)}>
-        <Plus /> Nuevo elemento
+        <Plus /> <span className="hidden sm:inline">Nuevo elemento</span>
+        <span className="sm:hidden">Nuevo</span>
       </Button>
 
       <div className="relative">
         <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar" className="h-8 w-44 rounded-md border bg-background pl-7 pr-6 text-sm outline-none focus:ring-2 focus:ring-primary" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar" className="h-8 w-28 rounded-md sm:w-44 border bg-background pl-7 pr-6 text-sm outline-none focus:ring-2 focus:ring-primary" />
         {q ? (
           <button type="button" className="absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground" onClick={() => setQ("")} aria-label="Limpiar">
             <X className="size-3.5" />
@@ -72,6 +76,12 @@ export function BoardToolbar() {
         ) : null}
       </div>
 
+      <Button variant={hayFiltros || s.orden || s.agruparPor ? "secondary" : "ghost"} size="sm" className="sm:hidden" onClick={() => setMas((m) => !m)}>
+        <SlidersHorizontal /> {mas ? "Menos" : "Más"}
+      </Button>
+
+      {/* En celular, filtros/orden/agrupar/columnas van detrás de "Más" */}
+      <div className={cn("contents", !mas && "max-sm:hidden")}>
       {/* Persona */}
       <Popover>
         <PopoverTrigger asChild>
@@ -212,6 +222,7 @@ export function BoardToolbar() {
             <Plus /> Columna
           </Button>
         </NuevaColumnaPopover>
+      </div>
       </div>
     </div>
   );

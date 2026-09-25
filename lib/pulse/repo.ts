@@ -14,6 +14,7 @@ import {
   pulseItems,
   pulseReglas,
   pulseUsers,
+  pulseVistas,
 } from "./schema";
 import { borrarArchivos } from "./storage";
 import type {
@@ -591,4 +592,84 @@ export async function eliminarRegla(id: string): Promise<string> {
   const d = await db();
   const [r] = await d.delete(pulseReglas).where(eq(pulseReglas.id, id)).returning({ nombre: pulseReglas.nombre });
   return r?.nombre ?? "";
+}
+
+// ---------- Búsqueda global (⌘K) ----------
+
+export interface ResultadoBusqueda {
+  itemId: string;
+  nombre: string;
+  boardSlug: string;
+  boardNombre: string;
+  grupo: string;
+  detalle: string | null; // dónde coincidió (p. ej. "Empresa: Solar PR")
+}
+
+export async function buscarItems(boardIds: string[], q: string, limite = 25): Promise<ResultadoBusqueda[]> {
+  const texto = q.trim();
+  if (!texto || !boardIds.length) return [];
+  const d = await db();
+  const digitos = /^[\d\s()+.-]+$/.test(texto) ? texto.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "") : "";
+  const patron = `%${texto.replace(/[%_\\]/g, (m) => "\\" + m)}%`;
+  const rows = await d
+    .select({ id: pulseItems.id, name: pulseItems.name, values: pulseItems.values, boardId: pulseItems.boardId, groupTitle: pulseGroups.title, slug: pulseBoards.slug, boardNombre: pulseBoards.nombre })
+    .from(pulseItems)
+    .innerJoin(pulseGroups, eq(pulseGroups.id, pulseItems.groupId))
+    .innerJoin(pulseBoards, eq(pulseBoards.id, pulseItems.boardId))
+    .where(
+      and(
+        inArray(pulseItems.boardId, boardIds),
+        // Si buscan un teléfono ("7876401068", "787-640-1068"), se compara solo con los dígitos.
+        digitos.length >= 4
+          ? sql`(${pulseItems.name} ilike ${patron} or ${pulseItems.values}::text ilike ${patron} or regexp_replace(${pulseItems.values}::text, '[^0-9]', '', 'g') like ${"%" + digitos + "%"})`
+          : sql`(${pulseItems.name} ilike ${patron} or ${pulseItems.values}::text ilike ${patron})`,
+      ),
+    )
+    .orderBy(sql`case when ${pulseItems.name} ilike ${texto + "%"} then 0 when ${pulseItems.name} ilike ${patron} then 1 else 2 end`, asc(pulseItems.name))
+    .limit(limite);
+  if (!rows.length) return [];
+  const cols = await d
+    .select({ id: pulseColumns.id, title: pulseColumns.title, type: pulseColumns.type })
+    .from(pulseColumns)
+    .where(inArray(pulseColumns.boardId, [...new Set(rows.map((r) => r.boardId))]));
+  const bajo = texto.toLowerCase();
+  return rows.map((r) => {
+    let detalle: string | null = null;
+    if (!r.name.toLowerCase().includes(bajo)) {
+      for (const c of cols) {
+        if (!["text", "long_text", "email", "phone"].includes(c.type)) continue;
+        const v = (r.values as Record<string, unknown>)[c.id];
+        if (typeof v === "string" && (v.toLowerCase().includes(bajo) || (digitos && v.replace(/\D/g, "").includes(digitos)))) {
+          detalle = `${c.title}: ${v.length > 60 ? v.slice(0, 60) + "…" : v}`;
+          break;
+        }
+      }
+    }
+    return { itemId: r.id, nombre: r.name, boardSlug: r.slug, boardNombre: r.boardNombre, grupo: r.groupTitle, detalle };
+  });
+}
+
+// ---------- Vistas guardadas (por persona) ----------
+
+export interface VistaGuardada {
+  id: string;
+  nombre: string;
+  estado: Record<string, unknown>;
+}
+
+export async function listarVistas(userId: string, boardId: string): Promise<VistaGuardada[]> {
+  const d = await db();
+  const rows = await d.select().from(pulseVistas).where(and(eq(pulseVistas.userId, userId), eq(pulseVistas.boardId, boardId))).orderBy(asc(pulseVistas.createdAt));
+  return rows.map((r) => ({ id: r.id, nombre: r.nombre, estado: r.estado as Record<string, unknown> }));
+}
+
+export async function guardarVista(p: { userId: string; boardId: string; nombre: string; estado: Record<string, unknown> }): Promise<VistaGuardada> {
+  const d = await db();
+  const [r] = await d.insert(pulseVistas).values(p).returning();
+  return { id: r.id, nombre: r.nombre, estado: r.estado as Record<string, unknown> };
+}
+
+export async function eliminarVista(userId: string, id: string): Promise<void> {
+  const d = await db();
+  await d.delete(pulseVistas).where(and(eq(pulseVistas.id, id), eq(pulseVistas.userId, userId)));
 }

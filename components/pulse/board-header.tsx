@@ -69,12 +69,12 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
       {editando ? (
         <input autoFocus className="h-8 rounded border px-2 text-lg font-semibold outline-none ring-2 ring-primary" value={nombre} onChange={(e) => setNombre(e.target.value)} onBlur={guardar} onKeyDown={(e) => e.key === "Enter" && guardar()} />
       ) : (
-        <h1 className="flex items-center gap-2 text-lg font-semibold" onDoubleClick={() => setEditando(true)} title="Doble click para renombrar">
+        <h1 className="flex min-w-0 items-center gap-2 truncate text-base font-semibold sm:text-lg" onDoubleClick={() => setEditando(true)} title="Doble click para renombrar">
           {board.nombre}
           {board.privado ? <Lock className="size-3.5 text-muted-foreground" aria-label="Tablero privado" /> : null}
         </h1>
       )}
-      <span className="flex items-center gap-2 rounded-full border bg-background/70 px-2.5 py-0.5 text-xs text-muted-foreground">
+      <span className="hidden items-center gap-2 rounded-full border bg-background/70 px-2.5 py-0.5 text-xs text-muted-foreground sm:flex">
         <span className="punto-vivo" /> {Object.keys(items).length.toLocaleString("en-US")} elementos
       </span>
       <div className="ml-auto flex items-center gap-2">

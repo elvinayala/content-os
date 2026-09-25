@@ -550,6 +550,13 @@ export function BoardProvider({
     window.history.replaceState(null, "", url);
   }, []);
 
+  // En celular la tabla solo deja ver el nombre: si no pidieron una vista, arranca en tarjetas.
+  useEffect(() => {
+    if (window.innerWidth < 640 && !new URL(window.location.href).searchParams.get("vista") && stateRef.current.vista === "tabla") {
+      dispatch({ type: "vista", vista: "tarjetas" });
+    }
+  }, []);
+
   const setVista = useCallback<Acciones["setVista"]>((vista) => {
     dispatch({ type: "vista", vista });
     const url = new URL(window.location.href);

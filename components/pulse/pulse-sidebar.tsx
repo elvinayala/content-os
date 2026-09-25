@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft, LayoutGrid, Lock, LogOut, Settings, Sun } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Lock, LogOut, Search, Settings, Sun } from "lucide-react";
 
+import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { PulseLogo } from "@/components/pulse/logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,6 +49,13 @@ export function PulseSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={abrirBuscador} tooltip="Buscar (⌘K)" className="text-muted-foreground">
+                <Search />
+                <span>Buscar</span>
+                <kbd className="ml-auto rounded border bg-background px-1.5 text-[10px] text-muted-foreground group-data-[collapsible=icon]:hidden">⌘K</kbd>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/pulse/mi-dia"} tooltip="Mi día">
                 <Link href="/pulse/mi-dia">
