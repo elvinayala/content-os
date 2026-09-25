@@ -66,6 +66,7 @@ app/
     tendencias/         6. Tendencias (fuentes desde data/negocio.json)
     configuracion/      Mi negocio (form + server action) — escribe data/negocio.json
   ceo/                  CEO Command Center (shell y tema propios, ver abajo)
+  ritmo/                Ritmo: ponche + desempeño del equipo (app aparte, cuentas de Pulse)
     layout.tsx          <div class="ceo"> + SidebarProvider + CeoSidebar
     page.tsx            Command Center (debrief + unidades + widgets)
     agents/ tasks/ schedule/ pipeline/ content/ vault/
@@ -435,6 +436,36 @@ cacheado, fallback de servidor ante rechazos; override `DIRECTOR_MODEL`). Regla 
 nuevos — lo que falte va como `[FALTA: …]`. Setup: scope `files:read` en la app de Slack
 (para abrir los adjuntos), invitar el bot al canal, `message.channels` (o `message.groups` si es
 privado). Video no lo ve: pide guion o frame.
+
+## Ritmo — asistencia y desempeño del equipo (`/ritmo`, 25/sep/2026)
+
+Elvin: medir **asistencia, cumplimiento y resultados por puesto sin vigilar** (nada de capturas/GPS/
+teclado). App **aparte de Pulse** (su nombre, su link, tema `.ritmo` en globals.css: azul tinta + verde (pulso) + coral (calor), el logo va de verde a coral,
+PWA propia `app/ritmo/manifest.webmanifest`), pero por dentro usa **las mismas cuentas, cookie
+`pulse-session` y base de Pulse** (tablas `desempeno_*`, migración `0008_desempeno.sql`, schema en
+`lib/desempeno/schema.ts`). Entrada propia en `/ritmo/entrar` (reusa `loginPulseAction`, que ahora
+acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
+
+- **Hoy** (`/ritmo`): círculo grande = ponche (hora del servidor + IP). Horario flexible (varios
+  tramos al día; un tramo < 16 h se cierra normal aunque pase la medianoche). Al salir: bloqueos
+  (opcional) + lo que el sistema no ve (`manual` del puesto, p. ej. reuniones con clientes). Salida
+  olvidada → la persona pone la hora y su líder la confirma (`correccion: pendiente`).
+- **Equipo** (`/ritmo/equipo`, `/ritmo/equipo/[persona]`): por departamento — presentes, sin marcar,
+  terminadas/vencidas, 🟢🟡🔴 de la semana; ficha con KPIs vs meta, 7 días y bloqueos. Permisos:
+  admin/editoras todo, el líder su gente, cada quien a sí mismo (`puedeVer` en `lib/desempeno/reglas.ts`).
+- **Ajustes** (`/ritmo/ajustes`, admin/editoras): perfiles (puesto, líder, horario PR, días, contrato,
+  ingreso; `desde` = día de activación, antes no cuenta), metas/pesos por puesto (`desempeno_metas`) y
+  botón que crea el tablero **Producción** en Pulse (`/pulse/produccion`).
+- **Reglas** (puras, `tests/desempeno.test.mjs`): puestos y KPIs en `PUESTOS`; asistencia (tolerancia
+  15 min, tarde 85/70/50, salida temprana solo si no completó horas); KPIs de Producción en ventana
+  móvil de 7 días desde `pulse_activity` del Estado (responsable → "En revisión"; quien pidió →
+  "Listo" o "Cambios" = revisión); score = 20 % asistencia + 80 % KPIs **conectados**; 🟢 ≥ 90, 🟡 ≥ 75.
+  Fuentes conectadas hoy: `produccion` y `manual`. Fase 2: Meta (registro de actividad), n8n (alertas
+  y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).
+- **Calibración**: el score solo lo ve admin (vista previa) hasta `DESEMPENO_SCORE=on`.
+- **Avisos** `app/api/cron/ritmo` (`?tarea=digest` L-V 9:30 AM PR a Carilin/`RITMO_AVISO_A` y a cada
+  líder; `?tarea=semanal` lunes 8 AM a Elvin): en simulación hasta `DESEMPENO_AVISOS=real`; `?dry=1`
+  nunca manda. El monitor viejo de Slack (`/ceo/equipo-actividad`) redirige a Ritmo.
 
 ## El ecosistema de email (ActiveCampaign)
 

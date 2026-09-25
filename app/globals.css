@@ -313,7 +313,78 @@
   font-feature-settings: "cv11", "ss01", "tnum";
 }
 
+/* Ritmo (/ritmo): asistencia y desempeño del equipo. Azul tinta + verde (pulso) + coral (calor).
+   No es "negro y verde": el fondo es tinta azulada y el coral acompaña al verde en los detalles.
+   Scoped: lo que portalea (Dialog/Sheet/Select/toast) necesita className="ritmo". */
+.ritmo {
+  --background: oklch(0.17 0.03 270);
+  --foreground: oklch(0.96 0.008 270);
+  --card: oklch(0.215 0.035 270);
+  --card-foreground: oklch(0.96 0.008 270);
+  --popover: oklch(0.22 0.035 270);
+  --popover-foreground: oklch(0.96 0.008 270);
+  --primary: oklch(0.86 0.19 152);
+  --primary-foreground: oklch(0.2 0.04 160);
+  --secondary: oklch(0.26 0.035 270);
+  --secondary-foreground: oklch(0.96 0.008 270);
+  --muted: oklch(0.25 0.03 270);
+  --muted-foreground: oklch(0.7 0.025 270);
+  --accent: oklch(0.28 0.04 270);
+  --accent-foreground: oklch(0.96 0.008 270);
+  --destructive: oklch(0.68 0.2 25);
+  --border: oklch(0.85 0.04 270 / 11%);
+  --input: oklch(0.85 0.04 270 / 15%);
+  --ring: oklch(0.86 0.19 152);
+  --neon: oklch(0.86 0.19 152);
+  --coral: oklch(0.79 0.13 42);
+  color-scheme: dark;
+  background: var(--background);
+  color: var(--foreground);
+}
+
 @layer components {
+  .ritmo .malla-ritmo {
+    background-image:
+      radial-gradient(50rem 26rem at 15% -12%, color-mix(in oklch, var(--neon) 12%, transparent), transparent 70%),
+      radial-gradient(44rem 26rem at 95% 0%, color-mix(in oklch, var(--coral) 11%, transparent), transparent 70%),
+      linear-gradient(to right, oklch(1 0 0 / 3%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 3%) 1px, transparent 1px);
+    background-size: auto, 44px 44px, 44px 44px;
+  }
+  .ritmo .panel {
+    border: 1px solid var(--border);
+    background: color-mix(in oklch, var(--card) 82%, transparent);
+    backdrop-filter: blur(14px);
+    border-radius: 1.25rem;
+  }
+  .ritmo .brillo {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--neon) 40%, transparent),
+      -14px -10px 44px -10px color-mix(in oklch, var(--neon) 55%, transparent),
+      16px 14px 48px -10px color-mix(in oklch, var(--coral) 50%, transparent);
+  }
+  .ritmo .texto-ritmo {
+    background: linear-gradient(90deg, var(--neon), var(--coral));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ritmo .latido {
+    stroke-dasharray: 60 240;
+    animation: ritmo-latido 2.4s linear infinite;
+  }
+  @keyframes ritmo-latido {
+    from { stroke-dashoffset: 300; }
+    to { stroke-dashoffset: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ritmo .latido { animation: none; stroke-dasharray: none; }
+  }
+  .ritmo .num {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+
   /* label mono global (los temas .ceo/.hud lo redefinen igual) */
   .label-mono {
     font-family: var(--font-geist-mono);

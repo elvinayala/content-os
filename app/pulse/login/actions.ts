@@ -19,8 +19,11 @@ export async function loginPulseAction(formData: FormData) {
   const desde = String(formData.get("desde") ?? "");
   const recordar = formData.get("recordar") === "1";
   const ttl = recordar ? TTL_SESION_LARGA : TTL_SESION;
-  const destinoValido = desde.startsWith("/pulse") && !desde.startsWith("//");
-  const volver = (error: string) => redirect(`/pulse/login?error=${error}${desde ? `&desde=${encodeURIComponent(desde)}` : ""}`);
+  const destinoValido = /^\/(pulse|ritmo)(\/|$|\?)/.test(desde);
+  // Ritmo (/ritmo) usa las mismas cuentas de Pulse pero tiene su propia pantalla de entrada.
+  const ritmo = desde.startsWith("/ritmo");
+  const pagina = ritmo ? "/ritmo/entrar" : "/pulse/login";
+  const volver = (error: string) => redirect(`${pagina}?error=${error}${desde ? `&desde=${encodeURIComponent(desde)}` : ""}`);
   const ip = await ipActual();
 
   // Límite por IP: 10 intentos por minuto.
@@ -57,7 +60,7 @@ export async function loginPulseAction(formData: FormData) {
     maxAge: ttl,
     path: "/",
   });
-  redirect(destinoValido ? desde : "/pulse");
+  redirect(destinoValido ? desde : ritmo ? "/ritmo" : "/pulse");
 }
 
 export async function logoutPulseAction() {

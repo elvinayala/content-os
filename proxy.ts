@@ -37,6 +37,10 @@ export default async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
+  // Dominio propio de Ritmo (ritmo-*.vercel.app): la raíz va directo a Ritmo.
+  if (host.startsWith("ritmo-") && (pathname === "/" || pathname === "/login")) {
+    return NextResponse.redirect(new URL("/ritmo", request.url));
+  }
   if (host.startsWith("pulse-") && (pathname === "/" || pathname === "/login")) {
     return NextResponse.redirect(new URL("/pulse", request.url));
   }
@@ -95,6 +99,16 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
   if (pathname.startsWith("/api/pulse/n8n/")) return NextResponse.next();
+  // Ritmo (asistencia + desempeño): mismas cuentas y cookie que Pulse, su propia pantalla de entrada.
+  if (pathname === "/ritmo/entrar" || pathname === "/ritmo/activar" || pathname === "/ritmo/icon.svg" || pathname.startsWith("/ritmo/apple-icon") || pathname === "/ritmo/manifest.webmanifest") return NextResponse.next();
+  if (pathname === "/ritmo" || pathname.startsWith("/ritmo/")) {
+    const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
+    const ceoOk = await sesionValida(request.cookies.get(COOKIE_SESION)?.value);
+    if (pulseOk || ceoOk) return NextResponse.next();
+    const entrar = new URL("/ritmo/entrar", request.url);
+    if (pathname !== "/ritmo") entrar.searchParams.set("desde", pathname);
+    return NextResponse.redirect(entrar);
+  }
   if (pathname === "/pulse" || pathname.startsWith("/pulse/") || pathname.startsWith("/api/pulse/")) {
     const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
     const ceoOk = await sesionValida(request.cookies.get(COOKIE_SESION)?.value);

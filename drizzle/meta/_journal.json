@@ -57,6 +57,13 @@
       "when": 1790304937851,
       "tag": "0007_reglas_vistas",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790345341601,
+      "tag": "0008_desempeno",
+      "breakpoints": true
     }
   ]
 }

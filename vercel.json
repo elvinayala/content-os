@@ -31,6 +31,14 @@
     {
       "path": "/api/cron/pulse-mi-dia",
       "schedule": "0 12 * * 1-5"
+    },
+    {
+      "path": "/api/cron/ritmo?tarea=digest",
+      "schedule": "30 13 * * 1-5"
+    },
+    {
+      "path": "/api/cron/ritmo?tarea=semanal",
+      "schedule": "0 12 * * 1"
     }
   ],
   "regions": [
