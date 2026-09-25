@@ -337,6 +337,14 @@ app.get("/manifest.webmanifest", (_req, res) => { res.type("application/manifest
 app.get("/sw.js", (_req, res) => { res.type("application/javascript").set("Service-Worker-Allowed", "/").send(fs.readFileSync(path.join(RAIZ, "portal", "sw.js"))); });
 // Material interno del equipo (decks de entrevista). Ruta no enlazada, noindex; el nombre del archivo hace de llave.
 // Los binarios se guardan en base64 (.b64) porque el CLI de Railway no sube archivos binarios.
+// Kit de bienvenida y acuerdo en PDF (25/sep/2026): la web de Netlify no se puede redesplegar (créditos), así que la
+// versión vigente se sirve desde aquí. Van como .b64 porque el CLI de Railway no sube binarios.
+app.get("/kit/:archivo", (req, res) => {
+  const nombre = path.basename(req.params.archivo);
+  const f = path.join(RAIZ, "portal", "kit", nombre + ".b64");
+  if (!nombre.endsWith(".pdf") || !fs.existsSync(f)) return res.status(404).end();
+  res.set("X-Robots-Tag", "noindex, nofollow").type("application/pdf").set("Content-Disposition", `inline; filename="${nombre}"`).send(Buffer.from(fs.readFileSync(f, "utf8").replace(/\s+/g, ""), "base64"));
+});
 app.get("/equipo/:archivo", (req, res) => {
   const nombre = path.basename(req.params.archivo);
   const f = path.join(RAIZ, "portal", "equipo", nombre + ".b64");
