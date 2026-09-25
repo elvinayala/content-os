@@ -61,3 +61,12 @@ Elvin → `crear` en pausa. Ver [[quiz-funnels-clickfunnels]], [[voz-espanol-pr-
 - **Espiar la competencia** (hábito de Elvin: sacar 1-3 cosas, no copiar la estrategia): skill `espiar-competencia` + `meta-ads.mjs competencia "<términos>"` (Apify `apify/facebook-ads-scraper`, ~$0.15/búsqueda; 30+ días activo = funciona, variantes = lo escalaron). **Falta `APIFY_TOKEN`** en `.env.local`, Railway `max` y Railway `bori` (Elvin lo crea en Apify → Settings → API). En la Mac se puede usar el MCP de Apify + `competencia resumir <json>`.
 - **Max = trafficker de los clientes de AI Borinquen en Bori** (heybori.ai → Estratega → "Max · trafficker", EN PROD 23/sep, commit 77f636d): Sonnet 5 rápido (~70 s por estrategia completa, probado local con cliente de prueba), ficha de onboarding POR espacio de cliente (`users.memoria.clientes[clienteId].ficha`, herramienta `guardar_ficha`), `espiar_competencia`, `solicitar_videos` (a la PM por Slack #clientes; Max nunca le escribe al cliente), `disenar_campana` con reparto exacto del método, flyers con Nano Banana. Solo dueño y staff/traffickers (`canEstratega`). Trafficker selecciona la cuenta del cliente en Conexiones; Max la confirma antes de montar. Pendiente: similares/web/lista de alto valor en el motor de Bori (hoy se agregan a mano en Ads Manager) y avisos proactivos de escalar para clientes.
 - Trampa: persona de Max en `telegram-puente.mjs` es un string con comillas dobles → nunca meter `"` sin escapar (23/sep tumbó el arranque con ReferenceError aunque `node --check` pasó).
+
+**24/sep/2026 — Max = Marketing Strategy & Creative Operator + VIVE EN SLACK.** Spec de Elvin en
+cerebro §0/§1a/§2b/§12-§17 (3 embudos, matemática comercial, optimizar desde el creativo, CTR único
+< 2 % malo, MANTENER/APAGAR/ITERAR/ESCALAR/NUEVO TEST, pepitas de Carilin/traffickers). Slack:
+#max-aprobaciones (Elvin o Carilin: ok/no/publica <id>); Max NUNCA le escribe al cliente — el servidor
+publica lo aprobado; clientes = invitados single-channel de Slack en canal vinculado; activar campañas
+por API SOLO con `meta-ads.mjs … activar --item <id>` aprobado. Pendiente de Elvin: crear
+#max-aprobaciones (el bot no tiene groups:write), invitar al bot ahí y a cada canal de cliente; luego
+SLACK_MAX_CHANNEL_ID en Vercel. "max o carilin" para publicar lo interpreté como Elvin o Carilin.
