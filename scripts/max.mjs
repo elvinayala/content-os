@@ -15,7 +15,7 @@
 //   node scripts/max.mjs leer <slug> [n]                            últimos mensajes del canal del cliente
 //   node scripts/max.mjs hilo <ts> [--canal <slug|C…>]              un hilo (por defecto de #max-aprobaciones)
 //   node scripts/max.mjs llamada "<nombre o negocio>"               resumen de la llamada de venta (Fathom)
-//   node scripts/max.mjs proponer <slug> <mensaje|plan|creativos|campana|interno> --titulo "…" --texto "…" [--hilo <ts del cliente>] [--nota "…"]
+//   node scripts/max.mjs proponer <slug> <mensaje|plan|creativos|campana|interno> --titulo "…" --texto "…" [--hilo <ts del cliente>] [--nota "…"] [--imagenes url1,url2] [--videos url1]
 //   node scripts/max.mjs pendientes [slug]                          lo que espera OK
 //   node scripts/max.mjs item <id>
 //   node scripts/max.mjs nota "<texto>" [--hilo <ts>]               hablar con Elvin/Carilin en #max-aprobaciones
@@ -23,7 +23,7 @@
 //   node scripts/max.mjs enviar <id>                                reintenta enviar algo YA aprobado
 //   node scripts/max.mjs carpeta <slug>                             carpeta de Drive del cliente (la crea si no existe; Pulse + Slack)
 //   node scripts/max.mjs drive-doc <slug> <branding|estrategia|creativos|videos|reportes|documentos> --titulo "…" --texto "…"
-//   node scripts/max.mjs drive-archivo <slug> <subcarpeta> --url https://… [--nombre archivo.png]   (flyer/imagen/video de Higgsfield…)
+//   node scripts/max.mjs drive-archivo <slug> <subcarpeta> --url https://… [--nombre archivo.png]   (flyer/imagen/video de fal…)
 //   node scripts/max.mjs drive-listar <slug>                        qué hay en la carpeta
 // ("publicar" no se propone aquí: lo crea meta-ads.mjs proponer-publicar con los ids exactos.)
 import fs from "node:fs";
@@ -42,7 +42,7 @@ function env(n) {
 const BASE = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
 const SECRETO = env("CRON_SECRET");
 
-const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo", "url"]);
+const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo", "url", "imagenes", "videos"]);
 const pos = [];
 const val = {};
 const argv = process.argv.slice(2);
@@ -149,7 +149,10 @@ try {
       const [slug, tipo] = rest;
       if (!slug || !tipo || !val.texto) salir('Uso: proponer <slug> <mensaje|plan|creativos|campana|interno> --titulo "…" --texto "…" [--hilo ts] [--nota "…"]');
       if (tipo === "publicar") salir("Publicar se propone con: node scripts/meta-ads.mjs <marca|cliente:slug> proponer-publicar <campaignIds> --cliente <slug>");
-      const r = await api("POST", null, { accion: "proponer", cliente: slug, tipo, titulo: val.titulo || "", contenido: val.texto, hilo: val.hilo, nota: val.nota });
+      // --imagenes / --videos: los flyers y videos (URLs de fal) se ven dentro del mensaje de aprobación.
+      const lista = (v) => String(v || "").split(",").map((x) => x.trim()).filter((x) => /^https:\/\//.test(x));
+      const datos = val.imagenes || val.videos ? { imagenes: lista(val.imagenes), videos: lista(val.videos) } : undefined;
+      const r = await api("POST", null, { accion: "proponer", cliente: slug, tipo, titulo: val.titulo || "", contenido: val.texto, hilo: val.hilo, nota: val.nota, datos });
       console.log(`✔ #${r.id} en #max-aprobaciones (${tipo} · ${slug}). Esperando el ok de Elvin o Carilin.${r.aviso ? " ⚠ " + r.aviso : ""}`);
       break;
     }

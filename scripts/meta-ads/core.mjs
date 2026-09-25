@@ -263,6 +263,32 @@ export function buildAdBody({ nombre, adsetId, creativeId }) {
   return { name: nombre, adset_id: adsetId, creative: { creative_id: creativeId }, status: "PAUSED" };
 }
 
+// ---------- medios que produce Max (flyers y videos de fal) ----------
+// Imagen: Meta no la baja de una URL; se manda en base64 y devuelve el hash que usa el creativo.
+export async function subirImagen(c, cuentaId, url, { fetchImpl = fetch } = {}) {
+  const r = await fetchImpl(url);
+  if (!r.ok) throw new Error(`no pude bajar el flyer (${r.status}): ${url}`);
+  const bytes = Buffer.from(await r.arrayBuffer()).toString("base64");
+  const j = await c.graph("POST", acct(cuentaId) + "/adimages", { bytes });
+  const hash = Object.values(j.images || {})[0]?.hash;
+  if (!hash) throw new Error("Meta no devolvió el hash de la imagen");
+  return hash;
+}
+
+// Video: Meta sí lo baja de la URL; hay que esperar a que lo procese para usarlo (y trae su miniatura).
+export async function subirVideo(c, cuentaId, url, nombre = "Video Max", { intentos = 60, esperaMs = 5000, dormir = (ms) => new Promise((r) => setTimeout(r, ms)) } = {}) {
+  const j = await c.graph("POST", acct(cuentaId) + "/advideos", { file_url: url, name: nombre });
+  if (!j.id) throw new Error("Meta no devolvió el id del video");
+  for (let i = 0; i < intentos; i++) {
+    const v = await c.graph("GET", "/" + j.id, { fields: "status,picture" });
+    const est = v.status?.video_status;
+    if (est === "ready") return { id: j.id, thumbUrl: v.picture || null };
+    if (est === "error") throw new Error(`Meta no pudo procesar el video ${j.id}`);
+    await dormir(esperaMs);
+  }
+  throw new Error(`el video ${j.id} sigue procesándose en Meta; vuelve a correr (es idempotente)`);
+}
+
 // ---------- públicos ----------
 export function specPublicoWeb({ nombre, pixelId, dias = 180, evento = "PageView", urlContiene }) {
   const filters = [{ field: "event", operator: "eq", value: evento }];
@@ -383,14 +409,16 @@ export function expandirPlan(plan, { publicosDisponibles = new Map() } = {}) {
       creativo: {
         clave: cr.clave,
         videoId: cr.videoId || null,
+        imagenUrl: cr.imagenUrl || null,
+        videoUrl: cr.videoUrl || null,
         existente: cr.igMediaId ? `reel ${cr.igMediaId}` : cr.postId ? `post ${cr.postId}` : null,
-        body: (pageId, igUserId, videoId) => (cr.igMediaId || cr.postId) ? buildCreativeExistente({
+        body: (pageId, igUserId, videoId, imageHash, thumbUrl) => (cr.igMediaId || cr.postId) ? buildCreativeExistente({
           nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, igMediaId: cr.igMediaId, postId: cr.postId,
           cta: cr.cta !== undefined ? cr.cta : (opt.optimizacion === "PROFILE_VISIT" ? "VIEW_INSTAGRAM_PROFILE" : opt.optimizacion === "CONVERSATIONS" ? "MESSAGE_PAGE" : opt.optimizacion === "THRUPLAY" ? null : "LEARN_MORE"),
           // VIEW_INSTAGRAM_PROFILE también exige `link` (error 2061015): la URL del perfil.
           link: opt.destino === "WEBSITE" ? plan.landing : opt.destino === "INSTAGRAM_PROFILE" && plan.igHandle ? `https://www.instagram.com/${plan.igHandle}/` : undefined, urlTags: plan.urlTags,
         }) : buildCreativeBody({
-          nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, videoId, thumbUrl: cr.thumbUrl,
+          nombre: `${plan.nombre} · ${cr.clave}`, pageId, igUserId, videoId: imageHash ? undefined : videoId, imageHash, thumbUrl: thumbUrl || cr.thumbUrl,
           link: plan.landing, textoPrincipal: cr.copy.textoPrincipal, titulo: cr.copy.titulo, descripcion: cr.copy.descripcion,
           cta: cr.copy.cta || "LEARN_MORE", urlTags: plan.urlTags,
         }),
@@ -403,7 +431,7 @@ export function expandirPlan(plan, { publicosDisponibles = new Map() } = {}) {
 
 // Crea en Meta (todo PAUSED) y devuelve/actualiza plan.meta con los ids. Idempotente:
 // si plan.meta ya tiene el id de un nodo, no lo vuelve a crear.
-export async function crearEnMeta(c, plan, { publicosDisponibles = new Map(), videoMarcador, log = console.log } = {}) {
+export async function crearEnMeta(c, plan, { publicosDisponibles = new Map(), videoMarcador, log = console.log, fetchImpl = fetch, dormir } = {}) {
   const errores = validarPlan(plan, { publicosDisponibles });
   if (errores.length) throw new Error("Plan inválido:\n - " + errores.join("\n - "));
   const arbol = expandirPlan(plan, { publicosDisponibles });
@@ -420,11 +448,21 @@ export async function crearEnMeta(c, plan, { publicosDisponibles = new Map(), vi
       plan.meta.conjuntos[n.clave] = j.id;
       log("conjunto", n.clave, j.id);
     }
-    const videoId = n.creativo.existente ? null : (n.creativo.videoId || videoMarcador);
-    if (!videoId && !n.creativo.existente) throw new Error(`creativo ${n.creativo.clave}: sin videoId ni video marcador en la cuenta`);
-    const kCre = `${n.creativo.clave}@${videoId || n.creativo.existente}`;
+    // Flyers y videos que produjo Max: se suben una vez y se recuerdan en plan.meta.medios (idempotente).
+    plan.meta.medios ||= {};
+    let videoId = null, imageHash = null, thumbUrl = null;
+    if (!n.creativo.existente) {
+      if (n.creativo.imagenUrl) {
+        imageHash = plan.meta.medios[n.creativo.imagenUrl] ||= await subirImagen(c, plan.cuentaId, n.creativo.imagenUrl, { fetchImpl });
+      } else if (n.creativo.videoUrl) {
+        const m = (plan.meta.medios[n.creativo.videoUrl] ||= await subirVideo(c, plan.cuentaId, n.creativo.videoUrl, `${plan.nombre} · ${n.creativo.clave}`, dormir ? { dormir } : {}));
+        videoId = m.id; thumbUrl = m.thumbUrl;
+      } else videoId = n.creativo.videoId || videoMarcador;
+    }
+    if (!videoId && !imageHash && !n.creativo.existente) throw new Error(`creativo ${n.creativo.clave}: sin videoId ni video marcador en la cuenta`);
+    const kCre = `${n.creativo.clave}@${imageHash || videoId || n.creativo.existente}`;
     if (!plan.meta.creativos[kCre]) {
-      const j = await c.graph("POST", a + "/adcreatives", n.creativo.body(plan.pageId, plan.igUserId, videoId));
+      const j = await c.graph("POST", a + "/adcreatives", n.creativo.body(plan.pageId, plan.igUserId, videoId, imageHash, thumbUrl));
       plan.meta.creativos[kCre] = j.id;
       log("creativo", kCre, j.id);
     }

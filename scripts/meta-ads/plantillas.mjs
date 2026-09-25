@@ -44,17 +44,39 @@ function conjuntosPorCreativo(plan, prefijo, porConjunto) {
   plan.conjuntos = plan.creativos.map((cr, i) => ({
     clave: `${prefijo}-${i + 1}`, publico: "P1", creativo: cr.clave, presupuestoDiario: porConjunto,
     nombre: `${prefijo}-${i + 1} · ${plan.publicos.P1.nombre} · ${cr.clave}`,
-    nombreAnuncio: `${cr.clave} · ${cr.igMediaId ? "reel " + cr.igMediaId : cr.postId ? "post " + cr.postId : cr.videoId ? "video " + cr.videoId : "⚠ SUBIR VIDEO"}`,
+    nombreAnuncio: `${cr.clave} · ${cr.igMediaId ? "reel " + cr.igMediaId : cr.postId ? "post " + cr.postId : cr.videoId ? "video " + cr.videoId : cr.imagenUrl ? "flyer" : cr.videoUrl ? "video" : "⚠ SUBIR VIDEO"}`,
   }));
   return plan;
 }
 
-function creativosDe({ reels = [], posts = [], videos = [], copias = [] }, prefijo) {
+// `piezas` = los creativos que PRODUCE Max (Elvin, 25/sep: "tiene que crear los flyers, los videos, hacer las
+// campañas"): [{ tipo: "imagen"|"video", url, textoPrincipal, titulo, descripcion, cta }]. Se suben a Meta al montar
+// (core.crearEnMeta) y van primero: son los aprobados para esta estrategia.
+function creativosDe({ reels = [], posts = [], videos = [], copias = [], piezas = [] }, prefijo) {
   const out = [];
+  let nf = 0, nv = 0;
+  for (const p of piezas) {
+    const copy = { textoPrincipal: p.textoPrincipal || "", titulo: p.titulo || "", descripcion: p.descripcion || "", ...(p.cta ? { cta: p.cta } : {}) };
+    if (p.tipo === "video") out.push({ clave: `${prefijo}-MV${++nv}`, videoUrl: String(p.url), copy });
+    else out.push({ clave: `${prefijo}-F${++nf}`, imagenUrl: String(p.url), copy });
+  }
   reels.forEach((id, i) => out.push({ clave: `${prefijo}-R${i + 1}`, igMediaId: String(id) }));
   posts.forEach((id, i) => out.push({ clave: `${prefijo}-P${i + 1}`, postId: String(id) }));
   videos.forEach((v, i) => out.push({ clave: `${prefijo}-V${i + 1}`, videoId: v ? String(v) : null, copy: copias[i] || copias[0] || {} }));
   return out;
+}
+
+// --creativos '<json>' → piezas validadas (URL https, tipo, copy con texto principal).
+export function piezasDesdeJson(texto) {
+  let arr;
+  try { arr = JSON.parse(texto); } catch { throw new Error("--creativos tiene que ser JSON: [{\"tipo\":\"imagen\",\"url\":\"https://…\",\"textoPrincipal\":\"…\",\"titulo\":\"…\"}]"); }
+  if (!Array.isArray(arr) || !arr.length) throw new Error("--creativos: lista vacía");
+  return arr.map((p, i) => {
+    const tipo = p.tipo === "video" ? "video" : "imagen";
+    if (!/^https:\/\//.test(String(p.url || ""))) throw new Error(`--creativos[${i}]: url https requerida`);
+    if (!String(p.textoPrincipal || "").trim()) throw new Error(`--creativos[${i}]: falta textoPrincipal (el copy del anuncio)`);
+    return { tipo, url: String(p.url), textoPrincipal: String(p.textoPrincipal), titulo: String(p.titulo || ""), descripcion: String(p.descripcion || ""), ...(p.cta ? { cta: String(p.cta) } : {}) };
+  });
 }
 
 // --- Follow Me: tráfico al perfil de IG con reels existentes ---------------------
@@ -135,10 +157,10 @@ export function repartirFases(total, { minimo = 10, conjuntos = { f1: 1, f2: 2, 
   return { reparto: r, omitidas };
 }
 
-export function planEstrategia5Fases(cfg, { destino = "dm-ig", presupuesto = 100, reels = [], posts = [], videos = [], copias = [], edad, intereses = [], url, nombre, excluir } = {}) {
+export function planEstrategia5Fases(cfg, { destino = "dm-ig", presupuesto = 100, reels = [], posts = [], videos = [], copias = [], piezas = [], edad, intereses = [], url, nombre, excluir } = {}) {
   if (!["dm-ig", "leads", "enlace"].includes(destino)) throw new Error("--destino debe ser dm-ig | leads | enlace (WhatsApp se monta desde Bori)");
-  const creativos = creativosDe({ reels, posts, videos, copias }, "C");
-  if (!creativos.length) throw new Error("La estrategia necesita creativos: --reels, --posts o --videos");
+  const creativos = creativosDe({ reels, posts, videos, copias, piezas }, "C");
+  if (!creativos.length) throw new Error("La estrategia necesita creativos: --creativos (los que produjo Max), --reels, --posts o --videos");
   const reglas = cfg.reglas || {};
   const minimo = reglas.minPorConjunto ?? cfg.minPorConjunto ?? 10;
   const etiqueta = cfg.etiqueta || cfg.nombre;
@@ -147,7 +169,7 @@ export function planEstrategia5Fases(cfg, { destino = "dm-ig", presupuesto = 100
   // F3 en dos conjuntos (caliente/tibio) solo si cada uno llega al mínimo sin ahogar ventas; si no, remarketing total.
   const dosF3 = presupuesto * REPARTO_5F.f3 >= 2 * minimo;
   const { reparto, omitidas } = repartirFases(presupuesto, { minimo, conjuntos: { f1: 1, f2: nF2, f3: dosF3 ? 2 : 1, f4: 1 } });
-  const conVideo = creativos.filter((c) => c.igMediaId || c.videoId || c.postId);
+  const conVideo = creativos.filter((c) => c.igMediaId || c.videoId || c.postId || c.videoUrl);
   const sub = (fase, modo, extra) => {
     const plan = base(cfg, { nombre: `${etiqueta} · ${fase} · ${nombre || "Método 5 Fases"}`, modo, presupuesto: reparto[extra.clave], edad, excluir: ex, intereses: extra.frio ? intereses : [], advantage: extra.frio ? !intereses.length : false });
     plan.fase = extra.clave;
@@ -218,6 +240,7 @@ export function opcionesDesdeFlags(flags) {
   if (flags.cta) o.cta = String(flags.cta);
   if (flags.excluir) o.excluir = lista(flags.excluir);
   if (flags.destino) o.destino = String(flags.destino);
+  if (flags.creativos) o.piezas = piezasDesdeJson(String(flags.creativos));
   // --intereses "6003178845152:The Home Depot,6003234413249:Remodelaciones"
   if (flags.intereses) o.intereses = String(flags.intereses).split(",").map((x) => { const [id, ...n] = x.split(":"); return { id: id.trim(), name: n.join(":").trim() || id.trim() }; }).filter((i) => /^\d+$/.test(i.id));
   return o;

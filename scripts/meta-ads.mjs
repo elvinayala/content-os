@@ -15,7 +15,7 @@
 //   node scripts/meta-ads.mjs <marca> pausar <id>             pausa campaña/conjunto/anuncio (única escritura de estado permitida)
 //   node scripts/meta-ads.mjs <marca> plantilla <tipo> [--reels a,b] [--videos a,b] [--presupuesto 15] [--edad 18-35] [--url …] [--nombre …] [--dry-run]
 //       tipos: follow-me | trafico-url | dm-instagram | quiz  → escribe data/meta-ads/campanas/<marca>-<tipo>-<fecha>.json y la monta EN PAUSA
-//   node scripts/meta-ads.mjs <marca> estrategia --destino dm-ig|leads|enlace --presupuesto 100 --reels a,b,c [--videos …] [--edad 25-55] [--intereses id:nombre,…] [--url …] [--nombre …] [--dry-run]
+//   node scripts/meta-ads.mjs <marca> estrategia --destino dm-ig|leads|enlace --presupuesto 100 [--creativos '<json de flyers/videos de Max>'] [--reels a,b,c] [--videos …] [--edad 25-55] [--intereses id:nombre,…] [--url …] [--nombre …] [--dry-run]
 //       EL MÉTODO DE ELVIN · 5 FASES: crea los públicos primero y monta F1 tráfico · F2 ventas (≥70 %) · F3 remarketing ventas · F4 ThruPlay 365, TODO EN PAUSA (~30-60 s)
 //   node scripts/meta-ads.mjs <marca> escalar <adsetId> [--pct 15] [--ok]   F5: sin --ok solo PROPONE; con --ok (tras el "dale" de Elvin) sube ≤ 20 %
 //   node scripts/meta-ads.mjs competencia "término, término" [--pais PR] [--para slug] [--paginas id,url]   espía la Biblioteca de Anuncios (APIFY_TOKEN)
@@ -33,7 +33,7 @@ const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const PORTAFOLIO = resolve(ROOT, "data/meta-ads/portafolio.json");
 const args = process.argv.slice(2);
 // Flags booleanas (--dry-run) y con valor (--reels a,b · --presupuesto 15 · --edad 18-35 · --url …).
-const CON_VALOR = new Set(["item", "cliente", "pct", "reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir", "pais", "max", "paginas", "para", "top", "destino", "flyers", "intereses"]);
+const CON_VALOR = new Set(["creativos", "item", "cliente", "pct", "reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir", "pais", "max", "paginas", "para", "top", "destino", "flyers", "intereses"]);
 const flags = new Set();
 const valores = {};
 const posicionales = [];
@@ -306,7 +306,7 @@ try {
     for (const f of est.fases) {
       if (f.omitida || f.errores?.length) { console.log(`⏭ ${f.fase.toUpperCase()}: ${f.omitida || "plan inválido"}`); continue; }
       let marcador = null;
-      if (f.creativos.some((x) => !x.videoId && !x.igMediaId && !x.postId)) marcador = (await M.listarVideos(c, f.cuentaId, 5))[0]?.id || null;
+      if (f.creativos.some((x) => !x.videoId && !x.igMediaId && !x.postId && !x.imagenUrl && !x.videoUrl)) marcador = (await M.listarVideos(c, f.cuentaId, 5))[0]?.id || null;
       try { await M.crearEnMeta(c, f, { publicosDisponibles: disponibles, videoMarcador: marcador, log: () => {} }); console.log(`✔ ${f.fase.toUpperCase()} campaña ${f.meta.campaignId} EN PAUSA`); }
       catch (e) { f.errorMeta = e.message.slice(0, 300); console.log(`✖ ${f.fase.toUpperCase()}: ${e.message.slice(0, 200)}`); }
       guardarEst();

@@ -98,3 +98,16 @@ test("Drive: subcarpetas por palabra, nombre de carpeta y cruce con Pulse", asyn
   assert.equal(mismoCliente("BIOWEST LABORATORY", "Biowest Laboratory (Iván Reyes)"), true);
   assert.equal(mismoCliente("Ana", "Biowest Laboratory (Iván Reyes)"), false);
 });
+
+test("creativos a la vista: imágenes como bloques, videos como enlaces, texto partido sin pasar de 3,000", async () => {
+  const { medios, bloquesConMedios } = await import("../lib/max/operador.ts");
+  const m = medios({ imagenes: ["https://a/1.png", "http://no", "https://a/2.png"], videos: ["https://a/v.mp4"] });
+  assert.deepEqual(m, { imagenes: ["https://a/1.png", "https://a/2.png"], videos: ["https://a/v.mp4"] });
+  const largo = Array.from({ length: 40 }, (_, i) => `Párrafo ${i} ` + "x".repeat(200)).join("\n");
+  const b = bloquesConMedios(largo, m);
+  const secciones = b.filter((x) => x.type === "section" && !x.text.text.startsWith("🎬"));
+  assert.ok(secciones.length >= 3 && secciones.every((s) => s.text.text.length <= 2900));
+  assert.equal(b.filter((x) => x.type === "image").length, 2);
+  assert.match(b.at(-1).text.text, /Video 1/);
+  assert.deepEqual(medios(null), { imagenes: [], videos: [] });
+});

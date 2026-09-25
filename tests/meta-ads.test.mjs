@@ -296,3 +296,53 @@ test("ThruPlay: conjunto sin destination_type y creativo existente sin CTA", () 
   assert.equal(body.call_to_action, undefined);
   assert.equal(body.source_instagram_media_id, "9");
 });
+
+// Elvin (25/sep): Max crea los flyers y los videos y arma las campañas con ellos.
+test("estrategia con los creativos que produjo Max: se suben a Meta (imagen por bytes, video por URL) y se usan", async () => {
+  const { planEstrategia5Fases, piezasDesdeJson } = await import("../scripts/meta-ads/plantillas.mjs");
+  const { crearEnMeta } = await import("../scripts/meta-ads/core.mjs");
+  const piezas = piezasDesdeJson(JSON.stringify([
+    { tipo: "imagen", url: "https://v3b.fal.media/f1.png", textoPrincipal: "Tu sonrisa en una cita", titulo: "Blanqueamiento" },
+    { tipo: "imagen", url: "https://v3b.fal.media/f2.png", textoPrincipal: "Carillas sin miedo", titulo: "Carillas" },
+    { tipo: "video", url: "https://v3b.fal.media/v1.mp4", textoPrincipal: "La doctora te explica", titulo: "Sin dolor" },
+  ]));
+  assert.throws(() => piezasDesdeJson('[{"tipo":"imagen","url":"http://x"}]'), /https/);
+  assert.throws(() => piezasDesdeJson('[{"tipo":"imagen","url":"https://x"}]'), /textoPrincipal/);
+  const cfg = { clave: "cliente:sonrisa", nombre: "Sonrisa", cuentaId: "123", pageId: "111", igUserId: "222", reglas: { minPorConjunto: 10 } };
+  const est = planEstrategia5Fases(cfg, { destino: "dm-ig", presupuesto: 100, piezas });
+  const f2 = est.fases.find((f) => f.fase === "f2");
+  assert.ok(f2.creativos.some((c) => c.imagenUrl === "https://v3b.fal.media/f1.png"), "los flyers de Max van en ventas");
+  const f4 = est.fases.find((f) => f.fase === "f4");
+  assert.equal(f4?.creativos[0].videoUrl, "https://v3b.fal.media/v1.mp4", "el ThruPlay usa el video que produjo Max");
+
+  // Meta simulado: registra las llamadas.
+  const llamadas = [];
+  let n = 0;
+  const c = { graph: async (m, path, params) => {
+    llamadas.push([m, path, params]);
+    if (path.endsWith("/adimages")) return { images: { "f.png": { hash: "HASH-" + (++n) } } };
+    if (path.endsWith("/advideos")) return { id: "VID1" };
+    if (path === "/VID1") return { status: { video_status: "ready" }, picture: "https://thumb" };
+    return { id: "ID" + (++n) };
+  } };
+  const fetchImpl = async () => ({ ok: true, arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer });
+  const meta = await crearEnMeta(c, f2, { log: () => {}, fetchImpl });
+  const subidas = llamadas.filter(([, p]) => p.endsWith("/adimages"));
+  assert.equal(subidas.length, new Set(f2.creativos.filter((x) => x.imagenUrl).map((x) => x.imagenUrl)).size, "cada flyer se sube una vez");
+  assert.equal(subidas[0][2].bytes, Buffer.from([1, 2, 3]).toString("base64"));
+  const creativo = llamadas.find(([, p]) => p.endsWith("/adcreatives"))[2];
+  assert.ok(creativo.object_story_spec.link_data.image_hash.startsWith("HASH-"), "el creativo usa el hash del flyer");
+  assert.ok(Object.keys(meta.anuncios).length === f2.conjuntos.length);
+  // Idempotente: correr otra vez no vuelve a subir ni a crear.
+  const antes = llamadas.length;
+  await crearEnMeta(c, f2, { log: () => {}, fetchImpl });
+  assert.equal(llamadas.length, antes);
+
+  // Video: se sube por URL, se espera a que esté listo y se usa su miniatura.
+  llamadas.length = 0;
+  await crearEnMeta(c, f4, { log: () => {}, fetchImpl, dormir: async () => {}, publicosDisponibles: new Map([["engagers-365", "901"], ["video25-365", "902"]]) });
+  assert.ok(llamadas.some(([, p, q]) => p.endsWith("/advideos") && q.file_url === "https://v3b.fal.media/v1.mp4"));
+  const cv = llamadas.find(([, p]) => p.endsWith("/adcreatives"))[2];
+  assert.equal(cv.object_story_spec.video_data.video_id, "VID1");
+  assert.equal(cv.object_story_spec.video_data.image_url, "https://thumb");
+});

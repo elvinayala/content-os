@@ -2,7 +2,9 @@ import "server-only";
 
 import {
   aprobadores,
+  bloquesConMedios,
   canalesPermitidos,
+  medios,
   type Decision,
   encabezadoBuzon,
   okConCambio,
@@ -68,18 +70,18 @@ async function dmDe(usuario: string): Promise<string | null> {
   return dms.get(usuario) ?? null;
 }
 
-export async function publicar(channel: string, text: string, thread_ts?: string | null): Promise<{ ok: boolean; ts?: string; error?: string }> {
+export async function publicar(channel: string, text: string, thread_ts?: string | null, blocks?: unknown[]): Promise<{ ok: boolean; ts?: string; error?: string }> {
   if (/^U[A-Z0-9]{6,}$/.test(channel)) {
     const dm = await dmDe(channel);
     // Sin DM previo con la app: se manda sin nombre/foto propios (Slack abre el DM de la app) y la
     // próxima vez ya existe el DM.
     if (!dm) {
-      const r = await slackApi<{ ts?: string }>("chat.postMessage", { channel, text, unfurl_links: false });
+      const r = await slackApi<{ ts?: string }>("chat.postMessage", { channel, text, unfurl_links: false, ...(blocks?.length ? { blocks } : {}) });
       return { ok: Boolean(r.ok), ts: r.ts, error: r.error };
     }
     channel = dm;
   }
-  const base = { channel, text, ...(thread_ts ? { thread_ts } : {}), unfurl_links: false };
+  const base = { channel, text: text.slice(0, 3900), ...(thread_ts ? { thread_ts } : {}), unfurl_links: false, ...(blocks?.length ? { blocks } : {}) };
   let r = await slackApi<{ ts?: string }>("chat.postMessage", { ...base, ...IDENTIDAD() });
   if (!r.ok && r.error === "missing_scope") r = await slackApi<{ ts?: string }>("chat.postMessage", base);
   return { ok: Boolean(r.ok), ts: r.ts, error: r.error };
@@ -100,7 +102,10 @@ export async function proponer(p: { cliente: string; tipo: TipoItem; titulo?: st
   const i = await crearItem(p);
   const canal = CANAL_APROBACIONES();
   if (!canal) return { item: i, aviso: "Falta SLACK_MAX_CHANNEL_ID: la propuesta quedó guardada pero no llegó a #max-aprobaciones." };
-  const r = await publicar(canal, textoAprobacion({ id: i.id, tipo: p.tipo, cliente: c?.nombre || p.cliente, titulo: p.titulo || "", contenido: p.contenido, nota: p.nota || undefined, alertas: revision.alertas }));
+  const texto = textoAprobacion({ id: i.id, tipo: p.tipo, cliente: c?.nombre || p.cliente, titulo: p.titulo || "", contenido: p.contenido, nota: p.nota || undefined, alertas: revision.alertas });
+  const m = medios(p.datos);
+  // Con flyers/videos: se ven dentro del mensaje (bloques), no como un link.
+  const r = await publicar(canal, texto, null, m.imagenes.length || m.videos.length ? bloquesConMedios(texto, m) : undefined);
   if (r.ok && r.ts) await actualizarItem(i.id, { aprobacionTs: r.ts });
   return { item: i, aviso: r.ok ? undefined : `No pude postear en #max-aprobaciones (${r.error}).` };
 }
@@ -123,7 +128,9 @@ export async function enviarAprobado(id: number): Promise<{ ok: boolean; texto: 
   if (!canalClientePermitido(c.canal)) return { ok: false, texto: `Aprobada, pero el canal de ${c.nombre} no está habilitado para Max (MAX_CANALES_CLIENTES). No se envió nada; cópiasela tú si quieres.` };
   const rev = revisarParaCliente(i.contenido, i.tipo);
   if (rev.bloqueos.length) return { ok: false, texto: `No la envié: ${rev.bloqueos.join(" · ")}.` };
-  const r = await publicar(c.canal, textoParaCliente(i.contenido), i.hilo);
+  const paraCliente = textoParaCliente(i.contenido);
+  const mc = medios(i.datos);
+  const r = await publicar(c.canal, paraCliente, i.hilo, mc.imagenes.length || mc.videos.length ? bloquesConMedios(paraCliente, mc) : undefined);
   if (!r.ok) return { ok: false, texto: `No pude enviarla al canal del cliente (${r.error}).` };
   await actualizarItem(id, { estado: "enviado", resultado: `enviado ${r.ts}` });
   await alBuzonMax(`${encabezadoBuzon("aprobacion", { evento: "enviado", item: `#${id}`, cliente: i.cliente, tipo: i.tipo })}\nYa le llegó al cliente lo aprobado (${i.titulo || i.tipo}). Sigue el proceso: actualiza la etapa y arranca el próximo paso.`);
@@ -164,6 +171,10 @@ export async function decidir(d: Decision, porSlackId: string): Promise<string> 
   if (subDrive) {
     const drive = await import("./drive");
     if (drive.driveListo()) {
+      // Los flyers y videos aprobados también quedan como archivo en la carpeta del cliente.
+      const ma = medios(i.datos);
+      for (const [k, url] of ma.imagenes.entries()) await drive.guardarArchivo(i.cliente, "creativos", url, `#${i.id} flyer ${k + 1}.png`).catch((e) => console.error("[max drive] flyer", i.id, e instanceof Error ? e.message : e));
+      for (const [k, url] of ma.videos.entries()) await drive.guardarArchivo(i.cliente, "videos", url, `#${i.id} video ${k + 1}.mp4`).catch((e) => console.error("[max drive] video", i.id, e instanceof Error ? e.message : e));
       await drive
         .guardarDoc(i.cliente, subDrive, `${i.titulo || i.tipo} · aprobado por ${nombre} (#${i.id})`, i.contenido)
         .then((doc) => actualizarItem(i.id, { datos: { drive: doc.url } }))

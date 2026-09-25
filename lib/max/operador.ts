@@ -242,3 +242,28 @@ export function mismoCliente(nombreItem: string, nombreCliente: string): boolean
   const partes = [nombreCliente, ...(nombreCliente.match(/\(([^)]+)\)/)?.slice(1) ?? []), nombreCliente.replace(/\s*\([^)]*\)\s*$/, "")].map(n).filter((x) => x.length >= 3);
   return partes.some((p) => p === item || p.includes(item) || item.includes(p));
 }
+
+// ── Creativos con imagen a la vista (Elvin, 25/sep: "tener los flyers aprobados") ─────────────
+// El texto va en secciones (Slack corta cada una en 3,000) y cada flyer como bloque de imagen, para que
+// Carilin/Jessica lo aprueben viéndolo, no con un link. Los videos van como enlaces.
+export function medios(datos: Record<string, unknown> | null | undefined): { imagenes: string[]; videos: string[] } {
+  const lista = (v: unknown) => (Array.isArray(v) ? v : []).map(String).filter((u) => /^https:\/\//.test(u));
+  return { imagenes: lista(datos?.imagenes).slice(0, 10), videos: lista(datos?.videos).slice(0, 10) };
+}
+
+export function bloquesConMedios(texto: string, m: { imagenes: string[]; videos: string[] }): unknown[] {
+  const secciones: string[] = [];
+  let actual = "";
+  for (const parrafo of String(texto).split(/\n(?=\S)/)) {
+    const trozo = actual ? `${actual}\n${parrafo}` : parrafo;
+    if (trozo.length > 2900) {
+      if (actual) secciones.push(actual);
+      actual = parrafo.slice(0, 2900);
+    } else actual = trozo;
+  }
+  if (actual) secciones.push(actual);
+  const bloques: unknown[] = secciones.slice(0, 30).map((t) => ({ type: "section", text: { type: "mrkdwn", text: t } }));
+  m.imagenes.forEach((url, i) => bloques.push({ type: "image", image_url: url, alt_text: `Creativo ${i + 1}` }));
+  if (m.videos.length) bloques.push({ type: "section", text: { type: "mrkdwn", text: m.videos.map((u, i) => `🎬 <${u}|Video ${i + 1}>`).join("   ") } });
+  return bloques;
+}

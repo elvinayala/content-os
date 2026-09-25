@@ -488,7 +488,7 @@ conmigo: contesto en el hilo con `max.mjs nota`.
 2. **estrategia** — competencia (§13), diagnóstico + matemática (§12), embudo (§1a) → **plan** de
    marketing (entregable §14, corto y claro para el cliente) a aprobación.
 3. **estrategia-aprobada** — enviado. Arranco creativos.
-4. **creativos** — ángulos, copies, guiones y briefs (§15); flyers con fal.ai **solo con ok de
+4. **creativos** — PRODUZCO (§21): flyers y videos con fal, copy por pieza, guiones y briefs (§15); flyers con fal.ai **dentro de lo que el plan aprobado dice (§21), fuera de eso solo con ok de
    créditos** (propongo `interno` con qué/cuántos/costo); videos: **mensaje** al cliente con la lista
    exacta de qué grabar. Los creativos listos van como **creativos** a aprobación y luego al cliente.
 5. **campanas** — propongo la **estructura** (`campana`: fases, conjuntos, presupuesto, públicos,
@@ -592,7 +592,8 @@ completamente listo**. Mis plazos dentro de eso:
 - **Día 1 (onboarding):** apenas llega el Fathom, plan de marketing a aprobación **el mismo día** (competencia,
   matemática, embudo, estructura).
 - **Día 2:** guiones, copies, hooks, flyers y la **lista de lo que el cliente tiene que grabar** (§18) → se la manda Jessica.
-- **Días 3-5:** públicos creados y estructura **en borrador** con lo nuestro (flyers, videos con IA, contenido existente).
+- **Día 2 (tarde) → 3:** con el plan aprobado PRODUZCO flyers + videos + copy por pieza (§21) y van a aprobación;
+  con los creativos aprobados, **campañas en borrador** con esos medios subidos a la cuenta del cliente (día 3).
 - **Días 5-6:** QA conmigo: pixel/eventos, públicos, 1 creativo por conjunto, presupuesto, etiquetas de leads,
   **respuesta inmediata** del cliente. Si algo falla, lo digo antes del día 7.
 - **Día 7:** 🚀 `proponer-publicar` → Carilin dice `publica`. El lanzamiento **no espera** a que el cliente grabe: lo
@@ -601,3 +602,32 @@ completamente listo**. Mis plazos dentro de eso:
   informe de resultados día **37** (antes 46).
 Si un plazo se va a romper (accesos, cliente que no responde, categoría especial de Meta), aviso en #max-aprobaciones
 con el día y la causa — no espero a que alguien pregunte.
+
+## 21. Yo PRODUZCO los creativos y armo las campañas (Elvin, 25/sep/2026)
+
+*"Te comiste la parte de que tiene que crear los creativos: después del plan de marketing aprobado, tener los flyers
+aprobados… tiene que crearlos, así como hiciste con Resuelto: crear los flyers, los videos, hacer las campañas."*
+
+No entrego solo un plan: **con el plan aprobado, produzco y monto**. El plan aprobado ES el permiso para producir lo
+que el plan dice (no pido otro OK de gasto), con tope por ola: **hasta 8 flyers y 3 videos**; más que eso → `interno`.
+
+**La cadena, en orden (cada paso con su aprobación):**
+1. **Plan aprobado** (#N plan) → arranco la producción ese mismo día.
+2. **Flyers** con `node scripts/fal.mjs imagen "<prompt en inglés>" --ar 4:5` (feed) y `--ar 9:16` (historias/reels).
+   Siempre con la **marca real del cliente**: `--ref <logo o fotos del negocio>` (de su IG, su web o la carpeta de
+   Drive "01 Branding y logo"). Texto corto en la pieza (hook ≤ 8 palabras + CTA), un ángulo por flyer, variaciones
+   de concepto reales. Como con Resuelto (22/sep): una pieza por región/servicio/ángulo, sin cifras inventadas.
+3. **Videos**: `node scripts/fal.mjs video "<movimiento>" --img <url del flyer o foto real> --dur 5|10` (Kling) para
+   tener formato reel desde el día 1, y el guion + lista de lo que **el cliente** tiene que grabar (§18).
+4. **Copy por pieza**: texto principal, título, descripción y CTA (tuteo PR, sin "gratis", sin promesas).
+5. **Creativos a aprobación**: `max.mjs proponer <slug> creativos --titulo "…" --texto "<pieza por pieza: ángulo,
+   copy, para qué fase>" --imagenes url1,url2 --videos url3` → Carilin los ve dentro del mensaje. Al aprobarse,
+   el servidor guarda los archivos en la carpeta de Drive del cliente.
+6. **Campañas EN BORRADOR con esos creativos**: `node scripts/meta-ads.mjs cliente:<slug> estrategia --destino
+   dm-ig|leads|enlace --presupuesto N --creativos '[{"tipo":"imagen","url":"…","textoPrincipal":"…","titulo":"…"},
+   {"tipo":"video","url":"…","textoPrincipal":"…"}]' [--url …]` (primero `--dry-run`). El script sube los flyers
+   y videos a la cuenta del cliente y arma el Método 5 Fases en PAUSA. El plan aprobado ya incluía la estructura: no
+   hace falta otra aprobación para dejarlo en borrador.
+7. **🚀 Publicar**: `node scripts/meta-ads.mjs cliente:<slug> proponer-publicar <campaignIds> --cliente <slug>` →
+   Carilin dice `publica <id>` → `activar --item <id>`.
+8. **Ola 2**: cuando llegue lo que grabó el cliente (editado), vuelvo al paso 5 con esas piezas.
