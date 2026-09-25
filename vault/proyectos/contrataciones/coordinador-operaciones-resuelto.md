@@ -3,7 +3,7 @@ fecha: 2026-09-25
 fuente: manual
 unidad: resuelto
 tags: [contrataciones, resuelto, operaciones, despacho, atencion-cliente]
-estado: ADELANTADO a la compuerta por decisión de Elvin (25/sep) · Yaileen busca el perfil · sueldo NO se menciona todavía
+estado: ADELANTADO a la compuerta (25/sep) · Yaileen busca + Aure pregunta a Valentina (preferida) · sueldo NO se menciona · PDF público: content-os-chi-seven.vercel.app/demos/resuelto/coordinador-operaciones-resuelto.pdf
 ---
 
 # Coordinador/a de Operaciones · Resuelto Home Services
@@ -94,6 +94,12 @@ Salario fijo + **bono por cada venta cerrada por él/ella**. El monto se define 
 los primeros candidatos y sepa el volumen real de trabajos. Referencia interna del plan de guerra:
 $2,000–2,500/mes cuando el puesto esté a tiempo completo con volumen; hoy puede arrancar en un
 esquema menor porque el volumen todavía es bajo.
+
+## 7b. Candidata preferida (25/sep)
+Elvin prefiere a **Valentina** para este puesto. Aure le pregunta primero si tiene disponibilidad
+real (empieza a estudiar; el puesto es horario de campo lun–sáb arrancando temprano). Si puede, es
+la primera opción; si no, sigue la búsqueda de Yaileen sin pausa. A ella tampoco se le habla de
+sueldo todavía.
 
 ## 8. Proceso
 1. Yaileen consigue **3–5 candidatos** con el perfil de §4 (sin hablar de sueldo).
