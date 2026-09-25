@@ -31,9 +31,11 @@ export const CANAL_APROBACIONES = () => process.env.SLACK_MAX_CHANNEL_ID || "";
 export const canalClientePermitido = (canal: string | null | undefined) => Boolean(canal) && canalesPermitidos(process.env.MAX_CANALES_CLIENTES).has(canal as string);
 
 export class BloqueoMax extends Error {}
+// Identidad de Max en Slack (24/sep): su nombre y su muñequito (public/marcas/max/, vault/ceo/identidad-max.md).
+const ORIGEN = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
 const IDENTIDAD = () => ({
-  username: process.env.MAX_NOMBRE_SLACK || "Max · Estrategia Level Up",
-  ...(process.env.MAX_AVATAR_URL ? { icon_url: process.env.MAX_AVATAR_URL } : {}),
+  username: process.env.MAX_NOMBRE_SLACK || "Max · Estratega Level Up",
+  icon_url: process.env.MAX_AVATAR_URL || `${ORIGEN}/marcas/max/max-avatar-512.png`,
 });
 const NOMBRE_APROBADOR: Record<string, string> = { elvin: "Elvin", carilin: "Carilin", jessica: "Jessica" };
 
@@ -212,4 +214,16 @@ export async function buscarLlamadas(nombre: string, n = 200): Promise<string> {
     return claves.length && claves.filter((k) => t.includes(k)).length >= Math.min(2, claves.length);
   });
   return hits.slice(0, 3).map((m) => (m.text || "").slice(0, 6000)).join("\n\n———\n\n") || `No encontré llamadas de "${nombre}" en el canal de resúmenes.`;
+}
+
+// Publica los mensajes programados que ya vencieron (lo llama el cron cada 5 min).
+export async function enviarProgramados(): Promise<{ enviados: number; fallidos: number }> {
+  const { programadosVencidos, marcarProgramado } = await import("./repo");
+  let enviados = 0, fallidos = 0;
+  for (const m of await programadosVencidos()) {
+    const r = await publicar(m.canal, m.texto);
+    await marcarProgramado(m.id, r.ok ? null : r.error || "error");
+    if (r.ok) enviados++; else fallidos++;
+  }
+  return { enviados, fallidos };
 }

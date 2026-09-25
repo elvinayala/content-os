@@ -219,7 +219,7 @@ async function postearRespuesta(
 }
 
 const ORIGEN = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
-const IDENTIDAD_MAX: Identidad = { username: process.env.MAX_NOMBRE_SLACK || "Max · Estrategia Level Up", ...(process.env.MAX_AVATAR_URL ? { icon_url: process.env.MAX_AVATAR_URL } : {}) };
+const IDENTIDAD_MAX: Identidad = { username: process.env.MAX_NOMBRE_SLACK || "Max · Estratega Level Up", icon_url: process.env.MAX_AVATAR_URL || `${ORIGEN}/marcas/max/max-avatar-512.png` };
 const IDENTIDAD_DIRECTOR: Identidad = {
   username: process.env.DIRECTOR_NOMBRE || "Leo · Director Creativo",
   icon_url: process.env.DIRECTOR_AVATAR_URL || `${ORIGEN}/marcas/leo/leo-avatar-512.png`,

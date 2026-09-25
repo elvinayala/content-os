@@ -51,6 +51,15 @@ export function asegurarTablas(): Promise<void> {
         decidido_el timestamptz
       )`);
       await d.execute(sql`CREATE INDEX IF NOT EXISTS max_items_estado ON max_items (estado, cliente)`);
+      await d.execute(sql`CREATE TABLE IF NOT EXISTS max_programados (
+        id serial PRIMARY KEY,
+        canal text NOT NULL,
+        texto text NOT NULL,
+        post_at timestamptz NOT NULL,
+        enviado_el timestamptz,
+        error text,
+        creado_el timestamptz NOT NULL DEFAULT now()
+      )`);
     })().catch((e) => {
       listas = null;
       throw e;
@@ -190,4 +199,30 @@ export async function alBuzonMax(texto: string): Promise<number | null> {
   const d = await db();
   const r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto) VALUES ('slack', 'max', ${texto.slice(0, 8000)}) RETURNING id`);
   return filas<{ id: number }>(r)[0]?.id ?? null;
+}
+
+// Mensajes programados CON la identidad de Max (nombre + foto). Slack no deja poner nombre/foto en
+// chat.scheduleMessage, así que se guardan aquí y /api/cron/max-programados los publica a su hora.
+export async function programar(canal: string, texto: string, postAt: Date): Promise<number> {
+  await asegurarTablas();
+  const d = await db();
+  const r = await d.execute(sql`INSERT INTO max_programados (canal, texto, post_at) VALUES (${canal}, ${texto}, ${postAt.toISOString()}) RETURNING id`);
+  return filas<{ id: number }>(r)[0].id;
+}
+
+export async function programadosVencidos(): Promise<{ id: number; canal: string; texto: string }[]> {
+  await asegurarTablas();
+  const d = await db();
+  return filas(await d.execute(sql`SELECT id, canal, texto FROM max_programados WHERE enviado_el IS NULL AND error IS NULL AND post_at <= now() ORDER BY post_at, id LIMIT 20`));
+}
+
+export async function marcarProgramado(id: number, error: string | null): Promise<void> {
+  const d = await db();
+  await d.execute(sql`UPDATE max_programados SET enviado_el = CASE WHEN ${error}::text IS NULL THEN now() ELSE NULL END, error = ${error} WHERE id = ${id}`);
+}
+
+export async function listarProgramados(): Promise<{ id: number; canal: string; post_at: string; enviado_el: string | null; error: string | null; texto: string }[]> {
+  await asegurarTablas();
+  const d = await db();
+  return filas(await d.execute(sql`SELECT id, canal, post_at, enviado_el, error, left(texto, 80) AS texto FROM max_programados ORDER BY id DESC LIMIT 30`));
 }

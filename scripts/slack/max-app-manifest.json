@@ -1,0 +1,39 @@
+{
+  "_como_usarlo": "api.slack.com/apps → Create New App → From a manifest → workspace de Level Up → pega este JSON (sin esta línea) → Create → Install to Workspace. Luego: Basic Information → Display Information → sube public/marcas/max/max-avatar-512.png; y pasa a Vercel SLACK_MAX_BOT_TOKEN (Bot User OAuth Token) y SLACK_MAX_SIGNING_SECRET (Signing Secret). Ver vault/ceo/identidad-max.md.",
+  "display_information": {
+    "name": "Max",
+    "description": "Estratega Digital 5.0 de Level Up Media (IA)",
+    "background_color": "#111111",
+    "long_description": "Max es el estratega de IA de Level Up Media. Entiende el negocio del cliente, investiga el mercado, escoge el embudo y arma la estrategia completa (campañas, creativos y presupuesto) con el método de Elvin Ayala. Todo lo que propone pasa por la aprobación de Elvin, Carilin o Jessica en #max-aprobaciones antes de llegarle a un cliente o de prender una campaña."
+  },
+  "features": {
+    "bot_user": { "display_name": "Max", "always_online": true }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "channels:history",
+        "channels:read",
+        "chat:write",
+        "chat:write.customize",
+        "files:read",
+        "groups:history",
+        "groups:read",
+        "im:history",
+        "im:read",
+        "im:write",
+        "users:read"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://content-os-chi-seven.vercel.app/api/slack-eventos?app=max",
+      "bot_events": ["app_mention", "message.channels", "message.groups", "message.im"]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}

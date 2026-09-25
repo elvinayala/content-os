@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { BloqueoMax, buscarLlamadas, canalClientePermitido, canalesDelBot, enviarAprobado, leerCanal, leerHilo, notaEnAprobaciones, proponer } from "@/lib/max/flujo";
 import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from "@/lib/max/operador";
-import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes } from "@/lib/max/repo";
+import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes, listarProgramados, programar } from "@/lib/max/repo";
 import { asegurarCarpeta, driveListo, guardarArchivo, guardarDoc, listarCarpeta, saludDrive } from "@/lib/max/drive";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
@@ -138,6 +138,20 @@ export async function POST(req: NextRequest) {
         return mal(e instanceof Error ? e.message : String(e), 502);
       }
     }
+        case "programar": {
+      // Mensaje con la identidad de Max a una hora (canal o id de persona para DM). Solo equipo/canales
+      // internos: a un canal de cliente nunca (eso va por proponer + aprobación).
+      const canal = s("canal", 20);
+      const texto = s("texto", 30000);
+      const cuando = new Date(String(b.post_at || ""));
+      if (!canal || !/^[CGUD][A-Z0-9]{6,}$/.test(canal) || !texto || Number.isNaN(cuando.getTime())) return mal("canal (C…/U…), texto y post_at (ISO)");
+      if (canal.startsWith("C") || canal.startsWith("G")) {
+        if (canalClientePermitido(canal)) return mal("a un canal de cliente se le escribe por proponer + aprobación", 403);
+      }
+      return NextResponse.json({ ok: true, id: await programar(canal, texto, cuando) });
+    }
+    case "programados":
+      return NextResponse.json({ ok: true, programados: await listarProgramados() });
         case "buzon-prueba": {
       // Solo para pruebas de punta a punta: simula lo que llegaría de Slack (p. ej. el resumen de Jessica
       // en el hilo) sin que nadie tenga que escribir. Se marca PRUEBA para que Max lo sepa.

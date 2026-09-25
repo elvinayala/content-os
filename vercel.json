@@ -23,6 +23,10 @@
     {
       "path": "/api/cron/aib-onboarding",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/max-programados",
+      "schedule": "*/5 * * * *"
     }
   ],
   "regions": [
