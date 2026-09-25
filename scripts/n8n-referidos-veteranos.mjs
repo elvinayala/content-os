@@ -4,7 +4,8 @@
 //
 // Reglas de Elvin: personalizado (nombre, negocio, sus leads, desde cuándo), texto un poco distinto para
 // cada uno, de 5 en 5 por día (tope 10), cada uno a una hora distinta. Nada de ráfagas.
-// Protección: el workflow manda UNO por corrida (cada 10 min, solo si ya le tocó la hora), no manda nada
+// Protección: el workflow manda UNO por corrida (cada 10 min, solo si ya le tocó la hora), nunca dos a menos
+// de 45 min, el plan solo usa horas futuras, no manda nada
 // con más de 3 h de atraso, y si un envío falla se PAUSA solo y avisa (workflow de errores).
 // Las respuestas las atiende el agente de onboarding v5 (su rama de referidos → Slack a Elvin).
 //
@@ -138,13 +139,17 @@ function diasHabiles(desde, n) {
   return out;
 }
 
+// Solo horas que todavía no pasaron (con 20 min de margen): si hoy ya no quedan, arranca el próximo día hábil.
 function armarPlan(desde) {
-  const dias = diasHabiles(desde, Math.ceil(CLIENTES.length / 5));
-  return CLIENTES.map((c, i) => {
-    const dia = dias[Math.floor(i / 5)];
-    const hora = HORAS[Math.floor(i / 5) % HORAS.length][i % 5];
-    return { i, nombre: c[0], negocio: c[1], leads: c[2], desde: c[3], enviarEl: `${dia}T${hora}:00-04:00`, texto: texto(c, i) };
+  const limite = Date.now() + 20 * 60 * 1000;
+  const turnos = [];
+  diasHabiles(desde, 20).forEach((dia, d) => {
+    for (const hora of HORAS[d % HORAS.length]) {
+      const iso = `${dia}T${hora}:00-04:00`;
+      if (Date.parse(iso) > limite) turnos.push(iso);
+    }
   });
+  return CLIENTES.map((c, i) => ({ i, nombre: c[0], negocio: c[1], leads: c[2], desde: c[3], enviarEl: turnos[i], texto: texto(c, i) }));
 }
 
 function armarWorkflow(plan) {
@@ -153,10 +158,13 @@ function armarWorkflow(plan) {
     nodo("Nota", "n8n-nodes-base.stickyNote", 1, { width: 560, height: 300, content: `## Referidos veteranos (una vez)\nPedido de referidos a los 34 clientes que ya pasaron de 200 leads (Elvin, 25/sep/2026; sin Oliver/Tinos).\n\n- 5 por día hábil, cada uno a su hora (10 AM–5 PM), texto distinto y con su nombre, negocio, leads y desde cuándo.\n- Manda **uno por corrida** (cada 10 min) y solo lo que ya le tocó; si se atrasó > 3 h, lo salta.\n- Si un envío falla: se **pausa solo** y avisa por el workflow de errores.\n- Las respuestas las atiende el agente de onboarding v5 (referidos → Slack a Elvin).\n- Para parar: desactivar este workflow.\n\nFuente: scripts/n8n-referidos-veteranos.mjs (content-os).` }, [0, -420]),
     nodo("Cada 10 min", "n8n-nodes-base.scheduleTrigger", 1.2, { rule: { interval: [{ field: "minutes", minutesInterval: 10 }] } }, [0, 0]),
     nodo("¿A quién le toca?", "n8n-nodes-base.code", 2, { jsCode: `const PLAN = ${JSON.stringify(plan.map(({ i, nombre, negocio, enviarEl, texto }) => ({ i, nombre, negocio, enviarEl, texto })))};
-const s = $getWorkflowStaticData('global');
+const g = $getWorkflowStaticData('global');
+const s = (g.v2 = g.v2 || {});
 s.enviados = s.enviados || {};
 if (s.pausado) return [];
 const ahora = Date.now();
+// Nunca dos envíos a menos de 45 min, pase lo que pase (si n8n estuvo caído no sale una ráfaga).
+if (s.ultimo && ahora - s.ultimo < 45 * 60 * 1000) return [];
 const toca = PLAN.find((p) => !s.enviados[p.i] && Date.parse(p.enviarEl) <= ahora);
 if (!toca) return [];
 if (ahora - Date.parse(toca.enviarEl) > 3 * 3600 * 1000) { s.enviados[toca.i] = { saltado: true, motivo: 'atraso > 3 h', el: new Date().toISOString() }; return []; }
@@ -165,13 +173,13 @@ return [{ json: toca }];` }, [260, 0]),
     nodo("Teléfono", "n8n-nodes-base.code", 2, { jsCode: `const p = $('¿A quién le toca?').first().json;
 const f = (($json.list) || [])[0];
 const tel = String((f && f.telefono) || '').replace(/\\D/g, '');
-const s = $getWorkflowStaticData('global');
+const s = $getWorkflowStaticData('global').v2;
 if (!f || tel.length < 10) { s.enviados[p.i] = { saltado: true, motivo: 'sin teléfono en NocoDB', el: new Date().toISOString() }; return []; }
 return [{ json: { ...p, telefono: tel.length === 10 ? '1' + tel : tel } }];` }, [780, 0]),
     nodo("Enviar WhatsApp", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: "={{ $json.texto }}", options_message: {} }, [1040, 0], { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
     nodo("Registrar", "n8n-nodes-base.code", 2, { jsCode: `const p = $('Teléfono').first().json;
 const r = $json || {};
-const s = $getWorkflowStaticData('global');
+const s = $getWorkflowStaticData('global').v2;
 const ok = !!(r.key && r.key.id);
 if (!ok) {
   s.pausado = true;
@@ -179,6 +187,7 @@ if (!ok) {
   throw new Error('Referidos veteranos: falló el envío a ' + p.nombre + ' — campaña PAUSADA. Revisar el WhatsApp de Level Up (Evolution) antes de reanudar.');
 }
 s.enviados[p.i] = { ok: true, nombre: p.nombre, el: new Date().toISOString() };
+s.ultimo = Date.now();
 return [{ json: { sessionId: p.telefono + '@s.whatsapp.net', mensaje: JSON.stringify({ type: 'ai', content: p.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }), nombre: p.nombre, enviados: Object.values(s.enviados).filter((e) => e.ok).length } }];` }, [1300, 0]),
     nodo("Memoria del agente", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);", options: { queryReplacement: "={{ [$json.sessionId, $json.mensaje] }}" } }, [1560, 0], { credentials: { postgres: CRED_PG }, onError: "continueRegularOutput" }),
   ];
