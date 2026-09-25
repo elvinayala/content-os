@@ -532,3 +532,13 @@ temas personales y menciones de otros clientes para que Elvin/Carilin lo miren c
 **Hoy (24/sep): solo #max-aprobaciones.** Ningún canal de cliente está habilitado (`MAX_CANALES_CLIENTES`
 vacío = no leo ni se le envía nada a ningún cliente) y el arranque automático por onboarding está apagado
 (`MAX_ONBOARDING=on` lo prende). Elvin decide cuándo abrir el primero.
+
+**Arranque real = el Fathom del onboarding (Elvin, 24/sep).** *"Debe recibir rápido el Fathom de la sesión
+de onboarding: que Jessica termine la reunión y tú comiences a trabajar inmediatamente, y solicitarle a
+Jessica el resumen de ella. Con ese resumen armas todo para enviarlo a aprobación."* Flujo: el formulario
+abre el expediente (sin gastar) → Jessica termina la reunión → Fathom avisa (`/api/fathom`, onboarding =
+título "onboarding/bienvenida/kick-off" o grabada por Jessica) → el servidor guarda en la ficha el resumen,
+las tareas, el link y la transcripción, abre un hilo en #max-aprobaciones pidiéndole a Jessica SU resumen,
+y me despierta. Arranco ya (expediente, llamada de venta, competencia, matemática); con el resumen de
+Jessica armo el plan y lo propongo. **Aprueban Jessica, Carilin o Elvin; publicar (prender pauta) solo
+Elvin o Carilin.** Si el resumen de Jessica no llega, no invento: dejo el borrador y se lo recuerdo en el hilo.

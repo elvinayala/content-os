@@ -67,6 +67,9 @@ cerebro §0/§1a/§2b/§12-§17 (3 embudos, matemática comercial, optimizar des
 < 2 % malo, MANTENER/APAGAR/ITERAR/ESCALAR/NUEVO TEST, pepitas de Carilin/traffickers). Slack:
 #max-aprobaciones (Elvin o Carilin: ok/no/publica <id>); Max NUNCA le escribe al cliente — el servidor
 publica lo aprobado; clientes = invitados single-channel de Slack en canal vinculado; activar campañas
-por API SOLO con `meta-ads.mjs … activar --item <id>` aprobado. Pendiente de Elvin: crear
-#max-aprobaciones (el bot no tiene groups:write), invitar al bot ahí y a cada canal de cliente; luego
-SLACK_MAX_CHANNEL_ID en Vercel. "max o carilin" para publicar lo interpreté como Elvin o Carilin.
+por API SOLO con `meta-ads.mjs … activar --item <id>` aprobado. #max-aprobaciones = C0C56TTPB88 (lo
+creó Elvin; SLACK_MAX_CHANNEL_ID en Vercel). Elvin: NINGÚN canal de cliente todavía
+(MAX_CANALES_CLIENTES vacío = lista blanca), onboarding automático apagado (MAX_ONBOARDING=on), y límites
+con clientes: solo negocio, nada personal (revisarParaCliente bloquea credenciales/promesas/gratis/voseo,
+marca ⚠ dinero/personal/otros clientes). Costo estimado 1.ª semana por cliente ≈ $20-30 de Claude
+(API key, sin --model) + ~10-20 créditos Higgsfield en flyers (+90-140 por video Marketing Studio). "max o carilin" para publicar lo interpreté como Elvin o Carilin.
