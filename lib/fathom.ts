@@ -177,3 +177,18 @@ export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): str
   const t = (r.transcript ?? []).map((x) => `${x.speaker?.display_name || "?"}: ${(x.text || "").trim()}`).filter((l) => l.length > 3).join("\n");
   return t.length > max ? `${t.slice(0, max)}\n…(sigue en Fathom)` : t;
 }
+
+// ── Qué va al canal de resúmenes de llamadas (#office-2-resumendellamadas) ─────────────────────
+// Aure (#29) pidió las llamadas de Elvin; Elvin (24/sep): "se tienen que ver todas las llamadas que
+// cogen los closers, Roger y Laura, específicamente ellos dos". Laura no tiene usuario propio: usa el
+// calendario/cuenta Level Up Media (levelupmediapr@gmail.com). Juan David NO (sin acceso desde 22/sep).
+// Entra si la grabó uno de ellos o si uno de ellos está en la invitación como parte del equipo.
+export const EMAILS_CANAL_LLAMADAS = ["elvin@levelupmediapr.net", "levelupmediapr@gmail.com", "roger.arteaga@levelupmediapr.net"];
+
+export function vaAlCanalDeLlamadas(r: ReunionFathom, emails: string[] = EMAILS_CANAL_LLAMADAS): boolean {
+  const lista = emails.map((e) => e.trim().toLowerCase()).filter(Boolean);
+  const grabo = (r.recorded_by?.email || "").toLowerCase();
+  if (!grabo) return true; // sin dato de quién grabó: como antes, se publica
+  if (lista.includes(grabo)) return true;
+  return (r.calendar_invitees ?? []).some((i) => i.is_external !== true && lista.includes((i.email || "").toLowerCase()));
+}

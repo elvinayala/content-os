@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { after, NextRequest, NextResponse } from "next/server";
 
-import { esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { EMAILS_CANAL_LLAMADAS, esOnboarding, firmaValida, mensajeSlack, type ReunionFathom, vaAlCanalDeLlamadas } from "@/lib/fathom";
 import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -114,13 +114,13 @@ export async function POST(req: NextRequest) {
   }
 
   // Con la cuenta de equipo (webhook "shared_team_recordings", 24/sep) llegan las llamadas de todos.
-  // Al canal de resúmenes de Aure siguen yendo SOLO las de Elvin (lo que pidió Aure, #29); las demás
-  // solo sirven para detectar onboardings de Jessica → Max. Se registran como 'omitido'.
-  const alCanal = (process.env.FATHOM_SLACK_EMAILS || "elvin@levelupmediapr.net,levelupmediapr@gmail.com").split(",").map((e) => e.trim().toLowerCase());
-  const grabo = (r.recorded_by?.email || "").toLowerCase();
-  if (grabo && !alCanal.includes(grabo)) {
+  // Al canal de resúmenes van las de Elvin y las de los closers Roger y Laura; las demás solo sirven
+  // para detectar onboardings de Jessica → Max. Se registran como 'omitido'.
+  // Al canal: Elvin + los closers Roger y Laura (lib/fathom.ts). Override: FATHOM_SLACK_EMAILS.
+  const alCanal = process.env.FATHOM_SLACK_EMAILS ? process.env.FATHOM_SLACK_EMAILS.split(",") : EMAILS_CANAL_LLAMADAS;
+  if (!vaAlCanalDeLlamadas(r, alCanal)) {
     await d.execute(sql`UPDATE fathom_llamadas SET estado = 'omitido', actualizado_el = now() WHERE recording_id = ${id}`);
-    return NextResponse.json({ ok: true, omitido: "no es de Elvin", onboarding: Boolean(motivo) });
+    return NextResponse.json({ ok: true, omitido: "no es de Elvin ni de los closers", onboarding: Boolean(motivo) });
   }
 
   let error: string | null = null;
