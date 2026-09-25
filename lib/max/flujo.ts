@@ -52,7 +52,33 @@ async function slackApi<T = Record<string, unknown>>(metodo: string, cuerpo: Rec
   return (await r.json().catch(() => ({ ok: false, error: "respuesta" }))) as T & { ok?: boolean; error?: string };
 }
 
+// Un DM a una persona (U…) con nombre/foto propios hay que mandarlo al id del DM (D…): si se manda al
+// U…, Slack lo deja en el chat de "Slackbot" y no en el de la app (visto el 24/sep con el DM de prueba).
+const dms = new Map<string, string>();
+async function dmDe(usuario: string): Promise<string | null> {
+  if (dms.has(usuario)) return dms.get(usuario)!;
+  let cursor = "";
+  for (let v = 0; v < 5; v++) {
+    const r = await slackApi<{ channels?: { id: string; user?: string }[]; response_metadata?: { next_cursor?: string } }>("users.conversations", { types: "im", limit: 200, ...(cursor ? { cursor } : {}) }, true);
+    if (!r.ok) break;
+    for (const c of r.channels ?? []) if (c.user) dms.set(c.user, c.id);
+    cursor = r.response_metadata?.next_cursor || "";
+    if (!cursor || dms.has(usuario)) break;
+  }
+  return dms.get(usuario) ?? null;
+}
+
 export async function publicar(channel: string, text: string, thread_ts?: string | null): Promise<{ ok: boolean; ts?: string; error?: string }> {
+  if (/^U[A-Z0-9]{6,}$/.test(channel)) {
+    const dm = await dmDe(channel);
+    // Sin DM previo con la app: se manda sin nombre/foto propios (Slack abre el DM de la app) y la
+    // próxima vez ya existe el DM.
+    if (!dm) {
+      const r = await slackApi<{ ts?: string }>("chat.postMessage", { channel, text, unfurl_links: false });
+      return { ok: Boolean(r.ok), ts: r.ts, error: r.error };
+    }
+    channel = dm;
+  }
   const base = { channel, text, ...(thread_ts ? { thread_ts } : {}), unfurl_links: false };
   let r = await slackApi<{ ts?: string }>("chat.postMessage", { ...base, ...IDENTIDAD() });
   if (!r.ok && r.error === "missing_scope") r = await slackApi<{ ts?: string }>("chat.postMessage", base);
