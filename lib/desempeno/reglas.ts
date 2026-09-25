@@ -406,11 +406,12 @@ export function promedio(xs: (number | null)[]): number | null {
 export interface Actor {
   id: string;
   rol: "admin" | "editor" | "miembro";
+  rrhh?: boolean; // Recursos Humanos (RITMO_RRHH): entra a la vista maestra aunque sea miembro en Pulse
 }
 
-// La vista maestra (todo el equipo + Ajustes) es solo de admin y editoras: hoy Elvin, Carilin y Aure
-// (Elvin, 25/sep/2026). Cada persona ve únicamente lo suyo; el campo `lider` es informativo.
-export const esMaestro = (actor: Pick<Actor, "rol">) => actor.rol === "admin" || actor.rol === "editor";
+// La vista maestra (todo el equipo, fichas y Ajustes) es de admin y editoras (Elvin, Carilin, Aure) y
+// de Recursos Humanos (Yaileen, por RITMO_RRHH). Cada persona ve únicamente lo suyo.
+export const esMaestro = (actor: Pick<Actor, "rol" | "rrhh">) => actor.rol === "admin" || actor.rol === "editor" || !!actor.rrhh;
 
 export function puedeVer(actor: Actor, persona: { userId: string; liderId: string | null }): boolean {
   return esMaestro(actor) || persona.userId === actor.id;

@@ -467,6 +467,25 @@ acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
   líder; `?tarea=semanal` lunes 8 AM a Elvin): en simulación hasta `DESEMPENO_AVISOS=real`; `?dry=1`
   nunca manda. El monitor viejo de Slack (`/ceo/equipo-actividad`) redirige a Ritmo.
 
+### Ritmo · Personas (RR.HH.) y canal ético (25/sep/2026)
+
+- **Vista maestra** = admin/editoras (Elvin, Carilin, Aure) **+ RR.HH.** por `RITMO_RRHH` (emails; Yaileen).
+  `lib/desempeno/sesion.ts` → `usuarioRitmo()` / `requiereMaestro()`. Los líderes NO ven la maestra.
+- **Personas** (`/ritmo/personas`, `/ritmo/personas/[id]`): ficha SOLO de operaciones con sueldo fijo
+  (`desempeno_fichas`; "Crear ficha" desde la lista): foto, teléfono y alterno, ciudad/país, documento,
+  salario mensual USD; documentos por categoría (identificación, contrato, certificaciones, entrenamiento
+  con videos, nómina, otros) en el bucket privado `pulse/ritmo/<userId>/…`, subidos DIRECTO del navegador
+  con URL firmada (`prepararSubida` → PUT → `confirmarSubidaAction`; en local pasa por el servidor);
+  se abren por `/ritmo/archivo/[id]` y `/ritmo/foto/[userId]` (maestra o la propia persona, con bitácora).
+  El empleado ve su ficha ("Mi ficha") y puede subir sus documentos (no nómina).
+- **Tiempo libre** (`lib/desempeno/rrhh.ts`, tests `tests/rrhh.test.mjs`): 7 días/año acumulados por mes
+  desde el ingreso, se solicitan a los 12 meses; enfermedad 3/año con certificado (si no → vacaciones);
+  maternidad 15 por evento; lo que no alcance = sin paga. RR.HH. registra las ausencias. Aviso de 12 meses:
+  banner en Hoy/ficha + cron `?tarea=aniversarios` (diario 9 AM PR, a la persona y a RR.HH./Carilin).
+- **Nómina estimada** del mes siguiente: salario + ajustes (`desempeno_ajustes`) − días sin paga.
+- **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
+  y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
+
 ## El ecosistema de email (ActiveCampaign)
 
 **Cada marca tiene SU cuenta de AC y nunca se mezclan (Elvin, 23/sep):** Level Up =

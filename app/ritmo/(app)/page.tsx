@@ -4,9 +4,9 @@ import Link from "next/link";
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
+import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
-import { usuarioActual } from "@/lib/pulse/auth";
-import { puedeGestionarUsuarios } from "@/lib/pulse/types";
+import { usuarioRitmo } from "@/lib/desempeno/sesion";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Hoy" };
@@ -17,13 +17,15 @@ const saludo = () => {
 };
 
 export default async function HoyPage() {
-  const u = await usuarioActual();
+  const u = await usuarioRitmo();
   if (!u) return null;
   const hoy = fechaPR(Date.now());
   const estado = await estadoPonche(u.id);
   const panel = estado ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
   const yo = panel?.filas.find((f) => f.perfil.userId === u.id);
   const oculto = modoScore(u.rol) === "oculto";
+  const ficha = await fichaCompleta(u.id).catch(() => null);
+  const vac = ficha?.saldos?.puedeSolicitar && ficha.saldos.vacaciones.disponibles >= 1 ? ficha.saldos.vacaciones.disponibles : null;
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
@@ -35,11 +37,17 @@ export default async function HoyPage() {
         </h1>
       </div>
 
+      {vac ? (
+        <Link href={`/ritmo/personas/${u.id}`} className="w-full max-w-md rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-center text-sm">
+          🌴 <b>Ya cumpliste 12 meses.</b> Tienes <b>{vac} días</b> de vacaciones para solicitar. Coordínalo con RR.HH.
+        </Link>
+      ) : null}
+
       {estado ? (
         <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} />
       ) : (
         <div className="panel max-w-sm p-6 text-center text-sm text-muted-foreground">
-          {puedeGestionarUsuarios(u.rol) ? (
+          {u.maestro ? (
             <>
               Todavía no tienes perfil de ponche. Puedes activarlo en <Link href="/ritmo/ajustes" className="text-primary">Ajustes</Link>.
             </>

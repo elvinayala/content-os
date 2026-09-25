@@ -107,3 +107,99 @@ export const desempenoEventos = pgTable(
   },
   (t) => [index("desempeno_eventos_user_at").on(t.userId, t.at)],
 );
+
+// ─── Ficha del empleado (RR.HH., 25/sep/2026) ──────────────────────────────────────────────────
+// Solo empleados de operaciones con sueldo fijo. La llena Yaileen (RR.HH.); la ven la vista
+// maestra y la propia persona. Salario en USD.
+export const desempenoFichas = pgTable("desempeno_fichas", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  fotoPath: text("foto_path"),
+  telefono: text("telefono"),
+  telefonoAlterno: text("telefono_alterno"),
+  ciudad: text("ciudad"),
+  pais: text("pais"),
+  documentoTipo: text("documento_tipo"), // cédula, pasaporte, licencia…
+  documentoNumero: text("documento_numero"),
+  salarioMensual: doublePrecision("salario_mensual"), // USD
+  notas: text("notas"),
+  updatedBy: uuid("updated_by").references(() => pulseUsers.id, { onDelete: "set null" }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Documentos, certificaciones, entrenamientos (videos incluidos) y demás archivos de la ficha.
+// Bucket privado "pulse" en ruta ritmo/<userId>/<id>-<nombre>.
+export const desempenoArchivos = pgTable(
+  "desempeno_archivos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    categoria: text("categoria").notNull(), // identificacion | contrato | certificacion | entrenamiento | nomina | otro
+    nombre: text("nombre").notNull(),
+    storagePath: text("storage_path").notNull(),
+    mime: text("mime"),
+    bytes: integer("bytes"),
+    subidoPor: uuid("subido_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_archivos_user").on(t.userId, t.createdAt)],
+);
+
+// Ausencias que registra RR.HH. (vacaciones, enfermedad, maternidad, personal). El cobro contra los
+// saldos (vacaciones / enfermedad / sin paga) lo calcula lib/desempeno/rrhh.ts.
+export const desempenoAusencias = pgTable(
+  "desempeno_ausencias",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(), // vacaciones | enfermedad | maternidad | personal
+    desde: text("desde").notNull(),
+    hasta: text("hasta").notNull(),
+    dias: doublePrecision("dias").notNull(),
+    certificado: boolean("certificado").notNull().default(false), // enfermedad con certificado médico válido
+    nota: text("nota"),
+    registradoPor: uuid("registrado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_ausencias_user").on(t.userId, t.desde)],
+);
+
+// Ajustes de nómina del mes (bono, comisión, descuento…), en USD: + suma, − resta.
+export const desempenoAjustes = pgTable(
+  "desempeno_ajustes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    mes: text("mes").notNull(), // YYYY-MM
+    concepto: text("concepto").notNull(),
+    monto: doublePrecision("monto").notNull(),
+    createdBy: uuid("created_by").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_ajustes_user_mes").on(t.userId, t.mes)],
+);
+
+// Canal ético (25/sep/2026): cualquier persona reporta algo antiético, con su nombre o de forma
+// anónima (userId null). SOLO lo ve Elvin (admin): un reporte puede ser sobre un líder o RR.HH.
+export const desempenoEtica = pgTable(
+  "desempeno_etica",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => pulseUsers.id, { onDelete: "set null" }), // null = anónimo
+    categoria: text("categoria").notNull(),
+    descripcion: text("descripcion").notNull(),
+    involucrados: text("involucrados"),
+    estado: text("estado").notNull().default("nuevo"), // nuevo | revisando | cerrado
+    notaInterna: text("nota_interna"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_etica_estado").on(t.estado, t.createdAt)],
+);

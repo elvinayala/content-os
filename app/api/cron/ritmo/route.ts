@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
+import { resumenPersonas } from "@/lib/desempeno/fichas";
+import { cumpleDoceMesesHoy } from "@/lib/desempeno/rrhh";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -47,6 +49,21 @@ export async function GET(req: NextRequest) {
   const base = process.env.CONTENT_OS_URL ?? "https://content-os-chi-seven.vercel.app";
   const url = `${base}/ritmo/equipo`;
   const hoy = fechaPR(Date.now());
+
+  // ?tarea=aniversarios (diario 9 AM PR): quien cumple HOY 12 meses → aviso a la persona y a RR.HH.
+  if (tarea === "aniversarios") {
+    const gente = (await resumenPersonas()).filter((g) => g.ficha && g.perfil.activo && g.perfil.fechaIngreso && cumpleDoceMesesHoy(g.perfil.fechaIngreso, hoy));
+    const rrhh = [...(process.env.RITMO_RRHH ?? "").split(","), ...(process.env.RITMO_AVISO_A ?? "carilin@levelupmediapr.net").split(",")].map((x) => x.trim().toLowerCase()).filter(Boolean);
+    const envios: { para: string; texto: string; enviado?: boolean }[] = [];
+    for (const g of gente) {
+      const dias = g.saldos?.vacaciones.disponibles ?? 0;
+      const nombre = g.perfil.nombre.split(" ")[0];
+      envios.push({ para: g.perfil.email, texto: `🌴 ¡Felicidades, ${nombre}! Hoy cumples 12 meses con nosotros. Ya puedes solicitar tus vacaciones: tienes ${dias} días acumulados. Coordínalo con RR.HH. <${base}/ritmo/personas/${g.perfil.userId}|Ver en Ritmo>` });
+      for (const e of rrhh) envios.push({ para: e, texto: `🌴 ${g.perfil.nombre} cumple hoy 12 meses: ya puede solicitar vacaciones (${dias} días acumulados). <${base}/ritmo/personas/${g.perfil.userId}|Ver ficha>` });
+    }
+    if (real) for (const e of envios) e.enviado = await dmSlack(e.para, e.texto);
+    return NextResponse.json({ ok: true, real, tarea, envios });
+  }
 
   if (tarea === "semanal") {
     const hasta = sumarDias(hoy, -1);

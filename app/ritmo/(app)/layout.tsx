@@ -1,19 +1,19 @@
 import { redirect } from "next/navigation";
 
 import { NavRitmo } from "@/components/ritmo/nav";
-import { usuarioActual } from "@/lib/pulse/auth";
-import { puedeGestionarUsuarios } from "@/lib/pulse/types";
+import { leerFicha } from "@/lib/desempeno/fichas";
+import { usuarioRitmo } from "@/lib/desempeno/sesion";
 
 export const dynamic = "force-dynamic";
 
 export default async function RitmoAppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const u = await usuarioActual();
+  const u = await usuarioRitmo();
   if (!u) redirect("/ritmo/entrar");
-  // Vista maestra (Equipo + Ajustes): solo Elvin, Carilin y Aure (admin/editoras).
-  const maestro = puedeGestionarUsuarios(u.rol);
+  // Vista maestra (Equipo, Personas, Ajustes): Elvin, Carilin, Aure y RR.HH. (Yaileen).
+  const maestro = u.maestro;
   return (
     <>
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={(await leerFicha(u.id).catch(() => null)) ? u.id : null} />
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
     </>
   );

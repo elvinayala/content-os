@@ -304,7 +304,7 @@ export interface Panel {
 }
 
 /** Todo lo del panel para lo que `actor` puede ver, de `desde` a `hasta` (días PR). */
-export async function armarPanel(actor: UsuarioPulse, desde: string, hasta: string, ahora = Date.now()): Promise<Panel> {
+export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde: string, hasta: string, ahora = Date.now()): Promise<Panel> {
   const hoy = fechaPR(ahora);
   const perfiles = (await leerPerfiles()).filter((p) => puedeVer(actor, p));
   const ids = perfiles.map((p) => p.userId);
@@ -383,6 +383,12 @@ export async function estadoPonche(userId: string): Promise<{ hoy: string; abier
 }
 
 /** El score se enseña cuando termina la calibración (DESEMPENO_SCORE=on). Antes, solo admin lo ve (vista previa). */
+/** Actor de Ritmo: el usuario de Pulse + si es de Recursos Humanos (emails en RITMO_RRHH). */
+export function actorRitmo<T extends { email: string; rol: UsuarioPulse["rol"] }>(u: T): T & { rrhh: boolean } {
+  const rrhh = (process.env.RITMO_RRHH ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  return { ...u, rrhh: rrhh.includes(u.email.toLowerCase()) };
+}
+
 export function modoScore(rol: string): "visible" | "vista-previa" | "oculto" {
   if (process.env.DESEMPENO_SCORE === "on") return "visible";
   return rol === "admin" ? "vista-previa" : "oculto";

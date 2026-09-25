@@ -7,8 +7,8 @@ import { COLOR, EstadoChip, fmtHoras, horaPR, MiniDias, ScoreBadge, Tarjeta } fr
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
-import { usuarioActual } from "@/lib/pulse/auth";
-import { puedeGestionarUsuarios, type ColorPulse } from "@/lib/pulse/types";
+import { usuarioRitmo } from "@/lib/desempeno/sesion";
+import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +17,11 @@ export const metadata = { title: "Equipo" };
 const esProduccion = (puesto: string) => puestoPorId(puesto)?.kpis.some((k) => k.fuente === "produccion" && k.id === "terminadas");
 
 export default async function DesempenoPage({ searchParams }: { searchParams: Promise<{ d?: string }> }) {
-  const u = await usuarioActual();
+  const u = await usuarioRitmo();
   if (!u) return null;
   const { d: depto } = await searchParams;
   const hoy = fechaPR(Date.now());
-  const gestor = puedeGestionarUsuarios(u.rol);
+  const gestor = u.maestro;
 
   let panel: Panel;
   try {

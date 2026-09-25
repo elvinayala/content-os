@@ -6,7 +6,7 @@ import { diaCorto, EstadoChip, fmtHoras, horaPR, ScoreBadge } from "@/components
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
 import { colorScore, fechaPR, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,7 @@ const fmtValor = (d: DetalleKpi) => (d.valor === null ? "—" : `${d.valor}${d.k
 const fmtMeta = (d: DetalleKpi) => (d.kpi.sentido === "info" ? "—" : `${d.kpi.sentido === "mayor" ? "≥" : "≤"} ${d.kpi.meta}${d.kpi.unidad === "%" ? "%" : d.kpi.unidad === "min" ? " min" : ""}`);
 
 export default async function PersonaPage({ params }: { params: Promise<{ persona: string }> }) {
-  const u = await usuarioActual();
+  const u = await usuarioRitmo();
   if (!u) return null;
   const { persona } = await params;
   const hoy = fechaPR(Date.now());
