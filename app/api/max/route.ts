@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { BloqueoMax, buscarLlamadas, canalClientePermitido, canalesDelBot, enviarAprobado, leerCanal, leerHilo, notaEnAprobaciones, proponer } from "@/lib/max/flujo";
 import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from "@/lib/max/operador";
-import { actualizarItem, cliente, guardarCliente, item, items, listarClientes } from "@/lib/max/repo";
+import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes } from "@/lib/max/repo";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
 // Max en Slack — las manos de Max (scripts/max.mjs, desde su contenedor de Railway). Auth con
@@ -111,7 +111,14 @@ export async function POST(req: NextRequest) {
       await notaEnAprobaciones(`${estado === "ejecutado" ? "✅" : "⚠️"} #${id}: ${resultado}`, actual.aprobacion_ts);
       return NextResponse.json({ ok: true, item: i });
     }
-    case "enviar": {
+    case "buzon-prueba": {
+      // Solo para pruebas de punta a punta: simula lo que llegaría de Slack (p. ej. el resumen de Jessica
+      // en el hilo) sin que nadie tenga que escribir. Se marca PRUEBA para que Max lo sepa.
+      const texto = s("texto", 8000);
+      if (!texto || !/prueba/i.test(texto)) return mal("texto (tiene que decir PRUEBA)");
+      return NextResponse.json({ ok: true, id: await alBuzonMax(texto) });
+    }
+        case "enviar": {
       const r = await enviarAprobado(Number(b.id));
       return NextResponse.json({ ok: r.ok, texto: r.texto }, { status: r.ok ? 200 : 409 });
     }

@@ -2,7 +2,7 @@ import "server-only";
 
 import { clienteDeReunion, markdownASlack, type ReunionConTranscripcion, transcripcionCorta } from "@/lib/fathom";
 
-import { notaEnAprobaciones } from "./flujo";
+import { CANAL_APROBACIONES, publicar } from "./flujo";
 import { encabezadoBuzon, slugCliente } from "./operador";
 import { alBuzonMax, buscarCliente, cliente, guardarCliente } from "./repo";
 
@@ -24,13 +24,15 @@ export async function iniciarClienteMax(r: { nombre: string; negocio: string; re
 
 const JESSICA = () => process.env.MAX_PM_SLACK_ID || "U08SN35L2UX";
 
-// prueba = true: lo mismo pero marcado 🧪, sin etiquetar a Jessica y sin despertar a Max (no gasta).
-export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones: { prueba?: boolean } = {}): Promise<{ slug: string; pedidoEnviado: boolean } | null> {
+// prueba = true: lo mismo pero marcado 🧪 y sin etiquetar a Jessica; sin despertar a Max (no gasta),
+// salvo completo = true: Max trabaja de verdad (con la instrucción de que es una prueba: no toca Meta,
+// no gasta créditos, no vincula canales).
+export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones: { prueba?: boolean; completo?: boolean } = {}): Promise<{ slug: string; pedidoEnviado: boolean; hilo?: string } | null> {
   const prueba = Boolean(opciones.prueba);
   if (process.env.MAX_FATHOM === "off" || !process.env.SLACK_MAX_CHANNEL_ID) return null;
   const { nombre, emails } = clienteDeReunion(r);
   const existente = await buscarCliente(emails, slugCliente(nombre));
-  const slug = existente?.slug ?? (prueba ? "prueba-fathom" : slugCliente(nombre));
+  const slug = prueba ? `prueba-${slugCliente(nombre)}`.slice(0, 48) : existente?.slug ?? slugCliente(nombre);
   const resumen = r.default_summary?.markdown_formatted?.trim() || "(Fathom no generó resumen)";
   const tareas = (r.action_items ?? []).filter((t) => t.description?.trim()).map((t) => `- ${t.description!.trim()}${t.assignee?.name ? ` (${t.assignee.name})` : ""}`).join("\n");
   const link = r.share_url || r.url || "";
@@ -56,14 +58,16 @@ export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones
     `${prueba ? "@Jessica" : `<@${JESSICA()}>`} déjame *tu resumen aquí en este hilo*: lo que viste del negocio, qué le prometimos, qué falta (accesos, material, videos) y cualquier alerta. Con eso armo el plan y lo subo a aprobación. Ya empecé a investigar. — Max`,
     `_(cliente: ${slug})_`,
   ].join("\n");
-  const ok = await notaEnAprobaciones(pedido);
+  const post = CANAL_APROBACIONES() ? await publicar(CANAL_APROBACIONES(), pedido) : { ok: false as const, ts: undefined };
+  const ok = post.ok;
 
-  if (prueba) return { slug, pedidoEnviado: ok };
+  if (prueba && !opciones.completo) return { slug, pedidoEnviado: ok, hilo: post.ts };
   await alBuzonMax(
-    `${encabezadoBuzon("onboarding", { cliente: slug, fuente: "fathom", recording: r.recording_id })}\n` +
+    `${encabezadoBuzon("onboarding", { cliente: slug, fuente: prueba ? "fathom PRUEBA" : "fathom", recording: r.recording_id, hilo: post.ts })}\n` +
+      (prueba ? "🧪 ESTO ES UNA PRUEBA de punta a punta que pidió Elvin: cliente ficticio. Haz TODO el proceso real hasta subir el plan a aprobación, pero NO toques Meta (ni cuentas ni campañas), NO gastes créditos de Higgsfield ni de Apify, NO vincules canales y marca el título de lo que propongas con (PRUEBA).\n" : "") +
       `Jessica terminó el onboarding de ${existente?.nombre || nombre}. ARRANCA YA: lee el expediente (max.mjs cliente ${slug}: formulario, Fathom y transcripción), la llamada de venta (max.mjs llamada '${(existente?.nombre || nombre).split(" (")[0]}'), espía la competencia y haz la matemática comercial. ` +
       `${ok ? "Ya le pedí a Jessica su resumen en #max-aprobaciones; su respuesta te llega como [Max canal · de Jessica …]." : "No pude pedirle el resumen a Jessica en #max-aprobaciones: pídeselo tú con una nota."} ` +
       `Cuando tengas su resumen, arma el plan (cerebro §14) y súbelo con max.mjs proponer ${slug} plan. Si su resumen no llega, NO inventes lo que falta: deja el borrador listo y recuérdaselo con una nota en el mismo hilo.\n\nResumen de Fathom:\n${resumen.slice(0, 5000)}\n\nTareas:\n${tareas || "(ninguna)"}`,
   );
-  return { slug, pedidoEnviado: ok };
+  return { slug, pedidoEnviado: ok, hilo: post.ts };
 }

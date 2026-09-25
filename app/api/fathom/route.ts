@@ -93,7 +93,9 @@ export async function POST(req: NextRequest) {
 
   const mensaje = mensajeSlack(r);
   // ?prueba=1&max=1: además corre el arranque de Max en modo prueba (sin mención ni buzón).
-  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: esOnboarding(r) ? await onboardingDesdeFathom(r, { prueba: true }) : null });
+  // ?prueba=1&max=1 → arranque de Max en modo prueba (sin mención ni buzón); max=completo → Max trabaja.
+  const modoMax = req.nextUrl.searchParams.get("max");
+  if (prueba && modoMax) return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: esOnboarding(r) ? await onboardingDesdeFathom(r, { prueba: true, completo: modoMax === "completo" }) : null });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
 
   // Del equipo solo entran dos cosas: las llamadas de cierre de Roger y Laura (van al canal) y los
