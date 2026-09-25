@@ -30,3 +30,9 @@ test("no rompe preguntas ni exclamaciones al final, y a veces quita el punto fin
   const finales = new Set([1, 2, 3, 4, 5, 6, 7, 8].map((i) => humanizar("Dale, te aviso.", i, "z" + i).endsWith(".")));
   assert.ok(finales.has(false));
 });
+
+test("quita los asteriscos de negrita sin tocar el precio (Messenger los muestra literales, 25/sep)", () => {
+  const out = humanizar("El reemplazo de inodoro es *$219 de mano de obra + $19 de coordinación*, con garantía de 12 meses.", 1, "messenger:1");
+  assert.ok(!out.includes("*"), out);
+  assert.match(out, /\$219 de mano de obra \+ \$19 de coordinación/);
+});

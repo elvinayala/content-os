@@ -4,6 +4,7 @@
  *  - sin "¡" de apertura (casi nadie lo escribe en WhatsApp) y a veces sin "¿"
  *  - minúscula al empezar cuando la primera palabra es común (nunca un nombre propio)
  *  - sin punto final la mayoría de las veces
+ *  - sin asteriscos de negrita (*así*): en Messenger/IG salen literales (Elvin, 25/sep)
  *  - UN solo error leve de acento en toda la conversación, en el 3er o 4to mensaje
  * Nunca toca números, precios, horas, links ni correos: solo palabras de una lista cerrada.
  * Determinista (semilla = contacto + número de mensaje) para que se pueda probar.
@@ -23,6 +24,7 @@ export function humanizar(texto: string, indice: number, contactoId: string): st
   if (!t || /https?:\/\//.test(t) && t.length < 40) return t; // un link solo se deja tal cual
   const s = (k: string) => azar(`${contactoId}:${indice}:${k}`);
 
+  t = t.replace(/\*{1,2}([^*\n]+?)\*{1,2}/g, "$1").replace(/\*/g, "");      // fuera las negritas *así*
   t = t.replace(/(^|\n)\s*¡/g, "$1").replace(/ ¡/g, " ");                 // fuera los ¡ de apertura
   if (s("abre?") < 0.5) t = t.replace(/(^|\n|\. )¿/g, "$1");              // a veces fuera el ¿
   // Minúscula al empezar (y al empezar cada párrafo) si la palabra es común.

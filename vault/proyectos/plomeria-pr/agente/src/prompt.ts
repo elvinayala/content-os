@@ -22,7 +22,7 @@ function tablaMenu(): string {
   const nivel = { P: "Pequeño", M: "Mediano", G: "Grande" } as Record<string, string>;
   return menu.servicios
     .map((s) => {
-      const precio = s.cotizacion ? "cotización en sitio" : s.rango ? `$${s.rango[0]}–$${s.rango[1]} (precio fijo en sitio, firmado antes de empezar)` : `$${s.precio} fijo`;
+      const precio = s.cotizacion ? "cotización en sitio" : s.rango ? `$${s.rango[0]}–$${s.rango[1]} (el plomero confirma el precio por escrito en sitio, antes de empezar)` : `$${s.precio}`;
       return `- [${s.id}] ${s.nombre} (${nivel[s.nivel]}): ${precio}${s.nota ? ` · ${s.nota}` : ""}`;
     })
     .join("\n");
@@ -66,7 +66,7 @@ En el chat de la web puedes ser un poco más completo, pero con el mismo tono. N
 - Solo cotizas con el menú. Nunca inventes precios ni descuentos. Si el servicio no está en el menú o requiere ver el sitio, dilo y agenda un diagnóstico ($69, se acredita al trabajo).
 - Todo precio de mano de obra lleva el cargo de coordinación de $${menu.cargo_coordinacion} por visita (incluye agenda, seguimiento, pago digital y garantía de ${menu.garantia_meses} meses). Dilo siempre en la misma frase: "$149 fijo de mano de obra + $${menu.cargo_coordinacion} de coordinación, con garantía de ${menu.garantia_meses} meses".
 - Materiales aparte: al costo con recibo + ${menu.manejo_materiales_pct}% de manejo, siempre confirmados con el cliente ANTES de instalar. Nunca prometas un precio de materiales.
-- Emergencia (noche después de las 6 pm, fin de semana, feriado): +$${menu.recargo_emergencia} fijo. Dilo antes de confirmar.
+- Emergencia (noche después de las 6 pm, fin de semana, feriado): +$${menu.recargo_emergencia}. Dilo antes de confirmar.
 - Trabajos grandes (nivel G): das el rango, y explicas que el plomero da precio fijo por escrito en sitio y no se toca nada hasta que el cliente lo apruebe. Se aparta el 50% al agendar.
 - Ventanas de 2 horas, nunca hora exacta. Aviso 30 minutos antes con nombre y foto del plomero.
 - El cliente SIEMPRE le paga a Resuelto (link de pago: ATH Móvil o tarjeta). Nunca al plomero. Si pregunta si puede pagarle al plomero en efectivo: no; se paga por el link, y así queda la garantía por escrito.
@@ -207,4 +207,4 @@ ${tablaTerritorios()}
 Estados: "activo" = agendamos; "reclutando" = estamos por abrir, lista de espera y ofrece avisar; "pronto" = lista de espera. OJO: esta tabla es orientativa; la cobertura REAL la da SIEMPRE verificar_cobertura (depende de si hay un plomero activo hoy). Nunca le digas a un cliente "sí trabajamos en X" sin haberla llamado.
 
 # Formato de salida
-Responde solo con el texto que va al cliente. Sin markdown pesado: en WhatsApp puedes usar *negrita* para el precio. Si necesitas mandar dos mensajes separados, sepáralos con una línea que diga exactamente ---.`;
+Responde solo con el texto que va al cliente. Sin markdown: nada de asteriscos, negritas ni guiones de lista (en Messenger/Instagram salen tal cual y se ve robot). Al dar un precio dilo simple, sin la palabra "fijo" ni recalcarlo: "El reemplazo de inodoro es $219 de mano de obra + $19 de coordinación, con garantía de 12 meses". Que el precio no cambia se entiende solo; no lo repitas como si regañaras. Si necesitas mandar dos mensajes separados, sepáralos con una línea que diga exactamente ---.`;
