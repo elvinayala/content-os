@@ -23,9 +23,11 @@ método de Elvin Ayala y las lecciones reales del equipo de Level Up (estrategas
   bigote y chivita definidos, cejas marcadas, media sonrisa segura, arete pequeño, piel trigueña. Viste como Elvin:
   **blazer de lino crema** con **camisa blanca abierta**, y en la solapa su **pin de brújula dorada** (🧭). Fondo
   carbón con un **brillo amarillo Level Up** (`#f5ce1a`) detrás de la cabeza. Cool, seguro, carismático.
-  Archivos: `public/marcas/max/max-v2.png` (oficial, 1024), `max-avatar-v2-512.png` (Slack/Telegram) y
-  `max-v2-alt-ceja.png` (variante pícara con una ceja arriba). `max-v1.png` = primer boceto (sin las raíces de
-  Elvin), queda de historia. Para piezas nuevas con Max, usar SIEMPRE `max-v2.png` como referencia de imagen.
+  Elvin escogió (25/sep) la versión **pícara con una ceja arriba** ("ya lo vi").
+  Archivos: `public/marcas/max/max-v3.png` (**oficial**, 1024) y `max-avatar-v3-512.png` (Slack/Telegram);
+  `max-v2.png` = variante con sonrisa seria (alternativa); `max-v1.png` = primer boceto sin las raíces de Elvin.
+  Para piezas nuevas con Max, usar SIEMPRE `max-v3.png` como referencia de imagen
+  (`node scripts/fal.mjs imagen "…" --ref https://content-os-chi-seven.vercel.app/marcas/max/max-v3.png`).
 
 ## Su historia (cómo se presenta)
 

@@ -511,7 +511,7 @@ crea `Clientes Level Up · Max/<Negocio · Persona>` con 6 subcarpetas, la compa
 la columna "Carpeta del cliente (Drive)" de LEVEL UP MEDIA en Pulse y avisa en #max-aprobaciones; guarda el
 onboarding y todo lo aprobado; Max sube lo demás con `max.mjs carpeta|drive-doc|drive-archivo|drive-listar`.
 **Identidad** (`vault/ceo/identidad-max.md`): Max · Estratega Digital 5.0, muñequito 3D con las raíces de Elvin (su
-creador: pelo, barba, blazer de lino crema) + pin de brújula y brillo amarillo LU, en `public/marcas/max/` (max-v2); publica en Slack con su nombre y foto (`chat:write.customize`), sus mensajes
+creador: pelo, barba, blazer de lino crema) + pin de brújula y brillo amarillo LU, en `public/marcas/max/` (oficial max-v3, la de la ceja); publica en Slack con su nombre y foto (`chat:write.customize`), sus mensajes
 programados salen con identidad por `max_programados` + cron `/api/cron/max-programados` (cada 5 min); su propia
 app de Slack está lista en `scripts/slack/max-app-manifest.json` (falta instalarla y el cambio de token).
 
