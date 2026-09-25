@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { after, NextRequest, NextResponse } from "next/server";
 
-import { esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { CLOSERS_FATHOM, esDeCloser, esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
 import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -96,9 +96,12 @@ export async function POST(req: NextRequest) {
   if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: esOnboarding(r) ? await onboardingDesdeFathom(r, { prueba: true }) : null });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
 
-  // Del equipo, lo que no es onboarding se descarta sin guardar nada (Elvin: "más nada").
+  // Del equipo solo entran dos cosas: las llamadas de cierre de Roger y Laura (van al canal) y los
+  // onboardings etiquetados (van a Max). Lo demás se descarta sin guardar nada.
   const onboarding = esOnboarding(r);
-  if (desdeEquipo && !onboarding) return NextResponse.json({ ok: true, ignorada: "no es onboarding" });
+  const closers = process.env.FATHOM_CLOSERS_EMAILS ? process.env.FATHOM_CLOSERS_EMAILS.split(",") : CLOSERS_FATHOM;
+  const deCloser = desdeEquipo && esDeCloser(r, closers);
+  if (desdeEquipo && !onboarding && !deCloser) return NextResponse.json({ ok: true, ignorada: "ni cierre ni onboarding" });
 
   const titulo = (r.meeting_title || r.title || "").slice(0, 300);
   await asegurarTabla();
@@ -118,9 +121,9 @@ export async function POST(req: NextRequest) {
   if (tomada[0].intentos === 1 && onboarding) {
     after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
   }
-  // Lo del equipo (onboardings de Jessica) es solo para Max: no sale en el canal de resúmenes, que
-  // sigue siendo el de las llamadas de Elvin que pidió Aure (#29).
-  if (desdeEquipo) {
+  // Los onboardings del equipo son solo para Max. Al canal de resúmenes: las llamadas de Elvin (#29) y
+  // las de cierre de Roger y Laura (Elvin, 24/sep).
+  if (desdeEquipo && !deCloser) {
     await d.execute(sql`UPDATE fathom_llamadas SET estado = 'max', actualizado_el = now() WHERE recording_id = ${id}`);
     return NextResponse.json({ ok: true, max: true });
   }

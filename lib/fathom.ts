@@ -170,3 +170,14 @@ export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): str
   const t = (r.transcript ?? []).map((x) => `${x.speaker?.display_name || "?"}: ${(x.text || "").trim()}`).filter((l) => l.length > 3).join("\n");
   return t.length > max ? `${t.slice(0, max)}\n…(sigue en Fathom)` : t;
 }
+
+// ── Llamadas de cierre → canal de resúmenes (Elvin, 24/sep/2026) ─────────────────────────────────
+// "Necesito que recoja las llamadas de Roger y Laura y las envíe al canal. Las llamadas de cierre."
+// Del webhook de EQUIPO, al canal va lo que grabaron los closers. Laura graba con la cuenta de Level
+// Up Media. Juan David y el resto NO. Override: FATHOM_CLOSERS_EMAILS (coma).
+export const CLOSERS_FATHOM = ["roger.arteaga@levelupmediapr.net", "levelupmediapr@gmail.com"];
+
+export function esDeCloser(r: ReunionFathom, emails: string[] = CLOSERS_FATHOM): boolean {
+  const grabo = (r.recorded_by?.email || "").trim().toLowerCase();
+  return Boolean(grabo) && emails.map((e) => e.trim().toLowerCase()).includes(grabo);
+}
