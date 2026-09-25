@@ -73,3 +73,16 @@ creó Elvin; SLACK_MAX_CHANNEL_ID en Vercel). Elvin: NINGÚN canal de cliente to
 con clientes: solo negocio, nada personal (revisarParaCliente bloquea credenciales/promesas/gratis/voseo,
 marca ⚠ dinero/personal/otros clientes). Costo estimado 1.ª semana por cliente ≈ $20-30 de Claude
 (API key, sin --model) + ~10-20 créditos Higgsfield en flyers (+90-140 por video Marketing Studio). "max o carilin" para publicar lo interpreté como Elvin o Carilin.
+**24/sep noche — arranque por Fathom:** el disparador real de Max es la reunión de onboarding de Jessica
+(U08SN35L2UX) en Fathom → /api/fathom (esOnboarding por título o grabada por Jessica) → expediente con
+resumen/tareas/transcripción + hilo en #max-aprobaciones pidiéndole a Jessica su resumen + Max arranca.
+Aprueban Jessica, Carilin o Elvin; publicar solo Elvin/Carilin. Webhook por cuenta: `fathom.mjs crear
+--cuenta jessica` (FATHOM_API_KEY_JESSICA → FATHOM_WEBHOOK_SECRET_JESSICA). Pendiente: la API key de
+Fathom de Jessica; el registro de /api/fathom está vacío (el webhook de Elvin nunca entregó nada).
+Probado en prod con ?prueba=1&max=1 (expediente "prueba-fathom" y mensaje 🧪 en el canal).
+**Fathom es cuenta de EQUIPO (Elvin, 24/sep):** no hace falta llave de Jessica: `FATHOM_API_KEY=<la de Elvin>
+node scripts/fathom.mjs crear --equipo` (shared_team_recordings → FATHOM_WEBHOOK_SECRET_EQUIPO) — pendiente
+que Elvin lo corra; Jessica debe compartir sus grabaciones con el equipo. Al canal de Aure solo van las
+llamadas de Elvin (FATHOM_SLACK_EMAILS). Programados por el bot (firmados Max) para el 25/sep: Carilin
+7:30 AM (Q0C4ANAQ9AS, DM D0C33M73V5Y) y Jessica 8:00 AM (Q0C4CHA3DEW, DM D0BFMAR99V4) con instrucciones
+de Fathom y el porqué; cancelar con chat.deleteScheduledMessage.

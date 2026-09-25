@@ -23,3 +23,8 @@ email que en Calendly (el cruce es automático).
 (bot Command Center del Slack de LU) y AIB → #borinquenia-calls del Slack de AI Borinquen (webhook
 entrante del "Command Center" de ese workspace, `SLACK_AIB_CALLS_WEBHOOK`). Regla de Elvin: nunca mezclar
 Slacks/Calendlys/ACs entre marcas. `lib/aviso-llamadas.ts`.
+
+**Fathom → #office-2-resumendellamadas (24/sep/2026):** Elvin pidió que salgan TODAS las llamadas de los closers
+Roger (roger.arteaga@levelupmediapr.net, U0C119DPXQR) y Laura (cuenta Level Up Media levelupmediapr@gmail.com)
+además de las de Elvin; nadie más (Juan David fuera). Regla en `vaAlCanalDeLlamadas` (lib/fathom.ts). Las de
+Roger/Laura llegan solo por el webhook de EQUIPO (`fathom.mjs crear --equipo`) y si comparten sus grabaciones.
