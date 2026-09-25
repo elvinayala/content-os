@@ -43,3 +43,9 @@ test("privacidad de Elvin: nada donde él grabó o participa", () => {
   assert.equal(esPrivadaDeElvin({ recording_id: 2, recorded_by: { email: "roger.arteaga@levelupmediapr.net" }, calendar_invitees: [{ email: "elvin@levelupmediapr.net", is_external: false }] }), true);
   assert.equal(esPrivadaDeElvin({ recording_id: 3, recorded_by: { email: "roger.arteaga@levelupmediapr.net" }, calendar_invitees: [{ email: "cliente@x.com", is_external: true }] }), false);
 });
+
+test("llamadas de cierre: también por nombre (Roger / Laura Bernal)", () => {
+  assert.equal(esDeCloser({ recording_id: 5, recorded_by: { name: "ana C.", email: "ana@x.com" }, meeting_title: "Laura Bernal" }), true);
+  assert.equal(esDeCloser({ recording_id: 6, recorded_by: { name: "Roger A.", email: "otra@x.com" }, meeting_title: "Paola: VIDEOLLAMADA" }), true);
+  assert.equal(esDeCloser({ recording_id: 7, recorded_by: { name: "Laura Pérez", email: "lp@x.com" }, meeting_title: "Otra" }), false);
+});

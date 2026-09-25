@@ -177,9 +177,15 @@ export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): str
 // Up Media. Juan David y el resto NO. Override: FATHOM_CLOSERS_EMAILS (coma).
 export const CLOSERS_FATHOM = ["roger.arteaga@levelupmediapr.net", "levelupmediapr@gmail.com"];
 
+// Elvin (24/sep): "todo lo que diga Roger o Laura Bernal" → también cuenta por nombre: quién grabó,
+// el título o los participantes (p. ej. la reunión "Laura Bernal" que grabó otra cuenta).
+const RE_CLOSERS = /\b(roger|laura\s+bernal)\b/i;
+
 export function esDeCloser(r: ReunionFathom, emails: string[] = CLOSERS_FATHOM): boolean {
   const grabo = (r.recorded_by?.email || "").trim().toLowerCase();
-  return Boolean(grabo) && emails.map((e) => e.trim().toLowerCase()).includes(grabo);
+  if (grabo && emails.map((e) => e.trim().toLowerCase()).includes(grabo)) return true;
+  const textos = [r.recorded_by?.name, r.meeting_title, r.title, ...(r.calendar_invitees ?? []).map((i) => i.name)];
+  return textos.some((t) => RE_CLOSERS.test(t || ""));
 }
 
 // ── Privacidad de Elvin (24/sep/2026, regla dura) ────────────────────────────────────────────────
