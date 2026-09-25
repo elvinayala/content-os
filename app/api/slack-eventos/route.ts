@@ -437,7 +437,7 @@ export async function POST(req: NextRequest) {
         }
         const u = await usuarioSlack(userId);
         await alBuzonMax(`${encabezadoBuzon("equipo", { de: u.nombre, hilo: raiz, canal: channel })}\n${texto}${ev.files?.length ? `\n(archivos: ${ev.files.map((f) => f.name).join(", ")})` : ""}`);
-        await postearRespuesta(channel, dec ? "Solo Elvin o Carilin aprueban; se lo paso a Max como comentario. 👀" : "👀 Max lo tiene; te contesta en este hilo.", raiz, false, IDENTIDAD_MAX);
+        await postearRespuesta(channel, dec ? "Solo Elvin, Carilin o Jessica aprueban; se lo paso a Max como comentario. 👀" : "👀 Max lo tiene; te contesta en este hilo.", raiz, false, IDENTIDAD_MAX);
       } catch (e) {
         console.error("[max aprobaciones]", e instanceof Error ? e.message : e);
       }

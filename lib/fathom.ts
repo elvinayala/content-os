@@ -131,3 +131,44 @@ export function mensajeSlack(r: ReunionFathom): { text: string; blocks: unknown[
   const text = `🎙️ ${titulo} · ${fechaHora(r.recording_start_time || r.scheduled_start_time)}`;
   return { text, blocks };
 }
+
+// ── Onboarding → Max (Elvin, 24/sep/2026) ──────────────────────────────────────────────────────
+// "Max debe recibir rápido el Fathom de la sesión de onboarding del cliente: que Jessica termine la
+// reunión y él comience a trabajar inmediatamente." Una reunión es de onboarding si su título lo
+// dice o si la grabó alguien de onboarding (FATHOM_ONBOARDING_EMAILS, default Jessica).
+export interface ReunionConTranscripcion extends ReunionFathom {
+  transcript?: { speaker?: { display_name?: string | null } | null; text?: string; timestamp?: string }[] | null;
+}
+
+const RE_ONBOARDING = /\b(onboarding|on-boarding|bienvenida|kick-?off|arranque|auditor[ií]a inicial)\b/i;
+
+export function esOnboarding(r: ReunionFathom, emailsOnboarding: string[] = ["jessica@levelupmediapr.net"]): boolean {
+  const titulo = `${r.meeting_title ?? ""} ${r.title ?? ""}`;
+  if (RE_ONBOARDING.test(titulo)) return true;
+  const quien = (r.recorded_by?.email || "").toLowerCase();
+  return Boolean(quien) && emailsOnboarding.map((e) => e.toLowerCase().trim()).includes(quien);
+}
+
+// El cliente de la reunión = los invitados externos (no del equipo). Nombre para el expediente: el
+// título sin la palabra "onboarding" si dice algo, si no el nombre del primer externo.
+export function clienteDeReunion(r: ReunionFathom, dominiosEquipo = ["levelupmediapr.net", "aiborinquen.com"]): { nombre: string; emails: string[] } {
+  const externos = (r.calendar_invitees ?? []).filter((i) => {
+    const dom = (i.email || "").toLowerCase().split("@")[1] || "";
+    return i.is_external !== false && !dominiosEquipo.some((d) => dom === d || dom.endsWith("." + d));
+  });
+  const emails = externos.map((i) => (i.email || "").toLowerCase().trim()).filter(Boolean);
+  const delTitulo = (r.meeting_title || r.title || "")
+    .replace(RE_ONBOARDING, "")
+    .replace(/\b(level up( media)?|lum|llamada|sesi[oó]n|reuni[oó]n|zoom|meet|call|con|de|y|x)\b/gi, " ")
+    .replace(/[|·:\-–—()[\]]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const nombre = (delTitulo.length >= 3 ? delTitulo : "") || externos[0]?.name?.trim() || emails[0] || "Cliente nuevo";
+  return { nombre: nombre.slice(0, 120), emails };
+}
+
+// Transcripción compacta para la ficha de Max (tope para no inflar tokens).
+export function transcripcionCorta(r: ReunionConTranscripcion, max = 15000): string {
+  const t = (r.transcript ?? []).map((x) => `${x.speaker?.display_name || "?"}: ${(x.text || "").trim()}`).filter((l) => l.length > 3).join("\n");
+  return t.length > max ? `${t.slice(0, max)}\n…(sigue en Fathom)` : t;
+}

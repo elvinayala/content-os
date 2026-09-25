@@ -64,10 +64,14 @@ export function okConCambio(nota: string): boolean {
   return /[a-záéíóúñ]{3,}.*\s.*[a-záéíóúñ]{3,}/i.test(n);
 }
 
+// Publicar campañas (prender pauta) es SOLO de Elvin y Carilin, aunque Jessica apruebe lo demás.
+export const PUEDEN_PUBLICAR = ["elvin", "carilin"];
+
 // Quién puede decidir: Elvin y Carilin (ids de Slack). MAX_APROBADORES = "Uxxx=elvin,Uyyy=carilin".
 export function aprobadores(env: string | undefined, ceo: string): Record<string, string> {
   const mapa: Record<string, string> = { [ceo]: "elvin" };
-  for (const par of String(env || "U07V7MVJ18B=carilin").split(",")) {
+  // Jessica (PM de onboarding) aprueba lo del onboarding junto a Elvin y Carilin (Elvin, 24/sep).
+  for (const par of String(env || "U07V7MVJ18B=carilin,U08SN35L2UX=jessica").split(",")) {
     const [id, nombre] = par.split("=").map((x) => x.trim());
     if (id && nombre) mapa[id] = nombre.toLowerCase();
   }

@@ -105,6 +105,18 @@ export async function clientePorCanal(canal: string): Promise<ClienteMax | null>
   return c;
 }
 
+// Para cruzar una reunión de Fathom con el expediente que abrió el formulario: por correo del
+// cliente (ficha.email) o por slug del nombre.
+export async function buscarCliente(emails: string[], slug: string): Promise<ClienteMax | null> {
+  await asegurarTablas();
+  const d = await db();
+  for (const e of emails) {
+    const r = filas<ClienteMax>(await d.execute(sql`SELECT * FROM max_clientes WHERE lower(ficha->>'email') = ${e.toLowerCase()} ORDER BY actualizado_el DESC LIMIT 1`))[0];
+    if (r) return r;
+  }
+  return cliente(slug);
+}
+
 export async function listarClientes(): Promise<ClienteMax[]> {
   await asegurarTablas();
   const d = await db();

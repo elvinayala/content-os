@@ -10,11 +10,17 @@ import { execFileSync } from "node:child_process";
 
 const API = "https://api.fathom.ai/external/v1";
 const PROD = process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app";
-const [cmd, arg] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const iCuenta = args.indexOf("--cuenta");
+// --cuenta jessica → usa FATHOM_API_KEY_JESSICA, guarda FATHOM_WEBHOOK_SECRET_JESSICA e incluye la
+// transcripción (para que Max arranque el onboarding con todo). Sin --cuenta = la de Elvin.
+const CUENTA = iCuenta >= 0 ? String(args.splice(iCuenta, 2)[1] || "").toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+const [cmd, arg] = args;
 
 async function fathom(path, init = {}) {
-  const key = process.env.FATHOM_API_KEY;
-  if (!key) throw new Error("Falta FATHOM_API_KEY (Fathom → Settings → API Access de elvin@levelupmediapr.net)");
+  const nombreKey = CUENTA ? `FATHOM_API_KEY_${CUENTA}` : "FATHOM_API_KEY";
+  const key = process.env[nombreKey];
+  if (!key) throw new Error(`Falta ${nombreKey} (Fathom → Settings → API Access de esa cuenta)`);
   const r = await fetch(`${API}${path}`, { ...init, headers: { "X-Api-Key": key, "Content-Type": "application/json", ...init.headers } });
   const t = await r.text();
   if (!r.ok) throw new Error(`Fathom ${r.status}: ${t.slice(0, 300)}`);
@@ -29,14 +35,16 @@ if (cmd === "crear") {
       triggered_for: ["my_recordings"],
       include_summary: true,
       include_action_items: true,
+      ...(CUENTA ? { include_transcript: true } : {}),
     }),
   });
   console.log(`✓ Webhook creado: id ${w.id} → ${w.url}`);
   if (!w.secret) throw new Error("Fathom no devolvió el secreto");
-  const vc = ["vercel", "env", "add", "FATHOM_WEBHOOK_SECRET", "production", "--force", "--scope", "elvin-7614s-projects"];
+  const nombreSecreto = CUENTA ? `FATHOM_WEBHOOK_SECRET_${CUENTA}` : "FATHOM_WEBHOOK_SECRET";
+  const vc = ["vercel", "env", "add", nombreSecreto, "production", "--force", "--scope", "elvin-7614s-projects"];
   if (process.env.VERCEL_TOKEN) vc.push("--token", process.env.VERCEL_TOKEN);
   execFileSync("npx", ["--yes", ...vc], { input: w.secret, stdio: ["pipe", "ignore", "inherit"] });
-  console.log("✓ FATHOM_WEBHOOK_SECRET guardado en Vercel (production). Falta redeploy para que lo tome.");
+  console.log(`✓ ${nombreSecreto} guardado en Vercel (production). Falta redeploy para que lo tome.`);
 } else if (cmd === "borrar") {
   if (!arg) throw new Error("Uso: borrar <webhook_id>");
   await fathom(`/webhooks/${arg}`, { method: "DELETE" });

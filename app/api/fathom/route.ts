@@ -1,7 +1,8 @@
 import { sql } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 
-import { firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
 
@@ -65,13 +66,12 @@ export async function POST(req: NextRequest) {
   if (prueba) {
     if (!secretoCron(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
   } else {
-    const secreto = process.env.FATHOM_WEBHOOK_SECRET;
-    if (!secreto) return NextResponse.json({ error: "sin-configurar" }, { status: 503 });
-    const ok = firmaValida(secreto, {
-      id: req.headers.get("webhook-id"),
-      timestamp: req.headers.get("webhook-timestamp"),
-      firma: req.headers.get("webhook-signature"),
-    }, cuerpo);
+    // Un webhook por cuenta de Fathom (Elvin, Jessica…), cada uno con su secreto:
+    // FATHOM_WEBHOOK_SECRET y FATHOM_WEBHOOK_SECRET_<CUENTA>. Vale si firma con cualquiera.
+    const secretos = Object.entries(process.env).filter(([k, v]) => /^FATHOM_WEBHOOK_SECRET(_[A-Z0-9]+)?$/.test(k) && v).map(([, v]) => v as string);
+    if (!secretos.length) return NextResponse.json({ error: "sin-configurar" }, { status: 503 });
+    const cabeceras = { id: req.headers.get("webhook-id"), timestamp: req.headers.get("webhook-timestamp"), firma: req.headers.get("webhook-signature") };
+    const ok = secretos.some((sec) => firmaValida(sec, cabeceras, cuerpo));
     if (!ok) return NextResponse.json({ error: "firma-invalida" }, { status: 401 });
   }
 
@@ -88,6 +88,8 @@ export async function POST(req: NextRequest) {
   }
 
   const mensaje = mensajeSlack(r);
+  // ?prueba=1&max=1: además corre el arranque de Max en modo prueba (sin mención ni buzón).
+  if (prueba && req.nextUrl.searchParams.get("max") === "1") return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: await onboardingDesdeFathom(r, { prueba: true }) });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
 
   const titulo = (r.meeting_title || r.title || "").slice(0, 300);
@@ -103,6 +105,12 @@ export async function POST(req: NextRequest) {
          OR (fathom_llamadas.estado = 'procesando' AND fathom_llamadas.actualizado_el < now() - interval '10 minutes')
     RETURNING intentos`));
   if (!tomada.length) return NextResponse.json({ ok: true, repetida: true });
+
+  // Onboarding de un cliente (Elvin, 24/sep): Max arranca al instante, sin esperar a Slack.
+  const emailsOnboarding = (process.env.FATHOM_ONBOARDING_EMAILS || "jessica@levelupmediapr.net").split(",");
+  if (tomada[0].intentos === 1 && esOnboarding(r, emailsOnboarding)) {
+    after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
+  }
 
   let error: string | null = null;
   let ts: string | null = null;

@@ -16,11 +16,12 @@ test("decisiones en #max-aprobaciones: ok / no con corrección / publica", () =>
   assert.equal(parsearDecision("nota 12"), null);
 });
 
-test("solo Elvin y Carilin aprueban (ampliable por env)", () => {
+test("aprueban Elvin, Carilin y Jessica (ampliable por env)", () => {
   const a = aprobadores(undefined, "UCEO");
   assert.equal(a.UCEO, "elvin");
   assert.equal(a.U07V7MVJ18B, "carilin");
-  assert.equal(Object.keys(a).length, 2);
+  assert.equal(a.U08SN35L2UX, "jessica", "Jessica aprueba lo del onboarding");
+  assert.equal(Object.keys(a).length, 3);
   assert.equal(aprobadores("UX=carilin,UY=Aure", "UCEO").UY, "aure");
 });
 

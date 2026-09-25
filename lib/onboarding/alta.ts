@@ -6,7 +6,7 @@ import { formatearTelefono } from "@/lib/pulse/typeform";
 import { PREGUNTAS, type Respuestas, texto, visible } from "./level-up";
 
 // Formulario propio de Level Up → ficha del cliente en Pulse.
-export async function altaDesdeFormulario(token: string, r: Respuestas, opciones: { tablero?: string } = {}): Promise<ResultadoAlta & { resumen: string; negocio: string }> {
+export async function altaDesdeFormulario(token: string, r: Respuestas, opciones: { tablero?: string } = {}): Promise<ResultadoAlta & { resumen: string; negocio: string; email: string }> {
   const columnas: Record<string, string> = {};
   for (const p of PREGUNTAS) {
     if (!p.columna || !visible(p, r)) continue;
@@ -29,5 +29,5 @@ export async function altaDesdeFormulario(token: string, r: Respuestas, opciones
     { tablero: opciones.tablero, origen: "formulario" },
   );
   // Max (24/sep) arranca el proceso del cliente con estas mismas respuestas.
-  return { ...alta, resumen, negocio: texto(r.negocio) };
+  return { ...alta, resumen, negocio: texto(r.negocio), email: texto(r.email).toLowerCase() };
 }

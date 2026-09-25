@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const prueba = req.nextUrl.searchParams.get("prueba") === "1" && secretoValido(req.headers.get("x-prueba"), process.env.CRON_SECRET);
   try {
     const r = await altaDesdeFormulario(`form-${token}`, respuestas, { tablero: prueba ? "demo" : undefined });
-    // Cliente nuevo de verdad → Max abre su expediente y arranca (estrategia a aprobación).
+    // Cliente nuevo de verdad → Max abre su expediente (arranca de verdad con el Fathom del onboarding).
     if (!prueba && r.estado !== "repetido") after(() => iniciarClienteMax(r).catch((e) => console.error("[onboarding → max]", e instanceof Error ? e.message : e)));
     return NextResponse.json({ ok: true, estado: r.estado });
   } catch (e) {
