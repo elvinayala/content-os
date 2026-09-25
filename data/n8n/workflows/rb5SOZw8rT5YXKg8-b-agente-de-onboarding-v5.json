@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-01T01:18:07.181Z",
+  "updatedAt": "2026-09-25T03:48:31.387Z",
   "createdAt": "2025-11-03T11:59:44.265Z",
   "id": "rb5SOZw8rT5YXKg8",
   "name": "B-) Agente de onboarding v5",
@@ -1498,6 +1498,52 @@
           "name": "Google Gemini(PaLM) Api account 2"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b7c3d0e2-1f4a-4c9b-9a51-0d2e8f6a7c11",
+              "leftValue": "={{ new RegExp(\"gracias por (comunicarte|comunicarse|contactarnos|escribirnos|contactar|tu interés|su interés)|hemos recibido (tu|su) mensaje|recibimos (tu|su) mensaje|(te|le) (responderemos|contestaremos|atenderemos|contactaremos)|en breve (te|le) (atendemos|atenderemos|respondemos|responderemos|contactamos)|(brevemente|en breve|pronto|luego) (le |te )?respondo|nuestro horario|fuera de(l)? horario|horario de (atención|servicio|oficina)|mensaje automático|respuesta automática|auto-?reply|welcome to|thanks? (you )?for (contacting|reaching|your message|messaging)|envíanos la siguiente información|en qué (te|le) podemos ayudar|es un placer atender(te|le)\", \"i\").test($json[\"agent-input\"] || \"\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3944,
+        720
+      ],
+      "id": "5e9a1c47-8d2b-4f63-a0e4-2c7b9d13f580",
+      "name": "es-respuesta-automatica?",
+      "notes": "Saludo/ausencia automático del WhatsApp Business del cliente (\"¡Gracias por comunicarte…!\"). Si lo es, el agente calla: no es una respuesta de la persona."
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4156,
+        880
+      ],
+      "id": "a41f8e20-6b3c-4d7e-9f12-7c5e0b2d9a33",
+      "name": "ignorar-respuesta-automatica"
     }
   ],
   "connections": {
@@ -1667,7 +1713,7 @@
       "main": [
         [
           {
-            "node": "Code",
+            "node": "es-respuesta-automatica?",
             "type": "main",
             "index": 0
           }
@@ -2135,13 +2181,32 @@
           }
         ]
       ]
+    },
+    "es-respuesta-automatica?": {
+      "main": [
+        [
+          {
+            "node": "ignorar-respuesta-automatica",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
     "errorWorkflow": "fEOX9Q3Szkf6bLQq",
-    "executionTimeout": 1200
+    "executionTimeout": 1200,
+    "availableInMCP": false
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -2327,9 +2392,9 @@
       }
     ]
   },
-  "versionId": "6e5abc12-2333-4add-bf0f-d2d6d3f6bb07",
-  "activeVersionId": "6e5abc12-2333-4add-bf0f-d2d6d3f6bb07",
-  "versionCounter": 56,
+  "versionId": "70d8c5a5-fd4b-472d-a03b-0b5457aa5063",
+  "activeVersionId": "70d8c5a5-fd4b-472d-a03b-0b5457aa5063",
+  "versionCounter": 59,
   "triggerCount": 1,
   "shared": [
     {
@@ -2354,7 +2419,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-22T12:00:41.271Z",
+              "updatedAt": "2026-09-24T12:00:44.665Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -2382,7 +2447,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-22",
+              "lastActiveAt": "2026-09-24",
               "isPending": false
             }
           }
@@ -2399,9 +2464,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-07-01T01:18:10.500Z",
-    "createdAt": "2026-07-01T01:18:07.186Z",
-    "versionId": "6e5abc12-2333-4add-bf0f-d2d6d3f6bb07",
+    "updatedAt": "2026-09-25T03:48:31.393Z",
+    "createdAt": "2026-09-25T03:48:31.393Z",
+    "versionId": "70d8c5a5-fd4b-472d-a03b-0b5457aa5063",
     "workflowId": "rb5SOZw8rT5YXKg8",
     "nodes": [
       {
@@ -3895,6 +3960,52 @@
             "name": "Google Gemini(PaLM) Api account 2"
           }
         }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b7c3d0e2-1f4a-4c9b-9a51-0d2e8f6a7c11",
+                "leftValue": "={{ new RegExp(\"gracias por (comunicarte|comunicarse|contactarnos|escribirnos|contactar|tu interés|su interés)|hemos recibido (tu|su) mensaje|recibimos (tu|su) mensaje|(te|le) (responderemos|contestaremos|atenderemos|contactaremos)|en breve (te|le) (atendemos|atenderemos|respondemos|responderemos|contactamos)|(brevemente|en breve|pronto|luego) (le |te )?respondo|nuestro horario|fuera de(l)? horario|horario de (atención|servicio|oficina)|mensaje automático|respuesta automática|auto-?reply|welcome to|thanks? (you )?for (contacting|reaching|your message|messaging)|envíanos la siguiente información|en qué (te|le) podemos ayudar|es un placer atender(te|le)\", \"i\").test($json[\"agent-input\"] || \"\") }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3944,
+          720
+        ],
+        "id": "5e9a1c47-8d2b-4f63-a0e4-2c7b9d13f580",
+        "name": "es-respuesta-automatica?",
+        "notes": "Saludo/ausencia automático del WhatsApp Business del cliente (\"¡Gracias por comunicarte…!\"). Si lo es, el agente calla: no es una respuesta de la persona."
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4156,
+          880
+        ],
+        "id": "a41f8e20-6b3c-4d7e-9f12-7c5e0b2d9a33",
+        "name": "ignorar-respuesta-automatica"
       }
     ],
     "connections": {
@@ -4064,7 +4175,7 @@
         "main": [
           [
             {
-              "node": "Code",
+              "node": "es-respuesta-automatica?",
               "type": "main",
               "index": 0
             }
@@ -4532,18 +4643,36 @@
             }
           ]
         ]
+      },
+      "es-respuesta-automatica?": {
+        "main": [
+          [
+            {
+              "node": "ignorar-respuesta-automatica",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 6e5abc12",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-07-01T01:18:10.488Z",
-        "id": 206,
+        "createdAt": "2026-09-25T03:48:31.751Z",
+        "id": 248,
         "workflowId": "rb5SOZw8rT5YXKg8",
-        "versionId": "6e5abc12-2333-4add-bf0f-d2d6d3f6bb07",
+        "versionId": "70d8c5a5-fd4b-472d-a03b-0b5457aa5063",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
