@@ -66,8 +66,12 @@ export async function POST(req: NextRequest) {
   // interesan los onboardings de Jessica para Max; nada se publica en el canal de resúmenes.
   let desdeEquipo = false;
 
-  if (prueba) {
+  // ?reenviar=1 (con CRON_SECRET): una llamada que ya existía en Fathom antes del webhook, traída con
+  // `node scripts/fathom.mjs reenviar`. Entra como del EQUIPO: mismas reglas (privacidad, cierre, no repetir).
+  const reenviar = req.nextUrl.searchParams.get("reenviar") === "1";
+  if (prueba || reenviar) {
     if (!secretoCron(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
+    desdeEquipo = reenviar;
   } else {
     // Un webhook por cuenta de Fathom (Elvin, Jessica…), cada uno con su secreto:
     // FATHOM_WEBHOOK_SECRET y FATHOM_WEBHOOK_SECRET_<CUENTA>. Vale si firma con cualquiera.

@@ -74,6 +74,32 @@ if (cmd === "crear") {
   if (process.env.VERCEL_TOKEN) vc.push("--token", process.env.VERCEL_TOKEN);
   execFileSync("npx", ["--yes", ...vc], { input: w.secret, stdio: ["pipe", "ignore", "inherit"] });
   console.log(`✓ ${nombreSecreto} guardado en Vercel (production). Falta redeploy para que lo tome.`);
+} else if (cmd === "reenviar") {
+  // Trae las llamadas que ya estaban en Fathom (el webhook solo avisa las nuevas) y las pasa por
+  // /api/fathom?reenviar=1 con las MISMAS reglas: privacidad de Elvin, solo cierres de Roger/Laura,
+  // sin repetir. Se saltan las que Fathom no pudo resumir (sin audio).
+  //   node scripts/fathom.mjs reenviar 2026-09-23   (desde esa fecha, hora UTC 00:00)
+  const desde = new Date(`${arg || new Date(Date.now() - 86400000).toISOString().slice(0, 10)}T00:00:00Z`).toISOString();
+  const s = process.env.CRON_SECRET;
+  if (!s) throw new Error("Falta CRON_SECRET");
+  const todas = [];
+  let cursor = "";
+  do {
+    const q = new URLSearchParams({ include_summary: "true", include_action_items: "true", created_after: desde });
+    if (cursor) q.set("cursor", cursor);
+    const j = await fathom(`/meetings?${q}`);
+    todas.push(...(j.items || []));
+    cursor = j.next_cursor || "";
+  } while (cursor);
+  todas.sort((a, b) => String(a.created_at).localeCompare(String(b.created_at))); // en orden, la más vieja primero
+  for (const m of todas) {
+    const quien = `${m.recorded_by?.name || "?"} · ${(m.meeting_title || m.title || "").slice(0, 50)}`;
+    if (!m.default_summary) { console.log(`— sin resumen (sin audio): ${quien}`); continue; }
+    const r = await fetch(`${PROD}/api/fathom?reenviar=1`, { method: "POST", headers: { "Content-Type": "application/json", "x-cron-secret": s }, body: JSON.stringify(m) });
+    const j = await r.json().catch(() => ({}));
+    const estado = j.ignorada ? `descartada (${j.ignorada})` : j.repetida ? "ya estaba" : j.max ? "a Max" : r.ok ? "✓ al canal" : `✗ ${r.status} ${j.error || ""}`;
+    console.log(`${estado}: ${quien}`);
+  }
 } else if (cmd === "borrar") {
   if (!arg) throw new Error("Uso: borrar <webhook_id>");
   await fathom(`/webhooks/${arg}`, { method: "DELETE" });
