@@ -41,3 +41,11 @@ credenciales o webhooks sin OK de Elvin; al planear Pulse, contemplar los cables
 **Análisis de todos los agentes (21/sep)**: `vault/proyectos/n8n/agentes-que-hace-cada-uno.md`. Hay 2 bases NocoDB: monitoreo (clientes/equipo ← Pulse) y onboarding (piehks983q2cfu6/mc5m2od7vy71g6z ← citas automáticas v4 desde emails de Calendly). **Bug crítico**: citas v4 muerto 30+ días → ningún cliente nuevo recibe bienvenida/encuestas 10-30 días. Pendientes: quitar nodos Teams del proveedor (error de licencia), token Meta del system user cada 59 días, archivar familia de publicación de campañas (0 uso, reemplazada por Bori+Max).
 
 **21/sep noche**: /api/calendly → n8n `onboarding-cita` (workflow GbGyPmnkEcf1Excz) reemplaza a citas v4; 8 nodos Teams del proveedor quitados. Pendiente: borrar credencial MicrosoftTeamsPymesAI en la UI; token Meta system user cada 59 días; archivar familia publicación.
+
+**Acompañamiento de onboarding (24-25/sep/2026):** la secuencia real (días desde la cita) es: día 0 bienvenida
+(cita v1) · día 3 carta del CEO 5 PM (J) + PDF ciberseguridad (I) · día 5 PDF "cómo tratar leads" (G, el
+proveedor dejó el trigger APAGADO → encendido 24/sep) · día 10 y 30 encuestas (F) · felicitación 100/200 leads
+(H v1 nunca corrió → reemplazado por **H-) Felicitaciones por leads v2** `3ylIqOgWiiW37lWx`,
+`scripts/n8n-felicitaciones.mjs`, 4:20 PM, REAL; 35 veteranos sembrados felicitaciones=200 sin mensaje por
+decisión de Elvin "solo los nuevos"). NO existen días 20/45/60 al cliente (Elvin pidió solo arreglar, no crearlos
+todavía). El agente v5 ignora respuestas automáticas (nodo es-respuesta-automatica?, 24/sep).
