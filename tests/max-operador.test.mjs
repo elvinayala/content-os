@@ -85,3 +85,16 @@ test("límites con clientes: se bloquea lo grave, se marca lo dudoso", async () 
   assert.equal(canalesPermitidos("").size, 0, "vacío = ningún canal de cliente");
   assert.deepEqual([...canalesPermitidos("C0B8P00B5A9, basura")], ["C0B8P00B5A9"]);
 });
+
+test("Drive: subcarpetas por palabra, nombre de carpeta y cruce con Pulse", async () => {
+  const { subcarpetaDrive, nombreCarpetaCliente, mismoCliente } = await import("../lib/max/operador.ts");
+  assert.equal(subcarpetaDrive("estrategia"), "02 Estrategia");
+  assert.equal(subcarpetaDrive("Flyers"), "03 Creativos (flyers e imágenes)");
+  assert.equal(subcarpetaDrive("logo"), "01 Branding y logo");
+  assert.equal(subcarpetaDrive("04"), "04 Videos");
+  assert.equal(subcarpetaDrive("cualquier cosa"), "");
+  assert.equal(nombreCarpetaCliente("Biowest Laboratory (Iván Reyes)"), "Biowest Laboratory · Iván Reyes");
+  assert.equal(mismoCliente("Ivan Reyes", "Biowest Laboratory (Iván Reyes)"), true);
+  assert.equal(mismoCliente("BIOWEST LABORATORY", "Biowest Laboratory (Iván Reyes)"), true);
+  assert.equal(mismoCliente("Ana", "Biowest Laboratory (Iván Reyes)"), false);
+});

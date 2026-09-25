@@ -35,6 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 
 const ROOT = process.cwd();
@@ -76,6 +77,9 @@ function env(n) {
 }
 const leerEstado = () => { try { return JSON.parse(fs.readFileSync(ESTADO, "utf8")); } catch { return { offset: 0, sesion: null, sesionDia: null, historial: [] }; } };
 const guardarEstado = (s) => fs.writeFileSync(ESTADO, JSON.stringify(s, null, 2) + "\n");
+// El estado en memoria que usan todos (main lo fija): correrClaude le suma el gasto de Max aquí mismo
+// para que el próximo guardarEstado no lo pise.
+let ESTADO_VIVO = null;
 
 async function tg(token, m, body) {
   const r = await fetch(`https://api.telegram.org/bot${token}/${m}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}), signal: AbortSignal.timeout(70000) });
@@ -234,6 +238,8 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     else args.push("--permission-mode", "acceptEdits", "--allowedTools", ...SEGURO);
     if (ES_NICO) for (const d of dirsNico()) args.push("--add-dir", d);
     if (ES_NICO) args.push("--model", opts.modelo || MODELO_NICO);
+    // Max (24/sep): Opus para planear/investigar, el barato para mensajes (scripts/max-gasto.mjs).
+    if (ES_MAX) args.push("--model", opts.modelo || MODELO_PLAN);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
     const envVars = { ...process.env, ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), PATH: `${path.dirname(CLAUDE)}:${process.env.PATH}` };
     LOG("claude ›", persona, nueva ? "sesión nueva" : "resume", prompt.slice(0, 80));
@@ -246,7 +252,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
       const min = Math.round((Date.now() - t0) / 60000);
       opts.avisar(`⏱ Sigo trabajando (${min} min) en: ${(opts.titulo || prompt).replace(/\s+/g, " ").slice(0, 140)}\nÚltimos pasos: ${pasos.slice(-4).join(" · ") || "pensando"}\n¿Sigo? Si no me dices nada, sigo. Para detenerme escribe: para`);
     }, AVISO_CADA_MIN * 60000) : null;
-    let final = "", texto = "", err = "", buf = "";
+    let final = "", texto = "", err = "", buf = "", costo = 0;
     const onLinea = (linea) => {
       if (!linea.trim()) return;
       let ev; try { ev = JSON.parse(linea); } catch { return; }
@@ -263,15 +269,18 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           }
         }
       }
-      if (ev.type === "result") { final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`); }
+      if (ev.type === "result") { final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
     };
     child.stdout.on("data", (d) => { buf += d; const partes = buf.split("\n"); buf = partes.pop(); partes.forEach(onLinea); });
     child.stderr.on("data", (d) => { const t = String(d); if (!/Permission allow rule/.test(t)) { err += t; LOG("claude stderr:", t.slice(0, 200)); } });
     const limiteMin = ES_NICO ? NICO_LIMITE_MIN : 15;
     const timer = setTimeout(() => { LOG(`claude: timeout ${limiteMin} min, matando`); child.kill("SIGTERM"); }, limiteMin * 60 * 1000);
-    const fin = () => { clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null; };
+    const fin = () => {
+      clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null;
+      if (ES_MAX && ESTADO_VIVO && costo > 0) { ESTADO_VIVO.gastoMax = registrarGasto(ESTADO_VIVO.gastoMax, costo); guardarEstado(ESTADO_VIVO); }
+    };
     child.on("error", (e) => { fin(); LOG("claude spawn error:", e.message); resolve({ code: 1, out: "", err: e.message }); });
-    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim() }); });
+    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo }); });
   });
 }
 
@@ -446,7 +455,7 @@ async function procesar(token, chat, texto, st) {
   await tg(token, "sendChatAction", { chat_id: chat, action: "typing" });
   // Elvin (19/sep): sin avisos de progreso; solo "escribiendo…" y la respuesta cuando esté todo.
   const onProgreso = null;
-  const optsTrabajo = ES_NICO ? { modelo, titulo: prompt, avisar: (x) => enviar(token, chat, x).catch(() => {}) } : {};
+  const optsTrabajo = ES_NICO ? { modelo, titulo: prompt, avisar: (x) => enviar(token, chat, x).catch(() => {}) } : ES_MAX ? { modelo: modeloParaTelegram(prompt) } : {};
   let r = await correrClaude(contextoRespuestas(st) + prompt, persona, st.sesion, nueva, onProgreso, optsTrabajo);
   if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, onProgreso, optsTrabajo); }
   clearInterval(typing);
@@ -455,6 +464,8 @@ async function procesar(token, chat, texto, st) {
   if (!resp) resp = r.err ? `No pude completarlo: ${r.err.slice(0, 600)}` : "No obtuve respuesta. Inténtalo de nuevo o escribe /nuevo.";
   st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona, prompt: prompt.slice(0, 300), resp: resp.slice(0, 300) }];
   guardarEstado(st);
+  // Lo que Elvin pide directo no se frena, pero sí se le avisa si ya pasó el tope.
+  if (ES_MAX) { const tope = dentroDelTope(st.gastoMax); if (!tope.ok) resp += `\n\n(💸 ${tope.motivo}. Lo tuyo lo hago igual; lo automático de Slack queda en pausa hasta que se libere el tope.)`; }
   await enviar(token, chat, resp);
   await slackEspejo(`[Telegram] ${persona} → Elvin: ${resp.slice(0, 3500)}`);
   const subidos = gitSubir(prompt);
@@ -505,8 +516,22 @@ async function atenderBuzon(token, chatCEO, st) {
       await resolverSolicitud(token, chatCEO, st, Number(dec[2]), dec[1].toLowerCase() === "ok", dec[3].trim());
       continue;
     }
-    try { await buzonMarcar(m.id, "en-curso"); } catch {}
     const deSlack = ES_MAX && m.de === "slack";
+    // Topes de gasto de Max (Elvin, 24/sep: $10/día, $25/semana): lo automático espera, sin perderse.
+    if (ES_MAX) {
+      const tope = dentroDelTope(st.gastoMax);
+      if (!tope.ok) {
+        if (st.topeAvisado !== diaPR()) {
+          st.topeAvisado = diaPR(); guardarEstado(st);
+          const aviso = `💸 Max llegó a su ${tope.motivo} (topes: $${TOPE_DIA}/día, $${TOPE_SEMANA}/semana). Lo que llegue de Slack queda en cola y lo retomo cuando se libere el tope. Para subirlo: MAX_TOPE_DIA / MAX_TOPE_SEMANA en Railway.`;
+          if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
+          await notaAprobacionesMax(aviso);
+        }
+        LOG("buzón: tope de gasto, espero ·", tope.motivo);
+        return;
+      }
+    }
+    try { await buzonMarcar(m.id, "en-curso"); } catch {}
     const prompt = deSlack
       ? `${m.texto}\n\n${MAX_SLACK}`
       : contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`. Sé breve: es un mensaje entre agentes, no un informe.`;
@@ -520,8 +545,9 @@ async function atenderBuzon(token, chatCEO, st) {
     const nueva = !st.sesion || st.sesionDia !== hoy;
     if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
-    let r = await correrClaude(prompt, persona, st.sesion, nueva, null);
-    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, null); }
+    const optsBuzon = ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {};
+    let r = await correrClaude(prompt, persona, st.sesion, nueva, null, optsBuzon);
+    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, null, optsBuzon); }
     const resp = (r.out || "").trim();
     st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona, de: m.de, prompt: m.texto.slice(0, 300), resp: resp.slice(0, 300) }];
     guardarEstado(st);
@@ -641,10 +667,18 @@ const MAX_SLACK = `OPERAS EN SLACK (cerebro-max.md §17 — léelo si no lo tien
 - Con Elvin/Carilin hablas en #max-aprobaciones: node scripts/max.mjs nota '…' --hilo <ts>. Cuando termines algo aprobado: node scripts/max.mjs cerrar <id> ejecutado|fallido '…'. Lleva la etapa: node scripts/max.mjs etapa <slug> <etapa>.
 - Contexto antes de responder: node scripts/max.mjs cliente <slug> (ficha), leer <slug> 30 (canal), llamada '<negocio>' (llamada de venta). Si el canal no está vinculado: canales <filtro> y vincular <slug> <canal>; si no aparece, pídelo con una nota.
 - LÍMITES CON CLIENTES (Elvin, 24/sep): SIEMPRE estratégico y SOLO del negocio del cliente — su marketing, anuncios, contenido, creativos, resultados, próximos pasos y el material o accesos que falten. NUNCA: temas personales (familia, salud, política, religión, relaciones, vida privada) ni opiniones fuera del negocio; si el cliente se va a lo personal, una línea amable y de vuelta al negocio. NUNCA precios, descuentos, pagos, contratos, reembolsos ni cancelaciones (eso lo propones como interno para Elvin/Carilin). NUNCA prometer resultados o ingresos, ni 'gratis', ni datos de otros clientes, ni problemas internos del equipo, ni pedir contraseñas o códigos (los accesos van por invitación de socio en Meta). El servidor bloquea o marca con ⚠ lo que se salga de esto.
+- DRIVE: cada cliente tiene su carpeta (max.mjs carpeta <slug>: la crea si falta, la pone en Pulse y avisa en Slack). TODO lo que produzcas va ahí: guiones, briefs, reportes → max.mjs drive-doc <slug> <estrategia|creativos|reportes|branding|documentos> --titulo '…' --texto '…'; flyers, imágenes, videos (URL de Higgsfield) → max.mjs drive-archivo <slug> <creativos|videos|branding> --url https://… --nombre …. Los planes, estructuras y creativos APROBADOS los guarda el servidor solo. Cuando haya canal del cliente, el enlace de la carpeta se le manda con proponer … mensaje.
 - ONBOARDING: tu arranque real es el Fathom de la reunión de onboarding de Jessica ([Onboarding nuevo · … fuente fathom]). Empieza ya (expediente, llamada de venta, competencia, matemática) y espera el resumen de Jessica en el hilo que el servidor abrió en #max-aprobaciones (te llega como [Max canal · de Jessica · hilo …]; el hilo dice '(cliente: slug)'). Con su resumen armas el plan y lo propones. Aprueban Jessica, Carilin o Elvin; publicar solo Elvin o Carilin.
 - Hoy NINGÚN canal de cliente está habilitado (MAX_CANALES_CLIENTES vacío): trabajas solo en #max-aprobaciones; no pidas que te agreguen a canales de clientes.
 - Si algo no te toca a ti o no tienes cómo hacerlo, dilo en una nota corta. No inventes datos, ids ni resultados.
 - Termina con UNA línea de qué hiciste (ids de lo propuesto). No escribas nada más: tu respuesta final no le llega a nadie.`;
+
+async function notaAprobacionesMax(texto) {
+  const base = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+  const secreto = env("CRON_SECRET");
+  if (!secreto) return;
+  try { await fetch(`${base}/api/max`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify({ accion: "nota", texto: `${texto}\n— Max` }), signal: AbortSignal.timeout(10000) }); } catch {}
+}
 
 function buzonLoop(token, getChat, st) {
   const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 90000); };
@@ -673,6 +707,7 @@ async function main() {
     } catch (e) { LOG("memoria:", e.message.slice(0, 120)); }
   }
   const st = leerEstado();
+  ESTADO_VIVO = st;
   // Si el contenedor se reinició con cambios sin publicar, volverlos a poner (y que el próximo
   // pedido los suba). /app es efímero: el volumen es lo único que sobrevive un redeploy.
   restaurarPendientes();

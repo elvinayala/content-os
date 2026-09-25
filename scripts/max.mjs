@@ -21,6 +21,10 @@
 //   node scripts/max.mjs nota "<texto>" [--hilo <ts>]               hablar con Elvin/Carilin en #max-aprobaciones
 //   node scripts/max.mjs cerrar <id> ejecutado|fallido "<resultado>"
 //   node scripts/max.mjs enviar <id>                                reintenta enviar algo YA aprobado
+//   node scripts/max.mjs carpeta <slug>                             carpeta de Drive del cliente (la crea si no existe; Pulse + Slack)
+//   node scripts/max.mjs drive-doc <slug> <branding|estrategia|creativos|videos|reportes|documentos> --titulo "…" --texto "…"
+//   node scripts/max.mjs drive-archivo <slug> <subcarpeta> --url https://… [--nombre archivo.png]   (flyer/imagen/video de Higgsfield…)
+//   node scripts/max.mjs drive-listar <slug>                        qué hay en la carpeta
 // ("publicar" no se propone aquí: lo crea meta-ads.mjs proponer-publicar con los ids exactos.)
 import fs from "node:fs";
 import path from "node:path";
@@ -38,7 +42,7 @@ function env(n) {
 const BASE = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
 const SECRETO = env("CRON_SECRET");
 
-const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo"]);
+const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo", "url"]);
 const pos = [];
 const val = {};
 const argv = process.argv.slice(2);
@@ -177,6 +181,33 @@ try {
     case "enviar": {
       const r = await api("POST", null, { accion: "enviar", id: Number(rest[0]) });
       console.log(r.texto);
+      break;
+    }
+    case "carpeta": {
+      if (!rest[0]) salir("Uso: carpeta <slug>");
+      const r = await api("POST", null, { accion: "drive-carpeta", cliente: rest[0], hilo: val.hilo });
+      console.log(`${r.nueva ? "✔ Carpeta creada" : "✔ Ya existía"}: ${r.carpeta.url} · Pulse: ${r.pulse}`);
+      break;
+    }
+    case "drive-doc": {
+      const [slug, sub] = rest;
+      if (!slug || !sub || !val.texto) salir('Uso: drive-doc <slug> <subcarpeta> --titulo "…" --texto "…"');
+      const r = await api("POST", null, { accion: "drive-doc", cliente: slug, sub, nombre: val.titulo || "Documento", texto: val.texto });
+      console.log(`✔ Doc en Drive: ${r.url}`);
+      break;
+    }
+    case "drive-archivo": {
+      const [slug, sub] = rest;
+      if (!slug || !sub || !val.url) salir("Uso: drive-archivo <slug> <subcarpeta> --url https://… [--nombre x.png]");
+      const r = await api("POST", null, { accion: "drive-archivo", cliente: slug, sub, url: val.url, nombre: val.nombre });
+      console.log(`✔ Archivo en Drive: ${r.url}`);
+      break;
+    }
+    case "drive-listar": {
+      if (!rest[0]) salir("Uso: drive-listar <slug>");
+      const { archivos } = await api("POST", null, { accion: "drive-listar", cliente: rest[0] });
+      if (!archivos.length) console.log("La carpeta está vacía (o todavía no existe).");
+      for (const a of archivos) console.log(`${a.carpeta || "(raíz)"} · ${a.nombre} · ${a.url}`);
       break;
     }
     default:

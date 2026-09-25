@@ -130,6 +130,18 @@ export async function decidir(d: Decision, porSlackId: string): Promise<string> 
   // aprobar
   const conCambio = okConCambio(dec.nota);
   await actualizarItem(i.id, { estado: "aprobado", decididoPor: quien, decisionNota: dec.nota || undefined });
+  // Lo aprobado queda en la carpeta del cliente (Elvin, 24/sep): plan y estructura en Estrategia,
+  // creativos en Creativos. Import diferido: drive.ts usa este módulo.
+  const subDrive = !conCambio && ({ plan: "estrategia", campana: "estrategia", creativos: "creativos" } as Record<string, string>)[i.tipo];
+  if (subDrive) {
+    const drive = await import("./drive");
+    if (drive.driveListo()) {
+      await drive
+        .guardarDoc(i.cliente, subDrive, `${i.titulo || i.tipo} · aprobado por ${nombre} (#${i.id})`, i.contenido)
+        .then((doc) => actualizarItem(i.id, { datos: { drive: doc.url } }))
+        .catch((e) => console.error("[max drive] aprobado", i.id, e instanceof Error ? e.message : e));
+    }
+  }
   if (VAN_AL_CLIENTE.includes(i.tipo)) {
     if (conCambio) {
       // "ok 7 pero cambia X": no se manda algo que nadie vio en su versión final.

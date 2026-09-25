@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { BloqueoMax, buscarLlamadas, canalClientePermitido, canalesDelBot, enviarAprobado, leerCanal, leerHilo, notaEnAprobaciones, proponer } from "@/lib/max/flujo";
 import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from "@/lib/max/operador";
 import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes } from "@/lib/max/repo";
+import { asegurarCarpeta, driveListo, guardarArchivo, guardarDoc, listarCarpeta, saludDrive } from "@/lib/max/drive";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
 // Max en Slack — las manos de Max (scripts/max.mjs, desde su contenedor de Railway). Auth con
@@ -111,7 +112,33 @@ export async function POST(req: NextRequest) {
       await notaEnAprobaciones(`${estado === "ejecutado" ? "✅" : "⚠️"} #${id}: ${resultado}`, actual.aprobacion_ts);
       return NextResponse.json({ ok: true, item: i });
     }
-    case "buzon-prueba": {
+    // Drive del cliente (24/sep): carpeta (idempotente), documentos y archivos por subcarpeta.
+    case "drive-carpeta":
+    case "drive-doc":
+    case "drive-archivo":
+    case "drive-listar":
+    case "drive-salud": {
+      if (!driveListo()) return mal("Drive no está conectado todavía (DRIVE_SCRIPT_URL / DRIVE_SCRIPT_SECRETO en Vercel)", 503);
+      try {
+        if (b.accion === "drive-salud") return NextResponse.json({ ok: true, raiz: await saludDrive() });
+        const slug = s("cliente", 48);
+        if (!slug || !(await cliente(slug))) return mal("cliente", 404);
+        if (b.accion === "drive-carpeta") return NextResponse.json({ ok: true, ...(await asegurarCarpeta(slug, { hilo: s("hilo", 30) })) });
+        if (b.accion === "drive-listar") return NextResponse.json({ ok: true, archivos: await listarCarpeta(slug) });
+        const sub = s("sub", 60) || "";
+        if (b.accion === "drive-doc") {
+          const texto = s("texto", 100000);
+          if (!texto) return mal("texto");
+          return NextResponse.json({ ok: true, ...(await guardarDoc(slug, sub, s("nombre", 200) || "Documento", texto)) });
+        }
+        const url = s("url", 2000);
+        if (!url) return mal("url");
+        return NextResponse.json({ ok: true, ...(await guardarArchivo(slug, sub, url, s("nombre", 200))) });
+      } catch (e) {
+        return mal(e instanceof Error ? e.message : String(e), 502);
+      }
+    }
+        case "buzon-prueba": {
       // Solo para pruebas de punta a punta: simula lo que llegaría de Slack (p. ej. el resumen de Jessica
       // en el hilo) sin que nadie tenga que escribir. Se marca PRUEBA para que Max lo sepa.
       const texto = s("texto", 8000);

@@ -18,10 +18,11 @@ import { validarValor } from "./valores";
 const USUARIOS_SISTEMA = {
   typeform: { email: "typeform@pulse.sistema", nombre: "Typeform (automático)" },
   formulario: { email: "onboarding@pulse.sistema", nombre: "Onboarding (automático)" },
+  max: { email: "max@pulse.sistema", nombre: "Max (estratega IA)" },
 } as const;
 export type OrigenOnboarding = keyof typeof USUARIOS_SISTEMA;
 
-async function usuarioSistema(origen: OrigenOnboarding): Promise<string> {
+export async function usuarioSistema(origen: OrigenOnboarding): Promise<string> {
   const d = await db();
   const { email, nombre } = USUARIOS_SISTEMA[origen];
   const [u] = await d.select({ id: pulseUsers.id }).from(pulseUsers).where(eq(pulseUsers.email, email));

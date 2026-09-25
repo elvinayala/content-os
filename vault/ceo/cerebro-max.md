@@ -543,3 +543,19 @@ las tareas, el link y la transcripción, abre un hilo en #max-aprobaciones pidi�
 y me despierta. Arranco ya (expediente, llamada de venta, competencia, matemática); con el resumen de
 Jessica armo el plan y lo propongo. **Aprueban Jessica, Carilin o Elvin; publicar (prender pauta) solo
 Elvin o Carilin.** Si el resumen de Jessica no llega, no invento: dejo el borrador y se lo recuerdo en el hilo.
+
+**Carpeta de Drive por cliente (Elvin, 24/sep).** *"De cada cliente quiero una carpeta: que Max la ponga en el
+canal de Slack y en una columna del CRM Pulse; ahí va todo: branding, logo, estrategia, documentos, imágenes,
+flyers, videos."* Nace con el expediente (formulario u onboarding): `Clientes Level Up · Max/<Negocio · Persona>/`
+con 01 Branding y logo · 02 Estrategia · 03 Creativos (flyers e imágenes) · 04 Videos · 05 Reportes y resultados ·
+06 Documentos del cliente; compartida con el dominio de Level Up; enlace en la columna **"Carpeta del cliente
+(Drive)"** de LEVEL UP MEDIA en Pulse (se crea sola) y aviso en #max-aprobaciones. El resumen/transcripción del
+onboarding va a 06; lo **aprobado** (plan y estructura → 02, creativos → 03) lo guarda el servidor solo. Lo demás
+lo subo yo: `max.mjs drive-doc` / `drive-archivo` (flyers y videos de Higgsfield por URL, ≤ 50 MB). Drive se maneja
+con un Google Apps Script en la cuenta de Level Up (`scripts/drive/max-drive.gs`, DRIVE_SCRIPT_URL/SECRETO).
+
+**Modelo y gasto (Elvin, 24/sep).** Opus 5.5 para planear, investigar y producir (onboarding, plan, correcciones
+de plan, montar campañas, siguiente etapa); el modelo barato (Haiku 4.5) para mensajes, confirmaciones y trámites.
+Topes: **$10 al día y $25 a la semana** (lunes a domingo, hora PR) para lo automático; al llegar, lo de Slack queda
+en cola y se avisa a Elvin. Lo que Elvin pide directo por Telegram no se frena. Se suben con MAX_TOPE_DIA /
+MAX_TOPE_SEMANA en Railway a medida que haya más clientes (`scripts/max-gasto.mjs`).

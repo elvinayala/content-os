@@ -204,3 +204,41 @@ export function revisarParaCliente(texto: string, tipo: TipoItem = "mensaje"): {
     alertas: [...(dinero ? [MSG_DINERO] : []), ...ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m)],
   };
 }
+
+// ── Carpeta de Drive del cliente (Elvin, 24/sep) ───────────────────────────────────────────────
+export const SUBCARPETAS_DRIVE = {
+  branding: "01 Branding y logo",
+  estrategia: "02 Estrategia",
+  creativos: "03 Creativos (flyers e imágenes)",
+  videos: "04 Videos",
+  reportes: "05 Reportes y resultados",
+  documentos: "06 Documentos del cliente",
+} as const;
+export type Subcarpeta = keyof typeof SUBCARPETAS_DRIVE;
+
+// "creativos", "Creativos", "03", "flyers"… → nombre real de la subcarpeta.
+export function subcarpetaDrive(x: string | undefined | null): string {
+  const t = String(x ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+  if (!t) return "";
+  if (/^0?1\b|brand|logo|marca/.test(t)) return SUBCARPETAS_DRIVE.branding;
+  if (/^0?2\b|estrateg|plan/.test(t)) return SUBCARPETAS_DRIVE.estrategia;
+  if (/^0?3\b|creativ|flyer|imagen|arte/.test(t)) return SUBCARPETAS_DRIVE.creativos;
+  if (/^0?4\b|video|reel/.test(t)) return SUBCARPETAS_DRIVE.videos;
+  if (/^0?5\b|report|resultado|metric/.test(t)) return SUBCARPETAS_DRIVE.reportes;
+  if (/^0?6\b|document|contrato|cliente/.test(t)) return SUBCARPETAS_DRIVE.documentos;
+  return "";
+}
+
+// Nombre de la carpeta en Drive: "Negocio (Persona)" → "Negocio · Persona", sin caracteres raros.
+export function nombreCarpetaCliente(nombre: string): string {
+  return String(nombre || "Cliente").replace(/\s*\(([^)]+)\)\s*$/, " · $1").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
+}
+
+// ¿Este ítem de Pulse es este cliente? (por nombre del negocio o de la persona, sin acentos).
+export function mismoCliente(nombreItem: string, nombreCliente: string): boolean {
+  const n = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  const item = n(nombreItem);
+  if (item.length < 3) return false;
+  const partes = [nombreCliente, ...(nombreCliente.match(/\(([^)]+)\)/)?.slice(1) ?? []), nombreCliente.replace(/\s*\([^)]*\)\s*$/, "")].map(n).filter((x) => x.length >= 3);
+  return partes.some((p) => p === item || p.includes(item) || item.includes(p));
+}

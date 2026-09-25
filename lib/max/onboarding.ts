@@ -18,8 +18,22 @@ export async function iniciarClienteMax(r: { nombre: string; negocio: string; re
   const slug = slugCliente(r.negocio || r.nombre);
   const previo = await cliente(slug);
   await guardarCliente({ slug, nombre, etapa: previo ? undefined : "onboarding", ficha: { onboarding: r.resumen.slice(0, 8000), ...(r.email ? { email: r.email } : {}) }, pulseItem: r.itemId });
+  // La carpeta de Drive del cliente nace con su expediente (Elvin, 24/sep): enlace en Pulse y aviso en Slack.
+  await carpetaYDoc(slug, "documentos", `Formulario de onboarding · ${nombre}`, r.resumen);
   if (process.env.MAX_ONBOARDING !== "on" || !process.env.SLACK_MAX_CHANNEL_ID) return;
   await alBuzonMax(`${encabezadoBuzon("onboarding", { cliente: slug, pulse: r.itemId, estado: r.estado })}\nCliente: ${nombre}\n\n${r.resumen.slice(0, 6000)}`);
+}
+
+// Carpeta + documento en Drive, sin romper el onboarding si Drive falla o no está conectado.
+async function carpetaYDoc(slug: string, sub: string, titulo: string, texto: string, hilo?: string | null): Promise<void> {
+  const drive = await import("./drive");
+  if (!drive.driveListo()) return;
+  try {
+    await drive.asegurarCarpeta(slug, { hilo });
+    await drive.guardarDoc(slug, sub, titulo, texto);
+  } catch (e) {
+    console.error("[max drive]", slug, e instanceof Error ? e.message : e);
+  }
 }
 
 const JESSICA = () => process.env.MAX_PM_SLACK_ID || "U08SN35L2UX";
@@ -60,6 +74,7 @@ export async function onboardingDesdeFathom(r: ReunionConTranscripcion, opciones
   ].join("\n");
   const post = CANAL_APROBACIONES() ? await publicar(CANAL_APROBACIONES(), pedido) : { ok: false as const, ts: undefined };
   const ok = post.ok;
+  await carpetaYDoc(slug, "documentos", `Onboarding (Fathom) · ${existente?.nombre || nombre}`, [`Resumen de Fathom${link ? ` (${link})` : ""}`, resumen, "", "Tareas", tareas || "(ninguna)", "", "Transcripción", transcripcionCorta(r) || "(sin transcripción)"].join("\n"), post.ts);
 
   if (prueba && !opciones.completo) return { slug, pedidoEnviado: ok, hilo: post.ts };
   await alBuzonMax(

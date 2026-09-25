@@ -503,6 +503,13 @@ llamada|proponer|pendientes|nota|cerrar|enviar) y `meta-ads.mjs cliente:<slug> �
 + `proponer-publicar <campaignIds> --cliente <slug>` + `activar --item <id>` (ÚNICO camino para prender
 por API: exige un 🚀 aprobado por Elvin/Carilin y prende solo sus ids). Puente de Max (Railway): lo que
 llega `de: slack` se trabaja con `MAX_SLACK` y el cerebro §17. Bori queda para los clientes de AIB.
+**Modelo y gasto:** Opus 5.5 para planear/investigar/producir y Haiku 4.5 para mensajes y trámites, con topes
+de $10/día y $25/semana para lo automático (`scripts/max-gasto.mjs`, `MAX_TOPE_DIA/SEMANA` en Railway; al
+llegar, lo de Slack queda en cola y se avisa a Elvin). **Carpeta de Drive por cliente** (`lib/max/drive.ts`):
+Google Apps Script en la cuenta de LU (`scripts/drive/max-drive.gs`, `DRIVE_SCRIPT_URL` + `DRIVE_SCRIPT_SECRETO`)
+crea `Clientes Level Up · Max/<Negocio · Persona>` con 6 subcarpetas, la comparte con el dominio, la enlaza en
+la columna "Carpeta del cliente (Drive)" de LEVEL UP MEDIA en Pulse y avisa en #max-aprobaciones; guarda el
+onboarding y todo lo aprobado; Max sube lo demás con `max.mjs carpeta|drive-doc|drive-archivo|drive-listar`.
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
