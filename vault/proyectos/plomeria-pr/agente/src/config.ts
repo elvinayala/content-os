@@ -24,6 +24,8 @@ export const config = {
     verifyToken: opt("WA_VERIFY_TOKEN", "resuelto"),
     appSecret: opt("META_APP_SECRET"),
   },
+  /** SMS desde el número de Resuelto en Zernio (E.164). Sin él, los SMS quedan en simulación. */
+  sms: { numero: opt("SMS_NUMERO") },
   zernio: {
     apiKey: opt("ZERNIO_API_KEY"),
     accountId: opt("ZERNIO_ACCOUNT_ID"),

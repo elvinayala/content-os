@@ -24,7 +24,7 @@ function escribir(archivo: string, datos: unknown) {
   fs.renameSync(p + ".tmp", p);
 }
 
-export type Canal = "whatsapp" | "instagram" | "messenger" | "web";
+export type Canal = "whatsapp" | "instagram" | "messenger" | "web" | "sms";
 
 export interface Contacto {
   id: string;              // `${canal}:${identificador}`
@@ -42,6 +42,10 @@ export interface Contacto {
   dm?: { conversationId: string; accountId: string };
   /** Seguimientos automáticos enviados por Messenger/IG (ISO); ver seguimiento.ts. */
   seguimientos?: string[];
+  /** SMS (canales/sms.ts): cuántos le mandamos, si pidió la baja y cuándo fue el seguimiento por SMS. */
+  smsEnviados?: number;
+  smsBaja?: boolean;
+  smsSeguimiento?: string;
   humano: boolean;         // true = un humano tomó la conversación; el agente calla
   humanoDesde?: string;
   enviadosWa?: number;     // cuántos mensajes le hemos mandado por WhatsApp (el humanizador lo usa)    // cuándo contestó por última vez un humano (para retomar solo pasadas HUMANO_HORAS)
@@ -176,6 +180,7 @@ export interface Contratista {
 const ahora = () => new Date().toISOString();
 
 export const almacen = {
+  contactos(): Contacto[] { return Object.values(leer<Record<string, Contacto>>("contactos.json", {})); },
   contacto(id: string): Contacto | undefined {
     return leer<Record<string, Contacto>>("contactos.json", {})[id];
   },

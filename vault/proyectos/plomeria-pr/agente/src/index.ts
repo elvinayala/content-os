@@ -25,6 +25,8 @@ import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
+import { avisarAlTelefono } from "./canales/telefono.js";
+import * as sms from "./canales/sms.js";
 import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO, telefonoBonito } from "./reclutamiento.js";
@@ -210,6 +212,19 @@ async function atenderDM(m: zernio.MensajeZernio) {
   if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
 }
 
+// ── SMS (número de Resuelto en Zernio, 25/sep/2026): el cliente o plomero contesta por texto → mismo cerebro,
+// respuesta por SMS. Si ya lo conocemos por su teléfono (Messenger/IG), sigue en su misma conversación. STOP = baja. ──
+let smsCrudos = 0;
+async function atenderSMS(m: { de: string; texto: string; id: string }) {
+  if (smsCrudos++ < 5) console.log("SMS entrante", m.de, m.texto.slice(0, 80));
+  const c = sms.contactoPorTelefono(m.de) ?? almacen.obtenerOCrearContacto("sms", m.de);
+  if (!c.telefono) { c.telefono = m.de.replace(/^\+1/, ""); almacen.guardarContacto(c); }
+  if (sms.BAJA.test(m.texto)) { almacen.guardarContacto({ ...c, smsBaja: true }); return console.log("SMS: baja de", m.de); }
+  if (esSoloAcuse(m.texto) && !ultimoNuestroPregunto(c.id)) return;
+  const respuestas = await responder(c, { texto: m.texto });
+  for (const r of respuestas) await sms.enviarSMS(m.de, r, { contacto: almacen.contacto(c.id) ?? c });
+}
+
 // ── Zernio: WhatsApp (message.received) + detección de que un humano contestó (message.sent) ──
 app.post("/webhook/zernio", async (req: any, res) => {
   if (!zernio.firmaValida(req.rawBody, req.headers["x-zernio-signature"])) return res.sendStatus(401);
@@ -225,6 +240,8 @@ app.post("/webhook/zernio", async (req: any, res) => {
       almacen.guardarContacto({ ...c, humano: true, humanoDesde: new Date().toISOString() });
       return console.log(`WA: humano contestó a ${toma.telefono}; el agente calla ${config.humanoHoras} h`);
     }
+    const entrante = sms.parsearSMS(req.body);
+    if (entrante) { if (!yaVisto("sms:" + entrante.id)) await atenderSMS(entrante); return; }
     for (const m of zernio.parsearWebhook(req.body)) {
       if (m.standby) continue; // Meta Business Agent está contestando; no le quitamos el chat
       if (yaVisto(m.id)) continue;
@@ -441,7 +458,7 @@ app.post("/admin/plomeros", async (req: any, res) => {
   const p = altaPlomero({ nombre: String(b.nombre).trim(), whatsapp: String(b.whatsapp), municipio: String(b.municipio).trim(), licencia: b.licencia ? String(b.licencia).trim() : undefined, email: b.email ? String(b.email).trim() : undefined });
   const link = linkPortal(p.id, config.urlPublica);
   if (!p.territorios.length) await wa.avisarCoordinador(`⚠️ ${p.nombre} dado de alta pero "${p.municipio}" no cae en ningún territorio: no recibirá trabajos hasta asignarle uno.`).catch(() => undefined);
-  const enviado = await wa.enviarTexto(p.whatsapp, bienvenidaPlomero(p.nombre, link)).then(() => true).catch(() => false);
+  const enviado = await avisarAlTelefono(p.whatsapp, bienvenidaPlomero(p.nombre, link)).catch(() => false);
   await wa.avisarCoordinador(`🔧 Alta de plomero: ${p.nombre} · ${p.municipio} (${p.territorios.join(", ") || "sin territorio"})${p.licencia ? " · " + p.licencia : ""}
 Link de su app: ${link}
 Bienvenida por WhatsApp: ${enviado ? "enviada" : "NO se pudo (mándale el link a mano)"}`).catch(() => undefined);
@@ -454,7 +471,7 @@ app.post("/admin/plomeros/:id/estado", (req: any, res) => {
 app.post("/admin/plomeros/:id/reenviar", async (req: any, res) => {
   const p = registroPlomeros().find((x) => x.id === req.params.id); if (!p) return res.status(404).json({ ok: false });
   const link = linkPortal(p.id, config.urlPublica);
-  const ok = await wa.enviarTexto(p.whatsapp, bienvenidaPlomero(p.nombre, link)).then(() => true).catch(() => false);
+  const ok = await avisarAlTelefono(p.whatsapp, bienvenidaPlomero(p.nombre, link)).catch(() => false);
   res.json({ ok, link });
 });
 app.get("/admin/fotos/:archivo", (req, res) => { const f = path.join(ciclo.DIR_FOTOS, path.basename(req.params.archivo)); if (!fs.existsSync(f)) return res.status(404).end(); res.type("jpg").send(fs.readFileSync(f)); });

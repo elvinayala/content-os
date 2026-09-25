@@ -13,12 +13,22 @@ import { enviarDM } from "./canales/zernio.js";
 import { humanizar } from "./humanizar.js";
 import { config } from "./config.js";
 import { territorioDe, plomeroActivoDe } from "./proveedores.js";
+import { enviarSMS } from "./canales/sms.js";
 
 const H = 3600_000;
 export const REGLAS = { primero: 2 * H, limite: 23 * H, max: 2, separacion: 6 * H, horaIni: 8, horaFin: 20 };
 const ACUSE = /^\s*(ok+|okey|oka|dale|gracias|muchas gracias|ok gracias|perfecto|bendiciones|👍|🙏|❤️|😊)[\s!.¡]*$/i;
 
 export const horaPR = (d = new Date()) => Number(d.toLocaleString("en-US", { timeZone: config.zonaHoraria, hour: "numeric", hour12: false })) % 24;
+
+/** Pasadas las 24 h Messenger ya no deja: UN SMS a quien dio su teléfono, entre las 24 y 72 h, de 9 AM a 7 PM. Pura. */
+export function tocaSMS(p: { ultimoCliente: number; smsSeguimiento: number; tieneTelefono: boolean; baja: boolean; agendo: boolean; humano: boolean; ahora: number; hora: number }): boolean {
+  if (!p.tieneTelefono || p.baja || p.agendo || p.humano || !p.ultimoCliente) return false;
+  const desde = p.ahora - p.ultimoCliente;
+  if (desde < 24 * H || desde > 72 * H) return false;
+  if (p.smsSeguimiento > p.ultimoCliente) return false;
+  return p.hora >= 9 && p.hora < 19;
+}
 
 /** ¿Le toca seguimiento ahora? Pura (tests/seguimiento.test.mjs). Tiempos en ms. */
 export function tocaSeguimiento(p: { ultimoCliente: number; ultimoTextoCliente: string; ultimoNuestro: number; enviados: number[]; agendo: boolean; humano: boolean; ahora: number; hora: number }): boolean {
@@ -60,7 +70,7 @@ export async function revisarSeguimientos() {
   const ahora = Date.now(), hora = horaPR();
   if (hora < REGLAS.horaIni || hora >= REGLAS.horaFin) return;
   const trabajos = almacen.trabajos(), proyectos = almacen.proyectos();
-  for (const id of almacen.conversacionesDesde(ahora - 24 * H)) {
+  for (const id of almacen.conversacionesDesde(ahora - 72 * H)) {
     const c = almacen.contacto(id);
     if (!c || !c.dm || (c.canal !== "messenger" && c.canal !== "instagram")) continue;
     if (c.tipo !== "cliente" && c.tipo !== "cliente-proyecto") continue;
@@ -71,6 +81,15 @@ export async function revisarSeguimientos() {
     const ultimo = delCliente.at(-1);
     const enviados = (c.seguimientos ?? []).map(ms);
     const agendo = trabajos.some((t) => t.contactoId === c.id && t.estado !== "cancelado") || proyectos.some((p) => p.contactoId === c.id);
+    const agendoYa = trabajos.some((t) => t.contactoId === c.id && t.estado !== "cancelado") || proyectos.some((p) => p.contactoId === c.id);
+    if (ultimo && tocaSMS({ ultimoCliente: ms(ultimo.fecha), smsSeguimiento: ms(c.smsSeguimiento), tieneTelefono: !!c.telefono, baja: !!c.smsBaja, agendo: agendoYa, humano: c.humano, ahora, hora })) {
+      try {
+        const texto = await redactar(c, ev, 2);
+        almacen.guardarContacto({ ...(almacen.contacto(c.id) ?? c), smsSeguimiento: new Date().toISOString() }); // uno por ventana, aunque no aplique
+        if (texto && (await enviarSMS(c.telefono!, texto, { contacto: almacen.contacto(c.id) ?? c }))) { archivar(c.id, "resuelto", texto, "seguimiento-sms"); console.log(`seguimiento SMS → ${c.nombre ?? c.id}`); }
+      } catch (e) { console.error("seguimiento SMS", c.id, e); }
+      continue;
+    }
     if (!ultimo || !tocaSeguimiento({ ultimoCliente: ms(ultimo.fecha), ultimoTextoCliente: ultimo.texto, ultimoNuestro: ms(nuestros.at(-1)?.fecha), enviados, agendo, humano: c.humano, ahora, hora })) continue;
     const numero = enviados.filter((t) => t > ms(ultimo.fecha)).length + 1;
     try {

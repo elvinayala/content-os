@@ -27,3 +27,14 @@ test("si el cliente vuelve a escribir, la ventana nueva arranca de cero", () => 
   const nuevo = T0 + 30 * H;
   assert.ok(S.tocaSeguimiento({ ...base, ultimoCliente: nuevo, ultimoNuestro: nuevo + 60_000, enviados: [T0 + 2 * H, T0 + 15 * H], ahora: nuevo + 3 * H }));
 });
+
+test("SMS: uno solo entre 24 y 72 h, con teléfono, sin baja, de 9 a 7", () => {
+  const b = { ultimoCliente: T0, smsSeguimiento: 0, tieneTelefono: true, baja: false, agendo: false, humano: false, ahora: T0 + 26 * H, hora: 11 };
+  assert.ok(S.tocaSMS(b));
+  assert.ok(!S.tocaSMS({ ...b, ahora: T0 + 20 * H }));
+  assert.ok(!S.tocaSMS({ ...b, ahora: T0 + 80 * H }));
+  assert.ok(!S.tocaSMS({ ...b, tieneTelefono: false }));
+  assert.ok(!S.tocaSMS({ ...b, baja: true }));
+  assert.ok(!S.tocaSMS({ ...b, smsSeguimiento: T0 + 25 * H }));
+  assert.ok(!S.tocaSMS({ ...b, hora: 20 }));
+});
