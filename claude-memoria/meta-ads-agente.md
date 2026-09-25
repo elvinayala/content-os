@@ -126,3 +126,9 @@ Elvin quiere lanzar en 7 días. Propuesta en vault/proyectos/level-up/customer-j
 accesos pedidos en el cierre, onboarding día 1 → plan de Max ese día, día 2 guiones+flyers+lista de grabación, UNA
 reunión de estrategia (Carilin) día 3, grabación en paralelo días 3-5, QA 5-6, lanzamiento día 7 sin esperar al
 contenido del cliente (ola 2 ~día 17), informe de resultados día 37. Estado: propuesta, Elvin evalúa.
+**Max PRODUCE y MONTA (25/sep, corrección de Elvin: "te comiste la parte de crear los creativos"):** plan aprobado =
+permiso para producir (hasta 8 flyers + 3 videos por ola) → flyers/videos con fal (--ref marca real del cliente) + copy
+por pieza → `max.mjs proponer <slug> creativos --imagenes … --videos …` (se ven como bloques de imagen en Slack; al
+aprobarse van a Drive) → `meta-ads.mjs cliente:<slug> estrategia --creativos '<json>'` sube imágenes (bytes →
+adimages hash) y videos (file_url → advideos, espera ready + miniatura) y arma el Método 5 Fases EN PAUSA → 🚀
+proponer-publicar → "publica". Cerebro §21. Límite: destino WhatsApp aún no se monta por API (dm-ig|leads|enlace).
