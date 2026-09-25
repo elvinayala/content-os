@@ -24,3 +24,9 @@ escribe · Facu publica · **Lola produce** · Nico plataformas · Max ads.
 **How to apply:** pedidos de flyers/artes/videos/guiones → Lola (`/crear-contenido`), con las
 reglas de su cerebro (tope de créditos, tuteo, sin "gratis", enemigo no cliente, solo a Elvin).
 Relacionado: [[sofi-coordinadora]], [[nico-vibecoder]], [[meta-ads-agente]].
+
+**25/sep/2026 — Lola crea con fal.ai, ya no con Higgsfield** (Elvin: "para Lola y Max, utiliza fal.ai"; Higgsfield
+quedó en periodo de gracia con límite diario). Manos: `node scripts/fal.mjs imagen "<prompt>" --ar 4:5|9:16 [--ref
+url]` (Nano Banana Pro; --ref conserva logo/producto/cara) y `video "<movimiento>" --img <url> --dur 5|10` (Kling 2.1
+Pro por cola). Llave FAL_API_KEY (la de Bori) en .env.local y Railway (max directo, lola por ${{max.FAL_API_KEY}}).
+Tope sin OK: 3 imágenes / 2 videos por pedido.

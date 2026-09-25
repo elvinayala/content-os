@@ -105,3 +105,12 @@ no se frena; Elvin quiere subirlos poco a poco con más clientes. Carpeta de Dri
 (scripts/drive/max-drive.gs; DRIVE_SCRIPT_SECRETO ya en Vercel; FALTA que Elvin publique el script y pase la URL
 /exec → DRIVE_SCRIPT_URL). Otra sesión tenía cambios de Pulse sin commitear (automatizaciones): desplegué desde un
 worktree limpio de HEAD para no subir su trabajo a medias — hacer lo mismo mientras siga así.
+**Identidad de Max (24/sep, medianoche):** Elvin quiso caricatura (estilo Muse) con SUS raíces ("él es el creador
+del método y el que funda a Max"): muñequito 3D con pelo/barba/blazer de lino crema de Elvin + pin de brújula y
+brillo amarillo LU → public/marcas/max/max-v2.png (oficial) y avatar max-avatar-v2-512.png; doc vault/ceo/identidad-max.md
+(transparencia: es IA, nunca se dice humano). Slack: publica con nombre+foto; DMs con identidad van al id D… del DM
+(al U… Slack los deja en Slackbot); mensajes del 25/sep reprogramados en max_programados (cron cada 5 min). Telegram
+renombrado "Max · Estratega Level Up" (foto: BotFather, la pone Elvin). App propia de Slack: manifest listo en
+scripts/slack/max-app-manifest.json, falta instalarla + el cambio de token/firma (evitar eventos duplicados con
+Command Center). Higgsfield: plan en "periodo de gracia" con límite diario (posible pago pendiente); la v2 se hizo con
+fal (FAL_API_KEY del Railway de Bori, nano-banana-pro/edit).
