@@ -1,5 +1,5 @@
 # Pista del reel de CLIENTES por región (18 s = video de 15 s + 3 s de cierre "Ya llegamos a <pueblo>").
-# Misma receta que pista-plomeros.py; escenas en 0 · 3.2 · 6.2 · 10.6 · 13.4 (logo) · 15.0 (cierre regional).
+# Misma receta que pista-plomeros.py; escenas en 0 · 3.2 · 6.2 · 10.6 · 13.4 (cierre regional; el logo con "WhatsApp" del video base se corta, 25/sep).
 import numpy as np, wave, sys
 SR = 44100; DUR = 18.0; N = int(SR*DUR); t = np.arange(N)/SR
 out = np.zeros(N)
@@ -83,7 +83,7 @@ for b in range(8):
             place(bass(root, int(beat*0.9*SR)), at+k*beat, 1.0 if k in (0,2) else 0.7)
 # ── Batería: entra en 3.2 (escena 2) y se llena en 6.5 (contador)
 tb = 2.4
-while tb < 15.0:
+while tb < 13.4:
     k = round((tb % bar)/beat)
     if k in (0,2): place(kick(), tb, 0.95)
     if k in (1,3) and tb>=3.2: place(clap(), tb, 0.8)
@@ -93,15 +93,14 @@ while tb < 15.0:
         place(hat(g=0.6), tb+beat/2, 0.7)
     tb += beat
 # ── Whooshes en cambios de escena (terminan justo en el corte)
-for cut in (3.2, 6.2, 10.6, 13.4, 15.0):
+for cut in (3.2, 6.2, 10.6, 13.4):
     w=whoosh(0.55); place(w, cut-0.55, 0.75)
 # ── Precios: un pop suave por fila del menú
 for c in (6.9, 7.35, 7.8, 8.25): place(pop(), c, 0.5)
 # ── Checks verdes
 for c in (10.8, 11.15, 11.5): place(pop(), c+0.3, 0.85)
 # ── Remate del logo + fade de todo
-place(kick(), 13.4, 1.0)
-place(kick(), 15.0, 1.0); place(stinger(), 15.0, 1.0)  # remate en el cierre regional
+place(kick(), 13.4, 1.0); place(stinger(), 13.4, 1.0)  # remate en el cierre regional
 fade_start=int(16.6*SR); out[fade_start:] *= np.linspace(1,0,N-fade_start)**1.5
 intro=int(0.25*SR); out[:intro]*=np.linspace(0,1,intro)
 # ── Master: compresión suave + límite
