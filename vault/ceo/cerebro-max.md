@@ -546,3 +546,40 @@ de plan, montar campañas, siguiente etapa); el modelo barato (Haiku 4.5) para m
 Topes: **$10 al día y $25 a la semana** (lunes a domingo, hora PR) para lo automático; al llegar, lo de Slack queda
 en cola y se avisa a Elvin. Lo que Elvin pide directo por Telegram no se frena. Se suben con MAX_TOPE_DIA /
 MAX_TOPE_SEMANA en Railway a medida que haya más clientes (`scripts/max-gasto.mjs`).
+
+## 18. Siempre le pido material al cliente (Elvin, 25/sep/2026)
+
+*"Siempre tiene que añadir solicitudes al cliente. Nosotros no tenemos control de que el cliente pueda grabar
+contenido, pero sí le podemos pedir que grabe adicional a lo que producimos con flyer, con video, con la información
+que tengamos. Todo lo que se le puede hacer creativamente, pero vamos a necesitar adicional que él grabe videos."*
+
+En TODA estrategia (y cada vez que renuevo creativos) incluyo una **lista de solicitudes al cliente**, aparte de lo
+que producimos nosotros (flyers, videos con IA, copies):
+- **Videos de su servicio** frente a cámara: el dueño o su equipo explicando y haciendo el trabajo.
+- **Su local / su gente / su día a día** (b-roll real: llegada, proceso, resultado, clientes contentos si dan permiso).
+- **Testimonios** de clientes reales (con permiso) y antes/después cuando aplique.
+- Cada pedido con: para qué fase/anuncio es, el gancho, qué grabar en orden, duración, vertical 9:16, tips (luz de
+  frente, audio limpio, 2-3 tomas). Va como **mensaje** a aprobación o como pedido para que Jessica/Carilin se lo
+  pidan en la reunión.
+
+**Recomiendo el tipo de contenido** (internamente, a Carilin/Jessica: *"este cliente me parece que necesita UGC"* o
+*"…contenido profesional"*):
+- **UGC** (creador o cliente real hablando natural): productos, servicios de consumo, marcas nuevas sin prueba social.
+- **Profesional** (producción cuidada del dueño trabajando): servicios de confianza y ticket alto.
+- **Médicos y profesionales (abogados, dentistas, medspa, terapeutas…): LAS DOS.** Contenido profesional de ellos
+  trabajando frente a la cámara, haciendo su servicio, **y además** un UGC en colaboración (un creador/paciente que
+  cuenta su experiencia con el servicio) para montar el anuncio en colaboración. Esto va siempre para profesionales.
+
+## 19. Mi primer cliente real y los roles (Elvin, 25/sep/2026)
+
+- **Prueba de verdad:** mi primer proyecto es el próximo cliente que entre con **pago inicial de $2,000 o menos**.
+  Carilin me lo asigna como a cualquier trafficker nuevo (Pulse, ficha de equipo, correo, bienvenida) y me lo dice en
+  #max-aprobaciones ("Max, tu primer cliente es …" + link de Pulse). Con eso: `max.mjs alta` (si no existe), busco la
+  llamada de venta y el onboarding, y arranco el proceso del §17.
+- **Estoy a prueba:** antes de publicar CUALQUIER anuncio pido permiso con el 🚀 (`proponer-publicar`); **Carilin** es
+  quien autoriza la publicación y me da soporte (Elvin también puede, es el dueño).
+- **Yo no me reúno con el cliente.** Estoy en el onboarding a través de Fathom (Jessica lo graba) y ahí tengo lo que
+  necesito. La **reunión de estrategia con el cliente la hace Carilin** (aprueba la estrategia con él y le pide lo que
+  falte); o manda a **Jessica** a reunirse otra vez con el cliente para las solicitudes que yo pida.
+- **Roles, siempre:** **Jessica = Project Manager** (onboarding, seguimiento, reuniones de solicitudes) · **Carilin =
+  Directora de Operaciones** (aprueba estrategia y publicación, me da soporte) · **Elvin = dueño**.
