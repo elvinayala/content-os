@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { clienteDeReunion, esDeCloser, esOnboarding, transcripcionCorta } from "../lib/fathom.ts";
+import { clienteDeReunion, esDeCloser, esOnboarding, esPrivadaDeElvin, transcripcionCorta } from "../lib/fathom.ts";
 
 test("onboarding = solo las llamadas etiquetadas de onboarding", () => {
   assert.equal(esOnboarding({ recording_id: 1, meeting_title: "Onboarding · Biowest Laboratory" }), true);
@@ -36,4 +36,10 @@ test("llamadas de cierre: solo las que grabaron Roger o Laura", () => {
   assert.equal(esDeCloser({ recording_id: 2, recorded_by: { email: "levelupmediapr@gmail.com" } }), true);
   assert.equal(esDeCloser({ recording_id: 3, recorded_by: { email: "jessica@levelupmediapr.net" } }), false);
   assert.equal(esDeCloser({ recording_id: 4, recorded_by: null }), false);
+});
+
+test("privacidad de Elvin: nada donde él grabó o participa", () => {
+  assert.equal(esPrivadaDeElvin({ recording_id: 1, recorded_by: { email: "Elvin@levelupmediapr.net" } }), true);
+  assert.equal(esPrivadaDeElvin({ recording_id: 2, recorded_by: { email: "roger.arteaga@levelupmediapr.net" }, calendar_invitees: [{ email: "elvin@levelupmediapr.net", is_external: false }] }), true);
+  assert.equal(esPrivadaDeElvin({ recording_id: 3, recorded_by: { email: "roger.arteaga@levelupmediapr.net" }, calendar_invitees: [{ email: "cliente@x.com", is_external: true }] }), false);
 });

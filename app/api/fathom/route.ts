@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { after, NextRequest, NextResponse } from "next/server";
 
-import { CLOSERS_FATHOM, esDeCloser, esOnboarding, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
+import { CLOSERS_FATHOM, esDeCloser, esOnboarding, esPrivadaDeElvin, PRIVADOS_FATHOM, firmaValida, mensajeSlack, type ReunionFathom } from "@/lib/fathom";
 import { onboardingDesdeFathom } from "@/lib/max/onboarding";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
@@ -98,6 +98,11 @@ export async function POST(req: NextRequest) {
   if (prueba && modoMax) return NextResponse.json({ prueba: true, esOnboarding: esOnboarding(r), max: esOnboarding(r) ? await onboardingDesdeFathom(r, { prueba: true, completo: modoMax === "completo" }) : null });
   if (prueba) return NextResponse.json({ prueba: true, canal: CANAL(), ...mensaje });
 
+  // Privacidad de Elvin (regla dura, 24/sep): nada de su cuenta de Fathom y ninguna reunión donde él
+  // esté sale de aquí — ni al canal ni a Max — sin su autorización. Se descarta sin guardar nada.
+  const privados = process.env.FATHOM_PRIVADOS_EMAILS ? process.env.FATHOM_PRIVADOS_EMAILS.split(",") : PRIVADOS_FATHOM;
+  if (!desdeEquipo || esPrivadaDeElvin(r, privados)) return NextResponse.json({ ok: true, ignorada: "privada" });
+
   // Del equipo solo entran dos cosas: las llamadas de cierre de Roger y Laura (van al canal) y los
   // onboardings etiquetados (van a Max). Lo demás se descarta sin guardar nada.
   const onboarding = esOnboarding(r);
@@ -123,8 +128,8 @@ export async function POST(req: NextRequest) {
   if (tomada[0].intentos === 1 && onboarding) {
     after(() => onboardingDesdeFathom(r).catch((e) => console.error("[fathom → max]", e instanceof Error ? e.message : e)));
   }
-  // Los onboardings del equipo son solo para Max. Al canal de resúmenes: las llamadas de Elvin (#29) y
-  // las de cierre de Roger y Laura (Elvin, 24/sep).
+  // Los onboardings del equipo son solo para Max. Al canal de resúmenes: SOLO las llamadas de cierre de
+  // Roger y Laura (Elvin, 24/sep). Las de Elvin nunca (ver privacidad arriba).
   if (desdeEquipo && !deCloser) {
     await d.execute(sql`UPDATE fathom_llamadas SET estado = 'max', actualizado_el = now() WHERE recording_id = ${id}`);
     return NextResponse.json({ ok: true, max: true });

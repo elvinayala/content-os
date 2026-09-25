@@ -181,3 +181,16 @@ export function esDeCloser(r: ReunionFathom, emails: string[] = CLOSERS_FATHOM):
   const grabo = (r.recorded_by?.email || "").trim().toLowerCase();
   return Boolean(grabo) && emails.map((e) => e.trim().toLowerCase()).includes(grabo);
 }
+
+// ── Privacidad de Elvin (24/sep/2026, regla dura) ────────────────────────────────────────────────
+// "Nunca graben mis grabaciones de Elvin Ayala, el CEO. No compartan mis reuniones con nadie, a menos
+// que yo dé autorización." Ninguna reunión donde Elvin esté (grabó, invitado o anfitrión) sale del
+// sistema: ni al canal de resúmenes ni a Max. Override (solo con su OK): FATHOM_PRIVADOS_EMAILS.
+export const PRIVADOS_FATHOM = ["elvin@levelupmediapr.net"];
+
+export function esPrivadaDeElvin(r: ReunionFathom, emails: string[] = PRIVADOS_FATHOM): boolean {
+  const lista = emails.map((e) => e.trim().toLowerCase()).filter(Boolean);
+  const grabo = (r.recorded_by?.email || "").trim().toLowerCase();
+  if (lista.includes(grabo)) return true;
+  return (r.calendar_invitees ?? []).some((i) => lista.includes((i.email || "").trim().toLowerCase()));
+}
