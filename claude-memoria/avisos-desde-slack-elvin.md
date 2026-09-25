@@ -22,3 +22,7 @@ más) y el equipo aprende que los agentes son quienes hacen el trabajo.
 (acuses de solicitudes, "Listo ✅" de Nico en #nico-desarrollo). Avisos que Elvin manda a dar → su
 cuenta + firma del agente. Sigue aplicando verificar al destinatario antes
 ([[slack-equipo-verificar]]) y no enviar contenido sin su OK ([[no-enviar-sin-aprobar]]).
+
+**Automáticos → siempre el bot (24/sep/2026):** los avisos recurrentes que manda el sistema solo (p. ej. el
+resumen "Mi día" de Pulse a Jessica y Carilin, lun–vie 8 AM) salen del bot **Command Center**
+(U0BFPB0SSP4), NUNCA de la cuenta de Elvin. Elvin: "que no le llegue nada desde mi cuenta a ellas".
