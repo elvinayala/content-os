@@ -83,7 +83,7 @@ Se lanza **donde vive Luis**, con un radio de 25 minutos de manejo. Los anuncios
 
 ### D6 · Entidad legal
 
-**Decidido:** LLC nueva en PR, **Resuelto Home Services LLC**, totalmente separada de AI Borinquen, Level Up y Shadow Operator: cuenta bancaria propia, contabilidad propia, equipo propio. **Nadie de las agencias trabaja en Resuelto.** Tesorería: Elvin firma; un contador externo lleva libros, nómina de contratistas y liquidaciones semanales hasta que el volumen justifique un administrador propio.
+**Decidido:** LLC nueva en PR, **Resuelto PR Home Services LLC**, totalmente separada de AI Borinquen, Level Up y Shadow Operator: cuenta bancaria propia, contabilidad propia, equipo propio. **Nadie de las agencias trabaja en Resuelto.** Tesorería: Elvin firma; un contador externo lleva libros, nómina de contratistas y liquidaciones semanales hasta que el volumen justifique un administrador propio.
 
 ---
 
@@ -452,7 +452,7 @@ Sin media buyer, sin diseñador, sin videógrafo en nómina. La implementación 
 - [x] D3 Materiales: plomero compra, costo + 20% (10/10); ferretería para equipos desde el mes 2 (decidido)
 - [ ] D4 Director Técnico: verificar licencia de Luis → si es Maestro, él interino; si no, contratar semana 3 (decidido por defecto)
 - [ ] D5 Territorio: municipio de Luis → ______ · radio 25 min
-- [x] D6 Entidad: **Resuelto Home Services LLC**, equipo y cuentas 100% propias (decidido)
+- [x] D6 Entidad: **Resuelto PR Home Services LLC**, equipo y cuentas 100% propias (decidido)
 - [ ] Publicar la búsqueda del Coordinador/a de Ops (perfil en el kit) y contactar 3 diseñadores + 1 implementador freelance con los briefs del kit
 
 **Elvin (con Luis, 45 minutos)**
@@ -465,7 +465,7 @@ Sin media buyer, sin diseñador, sin videógrafo en nómina. La implementación 
 
 **Coordinador/a de Ops (hasta contratarlo: Elvin, con apoyo de los agentes de IA)**
 
-- [ ] Cita con abogado corporativo (semana 1): Ley 59-2022, LLC "Resuelto Home Services LLC", contrato de plomero (borrador en el kit), términos y garantía
+- [ ] Cita con abogado corporativo (semana 1): Ley 59-2022, LLC "Resuelto PR Home Services LLC", contrato de plomero (borrador en el kit), términos y garantía
 - [ ] 2 cotizaciones de seguro de responsabilidad ($1M)
 - [ ] 20 llamadas de comprador misterioso (o a un freelancer por hora) → hoja "Precios del mercado"
 - [ ] Cotizar 3 polos + gorra + 2 imanes de auto + tarjeta digital

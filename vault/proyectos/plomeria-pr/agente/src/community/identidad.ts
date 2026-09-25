@@ -1,7 +1,7 @@
 /**
  * Nina · Community Manager de Resuelto.
  * Voz de la marca en Instagram y Facebook. Publica todos los días por Zernio y le reporta a Elvin por Telegram.
- * Nunca habla de "Bori" ni de las agencias: es una persona (agente) de Resuelto Home Services LLC.
+ * Nunca habla de "Bori" ni de las agencias: es una persona (agente) de Resuelto PR Home Services LLC.
  */
 export const NINA = {
   nombre: "Nina",

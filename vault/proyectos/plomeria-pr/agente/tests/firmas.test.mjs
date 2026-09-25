@@ -4,11 +4,11 @@ import assert from "node:assert/strict";
 const D = await import("../dist/firmas/documento.js");
 const PNG = "data:image/png;base64," + "iVBORw0KGgo".repeat(60);
 
-test("las dos plantillas tienen 3 hojas, campos, casillas y firmas marcadas", () => {
+test("las plantillas tienen sus hojas (anexo 1, acuerdos 3), campos, casillas y firmas marcadas", () => {
   for (const tipo of D.TIPOS) {
     const html = D.plantilla(tipo);
     const { css, hojas } = D.partes(html);
-    assert.equal(hojas.length, 3, tipo);
+    assert.equal(hojas.length, tipo === "anexo-nombre" ? 1 : 3, tipo);
     assert.ok(css.includes(".campo"), tipo);
     assert.ok(html.includes('data-firma="firmante"') && html.includes('data-firma="resuelto"'), tipo);
     for (const c of D.CAMPOS[tipo]) if (c.tipo !== "opcion") assert.ok(html.includes(`data-campo="${c.id}"`), `${tipo}: falta el campo ${c.id} en la plantilla`);

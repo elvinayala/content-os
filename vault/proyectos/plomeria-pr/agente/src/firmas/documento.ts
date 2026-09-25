@@ -12,8 +12,10 @@ import path from "node:path";
 import { RAIZ } from "../almacen.js";
 
 // "aprendiz" reemplazó a "ayudante" el 24/sep/2026: la Ley 59-2022 no permite plomería sin certificado de aprendiz o licencia.
-export type TipoContrato = "plomero" | "aprendiz";
-export const TIPOS: TipoContrato[] = ["plomero", "aprendiz"];
+export type TipoContrato = "plomero" | "aprendiz" | "anexo-nombre";
+export const TIPOS: TipoContrato[] = ["plomero", "aprendiz", "anexo-nombre"];
+/** Nombre de cada documento para el PDF, el certificado, los avisos y el panel. */
+export const NOMBRE_DOC: Record<TipoContrato, string> = { plomero: "Acuerdo de afiliación de plomero", aprendiz: "Acuerdo de aprendiz", "anexo-nombre": "Anexo de corrección del nombre de Resuelto" };
 
 export interface CampoDef { id: string; etiqueta: string; tipo: "texto" | "tel" | "opcion"; opciones?: { valor: string; etiqueta: string; check: string }[]; requerido: boolean; ayuda?: string }
 const COMUNES_INICIO: CampoDef[] = [
@@ -21,6 +23,8 @@ const COMUNES_INICIO: CampoDef[] = [
   { id: "telefono", etiqueta: "Teléfono", tipo: "tel", requerido: true },
 ];
 export const CAMPOS: Record<TipoContrato, CampoDef[]> = {
+  // 25/sep/2026: la entidad quedó como Resuelto PR Home Services LLC (registro 591463); los ya firmados firman este anexo.
+  "anexo-nombre": [...COMUNES_INICIO, { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true }],
   plomero: [
     ...COMUNES_INICIO,
     { id: "direccion", etiqueta: "Dirección", tipo: "texto", requerido: true },
@@ -117,8 +121,8 @@ export function certificado(a: Auditoria): string {
   const fila = (k: string, v: string) => `<tr><td>${k}</td><td>${esc(v)}</td></tr>`;
   const zona = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico", dateStyle: "long", timeStyle: "medium" }) + " (hora de PR)";
   return `<section class="hoja" data-hoja="99" data-titulo="Certificado"><div class="top"><div><div class="tag">Constancia de firma electrónica</div><h1>Certificado</h1></div></div>
-<p>Este documento fue firmado electrónicamente en la plataforma de Resuelto Home Services LLC. La persona firmante completó sus datos, dibujó su firma, puso sus iniciales en cada página y aceptó firmar electrónicamente, conforme a la ley de transacciones electrónicas de Puerto Rico.</p>
-<table class="cert">${fila("Documento", `${a.id} · ${a.tipo === "plomero" ? "Acuerdo de afiliación de plomero + Reglas de oro" : "Acuerdo de aprendiz + secciones que aplican + Reglas de oro"}`)}
+<p>Este documento fue firmado electrónicamente en la plataforma de Resuelto PR Home Services LLC. La persona firmante completó sus datos, dibujó su firma, puso sus iniciales en cada página y aceptó firmar electrónicamente, conforme a la ley de transacciones electrónicas de Puerto Rico.</p>
+<table class="cert">${fila("Documento", `${a.id} · ${a.tipo === "plomero" ? "Acuerdo de afiliación de plomero + Reglas de oro" : a.tipo === "aprendiz" ? "Acuerdo de aprendiz + secciones que aplican + Reglas de oro" : NOMBRE_DOC[a.tipo]}`)}
 ${fila("Firmante", `${a.nombre} · ${a.telefono}`)}
 ${fila("Emitido por Resuelto", `${zona(a.emitido.en)} · ${a.emitido.por}`)}
 ${a.abierto ? fila("Abierto por el firmante", `${zona(a.abierto.en)} · IP ${a.abierto.ip}`) : ""}

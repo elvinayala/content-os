@@ -6,9 +6,9 @@ const fecha = (iso?: string) => (iso ? new Date(iso).toLocaleString("es-PR", { t
 
 export function panelFirmasHTML(firmas: (Firma & { link: string; pdf: string })[]): string {
   const filas = firmas.map((f) => `<tr>
-    <td><b>${esc(f.nombre)}</b><br><span class="g">${esc(f.id)} · ${f.tipo === "plomero" ? "Plomero" : "Aprendiz"} · ${esc(f.telefono.replace(/^1/, ""))}</span></td>
+    <td><b>${esc(f.nombre)}</b><br><span class="g">${esc(f.id)} · ${f.tipo === "plomero" ? "Plomero" : f.tipo === "aprendiz" ? "Aprendiz" : "Anexo de nombre"} · ${esc(f.telefono.replace(/^1/, ""))}</span></td>
     <td>${f.estado === "firmado" ? `<span class="ok">✓ Firmado</span><br><span class="g">${fecha(f.firmado?.en)}</span>` : f.estado === "anulado" ? `<span class="g">Anulado</span>` : `<span class="pend">Pendiente</span><br><span class="g">${f.abierto ? "Lo abrió " + fecha(f.abierto.en) : "No lo ha abierto"}</span>`}</td>
-    <td class="acc">${f.estado === "firmado" ? `<a href="${f.pdf}" target="_blank">PDF</a>` : `<button data-tipo="${f.tipo === "plomero" ? "aprendiz" : "plomero"}" data-id="${esc(f.id)}">Pasar a ${f.tipo === "plomero" ? "aprendiz" : "plomero"}</button> <button data-copiar="${esc(f.link)}">Copiar enlace</button> <a href="https://wa.me/${esc(f.telefono)}?text=${encodeURIComponent(`Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${f.link}`)}" target="_blank">WhatsApp</a>`}</td>
+    <td class="acc">${f.estado === "firmado" ? `<a href="${f.pdf}" target="_blank">PDF</a>` : `${f.tipo === "anexo-nombre" ? "" : `<button data-tipo="${f.tipo === "plomero" ? "aprendiz" : "plomero"}" data-id="${esc(f.id)}">Pasar a ${f.tipo === "plomero" ? "aprendiz" : "plomero"}</button>`} <button data-copiar="${esc(f.link)}">Copiar enlace</button> <a href="https://wa.me/${esc(f.telefono)}?text=${encodeURIComponent(`Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${f.link}`)}" target="_blank">WhatsApp</a>`}</td>
   </tr>`).join("");
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Contratos · Resuelto</title>
@@ -37,7 +37,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:10px 8px;bor
 <h2>Nuevo contrato para firmar</h2>
 <div class="card">
 <form id="f">
-  <div><label>Tipo</label><select name="tipo"><option value="plomero">Plomero con licencia</option><option value="aprendiz">Aprendiz (con certificado de la Junta)</option></select></div>
+  <div><label>Tipo</label><select name="tipo"><option value="plomero">Plomero con licencia</option><option value="aprendiz">Aprendiz (con certificado de la Junta)</option><option value="anexo-nombre">Anexo de corrección de nombre (ya firmaron)</option></select></div>
   <div><label>Nombre</label><input name="nombre" required></div>
   <div><label>WhatsApp</label><input name="telefono" inputmode="tel" required placeholder="787-000-0000"></div>
   <div><label>Municipio</label><input name="municipio"></div>

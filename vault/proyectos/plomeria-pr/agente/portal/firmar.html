@@ -169,8 +169,9 @@
   // ── ¿Licencia? Oficial/maestro firma el acuerdo de plomero; con certificado de aprendiz, el de aprendiz.
   // Sin ninguno no hay contrato: la Ley 59-2022 (Art. 29) no permite hacer plomería sin certificado o licencia.
   let sinCertificado = false;
-  const nombreDoc = (t) => (t === "plomero" ? "de plomero afiliado" : "de aprendiz");
+  const nombreDoc = (t) => (t === "plomero" ? "de plomero afiliado" : t === "aprendiz" ? "de aprendiz" : "· anexo de corrección de nombre");
   function pintarLicencia() {
+    $("#licencia").classList.toggle("oculto", doc.tipo === "anexo-nombre");
     document.querySelectorAll("#licencia [data-tipo]").forEach((b) => b.classList.toggle("sel", sinCertificado ? b.dataset.tipo === "ninguno" : b.dataset.tipo === doc.tipo));
     $("#licenciaNota").textContent = sinCertificado
       ? "Por ley (Ley 59-2022), para trabajar en plomería en Puerto Rico necesitas al menos el certificado de aprendiz de la Junta Examinadora. No lleva examen: te matriculas en un curso de plomería de 3 meses en una escuela acreditada y lo solicitas. Cuando lo tengas, escríbenos y te mandamos tu contrato de aprendiz."
@@ -211,7 +212,7 @@
       .replace(/<span class="campo([^"]*)" data-campo="([a-z_]+)"><\/span>/g, (_m, cl, id) => `<span class="campo${cl} lleno">${esc(val[id] || "") || "—"}</span>`)
       .replace(/<span class="chk" data-check="([a-z_]+)">☐<\/span>/g, (_m, id) => `<span class="chk">${marcados.has(id) ? "☒" : "☐"}</span>`)
       .replace(/(<div class="firma" data-firma="firmante"><div class="trazo">)/g, `$1<span class="pendiente">Tu firma va aquí</span>`)
-      .replace(/(<div class="firma" data-firma="resuelto"><div class="trazo">)/g, `$1<span class="firma-tipo">Resuelto Home Services LLC</span>`);
+      .replace(/(<div class="firma" data-firma="resuelto"><div class="trazo">)/g, `$1<span class="firma-tipo">Resuelto PR Home Services LLC</span>`);
   }
   function pintarHojas() {
     const cont = $("#hojas"); cont.innerHTML = "";

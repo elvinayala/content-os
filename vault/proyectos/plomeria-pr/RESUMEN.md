@@ -1,6 +1,6 @@
 # Resuelto · Resumen en una página
 
-**Qué es.** Resuelto Home Services LLC es una marca de servicios para el hogar en Puerto Rico que arranca con plomería y está diseñada para crecer a aire acondicionado, electricidad y techos. No es una plomería: es la capa de demanda y confianza que se pone encima de plomeros licenciados independientes. Slogan: *Tu casa, resuelta.*
+**Qué es.** Resuelto PR Home Services LLC es una marca de servicios para el hogar en Puerto Rico que arranca con plomería y está diseñada para crecer a aire acondicionado, electricidad y techos. No es una plomería: es la capa de demanda y confianza que se pone encima de plomeros licenciados independientes. Slogan: *Tu casa, resuelta.*
 
 **Por qué ahora.** Puerto Rico tiene 963 plomeros colegiados para 3.2 millones de personas, el 70% con más de 65 años, y entraron 20 nuevos en 2025. El 54% de las viviendas es anterior a 1980. Nadie publica precios, nadie da ventana de llegada, nadie garantiza por escrito. El mercado está vacío de marca.
 

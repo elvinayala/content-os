@@ -21,10 +21,10 @@ export function contratoHTML(o: Oferta, p: Proveedor): string {
   .peq{font-size:11px;color:#5C6670}</style></head><body>
   <div class="marca">resuelto<span>.</span></div>
   <h1>Orden de trabajo y acuerdo de ejecución</h1>
-  <div class="peq">Referencia ${o.referencia} · Oferta ${o.id} · Resuelto Home Services LLC</div>
+  <div class="peq">Referencia ${o.referencia} · Oferta ${o.id} · Resuelto PR Home Services LLC</div>
 
   <h2>1. Partes</h2>
-  <p><strong>Resuelto Home Services LLC</strong> ("Resuelto") y <strong>${p.nombre}</strong> (${p.tipo === "plomero" ? "plomero licenciado" : "contratista registrado en DACO"}, WhatsApp ${p.whatsapp}) ("el Proveedor").</p>
+  <p><strong>Resuelto PR Home Services LLC</strong> ("Resuelto") y <strong>${p.nombre}</strong> (${p.tipo === "plomero" ? "plomero licenciado" : "contratista registrado en DACO"}, WhatsApp ${p.whatsapp}) ("el Proveedor").</p>
 
   <h2>2. Trabajo</h2>
   <table>
@@ -57,7 +57,7 @@ export function contratoHTML(o: Oferta, p: Proveedor): string {
   <h2>7. Marco</h2>
   <p>Esta orden se rige por el acuerdo marco de ${p.tipo === "plomero" ? "plomero afiliado" : "contratista Resuelto Verified"} firmado por las partes, incluida la cláusula de no captación de clientes de Resuelto.</p>
 
-  <div class="firma"><div>Por Resuelto Home Services LLC<br><br><span style="color:#fff">/firma_resuelto/</span></div><div>${p.nombre}<br><br><span style="color:#fff">/firma_proveedor/</span></div></div>
+  <div class="firma"><div>Por Resuelto PR Home Services LLC<br><br><span style="color:#fff">/firma_resuelto/</span></div><div>${p.nombre}<br><br><span style="color:#fff">/firma_proveedor/</span></div></div>
   <p class="peq">Aceptado en la plataforma el ${fecha(o.aceptadoEn ?? new Date().toISOString())}.</p>
 </body></html>`;
 }

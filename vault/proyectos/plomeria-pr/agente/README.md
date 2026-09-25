@@ -2,7 +2,7 @@
 
 Un solo cerebro (Claude) para todos los canales: **WhatsApp**, **Instagram DM**, **Facebook Messenger** y el **chat de las dos landings**. Cotiza con el menú, verifica cobertura por municipio, consulta el calendario del plomero, agenda, genera links de pago, lee fotos y PDFs, transcribe audios, registra plomeros candidatos y escala a un humano cuando hace falta.
 
-Es un servicio propio de Resuelto Home Services LLC. No depende de las agencias.
+Es un servicio propio de Resuelto PR Home Services LLC. No depende de las agencias.
 
 ## Cómo está armado
 
@@ -48,7 +48,7 @@ chat. El agente corre en Railway (proyecto `resuelto`, servicio `agente`, domini
 1. Activa la línea (Meta manda un código por SMS/llamada). **No instales WhatsApp ni WhatsApp Business con
    ese número.**
 2. [zernio.com](https://zernio.com) → Connections → tarjeta **WhatsApp** → **+ Connect** → **Use my own
-   number** → login de Facebook con el portafolio *Resuelto Home Services LLC* → crea un WABA nuevo →
+   number** → login de Facebook con el portafolio *Resuelto PR Home Services LLC* → crea un WABA nuevo →
    escribe el número → código SMS. En la ventana de Meta **no** elijas "Connect existing WhatsApp Business
    app account" (eso es coexistencia y te ata al teléfono).
 3. Dashboard → **API keys** → `ZERNIO_API_KEY`. Connections → WhatsApp → el id de la cuenta →

@@ -2,14 +2,14 @@
  * Registro y flujo de la firma electrónica: el equipo crea un enlace (/admin/firmas) → el plomero lo abre en el
  * celular, completa, crea su firma e iniciales, inicia cada página y firma → se genera el PDF final con certificado,
  * se guarda en el volumen (data/estado/firmas/) y se avisa a la reclutadora (Slack), a Elvin (Telegram) y a GHL.
- * Resuelto firma al EMITIR el enlace (como "Resuelto Home Services LLC", 25/sep a pedido de Aure): quien lo crea lo hace en nombre de Resuelto.
+ * Resuelto firma al EMITIR el enlace (como "Resuelto PR Home Services LLC", 25/sep a pedido de Aure): quien lo crea lo hace en nombre de Resuelto.
  */
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { RAIZ } from "../almacen.js";
 import { config } from "../config.js";
-import { plantilla, llenar, certificado, sha256, validarDatos, imagenValida, partes, CAMPOS, type TipoContrato, type DatosFirma } from "./documento.js";
+import { plantilla, llenar, certificado, sha256, validarDatos, imagenValida, partes, CAMPOS, NOMBRE_DOC, type TipoContrato, type DatosFirma } from "./documento.js";
 import { htmlAPdf } from "./pdf.js";
 import { dmSlack } from "../integraciones/slack.js";
 import { upsertContacto, agregarNota } from "../integraciones/crm.js";
@@ -75,10 +75,10 @@ export async function firmar(f: Firma, cuerpo: any, meta: { ip: string; ua: stri
   if (hojas.some((n) => !iniciadas.includes(n))) return { ok: false, error: "Falta poner tus iniciales en alguna página." };
 
   const en = new Date().toISOString();
-  const lleno = llenar(f.tipo, base, v.datos, { firmante: cuerpo.firma, resuelto: { nombre: "Resuelto Home Services LLC", cargo: "representante autorizado", en: f.emitido.en } }, en);
+  const lleno = llenar(f.tipo, base, v.datos, { firmante: cuerpo.firma, resuelto: { nombre: "Resuelto PR Home Services LLC", cargo: "representante autorizado", en: f.emitido.en } }, en);
   const hashContenido = sha256(lleno + cuerpo.firma + cuerpo.iniciales);
   const conCertificado = lleno.replace("</body>", certificado({ id: f.id, tipo: f.tipo, nombre: v.datos.nombre, telefono: v.datos.telefono, emitido: f.emitido, abierto: f.abierto, firmado: { en, ip: meta.ip, ua: meta.ua }, hojasIniciadas: iniciadas, hashContenido }) + "</body>");
-  const pdf = await htmlAPdf(conCertificado, { pie: `${f.id} · ${f.tipo === "plomero" ? "Acuerdo de afiliación de plomero" : "Acuerdo de aprendiz"} · firmado electrónicamente`, iniciales: cuerpo.iniciales });
+  const pdf = await htmlAPdf(conCertificado, { pie: `${f.id} · ${NOMBRE_DOC[f.tipo]} · firmado electrónicamente`, iniciales: cuerpo.iniciales });
   fs.mkdirSync(DIR_PDF, { recursive: true });
   const archivo = path.join(DIR_PDF, `${f.id}.pdf`);
   fs.writeFileSync(archivo, pdf);
@@ -96,10 +96,10 @@ export function archivoPdf(f: Firma): string | null {
 
 async function avisar(f: Firma) {
   const d = f.firmado!.datos;
-  const quien = f.tipo === "plomero" ? `plomero ${d.licencia ?? ""} #${d.lic_num ?? ""}`.trim() : `aprendiz · certificado #${d.cert_num ?? ""} (vence ${d.cert_vence ?? "?"}) · ${d.anos ?? ""} de experiencia`;
+  const quien = f.tipo === "anexo-nombre" ? "anexo de corrección de nombre" : f.tipo === "plomero" ? `plomero ${d.licencia ?? ""} #${d.lic_num ?? ""}`.trim() : `aprendiz · certificado #${d.cert_num ?? ""} (vence ${d.cert_vence ?? "?"}) · ${d.anos ?? ""} de experiencia`;
   const linea = `✍️ Contrato firmado: ${d.nombre} (${quien}) · ${d.municipio ?? ""} · ${enlacePdf(f)}`;
   await dmSlack(config.slack.reclutamiento, linea);
   await avisarCoordinador(linea);
-  const contactId = await upsertContacto({ nombre: d.nombre, telefono: d.telefono || f.telefono, municipio: d.municipio, tags: ["contrato-firmado", f.tipo === "plomero" ? "plomero-firmado" : "aprendiz-firmado"] });
-  if (contactId) await agregarNota(contactId, `✍️ Firmó electrónicamente el ${f.tipo === "plomero" ? "Acuerdo de afiliación de plomero" : "Acuerdo de aprendiz"} (${f.id}) el ${new Date(f.firmado!.en).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}. PDF: ${enlacePdf(f)} · huella ${f.firmado!.hashPdf.slice(0, 16)}…`);
+  const contactId = await upsertContacto({ nombre: d.nombre, telefono: d.telefono || f.telefono, municipio: d.municipio, tags: ["contrato-firmado", f.tipo === "plomero" ? "plomero-firmado" : f.tipo === "aprendiz" ? "aprendiz-firmado" : "anexo-nombre-firmado"] });
+  if (contactId) await agregarNota(contactId, `✍️ Firmó electrónicamente el ${NOMBRE_DOC[f.tipo]} (${f.id}) el ${new Date(f.firmado!.en).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}. PDF: ${enlacePdf(f)} · huella ${f.firmado!.hashPdf.slice(0, 16)}…`);
 }

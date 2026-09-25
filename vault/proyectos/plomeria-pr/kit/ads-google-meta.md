@@ -1,6 +1,6 @@
 # Anuncios · Resuelto · mes 1 (solo territorio de Luis)
 
-**Para:** media buyer freelance. Cuentas nuevas a nombre de Resuelto Home Services LLC. Conversión principal: clic a WhatsApp (evento `whatsapp_click`) y, cuando GHL lo permita, cita agendada. Geo: radio de 25 minutos alrededor del municipio de Luis, **nada más**.
+**Para:** media buyer freelance. Cuentas nuevas a nombre de Resuelto PR Home Services LLC. Conversión principal: clic a WhatsApp (evento `whatsapp_click`) y, cuando GHL lo permita, cita agendada. Geo: radio de 25 minutos alrededor del municipio de Luis, **nada más**.
 
 ## Google Ads · $40/día · Búsqueda
 **Estructura:** 1 campaña · 4 grupos · concordancia de frase + exacta · extensiones de llamada (WhatsApp), ubicación, precios (del menú) y enlaces (Destape · Calentador · Cisterna · Emergencia).

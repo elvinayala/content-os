@@ -7,7 +7,7 @@ Estado al 4 de septiembre de 2026 (día 0). Equipo propio; nadie de las agencias
 - [x] D2 Reparto: 35/65 sobre mano de obra + cargo de coordinación $19.
 - [x] D3 Materiales: el plomero compra con recibo; costo + 20% (10% plomero / 10% marca); ferretería para equipos desde el mes 2.
 - [x] D4 Director Técnico: part-time desde la semana 3 (si Luis es Maestro, él interino).
-- [x] D6 Entidad: **Resuelto Home Services LLC**, cuentas y equipo 100% propios.
+- [x] D6 Entidad: **Resuelto PR Home Services LLC**, cuentas y equipo 100% propios.
 - [x] Dominios revisados: resueltopr.com y resuelto.pr aparecen libres. YouTube @resueltopr libre.
 - [x] Kit de arranque: brief de marca, borrador de contrato + reglas de oro, menú v1, flujo de Bori, hoja de trabajos, anuncios, 10 reels, perfil del Coordinador/a, landing MVP.
 

@@ -32,7 +32,7 @@ Los dos terminan en el mismo lugar: **GHL, pipeline Candidatos**. Ese tablero es
 
 ## 3. Cómo se ve en GHL
 
-`app.gohighlevel.com` → sub-cuenta **Resuelto Home Services LLC** → Opportunities → pipeline **Candidatos**.
+`app.gohighlevel.com` → sub-cuenta **Resuelto PR Home Services LLC** → Opportunities → pipeline **Candidatos**.
 
 Etapas: **Aplicó** → Entrevista agendada → Documentos verificados → Activo (o Descartado). El agente y el formulario ponen todo en **Aplicó**; el resto lo mueves tú arrastrando la tarjeta. Cada tarjeta tiene el contacto, la nota con licencia/municipio/equipo/disponibilidad y la conversación (si vino por WhatsApp, el historial está en el inbox de Zernio; en GHL queda la nota).
 

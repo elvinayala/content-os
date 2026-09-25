@@ -53,9 +53,9 @@ def hoja(n, titulo, html):
     return f'<section class="hoja" data-hoja="{n}" data-titulo="{titulo}">{html}</section>'
 
 PROVISIONAL = """<div class="aviso"><b>Acuerdo provisional.</b> Rige desde su firma hasta que las partes firmen el contrato definitivo que prepara el abogado de Resuelto, o por <b>90 días</b>, lo que ocurra primero. Si el contrato definitivo no se firma en ese plazo, este acuerdo termina sin penalidad para ninguna de las partes, salvo lo dispuesto en las secciones 5, 6 y 9.</div>"""
-RESUELTO_PARTE = """<b>Resuelto Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes del Estado Libre Asociado de Puerto Rico, representada por Elvin Ayala ("Resuelto")"""
+RESUELTO_PARTE = """<b>Resuelto PR Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes de Puerto Rico, registro núm. 591463 del Departamento de Estado, representada por Elvin Ayala ("Resuelto")"""
 FIRMADO_EN = f"""<p>Firmado en {campo("lugar", "s")}, Puerto Rico, a {campo("dia", "s")} de {campo("mes", "s")} de 2026.</p>"""
-FIRMA_RESUELTO = firma("resuelto", "Por Resuelto Home Services LLC<br>Representante autorizado")
+FIRMA_RESUELTO = firma("resuelto", "Por Resuelto PR Home Services LLC<br>Representante autorizado")
 
 SEC = {
  1: """<h2>1. Relación</h2>
@@ -82,7 +82,7 @@ SEC = {
  9: """<h2>9. Confidencialidad e imagen</h2>
 <p>Precios, procesos y listas de clientes de Resuelto son confidenciales. El Plomero autoriza a Resuelto a usar su nombre, foto y las fotos de sus trabajos en su comunicación.</p>""",
  10: """<h2>10. Cumplimiento y seguro</h2>
-<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto Home Services LLC como asegurado adicional</b>, y la mantendrá vigente. Si no la entrega en ese plazo, Resuelto pausará las ofertas de trabajo hasta que la entregue. Cada parte responde por sus propios actos.</p>""",
+<p>El Plomero declara que su licencia y colegiación están vigentes, cumple con la ley y el reglamento de plomería de Puerto Rico y avisará cualquier suspensión en 24 horas. Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto PR Home Services LLC como asegurado adicional</b>, y la mantendrá vigente. Si no la entrega en ese plazo, Resuelto pausará las ofertas de trabajo hasta que la entregue. Cada parte responde por sus propios actos.</p>""",
 }
 
 HOJA_ACUERDO_1 = f"""{cab("Plomeros afiliados", "Acuerdo de afiliación")}
@@ -142,7 +142,21 @@ def documento(hojas):
 # PDF en blanco (para imprimir): acuerdo + reglas + aprendiz
 ACUERDO = documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS), hoja(4, "Acuerdo de aprendiz", HOJA_APRENDIZ)])
 # Plantillas de la firma electrónica
+# Anexo C (25/sep/2026): los primeros acuerdos se firmaron con "Resuelto Home Services LLC", pero la entidad quedó
+# registrada como RESUELTO PR HOME SERVICES LLC (registro 591463, 25/sep/2026). Una hoja, firma e iniciales.
+HOJA_ANEXO_NOMBRE = f"""{cab("Anexo C · Corrección del nombre de Resuelto", "Anexo de corrección de nombre")}
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")} &nbsp; Municipio: {campo("municipio", "s")} ("el Plomero").</p>
+<ol class="pasos">
+<li>En el Acuerdo de afiliación (o de aprendiz) que el Plomero firmó con Resuelto, la parte contratante aparece como "Resuelto Home Services LLC". El nombre legal correcto, según su registro en el Departamento de Estado de Puerto Rico del 25 de septiembre de 2026, es <b>Resuelto PR Home Services LLC</b>, registro núm. 591463.</li>
+<li>Donde ese Acuerdo dice "Resuelto Home Services LLC", debe leerse <b>"Resuelto PR Home Services LLC"</b>. Todo lo demás del Acuerdo sigue igual: pago, reglas, vigencia y secciones.</li>
+<li>Resuelto PR Home Services LLC asume y ratifica todos los derechos y obligaciones de ese Acuerdo desde la fecha en que el Plomero lo firmó.</li>
+</ol>
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Plomero", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+
 PLANTILLAS = {
+ "anexo-nombre": documento([hoja(1, "Anexo de corrección de nombre", HOJA_ANEXO_NOMBRE)]),
  "plomero": documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
  "aprendiz": documento([hoja(1, "Acuerdo de aprendiz", HOJA_APRENDIZ), hoja(2, "Secciones que te aplican", HOJA_APRENDIZ_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
 }
@@ -209,7 +223,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <li>Te pagamos los viernes, siempre.</li>
 </ol>
 <div class="caja" style="margin-top:22px"><h2>¿Dudas?</h2>WhatsApp de Resuelto: <b>787-956-1111</b> · resueltopr.com/plomeros</div>
-<p class="pie">Resuelto Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>
+<p class="pie">Resuelto PR Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>
 </body></html>"""
 
 DEST = AQUI / "../../agente/data/plantillas"

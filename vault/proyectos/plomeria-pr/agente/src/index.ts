@@ -142,7 +142,7 @@ app.post("/equipo-firmas/tipo", (req: any, res) => {
 });
 app.post("/equipo-firmas/nuevo", (req: any, res) => {
   const b = req.body ?? {};
-  const tipo = b.tipo === "aprendiz" ? "aprendiz" : "plomero";
+  const tipo = b.tipo === "aprendiz" ? "aprendiz" : b.tipo === "anexo-nombre" ? "anexo-nombre" : "plomero";
   if (!String(b.nombre ?? "").trim() || String(b.telefono ?? "").replace(/\D/g, "").length < 10) return res.json({ ok: false, error: "Pon el nombre y un WhatsApp de 10 dígitos." });
   const f = firmas.crear({ tipo, nombre: String(b.nombre), telefono: String(b.telefono), municipio: b.municipio ? String(b.municipio) : undefined, por: "panel de contratos" });
   const link = firmas.enlace(f);

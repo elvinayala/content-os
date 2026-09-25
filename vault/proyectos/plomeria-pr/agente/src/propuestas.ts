@@ -40,7 +40,7 @@ ${d.duracionDias ? `<p><strong>Duración estimada:</strong> ${d.duracionDias[0]}
 
 <h2>Cómo se paga</h2>
 <table>${c.hitos.map((h) => `<tr><td>${h.nombre}</td><td>${$(h.monto)}</td></tr>`).join("")}</table>
-<p class="peq">Se paga a Resuelto Home Services LLC por ATH Móvil, tarjeta o transferencia. El último pago se libera solo cuando tú aceptas el trabajo terminado.</p>
+<p class="peq">Se paga a Resuelto PR Home Services LLC por ATH Móvil, tarjeta o transferencia. El último pago se libera solo cuando tú aceptas el trabajo terminado.</p>
 
 <h2>La promesa Resuelto</h2>
 <p><span class="ok">✓</span> Contratista verificado (Resuelto Verified: registro DACO, seguro, referencias).<br>
@@ -58,8 +58,8 @@ export function contratoClienteHTML(d: DatosPropuesta & { registroDaco?: string 
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Contrato ${p.id} · Resuelto</title><style>${CSS}</style></head><body>
 <div class="marca">resuelto<span>.</span></div>
 <h1>Contrato de mejoras al hogar</h1>
-<div class="peq">Proyecto ${p.id} · ${fechaLarga()} · Resuelto Home Services LLC · Registro de Contratistas DACO ${d.registroDaco ?? "[NÚMERO]"}</div>
-<h2>1. Partes</h2><p><strong>Resuelto Home Services LLC</strong> ("Resuelto") y <strong>${p.nombre}</strong>, ${p.telefono} ("el Cliente"), propietario o autorizado de la propiedad en ${p.municipio}, Puerto Rico.</p>
+<div class="peq">Proyecto ${p.id} · ${fechaLarga()} · Resuelto PR Home Services LLC · Registro de Contratistas DACO ${d.registroDaco ?? "[NÚMERO]"}</div>
+<h2>1. Partes</h2><p><strong>Resuelto PR Home Services LLC</strong> ("Resuelto") y <strong>${p.nombre}</strong>, ${p.telefono} ("el Cliente"), propietario o autorizado de la propiedad en ${p.municipio}, Puerto Rico.</p>
 <h2>2. Objeto</h2><p>Resuelto ejecutará, directamente o mediante contratistas verificados bajo su responsabilidad y supervisión, el siguiente trabajo: <strong>${d.categoriaNombre}</strong> conforme al alcance de la Propuesta ${p.id}, que forma parte de este contrato.</p>
 <table>${d.partidas.map((x) => `<tr><td>${x.nombre}</td><td>${x.cantidad} ${x.unidad}</td></tr>`).join("")}</table>
 <h2>3. Precio y forma de pago</h2><p>Precio total fijo: <strong>${$(c.precioFinal)}</strong>, pagadero a Resuelto según los hitos:</p>
@@ -71,6 +71,6 @@ export function contratoClienteHTML(d: DatosPropuesta & { registroDaco?: string 
 <h2>7. Aceptación</h2><p>Al terminar, Resuelto y el Cliente inspeccionan el trabajo. El último hito se paga al aceptar. Los puntos pendientes se listan por escrito y se corrigen antes del pago final.</p>
 <h2>8. Cancelación</h2><p>[Cláusula de cancelación y derechos del consumidor conforme a DACO: la redacta el abogado.]</p>
 <h2>9. Permisos</h2><p>${p.categoriaId === "poda-arboles" || p.categoriaId === "piscinas" || p.categoriaId === "remodelacion-general" ? "Los permisos requeridos se gestionan según lo indicado en la propuesta y su costo forma parte del precio cuando así se especifica." : "No se anticipan permisos para este alcance."}</p>
-<div class="firma"><div>Resuelto Home Services LLC<br><br><span style="color:#fff">/firma_resuelto/</span></div><div>${p.nombre}<br><br><span style="color:#fff">/firma_cliente/</span></div></div>
+<div class="firma"><div>Resuelto PR Home Services LLC<br><br><span style="color:#fff">/firma_resuelto/</span></div><div>${p.nombre}<br><br><span style="color:#fff">/firma_cliente/</span></div></div>
 </body></html>`;
 }

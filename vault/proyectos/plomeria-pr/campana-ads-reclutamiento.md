@@ -9,7 +9,7 @@ base: "[[marketing-fase-0]] · [[ESTADO]] · [[kit/campana-reclutamiento]] · [[
 
 # Sprint de anuncios · Reclutar plomeros y contratistas · $50/día × 7 días
 
-> **Actualización 18/sep/2026:** se montó **directo en Meta** (no por Bori) porque Elvin quiso arrancar al día siguiente. Portafolio propio `Resuelto Home Services LLC` (157965986805918), cuenta `act_1564735818086768`, página Resuelto PR, pixel `28140823722265213` en las 3 landings (PageView · Lead · Contact). Como aún no hay WhatsApp, el objetivo es **Clientes potenciales → conversión Lead en el sitio** (formulario de `/plomeros` → GHL). Campaña A creada: `Resuelto · Plomeros · Leads · Sprint 1` ($30/día) → conjunto `Plomeros · PR · Advantage+ · Lead web` (PR, 25+) → anuncio A1 video 15 s con copy v1, CTA "Enviar solicitud", URL con UTM. Pendiente: tarjeta (Elvin), A2/A3 flyers y campaña B contratistas.
+> **Actualización 18/sep/2026:** se montó **directo en Meta** (no por Bori) porque Elvin quiso arrancar al día siguiente. Portafolio propio `Resuelto PR Home Services LLC` (157965986805918), cuenta `act_1564735818086768`, página Resuelto PR, pixel `28140823722265213` en las 3 landings (PageView · Lead · Contact). Como aún no hay WhatsApp, el objetivo es **Clientes potenciales → conversión Lead en el sitio** (formulario de `/plomeros` → GHL). Campaña A creada: `Resuelto · Plomeros · Leads · Sprint 1` ($30/día) → conjunto `Plomeros · PR · Advantage+ · Lead web` (PR, 25+) → anuncio A1 video 15 s con copy v1, CTA "Enviar solicitud", URL con UTM. Pendiente: tarjeta (Elvin), A2/A3 flyers y campaña B contratistas.
 >
 > **Campaña WhatsApp (18/sep, borrador):** `Resuelto · Plomeros · WhatsApp · Sprint 1` ($30/día, objetivo Ventas → Destinos de mensajes) → conjunto `Plomeros · PR · Hombres 30+ · Plomería · WhatsApp` (Puerto Rico, edad mínima 25 [tope del control duro de Meta], sugerencia 30–65+, Hombres, intereses Plomería (construcción) · Plumbing Technician (cargo) · The Home Depot · Construction (industry) · Caja de herramientas; ~480–566K) → anuncio W1 video 15 s, copy v1 con CTA a WhatsApp, plantilla de chat de Resuelto (saludo + 3 botones: licencia/aplicar · cómo funciona el pago · zonas). **Falta:** conectar el número de WhatsApp en el conjunto (Destino manual → WhatsApp → Conectar perfil, pide código) y **desmarcar Messenger**, que quedó marcado como destino temporal porque Meta exige al menos uno.
 
@@ -69,7 +69,7 @@ base: "[[marketing-fase-0]] · [[ESTADO]] · [[kit/campana-reclutamiento]] · [[
 ## 3. Estructura exacta
 
 ```
-Cuenta publicitaria: Resuelto Home Services LLC (Business Manager propio)
+Cuenta publicitaria: Resuelto PR Home Services LLC (Business Manager propio)
 │
 ├─ Campaña A · "Resuelto · Plomeros · WA · Sprint 1"      objetivo: Ventas (WhatsApp)   $30/día
 │    └─ Conjunto Advantage+ · PR · 25–60 · WhatsApp de Resuelto

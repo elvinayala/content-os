@@ -15,7 +15,7 @@ const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PUERTO = 9300 + Math.floor(Math.random() * 500);
 
 const header = `<div style="-webkit-print-color-adjust:exact;print-color-adjust:exact;width:100%;margin:-10px 0 0;padding:0 0.7in;height:0.66in;box-sizing:border-box;background:#0F3D5E;border-bottom:3px solid #F2621F;display:flex;align-items:center;justify-content:space-between;font-family:Helvetica,Arial,sans-serif;font-size:8px;letter-spacing:.4px;color:#FBF7F0">
-<img src="data:image/png;base64,${LOGO}" style="height:22px"><span>Resuelto Home Services LLC &nbsp;·&nbsp; resueltopr.com &nbsp;·&nbsp; WhatsApp 787-956-1111</span></div>`;
+<img src="data:image/png;base64,${LOGO}" style="height:22px"><span>Resuelto PR Home Services LLC &nbsp;·&nbsp; resueltopr.com &nbsp;·&nbsp; WhatsApp 787-956-1111</span></div>`;
 const footer = `<div style="width:100%;padding:0 0.7in;box-sizing:border-box;display:flex;justify-content:space-between;align-items:flex-end;font-family:Helvetica,Arial,sans-serif;font-size:7.5px;color:#5C6670">
 <span>${pie}</span>${iniciales ? '<span>Iniciales: ________ &nbsp; ________</span>' : ""}<span>Página <span class="pageNumber"></span> de <span class="totalPages"></span></span></div>`;
 

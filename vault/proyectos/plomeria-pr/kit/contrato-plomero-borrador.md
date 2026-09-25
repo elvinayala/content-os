@@ -3,7 +3,7 @@
 > Este documento es un borrador de negocio para que el abogado corporativo redacte el contrato definitivo conforme a la ley de Puerto Rico (incluida la Ley 59-2022 y la clasificación de contratistas independientes). **No se firma en esta versión.**
 
 ## Partes
-**Resuelto Home Services LLC** ("Resuelto" o "la Marca") y **[Nombre], licencia de [aprendiz/oficial/maestro] plomero núm. [____]**, colegiado núm. [____] ("el Plomero").
+**Resuelto PR Home Services LLC** ("Resuelto" o "la Marca") y **[Nombre], licencia de [aprendiz/oficial/maestro] plomero núm. [____]**, colegiado núm. [____] ("el Plomero").
 
 ## 1. Naturaleza de la relación
 Contratista independiente (Formulario 1099). El Plomero mantiene por su cuenta licencia, colegiación, seguro de responsabilidad, vehículo, herramientas y sus propios clientes fuera de la plataforma. Resuelto no garantiza un volumen mínimo de trabajos.

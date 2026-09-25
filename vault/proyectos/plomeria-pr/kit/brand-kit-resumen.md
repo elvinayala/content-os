@@ -6,7 +6,7 @@ Archivos fuente: `kit/brand-canvas/*.dc.html`
 Cómo referirse a las piezas en briefs, prompts y código: **L** logo · **A/B/C** alternativas de ícono · **C** colores · **F** fuentes · **T** estilos de texto · **V** frases · **A1–A4** aplicaciones físicas · **D1–D4** digitales.
 
 ## Marca
-- Nombre: **Resuelto** (wordmark en minúsculas: "resuelto"). Entidad: Resuelto Home Services LLC.
+- Nombre: **Resuelto** (wordmark en minúsculas: "resuelto"). Entidad: Resuelto PR Home Services LLC.
 - Slogan **V1**: "Tu casa, resuelta." · Promesa **V2**: "Llega cuando dice. Cobra lo que dijo. Lo garantiza por escrito."
 - Frases **V3** "Precio fijo. Punto." · **V4** "Sin sorpresas en la factura." · **V5** "Ya vamos." · **V6** "Te lo resolvemos."
 - Personalidad: buen vecino que sabe de todo y no cobra de más. Tuteo puertorriqueño, directo, sin jerga, sin voseo, sin coquíes ni banderas, sin superlativos vacíos. Un emoji máximo, solo en WhatsApp.

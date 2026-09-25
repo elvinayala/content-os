@@ -302,7 +302,7 @@ async function build(key) {
   const D = DATA[key];
   const pres = new pptxgen();
   pres.layout = "LAYOUT_16x9";
-  pres.author = "Resuelto Home Services LLC";
+  pres.author = "Resuelto PR Home Services LLC";
   pres.title = `Resuelto · Conversación con ${D.quien}`;
 
   // 1 · Portada
@@ -314,7 +314,7 @@ async function build(key) {
     t(s, D.tesis[1], { x: 0.6, y: 2.75, w: 8.8, h: 0.8, fontFace: HF, fontSize: 40, bold: true, color: C2 });
     t(s, `Conversación con: ${D.quien}`, { x: 0.6, y: 3.9, w: 8.8, h: 0.35, fontSize: 16, color: W });
     t(s, COMMON.portadaSub, { x: 0.6, y: 4.25, w: 8.8, h: 0.3, fontSize: 12, color: INK2 });
-    footer(s, `Resuelto Home Services LLC · ${D.url} · Confidencial`, true);
+    footer(s, `Resuelto PR Home Services LLC · ${D.url} · Confidencial`, true);
     notes(s, D.portadaNotas);
   }
 
@@ -590,7 +590,7 @@ async function build(key) {
       t(s, k, { x: 1.1, y, w: 2.2, h: 0.38, fontSize: 12, bold: true, color: C1, valign: "middle" });
       t(s, v, { x: 3.3, y, w: 4, h: 0.38, fontSize: 12, color: C4, valign: "middle" });
     }
-    footer(s, "Resuelto Home Services LLC · Puerto Rico");
+    footer(s, "Resuelto PR Home Services LLC · Puerto Rico");
     notes(s, `Después de la llamada, en 5 minutos: manda por WhatsApp (1) el DocuSign o la fecha de seguimiento, (2) el resumen del trato en 3 líneas, (3) el nombre y número de la persona que lo va a acompañar en su primer trabajo/proyecto. Registra el resultado en el agente (candidato → entrevistado / firmado / lista de espera).`);
   }
 
