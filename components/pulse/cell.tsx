@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cssColor } from "@/lib/pulse/colores";
-import type { ArchivoPulse, Columna, Item, UsuarioPulse, ValorLink } from "@/lib/pulse/types";
+import { etiquetaElegible, type ArchivoPulse, type Columna, type Item, type UsuarioPulse, type ValorLink } from "@/lib/pulse/types";
 import { formatearNumero } from "@/lib/pulse/valores";
 import { cn } from "@/lib/utils";
 
@@ -226,7 +226,7 @@ function CellStatus({ item, column, vertical }: CellProps) {
       </PopoverTrigger>
       <PopoverContent className="pulse w-64 p-2" align="start">
         <div className="grid grid-cols-2 gap-1.5">
-          {labels.map((l) => (
+          {labels.filter((l) => etiquetaElegible(l, valor ? [valor] : [])).map((l) => (
             <button
               key={l.id}
               type="button"
@@ -304,7 +304,7 @@ function CellDropdown({ item, column, vertical }: CellProps) {
       </PopoverTrigger>
       <PopoverContent className="pulse w-60 p-2" align="start">
         <div className="flex flex-col gap-1">
-          {labels.map((l) => (
+          {labels.filter((l) => etiquetaElegible(l, valor)).map((l) => (
             <button key={l.id} type="button" onClick={() => toggle(l.id)} className="flex items-center gap-2 rounded px-1 py-0.5 text-left text-sm hover:bg-muted">
               <span className={cn("flex size-4 items-center justify-center rounded border", valor.includes(l.id) && "bg-primary text-primary-foreground")}>{valor.includes(l.id) ? <Check className="size-3" /> : null}</span>
               <span className="size-2.5 rounded-full" style={{ background: cssColor(l.color) }} />

@@ -23,7 +23,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { cssColor } from "@/lib/pulse/colores";
-import type { Actividad, Columna, ValorCelda } from "@/lib/pulse/types";
+import { columnaVisible, type Actividad, type Columna, type ValorCelda } from "@/lib/pulse/types";
 import { formatearNumero } from "@/lib/pulse/valores";
 
 // Panel lateral del elemento (?item=): todos los campos + timeline de actividad y comentarios.
@@ -75,7 +75,7 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
               <TabsContent value="campos" className="min-h-0 flex-1 overflow-auto px-5 py-3">
                 {item.parcial ? <p className="mb-2 text-xs text-muted-foreground">Cargando campos…</p> : null}
                 <div className="flex flex-col divide-y">
-                  {s.columns.map((c) => (
+                  {s.columns.filter(columnaVisible).map((c) => (
                     <div key={c.id} className="campo-ficha -mx-2 flex min-h-10 items-center gap-3 rounded-md px-2 py-1.5">
                       <div className="flex w-44 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
                         <TipoColumnaIcon tipo={c.type} className="size-3.5 opacity-70" />
@@ -89,6 +89,24 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
                     </div>
                   ))}
                 </div>
+                {s.columns.some((c) => !columnaVisible(c)) ? (
+                  <details className="mt-3 rounded-lg border border-dashed px-3 py-2">
+                    <summary className="cursor-pointer text-xs text-muted-foreground select-none">Columnas ocultas ({s.columns.filter((c) => !columnaVisible(c)).length})</summary>
+                    <div className="mt-2 flex flex-col divide-y">
+                      {s.columns.filter((c) => !columnaVisible(c)).map((c) => (
+                        <div key={c.id} className="flex min-h-10 items-center gap-3 py-1.5">
+                          <div className="flex w-44 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
+                            <TipoColumnaIcon tipo={c.type} className="size-3.5 opacity-70" />
+                            <span className="truncate" title={c.title}>{c.title}</span>
+                          </div>
+                          <div className="min-w-0 flex-1 text-sm">
+                            <Cell item={item} column={c} usuarios={s.usuarios} archivos={s.archivos} relacionados={c.type === "relation" ? (relacionados[c.settings.boardId ?? ""] ?? []) : undefined} vertical />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                ) : null}
               </TabsContent>
               <TabsContent value="actividad" className="min-h-0 flex-1 overflow-hidden">
                 <Actividades itemId={item.id} boardId={item.boardId} columns={s.columns} />

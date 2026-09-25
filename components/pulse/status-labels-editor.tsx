@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { Eye, EyeOff, GripVertical, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useBoardActions } from "@/components/pulse/board-provider";
@@ -61,12 +61,20 @@ export function StatusLabelsEditor({ column, open, onOpenChange }: { column: Col
                   </div>
                 </PopoverContent>
               </Popover>
-              <input className="h-8 min-w-0 flex-1 rounded border px-2 text-sm" value={l.label} onChange={(e) => set(l.id, { label: e.target.value })} />
+              <input className={"h-8 min-w-0 flex-1 rounded border px-2 text-sm" + (l.oculta ? " text-muted-foreground line-through decoration-muted-foreground/40" : "")} value={l.label} onChange={(e) => set(l.id, { label: e.target.value })} />
               {column.type === "status" ? (
                 <label className="flex items-center gap-1 text-xs text-muted-foreground" title="Cuenta como terminado">
                   <input type="checkbox" checked={!!l.esDone} onChange={(e) => set(l.id, { esDone: e.target.checked })} /> listo
                 </label>
               ) : null}
+              <button
+                type="button"
+                className={l.oculta ? "text-muted-foreground/60 hover:text-foreground" : "text-muted-foreground hover:text-foreground"}
+                onClick={() => set(l.id, { oculta: !l.oculta })}
+                title={l.oculta ? "Oculta: no se ofrece para elegir (los que ya la tienen la conservan). Click para mostrarla" : "Ocultar: deja de ofrecerse sin quitársela a nadie"}
+              >
+                {l.oculta ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
               <button type="button" className="text-muted-foreground hover:text-destructive" onClick={() => setLabels((ls) => ls.filter((x) => x.id !== l.id))} title="Eliminar etiqueta">
                 <Trash2 className="size-4" />
               </button>

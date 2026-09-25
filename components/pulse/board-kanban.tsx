@@ -8,7 +8,7 @@ import { useBoard, useBoardActions, useGruposVisibles } from "@/components/pulse
 import { ItemCard } from "@/components/pulse/item-card";
 import { StatusPill } from "@/components/pulse/status-pill";
 import { cssColor } from "@/lib/pulse/colores";
-import type { Columna, Item } from "@/lib/pulse/types";
+import { columnaVisible, type Columna, type Item } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
 // Kanban: una columna por etiqueta de una columna "status" (o por grupo del tablero).
@@ -17,7 +17,7 @@ export function BoardKanban() {
   const s = useBoard();
   const { setValor, moverItems } = useBoardActions();
   const grupos = useGruposVisibles();
-  const statusCols = s.columns.filter((c) => c.type === "status");
+  const statusCols = s.columns.filter((c) => c.type === "status" && columnaVisible(c));
   const clave = `pulse:${s.board.slug}:kanban`;
   const [colId, setColId] = useState<string>(statusCols[0]?.id ?? "__grupo");
   const montado = useRef(false);
@@ -52,7 +52,7 @@ export function BoardKanban() {
         else sin.push(it);
       }
       return [
-        ...labels.map((l) => ({ id: l.id, titulo: l.label, color: l.color, items: porLabel.get(l.id) ?? [] })),
+        ...labels.filter((l) => !l.oculta || (porLabel.get(l.id)?.length ?? 0) > 0).map((l) => ({ id: l.id, titulo: l.label, color: l.color, items: porLabel.get(l.id) ?? [] })),
         { id: "__sin", titulo: "Sin estado", color: "grey" as const, items: sin },
       ];
     }
@@ -104,7 +104,7 @@ export function BoardKanban() {
             <ColumnaKanban key={k.id} id={k.id} titulo={k.titulo} color={k.color} items={k.items} suma={numero ? k.items.reduce((a, i) => a + ((i.values[numero.id] as number | undefined) ?? 0), 0) : null} formato={numero?.settings.formato} />
           ))}
         </div>
-        <DragOverlay>{activo ? <ItemCard item={activo} columns={s.columns} usuarios={s.usuarios} arrastrando className="w-64" /> : null}</DragOverlay>
+        <DragOverlay>{activo ? <ItemCard item={activo} columns={s.columns.filter(columnaVisible)} usuarios={s.usuarios} arrastrando className="w-64" /> : null}</DragOverlay>
       </DndContext>
     </div>
   );
@@ -146,7 +146,7 @@ function TarjetaArrastrable({ item, colorGrupo }: { item: Item; colorGrupo: stri
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} className={cn("touch-none", isDragging && "opacity-30")}>
-      <ItemCard item={item} columns={s.columns} usuarios={s.usuarios} colorGrupo={colorGrupo} />
+      <ItemCard item={item} columns={s.columns.filter(columnaVisible)} usuarios={s.usuarios} colorGrupo={colorGrupo} />
     </div>
   );
 }

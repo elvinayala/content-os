@@ -3,6 +3,7 @@
 import { useBoard, useGruposVisibles } from "@/components/pulse/board-provider";
 import { ItemCard } from "@/components/pulse/item-card";
 import { cssColor } from "@/lib/pulse/colores";
+import { columnaVisible } from "@/lib/pulse/types";
 
 // Vista de tarjetas: grilla por grupo.
 export function BoardCards() {
@@ -17,7 +18,7 @@ export function BoardCards() {
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {g.items.map((it) => (
-              <ItemCard key={it.id} item={it} columns={s.columns} usuarios={s.usuarios} colorGrupo={cssColor(g.color)} />
+              <ItemCard key={it.id} item={it} columns={s.columns.filter(columnaVisible)} usuarios={s.usuarios} colorGrupo={cssColor(g.color)} />
             ))}
           </div>
           {g.items.length === 0 ? <p className="text-xs text-muted-foreground">Sin elementos.</p> : null}

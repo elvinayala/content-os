@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUpAZ, ChevronDown, Pencil, Settings2, Trash2 } from "lucide-react";
+import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUpAZ, ChevronDown, EyeOff, Pencil, Settings2, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useBoard, useBoardActions, useMiRol } from "@/components/pulse/board-provider";
@@ -125,6 +125,9 @@ export function ColumnHeader({ column }: { column: Columna }) {
               </DropdownMenuItem>
               <DropdownMenuItem disabled={idx >= columns.length - 1} onClick={() => mover(1)}>
                 <ArrowRight /> Mover a la derecha
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => actualizarColumna(column.id, { settings: { ...column.settings, oculta: true } })}>
+                <EyeOff /> Ocultar columna
               </DropdownMenuItem>
               {conLabels ? (
                 <DropdownMenuItem onClick={() => setEditorLabels(true)}>

@@ -11,7 +11,7 @@ import { NuevaColumnaPopover } from "@/components/pulse/nueva-columna";
 import { ANCHO_CHECK, ANCHO_FINAL, ANCHO_NOMBRE, RowItem } from "@/components/pulse/row-item";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cssColor } from "@/lib/pulse/colores";
-import type { Item } from "@/lib/pulse/types";
+import { columnaVisible, type Item } from "@/lib/pulse/types";
 import { formatearNumero } from "@/lib/pulse/valores";
 
 type Fila =
@@ -33,7 +33,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
 
   const filas = useMemo<Fila[]>(() => {
     const out: Fila[] = [];
-    const hayNumero = s.columns.some((c) => c.type === "number");
+    const hayNumero = s.columns.some((c) => c.type === "number" && columnaVisible(c));
     for (const g of grupos) {
       const colapsado = s.colapsados.has(g.id);
       out.push({ tipo: "grupo", grupo: g, colapsado });
@@ -57,7 +57,8 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
     },
   });
 
-  const anchoTotal = ANCHO_CHECK + ANCHO_NOMBRE + s.columns.reduce((a, c) => a + c.width, 0) + ANCHO_FINAL;
+  const visibles = useMemo(() => s.columns.filter(columnaVisible), [s.columns]);
+  const anchoTotal = ANCHO_CHECK + ANCHO_NOMBRE + visibles.reduce((a, c) => a + c.width, 0) + ANCHO_FINAL;
   const todosIds = useMemo(() => grupos.flatMap((g) => g.items.map((i) => i.id)), [grupos]);
   const todosSeleccionados = todosIds.length > 0 && todosIds.every((id) => s.seleccion.has(id));
 
@@ -72,7 +73,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
           <div className="sticky z-30 flex shrink-0 items-center justify-center border-r border-[var(--pulse-linea)] bg-[#f9fafc] font-medium" style={{ width: ANCHO_NOMBRE, left: ANCHO_CHECK }}>
             Elemento
           </div>
-          {s.columns.map((c) => (
+          {visibles.map((c) => (
             <div key={c.id} className="shrink-0 border-r border-[var(--pulse-linea)]" style={{ width: c.width }}>
               <ColumnHeader column={c} />
             </div>
@@ -104,7 +105,7 @@ export function BoardTable({ relacionados }: { relacionados: Record<string, { id
             if (f.tipo === "item") {
               return (
                 <div key={v.key} style={estilo}>
-                  <RowItem item={f.item} columns={s.columns} usuarios={s.usuarios} archivos={s.archivos} relacionados={relacionados} colorGrupo={cssColor(f.grupo.color)} seleccionada={s.seleccion.has(f.item.id)} />
+                  <RowItem item={f.item} columns={visibles} usuarios={s.usuarios} archivos={s.archivos} relacionados={relacionados} colorGrupo={cssColor(f.grupo.color)} seleccionada={s.seleccion.has(f.item.id)} />
                 </div>
               );
             }
@@ -160,7 +161,8 @@ function FilaAgregar({ estilo, grupo }: { estilo: React.CSSProperties; grupo: Gr
 }
 
 function FilaResumen({ estilo, grupo }: { estilo: React.CSSProperties; grupo: GrupoVisible }) {
-  const { columns } = useBoard();
+  const { columns: todas } = useBoard();
+  const columns = todas.filter(columnaVisible);
   return (
     <div style={estilo} className="flex">
       <div className="sticky left-0 z-10 shrink-0 bg-background" style={{ width: ANCHO_CHECK + ANCHO_NOMBRE }} />

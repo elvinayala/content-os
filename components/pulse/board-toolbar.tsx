@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpDown, ChevronDown, Filter, LayoutGrid, Plus, Search, Table2, Columns3, User, X } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Eye, EyeOff, Filter, LayoutGrid, Plus, Search, Table2, Columns3, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cssColor } from "@/lib/pulse/colores";
-import type { Vista } from "@/lib/pulse/types";
+import { columnaVisible, type Vista } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
 const VISTAS: { id: Vista; nombre: string; icon: typeof Table2 }[] = [
@@ -28,15 +28,17 @@ const VISTAS: { id: Vista; nombre: string; icon: typeof Table2 }[] = [
 
 export function BoardToolbar() {
   const s = useBoard();
-  const { dispatch, crearItem, setVista } = useBoardActions();
+  const { dispatch, crearItem, setVista, actualizarColumna } = useBoardActions();
   const [q, setQ] = useState(s.busqueda);
   useEffect(() => {
     const t = setTimeout(() => dispatch({ type: "busqueda", texto: q }), 150);
     return () => clearTimeout(t);
   }, [q, dispatch]);
 
-  const colsFiltrables = s.columns.filter((c) => ["status", "dropdown", "people", "checkbox"].includes(c.type));
-  const colsAgrupables = s.columns.filter((c) => ["status", "dropdown", "people"].includes(c.type));
+  const visibles = s.columns.filter(columnaVisible);
+  const ocultas = s.columns.filter((c) => !columnaVisible(c));
+  const colsFiltrables = visibles.filter((c) => ["status", "dropdown", "people", "checkbox"].includes(c.type));
+  const colsAgrupables = visibles.filter((c) => ["status", "dropdown", "people"].includes(c.type));
   const hayFiltros = s.filtros.length > 0 || !!s.filtroPersona;
   const persona = s.usuarios.find((u) => u.id === s.filtroPersona);
 
@@ -144,7 +146,7 @@ export function BoardToolbar() {
           <DropdownMenuItem onClick={() => dispatch({ type: "orden", orden: { columnId: "name", dir: "asc" } })}>Nombre A→Z</DropdownMenuItem>
           <DropdownMenuItem onClick={() => dispatch({ type: "orden", orden: { columnId: "name", dir: "desc" } })}>Nombre Z→A</DropdownMenuItem>
           <DropdownMenuSeparator />
-          {s.columns.map((c) => (
+          {visibles.map((c) => (
             <DropdownMenuItem key={c.id} onClick={() => dispatch({ type: "orden", orden: { columnId: c.id, dir: s.orden?.columnId === c.id && s.orden.dir === "asc" ? "desc" : "asc" } })}>
               {c.title} {s.orden?.columnId === c.id ? (s.orden.dir === "asc" ? "↑" : "↓") : ""}
             </DropdownMenuItem>
@@ -188,6 +190,23 @@ export function BoardToolbar() {
         <Button variant="ghost" size="sm" onClick={() => dispatch({ type: "colapsar:todos", colapsado: s.colapsados.size < s.groups.length })}>
           {s.colapsados.size < s.groups.length ? "Colapsar todo" : "Expandir todo"}
         </Button>
+        {ocultas.length ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-muted-foreground">
+                <EyeOff /> Ocultas ({ocultas.length})
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="pulse w-60" align="end">
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">Columnas escondidas (sus datos se conservan)</DropdownMenuLabel>
+              {ocultas.map((c) => (
+                <DropdownMenuItem key={c.id} onClick={() => actualizarColumna(c.id, { settings: { ...c.settings, oculta: false } })}>
+                  <Eye /> Mostrar «{c.title}»
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
         <NuevaColumnaPopover>
           <Button variant="outline" size="sm">
             <Plus /> Columna

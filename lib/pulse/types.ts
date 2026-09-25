@@ -64,6 +64,7 @@ export interface EtiquetaStatus {
   label: string;
   color: ColorPulse;
   esDone?: boolean;
+  oculta?: boolean; // no se ofrece para elegir, pero los items que ya la tienen la conservan
 }
 
 export interface SettingsColumna {
@@ -71,7 +72,11 @@ export interface SettingsColumna {
   formato?: "moneda" | "entero" | "decimal"; // number
   boardId?: string; // relation → tablero destino
   multiple?: boolean; // people, relation, dropdown
+  oculta?: boolean; // columna escondida de tabla/tarjetas/listas (los datos se conservan)
 }
+
+export const columnaVisible = (c: { settings: SettingsColumna }) => !c.settings?.oculta;
+export const etiquetaElegible = (l: EtiquetaStatus, actuales: string[] = []) => !l.oculta || actuales.includes(l.id);
 
 export type ValorLink = { url: string; text?: string };
 
