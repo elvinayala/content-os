@@ -488,6 +488,14 @@ acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
   Elvin) → **RR.HH.** firma (la maestra). RR.HH. NO se salta al supervisor (`puedeDecidir`). Al firmar un día
   libre/vacaciones/permiso con días se registra la ausencia sola. Numerito de pendientes en el menú; avisos
   por Slack (bot) solo con `DESEMPENO_AVISOS=real`.
+- **Empresa** (`desempeno_perfiles.empresa`: `level_up` | `ai_borinquen`): misma plataforma, separado. La
+  pone RR.HH. (Ajustes o alta); al empleado NUNCA se le pregunta ni ve la etiqueta. Filtro en Equipo y
+  Personas; etiqueta coral "AI BORINQUEN" en la vista maestra.
+- **Alta de empleado nuevo** (al firmar contrato; `lib/desempeno/alta.ts`): Personas → "Nuevo empleado"
+  (nombre, correo, empresa, puesto, supervisor, ingreso, salario) → link de bienvenida (72 h). La persona
+  crea su clave y llena su ficha en `/ritmo/bienvenida` (foto, teléfonos, ciudad/país, documento, contacto
+  de emergencia, identificación obligatoria, contrato firmado). Mientras no la complete
+  (`fichaPendiente`: sin `completada_at` ni teléfono), el layout la trae ahí.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

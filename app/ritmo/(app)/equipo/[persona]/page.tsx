@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { diaCorto, EstadoChip, fmtHoras, horaPR, ScoreBadge } from "@/components/ritmo/piezas";
+import { diaCorto, EmpresaBadge, EstadoChip, fmtHoras, horaPR, ScoreBadge } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
 import { colorScore, fechaPR, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
@@ -47,7 +47,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
         <section className="flex flex-wrap items-center gap-4">
           <UserAvatar nombre={f.perfil.nombre} color={f.perfil.color as ColorPulse | null} className="size-12 text-base" />
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-semibold tracking-tight">{f.perfil.nombre}</h1>
+            <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">{f.perfil.nombre}{u.maestro ? <EmpresaBadge empresa={f.perfil.empresa} siempre /> : null}</h1>
             <p className="text-sm text-muted-foreground">
               {f.puestoNombre} · {f.departamento}
               {lider ? ` · líder: ${lider}` : ""} · horario {f.perfil.horaEntrada}–{f.perfil.horaSalida} PR

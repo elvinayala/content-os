@@ -71,3 +71,32 @@ export function Tarjeta({ titulo, valor, detalle, tono }: { titulo: string; valo
     </div>
   );
 }
+
+/** Etiqueta de empresa: AI Borinquen en coral, Level Up en verde (sutil). */
+export function EmpresaBadge({ empresa, siempre = false }: { empresa: string; siempre?: boolean }) {
+  if (empresa !== "ai_borinquen" && !siempre) return null;
+  const aib = empresa === "ai_borinquen";
+  return (
+    <span className={cn("inline-flex shrink-0 items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ring-1", aib ? "bg-[color:var(--coral)]/15 text-[color:var(--coral)] ring-[color:var(--coral)]/30" : "bg-primary/10 text-primary ring-primary/25")}>
+      {aib ? "AI BORINQUEN" : "LEVEL UP"}
+    </span>
+  );
+}
+
+/** Filtro por empresa (links que conservan los demás parámetros). */
+export function FiltroEmpresa({ actual, href }: { actual: string | undefined; href: (e: string | null) => string }) {
+  const op = [
+    { id: null, n: "Todas" },
+    { id: "level_up", n: "Level Up" },
+    { id: "ai_borinquen", n: "AI Borinquen" },
+  ];
+  return (
+    <div className="flex gap-1 rounded-full border border-border bg-card/60 p-1 text-xs">
+      {op.map((o) => (
+        <a key={o.n} href={href(o.id)} className={cn("rounded-full px-3 py-1.5 transition", (actual ?? null) === o.id ? (o.id === "ai_borinquen" ? "bg-[color:var(--coral)] text-background" : "bg-primary text-primary-foreground") : "text-muted-foreground hover:text-foreground")}>
+          {o.n}
+        </a>
+      ))}
+    </div>
+  );
+}

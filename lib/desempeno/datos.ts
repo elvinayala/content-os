@@ -43,6 +43,7 @@ export interface Perfil {
   email: string;
   color: string | null;
   puesto: string;
+  empresa: string;
   liderId: string | null;
   horaEntrada: string;
   horaSalida: string;
@@ -68,6 +69,7 @@ export async function leerPerfiles(soloActivos = true): Promise<Perfil[]> {
       email: f.email,
       color: f.color,
       puesto: f.p.puesto,
+      empresa: f.p.empresa,
       liderId: f.p.liderId,
       horaEntrada: f.p.horaEntrada,
       horaSalida: f.p.horaSalida,
@@ -84,7 +86,7 @@ export async function perfilDe(userId: string): Promise<Perfil | null> {
 }
 
 export async function guardarPerfil(
-  p: Pick<Perfil, "userId" | "puesto" | "liderId" | "horaEntrada" | "horaSalida" | "diasLaborables" | "tipoContrato" | "fechaIngreso" | "activo">,
+  p: Pick<Perfil, "userId" | "puesto" | "empresa" | "liderId" | "horaEntrada" | "horaSalida" | "diasLaborables" | "tipoContrato" | "fechaIngreso" | "activo">,
   actorId: string,
 ): Promise<void> {
   const d = await db();

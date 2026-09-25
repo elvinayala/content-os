@@ -98,6 +98,13 @@ export const PUESTOS: Puesto[] = [
   },
 ];
 
+// Empresas: la misma plataforma para las dos marcas, pero cada persona identificada (Elvin, 25/sep/2026).
+export const EMPRESAS = [
+  { id: "level_up", nombre: "Level Up", corto: "LU" },
+  { id: "ai_borinquen", nombre: "AI Borinquen", corto: "AIB" },
+] as const;
+export const empresaPorId = (id: string) => EMPRESAS.find((e) => e.id === id) ?? EMPRESAS[0];
+
 export const DEPARTAMENTOS = [...new Set(PUESTOS.map((p) => p.departamento))];
 export const puestoPorId = (id: string) => PUESTOS.find((p) => p.id === id);
 

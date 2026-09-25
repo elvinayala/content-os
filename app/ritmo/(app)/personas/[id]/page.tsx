@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AvatarRitmo } from "@/components/ritmo/avatar";
+import { EmpresaBadge } from "@/components/ritmo/piezas";
 import { Ajustes, Ausencias, Documentos, FormDatos } from "@/components/ritmo/ficha";
 import { BotonSubir } from "@/components/ritmo/subir";
 import { cargosAusencias, usd } from "@/lib/desempeno/rrhh";
@@ -61,7 +62,7 @@ export default async function FichaPage({ params }: { params: Promise<{ id: stri
           <BotonSubir userId={perfil.userId} categoria="foto" texto={ficha.fotoPath ? "Cambiar foto" : "Subir foto"} accept="image/*" className="h-7 text-xs" />
         </div>
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-semibold tracking-tight">{perfil.nombre}</h1>
+          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-semibold tracking-tight">{perfil.nombre}{u.maestro ? <EmpresaBadge empresa={perfil.empresa} siempre /> : null}</h1>
           <p className="text-sm text-muted-foreground">
             {puesto?.nombre} · {puesto?.departamento} · {CONTRATO[perfil.tipoContrato] ?? perfil.tipoContrato}
           </p>

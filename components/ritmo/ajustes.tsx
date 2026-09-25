@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Perfil } from "@/lib/desempeno/datos";
 import { kpisDe, PUESTOS, type OverrideMeta } from "@/lib/desempeno/reglas";
+
+import { EmpresaBadge } from "./piezas";
 import { cn } from "@/lib/utils";
 
 const aviso = { className: "ritmo" };
@@ -27,7 +29,7 @@ const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-
 type Usuario = { id: string; nombre: string; email: string };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
-const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
+const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
 export function Ajustes({ usuarios, perfiles, metas, produccion }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
@@ -123,7 +125,7 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
       <button type="button" onClick={() => setAbierto((x) => !x)} className="flex w-full items-center gap-3 text-left">
         <span className={cn("size-2 shrink-0 rounded-full", perfil?.activo ? "bg-primary" : "bg-white/20")} />
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-medium">{usuario.nombre}</span>
+          <span className="flex items-center gap-2 truncate font-medium">{usuario.nombre}{perfil ? <EmpresaBadge empresa={perfil.empresa} /> : null}</span>
           <span className="block truncate text-xs text-muted-foreground">{perfil ? `${puesto?.nombre} · ${perfil.horaEntrada}–${perfil.horaSalida}${perfil.activo ? "" : " · pausado"}` : usuario.email}</span>
         </span>
         <span className="text-xs text-primary">{perfil ? "Editar" : "Agregar"}</span>
@@ -137,9 +139,15 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
               ))}
             </select>
           </Campo>
-          <Campo label="Líder">
+          <Campo label="Empresa">
+            <select className={select} value={b.empresa} onChange={(e) => set("empresa", e.target.value)}>
+              <option value="level_up">Level Up</option>
+              <option value="ai_borinquen">AI Borinquen</option>
+            </select>
+          </Campo>
+          <Campo label="Supervisor">
             <select className={select} value={b.liderId ?? ""} onChange={(e) => set("liderId", e.target.value || null)}>
-              <option value="">— Sin líder (Carilin) —</option>
+              <option value="">— Sin supervisor (va directo a RR.HH.) —</option>
               {usuarios.filter((x) => x.id !== usuario.id).map((x) => (
                 <option key={x.id} value={x.id}>{x.nombre}</option>
               ))}

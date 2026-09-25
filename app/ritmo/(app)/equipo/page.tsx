@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Correcciones } from "@/components/ritmo/correcciones";
-import { COLOR, EstadoChip, fmtHoras, horaPR, MiniDias, ScoreBadge, Tarjeta } from "@/components/ritmo/piezas";
+import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, horaPR, MiniDias, ScoreBadge, Tarjeta } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
@@ -16,10 +16,18 @@ export const metadata = { title: "Equipo" };
 
 const esProduccion = (puesto: string) => puestoPorId(puesto)?.kpis.some((k) => k.fuente === "produccion" && k.id === "terminadas");
 
-export default async function DesempenoPage({ searchParams }: { searchParams: Promise<{ d?: string }> }) {
+export default async function DesempenoPage({ searchParams }: { searchParams: Promise<{ d?: string; e?: string }> }) {
   const u = await usuarioRitmo();
   if (!u) return null;
-  const { d: depto } = await searchParams;
+  const { d: depto, e: empresa } = await searchParams;
+  const url = (p: { d?: string | null; e?: string | null }) => {
+    const q = new URLSearchParams();
+    const dd = p.d === undefined ? depto : p.d;
+    const ee = p.e === undefined ? empresa : p.e;
+    if (dd) q.set("d", dd);
+    if (ee) q.set("e", ee);
+    return `/ritmo/equipo${q.size ? `?${q}` : ""}`;
+  };
   const hoy = fechaPR(Date.now());
   const gestor = u.maestro;
 
@@ -42,7 +50,8 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
 
   const modo = modoScore(u.rol);
   const oculto = modo === "oculto";
-  const filas = depto ? panel.filas.filter((f) => f.departamento === depto) : panel.filas;
+  const deEmpresa = empresa ? panel.filas.filter((f) => f.perfil.empresa === empresa) : panel.filas;
+  const filas = depto ? deEmpresa.filter((f) => f.departamento === depto) : deEmpresa;
   const laborables = filas.filter((f) => f.hoy.asistencia.estado !== "libre");
   const presentes = laborables.filter((f) => ["trabajando", "a_tiempo", "tarde"].includes(f.hoy.asistencia.estado)).length;
   const tarde = laborables.filter((f) => f.hoy.asistencia.minutosTarde > 15).length;
@@ -51,15 +60,15 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   const terminadas = filas.reduce((s, f) => s + (f.produccion?.terminadas ?? 0), 0);
   const conteo: Record<Color, number> = { verde: 0, amarillo: 0, rojo: 0 };
   for (const f of filas) if (f.colorSemana) conteo[f.colorSemana]++;
-  const correcciones = panel.filas
+  const correcciones = deEmpresa
     .filter((f) => puedeAprobar(u, f.perfil))
     .flatMap((f) => f.correcciones.map((c) => ({ id: c.id, nombre: f.perfil.nombre, fecha: c.fecha, entradaAt: c.entradaAt.toISOString(), salidaAt: c.salidaAt?.toISOString() ?? null, nota: c.nota })));
-  const deptos = DEPARTAMENTOS.filter((x) => panel.filas.some((f) => f.departamento === x));
+  const deptos = DEPARTAMENTOS.filter((x) => deEmpresa.some((f) => f.departamento === x));
   const fechaLarga = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
     <Marco gestor={gestor}>
-      <section className="flex flex-wrap items-end justify-between gap-4">
+      <section className="flex flex-col gap-4">
         <div>
           <p className="mb-1 text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">{fechaLarga}</p>
           <h1 className="text-3xl font-semibold tracking-tight">Equipo</h1>
@@ -67,14 +76,17 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
             Asistencia, tareas y resultados por puesto. Lo mide el sistema solo; el equipo solo marca entrada, salida y bloqueos.
           </p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+        <FiltroEmpresa actual={empresa} href={(e) => url({ e, d: null })} />
         {deptos.length > 1 ? (
           <div className="flex flex-wrap gap-1 rounded-full border border-border bg-card/60 p-1 text-xs">
-            <Link href="/ritmo/equipo" className={cn("rounded-full px-3 py-1.5 transition", !depto ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>Todos</Link>
+            <Link href={url({ d: null })} className={cn("rounded-full px-3 py-1.5 transition", !depto ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>Todos</Link>
             {deptos.map((x) => (
-              <Link key={x} href={`/ritmo/equipo?d=${encodeURIComponent(x)}`} className={cn("rounded-full px-3 py-1.5 transition", depto === x ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{x}</Link>
+              <Link key={x} href={url({ d: x })} className={cn("rounded-full px-3 py-1.5 transition", depto === x ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{x}</Link>
             ))}
           </div>
         ) : null}
+        </div>
       </section>
 
       {modo !== "visible" ? (
@@ -154,7 +166,7 @@ function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
         <div className="flex min-w-0 items-center gap-3">
           <UserAvatar nombre={f.perfil.nombre} color={f.perfil.color as ColorPulse | null} />
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{f.perfil.nombre}</p>
+            <p className="flex items-center gap-2 truncate text-sm font-medium">{f.perfil.nombre}<EmpresaBadge empresa={f.perfil.empresa} /></p>
             <p className="truncate text-xs text-muted-foreground">{f.puestoNombre}</p>
           </div>
         </div>

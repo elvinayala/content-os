@@ -7,10 +7,11 @@ import { redirect } from "next/navigation";
 import { linkDeAcceso } from "@/lib/desempeno/acceso";
 import * as datos from "@/lib/desempeno/datos";
 import * as etica from "@/lib/desempeno/etica";
+import { altaEmpleado } from "@/lib/desempeno/alta";
 import * as fichas from "@/lib/desempeno/fichas";
 import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
-import { puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
+import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereUsuario } from "@/lib/pulse/auth";
 import { COOKIE_PULSE } from "@/lib/pulse/session";
@@ -91,6 +92,7 @@ const HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
 export async function guardarPerfilAction(p: {
   userId: string;
   puesto: string;
+  empresa: string;
   liderId: string | null;
   horaEntrada: string;
   horaSalida: string;
@@ -102,6 +104,7 @@ export async function guardarPerfilAction(p: {
   return envolver(async () => {
     const u = await requiereMaestro();
     if (!PUESTOS.some((x) => x.id === p.puesto)) throw new Error("Puesto inválido");
+    if (!EMPRESAS.some((x) => x.id === p.empresa)) throw new Error("Empresa inválida");
     if (!HORA.test(p.horaEntrada) || !HORA.test(p.horaSalida) || p.horaSalida <= p.horaEntrada) throw new Error("Horario inválido");
     if (!["contratista", "nomina", "eor"].includes(p.tipoContrato)) throw new Error("Contrato inválido");
     if (p.fechaIngreso && !/^\d{4}-\d{2}-\d{2}$/.test(p.fechaIngreso)) throw new Error("Fecha de ingreso inválida");
@@ -162,7 +165,7 @@ export async function crearFichaAction(userId: string) {
   return envolver(async () => {
     const u = await requiereMaestro();
     if (await fichas.leerFicha(userId)) return {};
-    await fichas.guardarFicha({ userId, telefono: null, telefonoAlterno: null, ciudad: null, pais: null, documentoTipo: null, documentoNumero: null, salarioMensual: null, notas: null }, u.id);
+    await fichas.guardarFicha({ userId, telefono: null, telefonoAlterno: null, ciudad: null, pais: null, documentoTipo: null, documentoNumero: null, salarioMensual: null, notas: null, contactoEmergencia: null }, u.id);
     refresh();
     return {};
   });
@@ -178,6 +181,7 @@ export async function guardarFichaAction(p: {
   documentoNumero: string;
   salarioMensual: string;
   notas: string;
+  contactoEmergencia?: string;
 }) {
   return envolver(async () => {
     const u = await requiereMaestro();
@@ -185,7 +189,7 @@ export async function guardarFichaAction(p: {
     const salario = p.salarioMensual?.trim() ? Number(p.salarioMensual) : null;
     if (salario !== null && (!Number.isFinite(salario) || salario < 0 || salario > 100000)) throw new Error("Salario inválido");
     await fichas.guardarFicha(
-      { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000) },
+      { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000), contactoEmergencia: t(p.contactoEmergencia ?? "", 160) },
       u.id,
     );
     refresh();
@@ -351,6 +355,46 @@ export async function cancelarSolicitudAction(id: string) {
     if (!s) throw new Error("No existe");
     await solicitudes.cancelarSolicitud(s, u.id);
     refresh();
+    return {};
+  });
+}
+
+// ─── Alta de empleado nuevo (al firmar contrato) ─────────────────────────────────────────────
+
+async function baseUrl() {
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
+  const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
+export async function altaEmpleadoAction(p: { nombre: string; email: string; empresa: string; puesto: string; liderId: string; fechaIngreso: string; salario: string }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    if (!p.nombre?.trim() || p.nombre.trim().length < 3) throw new Error("Escribe el nombre completo");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email?.trim() ?? "")) throw new Error("Correo inválido");
+    if (!EMPRESAS.some((x) => x.id === p.empresa)) throw new Error("Escoge la empresa");
+    if (!PUESTOS.some((x) => x.id === p.puesto)) throw new Error("Escoge el puesto");
+    if (!FECHA.test(p.fechaIngreso)) throw new Error("Fecha de ingreso inválida");
+    const salario = p.salario?.trim() ? Number(p.salario) : null;
+    if (salario !== null && (!Number.isFinite(salario) || salario < 0 || salario > 100000)) throw new Error("Salario inválido");
+    const r = await altaEmpleado({ nombre: p.nombre, email: p.email, empresa: p.empresa, puesto: p.puesto, liderId: p.liderId || null, fechaIngreso: p.fechaIngreso, salarioMensual: salario }, u.id, await baseUrl());
+    refresh();
+    return r;
+  });
+}
+
+/** Bienvenida: la persona llena su propia ficha (obligatorio antes de usar Ritmo). */
+export async function completarFichaAction(p: { telefono: string; telefonoAlterno: string; ciudad: string; pais: string; documentoTipo: string; documentoNumero: string; contactoEmergencia: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    if (!(await fichas.leerFicha(u.id))) throw new Error("No tienes ficha");
+    const t = (x: string, n = 120) => x?.trim().slice(0, n) || "";
+    const d = { telefono: t(p.telefono, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60) };
+    const falta = Object.entries(d).find(([, v]) => !v);
+    if (falta) throw new Error("Completa todos los campos obligatorios");
+    if (!(await fichas.contarArchivos(u.id, "identificacion"))) throw new Error("Sube una foto de tu identificación");
+    await fichas.completarFichaPropia(u.id, { ...d, telefonoAlterno: t(p.telefonoAlterno, 40) || null, contactoEmergencia: t(p.contactoEmergencia, 160) || null });
     return {};
   });
 }

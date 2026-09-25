@@ -4,19 +4,24 @@ import { redirect } from "next/navigation";
 
 import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { CrearFicha } from "@/components/ritmo/crear-ficha";
-import { resumenPersonas } from "@/lib/desempeno/fichas";
-import { puestoPorId } from "@/lib/desempeno/reglas";
+import { NuevoEmpleado } from "@/components/ritmo/nuevo-empleado";
+import { EmpresaBadge, FiltroEmpresa } from "@/components/ritmo/piezas";
+import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
+import { PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
+import { listarUsuarios } from "@/lib/pulse/repo";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Personas" };
 
 // Fichas de RR.HH.: solo operaciones con sueldo fijo. Las ve la vista maestra (Elvin, Carilin, Aure, Yaileen).
-export default async function PersonasPage() {
+export default async function PersonasPage({ searchParams }: { searchParams: Promise<{ e?: string }> }) {
+  const { e: empresa } = await searchParams;
   const u = await usuarioRitmo();
   if (!u) return null;
   if (!u.maestro) redirect(`/ritmo/personas/${u.id}`);
-  const gente = await resumenPersonas();
+  const [todos, usuarios] = await Promise.all([resumenPersonas(), listarUsuarios()]);
+  const gente = todos.filter((g) => !empresa || g.perfil.empresa === empresa);
   const con = gente.filter((g) => g.ficha);
   const sin = gente.filter((g) => !g.ficha && g.perfil.activo);
   return (
@@ -25,6 +30,10 @@ export default async function PersonasPage() {
         <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">Recursos Humanos</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Personas</h1>
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">La ficha de cada empleado de operaciones con sueldo fijo: contacto, documentos, entrenamientos, vacaciones y nómina.</p>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <NuevoEmpleado puestos={PUESTOS.map((p) => ({ id: p.id, nombre: p.nombre }))} supervisores={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema")).map((x) => ({ id: x.id, nombre: x.nombre }))} />
+          <FiltroEmpresa actual={empresa} href={(e) => (e ? `/ritmo/personas?e=${e}` : "/ritmo/personas")} />
+        </div>
       </div>
 
       {con.length ? (
@@ -35,6 +44,7 @@ export default async function PersonasPage() {
                 <AvatarRitmo userId={perfil.userId} nombre={perfil.nombre} foto={ficha!.fotoPath} size={52} />
                 <div className="min-w-0">
                   <p className="truncate font-medium">{perfil.nombre}</p>
+                  <EmpresaBadge empresa={perfil.empresa} />
                   <p className="truncate text-xs text-muted-foreground">{puestoPorId(perfil.puesto)?.nombre ?? perfil.puesto}</p>
                 </div>
               </div>
@@ -42,7 +52,9 @@ export default async function PersonasPage() {
                 <span className="flex items-center gap-1.5"><MapPin className="size-3.5" />{[ficha!.ciudad, ficha!.pais].filter(Boolean).join(", ") || "Sin ubicación"}</span>
                 <span className="flex items-center gap-1.5"><Phone className="size-3.5" />{ficha!.telefono || "Sin teléfono"} · {perfil.email}</span>
               </div>
-              {saldos?.puedeSolicitar && saldos.vacaciones.disponibles >= 1 ? (
+              {fichaPendiente(ficha) ? (
+                <span className="self-start rounded-full bg-sky-400/10 px-2.5 py-1 text-xs text-sky-300">Nuevo · falta que complete su ficha</span>
+              ) : saldos?.puedeSolicitar && saldos.vacaciones.disponibles >= 1 ? (
                 <span className="flex items-center gap-1.5 self-start rounded-full bg-[color:var(--coral)]/15 px-2.5 py-1 text-xs text-[color:var(--coral)]">
                   <CalendarHeart className="size-3.5" /> Puede pedir vacaciones · {saldos.vacaciones.disponibles} días
                 </span>

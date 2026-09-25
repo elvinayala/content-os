@@ -41,7 +41,7 @@ export async function leerFichas(): Promise<Ficha[]> {
   return d.select().from(desempenoFichas);
 }
 
-export async function guardarFicha(p: Omit<Ficha, "updatedAt" | "updatedBy" | "fotoPath">, actorId: string) {
+export async function guardarFicha(p: Omit<Ficha, "updatedAt" | "updatedBy" | "fotoPath" | "completadaAt">, actorId: string) {
   const d = await db();
   const valores = { ...p, updatedBy: actorId, updatedAt: new Date() };
   await d.insert(desempenoFichas).values(valores).onConflictDoUpdate({ target: desempenoFichas.userId, set: valores });
@@ -199,4 +199,25 @@ export async function resumenPersonas(): Promise<{ perfil: Perfil; ficha: Ficha 
     const aus = ausencias.filter((a) => a.userId === perfil.userId).map(aAusencia);
     return { perfil, ficha, saldos: perfil.fechaIngreso ? saldos(perfil.fechaIngreso, aus, hoy) : null };
   });
+}
+
+// ─── Alta de empleado nuevo ──────────────────────────────────────────────────────────────────
+
+/** Tiene que completar su ficha (empleado nuevo que aún no llenó sus datos). */
+export const fichaPendiente = (f: Pick<Ficha, "completadaAt" | "telefono"> | null) => !!f && !f.completadaAt && !f.telefono;
+
+/** La persona llena su propia ficha (bienvenida). No toca salario ni notas de RR.HH. */
+export async function completarFichaPropia(
+  userId: string,
+  p: { telefono: string; telefonoAlterno: string | null; ciudad: string; pais: string; documentoTipo: string; documentoNumero: string; contactoEmergencia: string | null },
+) {
+  const d = await db();
+  await d.update(desempenoFichas).set({ ...p, completadaAt: new Date(), updatedBy: userId, updatedAt: new Date() }).where(eq(desempenoFichas.userId, userId));
+  await evento({ userId, actorId: userId, tipo: "ficha_completada" });
+}
+
+export async function contarArchivos(userId: string, categoria: string): Promise<number> {
+  const d = await db();
+  const filas = await d.select({ id: desempenoArchivos.id }).from(desempenoArchivos).where(and(eq(desempenoArchivos.userId, userId), eq(desempenoArchivos.categoria, categoria)));
+  return filas.length;
 }

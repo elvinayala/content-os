@@ -12,6 +12,7 @@ export const desempenoPerfiles = pgTable("desempeno_perfiles", {
     .primaryKey()
     .references(() => pulseUsers.id, { onDelete: "cascade" }),
   puesto: text("puesto").notNull(),
+  empresa: text("empresa").notNull().default("level_up"), // level_up | ai_borinquen (misma plataforma, separado)
   liderId: uuid("lider_id").references(() => pulseUsers.id, { onDelete: "set null" }),
   horaEntrada: text("hora_entrada").notNull().default("09:00"),
   horaSalida: text("hora_salida").notNull().default("18:00"),
@@ -124,6 +125,10 @@ export const desempenoFichas = pgTable("desempeno_fichas", {
   documentoNumero: text("documento_numero"),
   salarioMensual: doublePrecision("salario_mensual"), // USD
   notas: text("notas"),
+  contactoEmergencia: text("contacto_emergencia"), // nombre y teléfono
+  // Alta de empleado nuevo: al firmar contrato RR.HH. lo registra y la persona completa su ficha con el
+  // link de bienvenida. Mientras sea null, Ritmo la manda a /ritmo/bienvenida.
+  completadaAt: timestamp("completada_at", { withTimezone: true }),
   updatedBy: uuid("updated_by").references(() => pulseUsers.id, { onDelete: "set null" }),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
