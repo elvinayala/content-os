@@ -1,5 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 
+import { iniciarClienteMax } from "@/lib/max/onboarding";
 import { altaDesdeFormulario } from "@/lib/onboarding/alta";
 import { type Respuestas, validar } from "@/lib/onboarding/level-up";
 import { limiteIp, secretoValido } from "@/lib/pulse/seguridad";
@@ -32,6 +33,8 @@ export async function POST(req: NextRequest) {
   const prueba = req.nextUrl.searchParams.get("prueba") === "1" && secretoValido(req.headers.get("x-prueba"), process.env.CRON_SECRET);
   try {
     const r = await altaDesdeFormulario(`form-${token}`, respuestas, { tablero: prueba ? "demo" : undefined });
+    // Cliente nuevo de verdad → Max abre su expediente y arranca (estrategia a aprobación).
+    if (!prueba && r.estado !== "repetido") after(() => iniciarClienteMax(r).catch((e) => console.error("[onboarding → max]", e instanceof Error ? e.message : e)));
     return NextResponse.json({ ok: true, estado: r.estado });
   } catch (e) {
     console.error("[onboarding/level-up]", e);

@@ -33,7 +33,7 @@ const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const PORTAFOLIO = resolve(ROOT, "data/meta-ads/portafolio.json");
 const args = process.argv.slice(2);
 // Flags booleanas (--dry-run) y con valor (--reels a,b · --presupuesto 15 · --edad 18-35 · --url …).
-const CON_VALOR = new Set(["pct", "reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir", "pais", "max", "paginas", "para", "top", "destino", "flyers", "intereses"]);
+const CON_VALOR = new Set(["item", "cliente", "pct", "reels", "posts", "videos", "presupuesto", "edad", "url", "nombre", "cta", "excluir", "pais", "max", "paginas", "para", "top", "destino", "flyers", "intereses"]);
 const flags = new Set();
 const valores = {};
 const posicionales = [];
@@ -78,7 +78,25 @@ if (marca === "competencia") {
 }
 
 const portafolio = JSON.parse(readFileSync(PORTAFOLIO, "utf8"));
-const cfg = portafolio.marcas[marca];
+// Clientes de Level Up que maneja Max desde Slack (24/sep): `cliente:<slug>` lee cuenta/página/IG/
+// pixel/públicos del expediente en /api/max (scripts/max.mjs meta <slug> …) en vez de portafolio.json.
+async function apiMax(metodo, q, cuerpo) {
+  const base = (leerEnv("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+  const r = await fetch(`${base}/api/max${q ? "?" + new URLSearchParams(q) : ""}`, { method: metodo, headers: { "x-cron-secret": leerEnv("CRON_SECRET") || "", "Content-Type": "application/json" }, body: cuerpo ? JSON.stringify(cuerpo) : undefined, signal: AbortSignal.timeout(30000) });
+  const j = await r.json().catch(() => ({ ok: false, error: "HTTP " + r.status }));
+  if (!r.ok || j.ok === false) throw new Error("api/max: " + (j.error || j.texto || r.status));
+  return j;
+}
+const esCliente = Boolean(marca?.startsWith("cliente:"));
+let cfg = portafolio.marcas[marca];
+if (esCliente && cmd) {
+  const slug = marca.slice(8);
+  const { cliente: exp } = await apiMax("GET", { cliente: slug });
+  if (!exp) { console.error(`No existe el cliente ${slug} (node scripts/max.mjs clientes).`); process.exit(1); }
+  const m = exp.meta || {};
+  if (!m.cuentaId) { console.error(`${slug} no tiene cuenta de Meta: node scripts/max.mjs meta ${slug} --cuenta … --pagina … [--ig …] [--pixel …]`); process.exit(1); }
+  cfg = { nombre: exp.nombre, etiqueta: m.etiqueta || exp.nombre.split(" (")[0].toUpperCase().slice(0, 24), tokenEnv: m.tokenEnv || "META_ADS_TOKEN", cuentaId: m.cuentaId, pageId: m.pageId || null, igUserId: m.igUserId || null, pixelId: m.pixelId || null, igHandle: m.igHandle || null, landing: m.landing || null, compuertas: { ctrMin: 2, frecuenciaMax: 2.5, ...(m.compuertas || {}) }, reglas: { minPorConjunto: m.minPorConjunto || 10, ...(m.reglas || {}) }, publicosClave: m.publicosClave || {}, clienteSlug: slug };
+}
 if (!cfg || !cmd) {
   console.error("Uso: node scripts/meta-ads.mjs <marca> <comando> …  (marcas: " + Object.keys(portafolio.marcas).join(", ") + ")");
   process.exit(1);
@@ -96,7 +114,10 @@ if (!token) {
   process.exit(2);
 }
 const c = M.crearCliente(token, { log: flags.has("--verbose") ? (...a) => console.error("→", ...a) : undefined });
-const guardarPortafolio = () => { portafolio.actualizadoEl = new Date().toISOString().slice(0, 10); writeFileSync(PORTAFOLIO, JSON.stringify(portafolio, null, 2) + "\n"); };
+const guardarPortafolio = () => {
+  if (esCliente) return apiMax("POST", null, { accion: "cliente", slug: cfg.clienteSlug, meta: { pageId: cfg.pageId, igUserId: cfg.igUserId, publicosClave: cfg.publicosClave } }).catch((e) => console.error("⚠ no pude guardar en el expediente:", e.message));
+  portafolio.actualizadoEl = new Date().toISOString().slice(0, 10); writeFileSync(PORTAFOLIO, JSON.stringify(portafolio, null, 2) + "\n");
+};
 const tabla = (rows) => console.table(rows);
 const num = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
 const usd = (n) => (n == null ? "—" : "$" + Number(n).toFixed(2));
@@ -186,6 +207,53 @@ try {
     if (!flags.has("--ok")) { console.log("Propuesta, no ejecutada. Pídele el OK a Elvin; con su \"dale\" corre lo mismo con --ok."); process.exit(0); }
     await c.graph("POST", "/" + adsetId, { daily_budget: M.centavos(despues) });
     console.log(`✔ Escalado: $${despues}/día. Próxima revisión en 3-4 días (no volver a subir antes).`);
+  } else if (cmd === "proponer-publicar") {
+    // Max en Slack (24/sep): pide en #max-aprobaciones el "publica <id>" para campañas YA montadas en
+    // borrador. Guarda los ids EXACTOS (campaña + conjuntos + anuncios) que se prenderán; `activar`
+    // solo prende esos y solo si Elvin o Carilin lo autorizaron.
+    const campanas = (rest[0] || "").split(",").map((x) => x.trim()).filter((x) => /^\d+$/.test(x));
+    const slug = valores.cliente || cfg.clienteSlug;
+    if (!campanas.length || !slug) throw new Error("Uso: proponer-publicar <campaignId,campaignId> --cliente <slug>");
+    const ids = []; const lineas = []; let total = 0;
+    for (const id of campanas) {
+      const { camp, adsets, ads } = await M.arbolCampana(c, id);
+      const suma = adsets.reduce((s, a) => s + Number(a.daily_budget || 0) / 100, 0);
+      total += suma;
+      ids.push({ id: camp.id, tipo: "campana" }, ...adsets.map((a) => ({ id: a.id, tipo: "conjunto" })), ...ads.map((a) => ({ id: a.id, tipo: "anuncio" })));
+      lineas.push(`• ${camp.name} (${camp.objective}) · ${adsets.length} conjunto(s) · ${ads.length} anuncio(s) · $${suma}/día · hoy ${camp.status}`);
+      for (const a of adsets) lineas.push(`   – ${a.name} · $${Number(a.daily_budget || 0) / 100}/día`);
+    }
+    if (!esCliente) await apiMax("POST", null, { accion: "cliente", slug, nombre: cfg.nombre });
+    const contenido = `${lineas.join("\n")}\n\nTotal: $${Math.round(total * 100) / 100}/día (~$${Math.round(total * 30)}/mes) · cuenta ${cfg.cuentaId}\nAds Manager: https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${cfg.cuentaId}&selected_campaign_ids=${campanas.join(",")}`;
+    const r = await apiMax("POST", null, { accion: "proponer", cliente: slug, tipo: "publicar", titulo: valores.nombre || `Prender ${campanas.length} campaña(s) · $${Math.round(total * 100) / 100}/día`, contenido, datos: { marca, ids, campanas, totalDiario: total } });
+    console.log(`✔ #${r.id} en #max-aprobaciones: "publica ${r.id}" las prende (${ids.length} objetos, $${total}/día).${r.aviso ? " ⚠ " + r.aviso : ""}`);
+  } else if (cmd === "activar") {
+    // Único camino para prender algo por API: una aprobación "publicar" de Elvin o Carilin en
+    // #max-aprobaciones (estado aprobado) para ESTA marca. Prende exactamente sus ids: anuncios →
+    // conjuntos → campaña (así nada entrega a medias).
+    const id = Number(valores.item);
+    if (!id) throw new Error("Uso: activar --item <id> (el #id del 🚀 aprobado en #max-aprobaciones)");
+    const { item: it } = await apiMax("GET", { item: String(id) });
+    if (!it) throw new Error(`No existe la #${id}.`);
+    if (it.tipo !== "publicar") throw new Error(`La #${id} no es un pedido de publicar.`);
+    if (it.estado !== "aprobado") throw new Error(`La #${id} está ${it.estado}: solo se prende lo que Elvin o Carilin autorizaron con "publica ${id}".`);
+    if (!["elvin", "carilin"].includes(it.decidido_por)) throw new Error(`La #${id} no la autorizó Elvin ni Carilin.`);
+    if (it.datos?.marca !== marca) throw new Error(`La #${id} es de ${it.datos?.marca}, no de ${marca}.`);
+    const orden = { anuncio: 0, conjunto: 1, campana: 2 };
+    const objetos = [...(it.datos.ids || [])].sort((a, b) => orden[a.tipo] - orden[b.tipo]);
+    const hechos = []; const fallos = [];
+    for (const o of objetos) {
+      try { await c.graph("POST", "/" + o.id, { status: "ACTIVE" }); hechos.push(o); }
+      catch (e) { fallos.push(`${o.tipo} ${o.id}: ${e.message.slice(0, 120)}`); }
+    }
+    const estados = [];
+    for (const camp of it.datos.campanas || []) {
+      const x = await c.graph("GET", "/" + camp, { fields: "name,effective_status" }).catch(() => null);
+      estados.push(`${x?.name || camp}: ${x?.effective_status || "?"}`);
+    }
+    const resultado = `${hechos.length}/${objetos.length} activados · ${estados.join(" · ")}${fallos.length ? " · fallos: " + fallos.join(" | ") : ""}`;
+    await apiMax("POST", null, { accion: "cerrar", id, estado: fallos.length && !hechos.length ? "fallido" : "ejecutado", resultado });
+    console.log((fallos.length ? "⚠ " : "✔ ") + resultado);
   } else if (cmd === "pausar") {
     if (!rest[0]) throw new Error("Falta el id");
     await c.graph("POST", "/" + rest[0], { status: "PAUSED" });

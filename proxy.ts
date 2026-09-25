@@ -67,6 +67,8 @@ export default async function proxy(request: NextRequest) {
   // Buzón entre agentes (Sofi ↔ Nico ↔ Max ↔ Lola), lo consultan los puentes en Railway
   // (valida CRON_SECRET adentro).
   if (pathname === "/api/agentes") return NextResponse.next();
+  // Max en Slack (24/sep): las manos de Max desde Railway (auth propia con CRON_SECRET).
+  if (pathname === "/api/max") return NextResponse.next();
 
   // Webhook de Calendly (citas de los closers → Pipedrive): lo llama Calendly,
   // sin cookie; se autentica por firma adentro (CALENDLY_WEBHOOK_SIGNING_KEY).

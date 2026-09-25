@@ -3,6 +3,9 @@ import crypto from "crypto";
 import { after, type NextRequest, NextResponse } from "next/server";
 
 import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
+import { APROBADORES, CANAL_APROBACIONES, decidir, usuarioSlack } from "@/lib/max/flujo";
+import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
+import { alBuzonMax, clientePorCanal } from "@/lib/max/repo";
 import {
   MARCADOR_BRIEF,
   pasarPedidoASlack,
@@ -216,6 +219,7 @@ async function postearRespuesta(
 }
 
 const ORIGEN = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+const IDENTIDAD_MAX: Identidad = { username: process.env.MAX_NOMBRE_SLACK || "Max · Estrategia Level Up", ...(process.env.MAX_AVATAR_URL ? { icon_url: process.env.MAX_AVATAR_URL } : {}) };
 const IDENTIDAD_DIRECTOR: Identidad = {
   username: process.env.DIRECTOR_NOMBRE || "Leo · Director Creativo",
   icon_url: process.env.DIRECTOR_AVATAR_URL || `${ORIGEN}/marcas/leo/leo-avatar-512.png`,
@@ -409,6 +413,56 @@ export async function POST(req: NextRequest) {
       }
     });
     return NextResponse.json({ ok: true });
+  }
+
+  // MAX EN SLACK (Elvin, 24/sep/2026). #max-aprobaciones: Elvin o Carilin deciden con
+  // "ok 12" / "no 12 <corrección>" / "publica 12"; lo demás que escriban ahí es conversación con
+  // Max (le llega a su buzón y contesta en el hilo). Canales de clientes: lo que escribe el
+  // CLIENTE (no el equipo) en un canal vinculado le llega a Max, que prepara la respuesta y la
+  // manda a aprobación. Max nunca le escribe al cliente directo (ver lib/max/flujo.ts).
+  const canalMax = CANAL_APROBACIONES();
+  const humanoMax = ev?.type === "message" && !ev.bot_id && ev.user && (!ev.subtype || ev.subtype === "file_share");
+  if (canalMax && ev?.channel === canalMax) {
+    const texto = limpiar(ev.text ?? "");
+    if (!humanoMax || (!texto && !(ev.files?.length ?? 0))) return NextResponse.json({ ok: true });
+    const channel = ev.channel;
+    const raiz = ev.thread_ts ?? ev.ts ?? "";
+    const userId = ev.user as string;
+    const dec = parsearDecision(texto);
+    after(async () => {
+      try {
+        if (dec && APROBADORES()[userId]) {
+          await postearRespuesta(channel, await decidir(dec, userId), raiz, false, IDENTIDAD_MAX);
+          return;
+        }
+        const u = await usuarioSlack(userId);
+        await alBuzonMax(`${encabezadoBuzon("equipo", { de: u.nombre, hilo: raiz, canal: channel })}\n${texto}${ev.files?.length ? `\n(archivos: ${ev.files.map((f) => f.name).join(", ")})` : ""}`);
+        await postearRespuesta(channel, dec ? "Solo Elvin o Carilin aprueban; se lo paso a Max como comentario. 👀" : "👀 Max lo tiene; te contesta en este hilo.", raiz, false, IDENTIDAD_MAX);
+      } catch (e) {
+        console.error("[max aprobaciones]", e instanceof Error ? e.message : e);
+      }
+    });
+    return NextResponse.json({ ok: true });
+  }
+  if (humanoMax && ev?.channel && ev.channel_type !== "im") {
+    const clienteMax = await clientePorCanal(ev.channel).catch(() => null);
+    if (clienteMax) {
+      const channel = ev.channel;
+      const raiz = ev.thread_ts ?? ev.ts ?? "";
+      const userId = ev.user as string;
+      const texto = limpiar(ev.text ?? "");
+      after(async () => {
+        try {
+          const u = await usuarioSlack(userId);
+          const extra = (process.env.MAX_EQUIPO_EXTRA || "").split(",").map((x) => x.trim()).filter(Boolean);
+          if (esEquipo(u, [...extra, ...Object.keys(APROBADORES())])) return; // el equipo habla con Max en #max-aprobaciones
+          await alBuzonMax(`${encabezadoBuzon("cliente", { cliente: clienteMax.slug, canal: channel, hilo: raiz, de: u.nombre })}\n${texto || "(sin texto)"}${ev.files?.length ? `\n(archivos: ${ev.files.map((f) => `${f.name} [${f.mimetype}]`).join(", ")})` : ""}`);
+        } catch (e) {
+          console.error("[max cliente]", e instanceof Error ? e.message : e);
+        }
+      });
+      return NextResponse.json({ ok: true });
+    }
   }
 
   // Canal del Director Creativo: cada mensaje de persona (texto y/o archivos) se revisa en su

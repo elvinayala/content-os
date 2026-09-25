@@ -481,6 +481,25 @@ nunca activar ni subir presupuesto por API, 1 creativo por conjunto ≥ mínimo 
 tope diario por campaña, tuteo PR, sin "gratis", sin promesas de ingreso. Traffickers de Level Up
 usan **Bori** (rol `trafficker`, `POST /api/admin/crear-trafficker` como dueño).
 
+## Max vive en Slack (24/sep/2026)
+
+Elvin: "Max debe de vivir en Slack… todo el proceso (onboarding, estrategia, contenido) lo crea
+independiente, envía aprobación al canal, se aprueba y se lo envía al cliente; luego crea la estructura
+en borrador y, si lo autoriza, lo publica". **#max-aprobaciones** (`SLACK_MAX_CHANNEL_ID`, Elvin + Carilin
++ bot): Max propone con un #id; deciden **Elvin o Carilin** con `ok <id>` · `ok <id> pero …` (lo ajusta y
+vuelve a subir) · `no <id> <corrección>` · `publica <id>`. **Max nunca le escribe al cliente**: el
+servidor (`lib/max/flujo.ts`) publica en el canal del cliente EXACTAMENTE lo aprobado. Clientes = los
+invitados de Slack (single-channel guests) en un canal vinculado → su mensaje va al buzón de Max, que
+prepara la respuesta y la manda a aprobación. Arranca con cada cliente nuevo del formulario de onboarding
+de LU (`lib/max/onboarding.ts`, solo si existe el canal). Datos: tablas `max_clientes` (expediente: canal,
+etapa, ficha, ids de Meta) y `max_items` (propuestas) en la base de Pulse, `lib/max/repo.ts`; lógica pura
+testeada en `lib/max/operador.ts` (`tests/max-operador.test.mjs`); API `/api/max` (CRON_SECRET, pública
+en proxy). Manos de Max: `scripts/max.mjs` (clientes|alta|canales|vincular|etapa|ficha|meta|leer|hilo|
+llamada|proponer|pendientes|nota|cerrar|enviar) y `meta-ads.mjs cliente:<slug> …` (cuenta del expediente)
++ `proponer-publicar <campaignIds> --cliente <slug>` + `activar --item <id>` (ÚNICO camino para prender
+por API: exige un 🚀 aprobado por Elvin/Carilin y prende solo sus ids). Puente de Max (Railway): lo que
+llega `de: slack` se trabaja con `MAX_SLACK` y el cerebro §17. Bori queda para los clientes de AIB.
+
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
 Clon simplificado de Monday.com (ahorra ~$800/mes) para lo único que Level Up usaba ahí:
