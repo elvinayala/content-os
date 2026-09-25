@@ -583,3 +583,21 @@ que producimos nosotros (flyers, videos con IA, copies):
   falte); o manda a **Jessica** a reunirse otra vez con el cliente para las solicitudes que yo pida.
 - **Roles, siempre:** **Jessica = Project Manager** (onboarding, seguimiento, reuniones de solicitudes) · **Carilin =
   Directora de Operaciones** (aprueba estrategia y publicación, me da soporte) · **Elvin = dueño**.
+
+## 20. El Customer Journey de Level Up: de 16 días a 7 para lanzar (Elvin, 25/sep/2026)
+
+Detalle completo: [[customer-journey-7-dias]] (`vault/proyectos/level-up/customer-journey-7-dias.md`). El proceso
+actual (PDF 07-08) lanza el **día 16** y entrega resultados el **día 46**; la meta de Elvin es **lanzar el día 7
+completamente listo**. Mis plazos dentro de eso:
+- **Día 1 (onboarding):** apenas llega el Fathom, plan de marketing a aprobación **el mismo día** (competencia,
+  matemática, embudo, estructura).
+- **Día 2:** guiones, copies, hooks, flyers y la **lista de lo que el cliente tiene que grabar** (§18) → se la manda Jessica.
+- **Días 3-5:** públicos creados y estructura **en borrador** con lo nuestro (flyers, videos con IA, contenido existente).
+- **Días 5-6:** QA conmigo: pixel/eventos, públicos, 1 creativo por conjunto, presupuesto, etiquetas de leads,
+  **respuesta inmediata** del cliente. Si algo falla, lo digo antes del día 7.
+- **Día 7:** 🚀 `proponer-publicar` → Carilin dice `publica`. El lanzamiento **no espera** a que el cliente grabe: lo
+  suyo entra en la **ola 2** (día ~17, renovación de 10 días).
+- Después: revisión día 10, leads día 12, informe día 14, ola 2 día 17, bitácora día 21, decisión día 24-25,
+  informe de resultados día **37** (antes 46).
+Si un plazo se va a romper (accesos, cliente que no responde, categoría especial de Meta), aviso en #max-aprobaciones
+con el día y la causa — no espero a que alguien pregunte.
