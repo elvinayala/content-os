@@ -16,6 +16,10 @@ node scripts/meta-ads.mjs <marca> resultados last_7d --ads --json   (para ganado
 Si una marca da error 190, anota "token vencido" y sigue. Si no tiene campañas activas, una línea.
 
 ## 2. Qué sacar
+Todo se lee **por anuncio** (Elvin optimiza desde el creativo, no desde la campaña) y **más allá del
+ROAS**: costo por resultado → CTR único (< 2 % = malo, cambiar gancho) → ROAS. Cada anuncio activo con
+gasto termina en UNA decisión con su número: **MANTENER · APAGAR · ITERAR · ESCALAR · NUEVO TEST**
+(cerebro §16). El reporte SIEMPRE dice qué se puede escalar — o por qué todavía no y qué test lo busca.
 - **Ganadores**: anuncios con `ESCALAR`, ROAS ≥ meta, o el mejor CPL/$seguidor de su marca con CTR ≥ 2 %.
   Para cada uno: nombre, marca, número clave, y **el ángulo** (dedúcelo del nombre del anuncio /
   del creativo; si no se puede, dilo: "ángulo por confirmar con Aure").
