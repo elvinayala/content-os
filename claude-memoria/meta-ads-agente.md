@@ -93,3 +93,9 @@ en el canal fue un error suyo y se revirtió.
 **Webhook de equipo CREADO (24/sep noche):** Fathom webhook id 6fyy5yK5eWmSiy6H (shared_team_recordings +
 transcripción) → /api/fathom, secreto FATHOM_WEBHOOK_SECRET_EQUIPO en Vercel, redeploy hecho. Falta: que Jessica
 grabe y COMPARTA sus onboardings con el equipo, titulados "Onboarding · <Negocio>" (mensajes programados 25/sep).
+**Prueba de punta a punta (24/sep 22:40):** onboarding ficticio "Sonrisa Dental Caguas" (/api/fathom?prueba=1&max=completo
++ /api/max buzon-prueba) → Max leyó expediente + resumen simulado de Jessica y subió el #1 (PRUEBA) plan completo a
+#max-aprobaciones en 2 min 11 s por **$0.82** (costo REAL; mi estimado de $5-7 por plan era alto). Arreglado tras la
+prueba: filtro de voseo marcaba "sabes/haces"; alerta de dinero saltaba en todo plan. Mensajes reprogramados 25/sep
+(bot, firmados Max): Carilin guía completa 7:30 (Q0C46HJ4S75) + tarea Fathom/Jessica 7:31 (Q0C47N8FEBF), Jessica
+breve 8:00 (Q0C4EN9FMED).
