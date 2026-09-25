@@ -577,6 +577,33 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   (límite por IP, campo trampa, `?prueba=1` + `x-prueba: CRON_SECRET` → Demo) → `altaOnboarding`
   (`lib/pulse/alta-typeform.ts`, compartida con el Typeform): convierte cada respuesta al tipo de su
   columna (status/dropdown por etiqueta, número, link), crea en ONBOARDING & SETUP o completa lo vacío.
+- **Próximo nivel** (24/sep, sin cambios bruscos):
+  - **Ocultar** columnas y etiquetas (`settings.oculta`, `columnaVisible`/`etiquetaElegible` en
+    `lib/pulse/types.ts`): no se borran, salen del tablero/pickers; "Ocultas (n)" en la barra las
+    muestra; en la ficha van en "Columnas ocultas". En LU se ocultaron STATUS REVISIÓN, Encuesta,
+    Tipo, 6 etapas de Progreso sin uso y "Otro" en Razón de Baja.
+  - **Automatizaciones** tipo Monday (tabla `pulse_reglas`, menú ⚡ del tablero; solo admin/editor):
+    cuando valor/grupo (con excepciones) → mover, fecha +N días, poner valor/persona, **exigir**
+    un campo (p. ej. razón de baja al pasar a OFFBOARDED: el cliente abre `RequisitoDialog` y
+    reintenta) o avisar por Slack. Lógica pura en `lib/pulse/automatizaciones.ts` (tests),
+    ejecutor en `lib/pulse/motor-reglas.ts`; sin cascadas entre reglas.
+  - **Mi día** (`/pulse/mi-dia`, `lib/pulse/mi-dia.ts` puro + `mi-dia-datos.ts`): clientes nuevos
+    del formulario, onboardings detenidos +48 h, seguimientos de 10 días y reportes de la semana;
+    "✓ Hecho" queda en `pulse_activity.after.hecho` y "Reporte enviado" recalcula el próximo.
+    Cron `api/cron/pulse-mi-dia` lun–vie 8 AM PR → DM **desde el bot Command Center** (nunca
+    desde la cuenta de Elvin) a `PULSE_MI_DIA_DESTINOS` (default jessica, carilin); `?prueba=1`
+    solo a Elvin. IDs de Slack conocidos en `lib/pulse/slack-dm.ts` (el bot no tiene
+    `users:read.email`; override `PULSE_SLACK_IDS`).
+  - **⌘K** (`components/pulse/buscador-global.tsx`): clientes de los tableros visibles por nombre,
+    empresa, e-mail o teléfono (también dígitos pegados) + navegación. **Vistas guardadas** por
+    persona (`pulse_vistas`, popover "Vistas"). **Celular**: arranca en tarjetas, barra con "Más".
+  - **Preguntarle al CRM** (`/pulse/preguntar`, también desde ⌘K con `?q=`): agente con tools
+    (`buscar` → `consultar()` puro en `lib/pulse/preguntar.ts`, tests; `responder` con ids + nota)
+    en `lib/pulse/preguntar-ia.ts` (`claude-opus-5`, effort low, fallbacks del servidor; override
+    `PULSE_PREGUNTAR_MODEL`/`_EFFORT`). Solo aplana los tableros que la persona puede ver y solo
+    devuelve ids de esos tableros; tope 8 preguntas/min por persona. ~15 s por pregunta.
+  - Dev local usa `DATABASE_URL_DIRECT` (pooler de sesión): el de transacciones dejaba consultas
+    trabadas en "ClientRead" desde la Mac. Prod sigue con `DATABASE_URL` (6543).
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
