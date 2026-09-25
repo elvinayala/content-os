@@ -151,3 +151,40 @@ export function nominaMes(p: { salarioMensual: number | null; mes: string; ajust
 export const usd = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
 
 export const mesSiguiente = (hoy: string) => fechaMeses(`${hoy.slice(0, 7)}-01`, 1).slice(0, 7);
+
+// ─── Solicitudes a RR.HH. ─────────────────────────────────────────────────────────────────────
+
+export const TIPOS_SOLICITUD = [
+  { id: "dia_libre", nombre: "Día libre", conFechas: true },
+  { id: "vacaciones", nombre: "Vacaciones", conFechas: true },
+  { id: "permiso", nombre: "Permiso programado (cita, trámite…)", conFechas: true },
+  { id: "documento", nombre: "Carta o documento (constancia, certificación…)", conFechas: false },
+  { id: "otro", nombre: "Otra petición", conFechas: false },
+] as const;
+
+export type EstadoSolicitud = "supervisor" | "rrhh" | "aprobada" | "rechazada" | "cancelada";
+
+/** Estado inicial: si no tiene supervisor (o el supervisor es RR.HH./maestro), va directo a RR.HH. */
+export const estadoInicial = (supervisorId: string | null): EstadoSolicitud => (supervisorId ? "supervisor" : "rrhh");
+
+/**
+ * Quién decide: en "supervisor" solo el supervisor (o Elvin, admin); en "rrhh" la vista maestra
+ * (RR.HH., Carilin, Aure, Elvin). Nadie decide lo suyo. RR.HH. no se salta al supervisor.
+ */
+export function puedeDecidir(s: { userId: string; estado: string; supervisorId: string | null }, actor: { id: string; maestro: boolean; rol?: string }): boolean {
+  if (actor.id === s.userId) return false;
+  if (s.estado === "supervisor") return actor.id === s.supervisorId || actor.rol === "admin";
+  if (s.estado === "rrhh") return actor.maestro;
+  return false;
+}
+
+/** Siguiente estado al aprobar. */
+export const alAprobar = (estado: string): EstadoSolicitud => (estado === "supervisor" ? "rrhh" : "aprobada");
+
+/** Qué ausencia registra una solicitud firmada (null si no aplica). */
+export function ausenciaDeSolicitud(s: { tipo: string; desde: string | null; hasta: string | null; dias: number | null }): Omit<Ausencia, "id"> | null {
+  if (!s.desde || !s.dias || s.dias <= 0) return null;
+  if (s.tipo === "vacaciones") return { tipo: "vacaciones", desde: s.desde, hasta: s.hasta ?? s.desde, dias: s.dias, certificado: false };
+  if (s.tipo === "dia_libre" || s.tipo === "permiso") return { tipo: "personal", desde: s.desde, hasta: s.hasta ?? s.desde, dias: s.dias, certificado: false };
+  return null;
+}

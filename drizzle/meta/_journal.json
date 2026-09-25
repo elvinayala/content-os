@@ -71,6 +71,13 @@
       "when": 1790350842705,
       "tag": "0009_fichas",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790356749969,
+      "tag": "0010_solicitudes",
+      "breakpoints": true
     }
   ]
 }

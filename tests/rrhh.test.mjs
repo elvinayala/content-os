@@ -59,3 +59,21 @@ test("nómina del mes: base + ajustes − días sin paga", () => {
   assert.equal(n.descuentoSinPaga, 21);
   assert.equal(n.total, 1129);
 });
+
+test("solicitudes: supervisor aprueba, RR.HH. firma; nadie decide lo suyo", async () => {
+  const { puedeDecidir, alAprobar, estadoInicial, ausenciaDeSolicitud } = await import("../lib/desempeno/rrhh.ts");
+  assert.equal(estadoInicial("jefe"), "supervisor");
+  assert.equal(estadoInicial(null), "rrhh");
+  const s = { userId: "emp", estado: "supervisor", supervisorId: "jefe" };
+  assert.equal(puedeDecidir(s, { id: "jefe", maestro: false }), true);
+  assert.equal(puedeDecidir(s, { id: "otro", maestro: false }), false);
+  assert.equal(puedeDecidir(s, { id: "yaileen", maestro: true, rol: "miembro" }), false); // RR.HH. no se salta al supervisor
+  assert.equal(puedeDecidir(s, { id: "elvin", maestro: true, rol: "admin" }), true);
+  assert.equal(puedeDecidir({ ...s, estado: "rrhh" }, { id: "jefe", maestro: false }), false);
+  assert.equal(puedeDecidir({ ...s, estado: "rrhh" }, { id: "yaileen", maestro: true }), true);
+  assert.equal(puedeDecidir({ ...s, userId: "yaileen", estado: "rrhh" }, { id: "yaileen", maestro: true }), false);
+  assert.equal(alAprobar("supervisor"), "rrhh");
+  assert.equal(alAprobar("rrhh"), "aprobada");
+  assert.deepEqual(ausenciaDeSolicitud({ tipo: "dia_libre", desde: "2026-10-02", hasta: null, dias: 1 }), { tipo: "personal", desde: "2026-10-02", hasta: "2026-10-02", dias: 1, certificado: false });
+  assert.equal(ausenciaDeSolicitud({ tipo: "documento", desde: null, hasta: null, dias: null }), null);
+});

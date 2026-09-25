@@ -483,6 +483,11 @@ acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
   maternidad 15 por evento; lo que no alcance = sin paga. RR.HH. registra las ausencias. Aviso de 12 meses:
   banner en Hoy/ficha + cron `?tarea=aniversarios` (diario 9 AM PR, a la persona y a RR.HH./Carilin).
 - **Nómina estimada** del mes siguiente: salario + ajustes (`desempeno_ajustes`) − días sin paga.
+- **Solicitudes** (`/ritmo/solicitudes`, `desempeno_solicitudes`, `lib/desempeno/solicitudes.ts`): día libre,
+  vacaciones, permiso programado, carta/documento u otra petición → su **supervisor** (lider_id) aprueba (o
+  Elvin) → **RR.HH.** firma (la maestra). RR.HH. NO se salta al supervisor (`puedeDecidir`). Al firmar un día
+  libre/vacaciones/permiso con días se registra la ausencia sola. Numerito de pendientes en el menú; avisos
+  por Slack (bot) solo con `DESEMPENO_AVISOS=real`.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

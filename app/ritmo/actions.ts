@@ -8,6 +8,8 @@ import { linkDeAcceso } from "@/lib/desempeno/acceso";
 import * as datos from "@/lib/desempeno/datos";
 import * as etica from "@/lib/desempeno/etica";
 import * as fichas from "@/lib/desempeno/fichas";
+import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
+import * as solicitudes from "@/lib/desempeno/solicitudes";
 import { puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereUsuario } from "@/lib/pulse/auth";
@@ -301,6 +303,53 @@ export async function actualizarEticoAction(p: { id: string; estado: string; not
     if (u.rol !== "admin") throw new Error("Solo Elvin");
     if (!["nuevo", "revisando", "cerrado"].includes(p.estado)) throw new Error("Estado inválido");
     await etica.actualizarReporteEtico(p.id, { estado: p.estado, notaInterna: p.notaInterna?.trim().slice(0, 2000) || null });
+    refresh();
+    return {};
+  });
+}
+
+// ─── Solicitudes a RR.HH. ─────────────────────────────────────────────────────────────────────
+
+export async function crearSolicitudAction(p: { tipo: string; desde: string; hasta: string; dias: string; detalle: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const tipo = TIPOS_SOLICITUD.find((t) => t.id === p.tipo);
+    if (!tipo) throw new Error("Escoge qué necesitas");
+    const detalle = p.detalle?.trim().slice(0, 2000);
+    if (!detalle || detalle.length < 5) throw new Error("Explica brevemente lo que necesitas");
+    let desde: string | null = null, hasta: string | null = null, dias: number | null = null;
+    if (tipo.conFechas) {
+      if (!FECHA.test(p.desde)) throw new Error("Escoge la fecha");
+      desde = p.desde;
+      hasta = FECHA.test(p.hasta) && p.hasta >= p.desde ? p.hasta : p.desde;
+      dias = Number(p.dias);
+      if (!Number.isFinite(dias) || dias < 0 || dias > 60) throw new Error("Días inválidos");
+      dias = Math.round(dias * 2) / 2;
+    }
+    await solicitudes.crearSolicitud({ userId: u.id, nombre: u.nombre, tipo: tipo.id, desde, hasta, dias, detalle });
+    refresh();
+    return {};
+  });
+}
+
+export async function decidirSolicitudAction(p: { id: string; aprobar: boolean; nota: string }) {
+  return envolver(async () => {
+    const u = await usuarioRitmo();
+    if (!u) throw new Error("no-autorizado");
+    const s = await solicitudes.leerSolicitud(p.id);
+    if (!s || !puedeDecidir(s, u)) throw new Error("Esta solicitud no te toca o ya se decidió");
+    const estado = await solicitudes.decidirSolicitud(s, u, p.aprobar, p.nota?.trim().slice(0, 500) || null);
+    refresh();
+    return { estado };
+  });
+}
+
+export async function cancelarSolicitudAction(id: string) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const s = await solicitudes.leerSolicitud(id);
+    if (!s) throw new Error("No existe");
+    await solicitudes.cancelarSolicitud(s, u.id);
     refresh();
     return {};
   });

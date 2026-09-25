@@ -203,3 +203,31 @@ export const desempenoEtica = pgTable(
   },
   (t) => [index("desempeno_etica_estado").on(t.estado, t.createdAt)],
 );
+
+// Solicitudes a RR.HH. (25/sep/2026): día libre, vacaciones, permiso programado, carta/documento u otro.
+// Flujo: la persona pide → su supervisor (lider_id) aprueba → RR.HH. firma. Sin supervisor va directo a
+// RR.HH. Al firmar un día libre/vacaciones/permiso con días se registra la ausencia sola.
+export const desempenoSolicitudes = pgTable(
+  "desempeno_solicitudes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(), // dia_libre | vacaciones | permiso | documento | otro
+    desde: text("desde"),
+    hasta: text("hasta"),
+    dias: doublePrecision("dias"),
+    detalle: text("detalle").notNull(),
+    estado: text("estado").notNull(), // supervisor | rrhh | aprobada | rechazada | cancelada
+    supervisorId: uuid("supervisor_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+    supervisorAt: timestamp("supervisor_at", { withTimezone: true }),
+    supervisorNota: text("supervisor_nota"),
+    rrhhId: uuid("rrhh_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+    rrhhAt: timestamp("rrhh_at", { withTimezone: true }),
+    rrhhNota: text("rrhh_nota"),
+    ausenciaId: uuid("ausencia_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_solicitudes_estado").on(t.estado, t.createdAt), index("desempeno_solicitudes_user").on(t.userId)],
+);
