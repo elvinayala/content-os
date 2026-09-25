@@ -67,7 +67,7 @@ export async function usuarioSlack(id: string): Promise<{ id: string; nombre: st
 export async function proponer(p: { cliente: string; tipo: TipoItem; titulo?: string; contenido: string; hilo?: string | null; nota?: string | null; datos?: Record<string, unknown> }): Promise<{ item: ItemMax; aviso?: string }> {
   const c = await leerCliente(p.cliente);
   // Límites con clientes: lo grave no llega ni a aprobación (Max lo reescribe); lo dudoso va con ⚠.
-  const revision = VAN_AL_CLIENTE.includes(p.tipo) ? revisarParaCliente(`${p.titulo ?? ""}\n${p.contenido}`) : { bloqueos: [], alertas: [] };
+  const revision = VAN_AL_CLIENTE.includes(p.tipo) ? revisarParaCliente(`${p.titulo ?? ""}\n${p.contenido}`, p.tipo) : { bloqueos: [], alertas: [] };
   if (revision.bloqueos.length) throw new BloqueoMax(`No se puede proponer al cliente: ${revision.bloqueos.join(" · ")}. Reescríbelo.`);
   const i = await crearItem(p);
   const canal = CANAL_APROBACIONES();
@@ -93,7 +93,7 @@ export async function enviarAprobado(id: number): Promise<{ ok: boolean; texto: 
   const c = await leerCliente(i.cliente);
   if (!c?.canal) return { ok: false, texto: `Aprobada, pero no tengo vinculado el canal de ${c?.nombre || i.cliente}. En cuanto Max lo vincule se envía.` };
   if (!canalClientePermitido(c.canal)) return { ok: false, texto: `Aprobada, pero el canal de ${c.nombre} no está habilitado para Max (MAX_CANALES_CLIENTES). No se envió nada; cópiasela tú si quieres.` };
-  const rev = revisarParaCliente(i.contenido);
+  const rev = revisarParaCliente(i.contenido, i.tipo);
   if (rev.bloqueos.length) return { ok: false, texto: `No la envié: ${rev.bloqueos.join(" · ")}.` };
   const r = await publicar(c.canal, textoParaCliente(i.contenido), i.hilo);
   if (!r.ok) return { ok: false, texto: `No pude enviarla al canal del cliente (${r.error}).` };

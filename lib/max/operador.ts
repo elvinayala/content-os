@@ -182,18 +182,25 @@ const BLOQUEOS: [RegExp, string][] = [
   [/\b(contraseñ\w*|password|passcode|clave de (acceso|tu cuenta|instagram|facebook|meta)|c[oó]digo de (verificaci[oó]n|seguridad|2fa)|n[uú]mero de (tarjeta|cuenta bancaria)|seguro social)\b/i, "pide credenciales o datos sensibles (los accesos van por invitación de socio en Meta, nunca con claves)"],
   [/\b(te garantiz\w*|garantizad\w*|garantizamos|vas a (ganar|facturar|vender) \$?\d|resultados? (asegurad|garantizad)\w*)/i, "promete resultados o ingresos"],
   [/\bgratis\b/i, "usa \"gratis\""],
-  [/\b(vos|ten[eé]s|pod[eé]s|sab[eé]s|quer[eé]s|hac[eé]s)\b/i, "vosea (tiene que ser tuteo de Puerto Rico)"],
+  // Ojo: "sabes" y "haces" sin tilde son TUTEO (tú sabes, tú haces); solo "sabés/hacés" vosean.
+  // "tenes/podes/queres" no existen en tuteo (tienes/puedes/quieres), así que valen con o sin tilde.
+  [/\b(vos|ten[eé]s|pod[eé]s|sabés|quer[eé]s|hacés)(?![\p{L}])/iu, "vosea (tiene que ser tuteo de Puerto Rico)"],
 ];
+// Dinero: en un MENSAJE cualquier cifra merece lupa; en un plan/creativos las cifras son el presupuesto
+// y la matemática (normal), así que ahí solo cuentan las palabras de precio/contrato (prueba 24/sep).
+const RE_DINERO_CIFRAS = /\$\s?\d|\b\d+\s?(d[oó]lares|usd)\b/i;
+const RE_DINERO_PALABRAS = /\b(precio del (servicio|paquete|plan)|nuestro precio|descuento|reembolso|contrato|cancelar (el|tu) (servicio|contrato|plan)|renovaci[oó]n|mensualidad|cobro|factura de level up)\b/i;
+const MSG_DINERO = "toca dinero/contrato (confirma que Max no esté prometiendo algo que no le toca)";
 const ALERTAS: [RegExp, string][] = [
-  [/\$\s?\d|\b\d+\s?(d[oó]lares|usd)\b|\bprecio|\bdescuento|\bfactura|\bpago|\breembolso|\bcontrato|\bcancelar|\brenovaci[oó]n/i, "toca dinero/contrato (confirma que Max no esté prometiendo algo que no le toca)"],
   [/\b(familia|esposa?|novi[oa]|hij[oa]s?|salud|enferm\w*|m[eé]dico|pol[ií]tic\w*|religi[oó]n|iglesia|cumplea[nñ]os|vacaciones|fiesta|chisme)\b/i, "roza lo personal (Max solo habla del negocio del cliente)"],
   [/\b(otro cliente|otros clientes|[a-z]+ (nos )?pag[oó]|tenemos un cliente que)\b/i, "menciona a otros clientes (nunca datos de otros)"],
 ];
 
-export function revisarParaCliente(texto: string): { bloqueos: string[]; alertas: string[] } {
+export function revisarParaCliente(texto: string, tipo: TipoItem = "mensaje"): { bloqueos: string[]; alertas: string[] } {
   const t = String(texto ?? "");
+  const dinero = RE_DINERO_PALABRAS.test(t) || (tipo === "mensaje" && RE_DINERO_CIFRAS.test(t));
   return {
     bloqueos: BLOQUEOS.filter(([re]) => re.test(t)).map(([, m]) => m),
-    alertas: ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m),
+    alertas: [...(dinero ? [MSG_DINERO] : []), ...ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m)],
   };
 }

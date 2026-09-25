@@ -75,6 +75,12 @@ test("límites con clientes: se bloquea lo grave, se marca lo dudoso", async () 
   assert.equal(revisarParaCliente("la consulta es gratis").bloqueos.length, 1);
   assert.equal(revisarParaCliente("¿Tenés los videos?").bloqueos.length, 1);
   assert.equal(revisarParaCliente("El precio del paquete sube a $500").alertas.length, 1);
+  // Prueba del 24/sep: "sabes"/"haces" son tuteo; en un plan, el presupuesto no es alerta.
+  assert.equal(revisarParaCliente("Tú sabes lo que haces y lo haces bien").bloqueos.length, 0);
+  assert.equal(revisarParaCliente("¿Vos sabés?").bloqueos.length, 1);
+  assert.equal(revisarParaCliente("Con $50/día, faltan ~$17K/mes: ~40 pacientes.", "plan").alertas.length, 0);
+  assert.equal(revisarParaCliente("Te damos un descuento del 20 %", "plan").alertas.length, 1);
+  assert.equal(revisarParaCliente("Son $50 al día", "mensaje").alertas.length, 1);
   assert.equal(revisarParaCliente("¿Cómo está tu familia?").alertas.length, 1);
   assert.equal(canalesPermitidos("").size, 0, "vacío = ningún canal de cliente");
   assert.deepEqual([...canalesPermitidos("C0B8P00B5A9, basura")], ["C0B8P00B5A9"]);
