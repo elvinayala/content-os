@@ -35,7 +35,7 @@ export class BloqueoMax extends Error {}
 const ORIGEN = (process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
 const IDENTIDAD = () => ({
   username: process.env.MAX_NOMBRE_SLACK || "Max · Estratega Level Up",
-  icon_url: process.env.MAX_AVATAR_URL || `${ORIGEN}/marcas/max/max-avatar-512.png`,
+  icon_url: process.env.MAX_AVATAR_URL || `${ORIGEN}/marcas/max/max-avatar-v2-512.png`,
 });
 const NOMBRE_APROBADOR: Record<string, string> = { elvin: "Elvin", carilin: "Carilin", jessica: "Jessica" };
 
