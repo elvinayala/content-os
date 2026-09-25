@@ -55,7 +55,7 @@ def hoja(n, titulo, html):
 PROVISIONAL = """<div class="aviso"><b>Acuerdo provisional.</b> Rige desde su firma hasta que las partes firmen el contrato definitivo que prepara el abogado de Resuelto, o por <b>90 días</b>, lo que ocurra primero. Si el contrato definitivo no se firma en ese plazo, este acuerdo termina sin penalidad para ninguna de las partes, salvo lo dispuesto en las secciones 5, 6 y 9.</div>"""
 RESUELTO_PARTE = """<b>Resuelto Home Services LLC</b>, compañía de responsabilidad limitada organizada bajo las leyes del Estado Libre Asociado de Puerto Rico, representada por Elvin Ayala ("Resuelto")"""
 FIRMADO_EN = f"""<p>Firmado en {campo("lugar", "s")}, Puerto Rico, a {campo("dia", "s")} de {campo("mes", "s")} de 2026.</p>"""
-FIRMA_RESUELTO = firma("resuelto", "Por Resuelto Home Services LLC<br>Elvin Ayala, fundador")
+FIRMA_RESUELTO = firma("resuelto", "Por Resuelto Home Services LLC<br>Representante autorizado")
 
 SEC = {
  1: """<h2>1. Relación</h2>

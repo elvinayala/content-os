@@ -99,7 +99,7 @@ export function llenar(tipo: TipoContrato, html: string, datos: DatosFirma, firm
   // estilos de lo llenado (van en la plantilla impresa)
   return out.replace("</style>", `.campo.lleno{border-bottom:1px solid #8a97a3;min-width:0;height:auto;padding:0 4px;font-weight:600;color:#0F3D5E}
 .firma-img{height:44px;display:block;margin-bottom:-6px}
-.firma-tipo{font-family:'Caveat',cursive;font-size:22pt;color:#0F3D5E;display:block;line-height:1}
+.firma-tipo{font-family:'Caveat',cursive;font-size:17pt;color:#0F3D5E;display:block;line-height:1}
 .firma-meta{display:block;font-size:7pt;color:#5C6670}
 .cert td{font-size:9pt;vertical-align:top}.cert td:first-child{color:#5C6670;width:34%}
 </style>`).replace("<style>", `<style>@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');`);

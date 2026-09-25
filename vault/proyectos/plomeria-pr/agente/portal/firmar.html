@@ -211,7 +211,7 @@
       .replace(/<span class="campo([^"]*)" data-campo="([a-z_]+)"><\/span>/g, (_m, cl, id) => `<span class="campo${cl} lleno">${esc(val[id] || "") || "—"}</span>`)
       .replace(/<span class="chk" data-check="([a-z_]+)">☐<\/span>/g, (_m, id) => `<span class="chk">${marcados.has(id) ? "☒" : "☐"}</span>`)
       .replace(/(<div class="firma" data-firma="firmante"><div class="trazo">)/g, `$1<span class="pendiente">Tu firma va aquí</span>`)
-      .replace(/(<div class="firma" data-firma="resuelto"><div class="trazo">)/g, `$1<span class="firma-tipo">Elvin Ayala</span>`);
+      .replace(/(<div class="firma" data-firma="resuelto"><div class="trazo">)/g, `$1<span class="firma-tipo">Resuelto Home Services LLC</span>`);
   }
   function pintarHojas() {
     const cont = $("#hojas"); cont.innerHTML = "";
