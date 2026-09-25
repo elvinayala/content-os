@@ -76,3 +76,14 @@ test("mensajeCita: maestro sale con ⭐ y prioridad", () => {
   const m = R.mensajeCita({ nombre: "Abilo", nivelLicencia: "maestro", experiencia: "47 años", municipio: "Área metro", whatsapp: "19393812983" }, "2026-09-24T08:00:00-04:00", true);
   assert.match(m, /⭐ MAESTRO — prioridad/); assert.match(m, /fuera del horario/); assert.match(m, /8:00 AM/);
 });
+
+// 25/sep (Yaileen vía Aure): 2 entrevistas a las 9:00 y 1 a las 9:30; ella dura ~1 h con cada plomero.
+test("entrevistas separadas al menos 1 hora", async () => {
+  const R = await import("../dist/reclutamiento.js");
+  const nueve = ["2026-09-28T13:00:00.000Z"]; // lun 28, 9:00 AM PR
+  assert.equal(R.MIN_ENTREVISTA, 60);
+  assert.equal(R.chocaEntrevista("2026-09-28T13:00:00.000Z", nueve), true);
+  assert.equal(R.chocaEntrevista("2026-09-28T13:30:00.000Z", nueve), true);
+  assert.equal(R.chocaEntrevista("2026-09-28T14:00:00.000Z", nueve), false);
+  assert.deepEqual(R.separarHuecos(["2026-09-28T13:20:00Z", "2026-09-28T14:00:00Z", "2026-09-28T14:20:00Z", "2026-09-28T15:00:00Z"], nueve), ["2026-09-28T14:00:00Z", "2026-09-28T15:00:00Z"]);
+});

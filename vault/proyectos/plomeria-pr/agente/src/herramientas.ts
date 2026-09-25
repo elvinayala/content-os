@@ -13,7 +13,9 @@ import { RAIZ, type Proyecto, type Contratista } from "./almacen.js";
 import { crearLinkPago } from "./integraciones/cobros.js";
 import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCita } from "./integraciones/crm.js";
 import { dmSlack } from "./integraciones/slack.js";
-import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida } from "./reclutamiento.js";
+import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida, chocaEntrevista, separarHuecos, MIN_ENTREVISTA } from "./reclutamiento.js";
+/** Entrevistas ya agendadas (futuras), menos la del contacto que se está atendiendo. */
+const entrevistasOcupadas = (contactoId?: string) => almacen.candidatos().filter((x) => x.estado === "entrevista" && x.entrevista && x.contactoId !== contactoId && new Date(x.entrevista).getTime() > Date.now() - MIN_ENTREVISTA * 60_000).map((x) => x.entrevista as string);
 import { avisarCoordinador } from "./canales/whatsapp.js";
 import { programarLlamadaHumana } from "./llamar-cliente.js";
 
@@ -77,12 +79,12 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
   },
   {
     name: "horarios_entrevista",
-    description: "Devuelve los huecos LIBRES reales del calendario de entrevistas de GHL (videollamada de 20 min, lunes a viernes). Úsala antes de proponerle una hora a un plomero y propón SOLO horas de esta lista. Pasa `desde` (YYYY-MM-DD) si pidió un día en particular.",
+    description: "Devuelve los huecos LIBRES reales del calendario de entrevistas de GHL (videollamada de hasta 1 h, lunes a viernes; ya vienen separados 1 h entre sí y de las entrevistas agendadas). Úsala antes de proponerle una hora a un plomero y propón SOLO horas de esta lista. Pasa `desde` (YYYY-MM-DD) si pidió un día en particular.",
     input_schema: { type: "object", properties: { desde: { type: "string", description: "YYYY-MM-DD; vacío = desde hoy" } }, required: [], additionalProperties: false },
   },
   {
     name: "registrar_candidato",
-    description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la entrevista por videollamada de 20 minutos. Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
+    description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la entrevista por videollamada (bloquea 1 hora). Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
     input_schema: {
       type: "object",
       properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la hora que el plomero ACEPTÓ en su último mensaje (un sí claro o que él mismo dijo esa hora): uno de los huecos de horarios_entrevista, o — solo si es maestro o gran candidato — la hora que él pidió (lun–sáb, 7 AM–6 PM, con -04:00). Vacío si aún no aceptó" } },
@@ -252,7 +254,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "horarios_entrevista": {
       const desde = input.desde && /^\d{4}-\d{2}-\d{2}$/.test(input.desde) ? new Date(`${input.desde}T00:00:00-04:00`) : new Date();
       const inicio = new Date(Math.max(desde.getTime(), Date.now()));
-      const huecos = await huecosLibres(config.ghl.calEntrevista, inicio, new Date(inicio.getTime() + 8 * 86_400_000));
+      const huecos = separarHuecos(await huecosLibres(config.ghl.calEntrevista, inicio, new Date(inicio.getTime() + 8 * 86_400_000)), entrevistasOcupadas(ctx.contacto.id));
       if (!huecos.length) return { ok: false, mensaje: "No pude leer el calendario ahora. Pregúntale qué días y horas le sirven, anótalo en disponibilidad y dile que el equipo lo llama para cuadrar." };
       const fmt = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
       return { ok: true, huecos: huecos.slice(0, 16).map((iso) => ({ iso, texto: fmt(iso) })), nota: "Propón 1 o 2 que caigan en lo que él dijo. Cuando confirme, llama registrar_candidato con entrevista = el iso exacto." };
@@ -295,7 +297,8 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
           const libres = await huecosLibres(config.ghl.calEntrevista, new Date(dia.getTime() - 12 * 3600_000), new Date(dia.getTime() + 12 * 3600_000));
           fueraDeHorario = !libres.some((h) => new Date(h).getTime() === dia.getTime());
         }
-        cita = await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: 20, titulo: `${prioridad ? "⭐ " : ""}Entrevista · ${c.nombre} (${c.nivelLicencia}${c.experiencia ? ", " + c.experiencia : ""}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined, forzar: fueraDeHorario });
+        // Ni la hora de un gran candidato puede caer a menos de 1 h de otra entrevista (Yaileen dura ~1 h).
+        cita = chocaEntrevista(c.entrevista, entrevistasOcupadas(ctx.contacto.id)) ? { ok: false, error: "choca con otra entrevista" } : await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: MIN_ENTREVISTA, titulo: `${prioridad ? "⭐ " : ""}Entrevista · ${c.nombre} (${c.nivelLicencia}${c.experiencia ? ", " + c.experiencia : ""}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined, forzar: fueraDeHorario });
         if (cita.ok) { almacen.guardarCandidato({ ...c, ghlCitaId: (cita as { id?: string }).id ?? previo?.ghlCitaId }); await dmSlack(config.slack.reclutamiento, mensajeCita(c, c.entrevista, fueraDeHorario)); }
         else { almacen.guardarCandidato({ ...c, entrevista: previo?.entrevista, estado: previo?.entrevista ? "entrevista" : "nuevo" }); }
       } else if (previo?.ghlCitaId) almacen.guardarCandidato({ ...c, ghlCitaId: previo.ghlCitaId });
@@ -413,7 +416,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         await agregarNota(ghlId, `Aplicó por WhatsApp (agente). ${c.empresa ? "Empresa: " + c.empresa + " · " : ""}Categorías: ${c.categorias.join(", ")} · Zonas: ${c.zonas.join(", ")} · DACO: ${c.registroDaco ?? "NO"} · Seguro: ${c.seguro ?? "no indica"} · Exp: ${c.experienciaAnos ?? "?"} años`);
       }
       await avisarCoordinador(`🧱 Contratista ${c.id}: ${c.nombre}${c.empresa ? ` (${c.empresa})` : ""}\nCategorías: ${c.categorias.join(", ")} · Zonas: ${c.zonas.join(", ")}\nDACO: ${c.registroDaco ?? "NO"} · Seguro: ${c.seguro ?? "no indica"} · Exp: ${c.experienciaAnos ?? "?"} años · Capacidad: ${c.capacidadMensual ?? "?"}`);
-      return { ok: true, contratista_id: c.id, apto_documental: !!c.registroDaco, faltantes: [!c.registroDaco ? "registro DACO (requisito)" : null, !c.seguro ? "seguro de responsabilidad" : null, !c.portfolio ? "portfolio o fotos de trabajos" : null].filter(Boolean), siguiente_paso: c.registroDaco ? "verificación documental y entrevista de 20 min; ofrecer 2 horarios" : "explicar que el registro DACO es requisito y cómo obtenerlo (daco.pr.gov, ~$205 + fianza); anotar para cuando lo tenga" };
+      return { ok: true, contratista_id: c.id, apto_documental: !!c.registroDaco, faltantes: [!c.registroDaco ? "registro DACO (requisito)" : null, !c.seguro ? "seguro de responsabilidad" : null, !c.portfolio ? "portfolio o fotos de trabajos" : null].filter(Boolean), siguiente_paso: c.registroDaco ? "verificación documental y entrevista (hasta 1 h); ofrecer 2 horarios" : "explicar que el registro DACO es requisito y cómo obtenerlo (daco.pr.gov, ~$205 + fianza); anotar para cuando lo tenga" };
     }
     case "registrar_encuesta": {
       const r = await registrarEncuesta(input.proyecto_id, { llegoATiempo: input.llego_a_tiempo, profesional: input.profesional, explicoBien: input.explico_bien, cotizacionClara: input.cotizacion_clara, precioRecibido: input.precio_recibido || undefined, contrato: input.contrato, motivoNoContrato: input.motivo_no_contrato || undefined, estaComparando: input.esta_comparando, interesFinanciamiento: input.interes_financiamiento, fechaDeseada: input.fecha_deseada || undefined, problemaRepresentante: input.problema_representante || undefined, comentario: input.comentario || undefined });

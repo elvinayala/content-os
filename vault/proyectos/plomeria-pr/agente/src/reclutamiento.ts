@@ -39,6 +39,20 @@ export function horaPrioritariaValida(iso: string, ahora = Date.now(), zona = "A
   return p.weekday !== "Sun" && min >= 7 * 60 && min <= 18 * 60;
 }
 
+/** Yaileen dura ~1 h por entrevista (25/sep, vía Aure: le cayeron 2 a las 9:00 y 1 a las 9:30). Ninguna entrevista
+ *  puede empezar a menos de esto de otra, ni siquiera la hora que pide un gran candidato. */
+export const MIN_ENTREVISTA = 60;
+export function chocaEntrevista(iso: string, ocupadas: string[], minutos = MIN_ENTREVISTA): boolean {
+  const t = new Date(iso).getTime();
+  return ocupadas.some((o) => Math.abs(new Date(o).getTime() - t) < minutos * 60_000);
+}
+/** Huecos para ofrecer: fuera de las entrevistas ya agendadas y separados entre sí al menos `minutos`. */
+export function separarHuecos(huecos: string[], ocupadas: string[], minutos = MIN_ENTREVISTA): string[] {
+  const out: string[] = [];
+  for (const h of [...huecos].sort()) if (!chocaEntrevista(h, ocupadas, minutos) && !chocaEntrevista(h, out, minutos)) out.push(h);
+  return out;
+}
+
 const sinTildes = (t: string) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
 /**
  * ¿El último mensaje del plomero ACEPTA la hora `iso`? (23/sep: Abilo escribió "No tengo trabajo a esa hora"
