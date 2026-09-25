@@ -1,0 +1,40 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-09-25",
+ "motivo": "Firmó el 1.er plomero: Edgar Arroyo (oficial 6900-0026, Caguas, T3). Regla de Elvin: firma → anuncios de su zona el mismo día.",
+ "ids": {
+  "imagen": "98b9e70209e073b4df9e9026e749956e",
+  "miniatura": "87a94c8c2ce01bf91df7704f2f64f4cd",
+  "video": "28484481911203085",
+  "campana": "120255115172270029",
+  "conjuntoVideo": "120255115172670029",
+  "conjuntoFlyer": "120255115172980029",
+  "creativoFlyer": "1569535137698730",
+  "creativoVideo": "1868046514560797",
+  "anuncioVideo": "120255115175470029",
+  "anuncioFlyer": "120255115176090029"
+ },
+ "config": {
+  "destino": "MESSAGING_INSTAGRAM_DIRECT_MESSENGER",
+  "optimizacion": "CONVERSATIONS",
+  "edad": "28-65",
+  "geo": [
+   "Aguas Buenas",
+   "Gurabo",
+   "Juncos",
+   "San Lorenzo",
+   "Caguas",
+   "Cayey"
+  ],
+  "diario": {
+   "video": 12,
+   "flyer": 8
+  },
+  "copy": {
+   "message": "¿Fregadero tapado, inodoro que no para o calentador dañado en Caguas? Te decimos el precio ANTES de llegar: destape $149, reparación de inodoro $99, calentador $279. Plomero licenciado de tu zona y 12 meses de garantía en la mano de obra.\n\nEscríbenos por mensaje y te coordinamos la visita.",
+   "title": "Plomero con precio fijo en Caguas",
+   "description": "Precio antes de llegar · 12 meses de garantía"
+  },
+  "estado": "PAUSED (Elvin activa)"
+ }
+}
