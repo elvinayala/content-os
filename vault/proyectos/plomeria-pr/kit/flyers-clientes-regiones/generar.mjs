@@ -38,9 +38,12 @@ const PRECIOS = [
   ["Instalación de calentador", "De tanque", precio("calentador-tanque")],
 ];
 
-const [soloT, pueblos] = process.argv.slice(2);
+const [soloT, pueblos, nombreArea] = process.argv.slice(2);
+// 3er argumento opcional: el nombre del área cuando el plomero no está en la ciudad cabecera del territorio
+// (p. ej. Samuel en Quebradillas, T5 "Arecibo"). El archivo sale con ese nombre: cliente-quebradillas-…
+const slugDe = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const regiones = TERR.filter((t) => !soloT || t.id === soloT).map((t) => ({
-  slug: SLUG[t.id], nombre: NOMBRE[t.id],
+  slug: nombreArea ? slugDe(nombreArea) : SLUG[t.id], nombre: nombreArea || NOMBRE[t.id],
   municipios: pueblos ? pueblos.split(",").map((s) => s.trim()).filter(Boolean) : t.municipios,
 }));
 if (!regiones.length) throw new Error(`No existe el territorio ${soloT}`);

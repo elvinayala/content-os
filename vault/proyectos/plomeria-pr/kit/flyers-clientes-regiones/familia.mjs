@@ -24,8 +24,11 @@ const SLUG = { T1: "metro", T2: "bayamon", T3: "caguas", T4: "ponce", T5: "areci
 const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.precio) throw new Error(`Sin precio fijo: ${id}`); return s.precio; };
 const FEE = MENU.cargo_coordinacion;
 
-const [soloT, pueblos] = process.argv.slice(2);
-const areas = TERR.filter((t) => !soloT || t.id === soloT).map((t) => ({ slug: SLUG[t.id], nombre: NOMBRE[t.id], municipios: pueblos ? pueblos.split(",").map((s) => s.trim()).filter(Boolean) : t.municipios }));
+const [soloT, pueblos, nombreArea] = process.argv.slice(2);
+// 3er argumento opcional: el nombre del área cuando el plomero no está en la ciudad cabecera del territorio
+// (p. ej. Samuel en Quebradillas, T5 "Arecibo"). El archivo sale con ese nombre: cliente-quebradillas-…
+const slugDe = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const areas = TERR.filter((t) => !soloT || t.id === soloT).map((t) => ({ slug: nombreArea ? slugDe(nombreArea) : SLUG[t.id], nombre: nombreArea || NOMBRE[t.id], municipios: pueblos ? pueblos.split(",").map((s) => s.trim()).filter(Boolean) : t.municipios }));
 if (!areas.length) throw new Error(`No existe el territorio ${soloT}`);
 
 const LOGO = `<div class="logo"><svg viewBox="0 0 64 64"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#F2621F"/><path d="M20 35 L29 44 L46 26" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>resuelto</div>`;

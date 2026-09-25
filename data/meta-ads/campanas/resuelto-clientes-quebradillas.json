@@ -1,0 +1,79 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-09-25",
+ "area": "Quebradillas",
+ "pueblos": [
+  "Quebradillas",
+  "Camuy",
+  "Hatillo",
+  "Arecibo"
+ ],
+ "ids": {
+  "campana": "120255119529030029",
+  "conjuntoA": "120255119529220029",
+  "conjuntoB": "120255119529540029",
+  "conjuntoC": "120255119529870029"
+ },
+ "anuncios": {
+  "A-video-precio": {
+   "video": "1834415847761669",
+   "miniatura": "74ae9bc65db1b490d86729b62b7d9ee6",
+   "creativo": "1068628912641621",
+   "ad": "120255119532690029"
+  },
+  "A-flyer-ciudad": {
+   "imagen": "e48c866ff4beff9d2f3f5fcfd5fff88f",
+   "creativo": "1097387682663285",
+   "ad": "120255119533070029"
+  },
+  "A-flyer-menu": {
+   "imagen": "af63819d2bb52c338665ef27d37970b6",
+   "creativo": "1089728473919177",
+   "ad": "120255119533320029"
+  },
+  "B-video-destape": {
+   "video": "1666416158487328",
+   "miniatura": "88f8b3731861d83ee5374e1029074fbc",
+   "creativo": "929565386510301",
+   "ad": "120255119538980029"
+  },
+  "B-video-calentador": {
+   "video": "1772997560703167",
+   "miniatura": "a4e9f2728b88e9ed4efe224bda4b9be8",
+   "creativo": "1595403792084796",
+   "ad": "120255119542140029"
+  },
+  "B-flyer-destape": {
+   "imagen": "1be6e9b908cbc666b7767913a16e4c0e",
+   "creativo": "1118742617331183",
+   "ad": "120255119543380029"
+  },
+  "B-flyer-calentador": {
+   "imagen": "c16a37238e96e0400559d6382a06e6a9",
+   "creativo": "1556283645824568",
+   "ad": "120255119544570029"
+  },
+  "C-video-sorpresas": {
+   "video": "28641249108842034",
+   "miniatura": "184fef328eb8151accb92eec3de85b7b",
+   "creativo": "1792776955248827",
+   "ad": "120255119546660029"
+  },
+  "C-flyer-promesa": {
+   "imagen": "82e1bc92848521daade9ebc151b5d941",
+   "creativo": "2529591520868383",
+   "ad": "120255119547170029"
+  },
+  "C-flyer-problema": {
+   "imagen": "abd30383c43ed5d071a590f41e22a9e2",
+   "creativo": "1093294369966443",
+   "ad": "120255119547710029"
+  },
+  "C-flyer-sorpresas": {
+   "imagen": "36fa6064d739d316fe5c1eedd8578118",
+   "creativo": "1336119161747685",
+   "ad": "120255119548750029"
+  }
+ },
+ "estado": "Campaña EN PAUSA (Elvin la prende). 3 conjuntos × $10 = $30/día."
+}

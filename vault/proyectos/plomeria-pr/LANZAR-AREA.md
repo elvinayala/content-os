@@ -1,6 +1,6 @@
 # Lanzar un área de clientes · Resuelto
 
-**Regla de Elvin (25/sep/2026):** firma el plomero de un área y ese mismo día salen los anuncios de su zona, **nunca con un solo creativo**: varios conjuntos, varios anuncios, videos con CTA suave y flyers adaptados al área. Primer caso: Caguas (T3), campaña `120255115172270029`.
+**Regla de Elvin (25/sep/2026):** firma el plomero de un área y ese mismo día salen los anuncios de su zona, **nunca con un solo creativo**: varios conjuntos, varios anuncios, videos con CTA suave y flyers adaptados al área. Casos: Caguas (T3, Edgar Arroyo) campaña `120255115172270029` · Quebradillas (T5, Samuel Feliciano) campaña `120255119529030029`.
 
 ## 1. El día que firma
 
@@ -13,7 +13,15 @@
    node familia.mjs T3 "Caguas,Gurabo,Juncos,San Lorenzo,Cayey,Aguas Buenas"   # 6 flyers más (feed + historia)
    cd ../videos && ./armar-regionales.sh caguas                                # 4 videos de 19 s
    ```
-4. **Campaña** por API (script en `data/meta-ads/campanas/resuelto-clientes-caguas-2026-09.json` como modelo). Elvin la prende.
+   Si el plomero no vive en la ciudad cabecera del territorio, se pasa el nombre del área como 3.er argumento a los
+   dos generadores (`… T5 "Quebradillas,Camuy,Hatillo,Arecibo" Quebradillas`) y `armar-regionales.sh quebradillas`.
+   Si su pueblo no está en ningún territorio, se agrega a `agente/data/territorios.json` y se despliega ANTES del alta.
+4. **Campaña** con un comando (desde la raíz del repo; queda EN PAUSA y Elvin la prende):
+   ```bash
+   node vault/proyectos/plomeria-pr/kit/anuncios/lanzar-area.mjs quebradillas "Quebradillas" "Quebradillas:4242,Camuy:4214,Hatillo:4225,Arecibo:4261"
+   ```
+   Los códigos de pueblo salen de `/search?type=adgeolocation&country_code=PR`. Antes de tocar una campaña que ya
+   existe, mira si está activa: lo que se crea debajo de una campaña activa corre al instante.
 
 ## 2. Los creativos (por área)
 
