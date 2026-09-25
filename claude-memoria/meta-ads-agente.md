@@ -121,3 +121,8 @@ onboarding por Fathom (Jessica); la reunión de estrategia con el cliente la hac
 Max pida. Regla nueva (cerebro §18): Max SIEMPRE pide material grabado por el cliente y recomienda UGC vs profesional;
 médicos/profesionales = las dos (profesional + UGC en colaboración). Recado a Carilin quedó como BORRADOR en el Slack de
 Elvin (el MCP pide borrador si Elvin no revisó el texto).
+**Customer Journey LU (25/sep):** el actual (PDF "Customer Journey 07-08") lanza el día 16 y entrega resultados el 46;
+Elvin quiere lanzar en 7 días. Propuesta en vault/proyectos/level-up/customer-journey-7-dias.md y cerebro-max §20:
+accesos pedidos en el cierre, onboarding día 1 → plan de Max ese día, día 2 guiones+flyers+lista de grabación, UNA
+reunión de estrategia (Carilin) día 3, grabación en paralelo días 3-5, QA 5-6, lanzamiento día 7 sin esperar al
+contenido del cliente (ola 2 ~día 17), informe de resultados día 37. Estado: propuesta, Elvin evalúa.
