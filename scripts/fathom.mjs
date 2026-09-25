@@ -23,12 +23,35 @@ const EQUIPO = args.includes("--equipo");
 if (EQUIPO) args.splice(args.indexOf("--equipo"), 1);
 const [cmd, arg] = args;
 
+// Si la llave no viene en el entorno, se pide en pantalla (sin mostrarla) cuando se corre en una Terminal.
+async function pedirOculto(pregunta) {
+  if (!process.stdin.isTTY) return "";
+  process.stdout.write(pregunta);
+  return await new Promise((res) => {
+    let v = "";
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding("utf8");
+    const alTeclear = (ch) => {
+      for (const c of ch) {
+        if (c === "\r" || c === "\n" || c === "\u0004") { process.stdin.setRawMode(false); process.stdin.pause(); process.stdin.off("data", alTeclear); process.stdout.write("\n"); return res(v.trim()); }
+        if (c === "\u0003") process.exit(1);
+        if (c === "\u007f") v = v.slice(0, -1); else v += c;
+      }
+    };
+    process.stdin.on("data", alTeclear);
+  });
+}
+let llaveCache = null;
 async function fathom(path, init = {}) {
   const nombreKey = CUENTA && !EQUIPO ? `FATHOM_API_KEY_${CUENTA}` : "FATHOM_API_KEY";
-  const key = process.env[nombreKey];
-  if (!key) throw new Error(`Falta ${nombreKey} (Fathom → Settings → API Access de esa cuenta)`);
+  let key = llaveCache || process.env[nombreKey];
+  if (!key || /pega|llave|<|>/i.test(key)) key = await pedirOculto("Pega tu API key de Fathom (Settings → API Access) y presiona Enter (no se ve al pegar): ");
+  if (!key) throw new Error(`Falta ${nombreKey} (Fathom → Settings → API Access de esa cuenta). Corre esto en la app Terminal para que te la pida.`);
+  llaveCache = key;
   const r = await fetch(`${API}${path}`, { ...init, headers: { "X-Api-Key": key, "Content-Type": "application/json", ...init.headers } });
   const t = await r.text();
+  if (r.status === 401) throw new Error("Fathom dice que esa llave no es válida (401). Cópiala de nuevo completa desde Settings → API Access.");
   if (!r.ok) throw new Error(`Fathom ${r.status}: ${t.slice(0, 300)}`);
   return t ? JSON.parse(t) : {};
 }
