@@ -24,7 +24,10 @@ email que en Calendly (el cruce es automático).
 entrante del "Command Center" de ese workspace, `SLACK_AIB_CALLS_WEBHOOK`). Regla de Elvin: nunca mezclar
 Slacks/Calendlys/ACs entre marcas. `lib/aviso-llamadas.ts`.
 
-**Fathom → #office-2-resumendellamadas (24/sep/2026):** Elvin pidió que salgan TODAS las llamadas de los closers
-Roger (roger.arteaga@levelupmediapr.net, U0C119DPXQR) y Laura (cuenta Level Up Media levelupmediapr@gmail.com)
-además de las de Elvin; nadie más (Juan David fuera). Regla en `vaAlCanalDeLlamadas` (lib/fathom.ts). Las de
-Roger/Laura llegan solo por el webhook de EQUIPO (`fathom.mjs crear --equipo`) y si comparten sus grabaciones.
+**Fathom → #office-2-resumendellamadas (24/sep/2026, DECISIÓN FINAL de Elvin — no revertir):** "necesito
+que recoja las llamadas de Roger y Laura y las envíe al canal. Las llamadas de cierre." Al canal: SOLO las que GRABARON Roger (roger.arteaga@levelupmediapr.net, U0C119DPXQR) o Laura
+(cuenta Level Up Media levelupmediapr@gmail.com), que llegan por el webhook de EQUIPO
+(`shared_team_recordings`, FATHOM_WEBHOOK_SECRET_EQUIPO, registrado 24/sep). Regla `esDeCloser` en
+lib/fathom.ts (override FATHOM_CLOSERS_EMAILS). Del equipo, lo que no es cierre ni onboarding se descarta;
+los onboardings etiquetados van solo a Max. Juan David y el resto fuera. Las de Elvin NUNCA (su webhook se ignora y cualquier reunión donde él esté se descarta: [[privacidad-reuniones-elvin]]). Requiere: Roger y Laura como usuarios
+del equipo en Fathom compartiendo sus grabaciones, y el plan Team pagado (trial vence ~29/sep).

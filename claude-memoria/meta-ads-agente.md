@@ -86,3 +86,10 @@ que Elvin lo corra; Jessica debe compartir sus grabaciones con el equipo. Al can
 llamadas de Elvin (FATHOM_SLACK_EMAILS). Programados por el bot (firmados Max) para el 25/sep: Carilin
 7:30 AM (Q0C4ANAQ9AS, DM D0C33M73V5Y) y Jessica 8:00 AM (Q0C4CHA3DEW, DM D0BFMAR99V4) con instrucciones
 de Fathom y el porqué; cancelar con chat.deleteScheduledMessage.
+**Corrección de Elvin (24/sep noche):** del Fathom de equipo SOLO entran las llamadas etiquetadas de onboarding
+(título "Onboarding · <Negocio>") → Max; todo lo demás se descarta sin guardar y NADA del equipo sale en
+#office-2-resumendellamadas (ese canal sigue solo con las llamadas de Elvin, #29). El pedido de Roger/Laura
+en el canal fue un error suyo y se revirtió.
+**Webhook de equipo CREADO (24/sep noche):** Fathom webhook id 6fyy5yK5eWmSiy6H (shared_team_recordings +
+transcripción) → /api/fathom, secreto FATHOM_WEBHOOK_SECRET_EQUIPO en Vercel, redeploy hecho. Falta: que Jessica
+grabe y COMPARTA sus onboardings con el equipo, titulados "Onboarding · <Negocio>" (mensajes programados 25/sep).
