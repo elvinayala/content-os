@@ -11,6 +11,7 @@ import { RAIZ, almacen } from "./almacen.js";
 import { config } from "./config.js";
 import { elegibles, porId, linkPortal, listar as listarProv, TIEMPO_ACEPTAR_MIN, type Proveedor } from "./proveedores.js";
 import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
+import { avisarCliente } from "./aviso-cliente.js";
 import { contratoHTML } from "./contratos.js";
 import { enviarContrato } from "./integraciones/docusign.js";
 import { crearEvento } from "./integraciones/calendario.js";
@@ -31,6 +32,8 @@ export interface Oferta {
   estado: "abierta" | "aceptada" | "expirada" | "asignada-manual" | "cancelada";
   elegibles: string[];
   avisados: string[];
+  /** Plomeros que dijeron "No puedo": están en su derecho (nadie está obligado a coger trabajos). */
+  rechazados?: string[];
   aceptadoPor?: string; aceptadoEn?: string;
   expiraEn: string;
   contrato?: { envelopeId: string; estado: "simulado" | "enviado" | "firmado"; urlFirma?: string; firmadoEn?: string };
@@ -69,7 +72,7 @@ export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" 
   const el = opc.soloProveedor ? listarProv().filter((p) => p.id === opc.soloProveedor) : elegibles({ categoria: d.categoria, territorio: d.territorio });
   const o: Oferta = { ...d, id: "OF-" + String(lista.length + 1).padStart(4, "0"), estado: "abierta", elegibles: el.map((p) => p.id), avisados: [], expiraEn: new Date(Date.now() + (opc.minutos ?? TIEMPO_ACEPTAR_MIN[d.tipo]) * 60_000).toISOString(), creado: new Date().toISOString() };
   lista.push(o); guardar(lista);
-  if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Asignar a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`); return o; }
+  if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Busca quién lo quiera coger (nadie está obligado) y asígnalo a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`); return o; }
   for (const p of el) {
     try { await enviarTexto(p.whatsapp, mensajeOferta(o, p)); o.avisados.push(p.id); } catch (e) { console.error("aviso oferta", p.id, e); }
     notificar(p.id, { titulo: `Nuevo ${o.tipo === "trabajo" ? "trabajo" : "proyecto"} · ${$(o.pagoProveedor)}`, cuerpo: `${o.categoriaNombre} · ${o.municipio} · ${cuando(o.inicio)}. El primero que acepta se lo lleva.`, url: linkPortal(p.id, config.urlPublica), tag: o.id, ofertaId: o.id, urgente: true }).catch(() => undefined);
@@ -87,10 +90,25 @@ function programarExpiracion(id: string, ms: number) {
 export async function expirarSiSigueAbierta(id: string) {
   const o = oferta(id); if (!o || o.estado !== "abierta") return;
   o.estado = "expirada"; actualizar(o);
-  await avisarCoordinador(`⏰ Nadie aceptó ${o.id} (${o.categoriaNombre}, ${o.municipio}, ${$(o.pagoProveedor)}). Asignar a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`);
+  await avisarCoordinador(`⏰ Nadie aceptó ${o.id} (${o.categoriaNombre}, ${o.municipio}, ${$(o.pagoProveedor)})${o.rechazados?.length ? ` · dijeron que no: ${o.rechazados.join(", ")}` : ""}. Los plomeros deciden qué trabajos cogen: llama y pregunta quién puede, o muévele la hora al cliente. Asignar a mano solo con su sí: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`);
+  if (o.tipo === "trabajo") {
+    const t = almacen.trabajos().find((x) => x.id === o.referencia);
+    if (t) await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]}, todavía estamos confirmando el plomero para tu ${t.servicio.toLowerCase()}. Te escribimos por aquí en cuanto lo tengamos, o con otra hora si esa no se puede.`);
+  }
 }
 /** Al arrancar el servidor, re-programa las ofertas abiertas (los timers viven en memoria). */
 export function reanudarTimers() { for (const o of leer()) if (o.estado === "abierta") programarExpiracion(o.id, Math.max(0, new Date(o.expiraEn).getTime() - Date.now())); }
+
+/** El plomero dice "No puedo" (25/sep, Elvin: "ellos deciden qué trabajos cogen, no se pueden obligar"). No es falta.
+ *  Si ya dijeron que no todos los elegibles, no se espera al vencimiento: pasa al Coordinador y se le avisa al cliente. */
+export async function rechazar(ofertaId: string, proveedorId: string): Promise<{ ok: true } | { ok: false; motivo: string }> {
+  const o = oferta(ofertaId); if (!o) return { ok: false, motivo: "La oferta no existe." };
+  if (o.estado !== "abierta") return { ok: true };
+  if (!o.elegibles.includes(proveedorId)) return { ok: false, motivo: "Esta oferta no es de tu zona." };
+  o.rechazados = [...new Set([...(o.rechazados ?? []), proveedorId])]; actualizar(o);
+  if (o.elegibles.every((id) => o.rechazados!.includes(id))) { clearTimeout(timers.get(o.id)); await expirarSiSigueAbierta(o.id); }
+  return { ok: true };
+}
 
 /** El primero que llega gana. Proceso único + escritura sincrónica = sin carrera. */
 export async function aceptar(ofertaId: string, proveedorId: string, manual = false): Promise<{ ok: true; oferta: Oferta } | { ok: false; motivo: string }> {
@@ -133,6 +151,7 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   await enviarTexto(p.whatsapp, `✅ *${o.id} es tuyo*, ${p.nombre.split(" ")[0]}.\n${o.categoriaNombre} · ${cuando(o.inicio)}\n${cliente}${firma}\n\nRecuerda: fotos de antes y después, y el cliente le paga a Resuelto.`);
   notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente y firmar tu orden.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);
   for (const id of o.avisados) if (id !== p.id) { const q = porId(id); if (q) { enviarTexto(q.whatsapp, `${o.id} ya lo tomó otro proveedor. Te avisamos del próximo.`).catch(() => undefined); notificar(q.id, { titulo: `${o.id} ya se asignó`, cuerpo: "Otro proveedor lo tomó primero. Te avisamos del próximo.", url: linkPortal(q.id, config.urlPublica), tag: o.id }).catch(() => undefined); } }
+  if (t) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, plomero licenciado de Resuelto. Te escribimos cuando vaya en camino.`);
   await avisarCoordinador(`${manual ? "🛠️ Asignado a mano" : "✅ Aceptado"} ${o.id} → ${p.nombre} (${p.tipo}) · contrato ${o.contrato?.estado ?? "no enviado"}`);
   return { ok: true, oferta: o };
 }

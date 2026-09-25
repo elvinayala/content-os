@@ -81,7 +81,7 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
   function card(o,mia){
     var t=o.trabajo;
     var head='<div class="top"><div><b class="id">'+o.id+' · '+o.referencia+'</b><h3>'+o.categoriaNombre+'</h3><p>'+o.resumen+'</p></div><div class="pago">'+money(t&&t.pagoPlomero!=null?t.pagoPlomero:o.pagoProveedor)+'<small>tu pago</small></div></div>';
-    if(!mia) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span>⏳ <span class="timer">'+restante(o.expiraEn)+'</span></span></div><button class="btn" data-id="'+o.id+'">Aceptar este trabajo</button></div>';
+    if(!mia) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span>⏳ <span class="timer">'+restante(o.expiraEn)+'</span></span></div><button class="btn" data-id="'+o.id+'">Aceptar este trabajo</button><button class="btn line" data-no="'+o.id+'" style="margin-top:8px">No puedo este</button><p style="font-size:12.5px;color:var(--ink2);margin-top:8px">Tú decides qué trabajos coges. Decir que no, no te afecta.</p></div>';
     if(!t) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span class="tag ok">Tuyo</span></div>'+firmaDe(o)+'</div>';
     var n=ORDEN[t.estado]||1, pasos='<div class="pasos">'+[1,2,3,4].map(function(x){return '<span class="'+(x<=n?'on':'')+'"></span>'}).join('')+'</div>';
     var tel=(t.telefono||'').replace(/\D/g,'');
@@ -102,6 +102,8 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
   function enlazar(){
     document.querySelectorAll('button[data-id]').forEach(function(b){b.onclick=function(){b.disabled=true;b.textContent='Aceptando…';
       api('/api/proveedores/aceptar',{oferta:b.dataset.id}).then(function(j){if(j.ok){aviso('✅ '+j.oferta.id+' es tuyo. Abajo en "Mis trabajos" tienes los datos del cliente.');}else{aviso(j.motivo||'No se pudo aceptar.',true);} cargar();});};});
+    document.querySelectorAll('button[data-no]').forEach(function(b){b.onclick=function(){b.disabled=true;
+      api('/api/proveedores/rechazar',{oferta:b.dataset.no}).then(function(j){aviso(j.ok?'Listo, no te lo mostramos más. Te avisamos del próximo.':(j.motivo||'No se pudo.'),!j.ok);cargar();});};});
     document.querySelectorAll('button[data-paso]').forEach(function(b){b.onclick=function(){
       var of=b.dataset.of,body={oferta:of,paso:b.dataset.paso};
       if(b.dataset.paso==='terminado'){var mo=$('mo-'+of),mat=$('mat-'+of),nt=$('nota-'+of);if(mo)body.mano_obra=Number(mo.value);body.materiales=Number(mat&&mat.value||0);body.nota=nt?nt.value:'';if(!confirm('¿Cerrar el trabajo y enviarle el cobro al cliente?'))return;}
@@ -117,7 +119,7 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
     fetch('/api/proveedores/ofertas?p='+encodeURIComponent(p)+'&k='+k).then(function(r){return r.json()}).then(function(j){
       if(j.error){$('quien').textContent='Acceso inválido';$('abiertas').innerHTML='<div class="vacio">'+j.error+'</div>';return;}
       $('quien').textContent=j.proveedor.nombre+' · '+(j.proveedor.tipo==='plomero'?'Plomero':'Contratista');
-      var ab=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==p}), mi=j.ofertas.filter(function(o){return o.aceptadoPor===p});
+      var ab=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==p&&(o.rechazados||[]).indexOf(p)<0}), mi=j.ofertas.filter(function(o){return o.aceptadoPor===p});
       var activo=document.activeElement&&document.activeElement.tagName==='INPUT';if(activo)return;
       $('abiertas').innerHTML=ab.length?ab.map(function(o){return card(o,false)}).join(''):'<div class="vacio">Nada disponible ahora. Te avisamos al celular en cuanto salga algo en tu zona.</div>';
       $('mios').innerHTML=mi.length?mi.map(function(o){return card(o,true)}).join(''):'<div class="vacio">Todavía no tienes trabajos. Cuando aceptes uno, aquí ves al cliente y los pasos.</div>';

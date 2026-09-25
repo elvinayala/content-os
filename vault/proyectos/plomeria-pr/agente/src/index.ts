@@ -195,7 +195,9 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
 // las campañas de reclutamiento mandan aquí (24/sep/2026). Mismo cerebro; se contesta en la misma conversación. ──
 async function atenderDM(m: zernio.MensajeZernio) {
   const contacto = almacen.obtenerOCrearContacto(m.canal, m.de);
-  if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
+  if (m.nombre && !contacto.nombre) contacto.nombre = m.nombre;
+  if (contacto.dm?.conversationId !== m.conversationId) contacto.dm = { conversationId: m.conversationId, accountId: m.accountId };
+  almacen.guardarContacto(contacto);
   if (contacto.humano && contacto.humanoDesde && Date.now() - new Date(contacto.humanoDesde).getTime() > config.humanoHoras * 3600_000) {
     contacto.humano = false; almacen.guardarContacto(contacto);
   }
@@ -408,6 +410,11 @@ app.get("/pagar/:id", (req, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id);
   if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos por WhatsApp al 787-956-1111.</p>");
   res.type("html").send(pagarHTML(t, config.cobros.athMovil));
+});
+// El plomero decide qué trabajos coge (Elvin, 25/sep): "No puedo" no es falta y no se le vuelve a mostrar.
+app.post("/api/proveedores/rechazar", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  res.json(await despacho.rechazar(String(req.body?.oferta ?? ""), prov.id));
 });
 app.post("/api/proveedores/aceptar", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });

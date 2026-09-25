@@ -38,6 +38,8 @@ export interface Contacto {
   notas: string[];
   ghlContactId?: string;
   ghlOpportunityId?: string; // tarjeta en el pipeline (Candidatos / Contratistas / Trabajos) creada al clasificar
+  /** Conversación de Messenger/Instagram en Zernio, para escribirle después (confirmación, en camino, cobro). */
+  dm?: { conversationId: string; accountId: string };
   humano: boolean;         // true = un humano tomó la conversación; el agente calla
   humanoDesde?: string;
   enviadosWa?: number;     // cuántos mensajes le hemos mandado por WhatsApp (el humanizador lo usa)    // cuándo contestó por última vez un humano (para retomar solo pasadas HUMANO_HORAS)

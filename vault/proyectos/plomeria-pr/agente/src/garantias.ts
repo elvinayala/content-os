@@ -6,6 +6,7 @@
 import { almacen, type Trabajo } from "./almacen.js";
 import * as despacho from "./despacho.js";
 import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
+import { avisarCliente } from "./aviso-cliente.js";
 import { menu } from "./prompt.js";
 import { archivar } from "./historial.js";
 
@@ -26,7 +27,7 @@ export async function abrirGarantia(trabajoId: string, d: { motivo: string; inic
   almacen.guardarTrabajo(g);
   const o = await despacho.crearOferta({ tipo: "trabajo", referencia: id, categoria: "plomeria", categoriaNombre: g.servicio, territorio: t.territorio, municipio: t.municipio, resumen: `GARANTÍA de ${t.id} (sin costo, contrato: 48 h). ${d.motivo}`, pagoProveedor: 0, inicio: d.inicio, fin: d.fin }, { soloProveedor: t.plomeroId || undefined, minutos: 48 * 60 });
   archivar(t.contactoId, "staff", `${d.autor} abrió garantía ${id} sobre ${t.id}: ${d.motivo}`, id);
-  await enviarTexto(t.telefono, `Hola ${t.nombre.split(" ")[0]}, abrimos tu garantía del trabajo ${t.id} (${t.servicio.toLowerCase()}). No tiene costo. Te confirmamos por aquí quién va y cuándo.`).catch(() => undefined);
+  await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]}, abrimos tu garantía del trabajo ${t.id} (${t.servicio.toLowerCase()}). No tiene costo. Te confirmamos por aquí quién va y cuándo.`).catch(() => undefined);
   await avisarCoordinador(`🛡️ Garantía abierta ${id} sobre ${t.id} (${t.nombre}) por ${d.autor}. Ofrecida a ${t.plomeroId || "nadie (sin plomero original)"} · 48 h.\nMotivo: ${d.motivo}`).catch(() => undefined);
   return { ok: true, trabajo: g, oferta: o.id };
 }

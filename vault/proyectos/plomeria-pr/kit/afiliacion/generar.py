@@ -59,7 +59,7 @@ FIRMA_RESUELTO = firma("resuelto", "Por Resuelto Home Services LLC<br>Elvin Ayal
 
 SEC = {
  1: """<h2>1. Relación</h2>
-<p>El Plomero trabaja como <b>contratista independiente</b>, no como empleado. Mantiene por su cuenta su licencia, colegiación, vehículo, herramientas y sus clientes propios fuera de Resuelto. Resuelto no garantiza un volumen mínimo de trabajos. Resuelto emitirá la declaración informativa que corresponda según las leyes contributivas de Puerto Rico.</p>""",
+<p>El Plomero trabaja como <b>contratista independiente</b>, no como empleado. Mantiene por su cuenta su licencia, colegiación, vehículo, herramientas y sus clientes propios fuera de Resuelto. Resuelto no garantiza un volumen mínimo de trabajos. <b>El Plomero decide libremente qué trabajos acepta</b>: rechazar una oferta o no contestarla no es falta y no afecta su calificación ni su permanencia en Resuelto. Resuelto emitirá la declaración informativa que corresponda según las leyes contributivas de Puerto Rico.</p>""",
  2: """<h2>2. Lo que pone Resuelto</h2>
 <p>Los clientes y la publicidad pagada, la marca, la atención al cliente por WhatsApp, la cotización con precios publicados, la agenda y el despacho, el cobro al cliente, la facturación, la garantía al cliente y el servicio post-venta.</p>""",
  3: """<h2>3. Lo que pone el Plomero</h2>
@@ -172,7 +172,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 
 <h2>Cómo funciona un trabajo</h2>
 <ol class="pasos">
-<li><b>Te llega la oferta</b> a la app y por WhatsApp: qué es, dónde, la ventana y lo que te toca. <b>El primero que acepta se lo lleva</b> (en la app, o contestando "ACEPTO" con el número de la oferta).</li>
+<li><b>Te llega la oferta</b> a la app y por WhatsApp: qué es, dónde, la ventana y lo que te toca. <b>El primero que acepta se lo lleva</b> (en la app). <b>Tú decides qué trabajos coges</b>: si no puedes o no te interesa, tocas "No puedo este" y no pasa nada.</li>
 <li><b>30 minutos antes</b> avisas que vas de camino. Si te vas a atrasar, avisas antes de que empiece la ventana.</li>
 <li><b>Llegas, te presentas</b> ("Soy ___, de Resuelto") y confirmas el trabajo y el precio. <b>Foto de antes.</b></li>
 <li>Si el trabajo es distinto a lo cotizado, <b>no lo empiezas</b>: escribes a Resuelto y lo aprobamos con el cliente.</li>
