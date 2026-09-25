@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-25T04:00:39.231Z",
+  "updatedAt": "2026-09-25T11:49:17.158Z",
   "createdAt": "2026-09-25T03:59:53.152Z",
   "id": "3ylIqOgWiiW37lWx",
   "name": "H-) Felicitaciones por leads v2",
@@ -19,7 +19,7 @@
       "parameters": {
         "width": 560,
         "height": 280,
-        "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **simulacion**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
+        "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **real**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
       }
     },
     {
@@ -82,7 +82,7 @@
             {
               "id": "m1",
               "name": "real",
-              "value": false,
+              "value": true,
               "type": "boolean"
             }
           ]
@@ -106,6 +106,12 @@
               "id": "m2",
               "name": "real",
               "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "m3",
+              "name": "sembrar",
+              "value": "={{ $json.body && $json.body.sembrar === true }}",
               "type": "boolean"
             }
           ]
@@ -157,7 +163,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real } });\n}\nreturn out;"
+        "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\n// sembrar (una sola vez, por webhook): marca como ya felicitados a los que pasaron de 200 sin mandarles nada.\nconst sembrar = $('Modo simulación').isExecuted ? $('Modo simulación').first().json.sembrar === true : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real, sembrar } });\n}\nreturn out;"
       }
     },
     {
@@ -228,6 +234,90 @@
       }
     },
     {
+      "id": "f--sembrar-",
+      "name": "¿Sembrar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.sembrar === true && $json.hito === 200 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f-sembrar-en-nocodb",
+      "name": "Sembrar en NocoDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        400
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ Id: $json.id, felicitaciones: '200' }]) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 200
+            }
+          }
+        }
+      },
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "V2awKCkA1AJCFG27",
+          "name": "NocoDB Token account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f-sembrados",
+      "name": "Sembrados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        400
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { sembrados: $('¿Sembrar?').all().filter((i) => i.json.sembrar && i.json.hito === 200).map((i) => i.json.nombre), total: $input.all().length } }];"
+      }
+    },
+    {
       "id": "f--env-o-real-",
       "name": "¿Envío real?",
       "type": "n8n-nodes-base.if",
@@ -246,7 +336,7 @@
           },
           "conditions": [
             {
-              "id": "c1",
+              "id": "c2",
               "leftValue": "={{ $json.real === true && $json.puedeEnviar === true }}",
               "rightValue": "",
               "operator": {
@@ -280,7 +370,7 @@
           },
           "conditions": [
             {
-              "id": "c2",
+              "id": "c3",
               "leftValue": "={{ $json.hito === 100 }}",
               "rightValue": "",
               "operator": {
@@ -523,7 +613,36 @@
       "main": [
         [
           {
+            "node": "¿Sembrar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sembrar?": {
+      "main": [
+        [
+          {
+            "node": "Sembrar en NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "¿Envío real?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sembrar en NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Sembrados",
             "type": "main",
             "index": 0
           }
@@ -669,9 +788,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
-  "activeVersionId": "ababca45-3751-4688-b95a-d45e60ad8362",
-  "versionCounter": 10,
+  "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+  "activeVersionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+  "versionCounter": 22,
   "triggerCount": 2,
   "shared": [
     {
@@ -734,9 +853,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-25T04:00:39.234Z",
-    "createdAt": "2026-09-25T04:00:39.234Z",
-    "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+    "updatedAt": "2026-09-25T11:49:17.160Z",
+    "createdAt": "2026-09-25T11:49:17.160Z",
+    "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
     "workflowId": "3ylIqOgWiiW37lWx",
     "nodes": [
       {
@@ -751,7 +870,7 @@
         "parameters": {
           "width": 560,
           "height": 280,
-          "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **simulacion**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
+          "content": "## Felicitaciones por leads v2\nReemplaza al \"H-) … v1 (v3.1)\" que nunca corrió.\n\n- **Todos los días 4:20 PM PR** revisa los clientes de NocoDB (los alimenta Pulse).\n- Leads = campañas \"Level Up\" de su cuenta desde `fecha-inicio-campaña` (lead + conversaciones iniciadas).\n- ≥ 100 y sin felicitar → felicitación 100 + pedido de referidos. ≥ 200 y felicitado en 100 → felicitación 200.\n- Guarda `felicitaciones` = 100/200 en NocoDB (una vez por cliente) y deja el mensaje en la memoria del agente de onboarding.\n- MODO: **real**. En simulación no manda nada (el webhook `felicitaciones-leads` devuelve la lista).\n\nFuente: scripts/n8n-felicitaciones.mjs (content-os). No editar a mano."
         }
       },
       {
@@ -814,7 +933,7 @@
               {
                 "id": "m1",
                 "name": "real",
-                "value": false,
+                "value": true,
                 "type": "boolean"
               }
             ]
@@ -838,6 +957,12 @@
                 "id": "m2",
                 "name": "real",
                 "value": false,
+                "type": "boolean"
+              },
+              {
+                "id": "m3",
+                "name": "sembrar",
+                "value": "={{ $json.body && $json.body.sembrar === true }}",
                 "type": "boolean"
               }
             ]
@@ -889,7 +1014,7 @@
           0
         ],
         "parameters": {
-          "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real } });\n}\nreturn out;"
+          "jsCode": "// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.\nconst real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;\n// sembrar (una sola vez, por webhook): marca como ya felicitados a los que pasaron de 200 sin mandarles nada.\nconst sembrar = $('Modo simulación').isExecuted ? $('Modo simulación').first().json.sembrar === true : false;\nconst hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });\nconst out = [];\nfor (const f of ($json.list || [])) {\n  const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');\n  const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);\n  const fel = String(f.felicitaciones ?? '').trim();\n  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;\n  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real, sembrar } });\n}\nreturn out;"
         }
       },
       {
@@ -960,6 +1085,90 @@
         }
       },
       {
+        "id": "f--sembrar-",
+        "name": "¿Sembrar?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1300,
+          400
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.sembrar === true && $json.hito === 200 }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f-sembrar-en-nocodb",
+        "name": "Sembrar en NocoDB",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1560,
+          400
+        ],
+        "parameters": {
+          "method": "PATCH",
+          "url": "https://levelup-media-project-nocodb.ksnxqw.easypanel.host/api/v2/tables/mom1ynk05ap3m1l/records",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "nocoDbApiToken",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify([{ Id: $json.id, felicitaciones: '200' }]) }}",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 200
+              }
+            }
+          }
+        },
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "V2awKCkA1AJCFG27",
+            "name": "NocoDB Token account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f-sembrados",
+        "name": "Sembrados",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1820,
+          400
+        ],
+        "parameters": {
+          "jsCode": "return [{ json: { sembrados: $('¿Sembrar?').all().filter((i) => i.json.sembrar && i.json.hito === 200).map((i) => i.json.nombre), total: $input.all().length } }];"
+        }
+      },
+      {
         "id": "f--env-o-real-",
         "name": "¿Envío real?",
         "type": "n8n-nodes-base.if",
@@ -978,7 +1187,7 @@
             },
             "conditions": [
               {
-                "id": "c1",
+                "id": "c2",
                 "leftValue": "={{ $json.real === true && $json.puedeEnviar === true }}",
                 "rightValue": "",
                 "operator": {
@@ -1012,7 +1221,7 @@
             },
             "conditions": [
               {
-                "id": "c2",
+                "id": "c3",
                 "leftValue": "={{ $json.hito === 100 }}",
                 "rightValue": "",
                 "operator": {
@@ -1255,7 +1464,36 @@
         "main": [
           [
             {
+              "node": "¿Sembrar?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Sembrar?": {
+        "main": [
+          [
+            {
+              "node": "Sembrar en NocoDB",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
               "node": "¿Envío real?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sembrar en NocoDB": {
+        "main": [
+          [
+            {
+              "node": "Sembrados",
               "type": "main",
               "index": 0
             }
@@ -1393,26 +1631,26 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-25T04:00:39.408Z",
-        "id": 253,
+        "createdAt": "2026-09-25T11:49:17.336Z",
+        "id": 259,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T04:00:39.712Z",
-        "id": 254,
+        "createdAt": "2026-09-25T11:49:17.658Z",
+        "id": 260,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
         "event": "deactivated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T04:00:40.001Z",
-        "id": 255,
+        "createdAt": "2026-09-25T11:49:17.989Z",
+        "id": 261,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "ababca45-3751-4688-b95a-d45e60ad8362",
+        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

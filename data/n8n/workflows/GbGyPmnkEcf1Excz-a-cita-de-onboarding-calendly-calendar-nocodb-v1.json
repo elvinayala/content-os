@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-22T23:14:46.119Z",
+  "updatedAt": "2026-09-23T01:59:36.403Z",
   "createdAt": "2026-09-22T01:56:06.908Z",
   "id": "GbGyPmnkEcf1Excz",
   "name": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
@@ -19,7 +19,7 @@
       "parameters": {
         "width": 520,
         "height": 220,
-        "content": "## Cita de onboarding v1\nReemplaza a \"E-) citas automaticas v4\" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\nFuente: scripts/n8n-sync-pulse.mjs."
+        "content": "## Cita de onboarding v1\nReemplaza a \"E-) citas automaticas v4\" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\n4. Cliente en Chatwoot (inbox 6) + conversación, y el saludo 🎉 por WhatsApp si es cita nueva (sinBienvenida:true lo salta, para rezagados).\n\nFuente: scripts/n8n-sync-pulse.mjs."
       }
     },
     {
@@ -57,7 +57,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
+        "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n  sinBienvenida: b.sinBienvenida === true,\n} };"
       }
     },
     {
@@ -231,15 +231,484 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "n-nada-ya-exist-a",
-      "name": "Nada / ya existía",
+      "id": "n-nada-simulaci-n",
+      "name": "Nada / simulación",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
+      "position": [
+        1560,
+        400
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "n--simulaci-n-",
+      "name": "¿Simulación?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
       "position": [
         1300,
         200
       ],
-      "parameters": {}
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.accion }}",
+              "rightValue": "simular",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-datos-contacto",
+      "name": "Datos contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const d = $('Decidir cita').item.json;\nreturn { json: { ...d, nuevo: d.accion === 'crear', ultimos10: String(d.telefono || '').slice(-10) } };"
+      }
+    },
+    {
+      "id": "n-buscar-en-chatwoot",
+      "name": "Buscar en Chatwoot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        0
+      ],
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.ultimos10 || $json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "n-elegir-contacto",
+      "name": "Elegir contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const d = $('Datos contacto').item.json;\nconst lista = ($json.payload) || [];\nconst dig = (x) => String(x || '').replace(/[^0-9]/g, '');\nconst c = lista.find((x) => d.ultimos10 && dig(x.phone_number).endsWith(d.ultimos10)) || lista.find((x) => d.email && String(x.email || '').toLowerCase() === d.email) || null;\nconst ci = c ? (c.contact_inboxes || []).find((i) => i.inbox && i.inbox.id === 6) : null;\n// existenteId: ya está en Chatwoot pero en otro buzón (p. ej. Setters, inbox 12) → se le agrega el 6.\nreturn { json: { contactId: c && ci ? c.id : null, sourceId: ci ? ci.source_id : null, existenteId: c && !ci ? c.id : null } };"
+      }
+    },
+    {
+      "id": "n--existe-en-chatwoot-",
+      "name": "¿Existe en Chatwoot?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2600,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ !!$json.contactId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n--en-otro-buz-n-",
+      "name": "¿En otro buzón?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2860,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c4",
+              "leftValue": "={{ !!$json.existenteId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-agregar-al-whatsapp",
+      "name": "Agregar al WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.existenteId }}/contact_inboxes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ inbox_id: 6 }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "id": "n-contacto-agregado",
+      "name": "Contacto agregado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: { contactId: $('Elegir contacto').item.json.existenteId, sourceId: $json.source_id || ($json.payload && $json.payload.source_id) || null } };"
+      }
+    },
+    {
+      "id": "n--calendario-",
+      "name": "¿Calendario?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        -400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5",
+              "leftValue": "={{ $json.sinBienvenida !== true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-crear-contacto",
+      "name": "Crear contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ inbox_id: 6, name: $('Datos contacto').item.json.nombreCompleto, email: $('Datos contacto').item.json.email || undefined, phone_number: $('Datos contacto').item.json.telefono ? '+' + $('Datos contacto').item.json.telefono : undefined, identifier: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', custom_attributes: { '10dias': false, '30dias': false } }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "id": "n-contacto-creado",
+      "name": "Contacto creado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const p = $json.payload || {};\nreturn { json: { contactId: p.contact ? p.contact.id : null, sourceId: p.contact_inbox ? p.contact_inbox.source_id : null } };"
+      }
+    },
+    {
+      "id": "n-contacto-listo",
+      "name": "Contacto listo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3640,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: { contactId: $json.contactId, sourceId: $json.sourceId } };"
+      }
+    },
+    {
+      "id": "n-conversaciones",
+      "name": "Conversaciones",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3640,
+        0
+      ],
+      "parameters": {
+        "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.contactId }}/conversations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "id": "n--sin-conversaci-n-",
+      "name": "¿Sin conversación?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3900,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6",
+              "leftValue": "={{ !(($json.payload) || []).some((c) => c.inbox_id === 6) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-crear-conversaci-n",
+      "name": "Crear conversación",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4160,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/conversations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ source_id: $('Contacto listo').item.json.sourceId, inbox_id: 6, contact_id: $('Contacto listo').item.json.contactId }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pVHTvmpyURUnhFjQ",
+          "name": "Chatwoot LUM token perfil"
+        }
+      }
+    },
+    {
+      "id": "n--bienvenida-",
+      "name": "¿Bienvenida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4420,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c7",
+              "leftValue": "={{ $('Datos contacto').item.json.nuevo === true && $('Datos contacto').item.json.sinBienvenida !== true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "n-enviar-bienvenida",
+      "name": "Enviar bienvenida",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        4680,
+        -200
+      ],
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $('Datos contacto').item.json.telefono }}@s.whatsapp.net",
+        "messageText": "🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo",
+        "options_message": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "n-memoria-del-agente",
+      "name": "Memoria del agente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4940,
+        -200
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: { sessionId: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', messageJsonString: JSON.stringify({ type: 'ai', content: \"🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo\", additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }) } };"
+      }
+    },
+    {
+      "id": "n-guardar-en-memoria",
+      "name": "Guardar en memoria",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5200,
+        -200
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ [$json.sessionId, $json.messageJsonString] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -291,6 +760,24 @@
       "main": [
         [
           {
+            "node": "¿Calendario?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Simulación?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Calendario?": {
+      "main": [
+        [
+          {
             "node": "Evento en Calendar",
             "type": "main",
             "index": 0
@@ -298,7 +785,25 @@
         ],
         [
           {
-            "node": "Nada / ya existía",
+            "node": "Fila en onboarding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Simulación?": {
+      "main": [
+        [
+          {
+            "node": "Nada / simulación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Datos contacto",
             "type": "main",
             "index": 0
           }
@@ -315,6 +820,215 @@
           }
         ]
       ]
+    },
+    "Fila en onboarding": {
+      "main": [
+        [
+          {
+            "node": "Datos contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos contacto": {
+      "main": [
+        [
+          {
+            "node": "Buscar en Chatwoot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en Chatwoot": {
+      "main": [
+        [
+          {
+            "node": "Elegir contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir contacto": {
+      "main": [
+        [
+          {
+            "node": "¿Existe en Chatwoot?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Existe en Chatwoot?": {
+      "main": [
+        [
+          {
+            "node": "Contacto listo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿En otro buzón?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿En otro buzón?": {
+      "main": [
+        [
+          {
+            "node": "Agregar al WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar al WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Contacto agregado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacto agregado": {
+      "main": [
+        [
+          {
+            "node": "Contacto listo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear contacto": {
+      "main": [
+        [
+          {
+            "node": "Contacto creado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacto creado": {
+      "main": [
+        [
+          {
+            "node": "Contacto listo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacto listo": {
+      "main": [
+        [
+          {
+            "node": "Conversaciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversaciones": {
+      "main": [
+        [
+          {
+            "node": "¿Sin conversación?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sin conversación?": {
+      "main": [
+        [
+          {
+            "node": "Crear conversación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Bienvenida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear conversación": {
+      "main": [
+        [
+          {
+            "node": "¿Bienvenida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Bienvenida?": {
+      "main": [
+        [
+          {
+            "node": "Enviar bienvenida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Enviar bienvenida": {
+      "main": [
+        [
+          {
+            "node": "Memoria del agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria del agente": {
+      "main": [
+        [
+          {
+            "node": "Guardar en memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -326,9 +1040,9 @@
   "staticData": null,
   "meta": null,
   "pinData": null,
-  "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
-  "activeVersionId": "0bc03776-b979-4928-9602-57d8973764a2",
-  "versionCounter": 6,
+  "versionId": "eccfd9c3-da91-4828-b931-3b35a87d7ba6",
+  "activeVersionId": "eccfd9c3-da91-4828-b931-3b35a87d7ba6",
+  "versionCounter": 18,
   "triggerCount": 1,
   "shared": [
     {
@@ -353,7 +1067,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-22T12:00:41.271Z",
+              "updatedAt": "2026-09-25T04:00:39.197Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -381,7 +1095,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-22",
+              "lastActiveAt": "2026-09-25",
               "isPending": false
             }
           }
@@ -391,9 +1105,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-22T23:14:46.123Z",
-    "createdAt": "2026-09-22T23:14:46.123Z",
-    "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
+    "updatedAt": "2026-09-23T01:59:36.406Z",
+    "createdAt": "2026-09-23T01:59:36.406Z",
+    "versionId": "eccfd9c3-da91-4828-b931-3b35a87d7ba6",
     "workflowId": "GbGyPmnkEcf1Excz",
     "nodes": [
       {
@@ -408,7 +1122,7 @@
         "parameters": {
           "width": 520,
           "height": 220,
-          "content": "## Cita de onboarding v1\nReemplaza a \"E-) citas automaticas v4\" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\nFuente: scripts/n8n-sync-pulse.mjs."
+          "content": "## Cita de onboarding v1\nReemplaza a \"E-) citas automaticas v4\" (leía los correos de Calendly en Gmail; dejó de correr en agosto 2026 y por eso nadie nuevo recibía bienvenida ni encuestas).\n\nLo llama **/api/calendly** de Content OS (webhook oficial de Calendly) solo para eventos de **Onboarding**. Payload plano: nombre, apellido, email, telefono, fecha (ISO), eventName, zoomLink, uri.\n\n1. Dedupe por email o teléfono en la base de onboarding.\n2. Evento en el Calendar de agenteia@ (mismo formato que el viejo: description JSON con First-name/phone/zoom/uuid).\n3. Fila en NocoDB onboarding (nombre, email, fecha, event-id, evento, telefono, fecha-formateada).\n\n4. Cliente en Chatwoot (inbox 6) + conversación, y el saludo 🎉 por WhatsApp si es cita nueva (sinBienvenida:true lo salta, para rezagados).\n\nFuente: scripts/n8n-sync-pulse.mjs."
         }
       },
       {
@@ -446,7 +1160,7 @@
         ],
         "parameters": {
           "mode": "runOnceForEachItem",
-          "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n} };"
+          "jsCode": "const b = $json.body || $json;\nconst tel = String(b.telefono || '').replace(/[^0-9]/g, '');\nconst nombre = String(b.nombre || '').trim();\nconst apellido = String(b.apellido || '').trim();\nreturn { json: {\n  nombre, apellido, nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),\n  email: String(b.email || '').trim().toLowerCase(),\n  telefono: tel,\n  fecha: b.fecha,\n  // Día de la cita en hora de Puerto Rico (no UTC): una cita a las 8 PM PR es 00:00Z del día siguiente.\n  fechaFormateada: b.fecha ? new Date(b.fecha).toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' }) : '',\n  eventName: b.eventName || 'Onboarding',\n  zoomLink: b.zoomLink || '',\n  uri: b.uri || '',\n  simulacion: b.simulacion === true,\n  sinBienvenida: b.sinBienvenida === true,\n} };"
         }
       },
       {
@@ -620,15 +1334,484 @@
         "onError": "continueRegularOutput"
       },
       {
-        "id": "n-nada-ya-exist-a",
-        "name": "Nada / ya existía",
+        "id": "n-nada-simulaci-n",
+        "name": "Nada / simulación",
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
+        "position": [
+          1560,
+          400
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "n--simulaci-n-",
+        "name": "¿Simulación?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
         "position": [
           1300,
           200
         ],
-        "parameters": {}
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c2",
+                "leftValue": "={{ $json.accion }}",
+                "rightValue": "simular",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n-datos-contacto",
+        "name": "Datos contacto",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1820,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const d = $('Decidir cita').item.json;\nreturn { json: { ...d, nuevo: d.accion === 'crear', ultimos10: String(d.telefono || '').slice(-10) } };"
+        }
+      },
+      {
+        "id": "n-buscar-en-chatwoot",
+        "name": "Buscar en Chatwoot",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2080,
+          0
+        ],
+        "parameters": {
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/search",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "q",
+                "value": "={{ $json.ultimos10 || $json.email }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      {
+        "id": "n-elegir-contacto",
+        "name": "Elegir contacto",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2340,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const d = $('Datos contacto').item.json;\nconst lista = ($json.payload) || [];\nconst dig = (x) => String(x || '').replace(/[^0-9]/g, '');\nconst c = lista.find((x) => d.ultimos10 && dig(x.phone_number).endsWith(d.ultimos10)) || lista.find((x) => d.email && String(x.email || '').toLowerCase() === d.email) || null;\nconst ci = c ? (c.contact_inboxes || []).find((i) => i.inbox && i.inbox.id === 6) : null;\n// existenteId: ya está en Chatwoot pero en otro buzón (p. ej. Setters, inbox 12) → se le agrega el 6.\nreturn { json: { contactId: c && ci ? c.id : null, sourceId: ci ? ci.source_id : null, existenteId: c && !ci ? c.id : null } };"
+        }
+      },
+      {
+        "id": "n--existe-en-chatwoot-",
+        "name": "¿Existe en Chatwoot?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2600,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c3",
+                "leftValue": "={{ !!$json.contactId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n--en-otro-buz-n-",
+        "name": "¿En otro buzón?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2860,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c4",
+                "leftValue": "={{ !!$json.existenteId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n-agregar-al-whatsapp",
+        "name": "Agregar al WhatsApp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3120,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.existenteId }}/contact_inboxes",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ inbox_id: 6 }) }}",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "id": "n-contacto-agregado",
+        "name": "Contacto agregado",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3380,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "return { json: { contactId: $('Elegir contacto').item.json.existenteId, sourceId: $json.source_id || ($json.payload && $json.payload.source_id) || null } };"
+        }
+      },
+      {
+        "id": "n--calendario-",
+        "name": "¿Calendario?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1300,
+          -400
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c5",
+                "leftValue": "={{ $json.sinBienvenida !== true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n-crear-contacto",
+        "name": "Crear contacto",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3120,
+          200
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ inbox_id: 6, name: $('Datos contacto').item.json.nombreCompleto, email: $('Datos contacto').item.json.email || undefined, phone_number: $('Datos contacto').item.json.telefono ? '+' + $('Datos contacto').item.json.telefono : undefined, identifier: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', custom_attributes: { '10dias': false, '30dias': false } }) }}",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "id": "n-contacto-creado",
+        "name": "Contacto creado",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3380,
+          200
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const p = $json.payload || {};\nreturn { json: { contactId: p.contact ? p.contact.id : null, sourceId: p.contact_inbox ? p.contact_inbox.source_id : null } };"
+        }
+      },
+      {
+        "id": "n-contacto-listo",
+        "name": "Contacto listo",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3640,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "return { json: { contactId: $json.contactId, sourceId: $json.sourceId } };"
+        }
+      },
+      {
+        "id": "n-conversaciones",
+        "name": "Conversaciones",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3640,
+          0
+        ],
+        "parameters": {
+          "url": "=https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/contacts/{{ $json.contactId }}/conversations",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "id": "n--sin-conversaci-n-",
+        "name": "¿Sin conversación?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3900,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c6",
+                "leftValue": "={{ !(($json.payload) || []).some((c) => c.inbox_id === 6) }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n-crear-conversaci-n",
+        "name": "Crear conversación",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4160,
+          -200
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2/conversations",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ source_id: $('Contacto listo').item.json.sourceId, inbox_id: 6, contact_id: $('Contacto listo').item.json.contactId }) }}",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "pVHTvmpyURUnhFjQ",
+            "name": "Chatwoot LUM token perfil"
+          }
+        }
+      },
+      {
+        "id": "n--bienvenida-",
+        "name": "¿Bienvenida?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4420,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c7",
+                "leftValue": "={{ $('Datos contacto').item.json.nuevo === true && $('Datos contacto').item.json.sinBienvenida !== true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "n-enviar-bienvenida",
+        "name": "Enviar bienvenida",
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          4680,
+          -200
+        ],
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "Level-Up-Media-Whatsapp",
+          "remoteJid": "={{ $('Datos contacto').item.json.telefono }}@s.whatsapp.net",
+          "messageText": "🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo",
+          "options_message": {}
+        },
+        "credentials": {
+          "evolutionApi": {
+            "id": "o3VodCojIbc9QZ6C",
+            "name": "Evolution account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "n-memoria-del-agente",
+        "name": "Memoria del agente",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4940,
+          -200
+        ],
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "return { json: { sessionId: $('Datos contacto').item.json.telefono + '@s.whatsapp.net', messageJsonString: JSON.stringify({ type: 'ai', content: \"🎉 Bienvenido a Level Up Media PR! Estamos encantados de tenerte con nosotros. Si necesitas ayuda con onboarding o tienes dudas sobre tu próxima cita, solo dime y con gusto te apoyo\", additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }) } };"
+        }
+      },
+      {
+        "id": "n-guardar-en-memoria",
+        "name": "Guardar en memoria",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          5200,
+          -200
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+          "options": {
+            "queryReplacement": "={{ [$json.sessionId, $json.messageJsonString] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "GGHKaTkcxaueFMNW",
+            "name": "PostgresLevelUpMedia"
+          }
+        },
+        "onError": "continueRegularOutput"
       }
     ],
     "connections": {
@@ -680,6 +1863,24 @@
         "main": [
           [
             {
+              "node": "¿Calendario?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "¿Simulación?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Calendario?": {
+        "main": [
+          [
+            {
               "node": "Evento en Calendar",
               "type": "main",
               "index": 0
@@ -687,7 +1888,25 @@
           ],
           [
             {
-              "node": "Nada / ya existía",
+              "node": "Fila en onboarding",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Simulación?": {
+        "main": [
+          [
+            {
+              "node": "Nada / simulación",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Datos contacto",
               "type": "main",
               "index": 0
             }
@@ -704,6 +1923,215 @@
             }
           ]
         ]
+      },
+      "Fila en onboarding": {
+        "main": [
+          [
+            {
+              "node": "Datos contacto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Datos contacto": {
+        "main": [
+          [
+            {
+              "node": "Buscar en Chatwoot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar en Chatwoot": {
+        "main": [
+          [
+            {
+              "node": "Elegir contacto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Elegir contacto": {
+        "main": [
+          [
+            {
+              "node": "¿Existe en Chatwoot?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Existe en Chatwoot?": {
+        "main": [
+          [
+            {
+              "node": "Contacto listo",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "¿En otro buzón?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿En otro buzón?": {
+        "main": [
+          [
+            {
+              "node": "Agregar al WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Crear contacto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agregar al WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "Contacto agregado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contacto agregado": {
+        "main": [
+          [
+            {
+              "node": "Contacto listo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Crear contacto": {
+        "main": [
+          [
+            {
+              "node": "Contacto creado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contacto creado": {
+        "main": [
+          [
+            {
+              "node": "Contacto listo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contacto listo": {
+        "main": [
+          [
+            {
+              "node": "Conversaciones",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conversaciones": {
+        "main": [
+          [
+            {
+              "node": "¿Sin conversación?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Sin conversación?": {
+        "main": [
+          [
+            {
+              "node": "Crear conversación",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "¿Bienvenida?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Crear conversación": {
+        "main": [
+          [
+            {
+              "node": "¿Bienvenida?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Bienvenida?": {
+        "main": [
+          [
+            {
+              "node": "Enviar bienvenida",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Enviar bienvenida": {
+        "main": [
+          [
+            {
+              "node": "Memoria del agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memoria del agente": {
+        "main": [
+          [
+            {
+              "node": "Guardar en memoria",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Elvin  Ayala",
@@ -712,10 +2140,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-22T23:14:46.307Z",
-        "id": 243,
+        "createdAt": "2026-09-23T01:59:36.567Z",
+        "id": 247,
         "workflowId": "GbGyPmnkEcf1Excz",
-        "versionId": "0bc03776-b979-4928-9602-57d8973764a2",
+        "versionId": "eccfd9c3-da91-4828-b931-3b35a87d7ba6",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

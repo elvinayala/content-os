@@ -10,6 +10,8 @@
 //   node scripts/n8n-felicitaciones.mjs crear       → crea el workflow (en SIMULACIÓN) y lo activa
 //   node scripts/n8n-felicitaciones.mjs actualizar  → regenera y sube (PUT)
 //   node scripts/n8n-felicitaciones.mjs simular     → corre la simulación: a quién le tocaría hoy y por qué
+//   node scripts/n8n-felicitaciones.mjs sembrar     → UNA vez (Elvin, 25/sep): marca felicitaciones=200 a los que ya
+//                                                     pasaron de 200 sin mandarles nada; solo los nuevos reciben mensaje
 //   node scripts/n8n-felicitaciones.mjs real        → pasa a modo real (SOLO con el OK de Elvin) y apaga el viejo
 //
 // Env: N8N_API_KEY, PULSE_N8N_SECRET (la credencial "Pulse ↔ n8n" protege el webhook de simulación).
@@ -88,10 +90,12 @@ function armar(modo, credId) {
     nodo("Todos los días 4:20 PM", "n8n-nodes-base.scheduleTrigger", 1.2, { rule: { interval: [{ triggerAtHour: 16, triggerAtMinute: 20 }] } }, pos(0, 0)),
     nodo("Simulación (webhook)", "n8n-nodes-base.webhook", 2, { httpMethod: "POST", path: "felicitaciones-leads", authentication: "headerAuth", responseMode: "lastNode", responseData: "allEntries", options: {} }, pos(0, 1), { webhookId: "felicitaciones-leads", credentials: { httpHeaderAuth: { id: credId, name: "Pulse ↔ n8n (x-pulse-secret)" } } }),
     nodo("Modo programado", "n8n-nodes-base.set", 3.4, { assignments: { assignments: [{ id: "m1", name: "real", value: modo === "real", type: "boolean" }] }, options: {} }, pos(1, 0)),
-    nodo("Modo simulación", "n8n-nodes-base.set", 3.4, { assignments: { assignments: [{ id: "m2", name: "real", value: false, type: "boolean" }] }, options: {} }, pos(1, 1)),
+    nodo("Modo simulación", "n8n-nodes-base.set", 3.4, { assignments: { assignments: [{ id: "m2", name: "real", value: false, type: "boolean" }, { id: "m3", name: "sembrar", value: "={{ $json.body && $json.body.sembrar === true }}", type: "boolean" }] }, options: {} }, pos(1, 1)),
     nodo("Clientes (NocoDB)", "n8n-nodes-base.httpRequest", 4.2, { url: `${NOCODB}/tables/${T_CLIENTES}/records`, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", sendQuery: true, queryParameters: { parameters: [{ name: "limit", value: "1000" }] }, options: {} }, pos(2, 0), { credentials: { nocoDbApiToken: CRED_NOCODB }, retryOnFail: true, maxTries: 3, waitBetweenTries: 3000 }),
     nodo("Candidatos", "n8n-nodes-base.code", 2, { jsCode: `// Clientes con cuenta publicitaria, fecha de inicio y sin la felicitación de 200 todavía.
 const real = $('Modo programado').isExecuted ? $('Modo programado').first().json.real : false;
+// sembrar (una sola vez, por webhook): marca como ya felicitados a los que pasaron de 200 sin mandarles nada.
+const sembrar = $('Modo simulación').isExecuted ? $('Modo simulación').first().json.sembrar === true : false;
 const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });
 const out = [];
 for (const f of ($json.list || [])) {
@@ -99,7 +103,7 @@ for (const f of ($json.list || [])) {
   const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);
   const fel = String(f.felicitaciones ?? '').trim();
   if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;
-  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real } });
+  out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real, sembrar } });
 }
 return out;` }, pos(3, 0)),
     nodo("Leads en Meta", "n8n-nodes-base.httpRequest", 4.2, { url: "=https://graph.facebook.com/v23.0/act_{{ $json.cuenta }}/insights", authentication: "predefinedCredentialType", nodeCredentialType: "facebookGraphApi", sendQuery: true, queryParameters: { parameters: [
@@ -124,6 +128,9 @@ $input.all().forEach((it, i) => {
   out.push({ json: { ...c, leads, hito, error, primerNombre, puedeEnviar: !!hito && c.telefono.length >= 10 } });
 });
 return out;` }, pos(5, 0)),
+    nodo("¿Sembrar?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.sembrar === true && $json.hito === 200 }}")], combinator: "and" }, options: {} }, pos(5, 2)),
+    nodo("Sembrar en NocoDB", "n8n-nodes-base.httpRequest", 4.2, { method: "PATCH", url: `${NOCODB}/tables/${T_CLIENTES}/records`, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", sendBody: true, specifyBody: "json", jsonBody: "={{ JSON.stringify([{ Id: $json.id, felicitaciones: '200' }]) }}", options: { batching: { batch: { batchSize: 1, batchInterval: 200 } } } }, pos(6, 2), { credentials: { nocoDbApiToken: CRED_NOCODB }, ...ROBUSTO }),
+    nodo("Sembrados", "n8n-nodes-base.code", 2, { jsCode: "return [{ json: { sembrados: $('¿Sembrar?').all().filter((i) => i.json.sembrar && i.json.hito === 200).map((i) => i.json.nombre), total: $input.all().length } }];" }, pos(7, 2)),
     nodo("¿Envío real?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.real === true && $json.puedeEnviar === true }}")], combinator: "and" }, options: {} }, pos(6, 0)),
     // --- real
     nodo("¿100 o 200?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.hito === 100 }}")], combinator: "and" }, options: {} }, pos(7, -1)),
@@ -149,7 +156,8 @@ return [{ json: {
 } }];` }, pos(7, 1)),
   ];
   const connections = unir(
-    conectar("Todos los días 4:20 PM", "Modo programado", "Clientes (NocoDB)", "Candidatos", "Leads en Meta", "Decidir", "¿Envío real?"),
+    conectar("Todos los días 4:20 PM", "Modo programado", "Clientes (NocoDB)", "Candidatos", "Leads en Meta", "Decidir", "¿Sembrar?", "Sembrar en NocoDB", "Sembrados"),
+    conectar(["¿Sembrar?", 1], "¿Envío real?"),
     conectar("Simulación (webhook)", "Modo simulación", "Clientes (NocoDB)"),
     conectar("¿Envío real?", "¿100 o 200?", "Felicitación 100", "Esperar 1 min", "Referidos", "Lo que se mandó", "Memoria del agente", "Marcar en NocoDB"),
     conectar(["¿100 o 200?", 1], "Felicitación 200", "Lo que se mandó"),
@@ -183,13 +191,16 @@ try {
       await api(`/workflows/${VIEJO}/deactivate`, { method: "POST" }).catch(() => {});
       console.log("Viejo (v1 v3.1) desactivado. Desde hoy felicita de verdad a las 4:20 PM.");
     }
+  } else if (cmd === "sembrar") {
+    const r = await fetch(`${URL_N8N}/webhook/felicitaciones-leads`, { method: "POST", headers: { "Content-Type": "application/json", "x-pulse-secret": SECRETO }, body: JSON.stringify({ sembrar: true }), signal: AbortSignal.timeout(300000) });
+    console.log(r.status, (await r.text()).slice(0, 3000));
   } else if (cmd === "simular") {
     const r = await fetch(`${URL_N8N}/webhook/felicitaciones-leads`, { method: "POST", headers: { "Content-Type": "application/json", "x-pulse-secret": SECRETO }, body: "{}", signal: AbortSignal.timeout(300000) });
     const txt = await r.text();
     let j; try { j = JSON.parse(txt); } catch { j = txt; }
     console.log(JSON.stringify(Array.isArray(j) ? j[0] : j, null, 2));
   } else {
-    console.error("Comandos: crear | actualizar | simular | real");
+    console.error("Comandos: crear | actualizar | simular | sembrar | real");
     process.exit(1);
   }
 } catch (e) { console.error(`felicitaciones: ${e.message}`); process.exit(1); }
