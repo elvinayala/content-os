@@ -71,3 +71,5 @@ reemplaza al Typeform: 21 preguntas con marca LU, llena Empresa/Teléfono/E-mail
 Presupuesto/Id cuenta/Contenido/Vendedor en LEVEL UP MEDIA → ONBOARDING & SETUP; resto en comentario.
 El link lo manda el CLOSER al cerrar la venta (no Jessica); Jessica recibe la ficha llena y hace el onboarding. Jessica y Carilin avisadas (y corregidas) por Slack ese día (Jessica = U08SN35L2UX). El Typeform sigue de respaldo.
 Gotcha Slack: nunca poner un link entre **negritas** en mensajes de Slack — los asteriscos quedan pegados al URL y el link se rompe (le pasó a Jessica el 24/sep).
+
+**24/sep/2026 — próximo nivel EN PROD** (5 partes aprobadas por Elvin): ocultar columnas/etiquetas (no borrar), automatizaciones configurables (⚡, tabla pulse_reglas, exigir razón de baja al pasar a OFFBOARDED), Mi día + DM 8 AM lun–vie a Jessica y Carilin DESDE EL BOT (nunca desde la cuenta de Elvin), ⌘K + vistas guardadas + celular, y "Preguntarle al CRM" (/pulse/preguntar, Opus 5 effort low, ~15 s, solo tableros visibles). Datos: 17 onboardings detenidos +48 h al arrancar. Detalle en CLAUDE.md → Pulse → Próximo nivel.

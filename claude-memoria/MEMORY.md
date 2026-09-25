@@ -1,7 +1,7 @@
 # Memory Index
 
 - [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack/setup (Next 16, dir con espacio, /guion)
-- [Pulse — CRM propio](pulse-crm.md) — reemplazo de Monday ($800/mes): EN PROD con Supabase y los 3 tableros migrados (20/sep/2026); claves provisorias pulse-dev, falta la de Elvin y cancelar Monday
+- [Pulse — CRM propio](pulse-crm.md) — reemplazo de Monday ($800/mes) EN PROD con Supabase; 24/sep: próximo nivel (automatizaciones, Mi día con DM del bot, ⌘K, vistas, Preguntarle al CRM)
 - [Bori — super plataforma](bori-superplataforma.md) — la plataforma de agentes de AI Borinquen (admin-first en app/borinquen/, tema verde, voz Retell+preset, CRM live)
 - [Bori — backend real](bori-backend-real.md) — el SaaS en vivo con clientes pagando: dónde vive, cómo se despliega, las trampas que ya rompieron producción, y el monitor de fallos (Equipo → Fallos = récord de bugs; marcar arreglados ahí)
 - [Bori — plan de crecimiento](bori-plan-crecimiento.md) — 1K al día 60 · 3K al día 90 · 50K en un año (13/sep/2026): motores, compuertas, rol de Elvin + equipo de 4, trial 7 días; qué ya está en prod y las 7 decisiones pendientes
