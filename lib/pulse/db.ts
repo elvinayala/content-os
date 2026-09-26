@@ -2,7 +2,7 @@ import "server-only";
 
 import { drizzle as drizzlePg } from "drizzle-orm/postgres-js";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
-import postgres from "postgres";
+import { clienteResistente } from "./cliente-db";
 
 import * as desempeno from "../desempeno/schema";
 import * as formularios from "../formularios/schema";
@@ -28,7 +28,8 @@ async function crear(): Promise<DbPulse> {
   // trabadas en "ClientRead" cuando la Mac dispara varias en paralelo (24/sep/2026). Prod no cambia.
   const url = process.env.NODE_ENV === "development" && process.env.DATABASE_URL_DIRECT ? process.env.DATABASE_URL_DIRECT : process.env.DATABASE_URL;
   if (url) {
-    const sql = postgres(url, { prepare: false, max: 5, idle_timeout: 20, connect_timeout: 10 });
+    // Resistente a conexiones muertas tras congelarse la función (ver lib/pulse/cliente-db.ts).
+    const sql = clienteResistente(url, { prepare: false, max: 5, idle_timeout: 20, connect_timeout: 10 });
     return drizzlePg(sql, { schema });
   }
   const { PGlite } = await import("@electric-sql/pglite");
