@@ -54,14 +54,19 @@ HTML = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style>
 <tr><td><b>Caguas (T3)</b></td><td>Edgar Arroyo</td><td>{", ".join(pueblos["T3"])}</td></tr>
 <tr><td><b>Quebradillas (T5)</b></td><td>Samuel Feliciano</td><td>Quebradillas, Camuy, Hatillo, Arecibo <small>(el resto del Norte, confirmarlo con él)</small></td></tr></table>
 <p><small>Fuera de esas zonas: se anota en la lista de espera y se le avisa cuando abramos. Los plomeros deciden qué trabajos cogen: la cita se confirma cuando el plomero la acepta.</small></p>
-<h2>La llamada, en 6 pasos</h2>
+<h2>La llamada: primero escuchar, después vender</h2>
+<div class="aviso"><b>El propósito no es vender rápido.</b> Es que el cliente se sienta atendido: saludar, presentarse, escuchar su problema y llegar a un diagnóstico. La venta sale sola de ahí.</div>
 <ol>
-<li><b>Abre:</b> "Hola, [nombre], te llamo de Resuelto por lo del [problema] que nos escribiste".</li>
-<li><b>Confirma</b> el problema y el pueblo (tiene que estar en la tabla de arriba).</li>
-<li><b>Precio:</b> "Eso es $[precio] fijo de mano de obra, más ${FEE} de coordinación, con {GAR} meses de garantía".</li>
-<li><b>Cierra con horario, no con preguntas:</b> "¿Te sirve mañana de 10 a 12 o de 1 a 3?".</li>
-<li><b>Datos:</b> nombre completo, dirección exacta (urbanización, calle, número) y un punto de referencia.</li>
-<li><b>Cierre:</b> "Te confirmamos por mensaje cuando el plomero acepte; te avisa 30 minutos antes de llegar".</li>
+<li><b>Saluda por su nombre:</b> "Hola, [nombre], ¿cómo estás?".</li>
+<li><b>Preséntate:</b> "Te habla [tu nombre], de Resuelto PR. Estamos alrededor de la isla y ya estamos dando servicio en [su pueblo]".</li>
+<li><b>Recuérdale por qué lo llamas:</b> "Nos escribiste por las redes por un problema de plomería: [lo que dijo]". Si no dijo cuál, pregunta: "Cuéntame, ¿qué está pasando, para ver cómo te podemos ayudar?".</li>
+<li><b>Escucha y anota.</b> Deja que lo cuente completo. No interrumpas ni ofrezcas nada todavía.</li>
+<li><b>Pide fotos del área</b> si no las mandó por las redes: "Para tenerlo en récord y que el plomero llegue preparado, ¿me mandas unas fotos por el mismo chat?".</li>
+<li><b>Diagnóstico:</b>
+  <br>• Si el problema está claro y está en el menú: "Eso es $[precio] fijo de mano de obra, más ${FEE} de coordinación, con {GAR} meses de garantía".
+  <br>• Si no está claro o no está en el menú: ofrece la <b>visita de diagnóstico de ${DIAG}</b>. El plomero ve el problema y te da el precio fijo por escrito; si se hace el trabajo, los ${DIAG} se acreditan.</li>
+<li><b>Cierra con horario, no con preguntas:</b> "¿Te sirve mañana de 10 a 12 o de 1 a 3?". Toma nombre completo, dirección exacta y un punto de referencia.</li>
+<li><b>Cierre:</b> "Te confirmamos por mensaje cuando el plomero acepte; te avisa 30 minutos antes de llegar. El pago es por el link de Resuelto cuando termine".</li>
 </ol>
 <h2>Objeciones que salen</h2>
 <table>
