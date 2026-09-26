@@ -27,6 +27,7 @@ import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
 import * as demo from "./demo-plomero.js";
+import { montarMarca } from "./marca.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
@@ -60,6 +61,8 @@ app.set("trust proxy", true);
 
 // Guardamos el cuerpo crudo para validar firmas (Meta y Stripe).
 app.use(express.json({ limit: "25mb", verify: (req: any, _res, buf) => { req.rawBody = buf; } }));
+// Ícono de Resuelto en todas las páginas (favicon + apple-touch-icon), inyectado en cada HTML que sale.
+montarMarca(app);
 
 app.use((req, res, next) => {
   const origen = req.headers.origin ?? "";

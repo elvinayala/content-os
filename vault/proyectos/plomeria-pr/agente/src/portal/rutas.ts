@@ -18,6 +18,7 @@ import { avisarAlTelefono } from "../canales/telefono.js"; // WhatsApp si está 
 import { territorios } from "../prompt.js";
 import { config } from "../config.js";
 import * as staff from "./staff.js";
+import { casa } from "../marca.js";
 
 export const portal = express.Router();
 portal.use("/portal", express.urlencoded({ extended: false }));
@@ -35,6 +36,11 @@ const CSS = `:root{--navy:#08243A;--navy2:#0F3D5E;--o:#F2621F;--cream:#FBF7F0;--
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--navy);font-size:15px;line-height:1.45}
 a{color:var(--navy2)}nav{background:var(--navy);color:#fff;display:flex;align-items:center;gap:22px;padding:14px 22px;flex-wrap:wrap}
 nav b{font-family:Sora,system-ui;font-size:20px;font-weight:800;letter-spacing:-.02em;margin-right:8px}nav b i{color:var(--o);font-style:normal}
+nav a.marca{display:flex;align-items:center;gap:9px;color:#fff;border:0;padding:0;margin-right:10px}nav a.marca span{font-family:Sora,system-ui;font-size:21px;font-weight:800;letter-spacing:-.03em}
+.entrar{min-height:100vh;display:grid;place-items:center;background:radial-gradient(1200px 500px at 50% -10%,#123F61 0%,var(--navy) 60%);padding:24px}
+.entrar .card{width:100%;max-width:400px;padding:30px 28px;border:0;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.entrar .logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}.entrar .logo span{font-family:Sora,system-ui;font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--navy2)}
+.entrar h1{font-size:20px;margin-bottom:2px}.entrar .pie{color:#9FB8CA;font-size:12.5px;text-align:center;margin-top:18px}.entrar input{padding:12px 14px}.entrar input:focus{outline:2px solid #F2621F33;border-color:var(--o)}
 nav a{color:#CFE0EC;text-decoration:none;font-weight:600;font-size:14.5px}nav a.on{color:#fff;border-bottom:2px solid var(--o);padding-bottom:3px}nav .yo{margin-left:auto;font-size:13px;color:#9FB8CA}
 main{max-width:1100px;margin:0 auto;padding:22px}h1{font-family:Sora,system-ui;font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 h2{font-family:Sora,system-ui;font-size:16px;font-weight:700;margin:26px 0 10px}.sub{color:var(--ink2);margin-bottom:14px}
@@ -51,8 +57,8 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><b>resuelto<i>.</i></b>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
-  return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}<main>${cuerpo}</main>
+  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}${yo ? `<main>${cuerpo}</main>` : cuerpo}
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
 
@@ -68,8 +74,8 @@ function requerir(rol?: staff.Rol) {
 }
 portal.get("/portal/login", (req, res) => {
   const err = req.query.e ? `<p style="color:#B6470F;margin:10px 0">${req.query.e === "b" ? "Demasiados intentos. Espera 15 minutos." : "Email o clave incorrectos."}</p>` : "";
-  res.type("html").send(pagina("Entrar", null, "", `<div class="card" style="max-width:380px;margin:60px auto"><h1>resuelto<span style="color:var(--o)">.</span></h1><p class="sub">Portal de operación</p>${err}
-<form method="post" action="/portal/login"><input type="hidden" name="v" value="${e(req.query.v ?? "/portal")}"><label>Email</label><input name="email" type="email" autocomplete="username" required><label>Clave</label><input name="clave" type="password" autocomplete="current-password" required><p style="margin-top:14px"><button class="btn" style="width:100%">Entrar</button></p></form></div>`));
+  res.type("html").send(pagina("Entrar", null, "", `<div class="entrar"><div><div class="card"><div class="logo">${casa(false, 34)}<span>resuelto</span></div><h1>Portal de operación</h1><p class="sub">Clientes, trabajos, plomeros y equipo en un solo lugar.</p>${err}
+<form method="post" action="/portal/login"><input type="hidden" name="v" value="${e(req.query.v ?? "/portal")}"><label>Email</label><input name="email" type="email" autocomplete="username" required><label>Clave</label><input name="clave" type="password" autocomplete="current-password" required><p style="margin-top:16px"><button class="btn" style="width:100%;padding:12px 16px">Entrar</button></p></form></div><p class="pie">Resuelto PR Home Services LLC · uso interno</p></div></div>`));
 });
 portal.post("/portal/login", (req, res) => {
   const ip = String(req.headers["x-forwarded-for"] ?? req.ip).split(",")[0]; const i = intentos.get(ip);
@@ -105,7 +111,7 @@ portal.get("/portal", requerir(), (req, res) => {
   const activos = plomeros().filter((p) => p.estado === "activo").length;
   const porPagar = ts.filter((t) => t.pagoPlomero != null && !t.pagadoAlPlomero && t.estado === "cobrado").reduce((a, t) => a + (t.pagoPlomero ?? 0), 0);
   const fila = (t: Trabajo) => `<tr class="click" onclick="location='/portal/trabajos/${u(t.id)}'"><td><b>${e(t.id)}</b></td><td>${e(t.nombre)}<div class="muted">${e(t.municipio)}</div></td><td>${e(t.servicio)}</td><td>${e(t.plomeroId || "sin asignar")}</td><td>${tagEstado(t.estado)}</td><td>${f(t.inicio)}</td></tr>`;
-  res.type("html").send(pagina("Inicio", yo, "inicio", `<h1>Buenos días, ${e(yo.nombre.split(" ")[0])}</h1><p class="sub">Lo que está pasando hoy en Resuelto.</p>
+  res.type("html").send(pagina("Inicio", yo, "inicio", `<h1>${(() => { const h = Number(new Date().toLocaleString("en-US", { timeZone: config.zonaHoraria, hour: "numeric", hour12: false })) % 24; return h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches"; })()}, ${e(yo.nombre.split(" ")[0])}</h1><p class="sub">Lo que está pasando hoy en Resuelto.</p>
 <form action="/portal/clientes" class="card row"><input name="q" placeholder="Buscar cliente por nombre, teléfono o dirección…" autofocus style="flex:1"><button class="btn">Buscar</button></form>
 <div class="kpis"><div class="card kpi"><b>${deHoy.length}</b><span>trabajos hoy</span></div><div class="card kpi"><b>${enCurso.length}</b><span>en curso ahora</span></div><div class="card kpi"><b>${porCobrar.length}</b><span>terminados por cobrar</span></div><div class="card kpi"><b>${garantias.length}</b><span>garantías abiertas</span></div><div class="card kpi"><b>${activos}</b><span>plomeros activos</span></div><div class="card kpi"><b>${$(porPagar)}</b><span>por pagar a plomeros</span></div></div>
 <h2>Hoy</h2><div class="card"><table><tr><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Plomero</th><th>Estado</th><th>Ventana</th></tr>${deHoy.map(fila).join("") || '<tr><td colspan="6" class="muted">No hay trabajos para hoy.</td></tr>'}</table></div>
