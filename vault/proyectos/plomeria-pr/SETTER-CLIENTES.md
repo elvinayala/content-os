@@ -18,26 +18,23 @@ Los clientes llegan por los anuncios a Messenger e Instagram. El agente de Resue
 
 Alguien que ya trabajó con nosotros o de confianza, que hable bien por teléfono, trate a la gente con paciencia y tenga disponibilidad de tarde y los sábados. No hace falta saber de plomería: el precio lo da el menú.
 
-## Compensación
+## Compensación (26/sep/2026 — reemplaza los tramos del 25/sep)
 
-Contratista independiente. Cobra **por cita cerrada que se completó y se cobró**, no por cita agendada. Así la empresa solo paga por trabajos que dejaron dinero y el setter tiene razón para cerrar citas reales, no cualquier cita.
+**Setter:** Heileen, celular 787-733-8072 (el 787-956-1111 se desvía ahí de L–S, 8 AM–7 PM). Acuerdo: `kit/setter/acuerdo-setter.pdf` (app.resueltopr.com/kit/acuerdo-setter-p5w2.pdf). SOP: `kit/setter/sop-setter.pdf`.
 
-| Trabajo cerrado (completado y cobrado) | Le toca al setter | A Resuelto le queda (mano de obra 35% + $19) |
-|---|---|---|
-| Visita y diagnóstico ($69) | $5 | ~$43 |
-| Trabajo pequeño ($89–$199: destape, inodoro, llave…) | **$10** | $50–$82 |
-| Trabajo mediano ($199–$349: calentador, bomba, filtración…) | **$20** | $89–$141 |
-| Trabajo grande cotizado en sitio (cisterna, re-tubería…) | **5% de la mano de obra** (mínimo $20, tope $75) | 35% + $19 |
-| Proyecto de la División Proyectos (contrato firmado + depósito) | **$100** | 25% del proyecto |
+Contratista independiente. Sin sueldo fijo: un sueldo con horario fijo la convierte en empleada (Ley 80, vacaciones, seguro, nómina) y hoy, con 2 plomeros, el volumen no lo paga.
 
-- **Bono de mes:** 30 trabajos cerrados o más en el mes → **+$150**.
-- **Arranque:** las primeras 4 semanas, si sus comisiones de la semana no llegan a **$75**, Resuelto le completa hasta $75 (máximo $300 en total). Es para cuando hay una sola zona abierta y poco volumen.
-- **Cuándo cuenta:** el cliente estaba en un aviso suyo (o lo llamó él), agendó dentro de los 7 días siguientes a la llamada y el trabajo se cobró. Las cancelaciones y los trabajos sin cobrar no cuentan.
-- **Pago:** los viernes, junto con los plomeros, por ATH Móvil o transferencia, con el detalle de cada trabajo.
+| Qué | Le toca |
+|---|---|
+| Trabajo de plomería **completado y cobrado** que venga de su gestión | **10 % de la mano de obra** (destape $149 → $14.90 · calentador $279 → $27.90 · diagnóstico $69 → $6.90) |
+| Proyecto de la División Proyectos (contrato + depósito) | $100 |
+| Mes con 30 trabajos cobrados o más | +$150 |
+| **Arranque:** primeras 8 semanas, mínimo garantizado | $100/semana (tope $800) |
 
-**Por qué no un 5% plano:** en un destape de $168 el 5% son $8.40, y en un calentador son $15. Por tramos gana un poco más en los trabajos del día a día y es más fácil de entender ("$10 por cada destape que cierro"). En los trabajos grandes sí usa el 5%, porque ahí el ticket varía mucho.
-
-**Lo que puede ganar:** con una zona abierta (~1–2 trabajos al día) son unos $300–$600 al mes más el arranque. Con 3 zonas y 4–5 trabajos al día, $1,200–$1,800 al mes más el bono.
+- Sobre la mano de obra (sin materiales, sin los $19 de coordinación). De cada trabajo, Resuelto pasa de 35 % + $19 a 25 % + $19.
+- Cuenta si la llamada entrante la atendió ella, si devolvió la llamada o si llamó al cliente de un aviso, y el cliente agenda dentro de 7 días.
+- Pago los viernes, con lo cobrado hasta el miércoles.
+- **Lo que puede ganar:** con 2 zonas (~1–2 trabajos al día, mano de obra promedio ~$180) son $500–$950 al mes; con 4–5 trabajos al día, $2,000–$2,500 más el bono.
 
 ## Qué necesita para empezar
 

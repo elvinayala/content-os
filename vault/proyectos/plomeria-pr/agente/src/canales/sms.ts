@@ -16,7 +16,8 @@ export function e164(t: string): string | null {
   if (d.length === 11 && d.startsWith("1")) return "+" + d;
   return null;
 }
-const internos = () => [config.coordinadorWhatsapp, config.sms.numero, config.wa.numeroPublico].map((x) => e164(String(x ?? ""))).filter(Boolean);
+// SETTER_TELEFONO: el celular al que se desvían las llamadas (26/sep/2026); es del equipo, nunca recibe textos del negocio.
+const internos = () => [config.coordinadorWhatsapp, config.sms.numero, config.wa.numeroPublico, ...String(process.env.SETTER_TELEFONO ?? "").split(",")].map((x) => e164(String(x ?? ""))).filter(Boolean);
 export const BAJA = /^\s*(stop|baja|parar|cancelar|unsubscribe|no mas|no más)\s*[.!]*\s*$/i;
 const PIE = "\n\nResuelto · responde STOP si no quieres recibir textos.";
 
