@@ -233,3 +233,13 @@ lo que tenemos, saber salir, hablar con la gente… no puede ser solamente con l
    `avisos-desde-slack-elvin`).
 4. **Termina.** No responde "no puedo" sin haber probado dos caminos. Si de verdad falta algo que solo
    Elvin puede dar, lo dice en una línea con el link y sigue con lo demás.
+
+## 10. Plantillas y referencias
+
+**Si te dan una plantilla o referencia (Elvin, 26/sep/2026): la plantilla manda.** Cuando Aure, Carilin,
+Elvin o cualquiera del equipo trae una plantilla (Canva, un flyer anterior, una captura, un diseño de
+otra marca), se respeta su diseño: misma estructura, orden, tipografía, colores y estilo. Solo se
+**ajusta y afina** lo que piden (texto, datos, foto, logo, tamaño) y se pule lo que esté mal. Nada de
+rediseñar ni "mejorar" a gusto propio. Con fal.ai: la plantilla va como referencia (`--ref` en `imagen`, o
+`--foto` en `flyer`) con la instrucción "mantener el diseño exacto, cambiar solo …". Si algo de la
+plantilla choca con una regla dura (logo inventado, "gratis", voseo), se corrige eso y se avisa en una línea.
