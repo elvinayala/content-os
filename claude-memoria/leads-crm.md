@@ -17,6 +17,10 @@ archivado en Excel (`~/Documents/Archivo Pipedrive/2026-09-26/` + copia en Supab
 reales de LU. **27/sep:** embudos = copia EXACTA de los 11 de Pipedrive LU; entrada para Zapier (`/api/leads/entrada`)
 probada en prod; cuentas creadas (Luis setter; Roger, Laura, Joaquín closers; Nahuel director comercial; Ana y
 Dilan chatters; Aure) con links de 72 h a Leads. Santiago ya no está. **Falta de Elvin:** token de Timelines,
-OK para mandar los links por Slack, y cambiar/duplicar los 4 Zaps de las clases a la entrada nueva.
+OK para mandar los links por Slack. **Zaps HECHOS (26/sep):** los 4 de clases (LUM Class Diego 360078172 v8,
+FRANKIE 363181220 v4, VC 347784257 v7, CLICKFUNNELS - PIPEDRIVE 302982861 v2 = CF CLASS) tienen paso 4 Webhooks
+POST → /api/leads/entrada, en paralelo a Pipedrive; name = "Data Contact Name" (el first/last sale vacío); probados
+y publicados, leads de prueba borrados. Los 60 runs retenidos son del "Daily Executive Email Digest to Slack" (app
+desconectada), no de las clases.
 **Semana 3:** mover prospección/demos/dashboards, correr en paralelo 1 semana y cancelar Pipedrive LU; AIB después.
 Detalle técnico en CLAUDE.md §Leads. Ver [[pulse-crm]], [[closers-lu-calendly]], [[ecosistema-lu-aib]].
