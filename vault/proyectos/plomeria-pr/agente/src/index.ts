@@ -26,6 +26,7 @@ import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
+import * as demo from "./demo-plomero.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
@@ -344,11 +345,11 @@ app.get("/", (_req, res) => res.redirect("/portal"));
 
 // Link corto del plomero: /a/<id>/<código> → guarda su llave en el celular y abre la app
 app.get("/a/:id/:codigo", (req, res) => {
-  if (!verificarCorto(req.params.id, req.params.codigo) || !proveedorPorId(req.params.id)) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>Ese enlace no es válido. Pídele uno nuevo a Resuelto por WhatsApp.</p>");
+  if (!verificarCorto(req.params.id, req.params.codigo) || (!proveedorPorId(req.params.id) && req.params.id !== demo.DEMO_ID)) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>Ese enlace no es válido. Pídele uno nuevo a Resuelto por WhatsApp.</p>");
   res.redirect(linkLargo(req.params.id, ""));
 });
 app.post("/api/proveedores/trabajo/nota", async (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json({ ok: true });
   res.json(await ciclo.agregarNotaPlomero(String(req.body?.oferta ?? ""), prov, String(req.body?.texto ?? "")));
 });
 
@@ -359,6 +360,7 @@ app.use(cotizadorRouter);
 function proveedorAutenticado(req: any) {
   const p = String(req.query.p ?? req.body?.p ?? ""), k = String(req.query.k ?? req.body?.k ?? "");
   if (!p || !k || !verificarFirma(p, k)) return null;
+  if (p === demo.DEMO_ID) return demo.proveedorDemo; // vista de prueba: fuera del registro, nunca recibe ofertas reales
   return proveedorPorId(p) ?? null;
 }
 app.get("/proveedores", (_req, res) => { res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "proveedores.html"), "utf8")); });
@@ -414,12 +416,12 @@ app.get(["/icon-192.png", "/icon-512.png"], async (req, res) => {
 // Push
 app.get("/api/proveedores/push/clave", (_req, res) => res.json({ clave: push.clavePublica() || null }));
 app.post("/api/proveedores/push/suscribir", (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json({ ok: true, dispositivos: 0 });
   if (!req.body?.sub?.endpoint) return res.status(400).json({ error: "suscripción inválida" });
   res.json({ ok: true, dispositivos: push.suscribir(prov.id, req.body.sub, req.body.dispositivo) });
 });
 app.get("/api/proveedores/ofertas", (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido. Pide uno nuevo por WhatsApp." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido. Pide uno nuevo por WhatsApp." }); if (prov.id === demo.DEMO_ID) return res.json(demo.listar(req.query.reiniciar === "1"));
   const ofertas = despacho.ofertasPara(prov).map((o) => {
     if (o.aceptadoPor !== prov.id || o.tipo !== "trabajo") return o;
     const t = almacen.trabajos().find((x) => x.id === o.referencia);
@@ -429,18 +431,18 @@ app.get("/api/proveedores/ofertas", (req: any, res) => {
 });
 // Ciclo del trabajo desde la app: voy en camino → llegué → fotos → terminé (cobro al cliente)
 app.post("/api/proveedores/trabajo/paso", async (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.paso(String(req.body?.oferta ?? ""), String(req.body?.paso ?? ""), { mano_obra: req.body?.mano_obra, materiales: req.body?.materiales }));
   const paso = String(req.body?.paso ?? "") as "en-camino" | "llegue" | "terminado";
   if (!["en-camino", "llegue", "terminado"].includes(paso)) return res.status(400).json({ ok: false, motivo: "Paso inválido." });
   res.json(await ciclo.avanzar(String(req.body?.oferta ?? ""), prov, paso, { mano_obra: req.body?.mano_obra, materiales: req.body?.materiales, nota: req.body?.nota }));
 });
 app.post("/api/proveedores/trabajo/foto", async (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.foto(String(req.body?.oferta ?? ""), String(req.body?.tipo ?? "")));
   const tipo = req.body?.tipo === "antes" ? "antes" : "despues";
   try { res.json(await ciclo.guardarFoto(String(req.body?.oferta ?? ""), prov, tipo, String(req.body?.imagen ?? ""))); } catch (e) { res.json({ ok: false, motivo: "No pude guardar la foto." }); }
 });
 app.get("/api/proveedores/cuenta", (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.cuenta());
   res.json(ciclo.cuentaSemanal(prov));
 });
 // Página de pago del cliente (mientras no haya Stripe: ATH Móvil + total)
@@ -458,11 +460,11 @@ app.get("/pagar/:id", (req, res) => {
 });
 // El plomero decide qué trabajos coge (Elvin, 25/sep): "No puedo" no es falta y no se le vuelve a mostrar.
 app.post("/api/proveedores/rechazar", async (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.rechazar(String(req.body?.oferta ?? "")));
   res.json(await despacho.rechazar(String(req.body?.oferta ?? ""), prov.id));
 });
 app.post("/api/proveedores/aceptar", async (req: any, res) => {
-  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.aceptar(String(req.body?.oferta ?? "")));
   res.json(await despacho.aceptar(String(req.body?.oferta ?? ""), prov.id));
 });
 // DocuSign Connect → contrato firmado

@@ -9,7 +9,8 @@ import path from "node:path";
 import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
 import * as ciclo from "../ciclo-trabajo.js";
-import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal } from "../proveedores.js";
+import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe } from "../proveedores.js";
+import { DEMO_ID } from "../demo-plomero.js";
 import { leerHistorial, archivar } from "../historial.js";
 import { abrirGarantia, vigenciaGarantia } from "../garantias.js";
 import { enviarTexto, avisarCoordinador } from "../canales/whatsapp.js";
@@ -49,7 +50,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><b>resuelto<i>.</i></b>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><b>resuelto<i>.</i></b>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}<main>${cuerpo}</main>
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -205,6 +206,7 @@ portal.get("/portal/plomeros", requerir(), (req, res) => {
   res.type("html").send(pagina("Plomeros", yo, "plomeros", `<h1>Plomeros</h1><p class="sub">${ps.filter((p) => p.estado === "activo").length} activos · ${ps.length} en total</p>
 <h2>Dar de alta un plomero (contratado y firmado)</h2><div class="card"><div class="g2"><div><label>Nombre completo</label><input id="n" placeholder="Luis Rivera"></div><div><label>WhatsApp</label><input id="w" placeholder="787-555-0123"></div><div><label>Municipio</label><input id="m" placeholder="Bayamón"></div><div><label>Licencia (nivel y número)</label><input id="l" placeholder="maestro 12345"></div></div>
 <p style="margin-top:12px"><button class="btn" onclick="var v=i=>document.getElementById(i).value.trim();if(!v('n')||!v('w')||!v('m')){alert('Faltan nombre, WhatsApp o municipio');return}post('/portal/plomeros',{nombre:v('n'),whatsapp:v('w'),municipio:v('m'),licencia:v('l')},'Plomero activo. Le enviamos su app por WhatsApp.')">Dar de alta y enviarle su app</button></p></div>
+<div class="card row"><div style="flex:1"><b>¿Cómo lo ve el plomero?</b><div class="muted">La misma app que usan ellos, con trabajos de EJEMPLO: aceptar, "No puedo", en camino, llegué, fotos y terminé. No toca nada real.</div></div><a class="btn l" href="${e(linkPortal(DEMO_ID, config.urlPublica))}" target="_blank">Abrir la app de prueba</a></div>
 <div class="card"><table><tr><th>Plomero</th><th>Zona</th><th>Estado</th><th>Trabajos</th><th>Esta semana</th></tr>${filas || '<tr><td colspan="5" class="muted">Todavía no hay plomeros.</td></tr>'}</table></div>`));
 });
 portal.post("/portal/plomeros", requerir(), express.json(), async (req, res) => {
@@ -227,6 +229,52 @@ portal.get("/portal/plomeros/:id", requerir(), (req, res) => {
 });
 portal.post("/portal/plomeros/:id/estado", requerir(), express.json(), (req, res) => { const s = String(req.body?.estado ?? ""); if (!["activo", "pausado"].includes(s)) return res.json({ ok: false }); res.json({ ok: !!cambiarEstadoPlomero(req.params.id, s as any) }); });
 portal.post("/portal/plomeros/:id/reenviar", requerir(), async (req, res) => { const p = plomeros().find((x) => x.id === req.params.id); if (!p) return res.json({ ok: false }); const ok = await enviarTexto(p.whatsapp, bienvenida(p.nombre, linkPortal(p.id, config.urlPublica))).then(() => true).catch(() => false); res.json({ ok, motivo: ok ? undefined : "WhatsApp no lo entregó (¿fuera de la ventana de 24 h?). Copia el link y mándaselo tú." }); });
+
+// ── Vacantes (candidatos a plomero; lo lleva Yaileen) ──
+const ESTADO_CAND: Record<string, string> = { nuevo: "Nuevo", verificando: "Verificando", entrevista: "Entrevista", prueba: "Prueba", activo: "Activo", descartado: "Descartado", "lista-espera": "Lista de espera" };
+portal.get("/portal/vacantes", requerir(), (req, res) => {
+  const yo = (req as any).yo; const q = norm(req.query.q); const est = String(req.query.estado ?? "");
+  const cs = almacen.candidatos().filter((c) => (!est || c.estado === est) && (!q || norm([c.nombre, c.municipio, c.whatsapp, c.nivelLicencia, c.oficio].join(" ")).includes(q))).sort((a, b) => b.creado.localeCompare(a.creado));
+  const cuenta = (k: string) => almacen.candidatos().filter((c) => c.estado === k).length;
+  const filtros = Object.entries(ESTADO_CAND).map(([k, t]) => `<a class="tag ${est === k ? "info" : ""}" href="/portal/vacantes?estado=${k}">${t} · ${cuenta(k)}</a>`).join(" ");
+  const filas = cs.map((c) => `<tr class="click" onclick="location='/portal/clientes/${u(c.contactoId)}'"><td><b>${e(c.nombre)}</b><div class="muted">${e(c.whatsapp)}</div></td><td>${e(c.oficio ?? "plomero")} · ${e(c.nivelLicencia)}${c.numeroLicencia ? " #" + e(c.numeroLicencia) : ""}<div class="muted">${e(c.experiencia ?? "")}</div></td><td>${e(c.municipio)}<div class="muted">${e(territorioDe(c.municipio) ?? "fuera de zona")}</div></td><td>${e(c.disponibilidad)}</td><td><span class="tag">${e(ESTADO_CAND[c.estado] ?? c.estado)}</span>${c.entrevista ? `<div class="muted">entrevista ${f(c.entrevista)}</div>` : ""}</td><td>${fd(c.creado)}</td></tr>`).join("");
+  res.type("html").send(pagina("Vacantes", yo, "vacantes", `<h1>Vacantes · candidatos</h1><p class="sub">Plomeros y oficios que aplicaron. Reclutamiento lo lleva Yaileen; las entrevistas están en el calendario de GHL.</p>
+<form class="card row"><input name="q" value="${e(req.query.q ?? "")}" placeholder="Nombre, pueblo, teléfono, licencia" style="flex:1"><button class="btn">Buscar</button><a class="btn l" href="/portal/vacantes">Todos</a></form><p style="margin:0 0 12px">${filtros}</p>
+<div class="card"><table><tr><th>Candidato</th><th>Oficio · licencia</th><th>Pueblo</th><th>Disponibilidad</th><th>Estado</th><th>Aplicó</th></tr>${filas || '<tr><td colspan="6" class="muted">No hay candidatos con ese filtro.</td></tr>'}</table></div>`));
+});
+
+// ── Contratistas (División Proyectos) ──
+portal.get("/portal/contratistas", requerir(), (req, res) => {
+  const yo = (req as any).yo; const cs = almacen.contratistas().sort((a, b) => a.nombre.localeCompare(b.nombre));
+  const filas = cs.map((c) => `<tr class="click" onclick="location='/portal/clientes/${u(c.contactoId)}'"><td><b>${e(c.nombre)}</b><div class="muted">${e(c.empresa ?? "")} · ${e(c.whatsapp)}</div></td><td>${e(c.categorias.join(", "))}</td><td>${e(c.zonas.join(", "))}</td><td>${e(c.registroDaco ? "DACO " + c.registroDaco : "sin DACO")}<div class="muted">${e(c.seguro ? "seguro: " + c.seguro : "sin seguro anotado")}</div></td><td><span class="tag ${c.estado === "verified" || c.estado === "preferido" ? "ok" : c.estado === "descartado" ? "mute" : ""}">${e(c.estado)}</span></td></tr>`).join("");
+  res.type("html").send(pagina("Contratistas", yo, "contratistas", `<h1>Contratistas</h1><p class="sub">División Proyectos (remodelaciones). Solo los "verified" o "preferido" reciben proyectos.</p>
+<div class="card"><table><tr><th>Contratista</th><th>Categorías</th><th>Zonas</th><th>DACO · seguro</th><th>Estado</th></tr>${filas || '<tr><td colspan="5" class="muted">Todavía no hay contratistas.</td></tr>'}</table></div>`));
+});
+
+// ── Áreas (territorios: dónde hay plomero, trabajos y demanda en espera) ──
+portal.get("/portal/areas", requerir(), (req, res) => {
+  const yo = (req as any).yo; const ps = plomeros(); const ts = almacen.trabajos(); const espera = almacen.listaEspera(); const cands = almacen.candidatos();
+  const mes = new Date().toISOString().slice(0, 7);
+  const filas = territorios.territorios.map((t) => {
+    const activos = ps.filter((p) => p.estado === "activo" && p.territorios.includes(t.id));
+    const tsT = ts.filter((x) => territorioDe(x.municipio) === t.id && x.estado !== "cancelado");
+    const esp = espera.filter((x) => territorioDe(x.municipio) === t.id).length;
+    const cand = cands.filter((c) => territorioDe(c.municipio) === t.id && !["descartado", "activo"].includes(c.estado)).length;
+    return `<tr><td><b>${e(t.id)} · ${e(t.nombre)}</b><div class="muted">${e(t.municipios.join(", "))}</div></td><td>${activos.length ? activos.map((p) => `<a href="/portal/plomeros/${u(p.id)}">${e(p.nombre)}</a>`).join("<br>") : '<span class="tag warn">sin plomero</span>'}</td><td>${tsT.filter((x) => x.creado.startsWith(mes)).length} este mes<div class="muted">${tsT.length} en total</div></td><td>${esp}</td><td>${cand}</td></tr>`;
+  }).join("");
+  res.type("html").send(pagina("Áreas", yo, "areas", `<h1>Áreas</h1><p class="sub">Los 8 territorios. Donde hay plomero activo, el agente agenda y salen anuncios; donde no, el cliente queda en lista de espera.</p>
+<div class="card"><table><tr><th>Territorio · pueblos</th><th>Plomeros activos</th><th>Trabajos</th><th>Clientes en espera</th><th>Candidatos en proceso</th></tr>${filas}</table></div>`));
+});
+
+// ── Enlaces: todo lo que se usa, en un solo sitio ──
+portal.get("/portal/enlaces", requerir(), (req, res) => {
+  const yo = (req as any).yo; const b = config.urlPublica;
+  const li = (t: string, url: string, d: string) => `<tr><td><b>${t}</b><div class="muted">${d}</div></td><td><a href="${e(url)}" target="_blank" style="word-break:break-all">${e(url)}</a></td></tr>`;
+  res.type("html").send(pagina("Enlaces", yo, "enlaces", `<h1>Enlaces</h1><p class="sub">Lo que ve cada quien.</p>
+<h2>Clientes</h2><div class="card"><table>${li("Página de reserva", b + "/reservar", "El cliente escoge servicio, pueblo, día y hora, y reserva solo. Sin pago por ahora.")}${li("Web de Resuelto", "https://resueltopr.com", "La página pública.")}</table></div>
+<h2>Plomeros</h2><div class="card"><table>${li("App del plomero (PRUEBA)", linkPortal(DEMO_ID, b), "Trabajos de ejemplo: así aceptan, rechazan y cierran. No toca nada real.")}${li("Kit de bienvenida", b + "/kit/kit-bienvenida-resuelto.pdf", "Lo que recibe cada plomero al firmar.")}${li("Acuerdo del plomero", b + "/kit/acuerdo-resuelto.pdf", "Contrato de afiliación.")}</table><p class="muted" style="margin-top:8px">El link de cada plomero real está en su ficha (Plomeros → nombre).</p></div>
+<h2>Equipo</h2><div class="card"><table>${li("Firmas electrónicas", b + "/equipo-firmas", "Contratos por firmar y firmados (tiene su propia clave).")}${li("Menú de precios interno", b + "/kit/menu-precios-interno-r7q4.pdf", "Precios, guion de llamada y objeciones.")}${li("SOP de la setter", b + "/kit/sop-setter-k3m8.pdf", "Cómo trabaja la setter de clientes.")}${li("Acuerdo de la setter", b + "/kit/acuerdo-setter-p5w2.pdf", "Contratista independiente, comisión.")}</table></div>`));
+});
 
 // ── Equipo (solo admin) ──
 portal.get("/portal/equipo", requerir("admin"), (req, res) => {
