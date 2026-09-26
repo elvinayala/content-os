@@ -549,6 +549,16 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   `TIMELINES_TOKEN_LU|AIB`). **Un solo lead abierto por teléfono y marca** (índice único parcial): dos
   mensajes seguidos no duplican. Conectar: `node scripts/leads-timelines.mjs cuentas|webhooks|conectar lu`.
   Tabla `leads_whatsapp` = qué número alimenta qué embudo y dueño (sin fila → embudo "WhatsApp").
+- **Embudos = copia EXACTA de los 11 de Pipedrive LU** (27/sep, `SEMILLA.level_up`, mismos nombres/etapas, por
+  uso): WHATSAPP (entra por Timelines), LUM CLASS DIEGO / FRANKIE / VALENTINA CONTRERAS / CF CLASS (entraban por
+  **Zapier**), CLOSERS (Calendly), LUM DIAGNÓSTICO DE CRECIMIENTO (quiz), y sin uso: LUM DELIVERY, WHATSAPP NEW
+  LUM, Bori · Seguimiento, SHADOW. Búsqueda de embudo/etapa por nombre tolerante (`clave()`).
+- **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
+  LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
+- **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
+  Roger Arteaga, Laura Bernal, Joaquín La Valle (closers), Nahuel Tissera (director comercial), Ana Cecilio y
+  Dilan Torres (chatters); Aure (editor). Santiago Villarreal ya no está. Se les da la clave con el link de
+  acceso de Ritmo + `&d=leads` (`linkDeAcceso`, 72 h) → crean su clave y caen en /pulse/leads.
 - **Semana 2 (en paralelo con Pipedrive)**, `lib/leads/cables.ts`: Calendly de LU → embudo Closers
   (agendó/reagendó/canceló; onboarding = GANADO) y quiz de LU → "Diagnóstico de Crecimiento" (el quiz nunca
   mueve a un lead que ya existe). AIB y el resto de escritores de Pipedrive (prospección, fábrica de demos,
