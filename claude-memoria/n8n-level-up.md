@@ -49,3 +49,12 @@ proveedor dejó el trigger APAGADO → encendido 24/sep) · día 10 y 30 encuest
 `scripts/n8n-felicitaciones.mjs`, 4:20 PM, REAL; 35 veteranos sembrados felicitaciones=200 sin mensaje por
 decisión de Elvin "solo los nuevos"). NO existen días 20/45/60 al cliente (Elvin pidió solo arreglar, no crearlos
 todavía). El agente v5 ignora respuestas automáticas (nodo es-respuesta-automatica?, 24/sep).
+
+**Cacería de bugs (26/sep/2026, OK de Elvin):** alertas de WhatsApp caído/token Meta iban a Luis (+57 322…,
+<@U09319W4118>) → ahora Elvin+Carilin; el token de Meta de n8n es del usuario de sistema "Agente Monitoreo"
+(credencial "Levelito Acoount management"), revisado a diario por get campaign1. Pendiente de Elvin: ROTAR el
+client_secret de la app Meta 907230552045448 (Luis lo tuvo). Los DMs a "agenteia" (U096Y3TRT5E, nadie la lee)
+→ Elvin (U08U9777PUY). **B-) V3 = motor de reportes (15 y fin de mes) vía "A-) Trigger v1"; sin
+fecha-inicio-campaña no hay reporte** — 40 fechas recuperadas; el puente ahora busca la fecha si falta.
+Apagados: citas v4, My workflow, Webhooks central v1/v2, Publicador devflow, C.1 monitoreo julio.
+Sin acceso del system user: Marian Parra, Joy Rivera, Isamar Tirado (+7 que ni el token del dueño ve).
