@@ -176,23 +176,32 @@ const tel = String((f && f.telefono) || '').replace(/\\D/g, '');
 const s = $getWorkflowStaticData('global').v2;
 if (!f || tel.length < 10) { s.enviados[p.i] = { saltado: true, motivo: 'sin teléfono en NocoDB', el: new Date().toISOString() }; return []; }
 return [{ json: { ...p, telefono: tel.length === 10 ? '1' + tel : tel } }];` }, [780, 0]),
+    nodo("¿Ya se le mandó?", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "SELECT count(*)::int AS n FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%1,000 puntos%';", options: { queryReplacement: "={{ [$json.telefono + '@s.whatsapp.net'] }}" } }, [900, 0], { credentials: { postgres: CRED_PG }, alwaysOutputData: true }),
+    nodo("Solo si es nuevo", "n8n-nodes-base.code", 2, { jsCode: `// Segunda llave, en la base (no depende de staticData): una vez que salió, nunca más.
+const p = $('Teléfono').first().json;
+const s = $getWorkflowStaticData('global').v2;
+if (Number(($json && $json.n) || 0) > 0) { s.enviados[p.i] = { ok: true, nombre: p.nombre, yaEstaba: true, el: new Date().toISOString() }; return []; }
+return [{ json: p }];` }, [960, 0]),
     nodo("Enviar WhatsApp", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: "={{ $json.texto }}", options_message: {} }, [1040, 0], { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
-    nodo("Registrar", "n8n-nodes-base.code", 2, { jsCode: `const p = $('Teléfono').first().json;
+    nodo("Registrar", "n8n-nodes-base.code", 2, { jsCode: `// OJO: n8n solo guarda staticData si la corrida termina bien → aquí NUNCA se lanza error (26/sep: un throw
+// hizo que el "enviado" no se guardara y se reenviara cada 10 min).
+const p = $('Teléfono').first().json;
 const r = $json || {};
 const s = $getWorkflowStaticData('global').v2;
-const ok = !!(r.key && r.key.id);
+const key = (r.data && r.data.key) || r.key;
+const ok = !!(key && key.id);
+s.ultimo = Date.now();
 if (!ok) {
   s.pausado = true;
   s.enviados[p.i] = { fallo: true, el: new Date().toISOString() };
-  throw new Error('Referidos veteranos: falló el envío a ' + p.nombre + ' — campaña PAUSADA. Revisar el WhatsApp de Level Up (Evolution) antes de reanudar.');
+  return [{ json: { fallo: true, nombre: p.nombre } }];
 }
 s.enviados[p.i] = { ok: true, nombre: p.nombre, el: new Date().toISOString() };
-s.ultimo = Date.now();
 return [{ json: { sessionId: p.telefono + '@s.whatsapp.net', mensaje: JSON.stringify({ type: 'ai', content: p.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }), nombre: p.nombre, enviados: Object.values(s.enviados).filter((e) => e.ok).length } }];` }, [1300, 0]),
     nodo("Memoria del agente", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);", options: { queryReplacement: "={{ [$json.sessionId, $json.mensaje] }}" } }, [1560, 0], { credentials: { postgres: CRED_PG }, onError: "continueRegularOutput" }),
   ];
   const c = (a, b) => ({ [a]: { main: [[{ node: b, type: "main", index: 0 }]] } });
-  const connections = { ...c("Cada 10 min", "¿A quién le toca?"), ...c("¿A quién le toca?", "Cliente en NocoDB"), ...c("Cliente en NocoDB", "Teléfono"), ...c("Teléfono", "Enviar WhatsApp"), ...c("Enviar WhatsApp", "Registrar"), ...c("Registrar", "Memoria del agente") };
+  const connections = { ...c("Cada 10 min", "¿A quién le toca?"), ...c("¿A quién le toca?", "Cliente en NocoDB"), ...c("Cliente en NocoDB", "Teléfono"), ...c("Teléfono", "¿Ya se le mandó?"), ...c("¿Ya se le mandó?", "Solo si es nuevo"), ...c("Solo si es nuevo", "Enviar WhatsApp"), ...c("Enviar WhatsApp", "Registrar"), ...c("Registrar", "Memoria del agente") };
   return { name: NOMBRE_WF, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW, timezone: "America/Puerto_Rico" } };
 }
 

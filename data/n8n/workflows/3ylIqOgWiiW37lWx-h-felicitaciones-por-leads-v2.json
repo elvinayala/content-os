@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-25T11:49:17.158Z",
+  "updatedAt": "2026-09-26T17:51:06.250Z",
   "createdAt": "2026-09-25T03:59:53.152Z",
   "id": "3ylIqOgWiiW37lWx",
   "name": "H-) Felicitaciones por leads v2",
@@ -352,6 +352,63 @@
       }
     },
     {
+      "id": "f--ya-se-le-mand-",
+      "name": "¿Ya se le mandó?",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1560,
+        -400
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;",
+        "options": {
+          "queryReplacement": "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      }
+    },
+    {
+      "id": "f--nuevo-",
+      "name": "¿Nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        -200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ Number($json.n) === 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
       "id": "f--100-o-200-",
       "name": "¿100 o 200?",
       "type": "n8n-nodes-base.if",
@@ -370,7 +427,7 @@
           },
           "conditions": [
             {
-              "id": "c3",
+              "id": "c4",
               "leftValue": "={{ $json.hito === 100 }}",
               "rightValue": "",
               "operator": {
@@ -482,7 +539,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const c = $('¿Envío real?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
+        "jsCode": "const c = $('¿Nuevo?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
       }
     },
     {
@@ -525,7 +582,7 @@
         "nodeCredentialType": "nocoDbApiToken",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify([{ Id: $('Lo que se mandó').item.json.id, felicitaciones: String($('Lo que se mandó').item.json.hito) }]) }}",
+        "jsonBody": "={{ JSON.stringify([{ Id: Number($json.id), felicitaciones: String($json.hito) }]) }}",
         "options": {}
       },
       "credentials": {
@@ -675,7 +732,7 @@
       "main": [
         [
           {
-            "node": "¿100 o 200?",
+            "node": "¿Ya se le mandó?",
             "type": "main",
             "index": 0
           }
@@ -683,6 +740,35 @@
         [
           {
             "node": "Resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ya se le mandó?": {
+      "main": [
+        [
+          {
+            "node": "¿Nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Nuevo?": {
+      "main": [
+        [
+          {
+            "node": "¿100 o 200?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Marcar en NocoDB",
             "type": "main",
             "index": 0
           }
@@ -747,13 +833,7 @@
             "node": "Memoria del agente",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Memoria del agente": {
-      "main": [
-        [
+          },
           {
             "node": "Marcar en NocoDB",
             "type": "main",
@@ -788,9 +868,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
-  "activeVersionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
-  "versionCounter": 22,
+  "versionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
+  "activeVersionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
+  "versionCounter": 28,
   "triggerCount": 2,
   "shared": [
     {
@@ -815,7 +895,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-25T04:00:39.197Z",
+              "updatedAt": "2026-09-26T12:00:41.359Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -843,7 +923,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-25",
+              "lastActiveAt": "2026-09-26",
               "isPending": false
             }
           }
@@ -853,9 +933,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-25T11:49:17.160Z",
-    "createdAt": "2026-09-25T11:49:17.160Z",
-    "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+    "updatedAt": "2026-09-26T17:51:06.254Z",
+    "createdAt": "2026-09-26T17:51:06.254Z",
+    "versionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
     "workflowId": "3ylIqOgWiiW37lWx",
     "nodes": [
       {
@@ -1203,6 +1283,63 @@
         }
       },
       {
+        "id": "f--ya-se-le-mand-",
+        "name": "¿Ya se le mandó?",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          1560,
+          -400
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;",
+          "options": {
+            "queryReplacement": "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "GGHKaTkcxaueFMNW",
+            "name": "PostgresLevelUpMedia"
+          }
+        }
+      },
+      {
+        "id": "f--nuevo-",
+        "name": "¿Nuevo?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1560,
+          -200
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c3",
+                "leftValue": "={{ Number($json.n) === 0 }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
         "id": "f--100-o-200-",
         "name": "¿100 o 200?",
         "type": "n8n-nodes-base.if",
@@ -1221,7 +1358,7 @@
             },
             "conditions": [
               {
-                "id": "c3",
+                "id": "c4",
                 "leftValue": "={{ $json.hito === 100 }}",
                 "rightValue": "",
                 "operator": {
@@ -1333,7 +1470,7 @@
         ],
         "parameters": {
           "mode": "runOnceForEachItem",
-          "jsCode": "const c = $('¿Envío real?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
+          "jsCode": "const c = $('¿Nuevo?').item.json;\nconst textos = c.hito === 100 ? [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 100 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\", \"Hola {nombre}, me alegra ver tus resultados 🔥 ¿Conoces a 2 empresarios o profesionales a quienes también podamos ayudar implementando este sistema? Si es así, envíame sus nombres y números por aquí y te sumamos al programa de referidos con 5% o hasta 1,000 puntos de recompensa por cada referido.  ¡Gracias por tu confianza y por ser parte de Level Up Media! 💪\".replace('{nombre}', c.primerNombre)] : [\"Buenas, nos complace felicitarte por haber alcanzado 🎉*MÁS DE 200 LEADS*🎉 generados por nuestra alianza. Esperamos de corazón seguir consiguiendo resultados grandes trabajando juntos.\"];\nreturn { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };"
         }
       },
       {
@@ -1376,7 +1513,7 @@
           "nodeCredentialType": "nocoDbApiToken",
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={{ JSON.stringify([{ Id: $('Lo que se mandó').item.json.id, felicitaciones: String($('Lo que se mandó').item.json.hito) }]) }}",
+          "jsonBody": "={{ JSON.stringify([{ Id: Number($json.id), felicitaciones: String($json.hito) }]) }}",
           "options": {}
         },
         "credentials": {
@@ -1526,7 +1663,7 @@
         "main": [
           [
             {
-              "node": "¿100 o 200?",
+              "node": "¿Ya se le mandó?",
               "type": "main",
               "index": 0
             }
@@ -1534,6 +1671,35 @@
           [
             {
               "node": "Resumen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Ya se le mandó?": {
+        "main": [
+          [
+            {
+              "node": "¿Nuevo?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Nuevo?": {
+        "main": [
+          [
+            {
+              "node": "¿100 o 200?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Marcar en NocoDB",
               "type": "main",
               "index": 0
             }
@@ -1598,13 +1764,7 @@
               "node": "Memoria del agente",
               "type": "main",
               "index": 0
-            }
-          ]
-        ]
-      },
-      "Memoria del agente": {
-        "main": [
-          [
+            },
             {
               "node": "Marcar en NocoDB",
               "type": "main",
@@ -1631,26 +1791,26 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-25T11:49:17.336Z",
-        "id": 259,
+        "createdAt": "2026-09-26T17:51:06.510Z",
+        "id": 269,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+        "versionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T11:49:17.658Z",
-        "id": 260,
+        "createdAt": "2026-09-26T17:51:06.817Z",
+        "id": 270,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+        "versionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
         "event": "deactivated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T11:49:17.989Z",
-        "id": 261,
+        "createdAt": "2026-09-26T17:51:07.106Z",
+        "id": 271,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "4a70e663-ad2a-4168-bf46-d0ff4117d601",
+        "versionId": "e65a7130-88b2-4620-8df8-9666fe2ff5a8",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

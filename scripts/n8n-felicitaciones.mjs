@@ -133,16 +133,21 @@ return out;` }, pos(5, 0)),
     nodo("Sembrados", "n8n-nodes-base.code", 2, { jsCode: "return [{ json: { sembrados: $('¿Sembrar?').all().filter((i) => i.json.sembrar && i.json.hito === 200).map((i) => i.json.nombre), total: $input.all().length } }];" }, pos(7, 2)),
     nodo("¿Envío real?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.real === true && $json.puedeEnviar === true }}")], combinator: "and" }, options: {} }, pos(6, 0)),
     // --- real
+    // Llave en la base (26/sep): la marca de NocoDB falló el 25/sep ("Multiple matches found") y al otro día
+    // se habría repetido. Si la memoria del agente ya tiene esta felicitación para ese número, no se manda: solo
+    // se marca. La consulta devuelve los datos del cliente en la misma fila (sin depender del emparejado de items).
+    nodo("¿Ya se le mandó?", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;", options: { queryReplacement: "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre] }}" } }, pos(6, -2), { credentials: { postgres: CRED_PG } }),
+    nodo("¿Nuevo?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ Number($json.n) === 0 }}")], combinator: "and" }, options: {} }, pos(6, -1)),
     nodo("¿100 o 200?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.hito === 100 }}")], combinator: "and" }, options: {} }, pos(7, -1)),
     nodo("Felicitación 100", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: TEXTO_100, options_message: {} }, pos(8, -2), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
     nodo("Esperar 1 min", "n8n-nodes-base.wait", 1.1, { amount: 1, unit: "minutes" }, pos(9, -2)),
     nodo("Referidos", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $('¿100 o 200?').item.json.telefono }}@s.whatsapp.net", messageText: `={{ ${JSON.stringify(TEXTO_REFERIDOS)}.replace('{nombre}', $('¿100 o 200?').item.json.primerNombre) }}`, options_message: {} }, pos(10, -2), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
     nodo("Felicitación 200", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: TEXTO_200, options_message: {} }, pos(8, -1), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
-    nodo("Lo que se mandó", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('¿Envío real?').item.json;
+    nodo("Lo que se mandó", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('¿Nuevo?').item.json;
 const textos = c.hito === 100 ? [${JSON.stringify(TEXTO_100)}, ${JSON.stringify(TEXTO_REFERIDOS)}.replace('{nombre}', c.primerNombre)] : [${JSON.stringify(TEXTO_200)}];
 return { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };` }, pos(11, -1)),
     nodo("Memoria del agente", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);", options: { queryReplacement: "={{ [$json.sessionId, JSON.stringify({ type: 'ai', content: $json.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} })] }}" } }, pos(12, -1), { credentials: { postgres: CRED_PG }, onError: "continueRegularOutput" }),
-    nodo("Marcar en NocoDB", "n8n-nodes-base.httpRequest", 4.2, { method: "PATCH", url: `${NOCODB}/tables/${T_CLIENTES}/records`, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", sendBody: true, specifyBody: "json", jsonBody: "={{ JSON.stringify([{ Id: $('Lo que se mandó').item.json.id, felicitaciones: String($('Lo que se mandó').item.json.hito) }]) }}", options: {} }, pos(13, -1), { credentials: { nocoDbApiToken: CRED_NOCODB }, ...ROBUSTO }),
+    nodo("Marcar en NocoDB", "n8n-nodes-base.httpRequest", 4.2, { method: "PATCH", url: `${NOCODB}/tables/${T_CLIENTES}/records`, authentication: "predefinedCredentialType", nodeCredentialType: "nocoDbApiToken", sendBody: true, specifyBody: "json", jsonBody: "={{ JSON.stringify([{ Id: Number($json.id), felicitaciones: String($json.hito) }]) }}", options: {} }, pos(13, -1), { credentials: { nocoDbApiToken: CRED_NOCODB }, ...ROBUSTO }),
     // --- simulación / nada que mandar
     nodo("Resumen", "n8n-nodes-base.code", 2, { jsCode: `// Lo que habría pasado hoy (o por qué no le toca a nadie).
 const filas = $input.all().map((i) => i.json);
@@ -159,7 +164,9 @@ return [{ json: {
     conectar("Todos los días 4:20 PM", "Modo programado", "Clientes (NocoDB)", "Candidatos", "Leads en Meta", "Decidir", "¿Sembrar?", "Sembrar en NocoDB", "Sembrados"),
     conectar(["¿Sembrar?", 1], "¿Envío real?"),
     conectar("Simulación (webhook)", "Modo simulación", "Clientes (NocoDB)"),
-    conectar("¿Envío real?", "¿100 o 200?", "Felicitación 100", "Esperar 1 min", "Referidos", "Lo que se mandó", "Memoria del agente", "Marcar en NocoDB"),
+    conectar("¿Envío real?", "¿Ya se le mandó?", "¿Nuevo?", "¿100 o 200?", "Felicitación 100", "Esperar 1 min", "Referidos", "Lo que se mandó", "Memoria del agente"),
+    conectar("Lo que se mandó", "Marcar en NocoDB"),
+    conectar(["¿Nuevo?", 1], "Marcar en NocoDB"),
     conectar(["¿100 o 200?", 1], "Felicitación 200", "Lo que se mandó"),
     conectar(["¿Envío real?", 1], "Resumen"),
   );

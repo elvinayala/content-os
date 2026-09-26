@@ -1,133 +1,14 @@
 {
-  "exportadoEl": "2026-09-25T17:37:53.240Z",
+  "exportadoEl": "2026-09-26T17:52:24.507Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 103,
   "workflows": [
     {
-      "id": "3DeJXvNmTFQ44FIF",
-      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
-      "activo": true,
-      "archivo": "3DeJXvNmTFQ44FIF-recordatorio60-90diastrabajandojuntos.json",
-      "actualizadoEl": "2026-09-21T14:19:29.638Z"
-    },
-    {
-      "id": "0mEMnsMxnuy3SGjh",
-      "nombre": "My Sub-Workflow 2",
-      "activo": true,
-      "archivo": "0mEMnsMxnuy3SGjh-my-sub-workflow-2.json",
-      "actualizadoEl": "2025-10-20T19:14:09.000Z"
-    },
-    {
-      "id": "KWSsCZWE3CLmT7Dj",
-      "nombre": "C-) Tools agente principal v1",
-      "activo": true,
-      "archivo": "KWSsCZWE3CLmT7Dj-c-tools-agente-principal-v1.json",
-      "actualizadoEl": "2026-05-27T19:04:10.720Z"
-    },
-    {
-      "id": "61jM0xZxj4LvFEtX",
-      "nombre": "C-) Creador de copy(s) v1 - devflow",
-      "activo": true,
-      "archivo": "61jM0xZxj4LvFEtX-c-creador-de-copy-s-v1-devflow.json",
-      "actualizadoEl": "2026-01-06T14:14:23.574Z"
-    },
-    {
-      "id": "LN08xR2hD3GGSEW8",
-      "nombre": "A-) Trigger v1.1 safe",
-      "activo": true,
-      "archivo": "LN08xR2hD3GGSEW8-a-trigger-v1-1-safe.json",
-      "actualizadoEl": "2026-09-22T01:56:08.562Z"
-    },
-    {
-      "id": "J6gK0AYy7Bbz4NC2",
-      "nombre": "C-) Herramienta - Procesar Vacaciones",
-      "activo": true,
-      "archivo": "J6gK0AYy7Bbz4NC2-c-herramienta-procesar-vacaciones.json",
-      "actualizadoEl": "2026-03-04T00:57:50.958Z"
-    },
-    {
-      "id": "Sb6dLyiZnMJtc6AC",
-      "nombre": "C-) Lógica envío de reportes v5",
-      "activo": true,
-      "archivo": "Sb6dLyiZnMJtc6AC-c-logica-envio-de-reportes-v5.json",
-      "actualizadoEl": "2026-09-22T01:56:09.137Z"
-    },
-    {
-      "id": "I8u1vHBsHTeF74nd",
-      "nombre": "I-) Envio de pdf de ciberseguridad v1",
-      "activo": true,
-      "archivo": "I8u1vHBsHTeF74nd-i-envio-de-pdf-de-ciberseguridad-v1.json",
-      "actualizadoEl": "2026-01-06T14:07:40.470Z"
-    },
-    {
-      "id": "7DRJJjTva38GSoGg",
-      "nombre": "J-) Envio de mensaje de bienvenida",
-      "activo": true,
-      "archivo": "7DRJJjTva38GSoGg-j-envio-de-mensaje-de-bienvenida.json",
-      "actualizadoEl": "2026-09-22T01:56:07.997Z"
-    },
-    {
-      "id": "fEOX9Q3Szkf6bLQq",
-      "nombre": "Notificación Error",
-      "activo": true,
-      "archivo": "fEOX9Q3Szkf6bLQq-notificacion-error.json",
-      "actualizadoEl": "2026-09-22T01:56:11.426Z"
-    },
-    {
-      "id": "OyXhxbche4d60nOW",
-      "nombre": "My Sub-Workflow 3",
-      "activo": true,
-      "archivo": "OyXhxbche4d60nOW-my-sub-workflow-3.json",
-      "actualizadoEl": "2025-10-27T21:51:06.000Z"
-    },
-    {
-      "id": "M7Gunj0t3umBrgjP",
-      "nombre": "D-) Escalar a elvin",
-      "activo": true,
-      "archivo": "M7Gunj0t3umBrgjP-d-escalar-a-elvin.json",
-      "actualizadoEl": "2026-03-04T00:56:24.802Z"
-    },
-    {
-      "id": "Z9LnpNMTFKRl3CIg",
-      "nombre": "C-) Alerta por falta de pago v1",
-      "activo": true,
-      "archivo": "Z9LnpNMTFKRl3CIg-c-alerta-por-falta-de-pago-v1.json",
-      "actualizadoEl": "2026-09-22T01:56:10.591Z"
-    },
-    {
-      "id": "UIOeMjnuHwMaMyoX",
-      "nombre": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
-      "activo": true,
-      "archivo": "UIOeMjnuHwMaMyoX-recordatorio-remarketing-menos-de-3-campanas-activas-15-dias.json",
-      "actualizadoEl": "2026-01-06T14:10:43.246Z"
-    },
-    {
-      "id": "Vaxl6v0kVZW9tIHN",
-      "nombre": "Create PDF",
-      "activo": true,
-      "archivo": "Vaxl6v0kVZW9tIHN-create-pdf.json",
-      "actualizadoEl": "2025-09-26T22:59:22.000Z"
-    },
-    {
-      "id": "GbGyPmnkEcf1Excz",
-      "nombre": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
-      "activo": true,
-      "archivo": "GbGyPmnkEcf1Excz-a-cita-de-onboarding-calendly-calendar-nocodb-v1.json",
-      "actualizadoEl": "2026-09-23T01:59:36.403Z"
-    },
-    {
-      "id": "ZhcAhenK4DTDHehN",
-      "nombre": "Generacion de tareas sub worflow",
-      "activo": true,
-      "archivo": "ZhcAhenK4DTDHehN-generacion-de-tareas-sub-worflow.json",
-      "actualizadoEl": "2026-01-06T13:55:53.545Z"
-    },
-    {
-      "id": "wsmfSEQa0GYGHqjA",
-      "nombre": "B-) Publicador de campañas v1 - devflow",
-      "activo": true,
-      "archivo": "wsmfSEQa0GYGHqjA-b-publicador-de-campanas-v1-devflow.json",
-      "actualizadoEl": "2026-09-22T01:56:12.897Z"
+      "id": "6eUUg47MueSRhizz",
+      "nombre": "v2 Agente de monitoreo - Levelito",
+      "activo": false,
+      "archivo": "6eUUg47MueSRhizz-v2-agente-de-monitoreo-levelito.json",
+      "actualizadoEl": "2026-01-06T14:11:09.653Z"
     },
     {
       "id": "rb5SOZw8rT5YXKg8",
@@ -137,543 +18,11 @@
       "actualizadoEl": "2026-09-25T03:48:31.387Z"
     },
     {
-      "id": "zHqLHcFFgClZuUK5",
-      "nombre": "E-) citas automaticas v4",
-      "activo": true,
-      "archivo": "zHqLHcFFgClZuUK5-e-citas-automaticas-v4.json",
-      "actualizadoEl": "2026-07-12T22:57:40.457Z"
-    },
-    {
-      "id": "gbjp6DIimQwwgYEt",
-      "nombre": "C-) Creador de copy(s) v1",
-      "activo": true,
-      "archivo": "gbjp6DIimQwwgYEt-c-creador-de-copy-s-v1.json",
-      "actualizadoEl": "2026-01-06T13:54:55.671Z"
-    },
-    {
-      "id": "g7mkm3TKkjQYpopk",
-      "nombre": "B-) Slack button logic v2",
-      "activo": true,
-      "archivo": "g7mkm3TKkjQYpopk-b-slack-button-logic-v2.json",
-      "actualizadoEl": "2026-01-07T14:29:38.167Z"
-    },
-    {
-      "id": "kyiZTRCdzolA5li5",
-      "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
-      "activo": true,
-      "archivo": "kyiZTRCdzolA5li5-c-1-agente-de-monitoreo-jul-11-at-01-24-33.json",
-      "actualizadoEl": "2025-07-14T08:36:08.000Z"
-    },
-    {
-      "id": "giPHQRGfr5d89t7J",
-      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
-      "activo": true,
-      "archivo": "giPHQRGfr5d89t7J-g-envio-de-pdf-de-educacion-v1-v3-1.json",
-      "actualizadoEl": "2026-09-25T03:57:34.601Z"
-    },
-    {
-      "id": "pNSgghJY7mLA9GnB",
-      "nombre": "BackUp Workflows",
-      "activo": true,
-      "archivo": "pNSgghJY7mLA9GnB-backup-workflows.json",
-      "actualizadoEl": "2026-01-06T13:55:39.096Z"
-    },
-    {
-      "id": "wqgZHdFtQ07PQg2q",
-      "nombre": "Gotenberg (Create PDF)",
-      "activo": true,
-      "archivo": "wqgZHdFtQ07PQg2q-gotenberg-create-pdf.json",
-      "actualizadoEl": "2025-09-26T22:35:35.000Z"
-    },
-    {
-      "id": "zzaIVNQVp7rkKyo0",
-      "nombre": "My Sub-Workflow 1",
-      "activo": true,
-      "archivo": "zzaIVNQVp7rkKyo0-my-sub-workflow-1.json",
-      "actualizadoEl": "2025-07-09T03:38:34.000Z"
-    },
-    {
-      "id": "RXMCAuLoLhZCE2Sv",
-      "nombre": "My workflow",
-      "activo": true,
-      "archivo": "RXMCAuLoLhZCE2Sv-my-workflow.json",
-      "actualizadoEl": "2026-07-31T01:53:53.882Z"
-    },
-    {
-      "id": "3ylIqOgWiiW37lWx",
-      "nombre": "H-) Felicitaciones por leads v2",
-      "activo": true,
-      "archivo": "3ylIqOgWiiW37lWx-h-felicitaciones-por-leads-v2.json",
-      "actualizadoEl": "2026-09-25T11:49:17.158Z"
-    },
-    {
-      "id": "rxlp9wxl9cHFefn9",
-      "nombre": "K-) Referidos veteranos (una vez, sep 2026)",
-      "activo": true,
-      "archivo": "rxlp9wxl9cHFefn9-k-referidos-veteranos-una-vez-sep-2026.json",
-      "actualizadoEl": "2026-09-25T17:37:26.578Z"
-    },
-    {
-      "id": "vvXRpzCDaYehJDYf",
-      "nombre": "E-) Alerta falta de fases v1",
-      "activo": true,
-      "archivo": "vvXRpzCDaYehJDYf-e-alerta-falta-de-fases-v1.json",
-      "actualizadoEl": "2026-01-06T15:04:47.551Z"
-    },
-    {
-      "id": "3NpTfPN4uQseNhq5",
-      "nombre": "BackUp Credential",
-      "activo": true,
-      "archivo": "3NpTfPN4uQseNhq5-backup-credential.json",
-      "actualizadoEl": "2026-01-22T16:22:31.240Z"
-    },
-    {
-      "id": "dsrJpJi1MTr4mCOZ",
-      "nombre": "F-) Alerta para fase 5",
-      "activo": true,
-      "archivo": "dsrJpJi1MTr4mCOZ-f-alerta-para-fase-5.json",
-      "actualizadoEl": "2026-04-15T20:47:02.932Z"
-    },
-    {
-      "id": "txUzpGmbiSu8Zc4J",
-      "nombre": "B-) Agente de Setting V5",
-      "activo": true,
-      "archivo": "txUzpGmbiSu8Zc4J-b-agente-de-setting-v5.json",
-      "actualizadoEl": "2026-06-20T15:02:47.257Z"
-    },
-    {
-      "id": "WiNvceWGgPIVlOF6",
-      "nombre": "D) Comprobante Pago",
-      "activo": true,
-      "archivo": "WiNvceWGgPIVlOF6-d-comprobante-pago.json",
-      "actualizadoEl": "2026-01-06T14:05:26.379Z"
-    },
-    {
-      "id": "GB0T58QINudPFtEZ",
-      "nombre": "D-) Tools encuestador v1",
-      "activo": true,
-      "archivo": "GB0T58QINudPFtEZ-d-tools-encuestador-v1.json",
-      "actualizadoEl": "2026-01-06T14:05:28.167Z"
-    },
-    {
-      "id": "HlYjwOCuSEKfTsSi",
-      "nombre": "A-) Agente de RH",
-      "activo": true,
-      "archivo": "HlYjwOCuSEKfTsSi-a-agente-de-rh.json",
-      "actualizadoEl": "2026-03-04T00:55:51.366Z"
-    },
-    {
-      "id": "MjQHPb1GpuYo55l9",
-      "nombre": "A-) Webhooks central v1",
-      "activo": true,
-      "archivo": "MjQHPb1GpuYo55l9-a-webhooks-central-v1.json",
-      "actualizadoEl": "2026-01-06T13:51:48.848Z"
-    },
-    {
-      "id": "eoGkQJiljDgVjFz1",
-      "nombre": "D-) Limpiador de minio",
-      "activo": true,
-      "archivo": "eoGkQJiljDgVjFz1-d-limpiador-de-minio.json",
-      "actualizadoEl": "2026-01-06T13:50:45.654Z"
-    },
-    {
-      "id": "WgDRwK7RgmzqezhK",
-      "nombre": "A-) Webhooks central v2 - devflow",
-      "activo": true,
-      "archivo": "WgDRwK7RgmzqezhK-a-webhooks-central-v2-devflow.json",
-      "actualizadoEl": "2026-01-07T08:19:02.426Z"
-    },
-    {
-      "id": "76PxSWzFembacRcK",
-      "nombre": "A-) Mensajes de bienestar",
-      "activo": true,
-      "archivo": "76PxSWzFembacRcK-a-mensajes-de-bienestar.json",
-      "actualizadoEl": "2026-01-22T16:29:37.413Z"
-    },
-    {
-      "id": "uelcZVSQvpl2hetY",
-      "nombre": "F-) Lector de seguimientos v1",
-      "activo": true,
-      "archivo": "uelcZVSQvpl2hetY-f-lector-de-seguimientos-v1.json",
-      "actualizadoEl": "2026-06-27T18:14:56.392Z"
-    },
-    {
-      "id": "oJvf4D4IELGNBQqo",
-      "nombre": "B-) Publicador de campañas v1",
-      "activo": true,
-      "archivo": "oJvf4D4IELGNBQqo-b-publicador-de-campanas-v1.json",
-      "actualizadoEl": "2026-09-22T01:56:12.198Z"
-    },
-    {
-      "id": "MLp39LO5jJmzk9Vp",
-      "nombre": "A) RevisionInstanciaEvoAPI",
-      "activo": true,
-      "archivo": "MLp39LO5jJmzk9Vp-a-revisioninstanciaevoapi.json",
-      "actualizadoEl": "2026-08-31T02:52:49.815Z"
-    },
-    {
-      "id": "qXDEK5MdK5Zpwpzr",
-      "nombre": "B-) Agente de monitoreo v3",
-      "activo": true,
-      "archivo": "qXDEK5MdK5Zpwpzr-b-agente-de-monitoreo-v3.json",
-      "actualizadoEl": "2026-09-21T00:54:46.363Z"
-    },
-    {
-      "id": "yltCftFKOPFbreUt",
-      "nombre": "B-) V3",
-      "activo": true,
-      "archivo": "yltCftFKOPFbreUt-b-v3.json",
-      "actualizadoEl": "2026-07-01T11:44:02.172Z"
-    },
-    {
-      "id": "pNMZF1Fb4r6yHfGk",
-      "nombre": "A-) Recibir webhook chatwoot v1",
-      "activo": true,
-      "archivo": "pNMZF1Fb4r6yHfGk-a-recibir-webhook-chatwoot-v1.json",
-      "actualizadoEl": "2026-03-18T14:11:50.118Z"
-    },
-    {
-      "id": "RyeQFDXnB429XG0Q",
-      "nombre": "A-) Sync Pulse → NocoDB v1",
-      "activo": true,
-      "archivo": "RyeQFDXnB429XG0Q-a-sync-pulse-nocodb-v1.json",
-      "actualizadoEl": "2026-09-21T02:16:03.361Z"
-    },
-    {
-      "id": "yQPhJCGiqwZqBS9X",
-      "nombre": "A-) Trigger v1",
-      "activo": true,
-      "archivo": "yQPhJCGiqwZqBS9X-a-trigger-v1.json",
-      "actualizadoEl": "2026-07-01T12:23:57.611Z"
-    },
-    {
-      "id": "g7hZaosZ24Dgifbg",
-      "nombre": "A-) Sync Pulse → NocoDB equipo v1",
-      "activo": true,
-      "archivo": "g7hZaosZ24Dgifbg-a-sync-pulse-nocodb-equipo-v1.json",
-      "actualizadoEl": "2026-09-21T14:19:27.799Z"
-    },
-    {
-      "id": "gYdcVTS1dmuZRp0W",
-      "nombre": "Agente Cobros",
-      "activo": true,
-      "archivo": "gYdcVTS1dmuZRp0W-agente-cobros.json",
-      "actualizadoEl": "2026-09-21T14:19:29.285Z"
-    },
-    {
-      "id": "HvMsL5j65etc7ZBq",
-      "nombre": "E-) Agente supervisor",
-      "activo": true,
-      "archivo": "HvMsL5j65etc7ZBq-e-agente-supervisor.json",
-      "actualizadoEl": "2026-09-21T14:19:29.992Z"
-    },
-    {
-      "id": "cEPWfieOs6tWBdWa",
-      "nombre": "prueba",
+      "id": "7TYGDiWlJY2jqHX9",
+      "nombre": "A) Resumen Reuniones",
       "activo": false,
-      "archivo": "cEPWfieOs6tWBdWa-prueba.json",
-      "actualizadoEl": "2026-03-25T12:59:11.463Z"
-    },
-    {
-      "id": "1TaG7dgh54hTcLRm",
-      "nombre": "graficos",
-      "activo": false,
-      "archivo": "1TaG7dgh54hTcLRm-graficos.json",
-      "actualizadoEl": "2026-06-27T00:39:40.653Z"
-    },
-    {
-      "id": "zXZLXX4WRFy87qNj",
-      "nombre": "Agente de onboarding v4 out-of-servide",
-      "activo": false,
-      "archivo": "zXZLXX4WRFy87qNj-agente-de-onboarding-v4-out-of-servide.json",
-      "actualizadoEl": "2026-01-06T14:05:17.482Z"
-    },
-    {
-      "id": "zQPgMRoWkmrca8f6",
-      "nombre": "B2.2) Agente Onboarding - Citas automaticas",
-      "activo": false,
-      "archivo": "zQPgMRoWkmrca8f6-b2-2-agente-onboarding-citas-automaticas.json",
-      "actualizadoEl": "2026-01-06T14:05:21.755Z"
-    },
-    {
-      "id": "zFQkFlCjCbZ9KMJk",
-      "nombre": "out-of-service B2.1) Agente Onboarding - Citas automaticas",
-      "activo": false,
-      "archivo": "zFQkFlCjCbZ9KMJk-out-of-service-b2-1-agente-onboarding-citas-automaticas.json",
-      "actualizadoEl": "2026-01-06T14:07:50.173Z"
-    },
-    {
-      "id": "yEQPJCDIUKy3VMek",
-      "nombre": "v2 Levelito - Agente de monitoreo",
-      "activo": false,
-      "archivo": "yEQPJCDIUKy3VMek-v2-levelito-agente-de-monitoreo.json",
-      "actualizadoEl": "2025-08-22T19:07:04.000Z"
-    },
-    {
-      "id": "xd0kQhY3YZO3b7hQ",
-      "nombre": "X-) Vacaciones Recursos Humanos",
-      "activo": false,
-      "archivo": "xd0kQhY3YZO3b7hQ-x-vacaciones-recursos-humanos.json",
-      "actualizadoEl": "2026-01-06T13:52:58.606Z"
-    },
-    {
-      "id": "rTRe0OKhXPAKrFzs",
-      "nombre": "H-) Felicitaciones a los 100 - 200 leads v1 (v3.1)",
-      "activo": false,
-      "archivo": "rTRe0OKhXPAKrFzs-h-felicitaciones-a-los-100-200-leads-v1-v3-1.json",
-      "actualizadoEl": "2026-01-06T14:05:41.971Z"
-    },
-    {
-      "id": "nWAzRYgLFuJi1kaG",
-      "nombre": "C) Agente Monitoreo de anuncios",
-      "activo": false,
-      "archivo": "nWAzRYgLFuJi1kaG-c-agente-monitoreo-de-anuncios.json",
-      "actualizadoEl": "2025-07-17T18:34:23.000Z"
-    },
-    {
-      "id": "mVYdARFPPkMyJXNn",
-      "nombre": "Subworkflows",
-      "activo": false,
-      "archivo": "mVYdARFPPkMyJXNn-subworkflows.json",
-      "actualizadoEl": "2026-01-06T14:11:33.825Z"
-    },
-    {
-      "id": "lb3at6DIzuJqs1V8",
-      "nombre": "C) 1.2 Levelito MetricMan - Agente de monitoreo",
-      "activo": false,
-      "archivo": "lb3at6DIzuJqs1V8-c-1-2-levelito-metricman-agente-de-monitoreo.json",
-      "actualizadoEl": "2026-01-06T14:10:25.717Z"
-    },
-    {
-      "id": "ktzh4xweoJzWmWQD",
-      "nombre": "V1",
-      "activo": false,
-      "archivo": "ktzh4xweoJzWmWQD-v1.json",
-      "actualizadoEl": "2026-01-06T14:11:35.427Z"
-    },
-    {
-      "id": "jOgVxxtD2fJQeOgg",
-      "nombre": "Seguimiento tareas",
-      "activo": false,
-      "archivo": "jOgVxxtD2fJQeOgg-seguimiento-tareas.json",
-      "actualizadoEl": "2026-01-06T13:55:49.879Z"
-    },
-    {
-      "id": "jMW6wVpeUyPBG6Pm",
-      "nombre": "monitoreo",
-      "activo": false,
-      "archivo": "jMW6wVpeUyPBG6Pm-monitoreo.json",
-      "actualizadoEl": "2025-10-30T12:54:17.000Z"
-    },
-    {
-      "id": "gLB0tPkVHaZBZ7tI",
-      "nombre": "V3",
-      "activo": false,
-      "archivo": "gLB0tPkVHaZBZ7tI-v3.json",
-      "actualizadoEl": "2026-01-06T14:11:40.521Z"
-    },
-    {
-      "id": "fkc5VuZtjx2NUCvZ",
-      "nombre": "B1) Agente Onboarding - Validacion en excel",
-      "activo": false,
-      "archivo": "fkc5VuZtjx2NUCvZ-b1-agente-onboarding-validacion-en-excel.json",
-      "actualizadoEl": "2026-01-06T14:07:52.140Z"
-    },
-    {
-      "id": "ez1JVuJ11RaOQA3X",
-      "nombre": "X-) Agente RH",
-      "activo": false,
-      "archivo": "ez1JVuJ11RaOQA3X-x-agente-rh.json",
-      "actualizadoEl": "2026-07-31T02:10:53.297Z"
-    },
-    {
-      "id": "eXipGv9n5GSHMCag",
-      "nombre": "C) 1.1 Levelito MetricMan - Agente de monitoreo",
-      "activo": false,
-      "archivo": "eXipGv9n5GSHMCag-c-1-1-levelito-metricman-agente-de-monitoreo.json",
-      "actualizadoEl": "2026-01-06T14:10:23.087Z"
-    },
-    {
-      "id": "eWSMgXi9uW3E9gCy",
-      "nombre": "P-) Mantenimiento de desfase en los estrategas",
-      "activo": false,
-      "archivo": "eWSMgXi9uW3E9gCy-p-mantenimiento-de-desfase-en-los-estrategas.json",
-      "actualizadoEl": "2026-01-07T21:11:38.027Z"
-    },
-    {
-      "id": "eAz3TdAqZ9k3oLgQ",
-      "nombre": "F-) Mensaje de bienvenida onboarding",
-      "activo": false,
-      "archivo": "eAz3TdAqZ9k3oLgQ-f-mensaje-de-bienvenida-onboarding.json",
-      "actualizadoEl": "2025-11-28T21:09:19.000Z"
-    },
-    {
-      "id": "bs9GFWlptCe1lLBj",
-      "nombre": "out-of-service Agente Onboarding - Citas automaticas",
-      "activo": false,
-      "archivo": "bs9GFWlptCe1lLBj-out-of-service-agente-onboarding-citas-automaticas.json",
-      "actualizadoEl": "2026-01-06T14:07:48.304Z"
-    },
-    {
-      "id": "bO5n8pQI57Al2cgG",
-      "nombre": "Birthday copy",
-      "activo": false,
-      "archivo": "bO5n8pQI57Al2cgG-birthday-copy.json",
-      "actualizadoEl": "2025-10-13T13:48:40.000Z"
-    },
-    {
-      "id": "aZADKypvqlgg9xMh",
-      "nombre": "Actualizar correctamente chatwoot",
-      "activo": false,
-      "archivo": "aZADKypvqlgg9xMh-actualizar-correctamente-chatwoot.json",
-      "actualizadoEl": "2026-01-06T13:54:22.699Z"
-    },
-    {
-      "id": "a5FgDWKAfmqv40PM",
-      "nombre": "D-) Limpiador de minio - devflow",
-      "activo": false,
-      "archivo": "a5FgDWKAfmqv40PM-d-limpiador-de-minio-devflow.json",
-      "actualizadoEl": "2026-01-06T15:42:51.468Z"
-    },
-    {
-      "id": "Uk4m1c65HaC2MfFK",
-      "nombre": "Detectar workflows",
-      "activo": false,
-      "archivo": "Uk4m1c65HaC2MfFK-detectar-workflows.json",
-      "actualizadoEl": "2025-12-10T12:43:32.000Z"
-    },
-    {
-      "id": "TTciRCAqlCYC4QpA",
-      "nombre": "B-) Birthday",
-      "activo": false,
-      "archivo": "TTciRCAqlCYC4QpA-b-birthday.json",
-      "actualizadoEl": "2026-01-06T14:08:38.929Z"
-    },
-    {
-      "id": "TAtsmX9ozs2mPvCe",
-      "nombre": "B) Agente Onboarding - Orquestador v2 alexVersion",
-      "activo": false,
-      "archivo": "TAtsmX9ozs2mPvCe-b-agente-onboarding-orquestador-v2-alexversion.json",
-      "actualizadoEl": "2026-01-06T14:05:20.053Z"
-    },
-    {
-      "id": "T1t4OYwVW7QTJ1ml",
-      "nombre": "Get Campaigns",
-      "activo": false,
-      "archivo": "T1t4OYwVW7QTJ1ml-get-campaigns.json",
-      "actualizadoEl": "2026-01-06T14:11:32.020Z"
-    },
-    {
-      "id": "S0or6AyoMq9KszB3",
-      "nombre": "D-) Actualización fecha primera campaña",
-      "activo": false,
-      "archivo": "S0or6AyoMq9KszB3-d-actualizacion-fecha-primera-campana.json",
-      "actualizadoEl": "2026-01-06T14:10:35.115Z"
-    },
-    {
-      "id": "NyEQfFh6Lz0TBJ0E",
-      "nombre": "X-) page_id ig_id - tests",
-      "activo": false,
-      "archivo": "NyEQfFh6Lz0TBJ0E-x-page-id-ig-id-tests.json",
-      "actualizadoEl": "2026-01-06T13:54:53.556Z"
-    },
-    {
-      "id": "Lkb4xQg9G0y16FOj",
-      "nombre": "V2 poco eficiente",
-      "activo": false,
-      "archivo": "Lkb4xQg9G0y16FOj-v2-poco-eficiente.json",
-      "actualizadoEl": "2026-01-06T14:11:37.240Z"
-    },
-    {
-      "id": "LWZ3ILy8CzZFj9fO",
-      "nombre": "A-) Migracion de datos de monday v5 copy",
-      "activo": false,
-      "archivo": "LWZ3ILy8CzZFj9fO-a-migracion-de-datos-de-monday-v5-copy.json",
-      "actualizadoEl": "2025-11-18T15:20:45.000Z"
-    },
-    {
-      "id": "L51yWcEJXkSrloeK",
-      "nombre": "A-) Enviar noticias al canal",
-      "activo": false,
-      "archivo": "L51yWcEJXkSrloeK-a-enviar-noticias-al-canal.json",
-      "actualizadoEl": "2026-01-07T03:38:22.340Z"
-    },
-    {
-      "id": "L1OI3ULrh2yXJqP3",
-      "nombre": "V3 backUP",
-      "activo": false,
-      "archivo": "L1OI3ULrh2yXJqP3-v3-backup.json",
-      "actualizadoEl": "2026-01-06T14:11:43.940Z"
-    },
-    {
-      "id": "K73epIq7mbOTPL1t",
-      "nombre": "A-) Migracion de datos de monday v5",
-      "activo": false,
-      "archivo": "K73epIq7mbOTPL1t-a-migracion-de-datos-de-monday-v5.json",
-      "actualizadoEl": "2026-04-10T18:35:43.663Z"
-    },
-    {
-      "id": "HkjdzsysScaeszpR",
-      "nombre": "Reminder Tasks",
-      "activo": false,
-      "archivo": "HkjdzsysScaeszpR-reminder-tasks.json",
-      "actualizadoEl": "2025-07-03T04:19:03.000Z"
-    },
-    {
-      "id": "HPJYdfjD28yw5u4t",
-      "nombre": "E-) Notificacion  Personas Infracción",
-      "activo": false,
-      "archivo": "HPJYdfjD28yw5u4t-e-notificacion-personas-infraccion.json",
-      "actualizadoEl": "2026-01-06T13:52:44.278Z"
-    },
-    {
-      "id": "GeQUkgLSTCQYmWjP",
-      "nombre": "Encuestador",
-      "activo": false,
-      "archivo": "GeQUkgLSTCQYmWjP-encuestador.json",
-      "actualizadoEl": "2025-09-06T14:44:09.000Z"
-    },
-    {
-      "id": "Eo6BrnFxtLDXSEo0",
-      "nombre": "V3 copy john",
-      "activo": false,
-      "archivo": "Eo6BrnFxtLDXSEo0-v3-copy-john.json",
-      "actualizadoEl": "2026-01-06T14:11:46.402Z"
-    },
-    {
-      "id": "EEE1FGzB76wwEsyx",
-      "nombre": "Agente IA Area Onboarding",
-      "activo": false,
-      "archivo": "EEE1FGzB76wwEsyx-agente-ia-area-onboarding.json",
-      "actualizadoEl": "2025-07-06T22:21:28.000Z"
-    },
-    {
-      "id": "C42vSaciGbLjE3vI",
-      "nombre": "v3 Agente de monitoreo - Levelito",
-      "activo": false,
-      "archivo": "C42vSaciGbLjE3vI-v3-agente-de-monitoreo-levelito.json",
-      "actualizadoEl": "2025-09-11T21:06:54.000Z"
-    },
-    {
-      "id": "At91U3Emd50tyaVh",
-      "nombre": "Verificacion de meta - app demo",
-      "activo": false,
-      "archivo": "At91U3Emd50tyaVh-verificacion-de-meta-app-demo.json",
-      "actualizadoEl": "2026-01-06T13:55:31.733Z"
-    },
-    {
-      "id": "9MqLiz6lfEKcErPP",
-      "nombre": "X-) Agente RH Backup",
-      "activo": false,
-      "archivo": "9MqLiz6lfEKcErPP-x-agente-rh-backup.json",
-      "actualizadoEl": "2026-01-06T13:53:06.634Z"
-    },
-    {
-      "id": "8Af1xIlR1QJzIP6L",
-      "nombre": "C-) actualizacion diaria de estratega",
-      "activo": false,
-      "archivo": "8Af1xIlR1QJzIP6L-c-actualizacion-diaria-de-estratega.json",
-      "actualizadoEl": "2026-09-21T00:54:42.707Z"
+      "archivo": "7TYGDiWlJY2jqHX9-a-resumen-reuniones.json",
+      "actualizadoEl": "2025-10-01T19:32:08.000Z"
     },
     {
       "id": "80QA8Tpv4sLIcNku",
@@ -683,32 +32,445 @@
       "actualizadoEl": "2026-01-06T14:10:28.223Z"
     },
     {
-      "id": "7TYGDiWlJY2jqHX9",
-      "nombre": "A) Resumen Reuniones",
+      "id": "C42vSaciGbLjE3vI",
+      "nombre": "v3 Agente de monitoreo - Levelito",
       "activo": false,
-      "archivo": "7TYGDiWlJY2jqHX9-a-resumen-reuniones.json",
-      "actualizadoEl": "2025-10-01T19:32:08.000Z"
+      "archivo": "C42vSaciGbLjE3vI-v3-agente-de-monitoreo-levelito.json",
+      "actualizadoEl": "2025-09-11T21:06:54.000Z"
     },
     {
-      "id": "6eUUg47MueSRhizz",
-      "nombre": "v2 Agente de monitoreo - Levelito",
+      "id": "Eo6BrnFxtLDXSEo0",
+      "nombre": "V3 copy john",
       "activo": false,
-      "archivo": "6eUUg47MueSRhizz-v2-agente-de-monitoreo-levelito.json",
-      "actualizadoEl": "2026-01-06T14:11:09.653Z"
+      "archivo": "Eo6BrnFxtLDXSEo0-v3-copy-john.json",
+      "actualizadoEl": "2026-01-06T14:11:46.402Z"
     },
     {
-      "id": "5fTSuLxgCjMbnRSm",
-      "nombre": "ads-read",
-      "activo": false,
-      "archivo": "5fTSuLxgCjMbnRSm-ads-read.json",
-      "actualizadoEl": "2026-01-06T13:55:25.317Z"
+      "id": "GB0T58QINudPFtEZ",
+      "nombre": "D-) Tools encuestador v1",
+      "activo": true,
+      "archivo": "GB0T58QINudPFtEZ-d-tools-encuestador-v1.json",
+      "actualizadoEl": "2026-01-06T14:05:28.167Z"
     },
     {
-      "id": "4IaE51EipJb2ZJNY",
-      "nombre": "Docusing",
+      "id": "yltCftFKOPFbreUt",
+      "nombre": "B-) V3",
+      "activo": true,
+      "archivo": "yltCftFKOPFbreUt-b-v3.json",
+      "actualizadoEl": "2026-07-01T11:44:02.172Z"
+    },
+    {
+      "id": "I8u1vHBsHTeF74nd",
+      "nombre": "I-) Envio de pdf de ciberseguridad v1",
+      "activo": true,
+      "archivo": "I8u1vHBsHTeF74nd-i-envio-de-pdf-de-ciberseguridad-v1.json",
+      "actualizadoEl": "2026-01-06T14:07:40.470Z"
+    },
+    {
+      "id": "qXDEK5MdK5Zpwpzr",
+      "nombre": "B-) Agente de monitoreo v3",
+      "activo": true,
+      "archivo": "qXDEK5MdK5Zpwpzr-b-agente-de-monitoreo-v3.json",
+      "actualizadoEl": "2026-09-21T00:54:46.363Z"
+    },
+    {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
       "activo": false,
-      "archivo": "4IaE51EipJb2ZJNY-docusing.json",
-      "actualizadoEl": "2026-01-12T21:18:44.491Z"
+      "archivo": "K73epIq7mbOTPL1t-a-migracion-de-datos-de-monday-v5.json",
+      "actualizadoEl": "2026-04-10T18:35:43.663Z"
+    },
+    {
+      "id": "L1OI3ULrh2yXJqP3",
+      "nombre": "V3 backUP",
+      "activo": false,
+      "archivo": "L1OI3ULrh2yXJqP3-v3-backup.json",
+      "actualizadoEl": "2026-01-06T14:11:43.940Z"
+    },
+    {
+      "id": "S0or6AyoMq9KszB3",
+      "nombre": "D-) Actualización fecha primera campaña",
+      "activo": false,
+      "archivo": "S0or6AyoMq9KszB3-d-actualizacion-fecha-primera-campana.json",
+      "actualizadoEl": "2026-01-06T14:10:35.115Z"
+    },
+    {
+      "id": "yQPhJCGiqwZqBS9X",
+      "nombre": "A-) Trigger v1",
+      "activo": true,
+      "archivo": "yQPhJCGiqwZqBS9X-a-trigger-v1.json",
+      "actualizadoEl": "2026-07-01T12:23:57.611Z"
+    },
+    {
+      "id": "TAtsmX9ozs2mPvCe",
+      "nombre": "B) Agente Onboarding - Orquestador v2 alexVersion",
+      "activo": false,
+      "archivo": "TAtsmX9ozs2mPvCe-b-agente-onboarding-orquestador-v2-alexversion.json",
+      "actualizadoEl": "2026-01-06T14:05:20.053Z"
+    },
+    {
+      "id": "TTciRCAqlCYC4QpA",
+      "nombre": "B-) Birthday",
+      "activo": false,
+      "archivo": "TTciRCAqlCYC4QpA-b-birthday.json",
+      "actualizadoEl": "2026-01-06T14:08:38.929Z"
+    },
+    {
+      "id": "UIOeMjnuHwMaMyoX",
+      "nombre": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
+      "activo": true,
+      "archivo": "UIOeMjnuHwMaMyoX-recordatorio-remarketing-menos-de-3-campanas-activas-15-dias.json",
+      "actualizadoEl": "2026-01-06T14:10:43.246Z"
+    },
+    {
+      "id": "WiNvceWGgPIVlOF6",
+      "nombre": "D) Comprobante Pago",
+      "activo": true,
+      "archivo": "WiNvceWGgPIVlOF6-d-comprobante-pago.json",
+      "actualizadoEl": "2026-01-06T14:05:26.379Z"
+    },
+    {
+      "id": "aZADKypvqlgg9xMh",
+      "nombre": "Actualizar correctamente chatwoot",
+      "activo": false,
+      "archivo": "aZADKypvqlgg9xMh-actualizar-correctamente-chatwoot.json",
+      "actualizadoEl": "2026-01-06T13:54:22.699Z"
+    },
+    {
+      "id": "bs9GFWlptCe1lLBj",
+      "nombre": "out-of-service Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "archivo": "bs9GFWlptCe1lLBj-out-of-service-agente-onboarding-citas-automaticas.json",
+      "actualizadoEl": "2026-01-06T14:07:48.304Z"
+    },
+    {
+      "id": "eAz3TdAqZ9k3oLgQ",
+      "nombre": "F-) Mensaje de bienvenida onboarding",
+      "activo": false,
+      "archivo": "eAz3TdAqZ9k3oLgQ-f-mensaje-de-bienvenida-onboarding.json",
+      "actualizadoEl": "2025-11-28T21:09:19.000Z"
+    },
+    {
+      "id": "eXipGv9n5GSHMCag",
+      "nombre": "C) 1.1 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "archivo": "eXipGv9n5GSHMCag-c-1-1-levelito-metricman-agente-de-monitoreo.json",
+      "actualizadoEl": "2026-01-06T14:10:23.087Z"
+    },
+    {
+      "id": "zHqLHcFFgClZuUK5",
+      "nombre": "E-) citas automaticas v4",
+      "activo": true,
+      "archivo": "zHqLHcFFgClZuUK5-e-citas-automaticas-v4.json",
+      "actualizadoEl": "2026-07-12T22:57:40.457Z"
+    },
+    {
+      "id": "fEOX9Q3Szkf6bLQq",
+      "nombre": "Notificación Error",
+      "activo": true,
+      "archivo": "fEOX9Q3Szkf6bLQq-notificacion-error.json",
+      "actualizadoEl": "2026-09-22T01:56:11.426Z"
+    },
+    {
+      "id": "LN08xR2hD3GGSEW8",
+      "nombre": "A-) Trigger v1.1 safe",
+      "activo": true,
+      "archivo": "LN08xR2hD3GGSEW8-a-trigger-v1-1-safe.json",
+      "actualizadoEl": "2026-09-22T01:56:08.562Z"
+    },
+    {
+      "id": "gLB0tPkVHaZBZ7tI",
+      "nombre": "V3",
+      "activo": false,
+      "archivo": "gLB0tPkVHaZBZ7tI-v3.json",
+      "actualizadoEl": "2026-01-06T14:11:40.521Z"
+    },
+    {
+      "id": "giPHQRGfr5d89t7J",
+      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
+      "activo": true,
+      "archivo": "giPHQRGfr5d89t7J-g-envio-de-pdf-de-educacion-v1-v3-1.json",
+      "actualizadoEl": "2026-09-25T03:57:34.601Z"
+    },
+    {
+      "id": "jMW6wVpeUyPBG6Pm",
+      "nombre": "monitoreo",
+      "activo": false,
+      "archivo": "jMW6wVpeUyPBG6Pm-monitoreo.json",
+      "actualizadoEl": "2025-10-30T12:54:17.000Z"
+    },
+    {
+      "id": "lb3at6DIzuJqs1V8",
+      "nombre": "C) 1.2 Levelito MetricMan - Agente de monitoreo",
+      "activo": false,
+      "archivo": "lb3at6DIzuJqs1V8-c-1-2-levelito-metricman-agente-de-monitoreo.json",
+      "actualizadoEl": "2026-01-06T14:10:25.717Z"
+    },
+    {
+      "id": "rTRe0OKhXPAKrFzs",
+      "nombre": "H-) Felicitaciones a los 100 - 200 leads v1 (v3.1)",
+      "activo": false,
+      "archivo": "rTRe0OKhXPAKrFzs-h-felicitaciones-a-los-100-200-leads-v1-v3-1.json",
+      "actualizadoEl": "2026-01-06T14:05:41.971Z"
+    },
+    {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
+      "activo": false,
+      "archivo": "8Af1xIlR1QJzIP6L-c-actualizacion-diaria-de-estratega.json",
+      "actualizadoEl": "2026-09-21T00:54:42.707Z"
+    },
+    {
+      "id": "Sb6dLyiZnMJtc6AC",
+      "nombre": "C-) Lógica envío de reportes v5",
+      "activo": true,
+      "archivo": "Sb6dLyiZnMJtc6AC-c-logica-envio-de-reportes-v5.json",
+      "actualizadoEl": "2026-09-22T01:56:09.137Z"
+    },
+    {
+      "id": "yEQPJCDIUKy3VMek",
+      "nombre": "v2 Levelito - Agente de monitoreo",
+      "activo": false,
+      "archivo": "yEQPJCDIUKy3VMek-v2-levelito-agente-de-monitoreo.json",
+      "actualizadoEl": "2025-08-22T19:07:04.000Z"
+    },
+    {
+      "id": "dsrJpJi1MTr4mCOZ",
+      "nombre": "F-) Alerta para fase 5",
+      "activo": true,
+      "archivo": "dsrJpJi1MTr4mCOZ-f-alerta-para-fase-5.json",
+      "actualizadoEl": "2026-04-15T20:47:02.932Z"
+    },
+    {
+      "id": "zFQkFlCjCbZ9KMJk",
+      "nombre": "out-of-service B2.1) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "archivo": "zFQkFlCjCbZ9KMJk-out-of-service-b2-1-agente-onboarding-citas-automaticas.json",
+      "actualizadoEl": "2026-01-06T14:07:50.173Z"
+    },
+    {
+      "id": "zQPgMRoWkmrca8f6",
+      "nombre": "B2.2) Agente Onboarding - Citas automaticas",
+      "activo": false,
+      "archivo": "zQPgMRoWkmrca8f6-b2-2-agente-onboarding-citas-automaticas.json",
+      "actualizadoEl": "2026-01-06T14:05:21.755Z"
+    },
+    {
+      "id": "zXZLXX4WRFy87qNj",
+      "nombre": "Agente de onboarding v4 out-of-servide",
+      "activo": false,
+      "archivo": "zXZLXX4WRFy87qNj-agente-de-onboarding-v4-out-of-servide.json",
+      "actualizadoEl": "2026-01-06T14:05:17.482Z"
+    },
+    {
+      "id": "fkc5VuZtjx2NUCvZ",
+      "nombre": "B1) Agente Onboarding - Validacion en excel",
+      "activo": false,
+      "archivo": "fkc5VuZtjx2NUCvZ-b1-agente-onboarding-validacion-en-excel.json",
+      "actualizadoEl": "2026-01-06T14:07:52.140Z"
+    },
+    {
+      "id": "vvXRpzCDaYehJDYf",
+      "nombre": "E-) Alerta falta de fases v1",
+      "activo": true,
+      "archivo": "vvXRpzCDaYehJDYf-e-alerta-falta-de-fases-v1.json",
+      "actualizadoEl": "2026-01-06T15:04:47.551Z"
+    },
+    {
+      "id": "7DRJJjTva38GSoGg",
+      "nombre": "J-) Envio de mensaje de bienvenida",
+      "activo": true,
+      "archivo": "7DRJJjTva38GSoGg-j-envio-de-mensaje-de-bienvenida.json",
+      "actualizadoEl": "2026-09-22T01:56:07.997Z"
+    },
+    {
+      "id": "g7mkm3TKkjQYpopk",
+      "nombre": "B-) Slack button logic v2",
+      "activo": true,
+      "archivo": "g7mkm3TKkjQYpopk-b-slack-button-logic-v2.json",
+      "actualizadoEl": "2026-01-07T14:29:38.167Z"
+    },
+    {
+      "id": "eWSMgXi9uW3E9gCy",
+      "nombre": "P-) Mantenimiento de desfase en los estrategas",
+      "activo": false,
+      "archivo": "eWSMgXi9uW3E9gCy-p-mantenimiento-de-desfase-en-los-estrategas.json",
+      "actualizadoEl": "2026-01-07T21:11:38.027Z"
+    },
+    {
+      "id": "KWSsCZWE3CLmT7Dj",
+      "nombre": "C-) Tools agente principal v1",
+      "activo": true,
+      "archivo": "KWSsCZWE3CLmT7Dj-c-tools-agente-principal-v1.json",
+      "actualizadoEl": "2026-05-27T19:04:10.720Z"
+    },
+    {
+      "id": "uelcZVSQvpl2hetY",
+      "nombre": "F-) Lector de seguimientos v1",
+      "activo": true,
+      "archivo": "uelcZVSQvpl2hetY-f-lector-de-seguimientos-v1.json",
+      "actualizadoEl": "2026-06-27T18:14:56.392Z"
+    },
+    {
+      "id": "HlYjwOCuSEKfTsSi",
+      "nombre": "A-) Agente de RH",
+      "activo": false,
+      "archivo": "HlYjwOCuSEKfTsSi-a-agente-de-rh.json",
+      "actualizadoEl": "2026-03-04T00:55:51.366Z"
+    },
+    {
+      "id": "M7Gunj0t3umBrgjP",
+      "nombre": "D-) Escalar a elvin",
+      "activo": true,
+      "archivo": "M7Gunj0t3umBrgjP-d-escalar-a-elvin.json",
+      "actualizadoEl": "2026-03-04T00:56:24.802Z"
+    },
+    {
+      "id": "J6gK0AYy7Bbz4NC2",
+      "nombre": "C-) Herramienta - Procesar Vacaciones",
+      "activo": false,
+      "archivo": "J6gK0AYy7Bbz4NC2-c-herramienta-procesar-vacaciones.json",
+      "actualizadoEl": "2026-03-04T00:57:50.958Z"
+    },
+    {
+      "id": "pNMZF1Fb4r6yHfGk",
+      "nombre": "A-) Recibir webhook chatwoot v1",
+      "activo": true,
+      "archivo": "pNMZF1Fb4r6yHfGk-a-recibir-webhook-chatwoot-v1.json",
+      "actualizadoEl": "2026-03-18T14:11:50.118Z"
+    },
+    {
+      "id": "Z9LnpNMTFKRl3CIg",
+      "nombre": "C-) Alerta por falta de pago v1",
+      "activo": true,
+      "archivo": "Z9LnpNMTFKRl3CIg-c-alerta-por-falta-de-pago-v1.json",
+      "actualizadoEl": "2026-09-22T01:56:10.591Z"
+    },
+    {
+      "id": "eoGkQJiljDgVjFz1",
+      "nombre": "D-) Limpiador de minio",
+      "activo": true,
+      "archivo": "eoGkQJiljDgVjFz1-d-limpiador-de-minio.json",
+      "actualizadoEl": "2026-01-06T13:50:45.654Z"
+    },
+    {
+      "id": "3ylIqOgWiiW37lWx",
+      "nombre": "H-) Felicitaciones por leads v2",
+      "activo": true,
+      "archivo": "3ylIqOgWiiW37lWx-h-felicitaciones-por-leads-v2.json",
+      "actualizadoEl": "2026-09-26T17:51:06.250Z"
+    },
+    {
+      "id": "3NpTfPN4uQseNhq5",
+      "nombre": "BackUp Credential",
+      "activo": true,
+      "archivo": "3NpTfPN4uQseNhq5-backup-credential.json",
+      "actualizadoEl": "2026-01-22T16:22:31.240Z"
+    },
+    {
+      "id": "LWZ3ILy8CzZFj9fO",
+      "nombre": "A-) Migracion de datos de monday v5 copy",
+      "activo": false,
+      "archivo": "LWZ3ILy8CzZFj9fO-a-migracion-de-datos-de-monday-v5-copy.json",
+      "actualizadoEl": "2025-11-18T15:20:45.000Z"
+    },
+    {
+      "id": "At91U3Emd50tyaVh",
+      "nombre": "Verificacion de meta - app demo",
+      "activo": false,
+      "archivo": "At91U3Emd50tyaVh-verificacion-de-meta-app-demo.json",
+      "actualizadoEl": "2026-01-06T13:55:31.733Z"
+    },
+    {
+      "id": "ez1JVuJ11RaOQA3X",
+      "nombre": "X-) Agente RH",
+      "activo": false,
+      "archivo": "ez1JVuJ11RaOQA3X-x-agente-rh.json",
+      "actualizadoEl": "2026-07-31T02:10:53.297Z"
+    },
+    {
+      "id": "GeQUkgLSTCQYmWjP",
+      "nombre": "Encuestador",
+      "activo": false,
+      "archivo": "GeQUkgLSTCQYmWjP-encuestador.json",
+      "actualizadoEl": "2025-09-06T14:44:09.000Z"
+    },
+    {
+      "id": "mVYdARFPPkMyJXNn",
+      "nombre": "Subworkflows",
+      "activo": false,
+      "archivo": "mVYdARFPPkMyJXNn-subworkflows.json",
+      "actualizadoEl": "2026-01-06T14:11:33.825Z"
+    },
+    {
+      "id": "wsmfSEQa0GYGHqjA",
+      "nombre": "B-) Publicador de campañas v1 - devflow",
+      "activo": true,
+      "archivo": "wsmfSEQa0GYGHqjA-b-publicador-de-campanas-v1-devflow.json",
+      "actualizadoEl": "2026-09-22T01:56:12.897Z"
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "archivo": "gYdcVTS1dmuZRp0W-agente-cobros.json",
+      "actualizadoEl": "2026-09-21T14:19:29.285Z"
+    },
+    {
+      "id": "pNSgghJY7mLA9GnB",
+      "nombre": "BackUp Workflows",
+      "activo": true,
+      "archivo": "pNSgghJY7mLA9GnB-backup-workflows.json",
+      "actualizadoEl": "2026-01-06T13:55:39.096Z"
+    },
+    {
+      "id": "MLp39LO5jJmzk9Vp",
+      "nombre": "A) RevisionInstanciaEvoAPI",
+      "activo": true,
+      "archivo": "MLp39LO5jJmzk9Vp-a-revisioninstanciaevoapi.json",
+      "actualizadoEl": "2026-08-31T02:52:49.815Z"
+    },
+    {
+      "id": "L51yWcEJXkSrloeK",
+      "nombre": "A-) Enviar noticias al canal",
+      "activo": false,
+      "archivo": "L51yWcEJXkSrloeK-a-enviar-noticias-al-canal.json",
+      "actualizadoEl": "2026-01-07T03:38:22.340Z"
+    },
+    {
+      "id": "HPJYdfjD28yw5u4t",
+      "nombre": "E-) Notificacion  Personas Infracción",
+      "activo": false,
+      "archivo": "HPJYdfjD28yw5u4t-e-notificacion-personas-infraccion.json",
+      "actualizadoEl": "2026-01-06T13:52:44.278Z"
+    },
+    {
+      "id": "0mEMnsMxnuy3SGjh",
+      "nombre": "My Sub-Workflow 2",
+      "activo": true,
+      "archivo": "0mEMnsMxnuy3SGjh-my-sub-workflow-2.json",
+      "actualizadoEl": "2025-10-20T19:14:09.000Z"
+    },
+    {
+      "id": "nWAzRYgLFuJi1kaG",
+      "nombre": "C) Agente Monitoreo de anuncios",
+      "activo": false,
+      "archivo": "nWAzRYgLFuJi1kaG-c-agente-monitoreo-de-anuncios.json",
+      "actualizadoEl": "2025-07-17T18:34:23.000Z"
+    },
+    {
+      "id": "GbGyPmnkEcf1Excz",
+      "nombre": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
+      "activo": true,
+      "archivo": "GbGyPmnkEcf1Excz-a-cita-de-onboarding-calendly-calendar-nocodb-v1.json",
+      "actualizadoEl": "2026-09-23T01:59:36.403Z"
+    },
+    {
+      "id": "0O7mXpxvFSjaLtlU",
+      "nombre": "ads-management",
+      "activo": false,
+      "archivo": "0O7mXpxvFSjaLtlU-ads-management.json",
+      "actualizadoEl": "2026-01-06T13:55:28.035Z"
     },
     {
       "id": "0f2Ak2Z7Vft62F74",
@@ -718,11 +480,249 @@
       "actualizadoEl": "2026-01-06T13:55:45.827Z"
     },
     {
-      "id": "0O7mXpxvFSjaLtlU",
-      "nombre": "ads-management",
+      "id": "zzaIVNQVp7rkKyo0",
+      "nombre": "My Sub-Workflow 1",
+      "activo": true,
+      "archivo": "zzaIVNQVp7rkKyo0-my-sub-workflow-1.json",
+      "actualizadoEl": "2025-07-09T03:38:34.000Z"
+    },
+    {
+      "id": "Uk4m1c65HaC2MfFK",
+      "nombre": "Detectar workflows",
       "activo": false,
-      "archivo": "0O7mXpxvFSjaLtlU-ads-management.json",
-      "actualizadoEl": "2026-01-06T13:55:28.035Z"
+      "archivo": "Uk4m1c65HaC2MfFK-detectar-workflows.json",
+      "actualizadoEl": "2025-12-10T12:43:32.000Z"
+    },
+    {
+      "id": "Vaxl6v0kVZW9tIHN",
+      "nombre": "Create PDF",
+      "activo": true,
+      "archivo": "Vaxl6v0kVZW9tIHN-create-pdf.json",
+      "actualizadoEl": "2025-09-26T22:59:22.000Z"
+    },
+    {
+      "id": "HkjdzsysScaeszpR",
+      "nombre": "Reminder Tasks",
+      "activo": false,
+      "archivo": "HkjdzsysScaeszpR-reminder-tasks.json",
+      "actualizadoEl": "2025-07-03T04:19:03.000Z"
+    },
+    {
+      "id": "5fTSuLxgCjMbnRSm",
+      "nombre": "ads-read",
+      "activo": false,
+      "archivo": "5fTSuLxgCjMbnRSm-ads-read.json",
+      "actualizadoEl": "2026-01-06T13:55:25.317Z"
+    },
+    {
+      "id": "NyEQfFh6Lz0TBJ0E",
+      "nombre": "X-) page_id ig_id - tests",
+      "activo": false,
+      "archivo": "NyEQfFh6Lz0TBJ0E-x-page-id-ig-id-tests.json",
+      "actualizadoEl": "2026-01-06T13:54:53.556Z"
+    },
+    {
+      "id": "wqgZHdFtQ07PQg2q",
+      "nombre": "Gotenberg (Create PDF)",
+      "activo": true,
+      "archivo": "wqgZHdFtQ07PQg2q-gotenberg-create-pdf.json",
+      "actualizadoEl": "2025-09-26T22:35:35.000Z"
+    },
+    {
+      "id": "g7hZaosZ24Dgifbg",
+      "nombre": "A-) Sync Pulse → NocoDB equipo v1",
+      "activo": true,
+      "archivo": "g7hZaosZ24Dgifbg-a-sync-pulse-nocodb-equipo-v1.json",
+      "actualizadoEl": "2026-09-21T14:19:27.799Z"
+    },
+    {
+      "id": "gbjp6DIimQwwgYEt",
+      "nombre": "C-) Creador de copy(s) v1",
+      "activo": true,
+      "archivo": "gbjp6DIimQwwgYEt-c-creador-de-copy-s-v1.json",
+      "actualizadoEl": "2026-01-06T13:54:55.671Z"
+    },
+    {
+      "id": "OyXhxbche4d60nOW",
+      "nombre": "My Sub-Workflow 3",
+      "activo": true,
+      "archivo": "OyXhxbche4d60nOW-my-sub-workflow-3.json",
+      "actualizadoEl": "2025-10-27T21:51:06.000Z"
+    },
+    {
+      "id": "a5FgDWKAfmqv40PM",
+      "nombre": "D-) Limpiador de minio - devflow",
+      "activo": false,
+      "archivo": "a5FgDWKAfmqv40PM-d-limpiador-de-minio-devflow.json",
+      "actualizadoEl": "2026-01-06T15:42:51.468Z"
+    },
+    {
+      "id": "76PxSWzFembacRcK",
+      "nombre": "A-) Mensajes de bienestar",
+      "activo": true,
+      "archivo": "76PxSWzFembacRcK-a-mensajes-de-bienestar.json",
+      "actualizadoEl": "2026-01-22T16:29:37.413Z"
+    },
+    {
+      "id": "bO5n8pQI57Al2cgG",
+      "nombre": "Birthday copy",
+      "activo": false,
+      "archivo": "bO5n8pQI57Al2cgG-birthday-copy.json",
+      "actualizadoEl": "2025-10-13T13:48:40.000Z"
+    },
+    {
+      "id": "cEPWfieOs6tWBdWa",
+      "nombre": "prueba",
+      "activo": false,
+      "archivo": "cEPWfieOs6tWBdWa-prueba.json",
+      "actualizadoEl": "2026-03-25T12:59:11.463Z"
+    },
+    {
+      "id": "WgDRwK7RgmzqezhK",
+      "nombre": "A-) Webhooks central v2 - devflow",
+      "activo": true,
+      "archivo": "WgDRwK7RgmzqezhK-a-webhooks-central-v2-devflow.json",
+      "actualizadoEl": "2026-01-07T08:19:02.426Z"
+    },
+    {
+      "id": "1TaG7dgh54hTcLRm",
+      "nombre": "graficos",
+      "activo": false,
+      "archivo": "1TaG7dgh54hTcLRm-graficos.json",
+      "actualizadoEl": "2026-06-27T00:39:40.653Z"
+    },
+    {
+      "id": "rxlp9wxl9cHFefn9",
+      "nombre": "K-) Referidos veteranos (una vez, sep 2026)",
+      "activo": false,
+      "archivo": "rxlp9wxl9cHFefn9-k-referidos-veteranos-una-vez-sep-2026.json",
+      "actualizadoEl": "2026-09-26T17:51:56.394Z"
+    },
+    {
+      "id": "HvMsL5j65etc7ZBq",
+      "nombre": "E-) Agente supervisor",
+      "activo": true,
+      "archivo": "HvMsL5j65etc7ZBq-e-agente-supervisor.json",
+      "actualizadoEl": "2026-09-21T14:19:29.992Z"
+    },
+    {
+      "id": "kyiZTRCdzolA5li5",
+      "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
+      "activo": true,
+      "archivo": "kyiZTRCdzolA5li5-c-1-agente-de-monitoreo-jul-11-at-01-24-33.json",
+      "actualizadoEl": "2025-07-14T08:36:08.000Z"
+    },
+    {
+      "id": "oJvf4D4IELGNBQqo",
+      "nombre": "B-) Publicador de campañas v1",
+      "activo": true,
+      "archivo": "oJvf4D4IELGNBQqo-b-publicador-de-campanas-v1.json",
+      "actualizadoEl": "2026-09-22T01:56:12.198Z"
+    },
+    {
+      "id": "MjQHPb1GpuYo55l9",
+      "nombre": "A-) Webhooks central v1",
+      "activo": true,
+      "archivo": "MjQHPb1GpuYo55l9-a-webhooks-central-v1.json",
+      "actualizadoEl": "2026-01-06T13:51:48.848Z"
+    },
+    {
+      "id": "RyeQFDXnB429XG0Q",
+      "nombre": "A-) Sync Pulse → NocoDB v1",
+      "activo": true,
+      "archivo": "RyeQFDXnB429XG0Q-a-sync-pulse-nocodb-v1.json",
+      "actualizadoEl": "2026-09-21T02:16:03.361Z"
+    },
+    {
+      "id": "RXMCAuLoLhZCE2Sv",
+      "nombre": "My workflow",
+      "activo": true,
+      "archivo": "RXMCAuLoLhZCE2Sv-my-workflow.json",
+      "actualizadoEl": "2026-07-31T01:53:53.882Z"
+    },
+    {
+      "id": "ZhcAhenK4DTDHehN",
+      "nombre": "Generacion de tareas sub worflow",
+      "activo": true,
+      "archivo": "ZhcAhenK4DTDHehN-generacion-de-tareas-sub-worflow.json",
+      "actualizadoEl": "2026-01-06T13:55:53.545Z"
+    },
+    {
+      "id": "jOgVxxtD2fJQeOgg",
+      "nombre": "Seguimiento tareas",
+      "activo": false,
+      "archivo": "jOgVxxtD2fJQeOgg-seguimiento-tareas.json",
+      "actualizadoEl": "2026-01-06T13:55:49.879Z"
+    },
+    {
+      "id": "9MqLiz6lfEKcErPP",
+      "nombre": "X-) Agente RH Backup",
+      "activo": false,
+      "archivo": "9MqLiz6lfEKcErPP-x-agente-rh-backup.json",
+      "actualizadoEl": "2026-01-06T13:53:06.634Z"
+    },
+    {
+      "id": "txUzpGmbiSu8Zc4J",
+      "nombre": "B-) Agente de Setting V5",
+      "activo": true,
+      "archivo": "txUzpGmbiSu8Zc4J-b-agente-de-setting-v5.json",
+      "actualizadoEl": "2026-06-20T15:02:47.257Z"
+    },
+    {
+      "id": "Lkb4xQg9G0y16FOj",
+      "nombre": "V2 poco eficiente",
+      "activo": false,
+      "archivo": "Lkb4xQg9G0y16FOj-v2-poco-eficiente.json",
+      "actualizadoEl": "2026-01-06T14:11:37.240Z"
+    },
+    {
+      "id": "xd0kQhY3YZO3b7hQ",
+      "nombre": "X-) Vacaciones Recursos Humanos",
+      "activo": false,
+      "archivo": "xd0kQhY3YZO3b7hQ-x-vacaciones-recursos-humanos.json",
+      "actualizadoEl": "2026-01-06T13:52:58.606Z"
+    },
+    {
+      "id": "ktzh4xweoJzWmWQD",
+      "nombre": "V1",
+      "activo": false,
+      "archivo": "ktzh4xweoJzWmWQD-v1.json",
+      "actualizadoEl": "2026-01-06T14:11:35.427Z"
+    },
+    {
+      "id": "4IaE51EipJb2ZJNY",
+      "nombre": "Docusing",
+      "activo": false,
+      "archivo": "4IaE51EipJb2ZJNY-docusing.json",
+      "actualizadoEl": "2026-01-12T21:18:44.491Z"
+    },
+    {
+      "id": "61jM0xZxj4LvFEtX",
+      "nombre": "C-) Creador de copy(s) v1 - devflow",
+      "activo": true,
+      "archivo": "61jM0xZxj4LvFEtX-c-creador-de-copy-s-v1-devflow.json",
+      "actualizadoEl": "2026-01-06T14:14:23.574Z"
+    },
+    {
+      "id": "EEE1FGzB76wwEsyx",
+      "nombre": "Agente IA Area Onboarding",
+      "activo": false,
+      "archivo": "EEE1FGzB76wwEsyx-agente-ia-area-onboarding.json",
+      "actualizadoEl": "2025-07-06T22:21:28.000Z"
+    },
+    {
+      "id": "3DeJXvNmTFQ44FIF",
+      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
+      "activo": true,
+      "archivo": "3DeJXvNmTFQ44FIF-recordatorio60-90diastrabajandojuntos.json",
+      "actualizadoEl": "2026-09-21T14:19:29.638Z"
+    },
+    {
+      "id": "T1t4OYwVW7QTJ1ml",
+      "nombre": "Get Campaigns",
+      "activo": false,
+      "archivo": "T1t4OYwVW7QTJ1ml-get-campaigns.json",
+      "actualizadoEl": "2026-01-06T14:11:32.020Z"
     }
   ]
 }
