@@ -1,6 +1,6 @@
 ---
 name: lola-creadora-ia
-description: Lola = la Creadora de Contenido con IA (flyers, artes, videos Higgsfield, guiones a pedido); el puesto de producción que faltaba en el equipo de Sofi
+description: Lola = la Creadora de Contenido con IA (flyers con la guía de Elvin vía fal.mjs flyer, artes, videos Kling, guiones); el puesto de producción que faltaba en el equipo de Sofi
 metadata:
   type: project
 ---
@@ -29,4 +29,13 @@ Relacionado: [[sofi-coordinadora]], [[nico-vibecoder]], [[meta-ads-agente]].
 quedó en periodo de gracia con límite diario). Manos: `node scripts/fal.mjs imagen "<prompt>" --ar 4:5|9:16 [--ref
 url]` (Nano Banana Pro; --ref conserva logo/producto/cara) y `video "<movimiento>" --img <url> --dur 5|10` (Kling 2.1
 Pro por cola). Llave FAL_API_KEY (la de Bori) en .env.local y Railway (max directo, lola por ${{max.FAL_API_KEY}}).
-Tope sin OK: 3 imágenes / 2 videos por pedido.
+Tope sin OK: 3 imágenes / 2 videos por pedido (subido a 8/3 el 26/sep).
+
+**26/sep/2026 — GUÍA DE FLYERS DE ELVIN (siempre):** *"flyers de calidad, de pocas palabras: un título, bullets con los
+beneficios, call to action claro, que resalte el producto. Minimalista, elegante, siempre con calidad, Nano Banana
+Pro."* → `node scripts/fal.mjs flyer --marca <level-up|ai-borinquen|bori|resuelto|isla-run> --titulo … --bullets
+'a|b|c' --cta … --producto … [--foto url] [--logo url]`: valida el copy antes de gastar (título ≤ 8, ≤ 3 bullets ≤ 6,
+CTA ≤ 4, sin gratis/voseo/promesas), pone el LOGO REAL (public/marcas/, URLs públicas) como última referencia y arma el
+prompt sobre el de flyers de Bori. Marca sin kit = sin logo, NUNCA inventado (el 24/sep Lola sacó un "wordmark de IA"
+de Bori porque su contenedor no veía el kit). Prueba real LU "Tu marketing, con sistema": texto exacto con acentos,
+logo real, limpio — Elvin lo tiene que ver. Cerebro §3b. Lo que pide otro agente de parte de Elvin se entrega completo.
