@@ -193,6 +193,14 @@
       "porque": "No se ejecuta un plan que no existe ni se inventan cifras de ventas del equipo.",
       "verificado": "Búsqueda en /estado sin archivos de leaderboard; buzón: Lola confirmó que no hizo ninguno.",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "ninguna (Canva de Level Up · leaderboard)",
+      "que": "[Solicitud de Aure #49] Aure mandó el Canva donde viven las imágenes del leaderboard (diseño DAHBu9KnnQc). NO se ejecutó: el plan aprobado era otra vez el error de la API (Claude Code 2.1.278), y no hay acceso a Canva (el link es de edición y pide login: HTTP 403; no hay token ni integración de Canva).",
+      "porque": "Sin plan real y sin acceso a la herramienta; no se inventan cifras de ventas.",
+      "verificado": "curl al link → 403 en canva.com/design/DAHBu9KnnQc/…/edit; sin CANVA_* en el entorno ni código que use Canva.",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
