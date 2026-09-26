@@ -37,8 +37,12 @@ export default async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
-  // Dominio propio de Ritmo (ritmo-*.vercel.app): la raíz va directo a Ritmo.
-  if (host.startsWith("ritmo-") && (pathname === "/" || pathname === "/login")) {
+  // Dominios de Ritmo (ritmo.levelupmediapr.net y ritmo-*.vercel.app): la raíz va directo a Ritmo, y
+  // cualquier ruta que no sea de Ritmo (o sus archivos/acciones) también, para que nunca caiga en otra app.
+  if (host.startsWith("ritmo.") && pathname !== "/" && !pathname.startsWith("/ritmo") && !pathname.startsWith("/_next/") && !pathname.startsWith("/api/") && !pathname.startsWith("/pulse/login")) {
+    return NextResponse.redirect(new URL("/ritmo", request.url));
+  }
+  if ((host.startsWith("ritmo-") || host.startsWith("ritmo.")) && (pathname === "/" || pathname === "/login")) {
     return NextResponse.redirect(new URL("/ritmo", request.url));
   }
   if (host.startsWith("pulse-") && (pathname === "/" || pathname === "/login")) {
