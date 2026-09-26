@@ -173,7 +173,7 @@ export const estadoInicial = (supervisorId: string | null): EstadoSolicitud => (
  */
 export function puedeDecidir(s: { userId: string; estado: string; supervisorId: string | null }, actor: { id: string; maestro: boolean; rol?: string }): boolean {
   if (actor.id === s.userId) return false;
-  if (s.estado === "supervisor") return actor.id === s.supervisorId || actor.rol === "admin";
+  if (s.estado === "supervisor") return actor.id === s.supervisorId || (actor.rol === "admin" && actor.maestro);
   if (s.estado === "rrhh") return actor.maestro;
   return false;
 }

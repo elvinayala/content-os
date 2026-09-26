@@ -28,7 +28,9 @@ export const CATEGORIAS = [
 ] as const;
 export type Categoria = (typeof CATEGORIAS)[number]["id"] | "foto";
 
-export const MAX_BYTES = 500 * 1024 * 1024; // 500 MB (videos de entrenamiento)
+// El plan actual de Supabase acepta hasta 50 MB por archivo (el bucket "pulse" quedó con ese tope el
+// 26/sep/2026). Para videos más pesados: subir el plan (Pro permite más) o comprimir el video.
+export const MAX_BYTES = 50 * 1000 * 1000;
 
 // Seguridad: solo estos tipos de archivo (por extensión; el tipo que se guarda y se sirve sale de aquí,
 // nunca del navegador). Nada de .html/.svg/.js que se puedan ejecutar al abrirlos.
@@ -57,6 +59,33 @@ export function tipoPermitido(categoria: string, nombre: string): string | null 
   const ext = extension(nombre);
   return PERMITIDOS[categoria]?.includes(ext) ? MIME[ext] : null;
 }
+// Tope de tamaño por categoría. Se revisa ANTES (lo que dice el navegador) y DESPUÉS de subir (el tamaño
+// real en el almacenamiento): si se pasa, el archivo se borra.
+const MB = 1000 * 1000;
+export function limiteBytes(categoria: string): number {
+  if (categoria === "foto") return 10 * MB;
+  if (categoria === "entrenamiento" || categoria === "otro") return MAX_BYTES;
+  return 25 * MB;
+}
+export const textoLimite = (categoria: string) => `${Math.round(limiteBytes(categoria) / MB)} MB`;
+
+/** Tamaño real del archivo ya subido (null si no está). */
+export async function tamanoReal(path: string): Promise<number | null> {
+  const sb = supabase();
+  if (!sb) {
+    try {
+      const fs = await import("node:fs/promises");
+      const p = await import("node:path");
+      return (await fs.stat(p.join(process.cwd(), ".pulse-db", "archivos", path))).size;
+    } catch {
+      return null;
+    }
+  }
+  const { data, error } = await sb.storage.from(BUCKET).info(path);
+  if (error || !data) return null;
+  return typeof data.size === "number" ? data.size : null;
+}
+
 /** Se abre en el navegador (foto, PDF, video); lo demás se descarga. */
 export const seAbreEnLinea = (mime: string | null) => !!mime && (mime.startsWith("image/") || mime.startsWith("video/") || mime === "application/pdf");
 

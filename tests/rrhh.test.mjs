@@ -69,6 +69,7 @@ test("solicitudes: supervisor aprueba, RR.HH. firma; nadie decide lo suyo", asyn
   assert.equal(puedeDecidir(s, { id: "otro", maestro: false }), false);
   assert.equal(puedeDecidir(s, { id: "yaileen", maestro: true, rol: "miembro" }), false); // RR.HH. no se salta al supervisor
   assert.equal(puedeDecidir(s, { id: "elvin", maestro: true, rol: "admin" }), true);
+  assert.equal(puedeDecidir(s, { id: "elvin", maestro: false, rol: "admin" }), false); // sin segundo paso, no
   assert.equal(puedeDecidir({ ...s, estado: "rrhh" }, { id: "jefe", maestro: false }), false);
   assert.equal(puedeDecidir({ ...s, estado: "rrhh" }, { id: "yaileen", maestro: true }), true);
   assert.equal(puedeDecidir({ ...s, userId: "yaileen", estado: "rrhh" }, { id: "yaileen", maestro: true }), false);

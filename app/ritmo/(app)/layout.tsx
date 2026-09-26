@@ -10,6 +10,8 @@ export const dynamic = "force-dynamic";
 export default async function RitmoAppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const u = await usuarioRitmo();
   if (!u) redirect("/ritmo/entrar");
+  // Vista maestra (salarios, documentos, canal ético): segundo paso obligatorio.
+  if (u.falta2fa) redirect("/ritmo/verificar");
   // Vista maestra (Equipo, Personas, Ajustes): Elvin, Carilin, Aure y RR.HH. (Yaileen).
   const maestro = u.maestro;
   // Todo empleado nuevo completa su ficha antes de usar Ritmo.

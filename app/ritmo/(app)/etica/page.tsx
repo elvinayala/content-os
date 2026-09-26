@@ -14,7 +14,7 @@ export const metadata = { title: "Canal ético" };
 export default async function EticaPage() {
   const u = await usuarioRitmo();
   if (!u) return null;
-  const esElvin = u.rol === "admin";
+  const esElvin = u.rol === "admin" && u.maestro; // la bandeja exige el segundo paso
   let bandeja = null;
   if (esElvin) {
     const reportes = await listarReportesEticos();

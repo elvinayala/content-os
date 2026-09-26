@@ -240,3 +240,17 @@ export const desempenoSolicitudes = pgTable(
   },
   (t) => [index("desempeno_solicitudes_estado").on(t.estado, t.createdAt), index("desempeno_solicitudes_user").on(t.userId)],
 );
+
+// Verificación en dos pasos de la vista maestra (26/sep/2026). El secreto TOTP va CIFRADO (AES-256-GCM con
+// una llave derivada de PULSE_SESSION_SECRET); `ultimo_contador` evita que el mismo código sirva dos veces.
+export const desempenoDosPasos = pgTable("desempeno_dos_pasos", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  secretoCifrado: text("secreto_cifrado").notNull(),
+  activadoAt: timestamp("activado_at", { withTimezone: true }),
+  ultimoContador: integer("ultimo_contador").notNull().default(-1),
+  intentosFallidos: integer("intentos_fallidos").notNull().default(0),
+  bloqueadoHasta: timestamp("bloqueado_hasta", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { linkDeAcceso } from "@/lib/desempeno/acceso";
 import * as datos from "@/lib/desempeno/datos";
+import * as dosPasos from "@/lib/desempeno/dos-pasos";
 import * as etica from "@/lib/desempeno/etica";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
@@ -75,11 +76,12 @@ export async function corregirSalidaAction(p: { poncheId: string; hora: string; 
 
 export async function decidirCorreccionAction(p: { poncheId: string; aprobar: boolean }) {
   return envolver(async () => {
-    const u = datos.actorRitmo(await requiereUsuario());
+    const u = await usuarioRitmo();
+    if (!u) throw new Error("no-autorizado");
     const ponche = await datos.leerPonche(p.poncheId);
     if (!ponche || ponche.correccion !== "pendiente") throw new Error("Ya no está pendiente");
     const perfil = await datos.perfilDe(ponche.userId);
-    if (!perfil || !puedeAprobar(u, perfil)) throw new Error("Solo su líder, Carilin o admin");
+    if (!perfil || !u.maestro || !puedeAprobar(u, perfil)) throw new Error("Solo la vista maestra (con la verificación en dos pasos)");
     await datos.decidirCorreccion(p.poncheId, p.aprobar, u.id);
     refresh();
     return {};
@@ -222,7 +224,7 @@ export async function prepararSubidaAction(p: { userId: string; nombre: string; 
     if (!u.maestro && p.categoria === "nomina") throw new Error("Nómina la sube RR.HH.");
     if (![...fichas.CATEGORIAS.map((c) => c.id), "foto"].includes(p.categoria as never)) throw new Error("Categoría inválida");
     if (!(await fichas.leerFicha(p.userId))) throw new Error("Esta persona no tiene ficha");
-    if (!Number.isFinite(p.bytes) || p.bytes <= 0 || p.bytes > fichas.MAX_BYTES) throw new Error("Máximo 500 MB por archivo");
+    if (!Number.isFinite(p.bytes) || p.bytes <= 0 || p.bytes > fichas.limiteBytes(p.categoria)) throw new Error(`Máximo ${fichas.textoLimite(p.categoria)} para este tipo de archivo`);
     if (!fichas.tipoPermitido(p.categoria, p.nombre)) throw new Error(p.categoria === "foto" ? "La foto tiene que ser JPG, PNG, WEBP o HEIC" : "Ese tipo de archivo no se acepta aquí (usa PDF, foto, video o Word/Excel)");
     return fichas.prepararSubida(p.userId, p.nombre);
   });
@@ -248,6 +250,16 @@ export async function confirmarSubidaAction(p: { id: string; userId: string; pat
     if (!u.maestro && p.categoria === "nomina") throw new Error("Nómina la sube RR.HH.");
     const mime = fichas.tipoPermitido(p.categoria, p.nombre);
     if (!mime) throw new Error("Ese tipo de archivo no se acepta aquí");
+    if (!p.path.startsWith(`ritmo/${p.userId}/${p.id}-`) || p.path.includes("..")) throw new Error("Ruta inválida");
+    // Tamaño REAL en el almacenamiento (no el que dice el navegador): si no está o se pasa, se borra.
+    const real = await fichas.tamanoReal(p.path);
+    if (real === null) throw new Error("El archivo no terminó de subir. Inténtalo otra vez.");
+    if (real > fichas.limiteBytes(p.categoria)) {
+      const { borrarArchivos } = await import("@/lib/pulse/storage");
+      await borrarArchivos([p.path]).catch(() => {});
+      throw new Error(`El archivo pesa más de ${fichas.textoLimite(p.categoria)} y no se guardó`);
+    }
+    p.bytes = real;
     await fichas.registrarArchivo({ id: p.id, userId: p.userId, categoria: p.categoria as fichas.Categoria, nombre: p.nombre, path: p.path, mime, bytes: p.bytes }, u.id);
     refresh();
     return {};
@@ -323,8 +335,8 @@ export async function reporteEticoAction(p: { categoria: string; descripcion: st
 
 export async function actualizarEticoAction(p: { id: string; estado: string; notaInterna: string }) {
   return envolver(async () => {
-    const u = await requiereUsuario();
-    if (u.rol !== "admin") throw new Error("Solo Elvin");
+    const u = await usuarioRitmo();
+    if (!u?.maestro || u.rol !== "admin") throw new Error("Solo Elvin (con la verificación en dos pasos)");
     if (!["nuevo", "revisando", "cerrado"].includes(p.estado)) throw new Error("Estado inválido");
     await etica.actualizarReporteEtico(p.id, { estado: p.estado, notaInterna: p.notaInterna?.trim().slice(0, 2000) || null });
     refresh();
@@ -415,6 +427,32 @@ export async function completarFichaAction(p: { telefono: string; telefonoAltern
     if (falta) throw new Error("Completa todos los campos obligatorios");
     if (!(await fichas.contarArchivos(u.id, "identificacion"))) throw new Error("Sube una foto de tu identificación");
     await fichas.completarFichaPropia(u.id, { ...d, telefonoAlterno: t(p.telefonoAlterno, 40) || null, contactoEmergencia: t(p.contactoEmergencia, 160) || null });
+    return {};
+  });
+}
+
+// ─── Verificación en dos pasos (vista maestra) ───────────────────────────────────────────────
+
+export async function verificarDosPasosAction(codigo: string) {
+  return envolver(async () => {
+    const u = await usuarioRitmo();
+    if (!u) throw new Error("no-autorizado");
+    if (!u.falta2fa) return {};
+    const { limiteIp } = await import("@/lib/pulse/seguridad");
+    const ip = (await contexto()).ip;
+    if (!limiteIp(`2fa:${u.id}:${ip ?? "?"}`, 10, 60_000)) throw new Error("Demasiados intentos seguidos. Espera un minuto.");
+    const r = await dosPasos.comprobarCodigo(u.id, String(codigo ?? "").slice(0, 12), ip);
+    if (!r.ok) throw new Error(r.error);
+    return {};
+  });
+}
+
+/** Solo Elvin (admin verificado): reinicia la verificación de alguien que perdió el teléfono. */
+export async function reiniciarDosPasosAction(userId: string) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    if (u.rol !== "admin") throw new Error("Solo Elvin puede reiniciar la verificación");
+    await dosPasos.reiniciarDosPasos(userId, u.id);
     return {};
   });
 }
