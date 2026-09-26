@@ -62,7 +62,7 @@ export function clienteResistente(url: string, opciones: postgres.Options<Record
         return pendiente;
       },
       then<A, B>(ok?: (v: unknown) => A, mal?: (e: unknown) => B) {
-        return vigilar(correr, "consulta", esLectura(q)).then(ok, mal);
+        return vigilar(correr, `consulta «${q.replace(/\s+/g, " ").slice(0, 90)}»`, esLectura(q)).then(ok, mal);
       },
     };
     return pendiente;
