@@ -131,7 +131,9 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   try {
     const html = contratoHTML(o, p);
     const env = await enviarContrato({ proveedorId: p.id, ofertaId: o.id, nombre: p.nombre, email: p.email, telefono: p.whatsapp, html });
-    o.contrato = { envelopeId: env.envelopeId, estado: env.estado, urlFirma: env.urlFirma }; actualizar(o);
+    // Sin DocuSign, un trabajo de plomería no lleva orden aparte: lo cubre el acuerdo de afiliación que el plomero ya
+    // firmó (26/sep: a Edgar le decía "firma tu orden en el portal" y no había dónde). Los proyectos sí la guardan.
+    if (env.estado !== "simulado" || o.tipo === "proyecto") { o.contrato = { envelopeId: env.envelopeId, estado: env.estado, urlFirma: env.urlFirma }; actualizar(o); }
   } catch (e) { console.error("contrato", e); }
 
   // Actualiza el trabajo/proyecto de origen y el calendario del proveedor
@@ -153,10 +155,10 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   const cliente = t ? `${t.nombre} · ${t.telefono}\n📍 ${t.direccion}, ${t.municipio}${t.referencia ? " (" + t.referencia + ")" : ""}` : pr ? `${pr.nombre} · ${pr.telefono}\n📍 ${pr.municipio}` : "";
   const firma = o.contrato?.urlFirma ? `\n✍️ Firma tu orden de trabajo aquí: ${o.contrato.urlFirma}` : o.contrato?.estado === "simulado" ? `\n✍️ Tu orden de trabajo está en el portal para firmar: ${linkPortal(p.id, config.urlPublica)}` : "";
   await avisarAlTelefono(p.whatsapp, `✅ *${o.id} es tuyo*, ${p.nombre.split(" ")[0]}.\n${o.categoriaNombre} · ${cuando(o.inicio)}\n${cliente}${firma}\n\nRecuerda: fotos de antes y después, y el cliente le paga a Resuelto.`);
-  notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente y firmar tu orden.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);
+  notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente${o.contrato?.urlFirma ? " y firmar tu orden" : ""}.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);
   for (const id of o.avisados) if (id !== p.id) { const q = porId(id); if (q) { avisarAlTelefono(q.whatsapp, `${o.id} ya lo tomó otro proveedor. Te avisamos del próximo.`).catch(() => undefined); notificar(q.id, { titulo: `${o.id} ya se asignó`, cuerpo: "Otro proveedor lo tomó primero. Te avisamos del próximo.", url: linkPortal(q.id, config.urlPublica), tag: o.id }).catch(() => undefined); } }
   if (t) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, plomero licenciado de Resuelto. Te escribimos cuando vaya en camino.`);
-  await avisarCoordinador(`${manual ? "🛠️ Asignado a mano" : "✅ Aceptado"} ${o.id} → ${p.nombre} (${p.tipo}) · contrato ${o.contrato?.estado ?? "no enviado"}`);
+  await avisarCoordinador(`${manual ? "🛠️ Asignado a mano" : "✅ Aceptado"} ${o.id} → ${p.nombre} (${p.tipo}) · ${o.contrato ? "orden " + o.contrato.estado : "cubierto por su acuerdo de afiliación"}`);
   return { ok: true, oferta: o };
 }
 
