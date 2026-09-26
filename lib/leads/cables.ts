@@ -29,7 +29,7 @@ export function leadCalendlyAgendo(v: { nombre: string; email: string; telefono:
   return seguro("calendly-agendo", () =>
     ingestarLead({
       marca: "level_up",
-      embudo: "Closers",
+      embudo: "CLOSERS",
       etapa: v.reagenda ? "Llamada reprogramada" : "Llamada agendada",
       nombre: v.nombre,
       email: v.email,
@@ -81,7 +81,7 @@ export function leadQuiz(v: { evento: string; nombre: string; email: string; tel
   return seguro("quiz", () =>
     ingestarLead({
       marca: "level_up",
-      embudo: "Diagnóstico de Crecimiento",
+      embudo: "LUM DIAGNÓSTICO DE CRECIMIENTO",
       nombre: v.nombre,
       email: v.email,
       telefono: v.telefono,

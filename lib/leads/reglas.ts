@@ -27,21 +27,31 @@ export function telefonoLegible(d: string | null | undefined): string {
   return `+${d}`;
 }
 
-// Los embudos que Level Up usaba de verdad en Pipedrive (últimos 60 días al 26/sep/2026), con sus
-// etapas. "Closed / Already purchased / No califica" no son etapas aquí: son Ganado y Perdido (con motivo).
-export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEstancado?: number }[]> = {
+// Copia EXACTA de los embudos de Pipedrive de Level Up (26/sep/2026, pedido de Elvin: "copia los pipelines
+// que tenemos creados en Pipedrive"), mismos nombres y orden de etapas, ordenados por uso. Las etapas de
+// cierre del equipo ("Closed", "NO CALIFICA"…) se conservan; Ganado/Perdido siguen disponibles aparte.
+// `entrada` = de dónde le llegan los leads (lo que conectaba Pipedrive).
+export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEstancado?: number; entrada?: string }[]> = {
   level_up: [
-    { nombre: "WhatsApp", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Llamado 4x", "Llamado 5x", "Llamado 6x", "Llamar más tarde", "Cita agendada", "No show", "Seguimiento"], diasEstancado: 3 },
-    { nombre: "Closers", etapas: ["Llamada agendada", "Llamada reprogramada", "Llamada cancelada", "No show", "No ofertado", "Seguimiento", "Pago de reserva"], diasEstancado: 5 },
-    { nombre: "Clase Diego", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Llamado 4x", "Llamado 5x", "Llamado 6x", "Cita agendada", "No show", "Seguimiento"] },
-    { nombre: "Clase Frankie", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Llamado 4x", "Llamado 5x", "Llamado 6x", "Cita agendada", "No show", "Seguimiento"] },
-    { nombre: "Clase CF", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Llamado 4x", "Llamado 5x", "Llamado 6x", "Cita agendada", "No show", "Seguimiento"] },
-    { nombre: "Diagnóstico de Crecimiento", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Cita agendada", "No show", "Seguimiento"] },
+    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - WhatsApp", "Called 1x", "Called 2x", "Called 3x", "Called 4x", "Called 5x", "Called 6x", "Reasignar", "//", "Grupos de Whatsapp", "Appointment Set", "Llamar mas tarde", "No Show", "Follow-Up", "Closed", "NO CALIFICA", "Already Purchased", "ERRORES DEL SISTEMA", "Setters - Reclutamiento", "REMARKETING M"] },
+    { nombre: "LUM CLASS DIEGO", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD/LUM CLASS DIEGO", "X1", "X2", "X3", "X4", "X5", "X6", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
+    { nombre: "LUM CLASS FRANKIE", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD / FRANKIE CLASS", "CALLED 1X", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
+    { nombre: "CLOSERS", entrada: "calendly", diasEstancado: 5, etapas: ["Llamada agendada", "Llamada reprogramada", "Llamada cancelada", "No show", "No ofertado", "Follow up", "Pago reserva", "Closed win", "Closed lost"] },
+    { nombre: "LUM CLASS VALENTINA CONTRERAS", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD / VC CLASS", "CALLED 1X", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
+    { nombre: "LUM CF CLASS", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD / CF CLASS", "CALLED 1X", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
+    { nombre: "LUM DIAGNÓSTICO DE CRECIMIENTO", entrada: "quiz", diasEstancado: 3, etapas: ["NEW LEAD / DIAGNÓSTICO", "CALLED 1X", "CALLED 2X", "CALLED 3X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "DON'T QUALIFIED"] },
+    { nombre: "LUM DELIVERY", etapas: ["ONBOARDING", "SETUP", "RECOPILACIÓN Y/O CREACIÓN DE CONTENIDO", "SESIÓN ESTRÁTEGICA", "SEGUIMIENTOS Y REPORTES", "CLIENTE ACTIVO", "CLIENTE RECURRENTE", "CLIENTE INACTIVO"], diasEstancado: 0 },
+    { nombre: "WHATSAPP NEW LUM", etapas: ["NEW LEAD", "CALLED 1X", "CALLED 2X", "CALLED 3X", "CLOSED"] },
+    { nombre: "Bori · Seguimiento", etapas: ["Por contactar", "Mensaje enviado", "Respondió", "Registrado en Bori", "No interesa"] },
+    { nombre: "SHADOW · AUDITORÍA NEGOCIO DIGITAL", etapas: ["NEW LEAD / AUDITORÍA", "DM ENVIADO", "RESPONDIÓ", "LLAMADA AGENDADA", "NO SHOW", "FOLLOW UP", "COMUNIDAD $55", "CONSULTORÍA CERRADA", "NO CALIFICA"] },
   ],
   ai_borinquen: [
     { nombre: "WhatsApp", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Cita agendada", "No show", "Seguimiento"], diasEstancado: 3 },
   ],
 };
+
+/** Para buscar un embudo/etapa por nombre sin importar mayúsculas, acentos ni espacios. */
+export const clave = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim().toLowerCase();
 
 export type EstadoActividad = "ninguna" | "vencida" | "hoy" | "futura";
 const TZ = "America/Puerto_Rico";

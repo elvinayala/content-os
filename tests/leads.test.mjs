@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { estadoActividad, estancado, leerTimelines, normalizarTelefono, ordenEntre, SEMILLA, telefonoLegible } from "../lib/leads/reglas.ts";
+import { clave, estadoActividad, estancado, leerTimelines, normalizarTelefono, ordenEntre, SEMILLA, telefonoLegible } from "../lib/leads/reglas.ts";
 
 test("teléfonos a dígitos con código de país", () => {
   assert.equal(normalizarTelefono("(787) 555-1234"), "17875551234");
@@ -30,11 +30,12 @@ test("estancado y orden entre tarjetas", () => {
   assert.equal(ordenEntre(null, 1000), 0);
 });
 
-test("semillas: las marcas no se mezclan y no hay etapas de cierre", () => {
-  assert.ok(SEMILLA.level_up.length >= 5);
-  for (const e of [...SEMILLA.level_up, ...SEMILLA.ai_borinquen]) {
-    assert.ok(!e.etapas.some((x) => /closed|cerrad|ganad|perdid/i.test(x)), e.nombre);
-  }
+test("semillas: copia exacta de Pipedrive LU y búsqueda por nombre tolerante", () => {
+  assert.equal(SEMILLA.level_up.length, 11);
+  const closers = SEMILLA.level_up.find((e) => e.nombre === "CLOSERS");
+  assert.deepEqual(closers.etapas.slice(0, 3), ["Llamada agendada", "Llamada reprogramada", "Llamada cancelada"]);
+  assert.equal(SEMILLA.level_up[0].nombre, "WHATSAPP");
+  assert.equal(clave("  LUM  Diagnóstico de CRECIMIENTO "), "lum diagnostico de crecimiento");
 });
 
 test("Timelines: mensaje entrante anidado", () => {

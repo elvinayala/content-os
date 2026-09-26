@@ -87,6 +87,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/aib/calendly") return NextResponse.next();
   // Puente de WhatsApp de Leads (Timelines.ai no firma: secreto en la URL, lo valida la ruta).
   if (pathname === "/api/leads/timelines") return NextResponse.next();
+  // Entrada de formularios/Zapier a un embudo de Leads (secreto en la URL, lo valida la ruta).
+  if (pathname === "/api/leads/entrada") return NextResponse.next();
   // Fathom → Slack (resúmenes de llamadas, solicitud de Aure #29): valida la firma adentro.
   if (pathname === "/api/fathom") return NextResponse.next();
 

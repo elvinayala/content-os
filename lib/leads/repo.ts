@@ -6,7 +6,7 @@ import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { normalizarTelefono, ordenEntre, SEMILLA, type EventoWhatsapp, type Marca } from "./reglas";
+import { clave, normalizarTelefono, ordenEntre, SEMILLA, type EventoWhatsapp, type Marca } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -394,7 +394,7 @@ async function buscarAbierto(marca: Marca, telefono: string | null, email: strin
 async function embudoPorNombre(marca: Marca, nombre: string): Promise<Embudo | null> {
   await asegurarSemilla(marca);
   const lista = await listarEmbudos(marca);
-  return lista.find((e) => e.nombre.toLowerCase() === nombre.toLowerCase()) ?? lista[0] ?? null;
+  return lista.find((e) => clave(e.nombre) === clave(nombre)) ?? null;
 }
 
 /**
@@ -420,7 +420,7 @@ export async function ingestarLead(v: {
   const emb = await embudoPorNombre(v.marca, v.embudo);
   if (!emb) throw new Error("sin-embudos");
   const etapas = await etapasDe(emb.id);
-  const etapa = (v.etapa && etapas.find((e) => e.nombre.toLowerCase() === v.etapa!.toLowerCase())) || etapas[0];
+  const etapa = (v.etapa && etapas.find((e) => clave(e.nombre) === clave(v.etapa!))) || etapas[0];
   const d = await db();
   let duenoId: string | null = null;
   if (v.duenoNombre) {
@@ -478,7 +478,7 @@ export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promis
     // Un saliente a alguien que no está en el CRM (p. ej. un chat personal) no crea lead.
     if (ev.direccion !== "entrante") return "ignorado:saliente-sin-lead";
     let embudoId = cuenta?.embudoId ?? null;
-    if (!embudoId) embudoId = (await embudoPorNombre(marca, "WhatsApp"))?.id ?? null;
+    if (!embudoId) embudoId = (await embudoPorNombre(marca, "WhatsApp"))?.id ?? (await listarEmbudos(marca))[0]?.id ?? null;
     if (!embudoId) return "error:sin-embudo";
     const creado = await crearTrato({ marca, embudoId, nombre: ev.nombre || `WhatsApp ${ev.telefono}`, telefono: ev.telefono, origen: "whatsapp", duenoId: cuenta?.duenoId ?? null, datos: { cuentaWhatsapp: ev.cuenta } });
     nuevo = !creado.yaExistia;
