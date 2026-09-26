@@ -73,3 +73,11 @@ Canal propio **#nico-desarrollo** (C0C43J731AQ) con Carilin y Aure; Carilin ya l
 automatizaciones). VERCEL_TOKEN nuevo sin vencimiento en nico/puente/lola/max (Nico verificó 200);
 deploy-snapshots.sh ahora lleva `--scope`. 1000X en GitHub (`elvinayala/1000x-fuente`). Falta de
 Elvin: repo `autoflow-quality-care`, GHL_AGENCY_TOKEN, CLOUDFLARE_API_TOKEN + ACCOUNT_ID.
+
+**26/sep/2026 — Nico sin límites:** crea él mismo con `fal.mjs` (Nano Banana Pro; `FAL_API_KEY` y
+`HIGGSFIELD_OAUTH_JSON` por referencia a lola), + llaves de AC, Calendly LU/AIB, Typeform, Slack LU/AIB en
+Railway; cerebro §9: sale del stack (pide una llave una vez), habla con el equipo interno si el pedido lo
+necesita, nunca con clientes sin OK. Probado: flyer LU solo en ~2 min. TRAMPA: los plist de la Mac
+(nico/lola/telegram-puente) se volvían a prender en cada reinicio (`unload` no es permanente) y le robaban
+los mensajes a Railway con un Claude viejo (2.1.278 no sirve con Opus 5.5) → `launchctl disable` (permanente);
+en la Mac solo queda `com.iamarket.sync-nube`.
