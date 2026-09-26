@@ -177,6 +177,14 @@
       "porque": "Aure: Yaileen las mueve, pero que no se agenden pegadas (1 h entre reuniones, nunca a la misma hora). Elvin aprobó.",
       "verificado": "Tests del agente 47/47 (test nuevo: citas de GHL cuentan como ocupadas); tsc sin errores nuevos (165 preexistentes del clon, iguales antes y después). NO DESPLEGADO ni probado contra el GHL vivo: Nico no tiene acceso al Railway de Resuelto ni GHL_TOKEN. Falta: en la Mac git pull; cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach; luego pedir horarios de entrevista y confirmar que no ofrece a < 1 h de una cita puesta a mano.",
       "commit": "ver git log (citas de GHL)"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "ninguna (consulta de Aure)",
+      "que": "[Solicitud de Aure #43] Aure preguntó si Nico actualizó 2 imágenes del leaderboard de Level Up. No fue Nico: sin commits/archivos de leaderboard o ranking de LU en ningún repo, ni en las bitácoras de Nico/Iris/Lola, ni en los workflows de n8n. Se le preguntó a Lola por el buzón; falta que Aure diga dónde las vio (link o captura).",
+      "porque": "Elvin aprobó contestarle que no hubo cambios de Nico.",
+      "verificado": "Búsqueda en /estado (repos, data, vault, n8n): la única mención es la reunión LU del 26/mar (plataforma interna, repo no disponible).",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
