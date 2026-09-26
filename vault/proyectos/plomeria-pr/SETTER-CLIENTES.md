@@ -26,15 +26,16 @@ Contratista independiente. Sin sueldo fijo: un sueldo con horario fijo la convie
 
 | Qué | Le toca |
 |---|---|
-| Trabajo de plomería **completado y cobrado** que venga de su gestión | **10 % de la mano de obra** (destape $149 → $14.90 · calentador $279 → $27.90 · diagnóstico $69 → $6.90) |
-| Proyecto de la División Proyectos (contrato + depósito) | $100 |
-| Mes con 30 trabajos cobrados o más | +$150 |
+| Trabajo de plomería **completado y cobrado** que venga de su gestión | **6.5 % de la mano de obra** (destape $149 → $9.69 · calentador $279 → $18.14 · diagnóstico $69 → $4.49) |
+| Proyecto de remodelación de la División Proyectos (el cliente firma y paga el depósito) | $100 |
+| Semana con 10 trabajos cobrados o más | +$50 |
+| Semana con 20 o más (máximo, en lugar del de $50) | +$100 |
 | **Arranque:** primeras 8 semanas, mínimo garantizado | $100/semana (tope $800) |
 
-- Sobre la mano de obra (sin materiales, sin los $19 de coordinación). De cada trabajo, Resuelto pasa de 35 % + $19 a 25 % + $19.
+- Sobre la mano de obra (sin materiales, sin los $19 de coordinación). De cada trabajo, Resuelto pasa de 35 % + $19 a 28.5 % + $19. Elvin bajó del 10 % al 6.5 % y cambió el bono de mes por el semanal (26/sep).
 - Cuenta si la llamada entrante la atendió ella, si devolvió la llamada o si llamó al cliente de un aviso, y el cliente agenda dentro de 7 días.
 - Pago los viernes, con lo cobrado hasta el miércoles.
-- **Lo que puede ganar:** con 2 zonas (~1–2 trabajos al día, mano de obra promedio ~$180) son $500–$950 al mes; con 4–5 trabajos al día, $2,000–$2,500 más el bono.
+- **Lo que puede ganar:** con 2 zonas (~1–2 trabajos al día, mano de obra promedio ~$180) son ~$300–$600 al mes en comisión (más el mínimo de arranque las primeras 8 semanas y el bono de $50 si llega a 10 en la semana); con 4–5 trabajos al día, ~$1,300–$1,600 en comisión + $100 de bono por semana ≈ $1,700–$2,000 al mes.
 
 ## Qué necesita para empezar
 

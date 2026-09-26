@@ -56,9 +56,9 @@ HTML = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style>
 
 <h2>7. Cómo cobras</h2>
 <p>Contratista independiente. Cobras <b>por trabajo completado y cobrado</b> (no por cita agendada), los viernes, por ATH Móvil o transferencia, con el detalle.</p>
-<table><tr><td>Cada trabajo de plomería completado y cobrado</td><td class="n">10 % de la mano de obra</td></tr>
-<tr><td><small>Ejemplos: destape $149 → $14.90 · calentador $279 → $27.90 · diagnóstico $69 → $6.90</small></td><td></td></tr>
-<tr><td>Proyecto de remodelación (contrato + depósito)</td><td class="n">$100</td></tr><tr><td>Bono: 30 trabajos o más en el mes</td><td class="n">+$150</td></tr>
+<table><tr><td>Cada trabajo de plomería completado y cobrado</td><td class="n">6.5 % de la mano de obra</td></tr>
+<tr><td><small>Ejemplos: destape $149 → $9.69 · calentador $279 → $18.14 · diagnóstico $69 → $4.49</small></td><td></td></tr>
+<tr><td>Proyecto de remodelación (baño, cocina…) que el cliente firme y deposite</td><td class="n">$100</td></tr><tr><td>Bono de la semana: 10 trabajos cobrados o más</td><td class="n">+$50</td></tr><tr><td>Bono de la semana: 20 trabajos cobrados o más (máximo)</td><td class="n">+$100</td></tr>
 <tr><td>Arranque: primeras 8 semanas, mínimo garantizado</td><td class="n">$100/semana (tope $800)</td></tr></table>
 <p><small>Cuenta si el cliente vino de un aviso tuyo o de tu llamada, agendó dentro de 7 días y el trabajo se cobró.</small></p>
 

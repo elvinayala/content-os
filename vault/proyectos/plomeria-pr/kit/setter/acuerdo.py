@@ -1,5 +1,5 @@
 # Acuerdo de servicios de la setter de clientes (26/sep/2026, Elvin: "hazle un acuerdo de servicio a la setter; envíaselo
-# a Aure"). Contratista independiente, comisión del 10 % de la mano de obra cobrada + mínimo de arranque (SETTER-CLIENTES.md).
+# a Aure"). Contratista independiente, comisión del 6.5 % de la mano de obra cobrada + mínimo de arranque (SETTER-CLIENTES.md).
 # Borrador para revisión del abogado. Uso: python3 acuerdo.py → acuerdo-setter.pdf
 import subprocess
 from pathlib import Path
@@ -24,9 +24,10 @@ HTML = f"""<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style>
 
 <h2>3. Compensación</h2>
 <table>
-<tr><td>Por cada trabajo de plomería <b>completado y cobrado</b> que venga de su gestión</td><td class="n">10 % de la mano de obra cobrada</td></tr>
-<tr><td>Por cada proyecto de la División de Proyectos (contrato firmado y depósito cobrado)</td><td class="n">$100</td></tr>
-<tr><td>Bono del mes con 30 trabajos cobrados o más</td><td class="n">$150</td></tr>
+<tr><td>Por cada trabajo de plomería <b>completado y cobrado</b> que venga de su gestión</td><td class="n">6.5 % de la mano de obra cobrada</td></tr>
+<tr><td>Por cada proyecto de remodelación de la División de Proyectos (baño, cocina, etc.) que el cliente firme y del que pague el depósito</td><td class="n">$100</td></tr>
+<tr><td>Bono de la semana (lunes a domingo): 10 trabajos cobrados o más</td><td class="n">+$50</td></tr>
+<tr><td>Bono de la semana: 20 trabajos cobrados o más (en lugar del de $50; es el máximo)</td><td class="n">+$100</td></tr>
 <tr><td>Mínimo de arranque: primeras 8 semanas, si sus comisiones de la semana no llegan a esa cantidad, Resuelto completa la diferencia (máximo $800 en total)</td><td class="n">$100 por semana</td></tr></table>
 <ul><li><b>Qué cuenta como su gestión:</b> la llamada entrante que atendió, la llamada que devolvió o el cliente de un aviso que ella llamó, si el cliente agenda dentro de los 7 días siguientes.</li>
 <li>La comisión se calcula sobre la <b>mano de obra</b>: no incluye materiales, el cargo de coordinación, impuestos ni propinas. Las citas canceladas, los trabajos no cobrados y los reembolsos no generan comisión; si se reembolsa un trabajo ya pagado, se descuenta del próximo pago.</li>
