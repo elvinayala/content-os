@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-09-26T17:57:48.054Z",
+  "exportadoEl": "2026-09-26T18:11:43.607Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 103,
   "workflows": [
@@ -15,7 +15,7 @@
       "nombre": "B-) Agente de onboarding v5",
       "activo": true,
       "archivo": "rb5SOZw8rT5YXKg8-b-agente-de-onboarding-v5.json",
-      "actualizadoEl": "2026-09-25T03:48:31.387Z"
+      "actualizadoEl": "2026-09-26T18:04:59.715Z"
     },
     {
       "id": "7TYGDiWlJY2jqHX9",
@@ -120,7 +120,7 @@
       "nombre": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
       "activo": true,
       "archivo": "UIOeMjnuHwMaMyoX-recordatorio-remarketing-menos-de-3-campanas-activas-15-dias.json",
-      "actualizadoEl": "2026-01-06T14:10:43.246Z"
+      "actualizadoEl": "2026-09-26T18:04:58.495Z"
     },
     {
       "id": "WiNvceWGgPIVlOF6",
@@ -160,7 +160,7 @@
     {
       "id": "zHqLHcFFgClZuUK5",
       "nombre": "E-) citas automaticas v4",
-      "activo": true,
+      "activo": false,
       "archivo": "zHqLHcFFgClZuUK5-e-citas-automaticas-v4.json",
       "actualizadoEl": "2026-07-12T22:57:40.457Z"
     },
@@ -302,7 +302,7 @@
       "nombre": "C-) Tools agente principal v1",
       "activo": true,
       "archivo": "KWSsCZWE3CLmT7Dj-c-tools-agente-principal-v1.json",
-      "actualizadoEl": "2026-05-27T19:04:10.720Z"
+      "actualizadoEl": "2026-09-26T18:04:57.202Z"
     },
     {
       "id": "uelcZVSQvpl2hetY",
@@ -358,7 +358,7 @@
       "nombre": "H-) Felicitaciones por leads v2",
       "activo": true,
       "archivo": "3ylIqOgWiiW37lWx-h-felicitaciones-por-leads-v2.json",
-      "actualizadoEl": "2026-09-26T17:51:06.250Z"
+      "actualizadoEl": "2026-09-26T18:10:50.193Z"
     },
     {
       "id": "3NpTfPN4uQseNhq5",
@@ -405,7 +405,7 @@
     {
       "id": "wsmfSEQa0GYGHqjA",
       "nombre": "B-) Publicador de campañas v1 - devflow",
-      "activo": true,
+      "activo": false,
       "archivo": "wsmfSEQa0GYGHqjA-b-publicador-de-campanas-v1-devflow.json",
       "actualizadoEl": "2026-09-22T01:56:12.897Z"
     },
@@ -428,7 +428,7 @@
       "nombre": "A) RevisionInstanciaEvoAPI",
       "activo": true,
       "archivo": "MLp39LO5jJmzk9Vp-a-revisioninstanciaevoapi.json",
-      "actualizadoEl": "2026-08-31T02:52:49.815Z"
+      "actualizadoEl": "2026-09-26T18:06:09.335Z"
     },
     {
       "id": "L51yWcEJXkSrloeK",
@@ -580,7 +580,7 @@
     {
       "id": "WgDRwK7RgmzqezhK",
       "nombre": "A-) Webhooks central v2 - devflow",
-      "activo": true,
+      "activo": false,
       "archivo": "WgDRwK7RgmzqezhK-a-webhooks-central-v2-devflow.json",
       "actualizadoEl": "2026-01-07T08:19:02.426Z"
     },
@@ -608,7 +608,7 @@
     {
       "id": "kyiZTRCdzolA5li5",
       "nombre": "C.1) Agente de monitoreo (Jul 11 at 01:24:33)",
-      "activo": true,
+      "activo": false,
       "archivo": "kyiZTRCdzolA5li5-c-1-agente-de-monitoreo-jul-11-at-01-24-33.json",
       "actualizadoEl": "2025-07-14T08:36:08.000Z"
     },
@@ -622,7 +622,7 @@
     {
       "id": "MjQHPb1GpuYo55l9",
       "nombre": "A-) Webhooks central v1",
-      "activo": true,
+      "activo": false,
       "archivo": "MjQHPb1GpuYo55l9-a-webhooks-central-v1.json",
       "actualizadoEl": "2026-01-06T13:51:48.848Z"
     },
@@ -631,12 +631,12 @@
       "nombre": "A-) Sync Pulse → NocoDB v1",
       "activo": true,
       "archivo": "RyeQFDXnB429XG0Q-a-sync-pulse-nocodb-v1.json",
-      "actualizadoEl": "2026-09-21T02:16:03.361Z"
+      "actualizadoEl": "2026-09-26T18:11:17.687Z"
     },
     {
       "id": "RXMCAuLoLhZCE2Sv",
       "nombre": "My workflow",
-      "activo": true,
+      "activo": false,
       "archivo": "RXMCAuLoLhZCE2Sv-my-workflow.json",
       "actualizadoEl": "2026-07-31T01:53:53.882Z"
     },
@@ -666,7 +666,7 @@
       "nombre": "B-) Agente de Setting V5",
       "activo": true,
       "archivo": "txUzpGmbiSu8Zc4J-b-agente-de-setting-v5.json",
-      "actualizadoEl": "2026-06-20T15:02:47.257Z"
+      "actualizadoEl": "2026-09-26T18:05:01.140Z"
     },
     {
       "id": "Lkb4xQg9G0y16FOj",

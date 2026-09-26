@@ -121,11 +121,13 @@ $input.all().forEach((it, i) => {
   const error = it.json.error ? String(it.json.error.message || it.json.error).slice(0, 120) : null;
   const leads = acciones.filter((a) => TIPOS.includes(a.action_type)).reduce((s, a) => s + Number(a.value || 0), 0);
   // Como el viejo: si ya pasó de 200 sin haber sido felicitado, va directo la de 200.
-  let hito = null;
-  if (leads >= 200) hito = 200;
+  // Regla de Elvin (25/sep, "solo los nuevos"): quien aparece por primera vez ya pasado de 200 (cliente viejo
+  // al que recién se le llenó la fecha o la cuenta) se marca en silencio; solo se felicita al que cruza ahora.
+  let hito = null, silencioso = false;
+  if (leads >= 200) { hito = 200; silencioso = !c.felicitaciones; }
   else if (leads >= 100 && !c.felicitaciones) hito = 100;
   const primerNombre = (c.nombre.trim().split(/\\s+/)[0]) || '';
-  out.push({ json: { ...c, leads, hito, error, primerNombre, puedeEnviar: !!hito && c.telefono.length >= 10 } });
+  out.push({ json: { ...c, leads, hito, silencioso, error, primerNombre, puedeEnviar: !!hito && (silencioso || c.telefono.length >= 10) } });
 });
 return out;` }, pos(5, 0)),
     nodo("¿Sembrar?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.sembrar === true && $json.hito === 200 }}")], combinator: "and" }, options: {} }, pos(5, 2)),
@@ -136,8 +138,8 @@ return out;` }, pos(5, 0)),
     // Llave en la base (26/sep): la marca de NocoDB falló el 25/sep ("Multiple matches found") y al otro día
     // se habría repetido. Si la memoria del agente ya tiene esta felicitación para ese número, no se manda: solo
     // se marca. La consulta devuelve los datos del cliente en la misma fila (sin depender del emparejado de items).
-    nodo("¿Ya se le mandó?", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;", options: { queryReplacement: "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre] }}" } }, pos(6, -2), { credentials: { postgres: CRED_PG } }),
-    nodo("¿Nuevo?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ Number($json.n) === 0 }}")], combinator: "and" }, options: {} }, pos(6, -1)),
+    nodo("¿Ya se le mandó?", "n8n-nodes-base.postgres", 2.6, { operation: "executeQuery", query: "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, $7::boolean AS silencioso, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;", options: { queryReplacement: "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre, !!$json.silencioso] }}" } }, pos(6, -2), { credentials: { postgres: CRED_PG } }),
+    nodo("¿Nuevo?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ Number($json.n) === 0 && $json.silencioso !== true }}")], combinator: "and" }, options: {} }, pos(6, -1)),
     nodo("¿100 o 200?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.hito === 100 }}")], combinator: "and" }, options: {} }, pos(7, -1)),
     nodo("Felicitación 100", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: TEXTO_100, options_message: {} }, pos(8, -2), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
     nodo("Esperar 1 min", "n8n-nodes-base.wait", 1.1, { amount: 1, unit: "minutes" }, pos(9, -2)),

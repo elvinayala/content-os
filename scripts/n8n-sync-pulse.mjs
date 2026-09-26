@@ -164,7 +164,7 @@ return { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, acc
     nocoHttp("Enlazar", "POST", `=${NOCODB}/tables/${T.clientes}/links/{{ $('Elegir destino').item.json.linkCol }}/records/{{ $('Elegir destino').item.json.filaId }}`, pos(15, -1), "={{ JSON.stringify({ Id: $('Elegir destino').item.json.nuevoId }) }}"),
 
     // fecha de la primera campaña Level Up (Meta), como hacía el viejo
-    nodo("¿Buscar campañas?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ $json.cuentaCambio === true && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(9, 1)),
+    nodo("¿Buscar campañas?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(9, 1)),
     nodo("Campañas de Meta", "n8n-nodes-base.httpRequest", 4.2, { url: "=https://graph.facebook.com/v23.0/act_{{ $json.campos['ID-cuenta-publicitaria'] }}/campaigns", authentication: "predefinedCredentialType", nodeCredentialType: "facebookGraphApi", sendQuery: true, queryParameters: { parameters: [
       { name: "filtering", value: "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\",\"PAUSED\",\"DELETED\",\"ARCHIVED\",\"IN_PROCESS\",\"WITH_ISSUES\"]}]" },
       { name: "limit", value: "50" },

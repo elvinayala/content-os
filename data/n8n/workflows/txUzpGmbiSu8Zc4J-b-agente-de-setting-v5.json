@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-20T15:02:47.257Z",
+  "updatedAt": "2026-09-26T18:05:01.140Z",
   "createdAt": "2026-05-27T15:23:17.937Z",
   "id": "txUzpGmbiSu8Zc4J",
   "name": "B-) Agente de Setting V5",
@@ -1064,9 +1064,9 @@
         "select": "user",
         "user": {
           "__rl": true,
-          "value": "U096Y3TRT5E",
+          "value": "U08U9777PUY",
           "mode": "list",
-          "cachedResultName": "agenteia"
+          "cachedResultName": "elvin"
         },
         "text": "=Mensaje del usuario con los datos del referido:{{ $json.output.text }}",
         "otherOptions": {
@@ -1087,7 +1087,8 @@
           "id": "RPZcJdneOoqIBClJ",
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
         }
-      }
+      },
+      "notes": "Nico 26/sep/2026: antes iba a la cuenta agenteia (nadie la lee); ahora a Elvin."
     },
     {
       "parameters": {
@@ -3305,7 +3306,8 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "meta": null,
@@ -3445,9 +3447,9 @@
       }
     ]
   },
-  "versionId": "6802de1c-9b17-4b39-8a05-326a934f7b24",
-  "activeVersionId": "6802de1c-9b17-4b39-8a05-326a934f7b24",
-  "versionCounter": 57,
+  "versionId": "7465e919-aba5-49c3-b235-2fc8275490b3",
+  "activeVersionId": "7465e919-aba5-49c3-b235-2fc8275490b3",
+  "versionCounter": 60,
   "triggerCount": 1,
   "shared": [
     {
@@ -3510,9 +3512,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-06-20T15:02:50.146Z",
-    "createdAt": "2026-06-20T15:02:47.261Z",
-    "versionId": "6802de1c-9b17-4b39-8a05-326a934f7b24",
+    "updatedAt": "2026-09-26T18:05:01.145Z",
+    "createdAt": "2026-09-26T18:05:01.145Z",
+    "versionId": "7465e919-aba5-49c3-b235-2fc8275490b3",
     "workflowId": "txUzpGmbiSu8Zc4J",
     "nodes": [
       {
@@ -4572,9 +4574,9 @@
           "select": "user",
           "user": {
             "__rl": true,
-            "value": "U096Y3TRT5E",
+            "value": "U08U9777PUY",
             "mode": "list",
-            "cachedResultName": "agenteia"
+            "cachedResultName": "elvin"
           },
           "text": "=Mensaje del usuario con los datos del referido:{{ $json.output.text }}",
           "otherOptions": {
@@ -4595,7 +4597,8 @@
             "id": "RPZcJdneOoqIBClJ",
             "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
           }
-        }
+        },
+        "notes": "Nico 26/sep/2026: antes iba a la cuenta agenteia (nadie la lee); ahora a Elvin."
       },
       {
         "parameters": {
@@ -6812,15 +6815,15 @@
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 6802de1c",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-06-20T15:02:50.137Z",
-        "id": 197,
+        "createdAt": "2026-09-26T18:05:01.526Z",
+        "id": 290,
         "workflowId": "txUzpGmbiSu8Zc4J",
-        "versionId": "6802de1c-9b17-4b39-8a05-326a934f7b24",
+        "versionId": "7465e919-aba5-49c3-b235-2fc8275490b3",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

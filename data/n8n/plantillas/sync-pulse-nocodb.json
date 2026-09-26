@@ -698,7 +698,7 @@
           "conditions": [
             {
               "id": "c9",
-              "leftValue": "={{ $json.cuentaCambio === true && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
+              "leftValue": "={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",

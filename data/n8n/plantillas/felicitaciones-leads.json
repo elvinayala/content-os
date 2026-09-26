@@ -224,7 +224,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Cuenta los leads y decide qué felicitación toca (una por cliente y corrida).\nconst TIPOS = ['lead', 'onsite_conversion.messaging_conversation_started_7d'];\nconst out = [];\n$input.all().forEach((it, i) => {\n  const c = $('Candidatos').all()[i].json;\n  const acciones = (it.json.data && it.json.data[0] && it.json.data[0].actions) || [];\n  const error = it.json.error ? String(it.json.error.message || it.json.error).slice(0, 120) : null;\n  const leads = acciones.filter((a) => TIPOS.includes(a.action_type)).reduce((s, a) => s + Number(a.value || 0), 0);\n  // Como el viejo: si ya pasó de 200 sin haber sido felicitado, va directo la de 200.\n  let hito = null;\n  if (leads >= 200) hito = 200;\n  else if (leads >= 100 && !c.felicitaciones) hito = 100;\n  const primerNombre = (c.nombre.trim().split(/\\s+/)[0]) || '';\n  out.push({ json: { ...c, leads, hito, error, primerNombre, puedeEnviar: !!hito && c.telefono.length >= 10 } });\n});\nreturn out;"
+        "jsCode": "// Cuenta los leads y decide qué felicitación toca (una por cliente y corrida).\nconst TIPOS = ['lead', 'onsite_conversion.messaging_conversation_started_7d'];\nconst out = [];\n$input.all().forEach((it, i) => {\n  const c = $('Candidatos').all()[i].json;\n  const acciones = (it.json.data && it.json.data[0] && it.json.data[0].actions) || [];\n  const error = it.json.error ? String(it.json.error.message || it.json.error).slice(0, 120) : null;\n  const leads = acciones.filter((a) => TIPOS.includes(a.action_type)).reduce((s, a) => s + Number(a.value || 0), 0);\n  // Como el viejo: si ya pasó de 200 sin haber sido felicitado, va directo la de 200.\n  // Regla de Elvin (25/sep, \"solo los nuevos\"): quien aparece por primera vez ya pasado de 200 (cliente viejo\n  // al que recién se le llenó la fecha o la cuenta) se marca en silencio; solo se felicita al que cruza ahora.\n  let hito = null, silencioso = false;\n  if (leads >= 200) { hito = 200; silencioso = !c.felicitaciones; }\n  else if (leads >= 100 && !c.felicitaciones) hito = 100;\n  const primerNombre = (c.nombre.trim().split(/\\s+/)[0]) || '';\n  out.push({ json: { ...c, leads, hito, silencioso, error, primerNombre, puedeEnviar: !!hito && (silencioso || c.telefono.length >= 10) } });\n});\nreturn out;"
       }
     },
     {
@@ -356,9 +356,9 @@
       ],
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;",
+        "query": "SELECT $2::text AS id, $3::int AS hito, $4::text AS telefono, $5::text AS \"primerNombre\", $6::text AS nombre, $7::boolean AS silencioso, (SELECT count(*)::int FROM n8n_chat_histories_3344 WHERE session_id = $1 AND message->>'content' LIKE '%MÁS DE ' || $3 || ' LEADS%') AS n;",
         "options": {
-          "queryReplacement": "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre] }}"
+          "queryReplacement": "={{ [$json.telefono + '@s.whatsapp.net', String($json.id), $json.hito, $json.telefono, $json.primerNombre, $json.nombre, !!$json.silencioso] }}"
         }
       },
       "credentials": {
@@ -388,7 +388,7 @@
           "conditions": [
             {
               "id": "c3",
-              "leftValue": "={{ Number($json.n) === 0 }}",
+              "leftValue": "={{ Number($json.n) === 0 && $json.silencioso !== true }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",

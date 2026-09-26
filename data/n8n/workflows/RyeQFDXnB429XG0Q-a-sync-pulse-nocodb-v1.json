@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T02:16:03.361Z",
+  "updatedAt": "2026-09-26T18:11:17.687Z",
   "createdAt": "2026-09-21T01:20:23.688Z",
   "id": "RyeQFDXnB429XG0Q",
   "name": "A-) Sync Pulse → NocoDB v1",
@@ -704,7 +704,7 @@
           "conditions": [
             {
               "id": "c9",
-              "leftValue": "={{ $json.cuentaCambio === true && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
+              "leftValue": "={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
@@ -1149,9 +1149,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "08ff6297-09b1-4f6b-8b23-d236c15169ca",
-  "activeVersionId": "08ff6297-09b1-4f6b-8b23-d236c15169ca",
-  "versionCounter": 10,
+  "versionId": "45302c7c-c743-4259-bb7f-2c57648cd414",
+  "activeVersionId": "45302c7c-c743-4259-bb7f-2c57648cd414",
+  "versionCounter": 13,
   "triggerCount": 2,
   "shared": [
     {
@@ -1214,9 +1214,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-21T02:16:03.369Z",
-    "createdAt": "2026-09-21T02:16:03.369Z",
-    "versionId": "08ff6297-09b1-4f6b-8b23-d236c15169ca",
+    "updatedAt": "2026-09-26T18:11:17.690Z",
+    "createdAt": "2026-09-26T18:11:17.690Z",
+    "versionId": "45302c7c-c743-4259-bb7f-2c57648cd414",
     "workflowId": "RyeQFDXnB429XG0Q",
     "nodes": [
       {
@@ -1916,7 +1916,7 @@
             "conditions": [
               {
                 "id": "c9",
-                "leftValue": "={{ $json.cuentaCambio === true && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
+                "leftValue": "={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}",
                 "rightValue": "",
                 "operator": {
                   "type": "boolean",
@@ -2354,10 +2354,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-21T02:16:03.622Z",
-        "id": 227,
+        "createdAt": "2026-09-26T18:11:17.870Z",
+        "id": 305,
         "workflowId": "RyeQFDXnB429XG0Q",
-        "versionId": "08ff6297-09b1-4f6b-8b23-d236c15169ca",
+        "versionId": "45302c7c-c743-4259-bb7f-2c57648cd414",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-31T02:52:49.815Z",
+  "updatedAt": "2026-09-26T18:06:09.335Z",
   "createdAt": "2026-03-27T13:37:02.960Z",
   "id": "MLp39LO5jJmzk9Vp",
   "name": "A) RevisionInstanciaEvoAPI",
@@ -90,7 +90,7 @@
           "cachedResultName": "monitoreo-agentes-ia"
         },
         "messageType": "block",
-        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
         "text": "=",
         "otherOptions": {
           "includeLinkToWorkflow": false,
@@ -120,7 +120,8 @@
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
         }
       },
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Nico 26/sep/2026: avisaba a Luis (proveedor); ahora menciona a Elvin y Carilin."
     },
     {
       "parameters": {
@@ -133,7 +134,7 @@
           "cachedResultName": "monitoreo-agentes-ia"
         },
         "messageType": "block",
-        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
         "text": "=",
         "otherOptions": {
           "includeLinkToWorkflow": false,
@@ -163,7 +164,8 @@
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
         }
       },
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Nico 26/sep/2026: estado OK diario sin mencionar a nadie."
     },
     {
       "parameters": {
@@ -265,7 +267,7 @@
           "cachedResultName": "monitoreo-agentes-ia"
         },
         "messageType": "block",
-        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA FACEBOOK 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*\\n*`\\n\"}},{\"type\":\"divider\"}]}",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* Business Settings → Usuarios del sistema → *Agente Monitoreo* → Generar token (con ads_read y ads_management) → en n8n, credencial *Levelito Acoount management* → pegar el token nuevo.\"}},{\"type\":\"divider\"}]}",
         "text": "=",
         "otherOptions": {
           "includeLinkToWorkflow": false,
@@ -295,50 +297,12 @@
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
         }
       },
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Nico 26/sep/2026: la revisión diaria real del token (si get campaign1 falla). Reemplaza al aviso con fecha fija 27-06-2026 que avisaba a Luis por WhatsApp."
     },
     {
       "parameters": {
-        "url": "https://graph.facebook.com/v25.0/oauth/access_token",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "grant_type",
-              "value": "fb_exchange_token"
-            },
-            {
-              "name": "client_id",
-              "value": "907230552045448"
-            },
-            {
-              "name": "client_secret",
-              "value": "5d292190fe02106404712fd9e03a1d4b"
-            },
-            {
-              "name": "fb_exchange_token",
-              "value": "EAAM5HxLIt4gBRfWfIZC60dKS6vGDIuL1Yv10tWIA9qZCPWPUWkL5Ks91cq9vR4oJOTtqiZBA2iiegBYnb6cu0IVRTwnLP5ctmvuZBHiU7tbyWEkoYoZAVN58bRrRZBwKlvquURBvp9bAsIrMjp3ZAxYMIQnn39qw2bYA23tRIK3ZBcMfZAM3nMifle8Ri0ZCtxYTgO011jCQaSTZBtDLGjjZA9OeJnGhDlWTepErsqU7WepeAKAqZCcpZCvbzPEKWJq6LMj0M4fzMzXfZAf6X7iJcpu90gxXVymqQZDZD"
-            }
-          ]
-        },
-        "options": {
-          "redirect": {
-            "redirect": {}
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        384,
-        -512
-      ],
-      "id": "6a655055-3b33-4a0d-a1a1-7a32f05e3035",
-      "name": "renovacion_token_fb_ads"
-    },
-    {
-      "parameters": {
-        "content": "La renovación del token se debe hacer cada 59 dias, aca encuentras el endpoint para renovarlo, importante, debes generar el acces token de facebook graph api: \n\nhttps://developers.facebook.com/tools/explorer/907230552045448/?method=GET&path=me%3Ffields%3Did%2Cname&version=v25.0",
+        "content": "Token de Meta: lo revisa \"get campaign1\" todos los días a las 7 AM; si falla, avisa en Slack a Elvin y Carilin con los pasos. (Nico 26/sep/2026: se quitó el nodo con el token y el client_secret pegados, y el aviso por WhatsApp al proveedor.)",
         "width": 640
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -362,170 +326,6 @@
       ],
       "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
       "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "818e13f3-2cfb-4a16-ad65-6d5a802e353c",
-              "leftValue": "={{ $now.format('dd-MM-yyyy') }}",
-              "rightValue": "27-06-2026",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        80,
-        752
-      ],
-      "id": "bed74acc-4184-4cfe-bdb6-e9f875475293",
-      "name": "If2"
-    },
-    {
-      "parameters": {
-        "authentication": "oAuth2",
-        "select": "channel",
-        "channelId": {
-          "__rl": true,
-          "value": "C0954DHQV99",
-          "mode": "list",
-          "cachedResultName": "office-6-monitoreo-agentes-ia"
-        },
-        "text": "=🔴 MAÑANA SE VENCE TOKEN DE META: Como Renovarlo: https://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived",
-        "otherOptions": {
-          "includeLinkToWorkflow": false
-        }
-      },
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.4,
-      "position": [
-        288,
-        656
-      ],
-      "id": "7689635b-ca22-4083-bb25-f7f19bfea669",
-      "name": "Send a message3",
-      "webhookId": "37b9263c-1b8d-4e49-80a7-83eccaaac7db",
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "RPZcJdneOoqIBClJ",
-          "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "messages-api",
-        "instanceName": "Level-Up-Media-Whatsapp",
-        "remoteJid": "+573226724582",
-        "messageText": "Mañana se vence token meta Level Up",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        560,
-        656
-      ],
-      "id": "1b8f5a45-16ba-432d-96a7-575a2175e4b3",
-      "name": "Enviar texto",
-      "credentials": {
-        "evolutionApi": {
-          "id": "o3VodCojIbc9QZ6C",
-          "name": "Evolution account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "fetch-instances",
-        "instanceName": "Level-Up-Media-Setters"
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        160,
-        -320
-      ],
-      "id": "e944f6c2-dc9a-4fd9-82b1-68bc2b5329c6",
-      "name": "Buscar instancia2",
-      "credentials": {
-        "evolutionApi": {
-          "id": "o3VodCojIbc9QZ6C",
-          "name": "Evolution account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "d376c788-a51c-4298-b350-f351632edfff",
-              "leftValue": "={{ $('Buscar instancia2').item.json.data[0].connectionStatus }}",
-              "rightValue": "close",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        416,
-        -304
-      ],
-      "id": "4cb3b693-2b3e-45f7-bd0b-1a1a914dc979",
-      "name": "If3"
-    },
-    {
-      "parameters": {
-        "resource": "messages-api",
-        "instanceName": "Level-Up-Media-Setters",
-        "remoteJid": "+573226724582",
-        "messageText": "Hola",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        -336,
-        -272
-      ],
-      "id": "52a03919-fbd8-4bbd-8e9b-818e1ca09b27",
-      "name": "Enviar texto1",
-      "credentials": {
-        "evolutionApi": {
-          "id": "o3VodCojIbc9QZ6C",
-          "name": "Evolution account"
-        }
-      }
     }
   ],
   "connections": {
@@ -544,16 +344,6 @@
           },
           {
             "node": "get campaign1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "If2",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Buscar instancia2",
             "type": "main",
             "index": 0
           }
@@ -629,57 +419,6 @@
           }
         ]
       ]
-    },
-    "If2": {
-      "main": [
-        [
-          {
-            "node": "Send a message3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a message3": {
-      "main": [
-        [
-          {
-            "node": "Enviar texto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Buscar instancia2": {
-      "main": [
-        [
-          {
-            "node": "If3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If3": {
-      "main": [
-        [
-          {
-            "node": "Send a message",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Send a message1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
@@ -698,9 +437,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
-  "activeVersionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
-  "versionCounter": 45,
+  "versionId": "fb951a79-f35e-4896-b69a-458fe39736c4",
+  "activeVersionId": "fb951a79-f35e-4896-b69a-458fe39736c4",
+  "versionCounter": 48,
   "triggerCount": 1,
   "shared": [
     {
@@ -763,9 +502,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-08-31T02:51:54.365Z",
-    "createdAt": "2026-08-31T02:51:47.206Z",
-    "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+    "updatedAt": "2026-09-26T18:06:09.337Z",
+    "createdAt": "2026-09-26T18:06:09.337Z",
+    "versionId": "fb951a79-f35e-4896-b69a-458fe39736c4",
     "workflowId": "MLp39LO5jJmzk9Vp",
     "nodes": [
       {
@@ -851,7 +590,7 @@
             "cachedResultName": "monitoreo-agentes-ia"
           },
           "messageType": "block",
-          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA EVOLUTION API 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
           "text": "=",
           "otherOptions": {
             "includeLinkToWorkflow": false,
@@ -881,7 +620,8 @@
             "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
           }
         },
-        "onError": "continueRegularOutput"
+        "onError": "continueRegularOutput",
+        "notes": "Nico 26/sep/2026: avisaba a Luis (proveedor); ahora menciona a Elvin y Carilin."
       },
       {
         "parameters": {
@@ -894,7 +634,7 @@
             "cachedResultName": "monitoreo-agentes-ia"
           },
           "messageType": "block",
-          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\" Estado Cuenta Evolution API ✅\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Instancia:{{ $json.data[0].name }}\\n*Status:* `{{ $json.data[0].connectionStatus }}`\\n\"}},{\"type\":\"divider\"}]}",
           "text": "=",
           "otherOptions": {
             "includeLinkToWorkflow": false,
@@ -924,7 +664,8 @@
             "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
           }
         },
-        "onError": "continueRegularOutput"
+        "onError": "continueRegularOutput",
+        "notes": "Nico 26/sep/2026: estado OK diario sin mencionar a nadie."
       },
       {
         "parameters": {
@@ -1026,7 +767,7 @@
             "cachedResultName": "monitoreo-agentes-ia"
           },
           "messageType": "block",
-          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE DESCONECTO CUENTA FACEBOOK 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U09319W4118>\\n\\n*\\n*`\\n\"}},{\"type\":\"divider\"}]}",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* Business Settings → Usuarios del sistema → *Agente Monitoreo* → Generar token (con ads_read y ads_management) → en n8n, credencial *Levelito Acoount management* → pegar el token nuevo.\"}},{\"type\":\"divider\"}]}",
           "text": "=",
           "otherOptions": {
             "includeLinkToWorkflow": false,
@@ -1056,50 +797,12 @@
             "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
           }
         },
-        "onError": "continueRegularOutput"
+        "onError": "continueRegularOutput",
+        "notes": "Nico 26/sep/2026: la revisión diaria real del token (si get campaign1 falla). Reemplaza al aviso con fecha fija 27-06-2026 que avisaba a Luis por WhatsApp."
       },
       {
         "parameters": {
-          "url": "https://graph.facebook.com/v25.0/oauth/access_token",
-          "sendQuery": true,
-          "queryParameters": {
-            "parameters": [
-              {
-                "name": "grant_type",
-                "value": "fb_exchange_token"
-              },
-              {
-                "name": "client_id",
-                "value": "907230552045448"
-              },
-              {
-                "name": "client_secret",
-                "value": "5d292190fe02106404712fd9e03a1d4b"
-              },
-              {
-                "name": "fb_exchange_token",
-                "value": "EAAM5HxLIt4gBRfWfIZC60dKS6vGDIuL1Yv10tWIA9qZCPWPUWkL5Ks91cq9vR4oJOTtqiZBA2iiegBYnb6cu0IVRTwnLP5ctmvuZBHiU7tbyWEkoYoZAVN58bRrRZBwKlvquURBvp9bAsIrMjp3ZAxYMIQnn39qw2bYA23tRIK3ZBcMfZAM3nMifle8Ri0ZCtxYTgO011jCQaSTZBtDLGjjZA9OeJnGhDlWTepErsqU7WepeAKAqZCcpZCvbzPEKWJq6LMj0M4fzMzXfZAf6X7iJcpu90gxXVymqQZDZD"
-              }
-            ]
-          },
-          "options": {
-            "redirect": {
-              "redirect": {}
-            }
-          }
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.3,
-        "position": [
-          384,
-          -512
-        ],
-        "id": "6a655055-3b33-4a0d-a1a1-7a32f05e3035",
-        "name": "renovacion_token_fb_ads"
-      },
-      {
-        "parameters": {
-          "content": "La renovación del token se debe hacer cada 59 dias, aca encuentras el endpoint para renovarlo, importante, debes generar el acces token de facebook graph api: \n\nhttps://developers.facebook.com/tools/explorer/907230552045448/?method=GET&path=me%3Ffields%3Did%2Cname&version=v25.0",
+          "content": "Token de Meta: lo revisa \"get campaign1\" todos los días a las 7 AM; si falla, avisa en Slack a Elvin y Carilin con los pasos. (Nico 26/sep/2026: se quitó el nodo con el token y el client_secret pegados, y el aviso por WhatsApp al proveedor.)",
           "width": 640
         },
         "type": "n8n-nodes-base.stickyNote",
@@ -1123,170 +826,6 @@
         ],
         "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
         "name": "Sticky Note1"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "818e13f3-2cfb-4a16-ad65-6d5a802e353c",
-                "leftValue": "={{ $now.format('dd-MM-yyyy') }}",
-                "rightValue": "27-06-2026",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals",
-                  "name": "filter.operator.equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          80,
-          752
-        ],
-        "id": "bed74acc-4184-4cfe-bdb6-e9f875475293",
-        "name": "If2"
-      },
-      {
-        "parameters": {
-          "authentication": "oAuth2",
-          "select": "channel",
-          "channelId": {
-            "__rl": true,
-            "value": "C0954DHQV99",
-            "mode": "list",
-            "cachedResultName": "office-6-monitoreo-agentes-ia"
-          },
-          "text": "=🔴 MAÑANA SE VENCE TOKEN DE META: Como Renovarlo: https://developers.facebook.com/documentation/facebook-login/guides/access-tokens/get-long-lived",
-          "otherOptions": {
-            "includeLinkToWorkflow": false
-          }
-        },
-        "type": "n8n-nodes-base.slack",
-        "typeVersion": 2.4,
-        "position": [
-          288,
-          656
-        ],
-        "id": "7689635b-ca22-4083-bb25-f7f19bfea669",
-        "name": "Send a message3",
-        "webhookId": "37b9263c-1b8d-4e49-80a7-83eccaaac7db",
-        "credentials": {
-          "slackOAuth2Api": {
-            "id": "RPZcJdneOoqIBClJ",
-            "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "resource": "messages-api",
-          "instanceName": "Level-Up-Media-Whatsapp",
-          "remoteJid": "+573226724582",
-          "messageText": "Mañana se vence token meta Level Up",
-          "options_message": {}
-        },
-        "type": "n8n-nodes-evolution-api.evolutionApi",
-        "typeVersion": 1,
-        "position": [
-          560,
-          656
-        ],
-        "id": "1b8f5a45-16ba-432d-96a7-575a2175e4b3",
-        "name": "Enviar texto",
-        "credentials": {
-          "evolutionApi": {
-            "id": "o3VodCojIbc9QZ6C",
-            "name": "Evolution account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "fetch-instances",
-          "instanceName": "Level-Up-Media-Setters"
-        },
-        "type": "n8n-nodes-evolution-api.evolutionApi",
-        "typeVersion": 1,
-        "position": [
-          160,
-          -320
-        ],
-        "id": "e944f6c2-dc9a-4fd9-82b1-68bc2b5329c6",
-        "name": "Buscar instancia2",
-        "credentials": {
-          "evolutionApi": {
-            "id": "o3VodCojIbc9QZ6C",
-            "name": "Evolution account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "d376c788-a51c-4298-b350-f351632edfff",
-                "leftValue": "={{ $('Buscar instancia2').item.json.data[0].connectionStatus }}",
-                "rightValue": "close",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "or"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          416,
-          -304
-        ],
-        "id": "4cb3b693-2b3e-45f7-bd0b-1a1a914dc979",
-        "name": "If3"
-      },
-      {
-        "parameters": {
-          "resource": "messages-api",
-          "instanceName": "Level-Up-Media-Setters",
-          "remoteJid": "+573226724582",
-          "messageText": "Hola",
-          "options_message": {}
-        },
-        "type": "n8n-nodes-evolution-api.evolutionApi",
-        "typeVersion": 1,
-        "position": [
-          -336,
-          -272
-        ],
-        "id": "52a03919-fbd8-4bbd-8e9b-818e1ca09b27",
-        "name": "Enviar texto1",
-        "credentials": {
-          "evolutionApi": {
-            "id": "o3VodCojIbc9QZ6C",
-            "name": "Evolution account"
-          }
-        }
       }
     ],
     "connections": {
@@ -1305,16 +844,6 @@
             },
             {
               "node": "get campaign1",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "If2",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Buscar instancia2",
               "type": "main",
               "index": 0
             }
@@ -1390,69 +919,18 @@
             }
           ]
         ]
-      },
-      "If2": {
-        "main": [
-          [
-            {
-              "node": "Send a message3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Send a message3": {
-        "main": [
-          [
-            {
-              "node": "Enviar texto",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Buscar instancia2": {
-        "main": [
-          [
-            {
-              "node": "If3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "If3": {
-        "main": [
-          [
-            {
-              "node": "Send a message",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Send a message1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version aa337e4b",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-08-31T02:51:54.353Z",
-        "id": 219,
+        "createdAt": "2026-09-26T18:06:09.525Z",
+        "id": 293,
         "workflowId": "MLp39LO5jJmzk9Vp",
-        "versionId": "aa337e4b-0498-4d18-bc53-d2d07b72b45d",
+        "versionId": "fb951a79-f35e-4896-b69a-458fe39736c4",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

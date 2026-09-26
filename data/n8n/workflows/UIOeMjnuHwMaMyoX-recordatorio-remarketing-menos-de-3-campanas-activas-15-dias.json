@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T14:10:43.246Z",
+  "updatedAt": "2026-09-26T18:04:58.495Z",
   "createdAt": "2025-09-12T20:14:25.498Z",
   "id": "UIOeMjnuHwMaMyoX",
   "name": "Recordatorio remarketing - menos de 3 campañas activas - 15 dias despues",
@@ -13,9 +13,9 @@
         "select": "user",
         "user": {
           "__rl": true,
-          "value": "U096Y3TRT5E",
+          "value": "U08U9777PUY",
           "mode": "list",
-          "cachedResultName": "agenteia"
+          "cachedResultName": "elvin"
         },
         "text": "=La cuenta de {{ $json.nombre }} esta en tiempo para la creación de los publicos personalizados para remarketing",
         "otherOptions": {
@@ -36,7 +36,8 @@
           "id": "RPZcJdneOoqIBClJ",
           "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
         }
-      }
+      },
+      "notes": "Nico 26/sep/2026: antes iba a la cuenta agenteia (nadie la lee); ahora a Elvin."
     },
     {
       "parameters": {
@@ -926,7 +927,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
@@ -1684,9 +1687,9 @@
       }
     ]
   },
-  "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
-  "activeVersionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
-  "versionCounter": 17,
+  "versionId": "e1a41f35-65b5-49ee-9bba-bf8ec8e1f883",
+  "activeVersionId": "e1a41f35-65b5-49ee-9bba-bf8ec8e1f883",
+  "versionCounter": 20,
   "triggerCount": 0,
   "shared": [
     {
@@ -1762,9 +1765,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-06T13:21:36.607Z",
-    "createdAt": "2026-01-06T13:21:36.607Z",
-    "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+    "updatedAt": "2026-09-26T18:04:58.498Z",
+    "createdAt": "2026-09-26T18:04:58.498Z",
+    "versionId": "e1a41f35-65b5-49ee-9bba-bf8ec8e1f883",
     "workflowId": "UIOeMjnuHwMaMyoX",
     "nodes": [
       {
@@ -1773,9 +1776,9 @@
           "select": "user",
           "user": {
             "__rl": true,
-            "value": "U096Y3TRT5E",
+            "value": "U08U9777PUY",
             "mode": "list",
-            "cachedResultName": "agenteia"
+            "cachedResultName": "elvin"
           },
           "text": "=La cuenta de {{ $json.nombre }} esta en tiempo para la creación de los publicos personalizados para remarketing",
           "otherOptions": {
@@ -1796,7 +1799,8 @@
             "id": "RPZcJdneOoqIBClJ",
             "name": "Slack account LevelUp Media (agenteia@levelupmediapr.net)"
           }
-        }
+        },
+        "notes": "Nico 26/sep/2026: antes iba a la cuenta agenteia (nadie la lee); ahora a Elvin."
       },
       {
         "parameters": {
@@ -2685,18 +2689,18 @@
         ]
       }
     },
-    "authors": "system migration",
+    "authors": "Elvin  Ayala",
     "name": null,
     "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2025-12-05T13:01:12.000Z",
-        "id": 2,
+        "createdAt": "2026-09-26T18:04:58.656Z",
+        "id": 288,
         "workflowId": "UIOeMjnuHwMaMyoX",
-        "versionId": "e2b88f2d-0246-4e83-944b-c8ab01d6a90a",
+        "versionId": "e1a41f35-65b5-49ee-9bba-bf8ec8e1f883",
         "event": "activated",
-        "userId": null
+        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
     ]
   }
