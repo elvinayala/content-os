@@ -464,7 +464,9 @@ teclado). App **aparte de Pulse** (su nombre, su link, tema `.ritmo` en globals.
 PWA propia `app/ritmo/manifest.webmanifest`), pero por dentro usa **las mismas cuentas, cookie
 `pulse-session` y base de Pulse** (tablas `desempeno_*`, migración `0008_desempeno.sql`, schema en
 `lib/desempeno/schema.ts`). Entrada propia en `/ritmo/entrar` (reusa `loginPulseAction`, que ahora
-acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
+acepta `desde=/ritmo…`). **Dominio oficial: `https://ritmo.levelupmediapr.net`** (26/sep; CNAME `ritmo` →
+`cname.vercel-dns.com` + TXT `_vercel` en Network Solutions, verificado en Vercel); `ritmo-eamarket.vercel.app` sigue
+funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta ajena vuelve a Ritmo.
 
 - **Hoy** (`/ritmo`): círculo grande = ponche (hora del servidor + IP). Horario flexible (varios
   tramos al día; un tramo < 16 h se cierra normal aunque pase la medianoche). Al salir: bloqueos
