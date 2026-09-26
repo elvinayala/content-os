@@ -68,3 +68,4 @@
 - [Leads — reemplazo de Pipedrive](leads-crm.md) — CRM de leads dentro de Pulse (/pulse/leads, 26/sep/2026) con esencia Pipedrive + Timelines; historial de Pipedrive archivado en Excel, NO cargado; falta token Timelines y cuentas de setters/closers
 - [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — 25/sep: referidos mandó 18x a Christopher y 8x a Rafael (throw + staticData, data.key); llave en la base y vigilar el 1er envío real
 - [Formularios propios (Typeform de la casa)](formularios-propios.md) — Pulse → Formularios + /f/<slug> EN PROD 26/sep; onboarding LU (con botón Calendly de Jessica) y encuesta duplicados, n8n ya usa el link nuevo; 525 respuestas archivadas; falta que closers dejen el link de Typeform y cancelar
+- [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic/2026, ~25 top clientes por LTV, gratis por invitación, poca inversión sin pauta; Carilin dirige; formulario la-mesa cerrado
