@@ -50,7 +50,7 @@ export default async function HoyPage() {
         <div className="panel max-w-sm p-6 text-center text-sm text-muted-foreground">
           {u.maestro ? (
             <>
-              <b className="text-foreground">Tú estás en la dirección de Ritmo:</b> ves al equipo desde <Link href="/ritmo/equipo" className="text-primary">Equipo</Link> y <Link href="/ritmo/personas" className="text-primary">Personas</Link>, y no necesitas marcar entrada ni salida.
+              <b className="text-foreground">Tú estás en la dirección de Ritmo:</b> ves al equipo desde <Link href="/ritmo/equipo" className="text-primary">Equipo</Link> y <Link href="/ritmo/personas" className="text-primary">Personas</Link>, publicas vacantes en <Link href="/ritmo/carreras" className="text-primary">Carreras</Link>, y no necesitas marcar entrada ni salida.
               <span className="mt-2 block text-xs">
                 Si también quieres marcar tu día, entra en{" "}
                 <Link href={`/ritmo/ajustes?q=${encodeURIComponent(u.nombre)}`} className="text-primary">Ajustes → tu nombre → Agregar</Link> y guarda tu puesto y horario.

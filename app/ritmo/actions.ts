@@ -5,6 +5,8 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { linkDeAcceso } from "@/lib/desempeno/acceso";
+import * as carreras from "@/lib/desempeno/carreras";
+import { ESTADOS_VACANTE, MODALIDADES } from "@/lib/desempeno/carreras-reglas";
 import * as datos from "@/lib/desempeno/datos";
 import * as dosPasos from "@/lib/desempeno/dos-pasos";
 import * as etica from "@/lib/desempeno/etica";
@@ -454,5 +456,85 @@ export async function reiniciarDosPasosAction(userId: string) {
     if (u.rol !== "admin") throw new Error("Solo Elvin puede reiniciar la verificación");
     await dosPasos.reiniciarDosPasos(userId, u.id);
     return {};
+  });
+}
+
+// ─── Carreras: vacantes, aplicaciones internas y referidos ────────────────────────────────────
+
+export async function guardarVacanteAction(p: {
+  id: string | null;
+  titulo: string;
+  empresa: string;
+  departamento: string;
+  modalidad: string;
+  ubicacion: string;
+  descripcion: string;
+  requisitos: string;
+  salario: string;
+  bonoReferido: string;
+  estado: string;
+}) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    const titulo = p.titulo?.trim().slice(0, 120);
+    const descripcion = p.descripcion?.trim().slice(0, 5000);
+    if (!titulo || titulo.length < 3) throw new Error("Ponle un título a la vacante");
+    if (!descripcion || descripcion.length < 20) throw new Error("Describe la vacante (qué hará la persona)");
+    if (!EMPRESAS.some((e) => e.id === p.empresa)) throw new Error("Escoge la empresa");
+    if (!MODALIDADES.some((m) => m.id === p.modalidad)) throw new Error("Escoge la modalidad");
+    if (!ESTADOS_VACANTE.some((e) => e.id === p.estado)) throw new Error("Estado inválido");
+    const bono = p.bonoReferido === "" ? 100 : Number(p.bonoReferido);
+    if (!Number.isFinite(bono) || bono < 0 || bono > 5000) throw new Error("Bono por referido inválido");
+    const corto = (x: string, n: number) => x?.trim().slice(0, n) || null;
+    await carreras.guardarVacante(
+      p.id,
+      { titulo, empresa: p.empresa, departamento: corto(p.departamento, 80), modalidad: p.modalidad, ubicacion: corto(p.ubicacion, 80), descripcion, requisitos: corto(p.requisitos, 5000), salario: corto(p.salario, 80), bonoReferido: Math.round(bono), estado: p.estado },
+      u.id,
+    );
+    refresh();
+    return {};
+  });
+}
+
+async function limiteCarreras(clave: string) {
+  const { limiteIp } = await import("@/lib/pulse/seguridad");
+  if (!limiteIp(`carreras:${clave}`, 10, 3_600_000)) throw new Error("Demasiados envíos seguidos; intenta más tarde");
+}
+
+export async function aplicarVacanteAction(p: { vacanteId: string; motivo: string; enlace: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await limiteCarreras(u.id);
+    await carreras.aplicar(u, p.vacanteId, { motivo: p.motivo ?? "", enlace: p.enlace ?? "" });
+    refresh();
+    return {};
+  });
+}
+
+export async function referirVacanteAction(p: { vacanteId: string; nombre: string; email: string; telefono: string; relacion: string; motivo: string; enlace: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await limiteCarreras(u.id);
+    await carreras.referir(u, p.vacanteId, { nombre: p.nombre ?? "", email: p.email ?? "", telefono: p.telefono ?? "", relacion: p.relacion ?? "", motivo: p.motivo ?? "", enlace: p.enlace ?? "" });
+    refresh();
+    return {};
+  });
+}
+
+export async function retirarPostulacionAction(id: string) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await carreras.retirar(u, id);
+    refresh();
+    return {};
+  });
+}
+
+export async function estadoPostulacionAction(p: { id: string; estado: string; nota: string }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    const r = await carreras.cambiarEstado(u, p.id, p.estado, p.nota?.trim().slice(0, 1000) || null);
+    refresh();
+    return r;
   });
 }

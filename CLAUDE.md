@@ -548,6 +548,16 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Tope de archivos**: foto 10 MB, documentos 25 MB, videos de entrenamiento 50 MB (`limiteBytes` en `fichas.ts`), verificado
   con el tamaño REAL en Storage al confirmar (si se pasa, se borra). El bucket `pulse` está en 50 MB: es el tope del plan
   de Supabase; videos más grandes = plan Pro o comprimirlos.
+- **Carreras** (`/ritmo/carreras`, 26/sep; tablas `desempeno_vacantes` y `desempeno_postulaciones`, migración 0018;
+  reglas puras en `lib/desempeno/carreras-reglas.ts`, tests `tests/carreras.test.mjs`, datos en `lib/desempeno/carreras.ts`):
+  RR.HH./maestra publica vacantes cuando surge una oportunidad (título, empresa —solo la ve la maestra—, departamento,
+  modalidad, descripción, requisitos, salario opcional, bono por referido, abierta/pausada/cerrada). Cualquiera del
+  equipo **aplica** (crecer o cambiar de puesto; una vez por vacante, solo RR.HH. lo ve) o **refiere** a alguien
+  (nombre + correo o teléfono, por qué; sin auto-referirse ni duplicados). RR.HH. mueve cada caso (recibida → en revisión
+  → entrevista → seleccionado → onboarding completo | no seleccionado | retirada). **Bono**: referido + onboarding
+  completo → US$100 (o el de la vacante) entra solo como ajuste a la nómina del mes siguiente del que refirió, una sola
+  vez (`bono_ajuste_id`). Avisos por Slack a RR.HH. (nuevo caso) y a la persona (cada cambio). Pestaña "Carreras" con
+  punto verde si hay vacantes de los últimos 7 días (en el teléfono de la maestra se entra desde Hoy).
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

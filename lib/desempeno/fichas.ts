@@ -197,10 +197,11 @@ export async function listarAjustes(userId: string, mes: string): Promise<Ajuste
   return d.select().from(desempenoAjustes).where(and(eq(desempenoAjustes.userId, userId), eq(desempenoAjustes.mes, mes))).orderBy(asc(desempenoAjustes.createdAt));
 }
 
-export async function crearAjuste(a: { userId: string; mes: string; concepto: string; monto: number }, actorId: string) {
+export async function crearAjuste(a: { userId: string; mes: string; concepto: string; monto: number }, actorId: string): Promise<string> {
   const d = await db();
-  await d.insert(desempenoAjustes).values({ ...a, createdBy: actorId });
+  const [fila] = await d.insert(desempenoAjustes).values({ ...a, createdBy: actorId }).returning({ id: desempenoAjustes.id });
   await evento({ userId: a.userId, actorId, tipo: "ajuste_nomina", datos: { mes: a.mes, concepto: a.concepto } });
+  return fila.id;
 }
 
 export async function borrarAjuste(id: string, actorId: string) {

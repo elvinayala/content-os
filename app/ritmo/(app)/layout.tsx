@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { NavRitmo } from "@/components/ritmo/nav";
+import { vacantesNuevas } from "@/lib/desempeno/carreras";
 import { fichaPendiente, leerFicha } from "@/lib/desempeno/fichas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
@@ -19,7 +20,7 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   if (!maestro && fichaPendiente(ficha)) redirect("/ritmo/bienvenida");
   return (
     <>
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={await pendientesDe(u).catch(() => 0)} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={await pendientesDe(u).catch(() => 0)} vacantesNuevas={await vacantesNuevas().catch(() => 0)} />
       <main className="entrada mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
       <footer className="estado-linea mx-auto hidden w-full max-w-5xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>

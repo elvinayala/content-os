@@ -254,3 +254,51 @@ export const desempenoDosPasos = pgTable("desempeno_dos_pasos", {
   bloqueadoHasta: timestamp("bloqueado_hasta", { withTimezone: true }),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Carreras (26/sep/2026): RR.HH. publica vacantes cuando surge una oportunidad; el equipo aplica
+// (subir o cambiar de puesto) o refiere a alguien. Referido contratado + onboarding completo = bono
+// (US$100 por defecto) que entra como ajuste a la nómina del que refirió. Reglas en carreras-reglas.ts.
+export const desempenoVacantes = pgTable("desempeno_vacantes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  titulo: text("titulo").notNull(),
+  empresa: text("empresa").notNull().default("level_up"), // level_up | ai_borinquen
+  departamento: text("departamento"),
+  modalidad: text("modalidad").notNull().default("remoto"), // remoto | hibrido | presencial
+  ubicacion: text("ubicacion"),
+  descripcion: text("descripcion").notNull(),
+  requisitos: text("requisitos"),
+  salario: text("salario"), // rango o texto libre (opcional)
+  bonoReferido: doublePrecision("bono_referido").notNull().default(100),
+  estado: text("estado").notNull().default("abierta"), // abierta | pausada | cerrada
+  createdBy: uuid("created_by").references(() => pulseUsers.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const desempenoPostulaciones = pgTable(
+  "desempeno_postulaciones",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    vacanteId: uuid("vacante_id")
+      .notNull()
+      .references(() => desempenoVacantes.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(), // interna (el empleado aplica) | referido (propone a alguien)
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }), // quien aplica o quien refiere
+    candidatoNombre: text("candidato_nombre"),
+    candidatoEmail: text("candidato_email"),
+    candidatoTelefono: text("candidato_telefono"),
+    relacion: text("relacion"),
+    motivo: text("motivo").notNull(),
+    enlace: text("enlace"), // LinkedIn, portafolio o CV en la nube
+    estado: text("estado").notNull().default("recibida"), // recibida | en_proceso | entrevista | contratado | onboarding_completo | descartada | retirada
+    notaRrhh: text("nota_rrhh"),
+    bonoAjusteId: uuid("bono_ajuste_id"), // ajuste de nómina creado por el bono (una sola vez)
+    bonoMes: text("bono_mes"),
+    decididoPor: uuid("decidido_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_postulaciones_vacante").on(t.vacanteId), index("desempeno_postulaciones_user").on(t.userId)],
+);
