@@ -14,7 +14,7 @@ import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
-import { requiereUsuario } from "@/lib/pulse/auth";
+import { requiereCuenta as requiereUsuario } from "@/lib/pulse/auth";
 import { COOKIE_PULSE } from "@/lib/pulse/session";
 
 type R<T = object> = ({ ok: true } & T) | { ok: false; error: string };
@@ -95,6 +95,7 @@ export async function guardarPerfilAction(p: {
   puesto: string;
   empresa: string;
   slackId?: string | null;
+  soloRitmo?: boolean;
   liderId: string | null;
   horaEntrada: string;
   horaSalida: string;
@@ -120,7 +121,14 @@ export async function guardarPerfilAction(p: {
       const nombre = usuario?.nombre ?? (await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId)))?.nombre;
       if (nombre) slackId = await buscarSlackPorNombre(nombre).catch(() => null);
     }
-    await datos.guardarPerfil({ ...p, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
+    // Acceso a Pulse: al crear el perfil, quien no tenía clave queda SOLO Ritmo (no ve clientes/tesorería).
+    // Cambiarlo después es solo de admin/editoras (RR.HH. no puede abrirle Pulse a nadie).
+    const previo = (await datos.leerPerfiles(false)).find((x) => x.userId === p.userId);
+    const cuenta = await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId));
+    if (cuenta && (await import("@/lib/desempeno/acceso")).estaBloqueado(cuenta.email)) throw new Error("Esta persona no puede tener acceso (decisión de Elvin)");
+    const gestorPulse = u.rol === "admin" || u.rol === "editor";
+    const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : (previo?.soloRitmo ?? !cuenta?.tieneClave);
+    await datos.guardarPerfil({ ...p, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
     refresh();
     return {};
   });
@@ -160,7 +168,7 @@ export async function linkAccesoAction(userId: string) {
     const h = await headers();
     const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
     const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
-    const r = await linkDeAcceso(userId, `${proto}://${host}`);
+    const r = await linkDeAcceso(userId, `${proto}://${host}`, u.rol === "admin" || u.rol === "editor");
     await datos.evento({ userId, actorId: u.id, tipo: "link_acceso" });
     return r;
   });
@@ -214,7 +222,8 @@ export async function prepararSubidaAction(p: { userId: string; nombre: string; 
     if (!u.maestro && p.categoria === "nomina") throw new Error("Nómina la sube RR.HH.");
     if (![...fichas.CATEGORIAS.map((c) => c.id), "foto"].includes(p.categoria as never)) throw new Error("Categoría inválida");
     if (!(await fichas.leerFicha(p.userId))) throw new Error("Esta persona no tiene ficha");
-    if (p.bytes > fichas.MAX_BYTES) throw new Error("Máximo 500 MB por archivo");
+    if (!Number.isFinite(p.bytes) || p.bytes <= 0 || p.bytes > fichas.MAX_BYTES) throw new Error("Máximo 500 MB por archivo");
+    if (!fichas.tipoPermitido(p.categoria, p.nombre)) throw new Error(p.categoria === "foto" ? "La foto tiene que ser JPG, PNG, WEBP o HEIC" : "Ese tipo de archivo no se acepta aquí (usa PDF, foto, video o Word/Excel)");
     return fichas.prepararSubida(p.userId, p.nombre);
   });
 }
@@ -226,7 +235,7 @@ export async function subirLocalAction(fd: FormData) {
     const userId = String(fd.get("userId"));
     const path = String(fd.get("path"));
     const file = fd.get("file");
-    if (!u || !puedeFicha(u, userId) || !(file instanceof File) || !path.startsWith(`ritmo/${userId}/`)) throw new Error("No autorizado");
+    if (!u || !puedeFicha(u, userId) || !(file instanceof File) || !path.startsWith(`ritmo/${userId}/`) || path.includes("..")) throw new Error("No autorizado");
     await fichas.subirLocal(path, new Uint8Array(await file.arrayBuffer()), file.type || null);
     return {};
   });
@@ -237,7 +246,9 @@ export async function confirmarSubidaAction(p: { id: string; userId: string; pat
     const u = await usuarioRitmo();
     if (!u || !puedeFicha(u, p.userId)) throw new Error("No autorizado");
     if (!u.maestro && p.categoria === "nomina") throw new Error("Nómina la sube RR.HH.");
-    await fichas.registrarArchivo({ id: p.id, userId: p.userId, categoria: p.categoria as fichas.Categoria, nombre: p.nombre, path: p.path, mime: p.mime || null, bytes: p.bytes }, u.id);
+    const mime = fichas.tipoPermitido(p.categoria, p.nombre);
+    if (!mime) throw new Error("Ese tipo de archivo no se acepta aquí");
+    await fichas.registrarArchivo({ id: p.id, userId: p.userId, categoria: p.categoria as fichas.Categoria, nombre: p.nombre, path: p.path, mime, bytes: p.bytes }, u.id);
     refresh();
     return {};
   });

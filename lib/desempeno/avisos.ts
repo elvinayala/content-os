@@ -14,7 +14,9 @@ export interface FilaAviso {
   scoreSemana: number | null;
 }
 
-const lista = (xs: string[]) => xs.join(", ");
+// Texto de empleados → seguro para Slack (sin <links|falsos> ni <!channel> inyectados).
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const lista = (xs: string[]) => xs.map(esc).join(", ");
 
 /** Digest de la mañana (lo de AYER) para Carilin o para un líder. null = nada que avisar. */
 export function textoDigest(p: { fecha: string; filas: FilaAviso[]; url: string; para: string; extras?: string[] }): string | null {
@@ -24,7 +26,7 @@ export function textoDigest(p: { fecha: string; filas: FilaAviso[]; url: string;
   const sinSalida = f.filter((x) => x.sinSalida).map((x) => x.nombre);
   const porConfirmar = f.filter((x) => x.correccionPendiente).map((x) => x.nombre);
   const vencidas = f.filter((x) => x.vencidas > 0).map((x) => `${x.nombre} (${x.vencidas})`);
-  const bloqueos = f.filter((x) => x.bloqueos).map((x) => `• ${x.nombre}: ${x.bloqueos!.replace(/\s+/g, " ").slice(0, 160)}`);
+  const bloqueos = f.filter((x) => x.bloqueos).map((x) => `• ${esc(x.nombre)}: ${esc(x.bloqueos!.replace(/\s+/g, " ").slice(0, 160))}`);
   const lineas: string[] = [];
   if (sinMarcar.length) lineas.push(`🔴 Sin marcar: ${lista(sinMarcar)}`);
   if (tarde.length) lineas.push(`⏰ Entraron tarde: ${lista(tarde)}`);

@@ -13,6 +13,9 @@ import { desempenoPerfiles } from "./schema";
 
 export const avisosReales = () => process.env.DESEMPENO_AVISOS === "real";
 
+/** Texto escrito por empleados → seguro para Slack (sin <links|falsos>, @channel ni menciones inyectadas). */
+export const esc = (s: string | null | undefined) => (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 async function slack<T>(metodo: string, body?: Record<string, unknown>, query?: Record<string, string>): Promise<T | null> {
   const token = process.env.SLACK_BOT_TOKEN;
   if (!token) return null;

@@ -56,6 +56,8 @@ function aBoard(b: typeof pulseBoards.$inferSelect): Board {
 // demás (lectura y escritura) pasa por acá: la UI solo esconde, esto es lo que protege.
 
 export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
+  const { esSoloRitmo } = await import("./auth");
+  if (u.rol === "miembro" && (await esSoloRitmo(u.id))) return new Set(); // empleado solo de Ritmo: ningún tablero
   const d = await db();
   const rows = await d.select({ id: pulseBoards.id, privado: pulseBoards.privado }).from(pulseBoards);
   const visibles = new Set(rows.filter((b) => !b.privado).map((b) => b.id));
@@ -66,6 +68,8 @@ export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
 }
 
 export async function puedeVerBoard(u: UsuarioPulse, boardId: string): Promise<boolean> {
+  const { esSoloRitmo } = await import("./auth");
+  if (u.rol === "miembro" && (await esSoloRitmo(u.id))) return false;
   const d = await db();
   const [b] = await d.select({ privado: pulseBoards.privado }).from(pulseBoards).where(eq(pulseBoards.id, boardId));
   if (!b) return false;

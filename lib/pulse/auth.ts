@@ -6,6 +6,8 @@ import { cache } from "react";
 
 import { COOKIE_SESION, sesionValida } from "@/lib/auth";
 
+import { desempenoPerfiles } from "../desempeno/schema";
+
 import { db } from "./db";
 import { pulseUsers } from "./schema";
 import { COOKIE_PULSE, verificarSesion } from "./session";
@@ -50,7 +52,28 @@ export const usuarioActual = cache(async (): Promise<UsuarioPulse | null> => {
   return null;
 });
 
+// Seguridad (26/sep/2026): quien entró por Ritmo (empleado de operaciones, `solo_ritmo`) NO puede usar
+// Pulse — ahí están los clientes, Leads y Tesorería. La cuenta es la misma; el permiso no.
+export const esSoloRitmo = cache(async (userId: string): Promise<boolean> => {
+  try {
+    const d = await db();
+    const [p] = await d.select({ solo: desempenoPerfiles.soloRitmo }).from(desempenoPerfiles).where(eq(desempenoPerfiles.userId, userId));
+    return !!p?.solo;
+  } catch {
+    return false;
+  }
+});
+
+/** Usuario de PULSE (bloquea a los que son solo de Ritmo). Ritmo usa `requiereCuenta`. */
 export async function requiereUsuario(): Promise<UsuarioPulse> {
+  const u = await usuarioActual();
+  if (!u) throw new Error("no-autorizado");
+  if (u.rol === "miembro" && (await esSoloRitmo(u.id))) throw new Error("no-autorizado");
+  return u;
+}
+
+/** Cualquier cuenta activa (la usa Ritmo: también los empleados que son solo de Ritmo). */
+export async function requiereCuenta(): Promise<UsuarioPulse> {
   const u = await usuarioActual();
   if (!u) throw new Error("no-autorizado");
   return u;

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { Ajustes } from "@/components/ritmo/ajustes";
+import { estaBloqueado } from "@/lib/desempeno/acceso";
 import { columnasProduccion, leerMetas, leerPerfiles } from "@/lib/desempeno/datos";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { listarUsuarios } from "@/lib/pulse/repo";
@@ -16,11 +17,12 @@ export default async function AjustesPage({ searchParams }: { searchParams: Prom
   const [usuarios, perfiles, metas, prod] = await Promise.all([listarUsuarios(), leerPerfiles(false), leerMetas(), columnasProduccion()]);
   return (
     <Ajustes
-      usuarios={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema")).map((x) => ({ id: x.id, nombre: x.nombre, email: x.email }))}
+      usuarios={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema") && !estaBloqueado(x.email)).map((x) => ({ id: x.id, nombre: x.nombre, email: x.email }))}
       perfiles={perfiles}
       metas={metas}
       produccion={!!prod}
       buscar={q ?? ""}
+      gestorPulse={u.rol === "admin" || u.rol === "editor"}
     />
   );
 }

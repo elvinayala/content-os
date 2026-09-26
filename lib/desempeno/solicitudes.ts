@@ -4,7 +4,7 @@ import { desc, eq, inArray, or } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
-import { avisarPersona, avisarRrhh } from "./avisar";
+import { avisarPersona, avisarRrhh, esc } from "./avisar";
 import { evento, perfilDe } from "./datos";
 import { crearAusencia } from "./fichas";
 import { alAprobar, ausenciaDeSolicitud, estadoInicial, TIPOS_SOLICITUD } from "./rrhh";
@@ -24,7 +24,7 @@ export async function crearSolicitud(p: { userId: string; nombre: string; tipo: 
   const d = await db();
   const [s] = await d.insert(desempenoSolicitudes).values({ userId: p.userId, tipo: p.tipo, desde: p.desde, hasta: p.hasta, dias: p.dias, detalle: p.detalle, estado: estadoInicial(supervisorId), supervisorId }).returning();
   await evento({ userId: p.userId, actorId: p.userId, tipo: "solicitud", datos: { id: s.id, tipo: p.tipo } });
-  const texto = `📝 ${p.nombre} pidió: *${tipoNombre(p.tipo)}*${p.desde ? ` (${p.desde}${p.hasta && p.hasta !== p.desde ? ` → ${p.hasta}` : ""})` : ""}. Te toca ${s.estado === "supervisor" ? "aprobarla como supervisor" : "firmarla (RR.HH.)"}: <${base()}/ritmo/solicitudes|Ver en Ritmo>`;
+  const texto = `📝 ${esc(p.nombre)} pidió: *${tipoNombre(p.tipo)}*${p.desde ? ` (${p.desde}${p.hasta && p.hasta !== p.desde ? ` → ${p.hasta}` : ""})` : ""}. Te toca ${s.estado === "supervisor" ? "aprobarla como supervisor" : "firmarla (RR.HH.)"}: <${base()}/ritmo/solicitudes|Ver en Ritmo>`;
   if (s.estado === "supervisor") await avisarPersona(supervisorId, texto).catch(() => false);
   else await avisarRrhh(texto).catch(() => 0);
   return s;
@@ -54,9 +54,9 @@ export async function decidirSolicitud(s: Solicitud, actor: { id: string; nombre
   }
   await d.update(desempenoSolicitudes).set({ ...firma, estado, ausenciaId }).where(eq(desempenoSolicitudes.id, s.id));
   await evento({ userId: s.userId, actorId: actor.id, tipo: `solicitud_${estado}`, datos: { id: s.id, nota } });
-  if (estado === "rrhh") await avisarRrhh(`📝 ${actor.nombre} aprobó como supervisor una solicitud (*${tipoNombre(s.tipo)}*). Falta tu firma: <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => 0);
+  if (estado === "rrhh") await avisarRrhh(`📝 ${esc(actor.nombre)} aprobó como supervisor una solicitud (*${tipoNombre(s.tipo)}*). Falta tu firma: <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => 0);
   if (estado === "aprobada" || estado === "rechazada")
-    await avisarPersona(s.userId, `${estado === "aprobada" ? "✅ Aprobada y firmada" : "❌ No aprobada"}: tu solicitud de *${tipoNombre(s.tipo)}*${nota ? ` — “${nota}”` : ""}. <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => false);
+    await avisarPersona(s.userId, `${estado === "aprobada" ? "✅ Aprobada y firmada" : "❌ No aprobada"}: tu solicitud de *${tipoNombre(s.tipo)}*${nota ? ` — “${esc(nota)}”` : ""}. <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => false);
   return estado;
 }
 

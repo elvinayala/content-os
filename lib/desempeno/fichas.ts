@@ -30,6 +30,36 @@ export type Categoria = (typeof CATEGORIAS)[number]["id"] | "foto";
 
 export const MAX_BYTES = 500 * 1024 * 1024; // 500 MB (videos de entrenamiento)
 
+// Seguridad: solo estos tipos de archivo (por extensión; el tipo que se guarda y se sirve sale de aquí,
+// nunca del navegador). Nada de .html/.svg/.js que se puedan ejecutar al abrirlos.
+const MIME: Record<string, string> = {
+  jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", heic: "image/heic", heif: "image/heif",
+  pdf: "application/pdf",
+  mp4: "video/mp4", mov: "video/quicktime", m4v: "video/x-m4v", webm: "video/webm",
+  doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+};
+const IMAGEN = ["jpg", "jpeg", "png", "webp", "heic", "heif"];
+const VIDEO = ["mp4", "mov", "m4v", "webm"];
+const OFFICE = ["doc", "docx", "xls", "xlsx"];
+const PERMITIDOS: Record<string, string[]> = {
+  foto: IMAGEN,
+  identificacion: [...IMAGEN, "pdf"],
+  contrato: [...IMAGEN, "pdf", "doc", "docx"],
+  certificacion: [...IMAGEN, "pdf"],
+  entrenamiento: [...VIDEO, "pdf", ...IMAGEN],
+  nomina: ["pdf", ...IMAGEN, ...OFFICE],
+  otro: ["pdf", ...IMAGEN, ...OFFICE, ...VIDEO],
+};
+export const extension = (nombre: string) => (nombre.split(".").pop() ?? "").toLowerCase();
+/** El tipo real (por extensión) si la categoría lo acepta; si no, null. */
+export function tipoPermitido(categoria: string, nombre: string): string | null {
+  const ext = extension(nombre);
+  return PERMITIDOS[categoria]?.includes(ext) ? MIME[ext] : null;
+}
+/** Se abre en el navegador (foto, PDF, video); lo demás se descarga. */
+export const seAbreEnLinea = (mime: string | null) => !!mime && (mime.startsWith("image/") || mime.startsWith("video/") || mime === "application/pdf");
+
 export async function leerFicha(userId: string): Promise<Ficha | null> {
   const d = await db();
   const [f] = await d.select().from(desempenoFichas).where(eq(desempenoFichas.userId, userId));
@@ -105,11 +135,11 @@ export async function borrarArchivoFicha(id: string, actorId: string) {
   await evento({ userId: a.userId, actorId, tipo: "archivo_borrado", datos: { nombre: a.nombre } });
 }
 
-/** URL firmada (1 h) o null en local (se sirve desde disco). */
-export async function urlFirmada(path: string): Promise<string | null> {
+/** URL firmada (5 min) o null en local (se sirve desde disco). `descargar` = forzar descarga. */
+export async function urlFirmada(path: string, descargar?: string): Promise<string | null> {
   const sb = supabase();
   if (!sb || storageLocal) return null;
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 3600);
+  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 300, descargar ? { download: descargar } : undefined);
   if (error || !data) throw new Error(`Storage: ${error?.message ?? "sin URL"}`);
   return data.signedUrl;
 }

@@ -29,9 +29,9 @@ const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-
 type Usuario = { id: string; nombre: string; email: string };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
-const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", slackId: null, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
+const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
-export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "" }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string }) {
+export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +47,7 @@ export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "" }: 
           </button>
         ))}
       </div>
-      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} buscar={buscar} /> : <Metas metas={metas} />}
+      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} buscar={buscar} gestorPulse={gestorPulse} /> : <Metas metas={metas} />}
     </div>
   );
 }
@@ -82,7 +82,7 @@ function Produccion({ existe }: { existe: boolean }) {
   );
 }
 
-function Personas({ usuarios, perfiles, buscar }: { usuarios: Usuario[]; perfiles: Perfil[]; buscar: string }) {
+function Personas({ usuarios, perfiles, buscar, gestorPulse }: { usuarios: Usuario[]; perfiles: Perfil[]; buscar: string; gestorPulse: boolean }) {
   const [q, setQ] = useState(buscar);
   const conPerfil = new Set(perfiles.map((p) => p.userId));
   const lista = useMemo(
@@ -94,13 +94,14 @@ function Personas({ usuarios, perfiles, buscar }: { usuarios: Usuario[]; perfile
     <div className="flex flex-col gap-3">
       <Input placeholder="Buscar persona…" value={q} onChange={(e) => setQ(e.target.value)} className="h-11 max-w-sm" />
       {lista.map((u) => (
-        <FilaPerfil key={u.id} usuario={u} perfil={perfiles.find((p) => p.userId === u.id) ?? null} usuarios={usuarios} />
+        <FilaPerfil key={u.id} usuario={u} perfil={perfiles.find((p) => p.userId === u.id) ?? null} usuarios={usuarios} gestorPulse={gestorPulse} />
       ))}
     </div>
   );
 }
 
-function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: Perfil | null; usuarios: Usuario[] }) {
+function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuario; perfil: Perfil | null; usuarios: Usuario[]; gestorPulse: boolean }) {
+  const [tocoPulse, setTocoPulse] = useState(false);
   const [b, setB] = useState<Borrador>(() => {
     if (!perfil) return nuevo(usuario.id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -112,7 +113,8 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
   const set = <K extends keyof Borrador>(k: K, v: Borrador[K]) => setB((x) => ({ ...x, [k]: v }));
   const guardar = async () => {
     setCargando(true);
-    const r = await guardarPerfilAction(b);
+    // El acceso a Pulse solo se manda si un admin/editora lo cambió a propósito; si no, decide el servidor.
+    const r = await guardarPerfilAction({ ...b, soloRitmo: gestorPulse && tocoPulse ? b.soloRitmo : undefined });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success(`${usuario.nombre}: guardado`, aviso);
@@ -185,6 +187,12 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
           <Campo label="Slack (para sus avisos)">
             <Input className="h-10" value={b.slackId ?? ""} onChange={(e) => set("slackId", e.target.value.trim() || null)} placeholder="Se busca solo por el nombre" />
           </Campo>
+          {gestorPulse && perfil ? (
+            <label className="flex items-center gap-2 text-sm sm:col-span-2">
+              <input type="checkbox" checked={!b.soloRitmo} onChange={(e) => { setTocoPulse(true); set("soloRitmo", !e.target.checked); }} className="size-4 accent-[var(--neon)]" />
+              También puede entrar a Pulse (clientes, Leads, Tesorería)
+            </label>
+          ) : null}
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={b.activo} onChange={(e) => set("activo", e.target.checked)} className="size-4 accent-[var(--neon)]" />
             Activo en Ritmo

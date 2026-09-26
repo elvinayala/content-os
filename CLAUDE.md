@@ -526,6 +526,19 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   nombre al guardar/alta; "sin Slack" en Ajustes = ponerlo a mano).
 - **Ritmo reemplaza al agente de RR.HH. de n8n** ("SofIA" + "Procesar Vacaciones", APAGADOS el 26/sep
   con OK de Elvin: leían Monday y avisaban a Luis). `node scripts/n8n.mjs desactivar|activar <id>`.
+- **Seguridad (revisión 26/sep)**:
+  - **`solo_ritmo`** (`desempeno_perfiles`): quien entra por Ritmo (alta, o perfil creado a alguien sin clave)
+    NO usa Pulse. `requiereUsuario()` de Pulse, `boardsVisibles`/`puedeVerBoard`, Leads (`accesoLeads`) y el
+    layout de Pulse lo bloquean; Ritmo usa `requiereCuenta()`. Solo admin/editoras lo cambian en Ajustes
+    ("También puede entrar a Pulse"). Yaileen (RR.HH.) = solo Ritmo (perfil inactivo, sin ponche).
+  - **Links de acceso** (`lib/desempeno/acceso.ts`): exigen perfil activo en Ritmo; RR.HH. solo para quien
+    NO tiene clave (resetear clave = admin/editoras); `estaBloqueado` (Juan David + `RITMO_BLOQUEADOS`) no
+    recibe link, alta ni aparece en listas. El alta no reutiliza cuentas que ya tienen clave.
+  - **Archivos**: tipos permitidos por categoría y por extensión (`tipoPermitido`; nada de html/svg/js), el
+    tipo que se guarda y se sirve sale de la extensión, lo que no es foto/PDF/video se descarga, URL firmada de
+    5 min, `nosniff` + CSP sandbox en el servido local.
+  - **Cabeceras**: `/ritmo/*` con la misma CSP estricta, `X-Frame-Options: DENY` y Permissions-Policy de Pulse.
+  - **Slack**: el texto de empleados va escapado (`esc` en `avisar.ts`/`avisos.ts`) — sin menciones ni links falsos.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

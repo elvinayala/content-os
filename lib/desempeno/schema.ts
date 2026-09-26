@@ -14,6 +14,9 @@ export const desempenoPerfiles = pgTable("desempeno_perfiles", {
   puesto: text("puesto").notNull(),
   empresa: text("empresa").notNull().default("level_up"), // level_up | ai_borinquen (misma plataforma, separado)
   slackId: text("slack_id"), // para los avisos del bot (el bot no puede buscar por correo); se busca solo por nombre
+  // Seguridad: quien entra por Ritmo (alta o primer link de acceso) NO ve Pulse (clientes, tesorería).
+  // Los que ya usaban Pulse con su clave quedan en false. Solo admin/editoras lo cambian en Ajustes.
+  soloRitmo: boolean("solo_ritmo").notNull().default(false),
   liderId: uuid("lider_id").references(() => pulseUsers.id, { onDelete: "set null" }),
   horaEntrada: text("hora_entrada").notNull().default("09:00"),
   horaSalida: text("hora_salida").notNull().default("18:00"),

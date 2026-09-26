@@ -38,6 +38,8 @@ export interface TratoTarjeta {
 /** admin/editor de Pulse: todo. El resto, lo que diga leads_acceso (todos | solo sus leads). */
 export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ puede: boolean; alcance: "todos" | "mios" }> {
   if (u.rol === "admin" || u.rol === "editor") return { puede: true, alcance: "todos" };
+  const { esSoloRitmo } = await import("../pulse/auth");
+  if (await esSoloRitmo(u.id)) return { puede: false, alcance: "mios" }; // empleado solo de Ritmo
   const d = await db();
   const fila = await d.query.leadsAcceso.findFirst({ where: and(eq(leadsAcceso.userId, u.id), eq(leadsAcceso.marca, marca)) });
   return fila ? { puede: true, alcance: fila.alcance === "mios" ? "mios" : "todos" } : { puede: false, alcance: "mios" };
@@ -45,6 +47,8 @@ export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ pued
 
 export async function marcasConAcceso(u: UsuarioPulse): Promise<Marca[]> {
   if (u.rol === "admin" || u.rol === "editor") return ["level_up", "ai_borinquen"];
+  const { esSoloRitmo } = await import("../pulse/auth");
+  if (await esSoloRitmo(u.id)) return [];
   const d = await db();
   const filas = await d.select().from(leadsAcceso).where(eq(leadsAcceso.userId, u.id));
   return filas.map((f) => f.marca as Marca);

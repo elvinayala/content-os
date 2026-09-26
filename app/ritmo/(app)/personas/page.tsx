@@ -6,6 +6,7 @@ import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { CrearFicha } from "@/components/ritmo/crear-ficha";
 import { NuevoEmpleado } from "@/components/ritmo/nuevo-empleado";
 import { EmpresaBadge, FiltroEmpresa } from "@/components/ritmo/piezas";
+import { estaBloqueado } from "@/lib/desempeno/acceso";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { listarUsuarios } from "@/lib/pulse/repo";
@@ -31,7 +32,7 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Personas</h1>
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">La ficha de cada empleado de operaciones con sueldo fijo: contacto, documentos, entrenamientos, vacaciones y nómina.</p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <NuevoEmpleado puestos={PUESTOS.map((p) => ({ id: p.id, nombre: p.nombre }))} supervisores={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema")).map((x) => ({ id: x.id, nombre: x.nombre }))} />
+          <NuevoEmpleado puestos={PUESTOS.map((p) => ({ id: p.id, nombre: p.nombre }))} supervisores={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema") && !estaBloqueado(x.email)).map((x) => ({ id: x.id, nombre: x.nombre }))} />
           <FiltroEmpresa actual={empresa} href={(e) => (e ? `/ritmo/personas?e=${e}` : "/ritmo/personas")} />
         </div>
       </div>

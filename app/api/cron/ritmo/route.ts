@@ -2,7 +2,7 @@ import { inArray } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
-import { avisarCorreo, avisarPersona } from "@/lib/desempeno/avisar";
+import { avisarCorreo, avisarPersona, esc } from "@/lib/desempeno/avisar";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
@@ -97,10 +97,10 @@ export async function GET(req: NextRequest) {
   const extras: string[] = [];
   const porFirmar = (await solicitudesPara({ id: SISTEMA.id, maestro: true })).filter((x) => x.estado === "rrhh");
   const porSupervisor = (await solicitudesPara({ id: SISTEMA.id, maestro: true })).filter((x) => x.estado === "supervisor");
-  if (porFirmar.length) extras.push(`📝 Solicitudes esperando firma de RR.HH.: ${porFirmar.map((x) => x.nombre).join(", ")} <${base}/ritmo/solicitudes|Ver>`);
-  if (porSupervisor.length) extras.push(`⏳ Esperando a su supervisor: ${porSupervisor.map((x) => `${x.nombre} (${x.supervisorNombre ?? "—"})`).join(", ")}`);
+  if (porFirmar.length) extras.push(`📝 Solicitudes esperando firma de RR.HH.: ${porFirmar.map((x) => esc(x.nombre)).join(", ")} <${base}/ritmo/solicitudes|Ver>`);
+  if (porSupervisor.length) extras.push(`⏳ Esperando a su supervisor: ${porSupervisor.map((x) => `${esc(x.nombre)} (${esc(x.supervisorNombre ?? "—")})`).join(", ")}`);
   const sinFicha = (await resumenPersonas()).filter((g) => g.perfil.activo && fichaPendiente(g.ficha)).map((g) => g.perfil.nombre);
-  if (sinFicha.length) extras.push(`🆕 No han completado su ficha: ${sinFicha.join(", ")}`);
+  if (sinFicha.length) extras.push(`🆕 No han completado su ficha: ${sinFicha.map(esc).join(", ")}`);
   for (const email of todos) {
     const texto = textoDigest({ fecha: ayer, filas, url, para: "todo el equipo", extras });
     if (texto) envios.push({ para: email, email, texto });
