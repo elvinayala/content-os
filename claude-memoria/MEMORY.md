@@ -64,3 +64,4 @@
 - [Onboarding AIB](aib-onboarding-agente.md) — sale del Calendly de AI Borinquen (agendar onboarding = cliente, igual que LU), no de Pulse ni del Calendly LU; Calendly AIB conectado (23/sep); en simulación, falta número Zernio + plantillas + modo real
 - [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos a Elvin/equipo solo por Telegram/Slack; Resuelto bloqueado por SCAM el 23/sep por 35 avisos a su número
 - [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — /ritmo, app aparte de Pulse (mismas cuentas): ponche + KPIs por puesto + score 🟢🟡🔴; EN PROD 25/sep en ritmo-eamarket.vercel.app; maestra solo Elvin/Carilin/Aure; acceso por link de 72 h; sin vigilar
+- [Leads — reemplazo de Pipedrive](leads-crm.md) — CRM de leads dentro de Pulse (/pulse/leads, 26/sep/2026) con esencia Pipedrive + Timelines; historial de Pipedrive archivado en Excel, NO cargado; falta token Timelines y cuentas de setters/closers
