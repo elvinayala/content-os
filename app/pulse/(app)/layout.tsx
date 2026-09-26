@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { BuscadorGlobal } from "@/components/pulse/buscador-global";
 import { PulseSidebar } from "@/components/pulse/pulse-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { puedeFormularios } from "@/lib/formularios/reglas";
 import { marcasConAcceso } from "@/lib/leads/repo";
 import { esSoloRitmo, usuarioActual } from "@/lib/pulse/auth";
 import { listarBoards } from "@/lib/pulse/repo";
@@ -18,7 +19,7 @@ export default async function PulseAppLayout({ children }: Readonly<{ children: 
   const [boards, marcasLeads] = await Promise.all([listarBoards(usuario), marcasConAcceso(usuario)]);
   return (
     <SidebarProvider>
-      <PulseSidebar boards={boards} usuario={usuario} tieneLeads={marcasLeads.length > 0} />
+      <PulseSidebar boards={boards} usuario={usuario} tieneLeads={marcasLeads.length > 0} tieneFormularios={puedeFormularios(usuario, process.env.FORMULARIOS_ACCESO || undefined)} />
       <SidebarInset className="min-w-0 bg-background">{children}</SidebarInset>
       <BuscadorGlobal boards={boards.map((b) => ({ slug: b.slug, nombre: b.nombre, color: b.color }))} puedeConfigurar={puedeGestionarUsuarios(usuario.rol)} />
     </SidebarProvider>

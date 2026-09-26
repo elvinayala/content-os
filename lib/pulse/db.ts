@@ -5,12 +5,13 @@ import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import postgres from "postgres";
 
 import * as desempeno from "../desempeno/schema";
+import * as formularios from "../formularios/schema";
 import * as leads from "../leads/schema";
 import * as portal from "../portal/schema";
 import * as pulse from "./schema";
 
 // Un solo cliente para Pulse, el Portal AutoFlow (lib/portal) y Desempeño (lib/desempeno): misma base.
-const schema = { ...pulse, ...portal, ...desempeno, ...leads };
+const schema = { ...pulse, ...portal, ...desempeno, ...leads, ...formularios };
 
 // Conexión a la base de Pulse.
 //  - Con DATABASE_URL (Supabase, transaction pooler :6543): postgres.js con prepare:false.

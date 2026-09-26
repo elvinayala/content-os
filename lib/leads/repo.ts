@@ -352,6 +352,20 @@ export async function crearActividad(tratoId: string, v: { tipo: string; asunto:
   await recalcularProxima(tratoId);
 }
 
+/** La llamada que agendó el sistema (Calendly): una sola pendiente por lead, del dueño del lead.
+ *  `venceAt` null = se canceló (se quita). No toca las actividades que creó el equipo. */
+export async function agendarLlamadaSistema(tratoId: string, venceAt: Date | null, asunto = "Llamada agendada") {
+  const d = await db();
+  await d
+    .delete(leadsActividades)
+    .where(and(eq(leadsActividades.tratoId, tratoId), eq(leadsActividades.hecha, false), eq(leadsActividades.tipo, "llamada"), isNull(leadsActividades.creadaPor)));
+  if (venceAt) {
+    const [t] = await d.select({ duenoId: leadsTratos.duenoId }).from(leadsTratos).where(eq(leadsTratos.id, tratoId)).limit(1);
+    await d.insert(leadsActividades).values({ tratoId, tipo: "llamada", asunto: asunto.slice(0, 200), venceAt, asignadoId: t?.duenoId ?? null, creadaPor: null });
+  }
+  await recalcularProxima(tratoId);
+}
+
 export async function completarActividad(actividadId: string, hecha: boolean) {
   const d = await db();
   const [a] = await d.update(leadsActividades).set({ hecha, hechaAt: hecha ? new Date() : null }).where(eq(leadsActividades.id, actividadId)).returning();
@@ -466,6 +480,28 @@ export async function cuentasWhatsapp(marca: Marca) {
   return d.select().from(leadsWhatsapp).where(eq(leadsWhatsapp.marca, marca));
 }
 
+// Tablero de clientes de cada marca en Pulse. Un cliente actual (cualquier grupo menos OFFBOARDED)
+// que escribe al WhatsApp NO es un lead (Elvin, 26/sep): se ignora. Los ex-clientes sí entran.
+const TABLERO_CLIENTES: Record<Marca, string> = { level_up: "level-up-media", ai_borinquen: "ai-borinquen" };
+
+/** Nombre del cliente actual con ese teléfono (compara los últimos 10 dígitos), o null. */
+export async function clienteActual(marca: Marca, telefono: string): Promise<string | null> {
+  const digitos = telefono.replace(/\D/g, "");
+  if (digitos.length < 7) return null;
+  const d = await db();
+  const res = await d.execute(sql`
+    select i.name from pulse_items i
+    join pulse_boards b on b.id = i.board_id
+    join pulse_groups g on g.id = i.group_id
+    join pulse_columns c on c.board_id = b.id and c.type = 'phone'
+    where b.slug = ${TABLERO_CLIENTES[marca]}
+      and upper(g.title) not like 'OFFBOARD%'
+      and right(regexp_replace(coalesce(i.values ->> c.id::text, ''), '\\D', '', 'g'), 10) = ${digitos.slice(-10)}
+    limit 1`);
+  const filas = (Array.isArray(res) ? res : ((res as { rows?: unknown[] }).rows ?? [])) as { name: string }[];
+  return filas[0]?.name ?? null;
+}
+
 /** Guarda el mensaje en la línea de tiempo del lead (lo crea si es un contacto nuevo que escribe). */
 export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promise<string> {
   if (ev.esGrupo) return "ignorado:grupo";
@@ -481,6 +517,7 @@ export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promis
   if (!t) {
     // Un saliente a alguien que no está en el CRM (p. ej. un chat personal) no crea lead.
     if (ev.direccion !== "entrante") return "ignorado:saliente-sin-lead";
+    if (await clienteActual(marca, ev.telefono)) return "ignorado:cliente-actual";
     let embudoId = cuenta?.embudoId ?? null;
     if (!embudoId) embudoId = (await embudoPorNombre(marca, "WhatsApp"))?.id ?? (await listarEmbudos(marca))[0]?.id ?? null;
     if (!embudoId) return "error:sin-embudo";

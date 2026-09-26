@@ -14,5 +14,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#0b0b0b" };
 
 export default function OnboardingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <div className={`${sora.variable} ${inter.variable} onboarding-lu`}>{children}</div>;
+  return <div className={`${sora.variable} ${inter.variable}`}>{children}</div>;
 }

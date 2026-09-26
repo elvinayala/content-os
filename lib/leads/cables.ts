@@ -4,7 +4,7 @@ import { and, eq, or } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
 
-import { cerrarTrato, etapasDe, ingestarLead, moverTrato } from "./repo";
+import { agendarLlamadaSistema, cerrarTrato, etapasDe, ingestarLead, moverTrato } from "./repo";
 import { normalizarTelefono } from "./reglas";
 import { leadsEmbudos, leadsTratos } from "./schema";
 
@@ -26,8 +26,8 @@ async function seguro(nombre: string, fn: () => Promise<unknown>) {
 
 /** Cita agendada/reagendada en el Calendly de Level Up → embudo Closers. */
 export function leadCalendlyAgendo(v: { nombre: string; email: string; telefono: string; negocio: string; inicio: string; evento: string; closer?: string | null; agendoPor?: string | null; reagenda: boolean; uri: string }) {
-  return seguro("calendly-agendo", () =>
-    ingestarLead({
+  return seguro("calendly-agendo", async () => {
+    const r = await ingestarLead({
       marca: "level_up",
       embudo: "CLOSERS",
       etapa: v.reagenda ? "Llamada reprogramada" : "Llamada agendada",
@@ -40,8 +40,10 @@ export function leadCalendlyAgendo(v: { nombre: string; email: string; telefono:
       duenoNombre: v.closer ?? null,
       nota: `📅 ${v.reagenda ? "Reagendó" : "Agendó"}: ${fechaCita(v.inicio)} · ${v.evento}${v.closer ? ` · closer ${v.closer}` : ""}${v.agendoPor ? ` · agendó ${v.agendoPor}` : ""}`,
       datos: { citaInicio: v.inicio, citaEvento: v.evento, calendlyUri: v.uri, ...(v.closer ? { closer: v.closer } : {}) },
-    }),
-  );
+    });
+    // La llamada queda como seguimiento del closer a la hora de la cita (como la actividad "call" de Pipedrive).
+    await agendarLlamadaSistema(r.id, new Date(v.inicio), `📞 ${v.evento}`);
+  });
 }
 
 async function abiertoPorContacto(email: string | null, telefono: string | null) {
@@ -65,6 +67,7 @@ export function leadCalendlyCancelo(email: string, telefono: string | null) {
     const etapas = await etapasDe(emb.id);
     const cancelada = etapas.find((e) => /cancelad/i.test(e.nombre));
     if (cancelada) await moverTrato(t.id, cancelada.id, null, null);
+    await agendarLlamadaSistema(t.id, null);
   });
 }
 
@@ -72,7 +75,10 @@ export function leadCalendlyCancelo(email: string, telefono: string | null) {
 export function leadCalendlyOnboarding(email: string, telefono: string | null) {
   return seguro("calendly-onboarding", async () => {
     const t = await abiertoPorContacto(email, telefono);
-    if (t) await cerrarTrato(t.id, "ganado", null);
+    if (t) {
+      await cerrarTrato(t.id, "ganado", null);
+      await agendarLlamadaSistema(t.id, null);
+    }
   });
 }
 

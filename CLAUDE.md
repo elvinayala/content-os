@@ -568,7 +568,10 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   ?marca=level-up&s=LEADS_WEBHOOK_SECRET` (público en proxy; Timelines no firma → secreto en la URL; contesta
   ya y procesa con after(); lector tolerante `leerTimelines` porque Timelines no publica el esquema; lo crudo
   queda 14 días en `leads_webhook_log`). Envío por su API (`lib/leads/timelines.ts`, token
-  `TIMELINES_TOKEN_LU|AIB`). **Un solo lead abierto por teléfono y marca** (índice único parcial): dos
+  `TIMELINES_TOKEN_LU|AIB`; **LU conectado 26/sep**: número +1 787-409-2812, webhooks 30187/30188, token en
+  .env.local y Vercel; probado con conversación real). **Clientes actuales NO entran como lead** (Elvin, 26/sep):
+  `clienteActual()` busca el teléfono (últimos 10 dígitos) en el tablero de clientes de la marca en Pulse
+  (level-up-media / ai-borinquen), cualquier grupo menos OFFBOARDED → `ignorado:cliente-actual`; ex-clientes sí entran. **Un solo lead abierto por teléfono y marca** (índice único parcial): dos
   mensajes seguidos no duplican. Conectar: `node scripts/leads-timelines.mjs cuentas|webhooks|conectar lu`.
   Tabla `leads_whatsapp` = qué número alimenta qué embudo y dueño (sin fila → embudo "WhatsApp").
 - **Embudos = copia EXACTA de los 11 de Pipedrive LU** (27/sep, `SEMILLA.level_up`, mismos nombres/etapas, por
@@ -582,7 +585,8 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   Dilan Torres (chatters); Aure (editor). Santiago Villarreal ya no está. Se les da la clave con el link de
   acceso de Ritmo + `&d=leads` (`linkDeAcceso`, 72 h) → crean su clave y caen en /pulse/leads.
 - **Semana 2 (en paralelo con Pipedrive)**, `lib/leads/cables.ts`: Calendly de LU → embudo Closers
-  (agendó/reagendó/canceló; onboarding = GANADO) y quiz de LU → "Diagnóstico de Crecimiento" (el quiz nunca
+  (agendó/reagendó/canceló; onboarding = GANADO; la cita queda como actividad "llamada" del closer a la hora de la
+  cita vía `agendarLlamadaSistema`, se mueve si reagenda y se quita si cancela; el 26/sep se cargó la agenda futura: 10 citas) y quiz de LU → "Diagnóstico de Crecimiento" (el quiz nunca
   mueve a un lead que ya existe). AIB y el resto de escritores de Pipedrive (prospección, fábrica de demos,
   dashboards) siguen en Pipedrive hasta la semana 3.
 - **Archivo de Pipedrive** (costo $0, por API): `node scripts/pipedrive-archivo.mjs lu|aib` → JSON + Excel en
@@ -592,6 +596,30 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
 - Código: `lib/leads/{schema,reglas,repo,pagina,cables,timelines}.ts`, `app/pulse/(app)/leads/`,
   `components/leads/`, migraciones 0013-0014, `tests/leads.test.mjs`. Probar local sin clave:
   config `content-os-abierto` (puerto 3011, CEO_PORTAL_PASSWORD vacío = modo abierto de dev).
+
+## Formularios propios — el reemplazo de Typeform (`/pulse/formularios`, 26/sep/2026)
+
+Elvin: "quiero hacer mi propio Typeform… para descartar esa suscripción", con el estilo del onboarding de LU.
+**Plataforma**: formularios de una pregunta por pantalla (`/f/<slug>`, públicos en `proxy.ts`) que se crean y
+editan en **Pulse → Formularios** (admin/editor): preguntas (texto, largo, e-mail, teléfono, número, opción,
+varias, sí/no, escala 0-10, link, redes), condiciones ("mostrar solo si…"), bienvenida (con `*resaltado*`),
+pantalla final (`{nombre}` + botón con link, p. ej. Calendly), temas (Level Up · AI Borinquen · Claro · Noche +
+color de acento + logo), abrir/cerrar, duplicar, archivar, respuestas con búsqueda y **Excel (CSV)**, vista previa
+(`?vista=previa`, no guarda). Tablas `form_formularios` / `form_respuestas` (migración 0017, token por navegador =
+sin duplicados; guarda copia de las preguntas). La respuesta SIEMPRE se guarda primero; la **acción**
+`pulse-onboarding-lu` después crea/completa la ficha en LEVEL UP MEDIA (`altaDesdeFormulario` con las preguntas del
+formulario) y abre expediente a Max; si falla queda marcada "No creó la ficha". Código: `lib/formularios/
+{reglas,semillas,schema,repo}.ts` (reglas puras, tests `tests/formularios.test.mjs`), `components/formularios/`,
+`app/f/[slug]`, `app/api/f/[slug]`, `app/pulse/(app)/formularios/`. CSS `.formulario` con variables `--f-*`.
+- **Duplicados de Typeform** (semillas, `SEMILLAS`): `onboarding-level-up` (= levelupmedia.vercel.app; la página
+  `/onboarding/level-up` ahora lee este formulario y postea a `/api/f/onboarding-level-up`; se le sumó el botón del
+  Typeform para **agendar el onboarding con Jessica** en Calendly) y `encuesta-level-up`
+  (levelupmedia.vercel.app/f/encuesta-level-up, la encuesta `UDjwQkKP` que mandan los agentes de n8n; los 4
+  workflows que la tenían ya apuntan al link nuevo). Links de LU salen por `levelupmedia.vercel.app/f/…`.
+- **Archivo de Typeform** (antes de cancelar, $0): `node scripts/typeform-archivo.mjs` → JSON + Excel en
+  `~/Documents/Archivo Typeform/<fecha>/` y Storage `pulse/archivo-typeform/2026-09-26/` (525 respuestas del
+  onboarding). La encuesta `UDjwQkKP` vive en OTRA cuenta de Typeform (subdominio 6siljlqvh7z): sus respuestas
+  no se pueden bajar con `TYPEFORM_TOKEN`. `/api/pulse/typeform` queda de respaldo hasta cancelar.
 
 ## El ecosistema de email (ActiveCampaign)
 

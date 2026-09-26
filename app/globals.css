@@ -699,101 +699,132 @@
   }
 }
 
-/* ---------- Onboarding de Level Up (/onboarding/level-up) ----------
-   Marca LU: negro #0b0b0b + amarillo #f5ce1a, Sora (títulos) / Inter (texto). */
-.onboarding-lu {
+/* ---------- Formularios propios (/f/<slug>, /onboarding/level-up) ----------
+   Nacieron con el onboarding de Level Up (negro #0b0b0b + amarillo #f5ce1a, Sora/Inter). Los
+   colores salen de variables que pone cada formulario según su tema (lib/formularios/reglas.ts). */
+.formulario {
+  --f-fondo: #0b0b0b;
+  --f-texto: #f5f1e8;
+  --f-sutil: #a3a3a3;
+  --f-acento: #f5ce1a;
+  --f-tinta: #0b0b0b;
   font-family: var(--font-inter), system-ui, sans-serif;
-  color-scheme: dark;
+  color: var(--f-texto);
   -webkit-font-smoothing: antialiased;
 }
-.onboarding-lu .lu-fondo {
+.formulario[data-oscuro="true"] { color-scheme: dark; }
+.formulario .lu-fondo {
   background:
-    radial-gradient(60% 45% at 85% 0%, rgba(245, 206, 26, 0.13), transparent 70%),
-    radial-gradient(45% 40% at 0% 100%, rgba(245, 206, 26, 0.07), transparent 70%),
-    #0b0b0b;
+    radial-gradient(60% 45% at 85% 0%, color-mix(in srgb, var(--f-acento) 13%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, color-mix(in srgb, var(--f-acento) 7%, transparent), transparent 70%),
+    var(--f-fondo);
 }
-.onboarding-lu .lu-input {
+.formulario .f-acento { color: var(--f-acento); }
+.formulario .f-sutil { color: var(--f-sutil); }
+.formulario .f-tenue { color: color-mix(in srgb, var(--f-sutil) 65%, var(--f-fondo)); }
+.formulario .lu-input {
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 2px solid rgba(245, 241, 232, 0.18);
+  border-bottom: 2px solid color-mix(in srgb, var(--f-texto) 18%, transparent);
   padding: 0.5rem 0.1rem;
   font-size: 1.6rem;
   line-height: 1.3;
-  color: #f5f1e8;
+  color: var(--f-texto);
   outline: none;
   transition: border-color 0.2s ease;
 }
-.onboarding-lu .lu-input::placeholder {
-  color: rgba(245, 241, 232, 0.25);
-}
-.onboarding-lu .lu-input:focus {
-  border-bottom-color: #f5ce1a;
-}
-.onboarding-lu .lu-boton {
+.formulario .lu-input::placeholder { color: color-mix(in srgb, var(--f-texto) 25%, transparent); }
+.formulario .lu-input:focus { border-bottom-color: var(--f-acento); }
+.formulario .lu-boton {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   border-radius: 999px;
-  background: #f5ce1a;
-  color: #0b0b0b;
+  background: var(--f-acento);
+  color: var(--f-tinta);
   font-weight: 700;
   font-size: 1.05rem;
   padding: 0.8rem 1.6rem;
-  box-shadow: 0 12px 30px -12px rgba(245, 206, 26, 0.7);
+  box-shadow: 0 12px 30px -12px color-mix(in srgb, var(--f-acento) 70%, transparent);
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
-.onboarding-lu .lu-boton:hover {
+.formulario .lu-boton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 36px -12px rgba(245, 206, 26, 0.85);
+  box-shadow: 0 16px 36px -12px color-mix(in srgb, var(--f-acento) 85%, transparent);
 }
-.onboarding-lu .lu-boton:disabled {
-  opacity: 0.7;
+.formulario .lu-boton:disabled { opacity: 0.7; }
+.formulario .lu-chip {
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--f-acento) 30%, transparent);
+  background: color-mix(in srgb, var(--f-acento) 10%, transparent);
+  color: var(--f-acento);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
-.onboarding-lu .lu-opcion {
+.formulario .lu-tarjeta {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--f-texto) 10%, transparent);
+  background: color-mix(in srgb, var(--f-texto) 3%, transparent);
+}
+.formulario .lu-numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--f-acento);
+  color: var(--f-tinta);
+  font-weight: 700;
+}
+.formulario .lu-opcion {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   width: 100%;
   border-radius: 12px;
-  border: 1px solid rgba(245, 241, 232, 0.14);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid color-mix(in srgb, var(--f-texto) 14%, transparent);
+  background: color-mix(in srgb, var(--f-texto) 3%, transparent);
   padding: 0.8rem 1rem;
   font-size: 1.05rem;
-  color: #f5f1e8;
+  color: var(--f-texto);
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.onboarding-lu .lu-opcion:hover {
-  border-color: rgba(245, 206, 26, 0.5);
-  background: rgba(245, 206, 26, 0.06);
+.formulario .lu-opcion:hover {
+  border-color: color-mix(in srgb, var(--f-acento) 50%, transparent);
+  background: color-mix(in srgb, var(--f-acento) 6%, transparent);
 }
-.onboarding-lu .lu-opcion[data-on="true"] {
-  border-color: #f5ce1a;
-  background: rgba(245, 206, 26, 0.12);
+.formulario .lu-opcion[data-on="true"] {
+  border-color: var(--f-acento);
+  background: color-mix(in srgb, var(--f-acento) 12%, transparent);
 }
-.onboarding-lu .lu-letra {
+.formulario .lu-escala {
+  justify-content: center;
+  padding: 0.7rem 0;
+  font-weight: 600;
+}
+.formulario .lu-letra {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 6px;
-  border: 1px solid rgba(245, 206, 26, 0.5);
-  color: #f5ce1a;
+  border: 1px solid color-mix(in srgb, var(--f-acento) 50%, transparent);
+  color: var(--f-acento);
   font-size: 0.75rem;
   font-weight: 700;
   flex-shrink: 0;
 }
-.onboarding-lu .lu-opcion[data-on="true"] .lu-letra {
-  background: #f5ce1a;
-  color: #0b0b0b;
+.formulario .lu-opcion[data-on="true"] .lu-letra {
+  background: var(--f-acento);
+  color: var(--f-tinta);
 }
-.onboarding-lu .lu-entra {
-  animation: lu-entra 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-.onboarding-lu .lu-entra-atras {
-  animation: lu-entra-atras 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
+.formulario .lu-entra { animation: lu-entra 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.formulario .lu-entra-atras { animation: lu-entra-atras 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 @keyframes lu-entra {
   from { opacity: 0; transform: translateY(28px); }
   to { opacity: 1; transform: none; }
@@ -803,9 +834,9 @@
   to { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .onboarding-lu .lu-entra,
-  .onboarding-lu .lu-entra-atras { animation: none; }
+  .formulario .lu-entra,
+  .formulario .lu-entra-atras { animation: none; }
 }
 @media (max-width: 640px) {
-  .onboarding-lu .lu-input { font-size: 1.3rem; }
+  .formulario .lu-input { font-size: 1.3rem; }
 }

@@ -1,13 +1,11 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
-import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, Check, ExternalLink, Loader2 } from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { errorDe, PREGUNTAS, type Pregunta, type Respuestas, verOpcion, visible } from "@/lib/onboarding/level-up";
+import { conNombre, type ConfigFormulario, errorDe, opcionesDe, type Pregunta, type Respuestas, type Tema, verOpcion, visible } from "@/lib/formularios/reglas";
 
 const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const BORRADOR = "lu-onboarding-borrador";
 
 function nuevoToken(): string {
   try {
@@ -17,19 +15,40 @@ function nuevoToken(): string {
   }
 }
 
-export function FormularioLevelUp() {
+/** "*Level Up*" en un título → en el color de acento. */
+function Resaltado({ t }: { t: string }) {
+  return (
+    <>
+      {t.split(/(\*[^*]+\*)/g).map((x, i) =>
+        x.startsWith("*") && x.endsWith("*") && x.length > 2 ? (
+          <span key={i} className="f-acento">
+            {x.slice(1, -1)}
+          </span>
+        ) : (
+          <Fragment key={i}>{x}</Fragment>
+        ),
+      )}
+    </>
+  );
+}
+
+// Formulario público de una pregunta por pantalla (el "Typeform" de la casa). `previa` = vista
+// previa del editor: no guarda nada ni envía.
+export function FormularioPublico({ slug, config, tema, previa = false, origen }: { slug: string; config: ConfigFormulario; tema: Tema; previa?: boolean; origen?: string }) {
+  const BORRADOR = `formulario-borrador:${slug}`;
   const [r, setR] = useState<Respuestas>({});
-  const [paso, setPaso] = useState(0); // 0 = bienvenida; 1..n = preguntas; n+1 = gracias
+  const [paso, setPaso] = useState(0); // 0 = bienvenida; 1..n = preguntas; n+1 = final
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [token, setToken] = useState("");
   const [trampa, setTrampa] = useState("");
   const [dir, setDir] = useState<1 | -1>(1);
 
-  // Borrador: si cierra la pestaña, sigue donde iba.
+  // Borrador: si cierra la pestaña, sigue donde iba (el onboarding hereda el borrador de su versión anterior).
   useEffect(() => {
+    if (previa) return setToken(nuevoToken());
     try {
-      const raw = localStorage.getItem(BORRADOR);
+      const raw = localStorage.getItem(BORRADOR) ?? (slug === "onboarding-level-up" ? localStorage.getItem("lu-onboarding-borrador") : null);
       if (raw) {
         const b = JSON.parse(raw) as { r: Respuestas; token: string };
         setR(b.r ?? {});
@@ -38,15 +57,15 @@ export function FormularioLevelUp() {
       }
     } catch {}
     setToken(nuevoToken());
-  }, []);
+  }, [BORRADOR, slug, previa]);
   useEffect(() => {
-    if (!token) return;
+    if (!token || previa) return;
     try {
       localStorage.setItem(BORRADOR, JSON.stringify({ r, token }));
     } catch {}
-  }, [r, token]);
+  }, [r, token, BORRADOR, previa]);
 
-  const preguntas = useMemo(() => PREGUNTAS.filter((p) => visible(p, r)), [r]);
+  const preguntas = useMemo(() => config.preguntas.filter((p) => visible(p, r)), [config.preguntas, r]);
   const total = preguntas.length;
   const actual: Pregunta | undefined = paso >= 1 && paso <= total ? preguntas[paso - 1] : undefined;
   const terminado = paso > total;
@@ -57,13 +76,17 @@ export function FormularioLevelUp() {
   };
 
   const enviar = useCallback(async () => {
+    if (previa) {
+      setDir(1);
+      return setPaso(total + 1);
+    }
     setEnviando(true);
     setError(null);
     try {
-      const res = await fetch("/api/onboarding/level-up", {
+      const res = await fetch(`/api/f/${slug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, respuestas: r, empresa_web: trampa }),
+        body: JSON.stringify({ token, respuestas: r, empresa_web: trampa, origen }),
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.ok) {
@@ -80,6 +103,7 @@ export function FormularioLevelUp() {
       }
       try {
         localStorage.removeItem(BORRADOR);
+        if (slug === "onboarding-level-up") localStorage.removeItem("lu-onboarding-borrador");
       } catch {}
       setDir(1);
       setPaso(total + 1);
@@ -88,7 +112,7 @@ export function FormularioLevelUp() {
     } finally {
       setEnviando(false);
     }
-  }, [token, r, trampa, preguntas, total]);
+  }, [previa, slug, token, r, trampa, origen, preguntas, total, BORRADOR]);
 
   const siguiente = useCallback(
     (respuestasActuales?: Respuestas) => {
@@ -99,10 +123,12 @@ export function FormularioLevelUp() {
       }
       setError(null);
       setDir(1);
-      if (paso === total) return void enviar();
+      // La última visible puede cambiar según la respuesta (condiciones): se recalcula.
+      const vis = config.preguntas.filter((p) => visible(p, estado));
+      if (paso >= vis.length) return void enviar();
       setPaso((p) => p + 1);
     },
-    [actual, r, paso, total, enviar],
+    [actual, r, paso, config.preguntas, enviar],
   );
   const atras = () => {
     setError(null);
@@ -111,18 +137,27 @@ export function FormularioLevelUp() {
   };
 
   const progreso = terminado ? 100 : paso === 0 ? 0 : Math.round(((paso - 1) / total) * 100);
+  const estilo = { "--f-fondo": tema.fondo, "--f-texto": tema.texto, "--f-sutil": tema.sutil, "--f-acento": tema.acento, "--f-tinta": tema.tinta } as React.CSSProperties;
 
   return (
-    <main className="lu-fondo relative flex min-h-svh flex-col text-[#f5f1e8]">
-      {/* barra de progreso */}
-      <div className="fixed inset-x-0 top-0 z-20 h-1 bg-white/5">
-        <div className="h-full bg-[#f5ce1a] transition-[width] duration-500 ease-out" style={{ width: `${progreso}%` }} />
+    <main className="formulario lu-fondo relative flex min-h-svh flex-col" data-oscuro={tema.oscuro} style={estilo}>
+      <div className="fixed inset-x-0 top-0 z-20 h-1" style={{ background: "color-mix(in srgb, var(--f-texto) 6%, transparent)" }}>
+        <div className="h-full transition-[width] duration-500 ease-out" style={{ width: `${progreso}%`, background: "var(--f-acento)" }} />
       </div>
 
+      {previa ? (
+        <div className="fixed top-3 left-1/2 z-30 -translate-x-1/2 rounded-full bg-black/80 px-3 py-1 text-xs font-medium text-white shadow">Vista previa · no se guarda nada</div>
+      ) : null}
+
       <header className="flex items-center justify-between px-5 pt-6 sm:px-10">
-        <Image src="/marcas/level-up-logo-dark.png" alt="Level Up Media" width={160} height={116} priority className="h-14 w-auto" />
+        {tema.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={tema.logo} alt="" className="h-12 w-auto sm:h-14" />
+        ) : (
+          <span />
+        )}
         {actual ? (
-          <span className="text-xs font-medium tracking-[0.18em] text-[#a3a3a3] uppercase">
+          <span className="f-sutil text-xs font-medium tracking-[0.18em] uppercase">
             {paso} de {total}
           </span>
         ) : null}
@@ -132,6 +167,7 @@ export function FormularioLevelUp() {
         <div key={paso} className={dir === 1 ? "lu-entra" : "lu-entra-atras"}>
           {paso === 0 ? (
             <Bienvenida
+              config={config}
               onEmpezar={() => {
                 setDir(1);
                 // Si viene de un borrador, salta a la primera pregunta que le falta.
@@ -156,28 +192,26 @@ export function FormularioLevelUp() {
             />
           ) : null}
 
-          {terminado ? <Gracias nombre={String(r.nombre ?? "").split(" ")[0]} /> : null}
+          {terminado ? <Final config={config} r={r} /> : null}
         </div>
       </section>
 
       {actual ? (
         <footer className="flex items-center justify-between px-5 pb-6 sm:px-10">
-          <button type="button" onClick={atras} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-[#a3a3a3] transition hover:bg-white/5 hover:text-[#f5f1e8]">
+          <button type="button" onClick={atras} className="f-sutil flex items-center gap-2 rounded-full px-3 py-2 text-sm transition hover:opacity-80">
             <ArrowLeft className="size-4" /> Atrás
           </button>
-          <span className="hidden text-xs text-[#6b6b6b] sm:block">
-            Tus respuestas se guardan en este dispositivo mientras llenas el formulario.
-          </span>
+          <span className="f-tenue hidden text-xs sm:block">Tus respuestas se guardan en este dispositivo mientras llenas el formulario.</span>
         </footer>
       ) : null}
 
-      {/* trampa para bots: invisible para personas */}
       <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={trampa} onChange={(e) => setTrampa(e.target.value)} name="empresa_web" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
     </main>
   );
 }
 
-function Bienvenida({ onEmpezar, continuar }: { onEmpezar: () => void; continuar: boolean }) {
+function Bienvenida({ config, onEmpezar, continuar }: { config: ConfigFormulario; onEmpezar: () => void; continuar: boolean }) {
+  const b = config.bienvenida;
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Enter" && onEmpezar();
     window.addEventListener("keydown", k);
@@ -185,47 +219,51 @@ function Bienvenida({ onEmpezar, continuar }: { onEmpezar: () => void; continuar
   }, [onEmpezar]);
   return (
     <div className="flex flex-col gap-6">
-      <span className="w-fit rounded-full border border-[#f5ce1a]/30 bg-[#f5ce1a]/10 px-3 py-1 text-xs font-semibold tracking-[0.16em] text-[#f5ce1a] uppercase">Onboarding · 5 minutos</span>
+      {b.etiqueta ? <span className="lu-chip">{b.etiqueta}</span> : null}
       <h1 className="font-[family-name:var(--font-sora)] text-4xl leading-[1.08] font-bold tracking-tight sm:text-6xl">
-        Bienvenido a <span className="text-[#f5ce1a]">Level Up</span>.<br />
-        Vamos a preparar tu estrategia.
+        <Resaltado t={b.titulo} />
       </h1>
-      <p className="max-w-xl text-lg leading-relaxed text-[#bdbab2]">
-        Con estas respuestas tu estratega arma los anuncios, el público y el presupuesto. Mientras más claro seas, más rápido salimos al aire.
-      </p>
-      <ul className="grid gap-2 text-sm text-[#a3a3a3] sm:grid-cols-3">
-        {["Tu negocio y lo que vendes", "Tu cliente ideal y tus metas", "Accesos y contenido"].map((t, i) => (
-          <li key={t} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#f5ce1a] text-xs font-bold text-[#0b0b0b]">{i + 1}</span>
-            {t}
-          </li>
-        ))}
-      </ul>
+      {b.texto ? <p className="f-sutil max-w-xl text-lg leading-relaxed whitespace-pre-line">{b.texto}</p> : null}
+      {b.puntos?.filter(Boolean).length ? (
+        <ul className="f-sutil grid gap-2 text-sm sm:grid-cols-3">
+          {b.puntos.filter(Boolean).map((t, i) => (
+            <li key={t} className="lu-tarjeta flex items-center gap-2 px-3 py-2.5">
+              <span className="lu-numero size-6 shrink-0 text-xs">{i + 1}</span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      ) : null}
       <div className="flex flex-wrap items-center gap-4">
         <button type="button" onClick={onEmpezar} className="lu-boton">
-          {continuar ? "Continuar donde iba" : "Empezar"} <ArrowRight className="size-5" />
+          {continuar ? "Continuar donde iba" : b.boton || "Empezar"} <ArrowRight className="size-5" />
         </button>
-        <span className="hidden text-sm text-[#6b6b6b] sm:inline">
-          o presiona <kbd className="rounded border border-white/15 px-1.5 py-0.5 text-xs">Enter ↵</kbd>
+        <span className="f-tenue hidden text-sm sm:inline">
+          o presiona <kbd className="rounded border border-current/30 px-1.5 py-0.5 text-xs">Enter ↵</kbd>
         </span>
       </div>
     </div>
   );
 }
 
-function Gracias({ nombre }: { nombre: string }) {
+function Final({ config, r }: { config: ConfigFormulario; r: Respuestas }) {
+  const g = config.gracias;
   return (
     <div className="flex flex-col items-start gap-6">
-      <div className="flex size-16 items-center justify-center rounded-2xl bg-[#f5ce1a] text-[#0b0b0b] shadow-[0_20px_60px_-15px_rgba(245,206,26,0.6)]">
+      <div className="lu-numero size-16 rounded-2xl" style={{ boxShadow: "0 20px 60px -15px color-mix(in srgb, var(--f-acento) 60%, transparent)" }}>
         <Check className="size-9" strokeWidth={3} />
       </div>
       <h1 className="font-[family-name:var(--font-sora)] text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
-        ¡Listo{nombre ? `, ${nombre}` : ""}! 🚀
+        <Resaltado t={conNombre(g.titulo, r)} />
       </h1>
-      <p className="max-w-xl text-lg leading-relaxed text-[#bdbab2]">
-        Tu equipo de Level Up ya tiene toda la información. En las próximas <b className="text-[#f5f1e8]">24 horas</b> te escribimos por WhatsApp para coordinar los accesos y el arranque de tu campaña.
-      </p>
-      <p className="text-sm text-[#6b6b6b]">Ya puedes cerrar esta página.</p>
+      {g.texto ? <p className="f-sutil max-w-xl text-lg leading-relaxed whitespace-pre-line">{conNombre(g.texto, r)}</p> : null}
+      {g.boton?.url ? (
+        <a href={g.boton.url} target="_blank" rel="noopener noreferrer" className="lu-boton">
+          {g.boton.texto} <ExternalLink className="size-5" />
+        </a>
+      ) : (
+        <p className="f-tenue text-sm">Ya puedes cerrar esta página.</p>
+      )}
     </div>
   );
 }
@@ -256,24 +294,26 @@ function PreguntaVista({
     ref.current?.focus({ preventScroll: true });
   }, [p.id]);
 
+  const unica = p.tipo === "opcion" || p.tipo === "si-no" || p.tipo === "escala";
+  const opciones = opcionesDe(p);
+
   // Opción única: elegir avanza solo.
   const elegir = (op: string) => {
     onCambio(op);
     setTimeout(() => onSiguiente({ ...respuestas, [p.id]: op }), 220);
   };
 
-  // Letras como atajo en preguntas de opciones cortas.
+  // Letras (o números en la escala) como atajo.
   useEffect(() => {
-    if ((p.tipo !== "opcion" && p.tipo !== "multiple") || (p.opciones?.length ?? 0) > 12) return;
+    if ((!unica && p.tipo !== "multiple") || opciones.length > 12) return;
     const k = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement)?.tagName === "INPUT") return;
-      const i = LETRAS.indexOf(e.key.toUpperCase());
-      const op = p.opciones?.[i];
+      const op = p.tipo === "escala" ? opciones.find((o) => o === e.key) : opciones[LETRAS.indexOf(e.key.toUpperCase())];
       if (!op) {
         if (e.key === "Enter" && p.tipo === "multiple") onSiguiente();
         return;
       }
-      if (p.tipo === "opcion") elegir(op);
+      if (unica) elegir(op);
       else {
         const lista = Array.isArray(valor) ? valor : [];
         onCambio(lista.includes(op) ? lista.filter((x) => x !== op) : [...lista, op]);
@@ -288,17 +328,17 @@ function PreguntaVista({
 
   return (
     <div className="flex flex-col gap-5">
-      <span className="text-xs font-semibold tracking-[0.18em] text-[#f5ce1a] uppercase">{p.seccion}</span>
+      {p.seccion ? <span className="f-acento text-xs font-semibold tracking-[0.18em] uppercase">{p.seccion}</span> : null}
       <h2 className="flex gap-3 font-[family-name:var(--font-sora)] text-2xl leading-snug font-semibold sm:text-4xl">
-        <span className="mt-1 flex shrink-0 items-center gap-1 text-base font-medium text-[#f5ce1a] sm:mt-2 sm:text-lg">
+        <span className="f-acento mt-1 flex shrink-0 items-center gap-1 text-base font-medium sm:mt-2 sm:text-lg">
           {numero} <ArrowRight className="size-4" />
         </span>
         <span>
           {p.titulo}
-          {p.requerida ? <span className="text-[#f5ce1a]"> *</span> : null}
+          {p.requerida ? <span className="f-acento"> *</span> : null}
         </span>
       </h2>
-      {p.ayuda ? <p className="-mt-2 text-base text-[#a3a3a3] sm:pl-10">{p.ayuda}</p> : null}
+      {p.ayuda ? <p className="f-sutil -mt-2 text-base sm:pl-10">{p.ayuda}</p> : null}
 
       <div className="sm:pl-10">
         {p.tipo === "largo" ? (
@@ -316,18 +356,30 @@ function PreguntaVista({
             }}
             className="lu-input min-h-28 resize-none"
           />
-        ) : p.tipo === "opcion" ? (
-          <Opciones p={p} valor={s} onElegir={elegir} onOtra={(t) => onCambio(t)} onSiguiente={onSiguiente} />
+        ) : p.tipo === "escala" ? (
+          <div className="grid grid-cols-6 gap-2 sm:grid-cols-11">
+            {opciones.map((op) => (
+              <button key={op} type="button" onClick={() => elegir(op)} className="lu-opcion lu-escala" data-on={s === op}>
+                {op}
+              </button>
+            ))}
+            <div className="f-tenue col-span-full flex justify-between text-xs">
+              <span>0 · Nada probable</span>
+              <span>10 · Muy probable</span>
+            </div>
+          </div>
+        ) : unica ? (
+          <Opciones p={p} opciones={opciones} valor={s} onElegir={elegir} onOtra={(t) => onCambio(t)} onSiguiente={onSiguiente} />
         ) : p.tipo === "multiple" ? (
           <div className="flex flex-col gap-2">
-            {p.opciones?.map((op, i) => {
+            {opciones.map((op, i) => {
               const lista = Array.isArray(valor) ? valor : [];
               const on = lista.includes(op);
               return (
                 <button key={op} type="button" onClick={() => onCambio(on ? lista.filter((x) => x !== op) : [...lista, op])} className="lu-opcion" data-on={on}>
                   <span className="lu-letra">{LETRAS[i]}</span>
-                  <span className="flex-1 text-left">{op}</span>
-                  {on ? <Check className="size-5 text-[#f5ce1a]" /> : null}
+                  <span className="flex-1 text-left">{verOpcion(p, op)}</span>
+                  {on ? <Check className="f-acento size-5" /> : null}
                 </button>
               );
             })}
@@ -354,44 +406,49 @@ function PreguntaVista({
         )}
 
         {error ? (
-          <p role="alert" className="mt-4 flex w-fit items-center gap-2 rounded-md bg-[#ff5a4e]/15 px-3 py-1.5 text-sm text-[#ff8a80]">
+          <p role="alert" className="mt-4 flex w-fit items-center gap-2 rounded-md bg-[#ff5a4e]/15 px-3 py-1.5 text-sm text-[#e5483d]">
             ⚠ {error}
           </p>
         ) : null}
 
-        {p.tipo !== "opcion" ? (
+        {!unica ? (
           <div className="mt-6 flex items-center gap-4">
             <button type="button" onClick={() => onSiguiente()} disabled={enviando} className="lu-boton">
               {enviando ? <Loader2 className="size-5 animate-spin" /> : null}
               {ultima ? (enviando ? "Enviando…" : "Enviar") : "OK"} {!enviando ? <Check className="size-5" /> : null}
             </button>
-            <span className="hidden text-sm text-[#6b6b6b] sm:block">
-              {p.tipo === "largo" ? "⌘/Ctrl + Enter ↵" : "o presiona Enter ↵"}
-            </span>
+            <span className="f-tenue hidden text-sm sm:block">{p.tipo === "largo" ? "⌘/Ctrl + Enter ↵" : "o presiona Enter ↵"}</span>
+          </div>
+        ) : ultima && s ? (
+          <div className="mt-6">
+            <button type="button" onClick={() => onSiguiente()} disabled={enviando} className="lu-boton">
+              {enviando ? <Loader2 className="size-5 animate-spin" /> : null}
+              {enviando ? "Enviando…" : "Enviar"} {!enviando ? <Check className="size-5" /> : null}
+            </button>
           </div>
         ) : null}
-        {!p.requerida && p.tipo !== "opcion" ? <p className="mt-3 text-xs text-[#6b6b6b]">Opcional: puedes seguir sin responder.</p> : null}
+        {!p.requerida && !unica ? <p className="f-tenue mt-3 text-xs">Opcional: puedes seguir sin responder.</p> : null}
       </div>
     </div>
   );
 }
 
-function Opciones({ p, valor, onElegir, onOtra, onSiguiente }: { p: Pregunta; valor: string; onElegir: (op: string) => void; onOtra: (t: string) => void; onSiguiente: () => void }) {
-  const muchas = (p.opciones?.length ?? 0) > 12;
+function Opciones({ p, opciones, valor, onElegir, onOtra, onSiguiente }: { p: Pregunta; opciones: string[]; valor: string; onElegir: (op: string) => void; onOtra: (t: string) => void; onSiguiente: () => void }) {
+  const muchas = opciones.length > 12;
   const [filtro, setFiltro] = useState("");
   const [otra, setOtra] = useState(valor.startsWith("Otra:") ? valor.slice(5).trim() : "");
   const [modoOtra, setModoOtra] = useState(valor.startsWith("Otra:"));
-  const lista = (p.opciones ?? []).filter((o) => !filtro || verOpcion(o).toLowerCase().includes(filtro.toLowerCase()));
+  const lista = opciones.filter((o) => !filtro || verOpcion(p, o).toLowerCase().includes(filtro.toLowerCase()));
 
   return (
     <div className="flex flex-col gap-3">
-      {muchas ? <input value={filtro} onChange={(e) => setFiltro(e.target.value)} placeholder="Busca tu industria…" className="lu-input text-lg" autoFocus /> : null}
-      <div className={muchas ? "grid max-h-[46vh] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2" : "flex flex-col gap-2"}>
+      {muchas ? <input value={filtro} onChange={(e) => setFiltro(e.target.value)} placeholder="Busca…" className="lu-input text-lg" autoFocus /> : null}
+      <div className={muchas ? "grid max-h-[46vh] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2" : p.tipo === "si-no" ? "grid max-w-md grid-cols-2 gap-2" : "flex flex-col gap-2"}>
         {lista.map((op, i) => (
           <button key={op} type="button" onClick={() => onElegir(op)} className="lu-opcion" data-on={valor === op}>
             {!muchas ? <span className="lu-letra">{LETRAS[i]}</span> : null}
-            <span className="flex-1 text-left">{verOpcion(op)}</span>
-            {valor === op ? <Check className="size-5 text-[#f5ce1a]" /> : null}
+            <span className="flex-1 text-left">{verOpcion(p, op)}</span>
+            {valor === op ? <Check className="f-acento size-5" /> : null}
           </button>
         ))}
         {p.otra ? (
@@ -433,7 +490,7 @@ function Redes({ valor, onCambio, onSiguiente }: { valor: Record<string, string>
     <div className="grid gap-4 sm:grid-cols-2">
       {campos.map(([k, ph], i) => (
         <label key={k} className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium tracking-wide text-[#a3a3a3] uppercase">{k}</span>
+          <span className="f-sutil text-xs font-medium tracking-wide uppercase">{k}</span>
           <input
             autoFocus={i === 0}
             value={valor[k] ?? ""}

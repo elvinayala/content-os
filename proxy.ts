@@ -34,7 +34,7 @@ export default async function proxy(request: NextRequest) {
   // (links con basura pegada, /ceo, /pulse…) vuelve a la raíz: nunca un login ni nada interno.
   if (host === "levelupmedia.vercel.app" || host.startsWith("bienvenida-levelup")) {
     if (pathname === "/") return NextResponse.rewrite(new URL("/onboarding/level-up", request.url));
-    if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
+    if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
   // Dominios de Ritmo (ritmo.levelupmediapr.net y ritmo-*.vercel.app): la raíz va directo a Ritmo, y
@@ -103,6 +103,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
   // Formulario público de onboarding de Level Up (lo llena el cliente, sin login).
   if (pathname.startsWith("/onboarding/") || pathname.startsWith("/api/onboarding/")) return NextResponse.next();
+  // Formularios propios (el reemplazo de Typeform): /f/<slug> y su envío, públicos.
+  if (pathname.startsWith("/f/") || pathname.startsWith("/api/f/")) return NextResponse.next();
   // Webhook del Typeform de onboarding → ficha del cliente en Pulse (valida la firma adentro).
   if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.

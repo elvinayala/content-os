@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-09-26T18:11:43.607Z",
+  "exportadoEl": "2026-09-26T18:24:46.467Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 103,
   "workflows": [
@@ -15,7 +15,7 @@
       "nombre": "B-) Agente de onboarding v5",
       "activo": true,
       "archivo": "rb5SOZw8rT5YXKg8-b-agente-de-onboarding-v5.json",
-      "actualizadoEl": "2026-09-26T18:04:59.715Z"
+      "actualizadoEl": "2026-09-26T18:24:14.425Z"
     },
     {
       "id": "7TYGDiWlJY2jqHX9",
@@ -260,7 +260,7 @@
       "nombre": "Agente de onboarding v4 out-of-servide",
       "activo": false,
       "archivo": "zXZLXX4WRFy87qNj-agente-de-onboarding-v4-out-of-servide.json",
-      "actualizadoEl": "2026-01-06T14:05:17.482Z"
+      "actualizadoEl": "2026-09-26T18:24:16.606Z"
     },
     {
       "id": "fkc5VuZtjx2NUCvZ",
@@ -393,7 +393,7 @@
       "nombre": "Encuestador",
       "activo": false,
       "archivo": "GeQUkgLSTCQYmWjP-encuestador.json",
-      "actualizadoEl": "2025-09-06T14:44:09.000Z"
+      "actualizadoEl": "2026-09-26T18:24:15.558Z"
     },
     {
       "id": "mVYdARFPPkMyJXNn",
@@ -666,7 +666,7 @@
       "nombre": "B-) Agente de Setting V5",
       "activo": true,
       "archivo": "txUzpGmbiSu8Zc4J-b-agente-de-setting-v5.json",
-      "actualizadoEl": "2026-09-26T18:05:01.140Z"
+      "actualizadoEl": "2026-09-26T18:24:12.871Z"
     },
     {
       "id": "Lkb4xQg9G0y16FOj",

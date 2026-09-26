@@ -3,22 +3,10 @@
 // columna del CRM (Pulse → LEVEL UP MEDIA); lo que no tiene columna va al comentario de la ficha.
 // Puro (sin server-only): lo usa el cliente. Tests en tests/onboarding.test.mjs.
 
-export type TipoPregunta = "texto" | "largo" | "email" | "telefono" | "numero" | "opcion" | "multiple" | "url" | "redes" | "si-no";
+import { errorDe, type Pregunta, type Respuestas, texto, validar as validarCon, visible } from "../formularios/reglas.ts";
 
-export interface Pregunta {
-  id: string;
-  seccion: string;
-  titulo: string;
-  ayuda?: string;
-  tipo: TipoPregunta;
-  requerida: boolean;
-  opciones?: string[];
-  otra?: boolean; // agrega "Otra" con texto libre
-  placeholder?: string;
-  // Solo se muestra si esta otra respuesta cumple la condición
-  si?: { id: string; valor: string };
-  columna?: string; // título de la columna en Pulse
-}
+export { errorDe, texto, visible };
+export type { Pregunta, Respuestas };
 
 // Etiquetas de Industria en el CRM, ordenadas por uso real (24/sep/2026).
 export const INDUSTRIAS = [
@@ -72,57 +60,6 @@ export const PREGUNTAS: Pregunta[] = [
   { id: "notas", seccion: "Casi listo", titulo: "¿Algo más que debamos saber?", ayuda: "Temporadas fuertes, ofertas que vienen, lo que no te funcionó antes… Opcional.", tipo: "largo", requerida: false },
 ];
 
-export type Respuestas = Record<string, string | string[] | Record<string, string> | undefined>;
-
-export function visible(p: Pregunta, r: Respuestas): boolean {
-  if (!p.si) return true;
-  return r[p.si.id] === p.si.valor;
-}
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-// Devuelve el mensaje de error de una pregunta, o null si está bien.
-export function errorDe(p: Pregunta, r: Respuestas): string | null {
-  if (!visible(p, r)) return null;
-  const v = r[p.id];
-  const vacio = v == null || (typeof v === "string" && !v.trim()) || (Array.isArray(v) && v.length === 0) || (typeof v === "object" && !Array.isArray(v) && !Object.values(v).some((x) => x?.trim()));
-  if (vacio) return p.requerida ? "Esta respuesta hace falta para arrancar." : null;
-  const s = typeof v === "string" ? v.trim() : "";
-  switch (p.tipo) {
-    case "email":
-      return EMAIL.test(s) ? null : "Ese e-mail no parece correcto.";
-    case "telefono": {
-      const d = s.replace(/\D/g, "");
-      return d.length === 10 || (d.length === 11 && d.startsWith("1")) ? null : "Escribe los 10 números (ej. 787 000 0000).";
-    }
-    case "numero": {
-      const n = Number(s.replace(/[$,\s]/g, ""));
-      return Number.isFinite(n) && n >= 0 && n < 1_000_000 ? null : "Escribe solo el monto, en números.";
-    }
-    case "url":
-      return /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}/i.test(s) ? null : "Pega un link válido.";
-    case "opcion":
-      if (p.otra && s.startsWith("Otra:")) return s.slice(5).trim() ? null : "Escribe cuál.";
-      return p.opciones?.includes(s) ? null : "Elige una opción.";
-    case "multiple":
-      return Array.isArray(v) && v.every((x) => p.opciones?.includes(x)) ? null : "Elige al menos una opción.";
-    default:
-      return s.length > 3000 ? "Es muy largo: resúmelo un poco." : null;
-  }
-}
-
 export function validar(r: Respuestas): Record<string, string> {
-  const errores: Record<string, string> = {};
-  for (const p of PREGUNTAS) {
-    const e = errorDe(p, r);
-    if (e) errores[p.id] = e;
-  }
-  return errores;
-}
-
-export function texto(v: Respuestas[string]): string {
-  if (v == null) return "";
-  if (Array.isArray(v)) return v.join(", ");
-  if (typeof v === "object") return Object.entries(v).filter(([, x]) => x?.trim()).map(([k, x]) => `${k}: ${x.trim()}`).join(" · ");
-  return v.trim();
+  return validarCon(PREGUNTAS, r);
 }

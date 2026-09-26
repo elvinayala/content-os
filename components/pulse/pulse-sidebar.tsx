@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Kanban, LayoutGrid, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { ArrowLeft, FileText, Kanban, LayoutGrid, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { PulseLogo } from "@/components/pulse/logo";
@@ -29,10 +29,12 @@ export function PulseSidebar({
   boards,
   usuario,
   tieneLeads = false,
+  tieneFormularios = false,
 }: {
   boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items" | "privado">[];
   usuario: UsuarioPulse;
   tieneLeads?: boolean;
+  tieneFormularios?: boolean;
 }) {
   const pathname = usePathname();
   return (
@@ -72,6 +74,16 @@ export function PulseSidebar({
                   <Link href="/pulse/leads">
                     <Kanban />
                     <span>Leads</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
+            {tieneFormularios && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/formularios")} tooltip="Formularios">
+                  <Link href="/pulse/formularios">
+                    <FileText />
+                    <span>Formularios</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

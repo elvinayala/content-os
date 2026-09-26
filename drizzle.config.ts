@@ -10,8 +10,8 @@ const url = process.env.DATABASE_URL_DIRECT ?? process.env.DATABASE_URL;
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: ["./lib/pulse/schema.ts", "./lib/portal/schema.ts", "./lib/aib-onboarding/schema.ts", "./lib/desempeno/schema.ts", "./lib/leads/schema.ts"],
+  schema: ["./lib/pulse/schema.ts", "./lib/portal/schema.ts", "./lib/aib-onboarding/schema.ts", "./lib/desempeno/schema.ts", "./lib/leads/schema.ts", "./lib/formularios/schema.ts"],
   out: "./drizzle",
-  tablesFilter: ["pulse_*", "autoflow_*", "aib_*", "desempeno_*", "leads_*"],
+  tablesFilter: ["pulse_*", "autoflow_*", "aib_*", "desempeno_*", "leads_*", "form_*"],
   ...(url ? { dbCredentials: { url } } : { driver: "pglite", dbCredentials: { url: "./.pulse-db" } }),
 });
