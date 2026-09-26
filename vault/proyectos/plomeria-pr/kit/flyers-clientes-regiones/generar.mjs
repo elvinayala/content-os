@@ -20,7 +20,11 @@ const DATA = path.join(AQUI, "../../agente/data");
 const TERR = JSON.parse(fs.readFileSync(path.join(DATA, "territorios.json"), "utf8")).territorios;
 const MENU = JSON.parse(fs.readFileSync(path.join(DATA, "menu.json"), "utf8"));
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const CTA = "Escríbenos un mensaje"; // sin número y sin canal: sirve para Messenger, IG DM o cualquier chat
+// Excepción (26/sep/2026, Elvin aprobó los anuncios de LLAMADA para la gente mayor): con LLAMADA=1 el CTA es el
+// número de Resuelto en Zernio (787-956-1111, voz + SMS, no WhatsApp) y el archivo sale con "-llamada".
+const LLAMADA = process.env.LLAMADA === "1";
+const NUMERO = "787-956-1111";
+const CTA = LLAMADA ? `Llama al ${NUMERO}` : "Escríbenos un mensaje"; // sin número y sin canal: sirve para Messenger, IG DM o cualquier chat
 
 // El pueblo que el cliente reconoce, no el código interno.
 const NOMBRE = { T1: "San Juan", T2: "Bayamón", T3: "Caguas", T4: "Ponce", T5: "Arecibo", T6: "Mayagüez", T7: "Aguadilla", T8: "Fajardo" };
@@ -52,6 +56,7 @@ const LOGO = `<div class="logo"><svg viewBox="0 0 64 64"><path d="M32 5 L59 28 V
 const CHECK = `<i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1F9D6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`;
 // Burbuja de chat genérica (NO el logo de WhatsApp ni el de Messenger); los puntos van del naranja del botón.
 const CHAT = `<svg width="36" height="36" viewBox="0 0 24 24"><path d="M3.5 6A3 3 0 0 1 6.5 3h11a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H10.2l-4.6 3.7c-.6.5-1.6.1-1.6-.7V17a3 3 0 0 1-.5-1.7z" fill="#fff"/><circle cx="8.3" cy="10" r="1.35" fill="#F2621F"/><circle cx="12" cy="10" r="1.35" fill="#F2621F"/><circle cx="15.7" cy="10" r="1.35" fill="#F2621F"/></svg>`;
+const FONO = `<svg width="34" height="34" viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z" fill="#fff"/></svg>`;
 // El pueblo va en UNA línea y lo más grande posible (se achica hasta caber, tras cargar las fuentes).
 const AJUSTAR = `<script>document.fonts.ready.then(()=>{for(const el of document.querySelectorAll('.fit')){let t=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>el.clientWidth&&t>60){t-=2;el.style.fontSize=t+'px'}}})</script>`;
 
@@ -87,7 +92,7 @@ ${LOGO}
 <div style="margin-top:${story ? 36 : 20}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${story ? 36 : 24}px">
   <div class="muted" style="font-size:${story ? 24 : 20}px;line-height:1.35;max-width:${story ? 430 : 400}px">Mano de obra · materiales aparte<br>+ $${MENU.cargo_coordinacion} de coordinación</div>
-  <div class="cta">${CHAT}${CTA}</div>
+  <div class="cta">${LLAMADA ? FONO : CHAT}${CTA}</div>
 </div>
 ${AJUSTAR}
 </body></html>`;
@@ -97,7 +102,7 @@ ${AJUSTAR}
 const TELEFONO_PR = /\b(787|939)[-. ]?\d{3}[-. ]?\d{4}\b/;
 function sinTelefono(nombre, h) {
   if (/whatsapp/i.test(h)) throw new Error(`${nombre}: el flyer dice "WhatsApp". Regla de Elvin: CTA neutro (Escríbenos un mensaje), sin canal.`);
-  if (TELEFONO_PR.test(h)) throw new Error(`${nombre}: el flyer trae un número de teléfono (${h.match(TELEFONO_PR)[0]}). Regla de Elvin: los flyers NO llevan número.`);
+  if (TELEFONO_PR.test(h) && !(LLAMADA && h.match(new RegExp(TELEFONO_PR, "g")).every((x) => x === NUMERO))) throw new Error(`${nombre}: el flyer trae un número de teléfono (${h.match(TELEFONO_PR)[0]}). Regla de Elvin: los flyers NO llevan número.`);
   return h;
 }
 
@@ -105,7 +110,7 @@ fs.mkdirSync(path.join(AQUI, "src"), { recursive: true });
 // En paralelo; cada Chrome se corta a los 40 s (la captura sale en ~5 s).
 const correr = promisify(execFile);
 const trabajos = regiones.flatMap((r) => ["feed", "story"].map((formato) => {
-  const n = `cliente-${r.slug}-${formato}`;
+  const n = `cliente-${r.slug}${LLAMADA ? "-llamada" : ""}-${formato}`;
   const f = path.join(AQUI, "src", n + ".html");
   fs.writeFileSync(f, sinTelefono(n, html(r, formato)));
   return correr(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--user-data-dir=${path.join(AQUI, "src", ".chrome-" + n)}`, `--window-size=1080,${formato === "story" ? 1920 : 1350}`, "--force-device-scale-factor=1", "--virtual-time-budget=10000", `--screenshot=${path.join(AQUI, n + ".png")}`, "file://" + f], { timeout: 40000 })

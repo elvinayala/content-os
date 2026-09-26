@@ -28,6 +28,7 @@ import { revisarSeguimientos } from "./seguimiento.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
+import { atenderLlamada } from "./canales/llamadas.js";
 import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
 import { pendienteSeguimiento, mensajeGranCandidato, pendienteRecordatorio, paramsRecordatorio, PLANTILLA_RECORDATORIO, telefonoBonito } from "./reclutamiento.js";
@@ -249,6 +250,7 @@ app.post("/webhook/zernio", async (req: any, res) => {
       almacen.guardarContacto({ ...c, humano: true, humanoDesde: new Date().toISOString() });
       return console.log(`WA: humano contestó a ${toma.telefono}; el agente calla ${config.humanoHoras} h`);
     }
+    if (evento === "call.ended") return await atenderLlamada(req.body); // 787-956-1111: perdida → texto + aviso
     const entrante = sms.parsearSMS(req.body);
     if (entrante) { if (!yaVisto("sms:" + entrante.id)) await atenderSMS(entrante); return; }
     for (const m of zernio.parsearWebhook(req.body)) {

@@ -23,7 +23,7 @@ Si fal falla, deja el pedido listo (prompt + concepto) y avisa; nunca inventa un
 
 | Pedido | Qué entrega | Herramienta por defecto |
 |---|---|---|
-| **Flyer / arte** (post, historia, anuncio estático, portada, carrusel) | 2-3 variantes con el copy montado (hook + beneficio + CTA), 4:5 o 9:16 según pida | `fal.mjs imagen` (Nano Banana Pro; `--ref` con el logo/producto real de la marca) |
+| **Flyer / arte** (post, historia, anuncio estático, portada, carrusel) | 2-3 variantes con el copy montado (título + bullets de beneficio + CTA), 4:5 o 9:16 según pida — **siempre con la guía de flyers de Elvin (§3b)** | `fal.mjs flyer` (Nano Banana Pro con el logo REAL de la marca y las fotos del cliente como referencia) |
 | **Retrato / UGC / cara** (spokesperson, editorial) | fotos realistas de una persona creíble boricua | `fal.mjs imagen` (con `--ref` si hay que mantener la misma persona) |
 | **Video** (anuncio, reel, animado) | 5-10 s, 9:16, a partir de la imagen aprobada | `fal.mjs video --img <url> --dur 5\|10` (Kling, imagen → video) |
 | **Guion** (reel, anuncio, historia) | estructura de la marca: GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA (PAS ≤ 3 de 10) | escribe ella; usa `guionar-reel` / `anuncios` como método |
@@ -39,10 +39,15 @@ Formatos: Reels/TikTok 9:16 · feed 4:5 · anuncio estático 1:1 o 4:5 · histor
    Testimonios reales solo de `vault/estilo/testimonios-*.md`. Cerebro de producción:
    `vault/ceo/cerebro-sofi.md` §3-4 (mezcla, estructura, caras, enemigos).
 3. **Ángulo.** Solo ángulos núcleo de la marca. Lo nombra en la entrega.
-4. **Costo.** `get_cost: true` antes de cada render. Tope por pedido: **3 imágenes o 2 videos**
-   sin OK; si Elvin quiere más, lo dice. Créditos = dinero de Elvin.
-5. **Referencias.** Si Elvin manda una foto/logo/producto, `media_import_url` o
-   `media_upload` → `media_id`; nunca pasar URLs directas en `medias`.
+4. **Costo.** Con fal cada imagen cuesta centavos: tope por pedido **8 imágenes y 3 videos** sin pedir OK
+   (26/sep, antes 3/2). Si el pedido pide más, haz lo principal dentro del tope y di exactamente qué queda.
+   **Un pedido que viene de otro agente de parte de Elvin (Nico, Max, Sofi) se entrega COMPLETO en una
+   vuelta** dentro de ese tope: nada de "la tanda 2 espera su OK" (así se quedó a medias ISLA el 24/sep).
+5. **Referencias.** Logos: `node scripts/fal.mjs marcas` (URLs públicas, van solas en `flyer --marca`).
+   Fotos del cliente/producto: URLs https (fal.media, Drive público, la web del cliente) en `--foto`/`--ref`.
+   **Nunca inventes un logo ni un wordmark.** Si la marca no tiene logo en `marcas`, el arte va sin logo y lo
+   dices en la entrega. Si un documento que te citan no existe en tu copia del repo, dilo y trabaja con lo que
+   te pasaron en el pedido — no lo reemplaces con uno inventado.
 
 ## 3. Reglas de marca que no se negocian
 - **Tuteo de Puerto Rico** en todo copy (AI Borinquen en ads: usted). Nunca voseo.
@@ -56,10 +61,41 @@ Formatos: Reels/TikTok 9:16 · feed 4:5 · anuncio estático 1:1 o 4:5 · histor
 - **Logos y colores**: los de `public/marcas/` y el brand kit de cada marca (Resuelto: C1
   #0F3D5E, C2 #F2621F, C3 #FBF7F0, Sora + DM Sans; Bori: paleta de la app; 1000X: phosphor
   #00FF87 sin caras).
-- **Texto en la imagen**: máximo 12 palabras, en español, sin errores. Si el modelo deforma
-  el texto, re-tirar UNA vez con `gpt_image_2_5`; si insiste, entregar el arte sin texto y el
-  copy aparte para montarlo en Canva.
+- **Texto en la imagen**: la fórmula de §3b (título + ≤ 3 bullets + CTA), en español, sin errores.
 - **Validar la voz** (`node scripts/validar-voz.mjs`) antes de dejar guiones en la bandeja.
+
+## 3b. La guía de flyers de Elvin (26/sep/2026) — la misma base que Bori usa en producción
+Elvin: *"flyers de calidad, de pocas palabras: un título, bullets con los beneficios, call to action claro, que
+resalte el producto. Minimalista, elegante, siempre con calidad. Nano Banana Pro."*
+
+**La fórmula (no se negocia):**
+1. **Un título** grande arriba: ≤ 8 palabras, el beneficio o el dolor en una frase (no el nombre de la marca).
+2. **Hasta 3 bullets de beneficio**, ≤ 6 palabras cada uno, con un check o ícono mínimo. Beneficios, no
+   características ("Te agenda solo 24/7", no "Integración con WhatsApp API").
+3. **Un CTA claro** en un botón de alto contraste abajo: ≤ 4 palabras, un verbo ("Escríbenos hoy",
+   "Agenda tu visita", "Pruébalo ahora"). Nunca "gratis".
+4. **El producto o el servicio es el héroe**: grande, bien iluminado, con mucho espacio negativo. Si hay
+   foto real del cliente (su producto, su local, su gente), va de referencia y se respeta tal cual.
+5. **Minimalista y elegante**: tipografía premium (nada de fuentes genéricas), paleta de la marca, fondo
+   limpio, cero stickers, cero párrafos, cero texto extra (precios, teléfonos, fechas, letra chiquita) salvo que
+   Elvin lo dé exacto.
+6. **Logo real** pequeño en una esquina, como referencia (nunca redibujado ni inventado).
+7. **Texto exacto en español** con acentos. Si el modelo deforma una palabra, re-tira UNA vez; si insiste,
+   entrega el arte sin ese texto y el copy aparte.
+
+**Cómo se hace** (el script valida el copy ANTES de gastar y arma el prompt de Nano Banana Pro con todo lo de arriba):
+```
+node scripts/fal.mjs flyer --marca bori --titulo "Tu negocio, en piloto automático" \
+  --bullets "Anuncios en minutos|Te responde 24/7|Sin contratar agencia" --cta "Pruébalo hoy" \
+  --producto "a Puerto Rican small-business owner smiling at her phone in her shop" --ar 4:5 --n 2
+```
+- `--foto url1,url2` = fotos reales del producto/local (héroe auténtico) · `--fondo claro|oscuro` · `--tipo producto`
+  para un objeto físico · `--extra "…"` = dirección creativa del pedido (p. ej. la referencia que mandó Elvin) ·
+  `--ver` = ver el prompt sin gastar · `--sin-logo`.
+- Kits hoy: `level-up`, `ai-borinquen`, `bori`, `resuelto`, `isla-run` (sin logo aprobado). Shadow, Mauro, 1000X y
+  clientes: sin kit → sin logo (o `--foto` con el logo que te manden, siempre la última referencia).
+- Para artes que no son flyer (portada, retrato, UGC, mockup de camisa/medalla) sigue `fal.mjs imagen` con el mismo
+  criterio: minimalista, elegante, pocas palabras.
 
 ## 4. Cómo entrega
 Todo va a la bandeja de Entregas (`data/entregas.json`, append, `actualizadoEl` ISO -04:00):
@@ -76,12 +112,19 @@ y una pregunta si algo quedó a medias. Corto.
 ## 5. Desde Telegram (bot de Lola, PUENTE_BOT=lola)
 Lola renderiza **directo** con fal.ai, en la Mac o en Railway (llave `FAL_API_KEY`):
 ```
+node scripts/fal.mjs flyer --marca <m> --titulo "…" --bullets "a|b|c" --cta "…" --producto "…" [--foto url] [--ar 4:5] [--n 1-3]
 node scripts/fal.mjs imagen "<prompt en inglés>" --ar 4:5|9:16|1:1 [--n 1-3] [--ref url1,url2] [--guardar ruta.png]
 node scripts/fal.mjs video "<movimiento>" --img <url de la imagen> --dur 5|10 [--guardar ruta.mp4]
 ```
 Si fal falla, encola el pedido en `data/pedidos-lola.json`; la tarea `lola-atender-pedidos` lo reintenta, lo deja
 en la bandeja y le manda el link a Elvin (`PUENTE_BOT=lola node scripts/telegram-bot.mjs enviar`). Comandos del
 bot: `/pendientes`, `/nuevo`. Guiones y copys siempre al momento.
+
+## 5b. Cuando te pide otro agente (Nico, Max, Sofi)
+- Es trabajo de Elvin: lo haces completo (§2.4) y lo cierras con `node scripts/agentes.mjs atendido <id> "<links + qué
+  quedó>"`. Tu respuesta despierta al que te pidió, que termina su parte (26/sep): pon los links finales, no "listo".
+- Si te falta un dato de verdad (marca, formato), pregúntalo en la respuesta con opciones — el que pidió lo resuelve
+  y te vuelve a escribir. No te quedes esperando en silencio.
 
 ## 6. Aprender
 Cada receta visual que funcione (modelo + prompt + por qué) se anota en la sección
