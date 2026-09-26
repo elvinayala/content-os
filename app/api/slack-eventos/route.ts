@@ -308,7 +308,14 @@ interface RefSlack {
   hilo: string;
 }
 
-async function pasarANico(de: string, userId: string, texto: string, ref?: RefSlack): Promise<number | null> {
+// Adjuntos (26/sep, Aure #55/#66): las capturas que mandan Carilin/Aure llegan a Nico como enlace privado
+// de Slack (solo se abre con el token del bot; Nico lo baja con SLACK_BOT_TOKEN).
+function lineaAdjuntos(files?: ArchivoSlack[]): string {
+  const xs = (files ?? []).filter((f) => f.url_private);
+  return xs.length ? `\n(adjuntos: ${xs.map((f) => `${f.name ?? "archivo"} [${f.mimetype ?? "?"}] ${f.url_private}`).join(" · ")})` : "";
+}
+
+async function pasarANico(de: string, userId: string, texto: string, ref?: RefSlack, files?: ArchivoSlack[]): Promise<number | null> {
   const secreto = process.env.CRON_SECRET;
   if (!secreto) return null;
   const r = await fetch(`${ORIGEN}/api/agentes`, {
@@ -317,7 +324,7 @@ async function pasarANico(de: string, userId: string, texto: string, ref?: RefSl
     body: JSON.stringify({
       de,
       para: "nico",
-      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})${ref ? ` · canal ${ref.canal} · hilo ${ref.hilo}` : ""}]\n${texto}`,
+      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})${ref ? ` · canal ${ref.canal} · hilo ${ref.hilo}` : ""}]\n${texto}${lineaAdjuntos(files)}`,
     }),
     signal: AbortSignal.timeout(10000),
   });
@@ -377,12 +384,13 @@ export async function POST(req: NextRequest) {
   if (canalNico && ev?.channel === canalNico) {
     const humano = ev.type === "message" && !ev.bot_id && ev.user && (!ev.subtype || ev.subtype === "file_share");
     const texto = limpiar(ev.text ?? "");
-    if (!humano || !texto) return NextResponse.json({ ok: true });
+    if (!humano || (!texto && !(ev.files?.length ?? 0))) return NextResponse.json({ ok: true });
     const channel = ev.channel;
     const raiz = ev.thread_ts ?? ev.ts ?? "";
     const userId = ev.user as string;
     const decision = userId === CEO_SLACK ? texto.match(DECISION) : null;
     const deEquipo = EQUIPO_NICO[userId];
+    const archivos = ev.files;
     if (!decision && !deEquipo) return NextResponse.json({ ok: true }); // Elvin conversando, u otros
     after(async () => {
       try {
@@ -398,7 +406,7 @@ export async function POST(req: NextRequest) {
           );
           return;
         }
-        const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto, { canal: channel, hilo: raiz });
+        const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto || "(sin texto)", { canal: channel, hilo: raiz }, archivos);
         await postearRespuesta(
           channel,
           id
@@ -552,12 +560,13 @@ export async function POST(req: NextRequest) {
   const deEquipo = EQUIPO_NICO[ev.user];
   if (deEquipo && PARA_NICO.test(texto) && (ev.channel_type === "im" || ev.type === "app_mention")) {
     const pedido = texto.replace(PARA_NICO, "").trim() || texto;
+    const archivosDm = ev.files;
     const channel = ev.channel;
     const hilo = ev.thread_ts;
     const userId = ev.user;
     after(async () => {
       try {
-        const id = await pasarANico(deEquipo, userId, pedido);
+        const id = await pasarANico(deEquipo, userId, pedido, undefined, archivosDm);
         await postearRespuesta(
           channel,
           id

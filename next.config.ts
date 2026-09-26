@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   // (Vercel) porque las rutas se arman dinámicamente.
   outputFileTracingIncludes: {
     "/**": ["./data/**", "./.claude/skills/**", "./vault/**"],
+    "/api/cron/leaderboard": ["./public/leaderboard/**", "./public/marcas/level-up-logo-dark.png"],
   },
   // Pulse: PGlite (Postgres embebido, solo dev sin DATABASE_URL) y postgres.js van
   // como externos del bundle del server.
