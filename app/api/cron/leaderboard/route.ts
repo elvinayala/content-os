@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import type { ReactElement } from "react";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { JUNIO } from "@/lib/leaderboard/ejemplo";
 import { ALTO, ANCHO, fuentes, leaderboard } from "@/lib/leaderboard/imagen";
 import { armarCloser, armarSetter, mesPR, type ResultadoCloser, type ResultadoSetter } from "@/lib/leaderboard/reglas";
 import { secretoValido } from "@/lib/pulse/seguridad";
@@ -14,7 +15,7 @@ export const maxDuration = 60;
 // "COPIA RESPALDO - VENTAS 2026 LEVEL UP", arma CLOSER y SETTER con sus reglas y, si todo cuadra,
 // manda las 2 imágenes por DM desde el bot Command Center. Si algo no cuadra NO manda imágenes:
 // avisa por DM qué falló. Destino: LEADERBOARD_DESTINO=aure (default elvin, hasta su OK).
-//   ?ver=closer|setter → devuelve el PNG (vista previa) · ?dry=1 → solo JSON, no manda nada.
+//   ?ver=closer|setter → devuelve el PNG (vista previa; con &ejemplo=1 usa el ejemplo de junio) · ?dry=1 → solo JSON.
 const HOJA_ID = process.env.LEADERBOARD_HOJA_ID ?? "1a44rg368MURNEqIDTrtU5jxCbBMhZ8ah-fGPSTNpQg0";
 const HOJA_GID = process.env.LEADERBOARD_HOJA_GID ?? "2129209183";
 const DESTINOS: Record<string, string> = { aure: "U08HA9QCJBG", elvin: process.env.CEO_SLACK_ID ?? "U08U9777PUY" };
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "no-auth" }, { status: 401 });
   }
   const destino = DESTINOS[process.env.LEADERBOARD_DESTINO ?? "elvin"] ?? DESTINOS.elvin;
-  const { filas, error } = await leerHoja();
+  const { filas, error } = q.get("ejemplo") === "1" && q.get("ver") ? { filas: JUNIO, error: undefined } : await leerHoja();
   const closer = filas ? armarCloser(filas) : null;
   const setter = filas ? armarSetter(filas) : null;
   const errores = error ? [error] : [...(closer?.errores ?? []).map((e) => `Closer: ${e}`), ...(setter?.errores ?? []).map((e) => `Setter: ${e}`)];
