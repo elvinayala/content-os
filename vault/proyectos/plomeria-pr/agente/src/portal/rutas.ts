@@ -50,7 +50,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><b>resuelto<i>.</i></b>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><b>resuelto<i>.</i></b>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}<main>${cuerpo}</main>
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -77,6 +77,7 @@ portal.post("/portal/login", (req, res) => {
   if (!yo) { intentos.set(ip, { n: (i && i.hasta > Date.now() ? i.n : 0) + 1, hasta: Date.now() + 15 * 60_000 }); return res.redirect("/portal/login?e=1"); }
   intentos.delete(ip);
   res.setHeader("Set-Cookie", `rs=${staff.crearSesion(yo.email)}; Path=/portal; HttpOnly; Secure; SameSite=Lax; Max-Age=${30 * 86400}`);
+  if (yo.temporal) return res.redirect("/portal/clave?t=1");
   const v = String(req.body.v ?? "/portal"); res.redirect(v.startsWith("/portal") ? v : "/portal");
 });
 portal.get("/portal/salir", (_req, res) => { res.setHeader("Set-Cookie", "rs=; Path=/portal; Max-Age=0"); res.redirect("/portal/login"); });
@@ -274,6 +275,20 @@ portal.get("/portal/enlaces", requerir(), (req, res) => {
 <h2>Clientes</h2><div class="card"><table>${li("Página de reserva", b + "/reservar", "El cliente escoge servicio, pueblo, día y hora, y reserva solo. Sin pago por ahora.")}${li("Web de Resuelto", "https://resueltopr.com", "La página pública.")}</table></div>
 <h2>Plomeros</h2><div class="card"><table>${li("App del plomero (PRUEBA)", linkPortal(DEMO_ID, b), "Trabajos de ejemplo: así aceptan, rechazan y cierran. No toca nada real.")}${li("Kit de bienvenida", b + "/kit/kit-bienvenida-resuelto.pdf", "Lo que recibe cada plomero al firmar.")}${li("Acuerdo del plomero", b + "/kit/acuerdo-resuelto.pdf", "Contrato de afiliación.")}</table><p class="muted" style="margin-top:8px">El link de cada plomero real está en su ficha (Plomeros → nombre).</p></div>
 <h2>Equipo</h2><div class="card"><table>${li("Firmas electrónicas", b + "/equipo-firmas", "Contratos por firmar y firmados (tiene su propia clave).")}${li("Menú de precios interno", b + "/kit/menu-precios-interno-r7q4.pdf", "Precios, guion de llamada y objeciones.")}${li("SOP de la setter", b + "/kit/sop-setter-k3m8.pdf", "Cómo trabaja la setter de clientes.")}${li("Acuerdo de la setter", b + "/kit/acuerdo-setter-p5w2.pdf", "Contratista independiente, comisión.")}</table></div>`));
+});
+
+// ── Cambiar mi clave ──
+portal.get("/portal/clave", requerir(), (req, res) => {
+  const yo = (req as any).yo as staff.Staff; const err = req.query.e ? `<p style="color:#B6470F;margin:8px 0">${e(String(req.query.e))}</p>` : "";
+  res.type("html").send(pagina("Mi clave", yo, "", `<div class="card" style="max-width:420px;margin:30px auto"><h1>Cambiar mi clave</h1><p class="sub">${yo.temporal || req.query.t ? "Estás entrando con una clave temporal: ponle una tuya." : "Mínimo 8 caracteres."}</p>${err}
+<form method="post" action="/portal/clave"><label>Clave actual</label><input name="actual" type="password" autocomplete="current-password" required><label>Clave nueva (8+)</label><input name="nueva" type="password" autocomplete="new-password" minlength="8" required><label>Repite la clave nueva</label><input name="otra" type="password" autocomplete="new-password" minlength="8" required><p style="margin-top:14px"><button class="btn" style="width:100%">Guardar</button></p></form></div>`));
+});
+portal.post("/portal/clave", requerir(), (req, res) => {
+  const yo = (req as any).yo as staff.Staff; const b = req.body ?? {};
+  if (!staff.autenticar(yo.email, String(b.actual ?? ""))) return res.redirect("/portal/clave?e=" + encodeURIComponent("La clave actual no es correcta."));
+  if (String(b.nueva) !== String(b.otra)) return res.redirect("/portal/clave?e=" + encodeURIComponent("Las dos claves nuevas no son iguales."));
+  try { staff.ponerClave(yo.email, String(b.nueva ?? "")); } catch (err) { return res.redirect("/portal/clave?e=" + encodeURIComponent((err as Error).message)); }
+  res.type("html").send(pagina("Listo", yo, "", `<div class="card" style="max-width:420px;margin:30px auto"><h1>Clave cambiada ✅</h1><p style="margin-top:12px"><a class="btn" href="/portal">Ir al inicio</a></p></div>`));
 });
 
 // ── Equipo (solo admin) ──

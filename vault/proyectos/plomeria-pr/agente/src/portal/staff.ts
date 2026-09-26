@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import { RAIZ } from "../almacen.js";
 
 export type Rol = "admin" | "gerente" | "reclutamiento";
-export interface Staff { email: string; nombre: string; rol: Rol; salt: string; hash: string; activo: boolean; creado: string; ultimaEntrada?: string }
+export interface Staff { email: string; nombre: string; rol: Rol; salt: string; hash: string; activo: boolean; creado: string; ultimaEntrada?: string; temporal?: boolean }
 const ARCH = path.join(RAIZ, "data", "estado", "staff.json");
 const SECRETO = process.env.PORTAL_SECRETO ?? "cambiar-en-produccion";
 const leer = (): Staff[] => { try { return JSON.parse(fs.readFileSync(ARCH, "utf8")); } catch { return []; } };
@@ -19,6 +19,12 @@ export function crear(d: { email: string; nombre: string; rol: Rol; clave: strin
   const salt = crypto.randomBytes(16).toString("hex");
   const u: Staff = { email, nombre: d.nombre.trim(), rol: d.rol, salt, hash: hashDe(d.clave, salt), activo: true, creado: new Date().toISOString() };
   guardar([...l.filter((x) => x.email !== email), u]); return u;
+}
+/** Clave nueva (temporal = al entrar le pide cambiarla). */
+export function ponerClave(email: string, clave: string, temporal = false) {
+  if (clave.length < 8) throw new Error("La clave debe tener al menos 8 caracteres.");
+  const l = leer(); const u = l.find((x) => x.email === email.trim().toLowerCase()); if (!u) throw new Error("No existe ese usuario.");
+  u.salt = crypto.randomBytes(16).toString("hex"); u.hash = hashDe(clave, u.salt); u.temporal = temporal || undefined; guardar(l); return true;
 }
 export function cambiarActivo(email: string, activo: boolean) { const l = leer(); const u = l.find((x) => x.email === email); if (u) { u.activo = activo; guardar(l); } }
 export function autenticar(email: string, clave: string): Staff | null {
