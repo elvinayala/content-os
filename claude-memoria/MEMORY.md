@@ -69,3 +69,4 @@
 - [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — 25/sep: referidos mandó 18x a Christopher y 8x a Rafael (throw + staticData, data.key); llave en la base y vigilar el 1er envío real
 - [Formularios propios (Typeform de la casa)](formularios-propios.md) — Pulse → Formularios + /f/<slug> EN PROD 26/sep; onboarding LU (con botón Calendly de Jessica) y encuesta duplicados, n8n ya usa el link nuevo; 525 respuestas archivadas; falta que closers dejen el link de Typeform y cancelar
 - [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic/2026, ~25 top clientes por LTV, gratis por invitación, poca inversión sin pauta; Carilin dirige; formulario la-mesa cerrado
+- [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — 26/sep: pooler de transacciones cuelga consultas en cola → vigilante cliente-db.ts; el de sesión tiene tope 15 y tumbó prod; no cambiar sin subir pool size
