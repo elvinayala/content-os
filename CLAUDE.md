@@ -527,6 +527,38 @@ acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
+## Leads — el CRM de clientes potenciales que reemplaza a Pipedrive (`/pulse/leads`, 26/sep/2026)
+
+Pipedrive cuesta ~$900/mes (LU ~$600 + AIB ~$300). Decisión de Elvin: **Leads dentro de Pulse** (mismas
+cuentas y base) pero en tablas propias `leads_*`, separadas de las fichas de clientes, con **la esencia de
+Pipedrive**: embudos con etapas en columnas, arrastrar entre etapas, zonas **GANADO / PERDIDO** al arrastrar
+(perdido pide motivo), puntito de seguimiento (rojo vencido · verde hoy · ámbar sin seguimiento), tarjeta
+roja si está estancada (`diasEstancado` por embudo), vistas **Embudo · Lista · Actividades**, selector de
+embudo, "+ Lead", buscador y filtro por dueño. Ficha (`/pulse/leads/<marca>/<id>`): barra de etapas
+clickeable, Ganado/Perdido/Reabrir, resumen editable, **WhatsApp · Nota · Seguimiento** y el historial
+(conversación de WhatsApp + notas + cambios). Cada marca aparte (`marca` level_up | ai_borinquen); Level Up
+arranca con sus 6 embudos reales de Pipedrive (`SEMILLA` en `lib/leads/reglas.ts`), vacíos: **el historial NO
+se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el resto por `leads_acceso`
+(todos | solo sus leads).
+- **Puente de WhatsApp = Timelines.ai** (sigue siendo el que tiene los números): `POST /api/leads/timelines
+  ?marca=level-up&s=LEADS_WEBHOOK_SECRET` (público en proxy; Timelines no firma → secreto en la URL; contesta
+  ya y procesa con after(); lector tolerante `leerTimelines` porque Timelines no publica el esquema; lo crudo
+  queda 14 días en `leads_webhook_log`). Envío por su API (`lib/leads/timelines.ts`, token
+  `TIMELINES_TOKEN_LU|AIB`). **Un solo lead abierto por teléfono y marca** (índice único parcial): dos
+  mensajes seguidos no duplican. Conectar: `node scripts/leads-timelines.mjs cuentas|webhooks|conectar lu`.
+  Tabla `leads_whatsapp` = qué número alimenta qué embudo y dueño (sin fila → embudo "WhatsApp").
+- **Semana 2 (en paralelo con Pipedrive)**, `lib/leads/cables.ts`: Calendly de LU → embudo Closers
+  (agendó/reagendó/canceló; onboarding = GANADO) y quiz de LU → "Diagnóstico de Crecimiento" (el quiz nunca
+  mueve a un lead que ya existe). AIB y el resto de escritores de Pipedrive (prospección, fábrica de demos,
+  dashboards) siguen en Pipedrive hasta la semana 3.
+- **Archivo de Pipedrive** (costo $0, por API): `node scripts/pipedrive-archivo.mjs lu|aib` → JSON + Excel en
+  `~/Documents/Archivo Pipedrive/<fecha>/` (fuera del repo) y copia en Supabase Storage privado
+  `pulse/archivo-pipedrive/2026-09-26/` (LU: 14,713 tratos, 14,837 personas, 26,538 notas, 31,630 actividades;
+  AIB: 5,310 / 5,311 / 10,269 / 11,019).
+- Código: `lib/leads/{schema,reglas,repo,pagina,cables,timelines}.ts`, `app/pulse/(app)/leads/`,
+  `components/leads/`, migraciones 0013-0014, `tests/leads.test.mjs`. Probar local sin clave:
+  config `content-os-abierto` (puerto 3011, CEO_PORTAL_PASSWORD vacío = modo abierto de dev).
+
 ## El ecosistema de email (ActiveCampaign)
 
 **Cada marca tiene SU cuenta de AC y nunca se mezclan (Elvin, 23/sep):** Level Up =
