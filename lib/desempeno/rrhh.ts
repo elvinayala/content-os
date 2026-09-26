@@ -188,3 +188,12 @@ export function ausenciaDeSolicitud(s: { tipo: string; desde: string | null; has
   if (s.tipo === "dia_libre" || s.tipo === "permiso") return { tipo: "personal", desde: s.desde, hasta: s.hasta ?? s.desde, dias: s.dias, certificado: false };
   return null;
 }
+
+/** Saldo legible en días y horas: 11.08 días con jornada de 9 h → "11 días y 1 h". */
+export function diasYHoras(dias: number, horasDia: number): string {
+  let enteros = Math.floor(dias + 1e-9);
+  let horas = Math.round((dias - enteros) * horasDia);
+  if (horas >= horasDia) { enteros += 1; horas = 0; }
+  const d = `${enteros} ${enteros === 1 ? "día" : "días"}`;
+  return horas ? `${d} y ${horas} h` : d;
+}

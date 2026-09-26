@@ -1,6 +1,7 @@
 import { CalendarHeart, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { CrearFicha } from "@/components/ritmo/crear-ficha";
@@ -28,7 +29,7 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">Recursos Humanos</p>
+        <p className="ceja">Recursos Humanos</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Personas</h1>
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">La ficha de cada empleado de operaciones con sueldo fijo: contacto, documentos, entrenamientos, vacaciones y nómina.</p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -57,7 +58,7 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
                 <span className="self-start rounded-full bg-sky-400/10 px-2.5 py-1 text-xs text-sky-300">Nuevo · falta que complete su ficha</span>
               ) : saldos?.puedeSolicitar && saldos.vacaciones.disponibles >= 1 ? (
                 <span className="flex items-center gap-1.5 self-start rounded-full bg-[color:var(--coral)]/15 px-2.5 py-1 text-xs text-[color:var(--coral)]">
-                  <CalendarHeart className="size-3.5" /> Puede pedir vacaciones · {saldos.vacaciones.disponibles} días
+                  <CalendarHeart className="size-3.5" /> Puede pedir vacaciones · {diasYHoras(saldos.vacaciones.disponibles, saldos.horasDia)}
                 </span>
               ) : !perfil.fechaIngreso || !ficha!.salarioMensual ? (
                 <span className="self-start rounded-full bg-amber-400/10 px-2.5 py-1 text-xs text-amber-300">Ficha incompleta</span>

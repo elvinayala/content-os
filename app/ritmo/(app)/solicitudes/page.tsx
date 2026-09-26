@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { NuevaSolicitud, TarjetaSolicitud, type SolicitudUI } from "@/components/ritmo/solicitudes";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
-import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
+import { puedeDecidir, TIPOS_SOLICITUD, diasYHoras } from "@/lib/desempeno/rrhh";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
 
@@ -16,7 +16,7 @@ export default async function SolicitudesPage() {
   if (!u) return null;
   const [todas, ficha] = await Promise.all([solicitudesPara(u), fichaCompleta(u.id).catch(() => null)]);
   const s = ficha?.saldos;
-  const saldo = s ? `Tienes ${s.vacaciones.disponibles} días de vacaciones acumulados${s.puedeSolicitar ? "" : ` (las vacaciones se piden a partir del ${new Date(`${s.fechaDoceMeses}T12:00:00`).toLocaleDateString("es-PR", { day: "numeric", month: "long", year: "numeric" })}; un día libre antes de eso se descuenta de lo acumulado o va sin paga)`}.` : null;
+  const saldo = s ? `Tienes ${diasYHoras(s.vacaciones.disponibles, s.horasDia)} de vacaciones acumulados${s.puedeSolicitar ? "" : ` (las vacaciones se piden a partir del ${new Date(`${s.fechaDoceMeses}T12:00:00`).toLocaleDateString("es-PR", { day: "numeric", month: "long", year: "numeric" })}; un día libre antes de eso se descuenta de lo acumulado o va sin paga)`}.` : null;
   const ui = (x: (typeof todas)[number]): SolicitudUI => ({
     id: x.id,
     nombre: x.nombre,

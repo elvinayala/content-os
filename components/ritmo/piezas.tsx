@@ -15,7 +15,7 @@ export function ScoreBadge({ score, color, oculto, className }: { score: number 
   if (score === null || !color) return <span className={cn("text-sm text-muted-foreground", className)}>—</span>;
   return (
     <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-semibold tabular-nums ring-1", COLOR[color].fondo, COLOR[color].texto, className)}>
-      <span className={cn("size-2 rounded-full", COLOR[color].punto)} />
+      <span className={cn("punto-luz size-2 rounded-full", COLOR[color].punto)} />
       {score}
     </span>
   );
@@ -55,7 +55,7 @@ export function MiniDias({ dias, oculto }: { dias: DiaPersona[]; oculto?: boolea
         <span
           key={d.fecha}
           title={`${diaCorto(d.fecha)} · ${oculto || d.score.score === null ? ESTADO[d.asistencia.estado].nombre : d.score.score}`}
-          className={cn("size-2.5 rounded-full", !oculto && d.color ? COLOR[d.color].punto : d.asistencia.estado === "ausente" ? "bg-red-500/50" : d.asistencia.puntaje === null ? "bg-white/10" : "bg-white/40")}
+          className={cn("size-2.5 rounded-full", !oculto && d.color ? cn(COLOR[d.color].punto, COLOR[d.color].texto, "punto-luz") : d.asistencia.estado === "ausente" ? "bg-red-500/50" : d.asistencia.puntaje === null ? "bg-white/10" : "bg-white/40")}
         />
       ))}
     </div>
@@ -64,9 +64,9 @@ export function MiniDias({ dias, oculto }: { dias: DiaPersona[]; oculto?: boolea
 
 export function Tarjeta({ titulo, valor, detalle, tono }: { titulo: string; valor: React.ReactNode; detalle?: React.ReactNode; tono?: "rojo" | "ambar" }) {
   return (
-    <div className="panel p-4">
-      <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{titulo}</p>
-      <p className={cn("num mt-1 text-2xl font-semibold", tono === "rojo" && "text-red-400", tono === "ambar" && "text-amber-300")}>{valor}</p>
+    <div className="panel hud-esquinas p-4">
+      <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">{titulo}</p>
+      <p className={cn("num mt-1.5 text-2xl font-semibold tracking-tight", tono === "rojo" && "text-red-400", tono === "ambar" && "text-amber-300")}>{valor}</p>
       {detalle ? <p className="mt-0.5 text-xs text-muted-foreground">{detalle}</p> : null}
     </div>
   );

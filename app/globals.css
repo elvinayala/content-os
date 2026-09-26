@@ -385,6 +385,203 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* ---- Capa "tech" (26/sep): detalles finos sobre el mismo diseño, sin cambiar la estructura ---- */
+  /* Fondo: la grilla se desvanece hacia abajo y hay un halo que respira muy lento. */
+  .ritmo.malla-ritmo {
+    background-image: none;
+    position: relative;
+    isolation: isolate;
+  }
+  .ritmo.malla-ritmo::before,
+  .ritmo.malla-ritmo::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .ritmo.malla-ritmo::before {
+    background-image:
+      linear-gradient(to right, oklch(1 0 0 / 3.5%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 3.5%) 1px, transparent 1px),
+      radial-gradient(circle at center, oklch(1 0 0 / 9%) 1px, transparent 1.5px);
+    background-size: 44px 44px, 44px 44px, 44px 44px;
+    background-position: -1px -1px, -1px -1px, 21px 21px;
+    mask-image: radial-gradient(120% 75% at 50% 0%, #000 30%, transparent 80%);
+  }
+  .ritmo.malla-ritmo::after {
+    background:
+      radial-gradient(48rem 24rem at 12% -10%, color-mix(in oklch, var(--neon) 13%, transparent), transparent 70%),
+      radial-gradient(42rem 24rem at 96% -4%, color-mix(in oklch, var(--coral) 11%, transparent), transparent 70%);
+    animation: ritmo-respira 12s ease-in-out infinite alternate;
+  }
+  @keyframes ritmo-respira {
+    from { opacity: 0.75; }
+    to { opacity: 1; }
+  }
+
+  /* Paneles: borde con luz (verde arriba-izq → coral abajo-der), brillo interior y reacción al pasar. */
+  .ritmo .panel {
+    border-color: transparent;
+    background:
+      linear-gradient(color-mix(in oklch, var(--card) 86%, transparent), color-mix(in oklch, var(--card) 80%, transparent)) padding-box,
+      linear-gradient(135deg, color-mix(in oklch, var(--neon) 30%, transparent), oklch(1 0 0 / 7%) 28%, oklch(1 0 0 / 5%) 72%, color-mix(in oklch, var(--coral) 24%, transparent)) border-box;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 5%),
+      0 18px 40px -28px oklch(0 0 0 / 70%);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .ritmo a.panel:hover,
+  .ritmo .panel:has(> a:hover):not(:has(.fila)) {
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 7%),
+      0 0 0 1px color-mix(in oklch, var(--neon) 18%, transparent),
+      0 22px 44px -26px color-mix(in oklch, var(--neon) 30%, transparent);
+  }
+  /* Esquinas tipo HUD (tarjetas de indicadores) */
+  .ritmo .hud-esquinas {
+    position: relative;
+  }
+  .ritmo .hud-esquinas::before,
+  .ritmo .hud-esquinas::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .ritmo .hud-esquinas::before {
+    top: 8px;
+    left: 8px;
+    border-top: 1px solid var(--neon);
+    border-left: 1px solid var(--neon);
+    border-top-left-radius: 3px;
+  }
+  .ritmo .hud-esquinas::after {
+    right: 8px;
+    bottom: 8px;
+    border-right: 1px solid var(--coral);
+    border-bottom: 1px solid var(--coral);
+    border-bottom-right-radius: 3px;
+  }
+
+  /* Ceja de cada página: mono, con un punto que late. */
+  .ritmo .ceja {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-geist-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .ritmo .ceja::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--neon);
+    box-shadow: 0 0 10px var(--neon);
+    animation: ritmo-punto 2.4s ease-in-out infinite;
+  }
+  @keyframes ritmo-punto {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  .ritmo main h1 {
+    background: linear-gradient(180deg, var(--foreground) 40%, color-mix(in oklch, var(--foreground) 62%, var(--muted-foreground)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ritmo main h1 .texto-ritmo {
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Barra superior: línea de luz que corre por el borde inferior. */
+  .ritmo .linea-luz {
+    position: absolute;
+    inset: auto 0 -1px 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--neon) 60%, transparent) 30%, color-mix(in oklch, var(--coral) 55%, transparent) 70%, transparent);
+    background-size: 200% 100%;
+    animation: ritmo-linea 9s linear infinite;
+    opacity: 0.7;
+  }
+  @keyframes ritmo-linea {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+  }
+  .ritmo .tab-activa {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--neon) 28%, transparent),
+      0 0 18px -6px color-mix(in oklch, var(--neon) 60%, transparent);
+  }
+
+  /* Filas de listas: barra de acento a la izquierda al pasar. */
+  .ritmo .fila {
+    position: relative;
+  }
+  .ritmo .fila::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--neon), var(--coral));
+    opacity: 0;
+    transform: scaleY(0.4);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .ritmo .fila:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  /* Puntitos de la semana con brillo propio. */
+  .ritmo .punto-luz {
+    box-shadow: 0 0 8px -1px currentColor;
+  }
+
+  /* Entrada: el contenido sube y aparece en cascada. */
+  .ritmo .entrada > * {
+    animation: ritmo-aparece 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .ritmo .entrada > *:nth-child(2) { animation-delay: 0.05s; }
+  .ritmo .entrada > *:nth-child(3) { animation-delay: 0.1s; }
+  .ritmo .entrada > *:nth-child(4) { animation-delay: 0.15s; }
+  .ritmo .entrada > *:nth-child(n + 5) { animation-delay: 0.2s; }
+  @keyframes ritmo-aparece {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Dial del ponche: 60 marcas y barrido tipo radar mientras espera. */
+  .ritmo .barrido {
+    background: conic-gradient(from 0deg, transparent 0deg, color-mix(in oklch, var(--neon) 16%, transparent) 50deg, transparent 90deg);
+    animation: spin 6s linear infinite;
+    mask-image: radial-gradient(circle, transparent 58%, #000 60%, #000 69%, transparent 71%);
+  }
+  .ritmo .estado-linea {
+    font-family: var(--font-geist-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--muted-foreground) 80%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ritmo.malla-ritmo::after,
+    .ritmo .ceja::before,
+    .ritmo .linea-luz,
+    .ritmo .barrido,
+    .ritmo .entrada > * { animation: none; }
+  }
+
   /* label mono global (los temas .ceo/.hud lo redefinen igual) */
   .label-mono {
     font-family: var(--font-geist-mono);

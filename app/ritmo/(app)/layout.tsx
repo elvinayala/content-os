@@ -20,7 +20,14 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   return (
     <>
       <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={await pendientesDe(u).catch(() => 0)} />
-      <main className="mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
+      <main className="entrada mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
+      <footer className="estado-linea mx-auto hidden w-full max-w-5xl items-center gap-3 px-6 pb-8 md:flex">
+        <span>Ritmo</span>
+        <span className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+        <span>{maestro ? "Vista maestra · verificación en dos pasos" : "Sesión protegida"}</span>
+        <span>·</span>
+        <span>Hora de Puerto Rico</span>
+      </footer>
     </>
   );
 }

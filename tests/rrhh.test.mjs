@@ -78,3 +78,12 @@ test("solicitudes: supervisor aprueba, RR.HH. firma; nadie decide lo suyo", asyn
   assert.deepEqual(ausenciaDeSolicitud({ tipo: "dia_libre", desde: "2026-10-02", hasta: null, dias: 1 }), { tipo: "personal", desde: "2026-10-02", hasta: "2026-10-02", dias: 1, certificado: false });
   assert.equal(ausenciaDeSolicitud({ tipo: "documento", desde: null, hasta: null, dias: null }), null);
 });
+
+test("saldo en días y horas", async () => {
+  const { diasYHoras } = await import("../lib/desempeno/rrhh.ts");
+  assert.equal(diasYHoras(11.08, 8), "11 días y 1 h");
+  assert.equal(diasYHoras(7, 8), "7 días");
+  assert.equal(diasYHoras(1, 8), "1 día");
+  assert.equal(diasYHoras(2.97, 8), "3 días");
+  assert.equal(diasYHoras(0.5, 8), "0 días y 4 h");
+});

@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
 import { Ponche } from "@/components/ritmo/ponche";
@@ -31,7 +32,7 @@ export default async function HoyPage() {
   return (
     <div className="flex flex-col items-center gap-10 pt-4">
       <div className="text-center">
-        <p className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">{fecha}</p>
+        <p className="ceja">{fecha}</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">
           {saludo()}, <span className="texto-ritmo">{u.nombre.split(" ")[0]}</span>
         </h1>
@@ -39,7 +40,7 @@ export default async function HoyPage() {
 
       {vac ? (
         <Link href={`/ritmo/personas/${u.id}`} className="w-full max-w-md rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-center text-sm">
-          🌴 <b>Ya cumpliste 12 meses.</b> Tienes <b>{vac} días</b> de vacaciones para solicitar. Coordínalo con RR.HH.
+          🌴 <b>Ya cumpliste 12 meses.</b> Tienes <b>{diasYHoras(vac, ficha?.saldos?.horasDia ?? 8)}</b> de vacaciones para solicitar. Coordínalo con RR.HH.
         </Link>
       ) : null}
 

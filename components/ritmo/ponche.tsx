@@ -31,6 +31,42 @@ function reloj(desde: string, ahora: number) {
 
 const aviso = { className: "ritmo" };
 
+// Coordenadas redondeadas: el servidor y el navegador calculan los decimales distinto (hidratación).
+const r3 = (n: number) => Math.round(n * 1000) / 1000;
+const MARCAS = Array.from({ length: 60 }, (_, i) => {
+  const a = (i / 60) * 2 * Math.PI;
+  const mayor = i % 5 === 0;
+  const r1 = 43.2;
+  const r2 = r1 - (mayor ? 3.2 : 1.6);
+  return { mayor, xy: { x1: r3(50 + r1 * Math.cos(a)), y1: r3(50 + r1 * Math.sin(a)), x2: r3(50 + r2 * Math.cos(a)), y2: r3(50 + r2 * Math.sin(a)) } };
+});
+
+// Dial del círculo: 60 marcas (cada 5 más largas) y, mientras trabaja, un arco con el avance del tramo
+// sobre una jornada de 9 h. Solo decoración: el dato real es el reloj del centro.
+function Dial({ progreso }: { progreso: number | null }) {
+  const r = 46;
+  const c = 2 * Math.PI * r;
+  return (
+    <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full -rotate-90" aria-hidden>
+      <defs>
+        <linearGradient id="dial-g" x1="0" x2="1" y1="0" y2="1">
+          <stop stopColor="var(--neon)" />
+          <stop offset="1" stopColor="var(--coral)" />
+        </linearGradient>
+      </defs>
+      {MARCAS.map((m, i) => (
+        <line key={i} {...m.xy} stroke="currentColor" strokeWidth={m.mayor ? 0.6 : 0.35} className={m.mayor ? "text-foreground/35" : "text-foreground/15"} />
+      ))}
+      {progreso !== null ? (
+        <>
+          <circle cx="50" cy="50" r={r} fill="none" stroke="currentColor" strokeWidth="0.8" className="text-white/[0.06]" />
+          <circle cx="50" cy="50" r={r} fill="none" stroke="url(#dial-g)" strokeWidth="1.1" suppressHydrationWarning strokeLinecap="round" strokeDasharray={`${Math.max(0.5, Math.min(1, progreso) * c).toFixed(2)} ${c.toFixed(2)}`} className="drop-shadow-[0_0_3px_var(--neon)] transition-[stroke-dasharray] duration-1000" />
+        </>
+      ) : null}
+    </svg>
+  );
+}
+
 // El ponche: un círculo grande. Un toque para entrar; otro para salir (con bloqueos opcionales).
 export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: number }) {
   const [ahora, setAhora] = useState(() => Date.now());
@@ -113,6 +149,8 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
           abierto ? "brillo border-primary/60 bg-primary/[0.06]" : "border-border bg-card hover:border-[color:var(--coral)]/50",
         )}
       >
+        <Dial progreso={abierto ? (ahora - Date.parse(abierto)) / (9 * 3_600_000) : null} />
+        {!abierto && !cargando ? <span className="barrido absolute inset-0 rounded-full motion-reduce:hidden" aria-hidden /> : null}
         {abierto ? (
           <>
             <span className="absolute inset-3 animate-[spin_14s_linear_infinite] rounded-full border border-dashed border-[color:var(--coral)]/50 motion-reduce:animate-none" />

@@ -70,7 +70,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
     <Marco gestor={gestor}>
       <section className="flex flex-col gap-4">
         <div>
-          <p className="mb-1 text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">{fechaLarga}</p>
+          <p className="ceja mb-1.5">{fechaLarga}</p>
           <h1 className="text-3xl font-semibold tracking-tight">Equipo</h1>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">
             Asistencia, tareas y resultados por puesto. Lo mide el sistema solo; el equipo solo marca entrada, salida y bloqueos.
@@ -114,8 +114,8 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
             <Tarjeta titulo="Sin marcar" valor={sinMarcar} detalle="Día laborable sin entrada" tono={sinMarcar ? "rojo" : undefined} />
             <Tarjeta titulo="Terminadas (7 d)" valor={panel.hayProduccion ? terminadas : "—"} detalle={panel.hayProduccion ? "Tablero Producción" : "Falta el tablero Producción"} />
             <Tarjeta titulo="Vencidas" valor={panel.hayProduccion ? vencidas : "—"} detalle="Entregables atrasados" tono={vencidas ? "rojo" : undefined} />
-            <div className="col-span-2 panel p-4 md:col-span-1">
-              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Semana</p>
+            <div className="col-span-2 panel hud-esquinas p-4 md:col-span-1">
+              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Semana</p>
               {oculto ? (
                 <p className="mt-2 text-sm text-muted-foreground">Calibrando</p>
               ) : (
@@ -162,7 +162,7 @@ function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
   const prod = esProduccion(f.perfil.puesto) ? f.produccion : null;
   return (
     <li>
-      <Link href={`/ritmo/equipo/${f.perfil.userId}`} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3 transition hover:bg-white/[0.03] md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.3fr)_minmax(0,1fr)_auto_auto_auto]">
+      <Link href={`/ritmo/equipo/${f.perfil.userId}`} className="fila grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3 transition hover:bg-white/[0.03] md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.3fr)_minmax(0,1fr)_auto_auto_auto]">
         <div className="flex min-w-0 items-center gap-3">
           <UserAvatar nombre={f.perfil.nombre} color={f.perfil.color as ColorPulse | null} />
           <div className="min-w-0">

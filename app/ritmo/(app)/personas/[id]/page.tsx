@@ -6,7 +6,7 @@ import { AvatarRitmo } from "@/components/ritmo/avatar";
 import { EmpresaBadge } from "@/components/ritmo/piezas";
 import { Ajustes, Ausencias, Documentos, FormDatos } from "@/components/ritmo/ficha";
 import { BotonSubir } from "@/components/ritmo/subir";
-import { cargosAusencias, usd } from "@/lib/desempeno/rrhh";
+import { cargosAusencias, usd, diasYHoras } from "@/lib/desempeno/rrhh";
 import { CATEGORIAS, fichaCompleta } from "@/lib/desempeno/fichas";
 import { puestoPorId } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -80,7 +80,7 @@ export default async function FichaPage({ params }: { params: Promise<{ id: stri
       {s?.puedeSolicitar && s.vacaciones.disponibles >= 1 ? (
         <div className="rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-sm">
           <b>{u.id === id ? "Ya puedes solicitar tus vacaciones." : `${perfil.nombre.split(" ")[0]} ya puede solicitar vacaciones.`}</b> Cumplió 12 meses el {fecha(s.fechaDoceMeses)} y tiene{" "}
-          <b>{s.vacaciones.disponibles} días</b> ({Math.round(s.vacaciones.disponibles * s.horasDia)} h) acumulados.
+          <b>{diasYHoras(s.vacaciones.disponibles, s.horasDia)}</b> acumulados.
         </div>
       ) : null}
 
