@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-09-26T17:52:24.507Z",
+  "exportadoEl": "2026-09-26T17:57:48.054Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 103,
   "workflows": [
@@ -594,9 +594,9 @@
     {
       "id": "rxlp9wxl9cHFefn9",
       "nombre": "K-) Referidos veteranos (una vez, sep 2026)",
-      "activo": false,
+      "activo": true,
       "archivo": "rxlp9wxl9cHFefn9-k-referidos-veteranos-una-vez-sep-2026.json",
-      "actualizadoEl": "2026-09-26T17:51:56.394Z"
+      "actualizadoEl": "2026-09-26T17:57:21.500Z"
     },
     {
       "id": "HvMsL5j65etc7ZBq",
