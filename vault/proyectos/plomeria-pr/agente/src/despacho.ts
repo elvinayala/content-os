@@ -12,6 +12,7 @@ import { config } from "./config.js";
 import { elegibles, porId, linkPortal, listar as listarProv, TIEMPO_ACEPTAR_MIN, type Proveedor } from "./proveedores.js";
 import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
 import { avisarCliente } from "./aviso-cliente.js";
+import { avisarVentas, linkCliente } from "./ventas.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import { contratoHTML } from "./contratos.js";
 import { enviarContrato } from "./integraciones/docusign.js";
@@ -94,6 +95,8 @@ export async function expirarSiSigueAbierta(id: string) {
   await avisarCoordinador(`⏰ Nadie aceptó ${o.id} (${o.categoriaNombre}, ${o.municipio}, ${$(o.pagoProveedor)})${o.rechazados?.length ? ` · dijeron que no: ${o.rechazados.join(", ")}` : ""}. Los plomeros deciden qué trabajos cogen: llama y pregunta quién puede, o muévele la hora al cliente. Asignar a mano solo con su sí: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`);
   if (o.tipo === "trabajo") {
     const t = almacen.trabajos().find((x) => x.id === o.referencia);
+    // La setter llama al cliente para moverle el día o la hora (sin datos de los plomeros ni links de admin).
+    if (t) await avisarVentas(`🔁 Cita sin plomero: ${t.nombre} · ${String(t.telefono ?? "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "").replace(/^(\d{3})(\d{3})(\d{4})$/, "$1-$2-$3")} · ${t.municipio}\n${t.servicio} · ${new Date(t.inicio).toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}\nNingún plomero pudo a esa hora. Llama al cliente y muévele el día o la hora (reserva de nuevo en la página).\nConversación: ${linkCliente(t.contactoId)}`).catch(() => undefined);
     if (t) await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]}, todavía estamos confirmando el plomero para tu ${t.servicio.toLowerCase()}. Te escribimos por aquí en cuanto lo tengamos, o con otra hora si esa no se puede.`);
   }
 }

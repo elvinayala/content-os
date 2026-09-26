@@ -25,6 +25,7 @@ import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
+import * as ventas from "./ventas.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
@@ -443,6 +444,13 @@ app.get("/api/proveedores/cuenta", (req: any, res) => {
   res.json(ciclo.cuentaSemanal(prov));
 });
 // Página de pago del cliente (mientras no haya Stripe: ATH Móvil + total)
+// Conversación de UN cliente para la setter: enlace firmado que sale en los avisos de ventas (sin login).
+app.get("/ventas/c/:id", (req, res) => {
+  if (!ventas.firmaValida(req.params.id, req.query.k)) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>Enlace no válido.</p>");
+  const h = ventas.paginaCliente(req.params.id);
+  if (!h) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese cliente.</p>");
+  res.set("X-Robots-Tag", "noindex, nofollow").set("Cache-Control", "no-store").set("Referrer-Policy", "no-referrer").type("html").send(h);
+});
 app.get("/pagar/:id", (req, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id);
   if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos un texto al 787-956-1111.</p>");
@@ -566,6 +574,9 @@ async function revisarSaludWa() {
 setInterval(() => revisarSaludWa().catch(console.error), 10 * 60_000);
 // Seguimiento automático de clientes de Messenger/IG que pidieron precio y no agendaron (dentro de las 24 h de Meta).
 setInterval(() => revisarSeguimientos().catch(console.error), 10 * 60_000);
+// Grupo de Telegram de ventas: se conecta solo cuando agregan el bot a un grupo con "Ventas" en el nombre.
+ventas.buscarGrupoVentas().catch(console.error);
+setInterval(() => ventas.buscarGrupoVentas().catch(console.error), 2 * 60_000);
 setTimeout(() => revisarSaludWa().catch(console.error), 20_000);
 app.get("/salud/whatsapp", (_req, res) => { const u = saludWa.leer().ultimo; res.status(!u || u.ok ? 200 : 503).json(u ?? { ok: true, motivo: "sin revisar aún" }); });
 // Cuando Meta devuelve la cuenta y el evento viejo sigue en la ficha: POST /admin/salud-wa/resuelto

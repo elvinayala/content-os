@@ -6,7 +6,7 @@
  */
 import { almacen } from "./almacen.js";
 import { config } from "./config.js";
-import { avisarCoordinador } from "./canales/whatsapp.js";
+import { avisarVentas, linkCliente } from "./ventas.js";
 
 const MINUTOS = Number(process.env.LLAMAR_CLIENTE_MIN ?? 20);
 const telBonito = (t: string) => t.replace(/^(\d{3})(\d{3})(\d{4})$/, "$1-$2-$3");
@@ -20,5 +20,5 @@ export async function revisar(contactoId: string, resumen: string) {
   if (!c?.telefono) return;
   const agendo = almacen.trabajos().some((t) => t.contactoId === contactoId && t.estado !== "cancelado") || almacen.proyectos().some((p) => p.contactoId === contactoId);
   if (agendo) return;
-  await avisarCoordinador(`📞 Llama para cerrar: ${c.nombre ?? "cliente sin nombre"} · ${telBonito(c.telefono)}${c.municipio ? " · " + c.municipio : ""}\n${resumen}\nEscribió por ${c.canal} hace ${MINUTOS} min, dio su número y no ha agendado.\nConversación: ${config.urlPublica}/portal/clientes/${encodeURIComponent(contactoId)}`);
+  await avisarVentas(`📞 Llama para cerrar: ${c.nombre ?? "cliente sin nombre"} · ${telBonito(c.telefono)}${c.municipio ? " · " + c.municipio : ""}\n${resumen}\nEscribió por ${c.canal} hace ${MINUTOS} min, dio su número y no ha agendado.\nConversación: ${linkCliente(contactoId)}`);
 }

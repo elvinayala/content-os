@@ -10,7 +10,7 @@
 import { config } from "../config.js";
 import { almacen } from "../almacen.js";
 import { archivar } from "../historial.js";
-import { avisarCoordinador } from "./whatsapp.js";
+import { avisarVentas, linkCliente } from "../ventas.js";
 import { e164, enviarSMS, contactoPorTelefono } from "./sms.js";
 
 type Llamada = { id: string; direction?: string; from?: string; to?: string; durationSeconds?: number; endReason?: string; isVoicemail?: boolean };
@@ -63,5 +63,5 @@ export async function atenderLlamada(body: any) {
       almacen.guardarConversacion(conv);
     }
   }
-  await avisarCoordinador(`📞 Llamada perdida: ${conocido.nombre ?? "sin nombre"} · ${telBonito(de)}${conocido.municipio ? " · " + conocido.municipio : ""}\n${voz ? "Dejó mensaje: \"" + voz + "\"" : "No dejó mensaje."}\n${texto ? "Ya le salió un texto automático. " : ""}Devuélvele la llamada.\nFicha: ${config.urlPublica}/portal/clientes/${encodeURIComponent(contacto.id)}`);
+  await avisarVentas(`📞 Llamada perdida: ${conocido.nombre ?? "sin nombre"} · ${telBonito(de)}${conocido.municipio ? " · " + conocido.municipio : ""}\n${voz ? "Dejó mensaje: \"" + voz + "\"" : "No dejó mensaje."}\n${texto ? "Ya le salió un texto automático. " : ""}Devuélvele la llamada.\nConversación: ${linkCliente(contacto.id)}`);
 }
