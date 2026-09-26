@@ -539,6 +539,15 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
     5 min, `nosniff` + CSP sandbox en el servido local.
   - **Cabeceras**: `/ritmo/*` con la misma CSP estricta, `X-Frame-Options: DENY` y Permissions-Policy de Pulse.
   - **Slack**: el texto de empleados va escapado (`esc` en `avisar.ts`/`avisos.ts`) — sin menciones ni links falsos.
+- **Segundo paso de la vista maestra** (26/sep, `lib/desempeno/dos-pasos.ts` + `totp.ts` puro, tests `tests/totp.test.mjs`):
+  Elvin, Carilin, Aure y RR.HH. entran con un código de Google/Microsoft Authenticator (`/ritmo/verificar`, QR la
+  primera vez; secreto cifrado AES-GCM en `desempeno_dos_pasos`, migración 0016). Dispositivo recordado 30 días (cookie
+  `ritmo-2fa`, se invalida si cambia la clave/sesiones), 5 fallos = 15 min. Sin el segundo paso no hay vista maestra ni
+  se decide nada (`usuarioRitmo().falta2fa`). Teléfono perdido: "Reiniciar" en Ajustes (admin) o
+  `node scripts/ritmo-2fa.mjs estado|reset <email>`.
+- **Tope de archivos**: foto 10 MB, documentos 25 MB, videos de entrenamiento 50 MB (`limiteBytes` en `fichas.ts`), verificado
+  con el tamaño REAL en Storage al confirmar (si se pasa, se borra). El bucket `pulse` está en 50 MB: es el tope del plan
+  de Supabase; videos más grandes = plan Pro o comprimirlos.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
