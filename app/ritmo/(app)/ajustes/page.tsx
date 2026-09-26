@@ -9,7 +9,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Ajustes" };
 
 // Solo admin y editoras (Carilin, Aure): perfiles (puesto, líder, horario), metas y tablero Producción.
-export default async function AjustesPage() {
+export default async function AjustesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
   const u = await usuarioRitmo();
   if (!u?.maestro) redirect("/ritmo");
   const [usuarios, perfiles, metas, prod] = await Promise.all([listarUsuarios(), leerPerfiles(false), leerMetas(), columnasProduccion()]);
@@ -19,6 +20,7 @@ export default async function AjustesPage() {
       perfiles={perfiles}
       metas={metas}
       produccion={!!prod}
+      buscar={q ?? ""}
     />
   );
 }

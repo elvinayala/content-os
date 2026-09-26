@@ -31,7 +31,7 @@ type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
 const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", slackId: null, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
-export function Ajustes({ usuarios, perfiles, metas, produccion }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean }) {
+export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "" }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +47,7 @@ export function Ajustes({ usuarios, perfiles, metas, produccion }: { usuarios: U
           </button>
         ))}
       </div>
-      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} /> : <Metas metas={metas} />}
+      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} buscar={buscar} /> : <Metas metas={metas} />}
     </div>
   );
 }
@@ -82,8 +82,8 @@ function Produccion({ existe }: { existe: boolean }) {
   );
 }
 
-function Personas({ usuarios, perfiles }: { usuarios: Usuario[]; perfiles: Perfil[] }) {
-  const [q, setQ] = useState("");
+function Personas({ usuarios, perfiles, buscar }: { usuarios: Usuario[]; perfiles: Perfil[]; buscar: string }) {
+  const [q, setQ] = useState(buscar);
   const conPerfil = new Set(perfiles.map((p) => p.userId));
   const lista = useMemo(
     () => [...usuarios].sort((a, b) => Number(conPerfil.has(b.id)) - Number(conPerfil.has(a.id)) || a.nombre.localeCompare(b.nombre)).filter((u) => !q || `${u.nombre} ${u.email}`.toLowerCase().includes(q.toLowerCase())),

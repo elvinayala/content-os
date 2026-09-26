@@ -49,7 +49,11 @@ export default async function HoyPage() {
         <div className="panel max-w-sm p-6 text-center text-sm text-muted-foreground">
           {u.maestro ? (
             <>
-              Todavía no tienes perfil de ponche. Puedes activarlo en <Link href="/ritmo/ajustes" className="text-primary">Ajustes</Link>.
+              <b className="text-foreground">Tú estás en la dirección de Ritmo:</b> ves al equipo desde <Link href="/ritmo/equipo" className="text-primary">Equipo</Link> y <Link href="/ritmo/personas" className="text-primary">Personas</Link>, y no necesitas marcar entrada ni salida.
+              <span className="mt-2 block text-xs">
+                Si también quieres marcar tu día, entra en{" "}
+                <Link href={`/ritmo/ajustes?q=${encodeURIComponent(u.nombre)}`} className="text-primary">Ajustes → tu nombre → Agregar</Link> y guarda tu puesto y horario.
+              </span>
             </>
           ) : (
             "Todavía no tienes perfil en Ritmo. Pídele a Carilin que te lo active (puesto, líder y horario)."
