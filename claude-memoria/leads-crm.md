@@ -25,3 +25,9 @@ y publicados, leads de prueba borrados. Los 60 runs retenidos son del "Daily Exe
 desconectada), no de las clases.
 **Semana 3:** mover prospección/demos/dashboards, correr en paralelo 1 semana y cancelar Pipedrive LU; AIB después.
 Detalle técnico en CLAUDE.md §Leads. Ver [[pulse-crm]], [[closers-lu-calendly]], [[ecosistema-lu-aib]].
+
+**26/sep (tarde) — en validación:** por orden de Elvin, Aure y Nahuel usan Leads primero y dan el visto bueno
+antes de la transición (instrucciones por DM de Slack desde la cuenta de Elvin, firmadas "Claude"; Nahuel con su
+link de activación, vence 29/sep). Sin su ✅ NO se mandan los links al resto (Luis, Roger, Laura, Joaquín, Ana, Dilan)
+ni se apaga Pipedrive. Jessica tiene que llenar el Teléfono de 6 clientes activos sin número (para el filtro de
+clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETUP, quizá sea una ficha de prueba.
