@@ -105,6 +105,18 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
     input_schema: { type: "object", properties: { municipio: { type: "string" }, nombre: { type: "string" } }, required: ["municipio", "nombre"], additionalProperties: false },
   },
   {
+    name: "anotar_otro_oficio",
+    description: "Anota en la LISTA DE ESPERA de Resuelto a alguien que NO es plomero pero ofrece otro oficio (electricista/perito, handyman, técnico de aire acondicionado, pintor, contratista general, jardinero…). Resuelto va a abrir más oficios y lo llamamos primero cuando abra el suyo. Llámala en cuanto tengas nombre + oficio + área; lo que falte va vacío.",
+    input_schema: { type: "object", properties: {
+      nombre: { type: "string" }, oficio: { type: "string", description: "el oficio tal como lo dijo, p. ej. 'perito electricista'" },
+      municipio: { type: "string", description: "municipio o área donde trabaja ('toda la isla' vale)" },
+      experiencia: { type: "string", description: "años de experiencia tal como lo dijo; vacío si no lo dio" },
+      licencia: { type: "string", description: "licencia/colegiación del oficio si la mencionó; vacío si no" },
+      telefono: { type: "string", description: "su número (10 dígitos); vacío si todavía no lo dio" },
+      nota: { type: "string", description: "algo útil en una línea (dónde ha trabajado, si tiene guagua, etc.)" },
+    }, required: ["nombre", "oficio", "municipio"], additionalProperties: false },
+  },
+  {
     name: "clasificar_contacto",
     description: "Llámala EN CUANTO sepas qué tipo de persona escribe (normalmente en el 1er o 2º mensaje): cliente de plomería, dueño con proyecto, plomero candidato o contratista candidato. Crea la tarjeta en el CRM de inmediato para que el equipo la vea aunque la persona no termine la conversación. Llámala una vez por contacto, y de nuevo si cambia el tipo o cuando te dé su teléfono (pásalo en telefono).",
     input_schema: { type: "object", properties: { tipo: { type: "string", enum: ["cliente", "cliente-proyecto", "plomero-candidato", "contratista"] }, nombre: { type: "string", description: "vacío si aún no lo dio" }, municipio: { type: "string", description: "vacío si aún no lo dio" }, resumen: { type: "string", description: "1 línea: qué quiere o qué dijo" }, telefono: { type: "string", description: "teléfono de 10 dígitos si ya lo dio (en Messenger/Instagram es la única forma de tenerlo); vacío si no" } }, required: ["tipo", "nombre", "municipio", "resumen"], additionalProperties: false },
@@ -324,6 +336,18 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       // Cita recién confirmada: el enlace de Zoom va en el mensaje de confirmación, tal cual.
       const zoom = cita?.ok && config.zoomEntrevistas ? { enlace_videollamada: config.zoomEntrevistas, instruccion_enlace: "Confírmale día y hora y pégale este enlace de Zoom completo, tal cual, en una línea aparte. Dile que entre ahí a esa hora." } : {};
       return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: PUEDE_TRABAJAR.includes(c.nivelLicencia), ...(PUEDE_TRABAJAR.includes(c.nivelLicencia) ? {} : { nota_ley: "Sin licencia ni certificado de aprendiz: no hay entrevista. Ofrécele la ruta del certificado de aprendiz; no le prometas trabajos." }) };
+    }
+    case "anotar_otro_oficio": {
+      // Otros oficios (26/sep, Elvin: "no le cierres la puerta al electricista: lista de espera y lo llamamos cuando abramos").
+      const previo = almacen.candidatos().find((x) => x.contactoId === ctx.contacto.id);
+      const tel = String(input.telefono || ctx.contacto.telefono || (ctx.contacto.canal === "whatsapp" ? ctx.contacto.identificador : "") || "").replace(/\D/g, "");
+      const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: tel, nivelLicencia: input.licencia || "no aplica", municipio: input.municipio, experiencia: input.experiencia || undefined, oficio: input.oficio, equipo: input.nota || "", disponibilidad: "", estado: "lista-espera", creado: previo?.creado ?? new Date().toISOString() };
+      almacen.guardarCandidato(c);
+      const oficioTag = "oficio-" + norm(input.oficio).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const ghlId = await upsertContacto({ nombre: c.nombre, telefono: tel || undefined, municipio: c.municipio, tags: ["lista-espera-oficios", oficioTag], fuente: ctx.contacto.canal });
+      almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: tel || ctx.contacto.telefono, municipio: c.municipio, tipo: "plomero-candidato", ghlContactId: ghlId ?? ctx.contacto.ghlContactId });
+      if (ghlId) await agregarNota(ghlId, `Lista de espera · ${input.oficio}${input.licencia ? " (" + input.licencia + ")" : ""} · ${c.municipio}${c.experiencia ? " · " + c.experiencia : ""}${input.nota ? " · " + input.nota : ""}. Llamar cuando Resuelto abra ese oficio.`);
+      return { ok: true, candidato_id: c.id, falta_telefono: !tel, nota: tel ? "Anotado. Dile que quedó en la lista y que cuando abramos su oficio lo llamamos primero." : "Anotado sin teléfono: pídeselo una vez para poder llamarlo cuando abramos." };
     }
     case "agregar_lista_espera": {
       almacen.agregarListaEspera({ municipio: input.municipio, nombre: input.nombre, contactoId: ctx.contacto.id, creado: new Date().toISOString() });

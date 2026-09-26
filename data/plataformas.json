@@ -17,7 +17,11 @@
       ],
       "critico": false,
       "notas": "data/*.json van en el bundle: todo cambio de data/ o vault/ requiere deploy. Tareas de Sofi, Telegram, Calendly→Pipedrive, quiz funnels (/api/auditoria) viven aquí.",
-      "github": "elvinayala/content-os"
+      "github": "elvinayala/content-os",
+      "despliegue": {
+        "host": "vercel",
+        "repo": "content-os"
+      }
     },
     {
       "id": "bori",
@@ -39,7 +43,13 @@
       ],
       "critico": true,
       "notas": "Stripe LIVE. Postgres: cada campo nuevo va en 3 lugares (SCHEMA+migrate en db.js, rowToUser y COL en store.pg.js). Índices nuevos SOLO en migrate() tras el ALTER. Nunca mover un cobro sin revisar que el catch no tenga refund. Nunca implementar reembolsos por código.",
-      "github": "elvinayala/bori"
+      "github": "elvinayala/bori",
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "ceefdfd5-e444-4a28-a22e-b93e01eddad2",
+        "servicio": "bori",
+        "repo": "bori"
+      }
     },
     {
       "id": "plagas",
@@ -66,7 +76,13 @@
       ],
       "critico": true,
       "notas": "WhatsApp por Evolution (QR, número 787-587-2727). Evolution se cae por OOM: si hay quejas de 'no responde', revisar evolution primero. Cliente reclama rápido (Kristian): cada queja en Slack es un caso abierto.",
-      "github": "elvinayala/plagas-puerto-rico"
+      "github": "elvinayala/plagas-puerto-rico",
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "769e34de-49b3-45be-8451-4be2ea22b630",
+        "servicio": "app",
+        "repo": "plagas"
+      }
     },
     {
       "id": "cortex",
@@ -88,7 +104,14 @@
       ],
       "critico": false,
       "notas": "Python + FFmpeg. Estilo de referencia obligatorio (memorias ave-*). Usuario admin provisional 'lis'. Variables: usar `railway variable set --stdin` (los otros comandos hacen echo del valor).",
-      "github": "elvinayala/cortex"
+      "github": "elvinayala/cortex",
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b",
+        "servicio": "cortex",
+        "repo": "cortex",
+        "ojo": "revisar que no haya renders en cola antes"
+      }
     },
     {
       "id": "resuelto",
@@ -123,6 +146,14 @@
         "logs": "cd agente && npx @railway/cli logs",
         "tests": "cd agente && npm run build && node --test tests/",
         "whatsapp": "Zernio (canal src/canales/zernio.ts, webhook /webhook/zernio); número 939-247-9234"
+      },
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "797cee1c-19de-4aa4-9363-17dbf2fc38f5",
+        "servicio": "agente",
+        "carpeta": "vault/proyectos/plomeria-pr/agente",
+        "repo": "content-os",
+        "salud": "https://agente-production-684f.up.railway.app/health"
       }
     },
     {
@@ -259,7 +290,11 @@
         "lib/pulse/schema.ts"
       ],
       "critico": true,
-      "notas": "Tableros LEVEL UP MEDIA, AI BORINQUEN, Asignación de Estrategas. Columnas/etiquetas/grupos se agregan desde la UI (lo pueden hacer Jessica/Carilin). Cambios de esquema = migración Drizzle (npm run db:generate + db:migrate). Cada cambio de LUM / Estrategas se replica a NocoDB por el puente n8n (lib/pulse/puente-n8n.ts): cuidado con renombrar columnas. PROHIBIDO sin OK: borrar items/tableros/usuarios, tocar claves de otros usuarios. Respaldo diario en Storage pulse/respaldos/."
+      "notas": "Tableros LEVEL UP MEDIA, AI BORINQUEN, Asignación de Estrategas. Columnas/etiquetas/grupos se agregan desde la UI (lo pueden hacer Jessica/Carilin). Cambios de esquema = migración Drizzle (npm run db:generate + db:migrate). Cada cambio de LUM / Estrategas se replica a NocoDB por el puente n8n (lib/pulse/puente-n8n.ts): cuidado con renombrar columnas. PROHIBIDO sin OK: borrar items/tableros/usuarios, tocar claves de otros usuarios. Respaldo diario en Storage pulse/respaldos/.",
+      "despliegue": {
+        "host": "vercel",
+        "repo": "content-os"
+      }
     },
     {
       "id": "gohighlevel",
@@ -351,7 +386,13 @@
       ],
       "critico": false,
       "notas": "Constitución de producto de Elvin: lo simple y confiable gana.",
-      "github": "ai-borinquen/ai-borinquen-core"
+      "github": "ai-borinquen/ai-borinquen-core",
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "e35f6f30-200e-4af4-916e-01be37b891c2",
+        "servicio": "web",
+        "repo": "ai-borinquen-core"
+      }
     },
     {
       "id": "dashboard-ventas",
@@ -368,7 +409,13 @@
       ],
       "critico": false,
       "notas": "Estático en Netlify.",
-      "github": "elvinayala/dashboard-ventas-ea-market-llc"
+      "github": "elvinayala/dashboard-ventas-ea-market-llc",
+      "despliegue": {
+        "host": "railway",
+        "proyecto": "1e992dc9-3afb-4258-a1a6-082c5ad18c72",
+        "servicio": "dashboard-ventas-ea-market-llc",
+        "repo": "dashboard-ventas"
+      }
     },
     {
       "id": "sistema-hora-fija",
@@ -408,7 +455,13 @@
       ],
       "critico": true,
       "notas": "Funciones Netlify: auth, ordenes (EJECUCIÓN REAL con el broker del propio usuario, armado explícito, tamaño 1-50, bitácora), alertas, backtest, psicologia, px, radar, tv; lib/ autopilot, evaluacion, mentor, radar, seguridad. Datos en Netlify Blobs. PROHIBIDO sin OK explícito de Elvin: tocar ordenes.mjs/autopilot.mjs/seguridad.mjs, límites de tamaño o el armado de ejecución, credenciales de brokers de usuarios, planes/cobros, borrar blobs de alumnos. Marca 1000X: nunca caras, verde #00FF87 solo acento, nunca prometer retornos (disclaimers de riesgo siempre).",
-      "github": "elvinayala/1000x-fuente"
+      "github": "elvinayala/1000x-fuente",
+      "despliegue": {
+        "host": "netlify",
+        "sitio": "d76a5a41-fbdb-4d35-bcd2-59256579d2fe",
+        "carpeta": "deploy-1000x",
+        "repo": "1000x"
+      }
     },
     {
       "id": "1000x-landing",

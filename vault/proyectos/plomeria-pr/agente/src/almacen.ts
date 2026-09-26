@@ -111,13 +111,14 @@ export interface Candidato {
   numeroLicencia?: string;
   municipio: string;
   experiencia?: string;    // años que lleva de plomero (texto tal como lo dijo)
+  oficio?: string;         // si no es plomero: electricista, handyman, técnico de A/C… (lista de espera, 26/sep)
   equipo: string;
   disponibilidad: string;
   entrevista?: string;     // ISO
   ghlCitaId?: string;      // la cita en el calendario de entrevistas de GHL
   avisadoSeguimiento?: string; // cuándo se le avisó a la reclutadora que es un gran candidato sin cita
   recordado?: string;      // cuándo se le mandó el recordatorio de la entrevista
-  estado: "nuevo" | "verificando" | "entrevista" | "prueba" | "activo" | "descartado";
+  estado: "nuevo" | "verificando" | "entrevista" | "prueba" | "activo" | "descartado" | "lista-espera";
   creado: string;
 }
 

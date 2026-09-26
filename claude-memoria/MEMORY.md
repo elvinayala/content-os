@@ -66,3 +66,4 @@
 - [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos a Elvin/equipo solo por Telegram/Slack; Resuelto bloqueado por SCAM el 23/sep por 35 avisos a su número
 - [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — /ritmo, app aparte de Pulse (mismas cuentas): ponche + KPIs por puesto + score 🟢🟡🔴; EN PROD en ritmo.levelupmediapr.net (dominio oficial desde 26/sep); maestra solo Elvin/Carilin/Aure; acceso por link de 72 h; sin vigilar
 - [Leads — reemplazo de Pipedrive](leads-crm.md) — CRM de leads dentro de Pulse (/pulse/leads, 26/sep/2026) con esencia Pipedrive + Timelines; historial de Pipedrive archivado en Excel, NO cargado; falta token Timelines y cuentas de setters/closers
+- [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — 25/sep: referidos mandó 18x a Christopher y 8x a Rafael (throw + staticData, data.key); llave en la base y vigilar el 1er envío real
