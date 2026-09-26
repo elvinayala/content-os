@@ -1,6 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
+import { leadQuiz } from "@/lib/leads/cables";
 
 // after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
 export const maxDuration = 60;
@@ -348,6 +349,12 @@ export async function POST(req: NextRequest) {
       }
       if (marca === "level-up" && tracking.avatar) tagsAC.push(`avatar:${String(tracking.avatar).slice(0, 20)}`);
       after(() => upsertContacto({ email, nombre, telefono, marca, tags: tagsAC }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
+    }
+
+    // Leads (Pulse): el quiz de Level Up también entra al CRM nuevo, en paralelo con Pipedrive.
+    if (marca === "level-up") {
+      const r = body.resultado && typeof body.resultado === "object" ? (body.resultado as { principal?: string }).principal : null;
+      after(() => leadQuiz({ evento, nombre, email, telefono, negocio, resultado: r ?? null, avatar: tracking.avatar ? String(tracking.avatar) : null, utm: tracking.utm_source ? String(tracking.utm_source) : null }));
     }
 
     const contenido =

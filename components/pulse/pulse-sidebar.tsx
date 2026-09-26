@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, LayoutGrid, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { ArrowLeft, Kanban, LayoutGrid, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { PulseLogo } from "@/components/pulse/logo";
@@ -28,9 +28,11 @@ import type { BoardResumen } from "@/lib/pulse/repo";
 export function PulseSidebar({
   boards,
   usuario,
+  tieneLeads = false,
 }: {
   boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items" | "privado">[];
   usuario: UsuarioPulse;
+  tieneLeads?: boolean;
 }) {
   const pathname = usePathname();
   return (
@@ -64,6 +66,16 @@ export function PulseSidebar({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {tieneLeads && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/leads")} tooltip="Leads">
+                  <Link href="/pulse/leads">
+                    <Kanban />
+                    <span>Leads</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/pulse/preguntar"} tooltip="Preguntarle al CRM">
                 <Link href="/pulse/preguntar">

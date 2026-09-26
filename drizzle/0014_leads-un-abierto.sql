@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "leads_tratos_tel_abierto" ON "leads_tratos" USING btree ("marca","telefono") WHERE "leads_tratos"."estado" = 'abierto' and "leads_tratos"."telefono" is not null;

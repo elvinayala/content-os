@@ -3,6 +3,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 
 import { upsertContacto } from "@/lib/activecampaign";
 import { avisarLlamada } from "@/lib/aviso-llamadas";
+import { leadCalendlyAgendo, leadCalendlyCancelo, leadCalendlyOnboarding } from "@/lib/leads/cables";
 
 // after() corre hasta maxDuration: AC es lento (tags + lista ≈ 10-40 s).
 export const maxDuration = 120;
@@ -393,6 +394,7 @@ async function procesarCreado(inv: CalendlyInvitee) {
   if (IGNORAR.test(ev.name)) {
     if (vistoRecien(ev.uri)) return { ok: true, duplicado: true };
     after(() => avisarLlamada("level-up", inv, { onboarding: true }));
+    after(() => leadCalendlyOnboarding(email, telefono)); // Leads (Pulse): agendar onboarding = ganado
     const onb = await avisarOnboardingN8n(inv);
     return { ok: true, onboarding: onb, ignoradoPipedrive: `tipo-evento:${ev.name}` };
   }
@@ -402,6 +404,10 @@ async function procesarCreado(inv: CalendlyInvitee) {
 
   // Aviso al canal de llamadas (#office-10-lum-calls) con el closer real (alias incluido).
   after(() => avisarLlamada("level-up", inv, { closer: owner.nombre }));
+  // Leads (Pulse), en paralelo con Pipedrive mientras dura la migración.
+  after(() =>
+    leadCalendlyAgendo({ nombre, email, telefono, negocio, inicio: ev.start_time, evento: ev.name, closer: owner.nombre ?? null, agendoPor: inv.tracking?.utm_source ?? null, reagenda: esReagenda, uri: ev.uri }),
+  );
 
   // ActiveCampaign: el que agenda entra a la base con `etapa:agendo` (dispara la
   // pre-llamada y corta lead→agenda). No-op sin ACTIVECAMPAIGN_*.
@@ -511,6 +517,7 @@ async function procesarCancelado(inv: CalendlyInvitee) {
   if (!dealId) return { ok: true, dealId: null, ignorado: "sin-deal" };
 
   const reagendado = Boolean(inv.rescheduled);
+  if (!reagendado) after(() => leadCalendlyCancelo(inv.email, telefonoDe(inv)));
   if (!reagendado) {
     after(() => upsertContacto({ email: inv.email.trim().toLowerCase(), nombre: inv.name, marca: marcaDe(inv), tags: ["etapa:cancelo"] }).then((r) => { if (!r.ok) console.error("[AC] upsert falló", r.error); }));
   }
