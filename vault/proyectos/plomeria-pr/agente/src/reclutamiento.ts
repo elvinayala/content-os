@@ -46,6 +46,12 @@ export function chocaEntrevista(iso: string, ocupadas: string[], minutos = MIN_E
   const t = new Date(iso).getTime();
   return ocupadas.some((o) => Math.abs(new Date(o).getTime() - t) < minutos * 60_000);
 }
+/** Horas ocupadas según el calendario de GHL (citas que Yaileen agenda o mueve a mano): sin canceladas/no-show,
+ *  sin las del propio candidato (si está cambiando su hora) y unidas a las que el agente ya conoce. */
+export function unirOcupadas(propias: string[], ghl: { inicio: string; contactId?: string; estado?: string }[], excluirContacto?: string): string[] {
+  const deGhl = ghl.filter((e) => !/cancel|invalid|noshow|no_show/i.test(e.estado ?? "") && !(excluirContacto && e.contactId === excluirContacto) && !isNaN(new Date(e.inicio).getTime())).map((e) => new Date(e.inicio).toISOString());
+  return [...new Set([...propias.map((o) => new Date(o).toISOString()), ...deGhl])];
+}
 /** Huecos para ofrecer: fuera de las entrevistas ya agendadas y separados entre sí al menos `minutos`. */
 export function separarHuecos(huecos: string[], ocupadas: string[], minutos = MIN_ENTREVISTA): string[] {
   const out: string[] = [];

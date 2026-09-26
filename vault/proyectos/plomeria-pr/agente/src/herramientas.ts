@@ -11,11 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { RAIZ, type Proyecto, type Contratista } from "./almacen.js";
 import { crearLinkPago } from "./integraciones/cobros.js";
-import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCita } from "./integraciones/crm.js";
+import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCita, citasCalendario } from "./integraciones/crm.js";
 import { dmSlack } from "./integraciones/slack.js";
-import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida, chocaEntrevista, separarHuecos, MIN_ENTREVISTA } from "./reclutamiento.js";
+import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida, chocaEntrevista, separarHuecos, unirOcupadas, MIN_ENTREVISTA } from "./reclutamiento.js";
 /** Entrevistas ya agendadas (futuras), menos la del contacto que se está atendiendo. */
 const entrevistasOcupadas = (contactoId?: string) => almacen.candidatos().filter((x) => x.estado === "entrevista" && x.entrevista && x.contactoId !== contactoId && new Date(x.entrevista).getTime() > Date.now() - MIN_ENTREVISTA * 60_000).map((x) => x.entrevista as string);
+/** Las del agente + las reales del calendario de GHL (lo que se agenda o mueve a mano). Si GHL falla, quedan las del agente. */
+const ocupadasConGhl = async (contactoId: string, ghlContactId: string | undefined, desde: Date, hasta: Date) => unirOcupadas(entrevistasOcupadas(contactoId), await citasCalendario(config.ghl.calEntrevista, new Date(desde.getTime() - MIN_ENTREVISTA * 60_000), new Date(hasta.getTime() + MIN_ENTREVISTA * 60_000)), ghlContactId);
 import { avisarCoordinador } from "./canales/whatsapp.js";
 import { programarLlamadaHumana } from "./llamar-cliente.js";
 
@@ -254,7 +256,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "horarios_entrevista": {
       const desde = input.desde && /^\d{4}-\d{2}-\d{2}$/.test(input.desde) ? new Date(`${input.desde}T00:00:00-04:00`) : new Date();
       const inicio = new Date(Math.max(desde.getTime(), Date.now()));
-      const huecos = separarHuecos(await huecosLibres(config.ghl.calEntrevista, inicio, new Date(inicio.getTime() + 8 * 86_400_000)), entrevistasOcupadas(ctx.contacto.id));
+      const huecos = separarHuecos(await huecosLibres(config.ghl.calEntrevista, inicio, new Date(inicio.getTime() + 8 * 86_400_000)), await ocupadasConGhl(ctx.contacto.id, ctx.contacto.ghlContactId, inicio, new Date(inicio.getTime() + 8 * 86_400_000)));
       if (!huecos.length) return { ok: false, mensaje: "No pude leer el calendario ahora. Pregúntale qué días y horas le sirven, anótalo en disponibilidad y dile que el equipo lo llama para cuadrar." };
       const fmt = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
       return { ok: true, huecos: huecos.slice(0, 16).map((iso) => ({ iso, texto: fmt(iso) })), nota: "Propón 1 o 2 que caigan en lo que él dijo. Cuando confirme, llama registrar_candidato con entrevista = el iso exacto." };
@@ -298,7 +300,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
           fueraDeHorario = !libres.some((h) => new Date(h).getTime() === dia.getTime());
         }
         // Ni la hora de un gran candidato puede caer a menos de 1 h de otra entrevista (Yaileen dura ~1 h).
-        cita = chocaEntrevista(c.entrevista, entrevistasOcupadas(ctx.contacto.id)) ? { ok: false, error: "choca con otra entrevista" } : await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: MIN_ENTREVISTA, titulo: `${prioridad ? "⭐ " : ""}Entrevista · ${c.nombre} (${c.nivelLicencia}${c.experiencia ? ", " + c.experiencia : ""}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined, forzar: fueraDeHorario });
+        cita = chocaEntrevista(c.entrevista, await ocupadasConGhl(ctx.contacto.id, ghlId, new Date(c.entrevista), new Date(c.entrevista))) ? { ok: false, error: "choca con otra entrevista" } : await guardarCita({ calendarId: config.ghl.calEntrevista, contactId: ghlId, inicio: c.entrevista, minutos: MIN_ENTREVISTA, titulo: `${prioridad ? "⭐ " : ""}Entrevista · ${c.nombre} (${c.nivelLicencia}${c.experiencia ? ", " + c.experiencia : ""}) · ${c.municipio}`, asignadoA: config.ghl.usuarioReclutamiento, citaId: previo?.ghlCitaId, lugar: config.zoomEntrevistas || undefined, forzar: fueraDeHorario });
         if (cita.ok) { almacen.guardarCandidato({ ...c, ghlCitaId: (cita as { id?: string }).id ?? previo?.ghlCitaId }); await dmSlack(config.slack.reclutamiento, mensajeCita(c, c.entrevista, fueraDeHorario)); }
         else { almacen.guardarCandidato({ ...c, entrevista: previo?.entrevista, estado: previo?.entrevista ? "entrevista" : "nuevo" }); }
       } else if (previo?.ghlCitaId) almacen.guardarCandidato({ ...c, ghlCitaId: previo.ghlCitaId });

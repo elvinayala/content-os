@@ -169,6 +169,14 @@
       "porque": "Aure preguntó \"y ahora?\" siguiendo su hilo; Elvin aprobó.",
       "verificado": "En vivo: app.resueltopr.com/kit/*.pdf (kit, acuerdo y menú interno de 8552d9d) iguales byte a byte (sha256) al repo; 5cd45a4, 5bd365c y b35d560 son ancestros de 8552d9d → lo desplegado los incluye. No verificado: el calendario de GHL sigue en 20 min (sin GHL_TOKEN de Resuelto) y las 3 entrevistas del lun 28 (9:00, 9:00, 9:30) siguen pegadas, no se movieron.",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "Resuelto (agente en Railway · reclutamiento)",
+      "que": "[Solicitud de Aure #42] El agente ahora también lee las citas reales del calendario de Entrevista en GHL (GET /calendars/events) y las cuenta como ocupadas al ofrecer huecos y al agendar (incluido gran candidato): lo que Yaileen agenda o mueve a mano queda protegido con 1 h de espacio y nunca a la misma hora. Excluye canceladas/no-show y la cita del propio candidato; si GHL falla, usa las del agente. Las 3 del lun 28 las mueve Yaileen (no se tocaron).",
+      "porque": "Aure: Yaileen las mueve, pero que no se agenden pegadas (1 h entre reuniones, nunca a la misma hora). Elvin aprobó.",
+      "verificado": "Tests del agente 47/47 (test nuevo: citas de GHL cuentan como ocupadas); tsc sin errores nuevos (165 preexistentes del clon, iguales antes y después). NO DESPLEGADO ni probado contra el GHL vivo: Nico no tiene acceso al Railway de Resuelto ni GHL_TOKEN. Falta: en la Mac git pull; cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach; luego pedir horarios de entrevista y confirmar que no ofrece a < 1 h de una cita puesta a mano.",
+      "commit": "ver git log (citas de GHL)"
     }
   ],
   "pendientesElvin": [

@@ -87,3 +87,18 @@ test("entrevistas separadas al menos 1 hora", async () => {
   assert.equal(R.chocaEntrevista("2026-09-28T14:00:00.000Z", nueve), false);
   assert.deepEqual(R.separarHuecos(["2026-09-28T13:20:00Z", "2026-09-28T14:00:00Z", "2026-09-28T14:20:00Z", "2026-09-28T15:00:00Z"], nueve), ["2026-09-28T14:00:00Z", "2026-09-28T15:00:00Z"]);
 });
+
+// 26/sep (Aure #42): Yaileen mueve citas a mano en GHL; el agente tiene que respetarlas también.
+test("las citas del calendario de GHL cuentan como ocupadas", async () => {
+  const R = await import("../dist/reclutamiento.js");
+  const ghl = [
+    { inicio: "2026-09-28T15:00:00.000Z", contactId: "g1", estado: "confirmed" }, // 11:00 AM, movida a mano
+    { inicio: "2026-09-28T17:00:00.000Z", contactId: "g2", estado: "cancelled" },
+    { inicio: "2026-09-28T19:00:00.000Z", contactId: "yo", estado: "confirmed" },  // la del mismo candidato
+  ];
+  const oc = R.unirOcupadas(["2026-09-28T13:00:00Z"], ghl, "yo");
+  assert.deepEqual(oc.sort(), ["2026-09-28T13:00:00.000Z", "2026-09-28T15:00:00.000Z"]);
+  assert.equal(R.chocaEntrevista("2026-09-28T15:30:00.000Z", oc), true);
+  assert.deepEqual(R.separarHuecos(["2026-09-28T14:00:00Z", "2026-09-28T15:20:00Z", "2026-09-28T16:00:00Z", "2026-09-28T17:00:00Z"], oc), ["2026-09-28T14:00:00Z", "2026-09-28T16:00:00Z", "2026-09-28T17:00:00Z"]);
+  assert.deepEqual(R.unirOcupadas(["2026-09-28T13:00:00Z"], []), ["2026-09-28T13:00:00.000Z"]);
+});

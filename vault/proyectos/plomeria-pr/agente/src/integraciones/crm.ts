@@ -60,6 +60,18 @@ export async function huecosLibres(calendarId: string, desde: Date, hasta: Date)
   return Object.entries(j).filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && v && typeof v === "object").flatMap(([, v]) => (v as { slots?: string[] }).slots ?? []).sort();
 }
 
+/** Citas reales del calendario (lo que el equipo agenda o mueve a mano en GHL), entre dos fechas. [] sin token o si falla. */
+export async function citasCalendario(calendarId: string, desde: Date, hasta: Date): Promise<{ inicio: string; contactId?: string; estado?: string }[]> {
+  if (!config.tiene.ghl() || !calendarId) return [];
+  try {
+    const q = new URLSearchParams({ locationId: config.ghl.locationId, calendarId, startTime: String(desde.getTime()), endTime: String(hasta.getTime()) });
+    const r = await fetch(`${BASE}/calendars/events?${q}`, { headers: hCal() });
+    if (!r.ok) { console.error("GHL events", r.status, (await r.text()).slice(0, 200)); return []; }
+    const j = (await r.json()) as { events?: { startTime?: string; contactId?: string; appointmentStatus?: string }[] };
+    return (j.events ?? []).filter((e) => e.startTime).map((e) => ({ inicio: e.startTime as string, contactId: e.contactId, estado: e.appointmentStatus }));
+  } catch (e) { console.error("GHL events", e); return []; }
+}
+
 /** Crea (o mueve, si ya hay `citaId`) la cita en GHL. GHL valida que el hueco esté libre, salvo con `forzar`
  *  (candidatos prioritarios: se les da la hora que pidan aunque esté fuera del horario del calendario). */
 export async function guardarCita(datos: { calendarId: string; contactId: string; inicio: string; minutos: number; titulo: string; asignadoA?: string; citaId?: string; lugar?: string; forzar?: boolean }): Promise<{ ok: boolean; id?: string; error?: string }> {
