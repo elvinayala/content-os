@@ -1,19 +1,22 @@
 import postgres from "postgres";
 
-// Cliente de Postgres que no se queda colgado (26/sep/2026). En Vercel la función se congela entre
-// requests y el socket al pooler de Supabase puede morir sin aviso: la siguiente consulta esperaba
-// para siempre y la página "se quedaba cargando" hasta el timeout de 300 s (Ritmo y Pulse).
-// Ahora cada consulta tiene un vigilante: si no responde en DB_TIMEOUT_MS (15 s), se abre una conexión
+// Cliente de Postgres que no se queda colgado (26/sep/2026). Causa real (reproducida desde la Mac): el pooler
+// de TRANSACCIONES de Supabase (:6543) cuelga ~1 de cada 3 lotes de consultas en cola en una misma conexión.
+// El de sesión (:5432) no se cuelga, pero tiene tope de 15 clientes en total y las instancias congeladas de
+// Vercel no los sueltan: al probarlo se llenó y tumbó prod ~5 min (revertido). Queda el de transacciones +
+// este vigilante. Arreglo de fondo pendiente: subir el pool size de Supabase y pasar a sesión.
+// Síntoma: la página "se quedaba cargando" hasta el timeout de 300 s de Vercel (Ritmo y Pulse).
+// Ahora cada consulta tiene un vigilante: si no responde en DB_TIMEOUT_MS (5 s), se abre una conexión
 // nueva, la vieja tiene 10 s para terminar y se cierra, y si era una lectura (SELECT) se repite una vez.
 // Las escrituras no se repiten (podrían haberse aplicado): esperan a la vieja, y si estaba muerta fallan
-// al cerrarse (~25 s) en vez de colgar 300 s. No corta consultas que solo estaban lentas.
+// al cerrarse (~15 s) en vez de colgar 300 s. No corta consultas que solo estaban lentas.
 
 type Sql = postgres.Sql;
 
 const esLectura = (q: string) => /^\s*select\b/i.test(q);
 const GRACIA_S = 10;
 
-export function clienteResistente(url: string, opciones: postgres.Options<Record<string, never>>, timeoutMs = Number(process.env.DB_TIMEOUT_MS) || 15000): Sql {
+export function clienteResistente(url: string, opciones: postgres.Options<Record<string, never>>, timeoutMs = Number(process.env.DB_TIMEOUT_MS) || 5000): Sql {
   const nuevo = () => postgres(url, opciones);
   const base = nuevo(); // drizzle ajusta parsers/serializers sobre este objeto al crearse
   let actual: Sql = base;
