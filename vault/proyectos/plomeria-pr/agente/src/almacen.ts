@@ -88,6 +88,8 @@ export interface Trabajo {
   materialesCosto?: number;
   totalCliente?: number;
   pagoPlomero?: number;
+  /** Fotos del área que subió el cliente al reservar por la página (reservas.ts). */
+  fotosCliente?: string[];
   fotosAntes?: string[];
   fotosDespues?: string[];
   notaCierre?: string;

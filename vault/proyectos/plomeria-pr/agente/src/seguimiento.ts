@@ -48,6 +48,7 @@ Escribe UN solo mensaje de seguimiento: 1 o 2 líneas, tuteo de Puerto Rico, com
 - Retoma lo que pidió (con su nombre si lo sabes) y ofrécele DOS espacios concretos de 2 horas, no la lista entera (por ejemplo "mañana de 10 a 12 o de 1 a 3"; hoy solo si todavía da tiempo).
 - Escribe completo y claro: "para", nunca "pa"; nada de jerga.
 - Si no tenemos su teléfono, pídeselo para confirmarle ("dame un número y te lo confirmo").
+- Si te dan un enlace de reserva, puedes cerrar con él para que reserve solo cuando pueda (completo, al final).
 - No repitas el desglose de precio, no menciones el porcentaje de materiales, no inventes descuentos ni urgencias falsas, no prometas horas exactas.
 - Si es el seguimiento 2 (el último), que sea más corto y sin presión: que si todavía lo necesita, le apartas el espacio.
 Responde exactamente NADA si no aplica: dijo que no le interesa o que ya lo resolvió, su pueblo no tiene cobertura (quedó en lista de espera), es un plomero o candidato, o la conversación no es de un servicio.`;
@@ -57,7 +58,7 @@ export async function redactar(c: Contacto, eventos: { autor: string; texto: str
   const charla = eventos.slice(-14).map((e) => `${e.autor === "cliente" ? "Cliente" : "Resuelto"}: ${e.texto}`).join("\n");
   const r = await cliente.messages.create({
     model: config.modelo, max_tokens: 300, system: SISTEMA,
-    messages: [{ role: "user", content: `Seguimiento ${numero} de ${REGLAS.max}. ${c.nombre ? `Nombre: ${c.nombre}.` : ""} ${c.telefono ? "Ya tenemos su teléfono." : "No tenemos su teléfono."} Hora en PR: ${new Date().toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", hour: "numeric", minute: "2-digit" })}.\n\nConversación:\n${charla}` }],
+    messages: [{ role: "user", content: `Seguimiento ${numero} de ${REGLAS.max}. ${c.nombre ? `Nombre: ${c.nombre}.` : ""} ${c.telefono ? "Ya tenemos su teléfono." : "No tenemos su teléfono."} ${c.municipio ? `Enlace de reserva: ${config.urlPublica}/reservar?p=${encodeURIComponent(c.municipio)}&o=seguimiento` : ""} Hora en PR: ${new Date().toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", hour: "numeric", minute: "2-digit" })}.\n\nConversación:\n${charla}` }],
   });
   const t = r.content.filter((b): b is Anthropic.TextBlock => b.type === "text").map((b) => b.text).join("").trim();
   return !t || /^NADA\b/i.test(t) ? null : t;

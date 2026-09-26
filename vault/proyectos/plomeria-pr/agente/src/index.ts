@@ -26,6 +26,7 @@ import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
+import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
 import { panelFirmasHTML, entrarFirmasHTML } from "./firmas/panel.js";
 import { esSoloAcuse, ultimoPregunto } from "./cierre.js";
@@ -102,6 +103,14 @@ app.post("/api/firmar/:token/tipo", (req: any, res) => {
   const r = firmas.cambiarTipo(f, tipo, "firmante");
   if (!r.ok) return res.status(409).json(r);
   res.json({ ok: true, ...firmas.abrir(f, ipDe(req)) });
+});
+// ── Página de reserva (26/sep/2026): anuncios, enlace del agente y SMS del setter terminan aquí ──
+app.get("/reservar", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "reservar.html"), "utf8")); });
+app.get("/api/reservar/datos", (_req, res) => res.json(reservas.datosReserva()));
+app.get("/api/reservar/ventanas", async (req, res) => res.json({ ventanas: await reservas.ventanas(String(req.query.pueblo ?? ""), String(req.query.fecha ?? "")).catch(() => []) }));
+app.post("/api/reservar", async (req: any, res) => {
+  try { res.json(await reservas.reservar(req.body, ipDe(req))); }
+  catch (e) { console.error("reservar", e); res.status(500).json({ ok: false, error: "No pudimos crear la reserva. Escríbenos por mensaje y te la cuadramos." }); }
 });
 app.get("/firmado/:archivo", (req, res) => {
   const f = firmas.porToken(String(req.params.archivo).replace(/\.pdf$/, ""));

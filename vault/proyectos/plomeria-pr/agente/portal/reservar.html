@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reserva tu plomero · Resuelto</title>
+<meta name="description" content="Plomero licenciado con precio fijo antes de llegar y 12 meses de garantía. Reserva en un minuto.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --azul:#0F3D5E; --naranja:#F2621F; --crema:#FBF7F0; --tinta:#1c2a36; --gris:#5C6670; --linea:#E6E1D8; --verde:#1F9D6B; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--crema); color: var(--tinta); font-family: 'DM Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.45; }
+  header { background: var(--azul); color: #fff; padding: 18px 20px 16px; border-bottom: 3px solid var(--naranja); }
+  header .marca { font-family: 'Sora'; font-weight: 800; font-size: 20px; letter-spacing: -.5px; display: flex; align-items: center; gap: 8px; }
+  header .marca svg { width: 22px; height: 22px; }
+  header p { margin: 6px 0 0; opacity: .88; font-size: 14.5px; }
+  main { max-width: 560px; margin: 0 auto; padding: 18px 16px 120px; }
+  h2 { font-family: 'Sora'; font-size: 18px; color: var(--azul); margin: 26px 0 4px; letter-spacing: -.3px; }
+  .sub { color: var(--gris); font-size: 14px; margin: 0 0 12px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 12px 0 6px; }
+  .ayuda { font-weight: 400; color: var(--gris); font-size: 12.5px; }
+  input, select, textarea { width: 100%; font: inherit; padding: 13px 14px; border: 1.5px solid var(--linea); border-radius: 12px; background: #fff; outline: none; color: var(--tinta); }
+  input:focus, select:focus, textarea:focus { border-color: var(--azul); }
+  textarea { min-height: 84px; resize: vertical; }
+  .precio { background: #fff; border: 1.5px solid var(--linea); border-radius: 14px; padding: 14px 16px; margin-top: 12px; display: none; }
+  .precio .n { font-family: 'Sora'; font-weight: 800; font-size: 34px; color: var(--naranja); letter-spacing: -1px; line-height: 1.1; }
+  .precio p { margin: 4px 0 0; font-size: 14px; color: var(--gris); }
+  .dias { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .dias button, .horas button { font: inherit; font-weight: 700; border: 1.5px solid var(--linea); background: #fff; color: var(--azul); border-radius: 12px; padding: 10px 12px; cursor: pointer; flex: none; }
+  .dias button small { display: block; font-weight: 500; font-size: 12px; color: var(--gris); }
+  .dias button.sel, .horas button.sel { background: var(--azul); border-color: var(--azul); color: #fff; }
+  .dias button.sel small { color: #d5e2ec; }
+  .horas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .vacio { color: var(--gris); font-size: 14px; padding: 8px 0; }
+  .fotos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .fotos img { width: 76px; height: 76px; object-fit: cover; border-radius: 10px; border: 1px solid var(--linea); }
+  .subir { display: inline-flex; align-items: center; gap: 8px; border: 1.5px dashed #b9c3cc; border-radius: 12px; padding: 12px 14px; background: #fff; cursor: pointer; font-weight: 700; color: var(--azul); }
+  .subir input { display: none; }
+  .resumen { background: #fff; border-radius: 14px; border: 1.5px solid var(--linea); padding: 14px 16px; margin-top: 22px; font-size: 14.5px; }
+  .resumen b { font-family: 'Sora'; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--gris); margin-top: 8px; }
+  .check svg { flex: none; margin-top: 2px; }
+  .principal { width: 100%; font: 700 17px 'Sora'; background: var(--naranja); color: #fff; border: 0; border-radius: 14px; padding: 16px; margin-top: 18px; cursor: pointer; }
+  .principal:disabled { opacity: .5; }
+  .error { background: #FDECEA; color: #9B2C1F; padding: 10px 12px; border-radius: 10px; font-size: 14px; margin-top: 12px; display: none; }
+  .listo { text-align: center; padding: 40px 8px; display: none; }
+  .listo .circulo { width: 76px; height: 76px; border-radius: 50%; background: var(--verde); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 14px; }
+  .listo h2 { margin-top: 0; font-size: 22px; }
+  .trampa { position: absolute; left: -9999px; }
+  button:focus-visible, .subir:focus-within { outline: 3px solid var(--naranja); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="marca"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="#F2621F"/><path d="M20 35 L29 44 L46 26" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>resuelto</div>
+  <p>Reserva tu plomero en un minuto. Precio fijo antes de llegar y 12 meses de garantía.</p>
+</header>
+<main>
+  <form id="f" novalidate>
+    <h2>1. ¿Qué necesitas?</h2>
+    <select id="servicio" aria-label="Servicio"></select>
+    <div class="precio" id="precio"><div class="n" id="precioN"></div><p id="precioP"></p></div>
+
+    <h2>2. ¿Dónde?</h2>
+    <select id="pueblo" aria-label="Pueblo"></select>
+
+    <h2>3. ¿Cuándo?</h2>
+    <p class="sub">Ventanas de 2 horas. El plomero te avisa 30 minutos antes de llegar.</p>
+    <div class="dias" id="dias"></div>
+    <div class="horas" id="horas"><div class="vacio">Escoge tu pueblo y un día.</div></div>
+
+    <h2>4. Tus datos</h2>
+    <label for="nombre">Nombre completo</label><input id="nombre" autocomplete="name" required>
+    <label for="telefono">Teléfono <span class="ayuda">· te confirmamos por texto</span></label><input id="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="787-000-0000" required>
+    <label for="direccion">Dirección <span class="ayuda">· urbanización, calle y número</span></label><input id="direccion" autocomplete="street-address" required>
+    <label for="referencia">Punto de referencia <span class="ayuda">· opcional</span></label><input id="referencia">
+    <label for="notas">Cuéntanos qué está pasando <span class="ayuda">· opcional</span></label><textarea id="notas"></textarea>
+    <input class="trampa" id="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <h2>5. Fotos del área</h2>
+    <p class="sub">Así el plomero llega preparado y queda en récord. Hasta 4.</p>
+    <label class="subir"><input type="file" id="archivos" accept="image/*" multiple>📷 Añadir fotos</label>
+    <div class="fotos" id="fotos"></div>
+
+    <div class="resumen" id="resumen">Completa los pasos para ver tu reserva.</div>
+    <div class="check"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1F9D6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>No pagas nada ahora.</b> Pagas al terminar, por el link de Resuelto (ATH Móvil o tarjeta). Nunca en efectivo.</span></div>
+    <div class="check"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1F9D6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Si aparece algo distinto a lo que reservaste, el plomero no lo toca hasta que tú lo apruebes.</span></div>
+    <button class="principal" id="enviar" type="submit">Reservar</button>
+    <div class="error" id="error" role="alert"></div>
+  </form>
+  <div class="listo" id="listo" role="status">
+    <div class="circulo">✓</div>
+    <h2>¡Recibimos tu reserva!</h2>
+    <p class="sub">Te confirmamos por texto cuando el plomero de tu zona la acepte (casi siempre en menos de 30 minutos). Si tienes dudas, escríbenos por mensaje.</p>
+  </div>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const q = new URLSearchParams(location.search);
+  let datos, dia = null, ventana = null, fotos = [];
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const DIAS = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"], MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const hoyPR = () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Puerto_Rico" }));
+  const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const hora12 = (iso) => new Date(iso).toLocaleTimeString("es-PR", { timeZone: "America/Puerto_Rico", hour: "numeric", minute: "2-digit" });
+  const error = (t) => { $("error").textContent = t || ""; $("error").style.display = t ? "block" : "none"; };
+  const servicioSel = () => datos.servicios.find((s) => s.id === $("servicio").value);
+
+  function precio() {
+    const s = servicioSel(); const box = $("precio");
+    if (!s) { box.style.display = "none"; return; }
+    box.style.display = "block";
+    if (s.precio != null) { $("precioN").textContent = `$${s.precio}`; $("precioP").textContent = `Precio fijo de mano de obra + $${datos.coordinacion} de coordinación. Materiales aparte, al costo con recibo. ${datos.garantiaMeses} meses de garantía.`; }
+    else { $("precioN").textContent = `$${s.desde.toLocaleString("en-US")} – $${s.hasta.toLocaleString("en-US")}`; $("precioP").textContent = "El plomero te confirma el precio fijo por escrito en tu casa, antes de empezar."; }
+    if (s.id === "diagnostico") $("precioP").textContent = "El plomero ve el problema y te da el precio fijo por escrito. Si se hace el trabajo, los $69 se acreditan.";
+    resumen();
+  }
+  function pintarDias() {
+    const d0 = hoyPR(); let html = "";
+    for (let i = 0; i < 7; i++) { const d = new Date(d0); d.setDate(d0.getDate() + i); if (d.getDay() === 0) continue; const v = ymd(d); html += `<button type="button" data-d="${v}" class="${dia === v ? "sel" : ""}">${i === 0 ? "Hoy" : i === 1 ? "Mañana" : DIAS[d.getDay()]}<small>${d.getDate()} ${MESES[d.getMonth()]}</small></button>`; }
+    $("dias").innerHTML = html;
+    $("dias").querySelectorAll("button").forEach((b) => (b.onclick = () => { dia = b.dataset.d; ventana = null; pintarDias(); horas(); }));
+  }
+  async function horas() {
+    const box = $("horas");
+    if (!$("pueblo").value || !dia) { box.innerHTML = '<div class="vacio">Escoge tu pueblo y un día.</div>'; return resumen(); }
+    box.innerHTML = '<div class="vacio">Buscando espacios…</div>';
+    const r = await fetch(`/api/reservar/ventanas?pueblo=${encodeURIComponent($("pueblo").value)}&fecha=${dia}`).then((x) => x.json()).catch(() => ({ ventanas: [] }));
+    const vs = r.ventanas || [];
+    if (!vs.length) { box.innerHTML = '<div class="vacio">No quedan espacios ese día. Prueba otro.</div>'; return resumen(); }
+    box.innerHTML = vs.map((v) => `<button type="button" data-i="${esc(v.inicio)}" data-f="${esc(v.fin)}" class="${ventana && ventana.inicio === v.inicio ? "sel" : ""}">${hora12(v.inicio)} – ${hora12(v.fin)}</button>`).join("");
+    box.querySelectorAll("button").forEach((b) => (b.onclick = () => { ventana = { inicio: b.dataset.i, fin: b.dataset.f }; box.querySelectorAll("button").forEach((x) => x.classList.toggle("sel", x === b)); resumen(); }));
+    resumen();
+  }
+  function resumen() {
+    const s = servicioSel(); if (!s || !$("pueblo").value || !ventana) { $("resumen").textContent = "Completa los pasos para ver tu reserva."; return; }
+    const cuando = new Date(ventana.inicio).toLocaleDateString("es-PR", { timeZone: "America/Puerto_Rico", weekday: "long", day: "numeric", month: "long" });
+    $("resumen").innerHTML = `<b>${esc(s.nombre)}</b><br>${esc($("pueblo").value)} · ${esc(cuando)}, de ${hora12(ventana.inicio)} a ${hora12(ventana.fin)}<br>${s.precio != null ? `$${s.precio} de mano de obra + $${datos.coordinacion} de coordinación` : "Precio fijo por escrito en sitio"}`;
+  }
+  function achicar(file) { return new Promise((ok, ko) => { const img = new Image(); img.onload = () => { const m = 1400, s = Math.min(1, m / Math.max(img.width, img.height)), c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); ok(c.toDataURL("image/jpeg", 0.8)); }; img.onerror = ko; img.src = URL.createObjectURL(file); }); }
+  $("archivos").onchange = async (e) => {
+    for (const f of [...e.target.files].slice(0, 4 - fotos.length)) { try { fotos.push(await achicar(f)); } catch {} }
+    $("fotos").innerHTML = fotos.map((d) => `<img src="${d}" alt="Foto del área">`).join(""); e.target.value = "";
+  };
+  $("servicio").onchange = precio;
+  $("pueblo").onchange = () => { ventana = null; horas(); };
+  $("f").onsubmit = async (e) => {
+    e.preventDefault(); error("");
+    const s = servicioSel(); const tel = $("telefono").value.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+    if (!s) return error("Escoge el servicio.");
+    if (!$("pueblo").value) return error("Escoge tu pueblo.");
+    if (!ventana) return error("Escoge el día y la hora.");
+    if ($("nombre").value.trim().length < 3) return error("Falta tu nombre.");
+    if (tel.length !== 10) return error("El teléfono debe tener 10 dígitos.");
+    if ($("direccion").value.trim().length < 6) return error("Falta la dirección.");
+    $("enviar").disabled = true; $("enviar").textContent = "Reservando…";
+    try {
+      const r = await fetch("/api/reservar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ servicio_id: s.id, pueblo: $("pueblo").value, inicio: ventana.inicio, fin: ventana.fin, nombre: $("nombre").value, telefono: tel, direccion: $("direccion").value, referencia: $("referencia").value, notas: $("notas").value, fotos, web: $("web").value, origen: q.get("o") || "" }) }).then((x) => x.json());
+      if (!r.ok) throw new Error(r.error || "No se pudo reservar.");
+      $("f").style.display = "none"; $("listo").style.display = "block"; window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) { error(err.message); $("enviar").disabled = false; $("enviar").textContent = "Reservar"; }
+  };
+  fetch("/api/reservar/datos").then((r) => r.json()).then((d) => {
+    datos = d;
+    const grupo = (n, t) => { const xs = d.servicios.filter((s) => s.nivel === n && s.id !== "diagnostico"); return xs.length ? `<optgroup label="${t}">${xs.map((s) => `<option value="${s.id}">${esc(s.nombre)} · ${s.precio != null ? "$" + s.precio : "desde $" + s.desde.toLocaleString("en-US")}</option>`).join("")}</optgroup>` : ""; };
+    const diag = d.servicios.find((s) => s.id === "diagnostico");
+    $("servicio").innerHTML = `<option value="">Escoge el servicio…</option>${diag ? `<option value="diagnostico">No sé qué es / no está en la lista · Visita de diagnóstico $${diag.precio}</option>` : ""}${grupo("P", "Trabajos pequeños")}${grupo("M", "Trabajos medianos")}${grupo("G", "Trabajos grandes (precio en sitio)")}`;
+    $("pueblo").innerHTML = `<option value="">Escoge tu pueblo…</option>${d.pueblos.map((p) => `<option>${esc(p)}</option>`).join("")}`;
+    if (q.get("s") && d.servicios.some((s) => s.id === q.get("s"))) $("servicio").value = q.get("s");
+    if (q.get("p") && d.pueblos.includes(q.get("p"))) $("pueblo").value = q.get("p");
+    precio(); pintarDias();
+  }).catch(() => error("Sin conexión. Vuelve a abrir la página."));
+})();
+</script>
+</body>
+</html>

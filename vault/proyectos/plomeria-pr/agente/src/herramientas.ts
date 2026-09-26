@@ -49,6 +49,11 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
     input_schema: { type: "object", properties: { territorio_id: { type: "string" }, fecha: { type: "string", description: "YYYY-MM-DD" }, emergencia: { type: "boolean" } }, required: ["territorio_id", "fecha", "emergencia"], additionalProperties: false },
   },
   {
+    name: "enlace_reserva",
+    description: "Devuelve el enlace de la página de reserva de Resuelto con el servicio y el pueblo ya escogidos. El cliente escoge día y hora, deja sus datos y sube fotos del área él mismo. Úsalo cuando el cliente prefiera reservar solo o esté ocupado ('estoy en el trabajo', 'después te escribo'), o si quiere mandar fotos más cómodo.",
+    input_schema: { type: "object", properties: { servicio_id: { type: "string", description: "id del menú (buscar_precio); 'diagnostico' si no está claro" }, municipio: { type: "string" } }, required: ["servicio_id", "municipio"], additionalProperties: false },
+  },
+  {
     name: "agendar_cita",
     description: "Crea el trabajo: evento en el calendario del plomero, oportunidad en el CRM y registro interno. Solo después de que el cliente aprobó precio y ventana y dio nombre y dirección.",
     input_schema: {
@@ -199,6 +204,10 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       const pl = plomeroDeTerritorio(t.id);
       const estado = pl ? "activo" : t.estado === "activo" ? "reclutando" : t.estado;
       return { estado, territorio_id: t.id, territorio: t.nombre, plomero: pl ? { id: pl.id, nombre: pl.nombre } : null, accion: pl ? "agendar" : "lista de espera" };
+    }
+    case "enlace_reserva": {
+      const q = new URLSearchParams({ s: String(input.servicio_id ?? ""), p: String(input.municipio ?? ""), o: ctx.contacto.canal });
+      return { ok: true, enlace: `${config.urlPublica}/reservar?${q.toString()}`, nota: "Mándalo completo, en su propia línea. La confirmación le llega por texto cuando el plomero acepte." };
     }
     case "consultar_disponibilidad": {
       const v = await ventanasLibres(input.territorio_id, input.fecha, !!input.emergencia);
