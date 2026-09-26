@@ -161,6 +161,14 @@
       "porque": "Yaileen dura ~1 h por llamada y le cayeron 3 entrevistas entre 9:00 y 9:30. Elvin aprobó.",
       "verificado": "Build OK; tests del agente 35/35 (test nuevo de separación). NO DESPLEGADO: sin acceso de Nico al Railway de Resuelto. Falta: deploy desde la Mac (git pull; cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach) y, opcional, en GHL poner el calendario Entrevista en 60 min (sin GHL_TOKEN de Resuelto no pude).",
       "commit": "ver git log (entrevistas 1 h)"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "Resuelto (agente en Railway)",
+      "que": "[Solicitud de Aure #41] Confirmé que ya están en producción la firma con el nombre legal RESUELTO PR HOME SERVICES LLC (#37-39) y las entrevistas separadas 1 h (#40). Sin cambios de código ni deploy: Elvin ya había desplegado desde la Mac.",
+      "porque": "Aure preguntó \"y ahora?\" siguiendo su hilo; Elvin aprobó.",
+      "verificado": "En vivo: app.resueltopr.com/kit/*.pdf (kit, acuerdo y menú interno de 8552d9d) iguales byte a byte (sha256) al repo; 5cd45a4, 5bd365c y b35d560 son ancestros de 8552d9d → lo desplegado los incluye. No verificado: el calendario de GHL sigue en 20 min (sin GHL_TOKEN de Resuelto) y las 3 entrevistas del lun 28 (9:00, 9:00, 9:30) siguen pegadas, no se movieron.",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
