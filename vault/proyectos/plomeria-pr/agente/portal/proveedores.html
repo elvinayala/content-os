@@ -85,7 +85,7 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
     if(!t) return '<div class="card">'+head+'<div class="meta"><span>📍 '+o.municipio+'</span><span>📅 '+cuando(o.inicio)+'</span><span class="tag ok">Tuyo</span></div>'+firmaDe(o)+'</div>';
     var n=ORDEN[t.estado]||1, pasos='<div class="pasos">'+[1,2,3,4].map(function(x){return '<span class="'+(x<=n?'on':'')+'"></span>'}).join('')+'</div>';
     var tel=(t.telefono||'').replace(/\D/g,'');
-    var cli='<div class="cli"><b>'+t.cliente+'</b><br>📞 <a href="tel:+'+tel+'">'+t.telefono+'</a> · <a href="https://wa.me/'+tel+'">WhatsApp</a><br>📍 <a href="https://maps.google.com/?q='+encodeURIComponent(t.direccion+', '+t.municipio+', PR')+'">'+t.direccion+', '+t.municipio+'</a>'+(t.referencia?'<br><span style="color:var(--ink2)">Ref: '+t.referencia+'</span>':'')+'<br>🕑 '+cuando(t.inicio)+' – '+hora(t.fin)+(t.emergencia?' <span class="tag warn">Emergencia</span>':'')+'<br>💲 '+(t.precioFijo!=null?'Precio fijo: $'+t.precioFijo+' mano de obra':'Por rango: $'+t.rango[0]+'–$'+t.rango[1]+' (tú pones el final)')+'</div>';
+    var cli='<div class="cli"><b>'+t.cliente+'</b><br>📍 <a href="https://maps.google.com/?q='+encodeURIComponent(t.direccion+', '+t.municipio+', PR')+'">'+t.direccion+', '+t.municipio+'</a>'+(t.referencia?'<br><span style="color:var(--ink2)">Ref: '+t.referencia+'</span>':'')+'<br>🕑 '+cuando(t.inicio)+' – '+hora(t.fin)+(t.emergencia?' <span class="tag warn">Emergencia</span>':'')+'<br>💲 '+(t.precioFijo!=null?'Precio fijo: $'+t.precioFijo+' mano de obra':'Por rango: $'+t.rango[0]+'–$'+t.rango[1]+' (tú pones el final)')+'</div>';
     var acc='';
     if(t.estado==='agendado') acc='<button class="btn" data-paso="en-camino" data-of="'+o.id+'">🚗 Voy en camino</button><p style="font-size:13px;color:var(--ink2);margin-top:8px">Le avisamos al cliente que vas.</p>';
     else if(t.estado==='en-camino') acc='<button class="btn" data-paso="llegue" data-of="'+o.id+'">📍 Llegué</button>';
@@ -96,7 +96,8 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
       +'<button class="btn" data-paso="terminado" data-of="'+o.id+'">✅ Terminé — cobrarle al cliente</button>';
     else acc='<div class="cli">✅ Terminado. El cliente paga <b>'+money(t.totalCliente)+'</b> a Resuelto'+(t.estado==='cobrado'?' <span class="tag ok">Cobrado</span>':' <span class="tag warn">Pendiente de pago</span>')+'<br>Tú cobras <b>'+money(t.pagoPlomero)+'</b> el viernes.</div>';
     var notaLibre=(t.estado!=='completado'&&t.estado!=='cobrado')?'<div class="campo"><label>Comentario para Resuelto (lo ve el gerente)</label><input id="com-'+o.id+'" placeholder="Ej: el cliente pidió cotizar otra cosa, falta una pieza…"></div><button class="btn line" data-com="'+o.id+'">Enviar comentario</button>':'';
-    return '<div class="card">'+head+pasos+cli+firmaDe(o)+acc+notaLibre+'</div>';
+    var hablar=(t.estado!=='completado'&&t.estado!=='cobrado')?'<div class="hablar"><button class="btn line" data-llamar="'+o.id+'">📞 Llamar por Resuelto</button><div class="campo"><input id="msg-'+o.id+'" placeholder="Escríbele al cliente (ej: voy llegando en 10 min)"></div><button class="btn line" data-msg="'+o.id+'">💬 Escribirle</button><p style="font-size:12.5px;color:var(--ink2);margin-top:6px">Al cliente le sale el número de Resuelto, nunca el tuyo.</p></div>':'';
+    return '<div class="card">'+head+pasos+cli+hablar+firmaDe(o)+acc+notaLibre+'</div>';
   }
   function achicar(file){return new Promise(function(ok,ko){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,s=Math.min(1,m/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',0.8))};img.onerror=ko;img.src=URL.createObjectURL(file)})}
   function enlazar(){
@@ -109,6 +110,10 @@ h2{font-family:Sora;font-size:18px;font-weight:700;margin:22px 0 10px}
       if(b.dataset.paso==='terminado'){var mo=$('mo-'+of),mat=$('mat-'+of),nt=$('nota-'+of);if(mo)body.mano_obra=Number(mo.value);body.materiales=Number(mat&&mat.value||0);body.nota=nt?nt.value:'';if(!confirm('¿Cerrar el trabajo y enviarle el cobro al cliente?'))return;}
       b.disabled=true;b.textContent='Enviando…';
       api('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){aviso(j.estado==='completado'?'✅ Listo. Le enviamos el cobro de '+money(j.total)+' al cliente. Tú cobras '+money(j.pago)+' el viernes.':(j.recordatorio||'✅ Listo'));}else{aviso(j.motivo||'No se pudo.',true);} cargar();cuenta();});};});
+    document.querySelectorAll('button[data-llamar]').forEach(function(b){b.onclick=function(){b.disabled=true;b.textContent='Llamando…';
+      api('/api/proveedores/trabajo/llamar',{oferta:b.dataset.llamar}).then(function(j){aviso(j.ok?(j.mensaje||'📞 Te estamos llamando.'):(j.motivo||'No se pudo'),!j.ok);setTimeout(function(){b.disabled=false;b.textContent='📞 Llamar por Resuelto'},8000);});};});
+    document.querySelectorAll('button[data-msg]').forEach(function(b){b.onclick=function(){var of=b.dataset.msg,i=$('msg-'+of);if(!i||!i.value.trim())return;b.disabled=true;
+      api('/api/proveedores/trabajo/mensaje',{oferta:of,texto:i.value}).then(function(j){aviso(j.ok?'💬 Mensaje enviado al cliente (le sale de Resuelto).':(j.motivo||'No se pudo'),!j.ok);if(j.ok)i.value='';b.disabled=false;});};});
     document.querySelectorAll('button[data-com]').forEach(function(b){b.onclick=function(){var of=b.dataset.com,i=$('com-'+of);if(!i||!i.value.trim())return;b.disabled=true;
       api('/api/proveedores/trabajo/nota',{oferta:of,texto:i.value}).then(function(j){aviso(j.ok?'💬 Comentario enviado.':(j.motivo||'No se pudo'),!j.ok);i.value='';b.disabled=false;});};});
     document.querySelectorAll('input[data-foto]').forEach(function(inp){inp.onchange=function(){

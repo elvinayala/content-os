@@ -152,7 +152,7 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   // Avisos: al proveedor (con los datos del cliente ya) y al resto (se cerró)
   const t = o.tipo === "trabajo" ? almacen.trabajos().find((x) => x.id === o.referencia) : undefined;
   const pr = o.tipo === "proyecto" ? almacen.proyectos().find((x) => x.id === o.referencia) : undefined;
-  const cliente = t ? `${t.nombre} · ${t.telefono}\n📍 ${t.direccion}, ${t.municipio}${t.referencia ? " (" + t.referencia + ")" : ""}` : pr ? `${pr.nombre} · ${pr.telefono}\n📍 ${pr.municipio}` : "";
+  const cliente = t ? `${t.nombre}\n📍 ${t.direccion}, ${t.municipio}${t.referencia ? " (" + t.referencia + ")" : ""}\n📞 Para hablarle usa tu app: "Llamar por Resuelto" o "Escribirle" (no uses tu número personal).` : pr ? `${pr.nombre} · ${pr.telefono}\n📍 ${pr.municipio}` : "";
   const firma = o.contrato?.urlFirma ? `\n✍️ Firma tu orden de trabajo aquí: ${o.contrato.urlFirma}` : o.contrato?.estado === "simulado" ? `\n✍️ Tu orden de trabajo está en el portal para firmar: ${linkPortal(p.id, config.urlPublica)}` : "";
   await avisarAlTelefono(p.whatsapp, `✅ *${o.id} es tuyo*, ${p.nombre.split(" ")[0]}.\n${o.categoriaNombre} · ${cuando(o.inicio)}\n${cliente}${firma}\n\nRecuerda: fotos de antes y después, y el cliente le paga a Resuelto.`);
   notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente${o.contrato?.urlFirma ? " y firmar tu orden" : ""}.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);

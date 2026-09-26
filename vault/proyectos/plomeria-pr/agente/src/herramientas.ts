@@ -24,6 +24,9 @@ import { programarLlamadaHumana } from "./llamar-cliente.js";
 /** Quién puede hacer plomería en PR (Ley 59-2022): licencia de oficial o maestro, o certificado de aprendiz (con un maestro). */
 const PUEDE_TRABAJAR = ["maestro", "oficial", "aprendiz"];
 import { config } from "./config.js";
+import { listar as listarProveedores, linkPortal } from "./proveedores.js";
+import { avisarAlTelefono } from "./canales/telefono.js";
+import { notificar } from "./push.js";
 import { crearOferta } from "./despacho.js";
 import { registrar as registrarEncuesta, MOTIVOS } from "./encuestas.js";
 
@@ -125,6 +128,11 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
     name: "guardar_nota_cliente",
     description: "Guarda un dato útil del contacto para futuras conversaciones (nombre, dirección, preferencia, detalle de la casa, aviso interno).",
     input_schema: { type: "object", properties: { nota: { type: "string" }, nombre: { type: "string", description: "vacío si no cambia" }, municipio: { type: "string" }, direccion: { type: "string" }, tipo: { type: "string", enum: ["cliente", "plomero-candidato", "cliente-proyecto", "contratista", "otro", ""] } }, required: ["nota", "nombre", "municipio", "direccion", "tipo"], additionalProperties: false },
+  },
+  {
+    name: "pasar_al_plomero",
+    description: "Le pasa al plomero asignado un mensaje del cliente sobre su cita (\"estoy llegando tarde\", \"el portón está abierto\", \"¿a qué hora llega?\"). Úsalo cuando el cliente le escribe algo al plomero o que el plomero necesita saber. El plomero recibe el aviso en su app y por texto. Nunca des el número del plomero.",
+    input_schema: { type: "object", properties: { mensaje: { type: "string", description: "Lo que dijo el cliente, claro y corto." } }, required: ["mensaje"] },
   },
   {
     name: "escalar_a_humano",
@@ -387,6 +395,18 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         programarLlamadaHumana(c.id, input.resumen);
       }
       return { ok: true, en_crm: !!ghlId, tarjeta: !!c.ghlOpportunityId, ...(primerTelefono ? { telefono_guardado: true } : {}) };
+    }
+    case "pasar_al_plomero": {
+      const t = almacen.trabajos().filter((x) => x.contactoId === ctx.contacto.id && x.plomeroId && !["completado", "cobrado", "cancelado"].includes(x.estado)).sort((a, b) => a.inicio.localeCompare(b.inicio))[0];
+      if (!t) return { error: "sin_trabajo_asignado", accion: "Todavía no hay plomero asignado a una cita de este cliente. Dile que en cuanto un plomero la acepte se lo pasamos." };
+      const p = listarProveedores().find((x) => x.id === t.plomeroId);
+      const texto = String(input.mensaje ?? "").slice(0, 400);
+      almacen.guardarTrabajo({ ...t, notasInternas: [...(t.notasInternas ?? []), { fecha: new Date().toISOString(), autor: "cliente", texto }] });
+      if (p) {
+        await avisarAlTelefono(p.whatsapp, `💬 ${t.nombre.split(" ")[0]} (${t.id}, ${t.municipio}) te dice: "${texto}"\nContéstale desde tu app (Escribirle o Llamar por Resuelto): ${linkPortal(p.id, config.urlPublica)}`).catch(() => undefined);
+        notificar(p.id, { titulo: `💬 ${t.nombre.split(" ")[0]} · ${t.id}`, cuerpo: texto, url: linkPortal(p.id, config.urlPublica), tag: t.id + "-msg" }).catch(() => undefined);
+      }
+      return { ok: true, accion: "Dile al cliente que ya se lo pasaste al plomero y que le contesta por aquí o lo llama desde el número de Resuelto." };
     }
     case "guardar_nota_cliente": {
       const c = { ...ctx.contacto };

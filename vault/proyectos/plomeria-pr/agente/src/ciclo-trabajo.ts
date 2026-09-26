@@ -24,7 +24,7 @@ fs.mkdirSync(DIR_FOTOS, { recursive: true });
 const r2 = (n: number) => Math.round(n * 100) / 100;
 const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-PR", { timeZone: config.zonaHoraria, hour: "numeric", minute: "2-digit" });
 
-function trabajoDe(ofertaId: string, p: Proveedor): { t: Trabajo } | { error: string } {
+export function trabajoDe(ofertaId: string, p: Proveedor): { t: Trabajo } | { error: string } {
   const o = despacho.oferta(ofertaId);
   if (!o || o.tipo !== "trabajo") return { error: "Ese trabajo no existe." };
   if (o.aceptadoPor !== p.id) return { error: "Ese trabajo no es tuyo." };
@@ -38,7 +38,7 @@ function trabajoDe(ofertaId: string, p: Proveedor): { t: Trabajo } | { error: st
 export function resumenParaPlomero(t: Trabajo) {
   const s = menu.servicios.find((x: any) => x.id === t.servicioId) as any;
   return {
-    id: t.id, estado: t.estado, cliente: t.nombre, telefono: t.telefono, direccion: t.direccion, municipio: t.municipio, referencia: t.referencia,
+    id: t.id, estado: t.estado, cliente: t.nombre, telefono: null, direccion: t.direccion, // el teléfono no se muestra: se llama/escribe por Resuelto (26/sep) municipio: t.municipio, referencia: t.referencia,
     servicio: t.servicio, precioFijo: t.manoObra, rango: t.rango ?? s?.rango ?? null, emergencia: t.emergencia,
     inicio: t.inicio, fin: t.fin, fotosAntes: (t.fotosAntes ?? []).length, fotosDespues: (t.fotosDespues ?? []).length,
     totalCliente: t.totalCliente ?? null, pagoPlomero: t.pagoPlomero ?? null, manejoMaterialesPct: menu.manejo_materiales_pct,

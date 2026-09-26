@@ -28,6 +28,7 @@ import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
 import * as demo from "./demo-plomero.js";
 import { montarMarca } from "./marca.js";
+import { llamarAlCliente, escribirAlCliente } from "./contacto-plomero.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
@@ -440,6 +441,19 @@ app.get("/api/proveedores/ofertas", (req: any, res) => {
     return t ? { ...o, trabajo: ciclo.resumenParaPlomero(t) } : o;
   });
   res.json({ proveedor: { id: prov.id, nombre: prov.nombre, tipo: prov.tipo }, ofertas });
+});
+// El plomero habla con su cliente por Resuelto (llamada puente y mensajes), sin su número personal (26/sep).
+app.post("/api/proveedores/trabajo/llamar", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true, mensaje: "📞 (Prueba) Te llamaríamos al celular y te conectaríamos con el cliente; a él le sale el número de Resuelto." });
+  const r = ciclo.trabajoDe(String(req.body?.oferta ?? ""), prov); if ("error" in r) return res.json({ ok: false, motivo: r.error });
+  res.json(await llamarAlCliente(r.t, prov));
+});
+app.post("/api/proveedores/trabajo/mensaje", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true });
+  const r = ciclo.trabajoDe(String(req.body?.oferta ?? ""), prov); if ("error" in r) return res.json({ ok: false, motivo: r.error });
+  res.json(await escribirAlCliente(r.t, prov, String(req.body?.texto ?? "")));
 });
 // Ciclo del trabajo desde la app: voy en camino → llegué → fotos → terminé (cobro al cliente)
 app.post("/api/proveedores/trabajo/paso", async (req: any, res) => {
