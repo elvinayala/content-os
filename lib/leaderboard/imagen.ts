@@ -62,7 +62,7 @@ async function foto(p: Puesto, d: number): Promise<Nodo> {
 
 const monto = (p: Puesto) => (p.monto == null ? "$" : formatoDinero(p.monto));
 
-async function columnaPodio(p: Puesto | undefined, lugar: 1 | 2 | 3): Promise<Nodo> {
+async function columnaPodio(p: Puesto | undefined, lugar: 1 | 2 | 3): Promise<Nodo[]> {
   const conf = { 1: { cx: 270, alto: 250, w: 104, d: 88 }, 2: { cx: 162, alto: 150, w: 104, d: 74 }, 3: { cx: 378, alto: 122, w: 104, d: 74 } }[lugar];
   const base = 628;
   const topColumna = base - conf.alto;
@@ -91,7 +91,8 @@ async function columnaPodio(p: Puesto | undefined, lugar: 1 | 2 | 3): Promise<No
       ),
     );
   }
-  return h("div", { position: "absolute", left: 0, top: 0, width: ANCHO, height: ALTO }, ...hijos);
+  // [columna, foto + nombre]: se pintan todas las columnas primero para que ningún nombre quede tapado.
+  return [hijos[0], ...hijos.slice(1)];
 }
 
 async function filaAbajo(p: Puesto): Promise<Nodo> {
@@ -121,7 +122,8 @@ export async function leaderboard(opc: { tipo: "closer" | "setter"; mes: string;
     cabecera.push(h("div", { position: "absolute", left: 0, top: px(140), width: ANCHO, justifyContent: "center", fontSize: px(30), fontWeight: 800, color: "#fff" }, "SETTER"));
   }
   const [p1, p2, p3] = opc.podio;
-  const columnas = [await columnaPodio(p2, 2), await columnaPodio(p1, 1), await columnaPodio(p3, 3)];
+  const partes = [await columnaPodio(p2, 2), await columnaPodio(p1, 1), await columnaPodio(p3, 3)];
+  const columnas = [...partes.map((x) => x[0]), ...partes.flatMap((x) => x.slice(1))];
   const filas = await Promise.all(opc.abajo.map(filaAbajo));
   const tarjeta = h(
     "div",
