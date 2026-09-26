@@ -10,7 +10,8 @@
 import { config } from "../config.js";
 import { almacen } from "../almacen.js";
 import { archivar } from "../historial.js";
-import { avisarVentas, linkCliente } from "../ventas.js";
+import { avisarVentas, linkCliente, esReclutamiento } from "../ventas.js";
+import { dmSlack } from "../integraciones/slack.js";
 import { e164, enviarSMS, contactoPorTelefono } from "./sms.js";
 
 type Llamada = { id: string; direction?: string; from?: string; to?: string; durationSeconds?: number; endReason?: string; isVoicemail?: boolean };
@@ -50,11 +51,14 @@ export async function atenderLlamada(body: any) {
   const voz = c.isVoicemail ? await transcripcion(c.id) : "";
   archivar(contacto.id, "cliente", `[Llamada perdida]${voz ? " Mensaje de voz: " + voz : " Sin mensaje."}`);
   const conocido = almacen.contacto(contacto.id) ?? contacto;
+  // Reclutamiento es 100 % de Yaileen (Elvin, 26/sep): un plomero o candidato que llama no le llega a la setter.
+  const recluta = esReclutamiento(conocido);
 
   let texto = false;
   if (Date.now() - (ultimoTexto.get(de) ?? 0) > 12 * 3600_000) {
     ultimoTexto.set(de, Date.now());
-    const msg = `Hola${conocido.nombre ? " " + conocido.nombre.split(" ")[0] : ""}, es Resuelto PR. Vimos tu llamada y te la devolvemos en breve. Si quieres adelantar, cuéntanos aquí qué te pasó y mándanos una foto del área. O reserva tú mismo: ${config.urlPublica}/reservar?o=llamada`;
+    const hola = `Hola${conocido.nombre ? " " + conocido.nombre.split(" ")[0] : ""}, es Resuelto PR. Vimos tu llamada y te la devolvemos en breve.`;
+    const msg = recluta ? hola : `${hola} Si quieres adelantar, cuéntanos aquí qué te pasó y mándanos una foto del área. O reserva tú mismo: ${config.urlPublica}/reservar?o=llamada`;
     texto = await enviarSMS(de, msg, { contacto: conocido });
     if (texto) {
       archivar(contacto.id, "resuelto", msg, "llamada-perdida-sms");
@@ -63,5 +67,6 @@ export async function atenderLlamada(body: any) {
       almacen.guardarConversacion(conv);
     }
   }
+  if (recluta) { await dmSlack(config.slack.reclutamiento, `📞 Llamada perdida de ${conocido.nombre ?? "un candidato"} · ${telBonito(de)} al 787-956-1111 (reclutamiento).${voz ? " Dejó mensaje: \"" + voz + "\"" : ""} Devuélvele la llamada.`); return; }
   await avisarVentas(`📞 Llamada perdida: ${conocido.nombre ?? "sin nombre"} · ${telBonito(de)}${conocido.municipio ? " · " + conocido.municipio : ""}\n${voz ? "Dejó mensaje: \"" + voz + "\"" : "No dejó mensaje."}\n${texto ? "Ya le salió un texto automático. " : ""}Devuélvele la llamada.\nConversación: ${linkCliente(contacto.id)}`);
 }

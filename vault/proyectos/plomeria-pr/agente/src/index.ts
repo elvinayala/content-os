@@ -549,6 +549,12 @@ async function pasarAReclutadora(contactoId: string, texto: string) {
   if (e.pasados.includes(contactoId)) return;
   const k = almacen.contacto(contactoId);
   const c = almacen.candidatos().find((x) => x.contactoId === contactoId);
+  // Clientes a la setter; candidatos y desconocidos (el WhatsApp era el canal de reclutamiento) a Yaileen (Elvin, 26/sep).
+  if (k && !ventas.esReclutamiento(k) && (k.tipo === "cliente" || k.tipo === "cliente-proyecto")) {
+    await ventas.avisarVentas(`📵 ${k.nombre ?? "Un cliente"} · ${telefonoBonito(contactoId.replace(/^whatsapp:/, ""))} escribió al WhatsApp de Resuelto y no le podemos contestar: "${texto.replace(/\s+/g, " ").slice(0, 140)}". Llámalo.\nConversación: ${ventas.linkCliente(contactoId)}`);
+    saludWa.guardar({ ...saludWa.leer(), pasados: [...saludWa.leer().pasados, contactoId] });
+    return;
+  }
   const quien = c ? `${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""}${c.experiencia ? ", " + c.experiencia : ""}, ${c.municipio})` : k?.nombre ?? "alguien";
   await dmSlack(config.slack.reclutamiento, `📵 ${quien} · ${telefonoBonito(contactoId.replace(/^whatsapp:/, ""))} escribió al WhatsApp de Resuelto y no le podemos contestar: "${texto.replace(/\s+/g, " ").slice(0, 140)}". Llámalo o escríbele desde tu teléfono.`);
   saludWa.guardar({ ...saludWa.leer(), pasados: [...saludWa.leer().pasados, contactoId] });

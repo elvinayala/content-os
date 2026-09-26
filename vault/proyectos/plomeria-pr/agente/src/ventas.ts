@@ -33,6 +33,11 @@ export async function avisarVentas(texto: string) {
   if (!ok) { console.error("Telegram ventas: no salió, va a Elvin"); await avisarCoordinador(texto); }
 }
 
+/** ¿Es de reclutamiento (Yaileen) y no de ventas (setter)? Plomeros, contratistas y quien ya aplicó como candidato. */
+export function esReclutamiento(c: { id: string; tipo?: string }) {
+  return c.tipo === "plomero-candidato" || c.tipo === "contratista" || almacen.candidatos().some((x) => x.contactoId === c.id);
+}
+
 // ── Enlace firmado a la conversación de un cliente ──
 const secreto = () => process.env.PORTAL_SECRETO || config.adminToken || "resuelto";
 export const firmaCliente = (id: string) => crypto.createHmac("sha256", secreto()).update("ventas:" + id).digest("base64url").slice(0, 22);
