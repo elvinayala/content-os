@@ -344,7 +344,8 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: tel, nivelLicencia: input.licencia || "no aplica", municipio: input.municipio, experiencia: input.experiencia || undefined, oficio: input.oficio, equipo: input.nota || "", disponibilidad: "", estado: "lista-espera", creado: previo?.creado ?? new Date().toISOString() };
       almacen.guardarCandidato(c);
       const oficioTag = "oficio-" + norm(input.oficio).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const ghlId = await upsertContacto({ nombre: c.nombre, telefono: tel || undefined, municipio: c.municipio, tags: ["lista-espera-oficios", oficioTag], fuente: ctx.contacto.canal });
+      // GHL exige teléfono o email: sin número queda solo en la lista del agente y entra a GHL cuando lo dé.
+      const ghlId = tel ? await upsertContacto({ nombre: c.nombre, telefono: tel, municipio: c.municipio, tags: ["lista-espera-oficios", oficioTag], fuente: ctx.contacto.canal }) : undefined;
       almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: tel || ctx.contacto.telefono, municipio: c.municipio, tipo: "plomero-candidato", ghlContactId: ghlId ?? ctx.contacto.ghlContactId });
       if (ghlId) await agregarNota(ghlId, `Lista de espera · ${input.oficio}${input.licencia ? " (" + input.licencia + ")" : ""} · ${c.municipio}${c.experiencia ? " · " + c.experiencia : ""}${input.nota ? " · " + input.nota : ""}. Llamar cuando Resuelto abra ese oficio.`);
       return { ok: true, candidato_id: c.id, falta_telefono: !tel, nota: tel ? "Anotado. Dile que quedó en la lista y que cuando abramos su oficio lo llamamos primero." : "Anotado sin teléfono: pídeselo una vez para poder llamarlo cuando abramos." };
