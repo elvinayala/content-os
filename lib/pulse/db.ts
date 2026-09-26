@@ -25,17 +25,11 @@ const g = globalThis as unknown as { __pulseDb?: Promise<DbPulse> };
 
 async function crear(): Promise<DbPulse> {
   // En dev local se usa el pooler de SESIÓN (:5432): el de transacciones (:6543) deja consultas
-  // trabadas en "ClientRead" cuando la Mac dispara varias en paralelo (24/sep/2026).
-  // 26/sep/2026: en prod también se usa el pooler de SESIÓN (mismo host, puerto 5432). El de transacciones
-  // (:6543) se traba con varias consultas en cola en la misma conexión cuando las respuestas pesan un poco
-  // (reproducido: ~50 % de lotes colgados; sesión: 0 de 75) → Ritmo/Pulse "se quedaban cargando".
-  // Pocas conexiones por instancia y que se suelten rápido, porque en modo sesión cada una ocupa un cupo.
-  // DB_POOLER=transaccion vuelve al comportamiento anterior.
-  const cruda = process.env.NODE_ENV === "development" && process.env.DATABASE_URL_DIRECT ? process.env.DATABASE_URL_DIRECT : process.env.DATABASE_URL;
-  const url = cruda && process.env.DB_POOLER !== "transaccion" ? cruda.replace(".pooler.supabase.com:6543/", ".pooler.supabase.com:5432/") : cruda;
+  // trabadas en "ClientRead" cuando la Mac dispara varias en paralelo (24/sep/2026). Prod no cambia.
+  const url = process.env.NODE_ENV === "development" && process.env.DATABASE_URL_DIRECT ? process.env.DATABASE_URL_DIRECT : process.env.DATABASE_URL;
   if (url) {
     // Resistente a conexiones muertas tras congelarse la función (ver lib/pulse/cliente-db.ts).
-    const sql = clienteResistente(url, { prepare: false, max: 3, idle_timeout: 10, max_lifetime: 60 * 10, connect_timeout: 10 });
+    const sql = clienteResistente(url, { prepare: false, max: 5, idle_timeout: 20, connect_timeout: 10 });
     return drizzlePg(sql, { schema });
   }
   const { PGlite } = await import("@electric-sql/pglite");
