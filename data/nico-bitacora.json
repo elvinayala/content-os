@@ -201,6 +201,14 @@
       "porque": "Sin plan real y sin acceso a la herramienta; no se inventan cifras de ventas.",
       "verificado": "curl al link → 403 en canva.com/design/DAHBu9KnnQc/…/edit; sin CANVA_* en el entorno ni código que use Canva.",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "Content OS (Vercel) · leaderboard de Level Up + slack-eventos",
+      "que": "[Solicitud de Aure #66] Leaderboards CLOSER y SETTER automáticos (#50–#66): lib/leaderboard/reglas.ts (resumen New Sales/Paying Off Debt/Totals; closers: normal+BORI = venta nueva, PDC = cuota, se junta por persona, Juan David y Valentina = CLOSER INACTIVOS, Carilin abajo como en el ejemplo de junio, Renovación & Otros = Paying Off Debt − abajo; 3 validaciones + fotos; setters directo de la columna, Inactive Setter = SETTER INACTIVOS, sin inventar montos), lib/leaderboard/imagen.ts (plantilla copiada del Canva, Open Sans, logo real, fotos recortadas de los ejemplos en public/leaderboard/fotos), cron /api/cron/leaderboard L–S 11:00 y 19:00 UTC (7 AM y 3 PM PR) → DM con su mensaje y las 2 imágenes; si algo no cuadra no manda imágenes y avisa. LEADERBOARD_DESTINO default elvin (a Aure solo tras OK de Elvin). Además: los adjuntos que Carilin/Aure mandan a Nico por Slack ahora le llegan como enlace (slack-eventos).",
+      "porque": "Aure lo pidió; Elvin aprobó el plan de la #66.",
+      "verificado": "Tests 6 nuevos, suite 141/141; build de Vercel con TypeScript OK; prod: /api/cron/leaderboard sin auth 401, ?dry=1 responde y frena con \"hoja no compartida (401)\", ?ver=closer|setter&ejemplo=1 devuelve PNG 200 (render con fuentes en Vercel OK); DM a Elvin con las 2 imágenes subido por el bot (files:write OK). NO verificado: datos reales (la hoja da 401: hay que compartirla con enlace); el paso de adjuntos en slack-eventos no se probó con un mensaje real.",
+      "commit": "5288fb2 + siguientes"
     }
   ],
   "pendientesElvin": [
