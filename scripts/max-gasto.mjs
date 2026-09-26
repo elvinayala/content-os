@@ -74,3 +74,13 @@ export function dentroDelTope(gastos, fecha = new Date(), topes = { dia: TOPE_DI
   if (semana >= topes.semana) return { ok: false, motivo: `tope semanal ($${topes.semana}) alcanzado: esta semana van $${semana.toFixed(2)}`, hoy, semana };
   return { ok: true, hoy, semana };
 }
+
+// El `total_cost_usd` que devuelve Claude Code al final de cada corrida es el ACUMULADO de la sesión (el puente
+// reanuda la misma sesión todo el día): una corrida de 18 s mostraba $3.62 porque venía de $3.47. Lo que cuenta
+// para el tope es la diferencia con el total anterior de ESA sesión (visto en los logs de Nico, 26/sep).
+export function costoDeLaCorrida(ultimo, sesion, totalReportado) {
+  const total = Number(totalReportado) || 0;
+  const previo = ultimo && ultimo.sesion === sesion ? Number(ultimo.total) || 0 : 0;
+  const delta = total >= previo ? total - previo : total; // si bajó, es otra sesión/reinicio
+  return { delta: Math.round(delta * 10000) / 10000, ultimo: { sesion, total } };
+}

@@ -613,10 +613,13 @@ que el plan dice (no pido otro OK de gasto), con tope por ola: **hasta 8 flyers 
 
 **La cadena, en orden (cada paso con su aprobación):**
 1. **Plan aprobado** (#N plan) → arranco la producción ese mismo día.
-2. **Flyers** con `node scripts/fal.mjs imagen "<prompt en inglés>" --ar 4:5` (feed) y `--ar 9:16` (historias/reels).
-   Siempre con la **marca real del cliente**: `--ref <logo o fotos del negocio>` (de su IG, su web o la carpeta de
-   Drive "01 Branding y logo"). Texto corto en la pieza (hook ≤ 8 palabras + CTA), un ángulo por flyer, variaciones
-   de concepto reales. Como con Resuelto (22/sep): una pieza por región/servicio/ángulo, sin cifras inventadas.
+2. **Flyers con la guía de Elvin** (26/sep: *"flyers de calidad, de pocas palabras: un título, bullets de beneficio,
+   CTA claro, que resalte el producto; minimalista, elegante, Nano Banana Pro"*; detalle en cerebro-lola.md §3b):
+   `node scripts/fal.mjs flyer --titulo "…" --bullets "a|b|c" --cta "…" --producto "<qué se ve>" --foto <fotos reales
+   del negocio> --logo <su logo real> --ar 4:5` (feed) y `--ar 9:16` (historias/reels). Siempre con la **marca real
+   del cliente** (de su IG, su web o la carpeta de Drive "01 Branding y logo"); sin logo real, va sin logo — nunca uno
+   inventado. El script valida el copy (≤ 8 palabras el título, ≤ 3 bullets de ≤ 6, CTA ≤ 4, sin "gratis"). Un
+   ángulo por flyer, variaciones de concepto reales. Como con Resuelto (22/sep): una pieza por región/servicio/ángulo, sin cifras inventadas.
 3. **Videos**: `node scripts/fal.mjs video "<movimiento>" --img <url del flyer o foto real> --dur 5|10` (Kling) para
    tener formato reel desde el día 1, y el guion + lista de lo que **el cliente** tiene que grabar (§18).
 4. **Copy por pieza**: texto principal, título, descripción y CTA (tuteo PR, sin "gratis", sin promesas).

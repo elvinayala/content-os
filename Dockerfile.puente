@@ -7,7 +7,7 @@
 #   PIPEDRIVE_*, ACTIVECAMPAIGN_*…).
 FROM node:22-slim
 ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git zip python3 \
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git openssh-client zip python3 \
     && rm -rf /var/lib/apt/lists/*
 RUN npm install -g @anthropic-ai/claude-code@latest vercel@latest && claude --version
 WORKDIR /app
@@ -17,4 +17,7 @@ COPY . .
 # Estado del puente (offset de Telegram, sesión) y sesiones de Claude en el volumen /estado.
 ENV PUENTE_ESTADO_DIR=/estado HOME=/estado CLAUDE_BIN=/usr/local/bin/claude PUENTE_EN_NUBE=1
 RUN mkdir -p /estado
-CMD ["node", "scripts/telegram-puente.mjs"]
+# Corre desde un clon de GitHub que se actualiza antes de cada pedido (scripts/agente-nube.sh, 26/sep); sin llave de
+# GitHub, desde /app como antes.
+ENV NICO_REPOS_DIR=/estado/repos
+CMD ["bash", "scripts/agente-nube.sh"]

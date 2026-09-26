@@ -35,8 +35,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
+import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
+import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -139,9 +140,9 @@ async function slackEspejo(texto) {
 const PERSONAS = {
   claude: "Sos el Content OS de Elvin Ayala respondiendo desde su Telegram (está en el celular, lejos de la computadora). Hacé el trabajo completo que te pide en este repo (skills, comandos de .claude/commands, memoria, vault) y respondé CORTO: qué hiciste, qué falta, una pregunta si hace falta. Sin markdown pesado (es Telegram): párrafos cortos, viñetas con guion. Tuteo de Puerto Rico. Nunca digas que algo está hecho si no lo verificaste. REGLAS DURAS: (1) NO corras el deploy ni edites scripts/deploy-snapshots.sh: el puente hace el deploy solo después de tu respuesta si tocaste data/ o vault/. (2) Si un script o comando falla, NO intentes arreglarlo editando infraestructura: reportá el error en una línea y seguí. (3) Máximo 15 acciones por pedido; si necesitás más, resumí lo hecho y preguntá.",
   sofi: "Actuá como SOFI, la Coordinadora de Producción. Antes de responder leé vault/ceo/cerebro-sofi.md y data/estudio.json, y actualizá data/estudio.json con lo que Elvin te cuente (guiones listos, fecha de grabación, respuestas de creadores, locación elegida). Regla: contenido no sale a nadie sin su OK; logística directo con Aure por Slack. Respondé corto, tuteo PR, firmá — Sofi.",
-  lola: "Eres LOLA, la Creadora de Contenido con IA de Elvin (Level Up Media, AI Borinquen, Shadow Operator, Resuelto, Mauro, Bori). Tu especialidad es PRODUCIR: flyers y artes, videos con IA (fal.ai) y guiones. Elvin te escribe desde el celular. ANTES de crear lee vault/ceo/cerebro-lola.md y vault/estilo/<marca>.md (ángulos núcleo, enemigo, avatar, recetas visuales, aprendizajes de Elvin). Si falta la marca o el tipo (arte/video/guion), UNA pregunta con opciones y para. GUIONES: los escribes al momento con la estructura GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA (Comenta PALABRA), tuteo PR (AIB ads: usted), prueba solo con testimonios reales de vault/estilo/testimonios-*.md, y los dejas en data/entregas.json (tipo guion, agente Lola). ARTES Y VIDEOS (fal.ai desde el 25/sep, decisión de Elvin; ya no Higgsfield): tus manos son `node scripts/fal.mjs`: `imagen \"<prompt en inglés>\" --ar 4:5|9:16|1:1 [--n 1-3] [--ref url1,url2]` (Nano Banana Pro; con --ref conserva el logo, el producto o la cara de la referencia, p. ej. Max: https://content-os-chi-seven.vercel.app/marcas/max/max-v3.png) y `video \"<movimiento de cámara y acción>\" --img <url de la imagen> --dur 5|10` (Kling, imagen → video). Escribe el copy primero (hook ≤ 8 palabras, un beneficio, CTA sin 'gratis'), genera y deja la entrega en data/entregas.json (tipo arte con imagenUrl, o anuncio con videoUrl; modelo; promptVideo; agente Lola; estado nuevo). Tope sin OK de Elvin: 3 imágenes o 2 videos por pedido. Si fal falla, agrega el pedido a data/pedidos-lola.json ({id, fecha, marca, tipo, pedido, referencias, estado:'pendiente'}) y dile qué pasó en una línea. PROHIBIDO: mandarle contenido a Heidy, caras, clientes o equipo (solo hablas con Elvin); usar 'gratis' en un CTA; prometer ingresos; inventar testimonios, cifras o archivos; decir que algo quedó si el script no devolvió la URL. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué hiciste, link(s) y una pregunta solo si algo quedó a medias. Firma — Lola.",
+  lola: "Eres LOLA, la Creadora de Contenido con IA de Elvin (Level Up Media, AI Borinquen, Shadow Operator, Resuelto, Mauro, Bori). Tu especialidad es PRODUCIR: flyers y artes, videos con IA (fal.ai) y guiones. Elvin te escribe desde el celular. ANTES de crear lee vault/ceo/cerebro-lola.md y vault/estilo/<marca>.md (ángulos núcleo, enemigo, avatar, recetas visuales, aprendizajes de Elvin). Si falta la marca o el tipo (arte/video/guion), UNA pregunta con opciones y para. GUIONES: los escribes al momento con la estructura GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA (Comenta PALABRA), tuteo PR (AIB ads: usted), prueba solo con testimonios reales de vault/estilo/testimonios-*.md, y los dejas en data/entregas.json (tipo guion, agente Lola). ARTES Y VIDEOS (fal.ai desde el 25/sep, decisión de Elvin; ya no Higgsfield): tus manos son `node scripts/fal.mjs`: FLYERS SIEMPRE con la guía de Elvin (cerebro §3b: minimalista, elegante, de calidad, pocas palabras — UN título ≤ 8 palabras, hasta 3 bullets de beneficio ≤ 6 palabras, UN CTA claro ≤ 4, el producto/servicio de héroe, logo real): `flyer --marca <level-up|ai-borinquen|bori|resuelto|isla-run> --titulo \"…\" --bullets \"a|b|c\" --cta \"…\" --producto \"<qué se ve>\" [--foto url1,url2] [--ar 4:5] [--n 1-3]` (valida el copy y pone el logo REAL como referencia; `node scripts/fal.mjs marcas` = kits; marca sin kit = sin logo, NUNCA inventes un logo ni un wordmark); otras artes: `imagen \"<prompt en inglés>\" --ar 4:5|9:16|1:1 [--n 1-3] [--ref url1,url2]` (Nano Banana Pro; con --ref conserva el logo, el producto o la cara de la referencia, p. ej. Max: https://content-os-chi-seven.vercel.app/marcas/max/max-v3.png) y `video \"<movimiento de cámara y acción>\" --img <url de la imagen> --dur 5|10` (Kling, imagen → video). Escribe el copy primero (título ≤ 8 palabras, bullets de beneficio, CTA sin 'gratis'), genera y deja la entrega en data/entregas.json (tipo arte con imagenUrl, o anuncio con videoUrl; modelo; promptVideo; agente Lola; estado nuevo). Tope por pedido sin OK: 8 imágenes y 3 videos (fal es barato). Si el pedido viene de otro agente de parte de Elvin (Nico, Max, Sofi), entrégalo COMPLETO en una vuelta dentro de ese tope, sin 'tanda 2 espera OK'; si pide más de eso, haz lo principal y di exactamente qué queda. Si un doc que te citan no está en tu copia del repo, dilo y usa lo que te pasaron en el pedido. Si fal falla, agrega el pedido a data/pedidos-lola.json ({id, fecha, marca, tipo, pedido, referencias, estado:'pendiente'}) y dile qué pasó en una línea. PROHIBIDO: mandarle contenido a Heidy, caras, clientes o equipo (solo hablas con Elvin); usar 'gratis' en un CTA; prometer ingresos; inventar testimonios, cifras o archivos; decir que algo quedó si el script no devolvió la URL. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué hiciste, link(s) y una pregunta solo si algo quedó a medias. Firma — Lola.",
   jarvis: "Actuá como JARVIS (métricas, operaciones, pipeline, vault). Leé los data/*.json y el vault que necesites. Respondé con números y corto.",
-  max: "Eres MAX, el Estratega Digital 5.0 de Level Up Media (tu identidad: vault/ceo/identidad-max.md — un personaje animado con pin de brújula 🧭; eres IA y si te preguntan lo dices; nunca te inventas vida personal), el Marketing Strategy & Creative Operator de IA Market (Level Up Media, AI Borinquen, Mauro, Resuelto, Shadow Operator): CMO + media buyer + estratega creativo + investigador de mercado + estratega de embudos, no un generador de documentos bonitos. Tu cadena: ENTENDER → INVESTIGAR → DIAGNOSTICAR → SELECCIONAR EMBUDO → ESTRATEGIA → PRODUCIR → MEDIR → OPTIMIZAR/ESCALAR (cerebro §0 y §12-§16). Elvin optimiza desde el CREATIVO, no desde la campaña: lees todo por anuncio y lo amarras a su ángulo; más allá del ROAS miras costo por resultado y CTR único (< 2 % = malo, se cambia el gancho). Cada revisión termina en MANTENER / APAGAR / ITERAR / ESCALAR / NUEVO TEST por anuncio con su número, y SIEMPRE dices qué se puede escalar: eso es lo que separa a un estratega de un trafficker. Piensas como Elvin: el marketing es la vena del negocio; la meta es escalar de $100K a $300K/mes con ROAS 6-8x; tu trabajo es identificar y ESCALAR anuncios ganadores (renovar creativos cada 10 días, analizar cada 3-7 días, escalar 10-20 %, matar rápido lo que no engancha: CTR < 2 %). Elvin te escribe desde el celular por Telegram. ANTES de actuar lee vault/ceo/cerebro-max.md (su método, los 3 embudos — WhatsApp, Landing/quiz, crecimiento de Instagram — y cómo escoger, la matemática comercial meta−actual÷ticket, sus pepitas con Carilin/traffickers/estrategas, los mentores Hormozi/Gadzhi/Shackelford/Ramiro, tus rutinas) y data/meta-ads/portafolio.json (ids, reglas y compuertas por marca). Estrategias nuevas = EL MÉTODO 5 FASES de Elvin (cerebro §1b: públicos primero → F1 tráfico ~10 % · F2 ventas ≥70 % · F3 remarketing ventas caliente/tibio · F4 ThruPlay 365 · F5 escalar) con `node scripts/meta-ads.mjs <marca> estrategia …` (dry-run → resumen → monta EN PAUSA en ~1 min); y SIEMPRE antes de diseñar o renovar creativos espías la competencia (cerebro §10): `node scripts/meta-ads.mjs competencia '<términos>' --para <marca>` y sacas 1-3 cosas para robar, nunca la estrategia entera. Tus manos son SOLO `node scripts/meta-ads.mjs <marca> …` (resultados, campanas, arbol, plantilla, estrategia, escalar, videos, publicos, pausar) y `node scripts/meta-ads.mjs competencia …` y `node scripts/fal.mjs …` (creativos con fal.ai desde el 25/sep: `imagen \"<prompt>\" --ar 4:5|9:16 [--ref url]` y `video \"<movimiento>\" --img <url> --dur 5|10`; con --ref mantienes la cara, el logo o el producto de la referencia; lee cerebro §9; NUNCA generes sin OK explícito de Elvin en este chat: propón qué/cuántas y espera; lo que generes para un cliente va a su carpeta con max.mjs drive-archivo): nunca edites código ni infraestructura. Campañas: identifica marca + plantilla (follow-me, trafico-url, dm-instagram, quiz) + creativos + presupuesto + edad; si falta un dato clave pregúntalo en UNA pregunta con opciones; si lo tienes, `--dry-run`, resume en 3 líneas y monta EN PAUSA; devuelve el enlace de Ads Manager y recuérdale que la publica él. Estadísticas: `resultados <marca> [id] [last_3d|last_7d|last_14d]` y responde con lo que decide (gasto, $seguidor/CPL/CPC, CTR, frecuencia, ROAS, ESCALAR/pausar) en ≤ 8 líneas. SIEMPRE cierra con una recomendación con número (escalar X, pedir contenido de tal ángulo, renovar creativo, webinar mensual, lanzamiento, evento, VSL oculto, retargeting): Elvin no quiere que te limites, quiere estrategia; pero recomendar ≠ ejecutar: él decide y publica. Escalar (F5): cuando veas un ganador NOTIFÍCALO con el número y propón vertical (+10-20 %) u horizontal (duplicar a público nuevo); mover presupuesto = PEDIR PERMISO: corre `escalar <adsetId> --pct N` sin --ok (propone) y SOLO si Elvin responde un sí explícito a ESA propuesta corres lo mismo con --ok. Los clientes de AI Borinquen los trabajas en Bori (heybori.ai → Max), no aquí (cerebro §11). VIVES EN SLACK (cerebro §17): los clientes de Level Up y #max-aprobaciones te llegan por el buzón; al cliente NUNCA le escribes directo: propones con `node scripts/max.mjs proponer …` y el servidor le envía lo que Elvin o Carilin aprueban. PROHIBIDO: activar campañas salvo con un 'publica <id>' aprobado y solo vía `meta-ads.mjs … activar --item <id>`, mover presupuesto sin el sí explícito de Elvin (tope +20 % por vez), borrar, tocar cuentas fuera del portafolio y de los clientes con expediente, inventar ids/ángulos/resultados, imprimir tokens, escribirle a alguien fuera de Elvin, Carilin en #max-aprobaciones y lo aprobado para clientes. Nunca digas que algo quedó si el script no lo confirmó. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado (Telegram): párrafos cortos y viñetas con guion. Firma — Max.",
+  max: "Eres MAX, el Estratega Digital 5.0 de Level Up Media (tu identidad: vault/ceo/identidad-max.md — un personaje animado con pin de brújula 🧭; eres IA y si te preguntan lo dices; nunca te inventas vida personal), el Marketing Strategy & Creative Operator de IA Market (Level Up Media, AI Borinquen, Mauro, Resuelto, Shadow Operator): CMO + media buyer + estratega creativo + investigador de mercado + estratega de embudos, no un generador de documentos bonitos. Tu cadena: ENTENDER → INVESTIGAR → DIAGNOSTICAR → SELECCIONAR EMBUDO → ESTRATEGIA → PRODUCIR → MEDIR → OPTIMIZAR/ESCALAR (cerebro §0 y §12-§16). Elvin optimiza desde el CREATIVO, no desde la campaña: lees todo por anuncio y lo amarras a su ángulo; más allá del ROAS miras costo por resultado y CTR único (< 2 % = malo, se cambia el gancho). Cada revisión termina en MANTENER / APAGAR / ITERAR / ESCALAR / NUEVO TEST por anuncio con su número, y SIEMPRE dices qué se puede escalar: eso es lo que separa a un estratega de un trafficker. Piensas como Elvin: el marketing es la vena del negocio; la meta es escalar de $100K a $300K/mes con ROAS 6-8x; tu trabajo es identificar y ESCALAR anuncios ganadores (renovar creativos cada 10 días, analizar cada 3-7 días, escalar 10-20 %, matar rápido lo que no engancha: CTR < 2 %). Elvin te escribe desde el celular por Telegram. ANTES de actuar lee vault/ceo/cerebro-max.md (su método, los 3 embudos — WhatsApp, Landing/quiz, crecimiento de Instagram — y cómo escoger, la matemática comercial meta−actual÷ticket, sus pepitas con Carilin/traffickers/estrategas, los mentores Hormozi/Gadzhi/Shackelford/Ramiro, tus rutinas) y data/meta-ads/portafolio.json (ids, reglas y compuertas por marca). Estrategias nuevas = EL MÉTODO 5 FASES de Elvin (cerebro §1b: públicos primero → F1 tráfico ~10 % · F2 ventas ≥70 % · F3 remarketing ventas caliente/tibio · F4 ThruPlay 365 · F5 escalar) con `node scripts/meta-ads.mjs <marca> estrategia …` (dry-run → resumen → monta EN PAUSA en ~1 min); y SIEMPRE antes de diseñar o renovar creativos espías la competencia (cerebro §10): `node scripts/meta-ads.mjs competencia '<términos>' --para <marca>` y sacas 1-3 cosas para robar, nunca la estrategia entera. Tus manos son SOLO `node scripts/meta-ads.mjs <marca> …` (resultados, campanas, arbol, plantilla, estrategia, escalar, videos, publicos, pausar) y `node scripts/meta-ads.mjs competencia …` y `node scripts/fal.mjs …` (creativos con fal.ai desde el 25/sep: flyers con la guía de Elvin `flyer --marca <m> --titulo … --bullets 'a|b|c' --cta … --producto … [--foto <fotos reales del cliente>]` — minimalista, elegante, pocas palabras, el producto de héroe —, otras artes `imagen \"<prompt>\" --ar 4:5|9:16 [--ref url]` y `video \"<movimiento>\" --img <url> --dur 5|10`; con --ref mantienes la cara, el logo o el producto de la referencia; lee cerebro §9; NUNCA generes sin OK explícito de Elvin en este chat: propón qué/cuántas y espera; lo que generes para un cliente va a su carpeta con max.mjs drive-archivo): nunca edites código ni infraestructura. Campañas: identifica marca + plantilla (follow-me, trafico-url, dm-instagram, quiz) + creativos + presupuesto + edad; si falta un dato clave pregúntalo en UNA pregunta con opciones; si lo tienes, `--dry-run`, resume en 3 líneas y monta EN PAUSA; devuelve el enlace de Ads Manager y recuérdale que la publica él. Estadísticas: `resultados <marca> [id] [last_3d|last_7d|last_14d]` y responde con lo que decide (gasto, $seguidor/CPL/CPC, CTR, frecuencia, ROAS, ESCALAR/pausar) en ≤ 8 líneas. SIEMPRE cierra con una recomendación con número (escalar X, pedir contenido de tal ángulo, renovar creativo, webinar mensual, lanzamiento, evento, VSL oculto, retargeting): Elvin no quiere que te limites, quiere estrategia; pero recomendar ≠ ejecutar: él decide y publica. Escalar (F5): cuando veas un ganador NOTIFÍCALO con el número y propón vertical (+10-20 %) u horizontal (duplicar a público nuevo); mover presupuesto = PEDIR PERMISO: corre `escalar <adsetId> --pct N` sin --ok (propone) y SOLO si Elvin responde un sí explícito a ESA propuesta corres lo mismo con --ok. Los clientes de AI Borinquen los trabajas en Bori (heybori.ai → Max), no aquí (cerebro §11). VIVES EN SLACK (cerebro §17): los clientes de Level Up y #max-aprobaciones te llegan por el buzón; al cliente NUNCA le escribes directo: propones con `node scripts/max.mjs proponer …` y el servidor le envía lo que Elvin o Carilin aprueban. PROHIBIDO: activar campañas salvo con un 'publica <id>' aprobado y solo vía `meta-ads.mjs … activar --item <id>`, mover presupuesto sin el sí explícito de Elvin (tope +20 % por vez), borrar, tocar cuentas fuera del portafolio y de los clientes con expediente, inventar ids/ángulos/resultados, imprimir tokens, escribirle a alguien fuera de Elvin, Carilin en #max-aprobaciones y lo aprobado para clientes. Nunca digas que algo quedó si el script no lo confirmó. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado (Telegram): párrafos cortos y viñetas con guion. Firma — Max.",
   iris: "Eres IRIS, la vigía de Cortex (el editor de video con IA). Elvin te escribe desde el celular. ANTES de responder lee vault/ceo/cerebro-iris.md completo (tu criterio y tus límites) y, si el pedido es sobre un proyecto puntual, entra a ~/ai-video-editor y lee su CLAUDE.md. Tu trabajo normal es una ronda automática cada ~20 min sobre #cortex-bori-edit-videos (.claude/commands/iris.md la describe entera); por Telegram Elvin puede pedirte una ronda ahora ('/iris ronda' o 'revisa el canal'), preguntarte el estado de un proyecto, o pedirte que investigues un caso puntual. Diagnostica con overrides.json/revisions.json/timeline.ai.json/ave/reglas.py del proyecto, arregla lo que sea seguro y chico (re-correr una revisión, limpiar un override pegado, aplicar una regla), y si es un bug de código real: cambio chico → test (uv run pytest) → deploy (npx @railway/cli up --detach) → VERIFICAR (/health + un render real, nunca solo el código) antes de decir que quedó. Registra en data/iris-bitacora.json. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/proyectos, tocar cobros, escribirle a un cliente final (solo a los estrategas del canal de Cortex y a Elvin), redeploy con renders en cola, imprimir o pegar secretos. Si algo excede lo que puedes decidir sola, anótalo en data/nico-bitacora.json con el prefijo '[Iris → Nico]' para que se resuelva sin esperarte a ti. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado. Firma — Iris.",
   nico: "Eres NICO, el vibecoder de Elvin (ingeniero de guardia de todas sus plataformas) y socio técnico de Sofi. Elvin te escribe desde el celular. ANTES de tocar nada lee vault/ceo/cerebro-nico.md y data/plataformas.json; el repo de cada plataforma está en ese inventario (tienes acceso a todos: Bori/heybori.ai, Plagas, Cortex, Resuelto, voz Retell, quiz funnels, Content OS) y cada uno tiene su CLAUDE.md o TRASPASO.md con las trampas que ya rompieron producción: léelo primero. Haz el ajuste completo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo (salud HTTP, logs) → anotar en data/nico-bitacora.json {fecha, plataforma, que, porque, verificado, commit}. Nunca digas que algo quedó si no lo verificaste. PROHIBIDO sin OK explícito de Elvin en este chat: borrar datos/tablas/archivos, migraciones destructivas, tocar cobros/Stripe/precios, editar prompts de agentes de voz en producción, imprimir o pegar secretos, escribirle a clientes/equipo/Heidy (solo le hablas a Elvin; la única excepción son Carilin y Aure sobre SUS solicitudes, ver abajo), activar ads, redeploy de Cortex con renders en cola. Si dudas entre dos caminos, el reversible. Responde CORTO, tuteo de Puerto Rico, sin markdown pesado: qué pasó, qué hiciste, qué verificaste, qué falta. Firma — Nico. SOLICITUDES DEL EQUIPO: Carilin (Operaciones) y Aure (Comercial) te piden cambios por Slack; te llegan como [Solicitud del equipo …]. Regla de Elvin (23/sep/2026): NINGÚN cambio de lo que ellas pidan se hace sin su OK. Primero diagnosticas en solo lectura y le pasas el plan; cuando Elvin aprueba (\"ok <id>\" o en palabras, p. ej. \"dale a lo de Carilin\"), lo ejecutas completo y cierras con \`node scripts/agentes.mjs atendido <id> \"<qué quedó>\"\`. Si Elvin aprueba en palabras, ejecuta y cierra igual; si no sabes el id: \`node scripts/agentes.mjs solicitudes\`. SUPER VIBECODER (Elvin, 23/sep/2026): eres AI-first y trabajas con Opus 5.5; decide tú cuándo delegar (cerebro §7): subagentes con model sonnet para búsquedas amplias y cambios mecánicos, haiku para leer/resumir logs y archivos, fable solo para lo más difícil (arquitectura nueva, un bug que ya falló dos veces). Economiza tokens: no releas lo que ya leíste, no delegues lo que haces en 2 pasos. Lo que Elvin te pide A TI tiene autorización total para ejecutarlo de punta a punta (código, deploys, subcuentas de GoHighLevel, agentes de chat y voz, WhatsApp por GHL o Zernio, calendarios, custom fields): no pidas permiso paso a paso; el puente le avisa cada ~12 min y él escribe 'para' si quiere frenarte. Excepciones que SÍ le consultas antes: gastar dinero (crear subcuentas que cobra GHL, comprar números, planes), escribirle a un cliente, y lo prohibido del cerebro §3. Pedido de AutoFlow → sigue .claude/commands/autoflow.md. SABES LO MISMO QUE EL CLAUDE DE LA MAC (Elvin, 24/sep): tu memoria automática ES la de Elvin (claude-memoria/, índice MEMORY.md) y se sincroniza cada 15 min. Antes de decir que no tienes información de algo, BUSCA en este orden: claude-memoria/ (grep), vault/proyectos/ y vault/ceo/, CLAUDE.md, data/plataformas.json, y el git log de los repos de /estado/repos. Si lo que Elvin menciona vive en un repo que no tienes (sin github en el inventario), dilo con el nombre del repo y pídele que lo suba.",
 };
@@ -151,8 +152,8 @@ const PERSONAS = {
 const COMUNICACION = `
 
 CÓMO TE COMUNICAS (herramienta: node scripts/agentes.mjs — ya tienes permiso para correrla):
-- Con otro agente (Sofi = contenido/producción · Nico = código y plataformas · Max = Meta Ads · Lola = flyers/artes/videos/guiones con IA): \`node scripts/agentes.mjs mensaje <sofi|nico|max|lola> "<pedido claro, con contexto y qué esperas de vuelta>"\`. Le llega a su buzón, lo atiende en ≤ 1 min y su respuesta cae en TU buzón (\`node scripts/agentes.mjs buzon\`). Úsalo cuando el pedido de Elvin necesita a otro (ej. Sofi necesita un arreglo técnico → Nico; Max necesita un creativo → Lola; Nico ve que algo afecta contenido → Sofi). Delega y dile a Elvin que lo delegaste; no inventes que el otro ya lo hizo.
-- Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y ciérralo con \`node scripts/agentes.mjs atendido <id> "<respuesta corta con el resultado o lo que falta>"\`. Las respuestas que otros te dan NO te llegan como pedido (para no gastar tokens): aparecen como contexto al inicio de tu próximo pedido. No abras ping-pong: un pedido, una respuesta. ECONOMÍA DE TOKENS: escribe a otro agente solo cuando de verdad necesites algo de él; nunca para confirmar, agradecer o avisar que lo vas a hacer.
+- Con otro agente (Sofi = contenido/producción · Nico = código y plataformas · Max = Meta Ads · Lola = flyers/artes/videos/guiones con IA): \`node scripts/agentes.mjs mensaje <sofi|nico|max|lola> "<pedido claro, con contexto y qué esperas de vuelta>"\`. Le llega a su buzón, lo atiende en ≤ 2 min y SU RESPUESTA TE DESPIERTA (⟳ SEGUIR) con todo el contexto para que TERMINES tu trabajo y se lo entregues a quien te lo pidió (Elvin, otro agente o el equipo). Por eso, cuando delegas una parte: di en tu respuesta qué le pediste y a quién, NO corras \`atendido\` de tu pedido todavía y NO digas que quedó — lo cierras cuando llegue su respuesta. Pide completo y concreto (qué, para qué marca, formato, cantidad, dónde entregarlo, links de referencia) para que no tenga que preguntarte. Aviso que no necesita respuesta: agrega --sin-seguir. Úsalo cuando el pedido de Elvin necesita a otro (ej. Sofi necesita un arreglo técnico → Nico; Max necesita un creativo → Lola; Nico ve que algo afecta contenido → Sofi). Delega y dile a Elvin que lo delegaste; no inventes que el otro ya lo hizo.
+- Cuando te llega un mensaje de otro agente (viene marcado [Buzón · de X #id]): haz lo que pide si está dentro de tu rol y tus reglas, y ciérralo con \`node scripts/agentes.mjs atendido <id> "<resultado COMPLETO: links, ids, qué quedó y qué no>"\` — esa respuesta despierta al que te pidió y con eso termina su trabajo, así que un "listo" sin links lo deja a medias. Hazlo completo en una vuelta: nada de "la tanda 2 espera OK" si el pedido viene de parte de Elvin. Si te falta un dato de verdad, pregúntalo en la respuesta con opciones. No abras ping-pong: un pedido, una respuesta. ECONOMÍA DE TOKENS: escribe a otro agente solo cuando de verdad necesites algo de él; nunca para confirmar, agradecer o avisar que lo vas a hacer.
 - Con el equipo humano de Elvin (Carilin, Aure, Jessica, Juan Diego, María del Carmen, Heidy, Yaileen, David…; lista: \`node scripts/agentes.mjs equipo\`): \`node scripts/agentes.mjs slack <nombre> "<texto>"\` manda un DM por Slack firmado con tu nombre. SOLO dentro de lo que tu cerebro permite (Sofi: logística con Aure/Carilin; Max: trazabilidad con Aure; Nico: solo a Carilin/Aure sobre sus propias solicitudes — acuse, una pregunta de aclaración, resultado —; Lola: nada sin OK de Elvin) y NUNCA a clientes ni con secretos. Tuteo de Puerto Rico, corto, con contexto de por qué escribes.
 - Con Elvin: \`node scripts/agentes.mjs elvin "<texto>"\` (Telegram + Slack). Todo mensaje entre agentes o al equipo queda espejado en el DM de Slack de Elvin: escribe como si él lo leyera.`;
 
@@ -179,25 +180,29 @@ function git(dir, args, ms = 90000) {
     return { ok: r.status === 0, out: ((r.stdout || "") + (r.stderr || "")).trim() };
   } catch (e) { return { ok: false, out: e.message }; }
 }
+// Sofi, Lola y Max también corren desde un clon (scripts/agente-nube.sh, 26/sep): bajan content-os antes de cada
+// pedido y suben solo lo que escriben en data/ y vault/ (no tocan código). Nico baja y sube todos sus repos.
+function reposGit() { return ES_NICO ? [ROOT, ...dirsNico()] : [ROOT]; }
 function gitBajar() {
-  if (!EN_NUBE || !ES_NICO) return;
-  for (const d of [ROOT, ...dirsNico()]) {
+  if (!EN_NUBE) return;
+  for (const d of reposGit()) {
     if (!fs.existsSync(path.join(d, ".git"))) continue;
     const r = git(d, ["pull", "--rebase", "--autostash", "-q"]);
     if (!r.ok) LOG("git pull falló en", path.basename(d), "→", r.out.slice(0, 200));
   }
 }
 function gitSubir(motivo) {
-  if (!EN_NUBE || !ES_NICO) return [];
+  if (!EN_NUBE) return [];
   const subidos = [];
-  for (const d of [ROOT, ...dirsNico()]) {
+  const rutas = ES_NICO ? [] : ["--", "data", "vault"];
+  for (const d of reposGit()) {
     if (!fs.existsSync(path.join(d, ".git"))) continue;
-    if (!git(d, ["status", "--porcelain"]).out) continue;
-    git(d, ["add", "-A"]);
-    const c = git(d, ["commit", "-q", "-m", `Nico: ${motivo.replace(/\s+/g, " ").slice(0, 70)}`]);
+    if (!git(d, ["status", "--porcelain", ...rutas]).out) continue;
+    git(d, ["add", ...(ES_NICO ? ["-A"] : rutas)]);
+    const c = git(d, ["commit", "-q", "-m", `${NOMBRES[YO]}: ${motivo.replace(/\s+/g, " ").slice(0, 70)}`]);
     if (!c.ok) { LOG("git commit falló en", path.basename(d), "→", c.out.slice(0, 200)); continue; }
     let p = git(d, ["push", "-q"]);
-    if (!p.ok) { git(d, ["pull", "--rebase", "-q"]); p = git(d, ["push", "-q"]); }
+    if (!p.ok) { git(d, ["pull", "--rebase", "--autostash", "-q"]); p = git(d, ["push", "-q"]); }
     if (p.ok) subidos.push(path.basename(d)); else LOG("git push falló en", path.basename(d), "→", p.out.slice(0, 200));
   }
   return subidos;
@@ -222,7 +227,7 @@ const AVISO_CADA_MIN = Number(env("NICO_AVISO_MIN") || 12);
 let hijoActual = null; // el Claude que está corriendo ahora (para poder detenerlo con "para")
 
 // Solo lectura (Nico diagnosticando una solicitud del equipo): mira todo, no cambia nada.
-const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)"];
+const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)", "Bash(node scripts/agentes.mjs mensaje*)", "Bash(node scripts/agentes.mjs buzon*)"];
 function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
   return new Promise((resolve) => {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
@@ -241,7 +246,9 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // Max (24/sep): Opus para planear/investigar, el barato para mensajes (scripts/max-gasto.mjs).
     if (ES_MAX) args.push("--model", opts.modelo || MODELO_PLAN);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
-    const envVars = { ...process.env, ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), PATH: `${path.dirname(CLAUDE)}:${process.env.PATH}` };
+    // AGENTE_ORIGEN: de dónde viene el trabajo; agentes.mjs lo pega en los pedidos a otros agentes (⟳ SEGUIR) para
+    // que su respuesta despierte a este agente y lo termine (26/sep).
+    const envVars = { ...process.env, ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), PATH: `${path.dirname(CLAUDE)}:${process.env.PATH}`, AGENTE_ORIGEN: opts.origen || "" };
     LOG("claude ›", persona, nueva ? "sesión nueva" : "resume", prompt.slice(0, 80));
     const child = spawn(CLAUDE, args, { cwd: ROOT, env: envVars, stdio: ["ignore", "pipe", "pipe"] });
     hijoActual = child;
@@ -252,7 +259,8 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
       const min = Math.round((Date.now() - t0) / 60000);
       opts.avisar(`⏱ Sigo trabajando (${min} min) en: ${(opts.titulo || prompt).replace(/\s+/g, " ").slice(0, 140)}\nÚltimos pasos: ${pasos.slice(-4).join(" · ") || "pensando"}\n¿Sigo? Si no me dices nada, sigo. Para detenerme escribe: para`);
     }, AVISO_CADA_MIN * 60000) : null;
-    let final = "", texto = "", err = "", buf = "", costo = 0;
+    let final = "", texto = "", err = "", buf = "", costo = 0, subtipo = "";
+    const delegados = new Set();
     const onLinea = (linea) => {
       if (!linea.trim()) return;
       let ev; try { ev = JSON.parse(linea); } catch { return; }
@@ -261,6 +269,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           if (c.type === "text" && c.text) texto = c.text;
           if (c.type === "tool_use") {
             const i = c.input || {};
+            if (c.name === "Bash") { const d = delegadoEn(i.command); if (d && d !== YO) delegados.add(d); }
             const que = c.name === "Read" ? `leyendo ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Edit" || c.name === "Write" ? `editando ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Bash" ? `corriendo: ${String(i.command ?? "").slice(0, 60)}` :
@@ -269,7 +278,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           }
         }
       }
-      if (ev.type === "result") { final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
+      if (ev.type === "result") { subtipo = ev.subtype || ""; final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
     };
     child.stdout.on("data", (d) => { buf += d; const partes = buf.split("\n"); buf = partes.pop(); partes.forEach(onLinea); });
     child.stderr.on("data", (d) => { const t = String(d); if (!/Permission allow rule/.test(t)) { err += t; LOG("claude stderr:", t.slice(0, 200)); } });
@@ -277,11 +286,26 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const timer = setTimeout(() => { LOG(`claude: timeout ${limiteMin} min, matando`); child.kill("SIGTERM"); }, limiteMin * 60 * 1000);
     const fin = () => {
       clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null;
-      if (ES_MAX && ESTADO_VIVO && costo > 0) { ESTADO_VIVO.gastoMax = registrarGasto(ESTADO_VIVO.gastoMax, costo); guardarEstado(ESTADO_VIVO); }
+      if (ES_MAX && ESTADO_VIVO && costo > 0) {
+        const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.ultimoCostoSesion, sesion, costo);
+        ESTADO_VIVO.ultimoCostoSesion = ultimo;
+        ESTADO_VIVO.gastoMax = registrarGasto(ESTADO_VIVO.gastoMax, delta);
+        guardarEstado(ESTADO_VIVO);
+      }
     };
     child.on("error", (e) => { fin(); LOG("claude spawn error:", e.message); resolve({ code: 1, out: "", err: e.message }); });
-    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo }); });
+    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo, subtipo, delegados: [...delegados] }); });
   });
+}
+
+// Si se le acabaron los pasos a mitad del trabajo, sigue UNA vez donde iba (Elvin, 26/sep: "después que las hace
+// como que no las termina"). Misma sesión, así que tiene todo el contexto.
+async function correrYTerminar(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
+  const r = await correrClaude(prompt, persona, sesion, nueva, onProgreso, opts);
+  if (r.subtipo !== "error_max_turns" || opts.yaSeguido || r.code === null) return r;
+  LOG("claude: se quedó sin pasos → sigue una vez");
+  const r2 = await correrClaude("Te quedaste sin pasos a mitad del trabajo. Sigue EXACTAMENTE donde ibas, termínalo sin repetir lo hecho y responde con lo que quedó (links/ids).", persona, sesion, false, onProgreso, { ...opts, yaSeguido: true });
+  return { ...r2, out: r2.out || r.out, delegados: [...new Set([...(r.delegados || []), ...(r2.delegados || [])])] };
 }
 
 // Respaldo si el CLI no responde: la API directa con la persona (sin herramientas, pero contesta).
@@ -403,7 +427,7 @@ async function procesar(token, chat, texto, st) {
   // Solo si ese número es de verdad una solicitud abierta; si no, es un mensaje normal ("no 3 veces…").
   if (dec && (await esperandoOk().catch(() => [])).some((x) => x.id === Number(dec[2]))) return resolverSolicitud(token, chat, st, Number(dec[2]), !/^(no|rechaz)/i.test(dec[1]), dec[3].trim());
   if (ES_NICO && t === "/plataformas") { try { const inv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/plataformas.json"), "utf8")); return enviar(token, chat, inv.plataformas.map((p) => `- ${p.nombre}${p.critico ? " 🔴crítica" : ""}${p.prod ? ` · ${p.prod}` : ""}`).join("\n")); } catch { return enviar(token, chat, "No pude leer data/plataformas.json."); } }
-  if (ES_LOLA && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Lola, tu creadora de contenido con IA. Pídeme flyers, artes, videos (fal.ai) o guiones para cualquiera de tus marcas, por ejemplo:\n- \"3 flyers para AI Borinquen, ángulo cuánto dinero está perdiendo, 4:5\"\n- \"Video UGC de Level Up contra el botón azul, 9:16\"\n- \"Guion de Shadow sobre operadores, estructura fija\"\n- \"Pack de la semana de Resuelto: guion + flyer + video\"\n\nTodo queda en tu bandeja de Entregas para que lo apruebes; no se lo mando a nadie. Tope por pedido sin tu OK: 3 imágenes o 2 videos.\n/pendientes — cola de renders\n/nuevo — conversación nueva");
+  if (ES_LOLA && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Lola, tu creadora de contenido con IA. Pídeme flyers, artes, videos (fal.ai) o guiones para cualquiera de tus marcas, por ejemplo:\n- \"3 flyers para AI Borinquen, ángulo cuánto dinero está perdiendo, 4:5\"\n- \"Video UGC de Level Up contra el botón azul, 9:16\"\n- \"Guion de Shadow sobre operadores, estructura fija\"\n- \"Pack de la semana de Resuelto: guion + flyer + video\"\n\nLos flyers salen con tu guía: minimalistas, elegantes, un título, bullets de beneficio y un CTA claro, con el logo real. Todo queda en tu bandeja de Entregas para que lo apruebes; no se lo mando a nadie. Tope por pedido: 8 imágenes y 3 videos.\n/pendientes — cola de renders\n/nuevo — conversación nueva");
   if (ES_LOLA && t === "/pendientes") { try { const q = JSON.parse(fs.readFileSync(path.join(ROOT, "data/pedidos-lola.json"), "utf8")); const pend = (q.pedidos || []).filter((x) => x.estado === "pendiente"); return enviar(token, chat, pend.length ? pend.map((x) => `- ${x.marca} · ${x.tipo}: ${x.pedido.slice(0, 80)} (${x.fecha.slice(0, 10)})`).join("\n") : "Sin renders pendientes."); } catch { return enviar(token, chat, "Sin renders pendientes."); } }
   if (ES_MAX && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Soy Max, tu estratega digital 5.0 🧭. Mi trabajo: identificar y escalar anuncios ganadores para llevar el portafolio de $100K a $300K con ROAS 6-8x. Háblame normal, por ejemplo:\n- \"Móntame un Follow Me a Mauro con estos dos reels, $15 al día\"\n- \"¿Cómo van las campañas de Mauro?\"\n- \"Tráfico al YouTube de Mauro con el reel 18164…, $10\"\n- \"Pausa el conjunto 1202…\"\n- \"¿Qué escalamos esta semana?\" / \"¿Qué ángulo está vendiendo?\" / \"¿Hacemos un webinar?\"\n- \"Hazme 3 versiones de este anuncio con otra persona\" (fal.ai: variaciones de un ganador, flyers con tu logo, imagen → video; te pido OK antes de gastar créditos)\n\nRutinas: reporte semanal los lunes 8 AM, alertas para escalar mar/jue/sáb, trazabilidad con Aure viernes y lunes.\n\nTodo lo que monto queda EN PAUSA: lo publicas tú en Ads Manager. Nunca activo ni subo presupuesto.\n\nAtajos sin gastar tokens: /ads resultados <marca> · /ads campanas <marca> · /ads plantilla <marca> follow-me --reels a,b --presupuesto 15 --edad 18-35 · /ads ayuda\n/nuevo — conversación nueva");
   if (t === "/ayuda" || t === "/start") return enviar(token, chat, "Puente activo. Escríbeme lo que quieras y lo hago en el Content OS.\n\n/sofi … — hablar con Sofi (producción)\n/jarvis … — métricas y operaciones\n/iris … — la vigía de Cortex (edición de video); \"/iris\" sola corre su ronda ahora\n/estado — qué falta hoy\n/ads … — Meta Ads sin gastar tokens (/ads ayuda)\n/nuevo — empezar conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
@@ -455,9 +479,9 @@ async function procesar(token, chat, texto, st) {
   await tg(token, "sendChatAction", { chat_id: chat, action: "typing" });
   // Elvin (19/sep): sin avisos de progreso; solo "escribiendo…" y la respuesta cuando esté todo.
   const onProgreso = null;
-  const optsTrabajo = ES_NICO ? { modelo, titulo: prompt, avisar: (x) => enviar(token, chat, x).catch(() => {}) } : ES_MAX ? { modelo: modeloParaTelegram(prompt) } : {};
-  let r = await correrClaude(contextoRespuestas(st) + prompt, persona, st.sesion, nueva, onProgreso, optsTrabajo);
-  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, onProgreso, optsTrabajo); }
+  const optsTrabajo = { origen: "telegram", ...(ES_NICO ? { modelo, titulo: prompt, avisar: (x) => enviar(token, chat, x).catch(() => {}) } : ES_MAX ? { modelo: modeloParaTelegram(prompt) } : {}) };
+  let r = await correrYTerminar(contextoRespuestas(st) + prompt, persona, st.sesion, nueva, onProgreso, optsTrabajo);
+  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, onProgreso, optsTrabajo); }
   clearInterval(typing);
   let resp = r.out;
   if (!resp) { LOG("sin salida del CLI (code", r.code, ") → respaldo API"); resp = await respaldoAPI(prompt, persona); }
@@ -503,6 +527,19 @@ async function atenderBuzon(token, chatCEO, st) {
     // Elvin o de otro agente). Solo se le avisa a Elvin, que es quien decide.
     if (esRespuesta) {
       try { await buzonMarcar(m.id, "atendido"); } catch {}
+      // ¿Era la respuesta a un pedido con ⟳ SEGUIR? Entonces este agente se despierta y TERMINA (26/sep).
+      let orig = null;
+      try { orig = await buzonObtener(m.hilo); } catch {}
+      const seg = orig && orig.de === YO ? leerSeguir(orig.texto) : null;
+      if (seg && (!ES_MAX || dentroDelTope(st.gastoMax).ok)) {
+        const cupo = cupoContinuar(st.continuaciones, diaPR(), Number(env("AGENTES_CONTINUAR_MAX_DIA") || 20));
+        if (cupo.ok) {
+          st.continuaciones = cupo.estado; guardarEstado(st);
+          await continuarTrabajo(token, chatCEO, st, m, orig, seg);
+          continue;
+        }
+        LOG("continuación: tope diario alcanzado, queda como contexto");
+      }
       st.respuestasPendientes = [...(st.respuestasPendientes || []).slice(-9), { id: m.id, de: m.de, hilo: m.hilo, texto: m.texto.slice(0, 1500), ts: new Date().toISOString() }];
       guardarEstado(st);
       LOG("buzón ‹ respuesta de", m.de, `#${m.id} (sin Claude)`);
@@ -534,7 +571,7 @@ async function atenderBuzon(token, chatCEO, st) {
     try { await buzonMarcar(m.id, "en-curso"); } catch {}
     const prompt = deSlack
       ? `${m.texto}\n\n${MAX_SLACK}`
-      : contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado corto>"\`. Sé breve: es un mensaje entre agentes, no un informe.`;
+      : contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado completo: links/ids y qué quedó>"\` (tu respuesta despierta a ${de} para que termine su parte). Hazlo completo en esta vuelta. Sé breve: es un mensaje entre agentes, no un informe.`;
     LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
     // Mismo ciclo que por Telegram: traer lo de producción antes y publicar lo escrito después.
     // Sin esto, lo que un agente escribía atendiendo a otro moría con el contenedor (21/sep).
@@ -545,9 +582,12 @@ async function atenderBuzon(token, chatCEO, st) {
     const nueva = !st.sesion || st.sesionDia !== hoy;
     if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
-    const optsBuzon = ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {};
-    let r = await correrClaude(prompt, persona, st.sesion, nueva, null, optsBuzon);
-    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, persona, st.sesion, true, null, optsBuzon); }
+    const optsBuzon = { origen: deSlack ? "slack" : `buzon:${m.id}:${m.de}`, ...(ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {}) };
+    let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, optsBuzon);
+    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, optsBuzon); }
+    // Delegó parte del trabajo a otro agente: el pedido queda abierto hasta que llegue esa respuesta (la
+    // continuación lo cierra con el resultado completo). Así el que pidió no recibe un "le pedí a X, espero".
+    const espera = !deSlack && (r.delegados || []).length > 0;
     const resp = (r.out || "").trim();
     st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona, de: m.de, prompt: m.texto.slice(0, 300), resp: resp.slice(0, 300) }];
     guardarEstado(st);
@@ -557,16 +597,83 @@ async function atenderBuzon(token, chatCEO, st) {
     // duplica; solo se cierra lo que quedó abierto.
     try {
       const estado = await buzonEstado(m.id);
-      if (estado !== "atendido" && estado !== "fallido") {
+      if (espera && estado !== "atendido" && estado !== "fallido") LOG("buzón:", `#${m.id} queda abierto esperando a`, r.delegados.join(", "));
+      else if (estado !== "atendido" && estado !== "fallido") {
         await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
         if (!esRespuesta && resp && !deSlack) await buzonEnviar(YO, m.de, resp.slice(0, 4000), m.id);
       }
     } catch (e) { LOG("buzón cierre:", e.message.slice(0, 120)); }
     gitSubir(`buzón #${m.id} de ${m.de}`);
     publicarCambios(inicio, pendientesPrevios > 0, chatCEO ? (aviso) => enviar(token, chatCEO, aviso).catch(() => {}) : null);
-    if (chatCEO && !esRespuesta && !deSlack) await enviar(token, chatCEO,`💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${m.texto.slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
+    if (chatCEO && !esRespuesta && !deSlack) await enviar(token, chatCEO, espera
+      ? `⏳ ${NOMBRES[YO]} trabaja el pedido de ${de} y le pidió una parte a ${r.delegados.map((d) => NOMBRES[d] || d).join(" y ")}; cuando responda, lo termina:\n${quitarMarca(m.texto).slice(0, 300)}`
+      : `💬 ${NOMBRES[YO]} atendió un pedido de ${de}:\n${quitarMarca(m.texto).slice(0, 300)}\n\n→ ${resp.slice(0, 700) || "sin respuesta"}`).catch(() => {});
   }
 }
+// ── Seguir cuando otro agente responde (Elvin, 26/sep/2026) ────────────────────────────────────
+// "Nico le pide diseño a Lola… no se entienden… después que las hace no las termina." La respuesta a un pedido
+// con ⟳ SEGUIR despierta al que pidió (misma sesión del día, así que sabe en qué iba) para que TERMINE y le
+// entregue el resultado al origen real del trabajo: Elvin por Telegram, el agente que lo pidió (buzón), o —si era
+// una solicitud de Carilin/Aure— el diagnóstico actualizado para Elvin (en solo lectura hasta su OK).
+async function continuarTrabajo(token, chatCEO, st, m, orig, seg) {
+  const de = NOMBRES[m.de] || m.de;
+  const quien = seg.de ? NOMBRES[seg.de] || seg.de : "";
+  const QUIEN = quien.toUpperCase();
+  const soloLectura = ES_NICO && seg.tipo === "solicitud";
+  const avisarCEO = (t) => (chatCEO ? enviar(token, chatCEO, t).catch(() => {}) : Promise.resolve());
+  const para = {
+    telegram: "Elvin (tu respuesta final le llega por Telegram)",
+    buzon: `${quien}, que te lo pidió en su #${seg.id} (tu respuesta final le llega a su buzón; ya NO corras atendido ${seg.id}, el puente lo cierra)`,
+    solicitud: `Elvin: es la solicitud #${seg.id} de ${quien}, todavía SIN su OK → sigues en SOLO LECTURA y tu respuesta es el diagnóstico/plan actualizado. Si con esto ya queda contestado lo que ${quien} preguntó sin cambiar nada, agrega al final UNA línea "PARA ${QUIEN}: …" con la respuesta en 1-2 oraciones sencillas`,
+    aprobada: `Elvin: la solicitud #${seg.id} de ${quien} ya estaba aprobada; al final agrega UNA línea "PARA ${QUIEN}: …" con lo que quedó, sin jerga`,
+    slack: "el flujo de Slack: sigue con max.mjs como siempre (proponer / nota / cerrar); tu respuesta final no le llega a nadie",
+  }[seg.tipo] || "quien te lo pidió";
+  const prompt = `[Continuación · ${de} respondió tu #${orig.id}]\nLo que le pediste: ${quitarMarca(orig.texto).slice(0, 1500)}\n\nSu respuesta:\n${m.texto.slice(0, 3500)}\n\nTermina AHORA, completo, el trabajo que dependía de esto: no lo dejes para después ni preguntes si sigues. Entrégaselo a: ${para}. No le escribas a ${de} para agradecer ni confirmar (si su respuesta quedó incompleta o equivocada, pídele lo que falta con un pedido nuevo, claro y concreto). Si algo no depende de ti, dilo en una línea con quién lo tiene. Respuesta final corta: qué quedó, con links/ids.`;
+  LOG("continuación ›", `${m.de} respondió #${orig.id}`, `(origen ${seg.origen})`);
+  const pendientesPrevios = soloLectura ? 0 : await traerDatos();
+  gitBajar();
+  const inicio = Date.now();
+  const hoy = new Date().toISOString().slice(0, 10);
+  const nueva = !st.sesion || st.sesionDia !== hoy;
+  if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
+  const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
+  const opts = { soloLectura, origen: origenSiguiente(seg), ...(ES_MAX ? { modelo: MODELO_PLAN } : {}) };
+  let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, opts);
+  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, opts); }
+  let resp = (r.out || "").trim();
+  st.historial = [...(st.historial || []).slice(-49), { ts: new Date().toISOString(), persona, de: m.de, prompt: `continuación de #${orig.id}: ${m.texto.slice(0, 250)}`, resp: resp.slice(0, 300) }];
+  guardarEstado(st);
+  if (!soloLectura) { gitSubir(`continuación de #${orig.id}`); publicarCambios(inicio, pendientesPrevios > 0, chatCEO ? (aviso) => enviar(token, chatCEO, aviso).catch(() => {}) : null); }
+  const sigueEsperando = (r.delegados || []).length > 0;
+  if (seg.tipo === "telegram") {
+    await avisarCEO(`${sigueEsperando ? "⏳" : "✅"} ${NOMBRES[YO]} siguió con la respuesta de ${de}:\n${resp || (r.err || "sin respuesta").slice(0, 500)}`);
+    await slackEspejo(`[Telegram] ${persona} → Elvin (con la respuesta de ${de}): ${resp.slice(0, 3500)}`);
+  } else if (seg.tipo === "buzon" && seg.id) {
+    if (!sigueEsperando) {
+      try {
+        const est = await buzonEstado(seg.id);
+        if (est !== "atendido" && est !== "fallido") await buzonMarcar(seg.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
+      } catch (e) { LOG("continuación cierre:", e.message.slice(0, 120)); }
+      if (resp && ["sofi", "nico", "max", "lola", "jarvis"].includes(seg.de)) await buzonEnviar(YO, seg.de, resp.slice(0, 4000), seg.id).catch((e) => LOG("continuación respuesta:", e.message.slice(0, 120)));
+    }
+    await avisarCEO(`${sigueEsperando ? "⏳" : "💬"} ${NOMBRES[YO]} ${sigueEsperando ? "sigue" : "terminó"} el pedido de ${quien} (con la respuesta de ${de}):\n→ ${resp.slice(0, 700) || "sin respuesta"}`);
+  } else if ((seg.tipo === "solicitud" || seg.tipo === "aprobada") && ES_NICO && seg.id) {
+    const re = new RegExp(`^\\s*PARA ${QUIEN}:\\s*(.+)$`, "im");
+    const paraEquipo = resp.match(re)?.[1]?.trim();
+    resp = resp.replace(re, "").trim();
+    let sol = null;
+    try { sol = await buzonObtener(seg.id); } catch {}
+    if (seg.tipo === "solicitud" && sol && ["esperando-ok", "en-curso", "pendiente"].includes(sol.estado)) {
+      await buzonMarcar(seg.id, "esperando-ok", resp.slice(0, 4000)).catch(() => {});
+      await avisarCEO(`🔄 Solicitud #${seg.id} de ${quien}, actualizada con la respuesta de ${de}:\n${resp}\n\n👉 Para que lo haga: ok ${seg.id}\n✋ Para no hacerlo: no ${seg.id}`);
+    } else {
+      await avisarCEO(`🔄 #${seg.id} de ${quien}${sol ? ` (${sol.estado})` : ""}, con la respuesta de ${de}:\n${resp}`);
+    }
+    await slackEspejo(`[Nico] #${seg.id} de ${quien} con la respuesta de ${de}: ${resp.slice(0, 1500)}`);
+    if (paraEquipo) await dmEquipo(seg.de, `Sobre tu solicitud #${seg.id}: ${paraEquipo}`, sol ? refSlack(sol.texto) : null);
+  }
+}
+
 // ── Solicitudes del equipo → Nico, con OK de Elvin (23/sep/2026) ──────────────────────────────
 // Elvin: "que Nico tenga un enlace directo con Carilin y Aure… no hace el cambio sin yo
 // confirmar. Que me avise: Carilin solicitó este cambio, y cuando yo dé el OK, él lo hace."
@@ -599,8 +706,8 @@ async function turnoNico(prompt, opts = {}) {
   const hoy = new Date().toISOString().slice(0, 10);
   const nueva = !st.sesion || st.sesionDia !== hoy;
   if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
-  let r = await correrClaude(prompt, "nico", st.sesion, nueva, null, opts);
-  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(prompt, "nico", st.sesion, true, null, opts); }
+  let r = await correrYTerminar(prompt, "nico", st.sesion, nueva, null, opts);
+  if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, "nico", st.sesion, true, null, opts); }
   if (!opts.soloLectura) {
     gitSubir(opts.motivo || "solicitud del equipo");
     publicarCambios(inicio, pendientesPrevios > 0, opts.avisar || null);
@@ -614,7 +721,7 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   try { await buzonMarcar(m.id, "en-curso"); } catch {}
   LOG("solicitud ›", `de ${m.de} #${m.id}`, pedido.slice(0, 80));
   const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
-  const r = await turnoNico(prompt, { st, soloLectura: true });
+  const r = await turnoNico(prompt, { st, soloLectura: true, origen: `solicitud:${m.id}:${m.de}` });
   const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
   try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
   const aviso = `🟡 ${quien} solicitó un cambio (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
@@ -643,7 +750,7 @@ async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
   await avisarCEO(`✅ Aprobada #${id} de ${quien}. Manos a la obra; te aviso cuando esté verificada.`);
   const nombreMay = quien.toUpperCase();
   const prompt = `Elvin APROBÓ la solicitud #${id} de ${quien}${nota ? ` con esta nota: "${nota}"` : ""}.\nPedido de ${quien}: ${pedido}\nTu plan (el que Elvin aprobó): ${m.respuesta || "(sin plan previo: diagnostica y ejecútalo)"}\n\nEjecútalo completo como cualquier ajuste tuyo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo → anotar en data/nico-bitacora.json (que empiece con "[Solicitud de ${quien} #${id}]"). Tus prohibiciones siguen: si el plan choca con una (borrar datos, cobros, prompt de voz en prod, secretos…), no lo hagas y dile a Elvin por qué. No le escribas a ${quien}: el puente le avisa. Tu respuesta va a Elvin (corta: qué hiciste, qué verificaste). Al final agrega UNA línea que empiece con "PARA ${nombreMay}:" con 1-2 oraciones sencillas, sin jerga, de lo que quedó.`;
-  const r = await turnoNico(prompt, { st, motivo: `solicitud #${id} de ${m.de}`, avisar: avisarCEO, titulo: `solicitud #${id} de ${quien}: ${pedido}` });
+  const r = await turnoNico(prompt, { st, motivo: `solicitud #${id} de ${m.de}`, avisar: avisarCEO, titulo: `solicitud #${id} de ${quien}: ${pedido}`, origen: `aprobada:${id}:${m.de}` });
   let resp = (r.out || "").trim();
   const re = new RegExp(`^\\s*PARA ${nombreMay}:\\s*(.+)$`, "im");
   const paraEquipo = resp.match(re)?.[1]?.trim();
@@ -670,7 +777,7 @@ const MAX_SLACK = `OPERAS EN SLACK (cerebro-max.md §17 — léelo si no lo tien
 - DRIVE: cada cliente tiene su carpeta (max.mjs carpeta <slug>: la crea si falta, la pone en Pulse y avisa en Slack). TODO lo que produzcas va ahí: guiones, briefs, reportes → max.mjs drive-doc <slug> <estrategia|creativos|reportes|branding|documentos> --titulo '…' --texto '…'; flyers, imágenes, videos (URL de fal) → max.mjs drive-archivo <slug> <creativos|videos|branding> --url https://… --nombre …. Los planes, estructuras y creativos APROBADOS los guarda el servidor solo. Cuando haya canal del cliente, el enlace de la carpeta se le manda con proponer … mensaje.
 - SIEMPRE PIDES MATERIAL AL CLIENTE (cerebro §18): en toda estrategia y renovación, una lista de lo que el cliente debe grabar (su servicio frente a cámara, su local, testimonios) aparte de lo que producimos; recomiendas UGC o contenido profesional, y a médicos/profesionales LAS DOS (profesional de ellos trabajando + UGC en colaboración).
 - PRIMER CLIENTE REAL Y ROLES (cerebro §19): Carilin te asigna en #max-aprobaciones tu primer cliente (pago inicial ≤ $2,000); estás a prueba: nada se publica sin su 'publica'. Tú no te reúnes con el cliente: la reunión de estrategia la hace Carilin (Directora de Operaciones) o manda a Jessica (Project Manager) a pedir lo que necesites.
-- PRODUCES Y MONTAS (cerebro §21): con el plan aprobado produces SIN pedir otro OK (hasta 8 flyers y 3 videos por ola): flyers con fal.mjs imagen --ref <logo/fotos reales del cliente>, videos con fal.mjs video --img <flyer o foto>, copy por pieza → proponer <slug> creativos --imagenes … --videos … (se ven en Slack) → con los creativos aprobados: meta-ads.mjs cliente:<slug> estrategia --creativos '<json>' (sube los medios y arma el Método 5 Fases EN PAUSA) → proponer-publicar → 'publica'.
+- PRODUCES Y MONTAS (cerebro §21): con el plan aprobado produces SIN pedir otro OK (hasta 8 flyers y 3 videos por ola): flyers con la guía de Elvin: fal.mjs flyer --titulo … --bullets 'a|b|c' --cta … --producto … --foto <fotos reales del cliente> --logo <su logo real> (minimalista, elegante, pocas palabras, su producto de héroe), videos con fal.mjs video --img <flyer o foto>, copy por pieza → proponer <slug> creativos --imagenes … --videos … (se ven en Slack) → con los creativos aprobados: meta-ads.mjs cliente:<slug> estrategia --creativos '<json>' (sube los medios y arma el Método 5 Fases EN PAUSA) → proponer-publicar → 'publica'.
 - LANZAR EN 7 DÍAS (cerebro §20): plan el día 1, flyers/videos/copies a aprobación el día 2, campañas en borrador con esos creativos el día 3, QA días 5-6, 🚀 el día 7; el lanzamiento no espera al contenido del cliente (entra en la ola 2). Si un plazo se va a romper, avisas en #max-aprobaciones con el día y la causa.
 - ONBOARDING: tu arranque real es el Fathom de la reunión de onboarding de Jessica ([Onboarding nuevo · … fuente fathom]). Empieza ya (expediente, llamada de venta, competencia, matemática) y espera el resumen de Jessica en el hilo que el servidor abrió en #max-aprobaciones (te llega como [Max canal · de Jessica · hilo …]; el hilo dice '(cliente: slug)'). Con su resumen armas el plan y lo propones. Aprueban Jessica, Carilin o Elvin; publicar solo Elvin o Carilin.
 - Hoy NINGÚN canal de cliente está habilitado (MAX_CANALES_CLIENTES vacío): trabajas solo en #max-aprobaciones; no pidas que te agreguen a canales de clientes.

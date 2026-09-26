@@ -3,7 +3,8 @@
 // "los agentes se tienen que poder hablar entre sí — Sofi le pide algo a Nico, Max le pide algo
 // a Nico — y con mi equipo personal también".
 //
-//   node scripts/agentes.mjs mensaje <agente> "<texto>"        deja un mensaje en el buzón de otro
+//   node scripts/agentes.mjs mensaje <agente> "<texto>" [--sin-seguir]   deja un pedido en el buzón de otro; su
+//                                                              respuesta te despierta para terminar (⟳ SEGUIR)
 //                                                              agente (sofi | nico | max | lola | elvin)
 //   node scripts/agentes.mjs buzon [agente]                    mis mensajes pendientes (YO = PUENTE_BOT)
 //   node scripts/agentes.mjs atendido <id> ["<respuesta>"]    marca un mensaje como atendido (y
@@ -20,7 +21,7 @@
 //
 // El buzón vive en la base de Pulse vía POST/GET /api/agentes (CONTENT_OS_URL + CRON_SECRET), el
 // único punto que comparten los contenedores de Railway y la Mac. Cada puente lo revisa cada
-// ~90 s y atiende lo que le llegó; las RESPUESTAS no disparan a Claude (se guardan y van como contexto en el próximo pedido) (ver telegram-puente.mjs → buzonLoop). Todo mensaje se espeja al
+// ~90 s y atiende lo que le llegó; la RESPUESTA a un pedido con ⟳ SEGUIR despierta al que pidió para que termine su trabajo (26/sep; las demás van como contexto del próximo pedido) (ver telegram-puente.mjs → buzonLoop). Todo mensaje se espeja al
 // DM de Slack de Elvin como [Agentes] para que él vea la conversación.
 //
 // Reglas (van también en cada cerebro): a Elvin y a los otros agentes, libre. Al EQUIPO HUMANO
@@ -33,6 +34,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { marcaSeguir } from "./agentes-seguir.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 function env(n) {
@@ -46,6 +48,7 @@ function env(n) {
 
 const YO = (process.env.PUENTE_BOT || process.env.AGENTE || "sofi").toLowerCase();
 const NOMBRE = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
+const CON_BUZON = new Set(["sofi", "nico", "max", "lola", "jarvis"]);
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");
 const CEO_SLACK = env("CEO_SLACK_ID") || "U08U9777PUY";
@@ -127,10 +130,18 @@ const [cmd, ...rest] = process.argv.slice(2);
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   try {
     if (cmd === "mensaje") {
-      const para = (rest[0] || "").toLowerCase(); const texto = rest.slice(1).join(" ").trim();
-      if (!NOMBRE[para] || !texto) throw new Error('Uso: mensaje <sofi|nico|max|lola|elvin> "<texto>"');
+      // --sin-seguir: aviso que no necesita respuesta. Sin la bandera, el pedido lleva ⟳ SEGUIR con el origen del
+      // trabajo (AGENTE_ORIGEN, lo pone el puente) y la respuesta te despierta para terminarlo (26/sep).
+      const sinSeguir = rest.includes("--sin-seguir");
+      const args = rest.filter((a) => a !== "--sin-seguir");
+      const para = (args[0] || "").toLowerCase(); const texto = args.slice(1).join(" ").trim();
+      if (!NOMBRE[para] || !texto) throw new Error('Uso: mensaje <sofi|nico|max|lola|elvin> "<texto>" [--sin-seguir]');
       if (para === "elvin") { await avisarElvin(texto); }
-      else { const j = await enviarMensaje(YO, para, texto); console.log(`✓ Mensaje #${j.id} para ${NOMBRE[para]}. Lo atiende en su próxima ronda (≤ 1 min) y su respuesta te llega a tu buzón.`); }
+      else {
+        const marca = sinSeguir ? "" : marcaSeguir(process.env.AGENTE_ORIGEN, NOMBRE[YO] || YO);
+        const j = await enviarMensaje(YO, para, texto + marca);
+        console.log(`✓ Mensaje #${j.id} para ${NOMBRE[para]}. Lo atiende en ≤ 2 min.${marca ? ` Cuando responda te despierto con su respuesta para que TERMINES el trabajo: no cierres tu pedido todavía ni digas que quedó.` : " Su respuesta te llega como contexto de tu próximo pedido."}`);
+      }
     } else if (cmd === "buzon") {
       const quien = (rest[0] || YO).toLowerCase();
       const m = await pendientes(quien);
@@ -140,11 +151,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
       const id = Number(rest[0]); const respuesta = rest.slice(1).join(" ").trim();
       if (!id) throw new Error('Uso: atendido <id> ["<respuesta>"]');
       await marcar(id, "atendido", respuesta || undefined);
+      let nota = "";
       if (respuesta) {
-        const orig = (await api("GET", { para: YO, ultimos: 200 })).mensajes.find((x) => x.id === id);
-        if (orig && orig.de !== YO) await enviarMensaje(YO, orig.de, respuesta, id);
+        const orig = await obtener(id);
+        // Solo los agentes tienen buzón: a Carilin/Aure (solicitudes del equipo) les avisa el puente por Slack.
+        // Antes esto intentaba dejarle la respuesta a "aure" y fallaba con agente-desconocido (#41, #42 del 25/sep).
+        if (orig && orig.de !== YO && CON_BUZON.has(orig.de)) await enviarMensaje(YO, orig.de, respuesta, id);
+        else if (orig && orig.de !== YO) nota = ` (a ${NOMBRE[orig.de] || orig.de} le llega por Slack cuando termine el puente)`;
       }
-      console.log(`✓ #${id} atendido${respuesta ? " y respondido" : ""}.`);
+      console.log(`✓ #${id} atendido${respuesta ? " y respondido" : ""}.${nota}`);
     } else if (cmd === "historial") {
       const quien = rest[0] && NOMBRE[rest[0].toLowerCase()] ? rest[0].toLowerCase() : "";
       const j = await api("GET", quien ? { para: quien, ultimos: rest[1] || 30 } : { ultimos: rest[0] || 30 });

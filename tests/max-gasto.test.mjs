@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { dentroDelTope, diaPR, gastoHoy, gastoSemana, lunesPR, MODELO_BARATO, MODELO_PLAN, modeloParaSlack, modeloParaTelegram, registrarGasto } from "../scripts/max-gasto.mjs";
+import { costoDeLaCorrida, dentroDelTope, diaPR, gastoHoy, gastoSemana, lunesPR, MODELO_BARATO, MODELO_PLAN, modeloParaSlack, modeloParaTelegram, registrarGasto } from "../scripts/max-gasto.mjs";
 
 test("modelo: Opus para planear/investigar/producir, el barato para mensajes", () => {
   assert.equal(MODELO_PLAN, "claude-opus-5-5");
@@ -39,4 +39,12 @@ test("topes: $10 al día y $25 a la semana (lunes a domingo, hora de PR)", () =>
   assert.equal(r.ok, false);
   assert.match(r.motivo, /semanal/);
   assert.equal(dentroDelTope(semana, new Date("2026-09-28T15:00:00Z")).ok, true, "el lunes arranca la semana nueva");
+});
+
+test("el costo de cada corrida es la diferencia con el acumulado de la sesión", () => {
+  let u = null, r;
+  r = costoDeLaCorrida(u, "s1", 3.47); assert.equal(r.delta, 3.47); u = r.ultimo;
+  r = costoDeLaCorrida(u, "s1", 3.62); assert.equal(r.delta, 0.15); u = r.ultimo;
+  r = costoDeLaCorrida(u, "s2", 0.8); assert.equal(r.delta, 0.8, "sesión nueva: cuenta completo"); u = r.ultimo;
+  r = costoDeLaCorrida(u, "s2", 0.5); assert.equal(r.delta, 0.5, "si el total baja (reinicio), cuenta lo reportado");
 });
