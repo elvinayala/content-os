@@ -132,3 +132,6 @@ por pieza → `max.mjs proponer <slug> creativos --imagenes … --videos …` (s
 aprobarse van a Drive) → `meta-ads.mjs cliente:<slug> estrategia --creativos '<json>'` sube imágenes (bytes →
 adimages hash) y videos (file_url → advideos, espera ready + miniatura) y arma el Método 5 Fases EN PAUSA → 🚀
 proponer-publicar → "publica". Cerebro §21. Límite: destino WhatsApp aún no se monta por API (dm-ig|leads|enlace).
+**26/sep:** Carilin le dijo a Elvin que Jessica YA tiene Fathom instalado. Los recordatorios de Max (sáb 8:30 AM) ya
+habían salido. Aún no ha entrado ninguna grabación de equipo a /api/fathom (estado 'max'): falta confirmar que
+comparte con el equipo y titula "Onboarding · Negocio" — se verá en su primer onboarding o con una prueba corta.
