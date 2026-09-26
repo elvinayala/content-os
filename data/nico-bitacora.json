@@ -185,6 +185,14 @@
       "porque": "Elvin aprobó contestarle que no hubo cambios de Nico.",
       "verificado": "Búsqueda en /estado (repos, data, vault, n8n): la única mención es la reunión LU del 26/mar (plataforma interna, repo no disponible).",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-26",
+      "plataforma": "ninguna (Level Up · leaderboard setters/closers)",
+      "que": "[Solicitud de Aure #48] Aure pidió por DM de Slack las imágenes del leaderboard de setters y closers de LU actualizadas. NO se ejecutó: el plan que Elvin aprobó era un error de la API (Claude Code 2.1.278 sin soporte del modelo), no un plan. Las imágenes no existen en ningún repo/data/vault ni las hizo Lola (#44/#45). La fuente para armarlas sería la hoja de ventas de LU que lee dashboard-ventas (columnas closer/setter). Tampoco hay manera de mandar imágenes por DM: agentes.mjs slack solo manda texto.",
+      "porque": "No se ejecuta un plan que no existe ni se inventan cifras de ventas del equipo.",
+      "verificado": "Búsqueda en /estado sin archivos de leaderboard; buzón: Lola confirmó que no hizo ninguno.",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
