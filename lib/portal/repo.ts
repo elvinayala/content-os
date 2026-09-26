@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, avg, count, desc, eq, inArray, ne, sql, sum } from "drizzle-orm";
+import { and, asc, avg, count, desc, eq, gt, inArray, ne, sql, sum } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
 
@@ -280,7 +280,7 @@ export async function llamadasPendientesDeSync(horas = 24): Promise<{ callId: st
   const rows = await d
     .select({ callId: autoflowLlamadas.callId, portalId: autoflowLlamadas.portalId })
     .from(autoflowLlamadas)
-    .where(and(ne(autoflowLlamadas.estado, "analizada"), ne(autoflowLlamadas.estado, "error"), sql`${autoflowLlamadas.createdAt} > ${desde}`))
+    .where(and(ne(autoflowLlamadas.estado, "analizada"), ne(autoflowLlamadas.estado, "error"), gt(autoflowLlamadas.createdAt, desde)))
     .orderBy(asc(autoflowLlamadas.createdAt))
     .limit(50);
   return rows;
