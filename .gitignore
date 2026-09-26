@@ -72,3 +72,6 @@ data/n8n/rezagados-*.json
 
 # Fotos/PDFs que Elvin manda por Telegram (los baja el puente; se borran a los 7 días)
 .telegram-adjuntos/
+
+# Perfiles temporales de Chrome del render de flyers (traen Cookies/Login Data): nunca al repo ni a Railway
+**/.chrome-*/

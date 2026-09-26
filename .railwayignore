@@ -40,3 +40,6 @@ vault/proyectos/bori-crecimiento/leads-perdidos
 !.vercel/project.json
 
 .telegram-adjuntos
+
+# Perfiles temporales de Chrome del render de flyers (enlaces rotos + datos del navegador)
+**/.chrome-*
