@@ -445,7 +445,7 @@ app.get("/api/proveedores/cuenta", (req: any, res) => {
 // Página de pago del cliente (mientras no haya Stripe: ATH Móvil + total)
 app.get("/pagar/:id", (req, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id);
-  if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos por WhatsApp al 787-956-1111.</p>");
+  if (!t || t.totalCliente == null) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encuentro ese trabajo. Escríbenos un texto al 787-956-1111.</p>");
   res.type("html").send(pagarHTML(t, config.cobros.athMovil));
 });
 // El plomero decide qué trabajos coge (Elvin, 25/sep): "No puedo" no es falta y no se le vuelve a mostrar.
