@@ -229,6 +229,15 @@ async function atenderDM(m: zernio.MensajeZernio) {
 let smsCrudos = 0;
 async function atenderSMS(m: { de: string; texto: string; id: string }) {
   if (smsCrudos++ < 5) console.log("SMS entrante", m.de, m.texto.slice(0, 80));
+  // Plomero por texto (con WhatsApp caído las ofertas le llegan por SMS): "ACEPTO OF-0001" acepta; lo demás va al coordinador.
+  const prov = proveedorPorWhatsapp(m.de);
+  if (prov) {
+    const acepto = m.texto.match(/acepto\s+(OF-\d{4})/i);
+    if (acepto) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await sms.enviarSMS(m.de, r.motivo); return; }
+    if (sms.BAJA.test(m.texto)) return;
+    await wa.avisarCoordinador(`💬 ${prov.nombre} (plomero) escribió por texto al 787-956-1111: "${m.texto.replace(/\s+/g, " ").slice(0, 300)}"`);
+    return;
+  }
   const c = sms.contactoPorTelefono(m.de) ?? almacen.obtenerOCrearContacto("sms", m.de);
   if (!c.telefono) { c.telefono = m.de.replace(/^\+1/, ""); almacen.guardarContacto(c); }
   if (sms.BAJA.test(m.texto)) { almacen.guardarContacto({ ...c, smsBaja: true }); return console.log("SMS: baja de", m.de); }

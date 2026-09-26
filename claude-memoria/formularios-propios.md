@@ -21,3 +21,8 @@ Quedó en prod: Pulse → Formularios (editor sin código) + páginas públicas 
 todavía entraron respuestas allá). También hay que revisar si la otra cuenta (6siljlqvh7z) se paga, y bajar sus
 respuestas desde la UI si importan. Detalle técnico en CLAUDE.md §Formularios propios.
 Ver [[pulse-crm]], [[leads-crm]], [[n8n-level-up]].
+
+**26/sep (tarde):** avisado por DM de Slack (desde la cuenta de Elvin, firmado Claude): Aure y Nahuel les dicen a
+los closers que solo se usa levelupmedia.vercel.app; **Aure cancela la membresía de Typeform** cuando verifique (y
+la otra cuenta 6siljlqvh7z si se paga); Jessica sabe dónde ver las respuestas. Formularios ahora lo ven admin/editor +
+Jessica y Nahuel (`puedeFormularios`, override FORMULARIOS_ACCESO). Commit e2875d2 subido a GitHub.

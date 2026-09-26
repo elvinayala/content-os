@@ -13,7 +13,8 @@ import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe }
 import { DEMO_ID } from "../demo-plomero.js";
 import { leerHistorial, archivar } from "../historial.js";
 import { abrirGarantia, vigenciaGarantia } from "../garantias.js";
-import { enviarTexto, avisarCoordinador } from "../canales/whatsapp.js";
+import { avisarCoordinador } from "../canales/whatsapp.js";
+import { avisarAlTelefono } from "../canales/telefono.js"; // WhatsApp si está sano; si no, SMS desde el 787-956-1111
 import { territorios } from "../prompt.js";
 import { config } from "../config.js";
 import * as staff from "./staff.js";
@@ -213,7 +214,7 @@ portal.get("/portal/plomeros", requerir(), (req, res) => {
 portal.post("/portal/plomeros", requerir(), express.json(), async (req, res) => {
   const b = req.body ?? {}; if (!b.nombre || !b.whatsapp || !b.municipio) return res.json({ ok: false, motivo: "Faltan nombre, WhatsApp o municipio." });
   const p = altaPlomero({ nombre: String(b.nombre).trim(), whatsapp: String(b.whatsapp), municipio: String(b.municipio).trim(), licencia: b.licencia ? String(b.licencia).trim() : undefined });
-  const link = linkPortal(p.id, config.urlPublica); const ok = await enviarTexto(p.whatsapp, bienvenida(p.nombre, link)).then(() => true).catch(() => false);
+  const link = linkPortal(p.id, config.urlPublica); const ok = await avisarAlTelefono(p.whatsapp, bienvenida(p.nombre, link)).catch(() => false);
   await avisarCoordinador(`🔧 Alta de plomero por ${(req as any).yo.nombre}: ${p.nombre} · ${p.municipio} (${p.territorios.join(", ") || "SIN territorio"})\nApp: ${link}\nBienvenida: ${ok ? "enviada" : "NO enviada — mándale el link a mano"}`).catch(() => undefined);
   res.json({ ok: true, link, bienvenida: ok });
 });
@@ -229,7 +230,7 @@ portal.get("/portal/plomeros/:id", requerir(), (req, res) => {
 <h2>Sus comentarios</h2><div class="card">${notas.map((n) => `<div class="ev plomero"><small>${f(n.fecha)} · ${e(n.t)}</small><div>${e(n.texto)}</div></div>`).join("") || '<p class="muted">Sin comentarios.</p>'}</div>`));
 });
 portal.post("/portal/plomeros/:id/estado", requerir(), express.json(), (req, res) => { const s = String(req.body?.estado ?? ""); if (!["activo", "pausado"].includes(s)) return res.json({ ok: false }); res.json({ ok: !!cambiarEstadoPlomero(req.params.id, s as any) }); });
-portal.post("/portal/plomeros/:id/reenviar", requerir(), async (req, res) => { const p = plomeros().find((x) => x.id === req.params.id); if (!p) return res.json({ ok: false }); const ok = await enviarTexto(p.whatsapp, bienvenida(p.nombre, linkPortal(p.id, config.urlPublica))).then(() => true).catch(() => false); res.json({ ok, motivo: ok ? undefined : "WhatsApp no lo entregó (¿fuera de la ventana de 24 h?). Copia el link y mándaselo tú." }); });
+portal.post("/portal/plomeros/:id/reenviar", requerir(), async (req, res) => { const p = plomeros().find((x) => x.id === req.params.id); if (!p) return res.json({ ok: false }); const ok = await avisarAlTelefono(p.whatsapp, bienvenida(p.nombre, linkPortal(p.id, config.urlPublica))).catch(() => false); res.json({ ok, motivo: ok ? undefined : "No se pudo entregar. Copia el link y mándaselo tú." }); });
 
 // ── Vacantes (candidatos a plomero; lo lleva Yaileen) ──
 const ESTADO_CAND: Record<string, string> = { nuevo: "Nuevo", verificando: "Verificando", entrevista: "Entrevista", prueba: "Prueba", activo: "Activo", descartado: "Descartado", "lista-espera": "Lista de espera" };
