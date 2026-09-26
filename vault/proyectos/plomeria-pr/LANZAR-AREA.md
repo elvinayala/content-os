@@ -52,3 +52,22 @@ Todos los videos terminan con el **cierre de la ciudad** (3 s) y el **CTA suave*
 | C · Confianza | $10/día | video `sorpresas` · flyers `promesa`, `problema` y `sorpresas` | "¿Te ha pasado que el plomero te dice un precio y al final te cobra el doble?…" |
 
 Mismo público en los 3: 28–65 años, solo los pueblos del plomero, sin Advantage+ de público. Meta reparte dentro de cada conjunto entre sus anuncios; a los 5–7 días se apagan los que no traen conversaciones y se renuevan (método de Max).
+
+## 4. Llamadas (26/sep/2026) · la gente mayor llama
+
+Una sola campaña para todas las áreas, **"Resuelto · Clientes · Llamadas (787-956-1111)"** (`120255128736340029`, EN PAUSA):
+un conjunto por área ($10/día, 40–65 años, sus pueblos, objetivo llamadas de calidad) con 4 flyers que dicen
+"Llama al 787-956-1111": ciudad · menú · destape · cisterna.
+
+```bash
+cd kit/flyers-clientes-regiones
+LLAMADA=1 node generar.mjs T3 "Caguas,Gurabo,…"
+LLAMADA=1 PIEZAS=menu,destape,cisterna node familia.mjs T3 "Caguas,Gurabo,…"
+cd ../../../../.. && node vault/proyectos/plomeria-pr/kit/anuncios/lanzar-llamadas.mjs caguas "Caguas" "Caguas:4262,…"
+```
+
+**Quién contesta:** el 787-956-1111 vive en Zernio (voz + SMS). Hoy toda llamada cae en la **contestadora** (saludo en
+español, transcribe); el agente (`agente/src/canales/llamadas.ts`) le manda al que llamó UN texto ("te devolvemos la
+llamada" + enlace de reserva) y avisa por Telegram con el número y lo que dijo. Cuando haya setter: se pone su celular
+como `forwardTo` (POST `/v1/phone-numbers/{id}/voice`, horario L–S 8 AM–7 PM ya configurado); fuera de horario o si no
+contesta, sigue la contestadora. **La campaña de llamadas se prende cuando alguien esté contestando.**

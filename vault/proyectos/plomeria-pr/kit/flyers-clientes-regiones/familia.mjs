@@ -25,6 +25,10 @@ const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.p
 // Trabajos grandes (nivel G): el menú trae un rango; el flyer dice "desde" el mínimo (el agente da el mismo rango).
 const desde = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.rango) throw new Error(`Sin rango: ${id}`); return s.rango[0]; };
 const FEE = MENU.cargo_coordinacion;
+// LLAMADA=1 (26/sep/2026): versión para los anuncios de llamada, con el número de Resuelto (voz + SMS en Zernio).
+// PIEZAS=menu,destape,cisterna limita qué piezas salen.
+const LLAMADA = process.env.LLAMADA === "1", NUMERO = "787-956-1111";
+const FONO = `<svg width="32" height="32" viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z" fill="#fff"/></svg>`;
 
 const [soloT, pueblos, nombreArea] = process.argv.slice(2);
 // 3er argumento opcional: el nombre del área cuando el plomero no está en la ciudad cabecera del territorio
@@ -68,7 +72,7 @@ ${[["Llega cuando dice.", "Ventana de 2 horas y aviso 30 minutos antes, con el n
   destape: (a, s) => `<div class="eyebrow">Lo más pedido en ${a.nombre}</div>
 <h1 style="font-size:${s ? 150 : 118}px;margin-top:${s ? 26 : 16}px">¿Fregadero tapado?</h1>
 <div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Destape simple · precio fijo</div><div class="n">$${$("destape-simple")}</div><p>Fregadero, lavamanos, ducha o inodoro · + $${FEE} de coordinación</p><div class="g">${OK}12 meses de garantía en la mano de obra</div></div>
-<p class="nota" style="margin-top:${s ? 44 : 26}px">Mándanos una foto por mensaje y te damos el precio y la hora.</p>`,
+<p class="nota" style="margin-top:${s ? 44 : 26}px">${LLAMADA ? "Llámanos y te damos la hora de la visita. Si no contestamos, te devolvemos la llamada." : "Mándanos una foto por mensaje y te damos el precio y la hora."}</p>`,
   problema: (a, s) => `<div class="eyebrow">Plomería en ${a.nombre}</div>
 <h1 style="font-size:${s ? 108 : 86}px;margin-top:${s ? 26 : 18}px">El problema no es el precio. <span class="o">Es no saberlo.</span></h1>
 <div class="dos" style="margin-top:${s ? 50 : 30}px">
@@ -129,7 +133,7 @@ ${LOGO}
 <div style="margin-top:${s ? 0 : "auto"};padding-top:${s ? 30 : 18}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${s ? 30 : 20}px;margin-top:${s ? 10 : 6}px">
   <div class="muted" style="font-size:${s ? 24 : 19}px;line-height:1.35;max-width:${s ? 330 : 380}px">Plomeros licenciados · mano de obra, materiales aparte</div>
-  <div class="cta">${CHAT}Escríbenos un mensaje</div>
+  <div class="cta">${LLAMADA ? FONO + "Llama al " + NUMERO : CHAT + "Escríbenos un mensaje"}</div>
 </div>
 </body></html>`;
 }
@@ -138,14 +142,14 @@ ${LOGO}
 const TELEFONO_PR = /\b(787|939)[-. ]?\d{3}[-. ]?\d{4}\b/;
 function sinTelefono(n, h) {
   if (/whatsapp/i.test(h)) throw new Error(`${n}: dice "WhatsApp"`);
-  if (TELEFONO_PR.test(h)) throw new Error(`${n}: trae un teléfono`);
+  if (TELEFONO_PR.test(h) && !(LLAMADA && h.match(new RegExp(TELEFONO_PR, "g")).every((x) => x === NUMERO))) throw new Error(`${n}: trae un teléfono`);
   return h;
 }
 
 fs.mkdirSync(path.join(AQUI, "src"), { recursive: true });
 const correr = promisify(execFile);
-const trabajos = areas.flatMap((a) => Object.keys(PIEZAS).flatMap((pieza) => ["feed", "story"].map((formato) => {
-  const n = `cliente-${a.slug}-${pieza}-${formato}`, f = path.join(AQUI, "src", n + ".html"), png = path.join(AQUI, n + ".png");
+const trabajos = areas.flatMap((a) => Object.keys(PIEZAS).filter((p) => !process.env.PIEZAS || process.env.PIEZAS.split(",").includes(p)).flatMap((pieza) => ["feed", "story"].map((formato) => {
+  const n = `cliente-${a.slug}-${pieza}${LLAMADA ? "-llamada" : ""}-${formato}`, f = path.join(AQUI, "src", n + ".html"), png = path.join(AQUI, n + ".png");
   fs.writeFileSync(f, sinTelefono(n, html(a, pieza, formato)));
   return () => correr(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--user-data-dir=${path.join(AQUI, "src", ".chrome-" + n)}`, `--window-size=1080,${formato === "story" ? 1920 : 1350}`, "--force-device-scale-factor=1", "--virtual-time-budget=10000", `--screenshot=${png}`, "file://" + f], { timeout: 40000 })
     .catch((e) => { if (!fs.existsSync(png)) throw e; })

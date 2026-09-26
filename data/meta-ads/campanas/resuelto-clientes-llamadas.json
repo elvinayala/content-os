@@ -1,0 +1,75 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-09-26",
+ "telefono": "787-956-1111",
+ "campana": "120255128736340029",
+ "areas": {
+  "caguas": {
+   "nombre": "Caguas",
+   "pueblos": [
+    "Caguas",
+    "Gurabo",
+    "Juncos",
+    "San Lorenzo",
+    "Cayey",
+    "Aguas Buenas"
+   ],
+   "conjunto": "120255128736810029",
+   "anuncios": {
+    "ciudad": {
+     "imagen": "6a863e48551eb0dc1cff48e91ca89085",
+     "creativo": "1115988954349247",
+     "ad": "120255128737870029"
+    },
+    "menu": {
+     "imagen": "371b70548f4a23f3e7a678b17b521ece",
+     "creativo": "977519228725473",
+     "ad": "120255128738150029"
+    },
+    "destape": {
+     "imagen": "44b99c7492a5d6656414ccd104403a1e",
+     "creativo": "1692963046165197",
+     "ad": "120255128738520029"
+    },
+    "cisterna": {
+     "imagen": "7ed770a1cf4576291ef0b2c6136d1261",
+     "creativo": "1476464760972084",
+     "ad": "120255128738870029"
+    }
+   }
+  },
+  "quebradillas": {
+   "nombre": "Quebradillas",
+   "pueblos": [
+    "Quebradillas",
+    "Camuy",
+    "Hatillo",
+    "Arecibo"
+   ],
+   "conjunto": "120255128745890029",
+   "anuncios": {
+    "ciudad": {
+     "imagen": "c37e3019e22857c7c693e920c8b3b4e9",
+     "creativo": "1769492394101397",
+     "ad": "120255128746800029"
+    },
+    "menu": {
+     "imagen": "b2ab907f0ff2e90dadde5b836e98967b",
+     "creativo": "1063659876569831",
+     "ad": "120255128747990029"
+    },
+    "destape": {
+     "imagen": "b5608e6bb0b03e2b2ce339c016e66fe2",
+     "creativo": "4275785096064962",
+     "ad": "120255128748260029"
+    },
+    "cisterna": {
+     "imagen": "19c3cd65ccb1a29742bbdc0d62d3eb42",
+     "creativo": "2545456722583864",
+     "ad": "120255128748510029"
+    }
+   }
+  }
+ },
+ "estado": "Campaña EN PAUSA: se prende cuando haya alguien contestando el 787-956-1111. $10/día por área."
+}
