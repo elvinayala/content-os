@@ -8,6 +8,7 @@ import { linkDeAcceso } from "@/lib/desempeno/acceso";
 import * as datos from "@/lib/desempeno/datos";
 import * as etica from "@/lib/desempeno/etica";
 import { altaEmpleado } from "@/lib/desempeno/alta";
+import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
 import * as fichas from "@/lib/desempeno/fichas";
 import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
@@ -93,6 +94,7 @@ export async function guardarPerfilAction(p: {
   userId: string;
   puesto: string;
   empresa: string;
+  slackId?: string | null;
   liderId: string | null;
   horaEntrada: string;
   horaSalida: string;
@@ -111,7 +113,14 @@ export async function guardarPerfilAction(p: {
     if (p.liderId === p.userId) throw new Error("Nadie es su propio líder");
     const dias = [...new Set(p.diasLaborables.filter((d) => Number.isInteger(d) && d >= 0 && d <= 6))].sort();
     if (!dias.length) throw new Error("Escoge al menos un día");
-    await datos.guardarPerfil({ ...p, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
+    let slackId = p.slackId?.trim() || null;
+    if (slackId && !/^[UW][A-Z0-9]{6,}$/.test(slackId)) throw new Error("El ID de Slack empieza con U (p. ej. U08Q51UFLSH)");
+    if (!slackId) {
+      const usuario = (await datos.leerPerfiles(false)).find((x) => x.userId === p.userId);
+      const nombre = usuario?.nombre ?? (await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId)))?.nombre;
+      if (nombre) slackId = await buscarSlackPorNombre(nombre).catch(() => null);
+    }
+    await datos.guardarPerfil({ ...p, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
     refresh();
     return {};
   });

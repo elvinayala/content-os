@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
 import { linkDeAcceso } from "./acceso";
+import { buscarSlackPorNombre } from "./avisar";
 import { evento, guardarPerfil, perfilDe } from "./datos";
 import { guardarFicha } from "./fichas";
 
@@ -23,7 +24,8 @@ export async function altaEmpleado(
   if (u && (await perfilDe(u.id))) throw new Error("Esa persona ya está en Ritmo: búscala en Ajustes");
   if (!u) [u] = await d.insert(pulseUsers).values({ email, nombre: p.nombre.trim(), rol: "miembro" }).returning();
   else await d.update(pulseUsers).set({ activo: true, nombre: p.nombre.trim() }).where(eq(pulseUsers.id, u.id));
-  await guardarPerfil({ userId: u.id, puesto: p.puesto, empresa: p.empresa, liderId: p.liderId, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: p.fechaIngreso, activo: true }, actorId);
+  const slackId = await buscarSlackPorNombre(p.nombre).catch(() => null);
+  await guardarPerfil({ userId: u.id, slackId, puesto: p.puesto, empresa: p.empresa, liderId: p.liderId, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: p.fechaIngreso, activo: true }, actorId);
   await guardarFicha({ userId: u.id, telefono: null, telefonoAlterno: null, ciudad: null, pais: null, documentoTipo: null, documentoNumero: null, salarioMensual: p.salarioMensual, notas: null, contactoEmergencia: null }, actorId);
   await evento({ userId: u.id, actorId, tipo: "alta_empleado", datos: { empresa: p.empresa, puesto: p.puesto } });
   return linkDeAcceso(u.id, base);

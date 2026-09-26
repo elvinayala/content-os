@@ -390,6 +390,19 @@ Elvin como `[Agentes] X → Y`. Reglas de comunicación en el sufijo `COMUNICACI
 personas: libre entre agentes y con Elvin; al equipo humano solo lo que el cerebro de cada uno
 permite; nunca a clientes; nunca secretos.
 
+**Terminan lo que empiezan (26/sep/2026).** Elvin: "Nico le pide diseño a Lola… no se entienden… después que las
+hace no las termina". Cada `agentes.mjs mensaje` lleva **⟳ SEGUIR [origen·n]** (el origen real del trabajo lo pone el
+puente en `AGENTE_ORIGEN`: `telegram` · `buzon:<id>:<de>` · `solicitud:<id>:<de>` · `aprobada:<id>:<de>` · `slack`);
+la **respuesta despierta al que pidió** (`continuarTrabajo` en el puente), que termina y entrega al origen: Elvin por
+Telegram, el agente que lo pidió (cierra su pedido), o el diagnóstico actualizado de una solicitud de Carilin/Aure
+(solo lectura hasta el OK; `PARA AURE: …` se le manda en su hilo). Un pedido que delegó queda abierto hasta esa
+respuesta. Topes: profundidad 3 y `AGENTES_CONTINUAR_MAX_DIA` (20). `--sin-seguir` = aviso sin respuesta. Si una
+corrida se queda sin pasos (`error_max_turns`) sigue una vez sola (`correrYTerminar`). Lógica pura en
+`scripts/agentes-seguir.mjs` (tests). `atendido` ya no falla con "agente-desconocido" al cerrar solicitudes del equipo.
+**Sofi, Lola y Max corren desde un clon de GitHub** (`scripts/agente-nube.sh`, `Dockerfile.puente`, llave
+`GIT_SSH_KEY_B64` por referencia a nico): bajan content-os antes de cada pedido y suben solo `data/` y `vault/`
+(antes su copia era la de su último deploy: "el kit de marca no existe") y deploy-snapshots ya no sube código viejo.
+
 ## Lola — la Creadora de Contenido con IA (20/sep/2026)
 
 El puesto que faltaba: Sofi coordina, Cami idea, Lauti escribe, Facu publica, **Lola produce**
@@ -405,7 +418,14 @@ Mac), si no encola. **Lola vive en Railway** (servicio `lola` del proyecto `puen
 `/estado`, variables por referencia `${{max.VAR}}` incl. `HIGGSFIELD_OAUTH_JSON`, así que renderiza
 directo sin la Mac; deploy `npx @railway/cli up --service lola --detach`). El plist de la Mac queda
 como respaldo, descargado. Lola nunca le manda nada a nadie que no sea Elvin. Está en el roster de
-`lib/equipo.ts`.
+`lib/equipo.ts`. **Guía de flyers de Elvin (26/sep)**: "flyers de calidad, de pocas palabras: un título, bullets de
+beneficio, CTA claro, que resalte el producto; minimalista, elegante, Nano Banana Pro" → `node scripts/fal.mjs flyer
+--marca <m> --titulo … --bullets 'a|b|c' --cta … --producto … [--foto url] [--logo url]` (valida el copy antes de
+gastar: ≤ 8 / 3×6 / 4 palabras, sin "gratis", voseo ni promesas de ingreso; el logo REAL va como última referencia;
+prompt puro en `scripts/fal/flyer.mjs`, tests `tests/fal-flyer.test.mjs`, base = el prompt de flyers de Bori). Kits
+con logo público en `public/marcas/` (level-up, ai-borinquen, bori, resuelto; isla-run sin logo aprobado): marca sin
+kit = sin logo, nunca inventado. Cerebro §3b. Tope por pedido 8 imágenes / 3 videos; lo que viene de otro agente de
+parte de Elvin se entrega completo en una vuelta.
 
 ## Pipeline de creadores para colaboraciones (`/creadores`, 21/sep/2026)
 
@@ -496,6 +516,14 @@ acepta `desde=/ritmo…`); dominio `ritmo-*` → `/ritmo` en `proxy.ts`.
   crea su clave y llena su ficha en `/ritmo/bienvenida` (foto, teléfonos, ciudad/país, documento, contacto
   de emergencia, identificación obligatoria, contrato firmado). Mientras no la complete
   (`fichaPendiente`: sin `completada_at` ni teléfono), el layout la trae ahí.
+- **Comunicación ENCENDIDA (26/sep, `DESEMPENO_AVISOS=real`)**, siempre desde el bot Command Center
+  (`lib/desempeno/avisar.ts`): solicitudes (al supervisor, a RR.HH. y al empleado cuando se decide),
+  digest L-V 9:30 AM a `RITMO_AVISO_A` (Carilin + Yaileen) con lo de ayer + solicitudes por firmar + fichas
+  sin completar, recordatorio L-V 6:45 PM a quien sigue con la entrada abierta, aniversario de 12 meses
+  y resumen semanal a Elvin. El bot no busca por correo: cada perfil tiene `slack_id` (se busca solo por
+  nombre al guardar/alta; "sin Slack" en Ajustes = ponerlo a mano).
+- **Ritmo reemplaza al agente de RR.HH. de n8n** ("SofIA" + "Procesar Vacaciones", APAGADOS el 26/sep
+  con OK de Elvin: leían Monday y avisaban a Luis). `node scripts/n8n.mjs desactivar|activar <id>`.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

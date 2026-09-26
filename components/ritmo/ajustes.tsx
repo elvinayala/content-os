@@ -29,7 +29,7 @@ const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-
 type Usuario = { id: string; nombre: string; email: string };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
-const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
+const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", slackId: null, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
 export function Ajustes({ usuarios, perfiles, metas, produccion }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
@@ -126,7 +126,7 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
         <span className={cn("size-2 shrink-0 rounded-full", perfil?.activo ? "bg-primary" : "bg-white/20")} />
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 truncate font-medium">{usuario.nombre}{perfil ? <EmpresaBadge empresa={perfil.empresa} /> : null}</span>
-          <span className="block truncate text-xs text-muted-foreground">{perfil ? `${puesto?.nombre} · ${perfil.horaEntrada}–${perfil.horaSalida}${perfil.activo ? "" : " · pausado"}` : usuario.email}</span>
+          <span className="block truncate text-xs text-muted-foreground">{perfil ? `${puesto?.nombre} · ${perfil.horaEntrada}–${perfil.horaSalida}${perfil.activo ? "" : " · pausado"}${perfil.slackId ? "" : " · sin Slack"}` : usuario.email}</span>
         </span>
         <span className="text-xs text-primary">{perfil ? "Editar" : "Agregar"}</span>
       </button>
@@ -181,6 +181,9 @@ function FilaPerfil({ usuario, perfil, usuarios }: { usuario: Usuario; perfil: P
           </Campo>
           <Campo label="Fecha de ingreso">
             <Input type="date" className="h-10" value={b.fechaIngreso ?? ""} onChange={(e) => set("fechaIngreso", e.target.value || null)} />
+          </Campo>
+          <Campo label="Slack (para sus avisos)">
+            <Input className="h-10" value={b.slackId ?? ""} onChange={(e) => set("slackId", e.target.value.trim() || null)} placeholder="Se busca solo por el nombre" />
           </Campo>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={b.activo} onChange={(e) => set("activo", e.target.checked)} className="size-4 accent-[var(--neon)]" />

@@ -44,6 +44,7 @@ export interface Perfil {
   color: string | null;
   puesto: string;
   empresa: string;
+  slackId: string | null;
   liderId: string | null;
   horaEntrada: string;
   horaSalida: string;
@@ -70,6 +71,7 @@ export async function leerPerfiles(soloActivos = true): Promise<Perfil[]> {
       color: f.color,
       puesto: f.p.puesto,
       empresa: f.p.empresa,
+      slackId: f.p.slackId,
       liderId: f.p.liderId,
       horaEntrada: f.p.horaEntrada,
       horaSalida: f.p.horaSalida,
@@ -86,7 +88,7 @@ export async function perfilDe(userId: string): Promise<Perfil | null> {
 }
 
 export async function guardarPerfil(
-  p: Pick<Perfil, "userId" | "puesto" | "empresa" | "liderId" | "horaEntrada" | "horaSalida" | "diasLaborables" | "tipoContrato" | "fechaIngreso" | "activo">,
+  p: Pick<Perfil, "userId" | "puesto" | "empresa" | "liderId" | "horaEntrada" | "horaSalida" | "diasLaborables" | "tipoContrato" | "fechaIngreso" | "activo"> & Partial<Pick<Perfil, "slackId">>,
   actorId: string,
 ): Promise<void> {
   const d = await db();

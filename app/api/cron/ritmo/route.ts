@@ -2,15 +2,16 @@ import { inArray } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
+import { avisarCorreo, avisarPersona } from "@/lib/desempeno/avisar";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
-import { resumenPersonas } from "@/lib/desempeno/fichas";
+import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
+import { solicitudesPara } from "@/lib/desempeno/solicitudes";
 import { cumpleDoceMesesHoy } from "@/lib/desempeno/rrhh";
-import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
+import { aMinutos, fechaPR, minutosPR, sumarDias } from "@/lib/desempeno/reglas";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 import { secretoValido } from "@/lib/pulse/seguridad";
-import { dmSlack } from "@/lib/pulse/slack-dm";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
 export const runtime = "nodejs";
@@ -19,7 +20,12 @@ export const maxDuration = 120;
 // Avisos de Ritmo por Slack:
 //  ?tarea=digest  (L-V 9:30 AM PR) → a Carilin (RITMO_AVISO_A; líderes solo con RITMO_AVISO_LIDERES=on): lo de AYER
 //                  que hay que mirar (sin marcar, tarde, sin salida, correcciones, vencidas, bloqueos).
+//                  + solicitudes esperando firma de RR.HH. y empleados nuevos que no han completado su ficha.
 //  ?tarea=semanal (lunes 8 AM PR)  → a Elvin (Telegram + Slack): la semana por colores.
+//  ?tarea=recordatorio (L-V 6:45 PM PR) → a quien sigue con la entrada abierta pasada su hora de salida:
+//                  un solo recordatorio suave para marcar la salida.
+//  ?tarea=aniversarios (diario 9 AM PR) → quien cumple 12 meses: a la persona y a RR.HH./Carilin.
+// Todo sale del bot Command Center (lib/desempeno/avisar.ts), nunca desde la cuenta de Elvin.
 // En simulación hasta que Elvin dé el OK (DESEMPENO_AVISOS=real); ?dry=1 nunca manda nada.
 
 const SISTEMA: UsuarioPulse = { id: "00000000-0000-0000-0000-000000000000", email: "ritmo@pulse.sistema", nombre: "Ritmo", rol: "admin", activo: true, color: null, tieneClave: false };
@@ -54,14 +60,23 @@ export async function GET(req: NextRequest) {
   if (tarea === "aniversarios") {
     const gente = (await resumenPersonas()).filter((g) => g.ficha && g.perfil.activo && g.perfil.fechaIngreso && cumpleDoceMesesHoy(g.perfil.fechaIngreso, hoy));
     const rrhh = [...(process.env.RITMO_RRHH ?? "").split(","), ...(process.env.RITMO_AVISO_A ?? "carilin@levelupmediapr.net").split(",")].map((x) => x.trim().toLowerCase()).filter(Boolean);
-    const envios: { para: string; texto: string; enviado?: boolean }[] = [];
+    const envios: { para: string; userId?: string; texto: string; enviado?: boolean }[] = [];
     for (const g of gente) {
       const dias = g.saldos?.vacaciones.disponibles ?? 0;
       const nombre = g.perfil.nombre.split(" ")[0];
-      envios.push({ para: g.perfil.email, texto: `🌴 ¡Felicidades, ${nombre}! Hoy cumples 12 meses con nosotros. Ya puedes solicitar tus vacaciones: tienes ${dias} días acumulados. Coordínalo con RR.HH. <${base}/ritmo/personas/${g.perfil.userId}|Ver en Ritmo>` });
+      envios.push({ para: g.perfil.email, userId: g.perfil.userId, texto: `🌴 ¡Felicidades, ${nombre}! Hoy cumples 12 meses con nosotros. Ya puedes solicitar tus vacaciones: tienes ${dias} días acumulados. Coordínalo con RR.HH. <${base}/ritmo/personas/${g.perfil.userId}|Ver en Ritmo>` });
       for (const e of rrhh) envios.push({ para: e, texto: `🌴 ${g.perfil.nombre} cumple hoy 12 meses: ya puede solicitar vacaciones (${dias} días acumulados). <${base}/ritmo/personas/${g.perfil.userId}|Ver ficha>` });
     }
-    if (real) for (const e of envios) e.enviado = await dmSlack(e.para, e.texto);
+    if (real) for (const e of envios) e.enviado = e.userId ? await avisarPersona(e.userId, e.texto) : await avisarCorreo(e.para, e.texto);
+    return NextResponse.json({ ok: true, real, tarea, envios });
+  }
+
+  if (tarea === "recordatorio") {
+    const panel = await armarPanel(SISTEMA, hoy, hoy);
+    const ahoraMin = minutosPR(Date.now());
+    const pendientes = panel.filas.filter((f) => f.ponchesAbiertos.length && ahoraMin >= aMinutos(f.perfil.horaSalida));
+    const envios = pendientes.map((f) => ({ para: f.perfil.nombre, userId: f.perfil.userId, texto: `👋 ${f.perfil.nombre.split(" ")[0]}, ¿ya terminaste por hoy? Si sí, marca tu salida en Ritmo (y si sigues trabajando, ignora esto). <${base}/ritmo|Abrir Ritmo>`, enviado: false }));
+    if (real) for (const e of envios) e.enviado = await avisarPersona(e.userId, e.texto);
     return NextResponse.json({ ok: true, real, tarea, envios });
   }
 
@@ -78,8 +93,16 @@ export async function GET(req: NextRequest) {
   const filas = panel.filas.map((f) => fila(f, ayer));
   const envios: { para: string; email: string; texto: string; enviado?: boolean }[] = [];
   const todos = (process.env.RITMO_AVISO_A ?? "carilin@levelupmediapr.net").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  // Lo de RR.HH.: solicitudes esperando firma y empleados nuevos sin ficha completa.
+  const extras: string[] = [];
+  const porFirmar = (await solicitudesPara({ id: SISTEMA.id, maestro: true })).filter((x) => x.estado === "rrhh");
+  const porSupervisor = (await solicitudesPara({ id: SISTEMA.id, maestro: true })).filter((x) => x.estado === "supervisor");
+  if (porFirmar.length) extras.push(`📝 Solicitudes esperando firma de RR.HH.: ${porFirmar.map((x) => x.nombre).join(", ")} <${base}/ritmo/solicitudes|Ver>`);
+  if (porSupervisor.length) extras.push(`⏳ Esperando a su supervisor: ${porSupervisor.map((x) => `${x.nombre} (${x.supervisorNombre ?? "—"})`).join(", ")}`);
+  const sinFicha = (await resumenPersonas()).filter((g) => g.perfil.activo && fichaPendiente(g.ficha)).map((g) => g.perfil.nombre);
+  if (sinFicha.length) extras.push(`🆕 No han completado su ficha: ${sinFicha.join(", ")}`);
   for (const email of todos) {
-    const texto = textoDigest({ fecha: ayer, filas, url, para: "todo el equipo" });
+    const texto = textoDigest({ fecha: ayer, filas, url, para: "todo el equipo", extras });
     if (texto) envios.push({ para: email, email, texto });
   }
   // Por defecto solo la vista maestra recibe el digest (Elvin: solo Carilin, Aure y él ven el equipo).
@@ -93,6 +116,6 @@ export async function GET(req: NextRequest) {
       if (texto) envios.push({ para: l.nombre, email: l.email, texto });
     }
   }
-  if (real) for (const e of envios) e.enviado = await dmSlack(e.email, e.texto);
+  if (real) for (const e of envios) e.enviado = await avisarCorreo(e.email, e.texto);
   return NextResponse.json({ ok: true, real, tarea: "digest", fecha: ayer, envios });
 }

@@ -13,6 +13,7 @@
 //                                        última falla de cada uno → data/n8n/salud.json
 //   node scripts/n8n.mjs salud        → resumen corto (lo que lee la ronda de Nico)
 //   node scripts/n8n.mjs todo         → inventario + exportar + ejecuciones + salud
+//   node scripts/n8n.mjs desactivar|activar <id>  → apaga/prende un workflow (solo con OK de Elvin)
 //   node scripts/n8n.mjs subir <id>   → sube data/n8n/workflows/<id>-*.json al servidor (PUT). Es la
 //                                        única escritura: editar el JSON local, subir, y volver a
 //                                        exportar. No activa ni desactiva nada.
@@ -179,6 +180,15 @@ async function subir(id) {
 }
 
 // Lo que consume la ronda de Nico: pocas líneas, sin tocar nada.
+// Prender/apagar un workflow (solo con el OK de Elvin). El respaldo sigue en data/n8n/workflows/.
+async function cambiarEstado(id, activar) {
+  if (!id) throw new Error("Falta el id del workflow");
+  const r = await fetch(`${URL_BASE}/api/v1/workflows/${id}/${activar ? "activate" : "deactivate"}`, { method: "POST", headers: { "X-N8N-API-KEY": KEY, Accept: "application/json" }, signal: AbortSignal.timeout(30000) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`n8n ${r.status}: ${JSON.stringify(j).slice(0, 200)}`);
+  console.log(`${j.name ?? id} → ${j.active ? "ACTIVO" : "apagado"}`);
+}
+
 async function salud() {
   let s;
   try { s = JSON.parse(fs.readFileSync(path.join(OUT, "salud.json"), "utf8")); } catch { s = await ejecuciones(1); }
@@ -197,6 +207,7 @@ try {
   else if (cmd === "ejecuciones") await ejecuciones(Number(process.argv[3]) || 7);
   else if (cmd === "salud") await salud();
   else if (cmd === "subir") await subir(process.argv[3]);
+  else if (cmd === "desactivar" || cmd === "activar") await cambiarEstado(process.argv[3], cmd === "activar");
   else if (cmd === "todo") { await inventario(); await exportar(); await ejecuciones(Number(process.argv[3]) || 7); await salud(); }
   else { console.error("Comandos: inventario | exportar | ejecuciones [dias] | salud | subir <id> | todo"); process.exit(1); }
 } catch (e) { console.error(`n8n: ${e.message}`); process.exit(1); }

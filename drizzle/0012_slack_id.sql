@@ -1,0 +1,1 @@
+ALTER TABLE "desempeno_perfiles" ADD COLUMN "slack_id" text;

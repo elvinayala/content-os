@@ -17,7 +17,7 @@ export interface FilaAviso {
 const lista = (xs: string[]) => xs.join(", ");
 
 /** Digest de la mañana (lo de AYER) para Carilin o para un líder. null = nada que avisar. */
-export function textoDigest(p: { fecha: string; filas: FilaAviso[]; url: string; para: string }): string | null {
+export function textoDigest(p: { fecha: string; filas: FilaAviso[]; url: string; para: string; extras?: string[] }): string | null {
   const f = p.filas;
   const sinMarcar = f.filter((x) => x.estado === "ausente").map((x) => x.nombre);
   const tarde = f.filter((x) => x.minutosTarde > 15).map((x) => `${x.nombre} (${x.minutosTarde} min)`);
@@ -32,6 +32,7 @@ export function textoDigest(p: { fecha: string; filas: FilaAviso[]; url: string;
   if (porConfirmar.length) lineas.push(`🕓 Salidas por confirmar: ${lista(porConfirmar)}`);
   if (vencidas.length) lineas.push(`📌 Entregables vencidos: ${lista(vencidas)}`);
   if (bloqueos.length) lineas.push(`🧱 Bloqueos reportados:\n${bloqueos.join("\n")}`);
+  lineas.push(...(p.extras ?? []));
   if (!lineas.length) return null;
   const dia = new Date(`${p.fecha}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
   return `*Ritmo · ${dia}* (${p.para})\n${lineas.join("\n")}\n<${p.url}|Ver en Ritmo>`;

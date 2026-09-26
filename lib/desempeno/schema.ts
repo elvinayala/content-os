@@ -13,6 +13,7 @@ export const desempenoPerfiles = pgTable("desempeno_perfiles", {
     .references(() => pulseUsers.id, { onDelete: "cascade" }),
   puesto: text("puesto").notNull(),
   empresa: text("empresa").notNull().default("level_up"), // level_up | ai_borinquen (misma plataforma, separado)
+  slackId: text("slack_id"), // para los avisos del bot (el bot no puede buscar por correo); se busca solo por nombre
   liderId: uuid("lider_id").references(() => pulseUsers.id, { onDelete: "set null" }),
   horaEntrada: text("hora_entrada").notNull().default("09:00"),
   horaSalida: text("hora_salida").notNull().default("18:00"),

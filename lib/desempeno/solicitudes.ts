@@ -4,7 +4,7 @@ import { desc, eq, inArray, or } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
-import { dmSlack } from "../pulse/slack-dm";
+import { avisarPersona, avisarRrhh } from "./avisar";
 import { evento, perfilDe } from "./datos";
 import { crearAusencia } from "./fichas";
 import { alAprobar, ausenciaDeSolicitud, estadoInicial, TIPOS_SOLICITUD } from "./rrhh";
@@ -17,19 +17,6 @@ export type Solicitud = typeof desempenoSolicitudes.$inferSelect;
 
 const base = () => process.env.CONTENT_OS_URL ?? "https://content-os-chi-seven.vercel.app";
 const tipoNombre = (t: string) => TIPOS_SOLICITUD.find((x) => x.id === t)?.nombre ?? t;
-const rrhhEmails = () => (process.env.RITMO_RRHH ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
-
-async function avisar(emails: string[], texto: string) {
-  if (process.env.DESEMPENO_AVISOS !== "real") return;
-  for (const e of emails) await dmSlack(e, texto).catch(() => false);
-}
-
-async function emailDe(id: string | null): Promise<string | null> {
-  if (!id) return null;
-  const d = await db();
-  const [u] = await d.select({ email: pulseUsers.email }).from(pulseUsers).where(eq(pulseUsers.id, id));
-  return u?.email ?? null;
-}
 
 export async function crearSolicitud(p: { userId: string; nombre: string; tipo: string; desde: string | null; hasta: string | null; dias: number | null; detalle: string }) {
   const perfil = await perfilDe(p.userId);
@@ -37,8 +24,9 @@ export async function crearSolicitud(p: { userId: string; nombre: string; tipo: 
   const d = await db();
   const [s] = await d.insert(desempenoSolicitudes).values({ userId: p.userId, tipo: p.tipo, desde: p.desde, hasta: p.hasta, dias: p.dias, detalle: p.detalle, estado: estadoInicial(supervisorId), supervisorId }).returning();
   await evento({ userId: p.userId, actorId: p.userId, tipo: "solicitud", datos: { id: s.id, tipo: p.tipo } });
-  const para = s.estado === "supervisor" ? [await emailDe(supervisorId)] : rrhhEmails();
-  await avisar(para.filter((x): x is string => !!x), `📝 ${p.nombre} pidió: *${tipoNombre(p.tipo)}*${p.desde ? ` (${p.desde}${p.hasta && p.hasta !== p.desde ? ` → ${p.hasta}` : ""})` : ""}. Te toca ${s.estado === "supervisor" ? "aprobarla como supervisor" : "firmarla (RR.HH.)"}: <${base()}/ritmo/solicitudes|Ver en Ritmo>`);
+  const texto = `📝 ${p.nombre} pidió: *${tipoNombre(p.tipo)}*${p.desde ? ` (${p.desde}${p.hasta && p.hasta !== p.desde ? ` → ${p.hasta}` : ""})` : ""}. Te toca ${s.estado === "supervisor" ? "aprobarla como supervisor" : "firmarla (RR.HH.)"}: <${base()}/ritmo/solicitudes|Ver en Ritmo>`;
+  if (s.estado === "supervisor") await avisarPersona(supervisorId, texto).catch(() => false);
+  else await avisarRrhh(texto).catch(() => 0);
   return s;
 }
 
@@ -66,10 +54,9 @@ export async function decidirSolicitud(s: Solicitud, actor: { id: string; nombre
   }
   await d.update(desempenoSolicitudes).set({ ...firma, estado, ausenciaId }).where(eq(desempenoSolicitudes.id, s.id));
   await evento({ userId: s.userId, actorId: actor.id, tipo: `solicitud_${estado}`, datos: { id: s.id, nota } });
-  const empleado = await emailDe(s.userId);
-  if (estado === "rrhh") await avisar(rrhhEmails(), `📝 ${actor.nombre} aprobó como supervisor una solicitud (*${tipoNombre(s.tipo)}*). Falta tu firma: <${base()}/ritmo/solicitudes|Ver en Ritmo>`);
-  if (empleado && (estado === "aprobada" || estado === "rechazada"))
-    await avisar([empleado], `${estado === "aprobada" ? "✅ Aprobada y firmada" : "❌ No aprobada"}: tu solicitud de *${tipoNombre(s.tipo)}*${nota ? ` — “${nota}”` : ""}. <${base()}/ritmo/solicitudes|Ver en Ritmo>`);
+  if (estado === "rrhh") await avisarRrhh(`📝 ${actor.nombre} aprobó como supervisor una solicitud (*${tipoNombre(s.tipo)}*). Falta tu firma: <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => 0);
+  if (estado === "aprobada" || estado === "rechazada")
+    await avisarPersona(s.userId, `${estado === "aprobada" ? "✅ Aprobada y firmada" : "❌ No aprobada"}: tu solicitud de *${tipoNombre(s.tipo)}*${nota ? ` — “${nota}”` : ""}. <${base()}/ritmo/solicitudes|Ver en Ritmo>`).catch(() => false);
   return estado;
 }
 
