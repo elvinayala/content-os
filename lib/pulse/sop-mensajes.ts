@@ -13,7 +13,7 @@ export interface SopPersona {
 
 export type ModoSop = "primero" | "insistir" | "estatus" | "ultimo" | "listo";
 
-const FECHA_LIMITE = "el viernes 2 de octubre";
+const FECHA_LIMITE = "viernes 2 de octubre";
 
 export function modoDelDia(p: { yaSeLeEscribio: boolean; respondio: boolean; esUltimoDia: boolean; todoPublicado: boolean }): ModoSop {
   if (p.todoPublicado) return "listo";
@@ -32,7 +32,7 @@ export function mensajeSop(p: SopPersona, modo: ModoSop): string | null {
       return null;
     case "primero":
       return [
-        `Hola ${p.nombre} 👋 De parte de Elvin, la prioridad de esta semana: *los SOP de cada departamento en Pulse antes de ${FECHA_LIMITE}*.`,
+        `Hola ${p.nombre} 👋 De parte de Elvin, la prioridad de esta semana: *los SOP de cada departamento en Pulse antes del ${FECHA_LIMITE}*.`,
         "1. Reúnete con cada departamento y revisen su SOP (si no lo tienen, se hace de nuevo).",
         "2. Pongan la fecha de revisión.",
         "3. Súbelo a Pulse (pestaña SOPs) y márcalo *Publicado*.",
@@ -41,7 +41,7 @@ export function mensajeSop(p: SopPersona, modo: ModoSop): string | null {
         "— Pulse",
       ].join("\n");
     case "insistir":
-      return `Hola ${p.nombre}, recordatorio de los SOP: ${conteo} Faltan: ${lista(p.faltan)}. La fecha es ${FECHA_LIMITE}. ¿Me confirmas que ya estás en eso?\n${links}\n— Pulse`;
+      return `Hola ${p.nombre}, recordatorio de los SOP: ${conteo} Faltan: ${lista(p.faltan)}. La fecha límite es el ${FECHA_LIMITE}. ¿Me confirmas que ya estás en eso?\n${links}\n— Pulse`;
     case "estatus":
       return `${p.nombre}, ¿cómo van los SOP? ${conteo} Faltan: ${lista(p.faltan)}.\n${links}\n— Pulse`;
     case "ultimo":
