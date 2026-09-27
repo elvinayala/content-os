@@ -665,6 +665,10 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   teléfono) en la etapa **"Grupos"** del embudo (era "Grupos de Whatsapp" de Pipedrive; se crea si falta), que el tablero
   dibuja angosta, al final y fuera de los totales (`esEtapaGrupos`). **Equipo ≠ lead**: teléfonos de las fichas de Ritmo +
   `LEADS_TELEFONOS_EQUIPO` → `ignorado:equipo` (Nahuel entró como lead el 26/sep; se borró).
+- **Tarjeta** (27/sep): "Llegó hoy 9:46 AM" (`horaLlegada`, hora PR) + negocio o nicho. El nicho lo saca Claude
+  (`lib/leads/nicho.ts`, `claude-opus-5` effort low, `LEADS_NICHO_MODEL`) de los primeros mensajes entrantes de WhatsApp
+  (desde `/api/leads/timelines`, máx. 3 intentos, espera si solo dijo "hola"); queda en `datos.nicho` y `negocio` si lo
+  nombra (nunca pisa lo escrito). Manito (cursor-pointer) en las tarjetas.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
