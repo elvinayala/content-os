@@ -824,6 +824,11 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
     devuelve ids de esos tableros; tope 8 preguntas/min por persona. ~15 s por pregunta.
   - Dev local usa `DATABASE_URL_DIRECT` (pooler de sesión): el de transacciones dejaba consultas
     trabadas en "ClientRead" desde la Mac. Prod sigue con `DATABASE_URL` (6543).
+- **Tesorería · Métricas del mes** (`/pulse/tesoreria-mensual`, 26/sep): tablero PRIVADO para María García
+  (tesorera, maria@) + Carilin y Aure: una fila por mes y marca (grupos Level Up Media / AI Borinquen) con
+  ventas nuevas, recurrentes, ingresos, reembolsos, activos inicio/cierre, bajas, churn %, ticket, LTV, cobros
+  pendientes, estado (Por llenar → En revisión → Cerrado) y reporte adjunto. Lo llena ella a mano. Creado por
+  `scripts/pulse/crear-tablero-tesoreria.mjs` (idempotente). El tablero TESORERIA (cobros) sigue aparte.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
