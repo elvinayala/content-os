@@ -660,6 +660,11 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   uso): WHATSAPP (entra por Timelines), LUM CLASS DIEGO / FRANKIE / VALENTINA CONTRERAS / CF CLASS (entraban por
   **Zapier**), CLOSERS (Calendly), LUM DIAGNÓSTICO DE CRECIMIENTO (quiz), y sin uso: LUM DELIVERY, WHATSAPP NEW
   LUM, Bori · Seguimiento, SHADOW. Búsqueda de embudo/etapa por nombre tolerante (`clave()`).
+- **Grupos de WhatsApp** (27/sep, Elvin): el grupo que se arma al agendar (closer + setter + administración) NO es lead.
+  Timelines manda `chat.is_group` → `registrarGrupo`: una tarjeta por grupo (`origen: "grupo"`, llave `chat_id`, sin
+  teléfono) en la etapa **"Grupos"** del embudo (era "Grupos de Whatsapp" de Pipedrive; se crea si falta), que el tablero
+  dibuja angosta, al final y fuera de los totales (`esEtapaGrupos`). **Equipo ≠ lead**: teléfonos de las fichas de Ritmo +
+  `LEADS_TELEFONOS_EQUIPO` → `ignorado:equipo` (Nahuel entró como lead el 26/sep; se borró).
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),

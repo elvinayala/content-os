@@ -3,10 +3,11 @@ import "server-only";
 import { and, asc, desc, eq, gt, ilike, inArray, isNull, lt, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
+import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, normalizarTelefono, ordenEntre, SEMILLA, type EventoWhatsapp, type Marca } from "./reglas";
+import { clave, esEtapaGrupos, ETAPA_GRUPOS, normalizarTelefono, ordenEntre, SEMILLA, type EventoWhatsapp, type Marca } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -520,26 +521,71 @@ export async function clienteActual(marca: Marca, telefono: string): Promise<str
   return filas[0]?.name ?? null;
 }
 
+/** Teléfonos del equipo (fichas de Ritmo + LEADS_TELEFONOS_EQUIPO): si escriben al WhatsApp no son leads. */
+async function esDelEquipo(telefono: string): Promise<boolean> {
+  const ultimos = (s: string | null | undefined) => (s ?? "").replace(/\D/g, "").slice(-10);
+  const t = ultimos(telefono);
+  if (t.length < 7) return false;
+  const env = (process.env.LEADS_TELEFONOS_EQUIPO ?? "").split(",").map(ultimos).filter(Boolean);
+  if (env.includes(t)) return true;
+  const d = await db();
+  const fichas = await d.select({ a: desempenoFichas.telefono, b: desempenoFichas.telefonoAlterno }).from(desempenoFichas);
+  return fichas.some((f) => ultimos(f.a) === t || ultimos(f.b) === t);
+}
+
+/** La etapa "Grupos" del embudo (la crea al final si no existe). */
+async function etapaGrupos(embudoId: string): Promise<string> {
+  const d = await db();
+  const etapas = await etapasDe(embudoId);
+  const ya = etapas.find((e) => esEtapaGrupos(e.nombre));
+  if (ya) return ya.id;
+  const [e] = await d.insert(leadsEtapas).values({ embudoId, nombre: ETAPA_GRUPOS, orden: (etapas.at(-1)?.orden ?? 0) + 1 }).returning();
+  return e.id;
+}
+
+/** Grupos de WhatsApp (el que se arma al agendar: closer + setter + administración): una tarjeta por grupo
+ * en la columna "Grupos", nunca como lead nuevo. */
+async function registrarGrupo(marca: Marca, ev: EventoWhatsapp, cuenta: { embudoId: string | null } | null | undefined): Promise<string> {
+  if (!ev.chatId) return "ignorado:grupo-sin-chat";
+  const d = await db();
+  let [t] = await d.select().from(leadsTratos).where(and(eq(leadsTratos.marca, marca), eq(leadsTratos.chatId, ev.chatId), eq(leadsTratos.origen, "grupo"), eq(leadsTratos.estado, "abierto"))).limit(1);
+  let nuevo = false;
+  if (!t) {
+    const embudoId = cuenta?.embudoId ?? (await embudoPorNombre(marca, "WhatsApp"))?.id ?? (await listarEmbudos(marca))[0]?.id ?? null;
+    if (!embudoId) return "error:sin-embudo";
+    t = await crearTrato({ marca, embudoId, etapaId: await etapaGrupos(embudoId), nombre: ev.nombre || "Grupo de WhatsApp", telefono: null, origen: "grupo", datos: { cuentaWhatsapp: ev.cuenta, grupo: true } });
+    nuevo = true;
+  }
+  if (ev.mensajeId) {
+    const antes = await d.select({ id: leadsHistorial.id }).from(leadsHistorial).where(eq(leadsHistorial.externoId, ev.mensajeId)).limit(1);
+    if (antes.length) return "duplicado";
+  }
+  if (ev.texto || ev.adjunto) await historial(t.id, ev.direccion === "saliente" ? "saliente" : "entrante", ev.texto, null, { externoId: ev.mensajeId, meta: { chatId: ev.chatId, cuenta: ev.cuenta, adjunto: ev.adjunto } });
+  await d.update(leadsTratos).set({ ultimoMensaje: new Date(), updatedAt: new Date(), chatId: ev.chatId, ...(ev.nombre ? { nombre: ev.nombre.slice(0, 160) } : {}) }).where(eq(leadsTratos.id, t.id));
+  return nuevo ? `grupo-nuevo:${t.id}` : `grupo:${t.id}`;
+}
+
 /** Guarda el mensaje en la línea de tiempo del lead (lo crea si es un contacto nuevo que escribe). */
 export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promise<string> {
-  if (ev.esGrupo) return "ignorado:grupo";
-  if (!ev.telefono) return "ignorado:sin-telefono";
-  if (!ev.texto && !ev.adjunto) return "ignorado:vacio";
+  if (!ev.telefono && !ev.esGrupo) return "ignorado:sin-telefono";
+  if (!ev.texto && !ev.adjunto && !ev.esGrupo) return "ignorado:vacio";
   const d = await db();
   const cuenta = ev.cuenta ? await d.query.leadsWhatsapp.findFirst({ where: eq(leadsWhatsapp.cuenta, ev.cuenta) }) : null;
   if (cuenta && cuenta.marca !== marca) return "ignorado:otra-marca";
   if (cuenta && !cuenta.activo) return "ignorado:cuenta-apagada";
+  if (ev.esGrupo) return registrarGrupo(marca, ev, cuenta);
 
-  let t = await buscarAbierto(marca, ev.telefono, null);
+  let t = await buscarAbierto(marca, ev.telefono!, null);
   let nuevo = false;
   if (!t) {
     // Un saliente a alguien que no está en el CRM (p. ej. un chat personal) no crea lead.
     if (ev.direccion !== "entrante") return "ignorado:saliente-sin-lead";
-    if (await clienteActual(marca, ev.telefono)) return "ignorado:cliente-actual";
+    if (await clienteActual(marca, ev.telefono!)) return "ignorado:cliente-actual";
+    if (await esDelEquipo(ev.telefono!)) return "ignorado:equipo";
     let embudoId = cuenta?.embudoId ?? null;
     if (!embudoId) embudoId = (await embudoPorNombre(marca, "WhatsApp"))?.id ?? (await listarEmbudos(marca))[0]?.id ?? null;
     if (!embudoId) return "error:sin-embudo";
-    const creado = await crearTrato({ marca, embudoId, nombre: ev.nombre || `WhatsApp ${ev.telefono}`, telefono: ev.telefono, origen: "whatsapp", duenoId: cuenta?.duenoId ?? null, datos: { cuentaWhatsapp: ev.cuenta } });
+    const creado = await crearTrato({ marca, embudoId, nombre: ev.nombre || `WhatsApp ${ev.telefono}`, telefono: ev.telefono!, origen: "whatsapp", duenoId: cuenta?.duenoId ?? null, datos: { cuentaWhatsapp: ev.cuenta } });
     nuevo = !creado.yaExistia;
     t = creado;
   }

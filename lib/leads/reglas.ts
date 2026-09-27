@@ -33,7 +33,7 @@ export function telefonoLegible(d: string | null | undefined): string {
 // `entrada` = de dónde le llegan los leads (lo que conectaba Pipedrive).
 export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEstancado?: number; entrada?: string }[]> = {
   level_up: [
-    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - WhatsApp", "Called 1x", "Called 2x", "Called 3x", "Called 4x", "Called 5x", "Called 6x", "Reasignar", "//", "Grupos de Whatsapp", "Appointment Set", "Llamar mas tarde", "No Show", "Follow-Up", "Closed", "NO CALIFICA", "Already Purchased", "ERRORES DEL SISTEMA", "Setters - Reclutamiento", "REMARKETING M"] },
+    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - WhatsApp", "Called 1x", "Called 2x", "Called 3x", "Called 4x", "Called 5x", "Called 6x", "Reasignar", "//", "Grupos", "Appointment Set", "Llamar mas tarde", "No Show", "Follow-Up", "Closed", "NO CALIFICA", "Already Purchased", "ERRORES DEL SISTEMA", "Setters - Reclutamiento", "REMARKETING M"] },
     { nombre: "LUM CLASS DIEGO", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD/LUM CLASS DIEGO", "X1", "X2", "X3", "X4", "X5", "X6", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
     { nombre: "LUM CLASS FRANKIE", entrada: "zapier", diasEstancado: 3, etapas: ["NEW LEAD / FRANKIE CLASS", "CALLED 1X", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "ALREADY PURCHASED", "DON'T QUALIFIED"] },
     { nombre: "CLOSERS", entrada: "calendly", diasEstancado: 5, etapas: ["Llamada agendada", "Llamada reprogramada", "Llamada cancelada", "No show", "No ofertado", "Follow up", "Pago reserva", "Closed win", "Closed lost"] },
@@ -48,12 +48,17 @@ export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEsta
   // Copia EXACTA de los 4 embudos de Pipedrive AIB (27/sep/2026), ordenados por uso. WHATSAPP y
   // RECUPERACIÓN 2026 entraban por Timelines.ai; el Diagnóstico por el quiz (/api/auditoria).
   ai_borinquen: [
-    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - Whatsapp", "Llamar mas tarde", "CALLED X1", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "Reasignar", "//", "GRUPOS DE WHATSAPP", "Appointment", "No show", "FOLLOW UP", "RESCHEDULE", "Closed", "Not Ready", "Allready purch", "Creadoras UGC", "Fallos del sistema", "REMARKETING MATEO"] },
+    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - Whatsapp", "Llamar mas tarde", "CALLED X1", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "Reasignar", "//", "Grupos", "Appointment", "No show", "FOLLOW UP", "RESCHEDULE", "Closed", "Not Ready", "Allready purch", "Creadoras UGC", "Fallos del sistema", "REMARKETING MATEO"] },
     { nombre: "RECUPERACIÓN 2026", entrada: "timelines", diasEstancado: 3, etapas: ["A · Agendaron", "B · Conversaron", "C · Fríos", "Contactado", "Conversando", "Probó el agente", "Llamada agendada", "No asistio", "Seguimiento", "Retirado (día 14)"] },
     { nombre: "DIAGNÓSTICO DE AUTOMATIZACIÓN", entrada: "quiz", diasEstancado: 3, etapas: ["NEW LEAD / DIAGNÓSTICO", "CALLED 1X", "CALLED 2X", "CALLED 3X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "DON'T QUALIFIED"] },
     { nombre: "Bori · Seguimiento", etapas: ["Por contactar", "Mensaje enviado", "Respondió", "Registrado en Bori", "No interesa"] },
   ],
 };
+
+/** La columna de grupos de WhatsApp (el grupo closer + setter + administración que se arma al agendar):
+ * no son leads, van aparte, angosta y al final del embudo, y no cuentan en los totales. */
+export const esEtapaGrupos = (nombre: string) => /^grupos?\b/i.test(nombre.trim());
+export const ETAPA_GRUPOS = "Grupos";
 
 /** Para buscar un embudo/etapa por nombre sin importar mayúsculas, acentos ni espacios. */
 export const clave = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim().toLowerCase();

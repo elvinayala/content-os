@@ -1,7 +1,7 @@
 "use client";
 
 import { DndContext, DragOverlay, MeasuringStrategy, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { CalendarClock, ChevronDown, Kanban, List, MessageCircle, Plus, Search, Settings2, Trophy, X } from "lucide-react";
+import { CalendarClock, ChevronDown, Kanban, List, MessageCircle, Plus, Search, Settings2, Trophy, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
@@ -13,7 +13,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { diasEnEtapa, estadoActividad, estancado, type Marca } from "@/lib/leads/reglas";
+import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, type Marca } from "@/lib/leads/reglas";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -238,7 +238,11 @@ export function TableroLeads({
     return m;
   }, [tratos, etapas]);
 
-  const total = tratos.reduce((s, t) => s + t.valor, 0);
+  // "Grupos" (grupos de WhatsApp de citas) va aparte: angosta, al final y fuera de los totales.
+  const idsGrupos = useMemo(() => new Set(etapas.filter((e) => esEtapaGrupos(e.nombre)).map((e) => e.id)), [etapas]);
+  const columnas = useMemo(() => [...etapas.filter((e) => !idsGrupos.has(e.id)), ...etapas.filter((e) => idsGrupos.has(e.id))], [etapas, idsGrupos]);
+  const leads = tratos.filter((t) => !idsGrupos.has(t.etapaId));
+  const total = leads.reduce((s, t) => s + t.valor, 0);
 
   const onDragStart = (e: DragStartEvent) => setArrastrando(tratos.find((t) => t.id === e.active.id) ?? null);
   const onDragEnd = (e: DragEndEvent) => {
@@ -287,15 +291,16 @@ export function TableroLeads({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="px-4 py-1.5 text-xs text-muted-foreground">
-        <span className="font-semibold text-foreground">{usd(total)}</span> · {tratos.length} {tratos.length === 1 ? "lead" : "leads"}
+        <span className="font-semibold text-foreground">{usd(total)}</span> · {leads.length} {leads.length === 1 ? "lead" : "leads"}
       </div>
       <DndContext id="leads-tablero" measuring={{ droppable: { strategy: MeasuringStrategy.Always } }} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setArrastrando(null)}>
         <div className="flex min-h-0 flex-1 gap-2 overflow-x-auto px-3 pb-24">
-          {etapas.map((e, i) => (
+          {columnas.map((e, i) => (
             <Columna
               key={e.id}
               etapa={e}
               primera={i === 0}
+              grupos={idsGrupos.has(e.id)}
               tratos={porEtapa.get(e.id) ?? []}
               diasEstancado={embudo.diasEstancado}
               ahora={ahora}
@@ -345,9 +350,29 @@ function ZonaCierre({ id, texto, clase, activa, icono }: { id: string; texto: st
   );
 }
 
-function Columna({ etapa, primera, tratos, diasEstancado, ahora, marcaSlug, onNuevo }: { etapa: EtapaUI; primera: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void }) {
+function Columna({ etapa, primera, grupos, tratos, diasEstancado, ahora, marcaSlug, onNuevo }: { etapa: EtapaUI; primera: boolean; grupos?: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void }) {
   const { setNodeRef, isOver } = useDroppable({ id: etapa.id });
   const suma = tratos.reduce((s, t) => s + t.valor, 0);
+  if (grupos) {
+    // Columna pequeña: solo el nombre del grupo (la cita), sin montos ni seguimiento.
+    return (
+      <section ref={setNodeRef} className={cn("flex w-44 shrink-0 flex-col rounded-lg border border-dashed bg-muted/20 transition-colors", isOver && "bg-muted")}>
+        <header className="flex items-center gap-1.5 px-2.5 py-2">
+          <Users className="size-3.5 text-muted-foreground" />
+          <h3 className="text-[12px] font-semibold">{etapa.nombre}</h3>
+          <span className="ml-auto rounded-full bg-muted px-1.5 text-[10px] text-muted-foreground">{tratos.length}</span>
+        </header>
+        <div className="flex min-h-12 flex-1 flex-col gap-1 overflow-y-auto px-1.5 pb-2">
+          {tratos.map((t) => (
+            <Link key={t.id} href={`/pulse/leads/${marcaSlug}/${t.id}`} className="truncate rounded border bg-background px-2 py-1 text-[11px] leading-tight text-muted-foreground hover:text-foreground" title={t.nombre}>
+              {t.nombre}
+            </Link>
+          ))}
+          {!tratos.length && <p className="px-1 text-[10px] text-muted-foreground/70">Los grupos de WhatsApp de las citas caen aquí solos.</p>}
+        </div>
+      </section>
+    );
+  }
   return (
     <section ref={setNodeRef} className={cn("flex w-64 shrink-0 flex-col rounded-lg bg-muted/40 transition-colors", isOver && "bg-muted")}>
       {/* Encabezado tipo flecha, como las etapas de Pipedrive */}

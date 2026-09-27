@@ -70,3 +70,12 @@ test("Timelines: grupos se detectan", () => {
   const ev = leerTimelines({ event_type: "message:received:new", chat: { chat_id: 1, phone: "120363@g.us", name: "Grupo" }, message: { text: "hola" } });
   assert.equal(ev.esGrupo, true);
 });
+
+test("esEtapaGrupos: la columna de grupos de WhatsApp", async () => {
+  const { esEtapaGrupos } = await import("../lib/leads/reglas.ts");
+  assert.equal(esEtapaGrupos("Grupos"), true);
+  assert.equal(esEtapaGrupos("GRUPOS DE WHATSAPP"), true);
+  assert.equal(esEtapaGrupos("Grupo"), true);
+  assert.equal(esEtapaGrupos("New Lead - WhatsApp"), false);
+  assert.equal(esEtapaGrupos("Reasignar"), false);
+});
