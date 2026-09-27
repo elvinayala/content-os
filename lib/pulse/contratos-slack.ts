@@ -135,7 +135,7 @@ export async function adjuntarContrato(itemId: string, opciones: { ventas?: Vent
     const resumen = resumenVenta(venta.detalle);
     if (resumen) {
       const link = await enlace(venta.ts);
-      await d.insert(pulseActivity).values({ itemId, boardId: item.boardId, tipo: "comentario", after: { texto: `${resumen}${venta.detalle?.metodo ? ` · ${venta.detalle.metodo}` : ""} (venta en ${NOMBRE_CANAL}${link ? `: ${link}` : ""})`, venta: venta.detalle }, userId });
+      await d.insert(pulseActivity).values({ itemId, boardId: item.boardId, tipo: "comentario", after: { texto: `${resumen}${venta.detalle?.metodo ? ` · ${venta.detalle.metodo}` : ""} (venta en ${NOMBRE_CANAL}${link ? `: ${link}` : ""})`, venta: venta.detalle, ventaTs: venta.ts }, userId });
     }
   }
   if (tieneArchivo) return { estado: "ya-tenia" };

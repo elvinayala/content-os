@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BookOpenCheck, CalendarClock, Clock, FileText, Kanban, Lock, MessageSquare, MoveRight, Plus, Sparkles, UserPlus } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpenCheck, CalendarCheck, CalendarClock, Clock, Crown, CreditCard, FileText, Kanban, Lock, MessageSquare, MoveRight, Plus, Sparkles, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 import { crearBoardAction } from "@/app/pulse/(app)/actions";
@@ -16,7 +16,8 @@ import { marcasConAcceso } from "@/lib/leads/repo";
 import { usuarioActual } from "@/lib/pulse/auth";
 import type { Pendiente, TipoPendiente } from "@/lib/pulse/mi-dia";
 import { pendientesDe } from "@/lib/pulse/mi-dia-datos";
-import { actividadReciente, boardsVisibles, listarBoards, numerosInicio, type EventoInicio } from "@/lib/pulse/repo";
+import { actividadReciente, boardsVisibles, listarBoards, numerosInicio, ultimosClientes, type EventoInicio } from "@/lib/pulse/repo";
+import { esAltoValor, type ClienteReciente } from "@/lib/pulse/ultimos-clientes";
 import type { ColorPulse } from "@/lib/pulse/types";
 
 export const dynamic = "force-dynamic";
@@ -50,12 +51,13 @@ export default async function PulseInicio() {
   const usuario = await usuarioActual();
   if (!usuario) return null;
   const visibles = [...(await boardsVisibles(usuario))];
-  const [boards, dia, actividad, numeros, marcas] = await Promise.all([
+  const [boards, dia, actividad, numeros, marcas, recientes] = await Promise.all([
     listarBoards(usuario),
     pendientesDe(visibles).catch(() => ({ pendientes: [] as Pendiente[], hoy: "" })),
     actividadReciente(visibles).catch(() => [] as EventoInicio[]),
     numerosInicio(visibles).catch((e) => (console.error("[pulse/inicio] numeros", e), null)),
     marcasConAcceso(usuario).catch(() => []),
+    ultimosClientes(visibles).catch((e) => (console.error("[pulse/inicio] ultimos", e), [] as ClienteReciente[])),
   ]);
   const fecha = new Date().toLocaleDateString("es-PR", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
   const porTipo = (Object.keys(TIPOS) as TipoPendiente[]).map((t) => ({ t, n: dia.pendientes.filter((p) => p.tipo === t).length }));
@@ -121,6 +123,9 @@ export default async function PulseInicio() {
             <Numero titulo="En cartera" valor={numeros.totalClientes} nota="Sin contar las bajas" />
           </section>
         ) : null}
+
+        {/* Últimos clientes */}
+        {recientes.length ? <UltimosClientes clientes={recientes} /> : null}
 
         <section className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
           <div className="flex min-w-0 flex-col gap-6">
@@ -279,5 +284,75 @@ function Numero({ titulo, valor, nota, destacado }: { titulo: string; valor: num
       <span className={`text-[28px] leading-none font-semibold tabular-nums ${destacado ? "text-primary" : ""}`}>{valor.toLocaleString("en-US")}</span>
       <span className="text-[11px] text-muted-foreground/80">{nota}</span>
     </div>
+  );
+}
+
+const usd = (n: number) => `$${n.toLocaleString("en-US", { maximumFractionDigits: n % 1 ? 2 : 0 })}`;
+const diaCorto = (iso?: string) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("es-PR", { day: "numeric", month: "short" }).replace(".", "") : "—");
+
+function UltimosClientes({ clientes }: { clientes: ClienteReciente[] }) {
+  const total = clientes.reduce((a, c) => a + (c.monto ?? 0), 0);
+  const altos = clientes.filter(esAltoValor).length;
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="text-[15px] font-semibold">Últimos clientes</h2>
+          <p className="text-xs text-muted-foreground">Los que acaban de entrar, aunque ya estén atendidos.</p>
+        </div>
+        {total ? (
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground tabular-nums">{usd(total)}</span> entre estos {clientes.length}
+            {altos ? <> · <span className="font-medium text-amber-700">{altos} de alto valor</span></> : null}
+          </p>
+        ) : null}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {clientes.map((c) => {
+          const alto = esAltoValor(c);
+          return (
+            <Link
+              key={c.itemId}
+              href={`/pulse/${c.boardSlug}?item=${c.itemId}`}
+              className={`superficie superficie-hover group relative flex flex-col gap-3 overflow-hidden p-4 ${alto ? "ring-1 ring-amber-400/60" : ""}`}
+              style={alto ? { background: "linear-gradient(160deg, color-mix(in srgb, #f5b50a 9%, white) 0%, white 55%)" } : undefined}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{c.nombre}</p>
+                  <p className="truncate text-xs text-muted-foreground">{c.empresa ?? c.grupo}</p>
+                </div>
+                {alto ? (
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800 ring-1 ring-amber-300/70">
+                    <Crown className="size-3" /> Alto valor
+                  </span>
+                ) : (
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">{c.marca}</span>
+                )}
+              </div>
+
+              <div>
+                <p className={`text-2xl leading-none font-semibold tabular-nums ${c.monto ? (alto ? "text-amber-700" : "") : "text-muted-foreground/60"}`}>{c.monto ? usd(c.monto) : "Sin monto"}</p>
+                <p className="mt-1 truncate text-[11px] text-muted-foreground">{c.detallePago ?? (c.monto ? "" : "Falta la venta en la ficha")}</p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {c.nicho ? <span className="rounded-md bg-primary/8 px-2 py-0.5 text-[11px] font-medium text-primary ring-1 ring-primary/15">{c.nicho}</span> : <span className="text-[11px] text-muted-foreground/70">Sin nicho</span>}
+                {alto ? <span className="text-[11px] text-muted-foreground">· {c.marca}</span> : null}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 border-t pt-3 text-[11px]">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <CreditCard className="size-3.5" /> Pagó <b className="font-medium text-foreground">{diaCorto(c.pagoEl)}</b>
+                </span>
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <CalendarCheck className="size-3.5" /> Onboarding <b className="font-medium text-foreground">{diaCorto(c.onboardingEl)}</b>
+                </span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
   );
 }

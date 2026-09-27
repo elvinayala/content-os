@@ -18,6 +18,8 @@ import {
   pulseVistas,
 } from "./schema";
 import { esCalculada, recalcular } from "./formulas";
+import { respuestaDelResumen } from "./mi-dia";
+import { cuentaComoNuevo, detalleDePago, diaDeSlack, diaPR, montoDePago, nichoDe, type ClienteReciente } from "./ultimos-clientes";
 import { borrarArchivos } from "./storage";
 import type {
   Actividad,
@@ -786,4 +788,77 @@ export async function numerosInicio(boardIds: string[]): Promise<{ activos: numb
     nuevosMes: filas.filter((f) => !/offboard/i.test(f.grupo)).reduce((a, f) => a + Number(f.nuevos), 0),
     totalClientes: filas.filter((f) => !/offboard|baja|inactiv/i.test(f.grupo)).reduce((a, f) => a + Number(f.n), 0),
   };
+}
+
+// Últimos clientes que entraron (Level Up y AI Borinquen visibles): cuánto pagaron, nicho, cuándo pagaron y el
+// onboarding. Lo que no está en la ficha se toma de la venta en Slack (comentario de Contratos) y del formulario.
+export async function ultimosClientes(boardIds: string[], limite = 6): Promise<ClienteReciente[]> {
+  if (!boardIds.length) return [];
+  const d = await db();
+  const boards = await d
+    .select({ id: pulseBoards.id, slug: pulseBoards.slug })
+    .from(pulseBoards)
+    .where(and(inArray(pulseBoards.id, boardIds), inArray(pulseBoards.slug, ["level-up-media", "ai-borinquen"])));
+  if (!boards.length) return [];
+  const ids = boards.map((b) => b.id);
+  const [columnas, filas] = await Promise.all([
+    d.select({ id: pulseColumns.id, boardId: pulseColumns.boardId, title: pulseColumns.title, type: pulseColumns.type, settings: pulseColumns.settings }).from(pulseColumns).where(inArray(pulseColumns.boardId, ids)),
+    d
+      .select({ id: pulseItems.id, boardId: pulseItems.boardId, name: pulseItems.name, values: pulseItems.values, createdAt: pulseItems.createdAt, grupo: pulseGroups.title })
+      .from(pulseItems)
+      .innerJoin(pulseGroups, eq(pulseGroups.id, pulseItems.groupId))
+      .where(inArray(pulseItems.boardId, ids))
+      .orderBy(desc(pulseItems.createdAt))
+      .limit(limite * 3),
+  ]);
+  const items = filas.filter((f) => cuentaComoNuevo(f.name, f.grupo)).slice(0, limite);
+  if (!items.length) return [];
+  const notas = await d
+    .select({ itemId: pulseActivity.itemId, after: pulseActivity.after })
+    .from(pulseActivity)
+    .where(and(inArray(pulseActivity.itemId, items.map((i) => i.id)), sql`(${pulseActivity.after} ? 'venta' or ${pulseActivity.after} ? 'typeform')`))
+    .orderBy(desc(pulseActivity.at));
+
+  return items.map((it) => {
+    const slug = boards.find((b) => b.id === it.boardId)!.slug;
+    const values = (it.values ?? {}) as Record<string, ValorCelda>;
+    const cols = columnas.filter((c) => c.boardId === it.boardId);
+    const col = (re: RegExp, tipo?: string) => cols.find((c) => re.test(c.title) && (!tipo || c.type === tipo));
+    const valor = (re: RegExp, tipo?: string) => {
+      const c = col(re, tipo);
+      return c ? values[c.id] : undefined;
+    };
+    const etiqueta = (re: RegExp) => {
+      const c = col(re);
+      if (!c) return undefined;
+      const v = values[c.id];
+      const id = Array.isArray(v) ? v[0] : v;
+      return ((c.settings ?? {}) as SettingsColumna).labels?.find((l) => l.id === id)?.label || undefined;
+    };
+    const texto = (re: RegExp) => {
+      const v = valor(re);
+      return typeof v === "string" && v.trim() ? v.trim() : undefined;
+    };
+    const venta = notas.find((n) => n.itemId === it.id && (n.after as { venta?: unknown })?.venta)?.after as
+      | { venta?: { pago?: string; plan?: string }; ventaTs?: string; texto?: string }
+      | undefined;
+    const form = notas.find((n) => n.itemId === it.id && (n.after as { typeform?: unknown })?.typeform)?.after as { texto?: string } | undefined;
+    const pagoInicial = valor(/^pago inicial/i, "number");
+    const acuerdo = texto(/^acuerdo de pago/i);
+    const monto = typeof pagoInicial === "number" && pagoInicial > 0 ? pagoInicial : (montoDePago(venta?.venta?.pago) ?? montoDePago(acuerdo));
+    const fechaPago = valor(/^fecha del pago inicial/i, "date");
+    return {
+      itemId: it.id,
+      boardSlug: slug,
+      marca: slug === "ai-borinquen" ? "AI Borinquen" : "Level Up",
+      nombre: it.name,
+      empresa: texto(/^empresa$/i),
+      nicho: nichoDe(etiqueta(/^industria$/i), form?.texto ? respuestaDelResumen(form.texto, /industria|nicho/i) : undefined),
+      monto,
+      detallePago: detalleDePago(venta?.venta?.pago, venta?.venta?.plan) ?? (acuerdo && acuerdo.length <= 60 ? acuerdo : undefined) ?? etiqueta(/^tipo de servicio$/i),
+      pagoEl: typeof fechaPago === "string" && fechaPago ? fechaPago : (diaDeSlack(venta?.ventaTs) ?? diaDeSlack(venta?.texto)),
+      onboardingEl: diaPR(new Date(it.createdAt)),
+      grupo: it.grupo,
+    };
+  });
 }
