@@ -2,6 +2,7 @@ import crypto from "crypto";
 
 import { after, type NextRequest, NextResponse } from "next/server";
 
+import { guardarReporteAgente } from "@/lib/desempeno/agentes-reportes";
 import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
 import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, usuarioSlack } from "@/lib/max/flujo";
 import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
@@ -282,7 +283,11 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
   }
   const respuesta = await responderDirector(turnos);
   // Anuncios, saludos y conversación entre el equipo: el agente se queda callado.
-  if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) await postearRespuesta(channel, respuesta, raiz, false, IDENTIDAD_DIRECTOR);
+  if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) {
+    await postearRespuesta(channel, respuesta, raiz, false, IDENTIDAD_DIRECTOR);
+    // Equipo digital (Ritmo): cada pieza revisada cuenta como una tarea del día de Leo.
+    await guardarReporteAgente({ agente: "leo", reporte: { tareas: 1 }, metricas: { corridas: 1 }, sumar: true }).catch(() => {});
+  }
 }
 
 // Enlace directo Carilin/Aure → Nico (Elvin, 23/sep/2026). Si alguien de esta lista le escribe

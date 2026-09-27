@@ -18,6 +18,9 @@
 //   node scripts/agentes.mjs solicitudes                       pedidos de Carilin/Aure a Nico que
 //                                                              esperan el OK de Elvin
 //   node scripts/agentes.mjs aprobar|rechazar <id> ["nota"]    la decisión de Elvin sobre una solicitud
+//   node scripts/agentes.mjs reporte --resumen "…" --tareas N [--entregables "a|b|c"] [--bloqueos "…"] [--agente x]
+//                                                              tu reporte del día en Ritmo (equipo digital:
+//                                                              lo ven Elvin, Carilin y Aure; comparan con humanos)
 //
 // El buzón vive en la base de Pulse vía POST/GET /api/agentes (CONTENT_OS_URL + CRON_SECRET), el
 // único punto que comparten los contenedores de Railway y la Mac. Cada puente lo revisa cada
@@ -187,6 +190,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
       console.log(`✓ Decisión #${j.id} dejada a Nico (${cmd} solicitud #${id}).`);
     } else if (cmd === "elvin") {
       await avisarElvin(rest.join(" ").trim());
+    } else if (cmd === "reporte") {
+      await reporteDelDia(rest);
     } else {
       console.log(fs.readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").filter((l) => l.startsWith("//")).slice(0, 28).map((l) => l.slice(3)).join("\n"));
     }
@@ -204,4 +209,19 @@ async function avisarElvin(texto) {
   }
   await espejoElvin(`[${NOMBRE[YO] || YO}] ${texto}`);
   console.log(ok ? "✓ Avisado a Elvin por Telegram (+ espejo Slack)." : "✓ Avisado a Elvin por Slack (Telegram no disponible aquí).");
+}
+
+// Reporte del día → Ritmo (/api/ritmo/agentes). Las métricas (corridas, minutos, costo) las pone el puente;
+// aquí va lo que el agente sabe de su trabajo: resumen, tareas completadas, entregables, bloqueos.
+export async function reporteDelDia(args, extra = {}) {
+  const val = (k) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : undefined; };
+  const agente = (val("agente") || YO).toLowerCase();
+  const resumen = val("resumen");
+  if (!resumen || resumen.trim().length < 10) throw new Error('Uso: reporte --resumen "qué hiciste hoy" --tareas N [--entregables "a|b"] [--bloqueos "…"]');
+  if (!SECRETO) throw new Error("Falta CRON_SECRET");
+  const body = { agente, reporte: { resumen, tareas: val("tareas"), entregables: val("entregables"), bloqueos: val("bloqueos") }, ...extra };
+  const r = await fetch(`${BASE}/api/ritmo/agentes`, { method: "POST", headers: { "x-cron-secret": SECRETO, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) });
+  const j = await r.json().catch(() => ({}));
+  if (!j.ok) throw new Error(`Ritmo no aceptó el reporte: ${j.error || r.status}`);
+  console.log(`✓ Reporte de ${NOMBRE[agente] || agente} guardado en Ritmo (${j.fecha}).`);
 }

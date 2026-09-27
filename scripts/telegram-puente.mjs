@@ -259,7 +259,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
       const min = Math.round((Date.now() - t0) / 60000);
       opts.avisar(`⏱ Sigo trabajando (${min} min) en: ${(opts.titulo || prompt).replace(/\s+/g, " ").slice(0, 140)}\nÚltimos pasos: ${pasos.slice(-4).join(" · ") || "pensando"}\n¿Sigo? Si no me dices nada, sigo. Para detenerme escribe: para`);
     }, AVISO_CADA_MIN * 60000) : null;
-    let final = "", texto = "", err = "", buf = "", costo = 0, subtipo = "";
+    let final = "", texto = "", err = "", buf = "", costo = 0, subtipo = "", durMs = 0;
     const delegados = new Set();
     const onLinea = (linea) => {
       if (!linea.trim()) return;
@@ -278,7 +278,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           }
         }
       }
-      if (ev.type === "result") { subtipo = ev.subtype || ""; final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
+      if (ev.type === "result") { subtipo = ev.subtype || ""; final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; durMs = Number(ev.duration_ms) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
     };
     child.stdout.on("data", (d) => { buf += d; const partes = buf.split("\n"); buf = partes.pop(); partes.forEach(onLinea); });
     child.stderr.on("data", (d) => { const t = String(d); if (!/Permission allow rule/.test(t)) { err += t; LOG("claude stderr:", t.slice(0, 200)); } });
@@ -286,6 +286,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const timer = setTimeout(() => { LOG(`claude: timeout ${limiteMin} min, matando`); child.kill("SIGTERM"); }, limiteMin * 60 * 1000);
     const fin = () => {
       clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null;
+      sumarJornada(sesion, costo, durMs || Date.now() - t0);
       if (ES_MAX && ESTADO_VIVO && costo > 0) {
         const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.ultimoCostoSesion, sesion, costo);
         ESTADO_VIVO.ultimoCostoSesion = ultimo;
@@ -791,6 +792,67 @@ async function notaAprobacionesMax(texto) {
   try { await fetch(`${base}/api/max`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify({ accion: "nota", texto: `${texto}\n— Max` }), signal: AbortSignal.timeout(10000) }); } catch {}
 }
 
+// ---- Jornada y cierre del día (26/sep): el reporte del agente en Ritmo (equipo digital) ----
+// Elvin: "que mis agentes al final del día hagan un reporte de su trabajo, para comparar cuán productivos son los
+// empleados digitales contra los humanos" (lo ven Elvin, Carilin y Aure en /ritmo/agentes). El puente mide solo:
+// corridas, minutos activos y costo real de IA (delta por sesión: Claude reporta el acumulado). A las 6:30 PM PR le
+// pide al agente su cierre (resumen, tareas, entregables, bloqueos → agentes.mjs reporte) y manda las métricas.
+const CIERRE_HORA = process.env.CIERRE_HORA || "18:30";
+function sumarJornada(sesion, costoTotal, ms) {
+  if (!ESTADO_VIVO) return;
+  const hoy = diaPR();
+  const j = ESTADO_VIVO.jornada?.dia === hoy ? ESTADO_VIVO.jornada : { dia: hoy, corridas: 0, ms: 0, costo: 0 };
+  const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.jornadaUltimo, sesion, costoTotal);
+  ESTADO_VIVO.jornadaUltimo = ultimo;
+  j.corridas += 1;
+  j.ms += Math.max(0, Number(ms) || 0);
+  j.costo = Math.round((j.costo + delta) * 10000) / 10000;
+  ESTADO_VIVO.jornada = j;
+  try { guardarEstado(ESTADO_VIVO); } catch {}
+}
+
+async function postRitmo(body) {
+  const base = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app", secreto = env("CRON_SECRET");
+  if (!secreto) return LOG("cierre: sin CRON_SECRET, no mando el reporte");
+  const r = await fetch(`${base}/api/ritmo/agentes`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) }).then((x) => x.json()).catch((e) => ({ error: e.message }));
+  LOG("cierre → Ritmo:", r.ok ? "ok" : r.error || "falló");
+}
+
+const PROMPT_CIERRE = "CIERRE DEL DÍA (Ritmo · equipo digital). Escribe tu reporte de HOY para Elvin, Carilin y Aure: lo comparan con el trabajo del equipo humano, así que sé exacto y honesto — solo lo que de verdad hiciste hoy (revisa esta conversación, tu bitácora y lo que tocaste). Cuenta como TAREA cada pedido o trabajo terminado y entregado (no cuentes intentos, mensajes sueltos ni cosas a medias). Guárdalo con UN solo comando: node scripts/agentes.mjs reporte --resumen \"3-6 líneas: qué hiciste y para quién\" --tareas N --entregables \"entregable 1 (con enlace si hay)|entregable 2\" --bloqueos \"lo que te frenó (omítelo si nada)\". No le escribas a nadie ni hagas otro trabajo. Responde solo: listo.";
+
+async function cierreDelDia(st, hoy) {
+  if (st.cierreDia === hoy) return;
+  st.cierreDia = hoy; guardarEstado(st);
+  const activo = st.jornada?.dia === hoy && st.jornada.corridas > 0;
+  if (activo) {
+    const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
+    const nueva = !st.sesion || st.sesionDia !== hoy;
+    if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
+    const opts = { origen: "cierre", ...(ES_MAX ? { modelo: MODELO_BARATO } : {}) };
+    let r = await correrClaude(PROMPT_CIERRE, persona, st.sesion, nueva, null, opts).catch((e) => ({ code: 1, err: e.message, out: "" }));
+    if (r.code !== 0 && /session|resume|No conversation/i.test((r.err || "") + (r.out || ""))) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(PROMPT_CIERRE, persona, st.sesion, true, null, opts).catch(() => ({})); }
+  }
+  const j = st.jornada?.dia === hoy ? st.jornada : { corridas: 0, ms: 0, costo: 0 };
+  await postRitmo({
+    agente: YO,
+    fecha: hoy,
+    metricas: { corridas: j.corridas, minutos: Math.round((j.ms / 60000) * 10) / 10, costoUsd: j.costo },
+    ...(activo ? {} : { reporte: { resumen: "Sin actividad hoy: nadie le pidió trabajo y no tuvo tareas programadas.", tareas: 0 } }),
+  });
+}
+
+function cierreLoop(st) {
+  const tick = async () => {
+    try {
+      const hoy = diaPR();
+      const hora = new Date().toLocaleTimeString("en-GB", { timeZone: "America/Puerto_Rico", hour: "2-digit", minute: "2-digit", hour12: false });
+      if (hora >= CIERRE_HORA && st.cierreDia !== hoy) await enSerie(() => cierreDelDia(st, hoy));
+    } catch (e) { LOG("cierre:", e.message); }
+    setTimeout(tick, 10 * 60000);
+  };
+  setTimeout(tick, 90000);
+}
+
 function buzonLoop(token, getChat, st) {
   const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 90000); };
   setTimeout(tick, 15000);
@@ -823,6 +885,7 @@ async function main() {
   // pedido los suba). /app es efímero: el volumen es lo único que sobrevive un redeploy.
   restaurarPendientes();
   buzonLoop(token, () => chatCEO || env("TELEGRAM_CEO_CHAT_ID"), st);
+  cierreLoop(st);
   // Vigía: si el polling falla 6 veces seguidas (la red quedó pegada, p. ej. la Mac durmió), el
   // proceso sale y launchd/Railway lo levantan limpio. Sin esto, el 20/sep quedó "vivo" sin oír.
   let fallos = 0;

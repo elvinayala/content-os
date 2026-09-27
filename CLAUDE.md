@@ -558,6 +558,17 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   completo → US$100 (o el de la vacante) entra solo como ajuste a la nómina del mes siguiente del que refirió, una sola
   vez (`bono_ajuste_id`). Avisos por Slack a RR.HH. (nuevo caso) y a la persona (cada cambio). Pestaña "Carreras" con
   punto verde si hay vacantes de los últimos 7 días (en el teléfono de la maestra se entra desde Hoy).
+- **Equipo digital** (`/ritmo/agentes`, 26/sep; tabla `desempeno_agentes_reportes`, migración 0019; puro en
+  `lib/desempeno/agentes-ia.ts` + tests `tests/agentes-ia.test.mjs`; datos `lib/desempeno/agentes-reportes.ts`):
+  Elvin: "que mis agentes al final del día hagan un reporte… comparar cómo producen los empleados digitales contra
+  los humanos". Solo **admin/editoras con 2 pasos** (Elvin, Carilin, Aure; RR.HH. no). Registro `AGENTES_IA`
+  (Sofi, Nico, Max, Lola, Iris, Leo) con su puesto humano equivalente. Entra por `POST /api/ritmo/agentes`
+  (CRON_SECRET; público en proxy) o `node scripts/agentes.mjs reporte --resumen … --tareas N --entregables "a|b"
+  --bloqueos …`. El **puente** (`telegram-puente.mjs`: `sumarJornada` + `cierreLoop`) mide solo corridas,
+  minutos y costo real de IA (delta por sesión) y a las 6:30 PM PR (`CIERRE_HORA`) le pide al agente su cierre y
+  manda las métricas; día sin actividad = "Sin actividad hoy". Leo suma 1 tarea por pieza revisada
+  (`/api/slack-eventos`); Iris hace su cierre en su ronda (`.claude/commands/iris.md` §6). Comparación 7 días por día
+  activo: humanos = horas del ponche, tareas del tablero Producción, costo = salario ÷ 21.7; "—" si falta el dato.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

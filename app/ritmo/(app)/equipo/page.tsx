@@ -1,4 +1,4 @@
-import { ChevronRight, Settings } from "lucide-react";
+import { ChevronRight, Settings, Bot } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -37,7 +37,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   } catch (e) {
     console.error("[desempeno] panel", e);
     return (
-      <Marco gestor={gestor}>
+      <Marco gestor={gestor} agentes={gestor && (u.rol === "admin" || u.rol === "editor")}>
         <p className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
           Desempeño todavía no está activado en esta base (falta la migración 0008).
         </p>
@@ -67,7 +67,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   const fechaLarga = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
-    <Marco gestor={gestor}>
+    <Marco gestor={gestor} agentes={gestor && (u.rol === "admin" || u.rol === "editor")}>
       <section className="flex flex-col gap-4">
         <div>
           <p className="ceja mb-1.5">{fechaLarga}</p>
@@ -205,13 +205,20 @@ function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
   );
 }
 
-function Marco({ children, gestor }: { children: React.ReactNode; gestor: boolean }) {
+function Marco({ children, gestor, agentes = false }: { children: React.ReactNode; gestor: boolean; agentes?: boolean }) {
   return (
     <div className="flex flex-col gap-6">
       {gestor ? (
-        <Link href="/ritmo/ajustes" className="-mb-2 flex items-center gap-1.5 self-end text-xs text-muted-foreground hover:text-foreground">
-          <Settings className="size-3.5" /> Ajustes
-        </Link>
+        <div className="-mb-2 flex items-center gap-4 self-end text-xs text-muted-foreground">
+          {agentes ? (
+            <Link href="/ritmo/agentes" className="flex items-center gap-1.5 hover:text-foreground">
+              <Bot className="size-3.5" /> Equipo digital
+            </Link>
+          ) : null}
+          <Link href="/ritmo/ajustes" className="flex items-center gap-1.5 hover:text-foreground">
+            <Settings className="size-3.5" /> Ajustes
+          </Link>
+        </div>
       ) : null}
       {children}
     </div>

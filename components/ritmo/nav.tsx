@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,7 +11,7 @@ import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0 }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
@@ -21,6 +21,8 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.
     { href: "/ritmo/carreras", nombre: "Carreras", icono: Briefcase, activo: path.startsWith("/ritmo/carreras"), nuevo: vacantesNuevas > 0, soloEscritorio: equipo },
+    // Equipo digital (agentes de IA vs. humanos): solo Elvin, Carilin y Aure; en el teléfono se entra desde Equipo.
+    ...(agentes ? [{ href: "/ritmo/agentes", nombre: "Agentes", icono: Bot, activo: path.startsWith("/ritmo/agentes"), soloEscritorio: true }] : []),
     ...(ajustes ? [{ href: "/ritmo/ajustes", nombre: "Ajustes", icono: Settings2, activo: path.startsWith("/ritmo/ajustes") }] : []),
     // En el teléfono la maestra ya tiene 5 pestañas: el canal ético queda en Solicitudes.
     { href: "/ritmo/etica", nombre: "Ético", icono: ShieldCheck, activo: path.startsWith("/ritmo/etica"), soloEscritorio: equipo },
@@ -46,7 +48,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
           ) : null}
           <span className="ml-auto" />
           <RelojPR />
-          <span className="hidden truncate text-sm text-muted-foreground sm:block">{nombre}</span>
+          <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", tabs.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
           <form action={salirDeRitmoAction}>
             <button type="submit" title="Cerrar sesión" className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground">
               <LogOut className="size-4" />

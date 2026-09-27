@@ -75,3 +75,17 @@ la respuesta correcta cuando no hay caso.
 
 Actualiza `data/iris-cursor.json` con el `ts` del mensaje más reciente que procesaste (aunque
 no haya sido un caso — así no relees mensajes normales en la próxima corrida).
+
+## 6. Cierre del día en Ritmo (una vez al día, desde las 6:30 PM PR)
+
+Elvin compara el trabajo de los agentes con el del equipo humano en Ritmo (`/ritmo/agentes`). En tu
+**primera ronda a partir de las 6:30 PM hora de Puerto Rico** (si `data/iris-cursor.json` no tiene
+`cierre` con la fecha de hoy), deja tu reporte del día con lo que dice `data/iris-bitacora.json` de HOY
+— solo lo real: casos atendidos y resueltos, lo que le pasaste a Nico, lo que quedó pendiente:
+
+```bash
+node scripts/agentes.mjs reporte --agente iris --resumen "<3-5 líneas>" --tareas <casos resueltos hoy> --entregables "<caso 1>|<caso 2>" --bloqueos "<si hubo>"
+```
+
+Si hoy no hubo ningún caso: `--resumen "Ronda sin casos: el canal no necesitó intervención." --tareas 0`.
+Después guarda `"cierre": "<YYYY-MM-DD de hoy>"` en `data/iris-cursor.json` para no repetirlo.

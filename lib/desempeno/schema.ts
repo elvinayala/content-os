@@ -302,3 +302,25 @@ export const desempenoPostulaciones = pgTable(
   },
   (t) => [index("desempeno_postulaciones_vacante").on(t.vacanteId), index("desempeno_postulaciones_user").on(t.userId)],
 );
+
+// Equipo digital (26/sep/2026): cada agente de IA (Sofi, Nico, Max, Lola, Iris, Leo…) deja su reporte del día.
+// Lo medible lo pone el sistema (corridas, minutos activos, costo de IA); lo demás lo escribe el agente
+// al cierre (resumen, tareas, entregables, bloqueos). Una fila por agente y día. Solo lo ven Elvin,
+// Carilin y Aure (/ritmo/agentes), para comparar productividad y costo contra el equipo humano.
+export const desempenoAgentesReportes = pgTable(
+  "desempeno_agentes_reportes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    agente: text("agente").notNull(), // id de lib/desempeno/agentes-ia.ts
+    fecha: text("fecha").notNull(), // YYYY-MM-DD (PR)
+    resumen: text("resumen"),
+    tareas: integer("tareas"),
+    entregables: jsonb("entregables").$type<string[]>(),
+    bloqueos: text("bloqueos"),
+    corridas: integer("corridas").notNull().default(0),
+    minutos: doublePrecision("minutos").notNull().default(0),
+    costoUsd: doublePrecision("costo_usd").notNull().default(0),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("desempeno_agentes_reportes_dia").on(t.agente, t.fecha)],
+);
