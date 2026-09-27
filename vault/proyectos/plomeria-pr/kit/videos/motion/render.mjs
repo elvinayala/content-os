@@ -19,6 +19,9 @@ const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const MENU = JSON.parse(fs.readFileSync(path.join(AQUI, "../../../agente/data/menu.json"), "utf8"));
 const $ = (id) => MENU.servicios.find((x) => x.id === id).precio;
 const FEE = MENU.cargo_coordinacion;
+// Oficios nuevos (27/sep/2026): precios aprobados de agente/data/menus-oficios.json.
+const OFI = JSON.parse(fs.readFileSync(path.join(AQUI, "../../../agente/data/menus-oficios.json"), "utf8")).oficios;
+const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error("Sin precio: " + id); };
 const FPS = 30;
 
 const CHECK = `<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#3DD598" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -60,6 +63,43 @@ const VIDEOS = {
       escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Por escrito</div><h2>${palabras("12 meses de garantía.", 10.85)}</h2><p class="sub e" ${entra(11.6)}>Si algo falla, volvemos en 48 horas.</p>`),
     ].join(""),
   },
+  // ── Clientes de los oficios nuevos (27/sep/2026): armar-clientes-oficios.sh les pega la ciudad y el CTA. ──
+  "cli-aire-mantenimiento": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Aire acondicionado</div><h1 class="m">${palabras("¿Tu split ya no enfría como antes?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Mantenimiento · precio fijo</div><div class="big pop" ${entra(3.45)}>$${o$("aire-mantenimiento")}</div><p class="sub e" ${entra(3.9)}>cada split adicional $${o$("aire-mantenimiento-adicional")}</p>`),
+    escena(6.2, 10.6, `<div class="lista">${checks(["Lavado de evaporador y turbina", "Bandeja, drenaje y condensadora", "Técnico licenciado", "12 meses de garantía"], 6.35)}</div>`),
+    escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Cada 6 meses</div><h2>${palabras("Enfría más y gasta menos luz.", 10.85)}</h2>`),
+  ].join("") },
+  "cli-aire-enfria": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Aire acondicionado</div><h1>${palabras("¿El aire no enfría?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Visita de diagnóstico</div><div class="big pop" ${entra(3.45)}>$${o$("aire-diagnostico")}</div><p class="sub e" ${entra(3.9)}>se acredita al trabajo · + $${FEE} de coordinación</p>`),
+    escena(6.2, 10.6, `<div class="lista">${checks(["Te decimos qué tiene", "El precio por escrito antes de tocar nada", "Técnico licenciado", "12 meses de garantía"], 6.35)}</div>`),
+    escena(10.6, 13.4, `<div class="chat pop" ${entra(10.7)}>${BURBUJA}</div><h2>${palabras("Mándanos una foto", 10.85)}</h2><p class="sub e" ${entra(11.5)}>del split y te damos la hora.</p>`),
+  ].join("") },
+  "cli-hm-tv": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Handyman</div><h1>${palabras("¿La TV sigue en el piso?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Montar TV · precio fijo</div><div class="big pop" ${entra(3.45)}>$${o$("hm-tv")}</div><p class="sub e" ${entra(3.9)}>hasta 65 pulgadas · base aparte</p>`),
+    escena(6.2, 10.6, `<div class="lista">${checks(["Nivelada y segura", "El área queda limpia", "Precio antes de llegar", "12 meses de garantía"], 6.35)}</div>`),
+    escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Y de paso</div><h2>${palabras("Repisas, cuadros, cortinas o esa puerta que roza.", 10.85)}</h2>`),
+  ].join("") },
+  "cli-hm-lista": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Handyman</div><h1 class="m">${palabras("¿Tienes una lista de arreglos pendientes?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Precio fijo por tarea</div><h1>${palabras("Desde", 3.45)} <span class="w o" style="animation-delay:3.6s">$${o$("hm-mueble")}.</span></h1>`),
+    escena(6.2, 10.6, `<div class="lista">${checks([`Montar TV · $${o$("hm-tv")}`, `Armar muebles · $${o$("hm-mueble")}`, `Cerraduras · $${o$("hm-cerradura")}`, `Parchar paredes · $${o$("hm-drywall")}`], 6.35)}</div>`),
+    escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Registrado en DACO</div><h2>${palabras("12 meses de garantía.", 10.85)}</h2><p class="sub e" ${entra(11.6)}>Por escrito.</p>`),
+  ].join("") },
+  "cli-el-breaker": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Electricidad</div><h1>${palabras("¿Se te dispara el breaker?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Visita de diagnóstico</div><div class="big pop" ${entra(3.45)}>$${o$("el-diagnostico")}</div><p class="sub e" ${entra(3.9)}>se acredita al trabajo · + $${FEE} de coordinación</p>`),
+    escena(6.2, 10.6, `<div class="lista">${checks(["Perito electricista licenciado", "Te decimos qué lo causa", "El precio antes de tocar nada", "12 meses de garantía"], 6.35)}</div>`),
+    escena(10.6, 13.4, `<h2>${palabras("No lo dejes así.", 10.7)}</h2><p class="sub e" ${entra(11.4)}>Un breaker que se dispara <b class="o">siempre avisa de algo.</b></p>`),
+  ].join("") },
+  "cli-el-abanico": { dur: 13.4, html: [
+    escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Electricidad</div><h1 class="m">${palabras("¿Ese abanico lleva meses en la caja?", 0.25)}</h1>`),
+    escena(3.2, 6.2, `<div class="eye e" ${entra(3.3)}>Instalar abanico · precio fijo</div><div class="big pop" ${entra(3.45)}>$${o$("el-abanico")}</div><p class="sub e" ${entra(3.9)}>con base existente</p>`),
+    escena(6.2, 10.6, `<div class="lista">${checks([`Lámparas · $${o$("el-lampara")}`, `Receptáculos · $${o$("el-receptaculo")}`, `GFCI · $${o$("el-gfci")}`, "Perito electricista licenciado"], 6.35)}</div>`),
+    escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Por escrito</div><h2>${palabras("12 meses de garantía.", 10.85)}</h2>`),
+  ].join("") },
   // ── Reclutamiento de oficios (27/sep/2026, Elvin: "los 4 videos antes de prender"). Mismos cortes; sin cifras ni
   // porcentajes (se explican en la entrevista). armar-oficios.sh les pega la historia del puesto y cta-rec.
   "rec-aire": {

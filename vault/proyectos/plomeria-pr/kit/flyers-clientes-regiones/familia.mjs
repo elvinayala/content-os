@@ -25,6 +25,10 @@ const $ = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.p
 // Trabajos grandes (nivel G): el menú trae un rango; el flyer dice "desde" el mínimo (el agente da el mismo rango).
 const desde = (id) => { const s = MENU.servicios.find((x) => x.id === id); if (!s?.rango) throw new Error(`Sin rango: ${id}`); return s.rango[0]; };
 const FEE = MENU.cargo_coordinacion;
+// Oficios nuevos (27/sep/2026, menús aprobados por Elvin): aire acondicionado, handyman y electricidad.
+const OFI = JSON.parse(fs.readFileSync(path.join(DATA, "menus-oficios.json"), "utf8")).oficios;
+const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error(`Sin precio: ${id}`); };
+const PIE = { aire: "Técnicos licenciados · mano de obra, equipo y materiales aparte", hm: "Handyman registrados en DACO · mano de obra, materiales aparte", el: "Peritos electricistas licenciados · mano de obra, materiales aparte" };
 // LLAMADA=1 (26/sep/2026): versión para los anuncios de llamada, con el número de Resuelto (voz + SMS en Zernio).
 // PIEZAS=menu,destape,cisterna limita qué piezas salen.
 const LLAMADA = process.env.LLAMADA === "1", NUMERO = "787-956-1111";
@@ -44,6 +48,41 @@ const CHAT = `<svg width="34" height="34" viewBox="0 0 24 24"><path d="M3.5 6A3 
 
 // Cada pieza devuelve el cuerpo (entre el logo y el pie). `s` = historia (1080×1920) o feed (1080×1350).
 const PIEZAS = {
+  // ── Aire acondicionado ──
+  "aire-menu": (a, s) => { const f = [["Mantenimiento de split", "Hasta 24,000 BTU · lavado completo", o$("aire-mantenimiento")], ["Cada split adicional", "En la misma visita", o$("aire-mantenimiento-adicional")], ["Diagnóstico", "No enfría, gotea o hace ruido", o$("aire-diagnostico")], ["Destapar el drenaje", "El split que gotea", o$("aire-drenaje")], ["Desinstalar un split", "Recuperando el gas", o$("aire-desinstalar")]];
+    return `<div class="fila-top"><div class="eyebrow">Aire acondicionado en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
+<h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Tu split, con precio fijo. <span class="o">Antes de ir a tu casa.</span></h1>
+<div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b><small>${d}</small></div><span>$${p}</span></div>`).join("")}</div>
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Instalación de mini split desde $${o$("aire-instalacion-12")} (equipo aparte). 12 meses de garantía.</p>`; },
+  "aire-mantenimiento": (a, s) => `<div class="eyebrow">Aire acondicionado · ${a.nombre}</div>
+<h1 style="font-size:${s ? 116 : 92}px;margin-top:${s ? 26 : 16}px">¿Hace cuánto no le das mantenimiento al split?</h1>
+<div class="precio" style="margin-top:${s ? 56 : 30}px"><div class="k">Mantenimiento · precio fijo</div><div class="n">$${o$("aire-mantenimiento")}</div><p>Cada split adicional $${o$("aire-mantenimiento-adicional")} · + $${FEE} de coordinación</p><div class="g">${OK}Técnico licenciado · 12 meses de garantía</div></div>
+<p class="nota" style="margin-top:${s ? 44 : 26}px">Lo recomendado es cada 6 meses: enfría más y gasta menos luz.</p>`,
+  "aire-enfria": (a, s) => `<div class="eyebrow">Aire acondicionado · ${a.nombre}</div>
+<h1 style="font-size:${s ? 140 : 110}px;margin-top:${s ? 26 : 16}px">¿El aire no enfría?</h1>
+<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Visita de diagnóstico</div><div class="n">$${o$("aire-diagnostico")}</div><p>Se acredita al trabajo si lo hacemos · + $${FEE} de coordinación</p><div class="g">${OK}El precio del arreglo, por escrito antes de tocar nada</div></div>
+<p class="nota" style="margin-top:${s ? 44 : 26}px">Mándanos una foto del split y te damos la hora.</p>`,
+  // ── Handyman ──
+  "hm-menu": (a, s) => { const f = [["Montar TV en la pared", "Hasta 65\" · base aparte", o$("hm-tv")], ["Armar mueble pequeño", "Mesa, gavetero, silla", o$("hm-mueble")], ["Colgar cuadros o repisas", "Hasta 5", o$("hm-colgar")], ["Cambiar cerradura o manija", "Pieza aparte", o$("hm-cerradura")], ["Ajustar puerta que roza", "O que no cierra", o$("hm-puerta")], ["Parchar hueco en la pared", "Hasta 6 pulgadas", o$("hm-drywall")]];
+    return `<div class="fila-top"><div class="eyebrow">Handyman en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
+<h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Esa lista de arreglos, <span class="o">con precio fijo.</span></h1>
+<div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b><small>${d}</small></div><span>$${p}</span></div>`).join("")}</div>
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Tareas varias: $${o$("hm-hora")} la primera hora. 12 meses de garantía.</p>`; },
+  "hm-tv": (a, s) => `<div class="eyebrow">Handyman · ${a.nombre}</div>
+<h1 style="font-size:${s ? 130 : 104}px;margin-top:${s ? 26 : 16}px">¿La TV sigue en el piso?</h1>
+<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Montar TV en la pared</div><div class="n">$${o$("hm-tv")}</div><p>Hasta 65" · base aparte · + $${FEE} de coordinación</p><div class="g">${OK}Nivelada, segura y sin reguero</div></div>
+<p class="nota" style="margin-top:${s ? 44 : 26}px">Y de paso: repisas, cuadros, cortinas o esa puerta que roza.</p>`,
+  // ── Electricidad ──
+  "el-menu": (a, s) => { const f = [["Cambiar receptáculo o interruptor", "Hasta 2", o$("el-receptaculo")], ["Receptáculo GFCI", "Baño o cocina", o$("el-gfci")], ["Instalar lámpara", "", o$("el-lampara")], ["Instalar abanico de techo", "Con base existente", o$("el-abanico")], ["Diagnóstico", "Breaker que se dispara, algo no prende", o$("el-diagnostico")]];
+    return `<div class="fila-top"><div class="eyebrow">Electricidad en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
+<h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Perito electricista, <span class="o">con precio fijo.</span></h1>
+<div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${p}</span></div>`).join("")}</div>
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Conexión de 220 desde $${o$("el-220")}. 12 meses de garantía.</p>`; },
+  "el-breaker": (a, s) => `<div class="eyebrow">Electricidad · ${a.nombre}</div>
+<h1 style="font-size:${s ? 128 : 100}px;margin-top:${s ? 26 : 16}px">¿Se te dispara el breaker?</h1>
+<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Visita de diagnóstico</div><div class="n">$${o$("el-diagnostico")}</div><p>Se acredita al trabajo si lo hacemos · + $${FEE} de coordinación</p><div class="g">${OK}Perito electricista licenciado</div></div>
+<p class="nota" style="margin-top:${s ? 44 : 26}px">No lo dejes así: un breaker que se dispara siempre avisa de algo.</p>`,
+
   // Elvin la escogió el 25/sep ("falta uno de cisterna que tenías antes"): c4 adaptado al área.
   cisterna: (a, s) => `<div class="eyebrow">Cuando la AAA corta · ${a.nombre}</div>
 <h1 style="font-size:${s ? 116 : 90}px;margin-top:${s ? 26 : 16}px">Que el corte de agua sea <span class="o">problema de otro.</span></h1>
@@ -132,7 +171,7 @@ ${LOGO}
 <div style="${s ? "margin:auto 0" : ""}">${PIEZAS[pieza](a, s)}</div>
 <div style="margin-top:${s ? 0 : "auto"};padding-top:${s ? 30 : 18}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${s ? 30 : 20}px;margin-top:${s ? 10 : 6}px">
-  <div class="muted" style="font-size:${s ? 24 : 19}px;line-height:1.35;max-width:${s ? 330 : 380}px">Plomeros licenciados · mano de obra, materiales aparte</div>
+  <div class="muted" style="font-size:${s ? 24 : 19}px;line-height:1.35;max-width:${s ? 330 : 380}px">${PIE[pieza.split("-")[0]] ?? "Plomeros licenciados · mano de obra, materiales aparte"}</div>
   <div class="cta">${LLAMADA ? FONO + "Llama al " + NUMERO : CHAT + "Escríbenos un mensaje"}</div>
 </div>
 </body></html>`;

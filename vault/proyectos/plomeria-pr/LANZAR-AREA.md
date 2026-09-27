@@ -71,3 +71,17 @@ español, transcribe); el agente (`agente/src/canales/llamadas.ts`) le manda al 
 llamada" + enlace de reserva) y avisa por Telegram con el número y lo que dijo. Cuando haya setter: se pone su celular
 como `forwardTo` (POST `/v1/phone-numbers/{id}/voice`, horario L–S 8 AM–7 PM ya configurado); fuera de horario o si no
 contesta, sigue la contestadora. **La campaña de llamadas se prende cuando alguien esté contestando.**
+
+## 5. Oficios nuevos: aire, handyman y electricidad (27/sep/2026)
+
+Mismo día que firma el técnico de un área, los creativos de clientes de su oficio con sus pueblos (precios de
+`agente/data/menus-oficios.json`, aprobados por Elvin):
+```bash
+cd kit/flyers-clientes-regiones
+OFICIO=aire node generar.mjs T3 "Caguas,Gurabo,…" Caguas                                   # flyer de ciudad (el ganador)
+PIEZAS=aire-menu,aire-mantenimiento,aire-enfria node familia.mjs T3 "Caguas,Gurabo,…" Caguas  # 3 flyers más
+cd ../videos && ./armar-clientes-oficios.sh caguas aire                                       # 2 videos de 19 s
+```
+Piezas por oficio: aire → `aire-menu`, `aire-mantenimiento`, `aire-enfria` · handyman → `hm-menu`, `hm-tv` ·
+electricidad → `el-menu`, `el-breaker`. Videos: aire-mantenimiento/aire-enfria · hm-tv/hm-lista · el-breaker/el-abanico.
+Vista previa de toda la isla ya generada con el área "Puerto Rico".

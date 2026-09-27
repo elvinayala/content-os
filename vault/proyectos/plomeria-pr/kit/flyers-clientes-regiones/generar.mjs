@@ -35,7 +35,18 @@ const precio = (id) => {
   if (!s?.precio) throw new Error(`El menú no tiene precio fijo para ${id}`);
   return s.precio;
 };
-const PRECIOS = [
+// OFICIO=aire|handyman|electricidad (27/sep/2026): el mismo flyer de ciudad (el que mejor funcionó en plomería) para
+// los oficios nuevos, con los precios aprobados de agente/data/menus-oficios.json. Sale como cliente-<área>-ciudad-<oficio>.
+const OFICIO = process.env.OFICIO || "";
+const OFI = JSON.parse(fs.readFileSync(path.join(DATA, "menus-oficios.json"), "utf8")).oficios;
+const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error(`Sin precio: ${id}`); };
+const POR_OFICIO = {
+  aire: { titulo: "Técnico de aire con precio fijo&nbsp;en", garantia: "Técnico licenciado · 12 meses de garantía", precios: [["Mantenimiento de split", "Hasta 24,000 BTU", o$("aire-mantenimiento")], ["Cada split adicional", "En la misma visita", o$("aire-mantenimiento-adicional")], ["Diagnóstico", "No enfría, gotea o hace ruido", o$("aire-diagnostico")], ["Destapar el drenaje", "El split que gotea", o$("aire-drenaje")]] },
+  handyman: { titulo: "Handyman con precio fijo en", garantia: "Registrado en DACO · 12 meses de garantía", precios: [["Montar TV en la pared", "Hasta 65\"", o$("hm-tv")], ["Armar mueble", "Mesa, gavetero, silla", o$("hm-mueble")], ["Cambiar cerradura o manija", "Pieza aparte", o$("hm-cerradura")], ["Parchar hueco en la pared", "Hasta 6 pulgadas", o$("hm-drywall")]] },
+  electricidad: { titulo: "Perito electricista con precio fijo&nbsp;en", garantia: "Perito licenciado · 12 meses de garantía", precios: [["Cambiar receptáculo o interruptor", "Hasta 2", o$("el-receptaculo")], ["Instalar lámpara", "", o$("el-lampara")], ["Instalar abanico de techo", "Con base existente", o$("el-abanico")], ["Diagnóstico", "Breaker que se dispara", o$("el-diagnostico")]] },
+};
+if (OFICIO && !POR_OFICIO[OFICIO]) throw new Error(`OFICIO debe ser: ${Object.keys(POR_OFICIO).join(", ")}`);
+const PRECIOS = OFICIO ? POR_OFICIO[OFICIO].precios : [
   ["Destape simple", "Fregadero, lavamanos, ducha o inodoro", precio("destape-simple")],
   ["Reparación de inodoro", "Flapper, válvula o sello", precio("reparacion-inodoro")],
   ["Llave o mezcladora", "Cocina o baño", precio("llave-mezcladora")],
@@ -64,7 +75,7 @@ function html(r, formato) {
   const story = formato === "story";
   const alto = story ? 1920 : 1350;
   const chips = r.municipios.map((m) => `<span class="chip">${m}</span>`).join("");
-  const filas = PRECIOS.map(([n, d, p]) => `<div class="fila"><div><b>${n}</b><small>${d}</small></div><span>$${p}</span></div>`).join("");
+  const filas = PRECIOS.map(([n, d, p]) => `<div class="fila"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${p}</span></div>`).join("");
   return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../feed/src/_base.css"><style>
 html,body{height:${alto}px}
 .chip{display:inline-block;background:#fff;border:1.5px solid var(--line);color:var(--c1);font-weight:600;font-size:${story ? 27 : 23}px;padding:10px 20px;border-radius:999px;margin:0 10px 12px 0}
@@ -82,12 +93,12 @@ html,body{height:${alto}px}
 </style></head><body class="cream"><div class="blob"></div>
 ${LOGO}
 <div style="margin-top:${story ? 90 : 56}px"><span class="nuevo"><b></b>Ya llegamos a tu zona</span></div>
-<h1 style="font-size:${story ? 96 : 64}px;margin-top:${story ? 30 : 22}px;color:var(--c1)">Plomero con precio fijo en</h1>
+<h1 style="font-size:${story ? (OFICIO && OFICIO !== "handyman" ? 80 : 96) : (OFICIO && OFICIO !== "handyman" ? 52 : 64)}px;margin-top:${story ? 30 : 22}px;color:var(--c1)">${OFICIO ? POR_OFICIO[OFICIO].titulo : "Plomero con precio fijo en"}</h1>
 <h1 class="o fit" style="font-size:${story ? 190 : 150}px;margin-top:4px;white-space:nowrap">${r.nombre}.</h1>
 <div class="precios" style="margin-top:${story ? 44 : 26}px">${filas}</div>
 <div style="margin-top:${story ? 34 : 20}px">
   <div class="check">${CHECK}Te decimos el precio antes de llegar</div>
-  <div class="check">${CHECK}Plomero licenciado · 12 meses de garantía</div>
+  <div class="check">${CHECK}${OFICIO ? POR_OFICIO[OFICIO].garantia : "Plomero licenciado · 12 meses de garantía"}</div>
 </div>
 <div style="margin-top:${story ? 36 : 20}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${story ? 36 : 24}px">
@@ -110,7 +121,7 @@ fs.mkdirSync(path.join(AQUI, "src"), { recursive: true });
 // En paralelo; cada Chrome se corta a los 40 s (la captura sale en ~5 s).
 const correr = promisify(execFile);
 const trabajos = regiones.flatMap((r) => ["feed", "story"].map((formato) => {
-  const n = `cliente-${r.slug}${LLAMADA ? "-llamada" : ""}-${formato}`;
+  const n = `cliente-${r.slug}${OFICIO ? "-ciudad-" + OFICIO : ""}${LLAMADA ? "-llamada" : ""}-${formato}`;
   const f = path.join(AQUI, "src", n + ".html");
   fs.writeFileSync(f, sinTelefono(n, html(r, formato)));
   return correr(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--user-data-dir=${path.join(AQUI, "src", ".chrome-" + n)}`, `--window-size=1080,${formato === "story" ? 1920 : 1350}`, "--force-device-scale-factor=1", "--virtual-time-budget=10000", `--screenshot=${path.join(AQUI, n + ".png")}`, "file://" + f], { timeout: 40000 })
