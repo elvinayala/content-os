@@ -44,8 +44,9 @@ La IA generativa deforma logos y textos; el código no — por eso son dos puest
 - **Bori ≠ AI Borinquen (Elvin, 27/sep).** **Bori** (heybori.ai) = la agencia de marketing en una sola
   plataforma; su logo es el coquí COBRE en la hoja (`marcas/bori.ts` + `Coqui.tsx`). **AI Borinquen** =
   agentes de IA de voz y chat, especializada en agentes PERSONALIZADOS (a la medida); su logo es el
-  coquí de CIRCUITOS verde/azul con puntos rojos (`marcas/aib.ts` + `CoquiAib.tsx`, neón #2BFF88,
-  Outfit). Nunca mezclar logos, colores ni mensajes entre las dos.
+  coquí de CIRCUITOS verde/azul con puntos rojos — **logo v2 en vector (27/sep)**: `CoquiAibVector.tsx`
+  lo anima por piezas desde `aib-logo.json` (`entrada` = se arma; `vivo` = ecualizador, ondas, chispas y
+  parpadeo). `aib.ts` = paleta (neón #2BFF88, Outfit). `CoquiAib.tsx` (PNG viejo) queda solo de respaldo. Nunca mezclar logos, colores ni mensajes entre las dos.
 - Español de PR, nunca voseo. **AI Borinquen en ANUNCIOS va de USTED** (`vault/estilo/ai-borinquen.md`);
   orgánico en tuteo. Si no dicen si es anuncio u orgánico, entregar la versión "usted" y la "tú"
   (patrón `registro` de `AibRecepcionista.tsx`).

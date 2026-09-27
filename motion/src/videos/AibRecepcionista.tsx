@@ -1,15 +1,16 @@
 // AI Borinquen · Recepcionista AI — showreel de 15 s (1920×1080, 30 fps).
 // Escenas (frames globales):
 //   1  0–66    El problema: teléfono sonando de madrugada, llamadas perdidas.
-//   2  60–140  El coquí de circuitos de AIB se revela por escaneo, glitch y emite señal.
+//   2  60–140  El logo v2 de AIB se arma por piezas: contorno, circuitos, patas, ojo, chispas, voz.
 //   3  136–245 "Tu nueva recepcionista" + lo que hace.
 //   4  240–365 La prueba: llamada contestada · WhatsApp agendando · calendario lleno · 0 perdidas.
 //   5  358–450 Lockup AI Borinquen · Recepcionista AI + CTA a la demo.
 import React from "react";
-import { AbsoluteFill, Img, Sequence, interpolate, staticFile, useCurrentFrame, Audio } from "remotion";
+import { AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame, Audio } from "remotion";
 // Marca: AI Borinquen (agentes de IA de voz y chat a la medida). NO usar el coquí cobre de Bori.
-import { C, FUENTE, FUENTE_MONO, GRADIENTE, LOGO_COQUI } from "../marcas/aib";
-import { CoquiAib, NombreAib } from "../marcas/CoquiAib";
+import { C, FUENTE, FUENTE_MONO, GRADIENTE } from "../marcas/aib";
+import { NombreAib } from "../marcas/CoquiAib";
+import { CoquiAibVector } from "../marcas/CoquiAibVector";
 import { Barrido, Destello, Fondo, Grano, glitch, golpe, rebote, sacudida, tw } from "../kit/fx";
 import { Chip, Palabras } from "../kit/texto";
 import { Calendario, Chat, Contador, Llamada, Notificacion, Telefono, type Tema } from "../kit/ui";
@@ -84,10 +85,7 @@ const Problema: React.FC = () => {
 /* ───────────── 2 · Entra el coquí ───────────── */
 const EntraCoqui: React.FC = () => {
   const f = useCurrentFrame();
-  const revela = tw(f, 4, 28, 0, 1);
-  const hit = 28; // se completa el escaneo
-  const glitchOn = (f >= hit && f < hit + 5) || (f >= 62 && f < 65);
-  const senal = f >= 36 ? ((f - 36) / 18) % 1 : null;
+  const hit = 28; // el logo ya está armado (patas + ojo)
   const { x, y } = sacudida(f, hit, 16, 10);
   const escala = interpolate(f, [0, 80], [1.1, 1], { extrapolateRight: "clamp" });
   const brillo = interpolate(f, [hit, hit + 12], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -106,7 +104,7 @@ const EntraCoqui: React.FC = () => {
         );
       })}
       <AbsoluteFill style={{ display: "grid", placeItems: "center", transform: `translate(${x}px, ${y}px) scale(${escala})` }}>
-        <CoquiAib size={620} revela={revela} glitch={glitchOn} senal={senal} brillo={brillo} />
+        <CoquiAibVector size={680} entrada={f - 2} vivo={f > 50} brillo={brillo} />
       </AbsoluteFill>
       <div style={{ position: "absolute", bottom: 70, width: "100%", textAlign: "center", fontFamily: FUENTE_MONO, color: C.verde, fontSize: 24, letterSpacing: "0.3em", opacity: tw(f, 40, 52) }}>
         AGENTES DE IA · VOZ Y CHAT
@@ -142,7 +140,7 @@ const Presenta: React.FC<{ t: Textos }> = ({ t }) => {
         </div>
         {/* El coquí se asoma en la esquina y canta */}
         <div style={{ position: "absolute", right: 80, bottom: 50, transform: `translateY(${(1 - coquiE) * 260}px) rotate(${(1 - coquiE) * 12}deg)` }}>
-          <CoquiAib size={230} senal={(f / 18) % 1} />
+          <CoquiAibVector size={230} vivo />
         </div>
       </AbsoluteFill>
       <Destello en={0} color={C.verdeClaro} max={0.5} dur={10} />
@@ -183,7 +181,7 @@ const Prueba: React.FC<{ t: Textos }> = ({ t }) => {
           <Llamada tema={TEMA} contesta={22} quien="Cliente nuevo" ancho={520} etiqueta={t.contesto} />
         </Panel>
         <Panel x={700} entra={12} titulo="02 · AGENDA">
-          <Chat tema={TEMA} ancho={520} nombre="Recepcionista AI" avatar={<Img src={staticFile(LOGO_COQUI)} style={{ width: 38, height: 38, objectFit: "contain" }} />}
+          <Chat tema={TEMA} ancho={520} nombre="Recepcionista AI" avatar={<CoquiAibVector size={38} />}
             burbujas={[
               { de: "cliente", texto: "Hola, ¿tienen cita para mañana?", en: 22 },
               { de: "agente", texto: t.opciones, en: 44 },
@@ -222,7 +220,7 @@ const Cierre: React.FC<{ t: Textos }> = ({ t }) => {
       <Fondo color={C.fondo} brillo="#0f4a2e" brillo2={C.azulLogo} grid={C.borde} />
       <div style={{ position: "absolute", left: 960, top: 250, width: pulso * 2600, height: pulso * 2600, borderRadius: "50%", border: `6px solid ${C.verde}`, transform: "translate(-50%,-50%)", opacity: pulso > 0 ? 1 - pulso : 0 }} />
       <div style={{ position: "absolute", left: 960, top: 250, transform: `translate(-50%,-50%) scale(${0.3 + 0.7 * coquiE})` }}>
-        <CoquiAib size={300} senal={f > 20 ? ((f - 20) / 18) % 1 : null} glitch={f >= 2 && f < 6} brillo={interpolate(f, [0, 14], [1, 0.2], { extrapolateRight: "clamp" })} />
+        <CoquiAibVector size={300} vivo brillo={interpolate(f, [0, 14], [1, 0.25], { extrapolateRight: "clamp" })} />
       </div>
       <div style={{ position: "absolute", top: 450, width: "100%", display: "flex", justifyContent: "center", opacity: nombre, transform: `translateY(${(1 - nombre) * 40}px)` }}>
         <NombreAib tam={120} />

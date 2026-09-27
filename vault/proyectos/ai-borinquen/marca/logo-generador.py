@@ -148,3 +148,13 @@ if __name__ == "__main__":
     for n, s in piezas.items():
         open(os.path.join(out, n), "w").write(s)
     print("\n".join(piezas))
+    # Las mismas formas para animar el logo por piezas en el taller de motion (Remi).
+    import json
+    formas = dict(VERDE=VERDE, AZUL=AZUL, ROJO=ROJO, CORTE=CORTE, CUERPO=CUERPO, LIMITE_AZUL=LIMITE_AZUL,
+                  MUSLO=MUSLO, BRAZO=BRAZO, MANO_VERDE_DEDOS=MANO_VERDE_DEDOS, MANO_AZUL_DEDOS=MANO_AZUL_DEDOS,
+                  PIE_DEDOS=PIE_DEDOS, OJO=OJO, FOSA=FOSA, BOCA=BOCA, LOMO=LOMO, CIRCUITOS=CIRCUITOS, NODOS=NODOS,
+                  ROJOS=ROJOS, PR=PR, ONDAS=ONDAS, ONDAS_BOCA=ONDAS_BOCA, ECUALIZADOR=ECUALIZADOR)
+    destino = os.path.join(base, "../../../../motion/src/marcas/aib-logo.json")
+    if os.path.isdir(os.path.dirname(destino)):
+        json.dump(formas, open(destino, "w"), indent=1)
+        print("motion/src/marcas/aib-logo.json")

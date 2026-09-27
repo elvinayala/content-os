@@ -433,7 +433,7 @@ Elvin: "videos de motion por prompt… como un showreel, a tope". Lola hace IA g
 logos y textos); **Remi anima por código** con **Remotion** (React → MP4) y los logos/colores
 reales. Taller en **`motion/`** (proyecto aparte con su `package.json`; excluido del `tsconfig` de
 Next, de `.vercelignore` y `.railwayignore`): `src/marcas/` (paleta + fuentes; `Coqui.tsx` = el
-coquí de Bori por capas con las formas exactas de `logo-color.svg`; `aib.ts` + `CoquiAib.tsx` = el coquí de circuitos de AI Borinquen, solo PNG → se anima entero). **Bori ≠ AI Borinquen**: Bori = agencia de marketing en una plataforma (coquí cobre); AIB = agentes de IA de voz y chat a la medida (coquí de circuitos) — nunca mezclar, `src/kit/` (fx, texto cinético,
+coquí de Bori por capas con las formas exactas de `logo-color.svg`; `aib.ts` + `CoquiAibVector.tsx` = el **logo v2 de AI Borinquen** (rebranding aprobado 27/sep, vector recreado del PNG viejo) animado por piezas desde `aib-logo.json`, que emite `vault/proyectos/ai-borinquen/marca/logo-generador.py` — ver su `LEEME.md`). **Bori ≠ AI Borinquen**: Bori = agencia de marketing en una plataforma (coquí cobre); AIB = agentes de IA de voz y chat a la medida (coquí de circuitos) — nunca mezclar, `src/kit/` (fx, texto cinético,
 teléfono/chat/llamada/calendario/contador), `src/videos/<Video>.tsx` + `.audio.ts`, `src/Root.tsx`.
 Audio por prompt: `node motion/scripts/audio.mjs musica|sfx "<prompt>"` (fal: stable-audio-25 /
 ElevenLabs sfx v2). Revisión obligatoria con `remotion still` + hoja de contacto antes de entregar.
