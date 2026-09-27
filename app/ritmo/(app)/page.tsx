@@ -26,8 +26,11 @@ export default async function HoyPage() {
   const u = await usuarioRitmo();
   if (!u) return null;
   const hoy = fechaPR(Date.now());
-  const estado = await estadoPonche(u.id);
-  const panel = estado ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
+  // Dirección (Elvin, Carilin, Aure): ve el ponche como todos, opcional, con su nota especial.
+  const direccion = u.rol === "admin" || u.rol === "editor";
+  const estado = await estadoPonche(u.id, direccion);
+  // Sin perfil (dirección) no hay "Mi semana": no vale la pena armar el panel.
+  const panel = estado && !estado.sinPerfil ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
   const yo = panel?.filas.find((f) => f.perfil.userId === u.id);
   const oculto = modoScore(u.rol) === "oculto";
   const ficha = await fichaCompleta(u.id).catch(() => null);
@@ -55,13 +58,14 @@ export default async function HoyPage() {
         </Link>
       ) : null}
 
-      {estado ? (
-        <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} />
-      ) : (
+      {estado ? <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} /> : null}
+
+      {!estado || estado.sinPerfil || u.maestro ? (
         <div className={`panel ${u.maestro ? "max-w-lg" : "max-w-sm"} p-6 text-center text-sm text-muted-foreground`}>
-          {u.maestro ? (
+          {u.maestro || direccion ? (
             <>
-              <b className="text-foreground">Tú estás en la dirección de Ritmo</b> y no necesitas marcar entrada ni salida.
+              <b className="text-foreground">Tú estás en la dirección de Ritmo</b>: no tienes que marcar entrada ni salida.
+              {estado?.sinPerfil ? <span className="mt-1 block text-xs">El ponche de arriba es opcional: si lo usas, queda solo para ti y no cuenta en ningún reporte.</span> : null}
               <span className="mt-4 grid grid-cols-2 gap-2 text-left sm:grid-cols-3">
                 {[
                   { href: "/ritmo/equipo", t: "Equipo", d: "Asistencia y KPIs" },
@@ -79,16 +83,12 @@ export default async function HoyPage() {
                   </Link>
                 ))}
               </span>
-              <span className="mt-2 block text-xs">
-                Si también quieres marcar tu día, entra en{" "}
-                <Link href={`/ritmo/ajustes?q=${encodeURIComponent(u.nombre)}`} className="text-primary">Ajustes → tu nombre → Agregar</Link> y guarda tu puesto y horario.
-              </span>
             </>
           ) : (
             "Todavía no tienes perfil en Ritmo. Pídele a Carilin que te lo active (puesto, líder y horario)."
           )}
         </div>
-      )}
+      ) : null}
 
       {yo ? (
         <Link href={`/ritmo/equipo/${u.id}`} className="panel group flex w-full max-w-md items-center gap-4 p-4 transition hover:border-primary/40">

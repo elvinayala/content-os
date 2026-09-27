@@ -368,10 +368,15 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
 // ─── Estado del botón de ponche (layout de Pulse) ─────────────────────────────────────────────
 
 /** null si la persona no tiene perfil (o las tablas aún no existen: nunca rompe Pulse). */
-export async function estadoPonche(userId: string): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string }[] } | null> {
+/**
+ * `opcional`: la dirección (Elvin, Carilin, Aure) no tiene que ponchar, pero ve el ponche igual que todos y puede
+ * usarlo si quiere (27/sep). Sin perfil, sus ponches no salen en Equipo, recordatorios ni reportes (todo eso sale
+ * de los perfiles). `sinPerfil` le dice a Hoy que muestre la nota especial.
+ */
+export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string }[]; sinPerfil?: boolean } | null> {
   try {
     const perfil = await perfilDe(userId);
-    if (!perfil?.activo) return null;
+    if (!perfil?.activo && !opcional) return null;
     const hoy = fechaPR(Date.now());
     const abiertos = await ponchesAbiertos(userId);
     const deHoy = abiertos.find((p) => vigente(p));
@@ -380,7 +385,8 @@ export async function estadoPonche(userId: string): Promise<{ hoy: string; abier
       hoy,
       abiertoHoy: deHoy ? deHoy.entradaAt.toISOString() : null,
       pendiente: viejo ? { id: viejo.id, fecha: viejo.fecha, entradaAt: viejo.entradaAt.toISOString() } : null,
-      manual: puestoPorId(perfil.puesto)?.manual ?? [],
+      manual: perfil?.activo ? (puestoPorId(perfil.puesto)?.manual ?? []) : [],
+      sinPerfil: !perfil?.activo,
     };
   } catch (e) {
     console.error("[desempeno] estadoPonche", e);

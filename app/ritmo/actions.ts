@@ -47,7 +47,9 @@ async function contexto() {
 export async function entrarAction() {
   return envolver(async () => {
     const u = await requiereUsuario();
-    if (!(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
+    // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
+    const direccion = u.rol === "admin" || u.rol === "editor";
+    if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
     const p = await datos.entrar(u.id, await contexto());
     refresh();
     return { entradaAt: p.entradaAt.toISOString() };

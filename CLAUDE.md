@@ -627,6 +627,9 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   ≥ 6 meses, ≥ 20 días marcados e índice ≥ 90 (40 % asistencia + 60 % desempeño; sin score, solo asistencia); la
   dirección escoge al ganador entre los que califican (validado en el servidor) → Noticia fijada + aviso. Para abrirlo al
   equipo: volver a poner la tarjeta en Hoy, la pestaña en `nav.tsx` y cambiar los gates `rol === "admin"`.
+- **Ponche de la dirección** (27/sep): Elvin, Carilin y Aure (admin/editoras) ven en Hoy el mismo ponche que todos, con la
+  nota "no tienes que marcar"; es opcional (`estadoPonche(id, opcional)` + `entrarAction` sin perfil). Sin perfil sus
+  ponches no salen en Equipo, recordatorios ni reportes (todo eso sale de `desempeno_perfiles`).
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
