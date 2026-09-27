@@ -107,6 +107,21 @@ export const pulseBoardMembers = pgTable(
   (t) => [uniqueIndex("pulse_board_members_pk").on(t.boardId, t.userId)],
 );
 
+// Tableros que una persona NO puede ver aunque sean públicos (p. ej. la tesorera de Level Up no ve
+// AI BORINQUEN). Los admins no se bloquean.
+export const pulseBoardBloqueos = pgTable(
+  "pulse_board_bloqueos",
+  {
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => pulseBoards.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  },
+  (t) => [uniqueIndex("pulse_board_bloqueos_pk").on(t.boardId, t.userId)],
+);
+
 export const pulseColumns = pgTable(
   "pulse_columns",
   {

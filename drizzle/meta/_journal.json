@@ -162,6 +162,20 @@
       "when": 1790477325944,
       "tag": "0022_bienestar-comunidad",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1790478645756,
+      "tag": "0023_formularios-parciales",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1790479347251,
+      "tag": "0024_board-bloqueos",
+      "breakpoints": true
     }
   ]
 }

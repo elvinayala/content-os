@@ -6,6 +6,7 @@ import { aUsuario } from "./auth";
 import { db } from "./db";
 import {
   pulseActivity,
+  pulseBoardBloqueos,
   pulseBoardMembers,
   pulseBoards,
   pulseColumns,
@@ -16,6 +17,7 @@ import {
   pulseUsers,
   pulseVistas,
 } from "./schema";
+import { esCalculada, recalcular } from "./formulas";
 import { borrarArchivos } from "./storage";
 import type {
   Actividad,
@@ -62,8 +64,12 @@ export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
   const rows = await d.select({ id: pulseBoards.id, privado: pulseBoards.privado }).from(pulseBoards);
   const visibles = new Set(rows.filter((b) => !b.privado).map((b) => b.id));
   if (u.rol === "admin") return new Set(rows.map((b) => b.id));
-  const m = await d.select({ boardId: pulseBoardMembers.boardId }).from(pulseBoardMembers).where(eq(pulseBoardMembers.userId, u.id));
+  const [m, bloqueos] = await Promise.all([
+    d.select({ boardId: pulseBoardMembers.boardId }).from(pulseBoardMembers).where(eq(pulseBoardMembers.userId, u.id)),
+    d.select({ boardId: pulseBoardBloqueos.boardId }).from(pulseBoardBloqueos).where(eq(pulseBoardBloqueos.userId, u.id)),
+  ]);
   for (const r of m) visibles.add(r.boardId);
+  for (const r of bloqueos) visibles.delete(r.boardId);
   return visibles;
 }
 
@@ -73,7 +79,10 @@ export async function puedeVerBoard(u: UsuarioPulse, boardId: string): Promise<b
   const d = await db();
   const [b] = await d.select({ privado: pulseBoards.privado }).from(pulseBoards).where(eq(pulseBoards.id, boardId));
   if (!b) return false;
-  if (!b.privado || u.rol === "admin") return true;
+  if (u.rol === "admin") return true;
+  const [bloqueo] = await d.select({ userId: pulseBoardBloqueos.userId }).from(pulseBoardBloqueos).where(and(eq(pulseBoardBloqueos.boardId, boardId), eq(pulseBoardBloqueos.userId, u.id)));
+  if (bloqueo) return false;
+  if (!b.privado) return true;
   const [m] = await d.select({ userId: pulseBoardMembers.userId }).from(pulseBoardMembers).where(and(eq(pulseBoardMembers.boardId, boardId), eq(pulseBoardMembers.userId, u.id)));
   return !!m;
 }
@@ -331,6 +340,24 @@ export async function leerItems(ids: string[]): Promise<Item[]> {
   if (!ids.length) return [];
   const d = await db();
   return (await d.select().from(pulseItems).where(inArray(pulseItems.id, ids))).map(aItem);
+}
+
+// Columnas calculadas (settings.formula): recalcula el elemento y guarda solo lo que cambió, sin
+// actividad (no es un cambio de una persona). Devuelve el elemento al día si hubo cambios.
+export async function recalcularItem(itemId: string): Promise<Item | null> {
+  const [item] = await leerItems([itemId]);
+  if (!item) return null;
+  const d = await db();
+  const cols = (await d.select().from(pulseColumns).where(eq(pulseColumns.boardId, item.boardId))).map(aColumna);
+  if (!cols.some(esCalculada)) return null;
+  const cambios = recalcular(cols, item.values);
+  if (!Object.keys(cambios).length) return null;
+  const [r] = await d
+    .update(pulseItems)
+    .set({ values: sql`${pulseItems.values} || ${JSON.stringify(cambios)}::jsonb` })
+    .where(eq(pulseItems.id, itemId))
+    .returning();
+  return aItem(r);
 }
 
 export async function leerNombresItems(boardId: string): Promise<{ id: string; name: string }[]> {

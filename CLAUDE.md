@@ -824,11 +824,17 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
     devuelve ids de esos tableros; tope 8 preguntas/min por persona. ~15 s por pregunta.
   - Dev local usa `DATABASE_URL_DIRECT` (pooler de sesión): el de transacciones dejaba consultas
     trabadas en "ClientRead" desde la Mac. Prod sigue con `DATABASE_URL` (6543).
-- **Tesorería · Métricas del mes** (`/pulse/tesoreria-mensual`, 26/sep): tablero PRIVADO para María García
-  (tesorera, maria@) + Carilin y Aure: una fila por mes y marca (grupos Level Up Media / AI Borinquen) con
-  ventas nuevas, recurrentes, ingresos, reembolsos, activos inicio/cierre, bajas, churn %, ticket, LTV, cobros
-  pendientes, estado (Por llenar → En revisión → Cerrado) y reporte adjunto. Lo llena ella a mano. Creado por
-  `scripts/pulse/crear-tablero-tesoreria.mjs` (idempotente). El tablero TESORERIA (cobros) sigue aparte.
+- **Tesorería LU · Métricas del mes** (`/pulse/tesoreria-mensual`, 26/sep): tablero PRIVADO para María García
+  (tesorera, maria@) + Carilin y Aure, **solo Level Up** (una fila por mes): ventas nuevas/recurrentes,
+  reembolsos, activos inicio/cierre, bajas, cobros pendientes, estado y reporte adjunto. **Se calculan solos**
+  (columnas `number` con `settings.formula`, `lib/pulse/formulas.ts` puro + tests; `repo.recalcularItem` tras cada
+  `actualizarValorAction`; la celda es de solo lectura con ƒ): ingresos totales = nuevas + recurrentes · netos =
+  totales − reembolsos · churn = bajas ÷ activos al inicio × 100 · ticket = ingresos ÷ activos al cierre · LTV =
+  ticket ÷ churn. Dato faltante = celda vacía (reembolsos sin nada → poner 0). Script
+  `scripts/pulse/crear-tablero-tesoreria.mjs`. El tablero TESORERIA (cobros) sigue aparte.
+- **Bloqueos por persona** (`pulse_board_bloqueos`, migración 0024): un tablero público que alguien NO ve
+  (`boardsVisibles`/`puedeVerBoard`, afecta sidebar, ⌘K, Preguntarle al CRM y archivos; admins no se bloquean).
+  María García tiene bloqueado AI BORINQUEN. Sin UI todavía: se agrega por SQL.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 

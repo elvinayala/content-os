@@ -70,6 +70,7 @@ export interface EtiquetaStatus {
 export interface SettingsColumna {
   labels?: EtiquetaStatus[]; // status, dropdown
   formato?: "moneda" | "entero" | "decimal"; // number
+  formula?: string; // number calculada: "{Bajas del mes} / {Clientes activos al inicio} * 100" (lib/pulse/formulas.ts)
   boardId?: string; // relation → tablero destino
   multiple?: boolean; // people, relation, dropdown
   oculta?: boolean; // columna escondida de tabla/tarjetas/listas (los datos se conservan)

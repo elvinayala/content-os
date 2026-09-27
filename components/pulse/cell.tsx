@@ -167,7 +167,8 @@ function CellNumero({ item, column, vertical }: CellProps) {
     setEditando(false);
     await setValor(item.id, column, borrador === "" ? null : borrador);
   };
-  if (editando) {
+  const calculada = !!column.settings.formula;
+  if (editando && !calculada) {
     return (
       <input
         autoFocus
@@ -184,10 +185,15 @@ function CellNumero({ item, column, vertical }: CellProps) {
     );
   }
   return (
-    <div className={cn("h-7 w-full min-w-0 leading-7", vertical ? "text-left" : "text-center")} onClick={() => setEditando(true)}>
-      <span className={cn("truncate tabular-nums", valor === undefined && "text-muted-foreground/50")}>
-        {valor === undefined ? (vertical ? "—" : "") : formatearNumero(valor, column.settings.formato)}
+    <div
+      className={cn("h-7 w-full min-w-0 leading-7", vertical ? "text-left" : "text-center", calculada && "cursor-default")}
+      onClick={() => !calculada && setEditando(true)}
+      title={calculada ? `Se calcula solo: ${column.settings.formula}` : undefined}
+    >
+      <span className={cn("truncate tabular-nums", valor == null && "text-muted-foreground/50", calculada && "text-foreground/80")}>
+        {valor == null ? (vertical || calculada ? "—" : "") : formatearNumero(valor, column.settings.formato)}
       </span>
+      {calculada && <span className="ml-1 align-super text-[9px] italic text-muted-foreground">ƒ</span>}
     </div>
   );
 }

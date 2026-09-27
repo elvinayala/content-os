@@ -1,4 +1,4 @@
-// Crea el tablero privado "Tesorería · Métricas del mes" (una fila por mes y marca) y le da
+// Crea el tablero privado "Tesorería LU · Métricas del mes" (una fila por mes, solo Level Up) y le da
 // acceso a la tesorera. Idempotente por slug: si ya existe, solo asegura los miembros.
 //   node --env-file=.env.local scripts/pulse/crear-tablero-tesoreria.mjs [--dry-run]
 import { randomUUID } from "node:crypto";
@@ -11,30 +11,30 @@ const HASTA_MES = 9; // se precargan los meses de 2026 hasta septiembre
 const seco = process.argv.includes("--dry-run");
 
 const lbl = (label, color, esDone) => ({ id: randomUUID().slice(0, 8), label, color, ...(esDone ? { esDone: true } : {}) });
-const n = (title, formato, width = 150) => ({ title, type: "number", settings: { formato }, width });
+const n = (title, formato, width = 150, formula) => ({ title, type: "number", settings: { formato, ...(formula ? { formula } : {}) }, width });
 const COLUMNAS = [
   { title: "Mes", type: "date", settings: {}, width: 130 },
   { title: "Estado", type: "status", settings: { labels: [lbl("Por llenar", "grey"), lbl("En revisión", "orange"), lbl("Cerrado", "green", true)] }, width: 140 },
   n("Ventas nuevas ($)", "moneda"),
   n("Clientes nuevos", "entero", 130),
   n("Ventas recurrentes ($)", "moneda", 170),
-  n("Ingresos totales ($)", "moneda", 160),
+  n("Ingresos totales ($)", "moneda", 160, "{Ventas nuevas ($)} + {Ventas recurrentes ($)}"),
   n("Reembolsos ($)", "moneda"),
   n("Cantidad de reembolsos", "entero", 170),
+  n("Ingresos netos ($)", "moneda", 160, "{Ingresos totales ($)} - {Reembolsos ($)}"),
   n("Clientes activos al inicio", "entero", 180),
   n("Clientes activos al cierre", "entero", 180),
   n("Bajas del mes", "entero", 130),
-  n("Churn (%)", "decimal", 120),
-  n("Ticket promedio ($)", "moneda", 160),
-  n("Lifetime value ($)", "moneda", 160),
+  n("Churn (%)", "decimal", 120, "{Bajas del mes} / {Clientes activos al inicio} * 100"),
+  n("Ticket promedio ($)", "moneda", 160, "{Ingresos totales ($)} / {Clientes activos al cierre}"),
+  n("Lifetime value ($)", "moneda", 160, "{Ticket promedio ($)} / ({Churn (%)} / 100)"),
   n("Cobros pendientes ($)", "moneda", 170),
   { title: "Responsable", type: "people", settings: {}, width: 140 },
   { title: "Reporte (Excel/PDF)", type: "file", settings: {}, width: 170 },
   { title: "Notas", type: "long_text", settings: {}, width: 260 },
 ];
 const GRUPOS = [
-  { title: "Level Up Media", color: "yellow" },
-  { title: "AI Borinquen", color: "green" },
+  { title: "Level Up Media", color: "yellow" }, // solo LU: María no trabaja AI Borinquen (Elvin, 26/sep)
 ];
 
 const sql = postgres(process.env.DATABASE_URL_DIRECT || process.env.DATABASE_URL, { prepare: false, max: 1 });
@@ -51,7 +51,7 @@ try {
     if (!board) {
       const [pos] = await tx`select coalesce(position, 0) + 1 as p from pulse_boards where slug = 'tesoreria'`;
       [board] = await tx`insert into pulse_boards (slug, nombre, descripcion, color, position, privado)
-        values (${SLUG}, 'Tesorería · Métricas del mes', 'Una fila por mes y marca: ventas nuevas, recurrentes, reembolsos, churn y lifetime value. Privado: tesorería + dirección.', 'green', ${pos?.p ?? 2}, true)
+        values (${SLUG}, 'Tesorería LU · Métricas del mes', 'Level Up Media, una fila por mes. Ingresos, ingresos netos, churn, ticket promedio y lifetime value se calculan solos. Privado: tesorería + dirección.', 'green', ${pos?.p ?? 2}, true)
         returning id`;
       const cols = [];
       for (const [i, c] of COLUMNAS.entries()) {

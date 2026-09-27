@@ -11,6 +11,7 @@ import { etiquetasQuitadasEnUso, poderes } from "@/lib/pulse/permisos";
 import { alertarElvin, prohibido, registrarEvento } from "@/lib/pulse/seguridad";
 import { subirArchivo, urlArchivo } from "@/lib/pulse/storage";
 import type { Actividad, ArchivoPulse, ColorPulse, Columna, Grupo, Item, SettingsColumna, TipoColumna, ValorCelda } from "@/lib/pulse/types";
+import { esCalculada } from "@/lib/pulse/formulas";
 import { validarValor } from "@/lib/pulse/valores";
 
 // Server actions del tablero. Todas verifican sesión, validan lo mínimo y devuelven
@@ -43,6 +44,8 @@ export async function actualizarValorAction(p: {
 }): Promise<R<{ updatedAt: string; value: ValorCelda; movidoA?: { groupId: string; regla: string }; item?: Item; automatizaciones?: string[] }>> {
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemId }));
+    const columna = await repo.leerColumna(p.columnId);
+    if (columna && esCalculada(columna)) throw new Error("Esta columna se calcula sola");
     const value = validarValor(p.tipo, p.value, p.settings);
     const [antes] = await repo.leerItems([p.itemId]);
     if (!antes) throw new Error("El elemento no existe");
@@ -57,7 +60,8 @@ export async function actualizarValorAction(p: {
       console.error("pulse automatización", e); // el valor ya quedó guardado
     }
     avisarCambio({ itemIds: [p.itemId], motivo: efecto.movidoA ? "mover" : "valor" });
-    const item = efecto.reglas.length ? (await repo.leerItems([p.itemId]))[0] : undefined;
+    const recalculado = await repo.recalcularItem(p.itemId).catch((e) => (console.error("pulse fórmulas", e), null));
+    const item = efecto.reglas.length ? (await repo.leerItems([p.itemId]))[0] : (recalculado ?? undefined);
     return {
       updatedAt: r.updatedAt,
       value,
