@@ -13,7 +13,7 @@ import { RAIZ, type Proyecto, type Contratista } from "./almacen.js";
 import { crearLinkPago } from "./integraciones/cobros.js";
 import { upsertContacto, crearOportunidad, agregarNota, huecosLibres, guardarCita, citasCalendario } from "./integraciones/crm.js";
 import { dmSlack } from "./integraciones/slack.js";
-import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida, chocaEntrevista, separarHuecos, unirOcupadas, MIN_ENTREVISTA } from "./reclutamiento.js";
+import { mensajeCita, aceptaHora, esPrioridad, horaPrioritariaValida, chocaEntrevista, separarHuecos, unirOcupadas, MIN_ENTREVISTA, aptoParaEntrevista, OFICIOS, oficioDe } from "./reclutamiento.js";
 /** Entrevistas ya agendadas (futuras), menos la del contacto que se está atendiendo. */
 const entrevistasOcupadas = (contactoId?: string) => almacen.candidatos().filter((x) => x.estado === "entrevista" && x.entrevista && x.contactoId !== contactoId && new Date(x.entrevista).getTime() > Date.now() - MIN_ENTREVISTA * 60_000).map((x) => x.entrevista as string);
 /** Las del agente + las reales del calendario de GHL (lo que se agenda o mueve a mano). Si GHL falla, quedan las del agente. */
@@ -94,10 +94,10 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
   },
   {
     name: "registrar_candidato",
-    description: "Registra a un plomero que quiere trabajar con Resuelto y, si ya eligió horario, agenda la entrevista por videollamada (bloquea 1 hora). Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
+    description: "Registra a un candidato que quiere trabajar con Resuelto — plomero, técnico de aire acondicionado, handyman, perito electricista o cotizador de proyectos (oficio) — y, si ya eligió horario, agenda la entrevista por videollamada (bloquea 1 hora). Llámala en cuanto tengas lo básico, aunque todavía no haya entrevista acordada (entrevista vacío).",
     input_schema: {
       type: "object",
-      properties: { nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "en tramite", "no tiene"] }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la hora que el plomero ACEPTÓ en su último mensaje (un sí claro o que él mismo dijo esa hora): uno de los huecos de horarios_entrevista, o — solo si es maestro o gran candidato — la hora que él pidió (lun–sáb, 7 AM–6 PM, con -04:00). Vacío si aún no aceptó" } },
+      properties: { oficio: { type: "string", enum: ["plomero", "aire", "handyman", "electricista", "cotizador"], description: "plomero (default), aire = técnico de aire acondicionado, handyman, electricista = perito electricista, cotizador = cotizador de proyectos a comisión" }, nombre: { type: "string" }, whatsapp: { type: "string" }, nivel_licencia: { type: "string", enum: ["maestro", "oficial", "aprendiz", "licencia de refrigeracion", "perito electricista", "en tramite", "no tiene", "no aplica"], description: "plomero: maestro/oficial/aprendiz · aire: licencia de refrigeracion · electricista: perito electricista · handyman y cotizador: no aplica" }, numero_licencia: { type: "string", description: "vacío si no lo dio" }, municipio: { type: "string" }, experiencia: { type: "string", description: "años de experiencia como plomero, tal como lo dijo; vacío si no lo dio" }, equipo: { type: "string", description: "vehículo y herramientas que tiene + lo propio del oficio: aire → EPA 608 sí/no y equipo (bomba de vacío, manómetros, recuperadora); handyman → registro de DACO sí/no y en qué se especializa; electricista → colegiado sí/no; cotizador → qué proyectos ha estimado y con qué empresas" }, disponibilidad: { type: "string" }, entrevista: { type: "string", description: "ISO de la hora que el plomero ACEPTÓ en su último mensaje (un sí claro o que él mismo dijo esa hora): uno de los huecos de horarios_entrevista, o — solo si es maestro o gran candidato — la hora que él pidió (lun–sáb, 7 AM–6 PM, con -04:00). Vacío si aún no aceptó" } },
       required: ["nombre", "whatsapp", "nivel_licencia", "numero_licencia", "municipio", "experiencia", "equipo", "disponibilidad", "entrevista"],
       additionalProperties: false,
     },
@@ -304,18 +304,18 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       // Candado legal (24/sep, Ley 59-2022 Art. 29): sin licencia de oficial/maestro ni certificado de aprendiz no se
       // puede hacer plomería, así que no hay entrevista. Se registra igual (ruta de aprendiz), pero no se agenda.
       let sinLicencia: string | null = null;
-      if (input.entrevista && input.entrevista !== previo?.entrevista && !PUEDE_TRABAJAR.includes(String(input.nivel_licencia))) {
-        sinLicencia = `No agendé: sin licencia de oficial o maestro ni certificado de aprendiz, por ley (Ley 59-2022) no puede hacer plomería, así que no hay entrevista. NO le confirmes nada. Explícale la ruta del certificado de aprendiz (no lleva examen: curso de plomería de 3 meses en una escuela acreditada y lo solicita a la Junta) y que nos escriba cuando lo tenga.`;
+      if (input.entrevista && input.entrevista !== previo?.entrevista && !aptoParaEntrevista(input.oficio, String(input.nivel_licencia))) {
+        sinLicencia = `No agendé: no hay entrevista sin la licencia que exige la ley. NO le confirmes nada. ${OFICIOS[oficioDe(input.oficio)].sinLicencia}`;
         input = { ...input, entrevista: previo?.entrevista ?? "" };
       }
-      const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: previo?.creado ?? new Date().toISOString() };
+      const c: Candidato = { id: previo?.id ?? "P-" + String(almacen.candidatos().length + 1).padStart(3, "0"), contactoId: ctx.contacto.id, nombre: input.nombre, whatsapp: input.whatsapp, nivelLicencia: input.nivel_licencia, ...(oficioDe(input.oficio) !== "plomero" ? { oficio: oficioDe(input.oficio) } : {}), numeroLicencia: input.numero_licencia || undefined, municipio: input.municipio, experiencia: input.experiencia || undefined, equipo: input.equipo, disponibilidad: input.disponibilidad, entrevista: input.entrevista || undefined, estado: input.entrevista ? "entrevista" : "nuevo", creado: previo?.creado ?? new Date().toISOString() };
       almacen.guardarCandidato(c);
-      const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: ["plomero-candidato", c.nivelLicencia], fuente: ctx.contacto.canal });
+      const ghlId = await upsertContacto({ nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tags: [oficioDe(input.oficio) === "plomero" ? "plomero-candidato" : "candidato-" + oficioDe(input.oficio), c.nivelLicencia], fuente: ctx.contacto.canal });
       almacen.guardarContacto({ ...ctx.contacto, nombre: c.nombre, telefono: c.whatsapp, municipio: c.municipio, tipo: "plomero-candidato", ghlContactId: ghlId });
       // Misma tarjeta que crea el formulario web (netlify/functions/lead.mjs): pipeline Candidatos → Aplicó.
       if (ghlId) {
         if (!ctx.contacto.ghlOpportunityId) { const op = await crearOportunidad({ contactId: ghlId, nombre: c.nombre, valor: 0, trabajoId: c.id, pipelineId: process.env.GHL_PIPELINE_CANDIDATOS_ID, stageId: process.env.GHL_STAGE_CANDIDATO_APLICO }); if (op) { ctx.contacto.ghlOpportunityId = op; almacen.guardarContacto(ctx.contacto); } }
-        await agregarNota(ghlId, `Aplicó por WhatsApp (agente). Licencia: ${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""} · Municipio: ${c.municipio}${c.experiencia ? " · Experiencia: " + c.experiencia : ""} · Equipo: ${c.equipo} · Disponibilidad: ${c.disponibilidad}${c.entrevista ? " · Entrevista acordada: " + c.entrevista : ""}`);
+        await agregarNota(ghlId, `Aplicó (agente) · ${OFICIOS[oficioDe(input.oficio)].nombre}. Licencia: ${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""} · Municipio: ${c.municipio}${c.experiencia ? " · Experiencia: " + c.experiencia : ""} · Equipo: ${c.equipo} · Disponibilidad: ${c.disponibilidad}${c.entrevista ? " · Entrevista acordada: " + c.entrevista : ""}`);
       }
       // Entrevista acordada → cita en el calendario de GHL (asignada a la reclutadora) + DM corto por Slack.
       let cita: { ok: boolean; error?: string } | null = null;
@@ -339,11 +339,11 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
         const t = territorioDeMunicipio(c.municipio);
         return { ok: false, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "", error: "Esa hora ya no está libre en el calendario (o no es un hueco válido). NO le confirmes la cita: llama horarios_entrevista y ofrécele otra." };
       }
-      await avisarCoordinador(`🔧 Candidato ${c.id}: ${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " " + c.numeroLicencia : ""}) · ${c.municipio}${c.experiencia ? " · " + c.experiencia + " de experiencia" : ""} · ${c.equipo}${c.entrevista ? `\nEntrevista: ${new Date(c.entrevista).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}` : ""}`);
+      await avisarCoordinador(`🔧 Candidato ${c.id}${oficioDe(input.oficio) !== "plomero" ? " · " + OFICIOS[oficioDe(input.oficio)].nombre.toUpperCase() : ""}: ${c.nombre} (${c.nivelLicencia}${c.numeroLicencia ? " " + c.numeroLicencia : ""}) · ${c.municipio}${c.experiencia ? " · " + c.experiencia + " de experiencia" : ""} · ${c.equipo}${c.entrevista ? `\nEntrevista: ${new Date(c.entrevista).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}` : ""}`);
       const t = territorioDeMunicipio(c.municipio);
       // Cita recién confirmada: el enlace de Zoom va en el mensaje de confirmación, tal cual.
       const zoom = cita?.ok && config.zoomEntrevistas ? { enlace_videollamada: config.zoomEntrevistas, instruccion_enlace: "Confírmale día y hora y pégale este enlace de Zoom completo, tal cual, en una línea aparte. Dile que entre ahí a esa hora." } : {};
-      return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: PUEDE_TRABAJAR.includes(c.nivelLicencia), ...(PUEDE_TRABAJAR.includes(c.nivelLicencia) ? {} : { nota_ley: "Sin licencia ni certificado de aprendiz: no hay entrevista. Ofrécele la ruta del certificado de aprendiz; no le prometas trabajos." }) };
+      return { ...zoom, ok: true, candidato_id: c.id, territorio: t ? `${t.id} ${t.nombre}` : "sin territorio definido aún", nota: "Reclutamos en todo Puerto Rico: sigue con la entrevista sin importar el municipio.", apto_por_licencia: aptoParaEntrevista(input.oficio, c.nivelLicencia), ...(aptoParaEntrevista(input.oficio, c.nivelLicencia) ? {} : { nota_ley: OFICIOS[oficioDe(input.oficio)].sinLicencia + " No le prometas trabajos." }) };
     }
     case "anotar_otro_oficio": {
       // Otros oficios (26/sep, Elvin: "no le cierres la puerta al electricista: lista de espera y lo llamamos cuando abramos").

@@ -21,7 +21,23 @@ export function anosExperiencia(texto?: string): number | null {
   return null;
 }
 
-export const tieneLicencia = (c: Pick<Candidato, "nivelLicencia">) => ["oficial", "maestro"].includes(String(c.nivelLicencia).toLowerCase());
+// ── Oficios que Resuelto recluta (27/sep/2026, Elvin aprobó aire, handyman, peritos y cotizador a comisión) ──
+// Candado legal por oficio: sin la licencia que exige la ley, se registra pero NO hay entrevista.
+export type Oficio = "plomero" | "aire" | "handyman" | "electricista" | "cotizador";
+export const OFICIOS: Record<Oficio, { nombre: string; habilitan: string[] | null; sinLicencia: string }> = {
+  plomero: { nombre: "plomero", habilitan: ["maestro", "oficial", "aprendiz"], sinLicencia: "Sin licencia de oficial o maestro ni certificado de aprendiz, por ley (Ley 59-2022) no puede hacer plomería. Explícale la ruta del certificado de aprendiz (curso de 3 meses en una escuela acreditada, lo solicita a la Junta) y que nos escriba cuando lo tenga." },
+  aire: { nombre: "técnico de aire acondicionado", habilitan: ["licencia de refrigeracion"], sinLicencia: "Sin la licencia de técnico de refrigeración y aire acondicionado (Junta Examinadora, Ley 36) no puede trabajar aire acondicionado por Resuelto. Anótalo y dile que cuando tenga la licencia nos escriba; si está estudiando, que nos avise al sacarla." },
+  handyman: { nombre: "handyman", habilitan: null, sinLicencia: "" },
+  electricista: { nombre: "perito electricista", habilitan: ["perito electricista"], sinLicencia: "Sin licencia de Perito Electricista no puede hacer trabajos eléctricos por Resuelto (es la ley). Si es ayudante de perito, anótalo y dile que cuando saque la licencia lo llamamos." },
+  cotizador: { nombre: "cotizador de proyectos", habilitan: null, sinLicencia: "" },
+};
+export const oficioDe = (o?: string): Oficio => (o && o in OFICIOS ? (o as Oficio) : "plomero");
+/** ¿Puede ir a entrevista con esa licencia? Pura (tests). Handyman y cotizador no llevan licencia de colegio. */
+export function aptoParaEntrevista(oficio: string | undefined, nivel: string): boolean {
+  const h = OFICIOS[oficioDe(oficio)].habilitan;
+  return h === null || h.includes(String(nivel).toLowerCase());
+}
+export const tieneLicencia = (c: Pick<Candidato, "nivelLicencia">) => ["oficial", "maestro", "licencia de refrigeracion", "perito electricista"].includes(String(c.nivelLicencia).toLowerCase());
 export function esGranCandidato(c: Candidato): boolean {
   const a = anosExperiencia(c.experiencia);
   return tieneLicencia(c) && a !== null && a >= ANOS_GRAN_CANDIDATO;
@@ -99,7 +115,7 @@ export function fechaCorta(iso: string, zona = "America/Puerto_Rico"): string {
   const hora = f.toLocaleTimeString("en-US", { timeZone: zona, hour: "numeric", minute: "2-digit" });
   return `${dia}, ${hora}`;
 }
-const ficha = (c: Candidato) => [c.nombre, `${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""}`, c.experiencia, c.municipio, telefonoBonito(c.whatsapp)].filter(Boolean).join(" · ");
+const ficha = (c: Candidato) => [c.nombre, c.oficio && c.estado !== "lista-espera" && oficioDe(c.oficio) !== "plomero" ? OFICIOS[oficioDe(c.oficio)].nombre.toUpperCase() : "", `${c.nivelLicencia}${c.numeroLicencia ? " #" + c.numeroLicencia : ""}`, c.experiencia, c.municipio, telefonoBonito(c.whatsapp)].filter(Boolean).join(" · ");
 
 export const mensajeCita = (c: Candidato, iso: string, fueraDeHorario = false) =>
   esPrioridad(c)
