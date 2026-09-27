@@ -81,3 +81,10 @@ necesita, nunca con clientes sin OK. Probado: flyer LU solo en ~2 min. TRAMPA: l
 (nico/lola/telegram-puente) se volvían a prender en cada reinicio (`unload` no es permanente) y le robaban
 los mensajes a Railway con un Claude viejo (2.1.278 no sirve con Opus 5.5) → `launchctl disable` (permanente);
 en la Mac solo queda `com.iamarket.sync-nube`.
+
+**27/sep/2026 — Nico reemplaza a Elvin en el desarrollo:** Carilin y Aure le piden a Nico lo técnico que
+antes le pedían a Elvin. Canales: #nico-desarrollo (C0C43J731AQ, pedidos) y **#nico-permisos**
+(C0C4MSG3AUB, privado, SOLO accesos: Nico pide con formato 🔑 Permiso #N y ellas lo dan). Plan en canvas
+F0C4CN8MW15 ("Cómo vamos a trabajar con Nico"); mensaje formal de Nico enviado desde la cuenta de Elvin
+pidiendo reunión de 30 min por Zoom (Aure crea el Zoom; Nico no habla en Zoom). Aprobación sigue siendo de
+Elvin (`ok <id>`) hasta que él decida delegarla a Carilin/Aure. Cerebro §11.
