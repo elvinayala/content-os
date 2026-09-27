@@ -1,9 +1,10 @@
 import { Flame, HeartPulse, Users } from "lucide-react";
 
 import { Animo, BarrasSemana, NuevaActividad, PausaActiva } from "@/components/ritmo/bienestar";
+import { MuroComunidad, TableroComunidad, UnirseComunidad } from "@/components/ritmo/comunidad";
 import { Tarjeta } from "@/components/ritmo/piezas";
-import { hoyPR, personasActivas, registrosDe, registrosEquipo } from "@/lib/desempeno/bienestar";
-import { ANIMOS, equipoSemana, META_SEMANAL_MIN, MIN_RESPUESTAS_ANIMO, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
+import { esVisible, feedComunidad, hoyPR, miembrosComunidad, personasActivas, registrosDe, registrosEquipo } from "@/lib/desempeno/bienestar";
+import { ANIMOS, equipoSemana, META_SEMANAL_MIN, MIN_RESPUESTAS_ANIMO, miSemana, rutinaDelDia, semanaDe, tableroComunidad } from "@/lib/desempeno/bienestar-reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,11 @@ export default async function BienestarPage() {
   if (!u) return null;
   const hoy = hoyPR();
   const dias = semanaDe(hoy);
-  const [mios, equipo, personas] = await Promise.all([registrosDe(u.id, dias), registrosEquipo(dias), personasActivas()]);
+  const [mios, equipo, personas, visible, miembros] = await Promise.all([registrosDe(u.id, dias), registrosEquipo(dias), personasActivas(), esVisible(u.id), miembrosComunidad()]);
+  // Comunidad: solo quien se unió la ve (reciprocidad: nadie mira sin aparecer). La dirección puede moderar.
+  const veComunidad = visible || u.maestro;
+  const tablero = veComunidad ? tableroComunidad(equipo, miembros, hoy) : [];
+  const feed = veComunidad ? await feedComunidad(u.id, miembros) : [];
   const yo = miSemana(mios, dias, hoy);
   const eq = equipoSemana(equipo, personas);
   const rutina = rutinaDelDia(hoy);
@@ -59,6 +64,25 @@ export default async function BienestarPage() {
       </div>
 
       <NuevaActividad />
+
+      <section className="flex flex-col gap-3">
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <Users className="size-4 text-[color:var(--coral)]" /> Comunidad
+        </h2>
+        <UnirseComunidad visible={visible} miembros={miembros.length} />
+        {veComunidad ? (
+          <div className="grid gap-4 md:grid-cols-[1fr_1.2fr]">
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Tablero de la semana</p>
+              {tablero.length ? <TableroComunidad filas={tablero} yo={u.id} /> : <div className="panel p-6 text-center text-sm text-muted-foreground">Nadie se ha unido todavía.</div>}
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Lo que pasa en el grupo</p>
+              <MuroComunidad items={feed} yo={u.id} maestro={u.maestro} puedeEscribir={visible} />
+            </div>
+          </div>
+        ) : null}
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold">

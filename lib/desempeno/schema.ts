@@ -1,7 +1,7 @@
 // Esquema de Desempeño (ponche + métricas por puesto + score) en la base de Pulse (Drizzle).
 // Prefijo desempeno_ (tablesFilter en drizzle.config.ts). Sin "server-only" ni imports "@/":
 // lo carga drizzle-kit fuera de Next.
-import { boolean, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, doublePrecision, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 import { pulseUsers } from "../pulse/schema";
 
@@ -357,4 +357,42 @@ export const desempenoBienestar = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("desempeno_bienestar_dia").on(t.userId, t.fecha, t.tipo), index("desempeno_bienestar_fecha").on(t.fecha)],
+);
+
+// Comunidad de Bienestar (26/sep/2026): la parte social, SOLO para quien se une (visible = true). Los demás no
+// aparecen en ningún lado. Se ve: nombre, minutos, pausas y actividades de la semana, y mensajes cortos con
+// reacciones. La energía del día NUNCA sale aquí.
+export const desempenoBienestarSocial = pgTable("desempeno_bienestar_social", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  visible: boolean("visible").notNull().default(false),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const desempenoBienestarPosts = pgTable(
+  "desempeno_bienestar_posts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    texto: text("texto").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_bienestar_posts_fecha").on(t.createdAt)],
+);
+
+export const desempenoBienestarReacciones = pgTable(
+  "desempeno_bienestar_reacciones",
+  {
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => desempenoBienestarPosts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    emoji: text("emoji").notNull(), // 💪 | 🔥 | 👏 (una por persona y mensaje)
+  },
+  (t) => [primaryKey({ columns: [t.postId, t.userId] })],
 );

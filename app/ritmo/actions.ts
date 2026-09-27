@@ -612,3 +612,43 @@ export async function animoAction(valor: number) {
     return {};
   });
 }
+
+// Comunidad de Bienestar (opcional): unirse/salir, mensajes cortos y reacciones.
+export async function comunidadVisibleAction(visible: boolean) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await bienestar.ponerVisible(u.id, visible);
+    refresh();
+    return {};
+  });
+}
+
+export async function mensajeComunidadAction(texto: string) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const { limiteIp } = await import("@/lib/pulse/seguridad");
+    if (!limiteIp(`comunidad:${u.id}`, 10, 3_600_000)) throw new Error("Muchos mensajes seguidos; intenta en un rato");
+    await bienestar.publicarMensaje(u.id, texto ?? "");
+    refresh();
+    return {};
+  });
+}
+
+export async function borrarMensajeComunidadAction(id: string) {
+  return envolver(async () => {
+    const u = await usuarioRitmo();
+    if (!u) throw new Error("no-autorizado");
+    await bienestar.borrarMensaje(id, u);
+    refresh();
+    return {};
+  });
+}
+
+export async function reaccionComunidadAction(p: { postId: string; emoji: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await bienestar.reaccionar(p.postId, u.id, p.emoji);
+    refresh();
+    return {};
+  });
+}

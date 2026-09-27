@@ -578,7 +578,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   `lib/desempeno/bienestar-reglas.ts` + tests `tests/bienestar.test.mjs`): la parte wellness (~15 %), voluntaria, privada y
   **fuera del score**. Pausa activa de ~5 min guiada (7 rutinas de escritorio, una por día, temporizador; al terminar se
   marca sola), anotar ejercicio (meta OMS 150 min/semana; pausas cuentan; tope 600 min/día), energía del día (1-5) y reto
-  del equipo (solo agregados; la energía la ve la maestra solo con ≥ 5 respuestas). Chatbot: Elvin lo planteó el 26/sep;
+  del equipo (solo agregados; la energía la ve la maestra solo con ≥ 5 respuestas). **Comunidad** (migración 0022, tablas
+  `desempeno_bienestar_social|posts|reacciones`): opcional — solo quien se une aparece y solo quien se une la ve (la
+  maestra también, para moderar): tablero de la semana (minutos, activo hoy), actividad del grupo, mensajes ≤ 280 con
+  reacciones 💪🔥👏 (una por persona). La energía nunca sale ahí. Salir = desaparece de inmediato. Chatbot: Elvin lo planteó el 26/sep;
   se dejó para después de ver 2-3 semanas de preguntas reales a RR.HH.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).

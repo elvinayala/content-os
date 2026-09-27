@@ -41,3 +41,24 @@ test("equipo: solo agregados y energía con ≥ 5 respuestas", () => {
   assert.equal(e.animo, null); // 4 respuestas: no se muestra
   assert.equal(equipoSemana([...regs, animo("e", 4)], 10).animo, 3.6);
 });
+
+test("comunidad: tablero solo con quienes se unieron y sin energía", async () => {
+  const { tableroComunidad, errorMensaje, nombreCorto } = await import("../lib/desempeno/bienestar-reglas.ts");
+  const regs = [
+    { userId: "a", fecha: "2026-09-30", tipo: "actividad", minutos: 60, valor: null },
+    { userId: "a", fecha: "2026-09-29", tipo: "pausa", minutos: 5, valor: null },
+    { userId: "b", fecha: "2026-09-28", tipo: "actividad", minutos: 160, valor: null },
+    { userId: "b", fecha: "2026-09-30", tipo: "animo", minutos: 0, valor: 1 },
+    { userId: "c", fecha: "2026-09-30", tipo: "actividad", minutos: 999, valor: null }, // c no se unió
+  ];
+  const t = tableroComunidad(regs, [{ id: "a", nombre: "Ana" }, { id: "b", nombre: "Beto" }], "2026-09-30");
+  assert.deepEqual(t.map((x) => x.id), ["b", "a"]);
+  assert.equal(t[0].meta, true);
+  assert.equal(t[0].activoHoy, false); // el ánimo no cuenta como actividad
+  assert.equal(t[1].activoHoy, true);
+  assert.equal("valor" in t[0], false);
+  assert.equal(errorMensaje(" "), "Escribe algo");
+  assert.match(errorMensaje("x".repeat(281)), /280/);
+  assert.equal(errorMensaje("¡Hoy le di duro! 🔥"), null);
+  assert.equal(nombreCorto("Santiago Alejandro Gutiérrez"), "Santiago A.");
+});

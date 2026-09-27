@@ -163,3 +163,39 @@ function restarDia(f: string) {
   d.setUTCDate(d.getUTCDate() - 1);
   return d.toISOString().slice(0, 10);
 }
+
+// ---- Comunidad (solo quienes se unen) ----
+export const REACCIONES = ["💪", "🔥", "👏"] as const;
+export const MAX_MENSAJE = 280;
+
+/** Tablero de la semana entre los que se unieron: minutos, pausas y si se movió hoy. Nunca incluye energía. */
+export function tableroComunidad(regs: RegistroBienestar[], visibles: { id: string; nombre: string }[], hoy: string) {
+  return visibles
+    .map((p) => {
+      const mios = regs.filter((r) => r.userId === p.id);
+      const minutos = mios.reduce((n, r) => n + (r.tipo === "actividad" || r.tipo === "pausa" ? r.minutos : 0), 0);
+      return {
+        id: p.id,
+        nombre: p.nombre,
+        minutos,
+        pausas: mios.filter((r) => r.tipo === "pausa").length,
+        activoHoy: mios.some((r) => r.fecha === hoy && (r.tipo === "pausa" || r.tipo === "actividad")),
+        meta: minutos >= META_SEMANAL_MIN,
+      };
+    })
+    .sort((a, b) => b.minutos - a.minutos || b.pausas - a.pausas || a.nombre.localeCompare(b.nombre));
+}
+
+/** Mensaje de la comunidad: corto, sin vacíos. Devuelve el error o null. */
+export function errorMensaje(texto: string): string | null {
+  const t = (texto ?? "").trim();
+  if (t.length < 2) return "Escribe algo";
+  if (t.length > MAX_MENSAJE) return `Máximo ${MAX_MENSAJE} caracteres`;
+  return null;
+}
+
+/** Nombre corto para la comunidad: primer nombre + inicial del apellido. */
+export function nombreCorto(nombre: string): string {
+  const partes = nombre.trim().split(/\s+/);
+  return partes.length > 1 ? `${partes[0]} ${partes[1][0]}.` : partes[0];
+}
