@@ -105,3 +105,16 @@ test("setter: nombre nuevo sin foto frena el envío", () => {
 test("mes en PR", () => {
   assert.equal(mesPR(new Date("2026-10-01T03:00:00Z")), "SEPTEMBER"); // 11 PM del 30/sep en PR
 });
+
+test("resumen: con Goal y Collected lee Collected (hoja real, sep/2026)", () => {
+  const h = hojaJunio();
+  h.splice(0, 3,
+    ["", "Sale Type", "Goal", "Collected", "Faltante", "% CUMPLIMIENTO"],
+    ["", "New Sales", "$135,000.00", "$37,834.00", "$97,166.00", "28%"],
+    ["", "Paying Off Debt ", "$65,000.00", "$42,723.00", "$22,277.00", "66%"],
+    ["", "Totals", "$200,000.00", "$80,557.00", "$119,443.00", "40%"],
+  );
+  const c = armarCloser(h);
+  assert.equal(c.total, 80557);
+  assert.ok(!c.errores.some((e) => e.includes("New Sales")), c.errores.join(" | "));
+});

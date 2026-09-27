@@ -82,6 +82,14 @@ export function leerResumen(filas: string[][]): { resumen?: Resumen; errores: st
       const fila = filas[r];
       for (let c = 0; c < fila.length; c++) {
         if (normalizar(fila[c] ?? "") !== etiqueta) continue;
+        // La hoja real trae "Sale Type | Goal | Collected | Faltante": si arriba hay "Collected", esa manda.
+        for (let a = r - 1; a >= Math.max(0, r - 4); a--) {
+          const k = (filas[a] ?? []).findIndex((x) => normalizar(x ?? "") === "collected");
+          if (k > c) {
+            const v = dinero(fila[k]);
+            if (v !== null) return v;
+          }
+        }
         for (let k = c + 1; k < fila.length; k++) {
           const v = dinero(fila[k]);
           if (v !== null) return v;
