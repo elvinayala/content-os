@@ -617,7 +617,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   del equipo (solo agregados; la energía la ve la maestra solo con ≥ 5 respuestas). **Comunidad** (migración 0022, tablas
   `desempeno_bienestar_social|posts|reacciones`): opcional — solo quien se une aparece y solo quien se une la ve (la
   maestra también, para moderar): tablero de la semana (minutos, activo hoy), actividad del grupo, mensajes ≤ 280 con
-  reacciones 💪🔥👏 (una por persona). La energía nunca sale ahí. Salir = desaparece de inmediato. Chatbot: Elvin lo planteó el 26/sep;
+  reacciones 💪🔥👏 (una por persona). La energía nunca sale ahí. Salir = desaparece de inmediato. **Red social (27/sep, Elvin: "que sea como una red social… escribirle a los
+  compañeros, interactuar los logros, comentarle")**: la Comunidad va PRIMERO en Bienestar; publicar al grupo o "Para"
+  un compañero (saludo → DM del bot con el mensaje), **comentarios** (`desempeno_bienestar_comentarios`, ≤ 200, aviso al
+  autor), reacciones 💪🔥👏❤️ y **logros automáticos** (`tipo: logro`, `clave` única por semana: meta de 150 min y 5 días
+  de pausa seguidos, `logrosDeLaSemana` + `revisarLogros` tras anotar) que el equipo aplaude y comenta. Migración 0026.
+  Chatbot: Elvin lo planteó el 26/sep;
   se dejó para después de ver 2-3 semanas de preguntas reales a RR.HH.
 - **Viajes** (`/ritmo/viajes`, 27/sep; tablas `desempeno_viajes_plan` y `desempeno_viaje_anual`, migración 0025; puro en
   `lib/desempeno/viajes-reglas.ts` + tests `tests/viajes.test.mjs`; datos `lib/desempeno/viajes.ts`): **OCULTO al equipo —

@@ -1,13 +1,13 @@
 "use client";
 
-import { Loader2, Send, Trash2, Users } from "lucide-react";
+import { Loader2, MessageCircle, Send, Trash2, Trophy, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { borrarMensajeComunidadAction, comunidadVisibleAction, mensajeComunidadAction, reaccionComunidadAction } from "@/app/ritmo/actions";
+import { borrarComentarioAction, borrarMensajeComunidadAction, comentarComunidadAction, comunidadVisibleAction, mensajeComunidadAction, reaccionComunidadAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ACTIVIDADES, MAX_MENSAJE, META_SEMANAL_MIN, REACCIONES } from "@/lib/desempeno/bienestar-reglas";
+import { ACTIVIDADES, MAX_COMENTARIO, MAX_MENSAJE, META_SEMANAL_MIN, REACCIONES } from "@/lib/desempeno/bienestar-reglas";
 import type { ItemComunidad } from "@/lib/desempeno/bienestar";
 import { cn } from "@/lib/utils";
 
@@ -48,8 +48,8 @@ export function UnirseComunidad({ visible, miembros = 0 }: { visible: boolean; m
         <Users className="size-5" />
       </div>
       <div className="flex-1">
-        <p className="font-semibold">Entrena en grupo{miembros ? <span className="ml-2 text-xs font-normal text-primary">{miembros} {miembros === 1 ? "persona ya está" : "personas ya están"}</span> : null}</p>
-        <p className="text-sm text-muted-foreground">Únete a la comunidad para ver quién se está moviendo, animarse entre todos y aparecer en el tablero de la semana. Es opcional: puedes salir cuando quieras y tu energía del día nunca se comparte.</p>
+        <p className="font-semibold">La comunidad del equipo{miembros ? <span className="ml-2 text-xs font-normal text-primary">{miembros} {miembros === 1 ? "persona ya está" : "personas ya están"}</span> : null}</p>
+        <p className="text-sm text-muted-foreground">Únete para escribirle a tus compañeros, comentar, celebrar los logros de todos y aparecer en el tablero de la semana. Es opcional: puedes salir cuando quieras y tu energía del día nunca se comparte.</p>
       </div>
       <Button className="h-10 rounded-full" onClick={() => cambiar(true)} disabled={cargando}>
         {cargando ? <Loader2 className="animate-spin" /> : null} Unirme
@@ -85,33 +85,48 @@ export function TableroComunidad({ filas, yo }: { filas: FilaTablero[]; yo: stri
   );
 }
 
-export function MuroComunidad({ items, yo, maestro, puedeEscribir }: { items: ItemComunidad[]; yo: string; maestro: boolean; puedeEscribir: boolean }) {
+export function MuroComunidad({ items, yo, maestro, puedeEscribir, miembros = [] }: { items: ItemComunidad[]; yo: string; maestro: boolean; puedeEscribir: boolean; miembros?: { id: string; nombre: string }[] }) {
   const [texto, setTexto] = useState("");
+  const [para, setPara] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const companeros = miembros.filter((m) => m.id !== yo);
   const publicar = async () => {
     setEnviando(true);
-    const r = await mensajeComunidadAction(texto);
+    const r = await mensajeComunidadAction(texto, para || null);
     setEnviando(false);
     if (!r.ok) return toast.error(r.error, aviso);
+    if (para) toast.success(`Le llegó tu mensaje a ${companeros.find((c) => c.id === para)?.nombre ?? "tu compañero"} 💬`, aviso);
     setTexto("");
-  };
-  const reaccionar = async (postId: string, emoji: string) => {
-    const r = await reaccionComunidadAction({ postId, emoji });
-    if (!r.ok) toast.error(r.error, aviso);
-  };
-  const borrar = async (id: string) => {
-    if (!confirm("¿Borrar este mensaje?")) return;
-    const r = await borrarMensajeComunidadAction(id);
-    if (!r.ok) toast.error(r.error, aviso);
+    setPara("");
   };
   const act = (id: string | null) => ACTIVIDADES.find((a) => a.id === id);
   return (
     <div className="flex flex-col gap-3">
       {puedeEscribir ? (
         <div className="panel flex flex-col gap-2 p-3">
-          <Textarea rows={2} value={texto} maxLength={MAX_MENSAJE} onChange={(e) => setTexto(e.target.value)} placeholder="¿Cómo va tu rutina? Hoy le di… 🔥" className="resize-none border-0 bg-transparent focus-visible:ring-0" />
-          <div className="flex items-center justify-between">
-            <span className="num font-mono text-[11px] text-muted-foreground">{texto.length}/{MAX_MENSAJE}</span>
+          <Textarea
+            rows={2}
+            value={texto}
+            maxLength={MAX_MENSAJE}
+            onChange={(e) => setTexto(e.target.value)}
+            placeholder={para ? `Escríbele algo a ${companeros.find((c) => c.id === para)?.nombre ?? ""}… 🙌` : "¿Cómo va tu día? Comparte algo con el equipo… 🔥"}
+            className="resize-none border-0 bg-transparent focus-visible:ring-0"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              Para
+              <select value={para} onChange={(e) => setPara(e.target.value)} className="h-8 rounded-full border border-border bg-transparent px-2.5 text-xs text-foreground">
+                <option value="">Todo el grupo</option>
+                {companeros.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <span className="num ml-auto font-mono text-[11px] text-muted-foreground">
+              {texto.length}/{MAX_MENSAJE}
+            </span>
             <Button size="sm" className="rounded-full" onClick={publicar} disabled={enviando || texto.trim().length < 2}>
               {enviando ? <Loader2 className="animate-spin" /> : <Send className="size-3.5" />} Publicar
             </Button>
@@ -122,25 +137,7 @@ export function MuroComunidad({ items, yo, maestro, puedeEscribir }: { items: It
         <div className="panel divide-y divide-border/50 overflow-hidden">
           {items.map((it) =>
             it.tipo === "mensaje" ? (
-              <div key={`m-${it.id}`} className="flex flex-col gap-2 p-4">
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="font-semibold text-foreground">{it.autor}</span>
-                  <span className="text-muted-foreground" suppressHydrationWarning>{haceCuanto(it.at)}</span>
-                  {it.autorId === yo || maestro ? (
-                    <button type="button" onClick={() => borrar(it.id)} title="Borrar" className="ml-auto rounded-full p-1 text-muted-foreground hover:text-red-300">
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  ) : null}
-                </div>
-                <p className="text-sm whitespace-pre-line">{it.texto}</p>
-                <div className="flex gap-1.5">
-                  {REACCIONES.map((e) => (
-                    <button key={e} type="button" disabled={!puedeEscribir} onClick={() => reaccionar(it.id, e)} className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ring-1 transition disabled:opacity-60", it.mia === e ? "bg-primary/10 ring-primary/40" : "ring-border hover:bg-white/[0.04]")}>
-                      {e} {it.reacciones[e] ? <span className="num font-mono">{it.reacciones[e]}</span> : null}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <Publicacion key={`m-${it.id}`} it={it} yo={yo} maestro={maestro} puedeEscribir={puedeEscribir} />
             ) : (
               <p key={`a-${it.id}`} className="flex items-center gap-2 px-4 py-2.5 text-xs text-muted-foreground">
                 <span className="text-base" aria-hidden>{it.clase === "pausa" ? "🧘" : (act(it.actividad)?.emoji ?? "✨")}</span>
@@ -155,6 +152,113 @@ export function MuroComunidad({ items, yo, maestro, puedeEscribir }: { items: It
       ) : (
         <div className="panel p-6 text-center text-sm text-muted-foreground">Todavía no hay movimiento esta semana. ¡Sé el primero en romper el hielo! 💪</div>
       )}
+    </div>
+  );
+}
+
+type Publicacion = Extract<ItemComunidad, { tipo: "mensaje" }>;
+
+function Publicacion({ it, yo, maestro, puedeEscribir }: { it: Publicacion; yo: string; maestro: boolean; puedeEscribir: boolean }) {
+  const [abierto, setAbierto] = useState(false);
+  const [comentario, setComentario] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const logro = it.clase === "logro";
+  const visibles = abierto ? it.comentarios : it.comentarios.slice(-2);
+  const reaccionar = async (emoji: string) => {
+    const r = await reaccionComunidadAction({ postId: it.id, emoji });
+    if (!r.ok) toast.error(r.error, aviso);
+  };
+  const borrar = async () => {
+    if (!confirm("¿Borrar esta publicación?")) return;
+    const r = await borrarMensajeComunidadAction(it.id);
+    if (!r.ok) toast.error(r.error, aviso);
+  };
+  const comentar = async () => {
+    if (!comentario.trim()) return;
+    setEnviando(true);
+    const r = await comentarComunidadAction({ postId: it.id, texto: comentario });
+    setEnviando(false);
+    if (!r.ok) return toast.error(r.error, aviso);
+    setComentario("");
+    setAbierto(true);
+  };
+  const borrarComentario = async (id: string) => {
+    if (!confirm("¿Borrar este comentario?")) return;
+    const r = await borrarComentarioAction(id);
+    if (!r.ok) toast.error(r.error, aviso);
+  };
+  return (
+    <div className={cn("flex flex-col gap-2 p-4", logro && "bg-gradient-to-r from-[color:var(--coral)]/[0.07] to-transparent")}>
+      <div className="flex items-center gap-2 text-xs">
+        {logro ? <Trophy className="size-3.5 text-[color:var(--coral)]" /> : null}
+        <span className="font-semibold text-foreground">{it.autor}</span>
+        {it.para ? (
+          <>
+            <span className="text-muted-foreground">→</span>
+            <span className="font-semibold text-primary">{it.para}</span>
+          </>
+        ) : null}
+        <span className="text-muted-foreground" suppressHydrationWarning>
+          {haceCuanto(it.at)}
+        </span>
+        {it.autorId === yo || maestro ? (
+          <button type="button" onClick={borrar} title="Borrar" className="ml-auto rounded-full p-1 text-muted-foreground hover:text-red-300">
+            <Trash2 className="size-3.5" />
+          </button>
+        ) : null}
+      </div>
+      <p className={cn("text-sm whitespace-pre-line", logro && "font-medium")}>{logro ? `${it.autor} ${it.texto}` : it.texto}</p>
+      <div className="flex flex-wrap items-center gap-1.5">
+        {REACCIONES.map((e) => (
+          <button key={e} type="button" disabled={!puedeEscribir} onClick={() => reaccionar(e)} className={cn("inline-flex cursor-pointer items-center gap-1 rounded-full px-2 py-0.5 text-xs ring-1 transition disabled:cursor-default disabled:opacity-60", it.mia === e ? "bg-primary/10 ring-primary/40" : "ring-border hover:bg-white/[0.04]")}>
+            {e} {it.reacciones[e] ? <span className="num font-mono">{it.reacciones[e]}</span> : null}
+          </button>
+        ))}
+        <button type="button" onClick={() => setAbierto((a) => !a)} className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-full px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground">
+          <MessageCircle className="size-3.5" /> {it.comentarios.length ? it.comentarios.length : "Comentar"}
+        </button>
+      </div>
+      {it.comentarios.length || abierto ? (
+        <div className="flex flex-col gap-1.5 border-l-2 border-border/60 pl-3">
+          {!abierto && it.comentarios.length > 2 ? (
+            <button type="button" onClick={() => setAbierto(true)} className="cursor-pointer self-start text-[11px] text-muted-foreground hover:text-foreground">
+              Ver los {it.comentarios.length} comentarios
+            </button>
+          ) : null}
+          {visibles.map((c) => (
+            <div key={c.id} className="group flex items-start gap-2 text-xs">
+              <p className="min-w-0 flex-1">
+                <b className="font-medium text-foreground">{c.autor}</b> <span className="text-foreground/90">{c.texto}</span>
+                <span className="ml-1.5 text-muted-foreground" suppressHydrationWarning>
+                  {haceCuanto(c.at)}
+                </span>
+              </p>
+              {c.autorId === yo || maestro ? (
+                <button type="button" onClick={() => borrarComentario(c.id)} title="Borrar" className="shrink-0 rounded-full p-0.5 text-muted-foreground opacity-0 transition group-hover:opacity-100 hover:text-red-300">
+                  <Trash2 className="size-3" />
+                </button>
+              ) : null}
+            </div>
+          ))}
+          {puedeEscribir && (abierto || it.comentarios.length) ? (
+            <div className="flex items-center gap-2">
+              <input
+                value={comentario}
+                maxLength={MAX_COMENTARIO}
+                onChange={(e) => setComentario(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void comentar();
+                }}
+                placeholder={logro ? "¡Felicítalo! 🎉" : "Escribe un comentario…"}
+                className="h-8 min-w-0 flex-1 rounded-full border border-border bg-transparent px-3 text-xs outline-none focus:border-primary/60"
+              />
+              <Button size="sm" variant="ghost" className="h-8 rounded-full" onClick={comentar} disabled={enviando || !comentario.trim()}>
+                {enviando ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />}
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

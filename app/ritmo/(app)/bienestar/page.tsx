@@ -35,6 +35,25 @@ export default async function BienestarPage() {
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">5 minutos al día hacen diferencia cuando trabajas frente a una pantalla. Todo aquí es voluntario, es tuyo y no cuenta para tu desempeño.</p>
       </div>
 
+      <section className="flex flex-col gap-3">
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <Users className="size-4 text-[color:var(--coral)]" /> Comunidad
+        </h2>
+        <UnirseComunidad visible={visible} miembros={miembros.length} />
+        {veComunidad ? (
+          <div className="grid gap-4 md:grid-cols-[1.35fr_1fr]">
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Lo que pasa en el equipo</p>
+              <MuroComunidad items={feed} yo={u.id} maestro={u.maestro} puedeEscribir={visible} miembros={miembros} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Tablero de la semana</p>
+              {tablero.length ? <TableroComunidad filas={tablero} yo={u.id} /> : <div className="panel p-6 text-center text-sm text-muted-foreground">Nadie se ha unido todavía.</div>}
+            </div>
+          </div>
+        ) : null}
+      </section>
+
       <div className="grid gap-4 md:grid-cols-2">
         <PausaActiva rutina={rutina} hecha={mios.some((r) => r.fecha === hoy && r.tipo === "pausa")} />
         <div className="flex flex-col gap-4">
@@ -65,24 +84,6 @@ export default async function BienestarPage() {
 
       <NuevaActividad />
 
-      <section className="flex flex-col gap-3">
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Users className="size-4 text-[color:var(--coral)]" /> Comunidad
-        </h2>
-        <UnirseComunidad visible={visible} miembros={miembros.length} />
-        {veComunidad ? (
-          <div className="grid gap-4 md:grid-cols-[1fr_1.2fr]">
-            <div className="flex flex-col gap-2">
-              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Tablero de la semana</p>
-              {tablero.length ? <TableroComunidad filas={tablero} yo={u.id} /> : <div className="panel p-6 text-center text-sm text-muted-foreground">Nadie se ha unido todavía.</div>}
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Lo que pasa en el grupo</p>
-              <MuroComunidad items={feed} yo={u.id} maestro={u.maestro} puedeEscribir={visible} />
-            </div>
-          </div>
-        ) : null}
-      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold">

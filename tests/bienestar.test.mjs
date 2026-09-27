@@ -62,3 +62,14 @@ test("comunidad: tablero solo con quienes se unieron y sin energía", async () =
   assert.equal(errorMensaje("¡Hoy le di duro! 🔥"), null);
   assert.equal(nombreCorto("Santiago Alejandro Gutiérrez"), "Santiago A.");
 });
+
+test("comunidad: logros de la semana y comentarios", async () => {
+  const { logrosDeLaSemana, errorComentario, MAX_COMENTARIO } = await import("../lib/desempeno/bienestar-reglas.ts");
+  assert.deepEqual(logrosDeLaSemana({ minutos: 100, racha: 2 }, "u1", "2026-09-28"), []);
+  const l = logrosDeLaSemana({ minutos: 160, racha: 5 }, "u1", "2026-09-28");
+  assert.deepEqual(l.map((x) => x.clave), ["meta:u1:2026-09-28", "racha5:u1:2026-09-28"]);
+  assert.match(l[0].texto, /160 min/);
+  assert.equal(errorComentario("  "), "Escribe algo");
+  assert.equal(errorComentario("x".repeat(MAX_COMENTARIO + 1)), `Máximo ${MAX_COMENTARIO} caracteres`);
+  assert.equal(errorComentario("¡Bien hecho!"), null);
+});

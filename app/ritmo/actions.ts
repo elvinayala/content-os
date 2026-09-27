@@ -590,6 +590,7 @@ export async function pausaHechaAction() {
     const u = await requiereUsuario();
     const hoy = bienestar.hoyPR();
     await bienestar.registrarPausa(u.id, hoy, Math.ceil(duracionRutina(rutinaDelDia(hoy)) / 60));
+    await bienestar.revisarLogros(u.id, hoy).catch(() => {});
     refresh();
     return {};
   });
@@ -602,6 +603,7 @@ export async function actividadAction(p: { actividad: string; minutos: number })
     const min = Math.round(Number(p.minutos));
     if (!Number.isFinite(min) || min < 5 || min > 300) throw new Error("Pon entre 5 y 300 minutos");
     await bienestar.registrarActividad(u.id, bienestar.hoyPR(), p.actividad, min);
+    await bienestar.revisarLogros(u.id, bienestar.hoyPR()).catch(() => {});
     refresh();
     return {};
   });
@@ -627,12 +629,33 @@ export async function comunidadVisibleAction(visible: boolean) {
   });
 }
 
-export async function mensajeComunidadAction(texto: string) {
+export async function mensajeComunidadAction(texto: string, paraId?: string | null) {
   return envolver(async () => {
     const u = await requiereUsuario();
     const { limiteIp } = await import("@/lib/pulse/seguridad");
     if (!limiteIp(`comunidad:${u.id}`, 10, 3_600_000)) throw new Error("Muchos mensajes seguidos; intenta en un rato");
-    await bienestar.publicarMensaje(u.id, texto ?? "");
+    await bienestar.publicarMensaje(u.id, texto ?? "", paraId || null);
+    refresh();
+    return {};
+  });
+}
+
+export async function comentarComunidadAction(p: { postId: string; texto: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const { limiteIp } = await import("@/lib/pulse/seguridad");
+    if (!limiteIp(`comentarios:${u.id}`, 30, 3_600_000)) throw new Error("Muchos comentarios seguidos; intenta en un rato");
+    await bienestar.comentar(p.postId, u.id, p.texto ?? "");
+    refresh();
+    return {};
+  });
+}
+
+export async function borrarComentarioAction(id: string) {
+  return envolver(async () => {
+    const u = await usuarioRitmo();
+    if (!u) throw new Error("no-autorizado");
+    await bienestar.borrarComentario(id, u);
     refresh();
     return {};
   });

@@ -165,8 +165,25 @@ function restarDia(f: string) {
 }
 
 // ---- Comunidad (solo quienes se unen) ----
-export const REACCIONES = ["💪", "🔥", "👏"] as const;
+export const REACCIONES = ["💪", "🔥", "👏", "❤️"] as const;
 export const MAX_MENSAJE = 280;
+export const MAX_COMENTARIO = 200;
+
+/** Comentario: corto, sin vacíos. */
+export function errorComentario(texto: string): string | null {
+  const t = (texto ?? "").trim();
+  if (!t) return "Escribe algo";
+  if (t.length > MAX_COMENTARIO) return `Máximo ${MAX_COMENTARIO} caracteres`;
+  return null;
+}
+
+/** Logros que el sistema publica en la comunidad (una vez por semana cada uno; la clave evita repetirlos). */
+export function logrosDeLaSemana(yo: { minutos: number; racha: number }, userId: string, lunes: string): { clave: string; texto: string }[] {
+  const out: { clave: string; texto: string }[] = [];
+  if (yo.minutos >= META_SEMANAL_MIN) out.push({ clave: `meta:${userId}:${lunes}`, texto: `llegó a la meta de la semana: ${yo.minutos} min moviéndose 🏆` });
+  if (yo.racha >= 5) out.push({ clave: `racha5:${userId}:${lunes}`, texto: "lleva 5 días seguidos haciendo la pausa activa 🔥" });
+  return out;
+}
 
 /** Tablero de la semana entre los que se unieron: minutos, pausas y si se movió hoy. Nunca incluye energía. */
 export function tableroComunidad(regs: RegistroBienestar[], visibles: { id: string; nombre: string }[], hoy: string) {

@@ -48,6 +48,15 @@
       "port": 8794
     },
     {
+      "name": "isla-run",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/elvinayala/isla-run && ISLA_PAGOS_DEMO=1 APP_URL=http://localhost:3130 npx next dev -p 3130"
+      ],
+      "port": 3130
+    },
+    {
       "name": "resuelto-firmas-local",
       "runtimeExecutable": "sh",
       "runtimeArgs": [
@@ -55,6 +64,15 @@
         "cd '/Users/elvinayala/AGENTE CONTENIDO/vault/proyectos/plomeria-pr/agente' && env GHL_TOKEN= GHL_LOCATION_ID= TELEGRAM_BOT_TOKEN= COORDINADOR_TELEGRAM_CHAT_ID= COORDINADOR_WHATSAPP= SLACK_BOT_TOKEN= ZERNIO_API_KEY= WA_TOKEN= ANTHROPIC_API_KEY= FIRMAS_TOKEN=prueba URL_PUBLICA=http://localhost:3121 PORT=3121 node dist/index.js"
       ],
       "port": 3121
+    },
+    {
+      "name": "content-os-abierto",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "CEO_PORTAL_PASSWORD= npx next dev -p 3011"
+      ],
+      "port": 3011
     }
   ]
 }

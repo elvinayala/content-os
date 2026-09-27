@@ -4,8 +4,9 @@ import { and, desc, eq, gt, inArray, sql } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
-import { errorMensaje, nombreCorto, REACCIONES } from "./bienestar-reglas";
-import { desempenoBienestar, desempenoBienestarPosts, desempenoBienestarReacciones, desempenoBienestarSocial, desempenoPerfiles } from "./schema";
+import { avisarPersona, esc } from "./avisar";
+import { errorComentario, errorMensaje, logrosDeLaSemana, miSemana, nombreCorto, REACCIONES, semanaDe } from "./bienestar-reglas";
+import { desempenoBienestar, desempenoBienestarComentarios, desempenoBienestarPosts, desempenoBienestarReacciones, desempenoBienestarSocial, desempenoPerfiles } from "./schema";
 
 // Bienestar: pausa activa, minutos de ejercicio y energía del día. Voluntario, privado y fuera del score.
 // Cada quien ve lo suyo; la maestra solo agregados (bienestar-reglas.ts → equipoSemana).
@@ -75,12 +76,53 @@ export async function miembrosComunidad(): Promise<{ id: string; nombre: string 
   return filas.map((f) => ({ id: f.id, nombre: nombreCorto(f.nombre) }));
 }
 
-export async function publicarMensaje(userId: string, texto: string) {
+const base = () => process.env.CONTENT_OS_URL ?? "https://content-os-chi-seven.vercel.app";
+const linkComunidad = () => `<${base()}/ritmo/bienestar|Ver en Ritmo>`;
+const nombreDe = async (id: string) => {
+  const d = await db();
+  const [u] = await d.select({ nombre: pulseUsers.nombre }).from(pulseUsers).where(eq(pulseUsers.id, id));
+  return u ? nombreCorto(u.nombre) : "Alguien";
+};
+
+/** Al grupo, o a un compañero (saludo): le llega un aviso por Slack desde el bot. */
+export async function publicarMensaje(userId: string, texto: string, paraId?: string | null) {
   if (!(await esVisible(userId))) throw new Error("Únete a la comunidad para publicar");
   const err = errorMensaje(texto);
   if (err) throw new Error(err);
+  if (paraId && (paraId === userId || !(await esVisible(paraId)))) throw new Error("Esa persona no está en la comunidad");
   const d = await db();
-  await d.insert(desempenoBienestarPosts).values({ userId, texto: texto.trim() });
+  await d.insert(desempenoBienestarPosts).values({ userId, texto: texto.trim(), tipo: paraId ? "saludo" : "mensaje", paraUserId: paraId ?? null });
+  if (paraId) await avisarPersona(paraId, `💬 ${esc(await nombreDe(userId))} te escribió en Bienestar: “${esc(texto.trim())}” ${linkComunidad()}`).catch(() => false);
+}
+
+export async function comentar(postId: string, userId: string, texto: string) {
+  if (!(await esVisible(userId))) throw new Error("Únete a la comunidad para comentar");
+  const err = errorComentario(texto);
+  if (err) throw new Error(err);
+  const d = await db();
+  const [p] = await d.select().from(desempenoBienestarPosts).where(eq(desempenoBienestarPosts.id, postId));
+  if (!p) throw new Error("Esa publicación ya no está");
+  await d.insert(desempenoBienestarComentarios).values({ postId, userId, texto: texto.trim() });
+  if (p.userId !== userId) await avisarPersona(p.userId, `💬 ${esc(await nombreDe(userId))} comentó tu publicación en Bienestar: “${esc(texto.trim())}” ${linkComunidad()}`).catch(() => false);
+}
+
+export async function borrarComentario(id: string, actor: { id: string; maestro: boolean }) {
+  const d = await db();
+  const [c] = await d.select().from(desempenoBienestarComentarios).where(eq(desempenoBienestarComentarios.id, id));
+  if (!c) return;
+  if (c.userId !== actor.id && !actor.maestro) throw new Error("Solo quien lo escribió o la dirección pueden borrarlo");
+  await d.delete(desempenoBienestarComentarios).where(eq(desempenoBienestarComentarios.id, id));
+}
+
+/** Tras anotar ejercicio o pausa: si llegó a la meta o a 5 días de racha, lo publica (una vez por semana). */
+export async function revisarLogros(userId: string, hoy: string) {
+  if (!(await esVisible(userId))) return;
+  const dias = semanaDe(hoy);
+  const yo = miSemana(await registrosDe(userId, dias), dias, hoy);
+  const d = await db();
+  for (const l of logrosDeLaSemana(yo, userId, dias[0])) {
+    await d.insert(desempenoBienestarPosts).values({ userId, texto: l.texto, tipo: "logro", clave: l.clave }).onConflictDoNothing();
+  }
 }
 
 export async function borrarMensaje(id: string, actor: { id: string; maestro: boolean }) {
@@ -102,8 +144,9 @@ export async function reaccionar(postId: string, userId: string, emoji: string) 
   else await d.insert(r).values({ postId, userId, emoji }).onConflictDoUpdate({ target: [r.postId, r.userId], set: { emoji } });
 }
 
+export type ComentarioComunidad = { id: string; autorId: string; autor: string; texto: string; at: string };
 export type ItemComunidad =
-  | { tipo: "mensaje"; id: string; autorId: string; autor: string; texto: string; at: string; reacciones: Record<string, number>; mia: string | null }
+  | { tipo: "mensaje"; clase: "mensaje" | "saludo" | "logro"; id: string; autorId: string; autor: string; para: string | null; texto: string; at: string; reacciones: Record<string, number>; mia: string | null; comentarios: ComentarioComunidad[] }
   | { tipo: "actividad"; id: string; autor: string; clase: "pausa" | "actividad"; actividad: string | null; minutos: number; at: string };
 
 /** Lo que pasa en la comunidad (últimos 7 días): mensajes + actividad de los miembros. Nunca la energía. */
@@ -117,13 +160,31 @@ export async function feedComunidad(yo: string, miembros: { id: string; nombre: 
     d.select().from(desempenoBienestarPosts).where(and(inArray(desempenoBienestarPosts.userId, ids), gt(desempenoBienestarPosts.createdAt, desde))).orderBy(desc(desempenoBienestarPosts.createdAt)).limit(40),
     d.select().from(t).where(and(inArray(t.userId, ids), inArray(t.tipo, ["pausa", "actividad"]), gt(t.updatedAt, desde))).orderBy(desc(t.updatedAt)).limit(40),
   ]);
-  const reacs = posts.length ? await d.select().from(desempenoBienestarReacciones).where(inArray(desempenoBienestarReacciones.postId, posts.map((p) => p.id))) : [];
+  const idsPosts = posts.map((p) => p.id);
+  const [reacs, coms] = idsPosts.length
+    ? await Promise.all([
+        d.select().from(desempenoBienestarReacciones).where(inArray(desempenoBienestarReacciones.postId, idsPosts)),
+        d.select().from(desempenoBienestarComentarios).where(inArray(desempenoBienestarComentarios.postId, idsPosts)).orderBy(desempenoBienestarComentarios.createdAt),
+      ])
+    : [[], []];
   const items: ItemComunidad[] = [
     ...posts.map((p) => {
       const mias = reacs.filter((r) => r.postId === p.id);
       const conteo: Record<string, number> = {};
       for (const r of mias) conteo[r.emoji] = (conteo[r.emoji] ?? 0) + 1;
-      return { tipo: "mensaje" as const, id: p.id, autorId: p.userId, autor: nombre(p.userId), texto: p.texto, at: p.createdAt.toISOString(), reacciones: conteo, mia: mias.find((r) => r.userId === yo)?.emoji ?? null };
+      return {
+        tipo: "mensaje" as const,
+        clase: (p.tipo === "saludo" || p.tipo === "logro" ? p.tipo : "mensaje") as "mensaje" | "saludo" | "logro",
+        id: p.id,
+        autorId: p.userId,
+        autor: nombre(p.userId),
+        para: p.paraUserId ? nombre(p.paraUserId) : null,
+        texto: p.texto,
+        at: p.createdAt.toISOString(),
+        reacciones: conteo,
+        mia: mias.find((r) => r.userId === yo)?.emoji ?? null,
+        comentarios: coms.filter((c) => c.postId === p.id && ids.includes(c.userId)).map((c) => ({ id: c.id, autorId: c.userId, autor: nombre(c.userId), texto: c.texto, at: c.createdAt.toISOString() })),
+      };
     }),
     ...acts.map((a) => ({ tipo: "actividad" as const, id: a.id, autor: nombre(a.userId), clase: a.tipo as "pausa" | "actividad", actividad: a.actividad, minutos: a.minutos, at: a.updatedAt.toISOString() })),
   ];

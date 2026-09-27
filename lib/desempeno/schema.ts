@@ -378,9 +378,30 @@ export const desempenoBienestarPosts = pgTable(
       .notNull()
       .references(() => pulseUsers.id, { onDelete: "cascade" }),
     texto: text("texto").notNull(),
+    // mensaje (al grupo) · saludo (a un compañero: para_user_id) · logro (lo publica el sistema: meta, racha)
+    tipo: text("tipo").notNull().default("mensaje"),
+    paraUserId: uuid("para_user_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+    clave: text("clave"), // logros: "meta:<userId>:<lunes>" para no repetirlos
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("desempeno_bienestar_posts_fecha").on(t.createdAt)],
+  (t) => [index("desempeno_bienestar_posts_fecha").on(t.createdAt), uniqueIndex("desempeno_bienestar_posts_clave").on(t.clave)],
+);
+
+// Comentarios en la comunidad (27/sep, Elvin: "como una red social… comentarle, escribirle algo simple").
+export const desempenoBienestarComentarios = pgTable(
+  "desempeno_bienestar_comentarios",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => desempenoBienestarPosts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    texto: text("texto").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_bienestar_comentarios_post").on(t.postId, t.createdAt)],
 );
 
 export const desempenoBienestarReacciones = pgTable(
