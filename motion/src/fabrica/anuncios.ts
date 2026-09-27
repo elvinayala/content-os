@@ -436,3 +436,177 @@ const BORI_RECORRIDO: Guion = {
   ],
 };
 ANUNCIOS.push({ ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-16x9`, formato: "16:9" }, { ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-9x16`, formato: "9:16" });
+
+/* ═════════════════ LOTE 3 (27/sep/2026) · 30 s · 9:16 y 16:9 ═════════════════
+   Ángulos aprobados: vault/proyectos/motion/angulos-lote-3.md (AIB 1,2,3,6 · Bori 1,2,3,7) + Level Up (ángulos núcleo
+   que faltaban de vault/estilo/level-up.md). Bori usa pantallas reales de la app (copia demo, negocio ficticio). */
+const CIERRE_AIB_30 = { cta: "Agende su demo →", sub: "Agentes de IA de voz y chat, a la medida de su negocio" };
+
+export const LOTE3: Guion[] = [
+  /* ───── AI BORINQUEN (de usted) ───── */
+  {
+    id: "aib-10-crecer-sin-contratar", marca: "ai-borinquen", titulo: "¿Más empleados o que los que tiene rindan el doble?", angulo: "Crecer sin contratar más",
+    escenas: [
+      { tipo: "gancho", dur: 100, lineas: ["¿Necesita más empleados…", "o que los que tiene *rindan el doble*?"] },
+      { tipo: "lista", dur: 190, modo: "tachar", titulo: "Lo que su equipo hace a mano *todos los días*:", items: [
+        { texto: "Contestar los mismos mensajes" }, { texto: "Confirmar citas" }, { texto: "Dar seguimiento" }, { texto: "Responder las mismas preguntas" },
+      ] },
+      { tipo: "gancho", dur: 90, lineas: ["Eso lo hace", "su *agente de IA*."] },
+      { tipo: "roles", dur: 150, titulo: "Y su equipo queda para:", roles: ["Vender", "Atender en persona", "Hacer crecer el negocio"] },
+      { tipo: "gancho", dur: 140, lineas: ["No contrate por contratar.", "*Maximice* a su personal con IA."] },
+      { tipo: "cierre", dur: 230, cta: "Agende su demo →", sub: "Crezca sin agrandar la nómina" },
+    ],
+  },
+  {
+    id: "aib-11-leads-que-ya-pago", marca: "ai-borinquen", titulo: "Antes de gastar más en publicidad, mire los leads que ya pagó", angulo: "Leads que ya pagó (caso Teo)",
+    escenas: [
+      { tipo: "gancho", dur: 110, lineas: ["Antes de gastar más en publicidad,", "mire los leads que *ya pagó*."] },
+      { tipo: "embudo", dur: 170, titulo: "¿Cuántos se quedan *sin contestar*?", etapas: ["Leads pagados", "Respuesta", "Cita", "Venta"], fuga: "Nadie contestó a tiempo" },
+      { tipo: "gancho", dur: 150, etiqueta: "Caso real · Mano Santa PR", lineas: ["Teo contestaba el *20 %*", "de sus leads.", "Hoy contesta en *segundos*."] },
+      { tipo: "cita", dur: 150, texto: "Me da tranquilidad saber que las conversaciones se siguen atendiendo.", autor: "Teo", rol: "TERAPISTA · MANO SANTA PR" },
+      { tipo: "pasos", dur: 120, titulo: "Su agente de IA:", pasos: ["Contesta en segundos", "Califica al cliente", "Agenda la cita"] },
+      { tipo: "cierre", dur: 200, ...CIERRE_AIB_30 },
+    ],
+  },
+  {
+    id: "aib-12-seguimiento", marca: "ai-borinquen", titulo: "El cliente no dijo que no. Nadie le volvió a escribir.", angulo: "El seguimiento que siempre se cae",
+    escenas: [
+      { tipo: "gancho", dur: 100, lineas: ["El cliente no dijo que no.", "Nadie le volvió a *escribir*."] },
+      { tipo: "comparativa", dur: 180, titulo: "¿Hasta dónde llega el *seguimiento*?", filas: [
+        { nombre: "Su equipo", precio: "2 mensajes", barra: 0.28, detalle: "Después se le olvida o se satura" },
+        { nombre: "Su agente de IA", precio: "Hasta la cita", barra: 1, tuyo: true, detalle: "Escribe en el momento justo, sin cansarse" },
+      ] },
+      { tipo: "gancho", dur: 100, lineas: ["¿Quién le escribe el tercero,", "el cuarto y el *quinto*?"] },
+      { tipo: "chat", dur: 190, titulo: "Su agente *no se olvida*.", hora: "Día 3 · seguimiento", nombre: "Asistente · Su negocio", burbujas: [
+        { de: "agente", texto: "Hola, Ana. ¿Pudo ver la información que le envié?", en: 10 },
+        { de: "cliente", texto: "Sí, perdón, estaba ocupada", en: 42 },
+        { de: "agente", texto: "¡Entiendo! ¿Le separo una evaluación el jueves a las 10:00?", en: 72 },
+        { de: "cliente", texto: "Dale, el jueves", en: 112 },
+        { de: "agente", texto: "Listo ✅ Jueves 10:00 AM.", en: 140 },
+      ] },
+      { tipo: "pasos", dur: 130, titulo: "Seguimiento *sin límite*", pasos: ["Recuerda a cada cliente", "Escribe en el momento justo", "Agenda cuando dice que sí"] },
+      { tipo: "cierre", dur: 200, ...CIERRE_AIB_30 },
+    ],
+  },
+  {
+    id: "aib-13-no-desaparecemos", marca: "ai-borinquen", titulo: "No le entregamos una herramienta y desaparecemos", angulo: "Miedo a comprar algo que nadie sabe usar (caso Milton)",
+    escenas: [
+      { tipo: "gancho", dur: 110, lineas: ["El miedo no es la tecnología.", "Es comprar algo que *nadie sabe usar*."] },
+      { tipo: "gancho", dur: 90, lineas: ["No le entregamos una herramienta", "y *desaparecemos*."] },
+      { tipo: "pasos", dur: 200, titulo: "Sus *21 días* con nosotros", pasos: ["Entendemos su negocio", "Entrenamos a su agente", "Lo instalamos con usted", "Lo acompañamos y medimos"] },
+      { tipo: "cita", dur: 180, texto: "Pensé que la implementación sería mucho más complicada, pero ha sido bastante fácil.", autor: "Milton", rol: "CARIBE PAINT" },
+      { tipo: "gancho", dur: 120, etiqueta: "Garantía", lineas: ["Funcionando en *21 días*", "o no le corre la mensualidad."], sub: "Sin contrato de permanencia." },
+      { tipo: "cierre", dur: 200, ...CIERRE_AIB_30 },
+    ],
+  },
+
+  /* ───── BORI (de tú) ───── */
+  {
+    id: "bori-09-sin-boost", marca: "bori", titulo: "Darle boost no es hacer anuncios", angulo: "Sin boost a ciegas",
+    escenas: [
+      { tipo: "gancho", dur: 100, lineas: ["Darle *boost*", "no es hacer anuncios."] },
+      { tipo: "lista", dur: 170, modo: "tachar", titulo: "Lo que haces *hoy*:", items: [
+        { texto: "Le das 'Promocionar'" }, { texto: "Escoges el público a ojo" }, { texto: "Rezas para que funcione" }, { texto: "Repites el mes que viene" },
+      ] },
+      { tipo: "gancho", dur: 90, lineas: ["Tu anuncio merece", "una *estrategia*."] },
+      { tipo: "pantalla", dur: 190, imagen: "bori-app/campanas-pc.png", dispositivo: "laptop", titulo: "Bori arma la campaña *completa*", sub: "Público, presupuesto y destino, con estrategias probadas.",
+        puntos: ["Estrategias de trafficker", "Todo queda en pausa", "Tú le das play"] },
+      { tipo: "pantalla", dur: 150, imagen: "bori-app/chat-aprobacion-pc.png", dispositivo: "laptop", titulo: "Y no gasta nada *sin tu OK*", foco: { x: 0.72, y: 0.33, w: 0.27, h: 0.6 } },
+      { tipo: "cierre", dur: 200, ...CIERRE_BORI_30 },
+    ],
+  },
+  {
+    id: "bori-10-tu-pagina-es-tuya", marca: "bori", titulo: "El freelancer se fue y se llevó tu página", angulo: "Tu cuenta es tuya",
+    escenas: [
+      { tipo: "gancho", dur: 100, alarma: true, lineas: ["El freelancer se fue…", "y se llevó tu *página*."] },
+      { tipo: "lista", dur: 170, modo: "tachar", titulo: "¿Te ha *pasado*?", items: [
+        { texto: "No tienes acceso a tu cuenta" }, { texto: "No sabes qué se publicó" }, { texto: "No sabes cuánto gastaste" }, { texto: "Empiezas de cero" },
+      ] },
+      { tipo: "gancho", dur: 100, lineas: ["Con Bori, todo queda", "en *tu* cuenta."] },
+      { tipo: "pantalla", dur: 180, imagen: "bori-app/config-pc.png", dispositivo: "laptop", titulo: "Tu cuenta. Tus datos. *Tu control.*", sub: "Tu propia cuenta de Meta, conectada a Bori.",
+        puntos: ["Tus anuncios en tu Meta", "Tu marca guardada", "Cancelas cuando quieras"] },
+      { tipo: "gancho", dur: 150, lineas: ["Con Bori, nadie te tiene", "de *rehén*."] },
+      { tipo: "cierre", dur: 200, ...CIERRE_BORI_30 },
+    ],
+  },
+  {
+    id: "bori-11-emprendes-solo", marca: "bori", titulo: "Eres el dueño, el vendedor, el diseñador… y el de los anuncios", angulo: "Emprendes solo",
+    escenas: [
+      { tipo: "gancho", dur: 110, lineas: ["Eres el dueño, el vendedor, el diseñador…", "y el de los *anuncios*."] },
+      { tipo: "roles", dur: 170, titulo: "Hoy haces de:", roles: ["Dueño", "Vendedor", "Diseñador", "Community manager", "Trafficker"] },
+      { tipo: "gancho", dur: 90, lineas: ["Emprender solo no significa", "hacerlo *todo* solo."] },
+      { tipo: "pantalla", dur: 190, imagen: "bori-app/generador-resultado-pc.png", dispositivo: "laptop", titulo: "Bori te hace los *anuncios*…", sub: "Describes tu negocio y en segundos tienes tus flyers.", foco: { x: 0.36, y: 0.15, w: 0.44, h: 0.55 } },
+      { tipo: "pantalla", dur: 140, imagen: "bori-app/movil-inicio-cel.png", dispositivo: "telefono", titulo: "…desde tu *celular*", sub: "Pídele lo que sea. Tú apruebas." },
+      { tipo: "cierre", dur: 200, cta: "Empieza en heybori.ai", sub: "Tu compañero de marketing 24/7, por $99 al mes", url: "@heybori" },
+    ],
+  },
+  {
+    id: "bori-12-navidad", marca: "bori", titulo: "Tus anuncios de Navidad, listos hoy", angulo: "Temporada (Navidad / Black Friday)",
+    escenas: [
+      { tipo: "gancho", dur: 100, etiqueta: "Temporada", lineas: ["Tus anuncios de *Navidad*,", "listos hoy."] },
+      { tipo: "gancho", dur: 80, lineas: ["Black Friday llega igual,", "estés listo *o no*."] },
+      { tipo: "flyers", dur: 210, titulo: "Pídele tu campaña de *temporada*…", prompt: "Quiero vender más en Navidad", piezas: [
+        { titulo: "Regalo perfecto", sub: "Te lo envolvemos" }, { titulo: "Black Friday", sub: "Solo este fin de semana" },
+        { titulo: "Especial navideño", sub: "Reserva tu fecha" }, { titulo: "Tarjeta de regalo", sub: "Regala a quien quieras" },
+        { titulo: "Última semana", sub: "Antes del 24" }, { titulo: "Fin de año", sub: "Cierra el año con estilo" },
+      ] },
+      { tipo: "aprobacion", dur: 170, titulo: "…y sale cuando *tú* digas.", campana: "Navidad · Regalos", detalle: "Público: 10 km a la redonda · 25 a 60 años", presupuesto: "$15/día · sale cuando tú digas" },
+      { tipo: "gancho", dur: 140, lineas: ["Que diciembre no te agarre", "*sin anuncios*."] },
+      { tipo: "cierre", dur: 200, ...CIERRE_BORI_30 },
+    ],
+  },
+
+  /* ───── LEVEL UP (de tú) ───── */
+  {
+    id: "lu-11-mi-nicho", marca: "level-up", titulo: "¿Crees que los anuncios no funcionan para tu negocio?", angulo: "“Los ads no funcionan para mi nicho”",
+    escenas: [
+      { tipo: "gancho", dur: 100, lineas: ["¿Crees que los anuncios", "no funcionan para *tu* negocio?"] },
+      { tipo: "gancho", dur: 90, lineas: ["Lo que falla no son los anuncios.", "Es la *estrategia*."] },
+      { tipo: "casos", dur: 220, titulo: "Negocios distintos, *mismo sistema*", nota: NOTA_LU, casos: [
+        { nombre: "Tinos · restaurante", desde: 30, hasta: 100 }, { nombre: "RK Automatic", desde: 30, hasta: 100 }, { nombre: "La Garita", desde: 25, hasta: 70 },
+      ] },
+      { tipo: "gancho", dur: 140, etiqueta: "Caso real · Quiropráctico", lineas: ["El Dr. Bryan Vega recibe", "*25 a 50 pacientes nuevos*", "cada mes."], sub: NOTA_LU },
+      { tipo: "gancho", dur: 150, lineas: ["+100 negocios en Puerto Rico.", "Distintos nichos. *Un sistema*."] },
+      { tipo: "cierre", dur: 200, ...CIERRE_LU },
+    ],
+  },
+  {
+    id: "lu-12-base-dormida", marca: "level-up", titulo: "Tienes cientos de clientes que no te han vuelto a comprar", angulo: "Base de clientes dormida",
+    escenas: [
+      { tipo: "gancho", dur: 110, lineas: ["Tienes cientos de clientes en tu teléfono", "que no te han vuelto a *comprar*."] },
+      { tipo: "gancho", dur: 90, alarma: true, lineas: ["Esa base se está", "*enfriando*."] },
+      { tipo: "pasos", dur: 190, titulo: "Lo que hacemos con *lo que ya tienes*", pasos: ["Remarketing a quien ya te vio", "Campañas a tu base de clientes", "Seguimiento automático con IA"] },
+      { tipo: "gancho", dur: 130, lineas: ["No necesitas más clientes.", "Necesitas dejar de perder los que *ya te llegan*."] },
+      { tipo: "gancho", dur: 140, etiqueta: "Level Up Media", lineas: ["+100 negocios en Puerto Rico", "ya *escalaron* con nosotros."], sub: NOTA_LU },
+      { tipo: "cierre", dur: 240, ...CIERRE_LU },
+    ],
+  },
+  {
+    id: "lu-13-contenido-sin-estructura", marca: "level-up", titulo: "Publicas todos los días y no te escribe nadie", angulo: "DWY · contenido sin estructura",
+    escenas: [
+      { tipo: "gancho", dur: 100, lineas: ["Publicas todos los días", "y no te escribe *nadie*."] },
+      { tipo: "gancho", dur: 80, lineas: ["No es el *algoritmo*."] },
+      { tipo: "lista", dur: 170, modo: "tachar", titulo: "Lo que le *falta* a tu contenido:", items: [
+        { texto: "Estructura" }, { texto: "Ángulos ganadores" }, { texto: "Estrategia de comunicación" }, { texto: "Anuncios que lo empujen" },
+      ] },
+      { tipo: "pasos", dur: 160, titulo: "Te lo instalamos *contigo*", pasos: ["Estructuramos tu contenido", "Encontramos tus ángulos ganadores", "Lo potenciamos con anuncios"] },
+      { tipo: "numero", dur: 200, etiqueta: "Yadiel · negocio digital", antes: "Antes: $5K/mes", desde: 5, hasta: 40, prefijo: "$", sufijo: "K/mes", nota: NOTA_LU },
+      { tipo: "cierre", dur: 190, cta: "Comenta SISTEMA", sub: "Consultoría 1:1: te instalamos el sistema contigo", url: "@level_upmediapr" },
+    ],
+  },
+  {
+    id: "lu-14-tres-huecos", marca: "level-up", titulo: "Los 3 huecos por donde se te va el dinero", angulo: "Referidos + leads tarde + base dormida",
+    escenas: [
+      { tipo: "gancho", dur: 110, lineas: ["¿Por dónde se te va el dinero", "cada mes *sin que lo veas*?"] },
+      { tipo: "lista", dur: 190, modo: "tachar", titulo: "Los *3 huecos* de tu negocio:", items: [
+        { texto: "Dependes de referidos" }, { texto: "Contestas tarde tus leads" }, { texto: "Tu base de clientes está dormida" },
+      ] },
+      { tipo: "gancho", dur: 100, lineas: ["Cada hueco es un cliente", "que se te *va*."] },
+      { tipo: "pasos", dur: 170, titulo: "Los tapamos con *un sistema*", pasos: ["Anuncios que traen clientes nuevos", "AutoFlow: respuesta en segundos", "Campañas a tu base de clientes"] },
+      { tipo: "gancho", dur: 140, etiqueta: "Caso real · Cabo Rojo", lineas: ["Tinos pasó de *$30K*", "a *$100K* al mes."], sub: NOTA_LU },
+      { tipo: "cierre", dur: 190, ...CIERRE_LU },
+    ],
+  },
+];
+
+ANUNCIOS.push(...LOTE3.flatMap(ambos));
