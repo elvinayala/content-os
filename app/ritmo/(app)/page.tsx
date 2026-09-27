@@ -7,6 +7,7 @@ import { Animo } from "@/components/ritmo/bienestar";
 import { Noticia } from "@/components/ritmo/noticias";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
+import { estadoSeguridad } from "@/lib/desempeno/seguridad";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
 import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
@@ -29,6 +30,7 @@ export default async function HoyPage() {
   // Dirección (Elvin, Carilin, Aure): ve el ponche como todos, opcional, con su nota especial.
   const direccion = u.rol === "admin" || u.rol === "editor";
   const estado = await estadoPonche(u.id, direccion);
+  const seguridad = estado && !estado.sinPerfil ? await estadoSeguridad(u).catch(() => undefined) : undefined;
   // Sin perfil (dirección) no hay "Mi semana": no vale la pena armar el panel.
   const panel = estado && !estado.sinPerfil ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
   const yo = panel?.filas.find((f) => f.perfil.userId === u.id);
@@ -58,7 +60,7 @@ export default async function HoyPage() {
         </Link>
       ) : null}
 
-      {estado ? <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} /> : null}
+      {estado ? <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} seguridad={seguridad} /> : null}
 
       {!estado || estado.sinPerfil || u.maestro ? (
         <div className={`panel ${u.maestro ? "max-w-lg" : "max-w-sm"} p-6 text-center text-sm text-muted-foreground`}>
@@ -75,6 +77,7 @@ export default async function HoyPage() {
                   { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
                   { href: "/ritmo/empresa", t: "Empresa", d: "Quiénes somos y recursos" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
+                  { href: "/ritmo/seguridad", t: "Seguridad", d: "Equipos y ponches manuales" },
                   { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
                   ...(u.rol === "admin" ? [{ href: "/ritmo/viajes", t: "Viajes", d: "Solo tú, por ahora" }] : []),
                 ].map((a) => (

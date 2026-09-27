@@ -11,6 +11,8 @@ import * as datos from "@/lib/desempeno/datos";
 import * as dosPasos from "@/lib/desempeno/dos-pasos";
 import * as empresa from "@/lib/desempeno/empresa";
 import * as etica from "@/lib/desempeno/etica";
+import * as seguridad from "@/lib/desempeno/seguridad";
+import { errorAlmuerzo } from "@/lib/desempeno/seguridad-reglas";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
 import * as bienestar from "@/lib/desempeno/bienestar";
@@ -45,26 +47,94 @@ async function contexto() {
 
 // ─── Ponche (cada quien el suyo) ──────────────────────────────────────────────────────────────
 
-export async function entrarAction() {
+export async function entrarAction(huella?: string | null) {
   return envolver(async () => {
     const u = await requiereUsuario();
     // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
     const direccion = u.rol === "admin" || u.rol === "editor";
     if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
-    const p = await datos.entrar(u.id, await contexto());
+    const { equipoId } = await seguridad.verificarParaPonchar(u, huella);
+    const p = await datos.entrar(u.id, { ...(await contexto()), equipoId });
     refresh();
     return { entradaAt: p.entradaAt.toISOString() };
   });
 }
 
-export async function salirAction(r: { bloqueos: string; datos: Record<string, number> }) {
+export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; huella?: string | null }) {
   return envolver(async () => {
     const u = await requiereUsuario();
+    await seguridad.verificarParaPonchar(u, r.huella);
     const perfil = await datos.perfilDe(u.id);
     const permitidos = new Set((puestoPorId(perfil?.puesto ?? "")?.manual ?? []).map((m) => m.id));
     const limpios: Record<string, number> = {};
     for (const [k, v] of Object.entries(r.datos ?? {})) if (permitidos.has(k) && Number.isFinite(v) && v >= 0 && v <= 50) limpios[k] = Math.round(v);
     await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios });
+    refresh();
+    return {};
+  });
+}
+
+/** Salir a almorzar (1 hora, entre las 11:00 AM y las 2:00 PM PR). Volver = entrarAction. */
+export async function almuerzoAction(huella?: string | null) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await seguridad.verificarParaPonchar(u, huella);
+    const est = await datos.estadoPonche(u.id, true);
+    const err = errorAlmuerzo({ ahora: new Date(), yaAlmorzo: !!est?.almuerzo, trabajando: !!est?.abiertoHoy });
+    if (err) throw new Error(err);
+    await datos.salirAlmuerzo(u.id, await contexto());
+    refresh();
+    return {};
+  });
+}
+
+// ─── Seguridad del ponche: equipos registrados y ponche manual (lo autoriza RR.HH.) ───────────
+
+export async function registrarEquipoAction(p: { nombre: string; huella: string | null; motivo?: string; reemplaza?: boolean }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const { limiteIp } = await import("@/lib/pulse/seguridad");
+    if (!limiteIp(`equipo:${u.id}`, 5, 3_600_000)) throw new Error("Demasiados intentos; espera un rato");
+    const e = await seguridad.registrarEquipo(u.id, p);
+    refresh();
+    return { estado: e.estado };
+  });
+}
+
+export async function poncheManualAction(p: { tipo: string; fecha: string; hora: string; motivo: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(p.fecha) || !/^\d{2}:\d{2}$/.test(p.hora)) throw new Error("Fecha u hora inválida");
+    const { limiteIp } = await import("@/lib/pulse/seguridad");
+    if (!limiteIp(`manual:${u.id}`, 6, 3_600_000)) throw new Error("Demasiadas solicitudes seguidas");
+    await seguridad.pedirPoncheManual(u.id, { tipo: p.tipo, hora: new Date(`${p.fecha}T${p.hora}:00-04:00`), motivo: p.motivo ?? "" });
+    refresh();
+    return {};
+  });
+}
+
+export async function decidirPoncheManualAction(p: { id: string; aprobar: boolean }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    await seguridad.decidirPoncheManual(p.id, p.aprobar, u.id);
+    refresh();
+    return {};
+  });
+}
+
+export async function decidirEquipoAction(p: { id: string; aprobar: boolean }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    await seguridad.decidirEquipo(p.id, p.aprobar, u.id);
+    refresh();
+    return {};
+  });
+}
+
+export async function decidirRedAction(p: { id: string; aprobar: boolean }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    await seguridad.decidirRed(p.id, p.aprobar, u.id);
     refresh();
     return {};
   });

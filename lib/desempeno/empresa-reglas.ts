@@ -158,6 +158,15 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
     "- Hay **15 minutos** de tolerancia en la hora de entrada.",
     "- Si se te olvidó marcar la salida, pones la hora y tu líder la confirma.",
   ].join("\n")),
+  s("pol-almuerzo", "politicas", "todas", 35, "Hora de almuerzo", [
+    "- Tienes **1 hora** de almuerzo y la escoges tú, **entre las 11:00 AM y las 2:00 PM** (hora de Puerto Rico).",
+    "- Márcala en **Hoy** con \"Salir a almorzar\" y, al volver, toca el círculo otra vez.",
+  ].join("\n")),
+  s("pol-equipo", "politicas", "todas", 38, "Tu computadora de trabajo", [
+    "- Solo se poncha desde la **computadora con la que trabajas** y desde tu red de internet. La primera vez, Ritmo te pide registrarla.",
+    "- Si usas dos (laptop y desktop) o cambias de computadora o de internet, RR.HH. lo autoriza.",
+    "- Desde el teléfono no se poncha. Si no estás en tu computadora, pide un **ponche manual** y RR.HH. lo revisa.",
+  ].join("\n")),
   s("pol-privacidad", "politicas", "todas", 40, "Tu privacidad", [
     "- Ritmo **no** toma capturas de pantalla, ni usa GPS, ni ve lo que escribes. Mide asistencia y resultados, no te vigila.",
     "- Tu ficha la ves tú y RR.HH.",
@@ -167,6 +176,7 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
   // Preguntas
   s("faq-marcar", "preguntas", "todas", 10, "¿Cómo marco mi entrada?", "En **Hoy**, toca el círculo grande. Para salir, lo tocas otra vez."),
   s("faq-olvido", "preguntas", "todas", 20, "Se me olvidó marcar la salida", "Ritmo te recuerda por Slack si sigues con la entrada abierta al final del día. Si se te pasó, pones la hora en que saliste y tu líder la confirma."),
+  s("faq-telefono", "preguntas", "todas", 25, "¿Puedo ponchar desde el teléfono?", "No. Se poncha desde tu computadora de trabajo registrada. Si no estás en ella, toca **Pedir ponche manual** en Hoy y RR.HH. lo autoriza."),
   s("faq-libre", "preguntas", "todas", 30, "¿Cómo pido un día libre o vacaciones?", "Ve a **Solicitudes** → nueva solicitud. Primero decide tu supervisor y después RR.HH."),
   s("faq-referir", "preguntas", "todas", 40, "¿Cómo refiero a alguien para trabajar aquí?", `En **Carreras**, escoge la vacante y toca Referir. Si entra y completa su onboarding, los US$${BONO_REFERIDO} te llegan en la nómina del mes siguiente.`),
   s("faq-quien", "preguntas", "todas", 50, "¿A quién le pregunto?", "Lo del trabajo, a tu supervisor. Lo de nómina, días libres y documentos, a **RR.HH.**"),

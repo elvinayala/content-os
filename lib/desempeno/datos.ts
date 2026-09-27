@@ -131,13 +131,13 @@ export async function leerPonche(id: string): Promise<Ponche | null> {
 }
 
 /** Marca entrada con la hora del servidor. Falla si hay un tramo abierto (hay que cerrarlo primero). */
-export async function entrar(userId: string, ctx: { ip: string | null; ua: string | null }): Promise<Ponche> {
+export async function entrar(userId: string, ctx: { ip: string | null; ua: string | null; equipoId?: string | null }): Promise<Ponche> {
   const abiertos = await ponchesAbiertos(userId);
   if (abiertos.some((x) => !vigente(x))) throw new Error("Tienes una salida pendiente de otro día: corrígela primero");
   if (abiertos.length) throw new Error("Ya tienes una entrada abierta");
   const d = await db();
   const ahora = new Date();
-  const [p] = await d.insert(desempenoPonches).values({ userId, fecha: fechaPR(ahora), entradaAt: ahora, ipEntrada: ctx.ip, userAgent: ctx.ua }).returning();
+  const [p] = await d.insert(desempenoPonches).values({ userId, fecha: fechaPR(ahora), entradaAt: ahora, ipEntrada: ctx.ip, userAgent: ctx.ua, dispositivoId: ctx.equipoId ?? null }).returning();
   await evento({ userId, actorId: userId, tipo: "entrada", datos: { poncheId: p.id }, ip: ctx.ip });
   return p;
 }
@@ -152,6 +152,28 @@ export async function salir(userId: string, ctx: { ip: string | null }, reporte:
   await d.update(desempenoPonches).set({ salidaAt: new Date(), ipSalida: ctx.ip }).where(eq(desempenoPonches.id, p.id));
   await guardarReporte(userId, hoy, reporte);
   await evento({ userId, actorId: userId, tipo: "salida", datos: { poncheId: p.id }, ip: ctx.ip });
+}
+
+/** Salir a almorzar: cierra el tramo de hoy marcado como almuerzo (sin mini-reporte). Volver = entrar. */
+export async function salirAlmuerzo(userId: string, ctx: { ip: string | null }): Promise<void> {
+  const abiertos = await ponchesAbiertos(userId);
+  const p = abiertos.find((x) => vigente(x));
+  if (!p) throw new Error("Primero marca tu entrada");
+  const d = await db();
+  await d.update(desempenoPonches).set({ salidaAt: new Date(), ipSalida: ctx.ip, motivoSalida: "almuerzo" }).where(eq(desempenoPonches.id, p.id));
+  await evento({ userId, actorId: userId, tipo: "almuerzo-salida", datos: { poncheId: p.id }, ip: ctx.ip });
+}
+
+/** El almuerzo de hoy: cuándo salió y cuándo volvió (la entrada siguiente), o null si no ha almorzado. */
+export async function almuerzoDeHoy(userId: string): Promise<{ salida: Date; vuelta: Date | null } | null> {
+  const d = await db();
+  const hoy = fechaPR(Date.now());
+  const deHoy = await d.select().from(desempenoPonches).where(and(eq(desempenoPonches.userId, userId), eq(desempenoPonches.fecha, hoy))).orderBy(asc(desempenoPonches.entradaAt));
+  const i = deHoy.findIndex((x) => x.motivoSalida === "almuerzo" && x.salidaAt);
+  if (i < 0) return null;
+  const salida = deHoy[i].salidaAt!;
+  const vuelta = deHoy.slice(i + 1).find((x) => x.entradaAt >= salida)?.entradaAt ?? null;
+  return { salida, vuelta };
 }
 
 export async function guardarReporte(userId: string, fecha: string, r: { bloqueos: string | null; datos: Record<string, number> }) {
@@ -373,7 +395,7 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
  * usarlo si quiere (27/sep). Sin perfil, sus ponches no salen en Equipo, recordatorios ni reportes (todo eso sale
  * de los perfiles). `sinPerfil` le dice a Hoy que muestre la nota especial.
  */
-export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string }[]; sinPerfil?: boolean } | null> {
+export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string }[]; sinPerfil?: boolean; almuerzo: { salida: string; vuelta: string | null } | null } | null> {
   try {
     const perfil = await perfilDe(userId);
     if (!perfil?.activo && !opcional) return null;
@@ -387,6 +409,9 @@ export async function estadoPonche(userId: string, opcional = false): Promise<{ 
       pendiente: viejo ? { id: viejo.id, fecha: viejo.fecha, entradaAt: viejo.entradaAt.toISOString() } : null,
       manual: perfil?.activo ? (puestoPorId(perfil.puesto)?.manual ?? []) : [],
       sinPerfil: !perfil?.activo,
+      almuerzo: await almuerzoDeHoy(userId)
+        .then((a) => (a ? { salida: a.salida.toISOString(), vuelta: a.vuelta ? a.vuelta.toISOString() : null } : null))
+        .catch(() => null),
     };
   } catch (e) {
     console.error("[desempeno] estadoPonche", e);

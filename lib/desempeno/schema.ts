@@ -47,6 +47,9 @@ export const desempenoPonches = pgTable(
     correccion: text("correccion"), // null | pendiente | aprobada | rechazada
     correccionPor: uuid("correccion_por").references(() => pulseUsers.id, { onDelete: "set null" }),
     nota: text("nota"),
+    motivoSalida: text("motivo_salida"), // null | almuerzo (la salida de este tramo fue para almorzar)
+    dispositivoId: uuid("dispositivo_id"), // equipo registrado desde el que se marcó
+    manualPor: uuid("manual_por").references(() => pulseUsers.id, { onDelete: "set null" }), // ponche manual autorizado por RR.HH.
   },
   (t) => [index("desempeno_ponches_user_fecha").on(t.userId, t.fecha)],
 );
@@ -471,4 +474,52 @@ export const desempenoEmpresa = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("desempeno_empresa_seccion").on(t.seccion, t.orden), uniqueIndex("desempeno_empresa_clave").on(t.clave)],
+);
+
+// Seguridad del ponche (27/sep, Elvin): solo se poncha desde la(s) computadora(s) de trabajo registradas y desde la
+// red (IP) aprobada. Una por defecto; otra (laptop + desktop) o un cambio → lo aprueba RR.HH. (Yaileen).
+export const desempenoDispositivos = pgTable(
+  "desempeno_dispositivos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    nombre: text("nombre").notNull(), // "Laptop HP", "Desktop oficina"
+    tokenHash: text("token_hash").notNull(), // sha256 del token que vive en la cookie de ese navegador
+    huella: text("huella"), // hash de características del equipo (para reconocerlo si borran las cookies)
+    agente: text("agente"), // navegador y sistema, legible
+    ips: jsonb("ips").$type<string[]>().notNull().default([]), // redes aprobadas
+    ipPendiente: text("ip_pendiente"), // red nueva esperando aprobación
+    ultimaIp: text("ultima_ip"),
+    estado: text("estado").notNull().default("pendiente"), // pendiente | aprobado | revocado
+    motivo: text("motivo"), // por qué pide este equipo (reemplazo, segundo equipo…)
+    reemplaza: boolean("reemplaza").notNull().default(false),
+    decididoPor: uuid("decidido_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    decididoAt: timestamp("decidido_at", { withTimezone: true }),
+    ultimoUsoAt: timestamp("ultimo_uso_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("desempeno_dispositivos_token").on(t.tokenHash), index("desempeno_dispositivos_user").on(t.userId)],
+);
+
+// Ponche manual: cuando no está en su computadora (o se le fue la luz, etc.) pide que RR.HH. le marque la hora.
+export const desempenoPoncheManual = pgTable(
+  "desempeno_ponche_manual",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(), // entrada | salida
+    hora: timestamp("hora", { withTimezone: true }).notNull(),
+    motivo: text("motivo").notNull(),
+    estado: text("estado").notNull().default("pendiente"), // pendiente | aprobada | rechazada
+    ip: text("ip"),
+    agente: text("agente"),
+    decididoPor: uuid("decidido_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    decididoAt: timestamp("decidido_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_ponche_manual_estado").on(t.estado, t.createdAt)],
 );

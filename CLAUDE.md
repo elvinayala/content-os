@@ -642,6 +642,19 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   Semillas solo con datos confirmados (`SEMILLAS_EMPRESA` en `lib/desempeno/empresa-reglas.ts`, tests
   `tests/empresa.test.mjs` verifican que las políticas cuadren con `POLITICA`/`BONO_REFERIDO`); **Misión y Valores de LU
   son BORRADOR** hasta que Elvin los apruebe. Pestaña en escritorio + tarjeta "Conoce la empresa" en Hoy.
+- **Seguridad del ponche** (27/sep, Elvin: "que no puedan evadir o engañar el sistema"): solo se poncha (entrada, salida,
+  almuerzo) desde una **computadora registrada y aprobada** (`desempeno_dispositivos`, migración 0028; cookie httpOnly
+  `ritmo-equipo` de 400 días con token → sha256 en la base; huella del navegador + red para reconocerla si borran cookies) y
+  desde una **red aprobada** (IPv4 exacta, IPv6 por prefijo /64: `redDe`). La primera computadora queda aprobada al
+  registrarla con su red; una segunda (laptop + desktop), un reemplazo o una red nueva → **RR.HH. (Yaileen) autoriza** en
+  `/ritmo/seguridad` (aviso por Slack). Teléfonos/tablets no se registran ni ponchan. Fuera de su computadora: **ponche
+  manual** (`desempeno_ponche_manual`, hasta 3 días atrás, con motivo) que RR.HH. autoriza (crea la entrada o cierra la
+  abierta; `manual_por`). La dirección (admin/editoras) queda fuera. `RITMO_SEGURIDAD` = on (default) | aviso | off.
+  Reglas puras `lib/desempeno/seguridad-reglas.ts` (tests `tests/seguridad-ponche.test.mjs`), servidor `seguridad.ts`,
+  UI `components/ritmo/seguridad.tsx`. Solo bloquea el PONCHE: el resto de Ritmo se abre desde cualquier lado.
+- **Almuerzo** (27/sep): 1 hora que escoge cada quien entre las **11:00 AM y las 2:00 PM PR**; "Salir a almorzar" cierra el
+  tramo con `motivo_salida = almuerzo` y volver = entrar (el tiempo de almuerzo no cuenta como horas). Una vez al día;
+  más de 65 min se pinta en ámbar (`duracionAlmuerzo`).
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

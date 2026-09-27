@@ -1,10 +1,12 @@
 "use client";
 
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, Utensils } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { corregirSalidaAction, entrarAction, salirAction } from "@/app/ritmo/actions";
+import { almuerzoAction, corregirSalidaAction, entrarAction, salirAction } from "@/app/ritmo/actions";
+import { huellaEquipo, PoncheManual, SeguridadPonche, type SeguridadUI } from "@/components/ritmo/seguridad";
+import { ALMUERZO, TEXTO_VENTANA_ALMUERZO, minutosPR } from "@/lib/desempeno/seguridad-reglas";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -17,6 +19,7 @@ export interface EstadoPonche {
   abiertoHoy: string | null; // ISO de la entrada abierta
   pendiente: { id: string; fecha: string; entradaAt: string } | null; // salida olvidada de otro día
   manual: { id: string; nombre: string }[];
+  almuerzo?: { salida: string; vuelta: string | null } | null;
 }
 
 const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-PR", { timeZone: "America/Puerto_Rico", hour: "numeric", minute: "2-digit" });
@@ -68,7 +71,7 @@ function Dial({ progreso }: { progreso: number | null }) {
 }
 
 // El ponche: un círculo grande. Un toque para entrar; otro para salir (con bloqueos opcionales).
-export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: number }) {
+export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; horasHoy: number; seguridad?: SeguridadUI }) {
   const [ahora, setAhora] = useState(() => Date.now());
   const [abrir, setAbrir] = useState(false);
   const [cargando, setCargando] = useState(false);
@@ -84,9 +87,16 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
     return () => clearInterval(t);
   }, [abierto]);
 
+  const almorzando = !!estado.almuerzo && !estado.almuerzo.vuelta && !abierto;
+  useEffect(() => {
+    if (!almorzando) return;
+    const t = setInterval(() => setAhora(Date.now()), 15_000);
+    return () => clearInterval(t);
+  }, [almorzando]);
+
   const entrar = async () => {
     setCargando(true);
-    const r = await entrarAction();
+    const r = await entrarAction(await huellaEquipo());
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
@@ -97,7 +107,7 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
     setCargando(true);
     const datos: Record<string, number> = {};
     for (const m of estado.manual) if (valores[m.id]) datos[m.id] = Number(valores[m.id]);
-    const r = await salirAction({ bloqueos, datos });
+    const r = await salirAction({ bloqueos, datos, huella: await huellaEquipo() });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
@@ -106,6 +116,16 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
     setValores({});
     toast.success("Salida marcada. ¡Buen trabajo hoy!", aviso);
   };
+
+  const almorzar = async () => {
+    setCargando(true);
+    const r = await almuerzoAction(await huellaEquipo());
+    setCargando(false);
+    if (!r.ok) return toast.error(r.error, aviso);
+    toast.success("¡Buen provecho! Tienes 1 hora. Al volver, toca el círculo.", aviso);
+  };
+  const minAhoraPR = minutosPR(new Date(ahora));
+  const puedeAlmorzar = !!abierto && !estado.almuerzo && minAhoraPR >= ALMUERZO.desde && minAhoraPR < ALMUERZO.hasta;
 
   const corregir = async () => {
     if (!estado.pendiente) return;
@@ -136,6 +156,8 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
         </Button>
       </div>
     );
+
+  if (seguridad && !seguridad.exento && seguridad.bloqueo && !abierto) return <SeguridadPonche s={seguridad} />;
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -177,17 +199,36 @@ export function Ponche({ estado, horasHoy }: { estado: EstadoPonche; horasHoy: n
           </>
         ) : (
           <>
-            <span className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">{horasHoy ? "Volver a" : "Toca para"}</span>
-            <span className="texto-ritmo mt-1 text-4xl font-semibold tracking-tight">Entrar</span>
-            {horasHoy ? <span className="num mt-2 text-sm text-muted-foreground">hoy llevas {Math.floor(horasHoy)}h {String(Math.round((horasHoy % 1) * 60)).padStart(2, "0")}m</span> : null}
+            <span className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">{almorzando ? "Almorzando · toca para" : horasHoy ? "Volver a" : "Toca para"}</span>
+            <span className="texto-ritmo mt-1 text-4xl font-semibold tracking-tight">{almorzando ? "Volver" : "Entrar"}</span>
+            {almorzando && estado.almuerzo ? (
+              <span className={cn("num mt-2 text-sm", ahora - Date.parse(estado.almuerzo.salida) > (ALMUERZO.minutos + ALMUERZO.tolerancia) * 60000 ? "text-amber-300" : "text-muted-foreground")}>
+                {Math.floor((ahora - Date.parse(estado.almuerzo.salida)) / 60000)} de {ALMUERZO.minutos} min de almuerzo
+              </span>
+            ) : null}
+            {horasHoy && !almorzando ? <span className="num mt-2 text-sm text-muted-foreground">hoy llevas {Math.floor(horasHoy)}h {String(Math.round((horasHoy % 1) * 60)).padStart(2, "0")}m</span> : null}
           </>
         )}
       </button>
       {abierto ? (
-        <Button variant="outline" onClick={() => setAbrir(true)} className="h-12 rounded-full px-8">
-          Marcar salida
-        </Button>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {puedeAlmorzar ? (
+            <Button variant="outline" onClick={almorzar} disabled={cargando} className="h-12 rounded-full px-6">
+              <Utensils className="size-4" /> Salir a almorzar
+            </Button>
+          ) : null}
+          <Button variant="outline" onClick={() => setAbrir(true)} className="h-12 rounded-full px-8">
+            Marcar salida
+          </Button>
+        </div>
       ) : null}
+      {abierto && !estado.almuerzo && !puedeAlmorzar ? <p className="-mt-3 text-xs text-muted-foreground">Tu hora de almuerzo la escoges tú, {TEXTO_VENTANA_ALMUERZO}.</p> : null}
+      {estado.almuerzo?.vuelta ? (
+        <p className="-mt-3 text-xs text-muted-foreground">
+          Almuerzo: {hora(estado.almuerzo.salida)} – {hora(estado.almuerzo.vuelta)} ({Math.round((Date.parse(estado.almuerzo.vuelta) - Date.parse(estado.almuerzo.salida)) / 60000)} min)
+        </p>
+      ) : null}
+      {seguridad && !seguridad.exento ? <PoncheManual pendientes={seguridad.manualPendientes} discreto /> : null}
 
       <Dialog open={abrir} onOpenChange={setAbrir}>
         <DialogContent className="ritmo sm:max-w-md">

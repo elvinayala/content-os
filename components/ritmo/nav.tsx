@@ -28,6 +28,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     ...(agentes ? [{ href: "/ritmo/agentes", nombre: "Agentes", icono: Bot, activo: path.startsWith("/ritmo/agentes"), soloEscritorio: true }] : []),
     ...(ajustes ? [{ href: "/ritmo/ajustes", nombre: "Ajustes", icono: Settings2, activo: path.startsWith("/ritmo/ajustes") }] : []),
     // En el teléfono la maestra ya tiene 5 pestañas: el canal ético queda en Solicitudes.
+    ...(equipo ? [{ href: "/ritmo/seguridad", nombre: "Seguridad", icono: ShieldCheck, activo: path.startsWith("/ritmo/seguridad"), soloEscritorio: true }] : []),
     { href: "/ritmo/etica", nombre: "Ético", icono: ShieldCheck, activo: path.startsWith("/ritmo/etica"), soloEscritorio: equipo },
   ] as { href: string; nombre: string; icono: typeof Timer; activo: boolean; badge?: number; nuevo?: boolean; soloEscritorio?: boolean }[];
   return (
