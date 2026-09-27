@@ -48,8 +48,10 @@ export const Titular: React.FC<{
     }}>
       {/* Sin viudas: las dos últimas palabras viajan juntas (nunca una sola palabra en la última línea). */}
       {palabras.map(({ limpio, marcada }, i) => {
-        if (palabras.length >= 3 && i === palabras.length - 1) return null;
-        const pegada = palabras.length >= 3 && i === palabras.length - 2 ? palabras[i + 1] : null;
+        // Solo se pega si la última es corta: pegar dos palabras largas rompe la línea peor que la viuda.
+        const pegar = palabras.length >= 3 && palabras[palabras.length - 1].limpio.replace(/[.,!?:;…]/g, "").length <= 5;
+        if (pegar && i === palabras.length - 1) return null;
+        const pegada = pegar && i === palabras.length - 2 ? palabras[i + 1] : null;
         const e = tw(f, entra + i * stagger, entra + i * stagger + 12);
         const s = sale !== undefined ? tw(f, sale + i, sale + i + 8, 0, 1, golpe) : 0;
         return (

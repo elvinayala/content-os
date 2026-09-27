@@ -64,8 +64,9 @@ export const ANUNCIOS: Anuncio[] = [
   },
   {
     id: "lu-06-leads", marca: "level-up", formato: "9:16", titulo: "Te llegan leads pero no ventas", angulo: "El problema es lo que pasa después",
+    tomas: [{ archivo: "tomas/lu-06-escritorio-noche.mp4", desde: 0, dur: 90, velo: 0.65 }],
     escenas: [
-      { tipo: "gancho", dur: 90, lineas: ["Te llegan *leads*…", "pero no ventas."] },
+      { tipo: "gancho", dur: 90, lineas: ["Te llegan", "*leads*…", "pero no ventas."] },
       { tipo: "embudo", dur: 150, titulo: "Así se te *escapan*", etapas: ["Leads", "Respuesta", "Cita", "Venta"], fuga: "Nadie contestó a tiempo" },
       { tipo: "gancho", dur: 100, lineas: ["El problema no es el anuncio.", "Es lo que pasa *después*."] },
       { tipo: "pasos", dur: 110, titulo: "El sistema *completo*", pasos: ["Anuncio", "Respuesta en segundos", "Cita agendada", "Venta"] },
@@ -98,6 +99,7 @@ export const ANUNCIOS: Anuncio[] = [
   },
   {
     id: "bori-03-10-minutos", marca: "bori", formato: "9:16", titulo: "De la idea al anuncio en 10 minutos", angulo: "Velocidad + sin Administrador de Anuncios",
+    tomas: [{ archivo: "tomas/bori-03-barberia.mp4", desde: 0, dur: 150, velo: 0.6 }],
     escenas: [
       { tipo: "gancho", dur: 80, lineas: ["De la idea al anuncio", "en *10 minutos*."] },
       { tipo: "flyers", dur: 200, titulo: "Tú le dices qué quieres…", prompt: "Quiero llenar los martes en mi barbería", piezas: [
@@ -129,6 +131,7 @@ export const ANUNCIOS: Anuncio[] = [
   /* ═════════ AI BORINQUEN (de usted) ═════════ */
   {
     id: "aib-01-8pm", marca: "ai-borinquen", formato: "9:16", titulo: "Si un cliente le escribe a las 8 de la noche, ¿quién le responde?", angulo: "Pierde leads de noche",
+    tomas: [{ archivo: "tomas/aib-01-telefono-noche.mp4", desde: 0, dur: 130 }],
     escenas: [
       { tipo: "gancho", dur: 80, etiqueta: "8:07 PM", lineas: ["Si un cliente le escribe", "a las *8 de la noche*…"] },
       { tipo: "gancho", dur: 50, lineas: ["¿quién le *responde*?"], alarma: true },

@@ -44,6 +44,17 @@ Para anuncios NO se escribe un video a mano: se escribe un **guion en datos** en
   (nunca abstracto), solo casos verificados + "Resultados de clientes reales; cada negocio es distinto.",
   AIB de usted, sin "gratis", Bori: "Pro $99/mes, sin contrato" (la prueba de 7 días no es pública).
 
+## 2c. Tomas cinematográficas con Higgsfield (27/sep/2026)
+Para los anuncios que más importan, el gancho lleva una toma real detrás del texto (campo `tomas` del
+anuncio: archivo en `motion/public/tomas/`, frames globales, `velo` = qué tan oscuro va encima).
+- Modelo: **Cinema Studio Video 3.0** (`cinematic_studio_3_0`, 9:16 o 16:9, 5 s, 1080p, sin audio) por el
+  MCP de Higgsfield (`generate_video_batch` → `jobs_wait` → bajar el `result_url`). ~5 min por tanda.
+- Tomas SIN caras (las caras de las marcas son personas reales), sin texto legible, sin logos, y nunca
+  presentadas como un cliente real. Si Higgsfield sugiere un preset en vez de generar, reenviar con
+  `declined_preset_id`.
+- Revisar 3 cuadros de cada toma antes de usarla (lo que el modelo agrega por su cuenta: p. ej. velas de
+  trading en una laptop → velo más oscuro o regenerar).
+
 ## 3. Principios de motion (lo que hace que se vea "de agencia")
 1. **Ritmo = música.** Pedir la pista primero, medir su energía (ffmpeg astats) y cortar en los
    golpes (120 BPM = cada 15 frames). Los cortes caen en el beat, los "pops" en contratiempo.

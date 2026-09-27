@@ -32,4 +32,6 @@ export type Anuncio = {
   titulo: string; // para la bandeja
   angulo: string;
   escenas: Escena[];
+  /** Tomas de video (B-roll cinematográfico, p. ej. de Higgsfield) detrás del texto, en frames globales. */
+  tomas?: { archivo: string; desde: number; dur: number; velo?: number }[];
 };
