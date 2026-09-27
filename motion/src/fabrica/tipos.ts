@@ -6,9 +6,9 @@ import type { MarcaId } from "./temas";
 export type Formato = "9:16" | "16:9";
 
 export type Escena = { dur: number } & (
-  | { tipo: "gancho"; lineas: string[]; sub?: string; alarma?: boolean; etiqueta?: string }
+  | { tipo: "gancho"; lineas: string[]; sub?: string; alarma?: boolean; etiqueta?: string; logo?: boolean }
   | { tipo: "numero"; etiqueta: string; desde: number; hasta: number; prefijo?: string; sufijo?: string; antes?: string; quien?: string; nota?: string }
-  | { tipo: "notificaciones"; lineas: string[]; hora: string; items: { titulo: string; detalle: string; hora: string }[] }
+  | { tipo: "notificaciones"; lineas: string[]; hora: string; items: { titulo: string; detalle: string; hora: string; icono?: "llamada" | "mensaje"; color?: string }[] }
   | { tipo: "comparativa"; titulo: string; filas: { nombre: string; precio: string; barra: number; tuyo?: boolean; detalle?: string }[]; nota?: string }
   | { tipo: "pasos"; titulo: string; pasos: string[] }
   | { tipo: "chat"; titulo: string; nombre: string; burbujas: { de: "cliente" | "agente"; texto: string; en: number }[]; hora?: string }
@@ -22,6 +22,9 @@ export type Escena = { dur: number } & (
   | { tipo: "rompecabezas"; antes: string; despues: string; piezas: string[] }
   | { tipo: "dato"; grande: string; texto: string; fuente?: string }
   | { tipo: "semanas"; titulo: string; semanas: number }
+  | { tipo: "lista"; titulo: string; items: { texto: string; monto?: string }[]; modo: "tachar" | "marcar" | "sumar"; total?: { etiqueta: string; prefijo?: string; hasta: number; sufijo?: string } }
+  | { tipo: "voz"; orden: string; respuesta: string; evento?: { titulo: string; cuando: string } }
+  | { tipo: "agenda"; pregunta: string; dia: string; items: { hora: string; texto: string }[] }
   | { tipo: "cierre"; cta: string; sub?: string; url?: string; nota?: string }
 );
 

@@ -35,8 +35,8 @@ export const Telefono: React.FC<{ ancho: number; tema: Tema; children: React.Rea
   );
 };
 
-export const Notificacion: React.FC<{ titulo: string; detalle: string; hora: string; entra: number; tema: Tema; color: string; ancho: number }> = ({
-  titulo, detalle, hora, entra, tema, color, ancho,
+export const Notificacion: React.FC<{ titulo: string; detalle: string; hora: string; entra: number; tema: Tema; color: string; ancho: number; icono?: "llamada" | "mensaje" }> = ({
+  titulo, detalle, hora, entra, tema, color, ancho, icono = "llamada",
 }) => {
   const f = useCurrentFrame();
   const e = rebote(f, entra, 16);
@@ -48,7 +48,7 @@ export const Notificacion: React.FC<{ titulo: string; detalle: string; hora: str
       fontFamily: tema.fuente,
     }}>
       <div style={{ width: 46, height: 46, borderRadius: 12, background: color, display: "grid", placeItems: "center", flexShrink: 0 }}>
-        <IconoTelefono size={26} color="#fff" cortado />
+        {icono === "llamada" ? <IconoTelefono size={26} color="#fff" cortado /> : <IconoMensaje size={26} color="#fff" />}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, color: tema.texto, fontWeight: 600, fontSize: 19, whiteSpace: "nowrap" }}>
@@ -64,6 +64,12 @@ export const IconoTelefono: React.FC<{ size: number; color: string; cortado?: bo
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" fill={color} />
     {cortado && <path d="M4 20 L20 4" stroke={color} strokeWidth={2.4} strokeLinecap="round" />}
+  </svg>
+);
+
+export const IconoMensaje: React.FC<{ size: number; color: string }> = ({ size, color }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" fill={color} />
   </svg>
 );
 

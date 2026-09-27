@@ -5,7 +5,7 @@ import { AbsoluteFill, Audio, Sequence, interpolate, random, staticFile, useCurr
 import { evolvePath } from "@remotion/paths";
 import { noise2D } from "@remotion/noise";
 import { golpe, rebote, suave, tw } from "../kit/fx";
-import { Chat, Llamada, Notificacion, Telefono } from "../kit/ui";
+import { Chat, IconoTelefono, Llamada, Notificacion, Telefono } from "../kit/ui";
 import type { TemaMarca } from "./temas";
 import type { Escena } from "./tipos";
 
@@ -120,24 +120,28 @@ const ajustar = (lineas: string[], ancho: number, base: number, envolver = linea
   const limpias = lineas.map((l) => l.replace(/\*/g, ""));
   const largo = Math.max(...limpias.map((l) => l.length));
   const palabra = Math.max(...limpias.flatMap((l) => l.split(" ").map((p) => p.length)));
-  const enUna = ancho / (largo * 0.52);
+  // 0.64 ≈ ancho medio de un carácter en negrita extra (Sora/Outfit/Onest 800): con menos, la línea "cabe" en
+  // el cálculo pero no en pantalla y se parte donde no debe ("¿Ya" solo arriba).
+  const enUna = ancho / (largo * 0.64);
   // Una sola frase larga puede partirse hasta en 3 líneas en vez de achicarse hasta ser ilegible.
-  const envuelta = envolver > 1 ? Math.min((ancho * envolver * 0.8) / (largo * 0.52), ancho / (palabra * 0.62)) : 0;
+  // Partir una línea solo si en una sola quedaría chica (< 75 % del tamaño base); las cortas van enteras.
+  const envuelta = envolver > 1 && enUna < base * 0.75 ? Math.min((ancho * envolver * 0.8) / (largo * 0.64), ancho / (palabra * 0.62)) : 0;
   return Math.min(base, Math.max(enUna, envuelta));
 };
 
 /* ═════════════════ Escenas ═════════════════ */
 
-const Gancho: React.FC<Extract<Escena, { tipo: "gancho" }>> = ({ lineas, sub, alarma, etiqueta, dur }) => {
+const Gancho: React.FC<Extract<Escena, { tipo: "gancho" }>> = ({ lineas, sub, alarma, etiqueta, logo, dur }) => {
   const f = useCurrentFrame();
   const t = useTema();
   const { w, pad, v } = useLienzo();
-  const tam = ajustar(lineas, w - pad * 2, v ? 150 : 150, v ? 2 : lineas.length === 1 ? 3 : 1); // en vertical cada línea puede partirse en dos
+  const tam = ajustar(lineas, w - pad * 2, v ? 150 : 150, v ? 3 : lineas.length === 1 ? 3 : 1); // en vertical una línea larga puede partirse hasta en tres
   const golpeCam = 1 + 0.06 * Math.exp(-f / 4);
   const acento = alarma ? t.alarma : undefined;
   return (
     <Marco dur={dur} gap={v ? 34 : 28}>
       <div style={{ transform: `scale(${golpeCam})`, display: "flex", flexDirection: "column", alignItems: "center", gap: v ? 34 : 26 }}>
+        {logo && <t.Logo size={v ? 300 : 230} entrada={f} vivo={f > 50} />}
         {etiqueta && <Etiqueta texto={etiqueta} color={acento} />}
         {lineas.map((l, i) => (
           <Titular key={i} texto={l} entra={i * 7} tam={tam} acento={acento} />
@@ -212,7 +216,7 @@ const Notificaciones: React.FC<Extract<Escena, { tipo: "notificaciones" }>> = ({
           <div style={{ fontFamily: t.fuente, color: t.texto, fontSize: ancho * 0.27, fontWeight: 600, letterSpacing: "-0.04em" }}>{hora}</div>
           <div style={{ height: 20 }} />
           {items.map((n, i) => (
-            <Notificacion key={i} titulo={n.titulo} detalle={n.detalle} hora={n.hora} entra={6 + i * 10} tema={t} color={t.alarma} ancho={ancho * 0.9} />
+            <Notificacion key={i} titulo={n.titulo} detalle={n.detalle} hora={n.hora} entra={6 + i * 10} tema={t} color={n.color ?? t.alarma} icono={n.icono} ancho={ancho * 0.9} />
           )).reverse()}
         </div>
       </Telefono>
@@ -706,6 +710,120 @@ const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, 
   );
 };
 
+const Lista: React.FC<Extract<Escena, { tipo: "lista" }>> = ({ titulo, items, modo, total, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w, pad } = useLienzo();
+  const ancho = Math.min(w - pad * 2, v ? 920 : 1100);
+  const cada = Math.max(6, Math.floor((dur * 0.62) / items.length));
+  const color = modo === "marcar" ? t.acento : t.alarma;
+  const hechos = Math.max(0, Math.min(items.length, Math.floor((f - 8) / cada) + 1));
+  return (
+    <Marco dur={dur} gap={v ? 36 : 28}>
+      <Titular texto={titulo} entra={0} tam={ajustar([titulo], ancho, v ? 88 : 80)} acento={modo === "tachar" ? t.alarma : undefined} />
+      <div style={{ width: ancho, display: "flex", flexDirection: "column", gap: v ? 18 : 14 }}>
+        {items.map((it, i) => {
+          const en = 8 + i * cada;
+          const e = rebote(f, en, 14);
+          const raya = tw(f, en + 5, en + 12);
+          return (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 22, padding: v ? "22px 28px" : "16px 26px", borderRadius: 22, background: t.superficie,
+              border: `2px solid ${raya > 0 ? color : t.borde}`, transform: `translateX(${(1 - e) * -80}px)`, opacity: Math.min(1, e * 1.5), fontFamily: t.fuente,
+            }}>
+              <div style={{ width: v ? 50 : 42, height: v ? 50 : 42, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", background: raya > 0 ? color : "transparent", border: `3px solid ${color}`, color: modo === "marcar" ? t.textoCta : "#fff", fontWeight: 800, fontSize: v ? 30 : 24, transform: `scale(${0.6 + 0.4 * raya})` }}>
+                {raya > 0 ? (modo === "tachar" ? "✕" : modo === "sumar" ? "$" : "✓") : ""}
+              </div>
+              <div style={{ position: "relative", flex: 1, fontSize: v ? 44 : 36, fontWeight: 600, color: modo === "tachar" && raya > 0 ? t.gris : t.texto }}>
+                {it.texto}
+                {modo === "tachar" && <div style={{ position: "absolute", left: 0, top: "52%", height: 5, borderRadius: 3, width: `${raya * 100}%`, background: t.alarma }} />}
+              </div>
+              {it.monto && <div style={{ fontFamily: t.mono, fontSize: v ? 34 : 28, color: t.alarma, fontWeight: 600 }}>{it.monto}</div>}
+            </div>
+          );
+        })}
+      </div>
+      {total && (
+        <div style={{ fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
+          {total.etiqueta} {total.prefijo ?? ""}{Math.round(total.hasta * (hechos / items.length))}{total.sufijo ?? ""}
+        </div>
+      )}
+      {items.map((_, i) => <Sfx key={i} src={modo === "tachar" ? "error.mp3" : "pop.mp3"} en={8 + i * cada + 5} vol={0.22} />)}
+    </Marco>
+  );
+};
+
+const Voz: React.FC<Extract<Escena, { tipo: "voz" }>> = ({ orden, respuesta, evento, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w, pad } = useLienzo();
+  const ancho = Math.min(w - pad * 2, v ? 920 : 1000);
+  const habla = Math.round(dur * 0.4); // hasta aquí el dueño habla
+  const letras = Math.floor(tw(f, 6, habla, 0, orden.length, (x) => x));
+  const responde = habla + 8;
+  const barras = 40;
+  const hablando = f < habla;
+  return (
+    <Marco dur={dur} gap={v ? 36 : 26}>
+      <Etiqueta texto={hablando ? "● Usted le habla" : "Su asistente responde"} color={hablando ? t.alarma : t.acento} />
+      <div style={{ display: "flex", alignItems: "center", gap: 6, height: v ? 130 : 100 }}>
+        {new Array(barras).fill(0).map((_, i) => {
+          const n = (noise2D("vz", i / 4, f / 5) + 1) / 2;
+          const env = Math.sin((i / (barras - 1)) * Math.PI);
+          const activo = f < habla || (f >= responde && f < responde + 30);
+          return <div key={i} style={{ width: v ? 10 : 8, height: activo ? 10 + n * (v ? 120 : 90) * env : 8, borderRadius: 5, background: f < habla ? t.texto : t.acento, opacity: 0.9 }} />;
+        })}
+      </div>
+      <div style={{ width: ancho, alignSelf: "center", padding: v ? "26px 32px" : "20px 28px", borderRadius: 28, background: "rgba(255,255,255,0.08)", border: `1px solid ${t.borde}`, fontFamily: t.fuente, fontSize: v ? 44 : 38, fontWeight: 600, color: t.texto, lineHeight: 1.25 }}>
+        “{orden.slice(0, letras)}{letras < orden.length ? <span style={{ color: t.acento }}>|</span> : "”"}
+      </div>
+      {f >= responde && (
+        <div style={{ width: ancho, padding: v ? "26px 32px" : "20px 28px", borderRadius: 28, background: t.superficie, border: `2px solid ${t.acento}`, fontFamily: t.fuente, fontSize: v ? 40 : 34, color: t.texto, lineHeight: 1.3, transform: `scale(${rebote(f, responde, 14)})`, transformOrigin: "left top", boxShadow: `0 0 50px ${t.acento}33` }}>
+          {respuesta}
+        </div>
+      )}
+      {evento && f >= responde + 14 && (
+        <div style={{ display: "flex", alignItems: "center", gap: 22, padding: v ? "22px 30px" : "16px 26px", borderRadius: 24, background: t.gradiente, color: t.textoCta, fontFamily: t.fuente, transform: `translateY(${(1 - rebote(f, responde + 14, 16)) * 120}px)` }}>
+          <div style={{ fontFamily: t.mono, fontSize: v ? 26 : 22, fontWeight: 600 }}>📅 CALENDARIO</div>
+          <div style={{ fontSize: v ? 40 : 34, fontWeight: 800 }}>{evento.titulo}</div>
+          <div style={{ fontSize: v ? 34 : 28, fontWeight: 600 }}>{evento.cuando}</div>
+        </div>
+      )}
+      <Sfx src="contesta.mp3" en={responde} vol={0.4} />
+      <Sfx src="brillo.mp3" en={responde + 14} vol={0.4} />
+    </Marco>
+  );
+};
+
+const Agenda: React.FC<Extract<Escena, { tipo: "agenda" }>> = ({ pregunta, dia, items, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w, pad } = useLienzo();
+  const ancho = Math.min(w - pad * 2, v ? 900 : 1000);
+  const cada = Math.max(6, Math.floor((dur * 0.55) / items.length));
+  return (
+    <Marco dur={dur} gap={v ? 34 : 24}>
+      <div style={{ padding: v ? "20px 34px" : "16px 30px", borderRadius: 99, background: "rgba(255,255,255,0.08)", border: `1px solid ${t.borde}`, fontFamily: t.fuente, fontSize: v ? 44 : 38, fontWeight: 600, color: t.texto, display: "flex", alignItems: "center", gap: 16, opacity: tw(f, 0, 8) }}>
+        <IconoTelefono size={v ? 34 : 28} color={t.acento} /> “{pregunta}”
+      </div>
+      <div style={{ width: ancho, borderRadius: 32, background: t.superficie, border: `2px solid ${t.borde}`, overflow: "hidden", opacity: tw(f, 6, 14) }}>
+        <div style={{ padding: v ? "22px 30px" : "16px 26px", background: t.gradiente, color: t.textoCta, fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 40 : 34 }}>{dia}</div>
+        {items.map((it, i) => {
+          const en = 12 + i * cada;
+          const e = tw(f, en, en + 10);
+          return (
+            <div key={i} style={{ display: "flex", gap: 26, alignItems: "center", padding: v ? "22px 30px" : "16px 26px", borderTop: `1px solid ${t.borde}`, opacity: e, transform: `translateX(${(1 - e) * 60}px)`, fontFamily: t.fuente }}>
+              <div style={{ fontFamily: t.mono, fontSize: v ? 32 : 26, color: t.acento, width: v ? 150 : 130 }}>{it.hora}</div>
+              <div style={{ fontSize: v ? 40 : 34, fontWeight: 600, color: t.texto }}>{it.texto}</div>
+            </div>
+          );
+        })}
+      </div>
+      {items.map((_, i) => <Sfx key={i} src="pop.mp3" en={12 + i * cada} vol={0.25} />)}
+    </Marco>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   switch (escena.tipo) {
     case "gancho": return <Gancho {...escena} />;
@@ -724,6 +842,9 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "rompecabezas": return <Rompecabezas {...escena} />;
     case "dato": return <Dato {...escena} />;
     case "semanas": return <Semanas {...escena} />;
+    case "lista": return <Lista {...escena} />;
+    case "voz": return <Voz {...escena} />;
+    case "agenda": return <Agenda {...escena} />;
     case "cierre": return <Cierre {...escena} />;
   }
 };
