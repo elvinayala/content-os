@@ -97,12 +97,16 @@ const real = $('Modo programado').isExecuted ? $('Modo programado').first().json
 // sembrar (una sola vez, por webhook): marca como ya felicitados a los que pasaron de 200 sin mandarles nada.
 const sembrar = $('Modo simulación').isExecuted ? $('Modo simulación').first().json.sembrar === true : false;
 const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Puerto_Rico' });
+const PROPIAS = ["883624268168419", "2010206776851", "1114829350772277", "1564735818086768", "503566678495233"];
+// Una cuenta puesta en 2+ clientes o que es nuestra = dato malo en Pulse: no se cuenta (no felicitar con leads ajenos).
+const cuentas = ($json.list || []).map((f) => String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, ''));
+const repetida = (c) => cuentas.filter((x) => x === c).length > 1;
 const out = [];
 for (const f of ($json.list || [])) {
   const cuenta = String(f['ID-cuenta-publicitaria'] || '').replace(/\\D/g, '');
   const inicio = String(f['fecha-inicio-campaña'] || '').slice(0, 10);
   const fel = String(f.felicitaciones ?? '').trim();
-  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200') continue;
+  if (!cuenta || !/^\\d{4}-\\d{2}-\\d{2}$/.test(inicio) || fel === '200' || PROPIAS.includes(cuenta) || repetida(cuenta)) continue;
   out.push({ json: { id: f.Id, nombre: f.nombre || '', empresa: f.empresa || '', telefono: String(f.telefono || '').replace(/\\D/g, ''), cuenta, inicio, hoy, felicitaciones: fel, real, sembrar } });
 }
 return out;` }, pos(3, 0)),

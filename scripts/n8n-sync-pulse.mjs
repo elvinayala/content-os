@@ -39,6 +39,9 @@ const LINK = { traffiker: "ct33f49i8som5rx", admin: "c2c88wzry5od96o", industria
 const CRED_NOCODB = { id: "V2awKCkA1AJCFG27", name: "NocoDB Token account" };
 const CRED_FACEBOOK = { id: "B89LULeA8wFpxWpo", name: "Levelito Acoount management" };
 const ERROR_WORKFLOW = "fEOX9Q3Szkf6bLQq"; // "Notificación Error"
+// Cuentas publicitarias NUESTRAS (LU principal + respaldo, AIB, Resuelto, Shadow): si un cliente la tiene puesta por
+// error en Pulse, no se le calcula fecha de inicio (26/sep: María Fernández y Nancy Marrero tenían el respaldo de LU).
+const CUENTAS_PROPIAS = ["883624268168419", "2010206776851", "1114829350772277", "1564735818086768", "503566678495233"];
 const NOMBRE = "A-) Sync Pulse → NocoDB v1";
 const NOMBRE_CRED = "Pulse ↔ n8n (x-pulse-secret)";
 
@@ -164,7 +167,7 @@ return { json: { ...plan, nuevoId, destino: hit ? (hit.nombre || '') : null, acc
     nocoHttp("Enlazar", "POST", `=${NOCODB}/tables/${T.clientes}/links/{{ $('Elegir destino').item.json.linkCol }}/records/{{ $('Elegir destino').item.json.filaId }}`, pos(15, -1), "={{ JSON.stringify({ Id: $('Elegir destino').item.json.nuevoId }) }}"),
 
     // fecha de la primera campaña Level Up (Meta), como hacía el viejo
-    nodo("¿Buscar campañas?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(9, 1)),
+    nodo("¿Buscar campañas?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ ($json.cuentaCambio === true || !($json.fila && $json.fila['fecha-inicio-campaña'])) && /^\\d{6,}$/.test(String($json.campos['ID-cuenta-publicitaria'] || '')) && !" + JSON.stringify(CUENTAS_PROPIAS) + ".includes(String($json.campos['ID-cuenta-publicitaria']).trim()) }}", "", "true", "boolean")], combinator: "and" }, options: {} }, pos(9, 1)),
     nodo("Campañas de Meta", "n8n-nodes-base.httpRequest", 4.2, { url: "=https://graph.facebook.com/v23.0/act_{{ $json.campos['ID-cuenta-publicitaria'] }}/campaigns", authentication: "predefinedCredentialType", nodeCredentialType: "facebookGraphApi", sendQuery: true, queryParameters: { parameters: [
       { name: "filtering", value: "[{\"field\":\"effective_status\",\"operator\":\"IN\",\"value\":[\"ACTIVE\",\"PAUSED\",\"DELETED\",\"ARCHIVED\",\"IN_PROCESS\",\"WITH_ISSUES\"]}]" },
       { name: "limit", value: "50" },

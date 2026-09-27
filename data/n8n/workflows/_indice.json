@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-09-26T18:24:46.467Z",
+  "exportadoEl": "2026-09-27T03:16:19.739Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 103,
   "workflows": [
@@ -358,7 +358,7 @@
       "nombre": "H-) Felicitaciones por leads v2",
       "activo": true,
       "archivo": "3ylIqOgWiiW37lWx-h-felicitaciones-por-leads-v2.json",
-      "actualizadoEl": "2026-09-26T18:10:50.193Z"
+      "actualizadoEl": "2026-09-27T03:15:37.794Z"
     },
     {
       "id": "3NpTfPN4uQseNhq5",
@@ -631,7 +631,7 @@
       "nombre": "A-) Sync Pulse → NocoDB v1",
       "activo": true,
       "archivo": "RyeQFDXnB429XG0Q-a-sync-pulse-nocodb-v1.json",
-      "actualizadoEl": "2026-09-26T18:11:17.687Z"
+      "actualizadoEl": "2026-09-27T03:15:36.712Z"
     },
     {
       "id": "RXMCAuLoLhZCE2Sv",
