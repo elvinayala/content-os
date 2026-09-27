@@ -14,3 +14,5 @@ metadata:
 **Dónde:** canvas https://claude.ai/code/artifact/010cf937-bafa-4bf3-8183-f5a4d0e709f4 (página "Sistema final" + "Exploración") · kit completo y `logo-generador.py` (Python que emite el SVG) en `AGENTE CONTENIDO/vault/proyectos/bori-crecimiento/marca/` · en el repo de Bori: `public/marca/` (logo.svg, favicons, og.png) y `public/sello-bori.png`.
 
 **How to apply:** cualquier pieza nueva de Bori sale del generador o de `public/marca/logo.svg`, nunca del emoji 🐸. Landing y app ya llevan la marca (commit 0c9bbd5). Ver [[bori-backend-real]], [[bori-plan-crecimiento]].
+
+**Ojo (Elvin, 27/sep/2026):** este coquí cobre es SOLO de Bori (la agencia de marketing en una sola plataforma). AI Borinquen (agentes de IA de voz y chat a la medida) tiene su propio logo: el coquí de circuitos verde/azul (`public/marcas/ai-borinquen-logo-dark.png`). Nunca usar uno por el otro. Ver [[remi-motion]].

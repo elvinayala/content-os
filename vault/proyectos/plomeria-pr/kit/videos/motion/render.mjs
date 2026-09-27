@@ -60,6 +60,49 @@ const VIDEOS = {
       escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Por escrito</div><h2>${palabras("12 meses de garantía.", 10.85)}</h2><p class="sub e" ${entra(11.6)}>Si algo falla, volvemos en 48 horas.</p>`),
     ].join(""),
   },
+  // ── Reclutamiento de oficios (27/sep/2026, Elvin: "los 4 videos antes de prender"). Mismos cortes; sin cifras ni
+  // porcentajes (se explican en la entrevista). armar-oficios.sh les pega la historia del puesto y cta-rec.
+  "rec-aire": {
+    dur: 13.4,
+    html: [
+      escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Técnicos de aire acondicionado</div><h1 class="m">${palabras("¿Tienes licencia de aire y te faltan clientes?", 0.25)}</h1>`),
+      escena(3.2, 6.2, `<h1>${palabras("Nosotros te los", 3.3)}<br>${palabras("conseguimos.", 3.75, "o")}</h1>`),
+      escena(6.2, 10.6, `<div class="lista">${checks(["Ponemos los clientes y la publicidad", "Tú decides qué trabajos coges", "Mantenimientos que se repiten", "Cobras todos los viernes"], 6.35)}</div>`),
+      escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Requisito</div><h2>${palabras("Licencia de técnico de refrigeración", 10.85)}</h2><p class="sub e" ${entra(11.7)}>y EPA 608 · 2 cupos por área</p>`),
+    ].join(""),
+  },
+  "rec-handyman": {
+    dur: 13.4,
+    html: [
+      escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Handyman</div><h1 class="m">${palabras("¿Eres bueno con las manos y quieres más trabajo?", 0.25)}</h1>`),
+      escena(3.2, 6.2, `<h2>${palabras("TV, muebles, puertas, cerraduras, drywall.", 3.3)}</h2><p class="sub e" ${entra(4.3)}>Clientes en tu zona, <b class="o">sin salir a buscarlos.</b></p>`),
+      escena(6.2, 10.6, `<div class="lista">${checks(["Ponemos los clientes y la publicidad", "Tú decides qué trabajos coges", "Precio fijo: sin regatear", "Cobras todos los viernes"], 6.35)}</div>`),
+      escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Requisito</div><h2>${palabras("Registro de contratista en DACO", 10.85)}</h2><p class="sub e" ${entra(11.7)}>o en trámite · 2 cupos por área</p>`),
+    ].join(""),
+  },
+  "rec-perito": {
+    dur: 13.4,
+    html: [
+      escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Peritos electricistas</div><h1 class="m">${palabras("¿Eres perito y quieres clientes sin buscarlos?", 0.25)}</h1>`),
+      escena(3.2, 6.2, `<h1>${palabras("Nosotros te los", 3.3)}<br>${palabras("conseguimos.", 3.75, "o")}</h1>`),
+      escena(6.2, 10.6, `<div class="lista">${checks(["Receptáculos, abanicos, breakers, 220", "Tú decides qué trabajos coges", "Pagamos la publicidad", "Cobras todos los viernes"], 6.35)}</div>`),
+      escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Requisito</div><h2>${palabras("Licencia de Perito Electricista", 10.85)}</h2><p class="sub e" ${entra(11.6)}>2 cupos por área</p>`),
+    ].join(""),
+  },
+  "rec-cotizador": {
+    dur: 13.4,
+    html: [
+      escena(0, 3.2, `<div class="eye e" ${entra(0.1)}>Cotizador de proyectos</div><h1 style="font-size:92px">${palabras("¿Sabes cotizar remodelaciones?", 0.25)}</h1>`),
+      escena(3.2, 6.2, `<h2>${palabras("Cocinas, baños, piscinas y techos.", 3.3)}</h2><p class="sub e" ${entra(4.2)}>Nosotros ponemos los clientes. <b class="o">Tú vas, mides y cotizas.</b></p>`),
+      escena(6.2, 10.6, `<div class="lista">${checks(["Comisión por cada proyecto vendido", "Cotizas con nuestra app", "Tú organizas tu agenda", "Cobras todos los viernes"], 6.35)}</div>`),
+      escena(10.6, 13.4, `<div class="eye e" ${entra(10.7)}>Buscamos</div><h2>${palabras("Experiencia en construcción", 10.85)}</h2><p class="sub e" ${entra(11.6)}>o venta de proyectos · pocos cupos</p>`),
+    ].join(""),
+  },
+  // Cierre de los videos de reclutamiento.
+  "cta-rec": {
+    dur: 2.6,
+    html: escena(0, 2.6, `<div class="marca e" ${entra(0.05)}>${LOGO}<span>resuelto</span></div><p class="sub e" ${entra(0.2)}>¿Eres tú?</p><h2 class="cta-h">${palabras("Escríbenos un mensaje", 0.35)}</h2><p class="sub e" ${entra(0.9)}>y cuadramos una entrevista por videollamada.</p>`),
+  },
   // Tarjeta final con el CTA suave (va después del cierre de la ciudad en los 4 videos).
   cta: {
     dur: 2.6,

@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const FLY = path.join(AQUI, "../flyers-oficios");
@@ -25,6 +26,10 @@ async function api(p, body) {
     if (j.error) throw new Error(p + ": " + JSON.stringify(j.error)); return j;
   }
 }
+const subirVideo = async (archivo, n) => { const f = new FormData(); f.append("name", n); f.append("source", new Blob([fs.readFileSync(archivo)], { type: "video/mp4" }), "v.mp4"); return (await api(`${ACT}/advideos`, f)).id; };
+const esperarVideo = async (id) => { for (let i = 0; i < 45; i++) { const r = await (await fetch(`https://graph.facebook.com/v25.0/${id}?fields=status&access_token=${T}`)).json(); if (r.status?.video_status === "ready") return; await new Promise((z) => setTimeout(z, 8000)); } throw new Error("El video no terminó de procesarse: " + id); };
+const miniatura = (video) => { const jpg = video.replace(/\.mp4$/, ".mini.jpg"); execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", "1.8", "-i", video, "-frames:v", "1", "-q:v", "3", jpg]); return jpg; };
+const VID = path.join(AQUI, "../videos/oficios");
 const subirImagen = async (f) => { const d = new FormData(); d.append("bytes", fs.readFileSync(f).toString("base64")); return Object.values((await api(`${ACT}/adimages`, d)).images)[0].hash; };
 const CTA = { type: "MESSAGE_PAGE", value: { app_destination: "MESSENGER" } };
 const DESTINOS = { call_to_actions: [{ type: "MESSAGE_PAGE", value: { app_destination: "MESSENGER", link: "https://fb.com/messenger_doc/" } }, { type: "INSTAGRAM_MESSAGE", value: { app_destination: "INSTAGRAM_DIRECT", link: "https://www.instagram.com/" } }], optimization_type: "DOF_MESSAGING_DESTINATION", additional_data: { is_click_to_message: true } };
@@ -43,13 +48,22 @@ plan.campana ??= (await api(`${ACT}/campaigns`, { name: "Resuelto · Oficios · 
 for (const [k, p] of Object.entries(PUESTOS)) {
   const c = (plan.conjuntos[k] ??= { anuncios: {} });
   c.adset ??= (await api(`${ACT}/adsets`, { name: `${p.nombre} · Puerto Rico · Messenger+IG`, campaign_id: plan.campana, status: "ACTIVE", daily_budget: 1000, billing_event: "IMPRESSIONS", optimization_goal: "CONVERSATIONS", destination_type: "MESSAGING_INSTAGRAM_DIRECT_MESSENGER", bid_strategy: "LOWEST_COST_WITHOUT_CAP", promoted_object: { page_id: PAGE }, targeting: { age_min: 18, age_max: 65, geo_locations: { countries: ["PR"] } } })).id; guardar();
-  for (const f of ["feed", "story"]) {
+  for (const f of ["feed", "story", "video"]) {
     const a = (c.anuncios[f] ??= {}); if (a.ad) continue;
-    a.imagen ??= await subirImagen(path.join(FLY, `oficio-${k}-${f}.png`)); guardar();
-    a.creativo ??= (await api(`${ACT}/adcreatives`, { name: `Oficios · ${p.nombre} · ${f}`, object_story_spec: { page_id: PAGE, instagram_user_id: IG, link_data: { link: "https://fb.com/messenger_doc/", message: p.mensaje, name: p.titulo, description: "Resuelto · toda la isla", image_hash: a.imagen, call_to_action: CTA } }, asset_feed_spec: DESTINOS, degrees_of_freedom_spec: SIN_ADV })).id; guardar();
-    a.ad = (await api(`${ACT}/ads`, { name: `${p.nombre} · ${f === "feed" ? "Flyer" : "Historia"}`, adset_id: c.adset, creative: { creative_id: a.creativo }, status: "ACTIVE" })).id; guardar();
+    if (f === "video") {
+      // 27/sep: video de 19 s por puesto (kit/videos/armar-oficios.sh), pedido de Elvin antes de prender.
+      const mp4 = path.join(VID, `resuelto-oficio-${k}.mp4`);
+      a.video ??= await subirVideo(mp4, `Resuelto · Oficios · ${p.nombre} 19s`); guardar();
+      a.miniatura ??= await subirImagen(miniatura(mp4)); guardar();
+      await esperarVideo(a.video);
+      a.creativo ??= (await api(`${ACT}/adcreatives`, { name: `Oficios · ${p.nombre} · video`, object_story_spec: { page_id: PAGE, instagram_user_id: IG, video_data: { video_id: a.video, image_hash: a.miniatura, message: p.mensaje, title: p.titulo, link_description: "Resuelto · toda la isla", call_to_action: CTA } }, asset_feed_spec: DESTINOS, degrees_of_freedom_spec: SIN_ADV })).id; guardar();
+    } else {
+      a.imagen ??= await subirImagen(path.join(FLY, `oficio-${k}-${f}.png`)); guardar();
+      a.creativo ??= (await api(`${ACT}/adcreatives`, { name: `Oficios · ${p.nombre} · ${f}`, object_story_spec: { page_id: PAGE, instagram_user_id: IG, link_data: { link: "https://fb.com/messenger_doc/", message: p.mensaje, name: p.titulo, description: "Resuelto · toda la isla", image_hash: a.imagen, call_to_action: CTA } }, asset_feed_spec: DESTINOS, degrees_of_freedom_spec: SIN_ADV })).id; guardar();
+    }
+    a.ad = (await api(`${ACT}/ads`, { name: `${p.nombre} · ${f === "feed" ? "Flyer" : f === "story" ? "Historia" : "Video 19s"}`, adset_id: c.adset, creative: { creative_id: a.creativo }, status: "ACTIVE" })).id; guardar();
     console.log("anuncio", k, f);
   }
 }
-plan.estado = "Campaña EN PAUSA (Elvin la prende). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla.";
+plan.estado = "Campaña EN PAUSA (Elvin: se prende el lunes). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla; flyer + historia + video por puesto.";
 guardar(); console.log(`listo: campaña ${plan.campana} · ${OUT}`);
