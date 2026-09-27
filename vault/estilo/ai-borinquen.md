@@ -81,8 +81,9 @@ trabaja usted".
 **Ángulo D — hooks:** "Esto es exactamente lo que pasa cuando un negocio trabaja
 con nosotros" · "El miedo no es la tecnología, es comprar algo que después nadie
 sabe usar" · "No le entregamos una herramienta y desaparecemos".
-Refuerzo de D: **funcionando en 21 días o no le corre la mensualidad; sin contrato
-de permanencia.**
+Refuerzo de D (corregido por Elvin, 27/sep/2026 — el "21 días / o no corre la mensualidad" NO es real, no usarlo):
+**AutoFlow: su sistema listo en 7 días · 45 días de acompañamiento, soporte y optimización · y si quiere,
+soporte para siempre.**
 
 **Medición (no decidir por CPL):** leads → citas → shows → propuestas → ventas →
 ticket promedio → CAC → MRR activado. No matar un ángulo antes de ~30-40 leads u
