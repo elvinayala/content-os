@@ -2,7 +2,7 @@
 // (secciones, quién ve qué, formato del texto y el contenido inicial). Tests en tests/empresa.test.mjs.
 
 // Mismos valores que POLITICA (rrhh.ts) y BONO_REFERIDO (carreras-reglas.ts); el test verifica que no se separen.
-export const POLITICA_TEXTO = { vacacionesAnual: 7, enfermedadAnual: 3, maternidad: 15, mesesParaVacaciones: 12, bonoReferido: 100 };
+export const POLITICA_TEXTO = { vacacionesAnual: 8, enfermedadAnual: 5, maternidad: 30, mesesParaVacaciones: 12, bonoReferido: 100 };
 const POLITICA = POLITICA_TEXTO;
 const BONO_REFERIDO = POLITICA_TEXTO.bonoReferido;
 

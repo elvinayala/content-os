@@ -536,9 +536,9 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   con URL firmada (`prepararSubida` → PUT → `confirmarSubidaAction`; en local pasa por el servidor);
   se abren por `/ritmo/archivo/[id]` y `/ritmo/foto/[userId]` (maestra o la propia persona, con bitácora).
   El empleado ve su ficha ("Mi ficha") y puede subir sus documentos (no nómina).
-- **Tiempo libre** (`lib/desempeno/rrhh.ts`, tests `tests/rrhh.test.mjs`): 7 días/año acumulados por mes
-  desde el ingreso, se solicitan a los 12 meses; enfermedad 3/año con certificado (si no → vacaciones);
-  maternidad 15 por evento; lo que no alcance = sin paga. RR.HH. registra las ausencias. Aviso de 12 meses:
+- **Tiempo libre** (`lib/desempeno/rrhh.ts`, tests `tests/rrhh.test.mjs`): **8** días/año acumulados por mes
+  desde el ingreso, se solicitan a los 12 meses; enfermedad **5**/año con certificado (si no → vacaciones);
+  maternidad **30** por evento (subidos el 27/sep, antes 7/3/15); lo que no alcance = sin paga. RR.HH. registra las ausencias. Aviso de 12 meses:
   banner en Hoy/ficha + cron `?tarea=aniversarios` (diario 9 AM PR, a la persona y a RR.HH./Carilin).
 - **Nómina estimada** del mes siguiente: salario + ajustes (`desempeno_ajustes`) − días sin paga.
 - **Solicitudes** (`/ritmo/solicitudes`, `desempeno_solicitudes`, `lib/desempeno/solicitudes.ts`): día libre,

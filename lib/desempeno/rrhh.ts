@@ -1,16 +1,16 @@
 // Reglas de RR.HH. de Ritmo (puras; tests/rrhh.test.mjs). Política de Elvin (25/sep/2026) para
 // empleados de operaciones con sueldo fijo:
-//  - Vacaciones: 7 días al año que se ACUMULAN por mes completo desde la fecha de ingreso
-//    (7/12 ≈ 0.58 días/mes). Se pueden SOLICITAR al cumplir 12 meses (el sistema avisa).
+//  - Vacaciones: 8 días al año que se ACUMULAN por mes completo desde la fecha de ingreso
+//    (8/12 ≈ 0.67 días/mes). Subió de 7 a 8 el 27/sep (Elvin). Se pueden SOLICITAR al cumplir 12 meses (el sistema avisa).
 //    Una ausencia se descuenta de lo acumulado aunque aún no tenga 12 meses.
-//  - Enfermedad: 3 días por año calendario, solo con certificado médico válido. Sin certificado
+//  - Enfermedad: 5 días por año calendario (antes 3; 27/sep), solo con certificado médico válido. Sin certificado
 //    (o pasado el cupo) se cobra de vacaciones.
-//  - Maternidad: 15 días por evento.
+//  - Maternidad: 30 días por evento (antes 15; 27/sep).
 //  - Lo que no alcance a cubrir vacaciones queda "sin paga".
 //  - Días → horas: 8 h por día (9-6 con 1 h de almuerzo).
 // ⚠️ Para quien esté en nómina formal (PR o Colombia) la ley pone mínimos más altos: revisar con abogado.
 
-export const POLITICA = { vacacionesAnual: 7, enfermedadAnual: 3, maternidad: 15, horasDia: 8, mesesParaVacaciones: 12 };
+export const POLITICA = { vacacionesAnual: 8, enfermedadAnual: 5, maternidad: 30, horasDia: 8, mesesParaVacaciones: 12 };
 
 export type TipoAusencia = "vacaciones" | "enfermedad" | "maternidad" | "personal";
 

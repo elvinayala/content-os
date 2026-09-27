@@ -12,36 +12,38 @@ test("meses completos y fecha de los 12 meses", () => {
   assert.equal(mesSiguiente("2026-12-15"), "2027-01");
 });
 
-test("vacaciones: 7 al año acumuladas por mes; se solicitan a los 12 meses", () => {
+test("vacaciones: 8 al año acumuladas por mes; se solicitan a los 12 meses", () => {
   const s6 = saldos("2026-03-01", [], "2026-09-01");
-  assert.equal(s6.vacaciones.acumuladas, 3.5);
+  assert.equal(s6.vacaciones.acumuladas, 4);
   assert.equal(s6.puedeSolicitar, false);
   const s12 = saldos("2025-09-01", [], "2026-09-01");
-  assert.equal(s12.vacaciones.acumuladas, 7);
+  assert.equal(s12.vacaciones.acumuladas, 8);
   assert.equal(s12.puedeSolicitar, true);
 });
 
-test("enfermedad: con certificado usa el cupo de 3; sin certificado o pasado el cupo va a vacaciones", () => {
+test("enfermedad: con certificado usa el cupo de 5; sin certificado o pasado el cupo va a vacaciones", () => {
   const c = cargosAusencias("2025-01-01", [
     { tipo: "enfermedad", desde: "2026-02-02", hasta: "2026-02-03", dias: 2, certificado: true },
     { tipo: "enfermedad", desde: "2026-03-02", hasta: "2026-03-03", dias: 2, certificado: true },
+    { tipo: "enfermedad", desde: "2026-03-16", hasta: "2026-03-17", dias: 2, certificado: true },
     { tipo: "enfermedad", desde: "2026-04-01", hasta: "2026-04-01", dias: 1, certificado: false },
   ]);
   assert.deepEqual(c[0].cargo, { vacaciones: 0, enfermedad: 2, maternidad: 0, sinPaga: 0 });
-  assert.deepEqual(c[1].cargo, { vacaciones: 1, enfermedad: 1, maternidad: 0, sinPaga: 0 });
-  assert.deepEqual(c[2].cargo, { vacaciones: 1, enfermedad: 0, maternidad: 0, sinPaga: 0 });
+  assert.deepEqual(c[1].cargo, { vacaciones: 0, enfermedad: 2, maternidad: 0, sinPaga: 0 });
+  assert.deepEqual(c[2].cargo, { vacaciones: 1, enfermedad: 1, maternidad: 0, sinPaga: 0 });
+  assert.deepEqual(c[3].cargo, { vacaciones: 1, enfermedad: 0, maternidad: 0, sinPaga: 0 });
 });
 
 test("ausencia antes de acumular: lo que falte queda sin paga", () => {
   const [a] = cargosAusencias("2026-07-01", [{ tipo: "personal", desde: "2026-09-10", hasta: "2026-09-11", dias: 2, certificado: false }]);
-  // 2 meses → 1.17 días acumulados
-  assert.equal(a.cargo.vacaciones, 1.17);
-  assert.equal(a.cargo.sinPaga, 0.83);
+  // 2 meses → 1.33 días acumulados
+  assert.equal(a.cargo.vacaciones, 1.33);
+  assert.equal(a.cargo.sinPaga, 0.67);
 });
 
-test("maternidad: 15 días por evento", () => {
-  const [a] = cargosAusencias("2024-01-01", [{ tipo: "maternidad", desde: "2026-05-01", hasta: "2026-05-21", dias: 15, certificado: false }]);
-  assert.equal(a.cargo.maternidad, 15);
+test("maternidad: 30 días por evento", () => {
+  const [a] = cargosAusencias("2024-01-01", [{ tipo: "maternidad", desde: "2026-05-01", hasta: "2026-06-11", dias: 30, certificado: false }]);
+  assert.equal(a.cargo.maternidad, 30);
   assert.equal(a.cargo.sinPaga, 0);
 });
 
@@ -54,10 +56,10 @@ test("nómina del mes: base + ajustes − días sin paga", () => {
     ingreso: "2026-09-01",
     ausencias: [{ tipo: "personal", desde: "2026-10-05", hasta: "2026-10-05", dias: 1, certificado: false }],
   });
-  // 1 mes → 0.58 días acumulados → 0.42 sin paga → 1100/22 × 0.42 = 21
-  assert.equal(n.diasSinPaga, 0.42);
-  assert.equal(n.descuentoSinPaga, 21);
-  assert.equal(n.total, 1129);
+  // 1 mes → 0.67 días acumulados → 0.33 sin paga → 1100/22 × 0.33 = 16.5
+  assert.equal(n.diasSinPaga, 0.33);
+  assert.equal(n.descuentoSinPaga, 16.5);
+  assert.equal(n.total, 1133.5);
 });
 
 test("solicitudes: supervisor aprueba, RR.HH. firma; nadie decide lo suyo", async () => {
