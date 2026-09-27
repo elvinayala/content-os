@@ -73,3 +73,5 @@ El link lo manda el CLOSER al cerrar la venta (no Jessica); Jessica recibe la fi
 Gotcha Slack: nunca poner un link entre **negritas** en mensajes de Slack — los asteriscos quedan pegados al URL y el link se rompe (le pasó a Jessica el 24/sep).
 
 **24/sep/2026 — próximo nivel EN PROD** (5 partes aprobadas por Elvin): ocultar columnas/etiquetas (no borrar), automatizaciones configurables (⚡, tabla pulse_reglas, exigir razón de baja al pasar a OFFBOARDED), Mi día + DM 8 AM lun–vie a Jessica y Carilin DESDE EL BOT (nunca desde la cuenta de Elvin), ⌘K + vistas guardadas + celular, y "Preguntarle al CRM" (/pulse/preguntar, Opus 5 effort low, ~15 s, solo tableros visibles). Datos: 17 onboardings detenidos +48 h al arrancar. Detalle en CLAUDE.md → Pulse → Próximo nivel.
+
+**26/sep/2026 — Tesorería mensual**: tablero privado /pulse/tesoreria-mensual SOLO Level Up para María García (tesorera LU, maria@, Slack U091X0MQXV0) + Carilin y Aure; churn, LTV, ticket e ingresos se calculan solos (columnas con settings.formula). María NO ve AI Borinquen (Elvin): bloqueo en pulse_board_bloqueos.
