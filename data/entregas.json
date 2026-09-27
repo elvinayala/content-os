@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-27T14:08:32.149Z",
+  "actualizadoEl": "2026-09-27T15:17:13.099Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -10336,20 +10336,6 @@
       "modelo": "remotion"
     },
     {
-      "id": "motion-remi-lu-03-doctor",
-      "tipo": "anuncio",
-      "marca": "level-up",
-      "titulo": "Eres doctor, no marketero",
-      "contenido": "Anuncio de motion graphics de la fábrica de Remi (lanzamiento 27/sep/2026). Guion en motion/src/fabrica/anuncios.ts (id lu-03-doctor). Archivo: motion/out/fabrica/lu-03-doctor.mp4.",
-      "angulo": "Salud · sin tiempo",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T06:03:10.656Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 25 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-03-doctor.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wMy1kb2N0b3IubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDQ4ODk5MCwiZXhwIjoxODIyMDI0OTkwfQ.RR1RYn9r8BO7-fsI9YdJGQVugvN6xQOQtTnWId-ezNQbek28FpFJN4hqVUhY314oNJg9NrSKlNZfgYtbtTXyZg",
-      "modelo": "remotion"
-    },
-    {
       "id": "motion-remi-lu-04-reel",
       "tipo": "anuncio",
       "marca": "level-up",
@@ -10361,20 +10347,6 @@
       "estado": "nuevo",
       "formato": "motion 9:16 · 15 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-04-reel.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wNC1yZWVsLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA0ODg5OTQsImV4cCI6MTgyMjAyNDk5NH0.n_zjG_uizYGEqfl524X7Z8c-2XP_lyTqhf8CX2nTEy7DflTEQ3Zu-kxUVDkEnZpmU_8Rj2GJlv3wZwlcfRyP3A",
-      "modelo": "remotion"
-    },
-    {
-      "id": "motion-remi-lu-05-casos",
-      "tipo": "anuncio",
-      "marca": "level-up",
-      "titulo": "No vendemos anuncios. Instalamos sistemas (casos)",
-      "contenido": "Anuncio de motion graphics de la fábrica de Remi (lanzamiento 27/sep/2026). Guion en motion/src/fabrica/anuncios.ts (id lu-05-casos). Archivo: motion/out/fabrica/lu-05-casos.mp4.",
-      "angulo": "Prueba social",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T06:03:21.407Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 20 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-05-casos.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wNS1jYXNvcy5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNDg5MDAxLCJleHAiOjE4MjIwMjUwMDF9.fudLkuVsB7timlcvcmSs2P3W0SkJXj6XYaaEYFB44YiEOgJ6sMiDhV6ui5bXGk1PBSYkgM9c5Y3nw-UQkRMWkQ",
       "modelo": "remotion"
     },
     {
@@ -10784,17 +10756,45 @@
       "modelo": "remotion"
     },
     {
+      "id": "motion-remi-lu-03-doctor",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Eres doctor, no marketero (con Dr. Bryan Vega)",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-03-doctor.mp4.",
+      "angulo": "Salud · sin tiempo",
+      "agente": "Remi",
+      "creadoEl": "2026-09-27T15:16:23.216Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 25 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-03-doctor.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wMy1kb2N0b3IubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDUyMjE4MywiZXhwIjoxODIyMDU4MTgzfQ.m49rkZD_tQ4QyfnU_M55LTHSw0USqBcnDRbpKcG677u7xlXes10uemvC2JCAB9ZAag6mpZpY4nn3XMvTKDSlfg",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-lu-05-casos",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "No vendemos anuncios. Instalamos sistemas (+100 negocios, Dr. Bryan Vega)",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-05-casos.mp4.",
+      "angulo": "Prueba social",
+      "agente": "Remi",
+      "creadoEl": "2026-09-27T15:16:30.811Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 20 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-05-casos.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wNS1jYXNvcy5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNTIyMTkwLCJleHAiOjE4MjIwNTgxOTB9.-0hAbABUU-q4U6gGe_w8Yq6xESm47wAWD3SXeIN_lnhg3w0q5ouIe1DzcLI4x_a4Y3Oygr8akOYQ8_byN2fhdw",
+      "modelo": "remotion"
+    },
+    {
       "id": "motion-remi-lu-09-escalar-10k-9x16",
       "tipo": "anuncio",
       "marca": "level-up",
       "titulo": "¿Ya facturas $10K al mes? Lo difícil es escalar (9:16)",
-      "contenido": "Lote 2 de la fábrica de Remi (30 s, 27/sep/2026). Guion aprobado en vault/proyectos/motion/guiones-lote-2.md; datos en motion/src/fabrica/anuncios.ts (LOTE2, lu-09-escalar-10k). Archivo: motion/out/fabrica/lu-09-escalar-10k-9x16.mp4.",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-09-escalar-10k-9x16.mp4.",
       "angulo": "Negocios de $10K+ que quieren escalar",
       "agente": "Remi",
-      "creadoEl": "2026-09-27T14:08:02.264Z",
+      "creadoEl": "2026-09-27T15:16:43.475Z",
       "estado": "nuevo",
       "formato": "motion 9:16 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-09-escalar-10k-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wOS1lc2NhbGFyLTEway05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MTgwODIsImV4cCI6MTgyMjA1NDA4Mn0.IMnEucrrWZGa2pFPHPzGCnLfnS0QBPVak5mt758B8ce9dzx2eMOFhFN-3fGr9wXIH8Q5ykOhwc7z6lMNpr8T2A",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-09-escalar-10k-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wOS1lc2NhbGFyLTEway05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MjIyMDMsImV4cCI6MTgyMjA1ODIwM30.oxp5d1bmLahiRLxGDc5jcp7UdBvB9fIS-8snL0_qJSMUVgR6OLqQdRMUEskFsjAr_ek9uNrBqaqn9w3QNaaZJQ",
       "modelo": "remotion"
     },
     {
@@ -10802,13 +10802,13 @@
       "tipo": "anuncio",
       "marca": "level-up",
       "titulo": "¿Ya facturas $10K al mes? Lo difícil es escalar (16:9)",
-      "contenido": "Lote 2 de la fábrica de Remi (30 s, 27/sep/2026). Guion aprobado en vault/proyectos/motion/guiones-lote-2.md; datos en motion/src/fabrica/anuncios.ts (LOTE2, lu-09-escalar-10k). Archivo: motion/out/fabrica/lu-09-escalar-10k-16x9.mp4.",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-09-escalar-10k-16x9.mp4.",
       "angulo": "Negocios de $10K+ que quieren escalar",
       "agente": "Remi",
-      "creadoEl": "2026-09-27T14:08:12.679Z",
+      "creadoEl": "2026-09-27T15:16:55.034Z",
       "estado": "nuevo",
       "formato": "motion 16:9 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-09-escalar-10k-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wOS1lc2NhbGFyLTEway0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MTgwOTIsImV4cCI6MTgyMjA1NDA5Mn0.Q-ypNtvZvo23WD3MuU-0p7b4tzODW2jyn7i3YNP7rItZr3kbHc44G_IgV-ttb-jI_xTtT1J0CQ2HhlH5QbMo4A",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-09-escalar-10k-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0wOS1lc2NhbGFyLTEway0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MjIyMTQsImV4cCI6MTgyMjA1ODIxNH0.jzSNAn8WVyL3bjOg5g5PgnNa9aIQJ-izxcXOrcVgZ7V3W0NYldOMPpqx57X4tV_JJs65gBh86OAacwvbzR6e6w",
       "modelo": "remotion"
     },
     {
@@ -10816,13 +10816,13 @@
       "tipo": "anuncio",
       "marca": "level-up",
       "titulo": "¿Ya te quemó una agencia? (9:16)",
-      "contenido": "Lote 2 de la fábrica de Remi (30 s, 27/sep/2026). Guion aprobado en vault/proyectos/motion/guiones-lote-2.md; datos en motion/src/fabrica/anuncios.ts (LOTE2, lu-10-te-quemo-una-agencia). Archivo: motion/out/fabrica/lu-10-te-quemo-una-agencia-9x16.mp4.",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-10-te-quemo-una-agencia-9x16.mp4.",
       "angulo": "Mala experiencia con otra agencia",
       "agente": "Remi",
-      "creadoEl": "2026-09-27T14:08:22.624Z",
+      "creadoEl": "2026-09-27T15:17:04.327Z",
       "estado": "nuevo",
       "formato": "motion 9:16 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-10-te-quemo-una-agencia-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0xMC10ZS1xdWVtby11bmEtYWdlbmNpYS05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MTgxMDIsImV4cCI6MTgyMjA1NDEwMn0._NDQa4WokTWdGRqfQF8tRJzfj--60NWnN6nEamIitoxudFT9_6fj_-oK108oAldZ3l4Cmwo088W7ZlkHjfV8Rg",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-10-te-quemo-una-agencia-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0xMC10ZS1xdWVtby11bmEtYWdlbmNpYS05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MjIyMjQsImV4cCI6MTgyMjA1ODIyNH0.0ngnh6VeWvAZUY-jg7Ar4luUXl-nKrudVeVmXcGShK0Ra-g57b4I-oxfGBSeDKd_yxeJI_jvlyZYlzGIH8pb4g",
       "modelo": "remotion"
     },
     {
@@ -10830,13 +10830,13 @@
       "tipo": "anuncio",
       "marca": "level-up",
       "titulo": "¿Ya te quemó una agencia? (16:9)",
-      "contenido": "Lote 2 de la fábrica de Remi (30 s, 27/sep/2026). Guion aprobado en vault/proyectos/motion/guiones-lote-2.md; datos en motion/src/fabrica/anuncios.ts (LOTE2, lu-10-te-quemo-una-agencia). Archivo: motion/out/fabrica/lu-10-te-quemo-una-agencia-16x9.mp4.",
+      "contenido": "Actualizado 27/sep: +100 negocios en PR y caso Dr. Bryan Vega (25 a 50 pacientes nuevos al mes). Archivo: motion/out/fabrica/lu-10-te-quemo-una-agencia-16x9.mp4.",
       "angulo": "Mala experiencia con otra agencia",
       "agente": "Remi",
-      "creadoEl": "2026-09-27T14:08:32.148Z",
+      "creadoEl": "2026-09-27T15:17:13.099Z",
       "estado": "nuevo",
       "formato": "motion 16:9 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-10-te-quemo-una-agencia-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0xMC10ZS1xdWVtby11bmEtYWdlbmNpYS0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MTgxMTIsImV4cCI6MTgyMjA1NDExMn0.hEFGeCezsfe8NRIrYk1sbBxygY9wBAwDISceHg5_GmLavbdCArmjiKuthDGWkgWmGGfIYyeAI5tiBlXz2U5UPw",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/lu-10-te-quemo-una-agencia-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9sdS0xMC10ZS1xdWVtby11bmEtYWdlbmNpYS0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1MjIyMzMsImV4cCI6MTgyMjA1ODIzM30.Z_n_nNpwDqW4x5mbt2i0yWcip3kfsyMDLEP11ax8JMez6Mp-02EWB7ZE3j5WYc2s2UO2tumcBlh-zwMJamKWdg",
       "modelo": "remotion"
     }
   ]
