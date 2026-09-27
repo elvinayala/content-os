@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { NavRitmo } from "@/components/ritmo/nav";
@@ -29,8 +28,6 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
         <span>{maestro ? "Vista maestra · verificación en dos pasos" : "Sesión protegida"}</span>
         <span>·</span>
         <span>Hora de Puerto Rico</span>
-        <span>·</span>
-        <Link href="/ritmo/ayuda" className="hover:text-foreground">Ayuda</Link>
       </footer>
     </>
   );
