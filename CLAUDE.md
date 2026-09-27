@@ -962,6 +962,10 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   KPIs vivos (`numerosInicio`: activos, onboarding, nuevos del mes, cartera), "Tu día", actividad reciente del
   equipo (`actividadReciente`, sin usuarios de sistema) y espacios de trabajo. Login en pantalla dividida con
   panel de marca ilustrativo (sin datos reales).
+  **Últimos clientes** en el Inicio (`ultimosClientes` en repo, puro en `lib/pulse/ultimos-clientes.ts` + tests): los 6
+  más recientes de LU/AIB visibles (sin bajas ni "(copy)"), cuánto pagó (Pago Inicial → venta de Slack → Acuerdo de
+  Pago; cuotas se multiplican), nicho (Industria; si es "Otro", lo del formulario), cuándo pagó (Fecha del pago
+  inicial → fecha de la venta en Slack, `ventaTs`) y onboarding (= ficha creada). ≥ $3,000 = "Alto valor" dorado.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
