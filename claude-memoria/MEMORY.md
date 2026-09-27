@@ -74,3 +74,4 @@
 - [Remi — motion designer](remi-motion.md) — 27/sep: motion graphics por prompt (Remotion en motion/, /motion); 1er video Recepcionista AI de AIB (anuncio de usted + orgánico tuteo); audio por fal; entrega a la bandeja
 - [AIB — acceso solo de Aure](aib-acceso-aure.md) — lo de AI Borinquen lo maneja Aure; Jessica/LU fuera; Leads AIB solo Aure, Luis, Yaileen (27/sep)
 - [Resumen del día por Telegram](resumen-dia-telegram.md) — 27/sep: 8:30 PM PR llamadas (Calendly) + ventas nuevas/renovaciones (hojas de tesorería) LU y AIB; falta que Elvin publique el Apps Script ventas-hoy.gs y pase la URL
+- [Deploy — empaque del vault](deploy-vault-empaque.md) — 27/sep: vault/** en cada función (194 MB) tumbó el deploy (ENOSPC); ahora solo vault/**/*.md
