@@ -5,8 +5,15 @@ const nextConfig: NextConfig = {
   // runtime; hay que incluirlos explícitamente en el trace del deploy
   // (Vercel) porque las rutas se arman dinámicamente.
   outputFileTracingIncludes: {
-    "/**": ["./data/**", "./.claude/skills/**", "./vault/**"],
+    // Del vault solo se leen notas .md (lib/vault.ts, cerebros de Sofi/Leo, memoria). Antes iba TODO el vault
+    // (~194 MB con videos/zips/PDFs de proyectos) dentro de cada función: el deploy se quedaba sin disco
+    // (ENOSPC, 27/sep) y cada función arrancaba más lenta. Solo .md ≈ 2 MB.
+    "/**": ["./data/**", "./.claude/skills/**", "./vault/**/*.md"],
     "/api/cron/leaderboard": ["./public/leaderboard/**", "./public/marcas/level-up-logo-dark.png"],
+  },
+  // Dependencias de proyectos guardados en el vault (agentes de Resuelto, landings) nunca van en las funciones.
+  outputFileTracingExcludes: {
+    "/**": ["./vault/**/node_modules/**", "./vault/**/.netlify/**"],
   },
   // Pulse: PGlite (Postgres embebido, solo dev sin DATABASE_URL) y postgres.js van
   // como externos del bundle del server.
