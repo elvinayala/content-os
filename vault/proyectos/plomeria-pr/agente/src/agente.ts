@@ -24,7 +24,7 @@ function contexto(contacto: Contacto): string {
     `[Contexto interno, no lo repitas al cliente]`,
     `Canal: ${contacto.canal}. Fecha: ${fecha}, ${hora} hora de Puerto Rico (${iso}). ${fueraDeHorario ? "AHORA es horario de emergencia (+$99 si pide servicio inmediato)." : "Horario regular."}`,
     contacto.nombre ? `Nombre conocido: ${contacto.nombre}.` : "Nombre: desconocido.",
-    contacto.telefono ? `Teléfono: ${contacto.telefono}.` : "Teléfono: desconocido (pídelo si vas a agendar).",
+    contacto.telefono ? `Teléfono: ${contacto.telefono} (ya lo tenemos: NO se lo vuelvas a pedir).` : "Teléfono: desconocido (pídelo si vas a agendar).",
     contacto.municipio ? `Municipio conocido: ${contacto.municipio}.` : "",
     contacto.direccion ? `Dirección conocida: ${contacto.direccion}.` : "",
     contacto.tipo ? `Tipo de contacto: ${contacto.tipo}.` : "",
@@ -36,9 +36,18 @@ function contexto(contacto: Contacto): string {
 
 export interface Entrada { texto?: string; adjuntos?: Adjunto[] }
 
+/** Teléfono de PR/EE. UU. escrito en un mensaje ("787 321 9437", "(939)555-1234", "17875551234"). Pura (tests). 27/sep:
+ *  el agente le pidió dos veces el número a un cliente que ya lo había mandado en su primer mensaje. */
+export function telefonoEnTexto(texto = ""): string | null {
+  const m = texto.match(/(?<!\d)(?:\+?1[\s.-]?)?\(?([2-9]\d{2})\)?[\s.-]?(\d{3})[\s.-]?(\d{4})(?!\d)/);
+  return m ? m[1] + m[2] + m[3] : null;
+}
+
 /** Devuelve la lista de mensajes a enviar (vacía si un humano tiene la conversación). */
 export async function responder(contacto: Contacto, entrada: Entrada): Promise<string[]> {
   archivar(contacto.id, "cliente", [entrada.texto, entrada.adjuntos?.length ? `[${entrada.adjuntos.length} adjunto(s)]` : ""].filter(Boolean).join(" "));
+  const tel = !contacto.telefono && telefonoEnTexto(entrada.texto);
+  if (tel) { contacto = { ...contacto, telefono: tel }; almacen.guardarContacto(contacto); }
   if (contacto.humano) return []; // un humano está atendiendo; el agente calla
 
   const conv = almacen.conversacion(contacto.id);
