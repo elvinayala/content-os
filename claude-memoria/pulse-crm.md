@@ -79,3 +79,6 @@ Gotcha Slack: nunca poner un link entre **negritas** en mensajes de Slack — lo
 **27/sep/2026 — Acuerdo firmado automático**: columna "Acuerdo firmado" en LEVEL UP MEDIA; Pulse toma el PDF del hilo de la venta en #office-2-ventas-contrato (bot ya invitado) y si falta avisa a Jessica. Primera pasada: 8 adjuntados, Joel marcado (su hilo tiene el PDF de Edgar), 10 sin venta en el canal. Ojo: closers a veces copian correo/teléfono de otro cliente en la venta (Natacha/Angelica) → el nombre desempata.
 
 **27/sep/2026 — SOPs**: tableros SOPs · Level Up / SOPs · AI Borinquen; recordatorio diario del bot a Carilin y Aure (9 AM, 28/sep → 2/oct), estatus si ya contestaron. Prioridad de Elvin.
+
+
+**27/sep/2026 — rediseño "nivel San Francisco"** (Elvin: "que digan wow, dale nivel"): Inicio con KPIs vivos + Tu día + actividad del equipo, login en pantalla dividida, pills suaves, íconos por tablero, esqueletos de carga, tuteo en toda la UI. **Why:** Elvin quiere que Pulse se sienta como un SaaS de una empresa multimillonaria y que el equipo lo disfrute. **How to apply:** toda pantalla nueva de Pulse usa los tokens de `.pulse`, `.superficie`, `IconoTablero` y `StatusPill`; nada de estilos a lo Monday (bordes gruesos, pills sólidas saturadas).
