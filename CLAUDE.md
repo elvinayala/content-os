@@ -635,6 +635,11 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   Roger Arteaga, Laura Bernal, Joaquín La Valle (closers), Nahuel Tissera (director comercial), Ana Cecilio y
   Dilan Torres (chatters); Aure (editor). Santiago Villarreal ya no está. Se les da la clave con el link de
   acceso de Ritmo + `&d=leads` (`linkDeAcceso`, 72 h) → crean su clave y caen en /pulse/leads.
+- **AI Borinquen (27/sep)**: copia exacta de sus 4 embudos de Pipedrive (`SEMILLA.ai_borinquen`: WHATSAPP, RECUPERACIÓN
+  2026, DIAGNÓSTICO DE AUTOMATIZACIÓN, Bori · Seguimiento); Timelines AIB conectado (`TIMELINES_TOKEN_AIB` en .env.local
+  y Vercel, número +1 939-304-0491, webhooks 30214/30215) y el quiz de AIB entra a "Diagnóstico de Automatización"
+  (`leadQuiz({ marca })`). Acceso: Aure y Luis Fernández. Los leads abiertos de Pipedrive AIB NO se cargaron (pendiente
+  de decisión de Elvin); Pipedrive AIB sigue en paralelo.
 - **Semana 2 (en paralelo con Pipedrive)**, `lib/leads/cables.ts`: Calendly de LU → embudo Closers
   (agendó/reagendó/canceló; onboarding = GANADO; la cita queda como actividad "llamada" del closer a la hora de la
   cita vía `agendarLlamadaSistema`, se mueve si reagenda y se quita si cancela; el 26/sep se cargó la agenda futura: 10 citas) y quiz de LU → "Diagnóstico de Crecimiento" (el quiz nunca
