@@ -47,9 +47,9 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
 
 ## Decisiones de Elvin (27/sep/2026)
 - **Bonos:** Nahuel los **crea** en Ritmo; **Elvin los autoriza** (solo Elvin).
-- **Metas del mes:** **$100,000 en ventas nuevas** y **mínimo $150,000 en total** (nuevas + pagos de deuda),
-  entre todos. Ritmo actual ≈ **$35,000 por semana** (referencia para la meta semanal).
-  `[CONFIRMAR: si la meta es de Level Up o de Level Up + AI Borinquen juntos; las carreras no se mezclan]`
+- **Meta de Level Up (solo LU):** **$100,000/mes en ventas nuevas** y **mínimo $150,000/mes en total**
+  (nuevas + pagos de deuda). Ritmo actual ≈ **$35,000 por semana** (referencia para la meta semanal).
+- **Meta de AI Borinquen:** **$30,000/mes**. Lo de AIB (datos y detalle de la meta) se coordina **con Aure**.
 - **Comisiones:** se le preguntaron a Nahuel por Slack (27/sep) → pendiente su respuesta.
 - **Pestaña de la hoja con cada venta y su fecha:** se le preguntó a Aure por Slack (27/sep) → pendiente.
 
