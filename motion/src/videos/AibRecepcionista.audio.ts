@@ -17,7 +17,7 @@ export const SFX: { archivo: string; en: number; volumen: number; dur?: number }
   { archivo: "audio/whoosh.mp3", en: 50, volumen: 0.7 },
   // 2 · el coquí
   { archivo: "audio/aterriza.mp3", en: 90, volumen: 0.8 },
-  { archivo: "audio/coqui.mp3", en: 111, volumen: 0.9, dur: 60 },
+  { archivo: "audio/coqui.mp3", en: 98, volumen: 0.9, dur: 60 },
   // 3 · presenta
   { archivo: "audio/whoosh.mp3", en: 131, volumen: 0.6 },
   // 4 · la prueba

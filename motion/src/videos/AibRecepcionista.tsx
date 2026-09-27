@@ -1,14 +1,15 @@
 // AI Borinquen · Recepcionista AI — showreel de 15 s (1920×1080, 30 fps).
 // Escenas (frames globales):
 //   1  0–66    El problema: teléfono sonando de madrugada, llamadas perdidas.
-//   2  60–140  El coquí: la hoja se dibuja, aterriza, infla el saco y canta.
+//   2  60–140  El coquí de circuitos de AIB se revela por escaneo, glitch y emite señal.
 //   3  136–245 "Tu nueva recepcionista" + lo que hace.
 //   4  240–365 La prueba: llamada contestada · WhatsApp agendando · calendario lleno · 0 perdidas.
 //   5  358–450 Lockup AI Borinquen · Recepcionista AI + CTA a la demo.
 import React from "react";
-import { AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame, Audio } from "remotion";
-import { C, FUENTE, FUENTE_MONO, GRADIENTE } from "../marcas/bori";
-import { Coqui } from "../marcas/Coqui";
+import { AbsoluteFill, Img, Sequence, interpolate, staticFile, useCurrentFrame, Audio } from "remotion";
+// Marca: AI Borinquen (agentes de IA de voz y chat a la medida). NO usar el coquí cobre de Bori.
+import { C, FUENTE, FUENTE_MONO, GRADIENTE, LOGO_COQUI } from "../marcas/aib";
+import { CoquiAib, NombreAib } from "../marcas/CoquiAib";
 import { Barrido, Destello, Fondo, Grano, glitch, golpe, rebote, sacudida, tw } from "../kit/fx";
 import { Chip, Palabras } from "../kit/texto";
 import { Calendario, Chat, Contador, Llamada, Notificacion, Telefono, type Tema } from "../kit/ui";
@@ -22,12 +23,12 @@ const TEXTOS = {
   usted: {
     presenta: "Su nueva", duerme: "Mientras usted duerme, ella trabaja.", contesto: "Contestó su recepcionista AI",
     agenda: "03 · LLENA SU AGENDA", opciones: "¡Claro! Tengo 10:00 AM o 2:30 PM. ¿Cuál le funciona?", listo: "Listo ✅ Le separé mañana, 10:00 AM.",
-    cta: "Agende su demo →",
+    cta: "Agende su demo →", medida: "Hecha a la medida",
   },
   tu: {
     presenta: "Tu nueva", duerme: "Mientras tú duermes, ella trabaja.", contesto: "Contestó tu recepcionista AI",
     agenda: "03 · LLENA TU AGENDA", opciones: "¡Claro! Tengo 10:00 AM o 2:30 PM. ¿Cuál te funciona?", listo: "Listo ✅ Te separé mañana, 10:00 AM.",
-    cta: "Agenda tu demo →",
+    cta: "Agenda tu demo →", medida: "Hecha a la medida",
   },
 };
 type Textos = (typeof TEXTOS)["usted"];
@@ -83,37 +84,34 @@ const Problema: React.FC = () => {
 /* ───────────── 2 · Entra el coquí ───────────── */
 const EntraCoqui: React.FC = () => {
   const f = useCurrentFrame();
-  const hoja = tw(f, 4, 26);
-  const cae = 28; // frame en que aterriza
-  const caidaY = f < cae ? interpolate(f, [12, cae], [-260, 0], { extrapolateLeft: "clamp", easing: golpe }) : 0;
-  const squash = f < cae ? 1.18 : 1 - 0.28 * Math.exp(-(f - cae) / 3) * Math.cos((f - cae) / 2.2);
-  const parpadeo = f >= 40 && f < 46 ? Math.sin(((f - 40) / 6) * Math.PI) : 0;
-  const saco = f < 50 ? 1 : 1 + 0.35 * Math.max(0, Math.sin(((f - 50) / 9) * Math.PI));
-  const ondas = tw(f, 52, 66);
-  const canto = f >= 54 ? ((f - 54) / 16) % 1 : null;
-  const { x, y } = sacudida(f, cae, 22, 12);
-  const escala = interpolate(f, [0, 80], [1.08, 1], { extrapolateRight: "clamp" });
-  // Anillos que barren la pantalla cuando canta (y abren la escena 3)
-  const anillos = [56, 64, 72];
+  const revela = tw(f, 4, 28, 0, 1);
+  const hit = 28; // se completa el escaneo
+  const glitchOn = (f >= hit && f < hit + 5) || (f >= 62 && f < 65);
+  const senal = f >= 36 ? ((f - 36) / 18) % 1 : null;
+  const { x, y } = sacudida(f, hit, 16, 10);
+  const escala = interpolate(f, [0, 80], [1.1, 1], { extrapolateRight: "clamp" });
+  const brillo = interpolate(f, [hit, hit + 12], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const anillos = [40, 48, 56];
   return (
     <AbsoluteFill>
-      <Fondo color={C.fondo} brillo={C.superficie} brillo2="#0f3d2a" grid={C.borde} />
+      <Fondo color={C.fondo} brillo={C.superficie2} brillo2="#0b3a4a" grid={C.borde} />
       {anillos.map((a, i) => {
-        const p = tw(f, a, a + 22, 0, 1);
+        const p = tw(f, a, a + 24, 0, 1);
         if (p <= 0 || p >= 1) return null;
         return (
           <div key={i} style={{
-            position: "absolute", left: 960 + 170, top: 540 - 230, width: p * 3400, height: p * 3400, borderRadius: "50%",
-            border: `${14 - i * 4}px solid ${i === 1 ? C.teal : C.verdeClaro}`, transform: "translate(-50%,-50%)", opacity: 1 - p,
+            position: "absolute", left: 960, top: 540, width: p * 3400, height: p * 3400, borderRadius: "50%",
+            border: `${12 - i * 3}px solid ${[C.verde, C.azulLogo, C.teal][i]}`, transform: "translate(-50%,-50%)", opacity: 1 - p,
           }} />
         );
       })}
       <AbsoluteFill style={{ display: "grid", placeItems: "center", transform: `translate(${x}px, ${y}px) scale(${escala})` }}>
-        <div style={{ filter: `drop-shadow(0 30px 60px rgba(0,0,0,0.5)) drop-shadow(0 0 ${30 + (saco - 1) * 120}px ${C.verde}55)` }}>
-          <Coqui size={640} hoja={hoja} cuerpo={f >= 12 ? 1 : 0} caidaY={caidaY} squash={squash} parpadeo={parpadeo} saco={saco} ondas={ondas} canto={canto} />
-        </div>
+        <CoquiAib size={620} revela={revela} glitch={glitchOn} senal={senal} brillo={brillo} />
       </AbsoluteFill>
-      <Destello en={cae} color={C.verdeClaro} max={0.35} />
+      <div style={{ position: "absolute", bottom: 70, width: "100%", textAlign: "center", fontFamily: FUENTE_MONO, color: C.verde, fontSize: 24, letterSpacing: "0.3em", opacity: tw(f, 40, 52) }}>
+        AGENTES DE IA · VOZ Y CHAT
+      </div>
+      <Destello en={hit} color={C.verde} max={0.12} dur={6} />
     </AbsoluteFill>
   );
 };
@@ -138,13 +136,13 @@ const Presenta: React.FC<{ t: Textos }> = ({ t }) => {
           <Palabras texto="recepcionista AI" entra={10} tam={170} fuente={FUENTE} gradiente={GRADIENTE} />
         </div>
         <div style={{ position: "absolute", top: 760, width: "100%", display: "flex", justifyContent: "center", gap: 28 }}>
-          <Chip texto="Contesta 24/7" entra={34} fuente={FUENTE} fondo={C.superficie} borde={C.borde} color={C.texto} />
+          <Chip texto="Voz y chat 24/7" entra={34} fuente={FUENTE} fondo={C.superficie} borde={C.borde} color={C.texto} />
           <Chip texto="Agenda citas" entra={44} fuente={FUENTE} fondo={C.superficie} borde={C.borde} color={C.texto} />
-          <Chip texto="Nunca se enferma" entra={54} fuente={FUENTE} fondo={C.superficie} borde={C.verde} color={C.verdeClaro} />
+          <Chip texto={t.medida} entra={54} fuente={FUENTE} fondo={C.superficie} borde={C.verde} color={C.verdeClaro} />
         </div>
         {/* El coquí se asoma en la esquina y canta */}
-        <div style={{ position: "absolute", right: 70, bottom: 30, transform: `translateY(${(1 - coquiE) * 260}px) rotate(${(1 - coquiE) * 12}deg)` }}>
-          <Coqui size={250} saco={1 + 0.3 * Math.max(0, Math.sin(f / 5))} canto={(f / 16) % 1} />
+        <div style={{ position: "absolute", right: 80, bottom: 50, transform: `translateY(${(1 - coquiE) * 260}px) rotate(${(1 - coquiE) * 12}deg)` }}>
+          <CoquiAib size={230} senal={(f / 18) % 1} />
         </div>
       </AbsoluteFill>
       <Destello en={0} color={C.verdeClaro} max={0.5} dur={10} />
@@ -185,7 +183,7 @@ const Prueba: React.FC<{ t: Textos }> = ({ t }) => {
           <Llamada tema={TEMA} contesta={22} quien="Cliente nuevo" ancho={520} etiqueta={t.contesto} />
         </Panel>
         <Panel x={700} entra={12} titulo="02 · AGENDA">
-          <Chat tema={TEMA} ancho={520} nombre="Recepcionista AI" avatar={<Coqui size={46} hoja={0} ondas={0} />}
+          <Chat tema={TEMA} ancho={520} nombre="Recepcionista AI" avatar={<Img src={staticFile(LOGO_COQUI)} style={{ width: 38, height: 38, objectFit: "contain" }} />}
             burbujas={[
               { de: "cliente", texto: "Hola, ¿tienen cita para mañana?", en: 22 },
               { de: "agente", texto: t.opciones, en: 44 },
@@ -215,40 +213,37 @@ const Prueba: React.FC<{ t: Textos }> = ({ t }) => {
 const Cierre: React.FC<{ t: Textos }> = ({ t }) => {
   const f = useCurrentFrame();
   const coquiE = rebote(f, 2, 22);
-  const saco = 1 + 0.32 * Math.max(0, Math.sin(((f - 24) / 8) * Math.PI)) * (f > 24 && f < 56 ? 1 : 0);
   const cta = rebote(f, 40, 18);
   const brillo = tw(f, 52, 76, -40, 140);
   const pulso = tw(f, 70, 92, 0, 1);
-  const salida = tw(f, 84, 92, 0, 1);
+  const nombre = tw(f, 10, 24);
   return (
     <AbsoluteFill>
-      <Fondo color={C.fondo} brillo="#145a3a" brillo2={C.teal} grid={C.borde} />
-      {/* pulso final */}
-      <div style={{ position: "absolute", left: 960, top: 330, width: pulso * 2600, height: pulso * 2600, borderRadius: "50%", border: `6px solid ${C.verdeClaro}`, transform: "translate(-50%,-50%)", opacity: pulso > 0 ? 1 - pulso : 0 }} />
-      <AbsoluteFill style={{ opacity: 1 - salida * 0.0 }}>
-        <div style={{ position: "absolute", left: 960, top: 330, transform: `translate(-50%,-50%) scale(${0.3 + 0.7 * coquiE}) rotate(${(1 - coquiE) * -20}deg)` }}>
-          <div style={{ filter: `drop-shadow(0 0 ${40 + (saco - 1) * 160}px ${C.verde}66)` }}>
-            <Coqui size={380} saco={saco} canto={f > 24 ? ((f - 24) / 16) % 1 : null} />
-          </div>
+      <Fondo color={C.fondo} brillo="#0f4a2e" brillo2={C.azulLogo} grid={C.borde} />
+      <div style={{ position: "absolute", left: 960, top: 250, width: pulso * 2600, height: pulso * 2600, borderRadius: "50%", border: `6px solid ${C.verde}`, transform: "translate(-50%,-50%)", opacity: pulso > 0 ? 1 - pulso : 0 }} />
+      <div style={{ position: "absolute", left: 960, top: 250, transform: `translate(-50%,-50%) scale(${0.3 + 0.7 * coquiE})` }}>
+        <CoquiAib size={300} senal={f > 20 ? ((f - 20) / 18) % 1 : null} glitch={f >= 2 && f < 6} brillo={interpolate(f, [0, 14], [1, 0.2], { extrapolateRight: "clamp" })} />
+      </div>
+      <div style={{ position: "absolute", top: 450, width: "100%", display: "flex", justifyContent: "center", opacity: nombre, transform: `translateY(${(1 - nombre) * 40}px)` }}>
+        <NombreAib tam={120} />
+      </div>
+      <div style={{ position: "absolute", top: 600, width: "100%" }}>
+        <Palabras texto="Recepcionista AI" entra={18} tam={64} fuente={FUENTE} peso={700} gradiente={GRADIENTE} espaciado={-0.01} />
+      </div>
+      <div style={{ position: "absolute", top: 700, width: "100%", textAlign: "center", fontFamily: FUENTE_MONO, color: C.gris, fontSize: 24, letterSpacing: "0.22em", opacity: tw(f, 28, 40) }}>
+        AGENTES DE IA DE VOZ Y CHAT · A LA MEDIDA
+      </div>
+      <div style={{ position: "absolute", top: 800, width: "100%", display: "flex", justifyContent: "center" }}>
+        <div style={{
+          position: "relative", overflow: "hidden", padding: "22px 54px", borderRadius: 999, background: C.verde,
+          fontFamily: FUENTE, fontWeight: 800, fontSize: 44, color: "#04140B", letterSpacing: "-0.01em",
+          transform: `scale(${cta})`, boxShadow: `0 20px 60px ${C.verde}55`,
+        }}>
+          {t.cta}
+          <div style={{ position: "absolute", top: 0, bottom: 0, left: `${brillo}%`, width: "25%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)", transform: "skewX(-20deg)" }} />
         </div>
-        <div style={{ position: "absolute", top: 560, width: "100%" }}>
-          <Palabras texto="AI Borinquen" entra={10} tam={120} fuente={FUENTE} color={C.texto} />
-          <div style={{ marginTop: 8 }}>
-            <Palabras texto="Recepcionista AI" entra={18} tam={64} fuente={FUENTE} peso={600} gradiente={GRADIENTE} espaciado={-0.01} />
-          </div>
-        </div>
-        <div style={{ position: "absolute", top: 870, width: "100%", display: "flex", justifyContent: "center" }}>
-          <div style={{
-            position: "relative", overflow: "hidden", padding: "22px 54px", borderRadius: 999, background: GRADIENTE,
-            fontFamily: FUENTE, fontWeight: 800, fontSize: 44, color: "#04130B", letterSpacing: "-0.02em",
-            transform: `scale(${cta})`, boxShadow: `0 20px 60px ${C.verde}55`,
-          }}>
-            {t.cta}
-            <div style={{ position: "absolute", top: 0, bottom: 0, left: `${brillo}%`, width: "25%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)", transform: "skewX(-20deg)" }} />
-          </div>
-        </div>
-      </AbsoluteFill>
-      <Destello en={0} color={C.verdeClaro} max={0.6} dur={10} />
+      </div>
+      <Destello en={0} color={C.verde} max={0.15} dur={8} />
     </AbsoluteFill>
   );
 };
@@ -271,7 +266,7 @@ export const AibRecepcionista: React.FC<{ registro: Registro }> = ({ registro })
       <Barrido centro={138} dur={14} colores={[C.teal, C.verde, C.fondo]} />
       <Barrido centro={242} dur={14} colores={[C.verdeClaro, C.verde, C.fondo]} angulo={12} />
       <Destello en={62} color={C.verdeClaro} max={0.5} dur={7} />
-      <Destello en={358} color={C.verdeClaro} max={0.7} dur={8} />
+      <Destello en={358} color={C.verde} max={0.25} dur={6} />
 
       <Grano />
 

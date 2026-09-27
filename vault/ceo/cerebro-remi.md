@@ -14,7 +14,9 @@ La IA generativa deforma logos y textos; el código no — por eso son dos puest
 - Formatos: 16:9 (1920×1080), 9:16 (1080×1920), 1:1 (1080×1080), 4:5 (1080×1350). 30 fps.
 
 ## 2. El taller (`motion/`, proyecto aparte de la app)
-- `src/marcas/<marca>.ts` — paleta y fuentes del kit de cada marca. `src/marcas/Coqui.tsx` = el
+- `src/marcas/<marca>.ts` — paleta y fuentes del kit de cada marca. `src/marcas/CoquiAib.tsx` = el
+  coquí de circuitos de AI Borinquen (solo hay PNG: se anima entero, nunca se redibuja; el nombre
+  va tipografiado con `NombreAib` porque el PNG lo trae cortado). `src/marcas/Coqui.tsx` = el
   coquí de Bori **por capas** (hoja, cuerpo, saco vocal, ojo, ondas) con las formas EXACTAS del
   logo; se anima, no se redibuja.
 - `src/kit/fx.tsx` (curvas, fondo vivo, grano, barridos, destellos, sacudida, glitch),
@@ -39,6 +41,11 @@ La IA generativa deforma logos y textos; el código no — por eso son dos puest
 7. **Zonas seguras**: 9:16 deja 250 px arriba y 350 px abajo libres (UI de Reels); 16:9, 5 % de margen.
 
 ## 4. Reglas de marca que no se negocian (las mismas de Lola §3)
+- **Bori ≠ AI Borinquen (Elvin, 27/sep).** **Bori** (heybori.ai) = la agencia de marketing en una sola
+  plataforma; su logo es el coquí COBRE en la hoja (`marcas/bori.ts` + `Coqui.tsx`). **AI Borinquen** =
+  agentes de IA de voz y chat, especializada en agentes PERSONALIZADOS (a la medida); su logo es el
+  coquí de CIRCUITOS verde/azul con puntos rojos (`marcas/aib.ts` + `CoquiAib.tsx`, neón #2BFF88,
+  Outfit). Nunca mezclar logos, colores ni mensajes entre las dos.
 - Español de PR, nunca voseo. **AI Borinquen en ANUNCIOS va de USTED** (`vault/estilo/ai-borinquen.md`);
   orgánico en tuteo. Si no dicen si es anuncio u orgánico, entregar la versión "usted" y la "tú"
   (patrón `registro` de `AibRecepcionista.tsx`).
@@ -73,4 +80,7 @@ Cuando Elvin corrige ("más rápido", "el logo más grande", "otra música"), an
 REGLAS APRENDIDAS solo lo que aplique a futuros videos.
 
 ### REGLAS APRENDIDAS
-- (vacío)
+- 27/sep: el primer video de AI Borinquen salió con el coquí de Bori → rehacerlo con la marca de AIB.
+  Antes de animar, confirmar QUÉ marca es y usar SU logo.
+- El resplandor (filter) nunca en el mismo elemento que un clip-path: el recorte lo vuelve una caja.
+- Con el neón de AIB los destellos van bajos (≤ 0.25); a 0.5+ queman la pantalla.
