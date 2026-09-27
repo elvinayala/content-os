@@ -39,6 +39,7 @@
   ],
   "exclude": [
     "demos/**",
+    "motion/**",
     "node_modules",
     "vault/proyectos/**"
   ]

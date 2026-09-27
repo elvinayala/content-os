@@ -11,3 +11,8 @@ node_modules
 .pulse-db/
 
 .telegram-adjuntos
+
+# taller de motion (Remotion): renders y deps locales
+motion/node_modules
+motion/out
+motion/public/audio

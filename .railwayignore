@@ -43,3 +43,7 @@ vault/proyectos/bori-crecimiento/leads-perdidos
 
 # Perfiles temporales de Chrome del render de flyers (enlaces rotos + datos del navegador)
 **/.chrome-*
+
+# taller de motion (Remotion)
+motion/out
+motion/public/audio

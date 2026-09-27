@@ -1,6 +1,7 @@
 import {
   BarChart3,
   ClipboardList,
+  Clapperboard,
   Lightbulb,
   PenLine,
   Send,
@@ -143,5 +144,24 @@ export const equipo: Agente[] = [
     entrega: "Artes, flyers, videos y guiones listos",
     href: "/ceo/entregas",
     seccion: "Entregas (artes, videos, guiones)",
+  },
+  // Remi nació el 27/sep/2026: Elvin pidió motion graphics por prompt ("un showreel a tope").
+  // Lola hace IA generativa (deforma logos y textos); Remi anima por código (Remotion → MP4)
+  // con los logos y colores reales. Taller en motion/, cerebro en vault/ceo/cerebro-remi.md.
+  {
+    id: "remi",
+    nombre: "Remi",
+    rol: "Motion Designer",
+    icon: Clapperboard,
+    responsabilidades: [
+      "Videos de motion graphics por prompt (lanzamientos, showreels, explicadores)",
+      "Logos animados con el logo real de cada marca (reveal, loop, sting)",
+      "Música y efectos sincronizados al beat; revisa cada video frame a frame",
+      "Deja el MP4 en la bandeja de Entregas (/motion)",
+    ],
+    consume: "Prompt de Elvin + brand kit y estilo de la marca",
+    entrega: "Videos de motion 16:9 / 9:16 / 1:1 listos",
+    href: "/ceo/entregas",
+    seccion: "Entregas (videos de motion)",
   },
 ];

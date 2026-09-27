@@ -427,6 +427,22 @@ con logo público en `public/marcas/` (level-up, ai-borinquen, bori, resuelto; i
 kit = sin logo, nunca inventado. Cerebro §3b. Tope por pedido 8 imágenes / 3 videos; lo que viene de otro agente de
 parte de Elvin se entrega completo en una vuelta.
 
+## Remi — el Motion Designer (`/motion`, 27/sep/2026)
+
+Elvin: "videos de motion por prompt… como un showreel, a tope". Lola hace IA generativa (deforma
+logos y textos); **Remi anima por código** con **Remotion** (React → MP4) y los logos/colores
+reales. Taller en **`motion/`** (proyecto aparte con su `package.json`; excluido del `tsconfig` de
+Next, de `.vercelignore` y `.railwayignore`): `src/marcas/` (paleta + fuentes; `Coqui.tsx` = el
+coquí de Bori por capas con las formas exactas de `logo-color.svg`), `src/kit/` (fx, texto cinético,
+teléfono/chat/llamada/calendario/contador), `src/videos/<Video>.tsx` + `.audio.ts`, `src/Root.tsx`.
+Audio por prompt: `node motion/scripts/audio.mjs musica|sfx "<prompt>"` (fal: stable-audio-25 /
+ElevenLabs sfx v2). Revisión obligatoria con `remotion still` + hoja de contacto antes de entregar.
+Entrega: `node motion/scripts/entregar.mjs <mp4> --marca --titulo` → Storage `pulse/motion/<fecha>/`
+(link firmado 1 año) + `data/entregas.json` (`agente: "Remi"`, `modelo: "remotion"`). Render de 15 s
+≈ 40 s en la Mac (`cd motion && npx remotion render src/index.ts <Id> out/<x>.mp4`; `npm run studio`
+para previsualizar). Primer video: `AibRecepcionista` (anuncio, **de usted**) y `AibRecepcionistaTu`
+(orgánico), 15 s 16:9. Cerebro `vault/ceo/cerebro-remi.md`. Fase 2: bot de Telegram/buzón.
+
 ## Pipeline de creadores para colaboraciones (`/creadores`, 21/sep/2026)
 
 Elvin identifica creadores a ojo (10–15K seguidores con engagement orgánico real) y quiere un flujo
