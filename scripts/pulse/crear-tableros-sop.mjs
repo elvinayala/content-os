@@ -50,7 +50,7 @@ try {
     await sql.begin(async (tx) => {
       const [{ min }] = await tx`select coalesce(min(position), 0) - 2 as min from pulse_boards`;
       const [b] = await tx`insert into pulse_boards (slug, nombre, descripcion, color, position, privado)
-        values (${t.slug}, ${t.nombre}, 'Un SOP por fila, agrupados por departamento. Antes de publicar: reunión con el departamento, revisar/rehacer, poner la fecha de revisión y subir el documento.', ${t.color}, ${t.slug === "sops-level-up" ? min : min + 1}, ${t.privado}) returning id`;
+        values (${t.slug}, ${t.nombre}, 'Un SOP por fila, agrupados por departamento. Antes de publicar: reunión con el departamento, revisar/rehacer, poner la fecha de revisión y subir el documento.', ${t.color}, ${t.slug === "sops-level-up" ? min : min + 3}, ${t.privado}) returning id`;
       const COLS = [
         { title: "Estado", type: "status", width: 140, settings: { labels: [
           { id: estado.por, label: "Por hacer", color: "grey" },
