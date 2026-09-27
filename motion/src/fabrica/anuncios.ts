@@ -410,3 +410,29 @@ const aVertical = (g: Guion): Anuncio => ({
   escenas: g.escenas.map((e) => (e.tipo === "pantalla" ? { ...e, imagen: e.imagen.replace("-pc.png", "-cel.png"), dispositivo: "telefono", foco: undefined, puntos: e.puntos?.slice(0, 2) } : e)),
 });
 ANUNCIOS.push({ ...RITMO_GUION, id: `${RITMO_GUION.id}-16x9`, formato: "16:9" }, aVertical(RITMO_GUION));
+
+/* ═════════════════ BORI · recorrido por la app (27/sep/2026, 60 s) ═════════════════
+   Capturas REALES de la app con un negocio FICTICIO (Barbería La Esquina, copia demo en /Users/elvinayala/bori-demo,
+   sin producción ni APIs pagas). */
+const BORI_RECORRIDO: Guion = {
+  id: "bori-recorrido-app", marca: "bori", titulo: "Bori por dentro: recorrido de la app en 60 s", angulo: "Demo del producto", musica: "audio/bori-musica-60.mp3",
+  escenas: [
+    { tipo: "gancho", dur: 90, logo: true, lineas: ["Esto es *Bori*."], sub: "Tu agencia de marketing con IA, en un solo lugar." },
+    { tipo: "gancho", dur: 70, lineas: ["Entra conmigo.", "Así se ve *por dentro*."] },
+    { tipo: "pantalla", dur: 180, imagen: "bori-app/dashboard-pc.png", dispositivo: "laptop", titulo: "Tu negocio en *un vistazo*", sub: "Tus campañas, lo que inviertes y lo que te traen, en vivo.",
+      puntos: ["Campañas activas y en pausa", "Gasto por día", "Tu mejor anuncio"], foco: { x: 0.09, y: 0.18, w: 0.6, h: 0.3 } },
+    { tipo: "pantalla", dur: 130, imagen: "bori-app/generador-pedido-pc.png", dispositivo: "laptop", titulo: "Dile qué *vendes*…", sub: "Tu negocio, en una línea.", foco: { x: 0.08, y: 0.14, w: 0.32, h: 0.24 } },
+    { tipo: "pantalla", dur: 180, imagen: "bori-app/generador-resultado-pc.png", dispositivo: "laptop", titulo: "…y Bori *diseña* tus anuncios", sub: "En segundos, con tu marca.",
+      puntos: ["Flyers listos para Meta", "Copy escrito", "Predicción de potencial"], foco: { x: 0.36, y: 0.15, w: 0.44, h: 0.55 } },
+    { tipo: "pantalla", dur: 170, imagen: "bori-app/campanas-pc.png", dispositivo: "laptop", titulo: "Tu campaña en *3 clics*", sub: "Estrategias probadas. Bori la monta en tu Meta, en pausa.",
+      puntos: ["Público y presupuesto listos", "Sin tocar el Administrador de Anuncios"] },
+    { tipo: "pantalla", dur: 190, imagen: "bori-app/chat-aprobacion-pc.png", dispositivo: "laptop", titulo: "Háblale a *Bori*", sub: "Te dice cómo van tus anuncios y te pide permiso antes de gastar.",
+      puntos: ["Tú apruebas", "Bori lo hace"], foco: { x: 0.72, y: 0.33, w: 0.27, h: 0.6 } },
+    { tipo: "pantalla", dur: 150, imagen: "bori-app/crm-pc.png", dispositivo: "laptop", titulo: "Cada cliente, en su *columna*", sub: "Tu CRM: nuevos, contactados, citas y ganados." },
+    { tipo: "pantalla", dur: 150, imagen: "bori-app/movil-inicio-cel.png", dispositivo: "telefono", titulo: "Y en tu *celular*", sub: "Pídele flyers, anuncios o ideas. Yo lo hago; tú apruebas." },
+    { tipo: "pantalla", dur: 150, imagen: "bori-app/planes-pc.png", dispositivo: "laptop", titulo: "Todo esto por *$99 al mes*", sub: "Bori Pro. Sin contrato: cancelas cuando quieras.", foco: { x: 0.19, y: 0.12, w: 0.22, h: 0.6 } },
+    { tipo: "gancho", dur: 100, lineas: ["Crea. Publica.", "*Vende.*"] },
+    { tipo: "cierre", dur: 240, cta: "Empieza en heybori.ai", sub: "Tu primer anuncio en 10 minutos", url: "@heybori" },
+  ],
+};
+ANUNCIOS.push({ ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-16x9`, formato: "16:9" }, { ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-9x16`, formato: "9:16" });

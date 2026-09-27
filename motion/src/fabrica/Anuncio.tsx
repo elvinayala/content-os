@@ -56,7 +56,7 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
           ),
         )}
         <Grano />
-        <Audio src={staticFile(tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
+        <Audio src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
         {cortes.map((c) => <Sfx key={c} src="whoosh.mp3" en={c - 5} vol={0.4} />)}
       </AbsoluteFill>
