@@ -4,7 +4,7 @@ import { and, eq, or } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
 
-import { agendarLlamadaSistema, cerrarTrato, etapasDe, ingestarLead, moverTrato } from "./repo";
+import { agendarLlamadaSistema, asegurarEtapa, cerrarTrato, embudoPorNombre, etapasDe, ingestarLead, moverTrato } from "./repo";
 import { normalizarTelefono } from "./reglas";
 import { leadsEmbudos, leadsTratos } from "./schema";
 
@@ -38,6 +38,8 @@ export function leadCalendlyAgendo(v: { nombre: string; email: string; telefono:
       origen: "calendly",
       agendoPor: v.agendoPor ?? null,
       duenoNombre: v.closer ?? null,
+      // Si venía del formulario de agenda (dueño = setter), al agendar pasa al closer.
+      forzarDueno: !!v.closer,
       nota: `📅 ${v.reagenda ? "Reagendó" : "Agendó"}: ${fechaCita(v.inicio)} · ${v.evento}${v.closer ? ` · closer ${v.closer}` : ""}${v.agendoPor ? ` · agendó ${v.agendoPor}` : ""}`,
       datos: { citaInicio: v.inicio, citaEvento: v.evento, calendlyUri: v.uri, ...(v.closer ? { closer: v.closer } : {}) },
     });
@@ -99,4 +101,44 @@ export function leadQuiz(v: { evento: string; nombre: string; email: string; tel
       datos: { ...(v.avatar ? { avatar: v.avatar } : {}), ...(v.resultado ? { resultadoQuiz: v.resultado } : {}) },
     }),
   );
+}
+
+export const ETAPA_SIN_AGENDAR = "Sin agendar";
+
+/**
+ * Formulario de agenda en 2 pasos (Pulse → Formularios, acción "leads-closers-lu"): en cuanto deja
+ * e-mail o WhatsApp, el lead entra a CLOSERS «Sin agendar» (dueño = el setter del link, por su
+ * utm_source) con un seguimiento a la hora: "llenó el formulario y no agendó". Si después agenda,
+ * el webhook de Calendly lo mueve a «Llamada agendada», se lo pasa al closer y cambia el seguimiento
+ * por la llamada. Un lead que ya existía no se mueve de donde está.
+ */
+export function leadFormularioAgenda(v: { slug: string; titulo: string; completo: boolean; primera: boolean; nombre: string; email: string; telefono: string; negocio: string; setter: string | null; resumen: string }) {
+  return seguro("formulario-agenda", async () => {
+    const emb = await embudoPorNombre("level_up", "CLOSERS");
+    if (!emb) return;
+    await asegurarEtapa(emb.id, ETAPA_SIN_AGENDAR, true);
+    const setter = v.setter && /^[a-záéíóúñ]{3,}$/i.test(v.setter.trim()) ? v.setter.trim() : null;
+    const conResumen = (t: string) => (v.resumen ? `${t}\n${v.resumen}` : t);
+    const nota = v.completo
+      ? conResumen(`📝 Completó el formulario de agenda (${v.titulo}); falta que escoja la hora en Calendly.`)
+      : v.primera
+        ? conResumen(`📝 Empezó el formulario de agenda (${v.titulo}) y dejó sus datos; todavía no lo termina.`)
+        : null;
+    const r = await ingestarLead({
+      marca: "level_up",
+      embudo: "CLOSERS",
+      etapa: ETAPA_SIN_AGENDAR,
+      nombre: v.nombre || v.email || v.telefono,
+      email: v.email || null,
+      telefono: v.telefono || null,
+      negocio: v.negocio.slice(0, 120) || null,
+      origen: "formulario",
+      agendoPor: setter,
+      duenoNombre: setter,
+      moverSiExiste: false,
+      nota,
+      datos: { formularioAgenda: v.slug },
+    });
+    if (r.nuevo) await agendarLlamadaSistema(r.id, new Date(Date.now() + 60 * 60_000), "📝 Llenó el formulario y no agendó: escríbele");
+  });
 }

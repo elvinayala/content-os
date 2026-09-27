@@ -270,6 +270,19 @@ export function EditorFormulario({ inicial }: { inicial: FormularioEditable }) {
                       <Label>Identificador</Label>
                       <Input value={p.id} onChange={(e) => setPregunta(sel, { id: e.target.value.replace(/[^a-zA-Z0-9_-]/g, "") })} />
                     </div>
+                    {f.config.calendly ? (
+                      <div className="grid gap-1.5">
+                        <Label>Respuesta en Calendly</Label>
+                        <select className={selectCls} value={p.calendly ?? ""} onChange={(e) => setPregunta(sel, { calendly: e.target.value || undefined })}>
+                          <option value="">Ninguna</option>
+                          {Array.from({ length: 10 }, (_, i) => `a${i + 1}`).map((a) => (
+                            <option key={a} value={a}>
+                              {a} (pregunta {a.slice(1)} del evento)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : null}
                     {f.accion === "pulse-onboarding-lu" ? (
                       <div className="grid gap-1.5 sm:col-span-2">
                         <Label>Columna en Pulse (LEVEL UP MEDIA)</Label>
@@ -333,7 +346,7 @@ export function EditorFormulario({ inicial }: { inicial: FormularioEditable }) {
           <div className="grid gap-5 lg:grid-cols-2">
             <div className="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-sm">
               <h3 className="font-semibold">General</h3>
-              <Campo label="Nombre (solo lo ves tú y la pestaña del navegador)" valor={f.titulo} onCambio={(v) => setF({ ...f, titulo: v })} />
+              <Campo label="Nombre (solo se ve en Pulse; la pestaña del navegador muestra el título de la bienvenida)" valor={f.titulo} onCambio={(v) => setF({ ...f, titulo: v })} />
               <div className="grid gap-1.5">
                 <Label>Link</Label>
                 <div className="flex items-center rounded-md border bg-muted/40 text-sm">
@@ -371,6 +384,22 @@ export function EditorFormulario({ inicial }: { inicial: FormularioEditable }) {
                     </option>
                   ))}
                 </select>
+              </div>
+              <label className="flex items-center justify-between gap-3 rounded-md border px-3 py-2.5">
+                <span>
+                  <span className="block text-sm font-medium">Guardar aunque no termine</span>
+                  <span className="text-xs text-muted-foreground">Desde que deja un e-mail o teléfono, lo que lleve queda guardado (“a medias”).</span>
+                </span>
+                <Switch checked={!!f.config.parciales} onCheckedChange={(v) => setConfig({ parciales: v || undefined })} />
+              </label>
+              <div className="grid gap-1.5">
+                <Label>Paso 2: agendar en Calendly (opcional)</Label>
+                <Input
+                  value={f.config.calendly?.url ?? ""}
+                  onChange={(e) => setConfig({ calendly: e.target.value.trim() ? { url: e.target.value.trim() } : undefined })}
+                  placeholder="https://calendly.com/…"
+                />
+                <p className="text-xs text-muted-foreground">Al terminar se abre este Calendly con todo pre-llenado. Cada pregunta dice en “Avanzado” qué respuesta de Calendly llena (a1…a10).</p>
               </div>
             </div>
 

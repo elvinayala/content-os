@@ -13,8 +13,10 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<s
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const f = await formularioPorSlug((await params).slug);
   if (!f) return { title: "Formulario" };
-  const descripcion = f.config.bienvenida.texto?.slice(0, 160) ?? f.titulo;
-  return { title: f.titulo, description: descripcion, robots: { index: false, follow: false }, openGraph: { title: f.titulo, description: descripcion, type: "website" } };
+  // Lo que ve la persona es el título de la bienvenida; el "titulo" del formulario es interno (Pulse).
+  const titulo = f.config.bienvenida.titulo.replace(/\*/g, "").trim() || f.titulo;
+  const descripcion = f.config.bienvenida.texto?.slice(0, 160) ?? titulo;
+  return { title: titulo, description: descripcion, robots: { index: false, follow: false }, openGraph: { title: titulo, description: descripcion, type: "website" } };
 }
 
 // Formulario público propio (/f/<slug>), el reemplazo de Typeform. `?vista=previa` = vista previa

@@ -75,3 +75,35 @@ test("quién maneja los formularios", async () => {
   assert.ok(puedeFormularios({ rol: "miembro", email: "nahueltissera46@gmail.com" }));
   assert.equal(puedeFormularios({ rol: "miembro", email: "roger.arteaga@levelupmediapr.net" }), false);
 });
+
+test("agenda de closers en 2 pasos: válida, a medias y pre-llenado de Calendly", async () => {
+  const { SEMILLAS_AGENDA } = await import("../lib/formularios/semillas-agenda.ts");
+  const { prefillCalendly, tieneContacto, telefonoE164, resumenRespuestas } = await import("../lib/formularios/reglas.ts");
+  assert.equal(SEMILLAS_AGENDA.length, 2);
+  for (const s of SEMILLAS_AGENDA) {
+    assert.equal(problemaConfig(s.config), null, s.slug);
+    assert.equal(s.accion, "leads-closers-lu");
+    assert.ok(s.config.parciales);
+    // Llena a1…a10 una vez cada una (las 10 preguntas del evento de Calendly).
+    const slots = s.config.preguntas.map((p) => p.calendly).filter(Boolean).sort();
+    assert.equal(slots.length, 10, s.slug);
+  }
+  const roger = SEMILLAS_AGENDA.find((s) => s.slug === "agenda-roger").config.preguntas;
+  // A medias: sin contacto no se guarda; con WhatsApp válido sí.
+  assert.equal(tieneContacto(roger, { nombre: "Ana" }), false);
+  assert.equal(tieneContacto(roger, { nombre: "Ana", telefono: "555" }), false);
+  assert.equal(tieneContacto(roger, { nombre: "Ana", telefono: "787 555 1234" }), true);
+  assert.equal(telefonoE164("(787) 555-1234"), "+17875551234");
+  const r = { nombre: "Ana Rivera", telefono: "787 555 1234", email: "ana@x.com", negocio: "Salón Ana", ventas: "$3,000 - $5000", urgencia: "En un mes " };
+  const pre = prefillCalendly(roger, r);
+  assert.equal(pre.name, "Ana Rivera");
+  assert.equal(pre.email, "ana@x.com");
+  assert.equal(pre.customAnswers.a1, "Salón Ana");
+  assert.equal(pre.customAnswers.a3, "$3,000 - $5000"); // tal cual Calendly para que lo marque
+  assert.equal(pre.customAnswers.a10, "+17875551234");
+  assert.equal(pre.customAnswers.a5, "En un mes"); // Calendly marca la opción sin el espacio final
+  const urg = roger.find((p) => p.id === "urgencia");
+  assert.equal(errorDe(urg, { urgencia: "Es una prioridad para resolver ya mismo " }), null);
+  assert.match(resumenRespuestas(roger, r), /\$3,000 - \$5,000/); // en la nota, bien escrito
+  assert.match(problemaConfig({ bienvenida: { titulo: "a" }, gracias: { titulo: "b" }, preguntas: [{ id: "x", titulo: "X", tipo: "texto", requerida: true }], calendly: { url: "https://otro.com/x" } }), /Calendly/);
+});

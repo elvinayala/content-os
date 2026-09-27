@@ -21,6 +21,8 @@ export interface Pregunta {
   si?: { id: string; valor: string };
   /** Título de la columna en Pulse (solo para la acción "Ficha de cliente en Pulse"). */
   columna?: string;
+  /** Respuesta de Calendly que esta pregunta pre-llena ("a1"…"a10", en el orden de las preguntas del evento). */
+  calendly?: string;
 }
 
 export interface Bienvenida {
@@ -41,6 +43,10 @@ export interface ConfigFormulario {
   bienvenida: Bienvenida;
   gracias: Gracias;
   preguntas: Pregunta[];
+  /** Guarda la respuesta a medida que avanza (desde que dio un e-mail o teléfono válido), aunque no termine. */
+  parciales?: boolean;
+  /** Paso 2: al terminar se abre este evento de Calendly con todo pre-llenado (en vez del botón final). */
+  calendly?: { url: string };
 }
 
 export type Respuestas = Record<string, string | string[] | Record<string, string> | undefined>;
@@ -100,6 +106,7 @@ export function tintaSobre(hex: string): string {
 export const ACCIONES: Record<string, string> = {
   ninguna: "Solo guardar las respuestas",
   "pulse-onboarding-lu": "Crear la ficha del cliente en Pulse (LEVEL UP MEDIA) y abrirle expediente a Max",
+  "leads-closers-lu": "Guardar el lead en Leads (Level Up · CLOSERS → «Sin agendar»), aunque no termine, con seguimiento",
 };
 
 export const TIPOS: Record<TipoPregunta, string> = {
@@ -161,7 +168,8 @@ export function errorDe(p: Pregunta, r: Respuestas): string | null {
     case "si-no":
     case "escala":
       if (p.otra && s.startsWith("Otra:")) return s.slice(5).trim() ? null : "Escribe cuál.";
-      return opcionesDe(p).includes(s) ? null : "Elige una opción.";
+      // Sin recortar: hay opciones copiadas de Calendly que terminan en espacio.
+      return opcionesDe(p).includes(v as string) || opcionesDe(p).includes(s) ? null : "Elige una opción.";
     case "multiple":
       return Array.isArray(v) && v.every((x) => opcionesDe(p).includes(x)) ? null : "Elige al menos una opción.";
     default:
@@ -245,6 +253,9 @@ export function problemaConfig(c: ConfigFormulario): string | null {
       if (j < 0 || j >= i) return `${n}: la condición tiene que depender de una pregunta anterior.`;
     }
   }
+  if (c.calendly && !/^https:\/\/calendly\.com\/\S+/.test(c.calendly.url)) return "El link de Calendly tiene que empezar con https://calendly.com/…";
+  const slots = c.preguntas.map((p) => p.calendly).filter(Boolean);
+  if (new Set(slots).size !== slots.length) return "Dos preguntas llenan la misma respuesta de Calendly.";
   if (c.gracias.boton && (!c.gracias.boton.texto?.trim() || !/^https?:\/\/\S+\.\S+/.test(c.gracias.boton.url ?? ""))) return "El botón de la pantalla final necesita texto y un link (https://…).";
   return null;
 }
@@ -274,4 +285,40 @@ export function celdaCsv(v: string): string {
 export function puedeFormularios(u: { rol: string; email: string }, lista = "jessica@levelupmediapr.net,nahueltissera46@gmail.com"): boolean {
   if (u.rol === "admin" || u.rol === "editor") return true;
   return lista.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean).includes(u.email.toLowerCase());
+}
+
+// ---------- Agenda en 2 pasos (formulario + Calendly) ----------
+
+/** Hay un contacto válido para guardar la respuesta a medias (e-mail o teléfono bien escritos). */
+export function tieneContacto(preguntas: Pregunta[], r: Respuestas): boolean {
+  return preguntas.some((p) => (p.tipo === "email" || p.tipo === "telefono") && texto(r[p.id]) !== "" && errorDe({ ...p, requerida: true }, r) === null);
+}
+
+/** Teléfono en formato internacional para Calendly (+1 787…). */
+export function telefonoE164(v: string): string {
+  const d = v.replace(/\D/g, "");
+  if (d.length === 10) return `+1${d}`;
+  return d ? `+${d}` : "";
+}
+
+/** Lo que se le pasa al widget de Calendly: nombre, e-mail y las respuestas a1…a10. */
+export function prefillCalendly(preguntas: Pregunta[], r: Respuestas): { name: string; email: string; customAnswers: Record<string, string> } {
+  const de = (tipo: TipoPregunta) => texto(r[preguntas.find((p) => p.tipo === tipo)?.id ?? ""]);
+  const customAnswers: Record<string, string> = {};
+  for (const p of preguntas) {
+    if (!p.calendly || !/^a([1-9]|10)$/.test(p.calendly) || !visible(p, r)) continue;
+    // Recortado. Ojo: Calendly NO marca opciones que en su configuración terminan en espacio (ni
+    // mandándolo como %20; probado el 26/sep): hay que quitarle ese espacio en Calendly.
+    const v = p.tipo === "telefono" ? telefonoE164(texto(r[p.id])) : texto(r[p.id]);
+    if (v) customAnswers[p.calendly] = v;
+  }
+  return { name: texto(r.nombre), email: de("email"), customAnswers };
+}
+
+/** Resumen de las respuestas para la nota del lead ("• Pregunta: respuesta"). */
+export function resumenRespuestas(preguntas: Pregunta[], r: Respuestas): string {
+  return preguntas
+    .filter((p) => visible(p, r) && texto(r[p.id]))
+    .map((p) => `• ${p.titulo.replace(/^[^\p{L}¿]+/u, "").replace(/^¿|\?$/g, "")}: ${p.etiquetas?.[texto(r[p.id])] ?? texto(r[p.id])}`)
+    .join("\n");
 }

@@ -23,6 +23,7 @@ export interface FormularioFila {
   accion: string;
   preguntas: number;
   total: number;
+  parciales: number;
   ultima: string | null;
   link: string;
 }
@@ -100,6 +101,7 @@ export function ListaFormularios({ formularios }: { formularios: FormularioFila[
               <Inbox className="size-4 text-muted-foreground" />
               <span className="font-semibold tabular-nums">{f.total}</span>
               <span className="text-muted-foreground">respuestas</span>
+              {f.parciales ? <span className="ml-1 rounded bg-amber-100 px-1.5 text-[11px] font-semibold text-amber-800">+{f.parciales} a medias</span> : null}
             </Link>
             <Button variant="outline" size="sm" onClick={() => copiar(f.link)}>
               <Copy className="size-4" /> Copiar link

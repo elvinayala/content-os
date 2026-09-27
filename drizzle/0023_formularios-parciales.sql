@@ -1,0 +1,1 @@
+ALTER TABLE "form_respuestas" ADD COLUMN "estado" text DEFAULT 'completa' NOT NULL;

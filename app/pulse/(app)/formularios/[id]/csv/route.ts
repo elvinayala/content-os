@@ -18,9 +18,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const cols = new Map(f.config.preguntas.map((p) => [p.id, p.titulo]));
   for (const r of rs) for (const p of r.preguntas) if (!cols.has(p.id)) cols.set(p.id, p.titulo);
   const lineas = [
-    ["Fecha (PR)", ...cols.values(), "Origen", "Resultado"].map(celdaCsv).join(";"),
+    ["Fecha (PR)", "Estado", ...cols.values(), "Origen", "Resultado"].map(celdaCsv).join(";"),
     ...rs.map((r) =>
-      [r.createdAt.toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" }), ...[...cols.keys()].map((k) => texto(r.respuestas[k])), r.origen ?? "", r.resultado ?? ""].map(celdaCsv).join(";"),
+      [r.createdAt.toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" }), r.estado === "parcial" ? "A medias" : "Completa", ...[...cols.keys()].map((k) => texto(r.respuestas[k])), r.origen ?? "", r.resultado ?? ""].map(celdaCsv).join(";"),
     ),
   ];
   const nombre = `${slugDe(f.titulo) || "formulario"}-${new Date().toISOString().slice(0, 10)}.csv`;

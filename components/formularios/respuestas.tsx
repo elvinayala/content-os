@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 
 export interface RespuestaFila {
   id: string;
+  estado: string;
   fecha: string;
   origen: string | null;
   resultado: string | null;
@@ -20,8 +21,10 @@ export interface RespuestaFila {
 
 const fecha = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
 
-function Resultado({ r }: { r: string | null }) {
+function Resultado({ r, estado }: { r: string | null; estado?: string }) {
+  if (estado === "parcial") return <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 uppercase">A medias</span>;
   if (!r) return null;
+  if (r.includes("agendó")) return <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 uppercase">Agendó</span>;
   if (r.startsWith("error")) return <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 uppercase" title={r}>No creó la ficha</span>;
   if (r.startsWith("ficha-")) return <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 uppercase" title={r}>{r.startsWith("ficha-creado") ? "Ficha nueva en Pulse" : "Ficha actualizada"}</span>;
   return null;
@@ -56,7 +59,11 @@ export function RespuestasFormulario({ formulario, respuestas }: { formulario: {
         </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{formulario.titulo}</div>
-          <div className="text-xs text-muted-foreground">{respuestas.length} respuestas</div>
+          <div className="text-xs text-muted-foreground">
+            {respuestas.filter((r) => r.estado !== "parcial").length} completas
+            {respuestas.some((r) => r.estado === "parcial") ? ` · ${respuestas.filter((r) => r.estado === "parcial").length} a medias` : ""}
+            {respuestas.some((r) => r.resultado?.includes("agendó")) ? ` · ${respuestas.filter((r) => r.resultado?.includes("agendó")).length} agendaron` : ""}
+          </div>
         </div>
         <Button asChild variant="ghost" size="sm">
           <a href={formulario.link} target="_blank" rel="noreferrer">
@@ -80,7 +87,7 @@ export function RespuestasFormulario({ formulario, respuestas }: { formulario: {
               <button type="button" onClick={() => setAbierta(on ? null : r.id)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/40">
                 <span className="w-28 shrink-0 text-xs text-muted-foreground">{fecha(r.fecha)}</span>
                 <span className="min-w-0 flex-1 truncate text-sm">{resumen || "(vacía)"}</span>
-                <Resultado r={r.resultado} />
+                <Resultado r={r.resultado} estado={r.estado} />
                 <ChevronDown className={`size-4 shrink-0 text-muted-foreground transition ${on ? "rotate-180" : ""}`} />
               </button>
               {on ? (

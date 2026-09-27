@@ -352,6 +352,18 @@ export async function crearActividad(tratoId: string, v: { tipo: string; asunto:
   await recalcularProxima(tratoId);
 }
 
+/** Asegura una etapa en un embudo (por nombre); si no existe la crea al principio o al final. */
+export async function asegurarEtapa(embudoId: string, nombre: string, alInicio: boolean): Promise<string> {
+  const etapas = await etapasDe(embudoId);
+  const ya = etapas.find((e) => clave(e.nombre) === clave(nombre));
+  if (ya) return ya.id;
+  const d = await db();
+  const ordenes = etapas.map((e) => e.orden);
+  const orden = ordenes.length ? (alInicio ? Math.min(...ordenes) - 1 : Math.max(...ordenes) + 1) : 0;
+  const [e] = await d.insert(leadsEtapas).values({ embudoId, nombre, orden }).returning({ id: leadsEtapas.id });
+  return e.id;
+}
+
 /** La llamada que agendó el sistema (Calendly): una sola pendiente por lead, del dueño del lead.
  *  `venceAt` null = se canceló (se quita). No toca las actividades que creó el equipo. */
 export async function agendarLlamadaSistema(tratoId: string, venceAt: Date | null, asunto = "Llamada agendada") {
@@ -409,7 +421,7 @@ async function buscarAbierto(marca: Marca, telefono: string | null, email: strin
   return t ?? null;
 }
 
-async function embudoPorNombre(marca: Marca, nombre: string): Promise<Embudo | null> {
+export async function embudoPorNombre(marca: Marca, nombre: string): Promise<Embudo | null> {
   await asegurarSemilla(marca);
   const lista = await listarEmbudos(marca);
   return lista.find((e) => clave(e.nombre) === clave(nombre)) ?? null;
@@ -434,6 +446,8 @@ export async function ingestarLead(v: {
   datos?: Record<string, unknown>;
   /** false = si el lead ya existe, no lo mueve de embudo/etapa (p. ej. el quiz no "devuelve" a quien ya agendó). */
   moverSiExiste?: boolean;
+  /** true = si el lead ya existe, el dueño pasa a ser `duenoNombre` (p. ej. del setter al closer al agendar). */
+  forzarDueno?: boolean;
 }): Promise<{ id: string; nuevo: boolean }> {
   const emb = await embudoPorNombre(v.marca, v.embudo);
   if (!emb) throw new Error("sin-embudos");
@@ -454,7 +468,7 @@ export async function ingestarLead(v: {
     if (!ya.negocio && v.negocio) cambios.negocio = v.negocio;
     if (!ya.email && email) cambios.email = email;
     if (!ya.telefono && telefono) cambios.telefono = telefono;
-    if (!ya.duenoId && duenoId) cambios.duenoId = duenoId;
+    if (duenoId && (!ya.duenoId || v.forzarDueno)) cambios.duenoId = duenoId;
     if (v.agendoPor) cambios.agendoPor = v.agendoPor;
     await d.update(leadsTratos).set(cambios).where(eq(leadsTratos.id, ya.id));
     if (v.moverSiExiste !== false && etapa && ya.etapaId !== etapa.id) await moverTrato(ya.id, etapa.id, null, null);

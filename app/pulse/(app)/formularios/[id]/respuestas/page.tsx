@@ -25,6 +25,7 @@ export default async function RespuestasPage({ params }: { params: Promise<{ id:
         const viejos = new Map(r.preguntas.map((p) => [p.id, p.titulo]));
         return {
           id: r.id,
+          estado: r.estado,
           fecha: r.createdAt.toISOString(),
           origen: r.origen,
           resultado: r.resultado,

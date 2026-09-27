@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, max, sql } from "drizzle-orm";
+import { and, desc, eq, max, sql } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
 
@@ -8,6 +8,7 @@ import type { Apariencia, ConfigFormulario, Respuestas } from "./reglas";
 import { slugDe } from "./reglas";
 import { formFormularios, formRespuestas } from "./schema";
 import { SEMILLAS } from "./semillas";
+import { SEMILLAS_AGENDA } from "./semillas-agenda";
 
 export type Formulario = typeof formFormularios.$inferSelect;
 export type Respuesta = typeof formRespuestas.$inferSelect;
@@ -17,10 +18,10 @@ let sembrado = false;
 export async function asegurarSemillas(): Promise<void> {
   if (sembrado) return;
   const d = await db();
-  for (const s of SEMILLAS) {
+  for (const s of [...SEMILLAS, ...SEMILLAS_AGENDA]) {
     await d
       .insert(formFormularios)
-      .values({ slug: s.slug, titulo: s.titulo, marca: s.marca, apariencia: s.apariencia, config: s.config, accion: s.accion })
+      .values({ slug: s.slug, titulo: s.titulo, marca: s.marca, apariencia: s.apariencia, config: s.config, accion: s.accion, activo: s.activo ?? true })
       .onConflictDoNothing();
   }
   sembrado = true;
@@ -28,6 +29,7 @@ export async function asegurarSemillas(): Promise<void> {
 
 export interface FormularioResumen extends Formulario {
   total: number;
+  parciales: number; // se quedaron a mitad
   ultima: Date | null;
 }
 
@@ -36,11 +38,16 @@ export async function listarFormularios(): Promise<FormularioResumen[]> {
   const d = await db();
   const forms = await d.select().from(formFormularios).where(eq(formFormularios.archivado, false)).orderBy(desc(formFormularios.updatedAt));
   const stats = await d
-    .select({ id: formRespuestas.formularioId, total: count(), ultima: max(formRespuestas.createdAt) })
+    .select({
+      id: formRespuestas.formularioId,
+      total: sql<number>`count(*) filter (where ${formRespuestas.estado} = 'completa')`,
+      parciales: sql<number>`count(*) filter (where ${formRespuestas.estado} = 'parcial')`,
+      ultima: max(formRespuestas.createdAt),
+    })
     .from(formRespuestas)
     .groupBy(formRespuestas.formularioId);
   const por = new Map(stats.map((s) => [s.id, s]));
-  return forms.map((f) => ({ ...f, total: Number(por.get(f.id)?.total ?? 0), ultima: por.get(f.id)?.ultima ?? null }));
+  return forms.map((f) => ({ ...f, total: Number(por.get(f.id)?.total ?? 0), parciales: Number(por.get(f.id)?.parciales ?? 0), ultima: por.get(f.id)?.ultima ?? null }));
 }
 
 export async function formularioPorSlug(slug: string): Promise<Formulario | null> {
@@ -118,7 +125,8 @@ export async function archivarFormulario(id: string): Promise<void> {
     .where(eq(formFormularios.id, id));
 }
 
-/** Guarda una respuesta. Si ese navegador ya la envió (mismo token), no duplica. */
+/** Guarda una respuesta completa. Si ese navegador ya la había completado (mismo token), no duplica
+ *  (`nueva: false`); si estaba a mitad (parcial), la completa y cuenta como nueva. */
 export async function guardarRespuesta(v: { formularioId: string; token: string; respuestas: Respuestas; preguntas: { id: string; titulo: string }[]; origen?: string | null }): Promise<{ id: string; nueva: boolean }> {
   const d = await db();
   const [r] = await d
@@ -127,8 +135,33 @@ export async function guardarRespuesta(v: { formularioId: string; token: string;
     .onConflictDoNothing()
     .returning({ id: formRespuestas.id });
   if (r) return { id: r.id, nueva: true };
-  const [ya] = await d.select({ id: formRespuestas.id }).from(formRespuestas).where(and(eq(formRespuestas.formularioId, v.formularioId), eq(formRespuestas.token, v.token))).limit(1);
-  return { id: ya.id, nueva: false };
+  const [ya] = await d
+    .update(formRespuestas)
+    .set({ respuestas: v.respuestas, preguntas: v.preguntas, estado: "completa", createdAt: new Date() })
+    .where(and(eq(formRespuestas.formularioId, v.formularioId), eq(formRespuestas.token, v.token), eq(formRespuestas.estado, "parcial")))
+    .returning({ id: formRespuestas.id });
+  if (ya) return { id: ya.id, nueva: true };
+  const [antes] = await d.select({ id: formRespuestas.id }).from(formRespuestas).where(and(eq(formRespuestas.formularioId, v.formularioId), eq(formRespuestas.token, v.token))).limit(1);
+  return { id: antes.id, nueva: false };
+}
+
+/** Guarda lo que lleva alguien que todavía no termina (una fila por navegador, se va pisando).
+ *  `primera` = es la primera vez que se guarda (para avisar/crear el lead una sola vez). Si ya la
+ *  completó, no toca nada. */
+export async function guardarParcial(v: { formularioId: string; token: string; respuestas: Respuestas; preguntas: { id: string; titulo: string }[]; origen?: string | null }): Promise<{ id: string; primera: boolean } | null> {
+  const d = await db();
+  const [r] = await d
+    .insert(formRespuestas)
+    .values({ formularioId: v.formularioId, token: v.token, respuestas: v.respuestas, preguntas: v.preguntas, origen: v.origen ?? null, estado: "parcial" })
+    .onConflictDoNothing()
+    .returning({ id: formRespuestas.id });
+  if (r) return { id: r.id, primera: true };
+  const [ya] = await d
+    .update(formRespuestas)
+    .set({ respuestas: v.respuestas, preguntas: v.preguntas })
+    .where(and(eq(formRespuestas.formularioId, v.formularioId), eq(formRespuestas.token, v.token), eq(formRespuestas.estado, "parcial")))
+    .returning({ id: formRespuestas.id });
+  return ya ? { id: ya.id, primera: false } : null;
 }
 
 export async function marcarResultado(id: string, resultado: string): Promise<void> {
@@ -144,4 +177,13 @@ export async function respuestasDe(formularioId: string, limite = 1000): Promise
 export async function borrarRespuesta(id: string): Promise<void> {
   const d = await db();
   await d.delete(formRespuestas).where(eq(formRespuestas.id, id));
+}
+
+/** El que respondió terminó el paso 2 (agendó en Calendly desde el formulario). */
+export async function marcarAgendo(formularioId: string, token: string): Promise<void> {
+  const d = await db();
+  await d
+    .update(formRespuestas)
+    .set({ resultado: sql`case when ${formRespuestas.resultado} is null or ${formRespuestas.resultado} = '' then 'agendó' else ${formRespuestas.resultado} || ' · agendó' end` })
+    .where(and(eq(formRespuestas.formularioId, formularioId), eq(formRespuestas.token, token), sql`coalesce(${formRespuestas.resultado}, '') not like '%agendó%'`));
 }

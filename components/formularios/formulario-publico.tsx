@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight, Check, ExternalLink, Loader2 } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { conNombre, type ConfigFormulario, errorDe, opcionesDe, type Pregunta, type Respuestas, type Tema, verOpcion, visible } from "@/lib/formularios/reglas";
+import { conNombre, type ConfigFormulario, errorDe, opcionesDe, prefillCalendly, type Pregunta, type Respuestas, type Tema, tieneContacto, verOpcion, visible } from "@/lib/formularios/reglas";
 
 const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -75,7 +75,10 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
     setR((x) => ({ ...x, [id]: v }));
   };
 
-  const enviar = useCallback(async () => {
+  const enviar = useCallback(async (actuales?: Respuestas) => {
+    // Las respuestas llegan del paso que se acaba de contestar: el estado `r` puede ir un render atrás
+    // (p. ej. al elegir la última opción, que avanza sola).
+    const resp = actuales ?? r;
     if (previa) {
       setDir(1);
       return setPaso(total + 1);
@@ -86,7 +89,7 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
       const res = await fetch(`/api/f/${slug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, respuestas: r, empresa_web: trampa, origen }),
+        body: JSON.stringify({ token, respuestas: resp, empresa_web: trampa, origen }),
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.ok) {
@@ -125,10 +128,14 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
       setDir(1);
       // La última visible puede cambiar según la respuesta (condiciones): se recalcula.
       const vis = config.preguntas.filter((p) => visible(p, estado));
-      if (paso >= vis.length) return void enviar();
+      if (paso >= vis.length) return void enviar(estado);
+      // Guardado a medias (si el formulario lo permite): lo que lleva queda aunque no termine.
+      if (config.parciales && !previa && token && tieneContacto(config.preguntas, estado)) {
+        fetch(`/api/f/${slug}`, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, respuestas: estado, parcial: true, origen }) }).catch(() => {});
+      }
       setPaso((p) => p + 1);
     },
-    [actual, r, paso, config.preguntas, enviar],
+    [actual, r, paso, config.preguntas, config.parciales, previa, token, slug, origen, enviar],
   );
   const atras = () => {
     setError(null);
@@ -192,7 +199,7 @@ export function FormularioPublico({ slug, config, tema, previa = false, origen }
             />
           ) : null}
 
-          {terminado ? <Final config={config} r={r} /> : null}
+          {terminado ? config.calendly?.url ? <Agenda config={config} r={r} tema={tema} slug={slug} token={token} origen={origen} previa={previa} /> : <Final config={config} r={r} /> : null}
         </div>
       </section>
 
@@ -264,6 +271,82 @@ function Final({ config, r }: { config: ConfigFormulario; r: Respuestas }) {
       ) : (
         <p className="f-tenue text-sm">Ya puedes cerrar esta página.</p>
       )}
+    </div>
+  );
+}
+
+declare global {
+  interface Window {
+    Calendly?: { initInlineWidget: (o: { url: string; parentElement: HTMLElement; prefill?: object; utm?: object }) => void };
+  }
+}
+
+/** Paso 2: el Calendly de siempre, dentro de la página y con todo lo que ya contestó pre-llenado. */
+function Agenda({ config, r, tema, slug, token, origen, previa }: { config: ConfigFormulario; r: Respuestas; tema: Tema; slug: string; token: string; origen?: string; previa: boolean }) {
+  const g = config.gracias;
+  const ref = useRef<HTMLDivElement>(null);
+  const [agendado, setAgendado] = useState(false);
+  useEffect(() => {
+    // Pre-llenado por el link (name, email, a1…a10): es lo documentado de Calendly y no depende del
+    // mensaje diferido del script (que a veces no llega). Espacios como %20: Calendly muestra el "+"
+    // de URLSearchParams tal cual.
+    const pre = prefillCalendly(config.preguntas, r);
+    const params: Record<string, string> = {
+      hide_gdpr_banner: "1",
+      background_color: tema.fondo.replace("#", ""),
+      text_color: tema.texto.replace("#", ""),
+      primary_color: tema.acento.replace("#", ""),
+      ...(pre.name ? { name: pre.name } : {}),
+      ...(pre.email ? { email: pre.email } : {}),
+      ...pre.customAnswers,
+    };
+    const base = config.calendly!.url;
+    const url = `${base}${base.includes("?") ? "&" : "?"}${Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&")}`;
+    const iniciar = () => {
+      if (!ref.current || !window.Calendly) return;
+      ref.current.innerHTML = "";
+      window.Calendly.initInlineWidget({ url, parentElement: ref.current, prefill: pre, utm: origen ? { utmSource: origen } : {} });
+    };
+    const id = "calendly-widget-js";
+    if (window.Calendly) iniciar();
+    else if (!document.getElementById(id)) {
+      const sc = document.createElement("script");
+      sc.id = id;
+      sc.src = "https://assets.calendly.com/assets/external/widget.js";
+      sc.async = true;
+      sc.onload = iniciar;
+      document.body.appendChild(sc);
+    } else document.getElementById(id)!.addEventListener("load", iniciar);
+    const msg = (e: MessageEvent) => {
+      if (e.origin !== "https://calendly.com" || e.data?.event !== "calendly.event_scheduled") return;
+      setAgendado(true);
+      if (!previa) fetch(`/api/f/${slug}`, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, agendo: true }) }).catch(() => {});
+    };
+    window.addEventListener("message", msg);
+    return () => window.removeEventListener("message", msg);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (agendado) {
+    return (
+      <div className="flex flex-col items-start gap-6">
+        <div className="lu-numero size-16 rounded-2xl">
+          <Check className="size-9" strokeWidth={3} />
+        </div>
+        <h1 className="font-[family-name:var(--font-sora)] text-4xl leading-tight font-bold tracking-tight sm:text-5xl">¡Listo! Tu videollamada quedó agendada 🎉</h1>
+        <p className="f-sutil max-w-xl text-lg leading-relaxed">Te llegó la confirmación al e-mail con el enlace de Zoom. Te escribimos por WhatsApp antes de la llamada.</p>
+        <p className="f-tenue text-sm">Ya puedes cerrar esta página.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-4">
+      <span className="lu-chip">Paso 2 de 2</span>
+      <h1 className="font-[family-name:var(--font-sora)] text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
+        <Resaltado t={conNombre(g.titulo, r)} />
+      </h1>
+      {g.texto ? <p className="f-sutil max-w-xl text-base leading-relaxed">{conNombre(g.texto, r)}</p> : null}
+      <div ref={ref} className="-mx-5 h-[1000px] overflow-hidden rounded-2xl sm:mx-0 sm:h-[760px]" />
     </div>
   );
 }

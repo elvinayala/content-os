@@ -37,6 +37,8 @@ export const formRespuestas = pgTable(
     respuestas: jsonb("respuestas").$type<Respuestas>().notNull(),
     // Copia de las preguntas al momento de responder (si después se editan, la respuesta se sigue leyendo bien).
     preguntas: jsonb("preguntas").$type<{ id: string; titulo: string }[]>().notNull(),
+    // "parcial" = se quedó a mitad (se guarda sola al avanzar, si el formulario lo permite) · "completa".
+    estado: text("estado").notNull().default("completa"),
     resultado: text("resultado"), // p. ej. "ficha-nueva:<itemId>", "error: …"
     origen: text("origen"), // utm_source / ?origen= del link
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

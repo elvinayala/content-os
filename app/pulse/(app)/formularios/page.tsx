@@ -31,6 +31,7 @@ export default async function FormulariosPage() {
             accion: f.accion,
             preguntas: f.config.preguntas.length,
             total: f.total,
+            parciales: f.parciales,
             ultima: f.ultima?.toISOString() ?? null,
             link: linkPublico(f),
           }))}
