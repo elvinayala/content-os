@@ -28,6 +28,22 @@ La IA generativa deforma logos y textos; el código no — por eso son dos puest
 - `scripts/audio.mjs musica|sfx "<prompt>"` — música (stable-audio) y efectos (ElevenLabs) vía fal.
 - `scripts/entregar.mjs` — sube el MP4 y lo deja en la bandeja.
 
+## 2b. La fábrica de anuncios (27/sep/2026) — lo normal para pauta
+Para anuncios NO se escribe un video a mano: se escribe un **guion en datos** en
+`motion/src/fabrica/anuncios.ts` (marca + formato 9:16/16:9 + escenas con `dur`) y la fábrica lo dibuja.
+- Temas por marca: `fabrica/temas.tsx` (Level Up: negro+oro, Sora, logo PNG del cohete · Bori: coquí cobre,
+  Onest · AI Borinquen: logo v2 por piezas, Outfit). Música de marca en `public/audio/<marca>-musica.mp3`.
+- Escenas (`fabrica/escenas.tsx`): gancho · numero (contador + curva) · notificaciones · comparativa · pasos ·
+  chat · llamada · flyers · aprobacion · embudo · casos · roles · cita · rompecabezas · dato · semanas · cierre.
+  `*palabra*` o `*frase de varias*` = resaltado. Se acomodan solas a vertical/horizontal y a la zona segura.
+- Cada escena trae sus efectos de sonido; el anuncio pone el golpe inicial, los barridos y la música.
+- Render: `motion/scripts/render-fabrica.sh [ids…]` → `motion/out/fabrica/<id>.mp4` (~30 s c/u).
+  Revisión: `node motion/scripts/hoja.mjs <id>` → hoja de contacto (1 cuadro por escena). Mirarla SIEMPRE.
+- Una escena nueva que haga falta se agrega a la fábrica (tipo en `tipos.ts` + componente), no a un video suelto.
+- Reglas del copy de anuncios: gancho en el frame 0 (sin intro), dolor concreto o resultado con número
+  (nunca abstracto), solo casos verificados + "Resultados de clientes reales; cada negocio es distinto.",
+  AIB de usted, sin "gratis", Bori: "Pro $99/mes, sin contrato" (la prueba de 7 días no es pública).
+
 ## 3. Principios de motion (lo que hace que se vea "de agencia")
 1. **Ritmo = música.** Pedir la pista primero, medir su energía (ffmpeg astats) y cortar en los
    golpes (120 BPM = cada 15 frames). Los cortes caen en el beat, los "pops" en contratiempo.
@@ -81,6 +97,7 @@ Cuando Elvin corrige ("más rápido", "el logo más grande", "otra música"), an
 REGLAS APRENDIDAS solo lo que aplique a futuros videos.
 
 ### REGLAS APRENDIDAS
+- Los títulos largos se parten en líneas (hasta 3) antes que achicarse; en vertical el gancho llena la pantalla; nunca una palabra sola en la última línea.
 - 27/sep: el primer video de AI Borinquen salió con el coquí de Bori → rehacerlo con la marca de AIB.
   Antes de animar, confirmar QUÉ marca es y usar SU logo.
 - El resplandor (filter) nunca en el mismo elemento que un clip-path: el recorte lo vuelve una caja.
