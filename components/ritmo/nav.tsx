@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,6 +18,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     ...(equipo ? [{ href: "/ritmo/equipo", nombre: "Equipo", icono: Users, activo: path.startsWith("/ritmo/equipo") }] : []),
     ...(equipo ? [{ href: "/ritmo/personas", nombre: "Personas", icono: UsersRound, activo: path.startsWith("/ritmo/personas") }] : []),
     ...(!equipo && miFicha ? [{ href: `/ritmo/personas/${miFicha}`, nombre: "Mi ficha", icono: IdCard, activo: path.startsWith("/ritmo/personas") }] : []),
+    { href: "/ritmo/empresa", nombre: "Empresa", icono: Building2, activo: path.startsWith("/ritmo/empresa"), soloEscritorio: true },
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.
     { href: "/ritmo/carreras", nombre: "Carreras", icono: Briefcase, activo: path.startsWith("/ritmo/carreras"), nuevo: vacantesNuevas > 0, soloEscritorio: equipo },

@@ -450,3 +450,25 @@ export const desempenoViajeAnual = pgTable("desempeno_viaje_anual", {
   nota: text("nota"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// "Empresa" (27/sep, Elvin: "tenemos que tener una sesión de quiénes somos… recursos de la empresa generales
+// para los empleados"): quiénes somos, recursos, políticas y preguntas. Lo edita la vista maestra; cada empleado
+// ve lo de "todas" + lo de su empresa. `publicado = false` = borrador que solo ve la dirección.
+export const desempenoEmpresa = pgTable(
+  "desempeno_empresa",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    seccion: text("seccion").notNull(), // nosotros | recursos | politicas | preguntas
+    titulo: text("titulo").notNull(),
+    cuerpo: text("cuerpo").notNull().default(""),
+    url: text("url"),
+    empresa: text("empresa").notNull().default("todas"), // todas | level_up | ai_borinquen
+    orden: integer("orden").notNull().default(0),
+    publicado: boolean("publicado").notNull().default(true),
+    clave: text("clave"), // semillas: no duplicar al volver a sembrar
+    actualizadoPor: uuid("actualizado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_empresa_seccion").on(t.seccion, t.orden), uniqueIndex("desempeno_empresa_clave").on(t.clave)],
+);

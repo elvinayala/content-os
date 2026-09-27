@@ -635,6 +635,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Ponche de la dirección** (27/sep): Elvin, Carilin y Aure (admin/editoras) ven en Hoy el mismo ponche que todos, con la
   nota "no tienes que marcar"; es opcional (`estadoPonche(id, opcional)` + `entrarAction` sin perfil). Sin perfil sus
   ponches no salen en Equipo, recordatorios ni reportes (todo eso sale de `desempeno_perfiles`).
+- **Empresa** (`/ritmo/empresa`, 27/sep, Elvin: "van a entrar… una plataforma completamente vacía"): Quiénes somos · El
+  equipo (directorio en vivo de los perfiles activos, cada empleado ve solo su empresa, iniciales sin foto) · Recursos ·
+  Políticas · Preguntas. Tabla `desempeno_empresa` (migración 0027; `empresa` todas|level_up|ai_borinquen, `publicado`),
+  editable por la vista maestra (lápiz / "Agregar", formato sencillo sin HTML: viñetas, **negrita**, [link](url)).
+  Semillas solo con datos confirmados (`SEMILLAS_EMPRESA` en `lib/desempeno/empresa-reglas.ts`, tests
+  `tests/empresa.test.mjs` verifican que las políticas cuadren con `POLITICA`/`BONO_REFERIDO`); **Misión y Valores de LU
+  son BORRADOR** hasta que Elvin los apruebe. Pestaña en escritorio + tarjeta "Conoce la empresa" en Hoy.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

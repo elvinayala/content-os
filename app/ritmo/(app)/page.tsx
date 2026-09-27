@@ -1,4 +1,4 @@
-import { ChevronRight, HeartPulse, Plane } from "lucide-react";
+import { Building2, ChevronRight, HeartPulse, Plane } from "lucide-react";
 import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
@@ -73,6 +73,7 @@ export default async function HoyPage() {
                   ...(u.rol === "admin" || u.rol === "editor" ? [{ href: "/ritmo/agentes", t: "Agentes", d: "Equipo digital" }] : []),
                   { href: "/ritmo/carreras", t: "Carreras", d: "Vacantes y referidos" },
                   { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
+                  { href: "/ritmo/empresa", t: "Empresa", d: "Quiénes somos y recursos" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
                   { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
                   ...(u.rol === "admin" ? [{ href: "/ritmo/viajes", t: "Viajes", d: "Solo tú, por ahora" }] : []),
@@ -106,6 +107,17 @@ export default async function HoyPage() {
           <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
         </Link>
       ) : null}
+
+      <Link href="/ritmo/empresa" className="panel group flex w-full max-w-md items-center gap-3 p-4 transition hover:border-primary/40">
+        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/30">
+          <Building2 className="size-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium">Conoce la empresa</p>
+          <p className="text-xs text-muted-foreground">Quiénes somos, el equipo, políticas y respuestas rápidas</p>
+        </div>
+        <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+      </Link>
 
       <section className="panel flex w-full max-w-md flex-col gap-3 p-4">
         <Link href="/ritmo/bienestar" className="group flex items-center gap-3">

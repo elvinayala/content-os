@@ -9,6 +9,7 @@ import * as carreras from "@/lib/desempeno/carreras";
 import { ESTADOS_VACANTE, MODALIDADES } from "@/lib/desempeno/carreras-reglas";
 import * as datos from "@/lib/desempeno/datos";
 import * as dosPasos from "@/lib/desempeno/dos-pasos";
+import * as empresa from "@/lib/desempeno/empresa";
 import * as etica from "@/lib/desempeno/etica";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
@@ -752,6 +753,26 @@ export async function elegirGanadorViajeAction(p: { anio: number; userId: string
     const c = lista.find((x) => x.userId === p.userId);
     if (!c?.e.enCarrera) throw new Error("Esa persona no cumple los requisitos del viaje del año");
     await viajes.elegirGanador(p.anio, { id: c.userId, nombre: c.nombre }, u);
+    refresh();
+    return {};
+  });
+}
+
+// ─── Empresa: quiénes somos, recursos, políticas y preguntas (lo edita la vista maestra) ──────
+
+export async function guardarEmpresaAction(p: { id?: string; seccion: string; titulo: string; cuerpo: string; url?: string | null; empresa: string; publicado: boolean }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    await empresa.guardarItemEmpresa(p, u.id);
+    refresh();
+    return {};
+  });
+}
+
+export async function borrarEmpresaAction(id: string) {
+  return envolver(async () => {
+    await requiereMaestro();
+    await empresa.borrarItemEmpresa(id);
     refresh();
     return {};
   });
