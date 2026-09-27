@@ -1,0 +1,191 @@
+{
+  "tipo": "estrategia-5-fases",
+  "marca": "level-up",
+  "nombre": "LU · Motion + Quiz 5 Fases",
+  "fecha": "2026-09-27",
+  "presupuestoDiario": 50,
+  "destino": "dm-ig",
+  "reparto": {
+    "f1": 10,
+    "f2": 40
+  },
+  "omitidas": {
+    "f4": "presupuesto de $50/día no alcanza para F4 sin bajar ventas del 70 %",
+    "f3": "presupuesto de $50/día no alcanza para F3 sin bajar ventas del 70 %"
+  },
+  "publicosACrear": {
+    "engagers-365": {
+      "tipo": "engagers",
+      "dias": 365,
+      "nombre": "LU · Interacción IG/FB 365d"
+    },
+    "video75-365": {
+      "tipo": "video75",
+      "dias": 365,
+      "nombre": "LU · Video 75 % 365d (caliente)"
+    },
+    "video25-365": {
+      "tipo": "video25",
+      "dias": 365,
+      "nombre": "LU · Video 25 % 365d (tibio)"
+    },
+    "mensajes-365": {
+      "tipo": "mensajes",
+      "dias": 365,
+      "nombre": "LU · Mensajes IG/FB 365d (caliente)"
+    },
+    "visitas-120": {
+      "tipo": "visitas",
+      "dias": 120,
+      "nombre": "LU · Visitó perfil/página 120d (tibio)"
+    },
+    "web-180": {
+      "tipo": "web",
+      "dias": 180,
+      "evento": "PageView",
+      "nombre": "LU · Visitó la web 180d"
+    },
+    "similar-engagers-1": {
+      "tipo": "similar",
+      "origen": "engagers-365",
+      "ratio": 0.01,
+      "pais": "PR",
+      "nombre": "LU · Similar 1 % interacción"
+    }
+  },
+  "fases": [
+    {
+      "marca": "level-up",
+      "nombre": "LU · F1 Tráfico · LU · Motion + Quiz 5 Fases",
+      "modo": "perfil-ig",
+      "creadoPor": "plantilla",
+      "fecha": "2026-09-27",
+      "cuentaId": "2010206776851",
+      "pageId": "103458229415869",
+      "igUserId": null,
+      "igHandle": null,
+      "pixelId": "27706808412306198",
+      "topeDiario": 10,
+      "minPorConjunto": 10,
+      "targetingBase": {
+        "paises": [
+          "PR"
+        ],
+        "edadMin": 25,
+        "edadMax": 55,
+        "plataformas": [
+          "instagram"
+        ],
+        "advantage": false
+      },
+      "publicos": {
+        "P1": {
+          "nombre": "PR 25-55",
+          "advantage": false,
+          "excluir": [],
+          "intereses": [],
+          "amplio": true,
+          "incluir": []
+        }
+      },
+      "creativos": [
+        {
+          "clave": "C-V1",
+          "videoId": "lu-07-autoflow-llego-16x9",
+          "copy": {}
+        }
+      ],
+      "conjuntos": [
+        {
+          "clave": "F1-1",
+          "publico": "P1",
+          "creativo": "C-V1",
+          "presupuestoDiario": 10
+        }
+      ],
+      "fase": "f1",
+      "errores": [
+        "creativo C-V1: sin textoPrincipal"
+      ]
+    },
+    {
+      "marca": "level-up",
+      "nombre": "LU · F2 Ventas · LU · Motion + Quiz 5 Fases",
+      "modo": "dm-ig",
+      "creadoPor": "plantilla",
+      "fecha": "2026-09-27",
+      "cuentaId": "2010206776851",
+      "pageId": "103458229415869",
+      "igUserId": null,
+      "igHandle": null,
+      "pixelId": "27706808412306198",
+      "topeDiario": 40,
+      "minPorConjunto": 10,
+      "targetingBase": {
+        "paises": [
+          "PR"
+        ],
+        "edadMin": 25,
+        "edadMax": 55,
+        "plataformas": [
+          "instagram"
+        ],
+        "advantage": false
+      },
+      "publicos": {
+        "P1": {
+          "nombre": "PR 25-55",
+          "advantage": false,
+          "excluir": [],
+          "intereses": [],
+          "amplio": true,
+          "incluir": []
+        }
+      },
+      "creativos": [
+        {
+          "clave": "C-V1",
+          "videoId": "lu-07-autoflow-llego-16x9",
+          "copy": {}
+        },
+        {
+          "clave": "C-V2",
+          "videoId": "lu-08-referidos-tinos-16x9",
+          "copy": {}
+        },
+        {
+          "clave": "C-V3",
+          "videoId": "lu-09-escalar-10k-16x9",
+          "copy": {}
+        }
+      ],
+      "conjuntos": [
+        {
+          "clave": "F2-1",
+          "publico": "P1",
+          "creativo": "C-V1",
+          "presupuestoDiario": 14
+        },
+        {
+          "clave": "F2-2",
+          "publico": "P1",
+          "creativo": "C-V2",
+          "presupuestoDiario": 13
+        },
+        {
+          "clave": "F2-3",
+          "publico": "P1",
+          "creativo": "C-V3",
+          "presupuestoDiario": 13
+        }
+      ],
+      "fase": "f2",
+      "errores": [
+        "creativo C-V1: sin textoPrincipal",
+        "creativo C-V2: sin textoPrincipal",
+        "creativo C-V3: sin textoPrincipal"
+      ]
+    }
+  ],
+  "f5": "Escalar: `resultados --ads` cada 3-7 días; ganadores (ROAS ≥ meta o CPL ≤ 70 % del tope con CTR ≥ 2 %) → vertical +10-20 % o horizontal (duplicar el creativo a público nuevo). Se PROPONE a Elvin y se ejecuta solo con su OK."
+}
