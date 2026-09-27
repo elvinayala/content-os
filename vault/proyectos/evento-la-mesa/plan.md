@@ -223,3 +223,9 @@ Elvin + el directorio). Nada de merch barato.
 - Cruzar cada nombre del Tier A con Pulse (grupo ≠ OFFBOARDED) y con Carilin antes del save-the-date.
 - Leer el formulario en `?vista=previa` antes de abrirlo.
 - Reemplazar los estimados por cotizaciones reales antes de la aprobación final.
+
+## Asignación de cotizaciones (26/sep/2026)
+Elvin: Lis Acevedo cotiza los 5 venues, Aure la apoya y le da seguimiento. **5 cotizaciones por escrito el sáb 3/oct;
+Elvin aprueba venue + presupuesto el lun 5/oct.** DMs enviados por Slack a las dos (firmados "— Sofi").
+Teléfonos: AC Hotel Condado ventas 787-827-7296 (principal 787-827-7280) · Condado Vanderbilt 787-721-5500 ·
+La Concha 787-721-7500 ext. 6200 ventas / 6232 eventos · El Convento 787-723-9020 · Piloto Venues 787-501-2048.
