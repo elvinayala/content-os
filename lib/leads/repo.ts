@@ -32,6 +32,8 @@ export interface TratoTarjeta {
   noLeidos: number;
   origen: string;
   ultimoMensaje: string | null;
+  creadoEl: string;
+  nicho: string | null;
 }
 
 // ---------- Acceso ------------------------------------------------------------------------------
@@ -134,11 +136,13 @@ const camposTarjeta = {
   noLeidos: leadsTratos.noLeidos,
   origen: leadsTratos.origen,
   ultimoMensaje: leadsTratos.ultimoMensaje,
+  creadoEl: leadsTratos.createdAt,
+  nicho: sql<string | null>`${leadsTratos.datos} ->> 'nicho'`,
 };
 
 function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
   const iso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
-  return { ...(r as unknown as TratoTarjeta), proximaActividad: iso(r.proximaActividad), etapaDesde: iso(r.etapaDesde)!, ultimoMensaje: iso(r.ultimoMensaje) };
+  return { ...(r as unknown as TratoTarjeta), proximaActividad: iso(r.proximaActividad), etapaDesde: iso(r.etapaDesde)!, ultimoMensaje: iso(r.ultimoMensaje), creadoEl: iso(r.creadoEl)! };
 }
 
 export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string } = {}): Promise<TratoTarjeta[]> {

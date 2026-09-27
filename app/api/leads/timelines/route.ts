@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 
 import { after, NextResponse, type NextRequest } from "next/server";
 
+import { detectarNicho } from "@/lib/leads/nicho";
 import { registrarMensaje, registrarWebhook } from "@/lib/leads/repo";
 import { leerTimelines, MARCAS, normalizarTelefono } from "@/lib/leads/reglas";
 import { chatTimelines } from "@/lib/leads/timelines";
@@ -50,6 +51,9 @@ export async function POST(req: NextRequest) {
       console.error("[leads/timelines]", resultado);
     }
     await registrarWebhook("timelines", m.marca, ev.evento, resultado, cuerpo).catch(() => {});
+    // Negocio / nicho para la tarjeta, leído de sus primeros mensajes (solo leads, nunca grupos).
+    const lead = ev.direccion === "entrante" ? resultado.match(/^(?:lead-nuevo|mensaje):(.+)$/)?.[1] : null;
+    if (lead) await detectarNicho(lead).catch((e) => console.error("[leads/nicho]", e));
   });
   return NextResponse.json({ ok: true });
 }

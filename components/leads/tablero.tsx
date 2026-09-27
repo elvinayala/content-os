@@ -13,7 +13,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, type Marca } from "@/lib/leads/reglas";
+import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, horaLlegada, type Marca } from "@/lib/leads/reglas";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,8 @@ export interface TarjetaUI {
   noLeidos: number;
   origen: string;
   ultimoMensaje: string | null;
+  creadoEl: string;
+  nicho: string | null;
 }
 
 const usd = (n: number) => (n ? `$${n.toLocaleString("en-US")}` : "$0");
@@ -364,7 +366,7 @@ function Columna({ etapa, primera, grupos, tratos, diasEstancado, ahora, marcaSl
         </header>
         <div className="flex min-h-12 flex-1 flex-col gap-1 overflow-y-auto px-1.5 pb-2">
           {tratos.map((t) => (
-            <Link key={t.id} href={`/pulse/leads/${marcaSlug}/${t.id}`} className="truncate rounded border bg-background px-2 py-1 text-[11px] leading-tight text-muted-foreground hover:text-foreground" title={t.nombre}>
+            <Link key={t.id} href={`/pulse/leads/${marcaSlug}/${t.id}`} className="cursor-pointer truncate rounded border bg-background px-2 py-1 text-[11px] leading-tight text-muted-foreground hover:text-foreground" title={t.nombre}>
               {t.nombre}
             </Link>
           ))}
@@ -418,14 +420,14 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
       {...drag.attributes}
       {...drag.listeners}
       className={cn(
-        "group relative rounded-md border bg-background shadow-[0_1px_2px_rgba(0,0,0,.06)] transition hover:shadow-md",
+        "group relative cursor-pointer rounded-md border bg-background shadow-[0_1px_2px_rgba(0,0,0,.06)] transition hover:shadow-md active:cursor-grabbing",
         viejo && "border-l-4 border-l-red-400",
         drag.isDragging && !fantasma && "opacity-30",
         drop.isOver && !drag.isDragging && "ring-2 ring-[#08a742]/50",
         fantasma && "w-60 rotate-2 shadow-xl",
       )}
     >
-      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block px-2.5 py-2" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
+      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block cursor-pointer px-2.5 py-2" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
         <div className="flex items-start gap-2">
           <p className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-tight">{t.nombre}</p>
           {t.noLeidos > 0 && (
@@ -435,7 +437,10 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
             </span>
           )}
         </div>
-        {t.negocio && <p className="truncate text-xs text-muted-foreground">{t.negocio}</p>}
+        {(t.negocio || t.nicho) && <p className="truncate text-xs text-muted-foreground">{t.negocio ?? t.nicho}</p>}
+        <p className="text-[10px] leading-tight text-muted-foreground/70" title={new Date(t.creadoEl).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" })}>
+          Llegó {horaLlegada(t.creadoEl, ahora)}
+        </p>
         <div className="mt-1.5 flex items-center gap-2">
           {t.duenoNombre ? <UserAvatar nombre={t.duenoNombre} color={t.duenoColor as ColorPulse | null} className="size-5 text-[9px] ring-0" /> : <span className="size-5 rounded-full border border-dashed" title="Sin dueño" />}
           <span className="text-xs font-medium text-muted-foreground">{usd(t.valor)}</span>

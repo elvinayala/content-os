@@ -79,3 +79,19 @@ test("esEtapaGrupos: la columna de grupos de WhatsApp", async () => {
   assert.equal(esEtapaGrupos("New Lead - WhatsApp"), false);
   assert.equal(esEtapaGrupos("Reasignar"), false);
 });
+
+test("horaLlegada en hora de PR: hoy / ayer / fecha", async () => {
+  const { horaLlegada } = await import("../lib/leads/reglas.ts");
+  const ahora = new Date("2026-09-27T15:00:00Z"); // 11:00 AM PR
+  assert.equal(horaLlegada("2026-09-27T13:46:00Z", ahora), "hoy 9:46 AM");
+  assert.equal(horaLlegada("2026-09-27T01:10:00Z", ahora), "ayer 9:10 PM"); // 26/sep 9:10 PM en PR
+  assert.match(horaLlegada("2026-09-24T19:00:00Z", ahora), /^24 sept? 3:00 PM$/);
+});
+
+test("leerNichoIA tolera texto alrededor y nulls", async () => {
+  const { leerNichoIA } = await import("../lib/leads/reglas.ts");
+  assert.deepEqual(leerNichoIA('Aquí va: {"negocio": null, "nicho": "Construcción"}'), { negocio: null, nicho: "Construcción" });
+  assert.deepEqual(leerNichoIA('{"negocio":"Bizcochos La Fe","nicho":"Repostería"}'), { negocio: "Bizcochos La Fe", nicho: "Repostería" });
+  assert.deepEqual(leerNichoIA('{"negocio":"null","nicho":"desconocido"}'), { negocio: null, nicho: null });
+  assert.deepEqual(leerNichoIA("no sé"), { negocio: null, nicho: null });
+});

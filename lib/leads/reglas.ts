@@ -63,6 +63,31 @@ export const ETAPA_GRUPOS = "Grupos";
 /** Para buscar un embudo/etapa por nombre sin importar mayúsculas, acentos ni espacios. */
 export const clave = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim().toLowerCase();
 
+/** Cuándo cayó el lead, corto y en hora de PR: "hoy 9:46 AM", "ayer 3:10 PM", "25 sep 3:10 PM". */
+export function horaLlegada(fecha: Date | string, ahora = new Date()): string {
+  const f = new Date(fecha);
+  const dia = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
+  const hora = f.toLocaleTimeString("en-US", { timeZone: "America/Puerto_Rico", hour: "numeric", minute: "2-digit" });
+  const ayer = new Date(ahora.getTime() - 86_400_000);
+  if (dia(f) === dia(ahora)) return `hoy ${hora}`;
+  if (dia(f) === dia(ayer)) return `ayer ${hora}`;
+  const fechaCorta = f.toLocaleDateString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short" }).replace(".", "");
+  return `${fechaCorta} ${hora}`;
+}
+
+/** Lo que Claude devuelve al leer los primeros mensajes: {"negocio": …, "nicho": …}. Tolerante. */
+export function leerNichoIA(texto: string): { negocio: string | null; nicho: string | null } {
+  const m = texto.match(/\{[\s\S]*\}/);
+  if (!m) return { negocio: null, nicho: null };
+  try {
+    const j = JSON.parse(m[0]) as { negocio?: unknown; nicho?: unknown };
+    const limpio = (v: unknown, n: number) => (typeof v === "string" && v.trim() && !/^(null|n\/a|ninguno|desconocido)$/i.test(v.trim()) ? v.trim().slice(0, n) : null);
+    return { negocio: limpio(j.negocio, 80), nicho: limpio(j.nicho, 40) };
+  } catch {
+    return { negocio: null, nicho: null };
+  }
+}
+
 export type EstadoActividad = "ninguna" | "vencida" | "hoy" | "futura";
 const TZ = "America/Puerto_Rico";
 const diaPR = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: TZ });
