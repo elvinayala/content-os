@@ -22,11 +22,11 @@ Ganchos alternos: (A) "Las marcas grandes tienen una agencia. Tú ahora también
 | 23–26 | **El marketing ya no es solo para el que tiene miles.** | gancho |
 | 26–30 | Empieza en heybori.ai · Bori Pro · $99/mes · sin contrato | cierre |
 
-### B-07 · "No sabes de anuncios. No tienes que saber."
-Ganchos: (A) "No sabes de anuncios. No tienes que saber." · (B) "¿Nunca has abierto el Administrador de Anuncios? Perfecto." · (C) "Tu negocio merece anuncios de agencia. Tu bolsillo, también."
+### B-07 · "No sabes hacer anuncios. Ya no tienes que aprender."
+Ganchos: (A) **"No sabes hacer anuncios. Ya no tienes que aprender."** · (B) "¿Nunca has abierto el Administrador de Anuncios? Ya no tienes que aprender." · (C) "Tu negocio merece anuncios de agencia. Tu bolsillo, también."
 | s | En pantalla | Escena |
 |---|---|---|
-| 0–4 | **No sabes de anuncios.** / **No tienes que *saber*.** | gancho |
+| 0–4 | **No sabes hacer anuncios.** / **Ya no tienes que *aprender*.** | gancho |
 | 4–10 | Tú le escribes: "Quiero vender más bizcochos este fin de semana" → 4 flyers listos | flyers (repostería) |
 | 10–18 | Campaña montada: Bizcochos del fin de semana · 8 km · $10/día · **tú le das play** | aprobacion |
 | 18–23 | **De la idea al anuncio en *10 minutos*.** | gancho (+ toma Higgsfield: repostería sin caras) |
@@ -34,7 +34,7 @@ Ganchos: (A) "No sabes de anuncios. No tienes que saber." · (B) "¿Nunca has ab
 | 26–30 | Empieza en heybori.ai | cierre |
 
 ### B-08 · "Un equipo completo de marketing… en una app."
-Ganchos: (A) "Diseñador. Estratega. Trafficker. Editor. En una sola app." · (B) "Contratar un equipo de marketing: $5,000 al mes. Tener a Bori: $99." `[CONFIRMAR $5,000]` · (C) "Tu equipo de marketing ahora cabe en tu celular."
+Ganchos: (A) "Diseñador. Estratega. Trafficker. Editor. En una sola app." · (B) **"Contratar un equipo de marketing: $3,000 al mes. Tener a Bori: $99."** (cifra de Elvin, 27/sep) · (C) "Tu equipo de marketing ahora cabe en tu celular."
 | s | En pantalla | Escena |
 |---|---|---|
 | 0–4 | **Diseñador. Estratega. Trafficker. Editor.** | gancho |
@@ -51,16 +51,18 @@ Ganchos: (A) "Diseñador. Estratega. Trafficker. Editor. En una sola app." · (B
 > con su negocio, no copiado y pegado"). "Agente personal" es el lenguaje de Bori ("tu trafficker
 > personal") y confundiría las marcas.
 
-### A-06 · Lanzamiento: "Presentamos AutoFlow, su recepcionista de IA"
-Ganchos: (A) "Presentamos AutoFlow: su negocio ya no pierde una llamada." · (B) "Su nueva recepcionista no duerme, no se enferma y contesta en segundos." · (C) "Llamada perdida. Mensaje sin leer. Cliente perdido. Hasta hoy."
+### A-06 · Lanzamiento: "Presentamos AutoFlow: toda su atención al cliente, en automático"
+No se limita a llamadas y mensajes: AutoFlow atiende **todos los canales** (llamadas, WhatsApp, Instagram,
+Facebook, la web) y hace el trabajo completo de una recepcionista (contesta, agenda, confirma, da seguimiento).
+Ganchos: (A) **"Presentamos AutoFlow: toda su atención al cliente, en automático."** · (B) "Su nueva recepcionista atiende todos sus canales, a toda hora." · (C) "Llamadas, WhatsApp, Instagram, Facebook… ¿quién contesta todo eso? Ahora, AutoFlow."
 | s | En pantalla | Escena |
 |---|---|---|
 | 0–3 | NUEVO · **Presentamos *AutoFlow*.** | gancho + logo v2 armándose |
-| 3–9 | 3 llamadas perdidas · 5 mensajes sin leer · 11:47 PM | notificaciones |
-| 9–13 | **Un equipo digital: *2 agentes* y un sistema.** | gancho |
-| 13–18 | Agente de voz contesta la llamada | llamada |
-| 18–22 | Agente de chat agenda por WhatsApp | chat |
-| 22–26 | Todo queda en su panel: cada cliente, cada cita, cada conversación | pasos (Contesta · Agenda · Registra) |
+| 3–9 | Llamadas · WhatsApp · Instagram · Facebook · la web: todo llegando a la vez, sin nadie que conteste | notificaciones (multicanal) |
+| 9–13 | **Una recepcionista de IA para *todos* sus canales.** | gancho |
+| 13–18 | Contesta · Agenda · Confirma · Da seguimiento · Le avisa a usted | roles |
+| 18–23 | Voz y chat: la misma recepcionista contesta la llamada y agenda por WhatsApp | llamada → chat |
+| 23–26 | Todo queda en su panel: cada cliente, cada cita, cada conversación | pasos |
 | 26–30 | Funcionando en 21 días o no le corre la mensualidad · **Agende su demo** | cierre |
 
 ### A-07 · "Automatice toda su atención al cliente"
@@ -74,27 +76,32 @@ Ganchos: (A) "¿Cuántos clientes se le fueron hoy por no contestar a tiempo?" �
 | 22–26 | "Me da tranquilidad saber que las conversaciones se siguen atendiendo." — Teo, Mano Santa PR | cita |
 | 26–30 | Agende su demo · Llámelo y háblele en vivo | cierre |
 
-### A-08 · Agentes personalizados: "No es un chatbot de plantilla"
-Ganchos: (A) "La IA genérica no conoce su negocio. La nuestra, sí." · (B) "No es un chatbot de plantilla. Es un empleado entrenado con SU negocio." · (C) "Sus precios, sus horarios, su manera de hablar. Su agente."
+### A-08 · Su asistente personal de IA (estilo Muse, adaptado a AI Borinquen)
+Usted le habla y él trabaja: le saca citas, revisa su calendario, le recuerda lo pendiente y le da
+seguimiento a sus clientes. `[CONFIRMAR: que el producto existe o qué entregamos hoy — es de la visión AIB Core "Assistant"]`
+Ganchos: (A) **"¿Y si tuviera un asistente que hace todo lo que usted le dice?"** · (B) "Háblele. Él le saca la cita, revisa su calendario y le recuerda lo pendiente." · (C) "Su asistente personal de IA. Hecho para su negocio, no para cualquiera."
 | s | En pantalla | Escena |
 |---|---|---|
-| 0–4 | **La IA genérica no conoce *su* negocio.** | gancho |
-| 4–8 | **La nuestra, *sí*.** | gancho |
-| 8–16 | Recepcionista · Cobros · Citas · Seguimiento · Encuestas → "Uno para cada puesto" | roles |
-| 16–23 | 1 Entendemos su negocio · 2 Lo entrenamos con sus datos · 3 Lo instalamos · 4 Lo mide en su portal | pasos |
-| 23–26 | **Entrenado con su negocio. No copiado y pegado.** | gancho |
-| 26–30 | Funcionando en 21 días o no le corre la mensualidad · Agende su demo | cierre |
-
-### A-09 · Bajar costos operativos: "Menos software, menos nómina, misma atención"
-Ganchos: (A) "¿Cuántas suscripciones paga al mes solo para atender clientes?" · (B) "Un empleado 24/7 le cuesta $58,000 al año. Su agente de IA, una fracción." · (C) "Bájele el costo a la operación, no a la atención."
-| s | En pantalla | Escena |
-|---|---|---|
-| 0–4 | **¿Cuántas suscripciones paga al mes** / **solo para *atender* clientes?** | gancho |
-| 4–11 | Contestador · Chatbot · Agenda · Formularios · Recordatorios → se juntan en **AutoFlow** | rompecabezas |
-| 11–19 | Atención 24/7 con personal: **$58,000/año** vs AutoFlow: **~$9,500/año** | comparativa (dato del deck) |
-| 19–23 | **3 veces más horas cubiertas.** | dato |
-| 23–26 | **Bájele el costo a la operación. No a la atención.** | gancho |
+| 0–4 | **¿Y si tuviera un asistente** / **que hace lo que usted le *dice*?** | gancho |
+| 4–11 | Usted, por voz: "Sácame una cita con el contable el jueves en la tarde" → onda de voz → "Listo, jueves 3:00 PM. Ya está en su calendario." | llamada/voz (orden hablada) |
+| 11–17 | "¿Qué tengo mañana?" → la agenda del día se arma sola | calendario / pasos |
+| 17–22 | Saca citas · Revisa su calendario · Le recuerda lo pendiente · Da seguimiento a sus clientes | roles |
+| 22–26 | **Su asistente personal de IA. Hecho a la medida de *su* negocio.** | gancho |
 | 26–30 | Agende su demo | cierre |
+
+### A-09 · Bajar costos: "Deje de pagar suscripciones. Tenga su propio sistema."
+El ángulo: reemplazar el CRM y la mayoría de las suscripciones mensuales con **herramientas propias hechas
+a la medida** (las construye AI Borinquen con su agente). Se ahorra la mensualidad de muchas plataformas
+y el sistema es de la empresa. Sin nombrar marcas de software; sin cifras de ahorro inventadas.
+Ganchos: (A) **"¿Cuántas suscripciones paga al mes para operar su negocio?"** · (B) "Deje de alquilar su software. Tenga el suyo." · (C) "Su propio CRM, hecho a la medida. Sin mensualidades de más."
+| s | En pantalla | Escena |
+|---|---|---|
+| 0–4 | **¿Cuántas suscripciones paga al mes** / **para operar su *negocio*?** | gancho |
+| 4–10 | CRM · Agenda · Formularios · Email · Encuestas · Reportes → caen una a una con "/mes" y un contador que sube | lista (suscripciones) |
+| 10–14 | **¿Y si fueran *suyas*?** | gancho |
+| 14–21 | Las piezas se juntan en **su propio sistema**: su CRM, su agenda, sus formularios, sus reportes | rompecabezas |
+| 21–26 | **Se lo construimos a la medida. Usted deja de pagar mensualidades de más.** | pasos (1 Revisamos lo que paga · 2 Construimos lo suyo · 3 Cancela lo que sobra) |
+| 26–30 | **Bájele el costo a la operación, no a la atención.** · Agende su demo | cierre |
 
 ---
 
