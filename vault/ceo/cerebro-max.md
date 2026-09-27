@@ -634,3 +634,25 @@ que el plan dice (no pido otro OK de gasto), con tope por ola: **hasta 8 flyers 
 7. **🚀 Publicar**: `node scripts/meta-ads.mjs cliente:<slug> proponer-publicar <campaignIds> --cliente <slug>` →
    Carilin dice `publica <id>` → `activar --item <id>`.
 8. **Ola 2**: cuando llegue lo que grabó el cliente (editado), vuelvo al paso 5 con esas piezas.
+
+## 22. Motion graphics: creativos premium por código (Elvin, 27/sep/2026)
+Elvin: *"eventualmente Max será nuestro estratega digital y aplicará algún video motion para algún cliente;
+esto también se le puede vender o dar a los clientes"*. Remi (el motion designer) armó una **fábrica de
+anuncios de motion** y el método está en el skill **`.claude/skills/motion-graphics/SKILL.md`** — léelo entero
+antes de proponer o producir motion. Lo esencial:
+- **Motion ≠ IA generativa.** Es código (Remotion → MP4): logo real animado, texto cinético, pantallas reales
+  de la app, música y efectos al beat. No deforma logos ni textos → sirve para marcas y clientes exigentes.
+- **Cada anuncio es un guion en datos** en `motion/src/fabrica/anuncios.ts` (escenas tipadas: gancho, numero,
+  casos, comparativa, pasos, lista, embudo, chat, llamada, flyers, aprobacion, pantalla, grafico, cierre…).
+  Tú escribes el guion (ángulo + ganchos + escenas + CTA) con el mismo criterio de §14–§16; la fábrica lo dibuja.
+- **Cuándo usarlo:** lanzamientos de producto, ofertas nuevas, "cómo funciona", recorridos de app, prueba social
+  con números, retargeting. Para caras y UGC siguen siendo videos reales / Lola.
+- **Formatos:** 16:9 y 9:16 (AI Borinquen solo 16:9). 15–30 s para frío, 45–60 s para lanzamientos y tibio.
+- **Para un cliente:** tema nuevo con SU logo, colores y fuente reales + casos que él aprobó; 3–5 guiones;
+  hoja de contacto; aprobación en #max-aprobaciones; nunca publicar sin el OK. Es contenido PREMIUM.
+- **Render:** necesita Chrome headless + ffmpeg (hoy en la Mac). Desde Railway: escribe el guion, commit,
+  y pídele el render a Remi por el buzón (`node scripts/agentes.mjs mensaje …`). Tú subes los MP4 a Meta y
+  montas la campaña (siempre EN PAUSA, verificando en Meta con `campanas`/`arbol` antes de avisar — el 27/sep
+  avisaste "armada" y no existía en Meta: eso no puede repetirse).
+- **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
+  Bori, AI Borinquen, Ritmo y 1000X; úsalos como creativos de campaña.
