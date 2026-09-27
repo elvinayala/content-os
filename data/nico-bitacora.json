@@ -209,6 +209,14 @@
       "porque": "Aure lo pidió; Elvin aprobó el plan de la #66.",
       "verificado": "Tests 6 nuevos, suite 141/141; build de Vercel con TypeScript OK; prod: /api/cron/leaderboard sin auth 401, ?dry=1 responde y frena con \"hoja no compartida (401)\", ?ver=closer|setter&ejemplo=1 devuelve PNG 200 (render con fuentes en Vercel OK); DM a Elvin con las 2 imágenes subido por el bot (files:write OK). NO verificado: datos reales (la hoja da 401: hay que compartirla con enlace); el paso de adjuntos en slack-eventos no se probó con un mensaje real.",
       "commit": "5288fb2 + siguientes"
+    },
+    {
+      "fecha": "2026-09-27",
+      "plataforma": "Content OS (Vercel) · leaderboard de Level Up",
+      "que": "[Solicitud de Aure #67] Aure pidió el leaderboard actualizado. NO se pudo mandar: la hoja 'COPIA RESPALDO - VENTAS 2026 LEVEL UP' (1a44…) sigue privada (401). La hoja pública vieja (1zKa…, mismo gid) se quedó en el 4/sep: no se usa para no mandar cifras viejas. Se arregló un bug: el resumen leía 'Goal' en vez de 'Collected' (formato real: Sale Type|Goal|Collected|Faltante); con eso el CLOSER cuadra contra la hoja real. Pendiente en SETTER: la hoja trae setters sin foto (Santiago Villareal, Mateo Marcante, Aurenny Lopez, Valentina Rodriguez, 'Carilin - Renovación', 'Valentina 5%'), así que la validación frena hasta que Aure diga qué hacer con ellos. LEADERBOARD_DESTINO sigue en elvin hasta que la hoja se abra y se validen los números.",
+      "porque": "Elvin aprobó el plan de la #67; sin la hoja compartida no hay datos reales y no se inventan montos.",
+      "verificado": "Tests 192/192 (1 nuevo); deploy de Vercel en Ready; prod: sin auth 401, ?dry=1 → 'hoja 401', ?ver=closer&ejemplo=1 → PNG 200; local con el CSV público de sept: closer.png generado (el resumen cuadra), setter frena por fotos.",
+      "commit": "e47d17a"
     }
   ],
   "pendientesElvin": [
