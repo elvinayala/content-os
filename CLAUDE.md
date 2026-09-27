@@ -955,6 +955,13 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   privados (Aure, Ángela, Ana Milena, Adamay, Garrys, Luis, Yaileen); Leads AIB solo con fila en `leads_acceso` (las
   editoras ya no entran solas: `accesoLeads`/`marcasConAcceso`) = Aure, Luis, Yaileen. Yaileen ya no es solo_ritmo.
   Jessica y Carilin no ven AIB.
+- **Rediseño nivel SaaS** (27/sep, Elvin: "una plataforma de San Francisco… que digan wow"): tema `.pulse`
+  refinado (fondo #fcfcfd, texto #1b1c1f, bordes #e5e5ea, `.superficie`, `.esqueleto` + `(app)/loading.tsx`),
+  pills de status suaves (tinte + punto, `status-pill.tsx`), ícono por tablero (`icono-tablero.tsx`, por nombre),
+  sidebar Inicio · Buscar (⌘K) · Mi día · Preguntar + grupos Ventas/Tableros. **Inicio** (`/pulse`): saludo,
+  KPIs vivos (`numerosInicio`: activos, onboarding, nuevos del mes, cartera), "Tu día", actividad reciente del
+  equipo (`actividadReciente`, sin usuarios de sistema) y espacios de trabajo. Login en pantalla dividida con
+  panel de marca ilustrativo (sin datos reales).
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
