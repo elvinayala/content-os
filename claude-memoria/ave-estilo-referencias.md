@@ -87,3 +87,10 @@ aparecen como «★ Prioritarias (Elvin)». Regla en REFERENCIA. Deploy con mp3 
 0.56 H, así que un énfasis de 3 líneas trepaba hasta la boca. Ahora se ancla por arriba (top ≥ pecho 0.53 H o piso de la
 cara + margen) y crece hacia abajo; si no cabe, se escala. Verificado en el render real (v16). Lección: para bloques de
 texto de altura variable, anclar el borde que importa (el de arriba), no el centro.
+
+**27/sep — «La referencia manda» (Elvin: «no te dejes llevar; si cambias brusco, que sea para mejorar; analiza bien»):**
+antes de dar por bueno un cambio de estilo/encuadre/color, compararlo contra las referencias medidas y las reglas fijas.
+Se revirtieron tres cambios míos de la revisión Hollywood que se salían: tope de resolución del zoom (cara al 12 % vs
+17–22 % de las referencias), cortes de escala (la referencia es encuadre fijo) e igualar color (regla «no tocar el look»).
+Cara medida en las 6 referencias: 17–22 % del alto (mediana ~20 %). **How to apply:** mejoras técnicas (audio, sincronía,
+errores) sí; cambios de look/encuadre/ritmo solo si la referencia los respalda o Elvin los pide, y verificados lado a lado.
