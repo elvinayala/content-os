@@ -45,11 +45,13 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
 - **Timelines / WhatsApp** (ya conectado a Leads): conversaciones escritas de los chatters.
 - **Diario y goal personal**: los llena la persona en Ritmo.
 
-## Lo que falta que decida Elvin
-1. Reglas de comisión por puesto (closer, setter, chatter; LU y AIB) — sin eso no se muestra comisión.
-2. Quién crea y autoriza bonos en cada empresa (¿Nahuel en LU? ¿en AIB?).
-3. Metas del equipo (día / semana / mes) por empresa, o si las pone el líder en Ritmo.
-4. La pestaña de la hoja con el detalle por venta (fecha) para los números del día.
+## Decisiones de Elvin (27/sep/2026)
+- **Bonos:** Nahuel los **crea** en Ritmo; **Elvin los autoriza** (solo Elvin).
+- **Metas del mes:** **$100,000 en ventas nuevas** y **mínimo $150,000 en total** (nuevas + pagos de deuda),
+  entre todos. Ritmo actual ≈ **$35,000 por semana** (referencia para la meta semanal).
+  `[CONFIRMAR: si la meta es de Level Up o de Level Up + AI Borinquen juntos; las carreras no se mezclan]`
+- **Comisiones:** se le preguntaron a Nahuel por Slack (27/sep) → pendiente su respuesta.
+- **Pestaña de la hoja con cada venta y su fecha:** se le preguntó a Aure por Slack (27/sep) → pendiente.
 
 ## Construcción (propuesta)
 Tablas `ventas_*` en la base de Pulse (metas, goals personales, bonos, diario), lector de la hoja reutilizando
