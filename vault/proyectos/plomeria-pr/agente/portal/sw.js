@@ -10,14 +10,14 @@ self.addEventListener("push", (e) => {
     tag: d.tag || d.ofertaId || "resuelto", renotify: true,
     vibrate: d.urgente ? [200, 100, 200, 100, 400] : [150, 80, 150],
     requireInteraction: !!d.urgente,
-    data: { url: d.url || "/proveedores" },
+    data: { url: d.url || "/pro" },
     actions: d.ofertaId ? [{ action: "abrir", title: "Ver y aceptar" }] : [],
   }));
 });
 
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || "/proveedores";
+  const url = (e.notification.data && e.notification.data.url) || "/pro";
   e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
     for (const c of cs) { if ("focus" in c) { c.navigate(url); return c.focus(); } }
     return self.clients.openWindow(url);
@@ -27,6 +27,6 @@ self.addEventListener("notificationclick", (e) => {
 // La app abre aunque no haya señal: cache mínimo del portal.
 self.addEventListener("fetch", (e) => {
   if (e.request.mode === "navigate") {
-    e.respondWith(fetch(e.request).catch(() => caches.match("/proveedores").then((r) => r || new Response("Sin conexión. Abre la app cuando tengas señal.", { headers: { "Content-Type": "text/plain; charset=utf-8" } }))));
+    e.respondWith(fetch(e.request).catch(() => caches.match("/pro").then((r) => r || new Response("Sin conexión. Abre la app cuando tengas señal.", { headers: { "Content-Type": "text/plain; charset=utf-8" } }))));
   }
 });

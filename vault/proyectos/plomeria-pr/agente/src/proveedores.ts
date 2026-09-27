@@ -104,4 +104,4 @@ export function verificarFirma(proveedorId: string, firma: string) {
 export function codigoCorto(proveedorId: string) { return crypto.createHmac("sha256", SECRETO).update("corto:" + proveedorId).digest("base64url").replace(/[-_]/g, "").slice(0, 8).toLowerCase(); }
 export function verificarCorto(proveedorId: string, codigo: string) { const ok = codigoCorto(proveedorId); return codigo.length === ok.length && crypto.timingSafeEqual(Buffer.from(codigo.toLowerCase()), Buffer.from(ok)); }
 export function linkPortal(proveedorId: string, base: string) { return `${base}/a/${encodeURIComponent(proveedorId)}/${codigoCorto(proveedorId)}`; }
-export function linkLargo(proveedorId: string, base: string) { return `${base}/proveedores?p=${encodeURIComponent(proveedorId)}&k=${firmar(proveedorId)}`; }
+export function linkLargo(proveedorId: string, base: string) { return `${base}/pro?p=${encodeURIComponent(proveedorId)}&k=${firmar(proveedorId)}`; }

@@ -1,8 +1,8 @@
 {
-  "name": "Resuelto Proveedores",
-  "short_name": "Resuelto",
+  "name": "Resuelto Pro",
+  "short_name": "Resuelto Pro",
   "description": "Trabajos disponibles en tu zona. El primero que acepta se lo lleva.",
-  "start_url": "/proveedores",
+  "start_url": "/pro",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

@@ -1,0 +1,31 @@
+# Resuelto Pro (app de los plomeros) · compila el APK de Android en la nube (la Mac no tiene Android Studio).
+# Se corre a mano (Actions → "Resuelto Pro · Android" → Run workflow) o cuando cambia vault/proyectos/plomeria-pr/app-pro.
+# Con el secreto GOOGLE_SERVICES_JSON (Firebase) el APK trae las alertas nativas; sin él compila igual, sin alertas.
+name: Resuelto Pro · Android
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["vault/proyectos/plomeria-pr/app-pro/**"]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vault/proyectos/plomeria-pr/app-pro
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci --no-audit --no-fund
+      - name: google-services.json (Firebase)
+        env: { GS: "${{ secrets.GOOGLE_SERVICES_JSON }}" }
+        run: if [ -n "$GS" ]; then echo "$GS" > android/app/google-services.json; else echo "Sin Firebase todavía"; fi
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resuelto-pro-debug-apk
+          path: vault/proyectos/plomeria-pr/app-pro/android/app/build/outputs/apk/debug/*.apk

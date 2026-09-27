@@ -1,0 +1,21 @@
+{
+  "name": "resuelto-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Resuelto Pro: la app de los plomeros (iPhone y Android). Carga app.resueltopr.com/pro y le suma alertas nativas.",
+  "scripts": {
+    "sync": "cap sync",
+    "iconos": "capacitor-assets generate --iconBackgroundColor '#F2621F' --splashBackgroundColor '#0F3D5E'",
+    "android:apk": "cap sync android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/push-notifications": "^8.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.2"
+  }
+}

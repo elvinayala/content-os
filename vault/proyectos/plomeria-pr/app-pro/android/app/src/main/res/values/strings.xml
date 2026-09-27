@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Resuelto Pro</string>
+    <string name="title_activity_main">Resuelto Pro</string>
+    <string name="package_name">pr.resuelto.pro</string>
+    <string name="custom_url_scheme">pr.resuelto.pro</string>
+</resources>

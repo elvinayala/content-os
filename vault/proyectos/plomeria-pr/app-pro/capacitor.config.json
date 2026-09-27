@@ -1,0 +1,17 @@
+{
+  "appId": "pr.resuelto.pro",
+  "appName": "Resuelto Pro",
+  "webDir": "www",
+  "server": {
+    "url": "https://app.resueltopr.com/pro",
+    "cleartext": false,
+    "allowNavigation": ["app.resueltopr.com"],
+    "errorPath": "sin-senal.html"
+  },
+  "backgroundColor": "#FBF7F0",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" },
+  "plugins": {
+    "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] }
+  }
+}

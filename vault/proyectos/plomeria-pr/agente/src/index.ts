@@ -29,6 +29,8 @@ import * as ventas from "./ventas.js";
 import * as demo from "./demo-plomero.js";
 import { montarMarca } from "./marca.js";
 import { llamarAlCliente, escribirAlCliente } from "./contacto-plomero.js";
+import * as proAcceso from "./pro-acceso.js";
+import * as pushNativo from "./push-nativo.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
 import * as sms from "./canales/sms.js";
@@ -46,7 +48,7 @@ import { verificarEventoStripe } from "./integraciones/cobros.js";
 import type { Adjunto } from "./integraciones/media.js";
 import { clasificarMime } from "./integraciones/media.js";
 import * as despacho from "./despacho.js";
-import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, listar as listarProveedores, plomeros as registroPlomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, linkLargo, verificarCorto } from "./proveedores.js";
+import { porId as proveedorPorId, porWhatsapp as proveedorPorWhatsapp, verificarFirma, firmar as firmarProveedor, listar as listarProveedores, plomeros as registroPlomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, linkLargo, verificarCorto } from "./proveedores.js";
 import * as ciclo from "./ciclo-trabajo.js";
 import { portal } from "./portal/rutas.js";
 import { panelPlomerosHTML, pagarHTML } from "./paginas-operacion.js";
@@ -376,6 +378,49 @@ function proveedorAutenticado(req: any) {
   if (p === demo.DEMO_ID) return demo.proveedorDemo; // vista de prueba: fuera del registro, nunca recibe ofertas reales
   return proveedorPorId(p) ?? null;
 }
+// ── Resuelto Pro: la app de los plomeros (web hoy; la misma página va dentro de la app nativa de las tiendas) ──
+app.get("/pro", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "pro.html"), "utf8")); });
+const DEMO_TEL = "7870000000"; // vista de prueba: 787-000-0000 con código 000000 entra a la app de ejemplo
+const intentosPro = new Map<string, number[]>();
+app.post("/api/pro/codigo", async (req: any, res) => {
+  const ip = String(req.ip ?? ""); const ahora = Date.now(); const h = (intentosPro.get(ip) ?? []).filter((t) => ahora - t < 3600_000);
+  if (h.length >= 12) return res.json({ ok: false, motivo: "Demasiados intentos. Espera un rato o llama a Resuelto." });
+  intentosPro.set(ip, [...h, ahora]);
+  const tel = proAcceso.soloDiez(req.body?.telefono);
+  if (tel.length !== 10) return res.json({ ok: false, motivo: "Escribe tu número de 10 dígitos." });
+  if (tel === DEMO_TEL) return res.json({ ok: true, demo: true });
+  const prov = proveedorPorWhatsapp(tel);
+  if (!prov) return res.json({ ok: false, motivo: "Ese número no está registrado como plomero de Resuelto. Si ya firmaste, pídele a Resuelto que te dé de alta." });
+  const codigo = proAcceso.nuevoCodigo(tel);
+  if (!codigo) return res.json({ ok: false, motivo: "Ya te enviamos varios códigos. Espera 15 minutos." });
+  const enviado = await sms.enviarSMS(tel, `Resuelto Pro: tu código es ${codigo}. Vence en 10 minutos. No se lo des a nadie.\n\n@app.resueltopr.com #${codigo}`);
+  if (!enviado) console.log(`[Resuelto Pro] código para ${prov.id}: no salió por texto`);
+  res.json({ ok: true });
+});
+app.post("/api/pro/entrar", (req: any, res) => {
+  const tel = proAcceso.soloDiez(req.body?.telefono), codigo = String(req.body?.codigo ?? "");
+  if (tel === DEMO_TEL) return codigo === "000000" ? res.json({ ok: true, p: demo.DEMO_ID, k: firmarProveedor(demo.DEMO_ID), nombre: demo.proveedorDemo.nombre }) : res.json({ ok: false, motivo: "Código incorrecto." });
+  const prov = proveedorPorWhatsapp(tel); if (!prov) return res.json({ ok: false, motivo: "Ese número no está registrado." });
+  const r = proAcceso.verificarCodigo(tel, codigo);
+  if (r !== "ok") return res.json({ ok: false, motivo: r === "incorrecto" ? "Ese código no es. Revísalo e intenta otra vez." : "El código venció. Pide uno nuevo." });
+  res.json({ ok: true, p: prov.id, k: firmarProveedor(prov.id), nombre: prov.nombre });
+});
+app.post("/api/pro/dispositivo", (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true });
+  res.json({ ok: pushNativo.registrar(prov.id, String(req.body?.token ?? ""), String(req.body?.plataforma ?? "")) });
+});
+app.get("/api/pro/estado", (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false });
+  res.json({ ok: true, nombre: prov.nombre, alertasWeb: push.cuantas(prov.id), alertasApp: pushNativo.cuantos(prov.id) });
+});
+app.post("/api/pro/ayuda", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Entra otra vez." });
+  const texto = String(req.body?.texto ?? "").replace(/\s+/g, " ").trim().slice(0, 600);
+  if (texto.length < 3) return res.json({ ok: false, motivo: "Escribe qué necesitas." });
+  if (prov.id !== demo.DEMO_ID) await wa.avisarCoordinador(`🆘 ${prov.nombre} (plomero) pide ayuda desde Resuelto Pro: "${texto}"`);
+  res.json({ ok: true });
+});
 app.get("/proveedores", (_req, res) => { res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "proveedores.html"), "utf8")); });
 // PWA: manifest, service worker e íconos
 app.get("/manifest.webmanifest", (_req, res) => { res.type("application/manifest+json").send(fs.readFileSync(path.join(RAIZ, "portal", "manifest.webmanifest"))); });

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="es-PR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Resuelto Pro</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Resuelto Pro">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<!--
+  Resuelto Pro (26/sep/2026): la app de los plomeros, hecha para gente mayor. Letra grande, UN botón principal a la vez,
+  confirmación antes de aceptar o cerrar, entrada con el número de teléfono + código por texto (sin links ni claves).
+  Es la misma página que carga la app nativa de las tiendas (Capacitor): si corre ahí, registra las alertas nativas.
+  APIs: /api/pro/* (entrada, alertas, ayuda) y /api/proveedores/* (ofertas, aceptar, pasos, fotos, llamar, escribir).
+-->
+<style>
+:root{--navy:#0F3D5E;--navy2:#08243A;--o:#F2621F;--o2:#D9510F;--cream:#FBF7F0;--line:#E6E1D8;--ink:#12283A;--ink2:#51606C;--ok:#1F9D6B;--ok2:#17805A;--warn:#B6470F}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--cream);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:18px;line-height:1.4}
+header{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header .marca{font-family:Sora,system-ui;font-weight:800;font-size:22px;letter-spacing:-.03em}header .pro{background:var(--o);color:#fff;font-family:Sora;font-size:12px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.06em}
+header .quien{margin-left:auto;font-size:15px;color:#CFE0EC;text-align:right}
+main{padding:16px 16px calc(env(safe-area-inset-bottom) + 96px);max-width:620px;margin:0 auto}
+h2{font-family:Sora,system-ui;font-size:21px;font-weight:800;margin:20px 0 10px;letter-spacing:-.02em}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(8,36,58,.05)}
+.nuevo{border:3px solid var(--o)}
+.que{font-family:Sora,system-ui;font-size:21px;font-weight:800;line-height:1.25}
+.dato{display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-size:19px}.dato span:first-child{width:28px;text-align:center;flex:none}
+.cobras{margin-top:14px;background:#EAF7F1;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}.cobras b{font-family:Sora;font-size:30px;color:var(--ok2)}.cobras small{color:var(--ink2);font-size:15px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:16px;font:inherit;font-weight:700;font-size:21px;padding:20px 16px;margin-top:14px;cursor:pointer;min-height:66px}
+.btn.verde{background:var(--ok);color:#fff}.btn.verde:active{background:var(--ok2)}.btn.naranja{background:var(--o);color:#fff}.btn.naranja:active{background:var(--o2)}
+.btn.claro{background:#fff;color:var(--ink);border:2px solid var(--line);font-size:18px;min-height:56px;padding:14px}a.btn{text-decoration:none;text-align:center}.btn:disabled{opacity:.55}
+.fila2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fila2 .btn{margin-top:10px}
+.pasos{display:flex;gap:6px;margin:14px 0 4px}.pasos div{flex:1;text-align:center;font-size:13px;color:var(--ink2)}.pasos div i{display:block;height:8px;border-radius:9px;background:var(--line);margin-bottom:5px}.pasos div.on i{background:var(--ok)}.pasos div.on{color:var(--ok2);font-weight:700}
+input,textarea{width:100%;font:inherit;font-size:22px;padding:16px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}input:focus,textarea:focus{outline:none;border-color:var(--o)}
+label{display:block;font-weight:700;margin:14px 0 6px;font-size:18px}
+.vacio{text-align:center;color:var(--ink2);padding:26px 10px;font-size:19px}.vacio b{display:block;font-size:40px;margin-bottom:6px}
+.aviso{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 70px);background:var(--navy2);color:#fff;border-radius:14px;padding:16px;font-size:18px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none}.aviso.mal{background:var(--warn)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font-weight:700;color:var(--ink2);padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:2px}nav.tabs button b{font-size:26px}nav.tabs button.on{color:var(--o)}
+.alertas{background:#FFF4EC;border:2px solid var(--o);border-radius:16px;padding:16px;margin-bottom:14px;font-size:18px}.alertas .btn{margin-top:10px}
+.modal{position:fixed;inset:0;background:rgba(8,36,58,.55);display:none;align-items:flex-end;justify-content:center;z-index:30}.modal.on{display:flex}
+.modal .hoja{background:#fff;width:100%;max-width:620px;border-radius:22px 22px 0 0;padding:22px 18px calc(env(safe-area-inset-bottom) + 18px)}.modal h3{font-family:Sora;font-size:22px;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.chips button{border:2px solid var(--line);background:#fff;border-radius:99px;padding:10px 14px;font:inherit;font-size:16px}
+.fotos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fotos label{margin:10px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed var(--o);border-radius:16px;padding:18px 8px;background:#FFF8F3;font-size:17px;text-align:center;min-height:96px}.fotos input{display:none}
+.hecho{background:#EAF7F1;border-radius:14px;padding:14px;margin-top:12px;font-size:18px}
+.dinero{font-family:Sora;font-size:44px;font-weight:800;color:var(--ok2)}
+.fila{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:18px}
+.entrar{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:28px 20px;max-width:480px;margin:0 auto}
+.entrar .logo{display:flex;align-items:center;gap:10px;margin-bottom:26px}.entrar .logo span{font-family:Sora;font-weight:800;font-size:30px;color:var(--navy);letter-spacing:-.03em}
+.entrar h1{font-family:Sora;font-size:26px;line-height:1.2;margin-bottom:8px}.entrar p{color:var(--ink2)}
+.link{background:none;border:0;color:var(--navy);text-decoration:underline;font:inherit;font-size:17px;margin-top:16px;padding:8px}
+.oculto{display:none!important}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="aviso" class="aviso"></div>
+<div id="modal" class="modal"><div class="hoja" id="hoja"></div></div>
+<audio id="timbre" preload="auto"></audio>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var CASA=function(px,oscuro){return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 64 64"><path d="M32 5 L59 28 V57 A3 3 0 0 1 56 60 H8 A3 3 0 0 1 5 57 V28 Z" fill="'+(oscuro?'#fff':'#0F3D5E')+'"/><path d="M20 35 L29 44 L46 26" stroke="#F2621F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'};
+  var dinero=function(n){return n==null?'—':'$'+Number(n).toFixed(2).replace(/\.00$/,'')};
+  var TZ='America/Puerto_Rico';
+  var dia=function(iso){return new Date(iso).toLocaleDateString('es-PR',{timeZone:TZ,weekday:'long',day:'numeric',month:'long'})};
+  var hora=function(iso){return new Date(iso).toLocaleTimeString('es-PR',{timeZone:TZ,hour:'numeric',minute:'2-digit'})};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var nativo=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+
+  // ── Sesión: llega por el link (p,k) o por el código; se guarda en este celular ──
+  var S=null; try{S=JSON.parse(localStorage.getItem('rpro')||'null')}catch(e){}
+  var q=new URLSearchParams(location.search);
+  if(q.get('p')&&q.get('k')){S={p:q.get('p'),k:q.get('k'),nombre:''};guardar();history.replaceState(null,'','/pro');}
+  function guardar(){try{localStorage.setItem('rpro',JSON.stringify(S))}catch(e){}}
+  function salir(){try{localStorage.removeItem('rpro')}catch(e){};S=null;pintarEntrar();}
+
+  function aviso(t,mal){var a=$('aviso');a.textContent=t;a.className='aviso'+(mal?' mal':'');a.style.display='block';clearTimeout(aviso.t);aviso.t=setTimeout(function(){a.style.display='none'},5000)}
+  function post(u,b){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({p:S&&S.p,k:S&&S.k},b||{}))}).then(function(r){if(r.status===401){salir();throw new Error('sesion')}return r.json()})}
+  function get(u){return fetch(u+(u.indexOf('?')<0?'?':'&')+'p='+encodeURIComponent(S.p)+'&k='+S.k).then(function(r){if(r.status===401){salir();throw new Error('sesion')}return r.json()})}
+  function abrirModal(html){$('hoja').innerHTML=html;$('modal').className='modal on'}
+  function cerrarModal(){$('modal').className='modal'}
+  $('modal').addEventListener('click',function(e){if(e.target.id==='modal')cerrarModal()});
+
+  // ── Entrar con el número + código ──
+  function pintarEntrar(){
+    $('app').innerHTML='<div class="entrar"><div class="logo">'+CASA(40)+'<span>resuelto</span><b class="pro" style="background:#F2621F;color:#fff;font-family:Sora;font-size:13px;padding:3px 8px;border-radius:6px">PRO</b></div>'
+      +'<div id="paso1"><h1>Entra con tu número de teléfono</h1><p>Te enviamos un código por texto.</p><label for="tel">Tu número</label><input id="tel" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="787-555-0123"><button class="btn naranja" id="pedir">Envíame el código</button></div>'
+      +'<div id="paso2" class="oculto"><h1>Escribe el código</h1><p id="p2txt">Te lo enviamos por texto.</p><label for="cod">Código de 6 números</label><input id="cod" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" style="letter-spacing:10px;text-align:center;font-size:30px"><button class="btn verde" id="entrar">Entrar</button><button class="link" id="otro">No me llegó · enviar otra vez</button><button class="link" id="cambiar">Cambiar el número</button></div>'
+      +'<p style="margin-top:26px;font-size:15px">¿Problemas para entrar? Pídele ayuda a Resuelto.</p></div>';
+    var tel=function(){return $('tel').value.replace(/\D/g,'')};
+    function pedir(){var b=$('pedir');b.disabled=true;b.textContent='Enviando…';
+      fetch('/api/pro/codigo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telefono:tel()})}).then(function(r){return r.json()}).then(function(j){
+        b.disabled=false;b.textContent='Envíame el código';
+        if(!j.ok){aviso(j.motivo||'No se pudo enviar.',true);return}
+        $('paso1').className='oculto';$('paso2').className='';$('p2txt').textContent=j.demo?'Vista de prueba: el código es 000000.':'Te lo enviamos por texto al '+$('tel').value+'.';$('cod').focus();
+        if('OTPCredential' in window){navigator.credentials.get({otp:{transport:['sms']}}).then(function(o){if(o&&o.code){$('cod').value=o.code;entrar()}}).catch(function(){})}
+      }).catch(function(){b.disabled=false;b.textContent='Envíame el código';aviso('Sin conexión. Intenta otra vez.',true)})}
+    function entrar(){var c=$('cod').value.replace(/\D/g,'');if(c.length!==6){aviso('El código tiene 6 números.',true);return}var b=$('entrar');b.disabled=true;
+      fetch('/api/pro/entrar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telefono:tel(),codigo:c})}).then(function(r){return r.json()}).then(function(j){
+        b.disabled=false;if(!j.ok){aviso(j.motivo||'No se pudo entrar.',true);return}
+        S={p:j.p,k:j.k,nombre:j.nombre};guardar();iniciar();
+      }).catch(function(){b.disabled=false;aviso('Sin conexión. Intenta otra vez.',true)})}
+    $('pedir').onclick=pedir;$('tel').onkeydown=function(e){if(e.key==='Enter')pedir()};
+    $('entrar').onclick=entrar;$('cod').oninput=function(){if(this.value.replace(/\D/g,'').length===6)entrar()};
+    $('otro').onclick=function(){$('paso2').className='oculto';$('paso1').className='';pedir()};
+    $('cambiar').onclick=function(){$('paso2').className='oculto';$('paso1').className='';$('tel').focus()};
+  }
+
+  // ── La app ──
+  var tab='trabajos', datos=null, vistos={}, primeraCarga=true;
+  function pintarMarco(){
+    $('app').innerHTML='<header>'+CASA(26,true)+'<span class="marca">resuelto</span><span class="pro">PRO</span><span class="quien" id="quien">'+esc(S.nombre||'')+'</span></header><main id="vista"></main>'
+      +'<nav class="tabs"><button data-tab="trabajos"><b>🔧</b>Trabajos</button><button data-tab="dinero"><b>💵</b>Mi dinero</button><button data-tab="ayuda"><b>🙋</b>Ayuda</button></nav>';
+    [].forEach.call(document.querySelectorAll('nav.tabs button'),function(b){b.onclick=function(){tab=b.dataset.tab;pintar()}});
+  }
+  function pintar(){
+    [].forEach.call(document.querySelectorAll('nav.tabs button'),function(b){b.className=b.dataset.tab===tab?'on':''});
+    if(tab==='trabajos')pintarTrabajos();else if(tab==='dinero')pintarDinero();else pintarAyuda();
+  }
+
+  var ESTADOS=['agendado','en-camino','en-sitio','completado'];
+  function paso(t){var i=ESTADOS.indexOf(t.estado==='cobrado'?'completado':t.estado);return i<0?0:i}
+  function tarjetaNueva(o){
+    return '<div class="card nuevo"><div class="que">'+esc(o.resumen)+'</div>'
+      +'<div class="dato"><span>📍</span><span>'+esc(o.municipio)+'</span></div>'
+      +(o.inicio?'<div class="dato"><span>📅</span><span>'+esc(dia(o.inicio))+'<br>'+esc(hora(o.inicio))+(o.fin?' a '+esc(hora(o.fin)):'')+'</span></div>':'')
+      +'<div class="cobras"><small>Tú cobras</small><b>'+dinero(o.pagoProveedor)+'</b></div>'
+      +'<button class="btn verde" data-aceptar="'+o.id+'">✅ Aceptar este trabajo</button>'
+      +'<button class="btn claro" data-no="'+o.id+'">No puedo este</button>'
+      +'<p style="font-size:15px;color:var(--ink2);margin-top:10px">Tú decides. Decir que no, no te afecta.</p></div>';
+  }
+  function tarjetaMia(o){
+    var t=o.trabajo; if(!t) return '<div class="card"><div class="que">'+esc(o.resumen)+'</div><div class="dato"><span>📍</span><span>'+esc(o.municipio)+'</span></div></div>';
+    var n=paso(t), hecho=t.estado==='completado'||t.estado==='cobrado';
+    var dir=t.direccion+', '+t.municipio+', PR';
+    var h='<div class="card"><div class="que">'+esc(t.servicio)+'</div>'
+      +'<div class="dato"><span>👤</span><span><b>'+esc(t.cliente)+'</b></span></div>'
+      +'<div class="dato"><span>📍</span><span>'+esc(t.direccion)+(String(t.direccion).toLowerCase().indexOf(String(t.municipio).toLowerCase())<0?', '+esc(t.municipio):'')+(t.referencia?'<br><small style="color:var(--ink2)">'+esc(t.referencia)+'</small>':'')+'</span></div>'
+      +'<div class="dato"><span>📅</span><span>'+esc(dia(t.inicio))+'<br>'+esc(hora(t.inicio))+' a '+esc(hora(t.fin))+'</span></div>'
+      +'<div class="dato"><span>💲</span><span>'+(t.precioFijo!=null?'Precio fijo: '+dinero(t.precioFijo)+' de mano de obra':'Se cotiza en sitio: '+dinero(t.rango[0])+' a '+dinero(t.rango[1]))+'</span></div>'
+      +'<div class="pasos">'+['En camino','Llegué','Fotos','Terminé'].map(function(x,i){return '<div class="'+(i<n||hecho?'on':'')+'"><i></i>'+x+'</div>'}).join('')+'</div>';
+    if(t.estado==='agendado') h+='<button class="btn naranja" data-paso="en-camino" data-of="'+o.id+'">🚗 Voy en camino</button><p style="font-size:15px;color:var(--ink2);margin-top:8px">Le avisamos al cliente que vas.</p>';
+    else if(t.estado==='en-camino') h+='<button class="btn naranja" data-paso="llegue" data-of="'+o.id+'">📍 Ya llegué</button>';
+    else if(t.estado==='en-sitio') h+='<div class="fotos"><label>📷<b>Foto de ANTES</b><small>'+t.fotosAntes+' tomada(s)</small><input type="file" accept="image/*" capture="environment" multiple data-foto="antes" data-of="'+o.id+'"></label><label>📷<b>Foto de DESPUÉS</b><small>'+t.fotosDespues+' tomada(s)</small><input type="file" accept="image/*" capture="environment" multiple data-foto="despues" data-of="'+o.id+'"></label></div>'
+      +'<button class="btn verde" data-terminar="'+o.id+'">✅ Terminé el trabajo</button>';
+    else h+='<div class="hecho">✅ <b>Terminado.</b> El cliente le paga <b>'+dinero(t.totalCliente)+'</b> a Resuelto.<br>Tú cobras <b>'+dinero(t.pagoPlomero)+'</b> el viernes.</div>';
+    if(!hecho) h+='<div class="fila2"><a class="btn claro" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dir)+'" target="_blank">🗺️ Cómo llegar</a><button class="btn claro" data-llamar="'+o.id+'">📞 Llamar</button></div>'
+      +'<button class="btn claro" data-escribir="'+o.id+'">💬 Escribirle al cliente</button>';
+    return h+'</div>';
+  }
+  function pintarTrabajos(){
+    var v=$('vista'); if(!datos){v.innerHTML='<div class="vacio"><b>⏳</b>Cargando…</div>';return}
+    var nuevas=datos.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==S.p&&(o.rechazados||[]).indexOf(S.p)<0});
+    var mias=datos.ofertas.filter(function(o){return o.aceptadoPor===S.p}).sort(function(a,b){var x=a.trabajo,y=b.trabajo,hx=x&&(x.estado==='completado'||x.estado==='cobrado'),hy=y&&(y.estado==='completado'||y.estado==='cobrado');if(hx!==hy)return hx?1:-1;return String(a.inicio).localeCompare(String(b.inicio))});
+    var h=bannerAlertas();
+    h+='<h2>Trabajos nuevos'+(nuevas.length?' ('+nuevas.length+')':'')+'</h2>'+(nuevas.length?nuevas.map(tarjetaNueva).join(''):'<div class="card vacio"><b>🔔</b>No hay trabajos nuevos ahora.<br>Te avisamos en cuanto salga uno en tu zona.</div>');
+    h+='<h2>Mis trabajos</h2>'+(mias.length?mias.map(tarjetaMia).join(''):'<div class="card vacio">Cuando aceptes un trabajo, aquí ves al cliente y los pasos.</div>');
+    v.innerHTML=h; enlazar();
+  }
+  function enlazar(){
+    var todos=function(sel,fn){[].forEach.call(document.querySelectorAll(sel),fn)};
+    todos('[data-aceptar]',function(b){b.onclick=function(){var o=buscar(b.dataset.aceptar);
+      abrirModal('<h3>¿Aceptas este trabajo?</h3><p style="font-size:19px">'+esc(o.resumen)+'<br>📍 '+esc(o.municipio)+(o.inicio?' · '+esc(dia(o.inicio))+', '+esc(hora(o.inicio)):'')+'<br>Tú cobras <b>'+dinero(o.pagoProveedor)+'</b></p><button class="btn verde" id="si">Sí, lo cojo</button><button class="btn claro" id="no">Cancelar</button>');
+      $('no').onclick=cerrarModal;$('si').onclick=function(){$('si').disabled=true;post('/api/proveedores/aceptar',{oferta:o.id}).then(function(j){cerrarModal();aviso(j.ok?'✅ ¡Es tuyo! Abajo tienes al cliente y los pasos.':(j.motivo||'No se pudo aceptar.'),!j.ok);cargar()})};}});
+    todos('[data-no]',function(b){b.onclick=function(){b.disabled=true;post('/api/proveedores/rechazar',{oferta:b.dataset.no}).then(function(j){aviso(j.ok?'Listo. Te avisamos del próximo.':(j.motivo||'No se pudo.'),!j.ok);cargar()})}});
+    todos('[data-paso]',function(b){b.onclick=function(){b.disabled=true;post('/api/proveedores/trabajo/paso',{oferta:b.dataset.of,paso:b.dataset.paso}).then(function(j){aviso(j.ok?(j.recordatorio||'✅ Listo'):(j.motivo||'No se pudo.'),!j.ok);cargar()})}});
+    todos('[data-llamar]',function(b){b.onclick=function(){b.disabled=true;post('/api/proveedores/trabajo/llamar',{oferta:b.dataset.llamar}).then(function(j){aviso(j.ok?(j.mensaje||'📞 Te estamos llamando. Contesta y te conectamos.'):(j.motivo||'No se pudo.'),!j.ok);setTimeout(function(){b.disabled=false},8000)})}});
+    todos('[data-escribir]',function(b){b.onclick=function(){var of=b.dataset.escribir;
+      abrirModal('<h3>Escribirle al cliente</h3><p style="color:var(--ink2);font-size:16px">Le llega de parte de Resuelto, nunca con tu número.</p><div class="chips">'+['Voy llegando en 10 minutos','Ya estoy afuera','Voy un poco tarde, llego en 30 minutos'].map(function(t){return '<button data-rapido="'+esc(t)+'">'+esc(t)+'</button>'}).join('')+'</div><label for="msg">O escribe tu mensaje</label><textarea id="msg" rows="3"></textarea><button class="btn naranja" id="env">Enviar</button><button class="btn claro" id="cer">Cancelar</button>');
+      [].forEach.call(document.querySelectorAll('[data-rapido]'),function(x){x.onclick=function(){$('msg').value=x.dataset.rapido}});
+      $('cer').onclick=cerrarModal;$('env').onclick=function(){var t=$('msg').value.trim();if(!t)return;$('env').disabled=true;post('/api/proveedores/trabajo/mensaje',{oferta:of,texto:t}).then(function(j){if(j.ok){cerrarModal();aviso('💬 Mensaje enviado.')}else{$('env').disabled=false;aviso(j.motivo||'No se pudo.',true)}})};}});
+    todos('input[data-foto]',function(inp){inp.onchange=function(){var fs=[].slice.call(inp.files||[]);if(!fs.length)return;aviso('Subiendo '+fs.length+' foto(s)…');
+      fs.reduce(function(pr,f){return pr.then(function(){return achicar(f).then(function(d){return post('/api/proveedores/trabajo/foto',{oferta:inp.dataset.of,tipo:inp.dataset.foto,imagen:d}).then(function(j){if(!j.ok)aviso(j.motivo,true)})})})},Promise.resolve()).then(function(){aviso('📷 Fotos guardadas.');cargar()})}});
+    todos('[data-terminar]',function(b){b.onclick=function(){var o=buscar(b.dataset.terminar),t=o.trabajo;
+      if(!t.fotosAntes||!t.fotosDespues){aviso('Primero toma la foto de ANTES y la de DESPUÉS.',true);return}
+      abrirModal('<h3>Cerrar el trabajo</h3>'+(t.precioFijo==null?'<label for="mo">Mano de obra final ('+dinero(t.rango[0])+' a '+dinero(t.rango[1])+')</label><input id="mo" type="number" inputmode="decimal">':'')+'<label for="mat">¿Cuánto costaron los materiales? (según el recibo)</label><input id="mat" type="number" inputmode="decimal" placeholder="0"><label for="nota">¿Algo que debamos saber? (opcional)</label><input id="nota" type="text" style="font-size:18px"><button class="btn verde" id="fin">✅ Terminé · cobrarle al cliente</button><button class="btn claro" id="cer">Todavía no</button>');
+      $('cer').onclick=cerrarModal;$('fin').onclick=function(){var body={oferta:o.id,paso:'terminado',materiales:Number(($('mat').value||'0').replace(',','.'))||0,nota:$('nota').value};if($('mo'))body.mano_obra=Number($('mo').value);$('fin').disabled=true;
+        post('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){cerrarModal();aviso('✅ Listo. Le enviamos el cobro de '+dinero(j.total)+' al cliente. Tú cobras '+dinero(j.pago)+' el viernes.')}else{$('fin').disabled=false;aviso(j.motivo||'No se pudo.',true)}cargar()})};}});
+    var ba=$('btn-alertas'); if(ba) ba.onclick=activarAlertasWeb;
+  }
+  function buscar(id){return datos.ofertas.filter(function(o){return o.id===id})[0]}
+  function achicar(file){return new Promise(function(ok,ko){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,s=Math.min(1,m/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.8))};img.onerror=ko;img.src=URL.createObjectURL(file)})}
+
+  function pintarDinero(){
+    var v=$('vista');v.innerHTML='<div class="vacio"><b>⏳</b>Cargando…</div>';
+    get('/api/proveedores/cuenta').then(function(c){if(c.error)return;var s=c.estaSemana,f=new Date(s.pagoViernes+'T12:00:00').toLocaleDateString('es-PR',{weekday:'long',day:'numeric',month:'long'});
+      v.innerHTML='<h2>Mi dinero</h2><div class="card"><p style="color:var(--ink2)">Esta semana · se paga el '+esc(f)+'</p><div class="dinero">'+dinero(s.total)+'</div>'
+        +(s.trabajos.length?s.trabajos.map(function(t){return '<div class="fila"><span>'+esc(t.servicio)+'<br><small style="color:var(--ink2)">'+esc(t.municipio||'')+'</small></span><b>'+dinero(t.pago)+'</b></div>'}).join(''):'<p style="color:var(--ink2);margin-top:10px">Todavía no has terminado trabajos esta semana.</p>')
+        +'</div><div class="card"><div class="fila"><span>Semana pasada</span><b>'+dinero(c.anterior.total)+'</b></div><div class="fila" style="border:0"><span>Desde que empezaste</span><b>'+dinero(c.acumulado)+'</b></div><p style="color:var(--ink2);margin-top:6px">'+c.trabajosTotales+' trabajo(s) terminados</p></div>'
+        +'<p style="color:var(--ink2);font-size:16px;margin-top:8px">Resuelto te paga los viernes lo que se cobró hasta el miércoles. El cliente siempre le paga a Resuelto, nunca a ti.</p>';
+    }).catch(function(){v.innerHTML='<div class="vacio">Sin conexión.</div>'});
+  }
+  function pintarAyuda(){
+    $('vista').innerHTML='<h2>¿Necesitas ayuda?</h2><div class="card"><label for="ayuda" style="margin-top:0">Escríbenos qué pasa y te contactamos</label><textarea id="ayuda" rows="4" style="font-size:19px" placeholder="Ej: no encuentro la casa del cliente"></textarea><button class="btn naranja" id="env-ayuda">Enviar a Resuelto</button></div>'
+      +'<h2>Cómo funciona</h2><div class="card" style="font-size:18px"><p>🔔 Cuando sale un trabajo en tu zona te suena el celular.</p><p style="margin-top:10px">✅ Si lo quieres, tocas <b>Aceptar</b>. Si no puedes, <b>No puedo este</b>. Nadie te obliga.</p><p style="margin-top:10px">🚗 El día del trabajo: <b>Voy en camino</b> → <b>Ya llegué</b> → fotos de antes y después → <b>Terminé</b>.</p><p style="margin-top:10px">📞 Para hablar con el cliente usa <b>Llamar</b> o <b>Escribirle</b>: le sale el número de Resuelto, nunca el tuyo.</p><p style="margin-top:10px">💵 El cliente le paga a Resuelto. Tú cobras los viernes.</p></div>'
+      +'<button class="btn claro" id="salir">Salir de este celular</button>';
+    $('env-ayuda').onclick=function(){var t=$('ayuda').value.trim();if(!t)return;$('env-ayuda').disabled=true;post('/api/pro/ayuda',{texto:t}).then(function(j){$('env-ayuda').disabled=false;if(j.ok){$('ayuda').value='';aviso('✅ Enviado. Resuelto te contacta pronto.')}else aviso(j.motivo||'No se pudo.',true)})};
+    $('salir').onclick=function(){abrirModal('<h3>¿Salir de este celular?</h3><p>Para volver a entrar necesitas un código nuevo por texto.</p><button class="btn naranja" id="si">Sí, salir</button><button class="btn claro" id="no">Cancelar</button>');$('no').onclick=cerrarModal;$('si').onclick=function(){cerrarModal();salir()}};
+  }
+
+  // ── Alertas: nativas (app de la tienda) o del navegador ──
+  var alertas={web:0,app:0,estado:'?'};
+  function bannerAlertas(){
+    if(nativo||alertas.app>0||alertas.web>0||alertas.estado==='activa')return '';
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
+      var ios=/iphone|ipad/i.test(navigator.userAgent);
+      return ios?'<div class="alertas"><b>🔔 Para que te suene cuando salga un trabajo:</b><br>toca <b>Compartir</b> (el cuadrito con la flecha) y luego <b>Añadir a pantalla de inicio</b>. Después abre Resuelto Pro desde ese ícono.</div>':'';
+    }
+    if(Notification.permission==='denied')return '<div class="alertas">🔕 Las alertas están bloqueadas en este celular. Pídele ayuda a Resuelto para activarlas.</div>';
+    return '<div class="alertas"><b>🔔 Activa las alertas</b><br>Así te suena el celular cuando sale un trabajo en tu zona.<button class="btn naranja" id="btn-alertas">Activar alertas</button></div>';
+  }
+  var urlB64=function(b){var p='='.repeat((4-b.length%4)%4),s=(b+p).replace(/-/g,'+').replace(/_/g,'/'),r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a};
+  function activarAlertasWeb(){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){return fetch('/api/proveedores/push/clave').then(function(r){return r.json()}).then(function(j){
+      if(!j.clave)throw new Error('sin clave');
+      return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(j.clave)}).then(function(sub){return post('/api/proveedores/push/suscribir',{sub:sub,dispositivo:navigator.userAgent.slice(0,80)})});
+    })}).then(function(){alertas.estado='activa';aviso('✅ Alertas activas. Te suena cuando salga un trabajo.');pintar()}).catch(function(){aviso('No se pudieron activar aquí. Pídele ayuda a Resuelto.',true)});
+  }
+  function alertasNativas(){
+    var P=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.PushNotifications; if(!P)return;
+    try{P.createChannel({id:'trabajos',name:'Trabajos nuevos',description:'Cuando sale un trabajo en tu zona',importance:5,sound:'alerta',vibration:true,visibility:1})}catch(e){}
+    P.addListener('registration',function(t){post('/api/pro/dispositivo',{token:t.value,plataforma:window.Capacitor.getPlatform()}).then(function(){alertas.app=1})});
+    P.addListener('pushNotificationReceived',function(){cargar()});
+    P.addListener('pushNotificationActionPerformed',function(){tab='trabajos';cargar()});
+    P.requestPermissions().then(function(r){if(r.receive==='granted')P.register()});
+  }
+
+  // ── Timbre cuando llega un trabajo nuevo con la app abierta ──
+  function timbre(){try{var C=window.AudioContext||window.webkitAudioContext,c=new C();[0,0.35,0.7].forEach(function(t){var o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0.0001,c.currentTime+t);g.gain.exponentialRampToValueAtTime(0.5,c.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t+0.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+0.32)})}catch(e){};if(navigator.vibrate)navigator.vibrate([300,120,300,120,500])}
+
+  function cargar(){
+    return get('/api/proveedores/ofertas').then(function(j){
+      if(j.error){aviso(j.error,true);return}
+      datos=j; if(j.proveedor&&j.proveedor.nombre&&S.nombre!==j.proveedor.nombre){S.nombre=j.proveedor.nombre;guardar();var q=$('quien');if(q)q.textContent=S.nombre}
+      var nuevas=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==S.p}),hay=false;
+      nuevas.forEach(function(o){if(!vistos[o.id]){vistos[o.id]=1;if(!primeraCarga)hay=true}});primeraCarga=false;
+      if(hay){timbre();aviso('🔔 ¡Trabajo nuevo en tu zona!')}
+      var activo=document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+      if(tab==='trabajos'&&!activo&&!$('modal').classList.contains('on'))pintarTrabajos();
+    }).catch(function(e){if(String(e.message)!=='sesion'&&tab==='trabajos'&&!datos)$('vista').innerHTML='<div class="vacio"><b>📶</b>Sin conexión. Se actualiza solo cuando vuelva la señal.</div>'});
+  }
+  function iniciar(){
+    pintarMarco();pintar();cargar();setInterval(cargar,15000);
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)cargar()});
+    if(nativo)alertasNativas();
+    else{get('/api/pro/estado').then(function(e){if(e.ok){alertas.web=e.alertasWeb;alertas.app=e.alertasApp;if(tab==='trabajos')pintarTrabajos()}}).catch(function(){});
+      if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').then(function(reg){return reg.pushManager&&reg.pushManager.getSubscription()}).then(function(s){if(s){alertas.estado='activa';if(tab==='trabajos'&&datos)pintarTrabajos()}}).catch(function(){})}
+  }
+  if(S&&S.p&&S.k)iniciar();else pintarEntrar();
+})();
+</script>
+</body>
+</html>

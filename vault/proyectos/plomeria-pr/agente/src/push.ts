@@ -20,6 +20,7 @@ const ARCH = path.join(RAIZ, "data", "estado", "push.json");
 function leer(): Sub[] { return fs.existsSync(ARCH) ? (JSON.parse(fs.readFileSync(ARCH, "utf8")) as Sub[]) : []; }
 function guardar(l: Sub[]) { fs.mkdirSync(path.dirname(ARCH), { recursive: true }); fs.writeFileSync(ARCH, JSON.stringify(l, null, 2)); }
 
+export const cuantas = (proveedorId: string) => leer().filter((s) => s.proveedorId === proveedorId).length;
 export function suscribir(proveedorId: string, sub: webpush.PushSubscription, dispositivo?: string) {
   const l = leer().filter((s) => s.sub.endpoint !== sub.endpoint);
   l.push({ proveedorId, sub, dispositivo, creado: new Date().toISOString() });
@@ -31,7 +32,9 @@ export interface Aviso { titulo: string; cuerpo: string; url: string; tag?: stri
 
 /** Envía a todos los dispositivos del proveedor. Borra suscripciones muertas (410/404). */
 export async function notificar(proveedorId: string, aviso: Aviso): Promise<number> {
-  if (!configurado()) { console.log(`[push simulado → ${proveedorId}] ${aviso.titulo}: ${aviso.cuerpo}`); return 0; }
+  // También a la app nativa (Resuelto Pro) si el plomero la tiene instalada.
+  const nativo = await import("./push-nativo.js").then((m) => m.enviar(proveedorId, aviso)).catch((e) => { console.error("push nativo", e); return 0; });
+  if (!configurado()) { console.log(`[push simulado → ${proveedorId}] ${aviso.titulo}: ${aviso.cuerpo}`); return nativo; }
   const todas = leer(); const mias = todas.filter((s) => s.proveedorId === proveedorId);
   let ok = 0; const muertas = new Set<string>();
   await Promise.all(mias.map(async (s) => {
@@ -39,5 +42,5 @@ export async function notificar(proveedorId: string, aviso: Aviso): Promise<numb
     catch (e: any) { if (e?.statusCode === 410 || e?.statusCode === 404) muertas.add(s.sub.endpoint); else console.error("push", proveedorId, e?.statusCode ?? e); }
   }));
   if (muertas.size) guardar(todas.filter((s) => !muertas.has(s.sub.endpoint)));
-  return ok;
+  return ok + nativo;
 }
