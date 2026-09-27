@@ -845,6 +845,16 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   totales − reembolsos · churn = bajas ÷ activos al inicio × 100 · ticket = ingresos ÷ activos al cierre · LTV =
   ticket ÷ churn. Dato faltante = celda vacía (reembolsos sin nada → poner 0). Script
   `scripts/pulse/crear-tablero-tesoreria.mjs`. El tablero TESORERIA (cobros) sigue aparte.
+- **Acuerdo firmado automático** (27/sep, `lib/pulse/contratos.ts` puro + tests `tests/pulse-contratos.test.mjs`,
+  `lib/pulse/contratos-slack.ts`): al crearse una ficha en LEVEL UP MEDIA (`altaOnboarding` → after()), Pulse lee
+  **#office-2-ventas-contrato** (`SLACK_CONTRATOS_CHANNEL_ID`, default C08SV6GJLPQ, privado: el bot Command Center
+  tiene que estar invitado), empareja la venta por correo/teléfono (o nombre + apellido), baja el PDF del hilo y lo sube
+  a la columna file **"Acuerdo firmado"** (usuario de sistema "Contratos (automático)", comentario con el link de la
+  venta). Si no hay venta o PDF → comentario ⚠️ y DM del bot a Jessica (`PULSE_CONTRATOS_AVISAR`) UNA vez; si el PDF no
+  menciona al cliente (pasó: el de Joel se llamaba "Edgar_Rosado") lo adjunta pero avisa "revísalo". Cron
+  `/api/cron/pulse-contratos` cada hora 8 AM–8 PM PR: fichas de los últimos 14 días sin acuerdo; cuando llega, lo
+  adjunta y le avisa a Jessica. Fichas anteriores a `PULSE_CONTRATOS_AVISOS_DESDE` (27/sep) no generan avisos.
+  `?avisar=0` = pasada sin avisos, `?dias=N`. "Firmado" = hay PDF del contrato en el hilo (no se lee la firma).
 - **Bloqueos por persona** (`pulse_board_bloqueos`, migración 0024): un tablero público que alguien NO ve
   (`boardsVisibles`/`puedeVerBoard`, afecta sidebar, ⌘K, Preguntarle al CRM y archivos; admins no se bloquean).
   María García tiene bloqueado AI BORINQUEN. Sin UI todavía: se agrega por SQL.

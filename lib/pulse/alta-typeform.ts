@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, eq, sql } from "drizzle-orm";
+import { after } from "next/server";
 
 import { db } from "./db";
 import { avisarCambio } from "./puente-n8n";
@@ -19,6 +20,7 @@ const USUARIOS_SISTEMA = {
   typeform: { email: "typeform@pulse.sistema", nombre: "Typeform (automático)" },
   formulario: { email: "onboarding@pulse.sistema", nombre: "Onboarding (automático)" },
   max: { email: "max@pulse.sistema", nombre: "Max (estratega IA)" },
+  contratos: { email: "contratos@pulse.sistema", nombre: "Contratos (automático)" },
 } as const;
 export type OrigenOnboarding = keyof typeof USUARIOS_SISTEMA;
 
@@ -134,6 +136,13 @@ export async function altaOnboarding(e: EntradaOnboarding, opciones: { tablero?:
 
   await d.insert(pulseActivity).values({ itemId, boardId: board.id, tipo: "comentario", after: { texto: e.resumen, typeform: e.token }, userId });
   if (slug === "level-up-media") avisarCambio({ itemIds: [itemId], motivo: `onboarding:${opciones.origen}` });
+  // Acuerdo firmado: lo busca en #office-2-ventas-contrato y lo adjunta; si falta, avisa a Jessica.
+  if (slug === "level-up-media") {
+    after(async () => {
+      const { adjuntarContrato } = await import("./contratos-slack");
+      await adjuntarContrato(itemId).catch((err) => console.error("pulse contrato", err));
+    });
+  }
   return { estado, itemId, nombre, tablero: slug };
 }
 

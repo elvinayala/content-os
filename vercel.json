@@ -51,6 +51,10 @@
     {
       "path": "/api/cron/leaderboard",
       "schedule": "0 11,19 * * 1-6"
+    },
+    {
+      "path": "/api/cron/pulse-contratos",
+      "schedule": "0 12-23,0 * * *"
     }
   ],
   "regions": [
