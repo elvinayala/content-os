@@ -365,7 +365,9 @@ try {
         marcador = vids[0]?.id || null;
         console.log("Video marcador:", marcador, vids[0]?.title || "");
       }
-      await M.crearEnMeta(c, plan, { publicosDisponibles: disponibles, videoMarcador: marcador });
+      // Guardar lo creado aunque falle a la mitad: así el reintento retoma sin duplicar (27/sep/2026).
+      try { await M.crearEnMeta(c, plan, { publicosDisponibles: disponibles, videoMarcador: marcador }); }
+      catch (e) { writeFileSync(planPath, JSON.stringify(plan, null, 2) + "\n"); throw e; }
       plan.creadoEl ||= new Date().toISOString();
       writeFileSync(planPath, JSON.stringify(plan, null, 2) + "\n");
       console.log(`✔ Campaña ${plan.meta.campaignId} montada EN PAUSA. Ads Manager: https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${plan.cuentaId}&selected_campaign_ids=${plan.meta.campaignId}`);

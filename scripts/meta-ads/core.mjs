@@ -169,7 +169,7 @@ export function buildTargeting({
   if (plataformas.length) {
     t.publisher_platforms = plataformas;
     if (plataformas.includes("instagram") && posicionesIG.length) t.instagram_positions = posicionesIG;
-    if (plataformas.includes("facebook")) t.facebook_positions = ["feed", "story", "facebook_reels", "video_feeds"];
+    if (plataformas.includes("facebook")) t.facebook_positions = ["feed", "story", "facebook_reels"]; // "video_feeds" quedó obsoleto en v25 (Meta 100/2490562, 27/sep/2026)
   }
   if (incluir.length) t.custom_audiences = incluir.map((id) => ({ id: String(id) }));
   if (excluir.length) t.excluded_custom_audiences = excluir.map((id) => ({ id: String(id) }));

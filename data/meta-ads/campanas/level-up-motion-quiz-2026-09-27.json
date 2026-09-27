@@ -1,0 +1,215 @@
+{
+  "marca": "level-up",
+  "nombre": "LU · Motion · Quiz Diagnóstico · 5 públicos × 5 creativos",
+  "modo": "leads",
+  "creadoPor": "plantilla",
+  "fecha": "2026-09-27",
+  "cuentaId": "2010206776851",
+  "pageId": "103458229415869",
+  "igUserId": null,
+  "igHandle": null,
+  "pixelId": "27706808412306198",
+  "topeDiario": 50,
+  "minPorConjunto": 10,
+  "targetingBase": {
+    "paises": [
+      "PR"
+    ],
+    "edadMin": 28,
+    "edadMax": 60,
+    "plataformas": [
+      "facebook",
+      "instagram"
+    ],
+    "advantage": false
+  },
+  "publicos": {
+    "P1": {
+      "nombre": "Similares de clientes (1–3 %)",
+      "incluir": [
+        "similar-clientes-1",
+        "similar-clientes-alto-valor-1",
+        "similar-clientes-alto-valor-3"
+      ],
+      "excluir": [
+        "clientes"
+      ],
+      "advantage": false
+    },
+    "P2": {
+      "nombre": "Interactuaron FB/IG 365 d",
+      "incluir": [
+        "engagers-365-fb",
+        "engagers-365-ig",
+        "fb-interaccion-365",
+        "ig-interaccion-60d"
+      ],
+      "excluir": [
+        "clientes"
+      ],
+      "advantage": false
+    },
+    "P3": {
+      "nombre": "Vieron videos (50–75 %) + tibio",
+      "incluir": [
+        "video50-365",
+        "video75-lum",
+        "video75-120d",
+        "tibio-15-365"
+      ],
+      "excluir": [
+        "clientes"
+      ],
+      "advantage": false
+    },
+    "P4": {
+      "nombre": "Similares de engagers",
+      "incluir": [
+        "similar-ig-engagers-1",
+        "similar-fb-engagers-3"
+      ],
+      "excluir": [
+        "clientes"
+      ],
+      "advantage": false
+    },
+    "P5": {
+      "nombre": "PR amplio 28–60",
+      "incluir": [],
+      "excluir": [
+        "clientes"
+      ],
+      "advantage": false,
+      "amplio": true
+    }
+  },
+  "creativos": [
+    {
+      "clave": "Q-V1",
+      "videoId": "1724653395310674",
+      "copy": {
+        "textoPrincipal": "Tus anuncios traen el cliente. Si nadie le contesta a tiempo, se va con la competencia.\n\nNuevo en Level Up: AutoFlow. Anuncios + un agente de voz y uno de chat que contestan en segundos + un CRM con todos tus leads.\n\n👉 Haz el diagnóstico de 1 minuto y te decimos qué está frenando tu crecimiento.",
+        "titulo": "Llegó AutoFlow a Level Up",
+        "descripcion": "Level Up Media · Puerto Rico",
+        "cta": "LEARN_MORE"
+      },
+      "thumbUrl": "https://scontent.fsig3-1.fna.fbcdn.net/v/t15.5256-10/819193428_29112417541683716_802654030527150803_n.jpg?_nc_cat=106&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e3495b&_nc_ohc=R3g3ycnQTU4Q7kNvwHLG-Ao&_nc_oc=AdoFbvjcBYuxzaK2UD-1ezZxrx6oc_PUhdd7Lo-1a803ykWvp08Jgomw3SStGpPX0vA&_nc_zt=23&_nc_ht=scontent.fsig3-1.fna&edm=APRAPSkEAAAA&_nc_gid=KOnB_-eK0RbgVhxXEhR6yQ&_nc_tpa=Q5bMBQK6sVCh85aHstx06N4ND24HoajQtguTZuYwDjRyoBi3lbsVh7lzxwC2NZru6NT9EBW8RPv3ChBv_TQ&oh=00_AQMN9VuJR4vmLx8HPNnN5C9BkQiSo-y4BhZENHjyDp1RXA&oe=6ABF8642"
+    },
+    {
+      "clave": "Q-V2",
+      "videoId": "4444186029189450",
+      "copy": {
+        "textoPrincipal": "Tinos pasó de $30K a $100K al mes. No fue un anuncio: fue un sistema.\n\nSi tu plan es que alguien te recomiende, no tienes un plan.\n\n👉 Haz el diagnóstico de 1 minuto y te decimos qué está frenando tu crecimiento.\n\nResultados de clientes reales; cada negocio es distinto.",
+        "titulo": "Tinos: de $30K a $100K al mes",
+        "descripcion": "Level Up Media · Puerto Rico",
+        "cta": "LEARN_MORE"
+      },
+      "thumbUrl": "https://scontent.fsig3-1.fna.fbcdn.net/v/t15.5256-10/827939294_1098805302506076_1984788861890124347_n.jpg?_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e3495b&_nc_ohc=MwgONV2UfrwQ7kNvwFwIsr3&_nc_oc=AdqRymcIsqb5eciXiLVWB-ze2QU15pzaDwhn8qSkIezWLfJKbTbuLsv5ke_Se-tiNM0&_nc_zt=23&_nc_ht=scontent.fsig3-1.fna&edm=APRAPSkEAAAA&_nc_gid=lpOyayqbCDxpo_iHqWWt0A&_nc_tpa=Q5bMBQL97vd6d4tgvda37FA6OfaA5ZyhR2mJtHESiKmIDPxdg43eqn7jxf9B7wZ6sOc5e0_55SqVbrUx0cw&oh=00_AQMOB8798AIzw2dflgAQpPCE3PmFokz9-zMoE0SVx61xhQ&oe=6ABF5A0D"
+    },
+    {
+      "clave": "Q-V3",
+      "videoId": "4315067402138365",
+      "copy": {
+        "textoPrincipal": "¿Ya facturas $10K al mes? Lo difícil no es vender: es escalar sin que todo dependa de ti.\n\nTinos, RK Automatic y La Garita ya lo hicieron con un sistema.\n\n👉 Haz el diagnóstico de 1 minuto y te decimos qué está frenando tu crecimiento.\n\nResultados de clientes reales; cada negocio es distinto.",
+        "titulo": "¿Ya facturas $10K al mes?",
+        "descripcion": "Level Up Media · Puerto Rico",
+        "cta": "LEARN_MORE"
+      },
+      "thumbUrl": "https://scontent.fsig3-1.fna.fbcdn.net/v/t15.5256-10/825177198_1071794795647158_2579724804353867643_n.jpg?_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e3495b&_nc_ohc=3rAjxdonlucQ7kNvwGcGk7a&_nc_oc=AdoL1QoVPLClgKf7y7w08ws4PLDIiOl-4LpBIJvPa9wpE9ptNyig7y4WaruhYws6HxM&_nc_zt=23&_nc_ht=scontent.fsig3-1.fna&edm=APRAPSkEAAAA&_nc_gid=Ct2oAU04j115RXIERN5cmg&_nc_tpa=Q5bMBQLisRFYBx4ku8-HgD3VEbvxqQIH0nr0pR7GcIR2yog2MZAX1GG-_zOtwLveWQnh6HT1mOoetBuM7zk&oh=00_AQMEuV5n1BeILTc9nllAsXj1MN9ryvh4bk6XI8XUn5WRZA&oe=6ABF5DEC"
+    },
+    {
+      "clave": "Q-V4",
+      "videoId": "1425481709549213",
+      "copy": {
+        "textoPrincipal": "¿Crees que los anuncios no funcionan para tu negocio? Lo que falla no son los anuncios: es la estrategia.\n\n+100 negocios en Puerto Rico. El Dr. Bryan Vega recibe entre 25 y 50 pacientes nuevos cada mes.\n\n👉 Haz el diagnóstico de 1 minuto y te decimos qué está frenando tu crecimiento.\n\nResultados de clientes reales; cada negocio es distinto.",
+        "titulo": "Distintos nichos. Un sistema.",
+        "descripcion": "Level Up Media · Puerto Rico",
+        "cta": "LEARN_MORE"
+      },
+      "thumbUrl": "https://scontent.fsig3-1.fna.fbcdn.net/v/t15.5256-10/829092502_1588673225475029_9091353298906405373_n.jpg?_nc_cat=102&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e3495b&_nc_ohc=d0KJDa0d7VoQ7kNvwG4qrhR&_nc_oc=AdrclKwKUz3GK6T80MUWIE3cUTyWIP_ZXY9EtZTbvV0BqPDJZnab7A9rtOpd8hRy6QM&_nc_zt=23&_nc_ht=scontent.fsig3-1.fna&edm=APRAPSkEAAAA&_nc_gid=7EZrOjBuhoLAxR16pFYFHQ&_nc_tpa=Q5bMBQKrDw2g9NoH12FtbGbCkrxU9D6QDFOhDCwK1BUSkPx9ET_1tJf83jRmauzW-MT-BRRtD6FpSRL_PrM&oh=00_AQOwo7krSyw4mIQPl1pHlxBmorXNyfX1okEdYqnWlT2puA&oe=6ABF7041"
+    },
+    {
+      "clave": "Q-V5",
+      "videoId": "1489240339696140",
+      "copy": {
+        "textoPrincipal": "Por 3 huecos se te va el dinero cada mes: dependes de referidos, contestas tarde tus leads y tu base de clientes está dormida.\n\nLos tapamos con un sistema: anuncios + respuesta en segundos + campañas a tu base.\n\n👉 Haz el diagnóstico de 1 minuto y te decimos qué está frenando tu crecimiento.",
+        "titulo": "Los 3 huecos de tu negocio",
+        "descripcion": "Level Up Media · Puerto Rico",
+        "cta": "LEARN_MORE"
+      },
+      "thumbUrl": "https://scontent.fsig3-1.fna.fbcdn.net/v/t15.5256-10/826074407_2290942274784807_235500390594844322_n.jpg?_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e3495b&_nc_ohc=PZygoIudAscQ7kNvwFNWajZ&_nc_oc=Adrf0dD1cM7dPHdwfqditAzh-Ghlj6QrlarohKN2fuAFWf-IXRNuUT8_rQ96ia1-NLk&_nc_zt=23&_nc_ht=scontent.fsig3-1.fna&edm=APRAPSkEAAAA&_nc_gid=6oMpePN4oC6L5nQcQdnE_w&_nc_tpa=Q5bMBQIPJBwAaN2TnGfwT8y6wsCTkuw_JGiaCIBs2jsZs1Ou209MPJt4wW87E_h9vdnUspGNBnclFtKDVwM&oh=00_AQOPTucmaMZPfxPLc3WHA4-HCuyGjPUvHrtCaqC2YL00MA&oe=6ABF7C49"
+    }
+  ],
+  "conjuntos": [
+    {
+      "clave": "Q-1",
+      "publico": "P1",
+      "creativo": "Q-V2",
+      "presupuestoDiario": 10,
+      "nombre": "Q-1 · Similares de clientes (1–3 %) · Q-V2",
+      "nombreAnuncio": "Q-V2 · motion"
+    },
+    {
+      "clave": "Q-2",
+      "publico": "P2",
+      "creativo": "Q-V1",
+      "presupuestoDiario": 10,
+      "nombre": "Q-2 · Interactuaron FB/IG 365 d · Q-V1",
+      "nombreAnuncio": "Q-V1 · motion"
+    },
+    {
+      "clave": "Q-3",
+      "publico": "P3",
+      "creativo": "Q-V5",
+      "presupuestoDiario": 10,
+      "nombre": "Q-3 · Vieron videos (50–75 %) + tibio · Q-V5",
+      "nombreAnuncio": "Q-V5 · motion"
+    },
+    {
+      "clave": "Q-4",
+      "publico": "P4",
+      "creativo": "Q-V4",
+      "presupuestoDiario": 10,
+      "nombre": "Q-4 · Similares de engagers · Q-V4",
+      "nombreAnuncio": "Q-V4 · motion"
+    },
+    {
+      "clave": "Q-5",
+      "publico": "P5",
+      "creativo": "Q-V3",
+      "presupuestoDiario": 10,
+      "nombre": "Q-5 · PR amplio 28–60 · Q-V3",
+      "nombreAnuncio": "Q-V3 · motion"
+    }
+  ],
+  "landing": "https://class.levelupmediapr.net/crecimiento",
+  "evento": "LEAD",
+  "urlTags": "utm_source=meta&utm_medium=paid&utm_campaign=lu-motion-quiz&utm_content={{ad.name}}&utm_term={{adset.name}}",
+  "notas": "Plan de Max (quiz, 5 videos) corregido por Remi el 27/sep: copies, públicos grandes de LU, FB+IG. EN PAUSA hasta el OK de Elvin.",
+  "meta": {
+    "campaignId": "52607961491997",
+    "conjuntos": {
+      "Q-1": "52607961527597",
+      "Q-2": "52607961717397",
+      "Q-3": "52607961749397",
+      "Q-4": "52607961768797",
+      "Q-5": "52607961940397"
+    },
+    "creativos": {
+      "Q-V2@4444186029189450": "1420438433364973",
+      "Q-V1@1724653395310674": "3963763957252551",
+      "Q-V5@1489240339696140": "1816853865992150",
+      "Q-V4@1425481709549213": "1614926026745993",
+      "Q-V3@4315067402138365": "1825158151826160"
+    },
+    "anuncios": {
+      "Q-1": "52607961697397",
+      "Q-2": "52607961747197",
+      "Q-3": "52607961757197",
+      "Q-4": "52607961898197",
+      "Q-5": "52607962030197"
+    },
+    "medios": {}
+  },
+  "creadoEl": "2026-09-27T22:57:08.835Z"
+}
