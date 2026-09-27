@@ -2,6 +2,7 @@
 
 - [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack/setup (Next 16, dir con espacio, /guion)
 - [Pulse — CRM propio](pulse-crm.md) — 27/sep: rediseño nivel SaaS (Inicio con KPIs, login dividido, pills suaves); reemplazo de Monday ($800/mes) EN PROD con Supabase; 24/sep: próximo nivel (automatizaciones, Mi día con DM del bot, ⌘K, vistas, Preguntarle al CRM)
+- [Protección de datos](proteccion-datos.md) — 27/sep: papelera universal (trigger en todas las tablas, Deshacer 15 min, /pulse/papelera) + respaldo diario cifrado en Supabase, Vercel Blob y la Mac; falta que Elvin guarde RESPALDO_CLAVE en su gestor
 - [Bori — super plataforma](bori-superplataforma.md) — la plataforma de agentes de AI Borinquen (admin-first en app/borinquen/, tema verde, voz Retell+preset, CRM live)
 - [Bori — backend real](bori-backend-real.md) — el SaaS en vivo con clientes pagando: dónde vive, cómo se despliega, las trampas que ya rompieron producción, y el monitor de fallos (Equipo → Fallos = récord de bugs; marcar arreglados ahí)
 - [Bori — plan de crecimiento](bori-plan-crecimiento.md) — 1K al día 60 · 3K al día 90 · 50K en un año (13/sep/2026): motores, compuertas, rol de Elvin + equipo de 4, trial 7 días; qué ya está en prod y las 7 decisiones pendientes
