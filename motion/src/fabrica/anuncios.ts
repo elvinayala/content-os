@@ -378,3 +378,35 @@ export const LOTE2: Guion[] = [
 ];
 
 ANUNCIOS.push(...LOTE2.flatMap(ambos));
+
+/* ═════════════════ RITMO · presentación interna al equipo (27/sep/2026) ═════════════════
+   Capturas REALES de la app con datos FICTICIOS (copia demo en /Users/elvinayala/ritmo-demo, nunca producción).
+   16:9 = capturas de computadora en laptop (para Slack); 9:16 = capturas de celular en teléfono. */
+const RITMO_GUION: Guion = {
+  id: "ritmo-presentacion", marca: "ritmo", titulo: "Bienvenidos a Ritmo: la plataforma oficial del equipo", angulo: "Lanzamiento interno",
+  escenas: [
+    { tipo: "gancho", dur: 90, logo: true, etiqueta: "Ya está aquí", lineas: ["Bienvenidos a *Ritmo*."], sub: "La plataforma oficial del equipo." },
+    { tipo: "gancho", dur: 90, lineas: ["Tu día, tus solicitudes y tu crecimiento,", "en *un solo lugar*."] },
+    { tipo: "pantalla", dur: 180, imagen: "ritmo/emp-hoy-pc.png", dispositivo: "laptop", titulo: "Marca tu *entrada y salida*", sub: "Un toque al llegar y otro al salir, con la hora oficial de Puerto Rico.",
+      puntos: ["Horario flexible, en tramos", "¿Se te olvidó la salida? La corriges y tu líder la confirma", "Tu semana, a la vista"], foco: { x: 0.36, y: 0.2, w: 0.28, h: 0.45 } },
+    { tipo: "gancho", dur: 100, lineas: ["Sin capturas. Sin GPS.", "Sin *vigilancia*."], sub: "Ritmo mide lo que ya haces, con reglas claras para todos." },
+    { tipo: "pantalla", dur: 170, imagen: "ritmo/emp-solicitudes-pc.png", dispositivo: "laptop", titulo: "Pide tus días *sin papeles*", sub: "Días libres, vacaciones, permisos o una carta.",
+      puntos: ["Tu supervisor lo aprueba", "RR.HH. lo firma", "Te avisamos en cada paso"], foco: { x: 0.22, y: 0.14, w: 0.56, h: 0.4 } },
+    { tipo: "pantalla", dur: 170, imagen: "ritmo/emp-carreras-pc.png", dispositivo: "laptop", titulo: "*Crece* aquí adentro", sub: "Las vacantes nuevas se publican primero en Ritmo.",
+      puntos: ["Aplica para crecer o cambiar de puesto", "Refiere a alguien y gana un bono", "El bono entra en tu nómina"], foco: { x: 0.22, y: 0.2, w: 0.56, h: 0.24 } },
+    { tipo: "pantalla", dur: 170, imagen: "ritmo/emp-bienestar-pc.png", dispositivo: "laptop", titulo: "Cuídate con *Bienestar*", sub: "Pausas activas de 5 minutos, tu ejercicio y tu energía.",
+      puntos: ["Voluntario y privado", "No cuenta para tu desempeño", "Únete a la comunidad del equipo, si quieres"], foco: { x: 0.22, y: 0.18, w: 0.58, h: 0.5 } },
+    { tipo: "pantalla", dur: 150, imagen: "ritmo/emp-noticias-pc.png", dispositivo: "laptop", titulo: "Entérate de *todo*", sub: "Logros del equipo, comunicados y causas que apoyamos." },
+    { tipo: "pantalla", dur: 190, imagen: "ritmo/lider-equipo-pc.png", dispositivo: "laptop", titulo: "Líderes: *tu equipo* de un vistazo", sub: "Quién llegó, qué se terminó y dónde hace falta una mano.",
+      puntos: ["Presentes, sin marcar y vencidas", "Solo ves a tu gente", "Confirmas correcciones en un toque"], foco: { x: 0.14, y: 0.3, w: 0.72, h: 0.24 } },
+    { tipo: "pantalla", dur: 150, imagen: "ritmo/emp-etica-pc.png", dispositivo: "laptop", titulo: "¿Viste algo que *no está bien*?", sub: "El canal ético es privado: puedes reportar de forma anónima." },
+    { tipo: "gancho", dur: 110, lineas: ["Tu ritmo.", "El de *todo el equipo*."] },
+    { tipo: "cierre", dur: 230, cta: "Entra hoy →", sub: "Usa tu link de acceso y guárdala en tu celular como una app", url: "ritmo.levelupmediapr.net" },
+  ],
+};
+// Versión vertical: mismas escenas con las capturas de celular en un teléfono (sin zoom: la pantalla entera ya se lee).
+const aVertical = (g: Guion): Anuncio => ({
+  ...g, id: `${g.id}-9x16`, formato: "9:16",
+  escenas: g.escenas.map((e) => (e.tipo === "pantalla" ? { ...e, imagen: e.imagen.replace("-pc.png", "-cel.png"), dispositivo: "telefono", foco: undefined, puntos: e.puntos?.slice(0, 2) } : e)),
+});
+ANUNCIOS.push({ ...RITMO_GUION, id: `${RITMO_GUION.id}-16x9`, formato: "16:9" }, aVertical(RITMO_GUION));

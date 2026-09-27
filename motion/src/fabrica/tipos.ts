@@ -25,6 +25,9 @@ export type Escena = { dur: number } & (
   | { tipo: "lista"; titulo: string; items: { texto: string; monto?: string }[]; modo: "tachar" | "marcar" | "sumar"; total?: { etiqueta: string; prefijo?: string; hasta: number; sufijo?: string } }
   | { tipo: "voz"; orden: string; respuesta: string; evento?: { titulo: string; cuando: string } }
   | { tipo: "agenda"; pregunta: string; dia: string; items: { hora: string; texto: string }[] }
+  | { tipo: "pantalla"; titulo: string; sub?: string; imagen: string; dispositivo: "laptop" | "telefono"; puntos?: string[];
+      /** Zona a la que acerca la cámara, en fracción de la captura (0-1). */
+      foco?: { x: number; y: number; w: number; h: number } }
   | { tipo: "cierre"; cta: string; sub?: string; url?: string; nota?: string }
 );
 

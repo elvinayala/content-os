@@ -1,7 +1,7 @@
 // Librería de escenas de la fábrica. Cada escena lee el tema de la marca (contexto) y el lienzo
 // (vertical 1080×1920 u horizontal 1920×1080) y se acomoda sola. Los tiempos son frames locales.
 import React, { createContext, useContext } from "react";
-import { AbsoluteFill, Audio, Sequence, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Img, Sequence, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { evolvePath } from "@remotion/paths";
 import { noise2D } from "@remotion/noise";
 import { golpe, rebote, suave, tw } from "../kit/fx";
@@ -824,6 +824,67 @@ const Agenda: React.FC<Extract<Escena, { tipo: "agenda" }>> = ({ pregunta, dia, 
   );
 };
 
+/** Captura real de una app dentro de un laptop o teléfono, con zoom a la zona importante y viñetas. */
+const Pantalla: React.FC<Extract<Escena, { tipo: "pantalla" }>> = ({ titulo, sub, imagen, dispositivo, puntos = [], foco, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w, h } = useLienzo();
+  const tel = dispositivo === "telefono";
+  // tamaño del aparato según el lienzo
+  const anchoPant = tel ? (v ? 560 : 420) : v ? 960 : 1040;
+  const altoPant = tel ? anchoPant * (844 / 390) : anchoPant * (900 / 1440);
+  const entra = rebote(f, 0, 22);
+  // cámara: empieza viendo toda la pantalla y se acerca al foco
+  const z = foco ? tw(f, Math.round(dur * 0.35), Math.round(dur * 0.62), 0, 1, suave) : 0;
+  const escala = foco ? 1 + z * (Math.min(1 / foco.w, 1 / foco.h) * 0.8 - 1) : 1;
+  const cx = foco ? (foco.x + foco.w / 2 - 0.5) * anchoPant * escala * z : 0;
+  const cy = foco ? (foco.y + foco.h / 2 - 0.5) * altoPant * escala * z : 0;
+  const scrollY = 0;
+  const aparato = (
+    <div style={{
+      position: "relative", transform: `translateY(${(1 - entra) * 140}px) rotateX(${(1 - entra) * 18}deg)`, opacity: Math.min(1, entra * 1.4),
+      padding: tel ? 14 : "18px 18px 22px", borderRadius: tel ? 64 : 22, background: "linear-gradient(145deg, #2a2f45, #0b0d16)",
+      boxShadow: `0 50px 140px rgba(0,0,0,0.6), 0 0 0 2px ${t.borde}, 0 0 90px ${t.acento}22`,
+    }}>
+      <div style={{ width: anchoPant, height: altoPant, borderRadius: tel ? 50 : 10, overflow: "hidden", position: "relative", background: t.fondo }}>
+        <Img src={staticFile(imagen)} style={{
+          width: "100%", position: "absolute", top: 0, left: 0,
+          transform: `translate(${-cx}px, ${-cy - scrollY}px) scale(${escala})`, transformOrigin: "center center",
+        }} />
+        {tel && <div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", width: 120, height: 34, borderRadius: 20, background: "#000" }} />}
+      </div>
+      {!tel && <div style={{ position: "absolute", left: -60, right: -60, bottom: -26, height: 26, borderRadius: "0 0 26px 26px", background: "linear-gradient(180deg, #3a3f55, #151826)" }} />}
+    </div>
+  );
+  const textos = (
+    <div style={{ display: "flex", flexDirection: "column", gap: v ? 18 : 22, alignItems: v ? "center" : "flex-start", maxWidth: v ? w - 160 : 600, width: v ? undefined : 600, flexShrink: 0 }}>
+      <Titular texto={titulo} entra={4} tam={ajustar([titulo], v ? w - 160 : 600, v ? 84 : 80)} alinear={v ? "center" : "left"} />
+      {sub && <div style={{ fontFamily: t.fuente, fontSize: v ? 36 : 30, color: t.gris, fontWeight: 500, opacity: tw(f, 14, 24), textAlign: v ? "center" : "left", lineHeight: 1.3 }}>{sub}</div>}
+      {puntos.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 6 }}>
+          {puntos.map((p, i) => {
+            const e = tw(f, 20 + i * 7, 30 + i * 7);
+            return (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, fontFamily: t.fuente, fontSize: v ? 34 : 30, fontWeight: 600, color: t.texto, opacity: e, transform: `translateX(${(1 - e) * -30}px)` }}>
+                <span style={{ width: 14, height: 14, borderRadius: 7, background: t.gradiente, flexShrink: 0 }} />{p}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+  const escalaAparato = v ? Math.min(1, (h - 250 - 380 - 330) / altoPant) : Math.min(1, (h - 180) / (altoPant + 40));
+  return (
+    <AbsoluteFill style={{ display: "flex", flexDirection: v ? "column" : "row", alignItems: "center", justifyContent: "center", gap: v ? 40 : 70, padding: v ? "230px 60px 330px" : "60px 90px", perspective: 1600 }}>
+      {textos}
+      <div style={{ transform: `scale(${escalaAparato})`, transformOrigin: v ? "top center" : "center", height: v ? altoPant * escalaAparato + 40 : undefined }}>{aparato}</div>
+      <Sfx src="whoosh.mp3" en={0} vol={0.3} />
+      {foco && <Sfx src="riser.mp3" en={Math.round(dur * 0.35)} vol={0.2} />}
+    </AbsoluteFill>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   switch (escena.tipo) {
     case "gancho": return <Gancho {...escena} />;
@@ -845,6 +906,7 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "lista": return <Lista {...escena} />;
     case "voz": return <Voz {...escena} />;
     case "agenda": return <Agenda {...escena} />;
+    case "pantalla": return <Pantalla {...escena} />;
     case "cierre": return <Cierre {...escena} />;
   }
 };

@@ -8,7 +8,8 @@ const src = fs.readFileSync(new URL("../src/fabrica/anuncios.ts", import.meta.ur
 // Los del lote 2 se escriben una vez y se expanden a -9x16 / -16x9: se busca el guion base.
 const base = src.includes(`id: "${id}"`) ? id : id.replace(/-(9x16|16x9)$/, "");
 const bloque = src.slice(src.indexOf(`id: "${base}"`)).replace(/tomas: \[[^\]]*\],/, "");
-const escenas = bloque.slice(0, bloque.indexOf("\n  },\n")).match(/dur: (\d+)/g).map((m) => +m.slice(5));
+const fin = bloque.search(/\n  \],?\n|\n  },\n/);
+const escenas = bloque.slice(0, fin).match(/dur: (\d+)/g).map((m) => +m.slice(5));
 let t = 0;
 const frames = escenas.map((d) => { const f = t + Math.round(d * 0.75); t += d; return f; });
 const mp4 = mp4Arg || `out/fabrica/${id}.mp4`;

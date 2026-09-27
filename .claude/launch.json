@@ -73,6 +73,15 @@
         "CEO_PORTAL_PASSWORD= npx next dev -p 3011"
       ],
       "port": 3011
+    },
+    {
+      "name": "ritmo-demo",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/elvinayala/ritmo-demo && npx next dev -p 3140"
+      ],
+      "port": 3140
     }
   ]
 }
