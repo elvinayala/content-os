@@ -215,9 +215,10 @@ async function historial(tratoId: string, tipo: string, texto: string, autorId?:
     .onConflictDoNothing();
 }
 
-async function ultimoOrden(etapaId: string): Promise<number | null> {
+// El más nuevo arriba (Elvin, 27/sep): lo que entra o lo que el sistema mueve va al principio de la columna.
+async function primerOrden(etapaId: string): Promise<number | null> {
   const d = await db();
-  const [r] = await d.select({ o: sql<number | null>`max(${leadsTratos.orden})` }).from(leadsTratos).where(and(eq(leadsTratos.etapaId, etapaId), eq(leadsTratos.estado, "abierto")));
+  const [r] = await d.select({ o: sql<number | null>`min(${leadsTratos.orden})` }).from(leadsTratos).where(and(eq(leadsTratos.etapaId, etapaId), eq(leadsTratos.estado, "abierto")));
   return r?.o ?? null;
 }
 
@@ -254,7 +255,7 @@ export async function crearTrato(v: {
       origen: v.origen ?? "manual",
       agendoPor: v.agendoPor ?? null,
       datos: v.datos ?? {},
-      orden: ordenEntre(await ultimoOrden(etapaId), null),
+      orden: ordenEntre(null, await primerOrden(etapaId)),
     })
     // Índice único parcial: un solo lead abierto por teléfono y marca. Si ya existe (p. ej. dos
     // mensajes de WhatsApp llegaron a la vez), se devuelve el que ya estaba.
@@ -298,7 +299,7 @@ export async function moverTrato(id: string, etapaId: string, antesId: string | 
   const [etapa] = await d.select().from(leadsEtapas).where(eq(leadsEtapas.id, etapaId)).limit(1);
   if (!t || !etapa) return;
   const ord = async (x: string | null) => (x ? ((await d.select({ o: leadsTratos.orden }).from(leadsTratos).where(eq(leadsTratos.id, x)).limit(1))[0]?.o ?? null) : null);
-  const orden = antesId || despuesId ? ordenEntre(await ord(antesId), await ord(despuesId)) : ordenEntre(await ultimoOrden(etapaId), null);
+  const orden = antesId || despuesId ? ordenEntre(await ord(antesId), await ord(despuesId)) : ordenEntre(null, await primerOrden(etapaId));
   const cambioEtapa = t.etapaId !== etapaId;
   await d
     .update(leadsTratos)
