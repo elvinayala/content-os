@@ -32,6 +32,7 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
   const [editando, setEditando] = useState(false);
   const [nombre, setNombre] = useState(board.nombre);
   const [confirmar, setConfirmar] = useState(false);
+  const [escrito, setEscrito] = useState("");
   const [acceso, setAcceso] = useState(false);
   const [automatizaciones, setAutomatizaciones] = useState(false);
   useEffect(() => setNombre(board.nombre), [board.nombre]);
@@ -107,16 +108,32 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
       </div>
       {automatizaciones ? <BoardAutomatizaciones open={automatizaciones} onOpenChange={setAutomatizaciones} /> : null}
       {usuario.rol === "admin" && acceso ? <BoardAcceso open={acceso} onOpenChange={setAcceso} /> : null}
-      <AlertDialog open={confirmar} onOpenChange={setConfirmar}>
+      <AlertDialog
+        open={confirmar}
+        onOpenChange={(v) => {
+          setConfirmar(v);
+          setEscrito("");
+        }}
+      >
         <AlertDialogContent className="pulse">
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar el tablero "{board.nombre}"?</AlertDialogTitle>
-            <AlertDialogDescription>Se borran todos sus elementos, columnas, grupos y archivos. No se puede deshacer.</AlertDialogDescription>
+            <AlertDialogTitle>¿Eliminar el tablero «{board.nombre}»?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se van a la papelera todos sus elementos, columnas, grupos y archivos (se pueden restaurar durante 90 días). Para confirmar, escribe el nombre del tablero.
+            </AlertDialogDescription>
           </AlertDialogHeader>
+          <input
+            value={escrito}
+            onChange={(e) => setEscrito(e.target.value)}
+            placeholder={board.nombre}
+            autoFocus
+            className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-destructive/30"
+          />
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
+              disabled={escrito.trim() !== board.nombre.trim()}
               onClick={async () => {
                 const r = await eliminarBoardAction({ boardId: board.id });
                 if (r.ok) router.push("/pulse");

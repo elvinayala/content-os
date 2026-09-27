@@ -23,6 +23,8 @@ export type TipoEventoSeguridad =
   | "usuario_activado"
   | "acceso_tablero"
   | "tablero_eliminado"
+  | "papelera_restaurada"
+  | "respaldo_fallido"
   | "borrado_masivo"
   | "archivo_descargado"
   | "accion_bloqueada"

@@ -97,7 +97,7 @@ export interface ArchivoUI {
 export function Documentos({ userId, archivos, categorias, maestro }: { userId: string; archivos: ArchivoUI[]; categorias: { id: string; nombre: string }[]; maestro: boolean }) {
   const [borrando, setBorrando] = useState<string | null>(null);
   const borrar = async (id: string) => {
-    if (!confirm("¿Borrar este archivo? No se puede deshacer.")) return;
+    if (!confirm("¿Borrar este archivo? Queda en la papelera 90 días (Elvin lo puede restaurar).")) return;
     setBorrando(id);
     const r = await borrarArchivoAction(id);
     setBorrando(null);

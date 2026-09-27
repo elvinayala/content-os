@@ -116,7 +116,7 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
               <AlertDialogContent className="pulse">
                 <AlertDialogHeader>
                   <AlertDialogTitle>¿Eliminar "{item.name}"?</AlertDialogTitle>
-                  <AlertDialogDescription>Se borra con su actividad y archivos. No se puede deshacer.</AlertDialogDescription>
+                  <AlertDialogDescription>Se va a la papelera con su actividad y archivos. Tendrás 15 minutos para deshacerlo; después, solo Elvin lo restaura.</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>

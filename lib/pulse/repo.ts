@@ -18,6 +18,7 @@ import {
   pulseVistas,
 } from "./schema";
 import { esCalculada, recalcular } from "./formulas";
+import { borrarComo } from "./papelera";
 import { respuestaDelResumen } from "./mi-dia";
 import { cuentaComoNuevo, detalleDePago, diaDeSlack, diaPR, montoDePago, nichoDe, type ClienteReciente } from "./ultimos-clientes";
 import { borrarArchivos } from "./storage";
@@ -230,17 +231,21 @@ export async function actualizarBoard(id: string, patch: { nombre?: string; desc
   await d.update(pulseBoards).set(patch).where(eq(pulseBoards.id, id));
 }
 
-export async function eliminarBoard(id: string): Promise<void> {
+export async function eliminarBoard(id: string, userId?: string): Promise<string | null> {
   const d = await db();
   const archivos = await d
     .select({ path: pulseFiles.storagePath })
     .from(pulseFiles)
     .innerJoin(pulseItems, eq(pulseItems.id, pulseFiles.itemId))
     .where(eq(pulseItems.boardId, id));
-  // Los grupos tienen FK restrict desde items: borrar items primero, el resto cascadea.
-  await d.delete(pulseItems).where(eq(pulseItems.boardId, id));
-  await d.delete(pulseBoards).where(eq(pulseBoards.id, id));
+  // Los grupos tienen FK restrict desde items: borrar items primero, el resto cascadea. Todo en una
+  // transacción = un solo lote en la papelera (se restaura completo).
+  const { lote } = await borrarComo(userId ?? "", async (tx) => {
+    await tx.delete(pulseItems).where(eq(pulseItems.boardId, id));
+    await tx.delete(pulseBoards).where(eq(pulseBoards.id, id));
+  });
   await borrarArchivos(archivos.map((a) => a.path));
+  return lote;
 }
 
 // ---------- Items ----------
@@ -329,13 +334,15 @@ export async function moverItems(p: { itemIds: string[]; groupId: string; userId
   }
 }
 
-export async function eliminarItems(p: { itemIds: string[]; userId: string }): Promise<number> {
-  if (!p.itemIds.length) return 0;
+// Borrado = papelera: las filas quedan en pulse_papelera (trigger) y los archivos en papelera/ de
+// Storage. Devuelve el lote para "Deshacer".
+export async function eliminarItems(p: { itemIds: string[]; userId: string }): Promise<{ n: number; lote: string | null }> {
+  if (!p.itemIds.length) return { n: 0, lote: null };
   const d = await db();
   const archivos = await d.select({ path: pulseFiles.storagePath }).from(pulseFiles).where(inArray(pulseFiles.itemId, p.itemIds));
-  const borrados = await d.delete(pulseItems).where(inArray(pulseItems.id, p.itemIds)).returning({ id: pulseItems.id });
+  const { resultado: borrados, lote } = await borrarComo(p.userId, (tx) => tx.delete(pulseItems).where(inArray(pulseItems.id, p.itemIds)).returning({ id: pulseItems.id }));
   await borrarArchivos(archivos.map((a) => a.path));
-  return borrados.length;
+  return { n: borrados.length, lote };
 }
 
 export async function leerItems(ids: string[]): Promise<Item[]> {
@@ -411,14 +418,16 @@ export async function actualizarColumna(columnId: string, patch: { title?: strin
   return aColumna(c);
 }
 
-export async function eliminarColumna(columnId: string): Promise<void> {
+// Los valores de la columna se QUEDAN en cada ficha (nada los lee sin su columna): si se restaura
+// la columna desde la papelera, vuelve con todos sus datos.
+export async function eliminarColumna(columnId: string, userId?: string): Promise<string | null> {
   const d = await db();
   const [c] = await d.select().from(pulseColumns).where(eq(pulseColumns.id, columnId));
-  if (!c) return;
+  if (!c) return null;
   const archivos = await d.select({ path: pulseFiles.storagePath }).from(pulseFiles).where(eq(pulseFiles.columnId, columnId));
-  await d.update(pulseItems).set({ values: sql`${pulseItems.values} - ${columnId}` }).where(eq(pulseItems.boardId, c.boardId));
-  await d.delete(pulseColumns).where(eq(pulseColumns.id, columnId));
+  const { lote } = await borrarComo(userId ?? "", (tx) => tx.delete(pulseColumns).where(eq(pulseColumns.id, columnId)));
   await borrarArchivos(archivos.map((a) => a.path));
+  return lote;
 }
 
 export async function reordenarColumnas(boardId: string, ids: string[]): Promise<void> {
@@ -549,10 +558,11 @@ export async function leerArchivo(id: string): Promise<(ArchivoPulse & { storage
   return f ? { ...aArchivo(f), storagePath: f.storagePath } : null;
 }
 
-export async function eliminarArchivo(id: string): Promise<void> {
-  const d = await db();
-  const [f] = await d.delete(pulseFiles).where(eq(pulseFiles.id, id)).returning();
+export async function eliminarArchivo(id: string, userId?: string): Promise<string | null> {
+  const { resultado, lote } = await borrarComo(userId ?? "", (tx) => tx.delete(pulseFiles).where(eq(pulseFiles.id, id)).returning());
+  const [f] = resultado;
   if (f) await borrarArchivos([f.storagePath]);
+  return f ? lote : null;
 }
 
 // ---------- Usuarios ----------

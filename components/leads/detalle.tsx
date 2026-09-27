@@ -221,7 +221,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, etapasDeOtros
               size="sm"
               className="justify-self-start text-muted-foreground hover:text-red-600"
               onClick={() => {
-                if (confirm(`¿Borrar a ${t.nombre}? No se puede deshacer.`)) correr(() => eliminarLeadAction(t.id), "Borrado", () => router.push(`/pulse/leads/${marcaSlug}`));
+                if (confirm(`¿Borrar a ${t.nombre}? Queda en la papelera 90 días (Elvin lo puede restaurar).`)) correr(() => eliminarLeadAction(t.id), "Borrado", () => router.push(`/pulse/leads/${marcaSlug}`));
               }}
             >
               <Trash2 className="size-4" /> Borrar lead

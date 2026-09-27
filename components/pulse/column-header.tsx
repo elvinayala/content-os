@@ -163,7 +163,7 @@ export function ColumnHeader({ column }: { column: Columna }) {
         <AlertDialogContent className="pulse">
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar la columna "{column.title}"?</AlertDialogTitle>
-            <AlertDialogDescription>Se borran los valores de esta columna en todos los elementos. No se puede deshacer.</AlertDialogDescription>
+            <AlertDialogDescription>La columna sale del tablero. Sus datos quedan guardados y Elvin la puede restaurar completa desde la Papelera durante 90 días.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>

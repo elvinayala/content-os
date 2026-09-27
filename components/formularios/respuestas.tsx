@@ -42,7 +42,7 @@ export function RespuestasFormulario({ formulario, respuestas }: { formulario: {
 
   const borrar = (id: string) =>
     start(async () => {
-      if (!confirm("¿Borrar esta respuesta? No se puede deshacer.")) return;
+      if (!confirm("¿Borrar esta respuesta? Queda en la papelera 90 días (Elvin la puede restaurar).")) return;
       const r = await borrarRespuestaAction(formulario.id, id);
       if (!r.ok) return void toast.error(r.error);
       toast("Respuesta borrada");

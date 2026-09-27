@@ -16,12 +16,14 @@ const NOMBRE: Record<string, string> = {
   acceso_tablero: "Acceso a tablero",
   tablero_eliminado: "Tablero eliminado",
   borrado_masivo: "Borrado masivo",
+  papelera_restaurada: "Restaurado de la papelera",
+  respaldo_fallido: "Respaldo falló",
   archivo_descargado: "Archivo descargado",
   accion_bloqueada: "Acción bloqueada",
   login_ip_nueva: "Conexión nueva",
   alerta_enviada: "Aviso a Elvin",
 };
-const ROJO = new Set(["login_fallido", "login_bloqueado", "login_limite_ip", "tablero_eliminado", "usuario_desactivado", "borrado_masivo", "accion_bloqueada"]);
+const ROJO = new Set(["login_fallido", "login_bloqueado", "login_limite_ip", "tablero_eliminado", "usuario_desactivado", "borrado_masivo", "accion_bloqueada", "respaldo_fallido"]);
 
 export function EventosSeguridad({ eventos }: { eventos: Awaited<ReturnType<typeof leerEventos>> }) {
   return (

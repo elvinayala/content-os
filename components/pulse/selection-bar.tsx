@@ -22,6 +22,8 @@ export function SelectionBar() {
   const { seleccion, groups } = useBoard();
   const { dispatch, moverItems, eliminarItems } = useBoardActions();
   const [confirmar, setConfirmar] = useState(false);
+  const [escrito, setEscrito] = useState("");
+  const pideEscribir = seleccion.size >= 10;
   if (seleccion.size === 0) return null;
   const ids = [...seleccion];
   return (
@@ -51,17 +53,35 @@ export function SelectionBar() {
           <X className="size-4" />
         </button>
       </div>
-      <AlertDialog open={confirmar} onOpenChange={setConfirmar}>
+      <AlertDialog
+        open={confirmar}
+        onOpenChange={(v) => {
+          setConfirmar(v);
+          setEscrito("");
+        }}
+      >
         <AlertDialogContent className="pulse">
           <AlertDialogHeader>
             <AlertDialogTitle>
               ¿Eliminar {ids.length} elemento{ids.length === 1 ? "" : "s"}?
             </AlertDialogTitle>
-            <AlertDialogDescription>Se borran con su actividad y archivos. No se puede deshacer.</AlertDialogDescription>
+            <AlertDialogDescription>
+              Se van a la papelera con su actividad y archivos. Tendrás 15 minutos para deshacerlo; después, solo Elvin los restaura.
+              {pideEscribir ? " Son muchos: escribe ELIMINAR para confirmar." : ""}
+            </AlertDialogDescription>
           </AlertDialogHeader>
+          {pideEscribir ? (
+            <input
+              value={escrito}
+              onChange={(e) => setEscrito(e.target.value)}
+              placeholder="ELIMINAR"
+              autoFocus
+              className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-destructive/30"
+            />
+          ) : null}
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={() => eliminarItems(ids)}>
+            <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" disabled={pideEscribir && escrito.trim().toUpperCase() !== "ELIMINAR"} onClick={() => eliminarItems(ids)}>
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>

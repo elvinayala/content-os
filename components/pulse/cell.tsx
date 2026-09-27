@@ -1,7 +1,9 @@
 "use client";
 
 import { Check, ExternalLink, FileText, Paperclip, Plus, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { memo, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { subirArchivoAction, urlArchivoAction } from "@/app/pulse/(app)/[board]/actions";
 import { useBoardActions } from "@/components/pulse/board-provider";
@@ -507,6 +509,7 @@ function CellLink({ item, column, vertical }: CellProps) {
 
 function CellArchivo({ item, column, archivos, vertical }: CellProps) {
   const { setValor, dispatch } = useBoardActions();
+  const router = useRouter();
   const ids = (item.values[column.id] as string[] | undefined) ?? [];
   const lista = ids.map((id) => archivos[id]).filter((a): a is ArchivoPulse => !!a);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -534,10 +537,29 @@ function CellArchivo({ item, column, archivos, vertical }: CellProps) {
     if (r.ok) window.open(r.url, "_blank", "noopener");
   };
   const quitar = async (a: ArchivoPulse) => {
-    const { eliminarArchivoAction } = await import("@/app/pulse/(app)/[board]/actions");
+    if (!confirm(`¿Quitar «${a.nombre}» de ${item.name}? Queda en la papelera 90 días.`)) return;
+    const { eliminarArchivoAction, deshacerBorradoAction } = await import("@/app/pulse/(app)/[board]/actions");
+    const antes = ids;
     await setValor(item.id, column, ids.filter((id) => id !== a.id));
-    await eliminarArchivoAction({ fileId: a.id });
+    const r = await eliminarArchivoAction({ fileId: a.id });
     dispatch({ type: "archivo:quitar", fileId: a.id });
+    const lote = r.ok ? r.lote : null;
+    toast.success(`«${a.nombre}» quitado`, {
+      className: "pulse",
+      duration: 15_000,
+      action: lote
+        ? {
+            label: "Deshacer",
+            onClick: async () => {
+              const d = await deshacerBorradoAction({ lote });
+              if (!d.ok) return toast.error(d.error, { className: "pulse" });
+              await setValor(item.id, column, antes);
+              toast.success("Archivo restaurado", { className: "pulse" });
+              router.refresh();
+            },
+          }
+        : undefined,
+    });
   };
 
   return (

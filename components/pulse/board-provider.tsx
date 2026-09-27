@@ -13,6 +13,7 @@ import {
   crearColumnaAction,
   crearGrupoAction,
   crearItemAction,
+  deshacerBorradoAction,
   eliminarColumnaAction,
   eliminarGrupoAction,
   eliminarItemsAction,
@@ -459,8 +460,27 @@ export function BoardProvider({
     if (!r.ok) {
       for (const it of previos) dispatch({ type: "item:agregar", item: it });
       fallo(r.error);
-    } else toast.success(`${r.n} elemento${r.n === 1 ? "" : "s"} eliminado${r.n === 1 ? "" : "s"}`, { className: "pulse" });
-  }, []);
+    } else {
+      const lote = r.lote;
+      toast.success(`${r.n} elemento${r.n === 1 ? "" : "s"} a la papelera`, {
+        className: "pulse",
+        description: "Tienes 15 minutos para deshacerlo.",
+        duration: 15_000,
+        action: lote
+          ? {
+              label: "Deshacer",
+              onClick: async () => {
+                const d = await deshacerBorradoAction({ lote });
+                if (!d.ok) return fallo(d.error);
+                for (const it of previos) dispatch({ type: "item:agregar", item: it });
+                toast.success("Restaurado", { className: "pulse" });
+                router.refresh();
+              },
+            }
+          : undefined,
+      });
+    }
+  }, [router]);
 
   const crearColumna = useCallback<Acciones["crearColumna"]>(async (title, type, settings) => {
     const r = await crearColumnaAction({ boardId: stateRef.current.board.id, title, type, settings });

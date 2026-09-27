@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Respaldo diario de la base de EA Market en esta Mac (scripts/respaldo.mjs local). Si la Mac está
+     dormida a la hora, launchd lo corre al despertar. Instalar:
+     cp scripts/launchd/com.iamarket.respaldo.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.iamarket.respaldo.plist -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.iamarket.respaldo</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/local/bin/node</string>
+    <string>--disable-warning=MODULE_TYPELESS_PACKAGE_JSON</string>
+    <string>--env-file=.env.local</string>
+    <string>/Users/elvinayala/AGENTE CONTENIDO/scripts/respaldo.mjs</string>
+    <string>local</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/elvinayala/AGENTE CONTENIDO</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>RESPALDO_CARPETA</key><string>/Users/elvinayala/Respaldos EA Market</string>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>HOME</key><string>/Users/elvinayala</string>
+  </dict>
+  <key>StartCalendarInterval</key><array>
+    <dict><key>Hour</key><integer>13</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/Users/elvinayala/Library/Logs/respaldo.log</string>
+  <key>StandardErrorPath</key><string>/Users/elvinayala/Library/Logs/respaldo.err.log</string>
+</dict></plist>

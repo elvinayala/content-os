@@ -1,6 +1,7 @@
 // Esquema de Pulse (Drizzle). Sin "server-only" ni imports "@/" porque lo carga drizzle-kit
 // fuera de Next. Todas las tablas llevan prefijo pulse_ (tablesFilter en drizzle.config.ts).
 import {
+  bigserial,
   boolean,
   index,
   integer,
@@ -262,4 +263,21 @@ export const pulseVistas = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("pulse_vistas_user_board").on(t.userId, t.boardId)],
+);
+
+// Papelera universal: un trigger AFTER DELETE en cada tabla (migración 0029) copia aquí la fila
+// borrada, venga de donde venga (app, script, cascada, agente). Todo lo borrado en la misma
+// transacción comparte `borrado_at` = un lote que se restaura junto. Se purga a los 90 días.
+export const pulsePapelera = pgTable(
+  "pulse_papelera",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    tabla: text("tabla").notNull(),
+    fila: jsonb("fila").notNull(),
+    borradoAt: timestamp("borrado_at", { withTimezone: true }).notNull().defaultNow(),
+    borradoPor: text("borrado_por"), // current_setting('app.usuario') si la app lo puso
+    restauradoAt: timestamp("restaurado_at", { withTimezone: true }),
+    restauradoPor: text("restaurado_por"),
+  },
+  (t) => [index("pulse_papelera_borrado").on(t.borradoAt), index("pulse_papelera_tabla").on(t.tabla)],
 );

@@ -49,14 +49,85 @@ export async function leerArchivoLocal(storagePath: string): Promise<Buffer> {
   return fs.readFile(await rutaLocal(storagePath));
 }
 
+// "Borrar" un archivo = moverlo a papelera/<día>/<ruta> (nunca se elimina al momento). La purga de
+// los de más de 90 días la hace el respaldo diario (purgarArchivosPapelera). Así un archivo quitado
+// por error —p. ej. el acuerdo firmado de un cliente— vuelve con la ficha al restaurar el lote.
 export async function borrarArchivos(paths: string[]): Promise<void> {
   if (!paths.length) return;
+  const { rutaPapelera } = await import("./papelera-reglas");
+  const dia = new Date().toISOString().slice(0, 10);
   const sb = cliente();
   if (!sb) {
     const fs = await import("node:fs/promises");
-    for (const p of paths) await fs.rm(await rutaLocal(p), { force: true });
+    const path = await import("node:path");
+    for (const p of paths) {
+      const destino = await rutaLocal(rutaPapelera(p, dia));
+      await fs.mkdir(path.dirname(destino), { recursive: true });
+      await fs.rename(await rutaLocal(p), destino).catch(() => {});
+    }
     return;
   }
-  const { error } = await sb.storage.from(BUCKET).remove(paths);
-  if (error) console.warn("[pulse] no se pudieron borrar archivos:", error.message);
+  for (const p of paths) {
+    const destino = rutaPapelera(p, dia);
+    await sb.storage.from(BUCKET).remove([destino]); // por si ya había uno con ese nombre hoy
+    const { error } = await sb.storage.from(BUCKET).move(p, destino);
+    if (error) console.warn("[pulse] no se pudo mandar a la papelera:", p, error.message);
+  }
+}
+
+// Trae de vuelta archivos de la papelera a su ruta original (al restaurar un lote).
+export async function restaurarArchivos(paths: string[]): Promise<number> {
+  if (!paths.length) return 0;
+  const sb = cliente();
+  let n = 0;
+  if (!sb) {
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+    const base = await rutaLocal("papelera");
+    const dias = await fs.readdir(base).catch(() => [] as string[]);
+    for (const p of paths) {
+      for (const dia of dias.sort().reverse()) {
+        const origen = path.join(base, dia, p);
+        if (await fs.stat(origen).then(() => true, () => false)) {
+          const destino = await rutaLocal(p);
+          await fs.mkdir(path.dirname(destino), { recursive: true });
+          await fs.rename(origen, destino);
+          n++;
+          break;
+        }
+      }
+    }
+    return n;
+  }
+  const { db } = await import("./db");
+  const { sql } = await import("drizzle-orm");
+  const d = await db();
+  for (const p of paths) {
+    const filas = filasDe<{ name: string }>(await d.execute(sql`select name from storage.objects where bucket_id = ${BUCKET} and name like 'papelera/%' and right(name, ${p.length + 1}) = ${"/" + p} order by name desc limit 1`));
+    const origen = filas[0]?.name;
+    if (!origen) continue;
+    const { error } = await sb.storage.from(BUCKET).move(origen, p);
+    if (!error) n++;
+    else console.warn("[pulse] no se pudo restaurar el archivo:", p, error.message);
+  }
+  return n;
+}
+
+// Borra de verdad lo que lleva más de `dias` en la papelera de Storage. Solo la llama el respaldo diario.
+export async function purgarArchivosPapelera(dias: number): Promise<number> {
+  const sb = cliente();
+  if (!sb) return 0;
+  const limite = new Date(Date.now() - dias * 86_400_000).toISOString().slice(0, 10);
+  const { db } = await import("./db");
+  const { sql } = await import("drizzle-orm");
+  const d = await db();
+  const filas = filasDe<{ name: string }>(await d.execute(sql`select name from storage.objects where bucket_id = ${BUCKET} and name like 'papelera/%' and split_part(name, '/', 2) < ${limite}`));
+  const nombres = filas.map((f) => f.name);
+  for (let i = 0; i < nombres.length; i += 100) await sb.storage.from(BUCKET).remove(nombres.slice(i, i + 100));
+  return nombres.length;
+}
+
+// d.execute devuelve un arreglo con postgres.js y { rows } con PGlite.
+export function filasDe<T>(res: unknown): T[] {
+  return (Array.isArray(res) ? res : ((res as { rows?: unknown[] }).rows ?? [])) as T[];
 }

@@ -6,6 +6,8 @@ import { requiereAccesoBoard, requiereAdmin, requiereUsuario } from "@/lib/pulse
 import type { Accion, Cuando } from "@/lib/pulse/automatizaciones";
 import { aplicarReglas, leerReglas, RequisitoError, verificarRequisitos } from "@/lib/pulse/motor-reglas";
 import { avisarCambio, prepararBaja } from "@/lib/pulse/puente-n8n";
+import { leerLote, restaurarLote } from "@/lib/pulse/papelera";
+import { puedeRestaurar } from "@/lib/pulse/papelera-reglas";
 import * as repo from "@/lib/pulse/repo";
 import { etiquetasQuitadasEnUso, poderes } from "@/lib/pulse/permisos";
 import { alertarElvin, prohibido, registrarEvento } from "@/lib/pulse/seguridad";
@@ -115,20 +117,20 @@ export async function moverItemsAction(p: { itemIds: string[]; groupId: string }
   });
 }
 
-export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{ n: number }>> {
+export async function eliminarItemsAction(p: { itemIds: string[] }): Promise<R<{ n: number; lote: string | null }>> {
   return envolver(async () => {
     const u = await requiereAccesoBoard(await repo.boardDe({ itemId: p.itemIds[0] }));
     const tope = poderes(u.rol).topeBorradoItems;
     if (tope !== null && p.itemIds.length > tope) await prohibido(u, `eliminar ${p.itemIds.length} elementos de golpe (tope ${tope})`);
     const { bajas, afectados } = await prepararBaja(p.itemIds);
-    const n = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
+    const { n, lote } = await repo.eliminarItems({ itemIds: p.itemIds, userId: u.id });
     if (n > 5) {
       await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `${n} elementos` });
       await alertarElvin(`borrado:${u.id}:${Date.now()}`, `${u.nombre} eliminó ${n} elementos de un tablero.`);
     }
     avisarCambio({ itemIds: afectados, bajas, motivo: "eliminar" });
     refresh();
-    return { n };
+    return { n, lote };
   });
 }
 
@@ -172,7 +174,7 @@ export async function eliminarColumnaAction(p: { columnId: string }): Promise<R>
     const u = await requiereAccesoBoard(await repo.boardDe({ columnId: p.columnId }));
     const col = await repo.leerColumna(p.columnId);
     if (!poderes(u.rol).eliminarColumnas) await prohibido(u, `eliminar la columna «${col?.title ?? "?"}» completa`);
-    await repo.eliminarColumna(p.columnId);
+    await repo.eliminarColumna(p.columnId, u.id);
     await registrarEvento({ tipo: "borrado_masivo", email: u.email, actorId: u.id, detalle: `columna «${col?.title ?? "?"}»` });
     return {};
   });
@@ -248,7 +250,7 @@ export async function guardarAccesoBoardAction(p: { boardId: string; privado: bo
 export async function eliminarBoardAction(p: { boardId: string }): Promise<R> {
   return envolver(async () => {
     const admin = await requiereAdmin();
-    await repo.eliminarBoard(p.boardId);
+    await repo.eliminarBoard(p.boardId, admin.id);
     await registrarEvento({ tipo: "tablero_eliminado", actorId: admin.id, email: admin.email, detalle: p.boardId });
     refresh();
     return {};
@@ -302,11 +304,25 @@ export async function urlArchivoAction(p: { fileId: string }): Promise<R<{ url: 
   });
 }
 
-export async function eliminarArchivoAction(p: { fileId: string }): Promise<R> {
+export async function eliminarArchivoAction(p: { fileId: string }): Promise<R<{ lote: string | null }>> {
   return envolver(async () => {
-    await requiereAccesoBoard(await repo.boardDe({ fileId: p.fileId }));
-    await repo.eliminarArchivo(p.fileId);
-    return {};
+    const u = await requiereAccesoBoard(await repo.boardDe({ fileId: p.fileId }));
+    const lote = await repo.eliminarArchivo(p.fileId, u.id);
+    return { lote };
+  });
+}
+
+// "Deshacer" de un borrado: el que borró, dentro de 15 min; el admin, siempre (y desde la Papelera).
+export async function deshacerBorradoAction(p: { lote: string }): Promise<R<{ restauradas: number; archivos: number }>> {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const lote = await leerLote(p.lote);
+    if (!lote) throw new Error("Ese borrado ya no está en la papelera");
+    if (!puedeRestaurar({ rol: u.rol, userId: u.id, lote })) throw new Error("Pasaron más de 15 minutos: pídele a Elvin que lo restaure desde la Papelera");
+    const r = await restaurarLote(p.lote, u.id);
+    await registrarEvento({ tipo: "papelera_restaurada", email: u.email, actorId: u.id, detalle: `${lote.principal} (${r.restauradas} filas, ${r.archivos} archivos)` });
+    refresh();
+    return { restauradas: r.restauradas, archivos: r.archivos };
   });
 }
 

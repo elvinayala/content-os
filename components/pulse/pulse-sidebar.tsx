@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { ArchiveRestore, ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { IconoTablero } from "@/components/pulse/icono-tablero";
@@ -143,6 +143,16 @@ export function PulseSidebar({
                 <Link href="/pulse/configuracion">
                   <Settings />
                   <span>Usuarios y configuración</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ) : null}
+          {usuario.rol === "admin" ? (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/papelera")} tooltip="Papelera y respaldos">
+                <Link href="/pulse/papelera">
+                  <ArchiveRestore />
+                  <span>Papelera y respaldos</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
