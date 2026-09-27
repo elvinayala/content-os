@@ -1,0 +1,68 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-09-27",
+ "campana": "120255133741590029",
+ "conjuntos": {
+  "aire": {
+   "anuncios": {
+    "feed": {
+     "imagen": "558bc3d0abce95ab797ceb3beb0ed7cb",
+     "creativo": "1108588141706655",
+     "ad": "120255133742430029"
+    },
+    "story": {
+     "imagen": "7cbdacc334c773a1f7d9eb542d68916c",
+     "creativo": "1657575465729672",
+     "ad": "120255133742880029"
+    }
+   },
+   "adset": "120255133741700029"
+  },
+  "handyman": {
+   "anuncios": {
+    "feed": {
+     "imagen": "77f7c916f635a766511baf49ff2e06f6",
+     "creativo": "1367779502006590",
+     "ad": "120255133743770029"
+    },
+    "story": {
+     "imagen": "343c692af295f32053d55edb0788956e",
+     "creativo": "2566399617172680",
+     "ad": "120255133744220029"
+    }
+   },
+   "adset": "120255133742990029"
+  },
+  "perito": {
+   "anuncios": {
+    "feed": {
+     "imagen": "a32f58fc6357bbbf5f4b704cd17f1ce6",
+     "creativo": "938412435994455",
+     "ad": "120255133745160029"
+    },
+    "story": {
+     "imagen": "ddf517ab900474fdb6d95ccd3dad83a3",
+     "creativo": "1849302506239747",
+     "ad": "120255133745830029"
+    }
+   },
+   "adset": "120255133744340029"
+  },
+  "cotizador": {
+   "anuncios": {
+    "feed": {
+     "imagen": "6bf44bd642ca95fc7c27a51be398f2da",
+     "creativo": "2226166884599899",
+     "ad": "120255133747390029"
+    },
+    "story": {
+     "imagen": "53dd3beadeaf060a0dd13951c78fd19b",
+     "creativo": "1071731818786063",
+     "ad": "120255133748470029"
+    }
+   },
+   "adset": "120255133746000029"
+  }
+ },
+ "estado": "Campaña EN PAUSA (Elvin la prende). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla."
+}

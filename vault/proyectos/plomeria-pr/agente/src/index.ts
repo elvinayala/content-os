@@ -379,6 +379,8 @@ function proveedorAutenticado(req: any) {
   return proveedorPorId(p) ?? null;
 }
 // ── Resuelto Pro: la app de los plomeros (web hoy; la misma página va dentro de la app nativa de las tiendas) ──
+// Reclutamiento de todos los puestos (27/sep/2026): la comparte Yaileen; el botón abre Messenger de Resuelto.
+app.get(["/unete", "/trabaja"], (_req, res) => { res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "unete.html"), "utf8")); });
 app.get("/pro", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "pro.html"), "utf8")); });
 const DEMO_TEL = "7870000000"; // vista de prueba: 787-000-0000 con código 000000 entra a la app de ejemplo
 const intentosPro = new Map<string, number[]>();
