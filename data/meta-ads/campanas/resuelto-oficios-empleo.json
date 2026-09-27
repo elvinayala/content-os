@@ -14,6 +14,12 @@
      "imagen": "7cbdacc334c773a1f7d9eb542d68916c",
      "creativo": "1657575465729672",
      "ad": "120255133742880029"
+    },
+    "video": {
+     "video": "1584732966764115",
+     "miniatura": "f481abb54e483bcb6776385067508efa",
+     "creativo": "2145513723004529",
+     "ad": "120255133898870029"
     }
    },
    "adset": "120255133741700029"
@@ -29,6 +35,12 @@
      "imagen": "343c692af295f32053d55edb0788956e",
      "creativo": "2566399617172680",
      "ad": "120255133744220029"
+    },
+    "video": {
+     "video": "1106477961820257",
+     "miniatura": "7663bfb9a031b391a00f6254621a2978",
+     "creativo": "1070596575772841",
+     "ad": "120255133907310029"
     }
    },
    "adset": "120255133742990029"
@@ -44,6 +56,12 @@
      "imagen": "ddf517ab900474fdb6d95ccd3dad83a3",
      "creativo": "1849302506239747",
      "ad": "120255133745830029"
+    },
+    "video": {
+     "video": "1085337494087744",
+     "miniatura": "a9efad3dd6d0f16eced01daa2d2598a4",
+     "creativo": "1857293658813677",
+     "ad": "120255133910130029"
     }
    },
    "adset": "120255133744340029"
@@ -59,10 +77,16 @@
      "imagen": "53dd3beadeaf060a0dd13951c78fd19b",
      "creativo": "1071731818786063",
      "ad": "120255133748470029"
+    },
+    "video": {
+     "video": "1437421758323047",
+     "miniatura": "616bea166099b9c81965a73711cc68bd",
+     "creativo": "1657135912648081",
+     "ad": "120255133917160029"
     }
    },
    "adset": "120255133746000029"
   }
  },
- "estado": "Campaña EN PAUSA (Elvin la prende). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla."
+ "estado": "Campaña EN PAUSA (Elvin: se prende el lunes). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla; flyer + historia + video por puesto."
 }
