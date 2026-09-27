@@ -3,9 +3,11 @@ import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
+import { Noticia } from "@/components/ritmo/noticias";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
+import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 
@@ -27,6 +29,7 @@ export default async function HoyPage() {
   const oculto = modoScore(u.rol) === "oculto";
   const ficha = await fichaCompleta(u.id).catch(() => null);
   const vac = ficha?.saldos?.puedeSolicitar && ficha.saldos.vacaciones.disponibles >= 1 ? ficha.saldos.vacaciones.disponibles : null;
+  const noticias = await listarNoticias(3).catch(() => []);
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
@@ -47,10 +50,25 @@ export default async function HoyPage() {
       {estado ? (
         <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} />
       ) : (
-        <div className="panel max-w-sm p-6 text-center text-sm text-muted-foreground">
+        <div className={`panel ${u.maestro ? "max-w-lg" : "max-w-sm"} p-6 text-center text-sm text-muted-foreground`}>
           {u.maestro ? (
             <>
-              <b className="text-foreground">Tú estás en la dirección de Ritmo:</b> ves al equipo desde <Link href="/ritmo/equipo" className="text-primary">Equipo</Link> y <Link href="/ritmo/personas" className="text-primary">Personas</Link>, publicas vacantes en <Link href="/ritmo/carreras" className="text-primary">Carreras</Link>, y no necesitas marcar entrada ni salida.
+              <b className="text-foreground">Tú estás en la dirección de Ritmo</b> y no necesitas marcar entrada ni salida.
+              <span className="mt-4 grid grid-cols-2 gap-2 text-left sm:grid-cols-3">
+                {[
+                  { href: "/ritmo/equipo", t: "Equipo", d: "Asistencia y KPIs" },
+                  { href: "/ritmo/personas", t: "Personas", d: "Fichas y nómina" },
+                  ...(u.rol === "admin" || u.rol === "editor" ? [{ href: "/ritmo/agentes", t: "Agentes", d: "Equipo digital" }] : []),
+                  { href: "/ritmo/carreras", t: "Carreras", d: "Vacantes y referidos" },
+                  { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
+                  { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
+                ].map((a) => (
+                  <Link key={a.href} href={a.href} className="rounded-xl border border-border/70 bg-white/[0.02] px-3 py-2.5 transition hover:border-primary/40 hover:bg-primary/[0.04]">
+                    <span className="block text-sm font-medium text-foreground">{a.t}</span>
+                    <span className="block text-[11px] text-muted-foreground">{a.d}</span>
+                  </Link>
+                ))}
+              </span>
               <span className="mt-2 block text-xs">
                 Si también quieres marcar tu día, entra en{" "}
                 <Link href={`/ritmo/ajustes?q=${encodeURIComponent(u.nombre)}`} className="text-primary">Ajustes → tu nombre → Agregar</Link> y guarda tu puesto y horario.
@@ -76,6 +94,26 @@ export default async function HoyPage() {
             <ScoreBadge score={yo.scoreSemana} color={yo.colorSemana} oculto={oculto} />
           </div>
           <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+        </Link>
+      ) : null}
+
+      {noticias.length ? (
+        <section className="flex w-full max-w-md flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <p className="ceja">Noticias</p>
+            <Link href="/ritmo/noticias" className="text-xs text-muted-foreground hover:text-foreground">
+              Ver todas →
+            </Link>
+          </div>
+          <div className="panel divide-y divide-border/60 overflow-hidden">
+            {noticias.map((n) => (
+              <Noticia key={n.id} n={{ ...n, createdAt: n.createdAt.toISOString() }} maestro={false} compacta />
+            ))}
+          </div>
+        </section>
+      ) : u.maestro ? (
+        <Link href="/ritmo/noticias" className="text-xs text-muted-foreground hover:text-foreground">
+          📰 Publica la primera noticia del equipo →
         </Link>
       ) : null}
 

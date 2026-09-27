@@ -569,6 +569,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   manda las métricas; día sin actividad = "Sin actividad hoy". Leo suma 1 tarea por pieza revisada
   (`/api/slack-eventos`); Iris hace su cierre en su ronda (`.claude/commands/iris.md` §6). Comparación 7 días por día
   activo: humanos = horas del ponche, tareas del tablero Producción, costo = salario ÷ 21.7; "—" si falta el dato.
+- **Noticias** (`/ritmo/noticias` + las últimas 3 en Hoy, 26/sep; tabla `desempeno_noticias`, migración 0020;
+  `lib/desempeno/noticias.ts`, categorías en `noticias-tipos.ts`): logros del equipo (con persona → le avisa por Slack),
+  noticias, comunicados (se pueden fijar arriba) y causas benéficas. Publica/fija/borra la vista maestra; lo ve todo el
+  equipo. Breve a propósito (sin comentarios ni reacciones). En Hoy la maestra tiene accesos directos (Equipo, Personas,
+  Agentes, Carreras, Noticias, Solicitudes): en el celular no caben todas las pestañas.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

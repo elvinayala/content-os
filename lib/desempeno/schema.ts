@@ -324,3 +324,17 @@ export const desempenoAgentesReportes = pgTable(
   },
   (t) => [uniqueIndex("desempeno_agentes_reportes_dia").on(t.agente, t.fecha)],
 );
+
+// Noticias (26/sep/2026): un área breve en Ritmo con lo nuevo de la empresa — logros del equipo, noticias,
+// comunicados y causas benéficas. Publica la vista maestra; lo ve todo el equipo (Hoy + /ritmo/noticias).
+export const desempenoNoticias = pgTable("desempeno_noticias", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  categoria: text("categoria").notNull(), // logro | noticia | comunicado | benefica
+  titulo: text("titulo").notNull(),
+  cuerpo: text("cuerpo").notNull(),
+  personaId: uuid("persona_id").references(() => pulseUsers.id, { onDelete: "set null" }), // logro de alguien del equipo
+  enlace: text("enlace"),
+  fijada: boolean("fijada").notNull().default(false),
+  autorId: uuid("autor_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

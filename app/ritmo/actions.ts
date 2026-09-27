@@ -13,6 +13,8 @@ import * as etica from "@/lib/desempeno/etica";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
 import * as fichas from "@/lib/desempeno/fichas";
+import * as noticias from "@/lib/desempeno/noticias";
+import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
 import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
@@ -536,5 +538,41 @@ export async function estadoPostulacionAction(p: { id: string; estado: string; n
     const r = await carreras.cambiarEstado(u, p.id, p.estado, p.nota?.trim().slice(0, 1000) || null);
     refresh();
     return r;
+  });
+}
+
+// ─── Noticias: logros, noticias, comunicados y causas benéficas ───────────────────────────────
+
+export async function publicarNoticiaAction(p: { categoria: string; titulo: string; cuerpo: string; personaId: string; enlace: string; fijada: boolean }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    if (!CATEGORIAS_NOTICIA.some((c) => c.id === p.categoria)) throw new Error("Escoge el tipo");
+    const titulo = p.titulo?.trim().slice(0, 140);
+    const cuerpo = p.cuerpo?.trim().slice(0, 3000);
+    if (!titulo || titulo.length < 3) throw new Error("Ponle un título");
+    if (!cuerpo || cuerpo.length < 5) throw new Error("Escribe el mensaje");
+    const enlace = p.enlace?.trim() || null;
+    if (enlace && !/^https:\/\//i.test(enlace)) throw new Error("El enlace debe empezar con https://");
+    await noticias.publicarNoticia({ categoria: p.categoria, titulo, cuerpo, personaId: p.categoria === "logro" && p.personaId ? p.personaId : null, enlace: enlace?.slice(0, 500) ?? null, fijada: !!p.fijada }, u);
+    refresh();
+    return {};
+  });
+}
+
+export async function fijarNoticiaAction(id: string, fijada: boolean) {
+  return envolver(async () => {
+    await requiereMaestro();
+    await noticias.fijarNoticia(id, fijada);
+    refresh();
+    return {};
+  });
+}
+
+export async function borrarNoticiaAction(id: string) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    await noticias.borrarNoticia(id, u.id);
+    refresh();
+    return {};
   });
 }
