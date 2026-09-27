@@ -55,6 +55,10 @@
     {
       "path": "/api/cron/pulse-contratos",
       "schedule": "0 12-23,0 * * *"
+    },
+    {
+      "path": "/api/cron/sop-recordatorio",
+      "schedule": "0 13 * * *"
     }
   ],
   "regions": [

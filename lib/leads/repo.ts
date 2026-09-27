@@ -37,7 +37,9 @@ export interface TratoTarjeta {
 
 /** admin/editor de Pulse: todo. El resto, lo que diga leads_acceso (todos | solo sus leads). */
 export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ puede: boolean; alcance: "todos" | "mios" }> {
-  if (u.rol === "admin" || u.rol === "editor") return { puede: true, alcance: "todos" };
+  // AI Borinquen solo con permiso explícito (Elvin, 27/sep: "más nadie va a tener acceso a nada de
+  // Borinquen"); las editoras entran solas a Level Up, a AIB solo si tienen fila en leads_acceso.
+  if (u.rol === "admin" || (u.rol === "editor" && marca === "level_up")) return { puede: true, alcance: "todos" };
   const { esSoloRitmo } = await import("../pulse/auth");
   if (await esSoloRitmo(u.id)) return { puede: false, alcance: "mios" }; // empleado solo de Ritmo
   const d = await db();
@@ -46,12 +48,14 @@ export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ pued
 }
 
 export async function marcasConAcceso(u: UsuarioPulse): Promise<Marca[]> {
-  if (u.rol === "admin" || u.rol === "editor") return ["level_up", "ai_borinquen"];
+  if (u.rol === "admin") return ["level_up", "ai_borinquen"];
   const { esSoloRitmo } = await import("../pulse/auth");
   if (await esSoloRitmo(u.id)) return [];
   const d = await db();
   const filas = await d.select().from(leadsAcceso).where(eq(leadsAcceso.userId, u.id));
-  return filas.map((f) => f.marca as Marca);
+  const marcas = new Set(filas.map((f) => f.marca as Marca));
+  if (u.rol === "editor") marcas.add("level_up");
+  return (["level_up", "ai_borinquen"] as Marca[]).filter((m) => marcas.has(m));
 }
 
 export async function usuariosActivos() {

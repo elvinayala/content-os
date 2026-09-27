@@ -887,6 +887,17 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
 - **Bloqueos por persona** (`pulse_board_bloqueos`, migración 0024): un tablero público que alguien NO ve
   (`boardsVisibles`/`puedeVerBoard`, afecta sidebar, ⌘K, Preguntarle al CRM y archivos; admins no se bloquean).
   María García tiene bloqueado AI BORINQUEN. Sin UI todavía: se agrega por SQL.
+- **SOPs** (27/sep, pedido de Elvin, prioridad hasta el vie 2/oct): tableros **SOPs · Level Up** (público) y **SOPs · AI
+  Borinquen** (privado), primeros en la barra; un grupo por departamento con su "SOP principal" (responsable Carilin o
+  Aure), estados Por hacer → Rehaciendo → En revisión → Publicado; publicar EXIGE "Reunión con el departamento" y "Fecha de
+  revisión" y pone "Próxima revisión" a 90 días (regla ⚡). Script `scripts/pulse/crear-tableros-sop.mjs`. Recordatorio
+  `/api/cron/sop-recordatorio` 9 AM PR del 28/sep al 2/oct (`SOP_RECORDATORIO_DESDE/HASTA`): DM del bot a Carilin y Aure
+  con su progreso real; si ya contestaron en el DM → solo estatus; si publicaron todo → nada (`lib/pulse/sop-mensajes.ts`
+  puro + tests, `sop-recordatorio.ts`). `?dry=1` / `?prueba=1` (a Elvin).
+- **AI Borinquen cerrado** (27/sep, Elvin: "lo de Borinquen lo maneja Aure; más nadie"): tableros AI BORINQUEN y SOPs AIB
+  privados (Aure, Ángela, Ana Milena, Adamay, Garrys, Luis, Yaileen); Leads AIB solo con fila en `leads_acceso` (las
+  editoras ya no entran solas: `accesoLeads`/`marcasConAcceso`) = Aure, Luis, Yaileen. Yaileen ya no es solo_ritmo.
+  Jessica y Carilin no ven AIB.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
