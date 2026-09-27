@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,6 +21,8 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.
     { href: "/ritmo/carreras", nombre: "Carreras", icono: Briefcase, activo: path.startsWith("/ritmo/carreras"), nuevo: vacantesNuevas > 0, soloEscritorio: equipo },
+    // Bienestar: pestaña en escritorio para el equipo; la maestra entra desde Hoy (ya tiene muchas pestañas).
+    ...(!equipo ? [{ href: "/ritmo/bienestar", nombre: "Bienestar", icono: HeartPulse, activo: path.startsWith("/ritmo/bienestar"), soloEscritorio: true }] : []),
     // Equipo digital (agentes de IA vs. humanos): solo Elvin, Carilin y Aure; en el teléfono se entra desde Equipo.
     ...(agentes ? [{ href: "/ritmo/agentes", nombre: "Agentes", icono: Bot, activo: path.startsWith("/ritmo/agentes"), soloEscritorio: true }] : []),
     ...(ajustes ? [{ href: "/ritmo/ajustes", nombre: "Ajustes", icono: Settings2, activo: path.startsWith("/ritmo/ajustes") }] : []),

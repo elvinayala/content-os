@@ -1,12 +1,15 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, HeartPulse } from "lucide-react";
 import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
+import { Animo } from "@/components/ritmo/bienestar";
 import { Noticia } from "@/components/ritmo/noticias";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
+import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
+import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
 import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -30,6 +33,11 @@ export default async function HoyPage() {
   const ficha = await fichaCompleta(u.id).catch(() => null);
   const vac = ficha?.saldos?.puedeSolicitar && ficha.saldos.vacaciones.disponibles >= 1 ? ficha.saldos.vacaciones.disponibles : null;
   const noticias = await listarNoticias(3).catch(() => []);
+  const semanaB = semanaDe(hoyBienestar());
+  const misB = await registrosDe(u.id, semanaB).catch(() => []);
+  const bien = miSemana(misB, semanaB, hoyBienestar());
+  const pausaHoy = misB.some((r) => r.fecha === hoyBienestar() && r.tipo === "pausa");
+  const animoHoy = misB.find((r) => r.fecha === hoyBienestar() && r.tipo === "animo")?.valor ?? null;
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
@@ -62,6 +70,7 @@ export default async function HoyPage() {
                   { href: "/ritmo/carreras", t: "Carreras", d: "Vacantes y referidos" },
                   { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
+                  { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
                 ].map((a) => (
                   <Link key={a.href} href={a.href} className="rounded-xl border border-border/70 bg-white/[0.02] px-3 py-2.5 transition hover:border-primary/40 hover:bg-primary/[0.04]">
                     <span className="block text-sm font-medium text-foreground">{a.t}</span>
@@ -96,6 +105,28 @@ export default async function HoyPage() {
           <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
         </Link>
       ) : null}
+
+      <section className="panel flex w-full max-w-md flex-col gap-3 p-4">
+        <Link href="/ritmo/bienestar" className="group flex items-center gap-3">
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[color:var(--coral)]/12 text-[color:var(--coral)] ring-1 ring-[color:var(--coral)]/30">
+            <HeartPulse className="size-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium">{pausaHoy ? "✓ Pausa activa hecha" : `Pausa activa: ${rutinaDelDia(hoyBienestar()).titulo} · 5 min`}</p>
+            <div className="mt-1.5 flex items-center gap-2">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="h-full rounded-full bg-gradient-to-r from-[color:var(--neon)] to-[color:var(--coral)]" style={{ width: `${bien.pct}%` }} />
+              </div>
+              <span className="num font-mono text-[11px] text-muted-foreground">{bien.minutos}/{META_SEMANAL_MIN} min</span>
+            </div>
+          </div>
+          <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+        </Link>
+        <div className="border-t border-border/60 pt-3">
+          <p className="mb-1 text-xs text-muted-foreground">¿Cómo está tu energía hoy?</p>
+          <Animo valor={animoHoy} compacto />
+        </div>
+      </section>
 
       {noticias.length ? (
         <section className="flex w-full max-w-md flex-col gap-2">

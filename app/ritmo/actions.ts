@@ -12,6 +12,8 @@ import * as dosPasos from "@/lib/desempeno/dos-pasos";
 import * as etica from "@/lib/desempeno/etica";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
+import * as bienestar from "@/lib/desempeno/bienestar";
+import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/bienestar-reglas";
 import * as fichas from "@/lib/desempeno/fichas";
 import * as noticias from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
@@ -572,6 +574,40 @@ export async function borrarNoticiaAction(id: string) {
   return envolver(async () => {
     const u = await requiereMaestro();
     await noticias.borrarNoticia(id, u.id);
+    refresh();
+    return {};
+  });
+}
+
+// ─── Bienestar: pausa activa, ejercicio y energía (voluntario, fuera del score) ───────────────
+
+export async function pausaHechaAction() {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const hoy = bienestar.hoyPR();
+    await bienestar.registrarPausa(u.id, hoy, Math.ceil(duracionRutina(rutinaDelDia(hoy)) / 60));
+    refresh();
+    return {};
+  });
+}
+
+export async function actividadAction(p: { actividad: string; minutos: number }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    if (!ACTIVIDADES.some((a) => a.id === p.actividad)) throw new Error("Escoge la actividad");
+    const min = Math.round(Number(p.minutos));
+    if (!Number.isFinite(min) || min < 5 || min > 300) throw new Error("Pon entre 5 y 300 minutos");
+    await bienestar.registrarActividad(u.id, bienestar.hoyPR(), p.actividad, min);
+    refresh();
+    return {};
+  });
+}
+
+export async function animoAction(valor: number) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    if (![1, 2, 3, 4, 5].includes(valor)) throw new Error("Valor inválido");
+    await bienestar.registrarAnimo(u.id, bienestar.hoyPR(), valor);
     refresh();
     return {};
   });

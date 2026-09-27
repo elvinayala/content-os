@@ -338,3 +338,23 @@ export const desempenoNoticias = pgTable("desempeno_noticias", {
   autorId: uuid("autor_id").references(() => pulseUsers.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Bienestar (26/sep/2026): la parte wellness de Ritmo (~15 %). Voluntario y privado: pausa activa del día,
+// minutos de ejercicio (meta OMS 150/semana) y check-in de energía. NUNCA entra al score. La maestra solo ve
+// agregados del equipo (energía solo con ≥ 5 respuestas). Una fila por persona, día y tipo.
+export const desempenoBienestar = pgTable(
+  "desempeno_bienestar",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    fecha: text("fecha").notNull(), // YYYY-MM-DD (PR)
+    tipo: text("tipo").notNull(), // pausa | actividad | animo
+    minutos: integer("minutos").notNull().default(0), // pausa: 5 · actividad: suma del día
+    actividad: text("actividad"), // caminar | correr | gym | yoga | deporte | baile | otro (la última del día)
+    valor: integer("valor"), // animo: 1-5
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("desempeno_bienestar_dia").on(t.userId, t.fecha, t.tipo), index("desempeno_bienestar_fecha").on(t.fecha)],
+);

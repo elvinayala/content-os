@@ -574,6 +574,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   noticias, comunicados (se pueden fijar arriba) y causas benéficas. Publica/fija/borra la vista maestra; lo ve todo el
   equipo. Breve a propósito (sin comentarios ni reacciones). En Hoy la maestra tiene accesos directos (Equipo, Personas,
   Agentes, Carreras, Noticias, Solicitudes): en el celular no caben todas las pestañas.
+- **Bienestar** (`/ritmo/bienestar` + tarjeta en Hoy, 26/sep; tabla `desempeno_bienestar`, migración 0021; puro en
+  `lib/desempeno/bienestar-reglas.ts` + tests `tests/bienestar.test.mjs`): la parte wellness (~15 %), voluntaria, privada y
+  **fuera del score**. Pausa activa de ~5 min guiada (7 rutinas de escritorio, una por día, temporizador; al terminar se
+  marca sola), anotar ejercicio (meta OMS 150 min/semana; pausas cuentan; tope 600 min/día), energía del día (1-5) y reto
+  del equipo (solo agregados; la energía la ve la maestra solo con ≥ 5 respuestas). Chatbot: Elvin lo planteó el 26/sep;
+  se dejó para después de ver 2-3 semanas de preguntas reales a RR.HH.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
