@@ -9,7 +9,7 @@ import path from "node:path";
 import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
 import * as ciclo from "../ciclo-trabajo.js";
-import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe } from "../proveedores.js";
+import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe, NOMBRE_OFICIO, oficioCampo, type OficioCampo } from "../proveedores.js";
 import { DEMO_ID } from "../demo-plomero.js";
 import { leerHistorial, archivar } from "../historial.js";
 import { abrirGarantia, vigenciaGarantia } from "../garantias.js";
@@ -210,16 +210,16 @@ function bienvenida(nombre: string, link: string) {
 }
 portal.get("/portal/plomeros", requerir(), (req, res) => {
   const yo = (req as any).yo; const ps = plomeros();
-  const filas = ps.map((p) => { const c = ciclo.cuentaSemanal(p); return `<tr class="click" onclick="location='/portal/plomeros/${u(p.id)}'"><td><b>${e(p.nombre)}</b><div class="muted">${e(p.licencia ?? "")}</div></td><td>${e(p.municipio ?? "—")}<div class="muted">${e(p.territorios.join(", ") || "sin territorio")}</div></td><td><span class="tag ${p.estado === "activo" ? "ok" : "mute"}">${e(p.estado)}</span></td><td>${c.trabajosTotales}</td><td>${$(c.estaSemana.total)}</td></tr>`; }).join("");
+  const filas = ps.map((p) => { const c = ciclo.cuentaSemanal(p); return `<tr class="click" onclick="location='/portal/plomeros/${u(p.id)}'"><td><b>${e(p.nombre)}</b><div class="muted">${e(NOMBRE_OFICIO[oficioCampo(p)])}${p.licencia ? " · " + e(p.licencia) : ""}</div></td><td>${e(p.municipio ?? "—")}<div class="muted">${e(p.territorios.join(", ") || "sin territorio")}</div></td><td><span class="tag ${p.estado === "activo" ? "ok" : "mute"}">${e(p.estado)}</span></td><td>${c.trabajosTotales}</td><td>${$(c.estaSemana.total)}</td></tr>`; }).join("");
   res.type("html").send(pagina("Plomeros", yo, "plomeros", `<h1>Plomeros</h1><p class="sub">${ps.filter((p) => p.estado === "activo").length} activos · ${ps.length} en total</p>
-<h2>Dar de alta un plomero (contratado y firmado)</h2><div class="card"><div class="g2"><div><label>Nombre completo</label><input id="n" placeholder="Luis Rivera"></div><div><label>WhatsApp</label><input id="w" placeholder="787-555-0123"></div><div><label>Municipio</label><input id="m" placeholder="Bayamón"></div><div><label>Licencia (nivel y número)</label><input id="l" placeholder="maestro 12345"></div></div>
-<p style="margin-top:12px"><button class="btn" onclick="var v=i=>document.getElementById(i).value.trim();if(!v('n')||!v('w')||!v('m')){alert('Faltan nombre, WhatsApp o municipio');return}post('/portal/plomeros',{nombre:v('n'),whatsapp:v('w'),municipio:v('m'),licencia:v('l')},'Plomero activo. Le enviamos su app por WhatsApp.')">Dar de alta y enviarle su app</button></p></div>
+<h2>Dar de alta (contratado y firmado)</h2><div class="card"><div class="g2"><div><label>Oficio</label><select id="o">${Object.entries(NOMBRE_OFICIO).map(([k, t]) => `<option value="${k}">${t}</option>`).join("")}</select></div><div><label>Nombre completo</label><input id="n" placeholder="Luis Rivera"></div><div><label>WhatsApp</label><input id="w" placeholder="787-555-0123"></div><div><label>Municipio</label><input id="m" placeholder="Bayamón"></div><div><label>Licencia (nivel y número)</label><input id="l" placeholder="maestro 12345"></div></div>
+<p style="margin-top:12px"><button class="btn" onclick="var v=i=>document.getElementById(i).value.trim();if(!v('n')||!v('w')||!v('m')){alert('Faltan nombre, WhatsApp o municipio');return}post('/portal/plomeros',{oficio:v('o'),nombre:v('n'),whatsapp:v('w'),municipio:v('m'),licencia:v('l')},'Activo. Le enviamos su app por texto.')">Dar de alta y enviarle su app</button></p></div>
 <div class="card row"><div style="flex:1"><b>¿Cómo lo ve el plomero?</b><div class="muted">La misma app que usan ellos, con trabajos de EJEMPLO: aceptar, "No puedo", en camino, llegué, fotos y terminé. No toca nada real.</div></div><a class="btn l" href="${e(linkPortal(DEMO_ID, config.urlPublica))}" target="_blank">Abrir la app de prueba</a></div>
 <div class="card"><table><tr><th>Plomero</th><th>Zona</th><th>Estado</th><th>Trabajos</th><th>Esta semana</th></tr>${filas || '<tr><td colspan="5" class="muted">Todavía no hay plomeros.</td></tr>'}</table></div>`));
 });
 portal.post("/portal/plomeros", requerir(), express.json(), async (req, res) => {
   const b = req.body ?? {}; if (!b.nombre || !b.whatsapp || !b.municipio) return res.json({ ok: false, motivo: "Faltan nombre, WhatsApp o municipio." });
-  const p = altaPlomero({ nombre: String(b.nombre).trim(), whatsapp: String(b.whatsapp), municipio: String(b.municipio).trim(), licencia: b.licencia ? String(b.licencia).trim() : undefined });
+  const p = altaPlomero({ nombre: String(b.nombre).trim(), whatsapp: String(b.whatsapp), municipio: String(b.municipio).trim(), licencia: b.licencia ? String(b.licencia).trim() : undefined, oficio: (b.oficio in NOMBRE_OFICIO ? b.oficio : "plomero") as OficioCampo });
   const link = linkPortal(p.id, config.urlPublica); const ok = await avisarAlTelefono(p.whatsapp, bienvenida(p.nombre, link)).catch(() => false);
   await avisarCoordinador(`🔧 Alta de plomero por ${(req as any).yo.nombre}: ${p.nombre} · ${p.municipio} (${p.territorios.join(", ") || "SIN territorio"})\nApp: ${link}\nBienvenida: ${ok ? "enviada" : "NO enviada — mándale el link a mano"}`).catch(() => undefined);
   res.json({ ok: true, link, bienvenida: ok });

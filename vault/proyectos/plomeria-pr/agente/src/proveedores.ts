@@ -20,7 +20,14 @@ export interface Proveedor {
   municipio?: string;
   licencia?: string;          // "maestro 1234" / "oficial 5678"
   alta?: string;              // ISO de cuando se dio de alta
+  oficio?: OficioCampo;       // 27/sep: plomero (default) · aire · handyman · electricista
 }
+
+/** Oficio de campo → la categoría de trabajos que recibe (las ofertas salen por categoría y territorio). */
+export type OficioCampo = "plomero" | "aire" | "handyman" | "electricista";
+export const CATEGORIA_DE: Record<OficioCampo, string> = { plomero: "plomeria", aire: "aire", handyman: "handyman", electricista: "electricidad" };
+export const NOMBRE_OFICIO: Record<OficioCampo, string> = { plomero: "Plomero", aire: "Técnico de aire", handyman: "Handyman", electricista: "Perito electricista" };
+export const oficioCampo = (p: Pick<Proveedor, "oficio">): OficioCampo => p.oficio ?? "plomero";
 
 const cfgPath = path.join(RAIZ, "data", "proveedores.json");
 const cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8")) as { tiempo_para_aceptar_min: { trabajo: number; proyecto: number }; proveedores: Proveedor[] };
@@ -44,19 +51,20 @@ function guardarRegistro(list: Proveedor[]) { fs.writeFileSync(REG + ".tmp", JSO
 export function plomeros(): Proveedor[] { return leerRegistro(); }
 const slug = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 24);
 /** Da de alta (o reactiva) un plomero. El territorio sale del municipio. */
-export function altaPlomero(d: { nombre: string; whatsapp: string; municipio: string; licencia?: string; email?: string; territoriosExtra?: string[] }): Proveedor {
+export function altaPlomero(d: { nombre: string; whatsapp: string; municipio: string; licencia?: string; email?: string; territoriosExtra?: string[]; oficio?: OficioCampo }): Proveedor {
+  const oficio: OficioCampo = d.oficio && d.oficio in CATEGORIA_DE ? d.oficio : "plomero";
   const list = leerRegistro();
   const wa = d.whatsapp.replace(/\D/g, "").replace(/^(\d{10})$/, "1$1");
   const existente = list.find((p) => p.whatsapp.replace(/\D/g, "") === wa);
   const t = territorioDe(d.municipio);
   const territorios = [...new Set([t, ...(d.territoriosExtra ?? [])].filter((x): x is string => !!x))];
   if (existente) {
-    Object.assign(existente, { nombre: d.nombre, municipio: d.municipio, licencia: d.licencia ?? existente.licencia, email: d.email ?? existente.email, territorios: territorios.length ? territorios : existente.territorios, estado: "activo" });
+    Object.assign(existente, { nombre: d.nombre, municipio: d.municipio, licencia: d.licencia ?? existente.licencia, email: d.email ?? existente.email, territorios: territorios.length ? territorios : existente.territorios, estado: "activo", ...(d.oficio ? { oficio, categorias: [CATEGORIA_DE[oficio]] } : {}) });
     guardarRegistro(list); return existente;
   }
-  let id = slug(d.nombre.split(" ").slice(0, 2).join(" ")) || "plomero"; let n = 2;
+  let id = slug(d.nombre.split(" ").slice(0, 2).join(" ")) || oficio; let n = 2;
   while (list.some((p) => p.id === id)) id = `${slug(d.nombre)}-${n++}`;
-  const p: Proveedor = { id, tipo: "plomero", nombre: d.nombre, whatsapp: wa, email: d.email, categorias: ["plomeria"], territorios, estado: "activo", municipio: d.municipio, licencia: d.licencia, alta: new Date().toISOString() };
+  const p: Proveedor = { id, tipo: "plomero", nombre: d.nombre, whatsapp: wa, email: d.email, categorias: [CATEGORIA_DE[oficio]], territorios, estado: "activo", municipio: d.municipio, licencia: d.licencia, alta: new Date().toISOString(), ...(oficio !== "plomero" ? { oficio } : {}) };
   list.push(p); guardarRegistro(list); return p;
 }
 export function cambiarEstadoPlomero(id: string, estado: Proveedor["estado"]) {

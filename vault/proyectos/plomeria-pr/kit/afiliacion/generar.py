@@ -155,10 +155,73 @@ HOJA_ANEXO_NOMBRE = f"""{cab("Anexo C · Corrección del nombre de Resuelto", "A
 {FIRMADO_EN}
 <div class="firmas">{firma("firmante", "El Plomero", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
 
+# ── Técnicos de otros oficios (27/sep/2026, Elvin aprobó aire acondicionado, handyman y peritos electricistas) ──
+# Mismo trato que el plomero (65/35, viernes, garantía, el cliente es de Resuelto); cambia el cumplimiento por oficio.
+def _tec(t):
+    for a, b in (("El Plomero", "El Técnico"), ("el Plomero", "el Técnico"), ("del Plomero", "del Técnico"), ("al Plomero", "al Técnico"),
+                 ("la atención al cliente por WhatsApp", "la atención al cliente"), ("pasa por el WhatsApp de Resuelto", "pasa por Resuelto (su app, su número y sus canales)"),
+                 ("(cisterna, calentador, bomba)", "(mini split, abanico, lámpara, cerradura)")):
+        t = t.replace(a, b)
+    return t
+SEC_TEC = {k: _tec(v) for k, v in SEC.items()}
+SEC_TEC[10] = """<h2>10. Cumplimiento, alcance y seguro</h2>
+<p>El Técnico declara que tiene vigente lo que la ley exige para su oficio y avisará cualquier suspensión en 24 horas:
+<b>aire acondicionado</b>, licencia de técnico de refrigeración y aire acondicionado (Junta Examinadora, Ley 36 de 1970) y certificación EPA 608 para manejar refrigerantes;
+<b>electricidad</b>, licencia de Perito Electricista y colegiación vigentes;
+<b>handyman</b>, registro de contratista en DACO antes de su primer trabajo.
+El handyman <b>no hace trabajos de plomería, electricidad ni aire acondicionado</b>: esos se refieren a Resuelto para un técnico licenciado.
+Dentro de los <b>60 días</b> siguientes a la firma entregará evidencia de <b>seguro de responsabilidad pública por un mínimo de $300,000</b> por incidente, con <b>Resuelto PR Home Services LLC como asegurado adicional</b>, y la mantendrá vigente; si no la entrega, Resuelto pausa las ofertas hasta que la entregue. Cada parte responde por sus propios actos.</p>"""
+HOJA_TECNICO_1 = f"""{cab("Técnicos afiliados · aire, electricidad y handyman", "Acuerdo de afiliación")}
+{PROVISIONAL}
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
+Dirección: {campo("direccion", "l")} &nbsp; Municipio: {campo("municipio", "s")}<br>
+Oficio: {chk("of_aire", "Técnico de aire acondicionado")} {chk("of_electricista", "Perito electricista")} {chk("of_handyman", "Handyman")}<br>
+Licencia o registro de DACO núm. {campo("lic_num", "s")} · EPA 608 / colegiación / especialidad: {campo("extra", "l")} ("el Técnico").</p>
+{SEC_TEC[1]}{SEC_TEC[2]}{SEC_TEC[3]}{SEC_TEC[4]}"""
+HOJA_TECNICO_2 = f"""{SEC_TEC[5]}{SEC_TEC[6]}{SEC_TEC[7]}{SEC_TEC[8]}{SEC_TEC[9]}{SEC_TEC[10]}
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Técnico", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+HOJA_REGLAS_TECNICO = HOJA_REGLAS.replace("Firma del Plomero / Aprendiz", "Firma del Técnico")
+
+# ── Cotizador de proyectos a comisión (27/sep/2026): vende remodelaciones, cocinas, baños, piscinas y techos ──
+HOJA_COTIZADOR_1 = f"""{cab("Cotizador de proyectos · contratista independiente", "Acuerdo de servicios")}
+{PROVISIONAL}
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")}<br>
+Dirección: {campo("direccion", "l")} &nbsp; Municipio: {campo("municipio", "s")}<br>
+Experiencia: {campo("experiencia", "l")} ("el Cotizador").</p>
+<h2>1. El servicio</h2>
+<p>El Cotizador visita a los clientes de proyectos que Resuelto le asigna (remodelaciones, cocinas, baños, pisos, piscinas, techos y exteriores), mide, toma fotos y prepara la cotización en la app de Resuelto con el alcance, el Cost Book y los márgenes de Resuelto, y acompaña al cliente hasta que firma. <b>El precio final lo aprueba Resuelto</b>; el Cotizador no promete precios, descuentos ni fechas fuera de lo aprobado.</p>
+<h2>2. Contratista independiente</h2>
+<p>El Cotizador no es empleado de Resuelto. Usa su propio vehículo, celular y equipo de medir, organiza su agenda y puede prestar servicios a otros, siempre que no sean empresas que compitan con Resuelto en servicios del hogar. Es responsable de sus contribuciones; Resuelto emitirá la declaración informativa que corresponda y hará las retenciones que exija la ley.</p>
+<h2>3. Compensación</h2>
+<ul>
+<li><b>5 % del valor del proyecto cobrado</b>: la mitad cuando el cliente paga el depósito y la otra mitad cuando paga el balance final. Ejemplo: cocina de $20,000 → $1,000.</li>
+<li><b>$25 por visita de cotización completada</b> (fotos, medidas y propuesta subidas a la app en menos de 48 horas), se venda o no.</li>
+<li>Proyectos cancelados o no cobrados no generan comisión; si se reembolsa un depósito ya comisionado, se descuenta del próximo pago.</li>
+<li>Pago los viernes, por ATH Móvil o transferencia, con el detalle de cada proyecto.</li>
+</ul>"""
+HOJA_COTIZADOR_2 = f"""<h2>4. Reglas</h2>
+<ul>
+<li>Nunca cobra al cliente ni recibe dinero: todo pago va a Resuelto.</li>
+<li>No subcontrata ni recomienda contratistas por fuera: los proyectos los ejecutan los contratistas verificados de Resuelto.</li>
+<li>No cotiza trabajos que requieren licencia sin incluir al técnico licenciado que los hará.</li>
+<li>Se identifica como de Resuelto y trata al cliente con respeto.</li>
+</ul>
+<h2>5. Clientes y confidencialidad</h2>
+<p>Los clientes, los precios, el Cost Book, los márgenes y los procesos de Resuelto son confidenciales y de Resuelto. Durante el acuerdo y por <b>24 meses</b> después, el Cotizador no atenderá por fuera a clientes de Resuelto ni los dirigirá a otra empresa; incumplirlo es causa de terminación inmediata y de una penalidad de <b>$2,500 por cliente</b>.</p>
+<h2>6. Duración y terminación</h2>
+<p>Cualquiera de las partes puede terminar con <b>15 días</b> de aviso por escrito (un mensaje de texto cuenta). Resuelto puede terminar de inmediato si el Cotizador cobra a un cliente, falsea una cotización o incumple la sección 5. Al terminar, Resuelto paga las comisiones de los proyectos que se cobren dentro de los 60 días siguientes.</p>
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Cotizador", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+
 PLANTILLAS = {
  "anexo-nombre": documento([hoja(1, "Anexo de corrección de nombre", HOJA_ANEXO_NOMBRE)]),
  "plomero": documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
  "aprendiz": documento([hoja(1, "Acuerdo de aprendiz", HOJA_APRENDIZ), hoja(2, "Secciones que te aplican", HOJA_APRENDIZ_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
+ "tecnico": documento([hoja(1, "Acuerdo · parte 1", HOJA_TECNICO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_TECNICO_2), hoja(3, "Reglas de oro", HOJA_REGLAS_TECNICO)]),
+ "cotizador": documento([hoja(1, "Acuerdo · parte 1", HOJA_COTIZADOR_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_COTIZADOR_2)]),
 }
 
 def precio(s):

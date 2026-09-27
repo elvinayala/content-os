@@ -1,0 +1,182 @@
+{
+ "estado": "PROPUESTA 27/sep/2026 — Elvin aprueba y se valida con los primeros de cada oficio antes de venderlos. Mano de obra; + $19 de coordinación por visita; materiales y equipos aparte, al costo con recibo (+20 % de manejo, no se menciona si no preguntan). Garantía 12 meses en la mano de obra. Reparto igual que plomería: 65 % el técnico, 35 % Resuelto.",
+ "fuentes_mercado": [
+  "Limpieza de splits en ofertas (Gustazos/OfertaDelDía): $15–$25 por unidad como anzuelo — no competimos ahí: técnico licenciado, garantía y precio fijo",
+  "Handyman en PR: $50–$100 la hora; tareas sencillas $50–$130 (MeetAHandyman)"
+ ],
+ "oficios": {
+  "aire": {
+   "nombre": "Aire acondicionado",
+   "requisito": "Licencia de técnico de refrigeración y A/C (Junta Examinadora, Ley 36-1970) + EPA 608",
+   "servicios": [
+    {
+     "id": "aire-diagnostico",
+     "nombre": "Visita de diagnóstico (no enfría, gotea, hace ruido)",
+     "precio": 69,
+     "nota": "Se acredita al trabajo si se hace con Resuelto"
+    },
+    {
+     "id": "aire-mantenimiento",
+     "nombre": "Mantenimiento y limpieza profunda de split (hasta 24,000 BTU)",
+     "precio": 69,
+     "nota": "Lavado de evaporador y turbina, bandeja, drenaje y condensadora + revisión de presiones"
+    },
+    {
+     "id": "aire-mantenimiento-adicional",
+     "nombre": "Cada split adicional en la misma visita",
+     "precio": 45
+    },
+    {
+     "id": "aire-drenaje",
+     "nombre": "Destapar el drenaje del split que gotea",
+     "precio": 89
+    },
+    {
+     "id": "aire-instalacion-12",
+     "nombre": "Instalación de mini split hasta 12,000 BTU (equipo aparte)",
+     "rango": [
+      449,
+      599
+     ],
+     "nota": "Incluye hasta 15 pies de línea; se confirma con fotos"
+    },
+    {
+     "id": "aire-instalacion-24",
+     "nombre": "Instalación de mini split 18,000–24,000 BTU (equipo aparte)",
+     "rango": [
+      549,
+      749
+     ]
+    },
+    {
+     "id": "aire-desinstalar",
+     "nombre": "Desinstalar un split (recuperando el gas)",
+     "precio": 149
+    },
+    {
+     "id": "aire-fuga",
+     "nombre": "Fuga o recarga de gas",
+     "cotizacion": true,
+     "nota": "Siempre con diagnóstico primero"
+    }
+   ]
+  },
+  "handyman": {
+   "nombre": "Handyman",
+   "requisito": "Registro de contratista en DACO ($205, buena conducta, notarizado). NO hace plomería, electricidad ni A/C",
+   "servicios": [
+    {
+     "id": "hm-tv",
+     "nombre": "Montar TV en la pared (hasta 65\")",
+     "precio": 89,
+     "nota": "Base aparte"
+    },
+    {
+     "id": "hm-mueble",
+     "nombre": "Armar mueble pequeño (mesa, gavetero, silla)",
+     "precio": 69
+    },
+    {
+     "id": "hm-mueble-grande",
+     "nombre": "Armar mueble grande (cama, closet, escritorio)",
+     "rango": [
+      119,
+      169
+     ]
+    },
+    {
+     "id": "hm-colgar",
+     "nombre": "Colgar cuadros, espejos o repisas (hasta 5)",
+     "precio": 69
+    },
+    {
+     "id": "hm-cortinas",
+     "nombre": "Instalar cortinas o blinds (primera ventana)",
+     "precio": 69,
+     "nota": "+$25 cada ventana adicional"
+    },
+    {
+     "id": "hm-cerradura",
+     "nombre": "Cambiar cerradura o manija",
+     "precio": 69,
+     "nota": "Pieza aparte"
+    },
+    {
+     "id": "hm-puerta",
+     "nombre": "Ajustar puerta que roza o no cierra",
+     "precio": 79
+    },
+    {
+     "id": "hm-drywall",
+     "nombre": "Parchar hueco en pared (hasta 6 pulgadas)",
+     "precio": 99
+    },
+    {
+     "id": "hm-silicon",
+     "nombre": "Sellar con silicón bañera, ducha o fregadero",
+     "precio": 99
+    },
+    {
+     "id": "hm-hora",
+     "nombre": "Tareas varias por hora",
+     "precio": 69,
+     "nota": "$69 la primera hora, $49 cada hora adicional"
+    }
+   ]
+  },
+  "electricidad": {
+   "nombre": "Electricidad",
+   "requisito": "Licencia de Perito Electricista (colegiado)",
+   "servicios": [
+    {
+     "id": "el-diagnostico",
+     "nombre": "Visita de diagnóstico (breaker que se dispara, algo no prende)",
+     "precio": 69,
+     "nota": "Se acredita al trabajo"
+    },
+    {
+     "id": "el-receptaculo",
+     "nombre": "Cambiar receptáculo o interruptor (hasta 2)",
+     "precio": 89
+    },
+    {
+     "id": "el-gfci",
+     "nombre": "Instalar receptáculo GFCI (baño/cocina)",
+     "precio": 119
+    },
+    {
+     "id": "el-lampara",
+     "nombre": "Instalar lámpara",
+     "precio": 99
+    },
+    {
+     "id": "el-abanico",
+     "nombre": "Instalar abanico de techo (con base existente)",
+     "precio": 129
+    },
+    {
+     "id": "el-receptaculo-nuevo",
+     "nombre": "Receptáculo nuevo con cableado corto",
+     "rango": [
+      149,
+      249
+     ]
+    },
+    {
+     "id": "el-220",
+     "nombre": "Conexión de 220 (calentador, secadora, A/C)",
+     "rango": [
+      199,
+      349
+     ]
+    },
+    {
+     "id": "el-generador",
+     "nombre": "Generador, transfer switch o baterías",
+     "cotizacion": true,
+     "nota": "Proyecto: va por el cotizador"
+    }
+   ]
+  }
+ }
+}

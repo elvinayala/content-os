@@ -12,10 +12,11 @@ import path from "node:path";
 import { RAIZ } from "../almacen.js";
 
 // "aprendiz" reemplazó a "ayudante" el 24/sep/2026: la Ley 59-2022 no permite plomería sin certificado de aprendiz o licencia.
-export type TipoContrato = "plomero" | "aprendiz" | "anexo-nombre";
-export const TIPOS: TipoContrato[] = ["plomero", "aprendiz", "anexo-nombre"];
+// 27/sep/2026: "tecnico" (aire acondicionado, perito electricista, handyman) y "cotizador" de proyectos a comisión.
+export type TipoContrato = "plomero" | "aprendiz" | "anexo-nombre" | "tecnico" | "cotizador";
+export const TIPOS: TipoContrato[] = ["plomero", "aprendiz", "anexo-nombre", "tecnico", "cotizador"];
 /** Nombre de cada documento para el PDF, el certificado, los avisos y el panel. */
-export const NOMBRE_DOC: Record<TipoContrato, string> = { plomero: "Acuerdo de afiliación de plomero", aprendiz: "Acuerdo de aprendiz", "anexo-nombre": "Anexo de corrección del nombre de Resuelto" };
+export const NOMBRE_DOC: Record<TipoContrato, string> = { plomero: "Acuerdo de afiliación de plomero", aprendiz: "Acuerdo de aprendiz", "anexo-nombre": "Anexo de corrección del nombre de Resuelto", tecnico: "Acuerdo de afiliación de técnico", cotizador: "Acuerdo de servicios de cotizador" };
 
 export interface CampoDef { id: string; etiqueta: string; tipo: "texto" | "tel" | "opcion"; opciones?: { valor: string; etiqueta: string; check: string }[]; requerido: boolean; ayuda?: string }
 const COMUNES_INICIO: CampoDef[] = [
@@ -32,6 +33,20 @@ export const CAMPOS: Record<TipoContrato, CampoDef[]> = {
     { id: "licencia", etiqueta: "Licencia de plomero", tipo: "opcion", requerido: true, opciones: [{ valor: "oficial", etiqueta: "Oficial", check: "lic_oficial" }, { valor: "maestro", etiqueta: "Maestro", check: "lic_maestro" }] },
     { id: "lic_num", etiqueta: "Número de licencia", tipo: "texto", requerido: true },
     { id: "colegiacion", etiqueta: "Número de colegiación", tipo: "texto", requerido: false, ayuda: "Si no lo tienes a mano, déjalo en blanco" },
+  ],
+  tecnico: [
+    ...COMUNES_INICIO,
+    { id: "direccion", etiqueta: "Dirección", tipo: "texto", requerido: true },
+    { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true },
+    { id: "oficio", etiqueta: "Tu oficio", tipo: "opcion", requerido: true, opciones: [{ valor: "aire", etiqueta: "Técnico de aire acondicionado", check: "of_aire" }, { valor: "electricista", etiqueta: "Perito electricista", check: "of_electricista" }, { valor: "handyman", etiqueta: "Handyman", check: "of_handyman" }] },
+    { id: "lic_num", etiqueta: "Número de licencia (aire o perito) o de registro de DACO (handyman)", tipo: "texto", requerido: true, ayuda: "Si eres handyman y todavía no tienes el registro de DACO, escribe \"en trámite\"" },
+    { id: "extra", etiqueta: "EPA 608, colegiación o en qué te especializas", tipo: "texto", requerido: false },
+  ],
+  cotizador: [
+    ...COMUNES_INICIO,
+    { id: "direccion", etiqueta: "Dirección", tipo: "texto", requerido: true },
+    { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true },
+    { id: "experiencia", etiqueta: "Tu experiencia cotizando o vendiendo proyectos", tipo: "texto", requerido: true },
   ],
   aprendiz: [
     ...COMUNES_INICIO,

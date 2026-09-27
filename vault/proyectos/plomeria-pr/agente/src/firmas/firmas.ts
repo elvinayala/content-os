@@ -96,10 +96,10 @@ export function archivoPdf(f: Firma): string | null {
 
 async function avisar(f: Firma) {
   const d = f.firmado!.datos;
-  const quien = f.tipo === "anexo-nombre" ? "anexo de corrección de nombre" : f.tipo === "plomero" ? `plomero ${d.licencia ?? ""} #${d.lic_num ?? ""}`.trim() : `aprendiz · certificado #${d.cert_num ?? ""} (vence ${d.cert_vence ?? "?"}) · ${d.anos ?? ""} de experiencia`;
+  const quien = f.tipo === "tecnico" ? `técnico · ${d.oficio ?? ""} · #${d.lic_num ?? ""}` : f.tipo === "cotizador" ? `cotizador de proyectos · ${d.experiencia ?? ""}` : f.tipo === "anexo-nombre" ? "anexo de corrección de nombre" : f.tipo === "plomero" ? `plomero ${d.licencia ?? ""} #${d.lic_num ?? ""}`.trim() : `aprendiz · certificado #${d.cert_num ?? ""} (vence ${d.cert_vence ?? "?"}) · ${d.anos ?? ""} de experiencia`;
   const linea = `✍️ Contrato firmado: ${d.nombre} (${quien}) · ${d.municipio ?? ""} · ${enlacePdf(f)}`;
   await dmSlack(config.slack.reclutamiento, linea);
   await avisarCoordinador(linea);
-  const contactId = await upsertContacto({ nombre: d.nombre, telefono: d.telefono || f.telefono, municipio: d.municipio, tags: ["contrato-firmado", f.tipo === "plomero" ? "plomero-firmado" : f.tipo === "aprendiz" ? "aprendiz-firmado" : "anexo-nombre-firmado"] });
+  const contactId = await upsertContacto({ nombre: d.nombre, telefono: d.telefono || f.telefono, municipio: d.municipio, tags: ["contrato-firmado", f.tipo === "tecnico" ? `${d.oficio ?? "tecnico"}-firmado` : `${f.tipo}-firmado`] });
   if (contactId) await agregarNota(contactId, `✍️ Firmó electrónicamente el ${NOMBRE_DOC[f.tipo]} (${f.id}) el ${new Date(f.firmado!.en).toLocaleString("es-PR", { timeZone: config.zonaHoraria })}. PDF: ${enlacePdf(f)} · huella ${f.firmado!.hashPdf.slice(0, 16)}…`);
 }

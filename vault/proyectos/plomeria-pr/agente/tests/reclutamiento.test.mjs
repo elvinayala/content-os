@@ -102,3 +102,14 @@ test("las citas del calendario de GHL cuentan como ocupadas", async () => {
   assert.deepEqual(R.separarHuecos(["2026-09-28T14:00:00Z", "2026-09-28T15:20:00Z", "2026-09-28T16:00:00Z", "2026-09-28T17:00:00Z"], oc), ["2026-09-28T14:00:00Z", "2026-09-28T16:00:00Z", "2026-09-28T17:00:00Z"]);
   assert.deepEqual(R.unirOcupadas(["2026-09-28T13:00:00Z"], []), ["2026-09-28T13:00:00.000Z"]);
 });
+test("oficios nuevos: el candado legal de cada uno", () => {
+  assert.ok(R.aptoParaEntrevista(undefined, "maestro"));
+  assert.ok(!R.aptoParaEntrevista("plomero", "no tiene"));
+  assert.ok(R.aptoParaEntrevista("aire", "licencia de refrigeracion"));
+  assert.ok(!R.aptoParaEntrevista("aire", "en tramite"));
+  assert.ok(R.aptoParaEntrevista("electricista", "perito electricista"));
+  assert.ok(!R.aptoParaEntrevista("electricista", "no tiene"));
+  assert.ok(R.aptoParaEntrevista("handyman", "no aplica"));
+  assert.ok(R.aptoParaEntrevista("cotizador", "no aplica"));
+  assert.ok(R.tieneLicencia({ nivelLicencia: "perito electricista" }));
+});
