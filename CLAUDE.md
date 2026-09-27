@@ -966,6 +966,31 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   más recientes de LU/AIB visibles (sin bajas ni "(copy)"), cuánto pagó (Pago Inicial → venta de Slack → Acuerdo de
   Pago; cuotas se multiplican), nicho (Industria; si es "Otro", lo del formulario), cuándo pagó (Fecha del pago
   inicial → fecha de la venta en Slack, `ventaTs`) y onboarding (= ficha creada). ≥ $3,000 = "Alto valor" dorado.
+- **Protección de datos** (27/sep, Elvin: "que nadie pueda eliminar data de un solo click, y copia de seguridad
+  fuera y en varios lugares"):
+  - **Papelera universal** (migración 0029, `pulse_papelera`): trigger `papelera_guardar` AFTER DELETE en TODAS las
+    tablas de public (hoy 58; `pulse_papelera_proteger()` pone el trigger en tablas nuevas y la corre el respaldo diario)
+    copia la fila borrada, venga de la app, un script, una cascada o un agente; TRUNCATE bloqueado. Lo borrado en una
+    transacción = un **lote** (mismo `borrado_at`) que se restaura junto (`lib/pulse/papelera.ts`, puro en
+    `papelera-reglas.ts` + tests). `borrarComo(userId, fn)` marca quién borró (`app.usuario`). Los archivos NO se borran:
+    `borrarArchivos` los mueve a `papelera/<día>/<ruta>` en Storage y `restaurarLote` los trae de vuelta. 90 días y se purga
+    (solo si ese día la base quedó copiada fuera).
+  - **Pantalla**: toast **Deshacer** 15 min al borrar fichas/archivos (el que borró; `deshacerBorradoAction`); borrar un
+    tablero exige escribir su nombre; ≥ 10 fichas exige escribir ELIMINAR; quitar un archivo pide confirmación; borrar una
+    columna ya NO vacía sus valores (se quedan en `values` y vuelven al restaurarla). **Papelera y respaldos**
+    (`/pulse/papelera`, solo admin: guarda también nómina y canal ético) con restaurar por lote y el estado de los 3 respaldos.
+  - **Respaldo diario** (`/api/cron/pulse-respaldo`, 4:30 AM PR, `lib/respaldo/respaldo.ts`): TODA la base (60 tablas, menos
+    `leads_webhook_log`) en JSON → gzip → AES-256-GCM con `RESPALDO_CLAVE` (`lib/respaldo/cifrado.ts`, tests) en
+    **Supabase** `respaldos/base/<día>.json.gz.enc` (30 días) y **Vercel Blob privado** `respaldos-ea-market` (otro
+    proveedor; `base/` 60 días + `archivos/<ruta>.enc` incremental, sin motion/). Verifica bajando la copia de Blob,
+    descifrándola y contando filas; si algo falla → `notificarCEO` + evento `respaldo_fallido`. Estado en
+    `respaldos/estado.json`. **La Mac** (`scripts/respaldo.mjs local`, launchd `com.iamarket.respaldo` 1 PM o al
+    despertar) copia la base directo de Postgres (sin depender de Vercel) + archivos en `~/Respaldos EA Market/` (90 días;
+    fuera de Documents porque launchd no tiene permiso ahí) y deja `respaldos/estado-mac.json`.
+  - **Restaurar**: `node --env-file=.env.local scripts/respaldo.mjs listar | abrir <fuente> [--salida x.json] |
+    restaurar <fuente> [--tabla a,b] [--real]` (fuente = ruta · `supabase:<día>` · `blob:<día>`); solo inserta lo que falta
+    por la llave de cada tabla, nunca pisa. Probado de punta a punta el 27/sep. **Sin `RESPALDO_CLAVE` los respaldos no
+    se abren**: está en `.env.local` y en Vercel (Production); Elvin debe guardarla también en su gestor de claves.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 
