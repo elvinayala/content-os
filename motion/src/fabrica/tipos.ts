@@ -28,6 +28,8 @@ export type Escena = { dur: number } & (
   | { tipo: "pantalla"; titulo: string; sub?: string; imagen: string; dispositivo: "laptop" | "telefono"; puntos?: string[];
       /** Zona a la que acerca la cámara, en fracción de la captura (0-1). */
       foco?: { x: number; y: number; w: number; h: number } }
+  | { tipo: "grafico"; titulo: string; sub?: string; par: string; modo: "autopilot" | "radar"; puntos?: string[] }
+  | { tipo: "terminal"; titulo?: string; ventana: string; lineas: { t: string; tipo?: "ok" | "alerta" | "dim" | "info" }[] }
   | { tipo: "cierre"; cta: string; sub?: string; url?: string; nota?: string }
 );
 

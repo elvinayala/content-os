@@ -885,6 +885,135 @@ const Pantalla: React.FC<Extract<Escena, { tipo: "pantalla" }>> = ({ titulo, sub
   );
 };
 
+/** Gráfico de velas que se forma en vivo; el radar detecta la señal y marca entrada, SL y TP. SIMULACIÓN. */
+const Grafico: React.FC<Extract<Escena, { tipo: "grafico" }>> = ({ titulo, sub, par, modo, puntos = [], dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w } = useLienzo();
+  const ancho = v ? w - 120 : 1060;
+  const alto = v ? 700 : 640;
+  const N = 46;
+  const senal = 26; // vela de la señal
+  // serie: baja/lateral y luego impulso alcista tras la señal (determinista)
+  const velas: { o: number; c: number; h: number; l: number }[] = [];
+  let precio = 50;
+  for (let i = 0; i < N; i++) {
+    const tend = i < senal - 6 ? -0.25 : i < senal ? 0.05 : 0.95;
+    const o = precio;
+    const c = o + tend + (random(`c${i}`) - 0.5) * 2.2;
+    velas.push({ o, c, h: Math.max(o, c) + random(`h${i}`) * 1.2, l: Math.min(o, c) - random(`l${i}`) * 1.2 });
+    precio = c;
+  }
+  const min = Math.min(...velas.map((x) => x.l)) - 2;
+  const max = Math.max(...velas.map((x) => x.h)) + 2;
+  const Y = (p: number) => alto - ((p - min) / (max - min)) * alto;
+  const cw = ancho / N;
+  const visibles = Math.min(N, Math.floor(f / 1.7) + 8);
+  const entrada = velas[senal].c;
+  const sl = entrada - 4;
+  const tp = entrada + 8;
+  const trasSenal = visibles > senal;
+  const tpHit = velas.slice(senal + 1, visibles).some((x) => x.h >= tp);
+  const fSenal = (senal - 8) * 1.7;
+  const ping = ((f - fSenal) % 24) / 24;
+  const grafico = (
+    <div style={{ position: "relative", width: ancho, height: alto + 60, borderRadius: 18, background: t.superficie, border: `1px solid ${t.borde}`, overflow: "hidden", padding: "40px 0 20px" }}>
+      <div style={{ position: "absolute", top: 12, left: 18, fontFamily: t.mono, fontSize: 20, color: t.gris, letterSpacing: "0.12em" }}>{par} · M5</div>
+      <div style={{ position: "absolute", top: 12, right: 18, fontFamily: t.mono, fontSize: 16, color: t.gris, letterSpacing: "0.2em", border: `1px solid ${t.borde}`, padding: "2px 8px", borderRadius: 6 }}>SIMULACIÓN</div>
+      <svg width={ancho} height={alto} style={{ overflow: "visible" }}>
+        {[0.2, 0.4, 0.6, 0.8].map((g) => <line key={g} x1={0} x2={ancho} y1={alto * g} y2={alto * g} stroke={t.borde} strokeDasharray="4 10" />)}
+        {velas.slice(0, visibles).map((x, i) => {
+          const sube = x.c >= x.o;
+          const col = sube ? t.acento : t.alarma;
+          const nueva = i === visibles - 1 ? tw(f % 1.7, 0, 1.7) : 1;
+          return (
+            <g key={i} opacity={i === visibles - 1 ? 0.6 + 0.4 * nueva : 1}>
+              <line x1={i * cw + cw / 2} x2={i * cw + cw / 2} y1={Y(x.h)} y2={Y(x.l)} stroke={col} strokeWidth={2} />
+              <rect x={i * cw + cw * 0.18} width={cw * 0.64} y={Y(Math.max(x.o, x.c))} height={Math.max(2, Math.abs(Y(x.o) - Y(x.c)))} fill={col} opacity={0.9} />
+            </g>
+          );
+        })}
+        {trasSenal && (
+          <g>
+            <line x1={senal * cw} x2={ancho} y1={Y(entrada)} y2={Y(entrada)} stroke={t.texto} strokeDasharray="8 6" strokeWidth={1.5} />
+            <line x1={senal * cw} x2={ancho} y1={Y(tp)} y2={Y(tp)} stroke={t.acento} strokeDasharray="8 6" strokeWidth={2} />
+            <line x1={senal * cw} x2={ancho} y1={Y(sl)} y2={Y(sl)} stroke={t.alarma} strokeDasharray="8 6" strokeWidth={2} />
+            <text x={ancho - 12} y={Y(tp) - 8} textAnchor="end" fill={t.acento} fontFamily={t.mono} fontSize={18}>TP</text>
+            <text x={ancho - 12} y={Y(sl) + 22} textAnchor="end" fill={t.alarma} fontFamily={t.mono} fontSize={18}>SL</text>
+            <text x={ancho - 12} y={Y(entrada) - 8} textAnchor="end" fill={t.texto} fontFamily={t.mono} fontSize={18}>ENTRADA</text>
+            {/* radar */}
+            {!tpHit && [0, 1].map((k) => {
+              const q = (ping + k / 2) % 1;
+              return <circle key={k} cx={senal * cw + cw / 2} cy={Y(entrada)} r={10 + q * 70} fill="none" stroke={t.acento} strokeWidth={3 * (1 - q)} opacity={1 - q} />;
+            })}
+            <circle cx={senal * cw + cw / 2} cy={Y(entrada)} r={8} fill={t.acento} />
+          </g>
+        )}
+      </svg>
+      {trasSenal && (
+        <div style={{ position: "absolute", left: Math.min(ancho - 360, senal * cw - 40), top: Y(entrada) - 30, padding: "10px 16px", borderRadius: 10, background: t.fondo, border: `2px solid ${t.acento}`, fontFamily: t.mono, fontSize: 22, color: t.acento, transform: `scale(${rebote(f, fSenal, 12)})`, boxShadow: `0 0 30px ${t.acento}55` }}>
+          {modo === "autopilot" ? "AUTOPILOT · BUY ejecutado" : "RADAR · Señal BUY"}
+        </div>
+      )}
+      {tpHit && (
+        <div style={{ position: "absolute", right: 40, top: Y(tp) + 20, padding: "12px 20px", borderRadius: 10, background: t.acento, color: t.textoCta, fontFamily: t.mono, fontWeight: 700, fontSize: 26 }}>TP ALCANZADO ✓</div>
+      )}
+    </div>
+  );
+  return (
+    <AbsoluteFill style={{ display: "flex", flexDirection: v ? "column" : "row", alignItems: "center", justifyContent: "center", gap: v ? 40 : 70, padding: v ? "230px 60px 330px" : "60px 90px" }}>
+      <div style={{ width: v ? undefined : 560, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20, alignItems: v ? "center" : "flex-start" }}>
+        <Titular texto={titulo} entra={2} tam={ajustar([titulo], v ? w - 160 : 560, v ? 84 : 74)} alinear={v ? "center" : "left"} />
+        {sub && <div style={{ fontFamily: t.fuente, fontSize: v ? 34 : 28, color: t.gris, lineHeight: 1.35, opacity: tw(f, 12, 22), textAlign: v ? "center" : "left" }}>{sub}</div>}
+        {puntos.map((p, i) => {
+          const e = tw(f, 20 + i * 8, 30 + i * 8);
+          return <div key={i} style={{ fontFamily: t.fuente, fontSize: v ? 32 : 28, fontWeight: 600, color: t.texto, opacity: e, transform: `translateX(${(1 - e) * -30}px)` }}><span style={{ color: t.acento }}>&gt;</span> {p}</div>;
+        })}
+      </div>
+      {grafico}
+      <Sfx src="teclado.mp3" en={0} vol={0.15} />
+      <Sfx src="ding.mp3" en={Math.round(fSenal)} vol={0.45} />
+      <Sfx src="caching.mp3" en={Math.round((senal + 9) * 1.7)} vol={0.3} />
+    </AbsoluteFill>
+  );
+};
+
+/** Terminal que escribe el log del sistema, línea por línea. */
+const Terminal: React.FC<Extract<Escena, { tipo: "terminal" }>> = ({ titulo, ventana, lineas, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w } = useLienzo();
+  const ancho = Math.min(w - 160, v ? 960 : 1500);
+  const porLinea = Math.max(8, Math.floor((dur - 30) / lineas.length));
+  const colores = { ok: t.acento, alerta: t.alarma, dim: t.gris, info: t.texto };
+  return (
+    <Marco dur={dur} gap={v ? 40 : 30}>
+      {titulo && <Titular texto={titulo} entra={0} tam={ajustar([titulo], ancho, v ? 80 : 72)} />}
+      <div style={{ width: ancho, borderRadius: 16, background: "#030504", border: `1px solid ${t.borde}`, boxShadow: `0 0 60px ${t.acento}18`, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", borderBottom: `1px solid ${t.borde}`, fontFamily: t.mono, fontSize: v ? 18 : 22, color: t.gris, letterSpacing: "0.12em" }}>
+          {["#FF4D5E", "#F5CE1A", t.acento].map((c) => <span key={c} style={{ width: 12, height: 12, borderRadius: 6, background: c, opacity: 0.7 }} />)}
+          <span style={{ marginLeft: 10 }}>{ventana}</span>
+        </div>
+        <div style={{ padding: v ? "26px 28px" : "28px 34px", fontFamily: t.mono, fontSize: v ? 30 : 36, lineHeight: 1.65, minHeight: lineas.length * (v ? 51 : 60) + 20 }}>
+          {lineas.map((l, i) => {
+            const inicio = 10 + i * porLinea;
+            if (f < inicio) return null;
+            const n = Math.floor(tw(f, inicio, inicio + Math.min(porLinea - 2, l.t.length * 0.5), 0, l.t.length, (x) => x));
+            const ultima = i === Math.min(lineas.length - 1, Math.floor((f - 10) / porLinea));
+            return (
+              <div key={i} style={{ color: colores[l.tipo ?? "info"] }}>
+                <span style={{ color: t.gris }}>&gt; </span>{l.t.slice(0, n)}
+                {ultima && <span style={{ color: t.acento, opacity: f % 16 < 8 ? 1 : 0 }}>▋</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      {lineas.map((l, i) => <Sfx key={i} src={l.tipo === "ok" ? "ding.mp3" : "teclado.mp3"} en={10 + i * porLinea} vol={l.tipo === "ok" ? 0.3 : 0.12} />)}
+    </Marco>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   switch (escena.tipo) {
     case "gancho": return <Gancho {...escena} />;
@@ -907,6 +1036,8 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "voz": return <Voz {...escena} />;
     case "agenda": return <Agenda {...escena} />;
     case "pantalla": return <Pantalla {...escena} />;
+    case "grafico": return <Grafico {...escena} />;
+    case "terminal": return <Terminal {...escena} />;
     case "cierre": return <Cierre {...escena} />;
   }
 };

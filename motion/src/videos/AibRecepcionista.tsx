@@ -11,6 +11,7 @@ import { AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame, Audio
 import { C, FUENTE, FUENTE_MONO, GRADIENTE } from "../marcas/aib";
 import { NombreAib } from "../marcas/CoquiAib";
 import { CoquiAibVector } from "../marcas/CoquiAibVector";
+import { CoquiAibHeroe } from "../marcas/CoquiAibHeroe";
 import { Barrido, Destello, Fondo, Grano, glitch, golpe, rebote, sacudida, tw } from "../kit/fx";
 import { Chip, Palabras } from "../kit/texto";
 import { Calendario, Chat, Contador, Llamada, Notificacion, Telefono, type Tema } from "../kit/ui";
@@ -104,7 +105,7 @@ const EntraCoqui: React.FC = () => {
         );
       })}
       <AbsoluteFill style={{ display: "grid", placeItems: "center", transform: `translate(${x}px, ${y}px) scale(${escala})` }}>
-        <CoquiAibVector size={680} entrada={f - 2} vivo={f > 50} brillo={brillo} />
+        <CoquiAibHeroe size={560} t={f - 2} />
       </AbsoluteFill>
       <div style={{ position: "absolute", bottom: 70, width: "100%", textAlign: "center", fontFamily: FUENTE_MONO, color: C.verde, fontSize: 24, letterSpacing: "0.3em", opacity: tw(f, 40, 52) }}>
         AGENTES DE IA · VOZ Y CHAT
@@ -220,7 +221,7 @@ const Cierre: React.FC<{ t: Textos }> = ({ t }) => {
       <Fondo color={C.fondo} brillo="#0f4a2e" brillo2={C.azulLogo} grid={C.borde} />
       <div style={{ position: "absolute", left: 960, top: 250, width: pulso * 2600, height: pulso * 2600, borderRadius: "50%", border: `6px solid ${C.verde}`, transform: "translate(-50%,-50%)", opacity: pulso > 0 ? 1 - pulso : 0 }} />
       <div style={{ position: "absolute", left: 960, top: 250, transform: `translate(-50%,-50%) scale(${0.3 + 0.7 * coquiE})` }}>
-        <CoquiAibVector size={300} vivo brillo={interpolate(f, [0, 14], [1, 0.25], { extrapolateRight: "clamp" })} />
+        <CoquiAibHeroe size={300} t={f} desde={{ x: 2.2, y: 0.6 }} />
       </div>
       <div style={{ position: "absolute", top: 450, width: "100%", display: "flex", justifyContent: "center", opacity: nombre, transform: `translateY(${(1 - nombre) * 40}px)` }}>
         <NombreAib tam={120} />

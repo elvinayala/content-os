@@ -4,18 +4,22 @@ import React from "react";
 import { Img, staticFile, useCurrentFrame } from "remotion";
 import { loadFont as cargarSora } from "@remotion/google-fonts/Sora";
 import { loadFont as cargarGeist } from "@remotion/google-fonts/Geist";
+import { loadFont as cargarPlex } from "@remotion/google-fonts/IBMPlexMono";
+import { random } from "remotion";
 import { evolvePath } from "@remotion/paths";
 import { C as BORI, FUENTE as ONEST, FUENTE_MONO as MONO } from "../marcas/bori";
 import { C as AIB, FUENTE as OUTFIT } from "../marcas/aib";
 import { Coqui } from "../marcas/Coqui";
 import { CoquiAibVector } from "../marcas/CoquiAibVector";
+import { CoquiAibHeroe, rebotePorGolpe, T_ATERRIZA } from "../marcas/CoquiAibHeroe";
 import { NombreAib } from "../marcas/CoquiAib";
 import { rebote, tw } from "../kit/fx";
 
+const plex = cargarPlex("normal", { weights: ["400", "500", "600", "700"], subsets: ["latin"] });
 const geist = cargarGeist("normal", { weights: ["400", "500", "600", "700", "800"], subsets: ["latin"] });
 const sora = cargarSora("normal", { weights: ["400", "600", "700", "800"], subsets: ["latin"] });
 
-export type MarcaId = "level-up" | "bori" | "ai-borinquen" | "ritmo";
+export type MarcaId = "level-up" | "bori" | "ai-borinquen" | "ritmo" | "1000x";
 
 export type TemaMarca = {
   id: MarcaId;
@@ -100,13 +104,22 @@ export const BORI_T: TemaMarca = {
 };
 
 /* ───────── AI Borinquen: agentes de IA de voz y chat a la medida (logo v2, coquí de circuitos) ───────── */
-const LogoAib: TemaMarca["Logo"] = ({ size, entrada = null, vivo = false }) => <CoquiAibVector size={size} entrada={entrada} vivo={vivo} />;
+// Logos grandes: el coquí "Hollywood" (salta, aterriza, brinca). Chicos (avatar del chat): quietos.
+const LogoAib: TemaMarca["Logo"] = ({ size, entrada = null, vivo = false }) => {
+  const f = useCurrentFrame();
+  if (size >= 150 && entrada !== null) return <CoquiAibHeroe size={size} t={entrada} />;
+  if (size >= 150 && vivo) return <CoquiAibHeroe size={size} t={f + 200} sonido={false} brincoCada={60} />;
+  return <CoquiAibVector size={size} entrada={entrada} vivo={vivo} />;
+};
+// Cierre: el nombre ya está; el coquí salta desde fuera de cuadro, cae encima y el nombre rebota con el golpe.
 const FirmaAib: TemaMarca["Firma"] = ({ size, entrada }) => {
-  const n = tw(entrada, 12, 26);
+  const n = tw(entrada, 0, 10);
+  const golpe = rebotePorGolpe(entrada, size * 0.07);
+  const escalaNombre = entrada >= T_ATERRIZA ? 1 + 0.06 * Math.exp(-(entrada - T_ATERRIZA) / 5) : 1;
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: size * 0.08 }}>
-      <CoquiAibVector size={size} entrada={entrada} vivo={entrada > 48} />
-      <div style={{ opacity: n, transform: `translateY(${(1 - n) * 30}px)` }}><NombreAib tam={size * 0.3} /></div>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: size * 0.02 }}>
+      <CoquiAibHeroe size={size} t={entrada} desde={{ x: 2.2, y: 0.6 }} />
+      <div style={{ opacity: n, transform: `translateY(${golpe}px) scale(${escalaNombre})` }}><NombreAib tam={size * 0.3} /></div>
     </div>
   );
 };
@@ -157,4 +170,55 @@ export const RITMO_T: TemaMarca = {
   musica: "audio/ritmo-musica.mp3", Logo: LogoRitmo, Firma: FirmaRitmo,
 };
 
-export const TEMAS: Record<MarcaId, TemaMarca> = { "level-up": LEVEL_UP, bori: BORI_T, "ai-borinquen": AIB_T, ritmo: RITMO_T };
+/* ───────── 1000X: plataforma de trading (ghost terminal). Fósforo solo como acento; NUNCA caras. ───────── */
+const X_PATH = "M22 22 L46 50 L22 78 L34 78 L52 57 L70 78 L82 78 L58 50 L82 22 L70 22 L52 43 L34 22 Z"; // brand/svg/1000x-mark-phosphor.svg
+const LogoMilx: TemaMarca["Logo"] = ({ size, entrada = null, vivo = false }) => {
+  const f = useCurrentFrame();
+  const e = entrada ?? 999;
+  const trazo = Math.min(1, tw(e, 0, 16));
+  const relleno = tw(e, 12, 22);
+  const d = evolvePath(trazo, X_PATH);
+  const glitch = entrada !== null && e >= 20 && e < 26;
+  const dx = glitch ? (random(`mx${f}`) - 0.5) * 8 : 0;
+  const ranura = vivo || entrada === null ? 48 + ((f * 0.6) % 30) - 15 : 48; // la ranura del logo escanea
+  const parpadeo = vivo && f % 97 < 2 ? 0.6 : 1;
+  const id = `mx${size}`;
+  const x = (color: string, off: number, op: number) => (
+    <g transform={`translate(${off} 0)`} opacity={op}>
+      <path d={X_PATH} fill={color} fillOpacity={relleno} mask={`url(#${id})`} />
+      {trazo < 1 && <path d={X_PATH} fill="none" stroke={color} strokeWidth={1.4} strokeDasharray={d.strokeDasharray} strokeDashoffset={d.strokeDashoffset} />}
+    </g>
+  );
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size} style={{ overflow: "visible", opacity: parpadeo, filter: `drop-shadow(0 0 ${size * 0.05}px #00FF87)` }}>
+      <defs><mask id={id}><rect width="100" height="100" fill="white" /><rect x="10" y={ranura} width="80" height="4" fill="black" /></mask></defs>
+      {glitch && x("#FF2D55", -dx - 2, 0.7)}
+      {glitch && x("#00E5FF", dx + 2, 0.7)}
+      {x("#00FF87", 0, 1)}
+    </svg>
+  );
+};
+const FirmaMilx: TemaMarca["Firma"] = ({ size, entrada }) => {
+  const f = useCurrentFrame();
+  const texto = "1000X";
+  const n = Math.floor(tw(entrada, 16, 28, 0, texto.length, (v) => v));
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: size * 0.1 }}>
+      <LogoMilx size={size * 0.62} entrada={entrada} vivo={entrada > 30} />
+      <div style={{ fontFamily: plex.fontFamily, fontWeight: 700, fontSize: size * 0.24, letterSpacing: "0.12em", color: "#E6F2EB", lineHeight: 1 }}>
+        {texto.slice(0, n)}<span style={{ color: "#00FF87", opacity: f % 20 < 10 ? 1 : 0 }}>_</span>
+      </div>
+      <div style={{ fontFamily: plex.fontFamily, fontSize: size * 0.055, letterSpacing: "0.3em", color: "#8A9690", opacity: tw(entrada, 26, 36) }}>NO FACE. ALL SIGNAL.</div>
+    </div>
+  );
+};
+
+export const MILX_T: TemaMarca = {
+  id: "1000x", nombre: "1000X", fuente: plex.fontFamily, mono: plex.fontFamily,
+  fondo: "#050807", superficie: "#0A0F0C", borde: "#1B2620", texto: "#E6F2EB", gris: "#8A9690",
+  acento: "#00FF87", acento2: "#00C46A", alarma: "#FF4D5E", textoCta: "#050807",
+  gradiente: "linear-gradient(110deg, #00FF87 0%, #7CFFC0 100%)", brillo: "#00301a", brillo2: "#0a1a12",
+  musica: "audio/1000x-a.mp3", Logo: LogoMilx, Firma: FirmaMilx,
+};
+
+export const TEMAS: Record<MarcaId, TemaMarca> = { "level-up": LEVEL_UP, bori: BORI_T, "ai-borinquen": AIB_T, ritmo: RITMO_T, "1000x": MILX_T };

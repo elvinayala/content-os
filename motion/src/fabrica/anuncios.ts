@@ -132,7 +132,7 @@ export const ANUNCIOS: Anuncio[] = [
 
   /* ═════════ AI BORINQUEN (de usted) ═════════ */
   {
-    id: "aib-01-8pm", marca: "ai-borinquen", formato: "9:16", titulo: "Si un cliente le escribe a las 8 de la noche, ¿quién le responde?", angulo: "Pierde leads de noche",
+    id: "aib-01-8pm", marca: "ai-borinquen", formato: "16:9", titulo: "Si un cliente le escribe a las 8 de la noche, ¿quién le responde?", angulo: "Pierde leads de noche",
     tomas: [{ archivo: "tomas/aib-01-telefono-noche.mp4", desde: 0, dur: 130 }],
     escenas: [
       { tipo: "gancho", dur: 80, etiqueta: "8:07 PM", lineas: ["Si un cliente le escribe", "a las *8 de la noche*…"] },
@@ -147,13 +147,13 @@ export const ANUNCIOS: Anuncio[] = [
     ],
   },
   {
-    id: "aib-02-se-le-escapan", marca: "ai-borinquen", formato: "9:16", titulo: "Su problema no es que le falten clientes: se le están escapando", angulo: "Velocidad = dinero",
+    id: "aib-02-se-le-escapan", marca: "ai-borinquen", formato: "16:9", titulo: "Su problema no es que le falten clientes: se le están escapando", angulo: "Velocidad = dinero",
     escenas: [
       { tipo: "gancho", dur: 100, lineas: ["Su problema no es que", "le falten clientes."] },
       { tipo: "gancho", dur: 70, lineas: ["Es que se le están", "*escapando*."], alarma: true },
       { tipo: "dato", dur: 130, grande: "78%", texto: "de los clientes le compra al *primero* que responde." },
       { tipo: "roles", dur: 140, titulo: "Su agente de IA:", roles: ["Responde en segundos", "Califica", "Agenda la cita", "Da seguimiento"] },
-      { tipo: "cierre", dur: 160, cta: "Agende su demo →", sub: "Funcionando en 21 días o no le corre la mensualidad" },
+      { tipo: "cierre", dur: 160, cta: "Agende su demo →", sub: "Su sistema listo en 7 días · 45 días de acompañamiento" },
     ],
   },
   {
@@ -162,12 +162,12 @@ export const ANUNCIOS: Anuncio[] = [
       { tipo: "gancho", dur: 100, lineas: ["No vendemos", "un *chatbot*."] },
       { tipo: "gancho", dur: 120, lineas: ["Instalamos un empleado digital", "con un *trabajo concreto*."] },
       { tipo: "roles", dur: 200, titulo: "Uno para cada puesto:", roles: ["Recepcionista", "Cobros", "Citas", "Seguimiento", "Encuestas"], sub: "Entrenado con *su* negocio, no copiado y pegado." },
-      { tipo: "gancho", dur: 130, etiqueta: "Garantía", lineas: ["Funcionando en *21 días*", "o no le corre la mensualidad."], sub: "Sin contrato de permanencia." },
+      { tipo: "gancho", dur: 130, etiqueta: "AutoFlow", lineas: ["Su sistema listo en *7 días*.", "45 días de *acompañamiento*."], sub: "Y si quiere, soporte para siempre." },
       { tipo: "cierre", dur: 200, ...CIERRE_AIB },
     ],
   },
   {
-    id: "aib-04-una-sola-cosa", marca: "ai-borinquen", formato: "9:16", titulo: "No necesita automatizar toda su empresa: empiece por una sola cosa", angulo: "Automatice una sola cosa",
+    id: "aib-04-una-sola-cosa", marca: "ai-borinquen", formato: "16:9", titulo: "No necesita automatizar toda su empresa: empiece por una sola cosa", angulo: "Automatice una sola cosa",
     escenas: [
       { tipo: "gancho", dur: 90, lineas: ["No necesita automatizar", "toda su empresa."] },
       { tipo: "gancho", dur: 70, lineas: ["Empiece por", "*una sola cosa*."] },
@@ -189,8 +189,9 @@ export const ANUNCIOS: Anuncio[] = [
 /* ═════════════════ LOTE 2 (27/sep/2026) · 30 s · cada guion en 9:16 y 16:9 ═════════════════
    Guiones aprobados por Elvin: vault/proyectos/motion/guiones-lote-2.md */
 type Guion = Omit<Anuncio, "formato">;
+// AI Borinquen va solo en horizontal (Elvin, 27/sep/2026); las demás marcas en los dos formatos.
 const ambos = (g: Guion): Anuncio[] => [
-  { ...g, id: `${g.id}-9x16`, formato: "9:16" },
+  ...(g.marca === "ai-borinquen" ? [] : [{ ...g, id: `${g.id}-9x16`, formato: "9:16" as const }]),
   { ...g, id: `${g.id}-16x9`, formato: "16:9" },
 ];
 
@@ -266,7 +267,7 @@ export const LOTE2: Guion[] = [
         { de: "cliente", texto: "Sí, por favor", en: 62 },
         { de: "agente", texto: "Listo ✅ Le separé hoy a las 5:30 PM.", en: 86 },
       ] },
-      { tipo: "cierre", dur: 130, cta: "Agende su demo →", sub: "Funcionando en 21 días o no le corre la mensualidad" },
+      { tipo: "cierre", dur: 130, cta: "Agende su demo →", sub: "Su sistema listo en 7 días · 45 días de acompañamiento" },
     ],
   },
   {
@@ -493,9 +494,9 @@ export const LOTE3: Guion[] = [
     escenas: [
       { tipo: "gancho", dur: 110, lineas: ["El miedo no es la tecnología.", "Es comprar algo que *nadie sabe usar*."] },
       { tipo: "gancho", dur: 90, lineas: ["No le entregamos una herramienta", "y *desaparecemos*."] },
-      { tipo: "pasos", dur: 200, titulo: "Sus *21 días* con nosotros", pasos: ["Entendemos su negocio", "Entrenamos a su agente", "Lo instalamos con usted", "Lo acompañamos y medimos"] },
+      { tipo: "pasos", dur: 200, titulo: "Así lo *acompañamos*", pasos: ["Entendemos su negocio", "Sistema listo en 7 días", "45 días de optimización y soporte", "Y si quiere, para siempre"] },
       { tipo: "cita", dur: 180, texto: "Pensé que la implementación sería mucho más complicada, pero ha sido bastante fácil.", autor: "Milton", rol: "CARIBE PAINT" },
-      { tipo: "gancho", dur: 120, etiqueta: "Garantía", lineas: ["Funcionando en *21 días*", "o no le corre la mensualidad."], sub: "Sin contrato de permanencia." },
+      { tipo: "gancho", dur: 120, etiqueta: "AutoFlow", lineas: ["Listo en *7 días*.", "Acompañado *45 días*."], sub: "Y si quiere, soporte para siempre." },
       { tipo: "cierre", dur: 200, ...CIERRE_AIB_30 },
     ],
   },
@@ -610,3 +611,57 @@ export const LOTE3: Guion[] = [
 ];
 
 ANUNCIOS.push(...LOTE3.flatMap(ambos));
+
+/* ═════════════════ 1000X · lanzamiento de la plataforma (27/sep/2026) · solo horizontal ═════════════════
+   Plataforma de trading de Elvin y Richy: Autopilot (bot), Radar (alertas), indicador MILEX, Guardián de riesgo
+   para cuentas de fondeo, live trading diario, psicología, journal. $497/mes con el Autopilot incluido.
+   Cumplimiento: NUNCA prometer ganancias ni que pasas la evaluación; gráfico marcado SIMULACIÓN; aviso de riesgo. */
+const AVISO_1000X = "El trading conlleva un riesgo sustancial de pérdida. Contenido ilustrativo; no es asesoría de inversión.";
+ANUNCIOS.push(
+  {
+    id: "1000x-01-autopilot", marca: "1000x", formato: "16:9", titulo: "1000X · El mejor trader de 2028 será un bot (Autopilot)", angulo: "Trabajas y no puedes estar frente a la gráfica",
+    musica: "audio/1000x-a.mp3",
+    escenas: [
+      { tipo: "gancho", dur: 110, etiqueta: "> 2028", lineas: ["El mejor trader de 2028", "no será un ser humano."] },
+      { tipo: "gancho", dur: 70, lineas: ["Será un *bot*."] },
+      { tipo: "gancho", dur: 100, lineas: ["Tú estás trabajando.", "El mercado se *mueve*."] },
+      { tipo: "notificaciones", dur: 150, lineas: ["La oportunidad llega…", "y *tú no estás*."], hora: "10:32", items: [
+        { titulo: "Reunión", detalle: "Sala B · empezó hace 2 min", hora: "10:30 AM", icono: "mensaje", color: "#5C6662" },
+        { titulo: "Radar 1000X", detalle: "Señal en MNQ · 5m", hora: "10:31 AM", icono: "mensaje", color: "#00C46A" },
+        { titulo: "Entrada perdida", detalle: "El precio ya se fue", hora: "10:32 AM", icono: "mensaje" },
+      ] },
+      { tipo: "grafico", dur: 210, modo: "autopilot", par: "MNQ", titulo: "El *Autopilot* la toma por ti", sub: "Una estrategia probada, ejecutada sin que estés frente a la gráfica.",
+        puntos: ["Sin estar pegado al gráfico", "Sin tener que aprender a operar"] },
+      { tipo: "terminal", dur: 190, ventana: "1000X_  AUTOPILOT", lineas: [
+        { t: "radar: escaneando MNQ · 5m", tipo: "dim" }, { t: "sweep de liquidez detectado" }, { t: "recuadro confirmado · ruptura al alza" },
+        { t: "orden BUY enviada · SL 30 pt · TP liquidez anterior", tipo: "ok" }, { t: "guardián: riesgo dentro de tus reglas", tipo: "ok" }, { t: "trade gestionado en automático", tipo: "ok" },
+      ] },
+      { tipo: "gancho", dur: 90, lineas: ["¿Prefieres operar *tú*?"] },
+      { tipo: "grafico", dur: 170, modo: "radar", par: "MNQ", titulo: "El *Radar* te avisa", sub: "Te llega la alerta. Tú solo entras en la posición." },
+      { tipo: "roles", dur: 170, titulo: "Y en la plataforma:", roles: ["Indicador MILEX", "Live trading diario", "Psicología de trading", "Journal automático", "Guardián de riesgo"] },
+      { tipo: "pantalla", dur: 150, imagen: "1000x-app/terminal-pc.png", dispositivo: "laptop", titulo: "Todo en *una plataforma*", sub: "Autopilot, Radar e indicador incluidos.", foco: { x: 0.36, y: 0.36, w: 0.28, h: 0.32 } },
+      { tipo: "gancho", dur: 110, lineas: ["No tienes que vivir", "*pegado al gráfico*."] },
+      { tipo: "cierre", dur: 280, cta: "Solicita tu acceso →", sub: "$497/mes · Autopilot incluido", url: "ACCESS GRANTED TO FEW", nota: AVISO_1000X },
+    ],
+  },
+  {
+    id: "1000x-02-fondeo", marca: "1000x", formato: "16:9", titulo: "1000X · ¿Cuántas evaluaciones has quemado? (cuentas de fondeo)", angulo: "Te acompañamos a pasar la evaluación, en automático",
+    musica: "audio/1000x-b.mp3",
+    escenas: [
+      { tipo: "gancho", dur: 100, alarma: true, etiqueta: "> Cuentas de fondeo", lineas: ["¿Cuántas evaluaciones", "has *quemado*?"] },
+      { tipo: "lista", dur: 170, modo: "tachar", titulo: "Lo que te saca de la *evaluación*:", items: [
+        { texto: "Operar con nervios" }, { texto: "Pasarte del límite de pérdida" }, { texto: "Sobreoperar un mal día" }, { texto: "No estar cuando llega la entrada" },
+      ] },
+      { tipo: "gancho", dur: 90, lineas: ["Pasar la cuenta no debería", "depender de tus *nervios*."] },
+      { tipo: "terminal", dur: 170, ventana: "1000X_  GUARDIÁN · REGLAS DE TU PROP FIRM", lineas: [
+        { t: "cuenta de evaluación conectada", tipo: "ok" }, { t: "límite de pérdida diaria: calculado en vivo" }, { t: "riesgo por trade: dentro de las reglas", tipo: "ok" },
+        { t: "cerca del máximo del día → pausa", tipo: "alerta" }, { t: "autopilot: solo entra con la estrategia", tipo: "ok" },
+      ] },
+      { tipo: "grafico", dur: 190, modo: "autopilot", par: "MNQ", titulo: "El *Autopilot* opera con disciplina", sub: "Sin emociones. Sin sobreoperar. Con la misma estrategia, siempre." },
+      { tipo: "pasos", dur: 170, titulo: "Te *acompañamos* en tu evaluación", pasos: ["Conectas tu cuenta de fondeo", "El Guardián cuida tus reglas", "El Autopilot ejecuta la estrategia", "Live trading diario con el equipo"] },
+      { tipo: "pantalla", dur: 130, imagen: "1000x-app/terminal-pc.png", dispositivo: "laptop", titulo: "Todo en *una plataforma*", sub: "$497 al mes, con el Autopilot incluido.", foco: { x: 0.36, y: 0.36, w: 0.28, h: 0.32 } },
+      { tipo: "gancho", dur: 120, etiqueta: "> 2028", lineas: ["El mejor trader de 2028", "no será un ser humano.", "Será un *bot*."] },
+      { tipo: "cierre", dur: 210, cta: "Solicita tu acceso →", sub: "$497/mes · Autopilot, Radar y Guardián", url: "ACCESS GRANTED TO FEW", nota: AVISO_1000X },
+    ],
+  },
+);
