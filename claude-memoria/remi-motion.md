@@ -12,6 +12,7 @@ Elvin pidió (27/sep/2026) videos de motion graphics por prompt ("showreel de 15
 - Comando `/motion <prompt>`; cerebro `vault/ceo/cerebro-remi.md`. Render de 15 s ≈ 40 s en la Mac.
 - **Ojo registro:** los ANUNCIOS de AIB van DE USTED; orgánico en tuteo. El video tiene prop `registro` y dos composiciones (`AibRecepcionista` = usted, `AibRecepcionistaTu`).
 - **Bori ≠ AI Borinquen (corrección de Elvin, 27/sep):** Bori = agencia de marketing en una sola plataforma (heybori.ai, coquí cobre en la hoja). AI Borinquen = agentes de IA de voz y chat, especializada en agentes personalizados (coquí de CIRCUITOS verde/azul, neón #2BFF88, Outfit; `public/marcas/ai-borinquen-logo-dark.png`). El 1er corte usó el coquí de Bori por error; se rehizo con `CoquiAib`.
+- **Logo v2 de AI Borinquen (aprobado por Elvin 27/sep):** recreado en vector (no existía el original) en `vault/proyectos/ai-borinquen/marca/` (generador + SVG + PNG + LEEME); en motion `CoquiAibVector` lo anima por piezas. Falta pasar flyers de Lola y páginas de AIB al v2.
 - Fase 2 pendiente: bot de Telegram / buzón de agentes para Remi (Railway necesitaría Chrome).
 
 **How to apply:** pedidos de "motion", "logo animado", "video de lanzamiento" → /motion (Remi), no Lola. Ver [[lola-creadora-ia]], [[bori-marca]], [[voz-espanol-pr-tuteo]].

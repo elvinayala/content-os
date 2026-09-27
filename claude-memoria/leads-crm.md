@@ -31,3 +31,5 @@ antes de la transición (instrucciones por DM de Slack desde la cuenta de Elvin,
 link de activación, vence 29/sep). Sin su ✅ NO se mandan los links al resto (Luis, Roger, Laura, Joaquín, Ana, Dilan)
 ni se apaga Pipedrive. Jessica tiene que llenar el Teléfono de 6 clientes activos sin número (para el filtro de
 clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETUP, quizá sea una ficha de prueba.
+
+**27/sep/2026 — AIB en Leads**: 4 embudos copiados de Pipedrive AIB, Timelines AIB conectado (token en .env.local/Vercel), quiz AIB → Diagnóstico de Automatización, acceso Aure + Luis. Falta: decidir si se cargan los ~1,000 leads abiertos (WHATSAPP + RECUPERACIÓN 2026) y el "satélite"/setter nuevo que Elvin dirá.
