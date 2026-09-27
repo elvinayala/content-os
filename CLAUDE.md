@@ -442,6 +442,11 @@ Entrega: `node motion/scripts/entregar.mjs <mp4> --marca --titulo` → Storage `
 ≈ 40 s en la Mac (`cd motion && npx remotion render src/index.ts <Id> out/<x>.mp4`; `npm run studio`
 para previsualizar). Primer video: `AibRecepcionista` (anuncio, **de usted**) y `AibRecepcionistaTu`
 (orgánico), 15 s 16:9. Cerebro `vault/ceo/cerebro-remi.md`. Fase 2: bot de Telegram/buzón.
+**Fábrica de anuncios (27/sep):** `motion/src/fabrica/` — cada anuncio es un guion en datos (`anuncios.ts`: marca,
+9:16|16:9, escenas tipadas en `tipos.ts`) que dibujan `escenas.tsx` + `temas.tsx` (Level Up / Bori / AI Borinquen,
+cada uno con su logo, fuente, registro y música). 16 anuncios de lanzamiento (LU 6 · Bori 5 · AIB 5).
+`motion/scripts/render-fabrica.sh [ids]` → `motion/out/fabrica/`; `node motion/scripts/hoja.mjs <id>` = hoja de
+contacto para revisar. Audio de marca en `motion/public/audio/<marca>-musica.mp3` (fal, normalizado).
 
 ## Resumen del día por Telegram (27/sep/2026)
 
