@@ -656,6 +656,19 @@ formulario) y abre expediente a Max; si falla queda marcada "No creó la ficha".
   onboarding). La encuesta `UDjwQkKP` vive en OTRA cuenta de Typeform (subdominio 6siljlqvh7z): sus respuestas
   no se pueden bajar con `TYPEFORM_TOKEN`. `/api/pulse/typeform` queda de respaldo hasta cancelar.
 
+- **Agenda de closers en 2 pasos** (26/sep, Elvin: "aunque no se agende, los datos que lleve me los dé"; decidió NO
+  clonar Calendly: 11 asientos ≈ $180-220/mes vs. el riesgo en 200+ citas/mes): `/f/agenda-roger` y
+  `/f/agenda-level-up` (Laura) en `lib/formularios/semillas-agenda.ts`. Paso 1 = las 10 preguntas del evento
+  "VIDEOLLAMADA POR ZOOM" (opciones EXACTAS de Calendly en `opciones`, cómo se ven en `etiquetas`) + nombre/WhatsApp/
+  e-mail; `config.parciales` guarda en cada paso desde que hay e-mail o teléfono válido (`estado: parcial`, migración
+  0023). Paso 2 = `config.calendly.url` embebido (widget.js) con pre-llenado por el link (`name`, `email`, `a1…a10` con
+  `%20`; cada pregunta dice su `calendly: "aN"`) y "Agendó" al recibir `calendly.event_scheduled`. Acción
+  `leads-closers-lu` (`leadFormularioAgenda` en `lib/leads/cables.ts`): lead en CLOSERS «Sin agendar» (etapa creada al
+  principio), dueño = setter del `?utm_source=` (los setters mandan el link con su nombre), seguimiento "llenó y no
+  agendó" a la hora; al agendar, el webhook de Calendly lo mueve a «Llamada agendada» y lo pasa al closer
+  (`forzarDueno`). ⚠️ Calendly NO pre-marca opciones que en su configuración terminan en espacio ("En un mes ",
+  "Punto equilibrio ", "5% de la facturacion total "…): hay que quitarles el espacio en Calendly.
+
 ## El ecosistema de email (ActiveCampaign)
 
 **Cada marca tiene SU cuenta de AC y nunca se mezclan (Elvin, 23/sep):** Level Up =
