@@ -1,0 +1,106 @@
+{
+  "marca": "level-up",
+  "nombre": "LU Motion + Quiz Diagnóstico",
+  "modo": "leads",
+  "creadoPor": "plantilla",
+  "fecha": "2026-09-27",
+  "cuentaId": "2010206776851",
+  "pageId": "103458229415869",
+  "igUserId": null,
+  "igHandle": null,
+  "pixelId": "27706808412306198",
+  "topeDiario": 50,
+  "minPorConjunto": 10,
+  "targetingBase": {
+    "paises": [
+      "PR"
+    ],
+    "edadMin": 25,
+    "edadMax": 60,
+    "plataformas": [
+      "instagram"
+    ],
+    "advantage": false
+  },
+  "publicos": {
+    "P1": {
+      "nombre": "PR 25-60",
+      "advantage": false,
+      "excluir": [],
+      "intereses": [],
+      "amplio": true
+    }
+  },
+  "creativos": [
+    {
+      "clave": "Q-V1",
+      "videoId": "1724653395310674",
+      "copy": {}
+    },
+    {
+      "clave": "Q-V2",
+      "videoId": "4444186029189450",
+      "copy": {}
+    },
+    {
+      "clave": "Q-V3",
+      "videoId": "4315067402138365",
+      "copy": {}
+    },
+    {
+      "clave": "Q-V4",
+      "videoId": "1425481709549213",
+      "copy": {}
+    },
+    {
+      "clave": "Q-V5",
+      "videoId": "1489240339696140",
+      "copy": {}
+    }
+  ],
+  "conjuntos": [
+    {
+      "clave": "Q-1",
+      "publico": "P1",
+      "creativo": "Q-V1",
+      "presupuestoDiario": 10,
+      "nombre": "Q-1 · PR 25-60 · Q-V1",
+      "nombreAnuncio": "Q-V1 · video 1724653395310674"
+    },
+    {
+      "clave": "Q-2",
+      "publico": "P1",
+      "creativo": "Q-V2",
+      "presupuestoDiario": 10,
+      "nombre": "Q-2 · PR 25-60 · Q-V2",
+      "nombreAnuncio": "Q-V2 · video 4444186029189450"
+    },
+    {
+      "clave": "Q-3",
+      "publico": "P1",
+      "creativo": "Q-V3",
+      "presupuestoDiario": 10,
+      "nombre": "Q-3 · PR 25-60 · Q-V3",
+      "nombreAnuncio": "Q-V3 · video 4315067402138365"
+    },
+    {
+      "clave": "Q-4",
+      "publico": "P1",
+      "creativo": "Q-V4",
+      "presupuestoDiario": 10,
+      "nombre": "Q-4 · PR 25-60 · Q-V4",
+      "nombreAnuncio": "Q-V4 · video 1425481709549213"
+    },
+    {
+      "clave": "Q-5",
+      "publico": "P1",
+      "creativo": "Q-V5",
+      "presupuestoDiario": 10,
+      "nombre": "Q-5 · PR 25-60 · Q-V5",
+      "nombreAnuncio": "Q-V5 · video 1489240339696140"
+    }
+  ],
+  "landing": "https://class.levelupmediapr.net/crecimiento?utm_campaign=motion-27sep",
+  "evento": "LEAD",
+  "urlTags": "utm_source=meta&utm_medium=paid&utm_campaign=level-up-quiz&utm_content={{ad.name}}&utm_term={{adset.name}}"
+}
