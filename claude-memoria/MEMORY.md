@@ -72,3 +72,4 @@
 - [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — 26/sep: pooler de transacciones cuelga consultas en cola → vigilante cliente-db.ts; el de sesión tiene tope 15 y tumbó prod; no cambiar sin subir pool size
 - [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — 26/sep: /f/agenda-roger y /f/agenda-level-up EN PROD (guarda a medias → Leads «Sin agendar» + Calendly pre-llenado); NO clonar Calendly todavía; falta que setters usen el link y quitar espacios a 5 opciones en Calendly
 - [Remi — motion designer](remi-motion.md) — 27/sep: motion graphics por prompt (Remotion en motion/, /motion); 1er video Recepcionista AI de AIB (anuncio de usted + orgánico tuteo); audio por fal; entrega a la bandeja
+- [AIB — acceso solo de Aure](aib-acceso-aure.md) — lo de AI Borinquen lo maneja Aure; Jessica/LU fuera; Leads AIB solo Aure, Luis, Yaileen (27/sep)

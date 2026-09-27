@@ -77,3 +77,5 @@ Gotcha Slack: nunca poner un link entre **negritas** en mensajes de Slack — lo
 **26/sep/2026 — Tesorería mensual**: tablero privado /pulse/tesoreria-mensual SOLO Level Up para María García (tesorera LU, maria@, Slack U091X0MQXV0) + Carilin y Aure; churn, LTV, ticket e ingresos se calculan solos (columnas con settings.formula). María NO ve AI Borinquen (Elvin): bloqueo en pulse_board_bloqueos.
 
 **27/sep/2026 — Acuerdo firmado automático**: columna "Acuerdo firmado" en LEVEL UP MEDIA; Pulse toma el PDF del hilo de la venta en #office-2-ventas-contrato (bot ya invitado) y si falta avisa a Jessica. Primera pasada: 8 adjuntados, Joel marcado (su hilo tiene el PDF de Edgar), 10 sin venta en el canal. Ojo: closers a veces copian correo/teléfono de otro cliente en la venta (Natacha/Angelica) → el nombre desempata.
+
+**27/sep/2026 — SOPs**: tableros SOPs · Level Up / SOPs · AI Borinquen; recordatorio diario del bot a Carilin y Aure (9 AM, 28/sep → 2/oct), estatus si ya contestaron. Prioridad de Elvin.

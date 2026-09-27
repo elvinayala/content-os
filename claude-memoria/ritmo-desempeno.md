@@ -28,3 +28,4 @@ Ritmo = la plataforma de asistencia y desempeño que Elvin pidió el 24-25/sep/2
 
 **26/sep (noche) — Noticias + Bienestar (EN PROD):** Noticias (logros/noticias/comunicados/causas benéficas; publica la maestra; últimas 3 en Hoy). Bienestar ~15 % (pausa activa guiada 5 min, minutos de ejercicio meta OMS 150/sem, energía del día, reto del equipo solo agregados; fuera del score). Elvin pidió también un chatbot: le recomendé esperar 2-3 semanas de preguntas reales a RR.HH. (Yaileen las anota) antes de construirlo.
 - 26/sep: Bienestar tiene Comunidad opcional (tablero, actividad del grupo, mensajes + 💪🔥👏); solo miembros aparecen y la ven.
+- 27/sep: Viajes (/ritmo/viajes: planificar vacaciones + viaje del año por mérito) EN PROD pero OCULTO: solo Elvin lo ve hasta que decida abrirlo.
