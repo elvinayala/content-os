@@ -665,3 +665,42 @@ ANUNCIOS.push(
     ],
   },
 );
+
+/* 1000X · segunda tanda (27/sep): C cuadrado (psicología/disciplina) y D horizontal (anti-gurú). Música distinta. */
+ANUNCIOS.push(
+  {
+    id: "1000x-03-psicologia", marca: "1000x", formato: "1:1", titulo: "1000X · Tu peor enemigo en el trading eres tú (1:1)", angulo: "Psicología y disciplina",
+    musica: "audio/1000x-c.mp3",
+    escenas: [
+      { tipo: "gancho", dur: 100, alarma: true, etiqueta: "> Psicología", lineas: ["Tu peor enemigo", "en el trading", "eres *tú*."] },
+      { tipo: "lista", dur: 180, modo: "tachar", titulo: "Lo que te hace *perder*:", items: [
+        { texto: "Entrar por impulso" }, { texto: "Mover el stop loss" }, { texto: "Querer recuperar" }, { texto: "Sobreoperar" },
+      ] },
+      { tipo: "gancho", dur: 90, lineas: ["El sistema no tiene", "*emociones*."] },
+      { tipo: "terminal", dur: 180, ventana: "1000X_  GUARDIÁN", lineas: [
+        { t: "pérdida del día cerca del límite", tipo: "alerta" }, { t: "nuevas entradas: bloqueadas hoy", tipo: "ok" },
+        { t: "psicología del día: lista" }, { t: "mañana es otro día. el plan no cambia.", tipo: "dim" },
+      ] },
+      { tipo: "roles", dur: 150, titulo: "En 1000X:", roles: ["Radar de señales", "Guardián de riesgo", "Psicología diaria", "Journal automático"] },
+      { tipo: "cierre", dur: 200, cta: "Solicita tu acceso →", sub: "$497/mes · Autopilot incluido", url: "ACCESS GRANTED TO FEW", nota: AVISO_1000X },
+    ],
+  },
+  {
+    id: "1000x-04-sin-gurus", marca: "1000x", formato: "16:9", titulo: "1000X · Sin caras. Sin Lamborghinis. Puro sistema.", angulo: "Anti-gurú: sistema probado + live trading",
+    musica: "audio/1000x-d.mp3",
+    escenas: [
+      { tipo: "gancho", dur: 100, etiqueta: "> Sin gurús", lineas: ["Sin caras.", "Sin Lamborghinis.", "Sin señales *mágicas*."] },
+      { tipo: "gancho", dur: 80, lineas: ["Puro *sistema*."] },
+      { tipo: "lista", dur: 170, modo: "tachar", titulo: "Lo que te *vendieron*:", items: [
+        { texto: "Cursos de 20 horas" }, { texto: "Señales por Telegram sin estrategia" }, { texto: "Capturas de ganancias" }, { texto: "Un gurú que nunca opera en vivo" },
+      ] },
+      { tipo: "grafico", dur: 260, modo: "radar", par: "MNQ", titulo: "Una estrategia *probada*", sub: "El indicador MILEX marca la señal y no repinta.",
+        puntos: ["Sweep de liquidez → recuadro → ruptura", "Stop definido desde la entrada"] },
+      { tipo: "gancho", dur: 110, lineas: ["Operamos *en vivo*.", "Todos los días."], sub: "Live trading diario con el equipo." },
+      { tipo: "roles", dur: 160, titulo: "Tú escoges cómo:", roles: ["Autopilot: opera por ti", "Radar: te avisa", "Tú operas con el indicador"] },
+      { tipo: "pantalla", dur: 130, imagen: "1000x-app/terminal-pc.png", dispositivo: "laptop", titulo: "Todo en *una plataforma*", sub: "$497 al mes, con el Autopilot incluido.", foco: { x: 0.36, y: 0.36, w: 0.28, h: 0.32 } },
+      { tipo: "gancho", dur: 100, lineas: ["No face.", "*All signal.*"] },
+      { tipo: "cierre", dur: 240, cta: "Solicita tu acceso →", sub: "$497/mes · Autopilot, Radar y live trading", url: "ACCESS GRANTED TO FEW", nota: AVISO_1000X },
+    ],
+  },
+);

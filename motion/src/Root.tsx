@@ -13,7 +13,7 @@ export const Root: React.FC = () => (
     {/* Fábrica de anuncios: una composición por guion (id = nombre del archivo) */}
     {ANUNCIOS.map((a) => (
       <Composition key={a.id} id={a.id} component={Anuncio} defaultProps={{ anuncio: a }} durationInFrames={duracionDe(a)} fps={30}
-        width={a.formato === "9:16" ? 1080 : 1920} height={a.formato === "9:16" ? 1920 : 1080} />
+        width={a.formato === "16:9" ? 1920 : 1080} height={a.formato === "9:16" ? 1920 : 1080} />
     ))}
   </>
 );

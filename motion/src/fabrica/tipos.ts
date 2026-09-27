@@ -3,7 +3,7 @@
 // Texto con *asteriscos* = palabra resaltada con el color de la marca.
 import type { MarcaId } from "./temas";
 
-export type Formato = "9:16" | "16:9";
+export type Formato = "9:16" | "16:9" | "1:1";
 
 export type Escena = { dur: number } & (
   | { tipo: "gancho"; lineas: string[]; sub?: string; alarma?: boolean; etiqueta?: string; logo?: boolean }

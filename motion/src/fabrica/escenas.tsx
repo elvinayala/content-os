@@ -13,9 +13,10 @@ export const TemaCtx = createContext<TemaMarca | null>(null);
 const useTema = () => useContext(TemaCtx)!;
 const useLienzo = () => {
   const { width, height } = useVideoConfig();
-  const v = height > width;
+  const cuad = width === height; // 1:1 (feed): se apila como vertical, con márgenes de feed
+  const v = height > width || cuad;
   // Zona segura: en 9:16 la UI de Reels tapa ~250 px arriba y ~380 abajo.
-  return { w: width, h: height, v, pad: v ? 80 : 120, top: v ? 250 : 90, bottom: v ? 380 : 90 };
+  return { w: width, h: height, v, cuad, pad: v ? (cuad ? 70 : 80) : 120, top: cuad ? 80 : v ? 250 : 90, bottom: cuad ? 100 : v ? 380 : 90 };
 };
 
 export const Sfx: React.FC<{ src: string; en?: number; vol?: number }> = ({ src, en = 0, vol = 0.5 }) => (
@@ -91,10 +92,10 @@ const Etiqueta: React.FC<{ texto: string; entra?: number; color?: string }> = ({
 const Nota: React.FC<{ texto?: string; entra?: number }> = ({ texto, entra = 10 }) => {
   const f = useCurrentFrame();
   const t = useTema();
-  const { v, bottom } = useLienzo();
+  const { v, bottom, pad } = useLienzo();
   if (!texto) return null;
   return (
-    <div style={{ position: "absolute", left: 0, right: 0, bottom: bottom - (v ? 60 : 40), textAlign: "center", fontFamily: t.fuente, fontSize: v ? 24 : 20, color: t.gris, opacity: 0.8 * tw(f, entra, entra + 10) }}>
+    <div style={{ position: "absolute", left: pad, right: pad, bottom: Math.max(24, bottom - (v ? 60 : 40)), textAlign: "center", fontFamily: t.fuente, fontSize: v ? 24 : 20, color: t.gris, opacity: 0.8 * tw(f, entra, entra + 10) }}>
       {texto}
     </div>
   );
@@ -135,7 +136,8 @@ const Gancho: React.FC<Extract<Escena, { tipo: "gancho" }>> = ({ lineas, sub, al
   const f = useCurrentFrame();
   const t = useTema();
   const { w, pad, v } = useLienzo();
-  const tam = ajustar(lineas, w - pad * 2, v ? 150 : 150, v ? 3 : lineas.length === 1 ? 3 : 1); // en vertical una línea larga puede partirse hasta en tres
+  const { cuad } = useLienzo();
+  const tam = ajustar(lineas, w - pad * 2, cuad ? 118 : 150, v ? 3 : lineas.length === 1 ? 3 : 1); // en vertical una línea larga puede partirse hasta en tres
   const golpeCam = 1 + 0.06 * Math.exp(-f / 4);
   const acento = alarma ? t.alarma : undefined;
   return (
@@ -692,7 +694,7 @@ const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, 
   const brillo = tw(f, 40, 62, -40, 140);
   return (
     <Marco dur={dur} gap={v ? 50 : 34}>
-      <Firma size={v ? 420 : 330} entrada={f} />
+      <Firma size={useLienzo().cuad ? 280 : v ? 420 : 330} entrada={f} />
       {sub && <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 44 : 38, color: t.gris, textAlign: "center", opacity: tw(f, 18, 28), maxWidth: v ? 900 : 1300 }}>{sub}</div>}
       <div style={{
         position: "relative", overflow: "hidden", padding: v ? "30px 64px" : "24px 60px", borderRadius: 999, background: t.gradiente,
@@ -891,7 +893,8 @@ const Grafico: React.FC<Extract<Escena, { tipo: "grafico" }>> = ({ titulo, sub, 
   const t = useTema();
   const { v, w } = useLienzo();
   const ancho = v ? w - 120 : 1060;
-  const alto = v ? 700 : 640;
+  const { cuad } = useLienzo();
+  const alto = cuad ? 440 : v ? 700 : 640;
   const N = 46;
   const senal = 26; // vela de la señal
   // serie: baja/lateral y luego impulso alcista tras la señal (determinista)
@@ -961,7 +964,7 @@ const Grafico: React.FC<Extract<Escena, { tipo: "grafico" }>> = ({ titulo, sub, 
     </div>
   );
   return (
-    <AbsoluteFill style={{ display: "flex", flexDirection: v ? "column" : "row", alignItems: "center", justifyContent: "center", gap: v ? 40 : 70, padding: v ? "230px 60px 330px" : "60px 90px" }}>
+    <AbsoluteFill style={{ display: "flex", flexDirection: v ? "column" : "row", alignItems: "center", justifyContent: "center", gap: cuad ? 24 : v ? 40 : 70, padding: cuad ? "60px 60px 80px" : v ? "230px 60px 330px" : "60px 90px" }}>
       <div style={{ width: v ? undefined : 560, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20, alignItems: v ? "center" : "flex-start" }}>
         <Titular texto={titulo} entra={2} tam={ajustar([titulo], v ? w - 160 : 560, v ? 84 : 74)} alinear={v ? "center" : "left"} />
         {sub && <div style={{ fontFamily: t.fuente, fontSize: v ? 34 : 28, color: t.gris, lineHeight: 1.35, opacity: tw(f, 12, 22), textAlign: v ? "center" : "left" }}>{sub}</div>}
