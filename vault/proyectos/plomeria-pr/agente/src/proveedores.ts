@@ -73,7 +73,11 @@ export function cambiarEstadoPlomero(id: string, estado: Proveedor["estado"]) {
 }
 /** Plomero activo que cubre un territorio (el primero; la oferta igual sale a todos los del territorio). */
 export function plomeroActivoDe(territorioId: string): Proveedor | undefined {
-  return leerRegistro().find((p) => p.estado === "activo" && p.categorias.includes("plomeria") && p.territorios.includes(territorioId));
+  return activoDe(territorioId, "plomeria");
+}
+/** Técnico activo de una categoría (plomeria · aire · handyman · electricidad) en un territorio (27/sep/2026). */
+export function activoDe(territorioId: string, categoria: string): Proveedor | undefined {
+  return leerRegistro().find((p) => p.estado === "activo" && p.categorias.includes(categoria) && p.territorios.includes(territorioId));
 }
 
 const territorios = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "territorios.json"), "utf8")) as { territorios: { id: string; municipios: string[] }[] };

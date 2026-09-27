@@ -116,7 +116,7 @@ app.post("/api/firmar/:token/tipo", (req: any, res) => {
 // ── Página de reserva (26/sep/2026): anuncios, enlace del agente y SMS del setter terminan aquí ──
 app.get("/reservar", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "reservar.html"), "utf8")); });
 app.get("/api/reservar/datos", (_req, res) => res.json(reservas.datosReserva()));
-app.get("/api/reservar/ventanas", async (req, res) => res.json({ ventanas: await reservas.ventanas(String(req.query.pueblo ?? ""), String(req.query.fecha ?? "")).catch(() => []) }));
+app.get("/api/reservar/ventanas", async (req, res) => res.json({ ventanas: await reservas.ventanas(String(req.query.pueblo ?? ""), String(req.query.fecha ?? ""), String(req.query.s ?? "")).catch(() => []) }));
 app.post("/api/reservar", async (req: any, res) => {
   try { res.json(await reservas.reservar(req.body, ipDe(req))); }
   catch (e) { console.error("reservar", e); res.status(500).json({ ok: false, error: "No pudimos crear la reserva. Escríbenos por mensaje y te la cuadramos." }); }

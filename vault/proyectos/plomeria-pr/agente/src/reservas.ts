@@ -12,7 +12,8 @@ import path from "node:path";
 import sharp from "sharp";
 import { RAIZ, almacen, type Contacto } from "./almacen.js";
 import { ejecutar } from "./herramientas.js";
-import { territorioDe, plomeroActivoDe } from "./proveedores.js";
+import { territorioDe, activoDe } from "./proveedores.js";
+import { CATALOGO, servicioPorId, NOMBRE_CATEGORIA, type Categoria } from "./catalogo.js";
 import { ventanasLibres } from "./integraciones/calendario.js";
 import { contactoPorTelefono } from "./canales/sms.js";
 import { DIR_FOTOS } from "./ciclo-trabajo.js";
@@ -21,16 +22,19 @@ import { archivar } from "./historial.js";
 const MENU = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "menu.json"), "utf8"));
 const TERR = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "territorios.json"), "utf8")).territorios as { id: string; municipios: string[] }[];
 
-/** Lo que la página necesita para pintarse: servicios del menú, pueblos con plomero activo y el cargo de coordinación. */
+/** Pueblos donde hay un técnico activo de esa categoría. */
+const pueblosDe = (cat: Categoria) => TERR.filter((t) => activoDe(t.id, cat)).flatMap((t) => t.municipios).sort((a, b) => a.localeCompare(b, "es"));
+/** Lo que la página necesita: servicios de los oficios que tienen técnico activo en algún pueblo (27/sep: plomería,
+ *  handyman, electricidad…; aire en pausa), los pueblos de cada oficio y el cargo de coordinación. */
 export function datosReserva() {
-  const servicios = MENU.servicios.filter((s: any) => !s.cotizacion).map((s: any) => ({ id: s.id, nombre: s.nombre, nivel: s.nivel, precio: s.precio ?? null, desde: s.rango?.[0] ?? null, hasta: s.rango?.[1] ?? null, nota: s.nota ?? null }));
-  const pueblos = TERR.filter((t) => plomeroActivoDe(t.id)).flatMap((t) => t.municipios).sort((a, b) => a.localeCompare(b, "es"));
-  return { servicios, pueblos, coordinacion: MENU.cargo_coordinacion, garantiaMeses: MENU.garantia_meses, pagoAlTerminar: true };
+  const pueblosPor = Object.fromEntries((Object.keys(NOMBRE_CATEGORIA) as Categoria[]).map((c) => [c, pueblosDe(c)])) as Record<Categoria, string[]>;
+  const servicios = CATALOGO.filter((s) => !s.cotizacion && pueblosPor[s.categoria].length).map((s) => ({ id: s.id, nombre: s.nombre, nivel: s.nivel, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], precio: s.precio ?? null, desde: s.rango?.[0] ?? null, hasta: s.rango?.[1] ?? null, nota: s.nota ?? null }));
+  return { servicios, pueblos: pueblosPor.plomeria, pueblosPor, coordinacion: MENU.cargo_coordinacion, garantiaMeses: MENU.garantia_meses, pagoAlTerminar: true };
 }
 
-export async function ventanas(pueblo: string, fecha: string) {
-  const t = territorioDe(pueblo);
-  if (!t || !plomeroActivoDe(t) || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return [];
+export async function ventanas(pueblo: string, fecha: string, servicioId = "") {
+  const t = territorioDe(pueblo), cat = servicioPorId(servicioId)?.categoria ?? "plomeria";
+  if (!t || !activoDe(t, cat) || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return [];
   return ventanasLibres(t, fecha, false);
 }
 
@@ -43,17 +47,17 @@ export async function reservar(b: any, ip: string): Promise<{ ok: true; trabajoI
   if (lista.length >= 5) return { ok: false, error: "Demasiadas reservas desde esta conexión. Escríbenos por mensaje y te ayudamos." };
   intentos.set(ip, [...lista, ahora]);
 
-  const servicio = MENU.servicios.find((s: any) => s.id === b?.servicio_id && !s.cotizacion);
-  if (!servicio) return { ok: false, error: "Escoge el servicio." };
+  const servicio = servicioPorId(String(b?.servicio_id ?? ""));
+  if (!servicio || servicio.cotizacion) return { ok: false, error: "Escoge el servicio." };
   const pueblo = limpio(b?.pueblo, 60); const t = territorioDe(pueblo);
-  if (!t || !plomeroActivoDe(t)) return { ok: false, error: "Todavía no damos servicio en ese pueblo. Escríbenos por mensaje y te avisamos cuando lleguemos." };
+  if (!t || !activoDe(t, servicio.categoria)) return { ok: false, error: `Todavía no tenemos ${NOMBRE_CATEGORIA[servicio.categoria].toLowerCase()} en ese pueblo. Escríbenos por mensaje y te avisamos cuando lleguemos.` };
   const tel = String(b?.telefono ?? "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
   if (tel.length !== 10) return { ok: false, error: "El teléfono debe tener 10 dígitos." };
   const nombre = limpio(b?.nombre, 80), direccion = limpio(b?.direccion, 200);
   if (nombre.length < 3) return { ok: false, error: "Falta tu nombre." };
   if (direccion.length < 6) return { ok: false, error: "Falta la dirección (urbanización, calle y número)." };
   const inicio = String(b?.inicio ?? ""), fin = String(b?.fin ?? "");
-  const libres = await ventanas(pueblo, inicio.slice(0, 10));
+  const libres = await ventanas(pueblo, inicio.slice(0, 10), servicio.id);
   if (!libres.some((v) => new Date(v.inicio).getTime() === new Date(inicio).getTime())) return { ok: false, error: "Ese horario ya no está disponible. Escoge otro." };
 
   // El mismo contacto si ya nos escribió (Messenger/IG/SMS con ese teléfono); si no, uno nuevo de la web.

@@ -22,7 +22,8 @@
      "ad": "120255133898870029"
     }
    },
-   "adset": "120255133741700029"
+   "adset": "120255133741700029",
+   "estado": "PAUSADO 27/sep: Elvin deja aire para después (nicho)"
   },
   "handyman": {
    "anuncios": {
@@ -64,7 +65,8 @@
      "ad": "120255133910130029"
     }
    },
-   "adset": "120255133744340029"
+   "adset": "120255133744340029",
+   "estado": "PAUSADO 27/sep: electricidad va próximamente"
   },
   "cotizador": {
    "anuncios": {
@@ -88,5 +90,5 @@
    "adset": "120255133746000029"
   }
  },
- "estado": "Campaña EN PAUSA (Elvin: se prende el lunes). 4 conjuntos × $10 = $40/día, categoría Empleo, toda la isla; flyer + historia + video por puesto."
+ "estado": "Campaña EN PAUSA (Elvin la prende el lunes). Activos al prender: handyman y cotizador ($20/día). Aire y perito pausados."
 }

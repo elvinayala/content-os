@@ -6,6 +6,9 @@
  * asignarlo a mano.
  */
 import fs from "node:fs";
+import { servicioPorId, TECNICO_DE } from "./catalogo.js";
+/** "plomero licenciado", "handyman registrado en DACO"… según el servicio del trabajo (27/sep). */
+const tecnicoDe = (t: { servicioId: string }) => TECNICO_DE[servicioPorId(t.servicioId)?.categoria ?? "plomeria"];
 import path from "node:path";
 import { RAIZ, almacen } from "./almacen.js";
 import { config } from "./config.js";
@@ -97,7 +100,7 @@ export async function expirarSiSigueAbierta(id: string) {
     const t = almacen.trabajos().find((x) => x.id === o.referencia);
     // La setter llama al cliente para moverle el día o la hora (sin datos de los plomeros ni links de admin).
     if (t) await avisarVentas(`🔁 Cita sin plomero: ${t.nombre} · ${String(t.telefono ?? "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "").replace(/^(\d{3})(\d{3})(\d{4})$/, "$1-$2-$3")} · ${t.municipio}\n${t.servicio} · ${new Date(t.inicio).toLocaleString("es-PR", { timeZone: config.zonaHoraria, weekday: "long", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}\nNingún plomero pudo a esa hora. Llama al cliente y muévele el día o la hora (reserva de nuevo en la página).\nConversación: ${linkCliente(t.contactoId)}`).catch(() => undefined);
-    if (t) await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]}, todavía estamos confirmando el plomero para tu ${t.servicio.toLowerCase()}. Te escribimos por aquí en cuanto lo tengamos, o con otra hora si esa no se puede.`);
+    if (t) await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]}, todavía estamos confirmando el ${tecnicoDe(t).split(" ")[0]} para tu ${t.servicio.toLowerCase()}. Te escribimos por aquí en cuanto lo tengamos, o con otra hora si esa no se puede.`);
   }
 }
 /** Al arrancar el servidor, re-programa las ofertas abiertas (los timers viven en memoria). */
@@ -157,7 +160,7 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   await avisarAlTelefono(p.whatsapp, `✅ *${o.id} es tuyo*, ${p.nombre.split(" ")[0]}.\n${o.categoriaNombre} · ${cuando(o.inicio)}\n${cliente}${firma}\n\nRecuerda: fotos de antes y después, y el cliente le paga a Resuelto.`);
   notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente${o.contrato?.urlFirma ? " y firmar tu orden" : ""}.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);
   for (const id of o.avisados) if (id !== p.id) { const q = porId(id); if (q) { avisarAlTelefono(q.whatsapp, `${o.id} ya lo tomó otro proveedor. Te avisamos del próximo.`).catch(() => undefined); notificar(q.id, { titulo: `${o.id} ya se asignó`, cuerpo: "Otro proveedor lo tomó primero. Te avisamos del próximo.", url: linkPortal(q.id, config.urlPublica), tag: o.id }).catch(() => undefined); } }
-  if (t) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, plomero licenciado de Resuelto. Te escribimos cuando vaya en camino.`);
+  if (t) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, ${tecnicoDe(t)} de Resuelto. Te escribimos cuando vaya en camino.`);
   await avisarCoordinador(`${manual ? "🛠️ Asignado a mano" : "✅ Aceptado"} ${o.id} → ${p.nombre} (${p.tipo}) · ${o.contrato ? "orden " + o.contrato.estado : "cubierto por su acuerdo de afiliación"}`);
   return { ok: true, oferta: o };
 }

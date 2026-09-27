@@ -114,7 +114,8 @@
     box.style.display = "block";
     if (s.precio != null) { $("precioN").textContent = `$${s.precio}`; $("precioP").textContent = `Precio fijo de mano de obra + $${datos.coordinacion} de coordinación. Materiales aparte, al costo con recibo. ${datos.garantiaMeses} meses de garantía.`; }
     else { $("precioN").textContent = `$${s.desde.toLocaleString("en-US")} – $${s.hasta.toLocaleString("en-US")}`; $("precioP").textContent = "El plomero te confirma el precio fijo por escrito en tu casa, antes de empezar."; }
-    if (s.id === "diagnostico") $("precioP").textContent = "El plomero ve el problema y te da el precio fijo por escrito. Si se hace el trabajo, los $69 se acreditan.";
+    if (/diagnostico$/.test(s.id)) $("precioP").textContent = `El ${s.categoria === "plomeria" ? "plomero" : "técnico"} ve el problema y te da el precio fijo por escrito. Si se hace el trabajo, los $${s.precio} se acreditan.`;
+    else if (s.precio == null) $("precioP").textContent = `El ${s.categoria === "plomeria" ? "plomero" : "técnico"} te confirma el precio fijo por escrito en tu casa, antes de empezar.`;
     resumen();
   }
   function pintarDias() {
@@ -127,7 +128,7 @@
     const box = $("horas");
     if (!$("pueblo").value || !dia) { box.innerHTML = '<div class="vacio">Escoge tu pueblo y un día.</div>'; return resumen(); }
     box.innerHTML = '<div class="vacio">Buscando espacios…</div>';
-    const r = await fetch(`/api/reservar/ventanas?pueblo=${encodeURIComponent($("pueblo").value)}&fecha=${dia}`).then((x) => x.json()).catch(() => ({ ventanas: [] }));
+    const r = await fetch(`/api/reservar/ventanas?pueblo=${encodeURIComponent($("pueblo").value)}&fecha=${dia}&s=${encodeURIComponent($("servicio").value)}`).then((x) => x.json()).catch(() => ({ ventanas: [] }));
     const vs = r.ventanas || [];
     if (!vs.length) { box.innerHTML = '<div class="vacio">No quedan espacios ese día. Prueba otro.</div>'; return resumen(); }
     box.innerHTML = vs.map((v) => `<button type="button" data-i="${esc(v.inicio)}" data-f="${esc(v.fin)}" class="${ventana && ventana.inicio === v.inicio ? "sel" : ""}">${hora12(v.inicio)} – ${hora12(v.fin)}</button>`).join("");
@@ -144,7 +145,13 @@
     for (const f of [...e.target.files].slice(0, 4 - fotos.length)) { try { fotos.push(await achicar(f)); } catch {} }
     $("fotos").innerHTML = fotos.map((d) => `<img src="${d}" alt="Foto del área">`).join(""); e.target.value = "";
   };
-  $("servicio").onchange = precio;
+  // Pueblos del oficio escogido (27/sep: cada oficio tiene sus técnicos y sus pueblos).
+  function pueblos() {
+    const s = servicioSel(), lista = s && datos.pueblosPor ? datos.pueblosPor[s.categoria] || [] : datos.pueblos, antes = $("pueblo").value;
+    $("pueblo").innerHTML = `<option value="">Escoge tu pueblo…</option>${lista.map((p) => `<option>${esc(p)}</option>`).join("")}`;
+    if (lista.includes(antes)) $("pueblo").value = antes; else { ventana = null; horas(); }
+  }
+  $("servicio").onchange = () => { pueblos(); precio(); };
   $("pueblo").onchange = () => { ventana = null; horas(); };
   $("f").onsubmit = async (e) => {
     e.preventDefault(); error("");
@@ -164,12 +171,14 @@
   };
   fetch("/api/reservar/datos").then((r) => r.json()).then((d) => {
     datos = d;
-    const grupo = (n, t) => { const xs = d.servicios.filter((s) => s.nivel === n && s.id !== "diagnostico"); return xs.length ? `<optgroup label="${t}">${xs.map((s) => `<option value="${s.id}">${esc(s.nombre)} · ${s.precio != null ? "$" + s.precio : "desde $" + s.desde.toLocaleString("en-US")}</option>`).join("")}</optgroup>` : ""; };
+    const grupo = (n, t) => { const xs = d.servicios.filter((s) => s.categoria === "plomeria" && s.nivel === n && s.id !== "diagnostico"); return xs.length ? `<optgroup label="${t}">${xs.map((s) => `<option value="${s.id}">${esc(s.nombre)} · ${s.precio != null ? "$" + s.precio : "desde $" + s.desde.toLocaleString("en-US")}</option>`).join("")}</optgroup>` : ""; };
+    const oficios = [...new Set(d.servicios.filter((s) => s.categoria !== "plomeria").map((s) => s.categoria))];
+    const grupoOficio = (c) => { const xs = d.servicios.filter((s) => s.categoria === c); return `<optgroup label="${esc(xs[0].oficio)}">${xs.map((s) => `<option value="${s.id}">${esc(s.nombre)} · ${s.precio != null ? "$" + s.precio : "desde $" + s.desde.toLocaleString("en-US")}</option>`).join("")}</optgroup>`; };
     const diag = d.servicios.find((s) => s.id === "diagnostico");
-    $("servicio").innerHTML = `<option value="">Escoge el servicio…</option>${diag ? `<option value="diagnostico">No sé qué es / no está en la lista · Visita de diagnóstico $${diag.precio}</option>` : ""}${grupo("P", "Trabajos pequeños")}${grupo("M", "Trabajos medianos")}${grupo("G", "Trabajos grandes (precio en sitio)")}`;
+    $("servicio").innerHTML = `<option value="">Escoge el servicio…</option>${diag ? `<option value="diagnostico">No sé qué es / no está en la lista · Visita de diagnóstico $${diag.precio}</option>` : ""}${grupo("P", "Trabajos pequeños")}${grupo("M", "Trabajos medianos")}${grupo("G", "Trabajos grandes (precio en sitio)")}${oficios.map(grupoOficio).join("")}`;
     $("pueblo").innerHTML = `<option value="">Escoge tu pueblo…</option>${d.pueblos.map((p) => `<option>${esc(p)}</option>`).join("")}`;
-    if (q.get("s") && d.servicios.some((s) => s.id === q.get("s"))) $("servicio").value = q.get("s");
-    if (q.get("p") && d.pueblos.includes(q.get("p"))) $("pueblo").value = q.get("p");
+    if (q.get("s") && d.servicios.some((s) => s.id === q.get("s"))) $("servicio").value = q.get("s"); pueblos();
+    if (q.get("p") && [...$("pueblo").options].some((o) => o.value === q.get("p"))) $("pueblo").value = q.get("p");
     precio(); pintarDias();
   }).catch(() => error("Sin conexión. Vuelve a abrir la página."));
 })();

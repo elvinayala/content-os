@@ -24,6 +24,8 @@ import { programarLlamadaHumana } from "./llamar-cliente.js";
 /** Quién puede hacer plomería en PR (Ley 59-2022): licencia de oficial o maestro, o certificado de aprendiz (con un maestro). */
 const PUEDE_TRABAJAR = ["maestro", "oficial", "aprendiz"];
 import { config } from "./config.js";
+import { buscar as buscarCatalogo, servicioPorId, NOMBRE_CATEGORIA, TECNICO_DE, esCategoria, type Categoria as CategoriaServicio } from "./catalogo.js";
+import { activoDe } from "./proveedores.js";
 import { listar as listarProveedores, linkPortal } from "./proveedores.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import { notificar } from "./push.js";
@@ -38,13 +40,13 @@ const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,
 export const definiciones: Anthropic.Beta.BetaTool[] = [
   {
     name: "buscar_precio",
-    description: "Busca en el menú de Resuelto el servicio que mejor corresponde al problema descrito y devuelve su precio fijo o rango, nivel (P/M/G) y notas. Úsala antes de dar cualquier precio.",
+    description: "Busca en el menú de Resuelto (plomería, handyman, electricidad y aire acondicionado) el servicio que mejor corresponde al problema descrito y devuelve su precio fijo o rango, nivel (P/M/G), su oficio (categoria) y notas. Úsala antes de dar cualquier precio; después verifica cobertura CON ese oficio.",
     input_schema: { type: "object", properties: { problema: { type: "string", description: "Descripción del problema o servicio en palabras del cliente" } }, required: ["problema"], additionalProperties: false },
   },
   {
     name: "verificar_cobertura",
-    description: "Dado un municipio de Puerto Rico, dice si tenemos cobertura activa, el territorio, y el plomero asignado. Estados: activo, reclutando, pronto, sin-cobertura.",
-    input_schema: { type: "object", properties: { municipio: { type: "string" } }, required: ["municipio"], additionalProperties: false },
+    description: "Dado un municipio de Puerto Rico y el oficio (categoria que devolvió buscar_precio; plomeria si no se sabe), dice si hay un técnico activo de ese oficio, el territorio y los oficios que sí tenemos ahí. Estados: activo, reclutando, pronto, sin-cobertura.",
+    input_schema: { type: "object", properties: { municipio: { type: "string" }, oficio: { type: "string", enum: ["plomeria", "aire", "handyman", "electricidad"], description: "categoria del servicio (default plomeria)" } }, required: ["municipio"], additionalProperties: false },
   },
   {
     name: "consultar_disponibilidad",
@@ -193,17 +195,6 @@ export const definiciones: Anthropic.Beta.BetaTool[] = [
 
 type Ctx = { contacto: Contacto; ultimoTexto?: string };
 
-function buscarServicio(problema: string) {
-  const p = norm(problema);
-  const puntuar = (s: (typeof menu.servicios)[number]) => {
-    let pts = 0;
-    for (const a of (s as any).alias as string[] ?? []) if (p.includes(norm(a))) pts += 3 + norm(a).length / 10;
-    for (const w of norm(s.nombre).split(/\s+/)) if (w.length > 3 && p.includes(w)) pts += 1;
-    return pts;
-  };
-  const ordenados = menu.servicios.map((s) => ({ s, pts: puntuar(s) })).sort((a, b) => b.pts - a.pts);
-  return ordenados[0].pts > 0 ? ordenados.slice(0, 3).filter((x) => x.pts > 0).map((x) => x.s) : [];
-}
 
 function territorioDeMunicipio(municipio: string) {
   const m = norm(municipio);
@@ -213,17 +204,19 @@ function territorioDeMunicipio(municipio: string) {
 export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<unknown> {
   switch (nombre) {
     case "buscar_precio": {
-      const res = buscarServicio(input.problema);
+      const res = buscarCatalogo(input.problema);
       if (!res.length) return { encontrado: false, sugerencia: "No está en el menú. Ofrece diagnóstico ($69, se acredita) o escala si es comercial." };
-      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct, garantia_meses: menu.garantia_meses };
+      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct, garantia_meses: menu.garantia_meses };
     }
     case "verificar_cobertura": {
       const t = territorioDeMunicipio(input.municipio);
       if (!t) return { estado: "sin-cobertura", municipio: input.municipio, accion: "lista de espera" };
-      // Cobertura REAL: hay servicio solo si hay un plomero ACTIVO en el registro para ese territorio.
-      const pl = plomeroDeTerritorio(t.id);
-      const estado = pl ? "activo" : t.estado === "activo" ? "reclutando" : t.estado;
-      return { estado, territorio_id: t.id, territorio: t.nombre, plomero: pl ? { id: pl.id, nombre: pl.nombre } : null, accion: pl ? "agendar" : "lista de espera" };
+      // Cobertura REAL por oficio: hay servicio solo si hay un técnico ACTIVO de ese oficio en el territorio (27/sep).
+      const cat: CategoriaServicio = esCategoria(input.oficio) ? input.oficio : "plomeria";
+      const pl = cat === "plomeria" ? plomeroDeTerritorio(t.id) : activoDe(t.id, cat);
+      const estado = pl ? "activo" : t.estado === "activo" || cat !== "plomeria" ? "reclutando" : t.estado;
+      const oficiosAqui = (Object.keys(NOMBRE_CATEGORIA) as CategoriaServicio[]).filter((c) => (c === "plomeria" ? plomeroDeTerritorio(t.id) : activoDe(t.id, c))).map((c) => NOMBRE_CATEGORIA[c]);
+      return { estado, oficio: NOMBRE_CATEGORIA[cat], territorio_id: t.id, territorio: t.nombre, tecnico: pl ? { id: pl.id, nombre: pl.nombre } : null, oficios_con_tecnico_aqui: oficiosAqui, accion: pl ? "agendar" : "lista de espera (dile que todavía no tenemos " + NOMBRE_CATEGORIA[cat].toLowerCase() + " en su zona y que le avisamos)" };
     }
     case "enlace_reserva": {
       const q = new URLSearchParams({ s: String(input.servicio_id ?? ""), p: String(input.municipio ?? ""), o: ctx.contacto.canal });
@@ -234,14 +227,15 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       return { fecha: input.fecha, ventanas: v, simulado: !config.tiene.calendario() };
     }
     case "agendar_cita": {
-      const servicio = menu.servicios.find((s) => s.id === input.servicio_id);
+      const servicio = servicioPorId(String(input.servicio_id));
       if (!servicio) return { error: "servicio_id inválido; usa buscar_precio" };
       const t = territorios.territorios.find((x) => x.id === input.territorio_id);
       if (!t) return { error: "territorio inválido" };
-      if (!plomeroDeTerritorio(t.id)) return { error: "sin_plomero_activo", accion: "No agendes. Todavía no hay plomero activo en esa zona: ofrece la lista de espera (agregar_lista_espera) y di que le avisamos apenas abramos." };
+      const hayTecnico = servicio.categoria === "plomeria" ? plomeroDeTerritorio(t.id) : activoDe(t.id, servicio.categoria);
+      if (!hayTecnico) return { error: "sin_tecnico_activo", accion: `No agendes. Todavía no hay ${TECNICO_DE[servicio.categoria]} activo en esa zona: ofrece la lista de espera (agregar_lista_espera) y di que le avisamos apenas abramos.` };
       const id = almacen.nuevoIdTrabajo();
       const manoObra = servicio.precio ?? null;
-      const ghlId = ctx.contacto.ghlContactId ?? (await upsertContacto({ nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, tags: ["cliente", "agendado", t.id], fuente: ctx.contacto.canal }));
+      const ghlId = ctx.contacto.ghlContactId ?? (await upsertContacto({ nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, tags: ["cliente", "agendado", t.id, servicio.categoria], fuente: ctx.contacto.canal }));
       let oportunidadId: string | undefined;
       if (ghlId) oportunidadId = await crearOportunidad({ contactId: ghlId, nombre: input.nombre, valor: (manoObra ?? servicio.rango?.[0] ?? 0) + menu.cargo_coordinacion, trabajoId: id });
       const trabajo: Trabajo = { id, contactoId: ctx.contacto.id, nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, territorio: t.id, plomeroId: "", servicioId: servicio.id, servicio: servicio.nombre, nivel: servicio.nivel as any, manoObra, rango: servicio.rango, fee: menu.cargo_coordinacion, emergencia: !!input.emergencia, direccion: input.direccion, referencia: input.referencia || undefined, inicio: input.inicio, fin: input.fin, estado: "agendado", ghlOpportunityId: oportunidadId, fotos: [], creado: new Date().toISOString() };
@@ -249,7 +243,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       almacen.guardarContacto({ ...ctx.contacto, nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, direccion: input.direccion, tipo: "cliente", ghlContactId: ghlId });
       // Despacho: la oferta sale a todos los plomeros del territorio; el primero que acepta se la lleva.
       const pagoPlomero = manoObra ? Math.round(manoObra * 0.65 * 100) / 100 : 0;
-      const oferta = await crearOferta({ tipo: "trabajo", referencia: id, categoria: "plomeria", categoriaNombre: servicio.nombre, territorio: t.id, municipio: input.municipio, resumen: `${servicio.nombre}${input.emergencia ? " · EMERGENCIA" : ""}. ${input.notas || ""}`.trim(), pagoProveedor: pagoPlomero + (input.emergencia ? Math.round(menu.recargo_emergencia * 0.65 * 100) / 100 : 0), inicio: input.inicio, fin: input.fin });
+      const oferta = await crearOferta({ tipo: "trabajo", referencia: id, categoria: servicio.categoria, categoriaNombre: servicio.nombre, territorio: t.id, municipio: input.municipio, resumen: `${servicio.nombre}${input.emergencia ? " · EMERGENCIA" : ""}. ${input.notas || ""}`.trim(), pagoProveedor: pagoPlomero + (input.emergencia ? Math.round(menu.recargo_emergencia * 0.65 * 100) / 100 : 0), inicio: input.inicio, fin: input.fin });
       return { ok: true, trabajo_id: id, oferta_id: oferta.id, plomeros_avisados: oferta.avisados.length, crm: oportunidadId ? "creado" : "simulado", total_estimado: manoObra ? manoObra + menu.cargo_coordinacion + (input.emergencia ? menu.recargo_emergencia : 0) : null, nota_para_el_cliente: "Confirma la cita; el nombre y la foto del plomero se envían 30 minutos antes." };
     }
     case "consultar_trabajo": {

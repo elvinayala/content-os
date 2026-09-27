@@ -6,6 +6,9 @@
  * Sin al menos 1 foto del "después" no se puede cerrar.
  */
 import fs from "node:fs";
+import { servicioPorId, TECNICO_DE } from "./catalogo.js";
+/** "plomero licenciado", "handyman registrado en DACO"… según el servicio del trabajo (27/sep). */
+const tecnicoDe = (t: { servicioId: string }) => TECNICO_DE[servicioPorId(t.servicioId)?.categoria ?? "plomeria"];
 import path from "node:path";
 import sharp from "sharp";
 import { RAIZ, almacen, type Trabajo } from "./almacen.js";
@@ -53,7 +56,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     if (t.estado !== "agendado") return { ok: false, motivo: "Ya marcaste este paso." };
     almacen.guardarTrabajo({ ...t, estado: "en-camino", enCaminoEn: ahora });
     archivar(t.contactoId, "sistema", `${t.id}: ${p.nombre} marcó "voy en camino".`, t.id);
-    await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]} 👋 Te escribe Resuelto.\n\n${primer}, tu plomero licenciado, va en camino para tu ${t.servicio.toLowerCase()}. Llega dentro de tu ventana (${hora(t.inicio)}–${hora(t.fin)}).\n\nRecuerda: al final le pagas a Resuelto por link o ATH Móvil, nunca en efectivo al plomero. Cualquier cosa, escríbenos por aquí.`).catch(() => undefined);
+    await avisarCliente(t, `Hola ${t.nombre.split(" ")[0]} 👋 Te escribe Resuelto.\n\n${primer}, tu ${tecnicoDe(t)}, va en camino para tu ${t.servicio.toLowerCase()}. Llega dentro de tu ventana (${hora(t.inicio)}–${hora(t.fin)}).\n\nRecuerda: al final le pagas a Resuelto por link o ATH Móvil, nunca en efectivo al plomero. Cualquier cosa, escríbenos por aquí.`).catch(() => undefined);
     return { ok: true, estado: "en-camino" };
   }
   if (paso === "llegue") {

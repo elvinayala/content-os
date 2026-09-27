@@ -26,7 +26,8 @@ export function anosExperiencia(texto?: string): number | null {
 export type Oficio = "plomero" | "aire" | "handyman" | "electricista" | "cotizador";
 export const OFICIOS: Record<Oficio, { nombre: string; habilitan: string[] | null; sinLicencia: string }> = {
   plomero: { nombre: "plomero", habilitan: ["maestro", "oficial", "aprendiz"], sinLicencia: "Sin licencia de oficial o maestro ni certificado de aprendiz, por ley (Ley 59-2022) no puede hacer plomería. Explícale la ruta del certificado de aprendiz (curso de 3 meses en una escuela acreditada, lo solicita a la Junta) y que nos escriba cuando lo tenga." },
-  aire: { nombre: "técnico de aire acondicionado", habilitan: ["licencia de refrigeracion"], sinLicencia: "Sin la licencia de técnico de refrigeración y aire acondicionado (Junta Examinadora, Ley 36) no puede trabajar aire acondicionado por Resuelto. Anótalo y dile que cuando tenga la licencia nos escriba; si está estudiando, que nos avise al sacarla." },
+  // 27/sep/2026: Elvin dejó aire acondicionado para después ("es nicho"): no hay entrevista, va a lista de espera.
+  aire: { nombre: "técnico de aire acondicionado", habilitan: [], sinLicencia: "Aire acondicionado todavía no lo abrimos. Anótalo en la lista de espera con anotar_otro_oficio (oficio: técnico de aire acondicionado) y dile que cuando abramos lo llamamos primero." },
   handyman: { nombre: "handyman", habilitan: null, sinLicencia: "" },
   electricista: { nombre: "perito electricista", habilitan: ["perito electricista"], sinLicencia: "Sin licencia de Perito Electricista no puede hacer trabajos eléctricos por Resuelto (es la ley). Si es ayudante de perito, anótalo y dile que cuando saque la licencia lo llamamos." },
   cotizador: { nombre: "cotizador de proyectos", habilitan: null, sinLicencia: "" },

@@ -105,7 +105,7 @@ test("las citas del calendario de GHL cuentan como ocupadas", async () => {
 test("oficios nuevos: el candado legal de cada uno", () => {
   assert.ok(R.aptoParaEntrevista(undefined, "maestro"));
   assert.ok(!R.aptoParaEntrevista("plomero", "no tiene"));
-  assert.ok(R.aptoParaEntrevista("aire", "licencia de refrigeracion"));
+  assert.ok(!R.aptoParaEntrevista("aire", "licencia de refrigeracion")); // aire en pausa (27/sep): lista de espera
   assert.ok(!R.aptoParaEntrevista("aire", "en tramite"));
   assert.ok(R.aptoParaEntrevista("electricista", "perito electricista"));
   assert.ok(!R.aptoParaEntrevista("electricista", "no tiene"));
