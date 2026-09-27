@@ -193,7 +193,7 @@ La reunión de churn del **06/07** ordenó TODAS las razones de baja en tres cub
 
 ### 3. Baja asistencia / no-shows (objeción implícita: "no era prioridad")
 - **Dónde:** 50% de no-shows en AI Borinquen ([[ceo/perfil-ceo]]); de 7 citas, solo 1 confirmada ([[2026-02-16-blas-confirmacion-citas]]); show-up 40-50%, meta 60-80% ([[2026-05-22-luis-ia-levelapp]]). Diagnóstico fresco (25/07): los leads llegan *"desnutridos"* — no-shows y poco preparados — porque el anuncio no los educó ni el setter escarbó el dolor ([[2026-07-25-sesion-equipo-ventas]]).
-- **Rebate:** secuencia de confirmación cada 6-8h con **testimonios**; **regla ancla: responder en <5 min o cae la conversión ~80%**. Prevención río arriba (25/07): **anuncio con prueba social que nutre** (*"+50 casos, 100% legalizados, +12 meses"*) + **setter extractor de dolor** — asumir siempre que el lead no te conoce.
+- **Rebate:** secuencia de confirmación cada 6-8h con **testimonios**; **regla ancla: responder en <5 min o cae la conversión ~80%**. Prevención río arriba (25/07): **anuncio con prueba social que nutre** (*"+100 negocios [antes +50; Elvin 27/sep], 100% legalizados, +12 meses"*) + **setter extractor de dolor** — asumir siempre que el lead no te conoce.
 
 ### 4. El lead que no compra (freno interno del closer, no objeción del cliente)
 - **Dónde:** frame de mentalidad que Elvin enseña a los closers en la sesión de ventas del 25/07, para que el rechazo no genere ansiedad ni descuentos ([[2026-07-25-estrategia-ventas-autoflow-arturo]]).

@@ -35,9 +35,10 @@ export const ANUNCIOS: Anuncio[] = [
     escenas: [
       { tipo: "gancho", dur: 100, etiqueta: "Para doctores y profesionales de la salud", lineas: ["Eres *doctor*,", "no marketero."] },
       { tipo: "gancho", dur: 110, lineas: ["Trabajas 15 horas al día.", "¿Cuándo consigues", "*pacientes nuevos*?"] },
-      { tipo: "pasos", dur: 210, titulo: "Nosotros lo hacemos *por ti*", pasos: ["Oferta", "Estrategia", "Contenido", "Anuncios con IA", "Leads automatizados", "Escalar lo que funciona"] },
-      { tipo: "gancho", dur: 130, etiqueta: "Caso real", lineas: ["El Dr. Marvin Argüello abrió", "su oficina con la *agenda llena*."], sub: NOTA_LU },
-      { tipo: "cierre", dur: 200, cta: "Haz tu diagnóstico →", sub: "La agencia #1 de Meta Ads en Puerto Rico", url: "@level_upmediapr" },
+      { tipo: "pasos", dur: 150, titulo: "Nosotros lo hacemos *por ti*", pasos: ["Oferta", "Estrategia", "Contenido", "Anuncios con IA", "Leads automatizados", "Escalar lo que funciona"] },
+      { tipo: "gancho", dur: 110, etiqueta: "Caso real · Quiropráctico", lineas: ["El Dr. Bryan Vega recibe", "*25 a 50 pacientes nuevos*", "cada mes."], sub: NOTA_LU },
+      { tipo: "gancho", dur: 100, etiqueta: "Caso real · Cirujano plástico", lineas: ["El Dr. Marvin Argüello abrió", "su oficina con la *agenda llena*."], sub: NOTA_LU },
+      { tipo: "cierre", dur: 180, cta: "Haz tu diagnóstico →", sub: "La agencia #1 de Meta Ads en Puerto Rico", url: "@level_upmediapr" },
     ],
   },
   {
@@ -54,12 +55,13 @@ export const ANUNCIOS: Anuncio[] = [
     id: "lu-05-casos", marca: "level-up", formato: "16:9", titulo: "No vendemos anuncios. Instalamos sistemas (casos)", angulo: "Prueba social",
     escenas: [
       { tipo: "gancho", dur: 90, etiqueta: "Level Up Media", lineas: ["No vendemos anuncios.", "Instalamos *sistemas*."] },
-      { tipo: "casos", dur: 230, titulo: "Resultados de *clientes reales*", nota: NOTA_LU, casos: [
+      { tipo: "casos", dur: 180, titulo: "Resultados de *clientes reales*", nota: NOTA_LU, casos: [
         { nombre: "Tinos", desde: 30, hasta: 100 }, { nombre: "RK Automatic", desde: 30, hasta: 100 },
         { nombre: "La Garita", desde: 25, hasta: 70 }, { nombre: "Yadiel", desde: 5, hasta: 40 },
       ] },
-      { tipo: "gancho", dur: 110, lineas: ["+50 negocios en Puerto Rico", "ya *escalaron* con nosotros."] },
-      { tipo: "cierre", dur: 170, ...CIERRE_LU },
+      { tipo: "gancho", dur: 100, etiqueta: "Caso real · Quiropráctico", lineas: ["El Dr. Bryan Vega recibe", "*25 a 50 pacientes nuevos*", "cada mes."], sub: NOTA_LU },
+      { tipo: "gancho", dur: 90, lineas: ["+100 negocios en Puerto Rico", "ya *escalaron* con nosotros."] },
+      { tipo: "cierre", dur: 140, ...CIERRE_LU },
     ],
   },
   {
@@ -351,10 +353,11 @@ export const LOTE2: Guion[] = [
     escenas: [
       { tipo: "gancho", dur: 100, lineas: ["¿Ya facturas", "*$10K* al mes?"] },
       { tipo: "gancho", dur: 90, lineas: ["Lo difícil no es vender.", "Es *escalar*."] },
-      { tipo: "casos", dur: 230, titulo: "Negocios que ya *escalaron*", nota: NOTA_LU, casos: [
+      { tipo: "casos", dur: 170, titulo: "Negocios que ya *escalaron*", nota: NOTA_LU, casos: [
         { nombre: "Tinos", desde: 30, hasta: 100 }, { nombre: "RK Automatic", desde: 30, hasta: 100 }, { nombre: "La Garita", desde: 25, hasta: 70 },
       ] },
-      { tipo: "pasos", dur: 200, titulo: "Cómo lo *hacemos*", pasos: ["Oferta", "Estrategia", "Contenido", "Anuncios con IA", "Leads automatizados", "Escalar lo que funciona"] },
+      { tipo: "gancho", dur: 120, etiqueta: "Caso real · Quiropráctico", lineas: ["El Dr. Bryan Vega recibe", "*25 a 50 pacientes nuevos*", "cada mes."], sub: NOTA_LU },
+      { tipo: "pasos", dur: 140, titulo: "Cómo lo *hacemos*", pasos: ["Oferta", "Estrategia", "Contenido", "Anuncios con IA", "Leads automatizados", "Escalar lo que funciona"] },
       { tipo: "gancho", dur: 120, lineas: ["Escalamos lo que", "*ya* te funciona."] },
       { tipo: "cierre", dur: 160, ...CIERRE_LU },
     ],
@@ -368,7 +371,7 @@ export const LOTE2: Guion[] = [
       ] },
       { tipo: "gancho", dur: 110, lineas: ["Aquí es distinto.", "Y lo ponemos *por escrito*."] },
       { tipo: "pasos", dur: 170, titulo: "Así *trabajamos*", pasos: ["Contratos legales", "Expectativas por escrito antes de firmar", "Garantizamos tráfico y estrategia"] },
-      { tipo: "gancho", dur: 150, etiqueta: "Level Up Media", lineas: ["+50 negocios en Puerto Rico.", "+12 meses *operando*."] },
+      { tipo: "gancho", dur: 150, etiqueta: "Level Up Media", lineas: ["+100 negocios en Puerto Rico.", "+12 meses *operando*."] },
       { tipo: "cierre", dur: 170, ...CIERRE_LU },
     ],
   },

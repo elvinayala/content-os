@@ -113,7 +113,8 @@ Proceso completo, equipo completo, 100% personalizado, acceso 100% a nosotros:
 ## Testimonios reales (usar en carruseles de casos / prueba social)
 
 - **Dr. Marvin Argüello** (cirujano plástico) — agenda llena.
-- **Dr. Bryan Vega** (quiropráctico) — agenda llena.
+- **Dr. Bryan Vega** (quiropráctico) — recibe **entre 25 y 50 pacientes nuevos al mes** (Elvin, 27/sep/2026).
+- **Prueba social vigente (Elvin, 27/sep/2026): más de 100 negocios en Puerto Rico** (reemplaza el "+50").
 - **Tinos** (restaurante de Oliver Santiago, Cabo Rojo) — pasó de **$30K a $100K**.
 - **Coralis** (La Garita) — pasó de **$25K a $70K** al mes.
 - **RK Automatic** — pasó de **$30K a $100K** al mes.
