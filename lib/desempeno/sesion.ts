@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { usuarioActual } from "../pulse/auth";
 import type { UsuarioPulse } from "../pulse/types";
 import { actorRitmo } from "./datos";
@@ -13,14 +15,15 @@ import { esMaestro } from "./reglas";
  */
 export type UsuarioRitmo = UsuarioPulse & { rrhh: boolean; maestro: boolean; falta2fa: boolean };
 
-export async function usuarioRitmo(): Promise<UsuarioRitmo | null> {
+// cache(): el layout y la página lo piden en el mismo request; así se consulta una sola vez.
+export const usuarioRitmo = cache(async (): Promise<UsuarioRitmo | null> => {
   const u = await usuarioActual();
   if (!u) return null;
   const a = actorRitmo(u);
   const puede = esMaestro(a);
   const verificado = puede ? await dispositivoVerificado(u.id) : false;
   return { ...a, maestro: puede && verificado, falta2fa: puede && !verificado };
-}
+});
 
 export async function requiereMaestro(): Promise<UsuarioRitmo> {
   const u = await usuarioRitmo();

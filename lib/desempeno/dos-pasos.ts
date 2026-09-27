@@ -63,9 +63,15 @@ export async function dispositivoVerificado(userId: string): Promise<boolean> {
     const [uid, expS, sig] = v.split(".");
     const exp = Number(expS);
     if (uid !== userId || !Number.isFinite(exp) || exp < Date.now() || !sig) return false;
-    const f = await fila(userId);
+    // Una sola consulta: ¿activada? + desde cuándo valen las sesiones (antes eran dos idas a la base).
+    const d = await db();
+    const [f] = await d
+      .select({ activadoAt: desempenoDosPasos.activadoAt, desde: pulseUsers.sesionesDesde })
+      .from(desempenoDosPasos)
+      .innerJoin(pulseUsers, eq(pulseUsers.id, desempenoDosPasos.userId))
+      .where(eq(desempenoDosPasos.userId, userId));
     if (!f?.activadoAt) return false; // si se reinició la verificación, la cookie vieja ya no sirve
-    const esperada = Buffer.from(firma(userId, exp, await sesionesDesde(userId)));
+    const esperada = Buffer.from(firma(userId, exp, new Date(f.desde).getTime()));
     const dada = Buffer.from(sig);
     return esperada.length === dada.length && timingSafeEqual(esperada, dada);
   } catch {

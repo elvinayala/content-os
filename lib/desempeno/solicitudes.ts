@@ -1,6 +1,6 @@
 import "server-only";
 
-import { desc, eq, inArray, or } from "drizzle-orm";
+import { and, desc, eq, inArray, or } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
@@ -79,7 +79,16 @@ export async function solicitudesPara(actor: { id: string; maestro: boolean }) {
 }
 
 /** Pendientes que le tocan al actor (para el numerito del menú). */
-export async function pendientesDe(actor: { id: string; maestro: boolean }): Promise<number> {
+/** El numerito del menú: solo las abiertas y solo las columnas que pide `puedeDecidir` (sin nombres). */
+export async function pendientesDe(actor: { id: string; maestro: boolean; rol?: string }): Promise<number> {
   const { puedeDecidir } = await import("./rrhh");
-  return (await solicitudesPara(actor)).filter((s) => puedeDecidir(s, actor)).length;
+  const d = await db();
+  const t = desempenoSolicitudes;
+  const abiertas = inArray(t.estado, ["supervisor", "rrhh"]);
+  const filas = await d
+    .select({ userId: t.userId, estado: t.estado, supervisorId: t.supervisorId })
+    .from(t)
+    .where(actor.maestro ? abiertas : and(abiertas, eq(t.supervisorId, actor.id)))
+    .limit(500);
+  return filas.filter((s) => puedeDecidir(s, actor)).length;
 }
