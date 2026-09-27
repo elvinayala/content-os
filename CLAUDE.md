@@ -580,6 +580,9 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   marca sola), anotar ejercicio (meta OMS 150 min/semana; pausas cuentan; tope 600 min/día), energía del día (1-5) y reto
   del equipo (solo agregados; la energía la ve la maestra solo con ≥ 5 respuestas). Chatbot: Elvin lo planteó el 26/sep;
   se dejó para después de ver 2-3 semanas de preguntas reales a RR.HH.
+- **Preguntas frecuentes** (`/ritmo/ayuda`, 26/sep): en vez del chatbot, las dudas comunes del equipo con respuestas que
+  leen las mismas constantes (`POLITICA`, `TOLERANCIA_MIN`, `BONO_REFERIDO`…): si cambia una política, cambia la respuesta.
+  Enlazada desde Hoy, Solicitudes y el pie. Agregar preguntas nuevas = editar `GRUPOS` en la página.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

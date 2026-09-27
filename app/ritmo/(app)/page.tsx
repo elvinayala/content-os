@@ -149,7 +149,10 @@ export default async function HoyPage() {
       ) : null}
 
       <p className="max-w-sm text-center text-xs text-muted-foreground">
-        Ritmo solo guarda tu hora de entrada y salida y lo que tú reportes. Tus tareas y resultados salen de las herramientas del equipo. Sin capturas, sin GPS.
+        Ritmo solo guarda tu hora de entrada y salida y lo que tú reportes. Tus tareas y resultados salen de las herramientas del equipo. Sin capturas, sin GPS.{" "}
+        <Link href="/ritmo/ayuda" className="text-primary hover:underline">
+          ¿Dudas? Preguntas frecuentes
+        </Link>
       </p>
     </div>
   );
