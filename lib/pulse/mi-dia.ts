@@ -17,6 +17,24 @@ export interface Pendiente {
   fecha: string | null; // la fecha que lo dispara (YYYY-MM-DD)
   dias: number; // días de atraso (0 = hoy, negativo = mañana)
   personas: string[]; // ids asignados
+  info?: InfoCliente; // solo clientes nuevos / onboarding (lo agrega mi-dia-datos)
+}
+
+// Lo que conviene saber de un cliente nuevo de un vistazo (de la venta en Slack y del formulario).
+export interface InfoCliente {
+  pago?: string; // "💰 $3,500 · Done For You · Closer Roger"
+  vende?: string;
+  industria?: string;
+  ads?: string; // "Ads $600/mes"
+}
+
+// "• Qué vendes y qué es lo que más quieres vender: Terapia…" → "Terapia…" (comentario del formulario).
+export function respuestaDelResumen(texto: string, pregunta: RegExp): string | undefined {
+  for (const l of texto.split("\n")) {
+    const m = l.match(/^\s*[•*-]?\s*([^:]+):\s*(.+)$/);
+    if (m && pregunta.test(m[1])) return m[2].trim();
+  }
+  return undefined;
 }
 
 export interface TableroMiDia {

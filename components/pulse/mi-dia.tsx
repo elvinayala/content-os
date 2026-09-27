@@ -83,8 +83,15 @@ export function MiDia({ pendientes, hoy, yo, usuarios }: { pendientes: Pendiente
                       <ChevronRight className="size-3.5 shrink-0 opacity-0 transition group-hover:opacity-100" />
                     </Link>
                     <p className="truncate text-xs text-muted-foreground">
-                      {[p.empresa, p.boardNombre].filter(Boolean).join(" · ")}
+                      {[p.empresa, p.info?.industria, p.boardNombre].filter(Boolean).join(" · ")}
                     </p>
+                    {p.info && (p.info.pago || p.info.vende || p.info.ads) && (
+                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-snug">
+                        {p.info.pago && <span className="font-medium text-foreground/80">{p.info.pago}</span>}
+                        {p.info.vende && <span className="text-muted-foreground">Vende: {p.info.vende}</span>}
+                        {p.info.ads && <span className="rounded bg-muted px-1.5 text-muted-foreground">{p.info.ads}</span>}
+                      </div>
+                    )}
                   </div>
                   <span className={cn("hidden shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium sm:inline", p.dias > 0 ? "bg-[#e2445c]/10 text-[#e2445c]" : "bg-muted text-muted-foreground")}>
                     {tipo === "onboarding" ? `hace ${p.dias} días` : tipo === "nuevo" ? "nuevo" : cuando(p.dias)}

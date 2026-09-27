@@ -24,7 +24,7 @@ function armar(pendientes: Pendiente[], hoy: string): string {
   for (const tipo of Object.keys(TITULO) as TipoPendiente[]) {
     const xs = pendientes.filter((p) => p.tipo === tipo);
     if (!xs.length) continue;
-    const muestra = xs.slice(0, 5).map((p) => `<${BASE}/pulse/${p.boardSlug}?item=${p.itemId}|${p.nombre}>${tipo === "onboarding" ? ` (${p.dias} d)` : tipo === "nuevo" ? "" : ` (${cuando(p.dias)})`}`);
+    const muestra = xs.slice(0, 5).map((p) => `<${BASE}/pulse/${p.boardSlug}?item=${p.itemId}|${p.nombre}>${tipo === "onboarding" ? ` (${p.dias} d)` : tipo === "nuevo" ? (p.info?.pago ? ` (${p.info.pago.replace(/ · Closer.*$/, "")})` : "") : ` (${cuando(p.dias)})`}`);
     lineas.push(`${TITULO[tipo]}: *${xs.length}*\n   ${muestra.join(" · ")}${xs.length > 5 ? ` y ${xs.length - 5} más` : ""}`);
   }
   lineas.push(`👉 <${BASE}/pulse/mi-dia|Abrir Mi día> y marca lo que vayas resolviendo.`);

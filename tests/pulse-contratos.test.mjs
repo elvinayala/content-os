@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { archivoCoincide, elegirContrato, emparejar, leerVenta } from "../lib/pulse/contratos.ts";
+import { archivoCoincide, elegirContrato, emparejar, leerVenta, resumenVenta } from "../lib/pulse/contratos.ts";
 
 const ROGER = `Natacha Agront
 *Correo Electrónico:*  <mailto:nat.agront@gmail.com|nat.agront@gmail.com><mailto:nutricardn@gmail.com|n>
@@ -56,4 +56,21 @@ test("si el correo/teléfono está en dos ventas, gana la que también tiene el 
   const natacha = leerVenta("200", ROGER); // más reciente, con el correo y teléfono de Angelica
   assert.equal(emparejar({ nombre: "Angelica Velez", emails: ["nutricardn@gmail.com"], telefonos: ["7874840203"] }, [angelica, natacha]).ts, "100");
   assert.equal(emparejar({ nombre: "Natacha Agront", emails: ["nat.agront@gmail.com"], telefonos: [] }, [angelica, natacha]).ts, "200");
+});
+
+test("detalle de la venta: pago, plan, closer y método en los formatos del canal", () => {
+  const a = leerVenta("1", ROGER + "\n*metodo de pago: tarjeta de crédito*").detalle;
+  assert.equal(a.pago, "$3.500,00");
+  assert.equal(a.plan, "Done For you + visita de contenido");
+  assert.equal(a.closer, "Roger Arteaga");
+  assert.equal(a.setter, "Ana Patricia Cecilio Rivero");
+  assert.equal(a.metodo, "tarjeta de crédito");
+  assert.equal(resumenVenta(a), "💰 $3.500,00 · Done For you + visita de contenido · Closer Roger Arteaga");
+  const b = leerVenta("2", JUAN + "\n*Producto / Servicio:* Sistema Done For You (DFY)\n*Valor total del acuerdo:* *$3,000 USD*").detalle;
+  assert.equal(b.pago, "$3,000 USD");
+  assert.equal(b.plan, "Sistema Done For You (DFY)");
+  const c = leerVenta("3", "Omar Velazquez\n<mailto:a@b.com|a@b.com>\nDone For You + Creación de campañas publicitarias + visita de contenido\n*Pago total hoy: 500.00 USD*\n*Pago Mañana: 3.000,00 USD Cash con Daren*").detalle;
+  assert.equal(c.pago, "500.00 USD");
+  assert.equal(c.plan, "Done For You + Creación de campañas publicitarias + visita de contenido");
+  assert.equal(resumenVenta({}), null);
 });

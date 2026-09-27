@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calcularPendientes, clave } from "../lib/pulse/mi-dia.ts";
+import { calcularPendientes, clave, respuestaDelResumen } from "../lib/pulse/mi-dia.ts";
 
 const HOY = "2026-09-24";
 const AHORA = Date.parse("2026-09-24T12:00:00Z");
@@ -47,4 +47,11 @@ test("reportes y datos de la ficha", () => {
   assert.equal(p.dias, 2);
   assert.equal(p.empresa, "Solar PR");
   assert.deepEqual(p.personas, ["u1"]);
+});
+
+test("respuestaDelResumen lee una respuesta del comentario del formulario", () => {
+  const t = "📝 Formulario de onboarding de Level Up (09/25/2026)\n• Cómo se llama tu negocio: Licenciada Natacha Agront\n• En qué industria estás: Bienestar\n• Qué vendes y qué es lo que más quieres vender: Terapia psicológica para parejas.";
+  assert.equal(respuestaDelResumen(t, /qu[eé] vendes/i), "Terapia psicológica para parejas.");
+  assert.equal(respuestaDelResumen(t, /industria/i), "Bienestar");
+  assert.equal(respuestaDelResumen(t, /competencia/i), undefined);
 });

@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { and, eq, gt, sql } from "drizzle-orm";
 
 import { usuarioSistema } from "./alta-typeform";
-import { archivoCoincide, elegirContrato, emparejar, leerVenta, ultimos10, type ArchivoSlack, type VentaSlack } from "./contratos";
+import { archivoCoincide, elegirContrato, emparejar, leerVenta, resumenVenta, ultimos10, type ArchivoSlack, type VentaSlack } from "./contratos";
 import { db } from "./db";
 import { actualizarValor, registrarArchivo } from "./repo";
 import { pulseActivity, pulseBoards, pulseColumns, pulseGroups, pulseItems } from "./schema";
@@ -89,6 +89,12 @@ async function yaAvisado(itemId: string): Promise<EstadoContrato | null> {
   return a?.estado ?? null;
 }
 
+async function ventaGuardada(itemId: string): Promise<boolean> {
+  const d = await db();
+  const [a] = await d.select({ id: pulseActivity.id }).from(pulseActivity).where(and(eq(pulseActivity.itemId, itemId), sql`${pulseActivity.after} ? 'venta'`)).limit(1);
+  return !!a;
+}
+
 async function anotar(itemId: string, boardId: string, userId: string, estado: EstadoContrato, texto: string) {
   const d = await db();
   await d.insert(pulseActivity).values({ itemId, boardId, tipo: "comentario", after: { texto, contrato: { estado } }, userId });
@@ -110,7 +116,9 @@ export async function adjuntarContrato(itemId: string, opciones: { ventas?: Vent
   const cAcuerdo = cols.find((c) => c.title === COLUMNA_ACUERDO && c.type === "file");
   if (!cAcuerdo) return { estado: "sin-columna" };
   const values = item.values as Record<string, ValorCelda>;
-  if (Array.isArray(values[cAcuerdo.id]) && (values[cAcuerdo.id] as string[]).length) return { estado: "ya-tenia" };
+  const tieneArchivo = Array.isArray(values[cAcuerdo.id]) && (values[cAcuerdo.id] as string[]).length > 0;
+  const tieneVenta = await ventaGuardada(itemId);
+  if (tieneArchivo && tieneVenta) return { estado: "ya-tenia" };
 
   avisarActivo = opciones.avisar !== false;
   let ventas = opciones.ventas;
@@ -121,8 +129,17 @@ export async function adjuntarContrato(itemId: string, opciones: { ventas?: Vent
   }
   const texto = (tipo: string) => String(values[cols.find((c) => c.type === tipo)?.id ?? ""] ?? "");
   const venta = emparejar({ nombre: item.name, emails: [texto("email").toLowerCase()].filter(Boolean), telefonos: [ultimos10(texto("phone"))].filter(Boolean) }, ventas);
-  const archivo = venta ? elegirContrato(await archivosDelHilo(venta.ts)) : null;
   const userId = await usuarioSistema("contratos");
+  // Resumen de la venta (cuánto pagó, qué compró, closer) en la ficha: lo lee Mi día.
+  if (venta && !tieneVenta) {
+    const resumen = resumenVenta(venta.detalle);
+    if (resumen) {
+      const link = await enlace(venta.ts);
+      await d.insert(pulseActivity).values({ itemId, boardId: item.boardId, tipo: "comentario", after: { texto: `${resumen}${venta.detalle?.metodo ? ` · ${venta.detalle.metodo}` : ""} (venta en ${NOMBRE_CANAL}${link ? `: ${link}` : ""})`, venta: venta.detalle }, userId });
+    }
+  }
+  if (tieneArchivo) return { estado: "ya-tenia" };
+  const archivo = venta ? elegirContrato(await archivosDelHilo(venta.ts)) : null;
   const ficha = `<${BASE}/pulse/${TABLERO}?item=${itemId}|${item.name}>`;
   const previo = await yaAvisado(itemId);
 
@@ -181,7 +198,9 @@ export async function revisarPendientes(opciones: { dias?: number; avisar?: bool
       and(
         eq(pulseItems.boardId, board.id),
         gt(pulseItems.createdAt, sql`now() - make_interval(days => ${dias})`),
-        sql`coalesce(jsonb_array_length(case when jsonb_typeof(${pulseItems.values} -> ${col.id}) = 'array' then ${pulseItems.values} -> ${col.id} end), 0) = 0`,
+        // sin acuerdo, o sin el resumen de la venta
+        sql`(coalesce(jsonb_array_length(case when jsonb_typeof(${pulseItems.values} -> ${col.id}) = 'array' then ${pulseItems.values} -> ${col.id} end), 0) = 0
+          or not exists (select 1 from pulse_activity a where a.item_id = ${pulseItems.id} and a.after ? 'venta'))`,
       ),
     );
   const pendientes = items.filter((i) => !/offboard|baja|inactiv/i.test(i.grupo));
