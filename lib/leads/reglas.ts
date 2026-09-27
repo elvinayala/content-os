@@ -45,8 +45,13 @@ export const SEMILLA: Record<Marca, { nombre: string; etapas: string[]; diasEsta
     { nombre: "Bori · Seguimiento", etapas: ["Por contactar", "Mensaje enviado", "Respondió", "Registrado en Bori", "No interesa"] },
     { nombre: "SHADOW · AUDITORÍA NEGOCIO DIGITAL", etapas: ["NEW LEAD / AUDITORÍA", "DM ENVIADO", "RESPONDIÓ", "LLAMADA AGENDADA", "NO SHOW", "FOLLOW UP", "COMUNIDAD $55", "CONSULTORÍA CERRADA", "NO CALIFICA"] },
   ],
+  // Copia EXACTA de los 4 embudos de Pipedrive AIB (27/sep/2026), ordenados por uso. WHATSAPP y
+  // RECUPERACIÓN 2026 entraban por Timelines.ai; el Diagnóstico por el quiz (/api/auditoria).
   ai_borinquen: [
-    { nombre: "WhatsApp", etapas: ["Nuevo lead", "Llamado 1x", "Llamado 2x", "Llamado 3x", "Cita agendada", "No show", "Seguimiento"], diasEstancado: 3 },
+    { nombre: "WHATSAPP", entrada: "timelines", diasEstancado: 3, etapas: ["New Lead - Whatsapp", "Llamar mas tarde", "CALLED X1", "CALLED 2X", "CALLED 3X", "CALLED 4X", "CALLED 5X", "CALLED 6X", "Reasignar", "//", "GRUPOS DE WHATSAPP", "Appointment", "No show", "FOLLOW UP", "RESCHEDULE", "Closed", "Not Ready", "Allready purch", "Creadoras UGC", "Fallos del sistema", "REMARKETING MATEO"] },
+    { nombre: "RECUPERACIÓN 2026", entrada: "timelines", diasEstancado: 3, etapas: ["A · Agendaron", "B · Conversaron", "C · Fríos", "Contactado", "Conversando", "Probó el agente", "Llamada agendada", "No asistio", "Seguimiento", "Retirado (día 14)"] },
+    { nombre: "DIAGNÓSTICO DE AUTOMATIZACIÓN", entrada: "quiz", diasEstancado: 3, etapas: ["NEW LEAD / DIAGNÓSTICO", "CALLED 1X", "CALLED 2X", "CALLED 3X", "APPOINTMENT SET", "NO SHOW", "FOLLOW UP", "CLOSED", "DON'T QUALIFIED"] },
+    { nombre: "Bori · Seguimiento", etapas: ["Por contactar", "Mensaje enviado", "Respondió", "Registrado en Bori", "No interesa"] },
   ],
 };
 

@@ -84,12 +84,13 @@ export function leadCalendlyOnboarding(email: string, telefono: string | null) {
   });
 }
 
-/** Quiz "Diagnóstico de Crecimiento" de Level Up → embudo del mismo nombre. */
-export function leadQuiz(v: { evento: string; nombre: string; email: string; telefono: string; negocio: string; resultado?: string | null; avatar?: string | null; utm?: string | null }) {
+/** Quiz de diagnóstico → su embudo: Level Up "Diagnóstico de Crecimiento", AIB "Diagnóstico de Automatización". */
+export function leadQuiz(v: { marca?: "level_up" | "ai_borinquen"; evento: string; nombre: string; email: string; telefono: string; negocio: string; resultado?: string | null; avatar?: string | null; utm?: string | null }) {
+  const aib = v.marca === "ai_borinquen";
   return seguro("quiz", () =>
     ingestarLead({
-      marca: "level_up",
-      embudo: "LUM DIAGNÓSTICO DE CRECIMIENTO",
+      marca: aib ? "ai_borinquen" : "level_up",
+      embudo: aib ? "DIAGNÓSTICO DE AUTOMATIZACIÓN" : "LUM DIAGNÓSTICO DE CRECIMIENTO",
       nombre: v.nombre,
       email: v.email,
       telefono: v.telefono,
@@ -97,7 +98,7 @@ export function leadQuiz(v: { evento: string; nombre: string; email: string; tel
       origen: "quiz",
       agendoPor: v.utm ?? null,
       moverSiExiste: false,
-      nota: v.evento === "resultado" ? `🧭 Terminó el diagnóstico${v.resultado ? `: ${v.resultado}` : ""}` : "🧭 Empezó el diagnóstico de crecimiento",
+      nota: v.evento === "resultado" ? `🧭 Terminó el diagnóstico${v.resultado ? `: ${v.resultado}` : ""}` : `🧭 Empezó el diagnóstico de ${aib ? "automatización" : "crecimiento"}`,
       datos: { ...(v.avatar ? { avatar: v.avatar } : {}), ...(v.resultado ? { resultadoQuiz: v.resultado } : {}) },
     }),
   );

@@ -69,16 +69,15 @@ export function leerVenta(ts: string, texto: string, autor?: string): VentaSlack
 
 const tokens = (s: string) => norm(s).split(" ").filter((w) => w.length >= 3 && !/^(del|las|los|and|llc|inc)$/.test(w));
 
-// Puntaje: correo o teléfono = 3 (dato duro); nombre = 2 si coinciden nombre y apellido.
+// Puntaje: correo o teléfono = 3 (dato duro); nombre y apellido = 2; los dos = 4. El nombre desempata
+// cuando un closer copió el correo/teléfono de otro cliente en la venta (pasó con Natacha/Angelica).
 export function puntaje(f: FichaCliente, v: VentaSlack): number {
-  let p = 0;
-  if (f.emails.some((e) => v.emails.includes(e.toLowerCase()))) p = Math.max(p, 3);
-  if (f.telefonos.some((t) => t && v.telefonos.includes(t))) p = Math.max(p, 3);
+  const duro = f.emails.some((e) => v.emails.includes(e.toLowerCase())) || f.telefonos.some((t) => t && v.telefonos.includes(t));
   const a = tokens(f.nombre);
   const b = new Set(tokens(v.nombre));
   const comunes = a.filter((w) => b.has(w)).length;
-  if (comunes >= 2 || (comunes === 1 && a.length === 1 && b.size === 1)) p = Math.max(p, 2);
-  return p;
+  const nombre = comunes >= 2 || (comunes === 1 && a.length === 1 && b.size === 1);
+  return (duro ? 3 : 0) + (nombre ? (duro ? 1 : 2) : 0);
 }
 
 // La venta que corresponde a la ficha (la más reciente con mejor puntaje). null si ninguna llega a 2.
@@ -104,5 +103,8 @@ export function archivoCoincide(nombreCliente: string, nombreArchivo: string): b
   const ruido = new Set(["level", "media", "contrato", "acuerdo", "pdf", "dfy"]);
   const t = tokens(nombreCliente).filter((w) => !ruido.has(w));
   if (!t.length) return true;
+  // Un PDF sin nombre de persona ("Contrato_(1).pdf") no dice nada: no es sospechoso.
+  const delArchivo = archivo.replace(/\.pdf$/, "").split(" ").filter((w) => /^[a-z]{3,}$/.test(w) && !ruido.has(w) && !/^(done|for|fou|you|up)$/.test(w));
+  if (!delArchivo.length) return true;
   return t.some((w) => archivo.includes(w));
 }

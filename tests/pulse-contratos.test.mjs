@@ -47,4 +47,13 @@ test("elige el PDF del contrato y detecta el de otra persona", () => {
   assert.equal(archivoCoincide("Natacha Agront", "Level Up Media DFY  Contrato_ Natacha Agront (1).pdf"), true);
   assert.equal(archivoCoincide("Omar Vazquez", "Level_Up_Media_DFY__Contrato__Omar_Vázquez.pdf"), true);
   assert.equal(archivoCoincide("Joel Amil Rivera Velez", "Level_Up_Media_DFY__Contrato__Edgar_Rosado_(2).pdf"), false);
+  assert.equal(archivoCoincide("Yulianna Pomales", "Level_Up_Media_DFY__Contrato_(1).pdf"), true);
+  assert.equal(archivoCoincide("Maika Ayala", "A - Done For Fou Level Up Media - Maika (3).pdf"), true);
+});
+
+test("si el correo/teléfono está en dos ventas, gana la que también tiene el nombre", () => {
+  const angelica = leerVenta("100", "Angelica Velez Bobe\n<mailto:nutricardn@gmail.com|x>\n<tel:+17874840203|x>");
+  const natacha = leerVenta("200", ROGER); // más reciente, con el correo y teléfono de Angelica
+  assert.equal(emparejar({ nombre: "Angelica Velez", emails: ["nutricardn@gmail.com"], telefonos: ["7874840203"] }, [angelica, natacha]).ts, "100");
+  assert.equal(emparejar({ nombre: "Natacha Agront", emails: ["nat.agront@gmail.com"], telefonos: [] }, [angelica, natacha]).ts, "200");
 });
