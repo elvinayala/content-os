@@ -135,7 +135,7 @@ function ColumnaKanban({ id, titulo, color, items, suma, formato }: { id: string
         {items.map((it) => (
           <TarjetaArrastrable key={it.id} item={it} colorGrupo={cssColor(s.groups.find((g) => g.id === it.groupId)?.color)} />
         ))}
-        {items.length === 0 ? <p className="rounded-md border border-dashed py-6 text-center text-xs text-muted-foreground">Soltá acá</p> : null}
+        {items.length === 0 ? <p className="rounded-md border border-dashed py-6 text-center text-xs text-muted-foreground">Suelta aquí</p> : null}
       </div>
     </div>
   );

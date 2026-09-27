@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, FileText, Kanban, LayoutGrid, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
+import { IconoTablero } from "@/components/pulse/icono-tablero";
 import { PulseLogo } from "@/components/pulse/logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,7 +22,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { cssColor } from "@/lib/pulse/colores";
 import { NOMBRE_APP, NOMBRE_ROL, puedeGestionarUsuarios, SUBTITULO_APP, type UsuarioPulse } from "@/lib/pulse/types";
 import type { BoardResumen } from "@/lib/pulse/repo";
 
@@ -54,6 +54,14 @@ export function PulseSidebar({
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/pulse"} tooltip="Inicio">
+                <Link href="/pulse">
+                  <House />
+                  <span>Inicio</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
               <SidebarMenuButton onClick={abrirBuscador} tooltip="Buscar (⌘K)" className="text-muted-foreground">
                 <Search />
                 <span>Buscar</span>
@@ -68,6 +76,20 @@ export function PulseSidebar({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/pulse/preguntar"} tooltip="Preguntarle al CRM">
+                <Link href="/pulse/preguntar">
+                  <Sparkles />
+                  <span>Preguntarle al CRM</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        {tieneLeads || tieneFormularios ? (
+        <SidebarGroup>
+          <SidebarGroupLabel>Ventas</SidebarGroupLabel>
+          <SidebarMenu>
             {tieneLeads && (
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/leads")} tooltip="Leads">
@@ -88,26 +110,11 @@ export function PulseSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
             )}
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === "/pulse/preguntar"} tooltip="Preguntarle al CRM">
-                <Link href="/pulse/preguntar">
-                  <Sparkles />
-                  <span>Preguntarle al CRM</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === "/pulse"} tooltip="Tableros">
-                <Link href="/pulse">
-                  <LayoutGrid />
-                  <span>Tableros</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
+        ) : null}
         <SidebarGroup>
-          <SidebarGroupLabel>Mis tableros</SidebarGroupLabel>
+          <SidebarGroupLabel>Tableros</SidebarGroupLabel>
           <SidebarMenu>
             {boards.map((b) => {
               const href = `/pulse/${b.slug}`;
@@ -115,10 +122,10 @@ export function PulseSidebar({
                 <SidebarMenuItem key={b.id}>
                   <SidebarMenuButton asChild isActive={pathname === href || pathname.startsWith(href + "/")} tooltip={b.nombre}>
                     <Link href={href}>
-                      <span className="size-2.5 shrink-0 rounded-full" style={{ background: cssColor(b.color), boxShadow: `0 0 0 3px color-mix(in srgb, ${cssColor(b.color)} 22%, transparent)` }} />
+                      <IconoTablero nombre={b.nombre} color={b.color} />
                       <span className="truncate">{b.nombre}</span>
                       {b.privado ? <Lock className="size-3 shrink-0 text-muted-foreground" /> : null}
-                      <span className="ml-auto text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{b.items}</span>
+                      <span className="ml-auto text-[11px] text-muted-foreground/80 tabular-nums group-data-[collapsible=icon]:hidden">{b.items}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

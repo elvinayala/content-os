@@ -704,3 +704,86 @@ export async function eliminarVista(userId: string, id: string): Promise<void> {
   const d = await db();
   await d.delete(pulseVistas).where(and(eq(pulseVistas.id, id), eq(pulseVistas.userId, userId)));
 }
+
+// ---- Inicio: lo que pasó en la empresa (solo tableros visibles) ----
+
+export interface EventoInicio {
+  id: string;
+  tipo: string; // crear | valor | mover | comentario | nombre
+  at: string;
+  usuario: { nombre: string; color: string | null } | null;
+  item: { id: string; nombre: string };
+  board: { slug: string; nombre: string };
+  columna: string | null;
+  grupo: string | null; // "mover": grupo destino
+  texto: string | null; // "comentario"
+}
+
+export async function actividadReciente(boardIds: string[], limite = 14): Promise<EventoInicio[]> {
+  if (!boardIds.length) return [];
+  const d = await db();
+  const filas = await d
+    .select({ a: pulseActivity, itemNombre: pulseItems.name, slug: pulseBoards.slug, boardNombre: pulseBoards.nombre, uNombre: pulseUsers.nombre, uColor: pulseUsers.color, uEmail: pulseUsers.email })
+    .from(pulseActivity)
+    .innerJoin(pulseItems, eq(pulseItems.id, pulseActivity.itemId))
+    .innerJoin(pulseBoards, eq(pulseBoards.id, pulseActivity.boardId))
+    .leftJoin(pulseUsers, eq(pulseUsers.id, pulseActivity.userId))
+    .where(
+      and(
+        inArray(pulseActivity.boardId, boardIds),
+        inArray(pulseActivity.tipo, ["crear", "valor", "mover", "comentario"]),
+        // Lo que hace el equipo: los usuarios de sistema (contratos, formularios…) son ruido aquí.
+        sql`coalesce(${pulseUsers.email}, '') not like '%@pulse.sistema'`,
+      ),
+    )
+    .orderBy(desc(pulseActivity.at))
+    .limit(limite * 3);
+  // Una línea por persona+cliente+tipo seguidos (editar 5 celdas del mismo cliente = 1 evento).
+  const vistos = new Set<string>();
+  const unicas = filas.filter((f) => {
+    const k = `${f.a.userId}|${f.a.itemId}|${f.a.tipo}`;
+    if (vistos.has(k)) return false;
+    vistos.add(k);
+    return true;
+  }).slice(0, limite);
+  const colIds = [...new Set(unicas.map((f) => f.a.columnId).filter((x): x is string => !!x))];
+  const grupoIds = [...new Set(unicas.filter((f) => f.a.tipo === "mover" && typeof f.a.after === "string").map((f) => f.a.after as string))];
+  const [cols, grupos] = await Promise.all([
+    colIds.length ? d.select({ id: pulseColumns.id, title: pulseColumns.title }).from(pulseColumns).where(inArray(pulseColumns.id, colIds)) : Promise.resolve([]),
+    grupoIds.length ? d.select({ id: pulseGroups.id, title: pulseGroups.title }).from(pulseGroups).where(inArray(pulseGroups.id, grupoIds)) : Promise.resolve([]),
+  ]);
+  return unicas.map((f) => ({
+    id: f.a.id,
+    tipo: f.a.tipo,
+    at: new Date(f.a.at).toISOString(),
+    usuario: f.uNombre ? { nombre: f.uEmail?.endsWith("@pulse.sistema") ? f.uNombre.replace(/\s*\(automático\)/i, "") : f.uNombre, color: f.uColor } : null,
+    item: { id: f.a.itemId, nombre: f.itemNombre },
+    board: { slug: f.slug, nombre: f.boardNombre },
+    columna: cols.find((c) => c.id === f.a.columnId)?.title ?? null,
+    grupo: f.a.tipo === "mover" ? (grupos.find((g) => g.id === f.a.after)?.title ?? null) : null,
+    texto: f.a.tipo === "comentario" ? String((f.a.after as { texto?: string } | null)?.texto ?? "").slice(0, 140) : null,
+  }));
+}
+
+/** Números del Inicio: clientes activos, onboardings en curso y altas del mes (tableros de clientes visibles). */
+export async function numerosInicio(boardIds: string[]): Promise<{ activos: number; onboarding: number; nuevosMes: number; totalClientes: number } | null> {
+  if (!boardIds.length) return null;
+  const d = await db();
+  const clientes = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(and(inArray(pulseBoards.id, boardIds), inArray(pulseBoards.slug, ["level-up-media", "ai-borinquen"])));
+  if (!clientes.length) return null;
+  const ids = clientes.map((c) => c.id);
+  const inicioMes = `${new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" }).slice(0, 7)}-01T00:00:00-04:00`;
+  const filas = await d
+    .select({ grupo: pulseGroups.title, n: sql<number>`count(*)::int`, nuevos: sql<number>`count(*) filter (where ${pulseItems.createdAt} >= ${inicioMes}::timestamptz)::int` })
+    .from(pulseItems)
+    .innerJoin(pulseGroups, eq(pulseGroups.id, pulseItems.groupId))
+    .where(inArray(pulseItems.boardId, ids))
+    .groupBy(pulseGroups.title);
+  const suma = (re: RegExp) => filas.filter((f) => re.test(f.grupo)).reduce((a, f) => a + Number(f.n), 0);
+  return {
+    activos: suma(/cliente activo|inner circle|accelerator|marketing|recurrente/i),
+    onboarding: suma(/onboarding|an[aá]lisis/i),
+    nuevosMes: filas.filter((f) => !/offboard/i.test(f.grupo)).reduce((a, f) => a + Number(f.nuevos), 0),
+    totalClientes: filas.filter((f) => !/offboard|baja|inactiv/i.test(f.grupo)).reduce((a, f) => a + Number(f.n), 0),
+  };
+}

@@ -90,7 +90,7 @@ export async function requiereAccesoBoard(boardId: string | null): Promise<Usuar
   const u = await requiereUsuario();
   if (!boardId) throw new Error("No existe");
   const { puedeVerBoard } = await import("./repo");
-  if (!(await puedeVerBoard(u, boardId))) throw new Error("No tenés acceso a este tablero");
+  if (!(await puedeVerBoard(u, boardId))) throw new Error("No tienes acceso a este tablero");
   return u;
 }
 

@@ -8,6 +8,7 @@ import { eliminarBoardAction } from "@/app/pulse/(app)/[board]/actions";
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
 import { BoardAcceso } from "@/components/pulse/board-acceso";
 import { BoardAutomatizaciones } from "@/components/pulse/board-automatizaciones";
+import { IconoTablero } from "@/components/pulse/icono-tablero";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import {
   AlertDialog,
@@ -22,7 +23,6 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { cssColor } from "@/lib/pulse/colores";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
 export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
@@ -48,11 +48,13 @@ export function BoardHeader({ usuario }: { usuario: UsuarioPulse }) {
   };
 
   return (
-    <header className="vidrio relative flex h-14 shrink-0 items-center gap-3 border-b px-4" style={{ boxShadow: `inset 0 3px 0 ${cssColor(board.color)}` }}>
+    <header className="vidrio relative flex h-14 shrink-0 items-center gap-3 border-b px-4">
       <SidebarTrigger />
       <Popover>
         <PopoverTrigger asChild>
-          <button type="button" className="size-4 rounded" style={{ background: cssColor(board.color) }} title="Color del tablero" />
+          <button type="button" className="cursor-pointer rounded-lg transition hover:scale-105" title="Color del tablero">
+            <IconoTablero nombre={board.nombre} color={board.color ?? "grey"} tam="md" />
+          </button>
         </PopoverTrigger>
         <PopoverContent className="pulse w-56 p-2" align="start">
           <ColorPicker

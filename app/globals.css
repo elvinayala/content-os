@@ -249,38 +249,38 @@
    Select/Popover/DropdownMenu/Tooltip): pasar className="pulse" al *Content. */
 .pulse {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #323338;
+  --background: #fcfcfd;
+  --foreground: #1b1c1f;
   --card: #ffffff;
-  --card-foreground: #323338;
+  --card-foreground: #1b1c1f;
   --popover: #ffffff;
-  --popover-foreground: #323338;
+  --popover-foreground: #1b1c1f;
   --primary: oklch(0.62 0.15 40);
   --primary-foreground: #ffffff;
-  --secondary: #f6f7fb;
-  --secondary-foreground: #323338;
-  --muted: #f6f7fb;
-  --muted-foreground: #676879;
-  --accent: #eef1f8;
-  --accent-foreground: #323338;
+  --secondary: #f4f4f6;
+  --secondary-foreground: #1b1c1f;
+  --muted: #f4f4f6;
+  --muted-foreground: #6b6e76;
+  --accent: #f0f0f3;
+  --accent-foreground: #1b1c1f;
   --destructive: #e2445c;
-  --border: #d0d4e4;
-  --input: #c3c6d4;
+  --border: #e5e5ea;
+  --input: #d9d9df;
   --ring: oklch(0.62 0.15 40);
   --chart-1: oklch(0.62 0.15 40);
   --chart-2: #0086c0;
   --chart-3: #00c875;
   --chart-4: #a25ddc;
   --chart-5: #ffcb00;
-  --sidebar: #f7f8fb;
-  --sidebar-foreground: #323338;
+  --sidebar: #f7f7f9;
+  --sidebar-foreground: #2a2b30;
   --sidebar-primary: oklch(0.62 0.15 40);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e6e9ef;
-  --sidebar-accent-foreground: #323338;
-  --sidebar-border: #e3e6ee;
+  --sidebar-accent: #ececf0;
+  --sidebar-accent-foreground: #1b1c1f;
+  --sidebar-border: #eaeaee;
   --sidebar-ring: oklch(0.62 0.15 40);
-  --radius: 0.5rem;
+  --radius: 0.625rem;
   /* paleta de status/grupos (var_name de Monday → la migración mapea directo;
      mismos hex que lib/pulse/colores.ts) */
   --pulse-color-green: #00c875;
@@ -305,10 +305,11 @@
   --pulse-color-dark_grey: #808080;
   /* grilla */
   --pulse-fila: 36px;
-  --pulse-linea: #e9ebf1;
-  --pulse-hover: #f7f8fb;
-  --pulse-seleccion: #e8f1ff;
-  --pulse-sombra: 0 1px 2px rgba(50, 51, 56, 0.05), 0 8px 24px -16px rgba(50, 51, 56, 0.25);
+  --pulse-linea: #eeeef1;
+  --pulse-hover: #f7f7f9;
+  --pulse-seleccion: #eef3ff;
+  --pulse-sombra: 0 1px 2px rgba(16, 17, 20, 0.04), 0 4px 16px -8px rgba(16, 17, 20, 0.1);
+  --pulse-sombra-alta: 0 1px 2px rgba(16, 17, 20, 0.04), 0 12px 32px -12px rgba(16, 17, 20, 0.18);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "cv11", "ss01", "tnum";
 }
@@ -630,14 +631,53 @@
   }
   /* Pulse: fondo con malla suave + grilla tenue (home y login) */
   .pulse .fondo-malla {
-    background-color: #f6f7fb;
+    background-color: #fcfcfd;
     background-image:
-      radial-gradient(60% 50% at 0% 0%, color-mix(in oklch, var(--primary) 16%, transparent), transparent 70%),
-      radial-gradient(50% 45% at 100% 10%, color-mix(in oklch, #579bfc 18%, transparent), transparent 70%),
-      radial-gradient(40% 40% at 60% 100%, color-mix(in oklch, #a25ddc 12%, transparent), transparent 70%),
-      linear-gradient(to right, rgba(50, 51, 56, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(50, 51, 56, 0.045) 1px, transparent 1px);
-    background-size: auto, auto, auto, 32px 32px, 32px 32px;
+      radial-gradient(70% 55% at 50% -10%, color-mix(in oklch, var(--primary) 9%, transparent), transparent 70%),
+      radial-gradient(40% 35% at 100% 0%, color-mix(in oklch, #579bfc 8%, transparent), transparent 70%);
+  }
+  .pulse h1,
+  .pulse h2,
+  .pulse h3 {
+    letter-spacing: -0.018em;
+  }
+  /* Tarjeta de superficie (Inicio, paneles): borde hairline + sombra mínima */
+  .pulse .superficie {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--pulse-sombra);
+  }
+  .pulse .superficie-hover {
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .pulse .superficie-hover:hover {
+    border-color: #d6d6dc;
+    box-shadow: var(--pulse-sombra-alta);
+  }
+  .pulse .ceja-pulse {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  /* Barra lateral: el ítem activo es una "tarjeta" blanca, como Linear */
+  .pulse [data-sidebar="menu-button"][data-active="true"] {
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(16, 17, 20, 0.06), 0 0 0 1px rgba(16, 17, 20, 0.05);
+    font-weight: 500;
+  }
+  /* Esqueletos de carga */
+  .pulse .esqueleto {
+    background: linear-gradient(90deg, #f0f0f3 0%, #f7f7f9 50%, #f0f0f3 100%);
+    background-size: 200% 100%;
+    animation: pulse-brillo 1.4s ease-in-out infinite;
+    border-radius: 8px;
+  }
+  @keyframes pulse-brillo {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
   .pulse .vidrio {
     background: color-mix(in srgb, #ffffff 82%, transparent);

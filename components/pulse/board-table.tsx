@@ -133,7 +133,7 @@ function FilaAgregar({ estilo, grupo }: { estilo: React.CSSProperties; grupo: Gr
   };
   return (
     <div style={estilo} className="flex border-b border-[var(--pulse-linea)]">
-      <div className="sticky left-0 z-10 flex h-full items-center bg-background" style={{ width: ANCHO_CHECK + ANCHO_NOMBRE, borderLeft: `6px solid ${cssColor(grupo.color)}`, opacity: 0.85 }}>
+      <div className="sticky left-0 z-10 flex h-full items-center bg-background" style={{ width: ANCHO_CHECK + ANCHO_NOMBRE, borderLeft: `3px solid ${cssColor(grupo.color)}`, opacity: 0.85 }}>
         {activo ? (
           <input
             autoFocus

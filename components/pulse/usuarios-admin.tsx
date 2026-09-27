@@ -34,7 +34,7 @@ export function UsuariosAdmin({ usuarios, yo }: { usuarios: UsuarioPulse[]; yo: 
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-semibold">Usuarios</h2>
-          <p className="text-sm text-muted-foreground">Quiénes pueden entrar a Pulse y aparecer en las columnas de Personas. Los importados de Monday no tienen clave: para que entren, tocá "Poner clave". Roles: <b>Miembro</b> usa y edita los tableros · <b>Editor</b> además agrega gente y claves · <b>Admin</b> todo, incluso eliminar tableros.</p>
+          <p className="text-sm text-muted-foreground">Quiénes pueden entrar a Pulse y aparecer en las columnas de Personas. Los importados de Monday no tienen clave: para que entren, toca "Poner clave". Roles: <b>Miembro</b> usa y edita los tableros · <b>Editor</b> además agrega gente y claves · <b>Admin</b> todo, incluso eliminar tableros.</p>
         </div>
         <Dialog open={abierto} onOpenChange={setAbierto}>
           <DialogTrigger asChild>
@@ -126,7 +126,7 @@ function Lista({ titulo, usuarios, yo, onClave, aviso }: { titulo: string; usuar
             <UserAvatar nombre={u.nombre} color={u.color} className="size-8 text-xs" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">
-                {u.nombre} {u.id === yo.id ? <span className="text-xs text-muted-foreground">(vos)</span> : null}
+                {u.nombre} {u.id === yo.id ? <span className="text-xs text-muted-foreground">(tú)</span> : null}
               </p>
               <p className="truncate text-xs text-muted-foreground">
                 {u.email} · {NOMBRE_ROL[u.rol]} {!u.tieneClave ? "· sin clave" : ""}
@@ -160,7 +160,7 @@ function Lista({ titulo, usuarios, yo, onClave, aviso }: { titulo: string; usuar
             ) : null}
           </div>
         ))}
-        {usuarios.length === 0 ? <p className="px-3 py-4 text-sm text-muted-foreground">Nadie por acá.</p> : null}
+        {usuarios.length === 0 ? <p className="px-3 py-4 text-sm text-muted-foreground">Nadie por aquí.</p> : null}
       </div>
     </section>
   );

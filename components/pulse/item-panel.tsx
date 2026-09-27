@@ -206,7 +206,7 @@ function Actividades({ itemId, boardId, columns }: { itemId: string; boardId: st
   return (
     <div className="flex h-full flex-col">
       <div className="flex gap-2 border-b px-5 py-3">
-        <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Escribí un comentario… (Cmd/Ctrl+Enter para enviar)" rows={2} className="min-h-0 text-sm" onKeyDown={(e) => (e.metaKey || e.ctrlKey) && e.key === "Enter" && enviar()} />
+        <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Escribe un comentario… (Cmd/Ctrl+Enter para enviar)" rows={2} className="min-h-0 text-sm" onKeyDown={(e) => (e.metaKey || e.ctrlKey) && e.key === "Enter" && enviar()} />
         <button type="button" disabled={enviando || !texto.trim()} onClick={enviar} className="flex h-9 items-center gap-1 self-end rounded-md bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50">
           <Send className="size-4" />
         </button>

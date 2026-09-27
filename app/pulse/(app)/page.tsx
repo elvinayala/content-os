@@ -1,49 +1,81 @@
-import { ArrowUpRight, Layers3, Plus, Sparkles, Users } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpenCheck, CalendarClock, Clock, FileText, Kanban, Lock, MessageSquare, MoveRight, Plus, Sparkles, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 import { crearBoardAction } from "@/app/pulse/(app)/actions";
+import { BotonBuscar } from "@/components/pulse/boton-buscar";
 import { ColorPicker } from "@/components/pulse/color-picker";
+import { IconoTablero } from "@/components/pulse/icono-tablero";
+import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { cssColor } from "@/lib/pulse/colores";
+import { puedeFormularios } from "@/lib/formularios/reglas";
+import { marcasConAcceso } from "@/lib/leads/repo";
 import { usuarioActual } from "@/lib/pulse/auth";
-import { listarBoards } from "@/lib/pulse/repo";
-import { NOMBRE_APP } from "@/lib/pulse/types";
+import type { Pendiente, TipoPendiente } from "@/lib/pulse/mi-dia";
+import { pendientesDe } from "@/lib/pulse/mi-dia-datos";
+import { actividadReciente, boardsVisibles, listarBoards, numerosInicio, type EventoInicio } from "@/lib/pulse/repo";
+import type { ColorPulse } from "@/lib/pulse/types";
+
+export const dynamic = "force-dynamic";
+
+const TZ = "America/Puerto_Rico";
 
 function saludo(): string {
-  const h = Number(new Date().toLocaleString("en-US", { hour: "numeric", hour12: false, timeZone: "America/Puerto_Rico" }));
+  const h = Number(new Date().toLocaleString("en-US", { hour: "numeric", hour12: false, timeZone: TZ }));
   return h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches";
 }
 
 function hace(iso: string | null): string {
   if (!iso) return "sin actividad";
   const min = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-  if (min < 2) return "ahora mismo";
+  if (min < 2) return "ahora";
   if (min < 60) return `hace ${min} min`;
   const h = Math.round(min / 60);
   if (h < 24) return `hace ${h} h`;
   const d = Math.round(h / 24);
-  return `hace ${d} día${d === 1 ? "" : "s"}`;
+  return d === 1 ? "ayer" : `hace ${d} días`;
 }
 
-export default async function PulseHome() {
+const TIPOS: Record<TipoPendiente, { nombre: string; icono: typeof Clock; tono: string }> = {
+  nuevo: { nombre: "Clientes nuevos", icono: UserPlus, tono: "#00a862" },
+  onboarding: { nombre: "Onboardings detenidos", icono: Clock, tono: "#e8900c" },
+  seguimiento: { nombre: "Seguimientos", icono: CalendarClock, tono: "#3b82f6" },
+  reporte: { nombre: "Reportes", icono: FileText, tono: "#8b5cf6" },
+};
+
+export default async function PulseInicio() {
   const usuario = await usuarioActual();
-  const boards = await listarBoards(usuario ?? undefined);
-  const totalItems = boards.reduce((a, b) => a + b.items, 0);
-  const totalGrupos = boards.reduce((a, b) => a + b.grupos.length, 0);
+  if (!usuario) return null;
+  const visibles = [...(await boardsVisibles(usuario))];
+  const [boards, dia, actividad, numeros, marcas] = await Promise.all([
+    listarBoards(usuario),
+    pendientesDe(visibles).catch(() => ({ pendientes: [] as Pendiente[], hoy: "" })),
+    actividadReciente(visibles).catch(() => [] as EventoInicio[]),
+    numerosInicio(visibles).catch((e) => (console.error("[pulse/inicio] numeros", e), null)),
+    marcasConAcceso(usuario).catch(() => []),
+  ]);
+  const fecha = new Date().toLocaleDateString("es-PR", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
+  const porTipo = (Object.keys(TIPOS) as TipoPendiente[]).map((t) => ({ t, n: dia.pendientes.filter((p) => p.tipo === t).length }));
+  const sop = boards.find((b) => b.slug === "sops-level-up") ?? boards.find((b) => b.slug.startsWith("sops"));
+  const atajos = [
+    { href: "/pulse/preguntar", titulo: "Preguntarle al CRM", sub: "En español, con la lista", icono: Sparkles },
+    ...(marcas.length ? [{ href: "/pulse/leads", titulo: "Leads", sub: "Embudos y WhatsApp", icono: Kanban }] : []),
+    ...(puedeFormularios(usuario, process.env.FORMULARIOS_ACCESO || undefined) ? [{ href: "/pulse/formularios", titulo: "Formularios", sub: "Onboarding y encuestas", icono: FileText }] : []),
+    ...(sop ? [{ href: `/pulse/${sop.slug}`, titulo: "SOPs", sub: "Procesos del equipo", icono: BookOpenCheck }] : []),
+  ].slice(0, 4);
 
   return (
     <div className="fondo-malla min-h-svh">
       <header className="vidrio sticky top-0 z-20 flex h-14 items-center gap-3 border-b px-4">
         <SidebarTrigger />
-        <span className="text-sm font-medium">Tableros</span>
+        <span className="text-sm font-medium">Inicio</span>
         <div className="ml-auto">
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <Button size="sm" variant="outline" className="h-8">
                 <Plus /> Nuevo tablero
               </Button>
             </DialogTrigger>
@@ -67,85 +99,185 @@ export default async function PulseHome() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        {/* hero */}
-        <section className="mb-8 flex flex-wrap items-end justify-between gap-6">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-8 sm:py-12">
+        {/* Saludo + búsqueda */}
+        <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              <span className="punto-vivo" /> {NOMBRE_APP} · CRM de clientes
-            </p>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              {saludo()}, {usuario?.nombre.split(" ")[0]}.
+            <p className="ceja-pulse first-letter:uppercase">{fecha}</p>
+            <h1 className="mt-2 text-3xl font-semibold sm:text-[34px]">
+              {saludo()}, {usuario.nombre.split(" ")[0]}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">Todo lo que sabemos de cada cliente, en un solo lugar.</p>
+            <p className="mt-1.5 text-[15px] text-muted-foreground">Esto es lo que está pasando hoy en EA Market.</p>
           </div>
-          <div className="flex gap-3">
-            <Stat icono={<Users className="size-4" />} valor={totalItems.toLocaleString("en-US")} etiqueta="clientes" />
-            <Stat icono={<Layers3 className="size-4" />} valor={String(boards.length)} etiqueta={boards.length === 1 ? "tablero" : "tableros"} />
-            <Stat icono={<Sparkles className="size-4" />} valor={String(totalGrupos)} etiqueta="grupos" />
-          </div>
+          <BotonBuscar />
         </section>
 
-        {/* tableros */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {boards.map((b) => {
-            const color = cssColor(b.color);
-            const visibles = b.grupos.filter((g) => g.items > 0);
-            return (
-              <Link key={b.id} href={`/pulse/${b.slug}`} className="tarjeta-tablero group flex flex-col gap-4 p-5" style={{ ["--tarjeta-color" as string]: color }}>
-                <div className="flex items-start gap-3">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl text-white shadow-md" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 85%, white), ${color})` }}>
-                    <Layers3 className="size-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-base font-semibold leading-tight">{b.nombre}</h2>
-                    <p className="text-xs text-muted-foreground">
-                      {b.items.toLocaleString("en-US")} cliente{b.items === 1 ? "" : "s"} · {b.grupos.length} grupo{b.grupos.length === 1 ? "" : "s"}
-                    </p>
-                  </div>
-                  <ArrowUpRight className="size-4 shrink-0 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
-                </div>
+        {/* Números */}
+        {numeros ? (
+          <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <Numero titulo="Clientes activos" valor={numeros.activos} nota="Trabajando con nosotros" />
+            <Numero titulo="En onboarding" valor={numeros.onboarding} nota="Onboarding y estrategia" />
+            <Numero titulo="Nuevos este mes" valor={numeros.nuevosMes} nota="Fichas creadas en el mes" destacado />
+            <Numero titulo="En cartera" valor={numeros.totalClientes} nota="Sin contar las bajas" />
+          </section>
+        ) : null}
 
-                {b.items > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="barra-grupos">
-                      {visibles.map((g) => (
-                        <span key={g.id} title={`${g.title}: ${g.items}`} style={{ width: `${(g.items / b.items) * 100}%`, background: cssColor(g.color) }} />
-                      ))}
+        <section className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
+          <div className="flex min-w-0 flex-col gap-6">
+            {/* Tu día */}
+            <Panel titulo="Tu día" accion={{ href: "/pulse/mi-dia", texto: "Abrir Mi día" }}>
+              <div className="grid grid-cols-2 gap-2 border-b px-5 pb-4 sm:grid-cols-4">
+                {porTipo.map(({ t, n }) => {
+                  const T = TIPOS[t];
+                  return (
+                    <div key={t} className="flex flex-col gap-1 rounded-lg bg-muted/60 px-3 py-2.5">
+                      <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <T.icono className="size-3.5" style={{ color: T.tono }} /> {T.nombre}
+                      </span>
+                      <span className="text-xl font-semibold tabular-nums">{n}</span>
                     </div>
-                    <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                      {visibles.slice(0, 4).map((g) => (
-                        <li key={g.id} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                          <span className="size-2 rounded-full" style={{ background: cssColor(g.color) }} />
-                          <span className="max-w-32 truncate">{g.title}</span>
-                          <span className="font-medium text-foreground">{g.items}</span>
-                        </li>
-                      ))}
-                      {visibles.length > 4 ? <li className="text-[11px] text-muted-foreground">+{visibles.length - 4}</li> : null}
-                    </ul>
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground">Todavía sin elementos.</p>
-                )}
+                  );
+                })}
+              </div>
+              {dia.pendientes.length ? (
+                <ul className="divide-y">
+                  {dia.pendientes.slice(0, 5).map((p) => {
+                    const T = TIPOS[p.tipo];
+                    return (
+                      <li key={`${p.itemId}-${p.tipo}`}>
+                        <Link href={`/pulse/${p.boardSlug}?item=${p.itemId}`} className="group flex items-center gap-3 px-5 py-3 transition hover:bg-[var(--pulse-hover)]">
+                          <span className="grid size-8 shrink-0 place-items-center rounded-full" style={{ background: `color-mix(in srgb, ${T.tono} 12%, white)`, color: T.tono }}>
+                            <T.icono className="size-4" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-medium">{p.nombre}</span>
+                            <span className="block truncate text-xs text-muted-foreground">
+                              {[p.empresa, T.nombre.toLowerCase()].filter(Boolean).join(" · ")}
+                            </span>
+                          </span>
+                          <ArrowRight className="size-4 text-muted-foreground opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="px-5 py-8 text-center text-sm text-muted-foreground">Nada pendiente hoy. Buen trabajo. 🎉</p>
+              )}
+            </Panel>
 
-                <p className="mt-auto text-[11px] text-muted-foreground">Última actividad {hace(b.actualizadoEl)}</p>
-              </Link>
-            );
-          })}
-          {boards.length === 0 ? <p className="col-span-full text-sm text-muted-foreground">Todavía no hay tableros. Creá el primero con "Nuevo tablero".</p> : null}
+            {/* Actividad */}
+            <Panel titulo="Actividad reciente">
+              {actividad.length ? (
+                <ul className="flex flex-col">
+                  {actividad.map((e) => (
+                    <li key={e.id} className="flex items-start gap-3 px-5 py-2.5">
+                      {e.usuario ? <UserAvatar nombre={e.usuario.nombre} color={e.usuario.color as ColorPulse | null} className="mt-0.5 size-7 text-[10px]" /> : <span className="mt-0.5 size-7 shrink-0 rounded-full bg-muted" />}
+                      <p className="min-w-0 flex-1 text-[13px] leading-snug text-muted-foreground">
+                        <b className="font-medium text-foreground">{e.usuario?.nombre.split(" ")[0] ?? "Alguien"}</b> {verbo(e)}{" "}
+                        <Link href={`/pulse/${e.board.slug}?item=${e.item.id}`} className="font-medium text-foreground hover:underline">
+                          {e.item.nombre}
+                        </Link>
+                        {e.tipo === "mover" && e.grupo ? (
+                          <>
+                            {" "}
+                            <MoveRight className="inline size-3.5 align-[-2px]" /> <span className="text-foreground">{e.grupo}</span>
+                          </>
+                        ) : null}
+                        {e.texto ? <span className="mt-0.5 block truncate text-xs italic">“{e.texto}”</span> : null}
+                        <span className="mt-0.5 block text-[11px] text-muted-foreground/80">
+                          {e.board.nombre} · {hace(e.at)}
+                        </span>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="px-5 py-8 text-center text-sm text-muted-foreground">Todavía no hay movimiento.</p>
+              )}
+            </Panel>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-6">
+            {/* Tableros */}
+            <Panel titulo="Espacios de trabajo">
+              <ul className="flex flex-col px-2 pb-2">
+                {boards.map((b) => (
+                  <li key={b.id}>
+                    <Link href={`/pulse/${b.slug}`} className="group flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-[var(--pulse-hover)]">
+                      <IconoTablero nombre={b.nombre} color={b.color} tam="md" />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-1.5 truncate text-sm font-medium">
+                          <span className="truncate">{b.nombre}</span>
+                          {b.privado ? <Lock className="size-3 shrink-0 text-muted-foreground" /> : null}
+                        </span>
+                        <span className="block text-[11px] text-muted-foreground">
+                          {b.items.toLocaleString("en-US")} · {hace(b.actualizadoEl)}
+                        </span>
+                      </span>
+                      <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+
+            {/* Atajos */}
+            {atajos.length ? (
+              <section className="grid grid-cols-2 gap-3">
+                {atajos.map((a) => (
+                  <Link key={a.href} href={a.href} className="superficie superficie-hover group flex flex-col gap-3 p-4">
+                    <span className="grid size-8 place-items-center rounded-lg bg-primary/10 text-primary">
+                      <a.icono className="size-4" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-medium">{a.titulo}</span>
+                      <span className="block text-xs text-muted-foreground">{a.sub}</span>
+                    </span>
+                  </Link>
+                ))}
+              </section>
+            ) : null}
+          </div>
         </section>
+
+        <p className="flex items-center justify-center gap-2 pt-4 text-[11px] text-muted-foreground/80">
+          <MessageSquare className="size-3" /> Pulse · el sistema operativo de EA Market
+        </p>
       </main>
     </div>
   );
 }
 
-function Stat({ icono, valor, etiqueta }: { icono: React.ReactNode; valor: string; etiqueta: string }) {
+function verbo(e: EventoInicio): string {
+  if (e.tipo === "crear") return "agregó a";
+  if (e.tipo === "mover") return "movió a";
+  if (e.tipo === "comentario") return "comentó en";
+  return e.columna ? `actualizó «${e.columna}» de` : "actualizó a";
+}
+
+function Panel({ titulo, accion, children }: { titulo: string; accion?: { href: string; texto: string }; children: React.ReactNode }) {
   return (
-    <div className="vidrio flex min-w-28 flex-col gap-1 rounded-xl border px-4 py-3">
-      <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
-        {icono} {etiqueta}
-      </span>
-      <span className="text-2xl font-semibold tabular-nums leading-none">{valor}</span>
+    <section className="superficie overflow-hidden">
+      <header className="flex items-center justify-between px-5 pt-4 pb-3">
+        <h2 className="text-[15px] font-semibold">{titulo}</h2>
+        {accion ? (
+          <Link href={accion.href} className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-foreground">
+            {accion.texto} <ArrowRight className="size-3.5" />
+          </Link>
+        ) : null}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+function Numero({ titulo, valor, nota, destacado }: { titulo: string; valor: number; nota: string; destacado?: boolean }) {
+  return (
+    <div className="superficie flex flex-col gap-1.5 px-4 py-4">
+      <span className="text-xs font-medium text-muted-foreground">{titulo}</span>
+      <span className={`text-[28px] leading-none font-semibold tabular-nums ${destacado ? "text-primary" : ""}`}>{valor.toLocaleString("en-US")}</span>
+      <span className="text-[11px] text-muted-foreground/80">{nota}</span>
     </div>
   );
 }

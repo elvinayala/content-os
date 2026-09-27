@@ -44,7 +44,7 @@ export function BoardAcceso({ open, onOpenChange }: { open: boolean; onOpenChang
           <DialogTitle className="flex items-center gap-2">
             <Lock className="size-4" /> Acceso a «{board.nombre}»
           </DialogTitle>
-          <DialogDescription>Los admins siempre ven todos los tableros. Un tablero privado solo lo ven, además, las personas que marques acá.</DialogDescription>
+          <DialogDescription>Los admins siempre ven todos los tableros. Un tablero privado solo lo ven, además, las personas que marques aquí.</DialogDescription>
         </DialogHeader>
         <div className="flex items-center justify-between rounded-lg border px-3 py-2.5">
           <Label htmlFor="privado" className="flex flex-col gap-0.5">

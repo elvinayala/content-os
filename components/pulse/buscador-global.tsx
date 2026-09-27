@@ -71,7 +71,7 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
     const nav: Opcion[] = [
       { id: "mi-dia", titulo: "Mi día", detalle: "Lo que te toca hoy", icono: <Sun className="size-4" />, href: "/pulse/mi-dia" },
       { id: "preguntar", titulo: "Preguntarle al CRM", detalle: "Pregunta en español y te responde con la lista", icono: <Sparkles className="size-4" />, href: "/pulse/preguntar" + (bajo.length > 3 ? `?q=${encodeURIComponent(q.trim())}` : "") },
-      { id: "tableros", titulo: "Todos los tableros", icono: <LayoutGrid className="size-4" />, href: "/pulse" },
+      { id: "tableros", titulo: "Inicio", icono: <LayoutGrid className="size-4" />, href: "/pulse" },
       ...(puedeConfigurar ? [{ id: "config", titulo: "Usuarios y configuración", icono: <Settings className="size-4" />, href: "/pulse/configuracion" }] : []),
       ...boards.map((b) => ({ id: `b-${b.slug}`, titulo: b.nombre, detalle: "Tablero", icono: <Table2 className="size-4" style={{ color: cssColor(b.color) }} />, href: `/pulse/${b.slug}` })),
     ].filter((o) => !bajo || o.titulo.toLowerCase().includes(bajo) || o.id === "preguntar");

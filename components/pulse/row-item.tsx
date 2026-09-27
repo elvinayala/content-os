@@ -45,7 +45,7 @@ export const RowItem = memo(function RowItem({
 
   return (
     <div className="fila flex h-[var(--pulse-fila)] border-b border-[var(--pulse-linea)] bg-background" data-seleccionada={seleccionada}>
-      <div className="celda sticky left-0 z-10 flex shrink-0 justify-center bg-background !px-0" style={{ width: ANCHO_CHECK, borderLeft: `6px solid ${colorGrupo}` }}>
+      <div className="celda sticky left-0 z-10 flex shrink-0 justify-center bg-background !px-0" style={{ width: ANCHO_CHECK, borderLeft: `3px solid ${colorGrupo}` }}>
         <Checkbox checked={seleccionada} onCheckedChange={(c) => dispatch({ type: "seleccion", itemIds: [item.id], seleccionado: c === true })} className="size-4 rounded-sm" aria-label="Seleccionar" />
       </div>
       <div className={cn("celda group/nombre sticky z-10 shrink-0 gap-1 bg-background")} style={{ width: ANCHO_NOMBRE, left: ANCHO_CHECK }}>
