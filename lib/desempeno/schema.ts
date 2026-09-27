@@ -396,3 +396,36 @@ export const desempenoBienestarReacciones = pgTable(
   },
   (t) => [primaryKey({ columns: [t.postId, t.userId] })],
 );
+
+// Viajes (27/sep/2026): cada quien planifica sus vacaciones (local, dentro de su país o internacional) y las
+// convierte en solicitud; y el "viaje del año" que la empresa regala POR MÉRITO (pasajes + hospedaje hasta un
+// tope): la maestra escoge al ganador entre los que cumplen (viajes-reglas.ts).
+export const desempenoViajesPlan = pgTable(
+  "desempeno_viajes_plan",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(), // local | domestico | internacional
+    destino: text("destino").notNull(),
+    desde: text("desde"),
+    hasta: text("hasta"),
+    presupuestoUsd: doublePrecision("presupuesto_usd"),
+    notas: text("notas"),
+    solicitudId: uuid("solicitud_id"), // cuando lo pidió como vacaciones
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_viajes_plan_user").on(t.userId)],
+);
+
+export const desempenoViajeAnual = pgTable("desempeno_viaje_anual", {
+  anio: integer("anio").primaryKey(),
+  premio: text("premio").notNull(), // lo que incluye (texto que ve el equipo)
+  topeUsd: doublePrecision("tope_usd"), // tope de hospedaje (solo lo ve la maestra)
+  anuncio: text("anuncio").notNull(), // YYYY-MM-DD: fecha en que se anuncia al ganador
+  ganadorId: uuid("ganador_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+  anunciadoAt: timestamp("anunciado_at", { withTimezone: true }),
+  nota: text("nota"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

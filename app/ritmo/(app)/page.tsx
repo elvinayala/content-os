@@ -1,4 +1,4 @@
-import { ChevronRight, HeartPulse } from "lucide-react";
+import { ChevronRight, HeartPulse, Plane } from "lucide-react";
 import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
@@ -71,6 +71,7 @@ export default async function HoyPage() {
                   { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
                   { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
+                  ...(u.rol === "admin" ? [{ href: "/ritmo/viajes", t: "Viajes", d: "Solo tú, por ahora" }] : []),
                 ].map((a) => (
                   <Link key={a.href} href={a.href} className="rounded-xl border border-border/70 bg-white/[0.02] px-3 py-2.5 transition hover:border-primary/40 hover:bg-primary/[0.04]">
                     <span className="block text-sm font-medium text-foreground">{a.t}</span>
@@ -127,6 +128,19 @@ export default async function HoyPage() {
           <Animo valor={animoHoy} compacto />
         </div>
       </section>
+
+      {u.maestro && u.rol === "admin" ? (
+      <Link href="/ritmo/viajes" className="panel group flex w-full max-w-md items-center gap-3 p-4 transition">
+        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/30">
+          <Plane className="size-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium">Planifica tus próximas vacaciones</p>
+          <p className="text-xs text-muted-foreground">Local, dentro de tu país o internacional · y el viaje del año 🏆</p>
+        </div>
+        <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+      </Link>
+      ) : null}
 
       {noticias.length ? (
         <section className="flex w-full max-w-md flex-col gap-2">

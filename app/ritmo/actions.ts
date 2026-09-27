@@ -19,6 +19,8 @@ import * as noticias from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
 import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
+import * as viajes from "@/lib/desempeno/viajes";
+import { errorPlan } from "@/lib/desempeno/viajes-reglas";
 import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereCuenta as requiereUsuario } from "@/lib/pulse/auth";
@@ -648,6 +650,83 @@ export async function reaccionComunidadAction(p: { postId: string; emoji: string
   return envolver(async () => {
     const u = await requiereUsuario();
     await bienestar.reaccionar(p.postId, u.id, p.emoji);
+    refresh();
+    return {};
+  });
+}
+
+// ─── Viajes: planificar vacaciones y el viaje del año (por mérito) ────────────────────────────
+
+const hoyViajes = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
+
+export async function crearPlanViajeAction(p: { tipo: string; destino: string; desde: string; hasta: string; presupuesto: string; notas: string }) {
+  return envolver(async () => {
+    const u = await requiereDireccion();
+    const err = errorPlan(p, hoyViajes());
+    if (err) throw new Error(err);
+    await viajes.crearPlan(u.id, {
+      tipo: p.tipo,
+      destino: p.destino.trim().slice(0, 120),
+      desde: p.desde || null,
+      hasta: p.hasta || null,
+      presupuestoUsd: p.presupuesto ? Math.round(Number(p.presupuesto)) : null,
+      notas: p.notas?.trim().slice(0, 1000) || null,
+    });
+    refresh();
+    return {};
+  });
+}
+
+export async function borrarPlanViajeAction(id: string) {
+  return envolver(async () => {
+    const u = await requiereDireccion();
+    await viajes.borrarPlan(u.id, id);
+    refresh();
+    return {};
+  });
+}
+
+export async function pedirVacacionesPlanAction(id: string) {
+  return envolver(async () => {
+    const u = await requiereDireccion();
+    const r = await viajes.pedirVacaciones(u, id);
+    refresh();
+    return r;
+  });
+}
+
+// Viajes está oculto al equipo por ahora (Elvin, 27/sep): todo, planes incluidos, solo para él.
+async function requiereDireccion() {
+  const u = await requiereMaestro();
+  if (u.rol !== "admin") throw new Error("Solo Elvin, por ahora");
+  return u;
+}
+
+export async function guardarViajeAnualAction(p: { anio: number; premio: string; topeUsd: string; anuncio: string; nota: string }) {
+  return envolver(async () => {
+    const u = await requiereDireccion();
+    if (!Number.isInteger(p.anio) || p.anio < 2026 || p.anio > 2100) throw new Error("Año inválido");
+    const premio = p.premio?.trim().slice(0, 300);
+    if (!premio || premio.length < 5) throw new Error("Describe el premio");
+    if (!FECHA.test(p.anuncio)) throw new Error("Pon la fecha del anuncio");
+    const tope = p.topeUsd ? Number(p.topeUsd) : null;
+    if (tope !== null && (!Number.isFinite(tope) || tope < 0 || tope > 50000)) throw new Error("Tope inválido");
+    await viajes.guardarPrograma({ anio: p.anio, premio, topeUsd: tope, anuncio: p.anuncio, nota: p.nota?.trim().slice(0, 1000) || null }, u.id);
+    refresh();
+    return {};
+  });
+}
+
+export async function elegirGanadorViajeAction(p: { anio: number; userId: string; nombre: string }) {
+  return envolver(async () => {
+    const u = await requiereDireccion();
+    const prog = await viajes.programaDelAnio(p.anio);
+    if (!prog) throw new Error("Primero configura el viaje del año");
+    // Por mérito: solo se puede escoger a quien cumple (antigüedad, días y índice).
+    const lista = await viajes.elegibilidadAnio(u, p.anio, prog.anuncio);
+    const c = lista.find((x) => x.userId === p.userId);
+    if (!c?.e.enCarrera) throw new Error("Esa persona no cumple los requisitos del viaje del año");
+    await viajes.elegirGanador(p.anio, { id: c.userId, nombre: c.nombre }, u);
     refresh();
     return {};
   });

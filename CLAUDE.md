@@ -599,6 +599,14 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   maestra también, para moderar): tablero de la semana (minutos, activo hoy), actividad del grupo, mensajes ≤ 280 con
   reacciones 💪🔥👏 (una por persona). La energía nunca sale ahí. Salir = desaparece de inmediato. Chatbot: Elvin lo planteó el 26/sep;
   se dejó para después de ver 2-3 semanas de preguntas reales a RR.HH.
+- **Viajes** (`/ritmo/viajes`, 27/sep; tablas `desempeno_viajes_plan` y `desempeno_viaje_anual`, migración 0025; puro en
+  `lib/desempeno/viajes-reglas.ts` + tests `tests/viajes.test.mjs`; datos `lib/desempeno/viajes.ts`): **OCULTO al equipo —
+  solo Elvin (admin con 2 pasos) lo ve** hasta que él decida abrirlo (página, acceso en Hoy y acciones). Planificar
+  vacaciones (local · dentro del país · internacional, destino/fechas/presupuesto, cuenta regresiva) y "Pedir estas
+  vacaciones" → solicitud normal. **Viaje del año por mérito** (pasajes + hospedaje hasta un tope): califica quien tiene
+  ≥ 6 meses, ≥ 20 días marcados e índice ≥ 90 (40 % asistencia + 60 % desempeño; sin score, solo asistencia); la
+  dirección escoge al ganador entre los que califican (validado en el servidor) → Noticia fijada + aviso. Para abrirlo al
+  equipo: volver a poner la tarjeta en Hoy, la pestaña en `nav.tsx` y cambiar los gates `rol === "admin"`.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
