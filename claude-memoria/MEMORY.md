@@ -1,79 +1,79 @@
 # Memory Index
 
-- [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack/setup (Next 16, dir con espacio, /guion)
-- [Pulse — CRM propio](pulse-crm.md) — 27/sep: rediseño nivel SaaS (Inicio con KPIs, login dividido, pills suaves); reemplazo de Monday ($800/mes) EN PROD con Supabase; 24/sep: próximo nivel (automatizaciones, Mi día con DM del bot, ⌘K, vistas, Preguntarle al CRM)
-- [Protección de datos](proteccion-datos.md) — 27/sep: papelera universal (trigger en todas las tablas, Deshacer 15 min, /pulse/papelera) + respaldo diario cifrado en Supabase, Vercel Blob y la Mac; falta que Elvin guarde RESPALDO_CLAVE en su gestor
-- [Bori — super plataforma](bori-superplataforma.md) — la plataforma de agentes de AI Borinquen (admin-first en app/borinquen/, tema verde, voz Retell+preset, CRM live)
-- [Bori — backend real](bori-backend-real.md) — el SaaS en vivo con clientes pagando: dónde vive, cómo se despliega, las trampas que ya rompieron producción, y el monitor de fallos (Equipo → Fallos = récord de bugs; marcar arreglados ahí)
-- [Bori — plan de crecimiento](bori-plan-crecimiento.md) — 1K al día 60 · 3K al día 90 · 50K en un año (13/sep/2026): motores, compuertas, rol de Elvin + equipo de 4, trial 7 días; qué ya está en prod y las 7 decisiones pendientes
-- [Bori — marca](bori-marca.md) — identidad v1 (13/sep/2026): logo "el coquí que canta" (vector), paleta = la de la app, @heybori, kit + generador en vault/proyectos/bori-crecimiento/marca/, reglas logo vs personaje
-- [Bori — post-venta](bori-postventa.md) — ruta post-venta (19/sep/2026): Ángela PM es la dueña del cliente hasta que publica, traffickers respaldo, closers no son paso obligatorio; plan en artifact; 21/sep: 3 capas (Canal WhatsApp solo-lectura + app + 1 WhatsApp de soporte con Lis), Agencia único 1:1; puesto #2 = Lis como Coordinadora de Colaboraciones ($850 + $50/colab, desde 22/sep); pipeline de creadores scripts/creadores.mjs + /creadores (Apify) + atajo Telegram 'creador @x'; Elvin aprueba la tabla del viernes
-- [Bori — agente](bori-agente.md) — Bori como trafficker personal (estilo Muse): fase 1 EN PROD 21/sep; fase 2 WhatsApp por Zernio CONSTRUIDA (falta número + ZERNIO_* en Railway); 22/sep **Bori Estratega** (Opus 5.5 + búsqueda web, diseña la campaña y la deja para montar en pausa) EN PROD solo dueño/staff; fase 3 proactivo; 23/sep: **Bori móvil** fase 1 EN PROD en heybori.ai/movil (PWA tipo Muse sobre el mismo agente); siguen push, lanzar dentro del móvil y tiendas (Capacitor)
-- [Bori — CRM](bori-crm.md) — CRM propio para Pro/Agencia (15/sep/2026): pipeline, notas, puente webhook para Timelines.ai/Zapier, fase 2 pendiente (WhatsApp API, Lead Ads)
-- [Hey Bori — app de Meta](hey-bori-meta-app.md) — business_management **APROBADO 24/sep/2026** (+ renovados los demás permisos); ya no hace falta el puente de Evaluadores ni la versión B de bienvenida: "Sin páginas" = Reconectar Meta
-- [Elvin — perfil CEO](elvin-ceo-perfil.md) — prioridades, lo que le duele, a mejorar, su voz; para actuar con su criterio y crear contenido diferenciado (detalle en vault/ceo/)
-- [AIB — reestructuración de ventas](aib-reestructuracion-ventas.md) — 21/sep/2026: ventas $4K/mes; Alexis Pérez = nombre de Elvin para AIB (sin cara; caras UGC Yulianna/Ed/Luisa); precios $1,500+$147 / $2,500+$297 / $3,500+$497 + Academia AIB $2,500 y 1:1 $4K; Portal AutoFlow construido (app/portal); pre-call por Dragon Chat; pauta $75/día
-- [Plan de guerra Q4 2026](plan-de-guerra-q4.md) — aprobado 18/sep: holding IA Market, 2 motores + 3 productos + 1 piloto + 5 congelados con trigger, 5 jugadas (Fábrica de MVPs, Estudio), 2 contrataciones humanas + Sofi como coordinadora (agente), ninguna empresa nueva hasta el 12/dic
-- [Sofi — Coordinadora de Producción](sofi-coordinadora.md) — agente líder del Estudio con el criterio de Elvin: cerebro en vault/ceo/cerebro-sofi.md, rutinas (diaria, locación mensual con Aure, ciclo de ángulos), reglas de guion 50/20/20/10 + 8+2 + enemigo + doble CTA, caras y avatares
-- [Elvin — visión AI Borinquen Core](elvin-aib-core-vision.md) — constitución de producto del Core: AI-native, uso real antes que infra, sistema operativo de agentes, Builder incremental, demos con nombre de producto
-- [Ventaja — apuestas +EV](ventaja-apuestas.md) — 2º proyecto en /Users/elvinayala/ventaja: motor multi-agente de apuestas deportivas (PASO 01 mock)
-- [Elvin — estrategia de apuestas](elvin-apuestas-estrategia.md) — cómo apuesta (MLB/NBA/boxeo/UFC + predicciones) y qué quiere de Ventaja: intangibles por evento, no +EV genérico
-
-- [Organigrama del equipo](organigrama-equipo.md) — roles para rutear tareas (CEO decide, no ejecuta); detalle en vault/ceo/organigrama.md
-- [Circuito de contenido del equipo](circuito-contenido-equipo.md) — login /pedir + Slack two-way con Sofi; circuito de Valentina (INACTIVO desde 18/sep: ya no crea contenido; caras de LU = Daren y Frankie Jay (una persona))
-- [Voz — español PR tuteo](voz-espanol-pr-tuteo.md) — TODO el contenido/copy en tuteo de Puerto Rico (tú/tienes), NUNCA voseo argentino (vos/tenés)
-- [Glenn International — demo AutoFlow](glenn-international-demo.md) — cliente prospecto grande de Bori (AutoFlow); demos chat WhatsApp + voz (Valeria) bilingües en demos/glenn-international*/
-- [Dr. Alfred — demo AutoFlow](dr-alfred-demo.md) — oficina médica/medspa prospecto de Bori; demo chat WhatsApp (Camila) live en dr-alfred-demo-chat.netlify.app
-- [Voz — stack 2026](voz-stack-2026.md) — qué motor de voz usar para AutoFlow (Retell gana por transfer a extensión; OpenAI GPT-Live sin API; ElevenLabs mejor voz pero sin transfer en navegador)
-- [Memoria compuesta](memoria-compuesta.md) — vault de entidades + síntesis destilada (ángulos/objeciones/ideas/decisiones) que alimenta Jarvis y la fábrica; lib/memoria.ts, /sync-memoria, /destilar-memoria
-- [Alertas de clientes críticos](alertas-clientes-criticos.md) — cruzar con vault/entidades/<cliente>.md antes de alertar; no misatribuir quejas internas ni ROI prematuro (feedback real de Carilin)
-- [Shadow Operator — marca](shadow-operator-marca.md) — contenido de valor + personalidad + pepitas (no "meta"); escalera consultoría $3,500/4mo + Skool $55 + 2 socios de 0 a 20K
-- [Staff Agency — visión](staff-agency-vision.md) — nuevo proyecto de cantera de talento para ventas digitales (setter/closer reclutado, entrenado, certificado, colocado en empresas)
-- [Richy & Elvin Trading LLC](richy-elvin-trading.md) — negocio de trading con Richy, marca **1000X** (ghost terminal, phosphor #00FF87, no faces): comunidad $50/mes + curso $700 + bot ~$15K; demo y EA en demos/richy-elvin-trading/
-- [Plagas Puerto Rico — agente interno](plagas-puerto-rico.md) — cliente Gilbert Torres: repo plagas-puerto-rico/, WhatsApp por QR (Evolution), Railway, decisiones y pendientes
-- [Resuelto — Plomería PR](plomeria-pr-vision.md) — EN EJECUCIÓN (sep/2026): Resuelto Home Services LLC, marca/plataforma home services, plomero #1 Luis, 35/65 + fee $19, 10 plomeros/8 territorios en 6 meses; planes + kit en vault/proyectos/plomeria-pr/; 21/sep: WhatsApp 939-247-9234 por Zernio (no GHL) con el agente propio ya en Railway, falta que Elvin conecte el número y ponga secretos; 22/sep: 7 conjuntos por región en pausa ($75/día); 23/sep: primer plomero firmado (la LLC NO estaba constituida: el nombre 'Resuelto Home Services' ya es de otra entidad, 25/sep), contrato+kit en resueltopr.com/d/afiliacion-cf534a96/, entrevistas en GHL + avisos a Yaileen; firma electrónica propia en app.resueltopr.com/equipo-firmas; 24/sep: ayudante sin licencia eliminado (Ley 59-2022) → Acuerdo de aprendiz, Art. 28 (accionistas plomeros) pendiente con abogado; WhatsApp desactivado por Meta (apelación enviada), reclutamiento por Messenger+IG, número nuevo 787-956-1111 en espera
-- [Resuelto — cómo vender](resuelto-como-vender.md) — no vender rápido: saludar, presentarse, escuchar, fotos, diagnóstico (menú o visita $69), cerrar con horario; no soltar el 20%; escuchar primero y otros oficios a lista de espera (26/sep)
-- [Resuelto — equipo propio](resuelto-equipo-propio.md) — NUNCA gente/cuentas de las agencias; y desde 6/sep SIN empleados de marketing: Claude = agencia, Bori (heybori.ai) = creativos + Meta Ads (publica en pausa, Elvin activa), humanos = plomeros + 1 coordinador
-- [Contigo PR — adultos mayores](adultos-mayores-vision.md) — 3er proyecto (6/sep/2026), nombre Contigo PR: llamada diaria con IA + línea de pedidos + billetera del hijo + red de cuidadores por territorio; NO hospitales/gobierno; docs en vault/proyectos/adultos-mayores/
-- [Quiz funnels en ClickFunnels](quiz-funnels-clickfunnels.md) — Diagnóstico de Crecimiento (LU, NzxGPd) + Automatización (AIB, NEWQxr) + Shadow (NzxGvR) + Diagnóstico de Trader 1000X (local, sin CF aún); conectados a Pipedrive vía /api/auditoria; código en demos/auditorias/; CAÍDOS desde ~20/sep: cuenta de CF en pausa, respaldo en Netlify
-- [Quilla — holding de creadores](quilla-holding-creadores.md) — empresa nueva (15/sep/2026) de creator management + monetization en PR: Quilla, rev share 50/50, YouTube-only con vocero, GHL, marketplace condicional; 18 docs en vault/proyectos/quilla/
-- [Micro-influencers PR](micro-influencers-pr.md) — investigación sep/2026 en vault/proyectos/micro-influencers/ (10K–50K, solo PR, pago por reel, Tier A) + cómo vetar sin Apify desde el navegador
-- [Nina — community manager de Resuelto](nina-community-manager.md) — agente propio en Railway: 1 post/día por Zernio (50/20/20/10, post/carrusel/reel, feriados), reporta por Telegram (@Nina_resueltoCM_bot); IG/FB conectados en Zernio, primer post 22/sep 11 AM
-- [Resuelto — División Proyectos](resuelto-division-proyectos.md) — remodelaciones/mejoras ticket ~$12K, Resuelto vende y cobra (25%), contratistas Verified ejecutan, DACO obligatorio, Cost Book sin inventar costos; plan + código en agente/
-- [AI Video Editor](ai-video-editor.md) — 27/sep: revisión "editor de Hollywood" en prod (reglas de oficio); 25/sep: voz en off + tomas de apoyo; repo ~/ai-video-editor (Python, cerebro Claude + FFmpeg): estado del MVP, decisiones (no usar el editor de Bori como base), gotchas de setup
-- [AVE — estilo de referencia](ave-estilo-referencias.md) — lo aprendido de los 4 anuncios profesionales (base común + lo que cambia por marca); a esto debe parecerse siempre el editor
-- [AVE — detalles de la referencia Daren](ave-daren-referencia-detalles.md) — el mismo video editado profesionalmente: encuadre cerrado, callouts de cifras, lluvia de dinero, B/N de mood, contador, cursor CTA; aplicar SIEMPRE
-- [Victory Core — scrapper de leads](victory-core-leads.md) — cliente Néstor Nazario (limpieza de oficinas, Fayetteville NC): /victory-leads simple (Claude+Apify+JSON), $500+$147/mes, Elvin pidió NO sobre-ingenierizar; falta 1ª corrida real (Apify en tope) y datos de Néstor
-- [Ecosistema LU + AIB](ecosistema-lu-aib.md) — proyecto sep/2026 (fuente de estrés #1 de Elvin): cablear ManyChat + ActiveCampaign (no MailChimp) + Calendly + Pipedrive; plan 4 semanas en vault/proyectos/ecosistema/; toda pieza nueva nace con keyword + entrega + tag
-- [No enviar sin aprobar](no-enviar-sin-aprobar.md) — NUNCA postear contenido a Heidy/creadores/Slack por mi cuenta; Elvin aprueba desde la bandeja ("envíalos" ≠ aprobar)
-- [Verificar antes de activar](verificar-antes-de-activar.md) — leer el contenido final ya cargado y cruzar números con la fuente primaria antes de activar/reportar (22/sep: emails con [CORCHETES] a leads reales; 11 agendas reportadas como 2)
-- [Meta Ads — agente del portafolio](meta-ads-agente.md) — 25/sep: Max tiene identidad (muñequito con raíces de Elvin, ceja arriba, max-v3) y crea con fal.ai; 24/sep: Max = estratega/CMO que VIVE EN SLACK (#max-aprobaciones, Elvin o Carilin aprueban, al cliente solo lo aprobado, publicar solo con 'publica <id>'); motor API FUNCIONANDO (21/sep): token del dueño desde Bori (Elvin corre el script), plantillas follow-me/trafico-url/dm-instagram/quiz en ~10 s; MAX = media buyer con bot propio @eamarket_max_bot y el método de Elvin ($100K→$300K, ROAS 6-8x, renovar/analizar/escalar, 3 embudos, mentores) + rutinas (reporte lunes, alertas, trazabilidad con Aure); reglas de Elvin, IDs de las 4 cuentas, trampas de la API y del clasificador de permisos; 23/sep: MÉTODO 5 FASES (`estrategia`, públicos primero), `escalar` con permiso, skill espiar-competencia (Apify, falta APIFY_TOKEN) y Max = trafficker de clientes AIB en Bori (Estratega → modo Max, ficha por cliente)
-- [Cortex — coaching de grabación](cortex-coaching-grabacion.md) — recordar lunes/jueves a Carilin, María del Carmen y Juan Diego (de parte de Elvin) que formen a los clientes en cómo grabar y qué tomas mandar; tarea programada recordatorio-coaching-grabacion
-- [Privacidad de las reuniones de Elvin](privacidad-reuniones-elvin.md) — REGLA DURA: nunca grabar/publicar/compartir sus reuniones sin su OK; se aplica en silencio, no se le dice al equipo
-- [La plantilla manda](plantilla-manda.md) — si dan una plantilla/referencia de diseño, se respeta y solo se ajusta y afina; nunca rediseñar
-- [Avisos desde el Slack de Elvin](avisos-desde-slack-elvin.md) — "avísale a X" = DM desde la cuenta de Elvin (Slack MCP) pero firmado por el agente que lo hizo ("— Nico"), dándole el crédito
-- [Slack — verificar empleados](slack-equipo-verificar.md) — antes de mandar accesos/instrucciones por Slack confirmar correo @levelupmediapr.net; Lis Acevedo (con S) es la asistente, no "Liz García"
-- [Nico — vibecoder](nico-vibecoder.md) — 23/sep: Carilin y Aure le piden cambios por Slack ("Nico…") y NO ejecuta sin el OK de Elvin (ok/no <id>); 21 plataformas en el inventario; hoy corre solo en la Mac — agente técnico socio de Sofi (19/sep/2026): control total de todas las plataformas, ronda diaria 7 AM, bot @Nico_VibeCoder_AIBOT; en Railway con GitHub como fuente de verdad (20/sep, falta GH_TOKEN de Elvin); la Mac es copia: git pull antes de tocar content-os/bori/plagas/cortex
-- [Iris — vigía de Cortex](iris-vigia-cortex.md) — revisa #cortex-bori-edit-videos cada 20 min, responde y arregla o se lo deja a Nico, sin esperar a Elvin
-- [Carilin — revisión de clientes](carilin-revision-clientes.md) — a Carilin solo lo nuevo/cambiado/riesgo, ≥$1,500 bajo la lupa, sin repetir, máx 8 líneas (/revision-clientes, tarea revision-clientes-carilin L-Sáb 6 PM); el libreto largo viejo sale de Claude en Slack (apagarlo allá)
-- [n8n de Level Up](n8n-level-up.md) — back office de la agencia en un VPS Contabo/Easypanel (n8n+Chatwoot+Evolution+NocoDB); Nico lo tomó (20-21/sep/2026): API key, respaldo en data/n8n/, puente Pulse→NocoDB EN REAL (clientes+equipo), Cobros/Recordatorio/Supervisor leen Pulse, Monday apagado; corte con el proveedor (Luis) el 21/sep 7 PM vía Aure
-- [Lola — creadora de contenido con IA](lola-creadora-ia.md) — 26/sep: GUÍA DE FLYERS de Elvin (fal.mjs flyer: título + ≤3 bullets + CTA, minimalista, logo real, Nano Banana Pro); desde 25/sep crea con fal.ai (scripts/fal.mjs), ya no Higgsfield; el puesto de producción (20/sep/2026): flyers/artes/videos Higgsfield + guiones a pedido, /crear-contenido, tipo de entrega arte, bot @Lola_contentAI_bot en Railway (funciona sin la Mac; Higgsfield OAuth cargado)
-- [Los agentes se hablan](agentes-se-hablan.md) — 26/sep: ⟳ SEGUIR = la respuesta despierta al que pidió y termina; buzón /api/agentes + scripts/agentes.mjs (mensaje/buzon/atendido/slack DM/elvin), loop de 20 s en cada puente, espejo a Slack de Elvin; el bot puede DM a cualquiera del equipo; pendiente: estudio.json perdió cambios desde el puente
-- [Closers LU + Calendly](closers-lu-calendly.md) — Calendly→Pipedrive CLOSERS en vivo; Juan David/Roger con asiento, Laura sin asiento vía alias + filtro; Nahuel pide cambios del CRM
-- [Director Creativo en Slack](director-creativo-slack.md) — "Leo", agente que revisa flyers/guiones del equipo con el prompt de Elvin en #office-5-revision-creativa (en vivo 22/sep)
-- [ISLA Run Series](isla-run-series.md) — marca de carreras con socios; Cabo Rojo 5K dom 13/dic/2026; piloto como excepción al plan de guerra (23/sep); PDF de gestiones + plan en vault/proyectos/isla-run/; MVP de la plataforma construido en /Users/elvinayala/isla-run (local, sin deploy)
-- [Juan David — sin acceso](juan-david-sin-acceso.md) — 22/sep: Elvin ordenó quitarle TODO acceso al closer Juan David Guzman Escobar (no Juan Diego); ningún agente le escribe ni le da cuentas/links
-- [Onboarding AIB](aib-onboarding-agente.md) — sale del Calendly de AI Borinquen (agendar onboarding = cliente, igual que LU), no de Pulse ni del Calendly LU; Calendly AIB conectado (23/sep); en simulación, falta número Zernio + plantillas + modo real
-- [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos a Elvin/equipo solo por Telegram/Slack; Resuelto bloqueado por SCAM el 23/sep por 35 avisos a su número
-- [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — /ritmo, app aparte de Pulse (mismas cuentas): ponche + KPIs por puesto + score 🟢🟡🔴; EN PROD en ritmo.levelupmediapr.net (dominio oficial desde 26/sep); maestra solo Elvin/Carilin/Aure; acceso por link de 72 h; sin vigilar; 26/sep: 2FA en la vista maestra + tope 50 MB; Carreras (referidos $100) y Equipo digital (agentes vs humanos, cierre 6:30 PM); 27/sep: Arena de ventas (comisiones de Nahuel, sin ponche)
-- [Leads — reemplazo de Pipedrive](leads-crm.md) — CRM de leads dentro de Pulse (/pulse/leads, 26/sep/2026) con esencia Pipedrive + Timelines; historial de Pipedrive archivado en Excel, NO cargado; falta token Timelines y cuentas de setters/closers
-- [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — 25/sep: referidos mandó 18x a Christopher y 8x a Rafael (throw + staticData, data.key); llave en la base y vigilar el 1er envío real
-- [Formularios propios (Typeform de la casa)](formularios-propios.md) — Pulse → Formularios + /f/<slug> EN PROD 26/sep; onboarding LU (con botón Calendly de Jessica) y encuesta duplicados, n8n ya usa el link nuevo; 525 respuestas archivadas; falta que closers dejen el link de Typeform y cancelar
-- [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic/2026, ~25 top clientes por LTV, gratis por invitación, poca inversión sin pauta; Carilin dirige; formulario la-mesa cerrado; Lis cotiza 5 venues para el 3/oct (Aure apoya), Elvin aprueba el 5/oct
-- [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — 26/sep: pooler de transacciones cuelga consultas en cola → vigilante cliente-db.ts; el de sesión tiene tope 15 y tumbó prod; no cambiar sin subir pool size
-- [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — 26/sep: /f/agenda-roger y /f/agenda-level-up EN PROD (guarda a medias → Leads «Sin agendar» + Calendly pre-llenado); NO clonar Calendly todavía; falta que setters usen el link y quitar espacios a 5 opciones en Calendly
-- [Remi — motion designer](remi-motion.md) — 28/sep: paquete = 2 motion a clientes con acuerdo ≥ $3,500 pagado completo; 27/sep: skill motion-graphics (premium para clientes; Max §22); motion graphics por prompt (Remotion en motion/, /motion); 1er video Recepcionista AI de AIB (anuncio de usted + orgánico tuteo); audio por fal; entrega a la bandeja
-- [AIB — acceso solo de Aure](aib-acceso-aure.md) — lo de AI Borinquen lo maneja Aure; Jessica/LU fuera; Leads AIB solo Aure, Luis, Yaileen (27/sep)
-- [Resumen del día por Telegram](resumen-dia-telegram.md) — 27/sep: 8:30 PM PR llamadas (Calendly) + ventas nuevas/renovaciones (hojas de tesorería) LU y AIB; falta que Elvin publique el Apps Script ventas-hoy.gs y pase la URL
-- [Deploy — empaque del vault](deploy-vault-empaque.md) — 27/sep: vault/** en cada función (194 MB) tumbó el deploy (ENOSPC); ahora solo vault/**/*.md
-- [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 27/sep: listo en 7 días + 45 días de acompañamiento (+ soporte para siempre); el "21 días o no corre la mensualidad" NO es real (demo.mjs aún lo dice)
+- [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack (Next 16, dir con espacio, /guion)
+- [Pulse — CRM propio](pulse-crm.md) — reemplazo de Monday EN PROD (Supabase); automatizaciones, Mi día, ⌘K, Preguntar; 27/sep rediseño SaaS
+- [Pulse — bajas = OFFBOARDED](pulse-bajas-offboarded.md) — "eliminar" un cliente = moverlo a OFFBOARDED con razón de baja, nunca borrarlo (así a Jessica)
+- [Protección de datos](proteccion-datos.md) — papelera universal + Deshacer + respaldo cifrado diario (Supabase, Vercel Blob, Mac); falta RESPALDO_CLAVE en el gestor de Elvin
+- [Bori — super plataforma](bori-superplataforma.md) — plataforma de agentes de AIB (app/borinquen/, tema verde, voz Retell, CRM live)
+- [Bori — backend real](bori-backend-real.md) — SaaS en vivo: dónde vive, deploy, trampas que rompieron prod, monitor de fallos
+- [Bori — plan de crecimiento](bori-plan-crecimiento.md) — 1K día 60 · 3K día 90 · 50K en un año; motores, compuertas, decisiones pendientes
+- [Bori — marca](bori-marca.md) — identidad v1: logo "el coquí que canta", paleta de la app, kit en vault/proyectos/bori-crecimiento/marca/
+- [Bori — post-venta](bori-postventa.md) — Ángela PM dueña del cliente hasta publicar; 3 capas de soporte; Lis coordinadora de colaboraciones; pipeline de creadores
+- [Bori — agente](bori-agente.md) — trafficker personal (fase 1 prod), WhatsApp por Zernio (falta número), Bori Estratega, Bori móvil (heybori.ai/movil)
+- [Bori — CRM](bori-crm.md) — CRM para Pro/Agencia: pipeline, notas, puente Timelines/Zapier; fase 2 pendiente
+- [Hey Bori — app de Meta](hey-bori-meta-app.md) — business_management APROBADO 24/sep; "Sin páginas" = Reconectar Meta
+- [Elvin — perfil CEO](elvin-ceo-perfil.md) — prioridades, dolores, su voz (detalle en vault/ceo/)
+- [AIB — reestructuración de ventas](aib-reestructuracion-ventas.md) — Alexis Pérez, caras UGC, precios, Portal AutoFlow, pre-call Dragon Chat, pauta $75/día
+- [Plan de guerra Q4 2026](plan-de-guerra-q4.md) — holding IA Market, motores/productos/piloto/congelados; ninguna empresa nueva hasta el 12/dic
+- [Sofi — Coordinadora de Producción](sofi-coordinadora.md) — cerebro en vault/ceo/cerebro-sofi.md, rutinas, reglas de guion, caras
+- [Elvin — visión AI Borinquen Core](elvin-aib-core-vision.md) — AI-native, uso real antes que infra, Builder incremental
+- [Ventaja — apuestas +EV](ventaja-apuestas.md) — /Users/elvinayala/ventaja, motor multi-agente (PASO 01 mock)
+- [Elvin — estrategia de apuestas](elvin-apuestas-estrategia.md) — MLB/NBA/boxeo/UFC; intangibles por evento, no +EV genérico
+- [Organigrama del equipo](organigrama-equipo.md) — roles para rutear tareas (detalle en vault/ceo/organigrama.md)
+- [Circuito de contenido del equipo](circuito-contenido-equipo.md) — /pedir + Slack con Sofi; Valentina inactiva; caras LU = Daren y Frankie Jay
+- [Voz — español PR tuteo](voz-espanol-pr-tuteo.md) — todo en tuteo PR, NUNCA voseo
+- [Glenn International — demo AutoFlow](glenn-international-demo.md) — prospecto grande; demos chat + voz bilingües
+- [Dr. Alfred — demo AutoFlow](dr-alfred-demo.md) — medspa prospecto; demo chat (Camila) en Netlify
+- [Voz — stack 2026](voz-stack-2026.md) — Retell gana por transfer; ElevenLabs mejor voz sin transfer
+- [Memoria compuesta](memoria-compuesta.md) — vault de entidades + síntesis destilada para Jarvis y la fábrica
+- [Alertas de clientes críticos](alertas-clientes-criticos.md) — cruzar con vault/entidades antes de alertar (feedback de Carilin)
+- [Shadow Operator — marca](shadow-operator-marca.md) — valor + personalidad + pepitas; consultoría $3,500 + Skool $55
+- [Staff Agency — visión](staff-agency-vision.md) — cantera de setters/closers entrenados y colocados
+- [Richy & Elvin Trading LLC](richy-elvin-trading.md) — marca 1000X (ghost terminal); comunidad + curso + bot
+- [Plagas Puerto Rico — agente interno](plagas-puerto-rico.md) — cliente Gilbert Torres; Evolution, Railway, pendientes
+- [Resuelto — Plomería PR](plomeria-pr-vision.md) — EN EJECUCIÓN: plataforma home services, plomeros, WhatsApp/Meta, LLC y contratos pendientes
+- [Resuelto — cómo vender](resuelto-como-vender.md) — no vender rápido: escuchar, fotos, diagnóstico, cerrar con horario
+- [Resuelto — equipo propio](resuelto-equipo-propio.md) — nunca gente de las agencias; Claude = agencia, Bori = creativos + ads
+- [Contigo PR — adultos mayores](adultos-mayores-vision.md) — llamada diaria con IA + pedidos + cuidadores (congelado)
+- [Quiz funnels en ClickFunnels](quiz-funnels-clickfunnels.md) — quizzes LU/AIB/Shadow/1000X; CF en pausa, respaldo en Netlify
+- [Quilla — holding de creadores](quilla-holding-creadores.md) — creator management PR, rev share 50/50 (congelado)
+- [Micro-influencers PR](micro-influencers-pr.md) — investigación 10K–50K solo PR + cómo vetar sin Apify
+- [Nina — community manager de Resuelto](nina-community-manager.md) — 1 post/día por Zernio, reporta por Telegram
+- [Resuelto — División Proyectos](resuelto-division-proyectos.md) — remodelaciones ~$12K, contratistas Verified, DACO
+- [AI Video Editor](ai-video-editor.md) — repo ~/ai-video-editor (Claude + FFmpeg): estado, decisiones, gotchas
+- [AVE — estilo de referencia](ave-estilo-referencias.md) — lo aprendido de los 4 anuncios profesionales
+- [AVE — detalles de la referencia Daren](ave-daren-referencia-detalles.md) — encuadre, callouts, B/N, contador, cursor CTA
+- [Victory Core — scrapper de leads](victory-core-leads.md) — Néstor Nazario; simple, sin sobre-ingenierizar; falta 1ª corrida
+- [Ecosistema LU + AIB](ecosistema-lu-aib.md) — ManyChat + ActiveCampaign + Calendly + CRM; toda pieza con keyword + entrega + tag
+- [No enviar sin aprobar](no-enviar-sin-aprobar.md) — nunca postear contenido al equipo por mi cuenta; Elvin aprueba en la bandeja
+- [Verificar antes de activar](verificar-antes-de-activar.md) — leer lo cargado y cruzar números con la fuente antes de activar/reportar
+- [Meta Ads — agente del portafolio](meta-ads-agente.md) — Max: estratega en Slack, Método 5 Fases, plantillas, reglas e IDs de cuentas
+- [Cortex — coaching de grabación](cortex-coaching-grabacion.md) — recordatorio lunes/jueves sobre cómo grabar
+- [Privacidad de las reuniones de Elvin](privacidad-reuniones-elvin.md) — REGLA DURA: nunca grabar/compartir sus reuniones sin OK
+- [La plantilla manda](plantilla-manda.md) — con plantilla/referencia se ajusta, nunca se rediseña
+- [Avisos desde el Slack de Elvin](avisos-desde-slack-elvin.md) — "avísale a X" = DM desde su cuenta firmado por el agente; automáticos = bot
+- [Slack — verificar empleados](slack-equipo-verificar.md) — confirmar @levelupmediapr.net; Lis Acevedo (con S)
+- [Nico — vibecoder](nico-vibecoder.md) — guardia técnica de todas las plataformas; Railway + GitHub; Carilin/Aure piden y Elvin aprueba
+- [Iris — vigía de Cortex](iris-vigia-cortex.md) — revisa #cortex-bori-edit-videos cada 20 min y arregla o pasa a Nico
+- [Carilin — revisión de clientes](carilin-revision-clientes.md) — solo lo nuevo/riesgo, ≥$1,500 bajo la lupa, máx 8 líneas
+- [n8n de Level Up](n8n-level-up.md) — back office en Contabo/Easypanel; Nico lo tomó; puente Pulse→NocoDB en real
+- [Lola — creadora de contenido con IA](lola-creadora-ia.md) — flyers con fal.mjs (guía de Elvin), videos, bot en Railway
+- [Los agentes se hablan](agentes-se-hablan.md) — buzón /api/agentes + agentes.mjs; ⟳ SEGUIR para terminar lo delegado
+- [Closers LU + Calendly](closers-lu-calendly.md) — Calendly→CLOSERS; Laura por alias; Nahuel pide cambios del CRM
+- [Director Creativo en Slack](director-creativo-slack.md) — "Leo" revisa flyers/guiones en #office-5-revision-creativa
+- [ISLA Run Series](isla-run-series.md) — Cabo Rojo 5K 13/dic; excepción al plan de guerra; repo /Users/elvinayala/isla-run
+- [Juan David — sin acceso](juan-david-sin-acceso.md) — ningún acceso ni mensajes al closer Juan David Guzman Escobar
+- [Onboarding AIB](aib-onboarding-agente.md) — sale del Calendly de AIB; en simulación, falta número Zernio
+- [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos internos solo por Telegram/Slack
+- [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — ritmo.levelupmediapr.net: ponche, KPIs, RR.HH., 2FA, Carreras, Arena de ventas
+- [Leads — reemplazo de Pipedrive](leads-crm.md) — /pulse/leads con Timelines; historial de Pipedrive archivado, no cargado
+- [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — llave de envío en la base; vigilar el 1er envío real
+- [Formularios propios (Typeform de la casa)](formularios-propios.md) — /f/<slug> en prod; falta que closers dejen Typeform y cancelar
+- [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic, top 25 por LTV; Carilin dirige; venues para el 3/oct
+- [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — vigilante cliente-db.ts; no cambiar pooler sin subir pool size
+- [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — /f/agenda-roger y /f/agenda-level-up; no clonar Calendly
+- [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo
+- [AIB — acceso solo de Aure](aib-acceso-aure.md) — AIB lo maneja Aure; Jessica/LU fuera
+- [Resumen del día por Telegram](resumen-dia-telegram.md) — 8:30 PM llamadas + ventas; falta que Elvin publique ventas-hoy.gs
+- [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
+- [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 7 días + 45 de acompañamiento; el "21 días" no es real
