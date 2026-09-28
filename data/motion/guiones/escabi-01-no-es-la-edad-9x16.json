@@ -1,0 +1,82 @@
+{
+  "id": "escabi-01-no-es-la-edad-9x16",
+  "marca": "level-up",
+  "formato": "9:16",
+  "titulo": "Mamá repite la misma pregunta… ¿es la edad?",
+  "angulo": "Hijos de adultos mayores · señales de alerta",
+  "musica": "audio/cliente-calma.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Mamá repite",
+        "la *misma* pregunta…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 80,
+      "alarma": true,
+      "lineas": [
+        "Todos dicen:",
+        "*«es la edad»*."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 190,
+      "modo": "marcar",
+      "titulo": "Señales que *no* se deben ignorar",
+      "items": [
+        {
+          "texto": "Olvida citas y medicamentos"
+        },
+        {
+          "texto": "Se pierde en lugares conocidos"
+        },
+        {
+          "texto": "Le cuesta encontrar palabras"
+        },
+        {
+          "texto": "Cambios de ánimo o conducta"
+        }
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "lineas": [
+        "Una evaluación *neuropsicológica*",
+        "te dice qué está pasando."
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "dur": 170,
+      "titulo": "Cómo *funciona*",
+      "pasos": [
+        "Entrevista inicial",
+        "Pruebas de memoria, atención y lenguaje",
+        "Informe con diagnóstico y recomendaciones"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "etiqueta": "Dra. Yamilet Escabí · Psy.D",
+      "lineas": [
+        "Neuropsicóloga clínica.",
+        "*+10 años* de experiencia."
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 140,
+      "cta": "Agenda la evaluación",
+      "sub": "Hormigueros · también virtual",
+      "url": "787-546-6143",
+      "nota": "Información educativa; no sustituye una consulta profesional."
+    }
+  ]
+}

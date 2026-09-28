@@ -1,0 +1,71 @@
+{
+  "id": "escabi-02-entender-16x9",
+  "marca": "level-up",
+  "formato": "16:9",
+  "titulo": "Antes de tratar, hay que entender",
+  "angulo": "Autoridad · qué mide una evaluación neuropsicológica",
+  "musica": "audio/cliente-calma.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Antes de tratar,",
+        "hay que *entender*."
+      ]
+    },
+    {
+      "tipo": "roles",
+      "dur": 160,
+      "titulo": "Una evaluación *neuropsicológica* mide:",
+      "roles": [
+        "Memoria",
+        "Atención",
+        "Lenguaje",
+        "Funciones ejecutivas"
+      ],
+      "sub": "Para un diagnóstico claro y un plan a seguir."
+    },
+    {
+      "tipo": "dato",
+      "dur": 150,
+      "grande": "+10",
+      "texto": "años evaluando y tratando pacientes en práctica privada"
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "lineas": [
+        "En *español* o en *inglés*.",
+        "Presencial o *virtual*."
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "dur": 150,
+      "titulo": "Tu *camino*",
+      "pasos": [
+        "Llamas y coordinamos",
+        "Evaluación completa",
+        "Informe y plan a seguir"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "etiqueta": "Dra. Yamilet Escabí · Psy.D",
+      "lineas": [
+        "Post-doctorado en",
+        "*neuropsicología clínica*."
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 140,
+      "cta": "Agenda tu evaluación",
+      "sub": "Alemar Plaza, Hormigueros · también virtual",
+      "url": "787-546-6143",
+      "nota": "Información educativa; no sustituye una consulta profesional."
+    }
+  ]
+}
