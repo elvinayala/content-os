@@ -1,6 +1,7 @@
 import { Bot, CircleAlert, FileCheck2, UserRound } from "lucide-react";
 import { redirect } from "next/navigation";
 
+import { AutoRefresco } from "@/components/ritmo/auto-refresco";
 import { Tarjeta } from "@/components/ritmo/piezas";
 import { AGENTES_IA, ladoAgente, ladoHumano, veces, type Humano, type LadoComparado } from "@/lib/desempeno/agentes-ia";
 import { reportesAgentesEntre, salariosPorPersona } from "@/lib/desempeno/agentes-reportes";
@@ -48,6 +49,7 @@ export default async function AgentesPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <AutoRefresco segundos={60} />
       <div>
         <p className="ceja">Equipo digital</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Agentes</h1>
@@ -81,8 +83,8 @@ export default async function AgentesPage() {
                       {a.rol} · {a.donde}
                     </p>
                   </div>
-                  <span className={cn("rounded-full px-2 py-0.5 font-mono text-[10px] tracking-widest uppercase ring-1", resumen ? "bg-primary/10 text-primary ring-primary/30" : "bg-white/5 text-muted-foreground ring-white/10")}>
-                    {resumen ? "Reportó" : "Sin reporte"}
+                  <span className={cn("rounded-full px-2 py-0.5 font-mono text-[10px] tracking-widest uppercase ring-1", resumen || r?.corridas ? "bg-primary/10 text-primary ring-primary/30" : "bg-white/5 text-muted-foreground ring-white/10")}>
+                    {resumen ? "Reportó" : r?.corridas ? "● En vivo" : "Sin actividad"}
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2 font-mono text-[11px] text-muted-foreground">
@@ -91,7 +93,7 @@ export default async function AgentesPage() {
                   <div><p className="tracking-wider uppercase">Activo</p><p className="num text-base text-foreground">{r ? horas(r.minutos) : "—"}</p></div>
                   <div><p className="tracking-wider uppercase">Costo</p><p className="num text-base text-foreground">{r && !a.sinCosto ? usd(r.costoUsd) : "—"}</p></div>
                 </div>
-                {resumen ? <p className="text-sm whitespace-pre-line text-foreground/85">{resumen}</p> : <p className="text-sm text-muted-foreground">Todavía no hay reporte de hoy (llega al cierre, 6:30 PM).</p>}
+                {resumen ? <p className="text-sm whitespace-pre-line text-foreground/85">{resumen}</p> : <p className="text-sm text-muted-foreground">{r?.corridas ? "Trabajando: los números se actualizan en vivo; el resumen llega al cierre (6:30 PM)." : "Todavía no ha trabajado hoy."}</p>}
                 {r?.entregables?.length ? (
                   <ul className="flex flex-col gap-1 text-sm">
                     {r.entregables.map((e, i) => (

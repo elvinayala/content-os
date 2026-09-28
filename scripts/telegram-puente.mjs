@@ -809,13 +809,16 @@ function sumarJornada(sesion, costoTotal, ms) {
   j.costo = Math.round((j.costo + delta) * 10000) / 10000;
   ESTADO_VIVO.jornada = j;
   try { guardarEstado(ESTADO_VIVO); } catch {}
+  // En vivo (28/sep, Elvin: "no está funcionando esa data en tiempo real"): cada corrida actualiza sus números en Ritmo;
+  // el resumen y las tareas siguen llegando en el cierre de las 6:30 PM.
+  postRitmo({ agente: YO, fecha: hoy, metricas: { corridas: j.corridas, minutos: Math.round((j.ms / 60000) * 10) / 10, costoUsd: j.costo } }).catch(() => {});
 }
 
 async function postRitmo(body) {
   const base = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app", secreto = env("CRON_SECRET");
   if (!secreto) return LOG("cierre: sin CRON_SECRET, no mando el reporte");
   const r = await fetch(`${base}/api/ritmo/agentes`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) }).then((x) => x.json()).catch((e) => ({ error: e.message }));
-  LOG("cierre → Ritmo:", r.ok ? "ok" : r.error || "falló");
+  LOG("→ Ritmo:", r.ok ? "ok" : r.error || "falló");
 }
 
 const PROMPT_CIERRE = "CIERRE DEL DÍA (Ritmo · equipo digital). Escribe tu reporte de HOY para Elvin, Carilin y Aure: lo comparan con el trabajo del equipo humano, así que sé exacto y honesto — solo lo que de verdad hiciste hoy (revisa esta conversación, tu bitácora y lo que tocaste). Cuenta como TAREA cada pedido o trabajo terminado y entregado (no cuentes intentos, mensajes sueltos ni cosas a medias). Guárdalo con UN solo comando: node scripts/agentes.mjs reporte --resumen \"3-6 líneas: qué hiciste y para quién\" --tareas N --entregables \"entregable 1 (con enlace si hay)|entregable 2\" --bloqueos \"lo que te frenó (omítelo si nada)\". No le escribas a nadie ni hagas otro trabajo. Responde solo: listo.";
