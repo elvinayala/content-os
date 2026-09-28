@@ -249,6 +249,14 @@
       "porque": "Las respuestas no le habían llegado cuando escribió.",
       "verificado": "#84, #87 y #89 cerradas (atendido); nada que desplegar",
       "commit": "—"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS · Ritmo (base)",
+      "que": "[Solicitud de Aure #95] Lis Acevedo NO tenía cuenta (ni en Pulse ni en Ritmo). Alta con altaEmpleado: lis.acevedo@levelupmediapr.net, Level Up, puesto soporte, supervisora Aure, ingreso 22/sep, Slack U0BDGC8KGH4, solo Ritmo, ficha sin salario (lo pone RR.HH.). El link se genera en Ajustes > Lis > Link de acceso (el firmado desde el contenedor no sirve: vercel env pull no trae el PULSE_SESSION_SECRET real). Yaileen (#94) ya entra: login_ok desde 9:16 AM, sin bloqueo.",
+      "porque": "Sin cuenta ni perfil no hay link ni entrada.",
+      "verificado": "fila en pulse_users + desempeno_perfiles activo; /ritmo/activar responde 200; security_log de Yaileen con login_ok",
+      "commit": "— (dato)"
     }
   ],
   "pendientesElvin": [
