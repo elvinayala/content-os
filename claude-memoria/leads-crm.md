@@ -37,3 +37,5 @@ clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETU
 **27/sep/2026 — Grupos y equipo**: Leads de WhatsApp YA entran en tiempo real (Timelines → Pulse al instante). Los grupos de WhatsApp (cita closer+setter+admin, `is_group`) van solos a la columna angosta "Grupos" al final del embudo, fuera de los totales (pedido de Elvin). Teléfonos del equipo (fichas de Ritmo + LEADS_TELEFONOS_EQUIPO) no entran como lead; Nahuel se había colado y se borró.
 
 **28/sep — Exportar leads:** botón Exportar (Excel como Pipedrive). Elvin exporta directo; **Nahuel y Aure piden y Elvin aprueba** (link por Slack, una vez, 24 h, /pulse/leads/exportaciones). Nadie más exporta.
+
+**28/sep — Leads → Equipo:** Nahuel (director de ventas LU), las editoras y Elvin dan/quitan acceso a Leads desde el botón Equipo. Roger, Laura y Luis tenían acceso pero sin clave creada (necesitan su link de acceso de Carilin).
