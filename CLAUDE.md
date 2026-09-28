@@ -669,7 +669,7 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   director_ventas` en `PUESTOS`, `sinPonche`: no ponchan, no salen en Equipo; su Hoy = **Mi marcador**). Ventas = la pestaña del
   mes de la hoja de tesorería por el mismo Apps Script del resumen del día (`VENTAS_SCRIPT_URL`; sin él la Arena dice "no está
   conectada"), columnas buscadas por nombre (fecha, tipo, monto cobrado, método/pasarela, closer, setter, chatter, valor neto),
-  caché 5 min. **Comisiones de Nahuel** (mes completo, sobre cobrado − pasarela: Stripe/PayPal/ATH 3.5 %, Klarna 4.5 %): closer
+  caché 5 min. **Comisiones de Nahuel** (mes completo, sobre cobrado − pasarela: Stripe/PayPal/ATH 3.5 %, Klarna y FanBasis 4.5 %): closer
   7 %, con show-up ≥ 60 % → 8/9/10 % con cierre ≥ 25/30/35 % (show-up y citas del diario del closer; cierres = ventas nuevas de la
   hoja); setter 4 % de lo que agendó; chatter 4 %, 5 % con > 200 agendas propias (de Leads `agendo_por`, si no del diario).
   Carrera por rol (cash collected, sin comisiones), metas del equipo (`METAS`: LU $150K total / $100K nuevas / $35K semana; AIB

@@ -131,7 +131,7 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
           )}
           <p className="text-[11px] text-muted-foreground">
             Reglas (Nahuel): closer 7 %, y con show-up ≥ 60 % sube a 8/9/10 % con cierre de 25/30/35 % · setter 4 % de lo que agendó · chatter 4 %, 5 % con más de 200
-            agendas propias. Sobre lo cobrado menos la pasarela (Stripe, PayPal y ATH 3.5 %, Klarna 4.5 %). Show-up y citas salen del diario de cada closer; el cierre, de las
+            agendas propias. Sobre lo cobrado menos la pasarela (Stripe, PayPal y ATH 3.5 %, Klarna y FanBasis 4.5 %). Show-up y citas salen del diario de cada closer; el cierre, de las
             ventas nuevas de la hoja.
           </p>
           {!ar.hoja.error ? (

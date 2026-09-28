@@ -60,7 +60,7 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
   - **Chatter**: **4 %** del cash collected neto de sus ventas; **5 %** si **ese chatter** pasa de **200 agendas en el
     mes** (hoy el equipo va ~120/mes). La meta de 200 sube cuando suba la pauta.
   - Nahuel: "vamos por esos 200k!"
-- **Pasarelas (Elvin, 27/sep):** Stripe, PayPal y ATH Móvil 3.5 %; Klarna 4.5 % (dijo también "Comas 4.5": sin identificar, pendiente).
+- **Pasarelas (Elvin, 27/sep):** Stripe, PayPal y ATH Móvil 3.5 %; Klarna 4.5 %; FanBasis 4.5 % (el "Comas" de Elvin).
 - **La hoja trae Closer, Setter y Chatter** (Elvin, 27/sep); llega el 28/sep. Verificar con la hoja real: nombres de columnas, si
   "Valor Neto" ya descuenta la pasarela, y cómo escriben los nombres.
 

@@ -6,7 +6,7 @@
 //   · closer 7 % base; con show-up ≥ 60 % sube por % de cierre: ≥ 25 % → 8 · ≥ 30 % → 9 · ≥ 35 % → 10;
 //   · setter 4 % de las ventas que él agendó;
 //   · chatter 4 %, 5 % si ESE chatter pasa de 200 agendas en el mes.
-// Pasarelas (Elvin, 27/sep): Stripe, PayPal y ATH Móvil 3.5 %; Klarna 4.5 %.
+// Pasarelas (Elvin, 27/sep): Stripe, PayPal y ATH Móvil 3.5 %; Klarna y FanBasis 4.5 %.
 
 export type Empresa = "level_up" | "ai_borinquen";
 export type RolVentas = "closer" | "setter" | "chatter";
@@ -33,6 +33,7 @@ export const PASARELAS: { id: string; nombre: string; fee: number; patron: RegEx
   { id: "paypal", nombre: "PayPal", fee: 0.035, patron: /paypal|pay pal/ },
   { id: "ath", nombre: "ATH Móvil", fee: 0.035, patron: /\bath\b|ath ?movil/ },
   { id: "klarna", nombre: "Klarna", fee: 0.045, patron: /klarna/ },
+  { id: "fanbasis", nombre: "FanBasis", fee: 0.045, patron: /fan ?basi|comas/ },
 ];
 
 /** Pasarela de la venta por el texto de la hoja. Sin pasarela reconocida (efectivo, transferencia…) = 0 %. */

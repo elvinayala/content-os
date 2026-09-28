@@ -26,6 +26,8 @@ test("pasarelas: Stripe/PayPal/ATH 3.5 %, Klarna 4.5 %, transferencia 0 %", () =
   assert.equal(pasarelaDe("PAYPAL").fee, 0.035);
   assert.equal(pasarelaDe("ATH Móvil").fee, 0.035);
   assert.equal(pasarelaDe("Klarna").fee, 0.045);
+  assert.equal(pasarelaDe("FanBasis").fee, 0.045);
+  assert.equal(pasarelaDe("Fanbasics").fee, 0.045);
   assert.equal(pasarelaDe("Transferencia").fee, 0);
   assert.equal(pasarelaDe("Transferencia").desconocida, false);
   assert.equal(pasarelaDe("Afterpay").desconocida, true);
