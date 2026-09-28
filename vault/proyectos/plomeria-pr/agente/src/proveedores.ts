@@ -96,7 +96,10 @@ export function listar(): Proveedor[] {
 }
 
 export function porId(id: string) { return listar().find((p) => p.id === id); }
-export function porWhatsapp(numero: string) { const n = numero.replace(/\D/g, ""); return listar().find((p) => p.whatsapp.replace(/\D/g, "") === n); }
+/** Compara por los últimos 10 dígitos: el registro guarda "1787…" y Resuelto Pro manda "787…" (28/sep: Edgar no podía
+ *  entrar con su número). */
+export const mismoTelefono = (a: string, b: string) => { const x = String(a ?? "").replace(/\D/g, "").slice(-10), y = String(b ?? "").replace(/\D/g, "").slice(-10); return x.length === 10 && x === y; };
+export function porWhatsapp(numero: string) { return listar().find((p) => mismoTelefono(p.whatsapp, numero)); }
 
 /** Elegibles para una oferta: misma categoría y mismo territorio. Preferidos primero (se les avisa igual a todos). */
 export function elegibles(o: { categoria: string; territorio?: string }): Proveedor[] {

@@ -61,6 +61,22 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
     mes** (hoy el equipo va ~120/mes). La meta de 200 sube cuando suba la pauta.
   - Nahuel: "vamos por esos 200k!"
 - **Pasarelas (Elvin, 27/sep):** Stripe, PayPal y ATH Móvil 3.5 %; Klarna 4.5 %; FanBasis 4.5 % (el "Comas" de Elvin).
+- **Respuestas de Nahuel (28/sep, Slack):**
+  1. **Cuotas:** si se vende a dos cuotas, la **2.ª cuota también comisiona** ("sobre todo si la cobra el closer"): cuenta para
+     quien sale en esa fila de la hoja. Así ya calculaba la Arena (cash collected del mes = nuevas + cuotas).
+  2. **"Valor Neto" de la hoja:** "de eso se encarga Elvin luego". Mientras tanto la Arena descuenta la pasarela del monto
+     cobrado cuando la hoja trae la pasarela; si no, usa "Valor Neto".
+  3. **Show-up:** "lo saco del CRM, solo tengo que tener los closers al día" → sale de **Leads → CLOSERS**: por cada cita que
+     ya pasó (actividad "llamada" del closer), la etapa donde quedó el lead: No show = no se presentó; No ofertado / Follow up
+     / Pago reserva / Closed win-lost / ganado = se presentó; cancelada no cuenta; si sigue en "Llamada agendada" = **sin
+     marcar** (no cuenta y se le recuerda al closer y a Nahuel). Sin citas marcadas en el CRM → diario. (`resultadoCita`,
+     `citasDelMes`.) **Ojo:** los closers todavía mueven sus tratos en Pipedrive; para que cuente tienen que moverlos en Leads.
+  4. **Agendas de los chatters:** Nahuel lleva una **planilla de Excel** con métricas y números. Pendiente pedírsela para
+     leerla; mientras tanto, Leads (`agendo_por` de Calendly) o el diario.
+  5. **Equipo LU confirmado:** closers Roger, Laura y **Joaquín** (estaba de setter en Ritmo → corregido a closer), setter
+     Luis, chatters Ana y Dilan. **Laura está "un pie en Level y un pie en Bori"** → perfil AI Borinquen + `tambien_en`
+     level_up (migración 0031; "También vende en" en Ajustes): sale en la Arena de las dos marcas.
+  6. **Pasarelas:** no falta ninguna.
 - **La hoja trae Closer, Setter y Chatter** (Elvin, 27/sep); llega el 28/sep. Verificar con la hoja real: nombres de columnas, si
   "Valor Neto" ya descuenta la pasarela, y cómo escriben los nombres.
 

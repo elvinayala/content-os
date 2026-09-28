@@ -73,7 +73,7 @@
 - [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — vigilante cliente-db.ts; no cambiar pooler sin subir pool size
 - [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — /f/agenda-roger y /f/agenda-level-up; no clonar Calendly
 - [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo
-- [AIB — acceso solo de Aure](aib-acceso-aure.md) — AIB lo maneja Aure; Jessica/LU fuera
+- [AIB — acceso](aib-acceso-aure.md) — AIB lo opera Aure; Jessica/LU fuera; Carilin = mismo acceso que Aure (todo, incl. RR.HH.)
 - [Resumen del día por Telegram](resumen-dia-telegram.md) — 8:30 PM llamadas + ventas; falta que Elvin publique ventas-hoy.gs
 - [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
 - [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 7 días + 45 de acompañamiento; el "21 días" no es real
