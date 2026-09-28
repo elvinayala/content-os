@@ -14,7 +14,8 @@
 - [Hey Bori — app de Meta](hey-bori-meta-app.md) — business_management APROBADO 24/sep; "Sin páginas" = Reconectar Meta
 - [Elvin — perfil CEO](elvin-ceo-perfil.md) — prioridades, dolores, su voz (detalle en vault/ceo/)
 - [AIB — reestructuración de ventas](aib-reestructuracion-ventas.md) — Alexis Pérez, caras UGC, precios, Portal AutoFlow, pre-call Dragon Chat, pauta $75/día
-- [Plan de guerra Q4 2026](plan-de-guerra-q4.md) — holding IA Market, motores/productos/piloto/congelados; ninguna empresa nueva hasta el 12/dic
+- [EA Market LLC y sus marcas](ea-market-marcas.md) — nombre legal EA Market LLC (no "IA Market"); LU 2024 AI first, AIB 2026; a cada empleado solo su empresa
+- [Plan de guerra Q4 2026](plan-de-guerra-q4.md) — holding EA Market LLC, motores/productos/piloto/congelados; ninguna empresa nueva hasta el 12/dic
 - [Sofi — Coordinadora de Producción](sofi-coordinadora.md) — cerebro en vault/ceo/cerebro-sofi.md, rutinas, reglas de guion, caras
 - [Elvin — visión AI Borinquen Core](elvin-aib-core-vision.md) — AI-native, uso real antes que infra, Builder incremental
 - [Ventaja — apuestas +EV](ventaja-apuestas.md) — /Users/elvinayala/ventaja, motor multi-agente (PASO 01 mock)
