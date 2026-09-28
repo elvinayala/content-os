@@ -1,0 +1,157 @@
+{
+ "id": "aib-11-equipo-digital-9x16",
+ "marca": "ai-borinquen",
+ "formato": "9:16",
+ "estilo": "neon",
+ "titulo": "No es solo AutoFlow: su equipo digital (Recepcionista AI, ventas, cobros, agente personal)",
+ "angulo": "Portafolio de agentes · no es solo AutoFlow",
+ "musica": "audio/aib-equipo-41.mp3",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 70,
+   "alarma": true,
+   "lineas": [
+    "*9:40 p. m.*",
+    "Suena su teléfono."
+   ]
+  },
+  {
+   "tipo": "llamada",
+   "dur": 100,
+   "titulo": "Contesta su *Recepcionista AI*.",
+   "quien": "Cliente nuevo",
+   "etiqueta": "Contestó su Recepcionista AI"
+  },
+  {
+   "tipo": "gancho",
+   "dur": 80,
+   "logo": true,
+   "etiqueta": "AI Borinquen",
+   "lineas": [
+    "No vendemos",
+    "*un solo* producto."
+   ]
+  },
+  {
+   "tipo": "lista",
+   "dur": 130,
+   "modo": "marcar",
+   "titulo": "Su *equipo digital*:",
+   "items": [
+    {
+     "texto": "Recepcionista AI"
+    },
+    {
+     "texto": "Agente de ventas"
+    },
+    {
+     "texto": "Agente de cobros"
+    },
+    {
+     "texto": "Agente de soporte"
+    },
+    {
+     "texto": "Agente personal"
+    },
+    {
+     "texto": "AutoFlow: todo conectado"
+    }
+   ]
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 110,
+   "imagen": "autoflow-app/m-llamadas-v.png",
+   "dispositivo": "telefono",
+   "titulo": "*Recepcionista AI*: contesta, anota y agenda",
+   "sub": "Cada llamada queda transcrita. Datos de ejemplo.",
+   "foco": {
+    "x": 0.02,
+    "y": 0.14,
+    "w": 0.62,
+    "h": 0.46
+   }
+  },
+  {
+   "tipo": "chat",
+   "dur": 120,
+   "titulo": "Agente de *ventas* en WhatsApp",
+   "hora": "10:12 PM",
+   "nombre": "Ventas · Su negocio",
+   "burbujas": [
+    {
+     "de": "cliente",
+     "texto": "¿Cuánto cuesta el paquete de 3 sesiones?",
+     "en": 10
+    },
+    {
+     "de": "agente",
+     "texto": "Le explico las opciones y le separo una evaluación. ¿Le funciona el jueves?",
+     "en": 34
+    },
+    {
+     "de": "cliente",
+     "texto": "Sí, el jueves en la tarde",
+     "en": 66
+    },
+    {
+     "de": "agente",
+     "texto": "Listo ✅ Jueves a las 3:00 PM.",
+     "en": 90
+    }
+   ]
+  },
+  {
+   "tipo": "gancho",
+   "dur": 50,
+   "lineas": [
+    "Y su *agente personal*."
+   ]
+  },
+  {
+   "tipo": "voz",
+   "dur": 110,
+   "orden": "Recuérdame llamar a Pedro mañana a las 10.",
+   "respuesta": "Listo. Le agendé la llamada para mañana a las 10:00 AM.",
+   "evento": {
+    "titulo": "Llamar a Pedro",
+    "cuando": "Mañana · 10:00 AM"
+   }
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 110,
+   "imagen": "autoflow-app/m-crm-v.png",
+   "dispositivo": "telefono",
+   "titulo": "*AutoFlow* los conecta a todos",
+   "sub": "Chat, voz y CRM en un solo sistema. Datos de ejemplo."
+  },
+  {
+   "tipo": "gancho",
+   "dur": 80,
+   "lineas": [
+    "AutoFlow es *una* pieza.",
+    "Usted escoge *las suyas*."
+   ]
+  },
+  {
+   "tipo": "pasos",
+   "dur": 110,
+   "titulo": "Así *trabajamos*",
+   "pasos": [
+    "Listo en 7 días",
+    "45 días de acompañamiento",
+    "Soporte para siempre, si lo quiere"
+   ]
+  },
+  {
+   "tipo": "cierre",
+   "dur": 130,
+   "cta": "Agende su demo",
+   "sub": "Le armamos su equipo digital.",
+   "url": "WhatsApp +1 (939) 304-0491",
+   "nota": "Pantallas con un negocio y datos de ejemplo."
+  }
+ ]
+}

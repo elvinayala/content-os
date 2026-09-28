@@ -44,7 +44,7 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
   Escena nueva que haga falta → se agrega a la fábrica (tipo en `tipos.ts` + componente), no a un video suelto.
 - Audio: `node motion/scripts/audio.mjs musica "<estilo, BPM, beat desde el primer segundo, sin voz>" --seg 64`
   (fal stable-audio) y `… sfx "<efecto>" --seg ≥0.5` (ElevenLabs). Normalizar con
-  `ffmpeg -af loudnorm=I=-15:TP=-1.5:LRA=11`. **Cada video/campaña puede llevar su propia música** (`musica:`).
+  `ffmpeg -af loudnorm=I=-15:TP=-1.5:LRA=11`. ⚠ La música generada a veces **termina antes** de lo pedido (28/sep: dos pistas de 44 s se apagaban a los ~37 s y el cierre quedaba mudo): mide el volumen de los últimos 3 s (`ffmpeg -ss <t> -af volumedetect`) y, si cae, extiéndela repitiendo compases enteros con `acrossfade` (compás = 240/BPM s). Revisa también el audio del MP4 final. **Cada video/campaña puede llevar su propia música** (`musica:`).
 - Tomas cinematográficas (opcional): Higgsfield **Cinema Studio Video 3.0** (`cinematic_studio_3_0`, 5 s,
   1080p, sin audio) por su MCP → `motion/public/tomas/` → campo `tomas` del anuncio. Sin caras, sin texto,
   sin logos, nunca presentadas como un cliente real. Revisar 3 cuadros antes de usar.
