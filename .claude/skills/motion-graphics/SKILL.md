@@ -109,6 +109,12 @@ su OK). Lo pide Max a Jessica/Carilin en #max-aprobaciones y queda en la ficha/c
 material el video sale genérico: no se entrega así. Cada video debe tener identidad visible en cada escena (logo vivo,
 su motivo gráfico, sus fotos) y detalle (texturas, partículas de marca, transiciones con su forma), no solo texto sobre
 color plano.
+  **Dónde está ese material (búscalo tú primero, antes de pedirlo):** el resumen de onboarding de Jessica en
+  **#office-3-onboarding** (C07VCFWV283; en su hilo el estratega sube logo, fotos y la solicitud de flyers), el canal
+  del cliente (#<nombre>-<negocio>), **#office-5-revision-creativa** (guiones y flyers ya aprobados por Leo) y la llamada
+  de venta en **Fathom** (link en #office-2-ventas-contrato; se lee con el navegador). Pide a Jessica/Carilin solo lo
+  que no encuentres ahí. Guarda lo que saques en la ficha (`max.mjs ficha <slug> '{"negocio":{…}}'`), sobre todo lo
+  PROHIBIDO por el cliente (p. ej. la Dra. Escabí no quiere la palabra "neuropsicológica" en su campaña).
 1. **Marca del cliente en su expediente** (una vez, con SU logo real):
    `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
 2. **2 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:

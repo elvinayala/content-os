@@ -667,5 +667,11 @@ antes de proponer o producir motion. Lo esencial:
   cliente): logo real (PNG/SVG), colores y elementos de marca, fotos aprobadas de la persona y su negocio, cómo la
   contactan y qué destacar. Sin eso no se entrega; con eso, cada escena lleva su logo vivo, su motivo gráfico y sus fotos.
   Esa info tiene que quedar en la ficha/carpeta desde el onboarding (skill §7).
+  **Dónde está ese material (búscalo tú primero, antes de pedirlo):** el resumen de onboarding de Jessica en
+  **#office-3-onboarding** (C07VCFWV283; en su hilo el estratega sube logo, fotos y la solicitud de flyers), el canal
+  del cliente (#<nombre>-<negocio>), **#office-5-revision-creativa** (guiones y flyers ya aprobados por Leo) y la llamada
+  de venta en **Fathom** (link en #office-2-ventas-contrato; se lee con el navegador). Pide a Jessica/Carilin solo lo
+  que no encuentres ahí. Guarda lo que saques en la ficha (`max.mjs ficha <slug> '{"negocio":{…}}'`), sobre todo lo
+  PROHIBIDO por el cliente (p. ej. la Dra. Escabí no quiere la palabra "neuropsicológica" en su campaña).
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
   Bori, AI Borinquen, Ritmo y 1000X; úsalos como creativos de campaña.
