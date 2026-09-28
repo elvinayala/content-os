@@ -34,7 +34,7 @@ const carga = (userId: string, exp: number, desde: Date) => `ritmo-activar|${use
  * YA tiene clave (sería cambiarle la clave). RR.HH. solo para quien todavía no tiene. Siempre exige perfil
  * activo en Ritmo: el link no sirve para dar acceso a cualquier usuario de Pulse.
  */
-export async function linkDeAcceso(userId: string, base: string, puedeResetear = false): Promise<{ url: string; vence: string }> {
+export async function linkDeAcceso(userId: string, base: string, puedeResetear = false): Promise<{ url: string; vence: string; yaTieneClave?: { email: string } }> {
   const d = await db();
   const [u] = await d.select().from(pulseUsers).where(eq(pulseUsers.id, userId));
   if (!u || !u.activo) throw new Error("La persona no está activa en Pulse");
@@ -42,7 +42,8 @@ export async function linkDeAcceso(userId: string, base: string, puedeResetear =
   if (estaBloqueado(u.email)) throw new Error("Esta persona no puede tener acceso (decisión de Elvin)");
   const [p] = await d.select({ activo: desempenoPerfiles.activo }).from(desempenoPerfiles).where(eq(desempenoPerfiles.userId, u.id));
   if (!p?.activo) throw new Error("Primero guárdale su perfil en Ritmo (puesto, horario, supervisor)");
-  if (u.passwordHash && !puedeResetear) throw new Error("Ya tiene clave. Si la olvidó, pídele a Carilin, Aure o Elvin que le generen el link");
+  // Ya tiene clave (usa Pulse): RR.HH. no se la cambia; le manda cómo entrar con la que ya tiene.
+  if (u.passwordHash && !puedeResetear) return { url: "", vence: "", yaTieneClave: { email: u.email } };
   const exp = Date.now() + TTL_MS;
   const t = `${u.id}.${exp}.${await hmac(carga(u.id, exp, u.sesionesDesde))}`;
   return { url: `${base.replace(/\/$/, "")}/ritmo/activar?t=${t}`, vence: new Date(exp).toISOString() };

@@ -252,7 +252,7 @@ export async function linkAccesoAction(userId: string) {
     const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
     const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
     const r = await linkDeAcceso(userId, `${proto}://${host}`, u.rol === "admin" || u.rol === "editor");
-    await datos.evento({ userId, actorId: u.id, tipo: "link_acceso" });
+    await datos.evento({ userId, actorId: u.id, tipo: r.yaTieneClave ? "link_acceso_ya_tiene_clave" : "link_acceso" });
     return r;
   });
 }

@@ -218,10 +218,14 @@ function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
     const r = await linkAccesoAction(userId);
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
-    setUrl(r.url);
+    // Ya tiene clave (usa Pulse): no necesita link; se le manda cómo entrar. Si la olvidó, Carilin/Aure/Elvin le generan uno.
+    const texto = r.yaTieneClave
+      ? `Hola ${nombre.split(" ")[0]}: entra a Ritmo en https://ritmo.levelupmediapr.net con tu correo ${r.yaTieneClave.email} y la MISMA clave de Pulse. Si no la recuerdas, avísame y te mandamos un link para crear una nueva.`
+      : r.url;
+    setUrl(texto);
     try {
-      await navigator.clipboard.writeText(r.url);
-      toast.success(`Link de ${nombre.split(" ")[0]} copiado (vence en 72 h)`, aviso);
+      await navigator.clipboard.writeText(texto);
+      toast.success(r.yaTieneClave ? `${nombre.split(" ")[0]} ya tiene clave: mensaje para mandarle copiado` : `Link de ${nombre.split(" ")[0]} copiado (vence en 72 h)`, aviso);
     } catch {
       toast.success("Link listo: cópialo abajo", aviso);
     }
