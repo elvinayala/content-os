@@ -974,9 +974,10 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   con su progreso real; si ya contestaron en el DM → solo estatus; si publicaron todo → nada (`lib/pulse/sop-mensajes.ts`
   puro + tests, `sop-recordatorio.ts`). `?dry=1` / `?prueba=1` (a Elvin).
 - **AI Borinquen cerrado** (27/sep, Elvin: "lo de Borinquen lo maneja Aure; más nadie"): tableros AI BORINQUEN y SOPs AIB
-  privados (Aure, Ángela, Ana Milena, Adamay, Garrys, Luis, Yaileen); Leads AIB solo con fila en `leads_acceso` (las
-  editoras ya no entran solas: `accesoLeads`/`marcasConAcceso`) = Aure, Luis, Yaileen. Yaileen ya no es solo_ritmo.
-  Jessica y Carilin no ven AIB.
+  privados (Aure, Carilin, Ángela, Ana Milena, Adamay, Garrys, Luis, Yaileen); Leads AIB solo con fila en `leads_acceso` (las
+  editoras no entran solas: `accesoLeads`/`marcasConAcceso`) = Aure, Carilin, Luis, Yaileen. Yaileen ya no es solo_ritmo.
+  Jessica no ve AIB. **Carilin = mismo acceso que Aure** (28/sep, Elvin: "Carilin puede ver todo, incluso recursos humanos"):
+  mismos tableros privados (también HR y Solicitudes HR) y Leads de las dos marcas; lo que se le dé a Aure, también a Carilin.
 - **Rediseño nivel SaaS** (27/sep, Elvin: "una plataforma de San Francisco… que digan wow"): tema `.pulse`
   refinado (fondo #fcfcfd, texto #1b1c1f, bordes #e5e5ea, `.superficie`, `.esqueleto` + `(app)/loading.tsx`),
   pills de status suaves (tinte + punto, `status-pill.tsx`), ícono por tablero (`icono-tablero.tsx`, por nombre),
