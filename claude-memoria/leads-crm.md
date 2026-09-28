@@ -35,3 +35,5 @@ clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETU
 **27/sep/2026 — AIB en Leads**: 4 embudos copiados de Pipedrive AIB, Timelines AIB conectado (token en .env.local/Vercel), quiz AIB → Diagnóstico de Automatización, acceso Aure + Luis. Falta: decidir si se cargan los ~1,000 leads abiertos (WHATSAPP + RECUPERACIÓN 2026) y el "satélite"/setter nuevo que Elvin dirá.
 
 **27/sep/2026 — Grupos y equipo**: Leads de WhatsApp YA entran en tiempo real (Timelines → Pulse al instante). Los grupos de WhatsApp (cita closer+setter+admin, `is_group`) van solos a la columna angosta "Grupos" al final del embudo, fuera de los totales (pedido de Elvin). Teléfonos del equipo (fichas de Ritmo + LEADS_TELEFONOS_EQUIPO) no entran como lead; Nahuel se había colado y se borró.
+
+**28/sep — Exportar leads:** botón Exportar (Excel como Pipedrive). Elvin exporta directo; **Nahuel y Aure piden y Elvin aprueba** (link por Slack, una vez, 24 h, /pulse/leads/exportaciones). Nadie más exporta.
