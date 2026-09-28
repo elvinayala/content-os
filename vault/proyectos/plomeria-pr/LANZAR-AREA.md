@@ -1,6 +1,6 @@
 # Lanzar un área de clientes · Resuelto
 
-**Regla de Elvin (25/sep/2026):** firma el plomero de un área y ese mismo día salen los anuncios de su zona, **nunca con un solo creativo**: varios conjuntos, varios anuncios, videos con CTA suave y flyers adaptados al área. Casos: Caguas (T3, Edgar Arroyo) campaña `120255115172270029` · Quebradillas (T5, Samuel Feliciano) campaña `120255119529030029`.
+**Regla de Elvin (25/sep/2026):** firma el plomero de un área y ese mismo día salen los anuncios de su zona, **nunca con un solo creativo**: varios conjuntos, varios anuncios, videos con CTA suave y flyers adaptados al área. Casos: Caguas (T3, Edgar Arroyo) campaña `120255115172270029` · Quebradillas (T5, Samuel Feliciano) campaña `120255119529030029` · Aguadilla (T7, Santos Ferrer, maestro) campaña `120255155398260029` (28/sep: 3 × $15, más presupuesto en mensajes; `PRESUPUESTO_DIA=15` en lanzar-area.mjs) + conjunto de llamadas $10 (el único activo en la campaña de llamadas).
 
 ## 1. El día que firma
 
