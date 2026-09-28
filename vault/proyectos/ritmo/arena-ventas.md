@@ -50,14 +50,15 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
 - **Meta de Level Up (solo LU):** **$100,000/mes en ventas nuevas** y **mínimo $150,000/mes en total**
   (nuevas + pagos de deuda). Ritmo actual ≈ **$35,000 por semana** (referencia para la meta semanal).
 - **Meta de AI Borinquen:** **$30,000/mes**. Lo de AIB (datos y detalle de la meta) se coordina **con Aure**.
-- **Comisiones:** respondió Nahuel (27/sep, Slack). Aplican **igual en Level Up y AI Borinquen**:
-  - **Closer**: % sobre **cash collected**, escalonado por % de cierre, con **show-up ≥ 60 %** como condición:
-    cierre 20 % → **7 %** · 25 % → **8 %** · 30 % → **9 %** · 35 % → **10 %**.
-    `[CONFIRMAR con Nahuel: ¿con cierre < 20 % o show-up < 60 % cobra 0 %, o un mínimo? ¿el tramo se calcula con el
-    % del mes completo?]`
-  - **Setter**: **4 % sobre ventas** `[CONFIRMAR: ¿cash collected de las ventas que agendó, igual que el closer?]`.
-  - **Chatter**: **4 % sobre ventas**; **5 %** si el equipo supera **200 agendas al mes** (hoy ~120). La meta de agendas
-    sube cuando suba la pauta. `[CONFIRMAR: ¿las 200 son del equipo o de cada chatter?]`
+- **Comisiones (CONFIRMADAS por Nahuel, 27/sep, Slack)** — iguales en Level Up y AI Borinquen. Todo se calcula con el
+  **mes completo** y sobre **cash collected NETO** = lo cobrado **menos el % de las pasarelas de pago** (ese dinero no
+  entra a la empresa).
+  - **Closer**: 7 % base. Sube por % de cierre del mes **solo si tiene show-up ≥ 60 %**:
+    cierre < 25 % → **7 %** (incluye < 20 %) · ≥ 25 % → **8 %** · ≥ 30 % → **9 %** · ≥ 35 % → **10 %**.
+    Show-up < 60 % → se queda en **7 %** aunque tenga 35 % de cierre.
+  - **Setter**: **4 %** del cash collected neto de las ventas que **él agendó**.
+  - **Chatter**: **4 %** del cash collected neto de sus ventas; **5 %** si **ese chatter** pasa de **200 agendas en el
+    mes** (hoy el equipo va ~120/mes). La meta de 200 sube cuando suba la pauta.
   - Nahuel: "vamos por esos 200k!"
 - **Pestaña de la hoja con cada venta y su fecha:** se le preguntó a Aure por Slack (27/sep) → pendiente.
 
