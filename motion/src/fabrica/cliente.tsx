@@ -65,7 +65,7 @@ const Fibras: React.FC<{ paleta: string[] }> = ({ paleta }) => {
     { y: v ? 0.9 : 0.93, amp: v ? 0.05 : 0.07, n: 16 },
   ];
   return (
-    <AbsoluteFill style={{ pointerEvents: "none", filter: "blur(0.6px)" }}>
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         {haces.flatMap((hz, hi) => Array.from({ length: hz.n }, (_, i) => {
           const k = hi * 100 + i;
@@ -80,9 +80,11 @@ const Fibras: React.FC<{ paleta: string[] }> = ({ paleta }) => {
           return (
             <g key={k}>
               <path d={d} fill="none" stroke={col} strokeWidth={1.6 + (i % 3) * 0.7} strokeOpacity={0.16 + (i % 4) * 0.04} strokeLinecap="round" />
-              <path d={d} fill="none" stroke={col} strokeWidth={3 + (i % 2)} strokeOpacity={0.85} strokeLinecap="round"
-                strokeDasharray={`${largo * 0.05} ${largo}`} strokeDashoffset={-((f * vel + i * 137) % (largo * 1.05)) + largo * 0.05}
-                style={{ filter: `drop-shadow(0 0 6px ${col})` }} />
+              {/* Impulso de luz: halo = trazo ancho y tenue debajo (sin filtros: en la nube sin GPU los filtros cuestan mucho). */}
+              <path d={d} fill="none" stroke={col} strokeWidth={12} strokeOpacity={0.18} strokeLinecap="round"
+                strokeDasharray={`${largo * 0.05} ${largo}`} strokeDashoffset={-((f * vel + i * 137) % (largo * 1.05)) + largo * 0.05} />
+              <path d={d} fill="none" stroke={col} strokeWidth={3 + (i % 2)} strokeOpacity={0.9} strokeLinecap="round"
+                strokeDasharray={`${largo * 0.05} ${largo}`} strokeDashoffset={-((f * vel + i * 137) % (largo * 1.05)) + largo * 0.05} />
             </g>
           );
         }))}
