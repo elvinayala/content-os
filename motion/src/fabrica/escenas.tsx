@@ -62,7 +62,7 @@ export const Titular: React.FC<{
       es.entrada === "subir" ? { transform: `translateY(${(1 - e) * 110 - s2 * 110}%) rotate(${(1 - e) * 5}deg)`, transformOrigin: "left bottom" }
       : es.entrada === "desenfoque" ? { opacity: e * (1 - s2), filter: `blur(${(1 - e) * 14}px)`, transform: `translateY(${(1 - e) * 18}%)` }
       : es.entrada === "escala" ? { opacity: Math.min(1, e * 2) * (1 - s2), transform: `scale(${0.3 + 0.7 * rebote(f, ini, 16)}) rotate(${(1 - e) * -8}deg)` }
-      : { opacity: e > 0 ? 1 - s2 : 0, transform: `translateX(${(1 - e) * -40}%)` };
+      : { opacity: e > 0 ? 1 - s2 : 0, transform: `translateX(${(1 - e) * -12}%)`, clipPath: `inset(0 ${(1 - e) * 100}% 0 0)` };
     const base: React.CSSProperties = { display: "inline-block", marginLeft: ml, color: color ?? t.texto, ...mov };
     let look: React.CSSProperties = {};
     if (marcada) {

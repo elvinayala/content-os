@@ -1,0 +1,153 @@
+{
+ "id": "aib-10-autoflow-por-dentro",
+ "marca": "ai-borinquen",
+ "formato": "16:9",
+ "estilo": "tecno",
+ "titulo": "Así funciona AutoFlow por dentro (y los agentes a la medida)",
+ "angulo": "Producto por dentro · AutoFlow + agentes personalizados + agente personal",
+ "musica": "audio/aib-autoflow-40.mp3",
+ "escenas": [
+  {
+   "tipo": "gancho",
+   "dur": 80,
+   "alarma": true,
+   "lineas": [
+    "Un cliente le escribe",
+    "a las *9:40 p. m.*"
+   ]
+  },
+  {
+   "tipo": "gancho",
+   "dur": 60,
+   "lineas": [
+    "¿Quién le *contesta*?"
+   ]
+  },
+  {
+   "tipo": "gancho",
+   "dur": 85,
+   "logo": true,
+   "etiqueta": "AI Borinquen",
+   "lineas": [
+    "Agentes de IA",
+    "*a la medida*."
+   ]
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 110,
+   "imagen": "autoflow-app/agentes.png",
+   "dispositivo": "laptop",
+   "titulo": "*AutoFlow* por dentro",
+   "sub": "Su agente de chat y su agente de voz. Negocio y datos de ejemplo.",
+   "puntos": [
+    "WhatsApp, Instagram y web, 24/7",
+    "Contesta el teléfono en español e inglés"
+   ],
+   "foco": {
+    "x": 0.11,
+    "y": 0.03,
+    "w": 0.5,
+    "h": 0.46
+   }
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 120,
+   "imagen": "autoflow-app/llamadas.png",
+   "dispositivo": "laptop",
+   "titulo": "Cada llamada, *transcrita*",
+   "sub": "Con su resumen y su resultado.",
+   "puntos": [
+    "Sabe qué pidió el cliente",
+    "La cita queda agendada sola"
+   ],
+   "foco": {
+    "x": 0.3,
+    "y": 0.145,
+    "w": 0.58,
+    "h": 0.34
+   }
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 115,
+   "imagen": "autoflow-app/crm.png",
+   "dispositivo": "laptop",
+   "titulo": "Un *CRM* que se llena solo",
+   "sub": "Cada lead con su canal: llamada, chat, WhatsApp o Instagram.",
+   "puntos": [
+    "De nuevo a cita confirmada",
+    "Todo en un solo lugar"
+   ],
+   "foco": {
+    "x": 0.12,
+    "y": 0.1,
+    "w": 0.5,
+    "h": 0.3
+   }
+  },
+  {
+   "tipo": "pantalla",
+   "dur": 100,
+   "imagen": "autoflow-app/solicitudes.png",
+   "dispositivo": "laptop",
+   "titulo": "¿Un cambio? *Escríbalo.*",
+   "sub": "Nuestro equipo lo aplica y le avisa cuando está listo.",
+   "foco": {
+    "x": 0.11,
+    "y": 0.3,
+    "w": 0.5,
+    "h": 0.4
+   }
+  },
+  {
+   "tipo": "roles",
+   "dur": 110,
+   "titulo": "AutoFlow es solo *uno*. También:",
+   "roles": [
+    "Cobros",
+    "Ventas",
+    "Soporte",
+    "Seguimiento",
+    "Reservas"
+   ],
+   "sub": "Agentes personalizados, hechos a la medida de su operación."
+  },
+  {
+   "tipo": "gancho",
+   "dur": 55,
+   "lineas": [
+    "Y su *agente personal*."
+   ]
+  },
+  {
+   "tipo": "voz",
+   "dur": 120,
+   "orden": "Recuérdame llamar a Pedro mañana a las 10.",
+   "respuesta": "Listo. Le agendé la llamada para mañana a las 10:00 AM.",
+   "evento": {
+    "titulo": "Llamar a Pedro",
+    "cuando": "Mañana · 10:00 AM"
+   }
+  },
+  {
+   "tipo": "pasos",
+   "dur": 110,
+   "titulo": "Así *trabajamos*",
+   "pasos": [
+    "Listo en 7 días",
+    "45 días de acompañamiento",
+    "Soporte para siempre, si lo quiere"
+   ]
+  },
+  {
+   "tipo": "cierre",
+   "dur": 135,
+   "cta": "Agende su demo",
+   "sub": "Le enseñamos su sistema por dentro.",
+   "url": "WhatsApp +1 (939) 304-0491",
+   "nota": "Pantallas con un negocio y datos de ejemplo."
+  }
+ ]
+}

@@ -32,10 +32,21 @@ if (URL_SB && LLAVE) {
   const fecha = new Date().toISOString().slice(0, 10);
   const destino = `motion/${fecha}/${path.basename(archivo)}`;
   const h = { Authorization: `Bearer ${LLAVE}` };
-  const sube = await fetch(`${URL_SB}/storage/v1/object/pulse/${encodeURI(destino)}`, {
-    method: "POST", headers: { ...h, "Content-Type": "video/mp4", "x-upsert": "true" }, body: fs.readFileSync(archivo),
-  });
-  if (!sube.ok) { console.error(`✗ Storage ${sube.status}: ${(await sube.text()).slice(0, 200)}`); process.exit(1); }
+  // fetch de Node a veces corta subidas grandes desde la Mac (EPIPE, 28/sep): si falla, se sube con curl.
+  const urlSube = `${URL_SB}/storage/v1/object/pulse/${encodeURI(destino)}`;
+  let subio = false;
+  try {
+    const sube = await fetch(urlSube, { method: "POST", headers: { ...h, "Content-Type": "video/mp4", "x-upsert": "true" }, body: fs.readFileSync(archivo) });
+    if (!sube.ok) { console.error(`✗ Storage ${sube.status}: ${(await sube.text()).slice(0, 200)}`); process.exit(1); }
+    subio = true;
+  } catch (e) {
+    console.warn(`… fetch falló (${e.cause?.code || e.message}); subiendo con curl`);
+  }
+  if (!subio) {
+    const { execFileSync } = await import("node:child_process");
+    const code = execFileSync("curl", ["-s", "-o", "/dev/null", "-w", "%{http_code}", "-X", "POST", "-H", `Authorization: Bearer ${LLAVE}`, "-H", "Content-Type: video/mp4", "-H", "x-upsert: true", "--data-binary", `@${archivo}`, urlSube]).toString();
+    if (code !== "200") { console.error(`✗ Storage (curl) ${code}`); process.exit(1); }
+  }
   const firma = await fetch(`${URL_SB}/storage/v1/object/sign/pulse/${encodeURI(destino)}`, {
     method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: 60 * 60 * 24 * 365 }),
   });
