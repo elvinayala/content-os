@@ -83,7 +83,21 @@ lanzamiento de su producto, logo animado, recorrido de su app o servicio, anunci
 Flujo: onboarding del cliente (marca + oferta + casos aprobados) → tema nuevo → 3–5 guiones → render →
 hoja de contacto → aprobación interna (#max-aprobaciones) → entrega. Nunca publicar sin aprobación.
 
-## 6. Dónde se renderiza
-El render necesita Chrome headless y ffmpeg: hoy corre en la **Mac** (Remi). Si el agente está en Railway sin
-Chrome (p. ej. Max), escribe el guion en `anuncios.ts`, hace commit y le pide el render a Remi/Elvin por el buzón
-(`node scripts/agentes.mjs mensaje …`) o por Telegram. Los MP4 no van a git (`motion/out` está ignorado).
+## 6. Dónde se renderiza: Remi en la nube (27/sep/2026)
+Servicio **`remi`** en Railway (proyecto puente-telegram; `Dockerfile.remi`, `scripts/remi-nube.sh`,
+`motion/servicio/servidor.mjs`): Chrome headless + Remotion; baja lo último de GitHub en cada trabajo, renderiza y
+sube el MP4 a Storage (link firmado de 1 año). ~2–4 min por video de 30 s. **Ya no hace falta la Mac.**
+```bash
+node scripts/remi.mjs salud
+node scripts/remi.mjs render <id>… [--entregar --marca <m> --titulo "…"]          # guiones ya escritos en anuncios.ts
+node scripts/remi.mjs render --guion <archivo.json|'JSON'> [--entregar --marca <m>] # guion en JSON, SIN tocar código
+```
+**Guion en JSON** (lo que usa Max, que no edita código): `{ id, marca, formato: "16:9"|"9:16"|"1:1", titulo, angulo,
+escenas: [...], musica?, cliente?: { nombre, logoUrl (https, logo REAL), fondo, acento, texto?, acento2?, fuente? } }`.
+Con `cliente`, la marca sale del JSON (composición universal **`Motion`** + `src/fabrica/cliente.tsx`). Fuentes
+permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Bebas Neue, Sora, Outfit. Copia del
+guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.
+
+## 7. Paquete para clientes (Elvin, 27/sep/2026)
+Clientes de Level Up que pagan **$3,500 o más** reciben **3 videos de motion** en su paquete. Los produce Max (guion
++ marca del cliente) con Remi en la nube, pasan por #max-aprobaciones y se entregan en su carpeta de Drive / canal.

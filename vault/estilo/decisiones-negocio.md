@@ -144,3 +144,7 @@ Contradicciones que aparecen una y otra vez en el histórico — material de con
 - **El producto de AIB aún no es 100% estable** (crash-loops de voz/`bori`), y su propia tesis es *"el que haga un producto 100% validado no tiene competencia"* — de ahí que estabilizar sea prioridad #1 antes de escalar ventas ([[estabilidad-producto]]).
 - **Muchos bloqueos nacen del onboarding mal cerrado:** expectativas infladas (Joaquín espera ROI en un mes), accesos/portafolios de Meta rotos (Golden Capital, M&L, Hearing Tec) y categorías especiales sin tramitar — todo se previene cerrando bien el onboarding ([[2026-07-14-revision-estrategia-clientes-bloqueados]], [[categorias-especiales-meta]]).
 - **Daily de ventas del 22/07:** objeción fresca "¿cuánto?" (Dr. JL Rivera — reagendado al 4/8, aún sin demo formal). Patrón: los closers gastan 40+ min en demo sin pedir el pago (Ezequiel 2026-04-22) — munición lista para esta objeción, freno = confianza.
+
+- **Motion graphics en el paquete de Level Up (Elvin, 27/sep/2026):** todo cliente que paga **$3,500 o más** recibe
+  **3 videos de motion** (Remotion, marca real del cliente). Los produce Max con Remi en la nube y pasan por
+  #max-aprobaciones antes de entregarse. **Vigente.**

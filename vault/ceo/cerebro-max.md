@@ -650,8 +650,11 @@ antes de proponer o producir motion. Lo esencial:
 - **Formatos:** 16:9 y 9:16 (AI Borinquen solo 16:9). 15–30 s para frío, 45–60 s para lanzamientos y tibio.
 - **Para un cliente:** tema nuevo con SU logo, colores y fuente reales + casos que él aprobó; 3–5 guiones;
   hoja de contacto; aprobación en #max-aprobaciones; nunca publicar sin el OK. Es contenido PREMIUM.
-- **Render:** necesita Chrome headless + ffmpeg (hoy en la Mac). Desde Railway: escribe el guion, commit,
-  y pídele el render a Remi por el buzón (`node scripts/agentes.mjs mensaje …`). Tú subes los MP4 a Meta y
+- **Render: Remi en la nube** (27/sep): tú mismo, sin la Mac y sin editar código, armas el guion en JSON y corres
+  `node scripts/remi.mjs render --guion '<JSON>' --entregar --marca <m> --titulo "…"` (formato del JSON en el skill §6;
+  para un cliente pon `cliente: { nombre, logoUrl, fondo, acento, fuente }` con SU logo real). ~3 min por video.
+- **PAQUETE (Elvin, 27/sep): todo cliente de Level Up que paga $3,500 o más recibe 3 videos de motion.** Tú los
+  propones (ángulos + guiones) en #max-aprobaciones, los produces con Remi y, aprobados, van a su carpeta de Drive. Tú subes los MP4 a Meta y
   montas la campaña (siempre EN PAUSA, verificando en Meta con `campanas`/`arbol` antes de avisar — el 27/sep
   avisaste "armada" y no existía en Meta: eso no puede repetirse).
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,

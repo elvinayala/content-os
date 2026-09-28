@@ -447,6 +447,13 @@ para previsualizar). Primer video: `AibRecepcionista` (anuncio, **de usted**) y 
 cada uno con su logo, fuente, registro y música). 16 anuncios de lanzamiento (LU 6 · Bori 5 · AIB 5).
 `motion/scripts/render-fabrica.sh [ids]` → `motion/out/fabrica/`; `node motion/scripts/hoja.mjs <id>` = hoja de
 contacto para revisar. Audio de marca en `motion/public/audio/<marca>-musica.mp3` (fal, normalizado).
+**Remi en la nube (27/sep):** servicio `remi` en Railway (`Dockerfile.remi` + `scripts/remi-nube.sh` +
+`motion/servicio/servidor.mjs`, https://remi-production-6765.up.railway.app, `REMI_SECRETO`): baja GitHub, renderiza con
+Chrome headless y sube a Storage. `node scripts/remi.mjs render <id>|--guion <json> [--entregar --marca …]`. Guiones en
+JSON por la composición universal `Motion` (+ tema de cliente desde JSON: `src/fabrica/cliente.tsx`), así Max produce
+motion sin editar código (Max tiene `remi.mjs` en su puente y `REMI_URL/REMI_SECRETO` en Railway). **Paquete: clientes de
+LU que pagan ≥ $3,500 reciben 3 motion.** Skill `.claude/skills/motion-graphics/SKILL.md`; ojo `railway.json` fija el
+startCommand del puente para todo el proyecto → la imagen de Remi trae un atajo `scripts/telegram-puente.mjs`.
 
 ## Resumen del día por Telegram (27/sep/2026)
 
