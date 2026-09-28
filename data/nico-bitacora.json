@@ -217,6 +217,30 @@
       "porque": "Elvin aprobó el plan de la #67; sin la hoja compartida no hay datos reales y no se inventan montos.",
       "verificado": "Tests 192/192 (1 nuevo); deploy de Vercel en Ready; prod: sin auth 401, ?dry=1 → 'hoja 401', ?ver=closer&ejemplo=1 → PNG 200; local con el CSV público de sept: closer.png generado (el resumen cuadra), setter frena por fotos.",
       "commit": "e47d17a"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS (Vercel) · Ritmo",
+      "que": "[Solicitud de Aure #84] El \"Ya tiene clave\" que vio Yaileen ya lo había arreglado el commit 8e5a1e9 (8:36 AM, en prod desde 12:36 UTC): ahora copia un mensaje para que la persona entre con su correo y la clave que ya tiene. Ajusté el texto: \"la clave que ya creaste (la que usas para Pulse o Leads)\".",
+      "porque": "Yaileen no puede cambiarle la clave a quien ya tiene; los chatters no saben que su clave de Leads es la misma.",
+      "verificado": "deploy content-m6419aesq Ready, ritmo.levelupmediapr.net 200",
+      "commit": "10f7faf"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS · Pulse/Ritmo (base)",
+      "que": "[Solicitud de Aure #87] Usuario elmarcosg2021@gmail.com tenía el correo como nombre → nombre = \"Marcos Ruiz\" (cuadra con su ficha \"Marcos Ruiz - Diseñador Grafico\" en HR LEVEL UP MEDIA y Slack U07VDTQU8F4).",
+      "porque": "En Ritmo > Ajustes salía como correo.",
+      "verificado": "UPDATE returning nombre=Marcos Ruiz",
+      "commit": "— (dato)"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS (Vercel) · Ritmo",
+      "que": "[Solicitud de Aure #89] Bug: al crearle el perfil de Ritmo a chatters/setters los dejaba \"solo Ritmo\" y eso les CERRABA Leads (Dilan, Ana Cecilio, Joaquín La Valle, perfiles creados hoy por Yaileen). Arreglo: quien tiene permiso en leads_acceso nunca queda solo-Ritmo (guardarPerfilAction + tienePermisoLeads) y se corrigieron los 3 perfiles (solo_ritmo=false).",
+      "porque": "Dilan sí tiene cuenta (la de Leads); con la misma clave entra a Ritmo y a Leads.",
+      "verificado": "tsc sin errores en los archivos, npm test 0 fallos, deploy Ready, UPDATE 3 filas",
+      "commit": "10f7faf"
     }
   ],
   "pendientesElvin": [
