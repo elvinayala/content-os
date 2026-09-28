@@ -655,6 +655,20 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Almuerzo** (27/sep): 1 hora que escoge cada quien entre las **11:00 AM y las 2:00 PM PR**; "Salir a almorzar" cierra el
   tramo con `motivo_salida = almuerzo` y volver = entrar (el tiempo de almuerzo no cuenta como horas). Una vez al día;
   más de 65 min se pinta en ámbar (`duracionAlmuerzo`).
+- **Arena · ventas** (`/ritmo/arena`, 27/sep; diseño `vault/proyectos/ritmo/arena-ventas.md`; puro en `lib/ventas/reglas.ts` +
+  tests `tests/ventas.test.mjs`; datos `lib/ventas/datos.ts`; acciones `app/ritmo/arena-actions.ts`; migración 0030, tablas
+  `desempeno_ventas_diario|goals|bonos|alias`): closers, setters y chatters de LU y AIB (puestos `closer|setter|chatter|
+  director_ventas` en `PUESTOS`, `sinPonche`: no ponchan, no salen en Equipo; su Hoy = **Mi marcador**). Ventas = la pestaña del
+  mes de la hoja de tesorería por el mismo Apps Script del resumen del día (`VENTAS_SCRIPT_URL`; sin él la Arena dice "no está
+  conectada"), columnas buscadas por nombre (fecha, tipo, monto cobrado, método/pasarela, closer, setter, chatter, valor neto),
+  caché 5 min. **Comisiones de Nahuel** (mes completo, sobre cobrado − pasarela: Stripe/PayPal/ATH 3.5 %, Klarna 4.5 %): closer
+  7 %, con show-up ≥ 60 % → 8/9/10 % con cierre ≥ 25/30/35 % (show-up y citas del diario del closer; cierres = ventas nuevas de la
+  hoja); setter 4 % de lo que agendó; chatter 4 %, 5 % con > 200 agendas propias (de Leads `agendo_por`, si no del diario).
+  Carrera por rol (cash collected, sin comisiones), metas del equipo (`METAS`: LU $150K total / $100K nuevas / $35K semana; AIB
+  $30K), alerta roja/ámbar del día, meta personal, diario (hoy o ayer). Comisión privada: cada quien la suya; el director de
+  ventas y la dirección (Leads: AIB solo Elvin/Aure) ven la tabla de todos. **Bonos**: el director los crea → SOLO Elvin autoriza
+  → el director marca ganador → Elvin aprueba el pago (ajuste de nómina si tiene ficha). Nombres de la hoja ≈ Pulse por
+  `mismaPersona` (primer nombre + resto en orden); si no cuadra, fila en `desempeno_ventas_alias`.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

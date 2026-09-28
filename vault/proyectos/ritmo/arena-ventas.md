@@ -1,4 +1,4 @@
-# Ritmo · Arena — ventas dentro de Ritmo (diseño, 27/sep/2026) · PARA APROBAR ANTES DE CONSTRUIR
+# Ritmo · Arena — ventas dentro de Ritmo (diseño, 27/sep/2026) · CONSTRUIDA 27/sep (Elvin: "construye todo")
 
 Pedido de Elvin: hacer parte de Ritmo al equipo de ventas (closers, setters, chatters) de Level Up Y de
 AI Borinquen, **sin ponche** (ni aparecerles el reloj), con algo "bien especial": su marcador, metas,
@@ -60,7 +60,9 @@ ranking tipo carrera, bonos y un diario. Fuente de ventas: la hoja **"VENTAS 202
   - **Chatter**: **4 %** del cash collected neto de sus ventas; **5 %** si **ese chatter** pasa de **200 agendas en el
     mes** (hoy el equipo va ~120/mes). La meta de 200 sube cuando suba la pauta.
   - Nahuel: "vamos por esos 200k!"
-- **Pestaña de la hoja con cada venta y su fecha:** se le preguntó a Aure por Slack (27/sep) → pendiente.
+- **Pasarelas (Elvin, 27/sep):** Stripe, PayPal y ATH Móvil 3.5 %; Klarna 4.5 % (dijo también "Comas 4.5": sin identificar, pendiente).
+- **La hoja trae Closer, Setter y Chatter** (Elvin, 27/sep); llega el 28/sep. Verificar con la hoja real: nombres de columnas, si
+  "Valor Neto" ya descuenta la pasarela, y cómo escriben los nombres.
 
 ## Construcción (propuesta)
 Tablas `ventas_*` en la base de Pulse (metas, goals personales, bonos, diario), lector de la hoja reutilizando
