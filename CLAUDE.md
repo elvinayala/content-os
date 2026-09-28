@@ -741,9 +741,12 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (`/pulse/leads/<marca>/exportar?embudo=<id|todos>&estado=abierto|ganado|perdido|todos&dueno=&q=`): este embudo (lo que ves o
   todo) o todos los embudos; respeta dueño y búsqueda; sin tope (hasta 50K); sin grupos de WhatsApp; 20 columnas (nombre, negocio,
   teléfono +1, e-mail, embudo, etapa, estado, valor, dueño, agendó, origen, nicho, etiquetas, motivo de pérdida, próxima actividad,
-  último mensaje, días en la etapa, creado, cerrado, ID) en hora de PR; fórmulas neutralizadas. **Solo Elvin** + correos de
-  `LEADS_EXPORTAR`; cada exportación queda en el registro de seguridad y, si no es Elvin, le avisa. Puro en `lib/leads/exportar.ts`
-  (tests `tests/leads-exportar.test.mjs`), `tratosParaExportar` en repo.
+  último mensaje, días en la etapa, creado, cerrado, ID) en hora de PR; fórmulas neutralizadas. **Elvin exporta directo; Nahuel y
+  Aure** (`EXPORTAR_CON_OK`, override `LEADS_EXPORTAR`) tienen el botón pero **cada exportación espera el OK de Elvin**
+  (`pedirExportacionAction` → tabla `leads_exportaciones`, migración 0033 → `notificarCEO`; Elvin aprueba en
+  `/pulse/leads/exportaciones`; al aprobar, DM del bot con el link; se baja UNA vez y en 24 h con `?solicitud=<id>`, solo quien la
+  pidió). Nadie más exporta. Cada exportación queda en el registro de seguridad. Puro en `lib/leads/exportar.ts` (tests
+  `tests/leads-exportar.test.mjs`), servidor `lib/leads/exportaciones.ts`, `tratosParaExportar` en repo.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),

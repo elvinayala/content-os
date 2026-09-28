@@ -29,6 +29,7 @@ const CONOCIDOS: Record<string, string> = {
   "carilin@levelupmediapr.net": "U07V7MVJ18B",
   "aure@levelupmediapr.net": "U08HA9QCJBG",
   "yaileenjimenez@gmail.com": "U08Q51UFLSH", // Yaileen (RR.HH.), correo personal en Slack
+  "nahueltissera46@gmail.com": "U0C1M3KSVB8", // Nahuel (director comercial), correo personal en Slack
 };
 function deConfig(email: string): string | null {
   for (const par of (process.env.PULSE_SLACK_IDS ?? "").split(",")) {

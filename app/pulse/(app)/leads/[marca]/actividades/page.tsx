@@ -19,7 +19,7 @@ export default async function LeadsActividades({ params, searchParams }: { param
         <span className="text-sm font-semibold">Leads</span>
         <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{c.m.nombre}</span>
       </header>
-      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="actividades" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} puedeExportar={c.puedeExportar} etapas={c.etapas} />
+      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="actividades" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} exportar={c.exportar} etapas={c.etapas} />
       <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30">
         <ListaActividades filas={filas.map((f) => ({ ...f, venceAt: new Date(f.venceAt).toISOString() }))} marcaSlug={c.m.slug} />
       </div>

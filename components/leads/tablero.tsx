@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { cerrarLeadAction, moverLeadAction } from "@/app/pulse/(app)/leads/actions";
+import { cerrarLeadAction, moverLeadAction, pedirExportacionAction } from "@/app/pulse/(app)/leads/actions";
 import { EmbudoDialog, NuevoEmbudoDialog, NuevoLeadDialog, PerdidoDialog, type EmbudoUI, type EtapaUI, type UsuarioUI } from "@/components/leads/dialogos";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,7 @@ export function BarraLeads({
   yoId,
   puedeEditar,
   etapas,
-  puedeExportar = false,
+  exportar = null,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -67,7 +67,7 @@ export function BarraLeads({
   yoId: string;
   puedeEditar: boolean;
   etapas: EtapaUI[];
-  puedeExportar?: boolean;
+  exportar?: "directo" | "con_ok" | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -180,7 +180,7 @@ export function BarraLeads({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {puedeExportar && (
+          {exportar && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1" title="Exportar a Excel">
@@ -189,8 +189,20 @@ export function BarraLeads({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="pulse w-72" align="end">
+                {exportar === "con_ok" ? <p className="px-2 py-1.5 text-[11px] text-muted-foreground">Cada exportación la aprueba Elvin. Te avisamos por Slack con el link para bajarla (24 h, una vez).</p> : null}
                 {(() => {
                   // Respeta lo que estás viendo: dueño y búsqueda (como "Exportar resultados del filtro" de Pipedrive).
+                  const estadoVista = vista === "lista" ? (sp.get("estado") ?? "abierto") : "abierto";
+                  const opciones = [
+                    ...(embudo
+                      ? [
+                          { t: `${embudo.nombre} · lo que ves`, sub: estadoVista === "todos" ? "abiertos, ganados y perdidos" : `${estadoVista}s`, embudoSel: embudo.id, estado: estadoVista },
+                          { t: `${embudo.nombre} · todo`, sub: "abiertos, ganados y perdidos", embudoSel: embudo.id, estado: "todos" },
+                        ]
+                      : []),
+                    { t: "Todos los embudos · abiertos", sub: marcaNombre, embudoSel: "todos", estado: "abierto" },
+                    { t: "Todos los embudos · todo", sub: `${marcaNombre}: abiertos, ganados y perdidos`, embudoSel: "todos", estado: "todos" },
+                  ];
                   const url = (embudoSel: string, estado: string) => {
                     const p = new URLSearchParams();
                     p.set("embudo", embudoSel);
@@ -199,26 +211,32 @@ export function BarraLeads({
                     if (sp.get("q")) p.set("q", sp.get("q")!);
                     return `${base}/exportar?${p.toString()}`;
                   };
-                  const estadoVista = vista === "lista" ? (sp.get("estado") ?? "abierto") : "abierto";
-                  const opciones = [
-                    ...(embudo
-                      ? [
-                          { t: `${embudo.nombre} · lo que ves`, sub: estadoVista === "todos" ? "abiertos, ganados y perdidos" : `${estadoVista}s`, href: url(embudo.id, estadoVista) },
-                          { t: `${embudo.nombre} · todo`, sub: "abiertos, ganados y perdidos", href: url(embudo.id, "todos") },
-                        ]
-                      : []),
-                    { t: "Todos los embudos · abiertos", sub: marcaNombre, href: url("todos", "abierto") },
-                    { t: "Todos los embudos · todo", sub: `${marcaNombre}: abiertos, ganados y perdidos`, href: url("todos", "todos") },
-                  ];
-                  return opciones.map((o) => (
-                    <DropdownMenuItem key={o.href} asChild>
-                      <a href={o.href} download className="flex flex-col items-start gap-0">
-                        <span className="text-sm">{o.t}</span>
-                        <span className="text-[11px] text-muted-foreground">{o.sub}{dueno || sp.get("q") ? " · con tu filtro" : ""}</span>
-                      </a>
-                    </DropdownMenuItem>
-                  ));
+                  const pedir = async (embudoSel: string, estado: string) => {
+                    const r = await pedirExportacionAction({ marca, embudoId: embudoSel === "todos" ? null : embudoSel, estado, dueno: dueno || null, q: sp.get("q") ?? "" });
+                    if (!r.ok) return toast.error(r.error ?? "No se pudo pedir", { className: "pulse" });
+                    toast.success("Enviado a Elvin para aprobar", { className: "pulse", description: "Te llega por Slack el link para bajarlo." });
+                  };
+                  const conFiltro = dueno || sp.get("q") ? " · con tu filtro" : "";
+                  return opciones.map((o) =>
+                    exportar === "directo" ? (
+                      <DropdownMenuItem key={o.t} asChild>
+                        <a href={url(o.embudoSel, o.estado)} download className="flex flex-col items-start gap-0">
+                          <span className="text-sm">{o.t}</span>
+                          <span className="text-[11px] text-muted-foreground">{o.sub}{conFiltro}</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem key={o.t} onSelect={() => pedir(o.embudoSel, o.estado)} className="flex flex-col items-start gap-0">
+                        <span className="text-sm">Pedir: {o.t}</span>
+                        <span className="text-[11px] text-muted-foreground">{o.sub}{conFiltro}</span>
+                      </DropdownMenuItem>
+                    ),
+                  );
                 })()}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/pulse/leads/exportaciones">{exportar === "directo" ? "Solicitudes de exportación" : "Mis exportaciones"}</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}

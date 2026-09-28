@@ -166,3 +166,41 @@ export async function guardarEmbudoAction(embudoId: string, datos: { nombre: str
   refrescar(e.marca);
   return r;
 }
+
+// ---------- Exportar con aprobación (28/sep): Nahuel y Aure piden, Elvin aprueba ----------
+
+export async function pedirExportacionAction(p: { marca: Marca; embudoId: string | null; estado: string; dueno: string | null; q: string }): Promise<Res> {
+  const acc = await puedeMarca(p.marca);
+  if (!acc) return { ok: false, error: "Sin acceso a esta marca" };
+  const { modoExportar } = await import("@/lib/leads/exportar");
+  if (modoExportar(acc.u, process.env.LEADS_EXPORTAR ?? undefined) !== "con_ok") return { ok: false, error: "No tienes permiso para exportar" };
+  const { listarEmbudos, usuariosActivos } = await import("@/lib/leads/repo");
+  const [embudos, usuarios] = await Promise.all([listarEmbudos(p.marca), usuariosActivos()]);
+  const embudo = p.embudoId ? embudos.find((e) => e.id === p.embudoId) : null;
+  const dueno = acc.alcance === "mios" ? acc.u.id : p.dueno === "__sin" ? "__sin" : usuarios.some((x) => x.id === p.dueno) ? p.dueno : null;
+  const estado = ["abierto", "ganado", "perdido", "todos"].includes(p.estado) ? p.estado : "todos";
+  const { pedirExportacion } = await import("@/lib/leads/exportaciones");
+  const id = await pedirExportacion(acc.u, p.marca, {
+    embudoId: embudo?.id ?? null,
+    embudoNombre: embudo?.nombre ?? null,
+    estado,
+    dueno,
+    duenoNombre: dueno === "__sin" ? "sin dueño" : dueno ? (usuarios.find((x) => x.id === dueno)?.nombre ?? null) : null,
+    q: p.q.trim().slice(0, 80),
+  });
+  revalidatePath("/pulse/leads/exportaciones");
+  return { ok: true, id };
+}
+
+export async function decidirExportacionAction(p: { id: string; aprobar: boolean; nota?: string }): Promise<Res> {
+  const u = await usuarioActual();
+  if (!u || u.rol !== "admin") return { ok: false, error: "Solo Elvin aprueba exportaciones" };
+  const { decidirExportacion } = await import("@/lib/leads/exportaciones");
+  try {
+    await decidirExportacion(p.id, p.aprobar, u, p.nota);
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error" };
+  }
+  revalidatePath("/pulse/leads/exportaciones");
+  return { ok: true };
+}

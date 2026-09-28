@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { celda, COLUMNAS_EXPORT, csvLeads, fechaPR, filaExport, nombreArchivo, puedeExportarLeads, telefonoExport } from "../lib/leads/exportar.ts";
+import { celda, COLUMNAS_EXPORT, csvLeads, descargaVigente, describirFiltro, fechaPR, filaExport, modoExportar, nombreArchivo, puedeExportarLeads, telefonoExport } from "../lib/leads/exportar.ts";
 
 const lead = {
   id: "t1",
@@ -52,8 +52,20 @@ test("teléfonos, permisos y nombre del archivo", () => {
   assert.equal(telefonoExport("573001234567"), "+573001234567");
   assert.equal(telefonoExport(null), "");
   assert.equal(puedeExportarLeads({ rol: "admin", email: "e@x" }), true);
-  assert.equal(puedeExportarLeads({ rol: "editor", email: "aure@levelupmediapr.net" }), false);
-  assert.equal(puedeExportarLeads({ rol: "miembro", email: "Nahuel@x.com" }, "nahuel@x.com"), true);
+  assert.equal(puedeExportarLeads({ rol: "editor", email: "carilin@levelupmediapr.net" }), false);
   assert.equal(nombreArchivo("level-up", "LUM DIAGNÓSTICO", "todos", "2026-09-28"), "leads-level-up-lum-diagnostico-todos-2026-09-28.csv");
   assert.equal(nombreArchivo("level-up", null, "abierto", "2026-09-28"), "leads-level-up-todos-abierto-2026-09-28.csv");
+});
+
+test("Elvin exporta directo; Nahuel y Aure con su OK; nadie más", () => {
+  assert.equal(modoExportar({ rol: "admin", email: "elvin@x" }), "directo");
+  assert.equal(modoExportar({ rol: "editor", email: "aure@levelupmediapr.net" }), "con_ok");
+  assert.equal(modoExportar({ rol: "miembro", email: "NahuelTissera46@gmail.com" }), "con_ok");
+  assert.equal(modoExportar({ rol: "editor", email: "carilin@levelupmediapr.net" }), null);
+  assert.equal(modoExportar({ rol: "miembro", email: "roger.arteaga@levelupmediapr.net" }), null);
+  const ahora = new Date("2026-09-28T12:00:00Z");
+  assert.equal(descargaVigente({ estado: "aprobada", expiraAt: "2026-09-29T11:00:00Z" }, ahora), true);
+  assert.equal(descargaVigente({ estado: "aprobada", expiraAt: "2026-09-28T11:00:00Z" }, ahora), false);
+  assert.equal(descargaVigente({ estado: "descargada", expiraAt: "2026-09-29T11:00:00Z" }, ahora), false);
+  assert.equal(describirFiltro({ embudoId: "e", embudoNombre: "CLOSERS", estado: "abierto", dueno: "u", duenoNombre: "Roger", q: "" }, "Level Up"), "Level Up · CLOSERS · abiertos · de Roger");
 });

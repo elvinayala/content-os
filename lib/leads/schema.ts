@@ -154,3 +154,25 @@ export const leadsWebhookLog = pgTable("leads_webhook_log", {
   cuerpo: jsonb("cuerpo").$type<unknown>(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Exportaciones con aprobación (28/sep, Elvin): Nahuel y Aure piden, Elvin aprueba; se baja UNA vez y dentro de 24 h.
+export const leadsExportaciones = pgTable(
+  "leads_exportaciones",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    marca: text("marca").notNull(),
+    filtro: jsonb("filtro").$type<Record<string, unknown>>().notNull(), // FiltroExport
+    estado: text("estado").notNull().default("pendiente"), // pendiente | aprobada | rechazada | descargada
+    decididaPor: uuid("decidida_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    decididaAt: timestamp("decidida_at", { withTimezone: true }),
+    expiraAt: timestamp("expira_at", { withTimezone: true }),
+    descargadaAt: timestamp("descargada_at", { withTimezone: true }),
+    filas: integer("filas"),
+    nota: text("nota"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("leads_exportaciones_estado").on(t.estado, t.createdAt), index("leads_exportaciones_user").on(t.userId, t.createdAt)],
+);

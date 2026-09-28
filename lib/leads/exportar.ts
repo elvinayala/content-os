@@ -107,11 +107,40 @@ export function csvLeads(filas: FilaExport[], ahora = new Date()): string {
   return `﻿${lineas.join("\r\n")}`;
 }
 
-/** Quién exporta: Elvin (admin) siempre; además los correos de LEADS_EXPORTAR. Sacar la base de leads fuera de
- *  Pulse es sensible (un closer que se va se lleva la lista), por eso no lo tiene todo el que ve Leads. */
-export function puedeExportarLeads(u: { rol: string; email: string }, lista = ""): boolean {
-  if (u.rol === "admin") return true;
-  return lista.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean).includes(u.email.toLowerCase());
+/** Quién exporta (Elvin, 28/sep): Elvin directo; Nahuel y Aure tienen el botón pero cada exportación espera su OK
+ *  (LEADS_EXPORTAR = correos con botón y aprobación). Sacar la base de leads es sensible: un closer que se va se lleva
+ *  la lista. */
+export const EXPORTAR_CON_OK = "nahueltissera46@gmail.com,aure@levelupmediapr.net";
+export type ModoExportar = "directo" | "con_ok" | null;
+
+export function modoExportar(u: { rol: string; email: string }, lista = EXPORTAR_CON_OK): ModoExportar {
+  if (u.rol === "admin") return "directo";
+  return lista.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean).includes(u.email.toLowerCase()) ? "con_ok" : null;
+}
+
+export const puedeExportarLeads = (u: { rol: string; email: string }, lista = EXPORTAR_CON_OK) => modoExportar(u, lista) !== null;
+
+// Una exportación aprobada se baja UNA vez y dentro de 24 h.
+export const HORAS_DESCARGA = 24;
+
+export function descargaVigente(s: { estado: string; expiraAt: Date | string | null }, ahora = new Date()): boolean {
+  return s.estado === "aprobada" && !!s.expiraAt && new Date(s.expiraAt).getTime() > ahora.getTime();
+}
+
+export interface FiltroExport {
+  embudoId: string | null;
+  embudoNombre: string | null;
+  estado: string; // abierto | ganado | perdido | todos
+  dueno: string | null;
+  duenoNombre: string | null;
+  q: string;
+}
+
+const ESTADO_TXT: Record<string, string> = { abierto: "abiertos", ganado: "ganados", perdido: "perdidos", todos: "abiertos, ganados y perdidos" };
+
+/** "CLOSERS · abiertos · de Roger · con «dental»" para el aviso y la lista. */
+export function describirFiltro(f: FiltroExport, marca: string): string {
+  return [marca, f.embudoNombre ?? "todos los embudos", ESTADO_TXT[f.estado] ?? f.estado, f.duenoNombre ? `de ${f.duenoNombre}` : null, f.q ? `con «${f.q}»` : null].filter(Boolean).join(" · ");
 }
 
 export const nombreArchivo = (marca: string, embudo: string | null, estado: string, hoy: string) =>
