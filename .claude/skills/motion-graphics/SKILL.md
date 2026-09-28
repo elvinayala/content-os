@@ -99,5 +99,14 @@ permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Beb
 guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.
 
 ## 7. Paquete para clientes (Elvin, 27/sep/2026)
-Clientes de Level Up que pagan **$3,500 o más** reciben **3 videos de motion** en su paquete. Los produce Max (guion
-+ marca del cliente) con Remi en la nube, pasan por #max-aprobaciones y se entregan en su carpeta de Drive / canal.
+Clientes de Level Up que pagan **$3,500 o más** reciben **3 videos de MOTION GRAPHICS** (siempre motion por código con
+esta fábrica — nunca UGC, caras con IA ni video generativo en su lugar). Flujo de Max, de punta a punta:
+1. **Marca del cliente en su expediente** (una vez, con SU logo real):
+   `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
+2. **3 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:
+   `node scripts/remi.mjs render --guion '<[g1,g2,g3]>' --cliente <slug> --proponer --titulo "3 motion · <negocio>"`
+   (`--cliente` pone su marca sola; `--proponer` los sube a #max-aprobaciones como "creativos").
+3. **Aprobado** (ok de Elvin o Carilin) → el servidor los guarda en su Drive (`videos/`) y los manda a su canal.
+4. **Si se pautan:** `node scripts/meta-ads/subir-videos.mjs cliente:<slug> <url-del-video>…` → IDs de Meta → campaña
+   EN PAUSA con `meta-ads.mjs cliente:<slug> …` (verificar con `arbol` antes de avisar).
+Licencia: Remotion para empresas de 4+ personas = Company License (ver cerebro de Remi).

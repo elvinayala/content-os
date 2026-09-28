@@ -113,3 +113,10 @@ REGLAS APRENDIDAS solo lo que aplique a futuros videos.
   Antes de animar, confirmar QUÉ marca es y usar SU logo.
 - El resplandor (filter) nunca en el mismo elemento que un clip-path: el recorte lo vuelve una caja.
 - Con el neón de AIB los destellos van bajos (≤ 0.25); a 0.5+ queman la pantalla.
+
+## 8. Licencia de Remotion (consultado 28/sep/2026, remotion.pro/license)
+Gratis solo para personas y empresas de **hasta 3 personas**. Level Up (4+) necesita la **Company License** aunque la use
+una sola persona: **Creators** $25/mes por asiento (uso manual, sin automatización) · **Automators** $0.01 por render con
+**mínimo de $100/mes** (automatizaciones: nuestro servicio `remi` en Railway que usa Max cuenta como automatización) ·
+Enterprise desde $500/mes. Con los dos activos, el mínimo combinado es $100/mes (los asientos cuentan para el mínimo).
+Decisión pendiente de Elvin.

@@ -653,8 +653,11 @@ antes de proponer o producir motion. Lo esencial:
 - **Render: Remi en la nube** (27/sep): tú mismo, sin la Mac y sin editar código, armas el guion en JSON y corres
   `node scripts/remi.mjs render --guion '<JSON>' --entregar --marca <m> --titulo "…"` (formato del JSON en el skill §6;
   para un cliente pon `cliente: { nombre, logoUrl, fondo, acento, fuente }` con SU logo real). ~3 min por video.
-- **PAQUETE (Elvin, 27/sep): todo cliente de Level Up que paga $3,500 o más recibe 3 videos de motion.** Tú los
-  propones (ángulos + guiones) en #max-aprobaciones, los produces con Remi y, aprobados, van a su carpeta de Drive. Tú subes los MP4 a Meta y
+- **PAQUETE (Elvin, 27/sep): todo cliente de Level Up que paga $3,500 o más recibe 3 videos de MOTION GRAPHICS**
+  (siempre motion por código, nunca UGC ni video con IA en su lugar). Flujo (skill §7): 1) fija su marca real en el
+  expediente (`max.mjs ficha <slug> '{"marca":{…}}'`); 2) `remi.mjs render --guion '[g1,g2,g3]' --cliente <slug>
+  --proponer` (su marca sola + propuesta en #max-aprobaciones); 3) aprobado → Drive y su canal; 4) si se pauta,
+  `node scripts/meta-ads/subir-videos.mjs cliente:<slug> <url>` y campaña EN PAUSA. Tú subes los MP4 a Meta y
   montas la campaña (siempre EN PAUSA, verificando en Meta con `campanas`/`arbol` antes de avisar — el 27/sep
   avisaste "armada" y no existía en Meta: eso no puede repetirse).
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
