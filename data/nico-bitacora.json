@@ -241,6 +241,14 @@
       "porque": "Dilan sí tiene cuenta (la de Leads); con la misma clave entra a Ritmo y a Leads.",
       "verificado": "tsc sin errores en los archivos, npm test 0 fallos, deploy Ready, UPDATE 3 filas",
       "commit": "10f7faf"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS · Ritmo/Pulse",
+      "que": "[Solicitud de Aure #90] Aure mandó \"?\" (seguimiento de #84/#87/#89). Sin cambios: se le manda el resumen de lo que quedó y que #88 espera OK de Elvin.",
+      "porque": "Las respuestas no le habían llegado cuando escribió.",
+      "verificado": "#84, #87 y #89 cerradas (atendido); nada que desplegar",
+      "commit": "—"
     }
   ],
   "pendientesElvin": [
