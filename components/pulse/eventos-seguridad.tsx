@@ -18,6 +18,7 @@ const NOMBRE: Record<string, string> = {
   borrado_masivo: "Borrado masivo",
   papelera_restaurada: "Restaurado de la papelera",
   leads_exportados: "Leads exportados",
+  acceso_leads: "Acceso a Leads",
   respaldo_fallido: "Respaldo falló",
   archivo_descargado: "Archivo descargado",
   accion_bloqueada: "Acción bloqueada",

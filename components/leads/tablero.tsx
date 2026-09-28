@@ -55,6 +55,7 @@ export function BarraLeads({
   puedeEditar,
   etapas,
   exportar = null,
+  manejaEquipo = false,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -68,6 +69,7 @@ export function BarraLeads({
   puedeEditar: boolean;
   etapas: EtapaUI[];
   exportar?: "directo" | "con_ok" | null;
+  manejaEquipo?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -180,6 +182,14 @@ export function BarraLeads({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          {manejaEquipo && (
+            <Button asChild variant="outline" size="sm" className="h-8 gap-1" title="Quién entra a Leads">
+              <Link href={`${base}/equipo`}>
+                <Users className="size-4" />
+                <span className="hidden sm:inline">Equipo</span>
+              </Link>
+            </Button>
+          )}
           {exportar && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

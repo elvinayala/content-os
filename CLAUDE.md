@@ -747,6 +747,11 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   `/pulse/leads/exportaciones`; al aprobar, DM del bot con el link; se baja UNA vez y en 24 h con `?solicitud=<id>`, solo quien la
   pidió). Nadie más exporta. Cada exportación queda en el registro de seguridad. Puro en `lib/leads/exportar.ts` (tests
   `tests/leads-exportar.test.mjs`), servidor `lib/leads/exportaciones.ts`, `tratosParaExportar` en repo.
+- **Equipo de ventas** (`/pulse/leads/<marca>/equipo`, botón **Equipo** en la barra; 28/sep): el **director de ventas** de la marca
+  (perfil de Ritmo `director_ventas`: Nahuel en Level Up), las editoras y Elvin dan/cambian/quitan el acceso a Leads (todos los
+  leads | solo sus leads) a cuentas activas de Pulse; no a quien es "solo Ritmo" (eso lo abren Carilin/Aure en Ritmo → Ajustes) ni
+  a bloqueados. Marca "todavía no creó su clave". Cada cambio → registro de seguridad + aviso a Elvin si no lo hizo él. Puro en
+  `lib/leads/equipo.ts` (tests `tests/leads-equipo.test.mjs`), datos `lib/leads/equipo-datos.ts`, `accesoEquipoLeadsAction`.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),

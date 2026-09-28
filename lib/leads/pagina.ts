@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { usuarioActual } from "@/lib/pulse/auth";
 
+import { manejaEquipo } from "./equipo-datos";
 import { modoExportar } from "./exportar";
 import { accesoLeads, asegurarSemilla, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
 import { MARCAS, slugDeMarca } from "./reglas";
@@ -37,5 +38,6 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     q,
     puedeEditar: u.rol === "admin" || u.rol === "editor",
     exportar: modoExportar(u, process.env.LEADS_EXPORTAR || undefined), // "directo" (Elvin) | "con_ok" (Nahuel, Aure) | null
+    manejaEquipo: await manejaEquipo(u, m.marca).catch(() => false), // director de ventas, editoras, Elvin
   };
 }

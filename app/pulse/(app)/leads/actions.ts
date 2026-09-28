@@ -204,3 +204,41 @@ export async function decidirExportacionAction(p: { id: string; aprobar: boolean
   revalidatePath("/pulse/leads/exportaciones");
   return { ok: true };
 }
+
+// ---------- Equipo de ventas: quién entra a Leads (28/sep; lo maneja Nahuel en Level Up) ----------
+
+export async function accesoEquipoLeadsAction(p: { marca: Marca; userId: string; alcance: "todos" | "mios" | null }): Promise<Res> {
+  const u = await usuarioActual();
+  if (!u) return { ok: false, error: "Tu sesión venció" };
+  const { manejaEquipo, darAccesoLeads, quitarAccesoLeads } = await import("@/lib/leads/equipo-datos");
+  if (!(await manejaEquipo(u, p.marca))) return { ok: false, error: "Solo el director de ventas, las editoras o Elvin manejan el equipo" };
+  const { leerUsuario } = await import("@/lib/pulse/repo");
+  const objetivo = await leerUsuario(p.userId);
+  const { estaBloqueado } = await import("@/lib/desempeno/acceso");
+  const { esSoloRitmo } = await import("@/lib/pulse/auth");
+  const nombre = objetivo?.nombre ?? "esa persona";
+  const { MARCAS, slugDeMarca: slug } = await import("@/lib/leads/reglas");
+  const marcaNombre = MARCAS[slug(p.marca)]?.nombre ?? p.marca;
+  if (p.alcance === null) {
+    if (p.userId === u.id) return { ok: false, error: "No te puedes quitar el acceso a ti mismo" };
+    await quitarAccesoLeads(p.userId, p.marca);
+  } else {
+    const { errorDarAcceso } = await import("@/lib/leads/equipo");
+    const error = errorDarAcceso({
+      yoId: u.id,
+      objetivo: objetivo ? { id: objetivo.id, rol: objetivo.rol, activo: objetivo.activo, soloRitmo: await esSoloRitmo(objetivo.id), bloqueado: estaBloqueado(objetivo.email), sistema: objetivo.email.endsWith("@pulse.sistema") } : null,
+      alcance: p.alcance,
+    });
+    if (error) return { ok: false, error };
+    await darAccesoLeads(p.userId, p.marca, p.alcance);
+  }
+  const detalle = p.alcance === null ? `${u.nombre} le quitó Leads de ${marcaNombre} a ${nombre}` : `${u.nombre} le dio Leads de ${marcaNombre} a ${nombre} (${p.alcance === "mios" ? "solo sus leads" : "todos los leads"})`;
+  const { registrarEvento } = await import("@/lib/pulse/seguridad");
+  await registrarEvento({ tipo: "acceso_leads", email: u.email, actorId: u.id, userId: p.userId, detalle }).catch(() => {});
+  if (u.rol !== "admin") {
+    const { notificarCEO } = await import("@/lib/notificar-ceo");
+    await notificarCEO(`👥 ${detalle}.`).catch(() => null);
+  }
+  revalidatePath(`/pulse/leads/${slugDeMarca(p.marca)}/equipo`);
+  return { ok: true };
+}

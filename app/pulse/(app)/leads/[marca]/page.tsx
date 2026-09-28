@@ -28,7 +28,7 @@ export default async function LeadsEmbudo({ params, searchParams }: { params: Pr
         usuarios={c.usuarios}
         yoId={c.u.id}
         puedeEditar={c.puedeEditar}
-        exportar={c.exportar}
+        exportar={c.exportar} manejaEquipo={c.manejaEquipo}
         etapas={c.etapas}
       />
       {c.embudo ? (
