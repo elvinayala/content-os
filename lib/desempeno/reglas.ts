@@ -97,6 +97,10 @@ export const PUESTOS: Puesto[] = [
       { id: "escalaciones", nombre: "Escalaciones", fuente: "chatwoot", sentido: "menor", meta: 1, peso: 1, unidad: "u" },
     ],
   },
+  // Puestos sin KPIs conectados todavía (28/sep/2026, pedido de Aure): su nota sale de la asistencia.
+  { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
+  { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", kpis: [] },
+  { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", kpis: [] },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
   { id: "setter", nombre: "Setter", departamento: "Ventas", kpis: [], sinPonche: true },
