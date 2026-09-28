@@ -18,6 +18,8 @@ const RAIZ = path.join(AQUI, "../../../../..");
 const [slug, nombre, pueblosArg] = process.argv.slice(2);
 if (!slug || !nombre || !pueblosArg) throw new Error('Uso: lanzar-area.mjs <slug> "<Nombre>" "Pueblo:key,Pueblo:key"');
 const T = process.env.META_ADS_TOKEN; if (!T) throw new Error("Falta META_ADS_TOKEN");
+// Presupuesto por conjunto en dólares (default $10). 28/sep: Aguadilla va con $15 × 3 (Elvin: "más presupuesto en mensajes").
+const PRESUPUESTO = Math.round(Number(process.env.PRESUPUESTO_DIA ?? 10) * 100);
 const ACT = "act_1564735818086768", PAGE = "1278171838721301", IG = "17841432209401518";
 const PUEBLOS = pueblosArg.split(",").map((x) => { const [name, key] = x.split(":").map((s) => s.trim()); return { key, name, country: "PR" }; });
 const OUT = path.join(RAIZ, `data/meta-ads/campanas/resuelto-clientes-${slug}.json`);
@@ -56,7 +58,7 @@ const ids = plan.ids;
 if (!ids.campana) { ids.campana = (await api(`${ACT}/campaigns`, { name: `Resuelto · Clientes · ${nombre} · Messenger+IG`, objective: "OUTCOME_SALES", special_ad_categories: [], status: "PAUSED", is_adset_budget_sharing_enabled: false })).id; guardar(); }
 for (const [g, n] of Object.entries(CONJUNTOS)) {
   const k = "conjunto" + g; if (ids[k]) continue;
-  ids[k] = (await api(`${ACT}/adsets`, { name: `${g} · ${nombre} · ${n} · Messenger+IG`, campaign_id: ids.campana, status: "ACTIVE", daily_budget: 1000, billing_event: "IMPRESSIONS", optimization_goal: "CONVERSATIONS", destination_type: "MESSAGING_INSTAGRAM_DIRECT_MESSENGER", bid_strategy: "LOWEST_COST_WITHOUT_CAP", promoted_object: { page_id: PAGE }, targeting: { age_min: 28, age_max: 65, geo_locations: { regions: PUEBLOS, location_types: ["home", "recent"] }, targeting_automation: { advantage_audience: 0 } } })).id; guardar();
+  ids[k] = (await api(`${ACT}/adsets`, { name: `${g} · ${nombre} · ${n} · Messenger+IG`, campaign_id: ids.campana, status: "ACTIVE", daily_budget: PRESUPUESTO, billing_event: "IMPRESSIONS", optimization_goal: "CONVERSATIONS", destination_type: "MESSAGING_INSTAGRAM_DIRECT_MESSENGER", bid_strategy: "LOWEST_COST_WITHOUT_CAP", promoted_object: { page_id: PAGE }, targeting: { age_min: 28, age_max: 65, geo_locations: { regions: PUEBLOS, location_types: ["home", "recent"] }, targeting_automation: { advantage_audience: 0 } } })).id; guardar();
 }
 for (const [g, tipo, pieza] of ANUNCIOS) {
   const k = `${g}-${tipo}-${pieza || "ciudad"}`; const a = (plan.anuncios[k] ??= {}); if (a.ad) continue;
