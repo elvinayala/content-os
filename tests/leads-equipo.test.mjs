@@ -16,7 +16,7 @@ test("quién maneja el equipo de Leads", () => {
 test("a quién se le puede dar acceso", () => {
   const base = { id: "u2", rol: "miembro", activo: true, soloRitmo: false, bloqueado: false, sistema: false };
   assert.equal(errorDarAcceso({ yoId: "u1", objetivo: base, alcance: "todos" }), null);
-  assert.match(errorDarAcceso({ yoId: "u1", objetivo: { ...base, soloRitmo: true }, alcance: "todos" }), /También puede entrar a Pulse/);
+  assert.match(errorDarAcceso({ yoId: "u1", objetivo: { ...base, soloRitmo: true }, alcance: "todos" }), /Yaileen/);
   assert.match(errorDarAcceso({ yoId: "u1", objetivo: { ...base, bloqueado: true }, alcance: "todos" }), /decisión de Elvin/);
   assert.match(errorDarAcceso({ yoId: "u1", objetivo: { ...base, activo: false }, alcance: "todos" }), /cuenta activa/);
   assert.match(errorDarAcceso({ yoId: "u1", objetivo: base, alcance: "otro" }), /Escoge/);

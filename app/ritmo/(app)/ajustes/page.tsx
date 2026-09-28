@@ -47,7 +47,7 @@ export default async function AjustesPage({ searchParams }: { searchParams: Prom
         metas={metas}
         produccion={!!prod}
         buscar={q ?? ""}
-        gestorPulse={u.rol === "admin" || u.rol === "editor"}
+        gestorPulse={u.maestro}
       />
       {dosPasos ? <DosPasosAdmin gente={dosPasos} /> : null}
     </div>

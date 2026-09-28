@@ -58,7 +58,7 @@ export function EquipoLeads({ marca, yoId, conAcceso, candidatos }: { marca: Mar
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          ¿No aparece la persona? Primero necesita su cuenta: RR.HH. la da de alta en Ritmo (Personas → Nuevo empleado) y le llega un link para crear su clave. Si sale como «solo Ritmo», Carilin o Aure le marcan «También puede entrar a Pulse» en Ritmo → Ajustes.
+          Todo lo de cuentas y accesos lo maneja <b>Yaileen (RR.HH.)</b>: si la persona no aparece, ella la da de alta; si sale como «solo Ritmo», ella le abre Pulse; y si «todavía no creó su clave», ella le manda su link de acceso.
         </p>
       </section>
 

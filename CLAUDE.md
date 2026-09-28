@@ -573,8 +573,8 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Seguridad (revisión 26/sep)**:
   - **`solo_ritmo`** (`desempeno_perfiles`): quien entra por Ritmo (alta, o perfil creado a alguien sin clave)
     NO usa Pulse. `requiereUsuario()` de Pulse, `boardsVisibles`/`puedeVerBoard`, Leads (`accesoLeads`) y el
-    layout de Pulse lo bloquean; Ritmo usa `requiereCuenta()`. Solo admin/editoras lo cambian en Ajustes
-    ("También puede entrar a Pulse"). Yaileen (RR.HH.) = solo Ritmo (perfil inactivo, sin ponche).
+    layout de Pulse lo bloquean; Ritmo usa `requiereCuenta()`. Lo cambian la dirección y RR.HH. en Ajustes
+    ("También puede entrar a Pulse"; desde el 28/sep RR.HH. también, y como es sensible espera el OK de Elvin). Yaileen (RR.HH.) = solo Ritmo (perfil inactivo, sin ponche).
   - **Links de acceso** (`lib/desempeno/acceso.ts`): exigen perfil activo en Ritmo; RR.HH. solo para quien
     NO tiene clave (resetear clave = admin/editoras); `estaBloqueado` (Juan David + `RITMO_BLOQUEADOS`) no
     recibe link, alta ni aparece en listas. El alta no reutiliza cuentas que ya tienen clave.
@@ -749,7 +749,7 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   `tests/leads-exportar.test.mjs`), servidor `lib/leads/exportaciones.ts`, `tratosParaExportar` en repo.
 - **Equipo de ventas** (`/pulse/leads/<marca>/equipo`, botón **Equipo** en la barra; 28/sep): el **director de ventas** de la marca
   (perfil de Ritmo `director_ventas`: Nahuel en Level Up), las editoras y Elvin dan/cambian/quitan el acceso a Leads (todos los
-  leads | solo sus leads) a cuentas activas de Pulse; no a quien es "solo Ritmo" (eso lo abren Carilin/Aure en Ritmo → Ajustes) ni
+  leads | solo sus leads) a cuentas activas de Pulse; no a quien es "solo Ritmo" (eso lo abre Yaileen/RR.HH. en Ritmo → Ajustes) ni
   a bloqueados. Marca "todavía no creó su clave". Cada cambio → registro de seguridad + aviso a Elvin si no lo hizo él. Puro en
   `lib/leads/equipo.ts` (tests `tests/leads-equipo.test.mjs`), datos `lib/leads/equipo-datos.ts`, `accesoEquipoLeadsAction`.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=

@@ -17,7 +17,7 @@ export function errorDarAcceso(p: { yoId: string; objetivo: { id: string; rol: s
   if (o.bloqueado) return "Esta persona no puede tener acceso (decisión de Elvin)";
   if (o.rol === "admin") return "Elvin ya ve todo";
   if (!["todos", "mios"].includes(p.alcance)) return "Escoge si ve todos los leads o solo los suyos";
-  if (o.soloRitmo) return "Esta persona solo entra a Ritmo. Pídele a Carilin o Aure que en Ritmo → Ajustes le marquen «También puede entrar a Pulse» y vuelve a darle acceso";
+  if (o.soloRitmo) return "Esta persona solo entra a Ritmo. Pídele a Yaileen (RR.HH.) que le abra Pulse y vuelve a darle acceso";
   return null;
 }
 

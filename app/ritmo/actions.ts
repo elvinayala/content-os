@@ -212,11 +212,12 @@ export async function guardarPerfilAction(p: {
       if (nombre) slackId = await buscarSlackPorNombre(nombre).catch(() => null);
     }
     // Acceso a Pulse: al crear el perfil, quien no tenía clave queda SOLO Ritmo (no ve clientes/tesorería).
-    // Cambiarlo después es solo de admin/editoras (RR.HH. no puede abrirle Pulse a nadie).
+    // Lo cambian la dirección y RR.HH. (Elvin, 28/sep: "todo lo de recursos y accesos es con Yaileen"); como es
+    // sensible, lo que no haga Elvin espera su aprobación (Ajustes → Por aprobar).
     const previo = (await datos.leerPerfiles(false)).find((x) => x.userId === p.userId);
     const cuenta = await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId));
     if (cuenta && (await import("@/lib/desempeno/acceso")).estaBloqueado(cuenta.email)) throw new Error("Esta persona no puede tener acceso (decisión de Elvin)");
-    const gestorPulse = u.rol === "admin" || u.rol === "editor";
+    const gestorPulse = u.maestro; // admin, editoras y RR.HH.
     // Quien tiene permiso de Leads (closers, setters, chatters; lo da un admin) sigue entrando a Pulse: si no,
     // el perfil de Ritmo le cerraba Leads (28/sep: Dilan y Ana, chatters, perdieron Leads al crearles el perfil).
     const conLeads = await import("@/lib/leads/repo").then((r) => r.tienePermisoLeads(p.userId));
