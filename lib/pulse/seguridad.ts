@@ -24,6 +24,7 @@ export type TipoEventoSeguridad =
   | "acceso_tablero"
   | "tablero_eliminado"
   | "papelera_restaurada"
+  | "leads_exportados"
   | "respaldo_fallido"
   | "borrado_masivo"
   | "archivo_descargado"

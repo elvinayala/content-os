@@ -1,7 +1,7 @@
 "use client";
 
 import { DndContext, DragOverlay, MeasuringStrategy, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { CalendarClock, ChevronDown, Kanban, List, MessageCircle, Plus, Search, Settings2, Trophy, Users, X } from "lucide-react";
+import { CalendarClock, ChevronDown, Download, Kanban, List, MessageCircle, Plus, Search, Settings2, Trophy, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
@@ -54,6 +54,7 @@ export function BarraLeads({
   yoId,
   puedeEditar,
   etapas,
+  puedeExportar = false,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -66,6 +67,7 @@ export function BarraLeads({
   yoId: string;
   puedeEditar: boolean;
   etapas: EtapaUI[];
+  puedeExportar?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -178,6 +180,48 @@ export function BarraLeads({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          {puedeExportar && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1" title="Exportar a Excel">
+                  <Download className="size-4" />
+                  <span className="hidden sm:inline">Exportar</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="pulse w-72" align="end">
+                {(() => {
+                  // Respeta lo que estás viendo: dueño y búsqueda (como "Exportar resultados del filtro" de Pipedrive).
+                  const url = (embudoSel: string, estado: string) => {
+                    const p = new URLSearchParams();
+                    p.set("embudo", embudoSel);
+                    p.set("estado", estado);
+                    if (dueno) p.set("dueno", dueno);
+                    if (sp.get("q")) p.set("q", sp.get("q")!);
+                    return `${base}/exportar?${p.toString()}`;
+                  };
+                  const estadoVista = vista === "lista" ? (sp.get("estado") ?? "abierto") : "abierto";
+                  const opciones = [
+                    ...(embudo
+                      ? [
+                          { t: `${embudo.nombre} · lo que ves`, sub: estadoVista === "todos" ? "abiertos, ganados y perdidos" : `${estadoVista}s`, href: url(embudo.id, estadoVista) },
+                          { t: `${embudo.nombre} · todo`, sub: "abiertos, ganados y perdidos", href: url(embudo.id, "todos") },
+                        ]
+                      : []),
+                    { t: "Todos los embudos · abiertos", sub: marcaNombre, href: url("todos", "abierto") },
+                    { t: "Todos los embudos · todo", sub: `${marcaNombre}: abiertos, ganados y perdidos`, href: url("todos", "todos") },
+                  ];
+                  return opciones.map((o) => (
+                    <DropdownMenuItem key={o.href} asChild>
+                      <a href={o.href} download className="flex flex-col items-start gap-0">
+                        <span className="text-sm">{o.t}</span>
+                        <span className="text-[11px] text-muted-foreground">{o.sub}{dueno || sp.get("q") ? " · con tu filtro" : ""}</span>
+                      </a>
+                    </DropdownMenuItem>
+                  ));
+                })()}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {marcas.length > 1 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

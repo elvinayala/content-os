@@ -737,6 +737,13 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (`lib/leads/nicho.ts`, `claude-opus-5` effort low, `LEADS_NICHO_MODEL`) de los primeros mensajes entrantes de WhatsApp
   (desde `/api/leads/timelines`, máx. 3 intentos, espera si solo dijo "hola"); queda en `datos.nicho` y `negocio` si lo
   nombra (nunca pisa lo escrito). Manito (cursor-pointer) en las tarjetas.
+- **Exportar a Excel como Pipedrive** (28/sep): botón **Exportar** en la barra (Embudo · Lista · Actividades) → CSV con ; y BOM
+  (`/pulse/leads/<marca>/exportar?embudo=<id|todos>&estado=abierto|ganado|perdido|todos&dueno=&q=`): este embudo (lo que ves o
+  todo) o todos los embudos; respeta dueño y búsqueda; sin tope (hasta 50K); sin grupos de WhatsApp; 20 columnas (nombre, negocio,
+  teléfono +1, e-mail, embudo, etapa, estado, valor, dueño, agendó, origen, nicho, etiquetas, motivo de pérdida, próxima actividad,
+  último mensaje, días en la etapa, creado, cerrado, ID) en hora de PR; fórmulas neutralizadas. **Solo Elvin** + correos de
+  `LEADS_EXPORTAR`; cada exportación queda en el registro de seguridad y, si no es Elvin, le avisa. Puro en `lib/leads/exportar.ts`
+  (tests `tests/leads-exportar.test.mjs`), `tratosParaExportar` en repo.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),

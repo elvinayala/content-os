@@ -187,6 +187,51 @@ export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?:
     .limit(500);
 }
 
+/** Exportar (como Pipedrive): TODO lo que cumple el filtro, sin el tope de la lista. Los grupos de WhatsApp no son leads. */
+export async function tratosParaExportar(marca: Marca, f: { embudoId?: string | null; estado?: string; duenoId?: string | null; q?: string }) {
+  const d = await db();
+  const conds = [eq(leadsTratos.marca, marca), sql`${leadsTratos.origen} <> 'grupo'`];
+  if (f.embudoId) conds.push(eq(leadsTratos.embudoId, f.embudoId));
+  if (f.estado && f.estado !== "todos") conds.push(eq(leadsTratos.estado, f.estado));
+  if (f.duenoId === "__sin") conds.push(isNull(leadsTratos.duenoId));
+  else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
+  if (f.q?.trim()) {
+    const q = `%${f.q.trim()}%`;
+    const dig = f.q.replace(/\D/g, "");
+    conds.push(or(ilike(leadsTratos.nombre, q), ilike(leadsTratos.negocio, q), ilike(leadsTratos.email, q), ...(dig.length >= 4 ? [ilike(leadsTratos.telefono, `%${dig}%`)] : []))!);
+  }
+  return d
+    .select({
+      id: leadsTratos.id,
+      nombre: leadsTratos.nombre,
+      negocio: leadsTratos.negocio,
+      telefono: leadsTratos.telefono,
+      email: leadsTratos.email,
+      embudo: leadsEmbudos.nombre,
+      etapa: leadsEtapas.nombre,
+      estado: leadsTratos.estado,
+      valor: leadsTratos.valor,
+      dueno: pulseUsers.nombre,
+      agendoPor: leadsTratos.agendoPor,
+      origen: leadsTratos.origen,
+      etiquetas: leadsTratos.etiquetas,
+      datos: leadsTratos.datos,
+      motivoPerdida: leadsTratos.motivoPerdida,
+      proximaActividad: leadsTratos.proximaActividad,
+      ultimoMensaje: leadsTratos.ultimoMensaje,
+      etapaDesde: leadsTratos.etapaDesde,
+      createdAt: leadsTratos.createdAt,
+      cerradoAt: leadsTratos.cerradoAt,
+    })
+    .from(leadsTratos)
+    .innerJoin(leadsEmbudos, eq(leadsEmbudos.id, leadsTratos.embudoId))
+    .innerJoin(leadsEtapas, eq(leadsEtapas.id, leadsTratos.etapaId))
+    .leftJoin(pulseUsers, eq(pulseUsers.id, leadsTratos.duenoId))
+    .where(and(...conds))
+    .orderBy(asc(leadsEmbudos.nombre), asc(leadsEtapas.orden), desc(leadsTratos.createdAt))
+    .limit(50_000);
+}
+
 // ---------- Un trato ----------------------------------------------------------------------------
 
 export async function obtenerTrato(id: string) {

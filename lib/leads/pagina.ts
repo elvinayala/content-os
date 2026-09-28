@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { usuarioActual } from "@/lib/pulse/auth";
 
+import { puedeExportarLeads } from "./exportar";
 import { accesoLeads, asegurarSemilla, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
 import { MARCAS, slugDeMarca } from "./reglas";
 
@@ -35,5 +36,6 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     dueno,
     q,
     puedeEditar: u.rol === "admin" || u.rol === "editor",
+    puedeExportar: puedeExportarLeads(u, process.env.LEADS_EXPORTAR ?? ""),
   };
 }
