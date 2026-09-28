@@ -34,11 +34,18 @@ export async function llamarAlCliente(t: Trabajo, p: Proveedor): Promise<{ ok: b
   return { ok: true, mensaje: "📞 Te estamos llamando. Contesta y te conectamos con el cliente (le sale el número de Resuelto)." };
 }
 
+/** ¿El mensaje trae un teléfono (7-11 dígitos), un wa.me o un @usuario? Pura (tests). */
+export function tieneContactoPersonal(texto: string): boolean {
+  return /(?<!\d)(?:\+?1[-. ]?)?\(?\d{3}\)?[-. ]*\d{3}[-. ]*\d{4}(?!\d)|(?<!\d)\d{3}[-. ]\d{4}(?!\d)|wa\.me|(?:^|\s)@[a-z_][\w.]{2,}/i.test(texto);
+}
+
 export async function escribirAlCliente(t: Trabajo, p: Proveedor, texto: string): Promise<{ ok: boolean; motivo?: string }> {
   const limpio = String(texto ?? "").replace(/\s+/g, " ").trim().slice(0, 400);
   if (limpio.length < 2) return { ok: false, motivo: "Escribe el mensaje." };
   // No se cuelan números ni redes personales (el contrato lo prohíbe).
-  if (/\b\d{3}[-. )]*\d{3}[-. ]*\d{4}\b|wa\.me|whatsapp|@\w{3,}/i.test(limpio)) return { ok: false, motivo: "Por aquí no se mandan números personales ni redes. Si hace falta hablar, usa \"Llamar por Resuelto\"." };
+  // 28/sep: la palabra "whatsapp" o una "@" sueltas ya no bloquean ("te escribí por WhatsApp", "llego @ la 1"); solo un
+  // número de teléfono, un wa.me o un @usuario de redes.
+  if (tieneContactoPersonal(limpio)) return { ok: false, motivo: "Ese mensaje lleva un número de teléfono o una red, y eso no se puede mandar (el cliente ve el número de Resuelto). Quítalo y envíalo, o toca \"Llamar\" para hablar con el cliente." };
   const dia = new Date().toISOString().slice(0, 10), m = mensajesHoy.get(t.id);
   const n = m?.dia === dia ? m.n : 0; if (n >= 10) return { ok: false, motivo: "Llegaste al máximo de mensajes de hoy para este cliente." };
   mensajesHoy.set(t.id, { dia, n: n + 1 });
