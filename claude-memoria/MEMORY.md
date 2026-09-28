@@ -53,6 +53,7 @@
 - [Privacidad de las reuniones de Elvin](privacidad-reuniones-elvin.md) — REGLA DURA: nunca grabar/compartir sus reuniones sin OK
 - [La plantilla manda](plantilla-manda.md) — con plantilla/referencia se ajusta, nunca se rediseña
 - [Avisos desde el Slack de Elvin](avisos-desde-slack-elvin.md) — "avísale a X" = DM desde su cuenta firmado por el agente; automáticos = bot
+- [Accesos y RR.HH. → Yaileen](accesos-rrhh-yaileen.md) — cuentas, claves, abrir Pulse, altas y todo RR.HH. se pide a Yaileen, no a Carilin
 - [Slack — verificar empleados](slack-equipo-verificar.md) — confirmar @levelupmediapr.net; Lis Acevedo (con S)
 - [Nico — vibecoder](nico-vibecoder.md) — guardia técnica de todas las plataformas; Railway + GitHub; Carilin/Aure piden y Elvin aprueba
 - [Iris — vigía de Cortex](iris-vigia-cortex.md) — revisa #cortex-bori-edit-videos cada 20 min y arregla o pasa a Nico
