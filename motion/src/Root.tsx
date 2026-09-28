@@ -15,5 +15,12 @@ export const Root: React.FC = () => (
       <Composition key={a.id} id={a.id} component={Anuncio} defaultProps={{ anuncio: a }} durationInFrames={duracionDe(a)} fps={30}
         width={a.formato === "16:9" ? 1920 : 1080} height={a.formato === "9:16" ? 1920 : 1080} />
     ))}
+    {/* Composición universal: cualquier guion en JSON (inputProps.anuncio) — la usa Remi en la nube para Max y clientes. */}
+    <Composition id="Motion" component={Anuncio} defaultProps={{ anuncio: ANUNCIOS[0] }} durationInFrames={duracionDe(ANUNCIOS[0])} fps={30} width={1920} height={1080}
+      calculateMetadata={({ props }) => ({
+        durationInFrames: duracionDe(props.anuncio),
+        width: props.anuncio.formato === "16:9" ? 1920 : 1080,
+        height: props.anuncio.formato === "9:16" ? 1920 : 1080,
+      })} />
   </>
 );

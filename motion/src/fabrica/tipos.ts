@@ -2,6 +2,7 @@
 // fábrica (escenas.tsx) sabe dibujar cada tipo en vertical (9:16) u horizontal (16:9).
 // Texto con *asteriscos* = palabra resaltada con el color de la marca.
 import type { MarcaId } from "./temas";
+import type { TemaCliente } from "./cliente";
 
 export type Formato = "9:16" | "16:9" | "1:1";
 
@@ -44,4 +45,6 @@ export type Anuncio = {
   tomas?: { archivo: string; desde: number; dur: number; velo?: number }[];
   /** Pista distinta a la de la marca (p. ej. una más larga para videos de 60 s). */
   musica?: string;
+  /** Marca de un CLIENTE (logo, colores, fuente) armada desde JSON: si viene, manda sobre `marca`. */
+  cliente?: TemaCliente;
 };

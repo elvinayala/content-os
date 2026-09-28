@@ -5,6 +5,7 @@ import { AbsoluteFill, Audio, OffthreadVideo, Sequence, interpolate, staticFile,
 import { Barrido, Destello, Fondo, Grano } from "../kit/fx";
 import { EscenaFabrica, Sfx, TemaCtx } from "./escenas";
 import { TEMAS } from "./temas";
+import { temaCliente } from "./cliente";
 import type { Anuncio as TAnuncio } from "./tipos";
 
 export const duracionDe = (a: TAnuncio) => a.escenas.reduce((s, e) => s + e.dur, 0);
@@ -24,7 +25,7 @@ const Toma: React.FC<{ archivo: string; dur: number; velo: number; fondo: string
 };
 
 export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
-  const tema = TEMAS[anuncio.marca];
+  const tema = React.useMemo(() => (anuncio.cliente ? temaCliente(anuncio.cliente) : TEMAS[anuncio.marca]), [anuncio]);
   const { durationInFrames } = useVideoConfig();
   let t = 0;
   const cortes: number[] = [];

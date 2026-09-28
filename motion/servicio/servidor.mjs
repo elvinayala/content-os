@@ -7,7 +7,8 @@
 //   3. sube el MP4 a Supabase Storage (bucket privado `pulse`, carpeta motion/<fecha>/) y firma un link de 1 año.
 // API (cabecera x-remi-secreto = REMI_SECRETO):
 //   GET  /salud                              → { ok, repo, cola }
-//   POST /render { ids: ["lu-07-…-16x9"] }   → { trabajo }
+//   POST /render { ids: ["lu-07-…-16x9"] }   → { trabajo }   (composiciones ya escritas en anuncios.ts)
+//   POST /render { guiones: [{ id, marca|cliente, formato, escenas… }] } → { trabajo }   (guion en JSON, sin tocar código)
 //   GET  /trabajo/<id>                       → { estado: en-cola|trabajando|listo|error, resultados: [{ id, url, segundos }], error }
 import http from "node:http";
 import fs from "node:fs";
@@ -62,12 +63,13 @@ async function procesar(t) {
     const { selectComposition, renderMedia } = await import("@remotion/renderer");
     log(`trabajo ${t.id}: empaquetando (${t.commit})`);
     const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
-    for (const id of t.ids) {
+    const piezas = [...t.ids.map((id) => ({ id, compId: id, inputProps: undefined })), ...t.guiones.map((g) => ({ id: g.id, compId: "Motion", inputProps: { anuncio: g } }))];
+    for (const { id, compId, inputProps } of piezas) {
       const t0 = Date.now();
       log(`trabajo ${t.id}: render ${id}`);
-      const comp = await selectComposition({ serveUrl, id });
+      const comp = await selectComposition({ serveUrl, id: compId, inputProps });
       const salida = path.join("/tmp", `${id}.mp4`);
-      await renderMedia({ composition: comp, serveUrl, codec: "h264", outputLocation: salida, chromiumOptions: { gl: "swangle" }, logLevel: "error" });
+      await renderMedia({ composition: comp, serveUrl, codec: "h264", outputLocation: salida, inputProps, chromiumOptions: { gl: "swangle" }, logLevel: "error" });
       const url = await subir(salida, `${id}.mp4`);
       fs.rmSync(salida, { force: true });
       t.resultados.push({ id, url, segundos: Math.round(comp.durationInFrames / comp.fps), renderSeg: Math.round((Date.now() - t0) / 1000) });
@@ -96,17 +98,21 @@ http.createServer(async (req, res) => {
   if (req.method === "POST" && u.pathname === "/render") {
     let cuerpo = "";
     for await (const c of req) cuerpo += c;
-    let ids = [];
-    try { ids = JSON.parse(cuerpo || "{}").ids || []; } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
-    ids = ids.filter((x) => /^[A-Za-z0-9._-]{1,120}$/.test(x)).slice(0, 12);
-    if (!ids.length) return responder(res, 400, { ok: false, error: "Pasa { ids: [...] } (máx. 12)" });
-    const t = { id: crypto.randomUUID().slice(0, 8), ids, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
+    if (cuerpo.length > 400_000) return responder(res, 413, { ok: false, error: "guion demasiado grande" });
+    let ids = [], guiones = [];
+    try { const b = JSON.parse(cuerpo || "{}"); ids = b.ids || []; guiones = b.guiones || []; } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
+    const idValido = (x) => typeof x === "string" && /^[A-Za-z0-9._-]{1,120}$/.test(x);
+    ids = ids.filter(idValido);
+    guiones = guiones.filter((g) => g && idValido(g.id) && Array.isArray(g.escenas) && g.escenas.length && ["9:16", "16:9", "1:1"].includes(g.formato));
+    if (!ids.length && !guiones.length) return responder(res, 400, { ok: false, error: "Pasa { ids: [...] } o { guiones: [...] } válidos (id, formato 9:16|16:9|1:1, escenas)" });
+    if (ids.length + guiones.length > 12) return responder(res, 400, { ok: false, error: "Máximo 12 videos por trabajo" });
+    const t = { id: crypto.randomUUID().slice(0, 8), ids, guiones, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
     trabajos.set(t.id, t);
     cola.push(t);
     bombear();
     return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
   }
   const m = u.pathname.match(/^\/trabajo\/([a-f0-9-]+)$/);
-  if (m) { const t = trabajos.get(m[1]); return t ? responder(res, 200, { ok: true, ...t }) : responder(res, 404, { ok: false, error: "no existe" }); }
+  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id) }); }
   responder(res, 404, { ok: false, error: "ruta desconocida" });
 }).listen(PORT, () => log(`Remi escuchando en :${PORT} · repo ${REPO}`));
