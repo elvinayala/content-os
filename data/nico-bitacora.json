@@ -265,6 +265,14 @@
       "porque": "Aure: Yaileen no puede crear puestos (son fijos en el código).",
       "verificado": "npm test 224/0, deploy content-4xzkpslj3 Ready, ritmo 200, perfiles leídos de la base",
       "commit": "b47520d"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "n8n Level Up + Content OS (Vercel)",
+      "que": "[Solicitud de Carilin #106] Reportes del agente de encuestas en #office-6. Causa: el agente mandaba cada aviso directo a Slack (Paula: 3 avisos en 25 s, uno decía que aceptó la llamada y el último que no) y una IA le daba formato a cada uno. Ahora: \"D-) Tools encuestador v1\" manda cada aviso a /api/pulse/n8n/encuestas; Content OS los junta por teléfono (24 h), espera 5 min sin avisos (1 min tras finalizar), lee la conversación real en Chatwoot y arma UN reporte con la plantilla fija (teléfono +1 939-732-1680, @ real, prioridad, decisión FINAL, comentario textual sin repetir; lib/encuestas/). Cada 2 min n8n publica lo listo y lo nuevo va al hilo. Si el cliente pide persona/audio: prioridad alta + etiqueta no-contactar-ia en Chatwoot (creada) + el filtro is-inbound? del \"B-) Agente de onboarding v5\" ya no le contesta (solo se cambió la condición vacía; prompt intacto). Env CHATWOOT_LU_URL/TOKEN en Vercel. Respaldos en data/n8n/respaldos/.",
+      "porque": "Reportes duplicados y contradictorios llevaron a Carilin a llamar a Paula, que no quería llamada.",
+      "verificado": "tests 6/6; vista previa con el caso real de Paula = 1 reporte, ¿Quiere llamada?: No; n8n → Content OS 200 (poll {items:[]}); aviso de prueba llegó a la base (fila 1, apagada sin publicar); webhook del agente de onboarding vivo y el filtro evalúa sin error. FALTA ver el primer reporte real publicado y el primer mensaje real de un cliente pasando el filtro.",
+      "commit": "9a1f0a6, 8b45e2a"
     }
   ],
   "pendientesElvin": [
