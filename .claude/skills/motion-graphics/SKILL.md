@@ -99,7 +99,7 @@ permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Beb
 guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.
 
 ## 7. Paquete para clientes (Elvin, 27/sep/2026)
-Elvin, 28/sep: **2 videos de MOTION GRAPHICS** a los clientes de Level Up cuyo acuerdo es de **$3,500 o más** y que lo **pagaron completo de una** (28/sep: antes eran 3). Si paga en plazos, aunque el acuerdo sea mayor, **no se le hacen hasta que complete los pagos** (se revisa en Pulse: Pago Inicial = Acuerdo de Pago / "Pago Único"). Siempre motion por código con
+Elvin, 28/sep: **2 videos de MOTION GRAPHICS** a los clientes de Level Up cuyo acuerdo es de **US$3,500 o más** y que lo **pagaron completo de una** (28/sep: antes eran 3). Si paga en plazos, aunque el acuerdo sea mayor, **no se le hacen hasta que complete los pagos** (se revisa en Pulse: Pago Inicial = Acuerdo de Pago / "Pago Único"). Siempre motion por código con
 esta fábrica — nunca UGC, caras con IA ni video generativo en su lugar). Flujo de Max, de punta a punta:
 **Antes de producir, el material del cliente (Elvin, 28/sep — los primeros de la Dra. Escabí quedaron "muy básicos,
 muy plain, no hacen wow, sin su logo, sin su identidad"):** su **logo real** (PNG transparente/SVG) para animarlo por
@@ -123,4 +123,4 @@ color plano.
 3. **Aprobado** (ok de Elvin o Carilin) → el servidor los guarda en su Drive (`videos/`) y los manda a su canal.
 4. **Si se pautan:** `node scripts/meta-ads/subir-videos.mjs cliente:<slug> <url-del-video>…` → IDs de Meta → campaña
    EN PAUSA con `meta-ads.mjs cliente:<slug> …` (verificar con `arbol` antes de avisar).
-Licencia: **Automators** (Elvin, 28/sep): la llave va en `REMOTION_LICENSE_KEY` del servicio `remi` en Railway y cada render la reporta ($0.01; mínimo $100/mes).
+Licencia: **Automators** (Elvin, 28/sep): la llave va en `REMOTION_LICENSE_KEY` del servicio `remi` en Railway y cada render la reporta (US$0.01; mínimo US$100/mes).
