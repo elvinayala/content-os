@@ -625,8 +625,13 @@ const Dato: React.FC<Extract<Escena, { tipo: "dato" }>> = ({ grande, texto, fuen
   const f = useCurrentFrame();
   const t = useTema();
   const { v, w, pad } = useLienzo();
-  const num = parseFloat(grande);
-  const sufijo = grande.replace(/^[\d.,]+/, "");
+  // "+10", "85%", "$3K": prefijo + número + sufijo (antes "+10" salía "10+10").
+  const partes = grande.match(/^([^\d]*)([\d.,]+)(.*)$/);
+  const prefijo = partes?.[1] ?? "";
+  const num = partes ? parseFloat(partes[2].replace(/,/g, "")) : NaN;
+  const sufijo = partes?.[3] ?? "";
+  // El anillo marca la proporción solo si es un porcentaje; si no, se cierra completo.
+  const fraccion = sufijo.includes("%") ? Math.min(1, num / 100) : 1;
   const p = tw(f, 2, 26);
   const r = v ? 250 : 220;
   const circ = 2 * Math.PI * r;
@@ -636,10 +641,10 @@ const Dato: React.FC<Extract<Escena, { tipo: "dato" }>> = ({ grande, texto, fuen
         <svg width={r * 2 + 40} height={r * 2 + 40} style={{ position: "absolute", transform: "rotate(-90deg)" }}>
           <circle cx={r + 20} cy={r + 20} r={r} fill="none" stroke={t.borde} strokeWidth={18} />
           <circle cx={r + 20} cy={r + 20} r={r} fill="none" stroke={t.acento} strokeWidth={18} strokeLinecap="round"
-            strokeDasharray={circ} strokeDashoffset={circ * (1 - (isNaN(num) ? 1 : Math.min(1, num / 100)) * p)} style={{ filter: `drop-shadow(0 0 16px ${t.acento})` }} />
+            strokeDasharray={circ} strokeDashoffset={circ * (1 - (isNaN(num) ? 1 : fraccion) * p)} style={{ filter: `drop-shadow(0 0 16px ${t.acento})` }} />
         </svg>
         <div style={{ fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 190 : 170, color: t.texto, letterSpacing: "-0.05em", fontVariantNumeric: "tabular-nums" }}>
-          {isNaN(num) ? grande : `${Math.round(num * p)}${sufijo}`}
+          {isNaN(num) ? grande : `${prefijo}${Math.round(num * p)}${sufijo}`}
         </div>
       </div>
       <div style={{ maxWidth: Math.min(w - pad * 2, 1300) }}><Titular texto={texto} entra={14} tam={v ? 62 : 60} peso={700} stagger={1.5} /></div>

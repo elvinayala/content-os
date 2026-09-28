@@ -47,12 +47,13 @@ if (slugCliente && guiones.length) {
   const { cliente: exp } = await apiMax("GET", { cliente: slugCliente });
   if (!exp) { console.error(`✖ No existe el cliente ${slugCliente} (node scripts/max.mjs clientes)`); process.exit(1); }
   const m = exp.ficha?.marca || {};
-  const faltan = ["logoUrl", "fondo", "acento"].filter((k) => !m[k]);
+  const faltan = ["fondo", "acento"].filter((k) => !m[k]);
   if (faltan.length) {
     console.error(`✖ ${slugCliente} no tiene su marca completa (falta ${faltan.join(", ")}). Fíjala con SU logo real:\n  node scripts/max.mjs ficha ${slugCliente} '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`);
     process.exit(1);
   }
-  for (const g of guiones) g.cliente ??= { nombre: m.nombre || exp.nombre, logoUrl: m.logoUrl, fondo: m.fondo, acento: m.acento, texto: m.texto, acento2: m.acento2, fuente: m.fuente };
+  if (!m.logoUrl) console.warn(`⚠ ${slugCliente} sin logo real en su ficha: la firma sale solo con su nombre. Pídelo (Jessica / carpeta del cliente) antes de entregarle los videos.`);
+  for (const g of guiones) g.cliente ??= { nombre: m.nombre || exp.nombre, subtitulo: m.subtitulo, logoUrl: m.logoUrl, fondo: m.fondo, acento: m.acento, texto: m.texto, acento2: m.acento2, fuente: m.fuente };
   console.log(`🎨 Marca de ${exp.nombre}: fondo ${m.fondo} · acento ${m.acento} · ${m.fuente || "Inter"}`);
 }
 

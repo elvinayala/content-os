@@ -1,5 +1,5 @@
 // Tema de marca para un CLIENTE, armado desde JSON (sin tocar código): lo manda Max en el guion
-// (campo `cliente`) con el logo real, los colores y la fuente del cliente. Paquete de Level Up ≥ $3,500 = 3 motion.
+// (campo `cliente`) con el logo real, los colores y la fuente del cliente. Paquete de Level Up: acuerdo ≥ $3,500 pagado completo = 2 motion.
 // Fuentes permitidas (Google Fonts cargadas aquí): la del cliente tiene que ser una de estas.
 import React from "react";
 import { Img, useCurrentFrame } from "remotion";
@@ -32,7 +32,8 @@ export const FUENTES_CLIENTE = Object.keys(FUENTES);
 
 export type TemaCliente = {
   nombre: string; // nombre comercial (va en la firma del cierre)
-  logoUrl: string; // URL https del logo REAL (PNG/SVG con fondo transparente, idealmente)
+  logoUrl?: string; // URL https del logo REAL (PNG/SVG, fondo transparente). Sin él: firma solo con el nombre (nunca un logo inventado)
+  subtitulo?: string; // línea bajo el nombre en la firma (p. ej. "Neuropsicología clínica")
   fondo: string; // hex
   acento: string; // hex (CTA, resaltados)
   texto?: string; // hex (por defecto casi blanco)
@@ -61,6 +62,7 @@ export function temaCliente(c: TemaCliente): TemaMarca {
     const s = entrada === null ? 1 : 0.4 + 0.6 * rebote(e, 0, 20);
     const brillo = entrada === null ? 0.3 + (vivo ? 0.15 * Math.sin(f / 8) : 0) : tw(e, 8, 24, 1, 0.3);
     const flota = vivo ? Math.sin(f / 18) * size * 0.02 : 0;
+    if (!c.logoUrl) return null;
     return (
       <Img src={c.logoUrl} style={{
         width: size, height: size, objectFit: "contain", opacity: entrada === null ? 1 : tw(e, 0, 8),
@@ -70,8 +72,10 @@ export function temaCliente(c: TemaCliente): TemaMarca {
   };
   const Firma: TemaMarca["Firma"] = ({ size, entrada }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: size * 0.08 }}>
-      <Logo size={size * 0.7} entrada={entrada} vivo={entrada > 30} />
-      <div style={{ fontFamily: fuente, fontWeight: 800, fontSize: size * 0.2, color: texto, letterSpacing: "-0.02em", textAlign: "center", opacity: tw(entrada, 12, 24), transform: `translateY(${(1 - tw(entrada, 12, 24)) * 24}px)` }}>{c.nombre}</div>
+      {c.logoUrl ? <Logo size={size * 0.7} entrada={entrada} vivo={entrada > 30} /> : null}
+      <div style={{ fontFamily: fuente, fontWeight: 800, fontSize: size * (c.logoUrl ? 0.2 : 0.26), color: texto, letterSpacing: "-0.02em", textAlign: "center", lineHeight: 1.05, opacity: tw(entrada, c.logoUrl ? 12 : 0, c.logoUrl ? 24 : 14), transform: `translateY(${(1 - tw(entrada, c.logoUrl ? 12 : 0, c.logoUrl ? 24 : 14)) * 24}px)` }}>{c.nombre}</div>
+      {c.subtitulo ? <div style={{ fontFamily: fuente, fontWeight: 600, fontSize: size * 0.085, color: c.acento, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "center", opacity: tw(entrada, 14, 28) }}>{c.subtitulo}</div> : null}
+      {!c.logoUrl ? <div style={{ width: size * 0.5 * tw(entrada, 10, 30), height: Math.max(3, size * 0.012), borderRadius: 99, background: `linear-gradient(90deg, ${c.acento}, ${acento2})` }} /> : null}
     </div>
   );
   return {
