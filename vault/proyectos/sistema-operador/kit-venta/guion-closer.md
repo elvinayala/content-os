@@ -13,7 +13,7 @@ closer con este guion.
 
 Base: [[mentorias/mariano-segura-cierre-ventas]] (toda objeción = falta de certeza, siempre hay UNA
 real) y el estándar del setter extractor de dolor ([[estilo/objeciones-reales]]). Oferta:
-[[../oferta]] · Diagnóstico: [[../diagnostico-6-sistemas]].
+[[oferta]] · Diagnóstico: [[diagnostico-6-sistemas]].
 
 **Reglas de la llamada**
 - Tuteo PR. Lenguaje simple: nada de "CRM", "API", "n8n", "skills". Se dice "tu sistema de
@@ -73,7 +73,7 @@ Cierra el diagnóstico con **su** conclusión:
 
 ## 5 · La palanca en vivo: dale valor antes de vender (5 min)
 
-Dale **la palanca de un consejo** de su sistema más flojo ([[../curriculo]]). Que se lleve algo
+Dale **la palanca de un consejo** de su sistema más flojo ([[curriculo]]). Que se lleve algo
 aplicable aunque no compre:
 > "Te voy a dar una cosa que puedes hacer esta semana, entres o no entres: [palanca]. En EA Market
 > esto solo nos cambió [resultado]."
@@ -97,7 +97,7 @@ minutos? Prefiero explicárselo a los dos." Si no puede, reagenda con los dos. *
 2. **Cómo funciona**: semana 1 diagnóstico + 1:1 conmigo; semanas 2–4 las palancas; 5–10 la
    instalación; 11–13 operar con números. Una llamada grupal por semana, 4 llamadas 1:1 conmigo,
    el equipo por Slack.
-3. **Lo que te llevas**: repasa el cuadro de valor ([[../oferta]] §4) y **hila cada componente con
+3. **Lo que te llevas**: repasa el cuadro de valor ([[oferta]] §4) y **hila cada componente con
    su dolor**: *"¿te acuerdas que me dijiste [dolor]? Por eso viene [componente]."*
 4. **Credibilidad**: el caso que se le parece. Preséntalo con la pregunta de Mariano:
    > "Si tienes los mismos sistemas que [caso], ¿crees que puedes tener un resultado parecido?

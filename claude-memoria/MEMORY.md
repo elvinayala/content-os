@@ -29,6 +29,7 @@
 - [Memoria compuesta](memoria-compuesta.md) — vault de entidades + síntesis destilada para Jarvis y la fábrica
 - [Alertas de clientes críticos](alertas-clientes-criticos.md) — cruzar con vault/entidades antes de alertar (feedback de Carilin)
 - [Shadow Operator — marca](shadow-operator-marca.md) — valor + personalidad + pepitas; consultoría $3,500 + Skool $55
+- [Sistema Operador — high ticket](sistema-operador.md) — los 6 sistemas "como franquicia": $15K pago único, 10 fundadores a $9,997; cada sistema vale por sí solo
 - [Staff Agency — visión](staff-agency-vision.md) — cantera de setters/closers entrenados y colocados
 - [Richy & Elvin Trading LLC](richy-elvin-trading.md) — marca 1000X (ghost terminal); comunidad + curso + bot
 - [Plagas Puerto Rico — agente interno](plagas-puerto-rico.md) — cliente Gilbert Torres; Evolution, Railway, pendientes
