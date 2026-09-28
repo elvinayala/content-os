@@ -835,11 +835,12 @@ export async function elegirGanadorViajeAction(p: { anio: number; userId: string
   });
 }
 
-// ─── Empresa: quiénes somos, recursos, políticas y preguntas (lo edita la vista maestra) ──────
+// ─── Empresa: quiénes somos, recursos, políticas y preguntas (lo edita la dirección: Elvin, Carilin, Aure) ──
 
 export async function guardarEmpresaAction(p: { id?: string; seccion: string; titulo: string; cuerpo: string; url?: string | null; empresa: string; publicado: boolean }) {
   return envolver(async () => {
     const u = await requiereMaestro();
+    if (u.rol !== "admin" && u.rol !== "editor") throw new Error("Solo la dirección edita Empresa");
     await empresa.guardarItemEmpresa(p, u.id);
     refresh();
     return {};
@@ -848,7 +849,8 @@ export async function guardarEmpresaAction(p: { id?: string; seccion: string; ti
 
 export async function borrarEmpresaAction(id: string) {
   return envolver(async () => {
-    await requiereMaestro();
+    const u = await requiereMaestro();
+    if (u.rol !== "admin" && u.rol !== "editor") throw new Error("Solo la dirección edita Empresa");
     await empresa.borrarItemEmpresa(id);
     refresh();
     return {};

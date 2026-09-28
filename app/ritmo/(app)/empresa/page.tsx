@@ -15,7 +15,10 @@ export default async function EmpresaPage({ searchParams }: { searchParams: Prom
   if (!u) return null;
   const { s } = await searchParams;
   const seccion = (SECCIONES.find((x) => x.id === s)?.id ?? "nosotros") as SeccionEmpresa;
-  const v = { empresa: await empresaDe(u.id), maestro: u.maestro };
+  // Las dos empresas (y los borradores) solo las ve la dirección: Elvin, Carilin y Aure (Elvin, 28/sep). RR.HH. y el
+  // resto del equipo ven lo publicado para todos + lo de SU empresa.
+  const verTodo = u.maestro && (u.rol === "admin" || u.rol === "editor");
+  const v = { empresa: await empresaDe(u.id), maestro: verTodo };
   const [items, personas] = await Promise.all([seccion === "equipo" ? Promise.resolve([]) : contenidoEmpresa(v), seccion === "equipo" ? directorio(v) : Promise.resolve([])]);
   const deSeccion = items.filter((i) => i.seccion === seccion);
   const chip = (activo: boolean) => cn("rounded-full px-3 py-1.5 transition", activo ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground");
@@ -28,7 +31,7 @@ export default async function EmpresaPage({ searchParams }: { searchParams: Prom
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">La empresa</h1>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">Quiénes somos, quién es quién en el equipo, las políticas y dónde encontrar lo que necesitas.</p>
         </div>
-        {u.maestro && seccion !== "equipo" ? <NuevoItemEmpresa seccion={seccion} /> : null}
+        {verTodo && seccion !== "equipo" ? <NuevoItemEmpresa seccion={seccion} /> : null}
       </div>
 
       <div className="flex w-fit max-w-full flex-wrap gap-1 rounded-full border border-border bg-card/60 p-1 text-xs">
@@ -40,17 +43,17 @@ export default async function EmpresaPage({ searchParams }: { searchParams: Prom
       </div>
 
       {seccion === "equipo" ? (
-        <Directorio personas={personas} maestro={u.maestro} yo={u.id} />
+        <Directorio personas={personas} maestro={verTodo} yo={u.id} />
       ) : deSeccion.length ? (
         <div className="flex flex-col gap-3">
           {deSeccion.map((it) => (
-            <TarjetaEmpresa key={it.id} it={it} maestro={u.maestro} />
+            <TarjetaEmpresa key={it.id} it={it} maestro={verTodo} />
           ))}
         </div>
       ) : (
         <div className="panel p-6 text-center text-sm text-muted-foreground">Todavía no hay nada aquí.</div>
       )}
-      {u.maestro && seccion !== "equipo" ? (
+      {verTodo && seccion !== "equipo" ? (
         <p className="text-[11px] text-muted-foreground">Ves todo porque eres parte de la dirección: los borradores y lo de cada empresa. Cada empleado ve lo publicado para todos y lo de su empresa.</p>
       ) : null}
     </div>

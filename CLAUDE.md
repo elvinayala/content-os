@@ -220,7 +220,7 @@ neón cyan/violeta). PASO 01: todo mock salvo las ventas de Level Up (Sheets).
 ## El plan de guerra Q4 2026 (portafolio + Fábrica de Demos)
 
 El 18/sep/2026 Elvin aprobó el **plan de guerra** (`vault/ceo/plan-de-guerra-2026Q4.md`, memoria
-`plan-de-guerra-q4`): IA Market como holding con 2 motores (Level Up, AIB), 3 productos (Bori,
+`plan-de-guerra-q4`): EA Market LLC como holding (Elvin, 28/sep: el nombre es EA Market LLC, no "IA Market") con 2 motores (Level Up, AIB), 3 productos (Bori,
 Cortex, Shadow), 1 piloto (Resuelto, compuerta 15/nov) y 5 congelados con trigger (Quilla,
 Contigo PR, Staff Agency, 1000X, Ventaja). **Regla: ninguna empresa nueva hasta el 12/dic**; las
 ideas van a `vault/ideas/`.
@@ -646,7 +646,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Empresa** (`/ritmo/empresa`, 27/sep, Elvin: "van a entrar… una plataforma completamente vacía"): Quiénes somos · El
   equipo (directorio en vivo de los perfiles activos, cada empleado ve solo su empresa, iniciales sin foto) · Recursos ·
   Políticas · Preguntas. Tabla `desempeno_empresa` (migración 0027; `empresa` todas|level_up|ai_borinquen, `publicado`),
-  editable por la vista maestra (lápiz / "Agregar", formato sencillo sin HTML: viñetas, **negrita**, [link](url)).
+  editable por la dirección (Elvin, Carilin, Aure; lápiz / "Agregar", formato sencillo sin HTML: viñetas, **negrita**, [link](url)).
+  **28/sep (Elvin):** la madre es **EA Market LLC**; cada empleado ve SOLO su empresa (el texto de LU no nombra a AIB ni al revés;
+  test en `tests/empresa.test.mjs`) y solo admin/editoras ven las dos (RR.HH. no). LU nace en 2024 (Elvin en marketing y ventas
+  desde 2021) y su visión es **AI first** (marketing digital 100 % con IA → empresa de tecnología); AIB nace en 2026 porque los
+  dueños no contestaban sus mensajes y hoy digitaliza los negocios de PR con agentes personalizados.
   Semillas solo con datos confirmados (`SEMILLAS_EMPRESA` en `lib/desempeno/empresa-reglas.ts`, tests
   `tests/empresa.test.mjs` verifican que las políticas cuadren con `POLITICA`/`BONO_REFERIDO`); **Misión y Valores de LU
   son BORRADOR** hasta que Elvin los apruebe. Pestaña en escritorio + tarjeta "Conoce la empresa" en Hoy.

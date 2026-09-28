@@ -97,12 +97,20 @@ const s = (clave: string, seccion: string, empresa: EmpresaDe, orden: number, ti
 
 export const SEMILLAS_EMPRESA: Semilla[] = [
   // Quiénes somos
+  // Cada empleado ve SOLO su empresa (Elvin, 28/sep): el texto de Level Up no menciona a AI Borinquen ni al revés.
+  // La empresa madre se llama EA Market LLC.
   s("lu-quienes", "nosotros", "level_up", 10, "Level Up Media", [
-    "Level Up e AI Borinquen son las dos marcas de **IA Market**, la empresa madre.",
-    "Level Up hace publicidad en **Meta (Facebook e Instagram)** para negocios de Puerto Rico. Lo que vendemos no es una campaña suelta: es un **sistema completo** — tráfico, un proceso de ventas que convierte ese tráfico y automatización para que ningún lead se quede sin contestar.",
+    "Level Up Media es una empresa de **EA Market LLC**. Nace en **2024**, pero la historia empieza antes: Elvin, nuestro fundador, lleva desde **2021** aprendiendo y practicando el marketing y las ventas.",
+    "Hacemos publicidad en **Meta (Facebook e Instagram)** para negocios de Puerto Rico. Lo que vendemos no es una campaña suelta: es un **sistema completo** — tráfico, un proceso de ventas que convierte ese tráfico y automatización para que ningún lead se quede sin contestar.",
     "- **Dónde más ganamos:** profesionales de la salud (doctores, quiroprácticos, cirujanos plásticos), negocios de alto ticket (academias, consultores, traders) y abogados.",
     "- **Resultados que ya contamos:** el Dr. Bryan Vega llega a **25 pacientes nuevos al mes**; Kaglam tuvo la agenda llena **3 semanas por adelantado** desde el día 7 de campaña.",
     "- **Lo que nos diferencia:** unimos marketing y operación con inteligencia artificial, y todo se mide.",
+  ].join("\n")),
+  s("lu-vision", "nosotros", "level_up", 15, "Nuestra visión: AI first", [
+    "Amamos la tecnología y nos apoyamos **100 % en ella y en la inteligencia artificial**. Somos una empresa **AI first**.",
+    "- **Hoy:** hacer marketing digital apoyado **100 % en IA**.",
+    "- **Hacia dónde vamos:** ser una **empresa de tecnología**.",
+    "- **Es de todos:** esa mentalidad no es solo de la dirección; tiene que estar en cada persona del equipo. Antes de hacer algo a mano, pregúntate cómo la IA te ayuda a hacerlo mejor y más rápido.",
   ].join("\n")),
   s("lu-como", "nosotros", "level_up", 20, "Cómo trabajamos con un cliente", [
     "Del cierre al lanzamiento de las campañas:",
@@ -123,7 +131,8 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
     "- **Hablamos claro:** expectativas honestas con el cliente desde el primer día.",
   ].join("\n"), { publicado: false }),
   s("aib-quienes", "nosotros", "ai_borinquen", 10, "AI Borinquen", [
-    "Construimos **agentes de inteligencia artificial de voz y de chat** para negocios de Puerto Rico: contestan en WhatsApp, Instagram, Messenger y por teléfono, precalifican y agendan citas.",
+    "AI Borinquen es una empresa de **EA Market LLC**. Nace en **2026** por un problema muy concreto: los dueños de negocio **no contestaban sus mensajes** y perdían clientes todos los días.",
+    "Empezamos automatizando la atención al cliente, y hoy vamos más allá: **digitalizamos los negocios de Puerto Rico** con **agentes de inteligencia artificial personalizados**, de voz y de chat, que contestan en WhatsApp, Instagram, Messenger y por teléfono, precalifican y agendan citas.",
     "- **Un agente por rol, no uno que \"hace de todo\":** recepcionista, citas, cobros, servicio al cliente. Se entrena con la información de cada negocio; nada se copia y pega.",
     "- **Así queda:** el sistema listo en **7 días** y **45 días** de acompañamiento para afinarlo. El cliente ve sus llamadas, conversaciones y leads en su **Portal AutoFlow**.",
     "- **Resultado real:** Teo, de **Mano Santa PR**, antes contestaba solo el **20 %** de sus leads; hoy los contesta en segundos. Milton, de **Caribe Paint**, destaca lo natural de las conversaciones del asistente.",
@@ -131,6 +140,7 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
   ].join("\n")),
   s("aib-vision", "nosotros", "ai_borinquen", 20, "Nuestra visión", [
     "- Que ningún negocio de la isla pierda un cliente por no contestar a tiempo.",
+    "- No solo automatizar la atención al cliente: **digitalizar los negocios de Puerto Rico** con agentes hechos a su medida.",
     "- Digitalizar **y** capacitar: lo instalamos por el cliente, o le enseñamos a hacerlo.",
     "- Agentes por rol, en la voz y en el idioma del negocio.",
     "- Todo medible: el cliente ve sus llamadas, mensajes y leads en su portal.",

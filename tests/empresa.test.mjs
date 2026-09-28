@@ -49,3 +49,16 @@ test("las políticas del texto coinciden con las reglas reales de Ritmo", async 
   for (const k of ["vacacionesAnual", "enfermedadAnual", "maternidad", "mesesParaVacaciones"]) assert.equal(POLITICA_TEXTO[k], POLITICA[k], k);
   assert.equal(POLITICA_TEXTO.bonoReferido, BONO_REFERIDO);
 });
+
+test("Quiénes somos (Elvin, 28/sep): EA Market LLC y cada empresa solo habla de sí misma", () => {
+  const todo = SEMILLAS_EMPRESA.map((x) => `${x.titulo} ${x.cuerpo}`).join("\n");
+  assert.ok(!/IA Market/.test(todo), "la empresa madre es EA Market LLC");
+  for (const x of SEMILLAS_EMPRESA.filter((i) => i.empresa === "level_up")) assert.ok(!/borinquen/i.test(`${x.titulo} ${x.cuerpo}`), `${x.clave} menciona a AI Borinquen`);
+  for (const x of SEMILLAS_EMPRESA.filter((i) => i.empresa === "ai_borinquen")) assert.ok(!/level up/i.test(`${x.titulo} ${x.cuerpo}`), `${x.clave} menciona a Level Up`);
+  for (const x of SEMILLAS_EMPRESA.filter((i) => i.empresa === "todas")) assert.ok(!/borinquen/i.test(x.cuerpo), `${x.clave} (para todos) menciona una marca`);
+  const lu = SEMILLAS_EMPRESA.find((x) => x.clave === "lu-quienes");
+  assert.match(lu.cuerpo, /EA Market LLC/);
+  assert.match(lu.cuerpo, /2024/);
+  assert.match(SEMILLAS_EMPRESA.find((x) => x.clave === "lu-vision").cuerpo, /AI first/);
+  assert.match(SEMILLAS_EMPRESA.find((x) => x.clave === "aib-quienes").cuerpo, /2026/);
+});
