@@ -47,6 +47,7 @@ export default async function SolicitudesPage() {
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Solicitudes</h1>
         <p className="mt-1 text-sm text-muted-foreground">Días libres, vacaciones, permisos, cartas o cualquier petición a Recursos Humanos.</p>
+        <Link href="/ritmo/calendario" className="mt-2 inline-flex text-sm text-primary hover:underline">📅 Calendario del equipo: quién está fuera y cuándo →</Link>
       </div>
 
       {porDecidir.length ? (

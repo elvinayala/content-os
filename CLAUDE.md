@@ -685,6 +685,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   cada cita; "Llamada agendada" ya pasada = sin marcar, se le recuerda; sin citas marcadas → diario; `resultadoCita` +
   `citasDelMes`); **Laura vende en las dos marcas** (`desempeno_perfiles.tambien_en`, migración 0031, "También vende en" en
   Ajustes); Joaquín es closer. Pendiente: la planilla de Excel de Nahuel para las agendas de los chatters.
+- **Calendario de ausencias** (`/ritmo/calendario`, 28/sep; puro en `lib/desempeno/calendario-reglas.ts` + tests
+  `tests/calendario.test.mjs`, datos `lib/desempeno/calendario.ts`): mes en cuadrícula + lista de quién está fuera (ausencias
+  aprobadas + solicitudes en curso con borde punteado). Elvin: "los estrategas no se pueden ir dos a la vez" → `TOPE_FUERA`
+  (`estratega: 1`, por empresa): si ya hay uno APROBADO en esas fechas, no se puede pedir (el formulario lo avisa en vivo con
+  `revisarFechasAction`) ni aprobar; si solo hay otro pedido en curso, se avisa. Días con choque en rojo. El motivo (vacaciones,
+  enfermedad…) solo lo ve la vista maestra; el resto ve "Fuera"/"Pedido" de su empresa. Link en Solicitudes y en Hoy (maestra).
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

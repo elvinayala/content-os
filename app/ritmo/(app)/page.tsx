@@ -101,6 +101,7 @@ export default async function HoyPage() {
                   { href: "/ritmo/empresa", t: "Empresa", d: "Quiénes somos y recursos" },
                   { href: "/ritmo/arena", t: "Arena", d: "Ventas y comisiones" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
+                  { href: "/ritmo/calendario", t: "Calendario", d: "Quién está fuera" },
                   { href: "/ritmo/seguridad", t: "Seguridad", d: "Equipos y ponches manuales" },
                   { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
                   ...(u.rol === "admin" ? [{ href: "/ritmo/viajes", t: "Viajes", d: "Solo tú, por ahora" }] : []),

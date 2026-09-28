@@ -1,10 +1,10 @@
 "use client";
 
 import { Check, Circle, CircleCheck, CircleX, Loader2, Send, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { cancelarSolicitudAction, crearSolicitudAction, decidirSolicitudAction } from "@/app/ritmo/actions";
+import { cancelarSolicitudAction, crearSolicitudAction, decidirSolicitudAction, revisarFechasAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,18 @@ export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string 
   const [v, setV] = useState({ tipo: "", desde: "", hasta: "", dias: "1", detalle: "" });
   const [cargando, setCargando] = useState(false);
   const tipo = tipos.find((t) => t.id === v.tipo);
+  // Choques de fechas en vivo (28/sep): p. ej. dos estrategas no pueden estar fuera a la vez.
+  const [choque, setChoque] = useState<{ error: string | null; aviso: string | null }>({ error: null, aviso: null });
+  const conCalendario = !!tipo && ["vacaciones", "dia_libre", "permiso"].includes(tipo.id);
+  useEffect(() => {
+    if (!conCalendario || !v.desde) return;
+    let vivo = true;
+    revisarFechasAction(v.desde, v.hasta).then((r) => vivo && setChoque(r.ok ? { error: r.error, aviso: r.aviso } : { error: null, aviso: null }));
+    return () => {
+      vivo = false;
+    };
+  }, [conCalendario, v.desde, v.hasta]);
+  const visible = conCalendario && v.desde ? choque : { error: null, aviso: null };
   const enviar = async () => {
     setCargando(true);
     const r = await crearSolicitudAction(v);
@@ -48,9 +60,12 @@ export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string 
           <label className="col-span-2 flex flex-col gap-1.5 sm:col-span-1"><span className="text-xs text-muted-foreground">Días laborables (0.5 = medio día)</span><Input type="number" step="0.5" min="0" className="h-11" value={v.dias} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value }))} /></label>
         </div>
       ) : null}
+      {visible.error ? <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-300 ring-1 ring-red-500/30">⛔ {visible.error}</p> : null}
+      {visible.aviso ? <p className="rounded-xl bg-amber-500/10 px-3 py-2 text-sm text-amber-200 ring-1 ring-amber-500/30">⚠️ {visible.aviso}</p> : null}
+      {conCalendario ? <a href="/ritmo/calendario" className="w-fit text-xs text-primary hover:underline">Ver el calendario del equipo →</a> : null}
       {tipo && ["vacaciones", "dia_libre"].includes(tipo.id) && saldo ? <p className="text-xs text-[color:var(--coral)]">{saldo}</p> : null}
       <Textarea rows={3} maxLength={2000} value={v.detalle} onChange={(e) => setV((x) => ({ ...x, detalle: e.target.value }))} placeholder="Explica brevemente (motivo, a quién va dirigida la carta, horario del permiso…)" />
-      <Button onClick={enviar} disabled={cargando || !v.tipo} className="h-12 rounded-full text-base">
+      <Button onClick={enviar} disabled={cargando || !v.tipo || !!visible.error} className="h-12 rounded-full text-base">
         {cargando ? <Loader2 className="animate-spin" /> : <Send />} Enviar solicitud
       </Button>
     </div>
