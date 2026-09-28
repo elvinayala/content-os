@@ -2,7 +2,8 @@
 // los cortes + grano + música de la marca. El gancho entra en el frame 0 con un golpe (sin intro).
 import React from "react";
 import { AbsoluteFill, Audio, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { Barrido, Destello, Fondo, Grano } from "../kit/fx";
+import { Grano } from "../kit/fx";
+import { EstiloCtx, FondoEstilo, Transicion, resolverEstilo } from "./estilos";
 import { EscenaFabrica, Sfx, TemaCtx } from "./escenas";
 import { TEMAS } from "./temas";
 import { temaCliente } from "./cliente";
@@ -26,6 +27,7 @@ const Toma: React.FC<{ archivo: string; dur: number; velo: number; fondo: string
 
 export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
   const tema = React.useMemo(() => (anuncio.cliente ? temaCliente(anuncio.cliente) : TEMAS[anuncio.marca]), [anuncio]);
+  const estilo = React.useMemo(() => resolverEstilo(anuncio.estilo, anuncio.id), [anuncio.estilo, anuncio.id]);
   const { durationInFrames } = useVideoConfig();
   let t = 0;
   const cortes: number[] = [];
@@ -41,8 +43,9 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
   });
   return (
     <TemaCtx.Provider value={tema}>
+    <EstiloCtx.Provider value={estilo}>
       <AbsoluteFill style={{ background: tema.fondo }}>
-        <Fondo color={tema.fondo} brillo={tema.brillo} brillo2={tema.brillo2} grid={tema.borde} intensidad={0.9} />
+        <FondoEstilo tema={tema} estilo={estilo} />
         {tema.Motivo && <tema.Motivo />}
         {(anuncio.tomas ?? []).map((t, i) => (
           <Sequence key={`toma${i}`} from={t.desde} durationInFrames={t.dur}>
@@ -50,18 +53,13 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
           </Sequence>
         ))}
         {escenas}
-        {cortes.map((c, i) =>
-          i % 2 === 0 ? (
-            <Barrido key={c} centro={c} dur={12} colores={[tema.acento2, tema.acento, tema.fondo]} angulo={i % 4 === 0 ? -12 : 12} />
-          ) : (
-            <Destello key={c} en={c} color={tema.acento} max={0.22} dur={6} />
-          ),
-        )}
+        {cortes.map((c, i) => <Transicion key={c} c={c} i={i} tema={tema} estilo={estilo} />)}
         <Grano />
         <Audio src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
         {cortes.map((c) => <Sfx key={c} src="whoosh.mp3" en={c - 5} vol={0.4} />)}
       </AbsoluteFill>
+    </EstiloCtx.Provider>
     </TemaCtx.Provider>
   );
 };

@@ -8,6 +8,7 @@ import { golpe, rebote, suave, tw } from "../kit/fx";
 import { Chat, IconoTelefono, Llamada, Notificacion, Telefono } from "../kit/ui";
 import type { TemaMarca } from "./temas";
 import type { Escena } from "./tipos";
+import { frauncesItalica, useEstilo } from "./estilos";
 
 export const TemaCtx = createContext<TemaMarca | null>(null);
 const useTema = () => useContext(TemaCtx)!;
@@ -29,46 +30,73 @@ export const Sfx: React.FC<{ src: string; en?: number; vol?: number }> = ({ src,
 export const Titular: React.FC<{
   texto: string; entra: number; tam: number; stagger?: number; alinear?: "center" | "left";
   color?: string; acento?: string; peso?: number; sale?: number;
-}> = ({ texto, entra, tam, stagger = 2.5, alinear = "center", color, acento, peso = 800, sale }) => {
+}> = ({ texto, entra, tam: tamBase, stagger = 2.5, alinear, color, acento, peso, sale }) => {
   const f = useCurrentFrame();
   const t = useTema();
+  const es = useEstilo();
+  const al = alinear ?? es.alinear;
+  // El cuerpo (peso < 700, p. ej. subtítulos) va en la letra de la marca; los titulares en la del estilo.
+  const esTitulo = peso === undefined || peso >= 700;
+  const tam = esTitulo ? tamBase * es.escala : tamBase;
+  const familia = esTitulo ? es.familia ?? t.fuente : t.fuente;
+  const grosor = esTitulo ? (es.familia ? es.peso : peso ?? 800) : peso;
+  const ac = acento ?? t.acento;
   // *frase de varias palabras* también se resalta: se lleva el estado entre palabras.
   let dentro = false;
   const palabras = texto.split(" ").filter(Boolean).map((p) => {
     const abre = p.startsWith("*");
-    const cierra = /\*[.,!?:;…]*$/.test(p);
+    const cierra = /\*[.,!?:;…»]*$/.test(p);
     const marcada = dentro || abre;
     if (abre && !cierra) dentro = true;
     if (cierra) dentro = false;
     return { limpio: p.replace(/\*/g, ""), marcada };
   });
+  /** Una palabra con la entrada y el resaltado del estilo. */
+  const Palabra = ({ txt, marcada, i, ml = 0 }: { txt: string; marcada: boolean; i: number; ml?: number }) => {
+    const ini = entra + i * stagger;
+    const e = es.entrada === "corte" ? tw(f, ini, ini + 5, 0, 1, (x) => x) : tw(f, ini, ini + 12);
+    const s2 = sale !== undefined ? tw(f, sale + i, sale + i + 8, 0, 1, golpe) : 0;
+    const mov =
+      es.entrada === "subir" ? { transform: `translateY(${(1 - e) * 110 - s2 * 110}%) rotate(${(1 - e) * 5}deg)`, transformOrigin: "left bottom" }
+      : es.entrada === "desenfoque" ? { opacity: e * (1 - s2), filter: `blur(${(1 - e) * 14}px)`, transform: `translateY(${(1 - e) * 18}%)` }
+      : es.entrada === "escala" ? { opacity: Math.min(1, e * 2) * (1 - s2), transform: `scale(${0.3 + 0.7 * rebote(f, ini, 16)}) rotate(${(1 - e) * -8}deg)` }
+      : { opacity: e > 0 ? 1 - s2 : 0, transform: `translateX(${(1 - e) * -40}%)` };
+    const base: React.CSSProperties = { display: "inline-block", marginLeft: ml, color: color ?? t.texto, ...mov };
+    let look: React.CSSProperties = {};
+    if (marcada) {
+      if (es.resaltado === "color") look = { color: ac, textShadow: es.brillo ? `0 0 ${tam * 0.35}px ${ac}55` : undefined };
+      else if (es.resaltado === "italica") look = { color: ac, fontFamily: frauncesItalica(), fontStyle: "italic", fontWeight: 500 };
+      else if (es.resaltado === "bloque") look = { color: t.textoCta, background: ac, padding: "0 0.1em", boxDecorationBreak: "clone" };
+      else if (es.resaltado === "sticker") look = { color: t.textoCta, background: ac, padding: "0.02em 0.12em", borderRadius: tam * 0.18, rotate: `${i % 2 ? 2 : -2}deg` };
+      else if (es.resaltado === "subrayado") look = { color: color ?? t.texto, position: "relative" };
+    }
+    const raya = marcada && es.resaltado === "subrayado" ? tw(f, ini + 8, ini + 22) : 0;
+    const hueco = es.entrada === "subir"; // la máscara solo hace falta cuando la palabra sube desde abajo
+    return (
+      <span style={hueco ? { display: "inline-block", overflow: "hidden", paddingBottom: tam * 0.14, marginBottom: -tam * 0.14 } : { display: "inline-block" }}>
+        <span style={{ ...base, ...look }}>
+          {txt}
+          {raya > 0 && <span style={{ position: "absolute", left: 0, bottom: -tam * 0.04, height: Math.max(4, tam * 0.07), width: `${raya * 100}%`, background: ac, borderRadius: 99 }} />}
+        </span>
+      </span>
+    );
+  };
   return (
     <div style={{
-      display: "flex", flexWrap: "wrap", justifyContent: alinear === "center" ? "center" : "flex-start",
-      gap: `0 ${tam * 0.24}px`, fontFamily: t.fuente, fontWeight: peso, fontSize: tam, lineHeight: 1.05, letterSpacing: "-0.035em",
+      display: "flex", flexWrap: "wrap", justifyContent: al === "center" ? "center" : "flex-start", textAlign: al,
+      gap: `0 ${tam * 0.24}px`, fontFamily: familia, fontWeight: grosor, fontSize: tam, lineHeight: esTitulo ? es.interlinea : 1.05,
+      letterSpacing: esTitulo ? es.tracking : "-0.02em", textTransform: esTitulo && es.mayus ? "uppercase" : undefined,
     }}>
       {/* Sin viudas: las dos últimas palabras viajan juntas (nunca una sola palabra en la última línea). */}
       {palabras.map(({ limpio, marcada }, i) => {
         // Solo se pega si la última es corta: pegar dos palabras largas rompe la línea peor que la viuda.
-        const pegar = palabras.length >= 3 && palabras[palabras.length - 1].limpio.replace(/[.,!?:;…]/g, "").length <= 5;
+        const pegar = palabras.length >= 3 && palabras[palabras.length - 1].limpio.replace(/[.,!?:;…»]/g, "").length <= 5;
         if (pegar && i === palabras.length - 1) return null;
         const pegada = pegar && i === palabras.length - 2 ? palabras[i + 1] : null;
-        const e = tw(f, entra + i * stagger, entra + i * stagger + 12);
-        const s = sale !== undefined ? tw(f, sale + i, sale + i + 8, 0, 1, golpe) : 0;
         return (
-          <span key={i} style={{ display: "inline-block", overflow: "hidden", paddingBottom: tam * 0.14, marginBottom: -tam * 0.14 }}>
-            <span style={{
-              display: "inline-block", transform: `translateY(${(1 - e) * 110 - s * 110}%) rotate(${(1 - e) * 5}deg)`, transformOrigin: "left bottom",
-              color: marcada ? acento ?? t.acento : color ?? t.texto,
-              textShadow: marcada ? `0 0 ${tam * 0.35}px ${(acento ?? t.acento)}55` : undefined,
-            }}>{limpio}</span>
-            {pegada && (
-              <span style={{
-                display: "inline-block", marginLeft: tam * 0.24, transform: `translateY(${(1 - tw(f, entra + (i + 1) * stagger, entra + (i + 1) * stagger + 12)) * 110 - s * 110}%)`,
-                color: pegada.marcada ? acento ?? t.acento : color ?? t.texto,
-                textShadow: pegada.marcada ? `0 0 ${tam * 0.35}px ${(acento ?? t.acento)}55` : undefined,
-              }}>{pegada.limpio}</span>
-            )}
+          <span key={i} style={{ display: "inline-flex", whiteSpace: "nowrap" }}>
+            {Palabra({ txt: limpio, marcada, i })}
+            {pegada && Palabra({ txt: pegada.limpio, marcada: pegada.marcada, i: i + 1, ml: tam * 0.24 })}
           </span>
         );
       })}
@@ -79,8 +107,22 @@ export const Titular: React.FC<{
 const Etiqueta: React.FC<{ texto: string; entra?: number; color?: string }> = ({ texto, entra = 0, color }) => {
   const f = useCurrentFrame();
   const t = useTema();
+  const es = useEstilo();
   const { v } = useLienzo();
   const e = tw(f, entra, entra + 10);
+  if (es.etiqueta === "regla") return (
+    <div style={{ display: "flex", alignItems: "center", gap: 18, opacity: e }}>
+      <div style={{ width: 64 * tw(f, entra, entra + 14), height: 2, background: color ?? t.acento }} />
+      <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 30 : 26, letterSpacing: "0.14em", color: color ?? t.acento, textTransform: "uppercase" }}>{texto}</div>
+    </div>
+  );
+  if (es.etiqueta === "pastilla") return (
+    <div style={{
+      fontFamily: es.familia ?? t.fuente, fontWeight: es.mayus ? 400 : 700, fontSize: v ? 32 : 28, letterSpacing: es.mayus ? "0.06em" : "0.02em",
+      textTransform: "uppercase", color: t.textoCta, background: color ?? t.acento, padding: "8px 20px", borderRadius: es.radio / 2,
+      transform: `scale(${0.6 + 0.4 * rebote(f, entra, 14)}) rotate(${es.id === "pop" ? -3 : 0}deg)`, opacity: e,
+    }}>{texto}</div>
+  );
   return (
     <div style={{ fontFamily: t.mono, fontSize: v ? 30 : 26, letterSpacing: "0.22em", color: color ?? t.acento, opacity: e, transform: `translateY(${(1 - e) * 16}px)`, textTransform: "uppercase" }}>
       {texto}
@@ -104,11 +146,12 @@ const Nota: React.FC<{ texto?: string; entra?: number }> = ({ texto, entra = 10 
 /** Contenedor que respeta la zona segura y trae la deriva de cámara. */
 const Marco: React.FC<{ children: React.ReactNode; dur: number; centrado?: boolean; gap?: number }> = ({ children, dur, centrado = true, gap = 40 }) => {
   const f = useCurrentFrame();
+  const es = useEstilo();
   const { pad, top, bottom } = useLienzo();
   const escala = interpolate(f, [0, dur], [1.035, 1], { extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{
-      padding: `${top}px ${pad}px ${bottom}px`, display: "flex", flexDirection: "column", alignItems: "center",
+      padding: `${top}px ${pad}px ${bottom}px`, display: "flex", flexDirection: "column", alignItems: es.alinear === "left" ? "flex-start" : "center",
       justifyContent: centrado ? "center" : "flex-start", gap, transform: `scale(${escala})`,
     }}>
       {children}
@@ -134,6 +177,7 @@ const ajustar = (lineas: string[], ancho: number, base: number, envolver = linea
 
 const Gancho: React.FC<Extract<Escena, { tipo: "gancho" }>> = ({ lineas, sub, alarma, etiqueta, logo, dur }) => {
   const f = useCurrentFrame();
+  const es = useEstilo();
   const t = useTema();
   const { w, pad, v } = useLienzo();
   const { cuad } = useLienzo();
@@ -142,7 +186,7 @@ const Gancho: React.FC<Extract<Escena, { tipo: "gancho" }>> = ({ lineas, sub, al
   const acento = alarma ? t.alarma : undefined;
   return (
     <Marco dur={dur} gap={v ? 34 : 28}>
-      <div style={{ transform: `scale(${golpeCam})`, display: "flex", flexDirection: "column", alignItems: "center", gap: v ? 34 : 26 }}>
+      <div style={{ transform: `scale(${golpeCam})`, transformOrigin: es.alinear === "left" ? "left center" : "center", display: "flex", flexDirection: "column", alignItems: es.alinear === "left" ? "flex-start" : "center", gap: v ? 34 : 26 }}>
         {logo && <t.Logo size={v ? 300 : 230} entrada={f} vivo={f > 50} />}
         {etiqueta && <Etiqueta texto={etiqueta} color={acento} />}
         {lineas.map((l, i) => (
@@ -271,31 +315,109 @@ const Comparativa: React.FC<Extract<Escena, { tipo: "comparativa" }>> = ({ titul
   );
 };
 
+/** Un bullet (lista, pasos, puntos del retrato) con el look del ESTILO: píldora · línea · bloque · numeral · sticker · consola. */
+const Item: React.FC<{
+  i: number; en: number; texto: string; marca: string; color: string; activo: number; tam: number; ancho?: number;
+  tachar?: boolean; monto?: string;
+}> = ({ i, en, texto, marca, color, activo, tam, ancho, tachar, monto }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const es = useEstilo();
+  const { v } = useLienzo();
+  const e = rebote(f, en, 14);
+  const op = Math.min(1, e * 1.5);
+  const txtColor = tachar && activo > 0 ? t.gris : t.texto;
+  const lineal = (q: number) => q;
+  const Texto = (extra: React.CSSProperties = {}) => (
+    <div style={{ position: "relative", flex: 1, fontSize: tam, fontWeight: 600, color: txtColor, lineHeight: 1.18, fontFamily: t.fuente, ...extra }}>
+      {texto}
+      {tachar && <div style={{ position: "absolute", left: 0, top: "52%", height: Math.max(4, tam * 0.1), borderRadius: 3, width: `${activo * 100}%`, background: t.alarma }} />}
+    </div>
+  );
+  const Monto = monto ? <div style={{ fontFamily: t.mono, fontSize: tam * 0.78, color: t.alarma, fontWeight: 600 }}>{monto}</div> : null;
+  const circ = tam * 1.12;
+  switch (es.tarjeta) {
+    case "linea": {
+      const a = tw(f, en, en + 12);
+      return (
+        <div style={{ width: ancho, display: "flex", alignItems: "center", gap: tam * 0.5, padding: `${tam * 0.42}px 0`, borderBottom: `1px solid ${t.borde}`, opacity: a, filter: `blur(${(1 - a) * 8}px)` }}>
+          <div style={{ width: tam * 0.28, height: tam * 0.28, borderRadius: 99, flex: "none", background: activo > 0 ? color : "transparent", border: `2px solid ${color}` }} />
+          {Texto({ fontWeight: 500 })}{Monto}
+        </div>
+      );
+    }
+    case "numeral": {
+      const a = tw(f, en, en + 12);
+      return (
+        <div style={{ width: ancho, display: "flex", alignItems: "baseline", gap: tam * 0.6, padding: `${tam * 0.35}px 0`, borderTop: `1px solid ${t.borde}`, opacity: a, transform: `translateY(${(1 - a) * 20}px)` }}>
+          <div style={{ fontFamily: es.resaltado === "italica" ? frauncesItalica() : es.familia ?? t.fuente, fontStyle: es.resaltado === "italica" ? "italic" : undefined, fontWeight: 500, fontSize: tam * 1.5, color, lineHeight: 1, minWidth: tam * 1.9, fontVariantNumeric: "tabular-nums" }}>
+            {String(i + 1).padStart(2, "0")}
+          </div>
+          {Texto()}{Monto}
+        </div>
+      );
+    }
+    case "bloque": {
+      const x = tw(f, en, en + 6, 0, 1, lineal);
+      const on = activo > 0;
+      return (
+        <div style={{ width: ancho, overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: tam * 0.5, padding: `${tam * 0.42}px ${tam * 0.6}px`, background: on ? color : t.superficie, transform: `translateX(${(1 - x) * -105}%)` }}>
+            <div style={{ fontFamily: es.familia ?? t.fuente, fontSize: tam * 1.1, color: on ? t.textoCta : color, lineHeight: 1, minWidth: tam * 0.9 }}>{marca}</div>
+            {Texto({ fontFamily: es.familia ?? t.fuente, fontWeight: es.peso, textTransform: es.mayus ? "uppercase" : undefined, letterSpacing: es.mayus ? "0.02em" : undefined, fontSize: tam * 1.04, color: on ? t.textoCta : txtColor })}
+            {Monto}
+          </div>
+        </div>
+      );
+    }
+    case "sticker": {
+      const rot = i % 2 ? 2 : -2;
+      return (
+        <div style={{ width: ancho, display: "flex", alignItems: "center", gap: tam * 0.5, padding: `${tam * 0.42}px ${tam * 0.6}px`, borderRadius: es.radio, background: t.superficie, border: `3px solid ${t.texto}`, boxShadow: `${tam * 0.18}px ${tam * 0.18}px 0 ${color}`, transform: `rotate(${rot * e}deg) scale(${0.5 + 0.5 * e})`, opacity: op }}>
+          <div style={{ width: circ, height: circ, borderRadius: 99, flex: "none", display: "grid", placeItems: "center", background: color, color: t.textoCta, fontFamily: es.familia ?? t.fuente, fontWeight: 800, fontSize: tam * 0.6, transform: `scale(${0.6 + 0.4 * activo})` }}>{marca}</div>
+          {Texto()}{Monto}
+        </div>
+      );
+    }
+    case "terminal": {
+      const x = tw(f, en, en + 5, 0, 1, lineal);
+      return (
+        <div style={{ width: ancho, display: "flex", alignItems: "center", gap: tam * 0.45, padding: `${tam * 0.3}px ${tam * 0.5}px`, borderLeft: `4px solid ${activo > 0 ? color : t.borde}`, background: `${t.superficie}cc`, opacity: x > 0 ? 1 : 0, transform: `translateX(${(1 - x) * -40}px)` }}>
+          <div style={{ fontFamily: t.mono, fontSize: tam * 0.85, color: activo > 0 ? color : t.gris, whiteSpace: "pre" }}>{`[${activo > 0 ? marca : " "}]`}</div>
+          {Texto({ fontFamily: t.mono, fontWeight: 500, fontSize: tam * 0.86 })}{Monto}
+        </div>
+      );
+    }
+    case "pildora":
+    default:
+      return (
+        <div style={{ width: ancho, display: "flex", alignItems: "center", gap: 22, padding: v ? "22px 28px" : "16px 26px", borderRadius: 22, background: t.superficie, border: `2px solid ${activo > 0 ? color : t.borde}`, transform: `translateX(${(1 - e) * -80}px)`, opacity: op }}>
+          <div style={{ width: circ, height: circ, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", background: activo > 0 ? color : "transparent", border: `3px solid ${color}`, color: t.textoCta, fontFamily: t.fuente, fontWeight: 800, fontSize: tam * 0.62, transform: `scale(${0.6 + 0.4 * activo})` }}>
+            {activo > 0 ? marca : ""}
+          </div>
+          {Texto()}{Monto}
+        </div>
+      );
+  }
+};
+
 const Pasos: React.FC<Extract<Escena, { tipo: "pasos" }>> = ({ titulo, pasos, dur }) => {
   const f = useCurrentFrame();
   const t = useTema();
+  const es = useEstilo();
   const { v, w, pad } = useLienzo();
-  const cols = v ? 1 : pasos.length <= 3 ? pasos.length : 3;
+  // En 16:9 las tarjetas (píldora, bloque, sticker) van en columnas; los estilos de línea van en lista.
+  const enColumnas = !v && ["pildora", "bloque", "sticker"].includes(es.tarjeta);
+  const cols = enColumnas ? Math.min(3, pasos.length) : 1;
   const paso = Math.min(9, (dur * 0.6) / pasos.length);
+  const ancho = Math.min(w - pad * 2, enColumnas ? 1500 : 1250);
   return (
-    <Marco dur={dur} gap={v ? 50 : 50}>
+    <Marco dur={dur} gap={v ? 50 : 46}>
       <Titular texto={titulo} entra={0} tam={ajustar([titulo], w - pad * 2, v ? 100 : 86)} />
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: v ? 22 : 26, width: Math.min(w - pad * 2, 1500) }}>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: ["linea", "numeral"].includes(es.tarjeta) ? 0 : v ? 22 : 26, width: ancho }}>
         {pasos.map((p, i) => {
           const en = 8 + i * paso;
-          const e = rebote(f, en, 16);
-          return (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 24, padding: v ? "22px 28px" : "26px 30px", borderRadius: 26,
-              background: t.superficie, border: `2px solid ${t.borde}`, transform: `scale(${0.7 + 0.3 * e})`, opacity: Math.min(1, e * 1.4),
-            }}>
-              <div style={{
-                width: v ? 70 : 64, height: v ? 70 : 64, flexShrink: 0, borderRadius: "50%", display: "grid", placeItems: "center",
-                background: t.gradiente, color: t.textoCta, fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 36 : 32,
-              }}>{i + 1}</div>
-              <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 50 : 36, color: t.texto, lineHeight: 1.15 }}>{p}</div>
-            </div>
-          );
+          return <Item key={i} i={i} en={en} texto={p} marca={String(i + 1)} color={t.acento} activo={f >= en ? 1 : 0} tam={v ? 48 : enColumnas ? 36 : 42} />;
         })}
       </div>
       {pasos.map((_, i) => <Sfx key={i} src="pop.mp3" en={Math.round(8 + i * paso)} vol={0.3} />)}
@@ -693,26 +815,50 @@ const Semanas: React.FC<Extract<Escena, { tipo: "semanas" }>> = ({ titulo, seman
 const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, nota, dur }) => {
   const f = useCurrentFrame();
   const t = useTema();
-  const { v } = useLienzo();
+  const es = useEstilo();
+  const { v, cuad } = useLienzo();
   const Firma = t.Firma;
   const ctaE = rebote(f, 26, 18);
   const brillo = tw(f, 40, 62, -40, 140);
+  const partido = es.cierre === "partido" && !v;
+  const Boton = (
+    <div style={{
+      position: "relative", overflow: "hidden", padding: v ? "30px 64px" : "24px 60px", borderRadius: es.radio === 0 ? 0 : es.radio < 20 ? es.radio : 999,
+      background: es.id === "minimal" || es.id === "editorial" ? t.acento : t.gradiente,
+      fontFamily: es.familia ?? t.fuente, fontWeight: es.familia ? es.peso : 800, fontSize: (v ? 54 : 46) * (es.mayus ? 1.1 : es.id === "pop" ? (v ? 0.66 : 0.8) : 1), whiteSpace: "nowrap",
+      textTransform: es.mayus ? "uppercase" : undefined, letterSpacing: es.mayus ? "0.02em" : "-0.01em", color: t.textoCta,
+      transform: `scale(${ctaE}) rotate(${es.id === "pop" ? -2 : 0}deg)`,
+      boxShadow: es.id === "pop" ? `10px 10px 0 ${t.texto}` : es.brillo ? `0 20px 70px ${t.acento}55` : `0 12px 40px ${t.fondo}`,
+      border: es.id === "pop" ? `3px solid ${t.texto}` : undefined,
+    }}>
+      {cta}
+      {es.brillo && <div style={{ position: "absolute", top: 0, bottom: 0, left: `${brillo}%`, width: "25%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)", transform: "skewX(-20deg)" }} />}
+    </div>
+  );
+  const Sub = sub && <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 44 : 38, color: t.gris, textAlign: partido ? "left" : "center", opacity: tw(f, 18, 28), maxWidth: v ? 900 : partido ? 900 : 1300 }}>{sub}</div>;
+  const Url = url && <div style={{ fontFamily: t.mono, fontSize: v ? 34 : 30, color: t.texto, letterSpacing: "0.06em", opacity: tw(f, 34, 44) }}>{url}</div>;
+  const sonido = (<><Sfx src="impacto.mp3" en={0} vol={0.6} /><Sfx src="brillo.mp3" en={40} vol={0.45} /></>);
+  if (partido) {
+    return (
+      <AbsoluteFill style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 90, padding: "90px 140px" }}>
+        <div style={{ flex: "none" }}><Firma size={360} entrada={f} /></div>
+        <div style={{ width: 2, height: 420 * tw(f, 6, 24), background: t.borde }} />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 34 }}>
+          {Sub}{Boton}{Url}
+        </div>
+        <Nota texto={nota} entra={30} />
+        {sonido}
+      </AbsoluteFill>
+    );
+  }
   return (
     <Marco dur={dur} gap={v ? 50 : 34}>
-      <Firma size={useLienzo().cuad ? 280 : v ? 420 : 330} entrada={f} />
-      {sub && <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 44 : 38, color: t.gris, textAlign: "center", opacity: tw(f, 18, 28), maxWidth: v ? 900 : 1300 }}>{sub}</div>}
-      <div style={{
-        position: "relative", overflow: "hidden", padding: v ? "30px 64px" : "24px 60px", borderRadius: 999, background: t.gradiente,
-        fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 54 : 46, color: t.textoCta, letterSpacing: "-0.01em",
-        transform: `scale(${ctaE})`, boxShadow: `0 20px 70px ${t.acento}55`,
-      }}>
-        {cta}
-        <div style={{ position: "absolute", top: 0, bottom: 0, left: `${brillo}%`, width: "25%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)", transform: "skewX(-20deg)" }} />
+      <div style={{ alignSelf: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: v ? 50 : 34 }}>
+        <Firma size={cuad ? 280 : v ? 420 : 330} entrada={f} />
+        {Sub}{Boton}{Url}
       </div>
-      {url && <div style={{ fontFamily: t.mono, fontSize: v ? 34 : 30, color: t.texto, letterSpacing: "0.06em", opacity: tw(f, 34, 44) }}>{url}</div>}
       <Nota texto={nota} entra={30} />
-      <Sfx src="impacto.mp3" en={0} vol={0.6} />
-      <Sfx src="brillo.mp3" en={40} vol={0.45} />
+      {sonido}
     </Marco>
   );
 };
@@ -720,6 +866,7 @@ const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, 
 const Lista: React.FC<Extract<Escena, { tipo: "lista" }>> = ({ titulo, items, modo, total, dur }) => {
   const f = useCurrentFrame();
   const t = useTema();
+  const es = useEstilo();
   const { v, w, pad } = useLienzo();
   const ancho = Math.min(w - pad * 2, v ? 920 : 1100);
   const cada = Math.max(6, Math.floor((dur * 0.62) / items.length));
@@ -728,30 +875,17 @@ const Lista: React.FC<Extract<Escena, { tipo: "lista" }>> = ({ titulo, items, mo
   return (
     <Marco dur={dur} gap={v ? 36 : 28}>
       <Titular texto={titulo} entra={0} tam={ajustar([titulo], ancho, v ? 88 : 80)} acento={modo === "tachar" ? t.alarma : undefined} />
-      <div style={{ width: ancho, display: "flex", flexDirection: "column", gap: v ? 18 : 14 }}>
+      <div style={{ width: ancho, display: "flex", flexDirection: "column", gap: ["linea", "numeral"].includes(es.tarjeta) ? 0 : es.tarjeta === "sticker" ? (v ? 30 : 24) : v ? 18 : 14 }}>
         {items.map((it, i) => {
           const en = 8 + i * cada;
-          const e = rebote(f, en, 14);
-          const raya = tw(f, en + 5, en + 12);
           return (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 22, padding: v ? "22px 28px" : "16px 26px", borderRadius: 22, background: t.superficie,
-              border: `2px solid ${raya > 0 ? color : t.borde}`, transform: `translateX(${(1 - e) * -80}px)`, opacity: Math.min(1, e * 1.5), fontFamily: t.fuente,
-            }}>
-              <div style={{ width: v ? 50 : 42, height: v ? 50 : 42, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", background: raya > 0 ? color : "transparent", border: `3px solid ${color}`, color: modo === "marcar" ? t.textoCta : "#fff", fontWeight: 800, fontSize: v ? 30 : 24, transform: `scale(${0.6 + 0.4 * raya})` }}>
-                {raya > 0 ? (modo === "tachar" ? "✕" : modo === "sumar" ? "$" : "✓") : ""}
-              </div>
-              <div style={{ position: "relative", flex: 1, fontSize: v ? 44 : 36, fontWeight: 600, color: modo === "tachar" && raya > 0 ? t.gris : t.texto }}>
-                {it.texto}
-                {modo === "tachar" && <div style={{ position: "absolute", left: 0, top: "52%", height: 5, borderRadius: 3, width: `${raya * 100}%`, background: t.alarma }} />}
-              </div>
-              {it.monto && <div style={{ fontFamily: t.mono, fontSize: v ? 34 : 28, color: t.alarma, fontWeight: 600 }}>{it.monto}</div>}
-            </div>
+            <Item key={i} i={i} en={en} texto={it.texto} monto={it.monto} marca={modo === "tachar" ? "✕" : modo === "sumar" ? "$" : "✓"}
+              color={color} activo={tw(f, en + 5, en + 12)} tam={v ? 44 : 36} tachar={modo === "tachar"} />
           );
         })}
       </div>
       {total && (
-        <div style={{ fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
+        <div style={{ fontFamily: es.familia ?? t.fuente, fontWeight: es.familia ? es.peso : 800, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
           {total.etiqueta} {total.prefijo ?? ""}{Math.round(total.hasta * (hechos / items.length))}{total.sufijo ?? ""}
         </div>
       )}
@@ -1076,21 +1210,12 @@ const Retrato: React.FC<Extract<Escena, { tipo: "retrato" }>> = ({ foto, titulo,
       }}>
         {etiqueta && <Etiqueta texto={etiqueta} entra={8} />}
         <Titular texto={titulo} entra={10} tam={tam} alinear={v ? "center" : "left"} />
-        {puntos.map((pt, i) => {
-          const en = 26 + i * 12;
-          const pe = tw(f, en, en + 12);
-          return (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 18, opacity: pe, transform: `translateX(${(1 - pe) * -30}px)` }}>
-              <div style={{
-                width: v ? 46 : 42, height: v ? 46 : 42, flex: "none", borderRadius: 99, background: t.gradiente, display: "grid", placeItems: "center",
-                transform: `scale(${rebote(f, en, 14)})`, boxShadow: `0 0 24px ${t.acento}66`,
-              }}>
-                <svg width="60%" height="60%" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke={t.textoCta} strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div>
-              <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 42 : 40, color: t.texto, lineHeight: 1.2 }}>{pt}</div>
-            </div>
-          );
-        })}
+        <div style={{ display: "flex", flexDirection: "column", gap: ["linea", "numeral"].includes(useEstilo().tarjeta) ? 0 : 16, width: v ? undefined : colW }}>
+          {puntos.map((pt, i) => {
+            const en = 26 + i * 12;
+            return <Item key={i} i={i} en={en} texto={pt} marca="✓" color={t.acento} activo={tw(f, en + 4, en + 10)} tam={v ? 40 : 36} />;
+          })}
+        </div>
       </div>
       <Sfx src="whoosh.mp3" en={0} vol={0.3} />
       {puntos.map((_, i) => <Sfx key={i} src="pop.mp3" en={26 + i * 12} vol={0.3} />)}

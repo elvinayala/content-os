@@ -47,6 +47,8 @@ export type Anuncio = {
   tomas?: { archivo: string; desde: number; dur: number; velo?: number }[];
   /** Pista distinta a la de la marca (p. ej. una más larga para videos de 60 s). */
   musica?: string;
+  /** Dirección de arte (estilos.tsx): neon · editorial · impacto · minimal · pop · tecno · "auto". Sin él = neon. */
+  estilo?: import("./estilos").EstiloId | "auto";
   /** Marca de un CLIENTE (logo, colores, fuente) armada desde JSON: si viene, manda sobre `marca`. */
   cliente?: TemaCliente;
 };

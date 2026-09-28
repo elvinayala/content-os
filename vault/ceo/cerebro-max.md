@@ -667,6 +667,10 @@ antes de proponer o producir motion. Lo esencial:
   cliente): logo real (PNG/SVG), colores y elementos de marca, fotos aprobadas de la persona y su negocio, cómo la
   contactan y qué destacar. Sin eso no se entrega; con eso, cada escena lleva su logo vivo, su motivo gráfico y sus fotos.
   Esa info tiene que quedar en la ficha/carpeta desde el onboarding (skill §7).
+- **Estilos (Elvin, 28/sep: "todos se ven iguales"):** 6 direcciones de arte — neon, editorial, impacto, minimal,
+  pop, tecno (skill §1b). Sin `estilo` en el guion, `remi.mjs` sortea uno por video sin repetir en el pedido; escógelo
+  tú cuando el nicho lo pida (salud → editorial/minimal, ofertas → impacto, comida/belleza → pop, software → tecno).
+  Nunca el mismo estilo para todos los videos de un cliente.
   **Dónde está ese material (búscalo tú primero, antes de pedirlo):** el resumen de onboarding de Jessica en
   **#office-3-onboarding** (C07VCFWV283; en su hilo el estratega sube logo, fotos y la solicitud de flyers), el canal
   del cliente (#<nombre>-<negocio>), **#office-5-revision-creativa** (guiones y flyers ya aprobados por Leo) y la llamada

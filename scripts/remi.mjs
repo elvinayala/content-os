@@ -10,6 +10,8 @@
 //       fuente }); se fija con: node scripts/max.mjs ficha <slug> '{"marca":{…}}'  (paso 2: tema automático).
 //     --proponer: sube los videos terminados a #max-aprobaciones como "creativos" del cliente; al aprobarse, el servidor
 //       los guarda en su carpeta de Drive (videos/) y los manda a su canal (paso 3). Todos son MOTION GRAPHICS.
+//   node scripts/remi.mjs render --guion <json> [--estilo neon|editorial|impacto|minimal|pop|tecno|auto]
+//     (sin --estilo ni `estilo` en el guion: uno al azar por video, sin repetir dentro del mismo pedido)
 //   node scripts/remi.mjs salud
 // --entregar deja cada video en la bandeja de Entregas (data/entregas.json, agente "Remi").
 // Env: REMI_URL + REMI_SECRETO (.env.local / Railway).
@@ -30,6 +32,20 @@ if (arg("guion")) {
   const txt = g.trim().startsWith("{") || g.trim().startsWith("[") ? g : fs.readFileSync(path.resolve(g), "utf8");
   guiones = [].concat(JSON.parse(txt));
   fs.mkdirSync(path.join(ROOT, "data/motion/guiones"), { recursive: true });
+  for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
+}
+// ESTILOS (Elvin, 28/sep: "todos se ven iguales"): cada guion sin `estilo` recibe uno al azar, y los de un mismo
+// pedido nunca repiten (los 2 videos de un cliente se ven distintos). --estilo <id> los fija todos.
+const ESTILOS = ["neon", "editorial", "impacto", "minimal", "pop", "tecno"];
+if (guiones.length) {
+  const fijo = arg("estilo");
+  if (fijo && !ESTILOS.includes(fijo) && fijo !== "auto") { console.error(`✖ --estilo: ${ESTILOS.join(" | ")} | auto`); process.exit(1); }
+  const bolsa = [...ESTILOS].sort(() => Math.random() - 0.5);
+  for (const g of guiones) {
+    if (fijo) g.estilo = fijo;
+    else if (!g.estilo) g.estilo = bolsa.shift() ?? ESTILOS[Math.floor(Math.random() * ESTILOS.length)];
+    console.log(`🎨 ${g.id}: estilo ${g.estilo}`);
+  }
   for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
 }
 const h = { "x-remi-secreto": SECRETO, "Content-Type": "application/json" };

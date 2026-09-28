@@ -120,3 +120,10 @@ una sola persona: **Creators** $25/mes por asiento (uso manual, sin automatizaci
 **mínimo de $100/mes** (automatizaciones: nuestro servicio `remi` en Railway que usa Max cuenta como automatización) ·
 Enterprise desde $500/mes. Con los dos activos, el mínimo combinado es $100/mes (los asientos cuentan para el mínimo).
 Decisión pendiente de Elvin.
+
+
+## Estilos (28/sep/2026)
+Elvin: "todos se ven iguales: los mismos bullets, la misma letra". Desde el 28/sep cada video lleva un **estilo** de
+`motion/src/fabrica/estilos.tsx` (neon · editorial · impacto · minimal · pop · tecno): cambia tipografía, resaltado,
+bullets, transiciones, fondo y cierre sin tocar la marca. Sin `estilo`, remi.mjs sortea sin repetir en el pedido.
+Detalle y tabla en el skill motion-graphics §1b.
