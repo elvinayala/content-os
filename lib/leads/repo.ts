@@ -50,6 +50,12 @@ export async function accesoLeads(u: UsuarioPulse, marca: Marca): Promise<{ pued
   return fila ? { puede: true, alcance: fila.alcance === "mios" ? "mios" : "todos" } : { puede: false, alcance: "mios" };
 }
 
+/** ¿Tiene fila en leads_acceso (de cualquier marca)? Ritmo lo usa para no dejarlo como "solo Ritmo". */
+export async function tienePermisoLeads(userId: string): Promise<boolean> {
+  const d = await db();
+  return !!(await d.query.leadsAcceso.findFirst({ where: eq(leadsAcceso.userId, userId) }));
+}
+
 export async function marcasConAcceso(u: UsuarioPulse): Promise<Marca[]> {
   if (u.rol === "admin") return ["level_up", "ai_borinquen"];
   const { esSoloRitmo } = await import("../pulse/auth");

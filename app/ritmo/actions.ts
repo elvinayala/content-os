@@ -210,7 +210,10 @@ export async function guardarPerfilAction(p: {
     const cuenta = await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId));
     if (cuenta && (await import("@/lib/desempeno/acceso")).estaBloqueado(cuenta.email)) throw new Error("Esta persona no puede tener acceso (decisión de Elvin)");
     const gestorPulse = u.rol === "admin" || u.rol === "editor";
-    const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : (previo?.soloRitmo ?? !cuenta?.tieneClave);
+    // Quien tiene permiso de Leads (closers, setters, chatters; lo da un admin) sigue entrando a Pulse: si no,
+    // el perfil de Ritmo le cerraba Leads (28/sep: Dilan y Ana, chatters, perdieron Leads al crearles el perfil).
+    const conLeads = await import("@/lib/leads/repo").then((r) => r.tienePermisoLeads(p.userId));
+    const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : conLeads ? false : (previo?.soloRitmo ?? !cuenta?.tieneClave);
     await datos.guardarPerfil({ ...p, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
     refresh();
     return {};

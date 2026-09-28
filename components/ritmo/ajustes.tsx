@@ -220,7 +220,7 @@ function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
     if (!r.ok) return toast.error(r.error, aviso);
     // Ya tiene clave (usa Pulse): no necesita link; se le manda cómo entrar. Si la olvidó, Carilin/Aure/Elvin le generan uno.
     const texto = r.yaTieneClave
-      ? `Hola ${nombre.split(" ")[0]}: entra a Ritmo en https://ritmo.levelupmediapr.net con tu correo ${r.yaTieneClave.email} y la MISMA clave de Pulse. Si no la recuerdas, avísame y te mandamos un link para crear una nueva.`
+      ? `Hola ${nombre.split(" ")[0]}: entra a Ritmo en https://ritmo.levelupmediapr.net con tu correo ${r.yaTieneClave.email} y la MISMA clave que ya creaste (la que usas para Pulse o Leads). Si no la recuerdas, avísame y te mandamos un link para crear una nueva.`
       : r.url;
     setUrl(texto);
     try {
