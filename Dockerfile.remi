@@ -1,0 +1,18 @@
+# Remi en la nube (27/sep/2026): servicio de render de la fábrica de motion (motion/servicio/servidor.mjs).
+# Chrome headless de Remotion + sus librerías del sistema. El código se baja de GitHub en cada trabajo
+# (scripts/remi-nube.sh), igual que Max/Lola/Sofi. Deploy: npx @railway/cli up --service remi --detach
+# Variables: REMI_SECRETO, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GIT_SSH_KEY_B64 (ref. a nico) o GH_TOKEN.
+FROM node:22-bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates git openssh-client curl \
+      libnss3 libdbus-1-3 libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2 libxrandr2 libxkbcommon0 \
+      libxfixes3 libxcomposite1 libxdamage1 libpango-1.0-0 libcairo2 libcups2 libdrm2 libxshmfence1 \
+      fonts-noto-color-emoji fonts-noto-core \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY scripts/remi-nube.sh /app/remi-nube.sh
+COPY data/plataformas.json /app/data/plataformas.json
+ENV HOME=/estado REMI_REPO=/estado/repos/content-os
+RUN mkdir -p /estado
+CMD ["bash", "/app/remi-nube.sh"]
