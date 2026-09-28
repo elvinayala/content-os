@@ -98,9 +98,11 @@ const s = (clave: string, seccion: string, empresa: EmpresaDe, orden: number, ti
 export const SEMILLAS_EMPRESA: Semilla[] = [
   // Quiénes somos
   s("lu-quienes", "nosotros", "level_up", 10, "Level Up Media", [
-    "Somos una agencia de publicidad en **Meta (Facebook e Instagram)** de Puerto Rico. En julio de 2026 cumplimos **2 años**.",
-    "No vendemos anuncios: instalamos **sistemas** que le traen clientes a los negocios — estrategia, contenido, campañas y seguimiento.",
-    "Fundador y CEO: **Elvin Ayala**.",
+    "Level Up e AI Borinquen son las dos marcas de **IA Market**, la empresa madre.",
+    "Level Up hace publicidad en **Meta (Facebook e Instagram)** para negocios de Puerto Rico. Lo que vendemos no es una campaña suelta: es un **sistema completo** — tráfico, un proceso de ventas que convierte ese tráfico y automatización para que ningún lead se quede sin contestar.",
+    "- **Dónde más ganamos:** profesionales de la salud (doctores, quiroprácticos, cirujanos plásticos), negocios de alto ticket (academias, consultores, traders) y abogados.",
+    "- **Resultados que ya contamos:** el Dr. Bryan Vega llega a **25 pacientes nuevos al mes**; Kaglam tuvo la agenda llena **3 semanas por adelantado** desde el día 7 de campaña.",
+    "- **Lo que nos diferencia:** unimos marketing y operación con inteligencia artificial, y todo se mide.",
   ].join("\n")),
   s("lu-como", "nosotros", "level_up", 20, "Cómo trabajamos con un cliente", [
     "Del cierre al lanzamiento de las campañas:",
@@ -121,10 +123,11 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
     "- **Hablamos claro:** expectativas honestas con el cliente desde el primer día.",
   ].join("\n"), { publicado: false }),
   s("aib-quienes", "nosotros", "ai_borinquen", 10, "AI Borinquen", [
-    "Agencia de automatización con **inteligencia artificial**, 100 % de Puerto Rico.",
-    "- Tenemos desarrolladores propios: los agentes se entrenan con el negocio de cada cliente, no se copian y pegan.",
-    "- No vendemos un chatbot: instalamos un **empleado digital** con un trabajo concreto (recepción, ventas, citas).",
-    "Fundador y CEO: **Elvin Ayala**.",
+    "Construimos **agentes de inteligencia artificial de voz y de chat** para negocios de Puerto Rico: contestan en WhatsApp, Instagram, Messenger y por teléfono, precalifican y agendan citas.",
+    "- **Un agente por rol, no uno que \"hace de todo\":** recepcionista, citas, cobros, servicio al cliente. Se entrena con la información de cada negocio; nada se copia y pega.",
+    "- **Así queda:** el sistema listo en **7 días** y **45 días** de acompañamiento para afinarlo. El cliente ve sus llamadas, conversaciones y leads en su **Portal AutoFlow**.",
+    "- **Resultado real:** Teo, de **Mano Santa PR**, antes contestaba solo el **20 %** de sus leads; hoy los contesta en segundos. Milton, de **Caribe Paint**, destaca lo natural de las conversaciones del asistente.",
+    "No vendemos software: le armamos al cliente su **equipo digital**.",
   ].join("\n")),
   s("aib-vision", "nosotros", "ai_borinquen", 20, "Nuestra visión", [
     "- Que ningún negocio de la isla pierda un cliente por no contestar a tiempo.",
@@ -143,7 +146,7 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
   s("rec-carreras", "recursos", "todas", 40, "Carreras y referidos", `Vacantes internas para crecer o cambiar de puesto. Si refieres a alguien y entra, ganas **US$${BONO_REFERIDO}**.`, { url: "/ritmo/carreras" }),
   s("rec-sops", "recursos", "todas", 50, "Los procesos de tu departamento (SOP)", "Cada departamento está revisando y publicando sus SOP: el paso a paso de cómo se hace cada cosa. Pídele a tu supervisor el de tu área."),
   s("rec-slack", "recursos", "todas", 60, "Slack", "La comunicación del equipo es por Slack. Los avisos de Ritmo (solicitudes, recordatorios, mensajes de Bienestar) te llegan del bot **Command Center**."),
-  s("rec-etica", "recursos", "todas", 70, "Canal ético", "Si ves algo que no está bien, repórtalo. Es anónimo si quieres y solo lo lee Elvin.", { url: "/ritmo/etica" }),
+  s("rec-etica", "recursos", "todas", 70, "Canal ético", "Si ves algo que no está bien, repórtalo. Puede ser anónimo y lo lee únicamente el CEO.", { url: "/ritmo/etica" }),
 
   // Políticas
   s("pol-tiempo", "politicas", "todas", 10, "Tiempo libre", [
