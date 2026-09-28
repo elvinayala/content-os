@@ -691,6 +691,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   (`estratega: 1`, por empresa): si ya hay uno APROBADO en esas fechas, no se puede pedir (el formulario lo avisa en vivo con
   `revisarFechasAction`) ni aprobar; si solo hay otro pedido en curso, se avisa. Días con choque en rojo. El motivo (vacaciones,
   enfermedad…) solo lo ve la vista maestra; el resto ve "Fuera"/"Pedido" de su empresa. Link en Solicitudes y en Hoy (maestra).
+- **Cambios con aprobación de Elvin** (28/sep, Elvin: "editar manual con aprobación mía"; `lib/desempeno/cambios-reglas.ts` puro +
+  tests `tests/cambios.test.mjs`, `cambios.ts`, tabla `desempeno_cambios`, migración 0032): cuando Carilin, Aure o RR.HH. guardan en
+  Ajustes o en la ficha, lo **sensible** (puesto, empresa, también-vende-en, supervisor, activo, acceso a Pulse, contrato, salario)
+  queda **pendiente** y a Elvin le llega `notificarCEO`; lo menor (horario, días, teléfono, notas) se aplica ya. Perfil nuevo = todo
+  espera. Elvin aprueba/rechaza en Ajustes → **Por aprobar** (se aplica sobre cómo está HOY la persona) y quien lo pidió recibe
+  el aviso por Slack. Elvin (admin) aplica directo. El alta de empleado nuevo sigue directa. Puesto nuevo **Tesorera**
+  (`tesoreria`, Finanzas: María García); Ajustes ya no arranca en "estratega" (así quedó mal María).
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
