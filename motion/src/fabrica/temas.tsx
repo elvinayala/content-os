@@ -25,6 +25,8 @@ export type TemaMarca = {
   id: MarcaId;
   nombre: string;
   fuente: string;
+  /** Letra de acento de la marca (opcional, p. ej. una serif): la usan los estilos que la piden (editorial). */
+  fuenteAcento?: string;
   mono: string;
   fondo: string;
   superficie: string;

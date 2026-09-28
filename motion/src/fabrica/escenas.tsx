@@ -8,7 +8,7 @@ import { golpe, rebote, suave, tw } from "../kit/fx";
 import { Chat, IconoTelefono, Llamada, Notificacion, Telefono } from "../kit/ui";
 import type { TemaMarca } from "./temas";
 import type { Escena } from "./tipos";
-import { frauncesItalica, useEstilo } from "./estilos";
+import { useEstilo } from "./estilos";
 
 export const TemaCtx = createContext<TemaMarca | null>(null);
 const useTema = () => useContext(TemaCtx)!;
@@ -38,8 +38,10 @@ export const Titular: React.FC<{
   // El cuerpo (peso < 700, p. ej. subtítulos) va en la letra de la marca; los titulares en la del estilo.
   const esTitulo = peso === undefined || peso >= 700;
   const tam = esTitulo ? tamBase * es.escala : tamBase;
-  const familia = esTitulo ? es.familia ?? t.fuente : t.fuente;
-  const grosor = esTitulo ? (es.familia ? es.peso : peso ?? 800) : peso;
+  // La letra SIEMPRE es la de la marca (identidad); el estilo solo decide peso, mayúsculas y ritmo.
+  const familia = esTitulo && es.usaAcento && t.fuenteAcento ? t.fuenteAcento : t.fuente;
+  const grosor = esTitulo ? peso ?? es.peso : peso;
+  const k = es.tempo;
   const ac = acento ?? t.acento;
   // *frase de varias palabras* también se resalta: se lleva el estado entre palabras.
   let dentro = false;
@@ -53,8 +55,8 @@ export const Titular: React.FC<{
   });
   /** Una palabra con la entrada y el resaltado del estilo. */
   const Palabra = ({ txt, marcada, i, ml = 0 }: { txt: string; marcada: boolean; i: number; ml?: number }) => {
-    const ini = entra + i * stagger;
-    const e = es.entrada === "corte" ? tw(f, ini, ini + 5, 0, 1, (x) => x) : tw(f, ini, ini + 12);
+    const ini = entra + i * stagger * k;
+    const e = es.entrada === "corte" ? tw(f, ini, ini + 5 * k, 0, 1, (x) => x) : tw(f, ini, ini + 12 * k);
     const s2 = sale !== undefined ? tw(f, sale + i, sale + i + 8, 0, 1, golpe) : 0;
     const mov =
       es.entrada === "subir" ? { transform: `translateY(${(1 - e) * 110 - s2 * 110}%) rotate(${(1 - e) * 5}deg)`, transformOrigin: "left bottom" }
@@ -65,7 +67,7 @@ export const Titular: React.FC<{
     let look: React.CSSProperties = {};
     if (marcada) {
       if (es.resaltado === "color") look = { color: ac, textShadow: es.brillo ? `0 0 ${tam * 0.35}px ${ac}55` : undefined };
-      else if (es.resaltado === "italica") look = { color: ac, fontFamily: frauncesItalica(), fontStyle: "italic", fontWeight: 500 };
+      else if (es.resaltado === "italica") look = { color: ac, fontFamily: t.fuenteAcento ?? familia, fontStyle: "italic" };
       else if (es.resaltado === "bloque") look = { color: t.textoCta, background: ac, padding: "0 0.1em", boxDecorationBreak: "clone" };
       else if (es.resaltado === "sticker") look = { color: t.textoCta, background: ac, padding: "0.02em 0.12em", borderRadius: tam * 0.18, rotate: `${i % 2 ? 2 : -2}deg` };
       else if (es.resaltado === "subrayado") look = { color: color ?? t.texto, position: "relative" };
@@ -118,7 +120,7 @@ const Etiqueta: React.FC<{ texto: string; entra?: number; color?: string }> = ({
   );
   if (es.etiqueta === "pastilla") return (
     <div style={{
-      fontFamily: es.familia ?? t.fuente, fontWeight: es.mayus ? 400 : 700, fontSize: v ? 32 : 28, letterSpacing: es.mayus ? "0.06em" : "0.02em",
+      fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 32 : 28, letterSpacing: es.mayus ? "0.06em" : "0.02em",
       textTransform: "uppercase", color: t.textoCta, background: color ?? t.acento, padding: "8px 20px", borderRadius: es.radio / 2,
       transform: `scale(${0.6 + 0.4 * rebote(f, entra, 14)}) rotate(${es.id === "pop" ? -3 : 0}deg)`, opacity: e,
     }}>{texto}</div>
@@ -350,7 +352,7 @@ const Item: React.FC<{
       const a = tw(f, en, en + 12);
       return (
         <div style={{ width: ancho, display: "flex", alignItems: "baseline", gap: tam * 0.6, padding: `${tam * 0.35}px 0`, borderTop: `1px solid ${t.borde}`, opacity: a, transform: `translateY(${(1 - a) * 20}px)` }}>
-          <div style={{ fontFamily: es.resaltado === "italica" ? frauncesItalica() : es.familia ?? t.fuente, fontStyle: es.resaltado === "italica" ? "italic" : undefined, fontWeight: 500, fontSize: tam * 1.5, color, lineHeight: 1, minWidth: tam * 1.9, fontVariantNumeric: "tabular-nums" }}>
+          <div style={{ fontFamily: t.fuenteAcento ?? t.fuente, fontStyle: es.resaltado === "italica" ? "italic" : undefined, fontWeight: t.fuenteAcento ? 500 : 300, fontSize: tam * 1.5, color, lineHeight: 1, minWidth: tam * 1.9, fontVariantNumeric: "tabular-nums" }}>
             {String(i + 1).padStart(2, "0")}
           </div>
           {Texto()}{Monto}
@@ -363,8 +365,8 @@ const Item: React.FC<{
       return (
         <div style={{ width: ancho, overflow: "hidden" }}>
           <div style={{ display: "flex", alignItems: "center", gap: tam * 0.5, padding: `${tam * 0.42}px ${tam * 0.6}px`, background: on ? color : t.superficie, transform: `translateX(${(1 - x) * -105}%)` }}>
-            <div style={{ fontFamily: es.familia ?? t.fuente, fontSize: tam * 1.1, color: on ? t.textoCta : color, lineHeight: 1, minWidth: tam * 0.9 }}>{marca}</div>
-            {Texto({ fontFamily: es.familia ?? t.fuente, fontWeight: es.peso, textTransform: es.mayus ? "uppercase" : undefined, letterSpacing: es.mayus ? "0.02em" : undefined, fontSize: tam * 1.04, color: on ? t.textoCta : txtColor })}
+            <div style={{ fontFamily: t.fuente, fontSize: tam * 1.1, color: on ? t.textoCta : color, lineHeight: 1, minWidth: tam * 0.9 }}>{marca}</div>
+            {Texto({ fontFamily: t.fuente, fontWeight: es.peso, textTransform: es.mayus ? "uppercase" : undefined, letterSpacing: es.mayus ? "0.02em" : undefined, fontSize: tam * 1.04, color: on ? t.textoCta : txtColor })}
             {Monto}
           </div>
         </div>
@@ -374,7 +376,7 @@ const Item: React.FC<{
       const rot = i % 2 ? 2 : -2;
       return (
         <div style={{ width: ancho, display: "flex", alignItems: "center", gap: tam * 0.5, padding: `${tam * 0.42}px ${tam * 0.6}px`, borderRadius: es.radio, background: t.superficie, border: `3px solid ${t.texto}`, boxShadow: `${tam * 0.18}px ${tam * 0.18}px 0 ${color}`, transform: `rotate(${rot * e}deg) scale(${0.5 + 0.5 * e})`, opacity: op }}>
-          <div style={{ width: circ, height: circ, borderRadius: 99, flex: "none", display: "grid", placeItems: "center", background: color, color: t.textoCta, fontFamily: es.familia ?? t.fuente, fontWeight: 800, fontSize: tam * 0.6, transform: `scale(${0.6 + 0.4 * activo})` }}>{marca}</div>
+          <div style={{ width: circ, height: circ, borderRadius: 99, flex: "none", display: "grid", placeItems: "center", background: color, color: t.textoCta, fontFamily: t.fuente, fontWeight: 800, fontSize: tam * 0.6, transform: `scale(${0.6 + 0.4 * activo})` }}>{marca}</div>
           {Texto()}{Monto}
         </div>
       );
@@ -825,7 +827,7 @@ const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, 
     <div style={{
       position: "relative", overflow: "hidden", padding: v ? "30px 64px" : "24px 60px", borderRadius: es.radio === 0 ? 0 : es.radio < 20 ? es.radio : 999,
       background: es.id === "minimal" || es.id === "editorial" ? t.acento : t.gradiente,
-      fontFamily: es.familia ?? t.fuente, fontWeight: es.familia ? es.peso : 800, fontSize: (v ? 54 : 46) * (es.mayus ? 1.1 : es.id === "pop" ? (v ? 0.66 : 0.8) : 1), whiteSpace: "nowrap",
+      fontFamily: t.fuente, fontWeight: es.peso, fontSize: (v ? 54 : 46) * (es.mayus ? 1.1 : es.id === "pop" ? (v ? 0.66 : 0.8) : 1), whiteSpace: "nowrap",
       textTransform: es.mayus ? "uppercase" : undefined, letterSpacing: es.mayus ? "0.02em" : "-0.01em", color: t.textoCta,
       transform: `scale(${ctaE}) rotate(${es.id === "pop" ? -2 : 0}deg)`,
       boxShadow: es.id === "pop" ? `10px 10px 0 ${t.texto}` : es.brillo ? `0 20px 70px ${t.acento}55` : `0 12px 40px ${t.fondo}`,
@@ -885,7 +887,7 @@ const Lista: React.FC<Extract<Escena, { tipo: "lista" }>> = ({ titulo, items, mo
         })}
       </div>
       {total && (
-        <div style={{ fontFamily: es.familia ?? t.fuente, fontWeight: es.familia ? es.peso : 800, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
+        <div style={{ fontFamily: t.fuente, fontWeight: es.peso, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
           {total.etiqueta} {total.prefijo ?? ""}{Math.round(total.hasta * (hechos / items.length))}{total.sufijo ?? ""}
         </div>
       )}

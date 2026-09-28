@@ -1,15 +1,11 @@
-// ESTILOS de la fábrica (Elvin, 28/sep: "todos se ven iguales: los mismos bullets, la misma letra"). La MARCA pone
-// colores y logo; el ESTILO pone la dirección de arte: tipografía de titulares, cómo se resalta, cómo entran las
-// palabras, cómo lucen los bullets, las transiciones y el fondo. Un mismo guion con otro estilo = otro video.
+// ESTILOS de la fábrica (Elvin, 28/sep: "todos se ven iguales… pero mantener una identidad dentro de ese cliente, sin
+// abusar"). La MARCA pone la identidad fija: colores, logo y su letra (1 principal + 1 de acento opcional). El ESTILO
+// pone la plantilla: cómo se resalta, cómo entran las palabras, cómo lucen los bullets, transiciones, fondo, cierre y
+// el RITMO. Nunca cambia la letra de la marca. Un mismo guion con otro estilo = otro video, misma marca.
 // Se escoge con `estilo` en el guion; sin él, los anuncios viejos quedan en "neon" (el look aprobado del 27/sep) y
 // remi.mjs le sortea uno a cada guion nuevo. "auto" = uno fijo según el id (siempre el mismo para ese video).
 import React, { createContext, useContext } from "react";
 import { AbsoluteFill, interpolate, random, useCurrentFrame } from "remotion";
-import { loadFont as fraunces } from "@remotion/google-fonts/Fraunces";
-import { loadFont as anton } from "@remotion/google-fonts/Anton";
-import { loadFont as manrope } from "@remotion/google-fonts/Manrope";
-import { loadFont as unbounded } from "@remotion/google-fonts/Unbounded";
-import { loadFont as grotesk } from "@remotion/google-fonts/SpaceGrotesk";
 import { Barrido, Destello, Fondo, inOut, tw } from "../kit/fx";
 import type { TemaMarca } from "./temas";
 
@@ -20,13 +16,15 @@ export type Estilo = {
   id: EstiloId;
   /** Para el skill y para escoger: qué es y para qué va bien. */
   describe: string;
-  /** Fuente de los titulares (undefined = la de la marca). */
-  fuente?: () => string;
+  /** Titulares en la letra de ACENTO de la marca (si tiene una; p. ej. su serif). */
+  usaAcento?: boolean;
+  /** Ritmo: multiplica los tiempos de entrada y de las transiciones (0.7 rápido · 1 normal · 1.4 calmado). */
+  tempo: number;
   mayus: boolean;
   peso: number;
   tracking: string;
   interlinea: number;
-  /** Multiplica el tamaño que calcula `ajustar` (fuentes angostas crecen, anchas se achican). */
+  /** Multiplica el tamaño que calcula `ajustar` (mayúsculas ocupan más: se achica). */
   escala: number;
   alinear: "center" | "left";
   /** Cómo se ve la *palabra resaltada*. */
@@ -45,59 +43,48 @@ export type Estilo = {
   cierre: "centro" | "partido";
 };
 
-const W = ["400", "500", "600", "700", "800"] as const;
-let cacheItalica = "";
-/** Fraunces en itálica (el resaltado del estilo editorial). */
-export const frauncesItalica = () => cacheItalica || (cacheItalica = fraunces("italic", { weights: ["500", "600"], subsets: ["latin"] }).fontFamily);
 
 export const ESTILOS: Record<EstiloId, Estilo> = {
   neon: {
-    id: "neon", describe: "El look de lanzamiento: letra de la marca en negrita, resaltado de color con halo, píldoras, barridos diagonales, brillo y partículas. Tecnología, IA, energía.",
-    mayus: false, peso: 800, tracking: "-0.035em", interlinea: 1.05, escala: 1, alinear: "center",
+    id: "neon", describe: "El look de lanzamiento: negrita, resaltado de color con halo, píldoras, barridos diagonales, brillo y partículas. Ritmo normal. Tecnología, IA, energía.",
+    tempo: 1, mayus: false, peso: 800, tracking: "-0.035em", interlinea: 1.05, escala: 1, alinear: "center",
     resaltado: "color", entrada: "subir", tarjeta: "pildora", radio: 26, brillo: true, transicion: "barrido", fondo: "brillo", etiqueta: "mono", cierre: "centro",
   },
   editorial: {
-    id: "editorial", describe: "Revista: serif elegante (Fraunces), resaltado en itálica, alineado a la izquierda, números grandes 01·02·03 con filetes finos, persianas suaves. Salud, profesionales, lujo, confianza.",
-    fuente: () => fraunces("normal", { weights: ["400", "500", "600", "700"], subsets: ["latin"] }).fontFamily,
-    mayus: false, peso: 600, tracking: "-0.025em", interlinea: 1.04, escala: 1.06, alinear: "left",
+    id: "editorial", describe: "Revista: resaltado en itálica (en la letra de acento si la marca tiene), a la izquierda, números grandes 01·02·03 con filetes finos, persianas suaves. Ritmo calmado. Salud, profesionales, lujo, confianza.",
+    usaAcento: true, tempo: 1.35, mayus: false, peso: 700, tracking: "-0.03em", interlinea: 1.04, escala: 1, alinear: "left",
     resaltado: "italica", entrada: "desenfoque", tarjeta: "numeral", radio: 0, brillo: false, transicion: "persiana", fondo: "liso", etiqueta: "regla", cierre: "partido",
   },
   impacto: {
-    id: "impacto", describe: "Póster de impacto: Anton en MAYÚSCULAS enormes, resaltado en bloque de color, bullets como bloques sólidos, cortes secos con panel de color. Ofertas, urgencia, gimnasios, construcción.",
-    fuente: () => anton("normal", { weights: ["400"], subsets: ["latin"] }).fontFamily,
-    mayus: true, peso: 400, tracking: "0.01em", interlinea: 0.98, escala: 1.28, alinear: "center",
+    id: "impacto", describe: "Póster de impacto: MAYÚSCULAS en negrita, resaltado en bloque de color, bullets como bloques sólidos, cortes secos con panel de color. Ritmo rápido. Ofertas, urgencia, gimnasios, construcción.",
+    tempo: 0.7, mayus: true, peso: 800, tracking: "-0.01em", interlinea: 1, escala: 0.9, alinear: "center",
     resaltado: "bloque", entrada: "corte", tarjeta: "bloque", radio: 0, brillo: false, transicion: "bloque", fondo: "diagonal", etiqueta: "pastilla", cierre: "centro",
   },
   minimal: {
-    id: "minimal", describe: "Minimalista: Manrope sobria, mucho aire, resaltado con subrayado que se dibuja, bullets de línea fina, fundidos lentos. Servicios premium, consultoría, bienes raíces.",
-    fuente: () => manrope("normal", { weights: [...W], subsets: ["latin"] }).fontFamily,
-    mayus: false, peso: 600, tracking: "-0.035em", interlinea: 1.08, escala: 0.86, alinear: "left",
+    id: "minimal", describe: "Minimalista: peso medio, mucho aire, resaltado con subrayado que se dibuja, bullets de línea fina, fundidos lentos. Ritmo calmado. Servicios premium, consultoría, bienes raíces.",
+    tempo: 1.5, mayus: false, peso: 600, tracking: "-0.035em", interlinea: 1.08, escala: 0.86, alinear: "left",
     resaltado: "subrayado", entrada: "desenfoque", tarjeta: "linea", radio: 14, brillo: false, transicion: "fundido", fondo: "liso", etiqueta: "regla", cierre: "partido",
   },
   pop: {
-    id: "pop", describe: "Pop: Unbounded redonda, resaltado tipo sticker inclinado, bullets como stickers con sombra dura, palabras que rebotan, iris circular y fondo de puntos. Comida, belleza, retail, jóvenes.",
-    fuente: () => unbounded("normal", { weights: ["500", "600", "700", "800"], subsets: ["latin"] }).fontFamily,
-    mayus: false, peso: 800, tracking: "-0.03em", interlinea: 1.08, escala: 0.8, alinear: "center",
+    id: "pop", describe: "Pop: resaltado tipo sticker inclinado, bullets como stickers con sombra dura, palabras que rebotan, iris circular y fondo de puntos. Ritmo ágil. Comida, belleza, retail, jóvenes.",
+    tempo: 0.85, mayus: false, peso: 800, tracking: "-0.03em", interlinea: 1.06, escala: 0.95, alinear: "center",
     resaltado: "sticker", entrada: "escala", tarjeta: "sticker", radio: 28, brillo: false, transicion: "iris", fondo: "puntos", etiqueta: "pastilla", cierre: "centro",
   },
   tecno: {
-    id: "tecno", describe: "Tecno: Space Grotesk a la izquierda, bullets de consola [✓], cuadrícula visible, cortes con glitch. Software, IA, trading, datos.",
-    fuente: () => grotesk("normal", { weights: ["500", "600", "700"], subsets: ["latin"] }).fontFamily,
-    mayus: false, peso: 700, tracking: "-0.035em", interlinea: 1.04, escala: 1, alinear: "left",
+    id: "tecno", describe: "Tecno: a la izquierda, bullets de consola [✓], cuadrícula visible, cortes con glitch. Ritmo rápido. Software, IA, trading, datos.",
+    tempo: 0.8, mayus: false, peso: 700, tracking: "-0.035em", interlinea: 1.04, escala: 0.96, alinear: "left",
     resaltado: "color", entrada: "corte", tarjeta: "terminal", radio: 6, brillo: true, transicion: "glitch", fondo: "grid", etiqueta: "mono", cierre: "partido",
   },
 };
 
-/** Estilo resuelto: con la familia de la fuente ya cargada. */
-export type EstiloListo = Estilo & { familia?: string };
+export type EstiloListo = Estilo;
 export const EstiloCtx = createContext<EstiloListo>(ESTILOS.neon);
 export const useEstilo = () => useContext(EstiloCtx);
 
 /** "auto" = uno fijo según el id (siempre el mismo para ese video). */
 export const resolverEstilo = (pedido: string | undefined, id: string): EstiloListo => {
   const clave = pedido === "auto" ? ESTILOS_ID[Math.floor(random(`estilo-${id}`) * ESTILOS_ID.length)] : (pedido as EstiloId) || "neon";
-  const e = ESTILOS[clave] ?? ESTILOS.neon;
-  return { ...e, familia: e.fuente?.() };
+  return ESTILOS[clave] ?? ESTILOS.neon;
 };
 
 /* ───────── Fondos ───────── */
@@ -148,8 +135,9 @@ export const FondoEstilo: React.FC<{ tema: TemaMarca; estilo: Estilo }> = ({ tem
 };
 
 /* ───────── Transiciones (tapan cada corte, centradas en `c`) ───────── */
-const Persiana: React.FC<{ c: number; color: string; linea: string }> = ({ c, color, linea }) => {
-  const f = useCurrentFrame();
+const Persiana: React.FC<{ c: number; color: string; linea: string; k: number }> = ({ c, color, linea, k }) => {
+  const f0 = useCurrentFrame();
+  const f = c + (f0 - c) / k;
   if (f < c - 10 || f > c + 12) return null;
   const n = 7;
   return (
@@ -165,8 +153,9 @@ const Persiana: React.FC<{ c: number; color: string; linea: string }> = ({ c, co
     </AbsoluteFill>
   );
 };
-const Iris: React.FC<{ c: number; color: string; color2: string }> = ({ c, color, color2 }) => {
-  const f = useCurrentFrame();
+const Iris: React.FC<{ c: number; color: string; color2: string; k: number }> = ({ c, color, color2, k }) => {
+  const f0 = useCurrentFrame();
+  const f = c + (f0 - c) / k;
   if (f < c - 9 || f > c + 10) return null;
   const crece = tw(f, c - 9, c - 1, 0, 1, inOut);
   const sale = tw(f, c + 1, c + 9, 0, 1, inOut);
@@ -177,14 +166,16 @@ const Iris: React.FC<{ c: number; color: string; color2: string }> = ({ c, color
     </AbsoluteFill>
   );
 };
-const Fundido: React.FC<{ c: number; color: string }> = ({ c, color }) => {
-  const f = useCurrentFrame();
+const Fundido: React.FC<{ c: number; color: string; k: number }> = ({ c, color, k }) => {
+  const f0 = useCurrentFrame();
+  const f = c + (f0 - c) / k;
   const o = interpolate(f, [c - 8, c, c + 8], [0, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   if (o <= 0) return null;
   return <AbsoluteFill style={{ background: color, opacity: o, pointerEvents: "none" }} />;
 };
-const Bloque: React.FC<{ c: number; color: string }> = ({ c, color }) => {
-  const f = useCurrentFrame();
+const Bloque: React.FC<{ c: number; color: string; k: number }> = ({ c, color, k }) => {
+  const f0 = useCurrentFrame();
+  const f = c + (f0 - c) / k;
   if (f < c - 8 || f > c + 9) return null;
   const y = f < c ? interpolate(f, [c - 7, c - 1], [100, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: inOut })
     : interpolate(f, [c + 1, c + 7], [0, -100], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: inOut });
@@ -208,15 +199,15 @@ const Glitch: React.FC<{ c: number; colores: string[] }> = ({ c, colores }) => {
 
 export const Transicion: React.FC<{ c: number; i: number; tema: TemaMarca; estilo: Estilo }> = ({ c, i, tema, estilo }) => {
   switch (estilo.transicion) {
-    case "persiana": return <Persiana c={c} color={tema.superficie} linea={tema.borde} />;
-    case "iris": return <Iris c={c} color={tema.acento} color2={tema.fondo} />;
-    case "fundido": return <Fundido c={c} color={tema.fondo} />;
-    case "bloque": return <Bloque c={c} color={i % 2 ? tema.acento2 : tema.acento} />;
+    case "persiana": return <Persiana c={c} color={tema.superficie} linea={tema.borde} k={estilo.tempo} />;
+    case "iris": return <Iris c={c} color={tema.acento} color2={tema.fondo} k={estilo.tempo} />;
+    case "fundido": return <Fundido c={c} color={tema.fondo} k={estilo.tempo} />;
+    case "bloque": return <Bloque c={c} color={i % 2 ? tema.acento2 : tema.acento} k={estilo.tempo} />;
     case "glitch": return <><Glitch c={c} colores={[tema.acento, tema.acento2, tema.texto]} /><Destello en={c} color={tema.acento} max={0.18} dur={5} /></>;
     case "barrido":
     default:
       return i % 2 === 0
-        ? <Barrido centro={c} dur={12} colores={[tema.acento2, tema.acento, tema.fondo]} angulo={i % 4 === 0 ? -12 : 12} />
+        ? <Barrido centro={c} dur={Math.round(12 * estilo.tempo)} colores={[tema.acento2, tema.acento, tema.fondo]} angulo={i % 4 === 0 ? -12 : 12} />
         : <Destello en={c} color={tema.acento} max={0.22} dur={6} />;
   }
 };

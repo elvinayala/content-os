@@ -123,7 +123,7 @@ Decisión pendiente de Elvin.
 
 
 ## Estilos (28/sep/2026)
-Elvin: "todos se ven iguales: los mismos bullets, la misma letra". Desde el 28/sep cada video lleva un **estilo** de
-`motion/src/fabrica/estilos.tsx` (neon · editorial · impacto · minimal · pop · tecno): cambia tipografía, resaltado,
-bullets, transiciones, fondo y cierre sin tocar la marca. Sin `estilo`, remi.mjs sortea sin repetir en el pedido.
-Detalle y tabla en el skill motion-graphics §1b.
+Elvin: "que no se vea todo igual… pero mantener una identidad dentro de ese cliente, sin abusar". La letra (1 + 1 de
+acento), los colores y el logo son de la marca y NO cambian; lo que rota es el estilo de `motion/src/fabrica/estilos.tsx`
+(neon · editorial · impacto · minimal · pop · tecno): plantilla + ritmo. Cada marca tiene sus estilos permitidos y se
+usa el menos usado. Detalle en el skill motion-graphics §1b.

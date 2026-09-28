@@ -49,25 +49,28 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
   1080p, sin audio) por su MCP → `motion/public/tomas/` → campo `tomas` del anuncio. Sin caras, sin texto,
   sin logos, nunca presentadas como un cliente real. Revisar 3 cuadros antes de usar.
 
-## 1b. ESTILOS — que no todos se vean iguales (Elvin, 28/sep/2026)
-"Todos se ven iguales: los mismos bullets, la misma letra." La **marca** pone colores y logo; el **estilo** pone la
-dirección de arte (tipografía de titulares, resaltado, entrada de las palabras, bullets, transiciones, fondo, cierre).
-Mismo guion + otro estilo = otro video. Vive en `motion/src/fabrica/estilos.tsx`; campo `estilo` del guion.
-| estilo | look | va bien con |
-|---|---|---|
-| `neon` | letra de la marca en negrita, resaltado de color con halo, píldoras, barridos diagonales, partículas | tecnología, IA, lanzamientos (el look del 27/sep) |
-| `editorial` | serif Fraunces, resaltado en *itálica*, a la izquierda, números 01·02·03 con filetes, persianas | salud, profesionales, lujo, confianza |
-| `impacto` | Anton en MAYÚSCULAS enormes, resaltado en bloque de color, bullets en bloques sólidos, cortes con panel | ofertas, urgencia, gimnasios, construcción |
-| `minimal` | Manrope sobria, mucho aire, subrayado que se dibuja, bullets de línea fina, fundidos | premium, consultoría, bienes raíces |
-| `pop` | Unbounded redonda, resaltado sticker inclinado, stickers con sombra dura, rebotes, iris, puntos | comida, belleza, retail, público joven |
-| `tecno` | Space Grotesk a la izquierda, bullets de consola `[✓]`, cuadrícula, glitch | software, IA, trading, datos |
-- **Sin `estilo`:** `remi.mjs` sortea uno por video y **no repite dentro del mismo pedido** (los 2 de un cliente salen
-  distintos). `--estilo <id>` los fija; `"auto"` = uno fijo según el id. Los anuncios viejos de `anuncios.ts` sin
-  estilo quedan en `neon` (lo ya aprobado no cambia).
-- Escoge a propósito cuando el nicho lo pide (tabla); si no, deja que se sortee. **No repitas el mismo estilo en
-  todos los videos de una marca ni de una campaña.**
-- Estilo nuevo = una entrada en `ESTILOS` (fuente + tokens); las escenas ya leen `useEstilo()` (Titular, Etiqueta,
-  Item, Cierre, Marco) y el anuncio usa `FondoEstilo` y `Transicion`. Revisa siempre con hoja de contacto.
+## 1b. ESTILOS — variedad sin perder la identidad (Elvin, 28/sep/2026)
+"Todos se ven iguales… pero mantener una identidad dentro de ese cliente, sin abusar." Regla:
+- **Lo FIJO es de la marca:** colores, logo y **su letra** — 1 principal (`fuente`) + 1 de acento opcional
+  (`fuenteAcento`: Fraunces, DM Serif Display o Playfair Display, para itálicas/números del editorial). Nunca más de 2.
+- **Lo que ROTA es el estilo** (`motion/src/fabrica/estilos.tsx`): la plantilla (resaltado, bullets, transiciones, fondo,
+  cierre) y el **ritmo** (`tempo`: rápido 0.7 · normal 1 · calmado 1.4). El estilo NO cambia la letra.
+| estilo | plantilla | ritmo | va bien con |
+|---|---|---|---|
+| `neon` | resaltado de color con halo, píldoras, barridos diagonales, partículas | normal | tecnología, IA, lanzamientos |
+| `editorial` | *itálica* (letra de acento si hay), a la izquierda, números 01·02·03 con filetes, persianas | calmado | salud, profesionales, lujo |
+| `impacto` | MAYÚSCULAS, resaltado en bloque de color, bullets en bloques sólidos, panel de color | rápido | ofertas, urgencia, gimnasios |
+| `minimal` | peso medio, mucho aire, subrayado que se dibuja, bullets de línea, fundidos | calmado | premium, consultoría |
+| `pop` | resaltado sticker, stickers con sombra dura, rebotes, iris, puntos | ágil | comida, belleza, joven |
+| `tecno` | a la izquierda, bullets de consola `[✓]`, cuadrícula, glitch | rápido | software, trading, datos |
+- **Cada marca/cliente tiene los estilos que le quedan** (sin abusar): cliente → `ficha.marca.estilos` (p. ej. la Dra.
+  Escabí: editorial, minimal, neon); marcas de Elvin → `ESTILOS_MARCA` en `scripts/remi.mjs`.
+- **Sin `estilo` en el guion**, `remi.mjs` toma el **menos usado con esa marca** (cuenta `data/motion/guiones/`) y no
+  repite dentro del mismo pedido. `--estilo <id>` fija todos; `"auto"` = uno fijo según el id. Los anuncios viejos de
+  `anuncios.ts` sin estilo quedan en `neon` (lo aprobado no cambia).
+- ⚠ `max.mjs ficha` mezcla solo el primer nivel: para cambiar algo de `marca`, manda el objeto `marca` COMPLETO.
+- Estilo nuevo = una entrada en `ESTILOS` (tokens); las escenas ya leen `useEstilo()` (Titular, Etiqueta, Item,
+  Cierre, Marco) y el anuncio usa `FondoEstilo` y `Transicion`. Revisa siempre con hoja de contacto.
 
 ## 2. Pantallas reales de una app (recorridos, demos de producto)
 - **NUNCA grabar producción** (datos de clientes, salarios, tokens). Levantar una **copia aislada con datos
@@ -113,7 +116,7 @@ node scripts/remi.mjs render <id>… [--entregar --marca <m> --titulo "…"]    
 node scripts/remi.mjs render --guion <archivo.json|'JSON'> [--entregar --marca <m>] # guion en JSON, SIN tocar código
 ```
 **Guion en JSON** (lo que usa Max, que no edita código): `{ id, marca, formato: "16:9"|"9:16"|"1:1", titulo, angulo,
-escenas: [...], musica?, estilo?, cliente?: { nombre, logoUrl (https, logo REAL), fondo, acento, texto?, acento2?, fuente? } }`.
+escenas: [...], musica?, estilo?, cliente?: { nombre, logoUrl (https o public/, logo REAL), logoCapas?, motivo?, fondo, acento, texto?, acento2?, fuente?, fuenteAcento?, estilos? } }`.
 Con `cliente`, la marca sale del JSON (composición universal **`Motion`** + `src/fabrica/cliente.tsx`). Fuentes
 permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Bebas Neue, Sora, Outfit. Copia del
 guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.

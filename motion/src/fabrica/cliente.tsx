@@ -14,6 +14,9 @@ import { loadFont as bebas } from "@remotion/google-fonts/BebasNeue";
 import { loadFont as sora } from "@remotion/google-fonts/Sora";
 import { loadFont as outfit } from "@remotion/google-fonts/Outfit";
 import { loadFont as mono } from "@remotion/google-fonts/JetBrainsMono";
+import { loadFont as fraunces } from "@remotion/google-fonts/Fraunces";
+import { loadFont as dmserif } from "@remotion/google-fonts/DMSerifDisplay";
+import { loadFont as playfair } from "@remotion/google-fonts/PlayfairDisplay";
 import { rebote, tw } from "../kit/fx";
 import type { TemaMarca } from "./temas";
 
@@ -29,6 +32,13 @@ const FUENTES: Record<string, () => string> = {
   Sora: () => sora("normal", { weights: [...W], subsets: ["latin"] }).fontFamily,
   Outfit: () => outfit("normal", { weights: [...W], subsets: ["latin"] }).fontFamily,
 };
+/** Letras de ACENTO (opcionales, 1 por cliente): serif para itálicas y números del estilo editorial. */
+const ACENTOS: Record<string, () => string> = {
+  Fraunces: () => { fraunces("italic", { weights: ["500", "600"], subsets: ["latin"] }); return fraunces("normal", { weights: ["500", "600", "700"], subsets: ["latin"] }).fontFamily; },
+  "DM Serif Display": () => { dmserif("italic", { weights: ["400"], subsets: ["latin"] }); return dmserif("normal", { weights: ["400"], subsets: ["latin"] }).fontFamily; },
+  "Playfair Display": () => { playfair("italic", { weights: ["500", "600"], subsets: ["latin"] }); return playfair("normal", { weights: ["500", "600", "700"], subsets: ["latin"] }).fontFamily; },
+};
+export const ACENTOS_CLIENTE = Object.keys(ACENTOS);
 export const FUENTES_CLIENTE = Object.keys(FUENTES);
 
 export type TemaCliente = {
@@ -39,7 +49,10 @@ export type TemaCliente = {
   acento: string; // hex (CTA, resaltados)
   texto?: string; // hex (por defecto casi blanco)
   acento2?: string;
-  fuente?: string; // una de FUENTES_CLIENTE (por defecto Inter)
+  fuente?: string; // una de FUENTES_CLIENTE (por defecto Inter) — SU letra, fija en todos sus videos
+  fuenteAcento?: string; // opcional, una de ACENTOS_CLIENTE (serif para el estilo editorial)
+  /** Estilos que le quedan a su marca (remi.mjs rota entre estos; sin él, todos). */
+  estilos?: string[];
   musica?: string; // pista de public/audio (por defecto la de Level Up)
   /** Logo por CAPAS para animarlo por piezas: `base` (la forma, p. ej. la cabeza) + `brillo` (lo que se enciende
    *  encima, p. ej. el cerebro de colores). Rutas https o de public/ (clientes/<slug>/…). Proporción ancho/alto. */
@@ -156,7 +169,7 @@ export function temaCliente(c: TemaCliente): TemaMarca {
   );
   return {
     id: "level-up", // no se usa para buscar el tema: el tema viene armado
-    nombre: c.nombre, fuente, mono: monoF,
+    nombre: c.nombre, fuente, mono: monoF, fuenteAcento: c.fuenteAcento && ACENTOS[c.fuenteAcento] ? ACENTOS[c.fuenteAcento]() : undefined,
     fondo: c.fondo, superficie: mezclar(c.fondo, oscuro ? "#ffffff" : "#000000", 0.06), borde: mezclar(c.fondo, oscuro ? "#ffffff" : "#000000", 0.16),
     texto, gris: hex(texto, 0.62), acento: c.acento, acento2, alarma: "#FF5A4E", textoCta: oscuro ? mezclar(c.fondo, "#000000", 0.2) : "#ffffff",
     gradiente: `linear-gradient(120deg, ${c.acento} 0%, ${acento2} 100%)`, brillo: mezclar(c.fondo, c.acento, 0.25), brillo2: mezclar(c.fondo, acento2, 0.2),

@@ -34,20 +34,6 @@ if (arg("guion")) {
   fs.mkdirSync(path.join(ROOT, "data/motion/guiones"), { recursive: true });
   for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
 }
-// ESTILOS (Elvin, 28/sep: "todos se ven iguales"): cada guion sin `estilo` recibe uno al azar, y los de un mismo
-// pedido nunca repiten (los 2 videos de un cliente se ven distintos). --estilo <id> los fija todos.
-const ESTILOS = ["neon", "editorial", "impacto", "minimal", "pop", "tecno"];
-if (guiones.length) {
-  const fijo = arg("estilo");
-  if (fijo && !ESTILOS.includes(fijo) && fijo !== "auto") { console.error(`✖ --estilo: ${ESTILOS.join(" | ")} | auto`); process.exit(1); }
-  const bolsa = [...ESTILOS].sort(() => Math.random() - 0.5);
-  for (const g of guiones) {
-    if (fijo) g.estilo = fijo;
-    else if (!g.estilo) g.estilo = bolsa.shift() ?? ESTILOS[Math.floor(Math.random() * ESTILOS.length)];
-    console.log(`🎨 ${g.id}: estilo ${g.estilo}`);
-  }
-  for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
-}
 const h = { "x-remi-secreto": SECRETO, "Content-Type": "application/json" };
 
 // API de Max (expediente de clientes y #max-aprobaciones).
@@ -72,6 +58,43 @@ if (slugCliente && guiones.length) {
   // Todo lo de ficha.marca pasa al tema (logo por capas, motivo, paleta, música…); lo que el tema no usa se ignora.
   for (const g of guiones) g.cliente ??= { ...m, nombre: m.nombre || exp.nombre };
   console.log(`🎨 Marca de ${exp.nombre}: fondo ${m.fondo} · acento ${m.acento} · ${m.fuente || "Inter"}`);
+}
+
+// ESTILOS (Elvin, 28/sep: "que no se vea todo igual, pero mantener la identidad del cliente, sin abusar"): la letra y
+// los colores son de la marca y no cambian; lo que rota es la PLANTILLA y el ritmo. Cada marca/cliente tiene los estilos
+// que le quedan (ficha.marca.estilos o ESTILOS_MARCA); se escoge el MENOS usado con esa marca (según data/motion/
+// guiones) y en un mismo pedido no se repite. --estilo <id> los fija todos; `estilo` en el guion manda.
+const ESTILOS = ["neon", "editorial", "impacto", "minimal", "pop", "tecno"];
+const ESTILOS_MARCA = {
+  "level-up": ["neon", "impacto", "editorial", "minimal", "tecno"],
+  bori: ["neon", "pop", "minimal", "editorial"],
+  "ai-borinquen": ["neon", "tecno", "minimal", "editorial"],
+  ritmo: ["neon", "minimal", "tecno", "pop"],
+  "1000x": ["tecno", "neon", "impacto", "minimal"],
+};
+if (guiones.length) {
+  const fijo = arg("estilo");
+  if (fijo && !ESTILOS.includes(fijo) && fijo !== "auto") { console.error(`✖ --estilo: ${ESTILOS.join(" | ")} | auto`); process.exit(1); }
+  const dir = path.join(ROOT, "data/motion/guiones");
+  const clave = (g) => g.cliente?.nombre || g.marca;
+  const usos = {};
+  for (const a of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+    try { const x = JSON.parse(fs.readFileSync(path.join(dir, a), "utf8")); if (x.estilo && !guiones.some((g) => g.id === x.id)) { const k = clave(x); usos[k] ??= {}; usos[k][x.estilo] = (usos[k][x.estilo] || 0) + 1; } } catch {}
+  }
+  for (const g of guiones) {
+    if (fijo) g.estilo = fijo;
+    if (!g.estilo) {
+      const k = clave(g);
+      const permitidos = (g.cliente ? (g.cliente.estilos?.length ? g.cliente.estilos : ESTILOS) : ESTILOS_MARCA[g.marca] || ESTILOS).filter((e) => ESTILOS.includes(e));
+      const u = (usos[k] ??= {});
+      const orden = [...permitidos].sort((a, b) => (u[a] || 0) - (u[b] || 0) || Math.random() - 0.5);
+      g.estilo = orden[0];
+      u[g.estilo] = (u[g.estilo] || 0) + 1; // así el siguiente del mismo pedido no lo repite
+    }
+    console.log(`🎨 ${g.id}: estilo ${g.estilo}`);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, `${g.id}.json`), JSON.stringify(g, null, 2) + "\n");
+  }
 }
 
 if (cmd === "salud") {
