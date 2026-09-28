@@ -15,6 +15,8 @@ import * as etica from "@/lib/desempeno/etica";
 import * as seguridad from "@/lib/desempeno/seguridad";
 import { errorAlmuerzo } from "@/lib/desempeno/seguridad-reglas";
 import { altaEmpleado } from "@/lib/desempeno/alta";
+import { decidirCambio, proponerCambio } from "@/lib/desempeno/cambios";
+import { diferencias, necesitaAprobacion, SENSIBLES_FICHA, SENSIBLES_PERFIL, separar } from "@/lib/desempeno/cambios-reglas";
 import { buscarSlackPorNombre } from "@/lib/desempeno/avisar";
 import * as bienestar from "@/lib/desempeno/bienestar";
 import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/bienestar-reglas";
@@ -219,9 +221,18 @@ export async function guardarPerfilAction(p: {
     // el perfil de Ritmo le cerraba Leads (28/sep: Dilan y Ana, chatters, perdieron Leads al crearles el perfil).
     const conLeads = await import("@/lib/leads/repo").then((r) => r.tienePermisoLeads(p.userId));
     const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : conLeads ? false : (previo?.soloRitmo ?? !cuenta?.tieneClave);
-    await datos.guardarPerfil({ ...p, tambienEn, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
+    const nuevo = { ...p, tambienEn, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null };
+    // Lo sensible (puesto, empresa, supervisor, activo, acceso a Pulse, contrato) espera a Elvin; lo menor pasa ya.
+    if (necesitaAprobacion(u.rol)) {
+      const { aplicarYa, pendientes } = separar(SENSIBLES_PERFIL, previo ?? null, nuevo);
+      if (aplicarYa) await datos.guardarPerfil(aplicarYa, u.id);
+      const lineas = pendientes.length ? await proponerCambio({ tipo: "perfil", userId: p.userId, cambios: pendientes, datos: previo ? null : nuevo, actorId: u.id }) : [];
+      refresh();
+      return { pendientes: lineas };
+    }
+    await datos.guardarPerfil(nuevo, u.id);
     refresh();
-    return {};
+    return { pendientes: [] as string[] };
   });
 }
 
@@ -296,12 +307,20 @@ export async function guardarFichaAction(p: {
     const t = (x: string, n = 120) => x?.trim().slice(0, n) || null;
     const salario = p.salarioMensual?.trim() ? Number(p.salarioMensual) : null;
     if (salario !== null && (!Number.isFinite(salario) || salario < 0 || salario > 100000)) throw new Error("Salario inválido");
-    await fichas.guardarFicha(
-      { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000), contactoEmergencia: t(p.contactoEmergencia ?? "", 160) },
-      u.id,
-    );
+    const nueva = { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000), contactoEmergencia: t(p.contactoEmergencia ?? "", 160) };
+    // El salario espera a Elvin (28/sep); lo demás de la ficha se guarda ya.
+    if (necesitaAprobacion(u.rol)) {
+      const previa = await fichas.leerFicha(p.userId);
+      const antes = previa ? { salarioMensual: previa.salarioMensual } : { salarioMensual: null };
+      const pendientes = diferencias(SENSIBLES_FICHA, antes, { salarioMensual: salario });
+      await fichas.guardarFicha({ ...nueva, salarioMensual: antes.salarioMensual }, u.id);
+      const lineas = pendientes.length ? await proponerCambio({ tipo: "ficha", userId: p.userId, cambios: pendientes, actorId: u.id }) : [];
+      refresh();
+      return { pendientes: lineas };
+    }
+    await fichas.guardarFicha(nueva, u.id);
     refresh();
-    return {};
+    return { pendientes: [] as string[] };
   });
 }
 
@@ -871,6 +890,18 @@ export async function borrarEmpresaAction(id: string) {
     const u = await requiereMaestro();
     if (u.rol !== "admin" && u.rol !== "editor") throw new Error("Solo la dirección edita Empresa");
     await empresa.borrarItemEmpresa(id);
+    refresh();
+    return {};
+  });
+}
+
+// ─── Cambios sensibles: solo Elvin (admin) decide ─────────────────────────────────────────────
+
+export async function decidirCambioAction(p: { id: string; aprobar: boolean; nota?: string }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    if (u.rol !== "admin") throw new Error("Solo Elvin aprueba estos cambios");
+    await decidirCambio(p.id, p.aprobar, u.id, p.nota);
     refresh();
     return {};
   });

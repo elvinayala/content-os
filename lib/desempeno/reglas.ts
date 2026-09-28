@@ -99,6 +99,7 @@ export const PUESTOS: Puesto[] = [
   },
   // Puestos sin KPIs conectados todavía (28/sep/2026, pedido de Aure): su nota sale de la asistencia.
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
+  { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
   { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", kpis: [] },
   { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", kpis: [] },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.

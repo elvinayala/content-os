@@ -600,3 +600,25 @@ export const desempenoVentasAlias = pgTable(
   },
   (t) => [primaryKey({ columns: [t.userId, t.alias] })],
 );
+
+// Cambios que esperan el OK de Elvin (28/sep): Carilin, Aure o RR.HH. editan a mano; lo sensible (puesto, empresa,
+// supervisor, activo, acceso a Pulse, contrato, salario) queda aquí hasta que Elvin lo aprueba (lib/desempeno/cambios.ts).
+export const desempenoCambios = pgTable(
+  "desempeno_cambios",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }), // a quién se le cambia
+    tipo: text("tipo").notNull(), // perfil | ficha
+    cambios: jsonb("cambios").notNull(), // [{ campo, antes, despues }]
+    datos: jsonb("datos"), // perfil completo propuesto cuando es nuevo (no se puede crear a medias)
+    estado: text("estado").notNull().default("pendiente"), // pendiente | aprobado | rechazado | reemplazado
+    propuestoPor: uuid("propuesto_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    decididoPor: uuid("decidido_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    decididoAt: timestamp("decidido_at", { withTimezone: true }),
+    nota: text("nota"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_cambios_estado").on(t.estado, t.createdAt), index("desempeno_cambios_user").on(t.userId, t.tipo, t.estado)],
+);

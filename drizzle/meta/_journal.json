@@ -225,6 +225,13 @@
       "when": 1790603765714,
       "tag": "0031_tambien-en",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1790616180524,
+      "tag": "0032_cambios-aprobacion",
+      "breakpoints": true
     }
   ]
 }

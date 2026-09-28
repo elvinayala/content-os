@@ -30,16 +30,18 @@ const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-
 type Usuario = { id: string; nombre: string; email: string };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
-const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", tambienEn: null, slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
+// Sin puesto por defecto: antes arrancaba en "estratega" y así quedó mal María (tesorera), 28/sep.
+const nuevo = (userId: string): Borrador => ({ userId, puesto: "", empresa: "level_up", tambienEn: null, slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
-export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean }) {
+export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false, arriba }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean; arriba?: React.ReactNode }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Ajustes</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Quién se mide, su horario y su líder; y las metas de cada puesto. Todo cambio queda en la bitácora.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Quién se mide, su horario y su líder; y las metas de cada puesto. Todo cambio queda en la bitácora. Lo sensible (puesto, empresa, supervisor, activo, acceso a Pulse, contrato y salario) lo aprueba Elvin.</p>
       </div>
+      {arriba}
       <Produccion existe={produccion} />
       <div className="flex gap-1 self-start rounded-full border border-border bg-card/60 p-1 text-sm">
         {(["personas", "metas"] as const).map((t) => (
@@ -118,7 +120,8 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuar
     const r = await guardarPerfilAction({ ...b, soloRitmo: gestorPulse && tocoPulse ? b.soloRitmo : undefined });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
-    toast.success(`${usuario.nombre}: guardado`, aviso);
+    if (r.pendientes?.length) toast.success(`${usuario.nombre}: enviado a Elvin para aprobar`, { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
+    else toast.success(`${usuario.nombre}: guardado`, aviso);
     setAbierto(false);
   };
   const puesto = PUESTOS.find((p) => p.id === (perfil?.puesto ?? b.puesto));
@@ -137,6 +140,7 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuar
         <div className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
           <Campo label="Puesto">
             <select className={select} value={b.puesto} onChange={(e) => set("puesto", e.target.value)}>
+              {!b.puesto ? <option value="">— Escoge el puesto —</option> : null}
               {PUESTOS.map((p) => (
                 <option key={p.id} value={p.id}>{p.nombre}</option>
               ))}

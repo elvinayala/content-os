@@ -124,6 +124,7 @@ export const SEMILLAS_EMPRESA: Semilla[] = [
   ].join("\n")),
   s("lu-mision", "nosotros", "level_up", 30, "Misión (borrador)", "Que cada negocio de Puerto Rico que confía en nosotros tenga un sistema que le traiga clientes todos los meses, medible y sin depender de la suerte.", { publicado: false }),
   s("lu-valores", "nosotros", "level_up", 40, "Nuestros valores (borrador)", [
+    "- **AI first:** antes de hacer algo a mano, preguntamos cómo la inteligencia artificial nos ayuda a hacerlo mejor y más rápido. Nos apoyamos 100 % en la tecnología.",
     "- **Los datos mandan:** decidimos con números, no con corazonadas.",
     "- **Lo real convierte:** foto y video reales del negocio por encima de lo genérico.",
     "- **Respondemos rápido:** un cliente que espera es un cliente que se va.",
