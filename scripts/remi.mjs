@@ -5,6 +5,11 @@
 //   node scripts/remi.mjs render --guion <archivo.json | 'JSON'> [--entregar --marca <m> …]
 //     (guion en JSON: { id, marca | cliente: { nombre, logoUrl, fondo, acento, fuente }, formato, escenas: […] };
 //      se guarda copia en data/motion/guiones/<id>.json. Así Max produce motion SIN editar código.)
+//   node scripts/remi.mjs render --guion <json> --cliente <slug> [--proponer --titulo "…" --texto "…"]
+//     --cliente: toma la MARCA del cliente de su expediente de Max (ficha.marca = { nombre, logoUrl, fondo, acento,
+//       fuente }); se fija con: node scripts/max.mjs ficha <slug> '{"marca":{…}}'  (paso 2: tema automático).
+//     --proponer: sube los videos terminados a #max-aprobaciones como "creativos" del cliente; al aprobarse, el servidor
+//       los guarda en su carpeta de Drive (videos/) y los manda a su canal (paso 3). Todos son MOTION GRAPHICS.
 //   node scripts/remi.mjs salud
 // --entregar deja cada video en la bandeja de Entregas (data/entregas.json, agente "Remi").
 // Env: REMI_URL + REMI_SECRETO (.env.local / Railway).
@@ -29,6 +34,28 @@ if (arg("guion")) {
 }
 const h = { "x-remi-secreto": SECRETO, "Content-Type": "application/json" };
 
+// API de Max (expediente de clientes y #max-aprobaciones).
+const BASE = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+async function apiMax(metodo, q, cuerpo) {
+  const r = await fetch(`${BASE}/api/max${q ? "?" + new URLSearchParams(q) : ""}`, { method: metodo, headers: { "x-cron-secret": env("CRON_SECRET"), "Content-Type": "application/json" }, body: cuerpo ? JSON.stringify(cuerpo) : undefined, signal: AbortSignal.timeout(30000) });
+  const j = await r.json().catch(() => ({ ok: false, error: "HTTP " + r.status }));
+  if (!r.ok || j.ok === false) throw new Error("api/max: " + (j.error || j.texto || r.status));
+  return j;
+}
+const slugCliente = arg("cliente");
+if (slugCliente && guiones.length) {
+  const { cliente: exp } = await apiMax("GET", { cliente: slugCliente });
+  if (!exp) { console.error(`✖ No existe el cliente ${slugCliente} (node scripts/max.mjs clientes)`); process.exit(1); }
+  const m = exp.ficha?.marca || {};
+  const faltan = ["logoUrl", "fondo", "acento"].filter((k) => !m[k]);
+  if (faltan.length) {
+    console.error(`✖ ${slugCliente} no tiene su marca completa (falta ${faltan.join(", ")}). Fíjala con SU logo real:\n  node scripts/max.mjs ficha ${slugCliente} '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`);
+    process.exit(1);
+  }
+  for (const g of guiones) g.cliente ??= { nombre: m.nombre || exp.nombre, logoUrl: m.logoUrl, fondo: m.fondo, acento: m.acento, texto: m.texto, acento2: m.acento2, fuente: m.fuente };
+  console.log(`🎨 Marca de ${exp.nombre}: fondo ${m.fondo} · acento ${m.acento} · ${m.fuente || "Inter"}`);
+}
+
 if (cmd === "salud") {
   console.log(await (await fetch(`${URL_REMI}/salud`)).text());
   process.exit(0);
@@ -52,6 +79,14 @@ for (let i = 0; i < 360; i++) {
 }
 if (t?.estado !== "listo") { console.error("✖", t?.error || t?.estado || "sin respuesta"); process.exit(1); }
 for (const x of t.resultados) console.log(`✓ ${x.id} (${x.segundos} s, render ${x.renderSeg} s)\n  ${x.url}`);
+
+if (resto.includes("--proponer")) {
+  const slug = slugCliente || arg("proponer-a");
+  if (!slug) { console.error("--proponer necesita --cliente <slug>"); process.exit(1); }
+  const texto = arg("texto") || `Motion graphics para ${slug} (${t.resultados.length} video${t.resultados.length > 1 ? "s" : ""}):\n` + t.resultados.map((x, i) => `${i + 1}. ${guiones.find((g) => g.id === x.id)?.titulo || x.id} · ${x.segundos} s`).join("\n");
+  const r2 = await apiMax("POST", null, { accion: "proponer", cliente: slug, tipo: "creativos", titulo: arg("titulo") || "Videos de motion graphics", contenido: texto, datos: { imagenes: [], videos: t.resultados.map((x) => x.url) } });
+  console.log(`✔ #${r2.id} en #max-aprobaciones (creativos · ${slug}). Al aprobarse: Drive (videos/) + canal del cliente.${r2.aviso ? " ⚠ " + r2.aviso : ""}`);
+}
 
 if (resto.includes("--entregar")) {
   const marca = arg("marca");

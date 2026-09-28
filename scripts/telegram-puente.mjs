@@ -237,7 +237,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     if (opts.soloLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (modo === "total") args.push("--dangerously-skip-permissions");
     // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
-    else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/fal.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node scripts/max.mjs*)", "Bash(node scripts/remi.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
+    else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/fal.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node scripts/max.mjs*)", "Bash(node scripts/remi.mjs*)", "Bash(node scripts/meta-ads/subir-videos.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
     // Lola: lee el vault, escribe en data/ (entregas, pedidos) y solo corre fal.ai + validar-voz.
     else if (ES_LOLA) args.push("--permission-mode", "acceptEdits", "--allowedTools", "Read", "Glob", "Grep", "Edit", "Write", "Bash(node scripts/fal.mjs*)", "Bash(node scripts/validar-voz.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node -e*)", "--disallowedTools", "WebFetch", "WebSearch");
     else args.push("--permission-mode", "acceptEdits", "--allowedTools", ...SEGURO);
