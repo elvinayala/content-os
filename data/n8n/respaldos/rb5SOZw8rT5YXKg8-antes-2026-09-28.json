@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-28T21:15:15.652Z",
+  "updatedAt": "2026-09-26T18:24:14.425Z",
   "createdAt": "2025-11-03T11:59:44.265Z",
   "id": "rb5SOZw8rT5YXKg8",
   "name": "B-) Agente de onboarding v5",
@@ -1336,7 +1336,7 @@
             },
             {
               "id": "62745e37-a830-4e1f-872f-a2fc278bbc97",
-              "leftValue": "={{ (($json.body.conversation || {}).labels || []).includes(\"no-contactar-ia\") ? \"no-ia\" : \"\" }}",
+              "leftValue": "",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -2393,9 +2393,9 @@
       }
     ]
   },
-  "versionId": "40864c3a-0f79-42c6-aca7-73aee5274185",
-  "activeVersionId": "40864c3a-0f79-42c6-aca7-73aee5274185",
-  "versionCounter": 68,
+  "versionId": "b724eb3f-a3ee-4232-b68f-cd9914b2b858",
+  "activeVersionId": "b724eb3f-a3ee-4232-b68f-cd9914b2b858",
+  "versionCounter": 65,
   "triggerCount": 1,
   "shared": [
     {
@@ -2465,9 +2465,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-09-28T21:15:15.655Z",
-    "createdAt": "2026-09-28T21:15:15.655Z",
-    "versionId": "40864c3a-0f79-42c6-aca7-73aee5274185",
+    "updatedAt": "2026-09-26T18:24:14.428Z",
+    "createdAt": "2026-09-26T18:24:14.428Z",
+    "versionId": "b724eb3f-a3ee-4232-b68f-cd9914b2b858",
     "workflowId": "rb5SOZw8rT5YXKg8",
     "nodes": [
       {
@@ -3799,7 +3799,7 @@
               },
               {
                 "id": "62745e37-a830-4e1f-872f-a2fc278bbc97",
-                "leftValue": "={{ (($json.body.conversation || {}).labels || []).includes(\"no-contactar-ia\") ? \"no-ia\" : \"\" }}",
+                "leftValue": "",
                 "rightValue": "",
                 "operator": {
                   "type": "string",
@@ -4671,10 +4671,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-28T21:15:15.891Z",
-        "id": 315,
+        "createdAt": "2026-09-26T18:24:14.639Z",
+        "id": 307,
         "workflowId": "rb5SOZw8rT5YXKg8",
-        "versionId": "40864c3a-0f79-42c6-aca7-73aee5274185",
+        "versionId": "b724eb3f-a3ee-4232-b68f-cd9914b2b858",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
