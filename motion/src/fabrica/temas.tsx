@@ -43,6 +43,8 @@ export type TemaMarca = {
   Logo: React.FC<{ size: number; entrada?: number | null; vivo?: boolean }>;
   /** Logo con nombre para el cierre. */
   Firma: React.FC<{ size: number; entrada: number }>;
+  /** Motivo gráfico de la marca detrás de todo (p. ej. las fibras del cerebro de un cliente). */
+  Motivo?: React.FC;
 };
 
 /* ───────── Level Up Media: negro + oro, Sora, cohete sobre la gráfica (PNG oficial) ───────── */

@@ -96,7 +96,7 @@ const Nota: React.FC<{ texto?: string; entra?: number }> = ({ texto, entra = 10 
   if (!texto) return null;
   return (
     <div style={{ position: "absolute", left: pad, right: pad, bottom: Math.max(24, bottom - (v ? 60 : 40)), textAlign: "center", fontFamily: t.fuente, fontSize: v ? 24 : 20, color: t.gris, opacity: 0.8 * tw(f, entra, entra + 10) }}>
-      {texto}
+      <span style={{ background: `${t.fondo}d9`, padding: "4px 14px", borderRadius: 99 }}>{texto}</span>
     </div>
   );
 };
@@ -1022,6 +1022,82 @@ const Terminal: React.FC<Extract<Escena, { tipo: "terminal" }>> = ({ titulo, ven
   );
 };
 
+
+/** Foto REAL de la persona o su negocio (con su OK): entra de abajo con marco de su marca, Ken Burns lento,
+ *  sello con su logo, y al lado (16:9) o debajo (9:16) el titular con puntos que se marcan. */
+const Retrato: React.FC<Extract<Escena, { tipo: "retrato" }>> = ({ foto, titulo, etiqueta, puntos = [], lado = "izq", enfoque = "50% 25%", dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { w, h, v, cuad, pad, top, bottom } = useLienzo();
+  const src = /^https?:\/\//.test(foto) ? foto : staticFile(foto.replace(/^\//, ""));
+  const e = tw(f, 0, 18);
+  const kb = interpolate(f, [0, dur], [1.14, 1.0]);
+  const pan = interpolate(f, [0, dur], [lado === "izq" ? -2 : 2, 0]);
+  // Caja de la foto: columna en 16:9; bloque arriba en 9:16 / 1:1.
+  const fw = v ? w - pad * 2 : Math.round(w * 0.4);
+  const fh = v ? Math.round((h - top - bottom) * (cuad ? 0.5 : 0.56)) : h - top - bottom - 40;
+  const fx = v ? pad : lado === "izq" ? pad : w - pad - fw;
+  const fy = v ? top : (h - fh) / 2;
+  const radio = v ? 40 : 36;
+  const colX = v ? pad : lado === "izq" ? fx + fw + 90 : pad;
+  const colW = v ? w - pad * 2 : w - pad * 2 - fw - 90;
+  const tam = ajustar([titulo], colW, v ? (cuad ? 76 : 92) : 88, 3);
+  const Logo = t.Logo;
+  return (
+    <AbsoluteFill>
+      {/* Marco con el degradado de la marca + halo */}
+      <div style={{
+        position: "absolute", left: fx - 5, top: fy - 5, width: fw + 10, height: fh + 10, borderRadius: radio + 5,
+        background: `linear-gradient(${120 + f * 0.6}deg, ${t.acento}, ${t.acento2}, ${t.acento})`,
+        boxShadow: `0 30px 90px ${t.acento}44`, opacity: e,
+        clipPath: `inset(${(1 - e) * 100}% 0 0 0 round ${radio + 5}px)`,
+      }} />
+      <div style={{
+        position: "absolute", left: fx, top: fy, width: fw, height: fh, borderRadius: radio, overflow: "hidden",
+        clipPath: `inset(${(1 - e) * 100}% 0 0 0 round ${radio}px)`, background: t.superficie,
+      }}>
+        <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: enfoque, transform: `scale(${kb}) translateX(${pan}%)` }} />
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, transparent 55%, ${t.fondo}cc 100%)` }} />
+        {/* Sello: su logo + nombre, como cristal */}
+        <div style={{
+          position: "absolute", left: 24, bottom: 24, display: "flex", alignItems: "center", gap: 14, padding: "10px 22px 10px 12px",
+          borderRadius: 999, background: "rgba(10,16,28,0.55)", border: "1px solid rgba(255,255,255,0.18)", backdropFilter: "blur(10px)",
+          opacity: tw(f, 16, 26), transform: `translateY(${(1 - tw(f, 16, 28)) * 20}px)`,
+        }}>
+          <Logo size={v ? 64 : 56} entrada={f - 16} vivo={f > 60} />
+          <div style={{ fontFamily: t.fuente, fontWeight: 700, fontSize: v ? 28 : 24, color: "#fff" }}>{t.nombre}</div>
+        </div>
+      </div>
+      {/* Texto */}
+      <div style={{
+        position: "absolute", left: colX, width: colW, top: v ? fy + fh + 48 : 0, bottom: v ? bottom : 0,
+        display: "flex", flexDirection: "column", justifyContent: v ? "flex-start" : "center", gap: v ? 26 : 30,
+        alignItems: v ? "center" : "flex-start",
+      }}>
+        {etiqueta && <Etiqueta texto={etiqueta} entra={8} />}
+        <Titular texto={titulo} entra={10} tam={tam} alinear={v ? "center" : "left"} />
+        {puntos.map((pt, i) => {
+          const en = 26 + i * 12;
+          const pe = tw(f, en, en + 12);
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 18, opacity: pe, transform: `translateX(${(1 - pe) * -30}px)` }}>
+              <div style={{
+                width: v ? 46 : 42, height: v ? 46 : 42, flex: "none", borderRadius: 99, background: t.gradiente, display: "grid", placeItems: "center",
+                transform: `scale(${rebote(f, en, 14)})`, boxShadow: `0 0 24px ${t.acento}66`,
+              }}>
+                <svg width="60%" height="60%" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke={t.textoCta} strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </div>
+              <div style={{ fontFamily: t.fuente, fontWeight: 600, fontSize: v ? 42 : 40, color: t.texto, lineHeight: 1.2 }}>{pt}</div>
+            </div>
+          );
+        })}
+      </div>
+      <Sfx src="whoosh.mp3" en={0} vol={0.3} />
+      {puntos.map((_, i) => <Sfx key={i} src="pop.mp3" en={26 + i * 12} vol={0.3} />)}
+    </AbsoluteFill>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   switch (escena.tipo) {
     case "gancho": return <Gancho {...escena} />;
@@ -1046,6 +1122,7 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "pantalla": return <Pantalla {...escena} />;
     case "grafico": return <Grafico {...escena} />;
     case "terminal": return <Terminal {...escena} />;
+    case "retrato": return <Retrato {...escena} />;
     case "cierre": return <Cierre {...escena} />;
   }
 };

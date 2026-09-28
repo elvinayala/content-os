@@ -43,6 +43,7 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
     <TemaCtx.Provider value={tema}>
       <AbsoluteFill style={{ background: tema.fondo }}>
         <Fondo color={tema.fondo} brillo={tema.brillo} brillo2={tema.brillo2} grid={tema.borde} intensidad={0.9} />
+        {tema.Motivo && <tema.Motivo />}
         {(anuncio.tomas ?? []).map((t, i) => (
           <Sequence key={`toma${i}`} from={t.desde} durationInFrames={t.dur}>
             <Toma archivo={t.archivo} dur={t.dur} velo={t.velo ?? 0.55} fondo={tema.fondo} brillo={tema.acento} />

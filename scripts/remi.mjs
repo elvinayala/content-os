@@ -52,8 +52,9 @@ if (slugCliente && guiones.length) {
     console.error(`✖ ${slugCliente} no tiene su marca completa (falta ${faltan.join(", ")}). Fíjala con SU logo real:\n  node scripts/max.mjs ficha ${slugCliente} '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`);
     process.exit(1);
   }
-  if (!m.logoUrl) console.warn(`⚠ ${slugCliente} sin logo real en su ficha: la firma sale solo con su nombre. Pídelo (Jessica / carpeta del cliente) antes de entregarle los videos.`);
-  for (const g of guiones) g.cliente ??= { nombre: m.nombre || exp.nombre, subtitulo: m.subtitulo, logoUrl: m.logoUrl, fondo: m.fondo, acento: m.acento, texto: m.texto, acento2: m.acento2, fuente: m.fuente };
+  if (!m.logoUrl && !m.logoCapas) console.warn(`⚠ ${slugCliente} sin logo real en su ficha: la firma sale solo con su nombre. Pídelo (Jessica / carpeta del cliente) antes de entregarle los videos.`);
+  // Todo lo de ficha.marca pasa al tema (logo por capas, motivo, paleta, música…); lo que el tema no usa se ignora.
+  for (const g of guiones) g.cliente ??= { ...m, nombre: m.nombre || exp.nombre };
   console.log(`🎨 Marca de ${exp.nombre}: fondo ${m.fondo} · acento ${m.acento} · ${m.fuente || "Inter"}`);
 }
 

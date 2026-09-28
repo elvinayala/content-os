@@ -31,6 +31,8 @@ export type Escena = { dur: number } & (
       foco?: { x: number; y: number; w: number; h: number } }
   | { tipo: "grafico"; titulo: string; sub?: string; par: string; modo: "autopilot" | "radar"; puntos?: string[] }
   | { tipo: "terminal"; titulo?: string; ventana: string; lineas: { t: string; tipo?: "ok" | "alerta" | "dim" | "info" }[] }
+  /** Foto REAL de la persona/negocio (con su OK) con Ken Burns + titular y puntos al lado (16:9) o debajo (9:16). */
+  | { tipo: "retrato"; foto: string; titulo: string; etiqueta?: string; puntos?: string[]; lado?: "izq" | "der"; enfoque?: string }
   | { tipo: "cierre"; cta: string; sub?: string; url?: string; nota?: string }
 );
 
