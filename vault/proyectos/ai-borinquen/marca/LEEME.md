@@ -16,5 +16,5 @@ No confundir con **Bori** (agencia de marketing en una sola plataforma, coquí c
   texto #E8F3EC. **Tipografía:** Outfit (títulos, nombre) + Inter (texto).
 - **Nombre:** "AI Borinquen" en Outfit 700 con el punto rojo arriba a la derecha.
 - Hoja de marca: `hoja-marca-v2.png` / `.html`.
-- Pendiente: pasar el kit de flyers de Lola (`scripts/fal/flyer.mjs`) y las páginas de AIB al logo v2
-  cuando `public/marcas/ai-borinquen/` esté desplegado.
+- Kit de flyers de Lola (`scripts/fal/flyer.mjs`) y skill `flyers-que-venden` ya usan el logo v2 (28/sep).
+  Pendiente: las páginas de AIB.

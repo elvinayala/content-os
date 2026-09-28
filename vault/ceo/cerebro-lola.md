@@ -82,12 +82,21 @@ resalte el producto. Minimalista, elegante, siempre con calidad. Nano Banana Pro
 6. **Logo real** pequeño en una esquina, como referencia (nunca redibujado ni inventado).
 7. **Texto exacto en español** con acentos. Si el modelo deforma una palabra, re-tira UNA vez; si insiste,
    entrega el arte sin ese texto y el copy aparte.
+8. **(v2, 28/sep) Alto impacto que vende:** la **frase clave del título resaltada** en el color de acento
+   (`--resaltar "como nuevo"`, 2-4 palabras que salgan del título), la **oferta** en su propia etiqueta cuando el
+   cliente la da exacta (`--oferta "Pintura desde $899"`, ≤ 5 palabras), la foto **a sangre completa** (nunca en un
+   recuadro o tarjeta: se ve a plantilla), **cero marcas ajenas** (carros, laptops y empaques genéricos) y **botón
+   plano** del color de la marca (sin brillo ni degradado). `--layout hero|split|producto` y `--acento "#hex"` para
+   clientes sin kit (si no, sale del color más fuerte del héroe).
+9. **Revisión antes de entregar (obligatoria):** leer cada palabra del arte contra el copy. Nano Banana Pro a veces
+   cuela palabras de la escena (salió "Tus anuncios **small** vendiendo **mientras mientras** duermes") o se salta
+   un elemento: si pasa, re-tira. Nunca se entrega un flyer con una letra mal.
 
 **Cómo se hace** (el script valida el copy ANTES de gastar y arma el prompt de Nano Banana Pro con todo lo de arriba):
 ```
 node scripts/fal.mjs flyer --marca bori --titulo "Tu negocio, en piloto automático" \
   --bullets "Anuncios en minutos|Te responde 24/7|Sin contratar agencia" --cta "Pruébalo hoy" \
-  --producto "a Puerto Rican small-business owner smiling at her phone in her shop" --ar 4:5 --n 2
+  --resaltar "piloto automático" --producto "a Puerto Rican shop owner smiling at her phone in her store" --ar 4:5 --n 2
 ```
 - `--foto url1,url2` = fotos reales del producto/local (héroe auténtico) · `--fondo claro|oscuro` · `--tipo producto`
   para un objeto físico · `--extra "…"` = dirección creativa del pedido (p. ej. la referencia que mandó Elvin) ·

@@ -51,3 +51,33 @@ test("armar: fotos primero, logo real al final; copy malo no gasta", () => {
   assert.deepEqual(cliente.refs, ["https://x.test/producto.jpg", "https://x.test/logo-cliente.png"], "logo del cliente, siempre al final");
   assert.equal(cliente.avisos.length, 0);
 });
+
+// v2 (28/sep/2026, Elvin: "flyers de alto impacto, que vendan"). Cada regla salió de una prueba real con Nano Banana Pro.
+test("v2 copy: la frase resaltada sale del título; la oferta es corta y sin gratis", () => {
+  assert.equal(validarCopy({ titulo: "Tu carro como nuevo", resaltar: "como nuevo", oferta: "Pintura desde $899", cta: "Escríbenos" }).ok, true);
+  assert.match(validarCopy({ titulo: "Tu carro como nuevo", resaltar: "brillante", cta: "Ya" }).errores.join(), /no está en el título/);
+  assert.match(validarCopy({ titulo: "Uno dos tres cuatro cinco", resaltar: "Uno dos tres cuatro cinco", cta: "Ya" }).errores.join(), /máximo 4/);
+  assert.match(validarCopy({ titulo: "Ok", oferta: "Primera visita gratis hoy", cta: "Ya" }).errores.join(), /gratis/);
+  assert.match(validarCopy({ titulo: "Ok", oferta: "uno dos tres cuatro cinco seis", cta: "Ya" }).errores.join(), /oferta/);
+});
+
+test("v2 prompt: texto numerado arriba, resaltado, oferta obligatoria, sin mockup ni recuadro ni marcas ajenas", () => {
+  const p = promptFlyer({ marca: null, titulo: "Tu carro como nuevo", bullets: ["Pintura con garantía"], cta: "Escríbenos hoy", resaltar: "como nuevo", oferta: "Pintura desde $899", producto: "a small-business red sedan", ar: "9:16" });
+  assert.ok(p.indexOf("TEXT ON THE FLYER") < p.indexOf("SCENE"), "el texto va antes de la escena");
+  assert.match(p, /\(1\) HEADLINE: "Tu carro como nuevo" — the words "como nuevo" in ONE vivid accent color/);
+  assert.match(p, /\(2\) OFFER BADGE: "Pintura desde \$899"/);
+  assert.match(p, /exactly ONCE, word for word/);
+  assert.match(p, /NOT a mockup/);
+  assert.match(p, /NEVER place the photo inside a box/);
+  assert.match(p, /SCENE \(visual only — NEVER write any words/, "la escena en inglés no se cuela como texto");
+  assert.match(p, /No third-party logos/);
+  assert.match(p, /SOLID flat button/);
+  assert.match(p, /top 14% and the bottom 20%/, "zonas seguras de historia");
+  assert.match(promptFlyer({ marca: marca("level-up"), titulo: "Hola", cta: "Ya", acento: "#F5CE1A" }), /the accent color #F5CE1A/);
+});
+
+test("v2 CLI: fal.mjs acepta --resaltar --oferta --layout --acento (antes los ignoraba en silencio)", async () => {
+  const fs = await import("node:fs");
+  const cli = fs.readFileSync(new URL("../scripts/fal.mjs", import.meta.url), "utf8");
+  for (const f of ["resaltar", "oferta", "layout", "acento"]) assert.match(cli, new RegExp(`"${f}"`), f);
+});

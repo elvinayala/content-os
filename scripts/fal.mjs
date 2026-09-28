@@ -5,7 +5,7 @@
 //
 //   node scripts/fal.mjs imagen "<prompt>" [--ar 1:1|4:5|9:16|16:9] [--n 1-3] [--res 1K|2K] [--ref url1,url2] [--guardar ruta.png]
 //        con --ref usa la edición (mismo personaje/producto/marca de la referencia: logo, foto del cliente, Max v2…)
-//   node scripts/fal.mjs flyer --marca <level-up|ai-borinquen|bori|resuelto|isla-run> --titulo "…" --bullets "beneficio 1|beneficio 2|beneficio 3" --cta "…" --producto "<qué se ve: el producto o el servicio>" [--foto url1,url2] [--logo <url del logo real de un cliente>] [--fondo oscuro|claro] [--tipo servicio|producto] [--ar 4:5] [--n 1-3] [--extra "…"] [--sin-logo] [--ver]
+//   node scripts/fal.mjs flyer --marca <level-up|ai-borinquen|bori|resuelto|isla-run> --titulo "…" --bullets "beneficio 1|beneficio 2|beneficio 3" --cta "…" --producto "<qué se ve: el producto o el servicio>" [--foto url1,url2] [--logo <url del logo real de un cliente>] [--fondo oscuro|claro] [--tipo servicio|producto] [--ar 4:5] [--n 1-3] [--resaltar "frase del título"] [--oferta "Desde $899"] [--layout hero|split|producto|auto] [--acento "#E63946"] [--extra "…"] [--sin-logo] [--ver]
 //        EL FLYER DE ELVIN (26/sep): minimalista, elegante, pocas palabras (1 título ≤ 8, ≤ 3 bullets de beneficio ≤ 6,
 //        CTA ≤ 4), el producto de héroe, logo REAL de la marca como referencia (nunca uno inventado). Valida el copy
 //        antes de gastar (sin "gratis", sin voseo, sin promesas de ingreso). --ver muestra el prompt sin generar.
@@ -34,7 +34,7 @@ const MODELO_IMAGEN = env("FAL_IMAGE_MODEL") || "fal-ai/nano-banana-pro";
 const MODELO_EDICION = env("FAL_EDIT_MODEL") || "fal-ai/nano-banana-pro/edit";
 const MODELO_VIDEO = env("FAL_VIDEO_MODEL") || "fal-ai/kling-video/v2.1/pro/image-to-video";
 
-const CON_VALOR = new Set(["ar", "n", "res", "ref", "img", "dur", "guardar", "marca", "titulo", "bullets", "cta", "producto", "foto", "fondo", "tipo", "extra", "logo"]);
+const CON_VALOR = new Set(["ar", "n", "res", "ref", "img", "dur", "guardar", "marca", "titulo", "bullets", "cta", "producto", "foto", "fondo", "tipo", "extra", "logo", "resaltar", "oferta", "layout", "acento"]);
 const pos = [];
 const val = {};
 const argv = process.argv.slice(2);
@@ -108,7 +108,7 @@ try {
     const refs = String(val.ref || "").split(",").map((x) => x.trim()).filter((x) => /^https:\/\//.test(x));
     await generarImagenes(prompt, refs, val.ar || "1:1");
   } else if (cmd === "flyer") {
-    const f = armarFlyer({ marca: val.marca, titulo: val.titulo, bullets: val.bullets, cta: val.cta, producto: val.producto, tipo: val.tipo, fondo: val.fondo, fotos: String(val.foto || "").split(",").map((x) => x.trim()).filter(Boolean), logo: val.logo, sinLogo: BANDERAS.has("sin-logo"), extra: val.extra });
+    const f = armarFlyer({ marca: val.marca, titulo: val.titulo, bullets: val.bullets, cta: val.cta, producto: val.producto, tipo: val.tipo, fondo: val.fondo, fotos: String(val.foto || "").split(",").map((x) => x.trim()).filter(Boolean), logo: val.logo, sinLogo: BANDERAS.has("sin-logo"), extra: val.extra, resaltar: val.resaltar, oferta: val.oferta, layout: val.layout, ar: val.ar || "4:5", acento: val.acento });
     console.log(`Flyer ${f.marca ? f.marca.nombre : "(sin marca)"} · título "${val.titulo || ""}" · ${f.bullets.length} bullet(s) · CTA "${val.cta || ""}" · logo: ${f.logo ? "sí (real)" : "no"} · ${f.refs.length} referencia(s)`);
     for (const a of f.avisos) console.log(`  ⚠ ${a}`);
     if (!f.ok) salir(`Copy fuera de la guía de Elvin — corrígelo antes de gastar:\n  - ${f.errores.join("\n  - ")}`);
