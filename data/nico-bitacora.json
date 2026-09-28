@@ -257,6 +257,14 @@
       "porque": "Sin cuenta ni perfil no hay link ni entrada.",
       "verificado": "fila en pulse_users + desempeno_perfiles activo; /ritmo/activar responde 200; security_log de Yaileen con login_ok",
       "commit": "— (dato)"
+    },
+    {
+      "fecha": "2026-09-28",
+      "plataforma": "Content OS (Vercel) · Ritmo",
+      "que": "[Solicitud de Aure #99] (junta #96-#99) Puestos nuevos en PUESTOS: RRHH, Coordinadora de Retención y Alianzas, AI Engineer (sin KPIs: nota = asistencia). Perfiles: Lis → Coordinadora de Retención y Alianzas; Yaileen → RRHH (sigue inactiva, sin ponche); Garrys Garcia → perfil nuevo AI Engineer, AI Borinquen, L-S 9-6, supervisora Ana Milena Consuegra, con acceso a Pulse (ya tenía clave). Ana Milena sin perfil: no hace falta para aprobar sus solicitudes. Garrys sin Slack ID (no salió en el Slack de LU).",
+      "porque": "Aure: Yaileen no puede crear puestos (son fijos en el código).",
+      "verificado": "npm test 224/0, deploy content-4xzkpslj3 Ready, ritmo 200, perfiles leídos de la base",
+      "commit": "b47520d"
     }
   ],
   "pendientesElvin": [
