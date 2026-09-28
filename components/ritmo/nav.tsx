@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Building2, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,13 +11,15 @@ import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
     ...(equipo ? [{ href: "/ritmo/equipo", nombre: "Equipo", icono: Users, activo: path.startsWith("/ritmo/equipo") }] : []),
     ...(equipo ? [{ href: "/ritmo/personas", nombre: "Personas", icono: UsersRound, activo: path.startsWith("/ritmo/personas") }] : []),
     ...(!equipo && miFicha ? [{ href: `/ritmo/personas/${miFicha}`, nombre: "Mi ficha", icono: IdCard, activo: path.startsWith("/ritmo/personas") }] : []),
+    // Arena (ventas): pestaña fija para closers/setters/chatters; la dirección entra desde Hoy (ya no cabe otra).
+    ...(arena && !equipo ? [{ href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena") }] : []),
     { href: "/ritmo/empresa", nombre: "Empresa", icono: Building2, activo: path.startsWith("/ritmo/empresa"), soloEscritorio: true },
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.

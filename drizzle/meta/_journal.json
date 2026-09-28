@@ -211,6 +211,13 @@
       "when": 1790551137290,
       "tag": "0029_papelera",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1790555037208,
+      "tag": "0030_arena-ventas",
+      "breakpoints": true
     }
   ]
 }

@@ -19,6 +19,7 @@ import {
   puestoPorId,
   rangoFechas,
   scoreDia,
+  sinPonche,
   valoresProduccion,
   type Asistencia,
   type CambioEstado,
@@ -334,7 +335,8 @@ export interface Panel {
 /** Todo lo del panel para lo que `actor` puede ver, de `desde` a `hasta` (días PR). */
 export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde: string, hasta: string, ahora = Date.now()): Promise<Panel> {
   const hoy = fechaPR(ahora);
-  const perfiles = (await leerPerfiles()).filter((p) => puedeVer(actor, p));
+  // Ventas no poncha: su lugar es la Arena, no Equipo (sin asistencia ni score).
+  const perfiles = (await leerPerfiles()).filter((p) => puedeVer(actor, p) && !sinPonche(p.puesto));
   const ids = perfiles.map((p) => p.userId);
   const d = await db();
   const [ponches, reportes, metas, prod, externas, lideresFilas] = await Promise.all([
@@ -399,6 +401,7 @@ export async function estadoPonche(userId: string, opcional = false): Promise<{ 
   try {
     const perfil = await perfilDe(userId);
     if (!perfil?.activo && !opcional) return null;
+    if (perfil?.activo && sinPonche(perfil.puesto)) return null; // ventas: sin reloj (su Hoy es el marcador)
     const hoy = fechaPR(Date.now());
     const abiertos = await ponchesAbiertos(userId);
     const deHoy = abiertos.find((p) => vigente(p));

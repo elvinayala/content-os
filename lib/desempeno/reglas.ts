@@ -28,6 +28,7 @@ export interface Puesto {
   departamento: string;
   kpis: Kpi[];
   manual?: { id: string; nombre: string }[]; // lo que reporta al marcar salida (además de bloqueos)
+  sinPonche?: boolean; // ventas: no ponchan; su desempeño es 100 % resultados (Arena, lib/ventas/reglas.ts)
 }
 
 // KPIs de Producción (editores, diseñadores, copy, web): ventana móvil de 7 días.
@@ -96,7 +97,14 @@ export const PUESTOS: Puesto[] = [
       { id: "escalaciones", nombre: "Escalaciones", fuente: "chatwoot", sentido: "menor", meta: 1, peso: 1, unidad: "u" },
     ],
   },
+  // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
+  { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
+  { id: "setter", nombre: "Setter", departamento: "Ventas", kpis: [], sinPonche: true },
+  { id: "chatter", nombre: "Chatter", departamento: "Ventas", kpis: [], sinPonche: true },
+  { id: "director_ventas", nombre: "Director de ventas", departamento: "Ventas", kpis: [], sinPonche: true },
 ];
+
+export const sinPonche = (puesto: string | null | undefined) => !!puesto && !!puestoPorId(puesto)?.sinPonche;
 
 // Empresas: la misma plataforma para las dos marcas, pero cada persona identificada (Elvin, 25/sep/2026).
 export const EMPRESAS = [

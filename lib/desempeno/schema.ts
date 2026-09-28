@@ -523,3 +523,78 @@ export const desempenoPoncheManual = pgTable(
   },
   (t) => [index("desempeno_ponche_manual_estado").on(t.estado, t.createdAt)],
 );
+
+// ─── Arena · ventas (27/sep/2026; reglas en lib/ventas/reglas.ts) ─────────────────────────────
+// Closers, setters y chatters de Level Up y AI Borinquen, SIN ponche. Las ventas salen de la hoja de
+// tesorería (no se guardan aquí); aquí va solo lo que no está en la hoja.
+
+// Diario de cada vendedor: una fila por persona y día (lo que el sistema no ve: citas, quién se
+// presentó, conversaciones, agendas, cómo le fue).
+export const desempenoVentasDiario = pgTable(
+  "desempeno_ventas_diario",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    fecha: text("fecha").notNull(), // YYYY-MM-DD PR
+    citas: integer("citas").notNull().default(0),
+    presentaron: integer("presentaron").notNull().default(0),
+    conversaciones: integer("conversaciones").notNull().default(0),
+    agendas: integer("agendas").notNull().default(0),
+    animo: integer("animo"), // 1-5
+    nota: text("nota"),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.fecha] })],
+);
+
+// Meta personal del mes ("$50,000 en ventas"), la pone cada quien.
+export const desempenoVentasGoals = pgTable(
+  "desempeno_ventas_goals",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    mes: text("mes").notNull(), // YYYY-MM
+    monto: integer("monto").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.mes] })],
+);
+
+// Bonos: Nahuel (director de ventas) los crea, SOLO Elvin los autoriza; el ganador lo marca el director y
+// Elvin aprueba el pago (si la persona tiene ficha con nómina, entra como ajuste del mes siguiente).
+export const desempenoVentasBonos = pgTable(
+  "desempeno_ventas_bonos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    empresa: text("empresa").notNull(), // level_up | ai_borinquen
+    titulo: text("titulo").notNull(),
+    detalle: text("detalle"),
+    monto: integer("monto").notNull(), // USD
+    rol: text("rol"), // closer | setter | chatter | null = todos
+    desde: text("desde").notNull(),
+    hasta: text("hasta"),
+    estado: text("estado").notNull().default("propuesto"), // propuesto | autorizado | ganado | pagado | rechazado | cerrado
+    creadoPor: uuid("creado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    autorizadoPor: uuid("autorizado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    ganadorId: uuid("ganador_id").references(() => pulseUsers.id, { onDelete: "set null" }),
+    ganadoAt: timestamp("ganado_at", { withTimezone: true }),
+    pagadoPor: uuid("pagado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+    ajusteId: uuid("ajuste_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("desempeno_ventas_bonos_empresa").on(t.empresa, t.estado)],
+);
+
+// Cómo sale cada vendedor escrito en la hoja cuando no es su nombre de Pulse ("Rogelio" → Roger).
+export const desempenoVentasAlias = pgTable(
+  "desempeno_ventas_alias",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    alias: text("alias").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.alias] })],
+);

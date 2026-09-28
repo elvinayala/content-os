@@ -1,10 +1,11 @@
-import { Building2, ChevronRight, HeartPulse, Plane } from "lucide-react";
+import { Building2, ChevronRight, HeartPulse, Plane, Trophy } from "lucide-react";
 import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
 import { Animo } from "@/components/ritmo/bienestar";
 import { Noticia } from "@/components/ritmo/noticias";
+import { MiMarcador } from "@/components/ritmo/arena-marcador";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
@@ -14,6 +15,7 @@ import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desemp
 import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
+import { accesoArena, armarArena } from "@/lib/ventas/datos";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Hoy" };
@@ -30,6 +32,10 @@ export default async function HoyPage() {
   // Dirección (Elvin, Carilin, Aure): ve el ponche como todos, opcional, con su nota especial.
   const direccion = u.rol === "admin" || u.rol === "editor";
   const estado = await estadoPonche(u.id, direccion);
+  // Ventas (Arena): sin reloj; en su lugar, su marcador (el ponche devuelve null para su puesto).
+  const arena = !estado && !direccion ? await accesoArena(u).catch(() => null) : null;
+  const vende = arena?.perfil ? arena : null;
+  const ventas = vende ? await armarArena(u, vende, vende.perfil!.empresa as "level_up").catch(() => null) : null;
   const seguridad = estado && !estado.sinPerfil ? await estadoSeguridad(u).catch(() => undefined) : undefined;
   // Sin perfil (dirección) no hay "Mi semana": no vale la pena armar el panel.
   const panel = estado && !estado.sinPerfil ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
@@ -62,7 +68,24 @@ export default async function HoyPage() {
 
       {estado ? <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} seguridad={seguridad} /> : null}
 
-      {!estado || estado.sinPerfil || u.maestro ? (
+      {ventas?.mio ? (
+        <div className="flex w-full max-w-md flex-col gap-3">
+          <MiMarcador rol={ventas.mio.rol} m={ventas.mio.m} goal={ventas.mio.goal} compacto />
+          <Link href="/ritmo/arena" className="panel group flex items-center gap-3 p-4 transition hover:border-primary/40">
+            <Trophy className="size-5 text-[color:var(--coral)]" />
+            <span className="flex-1 text-sm font-medium">La carrera, los bonos y mi diario</span>
+            <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+          </Link>
+        </div>
+      ) : vende ? (
+        <Link href="/ritmo/arena" className="panel group flex w-full max-w-md items-center gap-3 p-4 transition hover:border-primary/40">
+          <Trophy className="size-5 text-[color:var(--coral)]" />
+          <span className="flex-1 text-sm font-medium">Arena: la carrera, las comisiones y los bonos del equipo</span>
+          <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+        </Link>
+      ) : null}
+
+      {(!estado && !vende) || estado?.sinPerfil || u.maestro ? (
         <div className={`panel ${u.maestro ? "max-w-lg" : "max-w-sm"} p-6 text-center text-sm text-muted-foreground`}>
           {u.maestro || direccion ? (
             <>
@@ -76,6 +99,7 @@ export default async function HoyPage() {
                   { href: "/ritmo/carreras", t: "Carreras", d: "Vacantes y referidos" },
                   { href: "/ritmo/noticias", t: "Noticias", d: "Publicar al equipo" },
                   { href: "/ritmo/empresa", t: "Empresa", d: "Quiénes somos y recursos" },
+                  { href: "/ritmo/arena", t: "Arena", d: "Ventas y comisiones" },
                   { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar" },
                   { href: "/ritmo/seguridad", t: "Seguridad", d: "Equipos y ponches manuales" },
                   { href: "/ritmo/bienestar", t: "Bienestar", d: "Pausas y energía" },
