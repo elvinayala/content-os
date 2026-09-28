@@ -40,9 +40,14 @@ export function MiMarcador({ rol, m, goal, compacto = false }: { rol: RolVentas;
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           {rol === "closer" ? (
             <>
-              <Dato t="Show-up" v={pctTxt(m.tasas.showUp)} />
+              <Dato t={m.tasas.showUpFuente === "diario" ? "Show-up (diario)" : "Show-up (CRM)"} v={pctTxt(m.tasas.showUp)} />
               <Dato t="Cierre" v={pctTxt(m.tasas.cierre)} />
               <Dato t="Ventas nuevas" v={String(m.cierresMes)} />
+              {m.tasas.sinMarcar ? (
+                <p className="col-span-3 text-left text-[11px] text-amber-300">
+                  {m.tasas.sinMarcar} cita{m.tasas.sinMarcar === 1 ? "" : "s"} que ya pasaron siguen en «Llamada agendada» en Leads: muévelas (No show, Follow up, Closed…) para que cuenten en tu show-up.
+                </p>
+              ) : null}
             </>
           ) : (
             <>

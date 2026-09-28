@@ -13,6 +13,8 @@ export const desempenoPerfiles = pgTable("desempeno_perfiles", {
     .references(() => pulseUsers.id, { onDelete: "cascade" }),
   puesto: text("puesto").notNull(),
   empresa: text("empresa").notNull().default("level_up"), // level_up | ai_borinquen (misma plataforma, separado)
+  // Ventas: segunda empresa donde también vende (Laura: "un pie en Level y un pie en Bori", Nahuel 28/sep). null = solo una.
+  tambienEn: text("tambien_en"),
   slackId: text("slack_id"), // para los avisos del bot (el bot no puede buscar por correo); se busca solo por nombre
   // Seguridad: quien entra por Ritmo (alta o primer link de acceso) NO ve Pulse (clientes, tesorería).
   // Los que ya usaban Pulse con su clave quedan en false. Solo admin/editoras lo cambian en Ajustes.

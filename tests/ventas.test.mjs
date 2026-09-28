@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { carrera, equipo, errorBono, errorDiario, leerHojaVentas, marcador, mismaPersona, pasarelaDe, pctChatter, pctCloser, semanaDe, siguienteTramo, tasasDelMes, transaccionesDe } from "../lib/ventas/reglas.ts";
+import { carrera, contarCitas, equipo, errorBono, errorDiario, leerHojaVentas, marcador, mismaPersona, pasarelaDe, pctChatter, pctCloser, resultadoCita, semanaDe, siguienteTramo, tasasDelMes, transaccionesDe } from "../lib/ventas/reglas.ts";
 
 test("closer: 7 % base; 8-10 % solo con show-up ≥ 60 % (reglas de Nahuel)", () => {
   assert.equal(pctCloser(null, null), 0.07);
@@ -101,4 +101,31 @@ test("validaciones de diario y bonos", () => {
   assert.equal(errorDiario({ citas: 3, presentaron: 2, conversaciones: 10, agendas: 1 }), null);
   assert.equal(errorBono({ titulo: "Primero en cerrar 5", monto: 200, desde: "2026-09-28", hasta: "2026-10-04" }), null);
   assert.match(errorBono({ titulo: "x", monto: 200, desde: "2026-09-28", hasta: null }), /título/);
+});
+
+test("show-up desde el CRM (Nahuel, 28/sep): etapa del lead después de la cita", () => {
+  assert.equal(resultadoCita("Llamada agendada"), "sin_marcar");
+  assert.equal(resultadoCita("Llamada reprogramada"), "sin_marcar");
+  assert.equal(resultadoCita("Llamada cancelada"), "cancelada");
+  assert.equal(resultadoCita("No show"), "no_show");
+  assert.equal(resultadoCita("No ofertado"), "presento");
+  assert.equal(resultadoCita("Follow up"), "presento");
+  assert.equal(resultadoCita("Pago reserva"), "presento");
+  assert.equal(resultadoCita("Closed win"), "presento");
+  assert.equal(resultadoCita("Closed lost"), "presento");
+  assert.equal(resultadoCita("Llamada agendada", "ganado"), "presento");
+  const crm = contarCitas(["presento", "presento", "presento", "no_show", "cancelada", "sin_marcar"]);
+  assert.deepEqual(crm, { citas: 5, presentaron: 3, noShow: 1, sinMarcar: 1 });
+  // CRM manda sobre el diario; las sin marcar no cuentan
+  const t = tasasDelMes({ diario: [{ fecha: "2026-09-01", citas: 10, presentaron: 1, conversaciones: 0, agendas: 0 }], cierresHoja: 1, agendasLeads: 0, crm });
+  assert.equal(t.showUpFuente, "crm");
+  assert.equal(t.showUp, 0.75);
+  assert.equal(t.presentaron, 3);
+  assert.equal(t.sinMarcar, 1);
+  assert.equal(Math.round(t.cierre * 100), 33);
+  // sin citas marcadas en el CRM → diario
+  const d = tasasDelMes({ diario: [{ fecha: "2026-09-01", citas: 4, presentaron: 3, conversaciones: 0, agendas: 0 }], cierresHoja: 0, agendasLeads: 0, crm: { citas: 2, presentaron: 0, noShow: 0, sinMarcar: 2 } });
+  assert.equal(d.showUpFuente, "diario");
+  assert.equal(d.showUp, 0.75);
+  assert.match(siguienteTramo("closer", { showUp: null, cierre: null, agendas: 0 }), /Leads/);
 });

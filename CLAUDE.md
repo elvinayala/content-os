@@ -676,7 +676,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   $30K), alerta roja/ámbar del día, meta personal, diario (hoy o ayer). Comisión privada: cada quien la suya; el director de
   ventas y la dirección (Leads: AIB solo Elvin/Aure) ven la tabla de todos. **Bonos**: el director los crea → SOLO Elvin autoriza
   → el director marca ganador → Elvin aprueba el pago (ajuste de nómina si tiene ficha). Nombres de la hoja ≈ Pulse por
-  `mismaPersona` (primer nombre + resto en orden); si no cuadra, fila en `desempeno_ventas_alias`.
+  `mismaPersona` (primer nombre + resto en orden); si no cuadra, fila en `desempeno_ventas_alias`. **28/sep (Nahuel):** la 2.ª
+  cuota comisiona (para quien sale en su fila); el **show-up de los closers sale del CRM** (Leads → CLOSERS: etapa del lead tras
+  cada cita; "Llamada agendada" ya pasada = sin marcar, se le recuerda; sin citas marcadas → diario; `resultadoCita` +
+  `citasDelMes`); **Laura vende en las dos marcas** (`desempeno_perfiles.tambien_en`, migración 0031, "También vende en" en
+  Ajustes); Joaquín es closer. Pendiente: la planilla de Excel de Nahuel para las agendas de los chatters.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

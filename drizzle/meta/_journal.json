@@ -218,6 +218,13 @@
       "when": 1790555037208,
       "tag": "0030_arena-ventas",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1790603765714,
+      "tag": "0031_tambien-en",
+      "breakpoints": true
     }
   ]
 }

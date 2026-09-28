@@ -27,6 +27,7 @@ import { errorPlan } from "@/lib/desempeno/viajes-reglas";
 import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereCuenta as requiereUsuario } from "@/lib/pulse/auth";
+import { esPuestoVentas } from "@/lib/ventas/reglas";
 import { COOKIE_PULSE } from "@/lib/pulse/session";
 
 type R<T = object> = ({ ok: true } & T) | { ok: false; error: string };
@@ -177,6 +178,7 @@ export async function guardarPerfilAction(p: {
   userId: string;
   puesto: string;
   empresa: string;
+  tambienEn?: string | null;
   slackId?: string | null;
   soloRitmo?: boolean;
   liderId: string | null;
@@ -191,6 +193,8 @@ export async function guardarPerfilAction(p: {
     const u = await requiereMaestro();
     if (!PUESTOS.some((x) => x.id === p.puesto)) throw new Error("Puesto inválido");
     if (!EMPRESAS.some((x) => x.id === p.empresa)) throw new Error("Empresa inválida");
+    // Solo ventas vende en las dos empresas (Laura); a los demás se les limpia.
+    const tambienEn = esPuestoVentas(p.puesto) && p.tambienEn && p.tambienEn !== p.empresa && EMPRESAS.some((x) => x.id === p.tambienEn) ? p.tambienEn : null;
     if (!HORA.test(p.horaEntrada) || !HORA.test(p.horaSalida) || p.horaSalida <= p.horaEntrada) throw new Error("Horario inválido");
     if (!["contratista", "nomina", "eor"].includes(p.tipoContrato)) throw new Error("Contrato inválido");
     if (p.fechaIngreso && !/^\d{4}-\d{2}-\d{2}$/.test(p.fechaIngreso)) throw new Error("Fecha de ingreso inválida");
@@ -214,7 +218,7 @@ export async function guardarPerfilAction(p: {
     // el perfil de Ritmo le cerraba Leads (28/sep: Dilan y Ana, chatters, perdieron Leads al crearles el perfil).
     const conLeads = await import("@/lib/leads/repo").then((r) => r.tienePermisoLeads(p.userId));
     const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : conLeads ? false : (previo?.soloRitmo ?? !cuenta?.tieneClave);
-    await datos.guardarPerfil({ ...p, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
+    await datos.guardarPerfil({ ...p, tambienEn, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null }, u.id);
     refresh();
     return {};
   });

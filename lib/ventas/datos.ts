@@ -8,10 +8,10 @@ import { crearAjuste, leerFicha } from "../desempeno/fichas";
 import { desempenoVentasAlias, desempenoVentasBonos, desempenoVentasDiario, desempenoVentasGoals } from "../desempeno/schema";
 import type { UsuarioRitmo } from "../desempeno/sesion";
 import { marcasConAcceso } from "../leads/repo";
-import { leadsTratos } from "../leads/schema";
+import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
-import { carrera, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, type RolVentas, semanaDe, tasasDelMes, transaccionesDe } from "./reglas";
+import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe } from "./reglas";
 
 // Arena (ventas en Ritmo): datos. Las ventas salen de la hoja de tesorería de cada marca por el mismo Apps
 // Script del resumen del día (scripts/drive/ventas-hoy.gs · VENTAS_SCRIPT_URL + VENTAS_SCRIPT_SECRETO).
@@ -76,7 +76,7 @@ export async function accesoArena(u: UsuarioRitmo): Promise<AccesoArena> {
   const perfil = perfiles.find((p) => p.userId === u.id && esPuestoVentas(p.puesto)) ?? null;
   const direccion = u.maestro && (u.rol === "admin" || u.rol === "editor");
   const marcas = direccion ? ((await marcasConAcceso(u).catch(() => [])) as Empresa[]) : [];
-  const empresas = [...new Set<Empresa>([...(perfil ? [perfil.empresa as Empresa] : []), ...marcas])];
+  const empresas = [...new Set<Empresa>([...(perfil ? [perfil.empresa as Empresa, ...(perfil.tambienEn ? [perfil.tambienEn as Empresa] : [])] : []), ...marcas])];
   const rol = perfil && perfil.puesto !== "director_ventas" ? (perfil.puesto as RolVentas) : null;
   return { empresas, perfil, rol, director: perfil?.puesto === "director_ventas", direccion, autoriza: u.maestro && u.rol === "admin" };
 }
@@ -99,7 +99,8 @@ export interface Vendedor {
 }
 
 export async function vendedores(empresa: Empresa): Promise<Vendedor[]> {
-  const perfiles = (await leerPerfiles()).filter((p) => p.empresa === empresa && esPuestoVentas(p.puesto));
+  // Su empresa o la segunda donde también vende (Laura: Level Up y AI Borinquen).
+  const perfiles = (await leerPerfiles()).filter((p) => (p.empresa === empresa || p.tambienEn === empresa) && esPuestoVentas(p.puesto));
   const ids = perfiles.map((p) => p.userId);
   const d = await db();
   const alias = ids.length ? await d.select().from(desempenoVentasAlias).where(inArray(desempenoVentasAlias.userId, ids)) : [];
@@ -155,6 +156,43 @@ export async function agendasDelMes(empresa: Empresa, mes: string, personas: Ven
     }
   } catch (e) {
     console.error("[arena] agendas", e);
+  }
+  return out;
+}
+
+// ─── Show-up desde el CRM (Leads → CLOSERS) ──────────────────────────────────────────────────
+
+/**
+ * Citas de cada closer que ya pasaron este mes, con cómo terminaron según la etapa del lead (Nahuel, 28/sep:
+ * "lo saco del CRM, solo tengo que tener los closers al día"). La cita = la actividad "llamada" que deja el cable de
+ * Calendly (asignada al closer, a la hora de la cita; si reagenda se mueve). Una por lead: la última.
+ */
+export async function citasDelMes(empresa: Empresa, mes: string): Promise<Record<string, CitasCRM>> {
+  const [y, m] = mes.split("-").map(Number);
+  const desde = new Date(Date.UTC(y, m - 1, 1, 4));
+  const hasta = new Date(Math.min(Date.UTC(y, m, 1, 4), Date.now()));
+  const out: Record<string, CitasCRM> = {};
+  try {
+    const d = await db();
+    const filas = await d
+      .select({ trato: leadsActividades.tratoId, closer: leadsActividades.asignadoId, cuando: leadsActividades.venceAt, etapa: leadsEtapas.nombre, estado: leadsTratos.estado })
+      .from(leadsActividades)
+      .innerJoin(leadsTratos, eq(leadsTratos.id, leadsActividades.tratoId))
+      .innerJoin(leadsEtapas, eq(leadsEtapas.id, leadsTratos.etapaId))
+      .where(and(eq(leadsTratos.marca, empresa), eq(leadsActividades.tipo, "llamada"), gte(leadsActividades.venceAt, desde), lt(leadsActividades.venceAt, hasta)))
+      .orderBy(desc(leadsActividades.venceAt));
+    const vistos = new Set<string>();
+    const porCloser = new Map<string, ResultadoCita[]>();
+    for (const f of filas) {
+      if (!f.closer || vistos.has(f.trato)) continue;
+      vistos.add(f.trato);
+      const lista = porCloser.get(f.closer) ?? [];
+      lista.push(resultadoCita(f.etapa, f.estado));
+      porCloser.set(f.closer, lista);
+    }
+    for (const [closer, rs] of porCloser) out[closer] = contarCitas(rs);
+  } catch (e) {
+    console.error("[arena] citas del CRM", e);
   }
   return out;
 }
@@ -241,13 +279,13 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
   const vendiendo = gente.filter((g) => g.rol !== "director_ventas") as (Vendedor & { rol: RolVentas })[];
   const verTodos = a.director || a.direccion;
   const conMarcador = verTodos ? vendiendo : vendiendo.filter((g) => g.userId === u.id);
-  const [hoja, diario, agendas] = await Promise.all([hojaDelMes(empresa, hoy), diarioDelMes(conMarcador.map((g) => g.userId), mes), agendasDelMes(empresa, mes, vendiendo)]);
+  const [hoja, diario, agendas, citas] = await Promise.all([hojaDelMes(empresa, hoy), diarioDelMes(conMarcador.map((g) => g.userId), mes), agendasDelMes(empresa, mes, vendiendo), citasDelMes(empresa, mes)]);
   const txs = hoja.transacciones;
   const semana = semanaDe(hoy);
 
   const marcadorDe = (g: Vendedor & { rol: RolVentas }): Marcador => {
     const mias = transaccionesDe(txs, g.rol, g.nombre, g.alias);
-    const tasas = tasasDelMes({ diario: diario.filter((d) => d.userId === g.userId).map(aDiario), cierresHoja: mias.filter((t) => t.tipo === "nueva").length, agendasLeads: agendas[g.userId] ?? 0 });
+    const tasas = tasasDelMes({ diario: diario.filter((d) => d.userId === g.userId).map(aDiario), cierresHoja: mias.filter((t) => t.tipo === "nueva").length, agendasLeads: agendas[g.userId] ?? 0, crm: g.rol === "closer" ? (citas[g.userId] ?? null) : null });
     return marcador({ txs: mias, rol: g.rol, hoy, semana, tasas });
   };
 

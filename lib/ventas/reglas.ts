@@ -7,6 +7,9 @@
 //   · setter 4 % de las ventas que él agendó;
 //   · chatter 4 %, 5 % si ESE chatter pasa de 200 agendas en el mes.
 // Pasarelas (Elvin, 27/sep): Stripe, PayPal y ATH Móvil 3.5 %; Klarna y FanBasis 4.5 %.
+// Nahuel, 28/sep: la 2.ª cuota de una venta a plazos SÍ comisiona (cuenta para quien sale en esa fila de la hoja,
+// "sobre todo si la cobra el closer"); el show-up de los closers sale del CRM (Leads → CLOSERS), no del diario:
+// los closers tienen que mover cada cita que ya pasó (No show / No ofertado / Follow up / Pago reserva / Closed).
 
 export type Empresa = "level_up" | "ai_borinquen";
 export type RolVentas = "closer" | "setter" | "chatter";
@@ -78,7 +81,7 @@ export function pctDe(rol: RolVentas, t: { showUp: number | null; cierre: number
 export function siguienteTramo(rol: RolVentas, t: { showUp: number | null; cierre: number | null; agendas: number }): string | null {
   if (rol === "chatter") return t.agendas > AGENDAS_CHATTER_ALTO ? null : `${AGENDAS_CHATTER_ALTO + 1 - t.agendas} agendas más para el 5 %`;
   if (rol !== "closer") return null;
-  if (t.showUp == null || t.cierre == null) return "Llena tu diario (citas y quién se presentó) para subir de 7 %";
+  if (t.showUp == null || t.cierre == null) return "Mueve en Leads cada cita que ya pasó (No show, Follow up, Closed…) para subir de 7 %";
   if (t.showUp < SHOW_UP_MINIMO) return `Sube tu show-up a 60 % (vas ${pct(t.showUp)}) para pasar de 7 %`;
   const prox = [...TRAMOS_CLOSER].reverse().find((x) => t.cierre! < x.cierre - 1e-9);
   return prox ? `Cierre de ${Math.round(prox.cierre * 100)} % → ${Math.round(prox.pct * 100)} % (vas ${pct(t.cierre)})` : null;
@@ -222,21 +225,68 @@ export interface Tasas {
   cierres: number;
   showUp: number | null;
   cierre: number | null;
+  showUpFuente: "crm" | "diario" | null;
+  sinMarcar: number; // citas del CRM que ya pasaron y el closer no ha movido
   agendas: number;
   agendasFuente: "leads" | "diario";
 }
 
-/** Show-up = presentaron ÷ citas (diario). Cierre = ventas nuevas de la hoja ÷ presentaron. */
-export function tasasDelMes(p: { diario: Diario[]; cierresHoja: number; agendasLeads: number }): Tasas {
-  const citas = p.diario.reduce((s, d) => s + d.citas, 0);
-  const presentaron = p.diario.reduce((s, d) => s + d.presentaron, 0);
+// ─── Show-up desde el CRM (Leads → embudo CLOSERS) ────────────────────────────────────────────
+
+export type ResultadoCita = "presento" | "no_show" | "cancelada" | "sin_marcar";
+
+const normEtapa = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+/** Cómo terminó una cita que ya pasó, según la etapa donde el closer dejó el lead. */
+export function resultadoCita(etapa: string, estado?: string | null): ResultadoCita {
+  const e = normEtapa(etapa);
+  if (/cancel/.test(e)) return "cancelada";
+  if (/no ?show|no se present/.test(e)) return "no_show";
+  if (estado === "ganado") return "presento";
+  if (/no ofertado|follow|seguimiento|pago|reserva|closed|cerrad|ganad|perdid|oferta/.test(e)) return "presento";
+  return "sin_marcar"; // sigue en "Llamada agendada/reprogramada": el closer no lo ha movido
+}
+
+export interface CitasCRM {
+  citas: number; // sin las canceladas
+  presentaron: number;
+  noShow: number;
+  sinMarcar: number;
+}
+
+export function contarCitas(rs: ResultadoCita[]): CitasCRM {
+  const n = (r: ResultadoCita) => rs.filter((x) => x === r).length;
+  return { citas: rs.length - n("cancelada"), presentaron: n("presento"), noShow: n("no_show"), sinMarcar: n("sin_marcar") };
+}
+
+/**
+ * Show-up = presentaron ÷ (presentaron + no show). Sale del CRM (así lo mide Nahuel); si el closer no tiene citas
+ * marcadas en el CRM (p. ej. AI Borinquen, que todavía no agenda por Leads), del diario. Las citas sin marcar no
+ * cuentan ni a favor ni en contra: se le recuerdan. Cierre = ventas nuevas de la hoja ÷ presentaron.
+ */
+export function tasasDelMes(p: { diario: Diario[]; cierresHoja: number; agendasLeads: number; crm?: CitasCRM | null }): Tasas {
   const agendasDiario = p.diario.reduce((s, d) => s + d.agendas, 0);
+  const marcadasCRM = p.crm ? p.crm.presentaron + p.crm.noShow : 0;
+  let citas: number;
+  let presentaron: number;
+  let showUpFuente: Tasas["showUpFuente"];
+  if (p.crm && marcadasCRM > 0) {
+    citas = marcadasCRM;
+    presentaron = p.crm.presentaron;
+    showUpFuente = "crm";
+  } else {
+    citas = p.diario.reduce((s, d) => s + d.citas, 0);
+    presentaron = p.diario.reduce((s, d) => s + d.presentaron, 0);
+    showUpFuente = citas > 0 ? "diario" : null;
+  }
   return {
     citas,
     presentaron,
     cierres: p.cierresHoja,
     showUp: citas > 0 ? Math.min(1, presentaron / citas) : null,
     cierre: presentaron > 0 ? Math.min(1, p.cierresHoja / presentaron) : null,
+    showUpFuente,
+    sinMarcar: p.crm?.sinMarcar ?? 0,
     agendas: p.agendasLeads > 0 ? p.agendasLeads : agendasDiario,
     agendasFuente: p.agendasLeads > 0 ? "leads" : "diario",
   };

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Perfil } from "@/lib/desempeno/datos";
 import { kpisDe, PUESTOS, type OverrideMeta } from "@/lib/desempeno/reglas";
+import { esPuestoVentas } from "@/lib/ventas/reglas";
 
 import { EmpresaBadge } from "./piezas";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,7 @@ const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-
 type Usuario = { id: string; nombre: string; email: string };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
-const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
+const nuevo = (userId: string): Borrador => ({ userId, puesto: "estratega", empresa: "level_up", tambienEn: null, slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
 export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean }) {
   const [tab, setTab] = useState<"personas" | "metas">("personas");
@@ -147,6 +148,15 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuar
               <option value="ai_borinquen">AI Borinquen</option>
             </select>
           </Campo>
+          {esPuestoVentas(b.puesto) ? (
+            <Campo label="También vende en">
+              <select className={select} value={b.tambienEn ?? ""} onChange={(e) => set("tambienEn", e.target.value || null)}>
+                <option value="">— Solo en su empresa —</option>
+                {b.empresa !== "level_up" ? <option value="level_up">Level Up</option> : null}
+                {b.empresa !== "ai_borinquen" ? <option value="ai_borinquen">AI Borinquen</option> : null}
+              </select>
+            </Campo>
+          ) : null}
           <Campo label="Supervisor">
             <select className={select} value={b.liderId ?? ""} onChange={(e) => set("liderId", e.target.value || null)}>
               <option value="">— Sin supervisor (va directo a RR.HH.) —</option>

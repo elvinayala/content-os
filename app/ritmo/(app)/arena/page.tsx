@@ -117,7 +117,10 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
                       </td>
                       <td className="num py-2 pr-3 font-mono">{usd(c.m.mes)}</td>
                       <td className="num py-2 pr-3 font-mono">{usd(c.m.netoMes)}</td>
-                      <td className="num py-2 pr-3 font-mono text-xs">{c.rol === "closer" ? `${c.m.tasas.showUp == null ? "—" : Math.round(c.m.tasas.showUp * 100) + " %"} / ${c.m.tasas.cierre == null ? "—" : Math.round(c.m.tasas.cierre * 100) + " %"}` : "—"}</td>
+                      <td className="num py-2 pr-3 font-mono text-xs">
+                        {c.rol === "closer" ? `${c.m.tasas.showUp == null ? "—" : Math.round(c.m.tasas.showUp * 100) + " %"} / ${c.m.tasas.cierre == null ? "—" : Math.round(c.m.tasas.cierre * 100) + " %"}` : "—"}
+                        {c.rol === "closer" && c.m.tasas.sinMarcar ? <span className="block text-[10px] text-amber-300">{c.m.tasas.sinMarcar} sin marcar en Leads</span> : null}
+                      </td>
                       <td className="num py-2 pr-3 font-mono text-xs">{c.rol === "closer" ? "—" : c.m.tasas.agendas}</td>
                       <td className="num py-2 pr-3 font-mono">{Math.round(c.m.pct * 100)} %</td>
                       <td className="num py-2 text-right font-mono font-semibold text-primary">{usd(c.m.comision)}</td>
