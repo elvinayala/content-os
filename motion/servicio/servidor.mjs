@@ -20,6 +20,8 @@ const PORT = Number(process.env.PORT || 8080);
 const SECRETO = process.env.REMI_SECRETO || "";
 const REPO = process.env.REMI_REPO || "/estado/repos/content-os";
 const MOTION = path.join(REPO, "motion");
+// Licencia Automators de Remotion (Elvin la compró el 28/sep): con la llave, cada render se reporta y se cobra $0.01.
+const LICENCIA = process.env.REMOTION_LICENSE_KEY || null;
 const trabajos = new Map();
 const cola = [];
 let ocupado = false;
@@ -69,7 +71,7 @@ async function procesar(t) {
       log(`trabajo ${t.id}: render ${id}`);
       const comp = await selectComposition({ serveUrl, id: compId, inputProps });
       const salida = path.join("/tmp", `${id}.mp4`);
-      await renderMedia({ composition: comp, serveUrl, codec: "h264", outputLocation: salida, inputProps, chromiumOptions: { gl: "swangle" }, logLevel: "error" });
+      await renderMedia({ composition: comp, serveUrl, codec: "h264", outputLocation: salida, inputProps, chromiumOptions: { gl: "swangle" }, logLevel: "error", licenseKey: LICENCIA });
       const url = await subir(salida, `${id}.mp4`);
       fs.rmSync(salida, { force: true });
       t.resultados.push({ id, url, segundos: Math.round(comp.durationInFrames / comp.fps), renderSeg: Math.round((Date.now() - t0) / 1000) });

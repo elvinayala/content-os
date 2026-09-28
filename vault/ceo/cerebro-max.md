@@ -662,5 +662,10 @@ antes de proponer o producir motion. Lo esencial:
   `node scripts/meta-ads/subir-videos.mjs cliente:<slug> <url>` y campaña EN PAUSA. Tú subes los MP4 a Meta y
   montas la campaña (siempre EN PAUSA, verificando en Meta con `campanas`/`arbol` antes de avisar — el 27/sep
   avisaste "armada" y no existía en Meta: eso no puede repetirse).
+- **Motion con IDENTIDAD, no plain (Elvin, 28/sep):** los primeros de la Dra. Escabí quedaron "muy básicos, sin su logo,
+  sin su identidad, no hacen wow". Antes de producir pide a Jessica/Carilin (en #max-aprobaciones, en el hilo del
+  cliente): logo real (PNG/SVG), colores y elementos de marca, fotos aprobadas de la persona y su negocio, cómo la
+  contactan y qué destacar. Sin eso no se entrega; con eso, cada escena lleva su logo vivo, su motivo gráfico y sus fotos.
+  Esa info tiene que quedar en la ficha/carpeta desde el onboarding (skill §7).
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
   Bori, AI Borinquen, Ritmo y 1000X; úsalos como creativos de campaña.

@@ -101,6 +101,14 @@ guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.
 ## 7. Paquete para clientes (Elvin, 27/sep/2026)
 Elvin, 28/sep: **2 videos de MOTION GRAPHICS** a los clientes de Level Up cuyo acuerdo es de **$3,500 o más** y que lo **pagaron completo de una** (28/sep: antes eran 3). Si paga en plazos, aunque el acuerdo sea mayor, **no se le hacen hasta que complete los pagos** (se revisa en Pulse: Pago Inicial = Acuerdo de Pago / "Pago Único"). Siempre motion por código con
 esta fábrica — nunca UGC, caras con IA ni video generativo en su lugar). Flujo de Max, de punta a punta:
+**Antes de producir, el material del cliente (Elvin, 28/sep — los primeros de la Dra. Escabí quedaron "muy básicos,
+muy plain, no hacen wow, sin su logo, sin su identidad"):** su **logo real** (PNG transparente/SVG) para animarlo por
+piezas, sus **colores y elementos de marca** (motivos, texturas, íconos), **fotos** de la persona y su negocio que apruebe
+usar, **cómo lo contactan** (WhatsApp, link de citas, IG) y **qué destacar** (servicio estrella, público, frase, caso con
+su OK). Lo pide Max a Jessica/Carilin en #max-aprobaciones y queda en la ficha/carpeta desde el onboarding. Sin ese
+material el video sale genérico: no se entrega así. Cada video debe tener identidad visible en cada escena (logo vivo,
+su motivo gráfico, sus fotos) y detalle (texturas, partículas de marca, transiciones con su forma), no solo texto sobre
+color plano.
 1. **Marca del cliente en su expediente** (una vez, con SU logo real):
    `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
 2. **2 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:
@@ -109,4 +117,4 @@ esta fábrica — nunca UGC, caras con IA ni video generativo en su lugar). Fluj
 3. **Aprobado** (ok de Elvin o Carilin) → el servidor los guarda en su Drive (`videos/`) y los manda a su canal.
 4. **Si se pautan:** `node scripts/meta-ads/subir-videos.mjs cliente:<slug> <url-del-video>…` → IDs de Meta → campaña
    EN PAUSA con `meta-ads.mjs cliente:<slug> …` (verificar con `arbol` antes de avisar).
-Licencia: Remotion para empresas de 4+ personas = Company License (ver cerebro de Remi).
+Licencia: **Automators** (Elvin, 28/sep): la llave va en `REMOTION_LICENSE_KEY` del servicio `remi` en Railway y cada render la reporta ($0.01; mínimo $100/mes).
