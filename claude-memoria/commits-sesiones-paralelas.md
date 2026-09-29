@@ -9,3 +9,5 @@ En AGENTE CONTENIDO trabajan varias sesiones de Claude en paralelo sobre el mism
 **Why:** el build de Vercel se hace desde `main`; un import a un archivo sin commitear rompe producción.
 
 **How to apply:** antes de `git add`, correr `git diff <archivo>` y confirmar que TODOS los hunks son míos. Si hay ajenos: armar la versión limpia (la de HEAD + solo mis cambios), commitearla y devolver al working tree la versión con los cambios de la otra sesión. Nunca `git add -A` ni `git add .`. Relacionado: [[deploy-vault-empaque]].
+
+OJO con Python: `open(p,"w").write(f(...))` abre (y VACÍA) el archivo antes de calcular; si f falla queda en 0 bytes (pasó con nav.tsx y CLAUDE.md el 29/sep). Calcular primero, escribir después. Para recuperar, el working copy de antes está en los autostash de `git pull --autostash` (`git show <stash>:archivo`).
