@@ -78,11 +78,13 @@ export async function GET(req: NextRequest) {
   if (tarea === "sin-ponche") {
     const panel = await armarPanel(SISTEMA, hoy, hoy);
     const fuera = new Set((await tramosEntre(hoy, hoy)).filter((t) => t.estado === "aprobada").map((t) => t.userId));
-    const faltan = panel.filas.filter((f) => f.hoy.asistencia.estado === "ausente" && !f.ponchesAbiertos.length && !fuera.has(f.perfil.userId));
+    const rrhh = new Set((process.env.RITMO_RRHH ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean));
+    // RR.HH. no sale en su propia lista.
+    const faltan = panel.filas.filter((f) => f.hoy.asistencia.estado === "ausente" && !f.ponchesAbiertos.length && !fuera.has(f.perfil.userId) && !rrhh.has(f.perfil.email.toLowerCase()));
     const envios: { para: string; texto: string; enviados?: number }[] = [];
     if (faltan.length) {
       const lista = faltan.map((f) => `• ${esc(f.perfil.nombre)} (entra ${f.perfil.horaEntrada})`).join("\n");
-      const texto = `⏰ Son las 10 AM y ${faltan.length === 1 ? "esta persona no ha" : `estas ${faltan.length} personas no han`} marcado la entrada en Ritmo:\n${lista}\n\nEscríbeles directo: ¿están trabajando hoy? ¿necesitan ayuda para entrar a Ritmo o para registrar su computadora? (Si alguien tiene el día libre aprobado, no sale en esta lista.) <${base}/ritmo/equipo|Ver en Ritmo>`;
+      const texto = `⏰ Son las 10 AM y ${faltan.length === 1 ? "esta persona no ha" : `estas ${faltan.length} personas no han`} marcado la entrada en Ritmo:\n${lista}\n\nEscríbeles directo: ¿están trabajando hoy? ¿necesitan ayuda para entrar a Ritmo o para registrar su computadora? (Si alguien tiene el día libre aprobado, no sale en esta lista.) <https://ritmo.levelupmediapr.net/ritmo/equipo|Ver en Ritmo>`;
       envios.push({ para: "RR.HH.", texto });
     }
     if (real) for (const e of envios) e.enviados = await avisarRrhh(e.texto);
