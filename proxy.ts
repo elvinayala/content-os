@@ -37,6 +37,13 @@ export default async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
+  // Dominio del equipo de ventas (leads.levelupmediapr.net, 28/sep): la raíz es la entrada de ventas y solo existe Leads
+  // (lo que no sea Leads, su entrada o sus archivos/acciones vuelve a Leads: ahí nunca se ve un tablero de clientes).
+  if (host.startsWith("leads.")) {
+    if (pathname === "/") return NextResponse.rewrite(new URL("/ventas", request.url));
+    const permitido = pathname === "/ventas" || pathname.startsWith("/pulse/leads") || pathname === "/pulse/verificar" || pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname.startsWith("/pulse/icon") || pathname.startsWith("/pulse/apple-icon");
+    if (!permitido) return NextResponse.redirect(new URL("/pulse/leads", request.url));
+  }
   // Dominios de Ritmo (ritmo.levelupmediapr.net y ritmo-*.vercel.app): la raíz va directo a Ritmo, y
   // cualquier ruta que no sea de Ritmo (o sus archivos/acciones) también, para que nunca caiga en otra app.
   if (host.startsWith("ritmo.") && pathname !== "/" && !pathname.startsWith("/ritmo") && !pathname.startsWith("/_next/") && !pathname.startsWith("/api/") && !pathname.startsWith("/pulse/login")) {
@@ -130,6 +137,8 @@ export default async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
     }
+    // En leads.levelupmediapr.net la entrada es la de ventas (la raíz), nunca el login de Pulse.
+    if (host.startsWith("leads.")) return NextResponse.redirect(new URL("/", request.url));
     const login = new URL("/pulse/login", request.url);
     login.searchParams.set("desde", pathname);
     return NextResponse.redirect(login);

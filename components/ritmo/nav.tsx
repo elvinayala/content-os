@@ -7,11 +7,12 @@ import { usePathname } from "next/navigation";
 import { salirDeRitmoAction } from "@/app/ritmo/actions";
 import { cn } from "@/lib/utils";
 
+import { BotonSlack, type EspacioSlack } from "./boton-slack";
 import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, pulse = null }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; pulse?: { href: string; nombre: string } | null }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, pulse = null, slack = [] }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; pulse?: { href: string; nombre: string } | null; slack?: EspacioSlack[] }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
@@ -53,6 +54,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
             </nav>
           ) : null}
           <span className="ml-auto" />
+          <BotonSlack espacios={slack} />
           {pulse ? (
             <a href={pulse.href} title={`Ir a ${pulse.nombre}`} className="hidden items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:text-foreground sm:flex">
               <LayoutGrid className="size-3.5" /> {pulse.nombre}

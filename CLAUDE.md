@@ -1087,7 +1087,13 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   encendido). Alertas a Elvin (`alertarElvin`): intento con correo sin cuenta, cuenta vetada o desactivada, bloqueo por 5 claves
   malas, y cuenta nueva con correo fuera de la empresa (`avisarCuentaFuera`, en Pulse y en el alta de Ritmo). **Entrada del equipo
   de ventas: `/ventas`** (pública en proxy; mismas cuentas, cae en /pulse/leads). Botón **Ir a Ritmo** en el Inicio y la barra de
-  Pulse (misma sesión) y **Pulse/Leads** en el encabezado de Ritmo.
+  Pulse (misma sesión) y **Pulse/Leads** en el encabezado de Ritmo. **Dominio serio: `leads.levelupmediapr.net`** (agregado al
+  proyecto en Vercel el 28/sep; falta en Network Solutions: CNAME `leads` → `cname.vercel-dns.com` + TXT `_vercel` =
+  `vc-domain-verify=leads.levelupmediapr.net,36a3bcd819ef185180af`). En ese host la raíz es /ventas y todo lo que no sea Leads
+  vuelve a Leads (proxy); `LEADS_URL` apunta los botones de Ritmo ahí cuando esté verificado.
+  **Puente Ritmo → Slack** (`components/ritmo/boton-slack.tsx`): botón en el encabezado de Ritmo que abre la app de Slack del
+  espacio de su empresa (`slack://open?team=`; si no la tiene, app.slack.com). LU = T07V7MUDA9H (levelupmediaespacio), AIB =
+  T09LARF90H3 (aiborinquen); la dirección ve los dos.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 

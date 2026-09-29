@@ -7,9 +7,16 @@ import { fichaPendiente, leerFicha } from "@/lib/desempeno/fichas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
 import { esSoloRitmo, tipoAcceso } from "@/lib/pulse/auth";
+import { leerPerfiles } from "@/lib/desempeno/datos";
 import { veArena } from "@/lib/ventas/datos";
 
 export const dynamic = "force-dynamic";
+
+// Espacios de Slack de cada empresa (ids verificados con auth.test el 28/sep).
+const SLACK = {
+  level_up: { nombre: "Slack", equipo: "T07V7MUDA9H", web: "https://levelupmediaespacio.slack.com" },
+  ai_borinquen: { nombre: "Slack AIB", equipo: "T09LARF90H3", web: "https://aiborinquen.slack.com" },
+};
 
 export default async function RitmoAppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const u = await usuarioRitmo();
@@ -28,11 +35,15 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
     const soloLeads = (await tipoAcceso(u.id, u.rol)) === "solo_leads";
     const host = (await headers()).get("host") ?? "";
     const base = host.startsWith("ritmo.") || host.startsWith("ritmo-") ? process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app" : "";
-    return soloLeads ? { href: `${base}/pulse/leads`, nombre: "Leads" } : { href: `${base}/pulse`, nombre: "Pulse" };
+    // Leads tiene su propio dominio (leads.levelupmediapr.net) cuando LEADS_URL está puesto.
+    return soloLeads ? { href: `${process.env.LEADS_URL || base}/pulse/leads`, nombre: "Leads" } : { href: `${base}/pulse`, nombre: "Pulse" };
   })().catch(() => null);
+  // Puente a Slack: el espacio de su empresa; la dirección, los dos.
+  const empresa = await leerPerfiles(false).then((ps) => ps.find((p) => p.userId === u.id)?.empresa ?? null).catch(() => null);
+  const slack = u.rol === "admin" || u.rol === "editor" ? [{ ...SLACK.level_up, nombre: "Slack LU" }, SLACK.ai_borinquen] : [empresa === "ai_borinquen" ? { ...SLACK.ai_borinquen, nombre: "Slack" } : SLACK.level_up];
   return (
     <>
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} pulse={pulse} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} pulse={pulse} slack={slack} />
       <main className="entrada mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
       <footer className="estado-linea mx-auto hidden w-full max-w-5xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>
