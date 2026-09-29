@@ -28,8 +28,9 @@ export async function guardarReporteAgente(p: {
   const m = p.metricas ? { corridas: Math.round(num(p.metricas.corridas, 10_000)), minutos: num(p.metricas.minutos, 1440), costoUsd: num(p.metricas.costoUsd, 10_000) } : null;
 
   const set: Record<string, unknown> = { updatedAt: new Date() };
-  if (r?.resumen) set.resumen = r.resumen;
-  if (r?.entregables.length) set.entregables = r.entregables;
+  // sumar: trabajo del agente hecho fuera de su bot (p. ej. desde la Mac): se AÑADE a lo que ya reportó, no lo pisa.
+  if (r?.resumen) set.resumen = p.sumar ? sql`case when coalesce(${t.resumen}, '') = '' then ${r.resumen} else ${t.resumen} || ${"\n"} || ${r.resumen} end` : r.resumen;
+  if (r?.entregables.length) set.entregables = p.sumar ? sql`coalesce(${t.entregables}, '[]'::jsonb) || ${JSON.stringify(r.entregables)}::jsonb` : r.entregables;
   if (r?.bloqueos) set.bloqueos = r.bloqueos;
   if (r && r.tareas !== null) set.tareas = p.sumar ? sql`coalesce(${t.tareas}, 0) + ${r.tareas}` : r.tareas;
   if (m) {

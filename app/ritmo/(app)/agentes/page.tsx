@@ -41,8 +41,7 @@ export default async function AgentesPage() {
       .map((f) => ({ dias: f.dias.map((d) => ({ horas: d.asistencia.horas, tareas: null })), salarioMensual: salarios.get(f.perfil.userId) ?? null, tareasVentana: f.produccion ? f.produccion.terminadas : null }));
 
   const filas = AGENTES_IA.map((a) => {
-    const base = ladoAgente(reportes.filter((r) => r.agente === a.id));
-    const ag = a.sinCosto ? { ...base, costoDia: null, costoPorTarea: null } : base;
+    const ag = ladoAgente(reportes.filter((r) => r.agente === a.id), { sinMedicion: a.sinCosto });
     const hu = ladoHumano(humanosDe(a.comparaCon));
     return { a, ag, hu, puesto: puestoPorId(a.comparaCon)?.nombre ?? a.comparaCon };
   });
@@ -119,7 +118,7 @@ export default async function AgentesPage() {
         <div>
           <h2 className="text-sm font-semibold">Últimos 7 días · agente vs. humano</h2>
           <p className="text-xs text-muted-foreground">
-            Promedio por día activo. Humanos: horas del ponche, tareas del tablero Producción y costo = salario ÷ 21.7 días. “—” = todavía no hay ese dato (no se estima).
+            Promedio por día activo (debajo del nombre, el total de los 7 días). Humanos: horas del ponche, tareas del tablero Producción y costo = salario ÷ 21.7 días. “—” = todavía no hay ese dato (no se estima).
           </p>
         </div>
         <div className="panel overflow-hidden">
@@ -136,7 +135,7 @@ export default async function AgentesPage() {
             const ahorro = veces(hu.costoPorTarea, ag.costoPorTarea);
             return (
               <div key={a.id} className="fila border-b border-border/40 px-4 py-3 last:border-0">
-                <Linea icono={<Bot className="size-3.5 text-primary" />} titulo={a.nombre} sub={`${ag.diasActivos} días activos`} l={ag} />
+                <Linea icono={<Bot className="size-3.5 text-primary" />} titulo={a.nombre} sub={`${ag.diasActivos} ${ag.diasActivos === 1 ? "día activo" : "días activos"}${ag.totales.tareas !== null || ag.totales.costo !== null ? ` · en 7 días: ${[ag.totales.tareas !== null ? `${ag.totales.tareas} tareas` : null, ag.totales.horas !== null ? `${ag.totales.horas} h` : null, ag.totales.costo !== null ? `US$${ag.totales.costo.toFixed(2)}` : null].filter(Boolean).join(" · ")}` : ""}`} l={ag} />
                 <Linea icono={<UserRound className="size-3.5 text-[color:var(--coral)]" />} titulo={puesto} sub={hu.personas ? `${hu.personas} ${hu.personas === 1 ? "persona" : "personas"} · ${hu.diasActivos} días` : "sin personas en Ritmo"} l={hu} tenue
                   extra={
                     <span className="font-mono text-[11px]">

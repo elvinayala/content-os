@@ -35,17 +35,22 @@ const r2 = (n: number) => Math.round(n * 100) / 100;
 const prom = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 
 /** Un agente en la ventana: solo cuentan los días con actividad (corridas > 0 o tareas reportadas). */
-export function ladoAgente(reportes: ReporteAgente[]): LadoComparado {
+export function ladoAgente(reportes: ReporteAgente[], opts: { sinMedicion?: boolean } = {}): LadoComparado & { totales: { tareas: number | null; horas: number | null; costo: number | null } } {
   const activos = reportes.filter((r) => r.corridas > 0 || (r.tareas ?? 0) > 0);
   const conTareas = activos.filter((r) => r.tareas !== null);
-  const tareasDia = conTareas.length ? prom(conTareas.map((r) => r.tareas!)) : null;
-  const costoDia = activos.length ? prom(activos.map((r) => r.costoUsd)) : null;
+  const tareas = conTareas.reduce((n, r) => n + r.tareas!, 0);
+  const costoTotal = activos.reduce((n, r) => n + r.costoUsd, 0);
+  // Costo por tarea = lo que costaron los días en que reportó tareas ÷ esas tareas (28/sep: antes dividía
+  // promedios de días distintos y no cuadraba con las tarjetas de arriba).
+  const costoConTareas = conTareas.reduce((n, r) => n + r.costoUsd, 0);
+  const medido = !opts.sinMedicion; // Leo e Iris: su tiempo y su costo de IA todavía no se miden
   return {
     diasActivos: activos.length,
-    tareasDia: tareasDia === null ? null : r2(tareasDia),
-    horasDia: activos.length ? r2(prom(activos.map((r) => r.minutos / 60))!) : null,
-    costoDia: costoDia === null ? null : r2(costoDia),
-    costoPorTarea: tareasDia && costoDia !== null ? r2(costoDia / tareasDia) : null,
+    tareasDia: conTareas.length ? r2(tareas / conTareas.length) : null,
+    horasDia: medido && activos.length ? r2(prom(activos.map((r) => r.minutos / 60))!) : null,
+    costoDia: medido && activos.length ? r2(costoTotal / activos.length) : null,
+    costoPorTarea: medido && tareas > 0 ? r2(costoConTareas / tareas) : null,
+    totales: { tareas: conTareas.length ? tareas : null, horas: medido && activos.length ? r2(activos.reduce((n, r) => n + r.minutos, 0) / 60) : null, costo: medido && activos.length ? r2(costoTotal) : null },
   };
 }
 

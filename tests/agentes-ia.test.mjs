@@ -9,7 +9,18 @@ test("agente: promedia solo días con actividad", () => {
     { agente: "max", fecha: "2026-09-22", tareas: 6, corridas: 3, minutos: 60, costoUsd: 2 },
     { agente: "max", fecha: "2026-09-23", tareas: null, corridas: 0, minutos: 0, costoUsd: 0 },
   ]);
-  assert.deepEqual(l, { diasActivos: 2, tareasDia: 8, horasDia: 1.5, costoDia: 3, costoPorTarea: 0.38 });
+  assert.deepEqual(l, { diasActivos: 2, tareasDia: 8, horasDia: 1.5, costoDia: 3, costoPorTarea: 0.38, totales: { tareas: 16, horas: 3, costo: 6 } });
+  // Día trabajado sin reporte de tareas: el costo por tarea usa solo los días con tareas (caso Max, 28/sep).
+  const m = ladoAgente([
+    { agente: "max", fecha: "2026-09-27", tareas: null, corridas: 6, minutos: 5.8, costoUsd: 1.0669 },
+    { agente: "max", fecha: "2026-09-28", tareas: 1, corridas: 6, minutos: 2, costoUsd: 0.9102 },
+  ]);
+  assert.equal(m.costoPorTarea, 0.91);
+  assert.equal(m.totales.costo, 1.98);
+  // Leo: su tiempo y costo no se miden → "—", no "0 h".
+  const leo = ladoAgente([{ agente: "leo", fecha: "2026-09-28", tareas: 6, corridas: 6, minutos: 0, costoUsd: 0 }], { sinMedicion: true });
+  assert.equal(leo.horasDia, null);
+  assert.equal(leo.tareasDia, 6);
 });
 
 test("humano: por día trabajado, costo desde el salario", () => {
@@ -33,7 +44,7 @@ test("humano: tareas de la ventana (Producción) ÷ días trabajados", () => {
 });
 
 test("sin datos no se inventa nada", () => {
-  assert.deepEqual(ladoAgente([]), { diasActivos: 0, tareasDia: null, horasDia: null, costoDia: null, costoPorTarea: null });
+  assert.deepEqual(ladoAgente([]), { diasActivos: 0, tareasDia: null, horasDia: null, costoDia: null, costoPorTarea: null, totales: { tareas: null, horas: null, costo: null } });
   assert.equal(ladoHumano([{ dias: [{ horas: 8, tareas: null }], salarioMensual: null }]).costoPorTarea, null);
   assert.equal(veces(8, null), null);
   assert.equal(veces(8, 3), 2.7);

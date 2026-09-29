@@ -18,7 +18,7 @@
 //   node scripts/agentes.mjs solicitudes                       pedidos de Carilin/Aure a Nico que
 //                                                              esperan el OK de Elvin
 //   node scripts/agentes.mjs aprobar|rechazar <id> ["nota"]    la decisión de Elvin sobre una solicitud
-//   node scripts/agentes.mjs reporte --resumen "…" --tareas N [--entregables "a|b|c"] [--bloqueos "…"] [--agente x]
+//   node scripts/agentes.mjs reporte --resumen "…" --tareas N [--entregables "a|b|c"] [--bloqueos "…"] [--agente x] [--sumar]
 //                                                              tu reporte del día en Ritmo (equipo digital:
 //                                                              lo ven Elvin, Carilin y Aure; comparan con humanos)
 //
@@ -219,7 +219,8 @@ export async function reporteDelDia(args, extra = {}) {
   const resumen = val("resumen");
   if (!resumen || resumen.trim().length < 10) throw new Error('Uso: reporte --resumen "qué hiciste hoy" --tareas N [--entregables "a|b"] [--bloqueos "…"]');
   if (!SECRETO) throw new Error("Falta CRON_SECRET");
-  const body = { agente, reporte: { resumen, tareas: val("tareas"), entregables: val("entregables"), bloqueos: val("bloqueos") }, ...extra };
+  // --sumar: se añade al reporte del día (trabajo hecho fuera del bot del agente, p. ej. desde la Mac).
+  const body = { agente, reporte: { resumen, tareas: val("tareas"), entregables: val("entregables"), bloqueos: val("bloqueos") }, ...(args.includes("--sumar") ? { sumar: true } : {}), ...extra };
   const r = await fetch(`${BASE}/api/ritmo/agentes`, { method: "POST", headers: { "x-cron-secret": SECRETO, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) });
   const j = await r.json().catch(() => ({}));
   if (!j.ok) throw new Error(`Ritmo no aceptó el reporte: ${j.error || r.status}`);
