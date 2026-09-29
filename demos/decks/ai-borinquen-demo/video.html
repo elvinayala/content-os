@@ -1,4 +1,4 @@
-<title>Demo AI Borinquen</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=1920,initial-scale=1"></head><body><title>Demo AI Borinquen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -240,6 +240,7 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
 }
+.controles, .progreso { display: none !important; }
 </style>
 
 <div class="visor" id="visor">
@@ -271,18 +272,6 @@ p { margin: 0; }
             <ellipse class="anillo" cx="450" cy="455" rx="220" ry="60" fill="none" stroke="#7fb4ff" stroke-opacity=".75" stroke-width="3" transform="rotate(-14 450 450)"/></g>
         </svg>
       </div>
-    </section>
-
-    <!-- 2 · TESTIMONIOS -->
-    <section class="slide" id="s2" data-n="2">
-      <div class="ceja sube">Lo dicen ellos</div>
-      <h2 class="sube" style="--d:.1s;margin-top:20px">Resultados reales, en su propia voz.</h2>
-      <div class="tres">
-        <div class="sube" style="--d:.35s"><button type="button" class="video con" data-video="testimonios/ernest.mp4" aria-label="Ver el testimonio de Ernest Crisson Cancel" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/ernest-poster.jpg)"><div class="play" style="--d:0s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:48</span></button><div class="vlab">VIDEO 01</div><div class="vtit">Ernest Crisson Cancel</div><div class="vsub">Marketing + chat y voz · cerca de $5,000 más al mes</div></div>
-        <div class="sube" style="--d:.5s"><button type="button" class="video con" data-video="testimonios/mano-santa.mp4" aria-label="Ver el testimonio de Mano Santa" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/mano-santa-poster.jpg);background-position:center 30%"><div class="play" style="--d:.5s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:52</span></button><div class="vlab">VIDEO 02</div><div class="vtit">Mano Santa</div><div class="vsub">Contestaba el 20 % de sus leads; hoy su agente atiende y agenda</div></div>
-        <div class="sube" style="--d:.65s"><button type="button" class="video con" data-video="testimonios/sleekbrowspr.mp4" aria-label="Ver el testimonio de Sleekbrowspr" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/sleekbrowspr-poster.jpg);background-position:center 25%"><div class="play" style="--d:1s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:51</span></button><div class="vlab">VIDEO 03</div><div class="vtit">Sleekbrowspr</div><div class="vsub">AutoFlow contesta en segundos y le avisa cuando el cliente está listo</div></div>
-      </div>
-      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>02</span></div>
     </section>
 
     <!-- 3 · EL COSTO DE NO DIGITALIZARTE -->
@@ -412,6 +401,30 @@ p { margin: 0; }
     </section>
 
     <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
+    <!-- 9 · SIGUIENTE PASO (solo en el video) -->
+    <section class="slide" id="s9" data-n="9">
+      <div class="izq" style="position:absolute;left:128px;top:250px;width:1080px;display:flex;flex-direction:column;gap:30px">
+        <div class="ceja sube">Siguiente paso</div>
+        <h1 class="palabras" style="--d0:.15s"><span class="w" style="--i:0">Tu</span> <span class="w" style="--i:1">equipo</span> <span class="w" style="--i:2">de</span> <span class="w" style="--i:3">IA,</span><br><span class="w verde" style="--i:4">en</span> <span class="w verde" style="--i:5">marcha</span> <span class="w verde" style="--i:6">en</span> <span class="w verde" style="--i:7">15</span> <span class="w verde" style="--i:8">días.</span></h1>
+        <p class="sub desenfoca" style="--d:.9s">Agenda tu demo y te enseñamos tu sistema por dentro.</p>
+        <div class="pop" style="--d:1.4s;display:flex;align-items:center;gap:28px;margin-top:14px">
+          <div style="background:linear-gradient(90deg,#2f9e57,#4cc66e);color:#04150b;font-weight:700;font-size:38px;padding:22px 44px;border-radius:999px;box-shadow:0 20px 70px rgba(76,198,110,.4)">Escríbenos por WhatsApp</div>
+          <div style="font-family:var(--mono);font-size:34px;color:#eef2f9;letter-spacing:.04em">+1 (939) 304-0491</div>
+        </div>
+      </div>
+      <div class="planeta" aria-hidden="true" style="right:-150px;top:90px">
+        <svg viewBox="0 0 900 900"><defs>
+          <radialGradient id="gVerde" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#b9f7cf"/><stop offset=".35" stop-color="#4cc66e"/><stop offset=".75" stop-color="#1b7a45"/><stop offset="1" stop-color="#0b3d24"/></radialGradient>
+          <radialGradient id="gHaloV" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2fb866" stop-opacity=".35"/><stop offset="1" stop-color="#2fb866" stop-opacity="0"/></radialGradient></defs>
+          <circle cx="450" cy="450" r="420" fill="url(#gHaloV)"/>
+          <g class="orbita o2"><circle cx="450" cy="450" r="300" fill="none" stroke="#244a85" stroke-width="2" stroke-dasharray="4 10"/><circle cx="150" cy="450" r="10" fill="#3a78e6"/><circle cx="662" cy="238" r="7" fill="#4fcfe2"/></g>
+          <g class="orbita o1"><circle cx="450" cy="450" r="215" fill="none" stroke="#2a5aa3" stroke-width="2"/><circle cx="450" cy="235" r="11" fill="#4fcfe2"/></g>
+          <g class="esfera"><circle cx="450" cy="450" r="142" fill="url(#gVerde)"/><ellipse cx="450" cy="455" rx="220" ry="60" fill="none" stroke="#9ff0bf" stroke-opacity=".7" stroke-width="3" transform="rotate(-14 450 450)"/></g>
+        </svg>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span></span></div>
+    </section>
+
   </div>
 </div>
 
@@ -550,3 +563,4 @@ const LOGOS = [{"nombre": "Caribe Paint", "fondo": "#ffffff", "src": "data:image
   window.addEventListener("mousemove", despertar); despertar();
 })();
 </script>
+</body></html>

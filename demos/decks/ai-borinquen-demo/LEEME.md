@@ -11,3 +11,15 @@ agentes que nacen del Agente Personal, barra de implementación).
 - Controles: flechas / espacio / clic (izquierda = atrás), `F` pantalla completa, `R` repetir la animación, `#s3` abre la slide 3.
 - Reglas de contenido (Elvin, 28/sep): **sistema en marcha en 15 días**, optimización del día 16 al 45; respuesta en
   **menos de 10 segundos**. Testimonio 1 = Ernest Crisson Cancel (Zoom con Valentina, recortado a solo él, subtitulado: `motion` composición `Testimonio`, props en `data/motion/testimonios/ernest-crisson.json`). Pendiente: testimonios 2 y 3 (AI Borinquen) y cifra de software suelto (slide 3).
+
+## Testimonios (28/sep) y video para el cliente
+- Slide 2 = 3 testimonios con reproductor en grande: Ernest Crisson (Zoom con Valentina, recortado a solo él y subtitulado
+  con la composición `Testimonio` de motion; props en `data/motion/testimonios/ernest-crisson.json`), Mano Santa (52 s) y
+  Sleekbrowspr (51 s), cortados de los originales que Elvin subió a su DM de Slack. Los MP4 viven en la presentación publicada
+  y en la bandeja de Entregas (Storage `pulse/motion/…`); aquí solo quedan los posters.
+- **Video para el cliente** (pre-llamada, 62 s): `video.html` = la presentación sin la slide de testimonios, sin controles y
+  con una slide de cierre (WhatsApp). Se graba cuadro por cuadro con reloj virtual:
+  `node motion/scripts/grabar-deck.mjs <video.html> <carpeta> <slide inicial> "<seg por slide,…>"` (necesita
+  puppeteer-core; se corrió desde /Users/elvinayala/bori-demo) → cuadros JPG a 30 fps → ffmpeg: partes + testimonio de
+  Ernest (16 s) + música `motion/public/audio/aib-deck-67.mp3` que baja durante el testimonio.
+  Resultado: bandeja `motion-aib-presentacion-cliente`.

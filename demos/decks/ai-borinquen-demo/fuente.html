@@ -97,13 +97,14 @@ p { margin: 0; }
 .play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(79, 207, 226, .8); }
 .activa .play::after { animation: late 2.2s ease-out infinite; animation-delay: var(--d, 0s); }
 .play svg { width: 44px; height: 44px; margin-left: 8px; }
-.video.con { display: block; width: 100%; padding: 0; cursor: pointer; background-size: cover; background-position: center; font: inherit; }
+.video.con { display: block; width: 100%; padding: 0; color: inherit; text-align: left; cursor: pointer; background-size: cover; background-position: center; font: inherit; }
 .video.con:hover .play::before { border-color: #4fcfe2; }
 .video.con:focus-visible { outline: 3px solid var(--cian); outline-offset: 4px; }
 .dur { position: absolute; right: 16px; bottom: 14px; font-family: var(--mono); font-size: 20px; color: #eef2f9; background: rgba(8, 17, 32, .7); padding: 4px 10px; border-radius: 8px; }
 /* Reproductor en grande, dentro del escenario */
+.cine[hidden] { display: none; }
 .cine { position: absolute; inset: 0; z-index: 5; background: rgba(4, 8, 15, .92); display: grid; place-items: center; }
-.cine video { width: 1600px; height: 900px; border-radius: 18px; background: #000; box-shadow: 0 30px 120px rgba(0, 0, 0, .6); }
+.cine video { width: 1600px; height: 900px; object-fit: contain; border-radius: 18px; background: #000; box-shadow: 0 30px 120px rgba(0, 0, 0, .6); }
 .cine .cerrar { position: absolute; right: 60px; top: 40px; width: 64px; height: 64px; border-radius: 50%; border: 1px solid #2a3d63; background: rgba(8, 17, 32, .85); color: #eef2f9; font: 600 30px var(--grot); cursor: pointer; }
 .pend { position: absolute; top: 18px; left: 18px; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: #f3c969; border: 1px solid rgba(243, 201, 105, .5); border-radius: 999px; padding: 6px 14px; background: rgba(8, 17, 32, .6); }
 .vlab { font-family: var(--mono); font-size: 22px; letter-spacing: .16em; color: var(--verde); margin-top: 26px; }
@@ -191,7 +192,8 @@ p { margin: 0; }
 .barra { margin-top: 20px; border-radius: 24px; border: 1px solid #1f5a57; background: linear-gradient(90deg, #0f3a2f 0%, #0e2a3e 55%, #0d2146 100%); padding: 34px 50px; display: flex; align-items: center; gap: 60px; }
 .reloj { display: flex; flex-direction: column; gap: 4px; }
 .reloj small { font-family: var(--mono); font-size: 23px; letter-spacing: .14em; color: var(--gris); }
-.reloj .n { font-family: var(--mono); font-weight: 600; font-size: 84px; line-height: 1; font-variant-numeric: tabular-nums; min-width: 300px; }
+.reloj .n { font-family: var(--mono); font-weight: 600; font-size: 84px; line-height: 1; font-variant-numeric: tabular-nums; min-width: 300px; white-space: nowrap; }
+.reloj.hu .n { min-width: 470px; }
 .reloj.af .n { color: var(--verde); text-shadow: 0 0 36px rgba(76, 198, 110, .5); }
 .reloj.hu .n { color: #6f86ad; }
 .barra .frase { margin-left: auto; font-size: 38px; font-weight: 600; text-align: right; line-height: 1.25; max-width: 700px; }
@@ -277,8 +279,8 @@ p { margin: 0; }
       <h2 class="sube" style="--d:.1s;margin-top:20px">Resultados reales, en su propia voz.</h2>
       <div class="tres">
         <div class="sube" style="--d:.35s"><button type="button" class="video con" data-video="testimonios/ernest.mp4" aria-label="Ver el testimonio de Ernest Crisson Cancel" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/ernest-poster.jpg)"><div class="play" style="--d:0s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:48</span></button><div class="vlab">VIDEO 01</div><div class="vtit">Ernest Crisson Cancel</div><div class="vsub">Marketing + chat y voz · cerca de $5,000 más al mes</div></div>
-        <div class="sube" style="--d:.5s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:.5s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 02</div><div class="vtit">[Testimonio 2]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
-        <div class="sube" style="--d:.65s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:1s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 03</div><div class="vtit">[Testimonio 3]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
+        <div class="sube" style="--d:.5s"><button type="button" class="video con" data-video="testimonios/mano-santa.mp4" aria-label="Ver el testimonio de Mano Santa" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/mano-santa-poster.jpg);background-position:center 30%"><div class="play" style="--d:.5s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:52</span></button><div class="vlab">VIDEO 02</div><div class="vtit">Mano Santa</div><div class="vsub">Contestaba el 20 % de sus leads; hoy su agente atiende y agenda</div></div>
+        <div class="sube" style="--d:.65s"><button type="button" class="video con" data-video="testimonios/sleekbrowspr.mp4" aria-label="Ver el testimonio de Sleekbrowspr" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/sleekbrowspr-poster.jpg);background-position:center 25%"><div class="play" style="--d:1s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:51</span></button><div class="vlab">VIDEO 03</div><div class="vtit">Sleekbrowspr</div><div class="vsub">AutoFlow contesta en segundos y le avisa cuando el cliente está listo</div></div>
       </div>
       <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>02</span></div>
     </section>
