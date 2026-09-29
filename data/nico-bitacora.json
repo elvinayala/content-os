@@ -329,6 +329,14 @@
       "porque": "El candado de seguridad (layout de Pulse redirige a /ritmo a quien es solo_ritmo) estaba funcionando bien; la bandera de Daisy estaba mal puesta.",
       "verificado": "En la base: solo_ritmo=false y el cambio aprobado. Sin bloqueos de tablero; LEVEL UP MEDIA es público. Daisy no tiene 2FA todavía: la primera vez Pulse le pide configurar el autenticador (QR). pulse-eamarket.vercel.app/pulse/login → 200. Aparte: Paola Ordoñez (closer) y Lis Acevedo siguen solo_ritmo=true.",
       "commit": "solo bitácora"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Pulse/Ritmo (content-os)",
+      "que": "[Solicitud de Carilin #123] \"Debería estar en Ritmo y en Pulse, ella es ESTRATEGA\" era la respuesta a mi pregunta de la #122 sobre Daisy (mismo hilo 1790713907.630909, 20:35 UTC, antes de que yo mencionara a Paola y Lis). Daisy ya quedó así con la #122: puesto estratega, perfil activo en Ritmo, solo_ritmo=false (entra a Pulse). No se tocó nada; Paola Ordoñez y Lis Acevedo siguen igual.",
+      "porque": "Confirmación de Carilin del acceso de Daisy.",
+      "verificado": "Base de Pulse: Daisy Buendia · estratega · level_up · activa en Ritmo · solo_ritmo=false.",
+      "commit": "solo bitácora"
     }
   ],
   "pendientesElvin": [
@@ -370,5 +378,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T20:38:54.676Z"
+  "actualizadoEl": "2026-09-29T20:41:57.365Z"
 }
