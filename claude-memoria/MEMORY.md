@@ -2,6 +2,7 @@
 
 - [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack (Next 16, dir con espacio, /guion)
 - [Pulse — CRM propio](pulse-crm.md) — reemplazo de Monday EN PROD (Supabase); automatizaciones, Mi día, ⌘K, Preguntar; 27/sep rediseño SaaS
+- [Pulse — cuidado y autorización](pulse-autorizacion.md) — confidencial: nunca mezclar datos ni accesos; movimientos mayores solo con OK de Carilin (o Elvin/Aure); 2FA + ventas solo Leads (/ventas)
 - [Pulse — bajas = OFFBOARDED](pulse-bajas-offboarded.md) — "eliminar" un cliente = moverlo a OFFBOARDED con razón de baja, nunca borrarlo (así a Jessica)
 - [Protección de datos](proteccion-datos.md) — papelera universal + Deshacer + respaldo cifrado diario (Supabase, Vercel Blob, Mac); falta RESPALDO_CLAVE en el gestor de Elvin
 - [Bori — super plataforma](bori-superplataforma.md) — plataforma de agentes de AIB (app/borinquen/, tema verde, voz Retell, CRM live)
