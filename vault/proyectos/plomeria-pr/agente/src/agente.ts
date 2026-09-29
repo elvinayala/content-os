@@ -34,7 +34,7 @@ function contexto(contacto: Contacto): string {
   return lineas.join("\n");
 }
 
-export interface Entrada { texto?: string; adjuntos?: Adjunto[] }
+export interface Entrada { texto?: string; adjuntos?: Adjunto[]; /** reintento tras quedarse sin crédito: el mensaje ya está en el historial */ reintento?: boolean }
 
 /** Teléfono de PR/EE. UU. escrito en un mensaje ("787 321 9437", "(939)555-1234", "17875551234"). Pura (tests). 27/sep:
  *  el agente le pidió dos veces el número a un cliente que ya lo había mandado en su primer mensaje. */
@@ -45,7 +45,7 @@ export function telefonoEnTexto(texto = ""): string | null {
 
 /** Devuelve la lista de mensajes a enviar (vacía si un humano tiene la conversación). */
 export async function responder(contacto: Contacto, entrada: Entrada): Promise<string[]> {
-  archivar(contacto.id, "cliente", [entrada.texto, entrada.adjuntos?.length ? `[${entrada.adjuntos.length} adjunto(s)]` : ""].filter(Boolean).join(" "));
+  if (!entrada.reintento) archivar(contacto.id, "cliente", [entrada.texto, entrada.adjuntos?.length ? `[${entrada.adjuntos.length} adjunto(s)]` : ""].filter(Boolean).join(" "));
   const tel = !contacto.telefono && telefonoEnTexto(entrada.texto);
   if (tel) { contacto = { ...contacto, telefono: tel }; almacen.guardarContacto(contacto); }
   if (contacto.humano) return []; // un humano está atendiendo; el agente calla

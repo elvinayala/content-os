@@ -26,6 +26,7 @@ import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
+import * as sinCredito from "./sin-credito.js";
 import * as demo from "./demo-plomero.js";
 import { montarMarca } from "./marca.js";
 import { llamarAlCliente, escribirAlCliente } from "./contacto-plomero.js";
@@ -224,7 +225,12 @@ async function atenderDM(m: zernio.MensajeZernio) {
   }
   if (esSoloAcuse(m.texto) && !m.mediaIds.length && !ultimoNuestroPregunto(contacto.id)) return;
   const adjuntos = (await Promise.all(m.mediaIds.map((ref) => zernio.descargarMedia(ref)))).filter((a): a is Adjunto => !!a);
-  const respuestas = await responder(contacto, { texto: m.texto ?? "", adjuntos });
+  let respuestas: string[];
+  try { respuestas = await responder(contacto, { texto: m.texto ?? "", adjuntos, reintento: (m as any).reintento }); }
+  catch (e) {
+    if (!sinCredito.esSinCredito(e)) throw e;
+    sinCredito.guardar("dm", contacto.id, { ...m, mediaIds: [] }); await sinCredito.avisar(wa.avisarCoordinador); return;
+  }
   let n = contacto.enviadosWa ?? 0;
   for (const r of respuestas) { n++; await zernio.enviarDM(m.conversationId, m.accountId, humanizar(r, n, contacto.id)); }
   if (respuestas.length) { const fresco = almacen.contacto(contacto.id) ?? contacto; almacen.guardarContacto({ ...fresco, enviadosWa: n }); }
@@ -248,7 +254,12 @@ async function atenderSMS(m: { de: string; texto: string; id: string }) {
   if (!c.telefono) { c.telefono = m.de.replace(/^\+1/, ""); almacen.guardarContacto(c); }
   if (sms.BAJA.test(m.texto)) { almacen.guardarContacto({ ...c, smsBaja: true }); return console.log("SMS: baja de", m.de); }
   if (esSoloAcuse(m.texto) && !ultimoNuestroPregunto(c.id)) return;
-  const respuestas = await responder(c, { texto: m.texto });
+  let respuestas: string[];
+  try { respuestas = await responder(c, { texto: m.texto, reintento: (m as any).reintento }); }
+  catch (e) {
+    if (!sinCredito.esSinCredito(e)) throw e;
+    sinCredito.guardar("sms", c.id, m); await sinCredito.avisar(wa.avisarCoordinador); return;
+  }
   for (const r of respuestas) await sms.enviarSMS(m.de, r, { contacto: almacen.contacto(c.id) ?? c });
 }
 
@@ -658,6 +669,8 @@ setInterval(() => revisarSeguimientos().catch(console.error), 10 * 60_000);
 // Grupo de Telegram de ventas: se conecta solo cuando agregan el bot a un grupo con "Ventas" en el nombre.
 ventas.buscarGrupoVentas().catch(console.error);
 setInterval(() => ventas.buscarGrupoVentas().catch(console.error), 2 * 60_000);
+// Sin crédito de Anthropic: cada 3 min se prueba y, si volvió, se contesta a los que esperaban (sin-credito.ts).
+setInterval(() => sinCredito.reintentar({ dm: atenderDM, sms: atenderSMS }, wa.avisarCoordinador).catch(console.error), 3 * 60_000);
 setTimeout(() => revisarSaludWa().catch(console.error), 20_000);
 app.get("/salud/whatsapp", (_req, res) => { const u = saludWa.leer().ultimo; res.status(!u || u.ok ? 200 : 503).json(u ?? { ok: true, motivo: "sin revisar aún" }); });
 // Cuando Meta devuelve la cuenta y el evento viejo sigue en la ficha: POST /admin/salud-wa/resuelto
