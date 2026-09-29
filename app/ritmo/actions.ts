@@ -27,7 +27,7 @@ import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
 import { errorPlan } from "@/lib/desempeno/viajes-reglas";
-import { EMPRESAS, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
+import { EMPRESAS, faltanEnSalida, fechaPR, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereCuenta as requiereUsuario } from "@/lib/pulse/auth";
 import { esPuestoVentas } from "@/lib/ventas/reglas";
@@ -74,6 +74,9 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     for (const [k, v] of Object.entries(r.datos ?? {})) if (permitidos.has(k) && Number.isFinite(v) && v >= 0 && v <= 50) limpios[k] = Math.round(v);
     const detalles: Record<string, string> = {};
     for (const [k, v] of Object.entries(r.detalles ?? {})) if (permitidos.has(k) && typeof v === "string" && v.trim()) detalles[k] = v.trim().slice(0, 300);
+    // Sin los KPIs del día no se marca la salida (Elvin, 29/sep).
+    const falta = faltanEnSalida(puestoPorId(perfil?.puesto ?? "")?.manual ?? [], { datos: limpios, detalles }, await datos.reporteDe(u.id, fechaPR(Date.now())));
+    if (falta.length) throw new Error(`Antes de marcar la salida, completa tus KPIs de hoy (si fue 0, pon 0): ${falta.join(" · ")}`);
     await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios, detalles });
     refresh();
     return {};

@@ -488,3 +488,26 @@ export function puedeVer(actor: Actor, persona: { userId: string; liderId: strin
 export function puedeAprobar(actor: Actor, persona: { userId: string; liderId: string | null }): boolean {
   return persona.userId !== actor.id && esMaestro(actor);
 }
+
+/**
+ * KPIs obligatorios al marcar la salida (Elvin, 29/sep: "que no los deje ponchar si no han completado su KPI al final del
+ * día"). Cada KPI del puesto necesita un número (0 vale, pero hay que escribirlo) y, si es > 0 y pide detalle, el detalle.
+ * Lo que ya se reportó en una salida anterior de hoy cuenta. Devuelve lo que falta, en palabras; vacío = puede salir.
+ */
+export function faltanEnSalida(
+  manual: { id: string; nombre: string; detalle?: string }[],
+  envio: { datos: Record<string, number>; detalles: Record<string, string> },
+  previo: { datos?: Record<string, number> | null; detalles?: Record<string, string> | null } | null,
+): string[] {
+  const falta: string[] = [];
+  for (const m of manual) {
+    const ahora = envio.datos[m.id];
+    const antes = previo?.datos?.[m.id];
+    if (ahora === undefined && antes === undefined) {
+      falta.push(m.nombre);
+      continue;
+    }
+    if (m.detalle && (ahora ?? 0) > 0 && !envio.detalles[m.id]?.trim()) falta.push(`${m.nombre}: ${m.detalle.replace(/[¿?]/g, "").trim().toLowerCase()}`);
+  }
+  return falta;
+}

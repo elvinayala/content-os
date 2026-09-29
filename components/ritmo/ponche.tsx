@@ -239,14 +239,16 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           <DialogHeader>
             <DialogTitle>Marcar salida</DialogTitle>
             <DialogDescription>
-              {abierto ? `Entraste a las ${hora(abierto)} · ${reloj(abierto, ahora)} h.` : ""} Lo demás lo mide el sistema solo.
+              {abierto ? `Entraste a las ${hora(abierto)} · ${reloj(abierto, ahora)} h.` : ""} {estado.manual.length ? "Tus KPIs de hoy son obligatorios para marcar la salida (si fue 0, pon 0)." : "Lo demás lo mide el sistema solo."}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
             {estado.manual.map((m) => (
               <div key={m.id} className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-3">
-                  <Label htmlFor={m.id}>{m.nombre}</Label>
+                  <Label htmlFor={m.id}>
+                    {m.nombre} <span className="text-[color:var(--coral)]">*</span>
+                  </Label>
                   <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
                 </div>
                 {m.detalle && Number(valores[m.id] || 0) > 0 ? (

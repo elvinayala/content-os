@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   asistenciaDia,
+  faltanEnSalida,
   colorScore,
   fechaPR,
   kpisDe,
@@ -169,4 +170,18 @@ test("asistencia: los días antes de activar el perfil no cuentan", () => {
   const a = asistenciaDia({ fecha: "2026-09-23", horario: H, ahora: DESPUES, ponches: [], desde: "2026-09-24" });
   assert.equal(a.puntaje, null);
   assert.equal(asistenciaDia({ fecha: "2026-09-24", horario: H, ahora: DESPUES, ponches: [], desde: "2026-09-24" }).estado, "ausente");
+});
+
+test("salida: no se marca sin los KPIs del día (0 vale; con número > 0 pide el detalle)", () => {
+  const manual = [
+    { id: "reuniones_cliente", nombre: "Reuniones con clientes", detalle: "¿Con qué clientes?" },
+    { id: "campanas", nombre: "Campañas realizadas" },
+  ];
+  assert.deepEqual(faltanEnSalida(manual, { datos: {}, detalles: {} }, null), ["Reuniones con clientes", "Campañas realizadas"]);
+  assert.deepEqual(faltanEnSalida(manual, { datos: { reuniones_cliente: 0, campanas: 0 }, detalles: {} }, null), []);
+  assert.deepEqual(faltanEnSalida(manual, { datos: { reuniones_cliente: 2, campanas: 1 }, detalles: {} }, null), ["Reuniones con clientes: con qué clientes"]);
+  assert.deepEqual(faltanEnSalida(manual, { datos: { reuniones_cliente: 2, campanas: 1 }, detalles: { reuniones_cliente: "Tinos, Dra. Escabí" } }, null), []);
+  // Lo reportado en una salida anterior de hoy cuenta.
+  assert.deepEqual(faltanEnSalida(manual, { datos: {}, detalles: {} }, { datos: { reuniones_cliente: 1, campanas: 0 } }), []);
+  assert.deepEqual(faltanEnSalida([], { datos: {}, detalles: {} }, null), []);
 });

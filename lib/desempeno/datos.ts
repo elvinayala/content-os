@@ -194,6 +194,13 @@ export async function guardarReporte(userId: string, fecha: string, r: { bloqueo
     .onConflictDoUpdate({ target: [desempenoReportes.userId, desempenoReportes.fecha], set: { bloqueos, datos, detalles, updatedAt: new Date() } });
 }
 
+/** El reporte de un día (lo que ya anotó en salidas anteriores). */
+export async function reporteDe(userId: string, fecha: string) {
+  const d = await db();
+  const [r] = await d.select().from(desempenoReportes).where(and(eq(desempenoReportes.userId, userId), eq(desempenoReportes.fecha, fecha)));
+  return r ?? null;
+}
+
 /** Salida olvidada: la persona dice a qué hora terminó; queda pendiente hasta que el líder la apruebe. */
 export async function corregirSalida(poncheId: string, salida: Date, userId: string, nota: string | null) {
   const p = await leerPonche(poncheId);

@@ -2,7 +2,8 @@ import { inArray } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
-import { avisarCorreo, avisarPersona, esc } from "@/lib/desempeno/avisar";
+import { avisarCorreo, avisarPersona, avisarRrhh, esc } from "@/lib/desempeno/avisar";
+import { tramosEntre } from "@/lib/desempeno/calendario";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
@@ -24,6 +25,8 @@ export const maxDuration = 120;
 //  ?tarea=semanal (lunes 8 AM PR)  → a Elvin (Telegram + Slack): la semana por colores.
 //  ?tarea=recordatorio (L-V 6:45 PM PR) → a quien sigue con la entrada abierta pasada su hora de salida:
 //                  un solo recordatorio suave para marcar la salida.
+//  ?tarea=sin-ponche (L-V 10 AM PR) → a RR.HH. (RITMO_RRHH): quien a esa hora no ha marcado entrada (y le tocaba, sin
+//                  ausencia aprobada) para que les pregunte directo si están trabajando o si necesitan ayuda para entrar.
 //  ?tarea=aniversarios (diario 9 AM PR) → quien cumple 12 meses: a la persona y a RR.HH./Carilin.
 // Todo sale del bot Command Center (lib/desempeno/avisar.ts), nunca desde la cuenta de Elvin.
 // En simulación hasta que Elvin dé el OK (DESEMPENO_AVISOS=real); ?dry=1 nunca manda nada.
@@ -69,6 +72,21 @@ export async function GET(req: NextRequest) {
     }
     if (real) for (const e of envios) e.enviado = e.userId ? await avisarPersona(e.userId, e.texto) : await avisarCorreo(e.para, e.texto);
     return NextResponse.json({ ok: true, real, tarea, envios });
+  }
+
+  // ?tarea=sin-ponche (L-V 10 AM PR, Elvin 29/sep): los que no han ponchado → a Yaileen (RR.HH.) para que les pregunte.
+  if (tarea === "sin-ponche") {
+    const panel = await armarPanel(SISTEMA, hoy, hoy);
+    const fuera = new Set((await tramosEntre(hoy, hoy)).filter((t) => t.estado === "aprobada").map((t) => t.userId));
+    const faltan = panel.filas.filter((f) => f.hoy.asistencia.estado === "ausente" && !f.ponchesAbiertos.length && !fuera.has(f.perfil.userId));
+    const envios: { para: string; texto: string; enviados?: number }[] = [];
+    if (faltan.length) {
+      const lista = faltan.map((f) => `• ${esc(f.perfil.nombre)} (entra ${f.perfil.horaEntrada})`).join("\n");
+      const texto = `⏰ Son las 10 AM y ${faltan.length === 1 ? "esta persona no ha" : `estas ${faltan.length} personas no han`} marcado la entrada en Ritmo:\n${lista}\n\nEscríbeles directo: ¿están trabajando hoy? ¿necesitan ayuda para entrar a Ritmo o para registrar su computadora? (Si alguien tiene el día libre aprobado, no sale en esta lista.) <${base}/ritmo/equipo|Ver en Ritmo>`;
+      envios.push({ para: "RR.HH.", texto });
+    }
+    if (real) for (const e of envios) e.enviados = await avisarRrhh(e.texto);
+    return NextResponse.json({ ok: true, real, tarea, faltan: faltan.map((f) => f.perfil.nombre), envios });
   }
 
   if (tarea === "recordatorio") {

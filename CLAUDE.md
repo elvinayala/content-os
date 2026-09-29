@@ -783,6 +783,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   eventos o recordatorios de todo el día en SU calendario (`anotarCalendarioAction`). Solo se guarda el refresh token cifrado; se
   desconecta cuando quiera (revoca). **Necesita la app de Google** (`GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` en Vercel; Calendar
   API activada; redirect `https://ritmo.levelupmediapr.net/ritmo/google/volver`); sin ellas la tarjeta no sale.
+- **Alerta de las 10 AM y KPIs obligatorios** (29/sep, Elvin): cron `/api/cron/ritmo?tarea=sin-ponche` (L-V 10 AM PR, `0 14 * * 1-5`)
+  → a RR.HH. (`avisarRrhh`, Yaileen) la lista de quien no ha marcado entrada (le tocaba, sin ausencia aprobada) para que les
+  pregunte directo si están trabajando o necesitan ayuda para entrar. Y **no se marca la salida sin los KPIs del día**
+  (`faltanEnSalida`, puro + test): cada KPI manual del puesto necesita un número (0 vale) y el detalle si es > 0; lo
+  reportado en una salida anterior de hoy cuenta. El almuerzo no pide nada.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
