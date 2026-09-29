@@ -305,6 +305,14 @@
       "porque": "Yaileen no sabía si ya les habían avisado.",
       "verificado": "Bajé la captura de Slack con el bot. Código: app/api/cron/ritmo/route.ts (digest → RITMO_AVISO_A con \"No han completado su ficha\"); no hay tarea que le escriba a cada persona.",
       "commit": "solo bitácora"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Resuelto",
+      "que": "Elvin pidió avisarle a Yaileen que le pase a Heileen (setter de Resuelto) los números de nuestros plomeros, para que antes de agendar valide disponibilidad con el plomero del área. Le mandé el DM a Yaileen por Slack (bot Command Center, firmado — Nico).",
+      "porque": "Pedido directo de Elvin por Telegram.",
+      "verificado": "DM enviado a Yaileen (D0C3PJCS0V9) con node scripts/agentes.mjs slack — confirmación ✓ del bot.",
+      "commit": "sin cambios de código"
     }
   ],
   "pendientesElvin": [
@@ -346,5 +354,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T16:46:57.527Z"
+  "actualizadoEl": "2026-09-29T18:48:29.459Z"
 }
