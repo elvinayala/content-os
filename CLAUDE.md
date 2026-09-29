@@ -771,6 +771,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   por `lib/desempeno/puestos-extra.ts`, id `p_<slug>`, nacen sin KPIs; `usuarioRitmo()` los registra en `PUESTOS` con
   `registrarPuestosExtra`) y **corrige el nombre** de una persona directo (`datos.cambiarNombre`, evento "nombre"). Asignar
   el puesto sigue siendo sensible (espera a Elvin).
+- **Alerta de las 10 AM y KPIs obligatorios** (29/sep, Elvin): cron `/api/cron/ritmo?tarea=sin-ponche` (L-V 10 AM PR, `0 14 * * 1-5`)
+  → a RR.HH. (`avisarRrhh`, Yaileen) la lista de quien no ha marcado entrada (le tocaba, sin ausencia aprobada) para que les
+  pregunte directo si están trabajando o necesitan ayuda para entrar. Y **no se marca la salida sin los KPIs del día**
+  (`faltanEnSalida`, puro + test): cada KPI manual del puesto necesita un número (0 vale) y el detalle si es > 0; lo
+  reportado en una salida anterior de hoy cuenta. El almuerzo no pide nada.
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para
