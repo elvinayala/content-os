@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { crearProduccionAction, guardarMetaAction, guardarPerfilAction, linkAccesoAction } from "@/app/ritmo/actions";
+import { crearProduccionAction, crearPuestoAction, guardarMetaAction, guardarPerfilAction, linkAccesoAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Perfil } from "@/lib/desempeno/datos";
-import { kpisDe, PUESTOS, type OverrideMeta } from "@/lib/desempeno/reglas";
+import { kpisDe, type OverrideMeta } from "@/lib/desempeno/reglas";
 import { esPuestoVentas } from "@/lib/ventas/reglas";
 
 import { EmpresaBadge } from "./piezas";
@@ -28,13 +28,14 @@ const DIAS = [
 const select = "h-10 rounded-lg border border-input bg-card px-2.5 text-sm text-foreground outline-none focus:border-ring";
 
 type Usuario = { id: string; nombre: string; email: string };
+type PuestoUI = { id: string; nombre: string; departamento: string; nuevo?: boolean };
 type Borrador = Omit<Perfil, "nombre" | "email" | "color" | "desde">;
 
 // Sin puesto por defecto: antes arrancaba en "estratega" y así quedó mal María (tesorera), 28/sep.
 const nuevo = (userId: string): Borrador => ({ userId, puesto: "", empresa: "level_up", tambienEn: null, slackId: null, soloRitmo: true, liderId: null, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: null, activo: true });
 
-export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false, arriba }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean; arriba?: React.ReactNode }) {
-  const [tab, setTab] = useState<"personas" | "metas">("personas");
+export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", gestorPulse = false, arriba, puestos }: { usuarios: Usuario[]; perfiles: Perfil[]; metas: OverrideMeta[]; produccion: boolean; buscar?: string; gestorPulse?: boolean; arriba?: React.ReactNode; puestos: PuestoUI[] }) {
+  const [tab, setTab] = useState<"personas" | "puestos" | "metas">("personas");
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -44,13 +45,13 @@ export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", ge
       {arriba}
       <Produccion existe={produccion} />
       <div className="flex gap-1 self-start rounded-full border border-border bg-card/60 p-1 text-sm">
-        {(["personas", "metas"] as const).map((t) => (
+        {(["personas", "puestos", "metas"] as const).map((t) => (
           <button key={t} type="button" onClick={() => setTab(t)} className={cn("rounded-full px-4 py-1.5 capitalize transition", tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
             {t}
           </button>
         ))}
       </div>
-      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} buscar={buscar} gestorPulse={gestorPulse} /> : <Metas metas={metas} />}
+      {tab === "personas" ? <Personas usuarios={usuarios} perfiles={perfiles} buscar={buscar} gestorPulse={gestorPulse} puestos={puestos} /> : tab === "puestos" ? <Puestos puestos={puestos} /> : <Metas metas={metas} puestos={puestos} />}
     </div>
   );
 }
@@ -85,7 +86,7 @@ function Produccion({ existe }: { existe: boolean }) {
   );
 }
 
-function Personas({ usuarios, perfiles, buscar, gestorPulse }: { usuarios: Usuario[]; perfiles: Perfil[]; buscar: string; gestorPulse: boolean }) {
+function Personas({ usuarios, perfiles, buscar, gestorPulse, puestos }: { usuarios: Usuario[]; perfiles: Perfil[]; buscar: string; gestorPulse: boolean; puestos: PuestoUI[] }) {
   const [q, setQ] = useState(buscar);
   const conPerfil = new Set(perfiles.map((p) => p.userId));
   const lista = useMemo(
@@ -97,14 +98,15 @@ function Personas({ usuarios, perfiles, buscar, gestorPulse }: { usuarios: Usuar
     <div className="flex flex-col gap-3">
       <Input placeholder="Buscar persona…" value={q} onChange={(e) => setQ(e.target.value)} className="h-11 max-w-sm" />
       {lista.map((u) => (
-        <FilaPerfil key={u.id} usuario={u} perfil={perfiles.find((p) => p.userId === u.id) ?? null} usuarios={usuarios} gestorPulse={gestorPulse} />
+        <FilaPerfil key={u.id} usuario={u} perfil={perfiles.find((p) => p.userId === u.id) ?? null} usuarios={usuarios} gestorPulse={gestorPulse} puestos={puestos} />
       ))}
     </div>
   );
 }
 
-function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuario; perfil: Perfil | null; usuarios: Usuario[]; gestorPulse: boolean }) {
+function FilaPerfil({ usuario, perfil, usuarios, gestorPulse, puestos }: { usuario: Usuario; perfil: Perfil | null; usuarios: Usuario[]; gestorPulse: boolean; puestos: PuestoUI[] }) {
   const [tocoPulse, setTocoPulse] = useState(false);
+  const [nombre, setNombre] = useState(usuario.nombre);
   const [b, setB] = useState<Borrador>(() => {
     if (!perfil) return nuevo(usuario.id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,14 +119,14 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuar
   const guardar = async () => {
     setCargando(true);
     // El acceso a Pulse solo se manda si un admin/editora lo cambió a propósito; si no, decide el servidor.
-    const r = await guardarPerfilAction({ ...b, soloRitmo: gestorPulse && tocoPulse ? b.soloRitmo : undefined });
+    const r = await guardarPerfilAction({ ...b, nombre, soloRitmo: gestorPulse && tocoPulse ? b.soloRitmo : undefined });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     if (r.pendientes?.length) toast.success(`${usuario.nombre}: enviado a Elvin para aprobar`, { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
     else toast.success(`${usuario.nombre}: guardado`, aviso);
     setAbierto(false);
   };
-  const puesto = PUESTOS.find((p) => p.id === (perfil?.puesto ?? b.puesto));
+  const puesto = puestos.find((p) => p.id === (perfil?.puesto ?? b.puesto));
 
   return (
     <div className={cn("panel p-4", !perfil && "opacity-70")}>
@@ -138,10 +140,13 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse }: { usuario: Usuar
       </button>
       {abierto ? (
         <div className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
+          <Campo label="Nombre (se corrige directo)">
+            <Input className="h-10" value={nombre} maxLength={80} onChange={(e) => setNombre(e.target.value)} />
+          </Campo>
           <Campo label="Puesto">
             <select className={select} value={b.puesto} onChange={(e) => set("puesto", e.target.value)}>
               {!b.puesto ? <option value="">— Escoge el puesto —</option> : null}
-              {PUESTOS.map((p) => (
+              {puestos.map((p) => (
                 <option key={p.id} value={p.id}>{p.nombre}</option>
               ))}
             </select>
@@ -254,6 +259,56 @@ function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
   );
 }
 
+// Puestos (29/sep): RR.HH. y la dirección crean los que falten sin pedírselo a Nico. Nacen sin KPIs (la nota sale de la
+// asistencia); asignárselo a alguien sigue siendo un cambio que aprueba Elvin.
+function Puestos({ puestos }: { puestos: PuestoUI[] }) {
+  const [f, setF] = useState({ nombre: "", departamento: "" });
+  const [cargando, setCargando] = useState(false);
+  const deps = [...new Set(puestos.map((p) => p.departamento))];
+  const crear = async () => {
+    setCargando(true);
+    const r = await crearPuestoAction(f);
+    setCargando(false);
+    if (!r.ok) return toast.error(r.error, aviso);
+    toast.success(`Puesto «${f.nombre.trim()}» creado. Ya lo puedes escoger en Personas.`, aviso);
+    setF({ nombre: "", departamento: "" });
+  };
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="panel flex flex-col gap-3 p-4">
+        <p className="font-medium">Crear un puesto</p>
+        <p className="text-sm text-muted-foreground">Si el puesto de alguien no está en la lista, créalo aquí. Nace sin KPIs: su nota sale de la asistencia hasta que se le definan.</p>
+        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+          <Input className="h-10" placeholder="Nombre del puesto (ej.: Community Manager)" value={f.nombre} maxLength={60} onChange={(e) => setF((x) => ({ ...x, nombre: e.target.value }))} />
+          <Input className="h-10" list="departamentos" placeholder="Departamento (ej.: Contenido)" value={f.departamento} maxLength={40} onChange={(e) => setF((x) => ({ ...x, departamento: e.target.value }))} />
+          <datalist id="departamentos">
+            {deps.map((d) => (
+              <option key={d} value={d} />
+            ))}
+          </datalist>
+          <Button className="h-10 rounded-full" onClick={crear} disabled={cargando || f.nombre.trim().length < 3 || f.departamento.trim().length < 3}>
+            {cargando ? <Loader2 className="animate-spin" /> : <Plus />} Crear
+          </Button>
+        </div>
+      </div>
+      {deps.map((d) => (
+        <div key={d} className="panel p-4">
+          <p className="mb-2 font-mono text-[11px] tracking-widest text-muted-foreground uppercase">{d}</p>
+          <div className="flex flex-wrap gap-2">
+            {puestos
+              .filter((p) => p.departamento === d)
+              .map((p) => (
+                <span key={p.id} className={cn("rounded-full px-3 py-1 text-sm ring-1", p.nuevo ? "bg-primary/10 text-primary ring-primary/30" : "ring-border")}>
+                  {p.nombre}
+                </span>
+              ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Campo({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -263,15 +318,15 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function Metas({ metas }: { metas: OverrideMeta[] }) {
-  const [puesto, setPuesto] = useState(PUESTOS[0].id);
+function Metas({ metas, puestos }: { metas: OverrideMeta[]; puestos: PuestoUI[] }) {
+  const [puesto, setPuesto] = useState(puestos[0]?.id ?? "");
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-muted-foreground">
         Score = 20 % asistencia + 80 % KPIs. Cada KPI se compara con su meta; el peso dice cuánto pesa dentro del puesto (0 = solo informativo). Las primeras semanas son de calibración: ajusta con los números reales.
       </p>
       <select className={cn(select, "max-w-xs")} value={puesto} onChange={(e) => setPuesto(e.target.value)}>
-        {PUESTOS.map((p) => (
+        {puestos.map((p) => (
           <option key={p.id} value={p.id}>{p.nombre}</option>
         ))}
       </select>

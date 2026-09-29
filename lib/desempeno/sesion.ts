@@ -6,6 +6,7 @@ import { usuarioActual } from "../pulse/auth";
 import type { UsuarioPulse } from "../pulse/types";
 import { actorRitmo } from "./datos";
 import { dispositivoVerificado } from "./dos-pasos";
+import { cargarPuestosExtra } from "./puestos-extra";
 import { esMaestro } from "./reglas";
 
 /**
@@ -21,7 +22,8 @@ export const usuarioRitmo = cache(async (): Promise<UsuarioRitmo | null> => {
   if (!u) return null;
   const a = actorRitmo(u);
   const puede = esMaestro(a);
-  const verificado = puede ? await dispositivoVerificado(u.id) : false;
+  // Los puestos que crea RR.HH. (29/sep) se registran aquí: toda página y acción de Ritmo pasa por esta función.
+  const [verificado] = await Promise.all([puede ? dispositivoVerificado(u.id) : Promise.resolve(false), cargarPuestosExtra()]);
   return { ...a, maestro: puede && verificado, falta2fa: puede && !verificado };
 });
 

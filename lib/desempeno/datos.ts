@@ -439,3 +439,11 @@ export function modoScore(rol: string): "visible" | "vista-previa" | "oculto" {
   if (process.env.DESEMPENO_SCORE === "on") return "visible";
   return rol === "admin" ? "vista-previa" : "oculto";
 }
+
+/** Corrige el nombre de una persona (se ve igual en Ritmo y Pulse). Cambio menor: directo y con bitácora. */
+export async function cambiarNombre(userId: string, nombre: string, actorId: string, antes: string) {
+  const d = await db();
+  await d.update(pulseUsers).set({ nombre }).where(eq(pulseUsers.id, userId));
+  await evento({ userId, actorId, tipo: "nombre", datos: { antes, despues: nombre } });
+}
+

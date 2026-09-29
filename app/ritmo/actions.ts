@@ -179,7 +179,19 @@ export async function decidirCorreccionAction(p: { poncheId: string; aprobar: bo
 
 const HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+/** RR.HH. o la dirección crean un puesto nuevo (29/sep). Asignarlo a alguien sigue siendo un cambio que aprueba Elvin. */
+export async function crearPuestoAction(p: { nombre: string; departamento: string }) {
+  return envolver(async () => {
+    const u = await requiereMaestro();
+    const { crearPuesto } = await import("@/lib/desempeno/puestos-extra");
+    const id = await crearPuesto(p.nombre, p.departamento, u.id);
+    refresh();
+    return { id };
+  });
+}
+
 export async function guardarPerfilAction(p: {
+  nombre?: string;
   userId: string;
   puesto: string;
   empresa: string;
@@ -218,13 +230,21 @@ export async function guardarPerfilAction(p: {
     // sensible, lo que no haga Elvin espera su aprobación (Ajustes → Por aprobar).
     const previo = (await datos.leerPerfiles(false)).find((x) => x.userId === p.userId);
     const cuenta = await import("@/lib/pulse/repo").then((r) => r.leerUsuario(p.userId));
+    // Corregir cómo se escribe el nombre es un cambio menor: se aplica directo y queda en la bitácora (29/sep).
+    const nombreNuevo = p.nombre?.replace(/\s+/g, " ").trim();
+    if (cuenta && nombreNuevo && nombreNuevo !== cuenta.nombre) {
+      if (nombreNuevo.length < 3 || nombreNuevo.length > 80) throw new Error("Revisa el nombre");
+      await datos.cambiarNombre(p.userId, nombreNuevo, u.id, cuenta.nombre);
+    }
     if (cuenta && (await import("@/lib/desempeno/acceso")).estaBloqueado(cuenta.email)) throw new Error("Esta persona no puede tener acceso (decisión de Elvin)");
     const gestorPulse = u.maestro; // admin, editoras y RR.HH.
     // Quien tiene permiso de Leads (closers, setters, chatters; lo da un admin) sigue entrando a Pulse: si no,
     // el perfil de Ritmo le cerraba Leads (28/sep: Dilan y Ana, chatters, perdieron Leads al crearles el perfil).
     const conLeads = await import("@/lib/leads/repo").then((r) => r.tienePermisoLeads(p.userId));
     const soloRitmo = gestorPulse && typeof p.soloRitmo === "boolean" ? p.soloRitmo : conLeads ? false : (previo?.soloRitmo ?? !cuenta?.tieneClave);
-    const nuevo = { ...p, tambienEn, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { nombre: _nombre, ...perfilPedido } = p;
+    const nuevo = { ...perfilPedido, tambienEn, soloRitmo, slackId, diasLaborables: dias, fechaIngreso: p.fechaIngreso || null };
     // Lo sensible (puesto, empresa, supervisor, activo, acceso a Pulse, contrato) espera a Elvin; lo menor pasa ya.
     if (necesitaAprobacion(u.rol)) {
       const { aplicarYa, pendientes } = separar(SENSIBLES_PERFIL, previo ?? null, nuevo);

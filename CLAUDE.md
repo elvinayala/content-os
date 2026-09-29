@@ -766,6 +766,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   espera. Elvin aprueba/rechaza en Ajustes → **Por aprobar** (se aplica sobre cómo está HOY la persona) y quien lo pidió recibe
   el aviso por Slack. Elvin (admin) aplica directo. El alta de empleado nuevo sigue directa. Puesto nuevo **Tesorera**
   (`tesoreria`, Finanzas: María García); Ajustes ya no arranca en "estratega" (así quedó mal María).
+- **Cambios menores sin Nico** (29/sep, Elvin: "que Yaileen pueda hacer cambios menores manualmente"): en Ajustes, la
+  vista maestra **crea puestos** (pestaña Puestos → `crearPuestoAction`; tabla `desempeno_puestos_extra` creada en runtime
+  por `lib/desempeno/puestos-extra.ts`, id `p_<slug>`, nacen sin KPIs; `usuarioRitmo()` los registra en `PUESTOS` con
+  `registrarPuestosExtra`) y **corrige el nombre** de una persona directo (`datos.cambiarNombre`, evento "nombre"). Asignar
+  el puesto sigue siendo sensible (espera a Elvin).
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para

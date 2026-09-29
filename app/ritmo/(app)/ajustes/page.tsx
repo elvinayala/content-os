@@ -7,7 +7,7 @@ import { estaBloqueado } from "@/lib/desempeno/acceso";
 import { describirCambios, listarCambios } from "@/lib/desempeno/cambios";
 import { actorRitmo, columnasProduccion, leerMetas, leerPerfiles } from "@/lib/desempeno/datos";
 import { desempenoDosPasos } from "@/lib/desempeno/schema";
-import { esMaestro } from "@/lib/desempeno/reglas";
+import { esMaestro, PUESTOS } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { db } from "@/lib/pulse/db";
 import { listarUsuarios } from "@/lib/pulse/repo";
@@ -48,6 +48,7 @@ export default async function AjustesPage({ searchParams }: { searchParams: Prom
         produccion={!!prod}
         buscar={q ?? ""}
         gestorPulse={u.maestro}
+        puestos={PUESTOS.map((p) => ({ id: p.id, nombre: p.nombre, departamento: p.departamento, nuevo: p.id.startsWith("p_") }))}
       />
       {dosPasos ? <DosPasosAdmin gente={dosPasos} /> : null}
     </div>

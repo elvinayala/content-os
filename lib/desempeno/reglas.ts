@@ -136,6 +136,36 @@ export const EMPRESAS = [
 export const empresaPorId = (id: string) => EMPRESAS.find((e) => e.id === id) ?? EMPRESAS[0];
 
 export const DEPARTAMENTOS = [...new Set(PUESTOS.map((p) => p.departamento))];
+
+/**
+ * Puestos que RR.HH. crea desde Ajustes (29/sep, Elvin: "que Yaileen pueda hacer cambios menores sin pedirle a Nico").
+ * Viven en la base (lib/desempeno/puestos-extra.ts) y se registran aquí en cada request del servidor: nacen sin KPIs
+ * (su nota sale de la asistencia) hasta que alguien les defina los suyos.
+ */
+export function registrarPuestosExtra(extras: { id: string; nombre: string; departamento: string }[]) {
+  for (const x of extras) {
+    const actual = PUESTOS.find((p) => p.id === x.id);
+    if (actual) {
+      actual.nombre = x.nombre;
+      actual.departamento = x.departamento;
+    } else PUESTOS.push({ id: x.id, nombre: x.nombre, departamento: x.departamento, kpis: [] });
+    if (!DEPARTAMENTOS.includes(x.departamento)) DEPARTAMENTOS.push(x.departamento);
+  }
+}
+
+/** Id de un puesto nuevo a partir de su nombre ("Community Manager" → "p_community_manager"). */
+export function idPuesto(nombre: string): string {
+  return (
+    "p_" +
+    nombre
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_|_$/g, "")
+      .slice(0, 40)
+  );
+}
 export const puestoPorId = (id: string) => PUESTOS.find((p) => p.id === id);
 
 // Fuentes ya conectadas (fase 1). Las demás se muestran como "por conectar" y no entran al score.
