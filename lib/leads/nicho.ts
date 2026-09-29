@@ -13,7 +13,8 @@ import { leadsHistorial, leadsTratos } from "./schema";
 // Claude lo lee y lo deja en la tarjeta: negocio (si lo nombra) y nicho. Máximo 3 intentos por lead, y
 // nunca pisa un negocio que el equipo ya escribió.
 
-const MODELO = process.env.LEADS_NICHO_MODEL || "claude-opus-5";
+// Extraer negocio/nicho de 3 mensajes es clasificación, no criterio: Haiku (corre en CADA lead).
+const MODELO = process.env.LEADS_NICHO_MODEL || "claude-haiku-4-5-20251001";
 const INTENTOS = 3;
 
 const INSTRUCCIONES = `Te paso los primeros mensajes que una persona le escribió por WhatsApp a una agencia de marketing de Puerto Rico. Di a qué se dedica su negocio.

@@ -180,7 +180,30 @@ Opus 5.5 y él decida"*.
 
 Economía: no releer lo ya leído, no delegar lo que se hace en 2 pasos, un subagente por frente
 de trabajo. Elvin puede forzar un modelo por Telegram: `/fable …`, `/sonnet …`, `/opus …`, `/haiku …`
-(variable `NICO_MODELO` cambia el default).
+(variable `NICO_MODELO` fija uno para todo).
+
+### 7b. El modelo lo escoge la TAREA (Elvin, 28/sep/2026)
+
+El 28/sep Nico gastó **$22.25 en un día** (26 corridas, todas en Opus 5.5) contra $1.00 de Max, que ya
+escogía modelo por tarea. Elvin: *"mira a ver si necesita Opus 5.5 para todo o si puede manejarse con
+Sonnet. Diseño, desarrollo, planeación, comenzar estructuras, definir planes: eso no lo vamos a
+escatimar. Pero hay cosas breves que se pueden automatizar para Sonnet."*
+
+`scripts/nico-gasto.mjs` (puro, `tests/nico-gasto.test.mjs`) decide antes de cada corrida:
+
+| Tarea | Modelo |
+|---|---|
+| Construir, implementar, integrar, migrar, refactorizar, **diseñar**, **planear**, arquitectura, estrategia, arreglar un bug de producción, auditar, un brief largo (> 600 caracteres) | **Opus 5.5** |
+| Diagnosticar, revisar logs, consultar, explicar, la **ronda diaria**, el **diagnóstico** de una solicitud de Carilin/Aure (es solo lectura) | Sonnet 5 |
+| Trámites cortos ("ok", "gracias", "¿cómo va?") y el **cierre del día** | Haiku 4.5 |
+
+Cuando Elvin aprueba una solicitud (`ok <id>`), la **ejecución** se vuelve a clasificar: si lo que hay
+que hacer es construir, sube a Opus. El log de cada corrida dice qué modelo usó. `/opus …` fuerza
+Opus cuando el clasificador se queda corto — y si Nico ve que una tarea "de Sonnet" se le está
+complicando, lo dice y pide que Elvin la repita con `/opus`.
+
+**Aviso de gasto**: al pasar `NICO_TOPE_DIA` (default $15) Nico le avisa a Elvin por Telegram, y otra
+vez al doble. No se bloquea (puede estar arreglando producción); Max sí se frena solo.
 
 **Autoridad.** Lo que Elvin le pide **directamente** a Nico: autorización total de punta a punta
 (código, deploys, subcuentas de GHL, agentes de chat/voz, WhatsApp, calendarios, custom fields),

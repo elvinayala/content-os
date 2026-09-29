@@ -10,7 +10,8 @@ import { pulseBoards, pulseColumns, pulseGroups, pulseItems, pulseUsers } from "
 import type { SettingsColumna, TipoColumna, ValorCelda } from "./types";
 import { textoDeValor } from "./valores";
 
-const MODELO = process.env.PULSE_PREGUNTAR_MODEL || "claude-opus-5";
+// Buscar en el CRM y responder con ids: Sonnet (la respuesta sale de las tools, no del modelo).
+const MODELO = process.env.PULSE_PREGUNTAR_MODEL || "claude-sonnet-5";
 const MAX_VUELTAS = 6;
 
 export interface ItemRespuesta {

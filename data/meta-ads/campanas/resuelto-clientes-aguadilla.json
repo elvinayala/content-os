@@ -1,0 +1,80 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-09-28",
+ "area": "Aguadilla",
+ "pueblos": [
+  "Aguadilla",
+  "Isabela",
+  "Moca",
+  "San Sebastián",
+  "Aguada"
+ ],
+ "ids": {
+  "campana": "120255155398260029",
+  "conjuntoA": "120255155398700029",
+  "conjuntoB": "120255155398960029",
+  "conjuntoC": "120255155399390029"
+ },
+ "anuncios": {
+  "A-video-precio": {
+   "video": "3013846725616605",
+   "miniatura": "74ae9bc65db1b490d86729b62b7d9ee6",
+   "creativo": "1120331313669538",
+   "ad": "120255155403390029"
+  },
+  "A-flyer-ciudad": {
+   "imagen": "090d2d1263daa0ffeace3ab8be3e2b30",
+   "creativo": "1667371554733108",
+   "ad": "120255155404830029"
+  },
+  "A-flyer-menu": {
+   "imagen": "77dbeeee92e8f334064fc6c0189ec737",
+   "creativo": "1814564956207558",
+   "ad": "120255155405880029"
+  },
+  "B-video-destape": {
+   "video": "1753631385889974",
+   "miniatura": "88f8b3731861d83ee5374e1029074fbc",
+   "creativo": "1085155931157476",
+   "ad": "120255155408980029"
+  },
+  "B-video-calentador": {
+   "video": "1778447550068901",
+   "miniatura": "a4e9f2728b88e9ed4efe224bda4b9be8",
+   "creativo": "28961850870078598",
+   "ad": "120255155412450029"
+  },
+  "B-flyer-destape": {
+   "imagen": "de86659b75db0a886ddcbaaf8471bda3",
+   "creativo": "1573765140911940",
+   "ad": "120255155414340029"
+  },
+  "B-flyer-calentador": {
+   "imagen": "8580551d4d15aeeeda090f59cf2793b9",
+   "creativo": "1140135491681306",
+   "ad": "120255155418930029"
+  },
+  "C-video-sorpresas": {
+   "video": "1636669128108462",
+   "miniatura": "184fef328eb8151accb92eec3de85b7b",
+   "creativo": "854000177734223",
+   "ad": "120255155425540029"
+  },
+  "C-flyer-promesa": {
+   "imagen": "80ced8db5516a9d53d521f595f45bffb",
+   "creativo": "2930117600724068",
+   "ad": "120255155426470029"
+  },
+  "C-flyer-problema": {
+   "imagen": "6c577e01ac283235720f91de0c6a5d15",
+   "creativo": "4667186230270525",
+   "ad": "120255155429310029"
+  },
+  "C-flyer-sorpresas": {
+   "imagen": "e4a69cdeed2c009eed868116017eacff",
+   "creativo": "2442215882935315",
+   "ad": "120255155430530029"
+  }
+ },
+ "estado": "Campaña EN PAUSA (Elvin la prende). 3 conjuntos × $10 = $30/día."
+}

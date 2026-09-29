@@ -12,7 +12,8 @@ import { digitosTelefono, huella, leerExtraccion, listoParaPublicar, plantilla, 
 // listo para publicar (GET) y confirma con el ts de Slack (POST confirmar). Publica n8n porque el bot de
 // Content OS no está en ese canal; el texto lo arma este código. Ver lib/encuestas/reglas.ts.
 
-const MODELO = process.env.ENCUESTAS_MODEL || "claude-opus-5";
+// Sacar los datos de la conversación y llenar la plantilla fija de Carilin: Sonnet alcanza.
+const MODELO = process.env.ENCUESTAS_MODEL || "claude-sonnet-5";
 const ETIQUETA_NO_IA = "no-contactar-ia";
 
 function filas<T = Record<string, unknown>>(r: unknown): T[] {

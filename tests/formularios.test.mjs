@@ -16,6 +16,23 @@ test("las semillas de Typeform son formularios válidos", () => {
   assert.equal(onboarding.config.preguntas.find((p) => p.id === "industria").etiquetas.Electric, "Electricidad");
 });
 
+test("aplicación al Sistema Operador: nace cerrada, guarda parciales y no promete nada", () => {
+  const s = SEMILLAS.find((x) => x.slug === "aplicar-sistema");
+  assert.ok(s);
+  assert.equal(s.activo, false); // se abre cuando Elvin apruebe
+  assert.equal(s.config.parciales, true);
+  assert.equal(s.accion, "ninguna");
+  const ids = s.config.preguntas.map((p) => p.id);
+  for (const id of ["nombre", "telefono", "email", "facturacion", "tipo", "frena", "inversion"]) assert.ok(ids.includes(id), id);
+  assert.equal(s.config.preguntas.find((p) => p.id === "frena").opciones.length, 6); // los 6 sistemas
+  const todo = JSON.stringify(s.config).toLowerCase();
+  assert.doesNotMatch(todo, /gratis|garantiz/);
+  assert.deepEqual(
+    validar(s.config.preguntas, { nombre: "Ana", telefono: "787 555 1234", email: "a@b.com", negocio: "x", tipo: "Coaching o mentoría", facturacion: "$10,000 – $30,000", ticket: "$2,000 – $5,000", equipo: "2 a 5", frena: ["IA: hago a mano cosas que se repiten todas las semanas"], arreglar: "x", meta: "x", porque: "x", tiempo: "Sí", inversion: "Sí, tengo el capital" }),
+    {},
+  );
+});
+
 test("encuesta: '¿qué no ha ido bien?' solo aparece si contestó No", () => {
   const problema = encuesta.config.preguntas.find((p) => p.id === "problema");
   assert.equal(visible(problema, { contenido: "Sí" }), false);

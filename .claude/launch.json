@@ -48,6 +48,18 @@
       "port": 8794
     },
     {
+      "name": "sistema-operador",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8796",
+        "-d",
+        "demos/sistema-operador"
+      ],
+      "port": 8796
+    },
+    {
       "name": "isla-run",
       "runtimeExecutable": "sh",
       "runtimeArgs": [

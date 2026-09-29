@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sistema Operador · Elvin Ayala</title>
+<meta name="description" content="Los 6 sistemas con los que Elvin Ayala escala sus negocios (marketing, IA, operaciones, ventas, reclutamiento y entrenamiento), instalados contigo en 90 días. Por aplicación." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card-2:#1d212a; --line:#2b303b;
+    --fg:#f2efe8; --muted:#9aa0ad; --accent:#ffe14d; --accent-fg:#14120a; --ink:#5b8cff; --ink-soft:rgba(91,140,255,.14);
+    --head:'Bricolage Grotesque','Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:
+    radial-gradient(900px 520px at 85% -8%, rgba(91,140,255,.13), transparent 60%),
+    radial-gradient(700px 520px at -10% 30%, rgba(255,225,77,.06), transparent 60%), var(--bg);
+    color:var(--fg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  section{padding:72px 0}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid rgba(91,140,255,.45);border-radius:999px;font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:var(--ink-soft)}
+  h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;text-wrap:balance}
+  h1{font-weight:800;font-size:clamp(34px,6.4vw,66px);line-height:1.02;margin:22px 0 20px;max-width:900px}
+  h1 mark,h2 mark{background:linear-gradient(transparent 8%,var(--accent) 8%,var(--accent) 92%,transparent 92%);color:var(--accent-fg);padding:0 .12em;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  h2{font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.08;margin:14px 0 16px;max-width:760px}
+  h3{font-weight:600;font-size:20px;line-height:1.2}
+  .kicker{font:600 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .lead{color:var(--muted);font-size:clamp(17px,2.1vw,20px);max-width:690px;text-wrap:pretty}
+  .lead b{color:var(--fg);font-weight:600}
+  .btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:var(--accent-fg);font:700 17px var(--body);padding:16px 26px;border-radius:14px;text-decoration:none;transition:transform .15s,box-shadow .15s;box-shadow:0 10px 30px -10px rgba(255,225,77,.45)}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .nota{color:var(--muted);font-size:14px;margin-top:14px}
+  .hero{padding:56px 0 64px}
+  .top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+  .marca{font:800 18px var(--head);letter-spacing:-.01em}
+  .marca span{color:var(--accent)}
+  .top a.link{font-size:14px;color:var(--muted);text-decoration:none}
+  .top a.link:hover{color:var(--fg)}
+  .prueba{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:48px}
+  .prueba div{background:var(--card);padding:22px 18px}
+  .prueba b{display:block;font:800 clamp(24px,3.4vw,34px) var(--head);letter-spacing:-.02em}
+  .prueba span{color:var(--muted);font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px}
+  .dolor{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+  .dolor .card p{color:var(--muted);margin-top:8px}
+  .sistemas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+  .sis{position:relative;display:flex;flex-direction:column;gap:10px}
+  .sis .num{font:600 12px var(--mono);color:var(--ink);letter-spacing:.1em}
+  .sis p{color:var(--muted);font-size:15px}
+  .sis .palanca{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);font-size:14px;color:var(--fg)}
+  .sis .palanca em{font-style:normal;color:var(--accent);font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:4px}
+  .columna{margin-top:14px;display:flex;gap:18px;align-items:center;background:var(--card-2)}
+  .columna .tag{flex:none;font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-fg);background:var(--accent);padding:6px 10px;border-radius:8px}
+  .columna p{color:var(--muted)}
+  .columna p b{color:var(--fg)}
+  .linea{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px;counter-reset:f}
+  .fase{border-top:3px solid var(--line);padding-top:18px}
+  .fase.on{border-color:var(--accent)}
+  .fase .sem{font:600 12px var(--mono);color:var(--muted);letter-spacing:.1em}
+  .fase h3{margin:6px 0 8px}
+  .fase p{color:var(--muted);font-size:15px}
+  .incluye{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin-top:30px}
+  .item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .item svg{flex:none;margin-top:3px}
+  .item b{display:block;font-weight:600}
+  .item span{color:var(--muted);font-size:15px}
+  .bonos{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+  .bono{border:1px solid rgba(255,225,77,.35);background:rgba(255,225,77,.06);color:var(--fg);border-radius:999px;padding:8px 14px;font-size:14px}
+  .fit{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+  .fit ul{list-style:none;margin-top:14px;display:grid;gap:10px}
+  .fit li{padding-left:26px;position:relative;color:var(--muted)}
+  .fit li::before{position:absolute;left:0;top:0;font-weight:700}
+  .fit .si li::before{content:"✓";color:var(--accent)}
+  .fit .no li::before{content:"✕";color:#ff7b7b}
+  .garantia{display:flex;gap:22px;align-items:flex-start;border-color:rgba(255,225,77,.35)}
+  .sello{flex:none;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-fg);font:800 13px var(--head);text-align:center;line-height:1.05}
+  .garantia p{color:var(--muted);margin-top:8px}
+  .sobre{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:center}
+  .sobre .foto{aspect-ratio:4/5;border-radius:22px;background:linear-gradient(160deg,#1d212a,#12151b);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:20px}
+  .sobre p{color:var(--muted);margin-top:12px}
+  .sobre p b{color:var(--fg)}
+  details{border-bottom:1px solid var(--line);padding:18px 0}
+  summary{cursor:pointer;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--accent);font-size:22px;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);margin-top:10px;max-width:760px}
+  .final{text-align:center}
+  .final h2,.final .lead{margin-left:auto;margin-right:auto}
+  footer{padding:40px 0 60px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line)}
+  @media (max-width:860px){
+    .sistemas,.dolor{grid-template-columns:1fr 1fr}
+    .linea{grid-template-columns:1fr 1fr}
+    .prueba{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:620px){
+    section{padding:56px 0}
+    .sistemas,.dolor,.linea,.incluye,.fit,.sobre{grid-template-columns:1fr}
+    .columna,.garantia{flex-direction:column;gap:12px}
+    .btn{width:100%;justify-content:center}
+    .top a.link{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="marca">Sistema <span>Operador</span></div>
+    <a class="link" href="#aplicar">Aplicar →</a>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">Por aplicación · 90 días · con Elvin Ayala</span>
+    <h1>Tu negocio no necesita más horas. Necesita <mark>un sistema.</mark></h1>
+    <p class="lead">Te instalo los <b>6 sistemas</b> con los que mis dos agencias facturan cerca de <b>$1.5M al año</b>: marketing, IA, operaciones, ventas, reclutamiento y entrenamiento. Adaptados a tu negocio, contigo y en 90 días.</p>
+    <p class="lead" style="margin-top:12px">Para dueños de negocios digitales que <b>ya facturan</b> y están cansados de que todo pase por ellos.</p>
+    <div style="margin-top:30px"><a class="btn" href="#aplicar">Aplicar al programa <span aria-hidden="true">→</span></a></div>
+    <p class="nota">Solo 10 cupos de fundador. Reviso cada aplicación personalmente.</p>
+
+    <div class="prueba">
+      <div><b>~$1.5M</b><span>al año entre mis 2 agencias</span></div>
+      <div><b>+$100K</b><span>invertidos en mentorías</span></div>
+      <div><b>6</b><span>sistemas, cada uno vale por sí solo</span></div>
+      <div><b>90</b><span>días de instalación acompañada</span></div>
+    </div>
+  </section>
+</div>
+
+<section style="background:rgba(255,255,255,.015);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <span class="kicker">Si te suena familiar</span>
+    <h2>Vendes. Pero el negocio eres tú.</h2>
+    <p class="lead">Yo estuve ahí: facturando bien y trabajando hasta la 1 de la mañana, con siete áreas reportándome directo. El problema no era la demanda. Era que no había sistema.</p>
+    <div class="dolor">
+      <div class="card"><h3>La plata se escapa entre marketing y ventas</h3><p>No sabes qué anuncio trajo la venta. Los leads esperan horas por una respuesta. El que no compró hoy nunca recibe seguimiento.</p></div>
+      <div class="card"><h3>Todo pasa por ti</h3><p>Apruebas cada cosa, respondes cada pregunta y, si paras una semana, se nota en la venta.</p></div>
+      <div class="card"><h3>El equipo no rinde parejo</h3><p>Contratas por intuición, entrenas sobre la marcha y te enteras tarde de quién no está funcionando.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section id="sistemas">
+    <span class="kicker">El sistema</span>
+    <h2>Seis sistemas. <mark>Cada uno vale por sí solo.</mark></h2>
+    <p class="lead">Cada sistema trae su <b>palanca</b>: un solo consejo que por sí mismo te puede cambiar el negocio, aunque no uses los otros cinco. Empezamos por los 2 que más te mueven.</p>
+
+    <div class="sistemas">
+      <div class="card sis"><span class="num">01 · MARKETING</span><h3>Anuncios y contenido que venden</h3><p>El Método 5 Fases de Meta Ads, los 3 embudos que han generado millones y contenido con estructura de venta.</p><p class="palanca"><em>La palanca</em>Optimiza por la venta, no por el lead barato: saber qué anuncio trajo cada venta.</p></div>
+      <div class="card sis"><span class="num">02 · IA</span><h3>Tu equipo digital</h3><p>Agentes por rol que trabajan de verdad, con tu voz y tu criterio, y siempre con tu aprobación.</p><p class="palanca"><em>La palanca</em>Convierte tu receta en instrucciones: lo que haces igual cada semana, la IA lo hace como tú.</p></div>
+      <div class="card sis"><span class="num">03 · OPERACIONES</span><h3>Un negocio que no depende de ti</h3><p>Organigrama por roles, manuales por departamento, tu sistema de clientes y el scoreboard semanal.</p><p class="palanca"><em>La palanca</em>Nadie con más de 3–4 personas reportándole, y tus líderes deciden en su alcance.</p></div>
+      <div class="card sis"><span class="num">04 · VENTAS</span><h3>Que no se escape un lead</h3><p>Respuesta en minutos, agenda y pre-llamada, setters y closers con método, comisiones claras.</p><p class="palanca"><em>La palanca</em>Nunca des un lead por muerto. En mi equipo, una persona recuperó ~$32K en mes y medio solo en seguimientos.</p></div>
+      <div class="card sis"><span class="num">05 · RECLUTAMIENTO</span><h3>La persona correcta, rápido</h3><p>Perfiles con KPIs, vacantes que atraen, prueba práctica y un proceso de entrada que filtra.</p><p class="palanca"><em>La palanca</em>Filtra en 6 días, no en 6 meses: KPIs desde el primer día.</p></div>
+      <div class="card sis"><span class="num">06 · ENTRENAMIENTO</span><h3>Un equipo que mejora cada semana</h3><p>Práctica diaria, KPIs por puesto sin vigilar, onboarding de clientes y empleados, control de calidad.</p><p class="palanca"><em>La palanca</em>Los deportistas no juegan sin calentar: 20 minutos de práctica antes de la primera llamada.</p></div>
+    </div>
+
+    <div class="card columna"><span class="tag">La columna</span><p>Todo se sostiene en mis <b>4 Fundamentos: nicho, oferta, contenido y estrategia</b>. Más las pepitas de lo que me enseñaron mis mentores. Si uno falla, todo se cae; por ahí empezamos.</p></div>
+  </section>
+
+  <section>
+    <span class="kicker">Cómo funciona</span>
+    <h2>90 días, con un plan hecho para tu negocio.</h2>
+    <div class="linea">
+      <div class="fase on"><span class="sem">SEMANA 1</span><h3>Diagnóstico</h3><p>Auditamos tus 6 sistemas y hacemos un 1:1 conmigo. Escogemos los 2 que más mueven tu negocio.</p></div>
+      <div class="fase on"><span class="sem">SEMANAS 2–4</span><h3>Palancas</h3><p>Aplicamos la palanca de tus 2 sistemas prioritarios. Primer resultado medible.</p></div>
+      <div class="fase"><span class="sem">SEMANAS 5–10</span><h3>Instalación</h3><p>Instalamos los prioritarios completos y arrancamos los otros cuatro con sus plantillas.</p></div>
+      <div class="fase"><span class="sem">SEMANAS 11–13</span><h3>Operación</h3><p>Tu negocio opera el sistema con números. Salimos con el plan de los próximos 90 días.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="kicker">Lo que recibes</span>
+    <h2>Todo lo que usamos en EA Market, empacado para ti.</h2>
+    <div class="incluye">
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Diagnóstico de los 6 sistemas</b><span>Auditoría con puntaje + 1:1 conmigo + tu plan de 90 días.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Los 6 playbooks</b><span>Cada sistema, tal como lo operamos por dentro.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Instalación acompañada</b><span>Mi equipo instala contigo tus 2 sistemas prioritarios.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Kit de plantillas</b><span>Manuales, guiones de setter y closer, seguimientos, campañas, organigrama, perfiles de puesto.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Tu equipo digital</b><span>Tus primeras instrucciones de IA con tu voz, y el mapa de qué agentes montar primero.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Sistema de seguimiento configurado</b><span>Tu embudo de ventas por etapas, listo para tu proceso. No en blanco.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>12 llamadas grupales + 4 llamadas 1:1 conmigo</b><span>Revisamos tus ofertas, campañas, guiones y números.</span></div></div>
+      <div class="item"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#ffe14d"/><path d="M6 10.2l2.6 2.6L14 7.4" stroke="#14120a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Las pepitas + soporte por Slack</b><span>Lo destilado de +$100K en mentorías y el equipo contigo los 90 días.</span></div></div>
+    </div>
+    <div class="bonos">
+      <span class="bono">Bono · 2 videos de motion graphics con tu marca</span>
+      <span class="bono">Bono · 12 meses en la comunidad</span>
+      <span class="bono">Bono · actualizaciones del sistema por 12 meses</span>
+    </div>
+  </section>
+
+  <section>
+    <span class="kicker">Para quién es</span>
+    <h2>No es para todo el mundo. A propósito.</h2>
+    <div class="fit">
+      <div class="card si"><h3>Es para ti si…</h3><ul>
+        <li>Tienes un negocio digital (coaching, mentoría, curso, agencia, servicios) que ya factura <b style="color:var(--fg)">$10K o más al mes</b>.</li>
+        <li>Tienes oferta y clientes, pero todo depende de ti.</li>
+        <li>Quieres crecer sin trabajar el doble.</li>
+        <li>Puedes dedicarle 4–5 horas a la semana por 90 días.</li>
+      </ul></div>
+      <div class="card no"><h3>No es para ti si…</h3><ul>
+        <li>Estás empezando de cero (para eso tengo otro programa).</li>
+        <li>Tu negocio es un local físico (ahí te lo hacemos todo con Level Up o AI Borinquen).</li>
+        <li>Buscas una fórmula para hacerte rico rápido.</li>
+        <li>Quieres que te lo hagan todo sin participar.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card garantia">
+      <div class="sello">90<br>DÍAS</div>
+      <div><h3>Garantía de implementación</h3><p>Si en 90 días no tienes instalados los sistemas que acordamos en tu plan, te seguimos acompañando sin costo hasta que queden. Solo te pido que vengas a las llamadas y hagas las tareas de cada semana. No te prometo ingresos: nadie serio puede hacerlo. Te prometo el sistema instalado y el acompañamiento para operarlo.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sobre">
+      <div class="foto">Foto de Elvin<br>(pendiente)</div>
+      <div>
+        <span class="kicker">Quién te acompaña</span>
+        <h2>Yo he sido un fantasma.</h2>
+        <p>Construí <b>Level Up Media</b> y <b>AI Borinquen</b> en silencio: dos agencias, cerca de $1.5M al año, y hasta este año casi nadie sabía mi nombre.</p>
+        <p>Pagué más de <b>$100K en mentorías</b> y me equivoqué lo suficiente para saber qué funciona. Hoy mis agentes de IA hacen el board meeting a las 5 de la mañana, mi equipo tiene sus números a la vista y yo dejé de ser el cuello de botella.</p>
+        <p>Ese mismo sistema es el que te instalo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="kicker">Preguntas</span>
+    <h2>Lo que me preguntan antes de aplicar</h2>
+    <details><summary>¿Cuánto cuesta?</summary><p>Es un programa de inversión alta en un solo pago, con opción de financiamiento. El precio te lo doy en la llamada de diagnóstico, cuando ya sepamos si el programa es para ti y qué 2 sistemas instalaríamos primero.</p></details>
+    <details><summary>¿Es un curso?</summary><p>No. Un curso te da información; aquí te instalamos el sistema contigo, con llamadas conmigo y mi equipo al lado. Los playbooks y las plantillas son la base, pero lo que cambia tu negocio es la instalación.</p></details>
+    <details><summary>¿Funciona en mi nicho?</summary><p>Todo negocio digital vende con los mismos 4 fundamentos y los mismos 6 sistemas. Lo que se adapta es el ángulo y la oferta, y eso lo hacemos contigo en la semana 1.</p></details>
+    <details><summary>¿Cuánto tiempo me toma?</summary><p>Una llamada grupal por semana (60–90 minutos) y 3–4 horas de implementación. Son 90 días.</p></details>
+    <details><summary>¿Tengo que usar las mismas herramientas que ustedes?</summary><p>No. Te instalamos el sistema, no una herramienta. Si ya tienes un sistema de clientes o de anuncios que funciona, lo usamos; si no, te recomendamos el más simple para tu tamaño.</p></details>
+    <details><summary>¿Qué pasa después de los 90 días?</summary><p>Sales con los sistemas instalados, tus números a la vista y el plan de los próximos 90 días. Además, 12 meses de acceso a la comunidad y a las actualizaciones del sistema.</p></details>
+  </section>
+
+  <section class="final" id="aplicar">
+    <span class="eyebrow">10 cupos de fundador</span>
+    <h2>¿Listo para que tu negocio <mark>funcione sin ti</mark> en el centro?</h2>
+    <p class="lead">Aplica en 3 minutos. Reviso cada aplicación y, si tu negocio es un buen fit, te escribimos por WhatsApp para agendar la llamada de diagnóstico.</p>
+    <div style="margin-top:28px"><a class="btn" href="https://content-os-chi-seven.vercel.app/f/aplicar-sistema">Aplicar al Sistema Operador <span aria-hidden="true">→</span></a></div>
+  </section>
+</div>
+
+<footer><div class="wrap">Sistema Operador · Elvin Ayala · EA Market LLC</div></footer>
+
+</body>
+</html>

@@ -69,6 +69,39 @@
      "ad": "120255128748510029"
     }
    }
+  },
+  "aguadilla": {
+   "nombre": "Aguadilla",
+   "pueblos": [
+    "Aguadilla",
+    "Isabela",
+    "Moca",
+    "San Sebastián",
+    "Aguada"
+   ],
+   "conjunto": "120255155432920029",
+   "anuncios": {
+    "ciudad": {
+     "imagen": "5159c306eace3783a2c8c59cd2dc5f7e",
+     "creativo": "1030417740040664",
+     "ad": "120255155433770029"
+    },
+    "menu": {
+     "imagen": "45328665627d4d94cef1db6ed1a3bc4c",
+     "creativo": "1955577838456149",
+     "ad": "120255155434860029"
+    },
+    "destape": {
+     "imagen": "e21b83caf985367b0942c8113922dc94",
+     "creativo": "1143509848239721",
+     "ad": "120255155435490029"
+    },
+    "cisterna": {
+     "imagen": "f78e79d294be16ead567f4164cc8b23d",
+     "creativo": "1427526892664071",
+     "ad": "120255155437230029"
+    }
+   }
   }
  },
  "estado": "Campaña EN PAUSA: se prende cuando haya alguien contestando el 787-956-1111. $10/día por área."

@@ -111,4 +111,87 @@ export const SEMILLAS: Semilla[] = [
       ],
     },
   },
+  {
+    // Aplicación al Sistema Operador (28/sep/2026): el high ticket de pago único de Shadow Operator
+    // para dueños de negocios digitales que ya facturan $10K+/mes. Nace CERRADO: se abre desde
+    // Pulse → Formularios cuando Elvin apruebe la oferta. Oferta y guion del closer en
+    // vault/proyectos/sistema-operador/. Guarda parciales: el que se queda a mitad también es lead.
+    slug: "aplicar-sistema",
+    titulo: "Aplicación · Sistema Operador",
+    marca: "otra",
+    apariencia: { tema: "noche", acento: "#ffe14d", logo: "" },
+    accion: "ninguna",
+    activo: false,
+    config: {
+      parciales: true,
+      bienvenida: {
+        etiqueta: "Sistema Operador · por aplicación",
+        titulo: "Instala en tu negocio *los 6 sistemas* con los que escalo los míos.",
+        texto:
+          "Marketing, IA, operaciones, ventas, reclutamiento y entrenamiento, instalados contigo en 90 días. Es para dueños de negocios digitales que ya facturan y quieren crecer sin que todo pase por ellos. Son 3 minutos.",
+        puntos: ["Tu negocio y dónde estás hoy", "Qué te está frenando", "A dónde quieres llegar"],
+        boton: "Aplicar",
+      },
+      gracias: {
+        titulo: "Recibido, {nombre}.",
+        texto:
+          "Reviso cada aplicación personalmente. Si tu negocio es un buen fit, en las próximas 24 horas te escribimos por WhatsApp para agendar la llamada de diagnóstico. Si no lo es, te decimos cuál es el mejor próximo paso para ti.",
+      },
+      preguntas: [
+        { id: "nombre", seccion: "Tú", titulo: "¿Cómo te llamas?", tipo: "texto", requerida: true, placeholder: "Nombre y apellido" },
+        { id: "telefono", seccion: "Tú", titulo: "¿A qué WhatsApp te escribimos?", tipo: "telefono", requerida: true, placeholder: "787 000 0000" },
+        { id: "email", seccion: "Tú", titulo: "¿Y tu e-mail?", tipo: "email", requerida: true, placeholder: "tu@negocio.com" },
+        { id: "negocio", seccion: "Tu negocio", titulo: "¿Qué vendes y a quién?", ayuda: "El nombre de tu negocio, qué ofreces y tu Instagram o web.", tipo: "largo", requerida: true },
+        {
+          id: "tipo",
+          seccion: "Tu negocio",
+          titulo: "¿Qué tipo de negocio es?",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Coaching o mentoría", "Curso o producto digital", "Agencia o servicios digitales", "Creador de contenido con oferta propia", "Negocio con local físico"],
+          otra: true,
+        },
+        {
+          id: "facturacion",
+          seccion: "Dónde estás hoy",
+          titulo: "¿Cuánto factura tu negocio al mes, en promedio?",
+          ayuda: "Lo usamos solo para saber si el programa es para ti.",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Menos de $5,000", "$5,000 – $10,000", "$10,000 – $30,000", "$30,000 – $100,000", "Más de $100,000"],
+        },
+        { id: "ticket", seccion: "Dónde estás hoy", titulo: "¿Cuánto cuesta tu oferta principal?", tipo: "opcion", requerida: true, opciones: ["Menos de $500", "$500 – $2,000", "$2,000 – $5,000", "Más de $5,000"] },
+        { id: "equipo", seccion: "Dónde estás hoy", titulo: "¿Cuántas personas trabajan contigo?", tipo: "opcion", requerida: true, opciones: ["Solo yo", "2 a 5", "6 a 15", "Más de 15"] },
+        {
+          id: "frena",
+          seccion: "Qué te está frenando",
+          titulo: "¿Cuáles de estos sistemas sientes más flojos hoy?",
+          ayuda: "Escoge hasta los que de verdad te duelen.",
+          tipo: "multiple",
+          requerida: true,
+          opciones: [
+            "Marketing: no sé bien qué anuncio o contenido me trae las ventas",
+            "IA: hago a mano cosas que se repiten todas las semanas",
+            "Operaciones: todo pasa por mí",
+            "Ventas: se me escapan leads y seguimientos",
+            "Reclutamiento: me cuesta contratar a la persona correcta",
+            "Entrenamiento: mi equipo no rinde parejo",
+          ],
+        },
+        { id: "arreglar", seccion: "Qué te está frenando", titulo: "Si pudieras arreglar UNA sola cosa en los próximos 30 días, ¿cuál sería?", tipo: "largo", requerida: true },
+        { id: "meta", seccion: "A dónde quieres llegar", titulo: "¿Cuánto te gustaría estar facturando en 12 meses, y qué cambiaría en tu vida?", tipo: "largo", requerida: true },
+        { id: "porque", seccion: "A dónde quieres llegar", titulo: "¿Por qué ahora?", tipo: "largo", requerida: true },
+        { id: "tiempo", seccion: "Compromiso", titulo: "El programa pide 4 a 5 horas a la semana durante 90 días. ¿Las puedes sacar?", tipo: "si-no", requerida: true },
+        {
+          id: "inversion",
+          seccion: "Compromiso",
+          titulo: "Es un programa de inversión alta, en un solo pago. Si es lo que tu negocio necesita, ¿estás en posición de invertir en los próximos 30 días?",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Sí, tengo el capital", "Sí, con financiamiento", "Ahora mismo no"],
+        },
+        { id: "origen", seccion: "Compromiso", titulo: "¿Cómo supiste del Sistema Operador?", tipo: "opcion", requerida: false, opciones: ["Me escribió Elvin", "Soy o fui cliente de Level Up o AI Borinquen", "Instagram", "Me lo recomendó alguien"], otra: true },
+      ],
+    },
+  },
 ];

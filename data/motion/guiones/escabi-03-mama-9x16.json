@@ -1,0 +1,90 @@
+{
+  "id": "escabi-03-mama-9x16",
+  "marca": "level-up",
+  "formato": "9:16",
+  "titulo": "Mamá repite la misma pregunta… (hijos de adultos mayores)",
+  "angulo": "Hijos de adultos mayores · señales de alerta",
+  "musica": "audio/cliente-calma.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 95,
+      "lineas": [
+        "Mamá repite",
+        "la *misma* pregunta…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 75,
+      "alarma": true,
+      "lineas": [
+        "Todos dicen:",
+        "*«es la edad»*."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 170,
+      "modo": "marcar",
+      "titulo": "Señales que *no* se deben ignorar",
+      "items": [
+        {
+          "texto": "Olvida citas y medicamentos"
+        },
+        {
+          "texto": "Se pierde en lugares conocidos"
+        },
+        {
+          "texto": "Le cuesta encontrar palabras"
+        },
+        {
+          "texto": "Cambios de ánimo o conducta"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 180,
+      "foto": "clientes/escabi/retrato-bata.jpg",
+      "enfoque": "60% 40%",
+      "etiqueta": "Evaluación psicológica",
+      "titulo": "La familia *también* necesita claridad.",
+      "puntos": [
+        "Qué capacidades conserva",
+        "Qué cambió y cómo seguirlo",
+        "Recomendaciones para el cuidado en casa"
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "dur": 150,
+      "titulo": "Cómo *empieza*",
+      "pasos": [
+        "Entrevista inicial de 2 horas",
+        "Evaluación completa, si hace falta",
+        "Informe y recomendaciones claras"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 110,
+      "foto": "clientes/escabi/escritorio.jpg",
+      "enfoque": "55% 30%",
+      "etiqueta": "Dra. Yamilet Escabí · Psy.D",
+      "titulo": "Bilingüe. Sin tiempo de *espera*.",
+      "puntos": [
+        "Hormigueros, a minutos de Mayagüez",
+        "Martes a viernes, con cita"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 120,
+      "cta": "Escríbenos y te orientamos",
+      "sub": "Plaza Alemar, Suite 5 · Hormigueros",
+      "url": "787-546-6143",
+      "nota": "Información educativa; no sustituye una consulta profesional."
+    }
+  ]
+}

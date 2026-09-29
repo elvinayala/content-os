@@ -1,0 +1,84 @@
+{
+  "id": "escabi-04-atencion-16x9",
+  "marca": "level-up",
+  "formato": "16:9",
+  "titulo": "No siempre es falta de disciplina (adultos, atención)",
+  "angulo": "Adultos jóvenes con sospecha de TDAH",
+  "musica": "audio/cliente-calma.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 90,
+      "lineas": [
+        "La misma página,",
+        "leída *tres veces*."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "logo": true,
+      "lineas": [
+        "No siempre es falta",
+        "de *disciplina*."
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 140,
+      "modo": "marcar",
+      "titulo": "Cuando la atención *no* coopera:",
+      "items": [
+        {
+          "texto": "Citas que se olvidan"
+        },
+        {
+          "texto": "Proyectos que se quedan a medias"
+        },
+        {
+          "texto": "Leer y no retener"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 170,
+      "foto": "clientes/escabi/retrato-negro.jpg",
+      "enfoque": "50% 20%",
+      "etiqueta": "Dra. Yamilet Escabí · Psy.D",
+      "titulo": "A veces hay una *explicación*.",
+      "puntos": [
+        "Claridad sobre cómo funciona tu atención",
+        "Recomendaciones para tu trabajo o estudios",
+        "Te orientamos antes de una evaluación completa"
+      ]
+    },
+    {
+      "tipo": "dato",
+      "dur": 120,
+      "grande": "+10",
+      "texto": "años de experiencia como psicóloga clínica"
+    },
+    {
+      "tipo": "retrato",
+      "dur": 120,
+      "foto": "clientes/escabi/consulta-paciente.jpg",
+      "enfoque": "50% 40%",
+      "lado": "der",
+      "etiqueta": "Psicóloga clínica · Hormigueros",
+      "titulo": "«Yo siempre pongo el *paciente* primero.»",
+      "puntos": [
+        "En español o en inglés",
+        "Sin tiempo de espera"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 150,
+      "cta": "Escríbenos y te orientamos",
+      "sub": "Hormigueros, a minutos de Mayagüez · con cita",
+      "url": "787-546-6143",
+      "nota": "Información educativa; no sustituye una consulta profesional."
+    }
+  ]
+}

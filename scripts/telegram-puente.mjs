@@ -35,6 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { modeloParaNico, nombreCorto, NICO_TOPE_DIA } from "./nico-gasto.mjs";
 import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
@@ -242,7 +243,9 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     else if (ES_LOLA) args.push("--permission-mode", "acceptEdits", "--allowedTools", "Read", "Glob", "Grep", "Edit", "Write", "Bash(node scripts/fal.mjs*)", "Bash(node scripts/validar-voz.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node -e*)", "--disallowedTools", "WebFetch", "WebSearch");
     else args.push("--permission-mode", "acceptEdits", "--allowedTools", ...SEGURO);
     if (ES_NICO) for (const d of dirsNico()) args.push("--add-dir", d);
-    if (ES_NICO) args.push("--model", opts.modelo || MODELO_NICO);
+    // Nico (28/sep): modelo por tarea, como Max. Opus 5.5 para construir/diseñar/planear; Sonnet para
+    // diagnosticar, revisar y consultar; Haiku para trámites. `/opus …` lo fuerza. NICO_MODELO fija uno fijo.
+    if (ES_NICO) args.push("--model", opts.modelo || env("NICO_MODELO") || modeloParaNico(prompt, opts.origen));
     // Max (24/sep): Opus para planear/investigar, el barato para mensajes (scripts/max-gasto.mjs).
     if (ES_MAX) args.push("--model", opts.modelo || MODELO_PLAN);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
@@ -278,7 +281,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           }
         }
       }
-      if (ev.type === "result") { subtipo = ev.subtype || ""; final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; durMs = Number(ev.duration_ms) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, ES_MAX ? (opts.modelo || MODELO_PLAN) : ""); }
+      if (ev.type === "result") { subtipo = ev.subtype || ""; final = ev.result || texto; if (ev.is_error) err = [err, ev.result || "error"].filter(Boolean).join("\n") /* sin pisar el stderr: ahí viene "No conversation found" y de eso depende el reintento con sesión nueva */; costo = Number(ev.total_cost_usd) || 0; durMs = Number(ev.duration_ms) || 0; LOG("claude ‹ fin", ev.subtype ?? "", `${ev.duration_ms ?? "?"}ms`, `$${ev.total_cost_usd ?? "?"}`, nombreCorto(ES_MAX ? (opts.modelo || MODELO_PLAN) : ES_NICO ? (opts.modelo || env("NICO_MODELO") || modeloParaNico(prompt, opts.origen)) : "")); }
     };
     child.stdout.on("data", (d) => { buf += d; const partes = buf.split("\n"); buf = partes.pop(); partes.forEach(onLinea); });
     child.stderr.on("data", (d) => { const t = String(d); if (!/Permission allow rule/.test(t)) { err += t; LOG("claude stderr:", t.slice(0, 200)); } });
@@ -584,6 +587,7 @@ async function atenderBuzon(token, chatCEO, st) {
     if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
     const optsBuzon = { origen: deSlack ? "slack" : `buzon:${m.id}:${m.de}`, ...(ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {}) };
+    if (ES_NICO) optsBuzon.modelo = modeloParaNico(m.texto, deSlack ? `solicitud:${m.id}:${m.de}` : `buzon:${m.id}:${m.de}`);
     let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, optsBuzon);
     if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, optsBuzon); }
     // Delegó parte del trabajo a otro agente: el pedido queda abierto hasta que llegue esa respuesta (la
@@ -639,6 +643,7 @@ async function continuarTrabajo(token, chatCEO, st, m, orig, seg) {
   if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
   const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
   const opts = { soloLectura, origen: origenSiguiente(seg), ...(ES_MAX ? { modelo: MODELO_PLAN } : {}) };
+  if (ES_NICO) opts.modelo = modeloParaNico(`${orig?.texto || ""}\n${m.texto}`, soloLectura ? "solicitud" : "seguir");
   let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, opts);
   if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, opts); }
   let resp = (r.out || "").trim();
@@ -798,6 +803,13 @@ async function notaAprobacionesMax(texto) {
 // corridas, minutos activos y costo real de IA (delta por sesión: Claude reporta el acumulado). A las 6:30 PM PR le
 // pide al agente su cierre (resumen, tareas, entregables, bloqueos → agentes.mjs reporte) y manda las métricas.
 const CIERRE_HORA = process.env.CIERRE_HORA || "18:30";
+// Aviso corto a Elvin desde donde no hay token/chat a mano (sumarJornada).
+async function avisarGasto(texto) {
+  const token = env(ES_NICO ? "TELEGRAM_BOT_TOKEN_NICO" : "TELEGRAM_BOT_TOKEN");
+  const chat = env("TELEGRAM_CEO_CHAT_ID");
+  if (token && chat) await enviar(token, chat, texto).catch(() => {});
+  await slackEspejo(`[Agentes] ${texto}`);
+}
 function sumarJornada(sesion, costoTotal, ms) {
   if (!ESTADO_VIVO) return;
   const hoy = diaPR();
@@ -808,6 +820,16 @@ function sumarJornada(sesion, costoTotal, ms) {
   j.ms += Math.max(0, Number(ms) || 0);
   j.costo = Math.round((j.costo + delta) * 10000) / 10000;
   ESTADO_VIVO.jornada = j;
+  // Aviso de gasto (28/sep): Nico no se bloquea (a veces está arreglando producción), pero Elvin se entera
+  // apenas pasa el tope del día y otra vez al doble. Max sí se frena solo (scripts/max-gasto.mjs).
+  if (ES_NICO && NICO_TOPE_DIA > 0) {
+    const nivel = j.costo >= NICO_TOPE_DIA * 2 ? 2 : j.costo >= NICO_TOPE_DIA ? 1 : 0;
+    if (nivel > (ESTADO_VIVO.avisoGasto?.dia === hoy ? ESTADO_VIVO.avisoGasto.nivel : 0)) {
+      ESTADO_VIVO.avisoGasto = { dia: hoy, nivel };
+      LOG("gasto del día:", `$${j.costo}`, `(tope $${NICO_TOPE_DIA})`);
+      avisarGasto(`💸 Nico lleva $${j.costo.toFixed(2)} hoy en IA (tope de aviso: $${NICO_TOPE_DIA}). Sigo trabajando; si quieres que baje el ritmo, dímelo.`).catch(() => {});
+    }
+  }
   try { guardarEstado(ESTADO_VIVO); } catch {}
   // En vivo (28/sep, Elvin: "no está funcionando esa data en tiempo real"): cada corrida actualiza sus números en Ritmo;
   // el resumen y las tareas siguen llegando en el cierre de las 6:30 PM.
@@ -831,7 +853,7 @@ async function cierreDelDia(st, hoy) {
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
     const nueva = !st.sesion || st.sesionDia !== hoy;
     if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
-    const opts = { origen: "cierre", ...(ES_MAX ? { modelo: MODELO_BARATO } : {}) };
+    const opts = { origen: "cierre", ...(ES_MAX ? { modelo: MODELO_BARATO } : {}), ...(ES_NICO ? { modelo: modeloParaNico("", "cierre") } : {}) };
     let r = await correrClaude(PROMPT_CIERRE, persona, st.sesion, nueva, null, opts).catch((e) => ({ code: 1, err: e.message, out: "" }));
     if (r.code !== 0 && /session|resume|No conversation/i.test((r.err || "") + (r.out || ""))) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrClaude(PROMPT_CIERRE, persona, st.sesion, true, null, opts).catch(() => ({})); }
   }

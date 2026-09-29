@@ -24,7 +24,8 @@ export function cuentaAib(): CuentaZernio {
 
 export const canalListo = () => Boolean(cuentaAib().apiKey && cuentaAib().accountId);
 export const modoReal = () => process.env.AIB_ONBOARDING_MODO === "real";
-export const MODELO = process.env.AIB_ONBOARDING_MODEL || "claude-opus-5";
+// Conversación guiada por guion: Sonnet.
+export const MODELO = process.env.AIB_ONBOARDING_MODEL || "claude-sonnet-5";
 export const SLACK_CANAL = process.env.AIB_ONBOARDING_SLACK_CANAL || "C0C2YN5199B";
 export const HUMANO_HORAS = Number(process.env.AIB_HUMANO_HORAS || 3);
 

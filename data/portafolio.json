@@ -180,7 +180,7 @@
       "nombre": "Shadow Operator",
       "capa": "producto",
       "resumen": "La marca personal = el departamento de marketing del holding. Viable; lo caro ya está (casos, quiz, curriculum). Falta publicar 50 posts.",
-      "meta": "50 posts · 3K seguidores · Skool $55 con 30 fundadores · cohorte consultoría $3,500 en ene",
+      "meta": "50 posts · 3K seguidores · Skool $55 con 30 fundadores · cohorte consultoría $3,500 en ene · escalón top: Sistema Operador (pago único $15K; 10 fundadores a $9,997 por red en nov–dic)",
       "horasElvin": "1 día de grabación/mes + 30 min de audio/sem",
       "jugada": "Jugada 5: oct 50 posts → nov Skool fundadores → ene cohorte 1",
       "numeros": [
@@ -209,6 +209,10 @@
         {
           "label": "Entregas",
           "href": "/ceo/entregas"
+        },
+        {
+          "label": "Sistema Operador",
+          "href": "/ceo/vault/proyectos/sistema-operador/oferta"
         }
       ]
     },
