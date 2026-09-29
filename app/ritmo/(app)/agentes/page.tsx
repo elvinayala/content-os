@@ -1,11 +1,10 @@
-import { Bot, CircleAlert, FileCheck2, UserRound } from "lucide-react";
+import { CircleAlert, FileCheck2 } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { AutoRefresco } from "@/components/ritmo/auto-refresco";
 import { Oficina, type AgenteOficina } from "@/components/ritmo/oficina";
-import { Tarjeta } from "@/components/ritmo/piezas";
-import { AGENTES_IA, burbuja, estadoOficina, ladoAgente, ladoHumano, pantalla, veces, type Humano, type LadoComparado } from "@/lib/desempeno/agentes-ia";
-import { reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
+import { AGENTES_IA, burbuja, estadoOficina, ladoAgente, ladoHumano, pantalla, veces, type Humano } from "@/lib/desempeno/agentes-ia";
+import { ejecutivos, marcarPresencia, reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
 import { armarPanel } from "@/lib/desempeno/datos";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -27,7 +26,8 @@ export default async function AgentesPage() {
   if (!u.maestro || (u.rol !== "admin" && u.rol !== "editor")) redirect("/ritmo");
   const hoy = fechaPR(Date.now());
   const desde = sumarDias(hoy, -6);
-  const [reportes, panel, salarios, dichos] = await Promise.all([reportesAgentesEntre(desde, hoy), armarPanel(u, desde, hoy).catch(() => null), salariosPorPersona(), ultimosMensajes(AGENTES_IA.map((a) => a.id))]);
+  await marcarPresencia(u.id).catch(() => null);
+  const [reportes, panel, salarios, dichos, dire] = await Promise.all([reportesAgentesEntre(desde, hoy), armarPanel(u, desde, hoy).catch(() => null), salariosPorPersona(), ultimosMensajes(AGENTES_IA.map((a) => a.id)), ejecutivos(u.email)]);
 
   const deHoy = (id: string) => reportes.find((r) => r.agente === id && r.fecha === hoy) ?? null;
   const hoyTodos = reportes.filter((r) => r.fecha === hoy);
@@ -88,128 +88,127 @@ export default async function AgentesPage() {
         </p>
       </div>
 
-      <Oficina agentes={oficina} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
+      <Oficina agentes={oficina} ejecutivos={dire} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Tarjeta titulo="Tareas hoy" valor={tareasHoy} detalle={`${hoyTodos.filter((r) => r.resumen || (r.agente === "leo" && r.tareas)).length} de ${AGENTES_IA.length} reportaron`} />
-        <Tarjeta titulo="Tiempo activo hoy" valor={horas(minHoy)} detalle="Suma de todos los agentes" />
-        <Tarjeta titulo="Costo IA hoy" valor={usd(costoHoy)} detalle="Lo que costó la IA" />
-        <Tarjeta titulo="Costo IA (7 d)" valor={usd(costo7)} detalle={`${sumarDias(hoy, -6).slice(5)} → ${hoy.slice(5)}`} />
-      </div>
+      {/* resumen en una línea (la TV de la oficina ya enseña lo de hoy) */}
+      <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span><b className="num text-foreground">{tareasHoy}</b> tareas hoy</span>
+        <span><b className="num text-foreground">{horas(minHoy)}</b> activos</span>
+        <span><b className="num text-foreground">{usd(costoHoy)}</b> de IA hoy</span>
+        <span><b className="num text-foreground">{usd(costo7)}</b> en 7 días</span>
+        <span>{hoyTodos.filter((r) => r.resumen || (r.agente === "leo" && r.tareas)).length} de {AGENTES_IA.length} reportaron</span>
+      </p>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold">Hoy</h2>
-        <div className="grid gap-3 md:grid-cols-2">
+      <section className="flex flex-col gap-2.5">
+        <h2 className="text-sm font-semibold">Hoy, uno por uno</h2>
+        <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
           {AGENTES_IA.map((a) => {
             const r = deHoy(a.id);
             const resumen = r?.resumen ?? (a.id === "leo" && r?.tareas ? `Revisó ${r.tareas} ${r.tareas === 1 ? "pieza" : "piezas"} del equipo en Slack.` : null);
+            const activo = !!(r?.corridas || r?.tareas); // "Sin actividad hoy" también es un reporte: no cuenta como activo
             return (
-              <article key={a.id} className="panel flex flex-col gap-3 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-primary/10 text-primary">
-                    <Bot className="size-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold">{a.nombre}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {a.rol} · {a.donde}
-                    </p>
-                  </div>
-                  <span className={cn("rounded-full px-2 py-0.5 font-mono text-[10px] tracking-widest uppercase ring-1", resumen || r?.corridas ? "bg-primary/10 text-primary ring-primary/30" : "bg-white/5 text-muted-foreground ring-white/10")}>
-                    {resumen ? "Reportó" : r?.corridas ? "● En vivo" : "Sin actividad"}
+              <article key={a.id} className={cn("panel flex flex-col gap-2 p-3.5", !activo && "opacity-60")}>
+                <div className="flex items-center gap-2.5">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full text-sm font-semibold text-background" style={{ background: COLOR_AGENTE[a.id] ?? "#7dd3fc" }}>
+                    {a.nombre[0]}
                   </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm leading-tight font-semibold">{a.nombre}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">{a.rol}</p>
+                  </div>
+                  <span className={cn("size-2 shrink-0 rounded-full", activo ? "bg-primary shadow-[0_0_8px_var(--neon)]" : "bg-white/20")} title={activo ? "Trabajó hoy" : "Sin actividad"} />
                 </div>
-                <div className="grid grid-cols-4 gap-2 font-mono text-[11px] text-muted-foreground">
-                  <div><p className="tracking-wider uppercase">Tareas</p><p className="num text-base text-foreground">{r?.tareas ?? "—"}</p></div>
-                  <div><p className="tracking-wider uppercase">Corridas</p><p className="num text-base text-foreground">{r ? r.corridas : "—"}</p></div>
-                  <div><p className="tracking-wider uppercase">Activo</p><p className="num text-base text-foreground">{r ? horas(r.minutos) : "—"}</p></div>
-                  <div><p className="tracking-wider uppercase">Costo</p><p className="num text-base text-foreground">{r && !a.sinCosto ? usd(r.costoUsd) : "—"}</p></div>
-                </div>
-                {resumen ? <p className="text-sm whitespace-pre-line text-foreground/85">{resumen}</p> : <p className="text-sm text-muted-foreground">{r?.corridas ? "Trabajando: los números se actualizan en vivo; el resumen llega al cierre (6:30 PM)." : "Todavía no ha trabajado hoy."}</p>}
-                {r?.entregables?.length ? (
-                  <ul className="flex flex-col gap-1 text-sm">
-                    {r.entregables.map((e, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <FileCheck2 className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                        <span className="break-words">{e}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                {r?.bloqueos ? (
-                  <p className="flex items-start gap-2 rounded-lg bg-amber-400/10 px-3 py-2 text-xs text-amber-200 ring-1 ring-amber-400/25">
-                    <CircleAlert className="mt-0.5 size-3.5 shrink-0" /> {r.bloqueos}
-                  </p>
-                ) : null}
+                <p className="font-mono text-[11px] text-muted-foreground">
+                  <b className="text-foreground">{r?.tareas ?? "—"}</b> tareas · <b className="text-foreground">{r?.corridas ?? 0}</b> corridas · <b className="text-foreground">{r ? horas(r.minutos) : "—"}</b>
+                  {!a.sinCosto ? <> · <b className="text-foreground">{r ? usd(r.costoUsd) : "—"}</b></> : null}
+                </p>
+                {resumen ? (
+                  <details className="group text-[13px] leading-snug text-foreground/85">
+                    <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                      <span className="line-clamp-2 group-open:line-clamp-none">{resumen}</span>
+                      <span className="mt-1 inline-flex gap-2 text-[11px] text-muted-foreground">
+                        {r?.entregables?.length ? <span className="text-primary">✓ {r.entregables.length} entregable{r.entregables.length === 1 ? "" : "s"}</span> : null}
+                        {r?.bloqueos ? <span className="text-amber-300">⚠ bloqueo</span> : null}
+                        <span className="group-open:hidden">ver más</span>
+                      </span>
+                    </summary>
+                    {r?.entregables?.length ? (
+                      <ul className="mt-2 flex flex-col gap-1 text-[12px]">
+                        {r.entregables.map((e, i) => (
+                          <li key={i} className="flex items-start gap-1.5">
+                            <FileCheck2 className="mt-0.5 size-3 shrink-0 text-primary" />
+                            <span className="break-words">{e}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    {r?.bloqueos ? (
+                      <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-400/10 px-2.5 py-1.5 text-[12px] text-amber-200 ring-1 ring-amber-400/25">
+                        <CircleAlert className="mt-0.5 size-3 shrink-0" /> {r.bloqueos}
+                      </p>
+                    ) : null}
+                  </details>
+                ) : (
+                  <p className="text-[12px] text-muted-foreground">{r?.corridas ? "Trabajando: el resumen llega al cierre (6:30 PM)." : "Todavía no ha trabajado hoy."}</p>
+                )}
               </article>
             );
           })}
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-2.5">
         <div>
           <h2 className="text-sm font-semibold">Últimos 7 días · agente vs. humano</h2>
-          <p className="text-xs text-muted-foreground">
-            Promedio por día activo (debajo del nombre, el total de los 7 días). Humanos: horas del ponche, tareas del tablero Producción y costo = salario ÷ 21.7 días. “—” = todavía no hay ese dato (no se estima).
-          </p>
+          <p className="text-xs text-muted-foreground">Promedio por día que trabajó. Debajo, en gris, el puesto humano que hace lo mismo. “—” = todavía no hay ese dato.</p>
         </div>
-        <div className="panel overflow-hidden">
-          <div className="hidden grid-cols-[1.3fr_repeat(4,1fr)_0.9fr] gap-3 border-b border-border/60 px-4 py-2.5 font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase md:grid">
-            <span>Quién</span>
-            <span>Tareas / día</span>
-            <span>Horas / día</span>
-            <span>Costo / día</span>
-            <span>Costo / tarea</span>
-            <span>Agente vs humano</span>
-          </div>
-          {filas.map(({ a, ag, hu, puesto }) => {
-            const prod = veces(ag.tareasDia, hu.tareasDia);
-            const ahorro = veces(hu.costoPorTarea, ag.costoPorTarea);
-            return (
-              <div key={a.id} className="fila border-b border-border/40 px-4 py-3 last:border-0">
-                <Linea icono={<Bot className="size-3.5 text-primary" />} titulo={a.nombre} sub={`${ag.diasActivos} ${ag.diasActivos === 1 ? "día activo" : "días activos"}${ag.totales.tareas !== null || ag.totales.costo !== null ? ` · en 7 días: ${[ag.totales.tareas !== null ? `${ag.totales.tareas} tareas` : null, ag.totales.horas !== null ? `${ag.totales.horas} h` : null, ag.totales.costo !== null ? `US$${ag.totales.costo.toFixed(2)}` : null].filter(Boolean).join(" · ")}` : ""}`} l={ag} />
-                <Linea icono={<UserRound className="size-3.5 text-[color:var(--coral)]" />} titulo={puesto} sub={hu.personas ? `${hu.personas} ${hu.personas === 1 ? "persona" : "personas"} · ${hu.diasActivos} días` : "sin personas en Ritmo"} l={hu} tenue
-                  extra={
-                    <span className="font-mono text-[11px]">
-                      {prod !== null ? <span className={prod >= 1 ? "text-primary" : "text-[color:var(--coral)]"}>{prod}× tareas</span> : <span className="text-muted-foreground">—</span>}
-                      {ahorro !== null ? <span className="block text-muted-foreground">{ahorro}× más barato/tarea</span> : null}
-                    </span>
-                  }
-                />
-              </div>
-            );
-          })}
+        <div className="panel overflow-x-auto">
+          <table className="w-full min-w-[560px] text-sm">
+            <thead className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+              <tr className="border-b border-border/60">
+                <th className="px-3 py-2 text-left font-normal">Agente</th>
+                <th className="px-3 py-2 text-right font-normal">Tareas/día</th>
+                <th className="px-3 py-2 text-right font-normal">Horas/día</th>
+                <th className="px-3 py-2 text-right font-normal">Costo/día</th>
+                <th className="px-3 py-2 text-right font-normal">Costo/tarea</th>
+                <th className="px-3 py-2 text-right font-normal">vs. humano</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map(({ a, ag, hu, puesto }) => {
+                const prod = veces(ag.tareasDia, hu.tareasDia);
+                const ahorro = veces(hu.costoPorTarea, ag.costoPorTarea);
+                const celda = (agente: string, humano: string) => (
+                  <td className="px-3 py-2 text-right align-top">
+                    <span className="num block font-mono">{agente}</span>
+                    <span className="num block font-mono text-[11px] text-muted-foreground/70">{humano}</span>
+                  </td>
+                );
+                return (
+                  <tr key={a.id} className="border-b border-border/40 last:border-0">
+                    <td className="px-3 py-2 align-top">
+                      <span className="flex items-center gap-2">
+                        <span className="size-2 rounded-full" style={{ background: COLOR_AGENTE[a.id] ?? "#7dd3fc" }} />
+                        <b className="font-medium">{a.nombre}</b>
+                        <span className="text-[11px] text-muted-foreground">{ag.diasActivos} {ag.diasActivos === 1 ? "día" : "días"}</span>
+                      </span>
+                      <span className="block pl-4 text-[11px] text-muted-foreground/70">{puesto}{hu.personas ? ` · ${hu.personas} ${hu.personas === 1 ? "persona" : "personas"}` : " · sin personas en Ritmo"}</span>
+                    </td>
+                    {celda(num(ag.tareasDia), num(hu.tareasDia))}
+                    {celda(num(ag.horasDia, " h"), num(hu.horasDia, " h"))}
+                    {celda(usd(ag.costoDia), usd(hu.costoDia))}
+                    {celda(usd(ag.costoPorTarea), usd(hu.costoPorTarea))}
+                    <td className="px-3 py-2 text-right align-top font-mono text-[11px]">
+                      {prod !== null ? <span className={cn("block", prod >= 1 ? "text-primary" : "text-[color:var(--coral)]")}>{prod}× tareas</span> : <span className="block text-muted-foreground">—</span>}
+                      {ahorro !== null ? <span className="block text-muted-foreground">{ahorro}× más barato</span> : null}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
-  );
-}
-
-function Linea({ icono, titulo, sub, l, tenue, extra }: { icono: React.ReactNode; titulo: string; sub: string; l: LadoComparado; tenue?: boolean; extra?: React.ReactNode }) {
-  return (
-    <div className={cn("grid grid-cols-2 items-center gap-x-3 gap-y-1 py-1 text-sm md:grid-cols-[1.3fr_repeat(4,1fr)_0.9fr]", tenue && "text-foreground/75")}>
-      <div className="col-span-2 flex min-w-0 items-start gap-2 md:col-span-1">
-        <span className="mt-1">{icono}</span>
-        <div className="min-w-0">
-          <p className="leading-snug font-medium">{titulo}</p>
-          <p className="truncate text-xs text-muted-foreground">{sub}</p>
-        </div>
-      </div>
-      <Dato k="Tareas/día" v={num(l.tareasDia)} />
-      <Dato k="Horas/día" v={num(l.horasDia, " h")} />
-      <Dato k="Costo/día" v={usd(l.costoDia)} />
-      <Dato k="Costo/tarea" v={usd(l.costoPorTarea)} />
-      <div className="col-span-2 md:col-span-1">{extra ?? null}</div>
-    </div>
-  );
-}
-
-function Dato({ k, v }: { k: string; v: string }) {
-  return (
-    <p className="num">
-      <span className="mr-1.5 font-mono text-[10px] tracking-wider text-muted-foreground uppercase md:hidden">{k}</span>
-      {v}
-    </p>
   );
 }

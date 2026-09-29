@@ -4,7 +4,7 @@ import { and, asc, gte, lte, sql } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { limpiarReporte } from "./agentes-ia";
-import { desempenoAgentesReportes, desempenoFichas } from "./schema";
+import { desempenoAgentesReportes, desempenoFichas, desempenoPresencia } from "./schema";
 
 // Reportes del equipo digital (una fila por agente y día). Lo escriben:
 //  - el puente de cada agente (métricas: corridas, minutos, costo) y el agente mismo al cierre (resumen…),
@@ -80,3 +80,45 @@ export async function ultimosMensajes(agentes: string[]): Promise<Record<string,
   }
   return out;
 }
+
+// ─── Ala ejecutiva de la oficina virtual (28/sep, Elvin) ─────────────────────────────────────────
+// Elvin aprueba; Carilin y Aure le piden a los agentes. Aparece en su oficina quien está viendo la página (< 2 min).
+export const DIRECCION = { ceo: "elvin@levelupmediapr.net", carilin: "carilin@levelupmediapr.net", aure: "aure@levelupmediapr.net" } as const;
+
+export async function marcarPresencia(userId: string) {
+  const d = await db();
+  await d.insert(desempenoPresencia).values({ userId, lugar: "oficina", vistoAt: new Date() }).onConflictDoUpdate({ target: desempenoPresencia.userId, set: { vistoAt: new Date() } });
+}
+
+export interface Ejecutivos {
+  ceo: { presente: boolean; porAprobar: number };
+  carilin: { presente: boolean; pedidos: number };
+  aure: { presente: boolean; pedidos: number };
+}
+
+export async function ejecutivos(viendo: string): Promise<Ejecutivos> {
+  const d = await db();
+  const filas = (x: unknown) => (Array.isArray(x) ? x : ((x as { rows?: unknown[] }).rows ?? [])) as Record<string, unknown>[];
+  const presentes = new Set<string>([viendo.toLowerCase()]);
+  let porAprobar = 0;
+  const pedidos: Record<string, number> = {};
+  try {
+    const r = filas(await d.execute(sql`SELECT lower(u.email) AS email FROM desempeno_presencia p JOIN pulse_users u ON u.id = p.user_id WHERE p.visto_at > now() - interval '2 minutes'`));
+    for (const f of r) presentes.add(String(f.email));
+  } catch (e) {
+    console.error("[oficina] presencia", e);
+  }
+  try {
+    const [a] = filas(await d.execute(sql`SELECT (SELECT count(*) FROM agentes_mensajes WHERE estado = 'esperando-ok') + (SELECT count(*) FROM desempeno_cambios WHERE estado = 'pendiente') AS n`));
+    porAprobar = Number(a?.n ?? 0);
+    for (const f of filas(await d.execute(sql`SELECT de, count(*) AS n FROM agentes_mensajes WHERE de IN ('carilin', 'aure') AND creado_el > now() - interval '24 hours' GROUP BY de`))) pedidos[String(f.de)] = Number(f.n);
+  } catch (e) {
+    console.error("[oficina] conteos", e);
+  }
+  return {
+    ceo: { presente: presentes.has(DIRECCION.ceo), porAprobar },
+    carilin: { presente: presentes.has(DIRECCION.carilin), pedidos: pedidos.carilin ?? 0 },
+    aure: { presente: presentes.has(DIRECCION.aure), pedidos: pedidos.aure ?? 0 },
+  };
+}
+

@@ -651,7 +651,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   pantalla = 1.ª idea de su reporte, `pantalla()`; burbuja con lo último que dijo en el buzón, `ultimosMensajes` + `burbuja()`),
   sala con TV (tareas, minutos y costo de hoy) y sofá, y ping pong; `estadoOficina()`: trabajó hace < 15 min = en su computadora,
   trabajó hoy = en su escritorio, nada hoy = descansando (los 2 primeros al ping pong, el resto al sofá). Tocar = panel con el
-  reporte completo. Se refresca cada minuto.
+  reporte completo. Se refresca cada minuto. **Ala ejecutiva** (Elvin: "Carilin y Aure le piden a los agentes, yo apruebo"): oficina
+  del **CEO** (la más grande, aura dorada, pizarra con lo que espera su OK, monitor grande, sofá), la de **Aure** pequeña al lado y
+  la de **Carilin** (Directora de Operaciones) lejos, junto a la sala; cada quien aparece (silueta) solo mientras mira la página
+  (`desempeno_presencia`, migración 0035, < 2 min), si no la silla queda vacía. Debajo, "Hoy, uno por uno" y la tabla de 7 días
+  van compactas (Elvin: "más pequeño, más friendly").
   **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…; Elvin 28/sep: "que Remi,
   Lola y cualquier agente reporte lo de la Mac"): no pasa por su bot → `node scripts/reportar-mac.mjs <agente> "qué hiciste"
   --tareas N --entregables "a|b"` al terminar (se AÑADE al reporte del día; dentro de un bot, `PUENTE_BOT`, no hace nada para no

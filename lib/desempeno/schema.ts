@@ -633,3 +633,13 @@ export const desempenoGoogle = pgTable("desempeno_google", {
   refreshCifrado: text("refresh_cifrado").notNull(),
   conectadoAt: timestamp("conectado_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Presencia en la oficina virtual (28/sep, Elvin): quién de la dirección está viendo /ritmo/agentes ahora mismo (su
+// silueta se sienta en su oficina). Se actualiza en cada carga (la página se refresca cada minuto).
+export const desempenoPresencia = pgTable("desempeno_presencia", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  lugar: text("lugar").notNull(),
+  vistoAt: timestamp("visto_at", { withTimezone: true }).notNull().defaultNow(),
+});
