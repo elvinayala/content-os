@@ -83,3 +83,4 @@
 - [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
 - [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 28/sep: en marcha en 15 días + optimización día 16–45 (+ soporte para siempre); ya no "7 días"; el "21 días" no es real
 - [Gasto de IA — qué modelo para qué](gasto-ia-modelos.md) — Opus solo diseño/desarrollo/planeación; lo breve a Sonnet/Haiku (nico-gasto.mjs, max-gasto.mjs); costo por agente en /ritmo/agentes
+- [Kit de ventas AIB](kit-ventas-aib.md) — 28/sep: presentaciones animadas (Demo AIB + Marketing + IA), videos pre-llamada y 3 testimonios en aib-kit-ventas.netlify.app; uso obligatorio para closers de AIB (Aure los reúne el 29/sep)
