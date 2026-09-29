@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Smartphone, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -37,7 +37,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-border/40 bg-background/60 backdrop-blur-xl backdrop-saturate-150" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-        <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
           <Link href="/ritmo" className="flex items-center gap-2">
             <RitmoLogo size={26} />
             <span className="text-[15px] font-semibold tracking-tight">Ritmo</span>
@@ -60,6 +60,9 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
               <LayoutGrid className="size-3.5" /> {pulse.nombre}
             </a>
           ) : null}
+          <Link href="/ritmo/app" title="Ritmo en tu teléfono (app y avisos)" className={cn("rounded-full p-2 transition hover:bg-muted hover:text-foreground", path.startsWith("/ritmo/app") ? "text-primary" : "text-muted-foreground")}>
+            <Smartphone className="size-4" />
+          </Link>
           <RelojPR />
           <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", tabs.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
           <form action={salirDeRitmoAction}>

@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { RegistrarApp } from "@/components/ritmo/app-movil";
 import { NavRitmo } from "@/components/ritmo/nav";
 import { vacantesNuevas } from "@/lib/desempeno/carreras";
 import { fichaPendiente, leerFicha } from "@/lib/desempeno/fichas";
@@ -43,9 +44,10 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   const slack = u.rol === "admin" || u.rol === "editor" ? [{ ...SLACK.level_up, nombre: "Slack LU" }, SLACK.ai_borinquen] : [empresa === "ai_borinquen" ? { ...SLACK.ai_borinquen, nombre: "Slack" } : SLACK.level_up];
   return (
     <>
+      <RegistrarApp />
       <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} pulse={pulse} slack={slack} />
-      <main className="entrada mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
-      <footer className="estado-linea mx-auto hidden w-full max-w-5xl items-center gap-3 px-6 pb-8 md:flex">
+      <main className="entrada mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
+      <footer className="estado-linea mx-auto hidden w-full max-w-6xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>
         <span className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
         <span>{maestro ? "Vista maestra · verificación en dos pasos" : "Sesión protegida"}</span>
