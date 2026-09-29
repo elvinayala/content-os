@@ -253,6 +253,13 @@
       "when": 1790644719094,
       "tag": "0035_presencia-oficina",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1790651005229,
+      "tag": "0036_reportes-detalles",
+      "breakpoints": true
     }
   ]
 }

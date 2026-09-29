@@ -70,7 +70,7 @@ export default async function AgentesPage() {
       foto: a.id === "max" ? "/marcas/max/max-avatar-v3-512.png" : null,
       estado: estadoOficina(r ? { corridas: r.corridas, tareas: r.tareas, actualizado: r.updatedAt.toISOString() } : null, ahora),
       pantalla: pantalla(r?.resumen) ?? (a.id === "leo" && r?.tareas ? `Revisó ${r.tareas} piezas del equipo` : null),
-      dijo: d && texto ? { para: d.para, texto, hace: hace(d.creado) } : null,
+      dijo: d && texto ? { para: d.para === "mac" ? "Claude (Mac)" : d.para, texto, hace: hace(d.creado) } : null,
       tareas: r?.tareas ?? null,
       corridas: r?.corridas ?? 0,
       minutos: r?.minutos ?? 0,

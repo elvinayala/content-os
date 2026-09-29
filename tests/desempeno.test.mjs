@@ -128,7 +128,7 @@ test("puntaje de KPI contra la meta", () => {
 });
 
 test("score: 20 % asistencia + 80 % KPIs conectados; colores", () => {
-  const kpis = kpisDe("disenador");
+  const kpis = kpisDe("copy");
   const s = scoreDia({ asistencia: 100, kpis, valores: { entregas_a_tiempo: 100, terminadas: 15, revisiones: 0, vencidas: 0, backlog: 3 } });
   assert.equal(s.score, 100);
   const s2 = scoreDia({ asistencia: 50, kpis, valores: { entregas_a_tiempo: 50, terminadas: 15, revisiones: 1, vencidas: 1, backlog: 3 } });

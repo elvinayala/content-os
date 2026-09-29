@@ -18,7 +18,7 @@ export interface EstadoPonche {
   hoy: string;
   abiertoHoy: string | null; // ISO de la entrada abierta
   pendiente: { id: string; fecha: string; entradaAt: string } | null; // salida olvidada de otro día
-  manual: { id: string; nombre: string }[];
+  manual: { id: string; nombre: string; detalle?: string }[];
   almuerzo?: { salida: string; vuelta: string | null } | null;
 }
 
@@ -106,8 +106,12 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
   const salir = async () => {
     setCargando(true);
     const datos: Record<string, number> = {};
-    for (const m of estado.manual) if (valores[m.id]) datos[m.id] = Number(valores[m.id]);
-    const r = await salirAction({ bloqueos, datos, huella: await huellaEquipo() });
+    const detalles: Record<string, string> = {};
+    for (const m of estado.manual) {
+      if (valores[m.id]) datos[m.id] = Number(valores[m.id]);
+      if (valores[`${m.id}__detalle`]?.trim()) detalles[m.id] = valores[`${m.id}__detalle`];
+    }
+    const r = await salirAction({ bloqueos, datos, detalles, huella: await huellaEquipo() });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
@@ -240,9 +244,14 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           </DialogHeader>
           <div className="flex flex-col gap-4">
             {estado.manual.map((m) => (
-              <div key={m.id} className="flex items-center justify-between gap-3">
-                <Label htmlFor={m.id}>{m.nombre}</Label>
-                <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+              <div key={m.id} className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between gap-3">
+                  <Label htmlFor={m.id}>{m.nombre}</Label>
+                  <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                </div>
+                {m.detalle && Number(valores[m.id] || 0) > 0 ? (
+                  <Input className="h-10" maxLength={300} value={valores[`${m.id}__detalle`] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [`${m.id}__detalle`]: e.target.value }))} placeholder={m.detalle} />
+                ) : null}
               </div>
             ))}
             <div className="flex flex-col gap-2">

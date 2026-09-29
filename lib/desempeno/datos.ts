@@ -146,7 +146,7 @@ export async function entrar(userId: string, ctx: { ip: string | null; ua: strin
 }
 
 /** Marca salida del tramo abierto de HOY y guarda el mini-reporte (bloqueos + datos manuales). */
-export async function salir(userId: string, ctx: { ip: string | null }, reporte: { bloqueos: string | null; datos: Record<string, number> }): Promise<void> {
+export async function salir(userId: string, ctx: { ip: string | null }, reporte: { bloqueos: string | null; datos: Record<string, number>; detalles?: Record<string, string> }): Promise<void> {
   const abiertos = await ponchesAbiertos(userId);
   const p = abiertos.find((x) => vigente(x));
   if (!p) throw new Error(abiertos.length ? "Tienes una salida pendiente de otro día: corrígela primero" : "No tienes una entrada abierta");
@@ -179,17 +179,19 @@ export async function almuerzoDeHoy(userId: string): Promise<{ salida: Date; vue
   return { salida, vuelta };
 }
 
-export async function guardarReporte(userId: string, fecha: string, r: { bloqueos: string | null; datos: Record<string, number> }) {
+export async function guardarReporte(userId: string, fecha: string, r: { bloqueos: string | null; datos: Record<string, number>; detalles?: Record<string, string> }) {
   const d = await db();
   const [prev] = await d.select().from(desempenoReportes).where(and(eq(desempenoReportes.userId, userId), eq(desempenoReportes.fecha, fecha)));
-  // Varias salidas en el día: se suman los datos y se juntan los bloqueos.
+  // Varias salidas en el día: se suman los datos y se juntan los bloqueos y los detalles.
   const datos = { ...(prev?.datos ?? {}) };
   for (const [k, v] of Object.entries(r.datos)) datos[k] = (datos[k] ?? 0) + v;
+  const detalles = { ...(prev?.detalles ?? {}) };
+  for (const [k, v] of Object.entries(r.detalles ?? {})) detalles[k] = [detalles[k], v].filter(Boolean).join("; ");
   const bloqueos = [prev?.bloqueos, r.bloqueos].filter(Boolean).join("\n") || null;
   await d
     .insert(desempenoReportes)
-    .values({ userId, fecha, bloqueos, datos })
-    .onConflictDoUpdate({ target: [desempenoReportes.userId, desempenoReportes.fecha], set: { bloqueos, datos, updatedAt: new Date() } });
+    .values({ userId, fecha, bloqueos, datos, detalles })
+    .onConflictDoUpdate({ target: [desempenoReportes.userId, desempenoReportes.fecha], set: { bloqueos, datos, detalles, updatedAt: new Date() } });
 }
 
 /** Salida olvidada: la persona dice a qué hora terminó; queda pendiente hasta que el líder la apruebe. */
@@ -309,7 +311,7 @@ export interface DiaPersona {
   asistencia: Asistencia;
   score: ScoreDia;
   color: Color | null;
-  reporte: { bloqueos: string | null; datos: Record<string, number> } | null;
+  reporte: { bloqueos: string | null; datos: Record<string, number>; detalles: Record<string, string> } | null;
 }
 
 export interface FilaPersona {
@@ -368,8 +370,10 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
       if (prod) Object.assign(valores, valoresProduccion(kpisProduccion({ userId: perfil.userId, fecha, ...prod })));
       for (const m of externas) if (m.userId === perfil.userId && m.fecha === fecha) valores[m.kpi] = m.valor;
       const rep = reportes.find((r) => r.userId === perfil.userId && r.fecha === fecha);
+      // KPIs que la persona reporta al marcar salida (fuente "manual"): si ese día reportó, lo que no puso cuenta como 0.
+      for (const k of kpis) if (k.fuente === "manual" && rep && valores[k.id] === undefined) valores[k.id] = rep.datos[k.id] ?? 0;
       const score = scoreDia({ asistencia: asistencia.puntaje, kpis, valores });
-      return { fecha, asistencia, score, color: colorScore(score.score), reporte: rep ? { bloqueos: rep.bloqueos, datos: rep.datos } : null };
+      return { fecha, asistencia, score, color: colorScore(score.score), reporte: rep ? { bloqueos: rep.bloqueos, datos: rep.datos, detalles: rep.detalles ?? {} } : null };
     });
     const hoyDia = dias.find((x) => x.fecha === hoy) ?? dias[dias.length - 1];
     const scoreSemana = promedio(dias.filter((x) => x.fecha <= hoy).map((x) => x.score.score));
@@ -399,7 +403,7 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
  * usarlo si quiere (27/sep). Sin perfil, sus ponches no salen en Equipo, recordatorios ni reportes (todo eso sale
  * de los perfiles). `sinPerfil` le dice a Hoy que muestre la nota especial.
  */
-export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string }[]; sinPerfil?: boolean; almuerzo: { salida: string; vuelta: string | null } | null } | null> {
+export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string; detalle?: string }[]; sinPerfil?: boolean; almuerzo: { salida: string; vuelta: string | null } | null } | null> {
   try {
     const perfil = await perfilDe(userId);
     if (!perfil?.activo && !opcional) return null;

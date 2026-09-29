@@ -1,0 +1,1 @@
+ALTER TABLE "desempeno_reportes" ADD COLUMN "detalles" jsonb DEFAULT '{}'::jsonb NOT NULL;

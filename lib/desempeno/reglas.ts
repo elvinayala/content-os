@@ -27,7 +27,7 @@ export interface Puesto {
   nombre: string;
   departamento: string;
   kpis: Kpi[];
-  manual?: { id: string; nombre: string }[]; // lo que reporta al marcar salida (además de bloqueos)
+  manual?: { id: string; nombre: string; detalle?: string }[]; // lo que reporta al marcar salida (además de bloqueos); `detalle` = pregunta del texto (qué cliente, cuál…)
   sinPonche?: boolean; // ventas: no ponchan; su desempeño es 100 % resultados (Arena, lib/ventas/reglas.ts)
 }
 
@@ -42,32 +42,49 @@ const kpisTablero = (terminadasSemana: number): Kpi[] => [
 
 const reuniones = [{ id: "reuniones_cliente", nombre: "Reuniones con clientes hoy" }];
 
+// KPIs que reporta la persona al marcar salida (Elvin, 28/sep: "los primeros KPIs… lo demás quítalo por ahora"). Nacen
+// con peso 0 (se miden, no puntúan) hasta que Carilin/RR.HH. les pongan meta y peso en Ajustes.
+const reportado = (id: string, nombre: string, detalle: string, ayuda?: string) => ({
+  kpi: { id, nombre, fuente: "manual" as const, sentido: "mayor" as const, meta: 1, peso: 0, unidad: "u" as const, ayuda },
+  manual: { id, nombre, detalle },
+});
+const KPIS_REPORTADOS = {
+  estratega: [
+    reportado("reuniones_cliente", "Reuniones con clientes", "¿Con qué clientes?"),
+    reportado("campanas", "Campañas realizadas", "¿De qué clientes?"),
+    reportado("aprobados", "Planes, investigaciones y creativos aprobados", "¿Cuáles y de qué cliente?", "Planes de marketing, investigaciones de mercado, flyers, videos o creativos APROBADOS y listos para ejecutar (no solo pedidos)"),
+  ],
+  pm: [
+    reportado("onboardings", "Onboardings realizados", "¿De qué clientes?"),
+    reportado("conversaciones", "Conversaciones con clientes", "¿Con quiénes?", "Clientes que te respondieron y hablaste con ellos, por teléfono o chat (no mensajes enviados)"),
+    reportado("casos_resueltos", "Casos solucionados", "¿Cuál caso y de qué cliente?", "Bloqueos o problemas de un cliente que quedaron resueltos"),
+  ],
+  ai_engineer: [
+    reportado("soporte", "Soporte a clientes y bloqueos resueltos", "¿Qué cliente y qué fue?"),
+    reportado("sistemas_nuevos", "Sistemas nuevos desarrollados", "¿Cuál? (AutoFlow, agente personalizado…) ¿para quién?"),
+  ],
+  disenador: [
+    reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
+    reportado("otros_disenos", "Otros diseños (logo, presentación…)", "¿Cuáles y para quién?"),
+  ],
+};
+const kpisReportados = (k: keyof typeof KPIS_REPORTADOS) => KPIS_REPORTADOS[k].map((x) => x.kpi);
+const manualReportado = (k: keyof typeof KPIS_REPORTADOS) => KPIS_REPORTADOS[k].map((x) => x.manual);
+
 export const PUESTOS: Puesto[] = [
   {
     id: "pm",
     nombre: "Project / Account Manager",
     departamento: "Cuentas",
-    manual: reuniones,
-    kpis: [
-      { id: "clientes_al_dia", nombre: "Clientes al día", fuente: "pulse", sentido: "mayor", meta: 95, peso: 3, unidad: "%" },
-      { id: "pendientes", nombre: "Pendientes", fuente: "pulse", sentido: "menor", meta: 5, peso: 1, unidad: "u" },
-      { id: "entregables_vencidos", nombre: "Entregables vencidos", fuente: "produccion", sentido: "menor", meta: 0, peso: 3, unidad: "u", ayuda: "Tareas que pidió en Producción y están vencidas" },
-      { id: "escalaciones", nombre: "Escalaciones", fuente: "pulse", sentido: "menor", meta: 0, peso: 1, unidad: "u" },
-      { id: "tiempo_respuesta", nombre: "Tiempo de respuesta", fuente: "slack", sentido: "menor", meta: 60, peso: 2, unidad: "min" },
-    ],
+    manual: manualReportado("pm"),
+    kpis: kpisReportados("pm"),
   },
   {
     id: "estratega",
     nombre: "Estratega",
     departamento: "Estrategia y tráfico",
-    manual: reuniones,
-    kpis: [
-      { id: "cuentas_revisadas", nombre: "Cuentas revisadas", fuente: "n8n", sentido: "mayor", meta: 100, peso: 2, unidad: "%" },
-      { id: "entregas_a_tiempo", nombre: "Estrategias a tiempo", fuente: "produccion", sentido: "mayor", meta: 90, peso: 2, unidad: "%" },
-      { id: "optimizaciones", nombre: "Optimizaciones", fuente: "meta", sentido: "mayor", meta: 10, peso: 2, unidad: "u" },
-      { id: "cuentas_fuera_kpi", nombre: "Cuentas fuera de KPI", fuente: "n8n", sentido: "menor", meta: 2, peso: 2, unidad: "u" },
-      { id: "reportes_a_tiempo", nombre: "Reportes a tiempo", fuente: "nocodb", sentido: "mayor", meta: 100, peso: 2, unidad: "%" },
-    ],
+    manual: manualReportado("estratega"),
+    kpis: kpisReportados("estratega"),
   },
   {
     id: "media_buyer",
@@ -82,7 +99,7 @@ export const PUESTOS: Puesto[] = [
     ],
   },
   { id: "editor", nombre: "Editor de video", departamento: "Producción", kpis: kpisTablero(10) },
-  { id: "disenador", nombre: "Diseñador", departamento: "Producción", kpis: kpisTablero(15) },
+  { id: "disenador", nombre: "Diseñador", departamento: "Producción", manual: manualReportado("disenador"), kpis: kpisReportados("disenador") },
   { id: "copy", nombre: "Copy / Contenido", departamento: "Producción", kpis: kpisTablero(15) },
   { id: "web", nombre: "Web / Funnels", departamento: "Producción", kpis: kpisTablero(3) },
   {
@@ -101,7 +118,7 @@ export const PUESTOS: Puesto[] = [
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
   { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
   { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", kpis: [] },
-  { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", kpis: [] },
+  { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", manual: manualReportado("ai_engineer"), kpis: kpisReportados("ai_engineer") },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
   { id: "setter", nombre: "Setter", departamento: "Ventas", kpis: [], sinPonche: true },

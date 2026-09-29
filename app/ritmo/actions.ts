@@ -64,7 +64,7 @@ export async function entrarAction(huella?: string | null) {
   });
 }
 
-export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; huella?: string | null }) {
+export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; detalles?: Record<string, string>; huella?: string | null }) {
   return envolver(async () => {
     const u = await requiereUsuario();
     await seguridad.verificarParaPonchar(u, r.huella);
@@ -72,7 +72,9 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     const permitidos = new Set((puestoPorId(perfil?.puesto ?? "")?.manual ?? []).map((m) => m.id));
     const limpios: Record<string, number> = {};
     for (const [k, v] of Object.entries(r.datos ?? {})) if (permitidos.has(k) && Number.isFinite(v) && v >= 0 && v <= 50) limpios[k] = Math.round(v);
-    await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios });
+    const detalles: Record<string, string> = {};
+    for (const [k, v] of Object.entries(r.detalles ?? {})) if (permitidos.has(k) && typeof v === "string" && v.trim()) detalles[k] = v.trim().slice(0, 300);
+    await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios, detalles });
     refresh();
     return {};
   });

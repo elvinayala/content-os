@@ -27,7 +27,7 @@ Lis es la coordinadora de colaboraciones (piloto desde el 22/sep); Elvin aprueba
    tiene estilo propio, su audiencia es dueños de negocio de PR? Anotalo con
    `node scripts/creadores.mjs estado @h vetado --nota "…"` si cambia la lectura.
 5. Avisá por Telegram (`node scripts/telegram-bot.mjs enviar "…"`) con UNA línea por creador
-   (`@handle · seg · ER · Tier · alerta`) y a Lis por Slack (`node scripts/agentes.mjs slack Lis "…"`)
+   (`@handle · seg · ER · Tier · alerta`) y a Lis por Slack (`AGENTE=sofi node scripts/agentes.mjs slack Lis "…"`: es trabajo de Sofi, que firme ella)
    solo los Tier A/B con el siguiente paso: contactar.
 
 ## tabla

@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { diaCorto, EmpresaBadge, EstadoChip, fmtHoras, horaPR, ScoreBadge } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
-import { colorScore, fechaPR, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
+import { colorScore, fechaPR, PUESTOS, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
@@ -120,7 +120,14 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
                   {d.asistencia.correccionPendiente ? " · corrección por confirmar" : ""}
                 </span>
                 {d.reporte && Object.keys(d.reporte.datos).length ? (
-                  <span className="text-xs text-muted-foreground">{Object.entries(d.reporte.datos).map(([k, v]) => `${v} ${k === "reuniones_cliente" ? "reuniones" : k}`).join(" · ")}</span>
+                  <span className="flex flex-col text-xs text-muted-foreground">
+                    {Object.entries(d.reporte.datos).map(([k, v]) => (
+                      <span key={k}>
+                        <b className="text-foreground">{v}</b> {nombreManual(k)}
+                        {d.reporte!.detalles?.[k] ? <span className="text-foreground/70"> · {d.reporte!.detalles[k]}</span> : null}
+                      </span>
+                    ))}
+                  </span>
                 ) : null}
                 <span className="ml-auto">
                   <ScoreBadge score={d.score.score} color={d.color} oculto={oculto} />
@@ -167,4 +174,13 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
         </section>
     </div>
   );
+}
+
+// Nombre legible de lo que la persona reportó al marcar salida (cualquier puesto).
+function nombreManual(id: string): string {
+  for (const p of PUESTOS) {
+    const m = p.manual?.find((x) => x.id === id);
+    if (m) return m.nombre.toLowerCase();
+  }
+  return id.replace(/_/g, " ");
 }

@@ -559,7 +559,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   15 min, tarde 85/70/50, salida temprana solo si no completó horas); KPIs de Producción en ventana
   móvil de 7 días desde `pulse_activity` del Estado (responsable → "En revisión"; quien pidió →
   "Listo" o "Cambios" = revisión); score = 20 % asistencia + 80 % KPIs **conectados**; 🟢 ≥ 90, 🟡 ≥ 75.
-  Fuentes conectadas hoy: `produccion` y `manual`. Fase 2: Meta (registro de actividad), n8n (alertas
+  Fuentes conectadas hoy: `produccion` y `manual`. **KPIs reportados (28/sep, Elvin; "lo demás quítalo por ahora")**: se anotan
+  al marcar salida, número + detalle de texto (`desempeno_reportes.detalles`, migración 0036; ficha de la persona los muestra):
+  **Estratega** = reuniones con clientes (con quiénes) · campañas realizadas · planes/investigaciones/creativos APROBADOS listos
+  para ejecutar; **Project/Account Manager (Jessica)** = onboardings · conversaciones con clientes que respondieron (llamada o
+  chat) · casos solucionados; **AI Engineer** = soporte y bloqueos resueltos · sistemas nuevos (AutoFlow, agente personalizado);
+  **Diseñador** = flyers/creativos aprobados (cuántos por negocio) · otros diseños. Nacen con peso 0 (se miden, no puntúan)
+  hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). Fase 2: Meta (registro de actividad), n8n (alertas
   y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).
 - **Calibración**: el score solo lo ve admin (vista previa) hasta `DESEMPENO_SCORE=on`.
 - **Avisos** `app/api/cron/ritmo` (`?tarea=digest` L-V 9:30 AM PR a Carilin/`RITMO_AVISO_A` y a cada
@@ -660,8 +666,9 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   (mensaje a su buzón `agentes_mensajes` con la marca `MARCA_CAFE`; su respuesta sale en la conversación al refrescar). Misma
   regla que el buzón: Elvin habla con Sofi, Nico, Max o Lola; Carilin y Aure solo con Nico (va por su flujo con el OK de Elvin).
   **Sofi y Leo medidos en Vercel** (28/sep): `sumarUsoIA` suma corrida, tiempo y costo real (`costoDeUso` × `PRECIOS_MTOK`) de
-  cada respuesta de Sofi (Slack, Telegram, /pedir) y cada revisión de Leo. Ojo: `agentes.mjs` sin `PUENTE_BOT` firma como
-  Sofi, así que lo que las sesiones de la Mac mandan al buzón sale "de Sofi".
+  cada respuesta de Sofi (Slack, Telegram, /pedir) y cada revisión de Leo. **La Mac ya no firma como Sofi** (28/sep):
+  `agentes.mjs` sin `PUENTE_BOT`/`AGENTE` = "mac" ("Claude (Mac)"); en Railway el servicio de Sofi (sin PUENTE_BOT) sigue
+  siendo Sofi por `RAILWAY_SERVICE_NAME`; una rutina de Sofi en la Mac pone `AGENTE=sofi`.
   **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…; Elvin 28/sep: "que Remi,
   Lola y cualquier agente reporte lo de la Mac"): no pasa por su bot → `node scripts/reportar-mac.mjs <agente> "qué hiciste"
   --tareas N --entregables "a|b"` al terminar (se AÑADE al reporte del día; dentro de un bot, `PUENTE_BOT`, no hace nada para no

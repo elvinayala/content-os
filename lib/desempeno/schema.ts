@@ -98,6 +98,8 @@ export const desempenoReportes = pgTable(
     fecha: text("fecha").notNull(),
     bloqueos: text("bloqueos"),
     datos: jsonb("datos").$type<Record<string, number>>().notNull().default({}),
+    // El detalle de cada número (28/sep): con qué clientes, cuántos por negocio… { reuniones_cliente: "Tinos, Dra. Escabí" }
+    detalles: jsonb("detalles").$type<Record<string, string>>().notNull().default({}),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("desempeno_reportes_pk").on(t.userId, t.fecha)],

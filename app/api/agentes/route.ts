@@ -20,7 +20,8 @@ import { db } from "@/lib/pulse/db";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin"]);
+// "mac" = una sesión de Claude en la Mac (antes firmaba como Sofi; 28/sep).
+const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin", "mac"]);
 // Equipo humano que puede dejarle solicitudes a Nico desde Slack (Elvin, 23/sep/2026: "que Nico
 // tenga un enlace directo con Carilin y Aure"). Solo como remitente: nadie les deja nada aquí.
 const EQUIPO_REMITENTE = new Set(["carilin", "aure"]);

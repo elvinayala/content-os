@@ -6,7 +6,7 @@
 //   node scripts/agentes.mjs mensaje <agente> "<texto>" [--sin-seguir]   deja un pedido en el buzón de otro; su
 //                                                              respuesta te despierta para terminar (⟳ SEGUIR)
 //                                                              agente (sofi | nico | max | lola | elvin)
-//   node scripts/agentes.mjs buzon [agente]                    mis mensajes pendientes (YO = PUENTE_BOT)
+//   node scripts/agentes.mjs buzon [agente]                    mis mensajes pendientes (YO = PUENTE_BOT; sin él = "mac")
 //   node scripts/agentes.mjs atendido <id> ["<respuesta>"]    marca un mensaje como atendido (y
 //                                                              la respuesta vuelve al buzón del que preguntó)
 //   node scripts/agentes.mjs historial [agente] [n]            últimos mensajes (panel)
@@ -49,8 +49,11 @@ function env(n) {
   return "";
 }
 
-const YO = (process.env.PUENTE_BOT || process.env.AGENTE || "sofi").toLowerCase();
-const NOMBRE = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
+// Sin PUENTE_BOT ni AGENTE = una sesión de Claude en la Mac: firma como "Claude (Mac)", no como Sofi (Elvin, 28/sep:
+// "separar que la Mac no firme como Sofi"). Una rutina de un agente en la Mac pone AGENTE=<agente>.
+// En Railway el servicio de Sofi ("puente") no tiene PUENTE_BOT: ahí sigue siendo Sofi (Railway pone RAILWAY_SERVICE_NAME).
+const YO = (process.env.PUENTE_BOT || process.env.AGENTE || (process.env.RAILWAY_SERVICE_NAME ? "sofi" : "mac")).toLowerCase();
+const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
 const CON_BUZON = new Set(["sofi", "nico", "max", "lola", "jarvis"]);
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");
