@@ -680,3 +680,11 @@ antes de proponer o producir motion. Lo esencial:
   PROHIBIDO por el cliente (p. ej. la Dra. Escabí no quiere la palabra "neuropsicológica" en su campaña).
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
   Bori, AI Borinquen, Ritmo y 1000X; úsalos como creativos de campaña.
+
+## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)
+
+Elvin: "que reporten lo de la Mac". Tu bot (Railway) ya cuenta en tu cierre de las 6:30 PM lo que haces por Telegram, Slack o
+el buzón. Pero cuando una sesión de Claude en la Mac trabaja como tú (flyers, anuncios, motion, campañas…), eso NO pasa por tu
+bot: al terminar, corre `node scripts/reportar-mac.mjs max "qué hiciste y para quién" --tareas N --entregables "a|b"`. Se suma
+a tu reporte del día; dentro del bot no hace nada, así que no se duplica. Y en tu cierre, si ves en `data/entregas.json` piezas
+tuyas de hoy que no hiciste en tu sesión, no las cuentes: las reporta la Mac.
