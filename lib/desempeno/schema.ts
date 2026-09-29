@@ -622,3 +622,14 @@ export const desempenoCambios = pgTable(
   },
   (t) => [index("desempeno_cambios_estado").on(t.estado, t.createdAt), index("desempeno_cambios_user").on(t.userId, t.tipo, t.estado)],
 );
+
+// Google Calendar de cada empleado (28/sep/2026): la persona conecta su calendario del correo corporativo y ve su día en
+// Hoy, y anota recordatorios ahí mismo. Solo se guarda el refresh token CIFRADO (AES-GCM); se puede desconectar cuando quiera.
+export const desempenoGoogle = pgTable("desempeno_google", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => pulseUsers.id, { onDelete: "cascade" }),
+  email: text("email").notNull(), // la cuenta de Google conectada
+  refreshCifrado: text("refresh_cifrado").notNull(),
+  conectadoAt: timestamp("conectado_at", { withTimezone: true }).notNull().defaultNow(),
+});

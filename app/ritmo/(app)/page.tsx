@@ -6,6 +6,7 @@ import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/p
 import { Animo } from "@/components/ritmo/bienestar";
 import { Noticia } from "@/components/ritmo/noticias";
 import { MiMarcador } from "@/components/ritmo/arena-marcador";
+import { MiDiaGoogle } from "@/components/ritmo/mi-dia-google";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
@@ -15,6 +16,7 @@ import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
 import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
 import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
+import { googleListo, miDia } from "@/lib/desempeno/google-cal";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena } from "@/lib/ventas/datos";
 
@@ -52,6 +54,8 @@ export default async function HoyPage() {
   const bien = miSemana(misB, semanaB, hoyBienestar());
   const pausaHoy = misB.some((r) => r.fecha === hoyBienestar() && r.tipo === "pausa");
   const animoHoy = misB.find((r) => r.fecha === hoyBienestar() && r.tipo === "animo")?.valor ?? null;
+  // Mi día (Google Calendar del correo de trabajo): solo si la app de Google está configurada.
+  const calendario = googleListo() ? await miDia(u.id, hoy).catch(() => null) : undefined;
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
@@ -143,6 +147,16 @@ export default async function HoyPage() {
           </div>
           <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
         </Link>
+      ) : null}
+
+      {calendario !== undefined ? (
+        <MiDiaGoogle
+          conectado={!!calendario}
+          email={calendario?.email ?? null}
+          eventos={calendario && "eventos" in calendario ? calendario.eventos : []}
+          error={calendario && "error" in calendario ? calendario.error : null}
+          hoy={hoy}
+        />
       ) : null}
 
       <Link href="/ritmo/empresa" className="panel group flex w-full max-w-md items-center gap-3 p-4 transition hover:border-primary/40">

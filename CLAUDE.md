@@ -725,6 +725,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para
   nuevos: sirve para "completa lo que falta" (pre-llenado con lo que había); ahora exige foto y contacto de emergencia. Se le
   creó ficha vacía a todo perfil activo que no tenía (12 personas, 28/sep) → al entrar, Ritmo los lleva a completarla.
+- **Mi día · Google Calendar** (28/sep, Elvin: "que conecten el calendario de su correo corporativo… y lo anoten ahí mismo";
+  puro en `lib/desempeno/google-cal-reglas.ts` + tests `tests/google-cal.test.mjs`, servidor `lib/desempeno/google-cal.ts`, tabla
+  `desempeno_google`, migración 0034): cada persona toca "Conectar" en Hoy (`/ritmo/google/conectar` → Google → `/ritmo/google/volver`,
+  state firmado + misma sesión), ve lo de hoy de su calendario principal (sin cancelados ni rechazados, con link de Meet) y **Anota**
+  eventos o recordatorios de todo el día en SU calendario (`anotarCalendarioAction`). Solo se guarda el refresh token cifrado; se
+  desconecta cuando quiera (revoca). **Necesita la app de Google** (`GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` en Vercel; Calendar
+  API activada; redirect `https://ritmo.levelupmediapr.net/ritmo/google/volver`); sin ellas la tarjeta no sale.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 
