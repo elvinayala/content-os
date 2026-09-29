@@ -80,3 +80,6 @@ datos.entregas.push(entrega);
 datos.actualizadoEl = new Date().toISOString();
 fs.writeFileSync(ruta, JSON.stringify(datos, null, 2) + "\n");
 console.log(`✓ En la bandeja: ${id}${videoUrl ? `\n${videoUrl}` : ""}`);
+// Equipo digital: lo que Remi entrega desde la Mac cuenta en su reporte del día (dentro de un bot no hace nada).
+const { reportarDesdeMac } = await import("../../scripts/reportar-mac.mjs");
+await reportarDesdeMac("remi", { resumen: `Motion entregado: ${titulo} (${marca})`, entregables: [`${titulo}${videoUrl ? ` · ${videoUrl}` : ""}`] });

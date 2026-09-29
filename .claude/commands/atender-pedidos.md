@@ -54,3 +54,7 @@ vuelve a producir. (No uses reactions.add: el bot no tiene ese scope.)
 Reportá en 2-4 líneas: cuántos pedidos atendiste y qué produjiste. Si un pedido
 es ambiguo, producí tu mejor interpretación Y respondé en el hilo qué asumiste.
 NUNCA dejes el JSON inválido ni marques ✅ sin haber producido.
+
+**Reporte (Ritmo · equipo digital):** si estás en la Mac (no dentro del bot de Lola), al terminar suma lo entregado a su
+reporte del día: `node scripts/reportar-mac.mjs lola "qué hiciste y para quién" --tareas N --entregables "a|b"` (dentro de un bot no
+hace nada; el cierre de las 6:30 PM ya lo cuenta).

@@ -12,6 +12,7 @@ export const AGENTES_IA: AgenteIA[] = [
   { id: "lola", nombre: "Lola", rol: "Creadora de contenido con IA", comparaCon: "disenador", donde: "Telegram · Railway" },
   { id: "iris", nombre: "Iris", rol: "Vigía de edición (Cortex)", comparaCon: "soporte", donde: "Tarea programada", sinCosto: true },
   { id: "leo", nombre: "Leo", rol: "Director creativo (revisiones)", comparaCon: "copy", donde: "Slack", sinCosto: true },
+  { id: "remi", nombre: "Remi", rol: "Motion designer (videos por código)", comparaCon: "editor", donde: "Mac + Railway (render)", sinCosto: true },
 ];
 export const agenteIA = (id: string) => AGENTES_IA.find((a) => a.id === id);
 

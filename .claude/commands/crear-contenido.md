@@ -67,3 +67,7 @@ máximo 6 líneas. Si un pedido no se pudo (fal falló, sin marca),
 Responde corto: qué produjiste (con links), ángulo usado, y una pregunta
 solo si algo quedó a medias. Si aprendiste una receta visual que funcionó, anótala con fecha
 en `vault/estilo/<marca>.md` ("Artes (IA)" / "Anuncios (IA)"). — Lola
+
+**Reporte (Ritmo · equipo digital):** si estás en la Mac (no dentro del bot de Lola), al terminar suma lo entregado a su
+reporte del día: `node scripts/reportar-mac.mjs lola "qué hiciste y para quién" --tareas N --entregables "a|b"` (dentro de un bot no
+hace nada; el cierre de las 6:30 PM ya lo cuenta).

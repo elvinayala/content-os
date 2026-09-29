@@ -629,9 +629,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   manda las métricas; día sin actividad = "Sin actividad hoy". Leo suma 1 tarea por pieza revisada
   (`/api/slack-eventos`); Iris hace su cierre en su ronda (`.claude/commands/iris.md` §6). Comparación 7 días por día
   activo: humanos = horas del ponche, tareas del tablero Producción, costo = salario ÷ 21.7; "—" si falta el dato.
-  **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…): no pasa por su bot y no
-  cuenta solo → al terminar, `node --env-file=.env.local scripts/agentes.mjs reporte --agente <id> --sumar --tareas N --resumen
-  "…" --entregables "a|b"` (se AÑADE al reporte del día, no lo pisa; 28/sep: los motion de la Dra. Escabí no salían en Max).
+  **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…; Elvin 28/sep: "que Remi,
+  Lola y cualquier agente reporte lo de la Mac"): no pasa por su bot → `node scripts/reportar-mac.mjs <agente> "qué hiciste"
+  --tareas N --entregables "a|b"` al terminar (se AÑADE al reporte del día; dentro de un bot, `PUENTE_BOT`, no hace nada para no
+  duplicar el cierre). Remi lo hace solo al entregar (`motion/scripts/entregar.mjs`, `remi.mjs --entregar|--proponer`); los
+  comandos de Lola (`/crear-contenido`, `/atender-pedidos`) y Max (`/meta-ads`) lo piden al final. Remi está en `AGENTES_IA`
+  (se compara con Editor de video).
 - **Noticias** (`/ritmo/noticias` + las últimas 3 en Hoy, 26/sep; tabla `desempeno_noticias`, migración 0020;
   `lib/desempeno/noticias.ts`, categorías en `noticias-tipos.ts`): logros del equipo (con persona → le avisa por Slack),
   noticias, comunicados (se pueden fijar arriba) y causas benéficas. Publica/fija/borra la vista maestra; lo ve todo el

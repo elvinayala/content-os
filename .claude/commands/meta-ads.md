@@ -135,3 +135,7 @@ y subir presupuestos se hace en Ads Manager por él. Registra la decisión con f
   que él lo pida. Chrome solo para verificar visualmente o subir videos.
 - Si la API devuelve un error con código, repórtalo textual (código/subcódigo) y no reintentes a
   ciegas; 368/613 = bloqueo o rate limit → parar y avisar.
+
+**Reporte (Ritmo · equipo digital):** si estás en la Mac (no dentro del bot de Max), al terminar suma lo entregado a su
+reporte del día: `node scripts/reportar-mac.mjs max "qué hiciste y para quién" --tareas N --entregables "a|b"` (dentro de un bot no
+hace nada; el cierre de las 6:30 PM ya lo cuenta).

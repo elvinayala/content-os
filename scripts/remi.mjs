@@ -147,3 +147,9 @@ if (resto.includes("--entregar")) {
   fs.writeFileSync(ruta, JSON.stringify(datos, null, 2) + "\n");
   console.log(`✓ ${t.resultados.length} en la bandeja de Entregas`);
 }
+
+// Equipo digital: cada video renderizado desde la Mac suma a Remi (dentro del bot de Max no: lo cuenta su cierre).
+if (t.resultados?.length && (resto.includes("--entregar") || resto.includes("--proponer"))) {
+  const { reportarDesdeMac } = await import("./reportar-mac.mjs");
+  await reportarDesdeMac("remi", { resumen: `${t.resultados.length} video(s) de motion ${resto.includes("--proponer") ? "propuestos al cliente" : "en la bandeja"}`, tareas: t.resultados.length, entregables: t.resultados.map((x) => `${x.id} · ${x.url}`) });
+}

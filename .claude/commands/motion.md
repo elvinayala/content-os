@@ -40,3 +40,4 @@ Reusar `motion/src/kit/*` y los componentes de marca (p. ej. `Coqui`). Pieza nue
   y `bash scripts/deploy-snapshots.sh`.
 - Mandarle el MP4 a Elvin (en Claude Code: SendUserFile; por Telegram: `PUENTE_BOT=<bot> node scripts/telegram-bot.mjs enviar`).
 - Nunca publicarlo ni mandarlo a nadie más.
+- Entregar con `entregar.mjs` o `remi.mjs --entregar|--proponer` ya suma el video al reporte de Remi en Ritmo (desde la Mac).
