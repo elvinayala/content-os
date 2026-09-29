@@ -746,11 +746,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   cuota comisiona (para quien sale en su fila); el **show-up de los closers sale del CRM** (Leads → CLOSERS: etapa del lead tras
   cada cita; "Llamada agendada" ya pasada = sin marcar, se le recuerda; sin citas marcadas → diario; `resultadoCita` +
   `citasDelMes`); **Laura vende en las dos marcas** (`desempeno_perfiles.tambien_en`, migración 0031, "También vende en" en
-  Ajustes); Joaquín es closer. Pendiente: la planilla de Excel de Nahuel para las agendas de los chatters.
+  Ajustes); Joaquín es **setter** (Elvin, 28/sep; antes estaba como closer). Pendiente: la planilla de Excel de Nahuel para las agendas de los chatters.
   **KPIs del diario por puesto (Elvin, 28/sep; `KPIS_VENTAS`, `desempeno_ventas_diario.kpis`, migración 0037)**: setter =
   llamadas realizadas · conectadas · agendadas · show · no show; chatter (Ana Cecilio, Dilan) = conversaciones (personas que
   hablaron contigo) · pases (le sacaste el número y lo pasaste a llamada) · citas agendadas · show · no show; closer (Laura,
-  Roger, Joaquín; Paola por dar de alta) = demos · cerradas · no cerradas + cash collected de la hoja. Cada quien los anota en
+  Roger; Paola por dar de alta) = demos · cerradas · no cerradas + cash collected de la hoja. Cada quien los anota en
   Mi diario (con "Este mes"); el director y la dirección ven "KPIs del equipo · este mes" por puesto. Los campos viejos
   (conversaciones/agendas/presentaron) se llenan desde estos (`camposViejos`) para la comisión y el show-up de respaldo.
 - **Calendario de ausencias** (`/ritmo/calendario`, 28/sep; puro en `lib/desempeno/calendario-reglas.ts` + tests
@@ -835,7 +835,7 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
-  Roger Arteaga, Laura Bernal, Joaquín La Valle (closers), Nahuel Tissera (director comercial), Ana Cecilio y
+  Roger Arteaga, Laura Bernal (closers), Joaquín La Valle (setter), Nahuel Tissera (director comercial), Ana Cecilio y
   Dilan Torres (chatters); Aure (editor). Santiago Villarreal ya no está. Se les da la clave con el link de
   acceso de Ritmo + `&d=leads` (`linkDeAcceso`, 72 h) → crean su clave y caen en /pulse/leads.
 - **AI Borinquen (27/sep)**: copia exacta de sus 4 embudos de Pipedrive (`SEMILLA.ai_borinquen`: WHATSAPP, RECUPERACIÓN
