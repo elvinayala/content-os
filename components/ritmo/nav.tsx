@@ -1,13 +1,14 @@
 "use client";
 
-import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, LogOut, Newspaper, Settings2, ShieldCheck, Timer, Trophy, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { salirDeRitmoAction } from "@/app/ritmo/actions";
 import { cn } from "@/lib/utils";
 
-import { BotonSlack, type EspacioSlack } from "./boton-slack";
+import { type EspacioSlack } from "./boton-slack";
+import { MenuApps, MenuMas, type ItemMenu } from "./nav-menus";
 import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
@@ -34,6 +35,22 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     ...(equipo ? [{ href: "/ritmo/seguridad", nombre: "Seguridad", icono: ShieldCheck, activo: path.startsWith("/ritmo/seguridad"), soloEscritorio: true }] : []),
     { href: "/ritmo/etica", nombre: "Ético", icono: ShieldCheck, activo: path.startsWith("/ritmo/etica"), soloEscritorio: equipo },
   ] as { href: string; nombre: string; icono: typeof Timer; activo: boolean; badge?: number; nuevo?: boolean; soloEscritorio?: boolean }[];
+  // Escritorio (Elvin, 29/sep: "hay muchos tabs arriba… que se desplieguen cuando le dé clic"): a la vista lo del día a
+  // día; lo demás en "Más", agrupado. En el teléfono la barra de abajo no cambia.
+  const MAS: Record<string, string> = equipo
+    ? { "/ritmo/agentes": "Equipo", "/ritmo/empresa": "Empresa", "/ritmo/carreras": "Empresa", "/ritmo/ajustes": "Administración", "/ritmo/seguridad": "Administración", "/ritmo/etica": "Administración" }
+    : { "/ritmo/empresa": "Empresa", "/ritmo/bienestar": "Empresa", "/ritmo/etica": "Empresa" };
+  const extras: ItemMenu[] = equipo
+    ? [
+        { href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena"), grupo: "Equipo" },
+        { href: "/ritmo/calendario", nombre: "Calendario", icono: CalendarDays, activo: path.startsWith("/ritmo/calendario"), grupo: "Equipo" },
+        { href: "/ritmo/noticias", nombre: "Noticias", icono: Newspaper, activo: path.startsWith("/ritmo/noticias"), grupo: "Empresa" },
+        { href: "/ritmo/bienestar", nombre: "Bienestar", icono: HeartPulse, activo: path.startsWith("/ritmo/bienestar"), grupo: "Empresa" },
+      ]
+    : [];
+  const visibles = tabs.filter((t) => !MAS[t.href]);
+  const ORDEN = ["Equipo", "Empresa", "Administración"];
+  const mas: ItemMenu[] = [...tabs.filter((t) => MAS[t.href]).map((t) => ({ ...t, grupo: MAS[t.href] })), ...extras].sort((a, b) => ORDEN.indexOf(a.grupo) - ORDEN.indexOf(b.grupo));
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-border/40 bg-background/60 backdrop-blur-xl backdrop-saturate-150" style={{ paddingTop: "env(safe-area-inset-top)" }}>
@@ -44,24 +61,20 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
           </Link>
           {tabs.length > 1 ? (
             <nav className="ml-6 hidden items-center gap-1 md:flex">
-              {tabs.map((t) => (
+              {visibles.map((t) => (
                 <Link key={t.href} href={t.href} className={cn("relative rounded-full px-3.5 py-1.5 text-sm transition", t.activo ? "tab-activa bg-primary/10 text-primary" : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground")}>
                   {t.nombre}
                   {t.badge ? <span className="ml-1.5 rounded-full bg-[color:var(--coral)] px-1.5 text-[10px] font-semibold text-background">{t.badge}</span> : null}
                   {t.nuevo && !t.activo ? <span className="absolute top-1 right-1.5 size-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--neon)]" title="Vacante nueva" /> : null}
                 </Link>
               ))}
+              <MenuMas items={mas} />
             </nav>
           ) : null}
           <span className="ml-auto" />
-          <BotonSlack espacios={slack} />
-          {pulse ? (
-            <a href={pulse.href} title={`Ir a ${pulse.nombre}`} className="hidden items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:text-foreground sm:flex">
-              <LayoutGrid className="size-3.5" /> {pulse.nombre}
-            </a>
-          ) : null}
+          <MenuApps pulse={pulse} slack={slack} />
           <RelojPR />
-          <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", tabs.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
+          <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", visibles.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
           <form action={salirDeRitmoAction}>
             <button type="submit" title="Cerrar sesión" className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground">
               <LogOut className="size-4" />

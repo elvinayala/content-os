@@ -12,7 +12,7 @@ export interface EspacioSlack {
 
 // Puente Ritmo → Slack (Elvin, 28/sep): abre la app de Slack en el espacio de su empresa; si no la tiene instalada,
 // a los 1.5 s abre Slack en el navegador.
-function abrir(e: EspacioSlack) {
+export function abrirSlack(e: EspacioSlack) {
   let salio = false;
   const marcar = () => {
     salio = true;
@@ -33,7 +33,7 @@ export function BotonSlack({ espacios, className }: { espacios: EspacioSlack[]; 
         <button
           key={e.equipo}
           type="button"
-          onClick={() => abrir(e)}
+          onClick={() => abrirSlack(e)}
           title={`Abrir ${e.nombre}`}
           className="flex cursor-pointer items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:text-foreground"
         >
