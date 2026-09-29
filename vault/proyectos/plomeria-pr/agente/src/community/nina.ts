@@ -13,6 +13,7 @@ import { BIBLIOTECA, type Creativo } from "./biblioteca.js";
 import { renderTarjeta, type Tarjeta } from "./render.js";
 import { crearPost, cuentasSociales } from "./zernio-posts.js";
 import { reportar } from "./telegram.js";
+import { avisarVentas } from "../ventas.js";
 
 const ARCHIVO = path.join(RAIZ, "data", "estado", "community.json");
 interface Publicacion { fecha: string; pilar: Pilar | "feriado"; formato: Formato; creativoId: string; caption: string; zernioId?: string; urls?: string[]; draft?: boolean; error?: string }
@@ -112,6 +113,10 @@ export async function ejecutar(modo: "publicar" | "programar" | "borrador" = "pu
   const cuentas = await cuentasSociales();
   const cabecera = res.ok ? (res.draft ? `📝 Guardé el post de hoy como BORRADOR en Zernio (no hay Instagram/Facebook conectados todavía).` : modo === "programar" ? `🗓️ Programé el post de hoy para las 11:00 AM.` : `✅ Publicado.`) : `❌ No pude publicar: ${res.error}`;
   await reportar(`${NINA.firma}\n${cabecera}\n\n${plan.pilar === "feriado" ? `🎉 ${plan.feriado}` : `Pilar: ${plan.pilar} · Formato: ${plan.formato}`}${plan.creativo ? ` · Creativo: ${plan.creativo.id}` : " · Creativo generado"}\nCuentas: ${cuentas.length ? cuentas.map((c) => `${c.platform}${c.username ? " @" + c.username : ""}`).join(", ") : "ninguna conectada en Zernio"}\n\n${guion.caption.slice(0, 500)}${guion.caption.length > 500 ? "…" : ""}\n\n${urls[0]}${res.urls?.length ? "\n" + res.urls.join("\n") : ""}`);
+  if (res.ok && !res.draft) {
+    const resumen = `📱 Post publicado${plan.creativo ? ` (${plan.creativo.id})` : ""}: ${plan.pilar === "feriado" ? plan.feriado : `${plan.pilar} · ${plan.formato}`}`;
+    await avisarVentas(resumen).catch(() => undefined);
+  }
   return pub;
 }
 
@@ -135,7 +140,7 @@ export function arrancarReloj() {
         const estado = leer();
         if (!estado.publicaciones.some((p) => p.fecha === hoy && !p.error)) { ultimaPublicacion = hoy; await ejecutar("publicar"); }
       }
-    } catch (e) { console.error("Nina", e); await reportar(`${NINA.firma}\n❌ Error en el ciclo de hoy: ${(e as Error).message}`).catch(() => {}); }
+    } catch (e) { console.error("Nina", e); const msg = `${NINA.firma}\n❌ Error en el ciclo de hoy: ${(e as Error).message}`; await reportar(msg).catch(() => {}); await avisarVentas(msg.split("\n")[1]).catch(() => {}); }
   };
   setInterval(tick, 60_000);
   console.log(`Nina lista: preaviso ${NINA.horaPreaviso.hora}:${NINA.horaPreaviso.minuto} · publicación ${NINA.horaPublicacion.hora}:${String(NINA.horaPublicacion.minuto).padStart(2, "0")} (${config.zonaHoraria})`);
