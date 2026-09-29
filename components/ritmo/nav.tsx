@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Smartphone, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -60,9 +60,6 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
               <LayoutGrid className="size-3.5" /> {pulse.nombre}
             </a>
           ) : null}
-          <Link href="/ritmo/app" title="Ritmo en tu teléfono (app y avisos)" className={cn("rounded-full p-2 transition hover:bg-muted hover:text-foreground", path.startsWith("/ritmo/app") ? "text-primary" : "text-muted-foreground")}>
-            <Smartphone className="size-4" />
-          </Link>
           <RelojPR />
           <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", tabs.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
           <form action={salirDeRitmoAction}>

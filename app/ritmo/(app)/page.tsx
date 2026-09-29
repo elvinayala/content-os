@@ -8,7 +8,6 @@ import { Noticia } from "@/components/ritmo/noticias";
 import { MiMarcador } from "@/components/ritmo/arena-marcador";
 import { MiDiaGoogle } from "@/components/ritmo/mi-dia-google";
 import { Ponche } from "@/components/ritmo/ponche";
-import { AppMovil } from "@/components/ritmo/app-movil";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
 import { faltantesFicha, listaHumana } from "@/lib/desempeno/ficha-completa";
@@ -108,7 +107,6 @@ export default async function HoyPage() {
       {faltan.length || vac ? <div className="flex flex-col gap-2">{avisos}</div> : null}
 
       {/* La app en el teléfono: solo aparece en el celular mientras falte instalarla o activar los avisos. */}
-      <AppMovil clave={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? ""} tarjeta />
 
       <div className="grid items-start gap-6 lg:grid-cols-[360px_1fr]">
         {/* izquierda: el ponche (o el marcador de ventas) y mi semana */}
