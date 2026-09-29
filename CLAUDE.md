@@ -629,6 +629,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   manda las métricas; día sin actividad = "Sin actividad hoy". Leo suma 1 tarea por pieza revisada
   (`/api/slack-eventos`); Iris hace su cierre en su ronda (`.claude/commands/iris.md` §6). Comparación 7 días por día
   activo: humanos = horas del ponche, tareas del tablero Producción, costo = salario ÷ 21.7; "—" si falta el dato.
+  **Oficina virtual** (28/sep, Elvin: "una oficina: cada uno su cubículo, su computadora… un área con TV, una sala de ping
+  pong"): arriba de `/ritmo/agentes`, a lo ancho (`components/ritmo/oficina.tsx`): open space con un cubículo por agente (la
+  pantalla = 1.ª idea de su reporte, `pantalla()`; burbuja con lo último que dijo en el buzón, `ultimosMensajes` + `burbuja()`),
+  sala con TV (tareas, minutos y costo de hoy) y sofá, y ping pong; `estadoOficina()`: trabajó hace < 15 min = en su computadora,
+  trabajó hoy = en su escritorio, nada hoy = descansando (los 2 primeros al ping pong, el resto al sofá). Tocar = panel con el
+  reporte completo. Se refresca cada minuto.
   **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…; Elvin 28/sep: "que Remi,
   Lola y cualquier agente reporte lo de la Mac"): no pasa por su bot → `node scripts/reportar-mac.mjs <agente> "qué hiciste"
   --tareas N --entregables "a|b"` al terminar (se AÑADE al reporte del día; dentro de un bot, `PUENTE_BOT`, no hace nada para no

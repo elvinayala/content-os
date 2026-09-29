@@ -57,3 +57,26 @@ export async function salariosPorPersona(): Promise<Map<string, number>> {
   const filas = await d.select({ userId: desempenoFichas.userId, salario: desempenoFichas.salarioMensual }).from(desempenoFichas);
   return new Map(filas.filter((f) => f.salario && f.salario > 0).map((f) => [f.userId, f.salario!]));
 }
+
+/** Oficina virtual: lo último que dijo cada agente en el buzón (48 h). Tabla agentes_mensajes (SQL crudo, como /api/agentes). */
+export async function ultimosMensajes(agentes: string[]): Promise<Record<string, { para: string; texto: string; creado: string }>> {
+  const out: Record<string, { para: string; texto: string; creado: string }> = {};
+  try {
+    const d = await db();
+    const lista = sql.join(agentes.map((a) => sql`${a}`), sql`, `);
+    // Lo que el agente escribió (de = agente) o contestó (para = agente, con respuesta): lo más reciente de cada uno.
+    const r = await d.execute(sql`
+      SELECT DISTINCT ON (quien) quien AS de, a AS para, dicho AS texto, cuando AS creado FROM (
+        SELECT de AS quien, para AS a, texto AS dicho, creado_el AS cuando FROM agentes_mensajes
+          WHERE creado_el > now() - interval '48 hours' AND de IN (${lista})
+        UNION ALL
+        SELECT para AS quien, de AS a, respuesta AS dicho, atendido_el AS cuando FROM agentes_mensajes
+          WHERE atendido_el > now() - interval '48 hours' AND para IN (${lista}) AND coalesce(respuesta, '') <> ''
+      ) x ORDER BY quien, cuando DESC`);
+    const filas = (Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { de: string; para: string; texto: string; creado: string | Date }[];
+    for (const f of filas) out[f.de] = { para: f.para, texto: f.texto, creado: new Date(f.creado).toISOString() };
+  } catch (e) {
+    console.error("[oficina] mensajes", e);
+  }
+  return out;
+}

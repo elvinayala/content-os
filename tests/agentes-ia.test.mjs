@@ -57,3 +57,16 @@ test("reporte del agente se limpia", () => {
   assert.equal(limpiarReporte({ tareas: 9999 }).tareas, 500);
   assert.equal(agenteIA("nico").comparaCon, "web");
 });
+
+test("oficina: dónde está cada agente y qué dice su pantalla", async () => {
+  const { estadoOficina, pantalla, burbuja } = await import("../lib/desempeno/agentes-ia.ts");
+  const ahora = Date.parse("2026-09-28T20:00:00Z");
+  assert.equal(estadoOficina(null, ahora), "descansando");
+  assert.equal(estadoOficina({ corridas: 0, tareas: 0, actualizado: "2026-09-28T19:59:00Z" }, ahora), "descansando");
+  assert.equal(estadoOficina({ corridas: 3, tareas: null, actualizado: "2026-09-28T19:50:00Z" }, ahora), "trabajando");
+  assert.equal(estadoOficina({ corridas: 3, tareas: 1, actualizado: "2026-09-28T18:00:00Z" }, ahora), "en-escritorio");
+  assert.equal(estadoOficina({ corridas: 0, tareas: 6, actualizado: "2026-09-28T12:00:00Z" }, ahora), "en-escritorio"); // Leo
+  assert.equal(pantalla("Sin actividad hoy: nadie le pidió trabajo."), null);
+  assert.equal(pantalla("Arreglé el bug de Leads. Luego lo demás."), "Arreglé el bug de Leads.");
+  assert.equal(burbuja("[Solicitud del equipo · Aure] arregla el link\n⟳ SEGUIR [telegram·1]"), "arregla el link");
+});

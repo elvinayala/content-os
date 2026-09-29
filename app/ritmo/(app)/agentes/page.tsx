@@ -2,9 +2,10 @@ import { Bot, CircleAlert, FileCheck2, UserRound } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { AutoRefresco } from "@/components/ritmo/auto-refresco";
+import { Oficina, type AgenteOficina } from "@/components/ritmo/oficina";
 import { Tarjeta } from "@/components/ritmo/piezas";
-import { AGENTES_IA, ladoAgente, ladoHumano, veces, type Humano, type LadoComparado } from "@/lib/desempeno/agentes-ia";
-import { reportesAgentesEntre, salariosPorPersona } from "@/lib/desempeno/agentes-reportes";
+import { AGENTES_IA, burbuja, estadoOficina, ladoAgente, ladoHumano, pantalla, veces, type Humano, type LadoComparado } from "@/lib/desempeno/agentes-ia";
+import { reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
 import { armarPanel } from "@/lib/desempeno/datos";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -17,6 +18,7 @@ export const metadata = { title: "Agentes" };
 // equivalente (últimos 7 días). Solo Elvin, Carilin y Aure (admin/editoras con 2 pasos): es para decidir.
 const usd = (n: number | null, dec = 2) => (n === null ? "—" : `US$${n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec })}`);
 const num = (n: number | null, suf = "") => (n === null ? "—" : `${n.toLocaleString("es-PR", { maximumFractionDigits: 1 })}${suf}`);
+const COLOR_AGENTE: Record<string, string> = { sofi: "#f472b6", nico: "#34d399", max: "#f5ce1a", lola: "#fb923c", iris: "#a78bfa", leo: "#60a5fa", remi: "#22d3ee" };
 const horas = (min: number) => (min >= 60 ? `${Math.floor(min / 60)}h ${String(Math.round(min % 60)).padStart(2, "0")}m` : `${Math.round(min)} min`);
 
 export default async function AgentesPage() {
@@ -25,7 +27,7 @@ export default async function AgentesPage() {
   if (!u.maestro || (u.rol !== "admin" && u.rol !== "editor")) redirect("/ritmo");
   const hoy = fechaPR(Date.now());
   const desde = sumarDias(hoy, -6);
-  const [reportes, panel, salarios] = await Promise.all([reportesAgentesEntre(desde, hoy), armarPanel(u, desde, hoy).catch(() => null), salariosPorPersona()]);
+  const [reportes, panel, salarios, dichos] = await Promise.all([reportesAgentesEntre(desde, hoy), armarPanel(u, desde, hoy).catch(() => null), salariosPorPersona(), ultimosMensajes(AGENTES_IA.map((a) => a.id))]);
 
   const deHoy = (id: string) => reportes.find((r) => r.agente === id && r.fecha === hoy) ?? null;
   const hoyTodos = reportes.filter((r) => r.fecha === hoy);
@@ -46,6 +48,35 @@ export default async function AgentesPage() {
     return { a, ag, hu, puesto: puestoPorId(a.comparaCon)?.nombre ?? a.comparaCon };
   });
 
+  // Oficina virtual: dónde está cada agente, qué dice su pantalla y lo último que dijo.
+  const ahora = Date.now();
+  const hace = (iso: string) => {
+    const min = Math.max(0, Math.round((ahora - Date.parse(iso)) / 60000));
+    return min < 60 ? `hace ${min} min` : min < 1440 ? `hace ${Math.round(min / 60)} h` : "ayer";
+  };
+  const oficina: AgenteOficina[] = AGENTES_IA.map((a) => {
+    const r = deHoy(a.id);
+    const d = dichos[a.id];
+    const texto = burbuja(d?.texto);
+    return {
+      id: a.id,
+      nombre: a.nombre,
+      rol: a.rol,
+      color: COLOR_AGENTE[a.id] ?? "#7dd3fc",
+      foto: a.id === "max" ? "/marcas/max/max-avatar-v3-512.png" : null,
+      estado: estadoOficina(r ? { corridas: r.corridas, tareas: r.tareas, actualizado: r.updatedAt.toISOString() } : null, ahora),
+      pantalla: pantalla(r?.resumen) ?? (a.id === "leo" && r?.tareas ? `Revisó ${r.tareas} piezas del equipo` : null),
+      dijo: d && texto ? { para: d.para, texto, hace: hace(d.creado) } : null,
+      tareas: r?.tareas ?? null,
+      corridas: r?.corridas ?? 0,
+      minutos: r?.minutos ?? 0,
+      costo: a.sinCosto ? null : (r?.costoUsd ?? 0),
+      resumen: r?.resumen ?? null,
+      entregables: r?.entregables ?? [],
+      bloqueos: r?.bloqueos ?? null,
+    };
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <AutoRefresco segundos={60} />
@@ -56,6 +87,8 @@ export default async function AgentesPage() {
           Lo que hicieron tus agentes de IA y cómo se comparan con el equipo humano. Cada agente deja su reporte al cierre del día (6:30 PM); lo medible lo pone el sistema. Solo lo ven Elvin, Carilin y Aure.
         </p>
       </div>
+
+      <Oficina agentes={oficina} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Tarjeta titulo="Tareas hoy" valor={tareasHoy} detalle={`${hoyTodos.filter((r) => r.resumen || (r.agente === "leo" && r.tareas)).length} de ${AGENTES_IA.length} reportaron`} />

@@ -97,3 +97,35 @@ export function limpiarReporte(b: { resumen?: unknown; tareas?: unknown; entrega
     bloqueos: txt(b.bloqueos, 1000),
   };
 }
+
+// ─── Oficina virtual (28/sep, Elvin: "como una oficina: cada uno su cubículo, su computadora… una sala con TV, ping pong") ──
+
+export type EstadoOficina = "trabajando" | "en-escritorio" | "descansando";
+export const MIN_TRABAJANDO = 15;
+
+/** Dónde está el agente: trabajó hace < 15 min → en su computadora; trabajó hoy → en su escritorio; nada hoy → descansando. */
+export function estadoOficina(r: { corridas: number; tareas: number | null; actualizado: string | null } | null, ahora: number): EstadoOficina {
+  if (!r || (r.corridas <= 0 && !(r.tareas ?? 0))) return "descansando";
+  if (r.actualizado && ahora - Date.parse(r.actualizado) < MIN_TRABAJANDO * 60_000) return "trabajando";
+  return "en-escritorio";
+}
+
+/** Lo que dice la pantalla de su computadora: la 1.ª idea del resumen, sin relleno. */
+export function pantalla(resumen: string | null | undefined, max = 90): string | null {
+  const t = (resumen ?? "").replace(/\s+/g, " ").trim();
+  if (!t || /^(sin actividad|primer día de medición)/i.test(t)) return null;
+  const primera = t.split(/(?<=[.;:])\s/)[0];
+  return primera.length > max ? `${primera.slice(0, max - 1).trimEnd()}…` : primera;
+}
+
+/** Texto de un mensaje del buzón, limpio para la burbuja: sin encabezados [..], marcas ⟳ SEGUIR ni firmas. */
+export function burbuja(texto: string | null | undefined, max = 110): string | null {
+  const t = (texto ?? "")
+    .replace(/\[[^\]]{0,160}\]\s*/g, "")
+    .replace(/⟳\s*SEGUIR[^\n]*/gi, "")
+    .replace(/\n—\s*\w+\s*$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!t) return null;
+  return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+}
