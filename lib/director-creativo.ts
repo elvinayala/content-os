@@ -113,7 +113,10 @@ export async function responderDirector(turnos: TurnoDirector[]): Promise<string
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
   };
+  const t0 = Date.now();
   const resp = await anthropic.beta.messages.create(params as unknown as Anthropic.Beta.MessageCreateParamsNonStreaming);
+  // Equipo digital: tiempo y costo reales de la revisión (la tarea la suma /api/slack-eventos).
+  await import("@/lib/desempeno/agentes-reportes").then((m) => m.sumarUsoIA("leo", resp.model ?? MODEL_DIRECTOR, resp.usage, Date.now() - t0)).catch(() => {});
   if (resp.stop_reason === "refusal") {
     return "No pude revisar esta pieza (la frenó un filtro de seguridad). Pásasela a Elvin directo.";
   }

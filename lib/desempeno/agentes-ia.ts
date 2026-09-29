@@ -11,7 +11,7 @@ export const AGENTES_IA: AgenteIA[] = [
   { id: "max", nombre: "Max", rol: "Estratega digital y media buyer", comparaCon: "media_buyer", donde: "Telegram + Slack · Railway" },
   { id: "lola", nombre: "Lola", rol: "Creadora de contenido con IA", comparaCon: "disenador", donde: "Telegram · Railway" },
   { id: "iris", nombre: "Iris", rol: "Vigía de edición (Cortex)", comparaCon: "soporte", donde: "Tarea programada", sinCosto: true },
-  { id: "leo", nombre: "Leo", rol: "Director creativo (revisiones)", comparaCon: "copy", donde: "Slack", sinCosto: true },
+  { id: "leo", nombre: "Leo", rol: "Director creativo (revisiones)", comparaCon: "copy", donde: "Slack" },
   { id: "remi", nombre: "Remi", rol: "Motion designer (videos por código)", comparaCon: "editor", donde: "Mac + Railway (render)", sinCosto: true },
 ];
 export const agenteIA = (id: string) => AGENTES_IA.find((a) => a.id === id);
@@ -128,4 +128,23 @@ export function burbuja(texto: string | null | undefined, max = 110): string | n
     .trim();
   if (!t) return null;
   return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+}
+
+// ─── Costo real de una llamada a la API (28/sep: Sofi y Leo trabajan en Vercel y no se medían) ─────────────
+
+/** US$ por millón de tokens (entrada, salida). Escribir en caché = 1.25× la entrada; leer de caché = 0.1×. */
+export const PRECIOS_MTOK: Record<string, [number, number]> = {
+  "claude-opus-5-5": [4, 20],
+  "claude-opus-5": [5, 25],
+  "claude-sonnet-5": [2, 10],
+  "claude-haiku-4-5": [1, 5],
+  "claude-fable-5-1": [10, 50],
+};
+
+export function costoDeUso(modelo: string, u: { input_tokens?: number | null; output_tokens?: number | null; cache_creation_input_tokens?: number | null; cache_read_input_tokens?: number | null } | null | undefined): number {
+  if (!u) return 0;
+  const clave = Object.keys(PRECIOS_MTOK).find((k) => modelo.startsWith(k)) ?? "claude-opus-5";
+  const [ent, sal] = PRECIOS_MTOK[clave];
+  const usd = ((u.input_tokens ?? 0) * ent + (u.cache_creation_input_tokens ?? 0) * ent * 1.25 + (u.cache_read_input_tokens ?? 0) * ent * 0.1 + (u.output_tokens ?? 0) * sal) / 1_000_000;
+  return Math.round(usd * 10000) / 10000;
 }

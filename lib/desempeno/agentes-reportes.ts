@@ -3,7 +3,7 @@ import "server-only";
 import { and, asc, gte, lte, sql } from "drizzle-orm";
 
 import { db } from "../pulse/db";
-import { limpiarReporte } from "./agentes-ia";
+import { costoDeUso, limpiarReporte } from "./agentes-ia";
 import { desempenoAgentesReportes, desempenoFichas, desempenoPresencia } from "./schema";
 
 // Reportes del equipo digital (una fila por agente y día). Lo escriben:
@@ -122,3 +122,42 @@ export async function ejecutivos(viendo: string): Promise<Ejecutivos> {
   };
 }
 
+/** Una llamada a la API hecha por un agente que vive en Vercel (Sofi en Slack/Telegram, Leo): suma corrida, tiempo y costo. */
+export async function sumarUsoIA(agente: string, modelo: string, usage: Parameters<typeof costoDeUso>[1], ms: number) {
+  await guardarReporteAgente({ agente, metricas: { corridas: 1, minutos: Math.round((ms / 60000) * 10) / 10, costoUsd: costoDeUso(modelo, usage) }, sumar: true });
+}
+
+
+// ─── Rincón del café (28/sep, Elvin: "invitar a alguien a un café y hablar con él") ────────────────────────
+// El mensaje entra al buzón del agente (el mismo de /api/agentes) y su respuesta sale en la conversación del café.
+// Misma regla que el buzón: Elvin habla con cualquiera; Carilin y Aure solo con Nico (y eso va por su flujo de
+// solicitudes con el OK de Elvin).
+export const CON_BUZON_CAFE = ["sofi", "nico", "max", "lola"] as const;
+export const MARCA_CAFE = "☕ Café en la oficina (Ritmo)";
+
+export function puedeCafe(de: string, para: string) {
+  if (!(CON_BUZON_CAFE as readonly string[]).includes(para)) return false;
+  return de === "elvin" || ((de === "carilin" || de === "aure") && para === "nico");
+}
+
+export async function invitarCafe(de: string, para: string, texto: string): Promise<number> {
+  const d = await db();
+  const r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto) VALUES (${de}, ${para}, ${`${MARCA_CAFE} · ${texto}`}) RETURNING id`);
+  const f = (Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { id: number }[];
+  return f[0]?.id ?? 0;
+}
+
+export async function cafesDe(de: string): Promise<{ id: number; para: string; texto: string; respuesta: string | null; estado: string; creado: string }[]> {
+  try {
+    const d = await db();
+    const r = await d.execute(sql`
+      SELECT id, para, texto, respuesta, estado, creado_el FROM agentes_mensajes
+      WHERE de = ${de} AND texto LIKE ${`${MARCA_CAFE}%`} AND creado_el > now() - interval '24 hours'
+      ORDER BY id DESC LIMIT 12`);
+    const f = (Array.isArray(r) ? r : ((r as { rows?: unknown[] }).rows ?? [])) as { id: number; para: string; texto: string; respuesta: string | null; estado: string; creado_el: string | Date }[];
+    return f.reverse().map((x) => ({ id: x.id, para: x.para, texto: x.texto.replace(`${MARCA_CAFE} · `, ""), respuesta: x.respuesta, estado: x.estado, creado: new Date(x.creado_el).toISOString() }));
+  } catch (e) {
+    console.error("[oficina] café", e);
+    return [];
+  }
+}

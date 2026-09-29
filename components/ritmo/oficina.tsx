@@ -1,8 +1,11 @@
 "use client";
 
-import { Coffee, FileCheck2, Tv, X } from "lucide-react";
+import { Coffee, FileCheck2, Loader2, Send, Tv, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { cafeAction } from "@/app/ritmo/oficina-actions";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
@@ -228,8 +231,159 @@ function OficinaPequena({ titulo, nombre, rol, color, aura, presente, pedidos, g
   );
 }
 
-export function Oficina({ agentes, kpis, ejecutivos }: { agentes: AgenteOficina[]; kpis: { tareas: number; minutos: number; costo: number; activos: number }; ejecutivos: Ejecutivos }) {
+// ─── Ping pong con marcador (a 11; cuando alguien gana, empieza otro partido) ────────────────────────────────
+function PingPong({ a, b, onAbrir }: { a: AgenteOficina | undefined; b: AgenteOficina | undefined; onAbrir: (x: AgenteOficina) => void }) {
+  const [score, setScore] = useState<[number, number]>([0, 0]);
+  const [ganador, setGanador] = useState<string | null>(null);
+  const jugando = !!(a && b);
+  useEffect(() => {
+    if (!jugando) return;
+    const id = setInterval(() => {
+      setScore(([x, y]) => {
+        const nx = Math.random() < 0.5 ? x + 1 : x;
+        const ny = nx === x ? y + 1 : y;
+        if ((nx >= 11 || ny >= 11) && Math.abs(nx - ny) >= 2) {
+          setGanador(nx > ny ? a!.nombre : b!.nombre);
+          return [0, 0];
+        }
+        return [nx, ny];
+      });
+    }, 1600); // un punto por cada ida y vuelta de la bola
+    return () => clearInterval(id);
+  }, [jugando, a, b]);
+  const lider = score[0] === score[1] ? null : score[0] > score[1] ? a : b;
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        {a ? (
+          <button type="button" onClick={() => onAbrir(a)} title={`${a.nombre} · jugando`}>
+            <Avatar a={a} size={34} />
+          </button>
+        ) : (
+          <span className="size-[34px]" />
+        )}
+        <div className="relative h-20 flex-1 rounded-lg border-2 border-white/40 bg-[#10456b]">
+          <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-white/70" />
+          <span className="absolute inset-x-0 top-1/2 h-px bg-white/25" />
+          {jugando ? <span className="oficina-bola absolute size-2 rounded-full bg-white shadow" /> : null}
+          {jugando ? (
+            <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/80 px-2.5 py-0.5 font-mono text-xs font-bold ring-1 ring-white/20">
+              <span style={{ color: a!.color }}>{score[0]}</span>
+              <span className="text-white/40">–</span>
+              <span style={{ color: b!.color }}>{score[1]}</span>
+            </span>
+          ) : null}
+        </div>
+        {b ? (
+          <button type="button" onClick={() => onAbrir(b)} title={`${b.nombre} · jugando`}>
+            <Avatar a={b} size={34} />
+          </button>
+        ) : (
+          <span className="size-[34px]" />
+        )}
+      </div>
+      <p className="mt-2 text-center text-[11px] text-muted-foreground">
+        {jugando ? (lider ? `Va ganando ${lider.nombre}` : "Van empatados") + (ganador ? ` · último partido: ${ganador} 🏆` : "") : a ? `${a.nombre} espera rival` : "Todos están trabajando 💪"}
+      </p>
+    </>
+  );
+}
+
+// ─── Rincón del café: invitar a un agente a un café y hablar con él ─────────────────────────────────────────
+export type CafeUI = { yo: "elvin" | "carilin" | "aure" | null; permitidos: string[]; conversacion: { id: number; para: string; texto: string; respuesta: string | null; estado: string; creado: string }[] };
+
+function RinconCafe({ agentes, cafe, onAbrirChat }: { agentes: AgenteOficina[]; cafe: CafeUI; onAbrirChat: () => void }) {
+  const esperando = new Set(cafe.conversacion.filter((c) => !c.respuesta && c.estado !== "fallido").map((c) => c.para));
+  const enCafe = agentes.filter((a) => esperando.has(a.id));
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/[0.08] p-4 text-center">
+      <Coffee className="size-7 text-[color:var(--coral)]" />
+      <p className="text-xs text-muted-foreground">Rincón del café</p>
+      {enCafe.length ? (
+        <div className="flex -space-x-2">
+          {enCafe.map((a) => (
+            <Avatar key={a.id} a={a} size={30} />
+          ))}
+        </div>
+      ) : (
+        <span className="text-2xl">🪴</span>
+      )}
+      {cafe.yo ? (
+        <button type="button" onClick={onAbrirChat} className="mt-1 rounded-full bg-[color:var(--coral)]/15 px-3 py-1.5 text-xs font-medium text-[color:var(--coral)] ring-1 ring-[color:var(--coral)]/40 hover:bg-[color:var(--coral)]/25">
+          ☕ Invitar a un café
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function ChatCafe({ agentes, cafe, onCerrar }: { agentes: AgenteOficina[]; cafe: CafeUI; onCerrar: () => void }) {
+  const opciones = agentes.filter((a) => cafe.permitidos.includes(a.id));
+  const [para, setPara] = useState(opciones[0]?.id ?? "");
+  const [texto, setTexto] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const conv = cafe.conversacion.filter((c) => c.para === para);
+  const ag = agentes.find((a) => a.id === para);
+  const enviar = async () => {
+    setEnviando(true);
+    const r = await cafeAction(para, texto);
+    setEnviando(false);
+    if (!r.ok) return toast.error(r.error, { className: "ritmo" });
+    setTexto("");
+    toast.success(`${ag?.nombre ?? "El agente"} ya va para el café ☕ (contesta en 1-2 min)`, { className: "ritmo" });
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm" onClick={onCerrar}>
+      <aside className="ritmo flex h-full w-full max-w-md flex-col gap-4 border-l border-white/10 bg-[#0a0f18] p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2">
+          <Coffee className="size-5 text-[color:var(--coral)]" />
+          <p className="flex-1 text-lg font-semibold">Un café con…</p>
+          <button type="button" onClick={onCerrar} className="rounded-full p-2 text-muted-foreground hover:bg-white/5" aria-label="Cerrar">
+            <X className="size-5" />
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {opciones.map((a) => (
+            <button key={a.id} type="button" onClick={() => setPara(a.id)} className={cn("flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-sm ring-1 transition", para === a.id ? "bg-white/10 ring-white/40" : "ring-white/10 hover:bg-white/5")}>
+              <Avatar a={a} size={26} />
+              {a.nombre}
+            </button>
+          ))}
+        </div>
+        {cafe.yo !== "elvin" ? <p className="text-[11px] text-muted-foreground">Tu café con Nico va como solicitud: él la revisa y Elvin da el OK antes de cambiar algo.</p> : null}
+        <div className="flex flex-1 flex-col gap-3 overflow-y-auto rounded-xl bg-white/[0.02] p-3 ring-1 ring-white/[0.06]">
+          {conv.length ? (
+            conv.map((c) => (
+              <div key={c.id} className="flex flex-col gap-2">
+                <p className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-[color:var(--coral)]/20 px-3 py-2 text-sm">{c.texto}</p>
+                {c.respuesta ? (
+                  <div className="flex max-w-[90%] items-end gap-2">
+                    {ag ? <Avatar a={ag} size={24} /> : null}
+                    <p className="rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm whitespace-pre-line">{c.respuesta}</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">{c.estado === "fallido" ? "No pudo venir al café (falló su turno)." : `☕ ${ag?.nombre ?? "El agente"} está sirviéndose el café… (se actualiza solo)`}</p>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="m-auto text-center text-sm text-muted-foreground">Pregúntale lo que quieras: cómo va, qué le falta, qué necesita de ti.</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={2000} placeholder={ag ? `Escríbele a ${ag.nombre}…` : "Escribe…"} className="flex-1 resize-none rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-white/30" />
+          <button type="button" onClick={enviar} disabled={enviando || !texto.trim() || !para} className="grid w-12 place-items-center rounded-xl bg-[color:var(--coral)] text-background disabled:opacity-40" aria-label="Enviar">
+            {enviando ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+          </button>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+export function Oficina({ agentes, kpis, ejecutivos, cafe }: { agentes: AgenteOficina[]; kpis: { tareas: number; minutos: number; costo: number; activos: number }; ejecutivos: Ejecutivos; cafe: CafeUI }) {
   const [abierto, setAbierto] = useState<AgenteOficina | null>(null);
+  const [chat, setChat] = useState(false);
   // El panel solo se abre con un toque (en el navegador): ahí `document` ya existe para el portal.
   const libres = agentes.filter((a) => a.estado === "descansando");
   const ping = libres.slice(0, 2);
@@ -274,12 +428,8 @@ export function Oficina({ agentes, kpis, ejecutivos }: { agentes: AgenteOficina[
               {agentes.map((a) => (
                 <Cubiculo key={a.id} a={a} onAbrir={() => setAbierto(a)} />
               ))}
-              {/* rincón del café */}
-              <div className="hidden flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/[0.08] p-4 text-center xl:flex">
-                <Coffee className="size-7 text-[color:var(--coral)]" />
-                <p className="text-xs text-muted-foreground">Rincón del café</p>
-                <span className="text-2xl">🪴</span>
-              </div>
+              {/* rincón del café: invitar a un agente a un café y hablar con él */}
+              <RinconCafe agentes={agentes} cafe={cafe} onAbrirChat={() => setChat(true)} />
             </div>
           </div>
 
@@ -331,30 +481,7 @@ export function Oficina({ agentes, kpis, ejecutivos }: { agentes: AgenteOficina[
             {/* ping pong */}
             <div className="rounded-3xl border border-white/[0.06] bg-[#0c1219]/80 p-4">
               <p className="mb-3 font-mono text-[10px] tracking-[0.25em] text-muted-foreground uppercase">🏓 Ping pong</p>
-              <div className="flex items-center gap-2">
-                {ping[0] ? (
-                  <button type="button" onClick={() => setAbierto(ping[0])} title={`${ping[0].nombre} · jugando`}>
-                    <Avatar a={ping[0]} size={34} />
-                  </button>
-                ) : (
-                  <span className="size-[34px]" />
-                )}
-                <div className="relative h-20 flex-1 rounded-lg border-2 border-white/40 bg-[#10456b]">
-                  <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-white/70" />
-                  <span className="absolute inset-x-0 top-1/2 h-px bg-white/25" />
-                  {ping.length === 2 ? <span className="oficina-bola absolute size-2 rounded-full bg-white shadow" /> : null}
-                </div>
-                {ping[1] ? (
-                  <button type="button" onClick={() => setAbierto(ping[1])} title={`${ping[1].nombre} · jugando`}>
-                    <Avatar a={ping[1]} size={34} />
-                  </button>
-                ) : (
-                  <span className="size-[34px]" />
-                )}
-              </div>
-              <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                {ping.length === 2 ? `${ping[0].nombre} vs ${ping[1].nombre}` : ping.length === 1 ? `${ping[0].nombre} espera rival` : "Todos están trabajando 💪"}
-              </p>
+              <PingPong a={ping[0]} b={ping[1]} onAbrir={setAbierto} />
             </div>
           </div>
         </div>
@@ -415,6 +542,7 @@ export function Oficina({ agentes, kpis, ejecutivos }: { agentes: AgenteOficina[
         </div>,
         document.body,
       ) : null}
+      {chat ? createPortal(<ChatCafe agentes={agentes} cafe={cafe} onCerrar={() => setChat(false)} />, document.body) : null}
     </section>
   );
 }

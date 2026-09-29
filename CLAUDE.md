@@ -656,6 +656,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   la de **Carilin** (Directora de Operaciones) lejos, junto a la sala; cada quien aparece (silueta) solo mientras mira la página
   (`desempeno_presencia`, migración 0035, < 2 min), si no la silla queda vacía. Debajo, "Hoy, uno por uno" y la tabla de 7 días
   van compactas (Elvin: "más pequeño, más friendly").
+  **Ping pong con marcador** (a 11, "va ganando X") y **Rincón del café**: "☕ Invitar a un café" abre un chat con el agente
+  (mensaje a su buzón `agentes_mensajes` con la marca `MARCA_CAFE`; su respuesta sale en la conversación al refrescar). Misma
+  regla que el buzón: Elvin habla con Sofi, Nico, Max o Lola; Carilin y Aure solo con Nico (va por su flujo con el OK de Elvin).
+  **Sofi y Leo medidos en Vercel** (28/sep): `sumarUsoIA` suma corrida, tiempo y costo real (`costoDeUso` × `PRECIOS_MTOK`) de
+  cada respuesta de Sofi (Slack, Telegram, /pedir) y cada revisión de Leo. Ojo: `agentes.mjs` sin `PUENTE_BOT` firma como
+  Sofi, así que lo que las sesiones de la Mac mandan al buzón sale "de Sofi".
   **Trabajo de un agente hecho desde la Mac** (una sesión de Claude trabajando como Max, Lola, Remi…; Elvin 28/sep: "que Remi,
   Lola y cualquier agente reporte lo de la Mac"): no pasa por su bot → `node scripts/reportar-mac.mjs <agente> "qué hiciste"
   --tareas N --entregables "a|b"` al terminar (se AÑADE al reporte del día; dentro de un bot, `PUENTE_BOT`, no hace nada para no

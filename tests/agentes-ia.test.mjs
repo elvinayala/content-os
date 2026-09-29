@@ -70,3 +70,13 @@ test("oficina: dónde está cada agente y qué dice su pantalla", async () => {
   assert.equal(pantalla("Arreglé el bug de Leads. Luego lo demás."), "Arreglé el bug de Leads.");
   assert.equal(burbuja("[Solicitud del equipo · Aure] arregla el link\n⟳ SEGUIR [telegram·1]"), "arregla el link");
 });
+
+test("costo de una llamada a partir de usage", async () => {
+  const { costoDeUso } = await import("../lib/desempeno/agentes-ia.ts");
+  // Opus 5: 10K entrada ($0.05) + 2K salida ($0.05) + 20K leídos de caché ($0.01) = $0.11
+  assert.equal(costoDeUso("claude-opus-5", { input_tokens: 10_000, output_tokens: 2_000, cache_read_input_tokens: 20_000 }), 0.11);
+  // Sonnet 5: 1M de entrada = $2
+  assert.equal(costoDeUso("claude-sonnet-5", { input_tokens: 1_000_000 }), 2);
+  assert.equal(costoDeUso("claude-opus-5-5", { output_tokens: 1_000_000 }), 20);
+  assert.equal(costoDeUso("claude-opus-5", null), 0);
+});

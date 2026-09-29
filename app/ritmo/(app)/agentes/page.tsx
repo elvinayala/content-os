@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { AutoRefresco } from "@/components/ritmo/auto-refresco";
 import { Oficina, type AgenteOficina } from "@/components/ritmo/oficina";
 import { AGENTES_IA, burbuja, estadoOficina, ladoAgente, ladoHumano, pantalla, veces, type Humano } from "@/lib/desempeno/agentes-ia";
-import { ejecutivos, marcarPresencia, reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
+import { cafesDe, CON_BUZON_CAFE, DIRECCION, ejecutivos, marcarPresencia, puedeCafe, reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
 import { armarPanel } from "@/lib/desempeno/datos";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -27,6 +27,10 @@ export default async function AgentesPage() {
   const hoy = fechaPR(Date.now());
   const desde = sumarDias(hoy, -6);
   await marcarPresencia(u.id).catch(() => null);
+  // Rincón del café: quién soy en el buzón (elvin | carilin | aure) y mis cafés de las últimas 24 h.
+  const correo = u.email.toLowerCase();
+  const yo = correo === DIRECCION.ceo ? "elvin" : correo === DIRECCION.carilin ? "carilin" : correo === DIRECCION.aure ? "aure" : null;
+  const cafe = { yo, permitidos: yo ? CON_BUZON_CAFE.filter((a) => puedeCafe(yo, a)) : [], conversacion: yo ? await cafesDe(yo) : [] } as const;
   const [reportes, panel, salarios, dichos, dire] = await Promise.all([reportesAgentesEntre(desde, hoy), armarPanel(u, desde, hoy).catch(() => null), salariosPorPersona(), ultimosMensajes(AGENTES_IA.map((a) => a.id)), ejecutivos(u.email)]);
 
   const deHoy = (id: string) => reportes.find((r) => r.agente === id && r.fecha === hoy) ?? null;
@@ -88,7 +92,7 @@ export default async function AgentesPage() {
         </p>
       </div>
 
-      <Oficina agentes={oficina} ejecutivos={dire} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
+      <Oficina agentes={oficina} ejecutivos={dire} cafe={{ ...cafe, permitidos: [...cafe.permitidos], conversacion: [...cafe.conversacion] }} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
 
       {/* resumen en una línea (la TV de la oficina ya enseña lo de hoy) */}
       <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

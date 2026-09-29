@@ -286,7 +286,7 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
   if (respuesta && !/^\W*NO_RESPONDER\W*$/.test(respuesta)) {
     await postearRespuesta(channel, respuesta, raiz, false, IDENTIDAD_DIRECTOR);
     // Equipo digital (Ritmo): cada pieza revisada cuenta como una tarea del día de Leo.
-    await guardarReporteAgente({ agente: "leo", reporte: { tareas: 1 }, metricas: { corridas: 1 }, sumar: true }).catch(() => {});
+    await guardarReporteAgente({ agente: "leo", reporte: { tareas: 1 }, sumar: true }).catch(() => {});
   }
 }
 

@@ -86,12 +86,15 @@ export async function responderSofi(
     return "El chat no está disponible ahora (falta la API key). Escribile a Elvin.";
   }
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const t0 = Date.now();
   const resp = await anthropic.messages.create({
     model: MODEL_SOFI,
     max_tokens: 1100,
     system: system ?? (await systemSofi()),
     messages: mensajes.slice(-12).map((m) => ({ role: m.role, content: m.content })),
   });
+  // Equipo digital: lo que Sofi contesta desde Vercel (Slack, Telegram, /pedir) también cuenta en su día.
+  await import("@/lib/desempeno/agentes-reportes").then((m) => m.sumarUsoIA("sofi", resp.model ?? MODEL_SOFI, resp.usage, Date.now() - t0)).catch(() => {});
   return (
     resp.content.find((b) => b.type === "text")?.text ??
     "Dale, lo tomo y lo paso al equipo."
