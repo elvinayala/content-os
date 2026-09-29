@@ -41,8 +41,8 @@ export async function detectarNicho(tratoId: string): Promise<{ negocio: string 
   const params = {
     model: MODELO,
     max_tokens: 1024,
-    thinking: { type: "adaptive" as const },
-    output_config: { effort: "low" as const },
+    // Haiku no acepta thinking adaptativo ni effort (el 28/sep dio 400 y ningún lead sacaba nicho): solo en Sonnet/Opus.
+    ...(/haiku/i.test(MODELO) ? {} : { thinking: { type: "adaptive" as const }, output_config: { effort: "low" as const } }),
     system: INSTRUCCIONES,
     messages: [{ role: "user" as const, content: `Nombre en WhatsApp: ${t.nombre}\nMensajes:\n${texto}` }],
     betas: ["server-side-fallback-2026-07-01"],
