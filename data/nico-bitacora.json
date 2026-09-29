@@ -313,6 +313,14 @@
       "porque": "Pedido directo de Elvin por Telegram.",
       "verificado": "DM enviado a Yaileen (D0C3PJCS0V9) con node scripts/agentes.mjs slack — confirmación ✓ del bot.",
       "commit": "sin cambios de código"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "dashboard-ventas (dashboard-ea-market.netlify.app)",
+      "que": "Elvin avisó que \"esa hoja\" (con todas las comisiones) no puede estar pública. Encontré el sitio real: dashboard.html es estático (sin backend), con un \"login\" que solo corre en el navegador (USERS con hash en el JS, bypasseable con DevTools) y lee EN VIVO, desde el navegador, los Google Sheets de ventas de LU y AIB (gviz) — necesita que esas hojas estén compartidas \"cualquiera con el enlace\". Muestra comisión por closer/setter con nombre y monto, salario+comisión por persona, y clientes con teléfono. Puse contraseña real de Netlify (Password Protection, servida por Netlify antes de cualquier archivo — no bypasseable como el login viejo) al sitio dashboard-ea-market (site_id 75c714a8-33ed-4eab-bbb6-d4147d30456a). Verificado: sin clave → 401 con la página de Netlify; el login viejo del navegador queda como segunda capa (no se tocó).",
+      "porque": "Dato de comisiones + clientes expuesto sin protección real en un sitio público.",
+      "verificado": "curl sin auth → 401 (Netlify Password Protection). Pendiente: las hojas de Google Sheets siguen \"cualquiera con el enlace\" (las necesitan lib/ea-market.ts, lib/agencias.ts y app/api/cron/leaderboard/route.ts en content-os) — para cerrarlas del todo hay que migrar esas 3 lecturas al script privado con secreto que ya existe (ventas-hoy.gs) y ahí sí Elvin puede restringir el compartir de las hojas.",
+      "commit": "sin cambios de código (config de Netlify)"
     }
   ],
   "pendientesElvin": [
@@ -354,5 +362,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T18:48:29.459Z"
+  "actualizadoEl": "2026-09-29T19:11:30.327Z"
 }
