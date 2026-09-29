@@ -19,4 +19,6 @@ El 28/sep se dejó en $65/día: el conjunto "A · Precio fijo" de Caguas, Quebra
 
 **Why:** "Precio fijo" es el que trae conversaciones (en 7 días, Caguas 12 a ~$2 y Quebradillas 8 a ~$3.90); "Problemas" no trajo ninguna.
 
-**How to apply:** antes de crear o subir cualquier conjunto de Resuelto, suma lo que está activo y no te pases del tope del momento. Un área nueva se paga moviendo presupuesto, no sumando. Ver [[plomeria-pr-vision]] y [[meta-ads-agente]].
+**Área nueva (Elvin, 28/sep):** cada área nueva **suma $15-20/día para arrancar**; lo que ya está se deja igual (no se le quita a otra área). Así se llega a $125-150 con todas.
+
+**How to apply:** antes de crear o subir cualquier conjunto de Resuelto, suma lo que está activo y no te pases del tope del momento ($125/día los primeros 30 días). Un área nueva arranca con $15-20/día nuevos. Ver [[plomeria-pr-vision]] y [[meta-ads-agente]].

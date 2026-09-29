@@ -34,7 +34,7 @@
 - [Richy & Elvin Trading LLC](richy-elvin-trading.md) — marca 1000X (ghost terminal); comunidad + curso + bot
 - [Plagas Puerto Rico — agente interno](plagas-puerto-rico.md) — cliente Gilbert Torres; Evolution, Railway, pendientes
 - [Resuelto — Plomería PR](plomeria-pr-vision.md) — EN EJECUCIÓN: plataforma home services, plomeros, WhatsApp/Meta, LLC y contratos pendientes
-- [Resuelto — presupuesto de ads](resuelto-presupuesto-ads.md) — $60-65/día con 3 áreas, $125-150 con todas, decidir a los 90 días; Messenger > llamadas
+- [Resuelto — presupuesto de ads](resuelto-presupuesto-ads.md) — $60-65/día con 3 áreas; cada área nueva +$15-20; $125-150 con todas, decidir a los 90 días; Messenger > llamadas
 - [Resuelto — cómo vender](resuelto-como-vender.md) — no vender rápido: escuchar, fotos, diagnóstico, cerrar con horario
 - [Resuelto — equipo propio](resuelto-equipo-propio.md) — nunca gente de las agencias; Claude = agencia, Bori = creativos + ads
 - [Contigo PR — adultos mayores](adultos-mayores-vision.md) — llamada diaria con IA + pedidos + cuidadores (congelado)
