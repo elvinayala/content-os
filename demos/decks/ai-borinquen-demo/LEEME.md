@@ -10,4 +10,4 @@ agentes que nacen del Agente Personal, barra de implementación).
   `python3 -c "import json;open('index.html','w').write(open('fuente.html').read().replace('/*LOGOS*/[]', json.dumps(json.load(open('logos.json')))))"`
 - Controles: flechas / espacio / clic (izquierda = atrás), `F` pantalla completa, `R` repetir la animación, `#s3` abre la slide 3.
 - Reglas de contenido (Elvin, 28/sep): **sistema en marcha en 15 días**, optimización del día 16 al 45; respuesta en
-  **menos de 10 segundos**. Pendiente: testimonios (slide 2) y cifra de software suelto (slide 3).
+  **menos de 10 segundos**. Testimonio 1 = Ernest Crisson Cancel (Zoom con Valentina, recortado a solo él, subtitulado: `motion` composición `Testimonio`, props en `data/motion/testimonios/ernest-crisson.json`). Pendiente: testimonios 2 y 3 (AI Borinquen) y cifra de software suelto (slide 3).

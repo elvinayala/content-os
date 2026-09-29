@@ -97,6 +97,14 @@ p { margin: 0; }
 .play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(79, 207, 226, .8); }
 .activa .play::after { animation: late 2.2s ease-out infinite; animation-delay: var(--d, 0s); }
 .play svg { width: 44px; height: 44px; margin-left: 8px; }
+.video.con { display: block; width: 100%; padding: 0; cursor: pointer; background-size: cover; background-position: center; font: inherit; }
+.video.con:hover .play::before { border-color: #4fcfe2; }
+.video.con:focus-visible { outline: 3px solid var(--cian); outline-offset: 4px; }
+.dur { position: absolute; right: 16px; bottom: 14px; font-family: var(--mono); font-size: 20px; color: #eef2f9; background: rgba(8, 17, 32, .7); padding: 4px 10px; border-radius: 8px; }
+/* Reproductor en grande, dentro del escenario */
+.cine { position: absolute; inset: 0; z-index: 5; background: rgba(4, 8, 15, .92); display: grid; place-items: center; }
+.cine video { width: 1600px; height: 900px; border-radius: 18px; background: #000; box-shadow: 0 30px 120px rgba(0, 0, 0, .6); }
+.cine .cerrar { position: absolute; right: 60px; top: 40px; width: 64px; height: 64px; border-radius: 50%; border: 1px solid #2a3d63; background: rgba(8, 17, 32, .85); color: #eef2f9; font: 600 30px var(--grot); cursor: pointer; }
 .pend { position: absolute; top: 18px; left: 18px; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: #f3c969; border: 1px solid rgba(243, 201, 105, .5); border-radius: 999px; padding: 6px 14px; background: rgba(8, 17, 32, .6); }
 .vlab { font-family: var(--mono); font-size: 22px; letter-spacing: .16em; color: var(--verde); margin-top: 26px; }
 .vtit { font-size: 34px; font-weight: 600; margin-top: 10px; }
@@ -268,7 +276,7 @@ p { margin: 0; }
       <div class="ceja sube">Lo dicen ellos</div>
       <h2 class="sube" style="--d:.1s;margin-top:20px">Resultados reales, en su propia voz.</h2>
       <div class="tres">
-        <div class="sube" style="--d:.35s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:0s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 01</div><div class="vtit">[Testimonio 1]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
+        <div class="sube" style="--d:.35s"><button type="button" class="video con" data-video="testimonios/ernest.mp4" aria-label="Ver el testimonio de Ernest Crisson Cancel" style="background-image:linear-gradient(180deg,rgba(8,17,32,.05),rgba(8,17,32,.45)),url(testimonios/ernest-poster.jpg)"><div class="play" style="--d:0s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div><span class="dur">0:48</span></button><div class="vlab">VIDEO 01</div><div class="vtit">Ernest Crisson Cancel</div><div class="vsub">Marketing + chat y voz · cerca de $5,000 más al mes</div></div>
         <div class="sube" style="--d:.5s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:.5s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 02</div><div class="vtit">[Testimonio 2]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
         <div class="sube" style="--d:.65s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:1s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 03</div><div class="vtit">[Testimonio 3]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
       </div>
@@ -401,6 +409,7 @@ p { margin: 0; }
       <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>08</span></div>
     </section>
 
+    <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
   </div>
 </div>
 
@@ -489,7 +498,16 @@ const LOGOS = /*LOGOS*/[];
     if (s.id === "s6") relojes();
   }
 
+  // Testimonios: clic en la tarjeta → el video se abre en grande; Esc o ✕ lo cierra
+  const cine = document.getElementById("cine"), cineV = document.getElementById("cineVideo");
+  const abrirCine = (src) => { cineV.src = src; cine.hidden = false; cineV.play().catch(() => {}); };
+  const cerrarCine = () => { cineV.pause(); cineV.removeAttribute("src"); cineV.load(); cine.hidden = true; };
+  document.querySelectorAll("[data-video]").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); abrirCine(b.dataset.video); }));
+  cine.addEventListener("click", (e) => { e.stopPropagation(); if (e.target === cine) cerrarCine(); });
+  document.getElementById("cineCerrar").addEventListener("click", (e) => { e.stopPropagation(); cerrarCine(); });
+
   function ir(n, forzar) {
+    if (!cine.hidden) cerrarCine();
     n = Math.max(0, Math.min(slides.length - 1, n));
     if (n === actual && !forzar) return;
     limpiar();
@@ -512,6 +530,7 @@ const LOGOS = /*LOGOS*/[];
   document.getElementById("btnFull").addEventListener("click", (e) => { e.stopPropagation(); full(); });
   document.getElementById("visor").addEventListener("click", (e) => { ir(e.clientX < window.innerWidth * 0.3 ? actual - 1 : actual + 1); });
   window.addEventListener("keydown", (e) => {
+    if (!cine.hidden) { if (e.key === "Escape") cerrarCine(); else if (e.key === " ") { e.preventDefault(); cineV.paused ? cineV.play() : cineV.pause(); } return; }
     if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
     else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
     else if (e.key === "Home") ir(0);

@@ -1,0 +1,23 @@
+{
+  "video": "testimonios/ernest-corte.mp4", "dur": 48.4,
+  "nombre": "Ernest Crisson Cancel", "rol": "Cliente · marketing y automatizaciones",
+  "etiqueta": "AI BORINQUEN · TESTIMONIO",
+  "pregunta": { "desde": 43.2, "hasta": 48.2, "texto": "¿Cuánto más factura hoy que antes?" },
+  "subtitulos": [
+    { "desde": 0.1, "hasta": 3.6, "texto": "Te tengo que decir que para mí…" },
+    { "desde": 5.2, "hasta": 8.05, "texto": "llenaron mis expectativas y las superaron." },
+    { "desde": 8.1, "hasta": 10.4, "texto": "Me gustó cómo lo estaban haciendo," },
+    { "desde": 10.4, "hasta": 13.2, "texto": "y te tengo que decir que los números están." },
+    { "desde": 13.25, "hasta": 17.9, "texto": "Realmente no doy abasto con la entrada de llamadas y de citas" },
+    { "desde": 17.9, "hasta": 21.6, "texto": "que se han calendarizado y coordinado," },
+    { "desde": 21.65, "hasta": 24.4, "texto": "tanto así que la secretaria se ha tenido que envolver" },
+    { "desde": 24.45, "hasta": 27.2, "texto": "para darle seguimiento a las llamadas y a las agendas." },
+    { "desde": 27.3, "hasta": 30.5, "texto": "Siempre es de madrugada, no sé por qué," },
+    { "desde": 30.5, "hasta": 31.85, "texto": "pero entra mucha llamada." },
+    { "desde": 31.9, "hasta": 33.25, "texto": "Gracias a Dios que está el sistema," },
+    { "desde": 33.3, "hasta": 36.6, "texto": "porque de otra manera no habría manera: yo estoy durmiendo." },
+    { "desde": 36.85, "hasta": 39.5, "texto": "Cuando me despierto, veo que el sistema" },
+    { "desde": 39.55, "hasta": 43.2, "texto": "ha estado contactando y respondiendo al cliente." },
+    { "desde": 45.8, "hasta": 48.4, "texto": "Cerca de cinco mil dólares más mensuales." }
+  ]
+}
