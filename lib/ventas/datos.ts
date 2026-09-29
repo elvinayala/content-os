@@ -11,7 +11,7 @@ import { marcasConAcceso } from "../leads/repo";
 import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
-import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe } from "./reglas";
+import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes } from "./reglas";
 
 // Arena (ventas en Ritmo): datos. Las ventas salen de la hoja de tesorería de cada marca por el mismo Apps
 // Script del resumen del día (scripts/drive/ventas-hoy.gs · VENTAS_SCRIPT_URL + VENTAS_SCRIPT_SECRETO).
@@ -127,7 +127,7 @@ export const aDiario = (f: { fecha: string; citas: number; presentaron: number; 
   agendas: f.agendas,
 });
 
-export async function guardarDiario(userId: string, v: { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; animo: number | null; nota: string | null }) {
+export async function guardarDiario(userId: string, v: { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; kpis: Record<string, number>; animo: number | null; nota: string | null }) {
   const d = await db();
   await d
     .insert(desempenoVentasDiario)
@@ -269,6 +269,7 @@ export interface Arena {
   gente: Vendedor[];
   comisiones: FilaComision[]; // solo si quien mira es director o dirección
   mio: { rol: RolVentas; m: Marcador; goal: number | null; diario: Awaited<ReturnType<typeof diarioDelMes>> } | null;
+  kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number }[]; // KPIs del diario (mes), para el director y la dirección
 }
 
 export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa): Promise<Arena> {
@@ -300,5 +301,6 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
     gente,
     comisiones: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, m: marcadorDe(g) })) : [],
     mio: yo ? { rol: yo.rol, m: marcadorDe(yo), goal: await goalDe(u.id, mes).catch(() => null), diario: diario.filter((d) => d.userId === u.id) } : null,
+    kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(diario.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0) })) : [],
   };
 }

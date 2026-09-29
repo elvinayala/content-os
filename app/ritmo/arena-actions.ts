@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import * as v from "@/lib/ventas/datos";
-import { type Empresa, errorBono, errorDiario, MAX_NOTA_DIARIO } from "@/lib/ventas/reglas";
+import { camposViejos, type Empresa, errorBono, limpiarKpis, MAX_NOTA_DIARIO, type RolVentas } from "@/lib/ventas/reglas";
 
 // Acciones de la Arena (ventas en Ritmo). Permisos: cada quien su diario y su meta; el director de ventas
 // (y la dirección) crea bonos y marca ganadores; SOLO Elvin (admin) autoriza bonos y aprueba pagos.
@@ -30,18 +30,18 @@ async function acceso() {
 const hoyPR = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
 const entero = (x: unknown) => Math.round(Number(x) || 0);
 
-export async function guardarDiarioAction(p: { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; animo: number | null; nota: string }): Promise<R> {
+export async function guardarDiarioAction(p: { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string }): Promise<R> {
   return envolver(async () => {
     const { u, a } = await acceso();
-    if (!a.perfil) throw new Error("El diario es para el equipo de ventas");
+    if (!a.perfil || !a.rol) throw new Error("El diario es para closers, setters y chatters");
     const hoy = hoyPR();
     const ayer = new Date(Date.parse(`${hoy}T12:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
     // Hoy o ayer (cómo me fue ayer); más atrás lo corrige el director.
     if (p.fecha !== hoy && p.fecha !== ayer) throw new Error("Solo puedes llenar hoy o ayer");
-    const fila = { fecha: p.fecha, citas: entero(p.citas), presentaron: entero(p.presentaron), conversaciones: entero(p.conversaciones), agendas: entero(p.agendas), animo: p.animo && p.animo >= 1 && p.animo <= 5 ? entero(p.animo) : null, nota: p.nota?.trim().slice(0, MAX_NOTA_DIARIO) || null };
-    const err = errorDiario(fila);
-    if (err) throw new Error(err);
-    await v.guardarDiario(u.id, fila);
+    const { kpis, error } = limpiarKpis(a.rol as RolVentas, p.kpis ?? {});
+    if (error) throw new Error(error);
+    const nota = p.nota?.trim().slice(0, MAX_NOTA_DIARIO) || null;
+    await v.guardarDiario(u.id, { fecha: p.fecha, ...camposViejos(a.rol as RolVentas, kpis), kpis, animo: p.animo && p.animo >= 1 && p.animo <= 5 ? entero(p.animo) : null, nota });
   });
 }
 

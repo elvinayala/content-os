@@ -129,3 +129,16 @@ test("show-up desde el CRM (Nahuel, 28/sep): etapa del lead después de la cita"
   assert.equal(d.showUp, 0.75);
   assert.match(siguienteTramo("closer", { showUp: null, cierre: null, agendas: 0 }), /Leads/);
 });
+
+test("KPIs del diario por puesto (Elvin, 28/sep)", async () => {
+  const { KPIS_VENTAS, limpiarKpis, kpisDelMes, camposViejos } = await import("../lib/ventas/reglas.ts");
+  assert.deepEqual(KPIS_VENTAS.setter.map((k) => k.id), ["llamadas", "conectadas", "agendadas", "show", "no_show"]);
+  assert.deepEqual(KPIS_VENTAS.chatter.map((k) => k.id), ["conversaciones", "pases", "agendadas", "show", "no_show"]);
+  assert.deepEqual(KPIS_VENTAS.closer.map((k) => k.id), ["demos", "cerradas", "no_cerradas"]);
+  assert.deepEqual(limpiarKpis("chatter", { conversaciones: 30, pases: "4", agendadas: 5, otra: 9 }).kpis, { conversaciones: 30, pases: 4, agendadas: 5 });
+  assert.match(limpiarKpis("closer", { demos: 3, cerradas: 2, no_cerradas: 2 }).error, /demos/);
+  assert.match(limpiarKpis("setter", { llamadas: -1 }).error, /llamadas/);
+  assert.deepEqual(kpisDelMes([{ kpis: { llamadas: 10, show: 1 } }, { kpis: { llamadas: 5 } }, { kpis: null }]), { llamadas: 15, show: 1 });
+  assert.deepEqual(camposViejos("closer", { demos: 4, cerradas: 1 }), { citas: 0, presentaron: 4, conversaciones: 0, agendas: 0 });
+  assert.equal(camposViejos("chatter", { conversaciones: 20, agendadas: 3 }).agendas, 3);
+});

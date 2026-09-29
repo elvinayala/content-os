@@ -480,3 +480,55 @@ export function detectarOrden(valores: string[], porDefecto: "dmy" | "mdy"): "dm
   }
   return porDefecto;
 }
+
+// ─── KPIs del diario por puesto (Elvin, 28/sep) ────────────────────────────────────────────────────────────
+// Setter (phone setter): llamadas realizadas, conectadas, agendadas, show, no show.
+// Chatter (Ana Cecilio, Dilan): conversaciones (personas que hablaron contigo), pases (le sacaste el número y lo pasaste a
+// llamada porque no agendó por chat), citas agendadas, show, no show.
+// Closer (Laura, Roger, Paola…): demos, cerradas, no cerradas + cash collected (sale de la hoja, no se anota).
+export const KPIS_VENTAS: Record<RolVentas, { id: string; nombre: string; ayuda?: string }[]> = {
+  setter: [
+    { id: "llamadas", nombre: "Llamadas realizadas" },
+    { id: "conectadas", nombre: "Llamadas conectadas", ayuda: "Te contestaron" },
+    { id: "agendadas", nombre: "Llamadas agendadas" },
+    { id: "show", nombre: "Show", ayuda: "Citas tuyas que se presentaron" },
+    { id: "no_show", nombre: "No show" },
+  ],
+  chatter: [
+    { id: "conversaciones", nombre: "Conversaciones", ayuda: "Personas que hablaron contigo (no mensajes enviados)" },
+    { id: "pases", nombre: "Pases", ayuda: "Le sacaste el número y lo pasaste a llamada porque no agendó por el chat" },
+    { id: "agendadas", nombre: "Citas agendadas" },
+    { id: "show", nombre: "Show" },
+    { id: "no_show", nombre: "No show" },
+  ],
+  closer: [
+    { id: "demos", nombre: "Demos", ayuda: "Llamadas de venta que hiciste (la persona se presentó)" },
+    { id: "cerradas", nombre: "Cerradas" },
+    { id: "no_cerradas", nombre: "No cerradas" },
+  ],
+};
+
+/** Valida y limpia los KPIs del diario de un puesto (solo los suyos, enteros 0-1000). */
+export function limpiarKpis(rol: RolVentas, kpis: Record<string, unknown>): { kpis: Record<string, number>; error: string | null } {
+  const out: Record<string, number> = {};
+  for (const k of KPIS_VENTAS[rol]) {
+    const v = Number(kpis?.[k.id] ?? 0);
+    if (!Number.isInteger(v) || v < 0 || v > 1000) return { kpis: {}, error: `Revisa ${k.nombre.toLowerCase()}` };
+    if (v) out[k.id] = v;
+  }
+  if (rol === "closer" && (out.cerradas ?? 0) + (out.no_cerradas ?? 0) > (out.demos ?? 0)) return { kpis: {}, error: "Cerradas + no cerradas no pueden pasar de las demos" };
+  return { kpis: out, error: null };
+}
+
+/** Suma de los KPIs del diario en el mes (para el marcador y la tabla del director). */
+export function kpisDelMes(dias: { kpis?: Record<string, number> | null }[]): Record<string, number> {
+  const t: Record<string, number> = {};
+  for (const d of dias) for (const [k, v] of Object.entries(d.kpis ?? {})) t[k] = (t[k] ?? 0) + v;
+  return t;
+}
+
+/** Los campos viejos del diario (citas, presentaron, conversaciones, agendas) que usan show-up y comisión, desde los KPIs nuevos. */
+export function camposViejos(rol: RolVentas, k: Record<string, number>) {
+  if (rol === "closer") return { citas: 0, presentaron: k.demos ?? 0, conversaciones: 0, agendas: 0 };
+  return { citas: 0, presentaron: 0, conversaciones: rol === "chatter" ? (k.conversaciones ?? 0) : (k.conectadas ?? 0), agendas: k.agendadas ?? 0 };
+}

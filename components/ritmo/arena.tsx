@@ -110,32 +110,26 @@ export function MiGoal({ goal, mes }: { goal: number | null; mes: number }) {
 
 // ─── Diario ───────────────────────────────────────────────────────────────────────────────────
 
-export type DiarioUI = { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; animo: number | null; nota: string | null };
+export type DiarioUI = { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string | null };
+type KpiUI = { id: string; nombre: string; ayuda?: string };
 
-export function MiDiario({ rol, hoy, ayer, dias }: { rol: "closer" | "setter" | "chatter"; hoy: string; ayer: string; dias: DiarioUI[] }) {
+// Mi diario con los KPIs de mi puesto (Elvin, 28/sep) y lo que llevo en el mes.
+export function MiDiario({ hoy, ayer, dias, kpis, mes }: { hoy: string; ayer: string; dias: DiarioUI[]; kpis: KpiUI[]; mes: Record<string, number> }) {
   const [fecha, setFecha] = useState(hoy);
-  const actual = dias.find((d) => d.fecha === fecha);
-  const inicial = (d?: DiarioUI) => ({ citas: String(d?.citas ?? ""), presentaron: String(d?.presentaron ?? ""), conversaciones: String(d?.conversaciones ?? ""), agendas: String(d?.agendas ?? ""), animo: d?.animo ?? null, nota: d?.nota ?? "" });
-  const [f, setF] = useState(inicial(actual));
+  const inicial = (d?: DiarioUI) => ({ valores: Object.fromEntries(kpis.map((k) => [k.id, d?.kpis?.[k.id] ? String(d.kpis[k.id]) : ""])) as Record<string, string>, animo: d?.animo ?? null, nota: d?.nota ?? "" });
+  const [f, setF] = useState(inicial(dias.find((d) => d.fecha === hoy)));
   const [guardando, setGuardando] = useState(false);
   const cambiarFecha = (x: string) => {
     setFecha(x);
     setF(inicial(dias.find((d) => d.fecha === x)));
   };
-  const num = (k: "citas" | "presentaron" | "conversaciones" | "agendas") => (e: React.ChangeEvent<HTMLInputElement>) => setF((x) => ({ ...x, [k]: soloNum(e.target.value) }));
   const guardar = async () => {
     setGuardando(true);
-    const r = await guardarDiarioAction({ fecha, citas: Number(f.citas || 0), presentaron: Number(f.presentaron || 0), conversaciones: Number(f.conversaciones || 0), agendas: Number(f.agendas || 0), animo: f.animo, nota: f.nota });
+    const r = await guardarDiarioAction({ fecha, kpis: Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)])), animo: f.animo, nota: f.nota });
     setGuardando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success("Diario guardado ✍️", aviso);
   };
-  const campo = (k: "citas" | "presentaron" | "conversaciones" | "agendas", etiqueta: string) => (
-    <div className="flex flex-col gap-1.5">
-      <Label className="text-xs text-muted-foreground">{etiqueta}</Label>
-      <Input className="h-10 num font-mono" inputMode="numeric" value={f[k]} onChange={num(k)} placeholder="0" />
-    </div>
-  );
   return (
     <section className="panel flex flex-col gap-4 p-5">
       <div className="flex items-center justify-between gap-3">
@@ -151,19 +145,15 @@ export function MiDiario({ rol, hoy, ayer, dias }: { rol: "closer" | "setter" | 
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        {rol === "closer" ? (
-          <>
-            {campo("citas", "Citas que tenías")}
-            {campo("presentaron", "Se presentaron")}
-          </>
-        ) : (
-          <>
-            {campo("conversaciones", "Conversaciones / llamadas")}
-            {campo("agendas", "Citas que agendaste")}
-          </>
-        )}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {kpis.map((k) => (
+          <div key={k.id} className="flex flex-col gap-1.5" title={k.ayuda}>
+            <Label className="text-xs text-muted-foreground">{k.nombre}</Label>
+            <Input className="h-10 num font-mono" inputMode="numeric" value={f.valores[k.id] ?? ""} onChange={(e) => setF((x) => ({ ...x, valores: { ...x.valores, [k.id]: soloNum(e.target.value) } }))} placeholder="0" />
+          </div>
+        ))}
       </div>
+      {kpis.some((k) => k.ayuda) ? <p className="text-[11px] text-muted-foreground">{kpis.filter((k) => k.ayuda).map((k) => `${k.nombre}: ${k.ayuda}`).join(" · ")}</p> : null}
       <div className="flex flex-col gap-1.5">
         <Label className="text-xs text-muted-foreground">¿Cómo te fue?</Label>
         <div className="flex gap-1.5">
@@ -178,6 +168,16 @@ export function MiDiario({ rol, hoy, ayer, dias }: { rol: "closer" | "setter" | 
       <Button className="h-10 w-fit rounded-full" onClick={guardar} disabled={guardando}>
         {guardando ? <Loader2 className="animate-spin" /> : <Check className="size-4" />} Guardar {fecha === hoy ? "hoy" : "ayer"}
       </Button>
+      <div className="border-t border-border/60 pt-3">
+        <p className="mb-1.5 text-[11px] tracking-wider text-muted-foreground uppercase">Este mes</p>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs">
+          {kpis.map((k) => (
+            <span key={k.id}>
+              <b className="text-foreground">{mes[k.id] ?? 0}</b> <span className="text-muted-foreground">{k.nombre.toLowerCase()}</span>
+            </span>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

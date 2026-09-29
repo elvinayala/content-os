@@ -1,0 +1,1 @@
+ALTER TABLE "desempeno_ventas_diario" ADD COLUMN "kpis" jsonb DEFAULT '{}'::jsonb NOT NULL;

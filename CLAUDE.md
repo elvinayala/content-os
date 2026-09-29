@@ -747,6 +747,12 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   cada cita; "Llamada agendada" ya pasada = sin marcar, se le recuerda; sin citas marcadas → diario; `resultadoCita` +
   `citasDelMes`); **Laura vende en las dos marcas** (`desempeno_perfiles.tambien_en`, migración 0031, "También vende en" en
   Ajustes); Joaquín es closer. Pendiente: la planilla de Excel de Nahuel para las agendas de los chatters.
+  **KPIs del diario por puesto (Elvin, 28/sep; `KPIS_VENTAS`, `desempeno_ventas_diario.kpis`, migración 0037)**: setter =
+  llamadas realizadas · conectadas · agendadas · show · no show; chatter (Ana Cecilio, Dilan) = conversaciones (personas que
+  hablaron contigo) · pases (le sacaste el número y lo pasaste a llamada) · citas agendadas · show · no show; closer (Laura,
+  Roger, Joaquín; Paola por dar de alta) = demos · cerradas · no cerradas + cash collected de la hoja. Cada quien los anota en
+  Mi diario (con "Este mes"); el director y la dirección ven "KPIs del equipo · este mes" por puesto. Los campos viejos
+  (conversaciones/agendas/presentaron) se llenan desde estos (`camposViejos`) para la comisión y el show-up de respaldo.
 - **Calendario de ausencias** (`/ritmo/calendario`, 28/sep; puro en `lib/desempeno/calendario-reglas.ts` + tests
   `tests/calendario.test.mjs`, datos `lib/desempeno/calendario.ts`): mes en cuadrícula + lista de quién está fuera (ausencias
   aprobadas + solicitudes en curso con borde punteado). Elvin: "los estrategas no se pueden ir dos a la vez" → `TOPE_FUERA`

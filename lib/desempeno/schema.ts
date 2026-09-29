@@ -545,6 +545,8 @@ export const desempenoVentasDiario = pgTable(
     presentaron: integer("presentaron").notNull().default(0),
     conversaciones: integer("conversaciones").notNull().default(0),
     agendas: integer("agendas").notNull().default(0),
+    // KPIs de Elvin por puesto (28/sep; lista en lib/ventas/reglas.ts → KPIS_VENTAS): { llamadas: 40, conectadas: 12… }
+    kpis: jsonb("kpis").$type<Record<string, number>>().notNull().default({}),
     animo: integer("animo"), // 1-5
     nota: text("nota"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

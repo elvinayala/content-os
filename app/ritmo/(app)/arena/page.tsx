@@ -5,7 +5,7 @@ import { Alerta, Barra, Bonos, Carrera, MiDiario } from "@/components/ritmo/aren
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
-import type { Empresa, RolVentas } from "@/lib/ventas/reglas";
+import { KPIS_VENTAS, kpisDelMes, type Empresa, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -74,7 +74,7 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
       {ar.mio ? (
         <div className="grid gap-6 lg:grid-cols-2">
           <MiMarcador rol={ar.mio.rol} m={ar.mio.m} goal={ar.mio.goal} />
-          <MiDiario rol={ar.mio.rol} hoy={ar.hoy} ayer={ayer} dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, citas: x.citas, presentaron: x.presentaron, conversaciones: x.conversaciones, agendas: x.agendas, animo: x.animo, nota: x.nota }))} />
+          <MiDiario hoy={ar.hoy} ayer={ayer} kpis={KPIS_VENTAS[ar.mio.rol]} mes={kpisDelMes(ar.mio.diario)} dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, animo: x.animo, nota: x.nota }))} />
         </div>
       ) : null}
 
@@ -91,6 +91,45 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         equipo={ar.gente.filter((g) => g.rol !== "director_ventas").map((g) => ({ userId: g.userId, nombre: g.nombre }))}
         bonos={bonosFilas.map((b) => ({ id: b.id, titulo: b.titulo, detalle: b.detalle, monto: b.monto, rol: b.rol, desde: b.desde, hasta: b.hasta, estado: b.estado, ganador: b.ganadorId ? (nombres.get(b.ganadorId) ?? null) : null, creadoPor: b.creadoPor ? (nombres.get(b.creadoPor) ?? null) : null }))}
       />
+
+      {gestiona && ar.kpisEquipo.length ? (
+        <section className="panel flex flex-col gap-4 p-5">
+          <h2 className="text-sm font-semibold">KPIs del equipo · este mes</h2>
+          {ROLES.map((r) => {
+            const filas = ar.kpisEquipo.filter((x) => x.rol === r.id);
+            if (!filas.length) return null;
+            const cols = KPIS_VENTAS[r.id];
+            return (
+              <div key={r.id} className="overflow-x-auto">
+                <p className="mb-1 text-xs font-medium text-muted-foreground">{r.t}</p>
+                <table className="w-full min-w-[520px] text-sm">
+                  <thead className="text-left text-[11px] text-muted-foreground">
+                    <tr>
+                      <th className="py-1.5 pr-3 font-normal">Persona</th>
+                      {cols.map((c) => (
+                        <th key={c.id} className="py-1.5 pr-3 text-right font-normal">{c.nombre}</th>
+                      ))}
+                      {r.id === "closer" ? <th className="py-1.5 text-right font-normal">Cash collected</th> : null}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {filas.map((x) => (
+                      <tr key={x.userId}>
+                        <td className="py-1.5 pr-3">{x.nombre}</td>
+                        {cols.map((c) => (
+                          <td key={c.id} className="num py-1.5 pr-3 text-right font-mono">{x.mes[c.id] ?? 0}</td>
+                        ))}
+                        {r.id === "closer" ? <td className="num py-1.5 text-right font-mono">{usd(x.cash)}</td> : null}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })}
+          <p className="text-[11px] text-muted-foreground">Lo anota cada quien en su diario (hoy o ayer); el cash collected de los closers sale de la hoja de ventas.</p>
+        </section>
+      ) : null}
 
       {gestiona ? (
         <section className="panel flex flex-col gap-3 p-5">
