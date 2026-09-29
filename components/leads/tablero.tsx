@@ -13,7 +13,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, horaLlegada, type Marca } from "@/lib/leads/reglas";
+import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, FILTROS_FECHA, horaLlegada, type FiltroFecha, type Marca } from "@/lib/leads/reglas";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +56,7 @@ export function BarraLeads({
   etapas,
   exportar = null,
   manejaEquipo = false,
+  fecha = null,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -70,6 +71,7 @@ export function BarraLeads({
   etapas: EtapaUI[];
   exportar?: "directo" | "con_ok" | null;
   manejaEquipo?: boolean;
+  fecha?: FiltroFecha | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -163,6 +165,27 @@ export function BarraLeads({
               </button>
             )}
           </div>
+          {vista !== "actividades" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  {FILTROS_FECHA.find((f) => f.id === fecha)?.nombre ?? "Cualquier fecha"}
+                  <ChevronDown className="size-4 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="pulse w-48" align="end">
+                <DropdownMenuItem onSelect={() => ir({ fecha: null })} className={cn(!fecha && "font-semibold")}>
+                  Cualquier fecha
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {FILTROS_FECHA.map((f) => (
+                  <DropdownMenuItem key={f.id} onSelect={() => ir({ fecha: f.id })} className={cn(fecha === f.id && "font-semibold")}>
+                    {f.nombre}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">

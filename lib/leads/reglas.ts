@@ -75,6 +75,37 @@ export function horaLlegada(fecha: Date | string, ahora = new Date()): string {
   return `${fechaCorta} ${hora}`;
 }
 
+// Filtro "ver leads de hoy" (29/sep, Nahuel por el grupo de ventas: "¿cómo se filtra por hoy?").
+// Puerto Rico no tiene horario de verano (siempre UTC-4), así que el borde del día es fijo.
+export type FiltroFecha = "hoy" | "ayer" | "semana" | "mes";
+export const FILTROS_FECHA: { id: FiltroFecha; nombre: string }[] = [
+  { id: "hoy", nombre: "Hoy" },
+  { id: "ayer", nombre: "Ayer" },
+  { id: "semana", nombre: "Esta semana" },
+  { id: "mes", nombre: "Este mes" },
+];
+
+/** [desde, hasta) en UTC para un filtro de fecha, contado por el día calendario en hora de PR. */
+export function rangoFecha(filtro: FiltroFecha, ahora = new Date()): { desde: Date; hasta: Date } {
+  const diaPR = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" }); // YYYY-MM-DD
+  const inicioDia = (yyyyMMdd: string) => new Date(`${yyyyMMdd}T00:00:00-04:00`);
+  const hoy = diaPR(ahora);
+  const inicioHoy = inicioDia(hoy);
+  if (filtro === "hoy") return { desde: inicioHoy, hasta: new Date(inicioHoy.getTime() + 86_400_000) };
+  if (filtro === "ayer") {
+    const desde = new Date(inicioHoy.getTime() - 86_400_000);
+    return { desde, hasta: inicioHoy };
+  }
+  if (filtro === "semana") {
+    const diaSemana = new Date(`${hoy}T12:00:00-04:00`).getDay(); // 0=domingo
+    const offset = diaSemana === 0 ? 6 : diaSemana - 1; // días desde el lunes
+    const desde = new Date(inicioHoy.getTime() - offset * 86_400_000);
+    return { desde, hasta: new Date(inicioHoy.getTime() + 86_400_000) };
+  }
+  const desde = inicioDia(`${hoy.slice(0, 7)}-01`);
+  return { desde, hasta: new Date(inicioHoy.getTime() + 86_400_000) };
+}
+
 /** Lo que Claude devuelve al leer los primeros mensajes: {"negocio": …, "nicho": …}. Tolerante. */
 export function leerNichoIA(texto: string): { negocio: string | null; nicho: string | null } {
   const m = texto.match(/\{[\s\S]*\}/);

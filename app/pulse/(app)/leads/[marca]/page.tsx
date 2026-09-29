@@ -9,7 +9,7 @@ export const metadata = { title: "Leads · Pulse" };
 export default async function LeadsEmbudo({ params, searchParams }: { params: Promise<{ marca: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { marca } = await params;
   const c = await contextoLeads(marca, await searchParams);
-  const tratos = c.embudo ? await tratosAbiertos(c.embudo.id, { duenoId: c.dueno, q: c.q }) : [];
+  const tratos = c.embudo ? await tratosAbiertos(c.embudo.id, { duenoId: c.dueno, q: c.q, fecha: c.fecha }) : [];
   return (
     <div className="pulse flex h-svh flex-col bg-background">
       <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
@@ -30,6 +30,7 @@ export default async function LeadsEmbudo({ params, searchParams }: { params: Pr
         puedeEditar={c.puedeEditar}
         exportar={c.exportar} manejaEquipo={c.manejaEquipo}
         etapas={c.etapas}
+        fecha={c.fecha}
       />
       {c.embudo ? (
         <TableroLeads marca={c.m.marca} marcaSlug={c.m.slug} embudo={c.embudo} etapas={c.etapas} tratos={tratos} usuarios={c.usuarios} yoId={c.u.id} />

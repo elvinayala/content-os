@@ -1,13 +1,13 @@
 import "server-only";
 
-import { and, asc, desc, eq, gt, ilike, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, ilike, inArray, isNull, lt, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/pulse/db";
 import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, esEtapaGrupos, ETAPA_GRUPOS, normalizarTelefono, ordenEntre, SEMILLA, type EventoWhatsapp, type Marca } from "./reglas";
+import { clave, esEtapaGrupos, ETAPA_GRUPOS, normalizarTelefono, ordenEntre, rangoFecha, SEMILLA, type EventoWhatsapp, type FiltroFecha, type Marca } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -151,11 +151,20 @@ function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
   return { ...(r as unknown as TratoTarjeta), proximaActividad: iso(r.proximaActividad), etapaDesde: iso(r.etapaDesde)!, ultimoMensaje: iso(r.ultimoMensaje), creadoEl: iso(r.creadoEl)! };
 }
 
-export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string } = {}): Promise<TratoTarjeta[]> {
+/** Condición de fecha (por cuándo cayó el lead) para un filtro "hoy"/"ayer"/"semana"/"mes". */
+function condFecha(f?: FiltroFecha | null) {
+  if (!f) return undefined;
+  const { desde, hasta } = rangoFecha(f);
+  return and(gte(leadsTratos.createdAt, desde), lt(leadsTratos.createdAt, hasta));
+}
+
+export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null } = {}): Promise<TratoTarjeta[]> {
   const d = await db();
   const conds = [eq(leadsTratos.embudoId, embudoId), eq(leadsTratos.estado, "abierto")];
   if (f.duenoId === "__sin") conds.push(isNull(leadsTratos.duenoId));
   else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
+  const cf = condFecha(f.fecha);
+  if (cf) conds.push(cf);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
     const dig = f.q.replace(/\D/g, "");
@@ -166,13 +175,15 @@ export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | n
 }
 
 /** Vista de lista: todos los estados, filtrable. */
-export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?: string; duenoId?: string | null; q?: string }) {
+export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?: string; duenoId?: string | null; q?: string; fecha?: FiltroFecha | null }) {
   const d = await db();
   const conds = [eq(leadsTratos.marca, marca)];
   if (f.embudoId) conds.push(eq(leadsTratos.embudoId, f.embudoId));
   if (f.estado && f.estado !== "todos") conds.push(eq(leadsTratos.estado, f.estado));
   if (f.duenoId === "__sin") conds.push(isNull(leadsTratos.duenoId));
   else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
+  const cf = condFecha(f.fecha);
+  if (cf) conds.push(cf);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
     conds.push(or(ilike(leadsTratos.nombre, q), ilike(leadsTratos.negocio, q), ilike(leadsTratos.email, q), ilike(leadsTratos.telefono, `%${f.q.replace(/\D/g, "") || "~"}%`))!);

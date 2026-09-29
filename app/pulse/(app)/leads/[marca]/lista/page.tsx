@@ -25,7 +25,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
   const sp = await searchParams;
   const c = await contextoLeads(marca, sp);
   const estado = typeof sp.estado === "string" ? sp.estado : "abierto";
-  const filas = await listaTratos(c.m.marca, { embudoId: c.embudo?.id, estado, duenoId: c.dueno, q: c.q });
+  const filas = await listaTratos(c.m.marca, { embudoId: c.embudo?.id, estado, duenoId: c.dueno, q: c.q, fecha: c.fecha });
   const qs = (extra: Record<string, string>) => {
     const p = new URLSearchParams(Object.entries(sp).filter(([, v]) => typeof v === "string") as [string, string][]);
     for (const [k, v] of Object.entries(extra)) p.set(k, v);
@@ -38,7 +38,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
         <span className="text-sm font-semibold">Leads</span>
         <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{c.m.nombre}</span>
       </header>
-      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="lista" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} exportar={c.exportar} manejaEquipo={c.manejaEquipo} etapas={c.etapas} />
+      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="lista" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} exportar={c.exportar} manejaEquipo={c.manejaEquipo} etapas={c.etapas} fecha={c.fecha} />
       <div className="flex gap-1 px-4 py-2">
         {ESTADOS.map((e) => (
           <Link key={e.v} href={qs({ estado: e.v })} className={cn("rounded-full px-3 py-1 text-xs font-medium", estado === e.v ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground")}>

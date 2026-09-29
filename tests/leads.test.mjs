@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { clave, estadoActividad, estancado, leerTimelines, normalizarTelefono, ordenEntre, SEMILLA, telefonoLegible } from "../lib/leads/reglas.ts";
+import { clave, estadoActividad, estancado, leerTimelines, normalizarTelefono, ordenEntre, rangoFecha, SEMILLA, telefonoLegible } from "../lib/leads/reglas.ts";
 
 test("teléfonos a dígitos con código de país", () => {
   assert.equal(normalizarTelefono("(787) 555-1234"), "17875551234");
@@ -86,6 +86,14 @@ test("horaLlegada en hora de PR: hoy / ayer / fecha", async () => {
   assert.equal(horaLlegada("2026-09-27T13:46:00Z", ahora), "hoy 9:46 AM");
   assert.equal(horaLlegada("2026-09-27T01:10:00Z", ahora), "ayer 9:10 PM"); // 26/sep 9:10 PM en PR
   assert.match(horaLlegada("2026-09-24T19:00:00Z", ahora), /^24 sept? 3:00 PM$/);
+});
+
+test("rangoFecha: hoy/ayer/semana/mes en hora de PR (domingo 27/sep/2026)", () => {
+  const ahora = new Date("2026-09-27T15:00:00Z"); // 11:00 AM PR, domingo
+  assert.deepEqual(rangoFecha("hoy", ahora), { desde: new Date("2026-09-27T04:00:00Z"), hasta: new Date("2026-09-28T04:00:00Z") });
+  assert.deepEqual(rangoFecha("ayer", ahora), { desde: new Date("2026-09-26T04:00:00Z"), hasta: new Date("2026-09-27T04:00:00Z") });
+  assert.deepEqual(rangoFecha("semana", ahora), { desde: new Date("2026-09-21T04:00:00Z"), hasta: new Date("2026-09-28T04:00:00Z") }); // lunes 21/sep
+  assert.deepEqual(rangoFecha("mes", ahora), { desde: new Date("2026-09-01T04:00:00Z"), hasta: new Date("2026-09-28T04:00:00Z") });
 });
 
 test("leerNichoIA tolera texto alrededor y nulls", async () => {
