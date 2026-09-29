@@ -1,0 +1,531 @@
+<title>Demo AI Borinquen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Presentación animada de AI Borinquen: el mismo diseño del PDF de septiembre (navy + esfera azul +
+   verde/cian), en un escenario de 1920×1080 que se escala a la pantalla. Cada slide se arma al entrar. */
+:root {
+  color-scheme: dark;
+  --fondo: #081120;
+  --fondo2: #0b1a31;
+  --tarjeta: #0e1c35;
+  --borde: #1d3056;
+  --texto: #eef2f9;
+  --gris: #8d9dbb;
+  --gris2: #6f80a3;
+  --cian: #4fcfe2;
+  --verde: #4cc66e;
+  --verde2: #2f9e57;
+  --azul: #3a78e6;
+  --azul2: #1b4fb3;
+  --coral: #e5604f;
+  --grot: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+html, body { height: 100%; }
+body { margin: 0; background: #04080f; color: var(--texto); font-family: var(--grot); overflow: hidden; }
+.visor { position: fixed; inset: 0; overflow: hidden; background: #04080f; }
+.escenario { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+
+/* ───────── slide base ───────── */
+.slide {
+  position: absolute; inset: 0; overflow: hidden; padding: 112px 128px 150px; box-sizing: border-box;
+  background: radial-gradient(1100px 760px at 78% 30%, #0e2a52 0%, rgba(14, 42, 82, 0) 62%), var(--fondo);
+  opacity: 0; visibility: hidden; transition: opacity .55s ease, visibility 0s linear .55s;
+}
+.slide.activa { opacity: 1; visibility: visible; transition: opacity .55s ease; }
+.ceja { font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cian); display: flex; align-items: center; gap: 18px; }
+.ceja.coral { color: var(--coral); }
+h1, h2 { margin: 0; font-weight: 600; letter-spacing: -.025em; text-wrap: balance; }
+h1 { font-size: 104px; line-height: 1.02; }
+h2 { font-size: 64px; line-height: 1.06; }
+p { margin: 0; }
+.sub { font-size: 30px; line-height: 1.4; color: var(--gris); max-width: 1500px; }
+.pie { position: absolute; left: 128px; right: 128px; bottom: 64px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 24px; letter-spacing: .12em; color: var(--gris2); }
+.verde { color: var(--verde); }
+.cian { color: var(--cian); }
+
+/* ───────── animaciones comunes (solo corren en la slide activa) ───────── */
+@keyframes sube { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: none; } }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.4); } 70% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes desenfoca { from { opacity: 0; filter: blur(14px); transform: translateY(18px); } to { opacity: 1; filter: none; transform: none; } }
+@keyframes gira { to { transform: rotate(360deg); } }
+@keyframes giraAtras { to { transform: rotate(-360deg); } }
+@keyframes late { 0%, 100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.35); opacity: 0; } }
+@keyframes flota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes dibuja { from { stroke-dashoffset: var(--largo, 1000); } to { stroke-dashoffset: 0; } }
+@keyframes crece { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes brillo { 0% { box-shadow: 0 0 0 0 rgba(76, 198, 110, .0); } 40% { box-shadow: 0 0 60px 8px rgba(76, 198, 110, .45); } 100% { box-shadow: 0 0 30px 0 rgba(76, 198, 110, .18); } }
+.activa .sube { animation: sube .9s var(--ease) both; animation-delay: var(--d, 0s); }
+.activa .aparece { animation: aparece .9s ease both; animation-delay: var(--d, 0s); }
+.activa .pop { animation: pop .7s var(--ease) both; animation-delay: var(--d, 0s); }
+.activa .desenfoca { animation: desenfoca 1s var(--ease) both; animation-delay: var(--d, 0s); }
+
+/* Título palabra por palabra */
+.palabras .w { display: inline-block; }
+.activa .palabras .w { animation: sube .85s var(--ease) both; animation-delay: calc(var(--d0, 0s) + var(--i) * 70ms); }
+
+/* ───────── planeta (portada) ───────── */
+.planeta { position: absolute; width: 900px; height: 900px; }
+.planeta svg { width: 100%; height: 100%; overflow: visible; }
+.orbita { transform-origin: 450px 450px; transform-box: view-box; }
+.activa .orbita.o1 { animation: gira 38s linear infinite; }
+.activa .orbita.o2 { animation: giraAtras 60s linear infinite; }
+.activa .orbita.o3 { animation: gira 90s linear infinite; }
+.activa .esfera { animation: flota 7s ease-in-out infinite; }
+.anillo { transform-origin: 450px 450px; }
+
+/* ───────── 1 · portada ───────── */
+#s1 .izq { position: absolute; left: 128px; top: 170px; width: 1080px; display: flex; flex-direction: column; gap: 26px; }
+#s1 .vision { font-size: 32px; color: var(--gris); max-width: 980px; text-wrap: balance; line-height: 1.35; }
+#s1 .etq { font-family: var(--mono); font-size: 24px; letter-spacing: .2em; color: var(--gris2); margin-top: 18px; }
+.logos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 1000px; }
+.logo { height: 104px; border-radius: 14px; display: grid; place-items: center; padding: 12px 20px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+.logo img { max-width: 100%; max-height: 82px; object-fit: contain; display: block; }
+.activa .logo { animation: pop .7s var(--ease) both; animation-delay: calc(1.1s + var(--i) * 90ms); }
+#s1 .planeta { right: -170px; top: 10px; }
+
+/* ───────── 2 · testimonios ───────── */
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-top: 70px; }
+.video { aspect-ratio: 16 / 9; border-radius: 18px; border: 1px solid #28457a; position: relative; overflow: hidden;
+  background: radial-gradient(420px 240px at 50% 40%, #1a4a9a 0%, #0c2346 70%, #0a1a35 100%); box-shadow: 0 0 60px rgba(58, 120, 230, .18) inset; }
+.play { position: absolute; left: 50%; top: 50%; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; display: grid; place-items: center; }
+.play::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(238, 242, 249, .7); }
+.play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(79, 207, 226, .8); }
+.activa .play::after { animation: late 2.2s ease-out infinite; animation-delay: var(--d, 0s); }
+.play svg { width: 44px; height: 44px; margin-left: 8px; }
+.pend { position: absolute; top: 18px; left: 18px; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: #f3c969; border: 1px solid rgba(243, 201, 105, .5); border-radius: 999px; padding: 6px 14px; background: rgba(8, 17, 32, .6); }
+.vlab { font-family: var(--mono); font-size: 22px; letter-spacing: .16em; color: var(--verde); margin-top: 26px; }
+.vtit { font-size: 34px; font-weight: 600; margin-top: 10px; }
+.vsub { font-size: 24px; color: var(--gris); margin-top: 8px; }
+
+/* ───────── 3 · costo ───────── */
+.costo { display: grid; grid-template-columns: 900px 1fr; gap: 30px; margin-top: 56px; }
+.cuenta { border-radius: 22px; border: 1px solid rgba(229, 96, 79, .35); background: linear-gradient(160deg, #1d1624 0%, #140f1c 100%); padding: 38px 44px; }
+.cuenta .ceja { font-size: 20px; color: #f0a197; letter-spacing: .18em; }
+.fila { display: grid; grid-template-columns: 410px 1fr; align-items: center; gap: 22px; padding: 14px 0; border-bottom: 1px solid rgba(229, 96, 79, .14); }
+.fila:last-child { border-bottom: none; }
+.num { font-family: var(--mono); font-weight: 600; font-size: 64px; color: var(--coral); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.fila:first-of-type .num { color: var(--texto); }
+.fila.total .num { font-size: 76px; text-shadow: 0 0 40px rgba(229, 96, 79, .45); }
+.fila p { font-size: 25px; color: var(--gris); line-height: 1.3; }
+.activa .fila { animation: sube .7s var(--ease) both; animation-delay: var(--d); }
+.cuad { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.mini { border-radius: 20px; border: 1px solid var(--borde); background: var(--tarjeta); padding: 30px 30px; display: flex; flex-direction: column; gap: 12px; }
+.mini.mal { border-color: rgba(229, 96, 79, .35); background: #150f1b; }
+.mini svg { width: 40px; height: 40px; }
+.mini h3 { margin: 0; font-size: 30px; font-weight: 600; }
+.mini p { font-size: 23px; color: var(--gris); line-height: 1.35; }
+
+/* ───────── 4 · incluye ───────── */
+.tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 64px; }
+.tar { position: relative; border-radius: 22px; background: linear-gradient(180deg, #102447 0%, #0c1b36 100%); border: 1px solid #22407a; padding: 46px 42px 52px; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+.tar.v { background: linear-gradient(180deg, #0f2a33 0%, #0b1c2b 100%); border-color: #1f5a57; }
+.tar::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--azul), var(--cian)); transform-origin: left; }
+.tar.v::before { background: linear-gradient(90deg, var(--verde2), var(--verde)); }
+.activa .tar::before { animation: crece 1s var(--ease) both; animation-delay: calc(var(--d) + .35s); }
+.tar .ico { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; background: rgba(58, 120, 230, .15); }
+.tar.v .ico { background: rgba(76, 198, 110, .15); }
+.tar .ico svg { width: 36px; height: 36px; }
+.tar .lab { font-family: var(--mono); font-size: 21px; letter-spacing: .16em; color: var(--cian); margin-top: 10px; }
+.tar.v .lab { color: var(--verde); }
+.tar h3 { margin: 0; font-size: 42px; font-weight: 600; line-height: 1.1; }
+.tar p { font-size: 26px; color: var(--gris); line-height: 1.42; }
+
+/* ───────── 5 · agentes ───────── */
+#s5 .izq { position: absolute; left: 128px; top: 250px; width: 640px; display: flex; flex-direction: column; gap: 30px; }
+#s5 .izq h2 { font-size: 76px; }
+#s5 .izq p { font-size: 28px; color: var(--gris); line-height: 1.45; }
+.red { position: absolute; left: 820px; top: 70px; width: 980px; height: 900px; }
+.red svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.rayo { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+.activa .rayo { animation: dibuja .9s var(--ease) forwards; animation-delay: var(--d); --largo: 1000; }
+.nucleo { position: absolute; left: 490px; top: 450px; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #7ff0a5 0%, #34b765 38%, #147a44 72%, #0b4a2c 100%); display: grid; place-items: center; text-align: center;
+  box-shadow: 0 0 120px rgba(76, 198, 110, .45), inset 0 -20px 50px rgba(0, 0, 0, .35); }
+.activa .nucleo { animation: pop .9s var(--ease) both, brillo 2.4s ease 1s both; }
+.nucleo b { display: block; font-size: 44px; font-weight: 700; line-height: 1.02; color: #f3fff6; }
+.nucleo span { display: block; font-family: var(--mono); font-size: 19px; margin-top: 8px; color: #d9ffe6; letter-spacing: .04em; }
+.sat { position: absolute; width: 260px; margin: -17px 0 0 -130px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+.sat .punto { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--azul); background: #0b1a31; display: grid; place-items: center; }
+.sat .punto::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--cian); }
+.sat.estrella .punto { border-color: var(--verde); }
+.sat.estrella .punto::after { background: var(--verde); }
+.sat b { font-size: 28px; font-weight: 600; line-height: 1.1; }
+.sat.estrella b { color: var(--verde); }
+.sat span { font-size: 21px; color: var(--gris); }
+.sat.arriba { flex-direction: column-reverse; margin-top: -120px; }
+.activa .sat { animation: pop .6s var(--ease) both; animation-delay: var(--d); }
+.anillo5 { transform-origin: 490px 450px; }
+.activa .anillo5 { animation: gira 50s linear infinite; }
+
+/* ───────── 6 · autoflow ───────── */
+.flujo { position: relative; margin-top: 110px; height: 300px; }
+.flujo .linea { position: absolute; left: 150px; right: 150px; top: 60px; height: 3px; background: #1d3a66; border-radius: 3px; }
+.flujo .lleno { position: absolute; left: 150px; top: 60px; height: 3px; width: calc(100% - 300px); background: linear-gradient(90deg, var(--verde), var(--cian), var(--azul), var(--cian)); transform-origin: left; transform: scaleX(0); border-radius: 3px; box-shadow: 0 0 14px rgba(79, 207, 226, .7); }
+.activa .flujo .lleno { animation: crece 3.4s cubic-bezier(.45, 0, .55, 1) .6s forwards; }
+.lead { position: absolute; top: 48px; left: 138px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 0 22px 6px rgba(79, 207, 226, .9); opacity: 0; }
+@keyframes viaja { 0% { opacity: 0; left: 138px; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; left: calc(100% - 162px); } }
+.activa .lead { animation: viaja 3.4s cubic-bezier(.45, 0, .55, 1) .6s forwards; }
+.nodos { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, 1fr); }
+.nodo { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+.nodo .c { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #26457c; background: #0c1c38; display: grid; place-items: center; position: relative; z-index: 1; transition: none; }
+.nodo .c svg { width: 48px; height: 48px; stroke: #6f80a3; }
+@keyframes enciende { to { border-color: var(--col); background: var(--fondoCol); box-shadow: 0 0 40px var(--sombra); } }
+@keyframes enciendeIco { to { stroke: #eef2f9; } }
+.activa .nodo .c { animation: enciende .35s ease forwards; animation-delay: var(--d); }
+.activa .nodo .c svg { animation: enciendeIco .35s ease forwards; animation-delay: var(--d); }
+.nodo b { font-size: 34px; font-weight: 600; }
+.nodo span { font-size: 26px; color: var(--gris); line-height: 1.3; }
+.barra { margin-top: 20px; border-radius: 24px; border: 1px solid #1f5a57; background: linear-gradient(90deg, #0f3a2f 0%, #0e2a3e 55%, #0d2146 100%); padding: 34px 50px; display: flex; align-items: center; gap: 60px; }
+.reloj { display: flex; flex-direction: column; gap: 4px; }
+.reloj small { font-family: var(--mono); font-size: 23px; letter-spacing: .14em; color: var(--gris); }
+.reloj .n { font-family: var(--mono); font-weight: 600; font-size: 84px; line-height: 1; font-variant-numeric: tabular-nums; min-width: 300px; }
+.reloj.af .n { color: var(--verde); text-shadow: 0 0 36px rgba(76, 198, 110, .5); }
+.reloj.hu .n { color: #6f86ad; }
+.barra .frase { margin-left: auto; font-size: 38px; font-weight: 600; text-align: right; line-height: 1.25; max-width: 700px; }
+
+/* ───────── 7 · ahorro ───────── */
+.tresN { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 56px; }
+.caja { border-radius: 20px; border: 1px solid rgba(229, 96, 79, .3); background: #150f1b; padding: 34px 38px; display: flex; flex-direction: column; gap: 12px; }
+.caja small { font-family: var(--mono); font-size: 21px; letter-spacing: .16em; color: var(--gris); }
+.caja .num { font-size: 72px; }
+.caja p { font-size: 24px; color: var(--gris); line-height: 1.35; }
+.caja.bien { border-color: rgba(76, 198, 110, .32); background: #0d2126; }
+.caja.bien .num { color: var(--verde); text-shadow: 0 0 34px rgba(76, 198, 110, .35); }
+.caja.azul { border-color: #22407a; background: #0e1c3a; }
+.caja.azul .num { color: #7fb0ff; text-shadow: 0 0 34px rgba(58, 120, 230, .35); }
+
+/* ───────── 8 · implementación ───────── */
+.linea45 { position: relative; margin-top: 90px; height: 120px; }
+.eje { position: absolute; left: 0; right: 0; top: 50px; height: 14px; border-radius: 10px; background: #13244a; overflow: hidden; }
+.eje i { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; transform-origin: left; transform: scaleX(0); background: linear-gradient(90deg, var(--azul) 0%, var(--cian) 30%, var(--verde) 33.3%, var(--verde) 100%); }
+.activa .eje i { animation: crece 3.6s cubic-bezier(.45, 0, .55, 1) .5s forwards; }
+.hito { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--mono); font-size: 21px; color: var(--gris); letter-spacing: .08em; white-space: nowrap; }
+.hito .pin { width: 4px; height: 38px; background: #2a4270; border-radius: 3px; }
+.hito.meta { color: var(--verde); font-weight: 600; }
+.hito.meta .pin { background: var(--verde); height: 40px; box-shadow: 0 0 18px var(--verde); }
+.fases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 34px; }
+.fase { border-radius: 20px; border: 1px solid var(--borde); background: var(--tarjeta); padding: 30px 30px 34px; display: flex; flex-direction: column; gap: 12px; }
+.fase small { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: var(--cian); }
+.fase h3 { margin: 0; font-size: 36px; font-weight: 600; }
+.fase p { font-size: 23px; color: var(--gris); line-height: 1.4; }
+@keyframes faseOn { to { border-color: var(--col); box-shadow: 0 0 40px var(--sombra); } }
+.activa .fase { animation: sube .7s var(--ease) both, faseOn .5s ease forwards; animation-delay: var(--d0), var(--d); }
+.fase.lanz small { color: var(--verde); }
+
+/* ───────── controles ───────── */
+.controles { position: fixed; right: 18px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; z-index: 10; font-family: var(--mono); transition: opacity .4s ease; }
+.controles.dormido { opacity: 0; }
+.controles button { width: 42px; height: 42px; border-radius: 10px; border: 1px solid #2a3d63; background: rgba(8, 17, 32, .82); color: #cfd9ec; font: 600 18px var(--mono); cursor: pointer; display: grid; place-items: center; }
+.controles button:hover { border-color: var(--cian); color: #fff; }
+.controles button:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+.controles .pag { font-size: 14px; color: #9fb0cf; min-width: 58px; text-align: center; letter-spacing: .06em; }
+.progreso { position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 10; background: transparent; }
+.progreso i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--verde), var(--cian)); transition: width .5s var(--ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
+</style>
+
+<div class="visor" id="visor">
+  <div class="escenario" id="escenario">
+
+    <!-- 1 · PORTADA -->
+    <section class="slide" id="s1" data-n="1">
+      <div class="izq">
+        <div class="ceja sube" style="--d:.05s">
+          <svg width="52" height="36" viewBox="0 0 52 36" aria-label="Bandera de Puerto Rico"><rect width="52" height="36" fill="#e03a3e"/><rect y="7.2" width="52" height="7.2" fill="#fff"/><rect y="21.6" width="52" height="7.2" fill="#fff"/><path d="M0 0 L30 18 L0 36 Z" fill="#1d5fd1"/><path d="M10 12.4 l1.6 4.5 4.8.1-3.8 2.9 1.4 4.6-4-2.7-4 2.7 1.4-4.6-3.8-2.9 4.8-.1z" fill="#fff"/></svg>
+          AI Borinquen · Hecho en Puerto Rico
+        </div>
+        <h1 class="palabras" style="--d0:.15s"><span class="w" style="--i:0">Agentes</span> <span class="w" style="--i:1">de</span> <span class="w" style="--i:2">IA</span> <span class="w" style="--i:3">hechos</span><br><span class="w" style="--i:4">para</span> <span class="w" style="--i:5">tu</span> <span class="w" style="--i:6">negocio.</span></h1>
+        <p class="vision desenfoca" style="--d:.8s">Nuestra visión: <span class="verde">que cada negocio de la isla tenga su propio equipo de IA.</span></p>
+        <div class="etq aparece" style="--d:1s">CON QUIÉN HEMOS TRABAJADO</div>
+        <div class="logos" id="logos"></div>
+      </div>
+      <div class="planeta" aria-hidden="true">
+        <svg viewBox="0 0 900 900">
+          <defs>
+            <radialGradient id="gEsfera" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#9fe0ff"/><stop offset=".35" stop-color="#3f8ef0"/><stop offset=".75" stop-color="#1846a8"/><stop offset="1" stop-color="#0b2256"/></radialGradient>
+            <radialGradient id="gHalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2d6fe0" stop-opacity=".45"/><stop offset="1" stop-color="#2d6fe0" stop-opacity="0"/></radialGradient>
+          </defs>
+          <circle cx="450" cy="450" r="420" fill="url(#gHalo)"/>
+          <g class="orbita o3"><circle cx="450" cy="450" r="410" fill="none" stroke="#1f3e70" stroke-width="2"/><circle cx="450" cy="40" r="9" fill="#4cc66e"/><circle cx="860" cy="450" r="6" fill="#4fcfe2"/></g>
+          <g class="orbita o2"><circle cx="450" cy="450" r="300" fill="none" stroke="#244a85" stroke-width="2" stroke-dasharray="4 10"/><circle cx="150" cy="450" r="10" fill="#3a78e6"/><circle cx="662" cy="238" r="7" fill="#4cc66e"/></g>
+          <g class="orbita o1"><circle cx="450" cy="450" r="215" fill="none" stroke="#2a5aa3" stroke-width="2"/><circle cx="450" cy="235" r="11" fill="#4fcfe2"/></g>
+          <g class="esfera"><circle cx="450" cy="450" r="142" fill="url(#gEsfera)"/>
+            <ellipse class="anillo" cx="450" cy="455" rx="220" ry="60" fill="none" stroke="#7fb4ff" stroke-opacity=".75" stroke-width="3" transform="rotate(-14 450 450)"/></g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 2 · TESTIMONIOS -->
+    <section class="slide" id="s2" data-n="2">
+      <div class="ceja sube">Lo dicen ellos</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Resultados reales, en su propia voz.</h2>
+      <div class="tres">
+        <div class="sube" style="--d:.35s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:0s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 01</div><div class="vtit">[Testimonio 1]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
+        <div class="sube" style="--d:.5s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:.5s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 02</div><div class="vtit">[Testimonio 2]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
+        <div class="sube" style="--d:.65s"><div class="video"><span class="pend">VIDEO PENDIENTE</span><div class="play" style="--d:1s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#eef2f9"/></svg></div></div><div class="vlab">VIDEO 03</div><div class="vtit">[Testimonio 3]</div><div class="vsub">[Negocio · resultado en una línea]</div></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>02</span></div>
+    </section>
+
+    <!-- 3 · EL COSTO DE NO DIGITALIZARTE -->
+    <section class="slide" id="s3" data-n="3">
+      <div class="ceja coral sube">El costo de no digitalizarte</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">No digitalizarte te cuesta en todos lados.</h2>
+      <div class="costo">
+        <div class="cuenta">
+          <div class="ceja aparece" style="--d:.3s">En atención · cálculo conservador</div>
+          <div class="fila" style="--d:.45s"><div class="num" data-cuenta data-hasta="100" data-delay="600" data-dur="900">100</div><p>leads al mes entran a tu negocio</p></div>
+          <div class="fila" style="--d:1.35s"><div class="num" data-cuenta data-hasta="60" data-sufijo="%" data-delay="1450" data-dur="900">60%</div><p>se pierden por responder tarde</p></div>
+          <div class="fila" style="--d:2.25s"><div class="num" data-cuenta data-hasta="30000" data-prefijo="$" data-delay="2350" data-dur="1100">$30,000</div><p>al mes, con un ticket de $500</p></div>
+          <div class="fila total" style="--d:3.35s"><div class="num" data-cuenta data-hasta="360000" data-prefijo="$" data-delay="3450" data-dur="1500">$360,000</div><p>al año, solo en leads que nadie atendió</p></div>
+        </div>
+        <div class="cuad">
+          <div class="mini pop" style="--d:4.4s"><svg viewBox="0 0 24 24" fill="none" stroke="#4fcfe2" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><h3>Tiempo perdido</h3><p>Agenda, facturas, inventario y papeleo a mano, todos los días.</p></div>
+          <div class="mini pop" style="--d:4.55s"><svg viewBox="0 0 24 24" fill="none" stroke="#4fcfe2" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><h3>Software suelto</h3><p>Licencias que se suman mes tras mes y no hablan entre sí.</p></div>
+          <div class="mini mal pop" style="--d:4.7s"><svg viewBox="0 0 24 24" fill="none" stroke="#e5604f" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><h3>Errores y fugas</h3><p>Pedidos, cobros y datos que se pierden entre papeles y chats.</p></div>
+          <div class="mini pop" style="--d:4.85s"><svg viewBox="0 0 24 24" fill="none" stroke="#4cc66e" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14c2.4.2 3.9 1.8 4.5 4.5"/></svg><h3>Todo depende de ti</h3><p>Sin sistemas ni datos, decides a ciegas y el negocio no crece sin ti.</p></div>
+        </div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>03</span></div>
+    </section>
+
+    <!-- 4 · CÓMO LO HACEMOS -->
+    <section class="slide" id="s4" data-n="4">
+      <div class="ceja sube">Cómo lo hacemos</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Todo lo que incluye tu sistema.</h2>
+      <div class="tarjetas">
+        <div class="tar sube" style="--d:.35s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#7fb0ff" stroke-width="1.8" stroke-linecap="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></svg></div><div class="lab">01 · TU AGENTE</div><h3>Tu agente, 100% personalizado</h3><p>Construido solo con la información de tu negocio, con tu tono y tus reglas. Nada de plantillas.</p></div>
+        <div class="tar sube" style="--d:.6s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#7fb0ff" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/><path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/></svg></div><div class="lab">02 · TU SISTEMA</div><h3>Conectado a tu CRM</h3><p>Pipelines, tareas automáticas, SMS y email, y conexión con Meta para que el lead pase del anuncio al agente sin fricción.</p></div>
+        <div class="tar v sube" style="--d:.85s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#6fe08f" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.5V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.5"/><path d="M21 9v5"/></svg></div><div class="lab">03 · TU EQUIPO</div><h3>Capacitado y en control</h3><p>Tu equipo aprende a ajustar prompts, flujos y campañas. Control total, sin depender de nadie.</p></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>04</span></div>
+    </section>
+
+    <!-- 5 · LOS AGENTES -->
+    <section class="slide" id="s5" data-n="5">
+      <div class="izq">
+        <div class="ceja sube">Los agentes que construimos</div>
+        <h2 class="sube" style="--d:.1s">Primero tu agente. <span class="verde">Después, todo lo demás.</span></h2>
+        <p class="desenfoca" style="--d:.45s">Tu Agente Personal es tu propio ChatGPT, entrenado 100% con la información de tu negocio. De él nacen los demás.</p>
+      </div>
+      <div class="red" aria-hidden="false">
+        <svg viewBox="0 0 980 900" aria-label="Del Agente Personal nacen seis agentes">
+          <g class="anillo5"><circle cx="490" cy="450" r="330" fill="none" stroke="#1f3e70" stroke-width="2" stroke-dasharray="3 12"/><circle cx="490" cy="120" r="7" fill="#4fcfe2"/><circle cx="820" cy="450" r="5" fill="#4cc66e"/></g>
+          <circle cx="490" cy="450" r="245" fill="none" stroke="#1a3663" stroke-width="2"/>
+          <g stroke="#2d5aa0" stroke-width="3" stroke-linecap="round" fill="none">
+            <line class="rayo" style="--d:.9s"  x1="490" y1="450" x2="490" y2="120"/>
+            <line class="rayo" style="--d:1.1s" x1="490" y1="450" x2="776" y2="285"/>
+            <line class="rayo" style="--d:1.3s" x1="490" y1="450" x2="776" y2="615"/>
+            <line class="rayo" style="--d:1.5s" x1="490" y1="450" x2="490" y2="780"/>
+            <line class="rayo" style="--d:1.7s" x1="490" y1="450" x2="204" y2="615"/>
+            <line class="rayo" style="--d:1.9s" x1="490" y1="450" x2="204" y2="285"/>
+          </g>
+        </svg>
+        <div class="nucleo"><div><b>Agente<br>Personal</b><span>tu propio ChatGPT</span></div></div>
+        <div class="sat estrella arriba" style="left:490px;top:120px;--d:1.2s"><div class="punto"></div><b>Recepcionista IA</b><span>AutoFlow · atiende 24/7</span></div>
+        <div class="sat" style="left:840px;top:285px;--d:1.4s"><div class="punto"></div><b>Agente de cobros</b><span>Recuerda pagos</span></div>
+        <div class="sat" style="left:840px;top:615px;--d:1.6s"><div class="punto"></div><b>Agente de inventario</b><span>Existencias y pedidos</span></div>
+        <div class="sat" style="left:490px;top:790px;--d:1.8s"><div class="punto"></div><b>Agente de ventas</b><span>Califica y cierra</span></div>
+        <div class="sat" style="left:140px;top:615px;--d:2s"><div class="punto"></div><b>Agente de reactivación</b><span>Revive leads dormidos</span></div>
+        <div class="sat" style="left:140px;top:285px;--d:2.2s"><div class="punto"></div><b>Agente de reseñas</b><span>Cuida tu reputación</span></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>05</span></div>
+    </section>
+
+    <!-- 6 · AUTOFLOW · RECEPCIONISTA IA -->
+    <section class="slide" id="s6" data-n="6">
+      <div class="ceja sube">AutoFlow · Recepcionista IA</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Tu recepcionista que nunca duerme.</h2>
+      <p class="sub desenfoca" style="--d:.3s;margin-top:18px">Chat y voz en web, WhatsApp, Instagram, Facebook y llamadas. En español e inglés, con tu marca y tu tono.</p>
+      <div class="flujo">
+        <div class="linea"></div><div class="lleno"></div><div class="lead"></div>
+        <div class="nodos">
+          <div class="nodo" style="--col:#4cc66e;--fondoCol:#123a26;--sombra:rgba(76,198,110,.55)"><div class="c" style="--d:.6s"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14c2.4.2 3.9 1.8 4.5 4.5"/></svg></div><b>Contacta</b><span>Escribe o llama</span></div>
+          <div class="nodo" style="--col:#4cc66e;--fondoCol:#123a26;--sombra:rgba(76,198,110,.55)"><div class="c" style="--d:1.35s"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/><path d="M8.5 12.2c1 .9 2.3.9 3.4 0s2.4-.9 3.4 0"/></svg></div><b>Responde</b><span>En segundos</span></div>
+          <div class="nodo" style="--col:#3a78e6;--fondoCol:#10285a;--sombra:rgba(58,120,230,.55)"><div class="c" style="--d:2.1s"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></div><b>Califica</b><span>Entiende qué necesita</span></div>
+          <div class="nodo" style="--col:#3a78e6;--fondoCol:#10285a;--sombra:rgba(58,120,230,.55)"><div class="c" style="--d:2.85s"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><b>Agenda</b><span>Reserva o cobra</span></div>
+          <div class="nodo" style="--col:#4fcfe2;--fondoCol:#0f3444;--sombra:rgba(79,207,226,.55)"><div class="c" style="--d:3.6s"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/><path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/></svg></div><b>Registra</b><span>Todo en tu CRM</span></div>
+        </div>
+      </div>
+      <div class="barra sube" style="--d:.5s">
+        <div class="reloj af"><small>AUTOFLOW</small><div class="n" id="relojAF">0.0 s</div></div>
+        <div class="reloj hu"><small>HUMANO PROMEDIO</small><div class="n" id="relojHU">0 min</div></div>
+        <div class="frase">El que contesta primero, <span class="verde">se queda con la venta.</span></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>06</span></div>
+    </section>
+
+    <!-- 7 · TU AHORRO -->
+    <section class="slide" id="s7" data-n="7">
+      <div class="ceja sube">Tu ahorro</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Lo que te costaría cubrirlo con personas.</h2>
+      <p class="sub desenfoca" style="--d:.3s;margin-top:18px">Base: salario de ~$2,000/mes en Puerto Rico, más beneficios y cobertura de noches y fines de semana.</p>
+      <div class="tresN">
+        <div class="caja sube" style="--d:.45s"><small>1 PERSONA 24/7</small><div class="num" data-cuenta data-hasta="50000" data-prefijo="$" data-sufijo="+" data-delay="600" data-dur="1200">$50,000+</div><p>al año: cubrir 24 horas exige turnos extra</p></div>
+        <div class="caja sube" style="--d:.6s"><small>EQUIPO DE 3</small><div class="num" data-cuenta data-hasta="100000" data-prefijo="$" data-sufijo="+" data-delay="900" data-dur="1300">$100,000+</div><p>al año: chat 24/7, setter de citas y agente de llamadas</p></div>
+        <div class="caja sube" style="--d:.75s"><small>EQUIPO DE 5–10</small><div class="num" data-cuenta data-hasta="200000" data-prefijo="$" data-sufijo="+" data-delay="1200" data-dur="1500">$200,000+</div><p>al año: operación completa con supervisión</p></div>
+      </div>
+      <div class="tresN" style="margin-top:26px">
+        <div class="caja bien pop" style="--d:2.8s"><div class="num">&lt;10 s</div><p>tiempo de respuesta, contra 4 horas de un humano</p></div>
+        <div class="caja azul pop" style="--d:3s"><div class="num">24/7</div><p>noches, fines de semana y feriados</p></div>
+        <div class="caja bien pop" style="--d:3.2s"><div class="num" data-cuenta data-hasta="40" data-sufijo="+ h" data-delay="3300" data-dur="900">40+ h</div><p>a la semana que tu equipo recupera para vender</p></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>07</span></div>
+    </section>
+
+    <!-- 8 · IMPLEMENTACIÓN -->
+    <section class="slide" id="s8" data-n="8">
+      <div class="ceja sube">Implementación</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Tu sistema en marcha en <span class="verde">15 días.</span></h2>
+      <p class="sub desenfoca" style="--d:.3s;margin-top:18px">Cuatro fases claras, con lanzamiento guiado. Y mientras instalamos, <span class="verde">capacitamos a tu gente.</span></p>
+      <div class="linea45 aparece" style="--d:.4s">
+        <div class="eje"><i></i></div>
+        <div class="hito" style="left:0%;transform:none;align-items:flex-start"><span>DÍA 1</span><div class="pin"></div></div>
+        <div class="hito meta" style="left:33.3%"><span>DÍA 15 · EN MARCHA</span><div class="pin"></div></div>
+        <div class="hito" style="left:100%;transform:translateX(-100%);align-items:flex-end"><span>DÍA 45</span><div class="pin"></div></div>
+      </div>
+      <div class="fases">
+        <div class="fase" style="--d0:.5s;--d:.9s;--col:#3a78e6;--sombra:rgba(58,120,230,.35)"><small>F1 · DÍAS 1–3</small><h3>Incorporación</h3><p>Reunión de arranque, información, objetivos y casos de uso.</p></div>
+        <div class="fase" style="--d0:.62s;--d:1.9s;--col:#3a78e6;--sombra:rgba(58,120,230,.35)"><small>F2 · DÍAS 4–13</small><h3>Configuración</h3><p>Diseño de prompts, entrenamiento del agente y conexión con tus sistemas.</p></div>
+        <div class="fase lanz" style="--d0:.74s;--d:1.75s;--col:#4cc66e;--sombra:rgba(76,198,110,.45)"><small>F3 · DÍA 15</small><h3>Lanzamiento</h3><p>Validación final, capacitación de tu equipo y arranque real.</p></div>
+        <div class="fase" style="--d0:.86s;--d:3.9s;--col:#4fcfe2;--sombra:rgba(79,207,226,.35)"><small>F4 · DÍAS 16–45</small><h3>Optimización</h3><p>Ajustes de mensajes, reglas y flujos hasta estabilizar el rendimiento.</p></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>08</span></div>
+    </section>
+
+  </div>
+</div>
+
+<div class="progreso" aria-hidden="true"><i id="barraProg"></i></div>
+<div class="controles" id="controles">
+  <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
+  <span class="pag" id="pag">1 / 8</span>
+  <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
+  <button type="button" id="btnRep" aria-label="Repetir la animación de esta slide" title="Repetir animación">↻</button>
+  <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+</div>
+
+<script>
+const LOGOS = /*LOGOS*/[];
+(function () {
+  // Logos de clientes (ficha con el color de fondo de cada logo)
+  const cont = document.getElementById("logos");
+  LOGOS.forEach((l, i) => {
+    const d = document.createElement("div");
+    d.className = "logo"; d.style.background = l.fondo; d.style.setProperty("--i", i);
+    const img = document.createElement("img"); img.src = l.src; img.alt = l.nombre;
+    d.appendChild(img); cont.appendChild(d);
+  });
+
+  // Escala el escenario 1920×1080 a la ventana (con franjas si la proporción no es 16:9)
+  const esc = document.getElementById("escenario");
+  function ajustar() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const k = Math.min(w / 1920, h / 1080);
+    esc.style.transform = `scale(${k})`;
+    esc.style.left = (w - 1920 * k) / 2 + "px";
+    esc.style.top = (h - 1080 * k) / 2 + "px";
+  }
+  window.addEventListener("resize", ajustar); ajustar();
+
+  const slides = [...document.querySelectorAll(".slide")];
+  let actual = 0;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const timers = [];
+  const limpiar = () => { while (timers.length) { const t = timers.pop(); cancelAnimationFrame(t.raf); clearTimeout(t.to); } };
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const suave = (t) => 1 - Math.pow(1 - t, 3);
+
+  function contar(el) {
+    const hasta = +el.dataset.hasta, pre = el.dataset.prefijo || "", suf = el.dataset.sufijo || "";
+    const delay = reduce ? 0 : +(el.dataset.delay || 0), dur = reduce ? 1 : +(el.dataset.dur || 1000);
+    el.textContent = pre + "0" + suf;
+    const reg = { raf: 0, to: 0 };
+    reg.to = setTimeout(() => {
+      const t0 = performance.now();
+      const paso = (ahora) => {
+        const p = Math.min(1, (ahora - t0) / dur);
+        el.textContent = pre + fmt(hasta * suave(p)) + suf;
+        if (p < 1) reg.raf = requestAnimationFrame(paso);
+      };
+      reg.raf = requestAnimationFrame(paso);
+    }, delay);
+    timers.push(reg);
+  }
+
+  // Slide 6: el reloj de AutoFlow se detiene en menos de 10 s; el del humano sigue hasta 4 horas.
+  function relojes() {
+    const af = document.getElementById("relojAF"), hu = document.getElementById("relojHU");
+    af.textContent = "0.0 s"; hu.textContent = "0 min";
+    if (reduce) { af.textContent = "<10 s"; hu.textContent = "4 h"; return; }
+    const reg = { raf: 0, to: 0 };
+    reg.to = setTimeout(() => {
+      const t0 = performance.now();
+      const paso = (ahora) => {
+        const s = (ahora - t0) / 1000;
+        const segAF = Math.min(8.6, s * 3.2);
+        af.textContent = s * 3.2 >= 8.6 ? "<10 s" : segAF.toFixed(1) + " s";
+        const min = Math.min(240, Math.pow(Math.min(1, s / 4), 1.6) * 240);
+        hu.textContent = min >= 240 ? "4 h" : min >= 60 ? Math.floor(min / 60) + " h " + String(Math.floor(min % 60)).padStart(2, "0") + " min" : Math.floor(min) + " min";
+        if (s < 4.1) reg.raf = requestAnimationFrame(paso);
+      };
+      reg.raf = requestAnimationFrame(paso);
+    }, 1400);
+    timers.push(reg);
+  }
+
+  function arrancar(s) {
+    // Reinicia las animaciones CSS de la slide quitando y poniendo la clase
+    s.classList.remove("activa"); void s.offsetWidth; s.classList.add("activa");
+    s.querySelectorAll("[data-cuenta]").forEach(contar);
+    if (s.id === "s6") relojes();
+  }
+
+  function ir(n, forzar) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === actual && !forzar) return;
+    limpiar();
+    slides[actual].classList.remove("activa");
+    actual = n;
+    arrancar(slides[actual]);
+    document.getElementById("pag").textContent = `${actual + 1} / ${slides.length}`;
+    document.getElementById("barraProg").style.width = ((actual + 1) / slides.length) * 100 + "%";
+    try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
+  }
+
+  const inicial = /^#s(\d)$/.exec(location.hash);
+  actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
+  ir(actual, true);
+
+  document.getElementById("btnAnt").addEventListener("click", (e) => { e.stopPropagation(); ir(actual - 1); });
+  document.getElementById("btnSig").addEventListener("click", (e) => { e.stopPropagation(); ir(actual + 1); });
+  document.getElementById("btnRep").addEventListener("click", (e) => { e.stopPropagation(); ir(actual, true); });
+  const full = () => { const d = document.documentElement; (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(() => {}); };
+  document.getElementById("btnFull").addEventListener("click", (e) => { e.stopPropagation(); full(); });
+  document.getElementById("visor").addEventListener("click", (e) => { ir(e.clientX < window.innerWidth * 0.3 ? actual - 1 : actual + 1); });
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
+    else if (e.key === "Home") ir(0);
+    else if (e.key === "End") ir(slides.length - 1);
+    else if (e.key === "f" || e.key === "F") full();
+    else if (e.key === "r" || e.key === "R") ir(actual, true);
+  });
+  let x0 = null;
+  window.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(actual + (dx < 0 ? 1 : -1)); x0 = null; });
+
+  // Los controles se esconden solos mientras se presenta
+  const ctl = document.getElementById("controles"); let dormir;
+  const despertar = () => { ctl.classList.remove("dormido"); clearTimeout(dormir); dormir = setTimeout(() => ctl.classList.add("dormido"), 2600); };
+  window.addEventListener("mousemove", despertar); despertar();
+})();
+</script>
