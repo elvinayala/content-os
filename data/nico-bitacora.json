@@ -273,6 +273,14 @@
       "porque": "Reportes duplicados y contradictorios llevaron a Carilin a llamar a Paula, que no quería llamada.",
       "verificado": "tests 6/6; vista previa con el caso real de Paula = 1 reporte, ¿Quiere llamada?: No; n8n → Content OS 200 (poll {items:[]}); aviso de prueba llegó a la base (fila 1, apagada sin publicar); webhook del agente de onboarding vivo y el filtro evalúa sin error. FALTA ver el primer reporte real publicado y el primer mensaje real de un cliente pasando el filtro.",
       "commit": "9a1f0a6, 8b45e2a"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Content OS (Pulse/Ritmo/Leads)",
+      "que": "[Solicitud de Aure #112] Duda: ¿Yaileen da accesos de Pulse a los chicos o es el mismo usuario/clave de Ritmo? Respuesta (sin cambios de código): misma cuenta y clave; lo de closers/setters/chatters va aparte de Pulse: entran por /ventas (Leads) y el acceso a Leads lo dan Nahuel, Carilin, Aure o Elvin en Leads → Equipo. Yaileen solo abre \"También puede entrar a Pulse\" a quien es solo-Ritmo, y eso espera el OK de Elvin.",
+      "porque": "Aclarar el flujo de accesos del equipo de ventas (nota de Elvin: el link de Ritmo a closers es aparte de Pulse).",
+      "verificado": "Código: lib/leads/equipo.ts (manejaEquipoLeads/errorDarAcceso), lib/desempeno/cambios-reglas.ts (soloRitmo sensible), app/ritmo/activar (link &d=leads). Vivo: /ventas 200, ritmo.levelupmediapr.net/ritmo/entrar 200.",
+      "commit": "solo bitácora"
     }
   ],
   "pendientesElvin": [
@@ -314,5 +322,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-25T19:55:59.804Z"
+  "actualizadoEl": "2026-09-29T13:56:24.475Z"
 }
