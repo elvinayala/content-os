@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-29T00:16:37.520Z",
+  "actualizadoEl": "2026-09-29T01:37:18.448Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -11229,6 +11229,73 @@
       "estado": "nuevo",
       "formato": "motion 9:16 · 40 s · estilo neon",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-11-equipo-digital-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMTEtZXF1aXBvLWRpZ2l0YWwtOXgxNi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTk3LCJleHAiOjE4MjIxNzY5OTd9.mSGsQa-cIQHktuOuxe9l2hrYv9CSVe9ER4tj6kh1abLuUAT9DLPt5qlbqP8Qc9wCNd-3Qofh6QdrCZjvP0hFQw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-aib-presentacion-cliente",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Presentación AI Borinquen en video (para enviar al cliente antes de la llamada)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/aib-presentacion-cliente.mp4`.",
+      "angulo": "Pre-llamada: la demo de AI Borinquen + testimonio de Ernest Crisson",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T01:25:02.444Z",
+      "estado": "nuevo",
+      "formato": "presentación animada 16:9 · 62 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-presentacion-cliente.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItcHJlc2VudGFjaW9uLWNsaWVudGUubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDY0NTEwMiwiZXhwIjoxODIyMTgxMTAyfQ.sDiDQ52sHHvIyx6RSj3uTmjUAl3ZvCFLAli7doWV-4bPFTWRm8am1gDViq_qfplJ50NWICtvliRUbYL5gnM6Pw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "testimonio-aib-mano-santa",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Testimonio Mano Santa (corto, 52 s)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/testimonio-mano-santa.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T01:25:09.912Z",
+      "estado": "nuevo",
+      "formato": "testimonio 9:16 · 52 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/testimonio-mano-santa.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS90ZXN0aW1vbmlvLW1hbm8tc2FudGEubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDY0NTEwOSwiZXhwIjoxODIyMTgxMTA5fQ.mAnqDv-g8rwNyOLlP9OaEiDZEL63r2wylUr4mJ96rIr5Ybu7SSWRHNGqKXmvBwu67I14d8c0NIb5dBfGMNISdw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "testimonio-aib-sleekbrowspr",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Testimonio Sleekbrowspr (corto, 51 s)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/testimonio-sleekbrowspr.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T01:25:17.972Z",
+      "estado": "nuevo",
+      "formato": "testimonio 9:16 · 51 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/testimonio-sleekbrowspr.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS90ZXN0aW1vbmlvLXNsZWVrYnJvd3Nwci5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQ1MTE3LCJleHAiOjE4MjIxODExMTd9.T09f-OPv84eIeJT6IdkTDb-DIg_gimJTZ_r-ZrGKIWL1Vy2uzE6DXdIEVeyRbK16GZsq_FhvKxs9bCbRmvEqfw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "testimonio-aib-ernest-crisson",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Testimonio Ernest Crisson (Zoom, solo él, subtitulado, 48 s)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/testimonio-ernest-crisson.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T01:25:31.714Z",
+      "estado": "nuevo",
+      "formato": "testimonio 16:9 · 48 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/testimonio-ernest-crisson.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS90ZXN0aW1vbmlvLWVybmVzdC1jcmlzc29uLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA2NDUxMzEsImV4cCI6MTgyMjE4MTEzMX0.PgjN280MusTGqpTElZfSqf8la7dnApUcJzMRytVsoru0PZPby1A-CTB-z8NShuYZKlKsQ1u7CN_-DUSv3OnkkQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-aib-marketing-ia-cliente",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Presentación Marketing + IA en video (para enviar al cliente antes de la llamada)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/aib-marketing-ia-cliente.mp4`.",
+      "angulo": "Pre-llamada: Marketing + IA + testimonio de Ernest Crisson (resultados)",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T01:37:18.448Z",
+      "estado": "nuevo",
+      "formato": "presentación animada 16:9 · 54 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-marketing-ia-cliente.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItbWFya2V0aW5nLWlhLWNsaWVudGUubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDY0NTgzOCwiZXhwIjoxODIyMTgxODM4fQ.IVQaqf0l_KKqcHKcrxvpaWigJ43XfeUnZIzBmmDAECCqDLRfLIxiBWpukVvTaHw_fC-V_qT_QZnM1W7G959z0Q",
       "modelo": "remotion"
     }
   ]
