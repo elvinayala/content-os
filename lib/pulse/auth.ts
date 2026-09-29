@@ -10,6 +10,7 @@ import { desempenoPerfiles } from "../desempeno/schema";
 
 import { db } from "./db";
 import { pulseUsers } from "./schema";
+import { requiereSegundoPaso, tipoAccesoPulse, type TipoAcceso } from "./acceso-reglas";
 import { COOKIE_PULSE, verificarSesion } from "./session";
 import type { RolUsuario, UsuarioPulse } from "./types";
 
@@ -64,11 +65,33 @@ export const esSoloRitmo = cache(async (userId: string): Promise<boolean> => {
   }
 });
 
-/** Usuario de PULSE (bloquea a los que son solo de Ritmo). Ritmo usa `requiereCuenta`. */
+// Qué parte de Pulse le toca (28/sep): completo (tableros) · solo_leads (equipo de ventas) · solo_ritmo.
+export const tipoAcceso = cache(async (userId: string, rol: string): Promise<TipoAcceso> => {
+  if (rol === "admin" || rol === "editor") return "completo";
+  try {
+    const d = await db();
+    const [p] = await d.select({ puesto: desempenoPerfiles.puesto, soloRitmo: desempenoPerfiles.soloRitmo }).from(desempenoPerfiles).where(eq(desempenoPerfiles.userId, userId));
+    return tipoAccesoPulse(rol, p ?? null);
+  } catch {
+    return "completo";
+  }
+});
+
+/** Segundo candado de Pulse (28/sep, Elvin: "una doble capa para cualquier acceso"): todo el que ve tableros confirma
+ *  con el código de su app autenticadora; el navegador queda recordado 30 días (misma verificación que Ritmo). */
+export async function segundoPasoPendiente(u: UsuarioPulse): Promise<boolean> {
+  const modo = process.env.PULSE_2FA ?? (process.env.NODE_ENV === "production" ? "on" : "off");
+  if (!requiereSegundoPaso(await tipoAcceso(u.id, u.rol), modo)) return false;
+  const { dispositivoVerificado } = await import("../desempeno/dos-pasos");
+  return !(await dispositivoVerificado(u.id));
+}
+
+/** Usuario de PULSE (bloquea a los que son solo de Ritmo y exige el segundo paso). Ritmo usa `requiereCuenta`. */
 export async function requiereUsuario(): Promise<UsuarioPulse> {
   const u = await usuarioActual();
   if (!u) throw new Error("no-autorizado");
   if (u.rol === "miembro" && (await esSoloRitmo(u.id))) throw new Error("no-autorizado");
+  if (await segundoPasoPendiente(u)) throw new Error("Falta la verificación en dos pasos: recarga la página");
   return u;
 }
 
@@ -99,4 +122,11 @@ export async function requiereGestor(): Promise<UsuarioPulse> {
   const u = await requiereUsuario();
   if (u.rol !== "admin" && u.rol !== "editor") throw new Error("solo-admin");
   return u;
+}
+
+/** Para route handlers y actions que no pasan por el layout: la sesión SOLO vale con el segundo paso hecho. */
+export async function usuarioVerificado(): Promise<UsuarioPulse | null> {
+  const u = await usuarioActual();
+  if (!u) return null;
+  return (await segundoPasoPendiente(u)) ? null : u;
 }

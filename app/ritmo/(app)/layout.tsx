@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { NavRitmo } from "@/components/ritmo/nav";
@@ -5,6 +6,7 @@ import { vacantesNuevas } from "@/lib/desempeno/carreras";
 import { fichaPendiente, leerFicha } from "@/lib/desempeno/fichas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
+import { esSoloRitmo, tipoAcceso } from "@/lib/pulse/auth";
 import { veArena } from "@/lib/ventas/datos";
 
 export const dynamic = "force-dynamic";
@@ -20,9 +22,17 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   // Todo en paralelo (antes iba uno detrás del otro y cada pestaña esperaba la suma).
   const [ficha, pendientes, nuevas, arena] = await Promise.all([leerFicha(u.id).catch(() => null), pendientesDe(u).catch(() => 0), vacantesNuevas().catch(() => 0), veArena(u).catch(() => false)]);
   if (!maestro && fichaPendiente(ficha)) redirect("/ritmo/bienvenida");
+  // Botón para volver a Pulse (o a Leads, el equipo de ventas). En ritmo.levelupmediapr.net es otro dominio: link completo.
+  const pulse = await (async () => {
+    if (u.rol === "miembro" && (await esSoloRitmo(u.id))) return null;
+    const soloLeads = (await tipoAcceso(u.id, u.rol)) === "solo_leads";
+    const host = (await headers()).get("host") ?? "";
+    const base = host.startsWith("ritmo.") || host.startsWith("ritmo-") ? process.env.CONTENT_OS_URL || "https://content-os-chi-seven.vercel.app" : "";
+    return soloLeads ? { href: `${base}/pulse/leads`, nombre: "Leads" } : { href: `${base}/pulse`, nombre: "Pulse" };
+  })().catch(() => null);
   return (
     <>
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} pulse={pulse} />
       <main className="entrada mx-auto w-full max-w-5xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
       <footer className="estado-linea mx-auto hidden w-full max-w-5xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>

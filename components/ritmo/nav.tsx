@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Trophy, Building2, HeartPulse, IdCard, Inbox, LayoutGrid, LogOut, Settings2, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,7 +11,7 @@ import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, pulse = null }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; pulse?: { href: string; nombre: string } | null }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
@@ -53,6 +53,11 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
             </nav>
           ) : null}
           <span className="ml-auto" />
+          {pulse ? (
+            <a href={pulse.href} title={`Ir a ${pulse.nombre}`} className="hidden items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:text-foreground sm:flex">
+              <LayoutGrid className="size-3.5" /> {pulse.nombre}
+            </a>
+          ) : null}
           <RelojPR />
           <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", tabs.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>
           <form action={salirDeRitmoAction}>

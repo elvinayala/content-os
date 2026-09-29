@@ -1,5 +1,6 @@
-import { ArrowRight, ArrowUpRight, BookOpenCheck, CalendarCheck, CalendarClock, Clock, Crown, CreditCard, FileText, Kanban, Lock, MessageSquare, MoveRight, Plus, Sparkles, UserPlus } from "lucide-react";
+import { Activity, ArrowRight, ArrowUpRight, BookOpenCheck, CalendarCheck, CalendarClock, Clock, Crown, CreditCard, FileText, Kanban, Lock, MessageSquare, MoveRight, Plus, Sparkles, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { crearBoardAction } from "@/app/pulse/(app)/actions";
 import { BotonBuscar } from "@/components/pulse/boton-buscar";
@@ -13,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { puedeFormularios } from "@/lib/formularios/reglas";
 import { marcasConAcceso } from "@/lib/leads/repo";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { tipoAcceso, usuarioActual } from "@/lib/pulse/auth";
 import type { Pendiente, TipoPendiente } from "@/lib/pulse/mi-dia";
 import { pendientesDe } from "@/lib/pulse/mi-dia-datos";
 import { actividadReciente, boardsVisibles, listarBoards, numerosInicio, ultimosClientes, type EventoInicio } from "@/lib/pulse/repo";
@@ -50,6 +51,8 @@ const TIPOS: Record<TipoPendiente, { nombre: string; icono: typeof Clock; tono: 
 export default async function PulseInicio() {
   const usuario = await usuarioActual();
   if (!usuario) return null;
+  // El equipo de ventas entra directo a Leads: los tableros de clientes no son para ellos.
+  if ((await tipoAcceso(usuario.id, usuario.rol)) === "solo_leads") redirect("/pulse/leads");
   const visibles = [...(await boardsVisibles(usuario))];
   const [boards, dia, actividad, numeros, marcas, recientes] = await Promise.all([
     listarBoards(usuario),
@@ -111,7 +114,12 @@ export default async function PulseInicio() {
             </h1>
             <p className="mt-1.5 text-[15px] text-muted-foreground">Esto es lo que está pasando hoy en EA Market.</p>
           </div>
-          <BotonBuscar />
+          <div className="flex items-center gap-2">
+            <Link href="/ritmo" className="superficie superficie-hover flex h-11 shrink-0 items-center gap-2 px-4 text-sm font-medium whitespace-nowrap" title="Pasar a Ritmo con la misma sesión">
+              <Activity className="size-4 text-emerald-600" /> Ir a Ritmo
+            </Link>
+            <BotonBuscar />
+          </div>
         </section>
 
         {/* Números */}

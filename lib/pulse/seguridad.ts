@@ -81,7 +81,7 @@ export async function alertarElvin(clave: string, texto: string): Promise<void> 
 export async function prohibido(u: { id: string; email: string; nombre: string }, accion: string): Promise<never> {
   await registrarEvento({ tipo: "accion_bloqueada", email: u.email, userId: u.id, detalle: accion });
   await alertarElvin(`bloqueada:${u.id}:${accion}`, `${u.nombre} intentó ${accion} y se lo bloqueé.`);
-  throw new Error(`Tu rol no permite ${accion}. Si hace falta, pedíselo a Elvin.`);
+  throw new Error(`Tu rol no permite ${accion}. Si hace falta, pídeselo a Elvin.`);
 }
 
 // Muchas descargas de archivos en poco tiempo = posible extracción.
@@ -91,7 +91,7 @@ export async function vigilarDescargas(u: { id: string; nombre: string }): Promi
     .select({ n: sql<number>`count(*)` })
     .from(pulseSecurityLog)
     .where(sql`${pulseSecurityLog.tipo} = 'archivo_descargado' and ${pulseSecurityLog.userId} = ${u.id} and ${pulseSecurityLog.at} > now() - interval '10 minutes'`);
-  if (Number(n) >= 15) await alertarElvin(`descargas:${u.id}`, `${u.nombre} bajó ${n} archivos en los últimos 10 minutos. Revisalo en Actividad de seguridad.`);
+  if (Number(n) >= 15) await alertarElvin(`descargas:${u.id}`, `${u.nombre} bajó ${n} archivos en los últimos 10 minutos. Revísalo en Actividad de seguridad.`);
 }
 
 // Inicio de sesión de una editora/admin desde una IP que nunca usó.
@@ -107,7 +107,7 @@ export async function vigilarIpNueva(u: { id: string; email: string; nombre: str
   const [alguna] = await d.select({ id: pulseSecurityLog.id }).from(pulseSecurityLog).where(sql`${pulseSecurityLog.tipo} = 'login_ok' and ${pulseSecurityLog.userId} = ${u.id}`).limit(1);
   await registrarEvento({ tipo: "login_ip_nueva", email: u.email, userId: u.id, ip });
   // La primera vez que entra no es "nueva", es la primera.
-  if (alguna && u.rol === "editor") await alertarElvin(`ip:${u.id}:${ip}`, `${u.nombre} entró desde una conexión nueva (${ip}). Si no fue ella, cambiale la clave.`);
+  if (alguna && u.rol === "editor") await alertarElvin(`ip:${u.id}:${ip}`, `${u.nombre} entró desde una conexión nueva (${ip}). Si no fue ella, cámbiale la clave.`);
 }
 
 export async function leerEventos(limit = 60) {

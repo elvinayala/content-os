@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioVerificado as usuarioActual } from "@/lib/pulse/auth";
 import { boardDe, leerArchivo, puedeVerBoard } from "@/lib/pulse/repo";
 import { registrarEvento, vigilarDescargas } from "@/lib/pulse/seguridad";
 import { leerArchivoLocal, storageLocal, urlArchivo } from "@/lib/pulse/storage";

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/pulse/db";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioVerificado as usuarioActual } from "@/lib/pulse/auth";
 import {
   accesoLeads,
   actualizarTrato,

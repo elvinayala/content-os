@@ -101,6 +101,8 @@ export default async function proxy(request: NextRequest) {
   // Pulse (CRM, reemplazo de Monday): usuarios propios en Postgres (Jessica, Carly…).
   // Entra con cookie pulse válida o con la cookie CEO. La sesión de contenido NO entra.
   if (pathname === "/pulse/login") return NextResponse.next();
+  // Entrada del equipo de ventas (28/sep): login aparte que cae directo en Leads, sin pasar por los tableros.
+  if (pathname === "/ventas") return NextResponse.next();
   // Íconos de Pulse (favicon / apple-touch-icon): públicos, el navegador los pide sin cookie.
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
   // Formulario público de onboarding de Level Up (lo llena el cliente, sin login).

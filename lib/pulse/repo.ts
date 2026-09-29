@@ -63,6 +63,8 @@ function aBoard(b: typeof pulseBoards.$inferSelect): Board {
 export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
   const { esSoloRitmo } = await import("./auth");
   if (u.rol === "miembro" && (await esSoloRitmo(u.id))) return new Set(); // empleado solo de Ritmo: ningún tablero
+  const { tipoAcceso } = await import("./auth");
+  if ((await tipoAcceso(u.id, u.rol)) === "solo_leads") return new Set(); // equipo de ventas: solo Leads, nunca clientes
   const d = await db();
   const rows = await d.select({ id: pulseBoards.id, privado: pulseBoards.privado }).from(pulseBoards);
   const visibles = new Set(rows.filter((b) => !b.privado).map((b) => b.id));
@@ -77,8 +79,9 @@ export async function boardsVisibles(u: UsuarioPulse): Promise<Set<string>> {
 }
 
 export async function puedeVerBoard(u: UsuarioPulse, boardId: string): Promise<boolean> {
-  const { esSoloRitmo } = await import("./auth");
+  const { esSoloRitmo, tipoAcceso } = await import("./auth");
   if (u.rol === "miembro" && (await esSoloRitmo(u.id))) return false;
+  if ((await tipoAcceso(u.id, u.rol)) === "solo_leads") return false; // equipo de ventas: nunca tableros de clientes
   const d = await db();
   const [b] = await d.select({ privado: pulseBoards.privado }).from(pulseBoards).where(eq(pulseBoards.id, boardId));
   if (!b) return false;
@@ -584,7 +587,16 @@ export async function crearUsuario(p: { email: string; nombre: string; rol: RolU
     .insert(pulseUsers)
     .values({ email: p.email.toLowerCase().trim(), nombre: p.nombre, rol: p.rol, passwordHash: p.passwordHash, color: p.color ?? null })
     .returning();
+  await avisarCuentaFuera(u.email, u.nombre, "Pulse → Configuración");
   return aUsuario(u);
+}
+
+/** Cuenta nueva con un correo que no es de la empresa (gmail, etc.): puede ser legítima, pero Elvin se entera (28/sep). */
+export async function avisarCuentaFuera(email: string, nombre: string, donde: string): Promise<void> {
+  const { esCorreoEmpresa } = await import("./acceso-reglas");
+  if (esCorreoEmpresa(email)) return;
+  const { alertarElvin } = await import("./seguridad");
+  await alertarElvin(`cuenta-fuera:${email}`, `Se creó una cuenta con un correo que no es de la empresa: ${nombre} (${email}), desde ${donde}. Si no la reconoces, desactívala.`).catch(() => {});
 }
 
 export async function actualizarUsuario(id: string, patch: { nombre?: string; rol?: RolUsuario; activo?: boolean; passwordHash?: string; color?: ColorPulse }): Promise<void> {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArchiveRestore, ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { Activity, ArchiveRestore, ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { IconoTablero } from "@/components/pulse/icono-tablero";
@@ -30,11 +30,13 @@ export function PulseSidebar({
   usuario,
   tieneLeads = false,
   tieneFormularios = false,
+  soloLeads = false,
 }: {
   boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items" | "privado">[];
   usuario: UsuarioPulse;
   tieneLeads?: boolean;
   tieneFormularios?: boolean;
+  soloLeads?: boolean; // equipo de ventas: solo Leads (y Formularios si los tiene), nunca tableros de clientes
 }) {
   const pathname = usePathname();
   return (
@@ -51,6 +53,7 @@ export function PulseSidebar({
       </SidebarHeader>
 
       <SidebarContent>
+        {!soloLeads ? (
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -86,6 +89,7 @@ export function PulseSidebar({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
+        ) : null}
         {tieneLeads || tieneFormularios ? (
         <SidebarGroup>
           <SidebarGroupLabel>Ventas</SidebarGroupLabel>
@@ -113,6 +117,20 @@ export function PulseSidebar({
           </SidebarMenu>
         </SidebarGroup>
         ) : null}
+        {/* Pasar a Ritmo con la misma sesión (Elvin, 28/sep: "con un botón pasar de Pulse a Ritmo"). */}
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Ir a Ritmo">
+                <Link href="/ritmo">
+                  <Activity className="text-emerald-600" />
+                  <span>Ir a Ritmo</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        {!soloLeads ? (
         <SidebarGroup>
           <SidebarGroupLabel>Tableros</SidebarGroupLabel>
           <SidebarMenu>
@@ -133,6 +151,7 @@ export function PulseSidebar({
             })}
           </SidebarMenu>
         </SidebarGroup>
+        ) : null}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border">

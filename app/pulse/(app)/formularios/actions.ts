@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { archivarFormulario, borrarRespuesta, crearFormulario, formularioPorId, guardarFormulario } from "@/lib/formularios/repo";
 import { ACCIONES, type Apariencia, type ConfigFormulario, MARCAS_FORM, problemaConfig, TEMAS } from "@/lib/formularios/reglas";
 import { puedeFormularios } from "@/lib/formularios/reglas";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioVerificado as usuarioActual } from "@/lib/pulse/auth";
 
 type Res = { ok: boolean; error?: string; id?: string; slug?: string };
 

@@ -1077,6 +1077,17 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
     restaurar <fuente> [--tabla a,b] [--real]` (fuente = ruta · `supabase:<día>` · `blob:<día>`); solo inserta lo que falta
     por la llave de cada tabla, nunca pisa. Probado de punta a punta el 27/sep. **Sin `RESPALDO_CLAVE` los respaldos no
     se abren**: está en `.env.local` y en Vercel (Production); Elvin debe guardarla también en su gestor de claves.
+- **Doble capa y accesos separados** (28/sep, Elvin: "proteger Pulse… nunca mezclar datos, nunca mezclar accesos"; puro en
+  `lib/pulse/acceso-reglas.ts` + tests `tests/pulse-acceso.test.mjs`): `tipoAcceso` = **completo** (dirección y operaciones: ven
+  tableros) · **solo_leads** (perfil de Ritmo closer/setter/chatter/director_ventas: solo Leads y Formularios si los tiene; sin
+  tableros en `boardsVisibles`/`puedeVerBoard`, Inicio → /pulse/leads, barra recortada) · **solo_ritmo**. Todo el que es
+  *completo* confirma con el **código de su app autenticadora** (`/pulse/verificar`, la MISMA verificación de Ritmo:
+  `desempeno_dos_pasos` + cookie `ritmo-2fa` 30 días): lo exige el layout, `requiereUsuario()` y `usuarioVerificado()` (route
+  handlers de archivos/CSV/exportar y actions de Leads/Formularios). `PULSE_2FA=off` lo apaga (en dev viene apagado; en prod,
+  encendido). Alertas a Elvin (`alertarElvin`): intento con correo sin cuenta, cuenta vetada o desactivada, bloqueo por 5 claves
+  malas, y cuenta nueva con correo fuera de la empresa (`avisarCuentaFuera`, en Pulse y en el alta de Ritmo). **Entrada del equipo
+  de ventas: `/ventas`** (pública en proxy; mismas cuentas, cae en /pulse/leads). Botón **Ir a Ritmo** en el Inicio y la barra de
+  Pulse (misma sesión) y **Pulse/Leads** en el encabezado de Ritmo.
 - **Seed** de prueba: `npm run db:seed` (admin + Jessica + Carilin, clave `pulse-dev` sin env,
   tablero Demo). Env: ver bloque Pulse en `.env.example`.
 

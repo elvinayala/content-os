@@ -24,7 +24,10 @@ export async function altaEmpleado(
   if (u && u.rol !== "miembro") throw new Error("Ese correo es de un admin o editora");
   if (u?.passwordHash) throw new Error("Ese correo ya tiene cuenta con clave: créale el perfil en Ajustes");
   if (u && (await perfilDe(u.id))) throw new Error("Esa persona ya está en Ritmo: búscala en Ajustes");
-  if (!u) [u] = await d.insert(pulseUsers).values({ email, nombre: p.nombre.trim(), rol: "miembro" }).returning();
+  if (!u) {
+    [u] = await d.insert(pulseUsers).values({ email, nombre: p.nombre.trim(), rol: "miembro" }).returning();
+    await (await import("../pulse/repo")).avisarCuentaFuera(email, p.nombre.trim(), "Ritmo → alta de empleado");
+  }
   else await d.update(pulseUsers).set({ activo: true, nombre: p.nombre.trim() }).where(eq(pulseUsers.id, u.id));
   const slackId = await buscarSlackPorNombre(p.nombre).catch(() => null);
   await guardarPerfil({ userId: u.id, slackId, soloRitmo: true, puesto: p.puesto, empresa: p.empresa, liderId: p.liderId, horaEntrada: "09:00", horaSalida: "18:00", diasLaborables: [1, 2, 3, 4, 5], tipoContrato: "contratista", fechaIngreso: p.fechaIngreso, activo: true }, actorId);

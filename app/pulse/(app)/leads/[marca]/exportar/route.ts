@@ -4,7 +4,7 @@ import { anotarFilas, tomarDescarga } from "@/lib/leads/exportaciones";
 import { csvLeads, describirFiltro, modoExportar, nombreArchivo, type FiltroExport } from "@/lib/leads/exportar";
 import { MARCAS, slugDeMarca } from "@/lib/leads/reglas";
 import { accesoLeads, listarEmbudos, tratosParaExportar } from "@/lib/leads/repo";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioVerificado as usuarioActual } from "@/lib/pulse/auth";
 import { registrarEvento } from "@/lib/pulse/seguridad";
 
 export const dynamic = "force-dynamic";

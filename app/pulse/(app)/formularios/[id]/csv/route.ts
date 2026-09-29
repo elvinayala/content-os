@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { formularioPorId, respuestasDe } from "@/lib/formularios/repo";
 import { celdaCsv, puedeFormularios, slugDe, texto } from "@/lib/formularios/reglas";
-import { usuarioActual } from "@/lib/pulse/auth";
+import { usuarioVerificado as usuarioActual } from "@/lib/pulse/auth";
 
 export const dynamic = "force-dynamic";
 
