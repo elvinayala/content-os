@@ -17,3 +17,5 @@ Se le mandó a Aure por Slack: mañana temprano reúne a los closers y les prese
 "7 días"), respuesta **en menos de 10 s**. Fuentes y cómo republicar en `demos/decks/{ai-borinquen-demo,marketing-ia-demo,
 kit-ventas-aib}/LEEME.md`. Grabador: `motion/scripts/grabar-deck.mjs`. Ver [[aib-autoflow-plazos]], [[remi-motion]],
 [[aib-acceso-aure]].
+
+**Versión Level Up (29/sep):** la misma demo de agentes con la marca de LU (negro + oro, Sora, cohete) para upsell a clientes de LU: https://lu-kit-agentes.netlify.app (artifact https://claude.ai/artifact/HPjKTE5zQPMs3wwax5cCUc). Elvin: "Level Up y Borinquen es el mismo dueño y el mismo producto". Fuente en `demos/decks/level-up-agentes-demo/`.
