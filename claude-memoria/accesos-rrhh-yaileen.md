@@ -19,3 +19,5 @@ costumbre.
 puede generar links de acceso (para quien no tiene clave) y abrirle Pulse a alguien en Ritmo → Ajustes (esto último espera
 el OK de Elvin, ver [[ritmo-desempeno]]). Darle acceso a Leads al equipo de ventas lo hace Nahuel en Leads → Equipo
 ([[leads-crm]]).
+
+29/sep: Yaileen hace cambios menores sola en Ritmo → Ajustes (crear puestos, corregir nombres, horario, links, altas); lo sensible espera a Elvin solo. Se le explicó por DM: a Nico solo errores o algo importante.
