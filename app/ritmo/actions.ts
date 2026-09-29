@@ -552,6 +552,8 @@ export async function completarFichaAction(p: { telefono: string; telefonoAltern
     const d = { telefono: t(p.telefono, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60) };
     const falta = Object.entries(d).find(([, v]) => !v);
     if (falta) throw new Error("Completa todos los campos obligatorios");
+    if (!t(p.contactoEmergencia, 160)) throw new Error("Pon tu contacto de emergencia (nombre, parentesco y teléfono)");
+    if (!(await fichas.leerFicha(u.id))?.fotoPath) throw new Error("Sube tu foto");
     if (!(await fichas.contarArchivos(u.id, "identificacion"))) throw new Error("Sube una foto de tu identificación");
     await fichas.completarFichaPropia(u.id, { ...d, telefonoAlterno: t(p.telefonoAlterno, 40) || null, contactoEmergencia: t(p.contactoEmergencia, 160) || null });
     return {};

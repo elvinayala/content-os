@@ -269,6 +269,22 @@ ideas van a `vault/ideas/`.
   Sofi hacen pull primero. El plist de la Mac (`scripts/launchd/`) queda como respaldo, descargado.
   Pasos de BotFather: `vault/proyectos/estudio/telegram-botfather-pasos.md`.
 
+## Sistema Operador — el high ticket de pago único (28/sep/2026)
+
+Elvin: "quiero vender mi sistema como si fuera una franquicia… que algún consejo de cualquiera de esos
+sistemas le pueda cambiar el negocio". Los 6 sistemas de EA Market (marketing, IA, operaciones, ventas,
+reclutamiento, entrenamiento) sobre los 4 Fundamentos, instalados done-with-you en 90 días, para dueños
+digitales que ya facturan $10K+/mes. **Borrador pendiente del OK de Elvin**: $15,000 pago único, 10
+fundadores a $9,997 con caso documentado, garantía de implementación (no de ingresos), solo por
+aplicación. Es el escalón de arriba de Shadow (no es empresa nueva; preventa nov–dic, cohorte en ene).
+Todo en `vault/proyectos/sistema-operador/`: `oferta.md`, `curriculo.md` (cada sistema con su palanca,
+diagnóstico, módulos y fuente interna, que **nunca se entrega tal cual**), `diagnostico-6-sistemas.md`
+(30 preguntas, también lead magnet) y `kit-venta/guion-closer.md`. Presentación de 12 slides:
+`node scripts/sistema-operador/deck.mjs` → `kit-venta/sistema-operador.pptx` (paleta de Shadow; slide 7
+se llena en vivo). Página de venta estática `demos/sistema-operador/index.html` (sin precio; preview
+`sistema-operador`, puerto 8796; subir a Netlify solo con OK). Aplicación `/f/aplicar-sistema`: semilla
+en `lib/formularios/semillas.ts`, **nace cerrada**, guarda parciales, acción "ninguna".
+
 ## ISLA Run Series (piloto, 23/sep/2026)
 
 Marca premium de carreras por municipio, con socios; 1.ª edición **ISLA Cabo Rojo 5K** (dom 13/dic/2026,
@@ -698,6 +714,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   espera. Elvin aprueba/rechaza en Ajustes → **Por aprobar** (se aplica sobre cómo está HOY la persona) y quien lo pidió recibe
   el aviso por Slack. Elvin (admin) aplica directo. El alta de empleado nuevo sigue directa. Puesto nuevo **Tesorera**
   (`tesoreria`, Finanzas: María García); Ajustes ya no arranca en "estratega" (así quedó mal María).
+- **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
+  `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
+  emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para
+  nuevos: sirve para "completa lo que falta" (pre-llenado con lo que había); ahora exige foto y contacto de emergencia. Se le
+  creó ficha vacía a todo perfil activo que no tenía (12 personas, 28/sep) → al entrar, Ritmo los lleva a completarla.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

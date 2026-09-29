@@ -9,6 +9,7 @@ import { MiMarcador } from "@/components/ritmo/arena-marcador";
 import { Ponche } from "@/components/ritmo/ponche";
 import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
+import { faltantesFicha, listaHumana } from "@/lib/desempeno/ficha-completa";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
 import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
@@ -42,6 +43,8 @@ export default async function HoyPage() {
   const yo = panel?.filas.find((f) => f.perfil.userId === u.id);
   const oculto = modoScore(u.rol) === "oculto";
   const ficha = await fichaCompleta(u.id).catch(() => null);
+  // Elvin, 28/sep: "todo el mundo debe tener todos los datos llenos, incluyendo fotos".
+  const faltan = ficha && !direccion ? faltantesFicha(ficha.ficha, { identificacion: ficha.archivos.filter((a) => a.categoria === "identificacion").length, contrato: ficha.archivos.filter((a) => a.categoria === "contrato").length }) : [];
   const vac = ficha?.saldos?.puedeSolicitar && ficha.saldos.vacaciones.disponibles >= 1 ? ficha.saldos.vacaciones.disponibles : null;
   const noticias = await listarNoticias(3).catch(() => []);
   const semanaB = semanaDe(hoyBienestar());
@@ -59,6 +62,12 @@ export default async function HoyPage() {
           {saludo()}, <span className="texto-ritmo">{u.nombre.split(" ")[0]}</span>
         </h1>
       </div>
+
+      {faltan.length ? (
+        <Link href="/ritmo/bienvenida" className="w-full max-w-md rounded-2xl border border-amber-300/50 bg-amber-300/10 px-4 py-3 text-center text-sm">
+          📋 <b>Completa tu ficha hoy.</b> Te falta: <b>{listaHumana(faltan)}</b>. Toca aquí para llenarla.
+        </Link>
+      ) : null}
 
       {vac ? (
         <Link href={`/ritmo/personas/${u.id}`} className="w-full max-w-md rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-center text-sm">

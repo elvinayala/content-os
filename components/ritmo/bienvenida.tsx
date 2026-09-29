@@ -25,9 +25,12 @@ function Campo({ label, obligatorio, children, className }: { label: string; obl
 }
 
 // Bienvenida del empleado nuevo: llena su ficha (obligatorio antes de usar Ritmo).
-export function FormBienvenida({ userId, tieneFoto, ids, contratos }: { userId: string; tieneFoto: boolean; ids: number; contratos: number }) {
+type Datos = { telefono: string; telefonoAlterno: string; ciudad: string; pais: string; documentoTipo: string; documentoNumero: string; contactoEmergencia: string };
+
+// También sirve para "completa lo que falta" (28/sep): arranca con lo que la persona ya tenía.
+export function FormBienvenida({ userId, tieneFoto, ids, contratos, inicial }: { userId: string; tieneFoto: boolean; ids: number; contratos: number; inicial?: Partial<Datos> }) {
   const router = useRouter();
-  const [v, setV] = useState({ telefono: "", telefonoAlterno: "", ciudad: "", pais: "", documentoTipo: "Cédula", documentoNumero: "", contactoEmergencia: "" });
+  const [v, setV] = useState<Datos>({ telefono: "", telefonoAlterno: "", ciudad: "", pais: "", documentoTipo: "Cédula", documentoNumero: "", contactoEmergencia: "", ...Object.fromEntries(Object.entries(inicial ?? {}).filter(([, x]) => x)) });
   const [cargando, setCargando] = useState(false);
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) => setV((x) => ({ ...x, [k]: e.target.value }));
   const terminar = async () => {
@@ -57,7 +60,7 @@ export function FormBienvenida({ userId, tieneFoto, ids, contratos }: { userId: 
           <Campo label="País" obligatorio><Input className="h-11" value={v.pais} onChange={set("pais")} /></Campo>
           <Campo label="Tipo de documento" obligatorio><Input className="h-11" value={v.documentoTipo} onChange={set("documentoTipo")} placeholder="Cédula, pasaporte…" /></Campo>
           <Campo label="Número de documento" obligatorio><Input className="h-11" value={v.documentoNumero} onChange={set("documentoNumero")} /></Campo>
-          <Campo label="Contacto de emergencia" className="sm:col-span-2"><Input className="h-11" value={v.contactoEmergencia} onChange={set("contactoEmergencia")} placeholder="Nombre, parentesco y teléfono" /></Campo>
+          <Campo label="Contacto de emergencia" obligatorio className="sm:col-span-2"><Input className="h-11" value={v.contactoEmergencia} onChange={set("contactoEmergencia")} placeholder="Nombre, parentesco y teléfono" /></Campo>
         </div>
       </section>
       <section className={paso}>
