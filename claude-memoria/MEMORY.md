@@ -82,3 +82,4 @@
 - [Resumen del día por Telegram](resumen-dia-telegram.md) — 8:30 PM llamadas + ventas; falta que Elvin publique ventas-hoy.gs
 - [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
 - [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 28/sep: en marcha en 15 días + optimización día 16–45 (+ soporte para siempre); ya no "7 días"; el "21 días" no es real
+- [Gasto de IA — qué modelo para qué](gasto-ia-modelos.md) — Opus solo diseño/desarrollo/planeación; lo breve a Sonnet/Haiku (nico-gasto.mjs, max-gasto.mjs); costo por agente en /ritmo/agentes
