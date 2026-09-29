@@ -2,6 +2,7 @@
  * El cerebro: recibe un mensaje (texto + adjuntos) de un contacto por cualquier canal,
  * corre el bucle de herramientas con Claude y devuelve los textos a enviar.
  */
+import { pideLlamada, avisarLlamarCliente, esReclutamiento } from "./ventas.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { archivar } from "./historial.js";
 import { config } from "./config.js";
@@ -48,6 +49,7 @@ export async function responder(contacto: Contacto, entrada: Entrada): Promise<s
   if (!entrada.reintento) archivar(contacto.id, "cliente", [entrada.texto, entrada.adjuntos?.length ? `[${entrada.adjuntos.length} adjunto(s)]` : ""].filter(Boolean).join(" "));
   const tel = !contacto.telefono && telefonoEnTexto(entrada.texto);
   if (tel) { contacto = { ...contacto, telefono: tel }; almacen.guardarContacto(contacto); }
+  if (!entrada.reintento && pideLlamada(entrada.texto) && contacto.telefono && !esReclutamiento(contacto)) void avisarLlamarCliente(contacto, entrada.texto ?? "").catch(console.error);
   if (contacto.humano) return []; // un humano está atendiendo; el agente calla
 
   const conv = almacen.conversacion(contacto.id);

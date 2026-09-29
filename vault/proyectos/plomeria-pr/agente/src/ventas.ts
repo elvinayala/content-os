@@ -14,6 +14,7 @@ import { config } from "./config.js";
 import { RAIZ, almacen } from "./almacen.js";
 import { leerHistorial } from "./historial.js";
 import { avisarCoordinador } from "./canales/whatsapp.js";
+import { dmSlack } from "./integraciones/slack.js";
 
 const ARCH = path.join(RAIZ, "data", "estado", "ventas-telegram.json");
 const leerEstado = (): { chatId?: string; titulo?: string; conectado?: string; offset?: number } => { try { return JSON.parse(fs.readFileSync(ARCH, "utf8")); } catch { return {}; } };
@@ -84,4 +85,22 @@ export async function buscarGrupoVentas() {
     console.log("Telegram ventas conectado:", chat.title, chat.id);
     return;
   }
+}
+
+// ── "Llámame": el cliente deja su número y pide que lo llamen (29/sep, Elvin: "pásale una notificación a la setter para
+// que lo llame"). Sale al grupo de Ventas de Telegram (sin grupo → a Elvin) y a Aure por Slack, que se lo pasa a Heileen.
+// Una vez por cliente cada 6 h.
+/** ¿Pide que lo llamen? Pura (tests). */
+export function pideLlamada(texto = ""): boolean {
+  return /(\bll[aá]m(a|e|en)\s+(al|a este|a mi)\b|\bll[aá]m(ame|eme|enme|arme)\b|\bme (pueden|puedes|podr[ií]an) llamar|\bme llaman\b|\bdame una llamada|\bcall me\b)/i.test(texto);
+}
+const ultimaLlamada = new Map<string, number>();
+export async function avisarLlamarCliente(c: { id: string; nombre?: string; telefono?: string; municipio?: string }, texto: string) {
+  if (!c.telefono || Date.now() - (ultimaLlamada.get(c.id) ?? 0) < 6 * 3600_000) return;
+  ultimaLlamada.set(c.id, Date.now());
+  const tel = c.telefono.replace(/\D/g, "").slice(-10).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+  const msg = `📞 LLÁMALO YA: ${c.nombre ?? "Cliente"} · ${tel}${c.municipio ? " · " + c.municipio : ""}\nEscribió: "${texto.replace(/\s+/g, " ").slice(0, 200)}"\nConversación: ${linkCliente(c.id)}`;
+  await avisarVentas(msg);
+  const aure = process.env.SLACK_AVISO_SETTER ?? "U08HA9QCJBG";
+  await dmSlack(aure, `Aure, para Heileen (Resuelto) — un cliente pidió que lo llamen:\n${msg}`).catch(console.error);
 }
