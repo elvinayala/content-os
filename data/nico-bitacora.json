@@ -337,6 +337,14 @@
       "porque": "Confirmación de Carilin del acceso de Daisy.",
       "verificado": "Base de Pulse: Daisy Buendia · estratega · level_up · activa en Ritmo · solo_ritmo=false.",
       "commit": "solo bitácora"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Ritmo/Pulse (content-os)",
+      "que": "[Solicitud de Carilin #124] Slack de Daisy Buendia (U09MAUPKPEG). Su perfil de Ritmo YA tenía ese slack_id guardado (no hubo que tocar la base). Como respaldo lo agregué a CONOCIDOS en lib/pulse/slack-dm.ts, que usan los avisos que buscan por correo (el bot no tiene users:read.email).",
+      "porque": "Que a Daisy le lleguen los avisos del bot de Ritmo/Pulse.",
+      "verificado": "Base: desempeno_perfiles.slack_id = U09MAUPKPEG, sin otra persona con ese ID. Slack users.info: Daisy Buendia, activa, no bot. npm test 268/0. Deploy content-ddkd2ia2h ya en ritmo.levelupmediapr.net; Ritmo, Pulse y Content OS responden 200.",
+      "commit": "Slack: Daisy Buendia en los IDs conocidos del bot"
     }
   ],
   "pendientesElvin": [
@@ -378,5 +386,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T20:41:57.365Z"
+  "actualizadoEl": "2026-09-29T20:49:00.524Z"
 }
