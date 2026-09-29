@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-27T21:33:45.669Z",
+  "actualizadoEl": "2026-09-29T00:16:37.520Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -11022,34 +11022,6 @@
       "modelo": "remotion"
     },
     {
-      "id": "motion-remi-aib-02-se-le-escapan",
-      "tipo": "anuncio",
-      "marca": "ai-borinquen",
-      "titulo": "Su problema no es que le falten clientes: se le están escapando (16:9)",
-      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: listo en 7 días + 45 días de acompañamiento. Archivo: motion/out/fabrica/aib-02-se-le-escapan.mp4.",
-      "angulo": "Velocidad = dinero",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T21:31:44.639Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 20 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-02-se-le-escapan.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItMDItc2UtbGUtZXNjYXBhbi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNTQ0NzA0LCJleHAiOjE4MjIwODA3MDR9.S2GaR9qKhMdDRPNiSRo0aZX-g1Cy85JL21gPQT1OqVqxnaOkWs0o8_gaN5xRiy84cdOdckM_FwqEjquZPr3Lag",
-      "modelo": "remotion"
-    },
-    {
-      "id": "motion-remi-aib-03-empleado-digital",
-      "tipo": "anuncio",
-      "marca": "ai-borinquen",
-      "titulo": "No vendemos un chatbot: instalamos un empleado digital (16:9)",
-      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: listo en 7 días + 45 días de acompañamiento. Archivo: motion/out/fabrica/aib-03-empleado-digital.mp4.",
-      "angulo": "Agentes a la medida",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T21:31:54.145Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 25 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-03-empleado-digital.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItMDMtZW1wbGVhZG8tZGlnaXRhbC5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNTQ0NzE0LCJleHAiOjE4MjIwODA3MTR9.aFiSwDCpoJRJTvydJ8H-_Bw7AnrJ91HTDtobBF1n_CrWac7IZaKyWLM59XTbZJorr92-oqJh208XA_CMwGKF5Q",
-      "modelo": "remotion"
-    },
-    {
       "id": "motion-remi-aib-04-una-sola-cosa",
       "tipo": "anuncio",
       "marca": "ai-borinquen",
@@ -11075,20 +11047,6 @@
       "estado": "nuevo",
       "formato": "motion 16:9 · 20 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-05-suena-robotico.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItMDUtc3VlbmEtcm9ib3RpY28ubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDU0NDcyOCwiZXhwIjoxODIyMDgwNzI4fQ.J4YWtAb3fD4vnUpTfvmN79cCBezH4bEjAfe22HOZOBXk-iN98UQ3FnpN-oWulfyc4Vr8fyCPAxMMiZMQCQ5WfQ",
-      "modelo": "remotion"
-    },
-    {
-      "id": "motion-remi-aib-06-autoflow-lanzamiento-16x9",
-      "tipo": "anuncio",
-      "marca": "ai-borinquen",
-      "titulo": "Presentamos AutoFlow: toda su atención al cliente, en automático (16:9)",
-      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: listo en 7 días + 45 días de acompañamiento. Archivo: motion/out/fabrica/aib-06-autoflow-lanzamiento-16x9.mp4.",
-      "angulo": "Lanzamiento AutoFlow · todos los canales",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T21:32:18.459Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-06-autoflow-lanzamiento-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItMDYtYXV0b2Zsb3ctbGFuemFtaWVudG8tMTZ4OS5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNTQ0NzM4LCJleHAiOjE4MjIwODA3Mzh9.4FtQ7vJJXQ2blK6eghiUoBYigpcTMRBj5UIKQe_rvnQi59n5BFjb8k2nus1Lbbp9njeWxypA6zmI51K_gRhw9A",
       "modelo": "remotion"
     },
     {
@@ -11176,20 +11134,6 @@
       "modelo": "remotion"
     },
     {
-      "id": "motion-remi-aib-13-no-desaparecemos-16x9",
-      "tipo": "anuncio",
-      "marca": "ai-borinquen",
-      "titulo": "No le entregamos una herramienta y desaparecemos (16:9)",
-      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: listo en 7 días + 45 días de acompañamiento. Archivo: motion/out/fabrica/aib-13-no-desaparecemos-16x9.mp4.",
-      "angulo": "Miedo a comprar algo que nadie sabe usar (caso Milton)",
-      "agente": "Remi",
-      "creadoEl": "2026-09-27T21:33:38.111Z",
-      "estado": "nuevo",
-      "formato": "motion 16:9 · 30 s",
-      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-13-no-desaparecemos-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItMTMtbm8tZGVzYXBhcmVjZW1vcy0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA1NDQ4MTgsImV4cCI6MTgyMjA4MDgxOH0.Gv87zjM2D3_Ax8Jf57neCiwVSu9w2-fntchieBGpdfJdHH9YK3dD-vzJhWU3SJ7LslOTgOioqSg69j1Vi81teQ",
-      "modelo": "remotion"
-    },
-    {
       "id": "motion-remi-aib-recepcionista-anuncio",
       "tipo": "anuncio",
       "marca": "ai-borinquen",
@@ -11201,6 +11145,90 @@
       "estado": "nuevo",
       "formato": "motion 16:9 · 15 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-27/aib-recepcionista-anuncio-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yNy9haWItcmVjZXBjaW9uaXN0YS1hbnVuY2lvLTE2eDkubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDU0NDgyNSwiZXhwIjoxODIyMDgwODI1fQ.beAR9quk7caEdjtJ2I6HQPQrawsO1XmtxkNrjr2IMJOtw-jFPJ4gh0g_TUVNWtJ0tFsk0_ZZv4wNTczi7uyvKg",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-02-se-le-escapan",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Su problema no es que le falten clientes: se le están escapando (16:9)",
+      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: en marcha en 15 días + optimización del día 16 al 45 (regla de Elvin, 28/sep). Archivo: motion/out/fabrica/aib-02-se-le-escapan.mp4.",
+      "angulo": "Velocidad = dinero",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:15:40.784Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 20 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-02-se-le-escapan.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMDItc2UtbGUtZXNjYXBhbi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTQwLCJleHAiOjE4MjIxNzY5NDB9.tjQO6sXAS7ZvLG8Qbo6exZQ2JcoUYU9o3Xwa96tRScpcJLQxx1HsJwTEXLecICPE7WQMJC0CGeass1oVD9H57w",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-03-empleado-digital",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "No vendemos un chatbot: instalamos un empleado digital (16:9)",
+      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: en marcha en 15 días + optimización del día 16 al 45 (regla de Elvin, 28/sep). Archivo: motion/out/fabrica/aib-03-empleado-digital.mp4.",
+      "angulo": "Agentes a la medida",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:15:48.160Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 25 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-03-empleado-digital.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMDMtZW1wbGVhZG8tZGlnaXRhbC5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTQ4LCJleHAiOjE4MjIxNzY5NDh9.r9kQtimqpa1V2w0qfxNdAmzEpMJx_6TtNUic9788Z-smWCQaSZSquWZxmKAGUvVI1y4jnzTexfoDm0NwJpDXSw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-06-autoflow-lanzamiento-16x9",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Presentamos AutoFlow: toda su atención al cliente, en automático (16:9)",
+      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: en marcha en 15 días + optimización del día 16 al 45 (regla de Elvin, 28/sep). Archivo: motion/out/fabrica/aib-06-autoflow-lanzamiento-16x9.mp4.",
+      "angulo": "Lanzamiento AutoFlow · todos los canales",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:15:58.893Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 30 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-06-autoflow-lanzamiento-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMDYtYXV0b2Zsb3ctbGFuemFtaWVudG8tMTZ4OS5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTU4LCJleHAiOjE4MjIxNzY5NTh9.ToyBCjfPD2w5VS7Acf4R8nncMKu2_ud3Htf5XpaF5L-NviGO84AUGSOaVzZumCtveD5DMjdi_nER6WcCQefPGw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-13-no-desaparecemos-16x9",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "No le entregamos una herramienta y desaparecemos (16:9)",
+      "contenido": "AI Borinquen solo horizontal (Elvin, 27/sep). Coquí \"Hollywood\" (salta, aterriza, brinca) y plazos reales de AutoFlow: en marcha en 15 días + optimización del día 16 al 45 (regla de Elvin, 28/sep). Archivo: motion/out/fabrica/aib-13-no-desaparecemos-16x9.mp4.",
+      "angulo": "Miedo a comprar algo que nadie sabe usar (caso Milton)",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:16:09.905Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 30 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-13-no-desaparecemos-16x9.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMTMtbm8tZGVzYXBhcmVjZW1vcy0xNng5Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTA2NDA5NjksImV4cCI6MTgyMjE3Njk2OX0.wWZBMBopMdIGDedHkV16uMxhPeSA0AaPvYnXq8BTlFVmaMg6p-KZLJLSaCvba9YFOi4dKAMTo2iPdcM7XhNDnQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-10-autoflow-por-dentro",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "Así funciona AutoFlow por dentro (y los agentes a la medida)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/aib-10-autoflow-por-dentro.mp4`. Actualizado 28/sep: plazos de AutoFlow = en marcha en 15 días + optimización del día 16 al 45 + soporte para siempre, si lo quiere.",
+      "angulo": "Producto por dentro · AutoFlow + agentes personalizados + agente personal",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:16:22.141Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 40 s · estilo tecno",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-10-autoflow-por-dentro.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMTAtYXV0b2Zsb3ctcG9yLWRlbnRyby5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTgyLCJleHAiOjE4MjIxNzY5ODJ9.022WDFW3c3igxvwaAwRcxqAoXn2-ZnQIuiEIwlGp8OgpJUSxkfOR3IM8KlwZ8k3CYQZ1aR1O-1KVUHig9PTHpA",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-aib-11-equipo-digital",
+      "tipo": "anuncio",
+      "marca": "ai-borinquen",
+      "titulo": "No es solo AutoFlow: su equipo digital (Recepcionista AI, ventas, cobros, agente personal)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/aib-11-equipo-digital-9x16.mp4`. Actualizado 28/sep: plazos de AutoFlow = en marcha en 15 días + optimización del día 16 al 45 + soporte para siempre, si lo quiere.",
+      "angulo": "Portafolio de agentes · no es solo AutoFlow",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T00:16:37.520Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 40 s · estilo neon",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-11-equipo-digital-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItMTEtZXF1aXBvLWRpZ2l0YWwtOXgxNi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwNjQwOTk3LCJleHAiOjE4MjIxNzY5OTd9.mSGsQa-cIQHktuOuxe9l2hrYv9CSVe9ER4tj6kh1abLuUAT9DLPt5qlbqP8Qc9wCNd-3Qofh6QdrCZjvP0hFQw",
       "modelo": "remotion"
     }
   ]
