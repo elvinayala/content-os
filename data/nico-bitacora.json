@@ -321,6 +321,14 @@
       "porque": "Dato de comisiones + clientes expuesto sin protección real en un sitio público.",
       "verificado": "curl sin auth → 401 (Netlify Password Protection). Pendiente: las hojas de Google Sheets siguen \"cualquiera con el enlace\" (las necesitan lib/ea-market.ts, lib/agencias.ts y app/api/cron/leaderboard/route.ts en content-os) — para cerrarlas del todo hay que migrar esas 3 lecturas al script privado con secreto que ya existe (ventas-hoy.gs) y ahí sí Elvin puede restringir el compartir de las hojas.",
       "commit": "sin cambios de código (config de Netlify)"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Pulse/Ritmo (content-os)",
+      "que": "[Solicitud de Carilin #122] Daisy Buendia (estratega LU) caía en Ritmo al abrir Pulse: su perfil tenía solo_ritmo=true (única estratega así; el resto está en false). Yaileen ya había pedido quitarlo hoy 10:50 AM y el cambio esperaba el OK de Elvin en Ritmo → Ajustes. Con el OK de Elvin a #122 lo apliqué igual que el botón Aprobar: solo_ritmo=false, cambio ebf46595 → aprobado (decidido_por Elvin, nota \"vía Nico #122\"), evento cambio_aprobado. Sin cambios de código.",
+      "porque": "El candado de seguridad (layout de Pulse redirige a /ritmo a quien es solo_ritmo) estaba funcionando bien; la bandera de Daisy estaba mal puesta.",
+      "verificado": "En la base: solo_ritmo=false y el cambio aprobado. Sin bloqueos de tablero; LEVEL UP MEDIA es público. Daisy no tiene 2FA todavía: la primera vez Pulse le pide configurar el autenticador (QR). pulse-eamarket.vercel.app/pulse/login → 200. Aparte: Paola Ordoñez (closer) y Lis Acevedo siguen solo_ritmo=true.",
+      "commit": "solo bitácora"
     }
   ],
   "pendientesElvin": [
@@ -362,5 +370,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T19:11:30.327Z"
+  "actualizadoEl": "2026-09-29T20:38:54.676Z"
 }
