@@ -15,6 +15,9 @@ export const Root: React.FC = () => (
     <Composition id="Testimonio" component={Testimonio} fps={30} width={1920} height={1080} durationInFrames={300}
       defaultProps={{ video: "testimonios/ernest-corte.mp4", dur: 10, nombre: "Nombre", rol: "Cliente", subtitulos: [] } as PropsTestimonio}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.round(props.dur * 30) })} />
+    <Composition id="TestimonioVertical" component={Testimonio} fps={30} width={1080} height={1920} durationInFrames={300}
+      defaultProps={{ video: "testimonios/ernest-corte.mp4", dur: 10, nombre: "Nombre", rol: "Cliente", subtitulos: [], vertical: true } as PropsTestimonio}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.round(props.dur * 30) })} />
     {/* Fábrica de anuncios: una composición por guion (id = nombre del archivo) */}
     {ANUNCIOS.map((a) => (
       <Composition key={a.id} id={a.id} component={Anuncio} defaultProps={{ anuncio: a }} durationInFrames={duracionDe(a)} fps={30}

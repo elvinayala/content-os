@@ -20,11 +20,15 @@ export type PropsTestimonio = {
   acento?: string;
   subtitulos: Subtitulo[];
   pregunta?: Subtitulo;
+  /** 9:16: el video (16:9) al centro sobre un fondo difuminado de sí mismo, nombre arriba y subtítulos debajo. */
+  vertical?: boolean;
 };
 
 const entra = (f: number, a: number, b: number) => interpolate(f, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-export const Testimonio: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta }) => {
+export const Testimonio: React.FC<PropsTestimonio> = (props) => (props.vertical ? <TestimonioVertical {...props} /> : <TestimonioHorizontal {...props} />);
+
+const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
@@ -62,6 +66,46 @@ export const Testimonio: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiq
           <div style={{ fontFamily: GROT, fontWeight: 600, fontSize: 54, lineHeight: 1.22, color: "#ffffff", textAlign: "center", textWrap: "balance", background: "rgba(8,17,32,.78)", padding: "14px 30px", borderRadius: 16, maxWidth: 1500 } as React.CSSProperties}>
             {sub.texto}
           </div>
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+/** Versión 9:16 (WhatsApp, Reels): el Zoom horizontal al centro, fondo difuminado, nombre arriba, subtítulo debajo. */
+const TestimonioVertical: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = f / fps;
+  const sub = subtitulos.find((s) => t >= s.desde && t < s.hasta);
+  const eSub = sub ? Math.min(entra(t, sub.desde, sub.desde + 0.18), 1 - entra(t, sub.hasta - 0.12, sub.hasta)) : 0;
+  const ePreg = pregunta ? Math.min(entra(t, pregunta.desde, pregunta.desde + 0.3), 1 - entra(t, pregunta.hasta - 0.3, pregunta.hasta)) : 0;
+  const altoVideo = Math.round((1080 * 9) / 16) + 90; // un poco más alto que 16:9: recorta los lados y agranda la cara
+  return (
+    <AbsoluteFill style={{ background: "#081120" }}>
+      <OffthreadVideo src={staticFile(video)} muted style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", filter: "blur(38px) brightness(.45) saturate(1.2)", transform: "scale(1.15)" }} />
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(8,17,32,.55) 0%, rgba(8,17,32,.1) 35%, rgba(8,17,32,.1) 65%, rgba(8,17,32,.7) 100%)" }} />
+      {etiqueta && (
+        <div style={{ position: "absolute", left: 0, right: 0, top: 150, display: "flex", justifyContent: "center" }}>
+          <div style={{ fontFamily: MONO, fontSize: 24, letterSpacing: ".18em", color: "#eef2f9", background: "rgba(8,17,32,.62)", padding: "10px 20px", borderRadius: 10, border: "1px solid rgba(79,207,226,.35)" }}>{etiqueta}</div>
+        </div>
+      )}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+        <div style={{ width: 90, height: 6, borderRadius: 4, background: acento, marginBottom: 14 }} />
+        <div style={{ fontFamily: GROT, fontWeight: 700, fontSize: 58, color: "#eef2f9", textAlign: "center" }}>{nombre}</div>
+        <div style={{ fontFamily: GROT, fontWeight: 500, fontSize: 34, color: "#b9c6de", textAlign: "center" }}>{rol}</div>
+      </div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: (1920 - altoVideo) / 2 - 40, height: altoVideo, overflow: "hidden", boxShadow: "0 30px 90px rgba(0,0,0,.55)" }}>
+        <OffthreadVideo src={staticFile(video)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      </div>
+      {pregunta && ePreg > 0 && (
+        <div style={{ position: "absolute", left: 60, right: 60, top: (1920 - altoVideo) / 2 - 150, display: "flex", justifyContent: "center", opacity: ePreg }}>
+          <div style={{ fontFamily: GROT, fontWeight: 600, fontSize: 46, color: "#081120", background: "#eef2f9", padding: "14px 28px", borderRadius: 14, textAlign: "center" }}>{pregunta.texto}</div>
+        </div>
+      )}
+      {sub && (
+        <div style={{ position: "absolute", left: 70, right: 70, top: (1920 + altoVideo) / 2 + 10, display: "flex", justifyContent: "center", opacity: eSub, transform: `translateY(${(1 - eSub) * 12}px)` }}>
+          <div style={{ fontFamily: GROT, fontWeight: 600, fontSize: 60, lineHeight: 1.2, color: "#ffffff", textAlign: "center", textWrap: "balance", background: "rgba(8,17,32,.78)", padding: "16px 30px", borderRadius: 18 } as React.CSSProperties}>{sub.texto}</div>
         </div>
       )}
     </AbsoluteFill>
