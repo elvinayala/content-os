@@ -297,6 +297,14 @@
       "porque": "Aure sintió que sus pedidos no se contestaban igual que los de Carilin.",
       "verificado": "agentes.mjs solicitudes: #88 con plan = Credit balance is too low; #35, #36 y #91 abiertas.",
       "commit": "solo bitácora"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Ritmo (content-os)",
+      "que": "[Solicitud de Aure #118] La captura era de Yaileen: \"¿el personal que falta por completar la ficha en Ritmo, tú les enviaste el recordatorio o debo enviárselos yo?\". Respuesta: nadie les manda un recordatorio personal. El sistema solo les muestra el aviso ámbar dentro de Ritmo (y los lleva a /ritmo/bienvenida al entrar), y el resumen de L-V 9:30 AM que les llega a Carilin y a Yaileen trae la lista de quién falta. Así que el recordatorio se lo manda Yaileen. Sin cambios. Queda como opción, si Elvin lo quiere, un DM automático del bot a cada persona con su ficha pendiente.",
+      "porque": "Yaileen no sabía si ya les habían avisado.",
+      "verificado": "Bajé la captura de Slack con el bot. Código: app/api/cron/ritmo/route.ts (digest → RITMO_AVISO_A con \"No han completado su ficha\"); no hay tarea que le escriba a cada persona.",
+      "commit": "solo bitácora"
     }
   ],
   "pendientesElvin": [
@@ -338,5 +346,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T15:17:49.424Z"
+  "actualizadoEl": "2026-09-29T16:46:57.527Z"
 }
