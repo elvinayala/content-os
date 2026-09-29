@@ -289,6 +289,14 @@
       "porque": "Aure quería saber si Yaileen tenía que darles acceso nuevo.",
       "verificado": "Consulta de solo lectura a pulse_users + desempeno_perfiles + leads_acceso en prod; /ventas 200.",
       "commit": "solo bitácora"
+    },
+    {
+      "fecha": "2026-09-29",
+      "plataforma": "Nico (flujo de solicitudes)",
+      "que": "[Solicitud de Aure #116] Pidió que Nico lea y conteste sus solicitudes igual que las de Carilin. No hubo que tocar código: el flujo es el mismo para las dos. Revisé las que siguen abiertas: la #88 (Pulse se cuelga y Ctrl/Cmd+Z no deshace) nunca tuvo diagnóstico porque en ese momento se acabó el crédito de la API (\"Credit balance is too low\"). Seguramente es la que Aure sintió sin contestar. Las #35/#36 (Resuelto) y la #91 siguen abiertas desde el 25-28/sep.",
+      "porque": "Aure sintió que sus pedidos no se contestaban igual que los de Carilin.",
+      "verificado": "agentes.mjs solicitudes: #88 con plan = Credit balance is too low; #35, #36 y #91 abiertas.",
+      "commit": "solo bitácora"
     }
   ],
   "pendientesElvin": [
@@ -330,5 +338,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T14:00:44.500Z"
+  "actualizadoEl": "2026-09-29T15:17:49.424Z"
 }
