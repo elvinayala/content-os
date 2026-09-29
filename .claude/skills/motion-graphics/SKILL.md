@@ -85,7 +85,7 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
 - Registro: Level Up, Bori, 1000X y Ritmo en **tuteo PR**; **AI Borinquen en anuncios de USTED**. Nunca voseo.
 - Nunca "gratis" en un CTA, nunca prometer ingresos. Trading (1000X): SIMULACIÓN + aviso de riesgo, jamás
   prometer ganancias ni "te pasamos la cuenta".
-- AutoFlow (AIB): "listo en 7 días · 45 días de acompañamiento · soporte para siempre si quiere" (NO "21 días").
+- AutoFlow (AIB, regla de Elvin 28/sep): "su sistema en marcha en 15 días · optimización del día 16 al 45 · soporte para siempre, si lo quiere". NO "7 días" ni "listo en 7 días", y NO "21 días".
 - Level Up: "+100 negocios en PR"; casos Tinos, RK Automatic, La Garita, Yadiel, Dr. Bryan Vega (25–50 pacientes/mes).
 
 ## 4. Render, revisión y entrega

@@ -45,7 +45,7 @@ La memoria de **por qué las cosas son como son**. Consolida las decisiones y pa
 - **Tres niveles de agente de WhatsApp con vocabulario y precio fijos (22/07):** (1) reglas/botones = **NO se vende**; (2) chatbot con IA + memoria pero SIN conexión a sistemas = **$800-1,000**; (3) agente CONECTADO a calendario/CRM vía API (AutoFlow) = **$1,500-2,500+**. Regla de lenguaje: dejar de decir "chatbot" y vender **"un empleado / agente de IA"**; la prueba diferencial es que el cliente puede **llamar y hablar con el asistente en vivo** ([[2026-07-22-productos-boris-consultoria]]). **Vigente.**
 
 ### Reglas de oferta transversales (aprobadas por Elvin 11/07)
-- **Oferta directa "Danos 7 días":** *"Danos 7 días y vamos a instalarte el sistema que te va a atraer pacientes nuevos todos los días."* Siempre explicar que se instalan 2 sistemas (generación de citas + atención al cliente) ([[estilo/ai-borinquen]]). **Vigente.**
+- **Oferta directa "Danos 7 días":** *"Danos 7 días y vamos a instalarte el sistema que te va a atraer pacientes nuevos todos los días."* Siempre explicar que se instalan 2 sistemas (generación de citas + atención al cliente) ([[estilo/ai-borinquen]]). **Vigente.** (28/sep: Elvin fijó que el sistema queda en marcha en 15 días; no usar «7 días» en piezas nuevas hasta que Elvin decida qué pasa con esta oferta.)
 - **PROHIBIDO usar la palabra "gratis" en un CTA** (ni "gratuito"): devalúa la oferta y atrae al lead equivocado ([[estilo/estrategia]]). **Vigente.**
 - **Vender por valor:** *"Si das el precio pero das el valor, no hay forma de que no compren."* Del lado de Ramiro: **no perseguir ticket de $7-10k**, a $200k/mes se llega con volumen y ticket ~$2,300 ([[objecion-esta-caro]] / [[ceo/mentores]]). **Vigente.**
 

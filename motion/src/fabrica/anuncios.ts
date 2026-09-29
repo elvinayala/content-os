@@ -153,7 +153,7 @@ export const ANUNCIOS: Anuncio[] = [
       { tipo: "gancho", dur: 70, lineas: ["Es que se le están", "*escapando*."], alarma: true },
       { tipo: "dato", dur: 130, grande: "78%", texto: "de los clientes le compra al *primero* que responde." },
       { tipo: "roles", dur: 140, titulo: "Su agente de IA:", roles: ["Responde en segundos", "Califica", "Agenda la cita", "Da seguimiento"] },
-      { tipo: "cierre", dur: 160, cta: "Agende su demo →", sub: "Su sistema listo en 7 días · 45 días de acompañamiento" },
+      { tipo: "cierre", dur: 160, cta: "Agende su demo →", sub: "Su sistema en marcha en 15 días · optimización hasta el día 45" },
     ],
   },
   {
@@ -162,7 +162,7 @@ export const ANUNCIOS: Anuncio[] = [
       { tipo: "gancho", dur: 100, lineas: ["No vendemos", "un *chatbot*."] },
       { tipo: "gancho", dur: 120, lineas: ["Instalamos un empleado digital", "con un *trabajo concreto*."] },
       { tipo: "roles", dur: 200, titulo: "Uno para cada puesto:", roles: ["Recepcionista", "Cobros", "Citas", "Seguimiento", "Encuestas"], sub: "Entrenado con *su* negocio, no copiado y pegado." },
-      { tipo: "gancho", dur: 130, etiqueta: "AutoFlow", lineas: ["Su sistema listo en *7 días*.", "45 días de *acompañamiento*."], sub: "Y si quiere, soporte para siempre." },
+      { tipo: "gancho", dur: 130, etiqueta: "AutoFlow", lineas: ["Su sistema en marcha en *15 días*.", "Optimizado hasta el *día 45*."], sub: "Y si quiere, soporte para siempre." },
       { tipo: "cierre", dur: 200, ...CIERRE_AIB },
     ],
   },
@@ -267,7 +267,7 @@ export const LOTE2: Guion[] = [
         { de: "cliente", texto: "Sí, por favor", en: 62 },
         { de: "agente", texto: "Listo ✅ Le separé hoy a las 5:30 PM.", en: 86 },
       ] },
-      { tipo: "cierre", dur: 130, cta: "Agende su demo →", sub: "Su sistema listo en 7 días · 45 días de acompañamiento" },
+      { tipo: "cierre", dur: 130, cta: "Agende su demo →", sub: "Su sistema en marcha en 15 días · optimización hasta el día 45" },
     ],
   },
   {
@@ -494,9 +494,9 @@ export const LOTE3: Guion[] = [
     escenas: [
       { tipo: "gancho", dur: 110, lineas: ["El miedo no es la tecnología.", "Es comprar algo que *nadie sabe usar*."] },
       { tipo: "gancho", dur: 90, lineas: ["No le entregamos una herramienta", "y *desaparecemos*."] },
-      { tipo: "pasos", dur: 200, titulo: "Así lo *acompañamos*", pasos: ["Entendemos su negocio", "Sistema listo en 7 días", "45 días de optimización y soporte", "Y si quiere, para siempre"] },
+      { tipo: "pasos", dur: 200, titulo: "Así lo *acompañamos*", pasos: ["Entendemos su negocio", "Sistema en marcha en 15 días", "Optimización del día 16 al 45", "Soporte para siempre, si lo quiere"] },
       { tipo: "cita", dur: 180, texto: "Pensé que la implementación sería mucho más complicada, pero ha sido bastante fácil.", autor: "Milton", rol: "CARIBE PAINT" },
-      { tipo: "gancho", dur: 120, etiqueta: "AutoFlow", lineas: ["Listo en *7 días*.", "Acompañado *45 días*."], sub: "Y si quiere, soporte para siempre." },
+      { tipo: "gancho", dur: 120, etiqueta: "AutoFlow", lineas: ["En marcha en *15 días*.", "Optimizado hasta el *día 45*."], sub: "Y si quiere, soporte para siempre." },
       { tipo: "cierre", dur: 200, ...CIERRE_AIB_30 },
     ],
   },

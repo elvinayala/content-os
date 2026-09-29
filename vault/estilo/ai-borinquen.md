@@ -81,8 +81,9 @@ trabaja usted".
 **Ángulo D — hooks:** "Esto es exactamente lo que pasa cuando un negocio trabaja
 con nosotros" · "El miedo no es la tecnología, es comprar algo que después nadie
 sabe usar" · "No le entregamos una herramienta y desaparecemos".
-Refuerzo de D (corregido por Elvin, 27/sep/2026 — el "21 días / o no corre la mensualidad" NO es real, no usarlo):
-**AutoFlow: su sistema listo en 7 días · 45 días de acompañamiento, soporte y optimización · y si quiere,
+Refuerzo de D (corregido por Elvin, 27/sep/2026 — el "21 días / o no corre la mensualidad" NO es real, no usarlo;
+28/sep/2026: el plazo es 15 días, ya no "7 días"):
+**AutoFlow: su sistema en marcha en 15 días · optimización del día 16 al 45 · y si lo quiere,
 soporte para siempre.**
 
 **Medición (no decidir por CPL):** leads → citas → shows → propuestas → ventas →
@@ -118,6 +119,7 @@ ni automatizaciones, perder tiempo en tareas repetitivas, pagar demasiado por se
    **generación de citas** (atrae pacientes/clientes nuevos todos los días) y
    (2) el de **atención al cliente** (responde tus leads en automático y te
    agenda las citas). Promesa concreta + plazo corto + mecanismo claro.
+   (28/sep: Elvin fijó que el sistema queda en marcha en 15 días; no usar «7 días» en piezas nuevas hasta que Elvin decida qué pasa con esta oferta.)
 8. **Digitalizarse / optimizar procesos (aprobado por Elvin 11/07 — dar VARIOS
    de este ángulo en cada lote):** *"Si eres una empresa que está buscando
    digitalizarse u optimizar procesos…"* — habla al negocio que sabe que opera
