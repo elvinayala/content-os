@@ -13,7 +13,7 @@ import * as dosPasos from "@/lib/desempeno/dos-pasos";
 import * as empresa from "@/lib/desempeno/empresa";
 import * as etica from "@/lib/desempeno/etica";
 import * as seguridad from "@/lib/desempeno/seguridad";
-import { errorAlmuerzo } from "@/lib/desempeno/seguridad-reglas";
+import { errorAlmuerzo, type PistaEquipo } from "@/lib/desempeno/seguridad-reglas";
 import { altaEmpleado } from "@/lib/desempeno/alta";
 import { decidirCambio, proponerCambio } from "@/lib/desempeno/cambios";
 import { diferencias, necesitaAprobacion, SENSIBLES_FICHA, SENSIBLES_PERFIL, separar } from "@/lib/desempeno/cambios-reglas";
@@ -51,23 +51,23 @@ async function contexto() {
 
 // ─── Ponche (cada quien el suyo) ──────────────────────────────────────────────────────────────
 
-export async function entrarAction(huella?: string | null) {
+export async function entrarAction(huella?: string | null, pista?: PistaEquipo | null) {
   return envolver(async () => {
     const u = await requiereUsuario();
     // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
     const direccion = u.rol === "admin" || u.rol === "editor";
     if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
-    const { equipoId } = await seguridad.verificarParaPonchar(u, huella);
+    const { equipoId } = await seguridad.verificarParaPonchar(u, huella, pista);
     const p = await datos.entrar(u.id, { ...(await contexto()), equipoId });
     refresh();
     return { entradaAt: p.entradaAt.toISOString() };
   });
 }
 
-export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; detalles?: Record<string, string>; huella?: string | null }) {
+export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; detalles?: Record<string, string>; huella?: string | null; pista?: PistaEquipo | null }) {
   return envolver(async () => {
     const u = await requiereUsuario();
-    await seguridad.verificarParaPonchar(u, r.huella);
+    await seguridad.verificarParaPonchar(u, r.huella, r.pista);
     const perfil = await datos.perfilDe(u.id);
     const permitidos = new Set((puestoPorId(perfil?.puesto ?? "")?.manual ?? []).map((m) => m.id));
     const limpios: Record<string, number> = {};
@@ -84,10 +84,10 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
 }
 
 /** Salir a almorzar (1 hora, entre las 11:00 AM y las 2:00 PM PR). Volver = entrarAction. */
-export async function almuerzoAction(huella?: string | null) {
+export async function almuerzoAction(huella?: string | null, pista?: PistaEquipo | null) {
   return envolver(async () => {
     const u = await requiereUsuario();
-    await seguridad.verificarParaPonchar(u, huella);
+    await seguridad.verificarParaPonchar(u, huella, pista);
     const est = await datos.estadoPonche(u.id, true);
     const err = errorAlmuerzo({ ahora: new Date(), yaAlmorzo: !!est?.almuerzo, trabajando: !!est?.abiertoHoy });
     if (err) throw new Error(err);
@@ -99,7 +99,7 @@ export async function almuerzoAction(huella?: string | null) {
 
 // ─── Seguridad del ponche: equipos registrados y ponche manual (lo autoriza RR.HH.) ───────────
 
-export async function registrarEquipoAction(p: { nombre: string; huella: string | null; motivo?: string; reemplaza?: boolean }) {
+export async function registrarEquipoAction(p: { nombre: string; huella: string | null; motivo?: string; reemplaza?: boolean; pista?: PistaEquipo | null }) {
   return envolver(async () => {
     const u = await requiereUsuario();
     const { limiteIp } = await import("@/lib/pulse/seguridad");

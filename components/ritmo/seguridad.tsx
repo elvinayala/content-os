@@ -1,7 +1,7 @@
 "use client";
 
-import { Check, Clock, Laptop, Loader2, ShieldAlert, X } from "lucide-react";
-import { useState } from "react";
+import { Check, Clock, Laptop, Loader2, Monitor, ShieldAlert, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { decidirEquipoAction, decidirPoncheManualAction, decidirRedAction, poncheManualAction, registrarEquipoAction } from "@/app/ritmo/actions";
@@ -10,12 +10,55 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TEXTO_BLOQUEO, type MotivoBloqueo } from "@/lib/desempeno/seguridad-reglas";
+import { noEsComputadora, TEXTO_BLOQUEO, type MotivoBloqueo, type PistaEquipo } from "@/lib/desempeno/seguridad-reglas";
 import { cn } from "@/lib/utils";
 
 const aviso = { className: "ritmo" };
 
 export type SeguridadUI = { modo: string; exento: boolean; equipo: { nombre: string; estado: string } | null; bloqueo: MotivoBloqueo | null; tieneEquipos: boolean; manualPendientes: number };
+
+/** Pista para el servidor: el iPad con Safari se presenta como Mac (pero es táctil) y la app instalada corre
+ * "standalone". Desde ninguno de los dos se poncha (29/sep, Elvin). */
+export function pistaEquipo(): PistaEquipo {
+  try {
+    const ipad = /Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1;
+    const app = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    return { ipad, app };
+  } catch {
+    return {};
+  }
+}
+
+/** null = computadora en el navegador (se puede ponchar); si no, teléfono/tablet o la app instalada. */
+export function useFueraDeComputadora(): "movil" | "app" | null {
+  const [fuera, setFuera] = useState<"movil" | "app" | null>(null);
+  useEffect(() => setFuera(noEsComputadora(navigator.userAgent, pistaEquipo())), []);
+  return fuera;
+}
+
+/** En el teléfono o en la app, en vez del círculo: el ponche es solo en la computadora de trabajo. */
+export function FueraDeComputadora({ motivo, abierto, manual }: { motivo: "movil" | "app"; abierto: boolean; manual: number | null }) {
+  return (
+    <div className="panel mx-auto flex w-full max-w-md flex-col gap-3 p-6 text-center">
+      <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/25">
+        <Monitor className="size-6" />
+      </span>
+      <h2 className="font-semibold">El ponche se marca en tu computadora</h2>
+      <p className="text-sm text-muted-foreground">
+        {motivo === "app" ? "La app de Ritmo es para recibir los avisos." : "Desde el teléfono o la tablet no se poncha."} Entrada, almuerzo y salida se marcan solo desde la computadora de trabajo que tienes autorizada, en el navegador.
+      </p>
+      {abierto ? <p className="text-sm">Tu entrada de hoy está abierta: marca la salida desde tu computadora al terminar.</p> : null}
+      {manual !== null ? (
+        <>
+          <p className="text-[12px] text-muted-foreground">¿No estás en tu computadora? Pide un ponche manual y RR.HH. lo autoriza.</p>
+          <div className="flex justify-center">
+            <PoncheManual pendientes={manual} />
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
 
 /** Huella del equipo: características estables del navegador y la máquina, en un hash. Sirve para reconocer la
  * computadora si alguien borra las cookies (junto con la red); no identifica a la persona. */
@@ -40,7 +83,7 @@ export function SeguridadPonche({ s }: { s: SeguridadUI }) {
   const primera = puedeRegistrar && !s.tieneEquipos;
   const registrar = async () => {
     setCargando(true);
-    const r = await registrarEquipoAction({ nombre, huella: await huellaEquipo(), motivo: primera ? undefined : motivo, reemplaza: primera ? false : reemplaza });
+    const r = await registrarEquipoAction({ nombre, huella: await huellaEquipo(), pista: pistaEquipo(), motivo: primera ? undefined : motivo, reemplaza: primera ? false : reemplaza });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success(r.estado === "aprobado" ? "¡Listo! Esta es tu computadora de trabajo. Ya puedes ponchar." : "Enviado a RR.HH. Te avisamos por Slack cuando la aprueben.", aviso);

@@ -5,10 +5,11 @@
 // - Si no está en su computadora: pide un ponche manual y RR.HH. lo autoriza.
 // - Almuerzo: 1 hora, la escoge cada quien entre las 11:00 AM y las 2:00 PM (hora PR).
 
-export type MotivoBloqueo = "movil" | "sin-equipo" | "equipo-pendiente" | "equipo-revocado" | "red-nueva";
+export type MotivoBloqueo = "movil" | "app" | "sin-equipo" | "equipo-pendiente" | "equipo-revocado" | "red-nueva";
 
 export const TEXTO_BLOQUEO: Record<MotivoBloqueo, string> = {
   movil: "Desde el teléfono no se poncha. Usa tu computadora de trabajo o pide un ponche manual.",
+  app: "Desde la app de Ritmo no se poncha: la app es para los avisos. Marca en el navegador de tu computadora de trabajo o pide un ponche manual.",
   "sin-equipo": "Esta computadora no está registrada. Regístrala o pide un ponche manual.",
   "equipo-pendiente": "Esta computadora está esperando que RR.HH. la apruebe. Mientras tanto, pide un ponche manual.",
   "equipo-revocado": "Esta computadora ya no está autorizada. Pídele a RR.HH. que la reactive o usa la registrada.",
@@ -19,6 +20,23 @@ export const TEXTO_BLOQUEO: Record<MotivoBloqueo, string> = {
 export function esMovil(ua: string | null | undefined): boolean {
   const u = ua ?? "";
   return /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle|webOS|BlackBerry|Opera Mini|IEMobile/i.test(u);
+}
+
+/**
+ * Lo que el navegador dice de sí mismo (29/sep, Elvin: "que no se pueda ponchar desde la aplicación, solo desde la
+ * computadora autorizada"). El iPad con Safari se presenta como Mac (se nota por la pantalla táctil) y la app
+ * instalada (PWA) corre "standalone": ninguno de los dos es la computadora de trabajo.
+ */
+export interface PistaEquipo {
+  ipad?: boolean;
+  app?: boolean;
+}
+
+/** null = es una computadora en el navegador; si no, por qué no se poncha desde aquí (para todos, también la dirección). */
+export function noEsComputadora(ua: string | null | undefined, pista?: PistaEquipo | null): "movil" | "app" | null {
+  if (esMovil(ua) || pista?.ipad) return "movil";
+  if (pista?.app) return "app";
+  return null;
 }
 
 /** "Chrome · Windows", "Safari · Mac": lo que ve RR.HH. para reconocer el equipo. */

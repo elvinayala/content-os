@@ -11,7 +11,7 @@ import { avisarPersona, avisarRrhh, esc } from "./avisar";
 import { evento } from "./datos";
 import { fechaPR } from "./reglas";
 import { desempenoDispositivos, desempenoPoncheManual, desempenoPonches } from "./schema";
-import { decisionPonche, errorNombreEquipo, errorPoncheManual, esMovil, estadoAlRegistrar, redDe, resumenAgente, TEXTO_BLOQUEO, type MotivoBloqueo } from "./seguridad-reglas";
+import { decisionPonche, errorNombreEquipo, errorPoncheManual, esMovil, estadoAlRegistrar, noEsComputadora, redDe, resumenAgente, TEXTO_BLOQUEO, type MotivoBloqueo, type PistaEquipo } from "./seguridad-reglas";
 
 // Seguridad del ponche (27/sep, Elvin): "que no puedan evadir o engañar el sistema… un solo dispositivo a la vez…
 // si no están en la computadora no pueden ponchar; tienen que solicitar el ponche manual a Yaileen".
@@ -67,7 +67,7 @@ export async function equiposDe(userId: string): Promise<Equipo[]> {
 }
 
 /** Registrar ESTA computadora. La primera queda aprobada con la red de este momento; otra espera a RR.HH. */
-export async function registrarEquipo(userId: string, p: { nombre: string; huella: string | null; motivo?: string | null; reemplaza?: boolean }): Promise<Equipo> {
+export async function registrarEquipo(userId: string, p: { nombre: string; huella: string | null; motivo?: string | null; reemplaza?: boolean; pista?: PistaEquipo | null }): Promise<Equipo> {
   const err = errorNombreEquipo(p.nombre);
   if (err) throw new Error(err);
   const { ip, ua } = await contextoRed();
@@ -75,7 +75,7 @@ export async function registrarEquipo(userId: string, p: { nombre: string; huell
   if (ya && ya.estado !== "revocado") throw new Error("Esta computadora ya está registrada");
   const d = await db();
   const aprobados = (await equiposDe(userId)).filter((e) => e.estado === "aprobado").length;
-  const r = estadoAlRegistrar({ aprobadosQueTiene: aprobados, movil: esMovil(ua) });
+  const r = estadoAlRegistrar({ aprobadosQueTiene: aprobados, movil: !!noEsComputadora(ua, p.pista) });
   if ("error" in r) throw new Error(r.error);
   if (r.estado === "pendiente" && (p.motivo ?? "").trim().length < 5) throw new Error("Cuéntale a RR.HH. por qué necesitas otra computadora (ej. tengo laptop y desktop)");
   const token = randomBytes(32).toString("base64url");
@@ -108,12 +108,19 @@ export async function registrarEquipo(userId: string, p: { nombre: string; huell
 
 /**
  * Antes de marcar entrada, salida o almuerzo. Lanza el error con el porqué si no puede (modo "on").
- * La dirección (admin/editoras) no tiene que ponchar: queda fuera.
+ * La dirección (admin/editoras) no tiene que ponchar: queda fuera del registro de computadoras, PERO nadie poncha
+ * desde el teléfono, la tablet o la app instalada (29/sep, Elvin), aunque el modo sea "aviso".
  */
-export async function verificarParaPonchar(u: { id: string; rol: string }, huella?: string | null): Promise<{ equipoId: string | null }> {
+export async function verificarParaPonchar(u: { id: string; rol: string }, huella?: string | null, pista?: PistaEquipo | null): Promise<{ equipoId: string | null }> {
   const modo = modoSeguridad();
-  if (modo === "off" || u.rol === "admin" || u.rol === "editor") return { equipoId: null };
+  if (modo === "off") return { equipoId: null };
   const { ip, ua } = await contextoRed();
+  const fuera = noEsComputadora(ua, pista);
+  if (fuera) {
+    await evento({ userId: u.id, actorId: u.id, tipo: "ponche-bloqueado", datos: { motivo: fuera, equipoId: null, agente: resumenAgente(ua), modo }, ip });
+    throw new Error(TEXTO_BLOQUEO[fuera]);
+  }
+  if (u.rol === "admin" || u.rol === "editor") return { equipoId: null };
   const e = await equipoActual(u.id, huella);
   const r = decisionPonche({ equipo: e, ip, movil: esMovil(ua) });
   const d = await db();

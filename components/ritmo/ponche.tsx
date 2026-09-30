@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { almuerzoAction, corregirSalidaAction, entrarAction, salirAction } from "@/app/ritmo/actions";
 import { textoHora, useOtraZona, useZona } from "@/components/ritmo/hora-local";
-import { huellaEquipo, PoncheManual, SeguridadPonche, type SeguridadUI } from "@/components/ritmo/seguridad";
+import { FueraDeComputadora, huellaEquipo, pistaEquipo, PoncheManual, SeguridadPonche, useFueraDeComputadora, type SeguridadUI } from "@/components/ritmo/seguridad";
 import { ALMUERZO, TEXTO_VENTANA_ALMUERZO, minutosPR } from "@/lib/desempeno/seguridad-reglas";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -84,6 +84,8 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
   const [horaSalida, setHoraSalida] = useState("18:00");
   const [nota, setNota] = useState("");
   const abierto = estado.abiertoHoy;
+  // Teléfono, tablet o la app instalada: aquí no se poncha (29/sep, Elvin). El servidor también lo rechaza.
+  const fuera = useFueraDeComputadora();
 
   useEffect(() => {
     if (!abierto) return;
@@ -100,7 +102,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
 
   const entrar = async () => {
     setCargando(true);
-    const r = await entrarAction(await huellaEquipo());
+    const r = await entrarAction(await huellaEquipo(), pistaEquipo());
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
@@ -115,7 +117,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
       if (valores[m.id]) datos[m.id] = Number(valores[m.id]);
       if (valores[`${m.id}__detalle`]?.trim()) detalles[m.id] = valores[`${m.id}__detalle`];
     }
-    const r = await salirAction({ bloqueos, datos, detalles, huella: await huellaEquipo() });
+    const r = await salirAction({ bloqueos, datos, detalles, huella: await huellaEquipo(), pista: pistaEquipo() });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
@@ -127,7 +129,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
 
   const almorzar = async () => {
     setCargando(true);
-    const r = await almuerzoAction(await huellaEquipo());
+    const r = await almuerzoAction(await huellaEquipo(), pistaEquipo());
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success("¡Buen provecho! Tienes 1 hora. Al volver, toca el círculo.", aviso);
@@ -165,6 +167,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
       </div>
     );
 
+  if (fuera) return <FueraDeComputadora motivo={fuera} abierto={!!abierto} manual={seguridad && !seguridad.exento ? seguridad.manualPendientes : null} />;
   if (seguridad && !seguridad.exento && seguridad.bloqueo && !abierto) return <SeguridadPonche s={seguridad} />;
 
   return (

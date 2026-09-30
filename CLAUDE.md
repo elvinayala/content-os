@@ -721,7 +721,7 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   `ritmo-equipo` de 400 días con token → sha256 en la base; huella del navegador + red para reconocerla si borran cookies) y
   desde una **red aprobada** (IPv4 exacta, IPv6 por prefijo /64: `redDe`). La primera computadora queda aprobada al
   registrarla con su red; una segunda (laptop + desktop), un reemplazo o una red nueva → **RR.HH. (Yaileen) autoriza** en
-  `/ritmo/seguridad` (aviso por Slack). Teléfonos/tablets no se registran ni ponchan. Fuera de su computadora: **ponche
+  `/ritmo/seguridad` (aviso por Slack). Teléfonos/tablets no se registran ni ponchan. **Desde el 29/sep tampoco la app instalada ni el iPad** (Safari se presenta como Mac): `pistaEquipo()` en el navegador + `noEsComputadora()` en el servidor, para TODOS (también la dirección y aunque el modo sea "aviso"); en el teléfono/app, Hoy muestra `FueraDeComputadora` (con ponche manual) en vez del círculo. Fuera de su computadora: **ponche
   manual** (`desempeno_ponche_manual`, hasta 3 días atrás, con motivo) que RR.HH. autoriza (crea la entrada o cierra la
   abierta; `manual_por`). La dirección (admin/editoras) queda fuera. `RITMO_SEGURIDAD` = on (default) | aviso | off.
   Reglas puras `lib/desempeno/seguridad-reglas.ts` (tests `tests/seguridad-ponche.test.mjs`), servidor `seguridad.ts`,
