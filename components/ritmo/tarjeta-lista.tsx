@@ -14,7 +14,7 @@ import { Hora } from "./hora-local";
 export type PersonaLista = { id: string; nombre: string; hora?: string | null; nota?: string | null };
 export type GrupoLista = { etiqueta?: string; punto?: string; gente: PersonaLista[] };
 
-export function TarjetaLista({ titulo, valor, detalle, tono, grupos, vacio, className, children }: { titulo: string; valor?: React.ReactNode; detalle?: React.ReactNode; tono?: "rojo" | "ambar"; grupos: GrupoLista[]; vacio: string; className?: string; children?: React.ReactNode }) {
+export function TarjetaLista({ titulo, valor, detalle, tono, grupos, vacio, className, children, align = "start" }: { titulo: string; valor?: React.ReactNode; detalle?: React.ReactNode; tono?: "rojo" | "ambar"; grupos: GrupoLista[]; vacio: string; className?: string; children?: React.ReactNode; align?: "start" | "end" }) {
   const total = grupos.reduce((s, g) => s + g.gente.length, 0);
   return (
     <Popover>
@@ -32,7 +32,7 @@ export function TarjetaLista({ titulo, valor, detalle, tono, grupos, vacio, clas
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" sideOffset={8} className="ritmo max-h-[60vh] w-72 overflow-y-auto rounded-2xl border-white/10 bg-[#0c111b]/95 p-2 backdrop-blur-xl">
+      <PopoverContent align={align} side="bottom" avoidCollisions={false} sideOffset={8} className="ritmo max-h-[60vh] w-72 overflow-y-auto rounded-2xl border-white/10 bg-[#0c111b]/95 p-2 backdrop-blur-xl">
         <p className="px-2 pt-1 pb-2 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase">
           {titulo} · {total}
         </p>

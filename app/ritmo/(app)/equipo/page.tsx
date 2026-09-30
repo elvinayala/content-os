@@ -136,7 +136,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
             <TarjetaLista titulo="Sin marcar" valor={sinMarcar} detalle="Día laborable sin entrada" tono={sinMarcar ? "rojo" : undefined} grupos={listaSinMarcar} vacio="Todos los que trabajan hoy ya marcaron." />
             <TarjetaLista titulo="Terminadas (7 d)" valor={panel.hayProduccion ? terminadas : "—"} detalle={panel.hayProduccion ? "Tablero Producción" : "Falta el tablero Producción"} grupos={listaTerminadas} vacio={panel.hayProduccion ? "Nadie ha terminado entregas en los últimos 7 días." : "Se llena cuando el equipo use el tablero Producción en Pulse (se crea en Ajustes)."} />
             <TarjetaLista titulo="Vencidas" valor={panel.hayProduccion ? vencidas : "—"} detalle="Entregables atrasados" tono={vencidas ? "rojo" : undefined} grupos={listaVencidas} vacio={panel.hayProduccion ? "No hay entregables atrasados." : "Se llena cuando el equipo use el tablero Producción en Pulse."} />
-            <TarjetaLista titulo="Semana" className="col-span-2 md:col-span-1" grupos={oculto ? [] : listaSemana} vacio={oculto ? "El score está en calibración." : "Todavía no hay datos de la semana."}>
+            <TarjetaLista titulo="Semana" align="end" className="col-span-2 md:col-span-1" grupos={oculto ? [] : listaSemana} vacio={oculto ? "El score está en calibración." : "Todavía no hay datos de la semana."}>
               {oculto ? (
                 <p className="mt-2 text-sm text-muted-foreground">Calibrando</p>
               ) : (
