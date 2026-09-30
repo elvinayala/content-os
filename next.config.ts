@@ -54,6 +54,8 @@ const nextConfig: NextConfig = {
     ];
     // Ritmo (datos sensibles de empleados: documentos, salarios, canal ético): la misma protección que Pulse.
     return [
+      // App de Ritmo en el teléfono: el service worker nunca se cachea (así cada deploy llega) y cubre /ritmo sin barra.
+      { source: "/ritmo/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Service-Worker-Allowed", value: "/ritmo" }, { key: "Content-Type", value: "application/javascript; charset=utf-8" }] },
       { source: "/ritmo", headers: pulse },
       { source: "/ritmo/:path*", headers: pulse },
       { source: "/pulse", headers: pulse },

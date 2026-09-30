@@ -647,3 +647,25 @@ export const desempenoPresencia = pgTable("desempeno_presencia", {
   lugar: text("lugar").notNull(),
   vistoAt: timestamp("visto_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Notificaciones push a la app de Ritmo instalada en el teléfono (29/sep, Elvin: "apps sin App Store con push").
+// Una fila por teléfono/navegador suscrito (Web Push + VAPID). `app` deja la tabla lista para otras apps (clientes de LU).
+// Se borra sola cuando Apple/Google responden 404/410 (la persona desinstaló o quitó el permiso).
+export const desempenoPush = pgTable(
+  "desempeno_push",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => pulseUsers.id, { onDelete: "cascade" }),
+    app: text("app").notNull().default("ritmo"),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    dispositivo: text("dispositivo"), // "iPhone · app instalada", "Android · Chrome"…
+    creadoAt: timestamp("creado_at", { withTimezone: true }).notNull().defaultNow(),
+    ultimoOkAt: timestamp("ultimo_ok_at", { withTimezone: true }),
+    fallos: integer("fallos").notNull().default(0),
+  },
+  (t) => [uniqueIndex("desempeno_push_endpoint").on(t.endpoint), index("desempeno_push_user").on(t.userId, t.app)],
+);

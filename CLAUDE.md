@@ -788,6 +788,19 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   eventos o recordatorios de todo el día en SU calendario (`anotarCalendarioAction`). Solo se guarda el refresh token cifrado; se
   desconecta cuando quiera (revoca). **Necesita la app de Google** (`GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` en Vercel; Calendar
   API activada; redirect `https://ritmo.levelupmediapr.net/ritmo/google/volver`); sin ellas la tarjeta no sale.
+- **App en el teléfono + push, sin App Store** (29/sep, Elvin: "apps sin App Store ni Play Store con push"): PWA + Web Push
+  (VAPID, sin Firebase). Manifest `app/ritmo/manifest.webmanifest/route.ts` (íconos PNG de `app/ritmo/iconos/[archivo]` —
+  192/512/maskable/badge, estáticos en el build— + `app/ritmo/apple-icon.tsx`, todo desde `iconos/dibujo.tsx`), service worker
+  `public/ritmo/sw.js` (scope `/ritmo`, público en proxy, `Service-Worker-Allowed` en next.config; NO cachea páginas: datos
+  sensibles), suscripciones en `desempeno_push` (migración 0038, columna `app` para reusar en la app de clientes de LU),
+  envío en `lib/push/enviar.ts` (borra 404/410) y **todo aviso de `avisarPersona`/`avisarCorreo`/`avisarRrhh` sale además
+  como push** (texto de Slack → título/cuerpo/ruta con `lib/push/texto.ts`, puro, tests `tests/push.test.mjs`). Pantalla
+  **`/ritmo/app`** (ícono 📱 del encabezado): guía por plataforma (iPhone: Safari → Compartir → Agregar a inicio, iOS 16.4+;
+  dentro de WhatsApp/IG → "ábrelo en Safari/Chrome"; Android: botón Instalar), Activar / Enviar prueba / Desactivar, y sus
+  teléfonos; tarjeta en Hoy solo en el celular mientras falte algo (se esconde 7 días). Ruta `POST /ritmo/push`
+  (suscribir|quitar|probar; también la usa el SW en `pushsubscriptionchange`). En Equipo, 📱 junto a quien ya la tiene.
+  Env: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (si cambian, todos reactivan). Bori móvil
+  (`~/bori-demo`) se instala pero aún NO tiene push: copiar este patrón.
 - **Canal ético** (`/ritmo/etica`, `desempeno_etica`): cualquiera reporta, anónimo por defecto; la bandeja
   y el aviso por Telegram (sin el contenido) son SOLO para Elvin (admin).
 

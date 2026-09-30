@@ -121,7 +121,7 @@ export default async function proxy(request: NextRequest) {
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
   if (pathname.startsWith("/api/pulse/n8n/")) return NextResponse.next();
   // Ritmo (asistencia + desempeño): mismas cuentas y cookie que Pulse, su propia pantalla de entrada.
-  if (pathname === "/ritmo/entrar" || pathname === "/ritmo/activar" || pathname === "/ritmo/icon.svg" || pathname.startsWith("/ritmo/apple-icon") || pathname === "/ritmo/manifest.webmanifest") return NextResponse.next();
+  if (pathname === "/ritmo/entrar" || pathname === "/ritmo/activar" || pathname === "/ritmo/icon.svg" || pathname.startsWith("/ritmo/apple-icon") || pathname === "/ritmo/manifest.webmanifest" || pathname === "/ritmo/sw.js" || pathname.startsWith("/ritmo/iconos/")) return NextResponse.next();
   if (pathname === "/ritmo" || pathname.startsWith("/ritmo/")) {
     const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
     const ceoOk = await sesionValida(request.cookies.get(COOKIE_SESION)?.value);

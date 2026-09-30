@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
 import { slackIdPorEmail } from "../pulse/slack-dm";
+import { enviarPush, enviarPushCorreo } from "../push/enviar";
+import { avisoDesdeSlack } from "../push/texto";
 import { desempenoPerfiles } from "./schema";
 
 // Avisos de Ritmo por Slack: SIEMPRE desde el bot Command Center (nunca desde la cuenta de Elvin).
@@ -76,16 +78,22 @@ async function enviar(id: string | null, texto: string): Promise<boolean> {
   return !!r?.ok;
 }
 
-/** DM a una persona de Ritmo (por su id de usuario). */
+// Cada aviso sale también como notificación push a la app de Ritmo instalada en su teléfono (29/sep).
+// Slack sigue siendo el canal principal: el push es adicional y si falla no frena nada.
+const push = (p: Promise<number>) => p.catch((e) => (console.error("push ritmo", e), 0));
+
+/** DM a una persona de Ritmo (por su id de usuario) + push a su teléfono. */
 export async function avisarPersona(userId: string | null, texto: string): Promise<boolean> {
   if (!userId || !avisosReales()) return false;
-  return enviar(await idDe(userId), texto);
+  const [slack, n] = await Promise.all([idDe(userId).then((id) => enviar(id, texto)), push(enviarPush(userId, avisoDesdeSlack(texto)))]);
+  return slack || n > 0;
 }
 
-/** DM por correo (Carilin, RR.HH., destinatarios fijos). */
+/** DM por correo (Carilin, RR.HH., destinatarios fijos) + push a su teléfono. */
 export async function avisarCorreo(email: string, texto: string): Promise<boolean> {
   if (!avisosReales()) return false;
-  return enviar(await slackIdPorEmail(email), texto);
+  const [slack, n] = await Promise.all([slackIdPorEmail(email).then((id) => enviar(id, texto)), push(enviarPushCorreo(email, avisoDesdeSlack(texto)))]);
+  return slack || n > 0;
 }
 
 /** Recursos Humanos (RITMO_RRHH). */

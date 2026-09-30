@@ -1,4 +1,4 @@
-import { ChevronRight, Settings, Bot } from "lucide-react";
+import { ChevronRight, Settings, Bot, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -9,6 +9,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
+import { conPush } from "@/lib/push/enviar";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +58,8 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   const presentes = laborables.filter((f) => ["trabajando", "a_tiempo", "tarde"].includes(f.hoy.asistencia.estado)).length;
   const tarde = laborables.filter((f) => f.hoy.asistencia.minutosTarde > 15).length;
   const sinMarcar = laborables.filter((f) => f.hoy.asistencia.estado === "ausente").length;
+  // Quién ya tiene la app de Ritmo en el teléfono con avisos activos (para que RR.HH. sepa a quién le falta).
+  const conApp = await conPush(filas.map((f) => f.perfil.userId)).catch(() => new Set<string>());
   const vencidas = filas.reduce((s, f) => s + (f.produccion?.vencidas ?? 0), 0);
   const terminadas = filas.reduce((s, f) => s + (f.produccion?.terminadas ?? 0), 0);
   const conteo: Record<Color, number> = { verde: 0, amarillo: 0, rojo: 0 };
@@ -110,6 +113,12 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
         </div>
       ) : (
         <>
+          {filas.length ? (
+            <p className="-mb-3 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+              <Smartphone className="size-3.5 text-primary" /> App en el teléfono con avisos: <b className="text-foreground">{filas.filter((f) => conApp.has(f.perfil.userId)).length} de {filas.length}</b>
+              {filas.some((f) => !conApp.has(f.perfil.userId)) ? <span>· el ícono sale junto al nombre de quien ya la tiene</span> : null}
+            </p>
+          ) : null}
           <section className="grid grid-cols-2 gap-3 md:grid-cols-5">
             <Tarjeta titulo="Presentes hoy" valor={`${presentes}/${laborables.length}`} detalle={tarde ? `${tarde} llegaron tarde` : "Todos a tiempo"} tono={tarde ? "ambar" : undefined} />
             <Tarjeta titulo="Sin marcar" valor={sinMarcar} detalle="Día laborable sin entrada" tono={sinMarcar ? "rojo" : undefined} />
@@ -146,7 +155,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
                 </header>
                 <ul className="divide-y">
                   {gente.map((f) => (
-                    <FilaPersonaUI key={f.perfil.userId} f={f} oculto={oculto} />
+                    <FilaPersonaUI key={f.perfil.userId} f={f} oculto={oculto} app={conApp.has(f.perfil.userId)} />
                   ))}
                 </ul>
               </section>
@@ -158,7 +167,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   );
 }
 
-function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
+function FilaPersonaUI({ f, oculto, app }: { f: FilaPersona; oculto: boolean; app: boolean }) {
   const a = f.hoy.asistencia;
   const prod = esProduccion(f.perfil.puesto) ? f.produccion : null;
   return (
@@ -167,7 +176,7 @@ function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
         <div className="flex min-w-0 items-center gap-3">
           <UserAvatar nombre={f.perfil.nombre} color={f.perfil.color as ColorPulse | null} />
           <div className="min-w-0">
-            <p className="flex items-center gap-2 truncate text-sm font-medium">{f.perfil.nombre}<EmpresaBadge empresa={f.perfil.empresa} /></p>
+            <p className="flex items-center gap-2 truncate text-sm font-medium">{f.perfil.nombre}<EmpresaBadge empresa={f.perfil.empresa} />{app ? <Smartphone className="size-3.5 shrink-0 text-primary" aria-label="Tiene la app con avisos" /> : null}</p>
             <p className="truncate text-xs text-muted-foreground">{f.puestoNombre}</p>
           </div>
         </div>
