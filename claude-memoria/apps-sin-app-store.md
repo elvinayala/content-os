@@ -10,3 +10,5 @@ Decisión técnica: PWA + Web Push con VAPID (sin Firebase/OneSignal). En Ritmo:
 
 **Why:** evitar revisión/cuota de Apple y publicar al instante; mismo código y cuentas.
 **How to apply:** limitaciones que hay que recordarle: en iPhone solo con la app agregada a la pantalla de inicio desde Safari (iOS 16.4+), el permiso lo toca la persona, el push no lleva datos sensibles, y cambiar de dominio o de llaves VAPID obliga a reactivar. Plan B si algún día hace falta tienda: envolver la PWA (Play Store fácil; App Store difícil). Ver [[ritmo-desempeno]] y [[bori-agente]].
+
+**App de clientes de Level Up (29/sep, en prod):** app.levelupmediapr.net (`/cliente`), link personal por cliente desde la pestaña **App** de su ficha en Pulse; Inicio · Resultados (Meta real) · Archivos (Drive vía Apps Script, falta publicarlo) · Mi cuenta. Solicitudes/soporte siguen por el canal de Slack del negocio (decisión de Elvin). Avisos del equipo apagados hasta `CLIENTES_APP_AVISOS=real`. Falta DNS de `app.` en Network Solutions. Detalle en CLAUDE.md.
