@@ -353,6 +353,14 @@
       "porque": "Que Yaileen le conteste a Rafael sin prometer nada que no esté decidido.",
       "verificado": "Revisé menu.json, menu-de-servicios.md, generar.py, costbook.json, contrato-plomero-borrador.md y decisiones.md D3. No toqué precios (necesitan OK de Elvin). Sin código ni deploy.",
       "commit": "Resuelto: respuestas a candidatos plomeros (Rafael de Jesús)"
+    },
+    {
+      "fecha": "2026-09-30",
+      "plataforma": "Pulse · Leads (content-os)",
+      "que": "[Solicitud de Aure #127] Paola Ordoñez (closer LU) no veía Leads: tenía cuenta activa con clave y perfil de Ritmo closer/level_up sin solo_ritmo, pero NINGUNA fila en leads_acceso. Le di Leads de Level Up con alcance \"todos\" (igual que Laura y Roger) y quedó en pulse_security_log (acceso_leads).",
+      "porque": "Que Paola trabaje sus leads como el resto de los closers.",
+      "verificado": "Base: leads_acceso = level_up/todos para su user_id. accesoLeads(): no admin, no solo_ritmo, con fila → puede. leads.levelupmediapr.net/ventas y Pulse responden 200. Sin código ni deploy.",
+      "commit": "Bitácora: acceso a Leads de Paola Ordoñez"
     }
   ],
   "pendientesElvin": [
@@ -394,5 +402,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-30T17:42:28.548Z"
+  "actualizadoEl": "2026-09-30T17:44:37.109Z"
 }
