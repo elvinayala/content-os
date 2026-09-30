@@ -345,6 +345,14 @@
       "porque": "Que a Daisy le lleguen los avisos del bot de Ritmo/Pulse.",
       "verificado": "Base: desempeno_perfiles.slack_id = U09MAUPKPEG, sin otra persona con ese ID. Slack users.info: Daisy Buendia, activa, no bot. npm test 268/0. Deploy content-ddkd2ia2h ya en ritmo.levelupmediapr.net; Ritmo, Pulse y Content OS responden 200.",
       "commit": "Slack: Daisy Buendia en los IDs conocidos del bot"
+    },
+    {
+      "fecha": "2026-09-30",
+      "plataforma": "Resuelto (Plomería PR)",
+      "que": "[Solicitud de Aure #126] (junto con #125) Respuestas para Yaileen a las 4 preguntas del plomero Rafael de Jesús, en vault/proyectos/plomeria-pr/kit/respuestas-candidatos-plomeros.md. Corrección a mi plan: en #1 y #2 Rafael tiene razón, el menú NO tiene la mezcladora empotrada de ducha ni la válvula de descarga del inodoro (los $99/$129 no las cubren); mientras, van como diagnóstico $69 + cotización. #3 y #4 respondidas con lo del contrato-borrador y pendientes de contador/abogado.",
+      "porque": "Que Yaileen le conteste a Rafael sin prometer nada que no esté decidido.",
+      "verificado": "Revisé menu.json, menu-de-servicios.md, generar.py, costbook.json, contrato-plomero-borrador.md y decisiones.md D3. No toqué precios (necesitan OK de Elvin). Sin código ni deploy.",
+      "commit": "Resuelto: respuestas a candidatos plomeros (Rafael de Jesús)"
     }
   ],
   "pendientesElvin": [
@@ -386,5 +394,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-29T20:49:00.524Z"
+  "actualizadoEl": "2026-09-30T17:42:28.548Z"
 }
