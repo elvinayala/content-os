@@ -39,3 +39,5 @@ clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETU
 **28/sep — Exportar leads:** botón Exportar (Excel como Pipedrive). Elvin exporta directo; **Nahuel y Aure piden y Elvin aprueba** (link por Slack, una vez, 24 h, /pulse/leads/exportaciones). Nadie más exporta.
 
 **28/sep — Leads → Equipo:** Nahuel (director de ventas LU), las editoras y Elvin dan/quitan acceso a Leads desde el botón Equipo. Roger, Laura y Luis tenían acceso pero sin clave creada (necesitan su link de acceso de Carilin).
+
+**29/sep — Link oficial de Leads = https://leads.levelupmediapr.net** (DNS en Network Solutions + verificado en Vercel, `LEADS_URL` en Production). Es el que se le da al equipo de ventas; Nahuel ya lo tiene. En Network Solutions el CNAME se llena: Refers to = Other Host `leads`, Alias to = `cname.vercel-dns.com` (al revés queda mal).
