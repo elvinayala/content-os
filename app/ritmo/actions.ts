@@ -290,14 +290,18 @@ export async function salirDeRitmoAction() {
 }
 
 /** Link de un solo uso (72 h) para que la persona cree su clave. Lo manda quien lo genera. */
-export async function linkAccesoAction(userId: string) {
+/**
+ * Link de acceso. `reset` (30/sep, Elvin: "que Yaileen pueda resolver"): la vista maestra —también RR.HH.— le genera
+ * a un empleado que YA tiene clave un link para crear una nueva (la olvidó). Nunca para admins ni editoras.
+ */
+export async function linkAccesoAction(userId: string, reset = false) {
   return envolver(async () => {
     const u = await requiereMaestro();
     const h = await headers();
     const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
     const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
-    const r = await linkDeAcceso(userId, `${proto}://${host}`, u.rol === "admin" || u.rol === "editor");
-    await datos.evento({ userId, actorId: u.id, tipo: r.yaTieneClave ? "link_acceso_ya_tiene_clave" : "link_acceso" });
+    const r = await linkDeAcceso(userId, `${proto}://${host}`, reset || u.rol === "admin" || u.rol === "editor");
+    await datos.evento({ userId, actorId: u.id, tipo: reset ? "link_reset_clave" : r.yaTieneClave ? "link_acceso_ya_tiene_clave" : "link_acceso" });
     return r;
   });
 }
@@ -931,6 +935,36 @@ export async function decidirCambioAction(p: { id: string; aprobar: boolean; not
     if (u.rol !== "admin") throw new Error("Solo Elvin aprueba estos cambios");
     await decidirCambio(p.id, p.aprobar, u.id, p.nota);
     refresh();
+    return {};
+  });
+}
+
+// ─── Cambiar mi clave (30/sep) ─────────────────────────────────────────────────────────────────
+// Cada quien cambia la suya con la clave actual. Es la misma para Pulse, Leads y Ritmo. Cierra las demás sesiones
+// (y la vista maestra vuelve a pedir el código de la app); esta queda abierta con una sesión nueva.
+export async function cambiarMiClaveAction(p: { actual: string; nueva: string; otra: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const { limiteIp, cerrarSesiones, limpiarFallos, registrarEvento, ipActual } = await import("@/lib/pulse/seguridad");
+    if (!limiteIp(`mi-clave:${u.id}`, 5, 15 * 60_000)) throw new Error("Demasiados intentos. Espera 15 minutos.");
+    const nueva = (p.nueva ?? "").slice(0, 200);
+    if (nueva.length < 8) throw new Error("La clave nueva debe tener al menos 8 caracteres");
+    if (nueva !== p.otra) throw new Error("Las dos claves nuevas no coinciden");
+    if (nueva === p.actual) throw new Error("La clave nueva tiene que ser distinta a la actual");
+    const { db } = await import("@/lib/pulse/db");
+    const { pulseUsers } = await import("@/lib/pulse/schema");
+    const { eq } = await import("drizzle-orm");
+    const { hashPassword, verificarPassword } = await import("@/lib/pulse/password");
+    const d = await db();
+    const [fila] = await d.select({ hash: pulseUsers.passwordHash, email: pulseUsers.email }).from(pulseUsers).where(eq(pulseUsers.id, u.id));
+    if (!fila?.hash || !verificarPassword(p.actual ?? "", fila.hash)) throw new Error("Tu clave actual no es correcta");
+    await d.update(pulseUsers).set({ passwordHash: hashPassword(nueva) }).where(eq(pulseUsers.id, u.id));
+    await limpiarFallos(u.id);
+    await cerrarSesiones(u.id);
+    await registrarEvento({ tipo: "clave_cambiada", email: fila.email, userId: u.id, ip: await ipActual(), detalle: "La persona cambió su clave (Ritmo)" });
+    await new Promise((r) => setTimeout(r, 1100)); // la sesión nueva debe ser posterior a sesiones_desde
+    const { firmarSesion, TTL_SESION_LARGA } = await import("@/lib/pulse/session");
+    (await cookies()).set(COOKIE_PULSE, await firmarSesion(u.id, undefined, TTL_SESION_LARGA), { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: TTL_SESION_LARGA, path: "/" });
     return {};
   });
 }

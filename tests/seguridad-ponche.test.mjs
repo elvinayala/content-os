@@ -27,7 +27,8 @@ test("decisión del ponche", () => {
   const ok = { estado: "aprobado", ips: ["24.139.10.5", "2600:1700:abcd:12::/64"] };
   assert.deepEqual(decisionPonche({ equipo: ok, ip: "24.139.10.5", movil: false }), { ok: true });
   assert.deepEqual(decisionPonche({ equipo: ok, ip: "2600:1700:abcd:12:9:9:9:9", movil: false }), { ok: true });
-  assert.deepEqual(decisionPonche({ equipo: ok, ip: "8.8.8.8", movil: false }), { ok: false, motivo: "red-nueva" });
+  // 30/sep: otra red ya no bloquea (la IP de la casa cambia sola); se marca y ya.
+  assert.deepEqual(decisionPonche({ equipo: ok, ip: "8.8.8.8", movil: false }), { ok: true, redNueva: true });
   assert.deepEqual(decisionPonche({ equipo: ok, ip: "24.139.10.5", movil: true }), { ok: false, motivo: "movil" });
   assert.deepEqual(decisionPonche({ equipo: null, ip: "24.139.10.5", movil: false }), { ok: false, motivo: "sin-equipo" });
   assert.deepEqual(decisionPonche({ equipo: { ...ok, estado: "pendiente" }, ip: "24.139.10.5", movil: false }), { ok: false, motivo: "equipo-pendiente" });

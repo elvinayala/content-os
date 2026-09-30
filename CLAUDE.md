@@ -776,6 +776,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   pregunte directo si están trabajando o necesitan ayuda para entrar. Y **no se marca la salida sin los KPIs del día**
   (`faltanEnSalida`, puro + test): cada KPI manual del puesto necesita un número (0 vale) y el detalle si es > 0; lo
   reportado en una salida anterior de hoy cuenta. El almuerzo no pide nada.
+- **Claves sin depender de Elvin y ponche sin la red** (30/sep, Elvin: "Yaileen puede hacer ajustes… la app se está haciendo
+  dependiente de mí"): **Cambiar mi clave** (`/ritmo/clave`, llave del encabezado, `cambiarMiClaveAction`: clave actual + nueva,
+  cierra las otras sesiones) para todos; y en Ajustes, si la persona ya tiene clave, **"Olvidó su clave: link para una nueva"**
+  (`linkAccesoAction(userId, true)`) — RR.HH. también, solo para miembros (nunca admins/editoras); el link limpia los intentos
+  fallidos. **La red ya no bloquea el ponche** (`decisionPonche` → `redNueva`, evento `ponche-otra-red`): el 29-30/sep casi todos
+  pidieron ponche manual porque la IP de la casa cambia (VPN, hotspot, apagón, el proveedor la rota); lo que manda es la
+  computadora registrada y aprobada (teléfono, tablet y app siguen fuera).
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para

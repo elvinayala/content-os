@@ -232,6 +232,22 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse, puestos }: { usuar
 function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
   const [url, setUrl] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [tieneClave, setTieneClave] = useState(false);
+  // Olvidó la clave (30/sep): RR.HH. le manda un link para crear una nueva, sin pasar por Elvin ni Nico.
+  const resetear = async () => {
+    setCargando(true);
+    const r = await linkAccesoAction(userId, true);
+    setCargando(false);
+    if (!r.ok) return toast.error(r.error, aviso);
+    const texto = `Hola ${nombre.split(" ")[0]}: abre este link para crear tu clave nueva de Ritmo (es la misma de Pulse). Vence en 72 horas y sirve una sola vez: ${r.url}`;
+    setUrl(texto);
+    try {
+      await navigator.clipboard.writeText(texto);
+      toast.success(`Mensaje con el link para ${nombre.split(" ")[0]} copiado (vence en 72 h)`, aviso);
+    } catch {
+      toast.success("Link listo: cópialo abajo", aviso);
+    }
+  };
   const generar = async () => {
     setCargando(true);
     const r = await linkAccesoAction(userId);
@@ -242,6 +258,7 @@ function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
       ? `Hola ${nombre.split(" ")[0]}: entra a Ritmo en https://ritmo.levelupmediapr.net con tu correo ${r.yaTieneClave.email} y la MISMA clave que ya creaste (la que usas para Pulse o Leads). Si no la recuerdas, avísame y te mandamos un link para crear una nueva.`
       : r.url;
     setUrl(texto);
+    setTieneClave(!!r.yaTieneClave);
     try {
       await navigator.clipboard.writeText(texto);
       toast.success(r.yaTieneClave ? `${nombre.split(" ")[0]} ya tiene clave: mensaje para mandarle copiado` : `Link de ${nombre.split(" ")[0]} copiado (vence en 72 h)`, aviso);
@@ -254,6 +271,11 @@ function LinkAcceso({ userId, nombre }: { userId: string; nombre: string }) {
       <Button variant="outline" onClick={generar} disabled={cargando} className="rounded-full">
         {cargando ? <Loader2 className="animate-spin" /> : <KeyRound />} Link de acceso
       </Button>
+      {tieneClave ? (
+        <Button variant="outline" onClick={resetear} disabled={cargando} className="rounded-full border-[color:var(--coral)]/40 text-[color:var(--coral)]">
+          Olvidó su clave: link para una nueva
+        </Button>
+      ) : null}
       {url ? <Input readOnly value={url} onFocus={(e) => e.currentTarget.select()} className="h-9 min-w-0 flex-1 text-xs" /> : null}
     </div>
   );

@@ -66,14 +66,18 @@ export interface EquipoPonche {
   ips: string[];
 }
 
-/** ¿Puede ponchar desde aquí? */
-export function decisionPonche(p: { equipo: EquipoPonche | null; ip: string | null; movil: boolean }): { ok: true } | { ok: false; motivo: MotivoBloqueo } {
+/**
+ * ¿Puede ponchar desde aquí? Lo que manda es la COMPUTADORA registrada y aprobada. La red ya no bloquea (30/sep):
+ * desde casa la IP cambia sola (el proveedor la rota, VPN, hotspot, un apagón) y el 29-30/sep casi todos terminaron
+ * pidiendo ponche manual. Una red distinta solo se marca (`redNueva`) para que quede en el registro.
+ */
+export function decisionPonche(p: { equipo: EquipoPonche | null; ip: string | null; movil: boolean }): { ok: true; redNueva?: true } | { ok: false; motivo: MotivoBloqueo } {
   if (p.movil) return { ok: false, motivo: "movil" };
   if (!p.equipo) return { ok: false, motivo: "sin-equipo" };
   if (p.equipo.estado === "pendiente") return { ok: false, motivo: "equipo-pendiente" };
   if (p.equipo.estado !== "aprobado") return { ok: false, motivo: "equipo-revocado" };
   const red = redDe(p.ip);
-  if (!red || !p.equipo.ips.includes(red)) return { ok: false, motivo: "red-nueva" };
+  if (!red || !p.equipo.ips.includes(red)) return { ok: true, redNueva: true };
   return { ok: true };
 }
 

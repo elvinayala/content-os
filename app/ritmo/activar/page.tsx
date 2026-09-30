@@ -35,7 +35,7 @@ export default async function ActivarPage({ searchParams }: { searchParams: Prom
           ) : (
             <div>
               <h1 className="text-xl font-semibold tracking-tight">Este link ya no sirve</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Venció o ya se usó. Pídele uno nuevo a Carilin.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Venció o ya se usó. Pídele uno nuevo a RR.HH. (Yaileen).</p>
             </div>
           )}
         </div>

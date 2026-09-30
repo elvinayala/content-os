@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, KeyRound, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -75,6 +75,9 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
           <MenuApps pulse={pulse} slack={slack} />
           <Link href="/ritmo/app" title="Ritmo en tu teléfono (app y avisos)" className={cn("rounded-full p-2 transition hover:bg-muted hover:text-foreground", path.startsWith("/ritmo/app") ? "text-primary" : "text-muted-foreground")}>
             <Smartphone className="size-4" />
+          </Link>
+          <Link href="/ritmo/clave" title="Cambiar mi clave" className={cn("rounded-full p-2 transition hover:bg-muted hover:text-foreground", path.startsWith("/ritmo/clave") ? "text-primary" : "text-muted-foreground")}>
+            <KeyRound className="size-4" />
           </Link>
           <RelojPR />
           <span className={cn("hidden max-w-40 truncate text-sm text-muted-foreground", visibles.length > 5 ? "xl:block" : "sm:block")}>{nombre}</span>

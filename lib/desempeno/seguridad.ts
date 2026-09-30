@@ -125,7 +125,11 @@ export async function verificarParaPonchar(u: { id: string; rol: string }, huell
   const r = decisionPonche({ equipo: e, ip, movil: esMovil(ua) });
   const d = await db();
   if (e) await d.update(desempenoDispositivos).set({ ultimoUsoAt: new Date(), ultimaIp: ip }).where(eq(desempenoDispositivos.id, e.id));
-  if (r.ok) return { equipoId: e?.id ?? null };
+  if (r.ok) {
+    // Red distinta: no bloquea (30/sep), solo queda en el registro.
+    if (r.redNueva) await evento({ userId: u.id, actorId: u.id, tipo: "ponche-otra-red", datos: { equipoId: e?.id ?? null, red: redDe(ip) }, ip });
+    return { equipoId: e?.id ?? null };
+  }
   // Red nueva en un equipo aprobado: queda pedida a RR.HH. (una vez por red).
   const red = redDe(ip);
   if (r.motivo === "red-nueva" && e && red && e.ipPendiente !== red) {
