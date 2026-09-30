@@ -281,6 +281,13 @@
       "when": 1790733893061,
       "tag": "0039_app-clientes",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1790779668255,
+      "tag": "0040_wifi-principal",
+      "breakpoints": true
     }
   ]
 }

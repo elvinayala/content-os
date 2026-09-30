@@ -57,17 +57,17 @@ export async function entrarAction(huella?: string | null, pista?: PistaEquipo |
     // La dirección (admin/editoras) puede ponchar sin perfil: es opcional y no cuenta en ningún reporte.
     const direccion = u.rol === "admin" || u.rol === "editor";
     if (!direccion && !(await datos.perfilDe(u.id))?.activo) throw new Error("No tienes perfil de ponche: pídeselo a Carilin");
-    const { equipoId } = await seguridad.verificarParaPonchar(u, huella, pista);
+    const { equipoId, redNueva } = await seguridad.verificarParaPonchar(u, huella, pista);
     const p = await datos.entrar(u.id, { ...(await contexto()), equipoId });
     refresh();
-    return { entradaAt: p.entradaAt.toISOString() };
+    return { entradaAt: p.entradaAt.toISOString(), redNueva: !!redNueva };
   });
 }
 
 export async function salirAction(r: { bloqueos: string; datos: Record<string, number>; detalles?: Record<string, string>; huella?: string | null; pista?: PistaEquipo | null }) {
   return envolver(async () => {
     const u = await requiereUsuario();
-    await seguridad.verificarParaPonchar(u, r.huella, r.pista);
+    const { redNueva } = await seguridad.verificarParaPonchar(u, r.huella, r.pista);
     const perfil = await datos.perfilDe(u.id);
     const permitidos = new Set((puestoPorId(perfil?.puesto ?? "")?.manual ?? []).map((m) => m.id));
     const limpios: Record<string, number> = {};
@@ -79,6 +79,16 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     if (falta.length) throw new Error(`Antes de marcar la salida, completa tus KPIs de hoy (si fue 0, pon 0): ${falta.join(" · ")}`);
     await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios, detalles });
     refresh();
+    return { redNueva: !!redNueva };
+  });
+}
+
+/** Su Wi-Fi principal de trabajo (30/sep): lo declara cada quien en Hoy. */
+export async function guardarWifiAction(nombre: string) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    await seguridad.guardarWifiPrincipal(u.id, nombre);
+    refresh();
     return {};
   });
 }
@@ -87,13 +97,13 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
 export async function almuerzoAction(huella?: string | null, pista?: PistaEquipo | null) {
   return envolver(async () => {
     const u = await requiereUsuario();
-    await seguridad.verificarParaPonchar(u, huella, pista);
+    const { redNueva } = await seguridad.verificarParaPonchar(u, huella, pista);
     const est = await datos.estadoPonche(u.id, true);
     const err = errorAlmuerzo({ ahora: new Date(), yaAlmorzo: !!est?.almuerzo, trabajando: !!est?.abiertoHoy });
     if (err) throw new Error(err);
     await datos.salirAlmuerzo(u.id, await contexto());
     refresh();
-    return {};
+    return { redNueva: !!redNueva };
   });
 }
 

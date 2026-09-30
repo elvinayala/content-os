@@ -16,6 +16,9 @@ export const desempenoPerfiles = pgTable("desempeno_perfiles", {
   // Ventas: segunda empresa donde también vende (Laura: "un pie en Level y un pie en Bori", Nahuel 28/sep). null = solo una.
   tambienEn: text("tambien_en"),
   slackId: text("slack_id"), // para los avisos del bot (el bot no puede buscar por correo); se busca solo por nombre
+  // Nombre de su Wi-Fi principal de trabajo (30/sep, Elvin: "tienen CRM y datos; no se pueden conectar de cualquier
+  // wifi"). Lo declara la persona en Hoy; la red no bloquea el ponche, pero una red nueva avisa a RR.HH.
+  wifiPrincipal: text("wifi_principal"),
   // Seguridad: quien entra por Ritmo (alta o primer link de acceso) NO ve Pulse (clientes, tesorería).
   // Los que ya usaban Pulse con su clave quedan en false. Solo admin/editoras lo cambian en Ajustes.
   soloRitmo: boolean("solo_ritmo").notNull().default(false),

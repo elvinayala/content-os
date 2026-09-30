@@ -2,15 +2,16 @@ import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
 
-import { and, asc, desc, eq, isNull, lte, ne } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, lte, ne } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
+import { after } from "next/server";
 
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
 import { avisarPersona, avisarRrhh, esc } from "./avisar";
 import { evento } from "./datos";
 import { fechaPR } from "./reglas";
-import { desempenoDispositivos, desempenoPoncheManual, desempenoPonches } from "./schema";
+import { desempenoDispositivos, desempenoEventos, desempenoPerfiles, desempenoPoncheManual, desempenoPonches } from "./schema";
 import { decisionPonche, errorNombreEquipo, errorPoncheManual, esMovil, estadoAlRegistrar, noEsComputadora, redDe, resumenAgente, TEXTO_BLOQUEO, type MotivoBloqueo, type PistaEquipo } from "./seguridad-reglas";
 
 // Seguridad del ponche (27/sep, Elvin): "que no puedan evadir o engañar el sistema… un solo dispositivo a la vez…
@@ -111,7 +112,39 @@ export async function registrarEquipo(userId: string, p: { nombre: string; huell
  * La dirección (admin/editoras) no tiene que ponchar: queda fuera del registro de computadoras, PERO nadie poncha
  * desde el teléfono, la tablet o la app instalada (29/sep, Elvin), aunque el modo sea "aviso".
  */
-export async function verificarParaPonchar(u: { id: string; rol: string }, huella?: string | null, pista?: PistaEquipo | null): Promise<{ equipoId: string | null }> {
+/** El Wi-Fi principal que declaró la persona (null si todavía no lo ha dicho). */
+export async function wifiPrincipal(userId: string): Promise<string | null> {
+  const d = await db();
+  const [p] = await d.select({ w: desempenoPerfiles.wifiPrincipal }).from(desempenoPerfiles).where(eq(desempenoPerfiles.userId, userId));
+  return p?.w ?? null;
+}
+
+export async function guardarWifiPrincipal(userId: string, nombre: string) {
+  const w = (nombre ?? "").replace(/\s+/g, " ").trim();
+  if (w.length < 2 || w.length > 60) throw new Error("Escribe el nombre de tu Wi-Fi (entre 2 y 60 caracteres)");
+  const d = await db();
+  const r = await d.update(desempenoPerfiles).set({ wifiPrincipal: w }).where(eq(desempenoPerfiles.userId, userId)).returning({ id: desempenoPerfiles.userId });
+  if (!r.length) throw new Error("No tienes perfil en Ritmo");
+  await evento({ userId, actorId: userId, tipo: "wifi-principal", datos: { wifi: w } });
+}
+
+// Red nueva (30/sep, Elvin): no bloquea, pero RR.HH. se entera — tienen CRM y datos de clientes y no deben ponchar desde
+// cualquier Wi-Fi. Un aviso por red nueva y como mucho uno por persona al día (la IP de la casa rota sola).
+async function avisarRedNueva(u: { id: string }, e: { id: string; nombre: string; ipPendiente: string | null } | null, red: string | null, ip: string | null) {
+  await evento({ userId: u.id, actorId: u.id, tipo: "ponche-otra-red", datos: { equipoId: e?.id ?? null, red }, ip });
+  if (!e || !red || e.ipPendiente === red) return;
+  const d = await db();
+  await d.update(desempenoDispositivos).set({ ipPendiente: red }).where(eq(desempenoDispositivos.id, e.id));
+  const inicioDia = new Date(`${fechaPR(Date.now())}T00:00:00-04:00`);
+  const [ya] = await d.select({ id: desempenoEventos.id }).from(desempenoEventos).where(and(eq(desempenoEventos.userId, u.id), eq(desempenoEventos.tipo, "aviso-red-nueva"), gte(desempenoEventos.at, inicioDia))).limit(1);
+  if (ya) return;
+  const wifi = await wifiPrincipal(u.id);
+  const texto = `📶 ${esc(await nombreDe(u.id))} ponchó desde una *red de internet nueva* en su computadora *${esc(e.nombre)}* (no se bloqueó). ${wifi ? `Su Wi-Fi principal es «${esc(wifi)}».` : "Todavía no ha dicho cuál es su Wi-Fi principal."} Pregúntale dónde está conectado: con acceso al CRM y a datos de clientes no debe usar Wi-Fi públicos. Si es una red de confianza, apruébala y no vuelve a avisar: <${base()}/ritmo/seguridad|Ver en Ritmo>`;
+  await avisarRrhh(texto).catch(() => 0);
+  await evento({ userId: u.id, actorId: u.id, tipo: "aviso-red-nueva", datos: { red } });
+}
+
+export async function verificarParaPonchar(u: { id: string; rol: string }, huella?: string | null, pista?: PistaEquipo | null): Promise<{ equipoId: string | null; redNueva?: boolean }> {
   const modo = modoSeguridad();
   if (modo === "off") return { equipoId: null };
   const { ip, ua } = await contextoRed();
@@ -126,15 +159,12 @@ export async function verificarParaPonchar(u: { id: string; rol: string }, huell
   const d = await db();
   if (e) await d.update(desempenoDispositivos).set({ ultimoUsoAt: new Date(), ultimaIp: ip }).where(eq(desempenoDispositivos.id, e.id));
   if (r.ok) {
-    // Red distinta: no bloquea (30/sep), solo queda en el registro.
-    if (r.redNueva) await evento({ userId: u.id, actorId: u.id, tipo: "ponche-otra-red", datos: { equipoId: e?.id ?? null, red: redDe(ip) }, ip });
+    // Red distinta: no bloquea (30/sep), pero RR.HH. recibe el aviso y la persona ve el recordatorio.
+    if (r.redNueva) {
+      after(() => avisarRedNueva(u, e, redDe(ip), ip).catch((x) => console.error("[red-nueva]", x)));
+      return { equipoId: e?.id ?? null, redNueva: true };
+    }
     return { equipoId: e?.id ?? null };
-  }
-  // Red nueva en un equipo aprobado: queda pedida a RR.HH. (una vez por red).
-  const red = redDe(ip);
-  if (r.motivo === "red-nueva" && e && red && e.ipPendiente !== red) {
-    await d.update(desempenoDispositivos).set({ ipPendiente: red }).where(eq(desempenoDispositivos.id, e.id));
-    await avisarRrhh(`🌐 ${esc(await nombreDe(u.id))} intentó ponchar desde su computadora *${esc(e.nombre)}* pero en otra red (internet). Si es su nueva red de trabajo, apruébala: <${base()}/ritmo/seguridad|Ver en Ritmo>`).catch(() => 0);
   }
   await evento({ userId: u.id, actorId: u.id, tipo: "ponche-bloqueado", datos: { motivo: r.motivo, equipoId: e?.id ?? null, agente: resumenAgente(ua), modo }, ip });
   if (modo === "aviso") return { equipoId: e?.id ?? null };
@@ -142,18 +172,19 @@ export async function verificarParaPonchar(u: { id: string; rol: string }, huell
 }
 
 /** Lo que Hoy necesita saber (sin huella: solo cookie + red). */
-export async function estadoSeguridad(u: { id: string; rol: string }): Promise<{ modo: string; exento: boolean; equipo: { nombre: string; estado: string } | null; bloqueo: MotivoBloqueo | null; tieneEquipos: boolean; manualPendientes: number }> {
+export async function estadoSeguridad(u: { id: string; rol: string }): Promise<{ modo: string; exento: boolean; equipo: { nombre: string; estado: string } | null; bloqueo: MotivoBloqueo | null; tieneEquipos: boolean; manualPendientes: number; redNueva: boolean; wifiPrincipal: string | null }> {
   const modo = modoSeguridad();
   const exento = modo === "off" || u.rol === "admin" || u.rol === "editor";
   const { ip, ua } = await contextoRed();
   const d = await db();
-  const [e, todos, pend] = await Promise.all([
+  const [e, todos, pend, wifi] = await Promise.all([
     equipoActual(u.id),
     equiposDe(u.id),
     d.select({ id: desempenoPoncheManual.id }).from(desempenoPoncheManual).where(and(eq(desempenoPoncheManual.userId, u.id), eq(desempenoPoncheManual.estado, "pendiente"))),
+    wifiPrincipal(u.id).catch(() => null),
   ]);
   const r = decisionPonche({ equipo: e, ip, movil: esMovil(ua) });
-  return { modo, exento, equipo: e ? { nombre: e.nombre, estado: e.estado } : null, bloqueo: r.ok ? null : r.motivo, tieneEquipos: todos.some((x) => x.estado !== "revocado"), manualPendientes: pend.length };
+  return { modo, exento, equipo: e ? { nombre: e.nombre, estado: e.estado } : null, bloqueo: r.ok ? null : r.motivo, tieneEquipos: todos.some((x) => x.estado !== "revocado"), manualPendientes: pend.length, redNueva: r.ok && !!r.redNueva, wifiPrincipal: wifi };
 }
 
 // ---- Ponche manual ----
@@ -227,15 +258,17 @@ export async function decidirRed(id: string, aprobar: boolean, actorId: string) 
 
 export async function panelSeguridad() {
   const d = await db();
-  const [equipos, manuales, usuarios] = await Promise.all([
+  const [equipos, manuales, usuarios, perfiles] = await Promise.all([
     d.select().from(desempenoDispositivos).orderBy(desc(desempenoDispositivos.createdAt)),
     d.select().from(desempenoPoncheManual).orderBy(desc(desempenoPoncheManual.createdAt)).limit(200),
     d.select({ id: pulseUsers.id, nombre: pulseUsers.nombre }).from(pulseUsers),
+    d.select({ id: desempenoPerfiles.userId, wifi: desempenoPerfiles.wifiPrincipal }).from(desempenoPerfiles),
   ]);
+  const wifiDe = (id: string) => perfiles.find((p) => p.id === id)?.wifi ?? null;
   const nombre = (id: string) => usuarios.find((u) => u.id === id)?.nombre ?? "—";
   const iso = (x: Date | null) => (x ? x.toISOString() : null);
   return {
-    equipos: equipos.map((e) => ({ id: e.id, persona: nombre(e.userId), nombre: e.nombre, agente: e.agente, estado: e.estado, redes: e.ips.length, redPendiente: !!e.ipPendiente, motivo: e.motivo, reemplaza: e.reemplaza, ultimoUso: iso(e.ultimoUsoAt), creado: e.createdAt.toISOString() })),
+    equipos: equipos.map((e) => ({ id: e.id, persona: nombre(e.userId), nombre: e.nombre, agente: e.agente, estado: e.estado, redes: e.ips.length, redPendiente: !!e.ipPendiente, wifi: wifiDe(e.userId), motivo: e.motivo, reemplaza: e.reemplaza, ultimoUso: iso(e.ultimoUsoAt), creado: e.createdAt.toISOString() })),
     manuales: manuales.map((m) => ({ id: m.id, persona: nombre(m.userId), tipo: m.tipo, hora: m.hora.toISOString(), motivo: m.motivo, estado: m.estado, agente: m.agente, creado: m.createdAt.toISOString() })),
   };
 }

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { almuerzoAction, corregirSalidaAction, entrarAction, salirAction } from "@/app/ritmo/actions";
 import { textoHora, useOtraZona, useZona } from "@/components/ritmo/hora-local";
-import { FueraDeComputadora, huellaEquipo, pistaEquipo, PoncheManual, SeguridadPonche, useFueraDeComputadora, type SeguridadUI } from "@/components/ritmo/seguridad";
+import { AvisoRedNueva, FueraDeComputadora, huellaEquipo, pistaEquipo, PoncheManual, SeguridadPonche, TEXTO_RED_NUEVA, useFueraDeComputadora, WifiPrincipal, type SeguridadUI } from "@/components/ritmo/seguridad";
 import { ALMUERZO, TEXTO_VENTANA_ALMUERZO, minutosPR } from "@/lib/desempeno/seguridad-reglas";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -107,6 +107,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
     if (!r.ok) return toast.error(r.error, aviso);
     navigator.vibrate?.(15);
     toast.success(`Entrada a las ${hora(r.entradaAt)}`, aviso);
+    if (r.redNueva) toast.warning(TEXTO_RED_NUEVA, { ...aviso, duration: 12_000 });
   };
 
   const salir = async () => {
@@ -125,6 +126,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
     setBloqueos("");
     setValores({});
     toast.success("Salida marcada. ¡Buen trabajo hoy!", aviso);
+    if (r.redNueva) toast.warning(TEXTO_RED_NUEVA, { ...aviso, duration: 12_000 });
   };
 
   const almorzar = async () => {
@@ -133,6 +135,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success("¡Buen provecho! Tienes 1 hora. Al volver, toca el círculo.", aviso);
+    if (r.redNueva) toast.warning(TEXTO_RED_NUEVA, { ...aviso, duration: 12_000 });
   };
   const minAhoraPR = minutosPR(new Date(ahora));
   const puedeAlmorzar = !!abierto && !estado.almuerzo && minAhoraPR >= ALMUERZO.desde && minAhoraPR < ALMUERZO.hasta;
@@ -170,8 +173,11 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
   if (fuera) return <FueraDeComputadora motivo={fuera} abierto={!!abierto} manual={seguridad && !seguridad.exento ? seguridad.manualPendientes : null} />;
   if (seguridad && !seguridad.exento && seguridad.bloqueo && !abierto) return <SeguridadPonche s={seguridad} />;
 
+  const conSeguridad = seguridad && !seguridad.exento;
   return (
     <div className="flex flex-col items-center gap-6">
+      {conSeguridad && !seguridad.wifiPrincipal ? <WifiPrincipal /> : null}
+      {conSeguridad && seguridad.redNueva ? <AvisoRedNueva wifi={seguridad.wifiPrincipal} /> : null}
       <button
         type="button"
         disabled={cargando}

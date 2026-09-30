@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Clock, Laptop, Loader2, Monitor, ShieldAlert, X } from "lucide-react";
+import { Check, Clock, Laptop, Loader2, Monitor, ShieldAlert, Wifi, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { decidirEquipoAction, decidirPoncheManualAction, decidirRedAction, poncheManualAction, registrarEquipoAction } from "@/app/ritmo/actions";
+import { decidirEquipoAction, decidirPoncheManualAction, decidirRedAction, guardarWifiAction, poncheManualAction, registrarEquipoAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 const aviso = { className: "ritmo" };
 
-export type SeguridadUI = { modo: string; exento: boolean; equipo: { nombre: string; estado: string } | null; bloqueo: MotivoBloqueo | null; tieneEquipos: boolean; manualPendientes: number };
+export type SeguridadUI = { modo: string; exento: boolean; equipo: { nombre: string; estado: string } | null; bloqueo: MotivoBloqueo | null; tieneEquipos: boolean; manualPendientes: number; redNueva?: boolean; wifiPrincipal?: string | null };
 
 /** Pista para el servidor: el iPad con Safari se presenta como Mac (pero es táctil) y la app instalada corre
  * "standalone". Desde ninguno de los dos se poncha (29/sep, Elvin). */
@@ -228,5 +228,52 @@ export function QuitarEquipo({ id }: { id: string }) {
     <button type="button" onClick={quitar} disabled={cargando} className="cursor-pointer text-[11px] text-muted-foreground underline-offset-4 hover:text-red-300 hover:underline">
       {cargando ? "…" : "Quitar"}
     </button>
+  );
+}
+
+// ─── Wi-Fi principal y red nueva (30/sep, Elvin) ──────────────────────────────────────────────
+// La red no bloquea el ponche, pero cada quien dice cuál es su Wi-Fi de trabajo y sabe que no puede usar cualquiera:
+// desde Ritmo/Pulse tienen acceso al CRM y a datos de clientes.
+
+export const TEXTO_RED_NUEVA = "Estás conectado a una red distinta a la de siempre y RR.HH. recibe un aviso. Recuerda proteger los datos: con acceso al CRM y a la información de clientes, no uses Wi-Fi públicos ni compartidos (cafés, aeropuertos, centros comerciales).";
+
+export function WifiPrincipal() {
+  const [nombre, setNombre] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const guardar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCargando(true);
+    const r = await guardarWifiAction(nombre);
+    setCargando(false);
+    if (!r.ok) return toast.error(r.error, aviso);
+    toast.success("Listo, guardamos tu Wi-Fi principal.", aviso);
+  };
+  return (
+    <form onSubmit={guardar} className="panel flex w-full max-w-md flex-col gap-3 border-primary/30 p-5">
+      <div className="flex items-center gap-2 font-semibold">
+        <Wifi className="size-4 text-primary" /> ¿Cuál es tu Wi-Fi principal de trabajo?
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Desde aquí tienes acceso al CRM y a datos de clientes. Trabaja siempre desde tu red de confianza (la de tu casa u oficina), nunca desde Wi-Fi públicos o compartidos. Si un día te conectas desde otra red, RR.HH. recibe un aviso.
+      </p>
+      <div className="flex gap-2">
+        <Input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del Wi-Fi (ej.: Casa_Fibra_5G)" maxLength={60} required className="h-10" />
+        <Button type="submit" disabled={cargando} className="h-10 rounded-full px-5">
+          {cargando ? <Loader2 className="animate-spin" /> : null} Guardar
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export function AvisoRedNueva({ wifi }: { wifi: string | null | undefined }) {
+  return (
+    <div className="flex w-full max-w-md items-start gap-2 rounded-xl border border-amber-400/30 bg-amber-400/[0.08] px-4 py-3 text-xs text-amber-200">
+      <Wifi className="mt-0.5 size-4 shrink-0" />
+      <span>
+        {wifi ? <>No estás en tu Wi-Fi principal («{wifi}»). </> : null}
+        {TEXTO_RED_NUEVA}
+      </span>
+    </div>
   );
 }

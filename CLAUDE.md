@@ -782,7 +782,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   (`linkAccesoAction(userId, true)`) — RR.HH. también, solo para miembros (nunca admins/editoras); el link limpia los intentos
   fallidos. **La red ya no bloquea el ponche** (`decisionPonche` → `redNueva`, evento `ponche-otra-red`): el 29-30/sep casi todos
   pidieron ponche manual porque la IP de la casa cambia (VPN, hotspot, apagón, el proveedor la rota); lo que manda es la
-  computadora registrada y aprobada (teléfono, tablet y app siguen fuera).
+  computadora registrada y aprobada (teléfono, tablet y app siguen fuera). Pero (Elvin: "tienen CRM y datos; no se pueden
+  conectar de cualquier wifi"): cada quien declara su **Wi-Fi principal** en Hoy (`desempeno_perfiles.wifi_principal`,
+  migración 0040, `guardarWifiAction`), una red nueva **avisa a RR.HH.** (`avisarRedNueva` con `after()`: una vez por red y
+  máx. 1 por persona al día; se aprueba en Seguridad y no vuelve a avisar) y la persona ve el recordatorio de proteger los
+  datos (`AvisoRedNueva` + toast `TEXTO_RED_NUEVA`).
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para

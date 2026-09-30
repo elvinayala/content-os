@@ -65,9 +65,11 @@ export default async function SeguridadPage() {
           <div key={`r-${e.id}`} className={fila}>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium">
-                🌐 {e.persona} intentó ponchar desde <b>{e.nombre}</b> en otra red (internet)
+                🌐 {e.persona} ponchó desde <b>{e.nombre}</b> en una red (internet) nueva
               </p>
-              <p className="text-xs text-muted-foreground">Autorízala si es su nueva red de trabajo (cambio de proveedor, mudanza). Si no, recházala.</p>
+              <p className="text-xs text-muted-foreground">
+                {e.wifi ? `Su Wi-Fi principal es «${e.wifi}». ` : "No ha dicho cuál es su Wi-Fi principal. "}No se bloqueó: pregúntale dónde está. Si es una red de confianza, autorízala y no vuelve a avisar; si no, recházala.
+              </p>
             </div>
             <BotonesDecision id={e.id} tipo="red" />
           </div>
@@ -82,7 +84,7 @@ export default async function SeguridadPage() {
               <div key={e.id} className="flex items-center gap-3 px-4 py-2.5 text-sm">
                 <span className="w-40 truncate font-medium">{e.persona}</span>
                 <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                  {e.nombre} · {e.agente} · {e.redes} {e.redes === 1 ? "red" : "redes"}
+                  {e.nombre} · {e.agente} · {e.redes} {e.redes === 1 ? "red" : "redes"} · {e.wifi ? `Wi-Fi «${e.wifi}»` : "sin Wi-Fi declarado"}
                 </span>
                 <span className="hidden text-xs text-muted-foreground sm:block">{e.ultimoUso ? `usada ${fecha(e.ultimoUso)}` : "sin usar"}</span>
                 <QuitarEquipo id={e.id} />
