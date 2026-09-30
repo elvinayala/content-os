@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-09-29T01:37:18.448Z",
+  "actualizadoEl": "2026-09-29T20:42:01.416Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -11296,6 +11296,20 @@
       "estado": "nuevo",
       "formato": "presentación animada 16:9 · 54 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/aib-marketing-ia-cliente.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9haWItbWFya2V0aW5nLWlhLWNsaWVudGUubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDY0NTgzOCwiZXhwIjoxODIyMTgxODM4fQ.IVQaqf0l_KKqcHKcrxvpaWigJ43XfeUnZIzBmmDAECCqDLRfLIxiBWpukVvTaHw_fC-V_qT_QZnM1W7G959z0Q",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-lu-agentes-cliente",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Agentes de IA · Level Up Media en video (para enviar al cliente antes de la llamada)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/lu-agentes-cliente.mp4`.",
+      "angulo": "Upsell a clientes LU: la demo de agentes con la marca de Level Up",
+      "agente": "Remi",
+      "creadoEl": "2026-09-29T20:42:01.416Z",
+      "estado": "nuevo",
+      "formato": "presentación animada 16:9 · 62 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/lu-agentes-cliente.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9sdS1hZ2VudGVzLWNsaWVudGUubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDcxNDUyMSwiZXhwIjoxODIyMjUwNTIxfQ.HhgPr4psBwM0ObG7DMFWXzhoEuo-oDhLXRsR9kOonnvMd2Q5iesDzK1ksKGKmiSV14hZMRaWnsK9e1QwDye6jA",
       "modelo": "remotion"
     }
   ]
