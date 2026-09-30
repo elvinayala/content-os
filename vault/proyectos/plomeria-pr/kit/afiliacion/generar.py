@@ -68,7 +68,7 @@ SEC = {
 <ul>
 <li><b>65% de la mano de obra</b> de cada trabajo completado y cobrado al cliente. Resuelto retiene el 35%.</li>
 <li>El cargo de coordinación que paga el cliente (${MENU['cargo_coordinacion']}) es de Resuelto. El recargo de emergencia (+${MENU['recargo_emergencia']}) se reparte 65% / 35% igual que la mano de obra.</li>
-<li><b>Materiales:</b> el Plomero los compra y entrega el recibo con foto. Resuelto le reembolsa el <b>100% del costo</b> y le paga un <b>10% adicional</b> por manejo. Si Resuelto suple un equipo mayor (cisterna, calentador, bomba), el Plomero cobra solo la mano de obra.</li>
+<li><b>Materiales:</b> el Plomero los compra y entrega el recibo con foto. Resuelto le reembolsa el <b>100% del costo</b> y le paga un <b>10% adicional</b> por manejo, <b>dentro de las 48 horas</b> siguientes a cerrar el trabajo en la app, aparte de la liquidación del viernes. Si Resuelto suple un equipo mayor (cisterna, calentador, bomba), el Plomero cobra solo la mano de obra.</li>
 <li><b>Liquidación semanal los viernes</b>, por ATH Móvil o transferencia, con estado de cuenta por trabajo. Solo se liquidan trabajos ya cobrados al cliente.</li>
 </ul>""",
  5: """<h2>5. El cliente es de Resuelto</h2>
@@ -76,7 +76,7 @@ SEC = {
  6: """<h2>6. Nunca cobra el Plomero</h2>
 <p>El Plomero no cobra al cliente ni mano de obra ni materiales, por ningún medio. Todo pago va a Resuelto. Si un cliente insiste en pagar en efectivo, el Plomero lo recibe a nombre de Resuelto, lo reporta en el momento y lo deposita el mismo día.</p>""",
  7: f"""<h2>7. Garantía</h2>
-<p>La mano de obra tiene <b>{MENU['garantia_meses']} meses</b> de garantía al cliente. Si el fallo es por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>""",
+<p>La mano de obra tiene <b>{MENU['garantia_meses']} meses</b> de garantía al cliente, salvo los <b>destapes: 30 días</b>, que no cubren mal uso, fallas de la tubería (barriga, raíces, tubería rota) ni la recurrencia si el cliente no aceptó la inspección con cámara recomendada por escrito. Si el fallo es por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>""",
  8: """<h2>8. Calidad y terminación</h2>
 <p>Calificación promedio mínima de <b>4.8</b>. <b>Tres faltas</b> (no presentarse sin aviso, cobrar directo, queja grave verificada, no enviar fotos de forma repetida) son causa de terminación. Cualquiera de las partes puede terminar con <b>15 días</b> de aviso por escrito (WhatsApp cuenta).</p>""",
  9: """<h2>9. Confidencialidad e imagen</h2>
@@ -261,7 +261,7 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <div class="pag"></div>
 {cab("Kit de bienvenida", "Cómo cobras")}
 <div class="caja"><h2>Tu parte</h2>
-<b>65% de la mano de obra</b> de cada trabajo cobrado · <b>materiales: 100% del costo + 10%</b> por manejo (con recibo y foto) · emergencias (+${MENU['recargo_emergencia']}): también 65% para ti · <b>pago todos los viernes</b> por ATH Móvil o transferencia.</div>
+<b>65% de la mano de obra</b> de cada trabajo cobrado · <b>materiales: 100% del costo + 10%</b> por manejo (con recibo y foto, en 48 horas) · emergencias (+${MENU['recargo_emergencia']}): también 65% para ti · <b>pago todos los viernes</b> por ATH Móvil o transferencia.</div>
 <p>Ejemplo: un reemplazo de bomba de cisterna de $249 de mano de obra → <b>$161.85</b> para ti, más el costo de la bomba si la compraste tú, más el 10% de ese costo.</p>
 
 <h2>Lo que paga el cliente (mano de obra, precio fijo)</h2>

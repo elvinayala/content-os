@@ -14,7 +14,7 @@ export const NOMBRE_CATEGORIA: Record<Categoria, string> = { plomeria: "Plomerí
 /** Cómo se le dice al técnico de cada categoría (en mensajes al cliente y al equipo). */
 export const TECNICO_DE: Record<Categoria, string> = { plomeria: "plomero licenciado", aire: "técnico de aire licenciado", handyman: "handyman registrado en DACO", electricidad: "perito electricista licenciado" };
 
-export interface ServicioCat { id: string; nombre: string; nivel: "P" | "M" | "G"; precio?: number; rango?: [number, number]; cotizacion?: boolean; nota?: string; alias: string[]; categoria: Categoria }
+export interface ServicioCat { id: string; nombre: string; nivel: "P" | "M" | "G"; precio?: number; rango?: [number, number]; cotizacion?: boolean; nota?: string; alias: string[]; categoria: Categoria; garantia_dias?: number; garantia_nota?: string }
 
 // Cómo lo pide la gente (sin acentos, en minúscula: la búsqueda normaliza). Ojo con choques con plomería:
 // "llave" es de agua (plomería); la de la puerta es "cerradura"/"llavín".
@@ -69,4 +69,11 @@ export function buscar(problema: string, catalogo: ServicioCat[] = CATALOGO): Se
     return pts;
   };
   return catalogo.map((s) => ({ s, pts: puntos(s) })).filter((x) => x.pts > 0).sort((a, b) => b.pts - a.pts).slice(0, 3).map((x) => x.s);
+}
+
+/** Garantía de mano de obra de un servicio (30/sep, Elvin: destapes 30 días; lo demás, los meses del menú). Pura. */
+export function garantiaDe(servicioId: string | undefined, mesesGeneral = MENU.garantia_meses as number): { dias: number | null; meses: number | null; texto: string; nota: string | null } {
+  const s = servicioId ? servicioPorId(servicioId) : undefined;
+  if (s?.garantia_dias) return { dias: s.garantia_dias, meses: null, texto: `${s.garantia_dias} días`, nota: s.garantia_nota ?? null };
+  return { dias: null, meses: mesesGeneral, texto: `${mesesGeneral} meses`, nota: null };
 }

@@ -24,7 +24,7 @@ import { programarLlamadaHumana } from "./llamar-cliente.js";
 /** Quién puede hacer plomería en PR (Ley 59-2022): licencia de oficial o maestro, o certificado de aprendiz (con un maestro). */
 const PUEDE_TRABAJAR = ["maestro", "oficial", "aprendiz"];
 import { config } from "./config.js";
-import { buscar as buscarCatalogo, servicioPorId, NOMBRE_CATEGORIA, TECNICO_DE, esCategoria, type Categoria as CategoriaServicio } from "./catalogo.js";
+import { buscar as buscarCatalogo, servicioPorId, NOMBRE_CATEGORIA, TECNICO_DE, esCategoria, type Categoria as CategoriaServicio, garantiaDe } from "./catalogo.js";
 import { activoDe } from "./proveedores.js";
 import { listar as listarProveedores, linkPortal } from "./proveedores.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
@@ -206,7 +206,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "buscar_precio": {
       const res = buscarCatalogo(input.problema);
       if (!res.length) return { encontrado: false, sugerencia: "No está en el menú. Ofrece diagnóstico ($69, se acredita) o escala si es comercial." };
-      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct, garantia_meses: menu.garantia_meses };
+      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto, garantia_nota: garantiaDe(s.id).nota })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct, garantia_meses: menu.garantia_meses };
     }
     case "verificar_cobertura": {
       const t = territorioDeMunicipio(input.municipio);

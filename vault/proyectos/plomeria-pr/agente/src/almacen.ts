@@ -80,6 +80,8 @@ export interface Trabajo {
   fin: string;             // ISO
   estado: "agendado" | "en-camino" | "en-sitio" | "completado" | "cobrado" | "cancelado";
   eventoCalendarId?: string;
+  /** Adicionales y recomendaciones en sitio, aprobados por el cliente con un enlace (adicionales.ts, 30/sep). */
+  adicionales?: import("./adicionales.js").Adicional[];
   // Ciclo en la app del plomero (ciclo-trabajo.ts)
   enCaminoEn?: string;
   llegadaEn?: string;

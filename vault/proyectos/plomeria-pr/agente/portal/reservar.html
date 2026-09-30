@@ -112,7 +112,7 @@
     const s = servicioSel(); const box = $("precio");
     if (!s) { box.style.display = "none"; return; }
     box.style.display = "block";
-    if (s.precio != null) { $("precioN").textContent = `$${s.precio}`; $("precioP").textContent = `Precio fijo de mano de obra + $${datos.coordinacion} de coordinación. Materiales aparte, al costo con recibo. ${datos.garantiaMeses} meses de garantía.`; }
+    if (s.precio != null) { $("precioN").textContent = `$${s.precio}`; $("precioP").textContent = `Precio fijo de mano de obra + $${datos.coordinacion} de coordinación. Materiales aparte, al costo con recibo. ${s.garantia || datos.garantiaMeses + " meses"} de garantía.`; }
     else { $("precioN").textContent = `$${s.desde.toLocaleString("en-US")} – $${s.hasta.toLocaleString("en-US")}`; $("precioP").textContent = "El plomero te confirma el precio fijo por escrito en tu casa, antes de empezar."; }
     if (/diagnostico$/.test(s.id)) $("precioP").textContent = `El ${s.categoria === "plomeria" ? "plomero" : "técnico"} ve el problema y te da el precio fijo por escrito. Si se hace el trabajo, los $${s.precio} se acreditan.`;
     else if (s.precio == null) $("precioP").textContent = `El ${s.categoria === "plomeria" ? "plomero" : "técnico"} te confirma el precio fijo por escrito en tu casa, antes de empezar.`;

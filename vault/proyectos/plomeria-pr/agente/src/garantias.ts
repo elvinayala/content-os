@@ -9,10 +9,13 @@ import { enviarTexto, avisarCoordinador } from "./canales/whatsapp.js";
 import { avisarCliente } from "./aviso-cliente.js";
 import { menu } from "./prompt.js";
 import { archivar } from "./historial.js";
+import { garantiaDe } from "./catalogo.js";
 
 export function vigenciaGarantia(t: Trabajo): { vigente: boolean; vence?: string } {
   if (!t.terminadoEn || t.garantiaDe) return { vigente: false };
-  const vence = new Date(t.terminadoEn); vence.setMonth(vence.getMonth() + menu.garantia_meses);
+  const g = garantiaDe(t.servicioId);
+  const vence = new Date(t.terminadoEn);
+  if (g.dias) vence.setDate(vence.getDate() + g.dias); else vence.setMonth(vence.getMonth() + menu.garantia_meses);
   return { vigente: vence.getTime() > Date.now(), vence: vence.toISOString() };
 }
 

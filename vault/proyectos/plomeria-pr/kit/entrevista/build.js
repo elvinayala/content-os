@@ -155,7 +155,7 @@ Pausa después de la regla 2 y mira a la cámara: "Esta es la única que no tien
       ["¿Y si un mes está flojo?", "Por eso limitamos plomeros por zona y arrancamos con 3 territorios, no 8. Mejor pocos con la agenda llena que muchos peleando por lo mismo."],
       ["¿Y si el cliente me quiere contratar directo?", "Le dices que escriba a Resuelto. Ese cliente vuelve a ti por la app, porque tú eres el plomero de su zona. Y sigues cobrando sin perseguirlo."],
       ["¿Y mis clientes de siempre?", "Son tuyos y siguen siendo tuyos. Resuelto no te pide exclusividad. Solo te pide que los de Resuelto sean de Resuelto."],
-      ["¿Y si no me gusta?", "Contrato mes a mes, sin penalidad. Te vas cuando quieras avisando con 2 semanas para no dejar clientes colgados."],
+      ["¿Y si no me gusta?", "Sin permanencia ni penalidad: te vas cuando quieras avisando con 15 días. El acuerdo de hoy es provisional (hasta 90 días) mientras el abogado prepara el definitivo."],
     ],
     objecionesNotas: `Pregunta ANTES de mostrarlas: "¿Qué es lo que te frena?" Deja que la diga él. Luego responde con la del slide. Si dice una que no está aquí, la fórmula: reconoce ("tiene sentido que te preocupe") → aclara → pregunta de vuelta ("¿eso te resuelve la duda?").
 No discutas el 65/35 en la entrevista. Si insiste: "El reparto es igual para todos los fundadores; lo que sí se revisa a los 90 días con datos es cuánto trabajo te llega."`,

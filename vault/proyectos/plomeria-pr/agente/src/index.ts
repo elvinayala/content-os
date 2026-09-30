@@ -27,6 +27,7 @@ import * as firmas from "./firmas/firmas.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
 import * as sinCredito from "./sin-credito.js";
+import * as adicionales from "./adicionales.js";
 import * as demo from "./demo-plomero.js";
 import { montarMarca } from "./marca.js";
 import { llamarAlCliente, escribirAlCliente } from "./contacto-plomero.js";
@@ -519,6 +520,29 @@ app.post("/api/proveedores/trabajo/paso", async (req: any, res) => {
   const paso = String(req.body?.paso ?? "") as "en-camino" | "llegue" | "terminado";
   if (!["en-camino", "llegue", "terminado"].includes(paso)) return res.status(400).json({ ok: false, motivo: "Paso inválido." });
   res.json(await ciclo.avanzar(String(req.body?.oferta ?? ""), prov, paso, { mano_obra: req.body?.mano_obra, materiales: req.body?.materiales, nota: req.body?.nota }));
+});
+// Adicional o recomendación en sitio: el cliente lo aprueba con un enlace antes de que se haga (adicionales.ts, 30/sep).
+app.post("/api/proveedores/trabajo/adicional", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true, mensaje: "(Prueba) Al cliente le llegaría un enlace para aprobarlo." });
+  const r = ciclo.trabajoDe(String(req.body?.oferta ?? ""), prov); if ("error" in r) return res.json({ ok: false, motivo: r.error });
+  res.json(await adicionales.proponer(r.t, prov, { tipo: req.body?.tipo, servicioId: req.body?.servicio || undefined, descripcion: req.body?.descripcion, precio: req.body?.precio }, ventas.avisarVentas));
+});
+app.get("/ok/:t/:a/:k", (req, res) => {
+  const rol = req.query.equipo === "1" ? "equipo" : "cliente";
+  if (!adicionales.firmaOk(req.params.t, req.params.a, rol, req.params.k)) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>Ese enlace no es válido.</p>");
+  const t = almacen.trabajos().find((x) => x.id === req.params.t); const a = t?.adicionales?.find((x) => x.id === req.params.a);
+  if (!t || !a) return res.status(404).type("html").send("<p style='font-family:sans-serif;padding:24px'>No encontramos esa propuesta.</p>");
+  res.set("X-Robots-Tag", "noindex").type("html").send(adicionales.paginaDecision(t, a, rol, req.params.k));
+});
+app.post("/ok/:t/:a/:k", express.urlencoded({ extended: false }), async (req: any, res) => {
+  const rol = req.query.equipo === "1" ? "equipo" : "cliente";
+  if (!adicionales.firmaOk(req.params.t, req.params.a, rol, req.params.k)) return res.status(404).send("Enlace inválido");
+  const accion = req.body?.accion === "rechazar" ? "rechazar" : "aprobar";
+  const r = await adicionales.decidir(req.params.t, req.params.a, rol, accion, { precio: req.body?.precio, ip: String(req.ip ?? "") }, ventas.avisarVentas);
+  const t = almacen.trabajos().find((x) => x.id === req.params.t); const a = t?.adicionales?.find((x) => x.id === req.params.a);
+  if (!r.ok || !t || !a) return res.type("html").send(`<p style='font-family:sans-serif;padding:24px;font-size:18px'>${(r as any).motivo ?? "No se pudo."}</p>`);
+  res.type("html").send(adicionales.paginaDecision(t, a, rol, req.params.k));
 });
 app.post("/api/proveedores/trabajo/foto", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.foto(String(req.body?.oferta ?? ""), String(req.body?.tipo ?? "")));
