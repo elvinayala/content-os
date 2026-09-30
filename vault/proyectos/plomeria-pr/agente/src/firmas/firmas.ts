@@ -27,6 +27,8 @@ export interface Firma {
   abierto?: { en: string; ip: string };
   /** Cambios de contrato antes de firmar (p. ej. el candidato no tiene licencia pero sí certificado de aprendiz → aprendiz). */
   cambios?: { en: string; de: TipoContrato; a: TipoContrato; por: string }[];
+  /** Anulado desde el panel (30/sep): el enlace deja de servir; el registro no se borra. */
+  anulado?: { en: string; por: string };
   firmado?: { en: string; ip: string; ua: string; datos: DatosFirma; hashContenido: string; hashPdf: string; archivo: string };
 }
 
@@ -51,6 +53,13 @@ export function cambiarTipo(f: Firma, tipo: TipoContrato, por: string): { ok: tr
   if (f.tipo === tipo) return { ok: true };
   f.cambios = [...(f.cambios ?? []), { en: new Date().toISOString(), de: f.tipo, a: tipo, por }];
   f.tipo = tipo; actualizar(f);
+  return { ok: true };
+}
+
+/** Anula un contrato pendiente (30/sep, Yaileen: "limpiar los pendientes"). No se borra: queda como anulado y oculto. */
+export function anular(f: Firma, por: string): { ok: true } | { ok: false; error: string } {
+  if (f.estado !== "pendiente") return { ok: false, error: "Solo se anulan contratos pendientes." };
+  f.estado = "anulado"; f.anulado = { en: new Date().toISOString(), por }; actualizar(f);
   return { ok: true };
 }
 

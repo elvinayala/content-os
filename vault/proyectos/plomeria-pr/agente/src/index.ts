@@ -163,6 +163,11 @@ app.post("/equipo-firmas/tipo", (req: any, res) => {
   if (!f) return res.status(404).json({ ok: false, error: "No existe." });
   res.json(firmas.cambiarTipo(f, req.body?.tipo === "aprendiz" ? "aprendiz" : "plomero", "panel de contratos"));
 });
+app.post("/equipo-firmas/anular", (req: any, res) => {
+  const f = firmas.listar().find((x) => x.id === String(req.body?.id ?? ""));
+  if (!f) return res.status(404).json({ ok: false, error: "No existe." });
+  res.json(firmas.anular(f, "panel de contratos"));
+});
 app.post("/equipo-firmas/nuevo", (req: any, res) => {
   const b = req.body ?? {};
   const tipo = (["aprendiz", "anexo-nombre", "tecnico", "cotizador"].includes(b.tipo) ? b.tipo : "plomero") as "plomero" | "aprendiz" | "anexo-nombre" | "tecnico" | "cotizador";

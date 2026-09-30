@@ -27,15 +27,17 @@ Antes no había un camino claro en la app. Desde el 30/sep sí lo hay: **adicion
 | Leer el contrato antes de firmar | Sí. El enlace de firma muestra todo el contrato antes; también se manda en PDF. |
 | Pay-per-lead vs. Resuelto | En las apps de leads el plomero paga por cada cliente, lo persigue, cobra y si no paga lo pierde. Aquí no paga nada por el cliente, Resuelto cobra, da la garantía y le paga los viernes. A cambio, el cliente es de Resuelto. |
 
-## Pendientes de Elvin (no prometer todavía)
+## Decidido por Elvin (30/sep)
 
-1. **Garantía de destapes.** Hoy es 12 meses como todo. Propuesta: 30 días en destapes, y no cubre si el cliente rechazó la
-   cámara recomendada o si la causa es estructural (tubería con barriga) o mal uso.
-2. **Precios que faltan en el menú:** remover y reinstalar inodoro para destapar · mezcladora de ducha empotrada (válvula
-   en la pared; hoy "llave o mezcladora $129" se presta a confusión) · válvula de salida del inodoro (flush valve; hoy
-   "reparación de inodoro $99" no la incluye) · instalación de equipos de alto valor (inodoro inteligente) = cotización en sitio.
-3. **Capital de trabajo en materiales.** Propuesta: reembolso de materiales en 48 h, aparte del pago del viernes, o que
-   Resuelto compre lo que pase de $150.
-4. **Contratar con su LLC** (Rafael tiene una). Propuesta: sí, con el número de registro; lo ajusta el abogado.
-5. **Reembolso en planilla.** El estado de cuenta ya separa mano de obra y materiales; el 10 % de manejo es ingreso. Cómo
-   lo declara, con su contador (confirmar con el contador de Resuelto).
+1. **Garantía de destapes: 30 días** (destape simple y con máquina). No cubre si el cliente no aceptó la cámara
+   recomendada, mal uso ni fallas de la tubería. Lo demás sigue en 12 meses. (`garantia_dias` en `agente/data/menu.json`.)
+2. **A cotizar en sitio** (el plomero propone en la app, Resuelto aprueba el precio): remover y reinstalar inodoro ·
+   mezcladora de ducha empotrada · válvula de salida del inodoro · equipos de alto valor.
+3. **Materiales: reembolso en 48 horas** de cerrado el trabajo (costo + 10 %), aparte del viernes. Al cerrar, el aviso
+   del equipo trae el monto y la fecha límite.
+4. **Contratar con su LLC: sí**, con el número de registro. Pendiente: que el abogado lo deje en el acuerdo.
+5. **Reembolso en planilla:** el estado de cuenta separa mano de obra y materiales; el 10 % de manejo es ingreso; la
+   declaración la ve cada uno con su contador.
+
+A los plomeros activos (Edgar, Samuel, Santos) se les avisó por texto y por la app el 30/sep, con el aviso de que pronto
+tendrán Resuelto Pro en el celular.
