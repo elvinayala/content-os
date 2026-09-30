@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { almuerzoAction, corregirSalidaAction, entrarAction, salirAction } from "@/app/ritmo/actions";
+import { textoHora, useOtraZona, useZona } from "@/components/ritmo/hora-local";
 import { huellaEquipo, PoncheManual, SeguridadPonche, type SeguridadUI } from "@/components/ritmo/seguridad";
 import { ALMUERZO, TEXTO_VENTANA_ALMUERZO, minutosPR } from "@/lib/desempeno/seguridad-reglas";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,6 @@ export interface EstadoPonche {
   almuerzo?: { salida: string; vuelta: string | null } | null;
 }
 
-const hora = (iso: string) => new Date(iso).toLocaleTimeString("es-PR", { timeZone: "America/Puerto_Rico", hour: "numeric", minute: "2-digit" });
 const dia = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "short" });
 
 function reloj(desde: string, ahora: number) {
@@ -72,6 +72,10 @@ function Dial({ progreso }: { progreso: number | null }) {
 
 // El ponche: un círculo grande. Un toque para entrar; otro para salir (con bloqueos opcionales).
 export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; horasHoy: number; seguridad?: SeguridadUI }) {
+  // Horas en la zona de quien mira, con la de PR al lado si es otra (Daisy, 29/sep).
+  const tz = useZona();
+  const otraZona = useOtraZona();
+  const hora = (iso: string) => textoHora(iso, tz);
   const [ahora, setAhora] = useState(() => Date.now());
   const [abrir, setAbrir] = useState(false);
   const [cargando, setCargando] = useState(false);
@@ -199,7 +203,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           <>
             <span className="text-xs font-medium tracking-[0.2em] text-primary uppercase">Trabajando</span>
             <span className="num mt-1 text-6xl font-semibold tracking-tight">{reloj(abierto, ahora)}</span>
-            <span className="mt-1 mb-6 text-sm text-muted-foreground">desde las {hora(abierto)}</span>
+            <span className="mt-1 mb-6 text-center text-sm text-muted-foreground">desde las {hora(abierto)}</span>
           </>
         ) : (
           <>
@@ -232,6 +236,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           Almuerzo: {hora(estado.almuerzo.salida)} – {hora(estado.almuerzo.vuelta)} ({Math.round((Date.parse(estado.almuerzo.vuelta) - Date.parse(estado.almuerzo.salida)) / 60000)} min)
         </p>
       ) : null}
+      {otraZona ? <p className="-mt-3 text-center text-[11px] text-muted-foreground">Las horas salen en tu hora ({otraZona}); entre paréntesis, la de Puerto Rico, que es la que usa Ritmo para tu horario.</p> : null}
       {seguridad && !seguridad.exento ? <PoncheManual pendientes={seguridad.manualPendientes} discreto /> : null}
 
       <Dialog open={abrir} onOpenChange={setAbrir}>

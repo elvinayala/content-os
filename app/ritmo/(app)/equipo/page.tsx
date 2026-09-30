@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Correcciones } from "@/components/ritmo/correcciones";
-import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, horaPR, MiniDias, ScoreBadge, Tarjeta } from "@/components/ritmo/piezas";
+import { Hora } from "@/components/ritmo/hora-local";
+import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, MiniDias, ScoreBadge, Tarjeta } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
@@ -174,7 +175,7 @@ function FilaPersonaUI({ f, oculto }: { f: FilaPersona; oculto: boolean }) {
           <EstadoChip estado={a.estado} extra={a.minutosTarde > 15 ? `${a.minutosTarde} min` : undefined} />
           {a.entrada ? (
             <span className="tabular-nums">
-              {horaPR(a.entrada)} – {a.estado === "trabajando" ? "ahora" : horaPR(a.salida)} · {fmtHoras(a.horas)}
+              <Hora iso={a.entrada} /> – {a.estado === "trabajando" ? "ahora" : <Hora iso={a.salida} />} · {fmtHoras(a.horas)}
             </span>
           ) : null}
           {f.hoy.reporte?.bloqueos ? <span className="rounded bg-amber-400/15 px-1.5 py-0.5 text-amber-300">bloqueo</span> : null}

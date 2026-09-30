@@ -10,6 +10,8 @@ export function RelojPR() {
     const t = setInterval(() => setAhora(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
+  // Si estás en otra zona (Colombia…), también tu hora (29/sep).
+  const local = ahora ? ahora.toLocaleTimeString("es-PR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
   const hora = ahora ? ahora.toLocaleTimeString("es-PR", { timeZone: "America/Puerto_Rico", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "--:--:--";
   return (
     <span className="hidden items-center gap-2 rounded-full border border-border/70 bg-card/40 px-2.5 py-1 font-mono text-[11px] tracking-wider whitespace-nowrap text-muted-foreground tabular-nums xl:inline-flex" title="Hora de Puerto Rico">
@@ -17,6 +19,7 @@ export function RelojPR() {
         <span className="absolute inset-0 animate-ping rounded-full bg-primary/60 motion-reduce:animate-none" />
         <span className="relative size-1.5 rounded-full bg-primary" />
       </span>
+      {local && local !== hora.slice(0, 5) ? <span className="text-foreground/80">Tu hora {local} ·</span> : null}
       PR {hora}
     </span>
   );

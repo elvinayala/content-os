@@ -2,7 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { diaCorto, EmpresaBadge, EstadoChip, fmtHoras, horaPR, ScoreBadge } from "@/components/ritmo/piezas";
+import { Hora } from "@/components/ritmo/hora-local";
+import { diaCorto, EmpresaBadge, EstadoChip, fmtHoras, ScoreBadge } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
 import { colorScore, fechaPR, PUESTOS, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
@@ -115,7 +116,11 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
                 <span className="w-16 font-medium capitalize">{diaCorto(d.fecha)}</span>
                 <EstadoChip estado={d.asistencia.estado} extra={d.asistencia.minutosTarde > 15 ? `${d.asistencia.minutosTarde} min` : undefined} />
                 <span className="text-muted-foreground tabular-nums">
-                  {d.asistencia.entrada ? `${horaPR(d.asistencia.entrada)} – ${d.asistencia.estado === "trabajando" ? "ahora" : horaPR(d.asistencia.salida)} · ${fmtHoras(d.asistencia.horas)}` : ""}
+                  {d.asistencia.entrada ? (
+                    <>
+                      <Hora iso={d.asistencia.entrada} /> – {d.asistencia.estado === "trabajando" ? "ahora" : <Hora iso={d.asistencia.salida} />} · {fmtHoras(d.asistencia.horas)}
+                    </>
+                  ) : null}
                   {d.asistencia.sinSalida ? " · sin salida" : ""}
                   {d.asistencia.correccionPendiente ? " · corrección por confirmar" : ""}
                 </span>

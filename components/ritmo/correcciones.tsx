@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import { decidirCorreccionAction } from "@/app/ritmo/actions";
 import { Button } from "@/components/ui/button";
 
-import { diaCorto, horaPR } from "./piezas";
+import { Hora } from "./hora-local";
+import { diaCorto } from "./piezas";
 
 export interface Correccion {
   id: string;
@@ -42,7 +43,7 @@ export function Correcciones({ lista }: { lista: Correccion[] }) {
           <li key={c.id} className="flex flex-wrap items-center gap-3 rounded-xl bg-white/5 px-3 py-2 text-sm">
             <span className="font-medium">{c.nombre}</span>
             <span className="text-muted-foreground">
-              {diaCorto(c.fecha)} · {horaPR(c.entradaAt)} → {horaPR(c.salidaAt)}
+              {diaCorto(c.fecha)} · <Hora iso={c.entradaAt} /> → <Hora iso={c.salidaAt} />
               {c.nota ? ` · “${c.nota}”` : ""}
             </span>
             <span className="ml-auto flex gap-2">
