@@ -103,7 +103,7 @@ export function BarraLeads({
     <>
       <div className="flex flex-wrap items-center gap-2 border-b bg-background px-4 py-2.5">
         {/* Vistas (como los botones de Pipedrive) */}
-        <div className="flex rounded-md border p-0.5">
+        <div className="flex rounded-lg bg-muted p-0.5">
           {[
             { v: "embudo", icon: Kanban, href: base, t: "Embudo" },
             { v: "lista", icon: List, href: `${base}/lista`, t: "Lista" },
@@ -113,7 +113,7 @@ export function BarraLeads({
               key={b.v}
               href={`${b.href}${embudoId ? `?embudo=${embudoId}` : ""}`}
               title={b.t}
-              className={cn("flex h-7 items-center gap-1.5 rounded px-2 text-xs font-medium", vista === b.v ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted")}
+              className={cn("flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition", vista === b.v ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
             >
               <b.icon className="size-3.5" />
               <span className="hidden sm:inline">{b.t}</span>
@@ -129,7 +129,8 @@ export function BarraLeads({
         {vista !== "actividades" && embudo && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 max-w-60 gap-1 font-semibold">
+              <Button variant="outline" size="sm" className="h-8 max-w-64 gap-1.5 font-semibold">
+                <span className="size-2 shrink-0 rounded-full bg-[#08a742]" />
                 <span className="truncate">{embudo.nombre}</span>
                 <ChevronDown className="size-4 opacity-60" />
               </Button>
@@ -340,6 +341,16 @@ export function TableroLeads({
   const columnas = useMemo(() => [...etapas.filter((e) => !idsGrupos.has(e.id)), ...etapas.filter((e) => idsGrupos.has(e.id))], [etapas, idsGrupos]);
   const leads = tratos.filter((t) => !idsGrupos.has(t.etapaId));
   const total = leads.reduce((s, t) => s + t.valor, 0);
+  const resumen = useMemo(() => {
+    const hoy = leads.filter((t) => horaLlegada(t.creadoEl, ahora).startsWith("hoy")).length;
+    const estados = leads.map((t) => estadoActividad(t.proximaActividad, ahora));
+    return {
+      hoy,
+      sinSeguimiento: estados.filter((e) => e === "ninguna").length,
+      vencidos: estados.filter((e) => e === "vencida").length,
+      sinLeer: leads.filter((t) => t.noLeidos > 0).length,
+    };
+  }, [leads, ahora]);
 
   const onDragStart = (e: DragStartEvent) => setArrastrando(tratos.find((t) => t.id === e.active.id) ?? null);
   const onDragEnd = (e: DragEndEvent) => {
@@ -386,17 +397,24 @@ export function TableroLeads({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="px-4 py-1.5 text-xs text-muted-foreground">
-        <span className="font-semibold text-foreground">{usd(total)}</span> · {leads.length} {leads.length === 1 ? "lead" : "leads"}
+    <div className="flex min-h-0 flex-1 flex-col bg-[#f6f7f9]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-2.5 text-xs text-muted-foreground">
+        <span>
+          <b className="text-[15px] font-semibold text-foreground tabular-nums">{leads.length}</b> {leads.length === 1 ? "lead abierto" : "leads abiertos"}
+          {total ? <> · <b className="font-semibold text-foreground">{usd(total)}</b></> : null}
+        </span>
+        <Dato color="#08a742" n={resumen.hoy} texto="llegaron hoy" />
+        <Dato color="#25d366" n={resumen.sinLeer} texto="con mensajes sin leer" />
+        <Dato color="#ef4444" n={resumen.vencidos} texto="seguimientos vencidos" />
+        <Dato color="#f59e0b" n={resumen.sinSeguimiento} texto="sin seguimiento" />
       </div>
       <DndContext id="leads-tablero" measuring={{ droppable: { strategy: MeasuringStrategy.Always } }} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setArrastrando(null)}>
-        <div className="flex min-h-0 flex-1 gap-2 overflow-x-auto px-3 pb-24">
+        <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto px-4 pb-24">
           {columnas.map((e, i) => (
             <Columna
               key={e.id}
               etapa={e}
-              primera={i === 0}
+              color={COLORES_ETAPA[i % COLORES_ETAPA.length]}
               grupos={idsGrupos.has(e.id)}
               tratos={porEtapa.get(e.id) ?? []}
               diasEstancado={embudo.diasEstancado}
@@ -447,13 +465,26 @@ function ZonaCierre({ id, texto, clase, activa, icono }: { id: string; texto: st
   );
 }
 
-function Columna({ etapa, primera, grupos, tratos, diasEstancado, ahora, marcaSlug, onNuevo }: { etapa: EtapaUI; primera: boolean; grupos?: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void }) {
+// Un color por etapa (en orden), para que el embudo se lea de un vistazo.
+const COLORES_ETAPA = ["#08a742", "#0ea5e9", "#6366f1", "#a855f7", "#ec4899", "#f59e0b", "#f97316", "#14b8a6"];
+
+function Dato({ color, n, texto }: { color: string; n: number; texto: string }) {
+  if (!n) return null;
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className="size-1.5 rounded-full" style={{ background: color }} />
+      <b className="font-semibold text-foreground tabular-nums">{n}</b> {texto}
+    </span>
+  );
+}
+
+function Columna({ etapa, color, grupos, tratos, diasEstancado, ahora, marcaSlug, onNuevo }: { etapa: EtapaUI; color: string; grupos?: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void }) {
   const { setNodeRef, isOver } = useDroppable({ id: etapa.id });
   const suma = tratos.reduce((s, t) => s + t.valor, 0);
   if (grupos) {
     // Columna pequeña: solo el nombre del grupo (la cita), sin montos ni seguimiento.
     return (
-      <section ref={setNodeRef} className={cn("flex w-44 shrink-0 flex-col rounded-lg border border-dashed bg-muted/20 transition-colors", isOver && "bg-muted")}>
+      <section ref={setNodeRef} className={cn("flex w-44 shrink-0 flex-col rounded-xl border border-dashed bg-background/60 transition-colors", isOver && "bg-muted")}>
         <header className="flex items-center gap-1.5 px-2.5 py-2">
           <Users className="size-3.5 text-muted-foreground" />
           <h3 className="text-[12px] font-semibold">{etapa.nombre}</h3>
@@ -461,7 +492,7 @@ function Columna({ etapa, primera, grupos, tratos, diasEstancado, ahora, marcaSl
         </header>
         <div className="flex min-h-12 flex-1 flex-col gap-1 overflow-y-auto px-1.5 pb-2">
           {tratos.map((t) => (
-            <Link key={t.id} href={`/pulse/leads/${marcaSlug}/${t.id}`} className="cursor-pointer truncate rounded border bg-background px-2 py-1 text-[11px] leading-tight text-muted-foreground hover:text-foreground" title={t.nombre}>
+            <Link key={t.id} href={`/pulse/leads/${marcaSlug}/${t.id}`} className="cursor-pointer truncate rounded-md border bg-background px-2 py-1 text-[11px] leading-tight text-muted-foreground hover:text-foreground" title={t.nombre}>
               {t.nombre}
             </Link>
           ))}
@@ -471,41 +502,83 @@ function Columna({ etapa, primera, grupos, tratos, diasEstancado, ahora, marcaSl
     );
   }
   return (
-    <section ref={setNodeRef} className={cn("flex w-64 shrink-0 flex-col rounded-lg bg-muted/40 transition-colors", isOver && "bg-muted")}>
-      {/* Encabezado tipo flecha, como las etapas de Pipedrive */}
-      <header className={cn("relative mb-1 bg-background px-3 py-2 shadow-sm", primera ? "rounded-l-lg" : "", "rounded-t-lg")}>
-        <h3 className="truncate text-[13px] font-semibold" title={etapa.nombre}>
-          {etapa.nombre}
-        </h3>
-        <p className="text-[11px] text-muted-foreground">
-          {usd(suma)} · {tratos.length} {tratos.length === 1 ? "lead" : "leads"}
-        </p>
+    <section
+      ref={setNodeRef}
+      className={cn("flex w-[272px] shrink-0 flex-col rounded-xl bg-[#eceef1]/70 transition-colors", isOver && "bg-[#e3f4e8] ring-2 ring-[#08a742]/30")}
+    >
+      <header className="group/cab relative m-1.5 mb-2 overflow-hidden rounded-lg bg-background px-3 pt-2.5 pb-2 shadow-[0_1px_2px_rgba(16,24,40,.06)]">
+        <span className="absolute inset-x-0 top-0 h-[3px]" style={{ background: color }} />
+        <div className="flex items-center gap-2">
+          <h3 className="min-w-0 flex-1 truncate text-[13px] font-semibold" title={etapa.nombre}>
+            {etapa.nombre}
+          </h3>
+          <span className="rounded-full px-1.5 py-px text-[11px] font-semibold tabular-nums" style={{ background: `color-mix(in srgb, ${color} 14%, white)`, color }}>
+            {tratos.length}
+          </span>
+          <button onClick={onNuevo} className="grid size-6 place-items-center rounded-md text-muted-foreground opacity-0 transition group-hover/cab:opacity-100 hover:bg-muted hover:text-foreground" aria-label={`Nuevo lead en ${etapa.nombre}`} title="Agregar lead aquí">
+            <Plus className="size-3.5" />
+          </button>
+        </div>
+        {suma ? <p className="mt-0.5 text-[11px] text-muted-foreground tabular-nums">{usd(suma)}</p> : null}
       </header>
-      <div className="flex min-h-24 flex-1 flex-col gap-1.5 overflow-y-auto px-1.5 pb-2">
+      <div className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-1.5 pb-2">
         {tratos.map((t) => (
           <Tarjeta key={t.id} t={t} diasEstancado={diasEstancado} ahora={ahora} marcaSlug={marcaSlug} />
         ))}
-        <button onClick={onNuevo} className="mt-0.5 flex h-8 items-center justify-center rounded-md text-muted-foreground opacity-60 transition hover:bg-background hover:opacity-100" aria-label={`Nuevo lead en ${etapa.nombre}`}>
-          <Plus className="size-4" />
-        </button>
+        {!tratos.length && (
+          <button
+            onClick={onNuevo}
+            className="flex h-20 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-foreground/10 text-[11px] text-muted-foreground/70 transition hover:border-foreground/20 hover:bg-background/60 hover:text-muted-foreground"
+          >
+            <Plus className="size-4" />
+            Arrastra un lead aquí o agrégalo
+          </button>
+        )}
       </div>
     </section>
   );
 }
 
-const PUNTO: Record<string, string> = {
-  ninguna: "border-2 border-amber-400 bg-transparent", // sin seguimiento: aviso (Pipedrive: triangulito)
-  vencida: "bg-red-500",
-  hoy: "bg-[#08a742]",
-  futura: "bg-muted-foreground/40",
+const SEGUIMIENTO: Record<string, { texto: string; clase: string; titulo: string }> = {
+  ninguna: { texto: "Sin seguimiento", clase: "bg-amber-50 text-amber-700 ring-amber-200", titulo: "No tiene seguimiento programado" },
+  vencida: { texto: "Vencido", clase: "bg-red-50 text-red-600 ring-red-200", titulo: "El seguimiento ya pasó" },
+  hoy: { texto: "Hoy", clase: "bg-green-50 text-[#08a742] ring-green-200", titulo: "Seguimiento hoy" },
+  futura: { texto: "", clase: "bg-muted text-muted-foreground ring-transparent", titulo: "Seguimiento programado" },
 };
-const TITULO_PUNTO: Record<string, string> = { ninguna: "Sin seguimiento programado", vencida: "Seguimiento vencido", hoy: "Seguimiento hoy", futura: "Seguimiento programado" };
+
+const ORIGEN: Record<string, { texto: string; color: string }> = {
+  whatsapp: { texto: "WhatsApp", color: "#25d366" },
+  calendly: { texto: "Calendly", color: "#006bff" },
+  quiz: { texto: "Quiz", color: "#a855f7" },
+  formulario: { texto: "Formulario", color: "#0ea5e9" },
+  manual: { texto: "Manual", color: "#94a3b8" },
+};
+
+const COLORES_AVATAR = ["#08a742", "#0ea5e9", "#6366f1", "#a855f7", "#ec4899", "#f59e0b", "#f97316", "#14b8a6", "#64748b"];
+
+function colorDe(texto: string): string {
+  let h = 0;
+  for (const c of texto) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return COLORES_AVATAR[h % COLORES_AVATAR.length];
+}
+
+function telefonoCorto(tel: string | null): string | null {
+  const d = (tel ?? "").replace(/\D/g, "").slice(-10);
+  return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : tel;
+}
 
 function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaUI; diasEstancado: number; ahora: Date; marcaSlug: string; fantasma?: boolean }) {
   const drag = useDraggable({ id: t.id });
   const drop = useDroppable({ id: `card:${t.id}` });
   const act = estadoActividad(t.proximaActividad, ahora);
   const viejo = estancado(t.etapaDesde, diasEstancado, ahora);
+  // Hay contactos de WhatsApp cuyo nombre es solo un emoji: el teléfono los identifica.
+  const conLetras = /\p{L}/u.test(t.nombre);
+  const titulo = conLetras ? t.nombre : (telefonoCorto(t.telefono) ?? t.nombre);
+  const letras = conLetras ? t.nombre.replace(/[^\p{L}\s]/gu, " ").trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join("") : "";
+  const seg = SEGUIMIENTO[act];
+  const origen = ORIGEN[t.origen];
+  const fechaSeg = act === "futura" && t.proximaActividad ? new Date(t.proximaActividad).toLocaleDateString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short" }).replace(".", "") : "";
   return (
     <div
       ref={(n) => {
@@ -515,32 +588,52 @@ function Tarjeta({ t, diasEstancado, ahora, marcaSlug, fantasma }: { t: TarjetaU
       {...drag.attributes}
       {...drag.listeners}
       className={cn(
-        "group relative cursor-pointer rounded-md border bg-background shadow-[0_1px_2px_rgba(0,0,0,.06)] transition hover:shadow-md active:cursor-grabbing",
-        viejo && "border-l-4 border-l-red-400",
+        "group relative cursor-pointer rounded-lg border border-black/[0.06] bg-background shadow-[0_1px_2px_rgba(16,24,40,.05)] transition hover:-translate-y-px hover:border-black/10 hover:shadow-[0_4px_12px_rgba(16,24,40,.08)] active:cursor-grabbing",
+        viejo && "border-l-[3px] border-l-red-400",
         drag.isDragging && !fantasma && "opacity-30",
         drop.isOver && !drag.isDragging && "ring-2 ring-[#08a742]/50",
-        fantasma && "w-60 rotate-2 shadow-xl",
+        fantasma && "w-[260px] rotate-2 shadow-xl",
       )}
     >
-      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block cursor-pointer px-2.5 py-2" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
-        <div className="flex items-start gap-2">
-          <p className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-tight">{t.nombre}</p>
-          {t.noLeidos > 0 && (
-            <span className="flex items-center gap-0.5 rounded-full bg-[#25d366] px-1.5 text-[10px] font-bold text-white" title={`${t.noLeidos} mensaje(s) sin leer`}>
-              <MessageCircle className="size-2.5" />
-              {t.noLeidos}
-            </span>
-          )}
+      <Link href={`/pulse/leads/${marcaSlug}/${t.id}`} className="block cursor-pointer p-3" draggable={false} onClick={(e) => drag.isDragging && e.preventDefault()}>
+        <div className="flex items-start gap-2.5">
+          <span
+            className="grid size-8 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-white uppercase"
+            style={{ background: conLetras ? colorDe(t.nombre) : "#e5e7eb" }}
+          >
+            {letras || <span className="text-sm leading-none">{t.nombre.trim().slice(0, 2) || "·"}</span>}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <p className="min-w-0 flex-1 truncate text-[13px] leading-tight font-semibold">{titulo}</p>
+              {t.noLeidos > 0 && (
+                <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-[#25d366] px-1.5 py-px text-[10px] font-bold text-white" title={`${t.noLeidos} mensaje(s) sin leer`}>
+                  <MessageCircle className="size-2.5" />
+                  {t.noLeidos}
+                </span>
+              )}
+            </div>
+            {t.negocio || t.nicho ? <p className="mt-0.5 truncate text-xs text-muted-foreground">{t.negocio ?? t.nicho}</p> : null}
+            <p className="mt-1 flex items-center gap-1 text-[10.5px] text-muted-foreground/80" title={new Date(t.creadoEl).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" })}>
+              {origen ? <span className="size-1.5 shrink-0 rounded-full" style={{ background: origen.color }} title={origen.texto} /> : null}
+              Llegó {horaLlegada(t.creadoEl, ahora)}
+            </p>
+          </div>
         </div>
-        {(t.negocio || t.nicho) && <p className="truncate text-xs text-muted-foreground">{t.negocio ?? t.nicho}</p>}
-        <p className="text-[10px] leading-tight text-muted-foreground/70" title={new Date(t.creadoEl).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" })}>
-          Llegó {horaLlegada(t.creadoEl, ahora)}
-        </p>
-        <div className="mt-1.5 flex items-center gap-2">
-          {t.duenoNombre ? <UserAvatar nombre={t.duenoNombre} color={t.duenoColor as ColorPulse | null} className="size-5 text-[9px] ring-0" /> : <span className="size-5 rounded-full border border-dashed" title="Sin dueño" />}
-          <span className="text-xs font-medium text-muted-foreground">{usd(t.valor)}</span>
-          {viejo && <span className="text-[10px] font-medium text-red-500">{diasEnEtapa(t.etapaDesde, ahora)}d</span>}
-          <span className={cn("ml-auto size-2.5 rounded-full", PUNTO[act])} title={TITULO_PUNTO[act]} />
+        <div className="mt-2.5 flex items-center gap-2 border-t border-dashed border-black/[0.06] pt-2">
+          {t.duenoNombre ? (
+            <span className="flex min-w-0 items-center gap-1.5" title={`Dueño: ${t.duenoNombre}`}>
+              <UserAvatar nombre={t.duenoNombre} color={t.duenoColor as ColorPulse | null} className="size-5 text-[9px] ring-0" />
+              <span className="truncate text-[11px] text-muted-foreground">{t.duenoNombre.split(" ")[0]}</span>
+            </span>
+          ) : (
+            <span className="text-[11px] text-muted-foreground/60">Sin dueño</span>
+          )}
+          {t.valor ? <span className="text-[11px] font-semibold text-foreground tabular-nums">{usd(t.valor)}</span> : null}
+          {viejo && <span className="text-[10px] font-medium text-red-500" title="Días en esta etapa">{diasEnEtapa(t.etapaDesde, ahora)}d</span>}
+          <span className={cn("ml-auto shrink-0 rounded-full px-1.5 py-px text-[10px] font-medium ring-1", seg.clase)} title={seg.titulo}>
+            {seg.texto || fechaSeg}
+          </span>
         </div>
       </Link>
     </div>
