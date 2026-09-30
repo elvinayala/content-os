@@ -75,7 +75,7 @@
 - [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — llave de envío en la base; vigilar el 1er envío real
 - [Formularios propios (Typeform de la casa)](formularios-propios.md) — /f/<slug> en prod; falta que closers dejen Typeform y cancelar
 - [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic, top 25 por LTV; Carilin dirige; venues para el 3/oct
-- [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — vigilante cliente-db.ts; no cambiar pooler sin subir pool size
+- [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — causa: consultas haciendo fila en postgres.js; arreglado 29/sep con limitador en cliente-db.ts; no cambiar pooler sin subir pool size
 - [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — /f/agenda-roger y /f/agenda-level-up; no clonar Calendly
 - [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo
 - [AIB — acceso](aib-acceso-aure.md) — AIB lo opera Aure; Jessica/LU fuera; Carilin = mismo acceso que Aure (todo, incl. RR.HH.)

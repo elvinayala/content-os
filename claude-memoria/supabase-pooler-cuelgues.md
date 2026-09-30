@@ -13,4 +13,5 @@ metadata:
 - Si vuelven cuelgues: `vercel logs … -q renovada` muestra qué consulta se trabó.
 - Rollback rápido: `npx vercel promote <url-deploy-anterior> --yes --scope elvin-7614s-projects`.
 - Hay otro bug aparte: `/api/cron/autoflow-llamadas` falla con un Date como parámetro (ERR_INVALID_ARG_TYPE).
+**29/sep — causa de fondo encontrada y arreglada:** el cuelgue pasa cuando hay más consultas simultáneas que conexiones (`max`) y alguna hace FILA dentro de postgres.js (no es el pipelining: con max_pipeline 1 también). Prueba desde la Mac: max 5 + lotes de 8 → cuelgue seguro al 2.º lote; con un limitador propio (nadie entra al cliente si ya hay `max` corriendo) → 100/100 OK. Quedó `limitador()` en `lib/pulse/cliente-db.ts` (transacción = 1 turno). Ritmo pasó de ~40 % de pestañas en 5.4 s a todas en 0.4–1.4 s. El vigilante de 5 s se queda como red.
 Ver [[pulse-crm]], [[ritmo-desempeno]].
