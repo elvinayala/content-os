@@ -82,7 +82,7 @@ export async function fichaCliente(itemId: string): Promise<FichaCliente | null>
       const colsAsig = await d.select({ id: pulseColumns.id, title: pulseColumns.title }).from(pulseColumns).where(eq(pulseColumns.boardId, asig.boardId));
       const va = (asig.values ?? {}) as Record<string, ValorCelda>;
       for (const [re, rol] of [
-        [/^estratega$/i, "Estratega"],
+        [/^estratega$/i, "Estratega digital"],
         [/^dise[nñ]ador$/i, "Diseñador"],
       ] as const) {
         const c = colsAsig.find((x) => re.test(x.title));
@@ -98,7 +98,7 @@ export async function fichaCliente(itemId: string): Promise<FichaCliente | null>
     if (u && !equipo.some((e) => e.nombre === u.nombre && e.rol === p.rol)) equipo.push({ rol: p.rol, nombre: u.nombre, agenda: cal[u.email.toLowerCase()] ?? null });
   }
   // Primero el estratega (es con quien más habla), después el account manager y el diseñador.
-  const orden = ["Estratega", "Account manager", "Diseñador"];
+  const orden = ["Estratega digital", "Account manager", "Diseñador"];
   equipo.sort((a, b) => orden.indexOf(a.rol) - orden.indexOf(b.rol));
 
   const colAcuerdo = col(/^acuerdo firmado$/i);

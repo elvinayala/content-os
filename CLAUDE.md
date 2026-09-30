@@ -561,9 +561,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   "Listo" o "Cambios" = revisión); score = 20 % asistencia + 80 % KPIs **conectados**; 🟢 ≥ 90, 🟡 ≥ 75.
   Fuentes conectadas hoy: `produccion` y `manual`. **KPIs reportados (28/sep, Elvin; "lo demás quítalo por ahora")**: se anotan
   al marcar salida, número + detalle de texto (`desempeno_reportes.detalles`, migración 0036; ficha de la persona los muestra):
-  **Estratega** = reuniones con clientes (con quiénes) · campañas realizadas · planes/investigaciones/creativos APROBADOS listos
-  para ejecutar; **Project/Account Manager (Jessica)** = onboardings · conversaciones con clientes que respondieron (llamada o
-  chat) · casos solucionados; **AI Engineer** = soporte y bloqueos resueltos · sistemas nuevos (AutoFlow, agente personalizado);
+  **Estratega Digital** (así se llama el puesto desde el 30/sep) = reuniones con clientes (con quiénes) · campañas realizadas · planes/investigaciones/creativos APROBADOS listos
+  para ejecutar; **Project Manager (Jessica y Ángela, 30/sep)** = onboardings · conversaciones con clientes que respondieron (llamada o
+  chat) · casos solucionados · clientes contactados; **AI Engineer (Garrys, 30/sep)** = proyectos nuevos comenzados (AutoFlow,
+  sistema nuevo, agente personalizado) · reuniones de onboarding · soporte a sistemas;
   **Diseñador** = flyers/creativos aprobados (cuántos por negocio) · otros diseños. Nacen con peso 0 (se miden, no puntúan)
   hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). Fase 2: Meta (registro de actividad), n8n (alertas
   y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).

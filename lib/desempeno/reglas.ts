@@ -58,10 +58,14 @@ const KPIS_REPORTADOS = {
     reportado("onboardings", "Onboardings realizados", "¿De qué clientes?"),
     reportado("conversaciones", "Conversaciones con clientes", "¿Con quiénes?", "Clientes que te respondieron y hablaste con ellos, por teléfono o chat (no mensajes enviados)"),
     reportado("casos_resueltos", "Casos solucionados", "¿Cuál caso y de qué cliente?", "Bloqueos o problemas de un cliente que quedaron resueltos"),
+    // 30/sep (Elvin): también los clientes que contactó (Jessica y Ángela).
+    reportado("clientes_contactados", "Clientes contactados", "¿A quiénes?", "Clientes a los que les escribiste o llamaste hoy, aunque no hayan contestado"),
   ],
+  // 30/sep (Elvin, para Garrys): proyectos nuevos que comenzó, reuniones de onboarding y soporte a sistemas.
   ai_engineer: [
-    reportado("soporte", "Soporte a clientes y bloqueos resueltos", "¿Qué cliente y qué fue?"),
-    reportado("sistemas_nuevos", "Sistemas nuevos desarrollados", "¿Cuál? (AutoFlow, agente personalizado…) ¿para quién?"),
+    reportado("proyectos_nuevos", "Proyectos nuevos comenzados", "¿Cuál y para quién? (AutoFlow, sistema nuevo, agente personalizado)", "Proyectos que empezaste hoy: un AutoFlow, un sistema nuevo o un agente personalizado"),
+    reportado("reuniones_onboarding", "Reuniones de onboarding", "¿De qué clientes?"),
+    reportado("soporte", "Soporte a sistemas", "¿Qué sistema, de qué cliente y qué fue?", "Arreglos, ajustes o dudas resueltas de un sistema que ya está funcionando"),
   ],
   disenador: [
     reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
@@ -74,14 +78,14 @@ const manualReportado = (k: keyof typeof KPIS_REPORTADOS) => KPIS_REPORTADOS[k].
 export const PUESTOS: Puesto[] = [
   {
     id: "pm",
-    nombre: "Project / Account Manager",
+    nombre: "Project Manager",
     departamento: "Cuentas",
     manual: manualReportado("pm"),
     kpis: kpisReportados("pm"),
   },
   {
     id: "estratega",
-    nombre: "Estratega",
+    nombre: "Estratega Digital", // 30/sep, Elvin: "ese es su puesto"
     departamento: "Estrategia y tráfico",
     manual: manualReportado("estratega"),
     kpis: kpisReportados("estratega"),
