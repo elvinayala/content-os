@@ -281,3 +281,37 @@ export const pulsePapelera = pgTable(
   },
   (t) => [index("pulse_papelera_borrado").on(t.borradoAt), index("pulse_papelera_tabla").on(t.tabla)],
 );
+
+// App de clientes de Level Up (app.levelupmediapr.net, 29/sep/2026): una fila por cliente (item de LEVEL UP MEDIA) con app.
+// El link lleva item + versión firmados (lib/clientes-app/acceso.ts): "cambiar link" = subir `version` (el link y las
+// sesiones viejas mueren); "desactivar" = activo=false. `slack_url` = el canal de su negocio (lo pega el equipo).
+export const pulseAppClientes = pgTable("pulse_app_clientes", {
+  itemId: uuid("item_id")
+    .primaryKey()
+    .references(() => pulseItems.id, { onDelete: "cascade" }),
+  version: integer("version").notNull().default(1),
+  activo: boolean("activo").notNull().default(true),
+  slackUrl: text("slack_url"),
+  creadoPor: uuid("creado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+  creadoAt: timestamp("creado_at", { withTimezone: true }).notNull().defaultNow(),
+  ultimoAccesoAt: timestamp("ultimo_acceso_at", { withTimezone: true }),
+});
+
+// Teléfonos del cliente con la app instalada y avisos activos (Web Push; mismo envío que Ritmo, lib/push/enviar.ts).
+export const pulseAppPush = pgTable(
+  "pulse_app_push",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    itemId: uuid("item_id")
+      .notNull()
+      .references(() => pulseItems.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    dispositivo: text("dispositivo"),
+    creadoAt: timestamp("creado_at", { withTimezone: true }).notNull().defaultNow(),
+    ultimoOkAt: timestamp("ultimo_ok_at", { withTimezone: true }),
+    fallos: integer("fallos").notNull().default(0),
+  },
+  (t) => [uniqueIndex("pulse_app_push_endpoint").on(t.endpoint), index("pulse_app_push_item").on(t.itemId)],
+);

@@ -1,9 +1,10 @@
 "use client";
 
-import { Clock, MessageSquare, Send, Trash2 } from "lucide-react";
+import { Clock, MessageSquare, Send, Smartphone, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { comentarAction, leerActividadAction } from "@/app/pulse/(app)/[board]/actions";
+import { AppClientePanel } from "@/components/pulse/app-cliente";
 import { useBoard, useBoardActions } from "@/components/pulse/board-provider";
 import { Cell, fmtFechaCorta } from "@/components/pulse/cell";
 import { StatusPill } from "@/components/pulse/status-pill";
@@ -71,6 +72,11 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
                 <TabsTrigger value="actividad">
                   <Clock className="size-3.5" /> Actividad
                 </TabsTrigger>
+                {s.board.slug === "level-up-media" ? (
+                  <TabsTrigger value="app">
+                    <Smartphone className="size-3.5" /> App
+                  </TabsTrigger>
+                ) : null}
               </TabsList>
               <TabsContent value="campos" className="min-h-0 flex-1 overflow-auto px-5 py-3">
                 {item.parcial ? <p className="mb-2 text-xs text-muted-foreground">Cargando campos…</p> : null}
@@ -108,6 +114,11 @@ export function ItemPanel({ relacionados }: { relacionados: Record<string, { id:
                   </details>
                 ) : null}
               </TabsContent>
+              {s.board.slug === "level-up-media" ? (
+                <TabsContent value="app" className="min-h-0 flex-1 overflow-auto px-5 py-3">
+                  <AppClientePanel itemId={item.id} />
+                </TabsContent>
+              ) : null}
               <TabsContent value="actividad" className="min-h-0 flex-1 overflow-hidden">
                 <Actividades itemId={item.id} boardId={item.boardId} columns={s.columns} />
               </TabsContent>

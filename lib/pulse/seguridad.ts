@@ -32,7 +32,8 @@ export type TipoEventoSeguridad =
   | "accion_bloqueada"
   | "login_ip_nueva"
   | "alerta_enviada"
-  | "automatizacion";
+  | "automatizacion"
+  | "app_cliente";
 
 export const MAX_INTENTOS = 5;
 export const BLOQUEO_MIN = 15;

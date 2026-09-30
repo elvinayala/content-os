@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth";
 import { COOKIE_PORTAL, SLUG_RE, TTL_PORTAL, firmarAccesoPortal, tokenPortalValido, verificarAccesoPortal } from "@/lib/portal/acceso";
 import { COOKIE_PULSE, verificarSesion } from "@/lib/pulse/session";
+import { COOKIE_CLIENTE, TTL_CLIENTE, firmarCookieCliente, leerTokenCliente, verificarCookieCliente } from "@/lib/clientes-app/acceso";
 
 // Protege el portal con login. Dos roles:
 //  - CEO (CEO_PORTAL_PASSWORD): acceso total.
@@ -43,6 +44,10 @@ export default async function proxy(request: NextRequest) {
     if (pathname === "/") return NextResponse.rewrite(new URL("/ventas", request.url));
     const permitido = pathname === "/ventas" || pathname.startsWith("/pulse/leads") || pathname === "/pulse/verificar" || pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname.startsWith("/pulse/icon") || pathname.startsWith("/pulse/apple-icon");
     if (!permitido) return NextResponse.redirect(new URL("/pulse/leads", request.url));
+  }
+  // App de clientes de Level Up (app.levelupmediapr.net): ahí solo existe la app; todo lo demás vuelve a ella.
+  if (host.startsWith("app.") && !pathname.startsWith("/cliente") && !pathname.startsWith("/_next/")) {
+    return NextResponse.redirect(new URL("/cliente", request.url));
   }
   // Dominios de Ritmo (ritmo.levelupmediapr.net y ritmo-*.vercel.app): la raíz va directo a Ritmo, y
   // cualquier ruta que no sea de Ritmo (o sus archivos/acciones) también, para que nunca caiga en otra app.
@@ -120,6 +125,24 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
   if (pathname.startsWith("/api/pulse/n8n/")) return NextResponse.next();
+  // App de clientes de Level Up: el link personal (?k=) deja la cookie del cliente; el equipo con sesión de Pulse la ve
+  // en vista previa. El resto, al candado. La página confirma en la base que el acceso siga vigente.
+  if (pathname === "/cliente" || pathname.startsWith("/cliente/")) {
+    if (pathname === "/cliente/acceso" || pathname === "/cliente/sw.js" || pathname === "/cliente/manifest.webmanifest" || pathname.startsWith("/cliente/iconos/") || pathname.startsWith("/cliente/apple-icon")) return NextResponse.next();
+    const k = request.nextUrl.searchParams.get("k");
+    if (k) {
+      const a = await leerTokenCliente(k);
+      if (!a) return NextResponse.redirect(new URL("/cliente/acceso?link=vencido", request.url));
+      const res = NextResponse.redirect(new URL("/cliente", request.url));
+      res.cookies.set(COOKIE_CLIENTE, await firmarCookieCliente(a), { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: TTL_CLIENTE });
+      return res;
+    }
+    if (await verificarCookieCliente(request.cookies.get(COOKIE_CLIENTE)?.value)) return NextResponse.next();
+    const pulseOk = !!(await verificarSesion(request.cookies.get(COOKIE_PULSE)?.value));
+    if (pulseOk || (await sesionValida(request.cookies.get(COOKIE_SESION)?.value))) return NextResponse.next();
+    if (pathname === "/cliente/push") return NextResponse.json({ ok: false, error: "no-autorizado" }, { status: 401 });
+    return NextResponse.redirect(new URL("/cliente/acceso", request.url));
+  }
   // Ritmo (asistencia + desempeño): mismas cuentas y cookie que Pulse, su propia pantalla de entrada.
   if (pathname === "/ritmo/entrar" || pathname === "/ritmo/activar" || pathname === "/ritmo/icon.svg" || pathname.startsWith("/ritmo/apple-icon") || pathname === "/ritmo/manifest.webmanifest" || pathname === "/ritmo/sw.js" || pathname.startsWith("/ritmo/iconos/")) return NextResponse.next();
   if (pathname === "/ritmo" || pathname.startsWith("/ritmo/")) {

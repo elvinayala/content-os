@@ -17,7 +17,8 @@ const PUB = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 const PRIV = process.env.VAPID_PRIVATE_KEY ?? "";
 export const pushConfigurado = () => !!(PUB && PRIV);
 let listo = false;
-function vapid() {
+/** Configura web-push con las llaves VAPID una vez; false si faltan. Lo usa también la app de clientes. */
+export function vapid() {
   if (!listo && pushConfigurado()) {
     webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:levelupmediapr@gmail.com", PUB, PRIV);
     listo = true;

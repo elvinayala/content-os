@@ -274,6 +274,13 @@
       "when": 1790685150415,
       "tag": "0038_push-ritmo",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1790733893061,
+      "tag": "0039_app-clientes",
+      "breakpoints": true
     }
   ]
 }

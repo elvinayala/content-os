@@ -52,8 +52,15 @@ const nextConfig: NextConfig = {
         ].join("; "),
       },
     ];
+    // App de clientes de Level Up: la misma protección que Pulse, más las miniaturas de anuncios de Meta (fbcdn).
+    const cliente = pulse.map((h) =>
+      h.key === "Content-Security-Policy" ? { ...h, value: h.value.replace("img-src 'self' data: blob: https://*.supabase.co", "img-src 'self' data: blob: https://*.supabase.co https://*.fbcdn.net") } : h,
+    );
     // Ritmo (datos sensibles de empleados: documentos, salarios, canal ético): la misma protección que Pulse.
     return [
+      { source: "/cliente/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Service-Worker-Allowed", value: "/cliente" }, { key: "Content-Type", value: "application/javascript; charset=utf-8" }] },
+      { source: "/cliente", headers: cliente },
+      { source: "/cliente/:path*", headers: cliente },
       // App de Ritmo en el teléfono: el service worker nunca se cachea (así cada deploy llega) y cubre /ritmo sin barra.
       { source: "/ritmo/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Service-Worker-Allowed", value: "/ritmo" }, { key: "Content-Type", value: "application/javascript; charset=utf-8" }] },
       { source: "/ritmo", headers: pulse },

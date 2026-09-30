@@ -36,6 +36,10 @@ function doPost(e) {
     if (b.accion === "archivo") return json_(archivo_(b));
     if (b.accion === "listar") return json_(listar_(b));
     if (b.accion === "salud") return json_({ ok: true, raiz: raiz_().getUrl() });
+    // App de clientes (29/sep/2026): el cliente ve y sube archivos de SU carpeta desde app.levelupmediapr.net.
+    if (b.accion === "app-listar") return json_(appListar_(b));
+    if (b.accion === "app-bajar") return json_(appBajar_(b));
+    if (b.accion === "app-subir") return json_(appSubir_(b));
     return json_({ ok: false, error: "accion" });
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message || err) });
@@ -104,6 +108,65 @@ function listar_(b) {
   var sueltos = f.getFiles();
   while (sueltos.hasNext()) { var y = sueltos.next(); out.push({ carpeta: "", nombre: y.getName(), url: y.getUrl() }); }
   return { ok: true, archivos: out };
+}
+
+// ---- App de clientes: siempre dentro de la carpeta del cliente (carpetaId), nunca fuera de ella ----
+var APP_MAX_BYTES = 20 * 1024 * 1024; // lo que se puede bajar de una vez (videos más grandes: por Slack)
+var APP_SUBIDAS = "Material del cliente (app)";
+
+function appListar_(b) {
+  var raiz = DriveApp.getFolderById(String(b.carpetaId));
+  var out = [];
+  function agregar(f, carpeta) {
+    out.push({ id: f.getId(), nombre: f.getName(), mime: f.getMimeType(), bytes: f.getSize(), fecha: f.getLastUpdated().toISOString(), carpeta: carpeta });
+  }
+  var sueltos = raiz.getFiles();
+  while (sueltos.hasNext() && out.length < 300) agregar(sueltos.next(), "");
+  var subs = raiz.getFolders();
+  while (subs.hasNext() && out.length < 300) {
+    var s = subs.next();
+    var fs = s.getFiles();
+    while (fs.hasNext() && out.length < 300) agregar(fs.next(), s.getName());
+  }
+  return { ok: true, archivos: out };
+}
+
+// ¿El archivo está dentro de la carpeta del cliente (hasta 3 niveles)?
+function dentro_(file, carpetaId) {
+  var nivel = [file.getParents()];
+  for (var n = 0; n < 3; n++) {
+    var siguiente = [];
+    for (var i = 0; i < nivel.length; i++) {
+      while (nivel[i].hasNext()) {
+        var p = nivel[i].next();
+        if (p.getId() === carpetaId) return true;
+        siguiente.push(p.getParents());
+      }
+    }
+    nivel = siguiente;
+  }
+  return false;
+}
+
+function appBajar_(b) {
+  var file = DriveApp.getFileById(String(b.archivoId));
+  if (!dentro_(file, String(b.carpetaId))) return { ok: false, error: "fuera" };
+  if (file.getSize() > APP_MAX_BYTES) return { ok: false, error: "grande" };
+  var mime = file.getMimeType();
+  // Docs/Sheets/Slides de Google no son archivos: se entregan como PDF.
+  var blob = mime.indexOf("application/vnd.google-apps") === 0 ? file.getAs("application/pdf") : file.getBlob();
+  var nombre = mime.indexOf("application/vnd.google-apps") === 0 ? file.getName() + ".pdf" : file.getName();
+  return { ok: true, nombre: nombre, mime: blob.getContentType(), fecha: file.getLastUpdated().toISOString(), base64: Utilities.base64Encode(blob.getBytes()) };
+}
+
+function appSubir_(b) {
+  var raiz = DriveApp.getFolderById(String(b.carpetaId));
+  var r = UrlFetchApp.fetch(String(b.url), { muteHttpExceptions: true, followRedirects: true });
+  if (r.getResponseCode() >= 300) throw new Error("no pude bajar el archivo (" + r.getResponseCode() + ")");
+  var blob = r.getBlob();
+  blob.setName(String(b.nombre || "archivo").slice(0, 200));
+  var file = hija_(raiz, APP_SUBIDAS).createFile(blob);
+  return { ok: true, id: file.getId() };
 }
 
 function json_(o) {
