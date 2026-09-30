@@ -21,3 +21,5 @@ el OK de Elvin, ver [[ritmo-desempeno]]). Darle acceso a Leads al equipo de vent
 ([[leads-crm]]).
 
 29/sep: Yaileen hace cambios menores sola en Ritmo → Ajustes (crear puestos, corregir nombres, horario, links, altas); lo sensible espera a Elvin solo. Se le explicó por DM: a Nico solo errores o algo importante.
+
+30/sep: Yaileen resetea claves sola (Ajustes → Link de acceso → "Olvidó su clave: link para una nueva", solo miembros); todos cambian la suya en /ritmo/clave. Elvin: "ella tiene poderes de hacer ajustes; lo de mayor peso se consulta conmigo" — no hacer la app dependiente de Elvin.
