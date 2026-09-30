@@ -6,6 +6,7 @@ import { crearBoardAction } from "@/app/pulse/(app)/actions";
 import { BotonBuscar } from "@/components/pulse/boton-buscar";
 import { ColorPicker } from "@/components/pulse/color-picker";
 import { IconoTablero } from "@/components/pulse/icono-tablero";
+import { NumeroInicio } from "@/components/pulse/numero-inicio";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -17,7 +18,8 @@ import { marcasConAcceso } from "@/lib/leads/repo";
 import { tipoAcceso, usuarioActual } from "@/lib/pulse/auth";
 import type { Pendiente, TipoPendiente } from "@/lib/pulse/mi-dia";
 import { pendientesDe } from "@/lib/pulse/mi-dia-datos";
-import { actividadReciente, boardsVisibles, listarBoards, numerosInicio, ultimosClientes, type EventoInicio } from "@/lib/pulse/repo";
+import { actividadReciente, boardsVisibles, clientesInicio, listarBoards, ultimosClientes, type EventoInicio } from "@/lib/pulse/repo";
+import { VISTAS } from "@/lib/pulse/inicio-clientes";
 import { esAltoValor, type ClienteReciente } from "@/lib/pulse/ultimos-clientes";
 import type { ColorPulse } from "@/lib/pulse/types";
 
@@ -58,7 +60,7 @@ export default async function PulseInicio() {
     listarBoards(usuario),
     pendientesDe(visibles).catch(() => ({ pendientes: [] as Pendiente[], hoy: "" })),
     actividadReciente(visibles).catch(() => [] as EventoInicio[]),
-    numerosInicio(visibles).catch((e) => (console.error("[pulse/inicio] numeros", e), null)),
+    clientesInicio(visibles).catch((e) => (console.error("[pulse/inicio] numeros", e), null)),
     marcasConAcceso(usuario).catch(() => []),
     ultimosClientes(visibles).catch((e) => (console.error("[pulse/inicio] ultimos", e), [] as ClienteReciente[])),
   ]);
@@ -125,10 +127,9 @@ export default async function PulseInicio() {
         {/* Números */}
         {numeros ? (
           <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <Numero titulo="Clientes activos" valor={numeros.activos} nota="Trabajando con nosotros" />
-            <Numero titulo="En onboarding" valor={numeros.onboarding} nota="Onboarding y estrategia" />
-            <Numero titulo="Nuevos este mes" valor={numeros.nuevosMes} nota="Fichas creadas en el mes" destacado />
-            <Numero titulo="En cartera" valor={numeros.totalClientes} nota="Sin contar las bajas" />
+            {VISTAS.map((v) => (
+              <NumeroInicio key={v.id} vista={v.id} titulo={v.titulo} nota={v.nota} total={numeros[v.id].length} muestra={numeros[v.id].slice(0, 6)} destacado={v.id === "nuevos"} />
+            ))}
           </section>
         ) : null}
 
@@ -282,16 +283,6 @@ function Panel({ titulo, accion, children }: { titulo: string; accion?: { href: 
       </header>
       {children}
     </section>
-  );
-}
-
-function Numero({ titulo, valor, nota, destacado }: { titulo: string; valor: number; nota: string; destacado?: boolean }) {
-  return (
-    <div className="superficie flex flex-col gap-1.5 px-4 py-4">
-      <span className="text-xs font-medium text-muted-foreground">{titulo}</span>
-      <span className={`text-[28px] leading-none font-semibold tabular-nums ${destacado ? "text-primary" : ""}`}>{valor.toLocaleString("en-US")}</span>
-      <span className="text-[11px] text-muted-foreground/80">{nota}</span>
-    </div>
   );
 }
 

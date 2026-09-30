@@ -18,6 +18,7 @@ import {
   pulseVistas,
 } from "./schema";
 import { esCalculada, recalcular } from "./formulas";
+import { inicioMesPR, listasInicio, marcaDeTablero, type FichaInicio, type VistaInicio } from "./inicio-clientes";
 import { borrarComo } from "./papelera";
 import { respuestaDelResumen } from "./mi-dia";
 import { cuentaComoNuevo, detalleDePago, diaDeSlack, diaPR, montoDePago, nichoDe, type ClienteReciente } from "./ultimos-clientes";
@@ -789,27 +790,39 @@ export async function actividadReciente(boardIds: string[], limite = 14): Promis
   }));
 }
 
-/** Números del Inicio: clientes activos, onboardings en curso y altas del mes (tableros de clientes visibles). */
-export async function numerosInicio(boardIds: string[]): Promise<{ activos: number; onboarding: number; nuevosMes: number; totalClientes: number } | null> {
+/** Fichas detrás de los números del Inicio (tableros de clientes visibles, sin las bajas). */
+export async function clientesInicio(boardIds: string[]): Promise<Record<VistaInicio, FichaInicio[]> | null> {
   if (!boardIds.length) return null;
   const d = await db();
-  const clientes = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(and(inArray(pulseBoards.id, boardIds), inArray(pulseBoards.slug, ["level-up-media", "ai-borinquen"])));
-  if (!clientes.length) return null;
-  const ids = clientes.map((c) => c.id);
-  const inicioMes = `${new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" }).slice(0, 7)}-01T00:00:00-04:00`;
-  const filas = await d
-    .select({ grupo: pulseGroups.title, n: sql<number>`count(*)::int`, nuevos: sql<number>`count(*) filter (where ${pulseItems.createdAt} >= ${inicioMes}::timestamptz)::int` })
-    .from(pulseItems)
-    .innerJoin(pulseGroups, eq(pulseGroups.id, pulseItems.groupId))
-    .where(inArray(pulseItems.boardId, ids))
-    .groupBy(pulseGroups.title);
-  const suma = (re: RegExp) => filas.filter((f) => re.test(f.grupo)).reduce((a, f) => a + Number(f.n), 0);
-  return {
-    activos: suma(/cliente activo|inner circle|accelerator|marketing|recurrente/i),
-    onboarding: suma(/onboarding|an[aá]lisis/i),
-    nuevosMes: filas.filter((f) => !/offboard/i.test(f.grupo)).reduce((a, f) => a + Number(f.nuevos), 0),
-    totalClientes: filas.filter((f) => !/offboard|baja|inactiv/i.test(f.grupo)).reduce((a, f) => a + Number(f.n), 0),
-  };
+  const boards = await d
+    .select({ id: pulseBoards.id, slug: pulseBoards.slug })
+    .from(pulseBoards)
+    .where(and(inArray(pulseBoards.id, boardIds), inArray(pulseBoards.slug, ["level-up-media", "ai-borinquen"])));
+  if (!boards.length) return null;
+  const ids = boards.map((b) => b.id);
+  const [empresas, filas] = await Promise.all([
+    d.select({ id: pulseColumns.id, boardId: pulseColumns.boardId }).from(pulseColumns).where(and(inArray(pulseColumns.boardId, ids), sql`lower(trim(${pulseColumns.title})) = 'empresa'`)),
+    d
+      .select({ id: pulseItems.id, boardId: pulseItems.boardId, name: pulseItems.name, values: pulseItems.values, createdAt: pulseItems.createdAt, grupo: pulseGroups.title })
+      .from(pulseItems)
+      .innerJoin(pulseGroups, eq(pulseGroups.id, pulseItems.groupId))
+      .where(and(inArray(pulseItems.boardId, ids), sql`${pulseGroups.title} !~* 'offboard'`)),
+  ]);
+  const fichas: FichaInicio[] = filas.map((f) => {
+    const col = empresas.find((c) => c.boardId === f.boardId);
+    const emp = col ? (f.values as Record<string, unknown> | null)?.[col.id] : undefined;
+    const slug = boards.find((b) => b.id === f.boardId)!.slug;
+    return {
+      id: f.id,
+      nombre: f.name,
+      empresa: typeof emp === "string" && emp.trim() ? emp.trim() : null,
+      boardSlug: slug,
+      marca: marcaDeTablero(slug),
+      grupo: f.grupo,
+      creadoEl: new Date(f.createdAt).toISOString(),
+    };
+  });
+  return listasInicio(fichas, inicioMesPR());
 }
 
 // Últimos clientes que entraron (Level Up y AI Borinquen visibles): cuánto pagaron, nicho, cuándo pagaron y el
