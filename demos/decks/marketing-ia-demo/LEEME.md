@@ -4,11 +4,9 @@ El PDF "2026 demo Marketing Digital + IA" llevado a web animada, con el mismo si
 (escenario 1920×1080 escalado, cada slide se arma al entrar, controles que se esconden solos).
 
 - Publicada (privada, compartir desde Share): https://claude.ai/artifact/AyCJh4KV9QNSphZES9MvC1
-- 7 slides: portada · dos sistemas · motor de crecimiento (5 fases alrededor de la IA, con pulso que recorre el ciclo) ·
+- 7 slides: portada · **testimonios** (slide 2, 29/sep: Ernest Crisson, la parte de marketing, 52 s con subtítulos, props en `data/motion/testimonios/ernest-marketing.json`; Sleekbrowspr, gancho + "todas las semanas están llegando clientes nuevos", 24 s; clic = se abren en grande, Esc cierra) · dos sistemas · motor de crecimiento (5 fases alrededor de la IA, con pulso que recorre el ciclo) ·
   AutoFlow (canales + reloj que se detiene en **<10 s**) · sistema completo (el lead viaja y la línea regresa al anuncio) ·
-  **testimonios** (29/sep: Ernest Crisson, la parte de marketing, 52 s con subtítulos, props en
-  `data/motion/testimonios/ernest-marketing.json`; Sleekbrowspr, gancho + "todas las semanas están llegando clientes
-  nuevos", 24 s; clic = se abren en grande, Esc cierra) · siguiente paso con **"Empezamos por" + fecha de arranque editables en la llamada** (reemplaza el
+  siguiente paso con **"Empezamos por" + fecha de arranque editables en la llamada** (reemplaza el
   "[Definir por qué fase empezamos y la fecha de arranque]" del PDF).
 - Controles: flechas / espacio / clic, `F` pantalla completa, `R` repetir, `#s3` abre la slide 3.
 - **Video para el cliente**: la misma presentación con el cierre de WhatsApp en vez de los campos editables, grabada cuadro
