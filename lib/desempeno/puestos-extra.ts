@@ -31,9 +31,14 @@ let cache: { t: number; v: { id: string; nombre: string; departamento: string }[
 export async function cargarPuestosExtra() {
   if (cache && Date.now() - cache.t < 60_000) return registrarPuestosExtra(cache.v);
   try {
-    await asegurarTabla();
     const d = await db();
-    const v = filas(await d.execute(sql`SELECT id, nombre, departamento FROM desempeno_puestos_extra ORDER BY creado_el`));
+    const leer = () => d.execute(sql`SELECT id, nombre, departamento FROM desempeno_puestos_extra ORDER BY creado_el`);
+    // La tabla ya existe; solo se crea si falta (antes corría un CREATE TABLE en cada carga).
+    const v = filas(await leer().catch(async (e) => {
+      if (!/does not exist|no existe/i.test(String((e as Error)?.message ?? e))) throw e;
+      await asegurarTabla();
+      return leer();
+    }));
     cache = { t: Date.now(), v };
     registrarPuestosExtra(v);
   } catch (e) {

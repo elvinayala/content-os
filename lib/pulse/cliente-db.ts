@@ -14,10 +14,33 @@ import postgres from "postgres";
 type Sql = postgres.Sql;
 
 const esLectura = (q: string) => /^\s*select\b/i.test(q);
+
+// 29/sep/2026 — la causa de fondo: el cuelgue pasa cuando hay MÁS consultas simultáneas que conexiones y alguna
+// hace fila dentro de postgres.js (reproducido desde la Mac: con max 5 y lotes de 8, se colgaba siempre al 2.º
+// lote; con la fila en nuestro código, 100/100 lotes sin cuelgue). Por eso ninguna consulta entra al cliente si
+// ya hay `max` corriendo: esperan su turno aquí. Una transacción ocupa un turno mientras dura.
+function limitador(max: number) {
+  let activos = 0;
+  const cola: (() => void)[] = [];
+  const soltar = () => {
+    activos--;
+    cola.shift()?.();
+  };
+  return <T>(f: () => Promise<T>): Promise<T> =>
+    new Promise<T>((resolve, reject) => {
+      const correr = () => {
+        activos++;
+        f().then(resolve, reject).finally(soltar);
+      };
+      if (activos < max) correr();
+      else cola.push(correr);
+    });
+}
 const GRACIA_S = 10;
 
 export function clienteResistente(url: string, opciones: postgres.Options<Record<string, never>>, timeoutMs = Number(process.env.DB_TIMEOUT_MS) || 5000): Sql {
   const nuevo = () => postgres(url, opciones);
+  const turno = limitador(Math.max(1, Number(opciones.max) || 10));
   const base = nuevo(); // drizzle ajusta parsers/serializers sobre este objeto al crearse
   let actual: Sql = base;
 
@@ -65,7 +88,7 @@ export function clienteResistente(url: string, opciones: postgres.Options<Record
         return pendiente;
       },
       then<A, B>(ok?: (v: unknown) => A, mal?: (e: unknown) => B) {
-        return vigilar(correr, `consulta «${q.replace(/\s+/g, " ").slice(0, 90)}»`, esLectura(q)).then(ok, mal);
+        return turno(() => vigilar(correr, `consulta «${q.replace(/\s+/g, " ").slice(0, 90)}»`, esLectura(q))).then(ok, mal);
       },
     };
     return pendiente;
@@ -74,7 +97,7 @@ export function clienteResistente(url: string, opciones: postgres.Options<Record
   return new Proxy(base, {
     get(obj, prop, recv) {
       if (prop === "unsafe") return unsafe;
-      if (prop === "begin") return (...args: unknown[]) => vigilar(() => (actual.begin as (...a: unknown[]) => Promise<unknown>)(...args), "transacción", false);
+      if (prop === "begin") return (...args: unknown[]) => turno(() => vigilar(() => (actual.begin as (...a: unknown[]) => Promise<unknown>)(...args), "transacción", false));
       return Reflect.get(obj, prop, recv);
     },
   });
