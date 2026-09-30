@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 
 import { Correcciones } from "@/components/ritmo/correcciones";
 import { Hora } from "@/components/ritmo/hora-local";
-import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, MiniDias, ScoreBadge, Tarjeta } from "@/components/ritmo/piezas";
+import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
+import { TarjetaLista, type PersonaLista } from "@/components/ritmo/tarjeta-lista";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
@@ -64,6 +65,17 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
   const terminadas = filas.reduce((s, f) => s + (f.produccion?.terminadas ?? 0), 0);
   const conteo: Record<Color, number> = { verde: 0, amarillo: 0, rojo: 0 };
   for (const f of filas) if (f.colorSemana) conteo[f.colorSemana]++;
+  // Quiénes hay detrás de cada número (30/sep: "que le dé clic y me diga cuáles son").
+  const quien = (f: FilaPersona, extra?: Partial<PersonaLista>): PersonaLista => ({ id: f.perfil.userId, nombre: f.perfil.nombre, ...extra });
+  const presentesLista = laborables.filter((f) => ["trabajando", "a_tiempo", "tarde"].includes(f.hoy.asistencia.estado));
+  const listaPresentes = [
+    { etiqueta: "Llegaron tarde", punto: "bg-amber-400", gente: presentesLista.filter((f) => f.hoy.asistencia.minutosTarde > 15).map((f) => quien(f, { hora: f.hoy.asistencia.entrada, nota: `${f.hoy.asistencia.minutosTarde} min tarde` })) },
+    { etiqueta: "A tiempo", punto: "bg-emerald-400", gente: presentesLista.filter((f) => f.hoy.asistencia.minutosTarde <= 15).map((f) => quien(f, { hora: f.hoy.asistencia.entrada })) },
+  ];
+  const listaSinMarcar = [{ gente: laborables.filter((f) => f.hoy.asistencia.estado === "ausente").map((f) => quien(f, { nota: `entra ${f.perfil.horaEntrada}` })) }];
+  const listaTerminadas = [{ gente: filas.filter((f) => (f.produccion?.terminadas ?? 0) > 0).map((f) => quien(f, { nota: `${f.produccion!.terminadas} terminadas` })) }];
+  const listaVencidas = [{ gente: filas.filter((f) => (f.produccion?.vencidas ?? 0) > 0).map((f) => quien(f, { nota: `${f.produccion!.vencidas} vencidas` })) }];
+  const listaSemana = (Object.keys(COLOR) as Color[]).map((c) => ({ etiqueta: COLOR[c].nombre, punto: COLOR[c].punto, gente: filas.filter((f) => f.colorSemana === c).map((f) => quien(f, { nota: f.scoreSemana != null ? `${Math.round(f.scoreSemana)}` : null })) }));
   const correcciones = deEmpresa
     .filter((f) => puedeAprobar(u, f.perfil))
     .flatMap((f) => f.correcciones.map((c) => ({ id: c.id, nombre: f.perfil.nombre, fecha: c.fecha, entradaAt: c.entradaAt.toISOString(), salidaAt: c.salidaAt?.toISOString() ?? null, nota: c.nota })));
@@ -120,12 +132,11 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
             </p>
           ) : null}
           <section className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <Tarjeta titulo="Presentes hoy" valor={`${presentes}/${laborables.length}`} detalle={tarde ? `${tarde} llegaron tarde` : "Todos a tiempo"} tono={tarde ? "ambar" : undefined} />
-            <Tarjeta titulo="Sin marcar" valor={sinMarcar} detalle="Día laborable sin entrada" tono={sinMarcar ? "rojo" : undefined} />
-            <Tarjeta titulo="Terminadas (7 d)" valor={panel.hayProduccion ? terminadas : "—"} detalle={panel.hayProduccion ? "Tablero Producción" : "Falta el tablero Producción"} />
-            <Tarjeta titulo="Vencidas" valor={panel.hayProduccion ? vencidas : "—"} detalle="Entregables atrasados" tono={vencidas ? "rojo" : undefined} />
-            <div className="col-span-2 panel hud-esquinas p-4 md:col-span-1">
-              <p className="font-mono text-[10.5px] tracking-[0.16em] text-muted-foreground uppercase">Semana</p>
+            <TarjetaLista titulo="Presentes hoy" valor={`${presentes}/${laborables.length}`} detalle={tarde ? `${tarde} llegaron tarde` : "Todos a tiempo"} tono={tarde ? "ambar" : undefined} grupos={listaPresentes} vacio="Todavía nadie ha marcado entrada hoy." />
+            <TarjetaLista titulo="Sin marcar" valor={sinMarcar} detalle="Día laborable sin entrada" tono={sinMarcar ? "rojo" : undefined} grupos={listaSinMarcar} vacio="Todos los que trabajan hoy ya marcaron." />
+            <TarjetaLista titulo="Terminadas (7 d)" valor={panel.hayProduccion ? terminadas : "—"} detalle={panel.hayProduccion ? "Tablero Producción" : "Falta el tablero Producción"} grupos={listaTerminadas} vacio={panel.hayProduccion ? "Nadie ha terminado entregas en los últimos 7 días." : "Se llena cuando el equipo use el tablero Producción en Pulse (se crea en Ajustes)."} />
+            <TarjetaLista titulo="Vencidas" valor={panel.hayProduccion ? vencidas : "—"} detalle="Entregables atrasados" tono={vencidas ? "rojo" : undefined} grupos={listaVencidas} vacio={panel.hayProduccion ? "No hay entregables atrasados." : "Se llena cuando el equipo use el tablero Producción en Pulse."} />
+            <TarjetaLista titulo="Semana" className="col-span-2 md:col-span-1" grupos={oculto ? [] : listaSemana} vacio={oculto ? "El score está en calibración." : "Todavía no hay datos de la semana."}>
               {oculto ? (
                 <p className="mt-2 text-sm text-muted-foreground">Calibrando</p>
               ) : (
@@ -139,7 +150,7 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
                   ))}
                 </div>
               )}
-            </div>
+            </TarjetaLista>
           </section>
 
           <Correcciones lista={correcciones} />
