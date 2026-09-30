@@ -44,3 +44,4 @@ Ritmo = la plataforma de asistencia y desempeño que Elvin pidió el 24-25/sep/2
 **28/sep — Ficha completa de todos:** Elvin exige que todo el equipo esté registrado y con la ficha llena (foto, teléfono, ciudad, documento, contacto de emergencia, ID, contrato) para el 29/sep. Aviso en Hoy + /ritmo/bienvenida para completar lo que falta; fichas vacías creadas a 12 perfiles. Yaileen da seguimiento; sin clave: Laura, Roger, Luis, Lis.
 
 30/sep: la RED ya no bloquea el ponche (IP de casa cambia: VPN, hotspot, apagón → casi todos pedían manual); manda la computadora registrada. Evento ponche-otra-red queda de registro.
+Además (30/sep): cada quien declara su Wi-Fi principal en Hoy; red nueva → aviso a Yaileen (1/persona/día) + recordatorio de proteger datos (tienen CRM y datos de clientes).
