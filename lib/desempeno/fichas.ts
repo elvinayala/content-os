@@ -165,10 +165,10 @@ export async function borrarArchivoFicha(id: string, actorId: string) {
 }
 
 /** URL firmada (5 min) o null en local (se sirve desde disco). `descargar` = forzar descarga. */
-export async function urlFirmada(path: string, descargar?: string): Promise<string | null> {
+export async function urlFirmada(path: string, descargar?: string, segundos = 300): Promise<string | null> {
   const sb = supabase();
   if (!sb || storageLocal) return null;
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 300, descargar ? { download: descargar } : undefined);
+  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, segundos, descargar ? { download: descargar } : undefined);
   if (error || !data) throw new Error(`Storage: ${error?.message ?? "sin URL"}`);
   return data.signedUrl;
 }

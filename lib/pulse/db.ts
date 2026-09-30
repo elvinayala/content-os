@@ -29,7 +29,8 @@ async function crear(): Promise<DbPulse> {
   const url = process.env.NODE_ENV === "development" && process.env.DATABASE_URL_DIRECT ? process.env.DATABASE_URL_DIRECT : process.env.DATABASE_URL;
   if (url) {
     // Resistente a conexiones muertas tras congelarse la función (ver lib/pulse/cliente-db.ts).
-    const sql = clienteResistente(url, { prepare: false, max: 5, idle_timeout: 20, connect_timeout: 10 });
+    // 10 conexiones por instancia (29/sep; antes 5): Vercel atiende varias visitas a la vez en la misma instancia.
+    const sql = clienteResistente(url, { prepare: false, max: 10, idle_timeout: 20, connect_timeout: 10 });
     return drizzlePg(sql, { schema });
   }
   const { PGlite } = await import("@electric-sql/pglite");
