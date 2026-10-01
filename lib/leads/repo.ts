@@ -7,7 +7,7 @@ import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, esEtapaGrupos, ETAPA_GRUPOS, normalizarTelefono, ordenEntre, rangoFecha, SEMILLA, type EventoWhatsapp, type FiltroFecha, type Marca } from "./reglas";
+import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, seReparte, SEMILLA, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -105,7 +105,7 @@ export async function crearEmbudo(marca: Marca, nombre: string, etapas: string[]
 }
 
 /** Guarda nombre, días de estancado y la lista de etapas (renombrar, agregar, reordenar, borrar vacías). */
-export async function guardarEmbudo(embudoId: string, datos: { nombre: string; diasEstancado: number; etapas: { id?: string; nombre: string }[] }): Promise<{ ok: boolean; error?: string }> {
+export async function guardarEmbudo(embudoId: string, datos: { nombre: string; diasEstancado: number; etapas: { id?: string; nombre: string }[]; reparto?: Reparto }): Promise<{ ok: boolean; error?: string }> {
   const d = await db();
   const actuales = await etapasDe(embudoId);
   const quedan = new Set(datos.etapas.map((e) => e.id).filter(Boolean) as string[]);
@@ -115,7 +115,18 @@ export async function guardarEmbudo(embudoId: string, datos: { nombre: string; d
     if (n > 0) return { ok: false, error: `No puedo borrar una etapa con leads (${n}). Muévelos primero.` };
   }
   if (!datos.etapas.length) return { ok: false, error: "El embudo necesita al menos una etapa." };
-  await d.update(leadsEmbudos).set({ nombre: datos.nombre.trim() || "Embudo", diasEstancado: Math.max(0, Math.min(90, datos.diasEstancado)) }).where(eq(leadsEmbudos.id, embudoId));
+  let reparto: Reparto | undefined;
+  if (datos.reparto) {
+    const [e] = await d.select({ marca: leadsEmbudos.marca }).from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);
+    const equipo = new Set((await equipoReparto(e.marca as Marca)).map((u) => u.id));
+    const r = normalizarReparto(datos.reparto);
+    reparto = normalizarReparto({ ...r, personas: r.personas.filter((p) => equipo.has(p)) });
+    if (r.modo !== "ninguno" && reparto.modo === "ninguno") return { ok: false, error: "Escoge al menos una persona del equipo de ventas." };
+  }
+  await d
+    .update(leadsEmbudos)
+    .set({ nombre: datos.nombre.trim() || "Embudo", diasEstancado: Math.max(0, Math.min(90, datos.diasEstancado)), ...(reparto ? { reparto } : {}) })
+    .where(eq(leadsEmbudos.id, embudoId));
   for (const e of borrar) await d.delete(leadsEtapas).where(eq(leadsEtapas.id, e.id));
   for (const [i, e] of datos.etapas.entries()) {
     if (e.id) await d.update(leadsEtapas).set({ nombre: e.nombre.trim() || "Etapa", orden: i }).where(eq(leadsEtapas.id, e.id));
@@ -302,6 +313,7 @@ export async function crearTrato(v: {
   const d = await db();
   const etapaId = v.etapaId ?? (await etapasDe(v.embudoId))[0]?.id;
   if (!etapaId) throw new Error("embudo-sin-etapas");
+  const repartido = !v.duenoId && seReparte(v.origen ?? "manual") ? await siguienteDueno(v.marca, v.embudoId) : null;
   const [t] = await d
     .insert(leadsTratos)
     .values({
@@ -313,7 +325,7 @@ export async function crearTrato(v: {
       telefono: normalizarTelefono(v.telefono),
       email: v.email?.trim().toLowerCase() || null,
       valor: Math.max(0, Math.round(v.valor ?? 0)),
-      duenoId: v.duenoId ?? null,
+      duenoId: v.duenoId ?? repartido?.id ?? null,
       origen: v.origen ?? "manual",
       agendoPor: v.agendoPor ?? null,
       datos: v.datos ?? {},
@@ -328,8 +340,35 @@ export async function crearTrato(v: {
     if (!ya) throw new Error("no-se-pudo-crear");
     return { ...ya, yaExistia: true };
   }
-  await historial(t.id, "sistema", `Lead creado (${t.origen})`, v.autorId);
+  await historial(t.id, "sistema", `Lead creado (${t.origen})${repartido ? ` · asignado a ${repartido.nombre} por ${repartido.modo === "rotacion" ? "rotación" : "el reparto del embudo"}` : ""}`, v.autorId);
   return t;
+}
+
+/** Quien tiene acceso a Leads de la marca (el equipo de ventas): los únicos que pueden recibir reparto. */
+export async function equipoReparto(marca: Marca): Promise<{ id: string; nombre: string; color: string | null }[]> {
+  const d = await db();
+  return d
+    .select({ id: pulseUsers.id, nombre: pulseUsers.nombre, color: pulseUsers.color })
+    .from(leadsAcceso)
+    .innerJoin(pulseUsers, eq(pulseUsers.id, leadsAcceso.userId))
+    .where(and(eq(leadsAcceso.marca, marca), eq(pulseUsers.activo, true)))
+    .orderBy(asc(pulseUsers.nombre));
+}
+
+// El turno sube en la misma sentencia que lo lee: dos leads que llegan a la vez no le caen a la misma persona.
+async function siguienteDueno(marca: Marca, embudoId: string): Promise<{ id: string; nombre: string; modo: Reparto["modo"] } | null> {
+  const d = await db();
+  const [e] = await d
+    .update(leadsEmbudos)
+    .set({ repartoTurno: sql`${leadsEmbudos.repartoTurno} + 1` })
+    .where(and(eq(leadsEmbudos.id, embudoId), sql`${leadsEmbudos.reparto}->>'modo' in ('fijo', 'rotacion')`))
+    .returning({ reparto: leadsEmbudos.reparto, turno: leadsEmbudos.repartoTurno });
+  if (!e) return null;
+  const reparto = normalizarReparto(e.reparto);
+  const equipo = await equipoReparto(marca);
+  const id = duenoPorReparto(reparto, e.turno - 1, new Set(equipo.map((u) => u.id)));
+  const u = id ? equipo.find((x) => x.id === id) : null;
+  return u ? { id: u.id, nombre: u.nombre, modo: reparto.modo } : null;
 }
 
 export async function actualizarTrato(id: string, cambios: Partial<Pick<Trato, "nombre" | "negocio" | "telefono" | "email" | "valor" | "duenoId">>, autorId?: string | null): Promise<{ ok: boolean; error?: string }> {

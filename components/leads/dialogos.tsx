@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MOTIVOS_PERDIDA, slugDeMarca, type Marca } from "@/lib/leads/reglas";
+import { MODOS_REPARTO, MOTIVOS_PERDIDA, normalizarReparto, slugDeMarca, type Marca, type ModoReparto } from "@/lib/leads/reglas";
 
 export interface EtapaUI {
   id: string;
@@ -20,6 +20,7 @@ export interface EmbudoUI {
   id: string;
   nombre: string;
   diasEstancado: number;
+  reparto?: { modo?: string; personas?: string[] } | null;
 }
 export interface UsuarioUI {
   id: string;
@@ -182,8 +183,12 @@ export function PerdidoDialog({ tratoId, nombre, onCerrar, onHecho }: { tratoId:
 }
 
 /** Editar el embudo: nombre, días para "estancado" y etapas (renombrar, agregar, subir/bajar, borrar vacías). */
-export function EmbudoDialog({ abierto, onCerrar, embudo, etapas }: { abierto: boolean; onCerrar: () => void; embudo: EmbudoUI; etapas: EtapaUI[] }) {
+export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [] }: { abierto: boolean; onCerrar: () => void; embudo: EmbudoUI; etapas: EtapaUI[]; equipo?: UsuarioUI[] }) {
   const router = useRouter();
+  const inicial = normalizarReparto(embudo.reparto);
+  const [modo, setModo] = useState<ModoReparto>(inicial.modo);
+  const [personas, setPersonas] = useState<string[]>(inicial.personas);
+  const marcar = (id: string) => setPersonas((ps) => (modo === "fijo" ? [id] : ps.includes(id) ? ps.filter((x) => x !== id) : [...ps, id]));
   const [nombre, setNombre] = useState(embudo.nombre);
   const [dias, setDias] = useState(String(embudo.diasEstancado));
   const [lista, setLista] = useState<{ id?: string; nombre: string }[]>(etapas.map((e) => ({ id: e.id, nombre: e.nombre })));
@@ -197,7 +202,8 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas }: { abierto: b
   };
   const guardar = () =>
     start(async () => {
-      const r = await guardarEmbudoAction(embudo.id, { nombre, diasEstancado: Number(dias) || 0, etapas: lista });
+      if (modo !== "ninguno" && !personas.length) return void toast.error("Escoge quién recibe los leads de este embudo.");
+      const r = await guardarEmbudoAction(embudo.id, { nombre, diasEstancado: Number(dias) || 0, etapas: lista, reparto: { modo, personas: modo === "fijo" ? personas.slice(0, 1) : personas } });
       if (!r.ok) return void toast.error(r.error);
       toast.success("Embudo guardado");
       onCerrar();
@@ -240,6 +246,43 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas }: { abierto: b
           <Button variant="outline" size="sm" className="justify-self-start" onClick={() => setLista([...lista, { nombre: "Nueva etapa" }])}>
             <Plus className="size-4" /> Etapa
           </Button>
+
+          <div className="mt-2 grid gap-2 border-t pt-4">
+            <Label>¿Quién recibe los leads nuevos?</Label>
+            <div className="flex rounded-lg bg-muted p-0.5">
+              {MODOS_REPARTO.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setModo(m.id);
+                    if (m.id === "fijo") setPersonas((ps) => ps.slice(0, 1));
+                  }}
+                  className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition ${modo === m.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  {m.nombre}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground">{MODOS_REPARTO.find((m) => m.id === modo)?.ayuda} Los que ya llegan con dueño (setter del link, número de WhatsApp con dueño) y los que creas a mano no cambian.</p>
+            {modo !== "ninguno" &&
+              (equipo.length ? (
+                <div className="grid max-h-48 gap-1 overflow-y-auto rounded-lg border p-1.5">
+                  {equipo.map((u) => {
+                    const i = personas.indexOf(u.id);
+                    return (
+                      <label key={u.id} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                        <input type={modo === "fijo" ? "radio" : "checkbox"} name="reparto" checked={i >= 0} onChange={() => marcar(u.id)} className="size-4 accent-[#08a742]" />
+                        <span className="flex-1 truncate">{u.nombre}</span>
+                        {modo === "rotacion" && i >= 0 ? <span className="rounded-full bg-muted px-1.5 text-[10px] text-muted-foreground tabular-nums">{i + 1}.º</span> : null}
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Nadie tiene acceso a Leads de esta marca todavía (botón Equipo).</p>
+              ))}
+          </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onCerrar}>

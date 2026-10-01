@@ -156,7 +156,7 @@ export async function crearEmbudoAction(marca: Marca, nombre: string, etapas: st
   return { ok: true, id: e.id };
 }
 
-export async function guardarEmbudoAction(embudoId: string, datos: { nombre: string; diasEstancado: number; etapas: { id?: string; nombre: string }[] }): Promise<Res> {
+export async function guardarEmbudoAction(embudoId: string, datos: { nombre: string; diasEstancado: number; etapas: { id?: string; nombre: string }[]; reparto?: { modo: "ninguno" | "fijo" | "rotacion"; personas: string[] } }): Promise<Res> {
   const d = await db();
   const [e] = await d.select().from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);
   if (!e) return { ok: false, error: "No existe" };

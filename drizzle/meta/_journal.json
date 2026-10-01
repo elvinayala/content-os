@@ -295,6 +295,13 @@
       "when": 1790814891487,
       "tag": "0041_ultimas-vacaciones",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1790817980547,
+      "tag": "0042_reparto-embudo",
+      "breakpoints": true
     }
   ]
 }

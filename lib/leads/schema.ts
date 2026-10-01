@@ -18,6 +18,9 @@ export const leadsEmbudos = pgTable(
     archivado: boolean("archivado").notNull().default(false),
     // Días sin moverse en una etapa para marcar el lead "estancado" (el "rotting" de Pipedrive).
     diasEstancado: integer("dias_estancado").notNull().default(7),
+    // Quién recibe los leads nuevos que llegan sin dueño: nadie, una persona o rotación (round robin).
+    reparto: jsonb("reparto").$type<{ modo?: string; personas?: string[] }>().notNull().default({}),
+    repartoTurno: integer("reparto_turno").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("leads_embudos_marca").on(t.marca, t.orden)],

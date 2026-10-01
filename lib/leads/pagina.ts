@@ -6,7 +6,7 @@ import { usuarioActual } from "@/lib/pulse/auth";
 
 import { manejaEquipo } from "./equipo-datos";
 import { modoExportar } from "./exportar";
-import { accesoLeads, asegurarSemilla, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
+import { accesoLeads, asegurarSemilla, equipoReparto, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
 import { FILTROS_FECHA, MARCAS, slugDeMarca, type FiltroFecha } from "./reglas";
 
 /** Todo lo que necesita cualquier pantalla de Leads de una marca: acceso, embudos, etapas, gente. */
@@ -34,6 +34,7 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     embudo,
     etapas,
     usuarios,
+    equipoReparto: await equipoReparto(m.marca).catch(() => []),
     marcas: marcas.map((x) => ({ slug: slugDeMarca(x), nombre: MARCAS[slugDeMarca(x)].nombre })),
     dueno,
     q,

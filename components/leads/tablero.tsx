@@ -1,7 +1,7 @@
 "use client";
 
 import { DndContext, DragOverlay, MeasuringStrategy, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { CalendarClock, ChevronDown, Download, Kanban, List, MessageCircle, Plus, Search, Settings2, Trophy, Users, X } from "lucide-react";
+import { CalendarClock, ChevronDown, Download, Kanban, List, MessageCircle, Plus, Repeat2, Search, Settings2, Trophy, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
@@ -13,7 +13,7 @@ import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, FILTROS_FECHA, horaLlegada, type FiltroFecha, type Marca } from "@/lib/leads/reglas";
+import { diasEnEtapa, esEtapaGrupos, estadoActividad, estancado, FILTROS_FECHA, horaLlegada, normalizarReparto, type FiltroFecha, type Marca } from "@/lib/leads/reglas";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +57,7 @@ export function BarraLeads({
   exportar = null,
   manejaEquipo = false,
   fecha = null,
+  equipoReparto = [],
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -72,6 +73,7 @@ export function BarraLeads({
   exportar?: "directo" | "con_ok" | null;
   manejaEquipo?: boolean;
   fecha?: FiltroFecha | null;
+  equipoReparto?: UsuarioUI[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -294,7 +296,7 @@ export function BarraLeads({
         </div>
       </div>
       {embudo && <NuevoLeadDialog abierto={nuevo} onCerrar={() => setNuevo(false)} marca={marca} embudo={embudo} etapas={etapas} usuarios={usuarios} yoId={yoId} />}
-      {embudo && editar && <EmbudoDialog abierto={editar} onCerrar={() => setEditar(false)} embudo={embudo} etapas={etapas} />}
+      {embudo && editar && <EmbudoDialog abierto={editar} onCerrar={() => setEditar(false)} embudo={embudo} etapas={etapas} equipo={equipoReparto} />}
       <NuevoEmbudoDialog abierto={nuevoEmbudo} onCerrar={() => setNuevoEmbudo(false)} marca={marca} onCreado={(id) => ir({ embudo: id }, base)} />
     </>
   );
@@ -340,6 +342,7 @@ export function TableroLeads({
   const idsGrupos = useMemo(() => new Set(etapas.filter((e) => esEtapaGrupos(e.nombre)).map((e) => e.id)), [etapas]);
   const columnas = useMemo(() => [...etapas.filter((e) => !idsGrupos.has(e.id)), ...etapas.filter((e) => idsGrupos.has(e.id))], [etapas, idsGrupos]);
   const leads = tratos.filter((t) => !idsGrupos.has(t.etapaId));
+  const reparto = normalizarReparto(embudo.reparto);
   const total = leads.reduce((s, t) => s + t.valor, 0);
   const resumen = useMemo(() => {
     const hoy = leads.filter((t) => horaLlegada(t.creadoEl, ahora).startsWith("hoy")).length;
@@ -407,6 +410,13 @@ export function TableroLeads({
         <Dato color="#25d366" n={resumen.sinLeer} texto="con mensajes sin leer" />
         <Dato color="#ef4444" n={resumen.vencidos} texto="seguimientos vencidos" />
         <Dato color="#f59e0b" n={resumen.sinSeguimiento} texto="sin seguimiento" />
+        {reparto.modo !== "ninguno" ? (
+          <span className="ml-auto inline-flex items-center gap-1.5" title="Quién recibe los leads nuevos que llegan sin dueño">
+            <Repeat2 className="size-3.5" />
+            {reparto.modo === "rotacion" ? "Rotación" : "Van a"}:{" "}
+            <b className="font-medium text-foreground">{reparto.personas.map((id) => usuarios.find((u) => u.id === id)?.nombre.split(" ")[0] ?? "—").join(" → ")}</b>
+          </span>
+        ) : null}
       </div>
       <DndContext id="leads-tablero" measuring={{ droppable: { strategy: MeasuringStrategy.Always } }} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setArrastrando(null)}>
         <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto px-4 pb-24">

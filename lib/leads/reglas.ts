@@ -222,3 +222,42 @@ export function leerTimelines(body: unknown): EventoWhatsapp {
     adjunto,
   };
 }
+
+// ---------- Reparto de leads nuevos por embudo (30/sep, Elvin: "como el round robin de Pipedrive") ----------
+
+export type ModoReparto = "ninguno" | "fijo" | "rotacion";
+export interface Reparto {
+  modo: ModoReparto;
+  personas: string[];
+}
+
+export const MODOS_REPARTO: { id: ModoReparto; nombre: string; ayuda: string }[] = [
+  { id: "ninguno", nombre: "Nadie", ayuda: "Los leads nuevos quedan sin dueño hasta que alguien los tome." },
+  { id: "fijo", nombre: "Una persona", ayuda: "Todos los leads nuevos de este embudo van a la misma persona." },
+  { id: "rotacion", nombre: "Rotación", ayuda: "Uno a cada persona, en orden (round robin)." },
+];
+
+export function normalizarReparto(x: unknown): Reparto {
+  const r = (x ?? {}) as { modo?: unknown; personas?: unknown };
+  const modo: ModoReparto = r.modo === "fijo" || r.modo === "rotacion" ? r.modo : "ninguno";
+  const personas = Array.isArray(r.personas) ? [...new Set(r.personas.filter((p): p is string => typeof p === "string" && p.length > 0))] : [];
+  if (modo === "ninguno" || !personas.length) return { modo: "ninguno", personas: [] };
+  return { modo, personas: modo === "fijo" ? personas.slice(0, 1) : personas };
+}
+
+/**
+ * Dueño del próximo lead nuevo. `turno` = cuántos leads repartió ya el embudo. Las personas que ya no
+ * tienen acceso (o están desactivadas) se saltan sin romper el orden de las demás.
+ */
+export function duenoPorReparto(reparto: Reparto, turno: number, habilitados: ReadonlySet<string>): string | null {
+  const r = normalizarReparto(reparto);
+  const personas = r.personas.filter((p) => habilitados.has(p));
+  if (!personas.length || r.modo === "ninguno") return null;
+  if (r.modo === "fijo") return personas[0];
+  return personas[((turno % personas.length) + personas.length) % personas.length];
+}
+
+/** Los leads de estos orígenes no se reparten: el manual lo asigna quien lo crea y los grupos no son leads. */
+export function seReparte(origen: string | null | undefined): boolean {
+  return origen !== "manual" && origen !== "grupo";
+}
