@@ -35,3 +35,5 @@ Ana Cecilio (ana.cecilio@levelupmediapr.net) es **setter**: sus grabaciones (p. 
 Bernal) NO van al canal de cierres — quedan descartadas por la regla, a propósito. Llamadas previas al
 webhook: `FATHOM_API_KEY=… CRON_SECRET=… node scripts/fathom.mjs reenviar <AAAA-MM-DD>` (mismas reglas);
 FATHOM_API_KEY guardada en Vercel y en Nico (24/sep). El 24/sep se trajeron las 9 de Roger desde el 23/sep.
+
+**Metas de Nahuel (30/sep, Elvin):** escalones de $50K / $75K / $100K en **ventas nuevas cobradas en el mes** (solo New Sale de la hoja de tesorería; NUNCA renovaciones, upsells a clientes viejos, mensualidades ni lo que cobran Carilin/María). Es referencia para él, no una métrica a llenar; sale como línea pequeña en la Arena (`ESCALONES_DIRECTOR`).
