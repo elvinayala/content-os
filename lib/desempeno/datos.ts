@@ -196,6 +196,16 @@ export async function guardarReporte(userId: string, fecha: string, r: { bloqueo
     .onConflictDoUpdate({ target: [desempenoReportes.userId, desempenoReportes.fecha], set: { bloqueos, datos, detalles, updatedAt: new Date() } });
 }
 
+/** Reporte del día de un puesto "solo reporte" (Lis): REEMPLAZA lo del día (lo puede corregir las veces que quiera). */
+export async function reemplazarReporte(userId: string, fecha: string, r: { bloqueos: string | null; datos: Record<string, number>; detalles: Record<string, string> }) {
+  const d = await db();
+  await d
+    .insert(desempenoReportes)
+    .values({ userId, fecha, bloqueos: r.bloqueos, datos: r.datos, detalles: r.detalles })
+    .onConflictDoUpdate({ target: [desempenoReportes.userId, desempenoReportes.fecha], set: { bloqueos: r.bloqueos, datos: r.datos, detalles: r.detalles, updatedAt: new Date() } });
+  await evento({ userId, actorId: userId, tipo: "reporte-dia", datos: { fecha } });
+}
+
 /** El reporte de un día (lo que ya anotó en salidas anteriores). */
 export async function reporteDe(userId: string, fecha: string) {
   const d = await db();
@@ -373,13 +383,22 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
       const delDia = ponches.filter((p) => p.userId === perfil.userId && p.fecha === fecha);
       const iAlm = delDia.findIndex((p) => p.motivoSalida === "almuerzo" && p.salidaAt);
       const almuerzo = iAlm < 0 ? null : { salida: delDia[iAlm].salidaAt!.toISOString(), vuelta: delDia.slice(iAlm + 1).find((x) => x.entradaAt >= delDia[iAlm].salidaAt!)?.entradaAt.toISOString() ?? null };
-      const asistencia = asistenciaDia({
+      const asistencia0 = asistenciaDia({
         fecha,
         horario: perfil,
         ahora,
         desde: perfil.desde,
         ponches: ponches.filter((p) => p.userId === perfil.userId && p.fecha === fecha).map((p) => ({ entradaAt: p.entradaAt.toISOString(), salidaAt: p.salidaAt?.toISOString() ?? null, correccion: p.correccion })),
       });
+      // Puesto "solo reporte" (Lis, 30/sep): no poncha; el día cuenta si llenó su reporte (hoy queda pendiente hasta que lo llene).
+      const repDia = puesto?.soloReporte ? reportes.find((r) => r.userId === perfil.userId && r.fecha === fecha) : undefined;
+      const asistencia: Asistencia = !puesto?.soloReporte || asistencia0.estado === "libre"
+        ? asistencia0
+        : repDia
+          ? { ...asistencia0, estado: "a_tiempo", puntaje: 100, minutosTarde: 0, sinSalida: false }
+          : fecha >= fechaPR(ahora)
+            ? { ...asistencia0, estado: "pendiente", puntaje: null, minutosTarde: 0, sinSalida: false }
+            : { ...asistencia0, estado: "ausente", puntaje: 0, minutosTarde: 0, sinSalida: false };
       const valores: Record<string, number | null> = {};
       if (prod) Object.assign(valores, valoresProduccion(kpisProduccion({ userId: perfil.userId, fecha, ...prod })));
       for (const m of externas) if (m.userId === perfil.userId && m.fecha === fecha) valores[m.kpi] = m.valor;

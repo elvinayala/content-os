@@ -8,15 +8,16 @@ import { Noticia } from "@/components/ritmo/noticias";
 import { MiMarcador } from "@/components/ritmo/arena-marcador";
 import { MiDiaGoogle } from "@/components/ritmo/mi-dia-google";
 import { Ponche } from "@/components/ritmo/ponche";
+import { ReporteDiario } from "@/components/ritmo/reporte-diario";
 import { AppMovil } from "@/components/ritmo/app-movil";
-import { armarPanel, estadoPonche, modoScore } from "@/lib/desempeno/datos";
+import { armarPanel, estadoPonche, modoScore, perfilDe, reporteDe } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
 import { faltantesFicha, listaHumana } from "@/lib/desempeno/ficha-completa";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
 import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
 import { listarNoticias } from "@/lib/desempeno/noticias";
-import { fechaPR, sumarDias } from "@/lib/desempeno/reglas";
+import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { googleListo, miDia } from "@/lib/desempeno/google-cal";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
@@ -41,7 +42,11 @@ export default async function HoyPage() {
   const arena = !estado && !direccion ? await accesoArena(u).catch(() => null) : null;
   const vende = arena?.perfil ? arena : null;
   const ventas = vende ? await armarArena(u, vende, vende.perfil!.empresa as "level_up").catch(() => null) : null;
-  const seguridad = estado && !estado.sinPerfil ? await estadoSeguridad(u).catch(() => undefined) : undefined;
+  // Puesto "solo reporte" (Lis, 30/sep): no poncha; en lugar del círculo, su reporte del día siempre a la vista.
+  const puestoMio = !direccion && estado && !estado.sinPerfil ? puestoPorId((await perfilDe(u.id).catch(() => null))?.puesto ?? "") : undefined;
+  const soloReporte = puestoMio?.soloReporte ? puestoMio : null;
+  const repDia = soloReporte ? await Promise.all([reporteDe(u.id, hoy), reporteDe(u.id, sumarDias(hoy, -1))]).catch(() => [null, null]) : null;
+  const seguridad = estado && !estado.sinPerfil && !soloReporte ? await estadoSeguridad(u).catch(() => undefined) : undefined;
   // Sin perfil (dirección) no hay "Mi semana": no vale la pena armar el panel.
   const panel = estado && !estado.sinPerfil ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
   const yo = panel?.filas.find((f) => f.perfil.userId === u.id);
@@ -114,7 +119,17 @@ export default async function HoyPage() {
       <div className="grid items-start gap-6 lg:grid-cols-[360px_1fr]">
         {/* izquierda: el ponche (o el marcador de ventas) y mi semana */}
         <div className="flex flex-col items-center gap-5 lg:sticky lg:top-20">
-          {estado ? <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} seguridad={seguridad} /> : null}
+          {soloReporte && repDia ? (
+            <ReporteDiario
+              manual={soloReporte.manual ?? []}
+              hoy={hoy}
+              ayer={sumarDias(hoy, -1)}
+              repHoy={repDia[0] ? { datos: repDia[0].datos, detalles: repDia[0].detalles ?? {}, bloqueos: repDia[0].bloqueos } : null}
+              repAyer={repDia[1] ? { datos: repDia[1].datos, detalles: repDia[1].detalles ?? {}, bloqueos: repDia[1].bloqueos } : null}
+            />
+          ) : estado ? (
+            <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} seguridad={seguridad} />
+          ) : null}
           {estado?.sinPerfil ? <p className="max-w-xs text-center text-[11px] text-muted-foreground">Si lo usas, queda solo para ti y no cuenta en ningún reporte.</p> : null}
 
           {ventas?.mio ? (

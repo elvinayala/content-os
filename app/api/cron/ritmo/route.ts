@@ -12,7 +12,7 @@ import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
 import { cumpleDoceMesesHoy } from "@/lib/desempeno/rrhh";
-import { aMinutos, fechaPR, minutosPR, sumarDias } from "@/lib/desempeno/reglas";
+import { aMinutos, fechaPR, minutosPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { notificarCEO } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -138,6 +138,9 @@ export async function GET(req: NextRequest) {
     const ahoraMin = minutosPR(Date.now());
     const pendientes = panel.filas.filter((f) => f.ponchesAbiertos.length && ahoraMin >= aMinutos(f.perfil.horaSalida));
     const envios = pendientes.map((f) => ({ para: f.perfil.nombre, userId: f.perfil.userId, texto: `👋 ${f.perfil.nombre.split(" ")[0]}, ¿ya terminaste por hoy? Si sí, marca tu salida en Ritmo (y si sigues trabajando, ignora esto). <${base}/ritmo|Abrir Ritmo>`, enviado: false }));
+    // Quien no poncha pero llena su reporte del día (Lis, 30/sep): si hoy le tocaba y no lo ha llenado, se le pide.
+    for (const f of panel.filas.filter((x) => puestoPorId(x.perfil.puesto)?.soloReporte && x.hoy.asistencia.estado === "pendiente"))
+      envios.push({ para: f.perfil.nombre, userId: f.perfil.userId, texto: `📋 ${f.perfil.nombre.split(" ")[0]}, falta tu reporte de hoy en Ritmo (tus números del día; si algo fue 0, pon 0). <https://ritmo.levelupmediapr.net/ritmo|Llenarlo ahora>`, enviado: false });
     if (real) for (const e of envios) e.enviado = await avisarPersona(e.userId, e.texto);
     return NextResponse.json({ ok: true, real, tarea, envios });
   }

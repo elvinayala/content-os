@@ -3,6 +3,8 @@ import { test } from "node:test";
 
 import {
   asistenciaDia,
+  errorReporteDia,
+  puestoPorId,
   faltanEnSalida,
   colorScore,
   fechaPR,
@@ -184,4 +186,17 @@ test("salida: no se marca sin los KPIs del día (0 vale; con número > 0 pide el
   // Lo reportado en una salida anterior de hoy cuenta.
   assert.deepEqual(faltanEnSalida(manual, { datos: {}, detalles: {} }, { datos: { reuniones_cliente: 1, campanas: 0 } }), []);
   assert.deepEqual(faltanEnSalida([], { datos: {}, detalles: {} }, null), []);
+});
+
+test("reporte del día de Lis (solo reporte): todos los KPIs, detalle si > 0, montos en dólares", () => {
+  const lis = puestoPorId("retencion_alianzas");
+  assert.equal(lis.soloReporte, true);
+  const ids = lis.manual.map((m) => m.id);
+  assert.ok(["referidos", "reuniones_seguimiento", "cash_collected", "ventas_bori", "alianzas"].every((x) => ids.includes(x)));
+  const ceros = Object.fromEntries(ids.map((i) => [i, 0]));
+  assert.equal(errorReporteDia(lis.manual, ceros, {}), null);
+  assert.match(errorReporteDia(lis.manual, { ...ceros, referidos: undefined }, {}), /Falta: Referidos/);
+  assert.match(errorReporteDia(lis.manual, { ...ceros, cash_collected: 1500 }, {}), /Cash collected/);
+  assert.equal(errorReporteDia(lis.manual, { ...ceros, cash_collected: 1500 }, { cash_collected: "Dra. Escabí, renovación" }), null);
+  assert.match(errorReporteDia(lis.manual, { ...ceros, ventas_bori: 900 }, {}), /Revisa el número/);
 });

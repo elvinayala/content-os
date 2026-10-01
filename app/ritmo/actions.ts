@@ -27,7 +27,7 @@ import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
 import { errorPlan } from "@/lib/desempeno/viajes-reglas";
-import { EMPRESAS, faltanEnSalida, fechaPR, puedeAprobar, PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
+import { EMPRESAS, errorReporteDia, faltanEnSalida, fechaPR, puedeAprobar, PUESTOS, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { requiereMaestro, usuarioRitmo } from "@/lib/desempeno/sesion";
 import { requiereCuenta as requiereUsuario } from "@/lib/pulse/auth";
 import { esPuestoVentas } from "@/lib/ventas/reglas";
@@ -80,6 +80,32 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     await datos.salir(u.id, await contexto(), { bloqueos: r.bloqueos?.trim().slice(0, 1000) || null, datos: limpios, detalles });
     refresh();
     return { redNueva: !!redNueva };
+  });
+}
+
+/** Reporte del día de quien no poncha (Lis, 30/sep): hoy o ayer; se puede corregir (reemplaza). */
+export async function guardarReporteDiaAction(r: { fecha: string; datos: Record<string, number>; detalles: Record<string, string>; bloqueos: string }) {
+  return envolver(async () => {
+    const u = await requiereUsuario();
+    const perfil = await datos.perfilDe(u.id);
+    const puesto = puestoPorId(perfil?.puesto ?? "");
+    if (!perfil?.activo || !puesto?.soloReporte) throw new Error("Tu puesto marca entrada y salida: tus KPIs van al marcar la salida");
+    const hoy = fechaPR(Date.now());
+    if (r.fecha !== hoy && r.fecha !== sumarDias(hoy, -1)) throw new Error("Solo puedes llenar el de hoy o el de ayer");
+    const manual = puesto.manual ?? [];
+    const limpios: Record<string, number> = {};
+    const detalles: Record<string, string> = {};
+    for (const m of manual) {
+      const v = Number(r.datos?.[m.id]);
+      if (r.datos?.[m.id] !== undefined && Number.isFinite(v)) limpios[m.id] = m.dinero ? Math.round(v * 100) / 100 : Math.round(v);
+      const t = r.detalles?.[m.id];
+      if (typeof t === "string" && t.trim()) detalles[m.id] = t.trim().slice(0, 300);
+    }
+    const err = errorReporteDia(manual, limpios, detalles);
+    if (err) throw new Error(err);
+    await datos.reemplazarReporte(u.id, r.fecha, { datos: limpios, detalles, bloqueos: r.bloqueos?.trim().slice(0, 1000) || null });
+    refresh();
+    return {};
   });
 }
 

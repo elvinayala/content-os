@@ -27,8 +27,10 @@ export interface Puesto {
   nombre: string;
   departamento: string;
   kpis: Kpi[];
-  manual?: { id: string; nombre: string; detalle?: string }[]; // lo que reporta al marcar salida (además de bloqueos); `detalle` = pregunta del texto (qué cliente, cuál…)
+  manual?: { id: string; nombre: string; detalle?: string; dinero?: boolean }[]; // lo que reporta al marcar salida (además de bloqueos); `detalle` = pregunta del texto (qué cliente, cuál…); `dinero` = monto en US$
   sinPonche?: boolean; // ventas: no ponchan; su desempeño es 100 % resultados (Arena, lib/ventas/reglas.ts)
+  // No poncha, pero llena su reporte del día en Hoy (30/sep, Lis): sigue en Equipo/Ranking; su "asistencia" = si reportó.
+  soloReporte?: boolean;
 }
 
 // KPIs de Producción (editores, diseñadores, copy, web): ventana móvil de 7 días.
@@ -44,9 +46,9 @@ const reuniones = [{ id: "reuniones_cliente", nombre: "Reuniones con clientes ho
 
 // KPIs que reporta la persona al marcar salida (Elvin, 28/sep: "los primeros KPIs… lo demás quítalo por ahora"). Nacen
 // con peso 0 (se miden, no puntúan) hasta que Carilin/RR.HH. les pongan meta y peso en Ajustes.
-const reportado = (id: string, nombre: string, detalle: string, ayuda?: string) => ({
+const reportado = (id: string, nombre: string, detalle: string, ayuda?: string, dinero?: boolean) => ({
   kpi: { id, nombre, fuente: "manual" as const, sentido: "mayor" as const, meta: 1, peso: 0, unidad: "u" as const, ayuda },
-  manual: { id, nombre, detalle },
+  manual: { id, nombre, detalle, ...(dinero ? { dinero: true } : {}) },
 });
 const KPIS_REPORTADOS = {
   estratega: [
@@ -75,6 +77,10 @@ const KPIS_REPORTADOS = {
     reportado("churn_conversaron", "Clientes de churn con los que conversaste", "¿Cuáles y qué dijeron?", "De los que contactaste, los que te respondieron"),
     reportado("proyectos_especiales", "Proyectos especiales de EA Market LLC", "¿Cuál?"),
     reportado("alianzas", "Contactos para alianzas, colaboradores o creadores", "¿Quiénes y para qué marca?"),
+    // 30/sep (Elvin): también ventas.
+    reportado("reuniones_seguimiento", "Reuniones agendadas para seguimiento de ventas", "¿Con quiénes?"),
+    reportado("cash_collected", "Cash collected cerrado (US$)", "¿De quién y qué servicio?", "Lo que cobraste tú hoy, en dólares", true),
+    reportado("ventas_bori", "Ventas de Bori", "¿A quién?", "Ventas del producto Bori (low ticket) que cerraste tú"),
   ],
   disenador: [
     reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
@@ -130,7 +136,7 @@ export const PUESTOS: Puesto[] = [
   // Puestos sin KPIs conectados todavía (28/sep/2026, pedido de Aure): su nota sale de la asistencia.
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
   { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
-  { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas") },
+  { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas"), soloReporte: true },
   { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", manual: manualReportado("ai_engineer"), kpis: kpisReportados("ai_engineer") },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
@@ -523,4 +529,16 @@ export function faltanEnSalida(
     if (m.detalle && (ahora ?? 0) > 0 && !envio.detalles[m.id]?.trim()) falta.push(`${m.nombre}: ${m.detalle.replace(/[¿?]/g, "").trim().toLowerCase()}`);
   }
   return falta;
+}
+
+/** Validación del reporte del día de un puesto "solo reporte" (Lis): todos los KPIs con número (0 vale), el detalle si es
+ *  > 0, y topes (montos en US$ hasta 1,000,000; lo demás hasta 500). Devuelve el error o null. */
+export function errorReporteDia(manual: { id: string; nombre: string; detalle?: string; dinero?: boolean }[], datos: Record<string, number>, detalles: Record<string, string>): string | null {
+  for (const m of manual) {
+    const v = datos[m.id];
+    if (v === undefined || !Number.isFinite(v)) return `Falta: ${m.nombre} (si fue 0, pon 0)`;
+    if (v < 0 || v > (m.dinero ? 1_000_000 : 500)) return `Revisa el número de ${m.nombre}`;
+    if (m.detalle && v > 0 && !detalles[m.id]?.trim()) return `${m.nombre}: ${m.detalle.replace(/[¿?]/g, "").trim().toLowerCase()}`;
+  }
+  return null;
 }

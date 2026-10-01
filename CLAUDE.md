@@ -567,7 +567,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   sistema nuevo, agente personalizado) · reuniones de onboarding · soporte a sistemas;
   **Diseñador** = flyers/creativos aprobados (cuántos por negocio) · otros diseños; **Coordinadora de Retención y Alianzas (Lis, 30/sep)** =
   referidos conseguidos · conversaciones de seguimiento con potenciales · clientes de churn contactados · de esos, con los que
-  conversó · proyectos especiales de EA Market LLC · contactos para alianzas/colaboradores/creadores. Nacen con peso 0 (se miden, no puntúan)
+  conversó · proyectos especiales de EA Market LLC · contactos para alianzas/colaboradores/creadores · reuniones agendadas de
+  seguimiento de ventas · cash collected cerrado (US$) · ventas de Bori. **Lis no poncha** (puesto `soloReporte`): en Hoy, en lugar
+  del círculo, tiene **"Mi reporte del día"** siempre a la vista (`components/ritmo/reporte-diario.tsx`, `guardarReporteDiaAction`,
+  hoy o ayer, se corrige reemplazando; `errorReporteDia` exige todos con número); su "asistencia" = si reportó (hoy queda
+  pendiente); si a las 6:45 PM no lo ha llenado, el cron `recordatorio` se lo pide. Nacen con peso 0 (se miden, no puntúan)
   hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). Fase 2: Meta (registro de actividad), n8n (alertas
   y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).
 - **Calibración**: el score solo lo ve admin (vista previa) hasta `DESEMPENO_SCORE=on`.
