@@ -115,6 +115,18 @@ export async function eliminarLeadAction(tratoId: string): Promise<Res> {
   return { ok: true };
 }
 
+// Elvin (1/oct): "que reconozca cuáles son los números de nosotros". La dirección y el director de ventas.
+export async function marcarDelEquipoAction(tratoId: string): Promise<Res> {
+  const p = await puedeTrato(tratoId);
+  if (!p) return { ok: false, error: "Sin acceso" };
+  const { manejaEquipo } = await import("@/lib/leads/equipo-datos");
+  if (p.u.rol !== "admin" && p.u.rol !== "editor" && !(await manejaEquipo(p.u, p.t.marca as Marca))) return { ok: false, error: "Solo la dirección o el director de ventas" };
+  const { marcarDelEquipo } = await import("@/lib/leads/repo");
+  const r = await marcarDelEquipo(tratoId, p.u.id);
+  refrescar(p.t.marca);
+  return r;
+}
+
 export async function notaAction(tratoId: string, texto: string): Promise<Res> {
   const p = await puedeTrato(tratoId);
   if (!p) return { ok: false, error: "Sin acceso" };

@@ -8,7 +8,7 @@ import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
 import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, seReparte, SEMILLA, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
-import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
+import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsNumerosEquipo, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
 export type Etapa = typeof leadsEtapas.$inferSelect;
@@ -675,8 +675,30 @@ async function esDelEquipo(telefono: string): Promise<boolean> {
   const env = (process.env.LEADS_TELEFONOS_EQUIPO ?? "").split(",").map(ultimos).filter(Boolean);
   if (env.includes(t)) return true;
   const d = await db();
+  const [lista] = await d.select({ t: leadsNumerosEquipo.telefono }).from(leadsNumerosEquipo).where(eq(leadsNumerosEquipo.telefono, t)).limit(1);
+  if (lista) return true;
   const fichas = await d.select({ a: desempenoFichas.telefono, b: desempenoFichas.telefonoAlterno }).from(desempenoFichas);
   return fichas.some((f) => ultimos(f.a) === t || ultimos(f.b) === t);
+}
+
+/**
+ * "Es del equipo": guarda el número en la lista del equipo (para que no vuelva a entrar como lead) y saca de Leads
+ * los leads de WhatsApp con ese número, en las dos marcas. Quedan en la papelera 90 días.
+ */
+export async function marcarDelEquipo(tratoId: string, autorId: string | null): Promise<{ ok: boolean; error?: string; quitados?: number }> {
+  const d = await db();
+  const [t] = await d.select().from(leadsTratos).where(eq(leadsTratos.id, tratoId)).limit(1);
+  if (!t) return { ok: false, error: "No existe" };
+  const tel = (t.telefono ?? "").replace(/\D/g, "").slice(-10);
+  if (tel.length < 7) return { ok: false, error: "Este lead no tiene teléfono" };
+  await d.insert(leadsNumerosEquipo).values({ telefono: tel, nombre: t.nombre.slice(0, 120), agregadoPor: autorId }).onConflictDoNothing();
+  const mismos = await d
+    .select({ id: leadsTratos.id })
+    .from(leadsTratos)
+    .where(and(sql`right(regexp_replace(coalesce(${leadsTratos.telefono}, ''), '[^0-9]', '', 'g'), 10) = ${tel}`, eq(leadsTratos.origen, "whatsapp")));
+  const ids = [...new Set([t.id, ...mismos.map((m) => m.id)])];
+  for (const id of ids) await eliminarTrato(id);
+  return { ok: true, quitados: ids.length };
 }
 
 /** La etapa "Grupos" del embudo (la crea al final si no existe). */

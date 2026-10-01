@@ -302,6 +302,13 @@
       "when": 1790817980547,
       "tag": "0042_reparto-embudo",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1790880470503,
+      "tag": "0043_numeros-equipo",
+      "breakpoints": true
     }
   ]
 }

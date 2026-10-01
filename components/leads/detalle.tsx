@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowLeft, CalendarPlus, CheckSquare, MessageCircle, StickyNote, Trash2, Trophy } from "lucide-react";
+import { ArrowLeft, CalendarPlus, CheckSquare, MessageCircle, StickyNote, Trash2, Trophy, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { actividadAction, actualizarLeadAction, cerrarLeadAction, completarActividadAction, eliminarLeadAction, marcarLeidoAction, moverLeadAction, notaAction, whatsappAction } from "@/app/pulse/(app)/leads/actions";
+import { actividadAction, actualizarLeadAction, cerrarLeadAction, completarActividadAction, eliminarLeadAction, marcarDelEquipoAction, marcarLeidoAction, moverLeadAction, notaAction, whatsappAction } from "@/app/pulse/(app)/leads/actions";
 import { ICONO_ACTIVIDAD } from "@/components/leads/actividades";
 import { PerdidoDialog, type UsuarioUI } from "@/components/leads/dialogos";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ function manana10(): string {
   return `${ymd}T10:00`;
 }
 
-export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, etapasDeOtros }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]> }) {
+export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEquipo = false, etapasDeOtros }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; puedeMarcarEquipo?: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]> }) {
   const router = useRouter();
   const t = d.trato;
   const [pend, start] = useTransition();
@@ -214,6 +214,19 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, etapasDeOtros
                   ))}
               </dl>
             </details>
+          )}
+          {puedeMarcarEquipo && t.telefono && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-self-start text-muted-foreground hover:text-foreground"
+              title="Es alguien de nuestro equipo: se saca de Leads y su número no vuelve a entrar como lead"
+              onClick={() => {
+                if (confirm(`¿${t.nombre} es del equipo? Se saca de Leads (queda en la papelera) y su número ya no entra como lead.`)) correr(() => marcarDelEquipoAction(t.id), "Listo: es del equipo", () => router.push(`/pulse/leads/${marcaSlug}`));
+              }}
+            >
+              <UserCheck className="size-4" /> Es del equipo
+            </Button>
           )}
           {puedeBorrar && (
             <Button

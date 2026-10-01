@@ -179,3 +179,13 @@ export const leadsExportaciones = pgTable(
   },
   (t) => [index("leads_exportaciones_estado").on(t.estado, t.createdAt), index("leads_exportaciones_user").on(t.userId, t.createdAt)],
 );
+
+// Números del equipo (1/oct, Elvin: "que reconozca cuáles son los números de nosotros"): lo que escriban desde aquí
+// al WhatsApp del negocio no es un lead. Se llena con el botón "Es del equipo" de la ficha del lead; además cuentan
+// los teléfonos de las fichas de Ritmo y LEADS_TELEFONOS_EQUIPO. `telefono` = últimos 10 dígitos.
+export const leadsNumerosEquipo = pgTable("leads_numeros_equipo", {
+  telefono: text("telefono").primaryKey(),
+  nombre: text("nombre").notNull(),
+  agregadoPor: uuid("agregado_por").references(() => pulseUsers.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
