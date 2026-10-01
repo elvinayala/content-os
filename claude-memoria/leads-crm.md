@@ -41,3 +41,5 @@ clientes en WhatsApp); "Roger Arteaga" aparece como cliente en ONBOARDING & SETU
 **28/sep — Leads → Equipo:** Nahuel (director de ventas LU), las editoras y Elvin dan/quitan acceso a Leads desde el botón Equipo. Roger, Laura y Luis tenían acceso pero sin clave creada (necesitan su link de acceso de Carilin).
 
 **29/sep — Link oficial de Leads = https://leads.levelupmediapr.net** (DNS en Network Solutions + verificado en Vercel, `LEADS_URL` en Production). Es el que se le da al equipo de ventas; Nahuel ya lo tiene. En Network Solutions el CNAME se llena: Refers to = Other Host `leads`, Alias to = `cname.vercel-dns.com` (al revés queda mal).
+
+**30/sep — Reparto por embudo (round robin):** Editar embudo → Nadie / Una persona / Rotación entre el equipo con acceso a Leads. Solo a leads que llegan sin dueño. **Pipedrive: los tokens de API de LU y AIB dan 401 desde el 30/sep** — para el export final (leads de los últimos 3 días, un Excel por embudo, por DM a Elvin y Aure) Elvin tiene que sacar tokens nuevos en app.pipedrive.com/settings/api ANTES de cancelar.
