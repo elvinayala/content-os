@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-25T03:57:34.601Z",
+  "updatedAt": "2026-10-01T03:18:02.944Z",
   "createdAt": "2025-10-20T20:09:15.046Z",
   "id": "giPHQRGfr5d89t7J",
   "name": "G-) Envio de pdf de educacion v1 (v3.1)",
@@ -453,7 +453,9 @@
         96
       ],
       "id": "c5d93b87-e675-4388-8a30-40ddca0c18a3",
-      "name": "Schedule Trigger1"
+      "name": "Schedule Trigger1",
+      "notes": "Nico 30/sep/2026: va directo a get-clients-data. El candado de Redis (\"educacion\") se quedó trabado en [\"1\"] desde una corrida vieja y bloqueaba todo; corre 1 vez al día, no necesita candado (igual que el PDF del día 3).",
+      "notesInFlow": true
     }
   ],
   "connections": {
@@ -666,7 +668,7 @@
       "main": [
         [
           {
-            "node": "Redis",
+            "node": "get-clients-data",
             "type": "main",
             "index": 0
           }
@@ -760,9 +762,9 @@
       }
     ]
   },
-  "versionId": "755a3804-30da-4696-ac18-da460cb13c1f",
-  "activeVersionId": "755a3804-30da-4696-ac18-da460cb13c1f",
-  "versionCounter": 32,
+  "versionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
+  "activeVersionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
+  "versionCounter": 38,
   "triggerCount": 1,
   "shared": [
     {
@@ -787,7 +789,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-09-30T12:00:44.413Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -815,7 +817,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-09-30",
               "isPending": false
             }
           }
@@ -832,9 +834,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-09-25T03:57:34.605Z",
-    "createdAt": "2026-09-25T03:57:34.605Z",
-    "versionId": "755a3804-30da-4696-ac18-da460cb13c1f",
+    "updatedAt": "2026-10-01T03:18:02.957Z",
+    "createdAt": "2026-10-01T03:18:02.957Z",
+    "versionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
     "workflowId": "giPHQRGfr5d89t7J",
     "nodes": [
       {
@@ -1283,7 +1285,9 @@
           96
         ],
         "id": "c5d93b87-e675-4388-8a30-40ddca0c18a3",
-        "name": "Schedule Trigger1"
+        "name": "Schedule Trigger1",
+        "notes": "Nico 30/sep/2026: va directo a get-clients-data. El candado de Redis (\"educacion\") se quedó trabado en [\"1\"] desde una corrida vieja y bloqueaba todo; corre 1 vez al día, no necesita candado (igual que el PDF del día 3).",
+        "notesInFlow": true
       }
     ],
     "connections": {
@@ -1496,7 +1500,7 @@
         "main": [
           [
             {
-              "node": "Redis",
+              "node": "get-clients-data",
               "type": "main",
               "index": 0
             }
@@ -1510,26 +1514,26 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-25T03:57:34.801Z",
-        "id": 249,
+        "createdAt": "2026-10-01T03:18:03.219Z",
+        "id": 316,
         "workflowId": "giPHQRGfr5d89t7J",
-        "versionId": "755a3804-30da-4696-ac18-da460cb13c1f",
+        "versionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T03:57:42.934Z",
-        "id": 250,
+        "createdAt": "2026-10-01T03:18:03.985Z",
+        "id": 317,
         "workflowId": "giPHQRGfr5d89t7J",
-        "versionId": "755a3804-30da-4696-ac18-da460cb13c1f",
+        "versionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
         "event": "deactivated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-25T03:57:43.265Z",
-        "id": 251,
+        "createdAt": "2026-10-01T03:18:04.726Z",
+        "id": 318,
         "workflowId": "giPHQRGfr5d89t7J",
-        "versionId": "755a3804-30da-4696-ac18-da460cb13c1f",
+        "versionId": "e58bac76-2972-48c0-a2cd-eb961d93165f",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
