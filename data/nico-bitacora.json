@@ -369,6 +369,14 @@
       "porque": "Aure quería asignar en automático a Luis y Joaquín por embudo sin el formulario completo de etapas; el atajo existía solo para Nahuel.",
       "verificado": "tsc sin errores en leads, tests de reparto 5/5, build de Vercel OK, deploy Ready en prod, /login 200. La pantalla con sesión no la pude abrir desde aquí.",
       "commit": "c633b17"
+    },
+    {
+      "fecha": "2026-10-01T17:06:07.111Z",
+      "plataforma": "content-os (Pulse · Leads AIB)",
+      "que": "[Solicitud de Aure #137] Dilan Torres con acceso a Leads de AI Borinquen (alcance todos, igual que en LU y que el resto del equipo AIB). Fila en leads_acceso + evento acceso_leads en pulse_security_log. Luis Fernández ya lo tenía.",
+      "porque": "Aure confirmó que Dilan trabaja leads de las dos marcas; Elvin aprobó ampliar la lista cerrada de AIB.",
+      "verificado": "Consulta en prod: leads_acceso de Dilan = level_up/todos + ai_borinquen/todos; perfil no es solo_ritmo, así que accesoLeads(AIB) le da entrada. Sin cambio de código ni deploy. /login 200.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
