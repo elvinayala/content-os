@@ -55,3 +55,5 @@ novedad real. PDFs de los 3 documentos en `vault/proyectos/contrataciones/pdf/` 
 bot de Slack no tiene `files:write`).
 
 **Recorrido guiado (30/sep/2026, commit 40ac1e8):** el cliente nuevo (primer uso) ve al entrar un recorrido por cada pestaña (Marca → Generador → Editor → Avatar → Baúl → Campañas → chat), solo las que su plan usa. `recorrido.js` + `/api/recorrido`; se marca visto por navegador (`bori_recorrido_v1`); se repite en Configuración → Cuenta → "Ver el recorrido". Si piden cambiar textos, van en `recorrido.js` (tests en `test/recorrido.test.js`).
+
+**Tutorial en video (30/sep/2026, Elvin):** cada vez que un cliente PAGA Bori se le envía el tutorial "Cómo usar Bori paso a paso" (76 s, 16:9, Remi: `bori-tutorial-16x9` en `motion/src/fabrica/anuncios.ts`, pantallas de la copia demo). Avisado a Lis y Aure en #bori-clientes (C0C2YN5199B) con el video en el hilo. Si la app cambia, se recapturan las pantallas (`/Users/elvinayala/bori-demo/.captura-tour.mjs`) y se vuelve a renderizar. "Alice" en los dictados de Elvin = Lis.
