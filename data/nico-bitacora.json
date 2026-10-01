@@ -425,6 +425,14 @@
       "porque": "Aure: la cuenta vieja con correo de Level Up no la dejaba arrancar. Elvin aprobó. Se escogió el camino reversible y mínimo.",
       "verificado": "Antes: nada más enganchado a la vieja (sin ventas, leads, accesos ni archivos). Después: pulse_users solo tiene valentinar1830@gmail.com (activa, con clave, con perfil); papelera con 5 filas del lote. Sin cambio de código ni deploy.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-01T22:43:09.707Z",
+      "plataforma": "Pulse · Leads (base de datos)",
+      "que": "[Solicitud de Aure #154] Valentina Rodriguez (valentinar1830@gmail.com, setter) con acceso a Leads de Level Up y AI Borinquen (alcance todos, filas en leads_acceso). Además se le quitó solo_ritmo en su perfil: con esa marca accesoLeads la bloqueaba; como setter queda solo_leads (solo Leads y Formularios, sin tableros). Sin link: ya tiene clave propia, entra por /ventas o /pulse/login. Cierra #153.",
+      "porque": "Aure: trabaja las dos marcas; Elvin aprobó. Amplía la lista cerrada de AIB.",
+      "verificado": "leads_acceso = level_up/todos + ai_borinquen/todos; solo_ritmo=false, puesto setter → tipoAcceso solo_leads; sin bloqueos de tablero; cuenta activa con clave; /ventas 200. Dos eventos en pulse_security_log. No entré con su cuenta.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
