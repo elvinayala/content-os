@@ -433,6 +433,14 @@
       "porque": "Aure: trabaja las dos marcas; Elvin aprobó. Amplía la lista cerrada de AIB.",
       "verificado": "leads_acceso = level_up/todos + ai_borinquen/todos; solo_ritmo=false, puesto setter → tipoAcceso solo_leads; sin bloqueos de tablero; cuenta activa con clave; /ventas 200. Dos eventos en pulse_security_log. No entré con su cuenta.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-01T23:04:02.067Z",
+      "plataforma": "Ángelo (Quality Care/Angelorum, AutoFlow en Cloudflare + Retell)",
+      "que": "[Elvin] Diagnóstico de +17876659913 (mensaje en inglés y se cuelga): armé un endpoint temporal en content-os (reutilizando el RETELL_API_KEY ya en Vercel, que resultó ser la misma cuenta) para leer el agente, el número y las últimas 10 llamadas en Retell. Hallazgo: NINGUNA llamada de hoy aparece — la última que Retell tiene registrada es del 2 de septiembre. La llamada de Elvin nunca llegó a Retell: el número es \"custom\" (SIP trunk de Twilio, landing-aiborinquen.pstn.twilio.com) y el problema está en esa capa (Twilio/SIP), no en Retell ni en el Worker. Aparte, sin relación con el bug: el número quedó apuntando al agente en la version 2, pero el agente ya va por una version mas reciente (desde el commit de hoy de Elvin, modo solicitud) — re-sincronizar con node scripts/sync-retell.mjs --numero +17876659913 lo pondria al dia, pero eso es editar un agente de voz en produccion y no lo toque sin su OK explicito. El endpoint de diagnostico y su token temporal se borraron al terminar (ya no quedan en prod).",
+      "porque": "Elvin reporto la falla y pidio arreglarla; ademas el cliente quiere consolidar 3 numeros en uno para que Angelo conteste todo.",
+      "verificado": "get-agent, get-phone-number y list-calls respondieron con datos reales de la cuenta de Retell; los 404/200 de limpieza confirman que el endpoint temporal ya no existe y /login sigue sano.",
+      "commit": "eb7e229 (agregado) + limpieza en el commit siguiente"
     }
   ],
   "pendientesElvin": [
