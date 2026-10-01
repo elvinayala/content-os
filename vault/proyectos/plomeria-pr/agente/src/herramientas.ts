@@ -233,6 +233,10 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       if (!t) return { error: "territorio inválido" };
       const hayTecnico = servicio.categoria === "plomeria" ? plomeroDeTerritorio(t.id) : activoDe(t.id, servicio.categoria);
       if (!hayTecnico) return { error: "sin_tecnico_activo", accion: `No agendes. Todavía no hay ${TECNICO_DE[servicio.categoria]} activo en esa zona: ofrece la lista de espera (agregar_lista_espera) y di que le avisamos apenas abramos.` };
+      // No duplicar (30/sep: R-0003 y R-0004 eran el mismo cliente a la misma hora). Si este cliente ya tiene una cita
+      // activa ese mismo día, no se crea otra: se devuelve la que existe.
+      const yaTiene = citaDuplicada(almacen.trabajos(), ctx.contacto.id, String(input.inicio));
+      if (yaTiene) return { ok: true, duplicada: true, trabajo_id: yaTiene.id, nota_para_el_cliente: `Ya tiene una cita ${yaTiene.id} ese día (${yaTiene.servicio}). No crees otra: confírmale esa. Si quiere otro servicio en la misma visita, anótalo en la nota para el plomero.` };
       const id = almacen.nuevoIdTrabajo();
       const manoObra = servicio.precio ?? null;
       const ghlId = ctx.contacto.ghlContactId ?? (await upsertContacto({ nombre: input.nombre, telefono: input.telefono, municipio: input.municipio, tags: ["cliente", "agendado", t.id, servicio.categoria], fuente: ctx.contacto.canal }));
@@ -475,4 +479,11 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     default:
       return { error: `herramienta desconocida: ${nombre}` };
   }
+}
+
+/** ¿El cliente ya tiene una cita activa ese mismo día (hora de PR)? Pura (tests). */
+export function citaDuplicada(trabajos: { id: string; contactoId: string; estado: string; inicio: string; servicio: string }[], contactoId: string, inicio: string) {
+  const dia = (iso: string) => new Date(new Date(iso).getTime() - 4 * 3600_000).toISOString().slice(0, 10);
+  if (!inicio || Number.isNaN(Date.parse(inicio))) return undefined;
+  return trabajos.find((t) => t.contactoId === contactoId && ["agendado", "en-camino", "en-sitio"].includes(t.estado) && dia(t.inicio) === dia(inicio));
 }

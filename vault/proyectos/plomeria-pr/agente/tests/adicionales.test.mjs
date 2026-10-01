@@ -44,3 +44,12 @@ test("servicio a cotizar: el plomero propone y Resuelto aprueba", () => {
   const r = A.armarAdicional({ servicioId: "valvula-salida-inodoro", precio: 85 }, servicioPorId("valvula-salida-inodoro"));
   assert.equal(r.ok, true); assert.equal(r.adicional.estado, "por-precio"); assert.match(r.adicional.descripcion, /válvula de salida/i);
 });
+
+const { citaDuplicada } = await import("../dist/herramientas.js");
+test("no se crea una segunda cita para el mismo cliente el mismo día", () => {
+  const ts = [{ id: "R-0004", contactoId: "messenger:1", estado: "agendado", inicio: "2026-10-03T10:00:00-04:00", servicio: "Mezcladora" }];
+  assert.equal(citaDuplicada(ts, "messenger:1", "2026-10-03T14:00:00-04:00")?.id, "R-0004");
+  assert.equal(citaDuplicada(ts, "messenger:1", "2026-10-04T10:00:00-04:00"), undefined);
+  assert.equal(citaDuplicada(ts, "messenger:2", "2026-10-03T10:00:00-04:00"), undefined);
+  assert.equal(citaDuplicada([{ ...ts[0], estado: "cancelado" }], "messenger:1", "2026-10-03T10:00:00-04:00"), undefined);
+});
