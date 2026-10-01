@@ -46,6 +46,8 @@ de Alexis y el guion del video de 90 s (Yulianna lo graba con el celular); fecha
 pedir testimonios en video a Teo, Milton, Lizardo, Parada Típica, Yaritza; subir Conócenos a Netlify;
 scoreboard semanal AIB (F1) y reescritura del calendario AIB de octubre (F5) quedaron sin construir.
 
+**Ojo (1/oct):** AIB no es solo atención al cliente — ver [[aib-que-es]].
+
 **How to apply:** cualquier venta de AIB pasa por el portal (`demo.mjs todo` lo registra); precios solo
 desde `PRECIOS` en `demo.mjs`; testimonios solo Teo y Milton hasta que haya más grabados; el
 prospecto debe tocar su portal antes de la llamada (toque de las 24 h). Ver [[plan-de-guerra-q4]],

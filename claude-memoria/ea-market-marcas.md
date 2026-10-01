@@ -14,7 +14,7 @@ metadata:
   tecnología; esa mentalidad debe estar en TODOS los empleados.
 - **AI Borinquen:** nace en **2026** por el problema de que los dueños de negocio no contestaban sus mensajes; empezó
   automatizando la atención al cliente y hoy apunta a **digitalizar los negocios de Puerto Rico** con agentes personalizados.
-  (Bori ≠ AI Borinquen: Bori es la plataforma de marketing.)
+  Hoy AIB = agentes personalizados + capacitar dueños con IA + digitalizar negocios; la atención al cliente es solo una parte ([[aib-que-es]]). (Bori ≠ AI Borinquen: Bori es la plataforma de marketing.)
 
 **Why:** Elvin quiere que cada equipo se identifique con SU empresa y que la cultura AI first sea de todos.
 

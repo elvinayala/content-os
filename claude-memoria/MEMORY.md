@@ -1,5 +1,6 @@
 # Memory Index
 
+- [⚠️ AI Borinquen — qué es (REGLA DURA)](aib-que-es.md) — agentes personalizados + capacitar dueños con IA + digitalizar negocios; AutoFlow/atención al cliente es SOLO UNA PARTE; máx 1 de cada 4 piezas sobre atención
 - [Tablero de Contenido](tablero-contenido.md) — qué es el proyecto + gotchas de stack (Next 16, dir con espacio, /guion)
 - [Pulse — CRM propio](pulse-crm.md) — reemplazo de Monday EN PROD (Supabase); automatizaciones, Mi día, ⌘K, Preguntar; 27/sep rediseño SaaS
 - [Pulse — cuidado y autorización](pulse-autorizacion.md) — confidencial: nunca mezclar datos ni accesos; movimientos mayores solo con OK de Carilin (o Elvin/Aure); 2FA + ventas solo Leads (/ventas)
