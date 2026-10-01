@@ -919,7 +919,10 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   Timelines manda `chat.is_group` → `registrarGrupo`: una tarjeta por grupo (`origen: "grupo"`, llave `chat_id`, sin
   teléfono) en la etapa **"Grupos"** del embudo (era "Grupos de Whatsapp" de Pipedrive; se crea si falta), que el tablero
   dibuja angosta, al final y fuera de los totales (`esEtapaGrupos`). **Equipo ≠ lead**: teléfonos de las fichas de Ritmo +
-  `LEADS_TELEFONOS_EQUIPO` → `ignorado:equipo` (Nahuel entró como lead el 26/sep; se borró).
+  `LEADS_TELEFONOS_EQUIPO` + la tabla **`leads_numeros_equipo`** (migración 0043) → `ignorado:equipo`. Esa tabla se llena con el botón
+  **"Es del equipo"** de la ficha del lead (dirección o director de ventas; `marcarDelEquipo`: guarda los últimos 10 dígitos y saca
+  de Leads, a la papelera, los leads de WhatsApp con ese número en las dos marcas). El 1/oct se sacaron Aure, Laura, Ana Cecilio,
+  Luis, Valentina (setter) y Roger: el equipo de ventas no tiene ficha en Ritmo, así que solo esta lista los reconoce.
 - **Tarjeta** (27/sep): "Llegó hoy 9:46 AM" (`horaLlegada`, hora PR) + negocio o nicho. El nicho lo saca Claude
   (`lib/leads/nicho.ts`, `claude-opus-5` effort low, `LEADS_NICHO_MODEL`) de los primeros mensajes entrantes de WhatsApp
   (desde `/api/leads/timelines`, máx. 3 intentos, espera si solo dijo "hola"); queda en `datos.nicho` y `negocio` si lo
