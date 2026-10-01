@@ -66,14 +66,17 @@ que todo corra solo después de que él apruebe los guiones. Fuentes completas d
 **Casos:** Tinos $30K→$100K · Coralis $25K→$70K · RK Automatic $30K→$100K · Dr. Marvin, Dr.
 Bryan Vega (agenda llena).
 
-### AI Borinquen — Yulianna Vargas
-**Enemigos:** **responder tarde a los leads** · **no saber calificarlos** · **no tener sistemas ni
-automatizaciones** · **perder tiempo en tareas repetitivas** · **pagar demasiado por una
-secretaria/recepción**.
-**Ángulos de Yulianna:** agentes personalizados · digitalizar tu negocio · no responder a tiempo ·
-recepcionista de IA · "no contrates por contratar: maximiza a tu personal con IA" · crecer sin
-contratar más · "danos 7 días" (2 sistemas: citas + atención). Producto: AutoFlow en acción
-(demo del MVP). En anuncios AIB se habla de usted; en orgánico, tuteo.
+### AI Borinquen — Yulianna Vargas (y cualquier creadora de AIB)
+**AIB NO es solo atención al cliente (regla dura, 1/oct):** son 4 líneas — **agentes personalizados**
+· **capacitar dueños con IA** · **digitalizar negocios** · y **AutoFlow/atención**, que es SOLO una
+parte. En cada lote, máximo 1 de cada 4 guiones de atención. Detalle en `vault/estilo/ai-borinquen.md`.
+**Enemigos:** **no tener sistemas ni automatizaciones** · **perder tiempo en tareas repetitivas** ·
+**depender de que una persona lo haga todo a mano** · **contratar por contratar** · **ver mil
+herramientas de IA y no saber cuál aplica** · y, en piezas de AutoFlow, **responder tarde a los leads**.
+**Ángulos:** agentes personalizados (un empleado digital por puesto) · "no contrates por contratar:
+maximiza a tu personal con IA" · crecer sin contratar más · digitalizar tu negocio · aprender a usar
+la IA en tu negocio (capacitación) · recepcionista de IA y responder a tiempo (AutoFlow). "Danos 7
+días" en pausa: el plazo real es 15 días. En anuncios AIB se habla de usted; en orgánico, tuteo.
 
 ### Shadow Operator — Elvin
 **Tesis (Elvin, 18/sep): "No tienes que mostrar tu cara para hacer dinero por internet, y yo te

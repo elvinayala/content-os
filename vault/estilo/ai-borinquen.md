@@ -12,26 +12,65 @@ Reglas transversales en [[estrategia]].
 > **Idioma: español de Puerto Rico (TUTEO).** tú/tienes/quieres/puedes/tu — NUNCA
 > voseo (vos/tenés/querés/mirá). Ver la regla dura en [[estrategia]].
 
-**Qué es:** Agencia de IA enfocada en automatizar la atención al lead. Producto
-estrella: **AutoFlow** = 2 agentes de IA (chat + voz) + un CRM. Responde,
-califica y agenda leads automáticamente.
+## ⚠️ QUÉ ES AI BORINQUEN (regla dura de Elvin, repetida por semanas — 1/oct/2026)
 
-**Audiencia:** Dueños de negocio y agencias que generan leads pero los pierden —
-no responden a tiempo, contestan a deshora, el seguimiento manual se cae, la
-persona que contesta se satura. Ya invierten en marketing pero el embudo se
-rompe en la atención.
+**AI Borinquen NO es "contestar el teléfono" ni "atención al cliente".** Es una empresa de IA para
+negocios de Puerto Rico con cuatro líneas, en este orden de peso:
 
-**Dolor central:** "Generas leads y se te enfrían porque nadie los atiende
-rápido." Cada lead sin responder en minutos es plata que se va al competidor.
+1. **Agentes personalizados** — un agente de IA a la medida para cualquier trabajo del negocio:
+   ventas, WhatsApp, inventario, cotizaciones, cobros, seguimiento, recepción, citas. El cliente
+   contrata un **empleado digital** para un puesto concreto, no un chatbot genérico.
+2. **Capacitar dueños de negocio con IA** — para el que quiere aprender a hacerlo él: mentor, coach,
+   academia. **Academia AIB** grupal $2,500 / 3 meses · **1:1** $4,000 / 4 meses.
+3. **Digitalizar negocios** — sacar la operación del papel, la libreta, el Excel y el WhatsApp de
+   una sola persona: procesos, horas perdidas, errores, dependencia de alguien.
+4. **AutoFlow / atención al cliente** — chat + voz + CRM que contesta, precalifica y agenda.
+   **Es solo UNA parte de AIB.**
 
-**Voz:** Práctica, de operador. Números y procesos. El negocio es una máquina y
-la atención es un engranaje que está fallando. Da valor enseñando cómo funciona
-la automatización, no solo vendiéndola.
+**Regla de lotes:** máximo **1 de cada 4 piezas** (guiones, anuncios, carruseles, emails) sobre
+atención al cliente/AutoFlow. El resto se reparte entre agentes personalizados, capacitación y
+digitalización. En una frase: *"agentes de IA personalizados, capacitación y digitalización para
+negocios de Puerto Rico"* — nunca "la agencia del chatbot" ni "atención al lead con IA".
 
-**Objetivo:** Que el dueño sienta el costo de NO automatizar y vea AutoFlow como
-el arreglo obvio.
+**Audiencia:** dueños de negocio de Puerto Rico que saben que la IA viene y no quieren quedarse
+atrás. Dos tipos: el que **quiere que se lo monten** (agentes personalizados, digitalización,
+AutoFlow) y el que **quiere aprender a hacerlo él** (capacitación). Calificar por eso, no solo por
+cuántos leads recibe.
+
+**Dolores (no solo uno):** el negocio depende de que una persona haga todo a mano · el dueño ve mil
+herramientas de IA y no sabe cuál aplica a SU negocio · tareas repetitivas que se comen el día ·
+procesos en papel/libreta/WhatsApp desordenado · contratar más gente para crecer · y también, como
+una parte, los clientes que escriben y nadie contesta a tiempo.
+
+**Voz:** práctica, de operador. Números y procesos. El negocio es una máquina; la IA pone a
+trabajar las piezas que hoy dependen de una persona. Da valor enseñando, no solo vendiendo.
+
+**Objetivo:** que el dueño vea a AI Borinquen como su **partner de IA** — el que le monta los
+agentes que necesita o le enseña a usarlos — y no como "la agencia del chatbot".
+
+### Ángulos por línea (usar en todo lote; los 8 núcleo de abajo son SOLO de la línea 4)
+
+**1 · Agentes personalizados** — "Deje de buscar un chatbot: contrate un empleado digital para un
+puesto concreto" · "Un agente para cada trabajo de su negocio: el que cotiza, el que cobra, el que
+lleva el inventario, el que le da seguimiento a los que dijeron 'déjame pensarlo'" · "No contrate
+por contratar: maximice a su personal con IA" · "Crezca sin agrandar la nómina" · "Entrenado con
+su negocio, sus precios y su forma de hablar".
+
+**2 · Capacitación** — "La IA no le va a quitar su negocio; el que la sepa usar, sí" · "Usted ya
+paga ChatGPT y lo usa para escribir un mensaje: le enseñamos a ponerlo a trabajar" · "No necesita
+saber programar" · "Aprenda con SU negocio, no con ejemplos de Silicon Valley" · "Sale del programa
+con su primer agente funcionando".
+
+**3 · Digitalización** — "Su negocio vive en una libreta y en el WhatsApp de una persona" · "Si esa
+persona falta una semana, ¿qué pasa?" · "¿Cuántas horas a la semana se le van en lo mismo?" ·
+"Lo que hace igual todos los días no lo tiene que hacer usted" · "Ordenar antes de crecer".
+
+**4 · AutoFlow / atención al cliente** — los 8 ángulos núcleo de abajo y la OLA 1 (sobre todo A).
 
 ## ⭐ OLA 1 — LOS 4 ÁNGULOS PUBLICITARIOS (14/08) · usar para ADS
+> Ojo: la OLA 1 nació cuando AIB vendía sobre todo atención al lead. Úsala dentro de la regla de
+> lotes de arriba (máx. 1 de cada 4 piezas sobre atención); B y C sirven también para
+> agentes personalizados y digitalización.
 
 Ángulos de **pauta** para los primeros 30 días. Los 8 núcleo de abajo siguen
 vigentes para **orgánico**; estos cuatro son los que se testean con presupuesto.
@@ -98,7 +137,7 @@ recepcionista de IA · "no contrates por contratar: maximiza a tu personal con I
 contratar más · danos 7 días.** Enemigos: responder tarde, no saber calificar, no tener sistemas
 ni automatizaciones, perder tiempo en tareas repetitivas, pagar demasiado por secretaria.
 
-## Ángulos núcleo (los mismos 8, repetir siempre — NO inventar nuevos)
+## Ángulos núcleo de la LÍNEA 4 (AutoFlow / atención al cliente) — no son toda la marca
 
 1. **El lead frío se pierde:** el lead que respondes tarde ya compró en otro
    lado. Velocidad de respuesta = dinero.
@@ -167,8 +206,9 @@ aprendizajes.
 - **Cinemático:** hero frame con Soul 2.0 → image-to-video (Kling/Veo). Estética
   de máquina/engranaje: el negocio como sistema, la atención como pieza que
   falla y la IA como el arreglo.
-- **Regla de oro:** el anuncio abre con el dolor (lead sin responder = dinero
-  perdido), nunca con el producto. AutoFlow aparece como el arreglo obvio.
+- **Regla de oro:** el anuncio abre con el dolor del negocio, nunca con el producto (en piezas de
+  AutoFlow ese dolor es el lead sin responder; en las demás, el trabajo manual, no saber por dónde
+  empezar con la IA, depender de una persona).
 - **Hook en UGC (Virality Predictor, 07/07 — validado con A/B):** hablar desde
   el frame 1 NO alcanza. v1 (actor mira el teléfono antes de hablar) = hook
   33/100; v2 (habla desde frame 1, delivery urgente) = hook 32/100. Idéntico.
@@ -184,8 +224,8 @@ aprendizajes.
 - **Costos de referencia (07/07):** UGC Seedance 2.0 12s ≈ 54 cr · Kling 3.0
   pro 10s ≈ 25 cr · hero frame Soul 2.0 ≈ 0.12 cr. Batch de 3 ≈ 105 cr.
 
-## Avatar núcleo + ángulos obligatorios (07/07)
-**A quién le hablamos (siempre):** empresarios y profesionales que **reciben leads
+## Avatar de AutoFlow (línea 4) + sus ángulos (07/07) — histórico
+**A quién le hablamos cuando la pieza es de AutoFlow:** empresarios y profesionales que **reciben leads
 pero NO los responden bien ni a tiempo** — se les enfrían, los pierden, y no tienen
 un asistente automático que conteste 24/7. Que dependen de contestar a mano cuando
 pueden.
@@ -193,7 +233,7 @@ pueden.
 **Frame central (usar de hook seguido):** *"¿Cuánto dinero estás dejando en la
 mesa?"* — por cada lead que escribe y nadie contesta en la primera hora.
 
-**Ángulos núcleo (AI Borinquen = responder/convertir los leads):**
+**Ángulos núcleo de AutoFlow (línea 4 — NO es toda AIB, ver arriba):**
 1. No tener un sistema que responda tus leads al instante = ventas perdidas de noche/finde.
 2. Dependes de contestar a mano; el lead que no respondes en 1h se enfría (–7×).
 3. Al que ya invierte en marketing pero pierde los leads por lento: el problema no

@@ -22,7 +22,7 @@ y `vault/estilo/estrategia.md`. **Tuteo PR, nunca voseo. Nunca "gratis" en CTA.*
 ## 3. Mezcla por marca (regla dura)
 - **AI Borinquen (5/semana):** ~70% Claude (wow, casos, capacidades) → 3-4 de
   Claude, ~30% otros (IA para leads/automatizar, ChatGPT/Gemini, novedades).
-  Conectar con AutoFlow cuando pegue.
+  Conectar con lo que vende AIB: agentes personalizados, capacitación, digitalización y, a veces, AutoFlow (solo una parte; ver `vault/estilo/ai-borinquen.md`).
 - **Level Up (10/semana):** ~50% Meta Ads / marketing / WhatsApp / escalar agencia
   (estilo **Jason Wojo**, adaptado al español y a nuestros casos) + ~50% IA/Claude
   aplicada al marketing. Incluí SIEMPRE 1-2 de "noticia" (Meta o Claude) por lote.

@@ -55,7 +55,10 @@ Todos los hooks de muestra van en **tuteo de Puerto Rico** (tú/tienes/puedes), 
 
 ---
 
-## AI Borinquen (AutoFlow — atención al lead con IA)
+## AI Borinquen — sección de AutoFlow (atención al cliente, SOLO una de las 4 líneas)
+
+> AIB = agentes personalizados + capacitación + digitalización + AutoFlow. Lo de abajo es la parte de
+> AutoFlow; ver las 4 líneas y sus ángulos en [[estilo/ai-borinquen]].
 
 ### 7. Speed to lead: el primero que responde se lleva la venta (data dura + el caso del terapista)
 - **Por qué funciona:** es el **diferenciador comercial #1** que Elvin machacó en la daily de ventas del 16/07: *"Generar leads es importante, pero es más importante convertir esos leads"* y el "speed to lead" es *"el punto más débil de todas las empresas"* — si no respondes en ~15 min, el cliente se va ([[speed-to-lead]], [[2026-07-16-sesion-daily-juan]]). La venta NO es "IA que hace magia" sino **aplicación quirúrgica de la IA**: responder al instante y **precalificar** para que el vendedor humano solo hable con leads calificados. Laura ya había fijado los datos ancla: **78% de los compradores cierran con el primero en responder** y **67% se va al competidor tras una mala experiencia** ([[2026-06-30-laurita]], [[mentorias/pepitas-mentores]]); regla usada en ventas: respuesta >5 min reduce conversión 80% (reunión del 09/02). El caso más contundente es **el terapista** (es HOMBRE, decir "el terapista" — feedback 07/07 [[estilo/ai-borinquen]]): en PR recibía 3–4k leads/mes y solo respondía el 20% [[ceo/estrategias-contenido]]. Comparativa dura: humano 24/7 = $58K/año, 2,080 hrs vs AutoFlow ~$9,500/año, 8,736 hrs; respuesta 4 horas vs 10 segundos (reunión del 30/06).

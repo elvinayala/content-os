@@ -83,6 +83,7 @@ VIDEO: <link cuando esté renderizado>
 
 - Clips de hasta ~15s (hasta 4K). Anuncios más largos = encadenar clips: entregá
   los clips + un guión de montaje (orden, cortes, dónde va el CTA/subtítulos).
-- Para UGC de AI Borinquen el frame que convierte es el dolor: *"¿Cuánto dinero
-  estás dejando en la mesa?"* — lead que escribe y nadie contesta.
+- AI Borinquen NO es solo atención al cliente: es **agentes personalizados + capacitar dueños con IA
+  + digitalizar negocios**, y AutoFlow (contestar leads) es solo una parte. En un lote, máximo 1 de
+  cada 4 anuncios de atención. Ángulos por línea en `vault/estilo/ai-borinquen.md` (arriba de todo).
 - Aspect ratios: 9:16 (Reels/TikTok/Stories), 1:1 o 4:5 (feed), 16:9 (YouTube).

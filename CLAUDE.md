@@ -296,6 +296,15 @@ PDF de gestiones y permisos generado por `scripts/isla-run/gestiones-pdf.py`). L
 `/Users/elvinayala/isla-run`, no en Content OS (preview `isla-run` en `.claude/launch.json`, puerto
 3130, pagos demo). Su README tiene el checklist antes de abrir inscripciones.
 
+## ⚠️ Qué es AI Borinquen (regla dura de Elvin, 1/oct/2026)
+
+AI Borinquen **NO es solo atención al cliente ni "contestar el teléfono"**. Son cuatro líneas:
+**agentes personalizados** (un empleado digital por puesto: ventas, cotizaciones, inventario, cobros,
+seguimiento, recepción…) · **capacitar dueños de negocio con IA** (Academia AIB y 1:1) ·
+**digitalizar negocios** · y **AutoFlow/atención al cliente, que es SOLO una parte**. Todo copy de AIB
+(guiones, anuncios, carruseles, decks, emails, textos para empleados) arranca de las cuatro; en un lote,
+máximo 1 de cada 4 piezas sobre atención. Fuente: `vault/estilo/ai-borinquen.md` (arriba de todo).
+
 ## El Portal AutoFlow y la reestructuración de ventas de AIB (21/sep/2026)
 
 Diagnóstico aprobado por Elvin (ventas $15-20K → $4K/mes): no es producto, es demostración +

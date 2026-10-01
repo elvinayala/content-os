@@ -3,233 +3,212 @@ fecha: 2026-10-01
 fuente: manual
 unidad: ai-borinquen
 tags: [guiones, ads, ugc, creadora, aib]
-estado: borrador para grabar — pendiente del OK de Elvin
+estado: borrador para grabar — pendiente del OK de Elvin (v2: rehecho con las 4 líneas de AIB)
 ---
 
-# AI Borinquen · 8 guiones de anuncio para la creadora (octubre)
+# AI Borinquen · 8 guiones de anuncio para la creadora (octubre, v2)
 
-Lote nuevo con los ángulos que Elvin fijó en los últimos días: **agentes personalizados** (no solo
-"no contestas los leads"), el **testimonio del Lcdo. Ernest Crison** y el **plazo real: en marcha en
-15 días, optimización del día 16 al 45, soporte para siempre**.
+**AI Borinquen no es solo atención al cliente.** Este lote se reparte entre sus cuatro líneas:
 
-## Reglas de este lote (no romperlas)
+| Línea | Guiones |
+|---|---|
+| **Agentes personalizados** (un empleado digital por puesto) | 1, 2, 3 |
+| **Capacitar dueños de negocio con IA** | 4, 5 |
+| **Digitalizar el negocio** | 6, 7 |
+| **AutoFlow / atención al cliente** (solo una parte) | 8 |
 
-- **Registro: DE USTED** (regla de ads de AIB; el orgánico va en tuteo). Natural, de persona a
-  persona — de usted no significa acartonado.
-- **La IA es el mecanismo, no el protagonista.** El protagonista es el dinero, el tiempo y las
-  oportunidades que se escapan.
-- Estructura: **Gancho → Problema → Consecuencia → Solución → Cómo funciona → CTA**.
-- **CTA siempre a WhatsApp** (ahí contesta nuestro propio agente: viven la demo antes de la llamada).
-- **Prohibido:** "gratis" en el CTA · prometer ingresos o resultados garantizados · "revolucione su
-  empresa con inteligencia artificial" · **"7 días"** y **"21 días"** (el plazo es 15 días).
-- Duración: 30-45 s. Vertical 9:16. Grabado con celular, luz natural, sin teleprompter rígido:
-  que se le olvide una palabra y siga, eso es lo que lo hace creíble.
-- Un solo enemigo por pieza. Se ataca al enemigo (responder tarde, contratar por contratar,
-  el chatbot de menú), nunca al dueño.
+## Reglas del lote
 
-## Mezcla sugerida de pauta
-
-| Ángulo | Guiones | % |
-|---|---|---|
-| A · Cuánto dinero se le está escapando | 1, 8 | 35 % |
-| Agentes personalizados (el giro nuevo) | 2, 4 | 25 % |
-| B · Automatice una sola cosa | 3 | 15 % |
-| C · Quiero IA y no sé por dónde empezar | 5 | 15 % |
-| D · Esto es lo que pasa (prueba y proceso) | 6, 7 | 10 % · remarketing |
+- **De usted** (regla de ads de AIB). Natural, de persona a persona.
+- La IA es el mecanismo; el protagonista es el negocio: su tiempo, su gente, su dinero.
+- Gancho → Problema → Consecuencia → Solución → Cómo funciona → CTA a **WhatsApp**.
+- **Prohibido:** "gratis" en el CTA · prometer ingresos · "revolucione su empresa con IA" ·
+  "7 días" o "21 días" (el plazo real es 15 días en marcha + optimización del 16 al 45).
+- 30-45 s, vertical, celular, luz natural. Si se traba y sigue, esa toma sirve.
 
 ---
 
-## 1 · "Los que le escriben cuando usted está durmiendo"
-**Ángulo A** · 40 s · frío · el más fuerte del lote (dato real de un cliente)
+## 1 · "Contrate un empleado, no un chatbot"
+**Agentes personalizados** · 40 s · frío
 
-**Gancho (0-4 s)** — a cámara, de noche o luz baja, tono de confidencia:
-> "Anoche, mientras usted dormía, alguien le escribió a su negocio."
+**Gancho (0-3 s):**
+> "Deje de buscar un chatbot. Lo que su negocio necesita es un empleado más."
 
 **Cuerpo:**
-> "Y le escribió en serio: quería precio, quería cita, quería comprar.
-> Usted lo vio esta mañana, a las ocho. Esa persona ya habló con otro.
-> No es un invento mío. Un licenciado aquí en Puerto Rico nos dijo que le entran entre
-> **veinticinco y cincuenta mensajes al día**, y que casi todos entran de madrugada.
-> Hoy tiene un agente que contesta por él a esa hora. Sus palabras: *'gracias a Dios que está
-> el sistema, porque yo estoy durmiendo'*.
-> En dos meses contrató a diez personas más. Tuvo que empezar a cobrar la consulta, porque no
-> daba abasto."
+> "Uno que no se enferma, no pide vacaciones y no se va a las cinco.
+> Pero ojo: no un robot que 'hace de todo'. Un empleado digital **para un puesto concreto**.
+> El que cotiza. El que le da seguimiento a los que dijeron 'déjame pensarlo'. El que le
+> recuerda al cliente que tiene un pago pendiente. El que le avisa cuando se le acaba un producto.
+> Lo entrenamos con su negocio: sus precios, sus servicios, su forma de hablar. Y trabaja en lo
+> que usted ya usa: WhatsApp, su correo, su sistema."
 
 **CTA:**
-> "Si su negocio recibe mensajes de noche, escríbanos por WhatsApp. Le va a contestar el mismo
-> tipo de agente del que le estoy hablando. Pruébelo usted primero."
+> "Escríbanos por WhatsApp y díganos qué puesto le hace falta en su negocio. Le decimos si se puede
+> hacer y cómo quedaría."
 
-**Texto en pantalla:** `25 a 50 mensajes al día` → `casi todos, de madrugada` → `él estaba durmiendo`
-**B-roll:** celular en la mesa de noche iluminándose · notificaciones entrando a las 2 a.m. · mañana, la persona abriendo WhatsApp con 14 sin leer.
-**Nota:** el dato es de Ernest Crison (oficina legal). Si se nombra, pedirle permiso antes.
+**Texto en pantalla:** carteles de vacante → `COTIZACIONES` · `SEGUIMIENTO` · `COBROS` · `INVENTARIO`
+**B-roll:** ella pegando cartelitos de "se busca" en una pared · pantalla del agente trabajando.
 
 ---
 
-## 2 · "No le vamos a vender un robot. Le vamos a montar un empleado"
-**Ángulo agentes personalizados** · 40 s · frío · el giro nuevo
+## 2 · "Antes de contratar a otra persona"
+**Agentes personalizados · no contrate por contratar** · 40 s · frío
 
-**Gancho (0-3 s)** — a cámara, directa:
-> "Deje de buscar 'un chatbot'. Lo que su negocio necesita tiene un puesto y un nombre."
+**Gancho (0-4 s):**
+> "Antes de contratar a alguien más, hágase esta pregunta."
 
 **Cuerpo:**
-> "Piénselo como una contratación. ¿A quién necesita usted de verdad?
-> ¿Al que contesta el teléfono cuando nadie puede? ¿Al que confirma las citas del día siguiente
-> para que no se le caiga la agenda? ¿Al que le da seguimiento a los que dijeron 'déjame
-> pensarlo'? ¿Al que cotiza? ¿Al que cobra?
-> Eso es lo que hacemos: un agente **para un trabajo específico de su operación**, entrenado con
-> su negocio, su tono y sus precios. No una herramienta genérica que usted tiene que configurar.
-> Uno solo, el que más le duela, y después vemos el siguiente."
+> "¿Le falta gente… o su gente está haciendo trabajo que no debería estar haciendo?
+> Copiar datos de un lado a otro. Contestar la misma pregunta veinte veces. Preparar la misma
+> cotización. Perseguir pagos.
+> Eso no es trabajo para la persona que usted contrató por buena. Eso lo puede hacer un agente.
+> No es para botar a nadie: es para que su equipo haga lo que de verdad mueve su negocio, y usted
+> pueda crecer **sin agrandar la nómina**."
 
 **CTA:**
-> "Escríbanos por WhatsApp y dígame qué puesto le hace falta. Le digo si se puede y cuánto es."
+> "Escríbanos por WhatsApp y cuéntenos en qué se le va el día a su equipo."
 
-**Texto en pantalla:** cuatro cartelitos tipo vacante: `RECEPCIÓN` · `CONFIRMAR CITAS` · `SEGUIMIENTO` · `COBROS`
-**B-roll:** ella pasando tarjetas de "puesto vacante" · pantalla del agente contestando.
+**Texto en pantalla:** `¿Le falta gente?` → `¿O le sobra trabajo repetitivo?`
+**B-roll:** empleada copiando datos de un papel a la computadora, en bucle acelerado.
 
 ---
 
-## 3 · "Empiece por una sola cosa"
-**Ángulo B** · 35 s · frío · mata la objeción de precio sin hablar de precio
+## 3 · "Un agente para cada trabajo"
+**Agentes personalizados · ejemplos por negocio** · 35 s · frío (variante para probar)
 
-**Gancho (0-3 s)** — tono relajado, casi regañando con cariño:
-> "Usted no tiene que automatizar su empresa entera. De verdad que no."
+**Gancho (0-3 s):**
+> "Le digo qué agente le pondría yo a cinco negocios distintos."
 
-**Cuerpo:**
-> "El error es querer arreglarlo todo de una, ver el presupuesto y no hacer nada.
-> Haga esto: piense en la tarea que usted o su empleada repiten **todos los días** igualita.
-> Contestar '¿cuánto cuesta?' cincuenta veces. Confirmar las citas de mañana una por una.
-> Mandar el mismo mensaje de seguimiento.
-> Esa. Empiece por esa. Una sola. Se monta rápido, usted ve el cambio en su semana, y de ahí
-> decide si quiere la próxima."
+**Cuerpo (rápido, un corte por negocio):**
+> "Una ferretería: un agente que contesta si hay o no hay, y le avisa cuando se le está acabando
+> algo.
+> Un contratista: uno que arma la cotización con las fotos que le manda el cliente.
+> Una oficina médica: uno que confirma las citas de mañana y llena los huecos.
+> Un dealer: uno que le da seguimiento a cada persona que vino a mirar y no compró.
+> Una tienda: uno que contesta precios y toma el pedido por WhatsApp.
+> Ninguno es igual. Por eso se hacen a la medida."
 
 **CTA:**
-> "Escríbame por WhatsApp cuál es esa tarea en su negocio. Le digo por dónde empezaría yo."
+> "¿Cuál sería el suyo? Escríbanos por WhatsApp y díganos a qué se dedica."
+
+**Texto en pantalla:** el nombre de cada negocio + la tarea del agente, una por corte.
+**B-roll:** cinco locales distintos, dos segundos cada uno.
+
+---
+
+## 4 · "El que la sepa usar"
+**Capacitación** · 40 s · frío
+
+**Gancho (0-3 s):**
+> "La inteligencia artificial no le va a quitar su negocio. El que la sepa usar, sí."
+
+**Cuerpo:**
+> "Su competencia ya la está usando para contestar más rápido, cotizar en minutos y hacer en una
+> hora lo que a usted le toma el día.
+> Y usted no necesita saber programar. Necesita que alguien le enseñe **con su negocio**, no con
+> ejemplos de otro país que no aplican aquí.
+> Eso es lo que hacemos: un programa para dueños de negocio en Puerto Rico. Usted aprende a poner
+> la IA a trabajar, y termina con su primer agente funcionando en su negocio. No con un
+> certificado: con algo que ya le está ahorrando tiempo."
+
+**CTA:**
+> "Escríbanos por WhatsApp y le contamos cómo es el programa."
+
+**Texto en pantalla:** `No necesita saber programar.` → `Aprenda con SU negocio.`
+**B-roll:** dueños en una sesión con laptops · ella explicando frente a una pantalla.
+
+---
+
+## 5 · "Usted ya paga ChatGPT"
+**Capacitación** · 35 s · frío (gancho de identificación)
+
+**Gancho (0-3 s), con una sonrisa:**
+> "Usted ya paga ChatGPT. Y lo usa para escribir un mensaje bonito. Dígame si no."
+
+**Cuerpo:**
+> "Está bien, todos empezamos así. Pero esa misma herramienta le puede contestar a sus clientes,
+> armarle las cotizaciones, ordenarle las ventas de la semana y escribirle el contenido del mes.
+> Lo que falta no es la herramienta. Es saber qué pedirle y cómo conectarla a su negocio.
+> Y eso se aprende. En semanas, no en años."
+
+**CTA:**
+> "Si quiere aprender a sacarle el jugo de verdad, escríbanos por WhatsApp."
+
+**Texto en pantalla:** `Mensaje bonito` ✓ → `Cotizaciones · Ventas · Contenido · Clientes`
+**B-roll:** pantalla de ChatGPT con un mensaje de cumpleaños → corte a la misma pantalla haciendo un reporte.
+
+---
+
+## 6 · "Su negocio vive en una libreta"
+**Digitalización** · 40 s · frío
+
+**Gancho (0-3 s), con una libreta en la mano:**
+> "Si su negocio vive en esta libreta, tenemos que hablar."
+
+**Cuerpo:**
+> "En la libreta, en un Excel que solo entiende una persona y en el WhatsApp de la empleada.
+> Ahí están sus clientes, sus citas, sus pagos y sus pedidos.
+> Y funciona… hasta que esa persona falta una semana. O se va. O se moja la libreta.
+> Digitalizar no es comprar un programa caro. Es ordenar cómo trabaja su negocio para que no
+> dependa de que una sola persona se acuerde de todo. Y una vez está ordenado, la IA hace sola el
+> trabajo repetitivo."
+
+**CTA:**
+> "Escríbanos por WhatsApp y le decimos qué digitalizaríamos primero en su negocio."
+
+**Texto en pantalla:** `Libreta · Excel · WhatsApp de una persona` → `¿Y si esa persona falta?`
+**B-roll:** libreta llena de tachones · el mismo negocio con todo en una pantalla.
+
+---
+
+## 7 · "Lo que hace igual todos los días"
+**Digitalización · empezar por una cosa** · 35 s · frío
+
+**Gancho (0-3 s):**
+> "Lo que usted hace igual todos los días no lo tiene que hacer usted."
+
+**Cuerpo:**
+> "Haga el ejercicio: piense en una tarea que se repite idéntica. Pasar las ventas al Excel.
+> Mandar el recordatorio. Preparar el mismo reporte el viernes. Contestar la misma pregunta.
+> Esa. Empiece por esa sola. No tiene que transformar la empresa entera de un golpe.
+> Se automatiza una cosa, usted ve las horas que le devuelve en la semana, y de ahí decide la
+> próxima."
+
+**CTA:**
+> "Escríbanos por WhatsApp cuál es esa tarea en su negocio. Le decimos por dónde empezaríamos."
 
 **Texto en pantalla:** `¿Qué hace usted igual todos los días?`
-**B-roll:** una persona contestando el mismo mensaje una y otra vez, en bucle acelerado.
+**B-roll:** reloj acelerado sobre una persona haciendo la misma tarea.
 
 ---
 
-## 4 · "Antes de contratar a alguien más"
-**Ángulo agentes personalizados / no contratar por contratar** · 40 s · frío
+## 8 · "Mientras usted dormía" (la parte de AutoFlow)
+**AutoFlow / atención al cliente** · 40 s · frío · prueba con datos reales de un cliente
 
-**Gancho (0-4 s)** — a cámara, seria:
-> "Antes de poner a otra persona a contestar el teléfono, hágase una pregunta."
+**Gancho (0-4 s), de noche:**
+> "Anoche, mientras usted dormía, alguien le escribió a su negocio para comprar."
 
 **Cuerpo:**
-> "¿El problema es que le falta gente, o que su gente está haciendo trabajo que no debería estar
-> haciendo?
-> Porque una recepcionista cuesta sueldo, seguro, entrenamiento, y se va a las cinco.
-> Un agente de voz contesta a las nueve de la noche, el sábado, y los tres que llamaron a la vez.
-> No es para botar a nadie. Es para que su gente deje de apagar fuegos y haga lo que de verdad
-> mueve el negocio.
-> Un cliente nuestro nos dijo que su secretaria tuvo que **meterse a dar seguimiento** porque
-> empezaron a entrar demasiadas citas. Ese es el problema que uno quiere tener."
+> "Usted lo vio esta mañana. Esa persona ya habló con otro.
+> Un licenciado aquí en Puerto Rico nos dijo que le entran entre **veinticinco y cincuenta mensajes
+> al día**, casi todos de madrugada. Hoy tiene un agente de chat y uno de voz que contestan por él
+> a esa hora. Sus palabras: *'gracias a Dios que está el sistema, porque yo estoy durmiendo'*.
+> En dos meses contrató a diez personas más y tuvo que empezar a cobrar la consulta, porque no daba
+> abasto."
 
 **CTA:**
-> "Escríbanos por WhatsApp y le enseñamos cómo suena un agente contestando su teléfono."
+> "Si su negocio recibe mensajes de noche, escríbanos por WhatsApp. Le va a contestar el mismo tipo
+> de agente del que le hablo."
 
-**Texto en pantalla:** `Sueldo + seguro + entrenamiento` vs `contesta a las 9 p.m. y los sábados`
-**B-roll:** teléfono sonando sin que nadie conteste · recepción vacía a las 5:01 p.m.
+**Texto en pantalla:** `25 a 50 mensajes al día` → `casi todos, de madrugada`
+**B-roll:** celular en la mesa de noche iluminándose a las 2 a.m.
+**Nota:** dato textual de Ernest Crison. Si se usa su nombre o su video, pedirle permiso.
 
 ---
 
-## 5 · "Todo el mundo le dice que use IA"
-**Ángulo C** · 35 s · frío · el que trae al que está perdido
+## Para la creadora
 
-**Gancho (0-4 s)** — a cámara, con una sonrisa de complicidad:
-> "Todo el mundo le dice que use inteligencia artificial. Nadie le dice **qué** poner en SU negocio."
-
-**Cuerpo:**
-> "Y así es imposible. Usted abre Instagram y son mil herramientas, mil cursos, mil opiniones.
-> Lo que hace falta no es otra herramienta: es que alguien mire cómo trabaja usted.
-> Por dónde le entran los clientes, quién los contesta, en qué se le va el día, dónde se le cae
-> la bola. Eso se ve en veinte minutos.
-> De ahí sale una sola recomendación concreta: esto es lo que yo automatizaría primero en su
-> negocio. Y usted decide si lo hace con nosotros o por su cuenta."
-
-**CTA:**
-> "Escríbanos por WhatsApp y le decimos qué automatizaríamos primero en su caso."
-
-**Texto en pantalla:** `No necesita otra herramienta.` → `Necesita que alguien mire su operación.`
-**B-roll:** scroll de mil apps de IA · corte a una libreta con un solo proceso dibujado.
-
----
-
-## 6 · "Lo que dice un cliente" (testimonio contado por ella)
-**Ángulo D · prueba** · 40 s · **remarketing** (quien ya vio los otros)
-
-**Gancho (0-4 s)** — a cámara, con el teléfono en la mano:
-> "Esto me lo dijo un licenciado de aquí, y todavía me acuerdo de la frase."
-
-**Cuerpo:**
-> "Lleva cuatro meses con nosotros. Agente de chat, agente de voz y su CRM.
-> Primero: *'llenaron mis expectativas y las superaron'*.
-> Pero lo que me marcó fue esto: *'realmente no doy abasto con las llamadas y las citas; la
-> secretaria se tuvo que meter a dar seguimiento'*.
-> Le entraban tantas consultas que **tuvo que empezar a cobrarlas**. Hoy le entran entre dos y
-> cuatro consultas pagas al día.
-> Y en estos meses eso le representa cerca de cinco mil dólares más al mes."
-
-**CTA:**
-> "Si quiere ver cómo funcionaría en su negocio, escríbanos por WhatsApp."
-
-**Texto en pantalla:** `4 meses` · `10 contrataciones nuevas` · `+$5,000 al mes`
-**Nota:** todas las cifras son textuales del cliente. No redondear ni subirlas. Si se usa su nombre o
-su video, pedirle permiso primero.
-
----
-
-## 7 · "Qué pasa el día que usted dice que sí"
-**Ángulo D · proceso** · 40 s · **remarketing** (mata el miedo a quedarse solo)
-
-**Gancho (0-4 s)** — a cámara, tono tranquilo:
-> "El miedo no es la tecnología. El miedo es comprar algo y que después nadie lo sepa usar."
-
-**Cuerpo:**
-> "Entonces le digo exactamente cómo es.
-> Primero nos sentamos y aprendemos su negocio: sus servicios, sus precios, cómo contesta usted.
-> **A los quince días su sistema está en marcha** — contestando de verdad, no en una presentación.
-> Del día dieciséis al cuarenta y cinco lo afinamos con llamadas y conversaciones reales suyas,
-> porque siempre aparece algo que nadie previó.
-> Y después, si usted quiere, nos quedamos dándole soporte. No le entregamos una herramienta y
-> desaparecemos."
-
-**CTA:**
-> "Escríbanos por WhatsApp y empezamos por conocer su operación."
-
-**Texto en pantalla:** `Día 15: en marcha` → `Día 16 al 45: afinando` → `Después: soporte`
-**B-roll:** calendario marcando el día 15 · pantalla del panel con llamadas reales entrando.
-
----
-
-## 8 · "Usted ya pagó por ese lead"
-**Ángulo A** · 35 s · frío · para el que ya invierte en publicidad
-
-**Gancho (0-4 s)** — a cámara, directa, casi molesta:
-> "Usted paga por cada persona que le escribe. ¿Y cuántas se quedan sin contestar?"
-
-**Cuerpo:**
-> "Pagó el anuncio, pagó la agencia, pagó por que esa persona levantara la mano.
-> Y después llega el viernes a las seis, entran ocho mensajes, y se contestan el lunes.
-> Ese no es un problema de marketing. Ese es un problema de atención.
-> No le hace falta gastar más arriba. Le hace falta que lo que ya está pagando no se le caiga
-> abajo, donde nadie lo está mirando."
-
-**CTA:**
-> "Antes de subirle el presupuesto a su publicidad, escríbanos por WhatsApp. Mire primero qué está
-> pasando con los leads que ya pagó."
-
-**Texto en pantalla:** `Ya pagó por ese mensaje.` → `¿Quién lo contestó?`
-**B-roll:** panel de anuncios con el gasto subiendo · corte a WhatsApp con mensajes sin leer.
-
----
-
-## Para la creadora (nota de grabación)
-
-- Grabe los 8 de corrido, dos o tres tomas de cada uno. La buena casi siempre es la segunda.
-- Hable como le hablaría a un dueño de negocio que conoce, no como en un comercial. Si se traba y
-  sigue, **esa toma sirve**: es la que se siente real.
-- Varíe el lugar entre guiones (carro, oficina, caminando, en casa). Que no parezca una sesión.
-- Los primeros 3 segundos son todo: empiece hablando ya, sin saludo ni presentación.
-- No lea números que no estén en el guion, no prometa resultados y no diga "gratis".
+- Grabe los 8 de corrido, dos o tres tomas de cada uno.
+- Hable como le hablaría a un dueño de negocio que conoce. Empiece hablando ya, sin saludo.
+- Cambie de lugar entre guiones: oficina, carro, un local, caminando.
+- No diga números que no estén en el guion, no prometa resultados y no diga "gratis".
