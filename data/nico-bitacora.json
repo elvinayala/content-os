@@ -361,6 +361,14 @@
       "porque": "Que Paola trabaje sus leads como el resto de los closers.",
       "verificado": "Base: leads_acceso = level_up/todos para su user_id. accesoLeads(): no admin, no solo_ritmo, con fila → puede. leads.levelupmediapr.net/ventas y Pulse responden 200. Sin código ni deploy.",
       "commit": "Bitácora: acceso a Leads de Paola Ordoñez"
+    },
+    {
+      "fecha": "2026-10-01T01:48:27.271Z",
+      "plataforma": "content-os (Pulse · Leads)",
+      "que": "[Solicitud de Aure #134] Botón \"Reparto\" visible en la barra de Leads (y en el menú del embudo) para quien edita embudos (Aure, Carilin, Elvin) además del director de ventas: escoge qué setter(s) reciben los leads nuevos de cada embudo (una persona o rotación).",
+      "porque": "Aure quería asignar en automático a Luis y Joaquín por embudo sin el formulario completo de etapas; el atajo existía solo para Nahuel.",
+      "verificado": "tsc sin errores en leads, tests de reparto 5/5, build de Vercel OK, deploy Ready en prod, /login 200. La pantalla con sesión no la pude abrir desde aquí.",
+      "commit": "c633b17"
     }
   ],
   "pendientesElvin": [
