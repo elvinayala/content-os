@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Hora } from "@/components/ritmo/hora-local";
-import { diaCorto, EmpresaBadge, EstadoChip, fmtHoras, ScoreBadge } from "@/components/ritmo/piezas";
+import { diaCorto, EmpresaBadge, EstadoChip, ScoreBadge } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
 import { colorScore, fechaPR, PUESTOS, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
@@ -118,7 +118,20 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
                 <span className="text-muted-foreground tabular-nums">
                   {d.asistencia.entrada ? (
                     <>
-                      <Hora iso={d.asistencia.entrada} /> – {d.asistencia.estado === "trabajando" ? "ahora" : <Hora iso={d.asistencia.salida} />} · {fmtHoras(d.asistencia.horas)}
+                      <Hora iso={d.asistencia.entrada} />
+                      {d.almuerzo ? (
+                        <>
+                          {" · almuerzo "}
+                          <Hora iso={d.almuerzo.salida} />
+                          {d.almuerzo.vuelta ? (
+                            <>
+                              –<Hora iso={d.almuerzo.vuelta} />
+                            </>
+                          ) : null}
+                        </>
+                      ) : null}
+                      {" · "}
+                      {d.asistencia.estado === "trabajando" ? "ahora" : <Hora iso={d.asistencia.salida} />}
                     </>
                   ) : null}
                   {d.asistencia.sinSalida ? " · sin salida" : ""}

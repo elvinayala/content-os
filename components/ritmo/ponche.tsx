@@ -25,13 +25,6 @@ export interface EstadoPonche {
 
 const dia = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "short" });
 
-function reloj(desde: string, ahora: number) {
-  const s = Math.max(0, Math.floor((ahora - Date.parse(desde)) / 1000));
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  return `${h}:${String(m).padStart(2, "0")}`;
-}
-
 const aviso = { className: "ritmo" };
 
 // Coordenadas redondeadas: el servidor y el navegador calculan los decimales distinto (hidratación).
@@ -45,7 +38,7 @@ const MARCAS = Array.from({ length: 60 }, (_, i) => {
 });
 
 // Dial del círculo: 60 marcas (cada 5 más largas) y, mientras trabaja, un arco con el avance del tramo
-// sobre una jornada de 9 h. Solo decoración: el dato real es el reloj del centro.
+// sobre una jornada de 9 h. Solo decoración (no se muestran horas).
 function Dial({ progreso }: { progreso: number | null }) {
   const r = 46;
   const c = 2 * Math.PI * r;
@@ -210,9 +203,10 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           <Loader2 className="size-8 animate-spin text-primary" />
         ) : abierto ? (
           <>
+            {/* Sin reloj de horas (30/sep, Elvin: el equipo es remoto y toma sus pausas): solo la hora de entrada. */}
             <span className="text-xs font-medium tracking-[0.2em] text-primary uppercase">Trabajando</span>
-            <span className="num mt-1 text-6xl font-semibold tracking-tight">{reloj(abierto, ahora)}</span>
-            <span className="mt-1 mb-6 text-center text-sm text-muted-foreground">desde las {hora(abierto)}</span>
+            <span className="mt-2 text-sm text-muted-foreground">Entraste a las</span>
+            <span className="num mb-6 px-6 text-center text-2xl font-semibold tracking-tight">{hora(abierto)}</span>
           </>
         ) : (
           <>
@@ -223,7 +217,6 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
                 {Math.floor((ahora - Date.parse(estado.almuerzo.salida)) / 60000)} de {ALMUERZO.minutos} min de almuerzo
               </span>
             ) : null}
-            {horasHoy && !almorzando ? <span className="num mt-2 text-sm text-muted-foreground">hoy llevas {Math.floor(horasHoy)}h {String(Math.round((horasHoy % 1) * 60)).padStart(2, "0")}m</span> : null}
           </>
         )}
       </button>
@@ -253,7 +246,7 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
           <DialogHeader>
             <DialogTitle>Marcar salida</DialogTitle>
             <DialogDescription>
-              {abierto ? `Entraste a las ${hora(abierto)} · ${reloj(abierto, ahora)} h.` : ""} {estado.manual.length ? "Tus KPIs de hoy son obligatorios para marcar la salida (si fue 0, pon 0)." : "Lo demás lo mide el sistema solo."}
+              {abierto ? `Entraste a las ${hora(abierto)}.` : ""} {estado.manual.length ? "Tus KPIs de hoy son obligatorios para marcar la salida (si fue 0, pon 0)." : "Lo demás lo mide el sistema solo."}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">

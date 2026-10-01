@@ -4,6 +4,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
 import { avisarCorreo, avisarPersona, avisarRrhh, esc } from "@/lib/desempeno/avisar";
 import { tramosEntre } from "@/lib/desempeno/calendario";
+import { textoReporte } from "@/lib/desempeno/reporte-dia";
+import { reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
@@ -27,6 +29,8 @@ export const maxDuration = 120;
 //                  un solo recordatorio suave para marcar la salida.
 //  ?tarea=sin-ponche (L-V 10 AM PR) → a RR.HH. (RITMO_RRHH): quien a esa hora no ha marcado entrada (y le tocaba, sin
 //                  ausencia aprobada) para que les pregunte directo si están trabajando o si necesitan ayuda para entrar.
+//  ?tarea=reporte (L-V 7:30 PM PR) → a RR.HH.: el reporte del equipo de hoy (todo normal o qué verificar). El mismo
+//                  que Elvin ve en Equipo → "Reporte de hoy" (30/sep).
 //  ?tarea=aniversarios (diario 9 AM PR) → quien cumple 12 meses: a la persona y a RR.HH./Carilin.
 // Todo sale del bot Command Center (lib/desempeno/avisar.ts), nunca desde la cuenta de Elvin.
 // En simulación hasta que Elvin dé el OK (DESEMPENO_AVISOS=real); ?dry=1 nunca manda nada.
@@ -89,6 +93,14 @@ export async function GET(req: NextRequest) {
     }
     if (real) for (const e of envios) e.enviados = await avisarRrhh(e.texto);
     return NextResponse.json({ ok: true, real, tarea, faltan: faltan.map((f) => f.perfil.nombre), envios });
+  }
+
+  if (tarea === "reporte") {
+    const panel = await armarPanel(SISTEMA, hoy, hoy);
+    const r = await reporteDeHoy(panel.filas);
+    const texto = textoReporte(r, hoy, "https://ritmo.levelupmediapr.net/ritmo/equipo", esc);
+    const enviados = real ? await avisarRrhh(texto) : 0;
+    return NextResponse.json({ ok: true, real, tarea, normal: r.normal, enviados, texto });
   }
 
   if (tarea === "recordatorio") {

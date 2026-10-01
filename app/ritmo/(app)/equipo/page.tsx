@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 
 import { Correcciones } from "@/components/ritmo/correcciones";
 import { Hora } from "@/components/ritmo/hora-local";
-import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
+import { COLOR, EmpresaBadge, EstadoChip, FiltroEmpresa, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
 import { TarjetaLista, type PersonaLista } from "@/components/ritmo/tarjeta-lista";
+import { GraficaPersona } from "@/components/ritmo/grafica-persona";
+import { reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore, type FilaPersona, type Panel } from "@/lib/desempeno/datos";
 import { DEPARTAMENTOS, fechaPR, puedeAprobar, puestoPorId, sumarDias, type Color } from "@/lib/desempeno/reglas";
@@ -80,6 +82,8 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
     .filter((f) => puedeAprobar(u, f.perfil))
     .flatMap((f) => f.correcciones.map((c) => ({ id: c.id, nombre: f.perfil.nombre, fecha: c.fecha, entradaAt: c.entradaAt.toISOString(), salidaAt: c.salidaAt?.toISOString() ?? null, nota: c.nota })));
   const deptos = DEPARTAMENTOS.filter((x) => deEmpresa.some((f) => f.departamento === x));
+  // Reporte de hoy (30/sep): lo mismo que le llega a RR.HH. al final del día.
+  const reporte = await reporteDeHoy(deEmpresa).catch(() => null);
   const fechaLarga = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   return (
@@ -153,6 +157,30 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
             </TarjetaLista>
           </section>
 
+          {reporte ? (
+            <details className={cn("panel group px-4 py-3", reporte.normal ? "border-emerald-400/25" : "border-amber-400/30")} open={!reporte.normal}>
+              <summary className="flex cursor-pointer list-none items-center gap-2 text-sm">
+                <span className={cn("size-2 rounded-full", reporte.normal ? "bg-emerald-400" : "bg-amber-400")} />
+                <b>Reporte de hoy</b>
+                <span className="text-muted-foreground">· {reporte.normal ? "todo en normalidad" : `${reporte.alertas.length} ${reporte.alertas.length === 1 ? "cosa" : "cosas"} para verificar`} · {reporte.resumen}</span>
+                <ChevronRight className="ml-auto size-4 text-muted-foreground transition group-open:rotate-90" />
+              </summary>
+              {reporte.alertas.length ? (
+                <ul className="mt-2 flex flex-col gap-1.5 text-sm">
+                  {reporte.alertas.map((a) => (
+                    <li key={a.tipo} className="flex gap-2">
+                      <span className={cn("mt-1.5 size-1.5 shrink-0 rounded-full", a.grave ? "bg-red-400" : "bg-amber-400")} />
+                      <span>
+                        <b>{a.titulo}:</b> <span className="text-muted-foreground">{a.detalle}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <p className="mt-2 text-[11px] text-muted-foreground">A RR.HH. le llega por Slack al final del día (lun–vie 7:30 PM).</p>
+            </details>
+          ) : null}
+
           <Correcciones lista={correcciones} />
 
           {(depto ? [depto] : deptos).map((dep) => {
@@ -194,13 +222,34 @@ function FilaPersonaUI({ f, oculto, app }: { f: FilaPersona; oculto: boolean; ap
         <div className="order-3 col-span-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground md:order-none md:col-span-1">
           <EstadoChip estado={a.estado} extra={a.minutosTarde > 15 ? `${a.minutosTarde} min` : undefined} />
           {a.entrada ? (
+            // Entrada · almuerzo · salida, sin horas trabajadas (30/sep, Elvin: el equipo es remoto y toma sus pausas).
             <span className="tabular-nums">
-              <Hora iso={a.entrada} /> – {a.estado === "trabajando" ? "ahora" : <Hora iso={a.salida} />} · {fmtHoras(a.horas)}
+              <Hora iso={a.entrada} />
+              {f.hoy.almuerzo ? (
+                <>
+                  {" · almuerzo "}
+                  <Hora iso={f.hoy.almuerzo.salida} />
+                  {f.hoy.almuerzo.vuelta ? (
+                    <>
+                      –<Hora iso={f.hoy.almuerzo.vuelta} />
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+              {" · "}
+              {a.estado === "trabajando" ? "ahora" : <Hora iso={a.salida} />}
             </span>
           ) : null}
           {f.hoy.reporte?.bloqueos ? <span className="rounded bg-amber-400/15 px-1.5 py-0.5 text-amber-300">bloqueo</span> : null}
         </div>
-        <div className="hidden text-xs text-muted-foreground tabular-nums md:block">
+        <div className="hidden flex-col items-start gap-1 text-xs text-muted-foreground tabular-nums md:flex">
+          <GraficaPersona
+            userId={f.perfil.userId}
+            nombre={f.perfil.nombre}
+            puesto={f.puestoNombre}
+            kpis={(puestoPorId(f.perfil.puesto)?.manual ?? []).map((m) => ({ id: m.id, nombre: m.nombre }))}
+            dias={f.dias.map((d) => ({ fecha: d.fecha, estado: d.asistencia.estado, entrada: d.asistencia.entrada, salida: d.asistencia.salida, almuerzo: d.almuerzo, datos: d.reporte?.datos ?? {}, detalles: d.reporte?.detalles ?? {} }))}
+          />
           {prod ? (
             <>
               <b className="text-foreground">{prod.terminadas}</b> terminadas · <b className={prod.vencidas ? "text-red-400" : "text-foreground"}>{prod.vencidas}</b> vencidas · {prod.backlog} en cola
@@ -209,9 +258,7 @@ function FilaPersonaUI({ f, oculto, app }: { f: FilaPersona; oculto: boolean; ap
             <>
               <b className={f.produccion.vencidasPedidas ? "text-red-400" : "text-foreground"}>{f.produccion.vencidasPedidas}</b> entregables vencidos
             </>
-          ) : (
-            "KPIs en fase 2"
-          )}
+          ) : null}
         </div>
         <div className="hidden md:block">
           <MiniDias dias={f.dias} oculto={oculto} />

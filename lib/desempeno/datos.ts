@@ -321,6 +321,8 @@ export interface DiaPersona {
   score: ScoreDia;
   color: Color | null;
   reporte: { bloqueos: string | null; datos: Record<string, number>; detalles: Record<string, string> } | null;
+  // Almuerzo del día (30/sep, Elvin: "que se registre la hora de entrada, salida y almuerzo", sin horas trabajadas).
+  almuerzo: { salida: string; vuelta: string | null } | null;
 }
 
 export interface FilaPersona {
@@ -368,6 +370,9 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
     const puesto = puestoPorId(perfil.puesto);
     const kpis = kpisDe(perfil.puesto, metas);
     const dias = fechas.map((fecha): DiaPersona => {
+      const delDia = ponches.filter((p) => p.userId === perfil.userId && p.fecha === fecha);
+      const iAlm = delDia.findIndex((p) => p.motivoSalida === "almuerzo" && p.salidaAt);
+      const almuerzo = iAlm < 0 ? null : { salida: delDia[iAlm].salidaAt!.toISOString(), vuelta: delDia.slice(iAlm + 1).find((x) => x.entradaAt >= delDia[iAlm].salidaAt!)?.entradaAt.toISOString() ?? null };
       const asistencia = asistenciaDia({
         fecha,
         horario: perfil,
@@ -382,7 +387,7 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
       // KPIs que la persona reporta al marcar salida (fuente "manual"): si ese día reportó, lo que no puso cuenta como 0.
       for (const k of kpis) if (k.fuente === "manual" && rep && valores[k.id] === undefined) valores[k.id] = rep.datos[k.id] ?? 0;
       const score = scoreDia({ asistencia: asistencia.puntaje, kpis, valores });
-      return { fecha, asistencia, score, color: colorScore(score.score), reporte: rep ? { bloqueos: rep.bloqueos, datos: rep.datos, detalles: rep.detalles ?? {} } : null };
+      return { fecha, asistencia, score, color: colorScore(score.score), reporte: rep ? { bloqueos: rep.bloqueos, datos: rep.datos, detalles: rep.detalles ?? {} } : null, almuerzo };
     });
     const hoyDia = dias.find((x) => x.fecha === hoy) ?? dias[dias.length - 1];
     const scoreSemana = promedio(dias.filter((x) => x.fecha <= hoy).map((x) => x.score.score));

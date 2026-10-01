@@ -49,6 +49,10 @@
       "schedule": "0 14 * * 1-5"
     },
     {
+      "path": "/api/cron/ritmo?tarea=reporte",
+      "schedule": "30 23 * * 1-5"
+    },
+    {
       "path": "/api/cron/ritmo?tarea=recordatorio",
       "schedule": "45 22 * * 1-5"
     },
