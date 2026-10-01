@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
+import { BuscarEnEmbudo } from "@/components/leads/buscar-en-embudo";
 import { DetalleLead } from "@/components/leads/detalle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { contextoLeads } from "@/lib/leads/pagina";
@@ -29,6 +30,7 @@ export default async function LeadDetalle({ params }: { params: Promise<{ marca:
         <SidebarTrigger />
         <span className="text-sm font-semibold">Leads</span>
         <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{c.m.nombre}</span>
+        <BuscarEnEmbudo marcaSlug={c.m.slug} embudoId={d.trato.embudoId} embudoNombre={d.embudos.find((e) => e.id === d.trato.embudoId)?.nombre ?? "este embudo"} actualId={d.trato.id} />
       </header>
       <DetalleLead
         marcaSlug={c.m.slug}

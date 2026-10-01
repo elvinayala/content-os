@@ -50,6 +50,19 @@ export async function buscarLeadsGlobalAction(q: string): Promise<{ id: string; 
   return por.flat();
 }
 
+/** Buscador de la ficha: solo los leads del mismo embudo (respeta "solo mis leads"). */
+export async function buscarEnEmbudoAction(embudoId: string, q: string): Promise<{ id: string; nombre: string; telefono: string | null; etapa: string | null; estado: string }[]> {
+  if (q.trim().length < 2) return [];
+  const d = await db();
+  const [e] = await d.select({ marca: leadsEmbudos.marca }).from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);
+  if (!e) return [];
+  const p = await puedeMarca(e.marca as Marca);
+  if (!p) return [];
+  const { buscarEnMarca } = await import("@/lib/leads/repo");
+  const filas = await buscarEnMarca(e.marca as Marca, q.slice(0, 100), null, 10, p.alcance === "mios" ? p.u.id : null, embudoId);
+  return filas.map((f) => ({ id: f.id, nombre: f.nombre, telefono: f.telefono, etapa: f.etapa, estado: f.estado }));
+}
+
 /** Carga el trato y verifica permiso (marca + "solo mis leads"). */
 async function puedeTrato(tratoId: string) {
   const d = await db();
