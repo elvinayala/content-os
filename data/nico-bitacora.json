@@ -393,6 +393,14 @@
       "porque": "Aure: al abrir un lead se perdía el buscador y lo quería por embudo (WHATSAPP). Elvin aprobó el plan.",
       "verificado": "tsc sin errores nuevos en leads, tests de leads 22/22, consulta acotada probada en la base de prod (WHATSAPP + 787 → 50, solo de ese embudo), deploy Ready, /login 200, ficha sin sesión → login (307). No pude ver la pantalla con sesión.",
       "commit": "e78f4ec"
+    },
+    {
+      "fecha": "2026-10-01T19:11:15.780Z",
+      "plataforma": "Slack LU · Ritmo",
+      "que": "[Solicitud de Carilin #147] Comentarios del ponche que caían en #office-10-community-manager: Carilin decidió que basta con que el equipo los escriba en #office-15-ai-operaciones. Sin cambio de código: Ritmo no publica esos comentarios en ningún canal (lib/desempeno/avisar.ts y avisos.ts solo mandan DMs); el equipo los escribe a mano. El aviso al equipo lo da Carilin. Cierra #136 y #139.",
+      "porque": "Hilo #136/#139 de Carilin; Elvin aprobó cerrar sin cambios.",
+      "verificado": "Revisado en el código: ningún envío de Ritmo apunta a un canal; office-10-community-manager no aparece en el código ni en los workflows de n8n respaldados.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
