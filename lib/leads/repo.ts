@@ -175,10 +175,37 @@ function aTarjeta(r: Record<string, unknown>): TratoTarjeta {
 }
 
 /** Condición de fecha (por cuándo cayó el lead) para un filtro "hoy"/"ayer"/"semana"/"mes". */
+// "Hoy" = llegó hoy O tiene cita/seguimiento hoy (1/oct, Elvin: en CLOSERS las citas de hoy se agendaron días antes).
 function condFecha(f?: FiltroFecha | null) {
   if (!f) return undefined;
   const { desde, hasta } = rangoFecha(f);
-  return and(gte(leadsTratos.createdAt, desde), lt(leadsTratos.createdAt, hasta));
+  return or(
+    and(gte(leadsTratos.createdAt, desde), lt(leadsTratos.createdAt, hasta)),
+    sql`exists (select 1 from ${leadsActividades} a where a.trato_id = ${leadsTratos.id} and a.vence_at >= ${desde.toISOString()}::timestamptz and a.vence_at < ${hasta.toISOString()}::timestamptz)`,
+  );
+}
+
+/** Búsqueda en TODOS los embudos de la marca (como la lupa de Pipedrive): nombre, negocio, email o teléfono (dígitos). */
+export async function buscarEnMarca(marca: Marca, q: string, excluirEmbudo?: string | null, limite = 12) {
+  const texto = q.trim();
+  if (texto.length < 2) return [];
+  const d = await db();
+  const dig = texto.replace(/\D/g, "");
+  const like = `%${texto}%`;
+  const conds = [
+    eq(leadsTratos.marca, marca),
+    sql`${leadsTratos.origen} <> 'grupo'`,
+    or(ilike(leadsTratos.nombre, like), ilike(leadsTratos.negocio, like), ilike(leadsTratos.email, like), ...(dig.length >= 4 ? [ilike(leadsTratos.telefono, `%${dig}%`)] : []))!,
+  ];
+  if (excluirEmbudo) conds.push(sql`${leadsTratos.embudoId} <> ${excluirEmbudo}`);
+  return d
+    .select({ id: leadsTratos.id, nombre: leadsTratos.nombre, telefono: leadsTratos.telefono, estado: leadsTratos.estado, embudoId: leadsTratos.embudoId, embudo: leadsEmbudos.nombre, etapa: leadsEtapas.nombre })
+    .from(leadsTratos)
+    .innerJoin(leadsEmbudos, eq(leadsEmbudos.id, leadsTratos.embudoId))
+    .leftJoin(leadsEtapas, eq(leadsEtapas.id, leadsTratos.etapaId))
+    .where(and(...conds))
+    .orderBy(sql`case when ${leadsTratos.estado} = 'abierto' then 0 else 1 end`, desc(leadsTratos.updatedAt))
+    .limit(limite);
 }
 
 export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null } = {}): Promise<TratoTarjeta[]> {

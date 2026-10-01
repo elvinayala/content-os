@@ -195,7 +195,8 @@ export function BarraLeads({
                   <ChevronDown className="size-4 opacity-60" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="pulse w-48" align="end">
+              <DropdownMenuContent className="pulse w-56" align="end">
+                <p className="px-2 py-1.5 text-[11px] text-muted-foreground">Leads que llegaron o tienen cita o seguimiento ese día.</p>
                 <DropdownMenuItem onSelect={() => ir({ fecha: null })} className={cn(!fecha && "font-semibold")}>
                   Cualquier fecha
                 </DropdownMenuItem>
