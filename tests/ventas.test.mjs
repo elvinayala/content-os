@@ -169,3 +169,12 @@ test("ranking de ventas: metas diarias de setters y chatters, close rate de clos
   assert.equal(de("Chatter").indicadores.find((i) => i.id === "pases").nivel, "verde");
   assert.equal(de("Sin diario").nivel, "sin-datos");
 });
+
+test("escalones del director: cuánto falta para cada meta de ventas nuevas", async () => {
+  const { escalones, ESCALONES_DIRECTOR } = await import("../lib/ventas/reglas.ts");
+  const e = escalones(62_300, ESCALONES_DIRECTOR.level_up);
+  assert.deepEqual(e.metas.map((m) => m.logrado), [true, false, false]);
+  assert.deepEqual(e.siguiente, { meta: 75_000, falta: 12_700, n: 2 });
+  assert.equal(escalones(0, [50_000, 75_000, 100_000]).siguiente.falta, 50_000);
+  assert.equal(escalones(100_000, [50_000, 75_000, 100_000]).siguiente, null);
+});

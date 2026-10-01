@@ -617,3 +617,15 @@ export function rankingVentas(gente: { userId: string; nombre: string; rol: RolV
     .sort((a, b) => orden.indexOf(a.rol) - orden.indexOf(b.rol) || b.puntaje - a.puntaje || b.cash - a.cash)
     .map((f, i, xs) => ({ ...f, posicion: xs.slice(0, i).filter((x) => x.rol === f.rol).length + 1 }));
 }
+
+// ─── Escalones del director de ventas (30/sep, Elvin) ─────────────────────────────────────────
+// Metas de Nahuel en Level Up: SOLO ventas nuevas cobradas en el mes (New Sale de la hoja). Nada de
+// renovaciones, upsells a clientes, mensualidades ni lo que cobra tesorería. Es una referencia para él,
+// no una métrica que tenga que llenar.
+export const ESCALONES_DIRECTOR: Partial<Record<Empresa, number[]>> = { level_up: [50_000, 75_000, 100_000] };
+
+export function escalones(valor: number, metas: number[]): { metas: { meta: number; logrado: boolean; falta: number }[]; siguiente: { meta: number; falta: number; n: number } | null } {
+  const lista = [...metas].sort((a, b) => a - b).map((meta) => ({ meta, logrado: valor >= meta, falta: redondear(Math.max(0, meta - valor)) }));
+  const i = lista.findIndex((m) => !m.logrado);
+  return { metas: lista, siguiente: i < 0 ? null : { meta: lista[i].meta, falta: lista[i].falta, n: i + 1 } };
+}

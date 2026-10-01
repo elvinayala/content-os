@@ -5,7 +5,7 @@ import { Alerta, Barra, Bonos, Carrera, MiDiario } from "@/components/ritmo/aren
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
-import { KPIS_VENTAS, kpisDelMes, rankingVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
+import { ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, kpisDelMes, rankingVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -69,6 +69,7 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         <Barra valor={e.semana} meta={e.metaSemana} etiqueta="Esta semana" />
         <Barra valor={e.hoy} meta={e.metaDia} etiqueta="Hoy" />
         <p className="text-[11px] text-muted-foreground">A este paso el mes cierra en {usd(e.ritmoMes)}.</p>
+        {gestiona && ESCALONES_DIRECTOR[empresa] ? <EscalonesDirector valor={e.nuevasMes} metas={ESCALONES_DIRECTOR[empresa]!} sinDatos={!!ar.hoja.error} /> : null}
       </section>
 
       {ar.mio ? (
@@ -246,5 +247,25 @@ function RankingVentas({ filas }: { filas: Parameters<typeof rankingVentas>[0] }
         );
       })}
     </section>
+  );
+}
+
+// Metas del director de ventas: solo ventas nuevas cobradas este mes. Pequeño a propósito (referencia, no tarea).
+function EscalonesDirector({ valor, metas, sinDatos }: { valor: number; metas: number[]; sinDatos: boolean }) {
+  const e = escalones(valor, metas);
+  const k = (n: number) => `$${Math.round(n / 1000)}K`;
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-white/[0.06] pt-3 text-[11px] text-muted-foreground">
+      <span>Metas del director · ventas nuevas</span>
+      {e.metas.map((m) => (
+        <span key={m.meta} className={cn("rounded-full px-2 py-0.5 font-mono", m.logrado && !sinDatos ? "bg-primary/15 text-primary" : "bg-white/[0.04]")}>
+          {m.logrado && !sinDatos ? "✓ " : ""}
+          {k(m.meta)}
+        </span>
+      ))}
+      <span className="text-foreground/80">
+        {sinDatos ? <span>El avance sale cuando la hoja de ventas esté conectada.</span> : e.siguiente ? <>Faltan <b className="font-mono font-semibold text-foreground">{usd(e.siguiente.falta)}</b> para la meta {e.siguiente.n} ({k(e.siguiente.meta)})</> : <b className="font-semibold text-primary">Las 3 metas cumplidas 🎉</b>}
+      </span>
+    </div>
   );
 }

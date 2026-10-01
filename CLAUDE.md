@@ -762,6 +762,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
   candidato a bono), con nivel y recomendaciones (`rankingVentas` en `lib/ventas/reglas.ts`, tests en `tests/ventas.test.mjs`).
+  **Metas del director (30/sep, Elvin)**: Nahuel (LU) tiene escalones de **$50K / $75K / $100K en ventas NUEVAS cobradas en el mes**
+  (solo New Sale; nada de renovaciones, upsells, mensualidades ni lo que cobra tesorería). Es referencia, no tarea: una línea
+  pequeña al pie de "Meta del equipo" en la Arena (`ESCALONES_DIRECTOR` + `escalones` en `lib/ventas/reglas.ts`) con cuánto falta
+  para la siguiente; sin la hoja conectada solo muestra las metas.
 - **Calendario de ausencias** (`/ritmo/calendario`, 28/sep; puro en `lib/desempeno/calendario-reglas.ts` + tests
   `tests/calendario.test.mjs`, datos `lib/desempeno/calendario.ts`): mes en cuadrícula + lista de quién está fuera (ausencias
   aprobadas + solicitudes en curso con borde punteado). Elvin: "los estrategas no se pueden ir dos a la vez" → `TOPE_FUERA`
