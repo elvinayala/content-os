@@ -385,6 +385,14 @@
       "porque": "Seguimiento de #138; Elvin aprobó revisar el caso real.",
       "verificado": "Consulta en prod: 1 trato con 18045938646 (Tito, CLOSERS). Repetí la consulta de buscarEnMarca desde WHATSAPP con \"804-593-8646\" → devuelve Tito/CLOSERS. La búsqueda de otros embudos está en prod desde las 8:20 AM (b2eeab6, deploy Ready). No toqué ninguna de las dos tarjetas.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-01T19:08:01.963Z",
+      "plataforma": "content-os (Pulse · Leads)",
+      "que": "[Solicitud de Aure #146] Buscador en la ficha del lead (arriba, en el encabezado), acotado al embudo de ese lead: busca por nombre, negocio, e-mail o teléfono SOLO en ese embudo (ej. WHATSAPP), lista hasta 10 y al tocar uno salta a su ficha; Enter con un solo resultado lo abre, con varios abre el tablero del embudo filtrado. Respeta \"solo mis leads\". Cierra también #145.",
+      "porque": "Aure: al abrir un lead se perdía el buscador y lo quería por embudo (WHATSAPP). Elvin aprobó el plan.",
+      "verificado": "tsc sin errores nuevos en leads, tests de leads 22/22, consulta acotada probada en la base de prod (WHATSAPP + 787 → 50, solo de ese embudo), deploy Ready, /login 200, ficha sin sesión → login (307). No pude ver la pantalla con sesión.",
+      "commit": "e78f4ec"
     }
   ],
   "pendientesElvin": [
