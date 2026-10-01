@@ -252,7 +252,15 @@ export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?:
     conds.push(or(ilike(leadsTratos.nombre, q), ilike(leadsTratos.negocio, q), ilike(leadsTratos.email, q), ilike(leadsTratos.telefono, `%${f.q.replace(/\D/g, "") || "~"}%`))!);
   }
   return d
-    .select({ ...camposTarjeta, estado: leadsTratos.estado, email: leadsTratos.email, etapaNombre: leadsEtapas.nombre, createdAt: leadsTratos.createdAt })
+    .select({
+      ...camposTarjeta,
+      estado: leadsTratos.estado,
+      email: leadsTratos.email,
+      etapaNombre: leadsEtapas.nombre,
+      createdAt: leadsTratos.createdAt,
+      // Vista previa en la Lista (Aure, 1/oct): la nota más reciente que el equipo le dejó al lead.
+      ultimaNota: sql<string | null>`(select h.texto from leads_historial h where h.trato_id = ${leadsTratos.id} and h.tipo = 'nota' order by h.created_at desc limit 1)`,
+    })
     .from(leadsTratos)
     .leftJoin(pulseUsers, eq(pulseUsers.id, leadsTratos.duenoId))
     .leftJoin(leadsEtapas, eq(leadsEtapas.id, leadsTratos.etapaId))

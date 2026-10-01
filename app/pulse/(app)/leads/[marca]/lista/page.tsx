@@ -56,11 +56,12 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
         </span>
       </div>
       <div className="min-h-0 flex-1 overflow-auto px-4 pb-8">
-        <table className="w-full min-w-[900px] text-sm">
+        <table className="w-full min-w-[1100px] text-sm">
           <thead className="sticky top-0 bg-background text-left text-xs text-muted-foreground">
             <tr className="border-b">
               <th className="py-2 pr-3 font-medium">Lead</th>
               <th className="py-2 pr-3 font-medium">Negocio</th>
+              <th className="py-2 pr-3 font-medium">Última nota</th>
               <th className="py-2 pr-3 font-medium">Teléfono</th>
               <th className="py-2 pr-3 font-medium">Etapa</th>
               <th className="py-2 pr-3 font-medium">Valor</th>
@@ -83,6 +84,9 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
                     {f.noLeidos > 0 && <span className="ml-2 rounded-full bg-[#25d366] px-1.5 text-[10px] font-bold text-white">{f.noLeidos}</span>}
                   </td>
                   <td className="py-2 pr-3 text-muted-foreground">{f.negocio ?? "—"}</td>
+                  <td className="max-w-72 py-2 pr-3 text-muted-foreground" title={f.ultimaNota ?? undefined}>
+                    <span className="line-clamp-1">{f.ultimaNota ?? "—"}</span>
+                  </td>
                   <td className="py-2 pr-3 whitespace-nowrap text-muted-foreground">{telefonoLegible(f.telefono) || "—"}</td>
                   <td className="py-2 pr-3">{f.etapaNombre}</td>
                   <td className="py-2 pr-3">${f.valor.toLocaleString("en-US")}</td>
