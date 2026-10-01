@@ -144,7 +144,7 @@ export function BarraLeads({
                   {e.nombre}
                 </DropdownMenuItem>
               ))}
-              {!puedeEditar && manejaEquipo && (
+              {(puedeEditar || manejaEquipo) && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -227,6 +227,21 @@ export function BarraLeads({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          {(puedeEditar || manejaEquipo) && vista !== "actividades" && embudo && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1"
+              title={`Quién recibe los leads nuevos de ${embudo.nombre}`}
+              onClick={() => {
+                setSoloReparto(true);
+                setEditar(true);
+              }}
+            >
+              <Repeat2 className="size-4" />
+              <span className="hidden sm:inline">Reparto</span>
+            </Button>
+          )}
           {manejaEquipo && (
             <Button asChild variant="outline" size="sm" className="h-8 gap-1" title="Quién entra a Leads">
               <Link href={`${base}/equipo`}>
