@@ -28,7 +28,17 @@ export type PropsTestimonio = {
   logoCliente?: string;
   /** Logo de nuestra marca (PNG para fondo oscuro), pequeño arriba a la derecha; reemplaza la etiqueta. */
   logoMarca?: string;
+  /** Gancho al inicio (la mejor frase, adelantada): su subtítulo sale más grande y con la cifra resaltada. */
+  gancho?: { desde: number; hasta: number };
+  /** Tramo del "rebobinado" que vuelve al principio del testimonio: muestra ◀◀. */
+  rebobinar?: { desde: number; hasta: number };
+  /** Segundo en que aparece el rótulo con el nombre (por defecto 0.3; con gancho, después del rebobinado). */
+  rotuloDesde?: number;
 };
+
+/** Resalta cifras (15,000 · $9,000 · 25 %) en el color de acento. */
+const conCifras = (texto: string, acento: string) =>
+  texto.split(/(\$?[\d][\d,.]*\s?%?)/).map((p, i) => (/^\$?\d/.test(p) ? <span key={i} style={{ color: acento }}>{p}</span> : <React.Fragment key={i}>{p}</React.Fragment>));
 
 const entra = (f: number, a: number, b: number) => interpolate(f, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
@@ -78,26 +88,40 @@ const TestimonioRetrato: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiq
   );
 };
 
-const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta }) => {
+const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta, logoCliente, logoMarca, gancho, rebobinar, rotuloDesde = 0.3 }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
   const sub = subtitulos.find((s) => t >= s.desde && t < s.hasta);
   const eSub = sub ? Math.min(entra(t, sub.desde, sub.desde + 0.18), 1 - entra(t, sub.hasta - 0.12, sub.hasta)) : 0;
-  const rotulo = Math.min(entra(t, 0.3, 0.9), 1 - entra(t, 5.2, 5.8));
+  const rotulo = Math.min(entra(t, rotuloDesde, rotuloDesde + 0.6), 1 - entra(t, rotuloDesde + 4.9, rotuloDesde + 5.5));
   const ePreg = pregunta ? Math.min(entra(t, pregunta.desde, pregunta.desde + 0.3), 1 - entra(t, pregunta.hasta - 0.3, pregunta.hasta)) : 0;
+  const enGancho = !!gancho && t >= gancho.desde && t < gancho.hasta;
+  const enRew = !!rebobinar && t >= rebobinar.desde && t < rebobinar.hasta;
+  const eLogos = entra(t, 0.2, 1.0);
+  const { durationInFrames } = useVideoConfig();
+  const salida = 1 - entra(t, durationInFrames / fps - 0.5, durationInFrames / fps);
   return (
-    <AbsoluteFill style={{ background: "#081120" }}>
+    <AbsoluteFill style={{ background: "#081120", opacity: Math.max(salida, 0.0001) }}>
       <OffthreadVideo src={staticFile(video)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       {/* Degradado abajo para que el subtítulo se lea sobre cualquier fondo */}
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(8,17,32,0) 58%, rgba(8,17,32,.78) 100%)" }} />
-      {etiqueta && (
+      {logoCliente && <Img src={staticFile(logoCliente)} style={{ position: "absolute", left: 64, top: 52, height: 96, opacity: 0.88 * eLogos, filter: "drop-shadow(0 2px 10px rgba(0,0,0,.35))" }} />}
+      {logoMarca ? (
+        <Img src={staticFile(logoMarca)} style={{ position: "absolute", right: 60, top: 60, height: 52, opacity: 0.92 * eLogos, filter: "drop-shadow(0 2px 10px rgba(0,0,0,.35))" }} />
+      ) : etiqueta ? (
         <div style={{ position: "absolute", right: 56, top: 44, fontFamily: MONO, fontSize: 22, letterSpacing: ".18em", color: "#eef2f9", background: "rgba(8,17,32,.62)", padding: "10px 18px", borderRadius: 10, border: "1px solid rgba(79,207,226,.35)" }}>
           {etiqueta}
         </div>
+      ) : null}
+      {/* Rebobinado: ◀◀ que late mientras la imagen corre hacia atrás */}
+      {enRew && (
+        <div style={{ position: "absolute", left: 0, right: 0, top: 440, display: "flex", justifyContent: "center", opacity: 0.6 + 0.4 * Math.abs(Math.sin(t * 14)) }}>
+          <div style={{ fontFamily: MONO, fontWeight: 500, fontSize: 120, color: "#ffffff", letterSpacing: "-.1em", textShadow: "0 0 30px rgba(0,0,0,.6)" }}>◀◀</div>
+        </div>
       )}
       {/* Rótulo con el nombre */}
-      <div style={{ position: "absolute", left: 64, top: 64, opacity: rotulo, transform: `translateX(${(1 - rotulo) * -30}px)`, display: "flex", gap: 18, alignItems: "stretch" }}>
+      <div style={{ position: "absolute", left: 64, top: logoCliente ? 190 : 64, opacity: rotulo, transform: `translateX(${(1 - rotulo) * -30}px)`, display: "flex", gap: 18, alignItems: "stretch" }}>
         <div style={{ width: 6, borderRadius: 4, background: acento }} />
         <div style={{ background: "rgba(8,17,32,.72)", padding: "16px 26px", borderRadius: 14 }}>
           <div style={{ fontFamily: GROT, fontWeight: 700, fontSize: 40, color: "#eef2f9" }}>{nombre}</div>
@@ -112,10 +136,15 @@ const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, e
       )}
       {/* Subtítulo */}
       {sub && (
-        <div style={{ position: "absolute", left: 160, right: 160, bottom: 70, display: "flex", justifyContent: "center", opacity: eSub, transform: `translateY(${(1 - eSub) * 12}px)` }}>
-          <div style={{ fontFamily: GROT, fontWeight: 600, fontSize: 54, lineHeight: 1.22, color: "#ffffff", textAlign: "center", textWrap: "balance", background: "rgba(8,17,32,.78)", padding: "14px 30px", borderRadius: 16, maxWidth: 1500 } as React.CSSProperties}>
-            {sub.texto}
+        <div style={{ position: "absolute", left: 160, right: 160, bottom: enGancho ? 110 : 70, display: "flex", justifyContent: "center", opacity: eSub, transform: `translateY(${(1 - eSub) * 12}px) scale(${enGancho ? 0.94 + 0.06 * eSub : 1})` }}>
+          <div style={{ fontFamily: GROT, fontWeight: enGancho ? 700 : 600, fontSize: enGancho ? 72 : 54, lineHeight: 1.18, color: "#ffffff", textAlign: "center", textWrap: "balance", background: "rgba(8,17,32,.8)", padding: enGancho ? "18px 36px" : "14px 30px", borderRadius: 18, maxWidth: enGancho ? 1300 : 1500, border: enGancho ? `2px solid ${acento}` : undefined } as React.CSSProperties}>
+            {conCifras(sub.texto, acento)}
           </div>
+        </div>
+      )}
+      {logoMarca && (
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 24, textAlign: "center", fontFamily: MONO, fontSize: 17, letterSpacing: ".12em", color: "rgba(238,242,249,.55)", opacity: eLogos }}>
+          RESULTADOS DE CLIENTES REALES · CADA NEGOCIO ES DISTINTO
         </div>
       )}
     </AbsoluteFill>

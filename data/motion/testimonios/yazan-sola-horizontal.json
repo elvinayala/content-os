@@ -1,0 +1,80 @@
+{
+ "video": "testimonios/yazan-h.mp4",
+ "dur": 47.8,
+ "nombre": "Yazan",
+ "rol": "Sola Boutique · tienda en línea",
+ "acento": "#2BFF88",
+ "logoCliente": "testimonios/sola-blanco.png",
+ "logoMarca": "testimonios/aib-lockup.png",
+ "gancho": {
+  "desde": 0,
+  "hasta": 3.6
+ },
+ "rebobinar": {
+  "desde": 3.6,
+  "hasta": 4.8
+ },
+ "rotuloDesde": 4.8,
+ "subtitulos": [
+  {
+   "desde": 0.05,
+   "hasta": 3.55,
+   "texto": "Añadimos 15,000 clientes desde que empezamos con ustedes."
+  },
+  {
+   "desde": 4.8,
+   "hasta": 9.0,
+   "texto": "Mi tío, que es el dueño, se sentó con el contable,"
+  },
+  {
+   "desde": 9.0,
+   "hasta": 14.3,
+   "texto": "y me dice: «vamos a cancelar todo eso para ahorrar $9,000 mensuales»."
+  },
+  {
+   "desde": 14.27,
+   "hasta": 17.82,
+   "texto": "Yo le dije: «no hagan nada, dame dos días»."
+  },
+  {
+   "desde": 17.82,
+   "hasta": 23.27,
+   "texto": "Fui donde él, abrí Meta Ads y Shopify, las ventas de Shopify,"
+  },
+  {
+   "desde": 23.27,
+   "hasta": 26.99,
+   "texto": "y subió un 25 %… de 25 a 30 %."
+  },
+  {
+   "desde": 26.99,
+   "hasta": 30.59,
+   "texto": "Añadimos 15,000 clientes desde que empezamos con ustedes."
+  },
+  {
+   "desde": 30.59,
+   "hasta": 34.87,
+   "texto": "Cuando vi la estrategia de ustedes en Meta, las campañas,"
+  },
+  {
+   "desde": 34.87,
+   "hasta": 36.61,
+   "texto": "miré a mi tío: «¿tú sabes hacer eso?»"
+  },
+  {
+   "desde": 36.61,
+   "hasta": 40.21,
+   "texto": "Clientes fríos, medio calientes, calientes,"
+  },
+  {
+   "desde": 40.21,
+   "hasta": 43.07,
+   "texto": "los que compraron, los que no compraron…"
+  },
+  {
+   "desde": 43.07,
+   "hasta": 47.79,
+   "texto": "Por eso peleé con él por ustedes: porque hay resultados."
+  }
+ ]
+}
