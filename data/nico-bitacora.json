@@ -401,6 +401,14 @@
       "porque": "Hilo #136/#139 de Carilin; Elvin aprobó cerrar sin cambios.",
       "verificado": "Revisado en el código: ningún envío de Ritmo apunta a un canal; office-10-community-manager no aparece en el código ni en los workflows de n8n respaldados.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-01T19:20:18.240Z",
+      "plataforma": "content-os (Pulse · Leads LU y AIB)",
+      "que": "[Solicitud de Aure #148] Rubro del negocio como etiquetas: catálogo común a las dos marcas (Estética, Construcción, Solar, Handyman, Abogados, Doctores, Seguros, Vendedores / Tiendas, Dealer de autos, Educación (escuelas o cursos), Real estate, Auto partes + Otro). En la ficha: selector \"Rubro del negocio\" + \"Crear etiqueta…\" (solo admin/editor; tabla leads_rubros creada en runtime, sin migración, protegida por la papelera; sin duplicados por acento/mayúscula). En Embudo y Lista: filtro por rubro (incluye \"Sin rubro\"). Claude (Haiku, leads nuevos de WhatsApp) ahora escoge del catálogo y lo que no calce queda en \"Otro\". Se guarda en datos.nicho (mismo campo). \"Negocio\" (nombre) sigue libre. Cierra #143 y #144.",
+      "porque": "Aure lo pidió para clasificar y filtrar leads; Elvin aprobó el plan.",
+      "verificado": "Tests nuevos 5/5 (leads 27/27), tsc sin errores en leads, deploy Ready, /login 200. En prod: 120 leads abiertos sin rubro; Construcción (9) y Handyman (4) ya calzan con el catálogo; los nichos viejos en texto libre (Belleza 7, Salud 4, Barbería, Restaurante…) no se tocaron y salen como \"(sin etiqueta)\" hasta que alguien los cambie. No vi la pantalla con sesión.",
+      "commit": "7b5ec1c"
     }
   ],
   "pendientesElvin": [
