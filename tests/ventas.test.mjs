@@ -142,3 +142,30 @@ test("KPIs del diario por puesto (Elvin, 28/sep)", async () => {
   assert.deepEqual(camposViejos("closer", { demos: 4, cerradas: 1 }), { citas: 0, presentaron: 4, conversaciones: 0, agendas: 0 });
   assert.equal(camposViejos("chatter", { conversaciones: 20, agendadas: 3 }).agendas, 3);
 });
+
+test("ranking de ventas: metas diarias de setters y chatters, close rate de closers (30/sep)", async () => {
+  const { rankingVentas, nivelCloseRate } = await import("../lib/ventas/reglas.ts");
+  assert.equal(nivelCloseRate(15), "rojo");
+  assert.equal(nivelCloseRate(25), "amarillo");
+  assert.equal(nivelCloseRate(30), "verde");
+  assert.equal(nivelCloseRate(42), "elite");
+  const r = rankingVentas([
+    { userId: "s1", nombre: "Setter flojo", rol: "setter", dias: 2, cash: 0, mes: { llamadas: 160, conectadas: 30, agendadas: 4 } },
+    { userId: "s2", nombre: "Setter top", rol: "setter", dias: 2, cash: 0, mes: { llamadas: 260, conectadas: 70, agendadas: 10 } },
+    { userId: "c1", nombre: "Closer elite", rol: "closer", dias: 5, cash: 9000, mes: { demos: 10, cerradas: 4 } },
+    { userId: "c2", nombre: "Closer rojo", rol: "closer", dias: 5, cash: 1000, mes: { demos: 10, cerradas: 1 } },
+    { userId: "h1", nombre: "Chatter", rol: "chatter", dias: 1, cash: 0, mes: { conversaciones: 12, pases: 6, agendadas: 3 } },
+    { userId: "x", nombre: "Sin diario", rol: "setter", dias: 0, cash: 0, mes: {} },
+  ]);
+  const de = (n) => r.find((f) => f.nombre === n);
+  assert.equal(de("Closer elite").nivel, "elite");
+  assert.equal(de("Closer elite").posicion, 1);
+  assert.equal(de("Closer rojo").nivel, "rojo");
+  assert.match(de("Closer rojo").recomendaciones[0], /alerta roja/);
+  assert.equal(de("Setter top").posicion, 1);
+  assert.equal(de("Setter flojo").nivel, "rojo"); // 80 llamadas/día < 100
+  assert.ok(de("Setter flojo").recomendaciones.some((x) => x.includes("llamadas realizadas")));
+  assert.equal(de("Chatter").indicadores.find((i) => i.id === "conversaciones").nivel, "rojo"); // 12 < 15
+  assert.equal(de("Chatter").indicadores.find((i) => i.id === "pases").nivel, "verde");
+  assert.equal(de("Sin diario").nivel, "sin-datos");
+});

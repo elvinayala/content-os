@@ -5,7 +5,7 @@ import { Alerta, Barra, Bonos, Carrera, MiDiario } from "@/components/ritmo/aren
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
-import { KPIS_VENTAS, kpisDelMes, type Empresa, type RolVentas } from "@/lib/ventas/reglas";
+import { KPIS_VENTAS, kpisDelMes, rankingVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -91,6 +91,8 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         equipo={ar.gente.filter((g) => g.rol !== "director_ventas").map((g) => ({ userId: g.userId, nombre: g.nombre }))}
         bonos={bonosFilas.map((b) => ({ id: b.id, titulo: b.titulo, detalle: b.detalle, monto: b.monto, rol: b.rol, desde: b.desde, hasta: b.hasta, estado: b.estado, ganador: b.ganadorId ? (nombres.get(b.ganadorId) ?? null) : null, creadoPor: b.creadoPor ? (nombres.get(b.creadoPor) ?? null) : null }))}
       />
+
+      {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} /> : null}
 
       {gestiona && ar.kpisEquipo.length ? (
         <section className="panel flex flex-col gap-4 p-5">
@@ -185,5 +187,64 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         </section>
       ) : null}
     </div>
+  );
+}
+
+// Ranking de ventas con metas diarias y recomendaciones (30/sep, Elvin): lo ven Nahuel (director), Aure y Elvin.
+const NIVEL: Record<Nivel, { t: string; c: string }> = {
+  elite: { t: "Élite", c: "bg-primary/15 text-primary ring-primary/30" },
+  verde: { t: "En meta", c: "bg-emerald-400/10 text-emerald-300 ring-emerald-400/30" },
+  amarillo: { t: "Atención", c: "bg-amber-400/10 text-amber-300 ring-amber-400/30" },
+  rojo: { t: "Alerta roja", c: "bg-red-500/10 text-red-300 ring-red-500/30" },
+  "sin-datos": { t: "Sin diario", c: "bg-white/5 text-muted-foreground ring-border" },
+};
+
+function RankingVentas({ filas }: { filas: Parameters<typeof rankingVentas>[0] }) {
+  const ranking = rankingVentas(filas);
+  return (
+    <section id="ranking" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
+      <div>
+        <h2 className="text-sm font-semibold">Ranking de ventas · este mes</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Promedio por día que llenó su diario. Metas: setters 125 llamadas, 30 conectadas y 3–5 agendas al día · chatters 20–30 conversaciones (mínimo 15), 5–10 pases y 3–5 agendas · closers 30 % de close rate (menos de 20 % alerta roja, 40 % élite).
+        </p>
+      </div>
+      {ROLES.map((r) => {
+        const del = ranking.filter((f) => f.rol === r.id);
+        if (!del.length) return null;
+        return (
+          <div key={r.id} className="flex flex-col gap-2">
+            <p className="text-xs font-medium text-muted-foreground">{r.t}</p>
+            <ol className="flex flex-col gap-2">
+              {del.map((f) => (
+                <li key={f.userId} className="rounded-xl bg-white/[0.03] p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="grid size-7 place-items-center rounded-full bg-white/5 text-xs font-bold">{f.posicion}</span>
+                    <span className="font-medium">{f.nombre}</span>
+                    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1", NIVEL[f.nivel].c)}>{NIVEL[f.nivel].t}</span>
+                    <span className="ml-auto text-xs text-muted-foreground">{f.dias} {f.dias === 1 ? "día" : "días"} con diario{f.rol === "closer" ? ` · ${usd(f.cash)} cobrado` : ""}</span>
+                  </div>
+                  {f.indicadores.length ? (
+                    <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
+                      {f.indicadores.map((i) => (
+                        <span key={i.id} className={cn("rounded-lg px-2 py-1 ring-1", NIVEL[i.nivel].c)}>
+                          {i.nombre}: <b className="tabular-nums">{i.valor}{i.unidad === "%" ? " %" : ""}</b>
+                          {i.unidad === "/día" ? <span className="opacity-70"> /día · meta {i.meta}</span> : i.unidad === "%" ? <span className="opacity-70"> · meta {i.meta}</span> : null}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <ul className="mt-2 flex flex-col gap-0.5 text-xs text-muted-foreground">
+                    {f.recomendaciones.map((x) => (
+                      <li key={x}>→ {x}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      })}
+    </section>
   );
 }

@@ -269,7 +269,7 @@ export interface Arena {
   gente: Vendedor[];
   comisiones: FilaComision[]; // solo si quien mira es director o dirección
   mio: { rol: RolVentas; m: Marcador; goal: number | null; diario: Awaited<ReturnType<typeof diarioDelMes>> } | null;
-  kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number }[]; // KPIs del diario (mes), para el director y la dirección
+  kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[]; // KPIs del diario (mes), para el director y la dirección; `dias` = días que llenó su diario
 }
 
 export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa): Promise<Arena> {
@@ -301,6 +301,6 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
     gente,
     comisiones: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, m: marcadorDe(g) })) : [],
     mio: yo ? { rol: yo.rol, m: marcadorDe(yo), goal: await goalDe(u.id, mes).catch(() => null), diario: diario.filter((d) => d.userId === u.id) } : null,
-    kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(diario.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0) })) : [],
+    kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(diario.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0), dias: diario.filter((d) => d.userId === g.userId && d.kpis && Object.keys(d.kpis).length).length })) : [],
   };
 }

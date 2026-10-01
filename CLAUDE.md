@@ -565,7 +565,9 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   para ejecutar; **Project Manager (Jessica y Ángela, 30/sep)** = onboardings · conversaciones con clientes que respondieron (llamada o
   chat) · casos solucionados · clientes contactados; **AI Engineer (Garrys, 30/sep)** = proyectos nuevos comenzados (AutoFlow,
   sistema nuevo, agente personalizado) · reuniones de onboarding · soporte a sistemas;
-  **Diseñador** = flyers/creativos aprobados (cuántos por negocio) · otros diseños. Nacen con peso 0 (se miden, no puntúan)
+  **Diseñador** = flyers/creativos aprobados (cuántos por negocio) · otros diseños; **Coordinadora de Retención y Alianzas (Lis, 30/sep)** =
+  referidos conseguidos · conversaciones de seguimiento con potenciales · clientes de churn contactados · de esos, con los que
+  conversó · proyectos especiales de EA Market LLC · contactos para alianzas/colaboradores/creadores. Nacen con peso 0 (se miden, no puntúan)
   hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). Fase 2: Meta (registro de actividad), n8n (alertas
   y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).
 - **Calibración**: el score solo lo ve admin (vista previa) hasta `DESEMPENO_SCORE=on`.
@@ -756,6 +758,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   Roger; Paola por dar de alta) = demos · cerradas · no cerradas + cash collected de la hoja. Cada quien los anota en
   Mi diario (con "Este mes"); el director y la dirección ven "KPIs del equipo · este mes" por puesto. Los campos viejos
   (conversaciones/agendas/presentaron) se llenan desde estos (`camposViejos`) para la comisión y el show-up de respaldo.
+  **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
+  día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
+  (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
+  candidato a bono), con nivel y recomendaciones (`rankingVentas` en `lib/ventas/reglas.ts`, tests en `tests/ventas.test.mjs`).
 - **Calendario de ausencias** (`/ritmo/calendario`, 28/sep; puro en `lib/desempeno/calendario-reglas.ts` + tests
   `tests/calendario.test.mjs`, datos `lib/desempeno/calendario.ts`): mes en cuadrícula + lista de quién está fuera (ausencias
   aprobadas + solicitudes en curso con borde punteado). Elvin: "los estrategas no se pueden ir dos a la vez" → `TOPE_FUERA`

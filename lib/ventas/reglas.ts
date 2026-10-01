@@ -532,3 +532,88 @@ export function camposViejos(rol: RolVentas, k: Record<string, number>) {
   if (rol === "closer") return { citas: 0, presentaron: k.demos ?? 0, conversaciones: 0, agendas: 0 };
   return { citas: 0, presentaron: 0, conversaciones: rol === "chatter" ? (k.conversaciones ?? 0) : (k.conectadas ?? 0), agendas: k.agendadas ?? 0 };
 }
+
+// ─── Ranking de ventas con metas diarias (30/sep, Elvin) ─────────────────────────────────────────
+// "A los setters se les piden 125 llamadas diarias… conectar por lo menos 30… 3 a 5 agendas. Los chatters, 20 a 30
+// conversaciones (mínimo 15), 5 a 10 pases y 3 a 5 agendas. Los closers, 30 % de close rate: menos de 20 alerta roja,
+// 20 a 30 amarilla, 30 para arriba súper, 40 élite (se puede considerar bono)." Lo ven Nahuel, Aure y Elvin en la Arena.
+
+export interface MetaDiaria {
+  min: number; // por debajo = rojo
+  meta: number; // desde aquí = verde
+  top?: number; // excelente
+}
+
+export const METAS_DIARIAS: Partial<Record<RolVentas, Record<string, MetaDiaria>>> = {
+  setter: { llamadas: { min: 100, meta: 125 }, conectadas: { min: 25, meta: 30 }, agendadas: { min: 3, meta: 3, top: 5 } },
+  chatter: { conversaciones: { min: 15, meta: 20, top: 30 }, pases: { min: 5, meta: 5, top: 10 }, agendadas: { min: 3, meta: 3, top: 5 } },
+};
+
+export const CLOSE_RATE = { rojo: 20, super: 30, elite: 40 };
+
+export type Nivel = "elite" | "verde" | "amarillo" | "rojo" | "sin-datos";
+
+export interface FilaRankingVentas {
+  posicion: number;
+  userId: string;
+  nombre: string;
+  rol: RolVentas;
+  dias: number;
+  nivel: Nivel;
+  puntaje: number; // 0-100 para ordenar
+  indicadores: { id: string; nombre: string; valor: number; meta: string; nivel: Nivel; unidad: "/día" | "%" | "total" }[];
+  recomendaciones: string[];
+  cash: number;
+}
+
+const nivelDe = (v: number, m: MetaDiaria): Nivel => (m.top !== undefined && v >= m.top ? "elite" : v >= m.meta ? "verde" : v >= m.min ? "amarillo" : "rojo");
+const PEOR: Nivel[] = ["sin-datos", "rojo", "amarillo", "verde", "elite"];
+const r1 = (x: number) => Math.round(x * 10) / 10;
+
+export function nivelCloseRate(pct: number): Nivel {
+  return pct >= CLOSE_RATE.elite ? "elite" : pct >= CLOSE_RATE.super ? "verde" : pct >= CLOSE_RATE.rojo ? "amarillo" : "rojo";
+}
+
+export function rankingVentas(gente: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[]): FilaRankingVentas[] {
+  const filas = gente.map((g): Omit<FilaRankingVentas, "posicion"> => {
+    const nombreKpi = (id: string) => KPIS_VENTAS[g.rol].find((k) => k.id === id)?.nombre ?? id;
+    const rec: string[] = [];
+    if (!g.dias) {
+      return { userId: g.userId, nombre: g.nombre, rol: g.rol, dias: 0, nivel: "sin-datos", puntaje: 0, indicadores: [], recomendaciones: ["No ha llenado su diario este mes: sin eso no se puede medir ni comisionar bien."], cash: g.cash };
+    }
+    if (g.rol === "closer") {
+      const demos = g.mes.demos ?? 0;
+      const cerradas = g.mes.cerradas ?? 0;
+      const pct = demos ? Math.round((cerradas / demos) * 100) : 0;
+      const nivel: Nivel = demos ? nivelCloseRate(pct) : "sin-datos";
+      if (!demos) rec.push("No tiene demos anotadas este mes.");
+      else if (nivel === "rojo") rec.push(`Close rate de ${pct} %: alerta roja (menos de ${CLOSE_RATE.rojo} %). Revisar sus llamadas con Nahuel: objeciones, oferta y cierre.`);
+      else if (nivel === "amarillo") rec.push(`Va en ${pct} %: le faltan ${CLOSE_RATE.super - pct} puntos para el ${CLOSE_RATE.super} %. Practicar el cierre y el seguimiento de los que dijeron "lo pienso".`);
+      else if (nivel === "elite") rec.push(`Close rate élite (${pct} %): candidato a bono.`);
+      const indicadores = [
+        { id: "close_rate", nombre: "Close rate", valor: pct, meta: `${CLOSE_RATE.super} % (élite ${CLOSE_RATE.elite} %)`, nivel, unidad: "%" as const },
+        { id: "demos", nombre: "Demos", valor: demos, meta: "—", nivel: "verde" as Nivel, unidad: "total" as const },
+        { id: "cerradas", nombre: "Cerradas", valor: cerradas, meta: "—", nivel: "verde" as Nivel, unidad: "total" as const },
+      ];
+      return { userId: g.userId, nombre: g.nombre, rol: g.rol, dias: g.dias, nivel, puntaje: demos ? Math.min(100, (pct / CLOSE_RATE.elite) * 100) : 0, indicadores, recomendaciones: rec, cash: g.cash };
+    }
+    const metas = METAS_DIARIAS[g.rol] ?? {};
+    const indicadores = Object.entries(metas).map(([id, m]) => {
+      const prom = r1((g.mes[id] ?? 0) / g.dias);
+      return { id, nombre: nombreKpi(id), valor: prom, meta: m.top ? `${m.meta}–${m.top}` : `${m.meta}`, nivel: nivelDe(prom, m), unidad: "/día" as const };
+    });
+    for (const i of indicadores) if (i.nivel === "rojo" || i.nivel === "amarillo") rec.push(`Subir ${i.nombre.toLowerCase()}: promedia ${i.valor} al día y la meta es ${i.meta}.`);
+    if (g.rol === "setter" && (g.mes.llamadas ?? 0) > 0) {
+      const conexion = Math.round(((g.mes.conectadas ?? 0) / (g.mes.llamadas ?? 1)) * 100);
+      if (conexion < 20) rec.push(`Conecta el ${conexion} % de sus llamadas: revisar horarios y lista (la meta es 30 de 125 ≈ 24 %).`);
+    }
+    if (!rec.length) rec.push("Va en meta en todo. 👏");
+    const nivel = indicadores.reduce<Nivel>((peor, i) => (PEOR.indexOf(i.nivel) < PEOR.indexOf(peor) ? i.nivel : peor), "elite");
+    const puntaje = Math.round(indicadores.reduce((s, i) => s + Math.min(1.2, i.valor / (metas[i.id].meta || 1)), 0) / Math.max(1, indicadores.length) * (100 / 1.2));
+    return { userId: g.userId, nombre: g.nombre, rol: g.rol, dias: g.dias, nivel, puntaje, indicadores, recomendaciones: rec, cash: g.cash };
+  });
+  const orden: RolVentas[] = ["closer", "setter", "chatter"];
+  return filas
+    .sort((a, b) => orden.indexOf(a.rol) - orden.indexOf(b.rol) || b.puntaje - a.puntaje || b.cash - a.cash)
+    .map((f, i, xs) => ({ ...f, posicion: xs.slice(0, i).filter((x) => x.rol === f.rol).length + 1 }));
+}

@@ -67,6 +67,15 @@ const KPIS_REPORTADOS = {
     reportado("reuniones_onboarding", "Reuniones de onboarding", "¿De qué clientes?"),
     reportado("soporte", "Soporte a sistemas", "¿Qué sistema, de qué cliente y qué fue?", "Arreglos, ajustes o dudas resueltas de un sistema que ya está funcionando"),
   ],
+  // 30/sep (Elvin, para Lis): retención (referidos, seguimiento, lista de churn), proyectos especiales y alianzas.
+  retencion_alianzas: [
+    reportado("referidos", "Referidos conseguidos", "¿De quién y para qué marca?"),
+    reportado("seguimiento", "Conversaciones de seguimiento con clientes potenciales", "¿Con quiénes?", "Personas con las que hablaste para darle seguimiento (no mensajes sin respuesta)"),
+    reportado("churn_contactados", "Clientes de la lista de churn contactados", "¿Cuáles?"),
+    reportado("churn_conversaron", "Clientes de churn con los que conversaste", "¿Cuáles y qué dijeron?", "De los que contactaste, los que te respondieron"),
+    reportado("proyectos_especiales", "Proyectos especiales de EA Market LLC", "¿Cuál?"),
+    reportado("alianzas", "Contactos para alianzas, colaboradores o creadores", "¿Quiénes y para qué marca?"),
+  ],
   disenador: [
     reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
     reportado("otros_disenos", "Otros diseños (logo, presentación…)", "¿Cuáles y para quién?"),
@@ -121,7 +130,7 @@ export const PUESTOS: Puesto[] = [
   // Puestos sin KPIs conectados todavía (28/sep/2026, pedido de Aure): su nota sale de la asistencia.
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
   { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
-  { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", kpis: [] },
+  { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas") },
   { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", manual: manualReportado("ai_engineer"), kpis: kpisReportados("ai_engineer") },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
