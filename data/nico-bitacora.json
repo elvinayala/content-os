@@ -377,6 +377,14 @@
       "porque": "Aure confirmó que Dilan trabaja leads de las dos marcas; Elvin aprobó ampliar la lista cerrada de AIB.",
       "verificado": "Consulta en prod: leads_acceso de Dilan = level_up/todos + ai_borinquen/todos; perfil no es solo_ritmo, así que accesoLeads(AIB) le da entrada. Sin cambio de código ni deploy. /login 200.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-01T18:21:48.334Z",
+      "plataforma": "content-os (Pulse · Leads LU)",
+      "que": "[Solicitud de Aure #141] Lead de 804-593-8646 (Pedro) que no aparecía al buscar. Sí existe: está como \"Tito\" (nombre de perfil de WhatsApp) en el embudo CLOSERS, abierto, creado 1/oct 4:06 AM PR. Aparte hay una tarjeta \"Pedro Chamorro 12/05 -12:00 m.\" en WHATSAPP SIN teléfono (creada a mano). La búsqueda funciona: desde WHATSAPP el número lo enseña en la franja de otros embudos (CLOSERS · Tito). Buscar \"Pedro\" no encuentra a Tito porque el nombre es otro. Sin cambio de código ni de datos.",
+      "porque": "Seguimiento de #138; Elvin aprobó revisar el caso real.",
+      "verificado": "Consulta en prod: 1 trato con 18045938646 (Tito, CLOSERS). Repetí la consulta de buscarEnMarca desde WHATSAPP con \"804-593-8646\" → devuelve Tito/CLOSERS. La búsqueda de otros embudos está en prod desde las 8:20 AM (b2eeab6, deploy Ready). No toqué ninguna de las dos tarjetas.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
