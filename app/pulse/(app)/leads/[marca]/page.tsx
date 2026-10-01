@@ -11,7 +11,7 @@ export default async function LeadsEmbudo({ params, searchParams }: { params: Pr
   const { marca } = await params;
   const c = await contextoLeads(marca, await searchParams);
   const [tratos, otros] = await Promise.all([
-    c.embudo ? tratosAbiertos(c.embudo.id, { duenoId: c.dueno, q: c.q, fecha: c.fecha }) : Promise.resolve([]),
+    c.embudo ? tratosAbiertos(c.embudo.id, { duenoId: c.dueno, q: c.q, fecha: c.fecha, rubro: c.rubro }) : Promise.resolve([]),
     c.q ? buscarEnMarca(c.m.marca, c.q, c.embudo?.id).catch(() => []) : Promise.resolve([]),
   ]);
   return (
@@ -35,6 +35,8 @@ export default async function LeadsEmbudo({ params, searchParams }: { params: Pr
         exportar={c.exportar} manejaEquipo={c.manejaEquipo}
         etapas={c.etapas} equipoReparto={c.equipoReparto}
         fecha={c.fecha}
+        rubros={c.rubros}
+        rubro={c.rubro}
       />
       <OtrosResultados marcaSlug={c.m.slug} q={c.q} resultados={otros} />
       {c.embudo ? (

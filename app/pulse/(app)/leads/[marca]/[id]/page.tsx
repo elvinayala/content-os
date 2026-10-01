@@ -38,6 +38,8 @@ export default async function LeadDetalle({ params }: { params: Promise<{ marca:
         puedeBorrar={c.puedeEditar}
         puedeMarcarEquipo={c.puedeEditar || c.manejaEquipo}
         etapasDeOtros={etapasDeOtros}
+        rubros={c.rubros}
+        puedeCrearRubro={c.puedeEditar}
         d={{
           trato: {
             id: d.trato.id,

@@ -6,6 +6,8 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/pulse/db";
 
 import { leerNichoIA } from "./reglas";
+import { listarRubros } from "./rubros";
+import { rubroDeCatalogo } from "./rubros-reglas";
 import { leadsHistorial, leadsTratos } from "./schema";
 
 // Elvin (27/sep): "que diga el nombre del negocio… o por lo menos la industria o el nicho". Los leads de
@@ -17,8 +19,9 @@ import { leadsHistorial, leadsTratos } from "./schema";
 const MODELO = process.env.LEADS_NICHO_MODEL || "claude-haiku-4-5-20251001";
 const INTENTOS = 3;
 
-const INSTRUCCIONES = `Te paso los primeros mensajes que una persona le escribió por WhatsApp a una agencia de marketing de Puerto Rico. Di a qué se dedica su negocio.
-Responde SOLO con JSON: {"negocio": "<nombre del negocio si lo dice, si no null>", "nicho": "<industria o nicho en 1 a 3 palabras en español, p. ej. Construcción, Restaurante, Belleza, Bienes raíces, Salud, Refrigeración; null si no se sabe>"}.
+// El nicho es una etiqueta del catálogo de rubros (Aure, 1/oct); lo que no calce queda en "Otro".
+const instrucciones = (catalogo: string[]) => `Te paso los primeros mensajes que una persona le escribió por WhatsApp a una agencia de marketing de Puerto Rico. Di a qué se dedica su negocio.
+Responde SOLO con JSON: {"negocio": "<nombre del negocio si lo dice, si no null>", "nicho": "<UNA de estas etiquetas, escrita igual: ${catalogo.join(" | ")}; si no calza en ninguna, "Otro"; null si no se sabe>"}.
 No inventes: si los mensajes no dicen a qué se dedica (p. ej. solo "info" o "hola"), usa null.`;
 
 export async function detectarNicho(tratoId: string): Promise<{ negocio: string | null; nicho: string | null } | null> {
@@ -37,20 +40,22 @@ export async function detectarNicho(tratoId: string): Promise<{ negocio: string 
   const texto = mensajes.map((m) => (m.texto ?? "").trim()).filter(Boolean).join("\n").slice(0, 1500);
   if (texto.replace(/\s/g, "").length < 12) return null; // "hola" / "info": esperar al próximo mensaje
 
+  const catalogo = await listarRubros();
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const params = {
     model: MODELO,
     max_tokens: 1024,
     // Haiku no acepta thinking adaptativo ni effort (el 28/sep dio 400 y ningún lead sacaba nicho): solo en Sonnet/Opus.
     ...(/haiku/i.test(MODELO) ? {} : { thinking: { type: "adaptive" as const }, output_config: { effort: "low" as const } }),
-    system: INSTRUCCIONES,
+    system: instrucciones(catalogo),
     messages: [{ role: "user" as const, content: `Nombre en WhatsApp: ${t.nombre}\nMensajes:\n${texto}` }],
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
   };
   const resp = await anthropic.beta.messages.create(params as unknown as Anthropic.Beta.MessageCreateParamsNonStreaming);
   const salida = resp.stop_reason === "refusal" ? "" : resp.content.filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text").map((b) => b.text).join("");
-  const r = leerNichoIA(salida);
+  const leido = leerNichoIA(salida);
+  const r = { negocio: leido.negocio, nicho: rubroDeCatalogo(leido.nicho, catalogo) };
   await d
     .update(leadsTratos)
     .set({

@@ -27,7 +27,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
   const c = await contextoLeads(marca, sp);
   const estado = typeof sp.estado === "string" ? sp.estado : "abierto";
   const [filas, otros] = await Promise.all([
-    listaTratos(c.m.marca, { embudoId: c.embudo?.id, estado, duenoId: c.dueno, q: c.q, fecha: c.fecha }),
+    listaTratos(c.m.marca, { embudoId: c.embudo?.id, estado, duenoId: c.dueno, q: c.q, fecha: c.fecha, rubro: c.rubro }),
     c.q ? buscarEnMarca(c.m.marca, c.q, c.embudo?.id).catch(() => []) : Promise.resolve([]),
   ]);
   const qs = (extra: Record<string, string>) => {
@@ -42,7 +42,7 @@ export default async function LeadsLista({ params, searchParams }: { params: Pro
         <span className="text-sm font-semibold">Leads</span>
         <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{c.m.nombre}</span>
       </header>
-      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="lista" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} exportar={c.exportar} manejaEquipo={c.manejaEquipo} etapas={c.etapas} equipoReparto={c.equipoReparto} fecha={c.fecha} />
+      <BarraLeads marca={c.m.marca} marcaSlug={c.m.slug} marcaNombre={c.m.nombre} marcas={c.marcas} embudos={c.embudos} embudoId={c.embudo?.id ?? ""} vista="lista" usuarios={c.usuarios} yoId={c.u.id} puedeEditar={c.puedeEditar} exportar={c.exportar} manejaEquipo={c.manejaEquipo} etapas={c.etapas} equipoReparto={c.equipoReparto} fecha={c.fecha} rubros={c.rubros} rubro={c.rubro} />
       <OtrosResultados marcaSlug={c.m.slug} q={c.q} resultados={otros} />
       <div className="flex gap-1 px-4 py-2">
         {ESTADOS.map((e) => (

@@ -210,13 +210,22 @@ export async function buscarEnMarca(marca: Marca, q: string, excluirEmbudo?: str
     .limit(limite);
 }
 
-export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null } = {}): Promise<TratoTarjeta[]> {
+/** Filtro de rubro (datos.nicho): una etiqueta o "__sin" = sin rubro. */
+function condRubro(rubro?: string | null) {
+  if (!rubro) return null;
+  if (rubro === "__sin") return sql`coalesce(${leadsTratos.datos}->>'nicho', '') = ''`;
+  return sql`${leadsTratos.datos}->>'nicho' = ${rubro}`;
+}
+
+export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null } = {}): Promise<TratoTarjeta[]> {
   const d = await db();
   const conds = [eq(leadsTratos.embudoId, embudoId), eq(leadsTratos.estado, "abierto")];
   if (f.duenoId === "__sin") conds.push(isNull(leadsTratos.duenoId));
   else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
   const cf = condFecha(f.fecha);
   if (cf) conds.push(cf);
+  const cr = condRubro(f.rubro);
+  if (cr) conds.push(cr);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
     const dig = f.q.replace(/\D/g, "");
@@ -227,7 +236,7 @@ export async function tratosAbiertos(embudoId: string, f: { duenoId?: string | n
 }
 
 /** Vista de lista: todos los estados, filtrable. */
-export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?: string; duenoId?: string | null; q?: string; fecha?: FiltroFecha | null }) {
+export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?: string; duenoId?: string | null; q?: string; fecha?: FiltroFecha | null; rubro?: string | null }) {
   const d = await db();
   const conds = [eq(leadsTratos.marca, marca)];
   if (f.embudoId) conds.push(eq(leadsTratos.embudoId, f.embudoId));
@@ -236,6 +245,8 @@ export async function listaTratos(marca: Marca, f: { embudoId?: string; estado?:
   else if (f.duenoId) conds.push(eq(leadsTratos.duenoId, f.duenoId));
   const cf = condFecha(f.fecha);
   if (cf) conds.push(cf);
+  const cr = condRubro(f.rubro);
+  if (cr) conds.push(cr);
   if (f.q?.trim()) {
     const q = `%${f.q.trim()}%`;
     conds.push(or(ilike(leadsTratos.nombre, q), ilike(leadsTratos.negocio, q), ilike(leadsTratos.email, q), ilike(leadsTratos.telefono, `%${f.q.replace(/\D/g, "") || "~"}%`))!);

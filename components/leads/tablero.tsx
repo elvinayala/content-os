@@ -58,6 +58,8 @@ export function BarraLeads({
   manejaEquipo = false,
   fecha = null,
   equipoReparto = [],
+  rubros = [],
+  rubro = null,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -74,6 +76,8 @@ export function BarraLeads({
   manejaEquipo?: boolean;
   fecha?: FiltroFecha | null;
   equipoReparto?: UsuarioUI[];
+  rubros?: string[];
+  rubro?: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -204,6 +208,30 @@ export function BarraLeads({
                 {FILTROS_FECHA.map((f) => (
                   <DropdownMenuItem key={f.id} onSelect={() => ir({ fecha: f.id })} className={cn(fecha === f.id && "font-semibold")}>
                     {f.nombre}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {vista !== "actividades" && rubros.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 max-w-44 gap-1">
+                  <span className="truncate">{rubro === "__sin" ? "Sin rubro" : (rubro ?? "Todos los rubros")}</span>
+                  <ChevronDown className="size-4 shrink-0 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="pulse max-h-80 w-56 overflow-y-auto" align="end">
+                <DropdownMenuItem onSelect={() => ir({ rubro: null })} className={cn(!rubro && "font-semibold")}>
+                  Todos los rubros
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => ir({ rubro: "__sin" })} className={cn(rubro === "__sin" && "font-semibold")}>
+                  Sin rubro
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {rubros.map((r) => (
+                  <DropdownMenuItem key={r} onSelect={() => ir({ rubro: r })} className={cn(rubro === r && "font-semibold")}>
+                    {r}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { actividadAction, actualizarLeadAction, cerrarLeadAction, completarActividadAction, eliminarLeadAction, marcarDelEquipoAction, marcarLeidoAction, moverLeadAction, notaAction, whatsappAction } from "@/app/pulse/(app)/leads/actions";
 import { ICONO_ACTIVIDAD } from "@/components/leads/actividades";
 import { PerdidoDialog, type UsuarioUI } from "@/components/leads/dialogos";
+import { RubroLead } from "@/components/leads/rubro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,7 +52,7 @@ function manana10(): string {
   return `${ymd}T10:00`;
 }
 
-export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEquipo = false, etapasDeOtros }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; puedeMarcarEquipo?: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]> }) {
+export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEquipo = false, etapasDeOtros, rubros = [], puedeCrearRubro = false }: { d: DetalleUI; marcaSlug: string; usuarios: UsuarioUI[]; puedeBorrar: boolean; puedeMarcarEquipo?: boolean; etapasDeOtros: Record<string, { id: string; nombre: string }[]>; rubros?: string[]; puedeCrearRubro?: boolean }) {
   const router = useRouter();
   const t = d.trato;
   const [pend, start] = useTransition();
@@ -166,6 +167,7 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
               <Input className="h-8 text-sm text-foreground" value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} onBlur={() => guardarCampo(k)} onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()} />
             </label>
           ))}
+          <RubroLead tratoId={t.id} actual={typeof t.datos.nicho === "string" ? t.datos.nicho : null} rubros={rubros} puedeCrear={puedeCrearRubro} />
           {t.telefono && (
             <a href={`https://wa.me/${t.telefono}`} target="_blank" rel="noreferrer" className="-mt-1 text-xs text-[#128c7e] hover:underline">
               {telefonoLegible(t.telefono)} · abrir en WhatsApp

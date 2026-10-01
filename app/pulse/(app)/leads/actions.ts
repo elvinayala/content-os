@@ -22,7 +22,7 @@ import {
 import { slugDeMarca, type Marca } from "@/lib/leads/reglas";
 import { leadsActividades, leadsEmbudos, leadsTratos } from "@/lib/leads/schema";
 import { enviarWhatsapp } from "@/lib/leads/timelines";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 type Res = { ok: boolean; error?: string; id?: string };
 
@@ -117,6 +117,30 @@ export async function actualizarLeadAction(tratoId: string, cambios: { nombre?: 
   const r = await actualizarTrato(tratoId, cambios, p.u.id);
   refrescar(p.t.marca, tratoId);
   return r;
+}
+
+/** Rubro del negocio (etiqueta del catálogo) o null para quitarlo. Se guarda en datos.nicho. */
+export async function cambiarRubroAction(tratoId: string, rubro: string | null): Promise<Res> {
+  const p = await puedeTrato(tratoId);
+  if (!p) return { ok: false, error: "Sin acceso" };
+  const { listarRubros } = await import("@/lib/leads/rubros");
+  if (rubro !== null && !(await listarRubros()).includes(rubro)) return { ok: false, error: "Esa etiqueta no existe" };
+  const d = await db();
+  await d
+    .update(leadsTratos)
+    .set({ datos: rubro === null ? sql`coalesce(${leadsTratos.datos}, '{}'::jsonb) - 'nicho'` : sql`coalesce(${leadsTratos.datos}, '{}'::jsonb) || ${JSON.stringify({ nicho: rubro })}::jsonb` })
+    .where(eq(leadsTratos.id, tratoId));
+  refrescar(p.t.marca, tratoId);
+  return { ok: true };
+}
+
+/** Crear una etiqueta de rubro nueva (común a las dos marcas). Solo la dirección y las editoras. */
+export async function crearRubroAction(nombre: string): Promise<Res & { nombre?: string }> {
+  const u = await usuarioActual();
+  if (!u) return { ok: false, error: "Sin sesión" };
+  if (u.rol !== "admin" && u.rol !== "editor") return { ok: false, error: "Solo la dirección crea etiquetas" };
+  const { crearRubro } = await import("@/lib/leads/rubros");
+  return crearRubro(nombre, u.id);
 }
 
 export async function eliminarLeadAction(tratoId: string): Promise<Res> {

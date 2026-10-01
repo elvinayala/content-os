@@ -8,6 +8,8 @@ import { manejaEquipo } from "./equipo-datos";
 import { modoExportar } from "./exportar";
 import { accesoLeads, asegurarSemilla, equipoReparto, etapasDe, listarEmbudos, marcasConAcceso, usuariosActivos } from "./repo";
 import { FILTROS_FECHA, MARCAS, slugDeMarca, type FiltroFecha } from "./reglas";
+import { listarRubros } from "./rubros";
+import { SIN_RUBRO } from "./rubros-reglas";
 
 /** Todo lo que necesita cualquier pantalla de Leads de una marca: acceso, embudos, etapas, gente. */
 export async function contextoLeads(marcaSlug: string, sp: Record<string, string | string[] | undefined>) {
@@ -25,6 +27,8 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
   // "Solo mis leads": el filtro de dueño queda fijo en la persona.
   const dueno = acceso.alcance === "mios" ? u.id : typeof sp.dueno === "string" ? sp.dueno : null;
   const q = typeof sp.q === "string" ? sp.q : "";
+  const rubros = await listarRubros();
+  const rubro = typeof sp.rubro === "string" && (sp.rubro === SIN_RUBRO || rubros.includes(sp.rubro)) ? sp.rubro : null;
   const fecha = typeof sp.fecha === "string" && FILTROS_FECHA.some((f) => f.id === sp.fecha) ? (sp.fecha as FiltroFecha) : null;
   return {
     u,
@@ -39,6 +43,8 @@ export async function contextoLeads(marcaSlug: string, sp: Record<string, string
     dueno,
     q,
     fecha,
+    rubros,
+    rubro,
     puedeEditar: u.rol === "admin" || u.rol === "editor",
     exportar: modoExportar(u, process.env.LEADS_EXPORTAR || undefined), // "directo" (Elvin) | "con_ok" (Nahuel, Aure) | null
     manejaEquipo: await manejaEquipo(u, m.marca).catch(() => false), // director de ventas, editoras, Elvin
