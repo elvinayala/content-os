@@ -67,13 +67,13 @@ export function GraficaPersona({ userId, nombre, puesto, kpis, dias }: { userId:
                         <b className="num text-base text-foreground">{total}</b> en la semana
                       </span>
                     </div>
-                    <div className="mt-3 flex h-28 items-end gap-1.5">
+                    <div className="mt-3 flex items-end gap-1.5">
                       {dias.map((d, i) => {
                         const v = vals[i];
                         return (
                           <div key={d.fecha} className="flex flex-1 flex-col items-center gap-1">
                             <span className="text-[10px] text-muted-foreground tabular-nums">{v ?? ""}</span>
-                            <div className="flex w-full flex-1 items-end">
+                            <div className="flex h-20 w-full items-end">
                               <div
                                 className={cn("w-full rounded-t-md", v === null ? "h-0.5 bg-white/10" : v === 0 ? "h-0.5 bg-white/25" : "bg-gradient-to-t from-primary/50 to-primary")}
                                 style={v ? { height: `${Math.max(8, (v / max) * 100)}%` } : undefined}
