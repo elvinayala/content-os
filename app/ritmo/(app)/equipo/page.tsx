@@ -177,7 +177,10 @@ export default async function DesempenoPage({ searchParams }: { searchParams: Pr
                   ))}
                 </ul>
               ) : null}
-              <p className="mt-2 text-[11px] text-muted-foreground">A RR.HH. le llega por Slack al final del día (lun–vie 7:30 PM).</p>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                A RR.HH. le llega por Slack al final del día (lun–vie 7:30 PM). ·{" "}
+                <Link href="/ritmo/ranking" className="text-primary hover:underline">Ver lo de ayer y el ranking del mes →</Link>
+              </p>
             </details>
           ) : null}
 

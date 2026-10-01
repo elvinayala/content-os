@@ -1,4 +1,4 @@
-import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, Newspaper, Plane, ShieldCheck, Trophy, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, ListOrdered, Newspaper, Plane, ShieldCheck, Trophy, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
@@ -66,6 +66,7 @@ export default async function HoyPage() {
   const accesos = [
     { href: "/ritmo/equipo", t: "Equipo", d: "Asistencia y KPIs", i: Users },
     { href: "/ritmo/personas", t: "Personas", d: "Fichas y nómina", i: UsersRound },
+    { href: "/ritmo/ranking", t: "Ranking", d: "Lo de ayer y el mes", i: ListOrdered },
     ...(direccion ? [{ href: "/ritmo/agentes", t: "Agentes", d: "Equipo digital", i: Bot }] : []),
     { href: "/ritmo/arena", t: "Arena", d: "Ventas y comisiones", i: Trophy },
     { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar", i: Inbox, n: porFirmar },

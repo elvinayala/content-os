@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, KeyRound, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, KeyRound, ListOrdered, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -42,6 +42,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     : { "/ritmo/empresa": "Empresa", "/ritmo/bienestar": "Empresa", "/ritmo/etica": "Empresa" };
   const extras: ItemMenu[] = equipo
     ? [
+        { href: "/ritmo/ranking", nombre: "Ranking", icono: ListOrdered, activo: path.startsWith("/ritmo/ranking"), grupo: "Equipo" },
         { href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena"), grupo: "Equipo" },
         { href: "/ritmo/calendario", nombre: "Calendario", icono: CalendarDays, activo: path.startsWith("/ritmo/calendario"), grupo: "Equipo" },
         { href: "/ritmo/noticias", nombre: "Noticias", icono: Newspaper, activo: path.startsWith("/ritmo/noticias"), grupo: "Empresa" },

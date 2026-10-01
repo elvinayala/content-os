@@ -790,6 +790,15 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   migración 0040, `guardarWifiAction`), una red nueva **avisa a RR.HH.** (`avisarRedNueva` con `after()`: una vez por red y
   máx. 1 por persona al día; se aprueba en Seguridad y no vuelve a avisar) y la persona ve el recordatorio de proteger los
   datos (`AvisoRedNueva` + toast `TEXTO_RED_NUEVA`).
+- **Ranking y reportes** (30/sep, Elvin: "por la mañana ver lo de ayer… y mensual un ranking hasta el 100 con lo bueno, lo malo y
+  qué mejorar"): `/ritmo/ranking` (vista maestra; en "Más" y en Hoy) con **Ayer** (último día laborable: entrada · almuerzo · salida,
+  TODOS los KPIs con su detalle y bloqueos, por departamento, sin hacer clic) y **Mes** (índice 0-100 = 30 % asistencia · 20 %
+  constancia de KPIs · 50 % producción vs. el mejor de su mismo puesto; sin KPIs = solo asistencia; bueno/malo/mejorar). Puro en
+  `lib/desempeno/ranking.ts` (tests `tests/ranking.test.mjs`), adaptador `ranking-datos.ts`. **Racha baja** = 3+ días laborables
+  seguidos sin marcar, > 30 min tarde o sin KPIs → alerta en Ranking, en el "Reporte de hoy" de Equipo y en el reporte diario
+  (`?tarea=reporte`, L-V 7:30 PM PR a RR.HH.; `lib/desempeno/reporte-dia.ts`). Mensual: `?tarea=ranking-mes` (día 1, 9 AM PR) →
+  RR.HH. + Carilin. Equipo: gráfica de KPIs por persona (`components/ritmo/grafica-persona.tsx`) y **sin horas trabajadas** (solo
+  entrada, almuerzo y salida; `DiaPersona.almuerzo`).
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para

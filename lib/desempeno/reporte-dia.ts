@@ -11,7 +11,7 @@ export interface PersonaReporte {
 }
 
 export interface Alerta {
-  tipo: "sin-marcar" | "tarde" | "abierta" | "almuerzo" | "bloqueo" | "manual" | "red";
+  tipo: "sin-marcar" | "racha" | "tarde" | "abierta" | "almuerzo" | "bloqueo" | "manual" | "red";
   titulo: string;
   detalle: string;
   grave: boolean;
@@ -19,7 +19,7 @@ export interface Alerta {
 
 export const ALMUERZO_LARGO_MIN = 65;
 
-export function reporteDelDia(gente: PersonaReporte[], extra: { manualPendientes: number; redesNuevas: string[] }): { normal: boolean; resumen: string; alertas: Alerta[] } {
+export function reporteDelDia(gente: PersonaReporte[], extra: { manualPendientes: number; redesNuevas: string[]; rachas?: { nombre: string; dias: number; motivo: string }[] }): { normal: boolean; resumen: string; alertas: Alerta[] } {
   const tocaba = gente.filter((g) => g.estado !== "libre");
   const marcaron = tocaba.filter((g) => ["trabajando", "a_tiempo", "tarde"].includes(g.estado));
   const alertas: Alerta[] = [];
@@ -27,6 +27,9 @@ export function reporteDelDia(gente: PersonaReporte[], extra: { manualPendientes
 
   const sin = tocaba.filter((g) => g.estado === "ausente");
   if (sin.length) alertas.push({ tipo: "sin-marcar", titulo: `${sin.length} sin marcar`, detalle: nombres(sin.map((g) => g.nombre)), grave: true });
+  // Varios días seguidos con baja productividad (30/sep, Elvin): sin marcar, muy tarde o sin KPIs.
+  const rachas = extra.rachas ?? [];
+  if (rachas.length) alertas.push({ tipo: "racha", titulo: `${rachas.length} con varios días de baja productividad`, detalle: rachas.map((r) => `${r.nombre} (${r.dias} días: ${r.motivo})`).join(", "), grave: true });
   const tarde = marcaron.filter((g) => g.minutosTarde > 15).sort((a, b) => b.minutosTarde - a.minutosTarde);
   if (tarde.length) alertas.push({ tipo: "tarde", titulo: `${tarde.length} llegaron tarde`, detalle: nombres(tarde.map((g) => `${g.nombre} (${g.minutosTarde} min)`)), grave: false });
   const abierta = gente.filter((g) => g.sigueAbierta);

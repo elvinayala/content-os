@@ -49,6 +49,10 @@
       "schedule": "0 14 * * 1-5"
     },
     {
+      "path": "/api/cron/ritmo?tarea=ranking-mes",
+      "schedule": "0 13 1 * *"
+    },
+    {
       "path": "/api/cron/ritmo?tarea=reporte",
       "schedule": "30 23 * * 1-5"
     },
@@ -71,6 +75,10 @@
     {
       "path": "/api/cron/resumen-dia",
       "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/clientes-app",
+      "schedule": "0 14 * * *"
     }
   ],
   "regions": [

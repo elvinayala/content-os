@@ -4,6 +4,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
 import { avisarCorreo, avisarPersona, avisarRrhh, esc } from "@/lib/desempeno/avisar";
 import { tramosEntre } from "@/lib/desempeno/calendario";
+import { rankingMes, textoRankingMes } from "@/lib/desempeno/ranking";
+import { personasRank } from "@/lib/desempeno/ranking-datos";
 import { textoReporte } from "@/lib/desempeno/reporte-dia";
 import { reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
@@ -31,6 +33,7 @@ export const maxDuration = 120;
 //                  ausencia aprobada) para que les pregunte directo si están trabajando o si necesitan ayuda para entrar.
 //  ?tarea=reporte (L-V 7:30 PM PR) → a RR.HH.: el reporte del equipo de hoy (todo normal o qué verificar). El mismo
 //                  que Elvin ve en Equipo → "Reporte de hoy" (30/sep).
+//  ?tarea=ranking-mes (día 1, 9 AM PR) → a RR.HH. y a Carilin: el ranking de productividad del mes que terminó (?m=YYYY-MM).
 //  ?tarea=aniversarios (diario 9 AM PR) → quien cumple 12 meses: a la persona y a RR.HH./Carilin.
 // Todo sale del bot Command Center (lib/desempeno/avisar.ts), nunca desde la cuenta de Elvin.
 // En simulación hasta que Elvin dé el OK (DESEMPENO_AVISOS=real); ?dry=1 nunca manda nada.
@@ -95,8 +98,26 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, real, tarea, faltan: faltan.map((f) => f.perfil.nombre), envios });
   }
 
+  if (tarea === "ranking-mes") {
+    const m = req.nextUrl.searchParams.get("m");
+    const mes = m && /^\d{4}-\d{2}$/.test(m) ? m : sumarDias(hoy, -1).slice(0, 7);
+    const [y, mm] = mes.split("-").map(Number);
+    const fin = `${mes}-${String(new Date(Date.UTC(y, mm, 0)).getUTCDate()).padStart(2, "0")}`;
+    const hasta = fin < hoy ? fin : sumarDias(hoy, -1);
+    const panel = await armarPanel(SISTEMA, `${mes}-01`, hasta);
+    const filas = rankingMes(personasRank(panel.filas));
+    const nombre = new Date(`${mes}-15T12:00:00`).toLocaleDateString("es-PR", { month: "long", year: "numeric" });
+    const texto = textoRankingMes(filas, nombre, `https://ritmo.levelupmediapr.net/ritmo/ranking?v=mes&m=${mes}`, esc);
+    let enviados = 0;
+    if (real && filas.length) {
+      enviados += await avisarRrhh(texto);
+      if (await avisarCorreo(process.env.RITMO_RANKING_CARILIN ?? "carilin@levelupmediapr.net", texto)) enviados++;
+    }
+    return NextResponse.json({ ok: true, real, tarea, mes, personas: filas.length, enviados, texto });
+  }
+
   if (tarea === "reporte") {
-    const panel = await armarPanel(SISTEMA, hoy, hoy);
+    const panel = await armarPanel(SISTEMA, sumarDias(hoy, -10), hoy); // 10 días: para ver rachas de baja productividad
     const r = await reporteDeHoy(panel.filas);
     const texto = textoReporte(r, hoy, "https://ritmo.levelupmediapr.net/ritmo/equipo", esc);
     const enviados = real ? await avisarRrhh(texto) : 0;

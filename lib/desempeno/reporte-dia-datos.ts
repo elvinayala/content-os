@@ -5,6 +5,8 @@ import { and, eq, gte, inArray } from "drizzle-orm";
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
 import type { FilaPersona } from "./datos";
+import { rachaBaja } from "./ranking";
+import { personasRank } from "./ranking-datos";
 import { aMinutos, fechaPR, minutosPR } from "./reglas";
 import { reporteDelDia, type PersonaReporte } from "./reporte-dia";
 import { desempenoEventos, desempenoPoncheManual } from "./schema";
@@ -38,5 +40,10 @@ export async function reporteDeHoy(filas: FilaPersona[]) {
           .catch(() => [])
       : Promise.resolve([] as { nombre: string }[]),
   ]);
-  return reporteDelDia(gente, { manualPendientes: manual.length, redesNuevas: redes.map((r) => r.nombre) });
+  // Rachas: necesita varios días en `filas` (Equipo trae 7; el cron, 10).
+  const rachas = personasRank(filas).flatMap((p) => {
+    const r = rachaBaja(p);
+    return r ? [{ nombre: p.nombre, ...r }] : [];
+  });
+  return reporteDelDia(gente, { manualPendientes: manual.length, redesNuevas: redes.map((r) => r.nombre), rachas });
 }
