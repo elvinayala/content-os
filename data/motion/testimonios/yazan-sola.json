@@ -1,6 +1,6 @@
 {
  "video": "testimonios/yazan-corte.mp4",
- "dur": 46.07,
+ "dur": 49.57,
  "nombre": "Yazan",
  "rol": "Sola Boutique · tienda en línea",
  "etiqueta": "AI BORINQUEN · TESTIMONIO",
@@ -63,5 +63,9 @@
    "hasta": 46.07,
    "texto": "Por eso peleé con él por ustedes: porque hay resultados."
   }
- ]
+ ],
+ "durVideo": 46.07,
+ "cierre": {
+  "marca": "ai-borinquen"
+ }
 }

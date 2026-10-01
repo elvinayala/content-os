@@ -3,7 +3,8 @@
 // se le hizo arriba (para que se entienda la respuesta sin la voz de quien entrevista). Todo sale de props:
 //   npx remotion render src/index.ts Testimonio out/x.mp4 --props=<json { video, dur, nombre, rol, etiqueta?, subtitulos, pregunta? }>
 import React from "react";
-import { AbsoluteFill, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { TEMAS, type MarcaId } from "../fabrica/temas";
 import { loadFont } from "@remotion/google-fonts/SpaceGrotesk";
 import { loadFont as mono } from "@remotion/google-fonts/JetBrainsMono";
 
@@ -34,6 +35,25 @@ export type PropsTestimonio = {
   rebobinar?: { desde: number; hasta: number };
   /** Segundo en que aparece el rótulo con el nombre (por defecto 0.3; con gancho, después del rebobinado). */
   rotuloDesde?: number;
+  /** Cierre con la firma animada de la marca (el coquí de AI Borinquen que salta y aterriza). `dur` = video + cierre. */
+  cierre?: { marca: MarcaId };
+  /** Duración del video del testimonio (sin el cierre). Por defecto = dur. */
+  durVideo?: number;
+};
+
+/** La firma de la marca sola, como en los motion: fondo de la marca con un brillo suave y el logo animado. */
+const CierreMarca: React.FC<{ marca: MarcaId }> = ({ marca }) => {
+  const f = useCurrentFrame();
+  const { width, height, durationInFrames } = useVideoConfig();
+  const t = TEMAS[marca];
+  const v = height > width;
+  const op = Math.min(entra(f, 0, 8), 1 - entra(f, durationInFrames - 8, durationInFrames));
+  const Firma = t.Firma;
+  return (
+    <AbsoluteFill style={{ background: `radial-gradient(55% 55% at 50% 46%, ${t.brillo} 0%, ${t.fondo} 72%)`, alignItems: "center", justifyContent: "center", opacity: Math.max(op, 0.0001) }}>
+      <Firma size={v ? 470 : 380} entrada={f} />
+    </AbsoluteFill>
+  );
 };
 
 /** Resalta cifras (15,000 · $9,000 · 25 %) en el color de acento. */
@@ -42,16 +62,26 @@ const conCifras = (texto: string, acento: string) =>
 
 const entra = (f: number, a: number, b: number) => interpolate(f, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-export const Testimonio: React.FC<PropsTestimonio> = (props) =>
-  props.retrato ? <TestimonioRetrato {...props} /> : props.vertical ? <TestimonioVertical {...props} /> : <TestimonioHorizontal {...props} />;
+export const Testimonio: React.FC<PropsTestimonio> = (props) => {
+  const { fps } = useVideoConfig();
+  const cuerpo = props.retrato ? <TestimonioRetrato {...props} /> : props.vertical ? <TestimonioVertical {...props} /> : <TestimonioHorizontal {...props} />;
+  if (!props.cierre) return cuerpo;
+  const fv = Math.round((props.durVideo ?? props.dur) * fps);
+  return (
+    <AbsoluteFill style={{ background: TEMAS[props.cierre.marca].fondo }}>
+      <Sequence durationInFrames={fv}>{cuerpo}</Sequence>
+      <Sequence from={fv - 6}><CierreMarca marca={props.cierre.marca} /></Sequence>
+    </AbsoluteFill>
+  );
+};
 
 /** 9:16 con el video vertical a pantalla completa (30/sep, Yazan · Sola Boutique). Logos discretos arriba,
  *  rótulo con el nombre los primeros segundos y subtítulos en el tercio de abajo (fuera de la zona de los botones de Reels). */
-const TestimonioRetrato: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, logoCliente, logoMarca }) => {
+const TestimonioRetrato: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, logoCliente, logoMarca, durVideo }) => {
   const f = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const t = f / fps;
-  const fin = durationInFrames / fps;
+  const fin = durVideo ?? durationInFrames / fps;
   const sub = subtitulos.find((s) => t >= s.desde && t < s.hasta);
   const eSub = sub ? Math.min(entra(t, sub.desde, sub.desde + 0.18), 1 - entra(t, sub.hasta - 0.12, sub.hasta)) : 0;
   const rotulo = Math.min(entra(t, 0.4, 1.0), 1 - entra(t, 5.6, 6.2));
@@ -88,7 +118,7 @@ const TestimonioRetrato: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiq
   );
 };
 
-const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta, logoCliente, logoMarca, gancho, rebobinar, rotuloDesde = 0.3 }) => {
+const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, etiqueta, acento = "#4cc66e", subtitulos, pregunta, logoCliente, logoMarca, gancho, rebobinar, rotuloDesde = 0.3, durVideo }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
@@ -100,7 +130,8 @@ const TestimonioHorizontal: React.FC<PropsTestimonio> = ({ video, nombre, rol, e
   const enRew = !!rebobinar && t >= rebobinar.desde && t < rebobinar.hasta;
   const eLogos = entra(t, 0.2, 1.0);
   const { durationInFrames } = useVideoConfig();
-  const salida = 1 - entra(t, durationInFrames / fps - 0.5, durationInFrames / fps);
+  const finV = durVideo ?? durationInFrames / fps;
+  const salida = 1 - entra(t, finV - 0.5, finV);
   return (
     <AbsoluteFill style={{ background: "#081120", opacity: Math.max(salida, 0.0001) }}>
       <OffthreadVideo src={staticFile(video)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />

@@ -1,6 +1,6 @@
 {
  "video": "testimonios/yazan-h.mp4",
- "dur": 49.7,
+ "dur": 53.2,
  "nombre": "Yazan",
  "rol": "Sola Boutique · tienda en línea",
  "acento": "#2BFF88",
@@ -72,5 +72,9 @@
    "hasta": 49.67,
    "texto": "Por eso peleé con él por ustedes: porque hay resultados."
   }
- ]
+ ],
+ "durVideo": 49.7,
+ "cierre": {
+  "marca": "ai-borinquen"
+ }
 }
