@@ -40,6 +40,7 @@ export interface DatosFicha {
   salarioMensual: number | null;
   notas: string | null;
   contactoEmergencia: string | null;
+  ultimasVacaciones?: string | null;
 }
 
 export function FormDatos({ d }: { d: DatosFicha }) {
@@ -53,6 +54,7 @@ export function FormDatos({ d }: { d: DatosFicha }) {
     salarioMensual: d.salarioMensual?.toString() ?? "",
     notas: d.notas ?? "",
     contactoEmergencia: d.contactoEmergencia ?? "",
+    ultimasVacaciones: d.ultimasVacaciones ?? "",
   });
   const [cargando, setCargando] = useState(false);
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setV((x) => ({ ...x, [k]: e.target.value }));
@@ -73,6 +75,7 @@ export function FormDatos({ d }: { d: DatosFicha }) {
       <Campo label="Documento (tipo)"><Input className="h-10" value={v.documentoTipo} onChange={set("documentoTipo")} placeholder="Cédula, pasaporte…" /></Campo>
       <Campo label="Documento (número)"><Input className="h-10" value={v.documentoNumero} onChange={set("documentoNumero")} /></Campo>
       <Campo label="Contacto de emergencia"><Input className="h-10" value={v.contactoEmergencia} onChange={set("contactoEmergencia")} placeholder="Nombre y teléfono" /></Campo>
+      <Campo label="Últimas vacaciones (día que volvió)"><Input className="h-10" type="date" value={v.ultimasVacaciones} onChange={set("ultimasVacaciones")} title="Desde esta fecha se vuelven a acumular las vacaciones (máximo 8 días)" /></Campo>
       <Campo label="Salario mensual (USD)"><Input className="h-10" inputMode="decimal" value={v.salarioMensual} onChange={set("salarioMensual")} placeholder="900" /></Campo>
       <Campo label="Notas de RR.HH." className="sm:col-span-2"><Textarea rows={2} value={v.notas} onChange={set("notas")} /></Campo>
       <div className="flex justify-end sm:col-span-2">

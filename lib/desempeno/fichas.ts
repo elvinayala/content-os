@@ -100,7 +100,7 @@ export async function leerFichas(): Promise<Ficha[]> {
   return d.select().from(desempenoFichas);
 }
 
-export async function guardarFicha(p: Omit<Ficha, "updatedAt" | "updatedBy" | "fotoPath" | "completadaAt">, actorId: string) {
+export async function guardarFicha(p: Omit<Ficha, "updatedAt" | "updatedBy" | "fotoPath" | "completadaAt" | "ultimasVacaciones"> & { ultimasVacaciones?: string | null }, actorId: string) {
   const d = await db();
   const valores = { ...p, updatedBy: actorId, updatedAt: new Date() };
   await d.insert(desempenoFichas).values(valores).onConflictDoUpdate({ target: desempenoFichas.userId, set: valores });
@@ -241,7 +241,7 @@ export async function fichaCompleta(userId: string): Promise<FichaCompleta | nul
     ficha,
     archivos,
     ausencias,
-    saldos: perfil.fechaIngreso ? saldos(perfil.fechaIngreso, aus, hoy) : null,
+    saldos: perfil.fechaIngreso ? saldos(perfil.fechaIngreso, aus, hoy, ficha.ultimasVacaciones) : null,
     nomina: nominaMes({ salarioMensual: ficha.salarioMensual, mes, ajustes: ajustes.map((a) => ({ concepto: a.concepto, monto: a.monto })), ingreso: perfil.fechaIngreso, ausencias: aus }),
     ajustes,
   };
@@ -257,7 +257,7 @@ export async function resumenPersonas(): Promise<{ perfil: Perfil; ficha: Ficha 
   return perfiles.map((perfil) => {
     const ficha = fichas.find((f) => f.userId === perfil.userId) ?? null;
     const aus = ausencias.filter((a) => a.userId === perfil.userId).map(aAusencia);
-    return { perfil, ficha, saldos: perfil.fechaIngreso ? saldos(perfil.fechaIngreso, aus, hoy) : null };
+    return { perfil, ficha, saldos: perfil.fechaIngreso ? saldos(perfil.fechaIngreso, aus, hoy, ficha?.ultimasVacaciones) : null };
   });
 }
 

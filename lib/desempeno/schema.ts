@@ -140,6 +140,8 @@ export const desempenoFichas = pgTable("desempeno_fichas", {
   salarioMensual: doublePrecision("salario_mensual"), // USD
   notas: text("notas"),
   contactoEmergencia: text("contacto_emergencia"), // nombre y teléfono
+  // Día en que volvió de sus últimas vacaciones (30/sep, Elvin): desde ahí se acumula, con tope de 8 días. Lo pone RR.HH.
+  ultimasVacaciones: text("ultimas_vacaciones"),
   // Alta de empleado nuevo: al firmar contrato RR.HH. lo registra y la persona completa su ficha con el
   // link de bienvenida. Mientras sea null, Ritmo la manda a /ritmo/bienvenida.
   completadaAt: timestamp("completada_at", { withTimezone: true }),

@@ -1,0 +1,1 @@
+ALTER TABLE "desempeno_fichas" ADD COLUMN "ultimas_vacaciones" text;

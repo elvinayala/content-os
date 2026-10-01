@@ -288,6 +288,13 @@
       "when": 1790779668255,
       "tag": "0040_wifi-principal",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1790814891487,
+      "tag": "0041_ultimas-vacaciones",
+      "breakpoints": true
     }
   ]
 }

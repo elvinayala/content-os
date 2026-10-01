@@ -341,13 +341,16 @@ export async function guardarFichaAction(p: {
   salarioMensual: string;
   notas: string;
   contactoEmergencia?: string;
+  ultimasVacaciones?: string;
 }) {
   return envolver(async () => {
     const u = await requiereMaestro();
     const t = (x: string, n = 120) => x?.trim().slice(0, n) || null;
+    const ultimas = p.ultimasVacaciones?.trim() || null;
+    if (ultimas && (!/^\d{4}-\d{2}-\d{2}$/.test(ultimas) || ultimas > fechaPR(Date.now()))) throw new Error("Revisa la fecha de las últimas vacaciones");
     const salario = p.salarioMensual?.trim() ? Number(p.salarioMensual) : null;
     if (salario !== null && (!Number.isFinite(salario) || salario < 0 || salario > 100000)) throw new Error("Salario inválido");
-    const nueva = { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000), contactoEmergencia: t(p.contactoEmergencia ?? "", 160) };
+    const nueva = { userId: p.userId, telefono: t(p.telefono, 40), telefonoAlterno: t(p.telefonoAlterno, 40), ciudad: t(p.ciudad), pais: t(p.pais), documentoTipo: t(p.documentoTipo, 40), documentoNumero: t(p.documentoNumero, 60), salarioMensual: salario, notas: t(p.notas, 2000), contactoEmergencia: t(p.contactoEmergencia ?? "", 160), ...(p.ultimasVacaciones !== undefined ? { ultimasVacaciones: ultimas } : {}) };
     // El salario espera a Elvin (28/sep); lo demás de la ficha se guarda ya.
     if (necesitaAprobacion(u.rol)) {
       const previa = await fichas.leerFicha(p.userId);

@@ -21,6 +21,23 @@ test("vacaciones: 8 al año acumuladas por mes; se solicitan a los 12 meses", ()
   assert.equal(s12.puedeSolicitar, true);
 });
 
+test("vacaciones: tope de 8 días; se cuentan desde las últimas vacaciones (30/sep)", () => {
+  // 2 años sin registro de vacaciones: no pasa de 8.
+  assert.equal(saldos("2024-09-01", [], "2026-09-30").vacaciones.disponibles, 8);
+  // Volvió de vacaciones el 1/mar/2026: 6 meses → 4 días.
+  const s = saldos("2024-09-01", [], "2026-09-30", "2026-03-01");
+  assert.equal(s.vacaciones.acumuladas, 4);
+  assert.equal(s.vacaciones.disponibles, 4);
+  // Lo usado ANTES de esa fecha no se descuenta otra vez; lo de después sí.
+  const aus = [
+    { tipo: "vacaciones", desde: "2026-02-20", hasta: "2026-02-27", dias: 6, certificado: false },
+    { tipo: "personal", desde: "2026-06-01", hasta: "2026-06-01", dias: 1, certificado: false },
+  ];
+  assert.equal(saldos("2024-09-01", aus, "2026-09-30", "2026-03-01").vacaciones.disponibles, 3);
+  // Más de un año desde las últimas: vuelve a 8, no más.
+  assert.equal(saldos("2023-01-01", [], "2026-09-30", "2025-02-01").vacaciones.disponibles, 8);
+});
+
 test("enfermedad: con certificado usa el cupo de 5; sin certificado o pasado el cupo va a vacaciones", () => {
   const c = cargosAusencias("2025-01-01", [
     { tipo: "enfermedad", desde: "2026-02-02", hasta: "2026-02-03", dias: 2, certificado: true },

@@ -10,7 +10,9 @@
 //  - Días → horas: 8 h por día (9-6 con 1 h de almuerzo).
 // ⚠️ Para quien esté en nómina formal (PR o Colombia) la ley pone mínimos más altos: revisar con abogado.
 
-export const POLITICA = { vacacionesAnual: 8, enfermedadAnual: 5, maternidad: 30, horasDia: 8, mesesParaVacaciones: 12 };
+// 30/sep (Elvin): "lo más que han podido acumular son ocho días… el máximo ahora que estamos acumulando anual" → tope de
+// 8 días acumulados, y se cuenta desde las ÚLTIMAS vacaciones que cogió (dato que pone RR.HH. en la ficha), no desde el ingreso.
+export const POLITICA = { vacacionesAnual: 8, topeVacaciones: 8, enfermedadAnual: 5, maternidad: 30, horasDia: 8, mesesParaVacaciones: 12 };
 
 export type TipoAusencia = "vacaciones" | "enfermedad" | "maternidad" | "personal";
 
@@ -79,7 +81,7 @@ export function cargosAusencias(ingreso: string, ausencias: Ausencia[]): (Ausenc
     }
     if (resto > 0) {
       const acumuladas = (mesesCompletos(ingreso, a.desde) * POLITICA.vacacionesAnual) / 12;
-      const disponibles = Math.max(0, acumuladas - vacUsadas);
+      const disponibles = Math.min(POLITICA.topeVacaciones, Math.max(0, acumuladas - vacUsadas));
       cargo.vacaciones = Math.min(resto, disponibles);
       vacUsadas += cargo.vacaciones;
       cargo.sinPaga = resto - cargo.vacaciones;
@@ -99,11 +101,16 @@ export interface Saldos {
   horasDia: number;
 }
 
-export function saldos(ingreso: string, ausencias: Ausencia[], hoy: string): Saldos {
+/**
+ * `ultimasVacaciones` (YYYY-MM-DD, el día que volvió de las últimas): si está, se acumula desde ahí y solo cuentan las
+ * vacaciones usadas después. Siempre con tope de 8 días.
+ */
+export function saldos(ingreso: string, ausencias: Ausencia[], hoy: string, ultimasVacaciones?: string | null): Saldos {
   const meses = mesesCompletos(ingreso, hoy);
   const cargos = cargosAusencias(ingreso, ausencias.filter((a) => a.desde <= hoy));
-  const acumuladas = r2((meses * POLITICA.vacacionesAnual) / 12);
-  const usadas = r2(cargos.reduce((s, a) => s + a.cargo.vacaciones, 0));
+  const inicio = ultimasVacaciones && ultimasVacaciones > ingreso && ultimasVacaciones <= hoy ? ultimasVacaciones : ingreso;
+  const acumuladas = r2(Math.min(POLITICA.topeVacaciones, (mesesCompletos(inicio, hoy) * POLITICA.vacacionesAnual) / 12));
+  const usadas = r2(cargos.filter((a) => inicio === ingreso || a.desde > inicio).reduce((s, a) => s + a.cargo.vacaciones, 0));
   const enfUsadas = r2(cargos.filter((a) => a.desde.startsWith(hoy.slice(0, 4))).reduce((s, a) => s + a.cargo.enfermedad, 0));
   return {
     meses,
