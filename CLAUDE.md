@@ -944,6 +944,9 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (`equipoReparto`). Lo aplica `crearTrato` solo a leads que llegan SIN dueño (no manuales ni grupos; el setter del link o el
   número de WhatsApp con dueño mandan); `leads_embudos.reparto` + `reparto_turno` (migración 0042) sube atómico en el UPDATE.
   Puro en `lib/leads/reglas.ts` (`duenoPorReparto`, tests `tests/leads-reparto.test.mjs`); el tablero muestra "Rotación: A → B".
+- **Filtro de fecha y búsqueda** (1/oct): "Hoy/Ayer/Semana/Mes" = llegó en ese rango **o** tiene cita/seguimiento en ese rango
+  (`condFecha`, para que CLOSERS + Hoy enseñe las citas del día). La búsqueda filtra el embudo abierto y una franja enseña lo
+  que coincide en los **otros** embudos de la marca (`buscarEnMarca`, `components/leads/otros-resultados.tsx`).
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
