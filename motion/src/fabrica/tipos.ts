@@ -51,4 +51,7 @@ export type Anuncio = {
   estilo?: import("./estilos").EstiloId | "auto";
   /** Marca de un CLIENTE (logo, colores, fuente) armada desde JSON: si viene, manda sobre `marca`. */
   cliente?: TemaCliente;
+  /** Barrido en TODOS los cortes (con el estilo por defecto los impares son solo un destello, que entre dos pantallas
+   *  deja un cuadro vacío y la laptop "salta"). Para recorridos/tutoriales con muchas pantallas seguidas. */
+  barridoSiempre?: boolean;
 };

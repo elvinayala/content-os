@@ -197,7 +197,7 @@ const Glitch: React.FC<{ c: number; colores: string[] }> = ({ c, colores }) => {
   );
 };
 
-export const Transicion: React.FC<{ c: number; i: number; tema: TemaMarca; estilo: Estilo }> = ({ c, i, tema, estilo }) => {
+export const Transicion: React.FC<{ c: number; i: number; tema: TemaMarca; estilo: Estilo; barridoSiempre?: boolean }> = ({ c, i, tema, estilo, barridoSiempre }) => {
   switch (estilo.transicion) {
     case "persiana": return <Persiana c={c} color={tema.superficie} linea={tema.borde} k={estilo.tempo} />;
     case "iris": return <Iris c={c} color={tema.acento} color2={tema.fondo} k={estilo.tempo} />;
@@ -206,7 +206,7 @@ export const Transicion: React.FC<{ c: number; i: number; tema: TemaMarca; estil
     case "glitch": return <><Glitch c={c} colores={[tema.acento, tema.acento2, tema.texto]} /><Destello en={c} color={tema.acento} max={0.18} dur={5} /></>;
     case "barrido":
     default:
-      return i % 2 === 0
+      return i % 2 === 0 || barridoSiempre
         ? <Barrido centro={c} dur={Math.round(12 * estilo.tempo)} colores={[tema.acento2, tema.acento, tema.fondo]} angulo={i % 4 === 0 ? -12 : 12} />
         : <Destello en={c} color={tema.acento} max={0.22} dur={6} />;
   }

@@ -442,7 +442,7 @@ ANUNCIOS.push({ ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-16x9`, formato: "16
    Guía paso a paso de cómo usar Bori por dentro, para entregarla al comprar. Mismas capturas REALES de la copia
    demo (Barbería La Esquina, negocio ficticio) + Conexiones. Sin precios ni promesas: el cliente ya compró. */
 const BORI_TUTORIAL: Guion = {
-  id: "bori-tutorial", marca: "bori", titulo: "Cómo usar Bori: tutorial paso a paso", angulo: "Onboarding del cliente", musica: "audio/bori-tutorial.mp3",
+  id: "bori-tutorial", marca: "bori", titulo: "Cómo usar Bori: tutorial paso a paso", angulo: "Onboarding del cliente", musica: "audio/bori-tutorial.mp3", barridoSiempre: true,
   escenas: [
     { tipo: "gancho", dur: 90, logo: true, lineas: ["Bienvenido a *Bori*."], sub: "Te enseño a usarlo en 5 pasos." },
     { tipo: "pasos", dur: 150, titulo: "Tu ruta en *Bori*", pasos: ["Cuéntale tu negocio", "Conecta tu Meta", "Crea tus anuncios", "Lanza tu campaña", "Mira tus resultados"] },

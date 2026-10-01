@@ -53,7 +53,7 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
           </Sequence>
         ))}
         {escenas}
-        {cortes.map((c, i) => <Transicion key={c} c={c} i={i} tema={tema} estilo={estilo} />)}
+        {cortes.map((c, i) => <Transicion key={c} c={c} i={i} tema={tema} estilo={estilo} barridoSiempre={anuncio.barridoSiempre} />)}
         <Grano />
         <Audio src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
