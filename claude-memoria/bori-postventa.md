@@ -53,3 +53,5 @@ programada `seguimiento-lis-colaboraciones` (**9 AM y 2 PM**, no 5 AM) persigue 
 reunión ocurra, el tablero de creadores tenga 10+ y haya fecha con Elvin; solo avisa a Elvin si hay
 novedad real. PDFs de los 3 documentos en `vault/proyectos/contrataciones/pdf/` (los adjunta Elvin: el
 bot de Slack no tiene `files:write`).
+
+**Recorrido guiado (30/sep/2026, commit 40ac1e8):** el cliente nuevo (primer uso) ve al entrar un recorrido por cada pestaña (Marca → Generador → Editor → Avatar → Baúl → Campañas → chat), solo las que su plan usa. `recorrido.js` + `/api/recorrido`; se marca visto por navegador (`bori_recorrido_v1`); se repite en Configuración → Cuenta → "Ver el recorrido". Si piden cambiar textos, van en `recorrido.js` (tests en `test/recorrido.test.js`).
