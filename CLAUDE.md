@@ -926,6 +926,11 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   leads | solo sus leads) a cuentas activas de Pulse; no a quien es "solo Ritmo" (eso lo abre Yaileen/RR.HH. en Ritmo → Ajustes) ni
   a bloqueados. Marca "todavía no creó su clave". Cada cambio → registro de seguridad + aviso a Elvin si no lo hizo él. Puro en
   `lib/leads/equipo.ts` (tests `tests/leads-equipo.test.mjs`), datos `lib/leads/equipo-datos.ts`, `accesoEquipoLeadsAction`.
+- **Reparto por embudo** (30/sep, Elvin: "como el round robin de Pipedrive"): en **Editar embudo** → "¿Quién recibe los leads
+  nuevos?" = Nadie · Una persona · **Rotación** (round robin, en el orden marcado) entre quien tiene `leads_acceso` de la marca
+  (`equipoReparto`). Lo aplica `crearTrato` solo a leads que llegan SIN dueño (no manuales ni grupos; el setter del link o el
+  número de WhatsApp con dueño mandan); `leads_embudos.reparto` + `reparto_turno` (migración 0042) sube atómico en el UPDATE.
+  Puro en `lib/leads/reglas.ts` (`duenoPorReparto`, tests `tests/leads-reparto.test.mjs`); el tablero muestra "Rotación: A → B".
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
