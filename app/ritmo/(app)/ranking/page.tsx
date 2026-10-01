@@ -18,8 +18,9 @@ export const metadata = { title: "Ranking" };
 // y mensual un ranking de los empleados según productividad, con lo bueno, lo malo y lo que tiene que mejorar"). Solo la
 // vista maestra (Elvin, Carilin, Aure, Yaileen).
 
-const largo = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
-const nombreMes = (m: string) => new Date(`${m}-15T12:00:00`).toLocaleDateString("es-PR", { month: "long", year: "numeric" });
+const mayus = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const largo = (f: string) => mayus(new Date(`${f}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" }));
+const nombreMes = (m: string) => mayus(new Date(`${m}-15T12:00:00`).toLocaleDateString("es-PR", { month: "long", year: "numeric" }));
 const ultimoDia = (m: string) => {
   const [y, mm] = m.split("-").map(Number);
   return `${m}-${String(new Date(Date.UTC(y, mm, 0)).getUTCDate()).padStart(2, "0")}`;
@@ -86,7 +87,7 @@ async function VistaAyer({ u, hoy, ayer, empresa }: { u: Usuario; hoy: string; a
   return (
     <>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="text-lg font-semibold capitalize">{largo(dia)}</h2>
+        <h2 className="text-lg font-semibold">{largo(dia)}</h2>
         <span className="text-sm text-muted-foreground">
           {filas.filter((f) => ["a_tiempo", "tarde", "trabajando"].includes(f.dias.find((d) => d.fecha === dia)?.asistencia.estado ?? "")).length} de{" "}
           {filas.filter((f) => (f.dias.find((d) => d.fecha === dia)?.asistencia.estado ?? "libre") !== "libre").length} trabajaron
@@ -198,9 +199,9 @@ async function VistaMes({ u, ayer, mes, empresa, href }: { u: Usuario; ayer: str
     <>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={href({ m: mesMas(mes, -1) })} className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-foreground" aria-label="Mes anterior"><ChevronLeft className="size-4" /></Link>
-        <h2 className="text-lg font-semibold capitalize">{nombreMes(mes)}</h2>
+        <h2 className="text-lg font-semibold">{nombreMes(mes)}</h2>
         {mes < actual ? <Link href={href({ m: mesMas(mes, 1) })} className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-foreground" aria-label="Mes siguiente"><ChevronRight className="size-4" /></Link> : null}
-        <span className="text-sm text-muted-foreground">{mes === actual ? `hasta ayer (${largo(hasta)})` : "mes completo"}</span>
+        <span className="text-sm text-muted-foreground">{mes === actual ? `hasta ayer (${largo(hasta).toLowerCase()})` : "mes completo"}</span>
       </div>
       <p className="text-xs text-muted-foreground">
         Índice de productividad: 30 % asistencia (puntualidad) · 20 % constancia (anotó sus KPIs al salir) · 50 % producción (sus KPIs comparados con el mejor de su mismo puesto). Sin KPIs en su puesto, cuenta solo la asistencia.
