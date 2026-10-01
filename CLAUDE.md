@@ -1167,7 +1167,8 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
     solo a Elvin. IDs de Slack conocidos en `lib/pulse/slack-dm.ts` (el bot no tiene
     `users:read.email`; override `PULSE_SLACK_IDS`).
   - **⌘K** (`components/pulse/buscador-global.tsx`): clientes de los tableros visibles por nombre,
-    empresa, e-mail o teléfono (también dígitos pegados) + navegación. **Vistas guardadas** por
+    empresa, e-mail o teléfono (también dígitos pegados) + navegación; desde el 1/oct también **leads** de las marcas con
+    acceso (`buscarLeadsGlobalAction` → `buscarEnMarca`, respeta "solo mis leads"). **Vistas guardadas** por
     persona (`pulse_vistas`, popover "Vistas"). **Celular**: arranca en tarjetas, barra con "Más".
   - **Preguntarle al CRM** (`/pulse/preguntar`, también desde ⌘K con `?q=`): agente con tools
     (`buscar` → `consultar()` puro en `lib/pulse/preguntar.ts`, tests; `responder` con ids + nota)
