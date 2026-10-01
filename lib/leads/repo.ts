@@ -186,7 +186,7 @@ function condFecha(f?: FiltroFecha | null) {
 }
 
 /** Búsqueda en TODOS los embudos de la marca (como la lupa de Pipedrive): nombre, negocio, email o teléfono (dígitos). */
-export async function buscarEnMarca(marca: Marca, q: string, excluirEmbudo?: string | null, limite = 12) {
+export async function buscarEnMarca(marca: Marca, q: string, excluirEmbudo?: string | null, limite = 12, soloDueno?: string | null) {
   const texto = q.trim();
   if (texto.length < 2) return [];
   const d = await db();
@@ -198,6 +198,7 @@ export async function buscarEnMarca(marca: Marca, q: string, excluirEmbudo?: str
     or(ilike(leadsTratos.nombre, like), ilike(leadsTratos.negocio, like), ilike(leadsTratos.email, like), ...(dig.length >= 4 ? [ilike(leadsTratos.telefono, `%${dig}%`)] : []))!,
   ];
   if (excluirEmbudo) conds.push(sql`${leadsTratos.embudoId} <> ${excluirEmbudo}`);
+  if (soloDueno) conds.push(eq(leadsTratos.duenoId, soloDueno));
   return d
     .select({ id: leadsTratos.id, nombre: leadsTratos.nombre, telefono: leadsTratos.telefono, estado: leadsTratos.estado, embudoId: leadsTratos.embudoId, embudo: leadsEmbudos.nombre, etapa: leadsEtapas.nombre })
     .from(leadsTratos)

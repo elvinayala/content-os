@@ -33,6 +33,23 @@ async function puedeMarca(marca: Marca) {
   return a.puede ? { u, alcance: a.alcance } : null;
 }
 
+/** ⌘K de Pulse: leads de las marcas a las que la persona tiene acceso (solo los suyos si su alcance es "mios"). */
+export async function buscarLeadsGlobalAction(q: string): Promise<{ id: string; nombre: string; telefono: string | null; embudo: string; etapa: string | null; estado: string; marca: string; slug: string }[]> {
+  const u = await usuarioActual();
+  if (!u || q.trim().length < 2) return [];
+  const { buscarEnMarca, marcasConAcceso } = await import("@/lib/leads/repo");
+  const marcas = await marcasConAcceso(u).catch(() => []);
+  const por = await Promise.all(
+    marcas.map(async (m) => {
+      const a = await accesoLeads(u, m);
+      if (!a.puede) return [];
+      const filas = await buscarEnMarca(m, q.slice(0, 100), null, 8, a.alcance === "mios" ? u.id : null).catch(() => []);
+      return filas.map((f) => ({ ...f, marca: m === "level_up" ? "Level Up" : "AI Borinquen", slug: slugDeMarca(m) }));
+    }),
+  );
+  return por.flat();
+}
+
 /** Carga el trato y verifica permiso (marca + "solo mis leads"). */
 async function puedeTrato(tratoId: string) {
   const d = await db();

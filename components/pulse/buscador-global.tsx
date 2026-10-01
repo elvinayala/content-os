@@ -1,15 +1,21 @@
 "use client";
 
-import { CornerDownLeft, LayoutGrid, Loader2, Search, Settings, Sparkles, Sun, Table2 } from "lucide-react";
+import { CornerDownLeft, Kanban, LayoutGrid, Loader2, Search, Settings, Sparkles, Sun, Table2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { buscarGlobalAction } from "@/app/pulse/(app)/actions";
+import { buscarLeadsGlobalAction } from "@/app/pulse/(app)/leads/actions";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cssColor } from "@/lib/pulse/colores";
 import type { ResultadoBusqueda } from "@/lib/pulse/repo";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
+
+const telCorto = (t: string | null) => {
+  const d = (t ?? "").replace(/\D/g, "").slice(-10);
+  return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : null;
+};
 
 type Opcion = { id: string; titulo: string; detalle?: string; icono: React.ReactNode; href: string };
 
@@ -21,6 +27,7 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [resultados, setResultados] = useState<ResultadoBusqueda[]>([]);
+  const [leads, setLeads] = useState<Awaited<ReturnType<typeof buscarLeadsGlobalAction>>>([]);
   const [cargando, setCargando] = useState(false);
   const [activo, setActivo] = useState(0);
   const pedido = useRef(0);
@@ -52,15 +59,17 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
     const texto = q.trim();
     if (texto.length < 2) {
       setResultados([]);
+      setLeads([]);
       return;
     }
     const n = ++pedido.current;
     setCargando(true);
     const t = setTimeout(async () => {
-      const r = await buscarGlobalAction({ q: texto });
+      const [r, l] = await Promise.all([buscarGlobalAction({ q: texto }), buscarLeadsGlobalAction(texto).catch(() => [])]);
       if (n !== pedido.current) return;
       setCargando(false);
       setResultados(r.ok ? r.resultados : []);
+      setLeads(l);
       setActivo(0);
     }, 180);
     return () => clearTimeout(t);
@@ -82,8 +91,15 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
       icono: <span className="flex size-4 items-center justify-center rounded-full bg-primary/15 text-[9px] font-bold text-primary">{r.nombre.slice(0, 1).toUpperCase()}</span>,
       href: `/pulse/${r.boardSlug}?item=${r.itemId}`,
     }));
-    return bajo.length >= 2 ? [...items, ...nav] : nav;
-  }, [q, resultados, boards, puedeConfigurar]);
+    const deLeads: Opcion[] = leads.map((l) => ({
+      id: `lead-${l.id}`,
+      titulo: l.nombre,
+      detalle: [telCorto(l.telefono), `Lead · ${l.marca} · ${l.embudo}${l.etapa ? ` → ${l.etapa}` : ""}${l.estado !== "abierto" ? ` (${l.estado})` : ""}`].filter(Boolean).join(" — "),
+      icono: <Kanban className="size-4 text-[#08a742]" />,
+      href: `/pulse/leads/${l.slug}/${l.id}`,
+    }));
+    return bajo.length >= 2 ? [...items, ...deLeads, ...nav] : nav;
+  }, [q, resultados, leads, boards, puedeConfigurar]);
 
   const ir = (o: Opcion | undefined) => {
     if (!o) return;
@@ -113,13 +129,13 @@ export function BuscadorGlobal({ boards, puedeConfigurar }: { boards: { slug: st
                 ir(opciones[activo]);
               }
             }}
-            placeholder="Busca un cliente, empresa, teléfono, e-mail…"
+            placeholder="Busca un cliente o lead: nombre, empresa, teléfono, e-mail…"
             className="h-12 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
           />
           <kbd className="rounded border px-1.5 py-0.5 text-[10px] text-muted-foreground">esc</kbd>
         </div>
         <ul className="max-h-[55vh] overflow-y-auto p-1.5">
-          {q.trim().length >= 2 && !cargando && resultados.length === 0 ? <li className="px-3 py-2 text-xs text-muted-foreground">Ningún cliente coincide con «{q.trim()}».</li> : null}
+          {q.trim().length >= 2 && !cargando && resultados.length === 0 && leads.length === 0 ? <li className="px-3 py-2 text-xs text-muted-foreground">Ningún cliente ni lead coincide con «{q.trim()}».</li> : null}
           {opciones.map((o, i) => (
             <li key={o.id}>
               <button
