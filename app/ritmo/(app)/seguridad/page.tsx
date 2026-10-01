@@ -38,7 +38,7 @@ export default async function SeguridadPage() {
         <p className="ceja">RR.HH.</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Seguridad del ponche</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Cada persona poncha solo desde su computadora de trabajo y desde su red de internet. La primera computadora queda aprobada al registrarla; una segunda, un cambio, una red nueva o un ponche manual los autorizas aquí.
+          Cada persona poncha solo desde su computadora de trabajo registrada. La red no bloquea, pero cuando alguien poncha desde una red nueva te llega un aviso: si es de confianza, apruébala aquí y no vuelve a avisar. La primera computadora queda aprobada al registrarla; una segunda, un cambio o un ponche manual los autorizas aquí.
           {modo !== "on" ? <b className="ml-1 text-amber-300">Modo actual: {modo === "aviso" ? "solo aviso (no bloquea)" : "apagado"}.</b> : null}
         </p>
       </div>
