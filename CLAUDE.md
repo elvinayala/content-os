@@ -947,6 +947,9 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
   (`equipoReparto`). Lo aplica `crearTrato` solo a leads que llegan SIN dueño (no manuales ni grupos; el setter del link o el
   número de WhatsApp con dueño mandan); `leads_embudos.reparto` + `reparto_turno` (migración 0042) sube atómico en el UPDATE.
   Puro en `lib/leads/reglas.ts` (`duenoPorReparto`, tests `tests/leads-reparto.test.mjs`); el tablero muestra "Rotación: A → B".
+- **Mover columnas** (1/oct, Elvin: "arrastrarlas de lado a lado… sin fricción"): el encabezado de cada etapa se agarra y se suelta
+  sobre otra columna (`useDraggable` id `col:<etapa>` en el mismo DndContext de las tarjetas; la de Grupos no se mueve); optimista y
+  `reordenarEtapasAction` → `reordenarEtapas` (exige todas las etapas del embudo). Dirección y director de ventas (`puedeOrdenar`).
 - **Filtro de fecha y búsqueda** (1/oct): "Hoy/Ayer/Semana/Mes" = llegó en ese rango **o** tiene cita/seguimiento en ese rango
   (`condFecha`, para que CLOSERS + Hoy enseñe las citas del día). La búsqueda filtra el embudo abierto y una franja enseña lo
   que coincide en los **otros** embudos de la marca (`buscarEnMarca`, `components/leads/otros-resultados.tsx`).
