@@ -11,7 +11,8 @@ import { Hora } from "./hora-local";
 // Tarjetas del resumen de Equipo que se abren (30/sep, Elvin: "a los que están sin marcar, que le dé clic y me diga
 // cuáles son"). Cada nombre lleva a la ficha de la persona.
 
-export type PersonaLista = { id: string; nombre: string; hora?: string | null; nota?: string | null };
+// `href`: a dónde lleva (por defecto la ficha de Equipo); `detalle`: segunda línea (p. ej. lo que le falta).
+export type PersonaLista = { id: string; nombre: string; hora?: string | null; nota?: string | null; detalle?: string | null; href?: string };
 export type GrupoLista = { etiqueta?: string; punto?: string; gente: PersonaLista[] };
 
 export function TarjetaLista({ titulo, valor, detalle, tono, grupos, vacio, className, children, align = "start" }: { titulo: string; valor?: React.ReactNode; detalle?: React.ReactNode; tono?: "rojo" | "ambar"; grupos: GrupoLista[]; vacio: string; className?: string; children?: React.ReactNode; align?: "start" | "end" }) {
@@ -47,13 +48,16 @@ export function TarjetaLista({ titulo, valor, detalle, tono, grupos, vacio, clas
                   </p>
                 ) : null}
                 {g.gente.map((p) => (
-                  <Link key={p.id} href={`/ritmo/equipo/${p.id}`} className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-sm transition hover:bg-white/[0.06]">
-                    <span className="truncate">{p.nombre}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      {p.hora ? <Hora iso={p.hora} /> : null}
-                      {p.hora && p.nota ? " · " : null}
-                      {p.nota}
+                  <Link key={p.id} href={p.href ?? `/ritmo/equipo/${p.id}`} className="flex flex-col rounded-lg px-2 py-1.5 text-sm transition hover:bg-white/[0.06]">
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="truncate">{p.nombre}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                        {p.hora ? <Hora iso={p.hora} /> : null}
+                        {p.hora && p.nota ? " · " : null}
+                        {p.nota}
+                      </span>
                     </span>
+                    {p.detalle ? <span className="text-[11px] leading-snug text-amber-200/80">{p.detalle}</span> : null}
                   </Link>
                 ))}
               </div>

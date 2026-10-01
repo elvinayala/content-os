@@ -268,7 +268,7 @@ export async function panelSeguridad() {
   const nombre = (id: string) => usuarios.find((u) => u.id === id)?.nombre ?? "—";
   const iso = (x: Date | null) => (x ? x.toISOString() : null);
   return {
-    equipos: equipos.map((e) => ({ id: e.id, persona: nombre(e.userId), nombre: e.nombre, agente: e.agente, estado: e.estado, redes: e.ips.length, redPendiente: !!e.ipPendiente, wifi: wifiDe(e.userId), motivo: e.motivo, reemplaza: e.reemplaza, ultimoUso: iso(e.ultimoUsoAt), creado: e.createdAt.toISOString() })),
-    manuales: manuales.map((m) => ({ id: m.id, persona: nombre(m.userId), tipo: m.tipo, hora: m.hora.toISOString(), motivo: m.motivo, estado: m.estado, agente: m.agente, creado: m.createdAt.toISOString() })),
+    equipos: equipos.map((e) => ({ id: e.id, userId: e.userId, persona: nombre(e.userId), nombre: e.nombre, agente: e.agente, estado: e.estado, redes: e.ips.length, redPendiente: !!e.ipPendiente, wifi: wifiDe(e.userId), motivo: e.motivo, reemplaza: e.reemplaza, ultimoUso: iso(e.ultimoUsoAt), creado: e.createdAt.toISOString() })),
+    manuales: manuales.map((m) => ({ id: m.id, userId: m.userId, persona: nombre(m.userId), tipo: m.tipo, hora: m.hora.toISOString(), motivo: m.motivo, estado: m.estado, agente: m.agente, creado: m.createdAt.toISOString() })),
   };
 }

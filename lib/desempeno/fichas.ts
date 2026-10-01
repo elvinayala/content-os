@@ -281,3 +281,17 @@ export async function contarArchivos(userId: string, categoria: string): Promise
   const filas = await d.select({ id: desempenoArchivos.id }).from(desempenoArchivos).where(and(eq(desempenoArchivos.userId, userId), eq(desempenoArchivos.categoria, categoria)));
   return filas.length;
 }
+
+/** Cuántos documentos de identificación y contrato tiene cada persona (para ver de un vistazo a quién le falta). */
+export async function conteoDocumentos(): Promise<Map<string, { identificacion: number; contrato: number }>> {
+  const d = await db();
+  const filas = await d.select({ userId: desempenoArchivos.userId, categoria: desempenoArchivos.categoria }).from(desempenoArchivos);
+  const m = new Map<string, { identificacion: number; contrato: number }>();
+  for (const f of filas) {
+    const c = m.get(f.userId) ?? { identificacion: 0, contrato: 0 };
+    if (f.categoria === "identificacion") c.identificacion++;
+    if (f.categoria === "contrato") c.contrato++;
+    m.set(f.userId, c);
+  }
+  return m;
+}

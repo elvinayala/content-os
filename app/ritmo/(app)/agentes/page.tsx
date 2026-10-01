@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { AutoRefresco } from "@/components/ritmo/auto-refresco";
 import { Oficina, type AgenteOficina } from "@/components/ritmo/oficina";
+import { TarjetaLista } from "@/components/ritmo/tarjeta-lista";
 import { AGENTES_IA, burbuja, estadoOficina, ladoAgente, ladoHumano, pantalla, veces, type Humano } from "@/lib/desempeno/agentes-ia";
 import { cafesDe, CON_BUZON_CAFE, DIRECCION, ejecutivos, marcarPresencia, puedeCafe, reportesAgentesEntre, salariosPorPersona, ultimosMensajes } from "@/lib/desempeno/agentes-reportes";
 import { armarPanel } from "@/lib/desempeno/datos";
@@ -94,14 +95,23 @@ export default async function AgentesPage() {
 
       <Oficina agentes={oficina} ejecutivos={dire} cafe={{ ...cafe, permitidos: [...cafe.permitidos], conversacion: [...cafe.conversacion] }} kpis={{ tareas: tareasHoy, minutos: minHoy, costo: costoHoy, activos: oficina.filter((x) => x.estado !== "descansando").length }} />
 
-      {/* resumen en una línea (la TV de la oficina ya enseña lo de hoy) */}
-      <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-        <span><b className="num text-foreground">{tareasHoy}</b> tareas hoy</span>
-        <span><b className="num text-foreground">{horas(minHoy)}</b> activos</span>
-        <span><b className="num text-foreground">{usd(costoHoy)}</b> de IA hoy</span>
-        <span><b className="num text-foreground">{usd(costo7)}</b> en 7 días</span>
-        <span>{hoyTodos.filter((r) => r.resumen || (r.agente === "leo" && r.tareas)).length} de {AGENTES_IA.length} reportaron</span>
-      </p>
+      {/* resumen de hoy: cada número se abre y dice de quién es (30/sep, Elvin) */}
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <TarjetaLista titulo="Tareas hoy" valor={tareasHoy} detalle="Entre todos los agentes" vacio="Ningún agente ha cerrado tareas hoy." grupos={[{ gente: AGENTES_IA.map((a) => ({ a, r: deHoy(a.id) })).filter((x) => x.r?.tareas).sort((x, y) => (y.r!.tareas ?? 0) - (x.r!.tareas ?? 0)).map((x) => ({ id: x.a.id, nombre: x.a.nombre, nota: `${x.r!.tareas}`, href: `#agente-${x.a.id}` })) }]} />
+        <TarjetaLista titulo="Tiempo activo" valor={horas(minHoy)} detalle="Trabajando hoy" vacio="Nadie ha trabajado hoy todavía." grupos={[{ gente: AGENTES_IA.map((a) => ({ a, r: deHoy(a.id) })).filter((x) => x.r?.minutos).sort((x, y) => y.r!.minutos - x.r!.minutos).map((x) => ({ id: x.a.id, nombre: x.a.nombre, nota: horas(x.r!.minutos), href: `#agente-${x.a.id}` })) }]} />
+        <TarjetaLista titulo="IA hoy" valor={usd(costoHoy)} detalle={`${usd(costo7)} en 7 días`} vacio="Sin gasto de IA hoy." grupos={[{ gente: AGENTES_IA.map((a) => ({ a, r: deHoy(a.id) })).filter((x) => x.r?.costoUsd).sort((x, y) => y.r!.costoUsd - x.r!.costoUsd).map((x) => ({ id: x.a.id, nombre: x.a.nombre, nota: usd(x.r!.costoUsd), href: `#agente-${x.a.id}` })) }]} />
+        {(() => {
+          const reporto = (id: string) => { const r = deHoy(id); return !!(r?.resumen || (id === "leo" && r?.tareas)); };
+          const si = AGENTES_IA.filter((a) => reporto(a.id));
+          const no = AGENTES_IA.filter((a) => !reporto(a.id));
+          return (
+            <TarjetaLista titulo="Reportaron" valor={`${si.length}/${AGENTES_IA.length}`} detalle="Cierre del día" tono={no.length ? "ambar" : undefined} vacio="—" grupos={[
+              { etiqueta: "Ya reportaron", punto: "bg-emerald-400", gente: si.map((a) => ({ id: a.id, nombre: a.nombre, href: `#agente-${a.id}` })) },
+              { etiqueta: "Falta su reporte", punto: "bg-amber-400", gente: no.map((a) => ({ id: a.id, nombre: a.nombre, href: `#agente-${a.id}` })) },
+            ]} />
+          );
+        })()}
+      </section>
 
       <section className="flex flex-col gap-2.5">
         <h2 className="text-sm font-semibold">Hoy, uno por uno</h2>
@@ -111,7 +121,7 @@ export default async function AgentesPage() {
             const resumen = r?.resumen ?? (a.id === "leo" && r?.tareas ? `Revisó ${r.tareas} ${r.tareas === 1 ? "pieza" : "piezas"} del equipo en Slack.` : null);
             const activo = !!(r?.corridas || r?.tareas); // "Sin actividad hoy" también es un reporte: no cuenta como activo
             return (
-              <article key={a.id} className={cn("panel flex flex-col gap-2 p-3.5", !activo && "opacity-60")}>
+              <article key={a.id} id={`agente-${a.id}`} className={cn("panel flex scroll-mt-20 flex-col gap-2 p-3.5", !activo && "opacity-60")}>
                 <div className="flex items-center gap-2.5">
                   <span className="grid size-8 shrink-0 place-items-center rounded-full text-sm font-semibold text-background" style={{ background: COLOR_AGENTE[a.id] ?? "#7dd3fc" }}>
                     {a.nombre[0]}

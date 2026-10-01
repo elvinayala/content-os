@@ -8,7 +8,9 @@ import { CrearFicha } from "@/components/ritmo/crear-ficha";
 import { NuevoEmpleado } from "@/components/ritmo/nuevo-empleado";
 import { EmpresaBadge, FiltroEmpresa } from "@/components/ritmo/piezas";
 import { estaBloqueado } from "@/lib/desempeno/acceso";
-import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
+import { conteoDocumentos, fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
+import { faltantesFicha } from "@/lib/desempeno/ficha-completa";
+import { TarjetaLista, type PersonaLista } from "@/components/ritmo/tarjeta-lista";
 import { PUESTOS, puestoPorId } from "@/lib/desempeno/reglas";
 import { listarUsuarios } from "@/lib/pulse/repo";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -22,10 +24,17 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
   const u = await usuarioRitmo();
   if (!u) return null;
   if (!u.maestro) redirect(`/ritmo/personas/${u.id}`);
-  const [todos, usuarios] = await Promise.all([resumenPersonas(), listarUsuarios()]);
+  const [todos, usuarios, docs] = await Promise.all([resumenPersonas(), listarUsuarios(), conteoDocumentos().catch(() => new Map<string, { identificacion: number; contrato: number }>())]);
   const gente = todos.filter((g) => !empresa || g.perfil.empresa === empresa);
   const con = gente.filter((g) => g.ficha);
   const sin = gente.filter((g) => !g.ficha && g.perfil.activo);
+  // Resumen que se abre (30/sep, Elvin: "que le dé clic y me diga cuáles son").
+  const activos = gente.filter((g) => g.perfil.activo);
+  const fila = (g: (typeof gente)[number], extra?: Partial<PersonaLista>): PersonaLista => ({ id: g.perfil.userId, nombre: g.perfil.nombre, href: `/ritmo/personas/${g.perfil.userId}`, ...extra });
+  const conFaltas = activos.filter((g) => g.ficha).map((g) => ({ g, falta: faltantesFicha(g.ficha, docs.get(g.perfil.userId) ?? { identificacion: 0, contrato: 0 }) }));
+  const completas = conFaltas.filter((x) => !x.falta.length);
+  const incompletas = conFaltas.filter((x) => x.falta.length);
+  const vacaciones = activos.filter((g) => g.saldos?.puedeSolicitar && g.saldos.vacaciones.disponibles >= 1);
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -37,6 +46,13 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
           <FiltroEmpresa actual={empresa} href={(e) => (e ? `/ritmo/personas?e=${e}` : "/ritmo/personas")} />
         </div>
       </div>
+
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <TarjetaLista titulo="Fichas completas" valor={`${completas.length}/${activos.length}`} detalle="Con todos sus datos y documentos" grupos={[{ gente: completas.map((x) => fila(x.g)) }]} vacio="Nadie tiene la ficha completa todavía." />
+        <TarjetaLista titulo="Les falta algo" valor={incompletas.length} detalle="Datos o documentos pendientes" tono={incompletas.length ? "ambar" : undefined} grupos={[{ gente: incompletas.map((x) => fila(x.g, { nota: `${x.falta.length}`, detalle: `Falta: ${x.falta.join(", ")}` })) }]} vacio="Todos tienen la ficha completa. 👌" />
+        <TarjetaLista titulo="Sin ficha" valor={sin.length} detalle="Activos sin ficha creada" tono={sin.length ? "rojo" : undefined} grupos={[{ gente: sin.map((g) => fila(g, { href: "/ritmo/personas#sin-ficha" })) }]} vacio="Todos tienen ficha." />
+        <TarjetaLista titulo="Vacaciones" valor={vacaciones.length} detalle="Ya pueden pedirlas" grupos={[{ gente: vacaciones.map((g) => fila(g, { nota: `${g.saldos!.vacaciones.disponibles} días` })) }]} vacio="Nadie cumple todavía los 12 meses." />
+      </section>
 
       {con.length ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -71,7 +87,7 @@ export default async function PersonasPage({ searchParams }: { searchParams: Pro
       )}
 
       {sin.length ? (
-        <section className="panel p-4">
+        <section id="sin-ficha" className="panel scroll-mt-20 p-4">
           <h2 className="text-sm font-semibold">Sin ficha</h2>
           <p className="mb-3 text-xs text-muted-foreground">Tienen perfil de ponche pero no ficha. Crea la ficha solo si es de operaciones y cobra sueldo fijo.</p>
           <ul className="divide-y divide-border">

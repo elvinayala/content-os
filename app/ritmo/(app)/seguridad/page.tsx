@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { BotonesDecision, QuitarEquipo } from "@/components/ritmo/seguridad";
+import { TarjetaLista } from "@/components/ritmo/tarjeta-lista";
+import { leerPerfiles } from "@/lib/desempeno/datos";
+import { puestoPorId } from "@/lib/desempeno/reglas";
 import { modoSeguridad, panelSeguridad } from "@/lib/desempeno/seguridad";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { cn } from "@/lib/utils";
@@ -21,6 +24,12 @@ export default async function SeguridadPage() {
   const pendManuales = manuales.filter((m) => m.estado === "pendiente");
   const activos = equipos.filter((e) => e.estado === "aprobado");
   const total = pendEquipos.length + pendRedes.length + pendManuales.length;
+  // Resumen que se abre (30/sep): quién poncha y aún no tiene computadora o no ha dicho su Wi-Fi.
+  const ponchan = (await leerPerfiles().catch(() => [])).filter((p) => !puestoPorId(p.puesto)?.sinPonche);
+  const conEquipo = new Set(activos.map((e) => e.userId));
+  const sinEquipo = ponchan.filter((p) => !conEquipo.has(p.userId));
+  const sinWifi = ponchan.filter((p) => !p.wifiPrincipal);
+  const yo = (id: string, nombre: string, extra?: { nota?: string | null; detalle?: string | null; href?: string }) => ({ id, nombre, ...extra });
   const fila = "panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center";
 
   return (
@@ -34,7 +43,18 @@ export default async function SeguridadPage() {
         </p>
       </div>
 
-      <section className="flex flex-col gap-2">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <TarjetaLista titulo="Por decidir" valor={total} detalle="Equipos, redes y ponches" tono={total ? "ambar" : undefined} vacio="Nada pendiente. 👌" grupos={[
+          { etiqueta: "Ponche manual", gente: pendManuales.map((m) => yo(m.id, m.persona, { nota: m.tipo, detalle: m.motivo, href: "#por-decidir" })) },
+          { etiqueta: "Computadora", gente: pendEquipos.map((e) => yo(e.id, e.persona, { nota: e.nombre, href: "#por-decidir" })) },
+          { etiqueta: "Red nueva", gente: pendRedes.map((e) => yo(`r-${e.id}`, e.persona, { nota: e.nombre, href: "#por-decidir" })) },
+        ]} />
+        <TarjetaLista titulo="Sin computadora" valor={sinEquipo.length} detalle="No han registrado su equipo" tono={sinEquipo.length ? "rojo" : undefined} vacio="Todos tienen su computadora registrada." grupos={[{ gente: sinEquipo.map((p) => yo(p.userId, p.nombre, { nota: `entra ${p.horaEntrada}` })) }]} />
+        <TarjetaLista titulo="Sin Wi-Fi declarado" valor={sinWifi.length} detalle="No han dicho su red principal" tono={sinWifi.length ? "ambar" : undefined} vacio="Todos declararon su Wi-Fi principal." grupos={[{ gente: sinWifi.map((p) => yo(p.userId, p.nombre)) }]} />
+        <TarjetaLista titulo="Autorizadas" valor={activos.length} detalle="Computadoras aprobadas" vacio="Todavía no hay computadoras aprobadas." grupos={[{ gente: activos.map((e) => yo(e.id, e.persona, { nota: e.nombre, detalle: e.wifi ? `Wi-Fi «${e.wifi}»` : "Sin Wi-Fi declarado", href: `/ritmo/equipo/${e.userId}` })) }]} />
+      </section>
+
+      <section id="por-decidir" className="flex scroll-mt-20 flex-col gap-2">
         <h2 className="text-sm font-semibold">Por decidir {total ? <span className="ml-1 rounded-full bg-amber-400/15 px-2 py-0.5 text-xs text-amber-300">{total}</span> : null}</h2>
         {!total ? <div className="panel p-5 text-center text-sm text-muted-foreground">Nada pendiente. 👌</div> : null}
         {pendManuales.map((m) => (

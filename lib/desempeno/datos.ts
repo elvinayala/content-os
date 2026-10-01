@@ -56,6 +56,7 @@ export interface Perfil {
   fechaIngreso: string | null;
   activo: boolean;
   desde: string;
+  wifiPrincipal?: string | null; // su Wi-Fi de trabajo (30/sep)
 }
 
 export async function leerPerfiles(soloActivos = true): Promise<Perfil[]> {
@@ -85,6 +86,7 @@ export async function leerPerfiles(soloActivos = true): Promise<Perfil[]> {
       fechaIngreso: f.p.fechaIngreso,
       activo: f.p.activo,
       desde: f.p.desde,
+      wifiPrincipal: f.p.wifiPrincipal,
     }));
 }
 
