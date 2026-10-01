@@ -167,6 +167,21 @@ export async function guardarEmbudoAction(embudoId: string, datos: { nombre: str
   return r;
 }
 
+// El director de ventas (Nahuel) también reparte: solo toca el reparto, no el nombre ni las etapas.
+export async function guardarRepartoAction(embudoId: string, reparto: { modo: "ninguno" | "fijo" | "rotacion"; personas: string[] }): Promise<Res> {
+  const d = await db();
+  const [e] = await d.select().from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);
+  if (!e) return { ok: false, error: "No existe" };
+  const p = await puedeMarca(e.marca as Marca);
+  if (!p) return { ok: false, error: "Sin acceso a esta marca" };
+  const { manejaEquipo } = await import("@/lib/leads/equipo-datos");
+  if (p.u.rol !== "admin" && p.u.rol !== "editor" && !(await manejaEquipo(p.u, e.marca as Marca))) return { ok: false, error: "Solo la dirección y el director de ventas reparten leads" };
+  const { guardarReparto } = await import("@/lib/leads/repo");
+  const r = await guardarReparto(embudoId, reparto);
+  refrescar(e.marca);
+  return r;
+}
+
 // ---------- Exportar con aprobación (28/sep): Nahuel y Aure piden, Elvin aprueba ----------
 
 export async function pedirExportacionAction(p: { marca: Marca; embudoId: string | null; estado: string; dueno: string | null; q: string }): Promise<Res> {

@@ -81,6 +81,7 @@ export function BarraLeads({
   const [q, setQ] = useState(sp.get("q") ?? "");
   const [nuevo, setNuevo] = useState(false);
   const [editar, setEditar] = useState(false);
+  const [soloReparto, setSoloReparto] = useState(false);
   const [nuevoEmbudo, setNuevoEmbudo] = useState(false);
   const embudo = embudos.find((e) => e.id === embudoId) ?? embudos[0];
   const dueno = sp.get("dueno") ?? "";
@@ -143,10 +144,28 @@ export function BarraLeads({
                   {e.nombre}
                 </DropdownMenuItem>
               ))}
+              {!puedeEditar && manejaEquipo && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      setSoloReparto(true);
+                      setEditar(true);
+                    }}
+                  >
+                    <Repeat2 className="size-4" /> Reparto de leads
+                  </DropdownMenuItem>
+                </>
+              )}
               {puedeEditar && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => setEditar(true)}>
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      setSoloReparto(false);
+                      setEditar(true);
+                    }}
+                  >
                     <Settings2 className="size-4" /> Editar este embudo
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => setNuevoEmbudo(true)}>
@@ -296,7 +315,7 @@ export function BarraLeads({
         </div>
       </div>
       {embudo && <NuevoLeadDialog abierto={nuevo} onCerrar={() => setNuevo(false)} marca={marca} embudo={embudo} etapas={etapas} usuarios={usuarios} yoId={yoId} />}
-      {embudo && editar && <EmbudoDialog abierto={editar} onCerrar={() => setEditar(false)} embudo={embudo} etapas={etapas} equipo={equipoReparto} />}
+      {embudo && editar && <EmbudoDialog abierto={editar} onCerrar={() => setEditar(false)} embudo={embudo} etapas={etapas} equipo={equipoReparto} soloReparto={soloReparto} />}
       <NuevoEmbudoDialog abierto={nuevoEmbudo} onCerrar={() => setNuevoEmbudo(false)} marca={marca} onCreado={(id) => ir({ embudo: id }, base)} />
     </>
   );

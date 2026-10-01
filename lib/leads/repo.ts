@@ -105,6 +105,18 @@ export async function crearEmbudo(marca: Marca, nombre: string, etapas: string[]
 }
 
 /** Guarda nombre, días de estancado y la lista de etapas (renombrar, agregar, reordenar, borrar vacías). */
+export async function guardarReparto(embudoId: string, reparto: Reparto): Promise<{ ok: boolean; error?: string }> {
+  const d = await db();
+  const [e] = await d.select({ marca: leadsEmbudos.marca }).from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);
+  if (!e) return { ok: false, error: "No existe" };
+  const equipo = new Set((await equipoReparto(e.marca as Marca)).map((u) => u.id));
+  const r = normalizarReparto(reparto);
+  const limpio = normalizarReparto({ ...r, personas: r.personas.filter((p) => equipo.has(p)) });
+  if (r.modo !== "ninguno" && limpio.modo === "ninguno") return { ok: false, error: "Escoge al menos una persona del equipo de ventas." };
+  await d.update(leadsEmbudos).set({ reparto: limpio }).where(eq(leadsEmbudos.id, embudoId));
+  return { ok: true };
+}
+
 export async function guardarEmbudo(embudoId: string, datos: { nombre: string; diasEstancado: number; etapas: { id?: string; nombre: string }[]; reparto?: Reparto }): Promise<{ ok: boolean; error?: string }> {
   const d = await db();
   const actuales = await etapasDe(embudoId);

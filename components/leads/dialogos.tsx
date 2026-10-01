@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { cerrarLeadAction, crearEmbudoAction, crearLeadAction, guardarEmbudoAction } from "@/app/pulse/(app)/leads/actions";
+import { cerrarLeadAction, crearEmbudoAction, crearLeadAction, guardarEmbudoAction, guardarRepartoAction } from "@/app/pulse/(app)/leads/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -183,7 +183,7 @@ export function PerdidoDialog({ tratoId, nombre, onCerrar, onHecho }: { tratoId:
 }
 
 /** Editar el embudo: nombre, días para "estancado" y etapas (renombrar, agregar, subir/bajar, borrar vacías). */
-export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [] }: { abierto: boolean; onCerrar: () => void; embudo: EmbudoUI; etapas: EtapaUI[]; equipo?: UsuarioUI[] }) {
+export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [], soloReparto = false }: { abierto: boolean; onCerrar: () => void; embudo: EmbudoUI; etapas: EtapaUI[]; equipo?: UsuarioUI[]; soloReparto?: boolean }) {
   const router = useRouter();
   const inicial = normalizarReparto(embudo.reparto);
   const [modo, setModo] = useState<ModoReparto>(inicial.modo);
@@ -203,7 +203,8 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [] }:
   const guardar = () =>
     start(async () => {
       if (modo !== "ninguno" && !personas.length) return void toast.error("Escoge quién recibe los leads de este embudo.");
-      const r = await guardarEmbudoAction(embudo.id, { nombre, diasEstancado: Number(dias) || 0, etapas: lista, reparto: { modo, personas: modo === "fijo" ? personas.slice(0, 1) : personas } });
+      const reparto = { modo, personas: modo === "fijo" ? personas.slice(0, 1) : personas };
+      const r = soloReparto ? await guardarRepartoAction(embudo.id, reparto) : await guardarEmbudoAction(embudo.id, { nombre, diasEstancado: Number(dias) || 0, etapas: lista, reparto });
       if (!r.ok) return void toast.error(r.error);
       toast.success("Embudo guardado");
       onCerrar();
@@ -213,9 +214,11 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [] }:
     <Dialog open={abierto} onOpenChange={(v) => !v && onCerrar()}>
       <DialogContent className="pulse sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Editar embudo</DialogTitle>
+          <DialogTitle>{soloReparto ? `Reparto de leads · ${embudo.nombre}` : "Editar embudo"}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-3">
+          {!soloReparto && (
+          <>
           <div className="grid grid-cols-[1fr_120px] gap-3">
             <div className="grid gap-1.5">
               <Label>Nombre</Label>
@@ -246,8 +249,10 @@ export function EmbudoDialog({ abierto, onCerrar, embudo, etapas, equipo = [] }:
           <Button variant="outline" size="sm" className="justify-self-start" onClick={() => setLista([...lista, { nombre: "Nueva etapa" }])}>
             <Plus className="size-4" /> Etapa
           </Button>
+          </>
+          )}
 
-          <div className="mt-2 grid gap-2 border-t pt-4">
+          <div className={soloReparto ? "grid gap-2" : "mt-2 grid gap-2 border-t pt-4"}>
             <Label>¿Quién recibe los leads nuevos?</Label>
             <div className="flex rounded-lg bg-muted p-0.5">
               {MODOS_REPARTO.map((m) => (
