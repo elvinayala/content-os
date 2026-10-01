@@ -40,7 +40,7 @@ export default async function LeadsEmbudo({ params, searchParams }: { params: Pr
       />
       <OtrosResultados marcaSlug={c.m.slug} q={c.q} resultados={otros} />
       {c.embudo ? (
-        <TableroLeads marca={c.m.marca} marcaSlug={c.m.slug} embudo={c.embudo} etapas={c.etapas} tratos={tratos} usuarios={c.usuarios} yoId={c.u.id} />
+        <TableroLeads marca={c.m.marca} marcaSlug={c.m.slug} embudo={c.embudo} etapas={c.etapas} tratos={tratos} usuarios={c.usuarios} yoId={c.u.id} puedeOrdenar={c.puedeEditar || c.manejaEquipo} />
       ) : (
         <p className="p-8 text-sm text-muted-foreground">No hay embudos todavía.</p>
       )}

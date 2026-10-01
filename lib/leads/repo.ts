@@ -105,6 +105,16 @@ export async function crearEmbudo(marca: Marca, nombre: string, etapas: string[]
 }
 
 /** Guarda nombre, días de estancado y la lista de etapas (renombrar, agregar, reordenar, borrar vacías). */
+/** Nuevo orden de las etapas (arrastrar columnas en el tablero). Tienen que venir TODAS las del embudo. */
+export async function reordenarEtapas(embudoId: string, ids: string[]): Promise<{ ok: boolean; error?: string }> {
+  const d = await db();
+  const actuales = await etapasDe(embudoId);
+  const unicos = [...new Set(ids)];
+  if (unicos.length !== actuales.length || !actuales.every((e) => unicos.includes(e.id))) return { ok: false, error: "El embudo cambió; recarga la página." };
+  for (const [i, id] of unicos.entries()) await d.update(leadsEtapas).set({ orden: i }).where(and(eq(leadsEtapas.id, id), eq(leadsEtapas.embudoId, embudoId)));
+  return { ok: true };
+}
+
 export async function guardarReparto(embudoId: string, reparto: Reparto): Promise<{ ok: boolean; error?: string }> {
   const d = await db();
   const [e] = await d.select({ marca: leadsEmbudos.marca }).from(leadsEmbudos).where(eq(leadsEmbudos.id, embudoId)).limit(1);

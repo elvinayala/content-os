@@ -1,13 +1,13 @@
 "use client";
 
 import { DndContext, DragOverlay, MeasuringStrategy, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { CalendarClock, ChevronDown, Download, Kanban, List, MessageCircle, Plus, Repeat2, Search, Settings2, Trophy, Users, X } from "lucide-react";
+import { CalendarClock, ChevronDown, GripVertical, Download, Kanban, List, MessageCircle, Plus, Repeat2, Search, Settings2, Trophy, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { cerrarLeadAction, moverLeadAction, pedirExportacionAction } from "@/app/pulse/(app)/leads/actions";
+import { cerrarLeadAction, moverLeadAction, pedirExportacionAction, reordenarEtapasAction } from "@/app/pulse/(app)/leads/actions";
 import { EmbudoDialog, NuevoEmbudoDialog, NuevoLeadDialog, PerdidoDialog, type EmbudoUI, type EtapaUI, type UsuarioUI } from "@/components/leads/dialogos";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -376,6 +376,7 @@ export function TableroLeads({
   tratos: iniciales,
   usuarios,
   yoId,
+  puedeOrdenar = false,
 }: {
   marca: Marca;
   marcaSlug: string;
@@ -384,8 +385,13 @@ export function TableroLeads({
   tratos: TarjetaUI[];
   usuarios: UsuarioUI[];
   yoId: string;
+  puedeOrdenar?: boolean;
 }) {
   const router = useRouter();
+  // Orden de las columnas (se arrastran por el encabezado); optimista, el servidor lo guarda.
+  const [orden, setOrden] = useState(() => etapas.map((e) => e.id));
+  useEffect(() => setOrden(etapas.map((e) => e.id)), [etapas]);
+  const [columnaMovida, setColumnaMovida] = useState<EtapaUI | null>(null);
   const [tratos, setTratos] = useState(iniciales);
   useEffect(() => setTratos(iniciales), [iniciales]);
   const [arrastrando, setArrastrando] = useState<TarjetaUI | null>(null);
@@ -403,7 +409,10 @@ export function TableroLeads({
 
   // "Grupos" (grupos de WhatsApp de citas) va aparte: angosta, al final y fuera de los totales.
   const idsGrupos = useMemo(() => new Set(etapas.filter((e) => esEtapaGrupos(e.nombre)).map((e) => e.id)), [etapas]);
-  const columnas = useMemo(() => [...etapas.filter((e) => !idsGrupos.has(e.id)), ...etapas.filter((e) => idsGrupos.has(e.id))], [etapas, idsGrupos]);
+  const columnas = useMemo(() => {
+    const ordenadas = orden.map((id) => etapas.find((e) => e.id === id)).filter((e): e is EtapaUI => !!e);
+    return [...ordenadas.filter((e) => !idsGrupos.has(e.id)), ...ordenadas.filter((e) => idsGrupos.has(e.id))];
+  }, [orden, etapas, idsGrupos]);
   const leads = tratos.filter((t) => !idsGrupos.has(t.etapaId));
   const reparto = normalizarReparto(embudo.reparto);
   const total = leads.reduce((s, t) => s + t.valor, 0);
@@ -418,9 +427,35 @@ export function TableroLeads({
     };
   }, [leads, ahora]);
 
-  const onDragStart = (e: DragStartEvent) => setArrastrando(tratos.find((t) => t.id === e.active.id) ?? null);
+  const onDragStart = (e: DragStartEvent) => {
+    const id = String(e.active.id);
+    if (id.startsWith("col:")) return setColumnaMovida(etapas.find((x) => x.id === id.slice(4)) ?? null);
+    setArrastrando(tratos.find((t) => t.id === e.active.id) ?? null);
+  };
+  const moverColumna = (desdeId: string, destino: string | null) => {
+    if (!destino) return;
+    const hacia = destino.startsWith("card:") ? tratos.find((x) => x.id === destino.slice(5))?.etapaId : destino;
+    if (!hacia || hacia === desdeId || idsGrupos.has(hacia) || !etapas.some((x) => x.id === hacia)) return;
+    const visibles = columnas.filter((c) => !idsGrupos.has(c.id)).map((c) => c.id);
+    const de = visibles.indexOf(desdeId);
+    const a = visibles.indexOf(hacia);
+    if (de < 0 || a < 0) return;
+    visibles.splice(a, 0, visibles.splice(de, 1)[0]);
+    const nuevo = [...visibles, ...columnas.filter((c) => idsGrupos.has(c.id)).map((c) => c.id)];
+    const previo = orden;
+    setOrden(nuevo);
+    start(async () => {
+      const r = await reordenarEtapasAction(embudo.id, nuevo);
+      if (!r.ok) {
+        toast.error(r.error ?? "No se pudo mover la columna");
+        setOrden(previo);
+      }
+    });
+  };
   const onDragEnd = (e: DragEndEvent) => {
     setArrastrando(null);
+    setColumnaMovida(null);
+    if (String(e.active.id).startsWith("col:")) return moverColumna(String(e.active.id).slice(4), e.over ? String(e.over.id) : null);
     const t = tratos.find((x) => x.id === e.active.id);
     const destino = e.over ? String(e.over.id) : null;
     if (!t || !destino) return;
@@ -481,7 +516,17 @@ export function TableroLeads({
           </span>
         ) : null}
       </div>
-      <DndContext id="leads-tablero" measuring={{ droppable: { strategy: MeasuringStrategy.Always } }} sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setArrastrando(null)}>
+      <DndContext
+        id="leads-tablero"
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragCancel={() => {
+          setArrastrando(null);
+          setColumnaMovida(null);
+        }}
+      >
         <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto px-4 pb-24">
           {columnas.map((e, i) => (
             <Columna
@@ -494,6 +539,7 @@ export function TableroLeads({
               ahora={ahora}
               marcaSlug={marcaSlug}
               onNuevo={() => setNuevoEn(e.id)}
+              movible={puedeOrdenar && !idsGrupos.has(e.id)}
             />
           ))}
         </div>
@@ -510,7 +556,16 @@ export function TableroLeads({
           <ZonaCierre id="__ganado" texto="GANADO" clase="border-[#08a742] text-[#08a742] bg-green-50" activa="bg-[#08a742] text-white" icono />
         </div>
 
-        <DragOverlay dropAnimation={null}>{arrastrando ? <Tarjeta t={arrastrando} diasEstancado={embudo.diasEstancado} ahora={ahora} marcaSlug={marcaSlug} fantasma /> : null}</DragOverlay>
+        <DragOverlay dropAnimation={null}>
+          {arrastrando ? (
+            <Tarjeta t={arrastrando} diasEstancado={embudo.diasEstancado} ahora={ahora} marcaSlug={marcaSlug} fantasma />
+          ) : columnaMovida ? (
+            <div className="flex w-[260px] rotate-1 items-center gap-2 rounded-lg border bg-background px-3 py-2.5 text-[13px] font-semibold shadow-xl">
+              <GripVertical className="size-4 text-muted-foreground" />
+              {columnaMovida.nombre}
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       <PerdidoDialog
@@ -551,8 +606,10 @@ function Dato({ color, n, texto }: { color: string; n: number; texto: string }) 
   );
 }
 
-function Columna({ etapa, color, grupos, tratos, diasEstancado, ahora, marcaSlug, onNuevo }: { etapa: EtapaUI; color: string; grupos?: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void }) {
-  const { setNodeRef, isOver } = useDroppable({ id: etapa.id });
+function Columna({ etapa, color, grupos, tratos, diasEstancado, ahora, marcaSlug, onNuevo, movible = false }: { etapa: EtapaUI; color: string; grupos?: boolean; tratos: TarjetaUI[]; diasEstancado: number; ahora: Date; marcaSlug: string; onNuevo: () => void; movible?: boolean }) {
+  const { setNodeRef, isOver, active } = useDroppable({ id: etapa.id });
+  const cab = useDraggable({ id: `col:${etapa.id}`, disabled: !movible });
+  const llegaColumna = isOver && String(active?.id ?? "").startsWith("col:");
   const suma = tratos.reduce((s, t) => s + t.valor, 0);
   if (grupos) {
     // Columna pequeña: solo el nombre del grupo (la cita), sin montos ni seguimiento.
@@ -577,11 +634,22 @@ function Columna({ etapa, color, grupos, tratos, diasEstancado, ahora, marcaSlug
   return (
     <section
       ref={setNodeRef}
-      className={cn("flex w-[272px] shrink-0 flex-col rounded-xl bg-[#eceef1]/70 transition-colors", isOver && "bg-[#e3f4e8] ring-2 ring-[#08a742]/30")}
+      className={cn(
+        "flex w-[272px] shrink-0 flex-col rounded-xl bg-[#eceef1]/70 transition-colors",
+        llegaColumna ? "ring-2 ring-sky-400/70" : isOver && "bg-[#e3f4e8] ring-2 ring-[#08a742]/30",
+        cab.isDragging && "opacity-40",
+      )}
     >
-      <header className="group/cab relative m-1.5 mb-2 overflow-hidden rounded-lg bg-background px-3 pt-2.5 pb-2 shadow-[0_1px_2px_rgba(16,24,40,.06)]">
+      <header
+        ref={cab.setNodeRef}
+        {...cab.attributes}
+        {...cab.listeners}
+        className={cn("group/cab relative m-1.5 mb-2 overflow-hidden rounded-lg bg-background px-3 pt-2.5 pb-2 shadow-[0_1px_2px_rgba(16,24,40,.06)]", movible && "cursor-grab active:cursor-grabbing")}
+        title={movible ? "Arrastra el encabezado para mover la columna" : undefined}
+      >
         <span className="absolute inset-x-0 top-0 h-[3px]" style={{ background: color }} />
         <div className="flex items-center gap-2">
+          {movible ? <GripVertical className="-ml-1.5 size-3.5 shrink-0 text-muted-foreground/40 transition group-hover/cab:text-muted-foreground" /> : null}
           <h3 className="min-w-0 flex-1 truncate text-[13px] font-semibold" title={etapa.nombre}>
             {etapa.nombre}
           </h3>
