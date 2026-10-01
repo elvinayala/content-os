@@ -1,0 +1,67 @@
+{
+ "video": "testimonios/yazan-corte.mp4",
+ "dur": 42.99,
+ "nombre": "Yazan",
+ "rol": "Sola Boutique · tienda en línea",
+ "etiqueta": "AI BORINQUEN · TESTIMONIO",
+ "retrato": true,
+ "logoCliente": "testimonios/sola-blanco.png",
+ "logoMarca": "testimonios/aib-lockup.png",
+ "subtitulos": [
+  {
+   "desde": 0.0,
+   "hasta": 4.2,
+   "texto": "Mi tío, que es el dueño, se sentó con el contable,"
+  },
+  {
+   "desde": 4.2,
+   "hasta": 9.5,
+   "texto": "y me dice: «vamos a cancelar todo eso para ahorrar $9,000 mensuales»."
+  },
+  {
+   "desde": 9.47,
+   "hasta": 13.02,
+   "texto": "Yo le dije: «no hagan nada, dame dos días»."
+  },
+  {
+   "desde": 13.02,
+   "hasta": 18.47,
+   "texto": "Fui donde él, abrí Meta Ads y Shopify, las ventas de Shopify,"
+  },
+  {
+   "desde": 18.47,
+   "hasta": 22.19,
+   "texto": "y subió un 25 %… de 25 a 30 %."
+  },
+  {
+   "desde": 22.19,
+   "hasta": 25.79,
+   "texto": "Añadimos 15,000 clientes desde que empezamos con ustedes."
+  },
+  {
+   "desde": 25.79,
+   "hasta": 30.07,
+   "texto": "Cuando vi la estrategia de ustedes en Meta, las campañas,"
+  },
+  {
+   "desde": 30.07,
+   "hasta": 31.81,
+   "texto": "miré a mi tío: «¿tú sabes hacer eso?»"
+  },
+  {
+   "desde": 31.81,
+   "hasta": 35.41,
+   "texto": "Clientes fríos, medio calientes, calientes,"
+  },
+  {
+   "desde": 35.41,
+   "hasta": 38.27,
+   "texto": "los que compraron, los que no compraron…"
+  },
+  {
+   "desde": 38.27,
+   "hasta": 42.99,
+   "texto": "Por eso peleé con él por ustedes: porque hay resultados."
+  }
+ ]
+}
