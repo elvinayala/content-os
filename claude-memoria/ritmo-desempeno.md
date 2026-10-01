@@ -45,3 +45,5 @@ Ritmo = la plataforma de asistencia y desempeño que Elvin pidió el 24-25/sep/2
 
 30/sep: la RED ya no bloquea el ponche (IP de casa cambia: VPN, hotspot, apagón → casi todos pedían manual); manda la computadora registrada. Evento ponche-otra-red queda de registro.
 Además (30/sep): cada quien declara su Wi-Fi principal en Hoy; red nueva → aviso a Yaileen (1/persona/día) + recordatorio de proteger datos (tienen CRM y datos de clientes).
+
+30/sep: vacaciones con tope de 8 días y contadas desde ultimas_vacaciones (ficha). Se les preguntó a Carilin (LU: Aure, María García, María del Carmen, Jessica, Manuel, Marcos, Juan Diego, Santiago, Daisy) y Aure (ella + Adamay) por Slack; falta cargar las fechas cuando contesten. Equipo ya no muestra horas trabajadas (solo entrada/almuerzo/salida); reporte del equipo a Yaileen L-V 7:30 PM.
