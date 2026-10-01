@@ -5,7 +5,7 @@ import { and, eq, gte, inArray } from "drizzle-orm";
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
 import type { FilaPersona } from "./datos";
-import { rachaBaja } from "./ranking";
+import { alertaRendimiento, textoAlerta } from "./ranking";
 import { personasRank } from "./ranking-datos";
 import { aMinutos, fechaPR, minutosPR } from "./reglas";
 import { reporteDelDia, type PersonaReporte } from "./reporte-dia";
@@ -40,10 +40,17 @@ export async function reporteDeHoy(filas: FilaPersona[]) {
           .catch(() => [])
       : Promise.resolve([] as { nombre: string }[]),
   ]);
-  // Rachas: necesita varios días en `filas` (Equipo trae 7; el cron, 10).
-  const rachas = personasRank(filas).flatMap((p) => {
-    const r = rachaBaja(p);
-    return r ? [{ nombre: p.nombre, ...r }] : [];
-  });
-  return reporteDelDia(gente, { manualPendientes: manual.length, redesNuevas: redes.map((r) => r.nombre), rachas });
+  // Rendimiento: la roja cuenta el mes; para eso `filas` tiene que traer desde el día 1 (el cron y Ranking lo hacen).
+  const rendimiento = alertasDeRendimiento(filas).map((a) => ({ nivel: a.alerta.nivel, texto: textoAlerta(a.nombre, a.alerta) }));
+  return reporteDelDia(gente, { manualPendientes: manual.length, redesNuevas: redes.map((r) => r.nombre), rendimiento });
+}
+
+/** Alertas amarillas/rojas del mes en curso, rojas primero. */
+export function alertasDeRendimiento(filas: FilaPersona[], mes = fechaPR(Date.now()).slice(0, 7)) {
+  return personasRank(filas)
+    .flatMap((p) => {
+      const alerta = alertaRendimiento(p, mes);
+      return alerta ? [{ id: p.id, nombre: p.nombre, puesto: p.puesto, puestoNombre: p.puestoNombre, alerta }] : [];
+    })
+    .sort((a, b) => (a.alerta.nivel === b.alerta.nivel ? b.alerta.malosMes - a.alerta.malosMes : a.alerta.nivel === "roja" ? -1 : 1));
 }

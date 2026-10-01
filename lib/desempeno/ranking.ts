@@ -144,3 +144,72 @@ export function textoRankingMes(filas: FilaRanking[], mesNombre: string, url: st
   const atencion = filas.filter((f) => f.indice < 75 && f.mejorar.length).map((f) => `• *${esc(f.nombre)}*: ${esc(f.mejorar.join("; "))}`);
   return `🏆 *Ranking de productividad · ${mesNombre}*\n\n${top.join("\n")}${atencion.length ? `\n\n*Qué tienen que mejorar:*\n${atencion.join("\n")}` : ""}\n\n<${url}|Ver el ranking completo en Ritmo>`;
 }
+
+// ─── Alertas de rendimiento (30/sep, Elvin) ───────────────────────────────────────────────────
+// "No catalogues baja producción un día malo; busca rachas: dos, tres días malos corridos ya levantan sospecha… cuatro
+// días o más al mes malos, hay que tomar carta." Día malo = día bajo (sin marcar, muy tarde, sin KPIs o en 0) o baja
+// producción: anotó, pero produjo menos de la mitad de lo normal SUYO (mediana de sus días con producción; hace falta
+// historia de 5 días para comparar). 🟡 amarilla = 2+ días malos seguidos · 🔴 roja = 4+ días malos en el mes.
+
+export const RACHA_AMARILLA = 2;
+export const MALOS_ROJA = 4;
+const BAJA_PRODUCCION = 0.5;
+const HISTORIA_MINIMA = 5;
+
+const sumaDia = (d: DiaRank) => Object.values(d.datos).reduce((s, v) => s + (Number(v) || 0), 0);
+
+/** Mediana de lo que produce un día normal (solo días anotados con algo). null = todavía no hay con qué comparar. */
+export function produccionNormal(p: PersonaRank): number | null {
+  const xs = p.dias.filter((d) => trabajo(d) && d.estado !== "trabajando" && d.reporto).map(sumaDia).filter((x) => x > 0).sort((a, b) => a - b);
+  if (xs.length < HISTORIA_MINIMA) return null;
+  const m = Math.floor(xs.length / 2);
+  return xs.length % 2 ? xs[m] : (xs[m - 1] + xs[m]) / 2;
+}
+
+/** Por qué un día fue malo (null = día normal). */
+export function motivoDiaMalo(d: DiaRank, tieneKpis: boolean, normal: number | null): string | null {
+  if (!tocaba(d) || d.estado === "trabajando") return null;
+  if (d.estado === "ausente") return "sin marcar";
+  if (d.minutosTarde > 30) return "llegó muy tarde";
+  if (tieneKpis && (!d.reporto || Object.values(d.datos).every((v) => !v))) return "sin KPIs o en 0";
+  if (tieneKpis && normal !== null && sumaDia(d) < normal * BAJA_PRODUCCION) return "baja producción";
+  return null;
+}
+
+export interface AlertaRendimiento {
+  nivel: "amarilla" | "roja";
+  racha: number; // días malos seguidos hasta el último día completo
+  malosMes: number;
+  motivos: string[];
+  /** El último día completo fue el que la disparó (para avisar una sola vez). */
+  nueva: boolean;
+}
+
+export function alertaRendimiento(p: PersonaRank, mes: string): AlertaRendimiento | null {
+  const tiene = p.kpis.length > 0;
+  const normal = produccionNormal(p);
+  const completos = p.dias.filter((d) => tocaba(d) && d.estado !== "trabajando").sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const malos = completos.map((d) => ({ d, motivo: motivoDiaMalo(d, tiene, normal) }));
+  let racha = 0;
+  for (let i = malos.length - 1; i >= 0 && malos[i].motivo; i--) racha++;
+  const delMes = malos.filter((x) => x.d.fecha.startsWith(mes) && x.motivo);
+  const malosMes = delMes.length;
+  const nivel = malosMes >= MALOS_ROJA ? "roja" : racha >= RACHA_AMARILLA ? "amarilla" : null;
+  if (!nivel) return null;
+  const ultimoMalo = !!malos.at(-1)?.motivo && malos.at(-1)!.d.fecha.startsWith(mes);
+  const nueva = nivel === "roja" ? ultimoMalo && malosMes === MALOS_ROJA : racha === RACHA_AMARILLA;
+  const motivos = [...new Set((nivel === "roja" ? delMes : malos.slice(-racha)).map((x) => x.motivo!))];
+  return { nivel, racha, malosMes, motivos, nueva };
+}
+
+/** Una línea legible: "🔴 Ana · 4 días malos este mes (baja producción, sin marcar)". */
+export function textoAlerta(nombre: string, a: AlertaRendimiento): string {
+  const que = a.nivel === "roja" ? `${a.malosMes} días malos este mes${a.racha >= 2 ? `, ${a.racha} seguidos` : ""}` : `${a.racha} días malos seguidos`;
+  return `${a.nivel === "roja" ? "🔴" : "🟡"} ${nombre} · ${que} (${a.motivos.join(", ")})`;
+}
+
+/** Carilin: amarillas y rojas de Jessica, Ángela (Project Managers) y los estrategas; de los demás, solo rojas. */
+export const PUESTOS_CARILIN = ["pm", "estratega"];
+export function vaACarilin(puesto: string, a: AlertaRendimiento): boolean {
+  return a.nivel === "roja" || PUESTOS_CARILIN.includes(puesto);
+}

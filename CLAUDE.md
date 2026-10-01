@@ -809,6 +809,11 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   (`?tarea=reporte`, L-V 7:30 PM PR a RR.HH.; `lib/desempeno/reporte-dia.ts`). Mensual: `?tarea=ranking-mes` (día 1, 9 AM PR) →
   RR.HH. + Carilin. Equipo: gráfica de KPIs por persona (`components/ritmo/grafica-persona.tsx`) y **sin horas trabajadas** (solo
   entrada, almuerzo y salida; `DiaPersona.almuerzo`).
+- **Alertas de rendimiento** (30/sep, Elvin: "no catalogues baja producción un día malo; busca rachas"): día malo = sin marcar,
+  > 30 min tarde, sin KPIs/en 0, o **baja producción** (< 50 % de la mediana de SUS días con producción; necesita 5 días de historia).
+  🟡 = 2+ días malos seguidos · 🔴 = 4+ días malos en el mes (`alertaRendimiento` en `lib/desempeno/ranking.ts`, tests). Salen en
+  Ranking → Ayer y en el reporte de las 7:30 PM a RR.HH. (Yaileen, todas); a **Carilin** le llega un DM solo el día que nace la
+  alerta: amarillas y rojas de Project Managers (Jessica, Ángela) y estrategas, rojas de cualquiera (`vaACarilin`).
 - **Ficha completa de todos** (28/sep, Elvin: "todo el mundo debe tener todos los datos llenos, incluyendo fotos"):
   `faltantesFicha` (puro, `lib/desempeno/ficha-completa.ts` + tests) = foto, teléfono, ciudad y país, documento, contacto de
   emergencia, identificación y contrato. Aviso ámbar en Hoy con lo que falta → `/ritmo/bienvenida`, que ya no es solo para

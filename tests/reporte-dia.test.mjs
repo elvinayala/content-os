@@ -15,9 +15,10 @@ test("reporte: todo normal", () => {
 test("reporte: alertas con nombres, la grave primero", () => {
   const r = reporteDelDia(
     [p("Ana", "ausente"), p("Beto", "tarde", { minutosTarde: 84 }), p("Caro", "a_tiempo", { almuerzoMin: 80, bloqueos: "espero acceso a Meta" }), p("Dani", "trabajando", { sigueAbierta: true })],
-    { manualPendientes: 2, redesNuevas: ["Eva"], rachas: [{ nombre: "Fito", dias: 4, motivo: "sin KPIs o en 0" }] },
+    { manualPendientes: 2, redesNuevas: ["Eva"], rendimiento: [{ nivel: "roja", texto: "🔴 Fito · 4 días malos este mes (sin KPIs o en 0)" }, { nivel: "amarilla", texto: "🟡 Gabi · 2 días malos seguidos (baja producción)" }] },
   );
-  assert.ok(r.alertas.some((a) => a.tipo === "racha" && a.grave && a.detalle.includes("Fito (4 días")));
+  assert.ok(r.alertas.some((a) => a.tipo === "racha" && a.grave && a.detalle.startsWith("Fito · 4 días malos")));
+  assert.ok(r.alertas.some((a) => a.tipo === "racha" && !a.grave && a.detalle.startsWith("Gabi · 2 días")));
   assert.equal(r.normal, false);
   assert.equal(r.alertas[0].tipo, "sin-marcar");
   assert.equal(r.alertas[0].detalle, "Ana");

@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { Hora } from "@/components/ritmo/hora-local";
 import { EmpresaBadge, EstadoChip, FiltroEmpresa } from "@/components/ritmo/piezas";
 import { armarPanel, type FilaPersona } from "@/lib/desempeno/datos";
-import { rachaBaja, rankingMes } from "@/lib/desempeno/ranking";
+import { PUESTOS_CARILIN, rankingMes, textoAlerta } from "@/lib/desempeno/ranking";
+import { alertasDeRendimiento } from "@/lib/desempeno/reporte-dia-datos";
 import { personasRank } from "@/lib/desempeno/ranking-datos";
 import { DEPARTAMENTOS, fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
@@ -74,15 +75,13 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
 type Usuario = NonNullable<Awaited<ReturnType<typeof usuarioRitmo>>>;
 
 async function VistaAyer({ u, hoy, ayer, empresa }: { u: Usuario; hoy: string; ayer: string; empresa?: string }) {
-  const panel = await armarPanel(u, sumarDias(hoy, -12), ayer);
+  // Desde el día 1 del mes: la alerta roja cuenta los días malos del mes.
+  const panel = await armarPanel(u, [`${hoy.slice(0, 7)}-01`, sumarDias(hoy, -12)].sort()[0], ayer);
   const filas = panel.filas.filter((f) => !empresa || f.perfil.empresa === empresa);
   // "Ayer" = el último día que le tocaba trabajar a alguien (el lunes muestra el viernes).
   let dia = ayer;
   for (let i = 0; i < 6 && !filas.some((f) => f.dias.find((d) => d.fecha === dia && d.asistencia.estado !== "libre")); i++) dia = sumarDias(dia, -1);
-  const rachas = personasRank(filas).flatMap((p) => {
-    const r = rachaBaja(p);
-    return r ? [{ id: p.id, nombre: p.nombre, ...r }] : [];
-  });
+  const alertas = alertasDeRendimiento(filas, hoy.slice(0, 7));
   const deps = DEPARTAMENTOS.filter((x) => filas.some((f) => f.departamento === x));
   return (
     <>
@@ -94,22 +93,24 @@ async function VistaAyer({ u, hoy, ayer, empresa }: { u: Usuario; hoy: string; a
         </span>
       </div>
 
-      {rachas.length ? (
-        <section className="panel border-red-400/30 p-4">
-          <h3 className="flex items-center gap-2 text-sm font-semibold text-red-300">
-            <AlertTriangle className="size-4" /> Varios días seguidos con baja productividad
+      {alertas.length ? (
+        <section className={cn("panel p-4", alertas.some((a) => a.alerta.nivel === "roja") ? "border-red-400/30" : "border-amber-400/30")}>
+          <h3 className="flex items-center gap-2 text-sm font-semibold">
+            <AlertTriangle className="size-4 text-amber-300" /> Alertas de rendimiento
           </h3>
-          <ul className="mt-2 flex flex-col gap-1 text-sm">
-            {rachas.map((r) => (
-              <li key={r.id}>
-                <Link href={`/ritmo/equipo/${r.id}`} className="font-medium hover:underline">{r.nombre}</Link>
-                <span className="text-muted-foreground"> · {r.dias} días seguidos ({r.motivo})</span>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">🟡 2 o más días malos seguidos · 🔴 4 o más días malos este mes. Día malo = sin marcar, muy tarde, sin KPIs o produjo menos de la mitad de lo normal suyo.</p>
+          <ul className="mt-2.5 flex flex-col gap-1.5 text-sm">
+            {alertas.map((a) => (
+              <li key={a.id} className="flex flex-wrap items-baseline gap-x-2">
+                <Link href={`/ritmo/equipo/${a.id}`} className="font-medium hover:underline">{textoAlerta(a.nombre, a.alerta).split(" · ")[0]}</Link>
+                <span className="text-muted-foreground">{textoAlerta(a.nombre, a.alerta).split(" · ").slice(1).join(" · ")} · {a.puestoNombre}</span>
+                {a.alerta.nivel === "roja" || PUESTOS_CARILIN.includes(a.puesto) ? <span className="rounded-full bg-white/[0.05] px-1.5 text-[10px] text-muted-foreground">también a Carilin</span> : null}
               </li>
             ))}
           </ul>
         </section>
       ) : (
-        <p className="rounded-xl border border-emerald-400/25 bg-emerald-400/[0.05] px-4 py-2.5 text-sm text-emerald-200">✅ Nadie lleva varios días seguidos con baja productividad.</p>
+        <p className="rounded-xl border border-emerald-400/25 bg-emerald-400/[0.05] px-4 py-2.5 text-sm text-emerald-200">✅ Sin alertas de rendimiento: nadie con días malos seguidos ni 4 días malos este mes.</p>
       )}
 
       {deps.map((dep) => (

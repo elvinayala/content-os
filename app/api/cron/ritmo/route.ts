@@ -4,10 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { textoDigest, textoSemanal, type FilaAviso } from "@/lib/desempeno/avisos";
 import { avisarCorreo, avisarPersona, avisarRrhh, esc } from "@/lib/desempeno/avisar";
 import { tramosEntre } from "@/lib/desempeno/calendario";
-import { rankingMes, textoRankingMes } from "@/lib/desempeno/ranking";
+import { rankingMes, textoAlerta, textoRankingMes, vaACarilin } from "@/lib/desempeno/ranking";
 import { personasRank } from "@/lib/desempeno/ranking-datos";
 import { textoReporte } from "@/lib/desempeno/reporte-dia";
-import { reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
+import { alertasDeRendimiento, reporteDeHoy } from "@/lib/desempeno/reporte-dia-datos";
 import { armarPanel, modoScore, type FilaPersona } from "@/lib/desempeno/datos";
 import { fichaPendiente, resumenPersonas } from "@/lib/desempeno/fichas";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
@@ -117,11 +117,20 @@ export async function GET(req: NextRequest) {
   }
 
   if (tarea === "reporte") {
-    const panel = await armarPanel(SISTEMA, sumarDias(hoy, -10), hoy); // 10 días: para ver rachas de baja productividad
+    // Desde el día 1 del mes (la alerta roja cuenta los días malos del mes) y al menos 10 días (rachas que cruzan de mes).
+    const desde = [`${hoy.slice(0, 7)}-01`, sumarDias(hoy, -10)].sort()[0];
+    const panel = await armarPanel(SISTEMA, desde, hoy);
     const r = await reporteDeHoy(panel.filas);
     const texto = textoReporte(r, hoy, "https://ritmo.levelupmediapr.net/ritmo/equipo", esc);
     const enviados = real ? await avisarRrhh(texto) : 0;
-    return NextResponse.json({ ok: true, real, tarea, normal: r.normal, enviados, texto });
+    // Carilin (30/sep, Elvin): amarillas y rojas de Jessica, Ángela y los estrategas; de los demás, solo rojas. Solo el
+    // día que la alerta nace (2.º día malo seguido / 4.º del mes), para no repetirle lo mismo cada noche.
+    const nuevas = alertasDeRendimiento(panel.filas).filter((a) => a.alerta.nueva && vaACarilin(a.puesto, a.alerta));
+    const textoCarilin = nuevas.length
+      ? `📉 *Alertas de rendimiento del equipo*\n${nuevas.map((a) => `${esc(textoAlerta(a.nombre, a.alerta))} — ${esc(a.puestoNombre)}`).join("\n")}\n\n🟡 = 2+ días malos seguidos · 🔴 = 4+ días malos en el mes. Yaileen también lo tiene. <https://ritmo.levelupmediapr.net/ritmo/ranking|Ver en Ritmo>`
+      : null;
+    const aCarilin = real && textoCarilin ? await avisarCorreo(process.env.RITMO_RANKING_CARILIN ?? "carilin@levelupmediapr.net", textoCarilin) : false;
+    return NextResponse.json({ ok: true, real, tarea, normal: r.normal, enviados, texto, carilin: { enviado: aCarilin, texto: textoCarilin } });
   }
 
   if (tarea === "recordatorio") {
