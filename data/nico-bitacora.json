@@ -409,6 +409,14 @@
       "porque": "Aure lo pidió para clasificar y filtrar leads; Elvin aprobó el plan.",
       "verificado": "Tests nuevos 5/5 (leads 27/27), tsc sin errores en leads, deploy Ready, /login 200. En prod: 120 leads abiertos sin rubro; Construcción (9) y Handyman (4) ya calzan con el catálogo; los nichos viejos en texto libre (Belleza 7, Salud 4, Barbería, Restaurante…) no se tocaron y salen como \"(sin etiqueta)\" hasta que alguien los cambie. No vi la pantalla con sesión.",
       "commit": "7b5ec1c"
+    },
+    {
+      "fecha": "2026-10-01T19:25:29.970Z",
+      "plataforma": "content-os (Pulse · Leads)",
+      "que": "[Solicitud de Aure #149] Vista Lista de Leads: columna \"Última nota\" con la nota más reciente que el equipo le dejó a cada lead (1 línea; al pasar el mouse se ve completa). Subconsulta en listaTratos sobre leads_historial tipo nota (usa el índice por lead y fecha). Tabla un poco más ancha.",
+      "porque": "Aure: vista previa de lo que dijo cada lead sin abrirlo. Elvin aprobó.",
+      "verificado": "tsc sin errores en leads, tests de leads 27/27; la consulta en prod trae notas reales (28 de 248 leads de LU, ej. \"buzón de voz\") en ~0.3 s; deploy Ready, /login 200, lista sin sesión protegida. No vi la pantalla con sesión.",
+      "commit": "281615b"
     }
   ],
   "pendientesElvin": [
