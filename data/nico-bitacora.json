@@ -417,6 +417,14 @@
       "porque": "Aure: vista previa de lo que dijo cada lead sin abrirlo. Elvin aprobó.",
       "verificado": "tsc sin errores en leads, tests de leads 27/27; la consulta en prod trae notas reales (28 de 248 leads de LU, ej. \"buzón de voz\") en ~0.3 s; deploy Ready, /login 200, lista sin sesión protegida. No vi la pantalla con sesión.",
       "commit": "281615b"
+    },
+    {
+      "fecha": "2026-10-01T22:35:09.392Z",
+      "plataforma": "Pulse/Ritmo (base de datos)",
+      "que": "[Solicitud de Aure #152] Valentina Rodriguez tenía 2 cuentas: la vieja valentina.rodriguez@levelupmediapr.net (1/oct 3:29 PM, sin clave, perfil y ficha vacíos) y la buena valentinar1830@gmail.com (5:40 PM, con clave, identificación, contrato firmado y foto subidos a las 5:57 PM). Se BORRÓ SOLO la vieja (la que Aure dice que bloqueaba); la de Gmail se dejó porque borrarla le quitaba a Valentina lo que ya subió. Cascada: perfil, ficha y 2 cambios de esa cuenta. Todo quedó en la papelera (lote 2026-10-01 22:34:54 UTC), restaurable. Evento en pulse_security_log. Cierra #151.",
+      "porque": "Aure: la cuenta vieja con correo de Level Up no la dejaba arrancar. Elvin aprobó. Se escogió el camino reversible y mínimo.",
+      "verificado": "Antes: nada más enganchado a la vieja (sin ventas, leads, accesos ni archivos). Después: pulse_users solo tiene valentinar1830@gmail.com (activa, con clave, con perfil); papelera con 5 filas del lote. Sin cambio de código ni deploy.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
