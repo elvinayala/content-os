@@ -1,0 +1,458 @@
+<title>Propuesta Lorraine's Flowers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* AI Borinquen · marca v2 (27/sep/2026): fondo verde-negro, verde + azul del coquí, neón para lo que importa, rojo del punto */
+:root {
+  color-scheme: dark;
+  --fondo: #050e0a; --superficie: #0b1c14; --superficie2: #0f2419; --borde: #1c3a2a; --texto: #e8f3ec; --gris: #93ae9f; --gris2: #6d8a7a;
+  --verde: #3c9a3f; --azul: #1e6fd0; --neon: #2bff88; --rojo: #e63946; --rosa: #f2a7b6;
+  --outfit: "Outfit", "Helvetica Neue", Arial, sans-serif; --inter: "Inter", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font-family: var(--inter); overflow: hidden; }
+#visor { position: fixed; inset: 0; overflow: hidden; background: var(--fondo); }
+#escenario { position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; overflow: hidden;
+  background: radial-gradient(1100px 700px at 78% 30%, rgba(60,154,63,.16) 0%, rgba(60,154,63,0) 62%), radial-gradient(900px 600px at 10% 100%, rgba(30,111,208,.12) 0%, rgba(30,111,208,0) 60%), var(--fondo); }
+.slide.activa { opacity: 1; visibility: visible; transition: opacity .5s ease, visibility 0s; }
+.ceja { font-family: var(--mono); font-size: 22px; letter-spacing: .2em; text-transform: uppercase; color: var(--neon); }
+h1, h2 { font-family: var(--outfit); font-weight: 700; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+h2 { font-size: 76px; line-height: 1.04; }
+.verde { color: var(--neon); }
+.sub { font-size: 30px; line-height: 1.45; color: var(--gris); margin: 0; max-width: 1100px; }
+.pie { position: absolute; left: 120px; right: 120px; bottom: 50px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: var(--gris2); text-transform: uppercase; }
+.marca-pie { display: flex; align-items: center; gap: 12px; }
+.marca-pie img { height: 34px; }
+
+/* Entradas: cada slide se arma al entrar (.activa reinicia las animaciones) */
+@keyframes sube { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: none; } }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.86); } 70% { opacity: 1; transform: scale(1.03); } 100% { opacity: 1; transform: none; } }
+@keyframes dibuja { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes late { 0%, 100% { box-shadow: 0 0 0 0 rgba(43,255,136,.45); } 50% { box-shadow: 0 0 0 16px rgba(43,255,136,0); } }
+.activa .sube { animation: sube .8s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+.activa .aparece { animation: aparece .9s ease both; animation-delay: var(--d, 0s); }
+.activa .pop { animation: pop .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+
+/* 1 · Portada */
+#petalos { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#s1 .izq { position: absolute; left: 140px; top: 170px; width: 1080px; display: flex; flex-direction: column; gap: 34px; }
+#s1 .logo { display: flex; align-items: center; gap: 22px; }
+#s1 .logo img { width: 112px; height: auto; }
+#s1 .logo b { font-family: var(--outfit); font-size: 44px; font-weight: 700; letter-spacing: -.01em; }
+#s1 .logo b i { font-style: normal; color: var(--rojo); }
+#s1 .logo span { display: block; font-family: var(--mono); font-size: 18px; letter-spacing: .16em; color: var(--gris); text-transform: uppercase; margin-top: 4px; }
+#s1 h1 { font-size: 112px; line-height: .98; }
+#s1 .para { font-family: var(--outfit); font-size: 40px; font-weight: 500; color: var(--rosa); }
+#s1 .meta { display: flex; gap: 70px; margin-top: 30px; padding-top: 34px; border-top: 1px solid var(--borde); }
+#s1 .meta small { display: block; font-family: var(--mono); font-size: 18px; letter-spacing: .16em; color: var(--gris2); text-transform: uppercase; margin-bottom: 10px; }
+#s1 .meta b { font-family: var(--outfit); font-size: 30px; font-weight: 600; }
+#s1 .ramo { position: absolute; right: 120px; top: 170px; width: 560px; height: 700px; border-radius: 40px; border: 1px solid var(--borde);
+  background: radial-gradient(380px 380px at 50% 42%, rgba(242,167,182,.18), rgba(242,167,182,0) 70%), var(--superficie); display: grid; place-items: center; overflow: hidden; }
+#s1 .ramo svg { width: 420px; height: 420px; }
+#s1 .ramo .flor { transform-origin: 210px 210px; }
+.activa #s1-flor { animation: gira 26s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+#s1 .ramo .tag { position: absolute; bottom: 40px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 18px; letter-spacing: .18em; color: var(--gris); text-transform: uppercase; }
+
+/* 2 · Demo */
+#s2 .cab { position: absolute; left: 120px; top: 80px; right: 120px; display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+#s2 h2 { font-size: 60px; }
+#s2 .cab .ejemplo { white-space: nowrap; flex: none; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: #f3c969; border: 1px solid rgba(243,201,105,.45); border-radius: 999px; padding: 8px 18px; }
+.telefonos { position: absolute; left: 120px; right: 120px; top: 310px; display: grid; grid-template-columns: 1fr 1fr; gap: 70px; }
+.tel { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: start; }
+.tel .quien small { font-family: var(--mono); font-size: 18px; letter-spacing: .16em; color: var(--neon); text-transform: uppercase; }
+.tel .quien h3 { font-family: var(--outfit); font-size: 40px; line-height: 1.1; margin: 12px 0 14px; font-weight: 700; }
+.tel .quien p { font-size: 22px; line-height: 1.5; color: var(--gris); margin: 0; }
+.chat { height: 600px; border-radius: 34px; border: 1px solid var(--borde); background: #0a1711; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+.chat .barra { display: flex; align-items: center; gap: 14px; padding: 18px 22px; background: #0e2218; border-bottom: 1px solid var(--borde); }
+.chat .av { width: 46px; height: 46px; border-radius: 50%; background: var(--superficie2); display: grid; place-items: center; overflow: hidden; }
+.chat .av img { width: 36px; }
+.chat .barra b { font-family: var(--outfit); font-size: 22px; display: block; }
+.chat .barra span { font-size: 15px; color: var(--neon); }
+.chat .msgs { flex: 1; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.m { max-width: 82%; font-size: 19px; line-height: 1.42; padding: 12px 16px; border-radius: 18px; opacity: 0; transform: translateY(14px); }
+.m.yo { align-self: flex-end; background: #1d4a31; border-bottom-right-radius: 6px; }
+.m.ia { align-self: flex-start; background: #13281d; border: 1px solid var(--borde); border-bottom-left-radius: 6px; }
+.m.ver { opacity: 1; transform: none; transition: opacity .35s ease, transform .35s ease; }
+.escribe { align-self: flex-start; display: none; gap: 6px; padding: 14px 16px; border-radius: 18px; background: #13281d; border: 1px solid var(--borde); }
+.escribe.ver { display: flex; }
+.escribe i { width: 9px; height: 9px; border-radius: 50%; background: var(--gris); animation: punto 1s infinite; }
+.escribe i:nth-child(2) { animation-delay: .15s; } .escribe i:nth-child(3) { animation-delay: .3s; }
+@keyframes punto { 0%, 100% { opacity: .3; transform: none; } 50% { opacity: 1; transform: translateY(-3px); } }
+.factura { margin-top: 10px; background: #f6faf7; color: #0b1c14; border-radius: 14px; padding: 16px 18px; font-size: 16px; }
+.factura .t { display: flex; justify-content: space-between; font-family: var(--outfit); font-weight: 700; font-size: 18px; }
+.factura .l { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #c9d8cf; font-variant-numeric: tabular-nums; }
+.factura .l:last-child { border: 0; font-weight: 700; }
+.chip-crm { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-family: var(--mono); font-size: 14px; letter-spacing: .06em; color: var(--neon); border: 1px solid rgba(43,255,136,.4); border-radius: 999px; padding: 6px 12px; }
+
+/* 3 · Qué incluye */
+#s3 .cab { position: absolute; left: 120px; top: 90px; display: flex; flex-direction: column; gap: 18px; }
+.comp { position: absolute; left: 120px; right: 120px; top: 330px; display: grid; grid-template-columns: repeat(3, 1fr) 1.12fr; gap: 28px; }
+.card { background: var(--superficie); border: 1px solid var(--borde); border-radius: 26px; padding: 34px 32px; display: flex; flex-direction: column; gap: 16px; min-height: 470px; }
+.card .ico { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; background: var(--superficie2); border: 1px solid var(--borde); }
+.card .ico svg { width: 34px; height: 34px; }
+.card h3 { font-family: var(--outfit); font-size: 34px; line-height: 1.1; margin: 6px 0 0; font-weight: 700; }
+.card p { font-size: 21px; line-height: 1.5; color: var(--gris); margin: 0; }
+.card .precio { margin-top: auto; font-family: var(--outfit); font-size: 46px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.card .precio small { font-size: 22px; color: var(--gris); font-weight: 500; margin-left: 6px; }
+.card.bono { background: linear-gradient(160deg, rgba(43,255,136,.12), rgba(30,111,208,.10)), var(--superficie2); border-color: rgba(43,255,136,.45); position: relative; }
+.card.bono .etq { align-self: flex-start; font-family: var(--mono); font-size: 16px; letter-spacing: .1em; text-transform: uppercase; color: #04140b; background: var(--neon); border-radius: 999px; padding: 7px 14px; font-weight: 500; }
+.card.bono ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 21px; color: var(--texto); }
+.card.bono li::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--neon); margin-right: 12px; vertical-align: middle; }
+.card.bono .precio { display: flex; align-items: baseline; gap: 16px; }
+.card.bono .precio s { color: var(--gris2); font-size: 34px; text-decoration-thickness: 3px; text-decoration-color: var(--rojo); }
+.card.bono .precio em { font-style: normal; color: var(--neon); }
+
+/* 4 · Inversión */
+#s4 .cab { position: absolute; left: 120px; top: 90px; display: flex; flex-direction: column; gap: 18px; }
+.opciones { position: absolute; left: 120px; top: 320px; width: 1180px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.op { background: var(--superficie); border: 1px solid var(--borde); border-radius: 28px; padding: 40px 38px; display: flex; flex-direction: column; gap: 14px; }
+.op.top { background: linear-gradient(165deg, rgba(43,255,136,.14), rgba(30,111,208,.12)), var(--superficie2); border-color: rgba(43,255,136,.5); position: relative; }
+.op.top .reco { position: absolute; top: -18px; right: 30px; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: #04140b; background: var(--neon); padding: 7px 14px; border-radius: 999px; }
+.op small { font-family: var(--mono); font-size: 18px; letter-spacing: .16em; text-transform: uppercase; color: var(--gris); }
+.op h3 { font-family: var(--outfit); font-size: 36px; margin: 0; font-weight: 700; }
+.op .monto { font-family: var(--outfit); font-size: 96px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.op.top .monto { color: var(--neon); }
+.op .monto + span { font-size: 21px; color: var(--gris); }
+.op ul { list-style: none; margin: 16px 0 0; padding: 22px 0 0; border-top: 1px solid var(--borde); display: flex; flex-direction: column; gap: 12px; font-size: 21px; line-height: 1.35; }
+.op li { display: flex; gap: 12px; }
+.op li::before { content: "✓"; color: var(--neon); font-weight: 700; }
+.mant { position: absolute; right: 120px; top: 320px; width: 440px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 28px; padding: 40px 36px; display: flex; flex-direction: column; gap: 14px; }
+.mant .monto { font-family: var(--outfit); font-size: 88px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.mant .monto small { font-size: 28px; color: var(--gris); font-weight: 500; letter-spacing: 0; }
+.mant p { font-size: 22px; line-height: 1.5; color: var(--gris); margin: 0; }
+.mant .dia { margin-top: 10px; display: flex; align-items: center; gap: 14px; font-family: var(--outfit); font-size: 26px; font-weight: 600; }
+.mant .dia i { width: 54px; height: 54px; border-radius: 16px; background: rgba(43,255,136,.14); border: 1px solid rgba(43,255,136,.45); display: grid; place-items: center; font-style: normal; color: var(--neon); font-size: 22px; }
+
+/* 5 · Tiempos */
+#s5 .cab { position: absolute; left: 120px; top: 90px; display: flex; flex-direction: column; gap: 18px; }
+.linea { position: absolute; left: 160px; right: 160px; top: 470px; height: 4px; background: var(--borde); border-radius: 4px; }
+.linea b { position: absolute; inset: 0; background: linear-gradient(90deg, var(--azul), var(--verde), var(--neon)); border-radius: 4px; transform-origin: left; transform: scaleX(0); }
+.activa .linea b { animation: dibuja 2.2s cubic-bezier(.4,.1,.2,1) .5s both; }
+.hitos { position: absolute; left: 160px; right: 160px; top: 430px; display: grid; grid-template-columns: repeat(3, 1fr); }
+.hito { position: relative; display: flex; flex-direction: column; gap: 14px; }
+.hito:nth-child(2) { align-items: center; text-align: center; } .hito:nth-child(3) { align-items: flex-end; text-align: right; }
+.hito .pt { width: 80px; height: 80px; border-radius: 50%; background: var(--fondo); border: 4px solid var(--verde); display: grid; place-items: center; font-family: var(--outfit); font-weight: 700; font-size: 22px; }
+.hito:nth-child(3) .pt { border-color: var(--neon); }
+.activa .hito:nth-child(3) .pt { animation: pop .7s cubic-bezier(.2,.8,.2,1) 2.6s both, late 2.2s ease-out 3.4s infinite; }
+.hito h3 { font-family: var(--outfit); font-size: 50px; margin: 18px 0 0; font-weight: 700; }
+.hito:nth-child(3) h3 { color: var(--neon); }
+.hito p { font-size: 23px; line-height: 1.45; color: var(--gris); margin: 0; max-width: 430px; }
+.soporte { position: absolute; left: 160px; right: 160px; top: 830px; display: flex; align-items: center; gap: 22px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 22px; padding: 22px 30px; font-size: 24px; }
+.soporte b { font-family: var(--outfit); font-size: 26px; color: #04140b; background: var(--neon); padding: 8px 18px; border-radius: 999px; }
+
+/* 6 · Próximos pasos */
+#s6 .cab { position: absolute; left: 120px; top: 90px; display: flex; flex-direction: column; gap: 18px; }
+.pasos { position: absolute; left: 120px; right: 120px; top: 330px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; }
+.paso { background: var(--superficie); border: 1px solid var(--borde); border-radius: 24px; padding: 30px 26px; display: flex; flex-direction: column; gap: 18px; min-height: 230px; }
+.paso .n { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-family: var(--outfit); font-weight: 700; font-size: 26px; background: rgba(43,255,136,.12); border: 1px solid rgba(43,255,136,.45); color: var(--neon); }
+.paso b { font-family: var(--outfit); font-size: 30px; line-height: 1.15; font-weight: 600; }
+.cierre { position: absolute; left: 120px; right: 120px; top: 660px; display: flex; align-items: center; gap: 40px; }
+.cierre img { width: 150px; }
+.cierre h3 { font-family: var(--outfit); font-size: 64px; margin: 0; font-weight: 700; letter-spacing: -.02em; }
+.cierre p { font-size: 26px; color: var(--gris); margin: 10px 0 0; }
+
+/* Controles */
+.controles { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; background: rgba(5,14,10,.82); border: 1px solid var(--borde); border-radius: 14px; padding: 6px; transition: opacity .4s; z-index: 10; }
+.controles.dormido { opacity: 0; }
+.controles button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--borde); background: var(--superficie); color: var(--texto); font-size: 18px; cursor: pointer; }
+.controles button:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
+.controles .pag { font-family: var(--mono); font-size: 13px; color: var(--gris); padding: 0 8px; font-variant-numeric: tabular-nums; }
+.progreso { position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 10; }
+.progreso i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--azul), var(--neon)); transition: width .4s; }
+@media (prefers-reduced-motion: reduce) { .activa .sube, .activa .aparece, .activa .pop, .activa .linea b { animation: none !important; } .linea b { transform: none; } .activa #s1-flor { animation: none; } }
+</style>
+
+<div id="visor">
+  <div id="escenario">
+
+    <!-- 1 · PORTADA -->
+    <section class="slide activa" id="s1">
+      <canvas id="petalos" aria-hidden="true"></canvas>
+      <div class="izq">
+        <div class="logo sube"><img src="/*LOGO*/" alt="AI Borinquen"><div><b>AI Borinquen<i>.</i></b><span>Automatización e inteligencia artificial</span></div></div>
+        <div class="ceja sube" style="--d:.15s">Propuesta de implementación</div>
+        <h1 class="sube" style="--d:.25s">Agente de IA, CRM <span class="verde">y presencia web.</span></h1>
+        <div class="para sube" style="--d:.4s">Para Lorraine's Flowers</div>
+        <div class="meta sube" style="--d:.55s">
+          <div><small>Preparado para</small><b>Patricia Torres</b></div>
+          <div><small>Preparado por</small><b>AI Borinquen</b></div>
+          <div><small>Fecha</small><b>1 de octubre de 2026</b></div>
+        </div>
+      </div>
+      <div class="ramo pop" style="--d:.35s" aria-hidden="true">
+        <svg viewBox="0 0 420 420">
+          <g id="s1-flor" class="flor">
+            <g fill="#f2a7b6" fill-opacity=".9">
+              <ellipse cx="210" cy="118" rx="46" ry="92"/><ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(45 210 210)"/>
+              <ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(90 210 210)"/><ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(135 210 210)"/>
+              <ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(180 210 210)"/><ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(225 210 210)"/>
+              <ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(270 210 210)"/><ellipse cx="210" cy="118" rx="46" ry="92" transform="rotate(315 210 210)"/>
+            </g>
+            <g fill="#e63946" fill-opacity=".55">
+              <ellipse cx="210" cy="150" rx="30" ry="60" transform="rotate(22 210 210)"/><ellipse cx="210" cy="150" rx="30" ry="60" transform="rotate(112 210 210)"/>
+              <ellipse cx="210" cy="150" rx="30" ry="60" transform="rotate(202 210 210)"/><ellipse cx="210" cy="150" rx="30" ry="60" transform="rotate(292 210 210)"/>
+            </g>
+          </g>
+          <circle cx="210" cy="210" r="40" fill="#0b1c14" stroke="#2bff88" stroke-width="3"/>
+          <g stroke="#2bff88" stroke-width="3" stroke-linecap="round"><line x1="196" y1="200" x2="196" y2="220"/><line x1="206" y1="192" x2="206" y2="228"/><line x1="216" y1="198" x2="216" y2="222"/><line x1="226" y1="204" x2="226" y2="216"/></g>
+        </svg>
+        <div class="tag">Flores + IA · hecho en Puerto Rico</div>
+      </div>
+      <div class="pie"><span>AI Borinquen</span><span>Propuesta para Lorraine's Flowers</span></div>
+    </section>
+
+    <!-- 2 · DEMO -->
+    <section class="slide" id="s2">
+      <div class="cab">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="ceja sube">Así se ve en tu WhatsApp</div>
+          <h2 class="sube" style="--d:.1s">Uno trabaja contigo. <span class="verde">El otro atiende a tus clientes.</span></h2>
+        </div>
+        <div class="ejemplo aparece" style="--d:.4s">EJEMPLO DE CONVERSACIÓN</div>
+      </div>
+      <div class="telefonos">
+        <div class="tel">
+          <div class="quien sube" style="--d:.3s"><small>Para ti</small><h3>Tu agente de IA personalizado</h3><p>Tu propio ChatGPT dentro de WhatsApp, entrenado con tu negocio: crea facturas y te ayuda con el día a día.</p></div>
+          <div class="chat sube" style="--d:.45s">
+            <div class="barra"><div class="av"><img src="/*LOGO*/" alt=""></div><div><b>Tu agente · Lorraine's</b><span>en línea</span></div></div>
+            <div class="msgs" id="chatA">
+              <div class="m yo">Hazme una factura para Carmen Rivera: un arreglo de 24 rosas rojas, entrega el sábado.</div>
+              <div class="m ia">Listo, Patricia. Aquí está:
+                <div class="factura"><div class="t"><span>Factura #0147</span><span>Lorraine's Flowers</span></div>
+                  <div class="l"><span>Cliente</span><span>Carmen Rivera</span></div>
+                  <div class="l"><span>Arreglo · 24 rosas rojas</span><span>$85.00</span></div>
+                  <div class="l"><span>Entrega · sábado</span><span>$10.00</span></div>
+                  <div class="l"><span>Total</span><span>$95.00</span></div></div>
+              </div>
+              <div class="m yo">Perfecto, envíasela.</div>
+              <div class="escribe"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="tel">
+          <div class="quien sube" style="--d:.5s"><small>Para tus clientes</small><h3>Tu agente de WhatsApp</h3><p>Contesta a cualquier hora, toma el pedido y lo deja anotado en tu CRM.</p></div>
+          <div class="chat sube" style="--d:.65s">
+            <div class="barra"><div class="av"><img src="/*LOGO*/" alt=""></div><div><b>Lorraine's Flowers</b><span>responde al instante</span></div></div>
+            <div class="msgs" id="chatB">
+              <div class="m yo">Hola, ¿tienen arreglos para aniversario? Lo necesito para el viernes.</div>
+              <div class="m ia">¡Hola! Sí, tenemos arreglos de rosas, tulipanes y mixtos. ¿Qué presupuesto tienes en mente y a qué pueblo sería la entrega?</div>
+              <div class="m yo">Unos $80, en Bayamón.</div>
+              <div class="m ia">¡Perfecto! Te separo la entrega para el viernes en Bayamón. ¿A nombre de quién va?
+                <div class="chip-crm">● Pedido nuevo en el CRM</div></div>
+              <div class="escribe"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · QUÉ INCLUYE -->
+    <section class="slide" id="s3">
+      <div class="cab">
+        <div class="ceja sube">Qué incluye la propuesta</div>
+        <h2 class="sube" style="--d:.1s">Cuatro piezas que <span class="verde">trabajan juntas.</span></h2>
+        <p class="sub sube" style="--d:.2s">Para organizar el negocio y atender a tus clientes.</p>
+      </div>
+      <div class="comp">
+        <div class="card sube" style="--d:.35s">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#2bff88" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="11" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 15.5c1.5 1 3.5 1 5 0"/></svg></div>
+          <h3>Agente de IA personalizado</h3>
+          <p>Tu propio ChatGPT dentro de WhatsApp, entrenado con tu negocio. Crea facturas y maneja el día a día, conectado a una plataforma propia de Lorraine's Flowers.</p>
+          <div class="precio">$3,000<small>USD</small></div>
+        </div>
+        <div class="card sube" style="--d:.5s">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#2bff88" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/><path d="M9 11h6M9 14h4"/></svg></div>
+          <h3>Agente de WhatsApp</h3>
+          <p>Atención automatizada para tus clientes a través de WhatsApp.</p>
+          <div class="precio">$1,000<small>USD</small></div>
+        </div>
+        <div class="card sube" style="--d:.65s">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#2bff88" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 13h6M7 16h9"/></svg></div>
+          <h3>Página web de una página</h3>
+          <p>Una landing page dentro del embudo en GoHighLevel.</p>
+          <div class="precio">$800<small>USD</small></div>
+        </div>
+        <div class="card bono pop" style="--d:.9s">
+          <div class="etq">Bono · sin costo</div>
+          <h3>CRM completo en GoHighLevel</h3>
+          <ul><li>Calendario</li><li>Pipelines</li><li>Landing page integrada al embudo</li></ul>
+          <div class="precio"><s>$1,500</s><em>Incluido</em></div>
+        </div>
+      </div>
+      <div class="pie"><span class="marca-pie"><img src="/*LOGO*/" alt="">AI Borinquen</span><span>Propuesta para Lorraine's Flowers</span></div>
+    </section>
+
+    <!-- 4 · INVERSIÓN -->
+    <section class="slide" id="s4">
+      <div class="cab">
+        <div class="ceja sube">Opciones de inversión</div>
+        <h2 class="sube" style="--d:.1s">Dos formas de <span class="verde">empezar.</span></h2>
+        <p class="sub sube" style="--d:.2s">Según lo que necesite Lorraine's Flowers.</p>
+      </div>
+      <div class="opciones">
+        <div class="op sube" style="--d:.35s">
+          <small>Opción 1</small><h3>Agente y CRM</h3>
+          <div class="monto" data-cuenta="3000" data-delay="700">$3,000</div><span>USD de pago inicial</span>
+          <ul><li>Agente de IA personalizado</li><li>CRM completo en GoHighLevel con calendario y pipelines (bono, valor $1,500)</li><li>Soporte durante 60 días</li><li>Entrega en 7 a 15 días</li></ul>
+        </div>
+        <div class="op top sube" style="--d:.5s">
+          <div class="reco">La más completa</div>
+          <small>Opción 2</small><h3>Solución completa</h3>
+          <div class="monto" data-cuenta="5000" data-delay="900">$5,000</div><span>USD de pago inicial</span>
+          <ul><li>Agente de IA personalizado</li><li>Agente de WhatsApp</li><li>Landing page de una página</li><li>CRM completo en GoHighLevel con calendario y pipelines (bono, valor $1,500)</li><li>Soporte durante 60 días</li><li>Entrega en 7 a 15 días</li></ul>
+        </div>
+      </div>
+      <div class="mant sube" style="--d:.75s">
+        <small style="font-family:var(--mono);font-size:18px;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)">En ambas opciones</small>
+        <div class="monto">$297<small> USD/mes</small></div>
+        <p>Mantenimiento mensual.</p>
+        <div class="dia"><i>45</i>Se comienza a cobrar en el día 45.</div>
+      </div>
+      <div class="pie"><span class="marca-pie"><img src="/*LOGO*/" alt="">AI Borinquen</span><span>Propuesta para Lorraine's Flowers</span></div>
+    </section>
+
+    <!-- 5 · TIEMPOS -->
+    <section class="slide" id="s5">
+      <div class="cab">
+        <div class="ceja sube">Tiempos</div>
+        <h2 class="sube" style="--d:.1s">De la firma a <span class="verde">funcionando.</span></h2>
+      </div>
+      <div class="linea"><b></b></div>
+      <div class="hitos">
+        <div class="hito aparece" style="--d:.6s"><div class="pt">1</div><h3>7 a 15 días</h3><p>Implementación y entrega. Idealmente en 15 días.</p></div>
+        <div class="hito aparece" style="--d:1.5s"><div class="pt">2</div><h3>30 días</h3><p>Después de implementado, con el sistema ya funcionando.</p></div>
+        <div class="hito aparece" style="--d:2.4s"><div class="pt">45</div><h3>Día 45</h3><p>Inicia el mantenimiento de $297 USD al mes.</p></div>
+      </div>
+      <div class="soporte sube" style="--d:3s"><b>60 días</b>Soporte incluido en ambas opciones.</div>
+      <div class="pie"><span class="marca-pie"><img src="/*LOGO*/" alt="">AI Borinquen</span><span>Propuesta para Lorraine's Flowers</span></div>
+    </section>
+
+    <!-- 6 · PRÓXIMOS PASOS -->
+    <section class="slide" id="s6">
+      <div class="cab">
+        <div class="ceja sube">Próximos pasos</div>
+        <h2 class="sube" style="--d:.1s">Así <span class="verde">empezamos.</span></h2>
+      </div>
+      <div class="pasos">
+        <div class="paso sube" style="--d:.3s"><div class="n">1</div><b>Elegir la opción</b></div>
+        <div class="paso sube" style="--d:.45s"><div class="n">2</div><b>Pago inicial</b></div>
+        <div class="paso sube" style="--d:.6s"><div class="n">3</div><b>Información y accesos</b></div>
+        <div class="paso sube" style="--d:.75s"><div class="n">4</div><b>Implementación</b></div>
+        <div class="paso sube" style="--d:.9s"><div class="n">5</div><b>Entrega y soporte</b></div>
+      </div>
+      <div class="cierre aparece" style="--d:1.3s"><img src="/*LOGO*/" alt="AI Borinquen"><div><h3>Gracias, Patricia.</h3><p>AI Borinquen · Automatización e inteligencia artificial</p></div></div>
+    </section>
+
+  </div>
+</div>
+
+<div class="progreso" aria-hidden="true"><i id="barra"></i></div>
+<div class="controles" id="controles">
+  <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
+  <span class="pag" id="pag">1 / 6</span>
+  <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
+  <button type="button" id="btnRep" aria-label="Repetir la animación" title="Repetir animación (R)">↻</button>
+  <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+</div>
+
+<script>
+(function () {
+  const esc = document.getElementById("escenario");
+  function ajustar() {
+    const w = window.innerWidth, h = window.innerHeight, k = Math.min(w / 1920, h / 1080);
+    esc.style.transform = `scale(${k})`; esc.style.left = (w - 1920 * k) / 2 + "px"; esc.style.top = (h - 1080 * k) / 2 + "px";
+  }
+  window.addEventListener("resize", ajustar); ajustar();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slides = [...document.querySelectorAll(".slide")];
+  let actual = 0;
+  const timers = [];
+  const limpiar = () => { while (timers.length) clearTimeout(timers.pop()); };
+  const luego = (ms, fn) => timers.push(setTimeout(fn, reduce ? 0 : ms));
+
+  // Pétalos que caen en la portada (canvas, suave)
+  const cv = document.getElementById("petalos"), cx = cv.getContext("2d");
+  cv.width = 1920; cv.height = 1080;
+  const pet = Array.from({ length: 34 }, () => nuevo(true));
+  function nuevo(inicio) { return { x: Math.random() * 1920, y: inicio ? Math.random() * 1080 : -40, r: 8 + Math.random() * 12, v: .5 + Math.random() * 1.1, g: Math.random() * 6.28, gv: (Math.random() - .5) * .03, b: Math.random() * 6.28, c: Math.random() < .7 ? "242,167,182" : "230,57,70", a: .25 + Math.random() * .35 }; }
+  function petalos() {
+    if (actual === 0 && !reduce) {
+      cx.clearRect(0, 0, 1920, 1080);
+      for (const p of pet) {
+        p.y += p.v; p.b += .02; p.x += Math.sin(p.b) * .8; p.g += p.gv;
+        if (p.y > 1120) Object.assign(p, nuevo(false));
+        cx.save(); cx.translate(p.x, p.y); cx.rotate(p.g); cx.fillStyle = `rgba(${p.c},${p.a})`;
+        cx.beginPath(); cx.ellipse(0, 0, p.r * .55, p.r, 0, 0, Math.PI * 2); cx.fill(); cx.restore();
+      }
+    }
+    requestAnimationFrame(petalos);
+  }
+  requestAnimationFrame(petalos);
+
+  // Demo: los mensajes salen uno a uno con "escribiendo…"
+  function chat(id, base) {
+    const box = document.getElementById(id), ms = [...box.querySelectorAll(".m")], esc = box.querySelector(".escribe");
+    ms.forEach((m) => m.classList.remove("ver")); esc.classList.remove("ver");
+    let t = base;
+    ms.forEach((m) => {
+      if (m.classList.contains("ia")) { luego(t, () => { box.insertBefore(esc, m); esc.classList.add("ver"); }); t += 1100; }
+      luego(t, () => { esc.classList.remove("ver"); m.classList.add("ver"); });
+      t += m.classList.contains("ia") ? 1500 : 1000;
+    });
+    if (reduce) { ms.forEach((m) => m.classList.add("ver")); }
+  }
+  // Montos que cuentan
+  function contar(s) {
+    s.querySelectorAll("[data-cuenta]").forEach((el) => {
+      const hasta = +el.dataset.cuenta, d = +el.dataset.delay || 0;
+      el.textContent = "$0";
+      if (reduce) { el.textContent = "$" + hasta.toLocaleString("en-US"); return; }
+      luego(d, () => { const t0 = performance.now(); const paso = (n) => { const k = Math.min(1, (n - t0) / 1100), e = 1 - Math.pow(1 - k, 3); el.textContent = "$" + Math.round(hasta * e).toLocaleString("en-US"); if (k < 1) requestAnimationFrame(paso); }; requestAnimationFrame(paso); });
+    });
+  }
+  function arrancar(s) {
+    s.classList.remove("activa"); void s.offsetWidth; s.classList.add("activa");
+    if (s.id === "s2") { chat("chatA", 900); chat("chatB", 1700); }
+    contar(s);
+  }
+  function ir(n, forzar) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === actual && !forzar) return;
+    limpiar();
+    slides[actual].classList.remove("activa");
+    actual = n; arrancar(slides[actual]);
+    document.getElementById("pag").textContent = `${actual + 1} / ${slides.length}`;
+    document.getElementById("barra").style.width = ((actual + 1) / slides.length) * 100 + "%";
+    try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
+  }
+  const inicial = /^#s(\d)$/.exec(location.hash);
+  actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
+  slides.forEach((s, i) => { if (i !== actual) s.classList.remove("activa"); });
+  ir(actual, true);
+
+  document.getElementById("btnAnt").addEventListener("click", (e) => { e.stopPropagation(); ir(actual - 1); });
+  document.getElementById("btnSig").addEventListener("click", (e) => { e.stopPropagation(); ir(actual + 1); });
+  document.getElementById("btnRep").addEventListener("click", (e) => { e.stopPropagation(); ir(actual, true); });
+  const full = () => { const d = document.documentElement; try { (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(() => {}); } catch (e) {} };
+  document.getElementById("btnFull").addEventListener("click", (e) => { e.stopPropagation(); full(); });
+  document.getElementById("visor").addEventListener("click", (e) => ir(e.clientX < window.innerWidth * 0.3 ? actual - 1 : actual + 1));
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
+    else if (e.key === "Home") ir(0);
+    else if (e.key === "End") ir(slides.length - 1);
+    else if (e.key === "f" || e.key === "F") full();
+    else if (e.key === "r" || e.key === "R") ir(actual, true);
+  });
+  let x0 = null;
+  window.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(actual + (dx < 0 ? 1 : -1)); x0 = null; });
+  const ctl = document.getElementById("controles"); let dormir;
+  const despertar = () => { ctl.classList.remove("dormido"); clearTimeout(dormir); dormir = setTimeout(() => ctl.classList.add("dormido"), 2600); };
+  window.addEventListener("mousemove", despertar); despertar();
+})();
+</script>
