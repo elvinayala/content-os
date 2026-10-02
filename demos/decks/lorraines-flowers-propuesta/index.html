@@ -163,6 +163,10 @@ h2 { font-size: 76px; line-height: 1.04; }
 .controles .pag { font-family: var(--mono); font-size: 13px; color: var(--gris); padding: 0 8px; font-variant-numeric: tabular-nums; }
 .progreso { position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 10; }
 .progreso i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--azul), var(--neon)); transition: width .4s; }
+.girar { display: none; position: fixed; left: 12px; right: 12px; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 20; background: rgba(11,28,20,.95); border: 1px solid rgba(43,255,136,.45); color: #e8f3ec; border-radius: 14px; padding: 12px 14px; font: 500 15px/1.4 "Inter", Arial, sans-serif; align-items: center; gap: 12px; }
+.girar b { color: #2bff88; }
+.girar button { margin-left: auto; flex: none; background: none; border: 1px solid #1c3a2a; color: #e8f3ec; border-radius: 8px; width: 32px; height: 32px; font-size: 16px; }
+@media (orientation: portrait) and (max-width: 820px) { .girar { display: flex; } }
 @media (prefers-reduced-motion: reduce) { .activa .sube, .activa .aparece, .activa .pop, .activa .linea b { animation: none !important; } .linea b { transform: none; } .activa #s1-flor { animation: none; } }
 </style>
 
@@ -350,6 +354,7 @@ h2 { font-size: 76px; line-height: 1.04; }
   </div>
 </div>
 
+<div class="girar" id="girar"><span>📱 <b>Gira el teléfono</b> para verla en grande. Toca a la derecha para avanzar.</span><button type="button" id="cerrarGirar" aria-label="Cerrar aviso">✕</button></div>
 <div class="progreso" aria-hidden="true"><i id="barra"></i></div>
 <div class="controles" id="controles">
   <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
@@ -448,6 +453,7 @@ h2 { font-size: 76px; line-height: 1.04; }
     else if (e.key === "f" || e.key === "F") full();
     else if (e.key === "r" || e.key === "R") ir(actual, true);
   });
+  document.getElementById("cerrarGirar").addEventListener("click", (e) => { e.stopPropagation(); document.getElementById("girar").hidden = true; });
   let x0 = null;
   window.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
   window.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(actual + (dx < 0 ? 1 : -1)); x0 = null; });
