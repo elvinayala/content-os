@@ -11,3 +11,7 @@ animada con la **marca v2 de AI Borinquen** (fondo verde-negro, coquí de circui
   día 45 + 60 días de soporte) · próximos pasos.
 - Todos los precios, plazos y textos salen TAL CUAL del PDF. `fuente.html` lleva `/*LOGO*/`; `index.html` ya trae el logo
   (`vault/proyectos/ai-borinquen/marca/01-logo/logo-color-fondo-oscuro.svg`) en data URI.
+- **Correcciones de Elvin (1/oct):** landing page $1,000 (no $800; así la Opción 2 cuadra en $5,000) · el agente personal
+  hace facturas, **cotizaciones para eventos** y más (la demo muestra las dos) · nada de "60 días de soporte": soporte
+  incluido en la implementación (días 1–15) y la optimización (días 16–45); desde el día 45, mantenimiento $297/mes.
+  El PDF original todavía dice $800 y 60 días.
