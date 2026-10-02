@@ -2,6 +2,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { AibRecepcionista, DURACION as DUR_AIB } from "./videos/AibRecepcionista";
 import { Testimonio, type PropsTestimonio } from "./videos/Testimonio";
+import { LuPelicula, DURACION_LU_PELICULA } from "./videos/LuPelicula";
 import { Anuncio, duracionDe } from "./fabrica/Anuncio";
 import { ANUNCIOS } from "./fabrica/anuncios";
 
@@ -18,6 +19,8 @@ export const Root: React.FC = () => (
     <Composition id="TestimonioVertical" component={Testimonio} fps={30} width={1080} height={1920} durationInFrames={300}
       defaultProps={{ video: "testimonios/ernest-corte.mp4", dur: 10, nombre: "Nombre", rol: "Cliente", subtitulos: [], vertical: true } as PropsTestimonio}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.round(props.dur * 30) })} />
+    {/* La película de Level Up: la presentación de Canva hecha motion (testimonios reales + casos + método) */}
+    <Composition id="LuPelicula" component={LuPelicula} durationInFrames={DURACION_LU_PELICULA} fps={30} width={1920} height={1080} />
     {/* Fábrica de anuncios: una composición por guion (id = nombre del archivo) */}
     {ANUNCIOS.map((a) => (
       <Composition key={a.id} id={a.id} component={Anuncio} defaultProps={{ anuncio: a }} durationInFrames={duracionDe(a)} fps={30}

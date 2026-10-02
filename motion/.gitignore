@@ -1,2 +1,6 @@
 node_modules
 out
+# Clips de testimonios de la película de Level Up (pesados; viven en la Mac)
+/public/lu-peli/*.mp4
+/public/lu-peli/paginas/
+/public/audio/lu-pelicula-raw.wav
