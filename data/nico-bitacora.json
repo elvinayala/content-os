@@ -441,6 +441,14 @@
       "porque": "Elvin reporto la falla y pidio arreglarla; ademas el cliente quiere consolidar 3 numeros en uno para que Angelo conteste todo.",
       "verificado": "get-agent, get-phone-number y list-calls respondieron con datos reales de la cuenta de Retell; los 404/200 de limpieza confirman que el endpoint temporal ya no existe y /login sigue sano.",
       "commit": "eb7e229 (agregado) + limpieza en el commit siguiente"
+    },
+    {
+      "fecha": "2026-10-02",
+      "plataforma": "Pulse · Leads",
+      "que": "[Solicitud de Aure #157] (junta #155) Lis Acevedo (lis.acevedo@levelupmediapr.net) con acceso a Leads de Level Up y AI Borinquen, alcance todos los leads: 2 filas en leads_acceso (upsert, igual que darAccesoLeads) + 2 eventos acceso_leads en pulse_security_log. El paso 1 (abrir Pulse) ya estaba: solo_ritmo=false.",
+      "porque": "Aure: Lis trabaja en las dos empresas y ve todo. OK de Elvin.",
+      "verificado": "En la base: leads_acceso level_up=todos y ai_borinquen=todos; rol miembro, solo_ritmo=false → accesoLeads da puede=true/todos en las dos; 2FA ya activado (30/sep); leads.levelupmediapr.net/ventas → 200. No pude abrir la sesión como ella (prueba con su cuenta: pendiente que entre).",
+      "commit": "sin código (solo datos)"
     }
   ],
   "pendientesElvin": [
