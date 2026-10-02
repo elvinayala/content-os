@@ -22,7 +22,7 @@ cada trabajo deja ~$110 y el cliente sale pagado en el primer trabajo.
 
 | # | Qué | Estado |
 |---|---|---|
-| 1.1 | **Conjunto "D · Ticket alto" en Caguas y Cidra** ($15/día): 5 flyers nuevos (calentador solar desde $699 · trabajos grandes · factura de agua alta / filtración · cisterna desde $899 · calentador $279). Script `kit/anuncios/lanzar-ticket-alto.mjs`, listo. | ⏳ **espera el OK de Elvin** (gasta dinero) |
+| 1.1 | **Conjunto "D · Ticket alto" en Caguas y Cidra** ($15/día): 5 flyers nuevos (calentador solar desde $699 · trabajos grandes · factura de agua alta / filtración · cisterna desde $899 · calentador $279). Script `kit/anuncios/lanzar-ticket-alto.mjs`, listo. | ✅ activo desde el 1/oct, 9 PM (conjunto `120255203459600029`) · Cidra agregada también a Precio fijo |
 | 1.2 | **"Aprovecha la visita"**: el agente, al pedir los datos para agendar, hace UNA pregunta para sumar algo a la misma visita sin otro cargo de coordinación (inodoro que corre, llave que gotea, calentador viejo). Va en las notas de la cita y el plomero lo suma en sitio con "Encontré algo más". | ✅ en el agente desde hoy |
 | 1.3 | **Plomeros vendiendo en sitio**: "Encontré algo más" y "Recomendar algo" en la app (65 % de lo aprobado es suyo). Yaileen se lo enseña a Luis en la llamada de bienvenida y le recuerda a Edgar. | ✅ app · Yaileen entrena |
 | 1.4 | **Destape con máquina $299** en los anuncios: solo cuando confirmemos qué plomero tiene máquina y cámara. | ❓ Yaileen pregunta a Edgar y Luis |
@@ -41,14 +41,14 @@ cada trabajo deja ~$110 y el cliente sale pagado en el primer trabajo.
 
 ## 3. Pauta del mes (dentro del tope)
 
-- Hoy $65/día. Con el conjunto D de Caguas: **$80/día**. Tope de los primeros 30 días: $125.
+- Desde el 1/oct: **$80/día** (con el conjunto D de Caguas). Tope de los primeros 30 días: $125.
 - Cada lunes: se apagan los anuncios con 0 conversaciones en 7 días y se pasa el dinero al que trae (método de Max).
 - Área nueva = plomero firmado + $15–20/día (Rafael en Canóvanas abriría Metro, donde ya hay demanda sin cobertura).
 
 ## 4. Quién hace qué esta semana
 
-- **Elvin:** OK al conjunto D · Zernio (PR) · ATH Business/Stripe · recarga automática de Anthropic.
+- **Elvin:** Zernio (PR: correo listo para miki@zernio.com) · ATH Business/Stripe · recarga automática de Anthropic.
 - **Yaileen:** instalar la app con Luis y que acepte R-0002 antes de las 5:50 AM · preguntar quién tiene máquina de destape ·
   firmas pendientes (Rafael de Jesus, Jose A. Vargas).
 - **Heileen:** llamar a cada cliente que deja número el mismo día; confirmar a Somarie (R-0002) cuando Luis acepte.
-- **Claude:** montar el conjunto D con el OK, aviso automático de "dejó número y no agendó", revisión de anuncios el lunes.
+- **Claude:** ✅ alta automática al firmar (1/oct) · aviso automático de "dejó número y no agendó", revisión de anuncios el lunes.

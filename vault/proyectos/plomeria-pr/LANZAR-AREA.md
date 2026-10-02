@@ -4,7 +4,7 @@
 
 ## 1. El día que firma
 
-1. **Alta del plomero** activo en la app (`/admin/plomeros`) con su municipio. El agente agenda clientes en el territorio desde ese momento.
+1. **Alta del plomero: AUTOMÁTICA al firmar** (1/oct/2026, `agente/src/alta-automatica.ts`). Plomero o técnico que firma → queda activo con la zona de su municipio, le llega por texto la app, se le ofrecen los trabajos de su zona agendados sin plomero, Yaileen recibe el link y los pasos por Slack, Ventas (Telegram) sabe que hay plomero, y a Elvin le llega si la zona es NUEVA (anuncios = su OK). No se activan solos: aprendiz, cotizador, o pueblo fuera de toda zona (avisa cuál agregar a `territorios.json`). A mano sigue existiendo `/admin/plomeros`.
 2. **Confirmar sus pueblos** (Yaileen). Los anuncios y los flyers salen solo en esos pueblos.
 3. **Creativos del área**, con los pueblos reales (≈ 6 minutos en total):
    ```bash

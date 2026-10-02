@@ -94,6 +94,8 @@ export async function firmar(f: Firma, cuerpo: any, meta: { ip: string; ua: stri
   Object.assign(f, { estado: "firmado", nombre: v.datos.nombre, firmado: { en, ip: meta.ip, ua: meta.ua, datos: v.datos, hashContenido, hashPdf: sha256(pdf), archivo: path.basename(archivo) } });
   actualizar(f);
   avisar(f).catch((e) => console.error("firmas: aviso", e));
+  // 1/oct/2026: plomero o técnico → activo en la app, bienvenida, trabajos sin plomero de su zona y pasos a Yaileen.
+  import("../alta-automatica.js").then((m) => m.altaAlFirmar(f)).catch((e) => console.error("firmas: alta automática", e));
   return { ok: true, pdf: enlacePdf(f) };
 }
 

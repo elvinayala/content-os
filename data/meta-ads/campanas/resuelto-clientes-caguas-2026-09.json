@@ -106,5 +106,37 @@
    "B": "120255115172670029",
    "C": "120255118326880029"
   }
+ },
+ "ticketAlto": {
+  "anuncios": {
+   "solar": {
+    "imagen": "7da5f27b59461d54ca2fcd4c09cb0c36",
+    "creativo": "1113628661624755",
+    "ad": "120255203461010029"
+   },
+   "grandes": {
+    "imagen": "0244c288b31e49f692bcb52a99753a05",
+    "creativo": "1404960454568022",
+    "ad": "120255203462420029"
+   },
+   "agua-alta": {
+    "imagen": "c21f3d23ccfa1aa2a9e1590974a16a95",
+    "creativo": "1415833863951569",
+    "ad": "120255203463640029"
+   },
+   "cisterna": {
+    "imagen": "8f9717bb2335922f538c6b097cf33c38",
+    "creativo": "1606270910964618",
+    "ad": "120255203465220029"
+   },
+   "calentador": {
+    "imagen": "fb0c781b6f0e1d64cc945b1e9d3d4e04",
+    "creativo": "40042353282030556",
+    "ad": "120255203466510029"
+   }
+  },
+  "conjunto": "120255203459600029",
+  "creado": "2026-10-02T01:08:16.160Z",
+  "estado": "Conjunto D activo · $15/día · 5 flyers"
  }
 }
