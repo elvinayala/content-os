@@ -89,6 +89,22 @@ const PIEZAS = {
 <p class="nota" style="margin-top:${s ? 30 : 18}px">Instalamos tu cisterna con bomba y conexiones. El precio fijo te lo damos por escrito en sitio, y no se toca nada hasta que lo apruebes.</p>
 <div class="cuatro" style="margin-top:${s ? 40 : 24}px">${[[`$${desde("cisterna-bomba")}`, "Cisterna con bomba, desde"], [`$${$("bomba-cisterna")}`, "Reemplazo de bomba"], [`$${$("calentador-tanque")}`, "Instalación de calentador"], [`$${$("filtro-casa")}`, "Filtro para toda la casa"]].map(([n, d]) => `<div class="c4"><b>${n}</b><small>${d}</small></div>`).join("")}</div>
 <p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo. 12 meses de garantía.</p>`,
+  // ── Ticket alto (1/oct/2026, Elvin: "empujar subir el ticket… trabajos de 500, 800"). Rangos del menú: el flyer dice
+  // "desde" el mínimo y el precio final va por escrito en sitio, aprobado por el cliente antes de empezar.
+  solar: (a, s) => `<div class="eyebrow">Calentador solar · ${a.nombre}</div>
+<h1 style="font-size:${s ? 112 : 88}px;margin-top:${s ? 26 : 16}px">Agua caliente <span class="o">aunque se vaya la luz.</span></h1>
+<div class="precio" style="margin-top:${s ? 56 : 30}px"><div class="k">Instalación de calentador solar</div><div class="n"><small>desde </small>$${desde("calentador-solar")}</div><p>Mano de obra · equipo aparte · + $${FEE} de coordinación</p><div class="g">${OK}Precio fijo por escrito antes de empezar</div></div>
+<p class="nota" style="margin-top:${s ? 44 : 26}px">Y deja de pagar luz por calentar agua. ¿Prefieres eléctrico? De tanque $${$("calentador-tanque")} · de línea $${$("calentador-linea")}.</p>`,
+  "agua-alta": (a, s) => `<div class="eyebrow">Plomería en ${a.nombre}</div>
+<h1 style="font-size:${s ? 108 : 86}px;margin-top:${s ? 26 : 16}px">¿La factura de agua subió <span class="o">y no sabes por qué?</span></h1>
+<p class="nota" style="margin-top:${s ? 30 : 18}px">Casi siempre es una filtración que no se ve. La encontramos con equipo y cámara, y te damos el precio del arreglo antes de romper nada.</p>
+<div class="cuatro" style="margin-top:${s ? 40 : 24}px">${[[`$${$("deteccion-filtracion")}`, "Detección de filtración"], [`$${desde("reparacion-filtracion")}`, "Reparación, desde"], [`$${desde("linea-principal-agua")}`, "Línea principal nueva, desde"], [`$${$("valvula-paso")}`, "Válvula de paso"]].map(([n, d]) => `<div class="c4"><b>${n}</b><small>${d}</small></div>`).join("")}</div>
+<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo. 12 meses de garantía.</p>`,
+  grandes: (a, s) => { const f = [["Cisterna con bomba y conexiones", "Para los cortes de agua", `desde $${desde("cisterna-bomba")}`], ["Calentador solar", "Equipo aparte", `desde $${desde("calentador-solar")}`], ["Línea principal de agua", "Del contador a la casa", `desde $${desde("linea-principal-agua")}`], ["Re-tubería de un baño", "", `desde $${desde("retuberia-bano").toLocaleString("en-US")}`], ["Calentador de línea (tankless)", "Instalación", `$${$("calentador-linea")}`], ["Filtro para toda la casa", "Instalación", `$${$("filtro-casa")}`]];
+    return `<div class="fila-top"><div class="eyebrow">Trabajos grandes en ${a.nombre}</div><span class="sello">Precio por escrito</span></div>
+<h1 style="font-size:${s ? 92 : 72}px;margin-top:${s ? 26 : 18}px">El trabajo grande, <span class="o">sin sorpresas en la factura.</span></h1>
+<div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span style="font-size:${s ? 38 : 30}px">${p}</span></div>`).join("")}</div>
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">El precio final va firmado antes de empezar: si no lo apruebas, no se toca nada. Mano de obra + $${FEE} de coordinación. 12 meses de garantía.</p>`; },
   // Elvin la escogió el 25/sep (c12 adaptado). Solo lo que se cumple hoy: sin "respuesta en 2 horas" ni factura consolidada.
   propiedades: (a, s) => `<div class="eyebrow">Para quien administra propiedades en ${a.nombre}</div>
 <h1 style="font-size:${s ? 108 : 84}px;margin-top:${s ? 26 : 16}px">Un solo contacto para toda la plomería de <span class="o">tus propiedades.</span></h1>
