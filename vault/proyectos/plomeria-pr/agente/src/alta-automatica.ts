@@ -51,7 +51,7 @@ export function trabajosSinPlomero(trabajos: Trabajo[], ofertas: Pick<Oferta, "r
 export const minutosParaAceptar = (inicio: string, ahora = Date.now()) => Math.max(30, Math.min(12 * 60, Math.floor((new Date(inicio).getTime() - ahora - 2 * 3600_000) / 60_000)));
 
 export function bienvenida(nombre: string, link: string, trabajos: number) {
-  return `¡Bienvenido a Resuelto, ${nombre.split(" ")[0]}! 🔧\n\nEsta es tu app para recibir trabajos:\n${link}\n\n1️⃣ Ábrela y añádela a tu pantalla de inicio.\n2️⃣ Toca "Activar alertas" para que te avise al celular.\n3️⃣ Cuando salga un trabajo en tu zona te llega la alerta: el primero que acepta se lo lleva.\n4️⃣ En cada trabajo: "Voy en camino" → "Llegué" → fotos del antes y el después → "Terminé". Si encuentras algo más, "Encontré algo más": el cliente lo aprueba por un enlace. Resuelto le cobra al cliente y tú cobras el viernes (65 % de la mano de obra + materiales con 10 %).\n\nGuarda este mensaje: ese link es tu llave.${trabajos ? ` Ya tienes ${trabajos === 1 ? "1 trabajo esperando" : `${trabajos} trabajos esperando`} en tu zona (te llegan ahora).` : ""}`;
+  return `¡Bienvenido a Resuelto, ${nombre.split(" ")[0]}! 🔧\n\nEsta es tu app para recibir trabajos:\n${link}\n\n1️⃣ Ábrela y añádela a tu pantalla de inicio.\n2️⃣ Toca "Activar alertas" para que te avise al celular.\n3️⃣ Cuando salga un trabajo en tu zona te llega la alerta: el primero que acepta se lo lleva.\n4️⃣ En cada trabajo: "Voy en camino" → "Llegué" → fotos del antes y el después → "Terminé". Si encuentras algo más, "Encontré algo más": el cliente lo aprueba por un enlace. Resuelto le cobra al cliente y tú cobras el viernes el 65 % de la mano de obra. Las piezas que compres (pon el costo del recibo al terminar) te las devolvemos con 10 % extra en 48 horas.\n\nGuarda este mensaje: ese link es tu llave.${trabajos ? ` Ya tienes ${trabajos === 1 ? "1 trabajo esperando" : `${trabajos} trabajos esperando`} en tu zona (te llegan ahora).` : ""}`;
 }
 
 const fecha = (iso: string, zona: string) => new Date(iso).toLocaleString("es-PR", { timeZone: zona, weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
@@ -95,7 +95,7 @@ export async function altaAlFirmar(f: Firma): Promise<void> {
     "1. Llámalo y que abra el link → \"Añadir a pantalla de inicio\" → \"Activar alertas\".",
     ofrecidos.length ? `2. Tiene ${ofrecidos.length} trabajo(s) esperándolo en la app. Que los acepte antes de que venzan:\n${ofrecidos.join("\n")}` : "2. No hay trabajos esperando en su zona: le llegan por alerta cuando salgan.",
     "3. Que entienda el paso a paso: \"Voy en camino\" → \"Llegué\" → fotos → \"Terminé\". Si encuentra algo más: \"Encontré algo más\" (el cliente aprueba por un enlace).",
-    "4. Cobra los viernes: 65 % de la mano de obra + materiales con 10 %.",
+    "4. Cobra los viernes el 65 % de la mano de obra. Las piezas que compre: pone el costo del recibo al tocar \"Terminé\" y se le devuelven con 10 % extra en 48 horas.",
   ].join("\n");
   await dmSlack(config.slack.reclutamiento, pasos).catch(() => false);
   await avisarVentas(`🆕 Nuevo ${prov.NOMBRE_OFICIO[plan.oficio].toLowerCase()} en ${plan.municipio} (zona ${plan.territorio}): ${nombre.split(" ")[0]}. Ya se pueden agendar clientes ahí.${ofrecidos.length ? ` Se le ofrecieron ${ofrecidos.length} cita(s) que estaban sin plomero.` : ""}`).catch(() => undefined);

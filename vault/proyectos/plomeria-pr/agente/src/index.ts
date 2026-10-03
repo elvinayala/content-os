@@ -614,11 +614,12 @@ app.post("/admin/trabajos/:id/marcar", (req: any, res) => {
   const que = String(req.body?.que ?? "");
   if (que === "cobrado") almacen.guardarTrabajo({ ...t, estado: "cobrado", cobradoEn: t.cobradoEn ?? new Date().toISOString() });
   else if (que === "pagado-plomero") almacen.guardarTrabajo({ ...t, pagadoAlPlomero: new Date().toISOString().slice(0, 10) });
+  else if (que === "piezas-devueltas") almacen.guardarTrabajo({ ...t, piezasDevueltas: new Date().toISOString().slice(0, 10) });
   else return res.status(400).json({ ok: false });
   res.json({ ok: true });
 });
 function bienvenidaPlomero(nombre: string, link: string) {
-  return `¡Bienvenido a Resuelto, ${nombre.split(" ")[0]}! 🔧\n\nEsta es tu app para recibir trabajos:\n${link}\n\n1️⃣ Ábrela y añádela a tu pantalla de inicio.\n2️⃣ Toca "Activar alertas" para que te avise al celular.\n3️⃣ Cuando salga un trabajo en tu zona te llega la alerta: el primero que acepta se lo lleva.\n4️⃣ En cada trabajo: "Voy en camino" → "Llegué" → fotos del antes y el después → "Terminé". Resuelto le cobra al cliente y tú cobras el viernes (65 % de la mano de obra + materiales con 10 %).\n\nGuarda este mensaje: ese link es tu llave. Cualquier duda, escríbenos por aquí.`;
+  return `¡Bienvenido a Resuelto, ${nombre.split(" ")[0]}! 🔧\n\nEsta es tu app para recibir trabajos:\n${link}\n\n1️⃣ Ábrela y añádela a tu pantalla de inicio.\n2️⃣ Toca "Activar alertas" para que te avise al celular.\n3️⃣ Cuando salga un trabajo en tu zona te llega la alerta: el primero que acepta se lo lleva.\n4️⃣ En cada trabajo: "Voy en camino" → "Llegué" → fotos del antes y el después → "Terminé". Resuelto le cobra al cliente y tú cobras el viernes el 65 % de la mano de obra. Las piezas que compres (pon el costo del recibo al terminar) te las devolvemos con 10 % extra en 48 horas.\n\nGuarda este mensaje: ese link es tu llave. Cualquier duda, escríbenos por aquí.`;
 }
 app.get("/admin/ofertas", (_req, res) => res.json({ ofertas: despacho.ofertas().slice(-100).reverse(), proveedores: listarProveedores() }));
 app.get("/admin/cotizadores", (_req, res) => res.json({ cotizadores: (JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "cotizadores.json"), "utf8")) as any).cotizadores.map((c: any) => ({ ...c, link: linkCotizador(c.id) })) }));

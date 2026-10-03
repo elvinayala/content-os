@@ -5,6 +5,8 @@
  * Regla de pago (la que ya dice la app y el contrato): Resuelto paga los VIERNES lo que el cliente pagó hasta el
  * MIÉRCOLES a las 11:59 PM (hora PR). Lo que el cliente paga jueves o después entra el viernes siguiente. Si el cliente
  * todavía no ha pagado, el trabajo queda "esperando que el cliente pague" (no se le debe hasta que pague).
+ * El plomero comisiona SOLO de la mano de obra (65 %). Las piezas que compra se le devuelven aparte, en 48 h, con 10 %
+ * encima (Elvin, 30/sep y 2/oct); el costo lo pone él al tocar "Terminé", según el recibo.
  */
 import type { Trabajo } from "./almacen.js";
 
@@ -26,6 +28,18 @@ export function viernesDePago(ahora: number) {
   return { viernes, corte: viernes - DIA };
 }
 
+/** Comisión (viernes) y piezas (48 h) de un trabajo. Los cerrados antes del 2/oct guardaban las dos juntas en pagoPlomero. */
+export function partesDelPago(t: Pick<Trabajo, "pagoPlomero" | "piezasPlomero" | "materialesCosto" | "garantiaDe">) {
+  if (t.piezasPlomero != null) return { comision: r2(t.pagoPlomero ?? 0), piezas: r2(t.piezasPlomero) };
+  if (t.garantiaDe) return { comision: 0, piezas: r2(t.pagoPlomero ?? 0) };
+  const piezas = r2((t.materialesCosto ?? 0) * 1.1);
+  return { comision: r2(Math.max(0, (t.pagoPlomero ?? 0) - piezas)), piezas };
+}
+
+/** Piezas ya devueltas. En los trabajos de antes del 2/oct se devolvían junto con el pago del viernes. */
+export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlomero" | "pagadoAlPlomero">) =>
+  !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
+
 export type Linea = { id: string; servicio: string; municipio: string; fecha: string; pago: number };
 type OfertaMin = { referencia: string; aceptadoPor?: string; pagoProveedor: number; estado?: string };
 
@@ -36,29 +50,34 @@ const grupo = (ls: Linea[]) => ({ total: suma(ls), trabajos: ls });
 
 export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomeroId: string, ahora = Date.now()) {
   const mios = trabajos.filter((t) => t.plomeroId === plomeroId && t.estado !== "cancelado");
-  const hechos = mios.filter((t) => t.terminadoEn && t.pagoPlomero != null && t.pagoPlomero > 0);
+  const cerrados = mios.filter((t) => t.terminadoEn && t.pagoPlomero != null);
+  const com = (t: Trabajo) => partesDelPago(t).comision;
+  const hechos = cerrados.filter((t) => com(t) > 0);
   const { viernes, corte } = viernesDePago(ahora);
   const lunes = medianochePR(ahora, -((diaSemanaPR(ahora) + 6) % 7));
   const finSemana = lunes + 7 * DIA;
 
   const cobradoEn = (t: Trabajo) => Date.parse(t.cobradoEn ?? t.terminadoEn!);
   const porPagar = hechos.filter((t) => t.estado === "cobrado" && !t.pagadoAlPlomero);
-  const esteViernes = porPagar.filter((t) => cobradoEn(t) < corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, t.pagoPlomero!));
-  const siguiente = porPagar.filter((t) => cobradoEn(t) >= corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, t.pagoPlomero!));
-  const esperando = hechos.filter((t) => t.estado === "completado").map((t) => linea(t, t.terminadoEn, t.pagoPlomero!));
+  const esteViernes = porPagar.filter((t) => cobradoEn(t) < corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
+  const siguiente = porPagar.filter((t) => cobradoEn(t) >= corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
+  const esperando = hechos.filter((t) => t.estado === "completado").map((t) => linea(t, t.terminadoEn, com(t)));
 
-  const estimado = (t: Trabajo) => t.pagoPlomero
-    ?? ofertas.filter((o) => o.referencia === t.id && o.aceptadoPor === plomeroId).at(-1)?.pagoProveedor
+  const estimado = (t: Trabajo) => ofertas.filter((o) => o.referencia === t.id && o.aceptadoPor === plomeroId).at(-1)?.pagoProveedor
     ?? (t.manoObra ?? 0) * 0.65;
   const porHacer = mios.filter((t) => ["agendado", "en-camino", "en-sitio"].includes(t.estado) && Date.parse(t.inicio) < finSemana)
     .sort((a, b) => a.inicio.localeCompare(b.inicio)).map((t) => linea(t, t.inicio, estimado(t)));
 
   const deLaSemana = hechos.filter((t) => { const x = Date.parse(t.terminadoEn!); return x >= lunes && x < finSemana; })
-    .map((t) => linea(t, t.terminadoEn, t.pagoPlomero!));
+    .map((t) => linea(t, t.terminadoEn, com(t)));
 
   const pagos = new Map<string, Linea[]>();
-  for (const t of hechos.filter((x) => x.pagadoAlPlomero)) pagos.set(t.pagadoAlPlomero!, [...(pagos.get(t.pagadoAlPlomero!) ?? []), linea(t, t.terminadoEn, t.pagoPlomero!)]);
+  for (const t of hechos.filter((x) => x.pagadoAlPlomero)) pagos.set(t.pagadoAlPlomero!, [...(pagos.get(t.pagadoAlPlomero!) ?? []), linea(t, t.terminadoEn, com(t))]);
   const pagados = [...pagos.entries()].sort((a, b) => b[0].localeCompare(a[0])).slice(0, 6).map(([fecha, ls]) => ({ fecha, total: suma(ls), trabajos: ls.length }));
+
+  const conPiezas = cerrados.filter((t) => partesDelPago(t).piezas > 0);
+  const piezaLinea = (t: Trabajo) => linea(t, t.terminadoEn, partesDelPago(t).piezas);
+  const piezasPorDevolver = conPiezas.filter((t) => !piezasDevueltas(t)).map(piezaLinea);
 
   return {
     actualizado: new Date(ahora).toISOString(),
@@ -68,7 +87,8 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
     esperandoCliente: grupo(esperando),
     porHacer: grupo(porHacer),
     pagados,
-    acumulado: suma(hechos.map((t) => linea(t, t.terminadoEn, t.pagoPlomero!))),
+    piezas: { porDevolver: grupo(piezasPorDevolver), devueltas: suma(conPiezas.filter((t) => piezasDevueltas(t)).map(piezaLinea)) },
+    acumulado: suma(hechos.map((t) => linea(t, t.terminadoEn, com(t)))),
     trabajosTotales: hechos.length,
   };
 }

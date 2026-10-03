@@ -22,7 +22,7 @@ import { config } from "./config.js";
 import type { Proveedor } from "./proveedores.js";
 import { archivar } from "./historial.js";
 import { manoObraAdicional, menuPara } from "./adicionales.js";
-import { cuentaPlomero } from "./cuenta-plomero.js";
+import { cuentaPlomero, partesDelPago } from "./cuenta-plomero.js";
 
 export const DIR_FOTOS = path.join(RAIZ, "data", "estado", "fotos-trabajos");
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
@@ -46,7 +46,7 @@ export function resumenParaPlomero(t: Trabajo) {
     id: t.id, estado: t.estado, cliente: t.nombre, telefono: null, direccion: t.direccion, // el teléfono no se muestra: se llama/escribe por Resuelto (26/sep) municipio: t.municipio, referencia: t.referencia,
     servicio: t.servicio, precioFijo: t.manoObra, rango: t.rango ?? s?.rango ?? null, emergencia: t.emergencia,
     inicio: t.inicio, fin: t.fin, fotosAntes: (t.fotosAntes ?? []).length, fotosDespues: (t.fotosDespues ?? []).length,
-    totalCliente: t.totalCliente ?? null, pagoPlomero: t.pagoPlomero ?? null, manejoMaterialesPct: menu.manejo_materiales_pct,
+    totalCliente: t.totalCliente ?? null, pagoPlomero: t.pagoPlomero == null ? null : partesDelPago(t).comision, piezasPlomero: partesDelPago(t).piezas, manejoMaterialesPct: menu.manejo_materiales_pct,
     adicionales: (t.adicionales ?? []).map((a) => ({ id: a.id, tipo: a.tipo, descripcion: a.descripcion, precio: a.precio ?? a.precioPropuesto ?? null, estado: a.estado })),
     menuAdicionales: t.estado === "en-sitio" ? menuPara(t) : undefined,
   };
@@ -84,7 +84,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   if (t.garantiaDe) {
     // Re-trabajo de garantía: $0 al cliente; Resuelto reembolsa materiales (hasta $150, contrato del plomero).
     const reembolso = r2(Math.min(mat, 150));
-    almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, cobradoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
+    almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, cobradoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: 0, piezasPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
     archivar(t.contactoId, "sistema", `${t.id} (garantía de ${t.garantiaDe}) resuelto por ${p.nombre}. ${d.nota ?? ""}`.trim(), t.id);
     await avisarCliente(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} resolvió tu garantía (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
     await avisarCoordinador(`🛡️ Garantía cerrada ${t.id} (de ${t.garantiaDe}) por ${p.nombre}${mat ? ` · materiales $${mat} (reembolso $${reembolso})` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
@@ -96,16 +96,17 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   const recargo = t.emergencia ? menu.recargo_emergencia : 0;
   const matCliente = r2(mat * (1 + menu.manejo_materiales_pct / 100));
   const total = r2(mano + t.fee + recargo + matCliente);
-  const pago = r2(mano * 0.65 + recargo * 0.65 + mat * 1.1);
+  const pago = r2((mano + recargo) * 0.65);
+  const piezas = r2(mat * 1.1);
   const link = await crearLinkPago({ trabajoId: t.id, concepto: t.servicio, montoCentavos: Math.round(total * 100), telefono: t.telefono });
-  almacen.guardarTrabajo({ ...t, estado: "completado", terminadoEn: ahora, manoObraFinal: mano, materialesCosto: mat, totalCliente: total, pagoPlomero: pago, linkPago: link.url, notaCierre: d.nota?.trim() || undefined });
-  archivar(t.contactoId, "sistema", `${t.id} terminado por ${p.nombre}. Cliente $${total.toFixed(2)} (mano de obra $${mano}${mat ? `, materiales $${matCliente}` : ""}). Pago plomero $${pago.toFixed(2)}.${d.nota ? " Nota: " + d.nota : ""}`, t.id);
+  almacen.guardarTrabajo({ ...t, estado: "completado", terminadoEn: ahora, manoObraFinal: mano, materialesCosto: mat, totalCliente: total, pagoPlomero: pago, piezasPlomero: piezas, linkPago: link.url, notaCierre: d.nota?.trim() || undefined });
+  archivar(t.contactoId, "sistema", `${t.id} terminado por ${p.nombre}. Cliente $${total.toFixed(2)} (mano de obra $${mano}${mat ? `, materiales $${matCliente}` : ""}). Pago plomero $${pago.toFixed(2)}${piezas ? ` + piezas $${piezas.toFixed(2)}` : ""}.${d.nota ? " Nota: " + d.nota : ""}`, t.id);
   const desglose = [`Mano de obra: $${mano.toFixed(2)}`, recargo ? `Emergencia: $${recargo.toFixed(2)}` : "", mat ? `Materiales: $${matCliente.toFixed(2)}` : "", `Coordinación: $${t.fee.toFixed(2)}`].filter(Boolean).join("\n");
   await avisarCliente(t, `✅ ¡Listo, ${t.nombre.split(" ")[0]}! ${primer} terminó tu ${t.servicio.toLowerCase()}.\n\n${desglose}\n*Total: $${total.toFixed(2)}*\n\nPaga aquí: ${link.url ?? ""}\nO por ATH Móvil: ${link.athMovil}\n\nTu trabajo tiene garantía de ${garantiaDe(t.servicioId).texto} en mano de obra. Mañana te escribimos para saber cómo te fue.`).catch(() => undefined);
   if (t.ghlOpportunityId && process.env.GHL_STAGE_COMPLETADO) await actualizarOportunidad(t.ghlOpportunityId, { stageId: process.env.GHL_STAGE_COMPLETADO, monetaryValue: total }).catch(() => undefined);
   const fueraDeRango = rango && t.manoObra == null && mano - extra > rango[1];
-  await avisarCoordinador(`${fueraDeRango ? "⚠️ FUERA DE RANGO · " : "🧾 "}${t.id} terminado por ${p.nombre}\n${t.servicio} · ${t.municipio}\nTotal cliente $${total.toFixed(2)} · pago plomero $${pago.toFixed(2)}${mat ? `\n💵 Reembolsarle materiales $${r2(mat * 1.1).toFixed(2)} (costo + 10 %) antes del ${new Date(Date.now() + 48 * 3600_000).toLocaleDateString("es-PR", { timeZone: config.zonaHoraria, weekday: "short", day: "numeric", month: "short" })} (regla de 48 h)` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
-  return { ok: true, estado: "completado", total, pago, link: link.url, simulado: link.simulado };
+  await avisarCoordinador(`${fueraDeRango ? "⚠️ FUERA DE RANGO · " : "🧾 "}${t.id} terminado por ${p.nombre}\n${t.servicio} · ${t.municipio}\nTotal cliente $${total.toFixed(2)} · comisión plomero (viernes) $${pago.toFixed(2)}${mat ? `\n💵 Devolverle piezas $${piezas.toFixed(2)} (costo $${mat.toFixed(2)} + 10 %) antes del ${new Date(Date.now() + 48 * 3600_000).toLocaleDateString("es-PR", { timeZone: config.zonaHoraria, weekday: "short", day: "numeric", month: "short" })} (regla de 48 h)` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
+  return { ok: true, estado: "completado", total, pago, piezas, link: link.url, simulado: link.simulado };
 }
 
 /** Guarda una foto (data URL) del antes/después, redimensionada a 1600 px. */

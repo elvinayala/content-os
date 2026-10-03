@@ -89,7 +89,11 @@ export interface Trabajo {
   manoObraFinal?: number;
   materialesCosto?: number;
   totalCliente?: number;
+  /** Comisión del plomero que se paga el viernes: 65 % de la mano de obra (y del recargo de emergencia). */
   pagoPlomero?: number;
+  /** Piezas que compró el plomero: costo del recibo + 10 %. Se le devuelven en 48 h, aparte del viernes. */
+  piezasPlomero?: number;
+  piezasDevueltas?: string;   // fecha en que se le devolvieron
   /** Fotos del área que subió el cliente al reservar por la página (reservas.ts). */
   fotosCliente?: string[];
   fotosAntes?: string[];

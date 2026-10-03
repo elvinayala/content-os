@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cuentaPlomero, viernesDePago } from "../dist/cuenta-plomero.js";
+import { cuentaPlomero, viernesDePago, partesDelPago } from "../dist/cuenta-plomero.js";
 
 const PR = (s) => Date.parse(s + "-04:00");
 const t = (id, o) => ({ id, plomeroId: "luis", servicio: "Destape", municipio: "Cidra", estado: "cobrado", inicio: "2026-10-05T08:00:00-04:00", manoObra: 100, ...o });
@@ -50,4 +50,24 @@ test("el sábado, todo lo cobrado sin pagar va al viernes que viene", () => {
 test("sin oferta, el estimado de lo por hacer es el 65 % de la mano de obra", () => {
   const c = cuentaPlomero([t("Z", { estado: "agendado", inicio: "2026-10-09T09:00:00-04:00", manoObra: 200 })], [], "luis", PR("2026-10-08T15:00:00"));
   assert.equal(c.porHacer.total, 130);
+});
+
+test("comisiona solo de la mano de obra: las piezas (costo + 10 %) van aparte", () => {
+  assert.deepEqual(partesDelPago({ pagoPlomero: 97.5, piezasPlomero: 33, materialesCosto: 30 }), { comision: 97.5, piezas: 33 });
+  // cerrado antes del 2/oct: pagoPlomero traía 65 % de $150 + $30 × 1.10 junto
+  assert.deepEqual(partesDelPago({ pagoPlomero: 130.5, materialesCosto: 30 }), { comision: 97.5, piezas: 33 });
+  assert.deepEqual(partesDelPago({ pagoPlomero: 40, materialesCosto: 40, garantiaDe: "R-1" }), { comision: 0, piezas: 40 });
+});
+
+test("el viernes suma solo comisión; las piezas salen en su bloque hasta que se devuelven", () => {
+  const ts = [
+    t("P1", { terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 97.5, piezasPlomero: 33, materialesCosto: 30 }),
+    t("P2", { terminadoEn: "2026-10-06T15:00:00-04:00", cobradoEn: "2026-10-06T16:00:00-04:00", pagoPlomero: 65, piezasPlomero: 11, materialesCosto: 10, piezasDevueltas: "2026-10-07" }),
+    t("P3", { terminadoEn: "2026-09-29T10:00:00-04:00", pagoPlomero: 130.5, materialesCosto: 30, pagadoAlPlomero: "2026-10-02" }), // viejo y ya pagado
+  ];
+  const c = cuentaPlomero(ts, [], "luis", PR("2026-10-08T15:00:00"));
+  assert.equal(c.esteViernes.total, 162.5);
+  assert.deepEqual(c.piezas.porDevolver.trabajos.map((x) => x.id), ["P1"]); assert.equal(c.piezas.porDevolver.total, 33);
+  assert.equal(c.piezas.devueltas, 44);
+  assert.equal(c.acumulado, 260);
 });

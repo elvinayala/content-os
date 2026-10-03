@@ -12,7 +12,7 @@ export const DEMO_ID = "vista-demo";
 export const proveedorDemo: Proveedor = { id: DEMO_ID, tipo: "plomero", nombre: "Vista de prueba", whatsapp: "", categorias: ["plomeria"], territorios: ["T3"], estado: "activo", municipio: "Caguas" };
 
 const FEE = 19, MAT_CLIENTE = 1.2, MAT_PLOMERO = 1.1, PARTE = 0.65;
-type T = { id: string; estado: string; cliente: string; telefono: string; direccion: string; municipio: string; referencia: string; servicio: string; precioFijo: number | null; rango: number[] | null; emergencia: boolean; inicio: string; fin: string; fotosAntes: number; fotosDespues: number; totalCliente: number | null; pagoPlomero: number | null; manejoMaterialesPct: number };
+type T = { id: string; estado: string; cliente: string; telefono: string; direccion: string; municipio: string; referencia: string; servicio: string; precioFijo: number | null; rango: number[] | null; emergencia: boolean; inicio: string; fin: string; fotosAntes: number; fotosDespues: number; totalCliente: number | null; pagoPlomero: number | null; piezasPlomero?: number; manejoMaterialesPct: number };
 type O = { id: string; tipo: "trabajo"; referencia: string; categoria: string; categoriaNombre: string; municipio: string; resumen: string; pagoProveedor: number; inicio: string; fin: string; estado: string; elegibles: string[]; avisados: string[]; rechazados: string[]; aceptadoPor?: string; expiraEn: string; creado: string; trabajo?: T; terminadoEn?: string };
 
 function manana(h: number) { const d = new Date(Date.now() + 86400_000); if (d.getUTCDay() === 0) d.setUTCDate(d.getUTCDate() + 1); d.setUTCHours(h + 4, 0, 0, 0); return d.toISOString(); } // próximo día de trabajo (L–S), hora de PR (UTC-4)
@@ -51,9 +51,9 @@ export function paso(id: string, p: string, d: { mano_obra?: number; materiales?
   const mano = t.precioFijo ?? Number(d.mano_obra);
   if (!mano || (t.rango && (mano < t.rango[0] || mano > t.rango[1]))) return { ok: false, motivo: t.rango ? `La mano de obra tiene que estar entre $${t.rango[0]} y $${t.rango[1]}.` : "Falta la mano de obra." };
   const mat = Math.max(0, Number(d.materiales) || 0);
-  t.totalCliente = Math.round((mano + FEE + mat * MAT_CLIENTE) * 100) / 100; t.pagoPlomero = Math.round((mano * PARTE + mat * MAT_PLOMERO) * 100) / 100;
+  t.totalCliente = Math.round((mano + FEE + mat * MAT_CLIENTE) * 100) / 100; t.pagoPlomero = Math.round(mano * PARTE * 100) / 100; t.piezasPlomero = Math.round(mat * MAT_PLOMERO * 100) / 100;
   t.estado = "completado"; o.terminadoEn = new Date().toISOString();
-  return { ok: true, estado: "completado", total: t.totalCliente, pago: t.pagoPlomero };
+  return { ok: true, estado: "completado", total: t.totalCliente, pago: t.pagoPlomero, piezas: t.piezasPlomero };
 }
 export function foto(id: string, tipo: string) { const t = buscar(id)?.trabajo; if (!t) return { ok: false, motivo: "No encuentro el trabajo." }; if (tipo === "antes") t.fotosAntes++; else t.fotosDespues++; return { ok: true }; }
 export function cuenta() {
@@ -63,5 +63,5 @@ export function cuenta() {
   const mias = estado().filter((o) => o.trabajo && o.aceptadoPor === DEMO_ID);
   const hechos = mias.filter((o) => o.trabajo!.estado === "completado").map(lin), porHacer = mias.filter((o) => o.trabajo!.estado !== "completado").map(lin);
   const g = (ls: any[]) => ({ total: Math.round(ls.reduce((a, l) => a + (l.pago ?? 0), 0) * 100) / 100, trabajos: ls });
-  return { actualizado: new Date().toISOString(), semana: { desde: f(Date.now()), ...g(hechos) }, esteViernes: { fecha: f(viernes), ...g([]) }, siguienteViernes: { fecha: f(viernes + 7 * 86_400_000), ...g([]) }, esperandoCliente: g(hechos), porHacer: g(porHacer), pagados: [], acumulado: g(hechos).total, trabajosTotales: hechos.length };
+  return { actualizado: new Date().toISOString(), semana: { desde: f(Date.now()), ...g(hechos) }, esteViernes: { fecha: f(viernes), ...g([]) }, siguienteViernes: { fecha: f(viernes + 7 * 86_400_000), ...g([]) }, esperandoCliente: g(hechos), porHacer: g(porHacer), pagados: [], piezas: { porDevolver: g(mias.filter((o) => o.trabajo!.piezasPlomero).map((o) => ({ ...lin(o), pago: o.trabajo!.piezasPlomero }))), devueltas: 0 }, acumulado: g(hechos).total, trabajosTotales: hechos.length };
 }

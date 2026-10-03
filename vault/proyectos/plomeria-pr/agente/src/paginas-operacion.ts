@@ -2,6 +2,7 @@
 import type { Proveedor } from "./proveedores.js";
 import type { Oferta } from "./despacho.js";
 import type { Trabajo } from "./almacen.js";
+import { partesDelPago, piezasDevueltas } from "./cuenta-plomero.js";
 
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 const CSS = `:root{--c2:#F2621F;--night:#071B2C;--surf:#0C2A42;--line:rgba(255,255,255,.14);--ink:#EAF2F8;--ink2:#9FB8CA}
@@ -22,7 +23,7 @@ export function panelPlomerosHTML(plomeros: (Proveedor & { link: string })[], of
 <td><div class="link">${esc(p.link)}</div><button class="btn l" onclick="copiar('${esc(p.link)}')">Copiar link</button> <button class="btn l" onclick="post('/admin/plomeros/${esc(p.id)}/reenviar',{})">Reenviar bienvenida</button>
 ${p.estado === "activo" ? `<button class="btn l" onclick="post('/admin/plomeros/${esc(p.id)}/estado',{estado:'pausado'})">Pausar</button>` : `<button class="btn l" onclick="post('/admin/plomeros/${esc(p.id)}/estado',{estado:'activo'})">Activar</button>`}</td></tr>`).join("");
   const trab = trabajos.map((t) => `<tr><td><b>${esc(t.id)}</b><div class="link">${esc(t.servicio)}</div></td><td>${esc(t.nombre)}<div class="link">${esc(t.municipio)}</div></td><td>${esc(t.plomeroId || "—")}</td>
-<td><span class="tag ${t.estado === "cobrado" ? "ok" : "warn"}">${esc(t.estado)}</span></td><td>${t.totalCliente != null ? "$" + t.totalCliente.toFixed(2) : "—"}<div class="link">plomero ${t.pagoPlomero != null ? "$" + t.pagoPlomero.toFixed(2) : "—"}${t.pagadoAlPlomero ? " · pagado " + esc(t.pagadoAlPlomero) : ""}</div></td>
+<td><span class="tag ${t.estado === "cobrado" ? "ok" : "warn"}">${esc(t.estado)}</span></td><td>${t.totalCliente != null ? "$" + t.totalCliente.toFixed(2) : "—"}<div class="link">plomero ${t.pagoPlomero != null ? "$" + partesDelPago(t).comision.toFixed(2) + (partesDelPago(t).piezas ? " + piezas $" + partesDelPago(t).piezas.toFixed(2) + (piezasDevueltas(t) ? " (devueltas)" : " (48 h)") : "") : "—"}${t.pagadoAlPlomero ? " · pagado " + esc(t.pagadoAlPlomero) : ""}</div></td>
 <td>${[...(t.fotosAntes ?? []), ...(t.fotosDespues ?? [])].map((f) => `<a class="link" href="/admin/fotos/${esc(f)}" target="_blank">📷</a>`).join(" ")}
 ${t.estado === "completado" ? `<button class="btn l" onclick="post('/admin/trabajos/${esc(t.id)}/marcar',{que:'cobrado'})">Cobrado</button>` : ""}${t.pagoPlomero != null && !t.pagadoAlPlomero ? ` <button class="btn l" onclick="post('/admin/trabajos/${esc(t.id)}/marcar',{que:'pagado-plomero'})">Pagado al plomero</button>` : ""}</td></tr>`).join("");
   const ofs = ofertas.map((o) => `<tr><td><b>${esc(o.id)}</b> · ${esc(o.referencia)}</td><td>${esc(o.categoriaNombre)}<div class="link">${esc(o.municipio)}</div></td><td><span class="tag ${o.estado === "aceptada" ? "ok" : "warn"}">${esc(o.estado)}</span></td><td>${esc(o.aceptadoPor ?? "—")}</td><td>avisados: ${o.avisados.length}</td></tr>`).join("");
