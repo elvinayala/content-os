@@ -41,8 +41,9 @@ export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlom
   !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
 
 /** Montos al cerrar un trabajo: lo que paga el cliente, la comisión del plomero y lo que se le devuelve por piezas. Pura. */
-export function montosDeCierre(d: { manoObra: number; fee: number; recargo: number; piezasCosto: number; margenClientePct: number }) {
-  const matCliente = r2(d.piezasCosto * (1 + d.margenClientePct / 100));
+/** `equipoResuelto`: equipos grandes que pone Resuelto (calentador, bomba…): el cliente los paga igual, al plomero no se le devuelven. */
+export function montosDeCierre(d: { manoObra: number; fee: number; recargo: number; piezasCosto: number; margenClientePct: number; equipoResuelto?: number }) {
+  const matCliente = r2((d.piezasCosto + (d.equipoResuelto ?? 0)) * (1 + d.margenClientePct / 100));
   return { total: r2(d.manoObra + d.fee + d.recargo + matCliente), matCliente, pago: r2((d.manoObra + d.recargo) * 0.65), piezas: r2(d.piezasCosto * 1.1) };
 }
 
