@@ -407,7 +407,8 @@ atajo = r'''
     v.addEventListener("click", (ev) => { ev.stopPropagation(); if (el.paused) { el.play().catch(() => {}); v.classList.add("reproduciendo"); } else { el.pause(); v.classList.remove("reproduciendo"); } });
     el.addEventListener("ended", () => v.classList.remove("reproduciendo"));
   });
-  const pararVideos = () => document.querySelectorAll(".vid video").forEach((el) => { el.pause(); el.closest(".vid").classList.remove("reproduciendo"); });
+  // Solo toca los que están sonando: quitar una clase que no está igual "cambia" el atributo y el observador entraba en bucle
+  const pararVideos = () => document.querySelectorAll(".vid.reproduciendo").forEach((v) => { v.querySelector("video").pause(); v.classList.remove("reproduciendo"); });
   // Notas del speaker (N) con reloj de la charla
   const panel = document.getElementById("notas"), notasTxt = document.getElementById("notasTxt"), notasMeta = document.getElementById("notasMeta"), notasSig = document.getElementById("notasSig");
   let t0 = null;
@@ -424,7 +425,12 @@ atajo = r'''
   document.getElementById("notasCerrar").addEventListener("click", (ev) => { ev.stopPropagation(); panel.hidden = true; });
   panel.addEventListener("click", (ev) => ev.stopPropagation());
   window.addEventListener("keydown", (ev) => { if (ev.key === "n" || ev.key === "N") { panel.hidden = !panel.hidden; if (!t0) t0 = Date.now(); pintarNotas(); } }, true);
-  new MutationObserver(() => { pararVideos(); pintarNotas(); }).observe(document.getElementById("escenario"), { subtree: true, attributes: true, attributeFilter: ["class"] });
+  // Al cambiar de slide: pausar lo que suene y refrescar las notas (solo mira las slides, no los videos)
+  let ultima = document.querySelector(".slide.activa");
+  new MutationObserver(() => {
+    const s = document.querySelector(".slide.activa");
+    if (s && s !== ultima) { ultima = s; pararVideos(); if (!panel.hidden) pintarNotas(); }
+  }).observe(document.getElementById("escenario"), { subtree: true, attributes: true, attributeFilter: ["class"] });
 '''
 script2 = script.replace("  let x0 = null;", atajo + "\n  let x0 = null;", 1)
 script2 = script2.replace("/^#s(\\d)$/", "/^#s(\\d+)$/")
