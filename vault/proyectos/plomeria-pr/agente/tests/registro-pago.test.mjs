@@ -39,3 +39,16 @@ test("los otros gastos bajan lo que le queda a Resuelto y Ventas avisa lo que no
   assert.deepEqual(p.sinCierre, ["B"]);
   assert.equal(p.filas.find((f) => f.id === "A").metodo, "ATH Móvil (2 pagos)");
 });
+
+test("pago parcial (caso Cristina, 3/oct): pagó $500 de $681.20 por el tope de ATH; queda por cobrar $181.20", async () => {
+  const { debe } = await import("../dist/registro-pago.js");
+  const b = { mano_obra: "249", equipo: "413.80", nota: "pagó 500 hoy, 181.20 mañana", pagado: "parcial", total_pagado: "681.20", abonado: "500", metodo: "ATH Móvil", pagos: "2" };
+  assert.match(validarCierre({ ...b, abonado: "700" }, def).motivo, /lleva pagado/);
+  const v = validarCierre(b, def); assert.equal(v.ok, true); assert.equal(v.datos.pagado, false); assert.equal(v.datos.abonado, 500);
+  const t = { id: "R-0005", contactoId: "messenger:2", nombre: "Angela", servicio: "Bomba", municipio: "Gurabo", plomeroId: "luis-saez", estado: "completado", inicio: "2026-10-03T10:00:00-04:00", fee: 19, creado: "2026-10-01T00:00:00Z" };
+  const x = { ...t, ...aplicarCierre(t, { ...v.datos, por: "Heileen", registrado: "x" }, 20, "2026-10-03T22:00:00Z") };
+  assert.equal(x.estado, "completado"); assert.equal(debe(x), 181.2);
+  assert.equal(ganancia(x), 105.55); // 681.20 − 161.85 − 413.80
+  const p = panelVentas([x], { desde: Date.parse("2026-10-01T04:00:00Z"), hasta: Date.parse("2026-11-01T04:00:00Z") }, (y) => origenDe(y));
+  assert.equal(p.kpis.total, 681.2); assert.equal(p.kpis.porCobrar, 181.2);
+});

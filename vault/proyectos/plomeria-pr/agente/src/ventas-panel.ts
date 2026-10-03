@@ -6,7 +6,7 @@
  */
 import type { Trabajo } from "./almacen.js";
 import { partesDelPago } from "./cuenta-plomero.js";
-import { pagadoPorCliente } from "./registro-pago.js";
+import { pagadoPorCliente, debe } from "./registro-pago.js";
 
 export type Origen = "agente" | "agente-humano" | "setter" | "web";
 export const NOMBRE_ORIGEN: Record<Origen, string> = {
@@ -34,7 +34,7 @@ export function ganancia(t: Pick<Trabajo, "totalCliente" | "pagoPlomero" | "piez
   return r2(pagadoPorCliente(t) - comision - piezas - equipo - (t.cierre?.otrosGastos ?? 0));
 }
 
-export type FilaVenta = { id: string; fecha: string; cliente: string; servicio: string; municipio: string; plomero: string; origen: Origen; canal: string; total: number; comision: number; piezas: number; gastos: number; ganancia: number; cobrado: boolean; metodo?: string; registradoPor?: string };
+export type FilaVenta = { id: string; fecha: string; cliente: string; servicio: string; municipio: string; plomero: string; origen: Origen; canal: string; total: number; comision: number; piezas: number; gastos: number; ganancia: number; cobrado: boolean; debe: number; metodo?: string; registradoPor?: string };
 
 const sumar = <T>(xs: T[], f: (x: T) => number) => r2(xs.reduce((a, x) => a + f(x), 0));
 function agrupar(filas: FilaVenta[], clave: (f: FilaVenta) => string) {
@@ -50,7 +50,7 @@ export function panelVentas(trabajos: Trabajo[], rango: { desde: number; hasta: 
     .filter((t) => ["completado", "cobrado"].includes(t.estado) && !t.garantiaDe && enRango(t.terminadoEn ?? t.inicio))
     .map((t) => {
       const { comision, piezas } = partesDelPago(t);
-      return { id: t.id, fecha: t.terminadoEn ?? t.inicio, cliente: t.nombre, servicio: t.servicio, municipio: t.municipio, plomero: t.plomeroId || "—", origen: origen(t), canal: t.contactoId.split(":")[0], total: r2(pagadoPorCliente(t)), comision: t.pagoPlomero == null ? 0 : comision, piezas, gastos: r2((t.cierre?.otrosGastos ?? 0) + Math.max(0, (t.materialesCosto ?? 0) - piezas / 1.1)), ganancia: t.totalCliente == null ? 0 : ganancia(t), cobrado: t.estado === "cobrado", metodo: t.cierre?.metodo ? `${t.cierre.metodo}${(t.cierre.pagos ?? 1) > 1 ? ` (${t.cierre.pagos} pagos)` : ""}` : undefined, registradoPor: t.cierre?.por };
+      return { id: t.id, fecha: t.terminadoEn ?? t.inicio, cliente: t.nombre, servicio: t.servicio, municipio: t.municipio, plomero: t.plomeroId || "—", origen: origen(t), canal: t.contactoId.split(":")[0], total: r2(pagadoPorCliente(t)), comision: t.pagoPlomero == null ? 0 : comision, piezas, gastos: r2((t.cierre?.otrosGastos ?? 0) + Math.max(0, (t.materialesCosto ?? 0) - piezas / 1.1)), ganancia: t.totalCliente == null ? 0 : ganancia(t), cobrado: t.estado === "cobrado", debe: debe(t), metodo: t.cierre?.metodo ? `${t.cierre.metodo}${(t.cierre.pagos ?? 1) > 1 ? ` (${t.cierre.pagos} pagos)` : ""}` : undefined, registradoPor: t.cierre?.por };
     })
     .sort((a, b) => b.fecha.localeCompare(a.fecha));
   const sinMontos = filas.filter((f) => !f.total).map((f) => f.id);
@@ -62,7 +62,7 @@ export function panelVentas(trabajos: Trabajo[], rango: { desde: number; hasta: 
   const total = sumar(filas, (f) => f.total);
   return {
     kpis: {
-      ventas: filas.length, total, cobrado: sumar(filas.filter((f) => f.cobrado), (f) => f.total), porCobrar: sumar(filas.filter((f) => !f.cobrado), (f) => f.total),
+      ventas: filas.length, total, cobrado: sumar(filas.filter((f) => f.cobrado), (f) => f.total), porCobrar: sumar(filas, (f) => f.debe),
       comisiones: sumar(filas, (f) => f.comision), piezas: sumar(filas, (f) => f.piezas), ganancia: sumar(filas, (f) => f.ganancia),
       ticket: conMontos.length ? r2(sumar(conMontos, (f) => f.total) / conMontos.length) : 0,
       agendados: agendados.length, agendadoEstimado: sumar(agendados, (a) => a.estimado), sinPlomero: agendados.filter((a) => !a.plomero).length,
