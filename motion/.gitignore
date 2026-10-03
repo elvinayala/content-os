@@ -4,3 +4,4 @@ out
 /public/lu-peli/*.mp4
 /public/lu-peli/paginas/
 /public/audio/lu-pelicula-raw.wav
+/public/audio/*-raw.wav

@@ -4,7 +4,7 @@
 // Medios en public/lu-peli/ (clips cortados de los reels del Canva + capturas). Render:
 //   npx remotion render src/index.ts LuPelicula out/fabrica/lu-pelicula.mp4
 import React from "react";
-import { AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, interpolate, random, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { noise2D } from "@remotion/noise";
 import { LEVEL_UP as T } from "../fabrica/temas";
 import { Barrido, Destello, Grano, inOut, rebote, sacudida, tw } from "../kit/fx";
@@ -15,8 +15,8 @@ const F = T.fuente; // Sora
 const MONO = T.mono;
 
 /* ─────────────── Datos (de la presentación de Canva) ─────────────── */
-type Caso = { img: string; nombre: string; desc: string; dato: string; num?: number; pre?: string; suf?: string };
-const CASOS: Caso[] = [
+export type Caso = { img: string; nombre: string; desc: string; dato: string; num?: number; pre?: string; suf?: string };
+export const CASOS: Caso[] = [
   { img: "magdalys", nombre: "Magdalys — Beauty Salon", desc: "Pasó de operar en números rojos a generar más de $15K mensuales.", dato: "Más de $15K mensuales" },
   { img: "claro", nombre: "Edgard Cortés — Franquicias Claro", desc: "Campañas desde $1.02 por conversación, impulsando sus operaciones de Claro en Puerto Rico.", dato: "+1,400 conversaciones", num: 1400, pre: "+", suf: " conversaciones" },
   { img: "interior", nombre: "Home Interior Design", desc: "Clientes interesados en muebles y diseño de interiores, con campañas desde $0.58 por conversación.", dato: "+6,200 conversaciones", num: 6200, pre: "+", suf: " conversaciones" },
@@ -27,7 +27,7 @@ const CASOS: Caso[] = [
   { img: "pepino", nombre: "Pepino Gun Gallery", desc: "Crecimiento de membresía y promoción en 3 localidades, desde $2.35 por conversación.", dato: "+3,300 conversaciones", num: 3300, pre: "+", suf: " conversaciones" },
 ];
 
-const FASES = [
+export const FASES = [
   { n: "01", t: "Enganchar", d: "Captar la atención del cliente ideal." },
   { n: "02", t: "Solucionar", d: "Mostrar que resuelves su problema." },
   { n: "03", t: "Envolver", d: "Conectar emocionalmente con la marca." },
@@ -53,6 +53,15 @@ const TESTI: Record<string, Testi> = {
   oliver: { video: "lu-peli/oliver.mp4", dur: 13.57, forma: "vertical", nombre: "Oliver Santiago", negocio: "Tinos · Cabo Rojo",
     frases: [{ desde: 0, texto: "«Ha sido una *experiencia única*.»" }, { desde: 2.3, texto: "«Yo no me esperaba *estos resultados*.»" },
       { desde: 7.6, texto: "«Números que *nunca pensaba* imaginarme hacer.»" }] },
+  magdalys: { video: "lu-peli/magdalys-80.mp4", dur: 6.5, forma: "vertical", nombre: "Magdalys", negocio: "Beauty Salon · Bayamón",
+    frases: [{ desde: 0, texto: "«Mis ingresos y todo el negocio han subido *sobre un 80 %* desde que comencé con ustedes.»" }],
+    dato: { desde: 3.2, grande: "+80 %", chico: "en sus palabras" } },
+  reina: { video: "lu-peli/reina-50.mp4", dur: 10.9, forma: "vertical", nombre: "Reina", negocio: "Mr. iPhone · Mayagüez",
+    frases: [{ desde: 0, texto: "«Mayor clientela, *mayor flujo de llamadas* y de mensajes.»" }, { desde: 4.4, texto: "«Ha incrementado mi negocio *un 50 %*.»" }],
+    dato: { desde: 6.6, grande: "+50 %", chico: "en sus palabras" } },
+  ernest: { video: "lu-peli/ernest-5mil.mp4", dur: 5.4, forma: "cuadrado", nombre: "Lcdo. Ernest Crisson Cancel", negocio: "Abogado",
+    frases: [{ desde: 0, texto: "«Puede estar representando cerca de *cinco mil dólares más* mensuales.»" }],
+    dato: { desde: 2.6, grande: "+$5K/mes", chico: "en sus palabras" } },
   bryanNumeros: { video: "lu-peli/bryan-numeros.mp4", dur: 16.23, forma: "vertical", nombre: "Dr. Bryan Vega", negocio: "Quiropráctico · Aguada",
     frases: [{ desde: 0, texto: "«Empezamos con *25 pacientes nuevos* en una semana…»" }, { desde: 8.6, texto: "«…luego *30*…»" },
       { desde: 10.6, texto: "«…y esta última semana, *entre 50 y 60*.»" }, { desde: 14.2, texto: "«Y apenas van *ocho semanas*.»" }] },
@@ -69,8 +78,9 @@ const BLOQUES: { id: string; dur: number; testi?: keyof typeof TESTI }[] = [
   { id: "t", dur: s(TESTI.bryanMiedo.dur), testi: "bryanMiedo" },
   { id: "casos", dur: 60 + CASOS.length * 66 },
   { id: "t", dur: s(TESTI.robert.dur), testi: "robert" },
-  { id: "t", dur: s(TESTI.clienta.dur), testi: "clienta" },
-  { id: "t", dur: s(TESTI.grissel.dur), testi: "grissel" },
+  { id: "t", dur: s(TESTI.magdalys.dur), testi: "magdalys" },
+  { id: "t", dur: s(TESTI.reina.dur), testi: "reina" },
+  { id: "t", dur: s(TESTI.ernest.dur), testi: "ernest" },
   { id: "t", dur: s(TESTI.oliver.dur), testi: "oliver" },
   { id: "t", dur: s(TESTI.bryanNumeros.dur), testi: "bryanNumeros" },
   { id: "tecnologia", dur: 165 },
@@ -83,12 +93,13 @@ const INICIOS = BLOQUES.reduce<number[]>((a, b, i) => [...a, i === 0 ? 0 : a[i -
 export const DURACION_LU_PELICULA = INICIOS[INICIOS.length - 1] + BLOQUES[BLOQUES.length - 1].dur;
 
 /* ─────────────── Piezas comunes ─────────────── */
-const Resaltar: React.FC<{ texto: string; color?: string }> = ({ texto, color = ORO }) => (
+export const Resaltar: React.FC<{ texto: string; color?: string }> = ({ texto, color = ORO }) => (
   <>{texto.split(/(\*[^*]+\*)/).map((p, i) => (p.startsWith("*") ? <span key={i} style={{ color }}>{p.slice(1, -1)}</span> : <React.Fragment key={i}>{p}</React.Fragment>))}</>
 );
 
-const Ambiente: React.FC<{ intensidad?: number }> = ({ intensidad = 1 }) => {
+export const Ambiente: React.FC<{ intensidad?: number }> = ({ intensidad = 1 }) => {
   const f = useCurrentFrame();
+  const { width: W, height: H } = useVideoConfig();
   const x = 50 + noise2D("lx", f / 140, 0) * 20;
   const y = 40 + noise2D("ly", 0, f / 140) * 15;
   return (
@@ -101,8 +112,8 @@ const Ambiente: React.FC<{ intensidad?: number }> = ({ intensidad = 1 }) => {
       }} />
       {new Array(30).fill(0).map((_, i) => {
         const vel = 0.25 + random(`v${i}`) * 0.8;
-        const py = (random(`y${i}`) * 1080 - f * vel * 1.3 + 10800) % 1080;
-        const px = random(`x${i}`) * 1920 + noise2D(`n${i}`, f / 100, i) * 26;
+        const py = (random(`y${i}`) * H - f * vel * 1.3 + H * 10) % H;
+        const px = random(`x${i}`) * W + noise2D(`n${i}`, f / 100, i) * 26;
         const r = 1 + random(`r${i}`) * 2.2;
         return <div key={i} style={{ position: "absolute", left: px, top: py, width: r * 2, height: r * 2, borderRadius: r, background: ORO, opacity: (0.1 + random(`o${i}`) * 0.3) * intensidad }} />;
       })}
