@@ -230,6 +230,21 @@ h2 { font-size: 72px; line-height: 1.04; }
 .preg span { font-family: var(--sora); font-size: 34px; font-weight: 700; line-height: 1.25; }
 .tarea { max-width: 1400px; padding: 26px 36px; border-radius: 20px; background: var(--oro); color: #0b0b0b; font-family: var(--sora); font-size: 30px; line-height: 1.35; }
 .logo-cierre { width: 260px; margin-top: 10px; }
+.cita-chica { font-family: var(--sora); font-weight: 800; font-size: 44px; line-height: 1.18; letter-spacing: -.02em; border-left: 4px solid var(--oro); padding-left: 26px; }
+.cita-chica small { display: block; font-family: var(--inter); font-weight: 400; font-size: 21px; letter-spacing: 0; color: var(--gris); margin-top: 12px; line-height: 1.4; }
+.pasos6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 1500px; margin-top: 10px; }
+.paso6 { text-align: left; padding: 26px 30px; border-radius: 22px; background: var(--superficie); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 6px; }
+.paso6 small { font-family: var(--mono); color: var(--oro); font-size: 18px; letter-spacing: .2em; }
+.paso6 b { font-family: var(--sora); font-size: 40px; }
+.paso6 span { color: var(--gris); font-size: 23px; }
+.eco { display: flex; align-items: stretch; gap: 22px; margin-top: 20px; }
+.eco-pieza { width: 420px; padding: 32px; border-radius: 24px; background: var(--superficie); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.eco-pieza small { font-family: var(--mono); font-size: 18px; letter-spacing: .22em; color: var(--oro); }
+.eco-pieza b { font-family: var(--sora); font-size: 42px; line-height: 1.1; }
+.eco-pieza span { font-size: 23px; color: var(--gris); line-height: 1.35; }
+.eco-pieza.oro-fondo { background: var(--oro); border-color: var(--oro); color: #0b0b0b; box-shadow: 0 0 60px rgba(245,206,26,.25); }
+.eco-pieza.oro-fondo small, .eco-pieza.oro-fondo span, .eco-pieza.oro-fondo b { color: #0b0b0b; }
+.eco-mas { align-self: center; font-family: var(--sora); font-size: 64px; color: var(--oro); }
 /* Panel de notas del speaker (tecla N) */
 .notas { position: fixed; left: 16px; right: 16px; bottom: 76px; z-index: 30; max-height: 42vh; overflow: auto; background: rgba(15,14,12,.97); border: 1px solid rgba(245,206,26,.5); border-radius: 16px; padding: 18px 22px; color: var(--texto); font: 400 19px/1.5 var(--inter); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
 .notas header { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--mono); font-size: 13px; letter-spacing: .14em; color: var(--oro); text-transform: uppercase; margin-bottom: 8px; }
@@ -239,133 +254,110 @@ h2 { font-size: 72px; line-height: 1.04; }
 
 <div id="visor">
   <div id="escenario">
-    <section class="slide activa" id="s1" data-bloque="Apertura" data-notas="Buenas. Primero, gracias por la invitación [di el nombre del evento y de quien te invitó]. Te voy a confesar algo antes de empezar: esta es la primera vez que me paro en una tarima como speaker. Y si me ves un poquito nervioso, es real. En los próximos 30 minutos te voy a hablar de tres cosas: marca, mercadeo y automatización. No te voy a dar teoría. Te voy a dar lo que hemos visto funcionar con negocios de aquí, de Puerto Rico, con nombres y con números.">
+    <section class="slide activa" id="s1" data-bloque="Apertura" data-notas="Buenas. Gracias por la invitación [di el nombre del evento y de quien te invitó]. Soy Elvin Ayala, CEO de Level Up Media y de otros negocios digitales, y también tengo una empresa de inteligencia artificial. Y de mí, eso es todo: hoy no vine a hablar de mí. Vine a hablarte de dónde se te está yendo el dinero sin que te des cuenta, y de cómo se arregla.">
       
       <div class="centro">
       <img class="logo-grande pop" src="logo.png" alt="Level Up Media">
       <h1 class="mega sube" style="--d:.35s">Las conversaciones<br>son <span class="oro">dinero.</span></h1>
-      <div class="sub sube" style="--d:.55s">Marca, mercadeo y automatización: el sistema que trabaja mientras tú duermes.</div>
+      <div class="sub sube" style="--d:.55s">AutoFlow + marketing: el sistema que consigue clientes y los atiende.</div>
       <div class="firma sube" style="--d:.75s">Elvin Ayala · CEO, Level Up Media</div>
     </div>
-      <div class="pie"><span>Apertura</span><span>01 / 22</span></div>
+      <div class="pie"><span>Apertura</span><span>01 / 12</span></div>
     </section>
-    <section class="slide" id="s2" data-bloque="Apertura" data-notas="Yo he sido un fantasma. Alguna gente me conoce, pero públicamente no. Yo era el que hacía los anuncios, el que estaba detrás, no la cara del negocio. Desde el 2021 estoy aprendiendo y practicando marketing y ventas, y en el 2024 nace Level Up Media. Y te digo la verdad: yo no crecí hasta que empecé a asociarme, a pagar mentorías y a invertir en sistemas y procesos. Hoy hemos trabajado con más de 100 negocios en Puerto Rico. Todo lo que te voy a enseñar lo aprendí haciéndolo, equivocándome y midiendo.">
+    <section class="slide" id="s2" data-bloque="AutoFlow" data-notas="Vamos a empezar con algo. Saca tu teléfono, abre tu WhatsApp o tu Instagram y busca el último mensaje que te escribió un cliente nuevo. ¿Cuánto tardaste en contestarle? Levanta la mano si fue en menos de cinco minutos… ¿Menos de una hora?… ¿Al otro día?… ¿Y quién tiene uno que todavía no ha contestado?… Tranquilo, no eres el único. Esto que acabamos de ver aquí es dinero que se fue caminando.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="centro">
-      <div class="cita sube">«Yo he sido un <span class="oro">fantasma</span>.»</div>
-      <div class="linea-tiempo">
-        <div class="hito pop" style="--d:.6s"><b>2021</b><span>Empecé a aprender marketing y ventas</span></div>
-        <div class="hito pop" style="--d:.85s"><b>2024</b><span>Nace Level Up Media</span></div>
-        <div class="hito pop" style="--d:1.1s"><b class="oro">+100</b><span>negocios en Puerto Rico</span></div>
+      <div class="ceja sube">Saca tu teléfono</div>
+      <h2 class="grande sube" style="--d:.1s">¿Cuánto tardaste en contestar el último mensaje de <span class="oro">un cliente nuevo?</span></h2>
+      <div class="votos">
+        <div class="voto pop" style="--d:.7s">Menos de 5 minutos</div>
+        <div class="voto pop" style="--d:.9s">Menos de 1 hora</div>
+        <div class="voto pop" style="--d:1.1s">Al otro día</div>
+        <div class="voto rojo pop" style="--d:1.3s">Todavía no he contestado</div>
       </div>
     </div>
-      <div class="pie"><span>Apertura</span><span>02 / 22</span></div>
+      <div class="pie"><span>AutoFlow</span><span>02 / 12</span></div>
     </section>
-    <section class="slide" id="s3" data-bloque="Apertura" data-notas="[Pon el video: toca la pantalla del video.] Después del clip: Ese es el Dr. Bryan Vega, quiropráctico en Aguada. Cuando lo conocí no había abierto su oficina. Tenía miedo de abrir y que no llegara nadie. Y ese miedo lo tiene casi todo dueño de negocio que conozco: no saber si el mes que viene va a entrar gente. Lo que le cambió la historia no fue suerte ni un anuncio bonito. Fue montar un sistema desde el día uno. De eso se trata esta charla.">
+    <section class="slide" id="s3" data-bloque="AutoFlow" data-notas="Generar leads es importante, pero es más importante convertirlos. Y para mí el punto más débil de casi todas las empresas es cuánto tardan en contestar. Muchas veces no le compran al mejor ni al más barato: le compran al primero que contesta. Una persona, por muy buena que sea, se tarda horas, porque come, duerme y atiende a otro cliente. Y lo que entra de noche y el fin de semana se enfría. Un sistema bien montado contesta en segundos, a las 3 de la tarde o a las 3 de la mañana. [Si te preguntan por estadísticas: no cites porcentajes; quédate con «horas contra segundos».]">
+      <img class="logo-esq" src="logo.png" alt="">
+      <div class="centro">
+      <div class="ceja sube">El tiempo de respuesta</div>
+      <h2 class="mega sube" style="--d:.1s">El que contesta <span class="oro">primero,</span><br>se queda con la venta.</h2>
+      <div class="barras-cmp">
+        <div class="fila aparece" style="--d:.8s"><span>Una persona</span><div class="barra-larga"><i></i></div><b>horas</b></div>
+        <div class="fila aparece" style="--d:1.1s"><span>Un sistema</span><div class="barra-corta"><i></i></div><b class="oro">segundos</b></div>
+      </div>
+      <div class="sub sube" style="--d:1.6s">Generar leads es importante. <span class="oro">Convertirlos es más importante.</span></div>
+    </div>
+      <div class="pie"><span>AutoFlow</span><span>03 / 12</span></div>
+    </section>
+    <section class="slide" id="s4" data-bloque="AutoFlow" data-notas="Eso es lo que hace AutoFlow, el sistema que montamos en nuestra empresa de IA. Y fíjate que no te dije «un chatbot». Un chatbot te da el menú del uno, dos, tres. Esto es un sistema completo, con chat y con voz: contesta en segundos, precalifica para saber quién está listo, agenda la cita en tu calendario, la confirma para que no te dejen plantado, le da seguimiento al que te dijo «déjame pensarlo» y lo deja todo anotado en tu CRM. Y esto es clave: una persona deja de dar seguimiento después del segundo o tercer mensaje. El sistema no se cansa. Tu equipo solo habla con gente que ya está calificada y con cita.">
+      <img class="logo-esq" src="logo.png" alt="">
+      <div class="centro">
+      <div class="ceja sube">AutoFlow</div>
+      <h2 class="grande sube" style="--d:.1s">No es un chatbot.<br><span class="oro">Es un sistema completo.</span></h2>
+      <div class="pasos6"><div class="paso6 pop" style="--d:0.5s"><small>01</small><b>Responde</b><span>en segundos, de día y de noche</span></div><div class="paso6 pop" style="--d:0.7s"><small>02</small><b>Precalifica</b><span>quién está listo para comprar</span></div><div class="paso6 pop" style="--d:0.9s"><small>03</small><b>Agenda</b><span>la cita en tu calendario</span></div><div class="paso6 pop" style="--d:1.1s"><small>04</small><b>Confirma</b><span>para que no te dejen plantado</span></div><div class="paso6 pop" style="--d:1.3s"><small>05</small><b>Da seguimiento</b><span>al que dijo «déjame pensarlo»</span></div><div class="paso6 pop" style="--d:1.5s"><small>06</small><b>Lo anota todo</b><span>en tu CRM, con la conversación</span></div></div>
+    </div>
+      <div class="pie"><span>AutoFlow</span><span>04 / 12</span></div>
+    </section>
+    <section class="slide" id="s5" data-bloque="AutoFlow" data-notas="Te doy dos casos. El licenciado Ernest Crisson, abogado, le entran entre 25 y 50 mensajes al día, casi siempre de madrugada. Y en sus palabras: «Gracias a Dios que está el sistema. Yo estoy durmiendo, pero lo veo cuando me despierto: el sistema ha seguido contactando, respondiendo al cliente.» [Pon el video.] Y Teo, de Mano Santa PR, contestaba solo el 20% de sus leads. Hoy contesta en segundos, y lo que más le gustó fue la tranquilidad de saber que las conversaciones se siguen atendiendo. Los clientes no escriben cuando a ti te conviene. Escriben cuando tienen el problema.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="dos-col">
       <div class="col-txt">
-        <div class="ceja sube">Dr. Bryan Vega · Quiropráctico · Aguada</div>
-        <h2 class="sube" style="--d:.1s">«Yo tenía <span class="oro">miedo</span>.»</h2>
-        <p class="sube" style="--d:.25s">No sabía si iba a tener pacientes.</p>
+        <div class="ceja sube">En sus palabras</div>
+        <div class="cita-chica sube" style="--d:.1s">«Yo estoy <span class="oro">durmiendo</span>, pero lo veo cuando me despierto.»<small>Lcdo. Ernest Crisson Cancel · oficina legal · 25 a 50 mensajes al día, casi siempre de madrugada</small></div>
+        <div class="cita-chica sube" style="--d:.35s">Contestaba el <span class="oro">20 %</span> de sus leads. Hoy contesta <span class="oro">en segundos.</span><small>Teo · Mano Santa PR</small></div>
       </div>
-      <div class="vid pop" style="--d:.4s;width:420px;height:746px">
-          <video src="videos/bryan-miedo.mp4" poster="videos/bryan-miedo.jpg" playsinline preload="metadata"></video>
-          <div class="vplay"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div></div><span class="vtag">0:22 · toca para reproducir</span>
+      <div class="vid pop" style="--d:.4s;width:720px;height:405px">
+          <video src="videos/ernest-abasto.mp4" poster="videos/ernest-abasto.jpg" playsinline preload="metadata"></video>
+          <div class="vplay"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div></div><span class="vtag">0:08 · toca para reproducir</span>
         </div>
     </div>
-      <div class="pie"><span>Apertura</span><span>03 / 22</span></div>
+      <div class="pie"><span>AutoFlow</span><span>05 / 12</span></div>
     </section>
-    <section class="slide" id="s4" data-bloque="Apertura" data-notas="Te voy a dar el mapa de hoy. Un negocio que crece de forma predecible tiene tres piezas. Primero, marca: a quién le hablas y qué le prometes. Segundo, mercadeo: cómo haces que esa persona te vea todos los días, con estrategia y no con suerte. Y tercero, automatización: qué pasa cuando esa persona por fin te escribe. La mayoría de los negocios tiene una o dos. Casi nadie tiene las tres conectadas. Y cuando una falla, se cae todo. Esto es más estratégico que técnico.">
+    <section class="slide" id="s6" data-bloque="AutoFlow" data-notas="Y esto no es moda. Las empresas se van a mover a esto, igual que todo el mundo se movió a las redes. La gente todavía piensa que la IA es un mito o cosa de otro país, y ya está pasando aquí, en negocios de Puerto Rico. Y contestar es solo el principio: el mismo principio sirve para el que cotiza, el que cobra, el que lleva el inventario, el que da seguimiento. Un agente para cada trabajo, entrenado con tu negocio y tu forma de hablar. La regla es simple: si lo haces igual todos los días, no lo tienes que hacer tú. [Opcional: un sistema así queda en marcha en 15 días, y del día 16 al 45 se optimiza con las conversaciones reales.]">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="centro">
-      <h2 class="mega sube">No es suerte. <span class="oro">Es sistema.</span></h2>
-      <div class="cadena">
-        <div class="eslabon pop" style="--d:.5s"><small>01</small><b>Marca</b><span>A quién le hablas</span></div>
-        <div class="flecha aparece" style="--d:.8s">→</div>
-        <div class="eslabon pop" style="--d:1s"><small>02</small><b>Mercadeo</b><span>Que te vean, con estrategia</span></div>
-        <div class="flecha aparece" style="--d:1.3s">→</div>
-        <div class="eslabon pop" style="--d:1.5s"><small>03</small><b>Automatización</b><span>Qué pasa cuando te escriben</span></div>
+      <div class="ceja sube">Lo que viene</div>
+      <h2 class="grande sube" style="--d:.1s">Las empresas se van a mover a esto.<br><span class="oro">La pregunta es si tú vas primero.</span></h2>
+      <div class="organigrama">
+        <div class="puesto oro-borde pop" style="--d:.6s">Hoy: contesta y agenda</div><div class="puesto pop" style="--d:.8s">Cotiza</div>
+        <div class="puesto pop" style="--d:.95s">Cobra</div><div class="puesto pop" style="--d:1.1s">Lleva el inventario</div>
+        <div class="puesto pop" style="--d:1.25s">Da seguimiento</div>
       </div>
+      <div class="sub sube" style="--d:1.5s">Si lo haces igual todos los días, no lo tienes que hacer tú.</div>
     </div>
-      <div class="pie"><span>Apertura</span><span>04 / 22</span></div>
+      <div class="pie"><span>AutoFlow</span><span>06 / 12</span></div>
     </section>
-    <section class="slide" id="s5" data-bloque="Marca" data-notas="El error número uno que veo es querer hablarle a todo el mundo. Cuando le hablas a todos, no le hablas a nadie. Un buen nicho tiene dos cosas: dolor y dinero. Un problema real y urgente, y gente dispuesta y capaz de pagar por resolverlo. Y suena al revés, pero mientras más caro el nicho, más fácil se vuelve todo lo demás: la oferta, el contenido y la venta. Uno de mis mentores me lo dijo claro: la manera de no atraer leads malos es no hablarle al cliente promedio en tu contenido.">
+    <section class="slide" id="s7" data-bloque="Marketing" data-notas="Ahora, AutoFlow atiende. Pero alguien tiene que traer a esos clientes. Y ahí entra el marketing. El marketing es la vena de cada negocio: si no corre, el negocio se seca, no importa lo bueno que seas. Y te digo lo que más veo: dueños que viven de referidos o que le dan a Promocionar cuando se acuerdan. Si tu plan es que alguien te recomiende, no tienes un plan.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="centro">
-      <div class="ceja sube">Marca</div>
-      <h2 class="grande sube" style="--d:.1s">Cuando le hablas a todos,<br><span class="oro">no le hablas a nadie.</span></h2>
-      <div class="ecuacion">
-        <span class="pop" style="--d:.7s">DOLOR</span><i class="aparece" style="--d:.9s">+</i><span class="pop" style="--d:1.1s">DINERO</span><i class="aparece" style="--d:1.3s">=</i><span class="pop oro-fondo" style="--d:1.5s">NICHO</span>
-      </div>
+      <div class="ceja sube">Marketing</div>
+      <h2 class="mega sube" style="--d:.1s">El marketing es <span class="oro">la vena</span><br>de cada negocio.</h2>
+      <div class="sub sube" style="--d:.6s">AutoFlow atiende a los clientes. El marketing es lo que los trae.</div>
     </div>
-      <div class="pie"><span>Marca</span><span>05 / 22</span></div>
+      <div class="pie"><span>Marketing</span><span>07 / 12</span></div>
     </section>
-    <section class="slide" id="s6" data-bloque="Marca" data-notas="Puedes tener el mejor tráfico y el mejor embudo, pero si la oferta es débil no vas a vender. Y casi nadie tiene una buena oferta. Una oferta no es tu producto: es todo lo que la persona recibe a cambio de su dinero, bien empaquetado. Tiene cuatro ingredientes. La promesa: a dónde llega tu cliente. El valor empaquetado: varias piezas que juntas valen más que el precio. La credibilidad: casos y testimonios. Y la reducción de riesgo: todo lo que le quita el miedo a comprar.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="dos-col">
-      <div class="col-txt">
-        <div class="ceja sube">Marca</div>
-        <h2 class="sube" style="--d:.1s">Casi nadie tiene una <span class="oro">buena oferta.</span></h2>
-        <p class="sube" style="--d:.25s">Si la persona entiende el valor, le suena barato. Si no lo entiende, te dice que es caro.</p>
-      </div>
-      <div class="lista4">
-        <div class="item sube" style="--d:.5s"><b>01</b><span><strong>La promesa</strong> · «te llevo de aquí a aquí»</span></div>
-        <div class="item sube" style="--d:.75s"><b>02</b><span><strong>El valor empaquetado</strong> · piezas que juntas valen más que el precio</span></div>
-        <div class="item sube" style="--d:1s"><b>03</b><span><strong>La credibilidad</strong> · casos y testimonios</span></div>
-        <div class="item sube" style="--d:1.25s"><b>04</b><span><strong>La reducción de riesgo</strong> · todo lo que le quita el miedo a comprar</span></div>
-      </div>
-    </div>
-      <div class="pie"><span>Marca</span><span>06 / 22</span></div>
-    </section>
-    <section class="slide" id="s7" data-bloque="Marca" data-notas="Nosotros somos una empresa AI first: todo lo que hacemos se apoya en inteligencia artificial. Pero aprendimos algo a golpes. Cuando le pusimos imágenes hechas con IA a un negocio de aquí, con cocinas que se veían de Estados Unidos, el puertorriqueño lo detectó y no convirtió. Lo que bajó el costo por lead fue la foto y el video reales: el trabajo, el equipo, el dueño hablando a cámara. En un negocio de property management, con video real, llegamos a $4.25 por lead. La IA te ayuda a escribir. La verdad es la que vende.">
+    <section class="slide" id="s8" data-bloque="Marketing" data-notas="Lo más importante en el marketing es tener una estrategia. No anuncios sueltos, no un poquito de aquí y un poquito de allá, sino una estrategia concreta, ya validada y aprobada, que sabes que funciona antes de meterle el dinero. Darle al botón azul sin estrategia es la forma más cara de tirar dinero. Te lo pongo con un caso: Oliver Santiago tiene Tinos, un restaurante en Cabo Rojo, y pasó de facturar $30K a $100K al mes. No fue un anuncio. Fue una estrategia: oferta, contenido, anuncios, automatizar los leads y escalar lo que funciona.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="centro">
-      <div class="ceja sube">Marca</div>
-      <h2 class="grande sube" style="--d:.1s">En Puerto Rico,<br>la gente <span class="oro">huele lo falso.</span></h2>
+      <div class="ceja sube">Marketing</div>
+      <h2 class="grande sube" style="--d:.1s">No anuncios sueltos.<br><span class="oro">Una estrategia.</span></h2>
       <div class="versus">
-        <div class="lado pop" style="--d:.6s"><small>LA IA</small><b>para el copy</b></div>
-        <div class="vs aparece" style="--d:.9s">·</div>
-        <div class="lado oro-borde pop" style="--d:1.1s"><small>LO REAL</small><b>para la conversión</b></div>
-      </div>
-    </div>
-      <div class="pie"><span>Marca</span><span>07 / 22</span></div>
-    </section>
-    <section class="slide" id="s8" data-bloque="Mercadeo" data-notas="Levanta la mano si tu negocio vive mayormente de referidos… Bien. Los referidos son una bendición, pero no son un plan. Si tu plan para conseguir clientes es que alguien te recomiende, lo que tienes es suerte, y la suerte se acaba. Si mañana se secan los referidos, ¿cuántos clientes te quedan? Robert, de RK Transmission en Caguas, vivía de recomendaciones. Escúchalo a él. [Pon el video.] No es que los referidos se fueran. Es que dejó de depender de ellos.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="dos-col">
-      <div class="col-txt">
-        <div class="ceja sube">Mercadeo</div>
-        <h2 class="sube" style="--d:.1s">Si tu plan es que alguien te recomiende, <span class="oro">no tienes un plan.</span></h2>
-        <p class="sube" style="--d:.25s">Robert · RK Automatic Transmission · Caguas</p>
-      </div>
-      <div class="vid pop" style="--d:.4s;width:560px;height:560px">
-          <video src="videos/robert.mp4" poster="videos/robert.jpg" playsinline preload="metadata"></video>
-          <div class="vplay"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div></div><span class="vtag">0:09 · toca para reproducir</span>
-        </div>
-    </div>
-      <div class="pie"><span>Mercadeo</span><span>08 / 22</span></div>
-    </section>
-    <section class="slide" id="s9" data-bloque="Mercadeo" data-notas="Muchos dueños me dicen: «yo mismo le doy a Promocionar». Darle al botón azul es la forma más cara de tirar dinero. No porque Facebook no funcione, sino porque no hay estrategia detrás. Te lo pongo con un caso. Oliver Santiago tiene Tinos, un restaurante en Cabo Rojo, y pasó de facturar $30K a $100K al mes. ¿Cómo? No fue un anuncio. Fue un sistema: oferta, estrategia, anuncios con IA, automatización de los leads y escalar lo que funciona. Eso es lo que vendemos: sistema, no marketing suelto.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Mercadeo</div>
-      <h2 class="grande sube" style="--d:.1s">Promocionar <span class="oro">no es una estrategia.</span></h2>
-      <div class="versus">
-        <div class="lado pop" style="--d:.6s"><small>EL BOTÓN AZUL</small><b>lotería</b></div>
+        <div class="lado pop" style="--d:.6s"><small>LO QUE CASI TODOS HACEN</small><b>anuncios y estrategias sueltas</b></div>
         <div class="vs aparece" style="--d:.9s">vs.</div>
-        <div class="lado oro-borde pop" style="--d:1.1s"><small>UN SISTEMA</small><b>tráfico + ventas + automatización</b></div>
+        <div class="lado oro-borde pop" style="--d:1.1s"><small>LO QUE FUNCIONA</small><b>una estrategia concreta, validada y aprobada</b></div>
       </div>
       <div class="dato-pie sube" style="--d:1.5s">Tinos · Cabo Rojo · <span class="oro">$30K → $100K</span> al mes</div>
     </div>
-      <div class="pie"><span>Mercadeo</span><span>09 / 22</span></div>
+      <div class="pie"><span>Marketing</span><span>08 / 12</span></div>
     </section>
-    <section class="slide" id="s10" data-bloque="Mercadeo" data-notas="Este es nuestro método, y son cinco fases. Enganchar: captar la atención de tu cliente ideal, no de todo el mundo. Solucionar: mostrarle que tú resuelves su problema. Envolver: que conecte emocionalmente con tu marca, que confíe. Fidelizar: retener y cuidar al que ya te compró, porque ahí está el dinero que casi todos dejan en la mesa. Y Reproducir: escalar lo que ya funciona. ¿Y qué hay en el centro? Automatizar. Porque si cada fase depende de que tú estés pendiente, el motor se apaga el día que te cansas.">
+    <section class="slide" id="s9" data-bloque="Marketing" data-notas="Esta es nuestra estrategia, y ya está validada con más de 100 negocios en Puerto Rico. Son cinco fases. Enganchar: captar la atención de tu cliente ideal, no de todo el mundo. Solucionar: mostrarle que tú resuelves su problema. Envolver: que conecte con tu marca y confíe. Fidelizar: cuidar al que ya te compró, porque ahí está el dinero que casi todos dejan en la mesa. Y Reproducir: escalar lo que ya funciona, subiendo la inversión poco a poco y vigilando las ventas reales, no los leads baratos. ¿Y qué hay en el centro? Automatizar. Ahí es donde entra AutoFlow.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="izq-metodo">
-      <div class="ceja sube">Mercadeo · el método</div>
+      <div class="ceja sube">Marketing · la estrategia</div>
       <h2 class="sube" style="--d:.1s">El motor de <span class="oro">crecimiento</span></h2>
-      <p class="sube" style="--d:.25s">Cinco fases que convierten a un desconocido en cliente que vuelve — y luego lo automatizan para escalar.</p>
+      <p class="sube" style="--d:.25s">La estrategia validada: cinco fases que convierten a un desconocido en cliente que vuelve, con la automatización en el centro.</p>
     </div>
     <div class="motor">
       <svg viewBox="0 0 800 800" aria-hidden="true">
@@ -378,153 +370,37 @@ h2 { font-size: 72px; line-height: 1.04; }
       <div class="nucleo pop" style="--d:.3s"><small>NÚCLEO</small><b>Automatizar</b></div>
       <div class="fase pop" style="left:400px;top:100px;--d:0.9s"><i></i><div style="left:-125px;top:-150px;text-align:center"><small>01</small><b>Enganchar</b><span>Captar la atención del cliente ideal.</span></div></div><div class="fase pop" style="left:685px;top:307px;--d:1.2s"><i></i><div style="left:30px;top:-30px;text-align:left"><small>02</small><b>Solucionar</b><span>Mostrar que resuelves su problema.</span></div></div><div class="fase pop" style="left:576px;top:643px;--d:1.5s"><i></i><div style="left:30px;top:24px;text-align:left"><small>03</small><b>Envolver</b><span>Conectar emocionalmente con la marca.</span></div></div><div class="fase pop" style="left:224px;top:643px;--d:1.8s"><i></i><div style="left:-280px;top:24px;text-align:right"><small>04</small><b>Fidelizar</b><span>Retener y cuidar al cliente.</span></div></div><div class="fase pop" style="left:115px;top:307px;--d:2.1s"><i></i><div style="left:-280px;top:-30px;text-align:right"><small>05</small><b>Reproducir</b><span>Escalar lo que ya funciona.</span></div></div>
     </div>
-      <div class="pie"><span>Mercadeo</span><span>10 / 22</span></div>
+      <div class="pie"><span>Marketing</span><span>09 / 12</span></div>
     </section>
-    <section class="slide" id="s11" data-bloque="Mercadeo" data-notas="El contenido gana la confianza; el anuncio lo pone frente a mucha más gente. El reel te trae seguidores nuevos, el carrusel calienta a esa audiencia y la historia te cierra las ventas. Y cuando un contenido orgánico funciona, ahí le metes presupuesto: subes la inversión del 10 al 15% semanal, vigilando el retorno. Un secreto del día a día: no te dejes engañar por la métrica más barata. A veces un flyer sale a cinco pesos el resultado y un video a doce, pero la venta la trajo el video. Optimiza por ventas reales, no por leads baratos.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Mercadeo</div>
-      <h2 class="grande sube" style="--d:.1s">Los anuncios son <span class="oro">potenciador,</span><br>no principal.</h2>
-      <div class="embudo">
-        <div class="paso pop" style="--d:.6s"><b>El reel</b><span>te trae seguidores</span></div>
-        <div class="paso pop" style="--d:.85s"><b>El carrusel</b><span>calienta</span></div>
-        <div class="paso pop" style="--d:1.1s"><b>La historia</b><span>cierra</span></div>
-        <div class="paso oro-borde pop" style="--d:1.4s"><b>+10–15 %</b><span>semanal a lo que ya funciona</span></div>
-      </div>
-    </div>
-      <div class="pie"><span>Mercadeo</span><span>11 / 22</span></div>
-    </section>
-    <section class="slide" id="s12" data-bloque="Automatización" data-notas="Hasta aquí hablamos de cómo traer gente. Ahora viene lo que casi nadie te dice. Generar leads es importante, pero es más importante convertir esos leads. Puedes tener la mejor marca y los mejores anuncios de Puerto Rico, y perder la venta en el momento más tonto: cuando la persona te escribe y nadie le contesta. En inglés le dicen speed to lead, la velocidad con la que respondes. Y para mí es el punto más débil de todas las empresas.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Automatización</div>
-      <h2 class="grande sube" style="--d:.1s">Generar leads es importante.<br><span class="oro">Convertirlos es más importante.</span></h2>
-      <div class="reloj aparece" style="--d:.8s"><div class="arena"></div></div>
-      <div class="sub sube" style="--d:1s">El punto más débil de casi todo negocio: cuánto tardas en contestar.</div>
-    </div>
-      <div class="pie"><span>Automatización</span><span>12 / 22</span></div>
-    </section>
-    <section class="slide" id="s13" data-bloque="Automatización" data-notas="Vamos a hacer algo. Saca tu teléfono, abre tu WhatsApp o tu Instagram y busca el último mensaje que te escribió un cliente nuevo. ¿Cuánto tardaste en contestarle? Levanta la mano si fue en menos de cinco minutos… ¿Menos de una hora?… ¿Al otro día?… ¿Y quién tiene uno que todavía no ha contestado?… Tranquilo, no eres el único. Esto que acabamos de ver aquí es dinero que se fue caminando.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Ejercicio · saca tu teléfono</div>
-      <h2 class="grande sube" style="--d:.1s">¿Cuánto tardaste en contestar el último mensaje de <span class="oro">un cliente nuevo?</span></h2>
-      <div class="votos">
-        <div class="voto pop" style="--d:.7s">Menos de 5 minutos</div>
-        <div class="voto pop" style="--d:.9s">Menos de 1 hora</div>
-        <div class="voto pop" style="--d:1.1s">Al otro día</div>
-        <div class="voto rojo pop" style="--d:1.3s">Todavía no he contestado</div>
-      </div>
-    </div>
-      <div class="pie"><span>Automatización</span><span>13 / 22</span></div>
-    </section>
-    <section class="slide" id="s14" data-bloque="Automatización" data-notas="No le compran al mejor ni al más barato: muchas veces le compran al primero que contesta. Ahora compara. Una persona, por muy buena que sea, se tarda horas, porque come, duerme y atiende a otro cliente. Un sistema bien montado contesta en segundos. Eso no es tecnología por moda. Es la diferencia entre que la venta se quede contigo o se vaya a la competencia. [Si te preguntan por estadísticas: no cites porcentajes sin fuente; quédate con «horas contra segundos».]">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Automatización</div>
-      <h2 class="mega sube" style="--d:.1s">El que contesta <span class="oro">primero,</span><br>se queda con la venta.</h2>
-      <div class="barras-cmp">
-        <div class="fila aparece" style="--d:.8s"><span>Una persona</span><div class="barra-larga"><i></i></div><b>horas</b></div>
-        <div class="fila aparece" style="--d:1.1s"><span>Un sistema</span><div class="barra-corta"><i></i></div><b class="oro">segundos</b></div>
-      </div>
-    </div>
-      <div class="pie"><span>Automatización</span><span>14 / 22</span></div>
-    </section>
-    <section class="slide" id="s15" data-bloque="Automatización" data-notas="Te cuento el caso del licenciado Ernest Crisson, un abogado que trabaja con nosotros las dos cosas: el marketing y la automatización. Después de cuatro meses nos dijo esto: le entran entre 25 y 50 mensajes diarios, casi siempre de madrugada. Y en sus palabras: «Gracias a Dios que está el sistema, porque de otra manera no habría manera. Yo estoy durmiendo, pero lo veo cuando me despierto: el sistema ha seguido contactando, respondiendo al cliente.» Fíjate: los clientes no escriben cuando a ti te conviene. Escriben cuando tienen el problema.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Lcdo. Ernest Crisson Cancel · oficina legal · marketing + automatización</div>
-      <div class="cita sube" style="--d:.15s">«Yo estoy <span class="oro">durmiendo</span>, pero lo veo cuando me despierto.»</div>
-      <div class="sub sube" style="--d:.5s">25 a 50 mensajes al día, casi siempre de madrugada.</div>
-    </div>
-      <div class="pie"><span>Automatización</span><span>15 / 22</span></div>
-    </section>
-    <section class="slide" id="s16" data-bloque="Automatización" data-notas="Ojo con esto, porque aquí es donde mucha gente se equivoca con la IA. No se trata de que haga magia ni de que reemplace a tu gente. Se trata de ser quirúrgico: usarla al principio, para hablarle rápido al cliente y calificarlo, y que tus vendedores solo hablen con gente calificada. Con el marketing le resuelves al dueño un problema: que le lleguen clientes. Con los agentes de IA le resuelves dos: responder rápido y precalificar. Y con esos dos procesos puedes mejorar tus ventas sin meterle un dólar más a los anuncios.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">Automatización</div>
-      <h2 class="grande sube" style="--d:.1s">Con marketing resuelves un problema.<br><span class="oro">Con IA, resuelves dos.</span></h2>
-      <div class="flujo">
-        <div class="nodo pop" style="--d:.6s"><b>Responder</b><span>al instante</span></div><i class="aparece" style="--d:.8s">→</i>
-        <div class="nodo pop" style="--d:.9s"><b>Precalificar</b><span>quién está listo</span></div><i class="aparece" style="--d:1.1s">→</i>
-        <div class="nodo pop" style="--d:1.2s"><b>Agendar</b><span>en tu calendario</span></div><i class="aparece" style="--d:1.4s">→</i>
-        <div class="nodo oro-borde pop" style="--d:1.5s"><b>Tu equipo cierra</b><span>solo con calificados</span></div>
-      </div>
-    </div>
-      <div class="pie"><span>Automatización</span><span>16 / 22</span></div>
-    </section>
-    <section class="slide" id="s17" data-bloque="AutoFlow" data-notas="Te doy un ejemplo concreto. Nuestra empresa hermana, AI Borinquen, tiene un sistema que se llama AutoFlow: un asistente de chat, uno de voz y un CRM que contesta, precalifica y agenda citas solo. Pero no lo vendemos como un chatbot. Un chatbot te da el menú del uno, dos, tres. Esto es un empleado digital conectado a tu calendario. Teo, de Mano Santa PR, contestaba solo el 20% de sus leads. Hoy contesta en segundos. Y lo que más me gustó fue lo que dijo él: que le da tranquilidad saber que las conversaciones se siguen atendiendo.">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">AutoFlow · un ejemplo concreto</div>
-      <h2 class="grande sube" style="--d:.1s">No vendemos software.<br><span class="oro">Construimos tu equipo digital.</span></h2>
-      <div class="tres-iconos">
-        <div class="ico pop" style="--d:.7s"><b>Chat</b><span>contesta</span></div>
-        <div class="ico pop" style="--d:.95s"><b>Voz</b><span>atiende llamadas</span></div>
-        <div class="ico pop" style="--d:1.2s"><b>CRM</b><span>precalifica y agenda</span></div>
-      </div>
-      <div class="dato-pie sube" style="--d:1.5s">Teo · Mano Santa PR · contestaba el <span class="oro">20 %</span> de sus leads → hoy contesta <span class="oro">en segundos</span></div>
-    </div>
-      <div class="pie"><span>AutoFlow</span><span>17 / 22</span></div>
-    </section>
-    <section class="slide" id="s18" data-bloque="AutoFlow" data-notas="Y aquí quiero que me escuches bien: contestar mensajes es solo una parte. La automatización no es «el chatbot». Piensa en tu negocio como un organigrama: está el que cotiza, el que cobra, el que lleva el inventario, el que le da seguimiento a los que dijeron «déjame pensarlo». Cada uno de esos trabajos puede tener un agente de IA entrenado con tu negocio, tus precios y tu forma de hablar. La regla es simple: si lo haces igual todos los días, no lo tienes que hacer tú. [Opcional, 30 s: a las 5 de la mañana mi equipo de agentes tiene su reunión sin mí; yo llego y el plan del día ya está hecho.]">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="centro">
-      <div class="ceja sube">La atención es solo una pieza</div>
-      <h2 class="grande sube" style="--d:.1s">Si lo haces igual todos los días,<br><span class="oro">no lo tienes que hacer tú.</span></h2>
-      <div class="organigrama">
-        <div class="puesto pop" style="--d:.6s">El que cotiza</div><div class="puesto pop" style="--d:.75s">El que cobra</div>
-        <div class="puesto pop" style="--d:.9s">El que lleva el inventario</div><div class="puesto pop" style="--d:1.05s">El que da seguimiento</div>
-        <div class="puesto pop" style="--d:1.2s">El que recibe</div>
-      </div>
-      <div class="sub sube" style="--d:1.4s">Un agente por puesto · digitalizar tu negocio · aprender a usar la IA tú mismo</div>
-    </div>
-      <div class="pie"><span>AutoFlow</span><span>18 / 22</span></div>
-    </section>
-    <section class="slide" id="s19" data-bloque="Prueba" data-notas="¿Te acuerdas del título de la charla? Las conversaciones son dinero. Mira estos números: son conversaciones reales de negocios de aquí. Home Interior Design, más de 6,200 conversaciones, desde 58 centavos. RK Transmission, más de 4,600 conversaciones, y triplicó sus ventas. Magdalys, con su salón de belleza, pasó de operar en números rojos a más de $15K mensuales. Te lo digo claro: cada negocio es distinto y nadie te puede garantizar un número. Lo que sí te puedo decir es que ninguno llegó ahí con un anuncio suelto. Todos tienen un sistema detrás.">
+    <section class="slide" id="s10" data-bloque="Marketing" data-notas="¿Te acuerdas del título de la charla? Las conversaciones son dinero. Mira estos números: son conversaciones reales de negocios de aquí, con la misma estrategia. Home Interior Design, más de 6,200 conversaciones, desde 58 centavos. RK Transmission, más de 4,600 conversaciones, y triplicó sus ventas. Magdalys, con su salón de belleza, pasó de números rojos a más de $15K mensuales. Te lo digo claro: cada negocio es distinto y nadie te puede garantizar un número. Pero ninguno llegó ahí con un anuncio suelto. Y fíjate en la palabra: conversaciones. Cada una de esas conversaciones alguien la tiene que contestar.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="ceja sube" style="position:absolute;left:0;right:0;top:110px;text-align:center">Resultados de clientes reales</div>
     <h2 class="sube" style="--d:.1s;position:absolute;left:0;right:0;top:150px;text-align:center">Las conversaciones <span class="oro">son dinero.</span></h2>
     <div class="grid-casos"><div class="mini sube" style="--d:0.30s"><img src="casos/magdalys.jpg" alt=""><b>Magdalys · Beauty Salon</b><span>Más de $15K mensuales</span></div><div class="mini sube" style="--d:0.42s"><img src="casos/claro.jpg" alt=""><b>Edgard Cortés · Franquicias Claro</b><span>+1,400 conversaciones</span></div><div class="mini sube" style="--d:0.54s"><img src="casos/interior.jpg" alt=""><b>Home Interior Design</b><span>+6,200 conversaciones</span></div><div class="mini sube" style="--d:0.66s"><img src="casos/grissel.jpg" alt=""><b>Dra. Grissel Villanueva</b><span>+2,900 conversaciones</span></div><div class="mini sube" style="--d:0.78s"><img src="casos/rk.jpg" alt=""><b>RK Transmission</b><span>Triplicó sus ventas</span></div><div class="mini sube" style="--d:0.90s"><img src="casos/lorelys.jpg" alt=""><b>Dra. Lorelys Mojica</b><span>+3,500 conversaciones</span></div><div class="mini sube" style="--d:1.02s"><img src="casos/universidad.jpg" alt=""><b>Universidad Teológica Vida Abundante</b><span>+2,800 conversaciones</span></div><div class="mini sube" style="--d:1.14s"><img src="casos/pepino.jpg" alt=""><b>Pepino Gun Gallery</b><span>+3,300 conversaciones</span></div></div>
     <div class="legal aparece" style="--d:1.4s">CADA NEGOCIO ES DISTINTO · ESTOS SON RESULTADOS DE ESOS CLIENTES, NO UNA PROMESA</div>
-      <div class="pie"><span>Prueba</span><span>19 / 22</span></div>
+      <div class="pie"><span>Marketing</span><span>10 / 12</span></div>
     </section>
-    <section class="slide" id="s20" data-bloque="Prueba" data-notas="¿Te acuerdas del Dr. Bryan Vega, el que tenía miedo de abrir su oficina? Mejor que lo escuches a él, y a Robert, Magdalys, Reina y Oliver. [Pon el montaje.] Hoy son más de cien negocios en Puerto Rico. Y te repito: cada caso es distinto. No te traje esto para prometerte nada. Te lo traje para que veas que esto no es un mito. Esto está pasando aquí, en Aguada, en Caguas, en Bayamón, en Mayagüez, en Cabo Rojo. [Las cifras de Bryan las dice él en el video: no las repitas.]">
-      <img class="logo-esq" src="logo.png" alt="">
-      <div class="dos-col">
-      <div class="col-txt">
-        <div class="ceja sube">En sus palabras</div>
-        <h2 class="sube" style="--d:.1s">«Y apenas van <span class="oro">ocho semanas</span>.»</h2>
-        <p class="sube" style="--d:.25s">Dr. Bryan Vega · Robert · Magdalys · Reina · Oliver</p>
-        <div class="cien pop" style="--d:.6s">+100<small>negocios en Puerto Rico</small></div>
-      </div>
-      <div class="vid pop" style="--d:.4s;width:420px;height:746px">
-          <video src="videos/montaje.mp4" poster="videos/montaje.jpg" playsinline preload="metadata"></video>
-          <div class="vplay"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div></div><span class="vtag">0:34 · toca para reproducir</span>
-        </div>
-    </div>
-      <div class="pie"><span>Prueba</span><span>20 / 22</span></div>
-    </section>
-    <section class="slide" id="s21" data-bloque="Cierre" data-notas="No te quiero dejar con un montón de información. Te quiero dejar con tres preguntas. Una: ¿a quién le estoy hablando de verdad, o le hablo a todo el mundo? Dos: ¿tengo un sistema que me trae clientes, o vivo de referidos y de suerte? Tres: ¿cuánto tardo en contestar? Y te dejo una tarea para esta noche. Escríbele a tu propio negocio como si fueras un cliente nuevo, a las 9 de la noche. Mira el reloj y cuenta cuánto tardan en responderte. Ese número te va a decir más de tu negocio que cualquier charla.">
+    <section class="slide" id="s11" data-bloque="Ecosistema" data-notas="Y aquí está la idea de hoy en una sola pantalla. Todo dueño de negocio puede tener un sistema predecible. Marketing que te consigue los clientes, con una estrategia validada. Más AutoFlow, que los atiende: responde, califica, agenda y da seguimiento. Eso es un ecosistema completo. Si tienes solo el marketing, pagas por clientes que nadie contesta. Si tienes solo la automatización, no tiene a quién atender. Juntos, dejas de depender de la suerte y de los referidos. El licenciado Crisson tiene las dos cosas, y por eso hoy su problema es que no da abasto.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="centro">
-      <div class="ceja sube">Para llevarte</div>
-      <h2 class="grande sube" style="--d:.1s">Tres preguntas</h2>
-      <div class="preguntas">
-        <div class="preg sube" style="--d:.5s"><b>Marca</b><span>¿A quién le estoy hablando de verdad?</span></div>
-        <div class="preg sube" style="--d:.75s"><b>Mercadeo</b><span>¿Tengo un sistema o tengo suerte?</span></div>
-        <div class="preg sube" style="--d:1s"><b>Automatización</b><span>¿Cuánto tardo en contestar?</span></div>
+      <div class="ceja sube">El ecosistema completo</div>
+      <h2 class="grande sube" style="--d:.1s">Un negocio <span class="oro">predecible.</span></h2>
+      <div class="eco">
+        <div class="eco-pieza pop" style="--d:.5s"><small>MARKETING</small><b>consigue los clientes</b><span>una estrategia validada</span></div>
+        <div class="eco-mas aparece" style="--d:.8s">+</div>
+        <div class="eco-pieza pop" style="--d:1s"><small>AUTOFLOW</small><b>los atiende</b><span>responde, califica, agenda y da seguimiento</span></div>
+        <div class="eco-mas aparece" style="--d:1.3s">=</div>
+        <div class="eco-pieza oro-fondo pop" style="--d:1.5s"><small>TU NEGOCIO</small><b>un sistema</b><span>que no depende de la suerte</span></div>
       </div>
-      <div class="tarea pop" style="--d:1.4s"><b>Tarea de esta noche:</b> escríbele a tu propio negocio como si fueras un cliente nuevo y cuenta cuánto tardan en responderte.</div>
     </div>
-      <div class="pie"><span>Cierre</span><span>21 / 22</span></div>
+      <div class="pie"><span>Ecosistema</span><span>11 / 12</span></div>
     </section>
-    <section class="slide" id="s22" data-bloque="Cierre" data-notas="Hace treinta minutos te dije que yo había sido un fantasma. Hoy me paré aquí por primera vez, y te confieso que me daba miedo, igual que al Dr. Vega le daba miedo abrir su oficina. Pero aprendí algo: los resultados no le llegan al que tiene la idea perfecta. Le llegan al que construye el sistema y ejecuta. Si algo de lo que hablamos te hizo sentido y quieres conversar sobre tu negocio, búscame [di tu Instagram o la palabra clave]. Y como dice el Dr. Vega: no lo pienses. Toma acción. Gracias.">
+    <section class="slide" id="s12" data-bloque="Cierre" data-notas="Te dejo una tarea para esta noche. Escríbele a tu propio negocio como si fueras un cliente nuevo, a las 9 de la noche, y cuenta cuánto tardan en responderte. Ese número te va a decir más de tu negocio que cualquier charla. Si algo de lo que hablamos te hizo sentido y quieres ver cómo se vería este sistema en tu negocio, búscame [di tu Instagram o la palabra clave]. Y como dice uno de nuestros clientes, el Dr. Bryan Vega: [pon el video] no lo pienses. Toma acción. Gracias.">
       <img class="logo-esq" src="logo.png" alt="">
       <div class="dos-col">
       <div class="col-txt">
         <h2 class="mega sube">Las conversaciones<br>son <span class="oro">dinero.</span></h2>
-        <p class="sube" style="--d:.3s">«No lo pienses. Toma acción.» — Dr. Bryan Vega</p>
+        <p class="sube" style="--d:.3s">Esta noche: escríbele a tu propio negocio como si fueras un cliente nuevo y cuenta cuánto tardan en responderte.</p>
         <img class="logo-cierre aparece" style="--d:.7s" src="logo.png" alt="Level Up Media">
       </div>
       <div class="vid pop" style="--d:.4s;width:380px;height:676px">
@@ -532,7 +408,7 @@ h2 { font-size: 72px; line-height: 1.04; }
           <div class="vplay"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div></div><span class="vtag">toca para reproducir</span>
         </div>
     </div>
-      <div class="pie"><span>Cierre</span><span>22 / 22</span></div>
+      <div class="pie"><span>Cierre</span><span>12 / 12</span></div>
     </section>
     <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
   </div>
@@ -543,7 +419,7 @@ h2 { font-size: 72px; line-height: 1.04; }
 <div class="progreso" aria-hidden="true"><i id="barra"></i></div>
 <div class="controles" id="controles">
   <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
-  <span class="pag" id="pag">1 / 22</span>
+  <span class="pag" id="pag">1 / 12</span>
   <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
   <button type="button" id="btnRep" aria-label="Repetir la animación" title="Repetir animación (R)">↻</button>
   <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
