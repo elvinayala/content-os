@@ -47,6 +47,10 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
 .fotos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fotos label{margin:10px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed var(--o);border-radius:16px;padding:18px 8px;background:#FFF8F3;font-size:17px;text-align:center;min-height:96px}.fotos input{display:none}
 .hecho{background:#EAF7F1;border-radius:14px;padding:14px;margin-top:12px;font-size:18px}
 .dinero{font-family:Sora;font-size:44px;font-weight:800;color:var(--ok2)}
+.franja{display:flex;align-items:center;gap:12px;width:100%;border:0;font:inherit;text-align:left;background:linear-gradient(135deg,var(--ok),var(--ok2));color:#fff;border-radius:18px;padding:16px 18px;margin-bottom:6px;cursor:pointer}.franja div{flex:1}.franja small{display:block;font-size:15px;opacity:.9}.franja b{font-family:Sora;font-size:28px;font-weight:800}.franja i{font-style:normal;font-size:26px}
+.cobra{background:linear-gradient(135deg,var(--ok),var(--ok2));color:#fff;border:0}.cobra p{color:#E3F6EE}.cobra .dinero{color:#fff;font-size:52px;line-height:1.1;margin:4px 0}
+.bloque{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.bloque h3{font-family:Sora;font-size:19px;font-weight:800}.bloque b{font-family:Sora;font-size:24px}.nota{color:var(--ink2);font-size:16px;margin-top:4px}
+.fila small{color:var(--ink2);font-size:15px}.vivo{display:inline-block;width:9px;height:9px;border-radius:9px;background:var(--ok);margin-right:6px;animation:late 2s infinite}@keyframes late{50%{opacity:.25}}
 .fila{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:18px}
 .entrar{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:28px 20px;max-width:480px;margin:0 auto}
 .entrar .logo{display:flex;align-items:center;gap:10px;margin-bottom:26px}.entrar .logo span{font-family:Sora;font-weight:800;font-size:30px;color:var(--navy);letter-spacing:-.03em}
@@ -162,10 +166,11 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
     var v=$('vista'); if(!datos){v.innerHTML='<div class="vacio"><b>⏳</b>Cargando…</div>';return}
     var nuevas=datos.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==S.p&&(o.rechazados||[]).indexOf(S.p)<0});
     var mias=datos.ofertas.filter(function(o){return o.aceptadoPor===S.p}).sort(function(a,b){var x=a.trabajo,y=b.trabajo,hx=x&&(x.estado==='completado'||x.estado==='cobrado'),hy=y&&(y.estado==='completado'||y.estado==='cobrado');if(hx!==hy)return hx?1:-1;return String(a.inicio).localeCompare(String(b.inicio))});
-    var h=bannerAlertas();
+    var h=bannerAlertas()+franjaDinero();
     h+='<h2>Trabajos nuevos'+(nuevas.length?' ('+nuevas.length+')':'')+'</h2>'+(nuevas.length?nuevas.map(tarjetaNueva).join(''):'<div class="card vacio"><b>🔔</b>No hay trabajos nuevos ahora.<br>Te avisamos en cuanto salga uno en tu zona.</div>');
     h+='<h2>Mis trabajos</h2>'+(mias.length?mias.map(tarjetaMia).join(''):'<div class="card vacio">Cuando aceptes un trabajo, aquí ves al cliente y los pasos.</div>');
     v.innerHTML=h; enlazar();
+    var fr=$('franja'); if(fr) fr.onclick=function(){tab='dinero';pintar()};
   }
   function enlazar(){
     var todos=function(sel,fn){[].forEach.call(document.querySelectorAll(sel),fn)};
@@ -185,7 +190,7 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
       if(!t.fotosAntes||!t.fotosDespues){aviso('Primero toma la foto de ANTES y la de DESPUÉS.',true);return}
       abrirModal('<h3>Cerrar el trabajo</h3>'+(t.precioFijo==null?'<label for="mo">Mano de obra final ('+dinero(t.rango[0])+' a '+dinero(t.rango[1])+')</label><input id="mo" type="number" inputmode="decimal">':'')+'<label for="mat">¿Cuánto costaron los materiales? (según el recibo)</label><input id="mat" type="number" inputmode="decimal" placeholder="0"><label for="nota">¿Algo que debamos saber? (opcional)</label><input id="nota" type="text" style="font-size:18px"><button class="btn verde" id="fin">✅ Terminé · cobrarle al cliente</button><button class="btn claro" id="cer">Todavía no</button>');
       $('cer').onclick=cerrarModal;$('fin').onclick=function(){var body={oferta:o.id,paso:'terminado',materiales:Number(($('mat').value||'0').replace(',','.'))||0,nota:$('nota').value};if($('mo'))body.mano_obra=Number($('mo').value);$('fin').disabled=true;
-        post('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){cerrarModal();aviso('✅ Listo. Le enviamos el cobro de '+dinero(j.total)+' al cliente. Tú cobras '+dinero(j.pago)+' el viernes.')}else{$('fin').disabled=false;aviso(j.motivo||'No se pudo.',true)}cargar()})};}});
+        post('/api/proveedores/trabajo/paso',body).then(function(j){if(j.ok){cerrarModal();aviso('✅ Listo. Le enviamos el cobro de '+dinero(j.total)+' al cliente. Tus '+dinero(j.pago)+' entran en tu viernes cuando pague. Míralo en Mi dinero.')}else{$('fin').disabled=false;aviso(j.motivo||'No se pudo.',true)}cargar()})};}});
     todos('[data-adicional]',function(b){b.onclick=function(){var o=buscar(b.dataset.adicional),t=o.trabajo,menu=t.menuAdicionales||[];
       abrirModal('<h3>Encontré algo más</h3><p style="color:var(--ink2);font-size:16px">Escoge qué hay que hacer. Al cliente le llega el precio para aprobar. <b>No lo hagas hasta que apruebe</b>: te suena la app.</p><label for="srv">Trabajo adicional</label><select id="srv" style="font-size:18px;width:100%;padding:10px">'+menu.map(function(m){return '<option value="'+esc(m.id)+'" data-precio="'+(m.precio==null?'':m.precio)+'" data-min="'+(m.rango?m.rango[0]:'')+'" data-max="'+(m.rango?m.rango[1]:'')+'">'+esc(m.nombre)+' · '+(m.precio!=null?dinero(m.precio):m.rango?dinero(m.rango[0])+'–'+dinero(m.rango[1]):'a cotizar')+'</option>'}).join('')+'<option value="">No está en la lista</option></select><div id="rango" style="display:none"><label for="pr">Mano de obra</label><input id="pr" type="number" inputmode="decimal"></div><label for="des">Qué encontraste (corto)</label><textarea id="des" rows="2" placeholder="Ej: hay que remover el inodoro para destapar la línea"></textarea><button class="btn naranja" id="env">Mandar al cliente</button><button class="btn claro" id="cer">Cancelar</button>');
       var sel=$('srv'),ver=function(){var op=sel.options[sel.selectedIndex];var fijo=op.dataset.precio;$('rango').style.display=fijo?'none':'block';$('pr').placeholder=(op.value&&op.dataset.min)?('Entre '+op.dataset.min+' y '+op.dataset.max):'Precio que propones (Resuelto lo aprueba)'};sel.onchange=ver;ver();
@@ -198,14 +203,35 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
   function buscar(id){return datos.ofertas.filter(function(o){return o.id===id})[0]}
   function achicar(file){return new Promise(function(ok,ko){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,s=Math.min(1,m/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.8))};img.onerror=ko;img.src=URL.createObjectURL(file)})}
 
+  // ── Mi dinero (2/oct): lo que cobra este viernes, lo que va ganando y lo que viene. Se refresca solo con cargar(). ──
+  var cuenta=null;
+  var fechaLarga=function(f){return new Date(f+'T12:00:00').toLocaleDateString('es-PR',{weekday:'long',day:'numeric',month:'long'})};
+  function franjaDinero(){
+    if(!cuenta||!(cuenta.esteViernes.total||cuenta.semana.total||cuenta.esperandoCliente.total||cuenta.porHacer.total))return '';
+    return '<button class="franja" id="franja"><div><small>Esta semana llevas</small><b>'+dinero(cuenta.semana.total)+'</b><small>Este viernes cobras '+dinero(cuenta.esteViernes.total)+(cuenta.esperandoCliente.total?' · '+dinero(cuenta.esperandoCliente.total)+' esperando que el cliente pague':'')+'</small></div><i>💵</i></button>';
+  }
+  function lista(ls,cuando){return ls.map(function(t){return '<div class="fila"><span>'+esc(t.servicio)+'<br><small>'+esc(t.municipio||'')+(cuando?' · '+esc(cuando(t.fecha)):'')+'</small></span><b>'+dinero(t.pago)+'</b></div>'}).join('')}
   function pintarDinero(){
-    var v=$('vista');v.innerHTML='<div class="vacio"><b>⏳</b>Cargando…</div>';
-    get('/api/proveedores/cuenta').then(function(c){if(c.error)return;var s=c.estaSemana,f=new Date(s.pagoViernes+'T12:00:00').toLocaleDateString('es-PR',{weekday:'long',day:'numeric',month:'long'});
-      v.innerHTML='<h2>Mi dinero</h2><div class="card"><p style="color:var(--ink2)">Esta semana · se paga el '+esc(f)+'</p><div class="dinero">'+dinero(s.total)+'</div>'
-        +(s.trabajos.length?s.trabajos.map(function(t){return '<div class="fila"><span>'+esc(t.servicio)+'<br><small style="color:var(--ink2)">'+esc(t.municipio||'')+'</small></span><b>'+dinero(t.pago)+'</b></div>'}).join(''):'<p style="color:var(--ink2);margin-top:10px">Todavía no has terminado trabajos esta semana.</p>')
-        +'</div><div class="card"><div class="fila"><span>Semana pasada</span><b>'+dinero(c.anterior.total)+'</b></div><div class="fila" style="border:0"><span>Desde que empezaste</span><b>'+dinero(c.acumulado)+'</b></div><p style="color:var(--ink2);margin-top:6px">'+c.trabajosTotales+' trabajo(s) terminados</p></div>'
-        +'<p style="color:var(--ink2);font-size:16px;margin-top:8px">Resuelto te paga los viernes lo que se cobró hasta el miércoles. El cliente siempre le paga a Resuelto, nunca a ti.</p>';
-    }).catch(function(){v.innerHTML='<div class="vacio">Sin conexión.</div>'});
+    var v=$('vista'); if(!cuenta){v.innerHTML='<div class="vacio"><b>⏳</b>Cargando…</div>';cargarCuenta();return}
+    var c=cuenta, e=c.esteViernes, sv=c.siguienteViernes, es=c.esperandoCliente, ph=c.porHacer, h='<h2>Mi dinero</h2>';
+    var diaCorto=function(iso){return new Date(iso).toLocaleDateString('es-PR',{timeZone:TZ,weekday:'short',day:'numeric',month:'short'})};
+    h+='<div class="card cobra"><p>'+(e.fecha===new Date(Date.now()-4*3600e3).toISOString().slice(0,10)?'Hoy viernes cobras':'El viernes '+esc(new Date(e.fecha+'T12:00:00').toLocaleDateString('es-PR',{day:'numeric',month:'long'}))+' cobras')+'</p><div class="dinero">'+dinero(e.total)+'</div><p>'+(e.trabajos.length?e.trabajos.length+' trabajo(s) que el cliente ya pagó':'Todavía nada: entra lo que los clientes paguen hasta el miércoles.')+'</p></div>';
+    h+='<div class="card"><div class="bloque"><h3>Esta semana llevas</h3><b style="color:var(--ok2)">'+dinero(c.semana.total)+'</b></div><p class="nota">'+(c.semana.trabajos.length?c.semana.trabajos.length+' trabajo(s) terminados desde el lunes':'Todavía no has terminado trabajos esta semana.')+'</p>'+lista(c.semana.trabajos,diaCorto)+'</div>';
+    if(es.trabajos.length)h+='<div class="card"><div class="bloque"><h3>⏳ Esperando que el cliente pague</h3><b>'+dinero(es.total)+'</b></div><p class="nota">En cuanto pague, entra en tu viernes. Resuelto le cobra, tú no tienes que hacer nada.</p>'+lista(es.trabajos,diaCorto)+'</div>';
+    if(sv.trabajos.length)h+='<div class="card"><div class="bloque"><h3>💵 El viernes '+esc(new Date(sv.fecha+'T12:00:00').toLocaleDateString('es-PR',{day:'numeric',month:'long'}))+'</h3><b>'+dinero(sv.total)+'</b></div><p class="nota">El cliente pagó después del miércoles: va en el próximo pago.</p>'+lista(sv.trabajos,diaCorto)+'</div>';
+    if(ph.trabajos.length)h+='<div class="card"><div class="bloque"><h3>🔧 Por hacer esta semana</h3><b>'+dinero(ph.total)+'</b></div><p class="nota">Si los terminas, sumas eso a lo que llevas.</p>'+lista(ph.trabajos,function(f){return dia(f)+', '+hora(f)})+'</div>';
+    h+='<div class="card">'+(c.pagados.length?'<h3 style="font-family:Sora;font-size:19px">✅ Ya te pagamos</h3>'+c.pagados.map(function(p){return '<div class="fila"><span>'+esc(fechaLarga(p.fecha))+'<br><small>'+p.trabajos+' trabajo(s)</small></span><b>'+dinero(p.total)+'</b></div>'}).join(''):'')
+      +'<div class="fila" style="border:0"><span>Desde que empezaste</span><b>'+dinero(c.acumulado)+'</b></div><p class="nota">'+c.trabajosTotales+' trabajo(s) terminados</p></div>';
+    h+='<p class="nota" style="margin-top:8px"><span class="vivo"></span>Se actualiza solo. Resuelto te paga los viernes lo que los clientes pagaron hasta el miércoles. El cliente siempre le paga a Resuelto, nunca a ti.</p>';
+    v.innerHTML=h;
+  }
+  function cargarCuenta(){
+    if(!S||!S.p)return;
+    return get('/api/proveedores/cuenta').then(function(c){if(!c||c.error||!c.esteViernes)return;var antes=JSON.stringify(cuenta);cuenta=c;
+      if(JSON.stringify(c)===antes)return;
+      if(tab==='dinero'&&!$('modal').classList.contains('on'))pintarDinero();
+      else if(tab==='trabajos'&&datos){var fr=$('franja'),nuevo=franjaDinero();if(fr&&nuevo){fr.outerHTML=nuevo;$('franja').onclick=function(){tab='dinero';pintar()}}else if(!fr&&nuevo&&!(document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName)))pintarTrabajos()}
+    }).catch(function(){if(tab==='dinero'&&!cuenta)$('vista').innerHTML='<div class="vacio">Sin conexión.</div>'});
   }
   function pintarAyuda(){
     $('vista').innerHTML='<h2>¿Necesitas ayuda?</h2><div class="card"><label for="ayuda" style="margin-top:0">Escríbenos qué pasa y te contactamos</label><textarea id="ayuda" rows="4" style="font-size:19px" placeholder="Ej: no encuentro la casa del cliente"></textarea><button class="btn naranja" id="env-ayuda">Enviar a Resuelto</button></div>'
@@ -246,6 +272,8 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
   function timbre(){try{var C=window.AudioContext||window.webkitAudioContext,c=new C();[0,0.35,0.7].forEach(function(t){var o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0.0001,c.currentTime+t);g.gain.exponentialRampToValueAtTime(0.5,c.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t+0.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+0.32)})}catch(e){};if(navigator.vibrate)navigator.vibrate([300,120,300,120,500])}
 
   function cargar(){
+    if(!S||!S.p)return;
+    cargarCuenta();
     return get('/api/proveedores/ofertas').then(function(j){
       if(j.error){aviso(j.error,true);return}
       datos=j; if(j.proveedor&&j.proveedor.nombre&&S.nombre!==j.proveedor.nombre){S.nombre=j.proveedor.nombre;guardar();var q=$('quien');if(q)q.textContent=S.nombre}

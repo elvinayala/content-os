@@ -22,6 +22,7 @@ import { config } from "./config.js";
 import type { Proveedor } from "./proveedores.js";
 import { archivar } from "./historial.js";
 import { manoObraAdicional, menuPara } from "./adicionales.js";
+import { cuentaPlomero } from "./cuenta-plomero.js";
 
 export const DIR_FOTOS = path.join(RAIZ, "data", "estado", "fotos-trabajos");
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
@@ -83,7 +84,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   if (t.garantiaDe) {
     // Re-trabajo de garantía: $0 al cliente; Resuelto reembolsa materiales (hasta $150, contrato del plomero).
     const reembolso = r2(Math.min(mat, 150));
-    almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
+    almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, cobradoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
     archivar(t.contactoId, "sistema", `${t.id} (garantía de ${t.garantiaDe}) resuelto por ${p.nombre}. ${d.nota ?? ""}`.trim(), t.id);
     await avisarCliente(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} resolvió tu garantía (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
     await avisarCoordinador(`🛡️ Garantía cerrada ${t.id} (de ${t.garantiaDe}) por ${p.nombre}${mat ? ` · materiales $${mat} (reembolso $${reembolso})` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
@@ -120,27 +121,8 @@ export async function guardarFoto(ofertaId: string, p: Proveedor, tipo: "antes" 
   return { ok: true, total: lista.length };
 }
 
-/** Lunes 00:00 (hora PR) de la semana de una fecha, como Date UTC. */
-function lunesPR(d: Date) {
-  const pr = new Date(d.getTime() - 4 * 3600_000); const dow = (pr.getUTCDay() + 6) % 7;
-  return new Date(Date.UTC(pr.getUTCFullYear(), pr.getUTCMonth(), pr.getUTCDate() - dow, 4));
-}
-/** Estado de cuenta: semana actual (se paga el viernes siguiente) y la anterior. */
-export function cuentaSemanal(p: Proveedor) {
-  const mios = almacen.trabajos().filter((t) => t.plomeroId === p.id && t.terminadoEn && t.pagoPlomero != null);
-  const semana = (inicio: Date) => {
-    const fin = new Date(inicio.getTime() + 7 * 86400_000);
-    const ts = mios.filter((t) => { const x = new Date(t.terminadoEn!); return x >= inicio && x < fin; });
-    const viernes = new Date(fin.getTime() + 4 * 86400_000);
-    return {
-      desde: inicio.toISOString(), pagoViernes: viernes.toISOString().slice(0, 10),
-      trabajos: ts.map((t) => ({ id: t.id, servicio: t.servicio, municipio: t.municipio, fecha: t.terminadoEn, manoObra: t.manoObraFinal, materiales: t.materialesCosto, pago: t.pagoPlomero, cobrado: t.estado === "cobrado", pagado: !!t.pagadoAlPlomero })),
-      total: r2(ts.reduce((a, t) => a + (t.pagoPlomero ?? 0), 0)),
-    };
-  };
-  const esta = lunesPR(new Date());
-  return { estaSemana: semana(esta), anterior: semana(new Date(esta.getTime() - 7 * 86400_000)), acumulado: r2(mios.reduce((a, t) => a + (t.pagoPlomero ?? 0), 0)), trabajosTotales: mios.length };
-}
+/** Estado de cuenta del plomero (lo que va ganando, este viernes, el próximo, lo que espera que el cliente pague). */
+export const cuentaSemanal = (p: Proveedor) => cuentaPlomero(almacen.trabajos(), despacho.ofertas(), p.id);
 
 /** Comentario del plomero sobre un trabajo suyo (lo ve el gerente en el portal y llega por Telegram). */
 export async function agregarNotaPlomero(ofertaId: string, p: Proveedor, texto: string) {

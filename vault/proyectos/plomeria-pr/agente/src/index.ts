@@ -351,7 +351,7 @@ app.post("/webhook/stripe", (req: any, res) => {
     const s = ev.data.object as any;
     if (s.metadata?.proyectoId) { cerrarConDeposito(s.metadata.proyectoId, "stripe").catch(console.error); }
     const t = almacen.trabajos().find((x) => x.id === s.metadata?.trabajoId);
-    if (t && !s.metadata?.proyectoId) { almacen.guardarTrabajo({ ...t, estado: "cobrado" }); wa.avisarCoordinador(`💳 Cobrado ${t.id} · $${(s.amount_total / 100).toFixed(2)} · ${t.nombre}`).catch(() => undefined); if (t.telefono) wa.enviarTexto(t.telefono, `Recibido, ${t.nombre.split(" ")[0]}. Pago de $${(s.amount_total / 100).toFixed(2)} por ${t.servicio} confirmado. Tienes 12 meses de garantía en la mano de obra. Si todo quedó bien, nos ayudas muchísimo con una reseña en Google. ¡Gracias por confiar en Resuelto!`).catch(() => undefined); }
+    if (t && !s.metadata?.proyectoId) { almacen.guardarTrabajo({ ...t, estado: "cobrado", cobradoEn: t.cobradoEn ?? new Date().toISOString() }); wa.avisarCoordinador(`💳 Cobrado ${t.id} · $${(s.amount_total / 100).toFixed(2)} · ${t.nombre}`).catch(() => undefined); if (t.telefono) wa.enviarTexto(t.telefono, `Recibido, ${t.nombre.split(" ")[0]}. Pago de $${(s.amount_total / 100).toFixed(2)} por ${t.servicio} confirmado. Tienes 12 meses de garantía en la mano de obra. Si todo quedó bien, nos ayudas muchísimo con una reseña en Google. ¡Gracias por confiar en Resuelto!`).catch(() => undefined); }
   }
   res.sendStatus(200);
 });
@@ -612,7 +612,7 @@ app.get("/admin/fotos/:archivo", (req, res) => { const f = path.join(ciclo.DIR_F
 app.post("/admin/trabajos/:id/marcar", (req: any, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id); if (!t) return res.status(404).json({ ok: false });
   const que = String(req.body?.que ?? "");
-  if (que === "cobrado") almacen.guardarTrabajo({ ...t, estado: "cobrado" });
+  if (que === "cobrado") almacen.guardarTrabajo({ ...t, estado: "cobrado", cobradoEn: t.cobradoEn ?? new Date().toISOString() });
   else if (que === "pagado-plomero") almacen.guardarTrabajo({ ...t, pagadoAlPlomero: new Date().toISOString().slice(0, 10) });
   else return res.status(400).json({ ok: false });
   res.json({ ok: true });

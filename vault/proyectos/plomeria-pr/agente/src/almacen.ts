@@ -95,6 +95,8 @@ export interface Trabajo {
   fotosAntes?: string[];
   fotosDespues?: string[];
   notaCierre?: string;
+  /** Cuándo pagó el cliente: decide en qué viernes cobra el plomero (cuenta-plomero.ts). */
+  cobradoEn?: string;
   pagadoAlPlomero?: string;   // fecha del viernes en que se le pagó
   garantiaDe?: string;        // si es un re-trabajo de garantía: id del trabajo original
   notasInternas?: { fecha: string; autor: string; texto: string }[];

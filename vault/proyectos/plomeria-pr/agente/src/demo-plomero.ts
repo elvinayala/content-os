@@ -5,6 +5,7 @@
  * memoria: aceptar, "No puedo", voy en camino → llegué → fotos → terminé, y la cuenta de la semana. Nada toca clientes,
  * ofertas ni plomeros reales. Se reinicia sola tras 30 min sin uso (o con ?reiniciar=1).
  */
+import { viernesDePago } from "./cuenta-plomero.js";
 import type { Proveedor } from "./proveedores.js";
 
 export const DEMO_ID = "vista-demo";
@@ -56,9 +57,11 @@ export function paso(id: string, p: string, d: { mano_obra?: number; materiales?
 }
 export function foto(id: string, tipo: string) { const t = buscar(id)?.trabajo; if (!t) return { ok: false, motivo: "No encuentro el trabajo." }; if (tipo === "antes") t.fotosAntes++; else t.fotosDespues++; return { ok: true }; }
 export function cuenta() {
-  const hechos = estado().filter((o) => o.trabajo?.estado === "completado");
-  const hoy = new Date(), viernes = new Date(hoy); viernes.setDate(hoy.getDate() + ((5 - hoy.getDay() + 7) % 7 || 7));
-  const trabajos = hechos.map((o) => ({ id: o.trabajo!.id, servicio: o.trabajo!.servicio, municipio: o.municipio, fecha: o.terminadoEn, manoObra: null, materiales: null, pago: o.trabajo!.pagoPlomero, cobrado: false, pagado: false }));
-  const total = Math.round(trabajos.reduce((a, t) => a + (t.pago ?? 0), 0) * 100) / 100;
-  return { estaSemana: { desde: hoy.toISOString(), pagoViernes: viernes.toISOString().slice(0, 10), trabajos, total }, anterior: { total: 0, trabajos: [] }, acumulado: total, trabajosTotales: trabajos.length };
+  // En la prueba nada se cobra de verdad: lo terminado queda "esperando que el cliente pague" y lo aceptado, "por hacer".
+  const { viernes } = viernesDePago(Date.now()); const f = (ms: number) => new Date(ms - 4 * 3600_000).toISOString().slice(0, 10);
+  const lin = (o: any) => ({ id: o.trabajo.id, servicio: o.trabajo.servicio, municipio: o.municipio, fecha: o.terminadoEn ?? o.inicio, pago: o.trabajo.pagoPlomero ?? o.pagoProveedor });
+  const mias = estado().filter((o) => o.trabajo && o.aceptadoPor === DEMO_ID);
+  const hechos = mias.filter((o) => o.trabajo!.estado === "completado").map(lin), porHacer = mias.filter((o) => o.trabajo!.estado !== "completado").map(lin);
+  const g = (ls: any[]) => ({ total: Math.round(ls.reduce((a, l) => a + (l.pago ?? 0), 0) * 100) / 100, trabajos: ls });
+  return { actualizado: new Date().toISOString(), semana: { desde: f(Date.now()), ...g(hechos) }, esteViernes: { fecha: f(viernes), ...g([]) }, siguienteViernes: { fecha: f(viernes + 7 * 86_400_000), ...g([]) }, esperandoCliente: g(hechos), porHacer: g(porHacer), pagados: [], acumulado: g(hechos).total, trabajosTotales: hechos.length };
 }
