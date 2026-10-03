@@ -85,5 +85,6 @@
 - [AutoFlow · plazos reales](aib-autoflow-plazos.md) — 28/sep: en marcha en 15 días + optimización día 16–45 (+ soporte para siempre); ya no "7 días"; el "21 días" no es real
 - [Gasto de IA — qué modelo para qué](gasto-ia-modelos.md) — Opus solo diseño/desarrollo/planeación; lo breve a Sonnet/Haiku (nico-gasto.mjs, max-gasto.mjs); costo por agente en /ritmo/agentes
 - [Kit de ventas AIB](kit-ventas-aib.md) — 28/sep: presentaciones animadas (Demo AIB + Marketing + IA), videos pre-llamada y 3 testimonios en aib-kit-ventas.netlify.app; uso obligatorio para closers de AIB (Aure los reúne el 29/sep); versión con marca LU para upsell en lu-kit-agentes.netlify.app
+- [Material de venta Level Up](lu-material-ventas.md) — 2/oct: película LU + versiones (números hablan / en sus palabras, 16:9 y 9:16), demo closers lu-demo-ventas.netlify.app, charla de Elvin; clips de testimonio en motion/public/lu-peli
 - [Commits con sesiones en paralelo](commits-sesiones-paralelas.md) — revisar `git diff <archivo>` antes de commitear: hunks de otra sesión rompieron 2 deploys
 - [Apps sin App Store (PWA + push)](apps-sin-app-store.md) — Ritmo (/ritmo/app) y app de clientes LU (app.levelupmediapr.net, link personal desde Pulse) en prod; falta push en Bori
