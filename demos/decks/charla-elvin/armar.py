@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Arma la charla "Las conversaciones son dinero" (Elvin · Level Up Media). v2 (2/oct): 12 slides, AutoFlow primero, luego la estrategia de marketing y el ecosistema.
+# Arma la charla "Las conversaciones son dinero" (Elvin · Level Up Media). v3 (2/oct): 10 slides sin testimonios: agentes personalizados → AutoFlow (recepcionista) → marketing → ecosistema.
 # Base visual = la demo de Level Up (lu-demo/index.html): mismo motor, marca y controles + panel de notas (tecla N).
 import html, math, re, pathlib
 
@@ -24,69 +24,86 @@ S = []  # (html del cuerpo, notas, bloque)
 def slide(cuerpo, notas, bloque):
     S.append((cuerpo, notas, bloque))
 
-# ───────── 1 · APERTURA (breve: de Elvin casi nada) ─────────
+# ───────── 1 · APERTURA (de Elvin, una línea) ─────────
 slide('''<div class="centro">
       <img class="logo-grande pop" src="logo.png" alt="Level Up Media">
       <h1 class="mega sube" style="--d:.35s">Las conversaciones<br>son <span class="oro">dinero.</span></h1>
-      <div class="sub sube" style="--d:.55s">AutoFlow + marketing: el sistema que consigue clientes y los atiende.</div>
+      <div class="sub sube" style="--d:.55s">Agentes de IA + marketing: el sistema que consigue clientes y los atiende.</div>
       <div class="firma sube" style="--d:.75s">Elvin Ayala · CEO, Level Up Media</div>
     </div>''',
- "Buenas. Gracias por la invitación [di el nombre del evento y de quien te invitó]. Soy Elvin Ayala, CEO de Level Up Media y de otros negocios digitales, y también tengo una empresa de inteligencia artificial. Y de mí, eso es todo: hoy no vine a hablar de mí. Vine a hablarte de dónde se te está yendo el dinero sin que te des cuenta, y de cómo se arregla.", "Apertura")
+ "Buenas. Gracias por la invitación [di el nombre del evento y de quien te invitó]. Soy Elvin Ayala, CEO de Level Up Media y de otros negocios digitales, y también tengo una empresa de inteligencia artificial. Y de mí, eso es todo. Vamos al grano.", "Apertura")
 
-slide('''<div class="centro">
-      <div class="ceja sube">Saca tu teléfono</div>
-      <h2 class="grande sube" style="--d:.1s">¿Cuánto tardaste en contestar el último mensaje de <span class="oro">un cliente nuevo?</span></h2>
-      <div class="votos">
-        <div class="voto pop" style="--d:.7s">Menos de 5 minutos</div>
-        <div class="voto pop" style="--d:.9s">Menos de 1 hora</div>
-        <div class="voto pop" style="--d:1.1s">Al otro día</div>
-        <div class="voto rojo pop" style="--d:1.3s">Todavía no he contestado</div>
-      </div>
+# ───────── 2 · AGENTES PERSONALIZADOS (la órbita de AI Borinquen) ─────────
+AGENTES = [("Recepcionista IA", "AutoFlow · atiende 24/7"), ("Agente de ventas", "califica y cierra"), ("Agente de cobros", "recuerda pagos"),
+           ("Agente de inventario", "existencias y pedidos"), ("Agente de reactivación", "revive leads dormidos"), ("Agente de reseñas", "cuida tu reputación")]
+orb = ""; lineas = ""
+for i, (t, d) in enumerate(AGENTES):
+    a = -math.pi / 2 + i * 2 * math.pi / len(AGENTES); x = 380 + 300 * math.cos(a); y = 380 + 300 * math.sin(a)
+    lineas += f'<line x1="380" y1="380" x2="{x:.0f}" y2="{y:.0f}"/>'
+    orb += f'<div class="ancla" style="left:{x:.0f}px;top:{y:.0f}px"><div class="sat pop{" sat-oro" if i == 0 else ""}" style="--d:{0.8 + i * 0.18:.2f}s"><b>{e(t)}</b><span>{e(d)}</span></div></div>'
+slide(f'''<div class="izq-metodo">
+      <div class="ceja sube">Agentes de IA personalizados</div>
+      <h2 class="sube" style="--d:.1s">Primero tu agente.<br><span class="oro">Después, todo lo demás.</span></h2>
+      <p class="sube" style="--d:.25s">Tu Agente Personal es tu propio ChatGPT, entrenado 100 % con la información de tu negocio. De él nacen los demás.</p>
+    </div>
+    <div class="orbita">
+      <svg viewBox="0 0 760 760" aria-hidden="true">
+        <circle cx="380" cy="380" r="300" fill="none" stroke="rgba(245,206,26,.3)" stroke-width="2" stroke-dasharray="4 12"/>
+        <g stroke="rgba(245,206,26,.25)" stroke-width="1.5">{lineas}</g>
+      </svg>
+      <div class="ancla" style="left:380px;top:380px"><div class="centro-orb pop" style="--d:.4s"><small>TU</small><b>Agente Personal</b><span>tu propio ChatGPT</span></div></div>
+      {orb}
     </div>''',
- "Vamos a empezar con algo. Saca tu teléfono, abre tu WhatsApp o tu Instagram y busca el último mensaje que te escribió un cliente nuevo. ¿Cuánto tardaste en contestarle? Levanta la mano si fue en menos de cinco minutos… ¿Menos de una hora?… ¿Al otro día?… ¿Y quién tiene uno que todavía no ha contestado?… Tranquilo, no eres el único. Esto que acabamos de ver aquí es dinero que se fue caminando.", "AutoFlow")
+ "Empiezo por lo que hacemos en nuestra empresa de IA, porque cambia cómo se ve un negocio. No vendemos un chatbot. Primero construimos tu Agente Personal: tu propio ChatGPT, entrenado 100% con la información de tu negocio, tus precios, tus reglas y tu forma de hablar. Y de ese agente nacen los demás, uno para cada trabajo: el que atiende, el que vende, el que cobra, el que lleva el inventario, el que revive a los clientes que se quedaron dormidos y el que cuida tus reseñas. Un empleado digital para cada puesto. Y el primero que casi todo negocio necesita es este: la recepcionista.", "Agentes de IA")
 
+# ───────── 3 · AUTOFLOW · RECEPCIONISTA IA (cómo funciona) ─────────
+PASOS = [("Contacta", "escribe o llama"), ("Responde", "en segundos"), ("Califica", "entiende qué necesita"),
+         ("Agenda", "reserva o cobra"), ("Confirma", "y da seguimiento"), ("Registra", "todo en tu CRM")]
+flujo = ""
+for i, (t, d) in enumerate(PASOS):
+    if i: flujo += f'<i class="aparece" style="--d:{0.55 + i * 0.22:.2f}s">→</i>'
+    flujo += f'<div class="nodo6 pop{" oro-borde" if i == 1 else ""}" style="--d:{0.5 + i * 0.22:.2f}s"><small>{i + 1:02d}</small><b>{t}</b><span>{e(d)}</span></div>'
+slide(f'''<div class="centro">
+      <div class="ceja sube">AutoFlow · Recepcionista IA</div>
+      <h2 class="grande sube" style="--d:.1s">Tu recepcionista que <span class="oro">nunca duerme.</span></h2>
+      <div class="sub sube" style="--d:.3s">Chat y voz en web, WhatsApp, Instagram, Facebook y llamadas. En español e inglés, con tu marca y tu tono.</div>
+      <div class="flujo6">{flujo}</div>
+    </div>''',
+ "Eso es AutoFlow, nuestra recepcionista con IA. Te la explico rápido, en el orden en que pasa. Un cliente te escribe por WhatsApp, Instagram, Facebook o tu página, o te llama. AutoFlow le responde en segundos, con chat o con voz, en español o en inglés. Lo califica: entiende qué necesita y si está listo. Le agenda la cita en tu calendario, o le cobra. Se la confirma y le da seguimiento para que no te deje plantado, y al que dijo «déjame pensarlo» lo vuelve a buscar. Y todo queda registrado en tu CRM. No es el menú del uno, dos, tres. Es un sistema completo, y tu equipo solo habla con gente calificada y con cita.", "AutoFlow")
+
+# ───────── 4 · TIEMPO DE RESPUESTA ─────────
 slide('''<div class="centro">
-      <div class="ceja sube">El tiempo de respuesta</div>
+      <div class="ceja sube">Por qué importa</div>
       <h2 class="mega sube" style="--d:.1s">El que contesta <span class="oro">primero,</span><br>se queda con la venta.</h2>
       <div class="barras-cmp">
         <div class="fila aparece" style="--d:.8s"><span>Una persona</span><div class="barra-larga"><i></i></div><b>horas</b></div>
-        <div class="fila aparece" style="--d:1.1s"><span>Un sistema</span><div class="barra-corta"><i></i></div><b class="oro">segundos</b></div>
+        <div class="fila aparece" style="--d:1.1s"><span>AutoFlow</span><div class="barra-corta"><i></i></div><b class="oro">segundos</b></div>
       </div>
       <div class="sub sube" style="--d:1.6s">Generar leads es importante. <span class="oro">Convertirlos es más importante.</span></div>
     </div>''',
- "Generar leads es importante, pero es más importante convertirlos. Y para mí el punto más débil de casi todas las empresas es cuánto tardan en contestar. Muchas veces no le compran al mejor ni al más barato: le compran al primero que contesta. Una persona, por muy buena que sea, se tarda horas, porque come, duerme y atiende a otro cliente. Y lo que entra de noche y el fin de semana se enfría. Un sistema bien montado contesta en segundos, a las 3 de la tarde o a las 3 de la mañana. [Si te preguntan por estadísticas: no cites porcentajes; quédate con «horas contra segundos».]", "AutoFlow")
+ "¿Por qué empiezo por aquí? Levanta la mano rápido: ¿quién tiene ahora mismo en el teléfono un mensaje de un cliente nuevo que todavía no ha contestado?… Eso es dinero que se está yendo caminando. Generar leads es importante, pero convertirlos es más importante, y el punto más débil de casi todas las empresas es cuánto tardan en contestar. Muchas veces no le compran al mejor ni al más barato: le compran al primero que contesta. Una persona se tarda horas, porque come, duerme y atiende a otro cliente; y lo que entra de noche y el fin de semana se enfría. AutoFlow contesta en segundos, a las 3 de la tarde o a las 3 de la mañana. [Si te preguntan por estadísticas: no cites porcentajes; quédate con «horas contra segundos».]", "AutoFlow")
 
-PASOS = [("01", "Responde", "en segundos, de día y de noche"), ("02", "Precalifica", "quién está listo para comprar"), ("03", "Agenda", "la cita en tu calendario"),
-         ("04", "Confirma", "para que no te dejen plantado"), ("05", "Da seguimiento", "al que dijo «déjame pensarlo»"), ("06", "Lo anota todo", "en tu CRM, con la conversación")]
-pasos = "".join(f'<div class="paso6 pop" style="--d:{0.5 + i * 0.2:.1f}s"><small>{n}</small><b>{t}</b><span>{e(d)}</span></div>' for i, (n, t, d) in enumerate(PASOS))
+# ───────── 5 · IMPLEMENTACIÓN ─────────
+FASES_IMP = [("F1 · Días 1–3", "Incorporación", "Reunión de arranque, información, objetivos y casos de uso."),
+             ("F2 · Días 4–13", "Configuración", "Entrenamiento del agente y conexión con tus sistemas."),
+             ("F3 · Día 15", "En marcha", "Validación final, capacitación de tu equipo y arranque real."),
+             ("F4 · Días 16–45", "Optimización", "Ajustes de mensajes, reglas y flujos con conversaciones reales.")]
+imp = "".join(f'<div class="fase-imp pop{" oro-borde" if i == 2 else ""}" style="--d:{0.6 + i * 0.25:.2f}s"><small>{f}</small><b>{t}</b><span>{e(d)}</span></div>' for i, (f, t, d) in enumerate(FASES_IMP))
 slide(f'''<div class="centro">
-      <div class="ceja sube">AutoFlow</div>
-      <h2 class="grande sube" style="--d:.1s">No es un chatbot.<br><span class="oro">Es un sistema completo.</span></h2>
-      <div class="pasos6">{pasos}</div>
+      <div class="ceja sube">Cómo se instala</div>
+      <h2 class="grande sube" style="--d:.1s">Tu sistema en marcha en <span class="oro">15 días.</span></h2>
+      <div class="imp">{imp}</div>
+      <div class="sub sube" style="--d:1.8s">Del día 45 en adelante: mantenimiento. Y mientras instalamos, capacitamos a tu gente.</div>
     </div>''',
- "Eso es lo que hace AutoFlow, el sistema que montamos en nuestra empresa de IA. Y fíjate que no te dije «un chatbot». Un chatbot te da el menú del uno, dos, tres. Esto es un sistema completo, con chat y con voz: contesta en segundos, precalifica para saber quién está listo, agenda la cita en tu calendario, la confirma para que no te dejen plantado, le da seguimiento al que te dijo «déjame pensarlo» y lo deja todo anotado en tu CRM. Y esto es clave: una persona deja de dar seguimiento después del segundo o tercer mensaje. El sistema no se cansa. Tu equipo solo habla con gente que ya está calificada y con cita.", "AutoFlow")
+ "¿Y cuánto toma? Esto no es un proyecto de seis meses. En los primeros tres días nos sentamos contigo: tu información, tus objetivos y qué quieres que haga el agente. Del día 4 al 13 lo entrenamos y lo conectamos con tus sistemas. El día 15 está en marcha, atendiendo clientes reales, y tu equipo ya sabe usarlo. Y del día 16 al 45 lo optimizamos con las conversaciones reales, ajustando mensajes y reglas hasta que quede fino. Del 45 en adelante, mantenimiento.", "AutoFlow")
 
-slide(f'''<div class="dos-col">
-      <div class="col-txt">
-        <div class="ceja sube">En sus palabras</div>
-        <div class="cita-chica sube" style="--d:.1s">«Yo estoy <span class="oro">durmiendo</span>, pero lo veo cuando me despierto.»<small>Lcdo. Ernest Crisson Cancel · oficina legal · 25 a 50 mensajes al día, casi siempre de madrugada</small></div>
-        <div class="cita-chica sube" style="--d:.35s">Contestaba el <span class="oro">20 %</span> de sus leads. Hoy contesta <span class="oro">en segundos.</span><small>Teo · Mano Santa PR</small></div>
-      </div>
-      {video("ernest-abasto.mp4", "ernest-abasto.jpg", 720, 405, "0:08 · toca para reproducir")}
-    </div>''',
- "Te doy dos casos. El licenciado Ernest Crisson, abogado, le entran entre 25 y 50 mensajes al día, casi siempre de madrugada. Y en sus palabras: «Gracias a Dios que está el sistema. Yo estoy durmiendo, pero lo veo cuando me despierto: el sistema ha seguido contactando, respondiendo al cliente.» [Pon el video.] Y Teo, de Mano Santa PR, contestaba solo el 20% de sus leads. Hoy contesta en segundos, y lo que más le gustó fue la tranquilidad de saber que las conversaciones se siguen atendiendo. Los clientes no escriben cuando a ti te conviene. Escriben cuando tienen el problema.", "AutoFlow")
-
+# ───────── 6 · LO QUE VIENE ─────────
 slide('''<div class="centro">
       <div class="ceja sube">Lo que viene</div>
-      <h2 class="grande sube" style="--d:.1s">Las empresas se van a mover a esto.<br><span class="oro">La pregunta es si tú vas primero.</span></h2>
-      <div class="organigrama">
-        <div class="puesto oro-borde pop" style="--d:.6s">Hoy: contesta y agenda</div><div class="puesto pop" style="--d:.8s">Cotiza</div>
-        <div class="puesto pop" style="--d:.95s">Cobra</div><div class="puesto pop" style="--d:1.1s">Lleva el inventario</div>
-        <div class="puesto pop" style="--d:1.25s">Da seguimiento</div>
-      </div>
-      <div class="sub sube" style="--d:1.5s">Si lo haces igual todos los días, no lo tienes que hacer tú.</div>
+      <h2 class="mega sube" style="--d:.1s">Las empresas se van<br>a mover a esto.</h2>
+      <div class="sub sube" style="--d:.6s"><span class="oro">La pregunta es si tú vas primero.</span> Si lo haces igual todos los días, no lo tienes que hacer tú.</div>
     </div>''',
- "Y esto no es moda. Las empresas se van a mover a esto, igual que todo el mundo se movió a las redes. La gente todavía piensa que la IA es un mito o cosa de otro país, y ya está pasando aquí, en negocios de Puerto Rico. Y contestar es solo el principio: el mismo principio sirve para el que cotiza, el que cobra, el que lleva el inventario, el que da seguimiento. Un agente para cada trabajo, entrenado con tu negocio y tu forma de hablar. La regla es simple: si lo haces igual todos los días, no lo tienes que hacer tú. [Opcional: un sistema así queda en marcha en 15 días, y del día 16 al 45 se optimiza con las conversaciones reales.]", "AutoFlow")
+ "Y esto no es moda. Las empresas se van a mover a esto, igual que todo el mundo se movió a las redes sociales. La gente todavía piensa que la IA es un mito o cosa de otro país, y ya está pasando aquí, en negocios de Puerto Rico. La pregunta no es si va a pasar. Es si tú vas a ir primero o vas a llegar cuando tu competencia ya lo tenga. Y la regla es simple: si lo haces igual todos los días, no lo tienes que hacer tú.", "AutoFlow")
 
 # ───────── MARKETING ─────────
 slide('''<div class="centro">
@@ -94,7 +111,7 @@ slide('''<div class="centro">
       <h2 class="mega sube" style="--d:.1s">El marketing es <span class="oro">la vena</span><br>de cada negocio.</h2>
       <div class="sub sube" style="--d:.6s">AutoFlow atiende a los clientes. El marketing es lo que los trae.</div>
     </div>''',
- "Ahora, AutoFlow atiende. Pero alguien tiene que traer a esos clientes. Y ahí entra el marketing. El marketing es la vena de cada negocio: si no corre, el negocio se seca, no importa lo bueno que seas. Y te digo lo que más veo: dueños que viven de referidos o que le dan a Promocionar cuando se acuerdan. Si tu plan es que alguien te recomiende, no tienes un plan.", "Marketing")
+ "Ahora, AutoFlow atiende. Pero alguien tiene que traer a esos clientes. Y ahí entra el marketing. El marketing es la vena de cada negocio: si no corre, el negocio se seca, no importa lo bueno que seas. Y lo que más veo son dueños que viven de referidos o que le dan a Promocionar cuando se acuerdan. Si tu plan es que alguien te recomiende, no tienes un plan.", "Marketing")
 
 slide('''<div class="centro">
       <div class="ceja sube">Marketing</div>
@@ -104,9 +121,8 @@ slide('''<div class="centro">
         <div class="vs aparece" style="--d:.9s">vs.</div>
         <div class="lado oro-borde pop" style="--d:1.1s"><small>LO QUE FUNCIONA</small><b>una estrategia concreta, validada y aprobada</b></div>
       </div>
-      <div class="dato-pie sube" style="--d:1.5s">Tinos · Cabo Rojo · <span class="oro">$30K → $100K</span> al mes</div>
     </div>''',
- "Lo más importante en el marketing es tener una estrategia. No anuncios sueltos, no un poquito de aquí y un poquito de allá, sino una estrategia concreta, ya validada y aprobada, que sabes que funciona antes de meterle el dinero. Darle al botón azul sin estrategia es la forma más cara de tirar dinero. Te lo pongo con un caso: Oliver Santiago tiene Tinos, un restaurante en Cabo Rojo, y pasó de facturar $30K a $100K al mes. No fue un anuncio. Fue una estrategia: oferta, contenido, anuncios, automatizar los leads y escalar lo que funciona.", "Marketing")
+ "Lo más importante en el marketing es tener una estrategia. No anuncios sueltos, no un poquito de aquí y un poquito de allá, sino una estrategia concreta, ya validada y aprobada, que sabes que funciona antes de meterle el dinero. Darle al botón azul sin estrategia es la forma más cara de tirar dinero. No porque Facebook no funcione, sino porque no hay nada detrás.", "Marketing")
 
 # motor de 5 fases (mismo dibujo que la demo)
 FASES = [("01", "Enganchar", "Captar la atención del cliente ideal."), ("02", "Solucionar", "Mostrar que resuelves su problema."),
@@ -137,41 +153,20 @@ slide(f'''<div class="izq-metodo">
     </div>''',
  "Esta es nuestra estrategia, y ya está validada con más de 100 negocios en Puerto Rico. Son cinco fases. Enganchar: captar la atención de tu cliente ideal, no de todo el mundo. Solucionar: mostrarle que tú resuelves su problema. Envolver: que conecte con tu marca y confíe. Fidelizar: cuidar al que ya te compró, porque ahí está el dinero que casi todos dejan en la mesa. Y Reproducir: escalar lo que ya funciona, subiendo la inversión poco a poco y vigilando las ventas reales, no los leads baratos. ¿Y qué hay en el centro? Automatizar. Ahí es donde entra AutoFlow.", "Marketing")
 
-CASOS = [("magdalys", "Magdalys", "Beauty Salon", "Más de $15K mensuales"), ("claro", "Edgard Cortés", "Franquicias Claro", "+1,400 conversaciones"),
-         ("interior", "Home Interior Design", "", "+6,200 conversaciones"), ("grissel", "Dra. Grissel Villanueva", "", "+2,900 conversaciones"),
-         ("rk", "RK Transmission", "", "Triplicó sus ventas"), ("lorelys", "Dra. Lorelys Mojica", "", "+3,500 conversaciones"),
-         ("universidad", "Universidad Teológica Vida Abundante", "", "+2,800 conversaciones"), ("pepino", "Pepino Gun Gallery", "", "+3,300 conversaciones")]
-tarjetas = "".join(f'<div class="mini sube" style="--d:{0.3 + i * 0.12:.2f}s"><img src="casos/{k}.jpg" alt=""><b>{e(n)}{(" · " + e(s)) if s else ""}</b><span>{e(d)}</span></div>' for i, (k, n, s, d) in enumerate(CASOS))
-slide(f'''<div class="ceja sube" style="position:absolute;left:0;right:0;top:110px;text-align:center">Resultados de clientes reales</div>
-    <h2 class="sube" style="--d:.1s;position:absolute;left:0;right:0;top:150px;text-align:center">Las conversaciones <span class="oro">son dinero.</span></h2>
-    <div class="grid-casos">{tarjetas}</div>
-    <div class="legal aparece" style="--d:1.4s">CADA NEGOCIO ES DISTINTO · ESTOS SON RESULTADOS DE ESOS CLIENTES, NO UNA PROMESA</div>''',
- "¿Te acuerdas del título de la charla? Las conversaciones son dinero. Mira estos números: son conversaciones reales de negocios de aquí, con la misma estrategia. Home Interior Design, más de 6,200 conversaciones, desde 58 centavos. RK Transmission, más de 4,600 conversaciones, y triplicó sus ventas. Magdalys, con su salón de belleza, pasó de números rojos a más de $15K mensuales. Te lo digo claro: cada negocio es distinto y nadie te puede garantizar un número. Pero ninguno llegó ahí con un anuncio suelto. Y fíjate en la palabra: conversaciones. Cada una de esas conversaciones alguien la tiene que contestar.", "Marketing")
-
-
-# ───────── EL ECOSISTEMA Y CIERRE ─────────
+# ───────── 10 · EL ECOSISTEMA Y CIERRE ─────────
 slide('''<div class="centro">
       <div class="ceja sube">El ecosistema completo</div>
-      <h2 class="grande sube" style="--d:.1s">Un negocio <span class="oro">predecible.</span></h2>
+      <h2 class="grande sube" style="--d:.1s">Las conversaciones son <span class="oro">dinero.</span></h2>
       <div class="eco">
         <div class="eco-pieza pop" style="--d:.5s"><small>MARKETING</small><b>consigue los clientes</b><span>una estrategia validada</span></div>
         <div class="eco-mas aparece" style="--d:.8s">+</div>
         <div class="eco-pieza pop" style="--d:1s"><small>AUTOFLOW</small><b>los atiende</b><span>responde, califica, agenda y da seguimiento</span></div>
         <div class="eco-mas aparece" style="--d:1.3s">=</div>
-        <div class="eco-pieza oro-fondo pop" style="--d:1.5s"><small>TU NEGOCIO</small><b>un sistema</b><span>que no depende de la suerte</span></div>
+        <div class="eco-pieza oro-fondo pop" style="--d:1.5s"><small>TU NEGOCIO</small><b>predecible</b><span>un sistema que no depende de la suerte</span></div>
       </div>
+      <img class="logo-cierre aparece" style="--d:1.9s" src="logo.png" alt="Level Up Media">
     </div>''',
- "Y aquí está la idea de hoy en una sola pantalla. Todo dueño de negocio puede tener un sistema predecible. Marketing que te consigue los clientes, con una estrategia validada. Más AutoFlow, que los atiende: responde, califica, agenda y da seguimiento. Eso es un ecosistema completo. Si tienes solo el marketing, pagas por clientes que nadie contesta. Si tienes solo la automatización, no tiene a quién atender. Juntos, dejas de depender de la suerte y de los referidos. El licenciado Crisson tiene las dos cosas, y por eso hoy su problema es que no da abasto.", "Ecosistema")
-
-slide(f'''<div class="dos-col">
-      <div class="col-txt">
-        <h2 class="mega sube">Las conversaciones<br>son <span class="oro">dinero.</span></h2>
-        <p class="sube" style="--d:.3s">Esta noche: escríbele a tu propio negocio como si fueras un cliente nuevo y cuenta cuánto tardan en responderte.</p>
-        <img class="logo-cierre aparece" style="--d:.7s" src="logo.png" alt="Level Up Media">
-      </div>
-      {video("bryan-accion.mp4", "bryan-accion.jpg", 380, 676, "toca para reproducir")}
-    </div>''',
- "Te dejo una tarea para esta noche. Escríbele a tu propio negocio como si fueras un cliente nuevo, a las 9 de la noche, y cuenta cuánto tardan en responderte. Ese número te va a decir más de tu negocio que cualquier charla. Si algo de lo que hablamos te hizo sentido y quieres ver cómo se vería este sistema en tu negocio, búscame [di tu Instagram o la palabra clave]. Y como dice uno de nuestros clientes, el Dr. Bryan Vega: [pon el video] no lo pienses. Toma acción. Gracias.", "Cierre")
+ "Y aquí está la idea de hoy en una sola pantalla. Todo dueño de negocio puede tener un sistema predecible: marketing que te consigue los clientes, con una estrategia validada, más AutoFlow, que los atiende, los califica, les agenda y les da seguimiento. Eso es un ecosistema completo. Si tienes solo el marketing, pagas por clientes que nadie contesta. Si tienes solo la automatización, no tiene a quién atender. Juntos, dejas de depender de la suerte. Te dejo una tarea para esta noche: escríbele a tu propio negocio como si fueras un cliente nuevo y cuenta cuánto tardan en responderte. Si quieres ver cómo se vería esto en tu negocio, búscame [di tu Instagram o la palabra clave]. Las conversaciones son dinero. Gracias.", "Cierre")
 
 # ───────── Armar ─────────
 N = len(S)
@@ -296,6 +291,29 @@ extra = r'''
 .eco-pieza.oro-fondo { background: var(--oro); border-color: var(--oro); color: #0b0b0b; box-shadow: 0 0 60px rgba(245,206,26,.25); }
 .eco-pieza.oro-fondo small, .eco-pieza.oro-fondo span, .eco-pieza.oro-fondo b { color: #0b0b0b; }
 .eco-mas { align-self: center; font-family: var(--sora); font-size: 64px; color: var(--oro); }
+.orbita { position: absolute; right: 190px; top: 170px; width: 760px; height: 760px; }
+.orbita svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ancla { position: absolute; width: 0; height: 0; display: flex; align-items: center; justify-content: center; }
+.centro-orb { flex: none; width: 250px; height: 250px; border-radius: 50%; background: var(--oro); color: #0b0b0b; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 0 90px rgba(245,206,26,.35); }
+.centro-orb small { font-family: var(--mono); font-size: 16px; letter-spacing: .24em; }
+.centro-orb b { font-family: var(--sora); font-size: 34px; line-height: 1.05; }
+.centro-orb span { font-size: 19px; }
+.sat { flex: none; width: 230px; padding: 16px 18px; border-radius: 18px; background: var(--superficie); border: 1px solid var(--borde); text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.sat b { font-family: var(--sora); font-size: 22px; line-height: 1.15; }
+.sat span { font-size: 17px; color: var(--gris); }
+.sat-oro { border: 2px solid var(--oro); box-shadow: 0 0 50px rgba(245,206,26,.2); }
+.sat-oro b { color: var(--oro); }
+.flujo6 { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+.flujo6 i { font-style: normal; color: var(--oro); font-size: 34px; }
+.nodo6 { width: 222px; padding: 22px 20px; border-radius: 20px; background: var(--superficie); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.nodo6 small { font-family: var(--mono); color: var(--oro); font-size: 16px; letter-spacing: .2em; }
+.nodo6 b { font-family: var(--sora); font-size: 32px; }
+.nodo6 span { color: var(--gris); font-size: 20px; line-height: 1.3; }
+.imp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 1600px; margin-top: 10px; }
+.fase-imp { text-align: left; padding: 26px 28px; border-radius: 22px; background: var(--superficie); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 8px; }
+.fase-imp small { font-family: var(--mono); color: var(--oro); font-size: 17px; letter-spacing: .16em; text-transform: uppercase; }
+.fase-imp b { font-family: var(--sora); font-size: 38px; }
+.fase-imp span { color: var(--gris); font-size: 22px; line-height: 1.35; }
 /* Panel de notas del speaker (tecla N) */
 .notas { position: fixed; left: 16px; right: 16px; bottom: 76px; z-index: 30; max-height: 42vh; overflow: auto; background: rgba(15,14,12,.97); border: 1px solid rgba(245,206,26,.5); border-radius: 16px; padding: 18px 22px; color: var(--texto); font: 400 19px/1.5 var(--inter); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
 .notas header { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--mono); font-size: 13px; letter-spacing: .14em; color: var(--oro); text-transform: uppercase; margin-bottom: 8px; }
@@ -379,7 +397,7 @@ main{{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 .intro{{color:#a3a097;font-size:15px}}article{{background:#141311;border:1px solid #2c2a24;border-radius:16px;padding:16px 18px}}
 article header{{display:flex;justify-content:space-between;gap:10px;font:500 12px/1 monospace;letter-spacing:.14em;color:#f5ce1a;text-transform:uppercase}}
 article header a{{color:#a3a097}}article h2{{font:800 20px/1.25 Sora,Arial,sans-serif;margin:10px 0 6px}}article p{{margin:0}}</style></head><body><main>
-<h1>Las conversaciones son <span>dinero.</span></h1><div class="intro">Guion de Elvin · {N} slides · ~20–25 min. Lo que va entre [corchetes] es una indicación para ti, no se dice.</div>
+<h1>Las conversaciones son <span>dinero.</span></h1><div class="intro">Guion de Elvin · {N} slides · ~15–20 min. Lo que va entre [corchetes] es una indicación para ti, no se dice.</div>
 {filas}</main></body></html>'''
 (AQUI / "notas.html").write_text(notas_html)
 print("notas.html listo")

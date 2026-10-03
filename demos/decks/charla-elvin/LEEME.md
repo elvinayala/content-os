@@ -12,3 +12,10 @@ precalifica, agenda, confirma, da seguimiento, CRM → Ernest y Teo → "las emp
 marketing (la vena del negocio · no anuncios sueltos: una estrategia validada · el motor de 5 fases · casos) y el
 **ecosistema** (marketing consigue + AutoFlow atiende = negocio predecible). De Elvin, solo una línea al presentarse.
 `guion-charla.md` es el guion largo de la v1 (22 slides); el guion vigente sale en `notas.html`. La v1 está en git.
+
+**v3 (2/oct, Elvin): 10 slides, SIN testimonios.** Arranca con los agentes personalizados como los define AI Borinquen
+(Agente Personal = tu propio ChatGPT, de él nacen recepcionista, ventas, cobros, inventario, reactivación, reseñas) → AutoFlow
+= la Recepcionista IA y su recorrido (contacta → responde → califica → agenda → confirma/seguimiento → registra) → tiempo de
+respuesta → en marcha en 15 días (F1–F4, optimización 16–45, mantenimiento después) → las empresas se van a mover a esto →
+marketing (la vena · una estrategia validada · el motor) → ecosistema y cierre. Textos de AIB tomados de
+`demos/decks/ai-borinquen-demo/index.html` (slides 5, 6 y 8).
