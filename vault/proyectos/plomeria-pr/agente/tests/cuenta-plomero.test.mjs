@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cuentaPlomero, viernesDePago, partesDelPago } from "../dist/cuenta-plomero.js";
+import { cuentaPlomero, viernesDePago, partesDelPago, faltaParaPagar } from "../dist/cuenta-plomero.js";
 
 const PR = (s) => Date.parse(s + "-04:00");
-const t = (id, o) => ({ id, plomeroId: "luis", servicio: "Destape", municipio: "Cidra", estado: "cobrado", inicio: "2026-10-05T08:00:00-04:00", manoObra: 100, ...o });
+const t = (id, o) => ({ id, plomeroId: "luis", servicio: "Destape", municipio: "Cidra", estado: "cobrado", inicio: "2026-10-05T08:00:00-04:00", manoObra: 100, fotosDespues: ["d.jpg"], recibos: ["r.jpg"], ...o });
 const trabajos = [
   t("A", { terminadoEn: "2026-10-07T14:00:00-04:00", cobradoEn: "2026-10-07T23:30:00-04:00", pagoPlomero: 100 }),   // pagó el miércoles → este viernes
   t("B", { terminadoEn: "2026-10-07T16:00:00-04:00", cobradoEn: "2026-10-08T10:00:00-04:00", pagoPlomero: 50 }),    // pagó el jueves → viernes siguiente
@@ -81,4 +81,19 @@ test("montos del cierre: cliente paga piezas + 20 %, plomero 65 % de la mano de 
 test("equipo que pone Resuelto: el cliente lo paga con 20 %, al plomero no se le devuelve", async () => {
   const { montosDeCierre } = await import("../dist/cuenta-plomero.js");
   assert.deepEqual(montosDeCierre({ manoObra: 249, fee: 19, recargo: 0, piezasCosto: 10, equipoResuelto: 280, margenClientePct: 20 }), { total: 616, matCliente: 348, pago: 161.85, piezas: 11 });
+});
+
+test("sin foto del trabajo terminado (o sin recibo si hubo piezas) no se le paga: va a 'falta subir fotos'", () => {
+  assert.deepEqual(faltaParaPagar({ pagoPlomero: 97.5, piezasPlomero: 0 }), ["foto del trabajo terminado"]);
+  assert.deepEqual(faltaParaPagar({ fotosDespues: ["d"], pagoPlomero: 97.5, piezasPlomero: 33 }), ["foto del recibo de las piezas"]);
+  assert.deepEqual(faltaParaPagar({ fotosDespues: ["d"], recibos: ["r"], pagoPlomero: 97.5, piezasPlomero: 33 }), []);
+  const ts = [
+    t("OK", { terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 80, piezasPlomero: 0 }),
+    t("SF", { terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 100, piezasPlomero: 11, fotosDespues: [], recibos: [] }),
+  ];
+  const c = cuentaPlomero(ts, [], "luis", PR("2026-10-08T15:00:00"));
+  assert.equal(c.esteViernes.total, 80);
+  assert.deepEqual(c.faltanFotos.trabajos.map((x) => [x.id, x.pago, x.falta.length]), [["SF", 111, 2]]);
+  assert.equal(c.piezas.porDevolver.total, 0);
+  assert.equal(c.semana.total, 180); // lo ganado sí cuenta en la semana
 });

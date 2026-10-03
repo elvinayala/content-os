@@ -22,7 +22,7 @@ import { config } from "./config.js";
 import type { Proveedor } from "./proveedores.js";
 import { archivar } from "./historial.js";
 import { manoObraAdicional, menuPara } from "./adicionales.js";
-import { cuentaPlomero, partesDelPago, montosDeCierre } from "./cuenta-plomero.js";
+import { cuentaPlomero, partesDelPago, montosDeCierre, faltaParaPagar } from "./cuenta-plomero.js";
 
 export const DIR_FOTOS = path.join(RAIZ, "data", "estado", "fotos-trabajos");
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
@@ -45,7 +45,8 @@ export function resumenParaPlomero(t: Trabajo) {
   return {
     id: t.id, estado: t.estado, cliente: t.nombre, telefono: null, direccion: t.direccion, // el teléfono no se muestra: se llama/escribe por Resuelto (26/sep) municipio: t.municipio, referencia: t.referencia,
     servicio: t.servicio, precioFijo: t.manoObra, rango: t.rango ?? s?.rango ?? null, emergencia: t.emergencia,
-    inicio: t.inicio, fin: t.fin, fotosAntes: (t.fotosAntes ?? []).length, fotosDespues: (t.fotosDespues ?? []).length,
+    inicio: t.inicio, fin: t.fin, fotosAntes: (t.fotosAntes ?? []).length, fotosDespues: (t.fotosDespues ?? []).length, recibos: (t.recibos ?? []).length,
+    falta: ["completado", "cobrado"].includes(t.estado) && !t.pagadoAlPlomero ? faltaParaPagar(t) : [],
     totalCliente: t.totalCliente ?? null, pagoPlomero: t.pagoPlomero == null ? null : partesDelPago(t).comision, piezasPlomero: partesDelPago(t).piezas, manejoMaterialesPct: menu.manejo_materiales_pct,
     adicionales: (t.adicionales ?? []).map((a) => ({ id: a.id, tipo: a.tipo, descripcion: a.descripcion, precio: a.precio ?? a.precioPropuesto ?? null, estado: a.estado })),
     menuAdicionales: t.estado === "en-sitio" ? menuPara(t) : undefined,
@@ -73,6 +74,8 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   // terminado
   if (t.estado === "completado" || t.estado === "cobrado") return { ok: false, motivo: "Este trabajo ya está cerrado." };
   if (!(t.fotosDespues ?? []).length) return { ok: false, motivo: "Sube al menos una foto del DESPUÉS antes de cerrar." };
+  if (!(t.fotosAntes ?? []).length && !t.garantiaDe) return { ok: false, motivo: "Sube al menos una foto del ANTES antes de cerrar." };
+  if (Math.max(0, Number(d.materiales) || 0) > 0 && !(t.recibos ?? []).length) return { ok: false, motivo: "Compraste piezas: sube la foto del RECIBO antes de cerrar. Sin recibo no se te pueden devolver." };
   const rango = t.rango;
   let mano = t.manoObra ?? Number(d.mano_obra);
   if (t.manoObra == null) {
@@ -107,15 +110,15 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
 }
 
 /** Guarda una foto (data URL) del antes/después, redimensionada a 1600 px. */
-export async function guardarFoto(ofertaId: string, p: Proveedor, tipo: "antes" | "despues", dataUrl: string) {
+export async function guardarFoto(ofertaId: string, p: Proveedor, tipo: "antes" | "despues" | "recibo", dataUrl: string) {
   const r = trabajoDe(ofertaId, p); if ("error" in r) return { ok: false, motivo: r.error };
   const m = /^data:image\/[a-z+.-]+;base64,(.+)$/i.exec(dataUrl ?? ""); if (!m) return { ok: false, motivo: "Foto inválida." };
-  const t = r.t; const lista = [...((tipo === "antes" ? t.fotosAntes : t.fotosDespues) ?? [])];
+  const t = r.t; const lista = [...((tipo === "antes" ? t.fotosAntes : tipo === "recibo" ? t.recibos : t.fotosDespues) ?? [])];
   if (lista.length >= 6) return { ok: false, motivo: "Máximo 6 fotos por etapa." };
   const archivo = `${t.id}-${tipo}-${lista.length + 1}-${Date.now().toString(36)}.jpg`;
   await sharp(Buffer.from(m[1], "base64")).rotate().resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true }).jpeg({ quality: 78 }).toFile(path.join(DIR_FOTOS, archivo));
   lista.push(archivo);
-  almacen.guardarTrabajo({ ...t, ...(tipo === "antes" ? { fotosAntes: lista } : { fotosDespues: lista }), fotos: [...(t.fotos ?? []), archivo] });
+  almacen.guardarTrabajo({ ...t, ...(tipo === "antes" ? { fotosAntes: lista } : tipo === "recibo" ? { recibos: lista } : { fotosDespues: lista }), fotos: [...(t.fotos ?? []), archivo] });
   return { ok: true, total: lista.length };
 }
 

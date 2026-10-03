@@ -10,6 +10,7 @@
  *  GET  /admin/estado            resumen (trabajos, candidatos, lista de espera)
  *  GET  /widget.js               script embebible
  */
+import { faltaParaPagar } from "./cuenta-plomero.js";
 import express from "express";
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -551,7 +552,7 @@ app.post("/ok/:t/:a/:k", express.urlencoded({ extended: false }), async (req: an
 });
 app.post("/api/proveedores/trabajo/foto", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Enlace inválido." }); if (prov.id === demo.DEMO_ID) return res.json(demo.foto(String(req.body?.oferta ?? ""), String(req.body?.tipo ?? "")));
-  const tipo = req.body?.tipo === "antes" ? "antes" : "despues";
+  const tipo = req.body?.tipo === "antes" ? "antes" : req.body?.tipo === "recibo" ? "recibo" : "despues";
   try { res.json(await ciclo.guardarFoto(String(req.body?.oferta ?? ""), prov, tipo, String(req.body?.imagen ?? ""))); } catch (e) { res.json({ ok: false, motivo: "No pude guardar la foto." }); }
 });
 app.get("/api/proveedores/cuenta", (req: any, res) => {
@@ -613,7 +614,7 @@ app.post("/admin/trabajos/:id/marcar", (req: any, res) => {
   const t = almacen.trabajos().find((x) => x.id === req.params.id); if (!t) return res.status(404).json({ ok: false });
   const que = String(req.body?.que ?? "");
   if (que === "cobrado") almacen.guardarTrabajo({ ...t, estado: "cobrado", cobradoEn: t.cobradoEn ?? new Date().toISOString() });
-  else if (que === "pagado-plomero") almacen.guardarTrabajo({ ...t, pagadoAlPlomero: new Date().toISOString().slice(0, 10) });
+  else if (que === "pagado-plomero") { if (faltaParaPagar(t).length) return res.status(400).json({ ok: false, motivo: "Falta " + faltaParaPagar(t).join(" y ") }); almacen.guardarTrabajo({ ...t, pagadoAlPlomero: new Date().toISOString().slice(0, 10) }); }
   else if (que === "piezas-devueltas") almacen.guardarTrabajo({ ...t, piezasDevueltas: new Date().toISOString().slice(0, 10) });
   else return res.status(400).json({ ok: false });
   res.json({ ok: true });

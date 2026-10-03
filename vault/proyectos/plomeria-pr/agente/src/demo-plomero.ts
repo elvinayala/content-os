@@ -12,7 +12,7 @@ export const DEMO_ID = "vista-demo";
 export const proveedorDemo: Proveedor = { id: DEMO_ID, tipo: "plomero", nombre: "Vista de prueba", whatsapp: "", categorias: ["plomeria"], territorios: ["T3"], estado: "activo", municipio: "Caguas" };
 
 const FEE = 19, MAT_CLIENTE = 1.2, MAT_PLOMERO = 1.1, PARTE = 0.65;
-type T = { id: string; estado: string; cliente: string; telefono: string; direccion: string; municipio: string; referencia: string; servicio: string; precioFijo: number | null; rango: number[] | null; emergencia: boolean; inicio: string; fin: string; fotosAntes: number; fotosDespues: number; totalCliente: number | null; pagoPlomero: number | null; piezasPlomero?: number; manejoMaterialesPct: number };
+type T = { id: string; estado: string; cliente: string; telefono: string; direccion: string; municipio: string; referencia: string; servicio: string; precioFijo: number | null; rango: number[] | null; emergencia: boolean; inicio: string; fin: string; fotosAntes: number; fotosDespues: number; totalCliente: number | null; pagoPlomero: number | null; piezasPlomero?: number; recibos?: number; manejoMaterialesPct: number };
 type O = { id: string; tipo: "trabajo"; referencia: string; categoria: string; categoriaNombre: string; municipio: string; resumen: string; pagoProveedor: number; inicio: string; fin: string; estado: string; elegibles: string[]; avisados: string[]; rechazados: string[]; aceptadoPor?: string; expiraEn: string; creado: string; trabajo?: T; terminadoEn?: string };
 
 function manana(h: number) { const d = new Date(Date.now() + 86400_000); if (d.getUTCDay() === 0) d.setUTCDate(d.getUTCDate() + 1); d.setUTCHours(h + 4, 0, 0, 0); return d.toISOString(); } // próximo día de trabajo (L–S), hora de PR (UTC-4)
@@ -55,7 +55,7 @@ export function paso(id: string, p: string, d: { mano_obra?: number; materiales?
   t.estado = "completado"; o.terminadoEn = new Date().toISOString();
   return { ok: true, estado: "completado", total: t.totalCliente, pago: t.pagoPlomero, piezas: t.piezasPlomero };
 }
-export function foto(id: string, tipo: string) { const t = buscar(id)?.trabajo; if (!t) return { ok: false, motivo: "No encuentro el trabajo." }; if (tipo === "antes") t.fotosAntes++; else t.fotosDespues++; return { ok: true }; }
+export function foto(id: string, tipo: string) { const t = buscar(id)?.trabajo; if (!t) return { ok: false, motivo: "No encuentro el trabajo." }; if (tipo === "antes") t.fotosAntes++; else if (tipo === "recibo") t.recibos = (t.recibos ?? 0) + 1; else t.fotosDespues++; return { ok: true }; }
 export function cuenta() {
   // En la prueba nada se cobra de verdad: lo terminado queda "esperando que el cliente pague" y lo aceptado, "por hacer".
   const { viernes } = viernesDePago(Date.now()); const f = (ms: number) => new Date(ms - 4 * 3600_000).toISOString().slice(0, 10);

@@ -36,6 +36,15 @@ export function partesDelPago(t: Pick<Trabajo, "pagoPlomero" | "piezasPlomero" |
   return { comision: r2(Math.max(0, (t.pagoPlomero ?? 0) - piezas)), piezas };
 }
 
+/** Lo que le falta a un trabajo terminado para pagársele al plomero (Elvin, 3/oct: "foto de trabajo no se paga"; el
+ *  recibo de las piezas, por si hay garantía). Vacío = se le puede pagar. */
+export function faltaParaPagar(t: Pick<Trabajo, "fotosDespues" | "recibos" | "pagoPlomero" | "piezasPlomero" | "materialesCosto" | "garantiaDe">): string[] {
+  const f: string[] = [];
+  if (!(t.fotosDespues ?? []).length) f.push("foto del trabajo terminado");
+  if (partesDelPago(t).piezas > 0 && !(t.recibos ?? []).length) f.push("foto del recibo de las piezas");
+  return f;
+}
+
 /** Piezas ya devueltas. En los trabajos de antes del 2/oct se devolvían junto con el pago del viernes. */
 export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlomero" | "pagadoAlPlomero">) =>
   !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
@@ -65,10 +74,12 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
   const finSemana = lunes + 7 * DIA;
 
   const cobradoEn = (t: Trabajo) => Date.parse(t.cobradoEn ?? t.terminadoEn!);
-  const porPagar = hechos.filter((t) => t.estado === "cobrado" && !t.pagadoAlPlomero);
+  const faltan = (t: Trabajo) => !t.pagadoAlPlomero && faltaParaPagar(t).length > 0;
+  const porPagar = hechos.filter((t) => t.estado === "cobrado" && !t.pagadoAlPlomero && !faltan(t));
   const esteViernes = porPagar.filter((t) => cobradoEn(t) < corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
   const siguiente = porPagar.filter((t) => cobradoEn(t) >= corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
-  const esperando = hechos.filter((t) => t.estado === "completado").map((t) => linea(t, t.terminadoEn, com(t)));
+  const esperando = hechos.filter((t) => t.estado === "completado" && !faltan(t)).map((t) => linea(t, t.terminadoEn, com(t)));
+  const sinFotos = cerrados.filter(faltan).map((t) => ({ ...linea(t, t.terminadoEn, com(t) + (piezasDevueltas(t) ? 0 : partesDelPago(t).piezas)), falta: faltaParaPagar(t) }));
 
   const estimado = (t: Trabajo) => ofertas.filter((o) => o.referencia === t.id && o.aceptadoPor === plomeroId).at(-1)?.pagoProveedor
     ?? (t.manoObra ?? 0) * 0.65;
@@ -84,7 +95,7 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
 
   const conPiezas = cerrados.filter((t) => partesDelPago(t).piezas > 0);
   const piezaLinea = (t: Trabajo) => linea(t, t.terminadoEn, partesDelPago(t).piezas);
-  const piezasPorDevolver = conPiezas.filter((t) => !piezasDevueltas(t)).map(piezaLinea);
+  const piezasPorDevolver = conPiezas.filter((t) => !piezasDevueltas(t) && !faltan(t)).map(piezaLinea);
 
   return {
     actualizado: new Date(ahora).toISOString(),
@@ -93,6 +104,8 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
     siguienteViernes: { fecha: fechaPR(viernes + 7 * DIA), ...grupo(siguiente) },
     esperandoCliente: grupo(esperando),
     porHacer: grupo(porHacer),
+    /** Terminados que no se le pagan hasta que suba lo que falta (foto del trabajo, recibo de piezas). */
+    faltanFotos: { total: suma(sinFotos), trabajos: sinFotos },
     pagados,
     piezas: { porDevolver: grupo(piezasPorDevolver), devueltas: suma(conPiezas.filter((t) => piezasDevueltas(t)).map(piezaLinea)) },
     acumulado: suma(hechos.map((t) => linea(t, t.terminadoEn, com(t)))),
