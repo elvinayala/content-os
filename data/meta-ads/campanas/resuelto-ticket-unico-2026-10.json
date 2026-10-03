@@ -1,0 +1,35 @@
+{
+ "creado": "2026-10-03T21:31:33.402Z",
+ "conjuntos": {
+  "caguas:bomba-cisterna": {
+   "conjunto": "120255225330300029",
+   "imagen": "c44a37153fec70ede14b5a1b17cb4fcf",
+   "creativo": "1801939017485588",
+   "ad": "120255225331110029"
+  },
+  "caguas:calentador-tanque": {
+   "conjunto": "120255225331230029",
+   "imagen": "22c0e19f2cd22b2cf366419a0ce9bb02",
+   "creativo": "1573290333995924",
+   "ad": "120255225331670029"
+  },
+  "caguas:reparacion-filtracion": {
+   "conjunto": "120255225331700029",
+   "imagen": "4ca22e4a5cc0b8c67de5ce04ebd4cb84",
+   "creativo": "1590348852831837",
+   "ad": "120255225332450029"
+  },
+  "quebradillas:cisterna-bomba": {
+   "conjunto": "120255225332610029",
+   "imagen": "84215a0da64d2896c8834a4b73c8f5c0",
+   "creativo": "1084291197822976",
+   "ad": "120255225333060029"
+  },
+  "aguadilla:calentador-tanque": {
+   "conjunto": "120255225333360029",
+   "imagen": "c24f6245a3b59fb3bbb9b10fb7392383",
+   "creativo": "1453244536669082",
+   "ad": "120255225333660029"
+  }
+ }
+}
