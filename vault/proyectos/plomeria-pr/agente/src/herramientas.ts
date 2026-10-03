@@ -3,6 +3,7 @@
  * Todas devuelven JSON serializable; si una integración no está configurada, devuelven
  * `simulado: true` y el agente sigue funcionando.
  */
+import { montosDeCierre } from "./cuenta-plomero.js";
 import type Anthropic from "@anthropic-ai/sdk";
 import { almacen, type Contacto, type Trabajo, type Candidato } from "./almacen.js";
 import { menu, territorios } from "./prompt.js";
@@ -277,7 +278,12 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
       let total = input.mano_obra + t.fee + (t.emergencia ? menu.recargo_emergencia : 0) + materialesCobrados;
       if (input.es_deposito_50) total = Math.round(total * 50) / 100;
       const link = await crearLinkPago({ trabajoId: t.id, concepto: t.servicio + (input.es_deposito_50 ? " (depósito 50%)" : ""), montoCentavos: Math.round(total * 100), telefono: t.telefono });
-      almacen.guardarTrabajo({ ...t, linkPago: link.url, estado: input.es_deposito_50 ? t.estado : "completado", manoObra: input.mano_obra });
+      if (input.es_deposito_50) almacen.guardarTrabajo({ ...t, linkPago: link.url, manoObra: input.mano_obra });
+      else {
+        // 3/oct: antes marcaba "completado" sin montos y el plomero no veía su dinero (R-0005).
+        const m = montosDeCierre({ manoObra: input.mano_obra, fee: t.fee, recargo: t.emergencia ? menu.recargo_emergencia : 0, piezasCosto: input.materiales_costo, margenClientePct: menu.manejo_materiales_pct });
+        almacen.guardarTrabajo({ ...t, linkPago: link.url, estado: t.estado === "cobrado" ? "cobrado" : "completado", manoObra: input.mano_obra, terminadoEn: t.terminadoEn ?? new Date().toISOString(), manoObraFinal: input.mano_obra, materialesCosto: input.materiales_costo, totalCliente: m.total, pagoPlomero: m.pago, piezasPlomero: m.piezas });
+      }
       return { total, desglose: { mano_obra: input.mano_obra, coordinacion: t.fee, emergencia: t.emergencia ? menu.recargo_emergencia : 0, materiales_costo: input.materiales_costo, materiales_cobrados: materialesCobrados }, link_tarjeta: link.url ?? null, ath_movil: link.athMovil, simulado: link.simulado };
     }
     case "horarios_entrevista": {

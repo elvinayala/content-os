@@ -22,7 +22,7 @@ import { config } from "./config.js";
 import type { Proveedor } from "./proveedores.js";
 import { archivar } from "./historial.js";
 import { manoObraAdicional, menuPara } from "./adicionales.js";
-import { cuentaPlomero, partesDelPago } from "./cuenta-plomero.js";
+import { cuentaPlomero, partesDelPago, montosDeCierre } from "./cuenta-plomero.js";
 
 export const DIR_FOTOS = path.join(RAIZ, "data", "estado", "fotos-trabajos");
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
@@ -67,7 +67,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     if (t.estado !== "en-camino" && t.estado !== "agendado") return { ok: false, motivo: "Ya marcaste este paso." };
     almacen.guardarTrabajo({ ...t, estado: "en-sitio", llegadaEn: ahora, enCaminoEn: t.enCaminoEn ?? ahora });
     archivar(t.contactoId, "sistema", `${t.id}: ${p.nombre} llegó.`, t.id);
-    return { ok: true, estado: "en-sitio", recordatorio: "Toma fotos del ANTES antes de tocar nada." };
+    return { ok: true, estado: "en-sitio", recordatorio: "Toma fotos del ANTES antes de tocar nada. Si hace falta una pieza, dile al cliente el precio ANTES de comprarla." };
   }
 
   // terminado
@@ -94,10 +94,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
   const extra = manoObraAdicional(t);
   if (extra) mano = r2(mano + extra);
   const recargo = t.emergencia ? menu.recargo_emergencia : 0;
-  const matCliente = r2(mat * (1 + menu.manejo_materiales_pct / 100));
-  const total = r2(mano + t.fee + recargo + matCliente);
-  const pago = r2((mano + recargo) * 0.65);
-  const piezas = r2(mat * 1.1);
+  const { total, matCliente, pago, piezas } = montosDeCierre({ manoObra: mano, fee: t.fee, recargo, piezasCosto: mat, margenClientePct: menu.manejo_materiales_pct });
   const link = await crearLinkPago({ trabajoId: t.id, concepto: t.servicio, montoCentavos: Math.round(total * 100), telefono: t.telefono });
   almacen.guardarTrabajo({ ...t, estado: "completado", terminadoEn: ahora, manoObraFinal: mano, materialesCosto: mat, totalCliente: total, pagoPlomero: pago, piezasPlomero: piezas, linkPago: link.url, notaCierre: d.nota?.trim() || undefined });
   archivar(t.contactoId, "sistema", `${t.id} terminado por ${p.nombre}. Cliente $${total.toFixed(2)} (mano de obra $${mano}${mat ? `, materiales $${matCliente}` : ""}). Pago plomero $${pago.toFixed(2)}${piezas ? ` + piezas $${piezas.toFixed(2)}` : ""}.${d.nota ? " Nota: " + d.nota : ""}`, t.id);

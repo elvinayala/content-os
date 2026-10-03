@@ -31,7 +31,8 @@
         "toilet",
         "flapper",
         "el inodoro no para"
-      ]
+      ],
+      "pieza": "las piezas del inodoro"
     },
     {
       "id": "valvula-paso",
@@ -43,7 +44,8 @@
         "valvula",
         "angle stop",
         "llave de angulo"
-      ]
+      ],
+      "pieza": "la válvula"
     },
     {
       "id": "llave-mezcladora",
@@ -58,7 +60,8 @@
         "mezcladora",
         "faucet",
         "la pluma gotea"
-      ]
+      ],
+      "pieza": "la llave o mezcladora"
     },
     {
       "id": "destape-simple",
@@ -89,7 +92,8 @@
         "regadera",
         "ducha",
         "shower head"
-      ]
+      ],
+      "pieza": "el cabezal"
     },
     {
       "id": "instalacion-lavamanos",
@@ -101,7 +105,8 @@
         "instalar lavamanos",
         "instalar fregadero",
         "sink"
-      ]
+      ],
+      "pieza": "el lavamanos"
     },
     {
       "id": "disposal",
@@ -111,7 +116,8 @@
       "alias": [
         "disposal",
         "triturador"
-      ]
+      ],
+      "pieza": "el disposal"
     },
     {
       "id": "inodoro-completo",
@@ -122,7 +128,8 @@
         "cambiar inodoro",
         "inodoro nuevo",
         "instalar toilet"
-      ]
+      ],
+      "pieza": "el inodoro"
     },
     {
       "id": "bomba-cisterna",
@@ -134,7 +141,8 @@
         "la bomba no prende",
         "bomba de agua",
         "cisterna no bombea"
-      ]
+      ],
+      "pieza": "la bomba"
     },
     {
       "id": "calentador-tanque",
@@ -146,7 +154,8 @@
         "water heater",
         "no hay agua caliente",
         "calentador de tanque"
-      ]
+      ],
+      "pieza": "el calentador"
     },
     {
       "id": "destape-maquina",
@@ -188,7 +197,8 @@
         "tankless",
         "calentador de linea",
         "calentador electrico de paso"
-      ]
+      ],
+      "pieza": "el calentador"
     },
     {
       "id": "filtro-casa",
@@ -198,7 +208,8 @@
       "alias": [
         "filtro",
         "filtro de agua"
-      ]
+      ],
+      "pieza": "el filtro"
     },
     {
       "id": "reparacion-filtracion",

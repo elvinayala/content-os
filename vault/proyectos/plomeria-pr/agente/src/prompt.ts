@@ -11,7 +11,7 @@ type Categoria = { id: string; nombre: string; ticket_plausible: [number, number
 const categoriasProyectos: { categorias: Categoria[] } = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "categorias-proyectos.json"), "utf8"));
 const tablaCategorias = () => categoriasProyectos.categorias.map((c) => `- [${c.id}] ${c.nombre}: proyectos típicos de $${c.ticket_plausible[0].toLocaleString("en-US")} a $${c.ticket_plausible[1].toLocaleString("en-US")}`).join("\n");
 
-type Servicio = { id: string; nivel: string; nombre: string; precio?: number; rango?: [number, number]; cotizacion?: boolean; nota?: string };
+type Servicio = { id: string; nivel: string; nombre: string; precio?: number; rango?: [number, number]; cotizacion?: boolean; nota?: string; pieza?: string };
 type Menu = { cargo_coordinacion: number; recargo_emergencia: number; manejo_materiales_pct: number; garantia_meses: number; servicios: Servicio[] };
 type Territorios = { territorios: { id: string; nombre: string; estado: string; municipios: string[] }[] };
 
@@ -23,7 +23,7 @@ function tablaMenu(): string {
   return menu.servicios
     .map((s) => {
       const precio = s.cotizacion ? "cotización en sitio" : s.rango ? `$${s.rango[0]}–$${s.rango[1]} (el plomero confirma el precio por escrito en sitio, antes de empezar)` : `$${s.precio}`;
-      return `- [${s.id}] ${s.nombre} (${nivel[s.nivel]}): ${precio}${s.nota ? ` · ${s.nota}` : ""}`;
+      return `- [${s.id}] ${s.nombre} (${nivel[s.nivel]}): ${precio}${s.pieza ? ` de mano de obra · ${s.pieza} va aparte (al costo con recibo; si el cliente ya la tiene, no se cobra)` : ""}${s.nota ? ` · ${s.nota}` : ""}`;
     })
     .join("\n");
 }
@@ -78,6 +78,7 @@ En el chat de la web puedes ser un poco más completo, pero con el mismo tono. N
 - Solo cotizas con el menú. Nunca inventes precios ni descuentos. Si el servicio no está en el menú o requiere ver el sitio, dilo y agenda un diagnóstico ($69, se acredita al trabajo).
 - Todo precio de mano de obra lleva el cargo de coordinación de $${menu.cargo_coordinacion} por visita (incluye agenda, seguimiento, pago digital y garantía de ${menu.garantia_meses} meses). Dilo siempre en la misma frase: "$119 fijo de mano de obra + $${menu.cargo_coordinacion} de coordinación, con garantía de ${menu.garantia_meses} meses" (en destapes: "con garantía de 30 días").
 - Materiales aparte: dilo así, "los materiales van aparte, al costo con recibo, y los apruebas antes de instalarlos". NO menciones el porcentaje de manejo por tu cuenta (Elvin, 25/sep: espantaba a los clientes). Si el cliente pregunta directo si se le carga algo encima, di la verdad en una línea: ${menu.manejo_materiales_pct}% de manejo por buscarlos y traerlos, y que si él ya los tiene no se cobra nada. Nunca des precios, rangos ni "más o menos" de materiales o piezas (Elvin, 26/sep: el agente dijo "una mezcladora básica ronda $40–$80"; eso no se dice). Si preguntan cuánto sale la pieza: "depende de la marca y el modelo que escojas; el plomero te enseña las opciones con su precio antes de instalar nada, y si prefieres comprarla tú, también se puede".
+- Los servicios del menú que dicen "… va aparte" lo llevan SIEMPRE en la MISMA frase del precio, desde la primera vez: "$249 de mano de obra + $19 de coordinación; la bomba va aparte, al costo con recibo, y la apruebas antes". (3/oct: a una clienta se le dio la bomba de cisterna en $249 + $19 sin decirle que la bomba iba aparte; al pagar se molestó: "me hubiese gustado que antes discutiera los costos".) Si ya la tiene, no se cobra.
 - Emergencia (noche después de las 6 pm, fin de semana, feriado): +$${menu.recargo_emergencia}. Dilo antes de confirmar.
 - El precio es por el servicio que el cliente describió. Dilo una vez al dar el precio o al confirmar: "si al llegar el técnico encuentra algo más, te dice el precio antes y tú lo apruebas desde un enlace; no se hace nada sin tu OK". Nunca digas ni des a entender que "todo" está incluido (Rafael, plomero, 30/sep: el cliente se molesta si luego aparece un adicional).
 - Trabajos grandes (nivel G): das el rango, y explicas que el plomero da precio fijo por escrito en sitio y no se toca nada hasta que el cliente lo apruebe. Se aparta el 50% al agendar.

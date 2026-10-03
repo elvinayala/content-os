@@ -9,14 +9,14 @@ import path from "node:path";
 import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
 import * as ciclo from "../ciclo-trabajo.js";
-import { partesDelPago, piezasDevueltas } from "../cuenta-plomero.js";
+import { partesDelPago, piezasDevueltas, montosDeCierre } from "../cuenta-plomero.js";
 import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe, NOMBRE_OFICIO, oficioCampo, type OficioCampo } from "../proveedores.js";
 import { DEMO_ID } from "../demo-plomero.js";
 import { leerHistorial, archivar } from "../historial.js";
 import { abrirGarantia, vigenciaGarantia } from "../garantias.js";
 import { avisarCoordinador } from "../canales/whatsapp.js";
 import { avisarAlTelefono } from "../canales/telefono.js"; // WhatsApp si está sano; si no, SMS desde el 787-956-1111
-import { territorios } from "../prompt.js";
+import { territorios, menu } from "../prompt.js";
 import { config } from "../config.js";
 import * as staff from "./staff.js";
 import { casa } from "../marca.js";
@@ -174,6 +174,10 @@ portal.get("/portal/trabajos/:id", requerir(), (req, res) => {
 <div class="g2"><div class="card"><b>Cliente</b><p style="margin-top:6px">${e(t.nombre)} · <a href="tel:${tel(t.telefono).replace(/^1?(\d{10})$/, "+1$1")}">${e(t.telefono)}</a><br>📍 ${e(t.direccion)}${norm(t.direccion).includes(norm(t.municipio)) ? "" : ", " + e(t.municipio)}${t.referencia ? `<br><span class="muted">Ref: ${e(t.referencia)}</span>` : ""}<br>🕑 ${f(t.inicio)}${t.emergencia ? ' <span class="tag warn">Emergencia</span>' : ""}</p></div>
 <div class="card"><b>Dinero</b><p style="margin-top:6px">Mano de obra: ${$(t.manoObraFinal ?? t.manoObra)}${t.rango ? ` <span class="muted">(rango $${t.rango[0]}–$${t.rango[1]})</span>` : ""}<br>Materiales (costo): ${$(t.materialesCosto)}<br>Coordinación: ${$(t.fee)}<br><b>Cliente paga: ${$(t.totalCliente)}</b><br>Comisión del plomero (viernes, 65 % de la mano de obra): ${t.pagoPlomero == null ? "—" : $(partesDelPago(t).comision)} ${t.pagadoAlPlomero ? `<span class="tag ok">pagado ${e(t.pagadoAlPlomero)}</span>` : ""}${partesDelPago(t).piezas ? `<br>Piezas a devolverle en 48 h (costo + 10 %): ${$(partesDelPago(t).piezas)} ${piezasDevueltas(t) ? `<span class="tag ok">devueltas${t.piezasDevueltas ? " " + e(t.piezasDevueltas) : ""}</span>` : `<span class="tag warn">pendiente</span>`}` : ""}</p>
 <div class="row" style="margin-top:10px">${t.estado === "completado" && !t.garantiaDe ? `<button class="btn l" onclick="post('/portal/trabajos/${u(t.id)}/accion',{que:'cobrado'})">Marcar cobrado</button>` : ""}${t.pagoPlomero != null && !t.pagadoAlPlomero ? `<button class="btn l" onclick="post('/portal/trabajos/${u(t.id)}/accion',{que:'pagado-plomero'})">Marcar pagado al plomero</button>` : ""}${partesDelPago(t).piezas && !piezasDevueltas(t) ? `<button class="btn l" onclick="post('/portal/trabajos/${u(t.id)}/accion',{que:'piezas-devueltas'})">Marcar piezas devueltas</button>` : ""}${["agendado", "en-camino"].includes(t.estado) ? `<button class="btn l" onclick="if(confirm('¿Cancelar este trabajo? Se le avisa al cliente.'))post('/portal/trabajos/${u(t.id)}/accion',{que:'cancelar'})">Cancelar</button>` : ""}</div></div></div>
+${["completado", "cobrado"].includes(t.estado) && !t.garantiaDe ? `<details class="card" style="margin-top:12px"><summary><b>Ajustar montos</b> <span class="muted">(si se cerró sin números o con un error; al cliente no le llega nada)</span></summary>
+<div class="g2" style="margin-top:8px"><div><label>Mano de obra final ($)</label><input id="am-mo" type="number" step="0.01" value="${t.manoObraFinal ?? t.manoObra ?? ""}"></div><div><label>Piezas que pagó el plomero (recibo, $)</label><input id="am-pz" type="number" step="0.01" value="${t.materialesCosto ?? 0}"></div></div>
+<label>¿Por qué? (queda en el historial)</label><input id="am-n" placeholder="Ej: la bomba costó $289; se cobró por ATH en dos pagos">
+<p style="margin-top:10px"><button class="btn l" onclick="var n=document.getElementById('am-n').value.trim();if(!n){alert('Explica por qué');return}post('/portal/trabajos/${u(t.id)}/montos',{mano_obra:document.getElementById('am-mo').value,piezas:document.getElementById('am-pz').value,nota:n},'Montos guardados.')">Guardar montos</button></p></details>` : ""}
 <h2>Línea de tiempo</h2><div class="card">${pasos.map(([k, v]) => `<div class="ev ${v ? "plomero" : ""}"><small>${v ? f(v) : "pendiente"}</small><div>${e(k)}</div></div>`).join("")}</div>
 <div class="g2"><div><h2>Fotos del antes</h2><div class="card fotos">${fotos(t.fotosAntes)}</div></div><div><h2>Fotos del después</h2><div class="card fotos">${fotos(t.fotosDespues)}</div></div></div>
 <h2>Notas del plomero y del equipo</h2><div class="card">${t.notaCierre ? `<div class="ev plomero"><small>Al cerrar</small><div>${e(t.notaCierre)}</div></div>` : ""}${(t.notasInternas ?? []).map((n) => `<div class="ev ${n.autor.startsWith("plomero") ? "plomero" : "staff"}"><small>${f(n.fecha)} · ${e(n.autor.replace(/^(plomero|staff):/, ""))}</small><div>${e(n.texto)}</div></div>`).join("") || (t.notaCierre ? "" : '<p class="muted">Sin notas.</p>')}
@@ -192,6 +196,21 @@ portal.post("/portal/trabajos/:id/accion", requerir(), express.json(), async (re
     almacen.guardarTrabajo({ ...t, estado: "cancelado" }); archivar(t.contactoId, "staff", `${yo.nombre} canceló ${t.id}.`, t.id);
     await avisarCoordinador(`❌ ${yo.nombre} canceló ${t.id} (${t.nombre}).`).catch(() => undefined);
   } else return res.json({ ok: false, motivo: "Acción inválida." });
+  res.json({ ok: true });
+});
+portal.post("/portal/trabajos/:id/montos", requerir(), express.json(), async (req, res) => {
+  const yo = (req as any).yo as staff.Staff; const t = almacen.trabajos().find((x) => x.id === req.params.id); if (!t) return res.json({ ok: false, motivo: "No existe." });
+  if (!["completado", "cobrado"].includes(t.estado) || t.garantiaDe) return res.json({ ok: false, motivo: "Solo trabajos ya terminados (no garantías)." });
+  const mano = Number(req.body?.mano_obra), pz = Number(req.body?.piezas ?? 0), nota = String(req.body?.nota ?? "").trim().slice(0, 300);
+  if (!Number.isFinite(mano) || mano <= 0 || !Number.isFinite(pz) || pz < 0 || mano > 20000 || pz > 20000) return res.json({ ok: false, motivo: "Revisa los montos." });
+  if (!nota) return res.json({ ok: false, motivo: "Explica por qué." });
+  const m = montosDeCierre({ manoObra: mano, fee: t.fee, recargo: t.emergencia ? menu.recargo_emergencia : 0, piezasCosto: pz, margenClientePct: menu.manejo_materiales_pct });
+  const antes = `cliente ${$(t.totalCliente)} · comisión ${t.pagoPlomero == null ? "—" : $(partesDelPago(t).comision)} · piezas ${$(partesDelPago(t).piezas)}`;
+  const ahora = `cliente ${$(m.total)} · comisión ${$(m.pago)} · piezas ${$(m.piezas)}`;
+  almacen.guardarTrabajo({ ...t, terminadoEn: t.terminadoEn ?? new Date().toISOString(), manoObraFinal: mano, materialesCosto: pz, totalCliente: m.total, pagoPlomero: m.pago, piezasPlomero: m.piezas,
+    notasInternas: [...(t.notasInternas ?? []), { fecha: new Date().toISOString(), autor: `staff:${yo.nombre}`, texto: `Ajustó montos (${antes} → ${ahora}). ${nota}` }] });
+  archivar(t.contactoId, "staff", `${yo.nombre} ajustó los montos de ${t.id}: ${ahora}. ${nota}`, t.id);
+  await avisarCoordinador(`✏️ ${yo.nombre} ajustó los montos de ${t.id} (${t.nombre})\nAntes: ${antes}\nAhora: ${ahora}\n${nota}`).catch(() => undefined);
   res.json({ ok: true });
 });
 portal.post("/portal/trabajos/:id/nota", requerir(), express.json(), (req, res) => {

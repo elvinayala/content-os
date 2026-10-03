@@ -40,6 +40,12 @@ export function partesDelPago(t: Pick<Trabajo, "pagoPlomero" | "piezasPlomero" |
 export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlomero" | "pagadoAlPlomero">) =>
   !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
 
+/** Montos al cerrar un trabajo: lo que paga el cliente, la comisión del plomero y lo que se le devuelve por piezas. Pura. */
+export function montosDeCierre(d: { manoObra: number; fee: number; recargo: number; piezasCosto: number; margenClientePct: number }) {
+  const matCliente = r2(d.piezasCosto * (1 + d.margenClientePct / 100));
+  return { total: r2(d.manoObra + d.fee + d.recargo + matCliente), matCliente, pago: r2((d.manoObra + d.recargo) * 0.65), piezas: r2(d.piezasCosto * 1.1) };
+}
+
 export type Linea = { id: string; servicio: string; municipio: string; fecha: string; pago: number };
 type OfertaMin = { referencia: string; aceptadoPor?: string; pagoProveedor: number; estado?: string };
 

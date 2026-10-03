@@ -5,6 +5,7 @@
 import { pideLlamada, avisarLlamarCliente, esReclutamiento } from "./ventas.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { archivar } from "./historial.js";
+import { recortarHistorial } from "./recorte-historial.js";
 import { config } from "./config.js";
 import { almacen, type Contacto } from "./almacen.js";
 import { SYSTEM } from "./prompt.js";
@@ -57,7 +58,7 @@ export async function responder(contacto: Contacto, entrada: Entrada): Promise<s
   if (entrada.adjuntos?.length) bloques.push(...(await adjuntosABloques(entrada.adjuntos)));
   bloques.push({ type: "text", text: entrada.texto?.trim() || "(sin texto)" });
 
-  const mensajes: Anthropic.Beta.BetaMessageParam[] = [...conv.mensajes, { role: "user", content: bloques }];
+  const mensajes: Anthropic.Beta.BetaMessageParam[] = [...recortarHistorial(conv.mensajes), { role: "user", content: bloques }];
   const ctx = { contacto, ultimoTexto: entrada.texto };
   let salida: string[] = [];
 

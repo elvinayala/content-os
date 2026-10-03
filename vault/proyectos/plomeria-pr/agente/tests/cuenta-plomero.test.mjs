@@ -71,3 +71,9 @@ test("el viernes suma solo comisión; las piezas salen en su bloque hasta que se
   assert.equal(c.piezas.devueltas, 44);
   assert.equal(c.acumulado, 260);
 });
+
+test("montos del cierre: cliente paga piezas + 20 %, plomero 65 % de la mano de obra y piezas + 10 %", async () => {
+  const { montosDeCierre } = await import("../dist/cuenta-plomero.js");
+  assert.deepEqual(montosDeCierre({ manoObra: 129, fee: 19, recargo: 0, piezasCosto: 65, margenClientePct: 20 }), { total: 226, matCliente: 78, pago: 83.85, piezas: 71.5 });
+  assert.deepEqual(montosDeCierre({ manoObra: 249, fee: 19, recargo: 0, piezasCosto: 0, margenClientePct: 20 }), { total: 268, matCliente: 0, pago: 161.85, piezas: 0 });
+});

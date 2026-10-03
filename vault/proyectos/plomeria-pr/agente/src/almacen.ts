@@ -3,6 +3,7 @@
  * Suficiente para arrancar con un plomero; cuando haya 3+ se migra a Postgres
  * sin tocar el resto: solo esta capa.
  */
+import { recortarHistorial } from "./recorte-historial.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -220,7 +221,7 @@ export const almacen = {
   guardarConversacion(c: Conversacion) {
     const todas = leer<Record<string, Conversacion>>("conversaciones.json", {});
     // Nos quedamos con los últimos 40 turnos para no crecer sin límite; el resto lo resume el CRM.
-    todas[c.contactoId] = { ...c, mensajes: c.mensajes.slice(-40), actualizado: ahora() };
+    todas[c.contactoId] = { ...c, mensajes: recortarHistorial(c.mensajes), actualizado: ahora() };
     escribir("conversaciones.json", todas);
   },
 
