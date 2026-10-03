@@ -10,6 +10,7 @@ import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
 import * as ciclo from "../ciclo-trabajo.js";
 import { partesDelPago, piezasDevueltas, montosDeCierre } from "../cuenta-plomero.js";
+import { panelVentas, origenDe, NOMBRE_ORIGEN, type Origen } from "../ventas-panel.js";
 import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe, NOMBRE_OFICIO, oficioCampo, type OficioCampo } from "../proveedores.js";
 import { DEMO_ID } from "../demo-plomero.js";
 import { leerHistorial, archivar } from "../historial.js";
@@ -59,7 +60,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}${yo ? `<main>${cuerpo}</main>` : cuerpo}
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -103,6 +104,33 @@ function listaContactos(): Contacto[] {
 }
 const trabajosDe = (contactoId: string) => almacen.trabajos().filter((t) => t.contactoId === contactoId).sort((a, b) => b.creado.localeCompare(a.creado));
 const norm = (s: unknown) => String(s ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+// ── Ventas: quién vendió, cuánto dejó cada venta y cuánto se lleva cada plomero (3/oct) ──
+portal.get("/portal/ventas", requerir(), (req, res) => {
+  const yo = (req as any).yo as staff.Staff;
+  const hoyPR = new Date(Date.now() - 4 * 3600_000).toISOString().slice(0, 7);
+  const mes = /^\d{4}-\d{2}$/.test(String(req.query.mes ?? "")) ? String(req.query.mes) : req.query.mes === "todo" ? "todo" : hoyPR;
+  const [y, m] = (mes === "todo" ? hoyPR : mes).split("-").map(Number);
+  const rango = mes === "todo" ? { desde: 0, hasta: Date.now() + 365 * 86400_000 } : { desde: Date.UTC(y, m - 1, 1, 4), hasta: Date.UTC(y, m, 1, 4) };
+  const otroMes = (d: number) => { const x = new Date(Date.UTC(y, m - 1 + d, 1)); return x.toISOString().slice(0, 7); };
+  const nombreMes = (k: string) => new Date(k + "-15T12:00:00Z").toLocaleDateString("es-PR", { month: "long", year: "numeric" });
+  const ts = almacen.trabajos();
+  const origen = (t: Trabajo) => origenDe(t, { reservoPorPagina: !t.origen && leerHistorial(t.contactoId, 400).some((h) => h.texto.startsWith("[Reserva por la página]") && Math.abs(Date.parse(h.fecha) - Date.parse(t.creado)) < 3600_000), humanoDesde: almacen.contacto(t.contactoId)?.humanoDesde });
+  const p = panelVentas(ts, rango, origen);
+  const nombres = new Map(plomeros().map((x) => [x.id, x.nombre] as const)); const quien = (id: string) => nombres.get(id) ?? (id || "—");
+  const porPagar = new Map<string, number>(); for (const t of ts) if (t.estado === "cobrado" && t.pagoPlomero != null && !t.pagadoAlPlomero) porPagar.set(t.plomeroId, (porPagar.get(t.plomeroId) ?? 0) + partesDelPago(t).comision);
+  const tagO = (o: Origen) => `<span class="tag ${o === "agente" ? "ok" : o === "web" ? "info" : "warn"}">${e(NOMBRE_ORIGEN[o])}</span>`;
+  const tabla = (titulo: string, filas: ReturnType<typeof panelVentas>["porOrigen"], nombre: (k: string) => string, extra?: (k: string) => string) => `<div class="card"><b>${titulo}</b><table style="margin-top:8px"><tr><th></th><th>Ventas</th><th>Cliente pagó</th><th>Comisión plomero</th><th>Piezas</th><th>Le queda a Resuelto</th>${extra ? "<th>Por pagar (viernes)</th>" : ""}</tr>${filas.map((g) => `<tr><td>${nombre(g.clave)}</td><td>${g.ventas}</td><td>${$(g.total)}</td><td>${$(g.comision)}</td><td>${$(g.piezas)}</td><td><b>${$(g.ganancia)}</b></td>${extra ? `<td>${extra(g.clave)}</td>` : ""}</tr>`).join("") || '<tr><td colspan="7" class="muted">Sin ventas en este periodo.</td></tr>'}</table></div>`;
+  const k = p.kpis;
+  res.type("html").send(pagina("Ventas", yo, "ventas", `<h1>Ventas</h1><p class="sub">${mes === "todo" ? "Desde el principio" : e(nombreMes(mes))} · <a href="/portal/ventas?mes=${otroMes(-1)}">← ${e(nombreMes(otroMes(-1)))}</a>${mes !== hoyPR ? ` · <a href="/portal/ventas">Este mes</a>` : ""} · <a href="/portal/ventas?mes=todo">Todo</a></p>
+<div class="kpis"><div class="card kpi"><b>${k.ventas}</b><span>trabajos vendidos</span></div><div class="card kpi"><b>${$(k.total)}</b><span>pagaron los clientes</span></div><div class="card kpi"><b>${$(k.ganancia)}</b><span>le queda a Resuelto</span></div><div class="card kpi"><b>${$(k.comisiones)}</b><span>comisiones de plomeros</span></div><div class="card kpi"><b>${$(k.ticket)}</b><span>ticket promedio</span></div><div class="card kpi"><b>${$(k.porCobrar)}</b><span>por cobrar a clientes</span></div><div class="card kpi"><b>${k.agendados}</b><span>agendados · ~${$(k.agendadoEstimado)}${k.sinPlomero ? ` · <span style="color:#B6470F;font-weight:700">${k.sinPlomero} sin plomero</span>` : ""}</span></div></div>
+${p.sinMontos.length ? `<div class="card" style="border:2px solid #F2621F"><b>⚠️ Cerrados sin montos:</b> ${p.sinMontos.map((id) => `<a href="/portal/trabajos/${u(id)}">${e(id)}</a>`).join(", ")}. No cuentan en los totales ni le salen al plomero. Ábrelos y usa <b>"Ajustar montos"</b>.</div>` : ""}
+<div class="g2">${tabla("¿Quién cerró la venta?", p.porOrigen, (o) => tagO(o as Origen))}${tabla("Por pueblo", p.porZona, (z) => e(z))}</div>
+${tabla("Por plomero", p.porPlomero, (id) => `<a href="/portal/plomeros/${u(id)}">${e(quien(id))}</a>`, (id) => $(porPagar.get(id) ?? 0))}
+<h2>Cada venta</h2><div class="card"><table><tr><th>Fecha</th><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Plomero</th><th>Quién cerró</th><th>Canal</th><th>Cliente pagó</th><th>Comisión</th><th>Piezas</th><th>Le queda</th><th></th></tr>${p.filas.map((r) => `<tr class="click" onclick="location='/portal/trabajos/${u(r.id)}'"><td>${fd(r.fecha)}</td><td><b>${e(r.id)}</b></td><td>${e(r.cliente)}</td><td>${e(r.servicio)}<div class="muted">${e(r.municipio)}</div></td><td>${e(quien(r.plomero))}</td><td>${tagO(r.origen)}</td><td>${e(r.canal)}</td><td>${r.total ? $(r.total) : '<span class="tag warn">sin montos</span>'}</td><td>${$(r.comision)}</td><td>${$(r.piezas)}</td><td><b>${$(r.ganancia)}</b></td><td>${r.cobrado ? '<span class="tag ok">cobrado</span>' : '<span class="tag warn">por cobrar</span>'}</td></tr>`).join("") || '<tr><td colspan="12" class="muted">Sin ventas en este periodo.</td></tr>'}</table></div>
+<h2>Agendados (lo que viene)</h2><div class="card"><table><tr><th>Cita</th><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Plomero</th><th>Quién cerró</th><th>Valor estimado</th></tr>${p.agendados.map((a) => `<tr class="click" onclick="location='/portal/trabajos/${u(a.id)}'"><td>${f(a.inicio)}</td><td><b>${e(a.id)}</b></td><td>${e(a.cliente)}</td><td>${e(a.servicio)}<div class="muted">${e(a.municipio)}</div></td><td>${a.plomero ? e(quien(a.plomero)) : '<span class="tag warn">sin plomero</span>'}</td><td>${tagO(a.origen)}</td><td>${$(a.estimado)}</td></tr>`).join("") || '<tr><td colspan="7" class="muted">No hay citas agendadas.</td></tr>'}</table></div>
+<p class="muted">"Le queda a Resuelto" = lo que pagó el cliente − comisión del plomero − piezas que se le devuelven − equipo que puso Resuelto. "Agente + Heileen" = Heileen había hablado con el cliente antes de que el agente agendara.</p>`));
+});
 
 // ── Inicio ──
 portal.get("/portal", requerir(), (req, res) => {

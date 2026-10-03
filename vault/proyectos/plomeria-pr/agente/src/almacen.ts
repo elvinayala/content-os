@@ -100,6 +100,10 @@ export interface Trabajo {
   fotosAntes?: string[];
   fotosDespues?: string[];
   notaCierre?: string;
+  /** Quién cerró la venta (3/oct): el agente solo, la setter con su enlace de reserva o el cliente en la página. */
+  origen?: "agente" | "setter" | "web";
+  /** Una persona del equipo (Heileen) había contestado esa conversación antes de agendar. */
+  humanoAntes?: boolean;
   /** Cuándo pagó el cliente: decide en qué viernes cobra el plomero (cuenta-plomero.ts). */
   cobradoEn?: string;
   pagadoAlPlomero?: string;   // fecha del viernes en que se le pagó

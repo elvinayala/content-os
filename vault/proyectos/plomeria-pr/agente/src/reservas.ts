@@ -66,7 +66,7 @@ export async function reservar(b: any, ip: string): Promise<{ ok: true; trabajoI
   const contacto = almacen.contacto(c.id) ?? c;
   const notas = limpio(b?.notas, 600);
   archivar(contacto.id, "cliente", `[Reserva por la página] ${servicio.nombre} · ${pueblo} · ${new Date(inicio).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico" })}${notas ? " · " + notas : ""}`);
-  const r: any = await ejecutar("agendar_cita", { nombre, telefono: "1" + tel, municipio: pueblo, territorio_id: t, servicio_id: servicio.id, emergencia: false, direccion, referencia: limpio(b?.referencia, 200), inicio, fin: fin || new Date(new Date(inicio).getTime() + 2 * 3600_000).toISOString(), notas: `Reservó en la página.${notas ? " " + notas : ""}` }, { contacto } as any);
+  const r: any = await ejecutar("agendar_cita", { origen: b?.origen === "setter" ? "setter" : "web", nombre, telefono: "1" + tel, municipio: pueblo, territorio_id: t, servicio_id: servicio.id, emergencia: false, direccion, referencia: limpio(b?.referencia, 200), inicio, fin: fin || new Date(new Date(inicio).getTime() + 2 * 3600_000).toISOString(), notas: `Reservó en la página.${notas ? " " + notas : ""}` }, { contacto } as any);
   if (!r?.ok) return { ok: false, error: "No pudimos crear la reserva. Escríbenos por mensaje y te la cuadramos." };
 
   // Fotos del área (hasta 4): récord y para que el plomero llegue preparado.

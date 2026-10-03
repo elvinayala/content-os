@@ -164,7 +164,7 @@
     if ($("direccion").value.trim().length < 6) return error("Falta la dirección.");
     $("enviar").disabled = true; $("enviar").textContent = "Reservando…";
     try {
-      const r = await fetch("/api/reservar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ servicio_id: s.id, pueblo: $("pueblo").value, inicio: ventana.inicio, fin: ventana.fin, nombre: $("nombre").value, telefono: tel, direccion: $("direccion").value, referencia: $("referencia").value, notas: $("notas").value, fotos, web: $("web").value, origen: q.get("o") || "" }) }).then((x) => x.json());
+      const r = await fetch("/api/reservar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ origen: new URLSearchParams(location.search).get("o") || "", servicio_id: s.id, pueblo: $("pueblo").value, inicio: ventana.inicio, fin: ventana.fin, nombre: $("nombre").value, telefono: tel, direccion: $("direccion").value, referencia: $("referencia").value, notas: $("notas").value, fotos, web: $("web").value, origen: q.get("o") || "" }) }).then((x) => x.json());
       if (!r.ok) throw new Error(r.error || "No se pudo reservar.");
       $("f").style.display = "none"; $("listo").style.display = "block"; window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) { error(err.message); $("enviar").disabled = false; $("enviar").textContent = "Reservar"; }
