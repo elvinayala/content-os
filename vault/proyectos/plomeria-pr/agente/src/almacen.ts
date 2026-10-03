@@ -100,6 +100,10 @@ export interface Trabajo {
   fotosAntes?: string[];
   fotosDespues?: string[];
   notaCierre?: string;
+  /** Cierre y pago que registró el equipo (registro-pago.ts): desglose, lo que pagó el cliente, gastos. */
+  cierre?: import("./registro-pago.js").Cierre;
+  /** Fotos de recibos y comprobantes de pago que subió el equipo. */
+  recibos?: string[];
   /** Quién cerró la venta (3/oct): el agente solo, la setter con su enlace de reserva o el cliente en la página. */
   origen?: "agente" | "setter" | "web";
   /** Una persona del equipo (Heileen) había contestado esa conversación antes de agendar. */
