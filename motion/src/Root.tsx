@@ -5,6 +5,7 @@ import { Testimonio, type PropsTestimonio } from "./videos/Testimonio";
 import { LuPelicula, DURACION_LU_PELICULA } from "./videos/LuPelicula";
 import { LuVersion, duracionVersion } from "./videos/LuVersiones";
 import { Anuncio, duracionDe } from "./fabrica/Anuncio";
+import { ResueltoTicket, DURACION_RESUELTO } from "./videos/ResueltoTicket";
 import { ANUNCIOS } from "./fabrica/anuncios";
 
 // Un <Composition> por video. id = nombre para `npm run render -- <id> out/<archivo>.mp4`.
@@ -22,6 +23,10 @@ export const Root: React.FC = () => (
       calculateMetadata={({ props }) => ({ durationInFrames: Math.round(props.dur * 30) })} />
     {/* La película de Level Up: la presentación de Canva hecha motion (testimonios reales + casos + método) */}
     <Composition id="LuPelicula" component={LuPelicula} durationInFrames={DURACION_LU_PELICULA} fps={30} width={1920} height={1080} />
+    {/* Resuelto: anuncios de ticket alto (cisterna $899 · solar $699 · re-tubería $1,200), 9:16, 15 s */}
+    {["cisterna", "solar", "retuberia"].map((s) => (
+      <Composition key={s} id={`Resuelto-${s}`} component={ResueltoTicket} defaultProps={{ servicio: s }} durationInFrames={DURACION_RESUELTO} fps={30} width={1080} height={1920} />
+    ))}
     {/* Versiones: "Los números hablan" (datos) y "En sus palabras" (voces), en 16:9 y 9:16 */}
     <Composition id="LuDatos" component={LuVersion} defaultProps={{ version: "datos" }} durationInFrames={duracionVersion("datos")} fps={30} width={1920} height={1080} />
     <Composition id="LuDatosVertical" component={LuVersion} defaultProps={{ version: "datos" }} durationInFrames={duracionVersion("datos")} fps={30} width={1080} height={1920} />
