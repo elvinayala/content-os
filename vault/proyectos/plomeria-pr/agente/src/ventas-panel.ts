@@ -73,3 +73,25 @@ export function panelVentas(trabajos: Trabajo[], rango: { desde: number; hasta: 
     filas, agendados, sinMontos, sinCierre,
   };
 }
+
+/** Resumen del mes para el dueño (3/oct, Elvin: "total de trabajos con y sin piezas, total de compras de piezas, total de
+ *  mano de obra y el neto que sobró… y el gasto en anuncios"). Solo trabajos terminados (no garantías). */
+export function resumenMes(trabajos: Trabajo[], rango: { desde: number; hasta: number }) {
+  const en = (iso?: string) => { const x = Date.parse(iso ?? ""); return x >= rango.desde && x < rango.hasta; };
+  const ts = trabajos.filter((t) => ["completado", "cobrado"].includes(t.estado) && !t.garantiaDe && t.totalCliente != null && en(t.terminadoEn ?? t.inicio));
+  const filas = ts.map((t) => {
+    const { comision, piezas } = partesDelPago(t);
+    const mano = t.cierre?.manoObra ?? t.manoObraFinal ?? t.manoObra ?? 0, fee = t.cierre?.fee ?? t.fee, recargo = t.cierre?.recargo ?? 0;
+    const facturado = r2(pagadoPorCliente(t)), servicio = r2(mano + fee + recargo);
+    return { id: t.id, cliente: t.nombre, servicio: t.servicio, fecha: t.terminadoEn ?? t.inicio, facturado, sinPiezas: Math.min(facturado, servicio), mano, fee, recargo,
+      piezasCobradas: r2(Math.max(0, facturado - servicio)), compraPiezas: r2(t.materialesCosto ?? 0), comision, devolucion: piezas,
+      otros: r2(t.cierre?.otrosGastos ?? 0), neto: ganancia(t), debe: debe(t) };
+  });
+  const s = (k: keyof (typeof filas)[number]) => sumar(filas, (f) => Number(f[k]) || 0);
+  return {
+    trabajos: filas.length, facturado: s("facturado"), sinPiezas: s("sinPiezas"), piezasCobradas: s("piezasCobradas"),
+    manoObra: s("mano"), coordinacion: s("fee"), recargos: s("recargo"), compraPiezas: s("compraPiezas"),
+    comisiones: s("comision"), devolucionPiezas: s("devolucion"), otrosGastos: s("otros"), neto: s("neto"), porCobrar: s("debe"),
+    filas: filas.sort((a, b) => b.fecha.localeCompare(a.fecha)),
+  };
+}

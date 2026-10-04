@@ -10,7 +10,8 @@ import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
 import * as ciclo from "../ciclo-trabajo.js";
 import { partesDelPago, piezasDevueltas, montosDeCierre, faltaParaPagar } from "../cuenta-plomero.js";
-import { panelVentas, origenDe, ganancia, NOMBRE_ORIGEN, type Origen } from "../ventas-panel.js";
+import { panelVentas, origenDe, ganancia, resumenMes, NOMBRE_ORIGEN, type Origen } from "../ventas-panel.js";
+import { gastoAnuncios } from "../anuncios-gasto.js";
 import { validarCierre, aplicarCierre, METODOS } from "../registro-pago.js";
 import sharp from "sharp";
 import { plomeros, altaPlomero, cambiarEstadoPlomero, linkPortal, territorioDe, NOMBRE_OFICIO, oficioCampo, type OficioCampo } from "../proveedores.js";
@@ -62,7 +63,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["resumen", "/portal/resumen", "Resumen"], ["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}${yo ? `<main>${cuerpo}</main>` : cuerpo}
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -171,6 +172,43 @@ ${tabla("Por plomero", p.porPlomero, (id) => `<a href="/portal/plomeros/${u(id)}
 <h2>Cada venta</h2><div class="card"><table><tr><th>Fecha</th><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Plomero</th><th>Quién cerró</th><th>Canal</th><th>Cliente pagó</th><th>Cómo pagó</th><th>Comisión</th><th>Piezas</th><th>Gastos</th><th>Le queda</th><th>Registró</th><th></th></tr>${p.filas.map((r) => `<tr class="click" onclick="location='/portal/trabajos/${u(r.id)}'"><td>${fd(r.fecha)}</td><td><b>${e(r.id)}</b></td><td>${e(r.cliente)}</td><td>${e(r.servicio)}<div class="muted">${e(r.municipio)}</div></td><td>${e(quien(r.plomero))}</td><td>${tagO(r.origen)}</td><td>${e(r.canal)}</td><td>${r.total ? (r.debe && r.debe < r.total ? `${$(r2(r.total - r.debe))} de ${$(r.total)}` : $(r.total)) : '<span class="tag warn">sin montos</span>'}</td><td>${e(r.metodo ?? "—")}</td><td>${$(r.comision)}</td><td>${$(r.piezas)}</td><td>${$(r.gastos)}</td><td><b>${$(r.ganancia)}</b></td><td>${r.registradoPor ? e(r.registradoPor) : '<span class="tag warn">falta</span>'}</td><td>${r.cobrado ? '<span class="tag ok">cobrado</span>' : `<span class="tag warn">debe ${$(r.debe)}</span>`}</td></tr>`).join("") || '<tr><td colspan="15" class="muted">Sin ventas en este periodo.</td></tr>'}</table></div>
 <h2>Agendados (lo que viene)</h2><div class="card"><table><tr><th>Cita</th><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Plomero</th><th>Quién cerró</th><th>Valor estimado</th></tr>${p.agendados.map((a) => `<tr class="click" onclick="location='/portal/trabajos/${u(a.id)}'"><td>${f(a.inicio)}</td><td><b>${e(a.id)}</b></td><td>${e(a.cliente)}</td><td>${e(a.servicio)}<div class="muted">${e(a.municipio)}</div></td><td>${a.plomero ? e(quien(a.plomero)) : '<span class="tag warn">sin plomero</span>'}</td><td>${tagO(a.origen)}</td><td>${$(a.estimado)}</td></tr>`).join("") || '<tr><td colspan="7" class="muted">No hay citas agendadas.</td></tr>'}</table></div>
 <p class="muted">"Le queda a Resuelto" = lo que pagó el cliente − comisión del plomero − piezas que se le devuelven − equipo que puso Resuelto − otros gastos. "Gastos" = equipo de Resuelto + otros gastos. "Agente + Heileen" = Heileen había hablado con el cliente antes de que el agente agendara.</p>`));
+});
+
+// ── Resumen del dueño (solo admin): anuncios vs. lo que dejaron los trabajos, mes por mes (3/oct) ──
+portal.get("/portal/resumen", requerir("admin"), async (req, res) => {
+  const yo = (req as any).yo as staff.Staff;
+  const hoyPR = new Date(Date.now() - 4 * 3600_000).toISOString().slice(0, 10);
+  const mes = /^\d{4}-\d{2}$/.test(String(req.query.mes ?? "")) ? String(req.query.mes) : hoyPR.slice(0, 7);
+  const rangoDe = (k: string) => { const [y, m] = k.split("-").map(Number); return { desde: Date.UTC(y, m - 1, 1, 4), hasta: Date.UTC(y, m, 1, 4), d1: `${k}-01`, d2: k === hoyPR.slice(0, 7) ? hoyPR : new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10) }; };
+  const mesAntes = (k: string, n: number) => { const [y, m] = k.split("-").map(Number); return new Date(Date.UTC(y, m - 1 - n, 1)).toISOString().slice(0, 7); };
+  const nombreMes = (k: string) => new Date(k + "-15T12:00:00Z").toLocaleDateString("es-PR", { month: "long", year: "numeric" });
+  const ts = almacen.trabajos(); const R = rangoDe(mes); const r = resumenMes(ts, R); const ads = await gastoAnuncios(R.d1, R.d2);
+  const gasto = ads.ok ? ads.total : 0;
+  const meses = await Promise.all([0, 1, 2, 3, 4, 5].map(async (n) => { const k = mesAntes(mes, n), rr = rangoDe(k), x = resumenMes(ts, rr); const a = k < "2026-09" ? null : await gastoAnuncios(rr.d1, rr.d2); return { k, x, a }; }));
+  const kpi = (v: string, t: string, color = "") => `<div class="card kpi"><b${color ? ` style="color:${color}"` : ""}>${v}</b><span>${t}</span></div>`;
+  const fila = (k: string, v: string, fuerte = false, nota = "") => `<tr><td>${fuerte ? `<b>${k}</b>` : k}${nota ? `<div class="muted">${nota}</div>` : ""}</td><td style="text-align:right">${fuerte ? `<b>${v}</b>` : v}</td></tr>`;
+  const final = r2(r.neto - gasto);
+  res.type("html").send(pagina("Resumen", yo, "resumen", `<h1>Resumen</h1><p class="sub">${e(nombreMes(mes))} · <a href="/portal/resumen?mes=${mesAntes(mes, 1)}">← ${e(nombreMes(mesAntes(mes, 1)))}</a>${mes !== hoyPR.slice(0, 7) ? ` · <a href="/portal/resumen">Este mes</a>` : ""}</p>
+<div class="kpis">${kpi(ads.ok ? $(gasto) : "—", "gastado en anuncios")}${kpi($(r.facturado), "facturado (todo incluido)")}${kpi($(r.sinPiezas), "facturado sin piezas")}${kpi($(r.neto), "neto de los trabajos")}${kpi($(final), "neto después de anuncios", final < 0 ? "#B6470F" : "#157A53")}${kpi(String(r.trabajos), "trabajos realizados")}</div>
+${ads.ok ? "" : `<div class="card" style="border:2px solid #F2C94C">No pude leer el gasto en anuncios: ${e(ads.motivo)}.</div>`}
+<div class="g2"><div class="card"><b>Los trabajos del mes</b><table style="margin-top:8px">
+${fila("Facturado, todo incluido", $(r.facturado), true, `${r.trabajos} trabajo(s)${r.porCobrar ? ` · ${$(r.porCobrar)} todavía por cobrar` : ""}`)}
+${fila("Mano de obra", $(r.manoObra))}${fila("Coordinación ($19 por visita)", $(r.coordinacion))}${r.recargos ? fila("Recargos de emergencia", $(r.recargos)) : ""}
+${fila("Facturado sin piezas", $(r.sinPiezas), true, "mano de obra + coordinación + recargos")}
+${fila("Piezas y equipo cobrados al cliente", $(r.piezasCobradas))}
+</table></div><div class="card"><b>A dónde se fue</b><table style="margin-top:8px">
+${fila("Comisiones de plomeros", "− " + $(r.comisiones), false, "65 % de la mano de obra")}
+${fila("Compras de piezas y equipo", "− " + $(r.compraPiezas), false, "costo (las del plomero se le devuelven + 10 %)")}
+${fila("10 % de manejo a plomeros", "− " + $(r2(r.devolucionPiezas - (r.devolucionPiezas / 1.1))))}
+${r.otrosGastos ? fila("Otros gastos", "− " + $(r.otrosGastos)) : ""}
+${fila("Neto de los trabajos", $(r.neto), true, "lo que sobró antes de anuncios")}
+${fila("Anuncios en Meta", ads.ok ? "− " + $(gasto) : "—", false, ads.ok ? `clientes ${$(ads.clientes)} · reclutamiento ${$(ads.reclutamiento)}` : "")}
+${fila("Neto después de anuncios", $(final), true)}
+</table>${ads.ok && r.trabajos ? `<p class="muted" style="margin-top:8px">Anuncios de clientes: ${$(ads.clientes)} · ${ads.conversaciones} conversaciones (${ads.conversaciones ? $(r2(ads.clientes / ads.conversaciones)) : "—"} c/u) · ${$(r2(ads.clientes / r.trabajos))} por trabajo realizado.</p>` : ""}</div></div>
+<h2>Cada trabajo</h2><div class="card"><table><tr><th>Fecha</th><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Facturado</th><th>Sin piezas</th><th>Mano de obra</th><th>Piezas compradas</th><th>Comisión</th><th>Otros</th><th>Neto</th></tr>${r.filas.map((f) => `<tr class="click" onclick="location='/portal/trabajos/${u(f.id)}'"><td>${fd(f.fecha)}</td><td><b>${e(f.id)}</b></td><td>${e(f.cliente)}</td><td>${e(f.servicio)}</td><td>${$(f.facturado)}${f.debe ? `<div class="muted">debe ${$(f.debe)}</div>` : ""}</td><td>${$(f.sinPiezas)}</td><td>${$(f.mano)}</td><td>${$(f.compraPiezas)}</td><td>${$(f.comision)}</td><td>${$(f.otros)}</td><td><b>${$(f.neto)}</b></td></tr>`).join("") || '<tr><td colspan="11" class="muted">Sin trabajos terminados este mes.</td></tr>'}</table></div>
+<h2>Mes por mes</h2><div class="card"><table><tr><th>Mes</th><th>Trabajos</th><th>Facturado</th><th>Sin piezas</th><th>Piezas compradas</th><th>Neto trabajos</th><th>Anuncios</th><th>Neto final</th></tr>${meses.map(({ k, x, a }) => `<tr class="click" onclick="location='/portal/resumen?mes=${k}'"><td>${e(nombreMes(k))}</td><td>${x.trabajos}</td><td>${$(x.facturado)}</td><td>${$(x.sinPiezas)}</td><td>${$(x.compraPiezas)}</td><td>${$(x.neto)}</td><td>${a?.ok ? $(a.total) : "—"}</td><td><b>${$(r2(x.neto - (a?.ok ? a.total : 0)))}</b></td></tr>`).join("")}</table></div>
+${ads.ok && ads.porCampana.length ? `<h2>Anuncios por campaña</h2><div class="card"><table><tr><th>Campaña</th><th>Gasto</th><th>Conversaciones</th><th>Costo c/u</th></tr>${ads.porCampana.map((c) => `<tr><td>${e(c.nombre)}</td><td>${$(c.gasto)}</td><td>${c.conversaciones}</td><td>${c.conversaciones ? $(r2(c.gasto / c.conversaciones)) : "—"}</td></tr>`).join("")}</table></div>` : ""}
+<p class="muted">Solo trabajos terminados con montos. "Facturado" usa lo que el cliente pagó (o acordó pagar) si se registró el cierre. El gasto en anuncios viene de Meta (se actualiza cada hora).</p>`));
 });
 
 // ── Inicio ──

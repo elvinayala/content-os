@@ -35,3 +35,18 @@ test("panel: ventas del rango, totales por origen y plomero, agendados aparte", 
   assert.deepEqual(p.porOrigen.map((g) => [g.clave, g.ventas]), [["setter", 1], ["agente", 2]]);
   assert.deepEqual(p.agendados.map((a) => [a.id, a.estimado]), [["P", 268]]); assert.equal(p.kpis.sinPlomero, 1);
 });
+
+test("resumen del mes: con y sin piezas, compras de piezas, mano de obra y neto", async () => {
+  const { resumenMes } = await import("../dist/ventas-panel.js");
+  const t = (id, o) => ({ id, contactoId: "messenger:1", nombre: "C", servicio: "S", municipio: "Gurabo", plomeroId: "edgar", estado: "cobrado", inicio: "2026-10-02T10:00:00-04:00", terminadoEn: "2026-10-02T12:00:00-04:00", fee: 19, creado: "x", ...o });
+  const r = resumenMes([
+    t("A", { manoObra: 129, manoObraFinal: 129, totalCliente: 226, pagoPlomero: 155.35, materialesCosto: 65 }),                 // pieza del plomero
+    t("B", { manoObra: 249, estado: "completado", totalCliente: 764.56, pagoPlomero: 161.85, piezasPlomero: 0, materialesCosto: 413.8,
+      cierre: { manoObra: 249, fee: 19, recargo: 0, piezasPlomero: 0, equipoResuelto: 413.8, otrosGastos: 0, pagado: false, abonado: 500, totalPagado: 681.2 } }),
+    t("G", { garantiaDe: "A", totalCliente: 0, pagoPlomero: 0 }),
+  ], { desde: Date.parse("2026-10-01T04:00:00Z"), hasta: Date.parse("2026-11-01T04:00:00Z") });
+  assert.equal(r.trabajos, 2);
+  assert.equal(r.facturado, 907.2); assert.equal(r.sinPiezas, 416); assert.equal(r.piezasCobradas, 491.2);
+  assert.equal(r.manoObra, 378); assert.equal(r.coordinacion, 38); assert.equal(r.compraPiezas, 478.8);
+  assert.equal(r.comisiones, 245.7); assert.equal(r.neto, 176.2); assert.equal(r.porCobrar, 181.2);
+});
