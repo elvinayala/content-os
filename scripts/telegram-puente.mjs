@@ -693,6 +693,14 @@ function refSlack(texto) {
   const m = String(texto).match(/^\[Solicitud del equipo[^\]]*· canal (\S+) · hilo ([\d.]+)\]/);
   return m ? { canal: m[1], hilo: m[2] } : null;
 }
+// Canal por plataforma (SLACK_NICO_CANALES, 3/oct): el pedido trae "· plataforma <id>" en el encabezado.
+function plataformaDe(texto) {
+  return String(texto).match(/^\[Solicitud del equipo[^\]]*· plataforma ([\w-]+)/)?.[1] || null;
+}
+const lineaPlataforma = (texto) => {
+  const p = plataformaDe(texto);
+  return p ? `\nPLATAFORMA: ${p} (vino de su canal de cambios). Lee su entrada en data/plataformas.json (repo, prod, deploy, trampas) y el CLAUDE.md/TRASPASO.md de ese repo antes de nada; el cambio es en esa plataforma salvo que el pedido diga otra cosa.` : "";
+};
 async function dmEquipo(quien, texto, ref) {
   const tok = env("SLACK_BOT_TOKEN"); const persona = resolverPersona(quien);
   if (!tok || !persona) return;
@@ -726,11 +734,11 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   const pedido = m.texto.replace(/^\[Solicitud del equipo[^\]]*\]\n?/, "").trim();
   try { await buzonMarcar(m.id, "en-curso"); } catch {}
   LOG("solicitud ›", `de ${m.de} #${m.id}`, pedido.slice(0, 80));
-  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
+  const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}${lineaPlataforma(m.texto)}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
   const r = await turnoNico(prompt, { st, soloLectura: true, origen: `solicitud:${m.id}:${m.de}` });
   const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
   try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
-  const aviso = `🟡 ${quien} solicitó un cambio (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
+  const aviso = `🟡 ${quien} solicitó un cambio${plataformaDe(m.texto) ? ` en ${plataformaDe(m.texto)}` : ""} (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
   if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
   await slackEspejo(`[Nico] ${aviso}`);
   const pregunta = plan.match(new RegExp(`Pregunta para ${quien}:\\s*(.+)`, "i"));
@@ -755,7 +763,7 @@ async function resolverSolicitud(token, chatCEO, st, id, aprobado, nota) {
   await dmEquipo(m.de, `Elvin aprobó tu solicitud #${id}. Ya estoy en eso; te aviso cuando quede.`, refSlack(m.texto));
   await avisarCEO(`✅ Aprobada #${id} de ${quien}. Manos a la obra; te aviso cuando esté verificada.`);
   const nombreMay = quien.toUpperCase();
-  const prompt = `Elvin APROBÓ la solicitud #${id} de ${quien}${nota ? ` con esta nota: "${nota}"` : ""}.\nPedido de ${quien}: ${pedido}\nTu plan (el que Elvin aprobó): ${m.respuesta || "(sin plan previo: diagnostica y ejecútalo)"}\n\nEjecútalo completo como cualquier ajuste tuyo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo → anotar en data/nico-bitacora.json (que empiece con "[Solicitud de ${quien} #${id}]"). Tus prohibiciones siguen: si el plan choca con una (borrar datos, cobros, prompt de voz en prod, secretos…), no lo hagas y dile a Elvin por qué. No le escribas a ${quien}: el puente le avisa. Tu respuesta va a Elvin (corta: qué hiciste, qué verificaste). Al final agrega UNA línea que empiece con "PARA ${nombreMay}:" con 1-2 oraciones sencillas, sin jerga, de lo que quedó.`;
+  const prompt = `Elvin APROBÓ la solicitud #${id} de ${quien}${nota ? ` con esta nota: "${nota}"` : ""}.\nPedido de ${quien}: ${pedido}${lineaPlataforma(m.texto)}\nTu plan (el que Elvin aprobó): ${m.respuesta || "(sin plan previo: diagnostica y ejecútalo)"}\n\nEjecútalo completo como cualquier ajuste tuyo: leer → cambio chico → test → deploy → VERIFICAR contra el sistema vivo → anotar en data/nico-bitacora.json (que empiece con "[Solicitud de ${quien} #${id}]"). Tus prohibiciones siguen: si el plan choca con una (borrar datos, cobros, prompt de voz en prod, secretos…), no lo hagas y dile a Elvin por qué. No le escribas a ${quien}: el puente le avisa. Tu respuesta va a Elvin (corta: qué hiciste, qué verificaste). Al final agrega UNA línea que empiece con "PARA ${nombreMay}:" con 1-2 oraciones sencillas, sin jerga, de lo que quedó.`;
   const r = await turnoNico(prompt, { st, motivo: `solicitud #${id} de ${m.de}`, avisar: avisarCEO, titulo: `solicitud #${id} de ${quien}: ${pedido}`, origen: `aprobada:${id}:${m.de}` });
   let resp = (r.out || "").trim();
   const re = new RegExp(`^\\s*PARA ${nombreMay}:\\s*(.+)$`, "im");

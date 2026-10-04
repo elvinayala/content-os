@@ -398,6 +398,12 @@ avisa a quien lo pidió. `/solicitudes` lista las abiertas; la ronda las pone en
 Lista de quién puede pedir: `NICO_EQUIPO` (Vercel) + `EQUIPO_NICO` (puente). Detalle en
 `vault/ceo/cerebro-nico.md` §3b. Inventario ampliado (Pulse, GoHighLevel, Ángelo/Quality Care,
 voz/SaaS/Core de AIB, dashboard de ventas, Hora Fija, 1000X) en `data/plataformas.json`.
+**Canales por plataforma (3/oct/2026)**, Elvin: "un canal de Slack para los cambios de Bori… cuando yo no esté, que se
+ejecute con una aprobación mía, como funciona Nico": `SLACK_NICO_CANALES="C…=bori"` (Vercel) hace que ese canal funcione
+igual que #nico-desarrollo (Carilin/Aure piden sin prefijo → Nico diagnostica en solo lectura → Elvin `ok <id>` por
+Telegram o en el hilo), pero el pedido llega con `· plataforma bori` y Nico lee esa entrada del inventario y su repo
+antes del plan (`plataformaDe`/`lineaPlataforma` en el puente). El bot tiene que estar invitado al canal y la app de
+Slack suscrita a `message.channels`/`message.groups`.
 
 ## Gasto de IA: el modelo lo escoge la tarea (28/sep/2026)
 

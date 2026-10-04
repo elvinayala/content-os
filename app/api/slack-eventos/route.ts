@@ -311,7 +311,19 @@ const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure"
 interface RefSlack {
   canal: string;
   hilo: string;
+  plataforma?: string;
 }
+
+// Canales por plataforma (Elvin, 3/oct: "un canal de Slack para los cambios de Bori… que se ejecute
+// con una aprobación mía, como funciona Nico"): funcionan igual que el canal de Nico, pero el pedido
+// le llega marcado con la plataforma (id de data/plataformas.json) para que diagnostique en ese repo.
+// SLACK_NICO_CANALES="C0XXXX=bori,C0YYYY=cortex".
+const CANALES_PLATAFORMA: Record<string, string> = Object.fromEntries(
+  (process.env.SLACK_NICO_CANALES || "")
+    .split(",")
+    .map((x) => x.split("=").map((y) => y.trim()))
+    .filter(([id, plat]) => id && plat),
+);
 
 // Adjuntos (26/sep, Aure #55/#66): las capturas que mandan Carilin/Aure llegan a Nico como enlace privado
 // de Slack (solo se abre con el token del bot; Nico lo baja con SLACK_BOT_TOKEN).
@@ -329,7 +341,7 @@ async function pasarANico(de: string, userId: string, texto: string, ref?: RefSl
     body: JSON.stringify({
       de,
       para: "nico",
-      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})${ref ? ` · canal ${ref.canal} · hilo ${ref.hilo}` : ""}]\n${texto}${lineaAdjuntos(files)}`,
+      texto: `[Solicitud del equipo · ${NOMBRE_EQUIPO[de] ?? de} (Slack ${userId})${ref?.plataforma ? ` · plataforma ${ref.plataforma}` : ""}${ref ? ` · canal ${ref.canal} · hilo ${ref.hilo}` : ""}]\n${texto}${lineaAdjuntos(files)}`,
     }),
     signal: AbortSignal.timeout(10000),
   });
@@ -386,7 +398,8 @@ export async function POST(req: NextRequest) {
   const ev = body.event;
 
   const canalNico = process.env.SLACK_NICO_CHANNEL_ID;
-  if (canalNico && ev?.channel === canalNico) {
+  const plataformaCanal = ev?.channel ? CANALES_PLATAFORMA[ev.channel] : undefined;
+  if (ev?.channel && ((canalNico && ev.channel === canalNico) || plataformaCanal)) {
     const humano = ev.type === "message" && !ev.bot_id && ev.user && (!ev.subtype || ev.subtype === "file_share");
     const texto = limpiar(ev.text ?? "");
     if (!humano || (!texto && !(ev.files?.length ?? 0))) return NextResponse.json({ ok: true });
@@ -411,7 +424,7 @@ export async function POST(req: NextRequest) {
           );
           return;
         }
-        const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto || "(sin texto)", { canal: channel, hilo: raiz }, archivos);
+        const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto || "(sin texto)", { canal: channel, hilo: raiz, plataforma: plataformaCanal }, archivos);
         await postearRespuesta(
           channel,
           id
