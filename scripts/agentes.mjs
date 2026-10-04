@@ -53,7 +53,7 @@ function env(n) {
 // "separar que la Mac no firme como Sofi"). Una rutina de un agente en la Mac pone AGENTE=<agente>.
 // En Railway el servicio de Sofi ("puente") no tiene PUENTE_BOT: ahí sigue siendo Sofi (Railway pone RAILWAY_SERVICE_NAME).
 const YO = (process.env.PUENTE_BOT || process.env.AGENTE || (process.env.RAILWAY_SERVICE_NAME ? "sofi" : "mac")).toLowerCase();
-const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
+const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela" };
 const CON_BUZON = new Set(["sofi", "nico", "max", "lola", "jarvis"]);
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");
@@ -63,6 +63,8 @@ const CEO_SLACK = env("CEO_SLACK_ID") || "U08U9777PUY";
 export const EQUIPO = [
   { id: "U07V7MVJ18B", nombre: "Carilin", rol: "Directora de Operaciones" },
   { id: "U08HA9QCJBG", nombre: "Aure", rol: "Asistente + Directora Comercial" },
+  { id: "U0BDGC8KGH4", nombre: "Lis", rol: "Coordinadora de Retención y Alianzas" },
+  { id: "U0BVA6F2KN3", nombre: "Ángela", rol: "Project Manager AIB (clientes de Bori)" },
   { id: "U08SN35L2UX", nombre: "Jessica", rol: "Project Manager (onboarding)" },
   { id: "U091X0MQXV0", nombre: "María García", rol: "Tesorería LUM" },
   { id: "U08Q51UFLSH", nombre: "Yaileen", rol: "Tesorería AIB / Team Scaling" },

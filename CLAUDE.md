@@ -402,8 +402,11 @@ voz/SaaS/Core de AIB, dashboard de ventas, Hora Fija, 1000X) en `data/plataforma
 ejecute con una aprobación mía, como funciona Nico": `SLACK_NICO_CANALES="C…=bori"` (Vercel) hace que ese canal funcione
 igual que #nico-desarrollo (Carilin/Aure piden sin prefijo → Nico diagnostica en solo lectura → Elvin `ok <id>` por
 Telegram o en el hilo), pero el pedido llega con `· plataforma bori` y Nico lee esa entrada del inventario y su repo
-antes del plan (`plataformaDe`/`lineaPlataforma` en el puente). El bot tiene que estar invitado al canal y la app de
-Slack suscrita a `message.channels`/`message.groups`.
+antes del plan (`plataformaDe`/`lineaPlataforma` en el puente). **Bori = #bori-clientes** (`C0C2YN5199B=bori`): ahí
+piden Aure, Carilin, **Lis y Ángela** (`EQUIPO_PLATAFORMA` en slack-eventos; solo en ese canal). Como el canal también es
+conversación, las cortesías ("gracias", "ok") no pasan y Nico contesta `NO_ES_PEDIDO` a lo que no es pedido → se cierra
+sin avisar a nadie; si es pedido, el acuse en el hilo lo da el puente tras diagnosticar. Las alertas automáticas de
+fallos siguen en #bori-clientes-y-bugs-archived.
 
 ## Gasto de IA: el modelo lo escoge la tarea (28/sep/2026)
 

@@ -303,7 +303,7 @@ const EQUIPO_NICO: Record<string, string> = Object.fromEntries(
 );
 const PARA_NICO = /^\s*(?:@?nico\b|para\s+nico\b)[\s,:.\-—]*/i;
 const IDENTIDAD_NICO: Identidad = { username: "Nico · Plataformas" };
-const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure" };
+const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela" };
 
 // Canal propio de Nico (Elvin, 23/sep: "que tengan un canal directo con Nico"): en
 // SLACK_NICO_CHANNEL_ID todo lo que escriban Carilin o Aure es para Nico, sin prefijo, y Nico
@@ -324,6 +324,13 @@ const CANALES_PLATAFORMA: Record<string, string> = Object.fromEntries(
     .map((x) => x.split("=").map((y) => y.trim()))
     .filter(([id, plat]) => id && plat),
 );
+// Quién más puede pedir en el canal de cada plataforma (además de Carilin y Aure). Elvin, 3/oct: en
+// #bori-clientes "que puedan pedir las que estén en el canal: Aure, Lis, Ángela".
+const EQUIPO_PLATAFORMA: Record<string, Record<string, string>> = {
+  bori: { U0BDGC8KGH4: "lis", U0BVA6F2KN3: "angela" },
+};
+// El canal de una plataforma también es conversación del equipo: lo que es solo cortesía no se le pasa a Nico.
+const CORTESIA = /^(gracias|muchas gracias|ok|okay|oki|listo|perfecto|dale|genial|excelente|bien|entendido|recibido|super|súper)?[\s!.,👍🙏🙌✅💪]*$/i;
 
 // Adjuntos (26/sep, Aure #55/#66): las capturas que mandan Carilin/Aure llegan a Nico como enlace privado
 // de Slack (solo se abre con el token del bot; Nico lo baja con SLACK_BOT_TOKEN).
@@ -407,9 +414,10 @@ export async function POST(req: NextRequest) {
     const raiz = ev.thread_ts ?? ev.ts ?? "";
     const userId = ev.user as string;
     const decision = userId === CEO_SLACK ? texto.match(DECISION) : null;
-    const deEquipo = EQUIPO_NICO[userId];
+    const deEquipo = EQUIPO_NICO[userId] ?? (plataformaCanal ? EQUIPO_PLATAFORMA[plataformaCanal]?.[userId] : undefined);
     const archivos = ev.files;
     if (!decision && !deEquipo) return NextResponse.json({ ok: true }); // Elvin conversando, u otros
+    if (!decision && plataformaCanal && !archivos?.length && CORTESIA.test(texto)) return NextResponse.json({ ok: true });
     after(async () => {
       try {
         if (decision) {
@@ -425,6 +433,8 @@ export async function POST(req: NextRequest) {
           return;
         }
         const id = await pasarANico(deEquipo, userId, texto.replace(PARA_NICO, "").trim() || texto || "(sin texto)", { canal: channel, hilo: raiz, plataforma: plataformaCanal }, archivos);
+        // En el canal de una plataforma el acuse lo da el puente después de diagnosticar (y solo si era un pedido).
+        if (id && plataformaCanal) return;
         await postearRespuesta(
           channel,
           id

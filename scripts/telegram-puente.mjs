@@ -59,10 +59,11 @@ const ES_MAX = BOT === "max";
 const ES_LOLA = BOT === "lola";
 // Nombre de este agente en el buzón compartido (scripts/agentes.mjs). Sin PUENTE_BOT es Sofi.
 const YO = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
-const NOMBRES = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", elvin: "Elvin", carilin: "Carilin", aure: "Aure" };
+const NOMBRES = { sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela" };
 // Equipo humano que le pide cambios a Nico por Slack (23/sep/2026). Nico NUNCA ejecuta lo que
 // ellas piden sin el OK de Elvin: diagnostica en solo lectura, le pasa el plan y espera "ok <id>".
-const EQUIPO_NICO = new Set(["carilin", "aure"]);
+// Lis y Ángela (3/oct) solo llegan desde el canal de cambios de Bori (#bori-clientes).
+const EQUIPO_NICO = new Set(["carilin", "aure", "lis", "angela"]);
 // En Railway el estado vive en el volumen /estado (PUENTE_ESTADO_DIR); en la Mac, en data/.
 const ESTADO = path.join(process.env.PUENTE_ESTADO_DIR || path.join(ROOT, "data"), ES_NICO ? "telegram-puente-nico.json" : ES_MAX ? "telegram-puente-max.json" : ES_LOLA ? "telegram-puente-lola.json" : "telegram-puente.json");
 const EN_NUBE = process.env.PUENTE_EN_NUBE === "1";
@@ -699,7 +700,7 @@ function plataformaDe(texto) {
 }
 const lineaPlataforma = (texto) => {
   const p = plataformaDe(texto);
-  return p ? `\nPLATAFORMA: ${p} (vino de su canal de cambios). Lee su entrada en data/plataformas.json (repo, prod, deploy, trampas) y el CLAUDE.md/TRASPASO.md de ese repo antes de nada; el cambio es en esa plataforma salvo que el pedido diga otra cosa.` : "";
+  return p ? `\nPLATAFORMA: ${p} (vino de su canal de cambios). Lee su entrada en data/plataformas.json (repo, prod, deploy, trampas) y el CLAUDE.md/TRASPASO.md de ese repo antes de nada; el cambio es en esa plataforma salvo que el pedido diga otra cosa.\nEse canal también es conversación del equipo: si el mensaje NO es un pedido de cambio, una pregunta técnica ni el reporte de un fallo (agradecimiento, aviso entre ellas, algo para Elvin que no es técnico), responde SOLO la palabra NO_ES_PEDIDO.` : "";
 };
 async function dmEquipo(quien, texto, ref) {
   const tok = env("SLACK_BOT_TOKEN"); const persona = resolverPersona(quien);
@@ -737,10 +738,16 @@ async function diagnosticarSolicitud(token, chatCEO, st, m) {
   const prompt = `[Solicitud del equipo #${m.id} · de ${quien}]${refSlack(m.texto) ? " (vino del canal de Nico; si es la respuesta a una pregunta tuya o sigue un pedido anterior del mismo hilo, júntalos en un solo plan)" : ""}${lineaPlataforma(m.texto)}\n${pedido}\n\nREGLA DE ELVIN: NO hagas ningún cambio (estás en solo lectura). Diagnostica y arma el plan para que Elvin lo apruebe:\n1) Qué pidió ${quien}, en una línea.\n2) Plataforma y dónde está (repo/archivo, cuenta, workflow, tablero).\n3) Qué harías exactamente, paso a paso y corto.\n4) Riesgo (bajo/medio/alto), si es reversible y a quién afecta (clientes, equipo, cobros).\n5) Tu recomendación: hacerlo, hacerlo distinto o no hacerlo, y por qué.\nSi falta un dato clave de ${quien}, dilo en una línea "Pregunta para ${quien}: …". Máximo 12 líneas, tuteo PR, sin markdown pesado. No escribas a nadie: el puente le manda esto a Elvin.`;
   const r = await turnoNico(prompt, { st, soloLectura: true, origen: `solicitud:${m.id}:${m.de}` });
   const plan = (r.out || "").trim() || `No pude diagnosticarlo (${(r.err || "sin salida").slice(0, 200)}). Lo puedo revisar con más calma si me lo apruebas igual.`;
+  if (plataformaDe(m.texto) && /^\s*NO_ES_PEDIDO\b/.test(plan)) {
+    LOG("solicitud ›", `#${m.id} no era pedido`);
+    try { await buzonMarcar(m.id, "atendido", "No era un pedido (conversación del canal)."); } catch {}
+    return;
+  }
   try { await buzonMarcar(m.id, "esperando-ok", plan.slice(0, 4000)); } catch (e) { LOG("solicitud marcar:", e.message.slice(0, 120)); }
   const aviso = `🟡 ${quien} solicitó un cambio${plataformaDe(m.texto) ? ` en ${plataformaDe(m.texto)}` : ""} (#${m.id}):\n“${pedido.slice(0, 600)}”\n\n${plan}\n\n👉 Para que lo haga: ok ${m.id}\n✋ Para no hacerlo: no ${m.id} (puedes añadir una nota)\n(También sirve en Slack: "nico ok ${m.id}")`;
   if (chatCEO) await enviar(token, chatCEO, aviso).catch(() => {});
   await slackEspejo(`[Nico] ${aviso}`);
+  if (plataformaDe(m.texto)) await dmEquipo(m.de, `Recibido ✅ (solicitud #${m.id}). Le pasé el plan a Elvin; cuando dé el OK lo hago y te aviso en este hilo.`, refSlack(m.texto));
   const pregunta = plan.match(new RegExp(`Pregunta para ${quien}:\\s*(.+)`, "i"));
   if (pregunta) await dmEquipo(m.de, `Sobre tu solicitud #${m.id}: ${pregunta[1].trim()}${refSlack(m.texto) ? " (contéstame aquí en el hilo)" : ' (respóndeme empezando con "Nico")'}`, refSlack(m.texto));
 }
