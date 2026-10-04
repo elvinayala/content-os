@@ -97,3 +97,16 @@ test("sin foto del trabajo terminado (o sin recibo si hubo piezas) no se le paga
   assert.equal(c.piezas.porDevolver.total, 0);
   assert.equal(c.semana.total, 180); // lo ganado sí cuenta en la semana
 });
+
+test("en qué punto está el pago de cada trabajo y por qué", async () => {
+  const { pasoDePago } = await import("../dist/cuenta-plomero.js");
+  const ahora = PR("2026-10-08T15:00:00");
+  const x = (o) => pasoDePago(t("X", o), ahora);
+  assert.equal(x({ estado: "agendado" }).clave, "hacer");
+  assert.equal(x({ estado: "completado", terminadoEn: "2026-10-07T10:00:00-04:00" }).clave, "cierre");
+  assert.equal(x({ estado: "completado", terminadoEn: "2026-10-07T10:00:00-04:00", pagoPlomero: 80 }).clave, "cliente");
+  assert.match(x({ estado: "completado", terminadoEn: "2026-10-07T10:00:00-04:00", pagoPlomero: 80, fotosDespues: [] }).texto, /foto del trabajo terminado/);
+  assert.deepEqual(x({ terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 80 }), { clave: "viernes", texto: "Entra el viernes 2026-10-09" });
+  assert.equal(x({ terminadoEn: "2026-10-07T10:00:00-04:00", cobradoEn: "2026-10-08T12:00:00-04:00", pagoPlomero: 80 }).clave, "siguiente");
+  assert.equal(x({ terminadoEn: "2026-10-01T10:00:00-04:00", cobradoEn: "2026-10-01T12:00:00-04:00", pagoPlomero: 80, pagadoAlPlomero: "2026-10-02" }).clave, "pagado");
+});

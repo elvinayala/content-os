@@ -45,6 +45,21 @@ export function faltaParaPagar(t: Pick<Trabajo, "fotosDespues" | "recibos" | "pa
   return f;
 }
 
+/** En qué punto está el pago al plomero de un trabajo, con la razón (portal, 4/oct: "no dice nada de cuánto cobran el viernes"). Pura. */
+export type PasoPago = { clave: "pagado" | "viernes" | "siguiente" | "cliente" | "fotos" | "cierre" | "hacer" | "cancelado"; texto: string };
+export function pasoDePago(t: Trabajo, ahora = Date.now()): PasoPago {
+  if (t.estado === "cancelado") return { clave: "cancelado", texto: "Cancelado" };
+  if (!t.terminadoEn && !["completado", "cobrado"].includes(t.estado)) return { clave: "hacer", texto: "Por hacer" };
+  if (t.pagoPlomero == null) return { clave: "cierre", texto: "Falta registrar el cierre (montos)" };
+  if (t.pagadoAlPlomero) return { clave: "pagado", texto: `Pagado el ${t.pagadoAlPlomero}` };
+  const f = faltaParaPagar(t);
+  if (f.length) return { clave: "fotos", texto: `Falta subir: ${f.join(" y ")}` };
+  if (t.estado !== "cobrado") return { clave: "cliente", texto: "Esperando que el cliente pague" };
+  const { viernes, corte } = viernesDePago(ahora);
+  const cobro = Date.parse(t.cobradoEn ?? t.terminadoEn ?? "");
+  return cobro < corte ? { clave: "viernes", texto: `Entra el viernes ${fechaPR(viernes)}` } : { clave: "siguiente", texto: `Entra el viernes ${fechaPR(viernes + 7 * DIA)}` };
+}
+
 /** Piezas ya devueltas. En los trabajos de antes del 2/oct se devolvían junto con el pago del viernes. */
 export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlomero" | "pagadoAlPlomero">) =>
   !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
