@@ -1,14 +1,21 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { aplicar, describir, diferencias, necesitaAprobacion, SENSIBLES_FICHA, SENSIBLES_PERFIL, separar, valorLegible } from "../lib/desempeno/cambios-reglas.ts";
+import { aplicar, describir, diferencias, necesitaAprobacion, puedeDecidirCambios, SENSIBLES_FICHA, SENSIBLES_PERFIL, separar, valorLegible } from "../lib/desempeno/cambios-reglas.ts";
 
 const perfil = { userId: "u1", puesto: "estratega", empresa: "level_up", liderId: null, activo: true, soloRitmo: false, tipoContrato: "contratista", horaEntrada: "09:00", horaSalida: "18:00" };
 
-test("solo Elvin aplica lo sensible directo", () => {
+test("la dirección (no admin) propone lo sensible", () => {
   assert.equal(necesitaAprobacion("admin"), false);
   assert.equal(necesitaAprobacion("editor"), true);
   assert.equal(necesitaAprobacion("miembro"), true);
+});
+
+test("RR.HH. (Yaileen) aplica directo y decide lo de la dirección", () => {
+  assert.equal(necesitaAprobacion("miembro", true), false);
+  assert.equal(puedeDecidirCambios("miembro", true), true);
+  assert.equal(puedeDecidirCambios("admin"), true);
+  assert.equal(puedeDecidirCambios("editor"), false);
 });
 
 test("separar: lo menor pasa ya, lo sensible espera", () => {

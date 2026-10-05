@@ -2,10 +2,9 @@ import "server-only";
 
 import { and, desc, eq } from "drizzle-orm";
 
-import { notificarCEO } from "../notificar-ceo";
 import { db } from "../pulse/db";
 import { pulseUsers } from "../pulse/schema";
-import { avisarPersona } from "./avisar";
+import { avisarPersona, avisarRrhh } from "./avisar";
 import { aplicar, describir, type CambioCampo, type TipoCambio, valorLegible } from "./cambios-reglas";
 import { evento, guardarPerfil, perfilDe, type Perfil } from "./datos";
 import { guardarFicha, leerFicha } from "./fichas";
@@ -35,7 +34,7 @@ function legible(n: Map<string, string>) {
   };
 }
 
-/** Deja el cambio esperando a Elvin (reemplaza uno anterior de la misma persona y tipo) y le avisa. */
+/** Deja el cambio esperando a RR.HH. (decide Yaileen; Elvin también puede) (reemplaza uno anterior de la misma persona y tipo) y le avisa. */
 export async function proponerCambio(p: { tipo: TipoCambio; userId: string; cambios: CambioCampo[]; datos?: unknown; actorId: string }): Promise<string[]> {
   const d = await db();
   await d
@@ -46,7 +45,7 @@ export async function proponerCambio(p: { tipo: TipoCambio; userId: string; camb
   const n = await nombres();
   const lineas = p.cambios.map((x) => describir(x, legible(n)));
   await evento({ userId: p.userId, actorId: p.actorId, tipo: "cambio_propuesto", datos: { id: c.id, tipo: p.tipo, campos: p.cambios.map((x) => x.campo) } });
-  await notificarCEO(
+  await avisarRrhh(
     `✋ ${n.get(p.actorId) ?? "Alguien"} quiere cambiar a ${n.get(p.userId) ?? "una persona"} en Ritmo:\n${lineas.map((l) => `• ${l}`).join("\n")}\nApruébalo o recházalo en Ritmo → Ajustes → Por aprobar: ${URL_AJUSTES}`,
   ).catch(() => null);
   return lineas;
@@ -70,7 +69,7 @@ export async function describirCambios(cs: Cambio[]): Promise<Record<string, str
   return Object.fromEntries(cs.map((c) => [c.id, (c.cambios as CambioCampo[]).map((x) => describir(x, legible(n)))]));
 }
 
-/** Elvin decide. Aprobar aplica los cambios sobre cómo está HOY la persona (no pisa lo menor editado después). */
+/** RR.HH. o Elvin deciden. Aprobar aplica los cambios sobre cómo está HOY la persona (no pisa lo menor editado después). */
 export async function decidirCambio(id: string, aprobar: boolean, actorId: string, nota?: string | null): Promise<void> {
   const d = await db();
   const [c] = await d.select().from(t).where(eq(t.id, id));

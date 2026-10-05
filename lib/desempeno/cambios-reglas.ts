@@ -1,4 +1,4 @@
-// Cambios que esperan el OK de Elvin (28/sep/2026): "Carilin y Aure editan a mano, con aprobación mía". Solo lo
+// Cambios que esperan el OK de Elvin o RR.HH. (28/sep/2026; RR.HH. desde el 5/oct): "Carilin y Aure editan a mano, con aprobación mía". Solo lo
 // sensible espera; lo menor se aplica al momento. Puro (tests en tests/cambios.test.mjs).
 
 // Lo que cambia quién es, dónde está, a quién responde, si entra o cuánto gana.
@@ -24,8 +24,10 @@ export const ETIQUETA_CAMPO: Record<string, string> = {
   salarioMensual: "Salario mensual",
 };
 
-/** Solo Elvin (admin) aplica lo sensible directo; cualquier otra persona de la dirección o RR.HH. lo propone. */
-export const necesitaAprobacion = (rol: string) => rol !== "admin";
+/** Elvin (admin) y RR.HH. (Yaileen; Elvin, 5/oct: "que lo autorice directo Yai") aplican lo sensible directo y deciden lo
+ *  que propone el resto de la dirección (Carilin, Aure). */
+export const puedeDecidirCambios = (rol: string, rrhh = false) => rol === "admin" || rrhh;
+export const necesitaAprobacion = (rol: string, rrhh = false) => !puedeDecidirCambios(rol, rrhh);
 
 const igual = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 

@@ -63,7 +63,7 @@ export function FormDatos({ d }: { d: DatosFicha }) {
     const r = await guardarFichaAction({ userId: d.userId, ...v });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
-    if (r.pendientes?.length) toast.success("Ficha guardada. El salario queda pendiente de Elvin", { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
+    if (r.pendientes?.length) toast.success("Ficha guardada. El salario queda pendiente de RR.HH.", { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
     else toast.success("Ficha guardada", aviso);
   };
   return (

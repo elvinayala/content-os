@@ -17,20 +17,20 @@ export interface CambioUI {
   cuando: string;
 }
 
-/** Cambios sensibles que Carilin, Aure o RR.HH. hicieron a mano y esperan a Elvin. Solo Elvin decide. */
+/** Cambios sensibles que Carilin, Aure o RR.HH. hicieron a mano y esperan a RR.HH. o Elvin, que son quienes deciden. */
 export function CambiosPendientes({ cambios, decide }: { cambios: CambioUI[]; decide: boolean }) {
   if (!cambios.length) return null;
   return (
     <section className="panel flex flex-col gap-3 p-4">
       <div className="flex items-center gap-2">
         <Clock className="size-4 text-amber-300" />
-        <h2 className="font-semibold">{decide ? "Por aprobar" : "Esperando a Elvin"}</h2>
+        <h2 className="font-semibold">{decide ? "Por aprobar" : "Esperando aprobación"}</h2>
         <span className="rounded-full bg-amber-300/15 px-2 py-0.5 text-xs text-amber-300">{cambios.length}</span>
       </div>
       <p className="text-xs text-muted-foreground">
         {decide
           ? "Cambios sensibles (puesto, empresa, supervisor, activo, acceso a Pulse, contrato o salario) que hizo alguien de la dirección o RR.HH. No se aplican hasta que los apruebes."
-          : "Estos cambios ya se enviaron. Se aplican cuando Elvin los apruebe y te llega el aviso por Slack."}
+          : "Estos cambios ya se enviaron. Se aplican cuando RR.HH. los apruebe y te llega el aviso por Slack."}
       </p>
       <ul className="flex flex-col divide-y divide-border/60">
         {cambios.map((c) => (

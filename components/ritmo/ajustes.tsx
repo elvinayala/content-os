@@ -40,7 +40,7 @@ export function Ajustes({ usuarios, perfiles, metas, produccion, buscar = "", ge
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Ajustes</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Quién se mide, su horario y su líder; y las metas de cada puesto. Todo cambio queda en la bitácora. Lo sensible (puesto, empresa, supervisor, activo, acceso a Pulse, contrato y salario) lo aprueba Elvin.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Quién se mide, su horario y su líder; y las metas de cada puesto. Todo cambio queda en la bitácora. Lo sensible (puesto, empresa, supervisor, activo, acceso a Pulse, contrato y salario) lo aprueba RR.HH. (Yaileen) o Elvin.</p>
       </div>
       {arriba}
       <Produccion existe={produccion} />
@@ -122,7 +122,7 @@ function FilaPerfil({ usuario, perfil, usuarios, gestorPulse, puestos }: { usuar
     const r = await guardarPerfilAction({ ...b, nombre, soloRitmo: gestorPulse && tocoPulse ? b.soloRitmo : undefined });
     setCargando(false);
     if (!r.ok) return toast.error(r.error, aviso);
-    if (r.pendientes?.length) toast.success(`${usuario.nombre}: enviado a Elvin para aprobar`, { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
+    if (r.pendientes?.length) toast.success(`${usuario.nombre}: enviado a RR.HH. para aprobar`, { ...aviso, description: r.pendientes.join(" · "), duration: 8000 });
     else toast.success(`${usuario.nombre}: guardado`, aviso);
     setAbierto(false);
   };

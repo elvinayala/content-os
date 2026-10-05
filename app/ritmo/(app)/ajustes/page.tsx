@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { Ajustes } from "@/components/ritmo/ajustes";
 import { CambiosPendientes } from "@/components/ritmo/cambios-pendientes";
+import { puedeDecidirCambios } from "@/lib/desempeno/cambios-reglas";
 import { DosPasosAdmin } from "@/components/ritmo/dos-pasos-admin";
 import { estaBloqueado } from "@/lib/desempeno/acceso";
 import { describirCambios, listarCambios } from "@/lib/desempeno/cambios";
@@ -41,7 +42,7 @@ export default async function AjustesPage({ searchParams }: { searchParams: Prom
   return (
     <div className="flex flex-col gap-6">
       <Ajustes
-        arriba={<CambiosPendientes cambios={cambios} decide={u.rol === "admin"} />}
+        arriba={<CambiosPendientes cambios={cambios} decide={puedeDecidirCambios(u.rol, u.rrhh)} />}
         usuarios={usuarios.filter((x) => x.activo && !x.email.endsWith("@pulse.sistema") && !estaBloqueado(x.email)).map((x) => ({ id: x.id, nombre: x.nombre, email: x.email }))}
         perfiles={perfiles}
         metas={metas}
