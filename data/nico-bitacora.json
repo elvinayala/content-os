@@ -449,6 +449,14 @@
       "porque": "Aure: Lis trabaja en las dos empresas y ve todo. OK de Elvin.",
       "verificado": "En la base: leads_acceso level_up=todos y ai_borinquen=todos; rol miembro, solo_ritmo=false → accesoLeads da puede=true/todos en las dos; 2FA ya activado (30/sep); leads.levelupmediapr.net/ventas → 200. No pude abrir la sesión como ella (prueba con su cuenta: pendiente que entre).",
       "commit": "sin código (solo datos)"
+    },
+    {
+      "fecha": "2026-10-05T18:34:46.032Z",
+      "plataforma": "ritmo (content-os)",
+      "que": "[Solicitud de Aure #168] Cambios sensibles de Ritmo (puesto, empresa, supervisor, activo, acceso a Pulse, contrato, salario): RR.HH. (Yaileen) los aplica directo y decide los que proponen Carilin/Aure; el aviso le llega a RR.HH. en vez de a Elvin. Elvin sigue pudiendo decidir.",
+      "porque": "Elvin aprobó: \"Yaileen autorizada\" — quitar su aprobación y que lo autorice Yai.",
+      "verificado": "tests/cambios.test.mjs OK; deploy Ready con alias ritmo.levelupmediapr.net y content-os-chi-seven; /ritmo/entrar y /login 200; RITMO_RRHH existe en Production; logs sin errores. 2 cambios pendientes (Eros, Valentina) quedan para que Yaileen los apruebe. No probé con la sesión de Yaileen.",
+      "commit": "b86fe0f"
     }
   ],
   "pendientesElvin": [
