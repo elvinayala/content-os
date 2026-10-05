@@ -12,99 +12,72 @@ Ritmo de lectura: ~140 palabras por minuto.
 
 ---
 
-## 1. VSL OCULTO · SHADOW (10-11 min · sin precios)
+## 1. VSL OCULTO · SHADOW (v3 · estructura de 13 pasos · ~9.1 min · sin precios)
 
-**[0:00 · GANCHO]**
-Mis dos empresas facturan cerca de un millón y medio de dólares al año. Y hasta este año, casi nadie sabía mi nombre.
-No soy influencer. No me hice viral. No tengo cien mil seguidores.
-Tengo un sistema. En los próximos diez minutos te voy a enseñar cómo funciona, por qué lo que has probado no te ha llevado a tu número, y cómo lo instalo contigo.
+**[0:00 · PRUEBA · rápida]**
+He escalado más de diez marcas con el mismo sistema. Varias empresas en silencio y una agencia de más de cien mil dólares al mes, y casi nadie sabía quién era. Hoy te enseño ese sistema.
 
-**[0:30 · PRUEBA]**
-Para que sepas que esto no es teoría:
-Tinos pasó de treinta mil a cien mil dólares al mes. RK Automatic, de treinta mil a cien mil. Coralis, de veinticinco mil a setenta mil. Yadiel, un coach, de cinco mil a cuarenta mil al mes.
-Ninguno lo logró con un anuncio. Lo lograron con un sistema.
-Y yo pagué más de cien mil dólares en mentorías para aprender lo que te voy a resumir en diez minutos.
+**[0:15 · PROMESA]**
+Te voy a llevar de cero, o de donde estés pegado, a tus primeros diez mil dólares al mes. Y lo vamos a hacer con tres cosas, en este orden: una estrategia de comunicación y de contenido que traiga a la persona correcta, un sistema de marketing que ponga ese contenido frente a más gente, y un sistema de ventas que convierta esas conversaciones en clientes. Tres sistemas, instalados en tu negocio, conmigo al lado.
 
-**[1:10 · PARA QUIÉN]**
-Este video es para dos personas.
-Uno: sabes hacer algo que la gente paga —enseñas, asesoras, tienes un servicio— y quieres convertirlo en un producto digital que te deje diez mil dólares al mes o más.
-Dos: ya vendes por internet, pero estás pegado. Tres mil, cinco mil, diez mil al mes… y no sale de ahí. Y todo depende de ti.
-Si no eres ninguno de los dos, te ahorro el tiempo: este video no es para ti.
+**[0:47 · LA PIEDRITA]**
+Pero antes, déjame una piedrita en el zapato.
+Diez mil dólares al mes son cuatro clientes. No cien mil seguidores.
+Tres clientes a tres mil quinientos. O cuatro a dos mil quinientos. Haz esa cuenta. Si con cuatro clientes llegas a tu número, ¿por qué llevas meses persiguiendo audiencia?
 
-**[1:40 · EL PROBLEMA]**
-Te digo lo que veo en casi todos los negocios que audito.
-No es que trabajes poco. Es que te dijeron que el problema era el contenido.
-"Publica todos los días." "Hazte viral." "Construye tu marca."
-Y ahí estás: publicando, editando, persiguiendo tendencias. Te escriben tres personas a la semana. Ninguna compra.
-Viral no es ventas. Un reel de quinientas mil vistas te trae curiosos. Y los curiosos no pagan.
-El problema casi nunca es el contenido. Es que te falta uno de cuatro fundamentos.
+**[1:08 · EL ENEMIGO COMÚN]**
+Porque te repitieron el mismo consejo que le repiten a todo el que quiere vivir de internet: publica todos los días, hazte viral, construye tu marca. Contenido por contenido. Persiguiendo vistas, volumen y seguidores.
+Ese consejo suena lógico y es el que más negocios deja pegados. Viral no es ventas. Un reel de quinientas mil vistas te trae curiosos, y los curiosos no pagan.
 
-**[2:20 · LOS 4 FUNDAMENTOS]**
-Todo negocio digital se sostiene en cuatro cosas: nicho, oferta, contenido y estrategia. Si una falla, todo se cae.
-**Nicho.** El error más grande es hablarle a todos. Cuando le hablas a todos, no le hablas a nadie. Un buen nicho tiene dos cosas: dolor y dinero. Un problema urgente y gente que puede pagar por resolverlo. Mientras más caro el nicho, más fácil todo lo demás.
-**Oferta.** Aquí falla casi todo el mundo. Puedes tener el mejor contenido y los mejores anuncios: si tu oferta es débil, no vendes. Una oferta no es tu producto. Es la promesa —te llevo de aquí a aquí—, todo lo que recibes empaquetado, la prueba de que funciona y lo que te quita el miedo a comprar. Si la persona entiende el valor, le suena barato. Si no lo entiende, te dice que es caro.
-**Contenido.** No es para entretener. Es para traer al cliente correcto. Se trabaja con ángulos ganadores: los temas que ya te trajeron gente que pagó. El reel trae seguidores. El carrusel los calienta. La historia cierra.
-**Estrategia.** Es lo que convierte atención en conversaciones, y conversaciones en ventas. Las conversaciones son dinero. Y no se van a agendar solas.
+**[1:36 · AGITA EL PROBLEMA]**
+Mira cómo se ve esto desde adentro.
+Publicas todos los días. Grabas, editas, buscas ideas. Te escriben tres personas a la semana y ninguna compra. De tres mil seguidores, trescientos ven tu historia y cinco te escriben; los otros doscientos noventa y cinco nunca supieron lo que ofreces. Las conversaciones que llegan se quedan sin contestar, y cada una tiene precio. Las que contestas, no les das seguimiento: das el lead por muerto después del primer "lo voy a pensar".
+Cuando por fin alguien pregunta el precio, cobras por post o por tarea, y compites con todos. Si dice que es caro, bajas el precio, y le confirmas que lo estabas inflando.
+Y los anuncios que pagaste los optimizaste por leads baratos. Un cliente tenía ciento setenta conversaciones a ochenta centavos cada una, y cero ventas. Otro: un flyer le daba leads a cinco dólares y un video a doce, y la venta la trajo el video. El más barato casi nunca es el que vende.
+Y todo, todo, depende de ti.
 
-**[4:20 · LOS 6 SISTEMAS]**
-Sobre esos cuatro fundamentos, mis empresas corren con seis sistemas. Son los mismos que te instalo.
-**Marketing.** Contenido con estructura y anuncios que potencian lo que ya funciona. Pago cerca de un dólar por seguidor. Cien al día. Si seis compran un programa de tres mil, son dieciocho mil al mes. Es matemática, no suerte.
-**Ventas.** Conversaciones, setter, closer y seguimiento. Una persona de mi equipo cobró treinta y dos mil dólares en cuarenta y cinco días solo dándole seguimiento a los que ya habían dicho que no.
-**Inteligencia artificial.** Mi negocio tiene una reunión a las cinco de la mañana sin mí. Agentes que revisan los números, preparan el contenido y me dejan el plan del día listo. No tienes que dominar la IA. Tienes que saber operarla.
-**Operaciones.** Lo que hace que el negocio no dependa de ti.
-**Reclutamiento y entrenamiento.** Encontrar a la gente correcta y que venda como tú.
-No necesitas los seis el primer mes. Necesitas saber cuál te falta primero.
+**[2:49 · LLÉVALOS AL EXTREMO]**
+Ahora llévalo al extremo. Imagina que dentro de un año sigues igual. Trescientos sesenta y cinco reels después, el mismo número en tu cuenta. Más cansado. Con cuarenta clientes de doscientos cincuenta dólares escribiéndote a las once de la noche, o con ninguno. Pagándole otra mentoría a alguien que promete cien mil sin haberlo hecho.
+El problema no es que no trabajes. Es que estás trabajando en lo que no mueve el número.
 
-**[6:10 · SIN CARA]**
-Y sé lo que estás pensando: no tienes que mostrar la cara. Yo construí todo esto siendo un fantasma. He visto cuentas pasar de seiscientos a seis mil seguidores y facturar treinta, cuarenta mil dólares sin hablar a cámara.
-Si quieres dar la cara, bien. Si no, igual se puede. Lo que no se puede es no tener sistema.
+**[3:21 · MECANISMO ÚNICO · LOS TRES SISTEMAS]**
+Esto se arregla con tres sistemas. Son por donde empezamos, porque son los que primero mueven el número. Y se apoyan en cuatro fundamentos: nicho, oferta, contenido y estrategia. Si uno falla, todo se cae. No es el logo. No es la app.
+Nicho: dolor y dinero; mientras más caro el nicho, más fácil todo lo demás. Oferta: aquí falla casi todo el mundo. No te falta publicar más: te falta una oferta que alguien quiera pagar. Si nadie te compra, no subas el volumen: cambia la oferta.
+Sistema uno, el de contenido. Tu estrategia de comunicación. Ángulos ganadores —los temas que ya te trajeron gente que pagó— y una estructura: el reel trae, el carrusel calienta y la historia cierra.
+Sistema dos, el de marketing. Los anuncios no son lo principal: potencian lo que ya funciona orgánico. Pago cerca de un dólar por seguidor, cien al día; si seis compran un programa de tres mil, son dieciocho mil al mes. Y se optimiza por ventas, no por leads baratos. Antes de escalar, dos confirmaciones: métricas positivas y ventas reales.
+Sistema tres, el de ventas. Las conversaciones son dinero. Cómo abres la conversación con los que vieron tu historia y no escribieron: "Hola, te hago una consulta, vi que estabas viendo mi historia, ¿tienes algún negocio?". Cómo das seguimiento: nunca des un lead por muerto, la mayoría de mis cierres no salieron de la primera llamada. Cómo cobras: una palabra cambia lo que puedes cobrar, estrategia. Y cuando dicen que es caro, no bajas el precio: quitas algo del paquete.
+Y sobre los tres, la inteligencia artificial haciendo el trabajo repetitivo. No tienes que dominarla, tienes que saber operarla. Mi negocio tiene una reunión a las cinco de la mañana sin mí.
 
-**[6:40 · EL ENEMIGO]**
-Ahora, por qué esto no te lo ha dado nadie.
-Mucha gente te promete escalarte a cien mil al mes. Pregúntale cuánto factura. Para prometerte una cifra, tienes que haber hecho por lo menos el triple.
-Y la mayoría te vende un curso grabado, un grupo, y un asistente contestándote por ellos.
-Yo no te voy a dar un curso y desaparecer. Esto se instala contigo.
+**[5:26 · CREDIBILIDAD · POR QUÉ ESCUCHARME]**
+¿Por qué escucharme? Porque no te enseño lo que leí. Te enseño lo que apliqué en más de diez marcas, en todo tipo de nicho. Si funciona en nichos tan distintos, no es suerte: es sistema.
+Pagué más de cien mil dólares en mentorías, con gente que sí lo había hecho. Una frase me cambió cómo vendo: nunca hay tres objeciones; siempre hay una sola razón real por la que no te compran.
+Y el sistema sirve igual para un negocio digital que para uno local. Tu primer cliente puede estar a cinco minutos de tu casa. Y no tienes que mostrar la cara.
 
-**[7:20 · QUÉ PASA CUANDO ENTRAS]**
-Así funciona.
-Primero, una auditoría uno a uno de tu negocio. Miramos tus cuatro fundamentos y te digo exactamente cuál está flojo.
-Después armamos contigo tu nicho y tu oferta. Eso es lo que más rápido mueve el número.
-Luego instalamos el sistema: contenido con estructura, embudo, guiones de venta, seguimiento, y la IA que te quita el trabajo repetitivo.
-Tienes sesiones en grupo cada semana, sesiones uno a uno conmigo, el programa completo, las plantillas y las herramientas de IA que uso yo.
-Y no te soltamos hasta que el sistema esté vendiendo.
-En números reales: el primer mes estructuras y empatas. El segundo vienen los primeros resultados. El tercero escalas. Si esperas diez mil el primer mes, esto no es para ti.
+**[6:10 · PRUEBAS]**
+Y ahora, la prueba.
+Este sistema empezó en Level Up, mi agencia de marketing, y ya ha ayudado a escalar agencias de marketing a más de cien mil dólares al mes. Ese es el foco.
+Pero no se queda en las agencias. Lo hemos aplicado en negocios físicos, como el restaurante Tinos, que llevamos a cien mil dólares al mes. En agencias de tecnología, a veinte mil al mes.
+Y en médicos: un sistema de marketing e inteligencia artificial que les consigue clientes, les responde y les agenda las citas en automático. Ha ayudado a más de veinticinco profesionales de la salud, y a varios les permitió abrir su oficina de cero con la agenda llena: doctores como Marvin Argüello y Bryan Vega.
+Mismo sistema. Nichos distintos.
 
-**[8:40 · PARA QUIÉN NO]**
-Para no perder tiempo:
-No es para el que busca hacerse rico rápido.
-No es para el que quiere un curso para verlo cuando pueda.
-No es para el que no va a ejecutar.
-Es para el que sabe hacer algo que vale, está dispuesto a trabajar y quiere al lado a alguien que ya lo hizo.
-No es barato. Es una inversión seria. Y no acepto a todo el mundo.
+**[7:05 · QUÉ CONSIGUES, EXACTAMENTE]**
+Esto es exactamente lo que consigues.
+Una auditoría uno a uno de tu negocio: tus cuatro fundamentos y cuál está flojo. Tu nicho y tu oferta, armados contigo. Tu estrategia de comunicación y tu estructura de contenido. Tu sistema de marketing, montado. Tu sistema de ventas, con los guiones, los abridores y el seguimiento. Sesiones en grupo cada semana, sesiones uno a uno conmigo, el programa completo, las plantillas y las herramientas de IA que uso yo.
+Apuntamos a tus primeros diez mil con pocos clientes bien atendidos: el primer mes estructuras y empatas, el segundo ves resultados, el tercero escalas. No te voy a prometer un número. Te prometo el sistema y el acompañamiento hasta que esté vendiendo.
 
-**[9:20 · CTA — versión A, directa]**
-Si llegaste hasta aquí, este es el próximo paso.
-Llena la aplicación debajo de este video. Te toma tres minutos. Mi equipo la revisa y, si calificas, agendamos una llamada.
-En esa llamada miramos tu negocio y te digo cuál de mis programas es para ti. Y si no es ninguno, también te lo digo.
-Hay pocos espacios, porque esto lo hago contigo. Cuando se llenan, se cierra.
-No necesitas más contenido. Necesitas un sistema. Aplica abajo.
+**[7:56 · NO TIENES NADA QUE PERDER]**
+¿Y qué arriesgas? Aplicar no te compromete a nada. Llenas la aplicación en tres minutos. Si calificas, hablamos veinte minutos, miro tu negocio y te digo cuál es el siguiente paso. Si mi programa no es para ti, te lo digo, y te vas con un diagnóstico claro de qué te falta.
+Lo único que pierdes es seguir como estás: en tres, cinco mil, haciendo lo mismo.
+
+**[8:24 · RAZONES PARA ACTUAR AHORA]**
+¿Por qué ahora? Primero, porque esto lo hago contigo, así que los espacios son pocos, y cuando se llenan, se cierra. Segundo, porque el reloj ya está corriendo: cada mes sin sistema son cuatro clientes que no entraron. Y cuanto antes empiezas, antes llegas al tercer mes, que es cuando escalas. Y tercero, porque lo que te falta hoy no es información. Es un sistema instalado.
+
+**[8:53 · ACCIÓN · CTA (versión A, directa)]**
+Llena la aplicación debajo de este video. Te toma tres minutos. Mi equipo la revisa y, si calificas, agendamos tu llamada. Aplica abajo.
 Nos vemos del otro lado.
 
-**[CTA — versión B, suave]** (grabar las dos)
-Si todavía no estás seguro, igual aplica. La llamada es para ver si tiene sentido trabajar juntos. Si no lo tiene, te vas con un diagnóstico claro de qué te falta y por dónde empezar.
-Llena la aplicación abajo. Nos vemos del otro lado.
-
-### Ganchos de repuesto (para cambiar los primeros 30 s)
-1. Si sabes algo que la gente pagaría pero todavía no tienes un producto digital, este es el video más importante que vas a ver este año.
-2. Hice más plata que nunca y trabajaba hasta la una de la mañana todos los días. Esto es lo que cambié.
-3. Viral no es ventas. Si llevas meses publicando y no te compra nadie, quédate diez minutos.
-4. Pagué más de cien mil dólares en mentorías. Te lo resumo en diez minutos.
-5. Si tu mentor no factura trescientos mil al mes, no te puede prometer cien mil. Yo te enseño lo que sí hago.
-6. Dos empresas. Un millón y medio al año. Cero fama. Te enseño el sistema.
-7. No te falta contenido. Te falta uno de cuatro fundamentos. Te digo cuál.
-8. Si estás pegado en tres o cinco mil al mes, el problema no eres tú. Es que no tienes sistema.
-9. Yadiel facturaba cinco mil al mes con su programa. Hoy factura cuarenta mil. Te explico exactamente qué cambió.
-10. Hoy las redes están en modo fácil para hacer dinero. Si tú no estás facturando, te falta una pieza.
+**[9:05 · CTA (versión B, suave · graba las dos)]**
+Si todavía no estás seguro, igual aplica. La llamada es para ver si tiene sentido trabajar juntos. Aplica abajo. Nos vemos del otro lado.
 
 ---
 
