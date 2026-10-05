@@ -742,3 +742,48 @@ ANUNCIOS.push(
     ],
   },
 );
+
+/* ═════════════════ 1000X · recorrido de la plataforma (5/oct/2026) · 16:9 ═════════════════
+   Elvin: "un video para 1000X explicando todo lo que tiene la plataforma… como el de Bori". Pantallas REALES de la
+   terminal (1000x-fuente/deploy-1000x) en MODO DEMO con datos simulados, servida en local sin funciones (cero órdenes);
+   capturas en motion/public/1000x-app/tour/ (scripts en ~/bori-demo/.captura-1000x-*.mjs). Mismo cumplimiento: nada de
+   ganancias prometidas ni "pasas la evaluación", gráfico marcado SIMULACIÓN, aviso de riesgo al cierre. */
+const TOUR = "1000x-app/tour";
+const TOUR_1000X: Anuncio = {
+  id: "1000x-tour", marca: "1000x", formato: "16:9", titulo: "1000X · Todo lo que tiene la plataforma (recorrido)", angulo: "Recorrido del producto",
+  musica: "audio/1000x-tour.mp3", barridoSiempre: true,
+  escenas: [
+    { tipo: "gancho", dur: 90, etiqueta: "> 1000X_", lineas: ["Bienvenido a *1000X*."], sub: "Te enseño todo lo que tiene la plataforma." },
+    { tipo: "pasos", dur: 170, titulo: "Todo en *una terminal*", pasos: ["Lee el mercado", "Encuentra la entrada", "Cuida tu cuenta", "Ejecuta", "Mejora cada día"] },
+    { tipo: "pantalla", dur: 190, imagen: `${TOUR}/c-modos.png`, dispositivo: "laptop", titulo: "Escoge cómo *operas*",
+      sub: "Gráfico, estrategia, riesgo y ejecución en la misma pantalla.",
+      puntos: ["Learn: la IA te enseña el porqué", "Copilot: la IA prepara, tú decides", "Autopilot: ejecuta por ti"] },
+    { tipo: "pantalla", dur: 160, imagen: `${TOUR}/v-grafico.png`, dispositivo: "laptop", titulo: "El *gráfico* de MNQ",
+      sub: "Velas en vivo, EMA, VWAP y los niveles del día: máximo y mínimo de ayer y el rango de apertura.", foco: { x: 0.016, y: 0.222, w: 0.715, h: 0.644 } },
+    { tipo: "pantalla", dur: 180, imagen: `${TOUR}/c-estrategias.png`, dispositivo: "laptop", titulo: "Las estrategias de *Richie*",
+      sub: "MILEX · Toma de liquidez: sweep → recuadro → ruptura.", puntos: ["Entrada definida", "Stop de 30 puntos", "Objetivo: la liquidez anterior"] },
+    { tipo: "grafico", dur: 170, modo: "radar", par: "MNQ", titulo: "El indicador *MILEX*", sub: "Marca la señal en la plataforma y en tu TradingView. No repinta." },
+    { tipo: "pantalla", dur: 170, imagen: `${TOUR}/c-radar.png`, dispositivo: "laptop", titulo: "El *Radar* te avisa",
+      sub: "Cada señal llega a tu terminal y a tu teléfono. Toca «Analizar» y la IA la compara con tu plan." },
+    { tipo: "pantalla", dur: 200, imagen: `${TOUR}/c-guardian.png`, dispositivo: "laptop", titulo: "El *Guardián* cuida tu cuenta",
+      sub: "Lee las reglas de tu prop firm: piso del MLL, límite diario y cuánto puedes arriesgar hoy.",
+      puntos: ["Riesgo permitido, en vivo", "El tamaño se calcula solo", "Te frena cuando el plan dice que pares"] },
+    { tipo: "pantalla", dur: 170, imagen: `${TOUR}/c-ejecucion.png`, dispositivo: "laptop", titulo: "Ejecución en *1 clic*",
+      sub: "Entrada, stop y objetivo ya calculados con tu riesgo. Practica en simulado antes de ir a real." },
+    { tipo: "pantalla", dur: 200, imagen: `${TOUR}/c-autopilot.png`, dispositivo: "laptop", titulo: "El *Autopilot*",
+      sub: "Ejecuta solo las señales confirmadas del Radar, dentro de tus límites. Lo armas tú, con tu contraseña.",
+      puntos: ["Contratos y trades al día", "Freno de pérdida", "Tu horario"] },
+    { tipo: "pantalla", dur: 160, imagen: `${TOUR}/c-richie-ai.png`, dispositivo: "laptop", titulo: "*Richie AI* revisa tu plan",
+      sub: "Pregúntale cuánto arriesgar o cómo vas con el objetivo. No da señales: valida tu plan." },
+    { tipo: "pantalla", dur: 160, imagen: `${TOUR}/c-psicologia.png`, dispositivo: "laptop", titulo: "*Psicología* de trading",
+      sub: "Un mensaje cada día y una acción concreta para operar con disciplina." },
+    { tipo: "pantalla", dur: 160, imagen: `${TOUR}/c-journal.png`, dispositivo: "laptop", titulo: "Tu *journal*, automático",
+      sub: "Cada trade se anota solo: win rate, P&L neto y profit factor. También importas tu CSV." },
+    { tipo: "pantalla", dur: 190, imagen: `${TOUR}/c-riesgo.png`, dispositivo: "laptop", titulo: "La *calculadora* de riesgo",
+      sub: "Simula 10,000 meses con tus números y las reglas de Topstep, y te dice qué tan cerca estás de quemar la cuenta." },
+    { tipo: "roles", dur: 150, titulo: "Y además:", roles: ["Live trading diario", "Indicador MILEX en TradingView", "Comunidad de traders"] },
+    { tipo: "gancho", dur: 100, lineas: ["No face.", "*All signal.*"] },
+    { tipo: "cierre", dur: 240, cta: "Solicita tu acceso →", sub: "$497/mes · Autopilot incluido", url: "ACCESS GRANTED TO FEW", nota: AVISO_1000X },
+  ],
+};
+ANUNCIOS.push(TOUR_1000X);
