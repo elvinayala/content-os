@@ -16,6 +16,13 @@ Reglas transversales en [[estrategia]]. Cerebro de contenido en
 > **Idioma: español de Puerto Rico (TUTEO).** tú/tienes/quieres/puedes/tu — NUNCA
 > voseo (vos/tenés/querés/mirá/comentá/montá). Ver la regla dura en [[estrategia]].
 
+## ⚠️ Prueba y casos (Elvin, 5/oct/2026) — regla dura
+
+- **Nunca "dos agencias".** Se dice **"varias empresas"** (construidas en silencio).
+- **Pruebas aprobadas, tal cual:** "una agencia que creé y escalé a más de $100K al mes" · "he escalado más de 10 marcas entre $20K y $100K al mes, de todo tipo de nicho".
+- **Cero casos hipotéticos** ("un comediante de 400K…", "un creador me enseñó…"). Solo lo que Elvin dio o lo que está en el vault.
+- El sistema también le ha funcionado en marketing y automatizaciones para negocios locales: se puede mencionar, **poco**. La tesis es **negocios digitales a $10K/mes con pocos clientes**.
+
 ## ⚠️ Giro de marca (19/07) — de "meta" a VALOR
 
 Los guiones viejos hablaban DEL modelo (soy invisible, el influencer se quema, no

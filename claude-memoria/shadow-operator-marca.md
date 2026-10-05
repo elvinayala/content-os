@@ -43,3 +43,5 @@ descartó: "está muy técnico, nada de valor para conseguir comentarios."
 Aplicar a cualquier lote de Shadow (historias, reels, carruseles). Y la meta única del
 contenido: *crear tu producto digital de cero → primeros $10K/mes*; ángulos de
 refuerzo "sin mostrar la cara" y "las redes están en modo fácil".
+
+**Prueba y casos (Elvin, 5/oct/2026):** nunca "dos agencias" → "varias empresas". Pruebas aprobadas: "una agencia que creé y escalé a más de $100K al mes" y "he escalado más de 10 marcas entre $20K y $100K al mes, de todo tipo de nicho". **Cero casos hipotéticos** (nada de "un comediante de 400K…"): solo lo que Elvin dio o está en el vault. Que el sistema también sirve para marketing/automatizaciones de negocios locales se menciona poco; la tesis es negocios digitales a $10K/mes con pocos clientes. Regla escrita en `vault/estilo/shadow-operator.md`.

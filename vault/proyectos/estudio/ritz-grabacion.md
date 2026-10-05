@@ -3,7 +3,7 @@ fecha: 2026-10-05
 fuente: plan de Elvin + ajustes
 unidad: shadow-operator, ai-borinquen, marca-personal
 tags: [grabacion, estudio, ritz, vsl, b-roll, plan]
-estado: plan v1 — falta OK de Elvin en 3 decisiones (abajo)
+estado: plan v2 — decisiones resueltas el 5/oct
 ---
 
 # Grabación Ritz-Carlton Reserve · mié 7/oct 2 PM → jue 8/oct 1 PM
@@ -20,20 +20,20 @@ grabar en la oficina NO se graba aquí.
 
 | # | Video | Duración | Dónde vive | Prioridad |
 |---|---|---|---|---|
-| 1 | **Shadow · VSL oculto** (cuerpo + cierre A: consultoría $3,500) | 18-25 min | Página de aplicación, no público | NO NEGOCIABLE |
-| 1b | **Cierre B: Sistema Operador** (mismo cuerpo, otro cierre) | +5 min | Aplicación `/f/aplicar-sistema` | Solo si apruebas la oferta antes del miércoles |
-| 2 | **AI Borinquen · visión del fundador** (las 4 líneas, no "contestamos tus leads") | 8-12 min | Pre-call, closers, YouTube oculto | NO NEGOCIABLE |
+| 1 | **Shadow · VSL oculto** — SIN precios; cierre = "aplica y en la llamada vemos qué programa es para ti" | 10-12 min (tope 15) | Detrás del formulario de aplicación, no público | NO NEGOCIABLE |
+| 2 | **AI Borinquen · visión del fundador** (las 4 líneas, no "contestamos tus leads") | 6-8 min | Pre-call, closers, YouTube oculto | NO NEGOCIABLE |
 | 2b | **AI Borinquen · 90 segundos** para la página Conócenos | 90 s | `demos/ai-borinquen-conocenos` (el hueco ya existe) | Mismo bloque, +15 min |
 | 3 | **Mi historia** (YouTube) | 15-20 min | YouTube público | NO NEGOCIABLE |
 | — | ~~Caballo de Troya / objeciones~~ | — | — | **Sale del viaje** |
 | — | ~~Bori~~ | — | — | UGC/creadores, confirmado |
 
 **Por qué estos cambios:**
-- **Dos cierres sobre un cuerpo.** El VSL de Shadow y el del Sistema Operador comparten
-  problema, mecanismo y prueba (~70 %). Grabas el cuerpo una vez y dos cierres distintos.
-  Te ahorra un video entero. Pero la oferta del Sistema Operador sigue en borrador: si no
-  la apruebas antes del miércoles, NO grabes ese cierre (un VSL con precio o promesa
-  equivocados es metraje muerto).
+- **Un VSL sin precios sirve para las dos ofertas.** El video vende el problema, el
+  mecanismo, la prueba y a quién es para; el precio lo da el closer en la llamada, después
+  de construir el valor (tu regla con los closers desde el 18/07). El cierre manda a aplicar
+  y en la llamada se decide si va a la consultoría de $3,500 o al Sistema Operador. Así la
+  oferta del Sistema Operador puede cambiar sin que el video quede viejo. Lo que sí se dice:
+  "no es para todos, es una inversión seria" (filtra sin dar número).
 - **El Caballo de Troya no va al Ritz.** Las objeciones funcionan mejor en "yapping" (crudo,
   sin producción). Se graba en la oficina cualquier martes. Gastar la suite en eso es
   desperdiciar el fondo.
@@ -53,7 +53,7 @@ el martes** y mira hacia dónde da la terraza (si el sol se mete sobre el agua o
 |---|---|---|
 | 2:00-2:30 | Check-in. Recorrer la suite: dónde está la mejor ventana, apagar AC y probar audio en cada cuarto. Letrero de no molestar. | 1 |
 | 2:30-3:00 | **B-roll de llegada** (la suite intacta no vuelve a verse así) + calentamiento frente a cámara | 1 |
-| 3:00-5:00 | **VSL Shadow** — cuerpo + cierre A (+ cierre B si aplica). Teleprompter. Descansos cada 25 min. | 1 |
+| 3:00-5:00 | **VSL Shadow** (sin precios). Teleprompter. Descansos cada 25 min. Grabar 2 versiones del cierre (más directo / más suave). | 1 |
 | 5:00-5:30 | Descanso, agua, cambio de ropa | 2 |
 | 5:30-6:45 | **GOLDEN HOUR = SOLO B-roll.** Terraza, playa, caminar, silueta, océano. Cero tomas hablando: esta luz no se repite. | 2 |
 | 6:45-7:30 | Hora azul: laptop con luz de pantalla en la terraza, llamada simulada, luces encendiéndose | 2 |
@@ -75,8 +75,7 @@ el martes** y mira hacia dónde da la terraza (si el sol se mete sobre el agua o
 
 Total: ~4.5 h hablando a cámara · ~4 h de B-roll · ~45 min de fotos · ~45 min de voz.
 
-**Si se atrasa algo, se cae en este orden:** cierre B → 90 s de AIB → segunda tanda de B-roll
-de trabajo. El VSL de Shadow, el de AIB y Mi historia no se tocan.
+**Si se atrasa algo, se cae en este orden:** 90 s de AIB → segunda tanda de B-roll de trabajo. El VSL de Shadow, el de AIB y Mi historia no se tocan.
 
 ---
 
@@ -170,7 +169,6 @@ el mesero (sin cara) · agua · postre · servilleta
 | Lun 5 | Este plan + 3 decisiones (abajo) | Elvin |
 | Lun 5 | **Probar el micrófono y la cámara HOY**, no el miércoles | Elvin |
 | Mar 6 AM | Guion del VSL Shadow (palabra por palabra, para teleprompter) | Claude |
-| Mar 6 AM | Cierre B del Sistema Operador (solo si se aprueba la oferta) | Claude |
 | Mar 6 AM | Guion AIB visión + los 90 s (las 4 líneas) | Claude |
 | Mar 6 AM | Escaleta de Mi historia (bullets, no guion) | Claude |
 | Mar 6 AM | Las 50 líneas de voz en off, impresas | Claude |
@@ -200,7 +198,27 @@ power bank · paño para el lente · cinta gaffer · los 4 looks + 2 camisas.
 - La biblioteca de B-roll + voz se sube con los nombres de la 3d para que todo el equipo de
   agentes la use.
 
-## Decisiones pendientes de Elvin
-1. ¿Apruebas la oferta del Sistema Operador ($15K / 10 fundadores a $9,997) para grabar su cierre?
-2. ¿Vas solo o alguien opera la cámara? (cambia la lista de B-roll)
-3. ¿Qué equipo tienes ya? (micrófono lavalier y teleprompter, sobre todo)
+## Duraciones (Elvin, 5/oct)
+VSL Shadow 10-12 min, máximo 15 · AI Borinquen 6-8 min · Mi historia 15-20 min · 90 s de
+AIB igual. Guiones escritos a ese largo (≈140 palabras por minuto leído en teleprompter).
+
+## Decisiones (5/oct)
+1. **VSL sin precios.** Elvin no tiene clara la oferta del Sistema Operador ni si poner precios
+   en un VSL oculto → un solo VSL, sin precios, cierre a aplicar; el closer ubica en la
+   consultoría o el Sistema Operador. Sin cierre B.
+2. **Va con alguien operando la cámara** → se suman las tomas en movimiento (abajo).
+3. **Equipo confirmado:** lavalier, teleprompter, luz portátil, cámara aparte del iPhone.
+   (Igual: lavalier de respaldo o grabar audio también en el teléfono.)
+
+## Tomas extra con operador de cámara (+15)
+Seguirte caminando por el pasillo (de espaldas) · seguirte en la playa al golden hour ·
+por encima del hombro: la laptop, la libreta, el celular · entrar contigo a la suite ·
+plano lateral caminando con el teléfono · tú en la terraza desde adentro (marco de la
+puerta) · plano que abre desde las olas y termina en ti · reunión desde 2 ángulos ·
+tú escribiendo en la pizarra o libreta con la cámara rodeándote · revelar el mar desde
+detrás de ti · tú bajando escaleras de frente · plano cenital de la mesa de trabajo ·
+silueta al atardecer con cámara en movimiento · reacción mirando la pantalla (cara) ·
+salida del hotel con la maleta.
+
+El operador también hace el **segundo ángulo** de los videos a cámara (plano cerrado de
+lado) para que el editor tenga cortes sin jump cuts.
