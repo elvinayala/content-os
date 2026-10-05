@@ -8,7 +8,7 @@ Diez mil dólares al mes son cuatro clientes que te dejen dos mil quinientos cad
 Tres clientes tuyos a tres mil quinientos. O cuatro a dos mil quinientos. Haz esa cuenta. Si con cuatro clientes llegas a tu número, ¿por qué llevas meses persiguiendo audiencia?
 
 Y la respuesta tiene culpables: todos los que te han dicho que para hacer dinero por internet tienes que mostrar la cara. O que la única vía es hacer contenido: publicar todos los días, hacerte viral, construir tu marca.
-Mentira. La cara no es un requisito, y el contenido no es la única vía. Viral no es ventas: un reel de quinientas mil vistas te trae curiosos, y los curiosos no pagan.
+Mentira. La cara no es un requisito, y el contenido no es la única vía. Si quieres dar la cara, hazlo; pero la mayoría de las personas prefiere estar detrás de escena, y está bien. Viral no es ventas: un reel de quinientas mil vistas te trae curiosos, y los curiosos no pagan.
 
 Mira cómo se ve eso desde adentro.
 Te paras frente a una cámara aunque no quieres. Grabas, editas, buscas ideas, publicas todos los días. Te escriben tres personas a la semana y ninguna compra. De tres mil seguidores, trescientos ven tu historia y cinco te escriben; los otros doscientos noventa y cinco nunca supieron lo que ofreces. Y todo depende de ti: de tu cara, de tu energía y del algoritmo.
@@ -18,7 +18,7 @@ El problema no es que no trabajes. Es que estás trabajando en lo que no mueve e
 
 Y aquí está la oportunidad: en vez de competir contra los creadores, trabaja con ellos. Cada día salen más de diez mil creadores nuevos. Hoy hay más de cincuenta millones, y la economía de los creadores ya vale más de doscientos cincuenta mil millones de dólares, camino a casi quinientos mil millones en dos mil veintisiete.
 Pero según los estudios del sector, la mitad gana menos de quince mil dólares al año, y solo cuatro de cada cien pasan de cien mil. ¿Por qué? Porque tienen la audiencia y no saben de sistemas. No saben monetizarla. Y no tienen quién les instale cómo convertir esa audiencia en dinero.
-Hay muchísimos creadores y poquísimos operadores de sistemas. Esa diferencia es tu negocio. La cara es de ellos. Tú pones el sistema.
+Hay muchísimos creadores y poquísimos operadores de sistemas. Esa diferencia es tu negocio. Que sean ellos los que graben. Tú construyes lo que los hace ganar.
 
 ¿A quién le instalas esto? A coaches, mentores, infoproductores y dueños de agencia. A cualquier persona que sea experta en algo y pueda vender ese conocimiento online. Y a todos los creadores de contenido e influencers: la audiencia ya la tienen; lo que les falta es el sistema.
 ¿A quién no? A quien todavía no tiene nada que ofrecer, ni a quien no quiere vender online.
@@ -33,13 +33,13 @@ Y sobre los tres, la inteligencia artificial haciendo el trabajo repetitivo. No 
 ¿Por qué escucharme? Te cuento cómo empecé, rápido.
 En dos mil veintiuno, en plena pandemia, decidí aprender una habilidad: marketing. Aprendí a vender por internet. En dos mil veintidós armé mi propia estrategia y mi propio embudo, y llegué a más de veinte mil dólares al mes en e-commerce. De ahí pasé a ayudar a negocios de mi ciudad, y de ahí creé Level Up Media, la agencia número uno de marketing en Puerto Rico, con más de doscientos cincuenta negocios ayudados a escalar con esa estrategia.
 Entre dos mil veintitrés y dos mil veinticinco pagué más de cien mil dólares en mentorías con referentes de los negocios digitales, como Ramiro Cubría, Joe Lajara y Oscar Moisés, para aprender más allá del marketing: otros embudos, otros sistemas, cómo escalar a más de cien mil dólares al mes. Desde dos mil veinticuatro, inteligencia artificial: hoy no basta con traer leads, hay que responderlos, y las agencias que se quedan ponen un agente de IA en cada canal de ventas. Y operaciones: un sistema de onboarding con el que hemos atendido a más de cien dueños de negocio a la vez.
-No te enseño lo que leí. Te enseño lo que apliqué. Y el sistema sirve igual para un negocio digital que para uno local: tu primer cliente puede estar a cinco minutos de tu casa. Y no tienes que mostrar la cara.
+No te enseño lo que leí. Te enseño lo que apliqué. Y el sistema sirve igual para un negocio digital que para uno local: tu primer cliente puede estar a cinco minutos de tu casa. Y no tienes que mostrar la cara; y si quieres grabar tu propio contenido, el sistema también es tuyo.
 
 Y ahora, la prueba.
 Este sistema ya ha ayudado a escalar agencias de marketing a más de cien mil dólares al mes. Ese es el foco. Pero no se queda ahí: negocios físicos, como el restaurante Tinos, que llevamos a cien mil dólares al mes; agencias de tecnología, a veinte mil al mes. Y médicos: un sistema de marketing e inteligencia artificial que les consigue clientes, les responde y les agenda las citas en automático. Más de veinticinco profesionales de la salud, y a varios les permitió abrir su oficina de cero con la agenda llena, como los doctores Marvin Argüello y Bryan Vega.
 Mismo sistema. Nichos distintos. Eso es lo que hago yo con mis clientes. Lo que te enseño aquí es cómo conseguir clientes como estos y cómo darles ese resultado.
 
-Y esto es lo que de verdad te llevas: libertad. Libertad financiera, porque ya no dependes de un solo cliente ni de un solo sueldo: tienes socios que venden contigo y clientes que te pagan cada mes. Y libertad de tiempo: como operador estratégico, no eres empleado de nadie. Tú escoges con quién trabajas y desde dónde. Sin jefe, sin horario de oficina y sin mostrar la cara.
+Y esto es lo que de verdad te llevas: libertad. Libertad financiera, porque ya no dependes de un solo cliente ni de un solo sueldo: tienes socios que venden contigo y clientes que te pagan cada mes. Y libertad de tiempo: como operador estratégico, no eres empleado de nadie. Tú escoges con quién trabajas y desde dónde. Sin jefe y sin horario de oficina.
 
 Esto es exactamente lo que consigues.
 El programa completo para conseguir tu primer cliente: cómo escoger tu nicho, que tenga dolor y dinero; cómo armar tu oferta; y cómo asociarte con un creador o un negocio local para que sea tu primer caso de éxito. Y cómo funciona el modelo: eres socio estratégico, no empleado. Tú negocias el acuerdo con cada creador, entre el treinta y el cincuenta por ciento del producto que venden juntos: el treinta si le instalas una parte del sistema, el cincuenta si le instalas todos. Y con las mismas habilidades puedes tener, además, clientes privados que te paguen un fee mensual. Los tres sistemas, paso a paso, con las plantillas, los guiones y los abridores. Sesiones en grupo cada semana, sesiones uno a uno conmigo y acompañamiento hasta que cierres tu primer cliente.
