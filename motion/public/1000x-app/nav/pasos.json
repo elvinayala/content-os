@@ -1,0 +1,323 @@
+{
+ "modos": [
+  {
+   "imagen": "1000x-app/nav/modos-1.png",
+   "cursor": {
+    "x": 0.107,
+    "y": 0.167
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0,
+    "y": 0.08,
+    "w": 0.54,
+    "h": 0.15
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/modos-2.png",
+   "cursor": {
+    "x": 0.111,
+    "y": 0.235
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0,
+    "y": 0.15,
+    "w": 0.54,
+    "h": 0.14
+   }
+  }
+ ],
+ "grafico": [
+  {
+   "imagen": "1000x-app/nav/grafico-3.png",
+   "cursor": {
+    "x": 0.063,
+    "y": 0.284
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.006,
+    "y": 0.334,
+    "w": 0.941,
+    "h": 0.76
+   }
+  }
+ ],
+ "guardian": [
+  {
+   "imagen": "1000x-app/nav/guardian-4.png",
+   "cursor": {
+    "x": 0.963,
+    "y": 0.228
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.78,
+    "y": 0.13,
+    "w": 0.24,
+    "h": 0.44
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/guardian-5.png",
+   "cursor": {
+    "x": 0.783,
+    "y": 0.289
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.69,
+    "y": 0.05,
+    "w": 0.31,
+    "h": 0.45
+   }
+  }
+ ],
+ "ejecucion": [
+  {
+   "imagen": "1000x-app/nav/ejecucion-6.png",
+   "cursor": {
+    "x": 0.963,
+    "y": 0.288
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.78,
+    "y": 0.13,
+    "w": 0.24,
+    "h": 0.44
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/ejecucion-7.png",
+   "cursor": {
+    "x": 0.859,
+    "y": 0.528
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.706,
+    "y": 0.225,
+    "w": 0.305,
+    "h": 0.574
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/ejecucion-8.png",
+   "cursor": {
+    "x": 0.809,
+    "y": 0.497
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.64,
+    "y": 0,
+    "w": 0.38,
+    "h": 0.79
+   }
+  }
+ ],
+ "radar": [
+  {
+   "imagen": "1000x-app/nav/radar-9.png",
+   "cursor": {
+    "x": 0.963,
+    "y": 0.468
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.78,
+    "y": 0.13,
+    "w": 0.24,
+    "h": 0.54
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/radar-10.png",
+   "cursor": {
+    "x": 0.949,
+    "y": 0.616
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.722,
+    "y": 0.505,
+    "w": 0.283,
+    "h": 0.362
+   }
+  }
+ ],
+ "lyra": [
+  {
+   "imagen": "1000x-app/nav/lyra-11.png",
+   "cursor": {
+    "x": 0.953,
+    "y": 0.96
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.58,
+    "y": 0.58,
+    "w": 0.44,
+    "h": 0.44
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/lyra-12.png",
+   "cursor": {
+    "x": 0.789,
+    "y": 0.941
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.676,
+    "y": 0.36,
+    "w": 0.324,
+    "h": 0.64
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/lyra-13.png",
+   "cursor": {
+    "x": 0.926,
+    "y": 0.941
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.676,
+    "y": 0.5,
+    "w": 0.324,
+    "h": 0.5
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/lyra-14.png",
+   "cursor": null,
+   "clic": false,
+   "zoom": {
+    "x": 0.698,
+    "y": 0.301,
+    "w": 0.288,
+    "h": 0.364
+   }
+  }
+ ],
+ "lab": [
+  {
+   "imagen": "1000x-app/nav/lab-15.png",
+   "cursor": {
+    "x": 0.963,
+    "y": 0.408
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.78,
+    "y": 0.13,
+    "w": 0.24,
+    "h": 0.54
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/lab-16.png",
+   "cursor": {
+    "x": 0.792,
+    "y": 0.461
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0.722,
+    "y": 0.239,
+    "w": 0.283,
+    "h": 0.291
+   }
+  }
+ ],
+ "estrategias": [
+  {
+   "imagen": "1000x-app/nav/estrategias-17.png",
+   "cursor": {
+    "x": 0.477,
+    "y": 0.237
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0,
+    "y": 0.1,
+    "w": 0.99,
+    "h": 0.36
+   }
+  }
+ ],
+ "psicologia": [
+  {
+   "imagen": "1000x-app/nav/psicologia-18.png",
+   "cursor": {
+    "x": 0.088,
+    "y": 0.631
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0,
+    "y": 0.43,
+    "w": 0.99,
+    "h": 0.34
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/psicologia-19.png",
+   "cursor": null,
+   "clic": false,
+   "zoom": {
+    "x": 0,
+    "y": 0.08,
+    "w": 0.99,
+    "h": 0.79
+   }
+  }
+ ],
+ "journal": [
+  {
+   "imagen": "1000x-app/nav/journal-20.png",
+   "cursor": {
+    "x": 0.888,
+    "y": 0.262
+   },
+   "clic": false,
+   "zoom": {
+    "x": 0,
+    "y": 0.13,
+    "w": 0.99,
+    "h": 0.54
+   }
+  }
+ ],
+ "riesgo": [
+  {
+   "imagen": "1000x-app/nav/riesgo-21.png",
+   "cursor": {
+    "x": 0.5,
+    "y": 0.741
+   },
+   "clic": true,
+   "zoom": {
+    "x": 0.195,
+    "y": 0.616,
+    "w": 0.61,
+    "h": 0.251
+   }
+  },
+  {
+   "imagen": "1000x-app/nav/riesgo-22.png",
+   "cursor": null,
+   "clic": false,
+   "zoom": {
+    "x": 0.25,
+    "y": 0.2,
+    "w": 0.5,
+    "h": 0.46
+   }
+  }
+ ]
+}

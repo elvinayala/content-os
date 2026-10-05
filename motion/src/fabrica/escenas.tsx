@@ -1028,6 +1028,98 @@ const Pantalla: React.FC<Extract<Escena, { tipo: "pantalla" }>> = ({ titulo, sub
   );
 };
 
+
+/** Recorrido navegando la app: capturas reales en una laptop, cursor que va al botón y hace clic, la pantalla cambia
+ *  y la cámara se acerca a lo que se abrió. La cámara y el cursor viven en coordenadas de la captura (0-1). */
+type Cam = { s: number; tx: number; ty: number };
+const camara = (z: { x: number; y: number; w: number; h: number } | null | undefined, W: number, H: number): Cam => {
+  if (!z) return { s: 1, tx: 0, ty: 0 };
+  const s = Math.max(1, Math.min(3.2, Math.min(1 / z.w, 1 / z.h) * 0.94));
+  const cx = (z.x + z.w / 2) * W * s, cy = (z.y + z.h / 2) * H * s;
+  return { s, tx: Math.min(0, Math.max(W - W * s, W / 2 - cx)), ty: Math.min(0, Math.max(H - H * s, H / 2 - cy)) };
+};
+const Navegar: React.FC<Extract<Escena, { tipo: "navegar" }>> = ({ titulo, sub, puntos = [], pasos }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, w, h } = useLienzo();
+  const W = v ? 960 : 1120, H = W * (900 / 1440);
+  // en qué paso vamos
+  let ini = 0, i = 0;
+  while (i < pasos.length - 1 && f >= ini + pasos[i].dur) { ini += pasos[i].dur; i++; }
+  const paso = pasos[i], lt = f - ini, d = paso.dur;
+  const prev = i > 0 ? pasos[i - 1] : null;
+  // cámara: del paso anterior a este (la del primer paso arranca abierta)
+  const c0 = camara(prev ? prev.zoom : null, W, H), c1 = camara(paso.zoom, W, H);
+  const k = tw(lt, 2, Math.max(8, Math.round(d * 0.42)), 0, 1, suave);
+  const cam = { s: c0.s + (c1.s - c0.s) * k, tx: c0.tx + (c1.tx - c0.tx) * k, ty: c0.ty + (c1.ty - c0.ty) * k };
+  // cursor: desde donde quedó (o desde abajo a la derecha) hasta su objetivo
+  const ultimo = (() => { for (let j = i - 1; j >= 0; j--) if (pasos[j].cursor) return pasos[j].cursor!; return { x: 0.62, y: 0.82 }; })();
+  const objetivo = paso.cursor ?? ultimo;
+  const clicEn = paso.clic ? d - 12 : -999;
+  const m = tw(lt, Math.round(d * 0.12), paso.clic ? clicEn - 6 : Math.round(d * 0.6), 0, 1, suave);
+  const cur = { x: ultimo.x + (objetivo.x - ultimo.x) * m, y: ultimo.y + (objetivo.y - ultimo.y) * m };
+  const px = cam.tx + cur.x * W * cam.s, py = cam.ty + cur.y * H * cam.s;
+  const presion = paso.clic ? interpolate(lt, [clicEn - 2, clicEn, clicEn + 5], [1, 0.82, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
+  // la onda del clic sigue viva al arrancar el paso siguiente
+  const ondaDesde = paso.clic ? lt - clicEn : prev?.clic ? lt + 12 : -1;
+  const onda = ondaDesde >= 0 && ondaDesde < 22 ? ondaDesde / 22 : -1;
+  const ondaPos = paso.clic ? { x: px, y: py } : { x: cam.tx + (prev?.cursor?.x ?? 0) * W * cam.s, y: cam.ty + (prev?.cursor?.y ?? 0) * H * cam.s };
+  const cruce = prev ? tw(lt, 0, 6) : 1;
+  const verCursor = !!(paso.cursor || prev?.cursor);
+  const entra = rebote(f, 0, 22);
+  const captura = (src: string, op: number) => (
+    <Img src={staticFile(src)} style={{ position: "absolute", left: 0, top: 0, width: W, height: H, opacity: op,
+      transform: `translate(${cam.tx}px, ${cam.ty}px) scale(${cam.s})`, transformOrigin: "0 0" }} />
+  );
+  const aparato = (
+    <div style={{ position: "relative", transform: `translateY(${(1 - entra) * 140}px) rotateX(${(1 - entra) * 18}deg)`, opacity: Math.min(1, entra * 1.4),
+      padding: "18px 18px 22px", borderRadius: 22, background: "linear-gradient(145deg, #2a2f45, #0b0d16)",
+      boxShadow: `0 50px 140px rgba(0,0,0,0.6), 0 0 0 2px ${t.borde}, 0 0 90px ${t.acento}22` }}>
+      <div style={{ width: W, height: H, borderRadius: 10, overflow: "hidden", position: "relative", background: t.fondo }}>
+        {prev && cruce < 1 && captura(prev.imagen, 1)}
+        {captura(paso.imagen, cruce)}
+        {onda >= 0 && <div style={{ position: "absolute", left: ondaPos.x, top: ondaPos.y, width: 120, height: 120, marginLeft: -60, marginTop: -60, borderRadius: "50%",
+          border: `4px solid ${t.acento}`, transform: `scale(${0.2 + onda * 1.1})`, opacity: 1 - onda, boxShadow: `0 0 30px ${t.acento}` }} />}
+        {verCursor && (
+          <svg width={40} height={48} viewBox="0 0 20 24" style={{ position: "absolute", left: px - 4, top: py - 2, transform: `scale(${presion})`, transformOrigin: "4px 2px", filter: "drop-shadow(0 4px 8px rgba(0,0,0,.6))" }}>
+            <path d="M2 1 L2 19 L6.6 14.8 L9.6 21.6 L12.6 20.3 L9.7 13.6 L16 13.4 Z" fill="#fff" stroke="#0b0d16" strokeWidth={1.4} strokeLinejoin="round" />
+          </svg>
+        )}
+      </div>
+      <div style={{ position: "absolute", left: -60, right: -60, bottom: -26, height: 26, borderRadius: "0 0 26px 26px", background: "linear-gradient(180deg, #3a3f55, #151826)" }} />
+    </div>
+  );
+  const textos = (
+    <div style={{ display: "flex", flexDirection: "column", gap: v ? 18 : 22, alignItems: v ? "center" : "flex-start", maxWidth: v ? w - 160 : 560, width: v ? undefined : 560, flexShrink: 0 }}>
+      <Titular texto={titulo} entra={4} tam={ajustar([titulo], v ? w - 160 : 560, v ? 84 : 76)} alinear={v ? "center" : "left"} />
+      {sub && <div style={{ fontFamily: t.fuente, fontSize: v ? 36 : 29, color: t.gris, fontWeight: 500, opacity: tw(f, 14, 24), textAlign: v ? "center" : "left", lineHeight: 1.3 }}>{sub}</div>}
+      {puntos.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 6 }}>
+          {puntos.map((p, j) => {
+            const e = tw(f, 20 + j * 7, 30 + j * 7);
+            return (
+              <div key={j} style={{ display: "flex", alignItems: "center", gap: 14, fontFamily: t.fuente, fontSize: v ? 34 : 29, fontWeight: 600, color: t.texto, opacity: e, transform: `translateX(${(1 - e) * -30}px)` }}>
+                <span style={{ width: 14, height: 14, borderRadius: 7, background: t.gradiente, flexShrink: 0 }} />{p}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+  const escalaAparato = v ? Math.min(1, (h - 250 - 380 - 330) / H) : Math.min(1, (h - 160) / (H + 40));
+  let acc = 0;
+  const sonidos = pasos.map((ps, j) => { const en = acc; acc += ps.dur; return ps.clic ? <Sfx key={j} src="clic.mp3" en={en + ps.dur - 12} vol={0.55} /> : null; });
+  return (
+    <AbsoluteFill style={{ display: "flex", flexDirection: v ? "column" : "row", alignItems: "center", justifyContent: "center", gap: v ? 40 : 60, padding: v ? "230px 60px 330px" : "60px 70px", perspective: 1600 }}>
+      {textos}
+      <div style={{ transform: `scale(${escalaAparato})`, transformOrigin: v ? "top center" : "center", height: v ? H * escalaAparato + 40 : undefined }}>{aparato}</div>
+      <Sfx src="whoosh.mp3" en={0} vol={0.3} />
+      {sonidos}
+    </AbsoluteFill>
+  );
+};
+
 /** Gráfico de velas que se forma en vivo; el radar detecta la señal y marca entrada, SL y TP. SIMULACIÓN. */
 const Grafico: React.FC<Extract<Escena, { tipo: "grafico" }>> = ({ titulo, sub, par, modo, puntos = [], dur }) => {
   const f = useCurrentFrame();
@@ -1247,6 +1339,7 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "voz": return <Voz {...escena} />;
     case "agenda": return <Agenda {...escena} />;
     case "pantalla": return <Pantalla {...escena} />;
+    case "navegar": return <Navegar {...escena} />;
     case "grafico": return <Grafico {...escena} />;
     case "terminal": return <Terminal {...escena} />;
     case "retrato": return <Retrato {...escena} />;

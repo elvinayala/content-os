@@ -39,6 +39,7 @@ Este método produjo el 27/sep/2026 más de 80 videos (Level Up, Bori, AI Borinq
   | flyers / aprobacion | generador de piezas y tarjeta "Aprobar / No" con cursor |
   | rompecabezas / semanas / dato / cita | piezas que se juntan · semanas perdidas · stat en anillo · testimonio |
   | pantalla | **captura REAL de una app** en laptop o teléfono, con zoom (`foco`) y viñetas |
+  | navegar | **recorrido navegando la app**: capturas reales paso a paso, cursor que va al botón, clic con onda + sonido y la cámara se acerca a lo que se abrió (`pasos: [{imagen, dur, cursor, clic, zoom}]`; ej. `1000x-tour`) |
   | grafico / terminal | trading: velas + radar (marcado SIMULACIÓN) · log que se escribe |
   | cierre | firma de la marca + CTA con brillo + url + nota legal |
   Escena nueva que haga falta → se agrega a la fábrica (tipo en `tipos.ts` + componente), no a un video suelto.

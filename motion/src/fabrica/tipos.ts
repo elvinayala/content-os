@@ -6,6 +6,9 @@ import type { TemaCliente } from "./cliente";
 
 export type Formato = "9:16" | "16:9" | "1:1";
 
+/** Un paso de la escena "navegar". Coordenadas en fracción de la captura (0-1). */
+export type PasoNav = { imagen: string; dur: number; cursor?: { x: number; y: number } | null; clic?: boolean; zoom?: { x: number; y: number; w: number; h: number } | null };
+
 export type Escena = { dur: number } & (
   | { tipo: "gancho"; lineas: string[]; sub?: string; alarma?: boolean; etiqueta?: string; logo?: boolean }
   | { tipo: "numero"; etiqueta: string; desde: number; hasta: number; prefijo?: string; sufijo?: string; antes?: string; quien?: string; nota?: string }
@@ -29,6 +32,9 @@ export type Escena = { dur: number } & (
   | { tipo: "pantalla"; titulo: string; sub?: string; imagen: string; dispositivo: "laptop" | "telefono"; puntos?: string[];
       /** Zona a la que acerca la cámara, en fracción de la captura (0-1). */
       foco?: { x: number; y: number; w: number; h: number } }
+  /** Recorrido "navegando" la app en una laptop: cada paso es una captura REAL; el cursor va al botón, hace clic y la
+   *  cámara se acerca a `zoom`. La suma de `pasos[].dur` es la duración de la escena (usar `navegar()` en anuncios.ts). */
+  | { tipo: "navegar"; titulo: string; sub?: string; puntos?: string[]; pasos: PasoNav[] }
   | { tipo: "grafico"; titulo: string; sub?: string; par: string; modo: "autopilot" | "radar"; puntos?: string[] }
   | { tipo: "terminal"; titulo?: string; ventana: string; lineas: { t: string; tipo?: "ok" | "alerta" | "dim" | "info" }[] }
   /** Foto REAL de la persona/negocio (con su OK) con Ken Burns + titular y puntos al lado (16:9) o debajo (9:16). */
