@@ -28,6 +28,7 @@
 - [Glenn International — demo AutoFlow](glenn-international-demo.md) — prospecto grande; demos chat + voz bilingües
 - [Dr. Alfred — demo AutoFlow](dr-alfred-demo.md) — medspa prospecto; demo chat (Camila) en Netlify
 - [Voz — stack 2026](voz-stack-2026.md) — Retell gana por transfer; ElevenLabs mejor voz sin transfer
+- [AutoFlow · canales por Zernio](autoflow-zernio-canales.md) — Zernio SIEMPRE (una sola API) salvo clientes médicos por HIPAA → Meta oficial en GHL + Retell; falta la API key de AIB
 - [Memoria compuesta](memoria-compuesta.md) — vault de entidades + síntesis destilada para Jarvis y la fábrica
 - [Alertas de clientes críticos](alertas-clientes-criticos.md) — cruzar con vault/entidades antes de alertar (feedback de Carilin)
 - [Shadow Operator — marca](shadow-operator-marca.md) — valor + personalidad + pepitas; consultoría $3,500 + Skool $55
