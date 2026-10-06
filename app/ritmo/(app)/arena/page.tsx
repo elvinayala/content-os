@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Alerta, Barra, Bonos, Carrera, MiDiario } from "@/components/ritmo/arena";
+import { Alerta, Bonos, MiDiario } from "@/components/ritmo/arena";
+import { Avatar, BarraMeta, CarreraVivo, MarcadorEquipo, Pulso } from "@/components/ritmo/arena-vivo";
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
-import { ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, RANGOS, rankingVentas, TASAS_VENTAS, tasasVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
+import { CLOSE_RATE, ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, METAS_DIARIAS, RANGOS, rankingVentas, TASAS_VENTAS, tasasVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -33,7 +34,10 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
   const empresa = pedida && a.empresas.includes(pedida) ? pedida : a.empresas[0];
   const [ar, bonosFilas] = await Promise.all([armarArena(u, a, empresa, sp.r), bonosDe(empresa).catch(() => [])]);
   // Rango de los KPIs (6/oct, Elvin): hoy, ayer, últimos 7/30 días, este mes o el pasado. Comisiones y carrera siguen siendo del mes.
-  const rangos = (ancla: string) => RANGOS.map((x) => ({ id: x.id, t: x.t, href: `/ritmo/arena?${a.empresas.length > 1 ? `e=${empresa}&` : ""}r=${x.id}#${ancla}` }));
+  const rangos = (ancla: string) => RANGOS.map((x) => ({ id: x.id, t: x.t, href: `/ritmo/arena?${a.empresas.length > 1 ? `e=${empresa}&` : ""}r=${x.id}${ancla ? `#${ancla}` : ""}` }));
+  const hoyD = new Date(`${ar.hoy}T12:00:00Z`);
+  const mesNombre = hoyD.toLocaleDateString("es-PR", { month: "long", year: "numeric", timeZone: "UTC" }).replace(/^./, (c) => c.toUpperCase());
+  const diasFaltan = new Date(Date.UTC(hoyD.getUTCFullYear(), hoyD.getUTCMonth() + 1, 0)).getUTCDate() - hoyD.getUTCDate();
   const d = await db();
   const nombres = new Map((await d.select({ id: pulseUsers.id, nombre: pulseUsers.nombre }).from(pulseUsers)).map((x) => [x.id, x.nombre]));
   const gestiona = a.director || a.direccion;
@@ -42,61 +46,52 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="ceja">Arena · ventas</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">La carrera de {NOMBRE[empresa]}</h1>
-        </div>
-        {a.empresas.length > 1 ? (
-          <div className="flex gap-1 rounded-full bg-white/[0.04] p-1 text-sm">
+      {a.empresas.length > 1 ? (
+        <div className="-mb-3 flex justify-end">
+          <div className="flex gap-1 rounded-full bg-white/[0.04] p-1 text-sm ring-1 ring-border">
             {a.empresas.map((x) => (
-              <Link key={x} href={`/ritmo/arena?e=${x}`} className={cn("rounded-full px-3 py-1", x === empresa ? "bg-primary/15 text-primary" : "text-muted-foreground")}>
+              <Link key={x} href={`/ritmo/arena?e=${x}${sp.r ? `&r=${sp.r}` : ""}`} className={cn("rounded-full px-3 py-1 transition", x === empresa ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground")}>
                 {NOMBRE[x]}
               </Link>
             ))}
           </div>
-        ) : null}
-      </div>
-
-      {ar.hoja.error ? (
-        <div className="panel p-4 text-sm text-muted-foreground">
-          📄 {ar.hoja.error} {gestiona ? "Cuando la hoja esté conectada, la carrera y las comisiones se llenan solas." : "En cuanto esté, aquí sale todo."}
         </div>
       ) : null}
+
+      <MarcadorEquipo
+        empresa={NOMBRE[empresa]}
+        mesNombre={mesNombre}
+        diasFaltan={diasFaltan}
+        conectada={!ar.hoja.error}
+        e={{ hoy: e.hoy, semana: e.semana, mes: e.mes, nuevasMes: e.nuevasMes, metaDia: e.metaDia, metaSemana: e.metaSemana, mesTotal: e.metas.mesTotal, mesNuevas: e.metas.mesNuevas, ritmoMes: e.ritmoMes }}
+        escalones={gestiona && ESCALONES_DIRECTOR[empresa] ? escalones(e.nuevasMes, ESCALONES_DIRECTOR[empresa]!).metas : null}
+        rangos={rangos("")}
+        rangoId={ar.rango.id}
+      />
       {e.alerta && !ar.hoja.error ? <Alerta nivel={e.alerta.nivel!} texto={e.alerta.texto} /> : null}
 
-      <section className="panel flex flex-col gap-4 p-5">
-        <h2 className="text-sm font-semibold">Meta del equipo</h2>
-        <Barra grande valor={e.mes} meta={e.metas.mesTotal} etiqueta="Cash collected del mes" />
-        {e.metas.mesNuevas ? <Barra valor={e.nuevasMes} meta={e.metas.mesNuevas} etiqueta="Ventas nuevas del mes" /> : null}
-        <Barra valor={e.semana} meta={e.metaSemana} etiqueta="Esta semana" />
-        <Barra valor={e.hoy} meta={e.metaDia} etiqueta="Hoy" />
-        <p className="text-[11px] text-muted-foreground">A este paso el mes cierra en {usd(e.ritmoMes)}.</p>
-        {gestiona && ESCALONES_DIRECTOR[empresa] ? <EscalonesDirector valor={e.nuevasMes} metas={ESCALONES_DIRECTOR[empresa]!} sinDatos={!!ar.hoja.error} /> : null}
-      </section>
-
       {ar.mio ? (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <MiMarcador rol={ar.mio.rol} m={ar.mio.m} goal={ar.mio.goal} />
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div className="lg:sticky lg:top-20">
+            <MiMarcador rol={ar.mio.rol} m={ar.mio.m} goal={ar.mio.goal} />
+          </div>
           <MiDiario
+            rol={ar.mio.rol}
             hoy={ar.hoy}
             ayer={ayer}
             kpis={KPIS_VENTAS[ar.mio.rol]}
             rango={ar.mio.rango}
-            tasas={tasasVentas(ar.mio.rol, ar.mio.rango)}
             diasRango={ar.mio.diasRango}
-            rangoId={ar.rango.id}
-            rangos={rangos("diario")}
+            etiqueta={ar.rango.etiqueta}
             dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, animo: x.animo, nota: x.nota }))}
           />
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {ROLES.map((r) => (
-          <Carrera key={r.id} titulo={r.t} meta={null} corredores={ar.carreras[r.id].map((c) => ({ ...c, yo: c.userId === u.id }))} />
-        ))}
-      </div>
+      <Pulso pulso={ar.pulso} etiqueta={ar.rango.etiqueta} />
+
+
+      <CarreraVivo carreras={{ closer: ar.carreras.closer.map((c) => ({ ...c, yo: c.userId === u.id })), setter: ar.carreras.setter.map((c) => ({ ...c, yo: c.userId === u.id })), chatter: ar.carreras.chatter.map((c) => ({ ...c, yo: c.userId === u.id })) }} />
 
       <Bonos
         empresa={empresa}
@@ -106,23 +101,24 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         bonos={bonosFilas.map((b) => ({ id: b.id, titulo: b.titulo, detalle: b.detalle, monto: b.monto, rol: b.rol, desde: b.desde, hasta: b.hasta, estado: b.estado, ganador: b.ganadorId ? (nombres.get(b.ganadorId) ?? null) : null, creadoPor: b.creadoPor ? (nombres.get(b.creadoPor) ?? null) : null }))}
       />
 
-      {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} etiqueta={ar.rango.etiqueta} rangoId={ar.rango.id} rangos={rangos("ranking")} /> : null}
+      {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} etiqueta={ar.rango.etiqueta} /> : null}
 
       {gestiona && ar.kpisEquipo.length ? (
         <section id="kpis" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-semibold">KPIs del equipo · {ar.rango.etiqueta.toLowerCase()}</h2>
-            <SelectorRango rangos={rangos("kpis")} actual={ar.rango.id} />
+            <span className="text-[11px] text-muted-foreground">el más alto de cada columna brilla más</span>
           </div>
           {ROLES.map((r) => {
             const filas = ar.kpisEquipo.filter((x) => x.rol === r.id);
             if (!filas.length) return null;
             const cols = KPIS_VENTAS[r.id];
             const tasas = TASAS_VENTAS[r.id] ?? [];
+            const maxDe = Object.fromEntries(cols.map((c) => [c.id, Math.max(0, ...filas.map((x) => x.mes[c.id] ?? 0))]));
             return (
               <div key={r.id} className="overflow-x-auto">
                 <p className="mb-1 text-xs font-medium text-muted-foreground">{r.t}</p>
-                <table className="w-full min-w-[520px] text-sm">
+                <table className="w-full min-w-[520px] border-separate border-spacing-y-1 text-sm">
                   <thead className="text-left text-[11px] text-muted-foreground">
                     <tr>
                       <th className="sticky left-0 bg-card py-1.5 pr-3 font-normal">Persona</th>
@@ -136,13 +132,24 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
                       {r.id === "closer" ? <th className="py-1.5 text-right font-normal">Cash collected (mes)</th> : null}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border/60">
+                  <tbody>
                     {filas.map((x) => (
                       <tr key={x.userId}>
-                        <td className="sticky left-0 bg-card py-1.5 pr-3 whitespace-nowrap">{x.nombre}</td>
+                        <td className="sticky left-0 z-10 bg-card py-1.5 pr-3 whitespace-nowrap">
+                          <span className="flex items-center gap-2">
+                            <Avatar nombre={x.nombre} tamano={24} /> {x.nombre}
+                          </span>
+                        </td>
                         <td className="num py-1.5 pr-3 text-right font-mono text-muted-foreground">{x.dias}</td>
                         {cols.map((c) => (
-                          <td key={c.id} className="num py-1.5 pr-3 text-right font-mono">{c.dinero ? usd(x.mes[c.id] ?? 0) : (x.mes[c.id] ?? 0)}</td>
+                          <td key={c.id} className="num py-1 pr-1 text-right font-mono">
+                            <span
+                              className={cn("inline-block min-w-12 rounded-md px-2 py-1", (x.mes[c.id] ?? 0) && (x.mes[c.id] ?? 0) === maxDe[c.id] && "font-semibold text-primary")}
+                              style={{ background: maxDe[c.id] ? `color-mix(in oklch, var(--neon) ${Math.round(((x.mes[c.id] ?? 0) / maxDe[c.id]) * 22)}%, transparent)` : undefined }}
+                            >
+                              {c.dinero ? usd(x.mes[c.id] ?? 0) : (x.mes[c.id] ?? 0)}
+                            </span>
+                          </td>
                         ))}
                         {tasasVentas(r.id, x.mes).map((t) => (
                           <td key={t.id} className="num py-1.5 pr-3 text-right font-mono text-muted-foreground">{t.valor == null ? "—" : `${t.valor} %`}</td>
@@ -225,61 +232,78 @@ const NIVEL: Record<Nivel, { t: string; c: string }> = {
   "sin-datos": { t: "Sin diario", c: "bg-white/5 text-muted-foreground ring-border" },
 };
 
-function SelectorRango({ rangos, actual }: { rangos: { id: string; t: string; href: string }[]; actual: string }) {
-  return (
-    <div className="flex flex-wrap gap-1 text-[11px]">
-      {rangos.map((r) => (
-        <Link key={r.id} href={r.href} scroll={false} className={cn("rounded-full px-2.5 py-1 ring-1 transition", r.id === actual ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
-          {r.t}
-        </Link>
-      ))}
-    </div>
-  );
-}
+const MEDALLA = ["🥇", "🥈", "🥉"];
 
-function RankingVentas({ filas, etiqueta, rangoId, rangos }: { filas: Parameters<typeof rankingVentas>[0]; etiqueta: string; rangoId: string; rangos: { id: string; t: string; href: string }[] }) {
+function RankingVentas({ filas, etiqueta }: { filas: Parameters<typeof rankingVentas>[0]; etiqueta: string }) {
   const ranking = rankingVentas(filas);
   return (
-    <section id="ranking" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">Ranking de ventas · {etiqueta.toLowerCase()}</h2>
-          <SelectorRango rangos={rangos} actual={rangoId} />
-        </div>
+    <section id="ranking" className="panel flex scroll-mt-20 flex-col gap-5 p-5">
+      <div>
+        <h2 className="text-sm font-semibold">Ranking de ventas · {etiqueta.toLowerCase()}</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Promedio por día que llenó su diario en ese rango. Metas: setters 125 llamadas, 30 conectadas y 3–5 agendas al día · chatters 20–30 conversaciones (mínimo 15), 5–10 pases y 3–5 agendas · closers 30 % de close rate (menos de 20 % alerta roja, 40 % élite).
+          Promedio por día que llenó su diario en ese rango. La rayita blanca es la meta: setters 125 llamadas, 30 conectadas y 3–5 agendas · chatters 20–30 conversaciones (mínimo 15), 5–10 pases y 3–5 agendas · closers 30 % de close rate (élite 40 %).
         </p>
       </div>
       {ROLES.map((r) => {
         const del = ranking.filter((f) => f.rol === r.id);
         if (!del.length) return null;
+        const metas = METAS_DIARIAS[r.id] ?? {};
         return (
-          <div key={r.id} className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-muted-foreground">{r.t}</p>
-            <ol className="flex flex-col gap-2">
+          <div key={r.id} className="flex flex-col gap-2.5">
+            <p className="text-[11px] font-medium tracking-wider text-muted-foreground uppercase">{r.t}</p>
+            <ol className="grid gap-2.5 lg:grid-cols-2">
               {del.map((f) => (
-                <li key={f.userId} className="rounded-xl bg-white/[0.03] p-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="grid size-7 place-items-center rounded-full bg-white/5 text-xs font-bold">{f.posicion}</span>
-                    <span className="font-medium">{f.nombre}</span>
-                    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1", NIVEL[f.nivel].c)}>{NIVEL[f.nivel].t}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">{f.dias} {f.dias === 1 ? "día" : "días"} con diario{f.rol === "closer" ? ` · ${usd(f.cash)} cobrado` : ""}</span>
+                <li key={f.userId} className={cn("arena-tarjeta rounded-2xl bg-white/[0.03] p-4 ring-1 transition hover:bg-white/[0.045]", f.nivel === "rojo" ? "ring-red-500/25" : f.nivel === "elite" ? "ring-primary/40" : "ring-border/70")} style={{ animationDelay: `${(f.posicion - 1) * 0.06}s` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Avatar nombre={f.nombre} tamano={40} />
+                      <span className="absolute -right-1 -bottom-1 text-base">{f.nivel !== "sin-datos" && f.posicion <= 3 ? MEDALLA[f.posicion - 1] : ""}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">
+                        <span className="mr-1 font-mono text-xs text-muted-foreground">#{f.posicion}</span>
+                        {f.nombre}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {f.dias} {f.dias === 1 ? "día" : "días"} con diario{f.rol === "closer" ? ` · ${usd(f.cash)} cobrado` : ""}
+                      </p>
+                    </div>
+                    <span className={cn("shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1", NIVEL[f.nivel].c)}>{NIVEL[f.nivel].t}</span>
                   </div>
                   {f.indicadores.length ? (
-                    <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
-                      {f.indicadores.map((i) => (
-                        <span key={i.id} className={cn("rounded-lg px-2 py-1 ring-1", NIVEL[i.nivel].c)}>
-                          {i.nombre}: <b className="tabular-nums">{i.valor}{i.unidad === "%" ? " %" : ""}</b>
-                          {i.unidad === "/día" ? <span className="opacity-70"> /día · meta {i.meta}</span> : i.unidad === "%" ? <span className="opacity-70"> · meta {i.meta}</span> : null}
-                        </span>
-                      ))}
+                    <div className="mt-3 flex flex-col gap-2.5">
+                      {f.indicadores
+                        .filter((i) => i.unidad !== "total")
+                        .map((i) => {
+                          const m = metas[i.id];
+                          const meta = i.unidad === "%" ? CLOSE_RATE.super : (m?.meta ?? 1);
+                          const tope = i.unidad === "%" ? 50 : Math.max(m?.top ?? meta, meta) * 1.35;
+                          return (
+                            <div key={i.id}>
+                              <div className="mb-1 flex items-baseline justify-between text-xs">
+                                <span className="text-muted-foreground">{i.nombre}</span>
+                                <span className="font-mono">
+                                  <b>{i.valor}{i.unidad === "%" ? " %" : ""}</b>
+                                  <span className="text-muted-foreground"> {i.unidad === "/día" ? "/día" : ""} · meta {i.meta}</span>
+                                </span>
+                              </div>
+                              <BarraMeta valor={i.valor} meta={meta} tope={tope} nivel={i.nivel} />
+                            </div>
+                          );
+                        })}
                     </div>
                   ) : null}
-                  <ul className="mt-2 flex flex-col gap-0.5 text-xs text-muted-foreground">
-                    {f.recomendaciones.map((x) => (
-                      <li key={x}>→ {x}</li>
-                    ))}
-                  </ul>
+                  <details className="group mt-3">
+                    <summary className="cursor-pointer list-none text-[11px] text-primary/90 hover:text-primary">
+                      <span className="group-open:hidden">Ver recomendaciones ({f.recomendaciones.length}) →</span>
+                      <span className="hidden group-open:inline">Ocultar</span>
+                    </summary>
+                    <ul className="mt-1.5 flex flex-col gap-1 text-xs text-muted-foreground">
+                      {f.recomendaciones.map((x) => (
+                        <li key={x}>→ {x}</li>
+                      ))}
+                    </ul>
+                  </details>
                 </li>
               ))}
             </ol>
@@ -287,25 +311,5 @@ function RankingVentas({ filas, etiqueta, rangoId, rangos }: { filas: Parameters
         );
       })}
     </section>
-  );
-}
-
-// Metas del director de ventas: solo ventas nuevas cobradas este mes. Pequeño a propósito (referencia, no tarea).
-function EscalonesDirector({ valor, metas, sinDatos }: { valor: number; metas: number[]; sinDatos: boolean }) {
-  const e = escalones(valor, metas);
-  const k = (n: number) => `$${Math.round(n / 1000)}K`;
-  return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-white/[0.06] pt-3 text-[11px] text-muted-foreground">
-      <span>Metas del director · ventas nuevas</span>
-      {e.metas.map((m) => (
-        <span key={m.meta} className={cn("rounded-full px-2 py-0.5 font-mono", m.logrado && !sinDatos ? "bg-primary/15 text-primary" : "bg-white/[0.04]")}>
-          {m.logrado && !sinDatos ? "✓ " : ""}
-          {k(m.meta)}
-        </span>
-      ))}
-      <span className="text-foreground/80">
-        {sinDatos ? <span>El avance sale cuando la hoja de ventas esté conectada.</span> : e.siguiente ? <>Faltan <b className="font-mono font-semibold text-foreground">{usd(e.siguiente.falta)}</b> para la meta {e.siguiente.n} ({k(e.siguiente.meta)})</> : <b className="font-semibold text-primary">Las 3 metas cumplidas 🎉</b>}
-      </span>
-    </div>
   );
 }

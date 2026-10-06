@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Flag, Gift, Loader2, Plus, Target, Trophy, X } from "lucide-react";
+import { Check, Flag, Gift, Loader2, Minus, PenLine, Plus, Target, Trophy, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { tasasVentas, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
+
+import { Cifra, Confeti } from "./arena-vivo";
 
 const aviso = { className: "ritmo" };
 const usd = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
@@ -112,39 +115,36 @@ export function MiGoal({ goal, mes }: { goal: number | null; mes: number }) {
 
 export type DiarioUI = { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string | null };
 type KpiUI = { id: string; nombre: string; ayuda?: string; dinero?: boolean };
-type TasaUI = { id: string; nombre: string; valor: number | null };
 const soloDinero = (s: string) => {
   const limpio = s.replace(/[^\d.]/g, "");
   const [ent, ...dec] = limpio.split(".");
   return dec.length ? `${ent}.${dec.join("").slice(0, 2)}` : ent;
 };
-const dinero = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
 
 export function MiDiario({
+  rol,
   hoy,
   ayer,
   dias,
   kpis,
   rango,
-  tasas,
   diasRango,
-  rangoId,
-  rangos,
+  etiqueta,
 }: {
+  rol: RolVentas;
   hoy: string;
   ayer: string;
   dias: DiarioUI[];
   kpis: KpiUI[];
   rango: Record<string, number>; // totales del rango que se mira
-  tasas: TasaUI[];
   diasRango: number;
-  rangoId: string;
-  rangos: { id: string; t: string; href: string }[];
+  etiqueta: string;
 }) {
   const [fecha, setFecha] = useState(hoy);
   const inicial = (d?: DiarioUI) => ({ valores: Object.fromEntries(kpis.map((k) => [k.id, d?.kpis?.[k.id] ? String(d.kpis[k.id]) : ""])) as Record<string, string>, animo: d?.animo ?? null, nota: d?.nota ?? "" });
   const [f, setF] = useState(inicial(dias.find((d) => d.fecha === hoy)));
   const [guardando, setGuardando] = useState(false);
+  const [fiesta, setFiesta] = useState(0);
   // Tras guardar, el servidor trae el diario nuevo: el formulario queda con lo guardado (no se borra lo que escribió).
   const [previo, setPrevio] = useState(dias);
   if (previo !== dias) {
@@ -156,82 +156,119 @@ export function MiDiario({
     setFecha(x);
     setF(inicial(dias.find((d) => d.fecha === x)));
   };
+  const poner = (id: string, v: string) => setF((x) => ({ ...x, valores: { ...x.valores, [id]: v } }));
+  const sumar = (id: string, n: number) => poner(id, String(Math.max(0, Math.min(1000, Number(f.valores[id] || 0) + n))));
   const guardar = async () => {
     setGuardando(true);
     const r = await guardarDiarioAction({ fecha, kpis: Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)])), animo: f.animo, nota: f.nota });
     setGuardando(false);
     if (!r.ok) return toast.error(r.error, aviso);
+    setFiesta((n) => n + 1);
     toast.success("Diario guardado ✍️", aviso);
   };
   const guardado = dias.find((d) => d.fecha === fecha);
+  const numeros = Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)]));
+  const vivas = tasasVentas(rol, numeros);
+  const llenos = kpis.filter((k) => f.valores[k.id] !== "" && f.valores[k.id] !== undefined).length;
+  const dineros = kpis.filter((k) => k.dinero);
+  const conteos = kpis.filter((k) => !k.dinero);
   return (
-    <section id="diario" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
-      <div className="flex items-center justify-between gap-3">
+    <section id="diario" className="panel relative flex scroll-mt-20 flex-col gap-4 overflow-hidden p-5">
+      <Confeti disparo={fiesta} />
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold">Mi diario</h3>
-          <p className={cn("mt-0.5 text-[11px]", guardado ? "text-emerald-300" : "text-amber-300")}>{guardado ? "Ya lo llenaste: puedes corregirlo." : `Llena tus números de ${fecha === hoy ? "hoy" : "ayer"} (si algo fue 0, déjalo vacío).`}</p>
+          <h3 className="flex items-center gap-2 text-sm font-semibold">
+            <PenLine className="size-4 text-primary" /> Mi diario
+          </h3>
+          <p className={cn("mt-0.5 text-[11px]", guardado ? "text-emerald-300" : "text-amber-300")}>{guardado ? "✓ Ya lo llenaste: puedes corregirlo." : `Anota tus números de ${fecha === hoy ? "hoy" : "ayer"}.`}</p>
         </div>
-        <div className="flex gap-1 rounded-full bg-white/[0.04] p-1 text-xs">
+        <div className="flex gap-1 rounded-full bg-white/[0.04] p-1 text-xs ring-1 ring-border">
           {[
             { f: ayer, t: "Ayer" },
             { f: hoy, t: "Hoy" },
           ].map((x) => (
-            <button key={x.f} type="button" onClick={() => cambiarFecha(x.f)} className={cn("rounded-full px-3 py-1", fecha === x.f ? "bg-primary/15 text-primary" : "text-muted-foreground")}>
+            <button key={x.f} type="button" onClick={() => cambiarFecha(x.f)} className={cn("rounded-full px-3 py-1 transition", fecha === x.f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
               {x.t}
             </button>
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {kpis.map((k) => (
-          <div key={k.id} className="flex flex-col gap-1.5" title={k.ayuda}>
-            <Label className="text-xs leading-snug text-muted-foreground">{k.nombre}</Label>
-            <Input
-              className="h-10 num font-mono"
-              inputMode={k.dinero ? "decimal" : "numeric"}
-              value={f.valores[k.id] ?? ""}
-              onChange={(e) => setF((x) => ({ ...x, valores: { ...x.valores, [k.id]: k.dinero ? soloDinero(e.target.value) : soloNum(e.target.value) } }))}
-              placeholder={k.dinero ? "$0" : "0"}
-            />
+      <div className="flex items-center gap-3">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="arena-barra h-full rounded-full bg-gradient-to-r from-[color:var(--neon)] to-[color:var(--coral)]" style={{ width: `${(llenos / Math.max(1, kpis.length)) * 100}%` }} />
+        </div>
+        <span className="font-mono text-[11px] text-muted-foreground">
+          {llenos}/{kpis.length}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        {conteos.map((k) => (
+          <div key={k.id} className={cn("flex flex-col gap-1.5 rounded-xl bg-white/[0.03] p-2.5 ring-1 transition", f.valores[k.id] ? "ring-primary/30" : "ring-border/60")} title={k.ayuda}>
+            <Label className="min-h-[2lh] text-[11px] leading-tight text-muted-foreground">{k.nombre}</Label>
+            <div className="flex items-center gap-1">
+              <button type="button" aria-label={`Menos ${k.nombre}`} onClick={() => sumar(k.id, -1)} className="grid size-8 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-muted-foreground transition hover:bg-white/10 hover:text-foreground active:scale-90">
+                <Minus className="size-3.5" />
+              </button>
+              <Input className="h-8 min-w-0 px-1 text-center num font-mono text-base" inputMode="numeric" value={f.valores[k.id] ?? ""} onChange={(e) => poner(k.id, soloNum(e.target.value))} placeholder="0" />
+              <button type="button" aria-label={`Más ${k.nombre}`} onClick={() => sumar(k.id, 1)} className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary transition hover:bg-primary/25 active:scale-90">
+                <Plus className="size-3.5" />
+              </button>
+            </div>
           </div>
         ))}
       </div>
-      {kpis.some((k) => k.ayuda) ? <p className="text-[11px] text-muted-foreground">{kpis.filter((k) => k.ayuda).map((k) => `${k.nombre}: ${k.ayuda}`).join(" · ")}</p> : null}
+      {dineros.length ? (
+        <div className="grid grid-cols-2 gap-2.5">
+          {dineros.map((k) => (
+            <div key={k.id} className="flex flex-col gap-1.5 rounded-xl bg-[color:var(--coral)]/[0.06] p-2.5 ring-1 ring-[color:var(--coral)]/25" title={k.ayuda}>
+              <Label className="text-[11px] text-muted-foreground">{k.nombre}</Label>
+              <div className="relative">
+                <span className="absolute top-1/2 left-2.5 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+                <Input className="h-9 pl-6 num font-mono" inputMode="decimal" value={f.valores[k.id] ?? ""} onChange={(e) => poner(k.id, soloDinero(e.target.value))} placeholder="0" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {vivas.length ? (
+        <div className="flex flex-wrap gap-1.5 text-xs">
+          {vivas.map((t) => (
+            <span key={t.id} className={cn("rounded-lg px-2 py-1 ring-1 transition", t.valor == null ? "bg-white/[0.03] text-muted-foreground ring-border/60" : "bg-primary/10 text-primary ring-primary/30")}>
+              {t.nombre}: <b className="font-mono">{t.valor == null ? "—" : `${t.valor} %`}</b>
+            </span>
+          ))}
+          <span className="self-center text-[10px] text-muted-foreground">se calculan mientras escribes</span>
+        </div>
+      ) : null}
       <div className="flex flex-col gap-1.5">
         <Label className="text-xs text-muted-foreground">¿Cómo te fue?</Label>
         <div className="flex gap-1.5">
           {["😣", "😕", "😐", "🙂", "🔥"].map((e, i) => (
-            <button key={e} type="button" onClick={() => setF((x) => ({ ...x, animo: i + 1 }))} className={cn("grid size-10 place-items-center rounded-xl text-xl ring-1 transition", f.animo === i + 1 ? "bg-primary/15 ring-primary/50" : "ring-border hover:bg-white/[0.04]")}>
+            <button key={e} type="button" onClick={() => setF((x) => ({ ...x, animo: i + 1 }))} className={cn("grid size-10 place-items-center rounded-xl text-xl ring-1 transition hover:scale-110", f.animo === i + 1 ? "scale-110 bg-primary/15 ring-primary/50" : "ring-border hover:bg-white/[0.04]")}>
               {e}
             </button>
           ))}
         </div>
         <Textarea rows={2} value={f.nota} maxLength={400} onChange={(e) => setF((x) => ({ ...x, nota: e.target.value }))} placeholder="Qué funcionó, qué objeción salió, qué vas a mejorar…" />
       </div>
-      <Button className="h-10 w-fit rounded-full" onClick={guardar} disabled={guardando}>
+      <Button className="h-11 w-full rounded-full text-sm font-semibold sm:w-fit sm:px-8" onClick={guardar} disabled={guardando}>
         {guardando ? <Loader2 className="animate-spin" /> : <Check className="size-4" />} Guardar {fecha === hoy ? "hoy" : "ayer"}
       </Button>
       <div className="flex flex-col gap-2 border-t border-border/60 pt-3">
-        <div className="flex flex-wrap gap-1 text-[11px]">
-          {rangos.map((r) => (
-            <a key={r.id} href={r.href} className={cn("rounded-full px-2.5 py-1 ring-1 transition", r.id === rangoId ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
-              {r.t}
-            </a>
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground">
-          {diasRango} {diasRango === 1 ? "día" : "días"} con diario en este rango
+        <p className="text-[11px] tracking-wider text-muted-foreground uppercase">
+          {etiqueta} · {diasRango} {diasRango === 1 ? "día" : "días"} con diario
         </p>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {kpis.map((k) => (
-            <span key={k.id}>
-              <b className="text-foreground">{k.dinero ? dinero(rango[k.id] ?? 0) : (rango[k.id] ?? 0)}</b> <span className="text-muted-foreground">{k.nombre.replace(" (US$)", "").toLowerCase()}</span>
-            </span>
+            <div key={k.id} className="rounded-lg bg-white/[0.025] px-2 py-1.5">
+              <p className="truncate text-[10px] text-muted-foreground">{k.nombre.replace(" (US$)", "")}</p>
+              <Cifra valor={rango[k.id] ?? 0} tipo={k.dinero ? "usd" : "num"} className="font-mono text-sm font-semibold" />
+            </div>
           ))}
         </div>
-        {tasas.length ? (
+        {tasasVentas(rol, rango).length ? (
           <div className="flex flex-wrap gap-1.5 text-xs">
-            {tasas.map((t) => (
+            {tasasVentas(rol, rango).map((t) => (
               <span key={t.id} className="rounded-lg bg-white/[0.04] px-2 py-1">
                 {t.nombre}: <b className="font-mono">{t.valor == null ? "—" : `${t.valor} %`}</b>
               </span>

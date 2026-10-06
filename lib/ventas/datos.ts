@@ -278,6 +278,8 @@ export interface Arena {
   // su diario en ese rango; `cash` = lo cobrado del mes (la hoja es mensual).
   kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[];
   rango: { id: string; desde: string; hasta: string; etiqueta: string };
+  // Pulso: los KPIs del diario sumados por día y por puesto en el rango (de quien uno puede ver), para las mini-gráficas.
+  pulso: Partial<Record<RolVentas, { fecha: string; kpis: Record<string, number> }[]>>;
 }
 
 export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa, rangoPedido?: string): Promise<Arena> {
@@ -329,7 +331,27 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
           diasRango: enRango.filter((d) => d.userId === u.id && conKpis(d)).length,
         }
       : null,
+    pulso: pulsoDe(enRango, conMarcador, rango.desde, rango.hasta),
     kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(enRango.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0), dias: enRango.filter((d) => d.userId === g.userId && conKpis(d)).length })) : [],
     rango,
   };
+}
+
+/** KPIs del diario sumados por día y por puesto (días sin diario = 0), del primer al último día del rango. */
+function pulsoDe(filas: { userId: string; fecha: string; kpis: Record<string, number> | null }[], gente: { userId: string; rol: RolVentas }[], desde: string, hasta: string): Arena["pulso"] {
+  const rolDe = new Map(gente.map((g) => [g.userId, g.rol]));
+  const dias: string[] = [];
+  for (let t = Date.parse(`${desde}T12:00:00Z`); t <= Date.parse(`${hasta}T12:00:00Z`) && dias.length < 62; t += 86_400_000) dias.push(new Date(t).toISOString().slice(0, 10));
+  const out: Arena["pulso"] = {};
+  for (const rol of new Set(gente.map((g) => g.rol))) {
+    const porDia = new Map(dias.map((f) => [f, {} as Record<string, number>]));
+    for (const x of filas) {
+      if (rolDe.get(x.userId) !== rol) continue;
+      const k = porDia.get(x.fecha);
+      if (!k) continue;
+      for (const [id, v] of Object.entries(x.kpis ?? {})) k[id] = Math.round(((k[id] ?? 0) + v) * 100) / 100;
+    }
+    out[rol] = dias.map((fecha) => ({ fecha, kpis: porDia.get(fecha)! }));
+  }
+  return out;
 }
