@@ -395,14 +395,14 @@ lo diagnostica en **solo lectura** (`SOLO_LECTURA`, sin Edit/Write/deploy), lo d
 con el plan y se lo manda a Elvin; **solo ejecuta** con `ok <id>` / `no <id> [nota]` en su
 Telegram, `nico ok <id>` en Slack o `node scripts/agentes.mjs aprobar|rechazar <id>`. Al terminar le
 avisa a quien lo pidió. `/solicitudes` lista las abiertas; la ronda las pone en "Te toca a ti".
-Lista de quién puede pedir: `NICO_EQUIPO` (Vercel) + `EQUIPO_NICO` (puente).
+Lista de quién puede pedir: `NICO_EQUIPO` (Vercel) + `EQUIPO_NICO` (puente). Detalle en
+`vault/ceo/cerebro-nico.md` §3b. Inventario ampliado (Pulse, GoHighLevel, Ángelo/Quality Care,
+voz/SaaS/Core de AIB, dashboard de ventas, Hora Fija, 1000X) en `data/plataformas.json`.
 **Canales de AutoFlow (Elvin, 5/oct/2026): Zernio SIEMPRE** — una sola API para número (compra/porta, PR ~$3/mes),
 WhatsApp (número de Zernio registrado por API), DMs/comentarios de IG/FB, SMS y llamadas (número → Retell por SIP
 trunk; el cerebro de voz sigue en Retell); llave `AIB_ZERNIO_API_KEY` (cuenta de AIB, nunca la de Resuelto).
 **Excepto clientes médicos** (HIPAA: Zernio no ofrece BAA) → Meta oficial dentro de GHL (o GoGHL) + número/voz en
-Retell. Detalle en `.claude/commands/autoflow.md` §4. Detalle en
-`vault/ceo/cerebro-nico.md` §3b. Inventario ampliado (Pulse, GoHighLevel, Ángelo/Quality Care,
-voz/SaaS/Core de AIB, dashboard de ventas, Hora Fija, 1000X) en `data/plataformas.json`.
+Retell. Detalle en `.claude/commands/autoflow.md` §4.
 **Canales por plataforma (3/oct/2026)**, Elvin: "un canal de Slack para los cambios de Bori… cuando yo no esté, que se
 ejecute con una aprobación mía, como funciona Nico": `SLACK_NICO_CANALES="C…=bori"` (Vercel) hace que ese canal funcione
 igual que #nico-desarrollo (Carilin/Aure piden sin prefijo → Nico diagnostica en solo lectura → Elvin `ok <id>` por
