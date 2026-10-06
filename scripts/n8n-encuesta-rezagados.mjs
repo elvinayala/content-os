@@ -30,7 +30,8 @@ const N8N = (env("N8N_URL") || "https://n8nv2.levelupmediapr.net").replace(/\/$/
 const SECRETO = env("PULSE_N8N_SECRET");
 const CW_TOKEN = env("CHATWOOT_TOKEN");
 const CW = "https://levelup-media-project-chatwoot.ksnxqw.easypanel.host/api/v1/accounts/2";
-const LISTA = path.join(ROOT, "data/n8n/rezagados-2026-09.json");
+// REZAGADOS_LISTA = otra lista (mismo formato) para casos sueltos; el registro de envíos es compartido (no repite a nadie).
+const LISTA = path.join(ROOT, env("REZAGADOS_LISTA") || "data/n8n/rezagados-2026-09.json");
 const REGISTRO = path.join(ROOT, "data/n8n/rezagados-2026-09-envios.json");
 const INBOX = 6; // WhatsApp de Level Up (Evolution)
 
