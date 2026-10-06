@@ -785,6 +785,17 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   Roger; Paola por dar de alta) = demos · cerradas · no cerradas + cash collected de la hoja. Cada quien los anota en
   Mi diario (con "Este mes"); el director y la dirección ven "KPIs del equipo · este mes" por puesto. Los campos viejos
   (conversaciones/agendas/presentaron) se llenan desde estos (`camposViejos`) para la comisión y el show-up de respaldo.
+  **Planilla de chatters en Ritmo (6/oct, Elvin: "me gustaría que tenga todo esto Ritmo")**: el diario del chatter trae TODO lo de
+  `planilla_chatters_levelup.xlsx` (Drive): conversaciones, calificaron, no califica, seguimiento, mitad de conversación, propuesta
+  de agenda, link enviado, derivados (= `pases`), agendas, show, no show y **ventas/collections atribuidas (US$, `dinero`)**; los %
+  (calificado, agenda, mitad, propuesta, link; conexión del setter; close rate) salen solos (`TASAS_VENTAS`/`tasasVentas`). Se cargó
+  su historial (Ana 9/4–10/5, Dilan 9/21–10/3; cuadra con el Resumen: Ana 645 conv · $50,496 · $37,896) sin pisar lo ya anotado en
+  Ritmo. **Rangos** en Mi diario, KPIs del equipo y Ranking: Hoy · Ayer · 7 días · 30 días · Este mes · Mes pasado (`?r=`,
+  `rangoFechas`); comisiones y carrera siguen siendo del mes. La planilla de setters ("Producción Setters") no se ha pasado.
+  **Pase entre dominios** (`/api/pase?a=ritmo|leads|pulse` → `/api/pase/recibir`, `lib/pulse/pase.ts`, tests `tests/pase.test.mjs`):
+  Leads, Ritmo y Pulse son dominios distintos y la cookie no viaja; Roger y el equipo caían en el CRM al ir a Ritmo (el proxy de
+  `leads.*` mandaba todo /ritmo a Leads). Ahora "Ir a Ritmo" (Pulse) y "Leads/Pulse" (Ritmo) firman un pase de 60 s y un solo uso
+  (nonce en `pulse_security_log`) y la persona llega con su sesión; en `leads.*`, /ritmo → el pase. Solo con sesión real de Pulse.
   **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
