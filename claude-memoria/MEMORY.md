@@ -29,6 +29,7 @@
 - [Dr. Alfred — demo AutoFlow](dr-alfred-demo.md) — medspa prospecto; demo chat (Camila) en Netlify
 - [Voz — stack 2026](voz-stack-2026.md) — Retell gana por transfer; ElevenLabs mejor voz sin transfer
 - [AutoFlow · canales por Zernio](autoflow-zernio-canales.md) — Zernio SIEMPRE (una sola API) salvo clientes médicos por HIPAA → Meta oficial en GHL + Retell; scripts/zernio.mjs; key en .env.local y Railway nico (mismo equipo Zernio que Resuelto)
+- [Ángelo · Quality Care (Dr. Heredia)](angelo-quality-care.md) — chat+voz del cliente médico de AIB; Carilin publica sin GitHub: comparar prod antes de publicar; troncal SIP → 665-9913, transferencias al 883-6718 + ext
 - [Memoria compuesta](memoria-compuesta.md) — vault de entidades + síntesis destilada para Jarvis y la fábrica
 - [Alertas de clientes críticos](alertas-clientes-criticos.md) — cruzar con vault/entidades antes de alertar (feedback de Carilin)
 - [Shadow Operator — marca](shadow-operator-marca.md) — valor + personalidad + pepitas; consultoría $3,500 + Skool $55
