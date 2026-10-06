@@ -190,34 +190,46 @@ Nos vemos pronto.
 
 ---
 
-## 3. MI HISTORIA · YOUTUBE (guion v1 · ~9.9 min leído + ~4.0 min de tus 7 anécdotas = ~14 min)
+## 4. MI HISTORIA · YOUTUBE (guion v3 · ~12.7 min leído + ~5.5 min de tus 9 anécdotas = ~18 min)
 
 **[0:00 · GANCHO]**
-Estudié un bachillerato en educación. Después, una maestría.
-Y en medio de todo eso me di cuenta de algo: la vida que yo quería no era posible con una carrera tradicional.
+Me criaron con un plan: estudiar, conseguir un trabajo, trabajar treinta años y retirarme.
+Yo seguí el plan. Saqué un bachillerato en educación. Después, una maestría. Y me di cuenta de que la vida que yo quería no era posible con una carrera tradicional.
+Antes de encontrar mi camino, perdí dinero en un restaurante, en un negocio de frappés, en ropa y tenis... y en una estafa que se llevó mis últimos ahorros.
 Hoy tengo varias empresas. Una de ellas es una agencia que factura más de cien mil dólares al mes.
-Y todo empezó con una decisión que tomé en dos mil veintiuno, en plena pandemia: pagué una mentoría de novecientos noventa y siete dólares y me encerré a estudiar.
-En este video te cuento mi historia completa. Lo bueno. Y lo que casi nadie cuenta: las ventas bajitas, los meses en los que todo se tambaleaba, y todo lo que tuve que aprender para que esto dejara de depender solo de mí.
+Y todo cambió con una decisión que tomé en dos mil veintiuno, en plena pandemia: pagué una mentoría de novecientos noventa y siete dólares y me encerré a estudiar.
+En este video te cuento mi historia completa. Lo bueno, y lo que casi nadie cuenta.
 
-**[0:52 · POR QUÉ CONTARLA]**
+**[0:58 · POR QUÉ CONTARLA]**
 Y te la cuento por una razón.
 Si estás en un trabajo que no te llena, o estudiaste algo y sientes que no es lo tuyo, o simplemente quieres más... esta historia es para ti.
+Y si alguna vez te han subestimado, también.
 Porque yo estuve ahí.
 Y lo que cambió mi vida fue aprender una habilidad. Una. Y después otra. Y otra.
-Quédate hasta el final, porque al final te dejo las cuatro lecciones que más me han servido.
 
-**[1:23 · CAPÍTULO 1 · LO QUE SE SUPONE QUE HAY QUE HACER]**
+**[1:25 · CAPÍTULO 1 · LO QUE SE SUPONE QUE HAY QUE HACER]**
 Empecemos por el principio.
-Yo hice lo que se supone que uno debe hacer. Estudiar. Saqué un bachillerato en educación.
-Pero en el camino me fui dando cuenta de algo: eso no era lo que yo quería para mi futuro.
+Soy de Hormigueros, Puerto Rico. Nací en Mayagüez. Crecí en una familia tradicional: maestros y un policía. Gente trabajadora. Gente buena.
+Y con la mentalidad que te enseñan en una familia así: estudia, consigue un trabajo seguro, trabaja treinta años y retírate. Lo que yo llamo el ciclo de la rata. Una mentalidad limitante.
+Pero yo siempre fui distinto.
+De nene siempre fui atleta. Me encantaba el deporte. Y desde chico tuve visión de empresario: organizaba eventos, siempre estaba emprendiendo algo.
+Y siempre fui subestimado.
+[TÚ · 30 s: por quién, y cómo lo vivías.]
+Aun así, hice lo que se supone que uno debe hacer. Estudiar. Saqué un bachillerato en educación.
+Pero en el camino me fui dando cuenta de que eso no era lo que yo quería para mi futuro.
 [TÚ · 30-60 s: cuándo te diste cuenta, y cómo se sentía.]
-Y aun así, hice lo que hace casi todo el mundo cuando duda: seguí por el mismo camino. Hice una maestría. Buscando tener un buen trabajo. Pensando que con más estudios, la vida iba a mejorar.
-Y ahí fue que me cayó la realidad.
-Me di cuenta de que la vida que yo quería no era posible con una carrera tradicional.
+Y aun así, hice lo que hace casi todo el mundo cuando duda: seguí por el mismo camino. Hice una maestría. Buscando tener un buen trabajo.
+Y ahí me cayó la realidad: la vida que yo quería no era posible con una carrera tradicional.
 [TÚ · 20 s: qué vida querías. Tiempo, libertad, ingresos... con tus palabras.]
-Y esto no es un ataque a nadie que estudió. Si lo tuyo es la educación, qué bueno. Pero si tú sientes lo que yo sentía, escucha lo que sigue.
+Y esto no es un ataque a nadie que estudió. Si lo tuyo es la educación, qué bueno.
+Pero mientras tanto, yo no dejaba de emprender. Y aquí viene lo que casi nadie cuenta: antes de conocer el marketing digital, fracasé varias veces.
+Tuve un restaurante. Tuve un negocio de frappés. Emprendí con ropa y tenis. Y perdí dinero en cada uno.
+Y después casi entro al negocio de la compra y venta de vagones. Ahí perdí muchísimo dinero. Me estafaron, literalmente: los vagones nunca llegaron. Y ahí había puesto mis últimos ahorros.
+[TÚ · 45-60 s: cómo fue ese momento.]
+Me sobraban las ganas. Me faltaba una habilidad.
+Si tú sientes lo que yo sentía, escucha lo que sigue.
 
-**[2:19 · CAPÍTULO 2 · LA DECISIÓN (2021)]**
+**[3:26 · CAPÍTULO 2 · LA DECISIÓN (2021)]**
 Entonces, en dos mil veintiuno, tomé una decisión.
 Voy a cambiar mi vida. Y para cambiarla, voy a aprender una habilidad digital.
 Escogí el marketing digital.
@@ -227,7 +239,7 @@ Aprendí. Practiqué. Y cuando entendí lo que me enseñaron, lo perfeccioné y 
 Quédate con esto: nadie me regaló nada. Fue una decisión, una inversión y un encierro.
 [TÚ · 30 s: cómo era un día normal estudiando encerrado.]
 
-**[2:54 · CAPÍTULO 3 · MI PRIMER NEGOCIO DIGITAL]**
+**[4:02 · CAPÍTULO 3 · MI PRIMER NEGOCIO DIGITAL]**
 Con esa estrategia propia empecé a trabajar de lleno en mi primer negocio digital. Un e-commerce. Una tienda de uniformes.
 Y llegué a vender hasta veinte mil dólares al mes.
 Y ahí pasó algo que lo cambió todo. Me di cuenta de que el marketing me apasionaba. Y de que, bien aplicado, podía dar resultados increíbles.
@@ -235,19 +247,20 @@ Ya no era teoría. Era mi propio dinero, y funcionaba.
 [TÚ · 30 s: la primera venta, o el momento en que viste que esto funcionaba.]
 Pero había un detalle: era mi tienda. Mi estrategia aplicada a mis productos. Todavía no había visto qué pasaba cuando se la aplicaba a otros.
 
-**[3:34 · CAPÍTULO 4 · OTROS NEGOCIOS Y LEVEL UP MEDIA]**
+**[4:41 · CAPÍTULO 4 · OTROS NEGOCIOS Y LEVEL UP MEDIA]**
 Así que empecé a ayudar a otros negocios locales con su marketing.
 Les creaba la estrategia, la aplicábamos, y los resultados eran exponenciales.
 Y ahí fue cuando se me prendió el bombillo. Si esta estrategia funciona para mi negocio, y funciona para estos negocios, se la puedo aplicar a todos los dueños de negocio que la necesiten.
 Pero te voy a ser honesto: en ese momento yo pensaba pequeño. Pensaba conservador. Me imaginaba tener diez, veinte clientes. Y ya.
 Entonces, con mi socio, fundé Level Up Media.
-[TÚ · 30 s: el día que lo fundaste. Qué sentías.]
+Y no lo hice solo.
+[TÚ · 30-45 s: quién es tu socio, qué aporta cada uno, y el día que lo fundaron.]
 Y aquí viene algo que casi nadie sabe: yo no quería grabar contenido. No me gustaba hacer contenido.
 Así que hice algo que hoy enseño: me asocié con un creador de contenido. Él se encargó de esa parte. Y yo diseñé toda la estrategia que ya habíamos creado para mi negocio, y la apliqué en nuestra agencia para ayudar a otros dueños de negocio.
 Esa decisión, asociarme en vez de hacerlo todo yo, fue clave.
 Porque no tienes que hacerlo todo. Ni tienes que dar la cara. Necesitas saber qué hacer, y con quién asociarte.
 
-**[4:52 · CAPÍTULO 5 · LO QUE NO SE CUENTA]**
+**[6:01 · CAPÍTULO 5 · LO QUE NO SE CUENTA]**
 Hoy esa agencia factura más de cien mil dólares al mes. Pero llegar ahí no fue una línea recta.
 [TÚ · 30 s: el primer mes que pasaste de cien mil.]
 Hubo ventas bajitas. Hubo ventas altas. Hubo meses en los que todo se tambaleaba.
@@ -255,9 +268,10 @@ Hubo ventas bajitas. Hubo ventas altas. Hubo meses en los que todo se tambaleaba
 Fueron dos años y medio para pasar de cero a más de seis cifras mensuales.
 Y en ese proceso apareció el reto real: cómo atender a más de diez dueños de negocio a la vez.
 Y aprendí que el cuello de botella casi siempre es el mismo. No es el marketing. Es que no tienes sistemas.
+Y déjame aclarar algo, porque es fácil ver "cien mil dólares" y pensar que es sencillo. Lo difícil no es llegar. Es mantenerlo. Para escalar esos números hay que hacer muchas cosas, y no es fácil mantenerte más de un año seguido en esas cifras.
 
-**[5:30 · CAPÍTULO 6 · EL SALTO: APRENDER OTRA VEZ]**
-Ahí tomé la decisión que más ha impactado mi vida: volver a aprender.
+**[6:59 · CAPÍTULO 6 · EL SALTO: APRENDER OTRA VEZ]**
+Ahí tomé la decisión que más ha impactado mi vida: volver a aprender. Porque si algo he sido toda mi vida es subestimado, y la mejor respuesta que conozco es mejorar.
 En dos mil veintitrés me dediqué a pagar mentorías con personas que ya estaban haciendo más de seis cifras mensuales, para entender cómo ellos escalaban. Ramiro Cubría. Joe Lajara. Oscar Moisés. Entre otros.
 En total, pagué más de cien mil dólares en mentorías.
 Y mientras ya conocía de marketing, empecé a educarme en lo que viene después del marketing.
@@ -267,19 +281,29 @@ Operaciones.
 Y desde dos mil veinticuatro, inteligencia artificial y automatizaciones. Porque el marketing digital se está moviendo hacia allá: ya no basta con traer los clientes interesados, hay que responderlos. Y las agencias que evolucionan lo hacen con ayuda de la inteligencia artificial.
 Tuve que aprender todo eso para convertirme en una persona valiosa.
 
-**[6:37 · CAPÍTULO 7 · LA FÓRMULA DEL VALOR]**
+**[8:13 · CAPÍTULO 7 · LA FÓRMULA DEL VALOR]**
 Y esto es lo que quiero que entiendas, porque es la parte más importante de la historia.
 Con marketing digital, ya eres valioso. Pero si le sumas sistemas, inteligencia artificial, ventas, operaciones, cómo crear equipos, cómo hacer un sistema de onboarding para escalar...
 Ahí te conviertes en alguien demasiado valioso. Para cualquier empresa. O para cualquier creador de contenido.
 Una habilidad te abre la puerta. Pero es la combinación la que te hace difícil de reemplazar.
 
-**[7:09 · CAPÍTULO 8 · HOY]**
+**[8:46 · CAPÍTULO 8 · HOY]**
 Y con todo eso aprendido, empecé a crear otras empresas. Empresas de tecnología.
 Y se me hizo fácil. No porque yo sea un genio. Sino porque ya conocía todas esas habilidades.
-Hoy tenemos un sistema con el que hemos atendido a más de cien dueños de negocio a la vez. Y más de doscientos cincuenta negocios ayudados a escalar.
+Hoy, con mi socio y nuestro equipo, tenemos un sistema con el que hemos atendido a más de cien dueños de negocio a la vez. Y más de doscientos cincuenta negocios ayudados a escalar.
 Y todo empezó con una decisión en dos mil veintiuno.
 
-**[7:39 · SI HOY EMPEZARA DE CERO]**
+**[9:18 · EL PORQUÉ · UNA VIDA POR DISEÑO]**
+Y ahora, la pregunta que más me hacen: ¿por qué?
+¿Por qué hice todo esto?
+Porque quiero una vida por diseño.
+Una vida en la que pueda ver a mi hijo crecer. Compartir con las personas que quiero. Y ayudar: con una obra benéfica, con donaciones, a mi familia, a las personas que me ayudaron en algún momento.
+Y también me motiva dar resultados. Ayudar a otros dueños de negocio a crecer.
+Por eso tomé el riesgo de romper el ciclo de la rata. Porque la vida es más que un trabajo de ocho a cinco. Es más que eso.
+Y lo mejor es que, mientras trabajo, puedo ayudar a otras personas. Por eso, para mí, nunca es trabajo.
+Yo vivo para esto. Vivo para mis clientes.
+
+**[10:12 · SI HOY EMPEZARA DE CERO]**
 Ahora, si hoy tuviera que empezar de cero, ¿qué haría?
 Primero: escogería una habilidad digital. Una sola. No diez. Marketing, ventas, edición, automatización con inteligencia artificial. Pero una.
 Segundo: la aprendería de alguien que ya lo hizo, no de videos sueltos. Una mentoría, un programa, alguien que te muestre el camino.
@@ -287,15 +311,15 @@ Tercero: la pondría en práctica enseguida. Con un negocio propio, o con el de 
 Y cuarto: seguiría sumando habilidades. Cuando ya dominas una, aprendes la que la complementa. Ventas. Sistemas. Inteligencia artificial.
 Y ojo: no necesitas empezar con miles de seguidores ni con mucho dinero. Yo empecé sin saber nada.
 
-**[8:28 · LAS CUATRO LECCIONES]**
+**[11:01 · LAS CUATRO LECCIONES]**
 Entonces, las cuatro lecciones que quiero que te lleves.
-Uno: una habilidad digital puede cambiar tu vida. A mí no me la dio un título. Me la dio aprender marketing, practicarlo y perfeccionarlo.
+Uno: una habilidad digital puede cambiar tu vida. Con ganas y sin habilidad, fracasé en varios negocios. Cuando aprendí marketing, todo cambió. A mí no me la dio un título; me la dio aprender, practicar y perfeccionar.
 Dos: invierte en aprender de quienes ya lo hicieron. Empecé con una mentoría de novecientos noventa y siete dólares, y después pagué más de cien mil. Cada una me ahorró años de prueba y error.
-Tres: no tienes que hacerlo todo, ni dar la cara. Yo no quería grabar contenido. Me asocié con quien sí, y construí detrás de escena.
+Tres: no tienes que hacerlo todo, ni dar la cara. Yo no quería grabar contenido: me asocié con quien sí, y fundé la agencia con mi socio. Nadie construye esto solo.
 Y cuatro: lo que te hace valioso es sumar. Marketing, sistemas, inteligencia artificial, ventas, operaciones. Y sin sistemas, no escalas.
 
-**[9:16 · CIERRE]**
-Hoy enseño todo esto a personas que están justo donde yo estuve. Cansadas de lo que hacen. Con ganas de cambiar su vida. Y dispuestas a aprender una habilidad digital.
+**[11:58 · CIERRE]**
+Hoy enseño todo esto a personas que están justo donde yo estuve. Cansadas de lo que hacen. Con ganas de cambiar su vida. Y dispuestas a aprender una habilidad digital, para que también diseñen su vida.
 Si eres tú, déjame un comentario: ¿en qué punto estás hoy? Los leo todos.
 Y si quieres que te enseñe cómo llegar a tus primeros diez mil dólares al mes, ayudando a quienes ya tienen audiencia, el link está en la descripción.
 Y si no, quédate por aquí. Aquí voy a enseñar todo lo que sé.
