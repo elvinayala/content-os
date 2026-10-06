@@ -89,3 +89,4 @@
 - [Material de venta Level Up](lu-material-ventas.md) — 2/oct: película LU + versiones (números hablan / en sus palabras, 16:9 y 9:16), demo closers lu-demo-ventas.netlify.app, charla de Elvin; clips de testimonio en motion/public/lu-peli
 - [Commits con sesiones en paralelo](commits-sesiones-paralelas.md) — revisar `git diff <archivo>` antes de commitear: hunks de otra sesión rompieron 2 deploys
 - [Apps sin App Store (PWA + push)](apps-sin-app-store.md) — Ritmo (/ritmo/app) y app de clientes LU (app.levelupmediapr.net, link personal desde Pulse) en prod; falta push en Bori
+- [Kit de propuestas para Lis](kit-propuestas-lis.md) — 6/oct: Lis hace sola las propuestas animadas: lu-armador-propuestas.netlify.app + Skill/instrucciones de Claude (JSON); con Pro sube el zip a Skills
