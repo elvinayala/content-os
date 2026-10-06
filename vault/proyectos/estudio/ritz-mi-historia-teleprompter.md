@@ -94,11 +94,15 @@ Una habilidad te abre la puerta. Pero es la combinación la que te hace difícil
 Con todo eso aprendido, empecé a crear otras empresas. Empresas de tecnología.
 Y se me hizo fácil. No porque yo sea un genio. Sino porque ya conocía todas esas habilidades.
 Hoy, con mi socio y nuestro equipo, tenemos un sistema con el que hemos atendido a más de cien dueños de negocio a la vez.
+Además, superviso las operaciones de un equipo de treinta personas, entre todas mis empresas.
+Cerca del sesenta por ciento de ese equipo está en Medellín, Colombia. Tenemos operaciones allá.
+Y eso me ha permitido algo que me encanta: viajar. Cada tres meses voy a Medellín. A supervisar las operaciones, a compartir con el equipo en persona y a hacer networking con gente de inteligencia artificial.
+Y esto es parte de lo que más me apasiona: convertirme en un líder para ellos.
 Todo empezó con una decisión en dos mil veintiuno.
 
 Y ahora, la pregunta de fondo: ¿por qué hice todo esto?
 Porque quiero una vida por diseño.
-Una vida en la que pueda ver a mi hijo crecer. Compartir con las personas que quiero. Y ayudar: con una obra benéfica, con donaciones, a mi familia, a las personas que me ayudaron en algún momento.
+Una vida en la que pueda estar presente. Soy padre de dos niños, y quiero verlos crecer. Quiero compartir con las personas que quiero. Y ayudar: con una obra benéfica, con donaciones, a mi familia, a las personas que me ayudaron en algún momento.
 Y esa vida tiene una misión, y es doble.
 Primero: ayudar a personas a hacer dinero por internet y a salir del ciclo de la rata. Porque la vida es más que un trabajo de ocho a cinco.
 Segundo: ayudar a dueños de negocio que ya están listos para escalar, y darles el sistema para lograrlo.
