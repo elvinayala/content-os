@@ -72,6 +72,9 @@ Cámara + 2 baterías + cargador · 2 tarjetas rápidas + lector · lavalier + r
 - "Más de diez mil creadores nuevos al día": es un cálculo (Goldman: 50M creadores, 10-20 % de crecimiento anual), no un dato publicado.
 - Los doctores nombrados (Marvin Argüello, Bryan Vega) y tu socio: que estén de acuerdo.
 
+**Los $5 millones (VSL y Mi historia)**
+- "Más de cinco millones en ventas: dos millones y medio en tus negocios y dos millones y medio para tus clientes." Interpreté tu "en 20 pasos" como "en ventas". Tener el respaldo (hojas de ventas) a mano: es la cifra más fuerte del guion y la más fácil de cuestionar.
+
 **Mi historia**
 - Tu familia: "maestros y un policía". Confirmar.
 - Los vagones: "me metí en", no "casi entro".

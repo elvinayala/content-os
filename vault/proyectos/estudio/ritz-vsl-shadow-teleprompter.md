@@ -1,5 +1,6 @@
 Yo he escalado más de diez marcas con el mismo sistema.
-Varias empresas, en silencio. Una agencia que hoy factura más de cien mil dólares al mes. Y casi nadie sabía quién era.
+Esa estrategia ha generado más de cinco millones de dólares en ventas: dos millones y medio en mis propios negocios, y dos millones y medio para mis clientes.
+Todo en silencio, y casi nadie sabía quién era.
 Hoy te enseño ese sistema.
 
 Y si estás viendo esto, probablemente estás cansado.

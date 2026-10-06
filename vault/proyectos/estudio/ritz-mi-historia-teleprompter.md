@@ -60,6 +60,7 @@ Porque no tienes que hacerlo todo. Ni tienes que dar la cara. Necesitas saber qu
 Y quiero detenerme aquí un momento, porque esta es la parte que más me gratifica.
 En algún momento llegué a ser la persona que más anuncios hizo en Puerto Rico.
 Y hasta hoy, más de doscientos cincuenta negocios en Puerto Rico han escalado con mi estrategia. Con mi embudo de marketing. Mi agencia usa mi método, y directamente ha ayudado a cientos de negocios a crecer.
+En total, esa estrategia ha generado más de cinco millones de dólares en ventas: dos millones y medio en mis propios negocios, y dos millones y medio para mis clientes.
 Doctores, como el doctor Marvin Argüello, cirujano plástico.
 Restaurantes que pasaron de treinta mil a cien mil dólares al mes.
 Empresas de tecnología que llegaron a más de veinte mil dólares mensuales.
