@@ -126,56 +126,51 @@ Si todavía no estás seguro, igual aplica. La llamada es para ver si tiene sent
 
 ---
 
-## 2. AI BORINQUEN · VISIÓN DEL FUNDADOR (6-7 min · de usted)
+## 2. AI BORINQUEN · VISIÓN DEL FUNDADOR (v2 corto · ~3.9 min · de usted)
 
 **[0:00 · GANCHO]**
-Mi empresa tiene un equipo de agentes de inteligencia artificial. Uno coordina la producción. Uno revisa los anuncios y me dice cuál escalar. Uno programa. Uno diseña. Todos los días, a las cinco de la mañana, se reúnen sin mí y me dejan el plan del día listo.
-No le estoy hablando del futuro. Así opera mi negocio hoy. En los próximos minutos le enseño cómo se ve eso en el suyo.
+Mi empresa tiene un equipo de agentes de inteligencia artificial.
+Uno revisa los anuncios. Uno prepara el contenido. Uno coordina la producción. Y todos los días, a las cinco de la mañana, se reúnen sin mí y me dejan el plan del día listo.
+No le estoy hablando del futuro. Así opera mi negocio hoy.
+Y en los próximos minutos le muestro cómo se vería en el suyo.
 
-**[0:30 · PRUEBA]**
+**[0:29 · PRUEBA]**
 Esto no es teoría.
 Teo, un terapista de Mano Santa PR, contestaba el veinte por ciento de las personas que le escribían. Hoy contesta en segundos, precalifica y agenda solo.
-Milton, de Caribe Paint, nos dijo: "Pensé que la implementación sería mucho más complicada, pero ha sido bastante fácil."
-Y en mi propia empresa reemplazamos plataformas que pagábamos todos los meses con herramientas propias, hechas con inteligencia artificial.
+Y Milton, de Caribe Paint, nos dijo: "Pensé que la implementación sería mucho más complicada, pero hasta ahora ha sido bastante fácil."
 
-**[1:10 · EL PROBLEMA]**
-Todo el mundo le dice que use inteligencia artificial. Nadie le dice qué implementar en SU negocio.
-Usted ve mil herramientas, mil videos, y termina usando ChatGPT para escribir un mensaje.
+**[0:51 · EL PROBLEMA]**
+Todo el mundo le dice que use inteligencia artificial. Nadie le dice qué implementar en su negocio.
+Usted ve mil herramientas, mil videos... y termina usando ChatGPT para escribir un mensaje.
 Mientras tanto, el negocio sigue igual: tareas repetidas a mano todos los días. La operación en una libreta, en un Excel o en el WhatsApp de una sola persona. Y la única forma de crecer que conoce es contratar más gente.
 Ese no es un problema de tecnología. Es que nadie ha mirado cómo trabaja usted.
 
-**[1:50 · LO QUE HACEMOS: CUATRO COSAS]**
-AI Borinquen hace cuatro cosas.
-**Uno: agentes personalizados.** No un chatbot. Un empleado digital para un puesto concreto de su negocio: el que cotiza, el que cobra, el que lleva el inventario, el que le da seguimiento al que dijo "déjame pensarlo", el que agenda. Entrenado con su negocio, sus precios y su forma de hablar. Trabaja las veinticuatro horas, no se enferma y no renuncia.
-**Dos: digitalización.** Sacamos su operación del papel, de la libreta y de la cabeza de una sola persona. Procesos claros, todo en un solo lugar, y usted ve qué está pasando sin tener que preguntar.
-**Tres: capacitación.** Si usted prefiere aprender a hacerlo, le enseñamos. En grupo o uno a uno. La IA no le va a quitar su negocio. El que la sepa usar, sí.
-**Cuatro: atención al cliente.** Un agente que contesta en segundos por WhatsApp o por teléfono, con voz puertorriqueña, califica y le agenda la cita. Es una parte de lo que hacemos. No es lo único.
+**[1:28 · LO QUE HACEMOS · LAS CUATRO LÍNEAS]**
+En AI Borinquen hacemos cuatro cosas.
+Primero: agentes personalizados. No un chatbot. Un empleado digital para un puesto concreto de su negocio: el que cotiza, el que cobra, el que lleva el inventario, el que le da seguimiento al que dijo "déjame pensarlo". Entrenado con su negocio, sus precios y su forma de hablar.
+Segundo: digitalización. Sacamos su operación del papel, de la libreta y de la cabeza de una sola persona.
+Tercero: capacitación. Si usted prefiere aprender a hacerlo, le enseñamos, en grupo o uno a uno.
+Y cuarto: atención al cliente. Un agente que contesta en segundos por WhatsApp o por teléfono, con voz puertorriqueña, califica y le agenda la cita. Es una parte de lo que hacemos. No es lo único.
 
-**[3:40 · CÓMO TRABAJAMOS]**
-Primero miramos su operación: qué hace usted a mano, dónde se le van las horas y dónde se le escapa el dinero. No le vendemos tecnología antes de entender su negocio.
-Después escogemos por dónde empezar. No tiene que automatizarlo todo. Empiece por la tarea que más le está costando.
-Lo construimos con usted y lo dejamos funcionando en unos quince días. Del día dieciséis al cuarenta y cinco lo afinamos con lo que pasa de verdad en su negocio.
-Y no desaparecemos. Después hay soporte, y usted puede ver a sus agentes trabajando.
+**[2:21 · CÓMO TRABAJAMOS]**
+¿Cómo trabajamos?
+Primero miramos su operación: qué hace usted a mano, dónde se le van las horas y dónde se le escapa el dinero.
+Después escogemos por dónde empezar. No tiene que automatizarlo todo: empiece por lo que más le está costando.
+Lo construimos con usted y en unos quince días está funcionando. Del día dieciséis al cuarenta y cinco lo afinamos con lo que pasa de verdad en su negocio. Y después no desaparecemos: hay soporte.
 
-**[4:50 · POR QUÉ NOSOTROS]**
-No le vendemos algo que no usamos. Mis empresas corren con estos agentes todos los días.
-Somos de Puerto Rico, operamos en Puerto Rico y entendemos cómo se hacen negocios aquí: por WhatsApp, con confianza y con alguien que le conteste.
+**[2:54 · POR QUÉ NOSOTROS]**
+¿Por qué nosotros?
+Porque no le vendemos algo que no usamos. Mis empresas corren con estos agentes todos los días.
+Y porque somos de Puerto Rico. Entendemos cómo se hacen negocios aquí: por WhatsApp, con confianza y con alguien que le conteste.
 
-**[5:20 · PARA QUIÉN]**
-Esto es para el dueño que sabe que la IA viene y no quiere quedarse atrás. Para el que quiere crecer sin agrandar la nómina. Y para el que está cansado de que todo dependa de él.
+**[3:12 · PARA QUIÉN]**
+Esto es para el dueño que sabe que la inteligencia artificial viene y no quiere quedarse atrás. Para el que quiere crecer sin agrandar la nómina. Y para el que está cansado de que todo dependa de él.
 
-**[5:40 · CTA]**
+**[3:29 · ACCIÓN · CTA]**
 El próximo paso es simple: agende una llamada con nuestro equipo.
-En esa llamada miramos su negocio y le decimos qué agente o qué proceso le conviene empezar primero. Le enseñamos un agente funcionando, para que lo vea antes de decidir. Y si todavía no le conviene nada, también se lo decimos.
+Miramos su negocio, le decimos qué agente o qué proceso le conviene primero, y le enseñamos un agente funcionando, para que lo vea antes de decidir.
+Y si todavía no le conviene nada, también se lo decimos.
 AI Borinquen. Su equipo digital.
-
-### Ganchos de repuesto
-1. Todo el mundo le dice que use IA. Nadie le dice qué implementar en su negocio. Eso es lo que hacemos.
-2. Deje de buscar un chatbot. Contrate un empleado digital para un puesto concreto.
-3. Si su negocio vive en una libreta, un Excel y el WhatsApp de una persona, este video es para usted.
-4. Crezca sin agrandar la nómina. Le explico cómo en seis minutos.
-5. La IA no le va a quitar su negocio. El que la sepa usar, sí.
-6. ¿Qué tarea sigue haciendo usted a mano todos los días? Esa es la primera que le quitamos.
 
 ---
 
@@ -404,3 +399,17 @@ Nos vemos del otro lado.
 48. Si esto te sirvió, compártelo con alguien que lo necesite.
 49. No necesitas más contenido. Necesitas un sistema.
 50. Esto no es suerte. Es sistema.
+
+**Bori (12 · solo voz, sin cara · tuteo)**
+51. Tu negocio necesita anuncios. Tú no tienes tiempo. Bori sí.
+52. Bori es tu trafficker personal.
+53. Le dices qué vendes, y Bori te hace los flyers, arma la campaña y la deja lista para publicar.
+54. Tú apruebas. Bori ejecuta.
+55. No necesitas una agencia de mil dólares al mes para anunciarte.
+56. Un anuncio pensado para tu negocio, hecho con inteligencia artificial, en minutos.
+57. Bori nace para los dueños de negocio que no pueden pagar una agencia.
+58. Bori no es magia: necesitas un buen producto. Con eso, Bori hace el resto.
+59. Crea el contenido y corre los anuncios. El creativo es la mitad del producto.
+60. Tú dueño de negocio. Bori, tu departamento de marketing.
+61. Pruébalo con tu negocio. Entra a heybori.ai.
+62. Hecho con Bori.
