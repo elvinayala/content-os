@@ -1,0 +1,461 @@
+<title>Propuesta KAS · Level Up</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Level Up Media: negro cálido + amarillo #F5CE1A, Sora para títulos (marca de la fábrica de motion) */
+:root {
+  color-scheme: dark;
+  --fondo: #0b0b0b; --superficie: #141311; --superficie2: #1b1a16; --borde: #2c2a24; --texto: #f5f1e8; --gris: #a3a097; --gris2: #77746b;
+  --oro: #f5ce1a; --oro2: #ffe27a;
+  --sora: "Sora", "Helvetica Neue", Arial, sans-serif; --inter: "Inter", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font-family: var(--inter); overflow: hidden; }
+#visor { position: fixed; inset: 0; overflow: hidden; background: var(--fondo); }
+#escenario { position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; overflow: hidden;
+  background: radial-gradient(1000px 650px at 75% 25%, rgba(245,206,26,.09) 0%, rgba(245,206,26,0) 62%), var(--fondo); }
+.slide::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image: linear-gradient(rgba(245,206,26,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(245,206,26,.06) 1px, transparent 1px);
+  background-size: 90px 90px; -webkit-mask-image: radial-gradient(60% 60% at 50% 50%, #000 0%, transparent 100%); mask-image: radial-gradient(60% 60% at 50% 50%, #000 0%, transparent 100%); }
+.slide.activa { opacity: 1; visibility: visible; transition: opacity .5s ease, visibility 0s; }
+.ceja { font-family: var(--mono); font-size: 21px; letter-spacing: .3em; text-transform: uppercase; color: var(--oro); }
+h1, h2 { font-family: var(--sora); font-weight: 800; letter-spacing: -.025em; margin: 0; text-wrap: balance; }
+h2 { font-size: 72px; line-height: 1.04; }
+.oro { color: var(--oro); }
+.logo-esq { position: absolute; left: 70px; top: 50px; width: 120px; }
+.pie { position: absolute; left: 70px; right: 70px; bottom: 44px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 17px; letter-spacing: .16em; color: var(--gris2); text-transform: uppercase; }
+
+@keyframes sube { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: none; } }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.84); } 70% { opacity: 1; transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
+@keyframes desde-der { from { opacity: 0; transform: perspective(1600px) rotateY(-14deg) translateX(120px); } to { opacity: 1; transform: perspective(1600px) rotateY(-5deg); } }
+@keyframes desde-izq { from { opacity: 0; transform: perspective(1600px) rotateY(14deg) translateX(-120px); } to { opacity: 1; transform: perspective(1600px) rotateY(5deg); } }
+@keyframes late { 0%, 100% { transform: scale(1); opacity: .6; } 50% { transform: scale(1.35); opacity: 0; } }
+@keyframes gira { to { transform: rotate(360deg); } }
+@keyframes orbita { to { offset-distance: 100%; } }
+.activa .sube { animation: sube .8s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+.activa .aparece { animation: aparece .9s ease both; animation-delay: var(--d, 0s); }
+.activa .pop { animation: pop .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+
+/* 1 · Portada */
+#s1 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; text-align: center; }
+#s1 .logo { width: 620px; filter: drop-shadow(0 0 40px rgba(245,206,26,.25)); }
+#s1 .linea1 { font-family: var(--mono); font-size: 24px; letter-spacing: .34em; color: var(--oro); }
+#s1 h1 { font-size: 70px; }
+#s1 .sub { font-family: var(--sora); font-size: 32px; color: var(--gris); }
+#s1 .barras { display: flex; gap: 10px; margin-top: 10px; }
+#s1 .barras i { display: block; width: 80px; height: 8px; border-radius: 4px; background: var(--oro); opacity: .25; }
+.activa #s1 .barras i { animation: carga 2.4s ease infinite; animation-delay: calc(var(--i) * .18s); }
+@keyframes carga { 0%, 100% { opacity: .2; } 40% { opacity: 1; } }
+
+/* 2 · Testimonios */
+#s2 .cab { position: absolute; left: 0; right: 0; top: 120px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+.testis { position: absolute; left: 80px; right: 80px; top: 270px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 22px; }
+.testi .video { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 20px; overflow: hidden; border: 1px solid rgba(245,206,26,.35);
+  background: #000 center / cover no-repeat; cursor: pointer; padding: 0; box-shadow: 0 30px 80px rgba(0,0,0,.5); transition: transform .25s, border-color .25s; }
+.testi .video:hover { transform: translateY(-6px); border-color: var(--oro); }
+.testi .video:focus-visible { outline: 3px solid var(--oro); outline-offset: 4px; }
+.testi .video::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.75) 100%); }
+.play { position: absolute; left: 50%; top: 50%; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; display: grid; place-items: center; background: rgba(11,11,11,.45); z-index: 1; }
+.play::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(245,241,232,.75); }
+.play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--oro); }
+.activa .play::after { animation: late 2.2s ease-out infinite; animation-delay: var(--d, 0s); }
+.play svg { width: 32px; height: 32px; margin-left: 6px; }
+.dur { position: absolute; right: 12px; bottom: 12px; z-index: 1; font-family: var(--mono); font-size: 17px; color: var(--texto); background: rgba(11,11,11,.7); padding: 3px 9px; border-radius: 7px; }
+.testi b { display: block; font-family: var(--sora); font-size: 21px; font-weight: 700; margin-top: 18px; }
+.testi span { display: block; font-size: 16px; color: var(--gris); margin-top: 4px; }
+.testi q { display: block; font-family: var(--sora); font-size: 17px; line-height: 1.35; color: var(--texto); margin-top: 10px; quotes: "«" "»"; }
+.testi q em { font-style: normal; color: var(--oro); }
+.cine[hidden] { display: none; }
+.cine { position: absolute; inset: 0; z-index: 5; background: rgba(5,5,5,.94); display: grid; place-items: center; }
+.cine video { width: 1600px; height: 920px; object-fit: contain; border-radius: 18px; background: #000; box-shadow: 0 30px 120px rgba(0,0,0,.6); }
+.cine .cerrar { position: absolute; right: 60px; top: 40px; width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--borde); background: rgba(11,11,11,.85); color: var(--texto); font: 600 30px var(--sora); cursor: pointer; }
+
+/* 3–6 · Casos */
+.casos { position: absolute; left: 70px; right: 70px; top: 150px; bottom: 120px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.caso { background: var(--superficie); border: 1px solid var(--borde); border-radius: 24px; padding: 26px 26px 30px; display: flex; flex-direction: column; gap: 12px; }
+.caso .pantalla { border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #2c2a24; box-shadow: 0 30px 70px rgba(0,0,0,.5); }
+.caso:nth-child(1) .pantalla { transform: perspective(1600px) rotateY(5deg); }
+.caso:nth-child(2) .pantalla { transform: perspective(1600px) rotateY(-5deg); }
+.activa .caso:nth-child(1) .pantalla { animation: desde-izq .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: .15s; }
+.activa .caso:nth-child(2) .pantalla { animation: desde-der .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: .35s; }
+.caso .barra { height: 30px; background: #1c1c1e; display: flex; align-items: center; gap: 7px; padding: 0 12px; font-family: var(--mono); font-size: 12px; color: #9a9a9a; }
+.caso .barra i { width: 10px; height: 10px; border-radius: 5px; display: inline-block; }
+.caso .barra i:nth-child(1) { background: #ff5f57; } .caso .barra i:nth-child(2) { background: #febc2e; } .caso .barra i:nth-child(3) { background: #28c840; margin-right: 8px; }
+.caso .pantalla img { display: block; width: 100%; height: 300px; object-fit: cover; object-position: top left; }
+.caso small { font-family: var(--mono); font-size: 17px; letter-spacing: .26em; color: var(--oro); margin-top: 14px; }
+.caso h3 { font-family: var(--sora); font-size: 38px; font-weight: 800; margin: 0; letter-spacing: -.015em; }
+.caso p { font-size: 21px; line-height: 1.45; color: var(--gris); margin: 0; }
+.caso .dato { font-family: var(--sora); font-size: 48px; font-weight: 800; color: var(--oro); letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin-top: auto; }
+.legal { position: absolute; left: 0; right: 0; bottom: 40px; text-align: center; font-family: var(--mono); font-size: 15px; letter-spacing: .14em; color: var(--gris2); }
+
+/* 7 · Método */
+#s7 .izq { position: absolute; left: 110px; top: 340px; width: 600px; display: flex; flex-direction: column; gap: 22px; }
+#s7 .izq h2 { font-size: 80px; }
+#s7 .izq p { font-size: 28px; line-height: 1.45; color: var(--gris); margin: 0; }
+.motor { position: absolute; left: 930px; top: 140px; width: 800px; height: 800px; }
+.motor svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.activa .motor .aro { stroke-dasharray: 1885; stroke-dashoffset: 1885; animation: traza 2.4s cubic-bezier(.4,.1,.2,1) .4s forwards; }
+@keyframes traza { to { stroke-dashoffset: 0; } }
+.motor .punteado { transform-origin: 400px 400px; }
+.activa .motor .punteado { animation: gira 40s linear infinite; }
+.motor .chispa { offset-path: circle(300px at 400px 400px); offset-rotate: 0deg; width: 20px; height: 20px; border-radius: 50%; background: #fff6cc; box-shadow: 0 0 20px var(--oro); position: absolute; left: 0; top: 0; opacity: 0; }
+.activa .motor .chispa { animation: orbita 4.5s linear 2.8s infinite, aparece .3s ease 2.8s forwards; }
+.nucleo { position: absolute; left: 280px; top: 280px; width: 240px; height: 240px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle, rgba(245,206,26,.22), rgba(11,11,11,.95) 70%); border: 2px solid var(--oro); box-shadow: 0 0 50px rgba(245,206,26,.3); }
+.nucleo small { font-family: var(--mono); font-size: 16px; letter-spacing: .3em; color: var(--gris); }
+.nucleo b { font-family: var(--sora); font-size: 38px; color: var(--oro); margin-top: 6px; }
+.fase { position: absolute; width: 0; height: 0; }
+.fase i { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 22px rgba(245,206,26,.8); }
+.fase div { position: absolute; width: 250px; }
+.fase small { font-family: var(--mono); font-size: 16px; letter-spacing: .2em; color: var(--oro); display: block; }
+.fase b { font-family: var(--sora); font-size: 34px; display: block; }
+.fase span { font-size: 20px; line-height: 1.35; color: var(--gris); display: block; }
+
+/* 8 · Comencemos */
+#s8 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; }
+#s8 h1 { font-size: 220px; color: var(--oro); text-shadow: 0 0 70px rgba(245,206,26,.3); }
+#s8 .logo { width: 300px; }
+#s8 .mono { font-family: var(--mono); font-size: 22px; letter-spacing: .3em; color: var(--gris); }
+
+/* Controles */
+.controles { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; background: rgba(11,11,11,.85); border: 1px solid var(--borde); border-radius: 14px; padding: 6px; transition: opacity .4s; z-index: 10; }
+.controles.dormido { opacity: 0; }
+.controles button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--borde); background: var(--superficie); color: var(--texto); font-size: 18px; cursor: pointer; }
+.controles button:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
+.controles .pag { font-family: var(--mono); font-size: 13px; color: var(--gris); padding: 0 8px; font-variant-numeric: tabular-nums; }
+.progreso { position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 10; }
+.progreso i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--oro), var(--oro2)); transition: width .4s; }
+.girar { display: none; position: fixed; left: 12px; right: 12px; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 20; background: rgba(20,19,17,.96); border: 1px solid rgba(245,206,26,.45); color: var(--texto); border-radius: 14px; padding: 12px 14px; font: 500 15px/1.4 var(--inter); align-items: center; gap: 12px; }
+.girar b { color: var(--oro); }
+.girar button { margin-left: auto; flex: none; background: none; border: 1px solid var(--borde); color: var(--texto); border-radius: 8px; width: 32px; height: 32px; }
+@media (orientation: portrait) and (max-width: 820px) { .girar { display: flex; } }
+@media (prefers-reduced-motion: reduce) { .activa .sube, .activa .aparece, .activa .pop, .activa .caso .pantalla, .activa .motor .aro, .activa .motor .chispa { animation: none !important; } .motor .aro { stroke-dashoffset: 0; } }
+
+:root { --bronce: #c39a6b; --bronce2: #e6c7a0; }
+.bronce { color: var(--bronce); }
+.sub { font-family: var(--sora); font-size: 32px; color: var(--gris); line-height: 1.35; margin: 0; }
+.centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; text-align: center; padding: 0 160px; }
+.cab { position: absolute; left: 140px; right: 140px; top: 150px; display: flex; flex-direction: column; gap: 18px; }
+.cab h2 { font-size: 68px; line-height: 1.08; max-width: 1500px; }
+.grande { font-size: 84px; line-height: 1.08; }
+/* portada */
+.portada { position: absolute; left: 140px; top: 0; bottom: 0; width: 900px; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+.portada h1 { font-size: 92px; line-height: 1.04; }
+.marcas { display: flex; align-items: center; gap: 30px; }
+.marcas .lu { height: 92px; }
+.marcas .kas { height: 112px; }
+.marcas .x { font-family: var(--sora); font-size: 44px; color: var(--gris2); }
+.fecha { font-family: var(--mono); font-size: 19px; letter-spacing: .24em; color: var(--gris2); text-transform: uppercase; }
+.vitrina { position: absolute; right: 80px; top: 0; bottom: 0; width: 820px; }
+.foto { position: absolute; border-radius: 26px; overflow: hidden; border: 2px solid rgba(195,154,107,.55); box-shadow: 0 40px 110px rgba(0,0,0,.6); }
+.foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.f1 { width: 430px; height: 430px; left: 0; top: 130px; }
+.f2 { width: 330px; height: 560px; right: 20px; top: 70px; }
+.f3 { width: 360px; height: 360px; left: 210px; top: 600px; }
+.activa .f1 { animation: flotaA 9s ease-in-out infinite, pop .9s cubic-bezier(.2,.8,.2,1) .3s both; }
+.activa .f2 { animation: flotaB 10s ease-in-out infinite, pop .9s cubic-bezier(.2,.8,.2,1) .55s both; }
+.activa .f3 { animation: flotaA 11s ease-in-out infinite reverse, pop .9s cubic-bezier(.2,.8,.2,1) .8s both; }
+@keyframes flotaA { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-18px) rotate(1deg); } }
+@keyframes flotaB { 0%,100% { transform: translateY(0) rotate(2deg); } 50% { transform: translateY(16px) rotate(-1deg); } }
+/* diagnóstico */
+.grid-diag { position: absolute; left: 140px; right: 140px; top: 470px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.diag { background: var(--superficie); border: 1px solid var(--borde); border-top: 3px solid var(--bronce); border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; }
+.diag b { font-family: var(--sora); font-size: 34px; line-height: 1.1; color: var(--texto); }
+.diag span { font-size: 24px; line-height: 1.45; color: var(--gris); }
+.diag:last-child { border-top-color: var(--oro); }
+/* meta */
+.meta-num { font-family: var(--sora); font-weight: 800; font-size: 210px; line-height: 1; letter-spacing: -.04em; color: var(--oro); }
+.meta-num small, .meta-din small { display: block; font-family: var(--mono); font-weight: 400; font-size: 24px; letter-spacing: .26em; color: var(--gris); text-transform: uppercase; margin-top: 10px; }
+.flecha-meta { font-size: 54px; color: var(--bronce); }
+.meta-din { font-family: var(--sora); font-weight: 800; font-size: 86px; color: var(--texto); letter-spacing: -.02em; }
+/* plan */
+.ruta { position: absolute; left: 140px; right: 140px; top: 470px; display: flex; flex-direction: column; gap: 34px; }
+.carril { background: var(--superficie); border: 1px solid var(--borde); border-radius: 24px; padding: 30px 36px; display: flex; flex-direction: column; gap: 18px; }
+.carril small { font-family: var(--mono); font-size: 20px; letter-spacing: .24em; color: var(--oro); }
+.pasos { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pasos span { font-family: var(--sora); font-size: 32px; font-weight: 700; padding: 14px 24px; border-radius: 16px; border: 1px solid var(--borde); background: var(--superficie2); }
+.pasos span.fin { background: var(--oro); color: #0b0b0b; border-color: var(--oro); }
+.pasos i { font-style: normal; font-size: 36px; color: var(--bronce); }
+.activa .carril .pasos span { animation: pop .6s cubic-bezier(.2,.8,.2,1) both; }
+.activa .carril:first-child .pasos span:nth-child(1) { animation-delay: .6s; } .activa .carril:first-child .pasos span:nth-child(3) { animation-delay: .8s; } .activa .carril:first-child .pasos span:nth-child(5) { animation-delay: 1s; }
+.activa .carril:last-child .pasos span:nth-child(1) { animation-delay: 1.2s; } .activa .carril:last-child .pasos span:nth-child(3) { animation-delay: 1.4s; } .activa .carril:last-child .pasos span:nth-child(5) { animation-delay: 1.6s; } .activa .carril:last-child .pasos span:nth-child(7) { animation-delay: 1.8s; }
+/* teléfonos */
+.telefonos { position: absolute; left: 0; right: 0; top: 300px; display: flex; justify-content: center; gap: 90px; }
+.tel { width: 420px; height: 600px; border-radius: 44px; background: #fff; color: #1c1e21; padding: 22px; box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 10px #1b1a16; display: flex; flex-direction: column; gap: 14px; overflow: hidden; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+.fb-top, .ms-top { display: flex; align-items: center; gap: 12px; }
+.fb-top img, .ms-top img { width: 46px; height: 46px; border-radius: 50%; background: #fff; border: 1px solid #e4e6eb; object-fit: contain; padding: 4px; }
+.fb-top b, .ms-top b { display: block; font-size: 18px; } .fb-top span, .ms-top span { font-size: 14px; color: #65676b; }
+.fb-txt { font-size: 17px; line-height: 1.4; margin: 0; }
+.fb-foto { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; }
+.fb-cta { display: flex; justify-content: space-between; align-items: center; background: #f0f2f5; border-radius: 8px; padding: 12px 14px; }
+.fb-cta small { font-size: 12px; color: #65676b; } .fb-cta b { display: block; font-size: 18px; }
+.btn-fb { background: #1877f2; color: #fff; font-weight: 700; font-size: 16px; padding: 10px 18px; border-radius: 8px; }
+.activa .btn-fb { animation: late 1.6s ease-in-out 1.2s infinite; }
+@keyframes late { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(24,119,242,.2); } }
+.chat { background: #fff; }
+.burbujas { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.b { max-width: 82%; font-size: 17px; line-height: 1.38; padding: 12px 16px; border-radius: 20px; }
+.b.yo { align-self: flex-end; background: #0084ff; color: #fff; border-bottom-right-radius: 6px; }
+.b.ag { align-self: flex-start; background: #f0f0f0; border-bottom-left-radius: 6px; }
+.b.link { border: 1px solid var(--bronce); background: #fbf6f0; display: flex; flex-direction: column; }
+.b.link span { font-size: 14px; color: #8a6a44; }
+.nota-ej { position: absolute; left: 0; right: 0; top: 655px; text-align: center; font-family: var(--mono); font-size: 16px; letter-spacing: .2em; color: var(--gris2); }
+/* servicios */
+.servicio { position: absolute; inset: 120px 120px 110px 140px; display: grid; grid-template-columns: 640px 1fr; gap: 80px; align-items: center; }
+.lado-s { display: flex; flex-direction: column; gap: 22px; }
+.lado-s h2 { font-size: 74px; line-height: 1.04; }
+.precio { margin-top: 10px; background: var(--superficie); border: 2px solid var(--oro); border-radius: 26px; padding: 26px 32px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 0 60px rgba(245,206,26,.12); }
+.precio small { font-family: var(--mono); font-size: 18px; letter-spacing: .26em; color: var(--gris); }
+.precio b { font-family: var(--sora); font-size: 96px; line-height: 1; color: var(--oro); letter-spacing: -.03em; }
+.precio > span { font-size: 24px; color: var(--gris); }
+.nota-s { font-size: 21px; color: var(--gris2); }
+.incluye { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.incluye li { display: flex; gap: 18px; align-items: flex-start; font-size: 27px; line-height: 1.35; color: var(--texto); }
+.incluye i { flex: none; width: 38px; height: 38px; border-radius: 50%; background: rgba(195,154,107,.16); color: var(--bronce2); display: grid; place-items: center; margin-top: 2px; }
+.incluye i svg { width: 22px; height: 22px; }
+/* inversión */
+.suma { display: flex; align-items: center; gap: 30px; margin-top: 20px; }
+.pieza { width: 380px; padding: 34px; border-radius: 26px; background: var(--superficie); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 12px; }
+.pieza small { font-family: var(--mono); font-size: 17px; letter-spacing: .22em; color: var(--gris); }
+.pieza b { font-family: var(--sora); font-size: 80px; letter-spacing: -.03em; line-height: 1; }
+.pieza.total { background: var(--oro); border-color: var(--oro); color: #0b0b0b; box-shadow: 0 0 80px rgba(245,206,26,.25); }
+.pieza.total small { color: #3a3205; }
+.mas { font-family: var(--sora); font-size: 64px; color: var(--bronce); }
+/* línea de tiempo */
+.linea-k { position: absolute; left: 140px; right: 140px; top: 500px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+.riel { position: absolute; left: 0; right: 0; top: -34px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--bronce), var(--oro)); }
+.hito-k { position: relative; background: var(--superficie); border: 1px solid var(--borde); border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 10px; min-height: 260px; }
+.hito-k::before { content: ""; position: absolute; left: 30px; top: -44px; width: 20px; height: 20px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 20px rgba(245,206,26,.6); }
+.hito-k small { font-family: var(--mono); font-size: 19px; letter-spacing: .2em; color: var(--oro); text-transform: uppercase; }
+.hito-k b { font-family: var(--sora); font-size: 36px; }
+.hito-k span { font-size: 24px; color: var(--gris); line-height: 1.4; }
+.firma-k { font-family: var(--mono); font-size: 20px; letter-spacing: .26em; color: var(--oro); text-transform: uppercase; }
+</style>
+
+<div id="visor">
+  <div id="escenario">
+    <section class="slide activa" id="s1">
+      
+      <div class="portada">
+      <div class="marcas pop"><img class="lu" src="img/lu-logo.png" alt="Level Up Media"><span class="x">×</span><img class="kas" src="img/kas-logo.png" alt="KAS"></div>
+      <div class="ceja sube" style="--d:.3s">Propuesta para Kassandra Reyes</div>
+      <h1 class="sube" style="--d:.45s">Que cada clienta que ve <span class="bronce">KAS</span><br>llegue a <span class="oro">comprar.</span></h1>
+      <p class="sub sube" style="--d:.65s">Anuncios que llevan directo a tu tienda + un agente que contesta cada mensaje.</p>
+      <div class="fecha aparece" style="--d:.9s">5 de octubre de 2026</div>
+    </div>
+    <div class="vitrina">
+      <div class="foto f1"><img src="img/brillo.jpg" alt=""></div>
+      <div class="foto f2"><img src="img/eva.jpg" alt=""></div>
+      <div class="foto f3"><img src="img/elegancia.jpg" alt=""></div>
+    </div>
+      <div class="pie"><span>KAS × Level Up</span><span>01 / 10</span></div>
+    </section>
+    <section class="slide" id="s2">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="cab"><div class="ceja sube">Lo que hablamos</div>
+      <h2 class="sube" style="--d:.1s">Tienes el producto. Te falta que <span class="oro">te vean y te compren.</span></h2></div>
+    <div class="grid-diag"><div class="diag pop" style="--d:0.35s"><b>3 años</b><span>con tu tienda online de calzado para mujer, en piel y con diseño propio.</span></div><div class="diag pop" style="--d:0.53s"><b>35 a 55 años</b><span>tu clienta ideal, y una gran parte está en Facebook.</span></div><div class="diag pop" style="--d:0.71s"><b>Anuncios sin resultado</b><span>probaste en Instagram sin mucho resultado, y Facebook no lo manejas todavía.</span></div><div class="diag pop" style="--d:0.89s"><b>Mensajes sin respuesta</b><span>muchas clientas escriben, no reciben respuesta a tiempo y no llegan a tu página.</span></div></div>
+      <div class="pie"><span>Diagnóstico</span><span>02 / 10</span></div>
+    </section>
+    <section class="slide" id="s3">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="centro">
+      <div class="ceja sube">Tu meta</div>
+      <div class="meta-num pop" style="--d:.2s"><span data-cuenta="10">0</span>–<span data-cuenta="15">0</span><small>pares a la semana</small></div>
+      <div class="flecha-meta aparece" style="--d:.7s">↓</div>
+      <div class="meta-din pop" style="--d:.9s">≈ $4,000 – $5,000 <small>al mes en ventas</small></div>
+      <p class="sub sube" style="--d:1.2s">Con los precios de tu tienda (de $80 a $125 la mayoría de tus modelos).</p>
+    </div>
+      <div class="pie"><span>La meta</span><span>03 / 10</span></div>
+    </section>
+    <section class="slide" id="s4">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="cab"><div class="ceja sube">El plan</div>
+      <h2 class="sube" style="--d:.1s">Uno trae a la clienta. <span class="oro">El otro no la deja ir.</span></h2></div>
+    <div class="ruta">
+      <div class="carril pop" style="--d:.4s">
+        <small>1 · MARKETING</small>
+        <div class="pasos"><span>Anuncio en Facebook</span><i>→</i><span>Página del modelo</span><i>→</i><span class="fin">Compra</span></div>
+      </div>
+      <div class="carril pop" style="--d:.8s">
+        <small>2 · AGENTE DE CHAT</small>
+        <div class="pasos"><span>Te escribe</span><i>→</i><span>Respuesta en segundos</span><i>→</i><span>Enlace del modelo</span><i>→</i><span class="fin">Compra</span></div>
+      </div>
+    </div>
+      <div class="pie"><span>El plan</span><span>04 / 10</span></div>
+    </section>
+    <section class="slide" id="s5">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="cab"><div class="ceja sube">Así se ve · ejemplo</div>
+      <h2 class="sube" style="--d:.1s">Del anuncio a la compra, <span class="oro">sin perder a nadie.</span></h2></div>
+    <div class="telefonos">
+      <div class="tel pop" style="--d:.3s">
+        <div class="fb-top"><img src="img/kas-logo.png" alt=""><div><b>KAS Shoe designer</b><span>Publicidad</span></div></div>
+        <p class="fb-txt">Elegancia y comodidad en piel. Diseño de Puerto Rico, envíos a PR y EE. UU. 👠</p>
+        <img class="fb-foto" src="img/brillo.jpg" alt="">
+        <div class="fb-cta"><div><small>KASBRANDPR.COM</small><b>Bianca · $125</b></div><span class="btn-fb">Comprar</span></div>
+      </div>
+      <div class="tel chat pop" style="--d:.6s">
+        <div class="ms-top"><img src="img/kas-logo.png" alt=""><div><b>KAS</b><span>Responde en segundos</span></div></div>
+        <div class="burbujas">
+          <div class="b yo sube" style="--d:1.0s">Hola, ¿las Bianca las tienen en talla 7?</div>
+          <div class="b ag sube" style="--d:1.7s">¡Hola! 😊 Sí, las Bianca en piel metalizada están en talla 7, a $125. Te dejo el enlace para comprarlas directo:</div>
+          <div class="b ag link sube" style="--d:2.2s"><b>Bianca · KAS</b><span>kasbrandpr.com</span></div>
+          <div class="b ag sube" style="--d:2.7s">¿Te ayudo con algo más, como el envío?</div>
+        </div>
+      </div>
+      <div class="nota-ej aparece" style="--d:3s">EJEMPLO ILUSTRATIVO · tallas y disponibilidad se configuran con tu inventario</div>
+    </div>
+      <div class="pie"><span>Ejemplo</span><span>05 / 10</span></div>
+    </section>
+    <section class="slide" id="s6">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="servicio">
+      <div class="lado-s">
+        <div class="ceja sube">Servicio 1</div>
+        <h2 class="sube" style="--d:.1s">Marketing <span class="oro">hecho por nosotros</span></h2>
+        <p class="sub sube" style="--d:.2s">Done For You · 3 meses. Nosotros lo hacemos; tú te enfocas en tu marca.</p>
+        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="3500">0</span></b><span>por 3 meses</span></div>
+        <div class="nota-s aparece" style="--d:1.2s">La inversión en anuncios se paga aparte, directo a Meta.</div>
+      </div>
+      <ul class="incluye"><li class="sube" style="--d:0.30s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Onboarding 1:1 y auditoría de tu marca, tu tienda y tus cuentas</li><li class="sube" style="--d:0.39s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Estrategia de marketing para tu clienta ideal: mujeres de 35 a 55, con foco en Facebook</li><li class="sube" style="--d:0.48s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Tu oferta y tus ángulos ganadores</li><li class="sube" style="--d:0.57s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Estructura de tu contenido orgánico: qué publicar y por qué</li><li class="sube" style="--d:0.66s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Creativos para anuncios con tu marca y tus modelos</li><li class="sube" style="--d:0.75s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Campañas en Facebook e Instagram que llevan directo a la página de compra</li><li class="sube" style="--d:0.84s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Píxel de Meta para medir cada compra y optimizar por ventas</li><li class="sube" style="--d:0.93s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Optimización constante: se apaga lo que no vende y se escala lo que sí</li><li class="sube" style="--d:1.02s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Tu equipo: estratega, diseñador y project manager, con reportes de resultados</li></ul>
+    </div>
+      <div class="pie"><span>Marketing</span><span>06 / 10</span></div>
+    </section>
+    <section class="slide" id="s7">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="servicio">
+      <div class="lado-s">
+        <div class="ceja sube">Servicio 2</div>
+        <h2 class="sube" style="--d:.1s">Agente de chat <span class="oro">que vende</span></h2>
+        <p class="sub sube" style="--d:.2s">Para que ninguna clienta se quede sin respuesta ni sin llegar a tu página.</p>
+        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="2000">0</span></b><span>implementación</span></div>
+      </div>
+      <ul class="incluye"><li class="sube" style="--d:0.30s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Entrenado con tu catálogo: modelos, precios, tallas, materiales y envíos a PR y EE. UU.</li><li class="sube" style="--d:0.40s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Contesta en segundos, de día y de noche, en Messenger e Instagram</li><li class="sube" style="--d:0.50s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Recomienda modelos y manda el enlace directo a la página de compra</li><li class="sube" style="--d:0.60s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Resuelve dudas de tallas y envíos con el tono de KAS</li><li class="sube" style="--d:0.70s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Le da seguimiento a la clienta que preguntó y no compró</li><li class="sube" style="--d:0.80s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Te avisa cuando una clienta necesita hablar contigo</li><li class="sube" style="--d:0.90s"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>En marcha en 15 días, y del día 16 al 45 lo afinamos con conversaciones reales</li></ul>
+    </div>
+      <div class="pie"><span>Agente de chat</span><span>07 / 10</span></div>
+    </section>
+    <section class="slide" id="s8">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="centro">
+      <div class="ceja sube">Tu inversión</div>
+      <h2 class="sube" style="--d:.1s">Todo el sistema, <span class="oro">en una sola mirada.</span></h2>
+      <div class="suma">
+        <div class="pieza pop" style="--d:.4s"><small>MARKETING DFY · 3 MESES</small><b>$<span data-cuenta="3500">0</span></b></div>
+        <div class="mas aparece" style="--d:.7s">+</div>
+        <div class="pieza pop" style="--d:.9s"><small>AGENTE DE CHAT</small><b>$<span data-cuenta="2000">0</span></b></div>
+        <div class="mas aparece" style="--d:1.2s">=</div>
+        <div class="pieza total pop" style="--d:1.4s"><small>TOTAL</small><b>$<span data-cuenta="5500">0</span></b></div>
+      </div>
+      <p class="sub sube" style="--d:1.8s">Los anuncios se pagan aparte, directo a Meta, con el presupuesto que definamos juntas en la estrategia.</p>
+    </div>
+      <div class="pie"><span>Inversión</span><span>08 / 10</span></div>
+    </section>
+    <section class="slide" id="s9">
+      <img class="logo-esq" src="img/lu-logo.png" alt="">
+      <div class="cab"><div class="ceja sube">Cómo arrancamos</div>
+      <h2 class="sube" style="--d:.1s">De la firma a las <span class="oro">ventas.</span></h2></div>
+    <div class="linea-k"><div class="riel aparece" style="--d:.3s"></div><div class="hito-k pop" style="--d:0.40s"><small>Semana 1</small><b>Onboarding</b><span>Auditoría, accesos a tus cuentas y tu catálogo.</span></div><div class="hito-k pop" style="--d:0.65s"><small>Día 15</small><b>Agente en marcha</b><span>Contestando en Messenger e Instagram.</span></div><div class="hito-k pop" style="--d:0.90s"><small>Mes 1</small><b>Campañas al aire</b><span>Estrategia, creativos y anuncios hacia tu tienda.</span></div><div class="hito-k pop" style="--d:1.15s"><small>Meses 2 y 3</small><b>Optimizar y escalar</b><span>Más de lo que vende; el agente afinado hasta el día 45.</span></div></div>
+      <div class="pie"><span>Cómo arrancamos</span><span>09 / 10</span></div>
+    </section>
+    <section class="slide" id="s10">
+      
+      <div class="centro">
+      <div class="marcas pop"><img class="lu" src="img/lu-logo.png" alt="Level Up Media"><span class="x">×</span><img class="kas" src="img/kas-logo.png" alt="KAS"></div>
+      <h2 class="grande sube" style="--d:.3s">Nos vemos el <span class="oro">viernes 9 de octubre</span><br>a las 3:00 PM.</h2>
+      <p class="sub sube" style="--d:.55s">Revisamos juntas la propuesta y, si estás lista, arrancamos con tu onboarding.</p>
+      <div class="firma-k aparece" style="--d:.9s">Level Up Media · Elvin Ayala</div>
+    </div>
+      <div class="pie"><span>Próximo paso</span><span>10 / 10</span></div>
+    </section>
+    <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
+  </div>
+</div>
+
+<div class="girar" id="girar"><span>📱 <b>Gira el teléfono</b> para verla en grande. Toca a la derecha para avanzar.</span><button type="button" id="cerrarGirar" aria-label="Cerrar aviso">✕</button></div>
+<div class="progreso" aria-hidden="true"><i id="barra"></i></div>
+<div class="controles" id="controles">
+  <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
+  <span class="pag" id="pag">1 / 10</span>
+  <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
+  <button type="button" id="btnRep" aria-label="Repetir la animación" title="Repetir animación (R)">↻</button>
+  <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+</div>
+
+<script>
+(function () {
+  const esc = document.getElementById("escenario");
+  function ajustar() {
+    const w = window.innerWidth, h = window.innerHeight, k = Math.min(w / 1920, h / 1080);
+    esc.style.transform = `scale(${k})`; esc.style.left = (w - 1920 * k) / 2 + "px"; esc.style.top = (h - 1080 * k) / 2 + "px";
+  }
+  window.addEventListener("resize", ajustar); ajustar();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slides = [...document.querySelectorAll(".slide")];
+  let actual = 0;
+  const timers = [];
+  const limpiar = () => { while (timers.length) clearTimeout(timers.pop()); };
+
+  // Los números de los casos cuentan al entrar
+  function contar(s) {
+    s.querySelectorAll("[data-cuenta]").forEach((el) => {
+      const hasta = +el.dataset.cuenta, pre = el.dataset.pre || "", suf = el.dataset.suf || "";
+      const fmt = (n) => pre + Math.round(n).toLocaleString("en-US") + suf;
+      el.textContent = fmt(0);
+      if (reduce) { el.textContent = fmt(hasta); return; }
+      timers.push(setTimeout(() => { const t0 = performance.now(); const paso = (n) => { const k = Math.min(1, (n - t0) / 1300), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(hasta * e); if (k < 1) requestAnimationFrame(paso); }; requestAnimationFrame(paso); }, +el.dataset.delay || 700));
+    });
+  }
+  // Testimonios: clic → el video en grande; Esc o ✕ lo cierra
+  const cine = document.getElementById("cine"), cineV = document.getElementById("cineVideo");
+  const abrirCine = (src) => { cineV.src = src; cine.hidden = false; cineV.play().catch(() => {}); };
+  const cerrarCine = () => { cineV.pause(); cineV.removeAttribute("src"); cineV.load(); cine.hidden = true; };
+  document.querySelectorAll("[data-video]").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); abrirCine(b.dataset.video); }));
+  cine.addEventListener("click", (e) => { e.stopPropagation(); if (e.target === cine) cerrarCine(); });
+  document.getElementById("cineCerrar").addEventListener("click", (e) => { e.stopPropagation(); cerrarCine(); });
+  document.getElementById("cerrarGirar").addEventListener("click", (e) => { e.stopPropagation(); document.getElementById("girar").hidden = true; });
+
+  function arrancar(s) { s.classList.remove("activa"); void s.offsetWidth; s.classList.add("activa"); contar(s); }
+  function ir(n, forzar) {
+    if (!cine.hidden) cerrarCine();
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === actual && !forzar) return;
+    limpiar();
+    slides[actual].classList.remove("activa");
+    actual = n; arrancar(slides[actual]);
+    document.getElementById("pag").textContent = `${actual + 1} / ${slides.length}`;
+    document.getElementById("barra").style.width = ((actual + 1) / slides.length) * 100 + "%";
+    try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
+  }
+  const inicial = /^#s(\d+)$/.exec(location.hash);
+  actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
+  slides.forEach((s, i) => { if (i !== actual) s.classList.remove("activa"); });
+  ir(actual, true);
+
+  document.getElementById("btnAnt").addEventListener("click", (e) => { e.stopPropagation(); ir(actual - 1); });
+  document.getElementById("btnSig").addEventListener("click", (e) => { e.stopPropagation(); ir(actual + 1); });
+  document.getElementById("btnRep").addEventListener("click", (e) => { e.stopPropagation(); ir(actual, true); });
+  const full = () => { const d = document.documentElement; try { (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(() => {}); } catch (e) {} };
+  document.getElementById("btnFull").addEventListener("click", (e) => { e.stopPropagation(); full(); });
+  document.getElementById("visor").addEventListener("click", (e) => ir(e.clientX < window.innerWidth * 0.3 ? actual - 1 : actual + 1));
+  window.addEventListener("keydown", (e) => {
+    if (!cine.hidden) { if (e.key === "Escape") cerrarCine(); else if (e.key === " ") { e.preventDefault(); cineV.paused ? cineV.play() : cineV.pause(); } return; }
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
+    else if (e.key === "Home") ir(0);
+    else if (e.key === "End") ir(slides.length - 1);
+    else if (e.key === "f" || e.key === "F") full();
+    else if (e.key === "r" || e.key === "R") ir(actual, true);
+  });
+  let x0 = null;
+  window.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(actual + (dx < 0 ? 1 : -1)); x0 = null; });
+  const ctl = document.getElementById("controles"); let dormir;
+  const despertar = () => { ctl.classList.remove("dormido"); clearTimeout(dormir); dormir = setTimeout(() => ctl.classList.add("dormido"), 2600); };
+  window.addEventListener("mousemove", despertar); despertar();
+})();
+</script>
