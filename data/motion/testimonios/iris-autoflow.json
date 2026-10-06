@@ -1,0 +1,75 @@
+{
+ "video": "testimonios/iris-autoflow.mp4",
+ "dur": 45.17,
+ "nombre": "Iris",
+ "rol": "Cliente de AutoFlow · skin spa",
+ "retrato": true,
+ "acento": "#2BFF88",
+ "logoMarca": "testimonios/aib-lockup.png",
+ "gancho": {
+  "desde": 0,
+  "hasta": 3.6
+ },
+ "rotuloDesde": 3.6,
+ "subtitulos": [
+  {
+   "desde": 0.05,
+   "hasta": 3.55,
+   "texto": "No tarda ni 10, 15 segundos en que le conteste."
+  },
+  {
+   "desde": 3.6,
+   "hasta": 6.7,
+   "texto": "Desde que se implementó AutoFlow en mi negocio,"
+  },
+  {
+   "desde": 6.74,
+   "hasta": 10.9,
+   "texto": "tengo una paz, una tranquilidad, porque el servicio es súper eficiente."
+  },
+  {
+   "desde": 11.0,
+   "hasta": 15.3,
+   "texto": "Y ya cuando el lead está listo para que yo intervenga,"
+  },
+  {
+   "desde": 15.42,
+   "hasta": 17.9,
+   "texto": "me envía un mensaje de texto a mi teléfono personal,"
+  },
+  {
+   "desde": 18.04,
+   "hasta": 21.6,
+   "texto": "dejándome saber que tengo una clienta lista para mi intervención,"
+  },
+  {
+   "desde": 21.68,
+   "hasta": 25.3,
+   "texto": "lo que me economiza horas de estar contestando mensajes."
+  },
+  {
+   "desde": 25.39,
+   "hasta": 27.55,
+   "texto": "Y eso me ha dado una paz extraordinaria."
+  },
+  {
+   "desde": 27.67,
+   "hasta": 33.05,
+   "texto": "La parte que más me ha sorprendido es la agilidad con la que funciona este sistema."
+  },
+  {
+   "desde": 33.31,
+   "hasta": 37.05,
+   "texto": "Después que un cliente hace acercamiento a través de una red social,"
+  },
+  {
+   "desde": 37.11,
+   "hasta": 40.55,
+   "texto": "no tarda ni 10, 15 segundos en que le conteste."
+  }
+ ],
+ "durVideo": 40.67,
+ "cierre": {
+  "marca": "ai-borinquen"
+ }
+}
