@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Armador de Propuestas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root { color-scheme: dark; --fondo: #0b0b0b; --sup: #151411; --sup2: #1c1b17; --borde: #2e2c26; --texto: #f5f1e8; --gris: #a3a097; --oro: #f5ce1a; --rojo: #ff7a6b; --verde: #3ddc84; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.5 Inter, system-ui, sans-serif; padding: 28px 16px 60px; }
+main { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+header img { height: 46px; }
+h1 { font: 800 30px/1.15 Sora, sans-serif; margin: 0; letter-spacing: -.02em; }
+h1 span { color: var(--oro); }
+.intro { color: var(--gris); margin: 0; max-width: 760px; }
+.paso { background: var(--sup); border: 1px solid var(--borde); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.paso h2 { font: 700 19px Sora, sans-serif; margin: 0; display: flex; gap: 10px; align-items: center; }
+.paso h2 i { font-style: normal; width: 30px; height: 30px; border-radius: 50%; background: var(--oro); color: #0b0b0b; display: grid; place-items: center; font-size: 15px; flex: none; }
+.paso p { margin: 0; color: var(--gris); font-size: 14.5px; }
+textarea { width: 100%; min-height: 220px; background: #0e0d0b; color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 12px; font: 13px/1.45 ui-monospace, Menlo, monospace; resize: vertical; }
+.fila { display: flex; gap: 14px; flex-wrap: wrap; }
+.fila > div { flex: 1 1 260px; display: flex; flex-direction: column; gap: 8px; }
+label.archivo { display: flex; align-items: center; justify-content: center; min-height: 92px; border: 1.5px dashed var(--borde); border-radius: 12px; cursor: pointer; color: var(--gris); text-align: center; padding: 12px; font-size: 14px; }
+label.archivo:hover { border-color: var(--oro); color: var(--texto); }
+input[type=file] { display: none; }
+.miniaturas { display: flex; gap: 8px; flex-wrap: wrap; }
+.miniaturas img { height: 64px; border-radius: 8px; border: 1px solid var(--borde); background: #fff; object-fit: contain; max-width: 120px; }
+.botones { display: flex; gap: 10px; flex-wrap: wrap; }
+button { font: 600 15px Inter, sans-serif; border-radius: 10px; padding: 12px 20px; cursor: pointer; border: 1px solid var(--borde); background: var(--sup2); color: var(--texto); }
+button.principal { background: var(--oro); color: #0b0b0b; border-color: var(--oro); font-weight: 700; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.estado { font-size: 14.5px; min-height: 22px; }
+.estado.error { color: var(--rojo); } .estado.ok { color: var(--verde); }
+.vista { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--borde); background: #000; }
+.vista iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vista .vacio { position: absolute; inset: 0; display: grid; place-items: center; color: var(--gris); font-size: 14px; padding: 20px; text-align: center; }
+ol { margin: 0; padding-left: 20px; color: var(--gris); font-size: 14.5px; display: flex; flex-direction: column; gap: 4px; }
+ol b { color: var(--texto); }
+a { color: var(--oro); }
+</style></head><body>
+<main>
+  <header>
+    <img src="__LOGO_LU__" alt="Level Up Media">
+    <div><h1>Armador de <span>propuestas</span></h1>
+    <p class="intro">Pega lo que te dio Claude, sube el logo y las fotos del cliente, y descarga la presentación animada lista para mandar.</p></div>
+  </header>
+
+  <section class="paso">
+    <h2><i>1</i>Lo que te dio Claude</h2>
+    <p>Copia y pega aquí el bloque de datos que Claude te escribió (empieza con <code>{</code> y termina con <code>}</code>). Si viene entre <code>```</code>, no importa: se limpia solo.</p>
+    <textarea id="datos" spellcheck="false" placeholder='{ "marca": "level-up", "cliente": { … } … }'></textarea>
+    <div class="botones"><button type="button" id="ejemplo">Cargar el ejemplo (KAS) para ver cómo funciona</button></div>
+  </section>
+
+  <section class="paso">
+    <h2><i>2</i>Logo y fotos del cliente</h2>
+    <div class="fila">
+      <div><label class="archivo" for="logo">📎 Logo del cliente<br>(PNG con fondo transparente, si lo tienes)</label><input type="file" id="logo" accept="image/*"><div class="miniaturas" id="vLogo"></div></div>
+      <div><label class="archivo" for="fotos">🖼️ Hasta 3 fotos del cliente<br>(productos, local o trabajo; de su IG o web)</label><input type="file" id="fotos" accept="image/*" multiple><div class="miniaturas" id="vFotos"></div></div>
+    </div>
+    <p>Sin logo, la portada sale solo con el logo de nuestra marca. Sin fotos, la portada ocupa todo el ancho. La primera foto también se usa en el anuncio de ejemplo.</p>
+  </section>
+
+  <section class="paso">
+    <h2><i>3</i>Crear, revisar y descargar</h2>
+    <div class="botones">
+      <button type="button" class="principal" id="crear">Crear presentación</button>
+      <button type="button" id="abrir" disabled>Abrir en pantalla completa</button>
+      <button type="button" id="bajar" disabled>⬇ Descargar</button>
+    </div>
+    <div class="estado" id="estado"></div>
+    <div class="vista"><div class="vacio" id="vacio">Aquí vas a ver la presentación. Usa las flechas o toca a los lados para pasar las slides.</div><iframe id="marco" title="Vista previa" hidden></iframe></div>
+  </section>
+
+  <section class="paso">
+    <h2><i>4</i>Mandarla al cliente</h2>
+    <ol>
+      <li>Toca <b>⬇ Descargar</b>: se guarda un archivo <b>.html</b>.</li>
+      <li>Entra a <a href="https://app.netlify.com/drop" target="_blank" rel="noopener">app.netlify.com/drop</a> (con tu cuenta de Netlify) y <b>arrastra el archivo</b> ahí.</li>
+      <li>Netlify te da un link. Ese link es el que le mandas al cliente por WhatsApp.</li>
+      <li>Antes de mandarla, <b>pásala completa</b>: precios, nombre del cliente, fecha de la cita y que no haya nada inventado.</li>
+    </ol>
+  </section>
+</main>
+<script>window.R = __RECURSOS__;</script>
+<script>__ARMAR__</script>
+<script>
+const $ = (id) => document.getElementById(id);
+const img = { logo: "", fotos: [] };
+let ultimo = null;
+const estado = (t, tipo) => { $("estado").textContent = t; $("estado").className = "estado " + (tipo || ""); };
+// Achica las fotos para que la presentación no pese de más (el logo se deja en PNG para no perder la transparencia).
+function leer(file, max, comoPng) {
+  return new Promise((ok, mal) => {
+    const r = new FileReader();
+    r.onerror = mal;
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const k = Math.min(1, max / Math.max(im.width, im.height));
+        const cv = document.createElement("canvas"); cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        ok(comoPng ? cv.toDataURL("image/png") : cv.toDataURL("image/jpeg", 0.84));
+      };
+      im.onerror = () => mal(new Error("No pude leer esa imagen"));
+      im.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+const pintar = () => {
+  $("vLogo").innerHTML = img.logo ? `<img src="${img.logo}" alt="logo">` : "";
+  $("vFotos").innerHTML = img.fotos.map((f) => `<img src="${f}" alt="">`).join("");
+};
+$("logo").onchange = async (ev) => { const f = ev.target.files[0]; if (f) { img.logo = await leer(f, 900, true); pintar(); } };
+$("fotos").onchange = async (ev) => { img.fotos = []; for (const f of [...ev.target.files].slice(0, 3)) img.fotos.push(await leer(f, 1200, false)); pintar(); };
+$("ejemplo").onclick = () => { $("datos").value = JSON.stringify(R.ejemplo.datos, null, 2); img.logo = R.ejemplo.logo; img.fotos = R.ejemplo.fotos.slice(); pintar(); estado("Ejemplo cargado. Toca «Crear presentación».", "ok"); };
+function limpiarJson(t) {
+  t = t.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  return a >= 0 && b > a ? t.slice(a, b + 1) : t;
+}
+$("crear").onclick = () => {
+  let datos;
+  try { datos = JSON.parse(limpiarJson($("datos").value)); }
+  catch (err) { estado("El bloque de datos tiene un error (" + err.message + "). Pídele a Claude: «revisa el JSON, tiene un error de formato».", "error"); return; }
+  try {
+    const { html, n } = armarPropuesta(datos, img, R);
+    ultimo = { html, nombre: "propuesta-" + String(datos.cliente.negocio).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".html" };
+    const marco = $("marco"); marco.hidden = false; $("vacio").hidden = true; marco.srcdoc = html;
+    $("abrir").disabled = false; $("bajar").disabled = false;
+    estado(`✓ Lista: ${n} slides · ${(html.length / 1e6).toFixed(1)} MB. Revísala completa antes de mandarla.`, "ok");
+  } catch (err) { estado("No pude armarla: " + err.message, "error"); }
+};
+$("bajar").onclick = () => {
+  if (!ultimo) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ultimo.html], { type: "text/html" })); a.download = ultimo.nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+};
+$("abrir").onclick = () => { if (!ultimo) return; const u = URL.createObjectURL(new Blob([ultimo.html], { type: "text/html" })); window.open(u, "_blank"); };
+</script>
+</body></html>

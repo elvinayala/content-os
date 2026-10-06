@@ -1,0 +1,121 @@
+{
+  "marca": "level-up",
+  "cliente": {
+    "nombre": "Kassandra Reyes",
+    "negocio": "KAS",
+    "fecha": "5 de octubre de 2026",
+    "acento": "#c39a6b",
+    "logo": "img/kas-logo.png",
+    "fotos": ["img/brillo.jpg", "img/eva.jpg", "img/elegancia.jpg"]
+  },
+  "portada": {
+    "titulo": "Que cada clienta que ve **KAS**\nllegue a *comprar.*",
+    "sub": "Anuncios que llevan directo a tu tienda + un agente que contesta cada mensaje."
+  },
+  "diagnostico": {
+    "titulo": "Tienes el producto. Te falta que *te vean y te compren.*",
+    "puntos": [
+      ["3 años", "con tu tienda online de calzado para mujer, en piel y con diseño propio."],
+      ["35 a 55 años", "tu clienta ideal, y una gran parte está en Facebook."],
+      ["Anuncios sin resultado", "probaste en Instagram sin mucho resultado, y Facebook no lo manejas todavía."],
+      ["Mensajes sin respuesta", "muchas clientas escriben, no reciben respuesta a tiempo y no llegan a tu página."]
+    ]
+  },
+  "meta": {
+    "numero": "10–15",
+    "unidad": "pares a la semana",
+    "valor": "≈ $4,000 – $5,000",
+    "valor_nota": "al mes en ventas",
+    "nota": "Con los precios de tu tienda (de $80 a $125 la mayoría de tus modelos)."
+  },
+  "plan": {
+    "titulo": "Uno trae a la clienta. *El otro no la deja ir.*",
+    "carriles": [
+      { "nombre": "1 · MARKETING", "pasos": ["Anuncio en Facebook", "Página del modelo", "Compra"] },
+      { "nombre": "2 · AGENTE DE CHAT", "pasos": ["Te escribe", "Respuesta en segundos", "Enlace del modelo", "Compra"] }
+    ]
+  },
+  "ejemplo": {
+    "titulo": "Del anuncio a la compra, *sin perder a nadie.*",
+    "web": "kasbrandpr.com",
+    "anuncio": { "pagina": "KAS Shoe designer", "texto": "Elegancia y comodidad en piel. Diseño de Puerto Rico, envíos a PR y EE. UU. 👠", "foto": "img/brillo.jpg", "web": "kasbrandpr.com", "producto": "Bianca · $125", "boton": "Comprar" },
+    "chat": [
+      ["cliente", "Hola, ¿las Bianca las tienen en talla 7?"],
+      ["agente", "¡Hola! 😊 Sí, las Bianca en piel metalizada están en talla 7, a $125. Te dejo el enlace para comprarlas directo:"],
+      ["enlace", "Bianca · KAS"],
+      ["agente", "¿Te ayudo con algo más, como el envío?"]
+    ],
+    "nota": "tallas y disponibilidad se configuran con tu inventario"
+  },
+  "prueba": { "ceja": "Ya lo hicimos con otra tienda online", "testimonios": ["yazan"] },
+  "servicios": [
+    {
+      "nombre": "Marketing *hecho por nosotros*",
+      "corto": "Marketing DFY · 3 meses",
+      "sub": "Done For You · 3 meses. Nosotros lo hacemos; tú te enfocas en tu marca.",
+      "precio": 3500,
+      "precio_nota": "pago único · 3 meses de servicio",
+      "nota": "La inversión en anuncios se paga aparte, directo a Meta.",
+      "pie": "Marketing",
+      "incluye": [
+        "Onboarding 1:1 y auditoría de tu marca, tu tienda y tus cuentas",
+        "Estrategia de marketing para tu clienta ideal: mujeres de 35 a 55, con foco en Facebook",
+        "Tu oferta y tus ángulos ganadores",
+        "Estructura de tu contenido orgánico: qué publicar y por qué",
+        "Creativos para anuncios con tu marca y tus modelos",
+        "Campañas en Facebook e Instagram que llevan directo a la página de compra",
+        "Píxel de Meta para medir cada compra y optimizar por ventas",
+        "Optimización constante: se apaga lo que no vende y se escala lo que sí",
+        "Tu equipo: estratega, diseñador y project manager, con reportes de resultados"
+      ]
+    },
+    {
+      "nombre": "Agente de chat *que vende*",
+      "corto": "Agente de chat",
+      "sub": "Para que ninguna clienta se quede sin respuesta ni sin llegar a tu página.",
+      "precio": 2000,
+      "precio_nota": "pago único · sin mensualidad",
+      "pie": "Agente de chat",
+      "incluye": [
+        "Entrenado con tu catálogo: modelos, precios, tallas, materiales y envíos a PR y EE. UU.",
+        "Contesta en segundos, de día y de noche, en Messenger e Instagram",
+        "Recomienda modelos y manda el enlace directo a la página de compra",
+        "Resuelve dudas de tallas y envíos con el tono de KAS",
+        "Le da seguimiento a la clienta que preguntó y no compró",
+        "Te avisa cuando una clienta necesita hablar contigo",
+        "En marcha en 15 días, y del día 16 al 45 lo afinamos con conversaciones reales"
+      ]
+    }
+  ],
+  "proyeccion": {
+    "titulo": "Tu meta es el piso. *En el mes 3, escalamos.*",
+    "linea_meta": "Tu meta · 10–15 pares/semana",
+    "meses": [
+      { "mes": "Mes 1", "texto": "Arrancamos y aprendemos qué modelos y anuncios venden" },
+      { "mes": "Mes 2", "texto": "Llegamos a tu meta: 10–15 pares a la semana" },
+      { "mes": "Mes 3", "texto": "La superamos: más presupuesto a lo que ya vende", "cifra": "15+" }
+    ],
+    "legal": "Proyección ilustrativa con base en tu meta; los resultados dependen de tu producto, tu inventario y tu inversión en anuncios."
+  },
+  "inversion": {
+    "ceja": "Tu inversión · una sola vez",
+    "titulo": "Pagas una vez. *Sin mensualidades con nosotros.*",
+    "bono": 500,
+    "bono_texto": "si tomas los dos servicios juntos.",
+    "nota": "Los anuncios se pagan aparte, directo a Meta, con el presupuesto que definamos en la estrategia.",
+    "klarna": true
+  },
+  "arranque": {
+    "titulo": "De la firma a las *ventas.*",
+    "pasos": [
+      ["Semana 1", "Onboarding", "Auditoría, accesos a tus cuentas y tu catálogo."],
+      ["Día 15", "Agente en marcha", "Contestando en Messenger e Instagram."],
+      ["Mes 1", "Campañas al aire", "Estrategia, creativos y anuncios hacia tu tienda."],
+      ["Meses 2 y 3", "Optimizar y escalar", "Más de lo que vende; el agente afinado hasta el día 45."]
+    ]
+  },
+  "cierre": {
+    "titulo": "Nos vemos el *viernes 9 de octubre*\na las 3:00 PM.",
+    "sub": "Revisamos juntas la propuesta y, si estás lista, arrancamos con tu onboarding."
+  }
+}
