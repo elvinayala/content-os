@@ -14,7 +14,7 @@ precaución; con los demás nos vamos por ahí [Zernio] siempre".
 - **No médico** → Zernio sin preguntar: número comprado/portado en Zernio (comprar = gasto, OK de Elvin),
   WhatsApp registrado por API, DMs/comentarios de IG/FB por su bandeja (un perfil por cliente), SMS, y el
   número enlazado a Retell por SIP trunk (el cerebro de voz sigue en Retell). GHL queda para pipeline y
-  calendario. Llave: `AIB_ZERNIO_API_KEY` (cuenta de AIB; nunca la de Resuelto, equipo aparte).
+  calendario. Llave: `AIB_ZERNIO_API_KEY` (solo perfiles "AutoFlow · …"; nunca tocar los de Resuelto).
 - **Médico** (consultorio, clínica, laboratorio, dental, terapia, salud mental, todo lo que toque datos de
   pacientes) → NUNCA Zernio: Meta oficial dentro de GHL (o GoGHL) y número/voz en Retell. Ningún dato de
   pacientes en Slack/Telegram. En duda → tratarlo como médico y preguntar.
@@ -22,5 +22,6 @@ precaución; con los demás nos vamos por ahí [Zernio] siempre".
 **Why:** Zernio no menciona HIPAA ni ofrece BAA en su documentación; para el resto, una sola API simplifica y
 abarata (número ~$3/mes PR, voz $0.01/min).
 
-**How to apply:** en `/autoflow` §4 y cerebro de Nico §8. Ángelo/Quality Care (médico) no se toca. Pendiente
-5/oct: Elvin tiene que crear la cuenta de Zernio de AIB y pasar la API key. Relacionado: [[aib-onboarding-agente]], [[voz-stack-2026]].
+**How to apply:** en `/autoflow` §4 y cerebro de Nico §8. Ángelo/Quality Care (médico) no se toca. Key (5/oct): `AIB_ZERNIO_API_KEY` en .env.local
+y Railway `nico`; es del MISMO equipo de Zernio donde vive Resuelto (perfiles Default/Hey Bori/Resuelto WhatsApp) →
+`scripts/zernio.mjs` solo toca perfiles "AutoFlow · …" y cada cliente recibe una key limitada a su perfil. Relacionado: [[aib-onboarding-agente]], [[voz-stack-2026]].
