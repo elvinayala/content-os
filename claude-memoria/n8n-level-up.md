@@ -58,3 +58,8 @@ client_secret de la app Meta 907230552045448 (Luis lo tuvo). Los DMs a "agenteia
 fecha-inicio-campaña no hay reporte** — 40 fechas recuperadas; el puente ahora busca la fecha si falta.
 Apagados: citas v4, My workflow, Webhooks central v1/v2, Publicador devflow, C.1 monitoreo julio.
 Sin acceso del system user: Marian Parra, Joy Rivera, Isamar Tirado (+7 que ni el token del dueño ve).
+
+**Teléfono cruzado por reserva cancelada (5/oct/2026):** si un cliente agenda el onboarding dos veces (se equivoca en el
+teléfono y cancela), `onboarding-cita` dedupe por email y deja el teléfono de la reserva CANCELADA (Mario Yournet: 490 vs 420) →
+los flujos por fecha no lo encuentran en Chatwoot. Verificar con Calendly (reserva `active`, no `canceled`). Corregido en NocoDB
+(tabla onboarding mc5m2od7vy71g6z, Id 390). Pendiente de mejora: que el workflow de citas actualice el teléfono si la reserva nueva difiere.
