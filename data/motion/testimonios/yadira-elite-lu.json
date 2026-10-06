@@ -1,0 +1,100 @@
+{
+ "video": "testimonios/yadira-lu.mp4",
+ "dur": 58.1,
+ "nombre": "Dra. Yadira",
+ "rol": "Elite Medical Clinic PR · Bayamón",
+ "retrato": true,
+ "acento": "#F5CE1A",
+ "logoMarca": "marcas/level-up-logo-dark.png",
+ "gancho": {
+  "desde": 0,
+  "hasta": 4.26
+ },
+ "rotuloDesde": 4.26,
+ "subtitulos": [
+  {
+   "desde": 0.05,
+   "hasta": 4.21,
+   "texto": "He tenido más clientes y más personas preguntando por mis servicios."
+  },
+  {
+   "desde": 4.34,
+   "hasta": 6.92,
+   "texto": "Me enteré de Level Up Media por las redes sociales"
+  },
+  {
+   "desde": 6.92,
+   "hasta": 10.52,
+   "texto": "y mi interés de contactarlos fue tener más clientela."
+  },
+  {
+   "desde": 10.58,
+   "hasta": 14.98,
+   "texto": "Mi problema era que mis pacientes no conocían mis servicios."
+  },
+  {
+   "desde": 15.04,
+   "hasta": 18.84,
+   "texto": "Al contratarlos y estar más visible en las redes sociales,"
+  },
+  {
+   "desde": 18.84,
+   "hasta": 21.34,
+   "texto": "he tenido no solamente clientes nuevos,"
+  },
+  {
+   "desde": 21.4,
+   "hasta": 24.3,
+   "texto": "sino que mis pacientes también conocen todos los servicios"
+  },
+  {
+   "desde": 24.3,
+   "hasta": 26.94,
+   "texto": "que estaba brindando de weight loss."
+  },
+  {
+   "desde": 27.04,
+   "hasta": 29.26,
+   "texto": "Estoy muy satisfecha con Level Up."
+  },
+  {
+   "desde": 29.26,
+   "hasta": 34.01,
+   "texto": "Son muy profesionales, muy respetuosos, muy amables y se ven resultados."
+  },
+  {
+   "desde": 34.07,
+   "hasta": 36.29,
+   "texto": "He tenido más visibilidad en las redes sociales,"
+  },
+  {
+   "desde": 36.29,
+   "hasta": 39.45,
+   "texto": "en sitios a los que yo no podía llegar."
+  },
+  {
+   "desde": 39.49,
+   "hasta": 43.69,
+   "texto": "He tenido más clientes y más personas preguntando por mis servicios."
+  },
+  {
+   "desde": 43.8,
+   "hasta": 46.26,
+   "texto": "El marketing digital es la nueva era."
+  },
+  {
+   "desde": 46.66,
+   "hasta": 50.52,
+   "texto": "El que no tiene marketing tiene que tomar una decisión"
+  },
+  {
+   "desde": 50.52,
+   "hasta": 53.54,
+   "texto": "para estar al nivel de la competencia."
+  }
+ ],
+ "durVideo": 53.6,
+ "cierre": {
+  "marca": "level-up"
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "video": "testimonios/teo-mano-santa-h.mp4",
+ "dur": 51.6,
+ "nombre": "Teo",
+ "rol": "Mano Santa PR · cliente de AutoFlow",
+ "acento": "#2BFF88",
+ "logoMarca": "testimonios/aib-lockup.png",
+ "gancho": {
+  "desde": 0,
+  "hasta": 4.15
+ },
+ "rotuloDesde": 4.15,
+ "subtitulos": [
+  {
+   "desde": 0.05,
+   "hasta": 4.1,
+   "texto": "Los leads, estaba contestando un 20 %."
+  },
+  {
+   "desde": 4.2,
+   "hasta": 7.84,
+   "texto": "Yo hago mucha campaña, el teléfono suena y recibo muchos leads."
+  },
+  {
+   "desde": 8.02,
+   "hasta": 9.88,
+   "texto": "Tengo un cuadro telefónico."
+  },
+  {
+   "desde": 10.2,
+   "hasta": 14.2,
+   "texto": "Los leads, estaba contestando un 20 %. Esa es la razón."
+  },
+  {
+   "desde": 14.4,
+   "hasta": 17.04,
+   "texto": "Ya yo tenía inteligencia artificial."
+  },
+  {
+   "desde": 17.42,
+   "hasta": 22.58,
+   "texto": "¿Qué pasa? La que tengo nueva de ustedes es más inteligente"
+  },
+  {
+   "desde": 22.58,
+   "hasta": 25.46,
+   "texto": "que la que yo tenía: es más humana y me agenda."
+  },
+  {
+   "desde": 25.74,
+   "hasta": 28.3,
+   "texto": "Por eso el cambio, porque aquí estoy más completo."
+  },
+  {
+   "desde": 28.48,
+   "hasta": 31.8,
+   "texto": "Se lo recomiendo a cualquiera. AI Borinquen, ¿por qué?"
+  },
+  {
+   "desde": 32.12,
+   "hasta": 35.0,
+   "texto": "Porque te atienden, el precio es cómodo"
+  },
+  {
+   "desde": 35.08,
+   "hasta": 38.42,
+   "texto": "y cada vez que les tiras un mensaje, te contestan."
+  },
+  {
+   "desde": 38.6,
+   "hasta": 39.4,
+   "texto": "Y eso vale mucho."
+  },
+  {
+   "desde": 39.5,
+   "hasta": 41.42,
+   "texto": "Aquí en Mano Santa estamos adelante"
+  },
+  {
+   "desde": 41.42,
+   "hasta": 44.52,
+   "texto": "porque tenemos ayuda y un buen equipo,"
+  },
+  {
+   "desde": 44.52,
+   "hasta": 47.0,
+   "texto": "y la gente de AI Borinquen ayudando."
+  }
+ ],
+ "durVideo": 47.1,
+ "cierre": {
+  "marca": "ai-borinquen"
+ }
+}
