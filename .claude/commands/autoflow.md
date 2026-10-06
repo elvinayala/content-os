@@ -74,6 +74,13 @@ médico va aparte.
 - **Llave:** la cuenta de Zernio de AI Borinquen (`AIB_ZERNIO_API_KEY`). Nunca la de Resuelto
   (equipo aparte).
 - GHL queda solo para pipeline, custom fields y calendario.
+- **Manos:** `node scripts/zernio.mjs` (llave maestra `AIB_ZERNIO_API_KEY`; solo toca perfiles "AutoFlow · …"):
+  `perfil <slug> "<Negocio>" --giro "<giro>"` (se niega si es de salud) → `numeros 787|939 --sms` →
+  `comprar <slug> [+1…]` (sin `--ok` solo muestra el plan; con el OK de Elvin, `--ok`) →
+  `whatsapp-codigo <slug>` → conectar IG/FB del cliente al perfil → `cuentas <slug> --dir <repo>`
+  (escribe `ZERNIO_ACCOUNT_ID` + `CANAL_MODO=zernio`) → `key <slug> --dir <repo>` (key LIMITADA a su perfil,
+  directo al `.dev.vars`, nunca en pantalla) → `voz <slug> --agente <retellAgentId>` (troncal SIP propia →
+  Retell). `estado` lista todo sin secretos; registro en `data/zernio-clientes.json`. Tests: `tests/zernio.test.mjs`.
 
 **Cliente MÉDICO (consultorio, médico, clínica, laboratorio, terapia, dental, salud mental… todo lo
 que toque datos de pacientes) → NUNCA Zernio:**
