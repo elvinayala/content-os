@@ -796,6 +796,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   Leads, Ritmo y Pulse son dominios distintos y la cookie no viaja; Roger y el equipo caían en el CRM al ir a Ritmo (el proxy de
   `leads.*` mandaba todo /ritmo a Leads). Ahora "Ir a Ritmo" (Pulse) y "Leads/Pulse" (Ritmo) firman un pase de 60 s y un solo uso
   (nonce en `pulse_security_log`) y la persona llega con su sesión; en `leads.*`, /ritmo → el pase. Solo con sesión real de Pulse.
+  **Arena rediseñada (6/oct, Elvin: "muy simple, no se ve pro… más visual, animada, interactiva")**: piezas vivas en
+  `components/ritmo/arena-vivo.tsx` (números que cuentan, anillos, avatares por nombre, mini-gráficas, barras con meta, podio,
+  confeti; todo respeta prefers-reduced-motion; CSS `.arena-*` en globals.css): marcador del equipo con el selector de rango
+  global arriba · Mi marcador (anillo de la meta personal + escalera de comisión) y Mi diario (−/+, % en vivo, confeti) primero
+  para el vendedor · Pulso del diario por puesto (`pulso` en `armarArena`, suma por día) · Carrera con podio y pestañas ·
+  Ranking con barras vs `METAS_DIARIAS` · KPIs del equipo como mapa de calor. Avisado el equipo por DM (Laura = Slack Connect:
+  borrador para que Elvin lo mande).
   **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
