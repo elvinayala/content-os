@@ -457,6 +457,14 @@
       "porque": "Elvin aprobó: \"Yaileen autorizada\" — quitar su aprobación y que lo autorice Yai.",
       "verificado": "tests/cambios.test.mjs OK; deploy Ready con alias ritmo.levelupmediapr.net y content-os-chi-seven; /ritmo/entrar y /login 200; RITMO_RRHH existe en Production; logs sin errores. 2 cambios pendientes (Eros, Valentina) quedan para que Yaileen los apruebe. No probé con la sesión de Yaileen.",
       "commit": "b86fe0f"
+    },
+    {
+      "fecha": "2026-10-06T20:33:51.291Z",
+      "plataforma": "bori",
+      "que": "[Solicitud de Lis #179] Pasar la cuenta de Lauren (hoy con el correo de Roger) a su propio correo + clave nueva. PAUSADO: falta el correo de Lauren.",
+      "porque": "Elvin aprobó. Ubicada la cuenta u_mu3dgw5cf1obl7 (roger.arteaga@levelupmediapr.net, plan Agencia, suscripción activa $249 desde el 17/sep, sin marca ni contenido todavía). El correo de Lauren no está en Bori, ni en Leads (tarjeta de grupo sin correo) ni en el chat del grupo; Lis no contestó. No se tocó nada.",
+      "verificado": "Solo lectura: cuenta y suscripción confirmadas en la base de Bori. Falta ejecutar: updateUser(email) + correo de \"olvidé mi clave\" a ella + verificar login y Stripe.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
@@ -498,5 +506,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-09-30T17:44:37.109Z"
+  "actualizadoEl": "2026-10-06T20:33:51.291Z"
 }
