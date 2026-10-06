@@ -72,7 +72,7 @@
 - [Juan David — sin acceso](juan-david-sin-acceso.md) — ningún acceso ni mensajes al closer Juan David Guzman Escobar
 - [Onboarding AIB](aib-onboarding-agente.md) — sale del Calendly de AIB; en simulación, falta número Zernio
 - [WhatsApp del negocio sin avisos internos](whatsapp-negocio-no-avisos.md) — avisos internos solo por Telegram/Slack
-- [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — ritmo.levelupmediapr.net: ponche, KPIs, RR.HH., 2FA, Carreras, Arena de ventas
+- [Ritmo — asistencia y desempeño](ritmo-desempeno.md) — ritmo.levelupmediapr.net: ponche, KPIs, RR.HH., 2FA, Carreras, Arena de ventas (planilla de chatters + rangos, 6/oct); pase /api/pase entre Leads/Ritmo/Pulse
 - [Leads — reemplazo de Pipedrive](leads-crm.md) — /pulse/leads con Timelines; historial de Pipedrive archivado, no cargado
 - [n8n — envíos sin repetir](n8n-envios-sin-repetir.md) — llave de envío en la base; vigilar el 1er envío real
 - [Formularios propios (Typeform de la casa)](formularios-propios.md) — /f/<slug> en prod; falta que closers dejen Typeform y cancelar
