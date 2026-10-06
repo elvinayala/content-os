@@ -217,10 +217,11 @@ Carilin o Aure sigue pasando por el OK de Elvin (§3b).
 
 Pedido tipo "créame un AutoFlow para X" → `.claude/commands/autoflow.md`. Plantilla: Ángelo
 (`autoflow-quality-care`, SOP v2 en `docs/`). GHL es el centro (subcuenta, pipeline, custom fields,
-calendario); canal de WhatsApp por Meta oficial en GHL, Zernio (`CANAL_MODO=zernio`, ya en la
-plantilla) o GoGHL, el más fácil para ese cliente; voz con Retell. SOP v3 (23/sep): el cerebro corre en **Railway por defecto** (`server.mjs`,
+calendario). **Canales (Elvin, 5/oct/2026): Zernio SIEMPRE** (número, WhatsApp, IG/FB, SMS y llamadas por
+una sola API; número a Retell por SIP trunk) **salvo clientes médicos**, que por HIPAA se quedan en Meta oficial
+dentro de GHL (o GoGHL) con número y voz en Retell: Zernio no ofrece BAA. Detalle en `/autoflow` §4. Voz con Retell. SOP v3 (23/sep): el cerebro corre en **Railway por defecto** (`server.mjs`,
 un servicio `autoflow-<slug>` por cliente con su volumen); Cloudflare solo para Ángelo. Llaves que
-necesita: `GHL_AGENCY_TOKEN` y `ZERNIO_API_KEY` (si va por Zernio); `RETELL_API_KEY` y
+necesita: `GHL_AGENCY_TOKEN` y `AIB_ZERNIO_API_KEY` (la cuenta de Zernio de AIB, nunca la de Resuelto); `RETELL_API_KEY` y
 `RAILWAY_API_TOKEN` ya están. Ya no hace falta Cloudflare.
 
 ## WhatsApp de negocio restringido (lección del 23/sep/2026)

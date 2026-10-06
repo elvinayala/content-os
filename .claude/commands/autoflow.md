@@ -1,5 +1,5 @@
 ---
-description: Nico arma un AutoFlow completo para un cliente (agente de chat y/o voz + subcuenta de GoHighLevel con pipeline, custom fields y calendario + WhatsApp por GHL o Zernio), de punta a punta, avisándole a Elvin cada ~12 min
+description: Nico arma un AutoFlow completo para un cliente (agente de chat y/o voz + subcuenta de GoHighLevel con pipeline, custom fields y calendario + canales por Zernio; clientes médicos por GHL/Meta oficial), de punta a punta, avisándole a Elvin cada ~12 min
 argument-hint: <cliente/negocio> [chat|voz|ambos] [notas: web, IG, servicios, horario, WhatsApp…]
 ---
 
@@ -51,18 +51,36 @@ Sesiones aisladas por cliente (cada servicio tiene su propio volumen).
 4. **Custom fields + calendarios** — `scripts/provisionar-ghl.mjs` (verifica nombres de etapas).
 5. **Flujos "Customer Replied"** (uno por canal) → webhook `/webhook/ghl?token=` (SOP §6 de
    ghl-subcuenta). Solo si el cerebro va en Cloudflare: antes, excepción de WAF para `/webhook/*`.
-   Con Zernio, el WhatsApp NO usa este flujo (entra directo a `/webhook/zernio`).
+   Con Zernio (todo cliente no médico, §4), WhatsApp e IG/FB NO usan este flujo: entran directo a
+   `/webhook/zernio`.
 
-## 4. El canal de WhatsApp — escoge lo más fácil para ESE cliente
+## 4. Los canales — Zernio SIEMPRE, salvo clientes médicos (regla de Elvin, 5/oct/2026)
 
-| Opción | Cuándo | Cómo |
-|---|---|---|
-| **Meta oficial dentro de GHL** | El cliente tiene Business Manager sano y puede verificar | Conectar en GHL → Integraciones. Es el default del SOP. |
-| **Zernio** | Quiere salir hoy, número nuevo o Meta trabado | Ya está en la plantilla: `CANAL_MODO=zernio` + `ZERNIO_API_KEY`/`ZERNIO_ACCOUNT_ID`/`ZERNIO_WEBHOOK_SECRET`, webhook `/webhook/zernio` (SOP §5.1). |
-| **GoGHL (QR)** | La oficial falló tras el checklist del SOP §5 | `CANAL_MODO=goghl` + `GHL_CONVERSATION_PROVIDER_ID` (SOP §5). |
+Elvin: "solamente para los clientes médicos, por lo de HIPAA, tenemos que tener precaución; con los
+demás nos vamos por ahí [Zernio] siempre". **Zernio = una sola API** para número, WhatsApp, DMs y
+comentarios de IG/FB, SMS y llamadas. Sus documentos no mencionan HIPAA ni ofrecen BAA: por eso lo
+médico va aparte.
 
-Recomiéndale una a Elvin en una línea con el porqué; si no contesta en 10 min, sigue con la
-recomendada.
+**Cliente NO médico → Zernio, sin preguntar:**
+- **Número:** se compra o porta en Zernio (PR ~$3/mes). Comprar = gasto → OK de Elvin antes.
+- **WhatsApp:** número de Zernio registrado en WhatsApp por la API
+  (`POST /v1/phone-numbers/{id}/whatsapp/request-code`), o el WhatsApp que ya tenga conectado al
+  perfil. En la plantilla: `CANAL_MODO=zernio` + `ZERNIO_API_KEY`/`ZERNIO_ACCOUNT_ID`/
+  `ZERNIO_WEBHOOK_SECRET`, webhook `/webhook/zernio` (SOP §5.1).
+- **IG/FB:** DMs y comentarios por la bandeja de Zernio, en el mismo perfil del cliente (un perfil
+  por cliente: WhatsApp + IG + FB + número).
+- **Voz:** el número de Zernio va a Retell por **SIP trunk** (`POST /v1/voice/sip-trunks` +
+  attach); el cerebro de voz sigue en Retell.
+- **Llave:** la cuenta de Zernio de AI Borinquen (`AIB_ZERNIO_API_KEY`). Nunca la de Resuelto
+  (equipo aparte).
+- GHL queda solo para pipeline, custom fields y calendario.
+
+**Cliente MÉDICO (consultorio, médico, clínica, laboratorio, terapia, dental, salud mental… todo lo
+que toque datos de pacientes) → NUNCA Zernio:**
+- Se queda en el camino de hoy: **Meta oficial dentro de GHL** (si falla el checklist del SOP §5,
+  GoGHL con `CANAL_MODO=goghl` + `GHL_CONVERSATION_PROVIDER_ID`), número y voz en Retell.
+- Ningún dato de pacientes en Slack ni Telegram.
+- Si dudas si un negocio es médico, trátalo como médico y pregúntale a Elvin en una línea.
 
 ## 5. Voz (si aplica)
 
