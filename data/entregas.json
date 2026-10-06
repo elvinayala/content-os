@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream
   "actualizadoEl": "2026-09-29T20:42:01.416Z",
+=======
+  "actualizadoEl": "2026-10-05T21:59:41.116Z",
+>>>>>>> Stashed changes
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -11311,6 +11315,143 @@
       "formato": "presentación animada 16:9 · 62 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-09-29/lu-agentes-cliente.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0wOS0yOS9sdS1hZ2VudGVzLWNsaWVudGUubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDcxNDUyMSwiZXhwIjoxODIyMjUwNTIxfQ.HhgPr4psBwM0ObG7DMFWXzhoEuo-oDhLXRsR9kOonnvMd2Q5iesDzK1ksKGKmiSV14hZMRaWnsK9e1QwDye6jA",
       "modelo": "remotion"
+<<<<<<< Updated upstream
+=======
+    },
+    {
+      "id": "motion-remi-murlef09",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "La película de Level Up (presentación de Canva hecha motion)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/lu-pelicula-ligera.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-02T23:26:51.513Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 2:27",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-02/lu-pelicula-ligera.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMi9sdS1wZWxpY3VsYS1saWdlcmEubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDk4MzYxMSwiZXhwIjoxODIyNTE5NjExfQ.5qMO9T_-epEahAv56qt3wnwJhYUanHO1_Q4VM2XwsHmw0pEjZiJFcbIKcaK_6qSy8M3FW6_pm9SZHCa6Yiiy5g",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-murn816l",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Level Up · La-pelicula-de-Level-Up",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/La-pelicula-de-Level-Up.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-03T00:17:52.893Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 2:31",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-03/La-pelicula-de-Level-Up.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMy9MYS1wZWxpY3VsYS1kZS1MZXZlbC1VcC5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwOTg2NjcyLCJleHAiOjE4MjI1MjI2NzJ9.NHMs0FADGDH2terxirPa0VLyMnY729n2qdS2IDpysrI2KA3ypr2Bz1c9w-GXxO-ZMpWQhTSeRihlojPH6_OB7Q",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-murna3mo",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Level Up · Los-numeros-hablan-horizontal",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/Los-numeros-hablan-horizontal.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-03T00:19:29.376Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 1:02",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-03/Los-numeros-hablan-horizontal.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMy9Mb3MtbnVtZXJvcy1oYWJsYW4taG9yaXpvbnRhbC5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwOTg2NzY5LCJleHAiOjE4MjI1MjI3Njl9.yMJwR4pfnSvf0vjQo_81C8byIa8D9sAyDSIJ5C5ovLb4AcOLebQJk4lqq0ksWoMEKfBY5-6e0n1fPunPrtHXLQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-murnaqcn",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Level Up · Los-numeros-hablan-vertical",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/Los-numeros-hablan-vertical.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-03T00:19:58.823Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 1:02",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-03/Los-numeros-hablan-vertical.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMy9Mb3MtbnVtZXJvcy1oYWJsYW4tdmVydGljYWwubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDk4Njc5OCwiZXhwIjoxODIyNTIyNzk4fQ.0ZG6B_tNmIaldXK4r_IQFbnhwFlWzp2ttXn0sduaEmtwqCUMFpCirRig6CsNnWxbGRpLI8ZC9T45GCGaPg4knQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-murnbryv",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Level Up · En-sus-palabras-horizontal",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/En-sus-palabras-horizontal.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-03T00:20:47.575Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 1:51",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-03/En-sus-palabras-horizontal.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMy9Fbi1zdXMtcGFsYWJyYXMtaG9yaXpvbnRhbC5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkwOTg2ODQ3LCJleHAiOjE4MjI1MjI4NDd9.pWB-dYFsaqoo1OlsL6544tKn5CzUSwWltUqhIZ5f3RQCQs3O9YbDWavZ718pKvyrs01wfTgisi3GYMuRL-pslQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-murnd147",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "Level Up · En-sus-palabras-vertical",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/En-sus-palabras-vertical.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-03T00:21:46.087Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 1:51",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-03/En-sus-palabras-vertical.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wMy9Fbi1zdXMtcGFsYWJyYXMtdmVydGljYWwubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MDk4NjkwNiwiZXhwIjoxODIyNTIyOTA2fQ.mbCbSxTngZ08j__VY_zdahpZwhmPyQN3Y94Ga5_RR6KP7EiOUovOsK5pyQevspCmKIlnExAyjNhWF_mjpQfuhg",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mut5mk6p",
+      "tipo": "anuncio",
+      "marca": "resuelto",
+      "titulo": "Resuelto · Cisterna con bomba desde $899 (anuncio motion)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/resuelto/resuelto-cisterna-9x16.mp4`.",
+      "angulo": "Gancho: ¿Se fue el agua otra vez? → precio → garantías → Escríbenos",
+      "agente": "Remi",
+      "creadoEl": "2026-10-04T01:40:49.969Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 15 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-04/resuelto-cisterna-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wNC9yZXN1ZWx0by1jaXN0ZXJuYS05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTEwNzgwNTAsImV4cCI6MTgyMjYxNDA1MH0.dFL2l7yRyXhski9gVE67eAWEqUUoaLfMA41td3aH1YrMNDF04o_-r5Zytjt6fEr65vgqFYamNHtY96PazzZFAQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mut5mnfi",
+      "tipo": "anuncio",
+      "marca": "resuelto",
+      "titulo": "Resuelto · Calentador solar desde $699 (anuncio motion)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/resuelto/resuelto-solar-9x16.mp4`.",
+      "angulo": "Gancho: ¿Pagando luz para calentar agua? → precio → garantías → Escríbenos",
+      "agente": "Remi",
+      "creadoEl": "2026-10-04T01:40:54.175Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 15 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-04/resuelto-solar-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wNC9yZXN1ZWx0by1zb2xhci05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTEwNzgwNTQsImV4cCI6MTgyMjYxNDA1NH0.vpnFNpI8H3AKCbcXpTdnxfnTcZE6S9WEwJKwhH8L_qOCEjrk3d-4k8yJpAWdn793Cl7kNRvry-PWowQ8Qd3Mbw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mut5mqtt",
+      "tipo": "anuncio",
+      "marca": "resuelto",
+      "titulo": "Resuelto · Re-tubería de baño desde $1,200 (anuncio motion)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/resuelto/resuelto-retuberia-9x16.mp4`.",
+      "angulo": "Gancho: ¿Tubería vieja en tu baño? → precio → garantías → Escríbenos",
+      "agente": "Remi",
+      "creadoEl": "2026-10-04T01:40:58.577Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 15 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-04/resuelto-retuberia-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wNC9yZXN1ZWx0by1yZXR1YmVyaWEtOXgxNi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxMDc4MDU4LCJleHAiOjE4MjI2MTQwNTh9.JCKSbCuW5OjDU3gLSpa_C-k3GlJWFFbFJV2PWcJEn9kyvDA09Wxbrt--0XQaFvatkUitM7QHw6xTPgzO2Y9PlA",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-muvradzt",
+      "tipo": "anuncio",
+      "marca": "1000x",
+      "titulo": "1000X · Todo lo que tiene la plataforma (recorrido)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/fabrica/1000x-tour.mp4`.",
+      "angulo": "Recorrido navegando la app (clic y zoom): modos, gráfico, estrategias de Richie, MILEX, Radar, LYRA (copiloto, Lab), Guardián, ejecución 1-clic, Autopilot, psicología, journal y calculadora de riesgo",
+      "agente": "Remi",
+      "creadoEl": "2026-10-05T21:59:41.116Z",
+      "estado": "nuevo",
+      "formato": "motion 16:9 · 107 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-05/1000x-tour.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0wNS8xMDAweC10b3VyLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTEyMzc1ODAsImV4cCI6MTgyMjc3MzU4MH0.eLpX6o-1W-2qqm-Bugd78mLiwDoC4w1sjI-oIXqUyMJPxBni2fXl9RG_n9r9yB3ypRmmdWHaPWrJzQOWPxOnow",
+      "modelo": "remotion"
+>>>>>>> Stashed changes
     }
   ]
 }
