@@ -11,7 +11,7 @@ import { marcasConAcceso } from "../leads/repo";
 import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
-import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes } from "./reglas";
+import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes, rangoFechas } from "./reglas";
 
 // Arena (ventas en Ritmo): datos. Las ventas salen de la hoja de tesorería de cada marca por el mismo Apps
 // Script del resumen del día (scripts/drive/ventas-hoy.gs · VENTAS_SCRIPT_URL + VENTAS_SCRIPT_SECRETO).
@@ -110,12 +110,17 @@ export async function vendedores(empresa: Empresa): Promise<Vendedor[]> {
 // ─── Diario ───────────────────────────────────────────────────────────────────────────────────
 
 export async function diarioDelMes(userIds: string[], mes: string) {
+  return diarioEntre(userIds, `${mes}-01`, `${mes}-31`);
+}
+
+/** El diario de esas personas entre dos fechas (incluidas). */
+export async function diarioEntre(userIds: string[], desde: string, hasta: string) {
   if (!userIds.length) return [];
   const d = await db();
   return d
     .select()
     .from(desempenoVentasDiario)
-    .where(and(inArray(desempenoVentasDiario.userId, userIds), gte(desempenoVentasDiario.fecha, `${mes}-01`), lte(desempenoVentasDiario.fecha, `${mes}-31`)))
+    .where(and(inArray(desempenoVentasDiario.userId, userIds), gte(desempenoVentasDiario.fecha, desde), lte(desempenoVentasDiario.fecha, hasta)))
     .orderBy(desc(desempenoVentasDiario.fecha));
 }
 
@@ -268,11 +273,14 @@ export interface Arena {
   carreras: Record<RolVentas, Corredor[]>;
   gente: Vendedor[];
   comisiones: FilaComision[]; // solo si quien mira es director o dirección
-  mio: { rol: RolVentas; m: Marcador; goal: number | null; diario: Awaited<ReturnType<typeof diarioDelMes>> } | null;
-  kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[]; // KPIs del diario (mes), para el director y la dirección; `dias` = días que llenó su diario
+  mio: { rol: RolVentas; m: Marcador; goal: number | null; diario: Awaited<ReturnType<typeof diarioDelMes>>; rango: Record<string, number>; diasRango: number } | null;
+  // KPIs del diario en el rango que se mira (hoy, ayer, 7/30 días, mes…), para el director y la dirección; `dias` = días que llenó
+  // su diario en ese rango; `cash` = lo cobrado del mes (la hoja es mensual).
+  kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[];
+  rango: { id: string; desde: string; hasta: string; etiqueta: string };
 }
 
-export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa): Promise<Arena> {
+export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa, rangoPedido?: string): Promise<Arena> {
   const hoy = new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
   const hora = Number(new Date().toLocaleString("en-US", { timeZone: "America/Puerto_Rico", hour: "numeric", hour12: false })) % 24;
   const mes = hoy.slice(0, 7);
@@ -280,7 +288,18 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
   const vendiendo = gente.filter((g) => g.rol !== "director_ventas") as (Vendedor & { rol: RolVentas })[];
   const verTodos = a.director || a.direccion;
   const conMarcador = verTodos ? vendiendo : vendiendo.filter((g) => g.userId === u.id);
-  const [hoja, diario, agendas, citas] = await Promise.all([hojaDelMes(empresa, hoy), diarioDelMes(conMarcador.map((g) => g.userId), mes), agendasDelMes(empresa, mes, vendiendo), citasDelMes(empresa, mes)]);
+  const rango = rangoFechas(rangoPedido, hoy);
+  // El diario del mes (comisiones y show-up) y el del rango que se mira; si el rango es el mes, es la misma lectura.
+  const ids = conMarcador.map((g) => g.userId);
+  const [hoja, diario, agendas, citas, diarioRango] = await Promise.all([
+    hojaDelMes(empresa, hoy),
+    diarioDelMes(ids, mes),
+    agendasDelMes(empresa, mes, vendiendo),
+    citasDelMes(empresa, mes),
+    rango.id === "mes" ? Promise.resolve(null) : diarioEntre(ids, rango.desde, rango.hasta),
+  ]);
+  const enRango = diarioRango ?? diario;
+  const conKpis = (x: { kpis: Record<string, number> | null }) => !!x.kpis && Object.keys(x.kpis).length > 0;
   const txs = hoja.transacciones;
   const semana = semanaDe(hoy);
 
@@ -300,7 +319,17 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
     carreras: { closer: carrera(txs, "closer", personas), setter: carrera(txs, "setter", personas), chatter: carrera(txs, "chatter", personas) },
     gente,
     comisiones: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, m: marcadorDe(g) })) : [],
-    mio: yo ? { rol: yo.rol, m: marcadorDe(yo), goal: await goalDe(u.id, mes).catch(() => null), diario: diario.filter((d) => d.userId === u.id) } : null,
-    kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(diario.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0), dias: diario.filter((d) => d.userId === g.userId && d.kpis && Object.keys(d.kpis).length).length })) : [],
+    mio: yo
+      ? {
+          rol: yo.rol,
+          m: marcadorDe(yo),
+          goal: await goalDe(u.id, mes).catch(() => null),
+          diario: diario.filter((d) => d.userId === u.id),
+          rango: kpisDelMes(enRango.filter((d) => d.userId === u.id)),
+          diasRango: enRango.filter((d) => d.userId === u.id && conKpis(d)).length,
+        }
+      : null,
+    kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(enRango.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0), dias: enRango.filter((d) => d.userId === g.userId && conKpis(d)).length })) : [],
+    rango,
   };
 }

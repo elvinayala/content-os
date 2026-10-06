@@ -133,7 +133,7 @@ test("show-up desde el CRM (Nahuel, 28/sep): etapa del lead después de la cita"
 test("KPIs del diario por puesto (Elvin, 28/sep)", async () => {
   const { KPIS_VENTAS, limpiarKpis, kpisDelMes, camposViejos } = await import("../lib/ventas/reglas.ts");
   assert.deepEqual(KPIS_VENTAS.setter.map((k) => k.id), ["llamadas", "conectadas", "agendadas", "show", "no_show"]);
-  assert.deepEqual(KPIS_VENTAS.chatter.map((k) => k.id), ["conversaciones", "pases", "agendadas", "show", "no_show"]);
+  assert.deepEqual(KPIS_VENTAS.chatter.map((k) => k.id), ["conversaciones", "calificados", "no_califica", "seguimiento", "mitad_conversacion", "propuesta_agenda", "link_enviado", "pases", "agendadas", "show", "no_show", "ventas", "collections"]); // planilla de chatters (6/oct)
   assert.deepEqual(KPIS_VENTAS.closer.map((k) => k.id), ["demos", "cerradas", "no_cerradas"]);
   assert.deepEqual(limpiarKpis("chatter", { conversaciones: 30, pases: "4", agendadas: 5, otra: 9 }).kpis, { conversaciones: 30, pases: 4, agendadas: 5 });
   assert.match(limpiarKpis("closer", { demos: 3, cerradas: 2, no_cerradas: 2 }).error, /demos/);
@@ -177,4 +177,38 @@ test("escalones del director: cuánto falta para cada meta de ventas nuevas", as
   assert.deepEqual(e.siguiente, { meta: 75_000, falta: 12_700, n: 2 });
   assert.equal(escalones(0, [50_000, 75_000, 100_000]).siguiente.falta, 50_000);
   assert.equal(escalones(100_000, [50_000, 75_000, 100_000]).siguiente, null);
+});
+
+// ─── Planilla de chatters + rangos (6/oct) ───────────────────────────────────────────────────────
+import { kpisDelMes as sumarKpis, KPIS_VENTAS as KPIS, limpiarKpis, rangoFechas, tasasVentas } from "../lib/ventas/reglas.ts";
+
+test("chatter: trae todo lo de la planilla (y sigue con conversaciones/pases/agendadas para el ranking)", () => {
+  const ids = KPIS.chatter.map((k) => k.id);
+  for (const id of ["conversaciones", "calificados", "no_califica", "seguimiento", "mitad_conversacion", "propuesta_agenda", "link_enviado", "pases", "agendadas", "ventas", "collections"]) assert.ok(ids.includes(id), id);
+});
+
+test("limpiarKpis: dinero con centavos y comas; conteos enteros", () => {
+  const r = limpiarKpis("chatter", { conversaciones: 20, calificados: "13", ventas: "3,500.50", collections: 0 });
+  assert.equal(r.error, null);
+  assert.deepEqual(r.kpis, { conversaciones: 20, calificados: 13, ventas: 3500.5 });
+  assert.ok(limpiarKpis("chatter", { conversaciones: 2.5 }).error);
+  assert.ok(limpiarKpis("chatter", { ventas: 2_000_000 }).error);
+  assert.equal(sumarKpis([{ kpis: { ventas: 0.1 } }, { kpis: { ventas: 0.2 } }]).ventas, 0.3);
+});
+
+test("tasas de la planilla: sobre conversaciones; sin conversaciones = —", () => {
+  const t = Object.fromEntries(tasasVentas("chatter", { conversaciones: 20, calificados: 13, agendadas: 5, mitad_conversacion: 11, propuesta_agenda: 10, link_enviado: 7 }).map((x) => [x.id, x.valor]));
+  assert.deepEqual(t, { pct_calificado: 65, pct_agenda: 25, pct_mitad: 55, pct_propuesta: 50, pct_link: 35 });
+  assert.equal(tasasVentas("chatter", {})[0].valor, null);
+  assert.equal(tasasVentas("closer", { demos: 10, cerradas: 3 })[0].valor, 30);
+});
+
+test("rangos: hoy, ayer, 7 y 30 días, este mes y el pasado (cruzando año)", () => {
+  assert.deepEqual(rangoFechas("hoy", "2026-10-06"), { id: "hoy", desde: "2026-10-06", hasta: "2026-10-06", etiqueta: "Hoy" });
+  assert.equal(rangoFechas("ayer", "2026-10-01").desde, "2026-09-30");
+  assert.equal(rangoFechas("7d", "2026-10-06").desde, "2026-09-30");
+  assert.equal(rangoFechas("30d", "2026-10-06").desde, "2026-09-07");
+  assert.deepEqual([rangoFechas("mes", "2026-10-06").desde, rangoFechas("mes", "2026-10-06").hasta], ["2026-10-01", "2026-10-06"]);
+  assert.deepEqual([rangoFechas("mes-pasado", "2027-01-15").desde, rangoFechas("mes-pasado", "2027-01-15").hasta], ["2026-12-01", "2026-12-31"]);
+  assert.equal(rangoFechas("cualquier-cosa", "2026-10-06").id, "mes");
 });

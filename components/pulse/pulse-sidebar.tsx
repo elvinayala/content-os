@@ -122,10 +122,11 @@ export function PulseSidebar({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Ir a Ritmo">
-                <Link href="/ritmo">
+                {/* Ritmo vive en otro dominio: el pase lleva la misma sesión (6/oct). <a>, no Link: sin prefetch. */}
+                <a href="/api/pase?a=ritmo">
                   <Activity className="text-emerald-600" />
                   <span>Ir a Ritmo</span>
-                </Link>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

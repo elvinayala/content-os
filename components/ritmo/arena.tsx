@@ -111,14 +111,47 @@ export function MiGoal({ goal, mes }: { goal: number | null; mes: number }) {
 // ─── Diario ───────────────────────────────────────────────────────────────────────────────────
 
 export type DiarioUI = { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string | null };
-type KpiUI = { id: string; nombre: string; ayuda?: string };
+type KpiUI = { id: string; nombre: string; ayuda?: string; dinero?: boolean };
+type TasaUI = { id: string; nombre: string; valor: number | null };
+const soloDinero = (s: string) => {
+  const limpio = s.replace(/[^\d.]/g, "");
+  const [ent, ...dec] = limpio.split(".");
+  return dec.length ? `${ent}.${dec.join("").slice(0, 2)}` : ent;
+};
+const dinero = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
 
-// Mi diario con los KPIs de mi puesto (Elvin, 28/sep) y lo que llevo en el mes.
-export function MiDiario({ hoy, ayer, dias, kpis, mes }: { hoy: string; ayer: string; dias: DiarioUI[]; kpis: KpiUI[]; mes: Record<string, number> }) {
+export function MiDiario({
+  hoy,
+  ayer,
+  dias,
+  kpis,
+  rango,
+  tasas,
+  diasRango,
+  rangoId,
+  rangos,
+}: {
+  hoy: string;
+  ayer: string;
+  dias: DiarioUI[];
+  kpis: KpiUI[];
+  rango: Record<string, number>; // totales del rango que se mira
+  tasas: TasaUI[];
+  diasRango: number;
+  rangoId: string;
+  rangos: { id: string; t: string; href: string }[];
+}) {
   const [fecha, setFecha] = useState(hoy);
   const inicial = (d?: DiarioUI) => ({ valores: Object.fromEntries(kpis.map((k) => [k.id, d?.kpis?.[k.id] ? String(d.kpis[k.id]) : ""])) as Record<string, string>, animo: d?.animo ?? null, nota: d?.nota ?? "" });
   const [f, setF] = useState(inicial(dias.find((d) => d.fecha === hoy)));
   const [guardando, setGuardando] = useState(false);
+  // Tras guardar, el servidor trae el diario nuevo: el formulario queda con lo guardado (no se borra lo que escribió).
+  const [previo, setPrevio] = useState(dias);
+  if (previo !== dias) {
+    setPrevio(dias);
+    const d = dias.find((x) => x.fecha === fecha);
+    if (d) setF(inicial(d));
+  }
   const cambiarFecha = (x: string) => {
     setFecha(x);
     setF(inicial(dias.find((d) => d.fecha === x)));
@@ -130,10 +163,14 @@ export function MiDiario({ hoy, ayer, dias, kpis, mes }: { hoy: string; ayer: st
     if (!r.ok) return toast.error(r.error, aviso);
     toast.success("Diario guardado ✍️", aviso);
   };
+  const guardado = dias.find((d) => d.fecha === fecha);
   return (
-    <section className="panel flex flex-col gap-4 p-5">
+    <section id="diario" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">Mi diario</h3>
+        <div>
+          <h3 className="text-sm font-semibold">Mi diario</h3>
+          <p className={cn("mt-0.5 text-[11px]", guardado ? "text-emerald-300" : "text-amber-300")}>{guardado ? "Ya lo llenaste: puedes corregirlo." : `Llena tus números de ${fecha === hoy ? "hoy" : "ayer"} (si algo fue 0, déjalo vacío).`}</p>
+        </div>
         <div className="flex gap-1 rounded-full bg-white/[0.04] p-1 text-xs">
           {[
             { f: ayer, t: "Ayer" },
@@ -148,8 +185,14 @@ export function MiDiario({ hoy, ayer, dias, kpis, mes }: { hoy: string; ayer: st
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {kpis.map((k) => (
           <div key={k.id} className="flex flex-col gap-1.5" title={k.ayuda}>
-            <Label className="text-xs text-muted-foreground">{k.nombre}</Label>
-            <Input className="h-10 num font-mono" inputMode="numeric" value={f.valores[k.id] ?? ""} onChange={(e) => setF((x) => ({ ...x, valores: { ...x.valores, [k.id]: soloNum(e.target.value) } }))} placeholder="0" />
+            <Label className="text-xs leading-snug text-muted-foreground">{k.nombre}</Label>
+            <Input
+              className="h-10 num font-mono"
+              inputMode={k.dinero ? "decimal" : "numeric"}
+              value={f.valores[k.id] ?? ""}
+              onChange={(e) => setF((x) => ({ ...x, valores: { ...x.valores, [k.id]: k.dinero ? soloDinero(e.target.value) : soloNum(e.target.value) } }))}
+              placeholder={k.dinero ? "$0" : "0"}
+            />
           </div>
         ))}
       </div>
@@ -168,15 +211,33 @@ export function MiDiario({ hoy, ayer, dias, kpis, mes }: { hoy: string; ayer: st
       <Button className="h-10 w-fit rounded-full" onClick={guardar} disabled={guardando}>
         {guardando ? <Loader2 className="animate-spin" /> : <Check className="size-4" />} Guardar {fecha === hoy ? "hoy" : "ayer"}
       </Button>
-      <div className="border-t border-border/60 pt-3">
-        <p className="mb-1.5 text-[11px] tracking-wider text-muted-foreground uppercase">Este mes</p>
+      <div className="flex flex-col gap-2 border-t border-border/60 pt-3">
+        <div className="flex flex-wrap gap-1 text-[11px]">
+          {rangos.map((r) => (
+            <a key={r.id} href={r.href} className={cn("rounded-full px-2.5 py-1 ring-1 transition", r.id === rangoId ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
+              {r.t}
+            </a>
+          ))}
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          {diasRango} {diasRango === 1 ? "día" : "días"} con diario en este rango
+        </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs">
           {kpis.map((k) => (
             <span key={k.id}>
-              <b className="text-foreground">{mes[k.id] ?? 0}</b> <span className="text-muted-foreground">{k.nombre.toLowerCase()}</span>
+              <b className="text-foreground">{k.dinero ? dinero(rango[k.id] ?? 0) : (rango[k.id] ?? 0)}</b> <span className="text-muted-foreground">{k.nombre.replace(" (US$)", "").toLowerCase()}</span>
             </span>
           ))}
         </div>
+        {tasas.length ? (
+          <div className="flex flex-wrap gap-1.5 text-xs">
+            {tasas.map((t) => (
+              <span key={t.id} className="rounded-lg bg-white/[0.04] px-2 py-1">
+                {t.nombre}: <b className="font-mono">{t.valor == null ? "—" : `${t.valor} %`}</b>
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

@@ -42,6 +42,8 @@ export default async function proxy(request: NextRequest) {
   // (lo que no sea Leads, su entrada o sus archivos/acciones vuelve a Leads: ahí nunca se ve un tablero de clientes).
   if (host.startsWith("leads.")) {
     if (pathname === "/") return NextResponse.rewrite(new URL("/ventas", request.url));
+    // Ritmo (6/oct: Roger y el equipo caían en el CRM al buscar Ritmo): se va a su dominio con la misma sesión.
+    if (pathname === "/ritmo" || pathname.startsWith("/ritmo/")) return NextResponse.redirect(new URL("/api/pase?a=ritmo", request.url));
     const permitido = pathname === "/ventas" || pathname.startsWith("/pulse/leads") || pathname === "/pulse/verificar" || pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname.startsWith("/pulse/icon") || pathname.startsWith("/pulse/apple-icon");
     if (!permitido) return NextResponse.redirect(new URL("/pulse/leads", request.url));
   }
@@ -115,6 +117,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/pulse/login") return NextResponse.next();
   // Entrada del equipo de ventas (28/sep): login aparte que cae directo en Leads, sin pasar por los tableros.
   if (pathname === "/ventas") return NextResponse.next();
+  // Pase entre dominios (Leads ↔ Ritmo ↔ Pulse): cada ruta valida la sesión o el pase firmado adentro.
+  if (pathname === "/api/pase" || pathname === "/api/pase/recibir") return NextResponse.next();
   // Íconos de Pulse (favicon / apple-touch-icon): públicos, el navegador los pide sin cookie.
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
   // Formulario público de onboarding de Level Up (lo llena el cliente, sin login).

@@ -117,9 +117,9 @@ export default async function PulseInicio() {
             <p className="mt-1.5 text-[15px] text-muted-foreground">Esto es lo que está pasando hoy en EA Market.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/ritmo" className="superficie superficie-hover flex h-11 shrink-0 items-center gap-2 px-4 text-sm font-medium whitespace-nowrap" title="Pasar a Ritmo con la misma sesión">
+            <a href="/api/pase?a=ritmo" className="superficie superficie-hover flex h-11 shrink-0 items-center gap-2 px-4 text-sm font-medium whitespace-nowrap" title="Pasar a Ritmo con la misma sesión">
               <Activity className="size-4 text-emerald-600" /> Ir a Ritmo
-            </Link>
+            </a>
             <BotonBuscar />
           </div>
         </section>

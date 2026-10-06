@@ -483,10 +483,19 @@ export function detectarOrden(valores: string[], porDefecto: "dmy" | "mdy"): "dm
 
 // ─── KPIs del diario por puesto (Elvin, 28/sep) ────────────────────────────────────────────────────────────
 // Setter (phone setter): llamadas realizadas, conectadas, agendadas, show, no show.
-// Chatter (Ana Cecilio, Dilan): conversaciones (personas que hablaron contigo), pases (le sacaste el número y lo pasaste a
-// llamada porque no agendó por chat), citas agendadas, show, no show.
+// Chatter (Ana Cecilio, Dilan): desde el 6/oct, TODO lo de su planilla de Excel (planilla_chatters_levelup.xlsx, Elvin:
+// "me gustaría que tenga todo esto Ritmo"): conversaciones, calificados, no califica, seguimiento, mitad de conversación,
+// propuesta de agenda, link enviado, derivados (= los "pases" de antes), agendas, show, no show, y ventas/collections
+// atribuidas a sus leads (US$). Los % (calificado, agenda, mitad, propuesta, link) se calculan solos sobre conversaciones.
 // Closer (Laura, Roger, Paola…): demos, cerradas, no cerradas + cash collected (sale de la hoja, no se anota).
-export const KPIS_VENTAS: Record<RolVentas, { id: string; nombre: string; ayuda?: string }[]> = {
+export interface KpiVentas {
+  id: string;
+  nombre: string;
+  ayuda?: string;
+  dinero?: boolean; // US$ con centavos (ventas/collections atribuidas)
+}
+
+export const KPIS_VENTAS: Record<RolVentas, KpiVentas[]> = {
   setter: [
     { id: "llamadas", nombre: "Llamadas realizadas" },
     { id: "conectadas", nombre: "Llamadas conectadas", ayuda: "Te contestaron" },
@@ -496,10 +505,18 @@ export const KPIS_VENTAS: Record<RolVentas, { id: string; nombre: string; ayuda?
   ],
   chatter: [
     { id: "conversaciones", nombre: "Conversaciones", ayuda: "Personas que hablaron contigo (no mensajes enviados)" },
-    { id: "pases", nombre: "Pases", ayuda: "Le sacaste el número y lo pasaste a llamada porque no agendó por el chat" },
-    { id: "agendadas", nombre: "Citas agendadas" },
+    { id: "calificados", nombre: "Calificaron" },
+    { id: "no_califica", nombre: "No califica" },
+    { id: "seguimiento", nombre: "Seguimiento", ayuda: "Seguimientos que hiciste hoy" },
+    { id: "mitad_conversacion", nombre: "Mitad de conversación", ayuda: "Llegaron al menos a la mitad del guion" },
+    { id: "propuesta_agenda", nombre: "Propuesta de agenda", ayuda: "Veces que ofreciste agendar la llamada" },
+    { id: "link_enviado", nombre: "Link enviado", ayuda: "Veces que mandaste el link para agendar" },
+    { id: "pases", nombre: "Derivados (pases)", ayuda: "Lo pasaste a un setter/closer (le sacaste el número) sin agenda todavía" },
+    { id: "agendadas", nombre: "Agendas" },
     { id: "show", nombre: "Show" },
     { id: "no_show", nombre: "No show" },
+    { id: "ventas", nombre: "Ventas (US$)", ayuda: "Lo que se cerró hoy de leads que salieron de ti", dinero: true },
+    { id: "collections", nombre: "Collections (US$)", ayuda: "Lo que se cobró hoy de leads que salieron de ti", dinero: true },
   ],
   closer: [
     { id: "demos", nombre: "Demos", ayuda: "Llamadas de venta que hiciste (la persona se presentó)" },
@@ -508,11 +525,34 @@ export const KPIS_VENTAS: Record<RolVentas, { id: string; nombre: string; ayuda?
   ],
 };
 
-/** Valida y limpia los KPIs del diario de un puesto (solo los suyos, enteros 0-1000). */
+/** Los % de la planilla de los chatters, sobre conversaciones (null si no hay conversaciones). */
+export const TASAS_VENTAS: Partial<Record<RolVentas, { id: string; nombre: string; de: string; sobre: string }[]>> = {
+  chatter: [
+    { id: "pct_calificado", nombre: "% Calificado", de: "calificados", sobre: "conversaciones" },
+    { id: "pct_agenda", nombre: "% Agenda", de: "agendadas", sobre: "conversaciones" },
+    { id: "pct_mitad", nombre: "% Mitad conversación", de: "mitad_conversacion", sobre: "conversaciones" },
+    { id: "pct_propuesta", nombre: "% Propuesta agenda", de: "propuesta_agenda", sobre: "conversaciones" },
+    { id: "pct_link", nombre: "% Link enviado", de: "link_enviado", sobre: "conversaciones" },
+  ],
+  setter: [{ id: "pct_conexion", nombre: "% Conexión", de: "conectadas", sobre: "llamadas" }],
+  closer: [{ id: "pct_cierre", nombre: "Close rate", de: "cerradas", sobre: "demos" }],
+};
+
+export function tasasVentas(rol: RolVentas, t: Record<string, number>): { id: string; nombre: string; valor: number | null }[] {
+  return (TASAS_VENTAS[rol] ?? []).map((x) => ({ id: x.id, nombre: x.nombre, valor: t[x.sobre] ? Math.round(((t[x.de] ?? 0) / t[x.sobre]) * 1000) / 10 : null }));
+}
+
+/** Valida y limpia los KPIs del diario de un puesto (solo los suyos; enteros 0-1000, dinero 0-1,000,000 con centavos). */
 export function limpiarKpis(rol: RolVentas, kpis: Record<string, unknown>): { kpis: Record<string, number>; error: string | null } {
   const out: Record<string, number> = {};
   for (const k of KPIS_VENTAS[rol]) {
-    const v = Number(kpis?.[k.id] ?? 0);
+    const crudo = kpis?.[k.id];
+    const v = Number(typeof crudo === "string" ? crudo.replace(/[$,\s]/g, "") : (crudo ?? 0));
+    if (k.dinero) {
+      if (!Number.isFinite(v) || v < 0 || v > 1_000_000) return { kpis: {}, error: `Revisa ${k.nombre.toLowerCase()}` };
+      if (v) out[k.id] = Math.round(v * 100) / 100;
+      continue;
+    }
     if (!Number.isInteger(v) || v < 0 || v > 1000) return { kpis: {}, error: `Revisa ${k.nombre.toLowerCase()}` };
     if (v) out[k.id] = v;
   }
@@ -520,10 +560,38 @@ export function limpiarKpis(rol: RolVentas, kpis: Record<string, unknown>): { kp
   return { kpis: out, error: null };
 }
 
-/** Suma de los KPIs del diario en el mes (para el marcador y la tabla del director). */
+// ─── Rangos de fecha para ver los KPIs (6/oct, Elvin: "por día, ayer, hoy, últimos 7, últimos 30…") ─────
+export type Rango = "hoy" | "ayer" | "7d" | "30d" | "mes" | "mes-pasado";
+export const RANGOS: { id: Rango; t: string }[] = [
+  { id: "hoy", t: "Hoy" },
+  { id: "ayer", t: "Ayer" },
+  { id: "7d", t: "Últimos 7 días" },
+  { id: "30d", t: "Últimos 30 días" },
+  { id: "mes", t: "Este mes" },
+  { id: "mes-pasado", t: "Mes pasado" },
+];
+
+const sumarDiasISO = (f: string, n: number) => new Date(Date.parse(`${f}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
+/** Desde/hasta (incluidos, YYYY-MM-DD) del rango, contando desde `hoy` (hora de PR). */
+export function rangoFechas(r: string | undefined, hoy: string): { id: Rango; desde: string; hasta: string; etiqueta: string } {
+  const id = (RANGOS.some((x) => x.id === r) ? r : "mes") as Rango;
+  const etiqueta = RANGOS.find((x) => x.id === id)!.t;
+  if (id === "hoy") return { id, desde: hoy, hasta: hoy, etiqueta };
+  if (id === "ayer") return { id, desde: sumarDiasISO(hoy, -1), hasta: sumarDiasISO(hoy, -1), etiqueta };
+  if (id === "7d") return { id, desde: sumarDiasISO(hoy, -6), hasta: hoy, etiqueta };
+  if (id === "30d") return { id, desde: sumarDiasISO(hoy, -29), hasta: hoy, etiqueta };
+  if (id === "mes-pasado") {
+    const fin = sumarDiasISO(`${hoy.slice(0, 7)}-01`, -1);
+    return { id, desde: `${fin.slice(0, 7)}-01`, hasta: fin, etiqueta };
+  }
+  return { id, desde: `${hoy.slice(0, 7)}-01`, hasta: hoy, etiqueta };
+}
+
+/** Suma de los KPIs del diario (del mes o del rango que se mire; para el marcador y la tabla del director). */
 export function kpisDelMes(dias: { kpis?: Record<string, number> | null }[]): Record<string, number> {
   const t: Record<string, number> = {};
-  for (const d of dias) for (const [k, v] of Object.entries(d.kpis ?? {})) t[k] = (t[k] ?? 0) + v;
+  for (const d of dias) for (const [k, v] of Object.entries(d.kpis ?? {})) t[k] = Math.round(((t[k] ?? 0) + v) * 100) / 100;
   return t;
 }
 

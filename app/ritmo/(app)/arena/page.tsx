@@ -5,7 +5,7 @@ import { Alerta, Barra, Bonos, Carrera, MiDiario } from "@/components/ritmo/aren
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
-import { ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, kpisDelMes, rankingVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
+import { ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, RANGOS, rankingVentas, TASAS_VENTAS, tasasVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
@@ -23,14 +23,17 @@ const ROLES: { id: RolVentas; t: string }[] = [
 // Arena: ventas dentro de Ritmo (closers, setters y chatters de LU y AIB). Sin ponche: todo resultados.
 // La carrera muestra cash collected de cada uno; la comisión es privada (cada quien la suya; el director y
 // la dirección ven la de todos). Diseño: vault/proyectos/ritmo/arena-ventas.md.
-export default async function ArenaPage({ searchParams }: { searchParams: Promise<{ e?: string }> }) {
+export default async function ArenaPage({ searchParams }: { searchParams: Promise<{ e?: string; r?: string }> }) {
   const u = await usuarioRitmo();
   if (!u) return null;
   const a = await accesoArena(u);
   if (!a.empresas.length) redirect("/ritmo");
-  const pedida = (await searchParams).e as Empresa | undefined;
+  const sp = await searchParams;
+  const pedida = sp.e as Empresa | undefined;
   const empresa = pedida && a.empresas.includes(pedida) ? pedida : a.empresas[0];
-  const [ar, bonosFilas] = await Promise.all([armarArena(u, a, empresa), bonosDe(empresa).catch(() => [])]);
+  const [ar, bonosFilas] = await Promise.all([armarArena(u, a, empresa, sp.r), bonosDe(empresa).catch(() => [])]);
+  // Rango de los KPIs (6/oct, Elvin): hoy, ayer, últimos 7/30 días, este mes o el pasado. Comisiones y carrera siguen siendo del mes.
+  const rangos = (ancla: string) => RANGOS.map((x) => ({ id: x.id, t: x.t, href: `/ritmo/arena?${a.empresas.length > 1 ? `e=${empresa}&` : ""}r=${x.id}#${ancla}` }));
   const d = await db();
   const nombres = new Map((await d.select({ id: pulseUsers.id, nombre: pulseUsers.nombre }).from(pulseUsers)).map((x) => [x.id, x.nombre]));
   const gestiona = a.director || a.direccion;
@@ -75,7 +78,17 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
       {ar.mio ? (
         <div className="grid gap-6 lg:grid-cols-2">
           <MiMarcador rol={ar.mio.rol} m={ar.mio.m} goal={ar.mio.goal} />
-          <MiDiario hoy={ar.hoy} ayer={ayer} kpis={KPIS_VENTAS[ar.mio.rol]} mes={kpisDelMes(ar.mio.diario)} dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, animo: x.animo, nota: x.nota }))} />
+          <MiDiario
+            hoy={ar.hoy}
+            ayer={ayer}
+            kpis={KPIS_VENTAS[ar.mio.rol]}
+            rango={ar.mio.rango}
+            tasas={tasasVentas(ar.mio.rol, ar.mio.rango)}
+            diasRango={ar.mio.diasRango}
+            rangoId={ar.rango.id}
+            rangos={rangos("diario")}
+            dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, animo: x.animo, nota: x.nota }))}
+          />
         </div>
       ) : null}
 
@@ -93,34 +106,46 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         bonos={bonosFilas.map((b) => ({ id: b.id, titulo: b.titulo, detalle: b.detalle, monto: b.monto, rol: b.rol, desde: b.desde, hasta: b.hasta, estado: b.estado, ganador: b.ganadorId ? (nombres.get(b.ganadorId) ?? null) : null, creadoPor: b.creadoPor ? (nombres.get(b.creadoPor) ?? null) : null }))}
       />
 
-      {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} /> : null}
+      {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} etiqueta={ar.rango.etiqueta} rangoId={ar.rango.id} rangos={rangos("ranking")} /> : null}
 
       {gestiona && ar.kpisEquipo.length ? (
-        <section className="panel flex flex-col gap-4 p-5">
-          <h2 className="text-sm font-semibold">KPIs del equipo · este mes</h2>
+        <section id="kpis" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold">KPIs del equipo · {ar.rango.etiqueta.toLowerCase()}</h2>
+            <SelectorRango rangos={rangos("kpis")} actual={ar.rango.id} />
+          </div>
           {ROLES.map((r) => {
             const filas = ar.kpisEquipo.filter((x) => x.rol === r.id);
             if (!filas.length) return null;
             const cols = KPIS_VENTAS[r.id];
+            const tasas = TASAS_VENTAS[r.id] ?? [];
             return (
               <div key={r.id} className="overflow-x-auto">
                 <p className="mb-1 text-xs font-medium text-muted-foreground">{r.t}</p>
                 <table className="w-full min-w-[520px] text-sm">
                   <thead className="text-left text-[11px] text-muted-foreground">
                     <tr>
-                      <th className="py-1.5 pr-3 font-normal">Persona</th>
+                      <th className="sticky left-0 bg-card py-1.5 pr-3 font-normal">Persona</th>
+                      <th className="py-1.5 pr-3 text-right font-normal">Días</th>
                       {cols.map((c) => (
                         <th key={c.id} className="py-1.5 pr-3 text-right font-normal">{c.nombre}</th>
                       ))}
-                      {r.id === "closer" ? <th className="py-1.5 text-right font-normal">Cash collected</th> : null}
+                      {tasas.map((t) => (
+                        <th key={t.id} className="py-1.5 pr-3 text-right font-normal">{t.nombre}</th>
+                      ))}
+                      {r.id === "closer" ? <th className="py-1.5 text-right font-normal">Cash collected (mes)</th> : null}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
                     {filas.map((x) => (
                       <tr key={x.userId}>
-                        <td className="py-1.5 pr-3">{x.nombre}</td>
+                        <td className="sticky left-0 bg-card py-1.5 pr-3 whitespace-nowrap">{x.nombre}</td>
+                        <td className="num py-1.5 pr-3 text-right font-mono text-muted-foreground">{x.dias}</td>
                         {cols.map((c) => (
-                          <td key={c.id} className="num py-1.5 pr-3 text-right font-mono">{x.mes[c.id] ?? 0}</td>
+                          <td key={c.id} className="num py-1.5 pr-3 text-right font-mono">{c.dinero ? usd(x.mes[c.id] ?? 0) : (x.mes[c.id] ?? 0)}</td>
+                        ))}
+                        {tasasVentas(r.id, x.mes).map((t) => (
+                          <td key={t.id} className="num py-1.5 pr-3 text-right font-mono text-muted-foreground">{t.valor == null ? "—" : `${t.valor} %`}</td>
                         ))}
                         {r.id === "closer" ? <td className="num py-1.5 text-right font-mono">{usd(x.cash)}</td> : null}
                       </tr>
@@ -130,7 +155,7 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
               </div>
             );
           })}
-          <p className="text-[11px] text-muted-foreground">Lo anota cada quien en su diario (hoy o ayer); el cash collected de los closers sale de la hoja de ventas.</p>
+          <p className="text-[11px] text-muted-foreground">Lo anota cada quien en su diario (hoy o ayer). Los % se calculan solos sobre las conversaciones (chatters), las llamadas (setters) o las demos (closers). El cash collected de los closers es del mes y sale de la hoja de ventas.</p>
         </section>
       ) : null}
 
@@ -200,14 +225,29 @@ const NIVEL: Record<Nivel, { t: string; c: string }> = {
   "sin-datos": { t: "Sin diario", c: "bg-white/5 text-muted-foreground ring-border" },
 };
 
-function RankingVentas({ filas }: { filas: Parameters<typeof rankingVentas>[0] }) {
+function SelectorRango({ rangos, actual }: { rangos: { id: string; t: string; href: string }[]; actual: string }) {
+  return (
+    <div className="flex flex-wrap gap-1 text-[11px]">
+      {rangos.map((r) => (
+        <Link key={r.id} href={r.href} scroll={false} className={cn("rounded-full px-2.5 py-1 ring-1 transition", r.id === actual ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
+          {r.t}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function RankingVentas({ filas, etiqueta, rangoId, rangos }: { filas: Parameters<typeof rankingVentas>[0]; etiqueta: string; rangoId: string; rangos: { id: string; t: string; href: string }[] }) {
   const ranking = rankingVentas(filas);
   return (
     <section id="ranking" className="panel flex scroll-mt-20 flex-col gap-4 p-5">
-      <div>
-        <h2 className="text-sm font-semibold">Ranking de ventas · este mes</h2>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold">Ranking de ventas · {etiqueta.toLowerCase()}</h2>
+          <SelectorRango rangos={rangos} actual={rangoId} />
+        </div>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Promedio por día que llenó su diario. Metas: setters 125 llamadas, 30 conectadas y 3–5 agendas al día · chatters 20–30 conversaciones (mínimo 15), 5–10 pases y 3–5 agendas · closers 30 % de close rate (menos de 20 % alerta roja, 40 % élite).
+          Promedio por día que llenó su diario en ese rango. Metas: setters 125 llamadas, 30 conectadas y 3–5 agendas al día · chatters 20–30 conversaciones (mínimo 15), 5–10 pases y 3–5 agendas · closers 30 % de close rate (menos de 20 % alerta roja, 40 % élite).
         </p>
       </div>
       {ROLES.map((r) => {
