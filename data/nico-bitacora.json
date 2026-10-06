@@ -465,6 +465,14 @@
       "porque": "Elvin aprobó. Ubicada la cuenta u_mu3dgw5cf1obl7 (roger.arteaga@levelupmediapr.net, plan Agencia, suscripción activa $249 desde el 17/sep, sin marca ni contenido todavía). El correo de Lauren no está en Bori, ni en Leads (tarjeta de grupo sin correo) ni en el chat del grupo; Lis no contestó. No se tocó nada.",
       "verificado": "Solo lectura: cuenta y suscripción confirmadas en la base de Bori. Falta ejecutar: updateUser(email) + correo de \"olvidé mi clave\" a ella + verificar login y Stripe.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-06T20:37:31.690Z",
+      "plataforma": "bori",
+      "que": "[Solicitud de Lis #180] Cuenta de Lauren en Bori pasada a su correo (lbenereogarcia@gmail.com); antes estaba con roger.arteaga@levelupmediapr.net. Nombre de la cuenta Ventas → Lauren. Enviado el correo de \"crear nueva contraseña\" por /api/auth/forgot (cierra también la #179).",
+      "porque": "Elvin aprobó #179/#180. Es la misma cuenta (u_mu3dgw5cf1obl7, Agencia $249 desde 17/sep), así que no pierde nada.",
+      "verificado": "Correo nuevo libre antes del cambio; después: email nuevo, plan Agencia, sub_status active, Stripe sin tocar; forgot → ok + mailConfigured true; reset_token creado (vence 5:37 PM PR); 0 cuentas con el correo de Roger; /api/status 200. Sin cambio de código ni deploy.",
+      "commit": null
     }
   ],
   "pendientesElvin": [
@@ -506,5 +514,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-06T20:33:51.291Z"
+  "actualizadoEl": "2026-10-06T20:37:31.690Z"
 }
