@@ -126,78 +126,75 @@ Si todavía no estás seguro, igual aplica. La llamada es para ver si tiene sent
 
 ---
 
-## 2. AI BORINQUEN · VISIÓN (v3 · estructura del VSL oculto · ~5.0 min · de usted)
+## 2. AI BORINQUEN · VISIÓN (v5 · con ángulo de tranquilidad · ~5.0 min · de usted)
 
 **[0:00 · PRUEBA · rápida]**
 Llevo años trabajando con dueños de negocio en Puerto Rico. Y en casi todos veo lo mismo: gente trabajadora, ahogada en tareas que una inteligencia artificial ya puede hacer.
 Un abogado al que atendemos recibe hoy entre veinticinco y cincuenta mensajes al día, casi siempre de madrugada. Y mientras él duerme, el sistema los contesta.
-Hoy le explico cómo se hace.
 
-**[0:26 · PROMESA]**
+**[0:23 · PROMESA]**
 En AI Borinquen le armamos agentes de inteligencia artificial: empleados digitales para los puestos de su negocio.
-Para que usted crezca sin agrandar la nómina. Para que todo deje de depender de usted. Y con su primer agente listo en quince días.
+Para que usted crezca sin agrandar la nómina. Para tener todo organizado en un solo lugar. Para tener más tranquilidad y más tiempo libre, hasta para irse de vacaciones sin que todo se detenga.
+Y con su primer agente listo en quince días.
 
-**[0:44 · LA AFIRMACIÓN]**
+**[0:49 · LA AFIRMACIÓN]**
 La mayor parte de lo que usted hace a mano todos los días, una inteligencia artificial ya lo puede hacer.
 Y para crecer, no necesita contratar más gente.
 
-**[0:56 · EL ENEMIGO COMÚN]**
+**[1:01 · EL ENEMIGO COMÚN]**
 Pero seguramente le han dicho lo contrario.
-Que la inteligencia artificial es para las grandes empresas. Que es complicada. O que un chatbot de esos de menú, uno, dos, tres, lo resuelve todo.
+Que la inteligencia artificial es para las grandes empresas. O que un chatbot de esos de menú, uno, dos, tres, lo resuelve todo.
 Mentira.
-Un chatbot no es inteligencia artificial. Y usar ChatGPT para escribir un mensaje no es poner la IA a trabajar para usted.
+Un chatbot no es inteligencia artificial.
 
-**[1:20 · AGITA EL PROBLEMA]**
+**[1:17 · AGITA EL PROBLEMA]**
 Y mire cómo se ve esto desde adentro.
-Tareas repetidas a mano todos los días. La operación en una libreta, en un Excel o en el WhatsApp de una sola persona.
-Mil herramientas, y usted sin saber cuál aplica a su negocio. Y la única forma de crecer que conoce es contratar más gente.
-Y todo depende de usted.
+Son las diez de la noche y usted todavía está cotizando, escribiendo mensajes, buscando un archivo. La operación en una libreta, en un Excel o en el WhatsApp de una sola persona. Todo disperso. Todo en su cabeza.
+Y la única forma de crecer que conoce es contratar más gente.
+Todo depende de usted, y vive el día entero en estrés.
 
-**[1:45 · LLÉVALOS AL EXTREMO]**
-Ahora imagine que dentro de un año sigue igual.
-Más nómina. Más errores. Más horas.
-Y su competencia, con sus agentes trabajando de noche, mientras usted duerme, y quedándose con sus clientes.
+**[1:46 · LA CUENTA · CUÁNTO SE LE ESCAPA]**
+Ahora hagamos una cuenta.
+Un negocio recibe quinientos clientes potenciales al mes. Responde a tiempo a solo el veinte por ciento: cien. A los otros cuatrocientos les contesta tarde. Y con un ticket promedio de doscientos cincuenta dólares, esos cuatrocientos son cien mil dólares al mes en oportunidades.
+Aunque cerrara solo uno de cada cuatro, serían veinticinco mil dólares al mes. Trescientos mil al año. ¿Cuánto dinero se le está escapando?
+Y atender a esos clientes le cuesta, como mínimo, cincuenta mil dólares al año en Puerto Rico.
 
-**[1:59 · EL HUECO · LA OPORTUNIDAD]**
-Pero aquí hay una oportunidad.
-En Puerto Rico, la mayoría todavía ve la inteligencia artificial como algo lejano. Eso es una ventaja para el que se adelanta.
+**[2:24 · EL HUECO · LA OPORTUNIDAD]**
+Pero aquí hay una oportunidad: la mayoría todavía ve la inteligencia artificial como algo lejano. Esa es su ventaja.
 
-**[2:10 · MECANISMO ÚNICO · LAS CUATRO LÍNEAS]**
+**[2:32 · MECANISMO ÚNICO · LAS CUATRO LÍNEAS]**
 Entonces, ¿cómo se hace? Con cuatro cosas.
-Primero: agentes personalizados. No un chatbot. Un empleado digital para un puesto concreto: el que cotiza, el que cobra, el que le da seguimiento al que dijo "déjame pensarlo". Entrenado con su negocio, sus precios y su forma de hablar.
-Segundo: digitalización. Sacamos su operación del papel, de la libreta y de la cabeza de una sola persona.
-Tercero: capacitación. Si usted prefiere aprender a hacerlo, le enseñamos, en grupo o uno a uno.
+Primero: agentes personalizados. No un chatbot. Un empleado digital para un puesto concreto: el que cotiza, el que cobra, el que le da seguimiento al que dijo "déjame pensarlo".
+Segundo: digitalización. Todo en un solo lugar y organizado: sacamos su operación del papel, de la libreta y de la cabeza de una sola persona.
+Tercero: capacitación. Si prefiere aprender a hacerlo, le enseñamos.
 Y cuarto: atención al cliente. Un agente que contesta en segundos por WhatsApp o por teléfono, con voz puertorriqueña, califica y le agenda la cita. Es una parte de lo que hacemos. No es lo único.
 
-**[3:00 · CREDIBILIDAD · POR QUÉ NOSOTROS]**
+**[3:17 · CREDIBILIDAD · POR QUÉ NOSOTROS]**
 ¿Por qué nosotros?
 Porque no le vendemos algo que no usamos. Nuestras propias empresas corren con estos agentes todos los días.
-Y porque somos de Puerto Rico. Entendemos cómo se hacen negocios aquí: por WhatsApp, con confianza y con alguien que le conteste.
 
-**[3:19 · PRUEBAS]**
+**[3:27 · PRUEBAS]**
 Y ahora, la prueba.
 Teo, un terapista de Mano Santa PR, contestaba el veinte por ciento de las personas que le escribían. Hoy contesta en segundos, precalifica y agenda solo.
 Milton, de Caribe Paint, nos dijo: "Pensé que la implementación sería mucho más complicada, pero hasta ahora ha sido bastante fácil."
-Y el abogado del que le hablaba al principio: en dos meses, unas diez personas lo contrataron. Él calcula que el sistema le está dejando cerca de cinco mil dólares más al mes.
+Y el abogado del principio: en dos meses, unas diez personas lo contrataron. Él calcula que el sistema le está dejando cerca de cinco mil dólares más al mes.
 
-**[3:55 · QUÉ CONSIGUES · CÓMO TRABAJAMOS]**
+**[4:01 · QUÉ CONSIGUES · CÓMO TRABAJAMOS]**
 Entonces, ¿cómo trabajamos?
-Primero miramos su operación: qué hace usted a mano, dónde se le van las horas y dónde se le escapa el dinero.
-Después escogemos por dónde empezar.
+Primero miramos su operación: dónde se le van las horas y dónde se le escapa el dinero.
 En quince días está listo su primer agente. Del día dieciséis al cuarenta y cinco lo afinamos y lo optimizamos con lo que pasa de verdad en su negocio. Y después no desaparecemos: hay soporte.
 
-**[4:23 · NO TIENE NADA QUE PERDER]**
+**[4:24 · NO TIENE NADA QUE PERDER]**
 ¿Y qué arriesga? Una llamada.
 Miramos su negocio, le decimos qué agente le conviene primero y le enseñamos uno funcionando. Y si todavía no le conviene nada, también se lo decimos.
 
-**[4:36 · RAZONES PARA ACTUAR AHORA]**
+**[4:38 · RAZONES PARA ACTUAR AHORA]**
 ¿Por qué ahora?
 Porque cada semana que sigue haciéndolo a mano son horas y clientes que se van.
-Porque el que empieza primero aprende primero.
 Y porque en quince días puede estar viendo su primer agente trabajando.
 
-**[4:52 · ACCIÓN · CTA]**
-Agende su llamada con nuestro equipo, aquí debajo.
+**[4:50 · ACCIÓN · CTA]**
+Agende su llamada con nuestro equipo, aquí debajo, y recupere su tranquilidad.
 AI Borinquen. Su equipo digital.
 
 ---
