@@ -86,6 +86,24 @@ slide('''<div class="cab"><div class="ceja sube">Así se ve · ejemplo</div>
       <div class="nota-ej aparece" style="--d:3s">EJEMPLO ILUSTRATIVO · tallas y disponibilidad se configuran con tu inventario</div>
     </div>''', "Ejemplo")
 
+
+# ───────── Prueba: otra tienda online ─────────
+PLAY = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg>'
+slide(f'''<div class="cab"><div class="ceja sube">Ya lo hicimos con otra tienda online</div>
+      <h2 class="sube" style="--d:.1s">«Añadimos <span class="oro">15,000 clientes</span> desde que empezamos con ustedes.»</h2></div>
+    <div class="prueba">
+      <button type="button" class="video-h pop" style="--d:.35s;background-image:url(videos/yazan-sola.jpg)" data-video="videos/yazan-sola.mp4" aria-label="Ver el testimonio de Yazan, Sola Boutique">
+        <div class="play">{PLAY}</div><span class="dur">0:53</span></button>
+      <div class="dato-p">
+        <img class="logo-sola pop" style="--d:.5s" src="img/sola-logo.png" alt="Sola Boutique">
+        <b class="sube" style="--d:.6s">Yazan · Sola Boutique</b>
+        <span class="sube" style="--d:.7s">Tienda en línea · Meta Ads + Shopify</span>
+        <div class="num-p pop" style="--d:.9s"><b><span data-cuenta="15000">0</span>+</b><small>clientes nuevos</small></div>
+        <div class="num-p pop" style="--d:1.1s"><b>25–30 %</b><small>más ventas en Shopify, en sus palabras</small></div>
+        <div class="legal-p aparece" style="--d:1.4s">Resultados de un cliente real; cada negocio es distinto. Toca el video para verlo.</div>
+      </div>
+    </div>''', "Prueba")
+
 # ───────── 6 · Servicio 1: Marketing DFY ─────────
 DFY = ["Onboarding 1:1 y auditoría de tu marca, tu tienda y tus cuentas",
        "Estrategia de marketing para tu clienta ideal: mujeres de 35 a 55, con foco en Facebook",
@@ -102,7 +120,7 @@ slide(f'''<div class="servicio">
         <div class="ceja sube">Servicio 1</div>
         <h2 class="sube" style="--d:.1s">Marketing <span class="oro">hecho por nosotros</span></h2>
         <p class="sub sube" style="--d:.2s">Done For You · 3 meses. Nosotros lo hacemos; tú te enfocas en tu marca.</p>
-        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="3500">0</span></b><span>por 3 meses</span></div>
+        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="3500">0</span></b><span>pago único · 3 meses de servicio</span></div>
         <div class="nota-s aparece" style="--d:1.2s">La inversión en anuncios se paga aparte, directo a Meta.</div>
       </div>
       <ul class="incluye">{items}</ul>
@@ -122,23 +140,37 @@ slide(f'''<div class="servicio">
         <div class="ceja sube">Servicio 2</div>
         <h2 class="sube" style="--d:.1s">Agente de chat <span class="oro">que vende</span></h2>
         <p class="sub sube" style="--d:.2s">Para que ninguna clienta se quede sin respuesta ni sin llegar a tu página.</p>
-        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="2000">0</span></b><span>implementación</span></div>
+        <div class="precio pop" style="--d:.5s"><small>INVERSIÓN</small><b>$<span data-cuenta="2000">0</span></b><span>pago único · sin mensualidad</span></div>
       </div>
       <ul class="incluye">{items2}</ul>
     </div>''', "Agente de chat")
 
+
+# ───────── Proyección a 3 meses ─────────
+slide('''<div class="cab"><div class="ceja sube">Proyección · 3 meses</div>
+      <h2 class="sube" style="--d:.1s">Tu meta es el piso. <span class="oro">En el mes 3, escalamos.</span></h2></div>
+    <div class="proy">
+      <div class="meta-linea aparece" style="--d:1.2s"><span>Tu meta · 10–15 pares/semana</span></div>
+      <div class="col-p"><div class="barra-p b1"></div><b>Mes 1</b><span>Arrancamos y aprendemos qué modelos y anuncios venden</span></div>
+      <div class="col-p"><div class="barra-p b2"></div><b>Mes 2</b><span>Llegamos a tu meta: 10–15 pares a la semana</span></div>
+      <div class="col-p"><div class="barra-p b3"><i>15+</i></div><b class="oro">Mes 3</b><span>La superamos: más presupuesto a lo que ya vende</span></div>
+    </div>
+    <div class="legal-proy aparece" style="--d:1.8s">Proyección ilustrativa con base en tu meta; los resultados dependen de tu producto, tu inventario y tu inversión en anuncios.</div>''', "Proyección")
+
 # ───────── 8 · Inversión ─────────
 slide('''<div class="centro">
-      <div class="ceja sube">Tu inversión</div>
-      <h2 class="sube" style="--d:.1s">Todo el sistema, <span class="oro">en una sola mirada.</span></h2>
+      <div class="ceja sube">Tu inversión · una sola vez</div>
+      <h2 class="sube" style="--d:.1s">Pagas una vez. <span class="oro">Sin mensualidades con nosotros.</span></h2>
       <div class="suma">
         <div class="pieza pop" style="--d:.4s"><small>MARKETING DFY · 3 MESES</small><b>$<span data-cuenta="3500">0</span></b></div>
         <div class="mas aparece" style="--d:.7s">+</div>
         <div class="pieza pop" style="--d:.9s"><small>AGENTE DE CHAT</small><b>$<span data-cuenta="2000">0</span></b></div>
         <div class="mas aparece" style="--d:1.2s">=</div>
-        <div class="pieza total pop" style="--d:1.4s"><small>TOTAL</small><b>$<span data-cuenta="5500">0</span></b></div>
+        <div class="pieza total pop" style="--d:1.4s"><small>TOTAL CON TU BONO</small><s>$5,500</s><b>$<span data-cuenta="5000" data-delay="1500">0</span></b></div>
       </div>
-      <p class="sub sube" style="--d:1.8s">Los anuncios se pagan aparte, directo a Meta, con el presupuesto que definamos juntas en la estrategia.</p>
+      <div class="bono pop" style="--d:1.9s"><b>🎁 Bono de $500</b> si tomas los dos servicios juntos.</div>
+      <p class="sub chico sube" style="--d:2.1s">Los anuncios se pagan aparte, directo a Meta, con el presupuesto que definamos en la estrategia.</p>
+      <div class="klarna aparece" style="--d:2.4s"><img src="img/klarna.svg" alt="Klarna"><span>¿Prefieres pagar en cuotas? Financiamiento disponible con Klarna.</span></div>
     </div>''', "Inversión")
 
 # ───────── 9 · Cómo arrancamos ─────────
@@ -268,7 +300,41 @@ extra = r'''
 .hito-k small { font-family: var(--mono); font-size: 19px; letter-spacing: .2em; color: var(--oro); text-transform: uppercase; }
 .hito-k b { font-family: var(--sora); font-size: 36px; }
 .hito-k span { font-size: 24px; color: var(--gris); line-height: 1.4; }
-.firma-k { font-family: var(--mono); font-size: 20px; letter-spacing: .26em; color: var(--oro); text-transform: uppercase; }
+.firma-k { font-family: var(--mono); font-size: 20px; letter-spacing: .26em; color: var(--oro); text-transform: uppercase; }/* prueba */
+.prueba { position: absolute; left: 140px; right: 140px; top: 420px; display: grid; grid-template-columns: 1000px 1fr; gap: 60px; align-items: center; }
+.video-h { position: relative; width: 1000px; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; border: 2px solid rgba(245,206,26,.45); background: #000 center / cover no-repeat; cursor: pointer; padding: 0; box-shadow: 0 40px 120px rgba(0,0,0,.6); }
+.video-h .play { position: absolute; left: 50%; top: 50%; margin: -55px 0 0 -55px; width: 110px; height: 110px; }
+.video-h .dur { right: 14px; bottom: 14px; }
+.dato-p { display: flex; flex-direction: column; gap: 10px; }
+.logo-sola { width: 210px; filter: brightness(1.2); margin-bottom: 6px; }
+.dato-p > b { font-family: var(--sora); font-size: 34px; }
+.dato-p > span { font-size: 22px; color: var(--gris); }
+.num-p { margin-top: 12px; border-left: 3px solid var(--oro); padding-left: 18px; }
+.num-p b { font-family: var(--sora); font-size: 60px; color: var(--oro); line-height: 1; letter-spacing: -.02em; }
+.num-p small { display: block; font-size: 20px; color: var(--gris); margin-top: 4px; }
+.legal-p { font-family: var(--mono); font-size: 14px; letter-spacing: .08em; color: var(--gris2); margin-top: 14px; line-height: 1.5; }
+/* proyección */
+.proy { position: absolute; left: 260px; right: 260px; top: 380px; height: 520px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 80px; align-items: end; }
+.col-p { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.col-p b { font-family: var(--sora); font-size: 34px; }
+.col-p span { font-size: 22px; color: var(--gris); line-height: 1.4; }
+.barra-p { width: 100%; border-radius: 16px 16px 6px 6px; background: linear-gradient(180deg, rgba(195,154,107,.85), rgba(195,154,107,.35)); transform-origin: bottom; position: relative; }
+.b1 { height: 120px; } .b2 { height: 252px; } .b3 { height: 380px; background: linear-gradient(180deg, var(--oro), rgba(245,206,26,.35)); box-shadow: 0 0 60px rgba(245,206,26,.25); }
+.b3 i { position: absolute; top: 18px; left: 0; right: 0; text-align: center; font-style: normal; font-family: var(--sora); font-weight: 800; font-size: 54px; color: #0b0b0b; }
+.activa .barra-p { animation: crece 1.1s cubic-bezier(.2,.8,.2,1) both; }
+.activa .b1 { animation-delay: .4s; } .activa .b2 { animation-delay: .7s; } .activa .b3 { animation-delay: 1s; }
+@keyframes crece { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.meta-linea { position: absolute; left: -40px; right: -40px; bottom: 342px; border-top: 3px dashed var(--bronce); }
+.meta-linea span { position: absolute; left: 0; top: -40px; font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: var(--bronce2); text-transform: uppercase; }
+.legal-proy { position: absolute; left: 0; right: 0; bottom: 110px; text-align: center; font-family: var(--mono); font-size: 15px; letter-spacing: .08em; color: var(--gris2); }
+/* inversión con bono */
+.pieza.total s { font-family: var(--sora); font-size: 30px; color: #3a3205; opacity: .7; }
+.bono { font-family: var(--sora); font-size: 32px; background: rgba(195,154,107,.12); border: 2px dashed var(--bronce); border-radius: 18px; padding: 16px 30px; }
+.bono b { color: var(--bronce2); }
+.sub.chico { font-size: 24px; }
+.klarna { display: flex; align-items: center; gap: 14px; font-size: 20px; color: var(--gris); }
+.klarna img { height: 34px; }
+
 '''
 
 pagina = f'''<title>Propuesta KAS · Level Up</title>
