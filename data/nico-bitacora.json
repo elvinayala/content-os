@@ -2,6 +2,15 @@
   "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
   "entradas": [
     {
+      "fecha": "2026-10-07T18:20:00Z",
+      "plataforma": "cortex",
+      "que": "Bug real encontrado y arreglado: María pidió una revisión 'debes usar broll para TODO EL VIDEO' (fuente 20261007-175504-toma-de-apoyo-3-2-4tomas es solo audio) y Cortex le mostró un ValidationError de pydantic crudo en pantalla (broll.ratio debe ser <= 0.5, el LLM propuso 1.0). Causa: apply_dna_patch() en ave/brain/revise.py pasaba el valor del LLM tal cual a model_validate() sin recortarlo al rango declarado del campo. Arreglé: ahora recorta (clamp) a los límites ge/le del campo del DNA antes de validar, así no vuelve a tronar por un valor fuera de rango en ninguna revisión futura (no solo broll.ratio). Agregué test de regresión. Commit 83cec34, pusheado a GitHub (elvinayala/cortex main).",
+      "porque": "Elvin mandó el screenshot del error de María por Telegram.",
+      "verificado": "SSH a railway-cortex: health OK, sin .lock activos, sin cola (watch.log en 0/0 hace rato). Corrí toda la suite con uv (venv real del repo): 150 passed, 1 skipped, 1 failed (test_full_render_and_qa, por una version de ffmpeg distinta en este sandbox — falla igual en main sin mi cambio, confirmado con git stash). Confirmé con el venv real de Cortex los limites reales del campo (Ge 0, Le 0.5) antes de escribir el clamp.",
+      "commit": "83cec34",
+      "pendiente": "SIN DESPLEGAR TODAVIA: mi token de Railway solo tiene acceso al proyecto puente-telegram, no al proyecto cortex (railway link/up da Unauthorized). El deploy de Cortex no es por GitHub auto-deploy, es railway up manual desde el repo. Necesito que Elvin corra el deploy desde su Mac (ya tiene sesión con acceso) o me pase un token de proyecto de Railway para el servicio cortex."
+    },
+    {
       "fecha": "2026-09-22",
       "plataforma": "bori",
       "que": "Revisado el pago anual no completado (Agencia anual $2,388, serranoaletorres@gmail.com, 22/sep 6:54 PM). No hubo rechazo de tarjeta: el cliente eligió KLARNA en el checkout; Klarna pide aprobacion externa (next_action redirect_to_url) y el flujo quedo en requires_action -> invoice.payment_action_required + invoice.payment_failed. Suscripcion sub_1UIcaI en estado incomplete, factura in_1UIcaI abierta, sesion cs_live_a1gKtp aun OPEN (expira 23/sep ~6:54 PM): si vuelve al link y paga con tarjeta, entra solo.",
