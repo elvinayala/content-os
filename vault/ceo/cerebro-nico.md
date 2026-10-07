@@ -123,7 +123,7 @@ Elvin: *"dale acceso a Nico al proyecto para poder solicitarle sin estar en la M
 - **Código**: `/estado/repos/cortex` (GitHub `elvinayala/cortex`; el puente hace pull antes y push
   después). Leer su `CLAUDE.md` antes del primer cambio: la **referencia manda** (no tocar el look:
   nada de contraste/saturación/LUTs ni cambios bruscos; si algo cambia brusco, que sea mejora).
-- **Pruebas**: `uv run pytest -q` en el clon. `test_full_render_and_qa` falla SOLO aquí porque el
+- **Pruebas**: `uv run pytest -q` en el clon (si `uv` no está en el PATH: `$HOME/.local/bin/uv`). `test_full_render_and_qa` falla SOLO aquí porque el
   ffmpeg de este contenedor es 5.1 (no tiene `framelog` en ebur128); en producción pasa. Las demás tienen que pasar.
 - **Servidor (proyectos, renders, logs del vigilante)**: `ssh -F $HOME/.ssh/config railway-cortex "<comando>"`
   (llave "nico (Railway)" registrada en Railway; `ssh` no lee `$HOME/.ssh` solo, por eso el `-F`). Proyectos en
