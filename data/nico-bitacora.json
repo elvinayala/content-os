@@ -473,6 +473,15 @@
       "porque": "Elvin aprobó #179/#180. Es la misma cuenta (u_mu3dgw5cf1obl7, Agencia $249 desde 17/sep), así que no pierde nada.",
       "verificado": "Correo nuevo libre antes del cambio; después: email nuevo, plan Agencia, sub_status active, Stripe sin tocar; forgot → ok + mailConfigured true; reset_token creado (vence 5:37 PM PR); 0 cuentas con el correo de Roger; /api/status 200. Sin cambio de código ni deploy.",
       "commit": null
+    },
+    {
+      "fecha": "2026-10-07T15:52:55.995064Z",
+      "plataforma": "cortex",
+      "que": "Diagnóstico: María del Carmen (#cortex-bori-edit-videos) hizo una corrección manual (número de teléfono + énfasis) en el editor de 20261006-212837-img-5875, rendericé a v7, pero no ve la corrección reflejada.",
+      "porque": "Elvin me pidió ayudarla directo por Telegram.",
+      "verificado": "Cortex/edit.heybori.ai con salud OK (health 200). Revisé el código del editor manual (edicion_manual.py, editor.html, render.py, /video route): el flujo guarda, versiona, renderiza y el reproductor del proyecto usa cache-busting (?v=&t=), así que no es caché del navegador por diseño. No encontré un bug reproducible en el código que explique la pérdida específica de la corrección del teléfono. No tengo acceso (SSH ni token de Railway) al proyecto Cortex (es otro proyecto de Railway, distinto al mío) para leer el timeline.ai.json real de v7 y confirmar si la corrección quedó guardada.",
+      "commit": null,
+      "pendiente": "Necesito o (a) acceso de admin a edit.heybori.ai / SSH railway-cortex para inspeccionar el proyecto, o (b) que María confirme si al reabrir el editor (✎ Editar) su corrección del teléfono SIGUE ahí (eso aisla si fue un problema de guardado o de visualización/caché)."
     }
   ],
   "pendientesElvin": [
@@ -514,5 +523,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-06T20:37:31.690Z"
+  "actualizadoEl": "2026-10-07T15:52:55.995095Z"
 }
