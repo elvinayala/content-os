@@ -8,3 +8,9 @@ Segunda reunión (tentativa): lunes 12/oct, 6:30 PM PR.
 - Contenido en `sinergia.json` (kit `demos/kit-propuestas`). Rearmar: `python3 ../../kit-propuestas/armar.py sinergia.json index.html`
   y después `sed -i '' 's/¿Prefieres pagar en cuotas?/¿Prefieren pagar en cuotas?/' index.html` (la propuesta va de "ustedes").
 - Logo y fotos: de cqsinergia.com (su web), en `img/`. Testimonios: Dr. Bryan Vega (quiropráctico) y Dra. Grissel.
+
+## Cambio 7/oct (Elvin)
+Se añadió la estrategia probada del Dr. Bryan Vega (quiropráctico): le estructuramos su oferta → pacientes nuevos a su primera
+visita → paquete completo de 6 meses → ticket más alto; y lo que se implementa para Sinergia, automático: oferta, embudo,
+marketing y atención de los leads. Bryan queda como único testimonio (25 → 60 pacientes nuevos por semana, en sus palabras).
+Pendiente de confirmar: que "embudo y atención de los leads" esté incluido en los $4,500.

@@ -40,26 +40,29 @@
  "meta": {
   "numero": "$20K–$30K",
   "unidad": "al mes en facturación",
-  "nota": "Vendiendo su servicio completo a $105, sin depender de ofertas que les quitan margen.",
+  "nota": "Vendiendo su servicio completo a $105 y subiendo el ticket con paquetes de 6 meses, sin depender de ofertas que les quitan margen.",
   "ceja": "Su meta"
  },
  "plan": {
-  "titulo": "Atraer a quien *valora el cuidado,* no a quien busca el especial.",
+  "ceja": "La estrategia",
+  "titulo": "Una estrategia *que ya funcionó* con otro quiropráctico.",
   "carriles": [
    {
-    "nombre": "1 · ANUNCIOS",
+    "nombre": "LO QUE HICIMOS CON EL DR. BRYAN VEGA",
     "pasos": [
-     "Anuncio que muestra el valor",
-     "Mensaje o llamada",
-     "Cita a $105"
+     "Estructuramos su oferta",
+     "Pacientes nuevos a su primera visita",
+     "Paquete completo de 6 meses",
+     "Ticket más alto"
     ]
    },
    {
-    "nombre": "2 · CONTENIDO ORGÁNICO",
+    "nombre": "LO QUE IMPLEMENTAMOS PARA SINERGIA, AUTOMÁTICO",
     "pasos": [
-     "Videos que educan",
-     "Confianza en la clínica",
-     "Pacientes que vuelven y refieren"
+     "Su oferta",
+     "El embudo",
+     "El marketing",
+     "La atención de los leads"
     ]
    }
   ]
@@ -80,8 +83,7 @@
  "prueba": {
   "ceja": "Ya lo hicimos con otro quiropráctico",
   "testimonios": [
-   "bryan",
-   "grissel"
+   "bryan"
   ]
  },
  "servicios": [
@@ -96,11 +98,11 @@
    "incluye": [
     "Onboarding 1:1 y auditoría de su clínica, su publicidad actual y sus cuentas",
     "Estrategia para su paciente ideal: quien valora el cuidado y paga el servicio completo",
-    "Oferta y ángulos que venden el valor, sin depender de descuentos",
+    "Estructura de su oferta: de la primera visita al paquete completo de 6 meses",
     "Estructura de su contenido orgánico: qué publicar y por qué",
     "Creativos con su marca, sus fotos y su clínica",
     "Campañas en Facebook e Instagram para Camuy y pueblos vecinos",
-    "Medición de cada mensaje, llamada y cita que llega de los anuncios",
+    "Embudo y atención de los leads que lleguen, para que ninguno se quede sin respuesta",
     "Optimización constante: se apaga lo que no trae pacientes y se escala lo que sí",
     "Su equipo: estratega, diseñador y project manager, con reportes de resultados"
    ]
@@ -112,11 +114,11 @@
   "meses": [
    {
     "mes": "Mes 1",
-    "texto": "Estrategia y campañas enfocadas en el servicio completo de $105"
+    "texto": "Estrategia, oferta y campañas enfocadas en el servicio completo de $105"
    },
    {
     "mes": "Mes 2",
-    "texto": "Optimizamos: más de lo que trae pacientes a precio completo"
+    "texto": "Optimizamos y empezamos a vender el paquete completo de 6 meses"
    },
    {
     "mes": "Mes 3",
@@ -142,8 +144,8 @@
    ],
    [
     "Semanas 2 y 3",
-    "Estrategia y creativos",
-    "Oferta de valor, ángulos y anuncios con su marca."
+    "Oferta y creativos",
+    "Su oferta estructurada, el embudo y los anuncios con su marca."
    ],
    [
     "Mes 1",
