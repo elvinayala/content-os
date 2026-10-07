@@ -16,6 +16,8 @@ if [ "$(id -u)" = 0 ] && id nico >/dev/null 2>&1; then
   exec runuser -u nico --preserve-environment -- bash "$0" "$@"
 fi
 export HOME="${HOME:-/estado}"
+# uv (pruebas de Cortex) vive en el volumen: `python3 -m pip install --user --break-system-packages uv` (7/oct)
+export PATH="$HOME/.local/bin:$PATH" UV_CACHE_DIR="$HOME/.cache/uv" UV_PYTHON_INSTALL_DIR="$HOME/.local/share/uv/python"
 REPOS="${NICO_REPOS_DIR:-/estado/repos}"
 SEMILLA="${SEMILLA_DIR:-/app}"   # copia del repo que viaja en la imagen (solo para arrancar)
 mkdir -p "$REPOS" "$HOME/.ssh"
@@ -35,6 +37,17 @@ elif [ -n "${GIT_SSH_KEY_B64:-}" ]; then
   export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_ed25519 -o IdentitiesOnly=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=accept-new"
 else
   echo "⚠️ Sin GH_TOKEN ni GIT_SSH_KEY_B64: no puedo clonar los repos privados."
+fi
+
+# Entrar al servidor de Cortex (Elvin, 7/oct: "dale acceso a Nico al proyecto para solicitarle sin estar en la Mac").
+# La llave de Nico está registrada en Railway ("nico (Railway)"). ssh no lee $HOME/.ssh: se usa
+#   ssh -F $HOME/.ssh/config railway-cortex "<comando>"
+if [ -n "${GIT_SSH_KEY_B64:-}" ]; then
+  [ -s "$HOME/.ssh/id_ed25519" ] || { echo "$GIT_SSH_KEY_B64" | base64 -d > "$HOME/.ssh/id_ed25519"; chmod 600 "$HOME/.ssh/id_ed25519"; }
+  if ! grep -q "Host railway-cortex" "$HOME/.ssh/config" 2>/dev/null; then
+    printf 'Host railway-cortex\n    HostName ssh.railway.com\n    User 5d6c26bc-9d2c-49ee-a43e-d07fcb581063\n    IdentityFile %s/.ssh/id_ed25519\n    IdentitiesOnly yes\n    UserKnownHostsFile %s/.ssh/known_hosts\n    StrictHostKeyChecking accept-new\n    ServerAliveInterval 30\n    ServerAliveCountMax 3\n' "$HOME" "$HOME" >> "$HOME/.ssh/config"
+    chmod 600 "$HOME/.ssh/config"
+  fi
 fi
 
 clonar() {

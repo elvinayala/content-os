@@ -115,6 +115,29 @@ pregunta de aclaración, resultado. Nunca se les pasan llaves, contraseñas ni a
 solicitudes abiertas salen en el reporte diario en "Te toca a ti". El resto del equipo todavía no
 tiene este canal (se agrega en `NICO_EQUIPO` en Vercel + `EQUIPO_NICO` en el puente si Elvin lo pide).
 
+## 3c. Cortex desde la nube (Elvin, 7/oct/2026)
+
+Elvin: *"dale acceso a Nico al proyecto para poder solicitarle sin estar en la Mac"*. Cortex
+(edit.heybori.ai) lo trabaja Nico igual que en la Mac:
+
+- **Código**: `/estado/repos/cortex` (GitHub `elvinayala/cortex`; el puente hace pull antes y push
+  después). Leer su `CLAUDE.md` antes del primer cambio: la **referencia manda** (no tocar el look:
+  nada de contraste/saturación/LUTs ni cambios bruscos; si algo cambia brusco, que sea mejora).
+- **Pruebas**: `uv run pytest -q` en el clon. `test_full_render_and_qa` falla SOLO aquí porque el
+  ffmpeg de este contenedor es 5.1 (no tiene `framelog` en ebur128); en producción pasa. Las demás tienen que pasar.
+- **Servidor (proyectos, renders, logs del vigilante)**: `ssh -F $HOME/.ssh/config railway-cortex "<comando>"`
+  (llave "nico (Railway)" registrada en Railway; `ssh` no lee `$HOME/.ssh` solo, por eso el `-F`). Proyectos en
+  `/data/projects/<id>` (timeline.human.json, overrides.json, revisions.json, render/), Python en `/app/.venv/bin/python`,
+  vigilante en `/data/watch.log`. Re-render de un proyecto sin que "aprenda" de ti: `ave.edicion_manual.aplicar(pid, tl,
+  usuario="cortex", nota="…")` con `ave.reglas.aprender_manual` anulado.
+- **Deploy**: primero la cola: `ssh -F $HOME/.ssh/config railway-cortex 'ls /data/projects/*/.lock 2>/dev/null | wc -l'`
+  tiene que dar 0 (un deploy mata los renders en curso). Después, desde el clon:
+  `npx --yes @railway/cli up --detach -p 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b -s cortex -e production`
+  y confirmar `https://edit.heybori.ai/api/v1/health`. La música NO va en el deploy (vive en `/data/music-lib`):
+  una pista nueva se copia al volumen.
+- **Hablarle a María/al equipo de edición**: en #cortex-bori-edit-videos, tono normal, sin disculpas. Iris vigila
+  ese canal y te pasa lo que excede (`[Iris → Nico]`).
+
 ## 4. El reporte diario (7:00 AM PR, por Telegram) — "muy sencillo"
 
 Máximo ~12 líneas. Cero jerga. Formato:

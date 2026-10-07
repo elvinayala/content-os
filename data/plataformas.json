@@ -95,9 +95,9 @@
         "proyecto": "cortex",
         "servicio": "cortex"
       },
-      "deploy": "npx --yes @railway/cli up --detach  (desde el repo; un redeploy MATA los renders en curso: revisar la cola antes)",
+      "deploy": "Desde el clon: npx --yes @railway/cli up --detach -p 94efb653-0a6c-48f2-80eb-f1a4ac9e6c5b -s cortex -e production (un redeploy MATA los renders en curso: antes, ls /data/projects/*/.lock = 0)",
       "logs": "npx @railway/cli logs   · vigilante en /data/watch.log (ssh railway-cortex)",
-      "tests": "uv run pytest",
+      "tests": "uv run pytest -q (en el contenedor de Nico test_full_render_and_qa falla por ffmpeg 5.1; en prod pasa)",
       "leerPrimero": [
         "CLAUDE.md",
         "docs/adr/"
@@ -111,7 +111,8 @@
         "servicio": "cortex",
         "repo": "cortex",
         "ojo": "revisar que no haya renders en cola antes"
-      }
+      },
+      "servidor": "ssh -F $HOME/.ssh/config railway-cortex \"<comando>\" (en la Mac: ssh railway-cortex). Proyectos en /data/projects, python /app/.venv/bin/python"
     },
     {
       "id": "resuelto",
