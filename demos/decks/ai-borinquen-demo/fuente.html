@@ -198,6 +198,66 @@ p { margin: 0; }
 .reloj.hu .n { color: #6f86ad; }
 .barra .frase { margin-left: auto; font-size: 38px; font-weight: 600; text-align: right; line-height: 1.25; max-width: 700px; }
 
+
+/* ───────── 7 · autoflow: las 3 piezas ───────── */
+#s7 h2 { font-size: 58px; }
+#s7 .arbol { position: relative; margin-top: 30px; }
+#s7 .raiz { margin: 0 auto; width: max-content; display: flex; align-items: center; gap: 14px; padding: 10px 36px; border-radius: 999px; border: 2px solid var(--verde); background: #0f3326; font-size: 34px; font-weight: 700; letter-spacing: -.01em; box-shadow: 0 0 46px rgba(76, 198, 110, .35); position: relative; z-index: 1; }
+#s7 .raiz .lat { width: 16px; height: 16px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 0 rgba(76,198,110,.6); }
+.activa#s7 .raiz .lat { animation: pulso 1.6s ease-out infinite; }
+@keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(76,198,110,.7); } 100% { box-shadow: 0 0 0 16px rgba(76,198,110,0); } }
+#s7 .ramas { display: block; width: 100%; height: 52px; overflow: visible; }
+#s7 .ramas path { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 700; stroke-dashoffset: 700; }
+.activa#s7 .ramas path { animation: dibuja .8s var(--ease) forwards; animation-delay: var(--d); }
+#s7 .piezas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+#s7 .pieza { --c: var(--verde); border-radius: 26px; border: 1.5px solid color-mix(in srgb, var(--c) 45%, #1d3056); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 13%, #0e1c35) 0%, #0c1830 70%); padding: 22px 28px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; position: relative; }
+#s7 .pieza .tope { display: flex; align-items: center; gap: 18px; min-height: 76px; }
+#s7 .pieza small { font-family: var(--mono); font-size: 19px; letter-spacing: .16em; color: var(--c); }
+#s7 .pieza h3 { margin: 0; font-size: 38px; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }
+#s7 .pieza h3 em { font-style: normal; display: block; font-size: 22px; font-weight: 500; color: var(--gris); letter-spacing: 0; margin-top: 4px; }
+#s7 .pieza p { font-size: 23px; line-height: 1.35; color: #c3cee2; }
+#s7 .pieza p b { color: var(--texto); font-weight: 600; }
+#s7 .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+#s7 .chips span { font-size: 19px; padding: 7px 14px; border-radius: 999px; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--texto); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); }
+#s7 .badge { display: grid; place-items: center; border-radius: 50%; flex: none; }
+#s7 .badge svg { fill: #fff; }
+#s7 .wa { width: 76px; height: 76px; background: #25D366; box-shadow: 0 0 34px rgba(37, 211, 102, .45); }
+#s7 .wa svg { width: 46px; height: 46px; }
+#s7 .redesbox { display: flex; flex-direction: column; gap: 8px; }
+#s7 .redesbox .redes { display: flex; gap: 8px; }
+#s7 .redesbox .redes .badge { width: 40px; height: 40px; }
+#s7 .redesbox .redes svg { width: 22px; height: 22px; }
+#s7 .ms { background: linear-gradient(135deg, #00c6ff, #0068ff 55%, #a033ff); }
+#s7 .ig { border-radius: 12px !important; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+#s7 .redesbox span { font-size: 18px; color: var(--gris); line-height: 1.2; }
+#s7 .tel { width: 76px; height: 76px; background: #12306a; border: 2px solid var(--azul); position: relative; }
+#s7 .tel svg { width: 40px; height: 40px; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+#s7 .tel::before, #s7 .tel::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--azul); opacity: 0; }
+.activa#s7 .tel::before { animation: late 1.8s ease-out 1.6s infinite; }
+.activa#s7 .tel::after { animation: late 1.8s ease-out 2.5s infinite; }
+#s7 .numero { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 19px; color: var(--gris); white-space: nowrap; }
+#s7 .numero b { font-family: var(--mono); font-weight: 600; font-size: 21px; color: var(--texto); background: #0a1a36; border: 1px solid #284f8f; padding: 6px 12px; border-radius: 10px; }
+#s7 .numero i { font-style: normal; color: var(--azul); font-size: 21px; }
+#s7 .crm { width: 76px; height: 76px; background: #0f3444; border: 2px solid var(--cian); }
+#s7 .crm svg { width: 42px; height: 42px; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; }
+#s7 .tubo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+#s7 .tubo div { border-radius: 10px; background: #0a1a2c; border: 1px solid #1f4a5a; padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; min-height: 64px; position: relative; }
+#s7 .tubo small { font-size: 15px; letter-spacing: .06em; color: var(--gris); font-family: var(--mono); }
+#s7 .tubo i { display: block; height: 10px; border-radius: 5px; background: #1e5a6c; }
+#s7 .tubo i.on { background: var(--cian); opacity: 0; }
+.activa#s7 .tubo i.on { animation: aparece .4s ease forwards; animation-delay: var(--d); }
+#s7 .panel { margin-top: 26px; border-radius: 22px; border: 1px solid #23507a; background: linear-gradient(90deg, #0d2340, #0d1c38); padding: 14px 28px; display: flex; align-items: center; gap: 30px; }
+#s7 .panel .mas { font-family: var(--mono); font-size: 20px; letter-spacing: .16em; color: var(--cian); white-space: nowrap; }
+#s7 .panel h4 { margin: 0; font-size: 30px; font-weight: 700; white-space: nowrap; }
+#s7 .panel p { font-size: 22px; color: var(--gris); line-height: 1.3; max-width: 430px; }
+#s7 .vivo { margin-left: auto; display: flex; flex-direction: column; gap: 6px; min-width: 560px; }
+#s7 .vivo .fila { display: flex; align-items: center; gap: 10px; font-size: 19px; color: #c3cee2; background: #0a172c; border: 1px solid #1d3056; border-radius: 10px; padding: 6px 12px; }
+#s7 .vivo .fila b { font-weight: 600; color: var(--texto); }
+#s7 .vivo .fila em { margin-left: auto; font-style: normal; font-family: var(--mono); font-size: 16px; color: var(--verde); }
+#s7 .envivo { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 16px; letter-spacing: .14em; color: #ff6b5e; }
+#s7 .envivo::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #ff4d3d; }
+.activa#s7 .envivo::before { animation: late 1.4s ease-out infinite; }
+
 /* ───────── 7 · ahorro ───────── */
 .tresN { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 56px; }
 .caja { border-radius: 20px; border: 1px solid rgba(229, 96, 79, .3); background: #150f1b; padding: 34px 38px; display: flex; flex-direction: column; gap: 12px; }
@@ -373,8 +433,58 @@ p { margin: 0; }
       <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>06</span></div>
     </section>
 
-    <!-- 7 · TU AHORRO -->
+    <!-- 7 · AUTOFLOW · LAS 3 PIEZAS (2 agentes + CRM) + DASHBOARD -->
     <section class="slide" id="s7" data-n="7">
+      <div class="ceja sube">AutoFlow · cómo está hecho</div>
+      <h2 class="sube" style="--d:.1s;margin-top:18px">Un sistema, <span class="verde">tres piezas</span> trabajando juntas.</h2>
+      <div class="arbol">
+        <div class="raiz pop" style="--d:.35s"><span class="lat"></span>AutoFlow</div>
+        <svg class="ramas" viewBox="0 0 1664 64" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M832 0 C 832 40, 277 24, 277 64" stroke="#25D366" style="--d:.7s"/>
+          <path d="M832 0 L 832 64" stroke="#3a78e6" style="--d:.8s"/>
+          <path d="M832 0 C 832 40, 1387 24, 1387 64" stroke="#4fcfe2" style="--d:.9s"/>
+        </svg>
+        <div class="piezas">
+          <div class="pieza pop" style="--c:#25D366;--d:1.05s">
+            <div class="tope"><div class="badge wa"><svg viewBox="0 0 24 24" aria-label="WhatsApp"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div>
+              <div class="redesbox"><div class="redes"><div class="badge ms"><svg viewBox="0 0 24 24" aria-label="Messenger"><path d="M.001 11.639C.001 4.949 5.241 0 12.001 0S24 4.95 24 11.639c0 6.689-5.24 11.638-12 11.638-1.21 0-2.38-.16-3.47-.46a.96.96 0 00-.64.05l-2.39 1.05a.96.96 0 01-1.35-.85l-.07-2.14a.97.97 0 00-.32-.68A11.39 11.389 0 01.002 11.64zm8.32-2.19l-3.52 5.6c-.35.53.32 1.139.82.75l3.79-2.87c.26-.2.6-.2.87 0l2.8 2.1c.84.63 2.04.4 2.6-.48l3.52-5.6c.35-.53-.32-1.13-.82-.75l-3.79 2.87c-.25.2-.6.2-.86 0l-2.8-2.1a1.8 1.8 0 00-2.61.48z"/></svg></div><div class="badge ig"><svg viewBox="0 0 24 24" aria-label="Instagram"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></div></div><span>también en Messenger<br>e Instagram</span></div></div>
+            <small>AGENTE 1 · CHAT</small>
+            <h3>Agente de WhatsApp<em>Automatiza tus redes sociales</em></h3>
+            <p>Contesta en <b>segundos</b> en WhatsApp, Messenger e Instagram, califica y <b>agenda</b>.</p>
+            <div class="chips"><span>24/7</span><span>Español e inglés</span><span>Agenda citas</span></div>
+          </div>
+          <div class="pieza pop" style="--c:#3a78e6;--d:1.35s">
+            <div class="tope"><div class="badge tel"><svg viewBox="0 0 24 24" aria-label="Teléfono"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11.5 11.5 0 0 0 7.2 7.2l1.4-2.1 4.2 1.6V19a1.6 1.6 0 0 1-1.7 1.6C10.4 20.1 3.9 13.6 3.4 5.2A1.6 1.6 0 0 1 5 3.5z"/></svg></div>
+              <div class="numero"><b>Tu número de siempre</b><span><i>→</i> lo contesta tu Recepcionista</span></div></div>
+            <small>AGENTE 2 · VOZ</small>
+            <h3>Recepcionista<em>Agente de voz</em></h3>
+            <p>Se conecta a <b>tu número de teléfono</b>: contesta las llamadas y <b>agenda</b> las citas.</p>
+            <div class="chips"><span>Nunca pierdes una llamada</span><span>Voz natural</span></div>
+          </div>
+          <div class="pieza pop" style="--c:#4fcfe2;--d:1.65s">
+            <div class="tope"><div class="badge crm"><svg viewBox="0 0 24 24" aria-label="CRM"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/></svg></div>
+              <div class="tubo" style="flex:1"><div><small>NUEVO</small><i></i><i class="on" style="--d:2.3s"></i></div><div><small>AGENDÓ</small><i></i><i class="on" style="--d:2.7s"></i></div><div><small>CLIENTE</small><i class="on" style="--d:3.1s"></i></div></div></div>
+            <small>PIEZA 3 · CRM</small>
+            <h3>CRM en GoHighLevel<em>Organiza todos tus leads</em></h3>
+            <p>Cada chat y cada llamada <b>entra solo</b>, con su etapa. Nada se queda sin seguimiento.</p>
+            <div class="chips"><span>Todo en un solo lugar</span><span>Seguimiento</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sube" style="--d:2.1s">
+        <div><div class="mas">+ ADEMÁS</div><h4>El dashboard de tu agente</h4></div>
+        <p>Ve <b style="color:var(--texto)">en tiempo real</b> las conversaciones y todo lo que hace tu agente.</p>
+        <div class="vivo">
+          <div class="envivo">EN VIVO</div>
+          <div class="fila sube" style="--d:2.6s"><b>WhatsApp</b> «¿Tienen cita el jueves?» <em>agendada ✓</em></div>
+          <div class="fila sube" style="--d:3s"><b>Llamada</b> 1 min 48 s · quiere precios <em>en el CRM ✓</em></div>
+        </div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>07</span></div>
+    </section>
+
+    <!-- 8 · TU AHORRO -->
+    <section class="slide" id="s8" data-n="8">
       <div class="ceja sube">Tu ahorro</div>
       <h2 class="sube" style="--d:.1s;margin-top:20px">Lo que te costaría cubrirlo con personas.</h2>
       <p class="sub desenfoca" style="--d:.3s;margin-top:18px">Base: salario de ~$2,000/mes en Puerto Rico, más beneficios y cobertura de noches y fines de semana.</p>
@@ -388,11 +498,11 @@ p { margin: 0; }
         <div class="caja azul pop" style="--d:3s"><div class="num">24/7</div><p>noches, fines de semana y feriados</p></div>
         <div class="caja bien pop" style="--d:3.2s"><div class="num" data-cuenta data-hasta="40" data-sufijo="+ h" data-delay="3300" data-dur="900">40+ h</div><p>a la semana que tu equipo recupera para vender</p></div>
       </div>
-      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>07</span></div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>08</span></div>
     </section>
 
-    <!-- 8 · IMPLEMENTACIÓN -->
-    <section class="slide" id="s8" data-n="8">
+    <!-- 9 · IMPLEMENTACIÓN -->
+    <section class="slide" id="s9" data-n="9">
       <div class="ceja sube">Implementación</div>
       <h2 class="sube" style="--d:.1s;margin-top:20px">Tu sistema en marcha en <span class="verde">15 días.</span></h2>
       <p class="sub desenfoca" style="--d:.3s;margin-top:18px">Cuatro fases claras, con lanzamiento guiado. Y mientras instalamos, <span class="verde">capacitamos a tu gente.</span></p>
@@ -408,7 +518,7 @@ p { margin: 0; }
         <div class="fase lanz" style="--d0:.74s;--d:1.75s;--col:#4cc66e;--sombra:rgba(76,198,110,.45)"><small>F3 · DÍA 15</small><h3>Lanzamiento</h3><p>Validación final, capacitación de tu equipo y arranque real.</p></div>
         <div class="fase" style="--d0:.86s;--d:3.9s;--col:#4fcfe2;--sombra:rgba(79,207,226,.35)"><small>F4 · DÍAS 16–45</small><h3>Optimización</h3><p>Ajustes de mensajes, reglas y flujos hasta estabilizar el rendimiento.</p></div>
       </div>
-      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>08</span></div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>09</span></div>
     </section>
 
     <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>

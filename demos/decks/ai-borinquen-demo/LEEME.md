@@ -1,6 +1,6 @@
 # Presentación animada · Demo AI Borinquen (28/sep/2026)
 
-La presentación de venta de AI Borinquen (PDF "2026 sept Demo AI Borinquen") llevada a web animada: 8 slides en
+La presentación de venta de AI Borinquen (PDF "2026 sept Demo AI Borinquen") llevada a web animada: 9 slides en
 un escenario de 1920×1080 que se escala a la pantalla; cada slide se arma al entrar (contadores, flujo de AutoFlow,
 agentes que nacen del Agente Personal, barra de implementación).
 
@@ -23,3 +23,11 @@ agentes que nacen del Agente Personal, barra de implementación).
   puppeteer-core; se corrió desde /Users/elvinayala/bori-demo) → cuadros JPG a 30 fps → ffmpeg: partes + testimonio de
   Ernest (16 s) + música `motion/public/audio/aib-deck-67.mp3` que baja durante el testimonio.
   Resultado: bandeja `motion-aib-presentacion-cliente`.
+
+## Slide 7 · AutoFlow en 3 piezas (6/oct/2026)
+Elvin: "que se vea visualmente que AutoFlow se compone de tres ramas: dos agentes y un CRM". Slide nueva después de la del
+reloj: AutoFlow → **Agente de WhatsApp** (logo de WhatsApp + Messenger e Instagram chiquitos, "automatiza tus redes
+sociales") · **Recepcionista** (agente de voz, se conecta a tu número de siempre) · **CRM en GoHighLevel** (organiza todos
+los leads) + franja "Además: el dashboard de tu agente" (conversaciones en tiempo real). Logos de Simple Icons (CC0).
+Las que eran 7 y 8 ahora son 8 y 9. En Netlify se publica solo `/demo-ai-borinquen/index.html` con el deploy por digest
+(los MP4 del kit no están en git y se reusan por su sha). `video.html` (video pre-llamada) NO tiene esta slide todavía.
