@@ -1,0 +1,164 @@
+{
+ "marca": "level-up",
+ "cliente": {
+  "nombre": "Lisbeth y Néstor",
+  "negocio": "Clínica Quiropráctica Sinergia",
+  "fecha": "7 de octubre de 2026",
+  "acento": "#76aba8",
+  "logo": "img/logo.png",
+  "fotos": [
+   "img/doctores.jpg",
+   "img/ajuste.jpg",
+   "img/columna.jpg"
+  ]
+ },
+ "portada": {
+  "titulo": "Pacientes que llegan a **Sinergia**\npor el *servicio completo.*",
+  "sub": "Marketing que vende el valor de su cuidado quiropráctico, no el descuento."
+ },
+ "diagnostico": {
+  "titulo": "Tienen la clínica y los pacientes. *Les falta vender el valor.*",
+  "puntos": [
+   [
+    "5 años",
+    "cuidando a familias de Camuy y pueblos vecinos, desde los niños hasta la edad dorada."
+   ],
+   [
+    "Ofertas, no valor",
+    "su publicidad actual atrae con ofertas: el servicio de $105 termina en $65 o $59."
+   ],
+   [
+    "Casi $50 menos",
+    "por cada paciente que podría pagar el servicio completo."
+   ],
+   [
+    "$15,000 al mes",
+    "de facturación, pero solo quedan entre $5,000 y $6,000."
+   ]
+  ]
+ },
+ "meta": {
+  "numero": "$20K–$30K",
+  "unidad": "al mes en facturación",
+  "nota": "Vendiendo su servicio completo a $105, sin depender de ofertas que les quitan margen.",
+  "ceja": "Su meta"
+ },
+ "plan": {
+  "titulo": "Atraer a quien *valora el cuidado,* no a quien busca el especial.",
+  "carriles": [
+   {
+    "nombre": "1 · ANUNCIOS",
+    "pasos": [
+     "Anuncio que muestra el valor",
+     "Mensaje o llamada",
+     "Cita a $105"
+    ]
+   },
+   {
+    "nombre": "2 · CONTENIDO ORGÁNICO",
+    "pasos": [
+     "Videos que educan",
+     "Confianza en la clínica",
+     "Pacientes que vuelven y refieren"
+    ]
+   }
+  ]
+ },
+ "ejemplo": {
+  "titulo": "Un anuncio que vende *el servicio completo.*",
+  "web": "cqsinergia.com",
+  "anuncio": {
+   "pagina": "Clínica Quiropráctica Sinergia",
+   "texto": "¿Dolor de espalda que va y viene? En Sinergia buscamos la causa, no solo el síntoma. Cuidado quiropráctico para toda la familia en Camuy.",
+   "foto": "img/ajuste.jpg",
+   "web": "cqsinergia.com",
+   "producto": "Servicio completo · $105",
+   "boton": "Reservar"
+  },
+  "nota": "el anuncio final se crea con su estrategia, sus fotos y su oferta"
+ },
+ "prueba": {
+  "ceja": "Ya lo hicimos con otro quiropráctico",
+  "testimonios": [
+   "bryan",
+   "grissel"
+  ]
+ },
+ "servicios": [
+  {
+   "nombre": "Marketing *hecho por nosotros*",
+   "corto": "Plan de marketing",
+   "sub": "Done For You. Nosotros hacemos el marketing; ustedes se enfocan en sus pacientes.",
+   "precio": 4500,
+   "precio_nota": "plan de marketing Done For You",
+   "nota": "La inversión en anuncios se paga aparte, directo a Meta.",
+   "pie": "Marketing",
+   "incluye": [
+    "Onboarding 1:1 y auditoría de su clínica, su publicidad actual y sus cuentas",
+    "Estrategia para su paciente ideal: quien valora el cuidado y paga el servicio completo",
+    "Oferta y ángulos que venden el valor, sin depender de descuentos",
+    "Estructura de su contenido orgánico: qué publicar y por qué",
+    "Creativos con su marca, sus fotos y su clínica",
+    "Campañas en Facebook e Instagram para Camuy y pueblos vecinos",
+    "Medición de cada mensaje, llamada y cita que llega de los anuncios",
+    "Optimización constante: se apaga lo que no trae pacientes y se escala lo que sí",
+    "Su equipo: estratega, diseñador y project manager, con reportes de resultados"
+   ]
+  }
+ ],
+ "proyeccion": {
+  "titulo": "Primero el valor. *Después, a escalar.*",
+  "linea_meta": "Su meta · $20,000–$30,000 al mes",
+  "meses": [
+   {
+    "mes": "Mes 1",
+    "texto": "Estrategia y campañas enfocadas en el servicio completo de $105"
+   },
+   {
+    "mes": "Mes 2",
+    "texto": "Optimizamos: más de lo que trae pacientes a precio completo"
+   },
+   {
+    "mes": "Mes 3",
+    "texto": "Escalamos lo que funciona, rumbo a su meta",
+    "cifra": "$20K+"
+   }
+  ],
+  "legal": "Proyección ilustrativa con base en su meta; los resultados dependen de su operación, su capacidad de atender y su inversión en anuncios."
+ },
+ "inversion": {
+  "ceja": "Su inversión",
+  "titulo": "Un plan para vender *al precio que vale su servicio.*",
+  "nota": "Los anuncios se pagan aparte, directo a Meta, con el presupuesto que definamos en la estrategia.",
+  "klarna": true
+ },
+ "arranque": {
+  "titulo": "De la firma a los *pacientes.*",
+  "pasos": [
+   [
+    "Semana 1",
+    "Onboarding",
+    "Auditoría, accesos a sus cuentas y fotos de la clínica."
+   ],
+   [
+    "Semanas 2 y 3",
+    "Estrategia y creativos",
+    "Oferta de valor, ángulos y anuncios con su marca."
+   ],
+   [
+    "Mes 1",
+    "Campañas al aire",
+    "Pacientes nuevos buscando el servicio completo."
+   ],
+   [
+    "Meses 2 y 3",
+    "Optimizar y escalar",
+    "Más presupuesto a lo que trae pacientes a $105."
+   ]
+  ]
+ },
+ "cierre": {
+  "titulo": "Nos vemos el *lunes 12 de octubre*\na las 6:30 PM.",
+  "sub": "Con Lisbeth y Néstor: revisamos juntos la estrategia y, si están listos, arrancamos con su onboarding."
+ }
+}
