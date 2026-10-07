@@ -88,3 +88,10 @@ antes le pedían a Elvin. Canales: #nico-desarrollo (C0C43J731AQ, pedidos) y **#
 F0C4CN8MW15 ("Cómo vamos a trabajar con Nico"); mensaje formal de Nico enviado desde la cuenta de Elvin
 pidiendo reunión de 30 min por Zoom (Aure crea el Zoom; Nico no habla en Zoom). Aprobación sigue siendo de
 Elvin (`ok <id>`) hasta que él decida delegarla a Carilin/Aure. Cerebro §11.
+
+**Cortex desde la nube (7/oct/2026)**: Elvin: "dale acceso a Nico al proyecto para solicitarle sin estar en la Mac".
+Nico tiene el clon `/estado/repos/cortex`, uv en el volumen (`$HOME/.local/bin/uv`; 149/150 tests, el de render
+integral falla solo ahí por ffmpeg 5.1), entra al servidor con `ssh -F $HOME/.ssh/config railway-cortex` (llave
+"nico (Railway)" registrada en la cuenta de Railway) y despliega con `railway up -p 94efb653… -s cortex -e production`
+tras ver 0 `.lock`. Ojo al tocar su contenedor por ssh: entras como root y él corre como `nico` → `chown -R nico:nico /estado`.
+Cerebro §3c.

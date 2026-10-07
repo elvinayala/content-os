@@ -61,7 +61,7 @@
 - [Avisos desde el Slack de Elvin](avisos-desde-slack-elvin.md) — "avísale a X" = DM desde su cuenta firmado por el agente; automáticos = bot
 - [Accesos y RR.HH. → Yaileen](accesos-rrhh-yaileen.md) — cuentas, claves, abrir Pulse, altas y todo RR.HH. se pide a Yaileen, no a Carilin
 - [Slack — verificar empleados](slack-equipo-verificar.md) — confirmar @levelupmediapr.net; Lis Acevedo (con S)
-- [Nico — vibecoder](nico-vibecoder.md) — guardia técnica de todas las plataformas; Railway + GitHub; Carilin/Aure piden y Elvin aprueba
+- [Nico — vibecoder](nico-vibecoder.md) — guardia técnica de todas las plataformas; Railway + GitHub; Carilin/Aure piden y Elvin aprueba; desde 7/oct opera Cortex desde la nube (ssh + deploy)
 - [Iris — vigía de Cortex](iris-vigia-cortex.md) — revisa #cortex-bori-edit-videos cada 20 min y arregla o pasa a Nico
 - [Carilin — revisión de clientes](carilin-revision-clientes.md) — solo lo nuevo/riesgo, ≥$1,500 bajo la lupa, máx 8 líneas
 - [n8n de Level Up](n8n-level-up.md) — back office en Contabo/Easypanel; Nico lo tomó; puente Pulse→NocoDB en real
