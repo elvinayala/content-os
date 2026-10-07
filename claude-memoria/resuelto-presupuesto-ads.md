@@ -1,12 +1,14 @@
 ---
 name: resuelto-presupuesto-ads
-description: "Tope de inversión en Meta Ads de Resuelto — $60-65/día con 3 áreas, $125-150 con todas, revisar a los 90 días"
+description: "Tope de Meta Ads de Resuelto — HOY $30-35/día máximo (6/oct, mientras Elvin ajusta); antes $60-65 con 3 áreas; $125-150 con todas"
 metadata:
   node_type: memory
   type: project
   originSessionId: a8ffb613-6c4f-472e-8e63-e63ddb7a80f2
-  modified: 2026-09-28T23:16:27.641Z
+  modified: 2026-10-07T02:09:48.205Z
 ---
+
+**TOPE VIGENTE (6/oct/2026): máximo $30-35/día en total** ("en lo que primero ajusto unas cosas"). Quedó en $32.08: Caguas Precio fijo $12, D Ticket alto $3, Llamadas Aguadilla $1, los demás conjuntos a $2.01 (el mínimo de Meta para mensajes es > $2). No se apagó ningún conjunto. Antes: 5/oct $60; 3/oct $85. Motivo: 4-5/oct se gastaban ~$80/día sin trabajos agendados; los flyers minimalistas tenían CTR < 2 % y se cambiaron por gráficos (problema en foto + precio + Caguas). No subir de $35 sin que Elvin lo diga.
 
 Regla de Elvin (28/sep/2026) para la pauta de Resuelto:
 - Primeros 30 días: máximo **$125/día** en total.
