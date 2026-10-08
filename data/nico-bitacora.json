@@ -2,6 +2,15 @@
   "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
   "entradas": [
     {
+      "fecha": "2026-10-08T16:25:00Z",
+      "plataforma": "cortex",
+      "que": "Bug real de b-roll corregido y desplegado (commit d4ba1fc): en ave/brain/composer.py había un tope DURO de 20% de b-roll que ignoraba por completo dna.broll.ratio — por eso, aunque el pipeline ya subía el ratio a 0.5 para fuentes solo-audio (voz_patch) o una revisión pidiera más, el resultado se quedaba igual en 20% siempre. Subí también el límite del campo BrollDNA.ratio de 0.5 a 1.0 en ave/dna/schema.py para que un pedido explícito de 'b-roll en todo el video' SÍ pueda llegar al 100%. Es el root cause real detrás del error que arreglé ayer (83cec34, que solo evitaba el crash pero dejaba el video igual de pelado).",
+      "porque": "Elvin dijo 'arregla eso' tras avisarle que lo de ayer ya no tronaba; entendí que pedía resolver el problema de fondo, no solo el crash.",
+      "verificado": "0 renders en cola antes de desplegar. Agregué test de regresión (test_ratio_alto_ya_no_se_recorta_al_20_por_ciento) que falla con el código viejo y pasa con el nuevo; actualicé test_dna_patch_recorta_valores_fuera_de_rango (ahora 1.0 se cumple en vez de recortarse a 0.5). Suite completa: 151 passed, 1 failed (el de siempre, ffmpeg del sandbox), 1 skipped. Tras el deploy: md5 de composer.py y schema.py IDÉNTICO entre local y /app en railway-cortex, GET https://edit.heybori.ai/api/v1/health → 200.",
+      "commit": "d4ba1fc",
+      "pendiente": null
+    },
+    {
       "fecha": "2026-10-08T16:13:00Z",
       "plataforma": "cortex",
       "que": "Desplegué a producción el fix de 83cec34 (clamp de broll.ratio y cualquier otro campo del DNA al rango ge/le en vez de tronar con ValidationError crudo) que había quedado commiteado sin desplegar desde ayer. También subió 846c06c (cifras: solo el tipo contador cuenta).",
