@@ -2,6 +2,15 @@
   "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
   "entradas": [
     {
+      "fecha": "2026-10-08T19:30:00Z",
+      "plataforma": "cortex",
+      "que": "[Solicitud de Carilin #194] Auditoría de Cortex + 2 arreglos. (1) Caso de María (b-roll en todo el video, toma de voz = pared blanca): además del tope de 20 % (d4ba1fc), Cortex botaba las tomas de apoyo cuya frase caía en el 1.er segundo/cierre o a <6 s de otra, y con material propio la IA se apaga → solo 1 toma (10 %). Ahora la toma se corre al borde en vez de botarse y con ratio ≥ 0.5 se rellenan los huecos rotando sus tomas sin repetir plano; endurecer() ya no baja 1.0 a 0.2 (834a3e8). Simulado con su transcripción y tomas reales: 10 % → 97 %. (2) Nota de voz: la prueba de punta a punta dio QA fail (video 31 s vs audio 37 s): la base se unía con -c:v copy y ffmpeg 9 rompía los tiempos al cortar → ahora se re-codifica (9c23fe3). Verificado sin cambios: img-5875 (teléfono fijo 787-607-6686 tipo plain, 3 énfasis, y la revisión 'estilo MODERNO' de hoy 18:49 siguió en pro_minimal), clip3-3tomas ($599, 12K BTU, 939-414-7096 en callouts), Dr. Marini (3 b-roll en el timeline, disable_broll=false), podología (4 imágenes de talón/planta, nicho 'podologia' en el baúl), video como b-roll (3 proyectos reales con user.mp4).",
+      "porque": "Carilin pidió corregir el error de b-roll de María a nivel de plataforma y verificar que lo reportado como corregido de verdad funciona; Elvin aprobó #194.",
+      "verificado": "Suite 155 passed (falla solo test_full_render_and_qa por ffmpeg del sandbox). 2 deploys con 0 renders en cola; md5 de composer.py y voz.py iguales local/prod; health 200. Prueba de punta a punta en prod (nota de voz + 2 tomas + foto + logo): QA pass 100, video 37.27 s = audio 37.28 s, cierre con el logo de Level Up Media visto en un cuadro, la foto entró como toma; endpoint broll-imagen (foto del cliente) sube y normaliza OK. Proyectos de prueba movidos a _papelera.",
+      "commit": "834a3e8, 9c23fe3",
+      "pendiente": "María tiene que volver a mandar 'b-roll en todo el video' en toma-de-apoyo-3-2-4tomas para ver el resultado; el test de regresión de la nota de voz no reproduce en el ffmpeg 5.1 del sandbox (sí en el 9 de prod)."
+    },
+    {
       "fecha": "2026-10-08T16:25:00Z",
       "plataforma": "cortex",
       "que": "Bug real de b-roll corregido y desplegado (commit d4ba1fc): en ave/brain/composer.py había un tope DURO de 20% de b-roll que ignoraba por completo dna.broll.ratio — por eso, aunque el pipeline ya subía el ratio a 0.5 para fuentes solo-audio (voz_patch) o una revisión pidiera más, el resultado se quedaba igual en 20% siempre. Subí también el límite del campo BrollDNA.ratio de 0.5 a 1.0 en ave/dna/schema.py para que un pedido explícito de 'b-roll en todo el video' SÍ pueda llegar al 100%. Es el root cause real detrás del error que arreglé ayer (83cec34, que solo evitaba el crash pero dejaba el video igual de pelado).",
