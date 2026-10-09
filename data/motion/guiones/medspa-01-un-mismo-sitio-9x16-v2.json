@@ -1,0 +1,126 @@
+{
+  "id": "medspa-01-un-mismo-sitio-9x16-v2",
+  "formato": "9:16",
+  "titulo": "Un mismo sitio, con personal de salud (fase 1)",
+  "angulo": "Umbrella: personal de salud + todos los servicios",
+  "musica": "audio/medspa-musica.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 130,
+      "lineas": [
+        "Hay una facilidad en Hormigueros",
+        "donde la infusión te la pone",
+        "una *enfermera*…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 110,
+      "lineas": [
+        "…y el control de peso",
+        "te lo evalúa un *médico*."
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 150,
+      "alarma": true,
+      "lineas": [
+        "Lo común es ir a un sitio distinto para cada cosa…",
+        "y que en ninguno haya",
+        "*personal de salud* dentro del local."
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 150,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/slack-F0C75PXSWJ2-FOTO.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9zbGFjay1GMEM3NVBYU1dKMi1GT1RPLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NzQsImV4cCI6MTgyMzA4NjU3NH0.Yk9E5qvClW2WjefIvEe5dmjrX4wGBaASFd_jIHzPcBStrUiNXEXDYUm3Bed8cPs16vegLIq_jAn359rfUcgqSw",
+      "enfoque": "50% 35%",
+      "etiqueta": "Med Spa Infusion",
+      "titulo": "Eso es *Med Spa Infusion*.",
+      "puntos": [
+        "Todos los servicios en un mismo sitio"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 250,
+      "modo": "marcar",
+      "titulo": "Nuestros *servicios*",
+      "items": [
+        {
+          "texto": "Infusiones intravenosas de vitaminas"
+        },
+        {
+          "texto": "Rejuvenecimiento facial con radiofrecuencia, con esteticista con licencia"
+        },
+        {
+          "texto": "Masaje postoperatorio y drenaje linfático"
+        },
+        {
+          "texto": "Masaje corporal y relajante"
+        },
+        {
+          "texto": "Control de peso con evaluación y seguimiento médico"
+        }
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 200,
+      "modo": "marcar",
+      "titulo": "Personal de *salud*",
+      "items": [
+        {
+          "texto": "Un médico y dos enfermeras en la facilidad"
+        },
+        {
+          "texto": "Dos licencias del Departamento de Salud"
+        },
+        {
+          "texto": "Productos de farmacéuticas reconocidas"
+        },
+        {
+          "texto": "26 años en el mismo pueblo"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 200,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/med-spa-infusion/drive-1IAE-RId2dyViueBz_fLIHp2VBs2waDH6-1-01-56-.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvbWVkLXNwYS1pbmZ1c2lvbi9kcml2ZS0xSUFFLVJJZDJkeVZpdWVCel9mTElIcDJWQnMyd2FESDYtMS0wMS01Ni0uanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU3NSwiZXhwIjoxODIzMDg2NTc1fQ.13kIIvSzuhFXr5gVayAabsauwSi_1UH_jDGjrLx_sQRfHHDWmo9fabyMuSBbwA5k0DbGnrmNeI1iezoExSyi5A",
+      "enfoque": "50% 30%",
+      "etiqueta": "Frente al CDT Hospital La Concepción",
+      "titulo": "Cada tratamiento empieza con una *evaluación*.",
+      "puntos": [
+        "¿Cuál te toca a ti? Escríbenos"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 220,
+      "cta": "WhatsApp 787-458-1031",
+      "sub": "Ave. Luis Muñoz Marín #5 · Hormigueros",
+      "url": "Frente al CDT Hospital La Concepción",
+      "nota": "L–V 8:00 a.m.–5:00 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F7F5F0",
+    "texto": "#0B2550",
+    "acento": "#1A9BBA",
+    "fuente": "Montserrat",
+    "musica": "medspa-musica.mp3",
+    "nombre": "Med Spa Infusion",
+    "acento2": "#B8862A",
+    "estilos": [
+      "editorial",
+      "minimal"
+    ],
+    "logoUrl": "clientes/med-spa-infusion/logo.png",
+    "subtitulo": "Hormigueros · desde hace 26 años",
+    "fuenteAcento": "Playfair Display"
+  },
+  "estilo": "editorial"
+}
