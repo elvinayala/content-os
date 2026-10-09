@@ -52,6 +52,7 @@
 - [AVE — detalles de la referencia Daren](ave-daren-referencia-detalles.md) — encuadre, callouts, B/N, contador, cursor CTA
 - [Victory Core — scrapper de leads](victory-core-leads.md) — Néstor Nazario; simple, sin sobre-ingenierizar; falta 1ª corrida
 - [Ecosistema LU + AIB](ecosistema-lu-aib.md) — ManyChat + ActiveCampaign + Calendly + CRM; toda pieza con keyword + entrega + tag
+- [Instagram: Zernio + ManyChat](zernio-manychat-reparto.md) — 9/oct: ManyChat SOLO saludo al seguidor nuevo; Zernio palabras clave, historias, ref links; nunca los dos sobre lo mismo; una cuenta Zernio por marca
 - [No enviar sin aprobar](no-enviar-sin-aprobar.md) — nunca postear contenido al equipo por mi cuenta; Elvin aprueba en la bandeja
 - [Verificar antes de activar](verificar-antes-de-activar.md) — leer lo cargado y cruzar números con la fuente antes de activar/reportar
 - [Meta Ads — agente del portafolio](meta-ads-agente.md) — Max: estratega en Slack, Método 5 Fases, plantillas, reglas e IDs de cuentas
