@@ -1,0 +1,106 @@
+{
+  "id": "quiroplaza-01-dolor-9x16-v2",
+  "formato": "9:16",
+  "titulo": "El dolor no se aguanta, se evalúa (fase 2)",
+  "angulo": "Dolor normalizado → evaluación en un solo lugar",
+  "musica": "audio/ritmo-musica.mp3",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "lineas": [
+        "¿Hace cuánto dejaste",
+        "de preguntarte por qué",
+        "te *duele*…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "…y simplemente",
+        "aprendiste a *aguantarlo*?"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 150,
+      "alarma": true,
+      "lineas": [
+        "Muchas personas pasan meses o hasta años",
+        "con dolor de cuello o espalda",
+        "y terminan *normalizándolo*."
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 190,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/slack-F0C7CA0P0D9-IMG_8726.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9zbGFjay1GMEM3Q0EwUDBEOS1JTUdfODcyNi5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxNTUwMzQ5LCJleHAiOjE4MjMwODYzNDl9.AdLE51rH9esz_ID4wEP0tpDypnQkaHvMuVCE0GLPSAeAESPnQvcul9SIZc5WSqlJ5pd5LrOa18HJ4BFYvwEvug",
+      "enfoque": "50% 45%",
+      "etiqueta": "Quiroplaza · San Juan",
+      "titulo": "Entender *tu caso*, en un solo lugar.",
+      "puntos": [
+        "Radiografía",
+        "Electromiografía",
+        "Evaluación"
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "dur": 160,
+      "titulo": "Tu *plan* de atención",
+      "pasos": [
+        "Evaluamos tu caso",
+        "Radiografía y electromiografía aquí mismo",
+        "Plan de atención personalizado"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 190,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/drive-1BgXeOdrcrsTMqMoBcvq-SrXTW9v8OisJ-IMG_8730.jpg?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9kcml2ZS0xQmdYZU9kcmNyc1RNcU1vQmN2cS1TclhUVzl2OE9pc0otSU1HXzg3MzAuanBnIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTU1MDU2MCwiZXhwIjoxODIzMDg2NTYwfQ.A3KTQw9R-_QQUxQySHD_rCVv1KvxKGTVXKhUwDE05hpmxsSvRQsyDQa3_v2qGcWkpWp17H-bzS42vNcW6cU0lg",
+      "enfoque": "60% 30%",
+      "etiqueta": "Dr. Goar Blanco",
+      "titulo": "Más de *tres décadas* atendiendo pacientes.",
+      "puntos": [
+        "Soy el Dr. Goar Blanco",
+        "Más de 35 años de práctica"
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 150,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/quiroplaza/drive-10ldyRogYmNkRKLbg0YgT1ANPAAFSJAw--E8E751E9-014A-4B81-B77D-D09E5A0FC7E7.png?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvcXVpcm9wbGF6YS9kcml2ZS0xMGxkeVJvZ1ltTmtSS0xiZzBZZ1QxQU5QQUFGU0pBdy0tRThFNzUxRTktMDE0QS00QjgxLUI3N0QtRDA5RTVBMEZDN0U3LnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE1NTA1NjAsImV4cCI6MTgyMzA4NjU2MH0.6JlhPPVjurWkfxU7aplp5_9x2BmzttKsLb3C8ghZAvYZNvnwsDdQ-eQNJPfQctxe-AnJEDa8166LahZdTPHgVA",
+      "enfoque": "30% 25%",
+      "etiqueta": "¿Ya te cansaste de aguantar el dolor?",
+      "titulo": "Escríbenos y agenda tu *evaluación*.",
+      "puntos": [
+        "WhatsApp 787-504-8804",
+        "Llámanos 787-751-9147"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 170,
+      "cta": "Escribe al 787-504-8804",
+      "sub": "Adler Medical Plaza, Suite 501 · Hato Rey",
+      "url": "Llámanos 787-751-9147",
+      "nota": "Lun, Mié y Vie 8:00 a.m.–6:00 p.m. · Mar 1:00–6:00 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F5F4F4",
+    "texto": "#0A2D85",
+    "acento": "#FE6702",
+    "fuente": "Montserrat",
+    "musica": "cliente-calma.mp3",
+    "nombre": "Quiroplaza",
+    "estilos": [
+      "minimal",
+      "editorial"
+    ],
+    "logoUrl": "clientes/quiroplaza/logo.png",
+    "subtitulo": "Dr. Goar Blanco Blasco · Hato Rey"
+  },
+  "estilo": "minimal"
+}
