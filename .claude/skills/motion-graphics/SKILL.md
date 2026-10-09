@@ -139,6 +139,13 @@ color plano.
   de venta en **Fathom** (link en #office-2-ventas-contrato; se lee con el navegador). Pide a Jessica/Carilin solo lo
   que no encuentres ahí. Guarda lo que saques en la ficha (`max.mjs ficha <slug> '{"negocio":{…}}'`), sobre todo lo
   PROHIBIDO por el cliente (p. ej. la Dra. Escabí no quiere la palabra "neuropsicológica" en su campaña).
+0. **Pedido del equipo en UN paso (9/oct/2026)**: brief + guion + material (logo, 3-6 fotos, guía de marca si hay; o un
+   Drive "cualquiera con el enlace") en un solo mensaje/hilo de #max-aprobaciones. `node scripts/max.mjs material <slug>
+   --hilo <ts>` baja todo a Storage (URL de 1 año en `ficha.material`) y deja copia en /tmp para mirarlo con Read; las
+   fotos van en el guion por esa URL (`retrato.foto`). Sin b-roll, sin preguntar hex/URLs/tipografías, solo texto + música.
+   Fondo claro de marca (crema + texto marino) funciona: la viñeta se suaviza sola. Si el logo trae fondo, recórtalo
+   transparente (Quiroplaza, 9/oct). Ojo 9:16: `dato.grande` solo para números cortos ("26") y CTA del cierre ≤ 24
+   caracteres (el botón no hace salto de línea; pon el teléfono ahí).
 1. **Marca del cliente en su expediente** (una vez, con SU logo real):
    `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
 2. **2 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:

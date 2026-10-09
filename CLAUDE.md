@@ -1148,6 +1148,14 @@ onboarding y todo lo aprobado; Max sube lo demás con `max.mjs carpeta|drive-doc
 creador: pelo, barba, blazer de lino crema) + pin de brújula y brillo amarillo LU, en `public/marcas/max/` (oficial max-v3, la de la ceja); publica en Slack con su nombre y foto (`chat:write.customize`), sus mensajes
 programados salen con identidad por `max_programados` + cron `/api/cron/max-programados` (cada 5 min); su propia
 app de Slack está lista en `scripts/slack/max-app-manifest.json` (falta instalarla y el cambio de token).
+**Motion a pedido en UN paso (9/oct/2026)**: Carilin y María del Carmen pidieron 2 motion con todo el material en el hilo y Max
+les pidió "URLs públicas", hex y tipografías por dos días (no podía abrir adjuntos; sus respuestas cortas iban al modelo barato y se
+quedaban en silencio). Ahora: el pedido = un mensaje en #max-aprobaciones (brief + guion + logo y fotos o Drive abierto, sin b-roll);
+`max.mjs material <slug> --hilo <ts>` → `/api/max` accion `material` (`lib/max/material.ts`, reglas puras `material-reglas.ts` +
+tests) baja adjuntos de Slack y carpetas públicas de Drive (embeddedfolderview, sin clave) a Storage `pulse/motion/clientes/<slug>/`
+con URL de 1 año y `ficha.material`; Max los mira, fija `ficha.marca` y corre `remi.mjs … --cliente --proponer`. Mensajes cortos de
+un pedido de producción → modelo bueno (`PRODUCCION` en max-gasto.mjs); si una persona le escribe y Max no contesta, el puente le
+da otra vuelta y si no, nota honesta + aviso a Elvin (`respondioEnSlack`). Cerebro §22b, skill motion-graphics §7.0.
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
