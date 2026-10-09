@@ -48,7 +48,7 @@
 - [Nina — community manager de Resuelto](nina-community-manager.md) — 1 post/día por Zernio, reporta por Telegram
 - [Resuelto — División Proyectos](resuelto-division-proyectos.md) — remodelaciones ~$12K, contratistas Verified, DACO
 - [AI Video Editor](ai-video-editor.md) — repo ~/ai-video-editor (Claude + FFmpeg): estado, decisiones, gotchas
-- [AVE — estilo de referencia](ave-estilo-referencias.md) — lo aprendido de los 4 anuncios profesionales
+- [AVE — estilo de referencia](ave-estilo-referencias.md) — lo aprendido de los 4 anuncios profesionales; 9/oct: v1 SIEMPRE con el estándar (Hector Casas + Yulianna), cambios solo en revisiones
 - [AVE — detalles de la referencia Daren](ave-daren-referencia-detalles.md) — encuadre, callouts, B/N, contador, cursor CTA
 - [Victory Core — scrapper de leads](victory-core-leads.md) — Néstor Nazario; simple, sin sobre-ingenierizar; falta 1ª corrida
 - [Ecosistema LU + AIB](ecosistema-lu-aib.md) — ManyChat + ActiveCampaign + Calendly + CRM; toda pieza con keyword + entrega + tag
@@ -80,7 +80,7 @@
 - [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic, top 25 por LTV; Carilin dirige; venues para el 3/oct
 - [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — causa: consultas haciendo fila en postgres.js; arreglado 29/sep con limitador en cliente-db.ts; no cambiar pooler sin subir pool size
 - [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — /f/agenda-roger y /f/agenda-level-up; no clonar Calendly
-- [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo
+- [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo; 9/oct: motion a pedido en UN paso (max.mjs material, sin b-roll)
 - [AIB — acceso](aib-acceso-aure.md) — AIB lo opera Aure; Jessica/LU fuera; Carilin = mismo acceso que Aure (todo, incl. RR.HH.)
 - [Resumen del día por Telegram](resumen-dia-telegram.md) — 8:30 PM llamadas + ventas; falta que Elvin publique ventas-hoy.gs
 - [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
@@ -91,3 +91,4 @@
 - [Commits con sesiones en paralelo](commits-sesiones-paralelas.md) — revisar `git diff <archivo>` antes de commitear: hunks de otra sesión rompieron 2 deploys
 - [Apps sin App Store (PWA + push)](apps-sin-app-store.md) — Ritmo (/ritmo/app) y app de clientes LU (app.levelupmediapr.net, link personal desde Pulse) en prod; falta push en Bori
 - [Kit de propuestas para Lis](kit-propuestas-lis.md) — 6/oct: Lis hace sola las propuestas animadas: lu-armador-propuestas.netlify.app + Skill/instrucciones de Claude (JSON); con Pro sube el zip a Skills
+- [Avisar a María cada ajuste de Cortex](feedback-avisar-maria-ajustes.md) — tras cada ajuste desplegado, mensaje en #cortex-bori-edit-videos firmado — Elvin

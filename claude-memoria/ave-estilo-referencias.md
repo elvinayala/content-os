@@ -94,3 +94,8 @@ Se revirtieron tres cambios míos de la revisión Hollywood que se salían: tope
 17–22 % de las referencias), cortes de escala (la referencia es encuadre fijo) e igualar color (regla «no tocar el look»).
 Cara medida en las 6 referencias: 17–22 % del alto (mediana ~20 %). **How to apply:** mejoras técnicas (audio, sincronía,
 errores) sí; cambios de look/encuadre/ritmo solo si la referencia los respalda o Elvin los pide, y verificados lado a lado.
+
+**9/oct/2026 — regla dura de Elvin (con «Hector Casas 3_V1» y «Yulianna ADS (Sept) 1_V2» en ~/Downloads):** «siempre usa
+el estándar de edición así; esto no lo cambies nunca». La PRIMERA versión se entrega SIEMPRE con el estándar (esa calidad
+y esos detalles); agrandar o cambiar algo solo si el cliente/editora lo pide, y va en revisiones. Nada de reglas
+aprendidas ni ajustes de otros videos que muevan la v1 fuera del estándar.
