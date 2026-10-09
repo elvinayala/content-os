@@ -70,12 +70,14 @@ const Particulas: React.FC<{ ancho: number; alto: number }> = ({ ancho, alto }) 
 };
 
 /** Grano de película + viñeta: une todo y le quita lo "digital plano". */
-export const Grano: React.FC = () => {
+/** Grano + viñeta. `vineta` = qué tan oscuras quedan las esquinas: 0.55 en fondos oscuros; en fondos CLAROS (marcas de
+ *  clientes como Quiroplaza o Med Spa, 9/oct) va mucho más suave: una viñeta negra fuerte sobre crema se ve sucia. */
+export const Grano: React.FC<{ vineta?: number }> = ({ vineta = 0.55 }) => {
   const f = useCurrentFrame();
   const semilla = f % 8;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <AbsoluteFill style={{ background: "radial-gradient(80% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)" }} />
+      <AbsoluteFill style={{ background: `radial-gradient(80% 80% at 50% 50%, transparent 55%, rgba(0,0,0,${vineta}) 100%)` }} />
       <svg width="100%" height="100%" style={{ position: "absolute", opacity: 0.09, mixBlendMode: "overlay" }}>
         <filter id={`g${semilla}`}>
           <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed={semilla} stitchTiles="stitch" />

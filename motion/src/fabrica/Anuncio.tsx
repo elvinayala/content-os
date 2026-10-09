@@ -11,6 +11,14 @@ import type { Anuncio as TAnuncio } from "./tipos";
 
 export const duracionDe = (a: TAnuncio) => a.escenas.reduce((s, e) => s + e.dur, 0);
 
+/** ¿El fondo de la marca es claro? (hex #rrggbb) — para suavizar la viñeta. */
+const fondoClaro = (hex: string) => {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+  if (!m) return false;
+  const n = parseInt(m[1], 16);
+  return ((n >> 16) & 255) + ((n >> 8) & 255) + (n & 255) >= 384;
+};
+
 /** Toma de video a pantalla completa con velo de la marca (para que el texto se lea encima). */
 const Toma: React.FC<{ archivo: string; dur: number; velo: number; fondo: string; brillo: string }> = ({ archivo, dur, velo, fondo, brillo }) => {
   const f = useCurrentFrame();
@@ -54,7 +62,7 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
         ))}
         {escenas}
         {cortes.map((c, i) => <Transicion key={c} c={c} i={i} tema={tema} estilo={estilo} barridoSiempre={anuncio.barridoSiempre} />)}
-        <Grano />
+        <Grano vineta={fondoClaro(tema.fondo) ? 0.1 : 0.55} />
         <Audio src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
         {cortes.map((c) => <Sfx key={c} src="whoosh.mp3" en={c - 5} vol={0.4} />)}
