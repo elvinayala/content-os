@@ -4,7 +4,7 @@ import { ContratosAib } from "@/components/aib-contratos/panel";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { textoCostos } from "@/lib/aib-contratos/documento";
 import { enlaceContrato } from "@/lib/aib-contratos/firmar";
-import { listarContratos, puedeContratosAib } from "@/lib/aib-contratos/repo";
+import { listarContratos, puedeContratosAib, puedeEmitirContratoAib } from "@/lib/aib-contratos/repo";
 import { usuarioActual } from "@/lib/pulse/auth";
 import { NOMBRE_APP } from "@/lib/pulse/types";
 
@@ -13,8 +13,10 @@ export const metadata = { title: `Contratos AI Borinquen · ${NOMBRE_APP}` };
 
 export default async function ContratosAibPage() {
   const u = await usuarioActual();
-  if (!u || !(await puedeContratosAib(u))) redirect("/pulse");
-  const lista = await listarContratos();
+  const completo = u ? await puedeContratosAib(u) : false;
+  if (!u || !(completo || (await puedeEmitirContratoAib(u)))) redirect("/pulse");
+  // Quien solo puede crear (ver ACCESO_SOLO_CREAR en el repo) no ve la lista de contratos de otros clientes.
+  const lista = completo ? await listarContratos() : [];
   return (
     <div className="fondo-malla min-h-svh">
       <header className="vidrio sticky top-0 z-20 flex h-14 items-center gap-3 border-b px-4">

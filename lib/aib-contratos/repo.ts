@@ -58,6 +58,16 @@ export async function puedeContratosAib(u: UsuarioPulse): Promise<boolean> {
   return puedeVerBoard(u, b.id);
 }
 
+// Excepción puntual (OK de Elvin, 9/oct/2026): Laura es closer (solo_leads en Pulse, nunca ve tableros de
+// clientes) pero necesita CREAR contratos de AIB. No se le da el tablero: solo la plantilla de creación.
+const ACCESO_SOLO_CREAR = new Set(["laura.bernal@levelupmediapr.net"]);
+
+/** Puede emitir un contrato aunque no vea el tablero ni la lista completa (ver ACCESO_SOLO_CREAR). */
+export async function puedeEmitirContratoAib(u: UsuarioPulse): Promise<boolean> {
+  if (ACCESO_SOLO_CREAR.has(u.email.toLowerCase())) return true;
+  return puedeContratosAib(u);
+}
+
 export async function crearContrato(oferta: Oferta, u: UsuarioPulse): Promise<ContratoAib> {
   const x = await d();
   const token = crypto.randomBytes(18).toString("base64url");
