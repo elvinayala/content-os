@@ -2,6 +2,8 @@ import "server-only";
 
 import {
   aprobadores,
+  decisionDeEditor,
+  editores,
   bloquesConMedios,
   canalesPermitidos,
   medios,
@@ -27,6 +29,7 @@ import { actualizarItem, alBuzonMax, cliente as leerCliente, crearItem, item as 
 
 const CEO = process.env.CEO_SLACK_ID || "U08U9777PUY";
 export const APROBADORES = () => aprobadores(process.env.MAX_APROBADORES, CEO);
+export const EDITORES = () => editores(process.env.MAX_EDITORES);
 export const CANAL_APROBACIONES = () => process.env.SLACK_MAX_CHANNEL_ID || "";
 // Lista blanca de canales de clientes (Elvin, 24/sep: "que no añadan a Max a ningún canal de
 // ningún cliente aún"). Vacía = ninguno: Max no lee ni se le envía nada a ningún cliente.
@@ -39,7 +42,7 @@ const IDENTIDAD = () => ({
   username: process.env.MAX_NOMBRE_SLACK || "Max · Estratega Level Up",
   icon_url: process.env.MAX_AVATAR_URL || `${ORIGEN}/marcas/max/max-avatar-v3-512.png`,
 });
-const NOMBRE_APROBADOR: Record<string, string> = { elvin: "Elvin", carilin: "Carilin", jessica: "Jessica" };
+const NOMBRE_APROBADOR: Record<string, string> = { elvin: "Elvin", carilin: "Carilin", jessica: "Jessica", maria: "María del Carmen" };
 
 async function slackApi<T = Record<string, unknown>>(metodo: string, cuerpo: Record<string, unknown>, get = false): Promise<T & { ok?: boolean; error?: string }> {
   const token = process.env.SLACK_BOT_TOKEN;
@@ -139,8 +142,18 @@ export async function enviarAprobado(id: number): Promise<{ ok: boolean; texto: 
 
 // ── Decidir (Elvin o Carilin en #max-aprobaciones) ──────────────────────────────────────────────
 export async function decidir(d: Decision, porSlackId: string): Promise<string> {
-  const quien = APROBADORES()[porSlackId];
-  if (!quien) return "Solo Elvin, Carilin o Jessica aprueban lo de Max.";
+  let quien = APROBADORES()[porSlackId];
+  // Quien solo pide cambios (María del Carmen): su cambio entra como corrección; su "ok" a secas, como comentario.
+  if (!quien && EDITORES()[porSlackId]) {
+    const e = decisionDeEditor(d);
+    if (e.tipo === "comentario") {
+      await alBuzonMax(`${encabezadoBuzon("equipo", { de: NOMBRE_APROBADOR[EDITORES()[porSlackId]] || "María del Carmen", canal: CANAL_APROBACIONES() })}\nSobre la #${d.id}: ${d.accion === "aprobar" ? "le da el ok" : d.accion} ${d.nota}`.trim());
+      return `Anotado. Tú puedes pedir cambios (\`no ${d.id} <qué cambio>\`); la aprobación final de la #${d.id} es de Carilin, Elvin o Jessica.`;
+    }
+    quien = EDITORES()[porSlackId];
+    d = { ...d, accion: "rechazar", nota: e.nota };
+  }
+  if (!quien) return "Solo Elvin, Carilin o Jessica aprueban lo de Max (María del Carmen puede pedir cambios).";
   const i = await leerItem(d.id);
   // "ok" sobre un ítem de publicar = autorización de publicar.
   const dec: Decision = d.accion === "aprobar" && i?.tipo === "publicar" ? { ...d, accion: "publicar" } : d;

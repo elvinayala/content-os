@@ -111,3 +111,16 @@ test("creativos a la vista: imágenes como bloques, videos como enlaces, texto p
   assert.match(b.at(-1).text.text, /Video 1/);
   assert.deepEqual(medios(null), { imagenes: [], videos: [] });
 });
+
+test("María del Carmen puede pedir cambios, no aprobar (Elvin, 9/oct)", async () => {
+  const { editores, decisionDeEditor, revisarParaCliente } = await import("../lib/max/operador.ts");
+  assert.equal(editores(undefined).U0916SXJE9Z, "maria");
+  assert.deepEqual(decisionDeEditor({ accion: "rechazar", id: 6, nota: "la música debe durar los 47 segundos" }), { tipo: "cambio", nota: "la música debe durar los 47 segundos" });
+  assert.deepEqual(decisionDeEditor({ accion: "aprobar", id: 6, nota: "pero cambia la música" }), { tipo: "cambio", nota: "pero cambia la música" });
+  assert.deepEqual(decisionDeEditor({ accion: "aprobar", id: 6, nota: "" }), { tipo: "comentario" });
+  assert.deepEqual(decisionDeEditor({ accion: "rechazar", id: 6, nota: "" }), { tipo: "comentario" });
+  // Palabras de salud: lupa en un mensaje, normales en los creativos de un cliente de salud.
+  assert.deepEqual(revisarParaCliente("Un médico y dos enfermeras · personal de salud dentro del local", "creativos").alertas, []);
+  assert.equal(revisarParaCliente("¿Cómo sigue tu salud?", "mensaje").alertas.length, 1);
+  assert.equal(revisarParaCliente("Feliz cumpleaños a tu hija", "creativos").alertas.length, 1);
+});

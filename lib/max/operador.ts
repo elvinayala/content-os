@@ -78,6 +78,25 @@ export function aprobadores(env: string | undefined, ceo: string): Record<string
   return mapa;
 }
 
+// Quién puede PEDIR CAMBIOS (no aprobar): María del Carmen (Elvin, 9/oct: "María puede solicitar ediciones"). Su
+// "no <id> <cambio>" o "ok <id> pero …" le llega a Max como corrección; la aprobación final sigue siendo de
+// Elvin, Carilin o Jessica. MAX_EDITORES = "Uxxx=maria,…".
+export function editores(env: string | undefined): Record<string, string> {
+  const mapa: Record<string, string> = {};
+  for (const par of String(env || "U0916SXJE9Z=maria").split(",")) {
+    const [id, nombre] = par.split("=").map((x) => x.trim());
+    if (id && nombre) mapa[id] = nombre.toLowerCase();
+  }
+  return mapa;
+}
+
+// Lo que vale de una decisión de quien solo pide cambios: un cambio con nota → corrección; lo demás → comentario.
+export function decisionDeEditor(d: Decision): { tipo: "cambio"; nota: string } | { tipo: "comentario" } {
+  if (d.accion === "rechazar" && d.nota.trim()) return { tipo: "cambio", nota: d.nota.trim() };
+  if (d.accion === "aprobar" && okConCambio(d.nota)) return { tipo: "cambio", nota: d.nota.trim() };
+  return { tipo: "comentario" };
+}
+
 // ¿La decisión aplica a este ítem? Devuelve el porqué si no.
 export function validarDecision(
   d: Decision,
@@ -191,8 +210,13 @@ const BLOQUEOS: [RegExp, string][] = [
 const RE_DINERO_CIFRAS = /\$\s?\d|\b\d+\s?(d[oó]lares|usd)\b/i;
 const RE_DINERO_PALABRAS = /\b(precio del (servicio|paquete|plan)|nuestro precio|descuento|reembolso|contrato|cancelar (el|tu) (servicio|contrato|plan)|renovaci[oó]n|mensualidad|cobro|factura de level up)\b/i;
 const MSG_DINERO = "toca dinero/contrato (confirma que Max no esté prometiendo algo que no le toca)";
+// Las palabras de salud (salud, médico, enfermera) son lo personal en un MENSAJE, pero en el plan o los creativos de un
+// cliente de salud son su negocio: el motion de Med Spa ("personal de salud", "un médico y dos enfermeras") salía con ⚠
+// "roza lo personal" (9/oct). Ahí solo cuentan las de vida privada.
+const RE_PERSONAL = /\b(familia|esposa?|novi[oa]|hij[oa]s?|pol[ií]tic\w*|religi[oó]n|iglesia|cumplea[nñ]os|vacaciones|fiesta|chisme)\b/i;
+const RE_PERSONAL_SALUD = /\b(salud|enferm\w*|m[eé]dico)\b/i;
+const MSG_PERSONAL = "roza lo personal (Max solo habla del negocio del cliente)";
 const ALERTAS: [RegExp, string][] = [
-  [/\b(familia|esposa?|novi[oa]|hij[oa]s?|salud|enferm\w*|m[eé]dico|pol[ií]tic\w*|religi[oó]n|iglesia|cumplea[nñ]os|vacaciones|fiesta|chisme)\b/i, "roza lo personal (Max solo habla del negocio del cliente)"],
   [/\b(otro cliente|otros clientes|[a-z]+ (nos )?pag[oó]|tenemos un cliente que)\b/i, "menciona a otros clientes (nunca datos de otros)"],
 ];
 
@@ -201,7 +225,11 @@ export function revisarParaCliente(texto: string, tipo: TipoItem = "mensaje"): {
   const dinero = RE_DINERO_PALABRAS.test(t) || (tipo === "mensaje" && RE_DINERO_CIFRAS.test(t));
   return {
     bloqueos: BLOQUEOS.filter(([re]) => re.test(t)).map(([, m]) => m),
-    alertas: [...(dinero ? [MSG_DINERO] : []), ...ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m)],
+    alertas: [
+      ...(dinero ? [MSG_DINERO] : []),
+      ...(RE_PERSONAL.test(t) || (tipo === "mensaje" && RE_PERSONAL_SALUD.test(t)) ? [MSG_PERSONAL] : []),
+      ...ALERTAS.filter(([re]) => re.test(t)).map(([, m]) => m),
+    ],
   };
 }
 

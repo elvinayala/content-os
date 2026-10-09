@@ -4,7 +4,7 @@ import { after, type NextRequest, NextResponse } from "next/server";
 
 import { guardarReporteAgente } from "@/lib/desempeno/agentes-reportes";
 import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
-import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, usuarioSlack } from "@/lib/max/flujo";
+import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, EDITORES, usuarioSlack } from "@/lib/max/flujo";
 import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
 import { alBuzonMax, clientePorCanal } from "@/lib/max/repo";
 import {
@@ -467,13 +467,13 @@ export async function POST(req: NextRequest) {
     const dec = parsearDecision(texto);
     after(async () => {
       try {
-        if (dec && APROBADORES()[userId]) {
+        if (dec && (APROBADORES()[userId] || EDITORES()[userId])) {
           await postearRespuesta(channel, await decidir(dec, userId), raiz, false, IDENTIDAD_MAX);
           return;
         }
         const u = await usuarioSlack(userId);
         await alBuzonMax(`${encabezadoBuzon("equipo", { de: u.nombre, hilo: raiz, canal: channel })}\n${texto}${ev.files?.length ? `\n(archivos: ${ev.files.map((f) => f.name).join(", ")})` : ""}`);
-        await postearRespuesta(channel, dec ? "Solo Elvin, Carilin o Jessica aprueban; se lo paso a Max como comentario. 👀" : "👀 Max lo tiene; te contesta en este hilo.", raiz, false, IDENTIDAD_MAX);
+        await postearRespuesta(channel, dec ? "Solo Elvin, Carilin o Jessica aprueban (María del Carmen puede pedir cambios); se lo paso a Max como comentario. 👀" : "👀 Max lo tiene; te contesta en este hilo.", raiz, false, IDENTIDAD_MAX);
       } catch (e) {
         console.error("[max aprobaciones]", e instanceof Error ? e.message : e);
       }
