@@ -2,6 +2,14 @@
   "nota": "Bitácora de Nico (vibecoder). Cada ajuste que hace en cualquier plataforma queda aquí; de las últimas 24 h sale el reporte diario. pendientesElvin = cosas que solo Elvin puede hacer.",
   "entradas": [
     {
+      "fecha": "2026-10-09T19:14:39.709Z",
+      "plataforma": "content-os",
+      "que": "Solicitud #200 (Aure): Lis Acevedo miembro del tablero AI BORINQUEN en Pulse (acceso completo); Laura Bernal (closer) acceso solo a crear contratos AIB vía ACCESO_SOLO_CREAR en lib/aib-contratos/repo.ts, sin ver el tablero ni la lista de otros clientes",
+      "porque": "Elvin aprobó en el chat: Lis con acceso, Laura solo a la plantilla del contrato",
+      "verificado": "pendiente: esperando que el deploy de Vercel tome el commit b42ac29",
+      "commit": "b42ac29"
+    },
+    {
       "fecha": "2026-10-08T21:10:00Z",
       "plataforma": "cortex",
       "que": "Elvin mandó captura de María en #cortex-bori-edit-videos: 'cortex no me está cambiando los subtítulos... quiere estilo moderno y no me comprende'. Es el mismo proyecto img-5875 (cliente FX PR dentro de level-up-media) que ya había auditado en #194. Confirmé con el historial real: María pidió 'cambiar subtítulos por estilo MODERNO' 4 veces en 2 días (v4, v10, v11) y en NINGUNA cambió nada, porque la letra 'moderno' (Inter 28pt Black) ya era la de este cliente desde el PRIMER render (v1) — es el estándar por defecto de level-up-media. No es un malentendido de Cortex: interpreta bien la instrucción y aplica el parche correcto, pero el parche es idéntico a lo que ya había. Agregué aviso_estilo_sin_cambio() (ave/brain/revise.py) que compara el estilo de subtítulos antes/después de una revisión de letra y, si es idéntico, lo deja en avisos.json (el mismo mecanismo de '⚠️ Avisos sobre el material' que ya usa Cortex) en vez de quedar en silencio. No toqué verificar_revision/endurecer (tienen un camino que revienta con RuntimeError y para letra no hay 'más estricto' que probar).",
@@ -568,5 +576,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-07T15:52:55.995095Z"
+  "actualizadoEl": "2026-10-09T19:14:39.710Z"
 }
