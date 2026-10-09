@@ -994,6 +994,21 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
 - **Filtro de fecha y búsqueda** (1/oct): "Hoy/Ayer/Semana/Mes" = llegó en ese rango **o** tiene cita/seguimiento en ese rango
   (`condFecha`, para que CLOSERS + Hoy enseñe las citas del día). La búsqueda filtra el embudo abierto y una franja enseña lo
   que coincide en los **otros** embudos de la marca (`buscarEnMarca`, `components/leads/otros-resultados.tsx`).
+- **Audios, fotos y documentos de WhatsApp** (9/oct, Elvin: "vemos lo que se escribe pero no los audios"): Timelines los
+  manda en `message.attachments` con un link que **vence a los 15 min**. `leerTimelines` los lee (`adjuntos`, `fecha` = hora
+  real del mensaje); un audio solo ya no se descarta como "vacío" (antes se perdían ~20 al día y, si era el primer mensaje, ni
+  se creaba el lead). Audio/foto/documento ≤ 16 MB se copian al llegar a Storage `pulse/leads/<marca>/<mes>/<uid>-<n>.<ext>`
+  (`lib/leads/adjuntos.ts`, `meta.adjuntos[n].ruta`); los videos no. La ficha los reproduce por
+  `/api/pulse/leads/adjunto/<historialId>/<n>` (permisos del lead; lo no guardado se pide fresco a Timelines por
+  `GET /messages/<uid>`). Recuperación de 14 días: `/api/cron/leads-adjuntos-recuperar` (a mano, CRON_SECRET; 9/oct metió
+  820 mensajes sin tocar no leídos). Tests `tests/leads-adjuntos.test.mjs`.
+- **Vigía del WhatsApp** (9/oct, tras el 6/oct: el plan de Timelines de AIB perdió la API y no entró un lead en ~20 h):
+  `/api/cron/leads-vigia` cada 30 min → API/plan (401/403), número conectado, webhooks a Leads y silencio ≥ 3 h de 9 AM a
+  9 PM PR. Avisa por el **Telegram de Nico** (`notificarPorNico`, `TELEGRAM_BOT_TOKEN_NICO` en Vercel) una vez por problema
+  y otra al recuperarse; estado en `leads_webhook_log` (fuente "vigia"). Reglas puras `problemaTimelines`/`decisionVigia`.
+- **Exportaciones con Nico** (9/oct): el pedido de Nahuel/Aure le llega a Elvin por el bot de Nico con un código; aprueba con
+  `ok exp <código>` / `no exp <código>` en ese Telegram (el puente llama `POST /api/leads/exportaciones/decidir`, CRON_SECRET)
+  o `nico ok exp <código>` en Slack. `/solicitudes` de Nico también las lista.
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
