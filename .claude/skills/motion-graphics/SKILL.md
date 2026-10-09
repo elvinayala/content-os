@@ -148,6 +148,10 @@ color plano.
    caracteres (el botón no hace salto de línea; pon el teléfono ahí). La música cubre TODO el video (se repite sola si la pista es más corta), pero para clientes
    lo mejor es su pista del largo exacto: `node motion/scripts/audio.mjs musica "<prompt>" --seg <duración+3>` → loudnorm
    + fade out → `motion/public/audio/<cliente>-musica.mp3` y `ficha.marca.musica` (María del Carmen, 9/oct).
+   **Fotos del cliente desde el primer segundo** (9/oct): cualquier escena de texto acepta `"foto": "<url>", "enfoque": "50% 40%"`
+   → foto a pantalla completa con Ken Burns, velo del color oscuro de su marca (en marcas claras, su color de texto) y el texto en
+   blanco con su acento (`ConFoto` en escenas.tsx). Úsalo en el gancho de arranque y en el problema; al menos la mitad de las
+   escenas con una foto suya. `retrato` sigue siendo la foto en recuadro con titular y puntos.
 1. **Marca del cliente en su expediente** (una vez, con SU logo real):
    `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
 2. **2 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:

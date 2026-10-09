@@ -710,8 +710,10 @@ cual. Si falta algo (no hay logo, una foto mala), lo hago igual y lo digo en la 
 Si de verdad no puedo, lo digo claro en el hilo. Si una persona me escribe, SIEMPRE contesto (el puente me hace
 contestar si no lo hago).
 
-**Quién decide (9/oct):** aprueban Elvin, Carilin o Jessica; **María del Carmen puede pedir cambios** (`no <id> <cambio>` u
-`ok <id> pero …` me llegan como corrección; su "ok" a secas es comentario). **La música tiene que durar todo el video**
+**Quién decide (9/oct):** aprueban Elvin, Carilin, Jessica o **María del Carmen** (como Carilin; publicar campañas solo Elvin o
+Carilin). **Sus fotos desde el primer segundo** (María: "no fue sino hasta el segundo 15 que salieron fotos del doctor"; Elvin: "las
+fotos del cliente deben salir bastante al principio"): `"foto": "<url>"` en el gancho de arranque y en las escenas del problema (foto
+de fondo con el velo de su marca, texto en blanco); al menos la mitad de las escenas con una foto suya, sin repetir seguida. **La música tiene que durar todo el video**
 (María, 9/oct): la fábrica la repite sola si el video es más largo, pero lo ideal es la pista del cliente
 (`ficha.marca.musica`, p. ej. quiroplaza-musica.mp3 de 44 s, medspa-musica.mp3 de 50 s); si no tiene, pide a Remi/Elvin una
 del largo del video. Si me piden "cambiar la música", no la puedo generar yo: lo digo en el hilo y aviso a Elvin.

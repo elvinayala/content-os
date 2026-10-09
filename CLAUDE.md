@@ -1175,8 +1175,9 @@ tests) baja adjuntos de Slack y carpetas públicas de Drive (embeddedfolderview,
 con URL de 1 año y `ficha.material`; Max los mira, fija `ficha.marca` y corre `remi.mjs … --cliente --proponer`. Mensajes cortos de
 un pedido de producción → modelo bueno (`PRODUCCION` en max-gasto.mjs); si una persona le escribe y Max no contesta, el puente le
 da otra vuelta y si no, nota honesta + aviso a Elvin (`respondioEnSlack`). Cerebro §22b, skill motion-graphics §7.0. **María del Carmen
-pide cambios** (`MAX_EDITORES`, `editores`/`decisionDeEditor` en operador.ts: su `no <id> …` u `ok <id> pero …` = corrección; aprobar
-sigue siendo de Elvin, Carilin o Jessica). La música del motion se repite hasta el final (`<Audio loop>` en Anuncio.tsx).
+aprueba como Carilin** (9/oct; publicar campañas sigue siendo de Elvin o Carilin; `MAX_EDITORES`/`decisionDeEditor` quedan para quien
+solo pida cambios). La música del motion se repite hasta el final (`<Audio loop>` en Anuncio.tsx). **Fotos del cliente desde el
+primer segundo**: `foto` en cualquier escena de texto = foto de fondo con velo de su marca y texto blanco (`ConFoto` en escenas.tsx).
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 

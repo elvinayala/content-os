@@ -9,7 +9,10 @@ export type Formato = "9:16" | "16:9" | "1:1";
 /** Un paso de la escena "navegar". Coordenadas en fracción de la captura (0-1). */
 export type PasoNav = { imagen: string; dur: number; cursor?: { x: number; y: number } | null; clic?: boolean; zoom?: { x: number; y: number; w: number; h: number } | null };
 
-export type Escena = { dur: number } & (
+/** `foto` (opcional) en cualquier escena de texto = foto REAL del cliente de fondo, a pantalla completa con velo de su marca
+ *  y texto en blanco (María del Carmen, 9/oct: "no fue sino hasta el segundo 15 que salieron fotos del doctor"). En
+ *  `retrato` la foto va en su recuadro, como siempre. `enfoque` = qué parte de la foto se ve (object-position). */
+export type Escena = { dur: number; foto?: string; enfoque?: string } & (
   | { tipo: "gancho"; lineas: string[]; sub?: string; alarma?: boolean; etiqueta?: string; logo?: boolean }
   | { tipo: "numero"; etiqueta: string; desde: number; hasta: number; prefijo?: string; sufijo?: string; antes?: string; quien?: string; nota?: string }
   | { tipo: "notificaciones"; lineas: string[]; hora: string; items: { titulo: string; detalle: string; hora: string; icono?: "llamada" | "mensaje"; color?: string }[] }

@@ -70,20 +70,20 @@ export const PUEDEN_PUBLICAR = ["elvin", "carilin"];
 // Quién puede decidir: Elvin y Carilin (ids de Slack). MAX_APROBADORES = "Uxxx=elvin,Uyyy=carilin".
 export function aprobadores(env: string | undefined, ceo: string): Record<string, string> {
   const mapa: Record<string, string> = { [ceo]: "elvin" };
-  // Jessica (PM de onboarding) aprueba lo del onboarding junto a Elvin y Carilin (Elvin, 24/sep).
-  for (const par of String(env || "U07V7MVJ18B=carilin,U08SN35L2UX=jessica").split(",")) {
+  // Jessica (PM de onboarding) aprueba lo del onboarding junto a Elvin y Carilin (Elvin, 24/sep). María del Carmen
+  // aprueba como Carilin, todo menos publicar campañas (Elvin, 9/oct: "Sí, como Carilin").
+  for (const par of String(env || "U07V7MVJ18B=carilin,U08SN35L2UX=jessica,U0916SXJE9Z=maria").split(",")) {
     const [id, nombre] = par.split("=").map((x) => x.trim());
     if (id && nombre) mapa[id] = nombre.toLowerCase();
   }
   return mapa;
 }
 
-// Quién puede PEDIR CAMBIOS (no aprobar): María del Carmen (Elvin, 9/oct: "María puede solicitar ediciones"). Su
-// "no <id> <cambio>" o "ok <id> pero …" le llega a Max como corrección; la aprobación final sigue siendo de
-// Elvin, Carilin o Jessica. MAX_EDITORES = "Uxxx=maria,…".
+// Quién puede PEDIR CAMBIOS sin aprobar (MAX_EDITORES = "Uxxx=nombre,…"). Lo estrenó María del Carmen el 9/oct y ese
+// mismo día Elvin la subió a aprobadora como Carilin; hoy la lista está vacía y queda para el próximo que solo edite.
 export function editores(env: string | undefined): Record<string, string> {
   const mapa: Record<string, string> = {};
-  for (const par of String(env || "U0916SXJE9Z=maria").split(",")) {
+  for (const par of String(env || "").split(",")) {
     const [id, nombre] = par.split("=").map((x) => x.trim());
     if (id && nombre) mapa[id] = nombre.toLowerCase();
   }

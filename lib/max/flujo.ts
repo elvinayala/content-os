@@ -148,12 +148,12 @@ export async function decidir(d: Decision, porSlackId: string): Promise<string> 
     const e = decisionDeEditor(d);
     if (e.tipo === "comentario") {
       await alBuzonMax(`${encabezadoBuzon("equipo", { de: NOMBRE_APROBADOR[EDITORES()[porSlackId]] || "María del Carmen", canal: CANAL_APROBACIONES() })}\nSobre la #${d.id}: ${d.accion === "aprobar" ? "le da el ok" : d.accion} ${d.nota}`.trim());
-      return `Anotado. Tú puedes pedir cambios (\`no ${d.id} <qué cambio>\`); la aprobación final de la #${d.id} es de Carilin, Elvin o Jessica.`;
+      return `Anotado. Tú puedes pedir cambios (\`no ${d.id} <qué cambio>\`); la aprobación final de la #${d.id} es de Carilin, Elvin, Jessica o María del Carmen.`;
     }
     quien = EDITORES()[porSlackId];
     d = { ...d, accion: "rechazar", nota: e.nota };
   }
-  if (!quien) return "Solo Elvin, Carilin o Jessica aprueban lo de Max (María del Carmen puede pedir cambios).";
+  if (!quien) return "Solo Elvin, Carilin, Jessica o María del Carmen aprueban lo de Max.";
   const i = await leerItem(d.id);
   // "ok" sobre un ítem de publicar = autorización de publicar.
   const dec: Decision = d.accion === "aprobar" && i?.tipo === "publicar" ? { ...d, accion: "publicar" } : d;

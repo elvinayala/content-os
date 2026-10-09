@@ -1317,7 +1317,36 @@ const Retrato: React.FC<Extract<Escena, { tipo: "retrato" }>> = ({ foto, titulo,
   );
 };
 
+/** Foto real del cliente detrás de una escena de texto: pantalla completa, Ken Burns, velo del color OSCURO de su marca
+ *  (en marcas de fondo claro, su color de texto: el marino de Quiroplaza o Med Spa) y el texto pasa a blanco con su acento. */
+const hexOk = (c: string) => /^#[0-9a-f]{6}$/i.test(c);
+const esClaro = (c: string) => hexOk(c) && parseInt(c.slice(1, 3), 16) + parseInt(c.slice(3, 5), 16) + parseInt(c.slice(5, 7), 16) >= 384;
+const ConFoto: React.FC<{ foto: string; enfoque?: string; dur: number; children: React.ReactNode }> = ({ foto, enfoque = "50% 35%", dur, children }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const src = /^https?:\/\//.test(foto) ? foto : staticFile(foto.replace(/^\//, ""));
+  const velo = esClaro(t.fondo) ? (hexOk(t.texto) ? t.texto : "#0B1220") : hexOk(t.fondo) ? t.fondo : "#0B0B0F";
+  const entra = tw(f, 0, 10);
+  const kb = interpolate(f, [0, dur], [1.12, 1.0]);
+  const temaFoto = { ...t, texto: "#FFFFFF", gris: "rgba(255,255,255,0.82)", superficie: "rgba(255,255,255,0.10)", borde: "rgba(255,255,255,0.22)" };
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{ opacity: entra, overflow: "hidden" }}>
+        <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: enfoque, transform: `scale(${kb})` }} />
+        {/* Velo: deja ver la foto arriba y oscurece donde va el texto, para que se lea siempre */}
+        <AbsoluteFill style={{ background: `linear-gradient(180deg, ${velo}8c 0%, ${velo}b3 38%, ${velo}d9 62%, ${velo}f0 100%)` }} />
+        <AbsoluteFill style={{ background: `radial-gradient(80% 60% at 50% 45%, transparent 0%, ${velo}66 100%)` }} />
+      </AbsoluteFill>
+      <TemaCtx.Provider value={temaFoto}>{children}</TemaCtx.Provider>
+    </AbsoluteFill>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
+  if (escena.foto && escena.tipo !== "retrato") {
+    const { foto, enfoque, ...sinFoto } = escena;
+    return <ConFoto foto={foto} enfoque={enfoque} dur={escena.dur}><EscenaFabrica escena={sinFoto as Escena} /></ConFoto>;
+  }
   switch (escena.tipo) {
     case "gancho": return <Gancho {...escena} />;
     case "numero": return <Numero {...escena} />;

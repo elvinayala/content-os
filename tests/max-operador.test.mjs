@@ -16,12 +16,13 @@ test("decisiones en #max-aprobaciones: ok / no con corrección / publica", () =>
   assert.equal(parsearDecision("nota 12"), null);
 });
 
-test("aprueban Elvin, Carilin y Jessica (ampliable por env)", () => {
+test("aprueban Elvin, Carilin, Jessica y María del Carmen (ampliable por env)", () => {
   const a = aprobadores(undefined, "UCEO");
   assert.equal(a.UCEO, "elvin");
   assert.equal(a.U07V7MVJ18B, "carilin");
   assert.equal(a.U08SN35L2UX, "jessica", "Jessica aprueba lo del onboarding");
-  assert.equal(Object.keys(a).length, 3);
+  assert.equal(a.U0916SXJE9Z, "maria", "María del Carmen aprueba como Carilin (9/oct)");
+  assert.equal(Object.keys(a).length, 4);
   assert.equal(aprobadores("UX=carilin,UY=Aure", "UCEO").UY, "aure");
 });
 
@@ -112,9 +113,12 @@ test("creativos a la vista: imágenes como bloques, videos como enlaces, texto p
   assert.deepEqual(medios(null), { imagenes: [], videos: [] });
 });
 
-test("María del Carmen puede pedir cambios, no aprobar (Elvin, 9/oct)", async () => {
-  const { editores, decisionDeEditor, revisarParaCliente } = await import("../lib/max/operador.ts");
-  assert.equal(editores(undefined).U0916SXJE9Z, "maria");
+test("María del Carmen aprueba como Carilin; quien solo edita pide cambios (Elvin, 9/oct)", async () => {
+  const { editores, decisionDeEditor, revisarParaCliente, aprobadores, PUEDEN_PUBLICAR } = await import("../lib/max/operador.ts");
+  assert.equal(aprobadores(undefined, "UCEO").U0916SXJE9Z, "maria");
+  assert.equal(PUEDEN_PUBLICAR.includes("maria"), false, "publicar campañas sigue siendo de Elvin o Carilin");
+  assert.deepEqual(editores(undefined), {});
+  assert.equal(editores("UX=ana").UX, "ana");
   assert.deepEqual(decisionDeEditor({ accion: "rechazar", id: 6, nota: "la música debe durar los 47 segundos" }), { tipo: "cambio", nota: "la música debe durar los 47 segundos" });
   assert.deepEqual(decisionDeEditor({ accion: "aprobar", id: 6, nota: "pero cambia la música" }), { tipo: "cambio", nota: "pero cambia la música" });
   assert.deepEqual(decisionDeEditor({ accion: "aprobar", id: 6, nota: "" }), { tipo: "comentario" });
