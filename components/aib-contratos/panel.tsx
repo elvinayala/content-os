@@ -27,14 +27,15 @@ export function ContratosAib({ contratos }: { contratos: FilaContrato[] }) {
   const [nuevo, setNuevo] = useState<{ link: string; codigo: string; telefono: string; nombre: string } | null>(null);
   const [pend, start] = useTransition();
   const [v, setV] = useState({ nombre: "", telefono: "", email: "", negocio: "", servicio: "", total: "", hoy: "", mensual: "", nota: "" });
+  const [cuotas, setCuotas] = useState<{ monto: string; fecha: string }[]>([]);
   const set = (k: keyof typeof v) => (e: { target: { value: string } }) => setV((x) => ({ ...x, [k]: e.target.value }));
 
   function crear() {
     start(async () => {
-      const r = await crearContratoAction(v);
+      const r = await crearContratoAction({ ...v, cuotas: JSON.stringify(cuotas) });
       if (!r.ok) return void toast.error(r.error);
       setNuevo({ link: r.link, codigo: r.codigo, telefono: v.telefono.replace(/\D/g, "").slice(-10), nombre: v.nombre });
-      setV({ nombre: "", telefono: "", email: "", negocio: "", servicio: "", total: "", hoy: "", mensual: "", nota: "" });
+      setV({ nombre: "", telefono: "", email: "", negocio: "", servicio: "", total: "", hoy: "", mensual: "", nota: "" }); setCuotas([]);
       setAbierto(false);
     });
   }
@@ -75,7 +76,25 @@ export function ContratosAib({ contratos }: { contratos: FilaContrato[] }) {
             <L t="Pago de hoy (US$)" o a="Si paga en partes. Vacío = el total."><Input value={v.hoy} onChange={set("hoy")} inputMode="decimal" placeholder="1500" /></L>
             <L t="Mensualidad (US$)" o><Input value={v.mensual} onChange={set("mensual")} inputMode="decimal" placeholder="497" /></L>
           </div>
-          <L t="Nota del pago" o><Input value={v.nota} onChange={set("nota")} placeholder="Resto en 2 pagos: 15 y 30 de noviembre" /></L>
+          <div className="space-y-2 rounded-lg border border-dashed p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div><div className="text-sm font-medium">Cuotas a pagar <span className="font-normal text-muted-foreground">· opcional</span></div><div className="text-xs text-muted-foreground">Lo que queda después del pago de hoy. El pago de hoy más las cuotas tiene que dar el total.</div></div>
+              <Button type="button" size="sm" variant="outline" onClick={() => setCuotas((q) => [...q, { monto: "", fecha: "" }])}><Plus className="size-3.5" /> Cuota</Button>
+            </div>
+            {cuotas.map((q, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="w-16 text-xs text-muted-foreground">Cuota {i + 1}</span>
+                <Input className="w-32" inputMode="decimal" placeholder="1000" value={q.monto} onChange={(e) => setCuotas((xs) => xs.map((x, j) => (j === i ? { ...x, monto: e.target.value } : x)))} />
+                <Input className="w-44" type="date" value={q.fecha} onChange={(e) => setCuotas((xs) => xs.map((x, j) => (j === i ? { ...x, fecha: e.target.value } : x)))} />
+                <button type="button" className="text-muted-foreground" onClick={() => setCuotas((xs) => xs.filter((_, j) => j !== i))}><X className="size-4" /></button>
+              </div>
+            ))}
+            {cuotas.length > 0 && (() => {
+              const n = (x: string) => Number(x.replace(/[$,\s]/g, "")) || 0, suma = n(v.hoy) + cuotas.reduce((a, q) => a + n(q.monto), 0), total = n(v.total);
+              return <div className={`text-xs ${Math.abs(suma - total) < 0.01 ? "text-emerald-700" : "text-amber-700"}`}>Hoy + cuotas = ${suma.toLocaleString("en-US", { minimumFractionDigits: 2 })} {total ? `de $${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : ""}</div>;
+            })()}
+          </div>
+          <L t="Nota del pago" o><Input value={v.nota} onChange={set("nota")} placeholder="Cualquier detalle del pago" /></L>
           <div className="flex justify-end"><Button onClick={crear} disabled={pend}>{pend ? "Creando…" : "Crear link para firmar"}</Button></div>
         </div>
       )}

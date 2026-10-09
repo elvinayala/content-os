@@ -8,7 +8,7 @@ const oferta = { nombre: "María Rivera", telefono: "(787) 555-1234", email: "",
 test("el equipo llena a mano: nombre, teléfono, lo que se ofreció y el costo", () => {
   const r = validarOferta(oferta);
   assert.equal(r.ok, true);
-  assert.deepEqual(r.v.costos, { total: 3500, hoy: 1500, mensual: 497, nota: "" });
+  assert.deepEqual(r.v.costos, { total: 3500, hoy: 1500, mensual: 497, nota: "", cuotas: [] });
   assert.equal(r.v.cliente.telefono, "7875551234");
   assert.equal(validarOferta({ ...oferta, telefono: "555" }).ok, false);
   assert.equal(validarOferta({ ...oferta, servicio: "" }).ok, false);
@@ -46,4 +46,19 @@ test("las hojas llevan los datos, las 14 cláusulas y el resumen con lo ofrecido
   assert.ok(todo.includes("Agente de voz") && todo.includes("Pago de servicios") && todo.includes("$1,500.00"));
   assert.equal(hs.at(-1).bloques.at(-1).t, "firmas");
   assert.ok(hs[0].bloques.find((b) => b.t === "opciones").opciones.find((x) => x.marcado).texto.startsWith("Tarjeta de crédito"));
+});
+
+test("costo total más cuotas: tienen que cuadrar con el total y salen con su fecha", async () => {
+  const conCuotas = { ...oferta, mensual: "", cuotas: JSON.stringify([{ monto: "1000", fecha: "2026-12-15" }, { monto: "1,000", fecha: "2026-11-15" }, { monto: "", fecha: "" }]) };
+  const r = validarOferta(conCuotas);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.v.costos.cuotas, [{ monto: 1000, fecha: "2026-11-15" }, { monto: 1000, fecha: "2026-12-15" }]);
+  assert.equal(textoCostos(r.v.costos), "Total: $3,500.00 · Pago de hoy: $1,500.00 · 2 cuotas: $1,000.00 el 15 de noviembre de 2026, $1,000.00 el 15 de diciembre de 2026");
+  assert.match(validarOferta({ ...conCuotas, total: "4000" }).error, /suman \$3,500.00/);
+  assert.match(validarOferta({ ...conCuotas, hoy: "" }).error, /pago de hoy/);
+  assert.match(validarOferta({ ...oferta, cuotas: JSON.stringify([{ monto: "500" }]) }).error, /fecha de la cuota 1/);
+  const h1 = hojas(r.v, validarDatos(cliente).v, "2026-10-09T17:00:00Z")[0];
+  const filas = h1.bloques.filter((b) => b.t === "datos").flatMap((b) => b.filas);
+  assert.deepEqual(filas.find(([k]) => k === "Cuota 2 de 2"), ["Cuota 2 de 2", "$1,000.00 · 15 de diciembre de 2026"]);
+  assert.equal(h1.bloques.at(-1).t, "firmaCliente", "firma y fecha debajo de la autorización");
 });

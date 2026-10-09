@@ -31,8 +31,10 @@ export const CUENTAS = [
 export interface Oferta {
   cliente: { nombre: string; telefono: string; email: string; negocio: string };
   servicio: string; // "Incluye el servicio"
-  costos: { total: number; hoy: number | null; mensual: number | null; nota: string };
+  // Cuotas (Aure, 9/oct: "costo total más cuotas a pagar"): lo que queda después del pago de hoy, con su fecha.
+  costos: { total: number; hoy: number | null; mensual: number | null; nota: string; cuotas?: Cuota[] };
 }
+export interface Cuota { monto: number; fecha: string } // fecha YYYY-MM-DD
 /** Lo que completa el cliente en su teléfono. */
 export interface DatosCliente {
   nombre: string; email: string; telefono: string; negocio: string;
@@ -49,6 +51,7 @@ export type Bloque =
   | { t: "datos"; filas: [string, string][] }
   | { t: "opciones"; opciones: { texto: string; marcado: boolean }[] }
   | { t: "nota"; texto: string }
+  | { t: "firmaCliente" } // firma y fecha debajo de la autorización (como en el papel)
   | { t: "firmas" };
 export interface Hoja { n: number; titulo: string; bloques: Bloque[] }
 
@@ -81,7 +84,23 @@ export function validarOferta(e: Record<string, unknown>): R<Oferta> {
   if (Number.isNaN(hoy) || Number.isNaN(mensual)) return { ok: false, error: "Los montos solo llevan números." };
   if (hoy !== null && (hoy <= 0 || hoy > total)) return { ok: false, error: "El pago de hoy tiene que ser mayor que 0 y no pasar del total." };
   if (mensual !== null && mensual < 0) return { ok: false, error: "La mensualidad no puede ser negativa." };
-  return { ok: true, v: { cliente: { nombre, telefono, email, negocio }, servicio, costos: { total, hoy, mensual: mensual || null, nota } } };
+  let crudas: unknown = e.cuotas;
+  if (typeof crudas === "string") { try { crudas = crudas.trim() ? JSON.parse(crudas) : []; } catch { return { ok: false, error: "Revisa las cuotas." }; } }
+  const cuotas: Cuota[] = [];
+  for (const q of Array.isArray(crudas) ? crudas.slice(0, 24) : []) {
+    const x = (q ?? {}) as Record<string, unknown>, monto = numero(x.monto), fecha = String(x.fecha ?? "").trim();
+    if (monto === null && !fecha) continue; // fila vacía
+    if (monto === null || Number.isNaN(monto) || monto <= 0) return { ok: false, error: `Falta el monto de la cuota ${cuotas.length + 1}.` };
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || Number.isNaN(Date.parse(fecha))) return { ok: false, error: `Falta la fecha de la cuota ${cuotas.length + 1}.` };
+    cuotas.push({ monto, fecha });
+  }
+  cuotas.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  if (cuotas.length) {
+    if (hoy === null) return { ok: false, error: "Con cuotas, pon también el pago de hoy." };
+    const suma = Math.round((hoy + cuotas.reduce((a, q) => a + q.monto, 0)) * 100) / 100;
+    if (Math.abs(suma - total) > 0.01) return { ok: false, error: `El pago de hoy más las cuotas suman ${dinero(suma)}, pero el total es ${dinero(total)}.` };
+  }
+  return { ok: true, v: { cliente: { nombre, telefono, email, negocio }, servicio, costos: { total, hoy, mensual: mensual || null, nota, cuotas } } };
 }
 
 const usaFacturacion = (m: string) => m === "credito" || m === "debito" || m === "ach";
@@ -124,9 +143,13 @@ export function fechaLarga(iso: string): string {
   return `${p.day} de ${MESES[Number(p.month) - 1]} de ${p.year}`;
 }
 
+/** "2026-11-15" → "15 de noviembre de 2026". */
+export const fechaCorta = (f: string) => fechaLarga(`${f}T16:00:00Z`);
+
 export function textoCostos(c: Oferta["costos"]): string {
   const partes = [`Total: ${dinero(c.total)}`];
   if (c.hoy !== null && c.hoy !== c.total) partes.push(`Pago de hoy: ${dinero(c.hoy)}`);
+  if (c.cuotas?.length) partes.push(`${c.cuotas.length === 1 ? "1 cuota" : `${c.cuotas.length} cuotas`}: ${c.cuotas.map((q) => `${dinero(q.monto)} el ${fechaCorta(q.fecha)}`).join(", ")}`);
   if (c.mensual) partes.push(`Mensualidad: ${dinero(c.mensual)} al mes`);
   return partes.join(" · ") + (c.nota ? `. ${c.nota}` : "");
 }
@@ -142,7 +165,8 @@ export function hojas(o: Oferta, d: Partial<DatosCliente>, fechaIso: string): Ho
   if (esTarjeta(metodo)) facturacion.push(["Tipo de tarjeta", v(nombreDe(TARJETAS, d.tarjeta ?? ""))], ["Últimos 4 dígitos", d.ultimos4 ? `•••• ${d.ultimos4}` : "—"]);
   if (metodo === "ach") facturacion.push(["Banco", v(d.banco)], ["Tipo de cuenta", v(nombreDe(CUENTAS, d.tipoCuenta ?? ""))]);
   if (usaFacturacion(metodo) || d.calle) facturacion.push(["Dirección de facturación", [d.calle, d.ciudad, [d.estado, d.postal].filter(Boolean).join(" ")].filter((x) => x && x.trim()).join(", ") || "—"]);
-  const detalles: [string, string][] = [["Pago de servicios", dinero(montoHoy(o.costos))], ["Total del acuerdo", dinero(o.costos.total)]];
+  const detalles: [string, string][] = [["Costo total", dinero(o.costos.total)], ["Pago de servicios (hoy)", dinero(montoHoy(o.costos))]];
+  (o.costos.cuotas ?? []).forEach((q, i, xs) => detalles.push([`Cuota ${i + 1} de ${xs.length}`, `${dinero(q.monto)} · ${fechaCorta(q.fecha)}`]));
   if (o.costos.mensual) detalles.push(["Mensualidad", `${dinero(o.costos.mensual)} al mes`]);
   if (o.costos.nota) detalles.push(["Nota", o.costos.nota]);
 
@@ -160,6 +184,7 @@ export function hojas(o: Oferta, d: Partial<DatosCliente>, fechaIso: string): Ho
       { t: "datos", filas: detalles },
       { t: "h", texto: "5. Autorización" },
       { t: "p", texto: "Autorizo a AI Borinquen a procesar el pago por el monto especificado anteriormente, utilizando el método de pago indicado." },
+      { t: "firmaCliente" },
     ] },
     { n: 2, titulo: "Confidencialidad y términos de uso", bloques: [
       { t: "h", texto: "Nota de confidencialidad y seguridad de datos" },

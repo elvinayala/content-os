@@ -118,6 +118,16 @@ export async function pdfContrato(d: DatosPdf): Promise<Uint8Array> {
           y -= alto;
         }
         y -= 8;
+      } else if (b.t === "firmaCliente") {
+        y -= 4; espacio(70);
+        const base = y - 46, col = ancho / 2;
+        imagen(firma, 38, MX + 2, base + 3, col - 10);
+        page.drawLine({ start: { x: MX, y: base }, end: { x: MX + col, y: base }, thickness: 0.8, color: C.tinta });
+        page.drawText("Firma del cliente", { x: MX, y: base - 12, size: 8.5, font: neg, color: C.tinta });
+        page.drawText(winAnsi(fechaLarga(d.firmado.en)), { x: MX + col + 24, y: base + 4, size: 9.5, font: reg, color: C.tinta });
+        page.drawLine({ start: { x: MX + col + 24, y: base }, end: { x: MX + ancho, y: base }, thickness: 0.8, color: C.tinta });
+        page.drawText("Fecha", { x: MX + col + 24, y: base - 12, size: 8.5, font: neg, color: C.tinta });
+        y = base - 22;
       } else if (b.t === "firmas") {
         y -= 10; espacio(110);
         const col = (ancho - 24) / 2, base = y - 62;

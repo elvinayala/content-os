@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { CUENTAS, hojas as armarHojas, METODOS, TARJETAS, textoCostos, dinero, type Bloque, type DatosCliente, type Oferta } from "@/lib/aib-contratos/documento";
+import { CUENTAS, fechaLarga, hojas as armarHojas, METODOS, TARJETAS, textoCostos, dinero, type Bloque, type DatosCliente, type Oferta } from "@/lib/aib-contratos/documento";
 
 // Contrato de AI Borinquen en el teléfono del cliente (mismo flujo que el de Resuelto: datos → firma e iniciales →
 // leer e iniciar cada hoja → firmar → copia en PDF), con la marca de AIB: negro verdoso, verde neón, Outfit + Inter.
@@ -58,12 +58,18 @@ function Pad({ alto, ph, api, ancho }: { alto: number; ph: string; api: (a: PadA
   );
 }
 
-function BloqueVista({ b, firma }: { b: Bloque; firma: string | null }) {
+function BloqueVista({ b, firma, fecha }: { b: Bloque; firma: string | null; fecha: string }) {
   if (b.t === "titulo") return <div className="mb-3"><div className="text-[11px] font-semibold tracking-[0.14em] text-[#1FB6A6] uppercase">{b.tag}</div><h3 className="font-[family-name:var(--font-outfit)] text-[22px] font-bold tracking-tight text-[#0B1A12]">{b.texto}</h3></div>;
   if (b.t === "h") return <h4 className="mt-4 mb-1.5 font-[family-name:var(--font-outfit)] text-[15px] font-semibold text-[#0B1A12]">{b.texto}</h4>;
   if (b.t === "p") return <p className="mb-2.5 text-[14px] leading-relaxed text-[#26352d]">{b.texto}</p>;
   if (b.t === "nota") return <p className="my-2 rounded-xl bg-[#eef6f1] px-3 py-2 text-[12.5px] leading-snug text-[#4b6457] italic">{b.texto}</p>;
   if (b.t === "opciones") return <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">{b.opciones.map((o) => <div key={o.texto} className={`flex items-center gap-2 text-[14px] ${o.marcado ? "font-semibold text-[#0B1A12]" : "text-[#5d7166]"}`}><span className={`grid h-4 w-4 place-items-center rounded border text-[10px] ${o.marcado ? "border-[#050E0A] bg-[#050E0A] text-[#2BFF88]" : "border-[#9fb3a8]"}`}>{o.marcado ? "✓" : ""}</span>{o.texto}</div>)}</div>;
+  if (b.t === "firmaCliente") return (
+    <div className="mt-3 grid grid-cols-2 gap-4">
+      <div><div className="flex h-12 items-end border-b border-[#0B1A12]">{firma ? <img src={firma} alt="Tu firma" className="max-h-11" /> : <span className="pb-1 text-[12px] text-[#9fb3a8]">Tu firma va aquí</span>}</div><div className="mt-1 text-[12px] font-semibold">Firma del cliente</div></div>
+      <div><div className="flex h-12 items-end border-b border-[#0B1A12] pb-1 text-[14px]">{fecha}</div><div className="mt-1 text-[12px] font-semibold">Fecha</div></div>
+    </div>
+  );
   if (b.t === "datos") return <div className="overflow-hidden rounded-xl border border-[#dbe7e0]">{b.filas.map(([k, v]) => <div key={k} className="grid grid-cols-[42%_1fr] border-b border-[#dbe7e0] last:border-0"><div className="bg-[#f3f8f5] px-3 py-2 text-[12px] font-semibold text-[#5d7166]">{k}</div><div className="px-3 py-2 text-[14px] whitespace-pre-line text-[#0B1A12]">{v}</div></div>)}</div>;
   return (
     <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -205,7 +211,7 @@ export function FirmarContrato({ token, contrato }: { token: string; contrato: V
             return (
               <article key={h.n} className="mb-4 overflow-hidden rounded-2xl bg-white shadow-[0_1px_0_#dbe7e0,0_8px_22px_rgba(5,14,10,.06)]">
                 <div className="flex justify-between bg-[#eef6f1] px-4 py-2.5 text-[12.5px] text-[#5d7166]"><span>Página {h.n} de {hs.length}</span><span className="truncate pl-3">{h.titulo}</span></div>
-                <div className="px-4 pt-4 pb-2">{h.bloques.map((b, i) => <BloqueVista key={i} b={b} firma={firma} />)}</div>
+                <div className="px-4 pt-4 pb-2">{h.bloques.map((b, i) => <BloqueVista key={i} b={b} firma={firma} fecha={fechaLarga(hoy)} />)}</div>
                 <div className="flex items-center justify-between gap-3 border-t border-[#dbe7e0] px-4 py-3">
                   {on ? <span className="flex items-center gap-2 text-[14px] font-semibold text-[#138a52]">{ini && <img src={ini} alt="Iniciales" className="h-8" />}✓</span> : <span className="text-[13px] text-[#5d7166]">Sin iniciales</span>}
                   <button className={`rounded-xl border-[1.5px] px-4 py-2.5 text-[14px] font-semibold ${on ? "border-[#d6e2db] text-[#5d7166]" : "border-[#050E0A] bg-[#050E0A] text-[#2BFF88]"}`} onClick={() => setIniciadas((s) => { const n = new Set(s); if (on) n.delete(h.n); else n.add(h.n); return n; })}>{on ? "Quitar" : "Poner mis iniciales"}</button>
