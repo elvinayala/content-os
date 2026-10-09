@@ -40,9 +40,9 @@ function partir(texto: string, max = 3900): string[] {
 
 export async function enviarTelegram(
   texto: string,
-  opts: { chatId?: string; html?: boolean } = {},
+  opts: { chatId?: string; html?: boolean; token?: string } = {},
 ): Promise<{ ok: boolean; error?: string }> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const token = opts.token ?? process.env.TELEGRAM_BOT_TOKEN;
   const chatId = opts.chatId ?? process.env.TELEGRAM_CEO_CHAT_ID;
   if (!token || !chatId) return { ok: false, error: "telegram-no-configurado" };
   const cuerpo = opts.html === false ? texto : slackAHtml(texto);

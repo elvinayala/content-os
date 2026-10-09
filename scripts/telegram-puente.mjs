@@ -423,10 +423,19 @@ function correrAds(linea) {
 
 async function procesar(token, chat, texto, st) {
   const t = texto.trim();
-  if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/solicitudes — lo que Carilin o Aure pidieron y espera tu OK (ok <id> · no <id>)\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
+  if (ES_NICO && (t === "/ayuda" || t === "/start")) return enviar(token, chat, "Nico activo (vibecoder). Escríbeme qué ajustar o qué revisar en cualquiera de tus plataformas y lo hago.\n\n/ronda — la ronda de salud + reporte ahora mismo\n/solicitudes — lo que Carilin o Aure pidieron y las exportaciones de leads que esperan tu OK (ok <id> · ok exp <código>)\n/plataformas — qué puedo tocar\n/nuevo — conversación nueva\n\nTodo queda espejado en tu DM de Slack.");
   if (ES_NICO && t === "/solicitudes") {
     const l = await esperandoOk().catch(() => []);
-    return enviar(token, chat, l.length ? l.map((x) => `#${x.id} · ${NOMBRES[x.de] || x.de}: ${x.texto.replace(/^\[[^\]]*\]\n?/, "").slice(0, 160)}\n→ ok ${x.id} · no ${x.id}`).join("\n\n") : "Sin solicitudes del equipo esperando tu OK.");
+    const exp = (await exportacionesLeads("GET").catch(() => null))?.pendientes ?? [];
+    const lineas = [...l.map((x) => `#${x.id} · ${NOMBRES[x.de] || x.de}: ${x.texto.replace(/^\[[^\]]*\]\n?/, "").slice(0, 160)}\n→ ok ${x.id} · no ${x.id}`), ...exp];
+    return enviar(token, chat, lineas.length ? lineas.join("\n\n") : "Sin solicitudes del equipo ni exportaciones esperando tu OK.");
+  }
+  // "ok exp 3f2a1b" / "no exp 3f2a1b [nota]" → exportación de leads que pidió Nahuel o Aure (9/oct): la decide Content OS.
+  const decExp = ES_NICO && t.match(/^(ok|okay|s[ií]|dale|aprob\w*|no|rechaz\w*)\s+exp\w*\s*#?([0-9a-f]{4,8})\b\s*([\s\S]*)$/i);
+  if (decExp) {
+    const r = await exportacionesLeads("POST", { codigo: decExp[2], aprobar: !/^(no|rechaz)/i.test(decExp[1]), nota: decExp[3].trim() || undefined }).catch((e) => ({ mensaje: `No pude pasar la decisión: ${e.message}` }));
+    await slackEspejo(`[Nico] Exportación de leads ${decExp[2]}: ${r?.mensaje ?? "sin respuesta"}`);
+    return enviar(token, chat, r?.mensaje ?? "Content OS no respondió; apruébala en Leads → Exportaciones.");
   }
   // "ok 12" / "sí #12 pero sin tocar X" / "no 12 todavía no" → decisión sobre una solicitud del equipo.
   const dec = ES_NICO && t.match(/^(ok|okay|s[ií]|dale|aprob\w*|no|rechaz\w*)\s*#?(\d+)\b\s*([\s\S]*)$/i);
@@ -821,6 +830,14 @@ const MAX_SLACK = `OPERAS EN SLACK (cerebro-max.md §17 — léelo si no lo tien
 - Hoy NINGÚN canal de cliente está habilitado (MAX_CANALES_CLIENTES vacío): trabajas solo en #max-aprobaciones; no pidas que te agreguen a canales de clientes.
 - Si algo no te toca a ti o no tienes cómo hacerlo, dilo en una nota corta. No inventes datos, ids ni resultados.
 - Termina con UNA línea de qué hiciste (ids de lo propuesto). No escribas nada más: tu respuesta final no le llega a nadie.`;
+
+async function exportacionesLeads(metodo, body) {
+  const base = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
+  const secreto = env("CRON_SECRET");
+  if (!secreto) throw new Error("falta CRON_SECRET");
+  const r = await fetch(`${base}/api/leads/exportaciones/decidir`, { method: metodo, headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(20000) });
+  return r.json();
+}
 
 async function notaAprobacionesMax(texto, hilo) {
   const base = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");

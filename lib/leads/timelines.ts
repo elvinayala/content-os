@@ -70,3 +70,8 @@ export async function crearWebhookTimelines(m: Marca, url: string, evento: strin
 export async function chatTimelines(m: Marca, chatId: string) {
   return llamar<Record<string, unknown>>(m, "GET", `/chats/${encodeURIComponent(chatId)}`);
 }
+
+/** Un mensaje por su uid: trae un attachment_url fresco (el del aviso vence a los 15 min). */
+export async function mensajeTimelines(m: Marca, uid: string) {
+  return llamar<{ data?: { attachment_url?: string | null; attachment_filename?: string | null } }>(m, "GET", `/messages/${encodeURIComponent(uid)}`);
+}

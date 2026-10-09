@@ -105,6 +105,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/leads/timelines") return NextResponse.next();
   // Entrada de formularios/Zapier a un embudo de Leads (secreto en la URL, lo valida la ruta).
   if (pathname === "/api/leads/entrada") return NextResponse.next();
+  // Aprobar exportaciones de leads desde el Telegram de Nico (CRON_SECRET adentro).
+  if (pathname === "/api/leads/exportaciones/decidir") return NextResponse.next();
   // Fathom → Slack (resúmenes de llamadas, solicitud de Aure #29): valida la firma adentro.
   if (pathname === "/api/fathom") return NextResponse.next();
 

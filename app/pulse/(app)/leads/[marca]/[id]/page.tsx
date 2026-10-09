@@ -63,7 +63,14 @@ export default async function LeadDetalle({ params }: { params: Promise<{ marca:
           },
           etapas: d.etapas.map((e) => ({ id: e.id, nombre: e.nombre })),
           embudos: d.embudos.map((e) => ({ id: e.id, nombre: e.nombre })),
-          historial: d.historial.map((h) => ({ id: h.id, tipo: h.tipo, texto: h.texto, createdAt: iso(h.createdAt), autor: h.autor })),
+          historial: d.historial.map((h) => ({
+            id: h.id,
+            tipo: h.tipo,
+            texto: h.texto,
+            createdAt: iso(h.createdAt),
+            autor: h.autor,
+            adjuntos: (Array.isArray(h.meta?.adjuntos) ? (h.meta.adjuntos as { tipo?: string; nombre?: string }[]) : []).map((a) => ({ tipo: String(a?.tipo ?? "otro"), nombre: String(a?.nombre ?? "archivo") })),
+          })),
           actividades: d.actividades.map((a) => ({ id: a.id, tipo: a.tipo, asunto: a.asunto, venceAt: iso(a.venceAt), hecha: a.hecha, asignado: a.asignado })),
         }}
       />

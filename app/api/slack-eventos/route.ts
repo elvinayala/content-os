@@ -560,6 +560,19 @@ export async function POST(req: NextRequest) {
   const texto = limpiar(ev.text ?? "");
   if (!texto) return NextResponse.json({ ok: true });
 
+  // Elvin decide una exportación de leads desde Slack: "nico ok exp 3f2a1b" / "nico no exp 3f2a1b [nota]".
+  const decExp = ev.user === CEO_SLACK && texto.match(/^\s*@?nico\s+(ok|s[ií]|dale|no)\s+exp\w*\s*#?([0-9a-f]{4,8})\b\s*([\s\S]*)$/i);
+  if (decExp) {
+    const channel = ev.channel;
+    const hilo = ev.thread_ts;
+    after(async () => {
+      const { decidirPorCodigo } = await import("@/lib/leads/exportaciones");
+      const r = await decidirPorCodigo(decExp[2], decExp[1].toLowerCase() !== "no", decExp[3].trim() || null).catch((e) => ({ ok: false, mensaje: `No pude decidirla: ${e instanceof Error ? e.message : e}` }));
+      await postearRespuesta(channel, `${r.mensaje}\n— Nico`, hilo, false, IDENTIDAD_NICO);
+    });
+    return NextResponse.json({ ok: true });
+  }
+
   // Elvin decide una solicitud desde Slack: "nico ok 12" / "nico no 12 [nota]".
   const decision = ev.user === CEO_SLACK && texto.match(/^\s*@?nico\s+(ok|s[ií]|dale|no)\s*#?(\d+)\s*([\s\S]*)$/i);
   if (decision) {

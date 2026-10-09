@@ -164,6 +164,70 @@ export interface EventoWhatsapp {
   cuenta: string | null; // dígitos del número de la empresa
   esGrupo: boolean;
   adjunto: string | null;
+  /** Audios, fotos, videos y documentos del mensaje (el link de Timelines vence a los 15 min). */
+  adjuntos: AdjuntoWa[];
+  /** Cuándo se mandó el mensaje (si el aviso lo trae); Timelines a veces avisa horas después. */
+  fecha: string | null;
+}
+
+export type TipoAdjunto = "audio" | "imagen" | "video" | "documento" | "otro";
+export interface AdjuntoWa {
+  url: string | null;
+  mime: string;
+  nombre: string;
+  bytes: number | null;
+}
+
+export function tipoAdjunto(mime: string): TipoAdjunto {
+  const m = mime.toLowerCase();
+  if (m.startsWith("audio/")) return "audio";
+  if (m.startsWith("image/")) return "imagen";
+  if (m.startsWith("video/")) return "video";
+  if (m === "application/pdf" || m.startsWith("application/") || m.startsWith("text/")) return "documento";
+  return "otro";
+}
+
+const ETIQUETA_ADJUNTO: Record<TipoAdjunto, string> = { audio: "🎤 Audio", imagen: "📷 Foto", video: "🎬 Video", documento: "📄 Documento", otro: "📎 Archivo" };
+export const etiquetaAdjunto = (mime: string) => ETIQUETA_ADJUNTO[tipoAdjunto(mime)];
+
+/** Audios, fotos y documentos se guardan en nuestro Storage; los videos (pesan hasta 40+ MB) no. */
+export const MAX_BYTES_ADJUNTO = 16 * 1024 * 1024;
+export function seGuardaAdjunto(a: { mime: string; bytes: number | null }): boolean {
+  const t = tipoAdjunto(a.mime);
+  return (t === "audio" || t === "imagen" || t === "documento") && (a.bytes ?? 0) <= MAX_BYTES_ADJUNTO;
+}
+
+const EXT: Record<string, string> = { "audio/ogg": "ogg", "audio/mpeg": "mp3", "audio/mp4": "m4a", "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf", "video/mp4": "mp4" };
+export function extensionAdjunto(a: { mime: string; nombre: string }): string {
+  return EXT[a.mime.toLowerCase().split(";")[0]] ?? a.nombre.match(/\.([a-z0-9]{1,5})$/i)?.[1]?.toLowerCase() ?? "bin";
+}
+
+function leerAdjuntos(msg: Obj): AdjuntoWa[] {
+  const lista = Array.isArray(msg.attachments) ? msg.attachments : [];
+  const out: AdjuntoWa[] = [];
+  for (const a of lista) {
+    if (!esObj(a)) continue;
+    const mime = String(a.mimetype ?? a.mime_type ?? a.content_type ?? "application/octet-stream");
+    const url = (a.temporary_download_url ?? a.download_url ?? a.url ?? null) as string | null;
+    const bytes = Number(a.size ?? a.bytes);
+    out.push({ url: url ? String(url) : null, mime, nombre: String(a.filename ?? a.name ?? "archivo").slice(0, 120), bytes: Number.isFinite(bytes) ? bytes : null });
+  }
+  // Formato viejo/API: un solo attachment_url.
+  if (!out.length && typeof msg.attachment_url === "string") {
+    const nombre = String(msg.attachment_filename ?? "archivo");
+    const ext = nombre.split(".").pop()?.toLowerCase() ?? "";
+    const mime = Object.entries(EXT).find(([, e]) => e === ext)?.[0] ?? "application/octet-stream";
+    out.push({ url: msg.attachment_url, mime, nombre, bytes: null });
+  }
+  return out;
+}
+
+/** "2026-10-09 05:46:04 -0400" → ISO. */
+export function fechaTimelines(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const m = v.trim().match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(?:\.\d+)?\s*([+-]\d{2}):?(\d{2})$/);
+  const d = m ? new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`) : new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
 type Obj = Record<string, unknown>;
@@ -208,18 +272,21 @@ export function leerTimelines(body: unknown): EventoWhatsapp {
   const texto = String(buscar(msg, ["text", "body", "message_text", "caption"]) ?? "").trim();
   const adjunto = (buscar(msg, ["attachment_url", "file_url", "url", "media_url"]) as string | undefined) ?? null;
   const esGrupo = Boolean(buscar(chat, ["is_group", "group"])) || /@g\.us/.test(String(telChat ?? ""));
+  const adjuntos = leerAdjuntos(msg);
 
   return {
     evento,
     direccion,
     telefono,
     nombre: nombre ? String(nombre).slice(0, 120) : null,
-    texto: texto || (adjunto ? "📎 Archivo adjunto" : ""),
+    texto: texto || (adjuntos[0] ? etiquetaAdjunto(adjuntos[0].mime) : adjunto ? "📎 Archivo adjunto" : ""),
     mensajeId: (buscar(msg, ["message_uid", "message_id", "uid"]) as string | undefined)?.toString() ?? null,
     chatId: (buscar(chat, ["chat_id", "id"]) as string | number | undefined)?.toString() ?? null,
     cuenta,
     esGrupo,
-    adjunto,
+    adjunto: adjunto ?? adjuntos[0]?.url ?? null,
+    adjuntos,
+    fecha: fechaTimelines(buscar(msg, ["timestamp", "sent_at", "created_at"])),
   };
 }
 
@@ -260,4 +327,43 @@ export function duenoPorReparto(reparto: Reparto, turno: number, habilitados: Re
 /** Los leads de estos orígenes no se reparten: el manual lo asigna quien lo crea y los grupos no son leads. */
 export function seReparte(origen: string | null | undefined): boolean {
   return origen !== "manual" && origen !== "grupo";
+}
+
+// ---------- Vigía de WhatsApp (9/oct, Elvin): avisar si una marca deja de recibir mensajes ----------
+// El 6/oct el plan de Timelines de AIB perdió la API y no entró un lead en ~20 h sin que nadie se enterara.
+
+export interface ChequeoTimelines {
+  apiStatus: number; // 200 ok · 401 token · 403 plan · 0 red
+  cuentas: { phone: string; status: string }[];
+  webhooks: { event_type: string; enabled: boolean; url: string }[];
+  slug: string; // level-up | ai-borinquen
+  horasSilencio: number | null; // desde el último aviso que llegó
+}
+
+export function problemaTimelines(c: ChequeoTimelines): { clave: string; texto: string } | null {
+  if (c.apiStatus === 401) return { clave: "token", texto: "la llave de la API de Timelines dejó de servir (vencida o la cambiaron)." };
+  if (c.apiStatus === 403) return { clave: "plan", texto: "el plan de Timelines ya no incluye la API (¿se venció o falló el pago?). Sin eso no entra ningún mensaje a Leads." };
+  if (c.apiStatus === 200) {
+    const caida = c.cuentas.find((x) => x.status && x.status !== "active");
+    if (caida) return { clave: `desconectado:${caida.phone}`, texto: `el WhatsApp ${caida.phone} está desconectado de Timelines (${caida.status}). Hay que volver a escanear el QR.` };
+    const nuestros = c.webhooks.filter((w) => w.enabled && w.url.includes("/api/leads/timelines") && w.url.includes(`marca=${c.slug}`));
+    const falta = ["message:received:new", "message:sent:new"].filter((e) => !nuestros.some((w) => w.event_type === e));
+    if (falta.length) return { clave: "webhooks", texto: `faltan o están apagados los webhooks de Timelines hacia Leads (${falta.join(", ")}).` };
+  }
+  if (c.horasSilencio != null && c.horasSilencio >= HORAS_SILENCIO) return { clave: "silencio", texto: `hace ${Math.floor(c.horasSilencio)} h que no entra ni un mensaje de WhatsApp a Leads, aunque Timelines dice que todo está bien. Revisa que el número esté recibiendo.` };
+  return null;
+}
+
+export const HORAS_SILENCIO = 3;
+/** El silencio solo alarma de 9 AM a 9 PM de PR (de noche es normal). */
+export const horarioVigia = (horaPR: number) => horaPR >= 9 && horaPR < 21;
+
+/** previo = el último estado guardado ("alerta:<clave>" | "ok" | null). */
+export function decisionVigia(previo: string | null, problema: { clave: string } | null, enHorario: boolean): "alertar" | "recuperado" | null {
+  if (problema) {
+    if (previo === `alerta:${problema.clave}`) return null;
+    if (problema.clave === "silencio" && !enHorario) return null;
+    return "alertar";
+  }
+  return previo?.startsWith("alerta:") ? "recuperado" : null;
 }

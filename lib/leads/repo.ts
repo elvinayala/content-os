@@ -7,7 +7,7 @@ import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, seReparte, SEMILLA, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
+import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsNumerosEquipo, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -350,12 +350,24 @@ export async function obtenerTrato(id: string) {
   return { trato: t, historial, actividades, etapas, embudos };
 }
 
-async function historial(tratoId: string, tipo: string, texto: string, autorId?: string | null, extra: { externoId?: string | null; meta?: Record<string, unknown> } = {}) {
+async function historial(tratoId: string, tipo: string, texto: string, autorId?: string | null, extra: { externoId?: string | null; meta?: Record<string, unknown>; createdAt?: Date | null } = {}) {
   const d = await db();
   await d
     .insert(leadsHistorial)
-    .values({ tratoId, tipo, texto: texto.slice(0, 8000), autorId: autorId ?? null, externoId: extra.externoId ?? null, meta: extra.meta ?? {} })
+    .values({ tratoId, tipo, texto: texto.slice(0, 8000), autorId: autorId ?? null, externoId: extra.externoId ?? null, meta: extra.meta ?? {}, ...(extra.createdAt ? { createdAt: extra.createdAt } : {}) })
     .onConflictDoNothing();
+}
+
+/** Lo que se guarda de un mensaje de WhatsApp: sin el link temporal de Timelines (vence a los 15 min);
+ * el archivo lo copia guardarAdjuntos (lib/leads/adjuntos.ts) a nuestro Storage. */
+function extraMensaje(ev: EventoWhatsapp) {
+  const f = ev.fecha ? new Date(ev.fecha) : null;
+  return {
+    externoId: ev.mensajeId,
+    meta: { chatId: ev.chatId, cuenta: ev.cuenta, ...(ev.adjuntos.length ? { adjuntos: ev.adjuntos.map((a) => ({ tipo: tipoAdjunto(a.mime), mime: a.mime, nombre: a.nombre, bytes: a.bytes })) } : {}) },
+    // La hora real del mensaje (Timelines a veces avisa horas después), nunca en el futuro.
+    createdAt: f && f.getTime() <= Date.now() + 5 * 60_000 ? f : null,
+  };
 }
 
 // El más nuevo arriba (Elvin, 27/sep): lo que entra o lo que el sistema mueve va al principio de la columna.
@@ -743,11 +755,12 @@ async function etapaGrupos(embudoId: string): Promise<string> {
 
 /** Grupos de WhatsApp (el que se arma al agendar: closer + setter + administración): una tarjeta por grupo
  * en la columna "Grupos", nunca como lead nuevo. */
-async function registrarGrupo(marca: Marca, ev: EventoWhatsapp, cuenta: { embudoId: string | null } | null | undefined): Promise<string> {
+async function registrarGrupo(marca: Marca, ev: EventoWhatsapp, cuenta: { embudoId: string | null } | null | undefined, opts: { historico?: boolean } = {}): Promise<string> {
   if (!ev.chatId) return "ignorado:grupo-sin-chat";
   const d = await db();
   let [t] = await d.select().from(leadsTratos).where(and(eq(leadsTratos.marca, marca), eq(leadsTratos.chatId, ev.chatId), eq(leadsTratos.origen, "grupo"), eq(leadsTratos.estado, "abierto"))).limit(1);
   let nuevo = false;
+  if (!t && opts.historico) return "ignorado:sin-lead";
   if (!t) {
     const embudoId = cuenta?.embudoId ?? (await embudoPorNombre(marca, "WhatsApp"))?.id ?? (await listarEmbudos(marca))[0]?.id ?? null;
     if (!embudoId) return "error:sin-embudo";
@@ -758,26 +771,29 @@ async function registrarGrupo(marca: Marca, ev: EventoWhatsapp, cuenta: { embudo
     const antes = await d.select({ id: leadsHistorial.id }).from(leadsHistorial).where(eq(leadsHistorial.externoId, ev.mensajeId)).limit(1);
     if (antes.length) return "duplicado";
   }
-  if (ev.texto || ev.adjunto) await historial(t.id, ev.direccion === "saliente" ? "saliente" : "entrante", ev.texto, null, { externoId: ev.mensajeId, meta: { chatId: ev.chatId, cuenta: ev.cuenta, adjunto: ev.adjunto } });
+  if (ev.texto || ev.adjuntos.length) await historial(t.id, ev.direccion === "saliente" ? "saliente" : "entrante", ev.texto, null, extraMensaje(ev));
+  if (opts.historico) return `grupo:${t.id}`;
   await d.update(leadsTratos).set({ ultimoMensaje: new Date(), updatedAt: new Date(), chatId: ev.chatId, ...(ev.nombre ? { nombre: ev.nombre.slice(0, 160) } : {}) }).where(eq(leadsTratos.id, t.id));
   return nuevo ? `grupo-nuevo:${t.id}` : `grupo:${t.id}`;
 }
 
 /** Guarda el mensaje en la línea de tiempo del lead (lo crea si es un contacto nuevo que escribe). */
-export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promise<string> {
+/** opts.historico = recuperar un mensaje viejo: solo si el lead ya existe, y sin tocar "último mensaje" ni los no leídos. */
+export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp, opts: { historico?: boolean } = {}): Promise<string> {
   if (!ev.telefono && !ev.esGrupo) return "ignorado:sin-telefono";
-  if (!ev.texto && !ev.adjunto && !ev.esGrupo) return "ignorado:vacio";
+  if (!ev.texto && !ev.adjunto && !ev.adjuntos.length && !ev.esGrupo) return "ignorado:vacio";
   const d = await db();
   const cuenta = ev.cuenta ? await d.query.leadsWhatsapp.findFirst({ where: eq(leadsWhatsapp.cuenta, ev.cuenta) }) : null;
   if (cuenta && cuenta.marca !== marca) return "ignorado:otra-marca";
   if (cuenta && !cuenta.activo) return "ignorado:cuenta-apagada";
-  if (ev.esGrupo) return registrarGrupo(marca, ev, cuenta);
+  if (ev.esGrupo) return registrarGrupo(marca, ev, cuenta, opts);
 
   let t = await buscarAbierto(marca, ev.telefono!, null);
   let nuevo = false;
   if (!t) {
     // Un saliente a alguien que no está en el CRM (p. ej. un chat personal) no crea lead.
     if (ev.direccion !== "entrante") return "ignorado:saliente-sin-lead";
+    if (opts.historico) return "ignorado:sin-lead";
     if (await clienteActual(marca, ev.telefono!)) return "ignorado:cliente-actual";
     if (await esDelEquipo(ev.telefono!)) return "ignorado:equipo";
     let embudoId = cuenta?.embudoId ?? null;
@@ -789,7 +805,8 @@ export async function registrarMensaje(marca: Marca, ev: EventoWhatsapp): Promis
   }
   const antes = await d.select({ id: leadsHistorial.id }).from(leadsHistorial).where(ev.mensajeId ? eq(leadsHistorial.externoId, ev.mensajeId) : sql`false`).limit(1);
   if (antes.length) return "duplicado";
-  await historial(t.id, ev.direccion === "saliente" ? "saliente" : "entrante", ev.texto, null, { externoId: ev.mensajeId, meta: { chatId: ev.chatId, cuenta: ev.cuenta, adjunto: ev.adjunto } });
+  await historial(t.id, ev.direccion === "saliente" ? "saliente" : "entrante", ev.texto, null, extraMensaje(ev));
+  if (opts.historico) return `mensaje:${t.id}`;
   await d
     .update(leadsTratos)
     .set({

@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, desc, eq, gt, sql } from "drizzle-orm";
 
-import { notificarCEO } from "@/lib/notificar-ceo";
+import { notificarPorNico } from "@/lib/notificar-ceo";
 import { db } from "@/lib/pulse/db";
 import { pulseUsers } from "@/lib/pulse/schema";
 import { dmSlack } from "@/lib/pulse/slack-dm";
@@ -23,8 +23,46 @@ const nombreMarca = (m: string) => MARCAS[slugDeMarca(m as Marca)]?.nombre ?? m;
 export async function pedirExportacion(u: UsuarioPulse, marca: Marca, filtro: FiltroExport): Promise<string> {
   const d = await db();
   const [e] = await d.insert(t).values({ userId: u.id, marca, filtro: filtro as unknown as Record<string, unknown> }).returning({ id: t.id });
-  await notificarCEO(`📤 ${u.nombre} pide exportar leads a Excel: ${describirFiltro(filtro, nombreMarca(marca))}.\nApruébalo o recházalo aquí: ${PAGINA}`).catch(() => null);
+  const c = codigoExportacion(e.id);
+  // Se aprueba con Nico (9/oct, Elvin): "ok exp <código>" en su Telegram o "nico ok exp <código>" en Slack.
+  await notificarPorNico(`📤 ${u.nombre} pide exportar leads a Excel: ${describirFiltro(filtro, nombreMarca(marca))}.\n\n👉 Para aprobar: ok exp ${c}\n✋ Para no: no exp ${c}\n(o en la página: ${PAGINA})`).catch(() => null);
   return e.id;
+}
+
+/** Código corto para aprobar por Telegram/Slack: las primeras 6 letras del id. */
+export const codigoExportacion = (id: string) => id.slice(0, 6);
+
+/** El actor de las aprobaciones que llegan por Nico: Elvin (el admin de Pulse). */
+async function elvin(): Promise<UsuarioPulse | null> {
+  const d = await db();
+  const email = (process.env.PULSE_ADMIN_EMAIL ?? "elvin@levelupmediapr.net").toLowerCase();
+  const [u] = await d
+    .select({ id: pulseUsers.id, email: pulseUsers.email, nombre: pulseUsers.nombre })
+    .from(pulseUsers)
+    .where(and(eq(pulseUsers.rol, "admin"), eq(pulseUsers.activo, true), sql`lower(${pulseUsers.email}) = ${email}`))
+    .limit(1);
+  return u ? { ...u, rol: "admin", activo: true, color: null, tieneClave: true } : null;
+}
+
+/** Elvin decide desde Telegram (Nico) o Slack con el código corto. */
+export async function decidirPorCodigo(codigo: string, aprobar: boolean, nota?: string | null): Promise<{ ok: boolean; mensaje: string }> {
+  const c = codigo.trim().toLowerCase();
+  if (!/^[0-9a-f]{4,8}$/.test(c)) return { ok: false, mensaje: `"${codigo}" no es un código de exportación.` };
+  const pendientes = (await listarExportaciones({ limite: 100 })).filter((e) => e.estado === "pendiente" && e.id.startsWith(c));
+  if (!pendientes.length) {
+    const otra = (await listarExportaciones({ limite: 100 })).find((e) => e.id.startsWith(c));
+    return { ok: false, mensaje: otra ? `Esa exportación (${otra.persona}) ya está ${otra.estado}.` : `No encuentro la exportación ${c}.` };
+  }
+  if (pendientes.length > 1) return { ok: false, mensaje: `Hay ${pendientes.length} con ese código; usa uno más largo.` };
+  const actor = await elvin();
+  if (!actor) return { ok: false, mensaje: "No encontré la cuenta de Elvin en Pulse para firmar la decisión." };
+  const e = pendientes[0];
+  await decidirExportacion(e.id, aprobar, actor, nota);
+  return { ok: true, mensaje: aprobar ? `✅ Aprobada la exportación de ${e.persona} (${e.descripcion}). Ya le avisé: tiene ${HORAS_DESCARGA} h para bajarla, una sola vez.` : `✋ No va la exportación de ${e.persona}. Ya le avisé.` };
+}
+
+export async function pendientesParaNico(): Promise<string[]> {
+  return (await listarExportaciones({ limite: 50 })).filter((e) => e.estado === "pendiente").map((e) => `📤 ${e.persona}: ${e.descripcion}\n→ ok exp ${codigoExportacion(e.id)} · no exp ${codigoExportacion(e.id)}`);
 }
 
 export interface Exportacion {

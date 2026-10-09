@@ -39,7 +39,7 @@ export interface DetalleUI {
   };
   etapas: { id: string; nombre: string }[];
   embudos: { id: string; nombre: string }[];
-  historial: { id: string; tipo: string; texto: string; createdAt: string; autor: string | null }[];
+  historial: { id: string; tipo: string; texto: string; createdAt: string; autor: string | null; adjuntos: { tipo: string; nombre: string }[] }[];
   actividades: { id: string; tipo: string; asunto: string; venceAt: string; hecha: boolean; asignado: string | null }[];
 }
 
@@ -350,7 +350,10 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
                       )}
                     >
                       {h.tipo === "nota" && <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">Nota</p>}
-                      <p className="whitespace-pre-wrap break-words">{h.texto}</p>
+                      {h.adjuntos.map((a, i) => (
+                        <Adjunto key={i} src={`/api/pulse/leads/adjunto/${h.id}/${i}`} tipo={a.tipo} nombre={a.nombre} />
+                      ))}
+                      {!(h.adjuntos.length && ETIQUETAS_SOLAS.has(h.texto)) && <p className="whitespace-pre-wrap break-words">{h.texto}</p>}
                       <p className="mt-1 text-right text-[10px] opacity-60">
                         {cuando(h.createdAt)}
                         {h.autor ? ` · ${h.autor.split(" ")[0]}` : h.tipo === "saliente" ? " · desde el teléfono" : ""}
@@ -374,5 +377,24 @@ export function DetalleLead({ d, marcaSlug, usuarios, puedeBorrar, puedeMarcarEq
         }}
       />
     </div>
+  );
+}
+
+// Si el mensaje era solo el audio o la foto, el texto es la etiqueta ("🎤 Audio"): no se repite debajo.
+const ETIQUETAS_SOLAS = new Set(["🎤 Audio", "📷 Foto", "🎬 Video", "📄 Documento", "📎 Archivo", "📎 Archivo adjunto"]);
+
+function Adjunto({ src, tipo, nombre }: { src: string; tipo: string; nombre: string }) {
+  if (tipo === "audio") return <audio controls preload="none" src={src} className="mb-1 h-10 w-64 max-w-full" />;
+  if (tipo === "imagen")
+    return (
+      <a href={src} target="_blank" rel="noreferrer" className="mb-1 block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="Foto de WhatsApp" loading="lazy" className="max-h-64 max-w-full rounded-md object-contain" />
+      </a>
+    );
+  return (
+    <a href={src} target="_blank" rel="noreferrer" className="mb-1 inline-flex items-center gap-1.5 rounded-md border bg-background/60 px-2.5 py-1.5 text-xs font-medium underline-offset-2 hover:underline">
+      {tipo === "video" ? "🎬 Ver video" : `📄 ${nombre}`}
+    </a>
   );
 }

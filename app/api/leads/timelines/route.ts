@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 
 import { after, NextResponse, type NextRequest } from "next/server";
 
+import { guardarAdjuntos } from "@/lib/leads/adjuntos";
 import { detectarNicho } from "@/lib/leads/nicho";
 import { registrarMensaje, registrarWebhook } from "@/lib/leads/repo";
 import { leerTimelines, MARCAS, normalizarTelefono } from "@/lib/leads/reglas";
@@ -49,6 +50,10 @@ export async function POST(req: NextRequest) {
     } catch (e) {
       resultado = `error:${e instanceof Error ? e.message : String(e)}`.slice(0, 300);
       console.error("[leads/timelines]", resultado);
+    }
+    // Audios, fotos y documentos: el link de Timelines vence a los 15 min → se copian ya a Storage.
+    if (ev.adjuntos.length && /^(lead-nuevo|mensaje|grupo|grupo-nuevo):/.test(resultado)) {
+      await guardarAdjuntos(m.marca, ev.mensajeId, ev.adjuntos).catch((e) => console.error("[leads/adjuntos]", e));
     }
     await registrarWebhook("timelines", m.marca, ev.evento, resultado, cuerpo).catch(() => {});
     // Negocio / nicho para la tarjeta, leído de sus primeros mensajes (solo leads, nunca grupos).

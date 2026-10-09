@@ -31,3 +31,14 @@ export async function notificarCEO(texto: string): Promise<{ telegram: boolean; 
   ]);
   return { telegram: tg, slack: sl };
 }
+
+/** Desde el bot de Nico (lo técnico y lo que se aprueba con él: "ok exp <código>"). Sin su token sale por el
+ * bot de siempre. Slack queda de espejo igual que notificarCEO. */
+export async function notificarPorNico(texto: string): Promise<{ telegram: boolean; slack: boolean }> {
+  const token = process.env.TELEGRAM_BOT_TOKEN_NICO;
+  const [tg, sl] = await Promise.all([
+    token && process.env.TELEGRAM_CEO_CHAT_ID ? enviarTelegram(texto, { token }).then((r) => r.ok) : telegramListo() ? enviarTelegram(texto).then((r) => r.ok) : Promise.resolve(false),
+    notificarSlackCEO(`[Nico] ${texto}`),
+  ]);
+  return { telegram: tg, slack: sl };
+}
