@@ -232,11 +232,13 @@ try {
       const locales = await Promise.all(r.material.map(bajarLocal));
       console.log(`Material de ${slug}: ${r.material.length} archivo(s)${r.carpetasDrive ? ` (incluye ${r.carpetasDrive} carpeta(s) de Drive)` : ""}`);
       r.material.forEach((m, i) => {
+        if (m.tipo === "video") return;
         console.log(`\n[${m.tipo.toUpperCase()}] ${m.carpeta ? m.carpeta + " / " : ""}${m.nombre}${m.bytes ? ` · ${Math.round(m.bytes / 1024)} KB` : ""}`);
         if (locales[i]) console.log(`  mirar: ${locales[i]}`);
         if (m.url) console.log(`  url:   ${m.url}`);
-        else if (m.tipo === "video") console.log("  (b-roll: no se usa en motion por ahora)");
       });
+      const videos = r.material.filter((m) => m.tipo === "video");
+      if (videos.length) console.log(`\n[B-ROLL] ${videos.length} video(s): no se usan en motion por ahora (${videos.slice(0, 6).map((v) => v.nombre).join(", ")}${videos.length > 6 ? "…" : ""})`);
       for (const a of r.avisos || []) console.log(`⚠ ${a}`);
       console.log("\nSiguiente: mira el logo y las fotos con Read; fija su marca (ficha.marca: logoUrl = url del logo, fondo/acento = colores que ves en el logo) y arma el guion con las fotos (escena retrato, foto = url).");
       break;

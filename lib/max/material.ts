@@ -72,9 +72,14 @@ export async function reunirMaterial(slug: string, { canal, hilo, drive = [] }: 
   // 2) Drive (carpetas públicas).
   pendientes.push(...(await archivosDrive([...carpetas])));
 
-  // 3) Bajar lo que sirve (logo, fotos, PDF) y subirlo a Storage; los videos solo se listan.
+  // 3) Bajar lo que sirve (logo, fotos, PDF) y subirlo a Storage; los videos solo se listan. Primero lo que se baja
+  // (el b-roll no ocupa cupo) y sin repetir: la misma foto subida al hilo y al Drive se baja una sola vez (la de Slack).
+  const deSlack = new Set(pendientes.filter((p) => p.origen === "slack").map((p) => p.nombre.toLowerCase()));
+  const sinRepetir = pendientes.filter((p) => p.origen === "slack" || !deSlack.has(p.nombre.toLowerCase()));
+  const esVideo = (p: Pendiente) => mimeDe(p.nombre, p.mime).startsWith("video/");
+  const ordenados = [...sinRepetir.filter((p) => !esVideo(p)), ...sinRepetir.filter(esVideo)];
   const nuevos: Material[] = [];
-  const cola = pendientes.slice(0, MAX_ARCHIVOS);
+  const cola = [...ordenados.filter((p) => !esVideo(p)).slice(0, MAX_ARCHIVOS), ...ordenados.filter(esVideo).slice(0, 30)];
   const trabajar = async (p: Pendiente) => {
     const mime = mimeDe(p.nombre, p.mime);
     const tipo = clasificar(p.nombre, mime, p.carpeta);
@@ -87,7 +92,8 @@ export async function reunirMaterial(slug: string, { canal, hilo, drive = [] }: 
     nuevos.push({ ...base, bytes: b.datos.length, url: (await urlFirmada(ruta, UN_ANO)) ?? undefined });
   };
   for (let i = 0; i < cola.length; i += 4) await Promise.all(cola.slice(i, i + 4).map((p) => trabajar(p).catch((e) => avisos.push(`${p.nombre}: ${String(e?.message || e).slice(0, 120)}`))));
-  if (pendientes.length > MAX_ARCHIVOS) avisos.push(`había ${pendientes.length} archivos; tomé los primeros ${MAX_ARCHIVOS}`);
+  const imagenes = ordenados.filter((p) => !esVideo(p)).length;
+  if (imagenes > MAX_ARCHIVOS) avisos.push(`había ${imagenes} imágenes/PDF; tomé las primeras ${MAX_ARCHIVOS}`);
 
   const material = unirMaterial(viejo, nuevos);
   await guardarCliente({ slug, ficha: { material } });
