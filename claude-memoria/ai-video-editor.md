@@ -197,3 +197,12 @@ pregunta; si piden subtítulos/b-roll manda a "+ Nuevo".
 **Revisión "editor de Hollywood" (26–27/sep/2026, pedida por Elvin)**: 3 revisores (sonido/imagen/títulos) midieron renders reales vs referencias → reglas de oficio en el código (detalle en CLAUDE.md de Cortex): gancho arranca con la voz (piso de ruido por toma), audio exacto por clip, ganancia lineal, ducking sin bombeo, pistas a −18 LUFS; encuadre por plano en coordenadas de ventana (1:1 arreglado), tope de resolución 2×, cara centrada; cifras que parten la frase, texto de cifra solo literal, sin repetir; correcciones: nombres propios solo con contexto y nunca "otra forma de lo que dijo". EN PROD. 27/sep Elvin decidió: SIN imágenes de IA cuando el cliente manda tomas propias; «lo demás decide tú» → color igualado entre tomas (técnico, topes suaves), subtítulos quemados detectados (no se duplican), cortes de escala para el ritmo. Todo EN PROD.
 
 **6/oct/2026 — imágenes, logo y deploy liviano:** Cortex recibe imágenes (logo → cierre de ~2 s al final; fotos → tomas de apoyo propias, IA apagada) y el editor manual deja cambiar una imagen de IA por la foto del cliente (subir o escoger del banco; el baúl sigue solo admin). **Deploy:** la red de la Mac cortaba subidas grandes (BadRecordMac en ~15 intentos); la música (~90 MB) se movió al volumen `/data/music-lib` (enlazada en entrypoint) y cada deploy sube ~15 MB — una pista nueva hay que copiarla también a `/data/music-lib`. María avisada en #cortex-bori-edit-videos.
+
+**Auditoría 9/oct (Elvin: "siguen los mismos problemas")**: la causa casi nunca era el síntoma sino ESTADO PEGADO o
+mal interpretado: (1) música re-elegida en cada nota (excluía la anterior), (2) volumen absoluto que pisaba la
+calibración por pista, (3) dirección del b-roll deducida del número → «más» apagaba, (4) letra que ya estaba = no-op,
+(5) «baja un poco» → position bottom → letra al 45 %, (6) notas rehacían desde cero y borraban lo manual,
+(7) Level Up es AGENCIA: ajustes de un video se volvían regla de todos, (8) restore_ranges no llegaba al cortador,
+(9) Cloudflare corta subidas >100 MB (spinner eterno). Todo con pruebas en tests/test_revision_repetidas.py y sección
+en el CLAUDE.md de Cortex. Antes de "arreglar" un pedido repetido: medir versión por versión qué cambió de verdad
+(script medir: broll/subtítulos/música por timeline.vN.json) y mirar cuadros reales, no confiar en los overrides.
