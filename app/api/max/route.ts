@@ -4,6 +4,7 @@ import { BloqueoMax, buscarLlamadas, canalClientePermitido, canalesDelBot, envia
 import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from "@/lib/max/operador";
 import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes, listarProgramados, programar } from "@/lib/max/repo";
 import { asegurarCarpeta, driveListo, guardarArchivo, guardarDoc, listarCarpeta, saludDrive } from "@/lib/max/drive";
+import { reunirMaterial } from "@/lib/max/material";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
 // Max en Slack — las manos de Max (scripts/max.mjs, desde su contenedor de Railway). Auth con
@@ -18,9 +19,10 @@ import { secretoValido } from "@/lib/pulse/seguridad";
 //        { accion: "nota", texto, hilo? }                 nota de Max en #max-aprobaciones
 //        { accion: "cerrar", id, estado: ejecutado|fallido, resultado, datos? }
 //        { accion: "enviar", id }                         reintenta enviar al cliente algo YA aprobado
+//        { accion: "material", cliente, hilo?, canal?, drive?[] }  baja logo/fotos/PDF del hilo y de Drive → ficha.material
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300; // "material" baja y sube varias fotos (Slack + Drive)
 
 function autorizado(req: NextRequest): boolean {
   return secretoValido(req.headers.get("x-cron-secret"), process.env.CRON_SECRET);
@@ -93,6 +95,18 @@ export async function POST(req: NextRequest) {
         throw e;
       }
       return NextResponse.json({ ok: true, id: r.item.id, aviso: r.aviso });
+    }
+    case "material": {
+      const slug = s("cliente", 120);
+      if (!slug) return mal("cliente");
+      const canal = s("canal", 30);
+      if (canal && canal !== process.env.SLACK_MAX_CHANNEL_ID && !canalClientePermitido(canal)) return mal("ese canal no está habilitado para Max", 403);
+      const drive = Array.isArray(b.drive) ? (b.drive as unknown[]).filter((x): x is string => typeof x === "string").slice(0, 5) : [];
+      try {
+        return NextResponse.json({ ok: true, ...(await reunirMaterial(slug, { canal, hilo: s("hilo", 30), drive })) });
+      } catch (e) {
+        return mal(String((e as Error)?.message || e).slice(0, 300), 500);
+      }
     }
     case "nota": {
       const texto = s("texto", 30000);

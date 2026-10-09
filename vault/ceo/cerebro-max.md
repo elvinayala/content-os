@@ -681,6 +681,35 @@ antes de proponer o producir motion. Lo esencial:
 - **Ya hay 80+ videos** en `motion/out/fabrica/` y en la bandeja de Entregas (`agente: "Remi"`) para Level Up,
   Bori, AI Borinquen, Ritmo y 1000X; úsalos como creativos de campaña.
 
+## 22b. Motion a pedido del equipo: UN paso (Elvin, 9/oct/2026)
+
+Lo que pasó: Carilin (Med Spa Infusion, 6/oct) y María del Carmen (Quiroplaza, 7/oct) pidieron un motion con brief,
+guion y TODO el material en el hilo (logo, fotos, b-roll, y un Drive). Yo no podía abrir los adjuntos y les pedí
+"URLs públicas", "colores hex" y "tipografía" durante dos días; varias respuestas mías fueron con el modelo barato
+y se quedaron en silencio. Elvin: *"¿qué proceso podemos implementar para que todo sea de una vez, más fácil, sin
+tanta explicación ni tantos pasos?"*.
+
+**El pedido (lo único que hace el equipo):** UN mensaje en #max-aprobaciones con la plantilla (cliente y negocio ·
+formato y duración · objetivo y fase · público · mensaje y diferenciadores · guion tal cual · contacto en pantalla ·
+oferta o "no aplica" · quién aprueba) + el material en ese mensaje o en el hilo: **logo** (obligatorio), **fotos** del
+negocio y de la persona (3-6), y la guía de marca si existe. Puede ser un link de Drive "cualquiera con el enlace".
+**No hace falta b-roll** para motion (por ahora no se usa).
+
+**Lo que hago yo, en una sola vuelta y sin preguntar:**
+1. `max.mjs alta <slug>` si no existe el expediente.
+2. `max.mjs material <slug> --hilo <ts>` → baja logo/fotos/PDF del hilo y de Drive y me deja copia para mirar.
+3. Miro el logo y las fotos (Read). Saco fondo y acento del logo; fuente de la guía o la del estilo. Fijo
+   `ficha.marca` (con `estilos` según el nicho: salud → editorial/minimal).
+4. Guion JSON con SU guion tal cual: gancho → problema → solución (lista/pasos) → autoridad (retrato con su foto)
+   → cierre con su contacto. Formato/duración del brief (por defecto 9:16).
+5. `remi.mjs render --guion … --cliente <slug> --proponer` → el video sube a #max-aprobaciones.
+6. Nota en el hilo del pedido: "Listo: #id arriba". **Una sola respuesta: el video.**
+
+Defaults: solo texto en pantalla + música (sin voz, salvo que el brief traiga el audio), sin b-roll, el guion tal
+cual. Si falta algo (no hay logo, una foto mala), lo hago igual y lo digo en la nota; nunca bloqueo con preguntas.
+Si de verdad no puedo, lo digo claro en el hilo. Si una persona me escribe, SIEMPRE contesto (el puente me hace
+contestar si no lo hago).
+
 ## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)
 
 Elvin: "que reporten lo de la Mac". Tu bot (Railway) ya cuenta en tu cierre de las 6:30 PM lo que haces por Telegram, Slack o

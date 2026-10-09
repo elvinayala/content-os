@@ -25,6 +25,11 @@
 //   node scripts/max.mjs drive-doc <slug> <branding|estrategia|creativos|videos|reportes|documentos> --titulo "…" --texto "…"
 //   node scripts/max.mjs drive-archivo <slug> <subcarpeta> --url https://… [--nombre archivo.png]   (flyer/imagen/video de fal…)
 //   node scripts/max.mjs drive-listar <slug>                        qué hay en la carpeta
+//   node scripts/max.mjs material <slug> --hilo <ts> [--canal C…] [--drive <link de carpeta>]
+//        EL MATERIAL DEL PEDIDO (9/oct): baja solo lo que el equipo subió al hilo (adjuntos de Slack) y las carpetas de
+//        Drive "cualquiera con el enlace" que pegaron ahí → logo, fotos y PDF con URL que usa Remi (los b-roll solo se
+//        listan). Te deja copia en /tmp para que los MIRES con Read (colores del logo, qué foto va en cada escena).
+//        Nunca le pidas al equipo "URLs públicas", "hex" ni "tipografía": corre esto.
 // ("publicar" no se propone aquí: lo crea meta-ads.mjs proponer-publicar con los ids exactos.)
 import fs from "node:fs";
 import path from "node:path";
@@ -42,7 +47,7 @@ function env(n) {
 const BASE = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
 const SECRETO = env("CRON_SECRET");
 
-const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo", "url", "imagenes", "videos"]);
+const CON_VALOR = new Set(["nombre", "canal", "titulo", "texto", "hilo", "nota", "cuenta", "pagina", "ig", "pixel", "minimo", "url", "imagenes", "videos", "drive"]);
 const pos = [];
 const val = {};
 const argv = process.argv.slice(2);
@@ -55,10 +60,10 @@ for (let i = 0; i < argv.length; i++) {
 }
 const [cmd, ...rest] = pos;
 
-async function api(metodo, q, cuerpo) {
+async function api(metodo, q, cuerpo, ms = 60000) {
   if (!SECRETO) throw new Error("Falta CRON_SECRET");
   const url = `${BASE}/api/max${q ? "?" + new URLSearchParams(q) : ""}`;
-  const r = await fetch(url, { method: metodo, headers: { "x-cron-secret": SECRETO, "Content-Type": "application/json" }, body: cuerpo ? JSON.stringify(cuerpo) : undefined, signal: AbortSignal.timeout(60000) });
+  const r = await fetch(url, { method: metodo, headers: { "x-cron-secret": SECRETO, "Content-Type": "application/json" }, body: cuerpo ? JSON.stringify(cuerpo) : undefined, signal: AbortSignal.timeout(ms) });
   const j = await r.json().catch(() => ({ ok: false, error: `HTTP ${r.status}` }));
   if (!r.ok || j.ok === false) throw new Error(j.error || j.texto || `HTTP ${r.status}`);
   return j;
@@ -204,6 +209,36 @@ try {
       if (!slug || !sub || !val.url) salir("Uso: drive-archivo <slug> <subcarpeta> --url https://… [--nombre x.png]");
       const r = await api("POST", null, { accion: "drive-archivo", cliente: slug, sub, url: val.url, nombre: val.nombre });
       console.log(`✔ Archivo en Drive: ${r.url}`);
+      break;
+    }
+    case "material": {
+      const slug = rest[0];
+      if (!slug || (!val.hilo && !val.drive)) salir("Uso: material <slug> --hilo <ts> [--canal C…] [--drive <link>]");
+      const r = await api("POST", null, { accion: "material", cliente: slug, hilo: val.hilo, canal: val.canal, drive: val.drive ? [val.drive] : [] }, 320000);
+      // Copia local (en /tmp, NUNCA en el repo: son fotos de clientes) para mirarlas con Read.
+      const os = await import("node:os");
+      const dir = path.join(os.tmpdir(), "max-material", slug);
+      fs.mkdirSync(dir, { recursive: true });
+      const bajarLocal = async (m) => {
+        if (!m.url || !["logo", "foto", "pdf"].includes(m.tipo)) return "";
+        const destino = path.join(dir, `${m.clave}-${m.nombre}`.replace(/[^A-Za-z0-9._-]+/g, "-").slice(-90));
+        if (!fs.existsSync(destino)) {
+          const b = await fetch(m.url, { signal: AbortSignal.timeout(60000) }).then((x) => (x.ok ? x.arrayBuffer() : null)).catch(() => null);
+          if (!b) return "";
+          fs.writeFileSync(destino, Buffer.from(b));
+        }
+        return destino;
+      };
+      const locales = await Promise.all(r.material.map(bajarLocal));
+      console.log(`Material de ${slug}: ${r.material.length} archivo(s)${r.carpetasDrive ? ` (incluye ${r.carpetasDrive} carpeta(s) de Drive)` : ""}`);
+      r.material.forEach((m, i) => {
+        console.log(`\n[${m.tipo.toUpperCase()}] ${m.carpeta ? m.carpeta + " / " : ""}${m.nombre}${m.bytes ? ` · ${Math.round(m.bytes / 1024)} KB` : ""}`);
+        if (locales[i]) console.log(`  mirar: ${locales[i]}`);
+        if (m.url) console.log(`  url:   ${m.url}`);
+        else if (m.tipo === "video") console.log("  (b-roll: no se usa en motion por ahora)");
+      });
+      for (const a of r.avisos || []) console.log(`⚠ ${a}`);
+      console.log("\nSiguiente: mira el logo y las fotos con Read; fija su marca (ficha.marca: logoUrl = url del logo, fondo/acento = colores que ves en el logo) y arma el guion con las fotos (escena retrato, foto = url).");
       break;
     }
     case "drive-listar": {

@@ -36,7 +36,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { modeloParaNico, nombreCorto, NICO_TOPE_DIA } from "./nico-gasto.mjs";
-import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
+import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, respondioEnSlack, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
 
@@ -265,6 +265,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     }, AVISO_CADA_MIN * 60000) : null;
     let final = "", texto = "", err = "", buf = "", costo = 0, subtipo = "", durMs = 0;
     const delegados = new Set();
+    const comandos = []; // los Bash que corrió (p. ej. para saber si Max le contestó a alguien en Slack)
     const onLinea = (linea) => {
       if (!linea.trim()) return;
       let ev; try { ev = JSON.parse(linea); } catch { return; }
@@ -273,7 +274,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           if (c.type === "text" && c.text) texto = c.text;
           if (c.type === "tool_use") {
             const i = c.input || {};
-            if (c.name === "Bash") { const d = delegadoEn(i.command); if (d && d !== YO) delegados.add(d); }
+            if (c.name === "Bash") { comandos.push(String(i.command || "").slice(0, 400)); const d = delegadoEn(i.command); if (d && d !== YO) delegados.add(d); }
             const que = c.name === "Read" ? `leyendo ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Edit" || c.name === "Write" ? `editando ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Bash" ? `corriendo: ${String(i.command ?? "").slice(0, 60)}` :
@@ -299,7 +300,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
       }
     };
     child.on("error", (e) => { fin(); LOG("claude spawn error:", e.message); resolve({ code: 1, out: "", err: e.message }); });
-    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo, subtipo, delegados: [...delegados] }); });
+    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo, subtipo, delegados: [...delegados], comandos }); });
   });
 }
 
@@ -310,7 +311,7 @@ async function correrYTerminar(prompt, persona, sesion, nueva, onProgreso, opts 
   if (r.subtipo !== "error_max_turns" || opts.yaSeguido || r.code === null) return r;
   LOG("claude: se quedó sin pasos → sigue una vez");
   const r2 = await correrClaude("Te quedaste sin pasos a mitad del trabajo. Sigue EXACTAMENTE donde ibas, termínalo sin repetir lo hecho y responde con lo que quedó (links/ids).", persona, sesion, false, onProgreso, { ...opts, yaSeguido: true });
-  return { ...r2, out: r2.out || r.out, delegados: [...new Set([...(r.delegados || []), ...(r2.delegados || [])])] };
+  return { ...r2, out: r2.out || r.out, delegados: [...new Set([...(r.delegados || []), ...(r2.delegados || [])])], comandos: [...(r.comandos || []), ...(r2.comandos || [])] };
 }
 
 // Respaldo si el CLI no responde: la API directa con la persona (sin herramientas, pero contesta).
@@ -591,6 +592,21 @@ async function atenderBuzon(token, chatCEO, st) {
     if (ES_NICO) optsBuzon.modelo = modeloParaNico(m.texto, deSlack ? `solicitud:${m.id}:${m.de}` : `buzon:${m.id}:${m.de}`);
     let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, optsBuzon);
     if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, optsBuzon); }
+    // Una PERSONA le escribió a Max en Slack y Max no le contestó nada (7-8/oct: "👀 Max lo tiene" y después silencio,
+    // en los motion de Quiroplaza y Med Spa). Una vuelta más, con el modelo bueno, para que conteste en el hilo; si ni
+    // así, una nota honesta en el hilo y aviso a Elvin.
+    const dePersona = deSlack && /^\[(Max canal · de|Slack cliente)/.test(m.texto);
+    if (dePersona && r.code === 0 && !respondioEnSlack(r.comandos)) {
+      const hiloTs = (m.texto.split("\n")[0].match(/hilo ([\d.]+)/) || [])[1];
+      const quien = (m.texto.split("\n")[0].match(/de ([^·\]]+)/) || [])[1]?.trim() || "quien te escribió";
+      LOG("buzón: Max no contestó en Slack → otra vuelta");
+      const r2 = await correrClaude(`No le contestaste nada a ${quien} en Slack, y ${quien} está esperando. Contéstale AHORA en su hilo con node scripts/max.mjs nota '…'${hiloTs ? ` --hilo ${hiloTs}` : ""}: si ya lo hiciste, el resultado; si lo estás produciendo, hazlo en esta misma vuelta (material → marca → guion → remi.mjs … --proponer) y avísale; si de verdad no puedes, dilo claro y por qué. Nunca le pidas URLs, colores hex ni tipografías: eso lo sacas tú del material.`, persona, st.sesion, false, null, { ...optsBuzon, modelo: MODELO_PLAN });
+      r = { ...r2, out: r2.out || r.out, comandos: [...(r.comandos || []), ...(r2.comandos || [])] };
+      if (!respondioEnSlack(r.comandos)) {
+        await notaAprobacionesMax(`${quien}, se me trabó este pedido y no pude avanzar ahora. Ya le avisé a Elvin para resolverlo hoy.`, hiloTs);
+        if (chatCEO) await enviar(token, chatCEO, `⚠️ Max no pudo contestarle a ${quien} en #max-aprobaciones (hilo ${hiloTs || "?"}):\n${m.texto.slice(0, 500)}`).catch(() => {});
+      }
+    }
     // Delegó parte del trabajo a otro agente: el pedido queda abierto hasta que llegue esa respuesta (la
     // continuación lo cierra con el resultado completo). Así el que pidió no recibe un "le pedí a X, espero".
     const espera = !deSlack && (r.delegados || []).length > 0;
@@ -799,17 +815,18 @@ const MAX_SLACK = `OPERAS EN SLACK (cerebro-max.md §17 — léelo si no lo tien
 - SIEMPRE PIDES MATERIAL AL CLIENTE (cerebro §18): en toda estrategia y renovación, una lista de lo que el cliente debe grabar (su servicio frente a cámara, su local, testimonios) aparte de lo que producimos; recomiendas UGC o contenido profesional, y a médicos/profesionales LAS DOS (profesional de ellos trabajando + UGC en colaboración).
 - PRIMER CLIENTE REAL Y ROLES (cerebro §19): Carilin te asigna en #max-aprobaciones tu primer cliente (pago inicial ≤ $2,000); estás a prueba: nada se publica sin su 'publica'. Tú no te reúnes con el cliente: la reunión de estrategia la hace Carilin (Directora de Operaciones) o manda a Jessica (Project Manager) a pedir lo que necesites.
 - PRODUCES Y MONTAS (cerebro §21): con el plan aprobado produces SIN pedir otro OK (hasta 8 flyers y 3 videos por ola): flyers con la guía de Elvin: fal.mjs flyer --titulo … --bullets 'a|b|c' --cta … --producto … --foto <fotos reales del cliente> --logo <su logo real> (minimalista, elegante, pocas palabras, su producto de héroe), videos con fal.mjs video --img <flyer o foto>, copy por pieza → proponer <slug> creativos --imagenes … --videos … (se ven en Slack) → con los creativos aprobados: meta-ads.mjs cliente:<slug> estrategia --creativos '<json>' (sube los medios y arma el Método 5 Fases EN PAUSA) → proponer-publicar → 'publica'.
+- VIDEO MOTION A PEDIDO (Elvin, 9/oct — proceso de UN paso; cerebro §22b): cuando Carilin, María del Carmen, Jessica o Elvin te piden un motion en #max-aprobaciones (brief + guion + adjuntos en el hilo o un link de Drive), NO preguntas nada que puedas resolver tú. En ESTA misma vuelta: 1) node scripts/max.mjs alta <slug> si no existe; 2) node scripts/max.mjs material <slug> --hilo <ts del pedido> (baja logo, fotos y PDF del hilo y de Drive; NUNCA pidas "URLs públicas", "hex" ni "tipografía"); 3) mira con Read el logo y 2-4 fotos; fija su marca con max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"<url del logo>","fondo":"#…","acento":"#…","fuente":"…","estilos":[…]}}' (colores sacados del logo; fuente: la de la guía si la hay, si no Inter/Montserrat/Sora/Poppins según el estilo); 4) arma el guion JSON con SU guion tal cual (skill motion-graphics §6-§7): escenas gancho/lista/pasos/dato y retrato con SUS fotos (foto = url del material), cierre con su contacto; formato y duración del brief (por defecto 9:16); 5) node scripts/remi.mjs render --guion '<json>' --cliente <slug> --proponer --titulo "…" --texto "…" (~3-5 min); 6) max.mjs nota "Listo: #<id> arriba para aprobar" --hilo <ts>. Defaults sin preguntar: solo texto en pantalla + música (sin voz), sin b-roll (no se usa en motion por ahora), el guion tal cual. Si falta algo (p. ej. no hay logo), lo haces igual sin eso y lo dices en la nota. Una sola respuesta: el video.
 - LANZAR EN 7 DÍAS (cerebro §20): plan el día 1, flyers/videos/copies a aprobación el día 2, campañas en borrador con esos creativos el día 3, QA días 5-6, 🚀 el día 7; el lanzamiento no espera al contenido del cliente (entra en la ola 2). Si un plazo se va a romper, avisas en #max-aprobaciones con el día y la causa.
 - ONBOARDING: tu arranque real es el Fathom de la reunión de onboarding de Jessica ([Onboarding nuevo · … fuente fathom]). Empieza ya (expediente, llamada de venta, competencia, matemática) y espera el resumen de Jessica en el hilo que el servidor abrió en #max-aprobaciones (te llega como [Max canal · de Jessica · hilo …]; el hilo dice '(cliente: slug)'). Con su resumen armas el plan y lo propones. Aprueban Jessica, Carilin o Elvin; publicar solo Elvin o Carilin.
 - Hoy NINGÚN canal de cliente está habilitado (MAX_CANALES_CLIENTES vacío): trabajas solo en #max-aprobaciones; no pidas que te agreguen a canales de clientes.
 - Si algo no te toca a ti o no tienes cómo hacerlo, dilo en una nota corta. No inventes datos, ids ni resultados.
 - Termina con UNA línea de qué hiciste (ids de lo propuesto). No escribas nada más: tu respuesta final no le llega a nadie.`;
 
-async function notaAprobacionesMax(texto) {
+async function notaAprobacionesMax(texto, hilo) {
   const base = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
   const secreto = env("CRON_SECRET");
   if (!secreto) return;
-  try { await fetch(`${base}/api/max`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify({ accion: "nota", texto: `${texto}\n— Max` }), signal: AbortSignal.timeout(10000) }); } catch {}
+  try { await fetch(`${base}/api/max`, { method: "POST", headers: { "x-cron-secret": secreto, "Content-Type": "application/json" }, body: JSON.stringify({ accion: "nota", texto: `${texto}\n— Max`, ...(hilo ? { hilo } : {}) }), signal: AbortSignal.timeout(10000) }); } catch {}
 }
 
 // ---- Jornada y cierre del día (26/sep): el reporte del agente en Ritmo (equipo digital) ----

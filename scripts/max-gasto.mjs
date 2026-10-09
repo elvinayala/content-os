@@ -10,6 +10,13 @@ export const TOPE_DIA = Number(process.env.MAX_TOPE_DIA || 10);
 export const TOPE_SEMANA = Number(process.env.MAX_TOPE_SEMANA || 25);
 
 const TIPOS_DE_TRABAJO = /tipo (plan|creativos|campana)\b/;
+const PRODUCCION = /motion|video|flyer|creativ|render|logo|foto|imagen|b-?roll|drive\.google|guion|guión|opci[oó]n|ejecut|esperando|sigo|listo|adjunt|archivo|material|campa[ñn]a|estrategia|plan\b/i;
+
+// ¿Max le contestó a alguien en Slack en esta corrida? (los comandos Bash que corrió). Si una persona le escribió y
+// no hubo respuesta, el puente lo hace contestar (nunca más el "👀 Max lo tiene" seguido de silencio).
+export function respondioEnSlack(comandos) {
+  return (comandos || []).some((c) => /max\.mjs\s+(nota|proponer|cerrar|enviar)\b/.test(c) || (/remi\.mjs\b/.test(c) && /--proponer\b/.test(c)) || /meta-ads\.mjs\b.*\bproponer-publicar\b/.test(c));
+}
 
 // Lo que llega de Slack al buzón de Max → modelo. Planear/investigar/producir = Opus; mensajes,
 // confirmaciones y trámites = el barato.
@@ -23,9 +30,12 @@ export function modeloParaSlack(texto) {
     return MODELO_BARATO; // publicar (correr un script), ok de algo interno, correcciones de mensajes
   }
   if (/^\[Max canal/.test(cabecera)) {
-    // El equipo le habla en #max-aprobaciones: un resumen largo (p. ej. el de Jessica) arma un plan.
+    // El equipo le habla en #max-aprobaciones: un resumen largo (p. ej. el de Jessica) arma un plan. Y un mensaje corto
+    // DENTRO de un pedido de producción también es trabajo: "usa la opción A", "brolls", "¿lo estás ejecutando?". Con
+    // el barato, Max volvía a preguntar o no contestaba nada (motion de Quiroplaza y Med Spa, 7-8/oct).
     const cuerpo = t.slice(cabecera.length).trim();
-    return cuerpo.length > 400 ? MODELO_PLAN : MODELO_BARATO;
+    if (cuerpo.length > 400 || PRODUCCION.test(cuerpo)) return MODELO_PLAN;
+    return MODELO_BARATO;
   }
   return MODELO_BARATO; // [Slack cliente …] y lo demás: mensajes
 }

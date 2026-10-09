@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { costoDeLaCorrida, dentroDelTope, diaPR, gastoHoy, gastoSemana, lunesPR, MODELO_BARATO, MODELO_PLAN, modeloParaSlack, modeloParaTelegram, registrarGasto } from "../scripts/max-gasto.mjs";
+import { costoDeLaCorrida, respondioEnSlack, dentroDelTope, diaPR, gastoHoy, gastoSemana, lunesPR, MODELO_BARATO, MODELO_PLAN, modeloParaSlack, modeloParaTelegram, registrarGasto } from "../scripts/max-gasto.mjs";
 
 test("modelo: Opus para planear/investigar/producir, el barato para mensajes", () => {
   assert.equal(MODELO_PLAN, "claude-opus-5-5");
@@ -47,4 +47,20 @@ test("el costo de cada corrida es la diferencia con el acumulado de la sesión",
   r = costoDeLaCorrida(u, "s1", 3.62); assert.equal(r.delta, 0.15); u = r.ultimo;
   r = costoDeLaCorrida(u, "s2", 0.8); assert.equal(r.delta, 0.8, "sesión nueva: cuenta completo"); u = r.ultimo;
   r = costoDeLaCorrida(u, "s2", 0.5); assert.equal(r.delta, 0.5, "si el total baja (reinicio), cuenta lo reportado");
+});
+
+test("pedidos de producción en el hilo van al modelo bueno, aunque el mensaje sea corto", () => {
+  const h = "[Max canal · de María del Carmen · hilo 1791399553.096519 · canal C0C56TTPB88]\n";
+  assert.equal(modeloParaSlack(h + "USA LA OPCIÓN A"), MODELO_PLAN);
+  assert.equal(modeloParaSlack(h + "lo estás ejecutando?"), MODELO_PLAN);
+  assert.equal(modeloParaSlack(h + "brolls"), MODELO_PLAN);
+  assert.equal(modeloParaSlack(h + "opción 1:\n<https://drive.google.com/drive/folders/1A7a5HJwkYLaPckJismHi0PyOV_pzgjd1|drive>"), MODELO_PLAN);
+  assert.equal(modeloParaSlack(h + "gracias!"), MODELO_BARATO);
+});
+
+test("sabe si Max le contestó a alguien en Slack", () => {
+  assert.equal(respondioEnSlack(["node scripts/max.mjs material quiroplaza --hilo 1.2"]), false);
+  assert.equal(respondioEnSlack(["node scripts/max.mjs nota 'Listo' --hilo 1.2"]), true);
+  assert.equal(respondioEnSlack(["node scripts/remi.mjs render --guion g.json --cliente quiroplaza --proponer"]), true);
+  assert.equal(respondioEnSlack([]), false);
 });

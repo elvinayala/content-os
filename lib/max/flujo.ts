@@ -226,6 +226,15 @@ export async function leerHilo(canal: string, ts: string): Promise<string> {
   return out.join("\n");
 }
 
+// El hilo con sus ADJUNTOS (para el material de los creativos: lib/max/material.ts). El bot tiene files:read.
+export type ArchivoSlack = { id: string; name: string; mimetype?: string; size?: number; url_private_download?: string; url_private?: string };
+export async function hiloConArchivos(canal: string, ts: string): Promise<{ ok: boolean; error?: string; textos: string[]; archivos: ArchivoSlack[] }> {
+  const r = await slackApi<{ messages?: { text?: string; files?: ArchivoSlack[] }[] }>("conversations.replies", { channel: canal, ts, limit: 200 }, true);
+  if (!r.ok) return { ok: false, error: r.error, textos: [], archivos: [] };
+  const msgs = r.messages ?? [];
+  return { ok: true, textos: msgs.map((m) => m.text || ""), archivos: msgs.flatMap((m) => m.files ?? []).filter((f) => f && f.id) };
+}
+
 // Canales privados donde está el bot (para vincular el canal de un cliente nuevo).
 export async function canalesDelBot(): Promise<{ id: string; nombre: string; miembros: number }[]> {
   const out: { id: string; nombre: string; miembros: number }[] = [];

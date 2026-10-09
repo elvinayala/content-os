@@ -44,6 +44,15 @@ export async function urlArchivo(storagePath: string, fileId: string): Promise<s
   return data.signedUrl;
 }
 
+// URL firmada larga (p. ej. 1 año) para material que tiene que leer un servicio de afuera (el render de Remi).
+export async function urlFirmada(storagePath: string, segundos: number): Promise<string | null> {
+  const sb = cliente();
+  if (!sb) return null;
+  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(storagePath, segundos);
+  if (error || !data) throw new Error(`Storage: ${error?.message ?? "sin URL"}`);
+  return data.signedUrl;
+}
+
 export async function leerArchivoLocal(storagePath: string): Promise<Buffer> {
   const fs = await import("node:fs/promises");
   return fs.readFile(await rutaLocal(storagePath));
