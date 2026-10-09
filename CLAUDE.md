@@ -1155,7 +1155,9 @@ quedaban en silencio). Ahora: el pedido = un mensaje en #max-aprobaciones (brief
 tests) baja adjuntos de Slack y carpetas públicas de Drive (embeddedfolderview, sin clave) a Storage `pulse/motion/clientes/<slug>/`
 con URL de 1 año y `ficha.material`; Max los mira, fija `ficha.marca` y corre `remi.mjs … --cliente --proponer`. Mensajes cortos de
 un pedido de producción → modelo bueno (`PRODUCCION` en max-gasto.mjs); si una persona le escribe y Max no contesta, el puente le
-da otra vuelta y si no, nota honesta + aviso a Elvin (`respondioEnSlack`). Cerebro §22b, skill motion-graphics §7.0.
+da otra vuelta y si no, nota honesta + aviso a Elvin (`respondioEnSlack`). Cerebro §22b, skill motion-graphics §7.0. **María del Carmen
+pide cambios** (`MAX_EDITORES`, `editores`/`decisionDeEditor` en operador.ts: su `no <id> …` u `ok <id> pero …` = corrección; aprobar
+sigue siendo de Elvin, Carilin o Jessica). La música del motion se repite hasta el final (`<Audio loop>` en Anuncio.tsx).
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 

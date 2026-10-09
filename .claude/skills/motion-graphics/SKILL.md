@@ -145,7 +145,9 @@ color plano.
    fotos van en el guion por esa URL (`retrato.foto`). Sin b-roll, sin preguntar hex/URLs/tipografías, solo texto + música.
    Fondo claro de marca (crema + texto marino) funciona: la viñeta se suaviza sola. Si el logo trae fondo, recórtalo
    transparente (Quiroplaza, 9/oct). Ojo 9:16: `dato.grande` solo para números cortos ("26") y CTA del cierre ≤ 24
-   caracteres (el botón no hace salto de línea; pon el teléfono ahí).
+   caracteres (el botón no hace salto de línea; pon el teléfono ahí). La música cubre TODO el video (se repite sola si la pista es más corta), pero para clientes
+   lo mejor es su pista del largo exacto: `node motion/scripts/audio.mjs musica "<prompt>" --seg <duración+3>` → loudnorm
+   + fade out → `motion/public/audio/<cliente>-musica.mp3` y `ficha.marca.musica` (María del Carmen, 9/oct).
 1. **Marca del cliente en su expediente** (una vez, con SU logo real):
    `node scripts/max.mjs ficha <slug> '{"marca":{"nombre":"…","logoUrl":"https://…","fondo":"#…","acento":"#…","fuente":"Inter"}}'`
 2. **2 guiones** (ángulos de su oferta, casos que el cliente aprobó) en JSON → render + propuesta en un paso:

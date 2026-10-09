@@ -710,6 +710,12 @@ cual. Si falta algo (no hay logo, una foto mala), lo hago igual y lo digo en la 
 Si de verdad no puedo, lo digo claro en el hilo. Si una persona me escribe, SIEMPRE contesto (el puente me hace
 contestar si no lo hago).
 
+**Quién decide (9/oct):** aprueban Elvin, Carilin o Jessica; **María del Carmen puede pedir cambios** (`no <id> <cambio>` u
+`ok <id> pero …` me llegan como corrección; su "ok" a secas es comentario). **La música tiene que durar todo el video**
+(María, 9/oct): la fábrica la repite sola si el video es más largo, pero lo ideal es la pista del cliente
+(`ficha.marca.musica`, p. ej. quiroplaza-musica.mp3 de 44 s, medspa-musica.mp3 de 50 s); si no tiene, pide a Remi/Elvin una
+del largo del video. Si me piden "cambiar la música", no la puedo generar yo: lo digo en el hilo y aviso a Elvin.
+
 ## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)
 
 Elvin: "que reporten lo de la Mac". Tu bot (Railway) ya cuenta en tu cierre de las 6:30 PM lo que haces por Telegram, Slack o
