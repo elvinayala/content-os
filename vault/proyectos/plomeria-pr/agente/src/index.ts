@@ -158,7 +158,10 @@ app.get("/equipo-firmas/prueba.pdf", async (_req, res) => {
     res.type("pdf").send(await htmlAPdf(html, { pie: "PRUEBA DEL GENERADOR · sin validez", iniciales: px }));
   } catch (e) { console.error("prueba pdf", e); res.status(500).send("El generador de PDF falló: " + (e as Error).message); }
 });
-app.get("/equipo-firmas", (_req, res) => res.type("html").send(panelFirmasHTML(firmas.listar().map((f) => ({ ...f, link: firmas.enlace(f), pdf: firmas.enlacePdf(f) })))));
+const textoWA = (f: firmas.Firma, link: string) => f.tipo === "deposito"
+  ? `Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Para pagarte los viernes por depósito directo necesitamos la información de tu cuenta de banco. Complétala y fírmala desde el celular aquí (toma 2 minutos): ${link}\n\nNo nos mandes los números de la cuenta por mensaje: van solo en ese enlace.`
+  : `Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${link}`;
+app.get("/equipo-firmas", (_req, res) => res.type("html").send(panelFirmasHTML(firmas.listar().map((f) => ({ ...f, link: firmas.enlace(f), pdf: firmas.enlacePdf(f), whatsapp: `https://wa.me/${f.telefono}?text=${encodeURIComponent(textoWA(f, firmas.enlace(f)))}` })))));
 app.post("/equipo-firmas/tipo", (req: any, res) => {
   const f = firmas.listar().find((x) => x.id === String(req.body?.id ?? ""));
   if (!f) return res.status(404).json({ ok: false, error: "No existe." });
@@ -171,11 +174,20 @@ app.post("/equipo-firmas/anular", (req: any, res) => {
 });
 app.post("/equipo-firmas/nuevo", (req: any, res) => {
   const b = req.body ?? {};
-  const tipo = (["aprendiz", "anexo-nombre", "tecnico", "cotizador"].includes(b.tipo) ? b.tipo : "plomero") as "plomero" | "aprendiz" | "anexo-nombre" | "tecnico" | "cotizador";
+  const tipo = (["aprendiz", "anexo-nombre", "tecnico", "cotizador", "deposito"].includes(b.tipo) ? b.tipo : "plomero") as firmas.Firma["tipo"];
   if (!String(b.nombre ?? "").trim() || String(b.telefono ?? "").replace(/\D/g, "").length < 10) return res.json({ ok: false, error: "Pon el nombre y un WhatsApp de 10 dígitos." });
   const f = firmas.crear({ tipo, nombre: String(b.nombre), telefono: String(b.telefono), municipio: b.municipio ? String(b.municipio) : undefined, por: "panel de contratos" });
   const link = firmas.enlace(f);
-  res.json({ ok: true, id: f.id, link, whatsapp: `https://wa.me/${f.telefono}?text=${encodeURIComponent(`Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${link}`)}` });
+  res.json({ ok: true, id: f.id, link, whatsapp: `https://wa.me/${f.telefono}?text=${encodeURIComponent(textoWA(f, link))}` });
+});
+// Autorización de depósito directo para TODOS los activos que no la tienen (firmada o pendiente). 9/oct/2026.
+app.post("/equipo-firmas/deposito-todos", (_req: any, res) => {
+  const ya = firmas.listar().filter((f) => f.tipo === "deposito" && f.estado !== "anulado");
+  const mismo = (a: string, b: string) => a.replace(/\D/g, "").slice(-10) === b.replace(/\D/g, "").slice(-10);
+  const creados = registroPlomeros()
+    .filter((p) => p.estado === "activo" && p.whatsapp.replace(/\D/g, "").length >= 10 && !/demo|prueba/i.test(`${p.id} ${p.nombre}`) && !ya.some((f) => mismo(f.telefono, p.whatsapp)))
+    .map((p) => { const f = firmas.crear({ tipo: "deposito", nombre: p.nombre, telefono: p.whatsapp, municipio: p.municipio, por: "panel de contratos (todos)" }); return { id: f.id, nombre: f.nombre }; });
+  res.json({ ok: true, creados });
 });
 
 // Evita procesar dos veces el mismo mensaje si Meta reintenta el webhook.

@@ -4,12 +4,12 @@ import type { Firma } from "./firmas.js";
 const esc = (s: string) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const fecha = (iso?: string) => (iso ? new Date(iso).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : "");
 
-export function panelFirmasHTML(firmas: (Firma & { link: string; pdf: string })[]): string {
+export function panelFirmasHTML(firmas: (Firma & { link: string; pdf: string; whatsapp: string })[]): string {
   const anulados = firmas.filter((f) => f.estado === "anulado").length;
   const filas = firmas.map((f) => `<tr${f.estado === "anulado" ? ' class="anulado"' : ""}>
-    <td><b>${esc(f.nombre)}</b><br><span class="g">${esc(f.id)} · ${f.tipo === "plomero" ? "Plomero" : f.tipo === "aprendiz" ? "Aprendiz" : f.tipo === "tecnico" ? "Técnico" : f.tipo === "cotizador" ? "Cotizador" : "Anexo C · nombre de la LLC"} · ${esc(f.telefono.replace(/^1/, ""))}</span></td>
+    <td><b>${esc(f.nombre)}</b><br><span class="g">${esc(f.id)} · ${f.tipo === "plomero" ? "Plomero" : f.tipo === "aprendiz" ? "Aprendiz" : f.tipo === "tecnico" ? "Técnico" : f.tipo === "cotizador" ? "Cotizador" : f.tipo === "deposito" ? "🏦 Depósito directo" : "Anexo C · nombre de la LLC"} · ${esc(f.telefono.replace(/^1/, ""))}</span></td>
     <td>${f.estado === "firmado" ? `<span class="ok">✓ Firmado</span><br><span class="g">${fecha(f.firmado?.en)}</span>` : f.estado === "anulado" ? `<span class="g">Anulado</span>` : `<span class="pend">Pendiente</span><br><span class="g">${f.abierto ? "Lo abrió " + fecha(f.abierto.en) : "No lo ha abierto"}</span>${f.tipo === "anexo-nombre" ? `<br><span class="g">No es duplicado: corrige el nombre de la LLC en el contrato que ya firmó. Falta que lo firme.</span>` : ""}`}</td>
-    <td class="acc">${f.estado === "firmado" ? `<a href="${f.pdf}" target="_blank">PDF</a>` : `${f.tipo !== "plomero" && f.tipo !== "aprendiz" ? "" : `<button data-tipo="${f.tipo === "plomero" ? "aprendiz" : "plomero"}" data-id="${esc(f.id)}">Pasar a ${f.tipo === "plomero" ? "aprendiz" : "plomero"}</button>`} <button data-copiar="${esc(f.link)}">Copiar enlace</button> <button data-anular="${esc(f.id)}" data-nombre="${esc(f.nombre)}">Anular</button> <a href="https://wa.me/${esc(f.telefono)}?text=${encodeURIComponent(`Hola ${f.nombre.split(" ")[0]}, te escribo de Resuelto. Aquí está tu contrato para completarlo y firmarlo desde el celular (toma unos 3 minutos): ${f.link}`)}" target="_blank">WhatsApp</a>`}</td>
+    <td class="acc">${f.estado === "firmado" ? `<a href="${f.pdf}" target="_blank">PDF</a>` : `${f.tipo !== "plomero" && f.tipo !== "aprendiz" ? "" : `<button data-tipo="${f.tipo === "plomero" ? "aprendiz" : "plomero"}" data-id="${esc(f.id)}">Pasar a ${f.tipo === "plomero" ? "aprendiz" : "plomero"}</button>`} <button data-copiar="${esc(f.link)}">Copiar enlace</button> <button data-anular="${esc(f.id)}" data-nombre="${esc(f.nombre)}">Anular</button> <a href="${esc(f.whatsapp)}" target="_blank">WhatsApp</a>`}</td>
   </tr>`).join("");
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Contratos · Resuelto</title>
@@ -38,7 +38,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}tr.anulado{display:none
 <h2>Nuevo contrato para firmar</h2>
 <div class="card">
 <form id="f">
-  <div><label>Tipo</label><select name="tipo"><option value="plomero">Plomero con licencia</option><option value="aprendiz">Aprendiz (con certificado de la Junta)</option><option value="tecnico">Técnico: aire, perito electricista o handyman</option><option value="cotizador">Cotizador de proyectos (a comisión)</option><option value="anexo-nombre">Anexo de corrección de nombre (ya firmaron)</option></select></div>
+  <div><label>Tipo</label><select name="tipo"><option value="plomero">Plomero con licencia</option><option value="aprendiz">Aprendiz (con certificado de la Junta)</option><option value="tecnico">Técnico: aire, perito electricista o handyman</option><option value="cotizador">Cotizador de proyectos (a comisión)</option><option value="anexo-nombre">Anexo de corrección de nombre (ya firmaron)</option><option value="deposito">Autorización de depósito directo (cuenta de banco para sus pagos)</option></select></div>
   <div><label>Nombre</label><input name="nombre" required></div>
   <div><label>WhatsApp</label><input name="telefono" inputmode="tel" required placeholder="787-000-0000"></div>
   <div><label>Municipio</label><input name="municipio"></div>
@@ -47,12 +47,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}tr.anulado{display:none
 </form>
 <div id="nuevo"></div>
 </div>
+<h2>Depósito directo</h2>
+<div class="card"><p style="margin:0 0 10px;font-size:14px">Cada plomero activo firma su <b>autorización de depósito directo</b> (su cuenta de banco para pagarle los viernes). Este botón le crea el enlace a todos los activos que no la tienen; después le mandas a cada uno el suyo con el botón <b>WhatsApp</b> de la lista.</p>
+<button class="principal" id="dep-todos">Crear para todos los que faltan</button> <span class="g" id="dep-res"></span></div>
 <h2>Contratos</h2>
 ${anulados ? `<p style="margin:0 0 8px"><button id="ver-anulados" data-t="Ver anulados (${anulados})">Ver anulados (${anulados})</button></p>` : ""}<div class="card" style="padding:4px 12px"><table>${filas || `<tr><td class="g">Todavía no hay contratos.</td></tr>`}</table></div>
 </main>
 <script>
 document.querySelectorAll("[data-tipo]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await fetch(location.pathname+"/tipo",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:b.dataset.id,tipo:b.dataset.tipo})});const j=await r.json();if(j.ok)location.reload();else{alert(j.error||"No se pudo cambiar.");b.disabled=false}});
 document.querySelectorAll("[data-anular]").forEach(b=>b.onclick=async()=>{if(!confirm("¿Anular el contrato pendiente de "+b.dataset.nombre+"? El enlace deja de servir. No se borra: queda en 'Ver anulados'."))return;b.disabled=true;const r=await fetch(location.pathname+"/anular",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:b.dataset.anular})});const j=await r.json();if(j.ok)location.reload();else{alert(j.error||"No se pudo anular.");b.disabled=false}});
+document.getElementById("dep-todos").onclick=async(e)=>{const b=e.target;b.disabled=true;const r=await fetch(location.pathname+"/deposito-todos",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});const j=await r.json();if(!j.ok){alert(j.error||"No se pudo.");b.disabled=false;return}if(!j.creados.length){document.getElementById("dep-res").textContent="Todos los activos ya la tienen (firmada o enviada).";b.disabled=false;return}alert("Listo: "+j.creados.length+" enlaces nuevos ("+j.creados.map(x=>x.nombre).join(", ")+"). Ahora mándale a cada uno el suyo con el botón WhatsApp.");location.reload()};
 const va=document.getElementById("ver-anulados");if(va)va.onclick=()=>{document.body.classList.toggle("ver-anulados");va.textContent=document.body.classList.contains("ver-anulados")?"Ocultar anulados":va.dataset.t};
 document.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(b.dataset.copiar);b.textContent="Copiado ✓"});
 document.getElementById("f").onsubmit=async(e)=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));

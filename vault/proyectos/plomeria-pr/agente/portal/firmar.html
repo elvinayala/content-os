@@ -161,7 +161,7 @@
         for (const o of c.opciones) { const b = document.createElement("button"); b.type = "button"; b.textContent = o.etiqueta; if (datos[c.id] === o.valor) b.classList.add("sel"); b.onclick = () => { datos[c.id] = o.valor; g.querySelectorAll("button").forEach((x) => x.classList.toggle("sel", x === b)); }; g.appendChild(b); }
         f.appendChild(g);
       } else {
-        const i = document.createElement("input"); i.type = c.tipo === "tel" ? "tel" : "text"; i.inputMode = c.tipo === "tel" ? "tel" : "text"; i.name = c.id; i.value = datos[c.id] ?? doc.previos[c.id] ?? ""; i.autocomplete = { nombre: "name", telefono: "tel", direccion: "street-address", municipio: "address-level2" }[c.id] || "off";
+        const i = document.createElement("input"); i.type = c.tipo === "tel" ? "tel" : "text"; i.inputMode = c.tipo === "tel" ? "tel" : c.tipo === "numero" ? "numeric" : "text"; i.name = c.id; i.value = datos[c.id] ?? doc.previos[c.id] ?? ""; i.autocomplete = { nombre: "name", telefono: "tel", direccion: "street-address", municipio: "address-level2" }[c.id] || "off";
         i.oninput = () => (datos[c.id] = i.value); datos[c.id] = i.value; f.appendChild(i);
       }
     }
@@ -170,6 +170,7 @@
   // Sin ninguno no hay contrato: la Ley 59-2022 (Art. 29) no permite hacer plomería sin certificado o licencia.
   let sinCertificado = false;
   const nombreDoc = (t) => (t === "plomero" ? "de plomero afiliado" : t === "aprendiz" ? "de aprendiz" : t === "tecnico" ? "de técnico afiliado" : t === "cotizador" ? "de cotizador" : "· anexo de corrección de nombre");
+  const saludo = (d) => `Hola ${d.nombre.split(" ")[0]} · ${d.tipo === "deposito" ? "tu autorización de depósito directo" : "tu contrato " + nombreDoc(d.tipo)}`;
   function pintarLicencia() {
     $("#licencia").classList.toggle("oculto", doc.tipo !== "plomero" && doc.tipo !== "aprendiz"); // la pregunta de licencia es solo de plomería
     document.querySelectorAll("#licencia [data-tipo]").forEach((b) => b.classList.toggle("sel", sinCertificado ? b.dataset.tipo === "ninguno" : b.dataset.tipo === doc.tipo));
@@ -180,7 +181,7 @@
         : "Te toca el Acuerdo de aprendiz: trabajas siempre junto a un maestro plomero de Resuelto. Vas a necesitar el número de tu certificado. Cuando saques la licencia de oficial, pasas al de plomero.";
     $("#form").classList.toggle("oculto", sinCertificado);
     $("#seguir").disabled = sinCertificado;
-    $("#saludo").textContent = `Hola ${doc.nombre.split(" ")[0]} · tu contrato ${nombreDoc(doc.tipo)}`;
+    $("#saludo").textContent = saludo(doc);
   }
   document.querySelectorAll("#licencia [data-tipo]").forEach((b) => (b.onclick = async () => {
     error("");
@@ -199,6 +200,12 @@
 
   function validarPaso1() {
     for (const c of doc.campos) { const v = String(datos[c.id] ?? "").trim(); if (c.requerido && !v) return `Falta: ${c.etiqueta}.`; if (c.tipo === "tel" && v && v.replace(/\D/g, "").length < 10) return "El teléfono debe tener 10 dígitos."; }
+    if (doc.tipo === "deposito") { // lo mismo que revisa el servidor, para avisar antes de firmar
+      const n = (k) => String(datos[k] ?? "").replace(/[\s-]/g, ""), r = n("ruta"), d = r.split("").map(Number);
+      if (!/^\d{9}$/.test(r) || (3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + (d[2] + d[5] + d[8])) % 10) return "El número de ruta no es válido: son 9 dígitos. Revísalo en un cheque o en la app de tu banco.";
+      if (!/^\d{4,17}$/.test(n("cuenta"))) return "El número de cuenta solo lleva números (de 4 a 17).";
+      if (n("cuenta") !== n("cuenta2")) return "Los dos números de cuenta no son iguales. Escríbelos otra vez.";
+    }
     return "";
   }
 
@@ -283,7 +290,14 @@
   fetch(`/api/firmar/${token}`).then((r) => r.json()).then((j) => {
     if (!j.ok) { $("#p-cargando").innerHTML = `<h2>Enlace no válido</h2><p class="sub">${esc(j.error || "Pídele a Resuelto un enlace nuevo.")}</p>`; return; }
     doc = j; datos = {};
-    $("#saludo").textContent = `Hola ${j.nombre.split(" ")[0]} · tu contrato ${nombreDoc(j.tipo)}`;
+    $("#saludo").textContent = saludo(j);
+    if (j.tipo === "deposito") {
+      document.title = "Depósito directo · Resuelto";
+      $("#p1 .sub").textContent = "La cuenta donde te depositamos los viernes. Estos datos solo van aquí: nunca los mandes por mensaje.";
+      $("#p4 .check span").textContent = "Acepto firmar esta autorización electrónicamente. Mi firma y mis iniciales valen igual que en papel, y quedan registradas con la fecha, la hora y este dispositivo.";
+      $("#p5 h2").textContent = "¡Listo!";
+      $("#p5 .sub").textContent = "Tu cuenta quedó registrada para tus pagos de los viernes. Guarda tu copia.";
+    }
     if (j.estado === "firmado") { $("#descargar").href = j.pdf; return ir(5); }
     pintarLicencia(); pintarFormulario(); ir(1);
   }).catch(() => { $("#p-cargando").innerHTML = `<h2>Sin conexión</h2><p class="sub">Revisa tu señal y vuelve a abrir el enlace.</p>`; });

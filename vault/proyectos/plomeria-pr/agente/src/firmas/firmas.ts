@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { RAIZ } from "../almacen.js";
 import { config } from "../config.js";
-import { plantilla, llenar, certificado, sha256, validarDatos, imagenValida, partes, CAMPOS, NOMBRE_DOC, type TipoContrato, type DatosFirma } from "./documento.js";
+import { plantilla, llenar, certificado, sha256, validarDatos, imagenValida, partes, ultimos4, CAMPOS, NOMBRE_DOC, type TipoContrato, type DatosFirma } from "./documento.js";
 import { htmlAPdf } from "./pdf.js";
 import { dmSlack } from "../integraciones/slack.js";
 import { upsertContacto, agregarNota } from "../integraciones/crm.js";
@@ -95,7 +95,7 @@ export async function firmar(f: Firma, cuerpo: any, meta: { ip: string; ua: stri
   actualizar(f);
   avisar(f).catch((e) => console.error("firmas: aviso", e));
   // 1/oct/2026: plomero o técnico → activo en la app, bienvenida, trabajos sin plomero de su zona y pasos a Yaileen.
-  import("../alta-automatica.js").then((m) => m.altaAlFirmar(f)).catch((e) => console.error("firmas: alta automática", e));
+  if (f.tipo !== "deposito") import("../alta-automatica.js").then((m) => m.altaAlFirmar(f)).catch((e) => console.error("firmas: alta automática", e));
   return { ok: true, pdf: enlacePdf(f) };
 }
 
@@ -107,6 +107,13 @@ export function archivoPdf(f: Firma): string | null {
 
 async function avisar(f: Firma) {
   const d = f.firmado!.datos;
+  if (f.tipo === "deposito") {
+    // Datos de banco: en el aviso solo el banco y los últimos 4. Tampoco va al CRM (GoHighLevel): se queda en el volumen.
+    const linea = `🏦 Autorización de depósito directo firmada: ${d.nombre} · ${d.banco ?? ""} · ${d.tipo_cuenta ?? ""} ${ultimos4(d.cuenta ?? "")} · ${enlacePdf(f)}`;
+    await dmSlack(config.slack.reclutamiento, linea);
+    await avisarCoordinador(linea);
+    return;
+  }
   const quien = f.tipo === "tecnico" ? `técnico · ${d.oficio ?? ""} · #${d.lic_num ?? ""}` : f.tipo === "cotizador" ? `cotizador de proyectos · ${d.experiencia ?? ""}` : f.tipo === "anexo-nombre" ? "anexo de corrección de nombre" : f.tipo === "plomero" ? `plomero ${d.licencia ?? ""} #${d.lic_num ?? ""}`.trim() : `aprendiz · certificado #${d.cert_num ?? ""} (vence ${d.cert_vence ?? "?"}) · ${d.anos ?? ""} de experiencia`;
   const linea = `✍️ Contrato firmado: ${d.nombre} (${quien}) · ${d.municipio ?? ""} · ${enlacePdf(f)}`;
   await dmSlack(config.slack.reclutamiento, linea);

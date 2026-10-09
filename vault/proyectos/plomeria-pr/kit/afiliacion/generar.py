@@ -216,12 +216,37 @@ HOJA_COTIZADOR_2 = f"""<h2>4. Reglas</h2>
 {FIRMADO_EN}
 <div class="firmas">{firma("firmante", "El Cotizador", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
 
+# ── Autorización de depósito directo (9/oct/2026, Elvin: "un documento firmado con la información de banco de los
+# plomeros para sus pagos… con el branding de Resuelto"). Una hoja; Yaileen la manda desde /equipo-firmas.
+HOJA_DEPOSITO = f"""{cab("Pagos de los viernes", "Autorización de depósito directo")}
+<p><b>Entre</b> {RESUELTO_PARTE}, <b>y</b></p>
+<p>Nombre: {campo("nombre", "l")} &nbsp; Teléfono: {campo("telefono", "s")} &nbsp; Municipio: {campo("municipio", "s")} ("el Proveedor").</p>
+<h2>Cuenta para tus pagos</h2>
+<table>
+<tr><td style="width:38%">Banco</td><td>{campo("banco", "l")}</td></tr>
+<tr><td>Nombre del titular de la cuenta</td><td>{campo("titular", "l")}</td></tr>
+<tr><td>Tipo de cuenta</td><td>{chk("cta_cheques", "Cheques")} &nbsp;&nbsp; {chk("cta_ahorros", "Ahorros")}</td></tr>
+<tr><td>Número de ruta (routing, 9 dígitos)</td><td>{campo("ruta", "l")}</td></tr>
+<tr><td>Número de cuenta</td><td>{campo("cuenta", "l")}</td></tr>
+</table>
+<h2>Autorización</h2>
+<ol class="pasos">
+<li>Autorizo a Resuelto PR Home Services LLC a depositar en la cuenta indicada los pagos que me correspondan por los trabajos que realice como proveedor afiliado: la comisión de mano de obra y el reembolso de las piezas, según mi Acuerdo de afiliación. Los pagos salen los viernes.</li>
+<li>Confirmo que los datos de la cuenta son correctos y que soy el titular de la cuenta o que el titular me autoriza a recibir mis pagos en ella.</li>
+<li>Si por error se me deposita de más, Resuelto me avisará por escrito y lo corregirá en mi próximo pago.</li>
+<li>Esta autorización sigue vigente hasta que yo la cancele por escrito o firme una nueva con otra cuenta. La cuenta nueva se usa desde el primer pago después de recibida.</li>
+<li>Resuelto guarda estos datos de forma confidencial y solo los usa para pagarme. No los comparte con nadie, salvo con su banco o procesador de pagos para hacer el depósito, o cuando lo exija la ley.</li>
+</ol>
+{FIRMADO_EN}
+<div class="firmas">{firma("firmante", "El Proveedor", ' · Nombre: ' + campo("nombre_firma"))}{FIRMA_RESUELTO}</div>"""
+
 PLANTILLAS = {
  "anexo-nombre": documento([hoja(1, "Anexo de corrección de nombre", HOJA_ANEXO_NOMBRE)]),
  "plomero": documento([hoja(1, "Acuerdo · parte 1", HOJA_ACUERDO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_ACUERDO_2), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
  "aprendiz": documento([hoja(1, "Acuerdo de aprendiz", HOJA_APRENDIZ), hoja(2, "Secciones que te aplican", HOJA_APRENDIZ_SECCIONES), hoja(3, "Reglas de oro", HOJA_REGLAS)]),
  "tecnico": documento([hoja(1, "Acuerdo · parte 1", HOJA_TECNICO_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_TECNICO_2), hoja(3, "Reglas de oro", HOJA_REGLAS_TECNICO)]),
  "cotizador": documento([hoja(1, "Acuerdo · parte 1", HOJA_COTIZADOR_1), hoja(2, "Acuerdo · parte 2 y firma", HOJA_COTIZADOR_2)]),
+ "deposito": documento([hoja(1, "Autorización de depósito directo", HOJA_DEPOSITO)]),
 }
 
 def precio(s):

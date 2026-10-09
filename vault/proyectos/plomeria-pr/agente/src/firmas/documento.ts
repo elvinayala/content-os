@@ -13,12 +13,13 @@ import { RAIZ } from "../almacen.js";
 
 // "aprendiz" reemplazó a "ayudante" el 24/sep/2026: la Ley 59-2022 no permite plomería sin certificado de aprendiz o licencia.
 // 27/sep/2026: "tecnico" (aire acondicionado, perito electricista, handyman) y "cotizador" de proyectos a comisión.
-export type TipoContrato = "plomero" | "aprendiz" | "anexo-nombre" | "tecnico" | "cotizador";
-export const TIPOS: TipoContrato[] = ["plomero", "aprendiz", "anexo-nombre", "tecnico", "cotizador"];
+// 9/oct/2026: "deposito" = autorización de depósito directo (la información de banco para pagarle los viernes).
+export type TipoContrato = "plomero" | "aprendiz" | "anexo-nombre" | "tecnico" | "cotizador" | "deposito";
+export const TIPOS: TipoContrato[] = ["plomero", "aprendiz", "anexo-nombre", "tecnico", "cotizador", "deposito"];
 /** Nombre de cada documento para el PDF, el certificado, los avisos y el panel. */
-export const NOMBRE_DOC: Record<TipoContrato, string> = { plomero: "Acuerdo de afiliación de plomero", aprendiz: "Acuerdo de aprendiz", "anexo-nombre": "Anexo de corrección del nombre de Resuelto", tecnico: "Acuerdo de afiliación de técnico", cotizador: "Acuerdo de servicios de cotizador" };
+export const NOMBRE_DOC: Record<TipoContrato, string> = { plomero: "Acuerdo de afiliación de plomero", aprendiz: "Acuerdo de aprendiz", "anexo-nombre": "Anexo de corrección del nombre de Resuelto", tecnico: "Acuerdo de afiliación de técnico", cotizador: "Acuerdo de servicios de cotizador", deposito: "Autorización de depósito directo" };
 
-export interface CampoDef { id: string; etiqueta: string; tipo: "texto" | "tel" | "opcion"; opciones?: { valor: string; etiqueta: string; check: string }[]; requerido: boolean; ayuda?: string }
+export interface CampoDef { id: string; etiqueta: string; tipo: "texto" | "tel" | "opcion" | "numero"; opciones?: { valor: string; etiqueta: string; check: string }[]; requerido: boolean; ayuda?: string }
 const COMUNES_INICIO: CampoDef[] = [
   { id: "nombre", etiqueta: "Nombre completo", tipo: "texto", requerido: true },
   { id: "telefono", etiqueta: "Teléfono", tipo: "tel", requerido: true },
@@ -47,6 +48,16 @@ export const CAMPOS: Record<TipoContrato, CampoDef[]> = {
     { id: "direccion", etiqueta: "Dirección", tipo: "texto", requerido: true },
     { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true },
     { id: "experiencia", etiqueta: "Tu experiencia cotizando o vendiendo proyectos", tipo: "texto", requerido: true },
+  ],
+  deposito: [
+    ...COMUNES_INICIO,
+    { id: "municipio", etiqueta: "Municipio", tipo: "texto", requerido: true },
+    { id: "banco", etiqueta: "Banco", tipo: "texto", requerido: true, ayuda: "Ej.: Banco Popular, FirstBank, Oriental, Cooperativa…" },
+    { id: "titular", etiqueta: "Nombre del titular de la cuenta", tipo: "texto", requerido: true, ayuda: "Como aparece en el banco" },
+    { id: "tipo_cuenta", etiqueta: "Tipo de cuenta", tipo: "opcion", requerido: true, opciones: [{ valor: "cheques", etiqueta: "Cheques", check: "cta_cheques" }, { valor: "ahorros", etiqueta: "Ahorros", check: "cta_ahorros" }] },
+    { id: "ruta", etiqueta: "Número de ruta (routing)", tipo: "numero", requerido: true, ayuda: "9 dígitos. En un cheque es el primer número de abajo, a la izquierda; también sale en la app del banco" },
+    { id: "cuenta", etiqueta: "Número de cuenta", tipo: "numero", requerido: true },
+    { id: "cuenta2", etiqueta: "Escribe el número de cuenta otra vez", tipo: "numero", requerido: true, ayuda: "Para confirmar que no haya un error" },
   ],
   aprendiz: [
     ...COMUNES_INICIO,
@@ -82,10 +93,25 @@ export function validarDatos(tipo: TipoContrato, entrada: unknown): Validado | {
     if (c.tipo === "opcion" && v && !c.opciones!.some((o) => o.valor === v)) return { ok: false, error: `Escoge una opción en "${c.etiqueta}".` };
     if (c.tipo === "tel" && v && v.replace(/\D/g, "").length < 10) return { ok: false, error: "El teléfono debe tener 10 dígitos." };
     if (c.requerido && !v) return { ok: false, error: `Falta: ${c.etiqueta}.` };
-    out[c.id] = v;
+    out[c.id] = c.tipo === "numero" ? v.replace(/[\s-]/g, "") : v;
+  }
+  if (tipo === "deposito") {
+    if (!/^\d{9}$/.test(out.ruta) || !rutaValida(out.ruta)) return { ok: false, error: "El número de ruta no es válido: son 9 dígitos. Revísalo en un cheque o en la app de tu banco." };
+    if (!/^\d{4,17}$/.test(out.cuenta)) return { ok: false, error: "El número de cuenta solo lleva números (de 4 a 17)." };
+    if (out.cuenta !== out.cuenta2) return { ok: false, error: "Los dos números de cuenta no son iguales. Escríbelos otra vez." };
+    delete out.cuenta2; // solo era para confirmar
   }
   return { ok: true, datos: out };
 }
+
+/** Dígito verificador de las rutas bancarias de EE. UU./PR (ABA): 3·7·1 sobre los 9 dígitos, múltiplo de 10. */
+export function rutaValida(r: string): boolean {
+  if (!/^\d{9}$/.test(r)) return false;
+  const d = r.split("").map(Number);
+  return (3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + (d[2] + d[5] + d[8])) % 10 === 0;
+}
+/** "••••1234" para avisos: nunca el número completo fuera del PDF. */
+export const ultimos4 = (n: string) => "••••" + String(n ?? "").slice(-4);
 
 const PNG = /^data:image\/png;base64,[A-Za-z0-9+/=]+$/;
 /** Firma e iniciales: PNG en data URL, no vacías y de tamaño razonable (~400 KB máx.). */

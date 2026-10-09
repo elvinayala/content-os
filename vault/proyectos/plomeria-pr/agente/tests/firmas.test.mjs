@@ -4,14 +4,14 @@ import assert from "node:assert/strict";
 const D = await import("../dist/firmas/documento.js");
 const PNG = "data:image/png;base64," + "iVBORw0KGgo".repeat(60);
 
-test("las plantillas tienen sus hojas (anexo 1, cotizador 2, acuerdos 3), campos, casillas y firmas marcadas", () => {
+test("las plantillas tienen sus hojas (anexo y depósito 1, cotizador 2, acuerdos 3), campos, casillas y firmas marcadas", () => {
   for (const tipo of D.TIPOS) {
     const html = D.plantilla(tipo);
     const { css, hojas } = D.partes(html);
-    assert.equal(hojas.length, tipo === "anexo-nombre" ? 1 : tipo === "cotizador" ? 2 : 3, tipo);
+    assert.equal(hojas.length, tipo === "anexo-nombre" || tipo === "deposito" ? 1 : tipo === "cotizador" ? 2 : 3, tipo);
     assert.ok(css.includes(".campo"), tipo);
     assert.ok(html.includes('data-firma="firmante"') && html.includes('data-firma="resuelto"'), tipo);
-    for (const c of D.CAMPOS[tipo]) if (c.tipo !== "opcion") assert.ok(html.includes(`data-campo="${c.id}"`), `${tipo}: falta el campo ${c.id} en la plantilla`);
+    for (const c of D.CAMPOS[tipo]) if (c.tipo !== "opcion" && c.id !== "cuenta2") assert.ok(html.includes(`data-campo="${c.id}"`), `${tipo}: falta el campo ${c.id} en la plantilla`);
     for (const c of D.CAMPOS[tipo]) for (const o of c.opciones ?? []) assert.ok(html.includes(`data-check="${o.check}"`), `${tipo}: falta la casilla ${o.check}`);
   }
 });

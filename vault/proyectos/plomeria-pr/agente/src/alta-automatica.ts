@@ -31,6 +31,7 @@ export function planAlta(f: Pick<Firma, "tipo" | "municipio" | "firmado">, zonaD
   if (f.tipo === "aprendiz") return { activar: false, motivo: "es aprendiz: trabaja con un plomero licenciado, se asigna a mano" };
   if (f.tipo === "cotizador") return { activar: false, motivo: "es cotizador de proyectos: se da de alta en la app del cotizador" };
   if (f.tipo === "anexo-nombre") return { activar: false, motivo: "es un anexo: el plomero ya estaba activo" };
+  if (f.tipo === "deposito") return { activar: false, motivo: "es la autorización de depósito directo: el plomero ya estaba activo" };
   const oficio: OficioCampo | undefined = f.tipo === "plomero" ? "plomero" : OFICIO_TECNICO[String(d.oficio ?? "")];
   if (!oficio) return { activar: false, motivo: `oficio desconocido (${d.oficio ?? "vacío"})` };
   const municipio = String(d.municipio ?? f.municipio ?? "").trim();
@@ -67,7 +68,7 @@ export async function altaAlFirmar(f: Firma): Promise<void> {
   const nombre = d.nombre ?? f.nombre;
   const tel = d.telefono || f.telefono;
   if (!plan.activar) {
-    if (f.tipo === "anexo-nombre") return;
+    if (f.tipo === "anexo-nombre" || f.tipo === "deposito") return;
     const msg = `✍️ ${nombre} firmó (${f.tipo}), pero NO lo activé solo: ${plan.motivo}.`;
     await dmSlack(config.slack.reclutamiento, msg + " Avísale a Elvin o a Claude para darlo de alta.").catch(() => false);
     await avisarCoordinador(msg).catch(() => undefined);
