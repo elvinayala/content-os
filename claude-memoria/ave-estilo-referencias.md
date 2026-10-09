@@ -99,3 +99,8 @@ errores) sí; cambios de look/encuadre/ritmo solo si la referencia los respalda 
 el estándar de edición así; esto no lo cambies nunca». La PRIMERA versión se entrega SIEMPRE con el estándar (esa calidad
 y esos detalles); agrandar o cambiar algo solo si el cliente/editora lo pide, y va en revisiones. Nada de reglas
 aprendidas ni ajustes de otros videos que muevan la v1 fuera del estándar.
+**Medido 9/oct con `ave analyze-ref` (Sept 1 nueva en samples/references/yulianna-ads-sept-1-v2.mp4):** las DOS Yulianna
+tienen encuadre VARIABLE (σ 3 %), 28–37 cortes/min, blur ~7.5 frames en ~80 % de los cortes, palabra grande cada 2–3 s.
+El 27/sep apagué los cortes de escala leyendo la Sept 2 «a ojo» como fija: ERROR — medir siempre con el mismo instrumento
+la referencia y Cortex. Ahora: cortes de escala ±12 %, blur 7, énfasis 28/min, b-roll con corte+blur (no fundido),
+mundo por defecto = foto real (nunca caricatura). Pendiente decidir: b-roll de las refs 33–41 % vs tope 20 % de Elvin.
