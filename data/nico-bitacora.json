@@ -6,7 +6,7 @@
       "plataforma": "content-os",
       "que": "Solicitud #200 (Aure): Lis Acevedo miembro del tablero AI BORINQUEN en Pulse (acceso completo); Laura Bernal (closer) acceso solo a crear contratos AIB vía ACCESO_SOLO_CREAR en lib/aib-contratos/repo.ts, sin ver el tablero ni la lista de otros clientes",
       "porque": "Elvin aprobó en el chat: Lis con acceso, Laura solo a la plantilla del contrato",
-      "verificado": "pendiente: esperando que el deploy de Vercel tome el commit b42ac29",
+      "verificado": "deploy manual (scripts/deploy-snapshots.sh / vercel --prod) confirmado Ready en content-os-chi-seven.vercel.app 2 min después del push; /pulse/login responde 200; Lis confirmada como miembro de pulse_board_members del tablero ai-borinquen en la base",
       "commit": "b42ac29"
     },
     {
@@ -576,5 +576,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-09T19:14:39.710Z"
+  "actualizadoEl": "2026-10-09T19:23:27.503Z"
 }
