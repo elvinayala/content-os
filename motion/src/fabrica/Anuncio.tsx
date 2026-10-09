@@ -63,7 +63,9 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
         {escenas}
         {cortes.map((c, i) => <Transicion key={c} c={c} i={i} tema={tema} estilo={estilo} barridoSiempre={anuncio.barridoSiempre} />)}
         <Grano vineta={fondoClaro(tema.fondo) ? 0.1 : 0.55} />
-        <Audio src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
+        {/* loop: si el video dura más que la pista (cliente-calma = 32 s; Quiroplaza 41 s y Med Spa 47 s, 9/oct), la música
+            sigue hasta el final en vez de cortarse — lo pidió María del Carmen. El volumen ya baja al final del video. */}
+        <Audio loop src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
         {cortes.map((c) => <Sfx key={c} src="whoosh.mp3" en={c - 5} vol={0.4} />)}
       </AbsoluteFill>
