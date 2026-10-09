@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
     // (ENOSPC, 27/sep) y cada función arrancaba más lenta. Solo .md ≈ 2 MB.
     "/**": ["./data/**", "./.claude/skills/**", "./vault/**/*.md"],
     "/api/cron/leaderboard": ["./public/leaderboard/**", "./public/marcas/level-up-logo-dark.png"],
+    // Contrato de AI Borinquen: el logo va en el membrete del PDF firmado.
+    "/api/contrato/**": ["./public/marcas/ai-borinquen/lockup-horizontal-transparente.png"],
   },
   // Dependencias de proyectos guardados en el vault (agentes de Resuelto, landings) nunca van en las funciones.
   outputFileTracingExcludes: {

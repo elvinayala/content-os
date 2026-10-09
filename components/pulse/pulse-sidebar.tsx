@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ArchiveRestore, ArrowLeft, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
+import { Activity, ArchiveRestore, ArrowLeft, FileSignature, FileText, House, Kanban, Lock, LogOut, Search, Settings, Sparkles, Sun } from "lucide-react";
 
 import { abrirBuscador } from "@/components/pulse/buscador-global";
 import { IconoTablero } from "@/components/pulse/icono-tablero";
@@ -30,12 +30,14 @@ export function PulseSidebar({
   usuario,
   tieneLeads = false,
   tieneFormularios = false,
+  tieneContratosAib = false,
   soloLeads = false,
 }: {
   boards: Pick<BoardResumen, "id" | "slug" | "nombre" | "color" | "items" | "privado">[];
   usuario: UsuarioPulse;
   tieneLeads?: boolean;
   tieneFormularios?: boolean;
+  tieneContratosAib?: boolean; // contratos de AI Borinquen con firma (quien ve el tablero de AIB)
   soloLeads?: boolean; // equipo de ventas: solo Leads (y Formularios si los tiene), nunca tableros de clientes
 }) {
   const pathname = usePathname();
@@ -90,7 +92,7 @@ export function PulseSidebar({
           </SidebarMenu>
         </SidebarGroup>
         ) : null}
-        {tieneLeads || tieneFormularios ? (
+        {tieneLeads || tieneFormularios || tieneContratosAib ? (
         <SidebarGroup>
           <SidebarGroupLabel>Ventas</SidebarGroupLabel>
           <SidebarMenu>
@@ -110,6 +112,16 @@ export function PulseSidebar({
                   <Link href="/pulse/formularios">
                     <FileText />
                     <span>Formularios</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
+            {tieneContratosAib && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname.startsWith("/pulse/contratos-aib")} tooltip="Contratos AIB">
+                  <Link href="/pulse/contratos-aib">
+                    <FileSignature />
+                    <span>Contratos AIB</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

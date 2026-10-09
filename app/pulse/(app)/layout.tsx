@@ -22,7 +22,7 @@ export default async function PulseAppLayout({ children }: Readonly<{ children: 
   const [boards, marcasLeads] = await Promise.all([listarBoards(usuario), marcasConAcceso(usuario)]);
   return (
     <SidebarProvider>
-      <PulseSidebar boards={boards} usuario={usuario} soloLeads={soloLeads} tieneLeads={marcasLeads.length > 0} tieneFormularios={puedeFormularios(usuario, process.env.FORMULARIOS_ACCESO || undefined)} />
+      <PulseSidebar boards={boards} usuario={usuario} soloLeads={soloLeads} tieneLeads={marcasLeads.length > 0} tieneFormularios={puedeFormularios(usuario, process.env.FORMULARIOS_ACCESO || undefined)} tieneContratosAib={boards.some((b) => b.slug === "ai-borinquen")} />
       <SidebarInset className="min-w-0 bg-background">{children}</SidebarInset>
       <BuscadorGlobal boards={boards.map((b) => ({ slug: b.slug, nombre: b.nombre, color: b.color }))} puedeConfigurar={puedeGestionarUsuarios(usuario.rol)} />
     </SidebarProvider>

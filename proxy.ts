@@ -127,6 +127,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname.startsWith("/onboarding/") || pathname.startsWith("/api/onboarding/")) return NextResponse.next();
   // Formularios propios (el reemplazo de Typeform): /f/<slug> y su envío, públicos.
   if (pathname.startsWith("/f/") || pathname.startsWith("/api/f/")) return NextResponse.next();
+  // Contrato de AI Borinquen con firma electrónica: el link lleva el token (lo valida la página y la ruta).
+  if (pathname.startsWith("/contrato/") || pathname.startsWith("/api/contrato/")) return NextResponse.next();
   // Webhook del Typeform de onboarding → ficha del cliente en Pulse (valida la firma adentro).
   if (pathname === "/api/pulse/typeform") return NextResponse.next();
   // Export de clientes para n8n (puente Pulse → NocoDB): la ruta valida x-pulse-secret.
