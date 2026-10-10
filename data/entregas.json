@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-10T20:51:47.123Z",
+  "actualizadoEl": "2026-10-10T21:33:40.517Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12031,6 +12031,136 @@
       "creadoEl": "2026-10-10T20:51:47.123Z",
       "estado": "nuevo",
       "formato": "reel corto 7 s"
+    },
+    {
+      "id": "guion-so-v4-01",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Esto es más estratégico que técnico. Si fuera por lo técnico, mucha gente ya haría plata por internet.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: problema · Ángulo: Más estratégico que técnico\nPepita: Elvin, grabaciones\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Esto es más estratégico que técnico. Si fuera por lo técnico, mucha gente ya haría plata por internet.\"\n\nPROBLEMA:\nSales de tu trabajo y te pones a ver tutoriales de herramientas, pensando que lo que te falta es técnica.\n\nSOLUCIÓN:\nUn creador no le paga a un operador por saber botones. Le paga por saber qué decir, a quién y con qué oferta. Eso es estrategia, y se aprende.\n\nPRUEBA:\nEs el mismo sistema con el que he escalado más de 10 marcas.\n\nCTA: Comenta ESTRATEGIA y te cuento cómo.\n\nB-ROLL:\n1. Persona saliendo de un turno de noche\n2. Pantalla con 20 pestañas abiertas\n3. Libreta con un plan escrito a mano",
+      "pilar": "problema",
+      "angulo": "Más estratégico que técnico",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-02",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Una audiencia grande que no factura no es un ídolo: es una oportunidad.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: problema · Ángulo: La oportunidad que no ves · Estructura: PAS\nPepita: Elvin, Mapa de los 4 fundamentos\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Una audiencia grande que no factura no es un ídolo: es una oportunidad.\"\n\nPROBLEMA:\nVes a un creador con miles de seguidores y piensas que ya llegó.\n\nAGITAR: La mayoría tiene audiencia y atención, pero no tiene oferta ni sistema de ventas. Sus seguidores no se vuelven dinero.\n\nSOLUCIÓN:\nAhí entras tú. Le ayudas a crear su producto y le instalas marketing y ventas. Él da la cara; tú pones el sistema.\n\nPRUEBA:\nMás de 10 marcas con este sistema.\n\nCTA: Comenta CREADOR y te cuento cómo.\n\nB-ROLL:\n1. Perfil con miles de seguidores y cero ventas\n2. Panel de ventas vacío\n3. Un embudo que se enciende",
+      "pilar": "problema",
+      "angulo": "La oportunidad que no ves",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-03",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "A veces un flyer está en $5, pero un video está en $12, y la venta la trajo el video.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: problema · Ángulo: Lo barato te engaña\nPepita: Trafficker, sesión 14/07\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"A veces un flyer está en $5, pero un video está en $12, y la venta la trajo el video.\"\n\nPROBLEMA:\nSi mides solo por lo barato, escoges el anuncio equivocado.\n\nSOLUCIÓN:\nUn operador no se enamora de lo barato: mira cuál anuncio trajo la venta. Eso es lo que un creador no sabe hacer solo.\n\nPRUEBA:\nLo veo todos los días en las cuentas que operamos.\n\nCTA: Comenta VENTAS y te cuento cómo.\n\nB-ROLL:\n1. Flyer con '$5' junto a un video con '$12'\n2. Una venta marcada sobre el video",
+      "pilar": "problema",
+      "angulo": "Lo barato te engaña",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-04",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "150-170 conversaciones en 15 días a $0.80 y no convierte: no gestiona los mensajes.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: problema · Ángulo: Nadie contestaba\nPepita: Traffickers, sesión de cuentas\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"150-170 conversaciones en 15 días a $0.80 y no convierte: no gestiona los mensajes.\"\n\nPROBLEMA:\nCreían que el problema era el tráfico. Tenían 170 conversaciones a $0.80 y cero ventas.\n\nSOLUCIÓN:\nEl problema era que nadie manejaba los mensajes. Un operador monta el sistema de ventas: quién contesta, cuándo y cómo.\n\nPRUEBA:\nEso lo vi en una cuenta real, por eso ahora lo reviso primero.\n\nCTA: Comenta MENSAJES y te cuento cómo.\n\nB-ROLL:\n1. Contador de chats subiendo hasta 170\n2. Panel de ventas en cero\n3. Chats sin responder",
+      "pilar": "problema",
+      "angulo": "Nadie contestaba",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-05",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Casi nadie tiene una buena oferta.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: problema · Ángulo: La oferta\nPepita: Elvin, módulo de oferta 13/07\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Casi nadie tiene una buena oferta.\"\n\nPROBLEMA:\nVes creadores con contenido y seguidores que no venden. Todos dicen que les falta publicar más.\n\nSOLUCIÓN:\nLes falta oferta. Ahí trabajas tú: le ayudas a crear su producto digital (un curso, una mentoría, un programa o un producto en Hotmart) y a armar la oferta.\n\nPRUEBA:\nMás de 10 marcas con este sistema.\n\nCTA: Comenta OFERTA y te cuento cómo.\n\nB-ROLL:\n1. Feed lleno de posts sin ventas\n2. Una mano armando el producto en una libreta",
+      "pilar": "problema",
+      "angulo": "La oferta",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-06",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "La IA no hay que dominarla, hay que saber operarla.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: solución · Ángulo: Opera la IA\nPepita: Elvin, grabaciones\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"La IA no hay que dominarla, hay que saber operarla.\"\n\nPROBLEMA:\nCrees que tienes que aprender cien herramientas.\n\nSOLUCIÓN:\nAprende 4 o 5: Meta Ads, GoHighLevel, Claude y Slack. Lo que hacían 5 personas, lo haces con una.\n\nPRUEBA:\nEse es el stack con el que trabajo.\n\nCTA: Comenta IA y te cuento cómo.\n\nB-ROLL:\n1. Cien pestañas colapsando en cuatro logos\n2. Una sola persona frente a una pantalla",
+      "pilar": "solución",
+      "angulo": "Opera la IA",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-07",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Las conversaciones son dinero.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: solución · Ángulo: Conversaciones\nPepita: Elvin, grabaciones\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Las conversaciones son dinero.\"\n\nPROBLEMA:\nCrees que el trabajo es sumar seguidores.\n\nSOLUCIÓN:\nTu trabajo diario es llevar a la gente a una conversación. No se van a agendar solos. Alguien tiene que escribirles.\n\nPRUEBA:\nAsí funcionan más de 10 marcas.\n\nCTA: Comenta CONVERSACIONES y te cuento cómo.\n\nB-ROLL:\n1. Seguidores tachados\n2. Chats entrando\n3. Una agenda llenándose",
+      "pilar": "solución",
+      "angulo": "Conversaciones",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-08",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: producto · Ángulo: La promesa\nPepita: Elvin, tesis 18/sep\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara.\"\n\nPROBLEMA:\nTrabajas por el mínimo y piensas que para ganar más tienes que exponerte.\n\nSOLUCIÓN:\nNo. Aprendes a ayudar a un creador, coach o infoproductor a crear su producto y le instalas marketing y ventas. Cobras un porcentaje de lo que su producto venda.\n\nPRUEBA:\nHe escalado más de 10 marcas entre $20K y $100K al mes.\n\nCTA: Comenta OPERADOR y te cuento cómo.\n\nB-ROLL:\n1. Persona de espaldas frente a una pantalla\n2. $10,000 apareciendo en el panel\n3. El creador en cámara y tú detrás",
+      "pilar": "producto",
+      "angulo": "La promesa",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-09",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "El creador se lleva el crédito, tú el cheque.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: producto · Ángulo: El crédito y el cheque\nPepita: Elvin, 4 principios del Shadow (09/07)\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"El creador se lleva el crédito, tú el cheque.\"\n\nPROBLEMA:\nEres reservado y no quieres cámara. Crees que eso te deja fuera.\n\nSOLUCIÓN:\nEl operador no sale en cámara. El creador pone la cara y tú, el sistema. Cobras un 30 a 50 % de lo que ese producto venda.\n\nPRUEBA:\nYo construí una agencia que escalé a más de $100K al mes, trabajando en silencio.\n\nCTA: Comenta CHEQUE y te cuento cómo.\n\nB-ROLL:\n1. Creador hablando a cámara\n2. Tú detrás de la pantalla\n3. Porcentaje sobre una venta",
+      "pilar": "producto",
+      "angulo": "El crédito y el cheque",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v4-10",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Los deportistas no juegan sin calentar. Esto es un deporte.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator (voz de Elvin, sin cámara)\nPilar: mentalidad · Ángulo: Esto es un deporte\nPepita: Elvin, grabaciones\nA quién: joven de 18-26, trabaja por el mínimo, sin negocio, quiere ganar por internet sin mostrar la cara.\n\nGANCHO (voz + texto en pantalla):\n\"Los deportistas no juegan sin calentar. Esto es un deporte.\"\n\nPROBLEMA:\nSales cansado de tu turno y piensas que no tienes lo necesario.\n\nSOLUCIÓN:\nNadie empieza sabiendo. Se entrena. Tú ya tienes lo más difícil: las metas claras aunque estés abajo.\n\nPRUEBA:\nYo no crecí de golpe: pagué más de $100K en mentorías para entrenar.\n\nCTA: Comenta EMPEZAR y te cuento cómo.\n\nB-ROLL:\n1. Persona calentando antes de entrenar\n2. Libreta con una meta\n3. Reloj marcando la hora de entrenar",
+      "pilar": "mentalidad",
+      "angulo": "Esto es un deporte",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T21:33:40.517Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
     }
   ]
 }
