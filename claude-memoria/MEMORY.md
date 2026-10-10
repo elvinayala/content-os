@@ -38,6 +38,7 @@
 - [Richy & Elvin Trading LLC](richy-elvin-trading.md) — marca 1000X (ghost terminal); comunidad + curso + bot
 - [Plagas Puerto Rico — agente interno](plagas-puerto-rico.md) — cliente Gilbert Torres; Evolution, Railway, pendientes
 - [Resuelto — Plomería PR](plomeria-pr-vision.md) — EN EJECUCIÓN: plataforma home services, plomeros, WhatsApp/Meta, LLC y contratos pendientes
+- [Resuelto — foco: reclutar plomeros](resuelto-foco-reclutar-plomeros.md) — 10/oct: la semana = reclutar 10–12 plomeros; no subir presupuesto de clientes hasta tenerlos
 - [Resuelto — presupuesto de ads](resuelto-presupuesto-ads.md) — HOY máx $30-35/día (6/oct, Elvin ajustando); antes $60-65 con 3 áreas; $125-150 con todas; Messenger > llamadas
 - [Resuelto — cómo vender](resuelto-como-vender.md) — no vender rápido: escuchar, fotos, diagnóstico, cerrar con horario
 - [Resuelto — equipo propio](resuelto-equipo-propio.md) — nunca gente de las agencias; Claude = agencia, Bori = creativos + ads
