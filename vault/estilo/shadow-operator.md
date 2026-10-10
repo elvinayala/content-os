@@ -23,6 +23,41 @@ Reglas transversales en [[estrategia]]. Cerebro de contenido en
 - **Cero casos hipotéticos** ("un comediante de 400K…", "un creador me enseñó…"). Solo lo que Elvin dio o lo que está en el vault.
 - El sistema también le ha funcionado en marketing y automatizaciones para negocios locales: se puede mencionar, **poco**. La tesis es **negocios digitales a $10K/mes con pocos clientes**.
 
+## ⚠️ A QUIÉN LE HABLA SHADOW (Elvin, 10/oct/2026) — regla dura, corrige lotes anteriores
+
+**El viewer (nuestro cliente) NO es un creador de contenido.** Es una persona que puede estar en
+**cero, aprendiendo una habilidad**; inteligente pero **reservada**, que quizá **no quiere hacer
+contenido ni dar la cara**. Los guiones de Shadow le hablan A ELLA.
+
+- **Los operadores no le hablan a nadie ni hacen contenido.** Operan el marketing, las ventas o la
+  IA de **negocios** (digitales o locales) y cobran por eso. El contenido que sí existe es el de
+  Elvin (Shadow); el operador no publica.
+- ❌ Fuera: "si le hablas a todos no le vendes a nadie", "postea todos los días", "tu contenido…",
+  "tu audiencia…" dirigidos al viewer. Eso era consejo para un creador y el viewer no lo es. (Si el
+  tema de nicho entra, es sobre el **negocio al que el operador le trabaja**, no sobre el viewer.)
+- ✅ Dentro: sin cámara, sin audiencia propia, pocos clientes bien atendidos, estrategia > tarea,
+  la meta concreta **$10K al mes con pocos clientes**.
+
+### Ángulos vigentes (reemplazan a los 6 de abajo)
+Prueba base de "el sistema": **"el mismo sistema con el que he escalado más de 10 marcas"**.
+**Heredados:** El sistema que vende · Viral no es ventas (solo con data real: flyer $5 vs. video $12;
+170 conversaciones a $0.80 y cero ventas — `vault/proyectos/pepitas-shadow-banco.md` #1 y #16) ·
+**De 0 a $10K con pocos clientes** (el primer cliente es el paso; los $10K, la meta) · Mentalidad de
+operador · Opera la IA, no la domines · El operador detrás de la cortina (solo "varias empresas en
+silencio" y "una agencia a más de $100K al mes"). **Se quitó la serie del creador de Quilla** (Quilla
+está congelada y eran casos inventados).
+**Nuevos:** 7 La matemática de los $10K (problema: 3 clientes a $3,500 o 4 a $2,500; "$10K al mes son
+4 clientes, no 100,000 seguidores") · 8 Pocos clientes, bien atendidos (problema) · 9 Los 4
+fundamentos: nicho, oferta, contenido, estrategia (solución) · 10 Tu problema es la oferta, no el
+esfuerzo (problema) · 11 Las conversaciones son dinero (solución) · 12 El dinero está en el
+seguimiento (solución) · 13 Cobra por estrategia, no por tarea (producto) · 14 Nunca bajes el
+precio, quita componentes (solución) · 15 Optimiza por ventas, no por leads baratos (problema) · 16
+Un sistema probado, no una teoría (producto; "lo he aplicado en todo tipo de nicho", sin abundar) ·
+17 Lo que $100K en mentorías me enseñaron (mentalidad; UNA pepita por pieza) · 18 El mismo sistema
+le sirve a cualquier negocio (solución, de vez en cuando; para quien prefiere ofrecer marketing o
+automatizaciones a negocios locales). Ganchos de cada uno: los que dio Elvin el 10/oct (ver el
+lote `guion-so-v2-*` en la bandeja).
+
 ## ⚠️ Giro de marca (19/07) — de "meta" a VALOR
 
 Los guiones viejos hablaban DEL modelo (soy invisible, el influencer se quema, no
@@ -92,7 +127,7 @@ primeros $10K mensuales haciendo lo mismo que yo hago."** Vuelve como tesis cent
 los 6 ángulos de abajo). Mezcla 50/20/20/10. Enemigos: el consejo genérico de gurú, viral ≠ ventas,
 hablarle a todos, no tener oferta.
 
-## ⭐ LOS 6 ÁNGULOS DEFINITIVOS (30/07) — machacar SIEMPRE
+## (REEMPLAZADOS el 10/oct por «Ángulos vigentes», arriba) LOS 6 ÁNGULOS DEFINITIVOS (30/07)
 
 Destilados de todo su cerebro en Granola (sesiones Shadow con Yavett y Arturo,
 traffickers, closers, oferta) + la escalera de producto. **Estos 6 son los temas
