@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { sql } from "drizzle-orm";
+
 import { COOKIE_SESION, sesionValida } from "@/lib/auth";
+import { db } from "@/lib/pulse/db";
 
 export const runtime = "nodejs";
 
@@ -48,6 +51,23 @@ async function postearPedidoDM(texto: string): Promise<boolean> {
   }
 }
 
+// Los pedidos ya NO dependen de una tarea programada en la app de Claude (el 9/oct "10 guiones para b-roll
+// shadow" quedó 17 h en cola: `atender-pedidos-contenido` no corría desde el 5/sep). Ahora van también al buzón
+// de Sofi (agentes_mensajes), que vive en Railway 24/7 y los atiende en ~1-2 min. El DM de Slack queda como bitácora.
+async function encolarEnSofi(texto: string): Promise<boolean> {
+  try {
+    const d = await db();
+    await d.execute(sql`CREATE TABLE IF NOT EXISTS agentes_mensajes (
+      id serial PRIMARY KEY, de text NOT NULL, para text NOT NULL, texto text NOT NULL, hilo integer,
+      estado text NOT NULL DEFAULT 'pendiente', respuesta text,
+      creado_el timestamptz NOT NULL DEFAULT now(), atendido_el timestamptz)`);
+    await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto) VALUES ('elvin', 'sofi', ${texto.slice(0, 7500)})`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest) {
   const cookie = req.cookies.get(COOKIE_SESION)?.value;
   if (!(await sesionValida(cookie))) {
@@ -67,14 +87,24 @@ export async function POST(req: NextRequest) {
     if (!desc) {
       return NextResponse.json({ ok: false, error: "sin-texto" }, { status: 400 });
     }
+    const enSofi = await encolarEnSofi(
+      [
+        "[Pedido de contenido · Elvin, desde la bandeja de Entregas — URGENTE]",
+        desc,
+        "",
+        "Prodúcelo AHORA completo: lee vault/estilo/estrategia.md + vault/estilo/<marca>.md (+ cerebro-sofi §3-4: mezcla 50/20/20/10, 8 con la estructura de Elvin y 2 libres, enemigo por pieza, doble CTA) y para Shadow respeta las pruebas aprobadas del estilo. Déjalo en data/entregas.json (append, tipo guion/carrusel/etc., agente Lauti o Lola, estado nuevo, actualizadoEl), corre node scripts/validar-voz.mjs, publícalo con deploy-snapshots y avísale a Elvin con node scripts/agentes.mjs elvin \"<qué dejaste en la bandeja>\". No se lo mandes a nadie más.",
+      ].join("\n"),
+    );
     const ok = await postearPedidoDM(
       [
         ":rotating_light: *PEDIDO DE CONTENIDO (Elvin, desde la bandeja)*",
         desc,
-        "\n_El worker lo produce en la próxima corrida (~30 min) y lo deja en Entregas. Cuando esté, este mensaje queda marcado con ✅._",
+        enSofi
+          ? "\n_Sofi lo tiene en su buzón y lo deja en Entregas en unos minutos; te avisa por Telegram._"
+          : "\n_(No pude pasarlo al buzón de Sofi; queda aquí como registro.)_",
       ].join("\n"),
     );
-    if (!ok) {
+    if (!ok && !enSofi) {
       return NextResponse.json(
         { ok: false, error: "No se pudo encolar el pedido (Slack)." },
         { status: 502 },
