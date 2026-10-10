@@ -38,6 +38,30 @@ contenido ni dar la cara**. Los guiones de Shadow le hablan A ELLA.
 - ✅ Dentro: sin cámara, sin audiencia propia, pocos clientes bien atendidos, estrategia > tarea,
   la meta concreta **$10K al mes con pocos clientes**.
 
+### 👤 EL AVATAR DE SHADOW (Elvin, 10/oct/2026) — definitivo, reemplaza los "2 sub-avatares" de julio
+- **Edad 18–26.** Estudiante universitario, mesero, comida rápida, trabajo rutinario 9–6, turno de noche o carga
+  pesada; **trabajo a salario mínimo por hora, full time: no tiene tiempo ni dinero**. Alguno puede ser emprendedor
+  principiante, pero **ninguno opera un negocio todavía**.
+- **Busca cómo hacer dinero por internet y no sabe cómo.** No tiene skill vendible ni sabe a quién venderle. Shadow le
+  enseña (1) las habilidades que tiene que aprender y (2) a quién venderle.
+- **Mentalidad (Elvin, 10/oct):** además de la situación, el avatar tiene mentalidad de **emprendedor, superación y
+  firmeza**: aunque esté abajo, siempre ha tenido claras sus metas. No es un perdido: es alguien con ganas y sin camino.
+- **Qué crea el operador con el creador:** un **producto digital** — curso, mentoría, programa o producto en Hotmart — y
+  **la oferta**. Le ayuda a crearlo y luego le instala marketing y ventas; cobra ~30–50 % de lo que venda.
+- **Consultoría de $3,500:** por ahora NO se vende ni se menciona precio; Elvin no ha decidido si la cobra ni cómo. El CTA de
+  Producto lleva a la comunidad/DM, sin precio, hasta que él decida.
+- **Pilar Problema (50 %)** habla de DOS cosas: (a) su vida (tiempo por dinero, salario mínimo, no saber cómo ganar por
+  internet) y (b) **las piedras en el camino y el dolor de NO estarlo haciendo** (cada mes igual, el tiempo que pasa,
+  ver a otros avanzar, no saber qué aprender ni a quién venderle, miedo a no ser capaz, no tener quién guíe).
+- **Aún no hay compradores** (arrancando): todo lo de "sus resultados" es hipótesis hasta que haya casos reales.
+- **EL MODELO que aprende:** ayuda a **creadores de contenido, coaches, mentores, infoproductores y dueños de
+  agencias** a crear su producto y le instala **sistema de marketing + sistema de ventas** (primordial); también
+  operaciones/onboarding y automatizaciones con IA. **Cobra comisión de ~30–50 % de lo que ese producto genera en
+  ventas** (revenue share). El creador pone la cara; el operador, el sistema.
+- Por tanto: el cliente del OPERADOR son creadores/infoproductores (no negocios locales); el VIEWER es el joven de 18–26
+  sin negocio. Hablarle a él: tiempo por dinero a salario mínimo, no saber qué hacer en internet, qué skill aprender y a quién
+  vendérsela. Nunca como si ya tuviera audiencia, negocio o capital.
+
 ### 🧭 LA PROMESA (brújula de todo ángulo) — Elvin, 10/oct/2026
 **"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara."** Todo ángulo sale de ahí:
 cada pieza responde UNA pregunta de esa promesa y termina conectando con ella. Preguntas → ángulos:

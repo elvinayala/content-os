@@ -94,3 +94,4 @@
 - [Kit de propuestas para Lis](kit-propuestas-lis.md) — 6/oct: Lis hace sola las propuestas animadas: lu-armador-propuestas.netlify.app + Skill/instrucciones de Claude (JSON); con Pro sube el zip a Skills
 - [Avisar a María cada ajuste de Cortex](feedback-avisar-maria-ajustes.md) — tras cada ajuste desplegado, mensaje en #cortex-bori-edit-videos firmado — Elvin
 - [Mezcla de contenido 50/20/20/10](mezcla-contenido-50-20-20-10.md) — SIEMPRE: 50 % problema del avatar ideal · 20 solución · 20 producto · 10 mentalidad, en cualquier lote
+- [Shadow — avatar definitivo](shadow-avatar.md) — 18–26, salario mínimo, sin negocio; aprende a operar sistemas para creadores a 30–50 % de comisión
