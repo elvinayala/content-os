@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shadow Operator · Comunidad</title>
+<meta name="description" content="Aprende a hacer tus primeros $10K al mes por internet sin mostrar tu cara: ayuda a creadores a crear su producto e instalarles marketing y ventas. Comunidad privada con Elvin Ayala." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card-2:#1d212a; --line:#2b303b;
+    --fg:#f2efe8; --muted:#9aa0ad; --accent:#ffe14d; --accent-fg:#14120a; --ink:#5b8cff;
+    --head:'Bricolage Grotesque','Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace; --hand:'Caveat',cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:
+    radial-gradient(900px 520px at 85% -8%, rgba(91,140,255,.13), transparent 60%),
+    radial-gradient(700px 520px at -10% 30%, rgba(255,225,77,.06), transparent 60%), var(--bg);
+    color:var(--fg);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+  section{padding:64px 0}
+  .top{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+  .marca{font:800 18px var(--head);letter-spacing:-.01em}
+  .marca span{color:var(--accent)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid rgba(91,140,255,.45);border-radius:999px;font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;text-wrap:balance}
+  h1{font-weight:800;font-size:clamp(30px,5.6vw,56px);line-height:1.04;margin:18px 0 14px}
+  h1 mark,h2 mark{background:linear-gradient(transparent 8%,var(--accent) 8%,var(--accent) 92%,transparent 92%);color:var(--accent-fg);padding:0 .12em;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  h2{font-weight:800;font-size:clamp(26px,4vw,40px);line-height:1.1;margin:12px 0 14px}
+  h3{font-weight:600;font-size:19px;line-height:1.25}
+  .kicker{font:600 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .lead{color:var(--muted);font-size:clamp(16px,2vw,19px);max-width:680px;text-wrap:pretty}
+  .lead b{color:var(--fg);font-weight:600}
+  .hero{padding:28px 0 40px;text-align:center}
+  .hero .lead{margin:0 auto}
+  /* VIDEO */
+  .vsl{margin:28px auto 0;max-width:880px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#000;position:relative;aspect-ratio:16/9;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .vsl video,.vsl iframe,.vsl #yt{width:100%;height:100%;display:block;border:0}
+  .vsl .vacio{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;background:
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(242,239,232,.05) 31px 32px),var(--card)}
+  .vsl .vacio p{font:600 26px var(--hand);color:var(--ink)}
+  .vsl .vacio small{display:block;color:var(--muted);font:500 13px var(--body);margin-top:6px}
+  .play{position:absolute;inset:0;display:none;place-items:center;background:rgba(0,0,0,.35);border:0;cursor:pointer;color:var(--fg)}
+  .play span{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:var(--accent-fg);font:700 17px var(--body);padding:14px 22px;border-radius:999px}
+  .barra{height:4px;background:var(--line)}
+  .barra i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s linear}
+  .aviso{color:var(--muted);font-size:14px;margin-top:14px}
+  .aviso b{color:var(--fg)}
+  /* CTA que aparece */
+  .acceso{display:none;margin:26px auto 0;max-width:620px}
+  .acceso.abierto{display:block;animation:entra .6s ease-out}
+  @keyframes entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.acceso.abierto{animation:none}.btn{transition:none}}
+  .btn{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;background:var(--accent);color:var(--accent-fg);font:700 18px var(--body);padding:18px 24px;border-radius:14px;text-decoration:none;transition:transform .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .btn small{font-weight:600;opacity:.75}
+  .nota{color:var(--muted);font-size:13px;margin-top:10px;text-align:center}
+  /* tarjetas */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px}
+  .card p{color:var(--muted);margin-top:8px;font-size:15px}
+  .num{font:600 12px var(--mono);color:var(--ink);letter-spacing:.1em;display:block;margin-bottom:8px}
+  .cita{font:600 clamp(24px,3.6vw,34px)/1.2 var(--hand);color:var(--ink);margin-top:22px;max-width:720px}
+  .prueba{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:28px}
+  .prueba div{background:var(--card);padding:20px 16px}
+  .prueba b{display:block;font:800 clamp(22px,3vw,30px) var(--head);letter-spacing:-.02em}
+  .prueba span{color:var(--muted);font-size:13px}
+  .incluye li{list-style:none;display:flex;gap:12px;padding:14px 0;border-bottom:1px dashed var(--line)}
+  .incluye li:last-child{border-bottom:0}
+  .incluye li::before{content:"✓";flex:none;width:24px;height:24px;border-radius:7px;background:var(--accent);color:var(--accent-fg);font:700 14px var(--body);display:grid;place-items:center;margin-top:2px}
+  .incluye b{display:block}
+  .incluye span{color:var(--muted);font-size:15px}
+  .precio{margin-top:28px;text-align:center}
+  .precio .monto{font:800 clamp(44px,8vw,68px) var(--head);letter-spacing:-.03em}
+  .precio .monto small{font:500 18px var(--body);color:var(--muted)}
+  .garantia{margin-top:16px;border:1px dashed rgba(255,225,77,.5);border-radius:14px;padding:14px 16px;color:var(--fg);font-size:15px}
+  .no li{list-style:none;padding:8px 0;color:var(--muted)}
+  .no li::before{content:"✕  ";color:#ff7a7a;font-weight:700}
+  details{border-bottom:1px solid var(--line);padding:16px 0}
+  summary{cursor:pointer;font-weight:600;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";float:right;color:var(--muted)}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);margin-top:10px}
+  .bloqueado{display:none}
+  .bloqueado.abierto{display:block}
+  footer{padding:40px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+  @media (max-width:760px){
+    .grid3,.grid2{grid-template-columns:1fr}
+    .prueba{grid-template-columns:repeat(2,1fr)}
+    .btn{flex-direction:column;gap:2px}
+    section{padding:48px 0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="marca">SHADOW<span>.</span>OPERATOR</div>
+    <div class="kicker">Comunidad privada</div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">Video · mira hasta el final</span>
+    <h1>Cómo hacer tus primeros <mark>$10K al mes</mark> por internet sin mostrar tu cara</h1>
+    <p class="lead">Sin seguidores y sin negocio propio. <b>Ayudando a creadores a vender su producto</b> mientras tú operas desde atrás.</p>
+
+    <div class="vsl" id="vsl">
+      <div class="vacio" id="vacio"><div><p>Aquí va el video de Elvin</p><small>Falta subir el VSL (MP4 o YouTube): ver VIDEO_URL en el código.</small></div></div>
+      <button class="play" id="play" type="button" aria-label="Reproducir el video"><span>▶ Ver el video</span></button>
+    </div>
+    <div class="barra" aria-hidden="true"><i id="progreso"></i></div>
+    <p class="aviso" id="aviso">Mira el video completo. <b>El acceso a la comunidad se abre más adelante en el video.</b></p>
+
+    <div class="acceso" id="acceso">
+      <a class="btn" id="cta1" href="#">Quiero entrar a la comunidad <small>$97/mes</small></a>
+      <p class="nota">Pagas seguro en Skool. Cancelas cuando quieras.</p>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section>
+    <span class="kicker">Si esto te suena</span>
+    <h2>No es que te falten ganas. <mark>Te falta el mapa.</mark></h2>
+    <div class="grid3">
+      <div class="card"><h3>Trabajas mucho por poco</h3><p>Sales cansado del turno y el mes siguiente es igual al anterior.</p></div>
+      <div class="card"><h3>Mil consejos, ningún camino</h3><p>Uno dice dropshipping, otro "postea todos los días", otro cripto. No sabes qué aprender.</p></div>
+      <div class="card"><h3>No quieres dar la cara</h3><p>Eres reservado. Hacerte famoso no es lo tuyo, y está bien.</p></div>
+    </div>
+    <p class="cita">"Esto es más estratégico que técnico. Si fuera por lo técnico, mucha gente ya haría plata por internet."</p>
+  </section>
+
+  <section>
+    <span class="kicker">El modelo del operador</span>
+    <h2>Tres pasos. <mark>El creador da la cara, tú el sistema.</mark></h2>
+    <div class="grid3">
+      <div class="card"><span class="num">01</span><h3>Escoges a quién ayudar</h3><p>Creadores, coaches, mentores e infoproductores con audiencia… que no venden. Tienen atención y no tienen sistema.</p></div>
+      <div class="card"><span class="num">02</span><h3>Le creas el producto y la oferta</h3><p>Un curso, una mentoría o un programa, con una oferta que la gente quiera comprar. Casi nadie tiene una buena oferta.</p></div>
+      <div class="card"><span class="num">03</span><h3>Le instalas marketing y ventas</h3><p>Que la gente llegue, que alguien le conteste y que compre. Las conversaciones son dinero.</p></div>
+    </div>
+    <p class="lead" style="margin-top:22px">Cobras un porcentaje de lo que venda ese producto, normalmente <b>entre 30 % y 50 %</b>. Y con la IA lo operas tú solo: <b>Meta Ads, GoHighLevel, Claude y Slack.</b></p>
+  </section>
+
+  <section>
+    <span class="kicker">Quién te enseña</span>
+    <h2>Elvin Ayala. <mark>Nadie sabía mi nombre.</mark></h2>
+    <p class="lead">Construí mis empresas en silencio, detrás de la cortina. Lo que te enseño es lo mismo que hago todos los días.</p>
+    <div class="prueba">
+      <div><b>+10</b><span>marcas escaladas</span></div>
+      <div><b>$20K–$100K</b><span>al mes, de todo tipo de nicho</span></div>
+      <div><b>+$100K</b><span>al mes: la agencia que creé y escalé</span></div>
+      <div><b>+$100K</b><span>pagados en mentorías</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="kicker">Qué hay adentro</span>
+    <h2>Todo lo que necesitas para <mark>no hacerlo solo</mark></h2>
+    <ul class="incluye card" style="margin-top:28px">
+      <li><div><b>Clases privadas en vivo, 2 veces a la semana</b><span>Conmigo. Preguntas, revisiones y el paso que te toca.</span></div></li>
+      <li><div><b>Cursos privados, paso a paso</b><span>Escoger al creador, crear su producto y su oferta, montar marketing y ventas, operar con IA.</span></div></li>
+      <li><div><b>Chat privado 24/7</b><span>Con la comunidad: gente que está en lo mismo que tú.</span></div></li>
+      <li><div><b>Las herramientas y cómo las uso</b><span>Las 4 o 5 que necesitas, no las cien que te venden.</span></div></li>
+    </ul>
+
+    <div class="bloqueado" id="oferta">
+      <div class="precio card">
+        <span class="kicker">Acceso a la comunidad</span>
+        <div class="monto">$97<small> / mes</small></div>
+        <a class="btn" id="cta2" href="#" style="margin-top:18px">Quiero entrar ahora</a>
+        <div class="garantia">Garantía de 7 días: si en la primera semana sientes que no es para ti, te devolvemos tu dinero.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="kicker">Sé honesto contigo</span>
+    <h2>Esto no es para ti si…</h2>
+    <ul class="no card" style="margin-top:22px">
+      <li>Buscas dinero rápido o que alguien te haga el trabajo.</li>
+      <li>No vas a dedicarle tiempo después de tu turno.</li>
+      <li>Esperas resultados sin entrenar. Esto es un deporte: se entrena.</li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="kicker">Preguntas</span>
+    <h2>Lo que más me preguntan</h2>
+    <div style="margin-top:18px">
+      <details><summary>¿Tengo que salir en cámara?</summary><p>No. El creador da la cara. Tú operas el sistema desde atrás.</p></details>
+      <details><summary>¿Necesito experiencia o saber programar?</summary><p>No. Se aprende paso a paso en los cursos y en las clases en vivo. La IA no hay que dominarla, hay que saber operarla.</p></details>
+      <details><summary>¿Y si trabajo full time?</summary><p>Por eso las clases son dos veces a la semana y los cursos están grabados: avanzas a tu ritmo.</p></details>
+      <details><summary>¿Puedo cancelar?</summary><p>Sí, cuando quieras, desde tu cuenta de Skool.</p></details>
+      <details><summary>¿Me garantizas que voy a ganar $10K?</summary><p>No. Nadie honesto te lo puede garantizar: depende de tu trabajo. Lo que te doy es el mapa y que no lo camines solo.</p></details>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    Shadow Operator · EA Market LLC. Los resultados dependen del trabajo de cada persona. No prometemos ingresos.
+  </div>
+</footer>
+
+<script>
+  // ── CONFIGURACIÓN ──────────────────────────────────────────────
+  // VIDEO_URL: link del VSL. Puede ser un .mp4 o un link de YouTube.
+  const VIDEO_URL = "";
+  // SKOOL_URL: página de pago de la comunidad en Skool.
+  const SKOOL_URL = "#";
+  // Segundo del video en el que se abre el acceso (minuto 9:00 = cuando dice el precio).
+  const ABRE_EN = 540;
+  // ───────────────────────────────────────────────────────────────
+
+  const LLAVE = "so-comunidad-abierta";
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  ["cta1", "cta2"].forEach((id) => { $(id).href = SKOOL_URL; });
+
+  function abrir() {
+    $("acceso").classList.add("abierto");
+    $("oferta").classList.add("abierto");
+    $("aviso").textContent = "Ya puedes entrar a la comunidad.";
+    try { localStorage.setItem(LLAVE, "1"); } catch (e) {}
+    if (window.fbq) fbq("trackCustom", "AccesoAbierto");
+  }
+  let abierto = false;
+  function revisar(t, dur) {
+    if (dur) $("progreso").style.width = Math.min(100, (t / dur) * 100) + "%";
+    if (!abierto && t >= ABRE_EN) { abierto = true; abrir(); }
+    if (dur && t >= dur / 2 && !revisar.mitad) { revisar.mitad = true; if (window.fbq) fbq("trackCustom", "VSL50"); }
+  }
+
+  let ya = false;
+  try { ya = localStorage.getItem(LLAVE) === "1"; } catch (e) {}
+  if (ya || params.get("abrir") === "1") { abierto = true; abrir(); }
+
+  const yt = VIDEO_URL.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  if (VIDEO_URL && yt) {
+    $("vacio").outerHTML = '<div id="yt"></div>';
+    const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+    window.onYouTubeIframeAPIReady = () => {
+      const p = new YT.Player("yt", { videoId: yt[1], playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1 } });
+      setInterval(() => { try { revisar(p.getCurrentTime(), p.getDuration()); } catch (e) {} }, 1000);
+    };
+  } else if (VIDEO_URL) {
+    const v = document.createElement("video");
+    v.src = VIDEO_URL; v.playsInline = true; v.preload = "metadata";
+    $("vacio").replaceWith(v);
+    const play = $("play"); play.style.display = "grid";
+    play.onclick = () => { v.play(); play.style.display = "none"; };
+    v.onclick = () => { if (v.paused) { v.play(); play.style.display = "none"; } else { v.pause(); play.style.display = "grid"; } };
+    let visto = 0; // no deja adelantar el video
+    v.addEventListener("timeupdate", () => {
+      if (v.currentTime > visto + 2) v.currentTime = visto; else visto = Math.max(visto, v.currentTime);
+      revisar(v.currentTime, v.duration);
+    });
+  }
+</script>
+</body>
+</html>

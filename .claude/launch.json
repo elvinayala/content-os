@@ -103,6 +103,18 @@
         "cd /Users/elvinayala/bori-demo && PORT=3150 sh demo/start.sh"
       ],
       "port": 3150
+    },
+    {
+      "name": "shadow-comunidad",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8797",
+        "-d",
+        "demos/shadow-comunidad"
+      ],
+      "port": 8797
     }
   ]
 }
