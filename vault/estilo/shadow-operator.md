@@ -38,6 +38,16 @@ contenido ni dar la cara**. Los guiones de Shadow le hablan A ELLA.
 - ✅ Dentro: sin cámara, sin audiencia propia, pocos clientes bien atendidos, estrategia > tarea,
   la meta concreta **$10K al mes con pocos clientes**.
 
+### 🧭 LA PROMESA (brújula de todo ángulo) — Elvin, 10/oct/2026
+**"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara."** Todo ángulo sale de ahí:
+cada pieza responde UNA pregunta de esa promesa y termina conectando con ella. Preguntas → ángulos:
+¿se puede sin cara? (el operador trabaja detrás de escena) · ¿cuánto son $10K? (la matemática, pocos
+clientes) · ¿qué vendo si no salgo en cámara? (marketing, ventas e IA para negocios) · ¿a quién? (nicho con
+dolor y dinero) · ¿cómo consigo el primer cliente sin cara? (conversación directa, no audiencia) · ¿cómo cobro
+para llegar a $10K? (estrategia, oferta, no bajar el precio) · ¿cómo lo sostengo? (pocos clientes bien
+atendidos, sistema) · ¿por qué creerte? (10 marcas, el sistema probado) · "soy reservado" (ser reservado es el
+perfil del operador). Lo que no responde ninguna de esas preguntas (p. ej. viral, leads baratos) va al banco, no al lote.
+
 ### Ángulos vigentes (reemplazan a los 6 de abajo)
 Prueba base de "el sistema": **"el mismo sistema con el que he escalado más de 10 marcas"**.
 **Heredados:** El sistema que vende · Viral no es ventas (solo con data real: flyer $5 vs. video $12;
