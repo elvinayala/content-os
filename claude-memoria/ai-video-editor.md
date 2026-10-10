@@ -206,3 +206,5 @@ calibración por pista, (3) dirección del b-roll deducida del número → «má
 (9) Cloudflare corta subidas >100 MB (spinner eterno). Todo con pruebas en tests/test_revision_repetidas.py y sección
 en el CLAUDE.md de Cortex. Antes de "arreglar" un pedido repetido: medir versión por versión qué cambió de verdad
 (script medir: broll/subtítulos/música por timeline.vN.json) y mirar cuadros reales, no confiar en los overrides.
+
+- 9/oct (noche): **música** = sorteo SOLO entre las pistas de Elvin, con más peso para las que encajan con el contenido y sin repetir la reciente (`MU.elegir`, `_rng`). **Banderas PR/EE. UU.** al decir "Puerto Rico"/"Estados Unidos" (vertical): 3 franjas como Yulianna, sacadas de su referencia (`assets/motion/banderas/`, ojo: `.mp4` excluidos en git/docker/railway salvo esa carpeta); "quita la bandera" en revisión = `sin_banderas`.
