@@ -65,7 +65,7 @@ precio, quita componentes (solución) · 15 Optimiza por ventas, no por leads ba
 Un sistema probado, no una teoría (producto; "lo he aplicado en todo tipo de nicho", sin abundar) ·
 17 Lo que $100K en mentorías me enseñaron (mentalidad; UNA pepita por pieza) · 18 El mismo sistema
 le sirve a cualquier negocio (solución, de vez en cuando; para quien prefiere ofrecer marketing o
-automatizaciones a negocios locales). Ganchos de cada uno: los que dio Elvin el 10/oct (ver el
+automatizaciones a negocios locales). **19 El operador estratégico — cómo llegar a $10K al mes** (Elvin, 10/oct: operador técnico = hace tareas y cobra poco; estratégico = entiende el negocio, decide qué hacer y cobra por resultado; camino en 4 pasos: nicho con dolor y dinero → oferta clara → primeros 4-5 clientes conversando, sin cámara → sistematizar y cobrar por estrategia). Ganchos de cada uno: los que dio Elvin el 10/oct (ver el
 lote `guion-so-v2-*` en la bandeja).
 
 ## ⚠️ Giro de marca (19/07) — de "meta" a VALOR

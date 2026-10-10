@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-10T20:42:24.938Z",
+  "actualizadoEl": "2026-10-10T20:46:03.890Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -11730,6 +11730,45 @@
       "angulo": "Lo que $100K en mentorías me enseñaron",
       "agente": "Lauti",
       "creadoEl": "2026-10-10T20:42:24.938Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v3-21",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Hay dos tipos de operador. Solo uno llega a $10K.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator · voz de Elvin sobre imágenes (Elvin no sale en cámara)\nPromesa: \"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara\"\nPregunta de la promesa que responde: ¿Cómo llego a $10K como operador?\nPilar: problema · Ángulo: El operador estratégico · Enemigo: cobrar por tarea\nEstructura: de Elvin (GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA)\n\nGANCHO (3 variantes):\n1. Hay dos tipos de operador. Solo uno llega a $10K.\n2. Si cobras por tarea, nunca llegas a $10K.\n3. No necesitas ser el más técnico. Necesitas ser el más estratégico.\n\nPROBLEMA:\nEl operador técnico hace lo que le piden: un anuncio, un post, una automatización. Cobra poco, depende de que le manden trabajo, y siempre hay alguien más barato.\n\nSOLUCIÓN:\nEl operador estratégico primero entiende el negocio: su nicho, su oferta y dónde se le cae el dinero. Después decide qué hacer y en qué orden, y cobra por el resultado. Por eso le bastan cuatro clientes para llegar a $10K, y para eso no tiene que mostrar la cara.\n\nPRUEBA:\nHe escalado más de 10 marcas entre $20K y $100K al mes, de todo tipo de nicho.\n\nCTA (doble):\nCTA A: \"Comenta ESTRATEGIA y te mando la diferencia entre el operador técnico y el estratégico.\"\nCTA B: \"Comenta 10K y te cuento cómo te enseño a hacer tus primeros $10K al mes sin mostrar tu cara.\"\n\nB-ROLL SUGERIDO (en este orden):\n1. Dos personas frente a pantallas: una ejecuta tareas, otra mira un plan\n2. Lista de tareas con precio por cada una\n3. Pizarra con el diagnóstico de un negocio\n4. Cuatro clientes y $10K en pantalla\n5. Cierre: la palabra ESTRATEGIA",
+      "pilar": "problema",
+      "angulo": "El operador estratégico",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T20:46:03.890Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v3-22",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "Si fuera por lo técnico, mucha gente ya haría plata por internet.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator · voz de Elvin sobre imágenes (Elvin no sale en cámara)\nPromesa: \"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara\"\nPregunta de la promesa que responde: ¿Qué hace diferente al que llega?\nPilar: mentalidad · Ángulo: Más estratégico que técnico · Enemigo: creer que más técnica = más dinero\nEstructura: de Elvin (GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA)\n\nGANCHO (3 variantes):\n1. Si fuera por lo técnico, mucha gente ya haría plata por internet.\n2. Antes de jugar, estudias al lanzador.\n3. El que llega a $10K no es el más técnico. Es el que mejor piensa.\n\nPROBLEMA:\nCrees que para ganar $10K necesitas dominar más herramientas, más técnica, más cursos.\n\nSOLUCIÓN:\nEsto es más estratégico que técnico. Antes de jugar estudias al lanzador: cómo tira, si juega de lejos o de cerca. Con un negocio es igual: lo estudias, creas un plan para esa gente y lo ejecutas. El plan vale más que la herramienta.\n\nPRUEBA:\nYo construí varias empresas en silencio. Una agencia que creé y escalé a más de $100K al mes.\n\nCTA (doble):\nCTA A: \"Comenta PLAN y te mando las preguntas con las que estudio un negocio antes de tocar nada.\"\nCTA B: \"Comenta 10K y te cuento cómo te enseño a hacer tus primeros $10K al mes sin mostrar tu cara.\"\n\nB-ROLL SUGERIDO (en este orden):\n1. Pila de cursos y herramientas, desenfocada\n2. Un lanzador de béisbol estudiado en pantalla\n3. Libreta con el plan escrito\n4. Persona pensando frente a la ventana\n5. Cierre: 'el plan vale más que la herramienta'",
+      "pilar": "mentalidad",
+      "angulo": "Más estratégico que técnico",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T20:46:03.890Z",
+      "estado": "nuevo",
+      "formato": "reel b-roll narrado"
+    },
+    {
+      "id": "guion-so-v3-23",
+      "tipo": "guion",
+      "marca": "shadow-operator",
+      "titulo": "El camino a $10K como operador estratégico, en 4 pasos.",
+      "contenido": "🎬 REEL B-ROLL NARRADO — Shadow Operator · voz de Elvin sobre imágenes (Elvin no sale en cámara)\nPromesa: \"Te enseño a hacer tus primeros $10K al mes sin mostrar tu cara\"\nPregunta de la promesa que responde: ¿Cómo llego a $10K al mes?\nPilar: solución · Ángulo: El camino a $10K, paso a paso · Enemigo: hacer las cosas al revés\nEstructura: de Elvin (GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA)\n\nGANCHO (3 variantes):\n1. El camino a $10K como operador estratégico, en 4 pasos.\n2. Cómo llegar a $10K al mes sin mostrar tu cara.\n3. Cuatro pasos. En este orden.\n\nPROBLEMA:\nEl problema no es que no sepas: es que nadie te dice el orden, y haces las cosas al revés.\n\nSOLUCIÓN:\nUno: escoge un nicho con dolor y dinero. Dos: arma una oferta clara: a dónde llevas al cliente y por qué deberían creerte. Tres: consigue tus primeros cuatro o cinco clientes conversando, sin cámara, y diagnostica antes de ofrecer. Cuatro: sistematiza y cobra por estrategia, no por tarea. Con cuatro clientes a $2,500 ya estás en $10K. Es una cuenta, no una promesa.\n\nPRUEBA:\nEs el mismo sistema con el que he escalado más de 10 marcas.\n\nCTA (doble):\nCTA A: \"Comenta CAMINO y te mando los 4 pasos con una pregunta para cada uno.\"\nCTA B: \"Comenta 10K y te cuento cómo te enseño a hacer tus primeros $10K al mes sin mostrar tu cara.\"\n\nB-ROLL SUGERIDO (en este orden):\n1. Número 1 a 4 sobre una escalera\n2. Pizarra: nicho → oferta → primeros clientes → sistema\n3. Mensaje directo enviado desde un teléfono\n4. Calculadora: 4 × $2,500 = $10,000\n5. Cierre: los cuatro pasos alineados",
+      "pilar": "solución",
+      "angulo": "El camino a $10K, paso a paso",
+      "agente": "Lauti",
+      "creadoEl": "2026-10-10T20:46:03.890Z",
       "estado": "nuevo",
       "formato": "reel b-roll narrado"
     }
