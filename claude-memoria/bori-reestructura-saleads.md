@@ -11,6 +11,8 @@ Elvin (10/oct/2026): "reestructuración de Bori, sin quitar la esencia, cambios 
 
 **Cacería de bugs (10/oct noche):** recorrido completo como cliente en un Bori local (config `bori-local` en launch.json de Content OS, datos en /tmp/bori-local) + revisión de código; ~20 arreglados (lector de sitios lineal + fetch que valida IP al conectar; textos que se borraban; piezas de la estrategia anterior; copys cobrados doble; 4 fases necesitan ≥ $75/día). Resumen enviado por DM a Aure y Lis para Ángela y Adamay. Falta: campaña de prueba con Meta real, link de Zoom (Aure), WhatsApp de soporte fuera de horario (WHATSAPP_SOPORTE no está en Railway).
 
+**Planes (11/oct):** solo se venden **Pro ($99) y Business ($249)**. Business = nombre visible del plan que por dentro sigue siendo `Agencia` (no renombrar la llave: cuentas, STRIPE_PRICE_AGENCIA, avatar, trafficker). Creador/Starter fuera de la venta pero quien los tiene los conserva (PLANES_EN_VENTA en server.js; PLAN_NOMBRE en server y front).
+
 **No copiar:** "Conecta la otra app de Meta" de SaleADS — Bori tiene UNA app aprobada. TikTok/Google = "Pronto" (no existen).
 
 **Why:** Elvin quiere que el cliente llegue de la compra a su primera campaña guiado, como SaleADS.

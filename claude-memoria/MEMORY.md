@@ -10,7 +10,7 @@
 - [Bori — backend real](bori-backend-real.md) — SaaS en vivo: dónde vive, deploy, trampas que rompieron prod, monitor de fallos
 - [Bori — plan de crecimiento](bori-plan-crecimiento.md) — 1K día 60 · 3K día 90 · 50K en un año; motores, compuertas, decisiones pendientes
 - [Bori — marca](bori-marca.md) — identidad v1: logo "el coquí que canta", paleta de la app, kit en vault/proyectos/bori-crecimiento/marca/
-- [Bori — reestructura estilo SaleADS](bori-reestructura-saleads.md) — 10/oct: rehacer 30-40 % del flujo con SaleADS de referencia; hecho: correo, bienvenida, sala, Configura tu cuenta, activos, Mi negocio (lee el sitio web → servicios, identidad con paleta del logo), barras, Nueva estrategia guiada
+- [Bori — reestructura estilo SaleADS](bori-reestructura-saleads.md) — 10/oct: rehacer 30-40 % del flujo con SaleADS de referencia; solo planes Pro y Business (= Agencia por dentro); hecho: correo, bienvenida, sala, Configura tu cuenta, activos, Mi negocio (lee el sitio web → servicios, identidad con paleta del logo), barras, Nueva estrategia guiada
 - [Bori — post-venta](bori-postventa.md) — 10/oct: bienvenida + sala en vivo por Zoom para TODOS los planes (Adamay/Ángela L-V 9-4); tutorial en video; Ángela PM; 3 capas de soporte; Lis colaboraciones
 - [Bori — agente](bori-agente.md) — trafficker personal (fase 1 prod), WhatsApp por Zernio (falta número), Bori Estratega, Bori móvil (heybori.ai/movil)
 - [Bori — CRM](bori-crm.md) — CRM para Pro/Agencia: pipeline, notas, puente Timelines/Zapier; fase 2 pendiente
