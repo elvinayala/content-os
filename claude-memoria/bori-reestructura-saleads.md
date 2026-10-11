@@ -7,7 +7,7 @@ metadata:
 
 Elvin (10/oct/2026): "reestructuración de Bori, sin quitar la esencia, cambios entre 30 y 40 %… del workflow, las secuencias, cómo llevamos al cliente de A a B", con SaleADS (saleads.ai) de referencia. Mandó capturas de su onboarding.
 
-**Hecho el 10/oct (en prod, heybori.ai):** correo "✅ Tu pago fue aprobado" con pasos en tarjetas · /bienvenida (video + Zoom) · /sala-en-vivo (Zoom sin agendar, todos los planes, Adamay/Ángela L-V 9-4, aviso en #bori-clientes al entrar) · "Configura tu cuenta" como primera pantalla (pasos que se desbloquean) · asistente de activos al conectar Meta (centro de negocios → cuenta y página → "Preparando tu conexión con Meta" → ¿Qué ofreces?).
+**Hecho el 10/oct (en prod, heybori.ai):** correo "✅ Tu pago fue aprobado" con pasos en tarjetas · /bienvenida (video + Zoom) · /sala-en-vivo (Zoom sin agendar, todos los planes, Adamay/Ángela L-V 9-4, aviso en #bori-clientes al entrar) · "Configura tu cuenta" como primera pantalla (pasos que se desbloquean) · asistente de activos al conectar Meta (centro de negocios → cuenta y página → "Preparando tu conexión con Meta" → ¿Qué ofreces?) · Mi negocio en 7 preguntas, una por pantalla, con Bori narrando abajo · barra lateral por secciones (Estrategias / Crea / Administrar recursos / Equipo) + barra de arriba (Sugerencias, créditos, Comprar créditos) + tarjeta "Activa tu gerente de cuenta" · **Nueva estrategia guiada** (objetivo → presupuesto → creativos con "Llenar con lo mejor de mi Baúl" → revisar → montar EN PAUSA; mismas fórmulas y montarEstrategia; la página de Mis campañas queda como "Modo avanzado").
 
 **No copiar:** "Conecta la otra app de Meta" de SaleADS — Bori tiene UNA app aprobada. TikTok/Google = "Pronto" (no existen).
 
