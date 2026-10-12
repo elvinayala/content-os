@@ -54,3 +54,5 @@ Además (30/sep): cada quien declara su Wi-Fi principal en Hoy; red nueva → av
 30/sep: Lis (retencion_alianzas) ya NO poncha: "Mi reporte del día" en Hoy con 9 KPIs (incl. reuniones de seguimiento de ventas, cash collected US$, ventas de Bori); recordatorio 6:45 PM si falta. Se le avisó por Slack.
 
 6/oct: el diario de chatters = la planilla de Excel completa (calificados, seguimiento, mitad, propuesta, link, derivados, ventas/collections US$ + %); historial de Ana y Dilan cargado (cuadra con el Resumen). Rangos Hoy/Ayer/7d/30d/mes/mes pasado en Arena. Leads ↔ Ritmo ↔ Pulse con /api/pase (misma sesión): antes el dominio leads.* mandaba /ritmo al CRM (queja de Roger). Pendiente: planilla "Producción Setters"; Ana anotó 54 conversaciones el 1/oct en Ritmo vs 14 en la planilla (quedó 54).
+
+12/oct: puesto Videógrafo (Derek Toro): sin ponche; anota cada trabajo del día (trabajo, negocio, pueblo, videos, hora, día) en Hoy → Mis trabajos; eso es su reporte. Yaileen/Carilin lo dan de alta (Personas → Nuevo empleado → Videógrafo) y pueden anotarle trabajos desde Equipo. Al 12/oct Derek aún no tiene cuenta.
