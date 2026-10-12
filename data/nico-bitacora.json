@@ -535,6 +535,38 @@
       "verificado": "Cortex/edit.heybori.ai con salud OK (health 200). Revisé el código del editor manual (edicion_manual.py, editor.html, render.py, /video route): el flujo guarda, versiona, renderiza y el reproductor del proyecto usa cache-busting (?v=&t=), así que no es caché del navegador por diseño. No encontré un bug reproducible en el código que explique la pérdida específica de la corrección del teléfono. No tengo acceso (SSH ni token de Railway) al proyecto Cortex (es otro proyecto de Railway, distinto al mío) para leer el timeline.ai.json real de v7 y confirmar si la corrección quedó guardada.",
       "commit": null,
       "pendiente": "Necesito o (a) acceso de admin a edit.heybori.ai / SSH railway-cortex para inspeccionar el proyecto, o (b) que María confirme si al reabrir el editor (✎ Editar) su corrección del teléfono SIGUE ahí (eso aisla si fue un problema de guardado o de visualización/caché)."
+    },
+    {
+      "fecha": "2026-10-12T02:12:02.498Z",
+      "plataforma": "content-os",
+      "que": "Black Friday 2026: 3 landings de oferta en Netlify (bf2026-levelup/aiborinquen/bori) + /api/bf2026/cupos (tabla bf2026_cupos, LU 12 · AIB 8; Bori proxy a heybori) + scripts/bf2026.mjs",
+      "porque": "Pedido de mac #204 (BF aprobado por Elvin 11/oct)",
+      "verificado": "3 landings 200; cupos lu {ok,12/12}, aib {ok,8/8}, bori ok:false hasta desplegar fundador",
+      "commit": "content-os main (Black Friday 2026: 3 landings…)"
+    },
+    {
+      "fecha": "2026-10-12T02:12:02.499Z",
+      "plataforma": "bori",
+      "que": "Precio de fundador BF2026 (fundador.js, checkout ciclo f, cupos por Stripe, escalera de créditos, refill 30 d del anual, banner) en rama bf2026-fundador SIN desplegar; fix ?signup=1 en la misma rama",
+      "porque": "Pedido #204; Stripe LIVE espera OK de Elvin",
+      "verificado": "tests verdes (infra y urlsegura fallan igual sin el cambio: sin red en el contenedor); nada en prod",
+      "commit": "bori bf2026-fundador fbd3c71, c7deb6c"
+    },
+    {
+      "fecha": "2026-10-12T02:12:02.499Z",
+      "plataforma": "bori",
+      "que": "plantillas-bf.js: somete 4 plantillas de WhatsApp BF a Meta por Zernio al arrancar + GET /api/plantillas-bf",
+      "porque": "Pedido #204 punto 5",
+      "verificado": "deploy ok (/api/status 200, /app 200); estado zernio_no_configurado: Bori no tiene ZERNIO_API_KEY/ACCOUNT_ID en Railway",
+      "commit": "bori main c96ed38"
+    },
+    {
+      "fecha": "2026-10-12T02:12:02.499Z",
+      "plataforma": "content-os",
+      "que": "INCIDENTE: correr Bori local con el DATABASE_URL del contenedor creó 11 tablas vacías de Bori en el Supabase de Pulse (sin choque, 0 datos). Lección: correr Bori local con DATABASE_URL= vacío",
+      "porque": "prueba local de /api/fundador/cupos",
+      "verificado": "tablas con 0 filas; pendiente OK de Elvin para borrarlas",
+      "commit": "-"
     }
   ],
   "pendientesElvin": [
