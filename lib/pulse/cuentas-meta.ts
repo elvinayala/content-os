@@ -38,6 +38,7 @@ export interface ResultadoCuentas {
   avisados: number;
   transitorios: number;
   detalle: Linea[];
+  muestraError?: string;
   error?: string;
 }
 
@@ -59,12 +60,13 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   if (!cId) return { ...vacio, error: "sin-columna-id" };
   const cEmpresa = columnas.find((c) => /^empresa$/i.test(c.title));
   const cPersonas = columnas.find((c) => c.type === "people");
-  const bajas = grupos.filter((g) => /offboard|baja|inactiv/i.test(g.title)).map((g) => g.id);
+  // Solo los grupos de clientes con servicio de anuncios (no bajas ni los programas Inner Circle / Accelerator).
+  const fuera = grupos.filter((g) => !/cliente activo|onboarding|an[aá]lisis/i.test(g.title)).map((g) => g.id);
 
   const items = await d
     .select({ id: pulseItems.id, name: pulseItems.name, groupId: pulseItems.groupId, values: pulseItems.values, createdAt: pulseItems.createdAt })
     .from(pulseItems)
-    .where(and(eq(pulseItems.boardId, board.id), bajas.length ? notInArray(pulseItems.groupId, bajas) : undefined, o.itemId ? eq(pulseItems.id, o.itemId) : undefined));
+    .where(and(eq(pulseItems.boardId, board.id), fuera.length ? notInArray(pulseItems.groupId, fuera) : undefined, o.itemId ? eq(pulseItems.id, o.itemId) : undefined));
 
   // Último estado guardado por ficha.
   const previos = await d
@@ -116,7 +118,7 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
       detalle,
       admin: cPersonas ? (((v[cPersonas.id] as string[] | undefined) ?? []).map((u) => nombres.get(u)).filter(Boolean)[0] ?? null) : null,
     };
-    if (estado === "transitorio") { res.transitorios++; return; }
+    if (estado === "transitorio") { res.transitorios++; res.muestraError ??= detalle; return; }
     if (esProblema(estado)) { res.conProblema++; pendientesTodos.push(linea); }
     const { escribir, avisar } = decidir(ultimo.get(i.id) ?? null, estado);
     if (!escribir) return;
