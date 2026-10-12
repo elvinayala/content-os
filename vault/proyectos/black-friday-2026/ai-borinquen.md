@@ -83,9 +83,7 @@ oferta ("2 por la instalación de 1") y el precio lo da el closer en la llamada.
 precios de **Academia ($1,997)** y **Mapa de IA ($197)** donde ya estaban. Ante la duda, sin precio.
 
 **Lo que sigue pendiente de Elvin (marcado [DECIDE ELVIN] en el plan):** bono de lanzamiento y
-capacitación del equipo tal cual; el plan todavía dice "en AutoFlow paga desde el mes 3" (venía del
-precio viejo, que ya traía el mes 1 incluido): con la oferta nueva aquí quedó **"primer mes incluido
-= paga desde el mes 2"** hasta que Elvin diga otra cosa; 8 instalaciones por mes; si el bono de lanzamiento aplica también
+capacitación del equipo tal cual; primer mes incluido = paga desde el mes 2 (ya igual en el plan); 8 instalaciones por mes; si el bono de lanzamiento aplica también
 al 2.º agente de los clientes actuales (el plan no lo dice: los textos de clientes NO lo prometen).
 
 ### Cómo lo explica el closer en 30 segundos
