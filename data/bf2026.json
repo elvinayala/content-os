@@ -1,0 +1,22 @@
+{
+  "sitios": {
+    "lu": {
+      "id": "8eef4e0f-a783-45f5-b3d8-4936a7addbdd",
+      "url": "https://bf2026-levelup.netlify.app/",
+      "estado": "ready",
+      "desplegado": "2026-10-12T02:05:49.890Z"
+    },
+    "aib": {
+      "id": "0f5abe70-54ec-4fb1-8911-661d102b1002",
+      "url": "https://bf2026-aiborinquen.netlify.app/",
+      "estado": "ready",
+      "desplegado": "2026-10-12T02:05:54.699Z"
+    },
+    "bori": {
+      "id": "5b2ffeb5-fc63-4489-bd2c-8c6fb0c161f5",
+      "url": "https://bf2026-bori.netlify.app/",
+      "estado": "ready",
+      "desplegado": "2026-10-12T02:05:58.376Z"
+    }
+  }
+}

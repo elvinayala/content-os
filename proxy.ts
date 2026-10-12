@@ -81,6 +81,8 @@ export default async function proxy(request: NextRequest) {
   // de demo (público con rate limit) y registro de portales desde la fábrica (CRON_SECRET).
   if (pathname === "/api/retell-webhook") return NextResponse.next();
   if (pathname === "/api/demo-lead") return NextResponse.next();
+  // Contador de cupos de las landings de Black Friday 2026 (GET público; POST valida CRON_SECRET).
+  if (pathname === "/api/bf2026/cupos") return NextResponse.next();
   if (pathname === "/api/autoflow/portales") return NextResponse.next();
   // Webhook de Telegram (canal directo de Elvin con Sofi). Valida el secreto adentro.
   if (pathname === "/api/telegram") return NextResponse.next();
