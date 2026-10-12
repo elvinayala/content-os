@@ -83,7 +83,7 @@
 - [La Mesa · evento de clientes LU](evento-la-mesa.md) — sáb 5/dic, top 25 por LTV; Carilin dirige; venues para el 3/oct
 - [Supabase — cuelgues del pooler](supabase-pooler-cuelgues.md) — causa: consultas haciendo fila en postgres.js; arreglado 29/sep con limitador en cliente-db.ts; no cambiar pooler sin subir pool size
 - [Agenda de closers en 2 pasos](agenda-dos-pasos.md) — /f/agenda-roger y /f/agenda-level-up; no clonar Calendly
-- [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo; 9/oct: motion a pedido en UN paso (max.mjs material, sin b-roll)
+- [Remi — motion designer](remi-motion.md) — Remotion en motion/ + Railway; 2 motion a clientes ≥ $3,500 pagado completo; 9/oct: motion a pedido en UN paso (max.mjs material, sin b-roll); 12/oct: lotes tabla→videos + Hyperframes + Brag (skill lanzamiento)
 - [AIB — acceso](aib-acceso-aure.md) — AIB lo opera Aure; Jessica/LU fuera; Carilin = mismo acceso que Aure (todo, incl. RR.HH.)
 - [Resumen del día por Telegram](resumen-dia-telegram.md) — 8:30 PM llamadas + ventas; falta que Elvin publique ventas-hoy.gs
 - [Deploy — empaque del vault](deploy-vault-empaque.md) — solo vault/**/*.md en las funciones (ENOSPC)
