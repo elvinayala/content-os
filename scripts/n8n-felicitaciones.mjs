@@ -149,6 +149,10 @@ return out;` }, pos(5, 0)),
     nodo("Esperar 1 min", "n8n-nodes-base.wait", 1.1, { amount: 1, unit: "minutes" }, pos(9, -2)),
     nodo("Referidos", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $('¿100 o 200?').item.json.telefono }}@s.whatsapp.net", messageText: `={{ ${JSON.stringify(TEXTO_REFERIDOS)}.replace('{nombre}', $('¿100 o 200?').item.json.primerNombre) }}`, options_message: {} }, pos(10, -2), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
     nodo("Felicitación 200", "n8n-nodes-evolution-api.evolutionApi", 1, { resource: "messages-api", instanceName: "Level-Up-Media-Whatsapp", remoteJid: "={{ $json.telefono }}@s.whatsapp.net", messageText: TEXTO_200, options_message: {} }, pos(8, -1), { credentials: { evolutionApi: CRED_EVO }, onError: "continueRegularOutput" }),
+    // 11/oct/2026: el WhatsApp de Level Up estuvo desconectado y el flujo marcó "felicitado" a 3 clientes sin que el mensaje saliera
+    // (el envío sigue aunque falle). Ahora solo se marca y se guarda en memoria si Evolution devolvió el id del mensaje.
+    nodo("¿Salió la felicitación 100?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}")], combinator: "and" }, options: {} }, pos(8.5, -2)),
+    nodo("¿Salió la felicitación 200?", "n8n-nodes-base.if", 2.2, { conditions: { options: opts, conditions: [cond("={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}")], combinator: "and" }, options: {} }, pos(8.5, -1)),
     nodo("Lo que se mandó", "n8n-nodes-base.code", 2, { mode: "runOnceForEachItem", jsCode: `const c = $('¿Nuevo?').item.json;
 const textos = c.hito === 100 ? [${JSON.stringify(TEXTO_100)}, ${JSON.stringify(TEXTO_REFERIDOS)}.replace('{nombre}', c.primerNombre)] : [${JSON.stringify(TEXTO_200)}];
 return { json: { ...c, sessionId: c.telefono + '@s.whatsapp.net', texto: textos.join('\\n\\n') } };` }, pos(11, -1)),
@@ -170,10 +174,10 @@ return [{ json: {
     conectar("Todos los días 4:20 PM", "Modo programado", "Clientes (NocoDB)", "Candidatos", "Leads en Meta", "Decidir", "¿Sembrar?", "Sembrar en NocoDB", "Sembrados"),
     conectar(["¿Sembrar?", 1], "¿Envío real?"),
     conectar("Simulación (webhook)", "Modo simulación", "Clientes (NocoDB)"),
-    conectar("¿Envío real?", "¿Ya se le mandó?", "¿Nuevo?", "¿100 o 200?", "Felicitación 100", "Esperar 1 min", "Referidos", "Lo que se mandó", "Memoria del agente"),
+    conectar("¿Envío real?", "¿Ya se le mandó?", "¿Nuevo?", "¿100 o 200?", "Felicitación 100", "¿Salió la felicitación 100?", "Esperar 1 min", "Referidos", "Lo que se mandó", "Memoria del agente"),
     conectar("Lo que se mandó", "Marcar en NocoDB"),
     conectar(["¿Nuevo?", 1], "Marcar en NocoDB"),
-    conectar(["¿100 o 200?", 1], "Felicitación 200", "Lo que se mandó"),
+    conectar(["¿100 o 200?", 1], "Felicitación 200", "¿Salió la felicitación 200?", "Lo que se mandó"),
     conectar(["¿Envío real?", 1], "Resumen"),
   );
   return { name: NOMBRE, nodes, connections, settings: { executionOrder: "v1", errorWorkflow: ERROR_WORKFLOW, timezone: "America/Puerto_Rico" } };

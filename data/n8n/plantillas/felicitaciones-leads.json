@@ -523,6 +523,74 @@
       "onError": "continueRegularOutput"
     },
     {
+      "id": "f--sali-la-felicitaci-n-100-",
+      "name": "¿Salió la felicitación 100?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2210,
+        -400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5",
+              "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f--sali-la-felicitaci-n-200-",
+      "name": "¿Salió la felicitación 200?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2210,
+        -200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6",
+              "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
       "id": "f-lo-que-se-mand-",
       "name": "Lo que se mandó",
       "type": "n8n-nodes-base.code",
@@ -791,6 +859,17 @@
       "main": [
         [
           {
+            "node": "¿Salió la felicitación 100?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Salió la felicitación 100?": {
+      "main": [
+        [
+          {
             "node": "Esperar 1 min",
             "type": "main",
             "index": 0
@@ -837,6 +916,17 @@
       ]
     },
     "Felicitación 200": {
+      "main": [
+        [
+          {
+            "node": "¿Salió la felicitación 200?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Salió la felicitación 200?": {
       "main": [
         [
           {

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-27T03:15:37.794Z",
+  "updatedAt": "2026-10-12T02:41:02.264Z",
   "createdAt": "2026-09-25T03:59:53.152Z",
   "id": "3ylIqOgWiiW37lWx",
   "name": "H-) Felicitaciones por leads v2",
@@ -529,6 +529,74 @@
       "onError": "continueRegularOutput"
     },
     {
+      "id": "f--sali-la-felicitaci-n-100-",
+      "name": "¿Salió la felicitación 100?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2210,
+        -400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5",
+              "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f--sali-la-felicitaci-n-200-",
+      "name": "¿Salió la felicitación 200?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2210,
+        -200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6",
+              "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
       "id": "f-lo-que-se-mand-",
       "name": "Lo que se mandó",
       "type": "n8n-nodes-base.code",
@@ -797,6 +865,17 @@
       "main": [
         [
           {
+            "node": "¿Salió la felicitación 100?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Salió la felicitación 100?": {
+      "main": [
+        [
+          {
             "node": "Esperar 1 min",
             "type": "main",
             "index": 0
@@ -846,6 +925,17 @@
       "main": [
         [
           {
+            "node": "¿Salió la felicitación 200?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Salió la felicitación 200?": {
+      "main": [
+        [
+          {
             "node": "Lo que se mandó",
             "type": "main",
             "index": 0
@@ -868,9 +958,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
-  "activeVersionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
-  "versionCounter": 40,
+  "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
+  "activeVersionId": "952c0118-9524-43f3-bab4-22f779c26a03",
+  "versionCounter": 46,
   "triggerCount": 2,
   "shared": [
     {
@@ -895,7 +985,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -923,7 +1013,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -933,9 +1023,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-27T03:15:37.797Z",
-    "createdAt": "2026-09-27T03:15:37.797Z",
-    "versionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
+    "updatedAt": "2026-10-12T02:41:02.268Z",
+    "createdAt": "2026-10-12T02:41:02.268Z",
+    "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
     "workflowId": "3ylIqOgWiiW37lWx",
     "nodes": [
       {
@@ -1460,6 +1550,74 @@
         "onError": "continueRegularOutput"
       },
       {
+        "id": "f--sali-la-felicitaci-n-100-",
+        "name": "¿Salió la felicitación 100?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2210,
+          -400
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c5",
+                "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f--sali-la-felicitaci-n-200-",
+        "name": "¿Salió la felicitación 200?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2210,
+          -200
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c6",
+                "leftValue": "={{ !!(($json.data && $json.data.key && $json.data.key.id) || ($json.key && $json.key.id)) }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
         "id": "f-lo-que-se-mand-",
         "name": "Lo que se mandó",
         "type": "n8n-nodes-base.code",
@@ -1728,6 +1886,17 @@
         "main": [
           [
             {
+              "node": "¿Salió la felicitación 100?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Salió la felicitación 100?": {
+        "main": [
+          [
+            {
               "node": "Esperar 1 min",
               "type": "main",
               "index": 0
@@ -1777,6 +1946,17 @@
         "main": [
           [
             {
+              "node": "¿Salió la felicitación 200?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Salió la felicitación 200?": {
+        "main": [
+          [
+            {
               "node": "Lo que se mandó",
               "type": "main",
               "index": 0
@@ -1791,26 +1971,26 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-27T03:15:37.987Z",
-        "id": 311,
+        "createdAt": "2026-10-12T02:41:02.490Z",
+        "id": 328,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
+        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-27T03:15:38.298Z",
-        "id": 312,
+        "createdAt": "2026-10-12T02:41:02.809Z",
+        "id": 329,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
+        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
         "event": "deactivated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       },
       {
-        "createdAt": "2026-09-27T03:15:38.609Z",
-        "id": 313,
+        "createdAt": "2026-10-12T02:41:03.123Z",
+        "id": 330,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "5227523e-50b2-49ee-9958-b7466e4c3fc3",
+        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
