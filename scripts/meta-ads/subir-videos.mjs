@@ -4,6 +4,8 @@
 // (cliente:<slug> usa la cuenta de Meta del expediente de Max; se puede pasar la URL del video directo, p. ej. la de Remi.)
 // Cada entregaId es una fila de data/entregas.json con videoUrl (p. ej. motion-remi-lu-07-autoflow-llego-16x9).
 // Guarda el mapa id → videoId en data/meta-ads/videos-subidos.json para que Max lo use en los planes.
+import { negarEnSoloLectura } from "../../lib/solo-lectura.mjs";
+negarEnSoloLectura("subir videos a Meta"); // parche D
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

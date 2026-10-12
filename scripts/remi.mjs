@@ -15,6 +15,7 @@
 //   node scripts/remi.mjs salud
 // --entregar deja cada video en la bandeja de Entregas (data/entregas.json, agente "Remi").
 // Env: REMI_URL + REMI_SECRETO (.env.local / Railway).
+import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,6 +25,7 @@ const env = (n) => process.env[n] || (fs.existsSync(path.join(ROOT, ".env.local"
 const URL_REMI = env("REMI_URL") || "https://remi-production-6765.up.railway.app";
 const SECRETO = env("REMI_SECRETO");
 const [, , cmd, ...resto] = process.argv;
+if (cmd !== "salud") negarEnSoloLectura(`remi.mjs ${cmd ?? ""}`.trim()); // parche D: renderizar o proponer no es lectura
 const arg = (n) => { const i = resto.indexOf(`--${n}`); return i >= 0 ? resto[i + 1] : undefined; };
 const ids = resto.filter((x, i) => !x.startsWith("--") && !(i > 0 && resto[i - 1].startsWith("--") && resto[i - 1] !== "--entregar"));
 let guiones = [];

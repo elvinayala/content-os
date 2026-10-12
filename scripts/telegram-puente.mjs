@@ -41,6 +41,7 @@ import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as 
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
 import { prepararTareaAicore } from "./aicore-tareas.mjs";
 import { leerAprobacionNico, usarNonce, verificarAprobacion } from "../lib/firma-aprobaciones.mjs";
+import { MARCA_SOLO_LECTURA } from "../lib/solo-lectura.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -245,7 +246,12 @@ function marcasDeAicore(texto) {
 }
 
 // Solo lectura (Nico diagnosticando una solicitud del equipo): mira todo, no cambia nada.
-const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)", "Bash(node scripts/agentes.mjs mensaje*)", "Bash(node scripts/agentes.mjs buzon*)"];
+// Solo lectura de verdad (parche D, 12-oct): nada que salga del contenedor ni que active a otro agente. Se quitaron
+// WebFetch (podía sacar datos en una URL), `nico-ronda.mjs` con argumentos (`enviar` manda Telegram) y
+// `agentes.mjs mensaje` (un Nico en lectura le podía pedir a Lola, que corre con fal.ai y gasta créditos).
+const SOLO_LECTURA = ["Read", "Glob", "Grep", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)", "Bash(node scripts/agentes.mjs buzon*)"];
+// Lo que NUNCA se permite en solo lectura, aunque una regla de arriba lo dejara pasar por prefijo.
+const PROHIBIDO_EN_LECTURA = ["Edit", "Write", "NotebookEdit", "WebFetch", "WebSearch", "Bash(node scripts/agentes.mjs mensaje*)", "Bash(node scripts/agentes.mjs atendido*)", "Bash(node scripts/nico-ronda.mjs enviar*)"];
 function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
   return new Promise((resolve) => {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
@@ -271,7 +277,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const nicoLectura = ES_NICO && deBuzon && !macVerificada && env("NICO_BUZON_MODO") === "lectura";
     if (ES_NICO && deBuzon) LOG("nico · modo:", nicoLectura ? "solo lectura (delegado)" : env("NICO_BUZON_MODO") === "lectura" ? "total (Mac verificada)" : "total (restricción apagada)", origen);
     if (prep) { /* permisos ya puestos por prepararTareaAicore */ }
-    else if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    else if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", ...PROHIBIDO_EN_LECTURA);
     else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...metaLectura(opts.marcas), "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (deAicore) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (modo === "total") args.push("--dangerously-skip-permissions");
@@ -292,6 +298,11 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // AGENTE_ORIGEN: de dónde viene el trabajo; agentes.mjs lo pega en los pedidos a otros agentes (⟳ SEGUIR) para
     // que su respuesta despierte a este agente y lo termine (26/sep).
     const envVars = { ...process.env, ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), PATH: `${path.dirname(CLAUDE)}:${process.env.PATH}`, AGENTE_ORIGEN: opts.origen || "" };
+    // Parche D (12-oct): toda tarea de solo lectura lleva la marca, y los scripts con efectos la respetan (lib/solo-lectura.mjs).
+    // Las demás NUNCA la heredan del entorno.
+    const soloLecturaEfectiva = Boolean(prep) || Boolean(opts.soloLectura) || nicoLectura || deAicore;
+    if (soloLecturaEfectiva) envVars[MARCA_SOLO_LECTURA] = "1"; else delete envVars[MARCA_SOLO_LECTURA];
+    if (soloLecturaEfectiva) LOG("solo lectura (marca puesta) ·", persona, origen || "sin origen");
     LOG("claude ›", persona, nueva ? "sesión nueva" : "resume", prompt.slice(0, 80));
     const child = spawn(CLAUDE, args, { cwd: prep?.cwd || ROOT, env: envVars, stdio: ["ignore", "pipe", "pipe"] });
     hijoActual = child;

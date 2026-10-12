@@ -5,6 +5,8 @@
 // o prenda pauta —venga del comando que venga, la corra el agente que la corra— exige un ítem aprobado de
 // #max-aprobaciones que coincida exactamente con lo que se va a hacer. Sin eso, la llamada a Meta no sale.
 
+import { exigirEscritura } from "../../lib/solo-lectura.mjs";
+
 /** Campos de la Graph API que cambian cuánto se gasta. */
 export const CAMPOS_DE_GASTO = ["daily_budget", "lifetime_budget", "bid_amount", "spend_cap", "budget_remaining"];
 /** Quién puede autorizar gasto: los mismos que hoy pueden "publica <id>". */
@@ -67,6 +69,8 @@ export function verificarAprobacion(item, { marca, accion, objetivo, pct }) {
  */
 export function conCandado(cliente, { marca, obtenerItem }) {
   async function graph(method, path, params = {}, autorizacion) {
+    // Parche D: una tarea de solo lectura nunca escribe en Meta (ni pausar, ni crear en pausa, ni nada que no sea GET).
+    if (String(method).toUpperCase() !== "GET") exigirEscritura(`Meta ${method} ${path}`);
     if (!cambiaGasto(method, params, path)) return cliente.graph(method, path, params);
     if (!autorizacion?.item) throw new CandadoError(`${method} ${path} cambia gasto o prende pauta y no trae una aprobación (#id de #max-aprobaciones)`);
     const item = await obtenerItem(autorizacion.item);

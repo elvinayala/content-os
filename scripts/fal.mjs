@@ -15,6 +15,8 @@
 //
 // Devuelve las URLs finales (fal.media). Reglas de gasto: Lola hasta 8 imágenes / 3 videos por pedido; Max produce
 // con el plan aprobado (cerebro §21). Para dejarlo en la carpeta del cliente: max.mjs drive-archivo.
+import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
+negarEnSoloLectura("fal.ai (genera y cobra)"); // parche D
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

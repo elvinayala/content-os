@@ -31,6 +31,7 @@
 //        listan). Te deja copia en /tmp para que los MIRES con Read (colores del logo, qué foto va en cada escena).
 //        Nunca le pidas al equipo "URLs públicas", "hex" ni "tipografía": corre esto.
 // ("publicar" no se propone aquí: lo crea meta-ads.mjs proponer-publicar con los ids exactos.)
+import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -62,6 +63,7 @@ const [cmd, ...rest] = pos;
 
 async function api(metodo, q, cuerpo, ms = 60000) {
   if (!SECRETO) throw new Error("Falta CRON_SECRET");
+  if (metodo !== "GET") negarEnSoloLectura(`max.mjs ${cmd ?? ""}`.trim()); // parche D: en solo lectura, solo consultas
   const url = `${BASE}/api/max${q ? "?" + new URLSearchParams(q) : ""}`;
   const r = await fetch(url, { method: metodo, headers: { "x-cron-secret": SECRETO, "Content-Type": "application/json" }, body: cuerpo ? JSON.stringify(cuerpo) : undefined, signal: AbortSignal.timeout(ms) });
   const j = await r.json().catch(() => ({ ok: false, error: `HTTP ${r.status}` }));

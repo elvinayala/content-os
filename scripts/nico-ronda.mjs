@@ -10,6 +10,7 @@
 //
 // Lee data/plataformas.json. No toca nada: solo lee. Todo lo que falla se reporta, nunca tumba
 // la ronda (una plataforma sin respuesta es justamente un hallazgo).
+import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { execFile } from "node:child_process";
@@ -31,6 +32,7 @@ function env(n) {
 // ---- envío del reporte final ----
 // enviar "<texto>" [agente]  — agente = "nico" (default) | "iris" | … cualquiera con su propio
 // TELEGRAM_BOT_TOKEN_<AGENTE en mayúsculas>; sin ese token cae al genérico TELEGRAM_BOT_TOKEN.
+if (process.argv[2] === "enviar" || process.argv.includes("--guardar")) negarEnSoloLectura(`nico-ronda.mjs ${process.argv[2] === "enviar" ? "enviar" : "--guardar"}`); // parche D
 if (process.argv[2] === "enviar") {
   const args = process.argv.slice(3);
   const agentes = new Set(["nico", "iris", "max", "lola", "sofi"]);

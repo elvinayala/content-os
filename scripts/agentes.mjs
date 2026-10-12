@@ -34,6 +34,7 @@
 // Solicitudes del equipo (23/sep/2026): Carilin y Aure le escriben al bot de Slack empezando con
 // "Nico…" → entra aquí como de: carilin|aure → Nico diagnostica SIN tocar nada, deja el plan
 // (estado esperando-ok) y se lo pasa a Elvin; solo ejecuta cuando Elvin responde "ok <id>".
+import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -152,6 +153,8 @@ export async function esperandoOk() {
 const [cmd, ...rest] = process.argv.slice(2);
 // (la ruta del repo tiene un espacio: comparar rutas, no URLs)
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  // Parche D: en una tarea de solo lectura solo se consulta (nada de mensajes a otros agentes, a Elvin ni a Slack).
+  if (!["buzon", "historial", "equipo", "solicitudes"].includes(cmd)) negarEnSoloLectura(`agentes.mjs ${cmd ?? ""}`.trim());
   try {
     if (cmd === "mensaje") {
       // --sin-seguir: aviso que no necesita respuesta. Sin la bandera, el pedido lleva ⟳ SEGUIR con el origen del
