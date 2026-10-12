@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-12T03:00:11.046Z",
+  "updatedAt": "2026-10-12T03:07:34.086Z",
   "createdAt": "2026-03-27T13:37:02.960Z",
   "id": "MLp39LO5jJmzk9Vp",
   "name": "A) RevisionInstanciaEvoAPI",
@@ -267,7 +267,7 @@
           "cachedResultName": "monitoreo-agentes-ia"
         },
         "messageType": "block",
-        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* Business Settings → Usuarios del sistema → *Agente Monitoreo* → Generar token (con ads_read y ads_management) → en n8n, credencial *Levelito Acoount management* → pegar el token nuevo.\"}},{\"type\":\"divider\"}]}",
+        "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* El token es el de la app *Hey Bori* (credencial *Facebook Graph (Hey Bori · Elvin)*): renuévalo en Bori y avisa a Nico.\"}},{\"type\":\"divider\"}]}",
         "text": "=",
         "otherOptions": {
           "includeLinkToWorkflow": false,
@@ -326,6 +326,60 @@
       ],
       "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
       "name": "Sticky Note1"
+    },
+    {
+      "id": "av-24200",
+      "name": "Aviso a Elvin · WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"texto\":\"El WhatsApp de Level Up (939-244-4237) está desconectado: hay que volver a vincularlo con el QR. Mientras tanto no salen bienvenidas, PDFs, encuestas ni referidos.\"}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "av-20640",
+      "name": "Aviso a Elvin · Meta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        640
+      ],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"texto\":\"La conexión de Meta de n8n (Facebook Graph · Hey Bori) dejó de funcionar. Probable: el token de Hey Bori venció; hay que renovarlo en Bori y avisarle a Nico.\"}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
     }
   ],
   "connections": {
@@ -397,6 +451,11 @@
             "node": "Send a message",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Aviso a Elvin · WhatsApp",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -414,6 +473,11 @@
         [
           {
             "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aviso a Elvin · Meta",
             "type": "main",
             "index": 0
           }
@@ -437,9 +501,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "9423f871-df66-49d6-926b-3658104fec16",
-  "activeVersionId": "9423f871-df66-49d6-926b-3658104fec16",
-  "versionCounter": 51,
+  "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
+  "activeVersionId": "7e971168-5b42-4188-9113-232ccfff09f9",
+  "versionCounter": 54,
   "triggerCount": 1,
   "shared": [
     {
@@ -502,9 +566,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-10-12T03:00:11.049Z",
-    "createdAt": "2026-10-12T03:00:11.049Z",
-    "versionId": "9423f871-df66-49d6-926b-3658104fec16",
+    "updatedAt": "2026-10-12T03:07:34.089Z",
+    "createdAt": "2026-10-12T03:07:34.089Z",
+    "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
     "workflowId": "MLp39LO5jJmzk9Vp",
     "nodes": [
       {
@@ -767,7 +831,7 @@
             "cachedResultName": "monitoreo-agentes-ia"
           },
           "messageType": "block",
-          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* Business Settings → Usuarios del sistema → *Agente Monitoreo* → Generar token (con ads_read y ads_management) → en n8n, credencial *Levelito Acoount management* → pegar el token nuevo.\"}},{\"type\":\"divider\"}]}",
+          "blocksUi": "={\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"🔴 SE CAYÓ EL TOKEN DE META 🔴\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<@U08U9777PUY> <@U07V7MVJ18B>\\n\\nEl token de Meta que usan los agentes de n8n dejó de funcionar (usuario de sistema *Agente Monitoreo*). Mientras no se renueve, el monitoreo de campañas, los reportes y las felicitaciones no pueden leer Meta.\\n\\n*Cómo renovarlo:* El token es el de la app *Hey Bori* (credencial *Facebook Graph (Hey Bori · Elvin)*): renuévalo en Bori y avisa a Nico.\"}},{\"type\":\"divider\"}]}",
           "text": "=",
           "otherOptions": {
             "includeLinkToWorkflow": false,
@@ -826,6 +890,60 @@
         ],
         "id": "658329e7-2ac6-4e66-8609-dd7cc0201275",
         "name": "Sticky Note1"
+      },
+      {
+        "id": "av-24200",
+        "name": "Aviso a Elvin · WhatsApp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          640,
+          200
+        ],
+        "onError": "continueRegularOutput",
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"texto\":\"El WhatsApp de Level Up (939-244-4237) está desconectado: hay que volver a vincularlo con el QR. Mientras tanto no salen bienvenidas, PDFs, encuestas ni referidos.\"}",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
+          }
+        }
+      },
+      {
+        "id": "av-20640",
+        "name": "Aviso a Elvin · Meta",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          640
+        ],
+        "onError": "continueRegularOutput",
+        "parameters": {
+          "method": "POST",
+          "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"texto\":\"La conexión de Meta de n8n (Facebook Graph · Hey Bori) dejó de funcionar. Probable: el token de Hey Bori venció; hay que renovarlo en Bori y avisarle a Nico.\"}",
+          "options": {}
+        },
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "vDGtt7BxftPjeHjM",
+            "name": "Pulse ↔ n8n (x-pulse-secret)"
+          }
+        }
       }
     ],
     "connections": {
@@ -897,6 +1015,11 @@
               "node": "Send a message",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Aviso a Elvin · WhatsApp",
+              "type": "main",
+              "index": 0
             }
           ],
           [
@@ -916,6 +1039,11 @@
               "node": "Send a message2",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Aviso a Elvin · Meta",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -927,10 +1055,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-10-12T03:00:11.211Z",
-        "id": 342,
+        "createdAt": "2026-10-12T03:07:34.290Z",
+        "id": 346,
         "workflowId": "MLp39LO5jJmzk9Vp",
-        "versionId": "9423f871-df66-49d6-926b-3658104fec16",
+        "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }
