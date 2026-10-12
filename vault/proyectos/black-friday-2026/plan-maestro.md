@@ -19,7 +19,7 @@ tags: [black-friday, ofertas, anuncios, email, whatsapp, plan]
 | Puerta | Para quién | Oferta Black Friday |
 |---|---|---|
 | **Bori** — lo haces tú con IA | negocio pequeño que hoy le da al botón azul o paga un freelancer | Bori **anual a precio de fundador** |
-| **AI Borinquen** — tu equipo digital | dueño ahogado en tareas, papel y WhatsApp; o el que quiere aprender IA | **2 empleados digitales por el setup de 1** + Academia AIB |
+| **AI Borinquen** — tu equipo digital | dueño ahogado en tareas, papel y WhatsApp; o el que quiere aprender IA | **2 empleados digitales por la instalación de 1** + Academia AIB |
 | **Level Up** — lo hacemos contigo / por ti | negocio de $10–40K/mes que depende de referidos | **El Sistema Completo** con un agente de IA de AIB incluido |
 
 Cada marca vende por separado (calendario, Calendly, ActiveCampaign y WhatsApp propios — nunca se
@@ -28,7 +28,7 @@ con Bori Business; el cliente de Level Up se lleva su agente de AIB; el que quie
 Academia.
 
 **Regla de oferta (de Elvin: "vender por valor"):** en servicios **no se rebaja el precio de lista a
-lo loco — se apilan bonos con fecha real**. Donde sí hay rebaja (AutoFlow, Academia, Bori anual) es
+lo loco — se apilan bonos con fecha real**. Donde sí hay rebaja (2 agentes al precio de 1, Academia, Bori anual) es
 por **pago completo** y **solo hasta el 1/dic**. No se extiende: la fecha es real.
 
 ---
@@ -107,10 +107,13 @@ valor total $8,244:
 > marcha en 15 días + optimización del día 16 al 45 + soporte para siempre, si lo quiere.** Nunca
 > "7 días" ni "21 días".
 
+**Precios reales de AutoFlow (Elvin, 11/oct):** implementación **$1,500 = 1 agente + CRM** · **$2,500 = 2 agentes + CRM**.
+Mensualidad **$297** con voz (soporte, acceso al CRM, hosting y 500 minutos de voz) · **$147** si es solo agente de chat.
+(Reemplaza los $3,500 + $497 del "AutoFlow completo" de `PRECIOS` en `demo.mjs`, que hay que actualizar.)
+
 | Oferta | Lista | Black Friday (pago completo, 15/oct – 1/dic) |
 |---|---|---|
-| **Agente personalizado** (un puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción…) | $1,500–2,000 + mensualidad | **2 empleados digitales por el setup de 1:** pagas el setup del primero, el segundo se instala sin costo de setup (solo su mensualidad) |
-| **AutoFlow completo** (chat + voz + CRM configurado + agenda + portal) | $3,500 + $497/mes | **$2,497** + $497/mes desde el mes 2 |
+| **AutoFlow / agentes personalizados** | 1 agente + CRM $1,500 · 2 agentes + CRM $2,500 · + $147 o $297/mes | **2 empleados digitales por la instalación de 1:** 2 agentes + CRM por **$1,500** (el segundo agente sin cargo de instalación) + su mensualidad |
 | **Academia AIB** grupal (12 semanas, cohorte de enero) | $2,500 o 3 × $997 | **$1,997** pago completo · sales con tu primer agente funcionando |
 | **1:1 done-with-you** (4 meses) | $4,000 | **$3,497** pago completo |
 | **Mapa de IA de tu negocio** (entrada, 60 min: qué puestos se automatizan primero y cuánto tiempo te devuelve) | — | **$197, se acredita 100 %** si compras cualquier cosa antes del 15/ene |
@@ -127,6 +130,7 @@ valor total $8,244:
   (noviembre y diciembre). Lo de octubre queda **en marcha antes de la temporada alta de diciembre**; lo
   que pase del cupo de diciembre arranca la semana del 5/ene (se dice claro al vender).
   **[DECIDE ELVIN]**
+- **La demo de closers (aib-kit-ventas.netlify.app/demo-ai-borinquen, slide 10) muestra los bonos SIN PRECIOS** (Elvin, 11/oct): el closer da el precio en la llamada.
 - Precios en código siguen en `PRECIOS` (`demo.mjs`); los de Black Friday NO se cambian ahí: van en
   la landing y en el guion del closer. El deck sigue diciendo "21 días" en `GARANTIA` → **no
   mandar el deck de la fábrica durante Black Friday hasta corregirlo con el OK de Elvin.**

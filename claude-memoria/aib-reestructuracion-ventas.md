@@ -54,3 +54,7 @@ prospecto debe tocar su portal antes de la llamada (toque de las 24 h). Ver [[pl
 [[elvin-ceo-perfil]], [[ecosistema-lu-aib]], [[micro-influencers-pr]].
 
 **Canal de WhatsApp para clientes AutoFlow (21/sep/2026):** Elvin preguntó si Zernio sirve para clientes; respuesta: sí, con el WABA bajo el Meta Business DEL CLIENTE (activo de ellos), $6/mes por cuenta (3–10, luego $3), inbox web incluido, sin App Review por cliente, conversaciones iniciadas por el cliente sin fee de Meta. Riesgo: empresa joven → el canal es un adaptador de 1 archivo y el número es del cliente. Resuelto ([[plomeria-pr-vision]]) es el piloto; si funciona, es el camino para el chat de $1,500+$147 / $3,500+$497 mientras la app de Meta de Hey Bori madura (Embedded Signup propio después).
+
+**PRECIOS REALES DE AUTOFLOW (Elvin, 11/oct/2026 — mandan sobre lo de arriba):** implementación $1,500 = 1 agente + CRM ·
+$2,500 = 2 agentes + CRM. Mensualidad $297 con voz (soporte, acceso al CRM, hosting, 500 minutos de voz) · $147 si es solo
+chat. Ya NO existe el "AutoFlow completo $3,500 + $497". `PRECIOS` en `scripts/demo-cliente/demo.mjs` todavía tiene los viejos.
