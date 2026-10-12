@@ -51,9 +51,13 @@ test("cuándo se manda: 15 min después, hasta 4 h, de 8 AM a 8 PM de PR", () =>
   assert.equal(tocaEnviar(fin, new Date("2026-10-12T15:10:00Z")).motivo, "pronto");
   assert.equal(tocaEnviar(fin, new Date("2026-10-12T15:16:00Z")).ok, true);
   assert.equal(tocaEnviar(fin, new Date("2026-10-12T19:01:00Z")).motivo, "tarde");
-  // terminó 7:30 PM PR → 8:00 PM ya no se manda
+  // terminó 7:30 PM PR → 8:00 PM ya no se manda, pero sale a las 8 AM del día siguiente
   assert.equal(tocaEnviar("2026-10-12T23:30:00Z", new Date("2026-10-13T00:05:00Z")).motivo, "horario");
   assert.equal(tocaEnviar("2026-10-12T23:30:00Z", new Date("2026-10-12T23:50:00Z")).ok, true);
+  assert.equal(tocaEnviar("2026-10-12T23:30:00Z", new Date("2026-10-13T12:05:00Z")).ok, true); // 8:05 AM PR
+  assert.equal(tocaEnviar("2026-10-12T23:30:00Z", new Date("2026-10-13T16:00:00Z")).motivo, "tarde"); // 12 PM: ya pasaron > 14 h
+  // una llamada de media mañana no se manda al otro día
+  assert.equal(tocaEnviar("2026-10-12T15:00:00Z", new Date("2026-10-13T12:05:00Z")).motivo, "tarde");
 });
 
 test("el WhatsApp es en tuteo, nombra a quien atendió y lleva el link con la referencia", () => {

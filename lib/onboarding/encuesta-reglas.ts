@@ -14,17 +14,21 @@ export const OPC_MOTIVO = ["Se me olvidó o no pude conectarme", "Tuve un imprev
 
 export const MINUTOS_DESPUES = 15; // después de la hora de fin de la llamada
 export const HORAS_MAXIMO = 4; // pasado esto ya no se manda (no tiene sentido una encuesta de "hoy" al otro día)
+export const HORAS_MAXIMO_NOCHE = 14; // …salvo la llamada que termina de noche: su encuesta sale a las 8 AM del día siguiente
 export const HORA_DESDE = 8; // hora PR
 export const HORA_HASTA = 20;
 
 const horaPR = (d: Date) => Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Puerto_Rico", hour: "numeric", hour12: false }).format(d)) % 24;
 
-/** ¿Toca mandar la encuesta de una llamada que terminó en `fin`? Ventana 15 min – 4 h y solo de 8 AM a 8 PM (PR). */
+/** ¿Toca mandar la encuesta de una llamada que terminó en `fin`? 15 min – 4 h después y solo de 8 AM a 8 PM (PR);
+ *  si la llamada terminó de noche (7 PM – 8 AM), se le da hasta 14 h para que salga a primera hora de la mañana. */
 export function tocaEnviar(fin: Date | string, ahora: Date = new Date()): { ok: boolean; motivo?: "pronto" | "tarde" | "horario" } {
   const f = new Date(fin).getTime();
   const min = (ahora.getTime() - f) / 60_000;
   if (!Number.isFinite(min) || min < MINUTOS_DESPUES) return { ok: false, motivo: "pronto" };
-  if (min > HORAS_MAXIMO * 60) return { ok: false, motivo: "tarde" };
+  const hFin = horaPR(new Date(f));
+  const terminoDeNoche = hFin >= HORA_HASTA - 1 || hFin < HORA_DESDE;
+  if (min > (terminoDeNoche ? HORAS_MAXIMO_NOCHE : HORAS_MAXIMO) * 60) return { ok: false, motivo: "tarde" };
   const h = horaPR(ahora);
   if (h < HORA_DESDE || h >= HORA_HASTA) return { ok: false, motivo: "horario" };
   return { ok: true };
