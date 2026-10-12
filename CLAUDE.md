@@ -1220,7 +1220,10 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   "Id cuenta publicitaria" de cada ficha de LU (CLIENTE ACTIVO, ONBOARDING & SETUP, ANÁLISIS Y ESTRATEGIA): al crearse la ficha, cada hora en las
   nuevas/con problema y a las 7 AM PR en todas (`/api/cron/cuentas-meta`, `?completo=1`, `?avisar=0`). Estados `ok · sin-id · sin-permiso · no-existe ·
   pago · inactiva` (reglas puras en `cuentas-meta-reglas.ts`, tests `tests/cuentas-meta.test.mjs`); escribe nota en la ficha solo al cambiar y manda un DM
-  a Jessica (`PULSE_CUENTAS_AVISAR`); lunes = recordatorio. Los clientes comparten su cuenta con el portafolio "Level Up" 836808821982174.
+  a quien le toca (proceso de Carilin, 12/oct): cuenta **no compartida** → Jessica (`PULSE_CUENTAS_AVISAR`; en el onboarding el cliente nos
+  da permiso de socio en el portafolio "Level Up" 836808821982174); **sin ID, ID malo, pago o cuenta caída → el estratega asignado** en Asignación
+  de Estrategas (DM por su `slack_id` de Ritmo; él pone el ID: Jessica no tiene acceso a ningún administrador de anuncios); cliente sin estratega →
+  Carilin (`PULSE_CUENTAS_SIN_ESTRATEGA`). `repartirAvisos` puro + tests. Lunes = recordatorio.
 - **Seguridad** (`lib/pulse/seguridad.ts`, 21/sep): cookie `userId.exp.iat.hmac` (14 días) y
   `pulse_users.sesiones_desde` — cambiar clave/rol o desactivar cierra las sesiones; bloqueo 15 min
   tras 5 intentos fallidos (`intentos_fallidos`/`bloqueado_hasta`) + límite 10/min por IP; scrypt
