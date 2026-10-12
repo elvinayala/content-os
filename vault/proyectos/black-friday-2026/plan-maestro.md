@@ -119,7 +119,7 @@ Mensualidad **$297** con voz (soporte, acceso al CRM, hosting y 500 minutos de v
 | **Mapa de IA de tu negocio** (entrada, 60 min: qué puestos se automatizan primero y cuánto tiempo te devuelve) | — | **$197, se acredita 100 %** si compras cualquier cosa antes del 15/ene |
 
 - **Bono de lanzamiento (solo 15–31/oct):** el primer mes de mensualidad incluido en lo que compres
-  (en AutoFlow suma: paga desde el mes 3). Academia y 1:1 no tienen mensualidad → **una sesión 1:1
+  (paga desde el mes 2). Academia y 1:1 no tienen mensualidad → **una sesión 1:1
   extra de implementación (60 min)**. **[DECIDE ELVIN]**
 - **Escalera:** Ola 1 = precio BF + bono de lanzamiento + capacitación del equipo · Ola 2 y 3 = precio
   BF + capacitación del equipo · 1/dic = solo el precio BF.

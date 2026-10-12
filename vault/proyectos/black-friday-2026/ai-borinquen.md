@@ -48,8 +48,7 @@ engañado.
 
 | Oferta | Lista | Precio de Black Friday |
 |---|---|---|
-| **Agente personalizado** (un puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción…) | $1,500–2,000 + mensualidad | **2 empleados digitales por la instalación de 1**: paga la instalación del primero; el segundo se instala sin cargo de instalación (solo su mensualidad) |
-| **AutoFlow completo** (chat + voz + CRM configurado + agenda + portal) | $3,500 + $497/mes | **$2,497** + $497/mes desde el mes 2 |
+| **AutoFlow / agentes personalizados** (un empleado digital por puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción, atención…) | Implementación: **$1,500** = 1 agente + CRM · **$2,500** = 2 agentes + CRM · Mensualidad: **$297** con voz (soporte, acceso al CRM, hosting y 500 minutos de voz) · **$147** si es solo chat | **2 empleados digitales por la instalación de 1:** 2 agentes + CRM por **$1,500** (el segundo sin cargo de instalación) + su mensualidad |
 | **Academia AIB** grupal (12 semanas, cohorte de enero) | $2,500 o 3 × $997 | **$1,997** pago completo · sale con su primer agente funcionando |
 | **1:1 done-with-you** (4 meses) | $4,000 | **$3,497** pago completo |
 | **Mapa de IA de su negocio** (60 min: qué puestos se automatizan primero y cuánto tiempo le devuelve) | — | **$197, se acredita 100 %** si compra cualquier cosa antes del 15/ene |
@@ -59,7 +58,7 @@ engañado.
 | | Ola 1 (15–31/oct) | Olas 2 y 3 (1–30/nov) | 1/dic |
 |---|---|---|---|
 | Precio de Black Friday | ✅ | ✅ | ✅ |
-| **Bono de lanzamiento:** primer mes de mensualidad incluido · en AutoFlow paga desde el **mes 3** · en Academia y 1:1 (no tienen mensualidad): **una sesión 1:1 extra de implementación de 60 min** | ✅ | — | — |
+| **Bono de lanzamiento:** primer mes de mensualidad incluido (empieza a pagar en el mes 2) · en Academia y 1:1 (no tienen mensualidad): **una sesión 1:1 extra de implementación de 60 min** | ✅ | — | — |
 | **Capacitación de 60 min para su equipo** (cómo trabajar con sus agentes) | ✅ | ✅ (se cae el 30/nov a medianoche) | — |
 
 - **Capacidad real: 8 instalaciones por mes** (cada una son ~15 días de trabajo de AI Engineer). Lo
@@ -78,28 +77,39 @@ engañado.
 - **Palabras clave:** `EMPLEADO` (la oferta; le contesta nuestro agente) · `VIP` (solo "avísame de
   los cupos" por WhatsApp). Tag `bf2026` + `ai-borinquen`.
 
+**Precios en piezas públicas (Elvin, 11/oct):** en anuncios, flyers, emails y WhatsApp **no se
+publican montos de AutoFlow / empleados digitales** (ni implementación ni mensualidad): se dice la
+oferta ("2 por la instalación de 1") y el precio lo da el closer en la llamada. Solo se dejan los
+precios de **Academia ($1,997)** y **Mapa de IA ($197)** donde ya estaban. Ante la duda, sin precio.
+
 **Lo que sigue pendiente de Elvin (marcado [DECIDE ELVIN] en el plan):** bono de lanzamiento y
-capacitación del equipo tal cual; 8 instalaciones por mes; si el bono de lanzamiento aplica también
+capacitación del equipo tal cual; el plan todavía dice "en AutoFlow paga desde el mes 3" (venía del
+precio viejo, que ya traía el mes 1 incluido): con la oferta nueva aquí quedó **"primer mes incluido
+= paga desde el mes 2"** hasta que Elvin diga otra cosa; 8 instalaciones por mes; si el bono de lanzamiento aplica también
 al 2.º agente de los clientes actuales (el plan no lo dice: los textos de clientes NO lo prometen).
 
 ### Cómo lo explica el closer en 30 segundos
 
 > Por defecto **de usted**; si el dueño tutea, el closer tutea. Primero el dolor que sacó el setter,
-> después la oferta. El precio se dice después del valor. La escalera se dice siempre con la fecha.
+> después la oferta. **La demo de closers (`aib-kit-ventas.netlify.app/demo-ai-borinquen`, slide 10)
+> muestra los bonos SIN precios: el precio lo da el closer de viva voz en la llamada**, después del
+> valor y nunca por escrito antes. La escalera se dice siempre con la fecha.
 
 **Vía A — "que me lo monten"** (agente personalizado / digitalización / AutoFlow):
 > "Lo que usted me contó es que [DOLOR: las cotizaciones se le quedan para la noche y se le van
 > trabajos]. Lo que hacemos es ponerle un empleado digital en ese puesto: un agente entrenado con sus
 > precios, sus reglas y su forma de hablar, que hace esa tarea todos los días y le deja a usted solo
-> lo que necesita su decisión. Con el Black Friday adelantado, si paga la instalación de ese primero, el
-> segundo —el de cobros, por ejemplo— se lo instalamos sin cargo de instalación; paga solo su mensualidad.
+> lo que necesita su decisión. Con el Black Friday adelantado son dos empleados digitales por la
+> instalación de uno: los dos agentes con su CRM por $1,500, en vez de $2,500, y después su
+> mensualidad: $297 si lleva voz, $147 si es solo chat. Por ejemplo, uno que cotiza y otro que cobra.
 > Y si lo hacemos antes del 31 de octubre, el primer mes de mensualidad va incluido, le capacitamos a
 > su equipo, y lo tiene trabajando antes de la temporada alta de diciembre. Tengo 8 instalaciones por
 > mes. ¿Cuál de los dos puestos arrancamos primero?"
 
-*(Si el dolor es que le escriben más de lo que puede contestar y ya recibe mensajes: AutoFlow a
-$2,497, en marcha en 15 días, optimización del día 16 al 45 y, si lo quiere, soporte para siempre; en
-octubre la mensualidad empieza en el mes 3.)*
+*(Si el dolor es que le escriben más de lo que puede contestar y ya recibe mensajes: los dos
+empleados digitales son de atención —uno de chat y uno de voz, con su CRM—, la misma oferta de 2 por
+la instalación de 1, con mensualidad de $297 por llevar voz. En marcha en 15 días, optimización del día
+16 al 45 y, si lo quiere, soporte para siempre.)*
 
 **Vía B — "quiero aprender a hacerlo yo"** (Academia AIB / 1:1):
 > "Usted me dijo que quiere entenderlo y hacerlo usted mismo. Para eso es la Academia AIB: 12 semanas
@@ -425,7 +435,7 @@ octubre la mensualidad empieza en el mes 3.)*
 | 3–15 s | "En esta temporada escribe más gente que nunca y cada anuncio cuesta más. Usted paga por cada persona que le escribe… y muchas se quedan sin contestar porque usted estaba atendiendo, manejando o durmiendo." | PAGA POR CADA MENSAJE |
 | 15–30 s | "AutoFlow es su equipo de atención con IA: un agente de chat y uno de voz que contestan al momento, precalifican, agendan la cita y dejan todo en su CRM. Queda en marcha en 15 días, lo optimizamos del día 16 al 45 y, si lo quiere, soporte para siempre." | CHAT + VOZ + CRM + AGENDA |
 | 30–42 s | "Teo, de Mano Santa PR, respondía el 20 por ciento de sus mensajes. Hoy responde en segundos, precalifica y agenda. Él lo dice así: 'me da tranquilidad saber que las conversaciones se siguen atendiendo'." | TEO · MANO SANTA PR · 20 % → SEGUNDOS |
-| 42–50 s | "Black Friday hasta el 1 de diciembre: AutoFlow a 2,497 en vez de 3,500. Escriba EMPLEADO o dele al enlace." | AUTOFLOW $2,497 · ESCRIBA "EMPLEADO" |
+| 42–50 s | "Black Friday hasta el 1 de diciembre: su agente de chat y su agente de voz, los dos por la instalación de uno. Escriba EMPLEADO o dele al enlace." | CHAT + VOZ · 2 POR LA INSTALACIÓN DE 1 · ESCRIBA "EMPLEADO" |
 
 **Copy para Meta**
 - **Titular:** ¿Quién le contesta a las 9 PM?
@@ -440,8 +450,8 @@ octubre la mensualidad empieza en el mes 3.)*
   >
   > Teo, de Mano Santa PR, respondía el 20 % de sus mensajes. Hoy responde en segundos.
   >
-  > Black Friday hasta el 1 de diciembre: AutoFlow a $2,497 (lista $3,500). Escriba EMPLEADO o dele al
-  > enlace.
+  > Black Friday hasta el 1 de diciembre: su agente de chat y su agente de voz, los dos por la
+  > instalación de uno. Escriba EMPLEADO o dele al enlace.
 
 ---
 
@@ -578,7 +588,7 @@ su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE
 | 3–12 s | "Ha visto 40 videos, guardó 100 posts y su negocio sigue exactamente igual. Porque todo lo que ve está hecho para negocios de otro país, no para el suyo." | 40 VIDEOS · EL NEGOCIO IGUAL |
 | 12–20 s | "Y mientras lo deja para después, los procesos siguen a mano y usted sigue siendo el que hace todo." | USTED SIGUE HACIÉNDOLO TODO |
 | 20–32 s | "La Academia AIB es otra cosa: 12 semanas en grupo, con SU negocio sobre la mesa. No necesita saber programar. Sale con su primer agente funcionando." | ACADEMIA AIB · SU NEGOCIO · SU PRIMER AGENTE |
-| 32–45 s | "Black Friday, hasta el 1 de diciembre: 1,997 dólares pago completo, en vez de 2,500. Cohorte de enero. Si prefiere uno a uno: 4 meses por 3,497 en vez de 4,000." | $1,997 (ANTES $2,500) · 1:1 $3,497 |
+| 32–45 s | "Black Friday, hasta el 1 de diciembre: 1,997 dólares pago completo, en vez de 2,500. Cohorte de enero. Y si prefiere uno a uno, también hay programa 1:1 de 4 meses." | $1,997 (ANTES $2,500) · TAMBIÉN 1:1 |
 | 45–55 s | "Escriba EMPLEADO a nuestro WhatsApp y pregunte por la Academia, o reserve su cupo en el enlace." | RESERVE SU CUPO 👉 ENLACE |
 
 **Copy para Meta**
@@ -591,7 +601,7 @@ su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE
   > con su primer agente funcionando.
   >
   > Black Friday, hasta el 1 de diciembre: $1,997 pago completo (lista $2,500). Cohorte de enero.
-  > ¿Prefiere uno a uno? 4 meses por $3,497 (lista $4,000).
+  > ¿Prefiere uno a uno? También hay programa 1:1 de 4 meses.
   >
   > Escriba EMPLEADO a nuestro WhatsApp y pregunte por la Academia, o reserve su cupo en el enlace.
 
@@ -612,8 +622,8 @@ su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE
 |---|---|---|
 | 0–3 s | **1/dic:** "Esto cierra hoy a las 11:59 de la noche. Y no se extiende." · **30/nov:** "Hoy a medianoche se cae la capacitación de su equipo. Mañana cierra todo." | CIERRA 1/DIC · 11:59 PM |
 | 3–13 s | "Le digo lo que va a pasar si lo deja para enero: firma en enero, arranca a mitad de mes o en febrero, y paga precio de lista. El que firma ahora entra a enero con el sistema trabajando." | ENERO = FEBRERO |
-| 13–27 s | "AutoFlow por 2,497 en vez de 3,500, y la mensualidad desde el mes 2. En marcha en 15 días, optimización del día 16 al 45 y, si lo quiere, soporte para siempre. No le entregamos una herramienta y desaparecemos." | AUTOFLOW $2,497 · 15 DÍAS · DÍA 16–45 · SOPORTE |
-| 27–34 s | "Y si lo suyo es otro puesto, el 2×1 de empleados digitales y la Academia también cierran mañana martes." *(1/dic: "también cierran hoy")* | 2×1 EMPLEADOS · ACADEMIA $1,997 |
+| 13–27 s | "Su agente de chat y su agente de voz, con su CRM, por la instalación de uno. En marcha en 15 días, optimización del día 16 al 45 y, si lo quiere, soporte para siempre. No le entregamos una herramienta y desaparecemos." | CHAT + VOZ · 2 POR 1 · 15 DÍAS · DÍA 16–45 · SOPORTE |
+| 27–34 s | "Y si lo suyo es otro puesto —cotizar, cobrar, dar seguimiento—, es la misma oferta: dos empleados digitales por la instalación de uno. La Academia también cierra mañana martes." *(1/dic: "también cierra hoy")* | 2 EMPLEADOS · INSTALACIÓN DE 1 · ACADEMIA $1,997 |
 | 34–40 s | "Escriba EMPLEADO o dele al enlace antes de medianoche." | ESCRIBA "EMPLEADO" · [CONTADOR] |
 
 **Copy para Meta (versión 1/dic)**
@@ -624,10 +634,11 @@ su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE
   > El que firma en enero arranca a mitad de mes o en febrero, y a precio de lista. El que firma
   > ahora entra a enero con su sistema trabajando.
   >
-  > AutoFlow: $2,497 (lista $3,500) + $497/mes desde el mes 2. En marcha en 15 días, optimización del
-  > día 16 al 45 y, si lo quiere, soporte para siempre.
+  > AutoFlow: su agente de chat y su agente de voz, con su CRM, por la instalación de uno. En marcha
+  > en 15 días, optimización del día 16 al 45 y, si lo quiere, soporte para siempre.
   >
-  > También cierran hoy: 2 empleados digitales por la instalación de 1 y la Academia AIB a $1,997.
+  > Para cualquier otro puesto, la misma oferta: 2 empleados digitales por la instalación de 1. Y la
+  > Academia AIB a $1,997 también cierra hoy.
   >
   > Escriba EMPLEADO o dele al enlace antes de medianoche.
 
@@ -821,16 +832,16 @@ de AI Borinquen abre hoy, y tiene una regla sencilla: **el precio es el mismo ha
 diciembre, pero el que entra primero se lleva más.**
 
 **La oferta (pago completo):**
-- **Empleados digitales:** pagas la instalación del primero y el segundo se instala **sin cargo de instalación**.
-  Ejemplo: uno que cotiza y uno que cobra.
-- **AutoFlow completo** (chat + voz + CRM + agenda + portal): **$2,497** en vez de $3,500.
-- **Academia AIB** (12 semanas, cohorte de enero): **$1,997** en vez de $2,500. **1:1** (4 meses):
-  **$3,497** en vez de $4,000.
+- **Dos empleados digitales por la instalación de uno:** dos agentes con su CRM; el segundo se
+  instala **sin cargo de instalación** y solo pagas su mensualidad. Ejemplo: uno que cotiza y uno que
+  cobra. O, si lo tuyo son los mensajes, tu agente de chat y tu agente de voz (eso es AutoFlow).
+- **Academia AIB** (12 semanas, cohorte de enero): **$1,997** en vez de $2,500. También hay programa
+  **1:1** de 4 meses.
 - **Mapa de IA de tu negocio** (60 min): **$197**, acreditables si compras antes del 15 de enero.
 
 **La escalera de bonos:**
-- **Hasta el 31 de octubre:** el primer mes de mensualidad incluido (en AutoFlow pagas desde el mes 3;
-  en Academia y 1:1, una sesión 1:1 extra de implementación) **+ una capacitación de 60 minutos para
+- **Hasta el 31 de octubre:** el primer mes de mensualidad incluido (en Academia y 1:1, que no
+  tienen mensualidad, una sesión 1:1 extra de implementación) **+ una capacitación de 60 minutos para
   tu equipo**.
 - **Del 1 al 30 de noviembre:** la capacitación del equipo.
 - **1 de diciembre:** solo el precio.
@@ -880,8 +891,8 @@ Lo que hicimos con Teo en atención es el mismo método que usamos para cualquie
 tarea, entrenar al agente con el negocio, conectarlo y ajustarlo con el dueño. Puede ser atender, pero
 también cotizar, cobrar o dar seguimiento.
 
-Si te escriben más de lo que puedes contestar, este mes AutoFlow está a **$2,497** y, hasta el 31 de
-octubre, la mensualidad empieza en el mes 3.
+Si te escriben más de lo que puedes contestar, este Black Friday tu agente de chat y tu agente de voz
+van **por la instalación de uno**, y hasta el 31 de octubre el primer mes de mensualidad va incluido.
 
 **Mira la oferta: [LINK]**
 
@@ -978,13 +989,12 @@ Te escribo corto porque mañana, **sábado 31 de octubre a las 11:59 PM**, se ca
 lanzamiento del Black Friday adelantado.
 
 Lo que se cae:
-- **El primer mes de mensualidad incluido** en lo que compres.
-- En **AutoFlow**, eso significa que hoy pagas desde el mes 3; desde el domingo, desde el mes 2.
+- **El primer mes de mensualidad incluido** en tus empleados digitales (también en AutoFlow).
 - En la **Academia** y el **1:1**, la sesión 1:1 extra de implementación de 60 minutos.
 
 Lo que se queda (hasta el 30 de noviembre): la capacitación de 60 minutos para tu equipo. Y hasta el 1
-de diciembre, el precio de Black Friday: dos empleados digitales por la instalación de uno, AutoFlow a
-$2,497, Academia a $1,997, 1:1 a $3,497.
+de diciembre, el precio de Black Friday: dos empleados digitales por la instalación de uno (también
+para AutoFlow: chat + voz) y la Academia a $1,997.
 
 No te voy a decir que es ahora o nunca, porque no lo es: la oferta sigue en noviembre. Te digo la
 verdad: el que entra este fin de semana se lleva un mes más, y llega a diciembre con su empleado
@@ -1108,8 +1118,8 @@ para siempre**.
 Ahora, no todo negocio necesita esto. Si a ti lo que te come el día no son los mensajes sino otra
 tarea —cotizar, cobrar, dar seguimiento—, lo tuyo es un empleado digital para ese puesto.
 
-Las dos cosas están en nuestro Black Friday hasta el 1 de diciembre: **AutoFlow a $2,497** o **dos
-empleados digitales por la instalación de uno**. Y hasta el 30 de noviembre, con capacitación para tu equipo.
+Las dos cosas entran en la misma oferta de Black Friday, hasta el 1 de diciembre: **dos empleados
+digitales por la instalación de uno** (para AutoFlow: tu agente de chat y tu agente de voz). Y hasta el 30 de noviembre, con capacitación para tu equipo.
 
 **Mira cuál te toca: [LINK]**
 
@@ -1176,13 +1186,12 @@ Empezó la semana de Black Friday. Nosotros abrimos en octubre, así que esto no
 el último tramo. Te digo cómo están las cosas:
 
 **Lo que sigue hasta el 1 de diciembre (pago completo):**
-- **Empleados digitales:** pagas la instalación del primero y el segundo se instala **sin cargo de instalación**;
-  solo pagas su mensualidad.
-- **AutoFlow completo** (chat + voz + CRM + agenda + portal): **$2,497** en vez de $3,500, mensualidad
-  de $497 desde el mes 2. En marcha en 15 días, optimización del día 16 al 45 y, si lo quieres,
-  soporte para siempre.
+- **Dos empleados digitales por la instalación de uno:** dos agentes con su CRM; el segundo se
+  instala **sin cargo de instalación** y solo pagas su mensualidad. Sirve para cualquier puesto, y
+  también para **AutoFlow** (tu agente de chat y tu agente de voz). En marcha en 15 días,
+  optimización del día 16 al 45 y, si lo quieres, soporte para siempre.
 - **Academia AIB** (12 semanas, cohorte de enero): **$1,997** en vez de $2,500.
-- **1:1 conmigo y el equipo** (4 meses): **$3,497** en vez de $4,000.
+- **1:1 conmigo y el equipo** (4 meses): precio de Black Friday; te lo da el equipo en la llamada.
 - **Mapa de IA** (60 minutos): **$197**, acreditables si compras antes del 15 de enero.
 
 **Lo que se cae el lunes 30 a medianoche:** la capacitación de 60 minutos para tu equipo.
@@ -1252,11 +1261,11 @@ Para que no pierdas tiempo, escoge por tu problema, no por el producto:
 pagas su mensualidad.
 
 **"Me escriben más de lo que puedo contestar"**
-→ **AutoFlow completo:** **$2,497** en vez de $3,500, mensualidad desde el mes 2. En marcha en 15 días,
-optimización del día 16 al 45 y, si lo quieres, soporte para siempre.
+→ **AutoFlow:** tu agente de chat y tu agente de voz, con su CRM, por la instalación de uno. En marcha
+en 15 días, optimización del día 16 al 45 y, si lo quieres, soporte para siempre.
 
 **"Quiero aprender a hacerlo yo"**
-→ **Academia AIB** (cohorte de enero): **$1,997** en vez de $2,500. O **1:1** (4 meses): **$3,497**.
+→ **Academia AIB** (cohorte de enero): **$1,997** en vez de $2,500. O el **1:1** de 4 meses.
 
 **"No sé ni por dónde empezar"**
 → **Mapa de IA** (60 minutos): **$197**, acreditables si compras antes del 15 de enero.
@@ -1361,9 +1370,9 @@ Abrimos el 15 de octubre. Los bonos ya se cayeron. Hoy queda solo **el precio**,
 **Lo que cierra hoy (pago completo):**
 - **Dos empleados digitales por la instalación de uno.** El segundo se instala sin cargo de instalación; solo
   pagas su mensualidad.
-- **AutoFlow completo** a **$2,497** en vez de $3,500, mensualidad desde el mes 2. En marcha en 15
-  días, optimización del día 16 al 45 y, si lo quieres, soporte para siempre.
-- **Academia AIB** (cohorte de enero) a **$1,997** · **1:1** (4 meses) a **$3,497**.
+  Vale para cualquier puesto y para **AutoFlow** (chat + voz). En marcha en 15 días, optimización del
+  día 16 al 45 y, si lo quieres, soporte para siempre.
+- **Academia AIB** (cohorte de enero) a **$1,997** · y el **1:1** de 4 meses a precio de Black Friday.
 - **Mapa de IA** a **$197**, acreditables si compras antes del 15 de enero.
 
 Si llevas semanas leyendo estos correos y no has decidido, a lo mejor no es el precio. A lo mejor es
@@ -1394,8 +1403,8 @@ Quedan cuatro horas.
 A las 11:59 PM de hoy se acaban:
 
 - Los **dos empleados digitales por la instalación de uno**.
-- **AutoFlow** a $2,497.
-- La **Academia AIB** a $1,997 y el **1:1** a $3,497.
+- **AutoFlow** (chat + voz) dentro de esa misma oferta.
+- La **Academia AIB** a $1,997 y el **1:1** a precio de Black Friday.
 - El **Mapa de IA** a $197 acreditables.
 
 Mañana no hay "extendimos un día más". La fecha es real porque los cupos son reales: cada instalación
