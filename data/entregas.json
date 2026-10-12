@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-12T02:59:20.566Z",
+  "actualizadoEl": "2026-10-12T18:25:00.739Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12856,12 +12856,77 @@
       "tipo": "anuncio",
       "marca": "level-up",
       "titulo": "LU-BF-11 · El Black Friday llegó temprano (Ola 1)",
-      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-11-temprano-9x16.mp4`.",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-11-temprano-9x16.mp4`. — Reemplazado por la versión sin precio (Elvin, 12/oct).",
       "agente": "Remi",
       "creadoEl": "2026-10-12T02:59:20.565Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "formato": "motion 9:16 · 41 s",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-11-temprano-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMS10ZW1wcmFuby05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE3NzM5NjAsImV4cCI6MTgyMzMwOTk2MH0.2cW-HUWCjSqCMAGaZ-54yYXA6FhmI35AIdOKS8bec98fpqXzJy8_KhnrEo4RxRzZRufGkduQvSZrEdGzXpLPfw",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mv4nzj8p",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "LU-BF-12 · Solo 6 cupos arrancan en octubre (Ola 1)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-12-cupos-9x16.mp4`. — Reemplazado por la versión sin precio (Elvin, 12/oct).",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T03:00:16.297Z",
+      "estado": "descartado",
+      "formato": "motion 9:16 · 30 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-12-cupos-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMi1jdXBvcy05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE3NzQwMTYsImV4cCI6MTgyMzMxMDAxNn0.JPgs7MNCftqPdli2TY52n4sen3O5aLRXTMjosaMH2z9eJCbbKmd6dZBHBJZdEpWNC2LWLhGOwIVRSAF_EnxVTQ",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mv5iw09r",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bf-11-temprano-9x16 · sin precio (v2)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-11-temprano-9x16.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T17:25:19.839Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-11-temprano-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMS10ZW1wcmFuby05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE4MjU5MTksImV4cCI6MTgyMzM2MTkxOX0.4HDUvysAzK7Lo7KI3wzwtqd0B-GcWMhm-_c-BEuOYGSP5_31I3NahRaejrhjxDGaLhIVO29qkpbOhM3xzLut4g",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mv5iw813",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bf-12-cupos-9x16 · sin precio (v2)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-12-cupos-9x16.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T17:25:29.895Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-12-cupos-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMi1jdXBvcy05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE4MjU5MjksImV4cCI6MTgyMzM2MTkyOX0.XrL1Gmo3KrD8dukdGEXZFxq0mRgHba-ty810tBcF3G8WFOmUO05D_yyniYQ_ntdYR0K-vyMuPkAVvxXyP1UvdA",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mv5l0iql",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bf-13-collage-rapido-9x16 · collage de testimonios (sin precio)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-13-collage-rapido-9x16.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T18:24:49.629Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-13-collage-rapido-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMy1jb2xsYWdlLXJhcGlkby05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE4Mjk0ODksImV4cCI6MTgyMzM2NTQ4OX0.CQFHVBo0ulcXwETxA7h2iJGTtWpA05-cC28Z-0bOT0eYz-BUeAUcAm2Vs2twHJW99oyIrG1GaheTt77zQTox8w",
+      "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-mv5l0rb7",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bf-14-collage-calmado-9x16 · collage de testimonios (sin precio)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-14-collage-calmado-9x16.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T18:25:00.739Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-14-collage-calmado-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xNC1jb2xsYWdlLWNhbG1hZG8tOXgxNi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODI5NTAwLCJleHAiOjE4MjMzNjU1MDB9.s3_WbPo6uvfjw6S_64XIjp3MZ_0BLNz71DPtBVx-NuwkVnI7uicaVAG01eLxeo1Vg7oGk1apdDM_v1xr4jQiVw",
       "modelo": "remotion"
     }
   ]
