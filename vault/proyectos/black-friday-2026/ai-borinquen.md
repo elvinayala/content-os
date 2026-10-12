@@ -48,7 +48,7 @@ engañado.
 
 | Oferta | Lista | Precio de Black Friday |
 |---|---|---|
-| **Agente personalizado** (un puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción…) | $1,500–2,000 + mensualidad | **2 empleados digitales por el setup de 1**: paga el setup del primero; el segundo se instala sin costo de setup (solo su mensualidad) |
+| **Agente personalizado** (un puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción…) | $1,500–2,000 + mensualidad | **2 empleados digitales por la instalación de 1**: paga la instalación del primero; el segundo se instala sin cargo de instalación (solo su mensualidad) |
 | **AutoFlow completo** (chat + voz + CRM configurado + agenda + portal) | $3,500 + $497/mes | **$2,497** + $497/mes desde el mes 2 |
 | **Academia AIB** grupal (12 semanas, cohorte de enero) | $2,500 o 3 × $997 | **$1,997** pago completo · sale con su primer agente funcionando |
 | **1:1 done-with-you** (4 meses) | $4,000 | **$3,497** pago completo |
@@ -70,7 +70,7 @@ engañado.
   (en marcha en 15 días).
 - **Plazo de AutoFlow (única forma de decirlo):** *en marcha en 15 días, optimización del día 16 al
   45 y, si lo quiere, soporte para siempre.*
-- **Clientes actuales de AIB:** su **2.º empleado digital sin costo de setup** (solo su mensualidad),
+- **Clientes actuales de AIB:** su **2.º empleado digital sin cargo de instalación** (solo su mensualidad),
   hasta el 1/dic.
 - **No mandar el deck de la fábrica de demos** hasta corregir el plazo viejo en `GARANTIA` de
   `demo.mjs` (con OK de Elvin). Los precios de Black Friday van en la landing y en el guion del closer,
@@ -91,8 +91,8 @@ al 2.º agente de los clientes actuales (el plan no lo dice: los textos de clien
 > "Lo que usted me contó es que [DOLOR: las cotizaciones se le quedan para la noche y se le van
 > trabajos]. Lo que hacemos es ponerle un empleado digital en ese puesto: un agente entrenado con sus
 > precios, sus reglas y su forma de hablar, que hace esa tarea todos los días y le deja a usted solo
-> lo que necesita su decisión. Con el Black Friday adelantado, si paga el setup de ese primero, el
-> segundo —el de cobros, por ejemplo— se lo instalamos sin costo de setup; paga solo su mensualidad.
+> lo que necesita su decisión. Con el Black Friday adelantado, si paga la instalación de ese primero, el
+> segundo —el de cobros, por ejemplo— se lo instalamos sin cargo de instalación; paga solo su mensualidad.
 > Y si lo hacemos antes del 31 de octubre, el primer mes de mensualidad va incluido, le capacitamos a
 > su equipo, y lo tiene trabajando antes de la temporada alta de diciembre. Tengo 8 instalaciones por
 > mes. ¿Cuál de los dos puestos arrancamos primero?"
@@ -129,7 +129,7 @@ octubre la mensualidad empieza en el mes 3.)*
 > "Hagamos la cuenta con sus números, no con los míos. ¿Cuántas horas a la semana se le van en
 > [TAREA]? ¿Quién las hace y cuánto le cuesta esa hora? Eso, por 52 semanas, es lo que hoy paga por
 > hacerlo a mano. Un empleado digital hace ese puesto todos los días, y en este Black Friday el
-> segundo puesto no paga setup. Si todavía no está seguro de cuál conviene, empiece por el Mapa de IA:
+> segundo puesto no paga instalación. Si todavía no está seguro de cuál conviene, empiece por el Mapa de IA:
 > $197 que se le acreditan completos si contrata antes del 15 de enero."
 *(La cuenta sale de lo que dice el dueño. Si falta el dato, [DATO]. Nada de sueldos inventados.)*
 
@@ -201,7 +201,7 @@ octubre la mensualidad empieza en el mes 3.)*
 |---|---|---|
 | 0–3 s | "El Black Friday de AI Borinquen llegó temprano." | BLACK FRIDAY · EN OCTUBRE |
 | 3–10 s | "Diciembre es su temporada más fuerte. Y si llega con todo a mano —cotizar, cobrar, dar seguimiento—, la temporada se la come a usted." | DICIEMBRE · TODO A MANO |
-| 10–20 s | "Contrate un empleado digital: un agente de IA para un puesto concreto, entrenado con su negocio. Hasta el 1 de diciembre, paga el setup del primero y el segundo se instala sin costo de setup." | 2 EMPLEADOS DIGITALES · SETUP DE 1 |
+| 10–20 s | "Contrate un empleado digital: un agente de IA para un puesto concreto, entrenado con su negocio. Hasta el 1 de diciembre, paga la instalación del primero y el segundo se instala sin cargo de instalación." | 2 EMPLEADOS DIGITALES · INSTALACIÓN DE 1 |
 | 20–27 s | "Y si entra antes del 31 de octubre: el primer mes de mensualidad incluido y una capacitación de 60 minutos para su equipo. En marcha en 15 días, antes de diciembre." | HASTA EL 31/OCT: 1.er MES INCLUIDO + CAPACITACIÓN · EN MARCHA EN 15 DÍAS |
 | 27–31 s | Tarjeta de testimonio (sin voz, música baja). | "Pensé que la implementación sería mucho más complicada, pero hasta ahora ha sido bastante fácil." — MILTON · CARIBE PAINT |
 | 31–35 s | "8 instalaciones por mes. Escriba EMPLEADO o dele al enlace." | 8 CUPOS POR MES · ESCRIBA "EMPLEADO" · [CONTADOR DE CUPOS] |
@@ -214,8 +214,8 @@ octubre la mensualidad empieza en el mes 3.)*
   > Diciembre es su temporada más fuerte. Si llega con todo a mano, la temporada se lo come a usted.
   >
   > Contrate un empleado digital: un agente de IA para un puesto concreto (cotizar, cobrar, dar
-  > seguimiento), entrenado con su negocio. Hasta el 1 de diciembre: pague el setup del primero y el
-  > segundo se instala sin costo de setup.
+  > seguimiento), entrenado con su negocio. Hasta el 1 de diciembre: pague la instalación del primero y el
+  > segundo se instala sin cargo de instalación.
   >
   > Solo hasta el 31 de octubre: primer mes de mensualidad incluido + capacitación de 60 minutos para
   > su equipo. En marcha en 15 días, antes de diciembre. 8 instalaciones por mes.
@@ -317,7 +317,7 @@ octubre la mensualidad empieza en el mes 3.)*
 | 14–22 s | "Llega la noche, está cansado y la cotización se queda para mañana. Mañana hay otras cinco. Y el trabajo que ya era suyo se lo lleva el que envió el número primero." | EL TRABAJO SE VA CON OTRO |
 | 22–32 s | "En AI Borinquen le ponemos un empleado digital en ese puesto: un agente de cotizaciones entrenado con su lista de precios, sus materiales y sus reglas." | SU EMPLEADO DIGITAL DE COTIZACIONES |
 | 32–44 s | "Le pide al cliente los datos que usted pediría, arma la cotización y se la deja lista para que usted la apruebe con un toque. Usted decide; él hace el trabajo de escritorio." | 1. PIDE LOS DATOS · 2. ARMA · 3. USTED APRUEBA |
-| 44–52 s | "Y en nuestro Black Friday, el segundo empleado digital va sin costo de setup. Escriba EMPLEADO a nuestro WhatsApp o dele al enlace." | 2.º EMPLEADO SIN SETUP · ESCRIBA "EMPLEADO" |
+| 44–52 s | "Y en nuestro Black Friday, el segundo empleado digital va sin cargo de instalación. Escriba EMPLEADO a nuestro WhatsApp o dele al enlace." | 2.º EMPLEADO SIN INSTALACIÓN · ESCRIBA "EMPLEADO" |
 
 **Copy para Meta**
 - **Titular:** Cotizaciones listas sin perder la noche
@@ -330,7 +330,7 @@ octubre la mensualidad empieza en el mes 3.)*
   > En AI Borinquen le ponemos un empleado digital de cotizaciones: entrenado con su lista de precios,
   > le pide los datos al cliente y le deja la cotización lista para que usted la apruebe.
   >
-  > Black Friday, hasta el 1 de diciembre: el segundo empleado digital va sin costo de setup.
+  > Black Friday, hasta el 1 de diciembre: el segundo empleado digital va sin cargo de instalación.
   >
   > Escriba EMPLEADO a nuestro WhatsApp o dele al enlace.
 
@@ -353,7 +353,7 @@ octubre la mensualidad empieza en el mes 3.)*
 | 3–15 s | "Cobrar es incómodo. Nadie quiere escribirle al mismo cliente por tercera vez. Entonces se deja para la semana que viene, la factura se pone vieja y ese dinero, que ya usted trabajó, no entra." | COBRAR ES INCÓMODO → NO SE COBRA |
 | 15–30 s | "La salida no es contratar a alguien para perseguir pagos. Es un empleado digital de cobros: le recuerda al cliente antes de la fecha, el día del pago y después, con educación y con el tono de su negocio. Y a usted solo le avisa cuando alguien necesita una conversación de persona a persona." | ANTES · EL DÍA · DESPUÉS |
 | 30–40 s | "¿Cómo sé que conversa bien? No me crea a mí. Escríbale a nuestro WhatsApp: el que le contesta es uno de nuestros agentes. Pregúntele lo que quiera." | PRUÉBELO USTED |
-| 40–47 s | "Escriba EMPLEADO y pregúntele por el Black Friday: dos empleados digitales por el setup de uno, hasta el 1 de diciembre." | 2 POR EL SETUP DE 1 · ESCRIBA "EMPLEADO" |
+| 40–47 s | "Escriba EMPLEADO y pregúntele por el Black Friday: dos empleados digitales por la instalación de uno, hasta el 1 de diciembre." | 2 POR LA INSTALACIÓN DE 1 · ESCRIBA "EMPLEADO" |
 
 **Copy para Meta**
 - **Titular:** El empleado digital que cobra por usted
@@ -366,7 +366,7 @@ octubre la mensualidad empieza en el mes 3.)*
   > En AI Borinquen le ponemos un empleado digital de cobros: recuerda antes de la fecha, el día del
   > pago y después, con el tono de su negocio, y solo le avisa a usted cuando hace falta.
   >
-  > Black Friday hasta el 1 de diciembre: dos empleados digitales por el setup de uno.
+  > Black Friday hasta el 1 de diciembre: dos empleados digitales por la instalación de uno.
   >
   > Escriba EMPLEADO a nuestro WhatsApp y le contesta uno de nuestros agentes. O dele al enlace.
 
@@ -502,7 +502,7 @@ octubre la mensualidad empieza en el mes 3.)*
 | 3–12 s | "A muchos dueños les vendieron una herramienta, se la entregaron en blanco y desaparecieron. Por eso hoy desconfían de todo lo que diga IA." | SE LA ENTREGARON EN BLANCO |
 | 12–38 s | "Así se contrata un empleado digital con nosotros. Uno: usted escoge el puesto, el que cotiza, el que cobra, el que da seguimiento o el que lleva el inventario. Dos: lo entrenamos con sus precios, sus reglas y su forma de hablar. Tres: lo conectamos a lo que usted ya usa. Cuatro: usted lo prueba antes de que le hable a un cliente. Cinco: lo ajustamos con usted, y hasta el 30 de noviembre capacitamos a su equipo." | 1. PUESTO · 2. ENTRENAR · 3. CONECTAR · 4. PROBAR · 5. AJUSTAR |
 | 38–48 s | "Milton, de Caribe Paint, lo dijo así: 'pensé que la implementación sería mucho más complicada, pero hasta ahora ha sido bastante fácil'." | MILTON · CARIBE PAINT |
-| 48–55 s | "Black Friday: dos empleados digitales por el setup de uno, hasta el 1 de diciembre. Escriba EMPLEADO o dele al enlace." | 2 POR EL SETUP DE 1 · ESCRIBA "EMPLEADO" |
+| 48–55 s | "Black Friday: dos empleados digitales por la instalación de uno, hasta el 1 de diciembre. Escriba EMPLEADO o dele al enlace." | 2 POR LA INSTALACIÓN DE 1 · ESCRIBA "EMPLEADO" |
 
 **Copy para Meta**
 - **Titular:** Así se contrata un empleado digital
@@ -519,12 +519,12 @@ octubre la mensualidad empieza en el mes 3.)*
   > "Pensé que la implementación sería mucho más complicada, pero hasta ahora ha sido bastante fácil."
   > — Milton, Caribe Paint
   >
-  > Black Friday: 2 empleados digitales por el setup de 1, hasta el 1/dic. Escriba EMPLEADO o dele al
+  > Black Friday: 2 empleados digitales por la instalación de 1, hasta el 1/dic. Escriba EMPLEADO o dele al
   > enlace.
 
 ---
 
-### AIB-BF-08 · "Dos empleados digitales por el setup de uno"
+### AIB-BF-08 · "Dos empleados digitales por la instalación de uno"
 
 - **Línea:** 1 · Agentes personalizados · **Pilar:** Producto / oferta · **Enemigo:** crecer
   agrandando la nómina / contratar por contratar
@@ -537,10 +537,10 @@ octubre la mensualidad empieza en el mes 3.)*
 
 | Tiempo | Voz (Yulianna) | Texto en pantalla |
 |---|---|---|
-| 0–3 s | "Este Black Friday, dos empleados por el setup de uno." | 2 EMPLEADOS DIGITALES · SETUP DE 1 |
+| 0–3 s | "Este Black Friday, dos empleados por la instalación de uno." | 2 EMPLEADOS DIGITALES · INSTALACIÓN DE 1 |
 | 3–13 s | "Contratar hoy es poner el anuncio, entrevistar, entrenar… y a los tres meses empezar de nuevo. Mientras, usted cubre el puesto." | CONTRATAR · ENTRENAR · EMPEZAR DE NUEVO |
 | 13–25 s | "Un empleado digital es un agente de IA para un puesto concreto, entrenado con su negocio: el que cotiza, el que cobra, el que le da seguimiento a los que dijeron 'déjame pensarlo', el que lleva el inventario." | UN PUESTO · ENTRENADO CON SU NEGOCIO |
-| 25–37 s | "Hasta el 1 de diciembre: paga el setup del primero y el segundo se lo instalamos sin costo de setup; solo paga su mensualidad. Y hasta el 30 de noviembre, le capacitamos a su equipo 60 minutos." | PAGA EL SETUP DE 1 · EL 2.º SIN SETUP · + CAPACITACIÓN |
+| 25–37 s | "Hasta el 1 de diciembre: paga la instalación del primero y el segundo se lo instalamos sin cargo de instalación; solo paga su mensualidad. Y hasta el 30 de noviembre, le capacitamos a su equipo 60 minutos." | PAGA LA INSTALACIÓN DE 1 · EL 2.º SIN INSTALACIÓN · + CAPACITACIÓN |
 | 37–47 s | "¿Quiere ver cómo conversa uno? Escriba EMPLEADO a nuestro WhatsApp: el que le contesta es uno de los nuestros." | PRUÉBELO EN WHATSAPP |
 | 47–55 s | "Instalamos 8 por mes; lo que pase del cupo de diciembre arranca en enero. Escriba EMPLEADO o dele al enlace." | 8 CUPOS POR MES · ESCRIBA "EMPLEADO" |
 
@@ -548,15 +548,15 @@ octubre la mensualidad empieza en el mes 3.)*
 su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE HOY 11:59 PM.
 
 **Copy para Meta**
-- **Titular:** 2 empleados digitales por el setup de 1
+- **Titular:** 2 empleados digitales por la instalación de 1
 - **Texto principal:**
   > Contratar hoy es anunciar, entrevistar, entrenar… y a los tres meses empezar de nuevo.
   >
   > Un empleado digital es un agente de IA para un puesto concreto, entrenado con su negocio: el que
   > cotiza, el que cobra, el que le da seguimiento a los que dijeron "déjame pensarlo".
   >
-  > Black Friday de AI Borinquen, hasta el 1 de diciembre: pague el setup del primero y el segundo se
-  > lo instalamos sin costo de setup. Hasta el 30 de noviembre, con capacitación para su equipo.
+  > Black Friday de AI Borinquen, hasta el 1 de diciembre: pague la instalación del primero y el segundo se
+  > lo instalamos sin cargo de instalación. Hasta el 30 de noviembre, con capacitación para su equipo.
   >
   > 8 instalaciones por mes. Escriba EMPLEADO a nuestro WhatsApp o dele al enlace.
 
@@ -627,7 +627,7 @@ su equipo. Escriba EMPLEADO o dele al enlace." · Texto: LA CAPACITACIÓN SE CAE
   > AutoFlow: $2,497 (lista $3,500) + $497/mes desde el mes 2. En marcha en 15 días, optimización del
   > día 16 al 45 y, si lo quiere, soporte para siempre.
   >
-  > También cierran hoy: 2 empleados digitales por el setup de 1 y la Academia AIB a $1,997.
+  > También cierran hoy: 2 empleados digitales por la instalación de 1 y la Academia AIB a $1,997.
   >
   > Escriba EMPLEADO o dele al enlace antes de medianoche.
 
@@ -653,7 +653,7 @@ sprint (lun 12 – mar 13/oct) para la Ola 1.** La Lista VIP ya no existe: su fl
 ### F1 · Lanzamiento: "El Black Friday llegó temprano" (Ola 1 · 15–31/oct) — NUEVO
 
 - **Título:** El Black Friday llegó temprano *(5 palabras · resaltar "llegó temprano")*
-- **Bullets:** Dos empleados, setup de uno · Primer mes de mensualidad incluido · Trabajando antes de
+- **Bullets:** Dos empleados, instalación de uno · Primer mes de mensualidad incluido · Trabajando antes de
   diciembre
 - **CTA:** Escriba EMPLEADO
 - **Oferta (`--oferta`):** "Hasta el 31/oct"
@@ -662,7 +662,7 @@ sprint (lun 12 – mar 13/oct) para la Ola 1.** La Lista VIP ya no existe: su fl
   tarde. Coquí de circuitos abajo a la derecha. Negro + verde/azul de AIB.
 - **Copy del post:**
   > El Black Friday de AI Borinquen llegó temprano. Hasta el 1 de diciembre: dos empleados digitales
-  > por el setup de uno.
+  > por la instalación de uno.
   >
   > Y solo hasta el 31 de octubre: el primer mes de mensualidad incluido + una capacitación de 60
   > minutos para su equipo. En marcha en 15 días, antes de la temporada alta de diciembre. 8
@@ -670,12 +670,12 @@ sprint (lun 12 – mar 13/oct) para la Ola 1.** La Lista VIP ya no existe: su fl
   >
   > Escriba EMPLEADO a nuestro WhatsApp o dele al enlace.
 
-### F2 · 2 empleados digitales por el setup de 1 (Olas 2 y 3)
+### F2 · 2 empleados digitales por la instalación de 1 (Olas 2 y 3)
 
-- **Título:** Dos empleados digitales por el setup de uno *(8 palabras · resaltar "por el setup de uno")*
+- **Título:** Dos empleados digitales por la instalación de uno *(8 palabras · resaltar "por la instalación de uno")*
 - **Bullets:** Uno cotiza, otro cobra · Entrenados con su negocio · Solo hasta el 1/dic
 - **CTA:** Escriba EMPLEADO
-- **Oferta (`--oferta`):** "2.º sin costo de setup"
+- **Oferta (`--oferta`):** "2.º sin cargo de instalación"
 - **Idea visual:** dos gafetes de empleado colgando de un mismo cordón sobre un escritorio de negocio
   boricua (no oficina gringa): "EMPLEADO DIGITAL #1 · COTIZACIONES" y "#2 · COBROS". Luz natural de
   tarde. Coquí de circuitos en el cordón.
@@ -683,8 +683,8 @@ sprint (lun 12 – mar 13/oct) para la Ola 1.** La Lista VIP ya no existe: su fl
   > Un empleado digital es un agente de IA para un puesto concreto, entrenado con sus precios, sus
   > reglas y su forma de hablar.
   >
-  > Hasta el 1 de diciembre: pague el setup del primero y el segundo se lo instalamos sin costo de
-  > setup. Solo paga su mensualidad. Hasta el 30 de noviembre, con capacitación para su equipo.
+  > Hasta el 1 de diciembre: pague la instalación del primero y el segundo se lo instalamos sin cargo de
+  > instalación. Solo paga su mensualidad. Hasta el 30 de noviembre, con capacitación para su equipo.
   >
   > Escriba EMPLEADO a nuestro WhatsApp y le contesta uno de los nuestros. O dele al enlace.
 
@@ -804,7 +804,7 @@ Ernest Crisson **solo con su permiso** (sin permiso, "una oficina legal" y sin c
 | 16 | mar 1/dic · 8 PM | Cierra a medianoche | no compradores | 1 | reusado (antes 11) |
 | 17A | mié 2/dic · 9 AM | Bienvenida y próximos pasos | compradores | 1 | reusado (antes 12A) |
 | 17B | mié 2/dic · 9 AM | Lista de enero | no compradores | 3 | reusado (antes 12B) |
-| C | jue 15/oct · 7 AM (+ recordatorio vie 27/nov) | Tu segundo empleado digital, sin setup | clientes actuales | 1 | reusado (antes 13) |
+| C | jue 15/oct · 7 AM (+ recordatorio vie 27/nov) | Tu segundo empleado digital sin instalación | clientes actuales | 1 | reusado (antes 13) |
 
 ---
 
@@ -821,7 +821,7 @@ de AI Borinquen abre hoy, y tiene una regla sencilla: **el precio es el mismo ha
 diciembre, pero el que entra primero se lleva más.**
 
 **La oferta (pago completo):**
-- **Empleados digitales:** pagas el setup del primero y el segundo se instala **sin costo de setup**.
+- **Empleados digitales:** pagas la instalación del primero y el segundo se instala **sin cargo de instalación**.
   Ejemplo: uno que cotiza y uno que cobra.
 - **AutoFlow completo** (chat + voz + CRM + agenda + portal): **$2,497** en vez de $3,500.
 - **Academia AIB** (12 semanas, cohorte de enero): **$1,997** en vez de $2,500. **1:1** (4 meses):
@@ -917,7 +917,7 @@ Piensa en el puesto que más se va a cargar este diciembre:
 - ¿El **seguimiento** a los que dijeron "déjame pensarlo"?
 - ¿El **inventario** que se descuadra cuando más se vende?
 
-Ese es tu primer empleado digital. Y hasta el 1 de diciembre, el segundo va **sin costo de setup**.
+Ese es tu primer empleado digital. Y hasta el 1 de diciembre, el segundo va **sin cargo de instalación**.
 
 Hasta el **31 de octubre** también te llevas el primer mes de mensualidad incluido y una capacitación
 de 60 minutos para tu equipo. Instalamos 8 por mes.
@@ -983,7 +983,7 @@ Lo que se cae:
 - En la **Academia** y el **1:1**, la sesión 1:1 extra de implementación de 60 minutos.
 
 Lo que se queda (hasta el 30 de noviembre): la capacitación de 60 minutos para tu equipo. Y hasta el 1
-de diciembre, el precio de Black Friday: dos empleados digitales por el setup de uno, AutoFlow a
+de diciembre, el precio de Black Friday: dos empleados digitales por la instalación de uno, AutoFlow a
 $2,497, Academia a $1,997, 1:1 a $3,497.
 
 No te voy a decir que es ahora o nunca, porque no lo es: la oferta sigue en noviembre. Te digo la
@@ -1072,8 +1072,8 @@ WhatsApp: **[LINK]**
 Alexis Pérez
 Fundador de AI Borinquen
 
-P.D. Nuestro Black Friday sigue abierto hasta el 1 de diciembre: dos empleados digitales por el setup
-de uno, y hasta el 30 de noviembre con capacitación para tu equipo.
+P.D. Nuestro Black Friday sigue abierto hasta el 1 de diciembre: dos empleados digitales por la
+instalación de uno, y hasta el 30 de noviembre con capacitación para tu equipo.
 
 ---
 
@@ -1109,7 +1109,7 @@ Ahora, no todo negocio necesita esto. Si a ti lo que te come el día no son los 
 tarea —cotizar, cobrar, dar seguimiento—, lo tuyo es un empleado digital para ese puesto.
 
 Las dos cosas están en nuestro Black Friday hasta el 1 de diciembre: **AutoFlow a $2,497** o **dos
-empleados digitales por el setup de uno**. Y hasta el 30 de noviembre, con capacitación para tu equipo.
+empleados digitales por la instalación de uno**. Y hasta el 30 de noviembre, con capacitación para tu equipo.
 
 **Mira cuál te toca: [LINK]**
 
@@ -1152,7 +1152,7 @@ Después de eso, no desaparecemos: lo seguimos ajustando contigo. Milton, de Car
 **Los cupos:** instalamos 8 por mes. Para noviembre quedan **[DATO]**; lo que pase del cupo de
 diciembre arranca la semana del 5 de enero.
 
-Hasta el 1 de diciembre: dos empleados digitales por el setup de uno.
+Hasta el 1 de diciembre: dos empleados digitales por la instalación de uno.
 
 **Separa tu cupo: [LINK]**
 
@@ -1176,7 +1176,7 @@ Empezó la semana de Black Friday. Nosotros abrimos en octubre, así que esto no
 el último tramo. Te digo cómo están las cosas:
 
 **Lo que sigue hasta el 1 de diciembre (pago completo):**
-- **Empleados digitales:** pagas el setup del primero y el segundo se instala **sin costo de setup**;
+- **Empleados digitales:** pagas la instalación del primero y el segundo se instala **sin cargo de instalación**;
   solo pagas su mensualidad.
 - **AutoFlow completo** (chat + voz + CRM + agenda + portal): **$2,497** en vez de $3,500, mensualidad
   de $497 desde el mes 2. En marcha en 15 días, optimización del día 16 al 45 y, si lo quieres,
@@ -1248,7 +1248,7 @@ la misma, con menos cupos y menos días. Cierra el **martes 1 de diciembre a las
 Para que no pierdas tiempo, escoge por tu problema, no por el producto:
 
 **"Hay una tarea que me come el día"** (cotizar, cobrar, seguimiento, inventario)
-→ **Empleados digitales:** pagas el setup del primero y el segundo se instala sin costo de setup. Solo
+→ **Empleados digitales:** pagas la instalación del primero y el segundo se instala sin cargo de instalación. Solo
 pagas su mensualidad.
 
 **"Me escriben más de lo que puedo contestar"**
@@ -1333,7 +1333,7 @@ arranca la semana del 5 de enero.
 Si estás entre dos opciones:
 
 - Si lo que te frena es una **tarea** (cotizar, cobrar, dar seguimiento, el inventario): dos empleados
-  digitales por el setup de uno.
+  digitales por la instalación de uno.
 - Si lo que te frena es que **no sabes por dónde empezar**: el Mapa de IA, $197 acreditables.
 - Si lo que quieres es **aprender**: la Academia de enero a $1,997.
 
@@ -1359,7 +1359,7 @@ Hola [nombre],
 Abrimos el 15 de octubre. Los bonos ya se cayeron. Hoy queda solo **el precio**, y mañana tampoco.
 
 **Lo que cierra hoy (pago completo):**
-- **Dos empleados digitales por el setup de uno.** El segundo se instala sin costo de setup; solo
+- **Dos empleados digitales por la instalación de uno.** El segundo se instala sin cargo de instalación; solo
   pagas su mensualidad.
 - **AutoFlow completo** a **$2,497** en vez de $3,500, mensualidad desde el mes 2. En marcha en 15
   días, optimización del día 16 al 45 y, si lo quieres, soporte para siempre.
@@ -1393,7 +1393,7 @@ Quedan cuatro horas.
 
 A las 11:59 PM de hoy se acaban:
 
-- Los **dos empleados digitales por el setup de uno**.
+- Los **dos empleados digitales por la instalación de uno**.
 - **AutoFlow** a $2,497.
 - La **Academia AIB** a $1,997 y el **1:1** a $3,497.
 - El **Mapa de IA** a $197 acreditables.
@@ -1500,12 +1500,12 @@ recordatorio de que los $197 se acreditan si contrata antes del 15/ene.)*
 
 ---
 
-### Email C · CLIENTES ACTUALES de AIB — Tu segundo empleado digital sin setup
+### Email C · CLIENTES ACTUALES de AIB — Tu segundo empleado digital sin instalación
 
 - **Envío:** jue 15/oct · 7 AM (después de la salida suave por WhatsApp del mar 13) · recordatorio
   corto el vie 27/nov · segmento `bf2026:cliente`
 - **Línea:** 1 · Agentes personalizados
-- **Asunto:** Tu segundo empleado digital, sin setup
+- **Asunto:** Tu segundo empleado digital sin instalación
 - **Preheader:** Solo para clientes, hasta el 1 de diciembre
 
 Hola [nombre],
@@ -1521,7 +1521,7 @@ Pregunta rápida: **¿qué otro puesto de tu negocio sigue dependiendo de una pe
 - ¿El inventario?
 - ¿Confirmar citas o pedir reseñas después del servicio?
 
-Este Black Friday, como cliente, **tu segundo empleado digital se instala sin costo de setup**. Solo
+Este Black Friday, como cliente, **tu segundo empleado digital se instala sin cargo de instalación**. Solo
 pagas su mensualidad. Ya conocemos tu negocio, tus precios y tu forma de hablar, así que lo podemos
 tener **en marcha antes de la temporada alta de diciembre**.
 
@@ -1571,13 +1571,13 @@ respondió) → semana de Black Friday → Acción de Gracias (estado) → Black
 **Clientes actuales — A**
 > Hola [nombre], ¿cómo va todo en [negocio]? Te escribo antes que a nadie: el jueves abrimos nuestro
 > Black Friday, adelantado a octubre, y para clientes viene algo especial: tu segundo empleado
-> digital sin costo de setup. ¿Qué otra tarea de [negocio] te gustaría quitarte de encima antes de
+> digital sin cargo de instalación. ¿Qué otra tarea de [negocio] te gustaría quitarte de encima antes de
 > diciembre?
 > — Alexis Pérez, AI Borinquen
 
 **Clientes actuales — B**
 > [nombre], gracias por seguir con nosotros. Quería que lo supieras tú primero: este jueves sale
-> nuestro Black Friday y como cliente tu segundo agente va sin costo de setup. Si lo montamos este
+> nuestro Black Friday y como cliente tu segundo agente va sin cargo de instalación. Si lo montamos este
 > mes, llega trabajando a diciembre. ¿Te cuento cómo sería en [negocio]?
 > — Alexis Pérez, AI Borinquen
 
@@ -1598,7 +1598,7 @@ respondió) → semana de Black Friday → Acción de Gracias (estado) → Black
 
 **A**
 > Buenos días, [nombre]. Abrió el Black Friday de AI Borinquen, adelantado a octubre: dos empleados
-> digitales por el setup de uno, hasta el 1 de diciembre. Y solo hasta el 31 de octubre, el primer mes
+> digitales por la instalación de uno, hasta el 1 de diciembre. Y solo hasta el 31 de octubre, el primer mes
 > de mensualidad incluido. Todo aquí: [LINK]
 > — Alexis Pérez, AI Borinquen
 
@@ -1651,8 +1651,8 @@ respondió) → semana de Black Friday → Acción de Gracias (estado) → Black
 ### 6.5 Noviembre · 1 mensaje por semana (lun 2, 9 y 16/nov) — solo a quien respondió alguna vez
 
 **A (semana 1 · lo que queda)**
-> [nombre], se cayó el bono de lanzamiento, pero lo demás sigue: dos empleados digitales por el setup
-> de uno hasta el 1/dic y, hasta el 30/nov, capacitación de 60 minutos para tu equipo. ¿Qué tarea te
+> [nombre], se cayó el bono de lanzamiento, pero lo demás sigue: dos empleados digitales por la
+> instalación de uno hasta el 1/dic y, hasta el 30/nov, capacitación de 60 minutos para tu equipo. ¿Qué tarea te
 > está comiendo más tiempo este mes?
 > — Alexis Pérez, AI Borinquen
 
@@ -1684,7 +1684,7 @@ respondió) → semana de Black Friday → Acción de Gracias (estado) → Black
 
 **A**
 > Buenos días, [nombre]. Hoy es Black Friday. El nuestro abrió en octubre, así que ya sabes de qué se
-> trata: dos empleados digitales por el setup de uno, hasta el martes 1. Todo aquí: [LINK]
+> trata: dos empleados digitales por la instalación de uno, hasta el martes 1. Todo aquí: [LINK]
 > — Alexis Pérez, AI Borinquen
 
 **B**
@@ -1711,7 +1711,7 @@ respondió) → semana de Black Friday → Acción de Gracias (estado) → Black
 > — Alexis Pérez, AI Borinquen
 
 **B**
-> Últimas horas, [nombre]. Mañana ya no están los dos empleados digitales por el setup de uno ni los
+> Últimas horas, [nombre]. Mañana ya no están los dos empleados digitales por la instalación de uno ni los
 > precios de Black Friday. Te dejo el enlace por última vez: [LINK]
 > — Alexis Pérez, AI Borinquen
 
