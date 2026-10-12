@@ -159,3 +159,25 @@ export function repartirAvisos(
   for (const l of p.recuperados) meter(l.destino ? [l.destino] : sinEstratega, l.destino ? "estratega" : "asignar", l, "recuperados");
   return [...grupos.values()];
 }
+
+// ---------- Asignación de estratega sin el vínculo al cliente (12/oct) ----------
+// En «Asignación de Estrategas» muchas filas recientes (81 de 104 sin vínculo) solo traen el nombre del negocio o de la
+// persona en el título y no la columna «Nombre del cliente». Para no decir "sin estratega" de quien sí lo tiene, se
+// empareja por nombre. Conservador: igualdad, o todas las palabras del título dentro del cliente (mín. 2 palabras).
+
+const SIN_VALOR = new Set(["pr", "llc", "inc", "corp", "corporation", "co", "ads", "ad", "by", "the", "de", "del", "la", "el", "y", "and", "services", "service", "puerto", "rico"]);
+const limpio = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+const palabras = (t: string) => limpio(t).split(" ").filter((w) => w && !SIN_VALOR.has(w));
+
+export function emparejaAsignacion(titulo: string, cliente: { name: string; empresa?: string | null }): boolean {
+  const a = limpio(titulo).replace(/ /g, "");
+  if (a.length < 4) return false;
+  const pa = palabras(titulo);
+  for (const c of [cliente.name, cliente.empresa ?? ""]) {
+    if (!c.trim()) continue;
+    if (limpio(c).replace(/ /g, "") === a) return true; // "PG Electrical Contractor" = "pgelectricalcontractor"
+    const pc = new Set(palabras(c));
+    if (pa.length >= 2 && pa.every((w) => pc.has(w))) return true;
+  }
+  return false;
+}

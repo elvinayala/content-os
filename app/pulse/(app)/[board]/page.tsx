@@ -22,7 +22,7 @@ export default async function BoardPage({
   if (!data) notFound();
 
   // Nombres de los items de los tableros conectados (columnas relation).
-  const relacionados: Record<string, { id: string; name: string }[]> = {};
+  const relacionados: Record<string, { id: string; name: string; extra?: string }[]> = {};
   const destinos = [...new Set(data.columns.filter((c) => c.type === "relation" && c.settings.boardId).map((c) => c.settings.boardId!))];
   const visibles = await boardsVisibles(usuario);
   await Promise.all(destinos.map(async (id) => (relacionados[id] = visibles.has(id) ? await leerNombresItems(id) : [])));

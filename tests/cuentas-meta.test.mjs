@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { clasificar, decidir, limpiarId, onboardingHecho, repartirAvisos, rolDe, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
+import { clasificar, decidir, emparejaAsignacion, limpiarId, onboardingHecho, repartirAvisos, rolDe, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
 
 test("limpiarId acepta act_ y espacios, rechaza lo que no parece un ID", () => {
   assert.equal(limpiarId("act_1234567890123"), "1234567890123");
@@ -65,4 +65,17 @@ test("antes de la reunión de onboarding no se avisa que falta el ID (Jessica, 1
   assert.equal(onboardingHecho({ grupo: "ONBOARDING & SETUP", setup: "SETUP COMPLETADO 29/09", progreso: null }), true);
   assert.equal(onboardingHecho({ grupo: "ANÁLISIS Y ESTRATEGIA", setup: null, progreso: null }), true);
   assert.equal(onboardingHecho({ grupo: "CLIENTE ACTIVO" }), true);
+});
+
+test("asignación sin vínculo: se empareja por nombre sin confundir negocios parecidos", () => {
+  const c = (name, empresa) => ({ name, empresa });
+  assert.equal(emparejaAsignacion("Ana Araujo", c("Ana Araujo", "Blessed Events Boutique")), true);
+  assert.equal(emparejaAsignacion("RcproservicePR", c("Rafael Rene Claudio", "RcproservicePR")), true);
+  assert.equal(emparejaAsignacion("Andrews Medical Aesthetics", c("Carol N. Andrews", "Andrews Medical & Aesthetics")), true);
+  assert.equal(emparejaAsignacion("PG Electrical Contractor", c("Gabriel Perdomo", "pgelectricalcontractor")), true);
+  assert.equal(emparejaAsignacion("Natacha Agront", c("Natacha Agront", "Licenciada Natacha Agront")), true);
+  // negocios que se parecen pero no son el mismo
+  assert.equal(emparejaAsignacion("Magic Auto Tint", c("Fernando Silva", "Magic car care image llc")), false);
+  assert.equal(emparejaAsignacion("Blessed Landscaping", c("Ana Araujo", "Blessed Events Boutique")), false);
+  assert.equal(emparejaAsignacion("Cesar - Ice cream", c("Cesar Pabon", "Queen Ice Cream PR")), false); // una sola palabra útil: no se arriesga
 });

@@ -8,7 +8,7 @@ import { BoardToolbar } from "@/components/pulse/board-toolbar";
 import { ItemPanel } from "@/components/pulse/item-panel";
 import { SelectionBar } from "@/components/pulse/selection-bar";
 
-export function BoardView({ relacionados }: { relacionados: Record<string, { id: string; name: string }[]> }) {
+export function BoardView({ relacionados }: { relacionados: Record<string, { id: string; name: string; extra?: string }[]> }) {
   const { vista } = useBoard();
   return (
     <div className="flex min-h-0 flex-1 flex-col">

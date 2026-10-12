@@ -22,7 +22,7 @@ export interface CellProps {
   column: Columna;
   usuarios: UsuarioPulse[];
   archivos: Record<string, ArchivoPulse>;
-  relacionados?: { id: string; name: string }[];
+  relacionados?: { id: string; name: string; extra?: string }[];
   // `vertical`: dentro del panel del item (label a la izquierda, sin borde de grilla)
   vertical?: boolean;
 }
@@ -612,7 +612,8 @@ function CellRelacion({ item, column, relacionados = [], vertical }: CellProps) 
     const nuevo = ids.includes(id) ? ids.filter((v) => v !== id) : multiple ? [...ids, id] : [id];
     await setValor(item.id, column, nuevo);
   };
-  const lista = relacionados.filter((r) => !q || r.name.toLowerCase().includes(q.toLowerCase())).slice(0, 50);
+  const sinTildes = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const lista = relacionados.filter((r) => !q || sinTildes(`${r.name} ${r.extra ?? ""}`).includes(sinTildes(q))).slice(0, 50);
   return (
     <Popover onOpenChange={(o) => !o && setQ("")}>
       <PopoverTrigger asChild>
@@ -629,11 +630,14 @@ function CellRelacion({ item, column, relacionados = [], vertical }: CellProps) 
         </button>
       </PopoverTrigger>
       <PopoverContent className="pulse w-72 p-2" align="start">
-        <input autoFocus className="mb-2 h-7 w-full rounded border px-2 text-xs" placeholder="Buscar elemento…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input autoFocus className="mb-2 h-7 w-full rounded border px-2 text-xs" placeholder="Buscar por nombre o negocio…" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="flex max-h-64 flex-col gap-0.5 overflow-auto">
           {lista.map((r) => (
             <button key={r.id} type="button" onClick={() => toggle(r.id)} className="flex items-center gap-2 rounded px-1 py-1 text-left text-sm hover:bg-muted">
-              <span className="flex-1 truncate">{r.name}</span>
+              <span className="flex-1 truncate">
+                {r.name}
+                {r.extra ? <span className="text-muted-foreground"> · {r.extra}</span> : null}
+              </span>
               {ids.includes(r.id) ? <Check className="size-4 text-primary" /> : null}
             </button>
           ))}

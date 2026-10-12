@@ -28,7 +28,7 @@ export const RowItem = memo(function RowItem({
   columns: Columna[];
   usuarios: UsuarioPulse[];
   archivos: Record<string, ArchivoPulse>;
-  relacionados: Record<string, { id: string; name: string }[]>;
+  relacionados: Record<string, { id: string; name: string; extra?: string }[]>;
   colorGrupo: string;
   seleccionada: boolean;
 }) {

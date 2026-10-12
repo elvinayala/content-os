@@ -5,7 +5,7 @@ import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { notificarCEO } from "@/lib/notificar-ceo";
 
 import { usuarioSistema } from "./alta-typeform";
-import { clasificar, decidir, esProblema, limpiarId, onboardingHecho, repartirAvisos, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
+import { clasificar, decidir, emparejaAsignacion, esProblema, limpiarId, onboardingHecho, repartirAvisos, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
 import { db } from "./db";
 import { desempenoPerfiles } from "@/lib/desempeno/schema";
 
@@ -26,7 +26,7 @@ const AVISAR_A = lista(process.env.PULSE_CUENTAS_AVISAR, "jessica@levelupmediapr
 const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "jessica@levelupmediapr.net,carilin@levelupmediapr.net");
 
 /** Estratega asignado por ficha de LEVEL UP MEDIA (la asignación más reciente del tablero Asignación de Estrategas). */
-async function estrategas(): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
+async function estrategas(clientes: { id: string; name: string; empresa: string | null }[]): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
   const d = await db();
   const out = new Map<string, { email: string; nombre: string; slackId: string | null }>();
   const [b] = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(eq(pulseBoards.slug, "asignacion-estrategas"));
@@ -35,12 +35,19 @@ async function estrategas(): Promise<Map<string, { email: string; nombre: string
   const cRel = cols.find((c) => c.type === "relation");
   const cEst = cols.find((c) => c.type === "people" && /estratega/i.test(c.title));
   if (!cRel || !cEst) return out;
-  const asign = await d.select({ values: pulseItems.values }).from(pulseItems).where(eq(pulseItems.boardId, b.id)).orderBy(sql`${pulseItems.createdAt} asc`);
+  const asign = await d.select({ name: pulseItems.name, values: pulseItems.values }).from(pulseItems).where(eq(pulseItems.boardId, b.id)).orderBy(sql`${pulseItems.createdAt} asc`);
   const porCliente = new Map<string, string>(); // el orden asc deja la asignación más reciente
   for (const a of asign) {
     const v = a.values as Record<string, ValorCelda>;
     const est = ((v[cEst.id] as string[] | undefined) ?? [])[0];
     if (est) for (const cliente of (v[cRel.id] as string[] | undefined) ?? []) porCliente.set(cliente, est);
+  }
+  // Asignaciones sin el vínculo al cliente: se emparejan por nombre solo donde el vínculo no dijo nada.
+  for (const a of asign) {
+    const v = a.values as Record<string, ValorCelda>;
+    const est = ((v[cEst.id] as string[] | undefined) ?? [])[0];
+    if (!est || ((v[cRel.id] as string[] | undefined) ?? []).length) continue;
+    for (const c of clientes) if (!porCliente.has(c.id) && emparejaAsignacion(a.name, c)) porCliente.set(c.id, est);
   }
   const ids = [...new Set(porCliente.values())];
   if (!ids.length) return out;
@@ -141,7 +148,7 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   });
 
   const usuario = await usuarioSistema("cuentas");
-  const estrategaDe = await estrategas();
+  const estrategaDe = await estrategas(items.map((i) => ({ id: i.id, name: i.name, empresa: cEmpresa ? ((i.values as Record<string, ValorCelda>)[cEmpresa.id] as string | null) ?? null : null })));
   type LineaD = Linea & { destino: string | null };
   const nuevos: LineaD[] = [];
   const recuperados: LineaD[] = [];

@@ -28,7 +28,7 @@ import { columnaVisible, type Actividad, type Columna, type ValorCelda } from "@
 import { formatearNumero } from "@/lib/pulse/valores";
 
 // Panel lateral del elemento (?item=): todos los campos + timeline de actividad y comentarios.
-export function ItemPanel({ relacionados }: { relacionados: Record<string, { id: string; name: string }[]> }) {
+export function ItemPanel({ relacionados }: { relacionados: Record<string, { id: string; name: string; extra?: string }[]> }) {
   const s = useBoard();
   const { abrirItem, renombrar, eliminarItems, dispatch } = useBoardActions();
   const item = s.itemAbierto ? s.items[s.itemAbierto] : null;

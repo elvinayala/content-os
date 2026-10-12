@@ -373,9 +373,19 @@ export async function recalcularItem(itemId: string): Promise<Item | null> {
   return aItem(r);
 }
 
-export async function leerNombresItems(boardId: string): Promise<{ id: string; name: string }[]> {
+/** Opciones de una columna de relación. `extra` = el negocio (columna "Empresa") para mostrarlo y poder buscar por él:
+ * Jessica (12/oct) buscaba "Vicenza Boutique" y no salía porque el elemento se llama "Merary Quiroz". */
+export async function leerNombresItems(boardId: string): Promise<{ id: string; name: string; extra?: string }[]> {
   const d = await db();
-  return d.select({ id: pulseItems.id, name: pulseItems.name }).from(pulseItems).where(eq(pulseItems.boardId, boardId)).orderBy(asc(pulseItems.name));
+  const [cols, items] = await Promise.all([
+    d.select({ id: pulseColumns.id, title: pulseColumns.title }).from(pulseColumns).where(eq(pulseColumns.boardId, boardId)),
+    d.select({ id: pulseItems.id, name: pulseItems.name, values: pulseItems.values }).from(pulseItems).where(eq(pulseItems.boardId, boardId)).orderBy(asc(pulseItems.name)),
+  ]);
+  const cEmpresa = cols.find((c) => /^empresa$/i.test(c.title.trim()));
+  return items.map((i) => {
+    const e = cEmpresa ? (i.values as Record<string, unknown>)[cEmpresa.id] : null;
+    return { id: i.id, name: i.name, ...(typeof e === "string" && e.trim() && e.trim() !== i.name.trim() ? { extra: e.trim() } : {}) };
+  });
 }
 
 // ---------- Columnas ----------

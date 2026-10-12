@@ -25,7 +25,7 @@ const ALTO: Record<Fila["tipo"], number> = { grupo: 40, item: 36, agregar: 36, r
 
 // Tabla agrupada, virtualizada (filas absolutas sobre un scroll único horizontal+vertical).
 // Header de columnas sticky arriba; checkbox + nombre sticky a la izquierda.
-export function BoardTable({ relacionados }: { relacionados: Record<string, { id: string; name: string }[]> }) {
+export function BoardTable({ relacionados }: { relacionados: Record<string, { id: string; name: string; extra?: string }[]> }) {
   const s = useBoard();
   const { dispatch } = useBoardActions();
   const grupos = useGruposVisibles();
