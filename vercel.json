@@ -83,6 +83,14 @@
     {
       "path": "/api/cron/encuesta-onboarding",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/cuentas-meta",
+      "schedule": "0 12-23,0 * * *"
+    },
+    {
+      "path": "/api/cron/cuentas-meta?completo=1",
+      "schedule": "15 11 * * *"
     }
   ],
   "regions": [

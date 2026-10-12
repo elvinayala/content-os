@@ -21,6 +21,7 @@ const USUARIOS_SISTEMA = {
   formulario: { email: "onboarding@pulse.sistema", nombre: "Onboarding (automático)" },
   max: { email: "max@pulse.sistema", nombre: "Max (estratega IA)" },
   contratos: { email: "contratos@pulse.sistema", nombre: "Contratos (automático)" },
+  cuentas: { email: "cuentas@pulse.sistema", nombre: "Cuentas de anuncios (automático)" },
 } as const;
 export type OrigenOnboarding = keyof typeof USUARIOS_SISTEMA;
 
@@ -141,6 +142,13 @@ export async function altaOnboarding(e: EntradaOnboarding, opciones: { tablero?:
     after(async () => {
       const { adjuntarContrato } = await import("./contratos-slack");
       await adjuntarContrato(itemId).catch((err) => console.error("pulse contrato", err));
+    });
+  }
+  // Cuenta publicitaria: comprueba el día del onboarding que Bori la lee; si no, avisa a Jessica con los pasos.
+  if (slug === "level-up-media") {
+    after(async () => {
+      const { revisarCuentasMeta } = await import("./cuentas-meta");
+      await revisarCuentasMeta({ itemId, avisar: true }).catch((err) => console.error("pulse cuentas meta", err));
     });
   }
   return { estado, itemId, nombre, tablero: slug };
