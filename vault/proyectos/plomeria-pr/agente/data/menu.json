@@ -158,6 +158,22 @@
       "pieza": "el calentador"
     },
     {
+      "id": "lavado-calentador",
+      "nivel": "M",
+      "nombre": "Lavado y drenaje de calentador de tanque",
+      "precio": 149,
+      "nota": "Se drena, se lava el sedimento con jabón, se sella y se vuelve a llenar. Piezas aparte si hacen falta",
+      "alias": [
+        "lavar calentador",
+        "lavado de calentador",
+        "mantenimiento de calentador",
+        "drenar calentador",
+        "agua sucia del calentador",
+        "sedimento del calentador",
+        "limpiar calentador"
+      ]
+    },
+    {
       "id": "destape-maquina",
       "nivel": "M",
       "nombre": "Destape de línea principal con máquina",

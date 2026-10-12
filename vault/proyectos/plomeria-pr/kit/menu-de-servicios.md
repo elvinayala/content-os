@@ -20,6 +20,7 @@ Precios de **mano de obra**, con IVU incluido donde aplique (el contador confirm
 | Reemplazo de inodoro completo | $219 |
 | Reemplazo de bomba de cisterna | $249 |
 | Instalación de calentador de tanque | $279 |
+| Lavado y drenaje de calentador de tanque (piezas aparte si hacen falta) | $149 |
 | Destape de línea principal con máquina | $299 |
 | Detección de filtración con equipo y cámara | $199 (→ reparación desde $349) |
 | Instalación de calentador de línea (tankless) | $349 |
