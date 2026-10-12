@@ -116,7 +116,9 @@ test("creativos a la vista: imágenes como bloques, videos como enlaces, texto p
 test("María del Carmen aprueba como Carilin; quien solo edita pide cambios (Elvin, 9/oct)", async () => {
   const { editores, decisionDeEditor, revisarParaCliente, aprobadores, PUEDEN_PUBLICAR } = await import("../lib/max/operador.ts");
   assert.equal(aprobadores(undefined, "UCEO").U0916SXJE9Z, "maria");
-  assert.equal(PUEDEN_PUBLICAR.includes("maria"), false, "publicar campañas sigue siendo de Elvin o Carilin");
+  assert.equal(PUEDEN_PUBLICAR.includes("maria"), false, "publicar campañas es solo de Elvin");
+  assert.equal(PUEDEN_PUBLICAR.includes("carilin"), false, "Carilin no autoriza gasto (12-oct)");
+  assert.deepEqual(PUEDEN_PUBLICAR, ["elvin"]);
   assert.deepEqual(editores(undefined), {});
   assert.equal(editores("UX=ana").UX, "ana");
   assert.deepEqual(decisionDeEditor({ accion: "rechazar", id: 6, nota: "la música debe durar los 47 segundos" }), { tipo: "cambio", nota: "la música debe durar los 47 segundos" });

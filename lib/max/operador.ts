@@ -9,7 +9,7 @@
 //
 // Decisiones de Elvin (24/sep): canal nuevo #max-aprobaciones · TODO lo que va al cliente pasa por
 // aprobación (Max nunca le escribe directo: el servidor publica exactamente lo aprobado) · aprueban
-// y autorizan publicar Elvin o Carilin · arranca con los clientes nuevos desde el onboarding.
+// y autoriza publicar (gasto) solo Elvin · arranca con los clientes nuevos desde el onboarding.
 
 // Qué propone Max. El tipo decide qué pasa al aprobarse:
 //  - mensaje / plan / creativos → el servidor lo publica tal cual en el canal del cliente.
@@ -64,8 +64,9 @@ export function okConCambio(nota: string): boolean {
   return /[a-záéíóúñ]{3,}.*\s.*[a-záéíóúñ]{3,}/i.test(n);
 }
 
-// Publicar campañas (prender pauta) es SOLO de Elvin y Carilin, aunque Jessica apruebe lo demás.
-export const PUEDEN_PUBLICAR = ["elvin", "carilin"];
+// Publicar campañas (prender pauta) y escalar presupuesto es SOLO de Elvin (12-oct). Carilin, Jessica y María del
+// Carmen siguen aprobando lo demás (planes, contenido para clientes), pero no autorizan gasto.
+export const PUEDEN_PUBLICAR = ["elvin"];
 
 // Quién puede decidir: Elvin y Carilin (ids de Slack). MAX_APROBADORES = "Uxxx=elvin,Uyyy=carilin".
 export function aprobadores(env: string | undefined, ceo: string): Record<string, string> {

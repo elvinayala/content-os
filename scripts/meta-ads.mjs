@@ -27,6 +27,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as M from "./meta-ads/core.mjs";
+import { conCandado } from "./meta-ads/candado.mjs";
 import { PLANTILLAS, opcionesDesdeFlags, planEstrategia5Fases } from "./meta-ads/plantillas.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -113,7 +114,11 @@ if (!token) {
   console.error(`Falta ${cfg.tokenEnv} (token de usuario del sistema de Meta). Genéralo en Business Settings → Usuarios del sistema y ponlo en .env.local.`);
   process.exit(2);
 }
-const c = M.crearCliente(token, { log: flags.has("--verbose") ? (...a) => console.error("→", ...a) : undefined });
+// Candado de gasto (12-oct): toda escritura que gaste o prenda pauta exige un ítem aprobado de #max-aprobaciones.
+const c = conCandado(M.crearCliente(token, { log: flags.has("--verbose") ? (...a) => console.error("→", ...a) : undefined }), {
+  marca,
+  obtenerItem: async (id) => (await apiMax("GET", { item: String(id) })).item,
+});
 const guardarPortafolio = () => {
   if (esCliente) return apiMax("POST", null, { accion: "cliente", slug: cfg.clienteSlug, meta: { pageId: cfg.pageId, igUserId: cfg.igUserId, publicosClave: cfg.publicosClave } }).catch((e) => console.error("⚠ no pude guardar en el expediente:", e.message));
   portafolio.actualizadoEl = new Date().toISOString().slice(0, 10); writeFileSync(PORTAFOLIO, JSON.stringify(portafolio, null, 2) + "\n");
@@ -204,13 +209,25 @@ try {
     if (!a.daily_budget) throw new Error("Ese conjunto no tiene presupuesto propio (¿CBO?). Escala en la campaña a mano.");
     const antes = Number(a.daily_budget) / 100, despues = Math.round(antes * (1 + pct / 100) * 100) / 100;
     console.log(`${a.campaign?.name} → ${a.name} · ${a.effective_status} · $${antes}/día → $${despues}/día (+${pct} %)`);
-    if (!flags.has("--ok")) { console.log("Propuesta, no ejecutada. Pídele el OK a Elvin; con su \"dale\" corre lo mismo con --ok."); process.exit(0); }
-    await c.graph("POST", "/" + adsetId, { daily_budget: M.centavos(despues) });
+    const itemId = Number(valores.item);
+    if (!itemId) {
+      // Sin aprobación no se cambia nada: se deja la propuesta en #max-aprobaciones ("publica <id>", solo Elvin).
+      if (flags.has("--ok")) throw new Error("escalar ya no corre con --ok: necesita --item <id> autorizado con \"publica <id>\" por Elvin.");
+      const slug = valores.cliente || cfg.clienteSlug || String(marca);
+      if (!esCliente) await apiMax("POST", null, { accion: "cliente", slug, nombre: cfg.nombre });
+      const contenido = `${a.campaign?.name} → ${a.name}\nPresupuesto: $${antes}/día → $${despues}/día (+${pct} %) · cuenta ${cfg.cuentaId}`;
+      const r = await apiMax("POST", null, { accion: "proponer", cliente: slug, tipo: "publicar", titulo: `Escalar ${a.name} +${pct} % ($${antes} → $${despues}/día)`, contenido, datos: { marca, accion: "escalar", adsetId, pct, antes, despues } });
+      console.log(`Propuesta #${r.id} en #max-aprobaciones: "publica ${r.id}" la autoriza (solo Elvin). Después: escalar ${adsetId} --pct ${pct} --item ${r.id}`);
+      process.exit(0);
+    }
+    // El candado verifica en el servidor el ítem: tipo, estado, quién lo aprobó, marca, conjunto y %.
+    await c.graph("POST", "/" + adsetId, { daily_budget: M.centavos(despues) }, { item: itemId, accion: "escalar", objetivo: adsetId, pct });
+    await apiMax("POST", null, { accion: "cerrar", id: itemId, estado: "ejecutado", resultado: `$${antes}/día → $${despues}/día (+${pct} %)` });
     console.log(`✔ Escalado: $${despues}/día. Próxima revisión en 3-4 días (no volver a subir antes).`);
   } else if (cmd === "proponer-publicar") {
     // Max en Slack (24/sep): pide en #max-aprobaciones el "publica <id>" para campañas YA montadas en
     // borrador. Guarda los ids EXACTOS (campaña + conjuntos + anuncios) que se prenderán; `activar`
-    // solo prende esos y solo si Elvin o Carilin lo autorizaron.
+    // solo prende esos y solo si Elvin lo autorizó.
     const campanas = (rest[0] || "").split(",").map((x) => x.trim()).filter((x) => /^\d+$/.test(x));
     const slug = valores.cliente || cfg.clienteSlug;
     if (!campanas.length || !slug) throw new Error("Uso: proponer-publicar <campaignId,campaignId> --cliente <slug>");
@@ -228,7 +245,7 @@ try {
     const r = await apiMax("POST", null, { accion: "proponer", cliente: slug, tipo: "publicar", titulo: valores.nombre || `Prender ${campanas.length} campaña(s) · $${Math.round(total * 100) / 100}/día`, contenido, datos: { marca, ids, campanas, totalDiario: total } });
     console.log(`✔ #${r.id} en #max-aprobaciones: "publica ${r.id}" las prende (${ids.length} objetos, $${total}/día).${r.aviso ? " ⚠ " + r.aviso : ""}`);
   } else if (cmd === "activar") {
-    // Único camino para prender algo por API: una aprobación "publicar" de Elvin o Carilin en
+    // Único camino para prender algo por API: una aprobación "publicar" de Elvin en
     // #max-aprobaciones (estado aprobado) para ESTA marca. Prende exactamente sus ids: anuncios →
     // conjuntos → campaña (así nada entrega a medias).
     const id = Number(valores.item);
@@ -236,14 +253,15 @@ try {
     const { item: it } = await apiMax("GET", { item: String(id) });
     if (!it) throw new Error(`No existe la #${id}.`);
     if (it.tipo !== "publicar") throw new Error(`La #${id} no es un pedido de publicar.`);
-    if (it.estado !== "aprobado") throw new Error(`La #${id} está ${it.estado}: solo se prende lo que Elvin o Carilin autorizaron con "publica ${id}".`);
-    if (!["elvin", "carilin"].includes(it.decidido_por)) throw new Error(`La #${id} no la autorizó Elvin ni Carilin.`);
+    if (it.datos?.accion === "escalar") throw new Error(`La #${id} es una propuesta de escalar: corre escalar ${it.datos.adsetId} --pct ${it.datos.pct} --item ${id}.`);
+    if (it.estado !== "aprobado") throw new Error(`La #${id} está ${it.estado}: solo se prende lo que Elvin autorizó con "publica ${id}".`);
+    if (it.decidido_por !== "elvin") throw new Error(`La #${id} no la autorizó Elvin (solo él autoriza gasto).`);
     if (it.datos?.marca !== marca) throw new Error(`La #${id} es de ${it.datos?.marca}, no de ${marca}.`);
     const orden = { anuncio: 0, conjunto: 1, campana: 2 };
     const objetos = [...(it.datos.ids || [])].sort((a, b) => orden[a.tipo] - orden[b.tipo]);
     const hechos = []; const fallos = [];
     for (const o of objetos) {
-      try { await c.graph("POST", "/" + o.id, { status: "ACTIVE" }); hechos.push(o); }
+      try { await c.graph("POST", "/" + o.id, { status: "ACTIVE" }, { item: id, accion: "activar", objetivo: o.id }); hechos.push(o); }
       catch (e) { fallos.push(`${o.tipo} ${o.id}: ${e.message.slice(0, 120)}`); }
     }
     const estados = [];

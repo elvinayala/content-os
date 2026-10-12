@@ -169,9 +169,12 @@ export async function decidir(d: Decision, porSlackId: string): Promise<string> 
   }
 
   if (dec.accion === "publicar") {
-    if (!PUEDEN_PUBLICAR.includes(quien)) return `Publicar (prender pauta) es solo de Elvin o Carilin. La #${i.id} sigue esperando.`;
+    if (!PUEDEN_PUBLICAR.includes(quien)) return `Publicar o escalar (gasto en pauta) es solo de Elvin. La #${i.id} sigue esperando su "publica ${i.id}".`;
     await actualizarItem(i.id, { estado: "aprobado", decididoPor: quien, decisionNota: dec.nota || undefined });
-    await alBuzonMax(`${cab("publicar")}\n${nombre} AUTORIZÓ publicar la #${i.id}${dec.nota ? ` (nota: ${dec.nota})` : ""}. Corre \`node scripts/meta-ads.mjs ${String(i.datos.marca || "cliente:" + i.cliente)} activar --item ${i.id}\` y confirma en el hilo con el estado real.`);
+    const comando = i.datos.accion === "escalar"
+      ? `escalar ${String(i.datos.adsetId)} --pct ${String(i.datos.pct)} --item ${i.id}`
+      : `activar --item ${i.id}`;
+    await alBuzonMax(`${cab("publicar")}\n${nombre} AUTORIZÓ ${i.datos.accion === "escalar" ? "escalar" : "publicar"} la #${i.id}${dec.nota ? ` (nota: ${dec.nota})` : ""}. Corre \`node scripts/meta-ads.mjs ${String(i.datos.marca || "cliente:" + i.cliente)} ${comando}\` y confirma en el hilo con el estado real.`);
     return `🚀 Autorizado por ${nombre}. Max prende exactamente lo de la #${i.id} y confirma aquí con el estado real.`;
   }
 
