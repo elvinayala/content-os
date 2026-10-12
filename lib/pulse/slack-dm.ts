@@ -61,8 +61,8 @@ export async function slackIdPorEmail(email: string): Promise<string | null> {
   return id;
 }
 
-export async function dmSlack(email: string, texto: string): Promise<boolean> {
-  const id = await slackIdPorEmail(email);
+export async function dmSlack(email: string, texto: string, slackId?: string | null): Promise<boolean> {
+  const id = slackId || (await slackIdPorEmail(email));
   if (!id) return false;
   const r = await api<{ ok: boolean }>("chat.postMessage", { channel: id, text: texto, unfurl_links: false });
   return Boolean(r?.ok);

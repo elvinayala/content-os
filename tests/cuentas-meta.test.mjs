@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { clasificar, decidir, limpiarId, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
+import { clasificar, decidir, limpiarId, repartirAvisos, rolDe, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
 
 test("limpiarId acepta act_ y espacios, rechaza lo que no parece un ID", () => {
   assert.equal(limpiarId("act_1234567890123"), "1234567890123");
@@ -38,4 +38,22 @@ test("los textos traen los pasos y el portafolio", () => {
   const a = textoAviso({ nuevos: [{ nombre: "Ana", empresa: "Spa", id: "123456789012345", estado: "sin-permiso", detalle: "d", admin: "Jessica" }], recuperados: [] });
   assert.match(a ?? "", /Ana · Spa/);
   assert.equal(textoAviso({ nuevos: [], recuperados: [] }), null);
+});
+
+test("proceso de Carilin: compartir la cuenta es del onboarding; el ID y lo demás, del estratega", () => {
+  assert.equal(rolDe("sin-permiso"), "onboarding");
+  for (const e of ["sin-id", "no-existe", "pago", "inactiva"]) assert.equal(rolDe(e), "estratega");
+  assert.match(textoFicha("sin-id", null, "x"), /estratega/);
+  const l = (nombre, estado, destino) => ({ nombre, id: estado === "sin-id" ? null : "123456789012345", estado, detalle: "d", destino });
+  const r = repartirAvisos(
+    { nuevos: [l("Ana", "sin-id", "maria@x.com"), l("Beto", "sin-permiso", "maria@x.com"), l("Caro", "pago", null)], recuperados: [l("Dani", "ok", "maria@x.com")] },
+    ["jessica@x.com"],
+    ["carilin@x.com"],
+  );
+  const de = (email, rol) => r.find((g) => g.email === email && g.rol === rol);
+  assert.deepEqual(de("maria@x.com", "estratega").nuevos.map((x) => x.nombre), ["Ana"]);
+  assert.deepEqual(de("maria@x.com", "estratega").recuperados.map((x) => x.nombre), ["Dani"]);
+  assert.deepEqual(de("jessica@x.com", "onboarding").nuevos.map((x) => x.nombre), ["Beto"]);
+  assert.deepEqual(de("carilin@x.com", "estratega").nuevos.map((x) => x.nombre), ["Caro"]);
+  assert.match(textoAviso({ nuevos: de("maria@x.com", "estratega").nuevos, recuperados: [], rol: "estratega" }), /de tus clientes[\s\S]*Id cuenta publicitaria/);
 });

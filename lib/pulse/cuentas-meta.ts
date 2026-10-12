@@ -5,18 +5,56 @@ import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { notificarCEO } from "@/lib/notificar-ceo";
 
 import { usuarioSistema } from "./alta-typeform";
-import { clasificar, decidir, esProblema, limpiarId, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
+import { clasificar, decidir, esProblema, limpiarId, repartirAvisos, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
 import { db } from "./db";
+import { desempenoPerfiles } from "@/lib/desempeno/schema";
+
 import { pulseActivity, pulseBoards, pulseColumns, pulseGroups, pulseItems, pulseUsers } from "./schema";
 import { dmSlack } from "./slack-dm";
 import type { ValorCelda } from "./types";
 
 // Verifica que Bori (el token META_ADS_TOKEN, app Hey Bori) lea la cuenta publicitaria de cada cliente de Level Up.
 // Corre al crearse la ficha (onboarding), cada hora sobre las fichas nuevas o con problema, y una vez al día (7 AM PR)
-// sobre todas. Escribe en la ficha SOLO cuando cambia el estado y le avisa a Jessica en un solo DM por pasada.
+// sobre todas. Escribe en la ficha SOLO cuando cambia el estado y avisa en un DM por persona y pasada a quien le toca
+// (Carilin, 12/oct): compartir la cuenta con el portafolio = onboarding (Jessica); el ID en Pulse, pagos y cuentas
+// caídas = el estratega asignado en "Asignación de Estrategas"; cliente sin estratega → Carilin.
 
 const TABLERO = "level-up-media";
-const AVISAR_A = (process.env.PULSE_CUENTAS_AVISAR || "jessica@levelupmediapr.net").split(",").map((s) => s.trim()).filter(Boolean);
+const lista = (v: string | undefined, def: string) => (v || def).split(",").map((s) => s.trim()).filter(Boolean);
+const AVISAR_A = lista(process.env.PULSE_CUENTAS_AVISAR, "jessica@levelupmediapr.net"); // onboarding
+const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "carilin@levelupmediapr.net");
+
+/** Estratega asignado por ficha de LEVEL UP MEDIA (la asignación más reciente del tablero Asignación de Estrategas). */
+async function estrategas(): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
+  const d = await db();
+  const out = new Map<string, { email: string; nombre: string; slackId: string | null }>();
+  const [b] = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(eq(pulseBoards.slug, "asignacion-estrategas"));
+  if (!b) return out;
+  const cols = await d.select({ id: pulseColumns.id, title: pulseColumns.title, type: pulseColumns.type }).from(pulseColumns).where(eq(pulseColumns.boardId, b.id));
+  const cRel = cols.find((c) => c.type === "relation");
+  const cEst = cols.find((c) => c.type === "people" && /estratega/i.test(c.title));
+  if (!cRel || !cEst) return out;
+  const asign = await d.select({ values: pulseItems.values }).from(pulseItems).where(eq(pulseItems.boardId, b.id)).orderBy(sql`${pulseItems.createdAt} asc`);
+  const porCliente = new Map<string, string>(); // el orden asc deja la asignación más reciente
+  for (const a of asign) {
+    const v = a.values as Record<string, ValorCelda>;
+    const est = ((v[cEst.id] as string[] | undefined) ?? [])[0];
+    if (est) for (const cliente of (v[cRel.id] as string[] | undefined) ?? []) porCliente.set(cliente, est);
+  }
+  const ids = [...new Set(porCliente.values())];
+  if (!ids.length) return out;
+  const personas = await d
+    .select({ id: pulseUsers.id, email: pulseUsers.email, nombre: pulseUsers.nombre, slackId: desempenoPerfiles.slackId })
+    .from(pulseUsers)
+    .leftJoin(desempenoPerfiles, eq(desempenoPerfiles.userId, pulseUsers.id))
+    .where(inArray(pulseUsers.id, ids));
+  const porId = new Map(personas.map((x) => [x.id, x]));
+  for (const [cliente, est] of porCliente) {
+    const x = porId.get(est);
+    if (x) out.set(cliente, { email: x.email, nombre: x.nombre, slackId: x.slackId ?? null });
+  }
+  return out;
+}
 const DIAS_NUEVA = 14;
 const HORAS_SIN_ID = 24; // una ficha recién creada tiene un día para traer el ID antes de marcarla "sin ID"
 
@@ -91,9 +129,11 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   });
 
   const usuario = await usuarioSistema("cuentas");
-  const nuevos: Linea[] = [];
-  const recuperados: Linea[] = [];
-  const pendientesTodos: Linea[] = []; // para el recordatorio del lunes
+  const estrategaDe = await estrategas();
+  type LineaD = Linea & { destino: string | null };
+  const nuevos: LineaD[] = [];
+  const recuperados: LineaD[] = [];
+  const pendientesTodos: LineaD[] = []; // para el recordatorio del lunes
   const res: ResultadoCuentas = { ...vacio };
 
   const procesar = async (i: (typeof items)[number]) => {
@@ -110,13 +150,15 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
       ({ estado, detalle } = clasificar(await consultarMeta(id)));
     }
     res.revisadas++;
-    const linea: Linea = {
+    const est = estrategaDe.get(i.id);
+    const linea: LineaD = {
+      destino: est?.email ?? null,
       nombre: i.name,
       empresa: cEmpresa ? ((v[cEmpresa.id] as string) ?? null) : null,
       id,
       estado,
       detalle,
-      admin: cPersonas ? (((v[cPersonas.id] as string[] | undefined) ?? []).map((u) => nombres.get(u)).filter(Boolean)[0] ?? null) : null,
+      admin: est?.nombre ?? (cPersonas ? (((v[cPersonas.id] as string[] | undefined) ?? []).map((u) => nombres.get(u)).filter(Boolean)[0] ?? null) : null),
     };
     if (estado === "transitorio") { res.transitorios++; res.muestraError ??= detalle; return; }
     if (esProblema(estado)) { res.conProblema++; pendientesTodos.push(linea); }
@@ -135,9 +177,12 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   const { dia, hora } = horaPR();
   const recordatorio = o.recordatorio ?? (o.completo && dia === "Mon" && hora < 10);
   if (o.avisar !== false) {
-    const lista = recordatorio ? pendientesTodos : nuevos;
-    const texto = textoAviso({ nuevos: lista, recuperados, recordatorio: !!recordatorio });
-    if (texto) for (const email of AVISAR_A) if (await dmSlack(email, texto)) res.avisados++;
+    const slackDe = new Map([...estrategaDe.values()].map((e) => [e.email.toLowerCase(), e.slackId]));
+    const grupos = repartirAvisos({ nuevos: recordatorio ? pendientesTodos : nuevos, recuperados }, AVISAR_A, SIN_ESTRATEGA);
+    for (const g of grupos) {
+      const texto = textoAviso({ nuevos: g.nuevos, recuperados: g.recuperados, recordatorio: !!recordatorio, rol: g.rol });
+      if (texto && (await dmSlack(g.email, texto, slackDe.get(g.email.toLowerCase())))) res.avisados++;
+    }
   }
   // Si Meta/el token falla en masa en la pasada diaria, es problema nuestro, no de los clientes: se le avisa a Elvin.
   if (o.completo && o.avisar !== false && res.transitorios >= 5) {

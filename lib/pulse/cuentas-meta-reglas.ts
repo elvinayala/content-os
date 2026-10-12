@@ -1,6 +1,8 @@
 // Verificación de la cuenta publicitaria de cada cliente de Level Up (12/oct/2026). Elvin: "cómo aseguramos que Bori
 // lea todas las cuentas y queden conectadas el día del onboarding". Puro y testeado (tests/cuentas-meta.test.mjs);
-// lo usa lib/pulse/cuentas-meta.ts (consulta a Meta, comentarios en la ficha y avisos a Jessica).
+// lo usa lib/pulse/cuentas-meta.ts (consulta a Meta, comentarios en la ficha y avisos por DM).
+// Proceso (Carilin, 12/oct): en el ONBOARDING el cliente configura su cuenta y nos da permiso como socio (eso lo sigue
+// Jessica); el ESTRATEGA asignado pone el ID en Pulse, porque Jessica no tiene acceso a ningún administrador de anuncios.
 
 export const PORTAFOLIO_LU = process.env.CUENTAS_META_PORTAFOLIO_ID || "836808821982174"; // "Level Up" en Business Manager
 
@@ -12,6 +14,10 @@ export type EstadoCuenta =
   | "pago" // la lee, pero Meta la tiene con pago pendiente / en gracia
   | "inactiva" // la lee, pero está deshabilitada, en revisión o cerrada
   | "transitorio"; // error de Meta o del token: no es culpa del cliente, no se avisa por cliente
+
+/** A quién le toca: compartir la cuenta (permiso de socio) es del onboarding; el ID y lo demás, del estratega. */
+export type Rol = "onboarding" | "estratega";
+export const rolDe = (e: EstadoCuenta): Rol => (e === "sin-permiso" ? "onboarding" : "estratega");
 
 export const PROBLEMAS: EstadoCuenta[] = ["sin-id", "sin-permiso", "no-existe", "pago", "inactiva"];
 export const esProblema = (e: EstadoCuenta | null | undefined) => !!e && PROBLEMAS.includes(e);
@@ -56,7 +62,7 @@ export function textoFicha(estado: EstadoCuenta, id: string | null, detalle: str
     case "ok":
       return `✅ Cuenta publicitaria ${id}: Bori la lee y está activa.`;
     case "sin-id":
-      return `⚠️ Falta el ID de la cuenta publicitaria. Sin él no podemos leer resultados ni conectar Bori. Pídeselo al cliente en el onboarding (si no tiene cuenta, hay que crearla).`;
+      return `⚠️ Falta el ID de la cuenta publicitaria. Sin él no podemos leer resultados ni conectar Bori. Lo pone el estratega asignado en la columna «Id cuenta publicitaria» (lo ve en el administrador de anuncios, ya compartido con el portafolio de Level Up).`;
     case "sin-permiso":
       return `⚠️ Bori NO puede leer la cuenta ${id}: ${detalle}. ${PASOS_COMPARTIR}`;
     case "no-existe":
@@ -86,15 +92,23 @@ export function textoLinea(l: Linea): string {
   return `${ICONO[l.estado] ?? "•"} *${quien}*${adm}${l.id ? ` — ${l.id}` : ""}: ${l.detalle}`;
 }
 
-/** DM para Jessica: lo nuevo (o el recordatorio de lunes con todo lo pendiente). */
-export function textoAviso(p: { nuevos: Linea[]; recuperados: Linea[]; recordatorio?: boolean }): string | null {
+/** DM a quien le toca: Jessica (onboarding: compartir la cuenta) o el estratega (el ID en Pulse y lo demás). */
+export function textoAviso(p: { nuevos: Linea[]; recuperados: Linea[]; recordatorio?: boolean; rol?: Rol }): string | null {
   const partes: string[] = [];
   if (p.nuevos.length) {
-    const sin = p.nuevos.filter((l) => l.estado === "sin-permiso" || l.estado === "no-existe");
+    const estratega = p.rol === "estratega";
+    const titulo = p.recordatorio
+      ? "📌 Cuentas publicitarias que siguen pendientes"
+      : estratega
+        ? "🔌 Cuentas publicitarias de tus clientes por completar"
+        : "🔌 Cuentas publicitarias por conectar";
+    const sinPermiso = p.nuevos.some((l) => l.estado === "sin-permiso");
+    const sinId = p.nuevos.some((l) => l.estado === "sin-id" || l.estado === "no-existe");
     partes.push(
-      `${p.recordatorio ? "📌 Cuentas publicitarias que siguen pendientes" : "🔌 Cuentas publicitarias por conectar"} (${p.nuevos.length}):\n` +
+      `${titulo} (${p.nuevos.length}):\n` +
         p.nuevos.map((l) => `• ${textoLinea(l)}`).join("\n") +
-        (sin.length ? `\n\n${PASOS_COMPARTIR}` : ""),
+        (sinId ? `\n\nEl ID va en Pulse, columna «Id cuenta publicitaria» de la ficha (solo los números, sin "act_").` : "") +
+        (sinPermiso ? `\n\n${PASOS_COMPARTIR}` : ""),
     );
   }
   if (p.recuperados.length) partes.push(`✅ Ya quedaron conectadas:\n${p.recuperados.map((l) => `• ${l.nombre}${l.empresa ? ` · ${l.empresa}` : ""}`).join("\n")}`);
@@ -109,4 +123,25 @@ export function decidir(anterior: EstadoCuenta | null, ahora: EstadoCuenta): { e
   // ahora está ok: solo se escribe si antes había un problema registrado (si nunca hubo problema, no se llena la ficha de ✅)
   if (esProblema(anterior)) return { escribir: true, avisar: "recuperado" };
   return { escribir: false, avisar: null };
+}
+
+/** Reparte las líneas por destinatario: compartir la cuenta → onboarding (Jessica); el resto → el estratega asignado del
+ * cliente (`destino`, su correo) o, si no tiene, a quien cubre (`sinEstratega`). Lo que se arregló va a su estratega. */
+export function repartirAvisos(
+  p: { nuevos: (Linea & { destino?: string | null })[]; recuperados: (Linea & { destino?: string | null })[] },
+  onboarding: string[],
+  sinEstratega: string[],
+): { email: string; rol: Rol; nuevos: Linea[]; recuperados: Linea[] }[] {
+  const grupos = new Map<string, { email: string; rol: Rol; nuevos: Linea[]; recuperados: Linea[] }>();
+  const meter = (emails: string[], rol: Rol, l: Linea, tipo: "nuevos" | "recuperados") => {
+    for (const email of emails) {
+      const k = `${rol}|${email.toLowerCase()}`;
+      if (!grupos.has(k)) grupos.set(k, { email, rol, nuevos: [], recuperados: [] });
+      grupos.get(k)![tipo].push(l);
+    }
+  };
+  const delEstratega = (l: { destino?: string | null }) => (l.destino ? [l.destino] : sinEstratega);
+  for (const l of p.nuevos) meter(rolDe(l.estado) === "onboarding" ? onboarding : delEstratega(l), rolDe(l.estado), l, "nuevos");
+  for (const l of p.recuperados) meter(delEstratega(l), "estratega", l, "recuperados");
+  return [...grupos.values()];
 }
