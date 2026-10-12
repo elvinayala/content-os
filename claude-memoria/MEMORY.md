@@ -100,3 +100,4 @@
 - [Black Friday 2026](black-friday-2026.md) — APROBADO 11/oct: ofertas del 15/oct al 1/dic, mismo precio y bonos que bajan por ola; vault/proyectos/black-friday-2026/
 - [Encuesta de fin de onboarding](encuesta-fin-onboarding.md) — 11/oct: WhatsApp 15 min después de la llamada con Jessica; verde/ámbar/rojo → Elvin (y Carilin si no es verde); simulación hasta OK + prueba real
 - [Cuentas Meta en el onboarding](cuentas-meta-onboarding.md) — 12/oct: verificación automática de la cuenta publicitaria de cada cliente; portafolio Level Up 836808821982174; 21 IDs llenados solos; proceso: onboarding comparte (Jessica), estratega pone el ID; avisos ruteados así
+- [Level Up — piezas sin precio](lu-piezas-sin-precio.md) — 12/oct: motion/anuncios de LU sin $3,500 ni valores; solo resultados de clientes
