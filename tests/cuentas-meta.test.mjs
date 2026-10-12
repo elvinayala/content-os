@@ -54,6 +54,7 @@ test("proceso de Carilin: compartir la cuenta es del onboarding; el ID y lo dem√
   assert.deepEqual(de("maria@x.com", "estratega").nuevos.map((x) => x.nombre), ["Ana"]);
   assert.deepEqual(de("maria@x.com", "estratega").recuperados.map((x) => x.nombre), ["Dani"]);
   assert.deepEqual(de("jessica@x.com", "onboarding").nuevos.map((x) => x.nombre), ["Beto"]);
-  assert.deepEqual(de("carilin@x.com", "estratega").nuevos.map((x) => x.nombre), ["Caro"]);
+  assert.deepEqual(de("carilin@x.com", "asignar").nuevos.map((x) => x.nombre), ["Caro"]);
+  assert.match(textoAviso({ nuevos: de("carilin@x.com", "asignar").nuevos, recuperados: [], rol: "asignar" }), /sin estratega[\s\S]*Asignaci√≥n de Estrategas/);
   assert.match(textoAviso({ nuevos: de("maria@x.com", "estratega").nuevos, recuperados: [], rol: "estratega" }), /de tus clientes[\s\S]*Id cuenta publicitaria/);
 });

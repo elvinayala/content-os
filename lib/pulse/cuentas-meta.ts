@@ -17,12 +17,13 @@ import type { ValorCelda } from "./types";
 // Corre al crearse la ficha (onboarding), cada hora sobre las fichas nuevas o con problema, y una vez al día (7 AM PR)
 // sobre todas. Escribe en la ficha SOLO cuando cambia el estado y avisa en un DM por persona y pasada a quien le toca
 // (Carilin, 12/oct): compartir la cuenta con el portafolio = onboarding (Jessica); el ID en Pulse, pagos y cuentas
-// caídas = el estratega asignado en "Asignación de Estrategas"; cliente sin estratega → Carilin.
+// caídas = el estratega asignado en "Asignación de Estrategas"; cliente sin estratega → Jessica (los asigna) + Carilin.
 
 const TABLERO = "level-up-media";
 const lista = (v: string | undefined, def: string) => (v || def).split(",").map((s) => s.trim()).filter(Boolean);
 const AVISAR_A = lista(process.env.PULSE_CUENTAS_AVISAR, "jessica@levelupmediapr.net"); // onboarding
-const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "carilin@levelupmediapr.net");
+// Carilin (12/oct): "los que no tienen estratega envíaselos a Jessica, ella los asigna; a mí en copia".
+const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "jessica@levelupmediapr.net,carilin@levelupmediapr.net");
 
 /** Estratega asignado por ficha de LEVEL UP MEDIA (la asignación más reciente del tablero Asignación de Estrategas). */
 async function estrategas(): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {

@@ -16,7 +16,7 @@ export type EstadoCuenta =
   | "transitorio"; // error de Meta o del token: no es culpa del cliente, no se avisa por cliente
 
 /** A quién le toca: compartir la cuenta (permiso de socio) es del onboarding; el ID y lo demás, del estratega. */
-export type Rol = "onboarding" | "estratega";
+export type Rol = "onboarding" | "estratega" | "asignar"; // asignar = cliente sin estratega (lo asigna Jessica, Carilin en copia)
 export const rolDe = (e: EstadoCuenta): Rol => (e === "sin-permiso" ? "onboarding" : "estratega");
 
 export const PROBLEMAS: EstadoCuenta[] = ["sin-id", "sin-permiso", "no-existe", "pago", "inactiva"];
@@ -97,7 +97,9 @@ export function textoAviso(p: { nuevos: Linea[]; recuperados: Linea[]; recordato
   const partes: string[] = [];
   if (p.nuevos.length) {
     const estratega = p.rol === "estratega";
-    const titulo = p.recordatorio
+    const titulo = p.rol === "asignar"
+      ? "🧭 Clientes sin estratega asignado, con la cuenta publicitaria pendiente"
+      : p.recordatorio
       ? "📌 Cuentas publicitarias que siguen pendientes"
       : estratega
         ? "🔌 Cuentas publicitarias de tus clientes por completar"
@@ -107,8 +109,9 @@ export function textoAviso(p: { nuevos: Linea[]; recuperados: Linea[]; recordato
     partes.push(
       `${titulo} (${p.nuevos.length}):\n` +
         p.nuevos.map((l) => `• ${textoLinea(l)}`).join("\n") +
-        (sinId ? `\n\nEl ID va en Pulse, columna «Id cuenta publicitaria» de la ficha (solo los números, sin "act_").` : "") +
-        (sinPermiso ? `\n\n${PASOS_COMPARTIR}` : ""),
+        (sinId && p.rol !== "asignar" ? `\n\nEl ID va en Pulse, columna «Id cuenta publicitaria» de la ficha (solo los números, sin "act_").` : "") +
+        (sinPermiso ? `\n\n${PASOS_COMPARTIR}` : "") +
+        (p.rol === "asignar" ? `\n\nAsígnales estratega en «Asignación de Estrategas»: desde ahí los avisos de su cuenta le llegan a él.` : ""),
     );
   }
   if (p.recuperados.length) partes.push(`✅ Ya quedaron conectadas:\n${p.recuperados.map((l) => `• ${l.nombre}${l.empresa ? ` · ${l.empresa}` : ""}`).join("\n")}`);
@@ -126,7 +129,7 @@ export function decidir(anterior: EstadoCuenta | null, ahora: EstadoCuenta): { e
 }
 
 /** Reparte las líneas por destinatario: compartir la cuenta → onboarding (Jessica); el resto → el estratega asignado del
- * cliente (`destino`, su correo) o, si no tiene, a quien cubre (`sinEstratega`). Lo que se arregló va a su estratega. */
+ * cliente (`destino`, su correo) o, si no tiene, a quien asigna estrategas (`sinEstratega`: Jessica + Carilin en copia). */
 export function repartirAvisos(
   p: { nuevos: (Linea & { destino?: string | null })[]; recuperados: (Linea & { destino?: string | null })[] },
   onboarding: string[],
@@ -140,8 +143,11 @@ export function repartirAvisos(
       grupos.get(k)![tipo].push(l);
     }
   };
-  const delEstratega = (l: { destino?: string | null }) => (l.destino ? [l.destino] : sinEstratega);
-  for (const l of p.nuevos) meter(rolDe(l.estado) === "onboarding" ? onboarding : delEstratega(l), rolDe(l.estado), l, "nuevos");
-  for (const l of p.recuperados) meter(delEstratega(l), "estratega", l, "recuperados");
+  for (const l of p.nuevos) {
+    if (rolDe(l.estado) === "onboarding") meter(onboarding, "onboarding", l, "nuevos");
+    else if (l.destino) meter([l.destino], "estratega", l, "nuevos");
+    else meter(sinEstratega, "asignar", l, "nuevos");
+  }
+  for (const l of p.recuperados) meter(l.destino ? [l.destino] : sinEstratega, l.destino ? "estratega" : "asignar", l, "recuperados");
   return [...grupos.values()];
 }
