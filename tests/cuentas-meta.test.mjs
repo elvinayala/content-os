@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { clasificar, decidir, limpiarId, repartirAvisos, rolDe, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
+import { clasificar, decidir, limpiarId, onboardingHecho, repartirAvisos, rolDe, textoAviso, textoFicha } from "../lib/pulse/cuentas-meta-reglas.ts";
 
 test("limpiarId acepta act_ y espacios, rechaza lo que no parece un ID", () => {
   assert.equal(limpiarId("act_1234567890123"), "1234567890123");
@@ -57,4 +57,12 @@ test("proceso de Carilin: compartir la cuenta es del onboarding; el ID y lo dem�
   assert.deepEqual(de("carilin@x.com", "asignar").nuevos.map((x) => x.nombre), ["Caro"]);
   assert.match(textoAviso({ nuevos: de("carilin@x.com", "asignar").nuevos, recuperados: [], rol: "asignar" }), /sin estratega[\s\S]*Asignación de Estrategas/);
   assert.match(textoAviso({ nuevos: de("maria@x.com", "estratega").nuevos, recuperados: [], rol: "estratega" }), /de tus clientes[\s\S]*Id cuenta publicitaria/);
+});
+
+test("antes de la reunión de onboarding no se avisa que falta el ID (Jessica, 12/oct)", () => {
+  assert.equal(onboardingHecho({ grupo: "ONBOARDING & SETUP", setup: "Pendiente por coordinar espacio 10/10", progreso: "Configurar Cuenta Publicitaria" }), false);
+  assert.equal(onboardingHecho({ grupo: "ONBOARDING & SETUP", setup: null, progreso: null }), false);
+  assert.equal(onboardingHecho({ grupo: "ONBOARDING & SETUP", setup: "SETUP COMPLETADO 29/09", progreso: null }), true);
+  assert.equal(onboardingHecho({ grupo: "ANÁLISIS Y ESTRATEGIA", setup: null, progreso: null }), true);
+  assert.equal(onboardingHecho({ grupo: "CLIENTE ACTIVO" }), true);
 });

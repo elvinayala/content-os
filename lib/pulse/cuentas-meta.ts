@@ -5,7 +5,7 @@ import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { notificarCEO } from "@/lib/notificar-ceo";
 
 import { usuarioSistema } from "./alta-typeform";
-import { clasificar, decidir, esProblema, limpiarId, repartirAvisos, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
+import { clasificar, decidir, esProblema, limpiarId, onboardingHecho, repartirAvisos, textoAviso, textoFicha, type EstadoCuenta, type Linea, type RespuestaMeta } from "./cuentas-meta-reglas";
 import { db } from "./db";
 import { desempenoPerfiles } from "@/lib/desempeno/schema";
 
@@ -92,13 +92,15 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   const [board] = await d.select().from(pulseBoards).where(eq(pulseBoards.slug, TABLERO));
   if (!board) return { ...vacio, error: "sin-tablero" };
   const [columnas, grupos] = await Promise.all([
-    d.select({ id: pulseColumns.id, title: pulseColumns.title, type: pulseColumns.type }).from(pulseColumns).where(eq(pulseColumns.boardId, board.id)),
+    d.select({ id: pulseColumns.id, title: pulseColumns.title, type: pulseColumns.type, settings: pulseColumns.settings }).from(pulseColumns).where(eq(pulseColumns.boardId, board.id)),
     d.select({ id: pulseGroups.id, title: pulseGroups.title }).from(pulseGroups).where(eq(pulseGroups.boardId, board.id)),
   ]);
   const cId = columnas.find((c) => /^id cuenta publicitaria$/i.test(c.title));
   if (!cId) return { ...vacio, error: "sin-columna-id" };
   const cEmpresa = columnas.find((c) => /^empresa$/i.test(c.title));
   const cPersonas = columnas.find((c) => c.type === "people");
+  const cSetup = columnas.find((c) => /status del set ?up/i.test(c.title));
+  const cProgreso = columnas.find((c) => /^progreso$/i.test(c.title));
   // Solo los grupos de clientes con servicio de anuncios (no bajas ni los programas Inner Circle / Accelerator).
   const fuera = grupos.filter((g) => !/cliente activo|onboarding|an[aá]lisis/i.test(g.title)).map((g) => g.id);
 
@@ -122,6 +124,15 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
   const nombres = new Map<string, string>();
   if (idsPersonas.size) for (const u of await d.select({ id: pulseUsers.id, nombre: pulseUsers.nombre }).from(pulseUsers).where(inArray(pulseUsers.id, [...idsPersonas]))) nombres.set(u.id, u.nombre);
 
+  const grupoDe = new Map(grupos.map((g) => [g.id, g.title]));
+  // Texto de una celda status/dropdown (guardan el id de la etiqueta) o de texto.
+  const etiqueta = (c: (typeof columnas)[number] | undefined, v: Record<string, ValorCelda>): string | null => {
+    if (!c) return null;
+    const x = v[c.id];
+    const ids = Array.isArray(x) ? x : [x];
+    const labels = ((c.settings as { labels?: { id: string; label: string }[] } | null)?.labels ?? []);
+    return ids.map((y) => labels.find((l) => l.id === y)?.label ?? (typeof y === "string" ? y : "")).join(" ") || null;
+  };
   const ahora = Date.now();
   const objetivo = items.filter((i) => {
     if (o.itemId || o.completo) return true;
@@ -145,6 +156,7 @@ export async function revisarCuentasMeta(o: { itemId?: string; completo?: boolea
     let detalle: string;
     if (!id) {
       if (horas < HORAS_SIN_ID) return;
+      if (!onboardingHecho({ grupo: grupoDe.get(i.groupId) ?? "", setup: etiqueta(cSetup, v), progreso: etiqueta(cProgreso, v) })) return; // el ID se pide en la reunión
       estado = "sin-id";
       detalle = "falta el ID de la cuenta publicitaria";
     } else {

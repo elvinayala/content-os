@@ -19,6 +19,14 @@ export type EstadoCuenta =
 export type Rol = "onboarding" | "estratega" | "asignar"; // asignar = cliente sin estratega (lo asigna Jessica, Carilin en copia)
 export const rolDe = (e: EstadoCuenta): Rol => (e === "sin-permiso" ? "onboarding" : "estratega");
 
+/** ¿Ya tuvo la reunión de onboarding? (Jessica, 12/oct: "los que no tienen estratega es porque aún no han tenido la
+ * reunión"). Fuera del grupo ONBOARDING & SETUP, sí; dentro, solo si "Status del Set Up"/"Progreso" ya dicen completado.
+ * Antes de eso no se avisa que falta el ID: se pide en esa reunión. */
+export function onboardingHecho(f: { grupo: string; setup?: string | null; progreso?: string | null }): boolean {
+  if (!/onboarding/i.test(f.grupo)) return true;
+  return /complet|listo|todo ok/i.test(`${f.setup ?? ""} ${f.progreso ?? ""}`);
+}
+
 export const PROBLEMAS: EstadoCuenta[] = ["sin-id", "sin-permiso", "no-existe", "pago", "inactiva"];
 export const esProblema = (e: EstadoCuenta | null | undefined) => !!e && PROBLEMAS.includes(e);
 
