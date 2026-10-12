@@ -101,3 +101,4 @@
 - [Encuesta de fin de onboarding](encuesta-fin-onboarding.md) — 11/oct: WhatsApp 15 min después de la llamada con Jessica; verde/ámbar/rojo → Elvin (y Carilin si no es verde); simulación hasta OK + prueba real
 - [Cuentas Meta en el onboarding](cuentas-meta-onboarding.md) — 12/oct: verificación automática de la cuenta publicitaria de cada cliente; portafolio Level Up 836808821982174; 21 IDs llenados solos; proceso: onboarding comparte (Jessica), estratega pone el ID; avisos ruteados así
 - [Level Up — piezas sin precio](lu-piezas-sin-precio.md) — 12/oct: motion/anuncios de LU sin $3,500 ni valores; solo resultados de clientes
+- [Contenido cinematográfico con IA](contenido-cinematico-ia.md) — 12/oct: estilo Ramiro Cubria en Higgsfield para LU/AIB/marca personal; estudio en vault/proyectos/contenido-cinematico/; Higgsfield MCP sin créditos
