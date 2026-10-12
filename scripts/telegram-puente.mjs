@@ -39,6 +39,7 @@ import { modeloParaNico, nombreCorto, NICO_TOPE_DIA } from "./nico-gasto.mjs";
 import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, respondioEnSlack, dentroDelTope, diaPR, modeloParaSlack, modeloParaTelegram, registrarGasto } from "./max-gasto.mjs";
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
+import { prepararTareaAicore } from "./aicore-tareas.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -249,7 +250,11 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // Nico siempre va en modo total (es su trabajo: arreglar plataformas sin pedir permiso por
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
     const modo = ES_NICO ? "total" : ES_MAX || ES_LOLA ? "seguro" : env("PUENTE_MODO") || "seguro";
-    const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? NICO_TURNOS : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
+    // Tarea de AI Core (12-oct): contexto mínimo y carpeta propia (scripts/aicore-tareas.mjs). Todo lo demás, igual.
+    const prep = opts.aicore ? prepararTareaAicore({ persona: ES_MAX ? "max" : "sofi", root: ROOT, marcas: opts.marcas, sesion }) : null;
+    const args = prep
+      ? ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", prep.maxTurnos, ...prep.args]
+      : ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? NICO_TURNOS : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
     // Controles de AI Core (11-oct, ADR-064 del Core): quién pide define qué se puede hacer.
     //  · Nico: con NICO_BUZON_MODO=lectura, lo que le llega por el BUZÓN de otro agente o de AI Core va en
     //    solo lectura (diagnostica y propone). APAGADO por defecto: hasta que Elvin lo active, Nico sigue
@@ -259,7 +264,8 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const deBuzon = origen.startsWith("buzon:");
     const deAicore = deBuzon && origen.endsWith(":aicore");
     const nicoLectura = ES_NICO && deBuzon && !origen.endsWith(":elvin") && env("NICO_BUZON_MODO") === "lectura";
-    if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    if (prep) { /* permisos ya puestos por prepararTareaAicore */ }
+    else if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...metaLectura(opts.marcas), "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (deAicore) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (modo === "total") args.push("--dangerously-skip-permissions");
@@ -281,7 +287,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // que su respuesta despierte a este agente y lo termine (26/sep).
     const envVars = { ...process.env, ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), PATH: `${path.dirname(CLAUDE)}:${process.env.PATH}`, AGENTE_ORIGEN: opts.origen || "" };
     LOG("claude ›", persona, nueva ? "sesión nueva" : "resume", prompt.slice(0, 80));
-    const child = spawn(CLAUDE, args, { cwd: ROOT, env: envVars, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(CLAUDE, args, { cwd: prep?.cwd || ROOT, env: envVars, stdio: ["ignore", "pipe", "pipe"] });
     hijoActual = child;
     const pasos = [];
     const t0 = Date.now();
@@ -318,6 +324,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const timer = setTimeout(() => { LOG(`claude: timeout ${limiteMin} min, matando`); child.kill("SIGTERM"); }, limiteMin * 60 * 1000);
     const fin = () => {
       clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null;
+      try { prep?.limpiar(); } catch {}
       sumarJornada(sesion, costo, durMs || Date.now() - t0, opts.sesionAparte);
       if (ES_MAX && ESTADO_VIVO && costo > 0) {
         // Una sesión aparte (AI Core) lleva su propio "último total": si compartiera el de la sesión del día, la
@@ -635,7 +642,7 @@ async function atenderBuzon(token, chatCEO, st) {
     if (ES_NICO) optsBuzon.modelo = modeloParaNico(m.texto, deSlack ? `solicitud:${m.id}:${m.de}` : `buzon:${m.id}:${m.de}`);
     let r;
     if (deAicore) {
-      Object.assign(optsBuzon, { sesionAparte: true, modelo: modeloAicore(), marcas: marcasDeAicore(m.texto) });
+      Object.assign(optsBuzon, { sesionAparte: true, aicore: true, modelo: modeloAicore(), marcas: marcasDeAicore(m.texto) });
       r = await correrYTerminar(prompt, persona, randomUUID(), true, null, optsBuzon);
     } else {
       const nueva = !st.sesion || st.sesionDia !== hoy;
