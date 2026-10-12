@@ -81,18 +81,18 @@ closers (lu-demo-ventas.netlify.app, slides 8 y 9).
 creativos ($600) · edición de videos ($800) · videos motion graphics ($1,000) · visita de contenido profesional ($750) ·
 soporte 24/7 ($500).
 
-**Bonos Black Friday** (valor total con todo: $9,785):
+**Bonos Black Friday (Elvin, 11/oct: solo 2 — "con mi 1:1 y Bori está más que bien"; su llamada vale más que Bori)** —
+valor total $8,244:
 
 | Bono | Valor | Vence |
 |---|---|---|
-| 1. **Llamada estratégica 1:1 con el CEO** (tu plan de 2027) | $500 | Cyber Monday, 30/nov 11:59 PM |
-| 2. **Bori Pro 6 meses** — su plataforma de IA para crear contenido extra (flyers, videos, carruseles) | $594 | 1/dic |
-| 3. **Agente de IA de AI Borinquen** que contesta WhatsApp/IG, precalifica y agenda — instalación + 3 meses | $1,941 | 1/dic |
-| 4. **Bono de lanzamiento:** plan de contenido de 30 piezas con sus ángulos ganadores | $600 | 31/oct |
+| 1. **Llamada estratégica 1:1 con el CEO** (tu plan de 2027) | $1,500 | Cyber Monday, 30/nov 11:59 PM |
+| 2. **Bori Pro 6 meses** incluido — su plataforma de IA para crear contenido extra | $594 | 1/dic |
 
 - Bonos con **pago completo**. En plazos: los motion se entregan al terminar de pagar (regla vigente).
-- Escalera: Ola 1 (15–31/oct) = todo · Ola 2 y 3 = bonos 1–3 · 1/dic = bonos 2 y 3.
-- **[DECIDE ELVIN]** los valores de referencia, los 6 meses de Bori y el período que cubren los $3,500.
+- Escalera: 15/oct–30/nov = los 2 bonos · 1/dic = solo Bori. **La urgencia de octubre son los cupos:** solo 6 de
+  los 12 arrancan en octubre.
+- **[DECIDE ELVIN]** los valores de referencia del paquete y el período que cubren los $3,500.
 - **Cupos: 12 en total, repartidos por mes de arranque** (6 en octubre, 6 en noviembre) — capacidad
   real de onboarding (Jessica + estrategas). El contador de cupos es real y se dice. **[DECIDE ELVIN]**
 - **Clientes actuales de LU** (segmento aparte): "Renueva 3 meses por adelantado y te instalamos tu
