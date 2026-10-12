@@ -228,9 +228,19 @@ const NICO_LIMITE_MIN = Number(env("NICO_LIMITE_MIN") || 240);
 const AVISO_CADA_MIN = Number(env("NICO_AVISO_MIN") || 12);
 let hijoActual = null; // el Claude que está corriendo ahora (para poder detenerlo con "para")
 
+// Modelo de las tareas de AI Core (12-oct): Max, su modelo barato de siempre; Sofi, Sonnet (antes heredaba el
+// de la sesión del día). AICORE_MODELO lo fija para los dos.
+function modeloAicore() { return env("AICORE_MODELO") || (ES_MAX ? MODELO_BARATO : MODELOS.sonnet); }
+
 // Meta Ads en solo lectura (tareas de AI Core a Max): consultar resultados y estructura, nunca crear,
-// activar, escalar, pausar ni subir nada.
-const META_LECTURA = ["resumir", "cuentas", "campanas", "arbol", "resultados", "intereses"].map((c) => `Bash(node scripts/meta-ads.mjs * ${c}*)`);
+// activar, escalar, pausar ni subir nada. Y SOLO de las marcas de la empresa que pide (12-oct, ADR-067 del
+// Core): AI Core las pone en la primera línea (`· marcas: a,b`). Sin marcas, Max no consulta Meta.
+const COMANDOS_LECTURA = ["resumir", "cuentas", "campanas", "arbol", "resultados", "intereses"];
+const metaLectura = (marcas) => (marcas || []).flatMap((m) => COMANDOS_LECTURA.map((c) => `Bash(node scripts/meta-ads.mjs ${m} ${c}*)`));
+function marcasDeAicore(texto) {
+  const m = String(texto || "").split("\n")[0].match(/· marcas: ([a-z0-9,-]*)/);
+  return m ? m[1].split(",").filter((x) => /^[a-z0-9-]+$/.test(x)) : [];
+}
 
 // Solo lectura (Nico diagnosticando una solicitud del equipo): mira todo, no cambia nada.
 const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)", "Bash(node scripts/agentes.mjs mensaje*)", "Bash(node scripts/agentes.mjs buzon*)"];
@@ -250,7 +260,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const deAicore = deBuzon && origen.endsWith(":aicore");
     const nicoLectura = ES_NICO && deBuzon && !origen.endsWith(":elvin") && env("NICO_BUZON_MODO") === "lectura";
     if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
-    else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...META_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...metaLectura(opts.marcas), "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (deAicore) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (modo === "total") args.push("--dangerously-skip-permissions");
     // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
@@ -264,6 +274,8 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     if (ES_NICO) args.push("--model", opts.modelo || env("NICO_MODELO") || modeloParaNico(prompt, opts.origen));
     // Max (24/sep): Opus para planear/investigar, el barato para mensajes (scripts/max-gasto.mjs).
     if (ES_MAX) args.push("--model", opts.modelo || MODELO_PLAN);
+    // Sofi/Lola usan el modelo de siempre, salvo que la tarea traiga uno (hoy solo las de AI Core, 12-oct).
+    else if (!ES_NICO && opts.modelo) args.push("--model", opts.modelo);
     if (nueva) args.push("--session-id", sesion); else args.push("--resume", sesion);
     // AGENTE_ORIGEN: de dónde viene el trabajo; agentes.mjs lo pega en los pedidos a otros agentes (⟳ SEGUIR) para
     // que su respuesta despierte a este agente y lo termine (26/sep).
@@ -306,10 +318,13 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const timer = setTimeout(() => { LOG(`claude: timeout ${limiteMin} min, matando`); child.kill("SIGTERM"); }, limiteMin * 60 * 1000);
     const fin = () => {
       clearTimeout(timer); if (aviso) clearInterval(aviso); if (hijoActual === child) hijoActual = null;
-      sumarJornada(sesion, costo, durMs || Date.now() - t0);
+      sumarJornada(sesion, costo, durMs || Date.now() - t0, opts.sesionAparte);
       if (ES_MAX && ESTADO_VIVO && costo > 0) {
-        const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.ultimoCostoSesion, sesion, costo);
-        ESTADO_VIVO.ultimoCostoSesion = ultimo;
+        // Una sesión aparte (AI Core) lleva su propio "último total": si compartiera el de la sesión del día, la
+        // próxima corrida del día contaría su acumulado entero como gasto nuevo.
+        const campo = opts.sesionAparte ? "ultimoCostoAparte" : "ultimoCostoSesion";
+        const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO[campo], sesion, costo);
+        ESTADO_VIVO[campo] = ultimo;
         ESTADO_VIVO.gastoMax = registrarGasto(ESTADO_VIVO.gastoMax, delta);
         guardarEstado(ESTADO_VIVO);
       }
@@ -599,8 +614,14 @@ async function atenderBuzon(token, chatCEO, st) {
       }
     }
     try { await buzonMarcar(m.id, "en-curso"); } catch {}
+    // AI Core (Elvin, 12-oct): cada tarea de AI Core corre en su PROPIA sesión, nueva y corta, con un modelo
+    // barato. No retoma la conversación del día (no mezcla contextos ni paga por releerla) ni consume las
+    // respuestas pendientes de otros agentes. La sesión del día de Telegram/Slack queda intacta.
+    const deAicore = m.de === "aicore" && !ES_NICO && !ES_LOLA;
     const prompt = deSlack
       ? `${m.texto}\n\n${MAX_SLACK}`
+      : deAicore
+      ? `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nEs una tarea de AI Core en solo lectura. Lee lo que necesites, contesta con el resultado concreto y breve (si falta un dato, di cuál). No intentes cerrar el pedido con agentes.mjs: el puente lo cierra con tu respuesta.`
       : contextoRespuestas(st) + `[Buzón · de ${de} #${m.id}]\n${m.texto}\n\nHaz lo que pide ${de} si está dentro de tu rol y tus reglas (si no, dile por qué no). Cuando termines, responde con \`node scripts/agentes.mjs atendido ${m.id} "<resultado completo: links/ids y qué quedó>"\` (tu respuesta despierta a ${de} para que termine su parte). Hazlo completo en esta vuelta. Sé breve: es un mensaje entre agentes, no un informe.`;
     LOG("buzón ›", `de ${m.de} #${m.id}`, m.texto.slice(0, 80));
     // Mismo ciclo que por Telegram: traer lo de producción antes y publicar lo escrito después.
@@ -609,13 +630,19 @@ async function atenderBuzon(token, chatCEO, st) {
     gitBajar();
     const inicio = Date.now();
     const hoy = new Date().toISOString().slice(0, 10);
-    const nueva = !st.sesion || st.sesionDia !== hoy;
-    if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
     const optsBuzon = { origen: deSlack ? "slack" : `buzon:${m.id}:${m.de}`, ...(ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {}) };
     if (ES_NICO) optsBuzon.modelo = modeloParaNico(m.texto, deSlack ? `solicitud:${m.id}:${m.de}` : `buzon:${m.id}:${m.de}`);
-    let r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, optsBuzon);
-    if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, optsBuzon); }
+    let r;
+    if (deAicore) {
+      Object.assign(optsBuzon, { sesionAparte: true, modelo: modeloAicore(), marcas: marcasDeAicore(m.texto) });
+      r = await correrYTerminar(prompt, persona, randomUUID(), true, null, optsBuzon);
+    } else {
+      const nueva = !st.sesion || st.sesionDia !== hoy;
+      if (nueva) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); }
+      r = await correrYTerminar(prompt, persona, st.sesion, nueva, null, optsBuzon);
+      if (r.code !== 0 && /session|resume|No conversation/i.test(r.err + r.out)) { st.sesion = randomUUID(); st.sesionDia = hoy; guardarEstado(st); r = await correrYTerminar(prompt, persona, st.sesion, true, null, optsBuzon); }
+    }
     // Una PERSONA le escribió a Max en Slack y Max no le contestó nada (7-8/oct: "👀 Max lo tiene" y después silencio,
     // en los motion de Quiroplaza y Med Spa). Una vuelta más, con el modelo bueno, para que conteste en el hilo; si ni
     // así, una nota honesta en el hilo y aviso a Elvin.
@@ -876,12 +903,13 @@ async function avisarGasto(texto) {
 }
 // Costo (USD) de la última corrida, ya descontado lo que la sesión traía de antes (costoDeLaCorrida).
 let ultimoDeltaJornada = 0;
-function sumarJornada(sesion, costoTotal, ms) {
+function sumarJornada(sesion, costoTotal, ms, aparte = false) {
   if (!ESTADO_VIVO) return 0;
   const hoy = diaPR();
   const j = ESTADO_VIVO.jornada?.dia === hoy ? ESTADO_VIVO.jornada : { dia: hoy, corridas: 0, ms: 0, costo: 0 };
-  const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.jornadaUltimo, sesion, costoTotal);
-  ESTADO_VIVO.jornadaUltimo = ultimo;
+  const campo = aparte ? "jornadaUltimoAparte" : "jornadaUltimo"; // ver costoDeLaCorrida y la sesión aparte de AI Core
+  const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO[campo], sesion, costoTotal);
+  ESTADO_VIVO[campo] = ultimo;
   j.corridas += 1;
   j.ms += Math.max(0, Number(ms) || 0);
   j.costo = Math.round((j.costo + delta) * 10000) / 10000;
