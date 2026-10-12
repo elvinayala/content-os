@@ -9,6 +9,9 @@ import { MiMarcador } from "@/components/ritmo/arena-marcador";
 import { MiDiaGoogle } from "@/components/ritmo/mi-dia-google";
 import { Ponche } from "@/components/ritmo/ponche";
 import { ReporteDiario } from "@/components/ritmo/reporte-diario";
+import { MisTrabajos } from "@/components/ritmo/mis-trabajos";
+import { listarTrabajos } from "@/lib/desempeno/trabajos";
+import { DIAS_ATRAS_TRABAJOS } from "@/lib/desempeno/trabajos-reglas";
 import { AppMovil } from "@/components/ritmo/app-movil";
 import { armarPanel, estadoPonche, modoScore, perfilDe, reporteDe } from "@/lib/desempeno/datos";
 import { estadoSeguridad } from "@/lib/desempeno/seguridad";
@@ -45,7 +48,10 @@ export default async function HoyPage() {
   // Puesto "solo reporte" (Lis, 30/sep): no poncha; en lugar del círculo, su reporte del día siempre a la vista.
   const puestoMio = !direccion && estado && !estado.sinPerfil ? puestoPorId((await perfilDe(u.id).catch(() => null))?.puesto ?? "") : undefined;
   const soloReporte = puestoMio?.soloReporte ? puestoMio : null;
-  const repDia = soloReporte ? await Promise.all([reporteDe(u.id, hoy), reporteDe(u.id, sumarDias(hoy, -1))]).catch(() => [null, null]) : null;
+  const repDia = soloReporte && !soloReporte.trabajos ? await Promise.all([reporteDe(u.id, hoy), reporteDe(u.id, sumarDias(hoy, -1))]).catch(() => [null, null]) : null;
+  // Videógrafo (Derek, 12/oct): en lugar del reporte con números, anota cada trabajo del día.
+  const trabajos = soloReporte?.trabajos ? await listarTrabajos(u.id, sumarDias(hoy, -DIAS_ATRAS_TRABAJOS), hoy).catch(() => []) : null;
+  const ahoraPR = new Date().toLocaleTimeString("en-GB", { timeZone: "America/Puerto_Rico", hour: "2-digit", minute: "2-digit", hour12: false });
   const seguridad = estado && !estado.sinPerfil && !soloReporte ? await estadoSeguridad(u).catch(() => undefined) : undefined;
   // Sin perfil (dirección) no hay "Mi semana": no vale la pena armar el panel.
   const panel = estado && !estado.sinPerfil ? await armarPanel(u, sumarDias(hoy, -6), hoy).catch(() => null) : null;
@@ -119,7 +125,9 @@ export default async function HoyPage() {
       <div className="grid items-start gap-6 lg:grid-cols-[360px_1fr]">
         {/* izquierda: el ponche (o el marcador de ventas) y mi semana */}
         <div className="flex flex-col items-center gap-5 lg:sticky lg:top-20">
-          {soloReporte && repDia ? (
+          {trabajos ? (
+            <MisTrabajos trabajos={trabajos} hoy={hoy} ahora={ahoraPR} />
+          ) : soloReporte && repDia ? (
             <ReporteDiario
               manual={soloReporte.manual ?? []}
               hoy={hoy}

@@ -3,10 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Hora } from "@/components/ritmo/hora-local";
+import { MisTrabajos } from "@/components/ritmo/mis-trabajos";
 import { diaCorto, EmpresaBadge, EstadoChip, ScoreBadge } from "@/components/ritmo/piezas";
 import { UserAvatar } from "@/components/pulse/user-avatar";
 import { armarPanel, modoScore } from "@/lib/desempeno/datos";
-import { colorScore, fechaPR, PUESTOS, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
+import { colorScore, fechaPR, PUESTOS, puestoPorId, sumarDias, type DetalleKpi } from "@/lib/desempeno/reglas";
+import { listarTrabajos } from "@/lib/desempeno/trabajos";
+import { DIAS_ATRAS_TRABAJOS } from "@/lib/desempeno/trabajos-reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import type { ColorPulse } from "@/lib/pulse/types";
 import { cn } from "@/lib/utils";
@@ -39,6 +42,10 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
   const oculto = modoScore(u.rol) === "oculto";
   const lider = f.perfil.liderId ? panel.lideres[f.perfil.liderId] : null;
   const bloqueos = f.dias.filter((d) => d.reporte?.bloqueos).reverse();
+  // Videógrafo (Derek, 12/oct): sus trabajos del día; la vista maestra se los puede anotar o borrar.
+  const anotaTrabajos = !!puestoPorId(f.perfil.puesto)?.trabajos && u.maestro;
+  const trabajos = anotaTrabajos ? await listarTrabajos(persona, sumarDias(hoy, -DIAS_ATRAS_TRABAJOS), hoy).catch(() => []) : null;
+  const ahoraPR = new Date().toLocaleTimeString("en-GB", { timeZone: "America/Puerto_Rico", hour: "2-digit", minute: "2-digit", hour12: false });
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
@@ -65,6 +72,8 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
             </div>
           </div>
         </section>
+
+        {trabajos ? <MisTrabajos trabajos={trabajos} hoy={hoy} ahora={ahoraPR} para={persona} nombre={f.perfil.nombre} /> : null}
 
         <section className="overflow-hidden panel">
           <header className="border-b px-4 py-3">

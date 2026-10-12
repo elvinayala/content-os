@@ -31,6 +31,9 @@ export interface Puesto {
   sinPonche?: boolean; // ventas: no ponchan; su desempeño es 100 % resultados (Arena, lib/ventas/reglas.ts)
   // No poncha, pero llena su reporte del día en Hoy (30/sep, Lis): sigue en Equipo/Ranking; su "asistencia" = si reportó.
   soloReporte?: boolean;
+  // Su reporte del día sale de los trabajos que anota uno por uno (12/oct, Derek, videógrafo): trabajo, negocio, pueblo,
+  // videos, hora y día (lib/desempeno/trabajos-reglas.ts). Implica soloReporte.
+  trabajos?: boolean;
 }
 
 // KPIs de Producción (editores, diseñadores, copy, web): ventana móvil de 7 días.
@@ -81,6 +84,12 @@ const KPIS_REPORTADOS = {
     reportado("reuniones_seguimiento", "Reuniones agendadas para seguimiento de ventas", "¿Con quiénes?"),
     reportado("cash_collected", "Cash collected cerrado (US$)", "¿De quién y qué servicio?", "Lo que cobraste tú hoy, en dólares", true),
     reportado("ventas_bori", "Ventas de Bori", "¿A quién?", "Ventas del producto Bori (low ticket) que cerraste tú"),
+  ],
+  // 12/oct (Elvin, para Derek Toro): no los escribe aquí; salen de "Mis trabajos" (resumenTrabajos).
+  videografo: [
+    reportado("trabajos", "Trabajos realizados", "¿Cuáles?"),
+    reportado("videos", "Videos trabajados", "¿De qué negocios?"),
+    reportado("negocios", "Negocios visitados", "¿Cuáles y en qué pueblo?"),
   ],
   disenador: [
     reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
@@ -137,6 +146,8 @@ export const PUESTOS: Puesto[] = [
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
   { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
   { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas"), soloReporte: true },
+  // 12/oct (Elvin): Derek Toro viaja la isla grabando; no poncha, anota cada trabajo del día.
+  { id: "videografo", nombre: "Videógrafo", departamento: "Producción", manual: manualReportado("videografo"), kpis: kpisReportados("videografo"), soloReporte: true, trabajos: true },
   { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", manual: manualReportado("ai_engineer"), kpis: kpisReportados("ai_engineer") },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
