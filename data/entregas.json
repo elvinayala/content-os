@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-12T02:11:22.087Z",
+  "actualizadoEl": "2026-10-12T02:18:16.186Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12649,7 +12649,7 @@
       "pilar": "oferta",
       "agente": "Lola",
       "creadoEl": "2026-10-12T02:11:22.087Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "id": "bf26-lu-f1-45",
       "marca": "level-up",
       "titulo": "LU · BF26 Flyer 1 Lanzamiento (4:5 feed)",
@@ -12657,7 +12657,7 @@
       "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae0684/CsUHCr7oZpa11lGTgZ7p6_UeJ8h61N.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
-      "contenido": "Copy exacto de level-up.md §3. SIN foto real: rk.jpg/interior.jpg del repo son capturas de Meta Ads con datos de clientes, no fotos del taller/equipo. Objeto (calendario arrancado), cero gente/local de IA. Ojo: el calendario dice OCTOBER en inglés (el 9:16 ya sale en español). Si Elvin manda foto real del equipo, se rehace."
+      "contenido": "⛔ OBSOLETO (corrección de Elvin, 12/oct): LU ahora solo lleva 2 bonos (1:1 con el CEO + Bori Pro 6 meses). Este flyer trae el agente de IA/plan de 30 piezas/$9,785. Se rehace con el level-up.md actualizado. Copy exacto de level-up.md §3. SIN foto real: rk.jpg/interior.jpg del repo son capturas de Meta Ads con datos de clientes, no fotos del taller/equipo. Objeto (calendario arrancado), cero gente/local de IA. Ojo: el calendario dice OCTOBER en inglés (el 9:16 ya sale en español). Si Elvin manda foto real del equipo, se rehace."
     },
     {
       "tipo": "arte",
@@ -12665,7 +12665,7 @@
       "pilar": "oferta",
       "agente": "Lola",
       "creadoEl": "2026-10-12T02:11:22.087Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "id": "bf26-lu-f1-916",
       "marca": "level-up",
       "titulo": "LU · BF26 Flyer 1 Lanzamiento (9:16 historias)",
@@ -12673,7 +12673,7 @@
       "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae068e/YSf7nLM5HolzU8HXUIhNK_HxDWTSkz.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
-      "contenido": "Versión historias. Calendario OCTUBRE. Misma nota de foto real."
+      "contenido": "⛔ OBSOLETO (corrección de Elvin, 12/oct): LU ahora solo lleva 2 bonos (1:1 con el CEO + Bori Pro 6 meses). Este flyer trae el agente de IA/plan de 30 piezas/$9,785. Se rehace con el level-up.md actualizado. Versión historias. Calendario OCTUBRE. Misma nota de foto real."
     },
     {
       "tipo": "arte",
@@ -12681,7 +12681,7 @@
       "pilar": "oferta",
       "agente": "Lola",
       "creadoEl": "2026-10-12T02:11:22.087Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "id": "bf26-lu-f2-45",
       "marca": "level-up",
       "titulo": "LU · BF26 Flyer 2 Escalera de bonos (4:5)",
@@ -12689,7 +12689,7 @@
       "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae0688/_NqZhgOKIe7veBaykO3ip_FQydQYJG.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
-      "contenido": "Copy exacto de level-up.md §3. Libreta rayada con escalera a bolígrafo azul (IA, objeto, sin gente)."
+      "contenido": "⛔ OBSOLETO (corrección de Elvin, 12/oct): LU ahora solo lleva 2 bonos (1:1 con el CEO + Bori Pro 6 meses). Este flyer trae el agente de IA/plan de 30 piezas/$9,785. Se rehace con el level-up.md actualizado. Copy exacto de level-up.md §3. Libreta rayada con escalera a bolígrafo azul (IA, objeto, sin gente)."
     },
     {
       "tipo": "arte",
