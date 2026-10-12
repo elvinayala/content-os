@@ -595,7 +595,13 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   del círculo, tiene **"Mi reporte del día"** siempre a la vista (`components/ritmo/reporte-diario.tsx`, `guardarReporteDiaAction`,
   hoy o ayer, se corrige reemplazando; `errorReporteDia` exige todos con número); su "asistencia" = si reportó (hoy queda
   pendiente); si a las 6:45 PM no lo ha llenado, el cron `recordatorio` se lo pide. Nacen con peso 0 (se miden, no puntúan)
-  hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). Fase 2: Meta (registro de actividad), n8n (alertas
+  hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). **Videógrafo (Derek Toro, 12/oct, Elvin: "sin ponchar… viaja
+  la isla y pone trabajo realizado, negocio, pueblo, cantidad de videos, hora y día")**: puesto `videografo` (`soloReporte` +
+  `trabajos`); en Hoy, en vez del círculo, **Mis trabajos** (`components/ritmo/mis-trabajos.tsx`, `app/ritmo/trabajos-actions.ts`):
+  uno por negocio, hasta 7 días atrás, pueblo de la lista de los 78 (`trabajos-reglas.ts` puro + tests `tests/trabajos.test.mjs`).
+  Tabla `desempeno_trabajos` en SQL directo (`lib/desempeno/trabajos.ts`, papelera); cada cambio rehace su reporte del día
+  (trabajos · videos · negocios + detalle) → Equipo, Ranking, reporte a RR.HH. y recordatorio de las 6:45 PM. La vista maestra
+  (Yaileen, Carilin…) le anota o borra trabajos desde su ficha en Equipo. Se da de alta en Personas → Nuevo empleado → Videógrafo. Fase 2: Meta (registro de actividad), n8n (alertas
   y "Revisado"), NocoDB (reportes), Chatwoot, Slack → `desempeno_metricas` (una fila por persona/día/KPI).
 - **Calibración**: el score solo lo ve admin (vista previa) hasta `DESEMPENO_SCORE=on`.
 - **Avisos** `app/api/cron/ritmo` (`?tarea=digest` L-V 9:30 AM PR a Carilin/`RITMO_AVISO_A` y a cada
