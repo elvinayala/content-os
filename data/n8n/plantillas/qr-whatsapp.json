@@ -1,0 +1,207 @@
+{
+  "name": "L-2) QR WhatsApp (Content OS)",
+  "nodes": [
+    {
+      "id": "q-nota",
+      "name": "Nota",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ],
+      "parameters": {
+        "width": 480,
+        "height": 200,
+        "content": "## QR de WhatsApp (Content OS)\nContent OS (/vincular-whatsapp) lo llama para saber si la instancia de Level Up está conectada y, si no, traer un QR fresco.\nDevuelve `{ estado, base64? }`. No manda ningún mensaje.\nFuente: scripts/n8n-qr-whatsapp.mjs"
+      }
+    },
+    {
+      "id": "q-qr-webhook-",
+      "name": "QR (webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-qr",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "responseData": "firstEntryJson",
+        "options": {}
+      },
+      "webhookId": "whatsapp-qr",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "q-estado",
+      "name": "Estado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "url": "https://levelup-media-project-evolution-api.ksnxqw.easypanel.host/instance/connectionState/Level-Up-Media-Whatsapp",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "evolutionApi",
+        "options": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "q--conectado-",
+      "name": "¿Conectado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.instance && $json.instance.state }}",
+              "rightValue": "open",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "q-ya-est-conectado",
+      "name": "Ya está conectado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        -80
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { estado: 'open' } }];"
+      }
+    },
+    {
+      "id": "q-pedir-qr",
+      "name": "Pedir QR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        100
+      ],
+      "parameters": {
+        "url": "https://levelup-media-project-evolution-api.ksnxqw.easypanel.host/instance/connect/Level-Up-Media-Whatsapp",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "evolutionApi",
+        "options": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "q-con-qr",
+      "name": "Con QR",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        100
+      ],
+      "parameters": {
+        "jsCode": "const r = $json || {};\nreturn [{ json: { estado: r.base64 ? 'connecting' : 'error', base64: r.base64 || null } }];"
+      }
+    }
+  ],
+  "connections": {
+    "QR (webhook)": {
+      "main": [
+        [
+          {
+            "node": "Estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado": {
+      "main": [
+        [
+          {
+            "node": "¿Conectado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Conectado?": {
+      "main": [
+        [
+          {
+            "node": "Ya está conectado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pedir QR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedir QR": {
+      "main": [
+        [
+          {
+            "node": "Con QR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Puerto_Rico"
+  }
+}

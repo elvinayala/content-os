@@ -125,6 +125,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/pase" || pathname === "/api/pase/recibir") return NextResponse.next();
   // Íconos de Pulse (favicon / apple-touch-icon): públicos, el navegador los pide sin cookie.
   if (pathname === "/pulse/icon.svg" || pathname.startsWith("/pulse/apple-icon") || pathname.startsWith("/pulse/opengraph-image")) return NextResponse.next();
+  // Vincular el WhatsApp de Level Up: enlace temporal firmado (la página y su ruta lo validan adentro).
+  if (pathname === "/vincular-whatsapp" || pathname === "/api/vincular-whatsapp") return NextResponse.next();
   // Formulario público de onboarding de Level Up (lo llena el cliente, sin login).
   if (pathname.startsWith("/onboarding/") || pathname.startsWith("/api/onboarding/")) return NextResponse.next();
   // Formularios propios (el reemplazo de Typeform): /f/<slug> y su envío, públicos.
