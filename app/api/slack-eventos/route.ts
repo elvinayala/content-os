@@ -7,6 +7,7 @@ import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/d
 import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, EDITORES, usuarioSlack } from "@/lib/max/flujo";
 import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
 import { alBuzonMax, clientePorCanal } from "@/lib/max/repo";
+import { conFirma, firmarAprobacion } from "@/lib/firma-aprobaciones.mjs";
 import {
   MARCADOR_BRIEF,
   pasarPedidoASlack,
@@ -357,13 +358,21 @@ async function pasarANico(de: string, userId: string, texto: string, ref?: RefSl
 }
 
 // Decisión de Elvin sobre una solicitud → buzón de Nico (el puente la ejecuta o la cierra).
+// Llega aquí SOLO con la firma de Slack válida y el usuario de Elvin (CEO_SLACK). El servidor firma la decisión
+// (Ed25519, vence en 15 min, nonce de un solo uso) y el buzón y el puente de Nico la verifican (12-oct).
 async function decidirSolicitud(aprobado: boolean, id: string, nota: string): Promise<boolean> {
   const secreto = process.env.CRON_SECRET;
   if (!secreto) return false;
+  let token: string;
+  try {
+    token = firmarAprobacion({ tipo: "nico-solicitud", id, decision: aprobado ? "ok" : "no", por: "elvin", via: "slack" }, process.env.APROBACIONES_FIRMA_PRIVADA ?? "");
+  } catch {
+    return false; // sin llave no hay aprobación (fail-closed); Elvin puede decidir por Telegram
+  }
   const r = await fetch(`${ORIGEN}/api/agentes`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-cron-secret": secreto },
-    body: JSON.stringify({ de: "elvin", para: "nico", texto: `[APROBACIÓN] ${aprobado ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` }),
+    body: JSON.stringify({ de: "elvin", para: "nico", texto: conFirma(`[APROBACIÓN] ${aprobado ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}`, token) }),
     signal: AbortSignal.timeout(10000),
   })
     .then((x) => x.json() as Promise<{ ok?: boolean }>)

@@ -40,6 +40,7 @@ import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, re
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
 import { prepararTareaAicore } from "./aicore-tareas.mjs";
+import { leerAprobacionNico, usarNonce, verificarAprobacion } from "../lib/firma-aprobaciones.mjs";
 
 const ROOT = process.cwd();
 // PUENTE_BOT=nico → segundo bot (el vibecoder): token TELEGRAM_BOT_TOKEN_NICO, estado propio,
@@ -599,10 +600,25 @@ async function atenderBuzon(token, chatCEO, st) {
       continue;
     }
     if (ES_NICO && EQUIPO_NICO.has(m.de)) { await diagnosticarSolicitud(token, chatCEO, st, m); continue; }
-    const dec = ES_NICO && m.de === "elvin" && m.texto.match(/^\[APROBACIÓN\]\s*(ok|no)\s*#?(\d+)\s*([\s\S]*)$/i);
-    if (dec) {
+    // "De Elvin" por el buzón SOLO vale como aprobación firmada por el servidor (12-oct): firma Ed25519 válida, para
+    // esa solicitud y esa decisión, de alguien autorizado, sin vencer y sin haberse usado antes. Cualquier otra cosa
+    // que diga venir de Elvin se rechaza y se avisa (posible suplantación). Telegram ("ok N" desde el chat de Elvin)
+    // sigue igual: ahí la identidad la da Telegram.
+    if (m.de === "elvin") {
+      const ap = leerAprobacionNico(m.texto);
+      let v = !ES_NICO ? { ok: false, motivo: `${NOMBRES[YO]} no recibe aprobaciones` }
+        : ap ? verificarAprobacion(ap.token, { tipo: "nico-solicitud", id: ap.id, decision: ap.decision })
+        : { ok: false, motivo: "un mensaje 'de Elvin' por el buzón que no es una aprobación firmada" };
+      if (v.ok && !usarNonce((st.noncesAprobacion ||= {}), v.datos.nonce, v.datos.exp)) v = { ok: false, motivo: "esa aprobación ya se usó" };
+      guardarEstado(st);
+      if (!v.ok) {
+        LOG("buzón: rechazado 'de Elvin'", `#${m.id}`, v.motivo);
+        await buzonMarcar(m.id, "fallido", `Rechazado: ${v.motivo}`).catch(() => {});
+        if (chatCEO) await enviar(token, chatCEO, `⚠️ ${NOMBRES[YO]} rechazó un mensaje del buzón que decía venir de ti (#${m.id}): ${v.motivo}. Si fuiste tú, decide por Telegram o Slack.`).catch(() => {});
+        continue;
+      }
       await buzonMarcar(m.id, "atendido").catch(() => {});
-      await resolverSolicitud(token, chatCEO, st, Number(dec[2]), dec[1].toLowerCase() === "ok", dec[3].trim());
+      await resolverSolicitud(token, chatCEO, st, Number(ap.id), ap.decision === "ok", ap.nota);
       continue;
     }
     const deSlack = ES_MAX && m.de === "slack";

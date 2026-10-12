@@ -17,7 +17,7 @@
 //                                                              actual + espejo Slack)
 //   node scripts/agentes.mjs solicitudes                       pedidos de Carilin/Aure a Nico que
 //                                                              esperan el OK de Elvin
-//   node scripts/agentes.mjs aprobar|rechazar <id> ["nota"]    la decisión de Elvin sobre una solicitud
+//   (aprobar|rechazar ya no existen: Elvin decide por Telegram o Slack; ver lib/firma-aprobaciones.mjs)
 //   node scripts/agentes.mjs reporte --resumen "…" --tareas N [--entregables "a|b|c"] [--bloqueos "…"] [--agente x] [--sumar]
 //                                                              tu reporte del día en Ritmo (equipo digital:
 //                                                              lo ven Elvin, Carilin y Aure; comparan con humanos)
@@ -189,11 +189,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
       if (!m.length) console.log("Sin solicitudes del equipo esperando OK de Elvin.");
       for (const x of m) console.log(`#${x.id} · ${NOMBRE[x.de] || x.de} · ${String(x.creado_el).slice(0, 16)}\n${x.texto}\n↳ plan: ${(x.respuesta || "").slice(0, 600)}\n`);
     } else if (cmd === "aprobar" || cmd === "rechazar") {
-      // Lo usa Elvin (o el webhook de Slack en su nombre): deja la decisión en el buzón de Nico.
-      const id = Number(String(rest[0] || "").replace("#", "")); const nota = rest.slice(1).join(" ").trim();
-      if (!id) throw new Error(`Uso: ${cmd} <id> ["nota"]`);
-      const j = await api("POST", {}, { de: "elvin", para: "nico", texto: `[APROBACIÓN] ${cmd === "aprobar" ? "ok" : "no"} #${id}${nota ? ` ${nota}` : ""}` });
-      console.log(`✓ Decisión #${j.id} dejada a Nico (${cmd} solicitud #${id}).`);
+      // 12-oct: ya NO se aprueba desde la terminal. Cualquier agente con CRON_SECRET podía correr esto y hacerse pasar
+      // por Elvin. Las aprobaciones salen solo de canales que verifican a Elvin, firmadas por el servidor
+      // (lib/firma-aprobaciones.mjs); el buzón rechaza lo demás.
+      console.error("Las aprobaciones ya no salen de la terminal. Elvin decide por Telegram (\"ok <id>\" al bot de Nico) o por Slack (\"nico ok <id>\").");
+      process.exit(1);
     } else if (cmd === "elvin") {
       await avisarElvin(rest.join(" ").trim());
     } else if (cmd === "reporte") {

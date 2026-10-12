@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/pulse/db";
+import { remitentePermitido } from "@/lib/firma-aprobaciones.mjs";
 
 // El buzón de los agentes. Elvin (20/sep/2026): "los agentes se tienen que poder hablar entre
 // sí — Sofi le pide algo a Nico, Max le pide algo a Nico — y con mi equipo personal".
@@ -140,6 +141,10 @@ export async function POST(req: NextRequest) {
   const texto = String(b.texto ?? "").trim();
   if (!(AGENTES.has(de) || (EQUIPO_REMITENTE.has(de) && para === "nico")) || !AGENTES.has(para)) return NextResponse.json({ error: "agente-desconocido", agentes: [...AGENTES] }, { status: 400 });
   if (!texto || texto.length > 8000) return NextResponse.json({ error: "texto" }, { status: 400 });
+  // Nadie escribe como Elvin con CRON_SECRET (lo tienen todos los puentes y agentes): solo una aprobación firmada por
+  // el servidor después de verificarlo (lib/firma-aprobaciones.mjs, 12-oct).
+  const permiso = remitentePermitido({ de, texto });
+  if (!permiso.ok) return NextResponse.json({ error: "suplantacion", motivo: permiso.motivo }, { status: 403 });
   const r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto, hilo) VALUES (${de}, ${para}, ${texto}, ${b.hilo ?? null}) RETURNING id, creado_el`);
   const fila = filas<{ id: number; creado_el: string }>(r)[0];
   return NextResponse.json({ ok: true, id: fila.id, creadoEl: fila.creado_el });
