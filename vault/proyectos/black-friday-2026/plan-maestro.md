@@ -74,28 +74,25 @@ Lista de hoy: Done With You ~$3,500 · Done For You $3,500–4,000 en servicios 
 $6–7K). Lo que vendemos: **sistema, no marketing suelto** (oferta → estrategia → contenido → anuncios
 con IA → automatización de leads → escalar lo que funciona).
 
-**Oferta (pago completo $3,500 del 15/oct al 1/dic — [DECIDE ELVIN] precio exacto por avatar):**
+**Oferta irresistible (Elvin, 11/oct) — $3,500 pago completo, del 15/oct al 1/dic.** Ya está en la demo de
+closers (lu-demo-ventas.netlify.app, slides 8 y 9).
 
-| Bono | Valor de referencia | Por qué |
+**Lo que incluye** (valor de referencia $6,150): manejo de anuncios ($1,500) · estrategia completa ($1,000) · artes y
+creativos ($600) · edición de videos ($800) · videos motion graphics ($1,000) · visita de contenido profesional ($750) ·
+soporte 24/7 ($500).
+
+**Bonos Black Friday** (valor total con todo: $9,785):
+
+| Bono | Valor | Vence |
 |---|---|---|
-| 1. **Agente de chat de AI Borinquen instalado** (WhatsApp/IG: contesta, precalifica, agenda) + 3 meses de mensualidad incluidos | $1,500 + $441 | cierra el ángulo "pierdes los leads por contestar tarde"; LU y AIB son el mismo dueño y el mismo producto |
-| 2. **4 motion graphics** con tu marca real (Remi) — hoy el paquete ≥ $3,500 pagado completo trae 2 | 2 extra | ya existe la fábrica; costo bajo, valor percibido alto |
-| 3. **Sesión 1:1 con Elvin: tu plan de 2027** | — | autoridad; es lo que más pide el avatar coach/digital |
-| 4. **Arranque prioritario:** en octubre = tus anuncios corriendo para TU Black Friday; en noviembre = campañas montadas antes del 15/dic para entrar a enero corriendo | — | urgencia real: el que firma en enero arranca en febrero |
-| **Bono de lanzamiento (solo 15–31/oct):** plan de contenido de 30 piezas con tus ángulos ganadores | — | premia al que se mueve primero |
+| 1. **Llamada estratégica 1:1 con el CEO** (tu plan de 2027) | $500 | Cyber Monday, 30/nov 11:59 PM |
+| 2. **Bori Pro 6 meses** — su plataforma de IA para crear contenido extra (flyers, videos, carruseles) | $594 | 1/dic |
+| 3. **Agente de IA de AI Borinquen** que contesta WhatsApp/IG, precalifica y agenda — instalación + 3 meses | $1,941 | 1/dic |
+| 4. **Bono de lanzamiento:** plan de contenido de 30 piezas con sus ángulos ganadores | $600 | 31/oct |
 
-- **En plazos** (inicial + pagos): bonos 3 y 4. Los motion se entregan **cuando termine de pagar**
-  (regla vigente del paquete ≥ $3,500). El agente de AIB y el bono de lanzamiento son solo pago completo.
-- **Bono que se cae en Cyber Monday (30/nov 11:59 PM):** la sesión 1:1 con Elvin (bono 3). El 1/dic
-  se vende sin ella. **[DECIDE ELVIN]**
-- **La escalera de bonos:**
-
-  | Ola | Bonos |
-  |---|---|
-  | 1 · 15–31/oct | los 4 + bono de lanzamiento |
-  | 2 · 1–22/nov | los 4 |
-  | 3 · 23–30/nov | los 4 (la 1:1 con Elvin se cae el 30/nov a medianoche) |
-  | 1/dic | 1, 2 y 4 |
+- Bonos con **pago completo**. En plazos: los motion se entregan al terminar de pagar (regla vigente).
+- Escalera: Ola 1 (15–31/oct) = todo · Ola 2 y 3 = bonos 1–3 · 1/dic = bonos 2 y 3.
+- **[DECIDE ELVIN]** los valores de referencia, los 6 meses de Bori y el período que cubren los $3,500.
 - **Cupos: 12 en total, repartidos por mes de arranque** (6 en octubre, 6 en noviembre) — capacidad
   real de onboarding (Jessica + estrategas). El contador de cupos es real y se dice. **[DECIDE ELVIN]**
 - **Clientes actuales de LU** (segmento aparte): "Renueva 3 meses por adelantado y te instalamos tu

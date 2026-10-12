@@ -30,54 +30,67 @@ tags: [black-friday, level-up, guiones, flyers, email, whatsapp, setter]
 
 ### 1.1 Resumen (fiel a [[plan-maestro]] §2.1)
 
-**"El Sistema Completo · Black Friday"**: oferta → estrategia → contenido → anuncios con IA →
-automatización de leads → escalar lo que funciona. **Pago completo: $3,500, el mismo precio del 15/oct
-al 1/dic.** Lo que baja con el tiempo son los bonos y los cupos. [DECIDE ELVIN: precio exacto por avatar.]
+**"El Sistema Completo · Black Friday"**: oferta irresistible de Elvin del 11/oct. **Pago completo: $3,500,
+el mismo precio del 15/oct al 1/dic.** Lo que baja con el tiempo son los bonos y los cupos. Ya está en la demo de
+closers: `lu-demo-ventas.netlify.app`, slide 8 ("Todo esto por $3,500") y slide 9 ("Bonos").
 
-**Los bonos:**
-1. **Agente de chat de AI Borinquen instalado** en WhatsApp e IG (contesta, precalifica y agenda), con **3 meses de mensualidad incluidos**. Valor: $1,500 + $441.
-2. **4 motion graphics** con tu marca real. Hoy el paquete trae 2.
-3. **Sesión 1:1 con Elvin:** tu plan de 2027.
-4. **Arranque prioritario:**
-   - si firmas en **octubre**, tus anuncios están corriendo para TU Black Friday;
-   - si firmas en **noviembre**, tus campañas quedan montadas antes del 15/dic para entrar a enero corriendo.
-- **Bono de lanzamiento (solo 15–31/oct):** plan de contenido de 30 piezas con tus ángulos ganadores.
+**Lo que incluyen los $3,500** (valor de referencia **$6,150**):
 
-**La escalera de bonos:**
+| Incluye | Valor |
+|---|---|
+| Manejo de anuncios | $1,500 |
+| Estrategia completa | $1,000 |
+| Artes y creativos | $600 |
+| Edición de videos | $800 |
+| Videos motion graphics | $1,000 |
+| Visita de contenido profesional | $750 |
+| Soporte 24/7 | $500 |
 
-| Ola | Fechas | Bonos |
+**Bonos Black Friday** (valor total con todo: **$9,785**). Son solo para pago completo.
+
+| Bono | Valor | Vence |
 |---|---|---|
-| 1 · Lanzamiento adelantado | jue 15/oct – sáb 31/oct | los 4 + bono de lanzamiento |
-| 2 · Noviembre | dom 1/nov – dom 22/nov | los 4 |
-| 3 · Semana de Black Friday | lun 23/nov – lun 30/nov | los 4 (la 1:1 con Elvin se cae el **lun 30/nov a las 11:59 PM**) |
-| Último día | mar 1/dic | 1, 2 y 4 |
+| 1. **Llamada estratégica 1:1 con el CEO** (Elvin): tu plan de 2027 | $500 | Cyber Monday, lun 30/nov 11:59 PM |
+| 2. **Bori Pro 6 meses incluido**: su plataforma de IA para crear contenido extra (flyers, videos, carruseles) | $594 | 1/dic |
+| 3. **Agente de IA de AI Borinquen** que contesta WhatsApp/IG, precalifica y agenda: instalación + 3 meses | $1,941 | 1/dic |
+| 4. **Bono de lanzamiento:** plan de contenido de 30 piezas con tus ángulos ganadores | $600 | sáb 31/oct |
+
+**La escalera** (el valor total sale de sumar los $6,150 del paquete y los bonos vigentes):
+
+| Ola | Fechas | Bonos | Valor total |
+|---|---|---|---|
+| 1 · Lanzamiento adelantado | jue 15/oct – sáb 31/oct | 1, 2, 3 y 4 | **$9,785** |
+| 2 · Noviembre | dom 1/nov – dom 22/nov | 1, 2 y 3 | $9,185 |
+| 3 · Semana de Black Friday | lun 23/nov – lun 30/nov | 1, 2 y 3 (la llamada con el CEO se cae el lun 30 a las 11:59 PM) | $9,185 |
+| Último día | mar 1/dic | 2 y 3 | $8,685 |
 
 **Condiciones:**
-- **En plazos:** bonos 3 y 4. Los motion se entregan **cuando termine de pagar**. El agente de AIB y el bono de lanzamiento son **solo para pago completo**.
+- **En plazos:** el paquete base, sin bonos. Los motion se entregan cuando termine de pagar (regla vigente).
 - **Cupos: 12 en total**: 6 que arrancan en octubre y 6 en noviembre. El contador es real y se dice.
 - **Ángulo de octubre:** *"firma en octubre y tu negocio llega a SU Black Friday con anuncios corriendo"*.
 - **Clientes actuales:** renuevan 3 meses por adelantado y les instalamos su agente de AIB (kit `lu-kit-agentes.netlify.app`).
 - **Downsell** (factura menos de $10K o no puede invertir): Bori Business anual de Black Friday.
+- **[DECIDE ELVIN]:** los valores de referencia, los 6 meses de Bori y el período que cubren los $3,500.
+- **Bori siempre se dice "incluido"**, nunca con la palabra prohibida de los CTA.
 
-### 1.2 Cómo la explica el closer en 30 segundos
+### 1.2 Cómo la explica el closer en 30 segundos (con la demo, slides 8 y 9)
 
-> "Mira, {nombre}, lo que me dijiste es que [DOLOR QUE DIJO EL LEAD]. Eso no se arregla con un anuncio
-> más: se arregla con un sistema. Te montamos el sistema completo: tu oferta, la estrategia, el contenido,
-> los anuncios con IA, la automatización de tus leads, y escalamos lo que funcione.
-> Estamos en el Black Friday de Level Up. El precio es el mismo hasta el 1 de diciembre, pero los bonos van
-> bajando. Si entras hoy en pago completo te llevas un agente de IA de AI Borinquen que contesta tu WhatsApp e
-> Instagram, precalifica y agenda, con 3 meses incluidos. También 4 motion graphics con tu marca, una sesión
-> 1:1 con Elvin para tu plan de 2027 y arranque prioritario
-> *[octubre: "y tus anuncios corriendo para TU Black Friday, más el plan de contenido de 30 piezas, que solo
-> existe hasta el 31"]*
-> *[noviembre: "y tus campañas montadas antes del 15 de diciembre"]*.
-> Quedan [DATO] cupos de este mes. ¿Lo hacemos en pago completo o en plazos?"
+> *(Slide 8)* "Mira, {nombre}, lo que me dijiste es que [DOLOR QUE DIJO EL LEAD]. Eso se arregla con un
+> sistema, no con un anuncio más. Por $3,500 te llevas todo esto: manejo de anuncios, estrategia completa,
+> artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional a tu negocio
+> y soporte 24/7. Solo eso vale $6,150.
+> *(Slide 9)* Y como es Black Friday, en pago completo te sumo: una llamada estratégica 1:1 con Elvin, nuestro
+> CEO, para tu plan de 2027; 6 meses de Bori Pro incluidos, nuestra plataforma de IA para que crees contenido
+> extra; y un agente de IA de AI Borinquen que contesta tu WhatsApp e Instagram, precalifica y agenda, con la
+> instalación y 3 meses incluidos
+> *[octubre: "y, solo hasta el 31, tu plan de contenido de 30 piezas. En total son $9,785 en valor"]*.
+> Quedan [DATO] cupos de este mes. ¿Arrancamos con el pago completo hoy?"
 
 **Notas:**
-- El precio se dice **después** de instalar el valor (sesión de closers del 18/07).
-- Siempre con el kit `lu-demo-ventas`.
-- Se cierra con una pregunta de dos opciones, nunca con "¿qué te parece?".
-- Cuando cambie de ola, el closer actualiza la línea de los bonos (tabla de §1.1).
+- El precio se dice **después** de instalar el valor (sesión de closers del 18/07): primero la lista de la slide 8, después el número.
+- Se cierra con una pregunta directa, nunca con "¿qué te parece?".
+- Si pide plazos, se le explica que los bonos son solo de pago completo.
+- Cuando cambie de ola, el closer actualiza los bonos y el valor total (tabla de §1.1).
 
 ### 1.3 Objeciones del Black Friday adelantado
 
@@ -87,31 +100,31 @@ hay **una sola**.
 
 **"¿Black Friday en octubre? ¿Eso es real?"**
 > "Es real, y lo hicimos así a propósito. El precio no cambia hasta el 1 de diciembre; lo que cambia son los
-> bonos. El que entra primero se lleva más. Y en octubre tiene sentido por otra razón: tu negocio también
-> tiene su Black Friday. Si firmas ahora, llegas a tu temporada con anuncios corriendo. Si esperas a
-> noviembre, llegas tarde a la tuya."
+> bonos. Hoy te llevas $9,785 en valor; en noviembre, menos. El que entra primero se lleva más. Y en octubre
+> tiene sentido por otra razón: tu negocio también tiene su Black Friday. Si firmas ahora, llegas a tu temporada
+> con anuncios corriendo. Si esperas a noviembre, llegas tarde a la tuya."
 
 **"¿Por qué ahora? Mejor espero."**
 > "Puedes esperar; el precio va a ser el mismo. Lo que no va a estar es lo que te llevas hoy: el 31 de
-> octubre se cae el plan de contenido de 30 piezas y el 30 de noviembre se cae la sesión 1:1 con Elvin. Los
+> octubre se cae el plan de contenido de 30 piezas y el 30 de noviembre se cae la llamada 1:1 con Elvin. Los
 > cupos son 12, 6 por mes, y se están moviendo. Y en la práctica, el que firma en enero arranca en febrero.
 > Pregúntate esto: si sigues 60 días más dependiendo de referidos, ¿cuántos clientes te cuesta?"
 
 **"Está caro."**
-> "¿Caro comparado con qué? Solo el agente de IA que te instalamos vale $1,500 más $441 de mensualidad, y
-> eso es un bono. Lo caro es seguir pagando por lo que ya tienes: los referidos que no controlas y los
-> leads que se te mueren en el WhatsApp."
+> "¿Caro comparado con qué? Mira la slide 8: solo lo que incluye el paquete vale $6,150, y lo pagas en $3,500.
+> Encima van los bonos: el agente de IA por sí solo vale $1,941. Lo caro es seguir pagando por lo que ya
+> tienes: los referidos que no controlas y los leads que se te mueren en el WhatsApp."
 
 Después:
 - Pregunta: *"Sacando el dinero a un lado, ¿habría alguna otra razón para no hacerlo?"*. Casi siempre aterriza en fondos o en confianza.
-- Si es fondos: **plazos** (bonos 3 y 4; los motion cuando termine de pagar) o financiamiento (PayPal Credit, Klarna, tarjeta).
+- Si es fondos: **plazos** (paquete base sin bonos; los motion al terminar de pagar) o financiamiento (PayPal Credit, Klarna, tarjeta). Que vea lo que deja en la mesa: $9,785 contra $6,150.
 - Filosofía de Elvin: *"si das el precio pero das el valor, no hay forma de que no compren"*. Si suena caro, falta valor, no descuento. **Nunca bajar el precio.**
 
 **"¿Y si no funciona en mi nicho?"**
 > "Los anuncios sí funcionan en tu nicho; lo que falla es la estrategia. Mira el caso de [CASO DEL MISMO
 > NICHO]. Hemos trabajado con más de 100 negocios en Puerto Rico. Te garantizo tráfico y estrategia, que
 > es lo que controlamos. Ventas no se garantizan, y por eso el sistema incluye la parte donde más se pierde:
-> contestar y dar seguimiento."
+> contestar y dar seguimiento, con el agente de IA y soporte 24/7."
 
 - **Caso del mismo nicho:** salud → Dr. Marvin Argüello o Dr. Bryan Vega · restaurante → Tinos · automotriz → RK Automatic · negocio local → Coralis/La Garita.
 - Si de verdad no califica (factura menos de $10K o presupuesto de juguete): no se fuerza; se ofrece **Bori Business anual**.
@@ -121,7 +134,7 @@ Después:
 
 Responde esa pregunta ahí mismo. Después:
 - *"Sacando eso a un lado, ¿hay algo más que te frene?"*
-- "Hagamos esto: te separo 15 minutos con los dos antes de [PRÓXIMO CORTE: 31/oct · 30/nov · 1/dic], y lo ven conmigo con los números delante."
+- "Hagamos esto: te separo 15 minutos con los dos antes de [PRÓXIMO CORTE: 31/oct · 30/nov · 1/dic], y lo ven conmigo con las slides 8 y 9 delante."
 - Mientras decide, mándale **testimonios de su nicho** por WhatsApp (táctica de Carla).
 - Sin firma no hay contrato ni onboarding.
 
@@ -342,16 +355,16 @@ Responde esa pregunta ahí mismo. Después:
   — *Pantalla:* **11:04 PM**
 - **[3–12 s]** "Nadie. Tú estás durmiendo. Mañana a las 9 le contestas… y ya cotizó con otro que le respondió primero. Pagaste por ese cliente y se lo regalaste a la competencia."
   — *Pantalla:* **Le regalaste el cliente a otro**
-- **[12–28 s]** "Por eso este Black Friday, El Sistema Completo de Level Up trae un agente de IA de AI Borinquen instalado. Contesta tu WhatsApp y tu Instagram al instante, le hace las preguntas que tú le harías y le deja la cita en tu calendario. Con 3 meses de mensualidad incluidos."
+- **[12–28 s]** "Por eso este Black Friday, El Sistema Completo de Level Up trae un agente de IA de AI Borinquen instalado. Contesta tu WhatsApp y tu Instagram al instante, le hace las preguntas que tú le harías y le deja la cita en tu calendario. Con la instalación y 3 meses incluidos."
   — *B-roll real:* pantalla del agente contestando un WhatsApp (demo real, datos de ejemplo). *Pantalla:* **Contesta · Precalifica · Agenda**
-- **[28–36 s]** "Y es solo una parte: oferta, estrategia, contenido, anuncios con IA y escalar lo que funciona. Lo hemos hecho con más de 100 negocios en Puerto Rico."
+- **[28–36 s]** "Y es solo una parte. Por $3,500 te llevas manejo de anuncios, estrategia, artes, edición de videos, motion graphics, una visita de contenido y soporte 24/7. Lo hemos hecho con más de 100 negocios en Puerto Rico."
 - **[36–45 s]** "El agente va solo en pago completo, hasta el 1 de diciembre. Escribe SISTEMA o dale al enlace y agenda."
   — *Pantalla:* **Hasta el 1/dic · Quedan [DATO] cupos**
 
 **CTA:** Escribe SISTEMA · dale al enlace y agenda.
 
 **Copy del anuncio (Meta)**
-- **Texto principal:** Son las 11:04 de la noche y alguien que te quiere contratar te acaba de escribir. Si nadie contesta, mañana ya cotizó con otro. Este Black Friday, El Sistema Completo de Level Up trae un agente de IA de AI Borinquen instalado: contesta tu WhatsApp e Instagram al instante, precalifica y te deja la cita en el calendario, con 3 meses de mensualidad incluidos. Además: oferta, estrategia, contenido, anuncios con IA y escalar lo que funciona. Solo en pago completo, hasta el 1 de diciembre. Escribe SISTEMA o dale al enlace.
+- **Texto principal:** Son las 11:04 de la noche y alguien que te quiere contratar te acaba de escribir. Si nadie contesta, mañana ya cotizó con otro. Este Black Friday, El Sistema Completo de Level Up trae un agente de IA de AI Borinquen instalado: contesta tu WhatsApp e Instagram al instante, precalifica y te deja la cita en el calendario, con la instalación y 3 meses incluidos. Va dentro de El Sistema Completo por $3,500: anuncios, estrategia, artes, edición de videos, motion graphics, visita de contenido y soporte 24/7. Solo en pago completo, hasta el 1 de diciembre. Escribe SISTEMA o dale al enlace.
 - **Titular:** Tu WhatsApp contesta a las 11 PM
 - **Descripción:** Agente de IA incluido · hasta el 1/dic.
 
@@ -361,57 +374,57 @@ Responde esa pregunta ahí mismo. Después:
 
 - **Pilar:** PRODUCTO (testimonio en video) · **Estructura:** Elvin · **Ola:** 3 · Semana de Black Friday (sobre todo el vie 27/nov) · **Cara:** Frankie Jay + clip de Oliver Santiago
 - **Avatar:** negocios tradicionales y restaurantes de PR que crecieron por boca a boca y tocaron techo
-- **Enemigo:** depender de referidos · **Duración:** 55 s
+- **Enemigo:** depender de referidos · **Duración:** 60 s
 - **Pattern interrupt (0–1 s):** abre con Oliver Santiago en Tinos (Cabo Rojo), clip real (`motion/public/lu-peli/oliver.mp4`), primer plano, sin intro.
 
 **Guion**
 - **[0–4 s]** Frankie (voz sobre el clip): "Tinos pasó de facturar $30K a $100K al mes. ¿Cómo?"
   — *Pantalla:* **$30K → $100K/mes** + aviso de resultados
-- **[4–14 s]** "No fue un anuncio que se hizo viral. Antes, como casi todo negocio en Puerto Rico, dependían de que la gente los recomendara [DATO: confirmar con Oliver cómo conseguían clientes antes]. Eso da para vivir. No da para crecer."
-- **[14–30 s]** "Lo que hicimos fue un sistema: le arreglamos la oferta, armamos la estrategia, estructuramos el contenido, montamos anuncios con estrategia, automatizamos los mensajes para que nadie se quedara sin contestar, y escalamos lo que funcionó."
+- **[4–13 s]** "No fue un anuncio que se hizo viral. Antes, como casi todo negocio en Puerto Rico, dependían de que la gente los recomendara [DATO: confirmar con Oliver cómo conseguían clientes antes]. Eso da para vivir. No da para crecer."
+- **[13–27 s]** "Lo que hicimos fue un sistema: le arreglamos la oferta, armamos la estrategia, estructuramos el contenido, montamos anuncios con estrategia, automatizamos los mensajes para que nadie se quedara sin contestar, y escalamos lo que funcionó."
   — *Pantalla (en lista):* **Oferta · Estrategia · Contenido · Anuncios · Automatización · Escalar**
-- **[30–40 s]** *(Clip de Oliver en sus palabras: `oliver.mp4` u `oliver-cuenten.mp4`. VERIFICAR qué dice antes de editar; si dice el número, que lo diga él.)*
-- **[40–55 s]** "Ese mismo sistema es el que tenemos en Black Friday, con un agente de IA incluido y tus campañas montadas antes del 15 de diciembre. Quedan pocos cupos. Escribe SISTEMA o dale al enlace y agenda."
+- **[27–37 s]** *(Clip de Oliver en sus palabras: `oliver.mp4` u `oliver-cuenten.mp4`. VERIFICAR qué dice antes de editar; si dice el número, que lo diga él.)*
+- **[37–52 s]** "Ese sistema es el que tenemos en Black Friday por $3,500: manejo de anuncios, estrategia, artes, edición de videos, motion graphics, una visita de contenido a tu negocio y soporte 24/7. Y en pago completo te sumamos el agente de IA, 6 meses de Bori Pro incluidos y una llamada 1:1 con Elvin."
+  — *Pantalla:* **$9,185 en valor por $3,500**
+- **[52–60 s]** "Quedan pocos cupos. Escribe SISTEMA o dale al enlace y agenda."
 
 **CTA:** Escribe SISTEMA · dale al enlace y agenda.
 
 **Copy del anuncio (Meta)**
-- **Texto principal:** Tinos, el restaurante de Oliver Santiago en Cabo Rojo, pasó de facturar $30K a $100K al mes. No fue un anuncio viral. Fue un sistema: oferta, estrategia, contenido con estructura, anuncios con estrategia, mensajes automatizados para que nadie se quedara sin contestar, y escalar lo que funcionó. Ese mismo sistema es el que tenemos en Black Friday: agente de IA incluido en pago completo y campañas montadas antes del 15 de diciembre. Quedan pocos cupos. Escribe SISTEMA o dale al enlace. (Resultados de un cliente real; no son típicos ni garantizados.)
+- **Texto principal:** Tinos, el restaurante de Oliver Santiago en Cabo Rojo, pasó de facturar $30K a $100K al mes. No fue un anuncio viral: fue un sistema. Ese sistema es nuestro Black Friday. Por $3,500 incluye manejo de anuncios, estrategia completa, artes y creativos, edición de videos, motion graphics, una visita de contenido profesional y soporte 24/7. En pago completo te sumamos un agente de IA que contesta y agenda, 6 meses de Bori Pro incluidos y una llamada 1:1 con Elvin. Más de $9,000 en valor. Quedan pocos cupos. Escribe SISTEMA o dale al enlace. (Resultados de un cliente real; no son típicos ni garantizados.)
 - **Titular:** Tinos: de $30K a $100K al mes
-- **Descripción:** El sistema detrás · Black Friday hasta el 1/dic.
+- **Descripción:** $9,185 en valor por $3,500 · hasta el 1/dic.
 
 ---
 
-### LU-BF-09 · "Lo que te llevas (y por qué quedan pocos)"
+### LU-BF-09 · "Todo esto por $3,500 (y por qué quedan pocos)"
 
 - **Pilar:** PRODUCTO (oferta con bonos) · **Estructura:** Elvin · **Cara:** Daren
-- **Ola:** 2 y 3. Una sola grabación con una línea que cambia: la de la Ola 3 avisa que la 1:1 se cae el 30/nov.
+- **Ola:** 2 y 3. Una sola grabación con una línea que cambia: la de la Ola 3 avisa que la llamada con el CEO se cae el 30/nov.
 - **Avatar:** coaches/mentores/digitales (consultoría: "te lo instalamos contigo", nunca "agencia")
 - **Enemigo:** no tener estrategia · **Duración:** 60 s
-- **Pattern interrupt (0–1 s):** Daren pone sobre la mesa, de un golpe, una libreta con "12" escrito grande. Motion de Remi sobre la imagen real para apilar los bonos.
+- **Pattern interrupt (0–1 s):** Daren pone sobre la mesa, de un golpe, una libreta con "$3,500" escrito grande. Remi suma encima los valores, como la slide 8 de la demo.
 
 **Guion**
-- **[0–4 s]** "Esto es lo que te llevas si te instalamos tu sistema en este Black Friday. Y por qué solo hay 12."
-  — *Pantalla:* **12 cupos · quedan [DATO]**
-- **[4–12 s]** "Si sigues publicando sin estructura y vendiendo tú solo por el DM, enero va a ser igualito que octubre."
-- **[12–40 s]** "Te instalamos contigo, 1 a 1, el sistema completo: tu oferta, tu estrategia, tu contenido con ángulos ganadores, tus anuncios con IA, la automatización de tus leads, y escalamos lo que funcione. Y en Black Friday le sumamos:
-  uno, un agente de IA de AI Borinquen que contesta tu DM y tu WhatsApp, precalifica y agenda, con 3 meses incluidos;
-  dos, 4 motion graphics con tu marca real;
-  tres, una sesión 1:1 con Elvin para armar tu plan de 2027;
-  y cuatro, tus campañas montadas antes del 15 de diciembre."
-  — *Pantalla (Remi):* cada bono apilándose
-- **[40–48 s]** "Es el mismo sistema con el que Coralis, de La Garita, pasó de $25K a $70K al mes. Y son 12 porque es lo que podemos arrancar bien."
+- **[0–4 s]** "Esto es todo lo que te llevas por $3,500 en este Black Friday. Y por qué solo hay 12 cupos."
+  — *Pantalla:* **$3,500 · 12 cupos · quedan [DATO]**
+- **[4–10 s]** "Si sigues publicando sin estructura y vendiendo tú solo por el DM, enero va a ser igualito que octubre."
+- **[10–26 s]** "Primero, lo que incluye: manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7. Te lo instalamos contigo. Eso solo vale $6,150."
+  — *Pantalla (Remi):* cada partida con su valor, que suma **$6,150**
+- **[26–42 s]** "Y en pago completo te sumo tres bonos. Una llamada estratégica 1:1 con Elvin, nuestro CEO, para tu plan de 2027. Seis meses de Bori Pro incluidos, nuestra plataforma de IA para crear contenido extra. Y un agente de IA de AI Borinquen que contesta tu DM y tu WhatsApp, precalifica y agenda, con la instalación y 3 meses."
+  — *Pantalla (Remi):* bonos apilándose → **$9,185 en valor**
+- **[42–50 s]** "Es el mismo sistema con el que Coralis, de La Garita, pasó de $25K a $70K al mes. Y son 12 cupos porque es lo que podemos arrancar bien."
   — *Pantalla:* **Coralis: $25K → $70K/mes** + aviso de resultados
-- **[48–60 s]** Hay dos finales:
-  - *Ola 2:* "El precio no cambia, pero los bonos sí. El agente va solo en pago completo. Escribe SISTEMA o dale al enlace y agenda."
-  - *Ola 3:* "La sesión 1:1 con Elvin se cae el lunes 30 a medianoche. Escribe SISTEMA o dale al enlace y agenda."
+- **[50–60 s]** Hay dos finales:
+  - *Ola 2:* "El precio no cambia, pero los bonos sí, y son solo en pago completo. Escribe SISTEMA o dale al enlace y agenda."
+  - *Ola 3:* "La llamada 1:1 con Elvin se cae el lunes 30 a medianoche. Escribe SISTEMA o dale al enlace y agenda."
 
 **CTA:** Escribe SISTEMA · dale al enlace y agenda.
 
 **Copy del anuncio (Meta)**
-- **Texto principal:** El Sistema Completo · Black Friday. Te instalamos contigo, 1 a 1: oferta, estrategia, contenido con ángulos ganadores, anuncios con IA, automatización de leads y escalar lo que funciona. En pago completo te llevas además: un agente de IA de AI Borinquen que contesta, precalifica y agenda (3 meses incluidos), 4 motion graphics con tu marca, una sesión 1:1 con Elvin para tu plan de 2027 y tus campañas montadas antes del 15 de diciembre. El precio no cambia; los bonos sí. Solo 12 cupos. Escribe SISTEMA o dale al enlace.
-- **Titular:** El Sistema Completo · Black Friday
-- **Descripción:** Quedan pocos cupos · cierra el 1/dic.
+- **Texto principal:** El Sistema Completo · Black Friday por $3,500. Incluye manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7: $6,150 en valor. En pago completo te sumamos una llamada estratégica 1:1 con Elvin, 6 meses de Bori Pro incluidos y un agente de IA de AI Borinquen que contesta, precalifica y agenda (instalación + 3 meses). Más de $9,000 en valor por $3,500. El precio no cambia; los bonos sí. Solo 12 cupos. Escribe SISTEMA o dale al enlace.
+- **Titular:** Todo esto por $3,500
+- **Descripción:** $9,185 en valor · cierra el 1/dic.
 
 ---
 
@@ -429,7 +442,7 @@ Responde esa pregunta ahí mismo. Después:
 - **[3–14 s]** "Mira cómo funciona en la vida real: el que firma en enero arranca en febrero. El que firma hoy entra a enero con las campañas montadas y un agente de IA contestándole los mensajes. La diferencia no es el dinero. Es decidir."
   — *Pantalla:* **Hoy → enero corriendo · Enero → febrero**
 - **[14–24 s]** Cambia según la versión:
-  - *30/nov:* "Hoy a medianoche se cae la sesión 1:1 con Elvin. Y mañana cierra todo."
+  - *30/nov:* "Hoy a medianoche se cae la llamada 1:1 con Elvin. Y mañana cierra todo."
   - *1/dic:* "El Sistema Completo cierra hoy a las 11:59 de la noche, hora de Puerto Rico. No hay extensión. La fecha es real."
   — *Pantalla:* **contador en vivo (Remi)**
 - **[24–30 s]** "Escribe SISTEMA ahora o dale al enlace y agenda."
@@ -441,7 +454,7 @@ Responde esa pregunta ahí mismo. Después:
 - **Titular:** Cierra hoy 11:59 PM. Sin extensión
 - **Descripción:** Últimas horas del Black Friday de Level Up.
 
-**Versión 30/nov:** cambia la tercera oración por "Hoy a medianoche se cae la sesión 1:1 con Elvin y mañana cierra todo". Titular: "Cyber Monday: hoy se cae la 1:1".
+**Versión 30/nov:** cambia la tercera oración por "Hoy a medianoche se cae la llamada 1:1 con Elvin y mañana cierra todo". Titular: "Cyber Monday: hoy se cae la 1:1".
 
 ---
 
@@ -450,22 +463,23 @@ Responde esa pregunta ahí mismo. Después:
 - **Pilar:** PRODUCTO (lanzamiento) · **Estructura:** Elvin · **Ola:** 1 · Lanzamiento adelantado (jue 15 – sáb 31/oct)
 - **Cara:** ninguna. Lo produce Remi: tipografía cinética + clip real de Oliver (`motion/public/lu-peli/oliver.mp4`) + logo real de Level Up.
 - **Avatar:** dueños de negocio local (restaurantes, servicios, salud) que necesitan SU campaña de fin de año
-- **Enemigo:** depender de referidos · **Duración:** 30 s, música de marca (`motion/public/audio/level-up-musica.mp3`)
+- **Enemigo:** depender de referidos · **Duración:** 35 s, música de marca (`motion/public/audio/level-up-musica.mp3`)
 - **Pattern interrupt (0–1 s):** una hoja de calendario real que dice "NOVIEMBRE" se arranca y debajo aparece "OCTUBRE". Golpe de sonido.
 
 **Guion (todo en texto de pantalla, sin locución)**
 - **[0–3 s]** GANCHO: **El Black Friday llegó temprano.** → **Y no es el tuyo de comprar. Es el de tu negocio.**
-- **[3–9 s]** PROBLEMA: **Diciembre es tu temporada.** → **Si empiezas tus anuncios en noviembre, llegas tarde.** → **Y vuelves a depender de que te recomienden.**
-- **[9–16 s]** SOLUCIÓN: **Firma en octubre y llegas a TU Black Friday con anuncios corriendo.** → **Oferta · Estrategia · Contenido · Anuncios con IA · Agente que contesta y agenda**
+- **[3–8 s]** PROBLEMA: **Diciembre es tu temporada.** → **Si empiezas tus anuncios en noviembre, llegas tarde.**
+- **[8–16 s]** SOLUCIÓN, la lista de la slide 8 con su suma: **Anuncios · Estrategia · Artes · Edición de videos · Motion graphics · Visita de contenido · Soporte 24/7** → **$6,150 en valor**
 - **[16–24 s]** PRUEBA: clip de Oliver (Tinos, Cabo Rojo) en sus palabras. VERIFICAR qué dice. Encima: **Tinos: $30K → $100K/mes** + aviso de resultados.
-- **[24–30 s]** CTA: **Solo hasta el 31/oct: + plan de contenido de 30 piezas** → **6 cupos en octubre** → **Escribe SISTEMA · o dale al enlace**
+- **[24–31 s]** Los bonos de la slide 9: **+ Llamada 1:1 con el CEO · + Bori Pro 6 meses incluido · + Agente de IA (instalación + 3 meses) · + Plan de contenido de 30 piezas (solo hasta el 31/oct)** → **$9,785 en valor por $3,500**
+- **[31–35 s]** CTA: **6 cupos en octubre** → **Escribe SISTEMA · o dale al enlace**
 
 **CTA:** Escribe SISTEMA · dale al enlace.
 
 **Copy del anuncio (Meta)**
-- **Texto principal:** El Black Friday llegó temprano, y no es el de comprar: es el de tu negocio. Diciembre es tu temporada, y el que empieza sus anuncios en noviembre llega tarde. Firma en octubre y llegas a TU Black Friday con anuncios corriendo. El Sistema Completo de Level Up: oferta, estrategia, contenido, anuncios con IA y un agente de IA que contesta y agenda (pago completo, 3 meses incluidos). Solo hasta el 31 de octubre, además, tu plan de contenido de 30 piezas. 6 cupos en octubre. Escribe SISTEMA o dale al enlace.
-- **Titular:** El Black Friday llegó temprano
-- **Descripción:** 6 cupos en octubre · bono hasta el 31.
+- **Texto principal:** El Black Friday llegó temprano, y no es el de comprar: es el de tu negocio. Firma en octubre y llegas a TU temporada con anuncios corriendo. Por $3,500: manejo de anuncios, estrategia completa, artes y creativos, edición de videos, motion graphics, visita de contenido profesional y soporte 24/7. En pago completo, además: llamada 1:1 con el CEO, 6 meses de Bori Pro incluidos, un agente de IA que contesta y agenda y, solo hasta el 31 de octubre, tu plan de contenido de 30 piezas. $9,785 en valor. 6 cupos en octubre. Escribe SISTEMA o dale al enlace.
+- **Titular:** $9,785 en valor por $3,500
+- **Descripción:** El Black Friday llegó temprano · 6 cupos.
 
 ---
 
@@ -478,11 +492,11 @@ Responde esa pregunta ahí mismo. Después:
 - **Pattern interrupt (0–1 s):** cuatro escalones caen uno encima del otro con sonido de golpe, y el de arriba brilla en amarillo LU.
 
 **Guion (texto de pantalla; la única voz es la del clip)**
-- **[0–3 s]** **Mismo precio. Menos bonos cada semana.**
+- **[0–3 s]** **Mismo precio: $3,500. Menos bonos cada semana.**
 - **[3–13 s]** La escalera se arma peldaño por peldaño:
-  - **Octubre:** los 4 bonos + plan de contenido de 30 piezas
-  - **Noviembre:** los 4 bonos
-  - **Después del 30/nov:** sin la sesión 1:1 con Elvin
+  - **Octubre:** todos los bonos → **$9,785 en valor**
+  - **Noviembre:** sin el plan de contenido → **$9,185**
+  - **Después del 30/nov:** sin la llamada 1:1 con el CEO → **$8,685**
   - **1/dic:** se cierra
 - **[13–20 s]** Clip del Dr. Bryan Vega. **Que lo diga él:** cuántos pacientes nuevos recibe al mes. Encima: **Eso es un sistema.**
 - **[20–25 s]** **El que entra primero se lleva más.** → **Quedan [DATO] de 6 cupos en octubre** → **Escribe SISTEMA · o dale al enlace**
@@ -490,7 +504,7 @@ Responde esa pregunta ahí mismo. Después:
 **CTA:** Escribe SISTEMA · dale al enlace.
 
 **Copy del anuncio (Meta)**
-- **Texto principal:** En el Black Friday de Level Up el precio no cambia. Lo que cambia son los bonos. En octubre te llevas el agente de IA que contesta y agenda (3 meses incluidos), 4 motion graphics con tu marca, una sesión 1:1 con Elvin para tu plan de 2027, tus anuncios corriendo para tu temporada y, solo hasta el 31, tu plan de contenido de 30 piezas. En noviembre, uno menos. Después del 30, otro menos. El que entra primero se lleva más. Escribe SISTEMA o dale al enlace.
+- **Texto principal:** En el Black Friday de Level Up el precio no cambia: $3,500. Lo que cambia son los bonos. En octubre, además de anuncios, estrategia, artes, edición de videos, motion graphics, visita de contenido y soporte 24/7, te llevas una llamada 1:1 con el CEO, 6 meses de Bori Pro incluidos, un agente de IA que contesta y agenda, y tu plan de contenido de 30 piezas: $9,785 en valor. En noviembre, $9,185. Después del 30, $8,685. El que entra primero se lleva más. Escribe SISTEMA o dale al enlace.
 - **Titular:** El que entra primero se lleva más
 - **Descripción:** Mismo precio · menos bonos cada semana.
 
@@ -502,35 +516,36 @@ Responde esa pregunta ahí mismo. Después:
 - Foto **real** como referencia (`--foto`) y el logo real de `public/marcas/level-up` como última referencia.
 - Negro + amarillo LU (#f5ce1a).
 - Copy: título de 8 palabras o menos, 3 bullets de 6 palabras o menos, CTA de 4 palabras o menos, sin la palabra prohibida de los CTA.
+- Bori siempre como "incluido".
 - Fotos de los flyers de octubre: los flyers se hacen el 12–13/oct, antes de la grabación, así que se usan fotos reales que ya existen. Están en `motion/public/lu-peli/casos/` (`rk.jpg`, `interior.jpg`…) o en el banco de fotos del equipo. Cualquier foto de un cliente, solo con su permiso.
 
 ### Flyer 1 · Lanzamiento (Ola 1 · desde el jue 15/oct)
 - **Título:** El Black Friday llegó temprano.
-- **Bullets:** Agente de IA incluido · Bono de lanzamiento hasta el 31 · Solo 6 cupos en octubre
+- **Bullets:** $9,785 en valor por $3,500 · Agente de IA incluido · Solo 6 cupos en octubre
 - **CTA:** Escribe SISTEMA
 - **Foto real:** el equipo de Level Up trabajando o el taller de RK Automatic (`casos/rk.jpg`), con contraste alto.
-- **Copy del post:** El Black Friday de Level Up llegó temprano, y no es para que compres: es para que tu negocio llegue a SU temporada con anuncios corriendo. El Sistema Completo: oferta, estrategia, contenido, anuncios con IA y un agente de IA que contesta y agenda (pago completo, 3 meses incluidos). Solo hasta el 31 de octubre te llevas además tu plan de contenido de 30 piezas. 6 cupos en octubre. Escribe SISTEMA o dale al enlace.
+- **Copy del post:** El Black Friday de Level Up llegó temprano, para que tu negocio llegue a SU temporada con anuncios corriendo. Por $3,500 te llevas manejo de anuncios, estrategia completa, artes y creativos, edición de videos, motion graphics, una visita de contenido profesional y soporte 24/7. En pago completo, además: una llamada 1:1 con el CEO, 6 meses de Bori Pro incluidos, un agente de IA que contesta y agenda y, solo hasta el 31 de octubre, tu plan de contenido de 30 piezas. $9,785 en valor. 6 cupos en octubre. Escribe SISTEMA o dale al enlace.
 
 ### Flyer 2 · Escalera de bonos (Ola 1; en la Ola 2 se reedita sin el peldaño de octubre)
 - **Título:** El que entra primero se lleva más
-- **Bullets:** Hasta el 31/oct: todo incluido · Noviembre: sin el plan de contenido · Mismo precio. Menos bonos.
+- **Bullets:** Octubre: $9,785 en valor · Noviembre: sin el plan de contenido · Mismo precio. Menos bonos.
 - **CTA:** Escribe SISTEMA
 - **Foto real:** libreta real (hoja rayada, bolígrafo azul) con una escalera dibujada a mano, sobre un escritorio del equipo.
-- **Copy del post:** En nuestro Black Friday el precio no baja, y te digo por qué: lo que baja son los bonos. Si entras en octubre te llevas todo, incluido tu plan de contenido de 30 piezas. En noviembre, ese bono ya no está. El 30 se va la sesión 1:1 con Elvin. Y el 1 de diciembre cierra. El que entra primero se lleva más. Escribe SISTEMA o dale al enlace.
+- **Copy del post:** En nuestro Black Friday el precio no baja, y te digo por qué: lo que baja son los bonos. Si entras en octubre te llevas todo: $9,785 en valor por $3,500, incluido tu plan de contenido de 30 piezas. En noviembre, ese bono ya no está. El 30 se va la llamada 1:1 con el CEO. Y el 1 de diciembre cierra. El que entra primero se lleva más. Escribe SISTEMA o dale al enlace.
 
 ### Flyer 3 · Semana de Black Friday (Ola 3 · 23–30/nov)
-- **Título:** Tu sistema de clientes, montado antes de enero
-- **Bullets:** Agente de IA incluido · 4 motion graphics con tu marca · 1:1 con Elvin hasta el 30
+- **Título:** Todo esto por $3,500. Más tres bonos.
+- **Bullets:** Anuncios, estrategia, creativos y videos · Agente de IA + Bori Pro · 1:1 con el CEO hasta 30/nov
 - **CTA:** Escribe SISTEMA
-- **Foto real:** Daren con la libreta del "12" (sesión del día de grabación).
-- **Copy del post:** Semana de Black Friday. El Sistema Completo: oferta, estrategia, contenido, anuncios con IA, automatización de leads y escalar lo que funciona. En pago completo te llevas un agente de IA de AI Borinquen (contesta, precalifica y agenda, con 3 meses incluidos), 4 motion graphics con tu marca, tus campañas montadas antes del 15 de diciembre y, solo hasta el lunes 30, una sesión 1:1 con Elvin para tu plan de 2027. Quedan [DATO] cupos. Escribe SISTEMA o dale al enlace.
+- **Foto real:** Daren con la libreta del "$3,500" (sesión del día de grabación).
+- **Copy del post:** Semana de Black Friday. Por $3,500: manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7 ($6,150 en valor). En pago completo te sumamos un agente de IA de AI Borinquen que contesta, precalifica y agenda (instalación + 3 meses), 6 meses de Bori Pro incluidos y, solo hasta el lunes 30, una llamada estratégica 1:1 con Elvin. $9,185 en valor. Quedan [DATO] cupos. Escribe SISTEMA o dale al enlace.
 
 ### Flyer 4 · Últimas horas (mar 1/dic)
 - **Título:** Cierra hoy a medianoche. Sin extensión.
-- **Bullets:** Agente de IA incluido · Campañas listas antes del 15/dic · Quedan [DATO] cupos
+- **Bullets:** Agente de IA incluido · 6 meses de Bori Pro incluidos · Quedan [DATO] cupos
 - **CTA:** Escribe SISTEMA hoy
 - **Foto real:** Frankie o Daren con el calendario de pared en "1 DIC" (el mismo set del LU-BF-10).
-- **Copy del post:** Último día. El Black Friday de Level Up cierra hoy a las 11:59 PM, hora de Puerto Rico, y no se extiende. Si llevas todo el año diciendo "en enero lo empiezo", hoy es el día en que eso deja de ser un plan y se vuelve una fecha. Escribe SISTEMA o dale al enlace y agenda.
+- **Copy del post:** Último día. El Black Friday de Level Up cierra hoy a las 11:59 PM, hora de Puerto Rico, y no se extiende. Todavía te llevas el paquete completo por $3,500 y, en pago completo, el agente de IA y 6 meses de Bori Pro incluidos: $8,685 en valor. Si llevas todo el año diciendo "en enero lo empiezo", hoy es el día. Escribe SISTEMA o dale al enlace y agenda.
 - **Nota:** el número de cupos sale de la hoja real del día. Si no se sabe, se quita ese bullet y se pone "No se extiende".
 
 ---
@@ -553,7 +568,7 @@ Responde esa pregunta ahí mismo. Después:
 - LU-BF-02, 04, 06, 09 y 10 completos, con los dos finales.
 - LU-BF-09 con los dos cierres (Ola 2 y Ola 3).
 - LU-BF-10 en dos versiones (Cyber Monday y 1/dic).
-- Foto con la libreta del "12" para el flyer 3.
+- Foto con la libreta del "$3,500" para el flyer 3.
 
 **B-roll real (nada de IA)**
 - **Pantallas y teléfonos:**
@@ -600,7 +615,7 @@ Responde esa pregunta ahí mismo. Después:
 | 11 | jue 26/nov · 10 AM | Gracias (cero venta) | todos |
 | 12 | vie 27/nov · 6 AM | Black Friday | no compradores |
 | 13 | sáb 28/nov · 9 AM | Preguntas + prueba | no compradores |
-| 14 | lun 30/nov · 8 AM | Cyber Monday: se cae la 1:1 | no compradores |
+| 14 | lun 30/nov · 8 AM | Cyber Monday: se cae la llamada con el CEO | no compradores |
 | 15 | mar 1/dic · 8 AM | Último día | no compradores |
 | 16 | mar 1/dic · 8 PM | Cierra a medianoche (corto) | no compradores |
 | 17 | mié 2/dic · 9 AM | A: bienvenida · B: lista de enero | según |
@@ -610,7 +625,7 @@ Responde esa pregunta ahí mismo. Después:
 
 ### Email 1 · jue 15/oct · 7 AM · todos — El Black Friday llegó temprano
 - **Asunto:** El Black Friday llegó temprano
-- **Preheader:** Mismo precio hasta el 1/dic. Los bonos, no.
+- **Preheader:** $9,785 en valor por $3,500. Solo en octubre.
 
 {nombre},
 
@@ -618,20 +633,29 @@ Vas a ver que todo el mundo saca sus ofertas de Black Friday a finales de noviem
 
 Tu negocio también tiene su Black Friday: diciembre, las fiestas, la temporada en que la gente compra. Si empiezas tus anuncios en noviembre, llegas tarde a la tuya. **Si firmas en octubre, llegas a TU Black Friday con anuncios corriendo.**
 
-Lo que abrimos es **El Sistema Completo**: tu oferta, tu estrategia, tu contenido, tus anuncios con IA, la automatización de tus leads, y escalar lo que funcione.
+Por **$3,500** te llevas:
+- manejo de anuncios;
+- estrategia completa;
+- artes y creativos;
+- edición de videos;
+- videos motion graphics;
+- una visita de contenido profesional a tu negocio;
+- soporte 24/7.
 
-En pago completo ($3,500) te llevas además:
+Solo eso vale $6,150.
 
-1. **Un agente de chat de AI Borinquen** en tu WhatsApp e Instagram: contesta, precalifica y agenda. Con 3 meses de mensualidad incluidos.
-2. **4 motion graphics** con tu marca real.
-3. **Una sesión 1:1 conmigo**, para tu plan de 2027.
-4. **Arranque prioritario:** tus anuncios corriendo para tu temporada.
+Y en pago completo te sumo los bonos de Black Friday:
 
-Y **solo hasta el 31 de octubre: tu plan de contenido de 30 piezas** con tus ángulos ganadores.
+1. **Una llamada estratégica 1:1 conmigo** para tu plan de 2027.
+2. **6 meses de Bori Pro incluidos**, nuestra plataforma de IA para que crees contenido extra.
+3. **Un agente de IA de AI Borinquen** en tu WhatsApp e Instagram que contesta, precalifica y agenda, con la instalación y 3 meses incluidos.
+4. **Solo hasta el 31 de octubre:** tu plan de contenido de 30 piezas con tus ángulos ganadores.
 
-Así funciona: el precio es el mismo hasta el 1 de diciembre, pero los bonos van bajando. El 31 de octubre se cae el plan de contenido y el 30 de noviembre se cae la sesión conmigo. El que entra primero se lleva más.
+Todo junto son **$9,785 en valor por $3,500.**
 
-Son 12 cupos, 6 que arrancan en octubre y 6 en noviembre.
+Así funciona: el precio es el mismo hasta el 1 de diciembre, pero los bonos van bajando. El 31 de octubre se cae el plan de contenido y el 30 de noviembre se cae la llamada conmigo. El que entra primero se lleva más.
+
+Son 12 cupos: 6 que arrancan en octubre y 6 en noviembre.
 
 Agenda tu llamada aquí: [LINK]
 
@@ -704,20 +728,27 @@ Level Up Media
 Llevamos 11 días con el Black Friday abierto. Estas son las cuatro preguntas que más me han hecho; te las contesto sin rodeos.
 
 **"¿Esto funciona en mi nicho?"**
-Los anuncios funcionan en casi cualquier nicho; lo que falla es la estrategia. Hemos trabajado con más de 100 negocios en Puerto Rico: salud, restaurantes, automotriz, servicios. En la llamada te enseño el caso más parecido al tuyo.
+Los anuncios funcionan en casi cualquier nicho; lo que falla es la estrategia. Hemos trabajado con más de 100 negocios en Puerto Rico: salud, restaurantes, automotriz y servicios. En la llamada te enseño el caso más parecido al tuyo.
 
 **"¿Por qué $3,500?"**
-Porque no es un anuncio: es el sistema completo. Solo el agente de IA que te instalamos vale $1,500 más $441 de mensualidad, y en Black Friday va incluido en pago completo.
+Haz la suma tú mismo:
+- manejo de anuncios ($1,500);
+- estrategia completa ($1,000);
+- artes y creativos ($600);
+- edición de videos ($800);
+- motion graphics ($1,000);
+- visita de contenido profesional ($750);
+- soporte 24/7 ($500).
+
+Son $6,150, y lo pagas en $3,500. Encima, en pago completo, van los bonos: hoy suman $9,785 en valor.
 
 **"¿Me garantizas ventas?"**
-No. Nadie serio te garantiza ventas. Te garantizo tráfico y estrategia, que es lo que controlamos, y te monto la parte donde más ventas se pierden: contestar a tiempo y dar seguimiento.
+No. Nadie serio te garantiza ventas. Te garantizo tráfico y estrategia, que es lo que controlamos. Y con el agente de IA te monto la parte donde más ventas se pierden: contestar a tiempo y dar seguimiento.
 
 **"¿Y si lo hago en noviembre?"**
 Puedes; el precio es el mismo. Pero pierdes el plan de contenido de 30 piezas, que se cae el sábado 31, y llegas más tarde a tu temporada.
 
 **Cupos:** de los 6 que arrancan en octubre quedan [DATO].
-
-Si tu pregunta no está aquí, házmela en la llamada.
 
 Agenda aquí: [LINK]
 
@@ -734,22 +765,21 @@ Level Up Media
 
 Mañana, sábado 31 de octubre, a las 11:59 PM, se cae el bono de lanzamiento de nuestro Black Friday.
 
-Te recuerdo lo que es: **tu plan de contenido de 30 piezas, armado con tus ángulos ganadores**, los temas que traen clientes listos para comprar. O sea, un mes completo sabiendo qué publicar y por qué, en vez de sentarte cada mañana a ver qué se te ocurre.
+Te recuerdo lo que es: **tu plan de contenido de 30 piezas, armado con tus ángulos ganadores**, los temas que traen clientes listos para comprar. Un mes completo sabiendo qué publicar y por qué, en vez de sentarte cada mañana a ver qué se te ocurre.
 
-Desde el domingo el precio sigue igual, pero ese bono ya no existe. Y los cupos que arrancan en octubre tampoco: si entras desde el 1 de noviembre, arrancas con el grupo de noviembre.
+Desde el domingo el precio sigue igual, pero ese bono ya no existe. Y los cupos que arrancan en octubre, tampoco.
 
-Lo que te llevas si entras hoy o mañana en pago completo:
+Lo que te llevas si entras hoy o mañana en pago completo, por $3,500:
 
-- El Sistema Completo: oferta, estrategia, contenido, anuncios con IA, automatización de leads y escalar lo que funcione.
-- Un agente de IA de AI Borinquen que contesta, precalifica y agenda, con 3 meses incluidos.
-- 4 motion graphics con tu marca.
-- Una sesión 1:1 conmigo para tu plan de 2027.
-- Tus anuncios corriendo para tu temporada.
-- Y el plan de contenido de 30 piezas.
+- **El paquete** ($6,150 en valor): manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7.
+- **Una llamada estratégica 1:1 conmigo**, para tu plan de 2027.
+- **6 meses de Bori Pro incluidos.**
+- **Un agente de IA de AI Borinquen** que contesta, precalifica y agenda, con la instalación y 3 meses.
+- **Y el plan de contenido de 30 piezas.**
+
+Son $9,785 en valor. Desde el domingo, $9,185.
 
 Quedan [DATO] cupos de octubre.
-
-Si lo estabas pensando, hoy y mañana son los días.
 
 Agenda tu llamada aquí: [LINK]
 
@@ -814,21 +844,25 @@ P.D. Si ya sabes cuál es tu hueco y quieres taparlo, nuestro Black Friday sigue
 
 {nombre},
 
-Te cuento dos casos que me gustan mucho, porque empezaron desde cero.
+Te cuento dos casos que me gustan mucho porque empezaron desde cero.
 
 El **Dr. Marvin Argüello** es cirujano plástico. Cuando empezamos con él, todavía no había abierto su oficina. Abrió con la agenda llena.
 
-El **Dr. Bryan Vega** es quiropráctico. Tampoco había abierto cuando arrancamos. Hoy recibe entre 25 y 50 pacientes nuevos al mes. (Eso lo dice él mismo en su video; no es un número que yo me inventé.)
+El **Dr. Bryan Vega** es quiropráctico. Tampoco había abierto cuando arrancamos. Hoy recibe entre 25 y 50 pacientes nuevos al mes. Eso lo dice él mismo en su video; no es un número que yo me inventé.
 
 ¿Qué tienen en común? Ninguno dependió de que alguien los recomendara para arrancar. Tuvieron un sistema desde el día uno:
-
 - una oferta clara para su paciente ideal;
 - anuncios con estrategia que le hablaban a ese paciente, no a todo el mundo;
 - y una forma de contestar y agendar rápido cada vez que alguien escribía.
 
-Si ellos pudieron arrancar así sin pacientes, imagínate lo que hace ese sistema en un negocio que ya tiene clientes y una base que nadie está trabajando.
+Ese es el sistema que estamos montando en nuestro Black Friday. Por $3,500 incluye manejo de anuncios, estrategia completa, artes y creativos, edición de videos, motion graphics, una visita de contenido profesional y soporte 24/7.
 
-Ese es el sistema que estamos montando en nuestro Black Friday. En pago completo incluye un agente de IA de AI Borinquen que contesta, precalifica y agenda, con 3 meses incluidos, y tus campañas montadas antes del 15 de diciembre.
+En pago completo te sumamos tres bonos:
+- un agente de IA que contesta, precalifica y agenda;
+- 6 meses de Bori Pro incluidos;
+- y una llamada 1:1 conmigo.
+
+En total son $9,185 en valor.
 
 (Resultados de clientes reales; no son típicos ni garantizados.)
 
@@ -841,23 +875,23 @@ Level Up Media
 
 ### Email 9 · mar 17/nov · 8 AM · no compradores — Qué pasa cuando entras + cupos
 - **Asunto:** Qué pasa el día después de que firmas
-- **Preheader:** Tus primeros 30 días, paso por paso.
+- **Preheader:** Tus primeras semanas, paso por paso.
 
 {nombre},
 
 Mucha gente no entra porque no sabe qué pasa después de pagar. Te lo cuento tal cual, porque lo peor que te puede pasar es pagar y quedarte esperando.
 
-**Días 1 a 3.** Llenas tu formulario de onboarding y tienes tu reunión con Jessica. Ahí revisamos accesos (Meta, Instagram, tu página), tu oferta y lo que ya tienes funcionando.
+**Días 1 a 3.** Llenas tu formulario de onboarding y tienes tu reunión con Jessica. Ahí revisamos los accesos (Meta, Instagram, tu página), tu oferta y lo que ya tienes funcionando.
 
-**Primera semana.** Tu estratega arma la estrategia: a quién le hablamos, con qué ángulos y con qué oferta. Tú la apruebas.
+**Primera semana.** Tu estratega arma la estrategia completa: a quién le hablamos, con qué ángulos y con qué oferta. Tú la apruebas.
 
-**Segunda semana.** Producimos los creativos con fotos y videos reales de tu negocio (en Puerto Rico la gente huele lo falso) y Remi arranca tus 4 motion graphics.
+**La visita de contenido.** Vamos a tu negocio a grabar y a tomar fotos profesionales. En Puerto Rico la gente huele lo falso, así que tus anuncios van con tu negocio real. De ahí salen tus artes, la edición de tus videos y tus motion graphics.
 
-**En paralelo** (pago completo): el equipo de AI Borinquen instala tu agente en WhatsApp e Instagram para que ningún mensaje se quede sin contestar.
+**En paralelo** (pago completo): el equipo de AI Borinquen instala tu agente de IA en WhatsApp e Instagram, para que ningún mensaje se quede sin contestar. Y te activamos tus 6 meses de Bori Pro, para que crees contenido extra cuando quieras.
 
-**Antes del 15 de diciembre:** tus campañas están montadas y corriendo, para que entres a enero con el sistema andando y no empezando.
+**Tus campañas, corriendo** en [DATO: plazo real de arranque]. Y desde el primer día tienes soporte 24/7.
 
-**Y tu sesión 1:1 conmigo**, para tu plan de 2027, si entras antes del 30 de noviembre.
+**Tu llamada 1:1 conmigo** para el plan de 2027, si entras antes del 30 de noviembre.
 
 Lo único que te pido es que contestes rápido. Cada acceso que se queda pendiente es un día que tus anuncios no corren.
 
@@ -878,19 +912,19 @@ Level Up Media
 
 {nombre},
 
-Arrancó la semana de Black Friday, y antes de que te llegue la avalancha de ofertas de todo el mundo, te quiero dar el dato que importa: **de los 12 cupos quedan [DATO].**
+Arrancó la semana de Black Friday. Antes de que te llegue la avalancha de ofertas, te quiero dar el dato que importa: **de los 12 cupos quedan [DATO].**
 
-Abrimos el 15 de octubre a propósito. Los que entraron en octubre ya tienen sus anuncios corriendo para su temporada. Los que entraron en noviembre tienen sus campañas en camino para estar listas antes del 15 de diciembre.
+Abrimos el 15 de octubre a propósito. Los que entraron en octubre ya tienen sus anuncios corriendo para su temporada. Los que entraron en noviembre ya tienen su sistema en camino.
 
-Lo que sigue en pie esta semana, en pago completo:
+Lo que sigue en pie esta semana por $3,500:
 
-- El Sistema Completo: oferta, estrategia, contenido, anuncios con IA, automatización de leads y escalar lo que funcione.
-- Un agente de IA de AI Borinquen que contesta, precalifica y agenda, con 3 meses incluidos.
-- 4 motion graphics con tu marca.
-- Tus campañas montadas antes del 15 de diciembre.
-- Una sesión 1:1 conmigo para tu plan de 2027, **que se cae el lunes 30 a medianoche.**
+- **El paquete** ($6,150 en valor): manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7.
+- **En pago completo:**
+  - un agente de IA de AI Borinquen que contesta, precalifica y agenda, con la instalación y 3 meses;
+  - 6 meses de Bori Pro incluidos;
+  - una llamada estratégica 1:1 conmigo, **que se cae el lunes 30 a medianoche.**
 
-El 1 de diciembre a las 11:59 PM cierra todo. No se extiende.
+En total son $9,185 en valor. El 1 de diciembre, a las 11:59 PM, cierra todo. No se extiende.
 
 Agenda tu llamada aquí: [LINK]
 
@@ -926,26 +960,31 @@ Level Up Media
 
 ### Email 12 · vie 27/nov · 6 AM · no compradores — Black Friday
 - **Asunto:** Hoy es Black Friday (el de verdad)
-- **Preheader:** Quedan [DATO] cupos y el lunes se cae la 1:1.
+- **Preheader:** $9,185 en valor por $3,500. Quedan [DATO] cupos.
 
 {nombre},
 
 Hoy es el Black Friday que todo el mundo espera. El nuestro lleva abierto desde el 15 de octubre, así que te hablo claro: lo que queda es menos que lo que había, y eso es justo lo que te prometí.
 
-**El Sistema Completo · Black Friday.** No es un anuncio más ni marketing suelto: es el sistema que trae clientes todas las semanas sin depender de que alguien te recomiende.
+**El Sistema Completo · Black Friday: $3,500.** No es un anuncio más ni marketing suelto. Es el sistema que trae clientes todas las semanas sin depender de que alguien te recomiende.
 
-Lo que te montamos: tu oferta, tu estrategia, tu contenido, tus anuncios con IA, la automatización de tus leads, y escalamos lo que funcione.
+**Lo que incluye** ($6,150 en valor):
+- manejo de anuncios;
+- estrategia completa;
+- artes y creativos;
+- edición de videos;
+- videos motion graphics;
+- una visita de contenido profesional;
+- soporte 24/7.
 
-Lo que sigue incluido hoy en pago completo ($3,500):
+**Lo que te sumo hoy en pago completo:**
+1. **Una llamada estratégica 1:1 conmigo**, tu plan de 2027. **Se cae el lunes 30 a medianoche.**
+2. **6 meses de Bori Pro incluidos**, para crear contenido extra con IA.
+3. **Un agente de IA de AI Borinquen** en WhatsApp e Instagram: contesta, precalifica y agenda, con la instalación y 3 meses.
 
-1. **Agente de chat de AI Borinquen** en WhatsApp e Instagram: contesta al instante, precalifica y agenda. **3 meses de mensualidad incluidos.**
-2. **4 motion graphics** con tu marca real.
-3. **Sesión 1:1 conmigo:** tu plan de 2027. **Se cae el lunes 30 a medianoche.**
-4. **Arranque prioritario:** campañas montadas antes del 15 de diciembre.
+Todo junto son **$9,185 en valor por $3,500.** Los bonos son solo de pago completo.
 
-En plazos: bonos 3 y 4; los motion se entregan cuando termines de pagar.
-
-**Quedan [DATO] de 12 cupos.** El martes 1 de diciembre a las 11:59 PM cierra todo, sin extensión.
+**Quedan [DATO] de 12 cupos.** El martes 1 de diciembre, a las 11:59 PM, cierra todo, sin extensión.
 
 Lo que te garantizo es tráfico y estrategia, que es lo que controlamos. Lo demás lo construimos contigo, con los números delante.
 
@@ -965,15 +1004,22 @@ Level Up Media
 Ayer fue el día con más llamadas. Te comparto las tres preguntas que más se repitieron, porque a lo mejor tú tienes la misma.
 
 **"¿Esto le funciona a un negocio como el mío?"**
-Te contesto con casos, no con promesas. Tinos (restaurante, Cabo Rojo) pasó de $30K a $100K al mes. RK Automatic, de $30K a $100K. Coralis, de La Garita, de $25K a $70K. El Dr. Marvin Argüello abrió su oficina con la agenda llena, y el Dr. Bryan Vega recibe entre 25 y 50 pacientes nuevos al mes. En la llamada te enseño el más parecido a tu negocio.
+Te contesto con casos, no con promesas:
+- Tinos (restaurante en Cabo Rojo) pasó de $30K a $100K al mes.
+- RK Automatic, de $30K a $100K.
+- Coralis, de La Garita, de $25K a $70K.
+- El Dr. Marvin Argüello abrió su oficina con la agenda llena.
+- El Dr. Bryan Vega recibe entre 25 y 50 pacientes nuevos al mes.
+
+En la llamada te enseño el más parecido a tu negocio.
 
 **"¿Y si espero a enero?"**
-El que firma en enero arranca en febrero. Y en enero no hay agente de IA incluido ni sesión 1:1 conmigo: esta oferta cierra el 1 de diciembre.
+El que firma en enero arranca en febrero. Y en enero no hay agente de IA incluido, ni Bori Pro, ni llamada 1:1 conmigo: esta oferta cierra el 1 de diciembre.
 
 **"¿Puedo hacerlo en plazos?"**
-Sí. En plazos te llevas la sesión 1:1 conmigo y el arranque prioritario, y los motion graphics te los entregamos cuando termines de pagar. El agente de IA es solo para pago completo.
+Sí, el paquete completo de $3,500, y los motion graphics te los entregamos cuando termines de pagar. Pero los bonos (agente de IA, Bori Pro y la llamada conmigo) son solo de pago completo. Es la diferencia entre $6,150 y $9,185 en valor.
 
-Te lo recuerdo: la sesión 1:1 conmigo se cae el lunes 30 a medianoche.
+Te lo recuerdo: la llamada 1:1 conmigo se cae el lunes 30 a medianoche.
 
 (Resultados de clientes reales; no son típicos ni garantizados.)
 
@@ -985,25 +1031,25 @@ Level Up Media
 ---
 
 ### Email 14 · lun 30/nov · 8 AM · no compradores — Cyber Monday
-- **Asunto:** Cyber Monday: hoy se cae la sesión conmigo
+- **Asunto:** Cyber Monday: hoy se cae la llamada conmigo
 - **Preheader:** A medianoche desaparece. Mañana cierra todo.
 
 {nombre},
 
 Corto y directo.
 
-Hoy es Cyber Monday, y a las 11:59 de esta noche se cae **la sesión 1:1 conmigo para armar tu plan de 2027**.
+Hoy es Cyber Monday, y a las 11:59 de esta noche se cae **la llamada estratégica 1:1 conmigo para armar tu plan de 2027**.
 
 ¿Por qué esa? Porque mi tiempo es lo único que no puedo multiplicar. Después de hoy no la ofrezco más en esta oferta.
 
-Lo que sigue en pie hasta mañana:
+Lo que sigue en pie hasta mañana, por $3,500:
 
-- El Sistema Completo: oferta, estrategia, contenido, anuncios con IA, automatización de leads y escalar lo que funcione.
-- El agente de chat de AI Borinquen instalado, con 3 meses incluidos (pago completo).
-- 4 motion graphics con tu marca.
-- Tus campañas montadas antes del 15 de diciembre.
+- **El paquete** ($6,150 en valor): manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7.
+- **En pago completo:**
+  - el agente de IA de AI Borinquen, con la instalación y 3 meses;
+  - 6 meses de Bori Pro incluidos.
 
-Mañana, martes 1 de diciembre, a las 11:59 PM, cierra todo. Sin extensión.
+Hoy son $9,185 en valor. Mañana, $8,685. Y mañana, martes 1 de diciembre, a las 11:59 PM, cierra todo. Sin extensión.
 
 Si llevas semanas pensándolo, esta es la señal: el que firma hoy entra a enero corriendo; el que firma en enero arranca en febrero.
 
@@ -1026,8 +1072,8 @@ Hoy cierra el Black Friday de Level Up, a las 11:59 PM, hora de Puerto Rico. Y c
 
 Te lo resumo en tres líneas:
 
-- **Qué es:** el sistema completo para conseguir clientes todas las semanas: oferta, estrategia, contenido, anuncios con IA, automatización de leads y escalar lo que funcione.
-- **Qué te llevas hoy en pago completo:** un agente de IA de AI Borinquen que contesta, precalifica y agenda (3 meses incluidos), 4 motion graphics con tu marca y tus campañas montadas antes del 15 de diciembre.
+- **Qué es, por $3,500:** manejo de anuncios, estrategia completa, artes y creativos, edición de videos, videos motion graphics, una visita de contenido profesional y soporte 24/7.
+- **Qué te sumo hoy en pago completo:** un agente de IA de AI Borinquen que contesta, precalifica y agenda (instalación + 3 meses) y 6 meses de Bori Pro incluidos. Son $8,685 en valor.
 - **Para quién:** negocios que ya facturan y están cansados de depender de referidos y de la suerte.
 
 Y para quién no: si estás empezando y todavía no puedes invertir, no es para ti ahora, y prefiero decírtelo yo antes de que lo descubras tú. Para ti hay otra puerta, y en la llamada te la enseño.
@@ -1049,7 +1095,7 @@ Level Up Media
 
 Quedan cuatro horas.
 
-A las 11:59 PM cierra El Sistema Completo · Black Friday, con el agente de IA incluido y las campañas montadas antes del 15 de diciembre.
+A las 11:59 PM cierra El Sistema Completo · Black Friday: el paquete completo por $3,500 y, en pago completo, el agente de IA y 6 meses de Bori Pro incluidos.
 
 No te voy a escribir más sobre esto. Mañana la oferta ya no existe, y lo que te queda es la misma pregunta de siempre: ¿cuántos clientes nuevos te entran la semana que viene si los referidos no llegan?
 
@@ -1068,7 +1114,7 @@ Level Up Media
 
 ### Email 17A · mié 2/dic · 9 AM · compradores — Bienvenida y próximos pasos
 - **Asunto:** Bienvenido. Esto pasa ahora
-- **Preheader:** Tus próximos 14 días, paso por paso.
+- **Preheader:** Tus próximas semanas, paso por paso.
 
 *(Para los que compraron en las olas 2 y 3, o el 1/dic. Los de octubre ya están en onboarding: a ellos no se les manda.)*
 
@@ -1076,14 +1122,15 @@ Level Up Media
 
 Bienvenido a Level Up. Gracias por confiar en nosotros: lo tomo en serio.
 
-Como te prometimos, tus campañas tienen que estar montadas antes del 15 de diciembre. Para llegar a tiempo necesitamos moverte rápido, así que aquí van tus próximos pasos:
+Para que tus campañas arranquen lo antes posible, aquí van tus próximos pasos:
 
 1. **Hoy:** llena tu formulario de onboarding. Toma unos minutos y es lo que nos permite arrancar. Es el enlace de abajo.
-2. **Esta semana:** tu reunión de onboarding con Jessica. Ahí revisamos accesos, tu oferta y lo que ya tienes.
-3. **Agente de IA** (si entraste en pago completo): el equipo de AI Borinquen te contacta para instalarlo en tu WhatsApp e Instagram.
-4. **Motion graphics:** necesitamos tu logo y fotos y videos reales de tu negocio. Mientras más real, mejor vende.
-5. **Tu sesión 1:1 conmigo** (si entraste antes del 30/nov): te escribimos para escoger fecha.
-6. **Antes del 15/dic:** campañas montadas.
+2. **Esta semana:** tu reunión de onboarding con Jessica. Ahí revisamos los accesos, tu oferta y lo que ya tienes.
+3. **Tu visita de contenido profesional:** coordinamos el día para ir a tu negocio a grabar y tomar fotos. De ahí salen tus artes, tus videos editados y tus motion graphics.
+4. **Agente de IA** (si entraste en pago completo): el equipo de AI Borinquen te contacta para instalarlo en tu WhatsApp e Instagram.
+5. **Bori Pro** (si entraste en pago completo): te llega el acceso para tus 6 meses.
+6. **Tu llamada 1:1 conmigo** (si entraste antes del 30/nov): te escribimos para escoger fecha.
+7. **Soporte 24/7** desde hoy: cualquier cosa, nos escribes.
 
 Una cosa más: lo que más acelera todo es que contestes rápido. Cada día que un acceso se queda pendiente es un día que tus campañas no corren.
 
@@ -1220,10 +1267,10 @@ son pocos cupos en octubre
 *Variante A*
 ```
 {nombre} ya abrió
-el sistema completo para {negocio}: oferta, estrategia, contenido, anuncios con ia y automatización
-en pago completo te instalamos un agente de ia que contesta tu whatsapp y tu ig y agenda solo, 3 meses incluidos
-y hasta el 31 te llevas tu plan de contenido de 30 piezas
-son 6 cupos en octubre
+por $3,500: anuncios, estrategia, artes, edición de videos, motion, una visita de contenido a {negocio} y soporte 24/7
+en pago completo te sumo una llamada 1:1 conmigo, 6 meses de bori pro incluidos y un agente de ia que contesta y agenda
+y hasta el 31 tu plan de contenido de 30 piezas
+son $9,785 en valor y 6 cupos en octubre
 ¿te separo una llamada esta semana?
 ```
 *Variante B*
@@ -1232,6 +1279,7 @@ lo prometido {nombre}
 el black friday llegó temprano
 si firmas en octubre, {negocio} llega a su temporada con anuncios corriendo
 el precio no cambia hasta diciembre pero los bonos sí
+hoy son $9,785 en valor por $3,500
 ¿qué día te queda mejor para verlo?
 ```
 
@@ -1296,7 +1344,7 @@ si es más de 6 hablemos esta semana
 ```
 {nombre} arrancó la semana de black friday
 de los 12 cupos quedan [dato]
-la sesión 1:1 conmigo se cae el lunes 30
+la llamada 1:1 conmigo se cae el lunes 30
 ¿te separo una llamada antes del viernes?
 ```
 *Variante B*
@@ -1314,8 +1362,9 @@ dime si los vemos para {negocio}
 ```
 buenos días {nombre}
 hoy es black friday
-sistema completo + agente de ia incluido + campañas montadas antes del 15/dic
-la sesión 1:1 conmigo se cae el lunes
+todo el paquete por $3,500 + agente de ia + 6 meses de bori pro incluidos
+son $9,185 en valor
+la llamada 1:1 conmigo se cae el lunes
 ¿lo vemos hoy o mañana?
 ```
 *Variante B*
@@ -1330,7 +1379,7 @@ te dejo el enlace por aquí por si lo quieres ver con calma
 
 *Variante A*
 ```
-{nombre} hoy a medianoche se cae la sesión 1:1 conmigo
+{nombre} hoy a medianoche se cae la llamada 1:1 conmigo
 y mañana cierra todo
 si lo estabas pensando, hoy es el día de decidir
 ¿te llamo hoy un momento?
@@ -1382,7 +1431,7 @@ me ayuda mucho saberlo y te prometo que no te voy a vender nada
 ```
 {nombre} bienvenido a level up
 hoy te llega el formulario de onboarding, llénalo hoy mismo si puedes
-con eso arrancamos para tener tus campañas antes del 15
+con eso arrancamos y coordinamos tu visita de contenido
 ```
 ```
 {nombre} ya eres parte
@@ -1408,7 +1457,7 @@ si lo quieres ver antes, escribe SISTEMA y te atiende alguien del equipo
 | sáb 31/oct | contador de horas de Remi | "hoy a medianoche se cae el bono de octubre" |
 | lun 2/nov | Frankie a cámara, 6 s | "arrancan los cupos de noviembre · mismo precio" |
 | mar 10/nov | clip del Dr. Bryan, 8 s | "un sistema, no suerte · escribe sistema" |
-| lun 23/nov | Daren con la libreta del "12", 6 s | "semana de black friday · quedan [dato] cupos" |
+| lun 23/nov | Daren con la libreta del "$3,500", 6 s | "semana de black friday · quedan [dato] cupos" |
 | jue 26/nov | foto real del equipo | "hoy no se vende nada · gracias por este año" |
 | vie 27/nov | flyer 3 | "black friday · la 1:1 con elvin se cae el lunes" |
 | sáb 28/nov | clip de Oliver o del Dr. Bryan, 8 s | "casos reales de puerto rico · escribe sistema" |
