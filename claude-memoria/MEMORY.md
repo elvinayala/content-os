@@ -99,4 +99,4 @@
 - [Shadow — avatar definitivo](shadow-avatar.md) — 18–26, salario mínimo, sin negocio; aprende a operar sistemas para creadores a 30–50 % de comisión
 - [Black Friday 2026](black-friday-2026.md) — APROBADO 11/oct: ofertas del 15/oct al 1/dic, mismo precio y bonos que bajan por ola; vault/proyectos/black-friday-2026/
 - [Encuesta de fin de onboarding](encuesta-fin-onboarding.md) — 11/oct: WhatsApp 15 min después de la llamada con Jessica; verde/ámbar/rojo → Elvin (y Carilin si no es verde); simulación hasta OK + prueba real
-- [Cuentas Meta en el onboarding](cuentas-meta-onboarding.md) — 12/oct: verificación automática de la cuenta publicitaria de cada cliente (Bori debe leerla); portafolio Level Up 836808821982174; DM a Jessica + cron
+- [Cuentas Meta en el onboarding](cuentas-meta-onboarding.md) — 12/oct: verificación automática de la cuenta publicitaria de cada cliente; portafolio Level Up 836808821982174; 21 IDs llenados solos, faltan 7; pendiente Carilin: quién pide compartir la cuenta
