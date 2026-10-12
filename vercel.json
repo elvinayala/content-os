@@ -79,6 +79,10 @@
     {
       "path": "/api/cron/resumen-dia",
       "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/encuesta-onboarding",
+      "schedule": "*/10 * * * *"
     }
   ],
   "regions": [

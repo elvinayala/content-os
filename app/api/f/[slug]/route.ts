@@ -5,6 +5,7 @@ import { type ConfigFormulario, limpiar, type Respuestas, resumenRespuestas, tex
 import { leadFormularioAgenda } from "@/lib/leads/cables";
 import { iniciarClienteMax } from "@/lib/max/onboarding";
 import { altaDesdeFormulario } from "@/lib/onboarding/alta";
+import { procesarRespuestaOnboarding } from "@/lib/onboarding/encuesta";
 import { limiteIp, secretoValido } from "@/lib/pulse/seguridad";
 
 export const runtime = "nodejs";
@@ -71,6 +72,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   if (!r.nueva) return NextResponse.json({ ok: true, repetido: true });
 
   if (f.accion === "leads-closers-lu") after(() => leadAgenda(f, respuestas, origen, true, false));
+
+  // Encuesta de fin de onboarding: la respuesta ya está guardada; esto anota en la ficha y avisa (Elvin, y Carilin si algo no salió bien).
+  if (f.accion === "encuesta-onboarding-lu") {
+    after(async () => {
+      try {
+        const e = await procesarRespuestaOnboarding(origen, respuestas);
+        await marcarResultado(r.id, `encuesta-${e.nivel}${e.ref ? `:${e.ref}` : ""}`);
+      } catch (err) {
+        console.error(`[f/${slug}] encuesta`, err);
+        await marcarResultado(r.id, `error: ${err instanceof Error ? err.message : String(err)}`).catch(() => {});
+      }
+    });
+  }
 
   if (f.accion === "pulse-onboarding-lu") {
     const prueba = req.nextUrl.searchParams.get("prueba") === "1" && secretoValido(req.headers.get("x-prueba"), process.env.CRON_SECRET);

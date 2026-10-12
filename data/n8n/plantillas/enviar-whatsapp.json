@@ -1,0 +1,247 @@
+{
+  "name": "L-) Enviar WhatsApp (Content OS)",
+  "nodes": [
+    {
+      "id": "w-nota",
+      "name": "Nota",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -320
+      ],
+      "parameters": {
+        "width": 520,
+        "height": 240,
+        "content": "## Enviar WhatsApp (Content OS)\nContent OS (Vercel) lo llama para mandar UN mensaje por el WhatsApp de Level Up (Evolution).\n\n- Body: `{ telefono, texto }` (10 dígitos de PR o con código de país).\n- Devuelve `{ ok, id, error }`. **Nunca lanza error** después de enviar.\n- Deja el mensaje en la memoria del agente de onboarding.\n- El \"una sola vez\" lo controla quien llama.\n\nFuente: scripts/n8n-enviar-whatsapp.mjs (content-os)."
+      }
+    },
+    {
+      "id": "w-enviar-whatsapp-webhook-",
+      "name": "Enviar WhatsApp (webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enviar-whatsapp",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "responseData": "firstEntryJson",
+        "options": {}
+      },
+      "webhookId": "enviar-whatsapp",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vDGtt7BxftPjeHjM",
+          "name": "Pulse ↔ n8n (x-pulse-secret)"
+        }
+      }
+    },
+    {
+      "id": "w-validar",
+      "name": "Validar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const b = $json.body || {};\nlet tel = String(b.telefono || '').replace(/\\D/g, '');\nif (tel.length === 10) tel = '1' + tel;\nconst texto = String(b.texto || '').trim();\nif (tel.length < 11 || tel.length > 15) return [{ json: { ok: false, error: 'telefono-invalido' } }];\nif (!texto || texto.length > 1500) return [{ json: { ok: false, error: 'texto-invalido' } }];\nreturn [{ json: { ok: true, telefono: tel, texto } }];"
+      }
+    },
+    {
+      "id": "w--datos-v-lidos-",
+      "name": "¿Datos válidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "w-enviar",
+      "name": "Enviar",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -80
+      ],
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Level-Up-Media-Whatsapp",
+        "remoteJid": "={{ $json.telefono }}@s.whatsapp.net",
+        "messageText": "={{ $json.texto }}",
+        "options_message": {}
+      },
+      "credentials": {
+        "evolutionApi": {
+          "id": "o3VodCojIbc9QZ6C",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "w-resultado",
+      "name": "Resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        -80
+      ],
+      "parameters": {
+        "jsCode": "const v = $('Validar').first().json;\nconst r = $json || {};\nconst key = (r.data && r.data.key) || r.key;\nconst ok = !!(key && key.id);\nreturn [{ json: { ok, id: ok ? key.id : null, error: ok ? null : String((r.error && r.error.message) || r.message || 'evolution-sin-id').slice(0, 160), sessionId: v.telefono + '@s.whatsapp.net', mensaje: JSON.stringify({ type: 'ai', content: v.texto, additional_kwargs: {}, tool_calls: [], invalid_tool_calls: [], response_metadata: {} }) } }];"
+      }
+    },
+    {
+      "id": "w-memoria-del-agente",
+      "name": "Memoria del agente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1300,
+        -80
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories_3344 (session_id, message)\nVALUES ($1, $2::jsonb);",
+        "options": {
+          "queryReplacement": "={{ [$json.sessionId, $json.mensaje] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "GGHKaTkcxaueFMNW",
+          "name": "PostgresLevelUpMedia"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "w-respuesta",
+      "name": "Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Respuesta final: si hubo envío, lo que salió; si no, el error de validación.\nif ($('Resultado').isExecuted) { const r = $('Resultado').first().json; return [{ json: { ok: r.ok, id: r.id, error: r.error } }]; }\nconst v = $('Validar').first().json;\nreturn [{ json: { ok: false, id: null, error: v.error || 'datos' } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Enviar WhatsApp (webhook)": {
+      "main": [
+        [
+          {
+            "node": "Validar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar": {
+      "main": [
+        [
+          {
+            "node": "¿Datos válidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos válidos?": {
+      "main": [
+        [
+          {
+            "node": "Enviar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar": {
+      "main": [
+        [
+          {
+            "node": "Resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resultado": {
+      "main": [
+        [
+          {
+            "node": "Memoria del agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria del agente": {
+      "main": [
+        [
+          {
+            "node": "Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "timezone": "America/Puerto_Rico"
+  }
+}

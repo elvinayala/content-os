@@ -106,6 +106,7 @@ export function tintaSobre(hex: string): string {
 export const ACCIONES: Record<string, string> = {
   ninguna: "Solo guardar las respuestas",
   "pulse-onboarding-lu": "Crear la ficha del cliente en Pulse (LEVEL UP MEDIA) y abrirle expediente a Max",
+  "encuesta-onboarding-lu": "Encuesta de fin de onboarding: nota en la ficha y aviso a Elvin (y a Carilin si algo no salió bien)",
   "leads-closers-lu": "Guardar el lead en Leads (Level Up · CLOSERS → «Sin agendar»), aunque no termine, con seguimiento",
 };
 

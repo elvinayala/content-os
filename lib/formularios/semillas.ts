@@ -73,6 +73,63 @@ export const SEMILLAS: Semilla[] = [
     },
   },
   {
+    // Se la manda el sistema por WhatsApp 15 min después de que termina la llamada de onboarding con Jessica
+    // (cron /api/cron/encuesta-onboarding, lib/onboarding/encuesta.ts). Elvin, 11/oct/2026: saber que el
+    // onboarding salió bien, que nada raro pasó y que se cumplió todo. El link lleva ?origen=ob-<ref> (quién es);
+    // cada respuesta le avisa a Elvin y, si hay algo, a Carilin.
+    slug: "onboarding-experiencia",
+    titulo: "¿Cómo te fue en tu onboarding? · Level Up Media",
+    marca: "level_up",
+    apariencia: { tema: "level-up" },
+    accion: "encuesta-onboarding-lu",
+    config: {
+      bienvenida: {
+        etiqueta: "Tu onboarding · 1 minuto",
+        titulo: "¿Cómo te fue en tu onboarding?",
+        texto: "Queremos asegurarnos de que todo salió como debía y de que tu arranque sea excelente. Tus respuestas las lee el equipo directamente.",
+        boton: "Empezar",
+      },
+      gracias: {
+        titulo: "¡Gracias por contarnos!",
+        texto: "Tu equipo de Level Up ya lo tiene. Si algo no quedó bien, te escribimos nosotros para resolverlo.",
+      },
+      preguntas: [
+        { id: "tuvo", titulo: "¿Pudiste tener tu videollamada de onboarding?", tipo: "si-no", requerida: true },
+        {
+          id: "motivo",
+          titulo: "¿Qué pasó?",
+          ayuda: "Gracias por avisarnos: tu equipo te va a escribir para dejar tu onboarding listo.",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Se me olvidó o no pude conectarme", "Tuve un imprevisto", "Hubo un problema con el link o la hora", "Nadie me atendió"],
+          otra: true,
+          si: { id: "tuvo", valor: "No" },
+        },
+        { id: "nota", titulo: "Del 0 al 10, ¿cómo calificas tu experiencia en el onboarding?", ayuda: "0 = muy mala · 10 = excelente", tipo: "escala", requerida: true, si: { id: "tuvo", valor: "Sí" } },
+        {
+          id: "claro",
+          titulo: "¿Te quedó claro qué sigue y cuándo?",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Sí, todo claro", "Más o menos", "No, me quedaron dudas"],
+          si: { id: "tuvo", valor: "Sí" },
+        },
+        {
+          id: "cumplio",
+          titulo: "¿Se cubrió todo lo que esperabas en la llamada?",
+          ayuda: "Tus accesos y cuentas, los tiempos y lo que necesitamos de ti.",
+          tipo: "opcion",
+          requerida: true,
+          opciones: ["Sí, todo lo que esperaba", "Casi todo, faltó algo", "No, faltaron cosas importantes"],
+          si: { id: "tuvo", valor: "Sí" },
+        },
+        { id: "incomodo", titulo: "¿Pasó algo durante el onboarding que no te gustó o te hizo dudar?", tipo: "si-no", requerida: true, si: { id: "tuvo", valor: "Sí" } },
+        { id: "que", titulo: "Cuéntanos qué pasó", ayuda: "Con confianza: lo leemos y lo resolvemos.", tipo: "largo", requerida: true, si: { id: "incomodo", valor: "Sí" } },
+        { id: "mejora", titulo: "¿Algo que podamos mejorar?", ayuda: "Opcional.", tipo: "largo", requerida: false, si: { id: "tuvo", valor: "Sí" } },
+      ],
+    },
+  },
+  {
     // Confirmación de "La Mesa · Level Up" (evento privado de clientes, sáb 5/dic/2026). Nace CERRADO:
     // se abre desde Pulse → Formularios cuando Elvin apruebe la invitación. Plan en
     // vault/proyectos/evento-la-mesa/plan.md. Venue/hora se completan al confirmar el lugar.
