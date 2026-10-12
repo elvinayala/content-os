@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Anuncio, Dato, GraficoDiario, detalleResultados, dinero, entero } from "@/components/cliente/resultados";
+import { Anuncio, Dato, GraficoDiario, RecomendacionCard, SaludAnuncios, detalleResultados, dinero, entero } from "@/components/cliente/resultados";
 import { BotonSlack } from "@/components/cliente/piezas";
 import { fichaCliente } from "@/lib/clientes-app/datos";
 import { resultadosCliente } from "@/lib/clientes-app/resultados";
@@ -55,12 +55,14 @@ export default async function ResultadosPage({ searchParams }: { searchParams: P
               </>
             ) : null}
           </section>
+          <RecomendacionCard recos={r.recomendaciones} />
+          <SaludAnuncios t={t} s={r.salud} moneda={r.moneda} />
           <GraficoDiario serie={r.serie} />
           {r.anuncios.length ? (
             <section className="flex flex-col gap-2">
               <h2 className="lu-titulo text-base font-semibold">Los anuncios que mejor van</h2>
               {r.anuncios.map((a) => (
-                <Anuncio key={a.id} a={a} moneda={r.moneda} />
+                <Anuncio key={a.id} a={a} moneda={r.moneda} escalar={a.id === r.escalar} />
               ))}
             </section>
           ) : null}

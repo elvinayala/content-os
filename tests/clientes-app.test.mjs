@@ -95,25 +95,101 @@ test("resultados: leads + mensajes, costo por resultado y ROAS solo con ventas",
   assert.equal(esErrorDeToken(100), false);
 });
 
-test("archivos: carpeta desde el link, tipos y agrupado", async () => {
-  const { carpetaDeUrl, tipoDe, agrupar, tipoSubidaPermitido } = await import("../lib/clientes-app/archivos-reglas.ts");
-  assert.equal(carpetaDeUrl("https://drive.google.com/drive/folders/14987xnSObsgaOInpyXaiYf71hl2L0djS?usp=drive_link"), "14987xnSObsgaOInpyXaiYf71hl2L0djS");
-  assert.equal(carpetaDeUrl("https://drive.google.com/drive/u/1/folders/abcDEF123456789"), "abcDEF123456789");
-  assert.equal(carpetaDeUrl("https://docs.google.com/document/d/1mqg7RH5YXatbTwQfsYWDLCQGjrKHMzcv/edit"), null);
-  assert.equal(carpetaDeUrl(null), null);
-  assert.equal(tipoDe("image/png"), "imagen");
-  assert.equal(tipoDe("video/mp4"), "video");
-  assert.equal(tipoDe("application/vnd.google-apps.document"), "documento");
-  const g = agrupar([
-    { id: "1", nombre: "a", mime: "image/png", bytes: 1, fecha: "2026-09-01T00:00:00Z", carpeta: "03 Creativos" },
-    { id: "2", nombre: "b", mime: "image/png", bytes: 1, fecha: "2026-09-05T00:00:00Z", carpeta: "03 Creativos" },
-    { id: "3", nombre: "c", mime: "application/pdf", bytes: 1, fecha: "2026-09-02T00:00:00Z", carpeta: "" },
-    { id: "4", nombre: "d", mime: "application/pdf", bytes: 1, fecha: "2026-09-02T00:00:00Z", carpeta: "01 Branding" },
-    { id: "5", nombre: "atajo", mime: "application/vnd.google-apps.shortcut", bytes: 0, fecha: "2026-09-02T00:00:00Z", carpeta: "01 Branding" },
+
+test("recomendación: umbrales de Elvin y anuncio listo para escalar", async () => {
+  const { numerosDe, salud, recomendar, anuncioParaEscalar } = await import("../lib/clientes-app/resultados-reglas.ts");
+  const n = (spend, leads, extra = {}) => numerosDe({ spend: String(spend), impressions: "5000", actions: [{ action_type: "lead", value: String(leads) }], ...extra });
+  // Todo bien: CTR único 2.5, frecuencia 1.4, $1.50 por resultado → "vas bien"
+  const bien = n(30, 20, { unique_ctr: "2.5", frequency: "1.4" });
+  assert.deepEqual(salud(bien), { ctrUnico: "bien", frecuencia: "bien", costo: "bien" });
+  assert.equal(recomendar(bien, [])[0].tipo, "bien");
+  // $2-5: sin alerta de costo
+  const medio = n(60, 20, { unique_ctr: "2.5", frequency: "1.4" });
+  assert.equal(salud(medio).costo, "normal");
+  assert.equal(recomendar(medio, [])[0].tipo, "bien");
+  // > $5, CTR único < 2 y frecuencia > 1.8 → alertas en ese orden, máximo 2
+  const mal = n(120, 20, { unique_ctr: "1.4", frequency: "2.1" });
+  assert.deepEqual(salud(mal), { ctrUnico: "alerta", frecuencia: "alerta", costo: "alerta" });
+  assert.deepEqual(recomendar(mal, []).map((r) => r.tipo), ["costo", "ctr"]);
+  // Ganador: ≥ 10 resultados, ≥ $15, < $2, CTR único ≥ 2, frecuencia ≤ 1.8
+  const ganador = { nombre: "Video mascotas", numeros: n(18, 12, { unique_ctr: "3", frequency: "1.2" }) };
+  const quemado = { nombre: "Flyer viejo", numeros: n(18, 12, { unique_ctr: "3", frequency: "2.4" }) };
+  const pocos = { nombre: "Nuevo", numeros: n(5, 4, { unique_ctr: "3", frequency: "1.1" }) };
+  assert.equal(anuncioParaEscalar([quemado, pocos, ganador])?.nombre, "Video mascotas");
+  assert.equal(anuncioParaEscalar([quemado, pocos]), null);
+  // Con alertas y ganador: la alerta más importante + el escalar
+  assert.deepEqual(recomendar(mal, [ganador]).map((r) => r.tipo), ["costo", "escalar"]);
+  assert.ok(recomendar(bien, [ganador])[0].texto.includes("listo para escalar"));
+});
+
+test("entregables: solo plan, creativos y videos, con su tipo de archivo", async () => {
+  const { archivoValido, esTipoEntrega, nombreVisible, avisoEntrega } = await import("../lib/clientes-app/entregas-reglas.ts");
+  assert.equal(esTipoEntrega("creativo"), true);
+  assert.equal(esTipoEntrega("documento"), false);
+  assert.equal(archivoValido("plan", "application/pdf", "plan.pdf"), true);
+  assert.equal(archivoValido("plan", "text/html", "x.html"), false);
+  assert.equal(archivoValido("creativo", "image/png", "flyer.png"), true);
+  assert.equal(archivoValido("creativo", "video/mp4", "x.mp4"), false);
+  assert.equal(archivoValido("video", "video/quicktime", "x.mov"), true);
+  assert.equal(archivoValido("video", "", "x.mov"), true);
+  assert.equal(archivoValido("video", "image/svg+xml", "x.svg"), false);
+  assert.equal(nombreVisible("plan_marketing_v2.pdf"), "plan marketing v2");
+  assert.equal(avisoEntrega("creativo", 3).titulo, "🎨 Tienes 3 creativos nuevos");
+});
+
+test("bitácora: valida lo del modelo y mezcla lo entregado", async () => {
+  const { limpiarEntradas, entradasDeEntregas, lineaDeTiempo } = await import("../lib/clientes-app/bitacora-reglas.ts");
+  const hoy = "2026-09-30";
+  const r = limpiarEntradas(
+    {
+      entradas: [
+        { fecha: "2026-09-12", texto: "Lanzamos tu campaña de ventas por WhatsApp con 3 flyers - SR" },
+        { fecha: "2026-10-05", texto: "Esto es del futuro y no va" },
+        { fecha: "12/09", texto: "Fecha mal escrita" },
+        { fecha: "2026-08-03", texto: "Ajustamos el presupuesto a $350 al mes" },
+        { fecha: "2026-08-03", texto: "Creamos la campaña para que más gente conozca tu negocio" },
+        { fecha: "2026-09-12", texto: "Lanzamos tu campaña de ventas por WhatsApp con 3 flyers" },
+      ],
+    },
+    hoy,
+  );
+  assert.deepEqual(r.map((e) => e.texto), ["Lanzamos tu campaña de ventas por WhatsApp con 3 flyers", "Creamos la campaña para que más gente conozca tu negocio"]);
+  assert.deepEqual(limpiarEntradas(null, hoy), []);
+  const ent = entradasDeEntregas([
+    { tipo: "creativo", creadoAt: "2026-09-29T15:00:00Z" },
+    { tipo: "creativo", creadoAt: "2026-09-29T16:00:00Z" },
+    { tipo: "plan", creadoAt: "2026-09-20T15:00:00Z" },
   ]);
-  assert.deepEqual(g.map((x) => x.carpeta), ["Branding", "Creativos", "Tu carpeta"]);
-  assert.deepEqual(g[1].archivos.map((x) => x.id), ["2", "1"]);
-  assert.equal(g[0].archivos.length, 1);
-  assert.equal(tipoSubidaPermitido("video/quicktime", "x.mov"), true);
-  assert.equal(tipoSubidaPermitido("text/html", "x.html"), false);
+  assert.ok(ent.some((e) => e.texto === "Te entregamos 2 creativos nuevos."));
+  const t = lineaDeTiempo(r, ent);
+  assert.equal(t[0].fecha, "2026-09-29");
+  assert.equal(t.at(-1).fecha, "2026-08-03");
+});
+
+test("referidos: validación y estado en palabras del cliente", async () => {
+  const { validarReferido, estadoReferido } = await import("../lib/clientes-app/referidos-reglas.ts");
+  assert.ok("error" in validarReferido({ negocio: "", contacto: "Ana", telefono: "7875551234" }));
+  assert.ok("error" in validarReferido({ negocio: "Pizzería", contacto: "Ana", telefono: "555" }));
+  const ok = validarReferido({ negocio: "  Pizzería  Don Pepe ", contacto: "Ana", telefono: "(787) 555-1234", nota: "" });
+  assert.deepEqual(ok, { ok: { negocio: "Pizzería Don Pepe", contacto: "Ana", telefono: "7875551234", nota: "" } });
+  assert.equal(estadoReferido("ganado").tono, "ganado");
+  assert.equal(estadoReferido("abierto").texto, "En conversación");
+});
+
+test("reunión de estrategia: quién califica, horarios y aviso", async () => {
+  const { esAltoValor, validarSolicitud, textoHorario, mesPR, textoAvisoEquipo } = await import("../lib/clientes-app/reunion-reglas.ts");
+  assert.equal(esAltoValor({ marcadoAlto: false, montos: [3000] }), true);
+  assert.equal(esAltoValor({ marcadoAlto: false, montos: [2999, undefined, null] }), false);
+  assert.equal(esAltoValor({ marcadoAlto: true, montos: [] }), true);
+  const hoy = "2026-09-30"; // miércoles
+  assert.ok("error" in validarSolicitud({ opciones: [], tema: "" }, hoy));
+  assert.ok("error" in validarSolicitud({ opciones: [{ fecha: "2026-09-30", hora: "10:00" }] }, hoy)); // hoy no
+  assert.ok("error" in validarSolicitud({ opciones: [{ fecha: "2026-10-03", hora: "10:00" }] }, hoy)); // sábado
+  assert.ok("error" in validarSolicitud({ opciones: [{ fecha: "2026-10-30", hora: "10:00" }] }, hoy)); // > 21 días
+  assert.ok("error" in validarSolicitud({ opciones: [{ fecha: "2026-10-01", hora: "20:00" }] }, hoy)); // hora fuera
+  const ok = validarSolicitud({ opciones: [{ fecha: "2026-10-01", hora: "10:00" }, { fecha: "2026-10-01", hora: "10:00" }, { fecha: "", hora: "" }, { fecha: "2026-10-02", hora: "14:30" }], tema: "  ver  resultados " }, hoy);
+  assert.deepEqual(ok, { ok: { opciones: [{ fecha: "2026-10-01", hora: "10:00" }, { fecha: "2026-10-02", hora: "14:30" }], tema: "ver resultados" } });
+  assert.equal(textoHorario({ fecha: "2026-10-01", hora: "14:30" }), "jueves, 1 de octubre, 2:30 PM");
+  assert.equal(mesPR(new Date("2026-10-01T03:00:00Z")), "2026-09"); // 11 PM del 30/sep en PR
+  assert.ok(textoAvisoEquipo({ negocio: "X", contacto: "Y", opciones: [{ fecha: "2026-10-01", hora: "09:00" }], tema: "", linkFicha: "https://x" }).includes("9:00 AM"));
 });

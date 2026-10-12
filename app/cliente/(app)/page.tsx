@@ -1,10 +1,15 @@
-import { CalendarClock, ChevronRight } from "lucide-react";
+import { CalendarClock, ChevronRight, Gift } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
 import { AppMovil } from "@/components/app-movil";
 import { BotonSlack, EtapaCliente, PersonaFila } from "@/components/cliente/piezas";
+import { LineaTiempo } from "@/components/cliente/linea-tiempo";
+import { ReunionDelCliente } from "@/components/cliente/reunion-servidor";
 import { SemanaNumeros } from "@/components/cliente/resultados";
+import { bitacoraCliente } from "@/lib/clientes-app/bitacora";
+import { entradasDeEntregas, lineaDeTiempo } from "@/lib/clientes-app/bitacora-reglas";
+import { listarEntregas } from "@/lib/clientes-app/entregas";
 import { fichaCliente } from "@/lib/clientes-app/datos";
 import { fechaLarga, hoyPR } from "@/lib/clientes-app/formato";
 import { CLIENTE_APP } from "@/lib/clientes-app/config";
@@ -43,6 +48,10 @@ export default async function InicioCliente() {
         <SemanaNumeros cuenta={f.cuentaAnuncios} />
       </Suspense>
 
+      <Suspense fallback={null}>
+        <ReunionDelCliente itemId={v.itemId} preview={v.modo === "equipo"} />
+      </Suspense>
+
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="panel flex items-center gap-3 p-4">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/25">
@@ -67,8 +76,38 @@ export default async function InicioCliente() {
         ) : null}
       </section>
 
+      <Suspense fallback={<div className="panel h-28 animate-pulse" />}>
+        <UltimoTrabajo itemId={v.itemId} />
+      </Suspense>
+
+      <Link href="/cliente/referir" className="panel group flex items-center gap-3 p-4">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/25">
+          <Gift className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium">Refiere y gana</span>
+          <span className="block text-[12px] text-muted-foreground">¿Conoces un negocio que necesite más clientes?</span>
+        </span>
+        <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+      </Link>
+
       <BotonSlack url={f.slackUrl} grande />
       <p className="text-center text-[11px] text-muted-foreground">Solicitudes, cambios y soporte: por el canal de Slack de tu negocio.</p>
     </div>
+  );
+}
+
+async function UltimoTrabajo({ itemId }: { itemId: string }) {
+  const [campanas, entregas] = await Promise.all([bitacoraCliente(itemId).catch(() => []), listarEntregas(itemId).catch(() => [])]);
+  const todo = lineaDeTiempo(campanas, entradasDeEntregas(entregas));
+  if (!todo.length) return null;
+  return (
+    <Link href="/cliente/trabajo" className="panel group flex flex-col gap-3 p-5">
+      <div className="flex items-center justify-between">
+        <p className="ceja">Lo último que hicimos</p>
+        <span className="text-xs text-primary">Ver todo →</span>
+      </div>
+      <LineaTiempo entradas={todo} max={2} />
+    </Link>
   );
 }

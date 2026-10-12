@@ -32,7 +32,10 @@ export default async function AppClienteLayout({ children }: Readonly<{ children
       {v.modo === "cliente" ? <RegistrarApp cfg={cfg} /> : null}
       {v.modo === "equipo" ? (
         <div className="bg-primary px-4 py-1.5 text-center text-xs font-semibold text-primary-foreground" style={{ paddingTop: "calc(env(safe-area-inset-top) + 6px)" }}>
-          Vista previa del equipo · así ve {f.negocio} su app
+          Vista previa del equipo · así ve {f.negocio} su app ·{" "}
+          <a href="/cliente/ver/salir" className="underline">
+            Salir
+          </a>
         </div>
       ) : null}
       <NavCliente negocio={f.negocio} />

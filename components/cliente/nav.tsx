@@ -1,18 +1,18 @@
 "use client";
 
-import { BarChart3, FolderOpen, Home, UserRound } from "lucide-react";
+import { BarChart3, Gift, Home, ListChecks, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-// Arriba: logo + negocio. Abajo (teléfono): las 4 pestañas. En la computadora van arriba.
+// Arriba: logo + negocio + Mi cuenta. Abajo (teléfono): las 4 pestañas. En la computadora van arriba.
 const TABS = [
   { href: "/cliente", nombre: "Inicio", icono: Home },
   { href: "/cliente/resultados", nombre: "Resultados", icono: BarChart3 },
-  { href: "/cliente/archivos", nombre: "Archivos", icono: FolderOpen },
-  { href: "/cliente/cuenta", nombre: "Mi cuenta", icono: UserRound },
+  { href: "/cliente/trabajo", nombre: "Trabajo", icono: ListChecks },
+  { href: "/cliente/referir", nombre: "Referir", icono: Gift },
 ];
 
 export function NavCliente({ negocio }: { negocio: string }) {
@@ -33,7 +33,10 @@ export function NavCliente({ negocio }: { negocio: string }) {
               </Link>
             ))}
           </nav>
-          <span className="ml-auto max-w-44 truncate text-sm text-muted-foreground">{negocio}</span>
+          <span className="ml-auto max-w-40 truncate text-sm text-muted-foreground">{negocio}</span>
+          <Link href="/cliente/cuenta" title="Mi cuenta" className={cn("grid size-9 place-items-center rounded-full ring-1 transition", activo("/cliente/cuenta") ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
+            <UserRound className="size-4" />
+          </Link>
         </div>
       </header>
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/90 backdrop-blur-xl md:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>

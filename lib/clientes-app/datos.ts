@@ -1,11 +1,10 @@
 import "server-only";
 
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { pulseAppClientes, pulseColumns, pulseFiles, pulseGroups, pulseItems, pulseUsers } from "../pulse/schema";
 import type { SettingsColumna, ValorCelda } from "../pulse/types";
-import { carpetaDeUrl } from "./archivos-reglas";
 import { etapaDe, type Etapa } from "./etapa";
 
 // Lo que el CLIENTE ve de su ficha de LEVEL UP MEDIA. Lista cerrada a propósito: nada de pagos, montos, comentarios,
@@ -32,8 +31,6 @@ export interface FichaCliente {
   cuentaAnuncios: string | null;
   acuerdo: { id: string; nombre: string } | null;
   slackUrl: string | null;
-  /** Carpeta de Drive del cliente (columna Contenido o el expediente de Max). Interno: nunca se muestra el link. */
-  carpetaId: string | null;
 }
 
 /** Calendly de cada persona del equipo: CLIENTES_APP_AGENDA = {"correo":"https://calendly.com/…"}. */
@@ -107,9 +104,6 @@ export async function fichaCliente(itemId: string): Promise<FichaCliente | null>
     : [];
   const [app] = await d.select({ slackUrl: pulseAppClientes.slackUrl }).from(pulseAppClientes).where(eq(pulseAppClientes.itemId, itemId));
   const cuenta = texto(valor(/^id cuenta publicitaria$/i))?.replace(/^act_/, "") ?? null;
-  const contenido = valor(/^contenido$/i);
-  const urlContenido = contenido && typeof contenido === "object" && !Array.isArray(contenido) ? (contenido as { url?: string }).url : typeof contenido === "string" ? contenido : null;
-  const carpetaId = carpetaDeUrl(urlContenido) ?? (await carpetaDeMax(itemId));
 
   return {
     itemId,
@@ -126,21 +120,7 @@ export async function fichaCliente(itemId: string): Promise<FichaCliente | null>
     cuentaAnuncios: cuenta && /^\d{5,20}$/.test(cuenta) ? cuenta : null,
     acuerdo: acuerdo ?? null,
     slackUrl: app?.slackUrl ?? null,
-    carpetaId,
   };
-}
-
-/** La carpeta estándar que Max le creó (si tiene expediente vinculado a esta ficha). */
-async function carpetaDeMax(itemId: string): Promise<string | null> {
-  try {
-    const d = await db();
-    const r = (await d.execute(sql`select meta->'drive'->>'id' as id from max_clientes where pulse_item = ${itemId} limit 1`)) as unknown;
-    const filas = Array.isArray(r) ? r : ((r as { rows?: unknown[] })?.rows ?? []);
-    const id = (filas[0] as { id?: string } | undefined)?.id;
-    return id && /^[\w-]{10,}$/.test(id) ? id : null;
-  } catch {
-    return null; // sin tabla de Max (dev local) o sin expediente
-  }
 }
 
 /** ¿Este archivo es el acuerdo firmado de este cliente? (lo único de Pulse que el cliente puede bajar) */

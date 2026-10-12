@@ -3,6 +3,8 @@
 import { eq } from "drizzle-orm";
 
 import { linkCliente } from "@/lib/clientes-app/acceso";
+import { listarEntregas } from "@/lib/clientes-app/entregas";
+import { agendarReunion, altoValorCliente, cancelarReunion, reunionDelMes, type Reunion } from "@/lib/clientes-app/reunion";
 import { avisarCliente, avisosClientesReales, telefonosCliente } from "@/lib/clientes-app/push";
 import { TABLERO_CLIENTES } from "@/lib/clientes-app/sesion";
 import { requiereAccesoBoard } from "@/lib/pulse/auth";
@@ -37,6 +39,9 @@ export interface EstadoAppCliente {
   activo: boolean;
   link: string | null;
   slackUrl: string | null;
+  entregas: { plan: number; creativo: number; video: number };
+  altoValor: boolean;
+  reunion: Reunion | null;
   ultimoAcceso: string | null;
   telefonos: { dispositivo: string | null; ultimoOk: string | null }[];
   avisosReales: boolean;
@@ -52,7 +57,12 @@ async function estado(itemId: string): Promise<EstadoAppCliente> {
     activo: !!a?.activo,
     link: a?.activo ? await linkCliente(itemId, a.version) : null,
     slackUrl: a?.slackUrl ?? null,
+    entregas: await listarEntregas(itemId)
+      .then((l) => ({ plan: l.filter((x) => x.tipo === "plan").length, creativo: l.filter((x) => x.tipo === "creativo").length, video: l.filter((x) => x.tipo === "video").length }))
+      .catch(() => ({ plan: 0, creativo: 0, video: 0 })),
     ultimoAcceso: a?.ultimoAccesoAt?.toISOString() ?? null,
+    altoValor: await altoValorCliente(itemId).catch(() => false),
+    reunion: await reunionDelMes(itemId).catch(() => null),
     telefonos: tels.map((t) => ({ dispositivo: t.dispositivo, ultimoOk: t.ultimoOkAt?.toISOString() ?? null })),
     avisosReales: avisosClientesReales(),
     secretoListo: !!process.env.CLIENTES_APP_SECRET,
@@ -109,6 +119,23 @@ export async function guardarSlackAppAction(itemId: string, url: string) {
     const [a] = await d.select().from(pulseAppClientes).where(eq(pulseAppClientes.itemId, itemId));
     if (!a) throw new Error("Crea primero el link de la app");
     await d.update(pulseAppClientes).set({ slackUrl: limpio || null }).where(eq(pulseAppClientes.itemId, itemId));
+    return { estado: await estado(itemId) };
+  });
+}
+
+/** Confirmar la reunión de estrategia del mes (fecha y hora de PR + enlace de Meet/Zoom). */
+export async function agendarReunionAppAction(itemId: string, id: string, fechaHora: string, enlace: string) {
+  return envolver(async () => {
+    const { u } = await autorizar(itemId);
+    await agendarReunion(itemId, id, fechaHora, enlace, u.id);
+    return { estado: await estado(itemId) };
+  });
+}
+
+export async function cancelarReunionAppAction(itemId: string, id: string) {
+  return envolver(async () => {
+    const { u } = await autorizar(itemId);
+    await cancelarReunion(itemId, id, u.id);
     return { estado: await estado(itemId) };
   });
 }

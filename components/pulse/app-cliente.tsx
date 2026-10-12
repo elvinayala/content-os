@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import {
+  agendarReunionAppAction,
   avisarClienteAction,
+  cancelarReunionAppAction,
   cambiarLinkAppAction,
   crearLinkAppAction,
   desactivarAppAction,
@@ -13,6 +15,7 @@ import {
   guardarSlackAppAction,
   type EstadoAppCliente,
 } from "@/app/pulse/(app)/[board]/app-cliente-actions";
+import { textoHorario } from "@/lib/clientes-app/reunion-reglas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +29,8 @@ export function AppClientePanel({ itemId }: { itemId: string }) {
   const [cargando, setCargando] = useState<string | null>(null);
   const [slack, setSlack] = useState("");
   const [texto, setTexto] = useState("");
+  const [cita, setCita] = useState("");
+  const [enlace, setEnlace] = useState("");
 
   useEffect(() => {
     let vivo = true;
@@ -55,7 +60,7 @@ export function AppClientePanel({ itemId }: { itemId: string }) {
   return (
     <div className="flex flex-col gap-4 text-sm">
       <p className="text-muted-foreground">
-        La app del cliente (<b>app.levelupmediapr.net</b>): en qué va, sus resultados de Meta, sus archivos y su equipo. Entra con su link personal; se instala en el teléfono sin App Store.
+        La app del cliente (<b>app.levelupmediapr.net</b>): en qué va, sus resultados de Meta, el trabajo hecho, sus entregables y su equipo. Entra con su link personal; se instala en el teléfono sin App Store.
       </p>
       {!e.secretoListo ? <p className="rounded-lg bg-amber-50 px-3 py-2 text-amber-800">Falta CLIENTES_APP_SECRET en el servidor.</p> : null}
 
@@ -93,6 +98,59 @@ export function AppClientePanel({ itemId }: { itemId: string }) {
           </Button>
         </div>
       )}
+
+      {e.altoValor ? (
+        <div className="flex flex-col gap-2 rounded-xl border border-amber-300 bg-amber-50/60 p-3">
+          <p className="font-medium">Reunión de estrategia del mes</p>
+          <p className="text-xs text-muted-foreground">Pagó $3,000 o más (o está marcado Alto): tiene derecho a 1 al mes. Al cliente no se le dice por qué.</p>
+          {!e.reunion ? (
+            <p className="text-xs">Todavía no la ha pedido este mes.</p>
+          ) : e.reunion.estado === "agendada" ? (
+            <p className="text-xs">
+              ✅ Confirmada para{" "}
+              {e.reunion.agendadaPara
+                ? new Date(e.reunion.agendadaPara).toLocaleString("es-PR", { timeZone: "America/Puerto_Rico", weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" })
+                : "—"}
+              {e.reunion.enlace ? " · con enlace" : ""}
+            </p>
+          ) : (
+            <>
+              <p className="text-xs font-medium">La pidió. Horarios que prefiere (hora PR):</p>
+              <ul className="text-xs">
+                {e.reunion.opciones.map((o) => (
+                  <li key={o.fecha + o.hora}>· {textoHorario(o)}</li>
+                ))}
+              </ul>
+              {e.reunion.tema ? <p className="text-xs">Quiere revisar: “{e.reunion.tema}”</p> : null}
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input type="datetime-local" value={cita} onChange={(x) => setCita(x.target.value)} />
+                <Input value={enlace} onChange={(x) => setEnlace(x.target.value)} placeholder="Enlace de Meet o Zoom (https://…)" />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" disabled={!!cargando || !cita} onClick={() => hacer("cita", () => agendarReunionAppAction(itemId, e.reunion!.id, cita, enlace), "Reunión confirmada: el cliente la ve en su app")}>
+                  Confirmar reunión
+                </Button>
+                <Button size="sm" variant="ghost" disabled={!!cargando} onClick={() => confirm("¿Cancelar esta solicitud? El cliente podrá pedir otra este mes.") && hacer("cancelar", () => cancelarReunionAppAction(itemId, e.reunion!.id), "Solicitud cancelada")}>
+                  Cancelar
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      ) : null}
+
+      <div className="flex flex-col gap-2 rounded-xl border p-3">
+        <p className="font-medium">Lo que ve en Trabajo</p>
+        <p className="text-xs text-muted-foreground">
+          Solo su plan de marketing, sus creativos aprobados y sus videos. Plan: {e.entregas.plan ? "✓" : "falta"} · Creativos: {e.entregas.creativo} · Videos: {e.entregas.video}
+        </p>
+        <Button size="sm" variant="outline" className="self-start" asChild>
+          <a href={`/cliente/ver/${itemId}?ir=archivos`} target="_blank" rel="noreferrer">
+            Subir plan, creativos o videos
+          </a>
+        </Button>
+        <p className="text-[11px] text-muted-foreground">Lo que Max le envía aprobado por su canal de Slack entra solo.</p>
+      </div>
 
       {e.existe ? (
         <div className="flex flex-col gap-2 rounded-xl border p-3">

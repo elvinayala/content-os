@@ -1,5 +1,6 @@
 import type { AnuncioTop, ResultadosCliente } from "@/lib/clientes-app/resultados";
-import type { Numeros } from "@/lib/clientes-app/resultados-reglas";
+import { UMBRALES, type Numeros, type Recomendacion, type Salud, type Semaforo } from "@/lib/clientes-app/resultados-reglas";
+import { cn } from "@/lib/utils";
 
 // Piezas de Resultados (server components, sin JS en el cliente).
 export const dinero = (n: number | null, moneda = "USD", dec = 2) => (n == null ? "—" : new Intl.NumberFormat("es-PR", { style: "currency", currency: moneda, maximumFractionDigits: dec, minimumFractionDigits: dec }).format(n));
@@ -55,7 +56,7 @@ export function GraficoDiario({ serie }: { serie: ResultadosCliente["serie"] }) 
   );
 }
 
-export function Anuncio({ a, moneda }: { a: AnuncioTop; moneda: string }) {
+export function Anuncio({ a, moneda, escalar = false }: { a: AnuncioTop; moneda: string; escalar?: boolean }) {
   return (
     <div className="panel flex items-center gap-3 p-3">
       {a.miniatura ? (
@@ -66,6 +67,7 @@ export function Anuncio({ a, moneda }: { a: AnuncioTop; moneda: string }) {
       )}
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{a.nombre}</p>
+        {escalar ? <span className="mt-0.5 inline-block rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">🚀 Listo para escalar</span> : null}
         <p className="text-xs text-muted-foreground">
           {a.numeros.resultados ? `${entero(a.numeros.resultados)} resultados · ${dinero(a.numeros.costoResultado, moneda)} c/u` : `${entero(a.numeros.ventas)} ventas`}
         </p>
@@ -82,6 +84,8 @@ export async function SemanaNumeros({ cuenta }: { cuenta: string | null }) {
   const r = await resultadosCliente(cuenta, "7d");
   const t = r.totales;
   if (r.estado !== "ok" || !t?.inversion) return null;
+  // En Inicio, una sola línea: la oportunidad de escalar si hay; si no, la alerta más importante.
+  const linea = r.recomendaciones.find((x) => x.tipo === "escalar") ?? r.recomendaciones.find((x) => x.tipo !== "bien") ?? null;
   return (
     <a href="/cliente/resultados" className="panel group flex flex-col gap-3 p-5">
       <div className="flex items-center justify-between">
@@ -102,6 +106,57 @@ export async function SemanaNumeros({ cuenta }: { cuenta: string | null }) {
           <p className="text-[11px] text-muted-foreground">invertido</p>
         </div>
       </div>
+      {linea ? (
+        <p className="flex gap-2 border-t border-border/60 pt-3 text-xs leading-snug text-muted-foreground">
+          <span className="shrink-0">{ICONO_RECO[linea.tipo]}</span>
+          <span>{linea.texto}</span>
+        </p>
+      ) : null}
     </a>
+  );
+}
+
+const ICONO_RECO: Record<Recomendacion["tipo"], string> = { costo: "⚠️", ctr: "⚠️", frecuencia: "🔄", escalar: "🚀", bien: "✓" };
+
+/** La recomendación del equipo: una o dos líneas, nada más. */
+export function RecomendacionCard({ recos }: { recos: Recomendacion[] }) {
+  if (!recos.length) return null;
+  return (
+    <div className="panel flex flex-col gap-2 border-primary/30 p-4">
+      <p className="ceja">Recomendación</p>
+      {recos.map((r) => (
+        <p key={r.tipo} className="flex gap-2 text-sm leading-snug">
+          <span className="shrink-0">{ICONO_RECO[r.tipo]}</span>
+          <span>{r.texto}</span>
+        </p>
+      ))}
+    </div>
+  );
+}
+
+const COLOR: Record<Semaforo, string> = { bien: "text-emerald-400", normal: "text-foreground", alerta: "text-amber-400" };
+const PUNTO: Record<Semaforo, string> = { bien: "bg-emerald-400", normal: "bg-muted-foreground", alerta: "bg-amber-400" };
+
+/** Las 3 métricas que miramos (CTR único, frecuencia, costo por resultado) con su semáforo. */
+export function SaludAnuncios({ t, s, moneda }: { t: Numeros; s: Salud | null; moneda: string }) {
+  if (!s) return null;
+  const filas: { nombre: string; valor: string; meta: string; estado: Semaforo | null }[] = [
+    { nombre: "CTR único", valor: t.ctrUnico == null ? "—" : `${t.ctrUnico.toFixed(2)} %`, meta: `sano: ${UMBRALES.ctrUnicoMin} % o más`, estado: s.ctrUnico },
+    { nombre: "Frecuencia", valor: t.frecuencia == null ? "—" : t.frecuencia.toFixed(2), meta: `rotar creativos sobre ${UMBRALES.frecuenciaMax}`, estado: s.frecuencia },
+    { nombre: "Costo por resultado", valor: dinero(t.costoResultado, moneda), meta: `meta: menos de $${UMBRALES.costoBueno}`, estado: s.costo },
+  ];
+  return (
+    <div className="panel divide-y divide-border/60">
+      {filas.map((f) => (
+        <div key={f.nombre} className="flex items-center gap-3 px-4 py-2.5">
+          <span className={cn("size-2 shrink-0 rounded-full", f.estado ? PUNTO[f.estado] : "bg-muted")} />
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm">{f.nombre}</span>
+            <span className="block text-[11px] text-muted-foreground">{f.meta}</span>
+          </span>
+          <span className={cn("lu-titulo text-base font-semibold", f.estado ? COLOR[f.estado] : "")}>{f.valor}</span>
+        </div>
+      ))}
+    </div>
   );
 }

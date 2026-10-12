@@ -1,7 +1,7 @@
 import "server-only";
 
 import { notificarCEO } from "../notificar-ceo";
-import { esErrorDeToken, mejoresAnuncios, PERIODOS, serieDiaria, sumar, type FilaMeta, type Numeros, type Periodo } from "./resultados-reglas";
+import { anuncioParaEscalar, esErrorDeToken, mejoresAnuncios, PERIODOS, recomendar, salud, serieDiaria, sumar, type FilaMeta, type Numeros, type Periodo, type Recomendacion, type Salud } from "./resultados-reglas";
 
 // Resultados de anuncios del cliente, directo de la Marketing API de Meta con el token del portafolio (META_ADS_TOKEN,
 // el mismo que usa Max; dura ~60 días y lo renueva Elvin desde Bori). Solo LECTURA. Caché de 1 h por cuenta y periodo.
@@ -22,6 +22,10 @@ export interface ResultadosCliente {
   totales: Numeros | null;
   serie: { fecha: string; inversion: number; resultados: number }[];
   anuncios: AnuncioTop[];
+  salud: Salud | null;
+  recomendaciones: Recomendacion[];
+  /** Id del anuncio listo para escalar (si hay). */
+  escalar: string | null;
   actualizado: string;
 }
 
@@ -58,7 +62,7 @@ async function avisarToken(msg: string) {
 }
 
 export async function resultadosCliente(cuentaId: string | null, periodo: Periodo): Promise<ResultadosCliente> {
-  const vacio = (estado: ResultadosCliente["estado"]): ResultadosCliente => ({ estado, periodo, moneda: "USD", totales: null, serie: [], anuncios: [], actualizado: new Date().toISOString() });
+  const vacio = (estado: ResultadosCliente["estado"]): ResultadosCliente => ({ estado, periodo, moneda: "USD", totales: null, serie: [], anuncios: [], salud: null, recomendaciones: [], escalar: null, actualizado: new Date().toISOString() });
   if (!cuentaId) return vacio("sin-cuenta");
   const clave = `${cuentaId}:${periodo}`;
   const guardado = cache.get(clave);
@@ -66,7 +70,7 @@ export async function resultadosCliente(cuentaId: string | null, periodo: Period
 
   const preset = PERIODOS.find((p) => p.id === periodo)?.preset ?? "last_7d";
   const act = `/act_${cuentaId}`;
-  const campos = "spend,impressions,reach,clicks,actions,action_values,purchase_roas";
+  const campos = "spend,impressions,reach,clicks,unique_ctr,frequency,actions,action_values,purchase_roas";
   try {
     const [cuenta, total, diario, ads] = await Promise.all([
       graph<{ currency?: string }>(act, { fields: "currency" }),
@@ -74,7 +78,11 @@ export async function resultadosCliente(cuentaId: string | null, periodo: Period
       graph<{ data: FilaMeta[] }>(`${act}/insights`, { level: "account", date_preset: preset, time_increment: "1", fields: "spend,actions", limit: "100" }),
       graph<{ data: FilaMeta[] }>(`${act}/insights`, { level: "ad", date_preset: preset, fields: `ad_id,ad_name,${campos}`, limit: "200" }),
     ]);
-    const top = mejoresAnuncios(ads.data ?? []);
+    const todos = mejoresAnuncios(ads.data ?? [], 50);
+    const totales = (total.data ?? []).length ? sumar(total.data) : sumar([]);
+    const ganador = anuncioParaEscalar(todos);
+    // Los 3 mejores; si el ganador para escalar no está entre ellos, va primero.
+    const top = ganador && !todos.slice(0, 3).some((a) => a.id === ganador.id) ? [ganador, ...todos.slice(0, 2)] : todos.slice(0, 3);
     const creativos = top.length
       ? await graph<Record<string, { creative?: { thumbnail_url?: string; image_url?: string } }>>("/", { ids: top.map((a) => a.id).join(","), fields: "creative{thumbnail_url,image_url}" }).catch(() => ({}) as Record<string, { creative?: { thumbnail_url?: string; image_url?: string } }>)
       : {};
@@ -82,7 +90,10 @@ export async function resultadosCliente(cuentaId: string | null, periodo: Period
       estado: "ok",
       periodo,
       moneda: cuenta.currency ?? "USD",
-      totales: (total.data ?? []).length ? sumar(total.data) : sumar([]),
+      totales,
+      salud: salud(totales),
+      recomendaciones: totales.inversion ? recomendar(totales, todos) : [],
+      escalar: ganador?.id ?? null,
       serie: serieDiaria(diario.data ?? []),
       anuncios: top.map((a) => ({ ...a, miniatura: creativos[a.id]?.creative?.image_url ?? creativos[a.id]?.creative?.thumbnail_url ?? null })),
       actualizado: new Date().toISOString(),

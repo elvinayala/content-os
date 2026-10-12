@@ -133,6 +133,11 @@ export async function enviarAprobado(id: number): Promise<{ ok: boolean; texto: 
   const r = await publicar(c.canal, paraCliente, i.hilo, mc.imagenes.length || mc.videos.length ? bloquesConMedios(paraCliente, mc) : undefined);
   if (!r.ok) return { ok: false, texto: `No pude enviarla al canal del cliente (${r.error}).` };
   await actualizarItem(id, { estado: "enviado", resultado: `enviado ${r.ts}` });
+  // Los flyers y videos que el cliente recibió aprobados también quedan en su app (Archivos) (Elvin, 30/sep).
+  if (mc.imagenes.length || mc.videos.length)
+    await import("../clientes-app/entregas")
+      .then((m) => m.entregasDesdeMax(i.cliente, id, i.titulo || "", mc))
+      .catch((e) => console.error("[max app] entregas", id, e instanceof Error ? e.message : e));
   await alBuzonMax(`${encabezadoBuzon("aprobacion", { evento: "enviado", item: `#${id}`, cliente: i.cliente, tipo: i.tipo })}\nYa le llegó al cliente lo aprobado (${i.titulo || i.tipo}). Sigue el proceso: actualiza la etapa y arranca el próximo paso.`);
   return { ok: true, texto: `✅ #${id} enviado a <#${c.canal}>.` };
 }

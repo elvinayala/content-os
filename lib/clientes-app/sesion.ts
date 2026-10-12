@@ -37,6 +37,14 @@ export async function accesoVigente(itemId: string, version: number) {
 
 export const visorActual = cache(async (): Promise<Visor | null> => {
   const jar = await cookies();
+  // Vista previa del equipo primero: así quien del equipo abrió "Ver como el cliente" la ve aunque en ese navegador
+  // también haya entrado con un link de cliente (pasa en pruebas). Se revalida al usuario de Pulse en cada página.
+  const ver = jar.get(COOKIE_VER)?.value;
+  if (ver && UUID_RE.test(ver)) {
+    const u = await usuarioVerificado();
+    const boardId = u ? await boardDelItem(ver) : null;
+    if (u && boardId && (await puedeVerBoard(u, boardId))) return { itemId: ver, boardId, modo: "equipo", usuario: u };
+  }
   const c = await verificarCookieCliente(jar.get(COOKIE_CLIENTE)?.value);
   if (c) {
     const [a, boardId] = await Promise.all([accesoVigente(c.itemId, c.version), boardDelItem(c.itemId)]);
@@ -48,12 +56,6 @@ export const visorActual = cache(async (): Promise<Visor | null> => {
       }
       return { itemId: c.itemId, boardId, modo: "cliente", version: c.version };
     }
-  }
-  const ver = jar.get(COOKIE_VER)?.value;
-  if (ver && UUID_RE.test(ver)) {
-    const u = await usuarioVerificado();
-    const boardId = u ? await boardDelItem(ver) : null;
-    if (u && boardId && (await puedeVerBoard(u, boardId))) return { itemId: ver, boardId, modo: "equipo", usuario: u };
   }
   return null;
 });

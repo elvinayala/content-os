@@ -20,9 +20,9 @@ export function EtapaCliente({ etapa }: { etapa: Etapa }) {
         {PASOS.map((p, i) => (
           <li key={p.id} className="flex flex-col gap-1.5">
             <span className={cn("h-1.5 rounded-full", i < actual ? "bg-primary" : i === actual ? "bg-primary shadow-[0_0_12px_rgb(245_206_26/60%)]" : "bg-muted")} />
-            <span className={cn("flex min-w-0 items-center gap-0.5 text-[10.5px] leading-tight", i <= actual ? "text-foreground" : "text-muted-foreground")}>
-              {i < actual ? <Check className="size-3 shrink-0 text-primary" /> : null}
-              <span className="truncate">{p.corto}</span>
+            <span className={cn("flex min-w-0 items-center gap-0.5 text-[10px] leading-tight tracking-tight", i <= actual ? "text-foreground" : "text-muted-foreground")}>
+              {i < actual ? <Check className="size-2.5 shrink-0 text-primary" /> : null}
+              <span className="whitespace-nowrap">{p.corto}</span>
             </span>
           </li>
         ))}

@@ -2,6 +2,7 @@ import { FileText } from "lucide-react";
 
 import { AppMovil, type ConfigApp } from "@/components/app-movil";
 import { BotonSlack, PersonaFila } from "@/components/cliente/piezas";
+import { ReunionDelCliente } from "@/components/cliente/reunion-servidor";
 import { linkCliente } from "@/lib/clientes-app/acceso";
 import { fichaCliente } from "@/lib/clientes-app/datos";
 import { fechaCorta } from "@/lib/clientes-app/formato";
@@ -58,6 +59,7 @@ export default async function CuentaCliente() {
         ) : (
           <p className="panel px-4 py-3 text-sm text-muted-foreground">Estamos asignando a tu equipo. Te avisamos por Slack.</p>
         )}
+        <ReunionDelCliente itemId={v.itemId} preview={v.modo === "equipo"} />
         <BotonSlack url={f.slackUrl} grande />
       </section>
 
