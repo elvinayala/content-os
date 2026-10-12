@@ -185,7 +185,8 @@ export async function procesarRespuestaOnboarding(origen: string | null, respues
 
   const aviso = textoAviso({ nombre, negocio, host: fila?.host, ev, mejora: texto(respuestas.mejora) });
   await notificarCEO(aviso).catch((e) => console.error("[encuesta-onboarding] aviso", e));
-  if (ev.nivel !== "verde") await dmSlack(CARILIN, `${aviso}\n_(Encuesta de fin de onboarding de Level Up)_`).catch(() => false);
+  const esPrueba = /\(PRUEBA\)$/.test(nombre); // las pruebas de Elvin no le llegan a Carilin
+  if (ev.nivel !== "verde" && !esPrueba) await dmSlack(CARILIN, `${aviso}\n_(Encuesta de fin de onboarding de Level Up)_`).catch(() => false);
   return { nivel: ev.nivel, ref };
 }
 
