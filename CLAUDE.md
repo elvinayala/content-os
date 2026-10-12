@@ -1216,6 +1216,11 @@ Carilin agregan columnas/etiquetas/grupos desde la UI sin código.
   Asignación de Estrategas al webhook `pulse-cliente` (after(), `PULSE_N8N_SECRET`, `N8N_URL`) y
   expone `GET /api/pulse/n8n/clientes` para la corrida nocturna. El workflow lo genera
   `scripts/n8n-sync-pulse.mjs`. `PULSE_N8N_MODO=real` para escribir; si no, simulación.
+- **Cuentas publicitarias del onboarding** (12/oct): `lib/pulse/cuentas-meta.ts` verifica con `META_ADS_TOKEN` (app Hey Bori) que Bori lea el
+  "Id cuenta publicitaria" de cada ficha de LU (CLIENTE ACTIVO, ONBOARDING & SETUP, ANÁLISIS Y ESTRATEGIA): al crearse la ficha, cada hora en las
+  nuevas/con problema y a las 7 AM PR en todas (`/api/cron/cuentas-meta`, `?completo=1`, `?avisar=0`). Estados `ok · sin-id · sin-permiso · no-existe ·
+  pago · inactiva` (reglas puras en `cuentas-meta-reglas.ts`, tests `tests/cuentas-meta.test.mjs`); escribe nota en la ficha solo al cambiar y manda un DM
+  a Jessica (`PULSE_CUENTAS_AVISAR`); lunes = recordatorio. Los clientes comparten su cuenta con el portafolio "Level Up" 836808821982174.
 - **Seguridad** (`lib/pulse/seguridad.ts`, 21/sep): cookie `userId.exp.iat.hmac` (14 días) y
   `pulse_users.sesiones_desde` — cambiar clave/rol o desactivar cierra las sesiones; bloqueo 15 min
   tras 5 intentos fallidos (`intentos_fallidos`/`bloqueado_hasta`) + límite 10/min por IP; scrypt
