@@ -264,7 +264,12 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     const origen = String(opts.origen || "");
     const deBuzon = origen.startsWith("buzon:");
     const deAicore = deBuzon && origen.endsWith(":aicore");
-    const nicoLectura = ES_NICO && deBuzon && !origen.endsWith(":elvin") && env("NICO_BUZON_MODO") === "lectura";
+    // `mac` = las sesiones de Claude de Elvin en su Mac: son Elvin, así que NO van en lectura… pero SOLO si el mensaje
+    // trae la firma de la Mac verificada por el servidor (12-oct). Un "mac" sin firma (cualquiera con CRON_SECRET) va
+    // como delegado. "elvin" por el buzón ya solo existe como aprobación firmada, así que no entra aquí.
+    const macVerificada = origen.endsWith(":mac") && opts.verificadoMac === true;
+    const nicoLectura = ES_NICO && deBuzon && !macVerificada && env("NICO_BUZON_MODO") === "lectura";
+    if (ES_NICO && deBuzon) LOG("nico · modo:", nicoLectura ? "solo lectura (delegado)" : env("NICO_BUZON_MODO") === "lectura" ? "total (Mac verificada)" : "total (restricción apagada)", origen);
     if (prep) { /* permisos ya puestos por prepararTareaAicore */ }
     else if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...metaLectura(opts.marcas), "--disallowedTools", "Edit", "Write", "NotebookEdit");
@@ -654,7 +659,7 @@ async function atenderBuzon(token, chatCEO, st) {
     const inicio = Date.now();
     const hoy = new Date().toISOString().slice(0, 10);
     const persona = ES_NICO ? "nico" : ES_MAX ? "max" : ES_LOLA ? "lola" : "sofi";
-    const optsBuzon = { origen: deSlack ? "slack" : `buzon:${m.id}:${m.de}`, ...(ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {}) };
+    const optsBuzon = { origen: deSlack ? "slack" : `buzon:${m.id}:${m.de}`, verificadoMac: m.verificado === "mac", ...(ES_MAX ? { modelo: deSlack ? modeloParaSlack(m.texto) : MODELO_BARATO } : {}) };
     if (ES_NICO) optsBuzon.modelo = modeloParaNico(m.texto, deSlack ? `solicitud:${m.id}:${m.de}` : `buzon:${m.id}:${m.de}`);
     let r;
     if (deAicore) {

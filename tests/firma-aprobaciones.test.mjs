@@ -100,3 +100,35 @@ test("la llave del entorno puede venir en PEM o en base64; sin llave no se firma
   assert.equal(llavePrivadaDeEnv(servidor.priv), servidor.priv.trim());
   assert.throws(() => firmarAprobacion(ok12, ""), /falta la llave privada/);
 });
+
+// ── Credencial de la Mac ──────────────────────────────────────────────────────────────────────────────────────────
+import { CLAVE_PUBLICA_MAC, firmarMensajeMac, verificarMensajeMac } from "../lib/firma-aprobaciones.mjs";
+
+test("la llave pública real de la Mac está en el módulo y es Ed25519", () => {
+  assert.equal(crypto.createPublicKey(CLAVE_PUBLICA_MAC).asymmetricKeyType, "ed25519");
+  assert.notEqual(CLAVE_PUBLICA_MAC, CLAVE_PUBLICA_APROBACIONES);
+});
+
+test("la Mac firma un mensaje y solo vale para ese destinatario y ese texto, sin vencer", () => {
+  const mac = par();
+  const t = firmarMensajeMac({ para: "nico", texto: "revisa el deploy" }, mac.priv);
+  assert.equal(verificarMensajeMac(t, { para: "nico", texto: "revisa el deploy" }, mac.pub).ok, true);
+  assert.match(verificarMensajeMac(t, { para: "nico", texto: "borra la base" }, mac.pub).motivo, /no es el que se firmó/);
+  assert.match(verificarMensajeMac(t, { para: "max", texto: "revisa el deploy" }, mac.pub).motivo, /otro destinatario/);
+  assert.match(verificarMensajeMac(firmarMensajeMac({ para: "nico", texto: "x" }, atacante.priv), { para: "nico", texto: "x" }, mac.pub).motivo, /no es de la Mac/);
+  const vieja = firmarMensajeMac({ para: "nico", texto: "x" }, mac.priv, { ahora: Date.now() - 10 * 60 * 1000 });
+  assert.match(verificarMensajeMac(vieja, { para: "nico", texto: "x" }, mac.pub).motivo, /venció/);
+});
+
+test("el buzón: 'de mac' sin firma entra SIN privilegio (o se rechaza si es obligatoria); con firma, verificado y con nonce", () => {
+  const mac = par();
+  const sinFirma = remitentePermitido({ de: "mac", para: "nico", texto: "hola" }, servidor.pub, Date.now(), mac.pub);
+  assert.deepEqual(sinFirma, { ok: true, verificado: null });
+  assert.match(remitentePermitido({ de: "mac", para: "nico", texto: "hola", macObligatoria: true }, servidor.pub, Date.now(), mac.pub).motivo, /no trae la firma/);
+  const firma = firmarMensajeMac({ para: "nico", texto: "hola" }, mac.priv);
+  const ok = remitentePermitido({ de: "mac", para: "nico", texto: "hola", firmaMac: firma }, servidor.pub, Date.now(), mac.pub);
+  assert.equal(ok.verificado, "mac");
+  assert.ok(ok.nonce);
+  assert.match(remitentePermitido({ de: "mac", para: "nico", texto: "otra cosa", firmaMac: firma }, servidor.pub, Date.now(), mac.pub).motivo, /no es el que se firmó/);
+  assert.match(remitentePermitido({ de: "mac", para: "nico", texto: "hola", firmaMac: firmarMensajeMac({ para: "nico", texto: "hola" }, atacante.priv) }, servidor.pub, Date.now(), mac.pub).motivo, /no es de la Mac/);
+});

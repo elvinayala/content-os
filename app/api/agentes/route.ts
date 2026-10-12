@@ -71,6 +71,11 @@ async function asegurarTabla() {
         atendido_el timestamptz
       )`);
       await d.execute(sql`CREATE INDEX IF NOT EXISTS agentes_mensajes_para_estado ON agentes_mensajes (para, estado)`);
+    // 12-oct: quién está VERIFICADO (firma del servidor por Elvin, firma de la Mac) y el nonce de esa firma, que solo se
+    // puede usar una vez (si alguien reenvía el mismo mensaje firmado, choca con el índice único).
+    await d.execute(sql`ALTER TABLE agentes_mensajes ADD COLUMN IF NOT EXISTS verificado text`);
+    await d.execute(sql`ALTER TABLE agentes_mensajes ADD COLUMN IF NOT EXISTS firma_nonce text`);
+    await d.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS agentes_mensajes_firma_nonce_ux ON agentes_mensajes (firma_nonce) WHERE firma_nonce IS NOT NULL`);
       // Costo (USD) de la corrida que atendió el mensaje: AI Core lo muestra por tarea (11-oct).
       await d.execute(sql`ALTER TABLE agentes_mensajes ADD COLUMN IF NOT EXISTS costo_usd numeric(12, 6)`);
     })().catch((e) => { tablaLista = null; throw e; });
@@ -107,7 +112,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, mensajes: filas(r) });
   }
   if (para && pendientes) {
-    const r = await d.execute(sql`SELECT id, de, para, texto, hilo, estado, creado_el FROM agentes_mensajes WHERE para = ${para} AND estado = 'pendiente' ORDER BY id ASC LIMIT 20`);
+    const r = await d.execute(sql`SELECT id, de, para, texto, hilo, estado, creado_el, verificado FROM agentes_mensajes WHERE para = ${para} AND estado = 'pendiente' ORDER BY id ASC LIMIT 20`);
     return NextResponse.json({ ok: true, mensajes: filas(r) });
   }
   const r = para
@@ -143,9 +148,16 @@ export async function POST(req: NextRequest) {
   if (!texto || texto.length > 8000) return NextResponse.json({ error: "texto" }, { status: 400 });
   // Nadie escribe como Elvin con CRON_SECRET (lo tienen todos los puentes y agentes): solo una aprobación firmada por
   // el servidor después de verificarlo (lib/firma-aprobaciones.mjs, 12-oct).
-  const permiso = remitentePermitido({ de, texto });
+  // La Mac de Elvin firma con su propia llave (Llavero de la Mac): CRON_SECRET no basta para pasar por ella.
+  const permiso = remitentePermitido({ de, para, texto, firmaMac: req.headers.get("x-mac-firma"), macObligatoria: process.env.BUZON_MAC_FIRMA === "obligatoria" });
   if (!permiso.ok) return NextResponse.json({ error: "suplantacion", motivo: permiso.motivo }, { status: 403 });
-  const r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto, hilo) VALUES (${de}, ${para}, ${texto}, ${b.hilo ?? null}) RETURNING id, creado_el`);
+  let r;
+  try {
+    r = await d.execute(sql`INSERT INTO agentes_mensajes (de, para, texto, hilo, verificado, firma_nonce) VALUES (${de}, ${para}, ${texto}, ${b.hilo ?? null}, ${permiso.verificado ?? null}, ${permiso.nonce ?? null}) RETURNING id, creado_el`);
+  } catch (e) {
+    if (/firma_nonce/.test(String((e as Error)?.message ?? e))) return NextResponse.json({ error: "suplantacion", motivo: "esa firma ya se usó" }, { status: 409 });
+    throw e;
+  }
   const fila = filas<{ id: number; creado_el: string }>(r)[0];
   return NextResponse.json({ ok: true, id: fila.id, creadoEl: fila.creado_el });
 }

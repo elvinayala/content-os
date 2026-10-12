@@ -38,6 +38,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marcaSeguir } from "./agentes-seguir.mjs";
+import { execFileSync } from "node:child_process";
+import { firmarMensajeMac } from "../lib/firma-aprobaciones.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 function env(n) {
@@ -85,11 +87,24 @@ export function resolverPersona(q) {
   return EQUIPO.find((p) => sinAcentos(p.nombre) === n) || EQUIPO.find((p) => sinAcentos(p.nombre).startsWith(n)) || null;
 }
 
+// La Mac de Elvin firma lo que manda "de mac" con su llave del Llavero (12-oct). Fuera de la Mac (Railway, agentes) no
+// existe esa llave, así que nadie más puede mandar como la Mac aunque tenga CRON_SECRET.
+function firmaMac(body) {
+  if (!body || body.de !== "mac" || process.platform !== "darwin") return null;
+  try {
+    const llave = execFileSync("security", ["find-generic-password", "-s", "aib-dev", "-a", "CONTENT_OS_MAC_FIRMA", "-w"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    return llave ? firmarMensajeMac({ para: body.para, texto: body.texto }, llave) : null;
+  } catch {
+    return null;
+  }
+}
+
 async function api(metodo, params, body) {
   if (!SECRETO) throw new Error("Falta CRON_SECRET (.env.local o variable del servicio).");
   const url = new URL("/api/agentes", BASE);
   for (const [k, v] of Object.entries(params || {})) url.searchParams.set(k, String(v));
-  const r = await fetch(url, { method: metodo, headers: { "Content-Type": "application/json", "x-cron-secret": SECRETO }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(20000) });
+  const firma = metodo === "POST" ? firmaMac(body) : null;
+  const r = await fetch(url, { method: metodo, headers: { "Content-Type": "application/json", "x-cron-secret": SECRETO, ...(firma ? { "x-mac-firma": firma } : {}) }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(20000) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok || j.ok === false) throw new Error(`api/agentes ${r.status}: ${j.error || JSON.stringify(j).slice(0, 200)}`);
   return j;
