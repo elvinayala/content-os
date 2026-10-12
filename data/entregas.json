@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-12T02:18:16.186Z",
+  "actualizadoEl": "2026-10-12T02:53:44.239Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12697,7 +12697,7 @@
       "pilar": "oferta",
       "agente": "Lola",
       "creadoEl": "2026-10-12T02:11:22.087Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "id": "bf26-aib-f1-45",
       "marca": "ai-borinquen",
       "titulo": "AIB · BF26 F1 Lanzamiento (4:5, de usted)",
@@ -12705,7 +12705,7 @@
       "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae0689/J3BvdDK3gOn2JImY4_UWh_1yW110sJ.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
-      "contenido": "Copy exacto de ai-borinquen.md §3, oferta Hasta el 31/oct, logo real coquí de circuitos. Gafete EMPLEADO DIGITAL con silueta (sin cara)."
+      "contenido": "⛔ REEMPLAZADO por la v2 (Elvin cambió setup → instalación). Copy exacto de ai-borinquen.md §3, oferta Hasta el 31/oct, logo real coquí de circuitos. Gafete EMPLEADO DIGITAL con silueta (sin cara)."
     },
     {
       "tipo": "arte",
@@ -12713,7 +12713,7 @@
       "pilar": "oferta",
       "agente": "Lola",
       "creadoEl": "2026-10-12T02:11:22.087Z",
-      "estado": "nuevo",
+      "estado": "descartado",
       "id": "bf26-aib-f1-916",
       "marca": "ai-borinquen",
       "titulo": "AIB · BF26 F1 Lanzamiento (9:16) — REVISAR",
@@ -12721,7 +12721,7 @@
       "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae068e/U5z_1rFJPslL-ReGRVvB3_MLympNl6.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
-      "contenido": "⚠ El gafete trae una CARA de persona inventada por IA y el calendario tiene días en inglés. Recomiendo NO usarla: rehacer (1 imagen) con silueta como el 4:5, si Elvin da OK."
+      "contenido": "⛔ REEMPLAZADO por la v2 (Elvin cambió setup → instalación). ⚠ El gafete trae una CARA de persona inventada por IA y el calendario tiene días en inglés. Recomiendo NO usarla: rehacer (1 imagen) con silueta como el 4:5, si Elvin da OK."
     },
     {
       "tipo": "arte",
@@ -12770,6 +12770,86 @@
       "imagenUrl": "https://v3b.fal.media/files/b/0aae068e/eAbeJZzTLQFOVwvSChRiU_9lyBQJ9p.png",
       "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
       "contenido": "⚠ El coquí del calendario salió como rana realista, no la mascota de Bori (el logo arriba sí es el real, pero sin el nombre). Recomiendo rehacer (1 imagen) si Elvin da OK."
+    },
+    {
+      "tipo": "arte",
+      "modelo": "fal-ai/nano-banana-pro/edit",
+      "pilar": "oferta",
+      "agente": "Lola",
+      "creadoEl": "2026-10-12T02:53:44.239Z",
+      "estado": "nuevo",
+      "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
+      "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
+      "id": "bf26-lu-f1-45-v2",
+      "marca": "level-up",
+      "titulo": "LU · BF26 Flyer 1 Lanzamiento v2 (4:5) · 2 bonos",
+      "formato": "4:5",
+      "imagenUrl": "https://v3b.fal.media/files/b/0aae0789/hmULVuISjETfmTCZzvrxr_Lq9FzrDi.png",
+      "contenido": "Oferta nueva (level-up.md §3 actualizado): $8,244 en valor por $3,500 · Llamada 1:1 con el CEO · Solo 6 cupos en octubre. Sin foto real (no hay foto del equipo/taller en el repo; rk.jpg es captura de Meta Ads): objeto, cero gente/local de IA."
+    },
+    {
+      "tipo": "arte",
+      "modelo": "fal-ai/nano-banana-pro/edit",
+      "pilar": "oferta",
+      "agente": "Lola",
+      "creadoEl": "2026-10-12T02:53:44.239Z",
+      "estado": "nuevo",
+      "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
+      "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
+      "id": "bf26-lu-f1-916-v2",
+      "marca": "level-up",
+      "titulo": "LU · BF26 Flyer 1 Lanzamiento v2 (9:16) · 2 bonos",
+      "formato": "9:16",
+      "imagenUrl": "https://v3b.fal.media/files/b/0aae078a/Zn5XzyKrRTi1gVQjH9_4V_OoR0loFW.png",
+      "contenido": "Igual que el 4:5. Ojo: los días de la semana del calendario salen con letras sin sentido (pequeños); si molesta, se rehace."
+    },
+    {
+      "tipo": "arte",
+      "modelo": "fal-ai/nano-banana-pro/edit",
+      "pilar": "oferta",
+      "agente": "Lola",
+      "creadoEl": "2026-10-12T02:53:44.239Z",
+      "estado": "nuevo",
+      "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
+      "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
+      "id": "bf26-lu-f2-45-v2",
+      "marca": "level-up",
+      "titulo": "LU · BF26 Flyer 2 Los 2 bonos y los cupos (4:5)",
+      "formato": "4:5",
+      "imagenUrl": "https://v3b.fal.media/files/b/0aae078a/TV9k4pqfQskJArljgQggu_PrbgzDGT.png",
+      "contenido": "Copy exacto del nuevo §3: Dos bonos. Doce cupos. Seis en octubre. Libreta con 12 casillas y 6 marcadas oct (IA, objeto, sin gente)."
+    },
+    {
+      "tipo": "arte",
+      "modelo": "fal-ai/nano-banana-pro/edit",
+      "pilar": "oferta",
+      "agente": "Lola",
+      "creadoEl": "2026-10-12T02:53:44.239Z",
+      "estado": "nuevo",
+      "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
+      "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
+      "id": "bf26-aib-f1-45-v2",
+      "marca": "ai-borinquen",
+      "titulo": "AIB · BF26 F1 Lanzamiento v2 (4:5) · instalación",
+      "formato": "4:5",
+      "imagenUrl": "https://v3b.fal.media/files/b/0aae078c/SgWdTgw_sjAv8z8m5QQet_UaaABKJu.png",
+      "contenido": "Bullet nuevo: Dos empleados, instalación de uno (la versión de 7 palabras no pasa el tope de 6 de la guía). Gafete con silueta, sin cara. Detalle: un día del calendario dice MOR."
+    },
+    {
+      "tipo": "arte",
+      "modelo": "fal-ai/nano-banana-pro/edit",
+      "pilar": "oferta",
+      "agente": "Lola",
+      "creadoEl": "2026-10-12T02:53:44.239Z",
+      "estado": "nuevo",
+      "angulo": "Black Friday 2026 · Ola 1 (jue 15/oct)",
+      "promptVideo": "fal.mjs flyer (Nano Banana Pro) con logo real como referencia",
+      "id": "bf26-aib-f1-916-v2",
+      "marca": "ai-borinquen",
+      "titulo": "AIB · BF26 F1 Lanzamiento v2 (9:16) · instalación",
+      "formato": "9:16",
+      "imagenUrl": "https://v3b.fal.media/files/b/0aae078c/HQd66zgeOf6iblyDa9180_LFFgtVU5.png",
+      "contenido": "Gafete con silueta (ya sin cara inventada). Detalle: el calendario dice OCTUBER y días en inglés."
     }
   ]
 }
