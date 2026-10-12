@@ -1,0 +1,111 @@
+{
+  "id": "vital-01-tu-cuerpo-te-avisa-9x16",
+  "formato": "9:16",
+  "titulo": "Tu cuerpo te avisa (desintoxicación iónica)",
+  "angulo": "Primer paso natural y accesible: desintoxicación iónica desde $45",
+  "musica": "audio/medspa-musica.mp3",
+  "estilo": "minimal",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 130,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/vital-lifestyle-med-spa/drive-1mqsiSctSxlo5kPfV5CpN4NB-gpSts66X-1e8d8376-353c-4f4d-ab60-76409a5d8e45.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvdml0YWwtbGlmZXN0eWxlLW1lZC1zcGEvZHJpdmUtMW1xc2lTY3RTeGxvNWtQZlY1Q3BONE5CLWdwU3RzNjZYLTFlOGQ4Mzc2LTM1M2MtNGY0ZC1hYjYwLTc2NDA5YTVkOGU0NS5KUEciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODQ1MzUxLCJleHAiOjE4MjMzODEzNTF9.76UZpPK5_vUQ4Rk7FmNQJNuiayxxeDD4RoMsT1vr-7gOIF5S0id3oeW3H84X0stvAD4LZJNppj24DBH9CQVDtg",
+      "enfoque": "50% 50%",
+      "lineas": [
+        "¿Te sientes *cansado*,",
+        "pesado o sin energía",
+        "y no sabes por qué?"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 140,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/vital-lifestyle-med-spa/drive-1rVm0IjjIQt80j3BRkiJKEYZZ1ApBhn0C-01da3a05-9cec-4c86-b051-6754504df19a.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvdml0YWwtbGlmZXN0eWxlLW1lZC1zcGEvZHJpdmUtMXJWbTBJampJUXQ4MGozQlJraUpLRVlaWjFBcEJobjBDLTAxZGEzYTA1LTljZWMtNGM4Ni1iMDUxLTY3NTQ1MDRkZjE5YS5KUEciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODQ1MzUxLCJleHAiOjE4MjMzODEzNTF9.FHOyvFBunrUNkF6qxqdD5upwcQEQZwcajwRu7ktzQPW5pfeX6ud6gLcgMPJADSlGNyBqklG9PvmbAhSXXmcrMQ",
+      "enfoque": "50% 40%",
+      "lineas": [
+        "El estrés, la alimentación",
+        "y el ritmo del día a día",
+        "se *acumulan*…"
+      ]
+    },
+    {
+      "tipo": "gancho",
+      "dur": 120,
+      "alarma": true,
+      "lineas": [
+        "…y muchas veces el cuerpo",
+        "nos *avisa* antes de",
+        "que lo escuchemos."
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 170,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/vital-lifestyle-med-spa/drive-13wrCUF23l5Fa2YnRpZgDeeGgODh-P7aY-348a6114-0d6f-4baa-bb05-54a2f1d92de6.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvdml0YWwtbGlmZXN0eWxlLW1lZC1zcGEvZHJpdmUtMTN3ckNVRjIzbDVGYTJZblJwWmdEZWVHZ09EaC1QN2FZLTM0OGE2MTE0LTBkNmYtNGJhYS1iYjA1LTU0YTJmMWQ5MmRlNi5KUEciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODQ1MzUxLCJleHAiOjE4MjMzODEzNTF9.qvq6JHoUfalHl5PxranIyWG95EDSJn_MW74gZHJAblL33Sn4QQG0JOHHmCc5NdRSIJofvfBG-zDUgslIjCjofw",
+      "enfoque": "45% 50%",
+      "etiqueta": "En el centro de Phoenix",
+      "titulo": "Empieza con una sesión de *desintoxicación iónica*",
+      "puntos": [
+        "Vital Lifestyle Med-Spa",
+        "Medicina natural holística"
+      ]
+    },
+    {
+      "tipo": "lista",
+      "dur": 190,
+      "modo": "marcar",
+      "titulo": "Y según tu caso, *compleméntala* con",
+      "items": [
+        {
+          "texto": "Sueros homeopáticos"
+        },
+        {
+          "texto": "Auriculoterapia"
+        },
+        {
+          "texto": "Otros tratamientos naturales de desintoxicación"
+        }
+      ]
+    },
+    {
+      "tipo": "retrato",
+      "dur": 190,
+      "foto": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/clientes/vital-lifestyle-med-spa/drive-1WOGzLKd6HVwOA8ZPL1jb0K8WcwUgvLZB-fc6a8dac-7f10-4aea-82cd-510eaca087b8.JPG?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vY2xpZW50ZXMvdml0YWwtbGlmZXN0eWxlLW1lZC1zcGEvZHJpdmUtMVdPR3pMS2Q2SFZ3T0E4WlBMMWpiMEs4V2N3VWd2TFpCLWZjNmE4ZGFjLTdmMTAtNGFlYS04MmNkLTUxMGVhY2EwODdiOC5KUEciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODQ1MzUyLCJleHAiOjE4MjMzODEzNTJ9.Cla0dYyu4sZISAmDzcrtxvN6iFwLU1ezHibqLgbdbFYuPnt8ETyiZjV3v-SQZNjNwlS0LJXyGW3aXDGrRRLHAw",
+      "enfoque": "45% 30%",
+      "etiqueta": "Elba Roque",
+      "titulo": "Soy *Elba Roque*",
+      "puntos": [
+        "En nuestra clínica trabajamos con métodos naturales para ayudarte a cuidar tu bienestar",
+        "Y prevenir antes de lamentar"
+      ]
+    },
+    {
+      "tipo": "dato",
+      "dur": 130,
+      "grande": "$45",
+      "texto": "Tu primera sesión de desintoxicación iónica"
+    },
+    {
+      "tipo": "cierre",
+      "dur": 220,
+      "cta": "Escríbenos o llámanos al 602-245-9970",
+      "sub": "505 W Thomas Rd, Phoenix, AZ 85013",
+      "url": "Agenda tu cita",
+      "nota": "Lun–Mar 10:00 a.m.–5:00 p.m. · Mié 10:30 a.m.–6:30 p.m. · Sáb–Dom 9:30 a.m.–3:30 p.m."
+    }
+  ],
+  "cliente": {
+    "fondo": "#F6F8F1",
+    "texto": "#464952",
+    "acento": "#8EC641",
+    "fuente": "Montserrat",
+    "musica": "medspa-musica.mp3",
+    "nombre": "Vital Lifestyle Med-Spa",
+    "acento2": "#4BA452",
+    "estilos": [
+      "minimal",
+      "editorial"
+    ],
+    "subtitulo": "Phoenix, AZ"
+  }
+}
