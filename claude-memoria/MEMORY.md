@@ -97,3 +97,4 @@
 - [Avisar a María cada ajuste de Cortex](feedback-avisar-maria-ajustes.md) — tras cada ajuste desplegado, mensaje en #cortex-bori-edit-videos firmado — Elvin
 - [Mezcla de contenido 50/20/20/10](mezcla-contenido-50-20-20-10.md) — SIEMPRE: 50 % problema del avatar ideal · 20 solución · 20 producto · 10 mentalidad, en cualquier lote
 - [Shadow — avatar definitivo](shadow-avatar.md) — 18–26, salario mínimo, sin negocio; aprende a operar sistemas para creadores a 30–50 % de comisión
+- [Black Friday 2026](black-friday-2026.md) — APROBADO 11/oct: ofertas del 15/oct al 1/dic, mismo precio y bonos que bajan por ola; vault/proyectos/black-friday-2026/

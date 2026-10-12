@@ -1,13 +1,13 @@
 ---
 fecha: 2026-10-11
-estado: borrador — pendiente del OK de Elvin
+estado: APROBADO por Elvin (11/oct, "ok") · ofertas desde el 15/oct
 unidades: [level-up, ai-borinquen, bori]
 tags: [black-friday, ofertas, anuncios, email, whatsapp, plan]
 ---
 
 # Black Friday 2026 · Level Up · AI Borinquen · Bori
 
-> **Borrador para el OK de Elvin.** Precios y bonos salen de lo que ya existe (`PRECIOS` en
+> **APROBADO por Elvin el 11/oct/2026** (precios, bonos, cupos, presupuesto y metas tal como están aquí; donde dice [DECIDE ELVIN] vale la propuesta). Precios y bonos salen de lo que ya existe (`PRECIOS` en
 > `scripts/demo-cliente/demo.mjs`, `PLAN_PRICE`/`ciclos.js` de Bori, `vault/estilo/decisiones-negocio.md`).
 > Todo lo que es decisión de Elvin está marcado **[DECIDE ELVIN]** y resumido al final.
 > Piezas por marca: [[level-up]] · [[ai-borinquen]] · [[bori]] (en esta carpeta).
@@ -33,29 +33,36 @@ por **pago completo** y **solo hasta el 1/dic**. No se extiende: la fecha es rea
 
 ---
 
-## 1. Fechas clave (2026)
+## 1. Fechas clave (2026) — BLACK FRIDAY ADELANTADO
 
-| Día | Fecha | Qué pasa |
+> **Elvin (11/oct): "quiero que las ofertas salgan desde octubre, lo más pronto posible… sorprender a la
+> competencia, vender desde octubre".** Las ofertas abren el **jueves 15/oct** y cierran el **1/dic**.
+> Para que siete semanas no maten la urgencia: **el precio es el mismo de principio a fin y lo que baja
+> son los bonos y los cupos.** El que entra en octubre se lleva todo; el que espera al viernes negro, menos.
+> Nadie que compró temprano se siente engañado, y "el que entra primero se lleva más" es la urgencia.
+
+| Ola | Fechas | Qué pasa |
 |---|---|---|
-| Lun 13/oct – vie 24/oct | Preparación | OK de ofertas, landings, grabación, emails cargados, públicos |
-| Lun 26/oct – dom 15/nov | **Fase 1 · Calentar** | contenido de PROBLEMA + anuncios de video baratos para crear público caliente |
-| Lun 16/nov – dom 22/nov | **Fase 2 · Lista VIP** | "Escribe VIP" / formulario: entra a la lista que ve la oferta primero |
-| Lun 23/nov – mié 25/nov | **Fase 3 · Acceso anticipado VIP** | la lista VIP compra antes, con un bono extra de 48 h |
-| Jue 26/nov | Acción de Gracias | mensaje de gratitud, cero venta dura: "mañana abre" |
-| **Vie 27/nov** | **BLACK FRIDAY** | abre para todo el mundo 6:00 AM PR |
-| Sáb 28/nov | Small Business Saturday | día de **Bori** (negocio pequeño) + prueba social para las 3 |
-| Lun 30/nov | **Cyber Monday** | último bono (se cae a medianoche) |
-| Mar 1/dic | **Último día** | cierra 11:59 PM PR. No hay extensión |
-| Mié 2/dic – vie 12/dic | Post | onboarding de compradores, upsell cruzado, lista de espera de enero, reporte el 12/dic |
+| **Sprint de salida** | dom 11 – mié 14/oct | OK de Elvin (lun 12), links de pago, flyers (Lola) y motion (Remi) de lanzamiento, emails cargados, campañas EN PAUSA (Max). **Mar 13: salida suave 1:1** por WhatsApp a clientes y leads calientes (no necesita anuncios) |
+| **Ola 1 · Lanzamiento adelantado** | **jue 15/oct – sáb 31/oct** | **"El Black Friday llegó temprano."** Todos los bonos + el **bono de lanzamiento**. Anuncios directo a la oferta |
+| **Ola 2 · Noviembre** | dom 1/nov – dom 22/nov | se cae el bono de lanzamiento; quedan los demás. Entran los talking heads (grabación antes del 24/oct). Bori: "haz TU Black Friday con Bori" |
+| **Ola 3 · Semana de Black Friday** | lun 23/nov – lun 30/nov | **Vie 27 = Black Friday** (empujón máximo) · sáb 28 Small Business Saturday (día de Bori) · **lun 30 Cyber Monday: se cae el último bono a medianoche** |
+| **Último día** | mar 1/dic | solo la oferta base, cierra 11:59 PM PR. No hay extensión |
+| Post | mié 2/dic – vie 12/dic | onboarding, upsell cruzado, lista de espera de enero, reporte el 12/dic |
 
-**Por qué este calendario:** del 23/nov en adelante el costo de cada mil impresiones sube (todas las
-tiendas pautan). Por eso el público se construye barato en octubre–noviembre y la semana de Black
-Friday se gasta sobre todo en **remarketing a gente que ya nos vio**, no en prospección fría.
+**Por qué sorprende:** la competencia en PR guarda sus ofertas para la última semana de noviembre,
+cuando el anuncio cuesta más y el dueño ya gastó su presupuesto. Nosotros salimos 6 semanas antes, con
+el costo por impresión todavía bajo, y llegamos a la semana de Black Friday con los cupos medio vendidos
+(eso hace creíble el "quedan pocos"). En la semana de Black Friday la pauta va sobre todo a
+**remarketing** de los que nos vieron en octubre–noviembre.
 
-**Bori arranca antes (ojo):** los negocios pequeños preparan SUS anuncios de Black Friday a
-principios de noviembre. Bori tiene un ángulo propio y temprano: **"tu Black Friday hecho en 10
-minutos con Bori"** — del 2 al 22/nov se vende el plan mensual para que hagan su campaña, y la oferta
-anual entra el 23/nov.
+**El ángulo de octubre (LU y Bori):** *"firma en octubre y tu negocio llega a SU Black Friday con
+anuncios corriendo"* — el dueño de negocio necesita su propia campaña de fin de año, y el que arranca en
+noviembre llega tarde. AIB: *"su empleado digital trabajando antes de la temporada alta de diciembre"*
+(en marcha en 15 días).
+
+**La Lista VIP desaparece** (ya no hace falta: la oferta está abierta). La palabra `VIP` se deja solo
+como palabra clave de WhatsApp para los avisos de cupos.
 
 ---
 
@@ -67,21 +74,30 @@ Lista de hoy: Done With You ~$3,500 · Done For You $3,500–4,000 en servicios 
 $6–7K). Lo que vendemos: **sistema, no marketing suelto** (oferta → estrategia → contenido → anuncios
 con IA → automatización de leads → escalar lo que funciona).
 
-**Oferta (pago completo $3,500 — [DECIDE ELVIN] precio exacto por avatar):**
+**Oferta (pago completo $3,500 del 15/oct al 1/dic — [DECIDE ELVIN] precio exacto por avatar):**
 
 | Bono | Valor de referencia | Por qué |
 |---|---|---|
 | 1. **Agente de chat de AI Borinquen instalado** (WhatsApp/IG: contesta, precalifica, agenda) + 3 meses de mensualidad incluidos | $1,500 + $441 | cierra el ángulo "pierdes los leads por contestar tarde"; LU y AIB son el mismo dueño y el mismo producto |
 | 2. **4 motion graphics** con tu marca real (Remi) — hoy el paquete ≥ $3,500 pagado completo trae 2 | 2 extra | ya existe la fábrica; costo bajo, valor percibido alto |
 | 3. **Sesión 1:1 con Elvin: tu plan de 2027** | — | autoridad; es lo que más pide el avatar coach/digital |
-| 4. **Arranque prioritario:** campañas montadas antes del 15/dic para entrar a enero corriendo | — | urgencia real: el que firma en enero arranca en febrero |
-| **Bono VIP (solo 23–25/nov):** plan de contenido de enero — 30 piezas con tus ángulos ganadores | — | premia a la lista VIP |
+| 4. **Arranque prioritario:** en octubre = tus anuncios corriendo para TU Black Friday; en noviembre = campañas montadas antes del 15/dic para entrar a enero corriendo | — | urgencia real: el que firma en enero arranca en febrero |
+| **Bono de lanzamiento (solo 15–31/oct):** plan de contenido de 30 piezas con tus ángulos ganadores | — | premia al que se mueve primero |
 
 - **En plazos** (inicial + pagos): bonos 3 y 4. Los motion se entregan **cuando termine de pagar**
-  (regla vigente del paquete ≥ $3,500). El agente de AIB y el bono VIP son solo pago completo.
+  (regla vigente del paquete ≥ $3,500). El agente de AIB y el bono de lanzamiento son solo pago completo.
 - **Bono que se cae en Cyber Monday (30/nov 11:59 PM):** la sesión 1:1 con Elvin (bono 3). El 1/dic
   se vende sin ella. **[DECIDE ELVIN]**
-- **Cupos: 12** — capacidad real de onboarding (Jessica + estrategas). **[DECIDE ELVIN]**
+- **La escalera de bonos:**
+
+  | Ola | Bonos |
+  |---|---|
+  | 1 · 15–31/oct | los 4 + bono de lanzamiento |
+  | 2 · 1–22/nov | los 4 |
+  | 3 · 23–30/nov | los 4 (la 1:1 con Elvin se cae el 30/nov a medianoche) |
+  | 1/dic | 1, 2 y 4 |
+- **Cupos: 12 en total, repartidos por mes de arranque** (6 en octubre, 6 en noviembre) — capacidad
+  real de onboarding (Jessica + estrategas). El contador de cupos es real y se dice. **[DECIDE ELVIN]**
 - **Clientes actuales de LU** (segmento aparte): "Renueva 3 meses por adelantado y te instalamos tu
   agente de AIB" — usa el kit `lu-kit-agentes.netlify.app`.
 - **Downsell:** el que no califica (factura < $10K, no puede invertir) → **Bori Business anual de
@@ -94,7 +110,7 @@ con IA → automatización de leads → escalar lo que funciona).
 > marcha en 15 días + optimización del día 16 al 45 + soporte para siempre, si lo quiere.** Nunca
 > "7 días" ni "21 días".
 
-| Oferta | Lista | Black Friday (pago completo, hasta el 1/dic) |
+| Oferta | Lista | Black Friday (pago completo, 15/oct – 1/dic) |
 |---|---|---|
 | **Agente personalizado** (un puesto: cotizaciones, cobros, seguimiento, inventario, ventas, recepción…) | $1,500–2,000 + mensualidad | **2 empleados digitales por el setup de 1:** pagas el setup del primero, el segundo se instala sin costo de setup (solo su mensualidad) |
 | **AutoFlow completo** (chat + voz + CRM configurado + agenda + portal) | $3,500 + $497/mes | **$2,497** + $497/mes desde el mes 2 |
@@ -102,14 +118,17 @@ con IA → automatización de leads → escalar lo que funciona).
 | **1:1 done-with-you** (4 meses) | $4,000 | **$3,497** pago completo |
 | **Mapa de IA de tu negocio** (entrada, 60 min: qué puestos se automatizan primero y cuánto tiempo te devuelve) | — | **$197, se acredita 100 %** si compras cualquier cosa antes del 15/ene |
 
-- **Bono VIP (23–25/nov):** el primer mes de mensualidad incluido en lo que compres (en AutoFlow
-  suma: paga desde el mes 3). Academia y 1:1 no tienen mensualidad → el VIP recibe **una sesión 1:1
+- **Bono de lanzamiento (solo 15–31/oct):** el primer mes de mensualidad incluido en lo que compres
+  (en AutoFlow suma: paga desde el mes 3). Academia y 1:1 no tienen mensualidad → **una sesión 1:1
   extra de implementación (60 min)**. **[DECIDE ELVIN]**
+- **Escalera:** Ola 1 = precio BF + bono de lanzamiento + capacitación del equipo · Ola 2 y 3 = precio
+  BF + capacitación del equipo · 1/dic = solo el precio BF.
 - **Bono que se cae en Cyber Monday (30/nov 11:59 PM):** **capacitación de 60 min para tu equipo**
   sobre cómo trabajar con sus agentes. **[DECIDE ELVIN]**
 - **Clientes actuales de AIB:** su 2.º empleado digital sin setup (solo mensualidad), hasta el 1/dic.
-- **Capacidad:** cada instalación son ~15 días de trabajo de AI Engineer → **cupos de diciembre: 8
-  instalaciones**; lo que se venda por encima arranca la semana del 5/ene (se dice claro al vender).
+- **Capacidad:** cada instalación son ~15 días de trabajo de AI Engineer → **8 instalaciones por mes**
+  (noviembre y diciembre). Lo de octubre queda **en marcha antes de la temporada alta de diciembre**; lo
+  que pase del cupo de diciembre arranca la semana del 5/ene (se dice claro al vender).
   **[DECIDE ELVIN]**
 - Precios en código siguen en `PRECIOS` (`demo.mjs`); los de Black Friday NO se cambian ahí: van en
   la landing y en el guion del closer. El deck sigue diciendo "21 días" en `GARANTIA` → **no
@@ -123,16 +142,16 @@ con IA → automatización de leads → escalar lo que funciona).
 Lista: **Pro $99/mes** (180 créditos) · **Business $249/mes** (450 créditos, sesión 1:1 con estratega
 humano, campañas y negocios ilimitados, avatar). Anual hoy: Pro $79/mes · Business $199/mes.
 
-| Oferta | Hoy | Black Friday (23/nov – 1/dic) |
+| Oferta | Hoy | Black Friday (15/oct – 1/dic) |
 |---|---|---|
 | **Pro anual · fundador** | $948/año | **$599/año** (≈ $50/mes) y ese precio se queda congelado mientras renueves |
 | **Business anual · fundador** | $2,388/año | **$1,497/año** + 2 sesiones 1:1 con estratega + paquete de 400 créditos |
-| **Pro mensual** (2–22/nov: "haz tu Black Friday con Bori") | $99/mes | sigue en $99 + **150 créditos extra** el primer mes |
+| **Pro mensual** ("haz TU Black Friday con Bori") | $99/mes | sigue en $99 + **150 créditos extra** el primer mes |
 
-- **VIP (23–25/nov):** entra primero a los cupos de fundador. **Cyber Monday (hasta el 30/nov):** el
-  anual de fundador trae +150 créditos; el 1/dic se vende sin ellos. **[DECIDE ELVIN]**
+- **Escalera de créditos del anual de fundador:** Ola 1 (15–31/oct) **+300 créditos** · Ola 2 y 3
+  (1–30/nov) **+150** (se caen el Cyber Monday a medianoche) · 1/dic solo el precio. **[DECIDE ELVIN]**
 - Regla de precio vigente: lo que se anuncia es **Pro $99** — nunca "desde $39". El anual de fundador
-  es la ÚNICA rebaja y vive solo del 23/nov al 1/dic.
+  es la ÚNICA rebaja y vive solo del 15/oct al 1/dic.
 - **Cupos de fundador: 500** (ya era una decisión pendiente; Black Friday es el momento).
   **[DECIDE ELVIN]**
 - Small Business Saturday (28/nov) = día de Bori: en vivo de 30 min "armamos un Black Friday en vivo"
@@ -151,7 +170,7 @@ humano, campañas y negocios ilimitados, avatar). Anual hoy: Pro $79/mes · Busi
 
 Reglas de TODO el lote (no negociables):
 - **Mezcla 50/20/20/10:** de cada 10 piezas → 5 problema · 2 solución · 2 producto/oferta · 1 mentalidad.
-  Las de problema terminan con el CTA de la fase (Lista VIP o la oferta).
+  Desde el 15/oct TODAS terminan con la oferta (las de problema, con CTA suave: "escribe PALABRA").
 - **8 de cada 10** con la estructura de Elvin (GANCHO → PROBLEMA → SOLUCIÓN → PRUEBA → CTA) y **2 libres**.
 - Cada pieza ataca un **enemigo**: LU (botón azul · sin estrategia · referidos) · AIB (trabajo manual,
   depender de una persona, no saber por dónde empezar con IA, pagar de más; y responder tarde solo en
@@ -164,7 +183,7 @@ Reglas de TODO el lote (no negociables):
   pantallas reales de la app. AIB: su coquí de circuitos. **Nunca cruzar logos.**
 
 **Palabras clave (ManyChat/Zernio → tag `bf2026` + marca):** LU `SISTEMA` · AIB `EMPLEADO` · Bori `BORI`
-· lista VIP en las 3: `VIP`.
+· `VIP` en las 3 = "avísame de los cupos" por WhatsApp.
 
 **Caras:**
 - LU: **Frankie Jay** (salud, contratistas, negocios tradicionales 40–65) y **Daren** (Done With You,
@@ -173,38 +192,41 @@ Reglas de TODO el lote (no negociables):
 - Bori: **Bori el coquí** (presentador IA) + demo de pantalla + UGC de dueños. Elvin no graba.
 - Motion de las 3: **Remi** (fábrica en `motion/src/fabrica/`; countdown y ofertas animadas).
 
-**Grabación:** un solo día por marca antes del 24/oct (lista de guiones en cada archivo). Sofi lo
-coordina en `data/estudio.json`.
+**Creativos de la Ola 1 (sin esperar grabación):** flyers de Lola, motion de Remi (oferta, escalera de
+bonos, contador de cupos) y los clips de testimonio que ya existen (`motion/public/lu-peli/`,
+testimonios de AIB). **Grabación** de talking heads: un día por marca antes del 24/oct → entran en la
+Ola 2. Sofi lo coordina en `data/estudio.json`.
 
 ---
 
 ## 4. Plan de pauta (Max · Método 5 Fases adaptado)
 
-| Fase | Fechas | Objetivo de Meta | Público | % del presupuesto |
+| Ola | Fechas | Objetivo de Meta | Público | % del presupuesto |
 |---|---|---|---|---|
-| Calentar | 26/oct–15/nov | ThruPlay / tráfico (F1 + F4) con las piezas de problema | frío por intereses/nicho + lookalikes de clientes | 20 % |
-| Lista VIP | 16–22/nov | mensajes a WhatsApp/IG ("escribe VIP") + formulario | caliente (video 50 %+, interacción 365, visitantes) + frío ganador | 20 % |
-| VIP + Black Friday | 23/nov–1/dic | ventas / conversaciones (F2 + F3) | **remarketing caliente y tibio**, lista VIP, clientes y leads (públicos de lista) | 60 % |
+| 1 · Lanzamiento | 15–31/oct | conversaciones a WhatsApp / ventas (F2) **directo a la oferta** + ThruPlay (F4) para crear público | frío por nicho + lookalikes de clientes + caliente (365) | 35 % |
+| 2 · Noviembre | 1–22/nov | conversaciones/ventas (F2) + remarketing (F3) con talking heads y testimonios | frío ganador de la Ola 1 + caliente | 30 % |
+| 3 · Black Friday + último día | 23/nov–1/dic | ventas / conversaciones (F3) | **remarketing caliente y tibio**, clientes y leads (públicos de lista) | 35 % |
 
 **Presupuesto propuesto [DECIDE ELVIN]:**
 
-| Marca | Total 26/oct–1/dic | Promedio | Semana de Black Friday |
+| Marca | Total 15/oct–1/dic (48 días) | Promedio | Semana de Black Friday |
 |---|---|---|---|
-| Level Up | $4,000 | ~$110/día | ~$270/día (23/nov–1/dic) |
-| AI Borinquen | $2,500 | ~$70/día (hoy ~$75) | ~$165/día |
-| Bori | $1,500 | ~$40/día | **$50/día** (tope de la compuerta) |
+| Level Up | $5,000 | ~$105/día | ~$200/día (23/nov–1/dic) |
+| AI Borinquen | $3,000 | ~$62/día (hoy ~$75) | ~$120/día |
+| Bori | $2,000 | ~$42/día | **$50/día** (tope de la compuerta) |
 
 - Todo se monta **EN PAUSA** (Max) y Elvin o Carilin prenden. Escalar ganadores 10–20 %, nunca más.
 - 1 creativo por conjunto, ≥ $10/día por conjunto.
 - **Leer el embudo, no el CPL:** leads → agendas → shows → cierres → cash. No matar un ángulo antes de
   ~30 leads u 8 agendas.
-- Countdown en los anuncios del 27/nov al 1/dic (Remi) y anuncio de "últimas horas" el 1/dic.
+- Contador de **cupos** desde el 15/oct y de **horas** al cierre de cada ola (31/oct, 30/nov, 1/dic) — Remi.
+- Max monta la Ola 1 **en pausa el mié 14/oct**; Elvin o Carilin la prenden el jue 15 a las 6 AM.
 
 ---
 
 ## 5. Email marketing (ActiveCampaign · una cuenta por marca)
 
-**Antes del 1/nov (prerrequisitos):**
+**Antes del 15/oct (prerrequisitos — si no están, la Ola 1 sale solo por WhatsApp y anuncios):**
 1. Confirmar que el dominio de LU (`levelupmediapr.net`) y el de AIB están **autenticados** (DKIM/SPF).
    El 22/sep los envíos estaban bloqueados por eso. Sin esto no se manda nada.
 2. AIB necesita **su propia cuenta de AC** (la de LU no se usa para AIB). **[DECIDE ELVIN]** pasar acceso.
@@ -220,7 +242,6 @@ coordina en `data/estudio.json`.
 | Ex-clientes | ✅ | ✅ | ✅ (cancelaron) |
 | Clientes actuales | upsell agente AIB | upsell 2.º agente | upgrade a anual |
 | Usuarios del plan gratis | — | — | ✅ el más valioso |
-| Lista VIP (se forma 16–22/nov) | ✅ | ✅ | ✅ |
 
 > El archivo de Pipedrive (LU 14,837 personas · AIB 5,311) está en `~/Documents/Archivo Pipedrive/`.
 > **No importar en bloque:** solo los que dieron su correo en un contexto de negocio con nosotros,
@@ -230,18 +251,23 @@ coordina en `data/estudio.json`.
 
 | # | Fecha | Hora PR | Email | A quién |
 |---|---|---|---|---|
-| 1 | mar 3/nov | 8 AM | Valor: el problema #1 del avatar (cero venta) | todos |
-| 2 | mar 10/nov | 8 AM | Caso real + el sistema detrás | todos |
-| 3 | lun 16/nov | 8 AM | "El 27 abre algo — entra a la lista VIP" | todos |
-| 4 | jue 19/nov | 8 AM | Recordatorio VIP + qué gana el VIP | no-VIP |
-| 5 | lun 23/nov | 8 AM | **VIP: abre para ti primero** (bono 48 h) | VIP |
-| 6 | jue 26/nov | 10 AM | Gracias (Acción de Gracias) · mañana abre | todos |
-| 7 | **vie 27/nov** | 6 AM | **Abrió el Black Friday** | todos menos compradores |
-| 8 | sáb 28/nov | 9 AM | Preguntas y objeciones + prueba | no compradores |
-| 9 | lun 30/nov | 8 AM | Cyber Monday: el último bono se cae hoy | no compradores |
-| 10 | mar 1/dic | 8 AM | Último día | no compradores |
-| 11 | mar 1/dic | 8 PM | "Cierra a medianoche" (corto) | no compradores |
-| 12 | mié 2/dic | 9 AM | Compradores: bienvenida y próximos pasos · No compradores: lista de enero | según |
+| 1 | **jue 15/oct** | 7 AM | **"El Black Friday llegó temprano"** — la oferta + la escalera de bonos | todos |
+| 2 | sáb 17/oct | 9 AM | Caso real + el sistema detrás | no compradores |
+| 3 | mar 20/oct | 8 AM | Por qué en octubre (el ángulo de la marca) | no compradores |
+| 4 | lun 26/oct | 8 AM | Preguntas y objeciones + cupos que quedan | no compradores |
+| 5 | vie 30/oct | 8 AM | "Mañana se cae el bono de lanzamiento" | no compradores |
+| 6 | sáb 31/oct | 7 PM | "Hoy a medianoche" (corto) | no compradores |
+| 7 | mar 3/nov | 8 AM | Valor: el problema #1 del avatar (cero venta, P.D. con la oferta) | todos |
+| 8 | mar 10/nov | 8 AM | Caso real (otro) + oferta | no compradores |
+| 9 | mar 17/nov | 8 AM | Cómo funciona / qué pasa cuando entras + cupos | no compradores |
+| 10 | lun 23/nov | 8 AM | Semana de Black Friday: cupos que quedan | no compradores |
+| 11 | jue 26/nov | 10 AM | Gracias (Acción de Gracias), cero venta | todos |
+| 12 | **vie 27/nov** | 6 AM | **Black Friday** | no compradores |
+| 13 | sáb 28/nov | 9 AM | Preguntas y objeciones + prueba | no compradores |
+| 14 | lun 30/nov | 8 AM | Cyber Monday: el último bono se cae hoy | no compradores |
+| 15 | mar 1/dic | 8 AM | Último día | no compradores |
+| 16 | mar 1/dic | 8 PM | "Cierra a medianoche" (corto) | no compradores |
+| 17 | mié 2/dic | 9 AM | Compradores: bienvenida · No compradores: lista de enero | según |
 
 Al comprar → tag `bf2026:compro` → sale de la secuencia (automatización de AC por tag).
 
@@ -256,18 +282,21 @@ Al comprar → tag `bf2026:compro` → sale de la secuencia (automatización de 
 | Bori | WhatsApp de Bori por **Zernio** (939-250-8393) + **Canal de WhatsApp "Bori"** | plantillas aprobadas por Meta para lo que inicia Bori + publicaciones en el Canal |
 
 **Reglas para no quemar números:**
-- Lo más seguro y lo que más vende: **que el cliente escriba primero** (anuncios "escribe VIP",
+- Lo más seguro y lo que más vende: **que el cliente escriba primero** (anuncios "escribe la palabra",
   palabra clave en reels/historias). La ventana de 24 h queda abierta para conversar.
 - Mensajes que iniciamos nosotros: **solo a quien ya habló con nosotros**, por tandas de 50–100 por
   número al día, personalizados con nombre y negocio, nunca el mismo texto pegado a 1,000 personas.
 - Bori (API oficial): lo que inicia Bori va con **plantilla de marketing aprobada** (sométanlas antes del
-  10/nov).
+  14/oct; Meta tarda de horas a 1–2 días en aprobarlas).
 - Avisos internos NUNCA por el WhatsApp del negocio (eso va por Slack/Telegram).
 - Voz: en Instagram/WhatsApp de LU habla **Elvin** (minúscula, frases cortas, audios suyos); AIB firma
   **Alexis Pérez**; Bori habla como Bori.
 
-**La secuencia (textos en cada archivo):** confirmación VIP → VIP abre → Acción de Gracias (estado,
-no mensaje) → Black Friday abre → prueba social (audio/video) → Cyber Monday → últimas horas → post.
+**La secuencia (textos en cada archivo):** **salida suave 1:1 (mar 13/oct)** a clientes y leads
+calientes → lanzamiento (jue 15/oct) → prueba social → "mañana se cae el bono de lanzamiento" (vie 30/oct)
+→ noviembre (1 mensaje por semana, solo a quien respondió) → semana de Black Friday → Acción de Gracias
+(estado, no mensaje) → Black Friday → Cyber Monday → últimas horas → post. Estados de WhatsApp diarios
+durante las 3 olas.
 Más el **guion del setter** para la conversación 1:1 (dolor primero, sin dolor no hay cita).
 
 ---
@@ -276,12 +305,12 @@ Más el **guion del setter** para la conversación 1:1 (dolor primero, sin dolor
 
 | Marca | Meta de cash nuevo | Ticket medio | Cierres | Shows (cierre ~30 %) | Agendas (show ~60 %) |
 |---|---|---|---|---|---|
-| Level Up | $40,000 | $3,500 | 12 (= cupos) | 40 | ~67 |
+| Level Up | $42,000 | $3,500 | 12 (= cupos: 6 oct + 6 nov) | 40 | ~67 |
 | AI Borinquen | $25,000 | ~$2,500 | 10 | 33 | ~55 |
 | Bori | $25,000 | $599–1,497 | ~30 Pro anual + ~5 Business anual + mensuales | — (self-service) | — |
 
 **Tablero diario (lo arma Sofi, lo lee Elvin a las 8:30 PM con el resumen del día):** agendas, shows,
-cierres y cash por marca; VIP nuevos; respuestas a WhatsApp; aperturas/clics de email; gasto y costo
+cierres y cash por marca; cupos vendidos por ola; respuestas a WhatsApp; aperturas/clics de email; gasto y costo
 por agenda. Las ventas salen de la hoja de tesorería (resumen del día ya conectado a Telegram).
 
 ---
@@ -305,32 +334,37 @@ por agenda. Las ventas salen de la hoja de tesorería (resumen del día ya conec
 
 ---
 
-## 9. Checklist de preparación (antes del 24/oct)
+## 9. Sprint de salida (dom 11 – jue 15/oct)
 
-- [ ] Elvin aprueba ofertas, precios, cupos y presupuesto (§2, §4, §7)
-- [ ] 3 landings de oferta con contador real (cierra 1/dic 11:59 PM PR) — Nico
-- [ ] Cupones/precios de Black Friday en Stripe (Bori anual fundador) — Nico
-- [ ] Links de pago de LU y AIB por oferta (pago completo / plazos)
-- [ ] DKIM/SPF de LU y AIB confirmados; cuenta de AC de AIB
-- [ ] 12 emails por marca cargados como borrador + automatización por tag `bf2026:compro`
-- [ ] Plantillas de WhatsApp de Bori sometidas a Meta (antes del 10/nov)
-- [ ] Palabras clave `SISTEMA`/`EMPLEADO`/`BORI`/`VIP` en ManyChat/Zernio con tag de origen
-- [ ] Día de grabación por marca (lista en cada archivo) + 3 flyers por marca (Lola) + motion (Remi)
-- [ ] Públicos creados (video 50 %, interacción 365, listas de clientes/leads) — Max
-- [ ] Guion del closer con la oferta y los bonos; closers practican con el kit
-- [ ] Corregir "21 días" en `GARANTIA` de `demo.mjs` (con OK) o no mandar ese deck
+| Cuándo | Qué | Quién |
+|---|---|---|
+| **lun 12/oct** | **OK de Elvin** a ofertas, precios, cupos y presupuesto (§10) | Elvin |
+| lun 12 | Links de pago por oferta (pago completo / plazos) de LU y AIB; precio anual de fundador de Bori en Stripe | Nico |
+| lun 12 – mar 13 | 3 flyers por marca (lanzamiento, escalera de bonos, cupos) | Lola → revisa Leo |
+| lun 12 – mar 13 | Motion de lanzamiento por marca (oferta + escalera + contador de cupos) | Remi |
+| lun 12 – mar 13 | Guion del closer con la oferta y los bonos; los closers lo practican con el kit | Nahuel (LU) · Aure (AIB) |
+| **mar 13/oct** | **Salida suave 1:1 por WhatsApp** a clientes actuales y leads que agendaron y no compraron | setters/chatters LU · Liz (AIB) · Lis (Bori) |
+| mar 13 | Plantillas de WhatsApp de Bori sometidas a Meta; palabras clave `SISTEMA`/`EMPLEADO`/`BORI`/`VIP` con tag `bf2026` | Nico |
+| mar 13 – mié 14 | Emails 1–6 cargados en borrador + automatización por tag `bf2026:compro`; DKIM/SPF confirmados | Claude/Sofi · Elvin (DNS) |
+| mié 14/oct | Landing de oferta por marca con contador de cupos (puede salir el 15 con los anuncios a WhatsApp si no está) | Nico |
+| mié 14/oct | Campañas de la Ola 1 montadas **EN PAUSA**; públicos (365, listas de clientes/leads) | Max |
+| **jue 15/oct 6 AM** | **LANZAMIENTO:** Elvin/Carilin prenden campañas · email 1 · estados y mensajes de WhatsApp · post en IG de las 3 marcas | todos |
+| antes del 24/oct | Día de grabación por marca (talking heads para la Ola 2) | Sofi coordina |
+| — | Corregir "21 días" en `GARANTIA` de `demo.mjs` (con OK) o no mandar ese deck | Nico |
 
 ---
 
-## 10. Decisiones de Elvin (todo lo que falta para arrancar)
+## 10. Decisiones de Elvin — APROBADAS (11/oct, "ok")
 
-1. **LU:** precio Black Friday ($3,500 pago completo) y los 4 bonos; ¿incluimos el agente de chat de
-   AIB con 3 meses? ¿12 cupos?
-2. **AIB:** "2 empleados digitales por el setup de 1", AutoFlow a $2,497, Academia a $1,997, 1:1 a
-   $3,497, Mapa de IA a $197 acreditable; 8 instalaciones en diciembre.
-3. **Bori:** Pro anual fundador $599 y Business anual $1,497; 500 cupos de fundador; ¿se queda la pauta
-   en $50/día o hacemos excepción esa semana?
-4. **Presupuesto:** $4,000 LU · $2,500 AIB · $1,500 Bori (26/oct–1/dic).
-5. **Metas:** $40K LU · $25K AIB · $25K Bori.
-6. **Accesos:** cuenta de ActiveCampaign de AIB; confirmar DNS de los dos dominios.
-7. **Grabación:** fecha por marca antes del 24/oct.
+Vale todo lo propuesto en este plan: ofertas, escaleras de bonos, cupos (LU 12 · AIB 8 instalaciones/mes ·
+Bori 500 fundadores), presupuesto ($5,000 LU · $3,000 AIB · $2,000 Bori) y metas ($42K · $25K · $25K).
+Bori: la escalera de créditos y el precio congelado aplican también a Business; el +150 del Pro mensual
+vive hasta el 1/dic.
+
+**Sigue pendiente de Elvin (no bloquea la salida del 15/oct):**
+1. Acceso a la cuenta de ActiveCampaign de AIB y DNS (DKIM/SPF) de los dos dominios — sin eso, octubre
+   sale por WhatsApp y anuncios.
+2. Fecha de grabación por marca antes del 24/oct.
+3. Hora del en vivo de Bori del sáb 28/nov (la sala de Adamay/Ángela es L-V).
+4. Permiso de Ernest Crisson y texto de Sleekbrowspr (AIB); cómo conseguía clientes Tinos antes (LU).
+5. Fecha de la cohorte de enero de la Academia AIB.
