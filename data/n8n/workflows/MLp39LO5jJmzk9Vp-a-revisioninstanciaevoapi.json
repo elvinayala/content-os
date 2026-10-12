@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-12T03:07:34.086Z",
+  "updatedAt": "2026-10-12T03:08:21.415Z",
   "createdAt": "2026-03-27T13:37:02.960Z",
   "id": "MLp39LO5jJmzk9Vp",
   "name": "A) RevisionInstanciaEvoAPI",
@@ -339,7 +339,7 @@
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
-        "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/alerta",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -366,7 +366,7 @@
       "onError": "continueRegularOutput",
       "parameters": {
         "method": "POST",
-        "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+        "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/alerta",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -501,9 +501,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
-  "activeVersionId": "7e971168-5b42-4188-9113-232ccfff09f9",
-  "versionCounter": 54,
+  "versionId": "c8e40ef5-c128-4634-9a00-522865bc1132",
+  "activeVersionId": "c8e40ef5-c128-4634-9a00-522865bc1132",
+  "versionCounter": 57,
   "triggerCount": 1,
   "shared": [
     {
@@ -566,9 +566,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-10-12T03:07:34.089Z",
-    "createdAt": "2026-10-12T03:07:34.089Z",
-    "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
+    "updatedAt": "2026-10-12T03:08:21.419Z",
+    "createdAt": "2026-10-12T03:08:21.419Z",
+    "versionId": "c8e40ef5-c128-4634-9a00-522865bc1132",
     "workflowId": "MLp39LO5jJmzk9Vp",
     "nodes": [
       {
@@ -903,7 +903,7 @@
         "onError": "continueRegularOutput",
         "parameters": {
           "method": "POST",
-          "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+          "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/alerta",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
@@ -930,7 +930,7 @@
         "onError": "continueRegularOutput",
         "parameters": {
           "method": "POST",
-          "url": "https://levelupmedia.vercel.app/api/pulse/n8n/alerta",
+          "url": "https://content-os-chi-seven.vercel.app/api/pulse/n8n/alerta",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
@@ -1055,10 +1055,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-10-12T03:07:34.290Z",
-        "id": 346,
+        "createdAt": "2026-10-12T03:08:21.570Z",
+        "id": 347,
         "workflowId": "MLp39LO5jJmzk9Vp",
-        "versionId": "7e971168-5b42-4188-9113-232ccfff09f9",
+        "versionId": "c8e40ef5-c128-4634-9a00-522865bc1132",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

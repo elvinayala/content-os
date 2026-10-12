@@ -1,5 +1,5 @@
 {
-  "exportadoEl": "2026-10-12T03:08:08.823Z",
+  "exportadoEl": "2026-10-12T03:08:49.782Z",
   "servidor": "https://n8nv2.levelupmediapr.net",
   "total": 104,
   "workflows": [
@@ -589,7 +589,7 @@
       "nombre": "A) RevisionInstanciaEvoAPI",
       "activo": true,
       "archivo": "MLp39LO5jJmzk9Vp-a-revisioninstanciaevoapi.json",
-      "actualizadoEl": "2026-10-12T03:07:34.086Z"
+      "actualizadoEl": "2026-10-12T03:08:21.415Z"
     },
     {
       "id": "76PxSWzFembacRcK",
