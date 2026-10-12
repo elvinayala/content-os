@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-12T02:53:44.239Z",
+  "actualizadoEl": "2026-10-12T02:59:20.566Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12850,6 +12850,19 @@
       "formato": "9:16",
       "imagenUrl": "https://v3b.fal.media/files/b/0aae078c/HQd66zgeOf6iblyDa9180_LFFgtVU5.png",
       "contenido": "Gafete con silueta (ya sin cara inventada). Detalle: el calendario dice OCTUBER y días en inglés."
+    },
+    {
+      "id": "motion-remi-mv4nyc8l",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "LU-BF-11 · El Black Friday llegó temprano (Ola 1)",
+      "contenido": "Video de motion graphics (Remotion). Archivo local: `motion/out/bf/lu-bf-11-temprano-9x16.mp4`.",
+      "agente": "Remi",
+      "creadoEl": "2026-10-12T02:59:20.565Z",
+      "estado": "nuevo",
+      "formato": "motion 9:16 · 41 s",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-11-temprano-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xMS10ZW1wcmFuby05eDE2Lm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE3NzM5NjAsImV4cCI6MTgyMzMwOTk2MH0.2cW-HUWCjSqCMAGaZ-54yYXA6FhmI35AIdOKS8bec98fpqXzJy8_KhnrEo4RxRzZRufGkduQvSZrEdGzXpLPfw",
+      "modelo": "remotion"
     }
   ]
 }

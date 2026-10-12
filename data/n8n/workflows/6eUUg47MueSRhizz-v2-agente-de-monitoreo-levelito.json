@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T14:11:09.653Z",
+  "updatedAt": "2026-10-12T02:59:54.751Z",
   "createdAt": "2025-08-11T17:51:58.793Z",
   "id": "6eUUg47MueSRhizz",
   "name": "v2 Agente de monitoreo - Levelito",
@@ -451,8 +451,8 @@
       "name": "get campaign3",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1560,8 +1560,8 @@
       "name": "get campaign",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -4309,7 +4309,8 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
     "timezone": "America/Puerto_Rico",
-    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "availableInMCP": false
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -4368,9 +4369,9 @@
       }
     ]
   },
-  "versionId": "cf3bfaa8-450b-41a0-9a71-209c920416ad",
+  "versionId": "2768ab45-0ca3-4457-b199-5839cfcaec30",
   "activeVersionId": null,
-  "versionCounter": 3,
+  "versionCounter": 4,
   "triggerCount": 2,
   "shared": [
     {
@@ -4395,7 +4396,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -4423,7 +4424,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

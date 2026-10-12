@@ -111,6 +111,34 @@ p { margin: 0; }
 .vtit { font-size: 34px; font-weight: 600; margin-top: 10px; }
 .vsub { font-size: 24px; color: var(--gris); margin-top: 8px; }
 
+
+/* ───────── Black Friday adelantado (11/oct/2026) — SIN PRECIOS (Elvin) ───────── */
+.bf-cinta { position: absolute; right: 128px; top: 64px; display: flex; align-items: center; gap: 14px; padding: 12px 24px; border-radius: 999px; z-index: 2;
+  background: rgba(76, 198, 110, .1); border: 1px solid rgba(76, 198, 110, .5); font-family: var(--mono); font-size: 20px; letter-spacing: .18em; color: var(--verde); text-transform: uppercase; }
+.bf-cinta i { width: 12px; height: 12px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 16px var(--verde); }
+.activa .bf-cinta i { animation: titila 1.6s ease infinite; }
+@keyframes titila { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+.bfgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 54px; }
+.bfb { position: relative; border-radius: 24px; border: 1.5px solid color-mix(in srgb, var(--c) 45%, #1d3056); padding: 34px 34px 30px; display: flex; flex-direction: column; gap: 14px; min-height: 430px; box-sizing: border-box; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 14%, #0e1c35) 0%, #0c1830 75%); }
+.bfb::after { content: ""; position: absolute; inset: 0; background: radial-gradient(380px 200px at 100% 0%, color-mix(in srgb, var(--c) 22%, transparent), transparent 70%); pointer-events: none; }
+.bfb .ico { width: 72px; height: 72px; border-radius: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 18%, #0b1830); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); }
+.bfb .ico svg { width: 38px; height: 38px; stroke: var(--c); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bfb small { font-family: var(--mono); font-size: 20px; letter-spacing: .18em; color: var(--c); }
+.bfb h3 { margin: 0; font-size: 40px; font-weight: 600; line-height: 1.1; letter-spacing: -.015em; }
+.bfb p { font-size: 24px; line-height: 1.4; color: var(--gris); }
+.bfb .vence { margin-top: auto; align-self: flex-start; font-family: var(--mono); font-size: 18px; letter-spacing: .12em; text-transform: uppercase; padding: 8px 14px; border-radius: 10px; background: var(--c); color: #061020; font-weight: 600; }
+.bfb .vence.suave { background: transparent; color: var(--gris); border: 1px solid #2a3d63; font-weight: 500; }
+.bfb.cae { opacity: .45; filter: grayscale(.6); }
+.bfbarra { position: absolute; left: 128px; right: 128px; bottom: 132px; display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 24px 36px; border-radius: 22px; background: #0b1a31; border: 1px solid #22407a; }
+.bfbarra .izq { display: flex; flex-direction: column; gap: 6px; }
+.bfbarra .izq b { font-size: 36px; font-weight: 600; }
+.bfbarra .izq span { font-family: var(--mono); font-size: 19px; letter-spacing: .14em; color: var(--gris); text-transform: uppercase; }
+.bfreloj { text-align: right; }
+.bfreloj small { display: block; font-family: var(--mono); font-size: 18px; letter-spacing: .16em; color: var(--gris); text-transform: uppercase; }
+.bfreloj div { font-family: var(--mono); font-size: 44px; font-weight: 600; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.bfreloj em { font-style: normal; color: var(--verde); }
+
 /* ───────── 3 · costo ───────── */
 .costo { display: grid; grid-template-columns: 900px 1fr; gap: 30px; margin-top: 56px; }
 .cuenta { border-radius: 22px; border: 1px solid rgba(229, 96, 79, .35); background: linear-gradient(160deg, #1d1624 0%, #140f1c 100%); padding: 38px 44px; }
@@ -307,6 +335,7 @@ p { margin: 0; }
 
     <!-- 1 · PORTADA -->
     <section class="slide" id="s1" data-n="1">
+      <div class="bf-cinta aparece" style="--d:1.4s"><i></i>Black Friday adelantado · hasta el 1 de diciembre</div>
       <div class="izq">
         <div class="ceja sube" style="--d:.05s">
           <svg width="52" height="36" viewBox="0 0 52 36" aria-label="Bandera de Puerto Rico"><rect width="52" height="36" fill="#e03a3e"/><rect y="7.2" width="52" height="7.2" fill="#fff"/><rect y="21.6" width="52" height="7.2" fill="#fff"/><path d="M0 0 L30 18 L0 36 Z" fill="#1d5fd1"/><path d="M10 12.4 l1.6 4.5 4.8.1-3.8 2.9 1.4 4.6-4-2.7-4 2.7 1.4-4.6-3.8-2.9 4.8-.1z" fill="#fff"/></svg>
@@ -521,6 +550,22 @@ p { margin: 0; }
       <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>09</span></div>
     </section>
 
+
+    <!-- 10 · BLACK FRIDAY ADELANTADO (sin precios: el closer los da en la llamada) -->
+    <section class="slide" id="s10" data-n="10">
+      <div class="ceja sube">Black Friday adelantado · hasta el 1 de diciembre</div>
+      <h2 class="sube" style="--d:.1s;margin-top:20px">Si arrancas ahora, <span class="verde">te llevas más.</span></h2>
+      <div class="bfgrid">
+        <div class="bfb pop" style="--c:#4cc66e;--d:.35s"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M3 19c.7-3 2.6-4.6 5-4.6s4.3 1.6 5 4.6"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.6c2.5 0 4.4 1.4 5.2 4.4"/><path d="M19 3v4M17 5h4"/></svg></div><small>BONO 01</small><h3>2 empleados digitales por la instalación de 1</h3><p>Instalamos tu agente y un segundo empleado digital —cobros, ventas, seguimiento, inventario o reseñas— sin cargo de instalación.</p><div class="vence suave">Hasta el 1 de diciembre</div></div>
+        <div class="bfb pop" id="bfMes" style="--c:#4fcfe2;--d:.55s"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg></div><small>BONO 02 · LANZAMIENTO</small><h3>Tu primer mes de mensualidad, incluido</h3><p>Para los que arrancan en octubre. Si vas por la Academia o el 1:1, te llevas una sesión extra de implementación.</p><div class="vence" id="bfMesVence">Solo hasta el 31 de octubre</div></div>
+        <div class="bfb pop" style="--c:#7fb0ff;--d:.75s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.5V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.5"/><path d="M21 9v5"/></svg></div><small>BONO 03</small><h3>Capacitación de tu equipo</h3><p>Una sesión de 60 minutos para que tu gente sepa trabajar con sus agentes desde el primer día.</p><div class="vence">Hasta el Cyber Monday · 30 nov</div></div>
+      </div>
+      <div class="bfbarra sube" style="--d:1.1s">
+        <div class="izq"><b>Precio especial de Black Friday, <span class="verde">solo en esta llamada.</span></b><span>Cupos limitados · 8 instalaciones por mes</span></div>
+        <div class="bfreloj"><small id="bfRelojTxt">El bono de lanzamiento se cae en</small><div id="bfRelojVal">—</div></div>
+      </div>
+      <div class="pie"><span>AI BORINQUEN · PUERTO RICO</span><span>10</span></div>
+    </section>
     <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
   </div>
 </div>
@@ -528,7 +573,7 @@ p { margin: 0; }
 <div class="progreso" aria-hidden="true"><i id="barraProg"></i></div>
 <div class="controles" id="controles">
   <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
-  <span class="pag" id="pag">1 / 8</span>
+  <span class="pag" id="pag">1 / 10</span>
   <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
   <button type="button" id="btnRep" aria-label="Repetir la animación de esta slide" title="Repetir animación">↻</button>
   <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
@@ -603,6 +648,25 @@ const LOGOS = /*LOGOS*/[];
     timers.push(reg);
   }
 
+
+  // Black Friday: el reloj cambia solo según la fecha (hora de Puerto Rico, UTC-4)
+  const PR = (iso) => new Date(iso + "-04:00");
+  const ETAPAS_BF = [
+    { hasta: PR("2026-10-31T23:59:59"), txt: "El bono de lanzamiento se cae en" },
+    { hasta: PR("2026-11-30T23:59:59"), txt: "La capacitación de tu equipo se cae en" },
+    { hasta: PR("2026-12-01T23:59:59"), txt: "El Black Friday cierra en" },
+  ];
+  function relojBF() {
+    const ahora = new Date(), et = ETAPAS_BF.find((e) => ahora < e.hasta);
+    const txt = document.getElementById("bfRelojTxt"), val = document.getElementById("bfRelojVal");
+    if (ahora > ETAPAS_BF[0].hasta) { document.getElementById("bfMes").classList.add("cae"); const v = document.getElementById("bfMesVence"); v.textContent = "Terminó el 31 de octubre"; v.className = "vence suave"; }
+    if (!et) { txt.textContent = "El Black Friday"; val.innerHTML = "<em>cerró</em>"; return; }
+    const s = Math.max(0, Math.floor((et.hasta - ahora) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sg = s % 60;
+    const p = (n) => String(n).padStart(2, "0");
+    txt.textContent = et.txt;
+    val.innerHTML = `<em>${d}</em> días · <em>${p(h)}</em>:<em>${p(m)}</em>:<em>${p(sg)}</em>`;
+  }
+  relojBF(); setInterval(relojBF, 1000);
   function arrancar(s) {
     // Reinicia las animaciones CSS de la slide quitando y poniendo la clase
     s.classList.remove("activa"); void s.offsetWidth; s.classList.add("activa");
@@ -631,7 +695,7 @@ const LOGOS = /*LOGOS*/[];
     try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
   }
 
-  const inicial = /^#s(\d)$/.exec(location.hash);
+  const inicial = /^#s(\d+)$/.exec(location.hash);
   actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
   ir(actual, true);
 

@@ -39,10 +39,12 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
   const { durationInFrames } = useVideoConfig();
   let t = 0;
   const cortes: number[] = [];
+  const clips: [number, number][] = [];
   const escenas = anuncio.escenas.map((e, i) => {
     const desde = t;
     t += e.dur;
     if (i > 0) cortes.push(desde);
+    if (e.tipo === "clip") clips.push([desde, desde + e.dur]);
     return (
       <Sequence key={i} from={desde} durationInFrames={e.dur}>
         <EscenaFabrica escena={e} />
@@ -65,7 +67,12 @@ export const Anuncio: React.FC<{ anuncio: TAnuncio }> = ({ anuncio }) => {
         <Grano vineta={fondoClaro(tema.fondo) ? 0.1 : 0.55} />
         {/* loop: si el video dura más que la pista (cliente-calma = 32 s; Quiroplaza 41 s y Med Spa 47 s, 9/oct), la música
             sigue hasta el final en vez de cortarse — lo pidió María del Carmen. El volumen ya baja al final del video. */}
-        <Audio loop src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
+        <Audio loop src={staticFile(anuncio.musica ?? tema.musica)} volume={(f) => {
+          const base = interpolate(f, [0, 2, durationInFrames - 14, durationInFrames], [0.9, 0.55, 0.55, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          // Mientras habla un cliente (escena "clip") la música baja para que se le oiga.
+          const c = clips.find(([a, b]) => f >= a - 8 && f <= b + 8);
+          return c ? base * interpolate(f, [c[0] - 8, c[0], c[1], c[1] + 8], [1, 0.16, 0.16, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : base;
+        }} />
         <Sfx src="boom.mp3" en={0} vol={0.55} />
         {cortes.map((c) => <Sfx key={c} src="whoosh.mp3" en={c - 5} vol={0.4} />)}
       </AbsoluteFill>

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T15:04:47.551Z",
+  "updatedAt": "2026-10-12T03:00:04.965Z",
   "createdAt": "2025-09-23T08:51:12.290Z",
   "id": "vvXRpzCDaYehJDYf",
   "name": "E-) Alerta falta de fases v1",
@@ -261,8 +261,8 @@
       "name": "Get Campaigns",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -637,7 +637,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
@@ -1556,9 +1558,9 @@
       }
     ]
   },
-  "versionId": "88454809-a955-466a-8061-b147f31e711b",
-  "activeVersionId": "88454809-a955-466a-8061-b147f31e711b",
-  "versionCounter": 21,
+  "versionId": "73fd0af8-1c10-45ea-b7cd-d1e43a419939",
+  "activeVersionId": "73fd0af8-1c10-45ea-b7cd-d1e43a419939",
+  "versionCounter": 24,
   "triggerCount": 0,
   "shared": [
     {
@@ -1583,7 +1585,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -1611,7 +1613,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -1628,9 +1630,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-06T15:09:52.145Z",
-    "createdAt": "2026-01-06T15:04:47.557Z",
-    "versionId": "88454809-a955-466a-8061-b147f31e711b",
+    "updatedAt": "2026-10-12T03:00:04.969Z",
+    "createdAt": "2026-10-12T03:00:04.969Z",
+    "versionId": "73fd0af8-1c10-45ea-b7cd-d1e43a419939",
     "workflowId": "vvXRpzCDaYehJDYf",
     "nodes": [
       {
@@ -1887,8 +1889,8 @@
         "name": "Get Campaigns",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -2263,15 +2265,15 @@
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 88454809",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-01-06T15:09:52.096Z",
-        "id": 35,
+        "createdAt": "2026-10-12T03:00:05.202Z",
+        "id": 339,
         "workflowId": "vvXRpzCDaYehJDYf",
-        "versionId": "88454809-a955-466a-8061-b147f31e711b",
+        "versionId": "73fd0af8-1c10-45ea-b7cd-d1e43a419939",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

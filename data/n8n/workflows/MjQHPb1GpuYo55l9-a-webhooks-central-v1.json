@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T13:51:48.848Z",
+  "updatedAt": "2026-10-12T03:00:14.530Z",
   "createdAt": "2025-09-25T21:31:11.276Z",
   "id": "MjQHPb1GpuYo55l9",
   "name": "A-) Webhooks central v1",
@@ -908,8 +908,8 @@
       "name": "is-ad-account-valid?",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -961,8 +961,8 @@
       "name": "is-page-id-valid?",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1014,8 +1014,8 @@
       "name": "is-ig-valid? (from_page_id)",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1404,8 +1404,8 @@
       "name": "search-interest",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1506,8 +1506,8 @@
       "alwaysOutputData": true,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -2081,7 +2081,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
@@ -2124,9 +2126,9 @@
       }
     ]
   },
-  "versionId": "01566b59-9fe8-448f-a77e-8a75c3d5d063",
+  "versionId": "bb3e1324-bab7-4e2e-baba-66b130c52edc",
   "activeVersionId": null,
-  "versionCounter": 25,
+  "versionCounter": 26,
   "triggerCount": 1,
   "shared": [
     {
@@ -2151,7 +2153,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -2179,7 +2181,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

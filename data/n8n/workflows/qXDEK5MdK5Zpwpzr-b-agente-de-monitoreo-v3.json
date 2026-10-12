@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T00:54:46.363Z",
+  "updatedAt": "2026-10-12T02:59:58.076Z",
   "createdAt": "2025-09-13T04:35:10.608Z",
   "id": "qXDEK5MdK5Zpwpzr",
   "name": "B-) Agente de monitoreo v3",
@@ -781,8 +781,8 @@
       "name": "get campaign",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1603,8 +1603,8 @@
       "name": "get campaign1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         },
         "facebookGraphAppApi": {
           "id": "ExbnieFD9LX9uMqs",
@@ -3093,9 +3093,9 @@
       }
     ]
   },
-  "versionId": "515db399-4ba2-48d1-96ee-df1fa2a23c84",
-  "activeVersionId": "515db399-4ba2-48d1-96ee-df1fa2a23c84",
-  "versionCounter": 61,
+  "versionId": "3c1d734f-2653-4964-ae77-f8843f2dcc58",
+  "activeVersionId": "3c1d734f-2653-4964-ae77-f8843f2dcc58",
+  "versionCounter": 64,
   "triggerCount": 0,
   "shared": [
     {
@@ -3120,7 +3120,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -3148,7 +3148,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -3165,9 +3165,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-09-21T00:54:46.366Z",
-    "createdAt": "2026-09-21T00:54:46.366Z",
-    "versionId": "515db399-4ba2-48d1-96ee-df1fa2a23c84",
+    "updatedAt": "2026-10-12T02:59:58.079Z",
+    "createdAt": "2026-10-12T02:59:58.079Z",
+    "versionId": "3c1d734f-2653-4964-ae77-f8843f2dcc58",
     "workflowId": "qXDEK5MdK5Zpwpzr",
     "nodes": [
       {
@@ -3944,8 +3944,8 @@
         "name": "get campaign",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -4766,8 +4766,8 @@
         "name": "get campaign1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           },
           "facebookGraphAppApi": {
             "id": "ExbnieFD9LX9uMqs",
@@ -5512,10 +5512,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-21T00:54:46.552Z",
-        "id": 224,
+        "createdAt": "2026-10-12T02:59:58.263Z",
+        "id": 336,
         "workflowId": "qXDEK5MdK5Zpwpzr",
-        "versionId": "515db399-4ba2-48d1-96ee-df1fa2a23c84",
+        "versionId": "3c1d734f-2653-4964-ae77-f8843f2dcc58",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

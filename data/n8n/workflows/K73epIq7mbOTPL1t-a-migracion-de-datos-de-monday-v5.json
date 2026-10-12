@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-10T18:35:43.663Z",
+  "updatedAt": "2026-10-12T02:59:58.765Z",
   "createdAt": "2025-08-08T16:15:12.286Z",
   "id": "K73epIq7mbOTPL1t",
   "name": "A-) Migracion de datos de monday v5",
@@ -2320,8 +2320,8 @@
       "name": "get-campaigns",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -2475,8 +2475,8 @@
       "name": "get-campaigns1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -4943,9 +4943,9 @@
       }
     ]
   },
-  "versionId": "89cf6095-4cc3-4b8f-ae25-97630238ef9e",
+  "versionId": "23e31f6e-bbe0-4e44-a075-af90bcba8f8a",
   "activeVersionId": null,
-  "versionCounter": 42,
+  "versionCounter": 43,
   "triggerCount": 4,
   "shared": [
     {
@@ -4970,7 +4970,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -4998,7 +4998,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

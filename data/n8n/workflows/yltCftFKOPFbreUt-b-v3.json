@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-01T11:44:02.172Z",
+  "updatedAt": "2026-10-12T02:59:57.346Z",
   "createdAt": "2025-10-08T01:22:30.342Z",
   "id": "yltCftFKOPFbreUt",
   "name": "B-) V3",
@@ -83,8 +83,8 @@
       "name": "Get Campaigns Info (30 Days Report)1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -119,8 +119,8 @@
       "name": "Get Campaigns Info (15 Days Report)1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -887,8 +887,8 @@
       "name": "Get Campaigns Info (30 Days Report)",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -923,8 +923,8 @@
       "name": "Get Campaigns Info (15 Days Report)",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1581,8 +1581,8 @@
       "name": "Get Campaigns Info (30 Days Report)2",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -2136,7 +2136,8 @@
   "settings": {
     "callerPolicy": "workflowsFromSameOwner",
     "executionOrder": "v0",
-    "errorWorkflow": "fEOX9Q3Szkf6bLQq"
+    "errorWorkflow": "fEOX9Q3Szkf6bLQq",
+    "availableInMCP": false
   },
   "staticData": {
     "node:Todos los dias a las 2pm": {
@@ -2158,9 +2159,9 @@
       }
     ]
   },
-  "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
-  "activeVersionId": "9b173e86-3762-4027-bee7-01031acf9b50",
-  "versionCounter": 40,
+  "versionId": "2a1a40d0-3e0a-4830-9ea7-9272019fbbd3",
+  "activeVersionId": "2a1a40d0-3e0a-4830-9ea7-9272019fbbd3",
+  "versionCounter": 43,
   "triggerCount": 0,
   "shared": [
     {
@@ -2185,7 +2186,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -2213,7 +2214,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -2230,9 +2231,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-07-01T11:44:04.366Z",
-    "createdAt": "2026-07-01T11:44:02.183Z",
-    "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+    "updatedAt": "2026-10-12T02:59:57.349Z",
+    "createdAt": "2026-10-12T02:59:57.349Z",
+    "versionId": "2a1a40d0-3e0a-4830-9ea7-9272019fbbd3",
     "workflowId": "yltCftFKOPFbreUt",
     "nodes": [
       {
@@ -2311,8 +2312,8 @@
         "name": "Get Campaigns Info (30 Days Report)1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -2347,8 +2348,8 @@
         "name": "Get Campaigns Info (15 Days Report)1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -3115,8 +3116,8 @@
         "name": "Get Campaigns Info (30 Days Report)",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -3151,8 +3152,8 @@
         "name": "Get Campaigns Info (15 Days Report)",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -3809,8 +3810,8 @@
         "name": "Get Campaigns Info (30 Days Report)2",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -4362,15 +4363,15 @@
       }
     },
     "authors": "Elvin  Ayala",
-    "name": "Version 9b173e86",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-07-01T11:44:04.360Z",
-        "id": 207,
+        "createdAt": "2026-10-12T02:59:57.539Z",
+        "id": 335,
         "workflowId": "yltCftFKOPFbreUt",
-        "versionId": "9b173e86-3762-4027-bee7-01031acf9b50",
+        "versionId": "2a1a40d0-3e0a-4830-9ea7-9272019fbbd3",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-27T03:15:36.712Z",
+  "updatedAt": "2026-10-12T03:00:15.025Z",
   "createdAt": "2026-09-21T01:20:23.688Z",
   "id": "RyeQFDXnB429XG0Q",
   "name": "A-) Sync Pulse → NocoDB v1",
@@ -752,8 +752,8 @@
       },
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueRegularOutput"
@@ -1149,9 +1149,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "0752ddae-dfd0-4fb0-9a10-4dafc3152e2d",
-  "activeVersionId": "0752ddae-dfd0-4fb0-9a10-4dafc3152e2d",
-  "versionCounter": 16,
+  "versionId": "34f03ca7-31f5-4898-9da4-30a05784126c",
+  "activeVersionId": "34f03ca7-31f5-4898-9da4-30a05784126c",
+  "versionCounter": 19,
   "triggerCount": 2,
   "shared": [
     {
@@ -1176,7 +1176,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -1204,7 +1204,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -1214,9 +1214,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-27T03:15:36.716Z",
-    "createdAt": "2026-09-27T03:15:36.716Z",
-    "versionId": "0752ddae-dfd0-4fb0-9a10-4dafc3152e2d",
+    "updatedAt": "2026-10-12T03:00:15.028Z",
+    "createdAt": "2026-10-12T03:00:15.028Z",
+    "versionId": "34f03ca7-31f5-4898-9da4-30a05784126c",
     "workflowId": "RyeQFDXnB429XG0Q",
     "nodes": [
       {
@@ -1964,8 +1964,8 @@
         },
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueRegularOutput"
@@ -2354,10 +2354,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-27T03:15:36.930Z",
-        "id": 310,
+        "createdAt": "2026-10-12T03:00:15.168Z",
+        "id": 345,
         "workflowId": "RyeQFDXnB429XG0Q",
-        "versionId": "0752ddae-dfd0-4fb0-9a10-4dafc3152e2d",
+        "versionId": "34f03ca7-31f5-4898-9da4-30a05784126c",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

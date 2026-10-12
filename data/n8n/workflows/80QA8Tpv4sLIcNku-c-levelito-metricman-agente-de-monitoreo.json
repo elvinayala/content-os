@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T14:10:28.223Z",
+  "updatedAt": "2026-10-12T02:59:55.474Z",
   "createdAt": "2025-07-09T17:24:47.508Z",
   "id": "80QA8Tpv4sLIcNku",
   "name": "C) Levelito MetricMan - Agente de monitoreo",
@@ -1535,8 +1535,8 @@
       "name": "Asignar cuenta publicitaria1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1562,8 +1562,8 @@
       "name": "Asignar cuenta publicitaria2",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -2298,7 +2298,8 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
     "errorWorkflow": "fEOX9Q3Szkf6bLQq",
-    "timezone": "America/Puerto_Rico"
+    "timezone": "America/Puerto_Rico",
+    "availableInMCP": false
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -2334,9 +2335,9 @@
       }
     ]
   },
-  "versionId": "209d5058-ceb3-4e41-a473-2e10bfb6f4c3",
+  "versionId": "fabbb7b9-4b63-44c2-a7c5-017241bbabea",
   "activeVersionId": null,
-  "versionCounter": 3,
+  "versionCounter": 4,
   "triggerCount": 1,
   "shared": [
     {
@@ -2361,7 +2362,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -2389,7 +2390,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

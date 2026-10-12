@@ -42,6 +42,9 @@ export type Escena = { dur: number; foto?: string; enfoque?: string } & (
   | { tipo: "terminal"; titulo?: string; ventana: string; lineas: { t: string; tipo?: "ok" | "alerta" | "dim" | "info" }[] }
   /** Foto REAL de la persona/negocio (con su OK) con Ken Burns + titular y puntos al lado (16:9) o debajo (9:16). */
   | { tipo: "retrato"; foto: string; titulo: string; etiqueta?: string; puntos?: string[]; lado?: "izq" | "der"; enfoque?: string }
+  /** Clip REAL de testimonio (solo habla el cliente) a pantalla completa, con su audio; la música baja sola mientras
+   *  suena. `desde` = segundo del archivo donde empieza. Rótulo abajo (los clips ya traen subtítulos arriba). */
+  | { tipo: "clip"; video: string; desde?: number; etiqueta?: string; titulo?: string; nota?: string; volumen?: number }
   | { tipo: "cierre"; cta: string; sub?: string; url?: string; nota?: string }
 );
 

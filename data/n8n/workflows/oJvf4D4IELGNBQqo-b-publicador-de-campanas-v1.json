@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-22T01:56:12.198Z",
+  "updatedAt": "2026-10-12T03:00:13.882Z",
   "createdAt": "2025-10-14T21:28:30.178Z",
   "id": "oJvf4D4IELGNBQqo",
   "name": "B-) Publicador de campañas v1",
@@ -1256,8 +1256,8 @@
       "retryOnFail": true,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -1389,8 +1389,8 @@
       "name": "upload-video-to-meta",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1423,8 +1423,8 @@
       "name": "upload-image-to-meta",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1574,8 +1574,8 @@
       "name": "create-adcreative",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1611,8 +1611,8 @@
       "name": "create-adcreative1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1861,8 +1861,8 @@
       "name": "create-campaign",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1950,8 +1950,8 @@
       "name": "create-adset",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -1976,8 +1976,8 @@
       "name": "create-adset1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -2134,8 +2134,8 @@
       "name": "create-ad",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -2160,8 +2160,8 @@
       "name": "create-campaign1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -2249,8 +2249,8 @@
       "name": "create-adset2",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -2275,8 +2275,8 @@
       "name": "create-adset3",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -2433,8 +2433,8 @@
       "name": "create-ad1",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       }
     },
@@ -4125,9 +4125,9 @@
       }
     ]
   },
-  "versionId": "d7fe36d8-89a5-4e4f-a895-5c6fcc761c73",
-  "activeVersionId": "d7fe36d8-89a5-4e4f-a895-5c6fcc761c73",
-  "versionCounter": 18,
+  "versionId": "2ec99fed-3762-4b13-a6d2-66bb740bdb63",
+  "activeVersionId": "2ec99fed-3762-4b13-a6d2-66bb740bdb63",
+  "versionCounter": 21,
   "triggerCount": 0,
   "shared": [
     {
@@ -4152,7 +4152,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -4180,7 +4180,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
@@ -4190,9 +4190,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-09-22T01:56:12.201Z",
-    "createdAt": "2026-09-22T01:56:12.201Z",
-    "versionId": "d7fe36d8-89a5-4e4f-a895-5c6fcc761c73",
+    "updatedAt": "2026-10-12T03:00:13.886Z",
+    "createdAt": "2026-10-12T03:00:13.886Z",
+    "versionId": "2ec99fed-3762-4b13-a6d2-66bb740bdb63",
     "workflowId": "oJvf4D4IELGNBQqo",
     "nodes": [
       {
@@ -5444,8 +5444,8 @@
         "retryOnFail": true,
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "onError": "continueErrorOutput"
@@ -5577,8 +5577,8 @@
         "name": "upload-video-to-meta",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -5611,8 +5611,8 @@
         "name": "upload-image-to-meta",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -5762,8 +5762,8 @@
         "name": "create-adcreative",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -5799,8 +5799,8 @@
         "name": "create-adcreative1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6049,8 +6049,8 @@
         "name": "create-campaign",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6138,8 +6138,8 @@
         "name": "create-adset",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6164,8 +6164,8 @@
         "name": "create-adset1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6322,8 +6322,8 @@
         "name": "create-ad",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6348,8 +6348,8 @@
         "name": "create-campaign1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6437,8 +6437,8 @@
         "name": "create-adset2",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6463,8 +6463,8 @@
         "name": "create-adset3",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -6621,8 +6621,8 @@
         "name": "create-ad1",
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         }
       },
@@ -8115,10 +8115,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-09-22T01:56:12.379Z",
-        "id": 241,
+        "createdAt": "2026-10-12T03:00:14.041Z",
+        "id": 344,
         "workflowId": "oJvf4D4IELGNBQqo",
-        "versionId": "d7fe36d8-89a5-4e4f-a895-5c6fcc761c73",
+        "versionId": "2ec99fed-3762-4b13-a6d2-66bb740bdb63",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

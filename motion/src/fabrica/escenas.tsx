@@ -1,7 +1,7 @@
 // Librería de escenas de la fábrica. Cada escena lee el tema de la marca (contexto) y el lienzo
 // (vertical 1080×1920 u horizontal 1920×1080) y se acomoda sola. Los tiempos son frames locales.
 import React, { createContext, useContext } from "react";
-import { AbsoluteFill, Audio, Img, Sequence, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, interpolate, random, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { evolvePath } from "@remotion/paths";
 import { noise2D } from "@remotion/noise";
 import { golpe, rebote, suave, tw } from "../kit/fx";
@@ -336,7 +336,7 @@ const Item: React.FC<{
       {tachar && <div style={{ position: "absolute", left: 0, top: "52%", height: Math.max(4, tam * 0.1), borderRadius: 3, width: `${activo * 100}%`, background: t.alarma }} />}
     </div>
   );
-  const Monto = monto ? <div style={{ fontFamily: t.mono, fontSize: tam * 0.78, color: t.alarma, fontWeight: 600 }}>{monto}</div> : null;
+  const Monto = monto ? <div style={{ fontFamily: t.mono, fontSize: tam * 0.78, color: marca === "✓" ? t.acento : t.alarma, fontWeight: 600 }}>{monto}</div> : null;
   const circ = tam * 1.12;
   switch (es.tarjeta) {
     case "linea": {
@@ -887,8 +887,8 @@ const Lista: React.FC<Extract<Escena, { tipo: "lista" }>> = ({ titulo, items, mo
         })}
       </div>
       {total && (
-        <div style={{ fontFamily: t.fuente, fontWeight: es.peso, fontSize: v ? 60 : 52, color: t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
-          {total.etiqueta} {total.prefijo ?? ""}{Math.round(total.hasta * (hechos / items.length))}{total.sufijo ?? ""}
+        <div style={{ fontFamily: t.fuente, fontWeight: es.peso, fontSize: v ? 60 : 52, color: modo === "marcar" ? t.acento : t.alarma, opacity: tw(f, 10, 18), fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
+          {total.etiqueta} {total.prefijo ?? ""}{Math.round(total.hasta * (hechos / items.length)).toLocaleString("en-US")}{total.sufijo ?? ""}
         </div>
       )}
       {items.map((_, i) => <Sfx key={i} src={modo === "tachar" ? "error.mp3" : "pop.mp3"} en={8 + i * cada + 5} vol={0.22} />)}
@@ -1342,6 +1342,39 @@ const ConFoto: React.FC<{ foto: string; enfoque?: string; dur: number; children:
   );
 };
 
+
+/* ───────── Clip real de testimonio (11/oct/2026, Black Friday LU) ───────── */
+const ClipEsc: React.FC<Extract<Escena, { tipo: "clip" }>> = ({ video, desde = 0, etiqueta, titulo, nota, volumen = 1, dur }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { w, v, pad } = useLienzo();
+  const { fps } = useVideoConfig();
+  const src = /^https?:\/\//.test(video) ? video : staticFile(video.replace(/^\//, ""));
+  const entra = tw(f, 0, 10);
+  const kb = interpolate(f, [0, dur], [1.04, 1.0]);
+  const vol = (x: number) => interpolate(x, [0, 6, dur - 8, dur], [0, volumen, volumen, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const tam = titulo ? ajustar([titulo], w - pad * 2, v ? 92 : 80, 2) : 0;
+  return (
+    <AbsoluteFill style={{ opacity: entra }}>
+      <OffthreadVideo src={src} startFrom={Math.round(desde * fps)} volume={vol} style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${kb})` }} />
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, transparent 52%, ${t.fondo}d9 78%, ${t.fondo} 100%)` }} />
+      <div style={{ position: "absolute", left: pad, right: pad, bottom: v ? 300 : 70, display: "flex", flexDirection: "column", gap: 18, alignItems: "flex-start" }}>
+        {etiqueta && (
+          <div style={{ fontFamily: t.fuente, fontWeight: 700, fontSize: v ? 30 : 26, color: t.textoCta, background: t.acento, padding: "8px 20px", borderRadius: 999,
+            opacity: tw(f, 8, 18), transform: `translateY(${(1 - tw(f, 8, 20)) * 24}px)` }}>{etiqueta}</div>
+        )}
+        {titulo && (
+          <div style={{ fontFamily: t.fuente, fontWeight: 800, fontSize: tam, lineHeight: 1.04, letterSpacing: "-0.02em", color: t.texto,
+            textShadow: "0 6px 30px rgba(0,0,0,0.6)", opacity: tw(f, 14, 26), transform: `translateY(${(1 - tw(f, 14, 28)) * 30}px)` }}>
+            {titulo.split(/(\*[^*]+\*)/).map((p, i) => p.startsWith("*") ? <span key={i} style={{ color: t.acento }}>{p.slice(1, -1)}</span> : <React.Fragment key={i}>{p}</React.Fragment>)}
+          </div>
+        )}
+        {nota && <div style={{ fontFamily: t.mono, fontSize: v ? 22 : 18, color: t.gris, opacity: tw(f, 24, 34) }}>{nota}</div>}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   if (escena.foto && escena.tipo !== "retrato") {
     const { foto, enfoque, ...sinFoto } = escena;
@@ -1373,5 +1406,6 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "terminal": return <Terminal {...escena} />;
     case "retrato": return <Retrato {...escena} />;
     case "cierre": return <Cierre {...escena} />;
+    case "clip": return <ClipEsc {...escena} />;
   }
 };

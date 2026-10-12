@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T14:05:41.971Z",
+  "updatedAt": "2026-10-12T03:00:03.173Z",
   "createdAt": "2025-09-18T20:13:00.454Z",
   "id": "rTRe0OKhXPAKrFzs",
   "name": "H-) Felicitaciones a los 100 - 200 leads v1 (v3.1)",
@@ -290,8 +290,8 @@
       "executeOnce": false,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -2308,9 +2308,9 @@
       }
     ]
   },
-  "versionId": "4f8f26b7-b0af-405b-b0d3-828c3153790e",
+  "versionId": "61d194ca-a0d7-4e63-85b9-50003f815ae0",
   "activeVersionId": null,
-  "versionCounter": 149,
+  "versionCounter": 150,
   "triggerCount": 1,
   "shared": [
     {
@@ -2335,7 +2335,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -2363,7 +2363,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

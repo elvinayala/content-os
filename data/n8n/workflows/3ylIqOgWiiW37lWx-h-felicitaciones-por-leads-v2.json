@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-12T02:41:02.264Z",
+  "updatedAt": "2026-10-12T03:00:07.949Z",
   "createdAt": "2026-09-25T03:59:53.152Z",
   "id": "3ylIqOgWiiW37lWx",
   "name": "H-) Felicitaciones por leads v2",
@@ -211,8 +211,8 @@
       },
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "retryOnFail": true,
@@ -958,9 +958,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
-  "activeVersionId": "952c0118-9524-43f3-bab4-22f779c26a03",
-  "versionCounter": 46,
+  "versionId": "02633221-09d3-4087-a42f-ce0ff27e6c60",
+  "activeVersionId": "02633221-09d3-4087-a42f-ce0ff27e6c60",
+  "versionCounter": 49,
   "triggerCount": 2,
   "shared": [
     {
@@ -1023,9 +1023,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-10-12T02:41:02.268Z",
-    "createdAt": "2026-10-12T02:41:02.268Z",
-    "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
+    "updatedAt": "2026-10-12T03:00:07.951Z",
+    "createdAt": "2026-10-12T03:00:07.951Z",
+    "versionId": "02633221-09d3-4087-a42f-ce0ff27e6c60",
     "workflowId": "3ylIqOgWiiW37lWx",
     "nodes": [
       {
@@ -1232,8 +1232,8 @@
         },
         "credentials": {
           "facebookGraphApi": {
-            "id": "B89LULeA8wFpxWpo",
-            "name": "Levelito Acoount management"
+            "id": "EDnAJIe6yynT2Btp",
+            "name": "Facebook Graph (Hey Bori · Elvin)"
           }
         },
         "retryOnFail": true,
@@ -1971,26 +1971,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-10-12T02:41:02.490Z",
-        "id": 328,
+        "createdAt": "2026-10-12T03:00:08.194Z",
+        "id": 341,
         "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
-        "event": "activated",
-        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
-      },
-      {
-        "createdAt": "2026-10-12T02:41:02.809Z",
-        "id": 329,
-        "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
-        "event": "deactivated",
-        "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
-      },
-      {
-        "createdAt": "2026-10-12T02:41:03.123Z",
-        "id": 330,
-        "workflowId": "3ylIqOgWiiW37lWx",
-        "versionId": "952c0118-9524-43f3-bab4-22f779c26a03",
+        "versionId": "02633221-09d3-4087-a42f-ce0ff27e6c60",
         "event": "activated",
         "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e"
       }

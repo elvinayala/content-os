@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Demo Level Up Media</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,11 +115,63 @@ h2 { font-size: 72px; line-height: 1.04; }
 .fase b { font-family: var(--sora); font-size: 34px; display: block; }
 .fase span { font-size: 20px; line-height: 1.35; color: var(--gris); display: block; }
 
-/* 8 · Comencemos */
-#s8 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; }
-#s8 h1 { font-size: 220px; color: var(--oro); text-shadow: 0 0 70px rgba(245,206,26,.3); }
-#s8 .logo { width: 300px; }
-#s8 .mono { font-family: var(--mono); font-size: 22px; letter-spacing: .3em; color: var(--gris); }
+
+/* Black Friday · cinta de la portada */
+.bf-cinta { position: absolute; right: 70px; top: 54px; display: flex; align-items: center; gap: 14px; padding: 14px 26px; border-radius: 999px;
+  background: rgba(245,206,26,.1); border: 1px solid rgba(245,206,26,.55); font-family: var(--mono); font-size: 20px; letter-spacing: .22em; color: var(--oro); text-transform: uppercase; }
+.bf-cinta i { width: 12px; height: 12px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 16px var(--oro); }
+.activa .bf-cinta i { animation: titila 1.6s ease infinite; }
+@keyframes titila { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* 8 · Oferta: todo lo que recibes */
+#oferta .cab, #bonos .cab { position: absolute; left: 0; right: 0; top: 104px; text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+#oferta .cab h2, #bonos .cab h2 { font-size: 66px; }
+.incluye { position: absolute; left: 80px; right: 80px; top: 300px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.item { background: var(--superficie); border: 1px solid var(--borde); border-radius: 22px; padding: 26px 26px 24px; display: flex; flex-direction: column; gap: 10px; min-height: 270px; }
+.item .ico { width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center; background: rgba(245,206,26,.12); border: 1px solid rgba(245,206,26,.35); }
+.item .ico svg { width: 30px; height: 30px; stroke: var(--oro); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.item b { font-family: var(--sora); font-size: 27px; line-height: 1.15; margin-top: 6px; }
+.item span { font-size: 19px; line-height: 1.4; color: var(--gris); }
+.item .valor { margin-top: auto; font-family: var(--mono); font-size: 17px; letter-spacing: .1em; color: var(--gris2); }
+.item.total { background: linear-gradient(160deg, rgba(245,206,26,.22), rgba(245,206,26,.05)); border-color: var(--oro); box-shadow: 0 0 60px rgba(245,206,26,.18); justify-content: center; text-align: center; gap: 8px; }
+.item.total small { font-family: var(--mono); font-size: 17px; letter-spacing: .22em; color: var(--gris); }
+.item.total s { font-family: var(--sora); font-size: 34px; color: var(--gris); text-decoration-color: var(--oro); text-decoration-thickness: 3px; }
+.item.total .precio { font-family: var(--sora); font-size: 76px; font-weight: 800; color: var(--oro); letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.item.total em { font-style: normal; font-size: 18px; color: var(--texto); }
+
+/* 9 · Bonos Black Friday */
+.bonos { position: absolute; left: 80px; right: 80px; top: 300px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.bono { position: relative; background: var(--superficie); border: 1px solid rgba(245,206,26,.4); border-radius: 22px; padding: 30px 26px 26px; display: flex; flex-direction: column; gap: 12px; min-height: 420px; overflow: hidden; }
+.bono::before { content: ""; position: absolute; inset: 0; background: radial-gradient(420px 220px at 0% 0%, rgba(245,206,26,.16), transparent 70%); pointer-events: none; }
+.bono .num { font-family: var(--mono); font-size: 18px; letter-spacing: .26em; color: var(--oro); }
+.bono b { font-family: var(--sora); font-size: 31px; line-height: 1.12; }
+.bono span { font-size: 20px; line-height: 1.42; color: var(--gris); }
+.bono .valor { margin-top: auto; font-family: var(--sora); font-size: 26px; font-weight: 700; color: var(--texto); }
+.bono .vence { align-self: flex-start; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: #0b0b0b; background: var(--oro); padding: 6px 12px; border-radius: 8px; }
+.bono .vence.suave { background: transparent; color: var(--gris); border: 1px solid var(--borde); }
+.bonos.dos { grid-template-columns: 1fr 1fr; gap: 36px; left: 160px; right: 160px; }
+.bono.grande { min-height: 430px; padding: 40px 44px 36px; gap: 16px; }
+.bono.grande b { font-size: 44px; }
+.bono.grande span { font-size: 24px; }
+.bono.grande .valor { font-size: 34px; }
+.bono.grande:first-child { border-color: var(--oro); box-shadow: 0 0 70px rgba(245,206,26,.18); }
+.cierre-bf { position: absolute; left: 80px; right: 80px; bottom: 70px; display: flex; align-items: center; justify-content: space-between; gap: 30px;
+  padding: 26px 40px; border-radius: 22px; background: var(--superficie2); border: 1px solid var(--borde); }
+.cierre-bf .linea { display: flex; align-items: baseline; gap: 22px; font-family: var(--sora); }
+.cierre-bf .linea small { font-family: var(--mono); font-size: 17px; letter-spacing: .2em; color: var(--gris); }
+.cierre-bf .linea s { font-size: 40px; color: var(--gris); text-decoration-color: var(--oro); text-decoration-thickness: 3px; font-variant-numeric: tabular-nums; }
+.cierre-bf .linea strong { font-size: 64px; color: var(--oro); letter-spacing: -.03em; }
+.reloj { text-align: right; }
+.reloj small { display: block; font-family: var(--mono); font-size: 16px; letter-spacing: .2em; color: var(--gris); text-transform: uppercase; }
+.reloj b { display: block; font-family: var(--sora); font-size: 40px; color: var(--texto); font-variant-numeric: tabular-nums; margin-top: 6px; }
+.reloj b em { font-style: normal; color: var(--oro); }
+.letra { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; font-family: var(--mono); font-size: 14px; letter-spacing: .12em; color: var(--gris2); }
+
+/* 10 · Comencemos */
+#fin .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; }
+#fin h1 { font-size: 220px; color: var(--oro); text-shadow: 0 0 70px rgba(245,206,26,.3); }
+#fin .logo { width: 300px; }
+#fin .mono { font-family: var(--mono); font-size: 22px; letter-spacing: .3em; color: var(--gris); }
 
 /* Controles */
 .controles { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; background: rgba(11,11,11,.85); border: 1px solid var(--borde); border-radius: 14px; padding: 6px; transition: opacity .4s; z-index: 10; }
@@ -147,6 +200,7 @@ h2 { font-size: 72px; line-height: 1.04; }
         <div class="sub sube" style="--d:.65s">Marketing de crecimiento con datos que despegan.</div>
         <div class="barras aparece" style="--d:.9s"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i></div>
       </div>
+      <div class="bf-cinta aparece" style="--d:1.1s"><i></i>Black Friday adelantado · hasta el 1 de diciembre</div>
       <div class="pie"><span>Level Up Media</span><span>Presentación · 2026</span></div>
     </section>
 
@@ -155,15 +209,15 @@ h2 { font-size: 72px; line-height: 1.04; }
       <img class="logo-esq" src="logo.png" alt="">
       <div class="cab"><div class="ceja sube">Lo dicen ellos</div><h2 class="sube" style="--d:.1s">Testimonios de <span class="oro">nuestros clientes</span></h2></div>
       <div class="testis">
-        <div class="testi sube" style="--d:0.20s"><button type="button" class="video" data-video="testimonios/bryan.mp4" aria-label="Ver el testimonio de Dr. Bryan Vega" style="background-image:url(testimonios/bryan-poster.jpg)"><div class="play" style="--d:0.00s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:38</span></button>
+        <div class="testi sube" style="--d:0.20s"><button type="button" class="video" data-video="testimonios/bryan-v2.mp4" aria-label="Ver el testimonio de Dr. Bryan Vega" style="background-image:url(testimonios/bryan-v2-poster.jpg)"><div class="play" style="--d:0.00s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:17</span></button>
           <b>Dr. Bryan Vega</b><span>Quiropráctico · Aguada</span><q>Van dos meses de <em>agenda llena</em>.</q></div>
-        <div class="testi sube" style="--d:0.30s"><button type="button" class="video" data-video="testimonios/robert.mp4" aria-label="Ver el testimonio de Robert" style="background-image:url(testimonios/robert-poster.jpg)"><div class="play" style="--d:0.35s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:18</span></button>
+        <div class="testi sube" style="--d:0.30s"><button type="button" class="video" data-video="testimonios/robert-v2.mp4" aria-label="Ver el testimonio de Robert" style="background-image:url(testimonios/robert-v2-poster.jpg)"><div class="play" style="--d:0.35s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:15</span></button>
           <b>Robert</b><span>RK Automatic Transmission</span><q>Me has <em>triplicado</em> los números.</q></div>
-        <div class="testi sube" style="--d:0.40s"><button type="button" class="video" data-video="testimonios/magdalys.mp4" aria-label="Ver el testimonio de Magdalys" style="background-image:url(testimonios/magdalys-poster.jpg)"><div class="play" style="--d:0.70s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:26</span></button>
+        <div class="testi sube" style="--d:0.40s"><button type="button" class="video" data-video="testimonios/magdalys-v2.mp4" aria-label="Ver el testimonio de Magdalys" style="background-image:url(testimonios/magdalys-v2-poster.jpg)"><div class="play" style="--d:0.70s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:14</span></button>
           <b>Magdalys</b><span>Beauty Salon · Bayamón</span><q>Mis ingresos han subido <em>sobre un 80 %</em>.</q></div>
-        <div class="testi sube" style="--d:0.50s"><button type="button" class="video" data-video="testimonios/reina.mp4" aria-label="Ver el testimonio de Reina" style="background-image:url(testimonios/reina-poster.jpg)"><div class="play" style="--d:1.05s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:32</span></button>
+        <div class="testi sube" style="--d:0.50s"><button type="button" class="video" data-video="testimonios/reina-v2.mp4" aria-label="Ver el testimonio de Reina" style="background-image:url(testimonios/reina-v2-poster.jpg)"><div class="play" style="--d:1.05s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:14</span></button>
           <b>Reina</b><span>Mr. iPhone · Mayagüez</span><q>Ha incrementado mi negocio <em>un 50 %</em>.</q></div>
-        <div class="testi sube" style="--d:0.60s"><button type="button" class="video" data-video="testimonios/ernest.mp4" aria-label="Ver el testimonio de Lcdo. Ernest Crisson Cancel" style="background-image:url(testimonios/ernest-poster.jpg)"><div class="play" style="--d:1.40s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:31</span></button>
+        <div class="testi sube" style="--d:0.60s"><button type="button" class="video" data-video="testimonios/ernest-v2.mp4" aria-label="Ver el testimonio de Lcdo. Ernest Crisson Cancel" style="background-image:url(testimonios/ernest-v2-poster.jpg)"><div class="play" style="--d:1.40s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:21</span></button>
           <b>Lcdo. Ernest Crisson Cancel</b><span>Abogado</span><q>Cerca de <em>$5,000 más</em> al mes.</q></div>
         <div class="testi sube" style="--d:0.70s"><button type="button" class="video" data-video="testimonios/grissel.mp4" aria-label="Ver el testimonio de Dra. Grissel Villanueva" style="background-image:url(testimonios/grissel-poster.jpg)"><div class="play" style="--d:1.75s"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#f5f1e8"/></svg></div><span class="dur">0:10</span></button>
           <b>Dra. Grissel Villanueva</b><span>Medicina estética · Aguadilla</span><q>Un <em>alza increíble</em> en los leads.</q></div>
@@ -187,7 +241,7 @@ h2 { font-size: 72px; line-height: 1.04; }
           <small>CASO DE ÉXITO</small><h3>Edgard Cortés — Franquicias Claro</h3><p>Campañas desde $1.02 por conversación, impulsando sus operaciones de Claro en Puerto Rico.</p><div class="dato" data-cuenta="1400" data-pre="+" data-suf=" conversaciones" data-delay="1050">+1,400 conversaciones</div>
         </div>
       </div>
-      <div class="pie"><span>Casos de éxito</span><span>03 / 08</span></div>
+      <div class="pie"><span>Casos de éxito</span><span>03 / 10</span></div>
     </section>
     <!-- 4 · CASOS -->
     <section class="slide" id="s4">
@@ -203,7 +257,7 @@ h2 { font-size: 72px; line-height: 1.04; }
           <small>CASO DE ÉXITO</small><h3>Dra. Grissel Villanueva</h3><p>Estética, bótox, lifting y pérdida de peso, con campañas desde $1.03 por conversación.</p><div class="dato" data-cuenta="2900" data-pre="+" data-suf=" conversaciones" data-delay="1050">+2,900 conversaciones</div>
         </div>
       </div>
-      <div class="pie"><span>Casos de éxito</span><span>04 / 08</span></div>
+      <div class="pie"><span>Casos de éxito</span><span>04 / 10</span></div>
     </section>
     <!-- 5 · CASOS -->
     <section class="slide" id="s5">
@@ -219,7 +273,7 @@ h2 { font-size: 72px; line-height: 1.04; }
           <small>CASO DE ÉXITO</small><h3>Dra. Lorelys Mojica</h3><p>Campañas desde $0.95 y alcance de +398K personas.</p><div class="dato" data-cuenta="3500" data-pre="+" data-suf=" conversaciones" data-delay="1050">+3,500 conversaciones</div>
         </div>
       </div>
-      <div class="pie"><span>Casos de éxito</span><span>05 / 08</span></div>
+      <div class="pie"><span>Casos de éxito</span><span>05 / 10</span></div>
     </section>
     <!-- 6 · CASOS -->
     <section class="slide" id="s6">
@@ -235,7 +289,7 @@ h2 { font-size: 72px; line-height: 1.04; }
           <small>CASO DE ÉXITO</small><h3>Pepino Gun Gallery</h3><p>Crecimiento de membresía y promoción en 3 localidades, desde $2.35 por conversación.</p><div class="dato" data-cuenta="3300" data-pre="+" data-suf=" conversaciones" data-delay="1050">+3,300 conversaciones</div>
         </div>
       </div>
-      <div class="pie"><span>Casos de éxito</span><span>06 / 08</span></div>
+      <div class="pie"><span>Casos de éxito</span><span>06 / 10</span></div>
     </section>
 
     <!-- 7 · MÉTODO -->
@@ -262,17 +316,49 @@ h2 { font-size: 72px; line-height: 1.04; }
         <div class="fase pop" style="left:115px;top:307px;--d:2.1s"><i></i><div style="left:-280px;top:-30px;text-align:right"><small>05</small><b>Reproducir</b><span>Escalar lo que ya funciona.</span></div></div>
         
       </div>
-      <div class="pie"><span>Level Up Media</span><span>07 / 08</span></div>
+      <div class="pie"><span>Level Up Media</span><span>07 / 10</span></div>
     </section>
 
-    <!-- 8 · COMENCEMOS -->
-    <section class="slide" id="s8">
+    <!-- 8 · OFERTA BLACK FRIDAY: TODO LO QUE RECIBES -->
+    <section class="slide" id="oferta">
+      <img class="logo-esq" src="logo.png" alt="">
+      <div class="cab"><div class="ceja sube">Black Friday adelantado</div><h2 class="sube" style="--d:.1s">Todo esto por <span class="oro">$3,500</span></h2></div>
+      <div class="incluye">
+        <div class="item sube" style="--d:0.25s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 11l14-6v14L3 13z"/><path d="M7 13v5a2 2 0 0 0 4 0v-4"/><path d="M20 9v6"/></svg></div><b>Manejo de anuncios</b><span>Meta Ads con estrategia e IA: montamos, optimizamos y escalamos lo que vende.</span><div class="valor">VALOR DE REFERENCIA · $1,500</div></div>
+        <div class="item sube" style="--d:0.35s"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></div><b>Estrategia completa</b><span>Tu oferta, tus ángulos ganadores y el embudo, hechos para tu negocio.</span><div class="valor">VALOR DE REFERENCIA · $1,000</div></div>
+        <div class="item sube" style="--d:0.45s"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 16l-5-5L5 21"/></svg></div><b>Artes y creativos</b><span>Los diseños de tus anuncios y publicaciones, con tu marca.</span><div class="valor">VALOR DE REFERENCIA · $600</div></div>
+        <div class="item sube" style="--d:0.55s"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></div><b>Edición de videos</b><span>Tus videos editados para vender: cortes, subtítulos y ritmo.</span><div class="valor">VALOR DE REFERENCIA · $800</div></div>
+        <div class="item sube" style="--d:0.65s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 17c4 0 4-10 8-10s4 10 8 10"/><circle cx="4" cy="17" r="1.6"/><circle cx="20" cy="17" r="1.6"/></svg></div><b>Videos motion graphics</b><span>Animados con tu logo y tus colores reales. Se ven de otro nivel.</span><div class="valor">VALOR DE REFERENCIA · $1,000</div></div>
+        <div class="item sube" style="--d:0.75s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div><b>Visita de contenido profesional</b><span>Vamos a tu negocio a crear fotos y video reales. En PR lo real vende.</span><div class="valor">VALOR DE REFERENCIA · $750</div></div>
+        <div class="item sube" style="--d:0.85s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-2 2.5-5 2.5"/></svg></div><b>Soporte 24/7</b><span>Tienes a tu equipo cuando lo necesitas, no cuando se pueda.</span><div class="valor">VALOR DE REFERENCIA · $500</div></div>
+        <div class="item total pop" style="--d:1.15s"><small>VALOR DE REFERENCIA</small><s>$6,150</s><small style="margin-top:8px">TU INVERSIÓN</small><div class="precio">$3,500</div><em>pago completo</em></div>
+      </div>
+      <div class="pie"><span>Oferta Black Friday</span><span>08 / 10</span></div>
+    </section>
+
+    <!-- 9 · BONOS BLACK FRIDAY -->
+    <section class="slide" id="bonos">
+      <img class="logo-esq" src="logo.png" alt="">
+      <div class="cab"><div class="ceja sube">Bonos Black Friday</div><h2 class="sube" style="--d:.1s">Y si entras ahora, <span class="oro">te llevas esto</span></h2></div>
+      <div class="bonos dos">
+        <div class="bono grande pop" style="--d:.3s"><div class="num">BONO 01 · EL MÁS VALIOSO</div><b>Llamada estratégica 1:1 con nuestro CEO</b><span>Elvin Ayala se sienta contigo, revisa tu negocio de punta a punta y traza contigo el plan de crecimiento para 2027: tu oferta, tus números y dónde está el dinero que hoy se te escapa.</span><div class="valor">Valor $1,500</div><div class="vence">Hasta el Cyber Monday · 30 nov</div></div>
+        <div class="bono grande pop" style="--d:.55s"><div class="num">BONO 02</div><b>Bori: tu plataforma de contenido con IA</b><span>6 meses de Bori Pro incluidos para que tú o tu equipo creen flyers, videos y carruseles extra para tu negocio cuando quieran, además de lo que hacemos nosotros.</span><div class="valor">Valor $594</div><div class="vence suave">Incluido · 6 meses</div></div>
+      </div>
+      <div class="cierre-bf sube" style="--d:1.2s">
+        <div class="linea"><small>VALOR TOTAL</small><s data-cuenta="8244" data-pre="$" data-delay="1500">$8,244</s><small>HOY</small><strong>$3,500</strong></div>
+        <div class="reloj"><small id="relojTxt">La llamada con el CEO se cae en</small><b id="relojVal">—</b></div>
+      </div>
+      <div class="letra aparece" style="--d:1.5s">12 CUPOS · 6 ARRANCAN EN OCTUBRE · BONOS CON PAGO COMPLETO · LA OFERTA CIERRA EL 1 DE DICIEMBRE 11:59 PM</div>
+    </section>
+
+    <!-- 10 · COMENCEMOS -->
+    <section class="slide" id="fin">
       <div class="centro">
         <h1 class="pop">Comencemos.</h1>
         <img class="logo aparece" style="--d:.7s" src="logo.png" alt="Level Up Media">
         <div class="mono aparece" style="--d:1s">+100 NEGOCIOS EN PUERTO RICO</div>
       </div>
-      <div class="pie"><span>Level Up Media</span><span>08 / 08</span></div>
+      <div class="pie"><span>Level Up Media</span><span>10 / 10</span></div>
     </section>
 
     <div class="cine" id="cine" hidden><video id="cineVideo" controls playsinline preload="metadata"></video><button type="button" class="cerrar" id="cineCerrar" aria-label="Cerrar video">✕</button></div>
@@ -283,7 +369,7 @@ h2 { font-size: 72px; line-height: 1.04; }
 <div class="progreso" aria-hidden="true"><i id="barra"></i></div>
 <div class="controles" id="controles">
   <button type="button" id="btnAnt" aria-label="Slide anterior">‹</button>
-  <span class="pag" id="pag">1 / 8</span>
+  <span class="pag" id="pag">1 / 10</span>
   <button type="button" id="btnSig" aria-label="Slide siguiente">›</button>
   <button type="button" id="btnRep" aria-label="Repetir la animación" title="Repetir animación (R)">↻</button>
   <button type="button" id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
@@ -322,6 +408,24 @@ h2 { font-size: 72px; line-height: 1.04; }
   document.getElementById("cineCerrar").addEventListener("click", (e) => { e.stopPropagation(); cerrarCine(); });
   document.getElementById("cerrarGirar").addEventListener("click", (e) => { e.stopPropagation(); document.getElementById("girar").hidden = true; });
 
+
+  // Black Friday: el reloj de los bonos cambia solo según la fecha (hora de Puerto Rico, UTC-4)
+  const PR = (iso) => new Date(iso + "-04:00");
+  const ETAPAS = [
+    { hasta: PR("2026-11-30T23:59:59"), txt: "La llamada con el CEO se cae en" },
+    { hasta: PR("2026-12-01T23:59:59"), txt: "La oferta cierra en" },
+  ];
+  function reloj() {
+    const ahora = new Date(), et = ETAPAS.find((e) => ahora < e.hasta);
+    const txt = document.getElementById("relojTxt"), val = document.getElementById("relojVal");
+    if (!et) { txt.textContent = "La oferta de Black Friday"; val.innerHTML = "<em>cerró</em>"; return; }
+    const s = Math.max(0, Math.floor((et.hasta - ahora) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), seg = s % 60;
+    const p = (n) => String(n).padStart(2, "0");
+    txt.textContent = et.txt;
+    val.innerHTML = `<em>${d}</em> días · <em>${p(h)}</em>:<em>${p(m)}</em>:<em>${p(seg)}</em>`;
+  }
+  reloj(); setInterval(reloj, 1000);
+
   function arrancar(s) { s.classList.remove("activa"); void s.offsetWidth; s.classList.add("activa"); contar(s); }
   function ir(n, forzar) {
     if (!cine.hidden) cerrarCine();
@@ -334,7 +438,7 @@ h2 { font-size: 72px; line-height: 1.04; }
     document.getElementById("barra").style.width = ((actual + 1) / slides.length) * 100 + "%";
     try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
   }
-  const inicial = /^#s(\d)$/.exec(location.hash);
+  const inicial = /^#s(\d+)$/.exec(location.hash);
   actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
   slides.forEach((s, i) => { if (i !== actual) s.classList.remove("activa"); });
   ir(actual, true);

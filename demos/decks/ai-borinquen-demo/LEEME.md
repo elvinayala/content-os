@@ -31,3 +31,10 @@ sociales") · **Recepcionista** (agente de voz, se conecta a tu número de siemp
 los leads) + franja "Además: el dashboard de tu agente" (conversaciones en tiempo real). Logos de Simple Icons (CC0).
 Las que eran 7 y 8 ahora son 8 y 9. En Netlify se publica solo `/demo-ai-borinquen/index.html` con el deploy por digest
 (los MP4 del kit no están en git y se reusan por su sha). `video.html` (video pre-llamada) NO tiene esta slide todavía.
+
+## Black Friday 2026 (11/oct) — SIN PRECIOS (Elvin)
+Cinta "Black Friday adelantado" en la portada + slide 10 "Si arrancas ahora, te llevas más": bono 1 = 2 empleados digitales
+por la instalación de 1 (hasta el 1/dic) · bono 2 = primer mes de mensualidad (solo octubre; el 1/nov se apaga sola) ·
+bono 3 = capacitación de 60 min para el equipo (hasta el Cyber Monday) · barra "precio especial, solo en esta llamada" +
+reloj por fecha (hora PR). Publicada en aib-kit-ventas.netlify.app/demo-ai-borinquen/ subiendo SOLO esa página por la API
+de Netlify con digest (envoltura del kit + index.html), sin tocar los videos.

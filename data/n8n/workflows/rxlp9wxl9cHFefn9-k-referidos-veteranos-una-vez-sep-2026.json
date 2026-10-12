@@ -340,9 +340,139 @@
             "ok": true,
             "nombre": "Linette Lugo",
             "el": "2026-09-28T20:20:47.190Z"
+          },
+          "5": {
+            "ok": true,
+            "nombre": "Marie Pagan",
+            "el": "2026-09-29T14:50:45.444Z"
+          },
+          "6": {
+            "ok": true,
+            "nombre": "Nitza Sanchez",
+            "el": "2026-09-29T16:10:46.106Z"
+          },
+          "7": {
+            "ok": true,
+            "nombre": "Joshua Santana",
+            "el": "2026-09-29T17:40:45.768Z"
+          },
+          "8": {
+            "ok": true,
+            "nombre": "Edgar Lugo",
+            "el": "2026-09-29T19:10:47.111Z"
+          },
+          "9": {
+            "ok": true,
+            "nombre": "Josean Martinez",
+            "el": "2026-09-29T20:40:46.671Z"
+          },
+          "10": {
+            "ok": true,
+            "nombre": "Julio Santiago",
+            "el": "2026-09-30T14:10:45.972Z"
+          },
+          "11": {
+            "ok": true,
+            "nombre": "Katiusca Casado",
+            "el": "2026-09-30T15:30:45.779Z"
+          },
+          "12": {
+            "ok": true,
+            "nombre": "Bryan Vega",
+            "el": "2026-09-30T17:00:45.781Z"
+          },
+          "13": {
+            "ok": true,
+            "nombre": "Carlos Rivera Auto Corp",
+            "el": "2026-09-30T18:30:45.827Z"
+          },
+          "14": {
+            "ok": true,
+            "nombre": "Angel Marrero",
+            "el": "2026-09-30T20:00:45.790Z"
+          },
+          "15": {
+            "ok": true,
+            "nombre": "Shaidimar Berrios",
+            "el": "2026-10-01T15:10:46.003Z"
+          },
+          "16": {
+            "ok": true,
+            "nombre": "Luis Maldonado",
+            "el": "2026-10-01T16:40:45.235Z"
+          },
+          "17": {
+            "ok": true,
+            "nombre": "Reina Marrero",
+            "el": "2026-10-01T18:00:45.987Z"
+          },
+          "18": {
+            "ok": true,
+            "nombre": "Jemil Vasquez",
+            "el": "2026-10-01T19:30:45.362Z"
+          },
+          "19": {
+            "ok": true,
+            "nombre": "Ernest Crisson",
+            "el": "2026-10-01T21:00:42.445Z"
+          },
+          "20": {
+            "ok": true,
+            "nombre": "Carmelo Mendez",
+            "el": "2026-10-02T14:30:45.656Z"
+          },
+          "21": {
+            "ok": true,
+            "nombre": "Rocio Zayas",
+            "el": "2026-10-02T15:50:42.291Z"
+          },
+          "22": {
+            "ok": true,
+            "nombre": "Xavier Rufino",
+            "el": "2026-10-02T17:20:46.529Z"
+          },
+          "23": {
+            "ok": true,
+            "nombre": "Marieliz Cordero",
+            "el": "2026-10-02T18:50:45.375Z"
+          },
+          "24": {
+            "ok": true,
+            "nombre": "Miguel Correa",
+            "el": "2026-10-02T20:10:45.933Z"
+          },
+          "25": {
+            "ok": true,
+            "nombre": "Deborah Soler",
+            "el": "2026-10-05T14:20:47.160Z"
+          },
+          "26": {
+            "ok": true,
+            "nombre": "Felix Vazquez",
+            "el": "2026-10-05T15:40:46.134Z"
+          },
+          "27": {
+            "ok": true,
+            "nombre": "Kenia Carrera",
+            "el": "2026-10-05T17:10:45.679Z"
+          },
+          "28": {
+            "ok": true,
+            "nombre": "Axel Rios",
+            "el": "2026-10-05T18:50:46.089Z"
+          },
+          "29": {
+            "ok": true,
+            "nombre": "Juan Santana",
+            "el": "2026-10-05T20:20:46.981Z"
+          },
+          "30": {
+            "fallo": true,
+            "el": "2026-10-06T14:50:44.791Z"
           }
         },
-        "ultimo": 1790626847190
+        "ultimo": 1791298244791,
+        "pausado": true
       }
     }
   },
@@ -350,7 +480,7 @@
   "pinData": null,
   "versionId": "ad8dd404-33be-4c5d-8183-38059f4ba672",
   "activeVersionId": "ad8dd404-33be-4c5d-8183-38059f4ba672",
-  "versionCounter": 469,
+  "versionCounter": 2376,
   "triggerCount": 1,
   "shared": [
     {
@@ -375,7 +505,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -403,7 +533,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

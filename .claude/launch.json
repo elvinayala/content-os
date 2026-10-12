@@ -105,6 +105,15 @@
       "port": 3150
     },
     {
+      "name": "bori-local",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "mkdir -p /tmp/bori-local && cd '/Users/elvinayala/Documents/Claude/Projects/ai borinquen plataforma' && PORT=8093 DATA_DIR=/tmp/bori-local IMAGE_ENGINE=fal FAL_KEY=$(grep ^FAL_API_KEY= .env | cut -d= -f2-) node server.js"
+      ],
+      "port": 8093
+    },
+    {
       "name": "shadow-comunidad",
       "runtimeExecutable": "python3",
       "runtimeArgs": [

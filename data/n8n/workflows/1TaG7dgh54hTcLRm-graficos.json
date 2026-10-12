@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-27T00:39:40.653Z",
+  "updatedAt": "2026-10-12T03:00:12.762Z",
   "createdAt": "2026-01-07T13:24:57.991Z",
   "id": "1TaG7dgh54hTcLRm",
   "name": "graficos",
@@ -49,8 +49,8 @@
       "retryOnFail": true,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -135,8 +135,8 @@
       "retryOnFail": true,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -284,8 +284,8 @@
       "retryOnFail": true,
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -681,16 +681,17 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e57d31e6-ac17-456a-b504-37bcd9ce860d",
+  "versionId": "937ceefe-16e8-482b-8434-5e640e140cea",
   "activeVersionId": null,
-  "versionCounter": 31,
+  "versionCounter": 32,
   "triggerCount": 0,
   "shared": [
     {
@@ -715,7 +716,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -743,7 +744,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }

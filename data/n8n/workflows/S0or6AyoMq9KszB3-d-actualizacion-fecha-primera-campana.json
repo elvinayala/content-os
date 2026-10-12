@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-06T14:10:35.115Z",
+  "updatedAt": "2026-10-12T02:59:59.807Z",
   "createdAt": "2025-09-11T21:11:33.357Z",
   "id": "S0or6AyoMq9KszB3",
   "name": "D-) Actualización fecha primera campaña",
@@ -188,8 +188,8 @@
       "name": "get-campaigns",
       "credentials": {
         "facebookGraphApi": {
-          "id": "B89LULeA8wFpxWpo",
-          "name": "Levelito Acoount management"
+          "id": "EDnAJIe6yynT2Btp",
+          "name": "Facebook Graph (Hey Bori · Elvin)"
         }
       },
       "onError": "continueErrorOutput"
@@ -551,7 +551,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -564,9 +566,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "850e289e-6ccc-4c30-a9e3-2787bf55aad8",
+  "versionId": "d6620c52-1f21-417b-9380-b7b5d481854f",
   "activeVersionId": null,
-  "versionCounter": 27,
+  "versionCounter": 28,
   "triggerCount": 1,
   "shared": [
     {
@@ -591,7 +593,7 @@
             "userId": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
             "projectId": "Q08RCtzp2vXqwvix",
             "user": {
-              "updatedAt": "2026-09-28T12:00:50.770Z",
+              "updatedAt": "2026-10-11T12:00:42.735Z",
               "createdAt": "2026-01-06T13:15:28.816Z",
               "id": "61d3dd6e-ee00-410e-bb7c-dbcd58216e6e",
               "email": "agenteia@levelupmediapr.net",
@@ -619,7 +621,7 @@
               },
               "disabled": false,
               "mfaEnabled": true,
-              "lastActiveAt": "2026-09-28",
+              "lastActiveAt": "2026-10-11",
               "isPending": false
             }
           }
