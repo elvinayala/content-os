@@ -66,3 +66,16 @@ branding ghost terminal, sin caras, disclaimers). Backend listo: `marcaId '1000x
 `PIPEDRIVE_1000X_STAGE_DIAGNOSTICO` (cuenta propia, aún no existe) y `AC_LISTA_1000X`. **Pendiente de Elvin:** destino del CTA
 (`CONFIG.calendly` o `CONFIG.whatsapp`, hoy vacíos), crear el funnel en CF y pegar `1000x/cf-snippet.html`, Pipedrive de
 Richy & Elvin Trading, pixel. Ver [[richy-elvin-trading]].
+
+**Verificado el 12/oct/2026:** ClickFunnels **YA NO está en pausa** — los tres funnels responden con su
+contenido real (LU class.levelupmediapr.net/diagnostico-crecimiento · AIB auditoria.aiborinquen.co/automatizacion ·
+Shadow myworkspace2d96f.myclickfunnels.com/auditoria, funnel `NzxGvR`). El respaldo de Netlify
+(diagnostico-crecimiento-lu.netlify.app) sigue vivo como red.
+
+**Dominio de Shadow Operator (12/oct):** Elvin quiere **elvinayala.com** (su marca personal) para el quiz de
+Shadow. **Está LIBRE, no registrado** (RDAP de Verisign: 404) — lo tiene que comprar él (yo no compro). Al
+comprarlo en GoDaddy: TXT `@` = `clickfunnels-domain-verification=jRldZm` · CNAME `www` →
+`us-east-shard-3.myclickfunnels.com` · Forwarding del apex a https://www.elvinayala.com; después, en CF:
+Domains → Validate Ownership → funnel NzxGvR → Set Domain. `shadowoperator.co` (GoDaddy, ns47/48) quedó a
+MEDIAS del 13/sep: el CNAME `www` sigue apuntando a `shadowoperator.co` (conflicto que nunca se arregló) y
+no hay TXT de verificación; no resuelve. Se abandona si Elvin se queda con elvinayala.com.
