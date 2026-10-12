@@ -13,6 +13,10 @@
 //   node scripts/remi.mjs render --guion <json> [--estilo neon|editorial|impacto|minimal|pop|tecno|auto]
 //     (sin --estilo ni `estilo` en el guion: uno al azar por video, sin repetir dentro del mismo pedido)
 //   node scripts/remi.mjs salud
+//   node scripts/remi.mjs lote <tabla.csv | tabla.json | URL de Google Sheets (CSV)> --plantilla <guion.json>
+//        [--id-columna <col>] [--max 50] [--probar] [--omitir-errores] + las mismas opciones de render
+//     "Una plantilla, mil videos": cada fila de la tabla rellena los {{campos}} de la plantilla → un video por fila
+//     (lógica en scripts/remi/lote.mjs). --probar arma los guiones en data/motion/lotes/<plantilla>/ SIN renderizar.
 // --entregar deja cada video en la bandeja de Entregas (data/entregas.json, agente "Remi").
 // Env: REMI_URL + REMI_SECRETO (.env.local / Railway).
 import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
@@ -27,7 +31,7 @@ const SECRETO = env("REMI_SECRETO");
 const [, , cmd, ...resto] = process.argv;
 if (cmd !== "salud") negarEnSoloLectura(`remi.mjs ${cmd ?? ""}`.trim()); // parche D: renderizar o proponer no es lectura
 const arg = (n) => { const i = resto.indexOf(`--${n}`); return i >= 0 ? resto[i + 1] : undefined; };
-const ids = resto.filter((x, i) => !x.startsWith("--") && !(i > 0 && resto[i - 1].startsWith("--") && resto[i - 1] !== "--entregar"));
+let ids = resto.filter((x, i) => !x.startsWith("--") && !(i > 0 && resto[i - 1].startsWith("--") && resto[i - 1] !== "--entregar"));
 let guiones = [];
 if (arg("guion")) {
   const g = arg("guion");
@@ -37,6 +41,36 @@ if (arg("guion")) {
   for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
 }
 const h = { "x-remi-secreto": SECRETO, "Content-Type": "application/json" };
+
+// Lote: tabla + plantilla → un guion por fila (Elvin, 12/oct: "una plantilla, mil videos").
+if (cmd === "lote") {
+  const { leerCSV, armarLote } = await import("./remi/lote.mjs");
+  const fuente = ids[0];
+  if (!fuente || !arg("plantilla")) { console.error("Uso: remi.mjs lote <tabla.csv|.json|URL> --plantilla <guion.json> [--id-columna <col>] [--probar]"); process.exit(1); }
+  const texto = /^https?:\/\//.test(fuente) ? await (await fetch(fuente.replace(/\/edit.*$/, "/export?format=csv"))).text() : fs.readFileSync(path.resolve(fuente), "utf8");
+  const filas = fuente.endsWith(".json") ? JSON.parse(texto) : leerCSV(texto);
+  const plantilla = JSON.parse(fs.readFileSync(path.resolve(arg("plantilla")), "utf8"));
+  const r = armarLote(plantilla, filas, { idColumna: arg("id-columna"), max: arg("max") ? Number(arg("max")) : undefined });
+  console.log(`📋 ${filas.length} fila(s) → ${r.guiones.length} guion(es)`);
+  if (r.camposSinColumna.length) console.error(`✖ La plantilla pide {{${r.camposSinColumna.join("}}, {{")}}} y la tabla no tiene esa columna.`);
+  if (r.columnasSobran.length) console.log(`ℹ Columnas que la plantilla no usa: ${r.columnasSobran.join(", ")}`);
+  for (const e of r.errores) console.error(`✖ fila ${e.fila}: ${e.motivo}`);
+  if (!r.guiones.length || (r.errores.length && !resto.includes("--omitir-errores"))) {
+    console.error(r.guiones.length ? "Nada se renderizó: corrige la tabla o usa --omitir-errores." : "No salió ningún guion.");
+    process.exit(1);
+  }
+  if (resto.includes("--probar")) {
+    const dir = path.join(ROOT, "data/motion/lotes", plantilla.id || "lote");
+    fs.mkdirSync(dir, { recursive: true });
+    for (const g of r.guiones) fs.writeFileSync(path.join(dir, `${g.id}.json`), JSON.stringify(g, null, 2) + "\n");
+    console.log(`✓ ${r.guiones.length} guion(es) en ${path.relative(ROOT, dir)}/ (sin renderizar). Quita --probar para renderizarlos.`);
+    process.exit(0);
+  }
+  ids = [];
+  guiones = r.guiones;
+  fs.mkdirSync(path.join(ROOT, "data/motion/guiones"), { recursive: true });
+  for (const x of guiones) fs.writeFileSync(path.join(ROOT, "data/motion/guiones", `${x.id}.json`), JSON.stringify(x, null, 2) + "\n");
+}
 
 // API de Max (expediente de clientes y #max-aprobaciones).
 const BASE = (env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app").replace(/\/$/, "");
@@ -103,7 +137,7 @@ if (cmd === "salud") {
   console.log(await (await fetch(`${URL_REMI}/salud`)).text());
   process.exit(0);
 }
-if (cmd !== "render" || (!ids.length && !guiones.length)) {
+if (!["render", "lote"].includes(cmd) || (!ids.length && !guiones.length)) {
   console.error('Uso: remi.mjs render <id>… [--entregar --marca <m> --titulo "…" --formato "…"] | remi.mjs salud');
   process.exit(1);
 }

@@ -40,6 +40,7 @@
   "exclude": [
     "demos/**",
     "motion/**",
+    "estudio-html/**",
     "node_modules",
     "vault/proyectos/**"
   ]

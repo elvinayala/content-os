@@ -1,0 +1,11 @@
+{
+  "name": "estudio-html",
+  "private": true,
+  "description": "Videos en HTML con Hyperframes (HeyGen): composiciones HTML → MP4. Ver LEEME.md",
+  "scripts": {
+    "hf": "hyperframes"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.150"
+  }
+}

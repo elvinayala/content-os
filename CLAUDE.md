@@ -512,6 +512,11 @@ LU con acuerdo ≥ $3,500 PAGADO COMPLETO de una reciben 2 MOTION GRAPHICS** (en
 del expediente) `--proponer` (a #max-aprobaciones → Drive + canal). Licencia Remotion: Company License (Automators $100/mes mín.). **Estilos (28/sep)**: `motion/src/fabrica/estilos.tsx` — neon · editorial · impacto · minimal · pop · tecno = plantilla (resaltado, bullets, transiciones, fondo, cierre) + ritmo; la marca fija letra (1 + acento opcional), colores y logo. Campo `estilo` del guion; sin él remi.mjs usa el menos usado entre los permitidos de esa marca (`ficha.marca.estilos` / `ESTILOS_MARCA`) sin repetir en el pedido (skill §1b). Motion de clientes: logo por capas (`logoCapas`), motivo `fibras` y escena `retrato` con sus fotos reales. Skill `.claude/skills/motion-graphics/SKILL.md`; ojo `railway.json` fija el
 startCommand del puente para todo el proyecto → la imagen de Remi trae un atajo `scripts/telegram-puente.mjs`.
 
+**Tres motores de video (12/oct, Elvin tras ver "Motion con Opus 5.5"):** Remi/Remotion (lo de marca, nube) +
+**lotes** `remi.mjs lote <tabla> --plantilla <guion.json>` (un video por fila; `scripts/remi/lote.mjs`, plantillas en
+`data/motion/plantillas/`) · **Hyperframes** (HeyGen, video desde HTML) en `estudio-html/` (fijo 0.8.150, sin telemetría,
+nunca `publish`) · **Brag** (plugin de Claude Code, lanzamientos de 20 s). Cuál usar y las reglas: skill `lanzamiento`.
+
 ## Resumen del día por Telegram (27/sep/2026)
 
 Elvin: "todos los días, como a las 8-9 de la noche: cuántas llamadas se agendaron, cuánto en ventas nuevas y

@@ -122,6 +122,18 @@ Con `cliente`, la marca sale del JSON (composición universal **`Motion`** + `sr
 permitidas: Inter, Montserrat, Poppins, Plus Jakarta Sans, DM Sans, Manrope, Bebas Neue, Sora, Outfit. Copia del
 guion en `data/motion/guiones/<id>.json`. Env: `REMI_URL` + `REMI_SECRETO`.
 
+## 6b. Una plantilla, mil videos: lotes desde una tabla (12/oct/2026)
+Un guion con `{{Columna}}` (o `{{Columna|defecto}}`) en cualquier texto + una tabla (CSV de Excel —coma o punto y coma—,
+JSON o el link de Google Sheets) = **un video por fila**. Columnas sin importar mayúsculas ni acentos. Una fila con un campo
+vacío sin defecto es error y no se renderiza nada (o `--omitir-errores`). Tope 50 filas (`--max`).
+```bash
+node scripts/remi.mjs lote clientes.csv --plantilla data/motion/plantillas/lu-bienvenida-cliente.json --id-columna Negocio --probar
+node scripts/remi.mjs lote clientes.csv --plantilla … --id-columna Negocio [--estilo …] [--entregar --marca level-up | --cliente <slug> --proponer]
+```
+`--probar` deja los guiones en `data/motion/lotes/<plantilla>/` sin renderizar. Lógica pura en `scripts/remi/lote.mjs`
+(tests `tests/remi-lote.test.mjs`). Ejemplo probado: `lu-bienvenida-cliente.json` + `ejemplo-bienvenida.csv` (2 videos de 18 s).
+Otros motores (Hyperframes, Brag) y cuándo usar cada uno: skill `lanzamiento` y `estudio-html/LEEME.md`.
+
 ## 7. Paquete para clientes (Elvin, 27/sep/2026)
 Elvin, 28/sep: **2 videos de MOTION GRAPHICS** a los clientes de Level Up cuyo acuerdo es de **US$3,500 o más** y que lo **pagaron completo de una** (28/sep: antes eran 3). Si paga en plazos, aunque el acuerdo sea mayor, **no se le hacen hasta que complete los pagos** (se revisa en Pulse: Pago Inicial = Acuerdo de Pago / "Pago Único"). Siempre motion por código con
 esta fábrica — nunca UGC, caras con IA ni video generativo en su lugar). Flujo de Max, de punta a punta:

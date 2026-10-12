@@ -44,6 +44,9 @@ vault/proyectos/bori-crecimiento/leads-perdidos
 # Perfiles temporales de Chrome del render de flyers (enlaces rotos + datos del navegador)
 **/.chrome-*
 
+# estudio de video en HTML (Hyperframes): deps y renders locales
+estudio-html/node_modules
+estudio-html/**/*.mp4
 # taller de motion (Remotion)
 motion/out
 motion/public/audio

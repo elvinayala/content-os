@@ -12,6 +12,8 @@ node_modules
 
 .telegram-adjuntos
 
+# estudio de video en HTML (Hyperframes): deps y renders locales
+estudio-html/
 # taller de motion (Remotion): renders y deps locales
 motion/node_modules
 motion/out
