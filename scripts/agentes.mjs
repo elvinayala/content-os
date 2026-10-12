@@ -119,8 +119,9 @@ export async function estadoMensaje(id) {
   const m = (j.mensajes || []).find((x) => x.id === Number(id));
   return m ? m.estado : null;
 }
-export async function marcar(id, estado, respuesta) {
-  return api("POST", {}, { id, estado, respuesta });
+export async function marcar(id, estado, respuesta, costo) {
+  // `costo` (USD) solo si es un número: AI Core lo muestra en cada tarea (11-oct).
+  return api("POST", {}, { id, estado, respuesta, ...(Number.isFinite(costo) ? { costo } : {}) });
 }
 export async function obtener(id) {
   const j = await api("GET", { id });

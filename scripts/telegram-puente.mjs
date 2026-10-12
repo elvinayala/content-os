@@ -228,6 +228,10 @@ const NICO_LIMITE_MIN = Number(env("NICO_LIMITE_MIN") || 240);
 const AVISO_CADA_MIN = Number(env("NICO_AVISO_MIN") || 12);
 let hijoActual = null; // el Claude que está corriendo ahora (para poder detenerlo con "para")
 
+// Meta Ads en solo lectura (tareas de AI Core a Max): consultar resultados y estructura, nunca crear,
+// activar, escalar, pausar ni subir nada.
+const META_LECTURA = ["resumir", "cuentas", "campanas", "arbol", "resultados", "intereses"].map((c) => `Bash(node scripts/meta-ads.mjs * ${c}*)`);
+
 // Solo lectura (Nico diagnosticando una solicitud del equipo): mira todo, no cambia nada.
 const SOLO_LECTURA = ["Read", "Glob", "Grep", "WebFetch", "Bash(git log*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git show*)", "Bash(npx @railway/cli logs*)", "Bash(npx @railway/cli status*)", "Bash(node scripts/nico-ronda.mjs*)", "Bash(node scripts/n8n.mjs inventario*)", "Bash(node scripts/n8n.mjs ejecuciones*)", "Bash(node scripts/n8n.mjs salud*)", "Bash(node scripts/agentes.mjs solicitudes*)", "Bash(node scripts/agentes.mjs mensaje*)", "Bash(node scripts/agentes.mjs buzon*)"];
 function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
@@ -236,7 +240,18 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
     const modo = ES_NICO ? "total" : ES_MAX || ES_LOLA ? "seguro" : env("PUENTE_MODO") || "seguro";
     const args = ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? NICO_TURNOS : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
-    if (opts.soloLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    // Controles de AI Core (11-oct, ADR-064 del Core): quién pide define qué se puede hacer.
+    //  · Nico: con NICO_BUZON_MODO=lectura, lo que le llega por el BUZÓN de otro agente o de AI Core va en
+    //    solo lectura (diagnostica y propone). APAGADO por defecto: hasta que Elvin lo active, Nico sigue
+    //    exactamente como hoy.
+    //  · Tareas de AI Core (de = aicore) a Sofi o Max: solo lectura de verdad, sin herramientas que cambien nada.
+    const origen = String(opts.origen || "");
+    const deBuzon = origen.startsWith("buzon:");
+    const deAicore = deBuzon && origen.endsWith(":aicore");
+    const nicoLectura = ES_NICO && deBuzon && !origen.endsWith(":elvin") && env("NICO_BUZON_MODO") === "lectura";
+    if (opts.soloLectura || nicoLectura) args.push("--permission-mode", "default", "--allowedTools", ...SOLO_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    else if (deAicore && ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", ...META_LECTURA, "--disallowedTools", "Edit", "Write", "NotebookEdit");
+    else if (deAicore) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "--disallowedTools", "Edit", "Write", "NotebookEdit");
     else if (modo === "total") args.push("--dangerously-skip-permissions");
     // Max: lee lo que quiera, pero solo ejecuta el script de Meta Ads (y no edita nada).
     else if (ES_MAX) args.push("--permission-mode", "default", "--allowedTools", "Read", "Glob", "Grep", "Bash(node scripts/meta-ads.mjs*)", "Bash(node scripts/fal.mjs*)", "Bash(node scripts/agentes.mjs*)", "Bash(node scripts/max.mjs*)", "Bash(node scripts/remi.mjs*)", "Bash(node scripts/meta-ads/subir-videos.mjs*)", "--disallowedTools", "Edit", "Write", "WebFetch", "WebSearch");
@@ -300,7 +315,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
       }
     };
     child.on("error", (e) => { fin(); LOG("claude spawn error:", e.message); resolve({ code: 1, out: "", err: e.message }); });
-    child.on("close", (code) => { fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo, subtipo, delegados: [...delegados], comandos }); });
+    child.on("close", (code) => { ultimoDeltaJornada = 0; fin(); if (buf) onLinea(buf); resolve({ code, out: (final || texto).trim() || (child.detenido ? "Me detuve porque me lo pediste." : ""), err: err.trim(), costo, costoCorrida: ultimoDeltaJornada, subtipo, delegados: [...delegados], comandos }); });
   });
 }
 
@@ -311,7 +326,7 @@ async function correrYTerminar(prompt, persona, sesion, nueva, onProgreso, opts 
   if (r.subtipo !== "error_max_turns" || opts.yaSeguido || r.code === null) return r;
   LOG("claude: se quedó sin pasos → sigue una vez");
   const r2 = await correrClaude("Te quedaste sin pasos a mitad del trabajo. Sigue EXACTAMENTE donde ibas, termínalo sin repetir lo hecho y responde con lo que quedó (links/ids).", persona, sesion, false, onProgreso, { ...opts, yaSeguido: true });
-  return { ...r2, out: r2.out || r.out, delegados: [...new Set([...(r.delegados || []), ...(r2.delegados || [])])], comandos: [...(r.comandos || []), ...(r2.comandos || [])] };
+  return { ...r2, out: r2.out || r.out, costoCorrida: (r.costoCorrida || 0) + (r2.costoCorrida || 0), delegados: [...new Set([...(r.delegados || []), ...(r2.delegados || [])])], comandos: [...(r.comandos || []), ...(r2.comandos || [])] };
 }
 
 // Respaldo si el CLI no responde: la API directa con la persona (sin herramientas, pero contesta).
@@ -630,7 +645,7 @@ async function atenderBuzon(token, chatCEO, st) {
       const estado = await buzonEstado(m.id);
       if (espera && estado !== "atendido" && estado !== "fallido") LOG("buzón:", `#${m.id} queda abierto esperando a`, r.delegados.join(", "));
       else if (estado !== "atendido" && estado !== "fallido") {
-        await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500));
+        await buzonMarcar(m.id, resp ? "atendido" : "fallido", resp.slice(0, 4000) || (r.err || "sin respuesta").slice(0, 500), r.costoCorrida);
         if (!esRespuesta && resp && !deSlack) await buzonEnviar(YO, m.de, resp.slice(0, 4000), m.id);
       }
     } catch (e) { LOG("buzón cierre:", e.message.slice(0, 120)); }
@@ -859,8 +874,10 @@ async function avisarGasto(texto) {
   if (token && chat) await enviar(token, chat, texto).catch(() => {});
   await slackEspejo(`[Agentes] ${texto}`);
 }
+// Costo (USD) de la última corrida, ya descontado lo que la sesión traía de antes (costoDeLaCorrida).
+let ultimoDeltaJornada = 0;
 function sumarJornada(sesion, costoTotal, ms) {
-  if (!ESTADO_VIVO) return;
+  if (!ESTADO_VIVO) return 0;
   const hoy = diaPR();
   const j = ESTADO_VIVO.jornada?.dia === hoy ? ESTADO_VIVO.jornada : { dia: hoy, corridas: 0, ms: 0, costo: 0 };
   const { delta, ultimo } = costoDeLaCorrida(ESTADO_VIVO.jornadaUltimo, sesion, costoTotal);
@@ -869,6 +886,7 @@ function sumarJornada(sesion, costoTotal, ms) {
   j.ms += Math.max(0, Number(ms) || 0);
   j.costo = Math.round((j.costo + delta) * 10000) / 10000;
   ESTADO_VIVO.jornada = j;
+  ultimoDeltaJornada = delta; // AI Core (11-oct): el costo de ESTA corrida, para escribirlo en su fila del buzón
   // Aviso de gasto (28/sep): Nico no se bloquea (a veces está arreglando producción), pero Elvin se entera
   // apenas pasa el tope del día y otra vez al doble. Max sí se frena solo (scripts/max-gasto.mjs).
   if (ES_NICO && NICO_TOPE_DIA > 0) {

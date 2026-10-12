@@ -21,7 +21,12 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // "mac" = una sesión de Claude en la Mac (antes firmaba como Sofi; 28/sep).
-const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin", "mac"]);
+const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin", "mac", "aicore"]);
+// AI Core (11-oct): su propio secreto (AICORE_AGENTES_SECRET) y lo MÍNIMO. Solo puede dejar tareas
+// como "aicore" a estos agentes, sin hilo, y leer SUS filas por id. No puede marcar, listar ni ver
+// lo de otros. CRON_SECRET sigue siendo la llave de los puentes y los crons.
+// Piloto (11-oct): solo Sofi y Max. Nico y Lola se suman cuando Elvin lo apruebe (Nico tiene llaves de despliegue).
+const AICORE_PARA = new Set(["sofi", "max"]);
 // Equipo humano que puede dejarle solicitudes a Nico desde Slack (Elvin, 23/sep/2026: "que Nico
 // tenga un enlace directo con Carilin y Aure"). Solo como remitente: nadie les deja nada aquí.
 // Lis y Ángela (3/oct): solo desde el canal de cambios de Bori (SLACK_NICO_CANALES).
@@ -34,6 +39,11 @@ function autorizado(req: NextRequest): boolean {
   const secreto = process.env.CRON_SECRET;
   const dado = req.headers.get("x-cron-secret") ?? req.nextUrl.searchParams.get("secret");
   return Boolean(secreto) && dado === secreto;
+}
+
+function esAicore(req: NextRequest): boolean {
+  const secreto = process.env.AICORE_AGENTES_SECRET;
+  return Boolean(secreto) && req.headers.get("x-aicore-secret") === secreto;
 }
 
 // postgres.js devuelve un array (RowList); PGlite devuelve { rows }. Esto acepta los dos.
@@ -60,12 +70,23 @@ async function asegurarTabla() {
         atendido_el timestamptz
       )`);
       await d.execute(sql`CREATE INDEX IF NOT EXISTS agentes_mensajes_para_estado ON agentes_mensajes (para, estado)`);
+      // Costo (USD) de la corrida que atendió el mensaje: AI Core lo muestra por tarea (11-oct).
+      await d.execute(sql`ALTER TABLE agentes_mensajes ADD COLUMN IF NOT EXISTS costo_usd numeric(12, 6)`);
     })().catch((e) => { tablaLista = null; throw e; });
   }
   return tablaLista;
 }
 
 export async function GET(req: NextRequest) {
+  if (esAicore(req)) {
+    // AI Core solo lee SUS tareas, de una en una.
+    const id = Number(req.nextUrl.searchParams.get("id") ?? 0);
+    if (!id) return NextResponse.json({ error: "solo-por-id" }, { status: 400 });
+    await asegurarTabla();
+    const d = await db();
+    const r = await d.execute(sql`SELECT id, estado, respuesta, costo_usd, creado_el, atendido_el FROM agentes_mensajes WHERE id = ${id} AND de = 'aicore'`);
+    return NextResponse.json({ ok: true, mensajes: filas(r) });
+  }
   if (!autorizado(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
   await asegurarTabla();
   const d = await db();
@@ -95,9 +116,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!autorizado(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
-  let b: { de?: string; para?: string; texto?: string; hilo?: number; id?: number; estado?: string; respuesta?: string };
+  const aicore = esAicore(req);
+  if (!aicore && !autorizado(req)) return NextResponse.json({ error: "no-autorizado" }, { status: 401 });
+  let b: { de?: string; para?: string; texto?: string; hilo?: number; id?: number; estado?: string; respuesta?: string; costo?: number };
   try { b = await req.json(); } catch { return NextResponse.json({ error: "body" }, { status: 400 }); }
+  if (aicore && (b.id || b.hilo || b.de !== "aicore" || !AICORE_PARA.has(String(b.para ?? "")))) {
+    return NextResponse.json({ error: "aicore-solo-deja-tareas", agentes: [...AICORE_PARA] }, { status: 403 });
+  }
   await asegurarTabla();
   const d = await db();
 
@@ -105,7 +130,8 @@ export async function POST(req: NextRequest) {
   if (b.id) {
     const estado = String(b.estado ?? "atendido");
     if (!ESTADOS.includes(estado)) return NextResponse.json({ error: "estado" }, { status: 400 });
-    await d.execute(sql`UPDATE agentes_mensajes SET estado = ${estado}, respuesta = COALESCE(${b.respuesta ?? null}, respuesta), atendido_el = CASE WHEN ${estado} IN ('atendido','fallido','rechazado') THEN now() ELSE atendido_el END WHERE id = ${b.id}`);
+    const costo = Number.isFinite(Number(b.costo)) && b.costo !== undefined ? Number(b.costo) : null;
+    await d.execute(sql`UPDATE agentes_mensajes SET estado = ${estado}, respuesta = COALESCE(${b.respuesta ?? null}, respuesta), costo_usd = COALESCE(${costo}, costo_usd), atendido_el = CASE WHEN ${estado} IN ('atendido','fallido','rechazado') THEN now() ELSE atendido_el END WHERE id = ${b.id}`);
     return NextResponse.json({ ok: true, id: b.id, estado });
   }
 
