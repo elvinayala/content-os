@@ -324,7 +324,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
           if (c.type === "text" && c.text) texto = c.text;
           if (c.type === "tool_use") {
             const i = c.input || {};
-            if (c.name === "Bash") { comandos.push(String(i.command || "").slice(0, 400)); const d = delegadoEn(i.command); if (d && d !== YO) delegados.add(d); }
+            if (c.name === "Bash") { comandos.push(String(i.command || "").slice(0, 400)); const d = delegadoEn(i.command); if (d && d !== YO && !soloLecturaEfectiva) delegados.add(d); } // en solo lectura no se puede delegar (parche D): un intento negado no deja el pedido "esperando a" nadie
             const que = c.name === "Read" ? `leyendo ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Edit" || c.name === "Write" ? `editando ${i.file_path?.split("/").slice(-2).join("/") ?? ""}` :
               c.name === "Bash" ? `corriendo: ${String(i.command ?? "").slice(0, 60)}` :

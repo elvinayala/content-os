@@ -73,4 +73,6 @@ test("las listas de solo lectura del puente no traen nada que salga del contened
   // La marca se pone en toda tarea de solo lectura y se borra en las demás.
   assert.match(fuente, /if \(soloLecturaEfectiva\) envVars\[MARCA_SOLO_LECTURA\] = "1"; else delete envVars\[MARCA_SOLO_LECTURA\];/);
   assert.match(fuente, /const soloLecturaEfectiva = Boolean\(prep\) \|\| Boolean\(opts\.soloLectura\) \|\| nicoLectura \|\| deAicore;/);
+  // Un intento de delegar (negado) en solo lectura no deja el pedido abierto "esperando a" otro agente.
+  assert.match(fuente, /if \(d && d !== YO && !soloLecturaEfectiva\) delegados\.add\(d\);/);
 });
