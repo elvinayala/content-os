@@ -103,3 +103,4 @@
 - [AIB — clientes nuevos en Pulse](aib-clientes-pulse-angela.md) — 12/oct: Ángela (PM de AIB) sube las fichas; falta confirmar a Edgardo Maldonado; hojas de ventas sin conectar (VENTAS_SCRIPT_URL); huecos en Acuerdo/Próximo pago/Pueblo
 - [Level Up — piezas sin precio](lu-piezas-sin-precio.md) — 12/oct: motion/anuncios de LU sin $3,500 ni valores; solo resultados de clientes
 - [Contenido cinematográfico con IA](contenido-cinematico-ia.md) — 12/oct: estilo Ramiro Cubria en Higgsfield para LU/AIB/marca personal; estudio en vault/proyectos/contenido-cinematico/; Higgsfield MCP sin créditos
+- [AMBC 360 · operaciones de Yaritza Amaral](ambc-360.md) — plataforma propia (~/ambc-operaciones) del checklist de AMBC; sin PHI, bitácora inmutable, alertas sin cierre automático; go-live 2/nov; deploy pendiente del OK de Elvin

@@ -497,6 +497,24 @@
       "critico": false,
       "github": "elvinayala/isla-run",
       "notas": "Primera edición: ISLA Cabo Rojo 5K (13/dic/2026). Dinero real vía Stripe (webhook firma el pago). Nunca abrir inscripciones (estado 'abierta') sin OK de Elvin: relevo en BORRADOR hasta revisión legal, ruta por confirmar. Precio lo calcula el servidor; tope y escalones se editan en /admin/evento. Plan: vault/proyectos/isla-run/."
+    },
+    {
+      "id": "ambc-360",
+      "nombre": "AMBC 360 — plataforma de operaciones de la Dra. Yaritza Amaral (Advanced Medical Billing & Consulting)",
+      "repo": "/Users/elvinayala/ambc-operaciones",
+      "prod": null,
+      "salud": null,
+      "hosting": "railway (pendiente de crear; Dockerfile + Postgres)",
+      "deploy": "pendiente: proyecto Railway ambc-operaciones (servicio app + Postgres); ver TRASPASO.md",
+      "logs": "—",
+      "tests": "npm test (núcleo) · npm run aceptacion (5 escenarios del checklist; NUNCA contra prod) · npm run typecheck",
+      "leerPrimero": [
+        "CLAUDE.md",
+        "TRASPASO.md",
+        "docs/entrega/08-pruebas-aceptacion.md"
+      ],
+      "critico": false,
+      "notas": "Cliente de LU/AIB. SIN PHI (validador lib/dominio/sin-phi.ts). Bitácora inmutable (trigger). Ninguna alerta se cierra sola. Sin juicios de desempeño hasta línea base aprobada. Go-live 2/nov/2026. Nada se le escribe a la clienta sin OK de Elvin o Carilin."
     }
   ],
   "casosAbiertos": {

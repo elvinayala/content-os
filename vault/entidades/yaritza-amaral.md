@@ -26,5 +26,17 @@ La visión de expansión es enorme para el **sector salud de PR**: Medicare Adva
   a los que no se les puede conectar el portafolio de Meta; los mensajes ya entran al CRM y las
   campañas están montadas — el caso arranca de verdad ([[2026-07-21-reunion-general-ai-borinquen]]).
 
+- 2026-10-02 — Reunión con Carilin: quiere ver toda su operación (credenciales, facturación, auditoría,
+  RRHH) "tipo Trello" sin llamar a nadie, para que su equipo lo use el 1/nov; extendió hasta el 31/oct los
+  contratos de sus contratistas. Mandó 12 preguntas de Fase 2; Elvin fijó alcance, PHI fuera, CVO fuera.
+- 2026-10-06 — Sesión "agente interno" con Elvin: plataforma **aparte del CRM**, visión 360° del desempeño
+  de "las muchachas"; se le mostró Ritmo. Quedó en mandar sus SOP; demo prevista para el 13/oct.
+- 2026-10-09 — Mandó el **Checklist CRM – AMBC para Level Up** (11 secciones de aceptación: dashboard
+  filtrable, reclamaciones de punta a punta, credenciales por aseguradora, desempeño sin juicios, calidad,
+  alertas sin cierres automáticos, bitácora, segregación, PHI, propiedad de datos, pruebas y acta).
+- 2026-10-13 — Se construyó **AMBC 360** (`~/ambc-operaciones`, plantilla de Plagas, sin PHI): todo el
+  checklist + docs de entrega en `docs/entrega/`. Pendiente: deploy en Railway, SOP maestros de AMBC,
+  pruebas con Aimée 27–29/oct, capacitación 29–30/oct, go-live lun 2/nov.
+
 ## Conexiones
 [[autoflow]] — le vendieron el sistema completo (voz+chat+CRM) por $5,000. [[alejo]] — se lo trae como consultor de IA para la arquitectura del producto de salud. [[objecion-esta-caro]] — cierre a $7,000 vs $9,500 regular, vendido por valor. [[carilin]] — coordina el plan operativo y el onboarding.
