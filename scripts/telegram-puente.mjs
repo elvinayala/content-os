@@ -40,6 +40,7 @@ import { MODELO_BARATO, MODELO_PLAN, TOPE_DIA, TOPE_SEMANA, costoDeLaCorrida, re
 import { pendientes as buzonPendientes, marcar as buzonMarcar, enviarMensaje as buzonEnviar, estadoMensaje as buzonEstado, obtener as buzonObtener, esperandoOk, resolverPersona } from "./agentes.mjs";
 import { cupoContinuar, delegadoEn, leerSeguir, origenSiguiente, quitarMarca } from "./agentes-seguir.mjs";
 import { prepararTareaAicore } from "./aicore-tareas.mjs";
+import { atenderLeo } from "./aicore-leo.mjs";
 import { leerAprobacionNico, usarNonce, verificarAprobacion } from "../lib/firma-aprobaciones.mjs";
 import { MARCA_SOLO_LECTURA } from "../lib/solo-lectura.mjs";
 
@@ -258,7 +259,7 @@ function correrClaude(prompt, persona, sesion, nueva, onProgreso, opts = {}) {
     // cada comando) y con más turnos, porque un arreglo real lleva leer + test + deploy + verificar.
     const modo = ES_NICO ? "total" : ES_MAX || ES_LOLA ? "seguro" : env("PUENTE_MODO") || "seguro";
     // Tarea de AI Core (12-oct): contexto mínimo y carpeta propia (scripts/aicore-tareas.mjs). Todo lo demás, igual.
-    const prep = opts.aicore ? prepararTareaAicore({ persona: ES_MAX ? "max" : "sofi", root: ROOT, marcas: opts.marcas, sesion }) : null;
+    const prep = opts.aicore ? prepararTareaAicore({ persona: YO, root: ROOT, marcas: opts.marcas, sesion }) : null;
     const args = prep
       ? ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", prep.maxTurnos, ...prep.args]
       : ["-p", prompt, "--output-format", "stream-json", "--verbose", "--max-turns", ES_NICO ? NICO_TURNOS : ES_MAX ? "25" : ES_LOLA ? "35" : "20", "--append-system-prompt", (PERSONAS[persona] || PERSONAS.claude) + COMUNICACION];
@@ -656,7 +657,8 @@ async function atenderBuzon(token, chatCEO, st) {
     // AI Core (Elvin, 12-oct): cada tarea de AI Core corre en su PROPIA sesión, nueva y corta, con un modelo
     // barato. No retoma la conversación del día (no mezcla contextos ni paga por releerla) ni consume las
     // respuestas pendientes de otros agentes. La sesión del día de Telegram/Slack queda intacta.
-    const deAicore = m.de === "aicore" && !ES_NICO && !ES_LOLA;
+    // Desde el 13-oct también Nico y Lola (Elvin: "conecta ya todos los agentes"), con su modo de solo lectura propio.
+    const deAicore = m.de === "aicore";
     const prompt = deSlack
       ? `${m.texto}\n\n${MAX_SLACK}`
       : deAicore
@@ -1014,7 +1016,12 @@ function cierreLoop(st) {
 }
 
 function buzonLoop(token, getChat, st) {
-  const tick = async () => { try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); } setTimeout(tick, 90000); };
+  const tick = async () => {
+    try { await enSerie(() => atenderBuzon(token, getChat(), st)); } catch (e) { LOG("buzón loop:", e.message); }
+    // Leo (Director Creativo) no tiene puente: sus revisiones de AI Core las atiende el puente de Sofi (13-oct).
+    if (YO === "sofi") try { await atenderLeo({ pendientes: buzonPendientes, marcar: buzonMarcar, root: ROOT, key: process.env.ANTHROPIC_API_KEY || env("ANTHROPIC_API_KEY"), modelo: env("AICORE_LEO_MODELO") || "claude-sonnet-5", log: LOG }); } catch (e) { LOG("leo:", e.message); }
+    setTimeout(tick, 90000);
+  };
   setTimeout(tick, 15000);
 }
 

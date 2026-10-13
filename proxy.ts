@@ -93,6 +93,8 @@ export default async function proxy(request: NextRequest) {
   if (pathname === "/api/agentes") return NextResponse.next();
   // Reporte del día de cada agente → Ritmo (equipo digital). Valida CRON_SECRET adentro.
   if (pathname === "/api/ritmo/agentes") return NextResponse.next();
+  // AI Core lee Pulse y Ritmo en solo lectura (13-oct). Valida AICORE_AGENTES_SECRET adentro.
+  if (pathname === "/api/aicore/datos") return NextResponse.next();
   // Max en Slack (24/sep): las manos de Max desde Railway (auth propia con CRON_SECRET).
   if (pathname === "/api/max") return NextResponse.next();
 

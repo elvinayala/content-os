@@ -54,3 +54,34 @@ test("la carpeta de Max es la misma para la misma sesión (para poder retomarla)
   assert.equal(a, b);
   fs.rmSync(a, { recursive: true, force: true });
 });
+
+test("Nico desde AI Core: diagnóstico en solo lectura, sin deploys, sin agentes ni escritura", () => {
+  const p = prepararTareaAicore({ persona: "nico", root: ROOT, hoy: "martes, 13 de octubre de 2026" });
+  assert.equal(p.cwd, ROOT);
+  assert.ok(p.args.includes("--bare"));
+  const permitidos = p.args.slice(p.args.indexOf("--allowedTools") + 1, p.args.indexOf("--permission-mode"));
+  assert.ok(permitidos.includes("Bash(git log*)") && permitidos.includes("Bash(node scripts/n8n.mjs salud*)"));
+  assert.ok(!permitidos.some((a) => /agentes\.mjs|nico-ronda|fal\.mjs|git push|git commit|railway(\/cli)? (up|redeploy|variables)/.test(a)), permitidos.join(" "));
+  const prohibidos = p.args.slice(p.args.indexOf("--disallowedTools") + 1, p.args.indexOf("--append-system-prompt"));
+  for (const x of ["Edit", "Write", "WebFetch", "Bash(node scripts/agentes.mjs*)", "Bash(git push*)", "Bash(npx @railway/cli up*)"]) assert.ok(prohibidos.includes(x), x);
+  assert.match(p.args.at(-1), /DIAGNOSTICAR y PROPONER[\s\S]*13 de octubre/);
+});
+
+test("Lola desde AI Core: carpeta con SOLO su marca, sin Bash ni fal.ai", () => {
+  const p = prepararTareaAicore({ persona: "lola", root: ROOT, marcas: ["ai-borinquen", "../x"], sesion: "lola-1" });
+  try {
+    assert.notEqual(p.cwd, ROOT);
+    assert.equal(p.args[p.args.indexOf("--tools") + 1], "Read,Glob,Grep");
+    assert.ok(!p.args.some((a) => a.startsWith("Bash(")));
+    const archivos = listar(p.cwd);
+    assert.ok(!archivos.some((f) => /level-up|shadow-operator|resuelto|bori\.md/.test(f)), archivos.join(", "));
+    const { entregas } = JSON.parse(fs.readFileSync(path.join(p.cwd, "entregas.json"), "utf8"));
+    assert.ok(entregas.length > 0 && entregas.every((e) => e.marca === "ai-borinquen"));
+    const { pedidos } = JSON.parse(fs.readFileSync(path.join(p.cwd, "pedidos.json"), "utf8"));
+    assert.ok(pedidos.every((x) => x.marca === "ai-borinquen"));
+    assert.match(p.args.at(-1), /SOLO de la\(s\) marca\(s\): ai-borinquen\./);
+  } finally {
+    p.limpiar();
+  }
+  assert.equal(fs.existsSync(p.cwd), false);
+});

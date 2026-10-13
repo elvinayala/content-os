@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/pulse/db";
 import { remitentePermitido } from "@/lib/firma-aprobaciones.mjs";
+import { secretoValido } from "@/lib/pulse/seguridad";
 
 // El buzón de los agentes. Elvin (20/sep/2026): "los agentes se tienen que poder hablar entre
 // sí — Sofi le pide algo a Nico, Max le pide algo a Nico — y con mi equipo personal".
@@ -22,12 +23,14 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // "mac" = una sesión de Claude en la Mac (antes firmaba como Sofi; 28/sep).
-const AGENTES = new Set(["sofi", "nico", "max", "lola", "jarvis", "elvin", "mac", "aicore"]);
+// "leo" (13-oct) = el Director Creativo: solo recibe revisiones de AI Core; las atiende el puente de Sofi.
+const AGENTES = new Set(["sofi", "nico", "max", "lola", "leo", "jarvis", "elvin", "mac", "aicore"]);
 // AI Core (11-oct): su propio secreto (AICORE_AGENTES_SECRET) y lo MÍNIMO. Solo puede dejar tareas
 // como "aicore" a estos agentes, sin hilo, y leer SUS filas por id. No puede marcar, listar ni ver
 // lo de otros. CRON_SECRET sigue siendo la llave de los puentes y los crons.
-// Piloto (11-oct): solo Sofi y Max. Nico y Lola se suman cuando Elvin lo apruebe (Nico tiene llaves de despliegue).
-const AICORE_PARA = new Set(["sofi", "max"]);
+// Piloto (11-oct): solo Sofi y Max. 13-oct (Elvin: "conecta ya todos los agentes"): también Nico, Lola y Leo.
+// Sus puentes corren las tareas de AI Core en solo lectura (scripts/aicore-tareas.mjs, scripts/aicore-leo.mjs).
+const AICORE_PARA = new Set(["sofi", "max", "nico", "lola", "leo"]);
 // Equipo humano que puede dejarle solicitudes a Nico desde Slack (Elvin, 23/sep/2026: "que Nico
 // tenga un enlace directo con Carilin y Aure"). Solo como remitente: nadie les deja nada aquí.
 // Lis y Ángela (3/oct): solo desde el canal de cambios de Bori (SLACK_NICO_CANALES).
@@ -44,7 +47,7 @@ function autorizado(req: NextRequest): boolean {
 
 function esAicore(req: NextRequest): boolean {
   const secreto = process.env.AICORE_AGENTES_SECRET;
-  return Boolean(secreto) && req.headers.get("x-aicore-secret") === secreto;
+  return Boolean(secreto) && secretoValido(req.headers.get("x-aicore-secret"), secreto);
 }
 
 // postgres.js devuelve un array (RowList); PGlite devuelve { rows }. Esto acepta los dos.
