@@ -37,6 +37,14 @@ La visión de expansión es enorme para el **sector salud de PR**: Medicare Adva
 - 2026-10-13 — Se construyó **AMBC 360** (`~/ambc-operaciones`, plantilla de Plagas, sin PHI): todo el
   checklist + docs de entrega en `docs/entrega/`. Pendiente: deploy en Railway, SOP maestros de AMBC,
   pruebas con Aimée 27–29/oct, capacitación 29–30/oct, go-live lun 2/nov.
+- 2026-10-13 (tarde) — **Demo en vivo de AMBC 360** (https://app-production-1717.up.railway.app, datos de
+  prueba). Yaritza: "Era mi expectativa". Aimée: "me gusta lo que estoy viendo". Prioridades de Yaritza:
+  números semanales de facturación y cobro, estado de credenciales, operación en tiempo real. **Aimée es la
+  contacta principal** de la integración. Próximo: accesos provisionales esta semana (invitaciones creadas),
+  Yaritza sube a Drive muestras reales (reporte de cardiología, credenciales, auditoría, SOP de servicios
+  operacionales; los SOP ya están en Slack); credenciales hoy en Excel → conectarlo en vivo a la plataforma;
+  seguimiento jue/vie. Futuro: API para recibir facturas electrónicas (tendencia CMS), vender la plataforma a
+  otros facturadores en ~6 meses, asistente personal con agenda/WhatsApp. Glenda sin acceso al CRM todavía.
 
 ## Conexiones
 [[autoflow]] — le vendieron el sistema completo (voz+chat+CRM) por $5,000. [[alejo]] — se lo trae como consultor de IA para la arquitectura del producto de salud. [[objecion-esta-caro]] — cierre a $7,000 vs $9,500 regular, vendido por valor. [[carilin]] — coordina el plan operativo y el onboarding.
