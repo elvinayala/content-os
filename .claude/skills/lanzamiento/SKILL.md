@@ -18,6 +18,17 @@ registro, datos verificados ni de no enseñar datos de clientes: aquí sí.
 | **Muchos videos iguales con datos distintos** (bienvenida a cada cliente, un video por servicio, por pueblo…) | **Remi en lote** | `node scripts/remi.mjs lote <tabla.csv | URL de Sheets> --plantilla <guion.json> [--id-columna <col>] --probar` y luego sin `--probar`. Plantillas en `data/motion/plantillas/` (`{{Columna}}`, `{{Columna|defecto}}`). |
 | La lista de tomas exacta y en HTML (control total) | **Hyperframes** directo | `estudio-html/LEEME.md`. |
 
+## 1b. Si eres Max (o cualquier agente en la nube, sin navegador ni permiso para crear archivos)
+Brag no está en tu contenedor. Haces lo mismo así:
+- **Lote:** `node scripts/remi.mjs lote "<link de Google Sheets>" --plantilla data/motion/plantillas/<x>.json --id-columna <col> --probar`
+  (o las filas pegadas: `node scripts/remi.mjs lote - --plantilla '<JSON>' … <<'CSV' … CSV`). SIEMPRE primero `--probar`;
+  si sale limpio, lo mismo sin `--probar` con `--cliente <slug> --proponer` o `--entregar --marca <m>`.
+- **Lanzamiento:** lee `estudio-html/ritmo-lanzamiento/index.html` (ejemplo que funciona), escribe TU composición (misma
+  estructura: `data-composition-id="main"`, cada escena un `.clip` con `data-start`/`data-duration`, un timeline de GSAP en
+  pausa en `window.__timelines["main"]`, imágenes como `assets/<nombre>`) y renderízala en la nube:
+  `node scripts/remi.mjs html --id <id> --asset logo.png=<url> --asset musica.mp3=repo:<ruta> … --cliente <slug> --proponer <<'HTML' … HTML`
+  (~30–60 s). Revisa el resultado antes de proponerlo.
+
 ## 2. Reglas de la casa (no se negocian)
 1. **Registro:** Level Up, Bori, Ritmo, 1000X → tuteo de Puerto Rico. AI Borinquen en anuncios → de usted. Nunca voseo,
    nunca "gratis", nunca prometer ingresos. 1000X: SIMULACIÓN + aviso de riesgo.
