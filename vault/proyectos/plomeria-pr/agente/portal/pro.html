@@ -63,6 +63,7 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
 .chat .eq{align-self:flex-start;background:#E8EEF3;border-bottom-left-radius:4px}
 .chat .yo{align-self:flex-end;background:var(--o);color:#fff;border-bottom-right-radius:4px}
 nav.tabs button{position:relative}
+.chat .mf{display:block;max-width:100%;max-height:230px;border-radius:12px;margin-top:8px}
 .pt{position:absolute;top:2px;left:calc(50% + 6px);min-width:20px;padding:0 6px;border-radius:99px;background:#D93025;color:#fff;font-style:normal;font-size:13px;font-weight:800;line-height:20px;text-align:center}
 </style>
 </head>
@@ -253,16 +254,18 @@ nav.tabs button{position:relative}
     return get('/api/proveedores/mensajes?leer=1').then(function(j){
       var c=$('chat');if(!c||!j||!j.ok)return;
       var abajo=bajar||c.scrollHeight-c.scrollTop-c.clientHeight<80;
-      c.innerHTML=j.mensajes.length?j.mensajes.map(function(m){return '<div class="b '+(m.de==='equipo'?'eq':'yo')+'">'+esc(m.texto)+'<small>'+(m.de==='equipo'?esc(m.autor)+' · ':'')+horaMsj(m.en)+(m.trabajo?' · '+esc(m.trabajo):'')+'</small></div>'}).join(''):'<p style="color:var(--ink2);font-size:17px">Todavía no hay mensajes. Escríbenos si tienes una duda o algo no te funciona.</p>';
+      c.innerHTML=j.mensajes.length?j.mensajes.map(function(m){return '<div class="b '+(m.de==='equipo'?'eq':'yo')+'">'+esc(m.texto)+(m.fotos||[]).map(function(f){var u='/api/proveedores/mensajes/foto/'+encodeURIComponent(f)+'?p='+encodeURIComponent(S.p)+'&k='+S.k;return '<a href="'+u+'" target="_blank"><img class="mf" src="'+u+'"></a>'}).join('')+'<small>'+(m.de==='equipo'?esc(m.autor)+' · ':'')+horaMsj(m.en)+(m.trabajo?' · '+esc(m.trabajo):'')+'</small></div>'}).join(''):'<p style="color:var(--ink2);font-size:17px">Todavía no hay mensajes. Escríbenos si tienes una duda o algo no te funciona.</p>';
       if(abajo)c.scrollTop=c.scrollHeight;
       sinLeer=0;pintarInsignia();
     }).catch(function(){})
   }
   function pintarAyuda(){
-    $('vista').innerHTML='<h2>Mensajes con Resuelto</h2><div class="card"><div class="chat" id="chat"><p style="color:var(--ink2);font-size:17px">Cargando…</p></div><textarea id="msg" rows="3" style="font-size:19px" placeholder="Escribe aquí: una duda, un problema con la app o un aviso"></textarea><button class="btn naranja" id="env-msg" style="margin-top:8px">Enviar</button><p style="font-size:15px;color:var(--ink2);margin-top:8px">Aquí te contesta el equipo de Resuelto. Todo queda guardado.</p></div>'
+    $('vista').innerHTML='<h2>Mensajes con Resuelto</h2><div class="card"><div class="chat" id="chat"><p style="color:var(--ink2);font-size:17px">Cargando…</p></div><textarea id="msg" rows="3" style="font-size:19px" placeholder="Escribe aquí: una duda, un problema con la app o un aviso"></textarea><div class="fotos" style="margin:8px 0 0"><label style="grid-column:1/-1;padding:12px">📷<b>Agregar foto</b><small id="mf-n">Opcional: una foto del problema, del recibo o de la pieza</small><input type="file" accept="image/*" multiple id="mf"></label></div><button class="btn naranja" id="env-msg" style="margin-top:8px">Enviar</button><p style="font-size:15px;color:var(--ink2);margin-top:8px">Aquí te contesta el equipo de Resuelto. Todo queda guardado.</p></div>'
       +'<h2>Cómo funciona</h2><div class="card" style="font-size:18px"><p>🔔 Cuando sale un trabajo en tu zona te suena el celular.</p><p style="margin-top:10px">✅ Si lo quieres, tocas <b>Aceptar</b>. Si no puedes, <b>No puedo este</b>. Nadie te obliga.</p><p style="margin-top:10px">🚗 El día del trabajo: <b>Voy en camino</b> → <b>Ya llegué</b> → fotos de antes y después → <b>Terminé</b>.</p><p style="margin-top:10px">📞 Para hablar con el cliente usa <b>Llamar</b> o <b>Escribirle</b>: le sale el número de Resuelto, nunca el tuyo.</p><p style="margin-top:10px">💵 El cliente le paga a Resuelto. Tú cobras los viernes.</p></div>'
       +'<button class="btn claro" id="salir">Salir de este celular</button>';
-    $('env-msg').onclick=function(){var t=$('msg').value.trim();if(!t)return;$('env-msg').disabled=true;post('/api/proveedores/mensajes',{texto:t}).then(function(j){$('env-msg').disabled=false;if(j.ok){$('msg').value='';cargarHilo(true)}else aviso(j.motivo||'No se pudo enviar.',true)}).catch(function(){$('env-msg').disabled=false})};
+    $('mf').onchange=function(){var n=this.files.length;$('mf-n').textContent=n?n+' foto(s) lista(s) para enviar':'Opcional: una foto del problema, del recibo o de la pieza'};
+    $('env-msg').onclick=function(){var t=$('msg').value.trim(),fs=[].slice.call($('mf').files).slice(0,4);if(!t&&!fs.length)return;var b=$('env-msg');b.disabled=true;b.textContent='Enviando…';
+      Promise.all(fs.map(achicar)).then(function(fotos){return post('/api/proveedores/mensajes',{texto:t,fotos:fotos})}).then(function(j){b.disabled=false;b.textContent='Enviar';if(j.ok){$('msg').value='';$('mf').value='';$('mf-n').textContent='Opcional: una foto del problema, del recibo o de la pieza';cargarHilo(true)}else aviso(j.motivo||'No se pudo enviar.',true)}).catch(function(){b.disabled=false;b.textContent='Enviar';aviso('No se pudo enviar. Revisa tu señal.',true)})};
     cargarHilo(true);
     $('salir').onclick=function(){abrirModal('<h3>¿Salir de este celular?</h3><p>Para volver a entrar necesitas un código nuevo por texto.</p><button class="btn naranja" id="si">Sí, salir</button><button class="btn claro" id="no">Cancelar</button>');$('no').onclick=cerrarModal;$('si').onclick=function(){cerrarModal();salir()}};
   }
