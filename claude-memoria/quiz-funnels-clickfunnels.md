@@ -79,3 +79,13 @@ comprarlo en GoDaddy: TXT `@` = `clickfunnels-domain-verification=jRldZm` · CNA
 Domains → Validate Ownership → funnel NzxGvR → Set Domain. `shadowoperator.co` (GoDaddy, ns47/48) quedó a
 MEDIAS del 13/sep: el CNAME `www` sigue apuntando a `shadowoperator.co` (conflicto que nunca se arregló) y
 no hay TXT de verificación; no resuelve. Se abandona si Elvin se queda con elvinayala.com.
+
+**Shadow Operator EN VIVO con dominio propio (12-13/oct/2026):** `https://www.elvinayala.com/auditoria` (Elvin compró
+elvinayala.com en GoDaddy; CNAME `www` → us-east-shard-3.myclickfunnels.com + TXT `@` clickfunnels-domain-verification=jRldZm;
+dominio CF YXXXXP, funnel NzxGvR, badge oculto). El funnel vive en `/auditoria` y redirige a la página `/negocio-digital`
+(así funciona CF: **el path de la página NO puede ser igual al del funnel**, si no CF lo renombra a `/auditoria--68143`).
+Endpoint `/api/auditoria` marca `shadow-operator` verificado con un lead de prueba (Pipedrive LU, pipeline 14 stage 136; borrado).
+**Pendiente de Elvin:** en GoDaddy → Reenvío, `elvinayala.com` (sin www) → `https://www.elvinayala.com` con reenvío permanente,
+para que `elvinayala.com/auditoria` también funcione; el apex hoy no responde.
+Idea siguiente: página de raíz `elvinayala.com` estilo oscarmoises.com (5 pantallas: Escalar Negocio, IA, Marketing, Aprende a
+Operar…) como sitio propio en Netlify; el quiz pasaría a `auditoria.elvinayala.com`.
