@@ -814,7 +814,7 @@ const Semanas: React.FC<Extract<Escena, { tipo: "semanas" }>> = ({ titulo, seman
   );
 };
 
-const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, nota, dur }) => {
+const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, nota, dur, grande }) => {
   const f = useCurrentFrame();
   const t = useTema();
   const es = useEstilo();
@@ -856,7 +856,7 @@ const Cierre: React.FC<Extract<Escena, { tipo: "cierre" }>> = ({ cta, sub, url, 
   return (
     <Marco dur={dur} gap={v ? 50 : 34}>
       <div style={{ alignSelf: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: v ? 50 : 34 }}>
-        <Firma size={cuad ? 280 : v ? 420 : 330} entrada={f} />
+        <Firma size={cuad ? (grande ? 420 : 280) : v ? (grande ? 860 : 420) : (grande ? 520 : 330)} entrada={f} />
         {Sub}{Boton}{Url}
       </div>
       <Nota texto={nota} entra={30} />
@@ -1375,6 +1375,72 @@ const ClipEsc: React.FC<Extract<Escena, { tipo: "clip" }>> = ({ video, desde = 0
   );
 };
 
+
+/* ───────── Collage de testimonios (12/oct/2026, Black Friday LU: "un collage con las mejores partes de cada uno") ───────── */
+const CollageEsc: React.FC<Extract<Escena, { tipo: "collage" }>> = ({ clips, ritmo = "rapido", nota, titulo }) => {
+  const t = useTema();
+  const { v, pad } = useLienzo();
+  const { fps } = useVideoConfig();
+  const rapido = ritmo === "rapido";
+  let desde = 0;
+  return (
+    <AbsoluteFill style={{ background: t.fondo }}>
+      {clips.map((c, i) => {
+        const dur = Math.round((c.hasta - c.desde) * fps);
+        const from = desde;
+        desde += dur;
+        return (
+          <Sequence key={i} from={from} durationInFrames={dur}>
+            <PedazoCollage {...c} dur={dur} i={i} total={clips.length} rapido={rapido} />
+          </Sequence>
+        );
+      })}
+      {titulo && (
+        <div style={{ position: "absolute", left: pad, right: pad, top: v ? 250 : 70, textAlign: "center", fontFamily: t.mono, fontSize: v ? 26 : 22,
+          letterSpacing: "0.2em", textTransform: "uppercase", color: t.acento, textShadow: "0 2px 18px rgba(0,0,0,0.8)" }}>{titulo}</div>
+      )}
+      {nota && <div style={{ position: "absolute", left: pad, right: pad, bottom: v ? 300 : 40, fontFamily: t.mono, fontSize: v ? 20 : 17, color: t.gris, textAlign: "center" }}>{nota}</div>}
+    </AbsoluteFill>
+  );
+};
+
+const PedazoCollage: React.FC<{ video: string; desde: number; nombre: string; frase?: string; enfoque?: string; zoom?: number; origen?: string;
+  dur: number; i: number; total: number; rapido: boolean }> = ({ video, desde, nombre, frase, enfoque = "50% 50%", zoom = 1, origen = "50% 50%", dur, i, total, rapido }) => {
+  const f = useCurrentFrame();
+  const t = useTema();
+  const { v, pad } = useLienzo();
+  const { fps } = useVideoConfig();
+  const src = /^https?:\/\//.test(video) ? video : staticFile(video.replace(/^\//, ""));
+  // Rápido: golpe de zoom al entrar + destello blanco de 3 cuadros. Calmado: fundido y empuje lento.
+  const escala = rapido ? zoom * interpolate(f, [0, 5, dur], [1.12, 1.03, 1.0], { extrapolateRight: "clamp" }) : zoom * interpolate(f, [0, dur], [1.0, 1.07]);
+  const op = rapido ? 1 : interpolate(f, [0, 10, dur - 6, dur], [0, 1, 1, i === total - 1 ? 1 : 0.4], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const flash = rapido ? interpolate(f, [0, 3], [0.55, 0], { extrapolateRight: "clamp" }) : 0;
+  const vol = (x: number) => interpolate(x, [0, 3, dur - 4, dur], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill style={{ opacity: op }}>
+      <AbsoluteFill style={{ overflow: "hidden" }}>
+        <OffthreadVideo src={src} startFrom={Math.round(desde * fps)} volume={vol}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: enfoque, transform: `scale(${escala})`, transformOrigin: origen }} />
+      </AbsoluteFill>
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, transparent 58%, ${t.fondo}cc 82%, ${t.fondo} 100%)` }} />
+      {flash > 0 && <AbsoluteFill style={{ background: "#fff", opacity: flash }} />}
+      <div style={{ position: "absolute", left: pad, right: pad, bottom: v ? 360 : 80, display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-start" }}>
+        {frase && (
+          <div style={{ fontFamily: t.fuente, fontWeight: 800, fontSize: v ? 64 : 56, lineHeight: 1.05, color: t.texto, textShadow: "0 6px 26px rgba(0,0,0,0.7)",
+            opacity: tw(f, rapido ? 2 : 8, rapido ? 8 : 20), transform: `translateY(${(1 - tw(f, rapido ? 2 : 8, rapido ? 10 : 22)) * 20}px)` }}>
+            {frase.split(/(\*[^*]+\*)/).map((p, k) => p.startsWith("*") ? <span key={k} style={{ color: t.acento }}>{p.slice(1, -1)}</span> : <React.Fragment key={k}>{p}</React.Fragment>)}
+          </div>
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ fontFamily: t.fuente, fontWeight: 700, fontSize: v ? 28 : 24, color: t.textoCta, background: t.acento, padding: "7px 18px", borderRadius: 999,
+            opacity: tw(f, rapido ? 0 : 6, rapido ? 6 : 16) }}>{nombre}</div>
+          {rapido && <div style={{ fontFamily: t.mono, fontSize: v ? 22 : 18, color: t.gris }}>{String(i + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}</div>}
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
   if (escena.foto && escena.tipo !== "retrato") {
     const { foto, enfoque, ...sinFoto } = escena;
@@ -1407,5 +1473,6 @@ export const EscenaFabrica: React.FC<{ escena: Escena }> = ({ escena }) => {
     case "retrato": return <Retrato {...escena} />;
     case "cierre": return <Cierre {...escena} />;
     case "clip": return <ClipEsc {...escena} />;
+    case "collage": return <CollageEsc {...escena} />;
   }
 };
