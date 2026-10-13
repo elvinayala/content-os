@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: e26a1275-d67c-452e-b898-af4533d0dd8e
-  modified: 2026-10-13T13:30:00.559Z
+  modified: 2026-10-13T14:48:59.528Z
 ---
 
 Auditorías interactivas tipo Content Capital (Ramiro) construidas el 12/sep/2026 en
@@ -101,6 +101,12 @@ marca `level-up`, pipeline 12/122) · `/ia` (`jZZPkV`, `/ia-quiz`, quiz de AIB, 
 solo se reemplazan bien con `form_input` (no con teclear); tras pegar en CodeMirror verificar hash, cerrar con **Escape**, esperar el
 botón naranja "Save", guardar y verificar con curl (la caché tarda ~20 s); un `<link href=""…>` con comilla de más hace que CF/navegador
 se trague todo el snippet como atributos (página en blanco): probar el snippet en una página anfitriona antes de pegarlo.
+**Imagen al pegar el link (13/oct):** sin "Sharing image" CF pone SU logo en Slack/WhatsApp (Elvin lo vio y no lo quiere). Las 5 páginas ya
+tienen la suya (1200×630, `demos/elvinayala/og/generar-og.py` → `og-<shadow|escalar|marketing|ia|hub>.png`, Chrome headless). Se sube en
+página → ⋮ → Settings → **Sharing image** (biblioteca en un iframe: inyectar un `<input type=file>` en la página, subirlo con `file_upload` y pasar
+el File al input del iframe con DataTransfer + `change`). Slack cachea el preview por URL: para ver el nuevo en el mismo link, añadir `?v=2`.
+`elvinayala.com/<ruta>` SIN www da 404 (el reenvío de GoDaddy solo cubre la raíz): compartir siempre `https://www.elvinayala.com/...`.
+Shadow NO tiene pixel de Meta (los `fbq` del quiz no disparan nada).
 **Pendiente:** videos de fondo del hub (`demos/elvinayala/videos/`, hoy sin videos), pixel de Meta para los funnels personales, "Allow search
 engines" está APAGADO en el hub (decidir si indexarlo), y el copy de `/ia` y del funnel de AIB dice "recuperar clientes… en los primeros
 21 días" (el plazo real es 15 días + optimización 16-45, ver [[aib-autoflow-plazos]]) — corregir con el OK de Elvin.
