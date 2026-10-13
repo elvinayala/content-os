@@ -17,6 +17,12 @@
 //        [--id-columna <col>] [--max 50] [--probar] [--omitir-errores] + las mismas opciones de render
 //     "Una plantilla, mil videos": cada fila de la tabla rellena los {{campos}} de la plantilla → un video por fila
 //     (lógica en scripts/remi/lote.mjs). --probar arma los guiones en data/motion/lotes/<plantilla>/ SIN renderizar.
+//     Sin archivos (Max): la tabla puede ir por la entrada estándar con "-" (CSV o JSON) y la plantilla como JSON en línea.
+//   node scripts/remi.mjs html --id <id> [--archivo <index.html> | (HTML por la entrada estándar)] [--asset nombre=https://… …]
+//        + las mismas opciones de entrega (--entregar --marca … | --cliente <slug> --proponer)
+//     Composición de HYPERFRAMES (HTML + GSAP, skill lanzamiento) renderizada en la nube por Remi. Los archivos que usa
+//     (logo, fotos, capturas, música) se referencian como assets/<nombre> y se pasan con --asset: URL https (p. ej. el
+//     material del cliente) o repo:<ruta> (un archivo del repo: public/marcas/…, motion/public/…). Ver estudio-html/LEEME.md.
 // --entregar deja cada video en la bandeja de Entregas (data/entregas.json, agente "Remi").
 // Env: REMI_URL + REMI_SECRETO (.env.local / Railway).
 import { negarEnSoloLectura } from "../lib/solo-lectura.mjs";
@@ -47,9 +53,10 @@ if (cmd === "lote") {
   const { leerCSV, armarLote } = await import("./remi/lote.mjs");
   const fuente = ids[0];
   if (!fuente || !arg("plantilla")) { console.error("Uso: remi.mjs lote <tabla.csv|.json|URL> --plantilla <guion.json> [--id-columna <col>] [--probar]"); process.exit(1); }
-  const texto = /^https?:\/\//.test(fuente) ? await (await fetch(fuente.replace(/\/edit.*$/, "/export?format=csv"))).text() : fs.readFileSync(path.resolve(fuente), "utf8");
-  const filas = fuente.endsWith(".json") ? JSON.parse(texto) : leerCSV(texto);
-  const plantilla = JSON.parse(fs.readFileSync(path.resolve(arg("plantilla")), "utf8"));
+  const texto = fuente === "-" ? fs.readFileSync(0, "utf8") : /^https?:\/\//.test(fuente) ? await (await fetch(fuente.replace(/\/edit.*$/, "/export?format=csv"))).text() : fs.readFileSync(path.resolve(fuente), "utf8");
+  const filas = fuente.endsWith(".json") || /^\s*\[/.test(texto) ? JSON.parse(texto) : leerCSV(texto);
+  const pl = arg("plantilla").trim();
+  const plantilla = JSON.parse(pl.startsWith("{") ? pl : fs.readFileSync(path.resolve(pl), "utf8"));
   const r = armarLote(plantilla, filas, { idColumna: arg("id-columna"), max: arg("max") ? Number(arg("max")) : undefined });
   console.log(`📋 ${filas.length} fila(s) → ${r.guiones.length} guion(es)`);
   if (r.camposSinColumna.length) console.error(`✖ La plantilla pide {{${r.camposSinColumna.join("}}, {{")}}} y la tabla no tiene esa columna.`);
@@ -137,16 +144,30 @@ if (cmd === "salud") {
   console.log(await (await fetch(`${URL_REMI}/salud`)).text());
   process.exit(0);
 }
-if (!["render", "lote"].includes(cmd) || (!ids.length && !guiones.length)) {
-  console.error('Uso: remi.mjs render <id>… [--entregar --marca <m> --titulo "…" --formato "…"] | remi.mjs salud');
+let cuerpoHtml = null;
+if (cmd === "html") {
+  const id = arg("id");
+  if (!id || !/^[A-Za-z0-9._-]{1,120}$/.test(id)) { console.error("remi.mjs html --id <id> (letras, números, . _ -)"); process.exit(1); }
+  const html = arg("archivo") ? fs.readFileSync(path.resolve(arg("archivo")), "utf8") : fs.readFileSync(0, "utf8");
+  if (!html.includes("data-composition-id")) { console.error("✖ Eso no es una composición de Hyperframes (falta data-composition-id). Ver estudio-html/LEEME.md"); process.exit(1); }
+  const assets = [];
+  resto.forEach((x, i) => { if (x === "--asset") { const [nombre, ...u] = String(resto[i + 1] || "").split("="); assets.push({ nombre, url: u.join("=") }); } });
+  cuerpoHtml = { id, html, assets };
+  ids = [];
+  console.log(`🎞 Hyperframes: ${id} · ${(html.length / 1024).toFixed(0)} KB · ${assets.length} archivo(s)`);
+}
+if (!["render", "lote", "html"].includes(cmd) || (!ids.length && !guiones.length && !cuerpoHtml)) {
+  console.error('Uso: remi.mjs render <id>… [--entregar --marca <m> --titulo "…" --formato "…"] | remi.mjs lote … | remi.mjs html --id … | remi.mjs salud');
   process.exit(1);
 }
 if (!SECRETO) { console.error("Falta REMI_SECRETO"); process.exit(1); }
 
-const r = await fetch(`${URL_REMI}/render`, { method: "POST", headers: h, body: JSON.stringify({ ids: guiones.length ? ids.filter((x) => !guiones.some((g) => g.id === x)) : ids, guiones }) });
+const r = cuerpoHtml
+  ? await fetch(`${URL_REMI}/html`, { method: "POST", headers: h, body: JSON.stringify(cuerpoHtml) })
+  : await fetch(`${URL_REMI}/render`, { method: "POST", headers: h, body: JSON.stringify({ ids: guiones.length ? ids.filter((x) => !guiones.some((g) => g.id === x)) : ids, guiones }) });
 const j = await r.json();
 if (!j.ok) { console.error("✖", j.error || r.status); process.exit(1); }
-const n = ids.length + guiones.length;
+const n = cuerpoHtml ? 1 : ids.length + guiones.length;
 console.log(`⏳ trabajo ${j.trabajo} (${n} video${n > 1 ? "s" : ""}) — Remi baja lo último de GitHub y renderiza…`);
 let t;
 for (let i = 0; i < 360; i++) {
@@ -176,7 +197,7 @@ if (resto.includes("--entregar")) {
     datos.entregas.push({
       id, tipo: "anuncio", marca, titulo: arg("titulo") || x.id, agente: "Remi", creadoEl: new Date().toISOString(), estado: "nuevo",
       formato: arg("formato") || `motion · ${x.segundos} s`, videoUrl: x.url, modelo: "remotion",
-      contenido: `Video de motion renderizado en la nube (servicio remi, commit ${t.commit}). Guion: motion/src/fabrica/anuncios.ts (${x.id}).`,
+      contenido: cuerpoHtml ? `Video de Hyperframes (HTML) renderizado en la nube (servicio remi, commit ${t.commit}).` : `Video de motion renderizado en la nube (servicio remi, commit ${t.commit}). Guion: motion/src/fabrica/anuncios.ts (${x.id}).`,
     });
   }
   datos.actualizadoEl = new Date().toISOString();

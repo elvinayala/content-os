@@ -21,4 +21,8 @@ GH="${GH:-elvinayala/content-os}"
 if [ -d "$REPO/.git" ]; then (cd "$REPO" && git pull --rebase --autostash -q) && echo "↻ content-os actualizado"
 else git clone -q --depth 50 "git@github.com:$GH.git" "$REPO" && echo "⬇ content-os clonado"; fi
 cd "$REPO/motion" && npm ci --no-audit --no-fund && npx remotion browser ensure
+# Hyperframes (12/oct): segundo motor, para composiciones en HTML (lanzamientos). Sin telemetría.
+if [ -f "$REPO/estudio-html/package-lock.json" ]; then
+  (cd "$REPO/estudio-html" && npm ci --no-audit --no-fund && HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 node_modules/.bin/hyperframes browser ensure) || echo "⚠ Hyperframes no quedó listo (los videos de Remotion siguen funcionando)"
+fi
 exec node "$REPO/motion/servicio/servidor.mjs"

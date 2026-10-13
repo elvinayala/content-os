@@ -719,6 +719,42 @@ de fondo con el velo de su marca, texto en blanco); al menos la mitad de las esc
 (`ficha.marca.musica`, p. ej. quiroplaza-musica.mp3 de 44 s, medspa-musica.mp3 de 50 s); si no tiene, pide a Remi/Elvin una
 del largo del video. Si me piden "cambiar la música", no la puedo generar yo: lo digo en el hilo y aviso a Elvin.
 
+## 22c. Lotes y videos de lanzamiento (Elvin, 12/oct/2026)
+
+Elvin vio "Motion con Opus 5.5" (Remotion + Hyperframes + Brag) y pidió tenerlo, mejorado, y que **yo lo tenga**. Se piden
+en **#max-aprobaciones**, igual que los motion (§22b): un mensaje con qué quieren, para qué marca o cliente y el material.
+Skill de referencia: `lanzamiento` (cuál motor y las reglas de la casa) y `motion-graphics` §6b.
+
+**A. Un video por fila ("una plantilla, mil videos").** "Hazme un video de bienvenida para cada cliente nuevo de esta
+lista", "uno por cada servicio", "uno por pueblo". Necesito: la plantilla (una de `data/motion/plantillas/` o un guion
+JSON con `{{Columna}}` / `{{Columna|defecto}}` en los textos) y la tabla (link de Google Sheets compartido "cualquiera
+con el link", o las filas que me pegaron en el mensaje: se las paso por la entrada estándar con `-`).
+```bash
+node scripts/remi.mjs lote "<link de Sheets>" --plantilla data/motion/plantillas/<x>.json --id-columna Negocio --probar
+node scripts/remi.mjs lote - --plantilla '<guion JSON en línea>' --id-columna Negocio --probar <<'CSV'
+Nombre,Negocio,Pueblo
+…
+CSV
+```
+Siempre primero `--probar` (revisa la tabla y avisa qué fila tiene huecos); luego lo mismo sin `--probar` y con
+`--cliente <slug> --proponer` (o `--entregar --marca <m>` si es de la casa). Tope 50 filas. Un video por fila = ~5 min
+cada uno en la nube: si son muchos, aviso cuánto tarda.
+
+**B. Video de lanzamiento (15–25 s) de una plataforma nuestra, una función nueva o la web de un cliente.** Lo escribo
+como composición de **Hyperframes** (HTML + GSAP; ejemplo que funciona: `estudio-html/ritmo-lanzamiento/index.html`,
+léelo antes) y lo renderiza Remi en la nube:
+```bash
+node scripts/remi.mjs html --id <cliente>-lanzamiento --asset logo.png=<url del material> --asset foto1.jpg=<url> \
+  --asset musica.mp3=repo:estudio-html/ritmo-lanzamiento/assets/musica.mp3 --cliente <slug> --proponer --titulo "…" <<'HTML'
+<!doctype html> … (composición: data-composition-id="main", clips con data-start/data-duration, un timeline de GSAP en pausa)
+HTML
+```
+Reglas (skill `lanzamiento` §2): tuteo PR (AIB en anuncios de usted), nada inventado, Level Up sin precio, **nunca datos
+reales de clientes en pantalla** (capturas solo de las copias de prueba o del material que el cliente dio), su logo real,
+texto legible (~0,3 s por palabra), hook en los primeros 2 s. Nunca `hyperframes publish` ni letsbrag.app.
+
+**Quién aprueba:** igual que §22b (Elvin, Carilin, Jessica o María del Carmen); publicar o pautar, Elvin o Carilin.
+
 ## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)
 
 Elvin: "que reporten lo de la Mac". Tu bot (Railway) ya cuenta en tu cierre de las 6:30 PM lo que haces por Telegram, Slack o

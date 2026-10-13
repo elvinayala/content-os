@@ -20,3 +20,8 @@ mejorado. Esta carpeta es el **segundo motor** de video, al lado de Remi (`motio
 - **Ojo al actualizar:** `npx hyperframes skills update` reescribe `~/.claude/skills/hyperframes` y `product-launch-video`. Sus
   descripciones se acotaron a mano (12/oct) para que no se apropien de "cualquier video" y le quiten el trabajo a Remi;
   después de actualizar, volver a acotarlas.
+- **En la nube y por Max (12/oct):** Remi (Railway) también renderiza Hyperframes: `node scripts/remi.mjs html --id <id>
+  --asset nombre=<https|repo:ruta> … [--proponer --cliente <slug> | --entregar --marca <m>] < index.html`. Así Max (que no
+  tiene navegador ni puede crear archivos) hace lanzamientos desde Slack. Cerebro de Max §22c.
+- **Primer lanzamiento:** `ritmo-lanzamiento/` (20 s, 16:9, capturas de la copia de prueba con datos inventados, música
+  propia). Es el ejemplo que lee Max.

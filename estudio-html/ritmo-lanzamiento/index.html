@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" />
+    <style>
+      /* Ritmo: azul tinta + verde pulso → coral (app/globals.css .ritmo, app/ritmo/iconos/dibujo.tsx) */
+      :root { --tinta: #0a0f1c; --card: #13182a; --texto: #f0f2f7; --gris: #989eaf; --verde: #5cf09a; --coral: #f59e7a; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--tinta); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: Geist, "Helvetica Neue", Arial, sans-serif; color: var(--texto);
+        background: radial-gradient(1200px 800px at 75% 20%, #1a2340 0%, rgba(26, 35, 64, 0) 60%), var(--tinta); }
+      #rejilla { position: absolute; inset: 0; background-image: linear-gradient(rgba(240, 242, 247, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(240, 242, 247, .035) 1px, transparent 1px); background-size: 64px 64px; }
+      .clip { position: absolute; inset: 0; }
+      .grad { background: linear-gradient(90deg, var(--verde), var(--coral)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .ceja { font-family: "Geist Mono", ui-monospace, monospace; font-size: 24px; font-weight: 600; letter-spacing: .2em; color: var(--verde); text-transform: uppercase; }
+
+      /* 1 · gancho */
+      #s1 { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
+      #s1 .l { font-size: 96px; font-weight: 700; letter-spacing: -.035em; line-height: 1.05; }
+      #s1 .l3 { font-size: 104px; font-weight: 800; }
+      #pulsoHook { width: 760px; height: 90px; margin-top: 18px; }
+
+      /* 2 y 6 · logo */
+      .logo { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; }
+      .marca { display: flex; align-items: center; gap: 34px; }
+      .marca svg { width: 230px; height: 154px; overflow: visible; }
+      .marca b { font-size: 190px; font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+      .logo p { font-size: 40px; color: var(--gris); font-weight: 500; letter-spacing: -.01em; }
+      .logo p em { font-style: normal; color: var(--texto); }
+
+      /* 3-5 · funciones */
+      .texto { position: absolute; left: 128px; top: 0; bottom: 0; width: 560px; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+      .texto h2 { font-size: 76px; font-weight: 750; letter-spacing: -.035em; line-height: 1.02; }
+      .texto p { font-size: 32px; line-height: 1.38; color: var(--gris); }
+      .texto p b { color: var(--texto); font-weight: 600; }
+      .laptop { position: absolute; left: 740px; top: 150px; width: 1080px; height: 690px; border-radius: 26px; padding: 14px; background: #1b2033; border: 1px solid rgba(240, 242, 247, .12);
+        box-shadow: 0 40px 120px rgba(0, 0, 0, .55), 0 0 0 1px rgba(92, 240, 154, .06); }
+      .pantalla { position: relative; width: 100%; height: 100%; border-radius: 14px; overflow: hidden; background: #0a0f1c; }
+      .cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+      .cam img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+      .base { position: absolute; left: 690px; top: 852px; width: 1180px; height: 26px; border-radius: 0 0 26px 26px; background: linear-gradient(#262c44, #161a2a); }
+      .cursor { position: absolute; width: 44px; height: 44px; left: 0; top: 0; z-index: 3; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .5)); }
+      .onda { position: absolute; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; border: 4px solid var(--verde); opacity: 0; z-index: 2; }
+      .tels { position: absolute; left: 820px; top: 70px; width: 980px; height: 940px; }
+      .tel { position: absolute; top: 0; width: 420px; height: 910px; border-radius: 58px; padding: 14px; background: #1b2033; border: 1px solid rgba(240, 242, 247, .14); box-shadow: 0 40px 110px rgba(0, 0, 0, .6); }
+      .tel img { width: 100%; height: 100%; border-radius: 46px; object-fit: cover; object-position: top center; display: block; }
+      #t1 { left: 40px; } #t2 { left: 520px; top: 30px; }
+      .sello { position: absolute; z-index: 4; padding: 14px 24px; border-radius: 999px; background: rgba(92, 240, 154, .14); border: 1px solid rgba(92, 240, 154, .5); color: var(--verde); font-size: 26px; font-weight: 600; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1920" data-height="1080">
+      <div id="rejilla"></div>
+
+      <div id="s1" class="clip" data-start="0" data-duration="3.3" data-track-index="0">
+        <div class="l l1">¿Quién llegó hoy?</div>
+        <div class="l l2">¿Quién cumplió su meta?</div>
+        <div class="l l3 grad">Sin preguntarle a nadie.</div>
+        <svg id="pulsoHook" viewBox="0 0 760 90"><defs><linearGradient id="gh" x1="0" x2="760" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5cf09a" /><stop offset="1" stop-color="#f59e7a" /></linearGradient></defs>
+          <path id="ph" d="M0 50 H300 L330 18 L370 82 L405 30 L425 58 H760" fill="none" stroke="url(#gh)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </div>
+
+      <div id="s2" class="clip logo" data-start="3.3" data-duration="2.5" data-track-index="0">
+        <div class="marca">
+          <svg viewBox="4 8 24 16"><defs><linearGradient id="g2" x1="4" y1="16" x2="28" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5cf09a" /><stop offset="1" stop-color="#f59e7a" /></linearGradient></defs>
+            <path id="p2" d="M5 17h5l2.5-6 4 11 3-8 1.5 3H27" fill="none" stroke="url(#g2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" /></svg>
+          <b>Ritmo</b>
+        </div>
+        <p>Asistencia y desempeño del equipo. <em>Sin vigilar.</em></p>
+      </div>
+
+      <div id="s3" class="clip" data-start="5.8" data-duration="4.3" data-track-index="0">
+        <div class="texto">
+          <div class="ceja">01 · Ponche</div>
+          <h2>Marcan en<br><span class="grad">un toque.</span></h2>
+          <p>Desde su computadora aprobada, con la <b>hora del servidor</b>. Nada de capturas ni GPS.</p>
+        </div>
+        <div class="base"></div>
+        <div class="laptop"><div class="pantalla">
+          <div class="cam" id="cam3"><img src="assets/emp-hoy-pc.jpg" alt="Ritmo: pantalla Hoy con el ponche" /></div>
+          <div class="onda" id="onda3" style="left:524px;top:541px"></div>
+          <svg class="cursor" id="cur3" viewBox="0 0 24 24"><path d="M4 2l15 11-6.5 1.2L16 21l-3 1.4-3.6-6.9L4 20z" fill="#fff" stroke="#0a0f1c" stroke-width="1.4" stroke-linejoin="round" /></svg>
+        </div></div>
+      </div>
+
+      <div id="s4" class="clip" data-start="10.1" data-duration="4.2" data-track-index="0">
+        <div class="texto">
+          <div class="ceja">02 · Equipo</div>
+          <h2>Tu equipo,<br><span class="grad">en vivo.</span></h2>
+          <p>Quién está, quién cumple sus KPIs y qué está vencido. <b>Sin preguntarle a nadie.</b></p>
+        </div>
+        <div class="base"></div>
+        <div class="laptop"><div class="pantalla">
+          <div class="cam" id="cam4"><img src="assets/lider-equipo-pc.jpg" alt="Ritmo: el equipo en vivo" /></div>
+        </div></div>
+        <div class="sello" id="sello4" style="left:1180px;top:880px">11 de 11 presentes hoy</div>
+      </div>
+
+      <div id="s5" class="clip" data-start="14.3" data-duration="3.4" data-track-index="0">
+        <div class="texto">
+          <div class="ceja">03 · Recursos humanos</div>
+          <h2>Vacaciones<br>y permisos,<br><span class="grad">sin papeles.</span></h2>
+          <p>El supervisor aprueba, RR.HH. firma. <b>Y en el teléfono, como una app.</b></p>
+        </div>
+        <div class="tels">
+          <div class="tel" id="t1"><img src="assets/emp-solicitudes-cel.jpg" alt="Ritmo: solicitudes" /></div>
+          <div class="tel" id="t2"><img src="assets/emp-hoy-cel.jpg" alt="Ritmo en el teléfono" /></div>
+        </div>
+      </div>
+
+      <div id="s6" class="clip logo" data-start="17.7" data-duration="2.3" data-track-index="0">
+        <div class="marca">
+          <svg viewBox="4 8 24 16"><defs><linearGradient id="g6" x1="4" y1="16" x2="28" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5cf09a" /><stop offset="1" stop-color="#f59e7a" /></linearGradient></defs>
+            <path id="p6" d="M5 17h5l2.5-6 4 11 3-8 1.5 3H27" fill="none" stroke="url(#g6)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" /></svg>
+          <b>Ritmo</b>
+        </div>
+        <p>Tu equipo, <em>a su ritmo.</em></p>
+      </div>
+
+      <audio id="musica" src="assets/musica.mp3" data-start="0" data-duration="20" data-track-index="9" data-volume="0.9"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const E = "power3.out";
+      // 1 · gancho: las tres preguntas y el pulso que se dibuja
+      const largo = document.getElementById("ph").getTotalLength();
+      gsap.set("#ph", { strokeDasharray: largo, strokeDashoffset: largo });
+      tl.from("#s1 .l1", { y: 60, opacity: 0, duration: 0.5, ease: E }, 0.1)
+        .from("#s1 .l2", { y: 60, opacity: 0, duration: 0.5, ease: E }, 0.65)
+        .from("#s1 .l3", { y: 60, opacity: 0, duration: 0.55, ease: E }, 1.25)
+        .to("#ph", { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" }, 1.35)
+        .to("#s1", { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" }, 2.95);
+      // 2 · logo: el pulso se traza y el nombre entra
+      tl.to("#p2", { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 3.35)
+        .from("#s2 .marca b", { x: -40, opacity: 0, duration: 0.6, ease: E }, 3.75)
+        .from("#s2 p", { y: 24, opacity: 0, duration: 0.5, ease: E }, 4.2)
+        .to("#s2", { opacity: 0, scale: 1.04, duration: 0.3, ease: "power2.in" }, 5.45);
+      // 3 · ponche: entra la laptop, la cámara se acerca al círculo, el cursor toca "Marcar salida"
+      tl.from("#s3 .texto > *", { y: 40, opacity: 0, duration: 0.5, stagger: 0.12, ease: E }, 5.85)
+        .from("#s3 .laptop, #s3 .base", { y: 80, opacity: 0, duration: 0.7, ease: E }, 5.9)
+        .fromTo("#cam3", { scale: 1, transformOrigin: "50% 47%" }, { scale: 1.75, duration: 1.4, ease: "power2.inOut" }, 6.9)
+        .fromTo("#cur3", { x: 860, y: 600, opacity: 0 }, { x: 512, y: 532, opacity: 1, duration: 0.9, ease: "power2.inOut" }, 7.6)
+        .to("#cur3", { scale: 0.85, duration: 0.08, yoyo: true, repeat: 1, transformOrigin: "20% 10%" }, 8.55)
+        .fromTo("#onda3", { scale: 0.3, opacity: 0.9 }, { scale: 1.8, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false }, 8.6)
+        .to("#s3", { opacity: 0, duration: 0.3, ease: "power2.in" }, 9.8);
+      // 4 · equipo: la cámara baja a los indicadores
+      tl.from("#s4 .texto > *", { y: 40, opacity: 0, duration: 0.5, stagger: 0.12, ease: E }, 10.15)
+        .from("#s4 .laptop, #s4 .base", { y: 80, opacity: 0, duration: 0.7, ease: E }, 10.2)
+        .fromTo("#cam4", { scale: 1, transformOrigin: "50% 30%" }, { scale: 1.5, duration: 1.5, ease: "power2.inOut" }, 11.1)
+        .from("#sello4", { scale: 0.6, opacity: 0, duration: 0.5, ease: "back.out(1.8)" }, 12.2)
+        .to("#s4", { opacity: 0, duration: 0.3, ease: "power2.in" }, 14.0);
+      // 5 · RR.HH. y teléfono: dos teléfonos que suben
+      tl.from("#s5 .texto > *", { y: 40, opacity: 0, duration: 0.5, stagger: 0.12, ease: E }, 14.35)
+        .from("#t1", { y: 260, opacity: 0, rotation: -4, duration: 0.8, ease: E }, 14.45)
+        .from("#t2", { y: 320, opacity: 0, rotation: 4, duration: 0.8, ease: E }, 14.75)
+        .to("#t1", { y: -24, duration: 2.2, ease: "none" }, 15.25)
+        .to("#t2", { y: -40, duration: 2.0, ease: "none" }, 15.55)
+        .to("#s5", { opacity: 0, duration: 0.3, ease: "power2.in" }, 17.4);
+      // 6 · cierre
+      tl.to("#p6", { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 17.75)
+        .from("#s6 .marca b", { x: -40, opacity: 0, duration: 0.55, ease: E }, 18.1)
+        .from("#s6 p", { y: 24, opacity: 0, duration: 0.5, ease: E }, 18.5);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

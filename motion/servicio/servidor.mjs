@@ -9,6 +9,8 @@
 //   GET  /salud                              → { ok, repo, cola }
 //   POST /render { ids: ["lu-07-…-16x9"] }   → { trabajo }   (composiciones ya escritas en anuncios.ts)
 //   POST /render { guiones: [{ id, marca|cliente, formato, escenas… }] } → { trabajo }   (guion en JSON, sin tocar código)
+//   POST /html { id, html, assets: [{ nombre, url }] } → { trabajo }   (12/oct: composición de Hyperframes en HTML; la
+//        renderiza estudio-html/ con su Chrome + ffmpeg. Sin telemetría y nunca "publish")
 //   GET  /trabajo/<id>                       → { estado: en-cola|trabajando|listo|error, resultados: [{ id, url, segundos }], error }
 import http from "node:http";
 import fs from "node:fs";
@@ -34,12 +36,19 @@ const autorizado = (req) => {
 };
 
 function actualizarRepo() {
+  const lockHf = path.join(REPO, "estudio-html", "package-lock.json");
+  const antesHf = fs.existsSync(lockHf) ? fs.readFileSync(lockHf, "utf8") : "";
   const antes = fs.existsSync(path.join(MOTION, "package-lock.json")) ? fs.readFileSync(path.join(MOTION, "package-lock.json"), "utf8") : "";
   execFileSync("git", ["-C", REPO, "pull", "--rebase", "--autostash", "-q"], { stdio: "pipe" });
   const despues = fs.readFileSync(path.join(MOTION, "package-lock.json"), "utf8");
   if (antes !== despues || !fs.existsSync(path.join(MOTION, "node_modules"))) {
     log("dependencias de motion cambiaron → npm ci");
     execFileSync("npm", ["ci", "--no-audit", "--no-fund"], { cwd: MOTION, stdio: "inherit" });
+  }
+  const estudio = path.join(REPO, "estudio-html");
+  if (fs.existsSync(path.join(estudio, "package-lock.json")) && (antesHf !== fs.readFileSync(path.join(estudio, "package-lock.json"), "utf8") || !fs.existsSync(path.join(estudio, "node_modules")))) {
+    log("dependencias de estudio-html cambiaron → npm ci");
+    execFileSync("npm", ["ci", "--no-audit", "--no-fund"], { cwd: estudio, stdio: "inherit" });
   }
   return execFileSync("git", ["-C", REPO, "rev-parse", "--short", "HEAD"]).toString().trim();
 }
@@ -56,10 +65,42 @@ async function subir(archivo, nombre) {
   return `${url}/storage/v1${f.signedURL}`;
 }
 
+// Hyperframes (12/oct): escribe la composición en /tmp, baja sus archivos y la renderiza con el CLI fijado en estudio-html/.
+const ENV_HF = { ...process.env, HYPERFRAMES_NO_TELEMETRY: "1", DO_NOT_TRACK: "1", HYPERFRAMES_SKIP_SKILLS: "1" };
+async function renderHtml(t) {
+  const t0 = Date.now();
+  const dir = path.join("/tmp", `hf-${t.html.id}`);
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(path.join(dir, "assets"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "index.html"), t.html.html);
+  fs.writeFileSync(path.join(dir, "meta.json"), JSON.stringify({ id: t.html.id, name: t.html.id }));
+  for (const a of t.html.assets) {
+    if (a.url.startsWith("repo:")) { // archivo del repo (logos de public/marcas, capturas de motion/public…)
+      const origen = path.resolve(REPO, a.url.slice(5));
+      if (!origen.startsWith(REPO + path.sep) || !fs.existsSync(origen)) throw new Error(`No existe en el repo: ${a.url}`);
+      fs.copyFileSync(origen, path.join(dir, "assets", a.nombre));
+      continue;
+    }
+    const r = await fetch(a.url, { signal: AbortSignal.timeout(60000) });
+    if (!r.ok) throw new Error(`No pude bajar ${a.nombre} (${r.status})`);
+    fs.writeFileSync(path.join(dir, "assets", a.nombre), Buffer.from(await r.arrayBuffer()));
+  }
+  const estudio = path.join(REPO, "estudio-html");
+  const salida = path.join(dir, `${t.html.id}.mp4`);
+  log(`trabajo ${t.id}: hyperframes ${t.html.id}`);
+  execFileSync(path.join(estudio, "node_modules/.bin/hyperframes"), ["render", dir, "-o", salida, "--workers", "2"], { cwd: estudio, env: ENV_HF, stdio: "inherit", timeout: 20 * 60 * 1000 });
+  const segundos = Math.round(Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", salida]).toString().trim()) || 0);
+  const url = await subir(salida, `${t.html.id}.mp4`);
+  fs.rmSync(dir, { recursive: true, force: true });
+  t.resultados.push({ id: t.html.id, url, segundos, renderSeg: Math.round((Date.now() - t0) / 1000) });
+  log(`trabajo ${t.id}: ✓ ${t.html.id}`);
+}
+
 async function procesar(t) {
   t.estado = "trabajando";
   try {
     t.commit = actualizarRepo();
+    if (t.html) { await renderHtml(t); t.estado = "listo"; t.terminado = new Date().toISOString(); return; }
     // El servidor corre DESDE el clon (motion/servicio/), así que resuelve el node_modules de la fábrica.
     const { bundle } = await import("@remotion/bundler");
     const { selectComposition, renderMedia } = await import("@remotion/renderer");
@@ -114,7 +155,23 @@ http.createServer(async (req, res) => {
     bombear();
     return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
   }
+  if (req.method === "POST" && u.pathname === "/html") {
+    let cuerpo = "";
+    for await (const c of req) cuerpo += c;
+    if (cuerpo.length > 600_000) return responder(res, 413, { ok: false, error: "composición demasiado grande" });
+    let b;
+    try { b = JSON.parse(cuerpo || "{}"); } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
+    const assets = Array.isArray(b.assets) ? b.assets : [];
+    if (typeof b.id !== "string" || !/^[A-Za-z0-9._-]{1,120}$/.test(b.id)) return responder(res, 400, { ok: false, error: "id inválido" });
+    if (typeof b.html !== "string" || !b.html.includes("data-composition-id")) return responder(res, 400, { ok: false, error: "html no es una composición de Hyperframes (falta data-composition-id)" });
+    if (assets.length > 25 || assets.some((a) => !a || !/^[A-Za-z0-9._-]{1,80}$/.test(a.nombre || "") || !/^(https:\/\/|repo:[A-Za-z0-9._\/ -]+$)/.test(a.url || "") || /\.\./.test(a.url))) return responder(res, 400, { ok: false, error: "assets: máx. 25, cada uno { nombre: a-z0-9._-, url: https://… o repo:<ruta> }" });
+    const t = { id: crypto.randomUUID().slice(0, 8), ids: [], guiones: [], html: { id: b.id, html: b.html, assets }, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
+    trabajos.set(t.id, t);
+    cola.push(t);
+    bombear();
+    return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
+  }
   const m = u.pathname.match(/^\/trabajo\/([a-f0-9-]+)$/);
-  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id) }); }
+  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, html, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id), html: html?.id }); }
   responder(res, 404, { ok: false, error: "ruta desconocida" });
 }).listen(PORT, () => log(`Remi escuchando en :${PORT} · repo ${REPO}`));
