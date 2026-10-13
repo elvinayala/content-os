@@ -438,40 +438,52 @@ const BORI_RECORRIDO: Guion = {
 };
 ANUNCIOS.push({ ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-16x9`, formato: "16:9" }, { ...BORI_RECORRIDO, id: `${BORI_RECORRIDO.id}-9x16`, formato: "9:16" });
 
-/* ═════════════════ BORI · tutorial para clientes que compraron (30/sep/2026, ~76 s) ═════════════════
-   Guía paso a paso de cómo usar Bori por dentro, para entregarla al comprar. Mismas capturas REALES de la copia
-   demo (Barbería La Esquina, negocio ficticio) + Conexiones. Sin precios ni promesas: el cliente ya compró. */
+/* ═════════════════ TUTORIAL · CÓMO USAR BORI (rediseño del 10–11/oct/2026) ═════════════════
+   Guía paso a paso para entregarla al comprar (va en heybori.ai/bienvenida). Capturas REALES de la copia demo
+   (~/bori-demo, Barbería La Esquina, negocio ficticio; .captura-rediseno.mjs) con el flujo nuevo: Configura tu cuenta →
+   Mi negocio (lee el sitio web) → herramientas → Nueva estrategia (servicio → piezas → copys → confirmar, en pausa) →
+   sala en vivo y chat de Bori. Sin precios del plan ni promesas: el cliente ya compró. ≤ 90 s (la música dura 90.5 s). */
 const BORI_TUTORIAL: Guion = {
   id: "bori-tutorial", marca: "bori", titulo: "Cómo usar Bori: tutorial paso a paso", angulo: "Onboarding del cliente", musica: "audio/bori-tutorial.mp3", barridoSiempre: true,
   escenas: [
-    { tipo: "gancho", dur: 90, logo: true, lineas: ["Bienvenido a *Bori*."], sub: "Te enseño a usarlo en 5 pasos." },
-    { tipo: "pasos", dur: 150, titulo: "Tu ruta en *Bori*", pasos: ["Cuéntale tu negocio", "Conecta tu Meta", "Crea tus anuncios", "Lanza tu campaña", "Mira tus resultados"] },
-    { tipo: "pantalla", dur: 200, imagen: "bori-app/config-pc.png", dispositivo: "laptop", titulo: "Paso 1 · Cuéntale *tu negocio*",
-      sub: "Configuración → Marca. Grábale un audio o llena los campos: Bori lo usa en cada anuncio.",
-      puntos: ["Qué vendes y a quién", "Tu oferta y tu CTA", "Tu logo"], foco: { x: 0.19, y: 0.38, w: 0.6, h: 0.42 } },
-    { tipo: "pantalla", dur: 200, imagen: "bori-app/conexiones-pc.png", dispositivo: "laptop", titulo: "Paso 2 · Conecta *tu Meta*",
-      sub: "Configuración → Conexiones. Bori publica en tu cuenta, con tu presupuesto.",
-      puntos: ["Tu cuenta de anuncios", "Tu página e Instagram", "Tu píxel"], foco: { x: 0.19, y: 0.25, w: 0.46, h: 0.5 } },
-    { tipo: "pantalla", dur: 150, imagen: "bori-app/generador-pedido-pc.png", dispositivo: "laptop", titulo: "Paso 3 · Dile qué *vendes*…",
-      sub: "Generador AI: tu negocio en una línea y toca «Generar anuncios».", foco: { x: 0.08, y: 0.14, w: 0.32, h: 0.24 } },
-    { tipo: "pantalla", dur: 170, imagen: "bori-app/generador-resultado-pc.png", dispositivo: "laptop", titulo: "…y Bori *diseña* tus anuncios",
-      sub: "En segundos, con tu marca.", puntos: ["Varias versiones", "Copy escrito", "Predicción de potencial"], foco: { x: 0.36, y: 0.15, w: 0.44, h: 0.55 } },
-    { tipo: "pantalla", dur: 150, imagen: "bori-app/baul-pc.png", dispositivo: "laptop", titulo: "Todo queda en tu *Baúl*",
-      sub: "Cada pieza se guarda sola: descárgala, edítala o úsala en una campaña." },
-    { tipo: "pantalla", dur: 200, imagen: "bori-app/campanas-pc.png", dispositivo: "laptop", titulo: "Paso 4 · Tu campaña en *3 clics*",
-      sub: "Escoge la estrategia, revisa los creativos y publica. Se crea en pausa: tú la activas.",
-      puntos: ["1 · Estrategia", "2 · Revisa los creativos", "3 · Publica"] },
-    { tipo: "pantalla", dur: 180, imagen: "bori-app/dashboard-pc.png", dispositivo: "laptop", titulo: "Paso 5 · Mira tus *resultados*",
-      sub: "Dashboard: lo que inviertes, lo que te traen y tu mejor anuncio, en vivo.", foco: { x: 0.09, y: 0.18, w: 0.6, h: 0.3 } },
-    { tipo: "pantalla", dur: 190, imagen: "bori-app/chat-aprobacion-pc.png", dispositivo: "laptop", titulo: "¿Dudas? *Pregúntale a Bori*",
-      sub: "El botón del coquí abre tu estratega: te dice cómo van tus anuncios y te pide permiso antes de gastar.",
-      puntos: ["Tú apruebas", "Bori lo hace"], foco: { x: 0.72, y: 0.33, w: 0.27, h: 0.6 } },
-    { tipo: "pantalla", dur: 150, imagen: "bori-app/crm-pc.png", dispositivo: "laptop", titulo: "Tus clientes, *en orden*",
-      sub: "CRM: cada persona que te escribe, en su columna. Arrástrala cuando avance." },
-    { tipo: "pantalla", dur: 150, imagen: "bori-app/movil-inicio-cel.png", dispositivo: "telefono", titulo: "Y en tu *celular*",
-      sub: "Pídele flyers, anuncios o ideas desde donde estés." },
-    { tipo: "gancho", dur: 90, lineas: ["Crea. Publica.", "*Vende.*"] },
-    { tipo: "cierre", dur: 210, cta: "Entra a heybori.ai", sub: "Cualquier duda, pregúntale a Bori dentro de la app.", url: "@heybori" },
+    { tipo: "gancho", dur: 80, logo: true, lineas: ["Bienvenido a *Bori*."], sub: "Te enseño a usarlo, paso a paso." },
+    { tipo: "pasos", dur: 140, titulo: "Tu ruta en *Bori*", pasos: ["Configura tu cuenta", "Cuéntale tu negocio", "Crea tus piezas", "Lanza tu estrategia", "Pide ayuda cuando quieras"] },
+    { tipo: "pantalla", dur: 160, imagen: "bori-app/rd-configura.png", dispositivo: "laptop", titulo: "Paso 1 · *Configura tu cuenta*",
+      sub: "Es lo primero que ves al entrar. Sigue los pasos en orden.", puntos: ["Conecta tu Meta", "Escoge tus activos", "Configura tu negocio"],
+      foco: { x: 0.14, y: 0.24, w: 0.56, h: 0.6 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-negocios.png", dispositivo: "laptop", titulo: "Escoge tu *centro de negocios*",
+      sub: "Y después tu cuenta publicitaria y tu página.", foco: { x: 0.18, y: 0.08, w: 0.5, h: 0.42 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-web.png", dispositivo: "laptop", titulo: "Paso 2 · Pon tu *sitio web*",
+      sub: "Bori lo lee y llena tus servicios por ti.", foco: { x: 0.24, y: 0.1, w: 0.52, h: 0.42 } },
+    { tipo: "pantalla", dur: 140, imagen: "bori-app/rd-servicios.png", dispositivo: "laptop", titulo: "Revisa *tus servicios*",
+      puntos: ["Precio fijo o desde", "Cómo te contratan", "Dónde atiendes"], foco: { x: 0.38, y: 0.08, w: 0.56, h: 0.62 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-identidad.png", dispositivo: "laptop", titulo: "Tu *identidad*",
+      sub: "Logo, nombre, nichos y los colores de tu logo.", foco: { x: 0.44, y: 0.12, w: 0.54, h: 0.6 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-tono.png", dispositivo: "laptop", titulo: "Cómo *suena* tu marca",
+      sub: "Tono, personalidad y las palabras que nunca debe usar.", foco: { x: 0.26, y: 0.17, w: 0.48, h: 0.64 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-marketing.png", dispositivo: "laptop", titulo: "Tus señales de *marketing*",
+      sub: "Bori mide tu página y te da un mini-diagnóstico.", foco: { x: 0.44, y: 0.12, w: 0.54, h: 0.62 } },
+    { tipo: "pantalla", dur: 140, imagen: "bori-app/rd-inicio.png", dispositivo: "laptop", titulo: "Paso 3 · *Crea* tus piezas",
+      sub: "Tus herramientas, a un toque desde Inicio.", puntos: ["Generador IA", "Editor de video", "Mi avatar", "Baúl"],
+      foco: { x: 0.11, y: 0.08, w: 0.74, h: 0.42 } },
+    { tipo: "pantalla", dur: 110, imagen: "bori-app/rd-editor.png", dispositivo: "laptop", titulo: "Edita tus *videos*",
+      sub: "Subtítulos, zooms y b-roll, solos.", foco: { x: 0.05, y: 0.06, w: 0.62, h: 0.52 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-ne-servicio.png", dispositivo: "laptop", titulo: "Paso 4 · *Nueva estrategia*",
+      sub: "Escoge qué vas a promocionar.", foco: { x: 0.24, y: 0.08, w: 0.52, h: 0.62 } },
+    { tipo: "pantalla", dur: 120, imagen: "bori-app/rd-ne-resumen.png", dispositivo: "laptop", titulo: "Bori arma tu *estrategia*",
+      sub: "Objetivo, plataforma, inversión y ubicación." },
+    { tipo: "pantalla", dur: 140, imagen: "bori-app/rd-ne-piezas.png", dispositivo: "laptop", titulo: "Tu *estudio de piezas*",
+      puntos: ["Genera con IA", "Escoge de tu Baúl", "Carga las tuyas"] },
+    { tipo: "pantalla", dur: 110, imagen: "bori-app/rd-ne-copys.png", dispositivo: "laptop", titulo: "Aprueba los *textos*",
+      sub: "Uno por pieza: edítalos o apruébalos.", foco: { x: 0.22, y: 0.06, w: 0.56, h: 0.6 } },
+    { tipo: "pantalla", dur: 140, imagen: "bori-app/rd-ne-lanzar.png", dispositivo: "laptop", titulo: "*Confirma* y lanza",
+      sub: "Bori revisa tu Meta antes. Se monta en pausa: tú la prendes.", foco: { x: 0.27, y: 0.27, w: 0.46, h: 0.46 } },
+    { tipo: "pantalla", dur: 130, imagen: "bori-app/rd-sala.png", dispositivo: "laptop", titulo: "Paso 5 · *Habla con alguien*",
+      sub: "Sala en vivo por Zoom, sin agendar. Lunes a viernes, de 9 a 4." },
+    { tipo: "pantalla", dur: 110, imagen: "bori-app/rd-chat.png", dispositivo: "laptop", titulo: "O *pregúntale a Bori*",
+      sub: "El coquí te contesta y te pide permiso antes de gastar.", foco: { x: 0.6, y: 0.4, w: 0.4, h: 0.55 } },
+    { tipo: "gancho", dur: 70, lineas: ["Crea. Publica.", "*Vende.*"] },
+    { tipo: "cierre", dur: 170, cta: "Entra a www.heybori.ai", sub: "Cualquier duda, pregúntale a Bori dentro de la app.", url: "@heybori" },
   ],
 };
 ANUNCIOS.push({ ...BORI_TUTORIAL, id: `${BORI_TUTORIAL.id}-16x9`, formato: "16:9" }, { ...BORI_TUTORIAL, id: `${BORI_TUTORIAL.id}-9x16`, formato: "9:16" });
