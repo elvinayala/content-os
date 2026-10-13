@@ -224,3 +224,7 @@ segmento, ANTES de los subtítulos → la frase quedaba nítida sobre el fondo b
 (las tomas del cliente vienen abiertas, cara 6 %; Cortex ya amplía 2.2× y más se ve borroso) → es de grabación.
 OJO al medir: el medidor de nitidez lo dominan las letras; y `timeline.ai.json` es la versión vigente (una revisión
 global como velocidad no escribe timeline.vN.json).
+**13/oct · 6 letras (María: «algo más suave y delicado que la elegante»):** `brand.LETRAS` suma delicado (Montserrat
+Light/Medium), clasico (Cormorant Garamond Medium/SemiBold) y suave (Poppins Regular/SemiBold); TTF de fontsource (OFL),
+nombres únicos por peso para libass. El chat las entiende en `revise.sanear` («suave» solo si habla de letra/subtítulos:
+«música más suave» no cambia la tipografía). La v1 sigue en el estándar (moderno); las nuevas son para revisiones/branding.
