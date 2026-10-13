@@ -228,3 +228,10 @@ global como velocidad no escribe timeline.vN.json).
 Light/Medium), clasico (Cormorant Garamond Medium/SemiBold) y suave (Poppins Regular/SemiBold); TTF de fontsource (OFL),
 nombres únicos por peso para libass. El chat las entiende en `revise.sanear` («suave» solo si habla de letra/subtítulos:
 «música más suave» no cambia la tipografía). La v1 sigue en el estándar (moderno); las nuevas son para revisiones/branding.
+**13/oct · pedidos de María (tarde):** (1) «logo y letra» junto al negocio escogido = cambiar logo/letra/color de un negocio
+CON branding (`abrirBranding(n, editar)`); el cierre usa el color de fondo del logo si es de marca (`brand.fondo_de_logo`,
+LUA rosado #D59898) y `logo_transparente` quita franjas de borde y huecos de letras del color de fondo. Logo de LUA cambiado
+en prod (`/data/brand`, persistente). (2) Mister iPhone 12–16 s «distorsionado» = el AISLADOR con IA (soplido de banda ancha,
+armónicos borrados); «voz natural» → `denoise light` = sin aislador (`necesita_aislar`); v12 así. Lo «lento» = 0.9× que pidió
+Elvin (v9). (3) Mood de música `elegante` (4 pistas fal stable-audio-25, sin batería, `/data/music-lib/elegante-*.mp3` +
+music.json con lufs medido): se prefiere sola con mundo serio o letra elegante/delicado/clasico (`elegir(delicada=)`).
