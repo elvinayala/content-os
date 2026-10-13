@@ -1,357 +1,259 @@
 {
-  "generadoEl": "2026-09-26T18:11:53.670Z",
-  "dias": 30,
-  "desde": "2026-08-27T18:11:43.656Z",
-  "ejecucionesVistas": 3770,
+  "generadoEl": "2026-10-13T13:10:33.970Z",
+  "dias": 1,
+  "desde": "2026-10-12T13:10:29.590Z",
+  "ejecucionesVistas": 1582,
   "workflows": [
     {
-      "id": "rxlp9wxl9cHFefn9",
-      "nombre": "K-) Referidos veteranos (una vez, sep 2026)",
+      "id": "giPHQRGfr5d89t7J",
+      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
       "activo": true,
-      "ok": 121,
-      "error": 26,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T18:10:41.054Z",
-      "ultimoError": {
-        "id": "62684",
-        "cuando": "2026-09-25T23:10:38.044Z",
-        "modo": "trigger",
-        "nodo": "Registrar",
-        "mensaje": "falló el envío a Rafael Caban Valentin — campaña PAUSADA. Revisar el WhatsApp de Level Up (Evolution) antes de reanudar. [line 8]"
-      }
-    },
-    {
-      "id": "8Af1xIlR1QJzIP6L",
-      "nombre": "C-) actualizacion diaria de estratega",
-      "activo": false,
       "ok": 1,
-      "error": 8,
+      "error": 1,
       "otras": 0,
-      "ultimaOk": "2026-09-21T09:00:27.046Z",
+      "ultimaOk": "2026-10-12T14:02:01.094Z",
       "ultimoError": {
-        "id": "60703",
-        "cuando": "2026-09-20T09:00:49.045Z",
+        "id": "80144",
+        "cuando": "2026-10-12T14:00:52.098Z",
         "modo": "trigger",
-        "nodo": "Get an item",
-        "mensaje": "Cannot read properties of null (reading 'split')"
+        "nodo": "Enviar documento",
+        "mensaje": "Erro ao enviar documento"
       }
     },
     {
-      "id": "qXDEK5MdK5Zpwpzr",
-      "nombre": "B-) Agente de monitoreo v3",
+      "id": "g7hZaosZ24Dgifbg",
+      "nombre": "A-) Sync Pulse → NocoDB equipo v1",
       "activo": true,
-      "ok": 21,
-      "error": 3,
-      "otras": 0,
-      "ultimaOk": "2026-09-25T11:51:37.996Z",
-      "ultimoError": {
-        "id": "60367",
-        "cuando": "2026-09-18T11:46:16.902Z",
-        "modo": "integrated",
-        "nodo": "Send a message14",
-        "mensaje": "Parameter 'blocksUi' could not be parsed"
-      }
-    },
-    {
-      "id": "RyeQFDXnB429XG0Q",
-      "nombre": "A-) Sync Pulse → NocoDB v1",
-      "activo": true,
-      "ok": 228,
+      "ok": 0,
       "error": 1,
       "otras": 0,
-      "ultimaOk": "2026-09-26T14:55:55.198Z",
+      "ultimaOk": null,
       "ultimoError": {
-        "id": "60864",
-        "cuando": "2026-09-21T02:03:18.576Z",
-        "modo": "webhook",
-        "nodo": "Enlazar",
-        "mensaje": "Bad gateway - the service failed to handle your request"
+        "id": "81370",
+        "cuando": "2026-10-13T09:00:59.070Z",
+        "modo": "trigger",
+        "nodo": "Equipo en NocoDB",
+        "mensaje": "The DNS server returned an error, perhaps the server is offline"
       }
     },
     {
-      "id": "GbGyPmnkEcf1Excz",
-      "nombre": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
+      "id": "GB0T58QINudPFtEZ",
+      "nombre": "D-) Tools encuestador v1",
       "activo": true,
-      "ok": 33,
-      "error": 1,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T15:26:32.325Z",
-      "ultimoError": {
-        "id": "61350",
-        "cuando": "2026-09-23T01:51:00.520Z",
-        "modo": "webhook",
-        "nodo": "Crear contacto",
-        "mensaje": "Your request is invalid or could not be processed by the service"
-      }
-    },
-    {
-      "id": "pNSgghJY7mLA9GnB",
-      "nombre": "BackUp Workflows",
-      "activo": true,
-      "ok": 2041,
+      "ok": 720,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T12:01:35.938Z",
+      "ultimaOk": "2026-10-13T13:08:45.055Z",
       "ultimoError": null
     },
     {
       "id": "rb5SOZw8rT5YXKg8",
       "nombre": "B-) Agente de onboarding v5",
       "activo": true,
-      "ok": 440,
+      "ok": 253,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T17:56:27.472Z",
+      "ultimaOk": "2026-10-12T21:00:39.977Z",
       "ultimoError": null
     },
     {
       "id": "pNMZF1Fb4r6yHfGk",
       "nombre": "A-) Recibir webhook chatwoot v1",
       "activo": true,
-      "ok": 423,
+      "ok": 253,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T17:59:21.551Z",
+      "ultimaOk": "2026-10-12T21:00:38.735Z",
       "ultimoError": null
     },
     {
-      "id": "K73epIq7mbOTPL1t",
-      "nombre": "A-) Migracion de datos de monday v5",
-      "activo": false,
-      "ok": 64,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T13:13:09.492Z",
-      "ultimoError": null
-    },
-    {
-      "id": "Sb6dLyiZnMJtc6AC",
-      "nombre": "C-) Lógica envío de reportes v5",
+      "id": "pNSgghJY7mLA9GnB",
+      "nombre": "BackUp Workflows",
       "activo": true,
-      "ok": 63,
+      "ok": 153,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-15T13:05:56.917Z",
+      "ultimaOk": "2026-10-13T12:02:24.372Z",
       "ultimoError": null
     },
     {
-      "id": "fEOX9Q3Szkf6bLQq",
-      "nombre": "Notificación Error",
+      "id": "rxlp9wxl9cHFefn9",
+      "nombre": "K-) Referidos veteranos (una vez, sep 2026)",
       "activo": true,
-      "ok": 39,
+      "ok": 144,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-25T23:10:42.193Z",
+      "ultimaOk": "2026-10-13T13:00:31.034Z",
+      "ultimoError": null
+    },
+    {
+      "id": "RyeQFDXnB429XG0Q",
+      "nombre": "A-) Sync Pulse → NocoDB v1",
+      "activo": true,
+      "ok": 30,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-13T13:00:32.643Z",
+      "ultimoError": null
+    },
+    {
+      "id": "wVXvHSUTv5XlE0eq",
+      "nombre": "L-2) QR WhatsApp (Content OS)",
+      "activo": true,
+      "ok": 5,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-12T14:09:48.814Z",
+      "ultimoError": null
+    },
+    {
+      "id": "sTbBVF8Fg5SncIyS",
+      "nombre": "L-) Enviar WhatsApp (Content OS)",
+      "activo": true,
+      "ok": 5,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-12T14:34:36.906Z",
       "ultimoError": null
     },
     {
       "id": "uelcZVSQvpl2hetY",
       "nombre": "F-) Lector de seguimientos v1",
       "activo": true,
-      "ok": 28,
+      "ok": 2,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T14:00:49.043Z",
-      "ultimoError": null
-    },
-    {
-      "id": "dsrJpJi1MTr4mCOZ",
-      "nombre": "F-) Alerta para fase 5",
-      "activo": true,
-      "ok": 24,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-25T11:52:23.963Z",
-      "ultimoError": null
-    },
-    {
-      "id": "vvXRpzCDaYehJDYf",
-      "nombre": "E-) Alerta falta de fases v1",
-      "activo": true,
-      "ok": 24,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-25T11:51:19.791Z",
+      "ultimaOk": "2026-10-12T14:00:49.050Z",
       "ultimoError": null
     },
     {
       "id": "I8u1vHBsHTeF74nd",
       "nombre": "I-) Envio de pdf de ciberseguridad v1",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T14:00:57.052Z",
+      "ultimaOk": "2026-10-12T14:00:57.042Z",
       "ultimoError": null
     },
     {
       "id": "yQPhJCGiqwZqBS9X",
       "nombre": "A-) Trigger v1",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T13:00:46.072Z",
+      "ultimaOk": "2026-10-13T13:00:46.061Z",
+      "ultimoError": null
+    },
+    {
+      "id": "fEOX9Q3Szkf6bLQq",
+      "nombre": "Notificación Error",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-13T09:01:18.763Z",
       "ultimoError": null
     },
     {
       "id": "LN08xR2hD3GGSEW8",
       "nombre": "A-) Trigger v1.1 safe",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T11:45:35.113Z",
+      "ultimaOk": "2026-10-13T11:45:35.057Z",
       "ultimoError": null
     },
     {
       "id": "7DRJJjTva38GSoGg",
       "nombre": "J-) Envio de mensaje de bienvenida",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-25T21:00:30.069Z",
+      "ultimaOk": "2026-10-12T21:00:30.086Z",
       "ultimoError": null
     },
     {
       "id": "Z9LnpNMTFKRl3CIg",
       "nombre": "C-) Alerta por falta de pago v1",
       "activo": true,
-      "ok": 14,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T12:00:58.047Z",
-      "ultimoError": null
-    },
-    {
-      "id": "3NpTfPN4uQseNhq5",
-      "nombre": "BackUp Credential",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T12:00:09.075Z",
-      "ultimoError": null
-    },
-    {
-      "id": "gYdcVTS1dmuZRp0W",
-      "nombre": "Agente Cobros",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T13:00:53.076Z",
-      "ultimoError": null
-    },
-    {
-      "id": "MLp39LO5jJmzk9Vp",
-      "nombre": "A) RevisionInstanciaEvoAPI",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T11:00:35.081Z",
-      "ultimoError": null
-    },
-    {
-      "id": "76PxSWzFembacRcK",
-      "nombre": "A-) Mensajes de bienestar",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T15:00:09.056Z",
-      "ultimoError": null
-    },
-    {
-      "id": "3DeJXvNmTFQ44FIF",
-      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
-      "activo": true,
-      "ok": 14,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T13:00:23.062Z",
-      "ultimoError": null
-    },
-    {
-      "id": "GB0T58QINudPFtEZ",
-      "nombre": "D-) Tools encuestador v1",
-      "activo": true,
-      "ok": 9,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-25T20:32:21.849Z",
+      "ultimaOk": "2026-10-13T12:00:47.055Z",
       "ultimoError": null
     },
     {
       "id": "3ylIqOgWiiW37lWx",
       "nombre": "H-) Felicitaciones por leads v2",
       "activo": true,
-      "ok": 8,
+      "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-26T18:10:02.437Z",
+      "ultimaOk": "2026-10-12T20:20:27.074Z",
       "ultimoError": null
     },
     {
-      "id": "g7mkm3TKkjQYpopk",
-      "nombre": "B-) Slack button logic v2",
-      "activo": true,
-      "ok": 6,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-18T15:03:21.578Z",
-      "ultimoError": null
-    },
-    {
-      "id": "g7hZaosZ24Dgifbg",
-      "nombre": "A-) Sync Pulse → NocoDB equipo v1",
-      "activo": true,
-      "ok": 6,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T09:00:59.102Z",
-      "ultimoError": null
-    },
-    {
-      "id": "KWSsCZWE3CLmT7Dj",
-      "nombre": "C-) Tools agente principal v1",
-      "activo": true,
-      "ok": 5,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-25T18:57:06.998Z",
-      "ultimoError": null
-    },
-    {
-      "id": "HlYjwOCuSEKfTsSi",
-      "nombre": "A-) Agente de RH",
-      "activo": false,
-      "ok": 4,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-21T20:51:59.992Z",
-      "ultimoError": null
-    },
-    {
-      "id": "giPHQRGfr5d89t7J",
-      "nombre": "G-) Envio de pdf de educacion v1 (v3.1)",
-      "activo": true,
-      "ok": 2,
-      "error": 0,
-      "otras": 0,
-      "ultimaOk": "2026-09-26T14:00:29.069Z",
-      "ultimoError": null
-    },
-    {
-      "id": "yltCftFKOPFbreUt",
-      "nombre": "B-) V3",
+      "id": "3NpTfPN4uQseNhq5",
+      "nombre": "BackUp Credential",
       "activo": true,
       "ok": 1,
       "error": 0,
       "otras": 0,
-      "ultimaOk": "2026-09-15T13:00:46.102Z",
+      "ultimaOk": "2026-10-13T12:00:09.073Z",
+      "ultimoError": null
+    },
+    {
+      "id": "gYdcVTS1dmuZRp0W",
+      "nombre": "Agente Cobros",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-13T13:00:53.048Z",
+      "ultimoError": null
+    },
+    {
+      "id": "MLp39LO5jJmzk9Vp",
+      "nombre": "A) RevisionInstanciaEvoAPI",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-13T11:00:59.072Z",
+      "ultimoError": null
+    },
+    {
+      "id": "GbGyPmnkEcf1Excz",
+      "nombre": "A-) Cita de onboarding (Calendly → Calendar + NocoDB) v1",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-12T14:28:31.114Z",
+      "ultimoError": null
+    },
+    {
+      "id": "76PxSWzFembacRcK",
+      "nombre": "A-) Mensajes de bienestar",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-12T15:00:09.049Z",
+      "ultimoError": null
+    },
+    {
+      "id": "3DeJXvNmTFQ44FIF",
+      "nombre": "Recordatorio60-90DiasTrabajandoJuntos",
+      "activo": true,
+      "ok": 1,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": "2026-10-13T13:00:23.052Z",
       "ultimoError": null
     },
     {
@@ -397,6 +299,36 @@
     {
       "id": "Eo6BrnFxtLDXSEo0",
       "nombre": "V3 copy john",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "yltCftFKOPFbreUt",
+      "nombre": "B-) V3",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "qXDEK5MdK5Zpwpzr",
+      "nombre": "B-) Agente de monitoreo v3",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "K73epIq7mbOTPL1t",
+      "nombre": "A-) Migracion de datos de monday v5",
       "activo": false,
       "ok": 0,
       "error": 0,
@@ -555,9 +487,39 @@
       "ultimoError": null
     },
     {
+      "id": "8Af1xIlR1QJzIP6L",
+      "nombre": "C-) actualizacion diaria de estratega",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "Sb6dLyiZnMJtc6AC",
+      "nombre": "C-) Lógica envío de reportes v5",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
       "id": "yEQPJCDIUKy3VMek",
       "nombre": "v2 Levelito - Agente de monitoreo",
       "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "dsrJpJi1MTr4mCOZ",
+      "nombre": "F-) Alerta para fase 5",
+      "activo": true,
       "ok": 0,
       "error": 0,
       "otras": 0,
@@ -605,8 +567,48 @@
       "ultimoError": null
     },
     {
+      "id": "vvXRpzCDaYehJDYf",
+      "nombre": "E-) Alerta falta de fases v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "g7mkm3TKkjQYpopk",
+      "nombre": "B-) Slack button logic v2",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
       "id": "eWSMgXi9uW3E9gCy",
       "nombre": "P-) Mantenimiento de desfase en los estrategas",
+      "activo": false,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "KWSsCZWE3CLmT7Dj",
+      "nombre": "C-) Tools agente principal v1",
+      "activo": true,
+      "ok": 0,
+      "error": 0,
+      "otras": 0,
+      "ultimaOk": null,
+      "ultimoError": null
+    },
+    {
+      "id": "HlYjwOCuSEKfTsSi",
+      "nombre": "A-) Agente de RH",
       "activo": false,
       "ok": 0,
       "error": 0,
