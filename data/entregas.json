@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-13T01:14:14.452Z",
+  "actualizadoEl": "2026-10-13T04:06:44.364Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12954,6 +12954,19 @@
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-13/lu-bienvenida-gimnasio-ejemplo.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMy9sdS1iaWVudmVuaWRhLWdpbW5hc2lvLWVqZW1wbG8ubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTg1NDA1MCwiZXhwIjoxODIzMzkwMDUwfQ.DrUR1i92YX2St9J7-IndbIrmgd8AOrrRZUf03FZGfccfTbPEw1GgEQDYqQ8hpzWWLEUm2llAZdRyXv0VOAKI1A",
       "modelo": "remotion",
       "contenido": "Video de motion renderizado en la nube (servicio remi, commit 3e994af). Guion: motion/src/fabrica/anuncios.ts (lu-bienvenida-gimnasio-ejemplo)."
+    },
+    {
+      "id": "motion-remi-ritmo-cel-15s",
+      "tipo": "anuncio",
+      "marca": "ritmo",
+      "titulo": "Ritmo en el teléfono · lanzamiento 15 s (reels)",
+      "agente": "Remi",
+      "creadoEl": "2026-10-13T04:06:44.364Z",
+      "estado": "nuevo",
+      "formato": "9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-13/ritmo-cel-15s.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMy9yaXRtby1jZWwtMTVzLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE4NjQzOTksImV4cCI6MTgyMzQwMDM5OX0.WeoLB8lhLJdootaAV9SC8RzzNGR3OXGCNcRIpUyX31dncJXkKwwcu-te_W6e5Kd8vYXYBraBbWVFKGa-RYaKaw",
+      "modelo": "remotion",
+      "contenido": "Video de Hyperframes (HTML) renderizado en la nube (servicio remi, commit 5dbdb67)."
     }
   ]
 }
