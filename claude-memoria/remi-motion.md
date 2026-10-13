@@ -31,3 +31,9 @@ ahora hace **lotes** (`remi.mjs lote <tabla.csv|Sheets> --plantilla <guion.json>
 probado con 2 bienvenidas de 18 s) · **Hyperframes** de HeyGen en `estudio-html/` (sin telemetría, NUNCA `publish`) ·
 **Brag** instalado como plugin. La skill `lanzamiento` decide cuál usar y pone las reglas de la casa. Las skills de
 Hyperframes en ~/.claude/skills se acotaron a mano para que no le quiten los videos de marca a Remi (reacotar si se actualizan).
+**12/oct (noche) — Max ya los tiene:** Remi en la nube renderiza Hyperframes (`/html`; ffmpeg + Chrome propio en
+Dockerfile.remi; 20 s en ~33 s) → Max usa `remi.mjs lote` (tabla por Sheets o heredoc, `--probar` primero) y
+`remi.mjs html` (composición por heredoc, assets por URL o `repo:`). Pedidos en #max-aprobaciones; cerebro §22c, skill
+lanzamiento §1b. Primer lanzamiento: Ritmo (`estudio-html/ritmo-lanzamiento/`). Se les explicó por DM a Carilin y María del
+Carmen. Ojo: por buzón (modelo barato) Max respondió de memoria mal; el camino real de Slack usa Opus y no se ha visto
+de punta a punta todavía: vigilar el primer pedido.
