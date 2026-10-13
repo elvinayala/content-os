@@ -1,0 +1,42 @@
+{
+  "id": "lu-bienvenida-gimnasio-ejemplo",
+  "marca": "level-up",
+  "formato": "9:16",
+  "titulo": "Bienvenida · Gimnasio Ejemplo",
+  "angulo": "Bienvenida personalizada a cada cliente nuevo de Level Up (plantilla de lote)",
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "dur": 100,
+      "lineas": [
+        "Te damos la bienvenida,",
+        "*José (ejemplo)*"
+      ],
+      "logo": true
+    },
+    {
+      "tipo": "dato",
+      "dur": 110,
+      "grande": "Gimnasio Ejemplo",
+      "texto": "ya es parte de Level Up Media · Mayagüez"
+    },
+    {
+      "tipo": "pasos",
+      "dur": 210,
+      "titulo": "Lo que viene",
+      "pasos": [
+        "Onboarding con Jessica",
+        "Tu estrategia",
+        "Tus creativos",
+        "Tus campañas al aire"
+      ]
+    },
+    {
+      "tipo": "cierre",
+      "dur": 120,
+      "cta": "Nos vemos en el onboarding",
+      "sub": "Tu equipo de Level Up"
+    }
+  ],
+  "estilo": "neon"
+}

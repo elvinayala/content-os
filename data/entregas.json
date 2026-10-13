@@ -1,5 +1,5 @@
 {
-  "actualizadoEl": "2026-10-12T18:25:00.739Z",
+  "actualizadoEl": "2026-10-13T01:14:14.452Z",
   "entregas": [
     {
       "id": "ent-frankie-12",
@@ -12928,6 +12928,32 @@
       "formato": "motion 9:16",
       "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-12/lu-bf-14-collage-calmado-9x16.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMi9sdS1iZi0xNC1jb2xsYWdlLWNhbG1hZG8tOXgxNi5tcDQiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzkxODI5NTAwLCJleHAiOjE4MjMzNjU1MDB9.s3_WbPo6uvfjw6S_64XIjp3MZ_0BLNz71DPtBVx-NuwkVnI7uicaVAG01eLxeo1Vg7oGk1apdDM_v1xr4jQiVw",
       "modelo": "remotion"
+    },
+    {
+      "id": "motion-remi-lu-bienvenida-panaderia-ejemplo",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bienvenida-panaderia-ejemplo",
+      "agente": "Remi",
+      "creadoEl": "2026-10-13T01:14:14.451Z",
+      "estado": "nuevo",
+      "formato": "9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-13/lu-bienvenida-panaderia-ejemplo.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMy9sdS1iaWVudmVuaWRhLXBhbmFkZXJpYS1lamVtcGxvLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTE4NTM4NDAsImV4cCI6MTgyMzM4OTg0MH0.A3wR8IzQSUuPIOeefYTYLnqyBZKCNKtDwF-J1bagyHq7leUM0_nqwQX2W2InVS1tr_SbfR6bC4tLTCGhUIUA1w",
+      "modelo": "remotion",
+      "contenido": "Video de motion renderizado en la nube (servicio remi, commit 3e994af). Guion: motion/src/fabrica/anuncios.ts (lu-bienvenida-panaderia-ejemplo)."
+    },
+    {
+      "id": "motion-remi-lu-bienvenida-gimnasio-ejemplo",
+      "tipo": "anuncio",
+      "marca": "level-up",
+      "titulo": "lu-bienvenida-gimnasio-ejemplo",
+      "agente": "Remi",
+      "creadoEl": "2026-10-13T01:14:14.452Z",
+      "estado": "nuevo",
+      "formato": "9:16",
+      "videoUrl": "https://wamlxgbakjusjkoeuzjl.supabase.co/storage/v1/object/sign/pulse/motion/2026-10-13/lu-bienvenida-gimnasio-ejemplo.mp4?token=eyJraWQiOiIzNTRmODJhYi0xODgyLTRiNTYtOWNkYi0zOTdiZmJhY2ZhZDQiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJwdWxzZS9tb3Rpb24vMjAyNi0xMC0xMy9sdS1iaWVudmVuaWRhLWdpbW5hc2lvLWVqZW1wbG8ubXA0Iiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc5MTg1NDA1MCwiZXhwIjoxODIzMzkwMDUwfQ.DrUR1i92YX2St9J7-IndbIrmgd8AOrrRZUf03FZGfccfTbPEw1GgEQDYqQ8hpzWWLEUm2llAZdRyXv0VOAKI1A",
+      "modelo": "remotion",
+      "contenido": "Video de motion renderizado en la nube (servicio remi, commit 3e994af). Guion: motion/src/fabrica/anuncios.ts (lu-bienvenida-gimnasio-ejemplo)."
     }
   ]
 }
