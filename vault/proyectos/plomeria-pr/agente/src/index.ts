@@ -463,12 +463,21 @@ app.get("/api/proveedores/mensajes", (req: any, res) => {
   if (prov.id === demo.DEMO_ID) return res.json({ ok: true, mensajes: [], sinLeer: 0 });
   const hilo = mensajesPlomeros.hilo(prov.id), sinLeer = mensajesPlomeros.sinLeer(prov.id, "plomero");
   if (req.query.leer === "1") mensajesPlomeros.marcarLeidos(prov.id, "plomero");
-  res.json({ ok: true, sinLeer, mensajes: hilo.map((m) => ({ id: m.id, de: m.de, autor: m.de === "equipo" ? m.autor : "Tú", texto: m.texto, en: m.en, trabajo: m.trabajo ?? null, leido: !!m.leido })) });
+  res.json({ ok: true, sinLeer, mensajes: hilo.map((m) => ({ id: m.id, de: m.de, autor: m.de === "equipo" ? m.autor : "Tú", texto: m.texto, fotos: m.fotos ?? [], en: m.en, trabajo: m.trabajo ?? null, leido: !!m.leido })) });
+});
+// Foto de un mensaje: solo se la sirve al plomero dueño del hilo.
+app.get("/api/proveedores/mensajes/foto/:archivo", (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).end();
+  const archivo = path.basename(String(req.params.archivo));
+  if (!mensajesPlomeros.esFotoChat(archivo) || !mensajesPlomeros.fotoEsDe(archivo, prov.id)) return res.status(404).end();
+  const f = path.join(ciclo.DIR_FOTOS, archivo); if (!fs.existsSync(f)) return res.status(404).end();
+  res.type("jpg").send(fs.readFileSync(f));
 });
 app.post("/api/proveedores/mensajes", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Entra otra vez." });
   if (prov.id === demo.DEMO_ID) return res.json({ ok: true });
-  const r = mensajesPlomeros.enviar({ plomeroId: prov.id, de: "plomero", autor: prov.nombre, texto: req.body?.texto });
+  const f = await mensajesPlomeros.guardarFotos(req.body?.fotos, prov.id); if (!f.ok) return res.json(f);
+  const r = mensajesPlomeros.enviar({ plomeroId: prov.id, de: "plomero", autor: prov.nombre, texto: req.body?.texto, fotos: f.archivos });
   if (!r.ok) return res.json(r);
   await mensajesPlomeros.avisarAlEquipo(prov.id, prov.nombre, r.mensaje.texto);
   res.json({ ok: true });

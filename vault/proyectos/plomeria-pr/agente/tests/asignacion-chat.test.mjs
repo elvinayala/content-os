@@ -34,3 +34,15 @@ test("chat: cada lado lee lo que escribió el otro; los no leídos y las convers
   assert.equal(sinLeerEn(l, "edgar", "equipo"), 1, "no toca los de otro plomero");
   assert.equal(marcarLeidosEn(l, "luis", "equipo").cambiados, 0);
 });
+
+test("chat con fotos: una foto sola vale como mensaje; solo entran nombres de archivo del chat; máximo 4", async () => {
+  const { esFotoChat } = await import("../dist/mensajes.js");
+  assert.ok(esFotoChat("chat-luis-saez-mgh12ab-1.jpg"));
+  for (const malo of ["../../etc/passwd", "R-0001-despues-1.jpg", "chat-x.jpg", "chat-luis-m1-1.png", "", null, 5]) assert.equal(esFotoChat(malo), false, String(malo));
+  assert.ok("error" in agregarA([], { plomeroId: "luis", de: "plomero", autor: "Luis", texto: "", fotos: [] }));
+  assert.ok("error" in agregarA([], { plomeroId: "luis", de: "plomero", autor: "Luis", texto: "", fotos: ["../x.jpg"] }), "una ruta rara no cuenta como foto");
+  const solo = agregarA([], { plomeroId: "luis", de: "plomero", autor: "Luis", texto: "", fotos: ["chat-luis-m1-1.jpg"] });
+  assert.deepEqual(solo.mensaje.fotos, ["chat-luis-m1-1.jpg"]); assert.equal(solo.mensaje.texto, "");
+  const muchas = agregarA([], { plomeroId: "luis", de: "equipo", autor: "Aure", texto: "mira", fotos: [1, 2, 3, 4, 5, 6].map((n) => `chat-luis-m1-${n}.jpg`) });
+  assert.equal(muchas.mensaje.fotos.length, 4);
+});
