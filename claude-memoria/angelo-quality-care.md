@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: aa2a9e04-3ffd-40f6-bdcb-50f9e2d3d558
-  modified: 2026-10-06T22:18:19.006Z
+  modified: 2026-10-13T22:27:11.572Z
 ---
 
 Elvin le dice "el doctor Heredia" a este proyecto: Juan C. Heredia es el administrador de **Quality Care Physicians IPA 350 / Angelorum** (cliente AIB, contrato $3,500 chat + voz + CRM). Repo `~/autoflow-quality-care` (GitHub `elvinayala/autoflow-quality-care`), Worker de Cloudflare, voz en Retell (`agent_7be94f38b8988350cf0cef1ec6`, número de entrada +1 787-665-9913), sub-cuenta GHL `LgohVWuoPLlCUSITy3Ms`. Estado de entrada: `docs/ESTADO-DEL-PROYECTO.md`.
@@ -16,4 +16,6 @@ Elvin le dice "el doctor Heredia" a este proyecto: Juan C. Heredia es el adminis
 
 **How to apply:** el comando `scripts/sync-retell.mjs` y las pruebas contra `/voz/agendar` me los bloquea el clasificador → se los paso a Elvin; yo publico la versión del agente (`publish-agent`) y apunto el número (`update-phone-number`, `inbound_agents`) después.
 
-Decisiones (oct/2026): modo **solicitud** en chat y voz (Juan, 24/sep); Ángelo contesta TODAS las llamadas del 787-270-4747 por **troncal SIP** de la central (Cloud PBX) → `sip:+17876659913@sip.retellai.com` puerto 5060 TCP; transfiere al **787-883-6718** (no se desvía) con la extensión por DTMF (`cold_transfer_mode: sip_invite`), una herramienta por departamento según el PDF de extensiones. Pendiente al 6/oct: llamada de prueba (Carilin o Ana) y que el proveedor configure el troncal. Relacionado: [[autoflow-zernio-canales]] (médicos = Meta oficial, no Zernio).
+Decisiones (oct/2026): modo **solicitud** en chat y voz (Juan, 24/sep); Ángelo contesta TODAS las llamadas del 787-270-4747 por **troncal SIP** de la central (Cloud PBX) → `sip:+17876659913@sip.retellai.com` puerto 5060 TCP; transfiere al **787-883-6718** (no se desvía) con la extensión por DTMF (`cold_transfer_mode: sip_invite`), una herramienta por departamento según el PDF de extensiones. Pendiente al 6/oct: llamada de prueba (Carilin o Ana) y que el proveedor configure el troncal.
+
+**13/oct:** el 787-665-9913 NO está en el Twilio de Elvin (única cuenta "My first Twilio account", login elvin@levelupmediapr.net, solo tiene el 787-417-8125 = caller ID de prospección de AIB/Emilio, NO usarlo para Ángelo); vive en otra cuenta (trunk "landing-aiborinquen", jul/2026) que nadie tiene a mano → por eso la prueba daba "ocupado". Twilio sin números PR disponibles; un número nuevo en el trunk "AI Borinquen — Retell" exige contraseña SIP (Twilio pide IP **y** credencial) → lo pone Elvin, no yo. Plan: la central de la clínica manda SIP directo a Retell (no necesita Twilio para entrar) y las transferencias salen por la central (pedir su dirección SIP). Arreglado y publicado (v4): la voz no sabía la fecha (buscaba 2024) → ahora usa `{{current_time_America/Puerto_Rico}}` y `{{current_calendar_…}}` de Retell. Elvin escogió (13/oct) ir por los dos caminos a la vez: (1) la central de la clínica directo a Retell, que es lo definitivo y lo coordina Carilin con Juan, y (2) un número 787 en Telnyx para probar ya, que lo compra Elvin y él pone la contraseña SIP. Retell se prueba por texto en el dashboard (Test LLM → Manual Chat) sin crear citas. Relacionado: [[autoflow-zernio-canales]] (médicos = Meta oficial, no Zernio).
