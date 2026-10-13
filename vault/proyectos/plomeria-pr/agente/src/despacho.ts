@@ -72,11 +72,12 @@ function mensajeOferta(o: Oferta, p: Proveedor): string {
 }
 
 /** Crea la oferta y la anuncia a los elegibles. Si no hay elegibles, avisa al Coordinador de inmediato. */
-export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" | "avisados" | "expiraEn" | "creado">, opc: { soloProveedor?: string; minutos?: number } = {}): Promise<Oferta> {
+export async function crearOferta(d: Omit<Oferta, "id" | "estado" | "elegibles" | "avisados" | "expiraEn" | "creado">, opc: { soloProveedor?: string; minutos?: number; silenciosa?: boolean } = {}): Promise<Oferta> {
   const lista = leer();
   const el = opc.soloProveedor ? listarProv().filter((p) => p.id === opc.soloProveedor) : elegibles({ categoria: d.categoria, territorio: d.territorio });
   const o: Oferta = { ...d, id: "OF-" + String(lista.length + 1).padStart(4, "0"), estado: "abierta", elegibles: el.map((p) => p.id), avisados: [], expiraEn: new Date(Date.now() + (opc.minutos ?? TIEMPO_ACEPTAR_MIN[d.tipo]) * 60_000).toISOString(), creado: new Date().toISOString() };
   lista.push(o); guardar(lista);
+  if (opc.silenciosa) return o; // asignación a mano: sin alertas ni vencimiento (la acepta quien asigna, enseguida)
   if (!el.length) { await avisarCoordinador(`⚠️ ${o.id} (${o.categoriaNombre}, ${o.municipio}) sin proveedores elegibles. Busca quién lo quiera coger (nadie está obligado) y asígnalo a mano: ${config.urlPublica}/admin/plomeros?t=${config.adminToken}`); return o; }
   for (const p of el) {
     try { await avisarAlTelefono(p.whatsapp, mensajeOferta(o, p)); o.avisados.push(p.id); } catch (e) { console.error("aviso oferta", p.id, e); }
@@ -118,7 +119,7 @@ export async function rechazar(ofertaId: string, proveedorId: string): Promise<{
 }
 
 /** El primero que llega gana. Proceso único + escritura sincrónica = sin carrera. */
-export async function aceptar(ofertaId: string, proveedorId: string, manual = false): Promise<{ ok: true; oferta: Oferta } | { ok: false; motivo: string }> {
+export async function aceptar(ofertaId: string, proveedorId: string, manual = false, opc: { avisarAlCliente?: boolean } = {}): Promise<{ ok: true; oferta: Oferta } | { ok: false; motivo: string }> {
   const o = oferta(ofertaId); if (!o) return { ok: false, motivo: "La oferta no existe." };
   const p = porId(proveedorId); if (!p) return { ok: false, motivo: "Proveedor no registrado." };
   if (o.estado === "aceptada" || o.estado === "asignada-manual") return { ok: false, motivo: o.aceptadoPor === proveedorId ? "Ya es tuyo." : "Ya lo tomó otro proveedor. Te avisamos del próximo." };
@@ -160,9 +161,19 @@ export async function aceptar(ofertaId: string, proveedorId: string, manual = fa
   await avisarAlTelefono(p.whatsapp, `✅ *${o.id} es tuyo*, ${p.nombre.split(" ")[0]}.\n${o.categoriaNombre} · ${cuando(o.inicio)}\n${cliente}${firma}\n\nRecuerda: fotos de antes y después, y el cliente le paga a Resuelto.`);
   notificar(p.id, { titulo: `✅ ${o.id} es tuyo`, cuerpo: `${o.categoriaNombre} · ${cuando(o.inicio)}. Abre la app para ver el cliente${o.contrato?.urlFirma ? " y firmar tu orden" : ""}.`, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined);
   for (const id of o.avisados) if (id !== p.id) { const q = porId(id); if (q) { avisarAlTelefono(q.whatsapp, `${o.id} ya lo tomó otro proveedor. Te avisamos del próximo.`).catch(() => undefined); notificar(q.id, { titulo: `${o.id} ya se asignó`, cuerpo: "Otro proveedor lo tomó primero. Te avisamos del próximo.", url: linkPortal(q.id, config.urlPublica), tag: o.id }).catch(() => undefined); } }
-  if (t) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, ${tecnicoDe(t)} de Resuelto. Te escribimos cuando vaya en camino.\n\nEl precio es por lo que nos describiste. Si al llegar encuentra algo más, te dice el precio antes y tú lo apruebas desde un enlace: no se hace nada sin tu OK.`);
+  if (t && opc.avisarAlCliente !== false) await avisarCliente(t, `Listo, ${t.nombre.split(" ")[0]}: tu cita de ${t.servicio.toLowerCase()} quedó confirmada (${cuando(o.inicio)}). Te atiende ${p.nombre.split(" ")[0]}, ${tecnicoDe(t)} de Resuelto. Te escribimos cuando vaya en camino.\n\nEl precio es por lo que nos describiste. Si al llegar encuentra algo más, te dice el precio antes y tú lo apruebas desde un enlace: no se hace nada sin tu OK.`);
   await avisarCoordinador(`${manual ? "🛠️ Asignado a mano" : "✅ Aceptado"} ${o.id} → ${p.nombre} (${p.tipo}) · ${o.contrato ? "orden " + o.contrato.estado : "cubierto por su acuerdo de afiliación"}`);
   return { ok: true, oferta: o };
+}
+
+/** Suelta una oferta ya tomada (el plomero no puede o se reasigna a otro, 10/oct/2026): queda cancelada y el trabajo sin plomero. */
+export async function liberar(ofertaId: string, motivo = "Se reasignó"): Promise<boolean> {
+  const o = oferta(ofertaId); if (!o || !o.aceptadoPor) return false;
+  const p = porId(o.aceptadoPor);
+  o.estado = "cancelada"; actualizar(o);
+  if (o.tipo === "trabajo") { const t = almacen.trabajos().find((x) => x.id === o.referencia); if (t) almacen.guardarTrabajo({ ...t, plomeroId: "" }); }
+  if (p) { avisarAlTelefono(p.whatsapp, `${o.id} ya no es tuyo (${motivo}). Si tienes dudas, escríbenos desde la app.`).catch(() => undefined); notificar(p.id, { titulo: `${o.id} ya no es tuyo`, cuerpo: motivo, url: linkPortal(p.id, config.urlPublica), tag: o.id }).catch(() => undefined); }
+  return true;
 }
 
 export function marcarFirmado(envelopeId: string) {
@@ -174,5 +185,5 @@ export function marcarFirmado(envelopeId: string) {
 /** Ofertas que un proveedor puede ver: abiertas de su categoría/zona + las suyas. */
 export function ofertasPara(p: Proveedor) {
   const ahora = Date.now();
-  return leer().filter((o) => (o.estado === "abierta" && new Date(o.expiraEn).getTime() > ahora && o.elegibles.includes(p.id)) || o.aceptadoPor === p.id).sort((a, b) => b.creado.localeCompare(a.creado));
+  return leer().filter((o) => (o.estado === "abierta" && new Date(o.expiraEn).getTime() > ahora && o.elegibles.includes(p.id)) || (o.aceptadoPor === p.id && o.estado !== "cancelada")).sort((a, b) => b.creado.localeCompare(a.creado));
 }

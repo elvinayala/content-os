@@ -57,6 +57,13 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
 .entrar h1{font-family:Sora;font-size:26px;line-height:1.2;margin-bottom:8px}.entrar p{color:var(--ink2)}
 .link{background:none;border:0;color:var(--navy);text-decoration:underline;font:inherit;font-size:17px;margin-top:16px;padding:8px}
 .oculto{display:none!important}
+.chat{max-height:46vh;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:2px 0 8px}
+.chat .b{max-width:84%;padding:11px 14px;border-radius:16px;font-size:18px;line-height:1.35;white-space:pre-wrap;word-break:break-word}
+.chat .b small{display:block;font-size:12.5px;opacity:.7;margin-top:4px}
+.chat .eq{align-self:flex-start;background:#E8EEF3;border-bottom-left-radius:4px}
+.chat .yo{align-self:flex-end;background:var(--o);color:#fff;border-bottom-right-radius:4px}
+nav.tabs button{position:relative}
+.pt{position:absolute;top:2px;left:calc(50% + 6px);min-width:20px;padding:0 6px;border-radius:99px;background:#D93025;color:#fff;font-style:normal;font-size:13px;font-weight:800;line-height:20px;text-align:center}
 </style>
 </head>
 <body>
@@ -118,7 +125,7 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
   var tab='trabajos', datos=null, vistos={}, primeraCarga=true;
   function pintarMarco(){
     $('app').innerHTML='<header>'+CASA(26,true)+'<span class="marca">resuelto</span><span class="pro">PRO</span><span class="quien" id="quien">'+esc(S.nombre||'')+'</span></header><main id="vista"></main>'
-      +'<nav class="tabs"><button data-tab="trabajos"><b>🔧</b>Trabajos</button><button data-tab="dinero"><b>💵</b>Mi dinero</button><button data-tab="ayuda"><b>🙋</b>Ayuda</button></nav>';
+      +'<nav class="tabs"><button data-tab="trabajos"><b>🔧</b>Trabajos</button><button data-tab="dinero"><b>💵</b>Mi dinero</button><button data-tab="ayuda"><b>💬</b>Mensajes<i class="pt" id="pt" style="display:none"></i></button></nav>';
     [].forEach.call(document.querySelectorAll('nav.tabs button'),function(b){b.onclick=function(){tab=b.dataset.tab;pintar()}});
   }
   function pintar(){
@@ -154,6 +161,7 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
       +'<div class="fila2"><button class="btn claro" data-adicional="'+o.id+'">➕ Encontré algo más</button><button class="btn claro" data-recomendar="'+o.id+'">💡 Recomendar algo</button></div>'
       +'<button class="btn verde" data-terminar="'+o.id+'">✅ Terminé el trabajo</button>';
     else h+=((t.falta&&t.falta.length)?'<div class="alertas"><b>⚠️ Para que se te pague este trabajo falta: '+esc(t.falta.join(' y '))+'.</b><br>Súbela aquí:<div class="fotos" style="margin-top:8px">'+(t.falta.indexOf('foto del trabajo terminado')>=0?'<label>📷<b>Trabajo terminado</b><input type="file" accept="image/*" capture="environment" multiple data-foto="despues" data-of="'+o.id+'"></label>':'')+(t.falta.indexOf('foto del recibo de las piezas')>=0?'<label>🧾<b>Recibo de piezas</b><input type="file" accept="image/*" capture="environment" multiple data-foto="recibo" data-of="'+o.id+'"></label>':'')+'</div></div>':'')
+      +'<div class="fotos" style="margin:0 0 10px"><label style="grid-column:1/-1">🧾<b>Adjuntar factura o recibo de materiales</b><small>'+(t.recibos||0)+' adjunto(s) · compraste piezas para este trabajo</small><input type="file" accept="image/*" multiple data-foto="recibo" data-of="'+o.id+'"></label></div>'
       +'<div class="hecho">✅ <b>Terminado.</b> El cliente le paga <b>'+dinero(t.totalCliente)+'</b> a Resuelto.<br>Tú cobras <b>'+dinero(t.pagoPlomero)+'</b> el viernes'+(t.piezasPlomero?'<br>Piezas: te devolvemos <b>'+dinero(t.piezasPlomero)+'</b> en 48 horas':'')+'.</div>';
     if(!hecho) h+='<div class="fila2"><a class="btn claro" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dir)+'" target="_blank">🗺️ Cómo llegar</a><button class="btn claro" data-llamar="'+o.id+'">📞 Llamar</button></div>'
       +'<button class="btn claro" data-escribir="'+o.id+'">💬 Escribirle al cliente</button>';
@@ -238,11 +246,24 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
       else if(tab==='trabajos'&&datos){var fr=$('franja'),nuevo=franjaDinero();if(fr&&nuevo){fr.outerHTML=nuevo;$('franja').onclick=function(){tab='dinero';pintar()}}else if(!fr&&nuevo&&!(document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName)))pintarTrabajos()}
     }).catch(function(){if(tab==='dinero'&&!cuenta)$('vista').innerHTML='<div class="vacio">Sin conexión.</div>'});
   }
+  var sinLeer=0;
+  function pintarInsignia(){var b=$('pt');if(!b)return;b.style.display=sinLeer?'block':'none';b.textContent=sinLeer}
+  function horaMsj(iso){try{return new Date(iso).toLocaleString('es-PR',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}catch(e){return ''}}
+  function cargarHilo(bajar){
+    return get('/api/proveedores/mensajes?leer=1').then(function(j){
+      var c=$('chat');if(!c||!j||!j.ok)return;
+      var abajo=bajar||c.scrollHeight-c.scrollTop-c.clientHeight<80;
+      c.innerHTML=j.mensajes.length?j.mensajes.map(function(m){return '<div class="b '+(m.de==='equipo'?'eq':'yo')+'">'+esc(m.texto)+'<small>'+(m.de==='equipo'?esc(m.autor)+' · ':'')+horaMsj(m.en)+(m.trabajo?' · '+esc(m.trabajo):'')+'</small></div>'}).join(''):'<p style="color:var(--ink2);font-size:17px">Todavía no hay mensajes. Escríbenos si tienes una duda o algo no te funciona.</p>';
+      if(abajo)c.scrollTop=c.scrollHeight;
+      sinLeer=0;pintarInsignia();
+    }).catch(function(){})
+  }
   function pintarAyuda(){
-    $('vista').innerHTML='<h2>¿Necesitas ayuda?</h2><div class="card"><label for="ayuda" style="margin-top:0">Escríbenos qué pasa y te contactamos</label><textarea id="ayuda" rows="4" style="font-size:19px" placeholder="Ej: no encuentro la casa del cliente"></textarea><button class="btn naranja" id="env-ayuda">Enviar a Resuelto</button></div>'
+    $('vista').innerHTML='<h2>Mensajes con Resuelto</h2><div class="card"><div class="chat" id="chat"><p style="color:var(--ink2);font-size:17px">Cargando…</p></div><textarea id="msg" rows="3" style="font-size:19px" placeholder="Escribe aquí: una duda, un problema con la app o un aviso"></textarea><button class="btn naranja" id="env-msg" style="margin-top:8px">Enviar</button><p style="font-size:15px;color:var(--ink2);margin-top:8px">Aquí te contesta el equipo de Resuelto. Todo queda guardado.</p></div>'
       +'<h2>Cómo funciona</h2><div class="card" style="font-size:18px"><p>🔔 Cuando sale un trabajo en tu zona te suena el celular.</p><p style="margin-top:10px">✅ Si lo quieres, tocas <b>Aceptar</b>. Si no puedes, <b>No puedo este</b>. Nadie te obliga.</p><p style="margin-top:10px">🚗 El día del trabajo: <b>Voy en camino</b> → <b>Ya llegué</b> → fotos de antes y después → <b>Terminé</b>.</p><p style="margin-top:10px">📞 Para hablar con el cliente usa <b>Llamar</b> o <b>Escribirle</b>: le sale el número de Resuelto, nunca el tuyo.</p><p style="margin-top:10px">💵 El cliente le paga a Resuelto. Tú cobras los viernes.</p></div>'
       +'<button class="btn claro" id="salir">Salir de este celular</button>';
-    $('env-ayuda').onclick=function(){var t=$('ayuda').value.trim();if(!t)return;$('env-ayuda').disabled=true;post('/api/pro/ayuda',{texto:t}).then(function(j){$('env-ayuda').disabled=false;if(j.ok){$('ayuda').value='';aviso('✅ Enviado. Resuelto te contacta pronto.')}else aviso(j.motivo||'No se pudo.',true)})};
+    $('env-msg').onclick=function(){var t=$('msg').value.trim();if(!t)return;$('env-msg').disabled=true;post('/api/proveedores/mensajes',{texto:t}).then(function(j){$('env-msg').disabled=false;if(j.ok){$('msg').value='';cargarHilo(true)}else aviso(j.motivo||'No se pudo enviar.',true)}).catch(function(){$('env-msg').disabled=false})};
+    cargarHilo(true);
     $('salir').onclick=function(){abrirModal('<h3>¿Salir de este celular?</h3><p>Para volver a entrar necesitas un código nuevo por texto.</p><button class="btn naranja" id="si">Sí, salir</button><button class="btn claro" id="no">Cancelar</button>');$('no').onclick=cerrarModal;$('si').onclick=function(){cerrarModal();salir()}};
   }
 
@@ -281,7 +302,7 @@ nav.tabs button{flex:1;border:0;background:none;font:inherit;font-size:15px;font
     cargarCuenta();
     return get('/api/proveedores/ofertas').then(function(j){
       if(j.error){aviso(j.error,true);return}
-      datos=j; if(j.proveedor&&j.proveedor.nombre&&S.nombre!==j.proveedor.nombre){S.nombre=j.proveedor.nombre;guardar();var q=$('quien');if(q)q.textContent=S.nombre}
+      datos=j; sinLeer=j.sinLeer||0; pintarInsignia(); if(tab==='ayuda'&&!(document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName)))cargarHilo(); if(j.proveedor&&j.proveedor.nombre&&S.nombre!==j.proveedor.nombre){S.nombre=j.proveedor.nombre;guardar();var q=$('quien');if(q)q.textContent=S.nombre}
       var nuevas=j.ofertas.filter(function(o){return o.estado==='abierta'&&o.aceptadoPor!==S.p}),hay=false;
       nuevas.forEach(function(o){if(!vistos[o.id]){vistos[o.id]=1;if(!primeraCarga)hay=true}});primeraCarga=false;
       if(hay){timbre();aviso('🔔 ¡Trabajo nuevo en tu zona!')}

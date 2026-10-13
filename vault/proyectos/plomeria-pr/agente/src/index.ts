@@ -25,6 +25,7 @@ import { BIBLIOTECA } from "./community/biblioteca.js";
 import { responder } from "./agente.js";
 import { humanizar } from "./humanizar.js";
 import * as firmas from "./firmas/firmas.js";
+import * as mensajesPlomeros from "./mensajes.js";
 import { revisarSeguimientos } from "./seguimiento.js";
 import * as ventas from "./ventas.js";
 import * as sinCredito from "./sin-credito.js";
@@ -450,7 +451,26 @@ app.post("/api/pro/ayuda", async (req: any, res) => {
   const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Entra otra vez." });
   const texto = String(req.body?.texto ?? "").replace(/\s+/g, " ").trim().slice(0, 600);
   if (texto.length < 3) return res.json({ ok: false, motivo: "Escribe qué necesitas." });
-  if (prov.id !== demo.DEMO_ID) await wa.avisarCoordinador(`🆘 ${prov.nombre} (plomero) pide ayuda desde Resuelto Pro: "${texto}"`);
+  if (prov.id !== demo.DEMO_ID) { // versiones viejas de la app: el mensaje cae en el chat y se avisa al equipo
+    mensajesPlomeros.enviar({ plomeroId: prov.id, de: "plomero", autor: prov.nombre, texto });
+    await mensajesPlomeros.avisarAlEquipo(prov.id, prov.nombre, texto);
+  }
+  res.json({ ok: true });
+});
+// Chat con administración (10/oct/2026): un hilo por plomero, todo queda registrado y el equipo lo ve en el portal.
+app.get("/api/proveedores/mensajes", (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ error: "Enlace inválido." });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true, mensajes: [], sinLeer: 0 });
+  const hilo = mensajesPlomeros.hilo(prov.id), sinLeer = mensajesPlomeros.sinLeer(prov.id, "plomero");
+  if (req.query.leer === "1") mensajesPlomeros.marcarLeidos(prov.id, "plomero");
+  res.json({ ok: true, sinLeer, mensajes: hilo.map((m) => ({ id: m.id, de: m.de, autor: m.de === "equipo" ? m.autor : "Tú", texto: m.texto, en: m.en, trabajo: m.trabajo ?? null, leido: !!m.leido })) });
+});
+app.post("/api/proveedores/mensajes", async (req: any, res) => {
+  const prov = proveedorAutenticado(req); if (!prov) return res.status(401).json({ ok: false, motivo: "Entra otra vez." });
+  if (prov.id === demo.DEMO_ID) return res.json({ ok: true });
+  const r = mensajesPlomeros.enviar({ plomeroId: prov.id, de: "plomero", autor: prov.nombre, texto: req.body?.texto });
+  if (!r.ok) return res.json(r);
+  await mensajesPlomeros.avisarAlEquipo(prov.id, prov.nombre, r.mensaje.texto);
   res.json({ ok: true });
 });
 app.get("/proveedores", (_req, res) => { res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "proveedores.html"), "utf8")); });
@@ -517,7 +537,7 @@ app.get("/api/proveedores/ofertas", (req: any, res) => {
     const t = almacen.trabajos().find((x) => x.id === o.referencia);
     return t ? { ...o, trabajo: ciclo.resumenParaPlomero(t) } : o;
   });
-  res.json({ proveedor: { id: prov.id, nombre: prov.nombre, tipo: prov.tipo }, ofertas });
+  res.json({ proveedor: { id: prov.id, nombre: prov.nombre, tipo: prov.tipo }, ofertas, sinLeer: prov.id === demo.DEMO_ID ? 0 : mensajesPlomeros.sinLeer(prov.id, "plomero") });
 });
 // El plomero habla con su cliente por Resuelto (llamada puente y mensajes), sin su número personal (26/sep).
 app.post("/api/proveedores/trabajo/llamar", async (req: any, res) => {

@@ -8,6 +8,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { almacen, RAIZ, type Trabajo, type Contacto } from "../almacen.js";
 import * as despacho from "../despacho.js";
+import * as chat from "../mensajes.js";
+import { asignarManual, estadoAsignacion } from "../asignacion.js";
 import * as ciclo from "../ciclo-trabajo.js";
 import { partesDelPago, piezasDevueltas, montosDeCierre, faltaParaPagar, pasoDePago } from "../cuenta-plomero.js";
 import { panelVentas, origenDe, ganancia, resumenMes, NOMBRE_ORIGEN, type Origen } from "../ventas-panel.js";
@@ -64,7 +66,7 @@ input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:10
 .muted{color:var(--ink2)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-size:12.5px;color:var(--ink2);display:block;margin:8px 0 4px}`;
 
 function pagina(titulo: string, yo: staff.Staff | null, activo: string, cuerpo: string) {
-  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["resumen", "/portal/resumen", "Resumen"], ["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
+  const nav = yo ? `<nav><a class="marca" href="/portal">${casa(true, 24)}<span>resuelto</span></a>${[["inicio", "/portal", "Inicio"], ["clientes", "/portal/clientes", "Clientes"], ["trabajos", "/portal/trabajos", "Trabajos"], ["ventas", "/portal/ventas", "Ventas"], ["plomeros", "/portal/plomeros", "Plomeros"], ["mensajes", "/portal/mensajes", "Mensajes" + (chat.totalSinLeerEquipo() ? ` (${chat.totalSinLeerEquipo()})` : "")], ["vacantes", "/portal/vacantes", "Vacantes"], ["contratistas", "/portal/contratistas", "Contratistas"], ["areas", "/portal/areas", "Áreas"], ["enlaces", "/portal/enlaces", "Enlaces"], ...(yo.rol === "admin" ? [["resumen", "/portal/resumen", "Resumen"], ["equipo", "/portal/equipo", "Equipo"]] : [])].map(([k, h, t]) => `<a href="${h}" class="${k === activo ? "on" : ""}">${t}</a>`).join("")}<span class="yo">${e(yo.nombre)} · <a href="/portal/clave">Mi clave</a> · <a href="/portal/salir">Salir</a></span></nav>` : "";
   return `<!doctype html><html lang="es-PR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(titulo)} · Resuelto</title><meta name="robots" content="noindex"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body>${nav}${yo ? `<main>${cuerpo}</main>` : cuerpo}
 <script>function post(u,b,msg){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(r=>r.json()).then(j=>{if(j.ok){if(msg)alert(msg);location.reload()}else alert(j.motivo||'No se pudo')})}</script></body></html>`;
 }
@@ -273,8 +275,8 @@ portal.get("/portal/trabajos", requerir(), (req, res) => {
 portal.get("/portal/trabajos/:id", requerir(), (req, res) => {
   const yo = (req as any).yo; const t = almacen.trabajos().find((x) => x.id === req.params.id);
   if (!t) return res.status(404).type("html").send(pagina("No existe", yo, "trabajos", "<h1>No encuentro ese trabajo</h1>"));
-  const o = despacho.ofertas().find((x) => x.referencia === t.id); const g = vigenciaGarantia(t);
-  const pasos: [string, string | undefined][] = [["Agendado", t.creado], ["Aceptado por " + (o?.aceptadoPor ?? "—"), o?.aceptadoEn], ["En camino", t.enCaminoEn], ["Llegó", t.llegadaEn], ["Terminado", t.terminadoEn]];
+  const ofsT = despacho.ofertas().filter((x) => x.referencia === t.id); const o = ofsT.find((x) => x.aceptadoPor && x.estado !== "cancelada") ?? ofsT.at(-1); const g = vigenciaGarantia(t);
+  const pasos: [string, string | undefined][] = [["Agendado", t.creado], ["Aceptado por " + (o?.aceptadoPor ? (plomeros().find((p) => p.id === o.aceptadoPor)?.nombre ?? o.aceptadoPor) : "—") + (o?.estado === "asignada-manual" ? " (asignado a mano)" : ""), o?.aceptadoEn], ["En camino", t.enCaminoEn], ["Llegó", t.llegadaEn], ["Terminado", t.terminadoEn]];
   const fotos = (l?: string[]) => (l ?? []).map((x) => `<a href="/portal/fotos/${u(x)}" target="_blank"><img src="/portal/fotos/${u(x)}" loading="lazy"></a>`).join("") || '<span class="muted">Sin fotos.</span>';
   const ventanas = ((territorios as any).ventanas as string[]) ?? ["08:00-10:00", "10:00-12:00", "13:00-15:00", "15:00-17:00"];
   const manana = new Date(Date.now() + 86400_000).toLocaleDateString("en-CA", { timeZone: config.zonaHoraria });
@@ -284,6 +286,7 @@ portal.get("/portal/trabajos/:id", requerir(), (req, res) => {
 <div class="card"><b>Dinero</b><p style="margin-top:6px">Mano de obra: ${$(t.manoObraFinal ?? t.manoObra)}${t.rango ? ` <span class="muted">(rango $${t.rango[0]}–$${t.rango[1]})</span>` : ""}<br>Materiales (costo): ${$(t.materialesCosto)}<br>Coordinación: ${$(t.fee)}<br><b>Cliente paga: ${$(t.totalCliente)}</b><br>Comisión del plomero (viernes, 65 % de la mano de obra): ${t.pagoPlomero == null ? "—" : $(partesDelPago(t).comision)} ${t.pagadoAlPlomero ? `<span class="tag ok">pagado ${e(t.pagadoAlPlomero)}</span>` : ""}${partesDelPago(t).piezas ? `<br>Piezas a devolverle en 48 h (costo + 10 %): ${$(partesDelPago(t).piezas)} ${piezasDevueltas(t) ? `<span class="tag ok">devueltas${t.piezasDevueltas ? " " + e(t.piezasDevueltas) : ""}</span>` : `<span class="tag warn">pendiente</span>`}` : ""}</p>
 ${resumenCierre(t)}<div class="row" style="margin-top:10px">${t.estado === "completado" && !t.garantiaDe ? `<button class="btn l" onclick="var d=document.getElementById('cierre');d.open=true;document.getElementById('ci-pag').value='si';ciPagado();d.scrollIntoView({behavior:'smooth'})">Marcar cobrado</button>` : ""}${t.pagoPlomero != null && !t.pagadoAlPlomero ? (faltaParaPagar(t).length ? `<span class="tag warn" style="margin:6px 0">No se le paga al plomero hasta que suba: ${e(faltaParaPagar(t).join(" y "))}</span>` : `<button class="btn l" onclick="post('/portal/trabajos/${u(t.id)}/accion',{que:'pagado-plomero'})">Marcar pagado al plomero</button>`) : ""}${partesDelPago(t).piezas && !piezasDevueltas(t) ? `<button class="btn l" onclick="post('/portal/trabajos/${u(t.id)}/accion',{que:'piezas-devueltas'})">Marcar piezas devueltas</button>` : ""}${["agendado", "en-camino"].includes(t.estado) ? `<button class="btn l" onclick="if(confirm('¿Cancelar este trabajo? Se le avisa al cliente.'))post('/portal/trabajos/${u(t.id)}/accion',{que:'cancelar'})">Cancelar</button>` : ""}</div></div></div>
 ${t.estado !== "cancelado" && !t.garantiaDe ? formCierre(t) : ""}
+${cardAsignar(t)}
 <h2>Línea de tiempo</h2><div class="card">${pasos.map(([k, v]) => `<div class="ev ${v ? "plomero" : ""}"><small>${v ? f(v) : "pendiente"}</small><div>${e(k)}</div></div>`).join("")}</div>
 <div class="g2"><div><h2>Fotos del antes</h2><div class="card fotos">${fotos(t.fotosAntes)}</div></div><div><h2>Fotos del después</h2><div class="card fotos">${fotos(t.fotosDespues)}</div></div></div>
 <h2>Notas del plomero y del equipo</h2><div class="card">${t.notaCierre ? `<div class="ev plomero"><small>Al cerrar</small><div>${e(t.notaCierre)}</div></div>` : ""}${(t.notasInternas ?? []).map((n) => `<div class="ev ${n.autor.startsWith("plomero") ? "plomero" : "staff"}"><small>${f(n.fecha)} · ${e(n.autor.replace(/^(plomero|staff):/, ""))}</small><div>${e(n.texto)}</div></div>`).join("") || (t.notaCierre ? "" : '<p class="muted">Sin notas.</p>')}
@@ -344,6 +347,59 @@ portal.post("/portal/trabajos/:id/garantia", requerir(), express.json(), async (
 });
 portal.get("/portal/fotos/:archivo", requerir(), (req, res) => { const p = path.join(ciclo.DIR_FOTOS, path.basename(req.params.archivo)); if (!fs.existsSync(p)) return res.status(404).end(); res.type("jpg").send(fs.readFileSync(p)); });
 
+// ── Asignar un trabajo a mano (10/oct/2026) ──
+function cardAsignar(t: Trabajo) {
+  if (["completado", "cobrado", "cancelado"].includes(t.estado)) return "";
+  const ofs = despacho.ofertas().filter((o) => o.tipo === "trabajo" && o.referencia === t.id);
+  const est = estadoAsignacion(t, ofs);
+  const activos = plomeros().filter((p) => p.estado === "activo").sort((a, b) => Number(b.territorios.includes(t.territorio ?? "")) - Number(a.territorios.includes(t.territorio ?? "")) || a.nombre.localeCompare(b.nombre));
+  const nombre = (id: string) => plomeros().find((p) => p.id === id)?.nombre ?? id;
+  const estadoTxt = est.clave === "en-su-app" ? `<span class="tag ok">En la app de ${e(nombre(est.plomeroId))}</span> Lo tiene aceptado y le aparece en su app.`
+    : est.clave === "no-le-aparece" ? `<span class="tag" style="background:#FDECEA;color:#9B2C1F">⚠️ ${e(nombre(est.plomeroId))} figura como plomero, pero NO le aparece en su app</span> Asígnaselo aquí para que lo vea.`
+    : `<span class="tag mute">Sin plomero</span> Nadie lo ha aceptado.`;
+  const opciones = activos.map((p) => `<option value="${e(p.id)}">${e(p.nombre)} · ${e(p.municipio ?? "")}${p.territorios.includes(t.territorio ?? "") ? " ✓ zona" : ""}</option>`).join("");
+  return `<h2>Asignar a un plomero</h2><div class="card"><p style="margin-bottom:8px">${estadoTxt}</p>
+<div class="row"><select id="as-p" style="flex:1;min-width:220px">${opciones}</select><button class="btn" onclick="var v=document.getElementById('as-p').value;var ya=${est.clave === "en-su-app" ? "true" : "false"};if(ya&&!confirm('Ya lo tiene ${e(nombre(est.plomeroId))}. ¿Pasárselo al plomero que escogiste?'))return;post('/portal/trabajos/${u(t.id)}/asignar',{plomeroId:v,reasignar:ya},'Asignado. Ya le aparece en su app y se le avisó.')">Asignar y avisarle</button></div>
+<p class="muted" style="margin-top:8px">Queda registrado en las notas del trabajo. El plomero recibe el aviso de "es tuyo" y lo ve en su app. Al cliente se le confirma solo si la cita está por venir.</p></div>`;
+}
+portal.post("/portal/trabajos/:id/asignar", requerir(), express.json(), async (req, res) => {
+  const yo = (req as any).yo as staff.Staff;
+  res.json(await asignarManual(String(req.params.id), String(req.body?.plomeroId ?? ""), yo.nombre, { reasignar: req.body?.reasignar === true }));
+});
+
+// ── Mensajes con los plomeros (10/oct/2026) ──
+const horaCorta = (iso: string) => new Date(iso).toLocaleString("es-PR", { timeZone: config.zonaHoraria, day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+portal.get("/portal/mensajes", requerir(), (req, res) => {
+  const yo = (req as any).yo; const conv = new Map(chat.conversaciones().map((c) => [c.plomeroId, c]));
+  const filas = plomeros().filter((p) => p.estado === "activo" || conv.has(p.id)).map((p) => ({ p, c: conv.get(p.id) }))
+    .sort((a, b) => (b.c?.sinLeerEquipo ?? 0) - (a.c?.sinLeerEquipo ?? 0) || (b.c?.ultimo.en ?? "").localeCompare(a.c?.ultimo.en ?? "") || a.p.nombre.localeCompare(b.p.nombre))
+    .map(({ p, c }) => `<tr class="click" onclick="location='/portal/mensajes/${u(p.id)}'"><td><b>${e(p.nombre)}</b><div class="muted">${e(p.municipio ?? "")}</div></td><td>${c ? `<span class="muted">${c.ultimo.de === "plomero" ? "" : "Tú: "}</span>${e(c.ultimo.texto.slice(0, 90))}<div class="muted">${horaCorta(c.ultimo.en)}</div>` : '<span class="muted">Sin mensajes todavía</span>'}</td><td>${c?.sinLeerEquipo ? `<span class="tag" style="background:#F2621F;color:#fff">${c.sinLeerEquipo} nuevo${c.sinLeerEquipo > 1 ? "s" : ""}</span>` : ""}</td></tr>`).join("");
+  res.type("html").send(pagina("Mensajes", yo, "mensajes", `<h1>Mensajes con los plomeros</h1><p class="sub">Todo lo que se hable con cada plomero queda aquí, en un solo lugar. Lo que ellos escriben desde su app te llega aquí; lo que tú escribes les llega a su app.</p>
+<div class="card"><table><tr><th>Plomero</th><th>Último mensaje</th><th></th></tr>${filas || '<tr><td colspan="3" class="muted">No hay plomeros activos.</td></tr>'}</table></div>`));
+});
+portal.get("/portal/mensajes/:id", requerir(), (req, res) => {
+  const yo = (req as any).yo; const p = plomeros().find((x) => x.id === req.params.id);
+  if (!p) return res.status(404).type("html").send(pagina("No existe", yo, "mensajes", "<h1>No encuentro a ese plomero</h1>"));
+  chat.marcarLeidos(p.id, "equipo");
+  const hilo = chat.hilo(p.id);
+  const suyos = almacen.trabajos().filter((t) => t.plomeroId === p.id).sort((a, b) => b.inicio.localeCompare(a.inicio)).slice(0, 15);
+  const burbuja = (m: chat.Mensaje) => `<div style="display:flex;justify-content:${m.de === "equipo" ? "flex-end" : "flex-start"};margin:6px 0"><div style="max-width:78%;padding:9px 13px;border-radius:14px;background:${m.de === "equipo" ? "#0F3D5E" : "#EEF2F5"};color:${m.de === "equipo" ? "#fff" : "inherit"};white-space:pre-wrap">${m.trabajo ? `<div style="font-size:11.5px;opacity:.75;margin-bottom:3px">Sobre <a style="color:inherit" href="/portal/trabajos/${u(m.trabajo)}">${e(m.trabajo)}</a></div>` : ""}${e(m.texto)}<div style="font-size:11px;opacity:.7;margin-top:4px">${e(m.de === "equipo" ? m.autor : p.nombre.split(" ")[0])} · ${horaCorta(m.en)}${m.de === "equipo" ? (m.leido ? " · ✓ visto" : " · enviado") : ""}</div></div></div>`;
+  res.type("html").send(pagina("Mensajes · " + p.nombre, yo, "mensajes", `<p class="muted"><a href="/portal/mensajes">← Mensajes</a> · <a href="/portal/plomeros/${u(p.id)}">Ficha de ${e(p.nombre)}</a></p><h1>${e(p.nombre)}</h1>
+<div class="card" id="hilo" style="max-height:55vh;overflow:auto">${hilo.map(burbuja).join("") || '<p class="muted">Todavía no hay mensajes. Escríbele abajo.</p>'}</div>
+<div class="card"><label>Mensaje para ${e(p.nombre.split(" ")[0])}</label><textarea id="mt" rows="3" placeholder="Escribe aquí…"></textarea>
+<div class="row" style="margin-top:8px"><select id="mj" style="flex:1;min-width:200px"><option value="">(No es sobre un trabajo en especial)</option>${suyos.map((t) => `<option value="${e(t.id)}">${e(t.id)} · ${e(t.servicio)} · ${e(t.nombre)}</option>`).join("")}</select><button class="btn" onclick="var t=document.getElementById('mt').value.trim();if(!t)return;post('/portal/mensajes/${u(p.id)}',{texto:t,trabajo:document.getElementById('mj').value})">Enviar</button></div>
+<p class="muted" style="margin-top:8px">Le llega a su app como alerta. Si no tiene alertas activas, le llega por texto.</p></div>
+<script>var h=document.getElementById('hilo');h.scrollTop=h.scrollHeight;setTimeout(function(){if(!document.getElementById('mt').value)location.reload()},30000)</script>`));
+});
+portal.post("/portal/mensajes/:id", requerir(), express.json(), async (req, res) => {
+  const yo = (req as any).yo as staff.Staff; const p = plomeros().find((x) => x.id === req.params.id); if (!p) return res.json({ ok: false, motivo: "No existe." });
+  const trabajo = String(req.body?.trabajo ?? ""); if (trabajo && !almacen.trabajos().some((t) => t.id === trabajo)) return res.json({ ok: false, motivo: "Ese trabajo no existe." });
+  const r = chat.enviar({ plomeroId: p.id, de: "equipo", autor: yo.nombre, texto: req.body?.texto, trabajo: trabajo || undefined });
+  if (!r.ok) return res.json(r);
+  chat.avisarAlPlomero(p.id, r.mensaje.texto).catch((er) => console.error("mensaje al plomero", er));
+  res.json({ ok: true });
+});
+
 // ── Plomeros ──
 // Autorización de depósito directo (9/oct/2026): firmada, enviada o falta. Nunca muestra el número de cuenta.
 function depositoDe(p: { whatsapp: string }) {
@@ -385,7 +441,7 @@ portal.get("/portal/plomeros/:id", requerir(), (req, res) => {
   const ts = almacen.trabajos().filter((t) => t.plomeroId === p.id).sort((a, b) => b.inicio.localeCompare(a.inicio));
   const notas = ts.flatMap((t) => [...(t.notasInternas ?? []).filter((n) => n.autor.startsWith("plomero")).map((n) => ({ ...n, t: t.id })), ...(t.notaCierre ? [{ fecha: t.terminadoEn!, texto: t.notaCierre, t: t.id }] : [])]).sort((a, b) => b.fecha.localeCompare(a.fecha));
   res.type("html").send(pagina(p.nombre, yo, "plomeros", `<p class="muted"><a href="/portal/plomeros">← Plomeros</a></p><h1>${e(p.nombre)}</h1><p class="sub"><span class="tag ${p.estado === "activo" ? "ok" : "mute"}">${e(p.estado)}</span> · ${e(p.municipio ?? "")} · ${e(p.territorios.join(", "))} · ${e(p.licencia ?? "licencia sin anotar")} · alta ${fd(p.alta)}</p>${(() => { const dp = depositoDe(p); return `<p style="margin:-4px 0 12px;color:${dp.clave === "ok" ? "#157A53" : dp.clave === "falta" ? "#B45309" : "inherit"}">${e(dp.texto)}${"pdf" in dp && dp.pdf ? ` · <a href="${e(dp.pdf)}" target="_blank">PDF</a>` : ""}${dp.clave === "falta" ? ` · <a href="/equipo-firmas" target="_blank">Crear en Firmas</a>` : ""}</p>`; })()}
-<div class="g2"><div class="card"><b>Su app</b><p class="muted" style="margin:6px 0;word-break:break-all">${e(link)}</p><div class="row"><button class="btn l" onclick="navigator.clipboard.writeText('${e(link)}').then(()=>alert('Copiado'))">Copiar link</button><button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/reenviar',{},'Bienvenida reenviada')">Reenviar por WhatsApp</button>${p.estado === "activo" ? `<button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/estado',{estado:'pausado'})">Pausar</button>` : `<button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/estado',{estado:'activo'})">Activar</button>`}</div><p style="margin-top:10px">📞 <a href="https://wa.me/${tel(p.whatsapp)}" target="_blank">${e(p.whatsapp)}</a></p></div>
+<div class="g2"><div class="card"><b>Su app</b><p class="muted" style="margin:6px 0;word-break:break-all">${e(link)}</p><div class="row"><button class="btn l" onclick="navigator.clipboard.writeText('${e(link)}').then(()=>alert('Copiado'))">Copiar link</button><button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/reenviar',{},'Bienvenida reenviada')">Reenviar por WhatsApp</button><a class="btn l" href="/portal/mensajes/${u(p.id)}">💬 Mensajes${chat.sinLeer(p.id, "equipo") ? ` (${chat.sinLeer(p.id, "equipo")})` : ""}</a>${p.estado === "activo" ? `<button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/estado',{estado:'pausado'})">Pausar</button>` : `<button class="btn l" onclick="post('/portal/plomeros/${u(p.id)}/estado',{estado:'activo'})">Activar</button>`}</div><p style="margin-top:10px">📞 <a href="https://wa.me/${tel(p.whatsapp)}" target="_blank">${e(p.whatsapp)}</a></p></div>
 <div class="card"><b>Pagos</b><p style="margin-top:6px"><span class="muted">Ganado en total:</span> <b>${$(c.acumulado)}</b> en ${c.trabajosTotales} trabajo(s)<br><span class="muted">Cobra este viernes ${fd(c.esteViernes.fecha + "T12:00:00")}:</span> <b style="color:#157A53">${$(c.esteViernes.total)}</b>${c.esteViernes.trabajos.length ? ` (${c.esteViernes.trabajos.map((x) => e(x.id)).join(", ")})` : ""}<br><span class="muted">El viernes siguiente:</span> ${$(c.siguienteViernes.total)}<br><span class="muted">Esperando que el cliente pague:</span> ${$(c.esperandoCliente.total)}${c.esperandoCliente.trabajos.length ? ` (${c.esperandoCliente.trabajos.map((x) => `<a href="/portal/trabajos/${u(x.id)}">${e(x.id)}</a>`).join(", ")})` : ""}<br><span class="muted">Detenido por fotos:</span> ${$(c.faltanFotos.total)}${c.faltanFotos.trabajos.length ? ` (${c.faltanFotos.trabajos.map((x) => `<a href="/portal/trabajos/${u(x.id)}">${e(x.id)}</a> falta ${e(x.falta.join(" y "))}`).join("; ")})` : ""}<br><span class="muted">Piezas por devolverle:</span> ${$(c.piezas.porDevolver.total)}<br><span class="muted">Por hacer esta semana:</span> ${$(c.porHacer.total)} (${c.porHacer.trabajos.length})</p></div></div>
 <h2>Trabajos (${ts.length})</h2><div class="card"><table><tr><th>Trabajo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Estado</th><th>Cómo va su pago</th><th>Su pago</th></tr>${ts.map((t) => { const pp = pasoDePago(t); return `<tr class="click" onclick="location='/portal/trabajos/${u(t.id)}'"><td><b>${e(t.id)}</b></td><td>${e(t.nombre)}</td><td>${e(t.servicio)}</td><td>${fd(t.inicio)}</td><td>${tagEstado(t.estado)}</td><td><span class="tag ${pp.clave === "pagado" || pp.clave === "viernes" ? "ok" : pp.clave === "hacer" || pp.clave === "cancelado" ? "mute" : "warn"}">${e(pp.texto)}</span></td><td>${t.pagoPlomero == null ? "—" : $(partesDelPago(t).comision)}${t.pagadoAlPlomero ? ' <span class="tag ok">pagado</span>' : ""}${partesDelPago(t).piezas ? `<div class="muted">+ piezas ${$(partesDelPago(t).piezas)}</div>` : ""}</td></tr>`; }).join("") || '<tr><td colspan="7" class="muted">Sin trabajos todavía.</td></tr>'}</table></div>
 <h2>Sus comentarios</h2><div class="card">${notas.map((n) => `<div class="ev plomero"><small>${f(n.fecha)} · ${e(n.t)}</small><div>${e(n.texto)}</div></div>`).join("") || '<p class="muted">Sin comentarios.</p>'}</div>`));
