@@ -26,3 +26,9 @@
 Hoy los datos viven en el **volumen de Railway** (`/app/data/estado`: contactos, trabajos, ofertas, plomeros, historial, fotos). Es persistente pero **no tiene copia de seguridad**. Pendiente:
 1. **Elvin:** activar *Backups* del volumen en Railway (servicio `agente` → Volume → Backups, diario) — 1 minuto.
 2. **Claude, cuando pase de ~300 trabajos o haya 2+ personas editando a la vez:** migrar a Postgres (Railway) cambiando solo `almacen.ts`; fotos a almacenamiento de objetos.
+
+## Asignar a mano y chat con los plomeros (10/oct/2026, pedido de Aure)
+
+- **Asignar un trabajo a un plomero:** Trabajos → el trabajo → **Asignar a un plomero**. Crea una oferta "asignada a mano" a su nombre (`src/asignacion.ts`), así le aparece en su app (la app del plomero solo muestra trabajos con una oferta aceptada por él) y recibe el aviso de "es tuyo". Queda una nota en el trabajo. Si ya lo tenía otro, pide confirmar y se le suelta al anterior (`despacho.liberar`). El cliente solo recibe confirmación si la cita está por venir.
+- **Mensajes:** portal → **Mensajes** (contador de no leídos en el menú) y, en la app del plomero, la pestaña **Mensajes** (antes "Ayuda"). Un hilo por plomero en `data/estado/mensajes-plomeros.json` (`src/mensajes.ts`). Al plomero le llega push, o texto si no tiene alertas; el aviso al equipo va al grupo de Ventas de Telegram (máx. 1 cada 10 min por plomero). Aún sin fotos.
+- **Recibos:** el plomero puede adjuntar la factura de materiales también después de terminar el trabajo.
