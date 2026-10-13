@@ -63,8 +63,9 @@ export type TemaCliente = {
   paletaMotivo?: string[];
 };
 
-/** https → tal cual; si no, archivo de public/ (lo que Max sube con el guion vive en el repo). */
-export const archivo = (u: string) => (/^https?:\/\//.test(u) ? u : staticFile(u.replace(/^\//, "")));
+/** https o data: (el logo que manda Cortex embebido en el guion, 13/oct) → tal cual; si no, archivo de public/
+ *  (lo que Max sube con el guion vive en el repo). */
+export const archivo = (u: string) => (/^(https?:\/\/|data:image\/)/.test(u) ? u : staticFile(u.replace(/^\//, "")));
 
 const PALETA_FIBRAS = ["#3D5AFE", "#7C4DFF", "#FF3D8B", "#22C55E", "#22D3EE", "#FACC15", "#FF6B3D"];
 
