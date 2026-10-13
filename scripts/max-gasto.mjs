@@ -10,7 +10,7 @@ export const TOPE_DIA = Number(process.env.MAX_TOPE_DIA || 10);
 export const TOPE_SEMANA = Number(process.env.MAX_TOPE_SEMANA || 25);
 
 const TIPOS_DE_TRABAJO = /tipo (plan|creativos|campana)\b/;
-const PRODUCCION = /motion|video|flyer|creativ|render|logo|foto|imagen|b-?roll|drive\.google|guion|guión|opci[oó]n|ejecut|esperando|sigo|listo|adjunt|archivo|material|campa[ñn]a|estrategia|plan\b/i;
+const PRODUCCION = /motion|video|flyer|creativ|render|logo|foto|imagen|b-?roll|drive\.google|guion|guión|opci[oó]n|ejecut|esperando|sigo|listo|adjunt|archivo|material|campa[ñn]a|estrategia|plan\b|lote|lanzamiento|lista|sheets|hyperframes|plantilla/i;
 
 // ¿Max le contestó a alguien en Slack en esta corrida? (los comandos Bash que corrió). Si una persona le escribió y
 // no hubo respuesta, el puente lo hace contestar (nunca más el "👀 Max lo tiene" seguido de silencio).
