@@ -53,7 +53,11 @@ async function vistaPulse(u: UsuarioPulse, vista: string, q: string) {
       const [b] = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(eq(pulseBoards.slug, SLUG_CLIENTES));
       if (!b || !visibles.has(b.id)) return { error: "El tablero de clientes de Level Up no es visible para esta persona.", status: 403 };
       const clientes = await armarClientes();
-      return { total: clientes.length, activos: clientes.filter((c) => c.activo).length, clientes: clientes.map((c) => ({ negocio: c.empresa || c.nombre, contacto: c.nombre, industria: c.industria, grupo: c.grupo, activo: c.activo, admin: c.admin?.nombre ?? null, traffiker: c.traffiker?.nombre ?? null })) };
+      // Compacto (13-oct): los ~930 clientes completos pesan 150 KB. Conteos por grupo + la lista de ACTIVOS; el resto, con buscar.
+      const porGrupo: Record<string, number> = {};
+      for (const c of clientes) porGrupo[c.grupo || "(sin grupo)"] = (porGrupo[c.grupo || "(sin grupo)"] ?? 0) + 1;
+      const activos = clientes.filter((c) => c.activo);
+      return { total: clientes.length, activos: activos.length, porGrupo, clientesActivos: activos.map((c) => ({ negocio: c.empresa || c.nombre, contacto: c.nombre, industria: c.industria, admin: c.admin?.nombre ?? null, traffiker: c.traffiker?.nombre ?? null })), nota: "Para un cliente que no está activo, usa la vista buscar." };
     }
     case "mi-dia": {
       const { pendientes, hoy } = await pendientesDe(boardIds);
