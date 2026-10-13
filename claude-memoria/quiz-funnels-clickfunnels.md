@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: e26a1275-d67c-452e-b898-af4533d0dd8e
-  modified: 2026-09-12T14:18:10.671Z
+  modified: 2026-10-13T13:30:00.559Z
 ---
 
 Auditorías interactivas tipo Content Capital (Ramiro) construidas el 12/sep/2026 en
@@ -85,16 +85,23 @@ elvinayala.com en GoDaddy; CNAME `www` → us-east-shard-3.myclickfunnels.com + 
 dominio CF YXXXXP, funnel NzxGvR, badge oculto). El funnel vive en `/auditoria` y redirige a la página `/negocio-digital`
 (así funciona CF: **el path de la página NO puede ser igual al del funnel**, si no CF lo renombra a `/auditoria--68143`).
 Endpoint `/api/auditoria` marca `shadow-operator` verificado con un lead de prueba (Pipedrive LU, pipeline 14 stage 136; borrado).
-**Pendiente de Elvin:** en GoDaddy → Reenvío, `elvinayala.com` (sin www) → `https://www.elvinayala.com` con reenvío permanente,
-para que `elvinayala.com/auditoria` también funcione; el apex hoy no responde.
-Idea siguiente: página de raíz `elvinayala.com` estilo oscarmoises.com (5 pantallas: Escalar Negocio, IA, Marketing, Aprende a
-Operar…) como sitio propio en Netlify; el quiz pasaría a `auditoria.elvinayala.com`.
+El reenvío del apex en GoDaddy ya está hecho (verificado 13/oct). La página de raíz estilo oscarmoises.com quedó en ClickFunnels (ver abajo), no en Netlify.
 
-**elvinayala.com — página principal + 4 embudos (13/oct/2026, construido en local, SIN publicar):** carpeta
-`demos/elvinayala/` (LEEME.md): `/` = 4 pantallas estilo oscarmoises.com (Negocio digital $10K–$20K · Marketing · IA · Shadow);
-`/escalar/` = quiz NUEVO personal (4 palancas: oferta, contenido, cierre, sistema; meta $10/15/20K; marca `elvin-escalar`,
-pipeline Pipedrive LU 16 «ELVIN · ESCALAR $10-20K» stage 154; endpoint desplegado y probado); `/marketing/` = quiz de LU con
-el nombre de Elvin; `/ia/` = quiz de AIB; `/aprende/` = quiz de Shadow. Plan de hosting: TODO en Netlify bajo elvinayala.com
-(A del apex + CNAME www a Netlify; ClickFunnels deja de servir ese dominio y `/auditoria` redirige a `/aprende/`). Falta el OK de
-Elvin para subir + cambio de DNS en GoDaddy, y los videos de fondo (carpeta videos/). Pipeline 16 con sus 8 etapas verificado (el duplicado 17 ya se borró).
+**elvinayala.com — página principal + 4 embudos, EN VIVO en ClickFunnels (13/oct/2026):** Elvin decidió "todo en ClickFunnels"
+(se descartó Netlify; el paquete estático `demos/elvinayala/` queda solo como fuente/respaldo). Cinco funnels en el dominio CF
+`www.elvinayala.com` (site `jQQnLZ`), snippets listos para pegar en `demos/elvinayala/cf/*.html`:
+`/` = hub de 4 pantallas estilo oscarmoises.com (funnel `jALyxD`, path "/", CF lo redirige a `/inicio-pagina`; UTM pasan a cada quiz;
+`build-hub-cf.py` lo genera, clases `ea-` para que CF no le filtre CSS) · `/escalar` (funnel `NXZnvB`, página `/escalar-quiz`, quiz NUEVO
+personal, marca `elvin-escalar`, pipeline LU 16 stage 154) · `/marketing` (`YLZxbP`, `/marketing-quiz`, quiz de LU con su nombre,
+marca `level-up`, pipeline 12/122) · `/ia` (`jZZPkV`, `/ia-quiz`, quiz de AIB, marca `ai-borinquen`, cuenta Pipedrive AIB 3/33) ·
+`/auditoria` (Shadow, `NzxGvR`, página `/negocio-digital`, pipeline 14/136). Verificado en vivo 13/oct: los 5 responden, cada quiz con su
+`marcaId`, leads de prueba de `/marketing` y `/ia` llegaron a su Pipedrive (borrados), SEO de las 5 correcto, apex
+`elvinayala.com` ya redirige (301 de GoDaddy) a `https://www…`, CORS del endpoint abierto.
+**Lecciones CF:** el path de la página nunca igual al del funnel (CF lo renombra `--NNNNN`); Duplicate Funnel copia el SEO y los campos SEO
+solo se reemplazan bien con `form_input` (no con teclear); tras pegar en CodeMirror verificar hash, cerrar con **Escape**, esperar el
+botón naranja "Save", guardar y verificar con curl (la caché tarda ~20 s); un `<link href=""…>` con comilla de más hace que CF/navegador
+se trague todo el snippet como atributos (página en blanco): probar el snippet en una página anfitriona antes de pegarlo.
+**Pendiente:** videos de fondo del hub (`demos/elvinayala/videos/`, hoy sin videos), pixel de Meta para los funnels personales, "Allow search
+engines" está APAGADO en el hub (decidir si indexarlo), y el copy de `/ia` y del funnel de AIB dice "recuperar clientes… en los primeros
+21 días" (el plazo real es 15 días + optimización 16-45, ver [[aib-autoflow-plazos]]) — corregir con el OK de Elvin.
 
