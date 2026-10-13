@@ -64,7 +64,7 @@ test("Nico desde AI Core: diagnóstico en solo lectura, sin deploys, sin agentes
   assert.ok(!permitidos.some((a) => /agentes\.mjs|nico-ronda|fal\.mjs|git push|git commit|railway(\/cli)? (up|redeploy|variables)/.test(a)), permitidos.join(" "));
   const prohibidos = p.args.slice(p.args.indexOf("--disallowedTools") + 1, p.args.indexOf("--append-system-prompt"));
   for (const x of ["Edit", "Write", "WebFetch", "Bash(node scripts/agentes.mjs*)", "Bash(git push*)", "Bash(npx @railway/cli up*)"]) assert.ok(prohibidos.includes(x), x);
-  assert.match(p.args.at(-1), /DIAGNOSTICAR y PROPONER[\s\S]*13 de octubre/);
+  assert.match(p.args.at(-1), /13 de octubre[\s\S]*DIAGNOSTICAR y PROPONER/);
 });
 
 test("Lola desde AI Core: carpeta con SOLO su marca, sin Bash ni fal.ai", () => {
