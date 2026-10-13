@@ -53,12 +53,12 @@ function actualizarRepo() {
   return execFileSync("git", ["-C", REPO, "rev-parse", "--short", "HEAD"]).toString().trim();
 }
 
-async function subir(archivo, nombre) {
+async function subir(archivo, nombre, tipo = "video/mp4") {
   const url = process.env.SUPABASE_URL, llave = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !llave) throw new Error("Faltan SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY");
   const destino = `motion/${new Date().toISOString().slice(0, 10)}/${nombre}`;
   const h = { Authorization: `Bearer ${llave}` };
-  const r = await fetch(`${url}/storage/v1/object/pulse/${encodeURI(destino)}`, { method: "POST", headers: { ...h, "Content-Type": "video/mp4", "x-upsert": "true" }, body: fs.readFileSync(archivo) });
+  const r = await fetch(`${url}/storage/v1/object/pulse/${encodeURI(destino)}`, { method: "POST", headers: { ...h, "Content-Type": tipo, "x-upsert": "true" }, body: fs.readFileSync(archivo) });
   if (!r.ok) throw new Error(`Storage ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const f = await (await fetch(`${url}/storage/v1/object/sign/pulse/${encodeURI(destino)}`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: 60 * 60 * 24 * 365 }) })).json();
   if (!f.signedURL) throw new Error("No se pudo firmar el link");
@@ -91,9 +91,19 @@ async function renderHtml(t) {
   execFileSync(path.join(estudio, "node_modules/.bin/hyperframes"), ["render", dir, "-o", salida, "--workers", "2"], { cwd: estudio, env: ENV_HF, stdio: "inherit", timeout: 20 * 60 * 1000 });
   const segundos = Math.round(Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", salida]).toString().trim()) || 0);
   const url = await subir(salida, `${t.html.id}.mp4`);
+  const hojaUrl = await hoja(salida, t.html.id, segundos);
   fs.rmSync(dir, { recursive: true, force: true });
-  t.resultados.push({ id: t.html.id, url, segundos, renderSeg: Math.round((Date.now() - t0) / 1000) });
+  t.resultados.push({ id: t.html.id, url, hojaUrl, segundos, renderSeg: Math.round((Date.now() - t0) / 1000) });
   log(`trabajo ${t.id}: ✓ ${t.html.id}`);
+}
+
+// Hoja de revisión (12/oct, pedido de Max: "no puedo mirarlo antes de entregarlo"): 8 cuadros repartidos en 4×2.
+async function hoja(salida, id, segundos) {
+  try {
+    const img = salida.replace(/\.mp4$/, "-hoja.jpg");
+    execFileSync("ffmpeg", ["-v", "error", "-y", "-i", salida, "-vf", `fps=8/${Math.max(1, segundos)},scale=480:-2,tile=4x2:padding=6:color=0x222222`, "-frames:v", "1", "-q:v", "4", img]);
+    return await subir(img, `${id}-hoja.jpg`, "image/jpeg");
+  } catch (e) { log(`hoja ${id}: ${e?.message || e}`); return null; }
 }
 
 async function procesar(t) {
@@ -114,8 +124,10 @@ async function procesar(t) {
       const salida = path.join("/tmp", `${id}.mp4`);
       await renderMedia({ composition: comp, serveUrl, codec: "h264", outputLocation: salida, inputProps, chromiumOptions: { gl: "swangle" }, logLevel: "error", licenseKey: LICENCIA });
       const url = await subir(salida, `${id}.mp4`);
+      const segundos = Math.round(comp.durationInFrames / comp.fps);
+      const hojaUrl = await hoja(salida, id, segundos);
       fs.rmSync(salida, { force: true });
-      t.resultados.push({ id, url, segundos: Math.round(comp.durationInFrames / comp.fps), renderSeg: Math.round((Date.now() - t0) / 1000) });
+      t.resultados.push({ id, url, hojaUrl, segundos, renderSeg: Math.round((Date.now() - t0) / 1000) });
       log(`trabajo ${t.id}: ✓ ${id}`);
     }
     t.estado = "listo";

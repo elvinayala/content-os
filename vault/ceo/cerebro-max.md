@@ -753,6 +753,11 @@ Reglas (skill `lanzamiento` §2): tuteo PR (AIB en anuncios de usted), nada inve
 reales de clientes en pantalla** (capturas solo de las copias de prueba o del material que el cliente dio), su logo real,
 texto legible (~0,3 s por palabra), hook en los primeros 2 s. Nunca `hyperframes publish` ni letsbrag.app.
 
+**Revisar antes de entregar (12/oct):** cada render (`render`, `lote`, `html`) imprime `🖼 Hoja de revisión (8 cuadros):
+/tmp/remi-hoja-<id>.jpg`. Mírala con **Read** ANTES de `--entregar` o `--proponer`: texto cortado, zoom que se come el
+borde, algo encima de otra cosa, acentos. Si algo falla, corrige la composición y vuelve a renderizar (máx. 2 vueltas).
+Truco: renderiza primero SIN `--entregar`, mira la hoja, y solo entonces vuelve a correr con `--entregar` / `--proponer`.
+
 **Quién aprueba:** igual que §22b (Elvin, Carilin, Jessica o María del Carmen); publicar o pautar, Elvin o Carilin.
 
 ## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)

@@ -176,7 +176,17 @@ for (let i = 0; i < 360; i++) {
   if (t.estado === "listo" || t.estado === "error") break;
 }
 if (t?.estado !== "listo") { console.error("✖", t?.error || t?.estado || "sin respuesta"); process.exit(1); }
-for (const x of t.resultados) console.log(`✓ ${x.id} (${x.segundos} s, render ${x.renderSeg} s)\n  ${x.url}`);
+for (const x of t.resultados) {
+  console.log(`✓ ${x.id} (${x.segundos} s, render ${x.renderSeg} s)\n  ${x.url}`);
+  // Hoja de revisión: 8 cuadros del video, bajada a un archivo local para mirarla (Read) ANTES de entregar o proponer.
+  if (x.hojaUrl) {
+    try {
+      const destino = path.join((await import("node:os")).tmpdir(), `remi-hoja-${x.id}.jpg`);
+      fs.writeFileSync(destino, Buffer.from(await (await fetch(x.hojaUrl)).arrayBuffer()));
+      console.log(`  🖼 Hoja de revisión (8 cuadros): ${destino} — mírala antes de entregar`);
+    } catch { console.log(`  🖼 Hoja de revisión: ${x.hojaUrl}`); }
+  }
+}
 
 if (resto.includes("--proponer")) {
   const slug = slugCliente || arg("proponer-a");

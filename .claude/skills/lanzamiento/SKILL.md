@@ -27,7 +27,8 @@ Brag no está en tu contenedor. Haces lo mismo así:
   estructura: `data-composition-id="main"`, cada escena un `.clip` con `data-start`/`data-duration`, un timeline de GSAP en
   pausa en `window.__timelines["main"]`, imágenes como `assets/<nombre>`) y renderízala en la nube:
   `node scripts/remi.mjs html --id <id> --asset logo.png=<url> --asset musica.mp3=repo:<ruta> … --cliente <slug> --proponer <<'HTML' … HTML`
-  (~30–60 s). Revisa el resultado antes de proponerlo.
+  (~30–60 s). Cada render imprime una **hoja de revisión** (`/tmp/remi-hoja-<id>.jpg`, 8 cuadros): mírala con Read antes de
+  entregar o proponer; si algo se corta o se encima, corrige y renderiza otra vez. Renderiza primero sin `--entregar`/`--proponer`.
 
 ## 2. Reglas de la casa (no se negocian)
 1. **Registro:** Level Up, Bori, Ritmo, 1000X → tuteo de Puerto Rico. AI Borinquen en anuncios → de usted. Nunca voseo,
