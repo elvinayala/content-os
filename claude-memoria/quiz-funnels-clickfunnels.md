@@ -89,3 +89,12 @@ Endpoint `/api/auditoria` marca `shadow-operator` verificado con un lead de prue
 para que `elvinayala.com/auditoria` también funcione; el apex hoy no responde.
 Idea siguiente: página de raíz `elvinayala.com` estilo oscarmoises.com (5 pantallas: Escalar Negocio, IA, Marketing, Aprende a
 Operar…) como sitio propio en Netlify; el quiz pasaría a `auditoria.elvinayala.com`.
+
+**elvinayala.com — página principal + 4 embudos (13/oct/2026, construido en local, SIN publicar):** carpeta
+`demos/elvinayala/` (LEEME.md): `/` = 4 pantallas estilo oscarmoises.com (Negocio digital $10K–$20K · Marketing · IA · Shadow);
+`/escalar/` = quiz NUEVO personal (4 palancas: oferta, contenido, cierre, sistema; meta $10/15/20K; marca `elvin-escalar`,
+pipeline Pipedrive LU 16 «ELVIN · ESCALAR $10-20K» stage 154; endpoint desplegado y probado); `/marketing/` = quiz de LU con
+el nombre de Elvin; `/ia/` = quiz de AIB; `/aprende/` = quiz de Shadow. Plan de hosting: TODO en Netlify bajo elvinayala.com
+(A del apex + CNAME www a Netlify; ClickFunnels deja de servir ese dominio y `/auditoria` redirige a `/aprende/`). Falta el OK de
+Elvin para subir + cambio de DNS en GoDaddy, y los videos de fondo (carpeta videos/). Pipeline 16 con sus 8 etapas verificado (el duplicado 17 ya se borró).
+
