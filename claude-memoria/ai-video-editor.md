@@ -217,3 +217,10 @@ en el CLAUDE.md de Cortex. Antes de "arreglar" un pedido repetido: medir versió
 b-roll mínimo 10–20 % (composer completa con IA si las tomas del cliente no alcanzan); `_ajustar_al_tope` acorta parejo y quita la
 más amontonada (antes borraba una toma entera y dejaba huecos de 25 s); transición `whip` en 1 de cada 3 imágenes de IA;
 `apply_dna_patch` ignora un campo inválido en vez de tumbar la revisión. Ojo al revisar por script: «en todo el video» = ratio 1.0.
+**13/oct · comparación medida v8 Mister iPhone vs Hector/Yulianna (`ave analyze-ref`):** el blur del corte iba dentro del
+segmento, ANTES de los subtítulos → la frase quedaba nítida sobre el fondo borroso y medía 3.7 cuadros (refs 7.6–8.7). Ahora
+`expr.blur_cortes` lo aplica en el paso final después de `subtitles` y escala `frames` (medido a 24 fps) al fps de salida →
+7.9 cuadros. Lo que falta y NO se arregla en edición: cara 17 % del alto vs 22 % Hector / 30 % Yulianna y encuadre «fijo»
+(las tomas del cliente vienen abiertas, cara 6 %; Cortex ya amplía 2.2× y más se ve borroso) → es de grabación.
+OJO al medir: el medidor de nitidez lo dominan las letras; y `timeline.ai.json` es la versión vigente (una revisión
+global como velocidad no escribe timeline.vN.json).

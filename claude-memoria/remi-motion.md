@@ -35,5 +35,6 @@ Hyperframes en ~/.claude/skills se acotaron a mano para que no le quiten los vid
 Dockerfile.remi; 20 s en ~33 s) → Max usa `remi.mjs lote` (tabla por Sheets o heredoc, `--probar` primero) y
 `remi.mjs html` (composición por heredoc, assets por URL o `repo:`). Pedidos en #max-aprobaciones; cerebro §22c, skill
 lanzamiento §1b. Primer lanzamiento: Ritmo (`estudio-html/ritmo-lanzamiento/`). Se les explicó por DM a Carilin y María del
-Carmen. Ojo: por buzón (modelo barato) Max respondió de memoria mal; el camino real de Slack usa Opus y no se ha visto
-de punta a punta todavía: vigilar el primer pedido.
+Carmen. Probado de punta a punta en #max-aprobaciones el 12/oct: lote (2 bienvenidas, $1.59) y lanzamiento de Ritmo 9:16
+escrito por Max en Hyperframes ($2.80), ambos bien. Remi ahora devuelve una hoja de revisión (8 cuadros, /tmp/remi-hoja-<id>.jpg)
+que Max mira con Read antes de entregar. Cada pedido de video le cuesta $1.5–3 a Max: ojo con su tope de $10/día.
