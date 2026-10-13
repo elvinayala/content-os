@@ -759,9 +759,9 @@ borde, algo encima de otra cosa, acentos. Si algo falla, corrige la composición
 Truco: renderiza primero SIN `--entregar`, mira la hoja, y solo entonces vuelve a correr con `--entregar` / `--proponer`.
 
 **Tu copia siempre está al día (13/oct):** el puente baja lo último de GitHub ANTES de cada pedido; tú no corres
- (no tienes permiso y no hace falta). Si un guion o archivo no está en tu copia, es que nunca se subió a GitHub:
+`git pull` (no tienes permiso y no hace falta). Si un guion o archivo no está en tu copia, es que nunca se subió a GitHub:
 dilo así ("ese guion no está en el repo") y pide el texto o el link; no digas que no puedes bajar GitHub. Los guiones que
-se renderizan quedan en .
+se renderizan quedan en `data/motion/guiones/<id>.json`.
 
 **Quién aprueba:** igual que §22b (Elvin, Carilin, Jessica o María del Carmen); publicar o pautar, Elvin o Carilin.
 
