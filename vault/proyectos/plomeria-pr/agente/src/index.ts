@@ -59,6 +59,7 @@ import { panelPlomerosHTML, pagarHTML } from "./paginas-operacion.js";
 import { leerWebhook as leerWebhookDocusign } from "./integraciones/docusign.js";
 import * as push from "./push.js";
 import { router as cotizadorRouter, cerrarConDeposito, linkCotizador } from "./cotizador-app.js";
+import { router as calculadoraRouter, linkCalculadora } from "./calculadora-precio.js";
 import * as encuestas from "./encuestas.js";
 import { dashboardHTML } from "./dashboard.js";
 
@@ -401,6 +402,7 @@ app.post("/api/proveedores/trabajo/nota", async (req: any, res) => {
 
 // ── App del cotizador (tablet) + documentos del cliente ──
 app.use(cotizadorRouter);
+app.use(calculadoraRouter);
 
 // ── Portal de proveedores (plomeros y contratistas) ──
 function proveedorAutenticado(req: any) {
