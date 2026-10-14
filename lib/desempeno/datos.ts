@@ -436,7 +436,7 @@ export async function armarPanel(actor: UsuarioPulse & { rrhh?: boolean }, desde
  * usarlo si quiere (27/sep). Sin perfil, sus ponches no salen en Equipo, recordatorios ni reportes (todo eso sale
  * de los perfiles). `sinPerfil` le dice a Hoy que muestre la nota especial.
  */
-export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string; detalle?: string }[]; sinPerfil?: boolean; almuerzo: { salida: string; vuelta: string | null } | null } | null> {
+export async function estadoPonche(userId: string, opcional = false): Promise<{ hoy: string; abiertoHoy: string | null; pendiente: { id: string; fecha: string; entradaAt: string } | null; manual: { id: string; nombre: string; detalle?: string; dinero?: boolean }[]; sinPerfil?: boolean; almuerzo: { salida: string; vuelta: string | null } | null } | null> {
   try {
     const perfil = await perfilDe(userId);
     if (!perfil?.activo && !opcional) return null;

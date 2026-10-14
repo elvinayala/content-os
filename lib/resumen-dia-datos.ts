@@ -1,6 +1,11 @@
 import "server-only";
 
-import { type Agendas, contarAgendas, type EventoCalendly, inicioDiaPR, type MarcaResumen, pestanasDelMes, type ResumenMarca, ventasDelDia, type VentasDia } from "@/lib/resumen-dia";
+import { and, eq } from "drizzle-orm";
+
+import { desempenoPerfiles, desempenoReportes } from "@/lib/desempeno/schema";
+import { db } from "@/lib/pulse/db";
+import { pulseUsers } from "@/lib/pulse/schema";
+import { type Agendas, contarAgendas, type EventoCalendly, inicioDiaPR, type MarcaResumen, pestanasDelMes, type ResumenMarca, ventasDelDia, ventasDeReporte, type VentasDia } from "@/lib/resumen-dia";
 
 // Junta los datos del resumen del día (lib/resumen-dia.ts): Calendly de cada marca (su propia cuenta:
 // CALENDLY_TOKEN / CALENDLY_TOKEN_AIB) y las hojas de ventas de tesorería, que son privadas y se leen
@@ -48,8 +53,29 @@ export async function agendasDelDia(marca: MarcaResumen, dia: string): Promise<A
 
 export const hojasConectadas = () => Boolean(process.env.VENTAS_SCRIPT_URL && process.env.VENTAS_SCRIPT_SECRETO);
 
+/** Lo que reportó la tesorera de la marca en Ritmo ese día (puesto "tesoreria"); null si la marca no tiene tesorera. */
+export async function ventasDesdeTesoreria(marca: MarcaResumen, dia: string): Promise<VentasDia | null> {
+  try {
+    const d = await db();
+    const tesoreras = await d
+      .select({ id: pulseUsers.id, nombre: pulseUsers.nombre })
+      .from(desempenoPerfiles)
+      .innerJoin(pulseUsers, eq(pulseUsers.id, desempenoPerfiles.userId))
+      .where(and(eq(desempenoPerfiles.puesto, "tesoreria"), eq(desempenoPerfiles.empresa, marca), eq(desempenoPerfiles.activo, true)));
+    if (!tesoreras.length) return null;
+    const nombre = tesoreras[0].nombre.split(" ")[0];
+    for (const t of tesoreras) {
+      const [r] = await d.select({ datos: desempenoReportes.datos }).from(desempenoReportes).where(and(eq(desempenoReportes.userId, t.id), eq(desempenoReportes.fecha, dia)));
+      if (r && ["ventas_nuevas", "cuotas", "recurrentes", "renovaciones"].some((k) => r.datos?.[k] !== undefined)) return { ...ventasDeReporte(r.datos), fuente: `el reporte de ${t.nombre.split(" ")[0]} en Ritmo` };
+    }
+    return { nuevas: { monto: 0, n: 0 }, renovaciones: { monto: 0, n: 0 }, pendiente: `${nombre} todavía no ha reportado las ventas de hoy en Ritmo` };
+  } catch {
+    return null;
+  }
+}
+
 export async function ventasDeMarca(marca: MarcaResumen, dia: string): Promise<VentasDia | null> {
-  if (!hojasConectadas()) return null;
+  if (!hojasConectadas()) return ventasDesdeTesoreria(marca, dia);
   try {
     const r = await fetch(process.env.VENTAS_SCRIPT_URL!, {
       method: "POST",

@@ -212,3 +212,26 @@ test("rangos: hoy, ayer, 7 y 30 días, este mes y el pasado (cruzando año)", ()
   assert.deepEqual([rangoFechas("mes-pasado", "2027-01-15").desde, rangoFechas("mes-pasado", "2027-01-15").hasta], ["2026-12-01", "2026-12-31"]);
   assert.equal(rangoFechas("cualquier-cosa", "2026-10-06").id, "mes");
 });
+
+import { limpiarCierres, resumenCierres } from "../lib/ventas/reglas.ts";
+
+test("cierres: uno por cada cerrada, con industria y género (14/oct)", () => {
+  const ok = limpiarCierres([{ industria: "Solar", genero: "hombre" }, { industria: "Belleza", genero: "mujer" }], 2);
+  assert.equal(ok.error, null);
+  assert.equal(ok.cierres.length, 2);
+  assert.match(limpiarCierres([{ industria: "Solar", genero: "hombre" }], 2).error, /tus 2 cierres/);
+  assert.match(limpiarCierres([{ industria: "Inventada", genero: "hombre" }], 1).error, /tu cierre/);
+  assert.match(limpiarCierres([{ industria: "Solar", genero: "otro" }], 1).error, /tu cierre/);
+  assert.equal(limpiarCierres([], 0).error, null);
+});
+
+test("cierres: resumen por industria y género", () => {
+  const r = resumenCierres([
+    { cierres: [{ industria: "Solar", genero: "hombre" }, { industria: "Belleza", genero: "mujer" }] },
+    { cierres: [{ industria: "Solar", genero: "mujer" }] },
+    { cierres: null },
+  ]);
+  assert.equal(r.total, 3);
+  assert.deepEqual(r.porIndustria[0], { industria: "Solar", n: 2 });
+  assert.deepEqual(r.porGenero, { hombre: 1, mujer: 2 });
+});

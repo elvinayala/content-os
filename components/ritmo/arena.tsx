@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { tasasVentas, type RolVentas } from "@/lib/ventas/reglas";
+import { GENEROS_CIERRE, INDUSTRIAS_CIERRE, tasasVentas, type RolVentas } from "@/lib/ventas/reglas";
 import { cn } from "@/lib/utils";
 
 import { Cifra, Confeti } from "./arena-vivo";
@@ -113,7 +113,8 @@ export function MiGoal({ goal, mes }: { goal: number | null; mes: number }) {
 
 // ─── Diario ───────────────────────────────────────────────────────────────────────────────────
 
-export type DiarioUI = { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string | null };
+type CierreUI = { industria: string; genero: string };
+export type DiarioUI = { fecha: string; kpis: Record<string, number>; cierres?: CierreUI[]; animo: number | null; nota: string | null };
 type KpiUI = { id: string; nombre: string; ayuda?: string; dinero?: boolean };
 const soloDinero = (s: string) => {
   const limpio = s.replace(/[^\d.]/g, "");
@@ -141,7 +142,7 @@ export function MiDiario({
   etiqueta: string;
 }) {
   const [fecha, setFecha] = useState(hoy);
-  const inicial = (d?: DiarioUI) => ({ valores: Object.fromEntries(kpis.map((k) => [k.id, d?.kpis?.[k.id] ? String(d.kpis[k.id]) : ""])) as Record<string, string>, animo: d?.animo ?? null, nota: d?.nota ?? "" });
+  const inicial = (d?: DiarioUI) => ({ valores: Object.fromEntries(kpis.map((k) => [k.id, d?.kpis?.[k.id] ? String(d.kpis[k.id]) : ""])) as Record<string, string>, cierres: (d?.cierres ?? []) as CierreUI[], animo: d?.animo ?? null, nota: d?.nota ?? "" });
   const [f, setF] = useState(inicial(dias.find((d) => d.fecha === hoy)));
   const [guardando, setGuardando] = useState(false);
   const [fiesta, setFiesta] = useState(0);
@@ -160,12 +161,21 @@ export function MiDiario({
   const sumar = (id: string, n: number) => poner(id, String(Math.max(0, Math.min(1000, Number(f.valores[id] || 0) + n))));
   const guardar = async () => {
     setGuardando(true);
-    const r = await guardarDiarioAction({ fecha, kpis: Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)])), animo: f.animo, nota: f.nota });
+    const r = await guardarDiarioAction({ fecha, kpis: Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)])), cierres: rol === "closer" ? f.cierres.slice(0, nCierres) : [], animo: f.animo, nota: f.nota });
     setGuardando(false);
     if (!r.ok) return toast.error(r.error, aviso);
     setFiesta((n) => n + 1);
     toast.success("Diario guardado ✍️", aviso);
   };
+  // Closers: una fila por cada cerrada, con industria y si fue hombre o mujer (14/oct, Elvin).
+  const nCierres = rol === "closer" ? Math.min(50, Number(f.valores.cerradas || 0)) : 0;
+  const ponerCierre = (i: number, campo: keyof CierreUI, valor: string) =>
+    setF((x) => {
+      const lista = [...x.cierres];
+      while (lista.length <= i) lista.push({ industria: "", genero: "" });
+      lista[i] = { ...lista[i], [campo]: valor };
+      return { ...x, cierres: lista };
+    });
   const guardado = dias.find((d) => d.fecha === fecha);
   const numeros = Object.fromEntries(kpis.map((k) => [k.id, Number(f.valores[k.id] || 0)]));
   const vivas = tasasVentas(rol, numeros);
@@ -228,6 +238,39 @@ export function MiDiario({
               </div>
             </div>
           ))}
+        </div>
+      ) : null}
+      {nCierres > 0 ? (
+        <div className="flex flex-col gap-2 rounded-xl bg-white/[0.02] p-3 ring-1 ring-border/60">
+          <Label className="text-xs text-muted-foreground">Tus cierres: ¿de qué industria y a quién le cerraste?</Label>
+          {Array.from({ length: nCierres }, (_, i) => {
+            const c = f.cierres[i] ?? { industria: "", genero: "" };
+            return (
+              <div key={i} className="flex flex-wrap items-center gap-2">
+                <span className="w-5 text-center font-mono text-[11px] text-muted-foreground">{i + 1}</span>
+                <select
+                  aria-label={`Industria del cierre ${i + 1}`}
+                  value={c.industria}
+                  onChange={(e) => ponerCierre(i, "industria", e.target.value)}
+                  className={cn("h-9 min-w-0 flex-1 rounded-lg border bg-background px-2 text-sm", !c.industria && "text-muted-foreground")}
+                >
+                  <option value="">Industria…</option>
+                  {INDUSTRIAS_CIERRE.map((x) => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-1 rounded-lg bg-white/[0.04] p-0.5 ring-1 ring-border">
+                  {GENEROS_CIERRE.map((g) => (
+                    <button key={g.id} type="button" onClick={() => ponerCierre(i, "genero", g.id)} className={cn("rounded-md px-3 py-1 text-xs transition", c.genero === g.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+                      {g.t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : null}
       {vivas.length ? (

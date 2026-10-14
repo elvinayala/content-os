@@ -87,6 +87,15 @@ export interface VentasDia {
   nuevas: Suma;
   renovaciones: Suma; // todo lo que no es venta nueva: cuotas, mensualidades, renovaciones ("Payment of debt")
   error?: string;
+  fuente?: string; // "el reporte de María en Ritmo" cuando no sale de la hoja
+  pendiente?: string; // el reporte todavía no llega (no es un error)
+}
+
+/** Ventas del día desde el reporte de la tesorera en Ritmo (14/oct), mientras la hoja de ventas no esté conectada:
+ * nuevas = ventas nuevas; renovaciones y cuotas = cuotas + mensualidades + renovaciones/upsells. */
+export function ventasDeReporte(datos: Record<string, number>): VentasDia {
+  const m = (k: string) => Number(datos[k] ?? 0) || 0;
+  return { nuevas: { monto: m("ventas_nuevas"), n: 0 }, renovaciones: { monto: Math.round((m("cuotas") + m("recurrentes") + m("renovaciones")) * 100) / 100, n: 0 } };
 }
 
 /**
@@ -176,11 +185,15 @@ export function textoResumen(dia: string, marcas: ResumenMarca[]): string {
       const extra = [m.agendas.onboardings ? `${m.agendas.onboardings} onboarding${m.agendas.onboardings === 1 ? "" : "s"}` : "", m.agendas.canceladas ? `${m.agendas.canceladas} cancelada${m.agendas.canceladas === 1 ? "" : "s"}` : ""].filter(Boolean);
       lineas.push(`📞 Llamadas agendadas hoy: *${m.agendas.llamadas}*${extra.length ? ` (+ ${extra.join(" · ")})` : ""}`);
     } else lineas.push("📞 Llamadas: no pude leer Calendly");
-    if (m.ventas && !m.ventas.error) {
+    if (m.ventas?.pendiente) {
+      ventasCompletas = false;
+      lineas.push(`💰 Ventas: ${m.ventas.pendiente}`);
+    } else if (m.ventas && !m.ventas.error) {
       totNuevas += m.ventas.nuevas.monto;
       totRenov += m.ventas.renovaciones.monto;
       lineas.push(`💰 Ventas nuevas: *${dinero(m.ventas.nuevas.monto)}*${m.ventas.nuevas.n ? ` (${m.ventas.nuevas.n})` : ""}`);
       lineas.push(`🔁 Renovaciones y cuotas: *${dinero(m.ventas.renovaciones.monto)}*${m.ventas.renovaciones.n ? ` (${m.ventas.renovaciones.n})` : ""}`);
+      if (m.ventas.fuente) lineas.push(`_según ${m.ventas.fuente}_`);
     } else {
       ventasCompletas = false;
       lineas.push(m.ventas?.error ? `💰 Ventas: no pude leer la hoja (${m.ventas.error})` : "💰 Ventas: falta conectar la hoja de ventas");

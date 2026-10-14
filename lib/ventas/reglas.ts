@@ -697,3 +697,69 @@ export function escalones(valor: number, metas: number[]): { metas: { meta: numb
   const i = lista.findIndex((m) => !m.logrado);
   return { metas: lista, siguiente: i < 0 ? null : { meta: lista[i].meta, falta: lista[i].falta, n: i + 1 } };
 }
+
+// ─── Cierres por industria y género (14/oct, Elvin: "que los closers, si tienen cierre, marquen qué industria fue y si
+// cerraron a un hombre o a una mujer… para saber qué closer es el mejor, con qué industria y con quién") ─────────────
+// Industrias agrupadas a partir de las de Pulse (LU y AIB): con 40 opciones cada una tendría 1-2 cierres y no diría nada.
+export const INDUSTRIAS_CIERRE = [
+  "Solar",
+  "Restaurante y comida",
+  "Comercio / tienda",
+  "Belleza",
+  "Bienestar y salud",
+  "Medicina",
+  "Aires acondicionados",
+  "Servicios del hogar",
+  "Autos",
+  "Servicios profesionales / legales",
+  "Bienes raíces",
+  "Eventos y entretenimiento",
+  "E-commerce",
+  "Otra",
+] as const;
+export type IndustriaCierre = (typeof INDUSTRIAS_CIERRE)[number];
+export const GENEROS_CIERRE = [
+  { id: "hombre", t: "Hombre" },
+  { id: "mujer", t: "Mujer" },
+] as const;
+export type GeneroCierre = (typeof GENEROS_CIERRE)[number]["id"];
+export interface Cierre {
+  industria: IndustriaCierre;
+  genero: GeneroCierre;
+}
+
+/** Un cierre por cada "cerrada", con industria y género válidos. Si hay cerradas, todas se describen. */
+export function limpiarCierres(crudo: unknown, cerradas: number): { cierres: Cierre[]; error: string | null } {
+  const lista = Array.isArray(crudo) ? crudo : [];
+  const cierres: Cierre[] = [];
+  for (const c of lista.slice(0, 50)) {
+    const industria = (c as { industria?: string })?.industria;
+    const genero = (c as { genero?: string })?.genero;
+    if (!INDUSTRIAS_CIERRE.includes(industria as IndustriaCierre) || !GENEROS_CIERRE.some((g) => g.id === genero)) continue;
+    cierres.push({ industria: industria as IndustriaCierre, genero: genero as GeneroCierre });
+  }
+  if (cierres.length !== cerradas) {
+    return { cierres: [], error: cerradas === 1 ? "Marca la industria y si fue hombre o mujer de tu cierre" : `Marca la industria y si fue hombre o mujer de tus ${cerradas} cierres` };
+  }
+  return { cierres, error: null };
+}
+
+export interface ResumenCierres {
+  total: number;
+  porIndustria: { industria: string; n: number }[]; // de más a menos
+  porGenero: Record<GeneroCierre, number>;
+}
+
+/** Cuenta los cierres de un closer en un rango. */
+export function resumenCierres(dias: { cierres?: Cierre[] | null }[]): ResumenCierres {
+  const ind = new Map<string, number>();
+  const gen: Record<GeneroCierre, number> = { hombre: 0, mujer: 0 };
+  let total = 0;
+  for (const d of dias)
+    for (const c of d.cierres ?? []) {
+      total++;
+      ind.set(c.industria, (ind.get(c.industria) ?? 0) + 1);
+      if (c.genero in gen) gen[c.genero]++;
+    }
+  return { total, porIndustria: [...ind].map(([industria, n]) => ({ industria, n })).sort((a, b) => b.n - a.n || a.industria.localeCompare(b.industria)), porGenero: gen };
+}

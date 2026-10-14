@@ -19,7 +19,7 @@ export interface EstadoPonche {
   hoy: string;
   abiertoHoy: string | null; // ISO de la entrada abierta
   pendiente: { id: string; fecha: string; entradaAt: string } | null; // salida olvidada de otro día
-  manual: { id: string; nombre: string; detalle?: string }[];
+  manual: { id: string; nombre: string; detalle?: string; dinero?: boolean }[];
   almuerzo?: { salida: string; vuelta: string | null } | null;
 }
 
@@ -256,7 +256,14 @@ export function Ponche({ estado, horasHoy, seguridad }: { estado: EstadoPonche; 
                   <Label htmlFor={m.id}>
                     {m.nombre} <span className="text-[color:var(--coral)]">*</span>
                   </Label>
-                  <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                  {m.dinero ? (
+                    <div className="relative">
+                      <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                      <Input id={m.id} type="number" inputMode="decimal" min={0} max={1000000} step="0.01" className="h-11 w-36 pl-6 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                    </div>
+                  ) : (
+                    <Input id={m.id} type="number" inputMode="numeric" min={0} max={50} className="h-11 w-24 text-right" value={valores[m.id] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [m.id]: e.target.value }))} placeholder="0" />
+                  )}
                 </div>
                 {m.detalle && Number(valores[m.id] || 0) > 0 ? (
                   <Input className="h-10" maxLength={300} value={valores[`${m.id}__detalle`] ?? ""} onChange={(e) => setValores((v) => ({ ...v, [`${m.id}__detalle`]: e.target.value }))} placeholder={m.detalle} />

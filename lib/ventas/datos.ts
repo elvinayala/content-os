@@ -11,7 +11,7 @@ import { marcasConAcceso } from "../leads/repo";
 import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
-import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes, rangoFechas } from "./reglas";
+import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes, rangoFechas, resumenCierres, type ResumenCierres, type Cierre } from "./reglas";
 
 // Arena (ventas en Ritmo): datos. Las ventas salen de la hoja de tesorería de cada marca por el mismo Apps
 // Script del resumen del día (scripts/drive/ventas-hoy.gs · VENTAS_SCRIPT_URL + VENTAS_SCRIPT_SECRETO).
@@ -132,7 +132,7 @@ export const aDiario = (f: { fecha: string; citas: number; presentaron: number; 
   agendas: f.agendas,
 });
 
-export async function guardarDiario(userId: string, v: { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; kpis: Record<string, number>; animo: number | null; nota: string | null }) {
+export async function guardarDiario(userId: string, v: { fecha: string; citas: number; presentaron: number; conversaciones: number; agendas: number; kpis: Record<string, number>; cierres?: { industria: string; genero: string }[]; animo: number | null; nota: string | null }) {
   const d = await db();
   await d
     .insert(desempenoVentasDiario)
@@ -277,6 +277,8 @@ export interface Arena {
   // KPIs del diario en el rango que se mira (hoy, ayer, 7/30 días, mes…), para el director y la dirección; `dias` = días que llenó
   // su diario en ese rango; `cash` = lo cobrado del mes (la hoja es mensual).
   kpisEquipo: { userId: string; nombre: string; rol: RolVentas; mes: Record<string, number>; cash: number; dias: number }[];
+  // Closers (14/oct): de qué industria y de qué género son sus cierres en el rango, para ver quién cierra mejor qué.
+  cierresEquipo: { userId: string; nombre: string; demos: number; cerradas: number; resumen: ResumenCierres }[];
   rango: { id: string; desde: string; hasta: string; etiqueta: string };
   // Pulso: los KPIs del diario sumados por día y por puesto en el rango (de quien uno puede ver), para las mini-gráficas.
   pulso: Partial<Record<RolVentas, { fecha: string; kpis: Record<string, number> }[]>>;
@@ -333,6 +335,15 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
       : null,
     pulso: pulsoDe(enRango, conMarcador, rango.desde, rango.hasta),
     kpisEquipo: verTodos ? conMarcador.map((g) => ({ userId: g.userId, nombre: g.nombre, rol: g.rol, mes: kpisDelMes(enRango.filter((d) => d.userId === g.userId)), cash: transaccionesDe(txs, g.rol, g.nombre, g.alias).reduce((n, t) => n + t.bruto, 0), dias: enRango.filter((d) => d.userId === g.userId && conKpis(d)).length })) : [],
+    cierresEquipo: verTodos
+      ? conMarcador
+          .filter((g) => g.rol === "closer")
+          .map((g) => {
+            const suyas = enRango.filter((d) => d.userId === g.userId);
+            const k = kpisDelMes(suyas);
+            return { userId: g.userId, nombre: g.nombre, demos: k.demos ?? 0, cerradas: k.cerradas ?? 0, resumen: resumenCierres(suyas as { cierres?: Cierre[] | null }[]) };
+          })
+      : [],
     rango,
   };
 }

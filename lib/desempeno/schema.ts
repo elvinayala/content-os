@@ -552,6 +552,8 @@ export const desempenoVentasDiario = pgTable(
     agendas: integer("agendas").notNull().default(0),
     // KPIs de Elvin por puesto (28/sep; lista en lib/ventas/reglas.ts → KPIS_VENTAS): { llamadas: 40, conectadas: 12… }
     kpis: jsonb("kpis").$type<Record<string, number>>().notNull().default({}),
+    // Closers (14/oct): industria y género de cada cierre del día [{ industria: "Solar", genero: "mujer" }].
+    cierres: jsonb("cierres").$type<{ industria: string; genero: string }[]>().notNull().default([]),
     animo: integer("animo"), // 1-5
     nota: text("nota"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

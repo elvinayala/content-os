@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import * as v from "@/lib/ventas/datos";
-import { camposViejos, type Empresa, errorBono, limpiarKpis, MAX_NOTA_DIARIO, type RolVentas } from "@/lib/ventas/reglas";
+import { camposViejos, type Empresa, errorBono, limpiarCierres, limpiarKpis, MAX_NOTA_DIARIO, type RolVentas } from "@/lib/ventas/reglas";
 
 // Acciones de la Arena (ventas en Ritmo). Permisos: cada quien su diario y su meta; el director de ventas
 // (y la dirección) crea bonos y marca ganadores; SOLO Elvin (admin) autoriza bonos y aprueba pagos.
@@ -30,7 +30,7 @@ async function acceso() {
 const hoyPR = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Puerto_Rico" });
 const entero = (x: unknown) => Math.round(Number(x) || 0);
 
-export async function guardarDiarioAction(p: { fecha: string; kpis: Record<string, number>; animo: number | null; nota: string }): Promise<R> {
+export async function guardarDiarioAction(p: { fecha: string; kpis: Record<string, number>; cierres?: { industria: string; genero: string }[]; animo: number | null; nota: string }): Promise<R> {
   return envolver(async () => {
     const { u, a } = await acceso();
     if (!a.perfil || !a.rol) throw new Error("El diario es para closers, setters y chatters");
@@ -41,7 +41,10 @@ export async function guardarDiarioAction(p: { fecha: string; kpis: Record<strin
     const { kpis, error } = limpiarKpis(a.rol as RolVentas, p.kpis ?? {});
     if (error) throw new Error(error);
     const nota = p.nota?.trim().slice(0, MAX_NOTA_DIARIO) || null;
-    await v.guardarDiario(u.id, { fecha: p.fecha, ...camposViejos(a.rol as RolVentas, kpis), kpis, animo: p.animo && p.animo >= 1 && p.animo <= 5 ? entero(p.animo) : null, nota });
+    // Closers: industria y género de cada cierre (14/oct, Elvin).
+    const c = a.rol === "closer" ? limpiarCierres(p.cierres, kpis.cerradas ?? 0) : { cierres: [], error: null };
+    if (c.error) throw new Error(c.error);
+    await v.guardarDiario(u.id, { fecha: p.fecha, ...camposViejos(a.rol as RolVentas, kpis), kpis, cierres: c.cierres, animo: p.animo && p.animo >= 1 && p.animo <= 5 ? entero(p.animo) : null, nota });
   });
 }
 

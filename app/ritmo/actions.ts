@@ -69,9 +69,17 @@ export async function salirAction(r: { bloqueos: string; datos: Record<string, n
     const u = await requiereUsuario();
     const { redNueva } = await seguridad.verificarParaPonchar(u, r.huella, r.pista);
     const perfil = await datos.perfilDe(u.id);
-    const permitidos = new Set((puestoPorId(perfil?.puesto ?? "")?.manual ?? []).map((m) => m.id));
+    const manualPuesto = puestoPorId(perfil?.puesto ?? "")?.manual ?? [];
+    const permitidos = new Set(manualPuesto.map((m) => m.id));
+    // Los montos (US$, p. ej. las ventas del día de la tesorera) van hasta $1,000,000 con centavos; lo demás son conteos.
+    const enDinero = new Set(manualPuesto.filter((m) => m.dinero).map((m) => m.id));
     const limpios: Record<string, number> = {};
-    for (const [k, v] of Object.entries(r.datos ?? {})) if (permitidos.has(k) && Number.isFinite(v) && v >= 0 && v <= 50) limpios[k] = Math.round(v);
+    for (const [k, v] of Object.entries(r.datos ?? {})) {
+      if (!permitidos.has(k) || !Number.isFinite(v) || v < 0) continue;
+      if (enDinero.has(k)) {
+        if (v <= 1_000_000) limpios[k] = Math.round(v * 100) / 100;
+      } else if (v <= 50) limpios[k] = Math.round(v);
+    }
     const detalles: Record<string, string> = {};
     for (const [k, v] of Object.entries(r.detalles ?? {})) if (permitidos.has(k) && typeof v === "string" && v.trim()) detalles[k] = v.trim().slice(0, 300);
     // Sin los KPIs del día no se marca la salida (Elvin, 29/sep).

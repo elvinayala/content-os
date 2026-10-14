@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { contarAgendas, detectarOrden, diaPR, parseFecha, parseMonto, pestanasDelMes, textoResumen, ventasDelDia } from "../lib/resumen-dia.ts";
+import { contarAgendas, detectarOrden, diaPR, parseFecha, parseMonto, pestanasDelMes, textoResumen, ventasDelDia, ventasDeReporte } from "../lib/resumen-dia.ts";
 
 test("montos en los dos formatos de las hojas", () => {
   assert.equal(parseMonto("$3.500,00"), 3500);
@@ -67,4 +67,17 @@ test("mensaje: por marca y total; sin hoja no inventa ventas", () => {
   assert.match(t, /Ventas nuevas: \*\$7,000\* \(2\)/);
   assert.match(t, /falta conectar la hoja/);
   assert.match(t, /\*Total:\* 15 llamadas\n/); // sin montos totales si falta una hoja
+});
+
+test("ventas del reporte de la tesorera en Ritmo (14/oct)", () => {
+  const v = ventasDeReporte({ ventas_nuevas: 3500, cuotas: 750, recurrentes: 297, renovaciones: 1000.5, reembolsos: 200 });
+  assert.equal(v.nuevas.monto, 3500);
+  assert.equal(v.renovaciones.monto, 2047.5);
+  const t = textoResumen("2026-10-14", [
+    { marca: "level_up", agendas: { llamadas: 5, onboardings: 0, canceladas: 0 }, ventas: { ...v, fuente: "el reporte de Maria en Ritmo" } },
+    { marca: "ai_borinquen", agendas: { llamadas: 2, onboardings: 0, canceladas: 0 }, ventas: { nuevas: { monto: 0, n: 0 }, renovaciones: { monto: 0, n: 0 }, pendiente: "Yari todavía no ha reportado" } },
+  ]);
+  assert.match(t, /\$3,500/);
+  assert.match(t, /según el reporte de Maria/);
+  assert.match(t, /Ventas: Yari todavía no ha reportado/);
 });

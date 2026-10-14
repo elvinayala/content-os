@@ -83,7 +83,7 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
             rango={ar.mio.rango}
             diasRango={ar.mio.diasRango}
             etiqueta={ar.rango.etiqueta}
-            dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, animo: x.animo, nota: x.nota }))}
+            dias={ar.mio.diario.map((x) => ({ fecha: x.fecha, kpis: x.kpis ?? {}, cierres: x.cierres ?? [], animo: x.animo, nota: x.nota }))}
           />
         </div>
       ) : null}
@@ -165,6 +165,8 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
           <p className="text-[11px] text-muted-foreground">Lo anota cada quien en su diario (hoy o ayer). Los % se calculan solos sobre las conversaciones (chatters), las llamadas (setters) o las demos (closers). El cash collected de los closers es del mes y sale de la hoja de ventas.</p>
         </section>
       ) : null}
+
+      {gestiona && ar.cierresEquipo.length ? <CierresCloser filas={ar.cierresEquipo} etiqueta={ar.rango.etiqueta} /> : null}
 
       {gestiona ? (
         <section className="panel flex flex-col gap-3 p-5">
@@ -313,3 +315,70 @@ function RankingVentas({ filas, etiqueta }: { filas: Parameters<typeof rankingVe
     </section>
   );
 }
+
+// Cierres por industria y género (14/oct, Elvin: "para tener data de qué closer es el mejor, con qué industria y si es hombre o
+// mujer"). Cuenta lo que cada closer marca en su diario; el % es sobre sus cierres descritos.
+function CierresCloser({ filas, etiqueta }: { filas: { userId: string; nombre: string; demos: number; cerradas: number; resumen: { total: number; porIndustria: { industria: string; n: number }[]; porGenero: { hombre: number; mujer: number } } }[]; etiqueta: string }) {
+  const pct = (n: number, de: number) => (de ? `${Math.round((n / de) * 100)} %` : "—");
+  // Industrias con cierres del equipo, de más a menos, para comparar closers en la misma columna.
+  const totales = new Map<string, number>();
+  for (const f of filas) for (const i of f.resumen.porIndustria) totales.set(i.industria, (totales.get(i.industria) ?? 0) + i.n);
+  const industrias = [...totales].sort((a, b) => b[1] - a[1]).map(([i]) => i);
+  const conDatos = filas.some((f) => f.resumen.total);
+  return (
+    <section id="cierres" className="panel flex scroll-mt-20 flex-col gap-3 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-sm font-semibold">Cierres por industria y género · {etiqueta.toLowerCase()}</h2>
+        <span className="text-[11px] text-muted-foreground">lo marca cada closer en su diario</span>
+      </div>
+      {conDatos ? (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[520px] border-separate border-spacing-y-1 text-sm">
+            <thead className="text-left text-[11px] text-muted-foreground">
+              <tr>
+                <th className="sticky left-0 bg-card py-1.5 pr-3 font-normal">Closer</th>
+                <th className="py-1.5 pr-3 text-right font-normal">Demos</th>
+                <th className="py-1.5 pr-3 text-right font-normal">Cerradas</th>
+                <th className="py-1.5 pr-3 text-right font-normal">Hombres</th>
+                <th className="py-1.5 pr-3 text-right font-normal">Mujeres</th>
+                {industrias.map((i) => (
+                  <th key={i} className="py-1.5 pr-3 text-right font-normal whitespace-nowrap">{i}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map((f) => {
+                const enInd = new Map(f.resumen.porIndustria.map((x) => [x.industria, x.n]));
+                return (
+                  <tr key={f.userId}>
+                    <td className="sticky left-0 z-10 bg-card py-1.5 pr-3 whitespace-nowrap">
+                      <span className="flex items-center gap-2">
+                        <Avatar nombre={f.nombre} tamano={24} /> {f.nombre}
+                      </span>
+                    </td>
+                    <td className="num py-1.5 pr-3 text-right font-mono text-muted-foreground">{f.demos}</td>
+                    <td className="num py-1.5 pr-3 text-right font-mono font-semibold">{f.cerradas}</td>
+                    <td className="num py-1.5 pr-3 text-right font-mono">
+                      {f.resumen.porGenero.hombre} <span className="text-[11px] text-muted-foreground">{pct(f.resumen.porGenero.hombre, f.resumen.total)}</span>
+                    </td>
+                    <td className="num py-1.5 pr-3 text-right font-mono">
+                      {f.resumen.porGenero.mujer} <span className="text-[11px] text-muted-foreground">{pct(f.resumen.porGenero.mujer, f.resumen.total)}</span>
+                    </td>
+                    {industrias.map((i) => (
+                      <td key={i} className="num py-1.5 pr-3 text-right font-mono">
+                        {enInd.get(i) ? enInd.get(i) : <span className="text-muted-foreground/50">·</span>}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">Todavía no hay cierres marcados en este rango. Desde hoy, cada closer marca en su diario la industria y si le cerró a un hombre o a una mujer.</p>
+      )}
+    </section>
+  );
+}
+

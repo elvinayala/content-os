@@ -91,6 +91,16 @@ const KPIS_REPORTADOS = {
     reportado("videos", "Videos trabajados", "¿De qué negocios?"),
     reportado("negocios", "Negocios visitados", "¿Cuáles y en qué pueblo?"),
   ],
+  // 14/oct (Elvin): "María García, tesorera, debe subir las ventas del día en Ritmo: nuevas y no nuevas, recurrentes, cobros
+  // de cuotas, etc." Montos en US$ con el detalle de quién. Mientras la hoja de ventas no esté conectada, el resumen de las
+  // 8:30 PM toma de aquí las ventas de Level Up (lib/resumen-dia-datos.ts → ventasDesdeTesoreria).
+  tesoreria: [
+    reportado("ventas_nuevas", "Ventas nuevas (US$)", "¿De qué clientes y qué servicio?", "Clientes nuevos que pagaron hoy (New Sale), aunque sea el primer pago de un plan a plazos", true),
+    reportado("cuotas", "Cobros de cuotas (US$)", "¿De qué clientes y qué cuota?", "2.ª, 3.ª… cuota de un acuerdo de pago", true),
+    reportado("recurrentes", "Mensualidades / recurrentes (US$)", "¿De qué clientes?", "Pagos mensuales de clientes activos", true),
+    reportado("renovaciones", "Renovaciones y upsells (US$)", "¿De qué clientes y qué compraron?", "Clientes que renovaron su servicio o compraron algo adicional", true),
+    reportado("reembolsos", "Reembolsos (US$)", "¿A quién y por qué?", "Dinero devuelto hoy", true),
+  ],
   disenador: [
     reportado("flyers_aprobados", "Flyers y creativos aprobados", "¿Cuántos por negocio? (ej.: 6 Dra. Escabí, 3 Tinos)", "Solo los aprobados por el cliente o el estratega"),
     reportado("otros_disenos", "Otros diseños (logo, presentación…)", "¿Cuáles y para quién?"),
@@ -144,7 +154,7 @@ export const PUESTOS: Puesto[] = [
   },
   // Puestos sin KPIs conectados todavía (28/sep/2026, pedido de Aure): su nota sale de la asistencia.
   { id: "rrhh", nombre: "RRHH", departamento: "Recursos Humanos", kpis: [] },
-  { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", kpis: [] },
+  { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", manual: manualReportado("tesoreria"), kpis: kpisReportados("tesoreria") },
   { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas"), soloReporte: true },
   // 12/oct (Elvin): Derek Toro viaja la isla grabando; no poncha, anota cada trabajo del día.
   { id: "videografo", nombre: "Videógrafo", departamento: "Producción", manual: manualReportado("videografo"), kpis: kpisReportados("videografo"), soloReporte: true, trabajos: true },
