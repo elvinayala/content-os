@@ -143,11 +143,15 @@ async function procesar(t) {
 }
 
 async function empaquetar(t) {
-  if (paquete.commit === t.commit && paquete.serveUrl) return paquete.serveUrl;
+  // la llave es el árbol de motion/ (no el commit): Max y los agentes suben data/ y vault/ a cada rato y eso no cambia
+  // nada de Remotion; re-empaquetar cuesta ~40 s por video de Cortex
+  let llave = t.commit;
+  try { llave = execFileSync("git", ["-C", REPO, "rev-parse", "HEAD:motion"]).toString().trim(); } catch {}
+  if (paquete.commit === llave && paquete.serveUrl) return paquete.serveUrl;
   const { bundle } = await import("@remotion/bundler");
   log(`trabajo ${t.id}: empaquetando (${t.commit})`);
   const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
-  paquete = { commit: t.commit, serveUrl };
+  paquete = { commit: llave, serveUrl };
   return serveUrl;
 }
 
@@ -168,6 +172,7 @@ async function procesarCapas(t) {
       fs.rmSync(salida, { force: true });
       t.resultados.push({ id: c.id, url, renderSeg: Math.round((Date.now() - t0) / 1000) });
     }
+    t.segundosTotal = Math.round((Date.now() - Date.parse(t.creado)) / 1000);
     t.estado = "listo";
     log(`trabajo ${t.id}: ✓ ${t.capas.length} capa(s) de Cortex`);
   } catch (e) {
