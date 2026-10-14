@@ -148,12 +148,22 @@ async function empaquetar(t) {
   let llave = t.commit;
   try { llave = execFileSync("git", ["-C", REPO, "rev-parse", "HEAD:motion"]).toString().trim(); } catch {}
   if (paquete.commit === llave && paquete.serveUrl) return paquete.serveUrl;
-  const { bundle } = await import("@remotion/bundler");
-  log(`trabajo ${t.id}: empaquetando (${t.commit})`);
-  const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
-  paquete = { commit: llave, serveUrl };
-  return serveUrl;
+  // UN solo empaque a la vez (14/oct): una capa y un cierre llegaron juntos tras un commit, empaquetaron los dos al mismo
+  // tiempo sobre la misma carpeta y Remi se quedó colgado 40 min (los videos de Cortex salieron con el cierre de respaldo)
+  if (empacando && empacando.llave === llave) return empacando.promesa;
+  if (empacando) await empacando.promesa.catch(() => {});
+  if (paquete.commit === llave && paquete.serveUrl) return paquete.serveUrl;
+  const promesa = (async () => {
+    const { bundle } = await import("@remotion/bundler");
+    log(`trabajo ${t.id}: empaquetando (${t.commit})`);
+    const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
+    paquete = { commit: llave, serveUrl };
+    return serveUrl;
+  })();
+  empacando = { llave, promesa };
+  try { return await promesa; } finally { if (empacando?.promesa === promesa) empacando = null; }
 }
+let empacando = null;
 
 // Capas de Cortex (14/oct): cada una es corta (1-3 s), transparente (VP9 + alpha) y va directo a Storage.
 async function procesarCapas(t) {
