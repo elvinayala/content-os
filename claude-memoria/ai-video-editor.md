@@ -250,3 +250,8 @@ motion/src/cortex/CortexCapa.tsx), Remi `POST /capas` con cola propia y bundle e
 antes de subtítulos; el ASS no dibuja esas cifras pero las usa para acomodar subtítulos). Respaldo: lo que no llegue en
 `AVE_REMOTION_ESPERA` (240 s) se dibuja como antes; `AVE_MOTION_REMOTION=0` apaga. Medido: +35 s con caché, ~130 s si Remi
 recién reinició. Subtítulos/cortes/b-roll/audio siguen en FFmpeg (estándar Yulianna). ~$0.01 de licencia por capa.
+**14/oct · TopChiro (María):** BUG del editor: `src_start/src_end` de las palabras están en el tiempo GLOBAL (tomas seguidas,
+offset = suma de duraciones previas) y `recompute` del editor los leía como tiempo de la toma → al recortar se perdían todas las
+palabras desde la toma 2 (115 → 15). Arreglado en editor.html (usa la posición en la toma) + red de seguridad en
+`edicion_manual.aplicar` (`subtitulos_perdidos` → `remapear_subtitulos` desde el timeline anterior). Silero `aire` 0.25 → 0.10 s:
+con 0.25 cada unión entre tomas quedaba con ~0.75 s callados. TopChiro v6 = recortes de María + subtítulos recuperados.
