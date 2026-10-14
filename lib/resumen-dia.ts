@@ -202,6 +202,9 @@ export function textoResumen(dia: string, marcas: ResumenMarca[]): string {
   if (marcas.length > 1) {
     lineas.push("", `*Total:* ${totLlamadas} llamadas${ventasCompletas ? ` · ${dinero(totNuevas)} en ventas nuevas · ${dinero(totRenov)} en renovaciones y cuotas` : ""}`);
   }
-  lineas.push("", "_Ventas = valor neto registrado hoy en la hoja de tesorería._");
+  const deHoja = marcas.some((m) => m.ventas && !m.ventas.error && !m.ventas.pendiente && !m.ventas.fuente);
+  const deRitmo = marcas.some((m) => m.ventas?.fuente || m.ventas?.pendiente);
+  if (deHoja) lineas.push("", "_Ventas = valor neto registrado hoy en la hoja de tesorería._");
+  else if (deRitmo) lineas.push("", "_Ventas = lo que reportó tesorería hoy en Ritmo._");
   return lineas.join("\n");
 }
