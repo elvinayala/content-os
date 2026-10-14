@@ -49,7 +49,7 @@
 - [Micro-influencers PR](micro-influencers-pr.md) — investigación 10K–50K solo PR + cómo vetar sin Apify
 - [Nina — community manager de Resuelto](nina-community-manager.md) — 1 post/día por Zernio, reporta por Telegram
 - [Resuelto — División Proyectos](resuelto-division-proyectos.md) — remodelaciones ~$12K, contratistas Verified, DACO
-- [AI Video Editor](ai-video-editor.md) — repo ~/ai-video-editor (Claude + FFmpeg): estado, decisiones, gotchas
+- [AI Video Editor](ai-video-editor.md) — repo ~/ai-video-editor (Claude + FFmpeg): estado, decisiones, gotchas; 14/oct: correcciones solo por negocio, nunca globales (estándar igual para todos)
 - [AVE — estilo de referencia](ave-estilo-referencias.md) — lo aprendido de los 4 anuncios profesionales; 9/oct: v1 SIEMPRE con el estándar (Hector Casas + Yulianna), cambios solo en revisiones
 - [AVE — detalles de la referencia Daren](ave-daren-referencia-detalles.md) — encuadre, callouts, B/N, contador, cursor CTA
 - [Victory Core — scrapper de leads](victory-core-leads.md) — Néstor Nazario; simple, sin sobre-ingenierizar; falta 1ª corrida
