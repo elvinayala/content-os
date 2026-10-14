@@ -243,3 +243,10 @@ palabras de Whisper siempre se protegen; `AVE_VAD=0` lo apaga) · **Apple Vision
 clave `AVE_VISION_SECRETO` en Railway; endpoints `/api/vision/*`; latido < 90 s; sin Mac → YuNet; calibre alto×0.91 =
 face_size de YuNet, medido) · Remotion (Remi, solo el cierre) · FFmpeg (todo lo demás; CRF 18 → 21: −39 % peso, VMAF 95.7).
 Prueba de punta a punta OK (QA 100). Log de la Mac: `~/Library/Logs/cortex-vision.log`.
+**14/oct · Remotion en todo el motion (Elvin: «pon Remotion también en todo»):** cifras/contadores, anillo de %, íconos 3D,
+cursor y lluvia salen de Remi como capas TRANSPARENTES (VP9 alpha): composición `CortexCapa` (content-os
+motion/src/cortex/CortexCapa.tsx), Remi `POST /capas` con cola propia y bundle en caché por árbol de motion/; Cortex
+`ave/motion/remotion.py` (especificaciones → pedir en un hilo al empezar el render → FFmpeg las pone con `-c:v libvpx-vp9`
+antes de subtítulos; el ASS no dibuja esas cifras pero las usa para acomodar subtítulos). Respaldo: lo que no llegue en
+`AVE_REMOTION_ESPERA` (240 s) se dibuja como antes; `AVE_MOTION_REMOTION=0` apaga. Medido: +35 s con caché, ~130 s si Remi
+recién reinició. Subtítulos/cortes/b-roll/audio siguen en FFmpeg (estándar Yulianna). ~$0.01 de licencia por capa.
