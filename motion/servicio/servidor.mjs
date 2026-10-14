@@ -12,6 +12,8 @@
 //   POST /html { id, html, assets: [{ nombre, url }] } → { trabajo }   (12/oct: composición de Hyperframes en HTML; la
 //        renderiza estudio-html/ con su Chrome + ffmpeg. Sin telemetría y nunca "publish")
 //   GET  /trabajo/<id>                       → { estado: en-cola|trabajando|listo|error, resultados: [{ id, url, segundos }], error }
+//   POST /capas { capas: [{ id, props }] }   → { trabajo }   (14/oct: capas TRANSPARENTES de Cortex — cifras, anillos, íconos,
+//        cursor, lluvia — composición CortexCapa en VP9 con alpha; cola propia para no esperar detrás de los lotes de Max)
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
@@ -27,6 +29,9 @@ const LICENCIA = process.env.REMOTION_LICENSE_KEY || null;
 const trabajos = new Map();
 const cola = [];
 let ocupado = false;
+const colaCapas = [];
+let ocupadoCapas = false;
+let paquete = { commit: null, serveUrl: null };   // el bundle de Remotion se reusa mientras el commit no cambie
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 const responder = (res, code, cuerpo) => { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(cuerpo)); };
@@ -112,10 +117,8 @@ async function procesar(t) {
     t.commit = actualizarRepo();
     if (t.html) { await renderHtml(t); t.estado = "listo"; t.terminado = new Date().toISOString(); return; }
     // El servidor corre DESDE el clon (motion/servicio/), así que resuelve el node_modules de la fábrica.
-    const { bundle } = await import("@remotion/bundler");
     const { selectComposition, renderMedia } = await import("@remotion/renderer");
-    log(`trabajo ${t.id}: empaquetando (${t.commit})`);
-    const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
+    const serveUrl = await empaquetar(t);
     const piezas = [...t.ids.map((id) => ({ id, compId: id, inputProps: undefined })), ...t.guiones.map((g) => ({ id: g.id, compId: "Motion", inputProps: { anuncio: g } }))];
     for (const { id, compId, inputProps } of piezas) {
       const t0 = Date.now();
@@ -139,6 +142,49 @@ async function procesar(t) {
   t.terminado = new Date().toISOString();
 }
 
+async function empaquetar(t) {
+  if (paquete.commit === t.commit && paquete.serveUrl) return paquete.serveUrl;
+  const { bundle } = await import("@remotion/bundler");
+  log(`trabajo ${t.id}: empaquetando (${t.commit})`);
+  const serveUrl = await bundle({ entryPoint: path.join(MOTION, "src/index.ts"), publicDir: path.join(MOTION, "public") });
+  paquete = { commit: t.commit, serveUrl };
+  return serveUrl;
+}
+
+// Capas de Cortex (14/oct): cada una es corta (1-3 s), transparente (VP9 + alpha) y va directo a Storage.
+async function procesarCapas(t) {
+  t.estado = "trabajando";
+  try {
+    t.commit = actualizarRepo();
+    const { selectComposition, renderMedia } = await import("@remotion/renderer");
+    const serveUrl = await empaquetar(t);
+    for (const c of t.capas) {
+      const t0 = Date.now();
+      const comp = await selectComposition({ serveUrl, id: "CortexCapa", inputProps: c.props });
+      const salida = path.join("/tmp", `capa-${c.id}.webm`);
+      await renderMedia({ composition: comp, serveUrl, codec: "vp9", imageFormat: "png", pixelFormat: "yuva420p", outputLocation: salida,
+        inputProps: c.props, chromiumOptions: { gl: "swangle" }, logLevel: "error", licenseKey: LICENCIA });
+      const url = await subir(salida, `cortex-capas/${c.id}.webm`, "video/webm");
+      fs.rmSync(salida, { force: true });
+      t.resultados.push({ id: c.id, url, renderSeg: Math.round((Date.now() - t0) / 1000) });
+    }
+    t.estado = "listo";
+    log(`trabajo ${t.id}: ✓ ${t.capas.length} capa(s) de Cortex`);
+  } catch (e) {
+    t.estado = "error";
+    t.error = String(e?.message || e).slice(0, 800);
+    log(`trabajo ${t.id}: ✗ ${t.error}`);
+  }
+  t.terminado = new Date().toISOString();
+}
+
+async function bombearCapas() {
+  if (ocupadoCapas) return;
+  ocupadoCapas = true;
+  while (colaCapas.length) await procesarCapas(colaCapas.shift());
+  ocupadoCapas = false;
+}
+
 async function bombear() {
   if (ocupado) return;
   ocupado = true;
@@ -148,7 +194,7 @@ async function bombear() {
 
 http.createServer(async (req, res) => {
   const u = new URL(req.url, "http://x");
-  if (u.pathname === "/salud") return responder(res, 200, { ok: true, repo: fs.existsSync(MOTION), cola: cola.length, ocupado });
+  if (u.pathname === "/salud") return responder(res, 200, { ok: true, repo: fs.existsSync(MOTION), cola: cola.length, ocupado, colaCapas: colaCapas.length, capas: true });
   if (!autorizado(req)) return responder(res, 401, { ok: false, error: "no autorizado" });
   if (req.method === "POST" && u.pathname === "/render") {
     let cuerpo = "";
@@ -167,6 +213,20 @@ http.createServer(async (req, res) => {
     bombear();
     return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
   }
+  if (req.method === "POST" && u.pathname === "/capas") {
+    let cuerpo = "";
+    for await (const c of req) { cuerpo += c; if (cuerpo.length > 8_000_000) break; }
+    if (cuerpo.length > 8_000_000) return responder(res, 413, { ok: false, error: "capas demasiado grandes" });
+    let capas = [];
+    try { capas = (JSON.parse(cuerpo || "{}").capas || []); } catch { return responder(res, 400, { ok: false, error: "JSON inválido" }); }
+    capas = capas.filter((c) => c && /^[A-Za-z0-9._-]{1,120}$/.test(c.id || "") && c.props && c.props.elemento && Number(c.props.dur) > 0 && Number(c.props.dur) <= 30);
+    if (!capas.length || capas.length > 40) return responder(res, 400, { ok: false, error: "Pasa { capas: [{ id, props }] } (1 a 40)" });
+    const t = { id: crypto.randomUUID().slice(0, 8), ids: [], guiones: [], capas, estado: "en-cola", resultados: [], creado: new Date().toISOString() };
+    trabajos.set(t.id, t);
+    colaCapas.push(t);
+    bombearCapas();
+    return responder(res, 202, { ok: true, trabajo: t.id, enCola: colaCapas.length });
+  }
   if (req.method === "POST" && u.pathname === "/html") {
     let cuerpo = "";
     for await (const c of req) cuerpo += c;
@@ -184,6 +244,6 @@ http.createServer(async (req, res) => {
     return responder(res, 202, { ok: true, trabajo: t.id, enCola: cola.length });
   }
   const m = u.pathname.match(/^\/trabajo\/([a-f0-9-]+)$/);
-  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, html, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id), html: html?.id }); }
+  if (m) { const t = trabajos.get(m[1]); if (!t) return responder(res, 404, { ok: false, error: "no existe" }); const { guiones, html, capas, ...resto } = t; return responder(res, 200, { ok: true, ...resto, guiones: guiones.map((g) => g.id), html: html?.id, capas: capas?.length }); }
   responder(res, 404, { ok: false, error: "ruta desconocida" });
 }).listen(PORT, () => log(`Remi escuchando en :${PORT} · repo ${REPO}`));
