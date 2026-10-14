@@ -104,3 +104,15 @@ tienen encuadre VARIABLE (σ 3 %), 28–37 cortes/min, blur ~7.5 frames en ~80 %
 El 27/sep apagué los cortes de escala leyendo la Sept 2 «a ojo» como fija: ERROR — medir siempre con el mismo instrumento
 la referencia y Cortex. Ahora: cortes de escala ±12 %, blur 7, énfasis 28/min, b-roll con corte+blur (no fundido),
 mundo por defecto = foto real (nunca caricatura). Pendiente decidir: b-roll de las refs 33–41 % vs tope 20 % de Elvin.
+
+**14/oct/2026 — Testimonio Giovanni Ayala (Cars Auto Sales) = ESTÁNDAR DE TESTIMONIOS** (Elvin: «es un testimonio, mantener el
+estándar en esos detalles»). Archivo `samples/references/geovanni-testimonio.mp4`; análisis completo en
+`docs/estilo-referencias.md` §Testimonio. Medido: 14 cortes/min, plano 4 s, encuadre FIJO de cuerpo entero (cara 15 %, la mitad que
+Yulianna), b-roll 10 %, −18 LUFS, cero pausas. Color por intención: rojo problema · AZUL marca/solución (LEVEL UP MEDIA) · DORADO
+resultados/lugar. Motion: logo del negocio al nombrarlo, nombre gigante DETRÁS de la cabeza, etiqueta «TRÁFICO» (caja roja de
+brocha + cursor), rótulo «el testimonio · Nombre · cargo», pastilla «LINK AQUÍ ABAJO» con destello, b-roll con diseño (íconos de
+redes + cara recortada, tarjeta 3D con las fotos del cliente), whip/zoom blur, lavados de color. Sin blanco y negro.
+En Cortex: TESTIMONIAL → preset `PRO_TESTIMONIO` (framing.face_target 0.12, zoom none, b-roll 0.10, azul/dorado, sin B/N);
+`ave/analyze/testimonio.py` (Claude marca nombre/negocio/etiquetas/CTA) → efectos logo/rotulo/etiqueta/link dibujados por Remotion
+(CortexCapa). FALTA: texto detrás de la cabeza (necesita recorte de la persona: Apple Vision person segmentation en la Mac),
+b-roll con diseño y lavados de color. Probado con la propia referencia: marcas en 4.0 s / 64 s / 101 s (la referencia: 5 / 63 / 100).
