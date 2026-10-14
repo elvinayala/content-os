@@ -235,3 +235,11 @@ en prod (`/data/brand`, persistente). (2) Mister iPhone 12–16 s «distorsionad
 armónicos borrados); «voz natural» → `denoise light` = sin aislador (`necesita_aislar`); v12 así. Lo «lento» = 0.9× que pidió
 Elvin (v9). (3) Mood de música `elegante` (4 pistas fal stable-audio-25, sin batería, `/data/music-lib/elegante-*.mp3` +
 music.json con lufs medido): se prefiere sola con mundo serio o letra elegante/delicado/clasico (`elegir(delicada=)`).
+**14/oct · las 6 piezas de Cortex (Elvin: «Claude director, las demás solo trabajan»):** Claude (Opus 5.5, decide todo) ·
+Whisper (fal, `AVE_STT=fal`; WhisperX local no instalado) · **Silero VAD** (`ave/analyze/vad.py`, ONNX sin torch,
+`assets/models/silero_vad.onnx`; `Envelope.voz` filtra en `cuts.build_keep_ranges`: volumen sin voz no es habla, las
+palabras de Whisper siempre se protegen; `AVE_VAD=0` lo apaga) · **Apple Vision** (solo macOS → trabajador en la Mac:
+`scripts/vision-mac/{caras.swift,trabajador.py}` + launchd `com.eamarket.cortex-vision`, config `~/.config/cortex-vision.env`,
+clave `AVE_VISION_SECRETO` en Railway; endpoints `/api/vision/*`; latido < 90 s; sin Mac → YuNet; calibre alto×0.91 =
+face_size de YuNet, medido) · Remotion (Remi, solo el cierre) · FFmpeg (todo lo demás; CRF 18 → 21: −39 % peso, VMAF 95.7).
+Prueba de punta a punta OK (QA 100). Log de la Mac: `~/Library/Logs/cortex-vision.log`.
