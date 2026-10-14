@@ -584,6 +584,15 @@
       "verificado": "tests/test_voice_chain.py 6/6 nuevos; suite completa 263 passed, 1 skipped, 1 failed (test_full_render_and_qa, el de siempre por ffmpeg del sandbox, no por este cambio). 0 renders en cola antes de desplegar. md5 de audio.py idéntico local/prod tras el deploy (309949b4...). Medido en el proyecto real: voz (work/voice.wav) retumbo bajó de 15.8 dB (v2) a 10.7 dB (v3); QA pass 100 en v3. Avisé a María en #cortex-bori-edit-videos con node bajo ave.notify.slack, explicando la causa y que el audio original sigue siendo de calidad baja de por sí (no prometí perfección).",
       "commit": "903f108",
       "pendiente": "Falta que María escuche v3 y confirme si suena mejor o si hace falta seguir ajustando; la mejora es real y medida pero modesta (el audio fuente de la clienta sigue siendo de baja calidad)."
+    },
+    {
+      "fecha": "2026-10-14T21:20:00Z",
+      "plataforma": "Resuelto (agente en Railway)",
+      "que": "[Solicitud de Aure #324, aprobada por Elvin] Calculadora de precios privada: /calcular-precio?k=... (sin login) donde Aure describe el trabajo o sube una foto y Claude lo matchea contra data/menu.json; si calza, da el precio fijo + cargos (coordinación/materiales/emergencia). Para lo que NO está en el menú, Elvin decidió (\"déjala personalizada para esos\") que NO se invente un número: se marca cotización PERSONALIZADA y pide anotar detalles para que se cotice con criterio propio. src/calculadora-precio.ts nuevo, montado en index.ts junto al cotizadorRouter.",
+      "porque": "Aure pidió no depender de Elvin para cotizar cuando él no está; Elvin aprobó el plan (#324) y definió que lo fuera del menú quede personalizado.",
+      "verificado": "npm run build OK (mismo patrón de tipos ya tolerado en todo el repo, 230 errores preexistentes sin cambio); probado local con servidor de prueba: HTML con k válido 200, k inválido 403, POST sin k 401, POST vacío 400. NO DESPLEGADO: mi token de Railway no tiene acceso al proyecto resuelto (railway link y railway list dan Unauthorized/Project not found; sí funciona para cortex con el mismo token, así que es un scope específico). Código pusheado a GitHub (cc86353).",
+      "commit": "cc86353",
+      "pendienteElvin": "Desplegar desde la Mac: cd vault/proyectos/plomeria-pr/agente && npx @railway/cli up --detach (o darme acceso al proyecto resuelto en Railway). Después, probar /calcular-precio en vivo (necesita ANTHROPIC_API_KEY, que ya está configurado para el chat del agente) y mandarle el link a Aure."
     }
   ],
   "pendientesElvin": [
@@ -625,5 +634,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-14T19:25:00Z"
+  "actualizadoEl": "2026-10-14T21:20:00Z"
 }
