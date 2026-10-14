@@ -118,6 +118,12 @@ const mezclar = (h: string, con: string, p: number) => {
 export function temaCliente(c: TemaCliente): TemaMarca {
   const fuente = (FUENTES[c.fuente || "Inter"] || FUENTES.Inter)();
   const monoF = mono("normal", { weights: ["400", "600"], subsets: ["latin"] }).fontFamily;
+  // el texto del botón contrasta con el BOTÓN (su acento), no con el fondo: LUA tenía acento blanco sobre rosado y el CTA
+  // salía blanco sobre blanco, un cuadro vacío (María, 15/oct)
+  const textoSobre = (boton: string, fondo: string) => {
+    const l = (h: string) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    return l(boton) > 0.6 ? (l(fondo) > 0.6 ? "#121212" : mezclar(fondo, "#000000", 0.45)) : "#ffffff";
+  };
   const oscuro = parseInt(c.fondo.slice(1, 3), 16) + parseInt(c.fondo.slice(3, 5), 16) + parseInt(c.fondo.slice(5, 7), 16) < 384;
   const texto = c.texto || (oscuro ? "#F4F4F5" : "#111114");
   const acento2 = c.acento2 || mezclar(c.acento, oscuro ? "#ffffff" : "#000000", 0.35);
@@ -172,7 +178,7 @@ export function temaCliente(c: TemaCliente): TemaMarca {
     id: "level-up", // no se usa para buscar el tema: el tema viene armado
     nombre: c.nombre, fuente, mono: monoF, fuenteAcento: c.fuenteAcento && ACENTOS[c.fuenteAcento] ? ACENTOS[c.fuenteAcento]() : undefined,
     fondo: c.fondo, superficie: mezclar(c.fondo, oscuro ? "#ffffff" : "#000000", 0.06), borde: mezclar(c.fondo, oscuro ? "#ffffff" : "#000000", 0.16),
-    texto, gris: hex(texto, 0.62), acento: c.acento, acento2, alarma: "#FF5A4E", textoCta: oscuro ? mezclar(c.fondo, "#000000", 0.2) : "#ffffff",
+    texto, gris: hex(texto, 0.62), acento: c.acento, acento2, alarma: "#FF5A4E", textoCta: textoSobre(c.acento, c.fondo),
     gradiente: `linear-gradient(120deg, ${c.acento} 0%, ${acento2} 100%)`, brillo: mezclar(c.fondo, c.acento, 0.25), brillo2: mezclar(c.fondo, acento2, 0.2),
     musica: c.musica || "audio/lu-musica.mp3", Logo, Firma,
     Motivo: c.motivo === "fibras" ? () => <Fibras paleta={c.paletaMotivo ?? PALETA_FIBRAS} /> : undefined,
