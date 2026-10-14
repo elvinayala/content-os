@@ -567,6 +567,23 @@
       "porque": "prueba local de /api/fundador/cupos",
       "verificado": "tablas con 0 filas; pendiente OK de Elvin para borrarlas",
       "commit": "-"
+    },
+    {
+      "fecha": "2026-10-14T02:30:00Z",
+      "plataforma": "cortex",
+      "que": "[Solicitud #320] TTS con ElevenLabs para proyectos sin audio grabado: generar_voz_ia() con API ElevenLabs (voz genérica fija es-PR, Gabriel neutral) en ave/audio/tts.py. Integración en ave/ingest/voz.py: detecta guion sin audio → TTS automático. Pipeline (ave/pipeline.py) acepta parámetro guion en EditOptions. Endpoint /upload/{token} acepta campo 'guion' de texto → encola proyecto con voz IA. Así: estratega pega guion (sin audio ni video) → Cortex genera voz con TTS → pipeline de voz en off (recorte, casar tomas, b-roll) igual que con audio grabado.",
+      "porque": "Elvin aprobó #320 con Opus: 1 cliente, guion entregado, voz genérica (sin selector).",
+      "verificado": "pytest 6/6 (tests_tts.py + suite existente); build de Vercel OK; deploy a Railway con npx @railway/cli up --detach completó OK; prod: https://edit.heybori.ai/api/v1/health → 200; tests_voz.py sin fallos; tests_intake.py sin fallos; tests_pipeline.py sin fallos.",
+      "commit": "55cb7bd"
+    },
+    {
+      "fecha": "2026-10-14T19:25:00Z",
+      "plataforma": "cortex",
+      "que": "Elvin mandó captura de María en #cortex-bori-edit-videos (Dra. Yamilet Escabi Quiles, proyecto 20261014-180037-proceso-compensaci-n-y-pension-5tomas): 'el audio ORIGINAL se escucha muy mal... con la IA se escucha distorsionado... le pedí mejorarlo pero creo que empeoró'. Diagnóstico medido en el proyecto real (SSH a railway-cortex): v1 usó el aislador de IA (denoise auto/medium) → distorsión ya documentada; la revisión de María generó v2 (denoise=light, sin aislador, como ya estaba diseñado) pero el afftdn (denoise espectral) seguía reintroduciendo el retumbo de graves como artefacto (medí: voice_cut.wav crudo retumbo 9.6 dB → con afftdn light+highpass80 subía a 18.9 dB; con SOLO subir el highpass a 150 Hz sin afftdn bajaba a 4.8 dB). Causa real: el ruido de este audio es retumbo de graves (zumbido ambiental), no ruido de banda ancha, y afftdn no es la herramienta correcta para eso. Arreglo: ave/adapters/ffmpeg/audio.py, voice_chain() ahora recibe el retumbo medido; si es > 8 dB y no hay denoise medium/strong activo (que ya implica aislador aparte), sube el highpass a 150 Hz (por debajo del fundamental de voz adulta, se pierde poco timbre). Desplegado y aplicado una v3 al proyecto real con el override ya existente (denoise=light) para forzar la recomposición con el highpass corregido.",
+      "porque": "Elvin mandó la captura por Telegram pidiendo ayuda directa con el caso.",
+      "verificado": "tests/test_voice_chain.py 6/6 nuevos; suite completa 263 passed, 1 skipped, 1 failed (test_full_render_and_qa, el de siempre por ffmpeg del sandbox, no por este cambio). 0 renders en cola antes de desplegar. md5 de audio.py idéntico local/prod tras el deploy (309949b4...). Medido en el proyecto real: voz (work/voice.wav) retumbo bajó de 15.8 dB (v2) a 10.7 dB (v3); QA pass 100 en v3. Avisé a María en #cortex-bori-edit-videos con node bajo ave.notify.slack, explicando la causa y que el audio original sigue siendo de calidad baja de por sí (no prometí perfección).",
+      "commit": "903f108",
+      "pendiente": "Falta que María escuche v3 y confirme si suena mejor o si hace falta seguir ajustando; la mejora es real y medida pero modesta (el audio fuente de la clienta sigue siendo de baja calidad)."
     }
   ],
   "pendientesElvin": [
@@ -608,14 +625,5 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-    {
-      "fecha": "2026-10-14T02:30:00Z",
-      "plataforma": "cortex",
-      "que": "[Solicitud #320] TTS con ElevenLabs para proyectos sin audio grabado: generar_voz_ia() con API ElevenLabs (voz genérica fija es-PR, Gabriel neutral) en ave/audio/tts.py. Integración en ave/ingest/voz.py: detecta guion sin audio → TTS automático. Pipeline (ave/pipeline.py) acepta parámetro guion en EditOptions. Endpoint /upload/{token} acepta campo 'guion' de texto → encola proyecto con voz IA. Así: estratega pega guion (sin audio ni video) → Cortex genera voz con TTS → pipeline de voz en off (recorte, casar tomas, b-roll) igual que con audio grabado.",
-      "porque": "Elvin aprobó #320 con Opus: 1 cliente, guion entregado, voz genérica (sin selector).",
-      "verificado": "pytest 6/6 (tests_tts.py + suite existente); build de Vercel OK; deploy a Railway con npx @railway/cli up --detach completó OK; prod: https://edit.heybori.ai/api/v1/health → 200; tests_voz.py sin fallos; tests_intake.py sin fallos; tests_pipeline.py sin fallos.",
-      "commit": "55cb7bd"
-    }
-  ],
-  "actualizadoEl": "2026-10-14T02:30:00Z"
+  "actualizadoEl": "2026-10-14T19:25:00Z"
 }
