@@ -26,7 +26,12 @@ export type Elemento =
   | { tipo: "anillo"; pct: number; etiqueta?: string; color: string; x: number; y: number; diametro: number }
   | { tipo: "icono"; src: string; lado: "left" | "right"; x: number; y: number; escala: number }
   | { tipo: "cursor"; src: string; x: number; y: number }
-  | { tipo: "lluvia"; src: string; cantidad: number; escala: number; apilar: boolean; desdeY?: number | null; semilla: number };
+  | { tipo: "lluvia"; src: string; cantidad: number; escala: number; apilar: boolean; desdeY?: number | null; semilla: number }
+  // testimonio (referencia Giovanni Ayala · Cars Auto Sales, 14/oct)
+  | { tipo: "logo"; src: string; x: number; y: number; escala: number }
+  | { tipo: "rotulo"; pre: string; nombre: string; cargo: string; color: string; x: number; y: number }
+  | { tipo: "etiqueta"; texto: string; color: string; x: number; y: number; cursor: string }
+  | { tipo: "link"; texto: string; color: string; x: number; y: number; cursor: string };
 
 export type PropsCapa = { ancho: number; alto: number; fps: number; dur: number; fuente: Fuente; elemento: Elemento };
 
@@ -165,6 +170,107 @@ const Lluvia: React.FC<{ e: Extract<Elemento, { tipo: "lluvia" }> }> = ({ e }) =
   );
 };
 
+// ---- testimonio ----
+const LogoNegocio: React.FC<{ e: Extract<Elemento, { tipo: "logo" }> }> = ({ e }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const lado = W * e.escala;
+  const pop = spring({ frame, fps, config: { damping: 10, stiffness: 150, mass: 0.7 } });
+  const brillo = interpolate(frame, [0, 8, 24], [0, 1, 0.45], { extrapolateRight: "clamp" });
+  const flota = Math.sin((frame / fps) * 2.2) * lado * 0.025;
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      <Img src={e.src} style={{ position: "absolute", left: e.x * W, top: e.y * H + flota, width: lado, height: lado, objectFit: "contain",
+        transform: `translate(-50%,-50%) scale(${interpolate(pop, [0, 1], [0.4, 1])})`,
+        filter: `drop-shadow(0 0 ${lado * 0.08 * brillo}px rgba(255,255,255,0.95)) drop-shadow(0 ${lado * 0.05}px ${lado * 0.07}px rgba(0,0,0,0.45))` }} />
+    </AbsoluteFill>
+  );
+};
+
+const Rotulo: React.FC<{ e: Extract<Elemento, { tipo: "rotulo" }>; f: string }> = ({ e, f }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const B = base(W, H);
+  const entra = (d: number) => spring({ frame: frame - d, fps, config: { damping: 14, stiffness: 140 } });
+  const fila = (d: number): React.CSSProperties => ({ opacity: entra(d), transform: `translateY(${(1 - entra(d)) * B * 0.04}px)` });
+  const tam = B * 0.115;   // medido en la referencia: el nombre ocupa ~55 % del ancho
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      <div style={{ position: "absolute", left: e.x * W, top: e.y * H, transform: "translate(-50%,-50%)", textAlign: "center", whiteSpace: "nowrap", fontFamily: f, lineHeight: 1 }}>
+        <div style={{ ...fila(0), color: "#fff", fontWeight: 600, fontSize: tam * 0.36, textShadow: "0 3px 8px rgba(0,0,0,0.7)" }}>{e.pre}</div>
+        <div style={{ ...fila(3), fontWeight: 900, fontSize: tam, letterSpacing: -tam * 0.03, marginTop: tam * 0.06,
+          background: `linear-gradient(180deg, #FFF3B0 0%, ${e.color} 55%, #B8860B 100%)`, WebkitBackgroundClip: "text", color: "transparent",
+          filter: "drop-shadow(0 4px 0 rgba(60,40,0,0.85)) drop-shadow(0 8px 14px rgba(0,0,0,0.55))" }}>{e.nombre}</div>
+        {e.cargo ? <div style={{ ...fila(7), color: "#fff", fontWeight: 600, fontSize: tam * 0.36, marginTop: tam * 0.1, textShadow: "0 3px 8px rgba(0,0,0,0.7)" }}>{e.cargo}</div> : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const CursorClic: React.FC<{ src: string; x: number; y: number; desde: number }> = ({ src, x, y, desde }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H } = useVideoConfig();
+  const lado = W * 0.085, viaje = Math.round(0.45 * fps);
+  const p = interpolate(frame - desde, [0, viaje], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  if (frame < desde) return null;
+  const clic = frame - desde - viaje;
+  const onda = interpolate(clic, [1, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const cx = interpolate(p, [0, 1], [W * 0.95, x]), cy = interpolate(p, [0, 1], [H * 0.95, y]);
+  return (
+    <>
+      {onda > 0 && onda < 1 ? <div style={{ position: "absolute", left: x, top: y, width: lado * 1.5 * onda, height: lado * 1.5 * onda, borderRadius: "50%",
+        border: `${lado * 0.05}px solid rgba(255,255,255,${1 - onda})`, transform: "translate(-50%,-50%)" }} /> : null}
+      <Img src={src} style={{ position: "absolute", left: cx, top: cy, width: lado, transform: `scale(${clic > 1 && clic < 6 ? 0.86 : 1})`, transformOrigin: "top left",
+        filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.45))" }} />
+    </>
+  );
+};
+
+const Etiqueta: React.FC<{ e: Extract<Elemento, { tipo: "etiqueta" }>; f: string }> = ({ e, f }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const B = base(W, H);
+  const tam = B * 0.145;   // referencia: «TRÁFICO» ocupa ~50 % del ancho
+  const glitch = frame < 6 ? (random(`g${frame}`) - 0.5) * tam * 0.5 : 0;
+  const ancho = interpolate(spring({ frame, fps, config: { damping: 16, stiffness: 180 } }), [0, 1], [0, 1]);
+  // borde de brocha: polígono con muescas deterministas
+  const pts: string[] = [];
+  for (let i = 0; i <= 24; i++) pts.push(`${(i / 24) * 100}% ${random(`t${i}`) * 9}%`);
+  for (let i = 24; i >= 0; i--) pts.push(`${(i / 24) * 100}% ${100 - random(`b${i}`) * 9}%`);
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      <div style={{ position: "absolute", left: e.x * W + glitch, top: e.y * H, transform: `translate(-50%,-50%) scaleX(${ancho})`, padding: `${tam * 0.18}px ${tam * 0.4}px`,
+        background: e.color, clipPath: `polygon(${pts.join(",")})`, boxShadow: `0 0 ${tam * 0.4}px ${e.color}` }}>
+        <div style={{ fontFamily: f, fontWeight: 900, fontSize: tam, letterSpacing: tam * 0.02, color: "#0B0B0B", lineHeight: 1, whiteSpace: "nowrap",
+          textShadow: frame < 6 ? `${tam * 0.06}px 0 rgba(0,200,255,0.8), ${-tam * 0.06}px 0 rgba(255,0,80,0.8)` : "none" }}>{e.texto}</div>
+      </div>
+      <CursorClic src={e.cursor} x={e.x * W + W * 0.22} y={e.y * H + tam * 0.35} desde={Math.round(0.5 * fps)} />
+    </AbsoluteFill>
+  );
+};
+
+const PastillaLink: React.FC<{ e: Extract<Elemento, { tipo: "link" }>; f: string }> = ({ e, f }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const B = base(W, H);
+  const tam = B * 0.072;   // referencia: la pastilla ocupa ~55 % del ancho
+  const pop = spring({ frame, fps, config: { damping: 12, stiffness: 160 } });
+  const ciclo = (frame % Math.round(1.4 * fps)) / Math.round(1.4 * fps);
+  const latido = 0.75 + 0.25 * Math.sin((frame / fps) * Math.PI * 2);
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      <div style={{ position: "absolute", left: e.x * W, top: e.y * H, transform: `translate(-50%,-50%) scale(${interpolate(pop, [0, 1], [0.6, 1])})`,
+        padding: `${tam * 0.45}px ${tam * 0.9}px`, borderRadius: tam * 0.35, background: `linear-gradient(180deg, #FF4D55, ${e.color})`, overflow: "hidden",
+        boxShadow: `0 0 ${tam * 0.9 * latido}px ${e.color}, 0 0 ${tam * 0.3}px rgba(255,255,255,0.5) inset` }}>
+        <div style={{ fontFamily: f, fontWeight: 900, fontSize: tam, letterSpacing: tam * 0.08, color: "#fff", lineHeight: 1, whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.35)" }}>{e.texto}</div>
+        <div style={{ position: "absolute", top: "-50%", bottom: "-50%", width: tam * 0.6, left: `${interpolate(ciclo, [0, 0.5, 1], [-20, 120, 120])}%`,
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.75), transparent)", transform: "rotate(20deg)" }} />
+      </div>
+      <CursorClic src={e.cursor} x={e.x * W + W * 0.25} y={e.y * H + tam * 0.4} desde={Math.round(0.6 * fps)} />
+    </AbsoluteFill>
+  );
+};
+
 export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
   const f = FUENTES[fuente] ?? FUENTES.inter;
   const peso = PESO[fuente] ?? 900;
@@ -174,6 +280,10 @@ export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
     case "icono": return <Icono e={elemento} />;
     case "cursor": return <Cursor e={elemento} />;
     case "lluvia": return <Lluvia e={elemento} />;
+    case "logo": return <LogoNegocio e={elemento} />;
+    case "rotulo": return <Rotulo e={elemento} f={f} />;
+    case "etiqueta": return <Etiqueta e={elemento} f={f} />;
+    case "link": return <PastillaLink e={elemento} f={f} />;
   }
 };
 
