@@ -608,5 +608,14 @@
     },
     "Fathom → Slack (#29): pasar el API key de Fathom (Settings → API Access) e invitar al bot Command Center a #office-2-resumendellamadas (/invite)."
   ],
-  "actualizadoEl": "2026-10-09T19:23:27.503Z"
+    {
+      "fecha": "2026-10-14T02:30:00Z",
+      "plataforma": "cortex",
+      "que": "[Solicitud #320] TTS con ElevenLabs para proyectos sin audio grabado: generar_voz_ia() con API ElevenLabs (voz genérica fija es-PR, Gabriel neutral) en ave/audio/tts.py. Integración en ave/ingest/voz.py: detecta guion sin audio → TTS automático. Pipeline (ave/pipeline.py) acepta parámetro guion en EditOptions. Endpoint /upload/{token} acepta campo 'guion' de texto → encola proyecto con voz IA. Así: estratega pega guion (sin audio ni video) → Cortex genera voz con TTS → pipeline de voz en off (recorte, casar tomas, b-roll) igual que con audio grabado.",
+      "porque": "Elvin aprobó #320 con Opus: 1 cliente, guion entregado, voz genérica (sin selector).",
+      "verificado": "pytest 6/6 (tests_tts.py + suite existente); build de Vercel OK; deploy a Railway con npx @railway/cli up --detach completó OK; prod: https://edit.heybori.ai/api/v1/health → 200; tests_voz.py sin fallos; tests_intake.py sin fallos; tests_pipeline.py sin fallos.",
+      "commit": "55cb7bd"
+    }
+  ],
+  "actualizadoEl": "2026-10-14T02:30:00Z"
 }
