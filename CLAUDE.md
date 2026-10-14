@@ -814,7 +814,16 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   para el vendedor · Pulso del diario por puesto (`pulso` en `armarArena`, suma por día) · Carrera con podio y pestañas ·
   Ranking con barras vs `METAS_DIARIAS` · KPIs del equipo como mapa de calor. Avisado el equipo por DM (Laura = Slack Connect:
   borrador para que Elvin lo mande).
-  **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
+  **Cierres por industria y género (14/oct, Elvin: "para saber qué closer es el mejor, con qué industria y si es hombre o mujer")**:
+  en Mi diario, por cada "cerrada", el closer marca la industria (`INDUSTRIAS_CIERRE`, 14 grupos sacados de Pulse) y hombre/mujer
+  (obligatorio si hay cierres; `limpiarCierres`); se guarda en `desempeno_ventas_diario.cierres` (migración 0044). El director y la
+  dirección ven la tabla "Cierres por industria y género" por closer en el rango (`resumenCierres`, tests en `tests/ventas.test.mjs`).
+  Solo cierres, no demos por industria: el close rate por industria pediría marcar también las demos.
+  **Tesorera (María García, 14/oct, Elvin: "debe subir las ventas del día en Ritmo")**: al marcar salida reporta en US$ ventas nuevas,
+  cobros de cuotas, mensualidades/recurrentes, renovaciones/upsells y reembolsos, con el detalle de quién (`KPIS_REPORTADOS.tesoreria`;
+  el formulario de salida ya acepta montos con centavos, antes recortaba a 50). Mientras la hoja de ventas no esté conectada, el resumen
+  de las 8:30 PM toma de ahí las ventas de la marca de la tesorera (`ventasDesdeTesoreria`, `ventasDeReporte`); si no ha reportado, lo dice.
+    **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
   candidato a bono), con nivel y recomendaciones (`rankingVentas` en `lib/ventas/reglas.ts`, tests en `tests/ventas.test.mjs`).
