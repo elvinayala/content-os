@@ -10,6 +10,9 @@ import { loadFont as cargarMontserrat } from "@remotion/google-fonts/Montserrat"
 import { loadFont as cargarPoppins } from "@remotion/google-fonts/Poppins";
 import { loadFont as cargarDmSerif } from "@remotion/google-fonts/DMSerifDisplay";
 import { loadFont as cargarCormorant } from "@remotion/google-fonts/CormorantGaramond";
+import { loadFont as cargarAnton } from "@remotion/google-fonts/Anton";
+
+const ANTON = cargarAnton("normal", { weights: ["400"], subsets: ["latin"] }).fontFamily;
 
 const FUENTES = {
   inter: cargarInter("normal", { weights: ["300", "600", "900"], subsets: ["latin"] }).fontFamily,
@@ -31,7 +34,11 @@ export type Elemento =
   | { tipo: "logo"; src: string; x: number; y: number; escala: number }
   | { tipo: "rotulo"; pre: string; nombre: string; cargo: string; color: string; x: number; y: number }
   | { tipo: "etiqueta"; texto: string; color: string; x: number; y: number; cursor: string }
-  | { tipo: "link"; texto: string; color: string; x: number; y: number; cursor: string };
+  | { tipo: "link"; texto: string; color: string; x: number; y: number; cursor: string }
+  // «GIOVANNI AYALA» gigante DETRÁS de la cabeza: esta capa va debajo de la persona recortada (Cortex pone la persona encima)
+  | { tipo: "detras"; texto: string; color: string; y: number }
+  // lavado de luz (light leak morado/dorado) sobre una palabra fuerte
+  | { tipo: "lavado"; colores: string[] };
 
 export type PropsCapa = { ancho: number; alto: number; fps: number; dur: number; fuente: Fuente; elemento: Elemento };
 
@@ -271,6 +278,44 @@ const PastillaLink: React.FC<{ e: Extract<Elemento, { tipo: "link" }>; f: string
   );
 };
 
+const Detras: React.FC<{ e: Extract<Elemento, { tipo: "detras" }> }> = ({ e }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const n = Math.max(4, e.texto.length);
+  // Anton: ~0.46 del alto por letra → que ocupe ~94 % del ancho; estirada ×1.45 en alto como la condensada de la referencia
+  const tam = Math.min(H * 0.26, (W * 0.94) / (n * 0.46));
+  const pop = spring({ frame, fps, config: { damping: 15, stiffness: 150, mass: 0.7 } });
+  const esc = interpolate(pop, [0, 1], [1.35, 1]);
+  const desen = interpolate(frame, [0, 5], [14, 0], { extrapolateRight: "clamp" });
+  const brillo = interpolate(frame, [Math.round(0.35 * fps), Math.round(1.1 * fps)], [-30, 130], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const op = Math.min(interpolate(frame, [0, 3], [0, 1], { extrapolateRight: "clamp" }), salida(frame, durationInFrames, fps));
+  return (
+    <AbsoluteFill style={{ opacity: op }}>
+      <div style={{ position: "absolute", left: W / 2, top: e.y * H, transform: `translate(-50%,-50%) scale(${esc}) scaleY(1.45)`, filter: `blur(${desen}px)`, whiteSpace: "nowrap",
+        fontFamily: ANTON, fontSize: tam, lineHeight: 0.95, letterSpacing: tam * 0.01, textTransform: "uppercase",
+        backgroundImage: `linear-gradient(105deg, rgba(255,255,255,0) ${brillo - 12}%, rgba(255,255,255,0.9) ${brillo}%, rgba(255,255,255,0) ${brillo + 12}%), linear-gradient(180deg, #FFFFFF 18%, ${e.color} 100%)`,
+        WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+        textShadow: "none", WebkitTextStroke: `${Math.max(1, tam * 0.006)}px rgba(255,255,255,0.25)` }}>{e.texto}</div>
+    </AbsoluteFill>
+  );
+};
+
+const Lavado: React.FC<{ e: Extract<Elemento, { tipo: "lavado" }> }> = ({ e }) => {
+  const frame = useCurrentFrame();
+  const { width: W, height: H, durationInFrames } = useVideoConfig();
+  const k = frame / Math.max(1, durationInFrames - 1);
+  const op = interpolate(k, [0, 0.3, 1], [0, 0.62, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const [c1, c2] = [e.colores[0] ?? "#8A3FFC", e.colores[1] ?? "#F5C542"];
+  const x = interpolate(k, [0, 1], [-0.2, 1.1]);
+  return (
+    <AbsoluteFill style={{ opacity: op }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse ${W * 0.9}px ${H * 0.55}px at ${x * W}px ${H * 0.35}px, ${c1}EE, ${c1}00 70%)` }} />
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse ${W * 0.7}px ${H * 0.45}px at ${(1.1 - x) * W}px ${H * 0.75}px, ${c2}CC, ${c2}00 70%)` }} />
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(${100 + k * 40}deg, rgba(255,255,255,0) 30%, rgba(255,240,220,0.35) 50%, rgba(255,255,255,0) 70%)` }} />
+    </AbsoluteFill>
+  );
+};
+
 export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
   const f = FUENTES[fuente] ?? FUENTES.inter;
   const peso = PESO[fuente] ?? 900;
@@ -284,6 +329,8 @@ export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
     case "rotulo": return <Rotulo e={elemento} f={f} />;
     case "etiqueta": return <Etiqueta e={elemento} f={f} />;
     case "link": return <PastillaLink e={elemento} f={f} />;
+    case "detras": return <Detras e={elemento} />;
+    case "lavado": return <Lavado e={elemento} />;
   }
 };
 
