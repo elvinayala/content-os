@@ -122,7 +122,7 @@ const ordenAcciones = (xs: Accion[]) => [...xs].sort((a, b) => a.prioridad - b.p
 
 /** El mensaje del lunes a cada estratega: todas sus cuentas de la semana en uno, con el plazo (miércoles). */
 export function textoSemanal(nombre: string | null, casos: CasoCuenta[], fecha: string): string {
-  const L = [`📋 *Revisión de cuentas · ${diaLargo(fecha)}*`, `${nombre ? `Hola ${esc(nombre.split(" ")[0])} 👋 ` : ""}Esta semana te ${casos.length === 1 ? "toca *1 cuenta*" : `tocan *${casos.length} cuentas*`}. Tienes hasta el *${diaLargo(venceEl(fecha))}* para optimizarlas y marcarlas en Ritmo.`];
+  const L = [`📋 *Revisión de cuentas · ${diaLargo(fecha)}*`, `${nombre ? `Hola ${esc(nombre.split(" ")[0])} 👋 ` : ""}Esta semana te ${casos.length === 1 ? "toca *1 cuenta*" : `tocan *${casos.length} cuentas*`}. Tienes hasta el *${diaLargo(venceEl(fecha))}* para ${casos.length === 1 ? "optimizarla y marcarla" : "optimizarlas y marcarlas"} en Ritmo.`];
   for (const c of casos) {
     const p = progreso(c.acciones);
     L.push("", `*${esc(c.empresa || c.cliente)}* · ${c.estadoCuenta === "no-optimizada" ? "⚠️ no optimizada" : "🚀 para escalar"} · ${p.total === 1 ? "1 punto" : `${p.total} puntos`}`);
