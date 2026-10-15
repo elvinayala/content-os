@@ -1,50 +1,61 @@
 ---
 name: revision-clientes
-description: La revisión de anuncios de un cliente de Level Up con el método de Elvin — costos en máximo → último mes → 7 días → hoy, qué funcionó, qué está caro (se optimiza desde el creativo, no desde la campaña), qué escalar, flyers y videos con CTR único < 2 % para reemplazar y rotar, y frecuencia > 1.8. Usar cuando pidan "revisa a <cliente>", "tengo reunión con <cliente>", "cómo van los anuncios de <cliente>", "revisión de clientes" o "a quién le toca revisión".
+description: La revisión de la cuenta de anuncios de un cliente de Level Up con el método de Elvin — costo por resultado (máx → mes → 7 días → hoy), creativos caros comparados con su CTR (costo alto + CTR bajo = reemplazar ya), qué escalar (< $1 escalar con surf/vertical/horizontal; ~$2 con CTR alto, evaluar), si le falta la estrategia de 5 fases (8 a 12 campañas) y frecuencia > 1.8. El resumen va al estratega y queda en Ritmo para marcar "ejecutado" o por qué no. Usar cuando pidan "revisa a <cliente>", "tengo reunión con <cliente>", "cómo van los anuncios de <cliente>", "revisión de cuentas" o "a quién le toca revisión".
 ejecucion: live
 marcas: [level-up, clientes]
 ---
 
-Eres Max (o quien haga la revisión por él). Esta es la skill de Elvin para revisar clientes; él la usa para entrar a la
-reunión con la data del cliente o ya sabiendo qué ajustar (15/oct/2026).
+Eres Max (o quien haga la revisión por él). Esta es la skill de Elvin para revisar cuentas de clientes (15/oct/2026).
 
 ## Quién y cada cuánto
-- Clientes en **CLIENTE ACTIVO** de LEVEL UP MEDIA (Pulse), con pauta (no los de solo landing page).
-- **Cada 15 días**: acuerdo de **$3,000 o más** (columna "Acuerdo de Pago") o que **pagó $1,500 o más de una**
-  ("Pago Inicial"). **Cada 30 días**: los paquetes pequeños.
-- La tanda sale sola de lunes a viernes a las **7:30 AM PR** por el Telegram de Max (≈ 8 por día; los atrasados
-  primero, después los de acuerdo más grande). `node scripts/revision-clientes.mjs lista` dice a quién le toca.
+- Clientes en **CLIENTE ACTIVO** de LEVEL UP MEDIA (Pulse), con pauta.
+- **Dos veces al mes**: acuerdo de **$3,000 o más** (aunque el pago inicial sea menor) **y** pago inicial de **mínimo
+  $1,500**. **Una vez al mes**: los demás. Los montos los mantiene Carilin en Pulse ("Acuerdo de Pago", "Pago Inicial").
+- La tanda sale sola de lunes a viernes a las **7:30 AM PR** (≈ 8 por día). `node scripts/revision-clientes.mjs lista`
+  dice a quién le toca. Se detiene con `pausa` en `data/meta-ads/revisiones/estado.json`.
 
-## Cómo se revisa (en este orden, siempre)
-1. **Costos**: máximo → último mes → 7 días → hoy (gasto, resultados del objetivo, costo por resultado, CTR único,
-   frecuencia). Si el costo de la semana se movió ±15 % vs. el mes, se dice. Anuncios activos sin gasto hoy = revisar
-   pago/saldo/entrega.
-2. **Lo que ha funcionado** (máximo): creativos con volumen, costo ≤ mediana de la cuenta y CTR único ≥ 2 %.
-3. **Costos elevados** (último mes, activos): costo ≥ 1.5× la mediana o sin resultados con $15+. **Se optimiza desde el
-   creativo, no desde la campaña**: la acción es cambiar el creativo, no tocar públicos ni presupuesto.
-4. **Qué escalar**: gana en el mes **y** sigue ganando esta semana, CTR ≥ 2 %, frecuencia ≤ 1.8. Escalar = +10-20 %
-   o duplicar a público nuevo, **siempre con el OK de Elvin** (`meta-ads.mjs … escalar <adsetId> --pct 15` deja la
-   propuesta en #max-aprobaciones).
-5. **Flyers y videos**: CTR único < 2 % → pedir el reemplazo y rotarlos. Los que todavía pasan pero cayeron 25 %+ en 7
-   días "se están cansando": tener el relevo listo.
-6. **Frecuencia**: tope **1.8** en el último mes por anuncio activo → rotar el creativo o abrir el público.
-7. **Qué ajustaría**: máximo 4 acciones; creativos nuevos máximo 3 por revisión (primero los que no enganchan, después
-   los caros), con el ángulo del que funciona.
+## El resumen (claro, con espacios, pocos emojis)
+1. 💰 **Costo por resultado**: Máx · Mes · 7 días · Hoy (y lo gastado en el mes).
+2. **Primero los creativos más caros, comparados con el CTR** (último mes, solo lo prendido):
+   - 🔴 **Reemplazar ya**: costo alto (≥ 1.5× la mediana de la cuenta; en conversaciones, además ≥ $3) **y** CTR < 2 %.
+   - 🟠 **Costo alto** con buen CTR: revisar oferta o gancho.
+   - 🟡 **CTR bajo de 2 %** aunque el costo no sea alto: rotar.
+   Se optimiza **desde el creativo, no desde la campaña**.
+3. 🚀 **Escalar** (conversaciones): **< $1** con CTR ≥ 2 % → pedir escalar: **surf** (si está bajo $0.99), vertical u
+   horizontal — el trafficker escoge. **Hasta $2 con CTR alto** (≥ 3 %) → evaluar. Siempre que siga bien esta semana.
+   Otros objetivos: contra la mediana de la cuenta.
+4. 📐 **Estrategia de 5 fases** (8 a 12 campañas activas):
+   - Fase 1: tráfico al perfil de Instagram + reconocimiento ThruPlay.
+   - Fase 2: ventas (WhatsApp/mensajes → conversaciones; landing → leads; tienda → compras/ROAS), **3 a 4 campañas**
+     (video, flyers, carrusel o flexible).
+   - Fase 3: remarketing a tibios y calientes, **mínimo 2** (video + flyers o carrusel).
+   - Fase 4: ThruPlay a público de 365 días.
+   - Fase 5: escalar lo que funciona.
+   La fase sale del nombre de la campaña ("FASE 2 / VENTAS WHATSAPP…"); si no lo dice, del objetivo y el público. Más de
+   12 activas = consolidar.
+5. 🔁 **Frecuencia > 1.8** en el último mes → rotar el creativo o abrir el público.
 
-Notas: la unidad es el **creativo** (el mismo flyer en 3 conjuntos es uno; el mismo video publicado en FB e IG el mismo
-día, también). CTR = **CTR único** de Meta (`unique_ctr`). El resultado es el del objetivo de la campaña (conversaciones,
-leads, compras…). Reglas puras y probadas en `scripts/meta-ads/revision.mjs` (tests `tests/revision-clientes.test.mjs`).
+Estado de la cuenta: ⚠️ **Cuenta no optimizada** si hay algo que corregir · ✅ con algo para escalar · ✅ al día.
+La unidad es el **creativo** (el mismo flyer en varios conjuntos, o el mismo post en FB e IG, es uno). CTR = **CTR único**
+de Meta. Reglas puras en `scripts/meta-ads/revision.mjs` (tests `tests/revision-clientes.test.mjs`).
+
+## El seguimiento (que lo hagan)
+- Cada punto del resumen es una acción en **Ritmo → Cuentas** (`/ritmo/cuentas`). El estratega marca **Ejecutado**, o
+  **No se hizo** con el porqué (obligatorio).
+- La **dirección de tráfico** (María del Carmen, Juan Diego, Carilin) ve todas las cuentas, el cumplimiento por estratega,
+  marca la cuenta **"Ya está bien"** o le **pide optimización** (le llega por Slack).
+- 2 días hábiles con puntos sin marcar → recordatorio al estratega; 4 → aviso a la dirección de tráfico.
+- Encendido con `REVISION_CUENTAS=on` (Vercel). Antes: vista previa, solo Elvin ve los casos y no se le escribe a nadie.
 
 ## Cómo correrla
 - Un cliente ya (antes de una reunión): `node scripts/revision-clientes.mjs cliente "<nombre | negocio | cuenta>"`
-  (`--enviar` se lo manda a Elvin por Telegram y lo marca revisado).
-- La tanda del día: `node scripts/revision-clientes.mjs hoy` (ver) · `hoy --enviar` (una sola tanda por día).
-- Al contestarle a Elvin: el reporte tal cual + 1-2 líneas de criterio tuyo si ves algo que las reglas no ven
-  (p. ej. el ángulo detrás de los ganadores, un cliente que empezó hace poco y todavía aprende).
+  (`--enviar` a Elvin por Telegram; `--caso` además lo abre en Ritmo para el estratega).
+- La tanda del día: `node scripts/revision-clientes.mjs hoy` (ver) · `hoy --enviar` (una por día).
+- Al contestarle a Elvin: el resumen tal cual + 1-2 líneas de criterio si ves algo que las reglas no ven.
 
 ## Reglas duras
-- Solo lectura: la revisión no pausa, no cambia presupuestos, no prende nada.
-- Solo a Elvin. Nada al cliente ni al equipo sin su OK (el estratega se entera por Elvin o por lo que él apruebe).
-- Si Meta no deja leer la cuenta, el reporte lo dice: hay que compartirla con el portafolio Level Up
-  (836808821982174) con acceso a anuncios. Sin ID en Pulse, también.
+- Solo lectura de Meta: la revisión no pausa, no cambia presupuestos, no prende nada. Escalar lo hace el trafficker.
+- Al cliente nunca. Al estratega solo por Ritmo/Slack del bot cuando está encendido.
+- Si Meta no deja leer la cuenta o falta el ID en Pulse, el caso lo pide (compartir con el portafolio Level Up
+  836808821982174 con acceso a anuncios / poner el ID).
 - Nunca inventar números ni ángulos.

@@ -9,6 +9,7 @@ import { pendientesDe } from "@/lib/desempeno/solicitudes";
 import { esSoloRitmo, tipoAcceso } from "@/lib/pulse/auth";
 import { leerPerfiles } from "@/lib/desempeno/datos";
 import { veArena } from "@/lib/ventas/datos";
+import { accesoCuentas } from "@/lib/desempeno/optimizaciones";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   const maestro = u.maestro;
   // Todo empleado nuevo completa su ficha antes de usar Ritmo.
   // Todo en paralelo (antes iba uno detrás del otro y cada pestaña esperaba la suma).
-  const [ficha, pendientes, nuevas, arena] = await Promise.all([leerFicha(u.id).catch(() => null), pendientesDe(u).catch(() => 0), vacantesNuevas().catch(() => 0), veArena(u).catch(() => false)]);
+  const [ficha, pendientes, nuevas, arena, cuentas] = await Promise.all([leerFicha(u.id).catch(() => null), pendientesDe(u).catch(() => 0), vacantesNuevas().catch(() => 0), veArena(u).catch(() => false), accesoCuentas(u).catch(() => null)]);
   if (!maestro && fichaPendiente(ficha)) redirect("/ritmo/bienvenida");
   // Botón para volver a Pulse (o a Leads, el equipo de ventas). En ritmo.levelupmediapr.net es otro dominio: link completo.
   const pulse = await (async () => {
@@ -42,7 +43,7 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
   return (
     <>
       <RegistrarApp />
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} pulse={pulse} slack={slack} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} cuentas={!!cuentas} pulse={pulse} slack={slack} />
       <main className="entrada mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
       <footer className="estado-linea mx-auto hidden w-full max-w-6xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>

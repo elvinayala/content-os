@@ -26,9 +26,9 @@ const AVISAR_A = lista(process.env.PULSE_CUENTAS_AVISAR, "jessica@levelupmediapr
 const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "jessica@levelupmediapr.net,carilin@levelupmediapr.net");
 
 /** Estratega asignado por ficha de LEVEL UP MEDIA (la asignación más reciente del tablero Asignación de Estrategas). */
-export async function estrategas(clientes: { id: string; name: string; empresa: string | null }[]): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
+export async function estrategas(clientes: { id: string; name: string; empresa: string | null }[]): Promise<Map<string, { id: string; email: string; nombre: string; slackId: string | null }>> {
   const d = await db();
-  const out = new Map<string, { email: string; nombre: string; slackId: string | null }>();
+  const out = new Map<string, { id: string; email: string; nombre: string; slackId: string | null }>();
   const [b] = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(eq(pulseBoards.slug, "asignacion-estrategas"));
   if (!b) return out;
   const cols = await d.select({ id: pulseColumns.id, title: pulseColumns.title, type: pulseColumns.type }).from(pulseColumns).where(eq(pulseColumns.boardId, b.id));
@@ -59,7 +59,7 @@ export async function estrategas(clientes: { id: string; name: string; empresa: 
   const porId = new Map(personas.map((x) => [x.id, x]));
   for (const [cliente, est] of porCliente) {
     const x = porId.get(est);
-    if (x) out.set(cliente, { email: x.email, nombre: x.nombre, slackId: x.slackId ?? null });
+    if (x) out.set(cliente, { id: x.id, email: x.email, nombre: x.nombre, slackId: x.slackId ?? null });
   }
   return out;
 }

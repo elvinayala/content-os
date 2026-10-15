@@ -24,6 +24,7 @@ export interface ClienteRevision {
   fechaInicio: string | null;
   proximoReporte: string | null;
   estratega: string | null;
+  estrategaId: string | null;
 }
 
 export async function clientesParaRevision(): Promise<ClienteRevision[]> {
@@ -65,6 +66,7 @@ export async function clientesParaRevision(): Promise<ClienteRevision[]> {
         fechaInicio: texto(cInicio, v),
         proximoReporte: texto(cProximo, v),
         estratega: est.get(i.id)?.nombre ?? null,
+        estrategaId: est.get(i.id)?.id ?? null,
       };
     })
     .filter((c) => !/^landing/i.test(c.servicio ?? "")); // sin pauta (solo landing page): no hay anuncios que revisar

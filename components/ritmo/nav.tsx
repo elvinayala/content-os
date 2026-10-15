@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, KeyRound, ListOrdered, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, HeartPulse, IdCard, Inbox, KeyRound, ListOrdered, LogOut, Newspaper, Settings2, ShieldCheck, Smartphone, Timer, Trophy, Users, UsersRound, Wrench } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,7 +13,7 @@ import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, pulse = null, slack = [] }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; pulse?: { href: string; nombre: string } | null; slack?: EspacioSlack[] }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, cuentas = false, pulse = null, slack = [] }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; cuentas?: boolean; pulse?: { href: string; nombre: string } | null; slack?: EspacioSlack[] }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
@@ -22,6 +22,8 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     ...(!equipo && miFicha ? [{ href: `/ritmo/personas/${miFicha}`, nombre: "Mi ficha", icono: IdCard, activo: path.startsWith("/ritmo/personas") }] : []),
     // Arena (ventas): pestaña fija para closers/setters/chatters; la dirección entra desde Hoy (ya no cabe otra).
     ...(arena && !equipo ? [{ href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena") }] : []),
+    // Cuentas por optimizar (15/oct): estrategas con casos y dirección de tráfico. En el teléfono se entra desde Hoy.
+    ...(cuentas && !equipo ? [{ href: "/ritmo/cuentas", nombre: "Cuentas", icono: Wrench, activo: path.startsWith("/ritmo/cuentas"), soloEscritorio: true }] : []),
     { href: "/ritmo/empresa", nombre: "Empresa", icono: Building2, activo: path.startsWith("/ritmo/empresa"), soloEscritorio: true },
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.
@@ -43,6 +45,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
   const extras: ItemMenu[] = equipo
     ? [
         { href: "/ritmo/ranking", nombre: "Ranking", icono: ListOrdered, activo: path.startsWith("/ritmo/ranking"), grupo: "Equipo" },
+        ...(cuentas ? [{ href: "/ritmo/cuentas", nombre: "Cuentas", icono: Wrench, activo: path.startsWith("/ritmo/cuentas"), grupo: "Equipo" }] : []),
         { href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena"), grupo: "Equipo" },
         { href: "/ritmo/calendario", nombre: "Calendario", icono: CalendarDays, activo: path.startsWith("/ritmo/calendario"), grupo: "Equipo" },
         { href: "/ritmo/noticias", nombre: "Noticias", icono: Newspaper, activo: path.startsWith("/ritmo/noticias"), grupo: "Empresa" },

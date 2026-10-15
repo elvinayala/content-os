@@ -1,5 +1,6 @@
-import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, ListOrdered, Newspaper, Plane, ShieldCheck, Trophy, Users, UsersRound } from "lucide-react";
+import { Bot, Briefcase, Building2, CalendarDays, ChevronRight, HeartPulse, Inbox, ListOrdered, Newspaper, Plane, ShieldCheck, Trophy, Users, UsersRound, Wrench } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { diasYHoras } from "@/lib/desempeno/rrhh";
 
 import { EstadoChip, fmtHoras, MiniDias, ScoreBadge } from "@/components/ritmo/piezas";
@@ -22,6 +23,7 @@ import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desemp
 import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { googleListo, miDia } from "@/lib/desempeno/google-cal";
+import { resumenCuentasHoy } from "@/lib/desempeno/optimizaciones";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
 import { accesoArena, armarArena } from "@/lib/ventas/datos";
@@ -70,6 +72,8 @@ export default async function HoyPage() {
   // Mi día (Google Calendar del correo de trabajo): solo si la app de Google está configurada.
   const calendario = googleListo() ? await miDia(u.id, hoy).catch(() => null) : undefined;
   const porFirmar = u.maestro || direccion ? await pendientesDe(u).catch(() => 0) : 0;
+  // Cuentas por optimizar (15/oct): el estratega ve sus puntos sin marcar; la dirección de tráfico, todas las abiertas.
+  const cuentas = await resumenCuentasHoy(u).catch(() => null);
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   const esDireccion = u.maestro || direccion;
@@ -78,6 +82,7 @@ export default async function HoyPage() {
     { href: "/ritmo/equipo", t: "Equipo", d: "Asistencia y KPIs", i: Users },
     { href: "/ritmo/personas", t: "Personas", d: "Fichas y nómina", i: UsersRound },
     { href: "/ritmo/ranking", t: "Ranking", d: "Lo de ayer y el mes", i: ListOrdered },
+    ...(cuentas?.rol === "direccion" ? [{ href: "/ritmo/cuentas", t: "Cuentas", d: "Por optimizar", i: Wrench, n: cuentas.sinMarcar }] : []),
     ...(direccion ? [{ href: "/ritmo/agentes", t: "Agentes", d: "Equipo digital", i: Bot }] : []),
     { href: "/ritmo/arena", t: "Arena", d: "Ventas y comisiones", i: Trophy },
     { href: "/ritmo/solicitudes", t: "Solicitudes", d: "Aprobar y firmar", i: Inbox, n: porFirmar },
@@ -194,6 +199,17 @@ export default async function HoyPage() {
                 </Link>
               ))}
             </section>
+          ) : null}
+
+          {cuentas && !esDireccion ? (
+            <Link href="/ritmo/cuentas" className="panel group flex items-center gap-3 p-4 transition hover:border-primary/40">
+              <Wrench className={cn("size-5", cuentas.sinMarcar ? "text-amber-300" : "text-primary")} />
+              <span className="flex-1 text-sm">
+                <b>{cuentas.rol === "direccion" ? "Cuentas por optimizar" : "Mis cuentas por optimizar"}</b> ·{" "}
+                {cuentas.sinMarcar ? `${cuentas.sinMarcar} ${cuentas.sinMarcar === 1 ? "punto" : "puntos"} sin marcar en ${cuentas.abiertas} ${cuentas.abiertas === 1 ? "cuenta" : "cuentas"}` : cuentas.abiertas ? "todo marcado" : "nada pendiente"}
+              </span>
+              <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
+            </Link>
           ) : null}
 
           {calendario !== undefined ? (

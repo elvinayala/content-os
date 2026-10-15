@@ -1199,21 +1199,30 @@ aprueba como Carilin** (9/oct; publicar campañas sigue siendo de Elvin o Carili
 solo pida cambios). La música del motion se repite hasta el final (`<Audio loop>` en Anuncio.tsx). **Fotos del cliente desde el
 primer segundo**: `foto` en cualquier escena de texto = foto de fondo con velo de su marca y texto blanco (`ConFoto` en escenas.tsx).
 
-## Revisión de clientes por Max (15/oct/2026)
+## Revisión de cuentas de clientes por Max + seguimiento en Ritmo (15/oct/2026)
 
-Elvin: "que Max me envíe el reporte de los clientes para entrar a la reunión con la data o ya saber qué ajustar". Skill
-`.claude/skills/revision-clientes` (cerebro de Max §23). Clientes = CLIENTE ACTIVO de LEVEL UP MEDIA con pauta
-(`GET /api/max?revision=1` → `lib/max/revision-clientes.ts`: acuerdo, pago inicial, cuenta publicitaria, estratega).
-**Cadencia**: acuerdo ≥ $3,000 o pagó ≥ $1,500 de una → cada 15 días; paquetes pequeños → cada 30. **Orden del reporte**:
-costos en máximo → último mes → 7 días → hoy · lo que funcionó · costos elevados (se cambia el creativo, no la campaña) ·
-qué escalar (con su OK) · flyers/videos con CTR único < 2 % a reemplazar y rotar (y los que se cansan) · frecuencia > 1.8 ·
-"Qué ajustaría" (≤ 4). La unidad es el creativo (mismo flyer en varios conjuntos o el mismo post en FB e IG = uno). Reglas
-puras en `scripts/meta-ads/revision.mjs` (tests `tests/revision-clientes.test.mjs`); script `scripts/revision-clientes.mjs
-lista | cliente "<nombre>" [--enviar] | hoy [--enviar]` (solo lectura de Meta; una tanda por día; estado en
-`data/meta-ads/revisiones/estado.json`, lo enviado en `<fecha>.md`). El puente de Max la manda sola L-V desde las 7:30 AM PR
-(`revisionLoop`, `REVISION_HORA`, `REVISION_POR_DIA` = 8, `REVISION_CLIENTES=off` la apaga) por su Telegram + una línea en
-el DM de Slack. 15/oct: de 96 clientes, 67 van cada 15 días y 29 cada 30; Meta no deja leer 6 cuentas (no compartidas con
-acceso a anuncios) y 2 no tienen ID.
+Elvin: "que Max me ayude a revisar clientes… tenemos que saber si lo hicieron". Skill `.claude/skills/revision-clientes`
+(cerebro de Max §23). Clientes = CLIENTE ACTIVO de LEVEL UP MEDIA con pauta (`GET /api/max?revision=1` →
+`lib/max/revision-clientes.ts`: acuerdo, pago inicial, cuenta publicitaria, estratega). **Cadencia**: acuerdo ≥ $3,000 **y**
+pago inicial ≥ $1,500 → dos veces al mes; lo demás → mensual (Carilin verifica los montos en Pulse). **Resumen** (corto, con
+espacios y pocos emojis): costo por resultado máx · mes · 7 días · hoy → 🔴 costo alto + CTR < 2 % (reemplazar ya) · 🟠 costo
+alto con buen CTR · 🟡 CTR < 2 % → 🚀 escalar (conversación < $1: surf/vertical/horizontal; ≤ $2 con CTR ≥ 3 %: evaluar) →
+📐 estrategia de 5 fases (8-12 campañas: F1 tráfico IG + ThruPlay · F2 ventas 3-4 de video/flyers/carrusel · F3 remarketing
+≥ 2 · F4 ThruPlay 365; la fase sale del nombre "FASE N" o del objetivo/público) → 🔁 frecuencia > 1.8. Reglas puras en
+`scripts/meta-ads/revision.mjs` (tests `tests/revision-clientes.test.mjs`); script `scripts/revision-clientes.mjs lista |
+cliente "<nombre>" [--enviar] [--caso] | hoy [--enviar]` (solo lectura de Meta; una tanda por día; `pausa` en
+`data/meta-ads/revisiones/estado.json` la detiene). El puente de Max la corre L-V desde las 7:30 AM PR (`revisionLoop`,
+`REVISION_HORA`, `REVISION_POR_DIA` = 8, `REVISION_CLIENTES=off`).
+**Seguimiento en Ritmo** (`/ritmo/cuentas`): cada resumen con algo que hacer abre un **caso** (`desempeno_optimizaciones`, SQL
+directo en `lib/desempeno/optimizaciones.ts`; reglas puras `optimizaciones-reglas.ts`, tests `tests/optimizaciones.test.mjs`)
+vía `POST /api/max {accion:"revision-caso"}` (el estratega sale de Pulse, no del script). El estratega marca cada punto
+**Ejecutado** o **No se hizo + por qué**; la **dirección de tráfico** (`RITMO_DIRECTORES_TRAFICO`: maria.valencia@,
+juan.guzman@, carilin@ + admin/editoras) ve todo y el cumplimiento por estratega (marcó / ejecutó, 30 días), cierra
+("Ya está bien") o **pide optimización** (DM al estratega). Una revisión nueva reemplaza al caso abierto. `revision-seguimiento`:
+2 días hábiles sin marcar → recordatorio al estratega; 4 → aviso a la dirección. Tarjeta en Hoy, acceso "Cuentas" (maestra),
+pestaña en escritorio. **Encendido con `REVISION_CUENTAS=on`** (Vercel); antes es vista previa: casos `simulacion`, solo Elvin
+(admin) los ve y nadie recibe nada. 15/oct: en pausa hasta que Carilin verifique los montos (le escribió Max desde la cuenta de
+Elvin); con los montos de ese día: 29 dos veces al mes, 67 mensual; 6 cuentas sin permiso de lectura y 2 sin ID.
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
