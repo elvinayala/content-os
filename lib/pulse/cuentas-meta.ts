@@ -26,7 +26,7 @@ const AVISAR_A = lista(process.env.PULSE_CUENTAS_AVISAR, "jessica@levelupmediapr
 const SIN_ESTRATEGA = lista(process.env.PULSE_CUENTAS_SIN_ESTRATEGA, "jessica@levelupmediapr.net,carilin@levelupmediapr.net");
 
 /** Estratega asignado por ficha de LEVEL UP MEDIA (la asignación más reciente del tablero Asignación de Estrategas). */
-async function estrategas(clientes: { id: string; name: string; empresa: string | null }[]): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
+export async function estrategas(clientes: { id: string; name: string; empresa: string | null }[]): Promise<Map<string, { email: string; nombre: string; slackId: string | null }>> {
   const d = await db();
   const out = new Map<string, { email: string; nombre: string; slackId: string | null }>();
   const [b] = await d.select({ id: pulseBoards.id }).from(pulseBoards).where(eq(pulseBoards.slug, "asignacion-estrategas"));

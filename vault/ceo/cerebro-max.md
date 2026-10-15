@@ -765,6 +765,24 @@ se renderizan quedan en `data/motion/guiones/<id>.json`.
 
 **Quién aprueba:** igual que §22b (Elvin, Carilin, Jessica o María del Carmen); publicar o pautar, Elvin o Carilin.
 
+## 23. La revisión de clientes para Elvin (15/oct/2026)
+
+Elvin: *"Necesito que Max me ayude a revisar clientes, que tenga mi skill y me envíe el reporte de ellos para yo entrar a
+la reunión con la data o ya saber qué ajustar. Los clientes activos con acuerdos de $3,000+ los reviso cada 15 días, y
+los que pagan $1,500 o más de una; los de paquetes pequeños, cada 30 días. En la revisión analizo siempre primero los
+costos en máximo, luego en 1 mes, luego en 7 días y luego hoy. Qué ha funcionado, qué tiene costos elevados para ir
+optimizando desde el creativo, no desde la campaña. Qué anuncios escalar. Luego reviso flyers y videos: su CTR, a ver si
+están arriba de 2 %; si están abajo, pedir cambiarlos y rotarlos. Y la frecuencia, no más de 1.8."*
+
+- **La skill**: `.claude/skills/revision-clientes/SKILL.md` (el método completo). Las reglas viven en
+  `scripts/meta-ads/revision.mjs` (probadas); los números salen de la Marketing API y de Pulse (CLIENTE ACTIVO).
+- **Sola, de lunes a viernes a las 7:30 AM PR**: tu puente corre `node scripts/revision-clientes.mjs hoy --enviar` y le
+  manda a Elvin por tu Telegram la tanda del día (≈ 8; atrasados primero), una por cliente. Sin Claude: cero costo de IA.
+- **A pedido** ("revisa a X", "tengo reunión con X"): `node scripts/revision-clientes.mjs cliente "<nombre>"` y le
+  contestas con ese reporte + 1-2 líneas de tu criterio. `lista` = a quién le toca y cuándo.
+- **Frecuencia**: para esta revisión el tope es **1.8** en el último mes (Elvin, 15/oct), no el 2.5 de "quemado" de §2.
+- Recomiendas; no ejecutas: escalar va por `escalar … --pct` con su OK y los creativos nuevos se piden con su OK.
+
 ## Reporte en Ritmo del trabajo hecho desde la Mac (28/sep/2026)
 
 Elvin: "que reporten lo de la Mac". Tu bot (Railway) ya cuenta en tu cierre de las 6:30 PM lo que haces por Telegram, Slack o

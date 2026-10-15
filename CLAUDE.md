@@ -1199,6 +1199,22 @@ aprueba como Carilin** (9/oct; publicar campañas sigue siendo de Elvin o Carili
 solo pida cambios). La música del motion se repite hasta el final (`<Audio loop>` en Anuncio.tsx). **Fotos del cliente desde el
 primer segundo**: `foto` en cualquier escena de texto = foto de fondo con velo de su marca y texto blanco (`ConFoto` en escenas.tsx).
 
+## Revisión de clientes por Max (15/oct/2026)
+
+Elvin: "que Max me envíe el reporte de los clientes para entrar a la reunión con la data o ya saber qué ajustar". Skill
+`.claude/skills/revision-clientes` (cerebro de Max §23). Clientes = CLIENTE ACTIVO de LEVEL UP MEDIA con pauta
+(`GET /api/max?revision=1` → `lib/max/revision-clientes.ts`: acuerdo, pago inicial, cuenta publicitaria, estratega).
+**Cadencia**: acuerdo ≥ $3,000 o pagó ≥ $1,500 de una → cada 15 días; paquetes pequeños → cada 30. **Orden del reporte**:
+costos en máximo → último mes → 7 días → hoy · lo que funcionó · costos elevados (se cambia el creativo, no la campaña) ·
+qué escalar (con su OK) · flyers/videos con CTR único < 2 % a reemplazar y rotar (y los que se cansan) · frecuencia > 1.8 ·
+"Qué ajustaría" (≤ 4). La unidad es el creativo (mismo flyer en varios conjuntos o el mismo post en FB e IG = uno). Reglas
+puras en `scripts/meta-ads/revision.mjs` (tests `tests/revision-clientes.test.mjs`); script `scripts/revision-clientes.mjs
+lista | cliente "<nombre>" [--enviar] | hoy [--enviar]` (solo lectura de Meta; una tanda por día; estado en
+`data/meta-ads/revisiones/estado.json`, lo enviado en `<fecha>.md`). El puente de Max la manda sola L-V desde las 7:30 AM PR
+(`revisionLoop`, `REVISION_HORA`, `REVISION_POR_DIA` = 8, `REVISION_CLIENTES=off` la apaga) por su Telegram + una línea en
+el DM de Slack. 15/oct: de 96 clientes, 67 van cada 15 días y 29 cada 30; Meta no deja leer 6 cuentas (no compartidas con
+acceso a anuncios) y 2 no tienen ID.
+
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
 Clon simplificado de Monday.com (ahorra ~$800/mes) para lo único que Level Up usaba ahí:

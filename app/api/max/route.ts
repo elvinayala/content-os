@@ -5,6 +5,7 @@ import { ETAPAS, slugCliente, TIPOS_ITEM, type EstadoItem, type TipoItem } from 
 import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, listarClientes, listarProgramados, programar } from "@/lib/max/repo";
 import { asegurarCarpeta, driveListo, guardarArchivo, guardarDoc, listarCarpeta, saludDrive } from "@/lib/max/drive";
 import { reunirMaterial } from "@/lib/max/material";
+import { clientesParaRevision } from "@/lib/max/revision-clientes";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
 // Max en Slack — las manos de Max (scripts/max.mjs, desde su contenedor de Railway). Auth con
@@ -14,6 +15,7 @@ import { secretoValido } from "@/lib/pulse/seguridad";
 //
 //   GET  ?clientes=1 · ?cliente=<slug> · ?item=<id> · ?items=<estado>[&cliente=] · ?leer=<slug>[&n=]
 //        ?hilo=<ts>&canal=<id|slug> · ?canales=1 · ?llamadas=<nombre>
+//        ?revision=1                                        clientes activos de LU para la revisión de Elvin (cadencia + cuenta)
 //   POST { accion: "cliente", slug?, nombre, canal?, etapa?, ficha?, meta? }
 //        { accion: "proponer", cliente, tipo, titulo, contenido, hilo?, nota?, datos? }
 //        { accion: "nota", texto, hilo? }                 nota de Max en #max-aprobaciones
@@ -32,6 +34,7 @@ const mal = (error: string, status = 400) => NextResponse.json({ ok: false, erro
 export async function GET(req: NextRequest) {
   if (!autorizado(req)) return mal("no-autorizado", 401);
   const q = req.nextUrl.searchParams;
+  if (q.get("revision")) return NextResponse.json({ ok: true, clientes: await clientesParaRevision() });
   if (q.get("clientes")) return NextResponse.json({ ok: true, clientes: await listarClientes() });
   if (q.get("cliente")) return NextResponse.json({ ok: true, cliente: await cliente(q.get("cliente")!) });
   if (q.get("item")) return NextResponse.json({ ok: true, item: await item(Number(q.get("item"))) });
