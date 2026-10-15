@@ -10,11 +10,12 @@ metadata:
 
 15/oct/2026, Elvin pidió que Max revise clientes con su skill, y el mismo día la v2: "tenemos que saber si lo hicieron".
 
-- **Cadencia**: acuerdo ≥ $3,000 **y** pago inicial ≥ $1,500 → dos veces al mes; lo demás mensual (29 / 67 al 15/oct). Carilin verifica los montos en Pulse ANTES de arrancar (Max le escribió desde la cuenta de Elvin el 15/oct). La revisión está **en pausa** (`pausa` en `data/meta-ads/revisiones/estado.json`) hasta que ella confirme.
+- **Cadencia**: acuerdo ≥ $3,000 con CUALQUIER pago inicial → dos veces al mes (Elvin lo confirmó el 15/oct); acuerdos menores → mensual (50 / 46 al 15/oct). Carilin verifica los montos en Pulse ANTES de arrancar (Max le escribió desde la cuenta de Elvin el 15/oct). La revisión está **en pausa** (`pausa` en `data/meta-ads/revisiones/estado.json`) hasta que ella confirme.
 - **Resumen** (al estratega): costo por resultado máx/mes/7d/hoy → costo alto vs CTR (🔴 reemplazar ya / 🟠 revisar / 🟡 rotar) → 🚀 escalar (< $1 surf/vertical/horizontal; ≤ $2 con CTR alto, evaluar) → 📐 estrategia de 5 fases (8-12 campañas) → 🔁 frecuencia > 1.8.
+- **Calendario** (Elvin, 15/oct: "no quiero un revolú todos los días"): solo los LUNES 7:30 AM, grupos fijos (A/B 2×/mes en 1.º-3.º / 2.º-4.º lunes; 1-4 mensual); un mensaje por estratega; plazo el miércoles; jueves recordatorio, viernes a la dirección. En Ritmo → Hoy, "Tus prioridades de hoy" debajo del ponche.
 - **Seguimiento**: Ritmo → Cuentas (`/ritmo/cuentas`): cada punto se marca Ejecutado o No + por qué; dirección de tráfico = María del Carmen (maria.valencia@), Juan Diego Guzman (juan.guzman@, NO Juan David) y Carilin: cierra "ya está bien" o pide optimización. Recordatorio a 2 días hábiles, aviso a la dirección a 4.
 - **Para prender**: quitar `pausa` del estado.json y poner `REVISION_CUENTAS=on` en Vercel (antes: vista previa, solo Elvin ve los casos). Caso de prueba #1 (Magdalys, vista previa) creado el 15/oct.
-- Interpretaciones a confirmar con Elvin: "selfies" = escalado **surf**; "CTR alto" = ≥ 3 %; CTR = `unique_ctr`.
+- "Selfies" en su dictado = escalado **surf** (confirmado). "CTR alto" = ≥ 3 % y CTR = `unique_ctr` (decisiones mías, no confirmadas).
 
 **Why:** Elvin quiere saber que los estrategas ejecutan lo que se pide y tener las cuentas flojas visibles en Ritmo.
 **How to apply:** cambios de criterio → reglas puras (`scripts/meta-ads/revision.mjs`, `lib/desempeno/optimizaciones-reglas.ts`) + tests. Relacionado: [[meta-ads-agente]], [[ritmo-desempeno]], [[cuentas-meta-onboarding]].

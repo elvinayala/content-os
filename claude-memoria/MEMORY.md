@@ -59,7 +59,7 @@
 - [No enviar sin aprobar](no-enviar-sin-aprobar.md) — nunca postear contenido al equipo por mi cuenta; Elvin aprueba en la bandeja
 - [Verificar antes de activar](verificar-antes-de-activar.md) — leer lo cargado y cruzar números con la fuente antes de activar/reportar
 - [Meta Ads — agente del portafolio](meta-ads-agente.md) — Max: estratega en Slack, Método 5 Fases, plantillas, reglas e IDs de cuentas
-- [Revisión de cuentas por Max](revision-clientes-max.md) — v2 15/oct: resumen al estratega + caso en Ritmo (ejecutado/por qué); 2×/mes si acuerdo ≥ $3K y pago ≥ $1.5K; EN PAUSA hasta que Carilin verifique montos; prender con REVISION_CUENTAS=on
+- [Revisión de cuentas por Max](revision-clientes-max.md) — v2 15/oct: resumen al estratega + caso en Ritmo (ejecutado/por qué); 2×/mes si acuerdo ≥ $3K (cualquier pago inicial); EN PAUSA hasta que Carilin verifique montos; prender con REVISION_CUENTAS=on
 - [Cortex — coaching de grabación](cortex-coaching-grabacion.md) — recordatorio lunes/jueves sobre cómo grabar
 - [Privacidad de las reuniones de Elvin](privacidad-reuniones-elvin.md) — REGLA DURA: nunca grabar/compartir sus reuniones sin OK
 - [La plantilla manda](plantilla-manda.md) — con plantilla/referencia se ajusta, nunca se rediseña
