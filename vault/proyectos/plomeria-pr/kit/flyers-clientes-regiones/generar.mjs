@@ -41,9 +41,9 @@ const OFICIO = process.env.OFICIO || "";
 const OFI = JSON.parse(fs.readFileSync(path.join(DATA, "menus-oficios.json"), "utf8")).oficios;
 const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error(`Sin precio: ${id}`); };
 const POR_OFICIO = {
-  aire: { titulo: "Técnico de aire con precio fijo&nbsp;en", garantia: "Técnico licenciado · 12 meses de garantía", precios: [["Mantenimiento de split", "Hasta 24,000 BTU", o$("aire-mantenimiento")], ["Cada split adicional", "En la misma visita", o$("aire-mantenimiento-adicional")], ["Diagnóstico", "No enfría, gotea o hace ruido", o$("aire-diagnostico")], ["Destapar el drenaje", "El split que gotea", o$("aire-drenaje")]] },
-  handyman: { titulo: "Handyman con precio fijo en", garantia: "Registrado en DACO · 12 meses de garantía", precios: [["Montar TV en la pared", "Hasta 65\"", o$("hm-tv")], ["Armar mueble", "Mesa, gavetero, silla", o$("hm-mueble")], ["Cambiar cerradura o manija", "Pieza aparte", o$("hm-cerradura")], ["Parchar hueco en la pared", "Hasta 6 pulgadas", o$("hm-drywall")]] },
-  electricidad: { titulo: "Perito electricista con precio fijo&nbsp;en", garantia: "Perito licenciado · 12 meses de garantía", precios: [["Cambiar receptáculo o interruptor", "Hasta 2", o$("el-receptaculo")], ["Instalar lámpara", "", o$("el-lampara")], ["Instalar abanico de techo", "Con base existente", o$("el-abanico")], ["Diagnóstico", "Breaker que se dispara", o$("el-diagnostico")]] },
+  aire: { titulo: "Técnico de aire con precio fijo&nbsp;en", garantia: "Técnico licenciado · pagas al terminar", precios: [["Mantenimiento de split", "Hasta 24,000 BTU", o$("aire-mantenimiento")], ["Cada split adicional", "En la misma visita", o$("aire-mantenimiento-adicional")], ["Diagnóstico", "No enfría, gotea o hace ruido", o$("aire-diagnostico")], ["Destapar el drenaje", "El split que gotea", o$("aire-drenaje")]] },
+  handyman: { titulo: "Handyman con precio fijo en", garantia: "Registrado en DACO · pagas al terminar", precios: [["Montar TV en la pared", "Hasta 65\"", o$("hm-tv")], ["Armar mueble", "Mesa, gavetero, silla", o$("hm-mueble")], ["Cambiar cerradura o manija", "Pieza aparte", o$("hm-cerradura")], ["Parchar hueco en la pared", "Hasta 6 pulgadas", o$("hm-drywall")]] },
+  electricidad: { titulo: "Perito electricista con precio fijo&nbsp;en", garantia: "Perito licenciado · pagas al terminar", precios: [["Cambiar receptáculo o interruptor", "Hasta 2", o$("el-receptaculo")], ["Instalar lámpara", "", o$("el-lampara")], ["Instalar abanico de techo", "Con base existente", o$("el-abanico")], ["Diagnóstico", "Breaker que se dispara", o$("el-diagnostico")]] },
 };
 if (OFICIO && !POR_OFICIO[OFICIO]) throw new Error(`OFICIO debe ser: ${Object.keys(POR_OFICIO).join(", ")}`);
 const PRECIOS = OFICIO ? POR_OFICIO[OFICIO].precios : [
@@ -98,7 +98,7 @@ ${LOGO}
 <div class="precios" style="margin-top:${story ? 44 : 26}px">${filas}</div>
 <div style="margin-top:${story ? 34 : 20}px">
   <div class="check">${CHECK}Te decimos el precio antes de llegar</div>
-  <div class="check">${CHECK}${OFICIO ? POR_OFICIO[OFICIO].garantia : "Plomero licenciado · 12 meses de garantía"}</div>
+  <div class="check">${CHECK}${OFICIO ? POR_OFICIO[OFICIO].garantia : "Plomero licenciado · pagas al terminar"}</div>
 </div>
 <div style="margin-top:${story ? 36 : 20}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${story ? 36 : 24}px">

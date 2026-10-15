@@ -53,10 +53,10 @@ const PIEZAS = {
     return `<div class="fila-top"><div class="eyebrow">Aire acondicionado en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
 <h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Tu split, con precio fijo. <span class="o">Antes de ir a tu casa.</span></h1>
 <div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b><small>${d}</small></div><span>$${p}</span></div>`).join("")}</div>
-<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Instalación de mini split desde $${o$("aire-instalacion-12")} (equipo aparte). 12 meses de garantía.</p>`; },
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Instalación de mini split desde $${o$("aire-instalacion-12")} (equipo aparte).</p>`; },
   "aire-mantenimiento": (a, s) => `<div class="eyebrow">Aire acondicionado · ${a.nombre}</div>
 <h1 style="font-size:${s ? 116 : 92}px;margin-top:${s ? 26 : 16}px">¿Hace cuánto no le das mantenimiento al split?</h1>
-<div class="precio" style="margin-top:${s ? 56 : 30}px"><div class="k">Mantenimiento · precio fijo</div><div class="n">$${o$("aire-mantenimiento")}</div><p>Cada split adicional $${o$("aire-mantenimiento-adicional")} · + $${FEE} de coordinación</p><div class="g">${OK}Técnico licenciado · 12 meses de garantía</div></div>
+<div class="precio" style="margin-top:${s ? 56 : 30}px"><div class="k">Mantenimiento · precio fijo</div><div class="n">$${o$("aire-mantenimiento")}</div><p>Cada split adicional $${o$("aire-mantenimiento-adicional")} · + $${FEE} de coordinación</p><div class="g">${OK}Técnico licenciado · pagas al terminar</div></div>
 <p class="nota" style="margin-top:${s ? 44 : 26}px">Lo recomendado es cada 6 meses: enfría más y gasta menos luz.</p>`,
   "aire-enfria": (a, s) => `<div class="eyebrow">Aire acondicionado · ${a.nombre}</div>
 <h1 style="font-size:${s ? 140 : 110}px;margin-top:${s ? 26 : 16}px">¿El aire no enfría?</h1>
@@ -67,7 +67,7 @@ const PIEZAS = {
     return `<div class="fila-top"><div class="eyebrow">Handyman en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
 <h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Esa lista de arreglos, <span class="o">con precio fijo.</span></h1>
 <div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b><small>${d}</small></div><span>$${p}</span></div>`).join("")}</div>
-<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Tareas varias: $${o$("hm-hora")} la primera hora. 12 meses de garantía.</p>`; },
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Tareas varias: $${o$("hm-hora")} la primera hora.</p>`; },
   "hm-tv": (a, s) => `<div class="eyebrow">Handyman · ${a.nombre}</div>
 <h1 style="font-size:${s ? 130 : 104}px;margin-top:${s ? 26 : 16}px">¿La TV sigue en el piso?</h1>
 <div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Montar TV en la pared</div><div class="n">$${o$("hm-tv")}</div><p>Hasta 65" · base aparte · + $${FEE} de coordinación</p><div class="g">${OK}Nivelada, segura y sin reguero</div></div>
@@ -77,7 +77,7 @@ const PIEZAS = {
     return `<div class="fila-top"><div class="eyebrow">Electricidad en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
 <h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Perito electricista, <span class="o">con precio fijo.</span></h1>
 <div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${p}</span></div>`).join("")}</div>
-<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Conexión de 220 desde $${o$("el-220")}. 12 meses de garantía.</p>`; },
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Mano de obra + $${FEE} de coordinación. Conexión de 220 desde $${o$("el-220")}.</p>`; },
   "el-breaker": (a, s) => `<div class="eyebrow">Electricidad · ${a.nombre}</div>
 <h1 style="font-size:${s ? 128 : 100}px;margin-top:${s ? 26 : 16}px">¿Se te dispara el breaker?</h1>
 <div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Visita de diagnóstico</div><div class="n">$${o$("el-diagnostico")}</div><p>Se acredita al trabajo si lo hacemos · + $${FEE} de coordinación</p><div class="g">${OK}Perito electricista licenciado</div></div>
@@ -88,7 +88,7 @@ const PIEZAS = {
 <h1 style="font-size:${s ? 116 : 90}px;margin-top:${s ? 26 : 16}px">Que el corte de agua sea <span class="o">problema de otro.</span></h1>
 <p class="nota" style="margin-top:${s ? 30 : 18}px">Instalamos tu cisterna con bomba y conexiones. El precio fijo te lo damos por escrito en sitio, y no se toca nada hasta que lo apruebes.</p>
 <div class="cuatro" style="margin-top:${s ? 40 : 24}px">${[[`$${desde("cisterna-bomba")}`, "Cisterna con bomba, desde"], [`$${$("bomba-cisterna")}`, "Reemplazo de bomba"], [`$${$("calentador-tanque")}`, "Instalación de calentador"], [`$${$("filtro-casa")}`, "Filtro para toda la casa"]].map(([n, d]) => `<div class="c4"><b>${n}</b><small>${d}</small></div>`).join("")}</div>
-<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo. 12 meses de garantía.</p>`,
+<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo.</p>`,
   // ── Ticket alto (1/oct/2026, Elvin: "empujar subir el ticket… trabajos de 500, 800"). Rangos del menú: el flyer dice
   // "desde" el mínimo y el precio final va por escrito en sitio, aprobado por el cliente antes de empezar.
   solar: (a, s) => `<div class="eyebrow">Calentador solar · ${a.nombre}</div>
@@ -99,16 +99,16 @@ const PIEZAS = {
 <h1 style="font-size:${s ? 108 : 86}px;margin-top:${s ? 26 : 16}px">¿La factura de agua subió <span class="o">y no sabes por qué?</span></h1>
 <p class="nota" style="margin-top:${s ? 30 : 18}px">Casi siempre es una filtración que no se ve. La encontramos con equipo y cámara, y te damos el precio del arreglo antes de romper nada.</p>
 <div class="cuatro" style="margin-top:${s ? 40 : 24}px">${[[`$${$("deteccion-filtracion")}`, "Detección de filtración"], [`$${desde("reparacion-filtracion")}`, "Reparación, desde"], [`$${desde("linea-principal-agua")}`, "Línea principal nueva, desde"], [`$${$("valvula-paso")}`, "Válvula de paso"]].map(([n, d]) => `<div class="c4"><b>${n}</b><small>${d}</small></div>`).join("")}</div>
-<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo. 12 meses de garantía.</p>`,
+<p style="font-size:${s ? 22 : 18}px;color:var(--c4);margin-top:${s ? 18 : 10}px">Precios de mano de obra + $${FEE} de coordinación. Materiales al costo, con recibo.</p>`,
   grandes: (a, s) => { const f = [["Cisterna con bomba y conexiones", "Para los cortes de agua", `desde $${desde("cisterna-bomba")}`], ["Calentador solar", "Equipo aparte", `desde $${desde("calentador-solar")}`], ["Línea principal de agua", "Del contador a la casa", `desde $${desde("linea-principal-agua")}`], ["Re-tubería de un baño", "", `desde $${desde("retuberia-bano").toLocaleString("en-US")}`], ["Calentador de línea (tankless)", "Instalación", `$${$("calentador-linea")}`], ["Filtro para toda la casa", "Instalación", `$${$("filtro-casa")}`]];
     return `<div class="fila-top"><div class="eyebrow">Trabajos grandes en ${a.nombre}</div><span class="sello">Precio por escrito</span></div>
 <h1 style="font-size:${s ? 92 : 72}px;margin-top:${s ? 26 : 18}px">El trabajo grande, <span class="o">sin sorpresas en la factura.</span></h1>
 <div class="lista" style="margin-top:${s ? 40 : 22}px">${f.map(([n, d, p]) => `<div class="li"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span style="font-size:${s ? 38 : 30}px">${p}</span></div>`).join("")}</div>
-<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">El precio final va firmado antes de empezar: si no lo apruebas, no se toca nada. Mano de obra + $${FEE} de coordinación. 12 meses de garantía.</p>`; },
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">El precio final va firmado antes de empezar: si no lo apruebas, no se toca nada. Mano de obra + $${FEE} de coordinación.</p>`; },
   // Elvin la escogió el 25/sep (c12 adaptado). Solo lo que se cumple hoy: sin "respuesta en 2 horas" ni factura consolidada.
   propiedades: (a, s) => `<div class="eyebrow">Para quien administra propiedades en ${a.nombre}</div>
 <h1 style="font-size:${s ? 108 : 84}px;margin-top:${s ? 26 : 16}px">Un solo contacto para toda la plomería de <span class="o">tus propiedades.</span></h1>
-<div style="margin-top:${s ? 44 : 26}px;display:grid;gap:${s ? 26 : 16}px">${[["Precios cerrados por adelantado", "El mismo menú publicado, para cada unidad."], ["Te contestamos por mensaje al momento", "Airbnb, alquileres y condominios."], ["Historial de cada trabajo", "Qué se arregló, cuándo, con fotos y lo que costó."], ["12 meses de garantía por escrito", "Si algo falla, volvemos en 48 horas."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>
+<div style="margin-top:${s ? 44 : 26}px;display:grid;gap:${s ? 26 : 16}px">${[["Precios cerrados por adelantado", "El mismo menú publicado, para cada unidad."], ["Te contestamos por mensaje al momento", "Airbnb, alquileres y condominios."], ["Historial de cada trabajo", "Qué se arregló, cuándo, con fotos y lo que costó."], ["Todo por escrito", "Precio, trabajo y recibos en tu factura digital."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>
 <div class="plan" style="margin-top:${s ? 40 : 22}px"><div class="k">Plan de mantenimiento</div><div class="n">desde $399<small>/mes</small></div></div>`,
 
 
@@ -117,29 +117,29 @@ const PIEZAS = {
     return `<div class="fila-top"><div class="eyebrow">Plomería en ${a.nombre}</div><span class="sello">Precios publicados</span></div>
 <h1 style="font-size:${s ? 96 : 76}px;margin-top:${s ? 26 : 18}px">Esto es lo que cobramos. <span class="o">Antes de ir a tu casa.</span></h1>
 <div class="lista" style="margin-top:${s ? 40 : 22}px">${filas.map(([n, d, p]) => `<div class="li"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${p}</span></div>`).join("")}</div>
-<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Precios de mano de obra + $${FEE} de coordinación por visita. Materiales al costo, con recibo. 12 meses de garantía.</p>`;
+<p style="font-size:${s ? 24 : 19}px;color:var(--c4);margin-top:${s ? 22 : 12}px">Precios de mano de obra + $${FEE} de coordinación por visita. Materiales al costo, con recibo.</p>`;
   },
   promesa: (a, s) => `<div class="eyebrow">Plomería en ${a.nombre}</div>
 <h1 style="font-size:${s ? 104 : 84}px;margin-top:${s ? 30 : 22}px">Sabes el precio y la hora <span class="o">antes de que toquemos tu puerta.</span></h1>
 <div style="margin-top:${s ? 60 : 36}px;display:grid;gap:${s ? 34 : 22}px">
-${[["Llega cuando dice.", "Ventana de 2 horas y aviso 30 minutos antes, con el nombre del plomero."], ["Cobra lo que dijo.", "El precio que te damos por mensaje es el que pagas. Si aparece algo, lo apruebas tú antes."], ["Lo garantiza por escrito.", "12 meses de garantía en la mano de obra. Si algo falla, volvemos en 48 horas sin costo."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}
+${[["Llega cuando dice.", "Ventana de 2 horas y aviso 30 minutos antes, con el nombre del plomero."], ["Cobra lo que dijo.", "El precio que te damos por mensaje es el que pagas. Si aparece algo, lo apruebas tú antes."], ["Todo por escrito.", "Factura digital con el desglose y los recibos."]].map(([t, d]) => `<div class="pt"><i>${OK}</i><div><b>${t}</b><p>${d}</p></div></div>`).join("")}
 </div>`,
   destape: (a, s) => `<div class="eyebrow">Lo más pedido en ${a.nombre}</div>
 <h1 style="font-size:${s ? 150 : 118}px;margin-top:${s ? 26 : 16}px">¿Fregadero tapado?</h1>
-<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Destape simple · precio fijo</div><div class="n">$${$("destape-simple")}</div><p>Fregadero, lavamanos, ducha o inodoro · + $${FEE} de coordinación</p><div class="g">${OK}12 meses de garantía en la mano de obra</div></div>
+<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Destape simple · precio fijo</div><div class="n">$${$("destape-simple")}</div><p>Fregadero, lavamanos, ducha o inodoro · + $${FEE} de coordinación</p><div class="g">${OK}Plomero licenciado de tu zona</div></div>
 <p class="nota" style="margin-top:${s ? 44 : 26}px">${LLAMADA ? "Llámanos y te damos la hora de la visita. Si no contestamos, te devolvemos la llamada." : "Mándanos una foto por mensaje y te damos el precio y la hora."}</p>`,
   problema: (a, s) => `<div class="eyebrow">Plomería en ${a.nombre}</div>
 <h1 style="font-size:${s ? 108 : 86}px;margin-top:${s ? 26 : 18}px">El problema no es el precio. <span class="o">Es no saberlo.</span></h1>
 <div class="dos" style="margin-top:${s ? 50 : 30}px">
 <div class="col antes"><div class="k">Como pasa siempre</div>${["Llamas a tres y contesta uno", "Viene, mira y ahí te dice un número", "No tienes con qué compararlo", "Aparece algo más y sube el precio"].map((x) => `<div class="it"><i>${NO}</i>${x}</div>`).join("")}</div>
-<div class="col con"><div class="k">Con Resuelto</div>${["Escribes y te contestamos", "El precio sale del menú publicado", "Lo ves antes de que salgamos", "Si aparece algo, tú apruebas primero", "12 meses de garantía por escrito"].map((x) => `<div class="it"><i>${OK}</i>${x}</div>`).join("")}</div>
+<div class="col con"><div class="k">Con Resuelto</div>${["Escribes y te contestamos", "El precio sale del menú publicado", "Lo ves antes de que salgamos", "Si aparece algo, tú apruebas primero", "Pagas al terminar, con factura"].map((x) => `<div class="it"><i>${OK}</i>${x}</div>`).join("")}</div>
 </div>`,
   sorpresas: (a, s) => `<div class="eyebrow">Lo que no te va a pasar en ${a.nombre}</div>
 <h1 style="font-size:${s ? 116 : 92}px;margin-top:${s ? 26 : 18}px">5 sorpresas que aquí <span class="o">no existen.</span></h1>
-<div style="margin-top:${s ? 46 : 26}px">${[["El precio no sube en tu casa.", "Lo que te dimos por mensaje es lo que pagas."], ["No cobramos la visita dos veces.", `El diagnóstico de $${$("diagnostico")} se acredita al trabajo.`], ["No aparecemos sin avisar.", "Ventana de 2 horas y aviso 30 minutos antes."], ["No dejamos reguero.", "El área queda limpia. Zapatones al entrar."], ["No desaparecemos si algo falla.", "12 meses de garantía. Volvemos en 48 horas."]].map(([t, d], i) => `<div class="num5"><span>${i + 1}</span><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>`,
+<div style="margin-top:${s ? 46 : 26}px">${[["El precio no sube en tu casa.", "Lo que te dimos por mensaje es lo que pagas."], ["No cobramos la visita dos veces.", `El diagnóstico de $${$("diagnostico")} se acredita al trabajo.`], ["No aparecemos sin avisar.", "Ventana de 2 horas y aviso 30 minutos antes."], ["No dejamos reguero.", "El área queda limpia. Zapatones al entrar."], ["No desaparecemos.", "Si algo no quedó bien, nos escribes y lo revisamos."]].map(([t, d], i) => `<div class="num5"><span>${i + 1}</span><div><b>${t}</b><p>${d}</p></div></div>`).join("")}</div>`,
   calentador: (a, s) => `<div class="eyebrow">Calentador de agua · ${a.nombre}</div>
 <h1 style="font-size:${s ? 140 : 110}px;margin-top:${s ? 26 : 16}px">¿Ducha fría otra vez?</h1>
-<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Instalación de calentador</div><div class="n">$${$("calentador-tanque")}<small> de tanque</small></div><p>De línea (tankless): $${$("calentador-linea")} · + $${FEE} de coordinación</p><div class="g">${OK}12 meses de garantía · precio de mano de obra</div></div>
+<div class="precio" style="margin-top:${s ? 56 : 34}px"><div class="k">Instalación de calentador</div><div class="n">$${$("calentador-tanque")}<small> de tanque</small></div><p>De línea (tankless): $${$("calentador-linea")} · + $${FEE} de coordinación</p><div class="g">${OK}Precio de mano de obra · plomero licenciado</div></div>
 <p class="nota" style="margin-top:${s ? 44 : 26}px">¿Tiene más de 8 años? Casi siempre sale más barato cambiarlo que repararlo.</p>`,
 };
 

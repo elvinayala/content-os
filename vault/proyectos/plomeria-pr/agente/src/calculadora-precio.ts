@@ -76,7 +76,7 @@ router.post("/api/calcular-precio", async (req: any, res) => {
     res.json({
       encontrado: true, personalizado: false,
       servicio: { id: s.id, nombre: s.nombre, precio: s.precio, nota: s.nota ?? null },
-      cargos: { coordinacion: menu.cargo_coordinacion, emergencia: menu.recargo_emergencia, manejoMaterialesPct: menu.manejo_materiales_pct, garantiaMeses: menu.garantia_meses },
+      cargos: { coordinacion: menu.cargo_coordinacion, emergencia: menu.recargo_emergencia, manejoMaterialesPct: menu.manejo_materiales_pct },
       razon: out.razon,
     });
   } catch (e) {
@@ -112,6 +112,7 @@ const HTML = `<!doctype html>
 <script>
 const btn=document.getElementById('btn'),out=document.getElementById('out'),desc=document.getElementById('desc'),foto=document.getElementById('foto');
 const params=new URLSearchParams(location.search), k=params.get('k');
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
 btn.onclick=async()=>{
   const d=desc.value.trim(); const f=foto.files[0];
@@ -121,21 +122,22 @@ btn.onclick=async()=>{
   try{
     const r=await fetch('/api/calcular-precio?k='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({descripcion:d,fotos})});
     const j=await r.json();
-    if(!r.ok){out.className='err';out.innerHTML='⚠️ '+(j.error||'Error');out.style.display='block';return;}
+    if(!r.ok){out.className='err';out.innerHTML='⚠️ '+esc(j.error||'Error');out.style.display='block';return;}
     if(j.personalizado){
       out.className='personal';
-      let h='<b>🔧 Cotización personalizada</b><p class="nota">'+j.razon+'</p><p>'+j.mensaje+'</p>';
-      if(j.preguntas_al_cliente?.length) h+='<ul>'+j.preguntas_al_cliente.map(p=>'<li>'+p+'</li>').join('')+'</ul>';
+      let h='<b>🔧 Cotización personalizada</b><p class="nota">'+esc(j.razon)+'</p><p>'+esc(j.mensaje)+'</p>';
+      if(j.preguntas_al_cliente?.length) h+='<ul>'+j.preguntas_al_cliente.map(p=>'<li>'+esc(p)+'</li>').join('')+'</ul>';
       out.innerHTML=h;
     } else {
       out.className='ok';
       const precio=Array.isArray(j.servicio.precio)?('$'+j.servicio.precio[0]+'–$'+j.servicio.precio[1]):('$'+j.servicio.precio);
-      out.innerHTML='<div>'+j.servicio.nombre+'</div><div class="precio">'+precio+'</div>'+
-        (j.servicio.nota?'<p class="nota">'+j.servicio.nota+'</p>':'')+
-        '<p class="nota">+ $'+j.cargos.coordinacion+' de coordinación (incluye garantía '+j.cargos.garantiaMeses+' meses) · materiales al costo + '+j.cargos.manejoMaterialesPct+'% · emergencia +$'+j.cargos.emergencia+'</p>';
+      out.innerHTML='<div>'+esc(j.servicio.nombre)+'</div><div class="precio">'+precio+'</div>'+
+        (j.servicio.nota?'<p class="nota">'+esc(j.servicio.nota)+'</p>':'')+
+        '<p class="nota">+ $'+j.cargos.coordinacion+' de coordinación · materiales al costo + '+j.cargos.manejoMaterialesPct+'% · emergencia (noche, fin de semana, feriado) +$'+j.cargos.emergencia+'</p>'+
+        '<p class="nota">Al cliente: "$'+(Array.isArray(j.servicio.precio)?j.servicio.precio[0]:j.servicio.precio)+' de mano de obra + $'+j.cargos.coordinacion+' de coordinación; los materiales van aparte, al costo con recibo." Sin garantía de 12 meses: ya no se ofrece.</p>';
     }
     out.style.display='block';
-  } catch(e){ out.className='err'; out.innerHTML='⚠️ '+e.message; out.style.display='block'; }
+  } catch(e){ out.className='err'; out.innerHTML='⚠️ '+esc(e.message); out.style.display='block'; }
   finally{ btn.disabled=false; btn.textContent='Calcular precio'; }
 };
 </script>
