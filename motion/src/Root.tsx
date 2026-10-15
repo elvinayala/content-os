@@ -8,6 +8,7 @@ import { Anuncio, duracionDe } from "./fabrica/Anuncio";
 import { ResueltoTicket, DURACION_RESUELTO } from "./videos/ResueltoTicket";
 import { ANUNCIOS } from "./fabrica/anuncios";
 import { CortexCapa, CAPA_EJEMPLO } from "./cortex/CortexCapa";
+import { CortexTarjeta, TARJETA_EJEMPLO } from "./cortex/CortexTarjeta";
 
 // Un <Composition> por video. id = nombre para `npm run render -- <id> out/<archivo>.mp4`.
 export const Root: React.FC = () => (
@@ -40,6 +41,9 @@ export const Root: React.FC = () => (
     ))}
     {/* Capas de motion de Cortex (14/oct): un gráfico transparente (cifra, anillo, ícono, cursor, lluvia) por render. */}
     <Composition id="CortexCapa" component={CortexCapa} defaultProps={CAPA_EJEMPLO} durationInFrames={66} fps={30} width={1080} height={1920}
+      calculateMetadata={({ props }) => ({ durationInFrames: Math.max(2, Math.round(props.dur * props.fps)), fps: props.fps, width: props.ancho, height: props.alto })} />
+    {/* Tarjetas de diseño del b-roll de Cortex (16/oct): OPACAS, 9:16 o 16:9 según ancho/alto (ícono o foto + texto grande). */}
+    <Composition id="CortexTarjeta" component={CortexTarjeta} defaultProps={TARJETA_EJEMPLO} durationInFrames={90} fps={30} width={1080} height={1920}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.max(2, Math.round(props.dur * props.fps)), fps: props.fps, width: props.ancho, height: props.alto })} />
     {/* Composición universal: cualquier guion en JSON (inputProps.anuncio) — la usa Remi en la nube para Max y clientes. */}
     <Composition id="Motion" component={Anuncio} defaultProps={{ anuncio: ANUNCIOS[0] }} durationInFrames={duracionDe(ANUNCIOS[0])} fps={30} width={1920} height={1080}

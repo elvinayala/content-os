@@ -11,6 +11,7 @@ import { loadFont as cargarPoppins } from "@remotion/google-fonts/Poppins";
 import { loadFont as cargarDmSerif } from "@remotion/google-fonts/DMSerifDisplay";
 import { loadFont as cargarCormorant } from "@remotion/google-fonts/CormorantGaramond";
 import { loadFont as cargarAnton } from "@remotion/google-fonts/Anton";
+import { TarjetaVista, type Tarjeta } from "./CortexTarjeta";
 
 const ANTON = cargarAnton("normal", { weights: ["400"], subsets: ["latin"] }).fontFamily;
 
@@ -44,7 +45,9 @@ export type Elemento =
   | { tipo: "monedas"; x: number; y: number; desdeY?: number | null; cantidad: number; semilla: number; color: string }
   | { tipo: "fajo"; x: number; y: number; desdeY?: number | null; cantidad: number; semilla: number; color: string }
   // tarjeta de oferta para PRECIOS («2x$69», «4 x $24»): lo que paga quien mira nunca lleva lluvia de billetes
-  | { tipo: "oferta"; texto: string; sub?: string; color: string; x: number; y: number; sobrio?: boolean };
+  | { tipo: "oferta"; texto: string; sub?: string; color: string; x: number; y: number; sobrio?: boolean }
+  // tarjeta de b-roll OPACA (16/oct): misma vista que la composición CortexTarjeta; así la pide Cortex por /capas
+  | ({ tipo: "tarjeta" } & Tarjeta);
 
 export type PropsCapa = { ancho: number; alto: number; fps: number; dur: number; fuente: Fuente; elemento: Elemento };
 
@@ -478,6 +481,7 @@ export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
     case "monedas": return <Monedas e={elemento} />;
     case "fajo": return <Fajo e={elemento} />;
     case "oferta": return <Oferta e={elemento} f={f} peso={peso} />;
+    case "tarjeta": return <TarjetaVista t={elemento} />;
   }
 };
 
