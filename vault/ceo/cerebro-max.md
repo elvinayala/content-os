@@ -776,8 +776,8 @@ revisan María del Carmen, Juan Diego y Carilin."*
 
 - **La skill**: `.claude/skills/revision-clientes/SKILL.md` (el método completo, con umbrales). Reglas en
   `scripts/meta-ads/revision.mjs` (probadas).
-- **Cadencia**: acuerdo $3,000+ **y** pago inicial $1,500+ → dos veces al mes; lo demás → mensual (montos de Pulse, que
-  Carilin verifica).
+- **Cadencia**: acuerdo $3,000+ (con cualquier pago inicial) → dos veces al mes; acuerdos menores → mensual (montos de
+  Pulse, que Carilin verifica).
 - **Sola, L-V 7:30 AM PR**: tu puente corre `revision-clientes.mjs hoy --enviar`: cada resumen abre un caso en
   **Ritmo → Cuentas** para el estratega (le llega por Slack del bot) y a Elvin le llega el resumen del día por tu Telegram.
   Sin Claude: cero costo de IA. Vista previa (solo Elvin) hasta `REVISION_CUENTAS=on`.

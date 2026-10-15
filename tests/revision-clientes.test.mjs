@@ -14,11 +14,10 @@ test("acuerdo: lee el monto como lo escribe el equipo en Pulse", () => {
   assert.equal(leerAcuerdo(""), null);
 });
 
-test("cadencia de Elvin (15/oct): acuerdo $3,000+ Y pago inicial $1,500+ = dos veces al mes; lo demás, mensual", () => {
+test("cadencia de Elvin (15/oct): acuerdo $3,000+ = dos veces al mes, con cualquier pago inicial; menores, mensual", () => {
   assert.equal(cadencia({ acuerdo: "3500 X 90 DIAS", pagoInicial: 1500 }).dias, 15);
-  assert.equal(cadencia({ acuerdo: "3000 x 90 dias", pagoInicial: 3000 }).dias, 15);
-  assert.equal(cadencia({ acuerdo: "3000 x 90 dias", pagoInicial: 500 }).dias, 30, "acuerdo alto pero pago inicial menor de $1,500");
-  assert.match(cadencia({ acuerdo: "3000 x 90 dias", pagoInicial: 500 }).motivo, /menos de \$1,500/);
+  assert.equal(cadencia({ acuerdo: "3000 x 90 dias", pagoInicial: 500 }).dias, 15, "acuerdo alto aunque el pago inicial sea menor de $1,500");
+  assert.match(cadencia({ acuerdo: "5000 x 120 dias", pagoInicial: 750 }).motivo, /acuerdo de \$5,000 · pago inicial \$750/);
   assert.equal(cadencia({ acuerdo: "2000 x 90 dias", pagoInicial: 2000 }).dias, 30, "acuerdo menor de $3,000");
   assert.equal(cadencia({ acuerdo: "1.200 mes a mes", pagoInicial: 1600 }).dias, 30);
   assert.equal(cadencia({}).dias, 30);

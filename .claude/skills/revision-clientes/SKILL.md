@@ -9,8 +9,8 @@ Eres Max (o quien haga la revisión por él). Esta es la skill de Elvin para rev
 
 ## Quién y cada cuánto
 - Clientes en **CLIENTE ACTIVO** de LEVEL UP MEDIA (Pulse), con pauta.
-- **Dos veces al mes**: acuerdo de **$3,000 o más** (aunque el pago inicial sea menor) **y** pago inicial de **mínimo
-  $1,500**. **Una vez al mes**: los demás. Los montos los mantiene Carilin en Pulse ("Acuerdo de Pago", "Pago Inicial").
+- **Dos veces al mes**: acuerdo de **$3,000 o más**, sea cual sea el pago inicial (Elvin, 15/oct). **Una vez al mes**:
+  los acuerdos menores. Los montos los mantiene Carilin en Pulse ("Acuerdo de Pago", "Pago Inicial").
 - La tanda sale sola de lunes a viernes a las **7:30 AM PR** (≈ 8 por día). `node scripts/revision-clientes.mjs lista`
   dice a quién le toca. Se detiene con `pausa` en `data/meta-ads/revisiones/estado.json`.
 
@@ -21,7 +21,7 @@ Eres Max (o quien haga la revisión por él). Esta es la skill de Elvin para rev
    - 🟠 **Costo alto** con buen CTR: revisar oferta o gancho.
    - 🟡 **CTR bajo de 2 %** aunque el costo no sea alto: rotar.
    Se optimiza **desde el creativo, no desde la campaña**.
-3. 🚀 **Escalar** (conversaciones): **< $1** con CTR ≥ 2 % → pedir escalar: **surf** (si está bajo $0.99), vertical u
+3. 🚀 **Escalar** (conversaciones): **< $1** con CTR ≥ 2 % → pedir escalar: **surf** (si está bajo $0.99; Elvin lo dice "surf"), vertical u
    horizontal — el trafficker escoge. **Hasta $2 con CTR alto** (≥ 3 %) → evaluar. Siempre que siga bien esta semana.
    Otros objetivos: contra la mediana de la cuenta.
 4. 📐 **Estrategia de 5 fases** (8 a 12 campañas activas):

@@ -1,7 +1,7 @@
 // Revisión de cuentas de clientes de Level Up (Max · Elvin) — reglas puras. v2: 15/oct/2026.
 //
-// Elvin (15/oct): "Clientes con acuerdo de $3,000 o más (aunque el pago inicial sea menor) y pago inicial de mínimo
-// $1,500 se revisan dos veces al mes; los de acuerdos menores, una vez al mes. El resumen al estratega tiene que ser
+// Elvin (15/oct): "Clientes con acuerdo de $3,000 o más se revisan dos veces al mes (aunque el pago inicial sea menor,
+// también los de menos de $1,500); los de acuerdos menores, una vez al mes. El resumen al estratega tiene que ser
 // claro: primero los creativos con costos más elevados comparados con el CTR — costo alto y CTR bajo = reemplazar, lo
 // más urgente posible. Un anuncio a menos de $1 se pide escalar; a $2 con CTR alto se puede ver para escalar (vertical,
 // horizontal o surf, que es cuando está muy por debajo: menos de 99 centavos; el trafficker escoge). Identificar si no
@@ -24,8 +24,7 @@ export const UMBRAL = {
   ctr: 2, // CTR único < 2 % = no engancha → rotar / reemplazar
   ctrAlto: 3, // "CTR alto" para ver si se escala algo de ~$2
   frecuencia: 1.8,
-  acuerdoAlto: 3000, // acuerdo ≥ $3,000 …
-  pagoMinimo: 1500, // … y pago inicial ≥ $1,500 → dos veces al mes
+  acuerdoAlto: 3000, // acuerdo ≥ $3,000 → dos veces al mes (cualquier pago inicial)
   costoAlto: 1.5, // ≥ 1.5× la mediana de la cuenta = caro
   conversacionCara: 3, // y, si se mide en conversaciones, al menos $3 (a $2 todavía es bueno)
   escalar: 1, // conversación a menos de $1 → pedir escalar (surf, vertical u horizontal)
@@ -58,13 +57,14 @@ export function leerAcuerdo(texto) {
   return { monto, mensual: /^\s*(usd|d[oó]lares)?\s*(mes a mes|mensual|al mes|\/\s*mes)/i.test(resto) };
 }
 
-// Dos veces al mes: acuerdo de $3,000+ (aunque el pago inicial sea menor) Y pago inicial de mínimo $1,500.
+// Dos veces al mes: acuerdo de $3,000 o más, sea cual sea el pago inicial (Elvin, 15/oct: "sí, también dos veces al mes"
+// los que pagaron menos de $1,500 de entrada). Acuerdos menores: una vez al mes.
 export function cadencia({ acuerdo, pagoInicial } = {}) {
   const a = leerAcuerdo(acuerdo);
   const pago = n(pagoInicial);
   const desc = a ? (a.mensual ? `${usd0(a.monto)} al mes` : `acuerdo de ${usd0(a.monto)}`) : "sin acuerdo en Pulse";
-  if (a && a.monto >= UMBRAL.acuerdoAlto && pago >= UMBRAL.pagoMinimo) return { dias: 15, motivo: `${desc} · pago inicial ${usd0(pago)}` };
-  return { dias: 30, motivo: a && a.monto >= UMBRAL.acuerdoAlto ? `${desc} · pago inicial ${usd0(pago)} (menos de ${usd0(UMBRAL.pagoMinimo)})` : desc };
+  const conPago = pago ? `${desc} · pago inicial ${usd0(pago)}` : desc;
+  return a && a.monto >= UMBRAL.acuerdoAlto ? { dias: 15, motivo: conPago } : { dias: 30, motivo: conPago };
 }
 
 export function sumarDias(dia, dias) {

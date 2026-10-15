@@ -1203,8 +1203,8 @@ primer segundo**: `foto` en cualquier escena de texto = foto de fondo con velo d
 
 Elvin: "que Max me ayude a revisar clientes… tenemos que saber si lo hicieron". Skill `.claude/skills/revision-clientes`
 (cerebro de Max §23). Clientes = CLIENTE ACTIVO de LEVEL UP MEDIA con pauta (`GET /api/max?revision=1` →
-`lib/max/revision-clientes.ts`: acuerdo, pago inicial, cuenta publicitaria, estratega). **Cadencia**: acuerdo ≥ $3,000 **y**
-pago inicial ≥ $1,500 → dos veces al mes; lo demás → mensual (Carilin verifica los montos en Pulse). **Resumen** (corto, con
+`lib/max/revision-clientes.ts`: acuerdo, pago inicial, cuenta publicitaria, estratega). **Cadencia**: acuerdo ≥ $3,000 (con
+cualquier pago inicial) → dos veces al mes; acuerdos menores → mensual (Carilin verifica los montos en Pulse). **Resumen** (corto, con
 espacios y pocos emojis): costo por resultado máx · mes · 7 días · hoy → 🔴 costo alto + CTR < 2 % (reemplazar ya) · 🟠 costo
 alto con buen CTR · 🟡 CTR < 2 % → 🚀 escalar (conversación < $1: surf/vertical/horizontal; ≤ $2 con CTR ≥ 3 %: evaluar) →
 📐 estrategia de 5 fases (8-12 campañas: F1 tráfico IG + ThruPlay · F2 ventas 3-4 de video/flyers/carrusel · F3 remarketing
@@ -1222,7 +1222,7 @@ juan.guzman@, carilin@ + admin/editoras) ve todo y el cumplimiento por estratega
 2 días hábiles sin marcar → recordatorio al estratega; 4 → aviso a la dirección. Tarjeta en Hoy, acceso "Cuentas" (maestra),
 pestaña en escritorio. **Encendido con `REVISION_CUENTAS=on`** (Vercel); antes es vista previa: casos `simulacion`, solo Elvin
 (admin) los ve y nadie recibe nada. 15/oct: en pausa hasta que Carilin verifique los montos (le escribió Max desde la cuenta de
-Elvin); con los montos de ese día: 29 dos veces al mes, 67 mensual; 6 cuentas sin permiso de lectura y 2 sin ID.
+Elvin); con los montos de ese día: 50 dos veces al mes, 46 mensual; 6 cuentas sin permiso de lectura y 2 sin ID.
 
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
