@@ -1,0 +1,46 @@
+{
+  "clientes": {
+    "dba68c40-e6db-432e-a1a2-34f1dc2f7dbc": {
+      "nombre": "ReAwaken Upper Cervical",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "903d9cc4-fd4a-4b98-b5be-b7645d2434b9": {
+      "nombre": "Advanced Medical Billing and Consultant LLC",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "48e8a60b-37d3-4b02-a7a2-8034ab2e3d95": {
+      "nombre": "Topchiro",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "48c4f581-ae1e-4f95-a924-b26d14dd739f": {
+      "nombre": "Parada Tipica LLC",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "11b42037-0361-402a-80c6-66aa9f990388": {
+      "nombre": "Pitipua Restaurant",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "661644a4-a960-4ec8-9b1e-21a3e88cf674": {
+      "nombre": "Claro FI Communications",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "b165da8e-bd6d-4ce4-87c4-e4d6592e84f6": {
+      "nombre": "Proactivequiropractice&wellness",
+      "ultima": "2026-10-15",
+      "dias": 15
+    },
+    "1b8ebdc5-0f28-41ee-844b-1d6d1be3afc2": {
+      "nombre": "TrimGreen Pr",
+      "ultima": "2026-10-15",
+      "dias": 15
+    }
+  },
+  "ultimaTanda": "2026-10-15",
+  "actualizadoEl": "2026-10-15T22:00:03.699Z"
+}
