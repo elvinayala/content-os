@@ -89,7 +89,7 @@ export async function avanzar(ofertaId: string, p: Proveedor, paso: "en-camino" 
     const reembolso = r2(Math.min(mat, 150));
     almacen.guardarTrabajo({ ...t, estado: "cobrado", terminadoEn: ahora, cobradoEn: ahora, manoObraFinal: 0, materialesCosto: mat, totalCliente: 0, pagoPlomero: 0, piezasPlomero: reembolso, notaCierre: d.nota?.trim() || undefined });
     archivar(t.contactoId, "sistema", `${t.id} (garantía de ${t.garantiaDe}) resuelto por ${p.nombre}. ${d.nota ?? ""}`.trim(), t.id);
-    await avisarCliente(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} resolvió tu garantía (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
+    await avisarCliente(t, `✅ ${t.nombre.split(" ")[0]}, ${primer} corrigió tu trabajo (${t.garantiaDe}). No tienes que pagar nada. Si algo no quedó bien, escríbenos por aquí.`).catch(() => undefined);
     await avisarCoordinador(`🛡️ Garantía cerrada ${t.id} (de ${t.garantiaDe}) por ${p.nombre}${mat ? ` · materiales $${mat} (reembolso $${reembolso})` : ""}${d.nota ? `\nNota: ${d.nota}` : ""}`).catch(() => undefined);
     return { ok: true, estado: "completado", total: 0, pago: reembolso, garantia: true };
   }

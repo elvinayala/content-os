@@ -5,8 +5,10 @@
  * Regla de pago (la que ya dice la app y el contrato): Resuelto paga los VIERNES lo que el cliente pagó hasta el
  * MIÉRCOLES a las 11:59 PM (hora PR). Lo que el cliente paga jueves o después entra el viernes siguiente. Si el cliente
  * todavía no ha pagado, el trabajo queda "esperando que el cliente pague" (no se le debe hasta que pague).
- * El plomero comisiona SOLO de la mano de obra (65 %). Las piezas que compra se le devuelven aparte, en 48 h, con 10 %
- * encima (Elvin, 30/sep y 2/oct); el costo lo pone él al tocar "Terminé", según el recibo.
+ * El plomero comisiona SOLO de la mano de obra (65 %). Las piezas que compra se le devuelven con 10 % encima (Elvin,
+ * 30/sep y 2/oct); el costo lo pone él al tocar "Terminé", según el recibo. Desde el 14/oct/2026 (Aure/Elvin: "los pagos
+ * se hacen completos únicamente los viernes") las piezas YA NO salen aparte en 48 h: van en el mismo pago del viernes que
+ * la comisión del trabajo (`aPagar`). Las que ya se devolvieron por el flujo viejo (piezasDevueltas) no se vuelven a sumar.
  */
 import type { Trabajo } from "./almacen.js";
 
@@ -28,7 +30,7 @@ export function viernesDePago(ahora: number) {
   return { viernes, corte: viernes - DIA };
 }
 
-/** Comisión (viernes) y piezas (48 h) de un trabajo. Los cerrados antes del 2/oct guardaban las dos juntas en pagoPlomero. */
+/** Comisión y piezas de un trabajo (las dos se pagan el viernes). Los cerrados antes del 2/oct guardaban las dos juntas en pagoPlomero. */
 export function partesDelPago(t: Pick<Trabajo, "pagoPlomero" | "piezasPlomero" | "materialesCosto" | "garantiaDe">) {
   if (t.piezasPlomero != null) return { comision: r2(t.pagoPlomero ?? 0), piezas: r2(t.piezasPlomero) };
   if (t.garantiaDe) return { comision: 0, piezas: r2(t.pagoPlomero ?? 0) };
@@ -60,7 +62,7 @@ export function pasoDePago(t: Trabajo, ahora = Date.now()): PasoPago {
   return cobro < corte ? { clave: "viernes", texto: `Entra el viernes ${fechaPR(viernes)}` } : { clave: "siguiente", texto: `Entra el viernes ${fechaPR(viernes + 7 * DIA)}` };
 }
 
-/** Piezas ya devueltas. En los trabajos de antes del 2/oct se devolvían junto con el pago del viernes. */
+/** Piezas ya devueltas (por el flujo de 48 h de antes del 14/oct, o junto con el pago del viernes). */
 export const piezasDevueltas = (t: Pick<Trabajo, "piezasDevueltas" | "piezasPlomero" | "pagadoAlPlomero">) =>
   !!t.piezasDevueltas || (t.piezasPlomero == null && !!t.pagadoAlPlomero);
 
@@ -83,18 +85,23 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
   const mios = trabajos.filter((t) => t.plomeroId === plomeroId && t.estado !== "cancelado");
   const cerrados = mios.filter((t) => t.terminadoEn && t.pagoPlomero != null);
   const com = (t: Trabajo) => partesDelPago(t).comision;
+  const piezasPend = (t: Trabajo) => (piezasDevueltas(t) ? 0 : partesDelPago(t).piezas);
+  const aPagar = (t: Trabajo) => r2(com(t) + piezasPend(t)); // lo que entra el viernes: comisión + piezas, completo
   const hechos = cerrados.filter((t) => com(t) > 0);
+  const pendientes = cerrados.filter((t) => !t.pagadoAlPlomero && aPagar(t) > 0);
   const { viernes, corte } = viernesDePago(ahora);
   const lunes = medianochePR(ahora, -((diaSemanaPR(ahora) + 6) % 7));
   const finSemana = lunes + 7 * DIA;
 
   const cobradoEn = (t: Trabajo) => Date.parse(t.cobradoEn ?? t.terminadoEn!);
   const faltan = (t: Trabajo) => !t.pagadoAlPlomero && faltaParaPagar(t).length > 0;
-  const porPagar = hechos.filter((t) => t.estado === "cobrado" && !t.pagadoAlPlomero && !faltan(t));
-  const esteViernes = porPagar.filter((t) => cobradoEn(t) < corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
-  const siguiente = porPagar.filter((t) => cobradoEn(t) >= corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, com(t)));
-  const esperando = hechos.filter((t) => t.estado === "completado" && !faltan(t)).map((t) => linea(t, t.terminadoEn, com(t)));
-  const sinFotos = cerrados.filter(faltan).map((t) => ({ ...linea(t, t.terminadoEn, com(t) + (piezasDevueltas(t) ? 0 : partesDelPago(t).piezas)), falta: faltaParaPagar(t) }));
+  // Un re-trabajo sin costo (garantiaDe) no espera pago del cliente: sus piezas entran el viernes en cuanto cierra.
+  const listo = (t: Trabajo) => t.estado === "cobrado" || (!!t.garantiaDe && t.estado === "completado");
+  const porPagar = pendientes.filter((t) => listo(t) && !faltan(t));
+  const esteViernes = porPagar.filter((t) => cobradoEn(t) < corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, aPagar(t)));
+  const siguiente = porPagar.filter((t) => cobradoEn(t) >= corte).map((t) => linea(t, t.cobradoEn ?? t.terminadoEn, aPagar(t)));
+  const esperando = pendientes.filter((t) => !listo(t) && t.estado === "completado" && !faltan(t)).map((t) => linea(t, t.terminadoEn, aPagar(t)));
+  const sinFotos = cerrados.filter(faltan).map((t) => ({ ...linea(t, t.terminadoEn, aPagar(t)), falta: faltaParaPagar(t) }));
 
   const estimado = (t: Trabajo) => ofertas.filter((o) => o.referencia === t.id && o.aceptadoPor === plomeroId).at(-1)?.pagoProveedor
     ?? (t.manoObra ?? 0) * 0.65;
@@ -105,12 +112,14 @@ export function cuentaPlomero(trabajos: Trabajo[], ofertas: OfertaMin[], plomero
     .map((t) => linea(t, t.terminadoEn, com(t)));
 
   const pagos = new Map<string, Linea[]>();
-  for (const t of hechos.filter((x) => x.pagadoAlPlomero)) pagos.set(t.pagadoAlPlomero!, [...(pagos.get(t.pagadoAlPlomero!) ?? []), linea(t, t.terminadoEn, com(t))]);
+  const pagadoJunto = (t: Trabajo) => com(t) + (t.piezasDevueltas === t.pagadoAlPlomero ? partesDelPago(t).piezas : 0);
+  for (const t of cerrados.filter((x) => x.pagadoAlPlomero)) pagos.set(t.pagadoAlPlomero!, [...(pagos.get(t.pagadoAlPlomero!) ?? []), linea(t, t.terminadoEn, pagadoJunto(t))]);
   const pagados = [...pagos.entries()].sort((a, b) => b[0].localeCompare(a[0])).slice(0, 6).map(([fecha, ls]) => ({ fecha, total: suma(ls), trabajos: ls.length }));
 
   const conPiezas = cerrados.filter((t) => partesDelPago(t).piezas > 0);
   const piezaLinea = (t: Trabajo) => linea(t, t.terminadoEn, partesDelPago(t).piezas);
-  const piezasPorDevolver = conPiezas.filter((t) => !piezasDevueltas(t) && !faltan(t)).map(piezaLinea);
+  /** Piezas pendientes: ya van sumadas en el viernes que le toque al trabajo (informativo, no se paga aparte). */
+  const piezasPorDevolver = conPiezas.filter((t) => !piezasDevueltas(t) && !t.pagadoAlPlomero && !faltan(t)).map(piezaLinea);
 
   return {
     actualizado: new Date(ahora).toISOString(),

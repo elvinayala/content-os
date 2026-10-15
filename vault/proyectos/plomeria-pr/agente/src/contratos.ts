@@ -48,8 +48,8 @@ export function contratoHTML(o: Oferta, p: Proveedor): string {
     <li>Dejar el área limpia y tratar al cliente con respeto.</li>
   </ol>
 
-  <h2>5. Garantía</h2>
-  <p>El Proveedor garantiza la mano de obra por ${esProyecto ? "12 meses" : "12 meses"}. Si el fallo es atribuible a la ejecución, realiza el re-trabajo sin costo en 48 horas. Resuelto respalda la garantía frente al cliente y cubre materiales del re-trabajo hasta el límite de su acuerdo marco.</p>
+  <h2>5. Re-trabajos</h2>
+  <p>Si Resuelto le reporta un fallo atribuible a la ejecución, el Proveedor realiza el re-trabajo sin costo en 48 horas. Resuelto cubre materiales del re-trabajo hasta el límite de su acuerdo marco.</p>
 
   <h2>6. Abandono e incumplimiento</h2>
   <p>Si el Proveedor no se presenta sin aviso o abandona el trabajo, Resuelto puede reasignarlo y descontar el costo de la siguiente liquidación. Tres faltas graves terminan la relación conforme al acuerdo marco.</p>

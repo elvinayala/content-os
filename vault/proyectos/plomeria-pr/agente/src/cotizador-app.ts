@@ -112,7 +112,7 @@ router.post("/api/cotizador/propuesta", async (req: any, res) => {
   else if (p.ghlContactId) crearOportunidad({ contactId: p.ghlContactId, nombre: p.nombre, valor: cot_.precioFinal, trabajoId: p.id, pipelineId: process.env.GHL_PIPELINE_PROYECTOS_ID, stageId: process.env.GHL_STAGE_PROPUESTA }).then((id) => { if (id) almacen.guardarProyecto({ ...actualizado, ghlOpportunityId: id }); }).catch(() => undefined);
 
   if (cot_.requiereAprobacion) await avisarCoordinador(`⚠️ Aprobación de precio · ${p.id} (${cat?.nombre})\nCotizador: ${cot.nombre}\nPrecio propuesto $${cot_.precioFinal} · margen ${Math.round(cot_.margenFinal * 1000) / 10}% · mínimo sin aprobación $${cot_.precioMinimoSinAprobacion}\nAprobar: ${config.urlPublica}/admin/proyectos/${p.id}/aprobar?k=${firmaDoc(p.id)}`);
-  else await enviarTexto(p.telefono, `Hola ${p.nombre.split(" ")[0]}, aquí está tu propuesta de Resuelto para ${cat?.nombre?.toLowerCase()}: precio fijo $${cot_.precioFinal.toLocaleString("en-US")}, con garantía de 12 meses.\n${propuestaUrl}\nCuando quieras avanzar, responde "Acepto" y te mando el contrato y el depósito.`);
+  else await enviarTexto(p.telefono, `Hola ${p.nombre.split(" ")[0]}, aquí está tu propuesta de Resuelto para ${cat?.nombre?.toLowerCase()}: precio fijo $${cot_.precioFinal.toLocaleString("en-US")}.\n${propuestaUrl}\nCuando quieras avanzar, responde "Acepto" y te mando el contrato y el depósito.`);
 
   res.json({ ok: true, proyecto: actualizado, cotizacion: cot_, propuestaUrl });
 });
@@ -154,7 +154,7 @@ router.get("/admin/proyectos/:id/aprobar", async (req, res) => {
   const p = almacen.proyectos().find((x) => x.id === req.params.id); if (!p?.cotizacion) return res.status(404).send("no existe");
   if (!verificarFirma("doc:" + p.id, String(req.query.k ?? ""))) return res.status(403).send("enlace inválido");
   almacen.guardarProyecto({ ...p, estado: "propuesta", cotizacion: { ...p.cotizacion, aprobado: true, aprobadoEn: new Date().toISOString() } });
-  await enviarTexto(p.telefono, `Hola ${p.nombre.split(" ")[0]}, aquí está tu propuesta de Resuelto: precio fijo $${p.cotizacion.precioFinal.toLocaleString("en-US")}, con garantía de 12 meses.\n${p.cotizacion.propuestaUrl}`);
+  await enviarTexto(p.telefono, `Hola ${p.nombre.split(" ")[0]}, aquí está tu propuesta de Resuelto: precio fijo $${p.cotizacion.precioFinal.toLocaleString("en-US")}.\n${p.cotizacion.propuestaUrl}`);
   res.send(`Precio de ${p.id} aprobado ($${p.cotizacion.precioFinal}). Propuesta enviada al cliente.`);
 });
 

@@ -207,7 +207,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "buscar_precio": {
       const res = buscarCatalogo(input.problema);
       if (!res.length) return { encontrado: false, sugerencia: "No está en el menú. Ofrece diagnóstico ($69, se acredita) o escala si es comercial." };
-      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto, garantia_nota: garantiaDe(s.id).nota })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct, garantia_meses: menu.garantia_meses };
+      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto || "sin garantía (no la menciones)", garantia_nota: garantiaDe(s.id).nota })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct };
     }
     case "verificar_cobertura": {
       const t = territorioDeMunicipio(input.municipio);

@@ -71,9 +71,11 @@ export function buscar(problema: string, catalogo: ServicioCat[] = CATALOGO): Se
   return catalogo.map((s) => ({ s, pts: puntos(s) })).filter((x) => x.pts > 0).sort((a, b) => b.pts - a.pts).slice(0, 3).map((x) => x.s);
 }
 
-/** Garantía de mano de obra de un servicio (30/sep, Elvin: destapes 30 días; lo demás, los meses del menú). Pura. */
+/** Garantía de mano de obra de un servicio (30/sep, Elvin: destapes 30 días; lo demás, los meses del menú, que desde el
+ *  14/oct/2026 son 0 = sin garantía general: texto vacío y el cliente no ve ninguna garantía). Pura. */
 export function garantiaDe(servicioId: string | undefined, mesesGeneral = MENU.garantia_meses as number): { dias: number | null; meses: number | null; texto: string; nota: string | null } {
   const s = servicioId ? servicioPorId(servicioId) : undefined;
   if (s?.garantia_dias) return { dias: s.garantia_dias, meses: null, texto: `${s.garantia_dias} días`, nota: s.garantia_nota ?? null };
+  if (!mesesGeneral) return { dias: null, meses: null, texto: "", nota: null };
   return { dias: null, meses: mesesGeneral, texto: `${mesesGeneral} meses`, nota: null };
 }

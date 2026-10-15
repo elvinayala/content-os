@@ -3,7 +3,7 @@
   "cargo_coordinacion": 19,
   "recargo_emergencia": 99,
   "manejo_materiales_pct": 20,
-  "garantia_meses": 12,
+  "garantia_meses": 0,
   "servicios": [
     {
       "id": "diagnostico",

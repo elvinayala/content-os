@@ -59,14 +59,14 @@ test("comisiona solo de la mano de obra: las piezas (costo + 10 %) van aparte", 
   assert.deepEqual(partesDelPago({ pagoPlomero: 40, materialesCosto: 40, garantiaDe: "R-1" }), { comision: 0, piezas: 40 });
 });
 
-test("el viernes suma solo comisión; las piezas salen en su bloque hasta que se devuelven", () => {
+test("las piezas se pagan completas el viernes con la comisión (14/oct); las ya devueltas no se suman otra vez", () => {
   const ts = [
     t("P1", { terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 97.5, piezasPlomero: 33, materialesCosto: 30 }),
     t("P2", { terminadoEn: "2026-10-06T15:00:00-04:00", cobradoEn: "2026-10-06T16:00:00-04:00", pagoPlomero: 65, piezasPlomero: 11, materialesCosto: 10, piezasDevueltas: "2026-10-07" }),
     t("P3", { terminadoEn: "2026-09-29T10:00:00-04:00", pagoPlomero: 130.5, materialesCosto: 30, pagadoAlPlomero: "2026-10-02" }), // viejo y ya pagado
   ];
   const c = cuentaPlomero(ts, [], "luis", PR("2026-10-08T15:00:00"));
-  assert.equal(c.esteViernes.total, 162.5);
+  assert.equal(c.esteViernes.total, 195.5); // P1 97.5 + piezas 33 · P2 65 (sus piezas ya se devolvieron)
   assert.deepEqual(c.piezas.porDevolver.trabajos.map((x) => x.id), ["P1"]); assert.equal(c.piezas.porDevolver.total, 33);
   assert.equal(c.piezas.devueltas, 44);
   assert.equal(c.acumulado, 260);
@@ -109,4 +109,10 @@ test("en qué punto está el pago de cada trabajo y por qué", async () => {
   assert.deepEqual(x({ terminadoEn: "2026-10-06T10:00:00-04:00", cobradoEn: "2026-10-06T12:00:00-04:00", pagoPlomero: 80 }), { clave: "viernes", texto: "Entra el viernes 2026-10-09" });
   assert.equal(x({ terminadoEn: "2026-10-07T10:00:00-04:00", cobradoEn: "2026-10-08T12:00:00-04:00", pagoPlomero: 80 }).clave, "siguiente");
   assert.equal(x({ terminadoEn: "2026-10-01T10:00:00-04:00", cobradoEn: "2026-10-01T12:00:00-04:00", pagoPlomero: 80, pagadoAlPlomero: "2026-10-02" }).clave, "pagado");
+});
+
+test("re-trabajo sin costo: sus piezas entran el viernes aunque el cliente no pague nada", () => {
+  const ts = [t("G1", { estado: "completado", garantiaDe: "R-1", terminadoEn: "2026-10-06T10:00:00-04:00", pagoPlomero: 0, piezasPlomero: 22, materialesCosto: 20 })];
+  const c = cuentaPlomero(ts, [], "luis", PR("2026-10-08T15:00:00"));
+  assert.equal(c.esteViernes.total, 22); assert.equal(c.esperandoCliente.total, 0);
 });

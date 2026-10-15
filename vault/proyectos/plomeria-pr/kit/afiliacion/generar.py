@@ -61,22 +61,22 @@ SEC = {
  1: """<h2>1. Relación</h2>
 <p>El Plomero trabaja como <b>contratista independiente</b>, no como empleado. Mantiene por su cuenta su licencia, colegiación, vehículo, herramientas y sus clientes propios fuera de Resuelto. Resuelto no garantiza un volumen mínimo de trabajos. <b>El Plomero decide libremente qué trabajos acepta</b>: rechazar una oferta o no contestarla no es falta y no afecta su calificación ni su permanencia en Resuelto. Resuelto emitirá la declaración informativa que corresponda según las leyes contributivas de Puerto Rico.</p>""",
  2: """<h2>2. Lo que pone Resuelto</h2>
-<p>Los clientes y la publicidad pagada, la marca, la atención al cliente por WhatsApp, la cotización con precios publicados, la agenda y el despacho, el cobro al cliente, la facturación, la garantía al cliente y el servicio post-venta.</p>""",
+<p>Los clientes y la publicidad pagada, la marca, la atención al cliente por WhatsApp, la cotización con precios publicados, la agenda y el despacho, el cobro al cliente, la facturación y el servicio post-venta.</p>""",
  3: """<h2>3. Lo que pone el Plomero</h2>
 <p>El trabajo bien hecho dentro de la ventana acordada, con licencia vigente, identificación de Resuelto, fotos de antes y después, recibo de materiales y trato respetuoso al cliente, siguiendo las Reglas de Oro (Anexo A).</p>""",
  4: f"""<h2>4. Pago</h2>
 <ul>
 <li><b>65% de la mano de obra</b> de cada trabajo completado y cobrado al cliente. Resuelto retiene el 35%.</li>
 <li>El cargo de coordinación que paga el cliente (${MENU['cargo_coordinacion']}) es de Resuelto. El recargo de emergencia (+${MENU['recargo_emergencia']}) se reparte 65% / 35% igual que la mano de obra.</li>
-<li><b>Materiales:</b> el Plomero los compra y entrega el recibo con foto. Resuelto le reembolsa el <b>100% del costo</b> y le paga un <b>10% adicional</b> por manejo, <b>dentro de las 48 horas</b> siguientes a cerrar el trabajo en la app, aparte de la liquidación del viernes. Si Resuelto suple un equipo mayor (cisterna, calentador, bomba), el Plomero cobra solo la mano de obra.</li>
-<li><b>Liquidación semanal los viernes</b>, por ATH Móvil o transferencia, con estado de cuenta por trabajo. Solo se liquidan trabajos ya cobrados al cliente.</li>
+<li><b>Materiales:</b> el Plomero los compra y entrega el recibo con foto. Resuelto le reembolsa el <b>100% del costo</b> y le paga un <b>10% adicional</b> por manejo, junto con la comisión, en la liquidación del viernes. Si Resuelto suple un equipo mayor (cisterna, calentador, bomba), el Plomero cobra solo la mano de obra.</li>
+<li><b>Los pagos se hacen completos y únicamente los viernes</b> (comisión y reembolso de materiales juntos), por depósito directo, ATH Móvil o transferencia, con estado de cuenta por trabajo. Solo se liquidan trabajos ya cobrados al cliente.</li>
 </ul>""",
  5: """<h2>5. El cliente es de Resuelto</h2>
 <p>Todo cliente atendido por medio de Resuelto es cliente de Resuelto. El Plomero no le dará tarjetas, números personales, redes ni cotizaciones por fuera, ni lo atenderá directamente mientras dure la relación ni durante <b>24 meses</b> después. Toda comunicación con el cliente pasa por el WhatsApp de Resuelto. Incumplir esta sección es causa de terminación inmediata y de una penalidad de <b>$2,500 por cliente</b>, más los gastos de cobro.</p>""",
  6: """<h2>6. Nunca cobra el Plomero</h2>
 <p>El Plomero no cobra al cliente ni mano de obra ni materiales, por ningún medio. Todo pago va a Resuelto. Si un cliente insiste en pagar en efectivo, el Plomero lo recibe a nombre de Resuelto, lo reporta en el momento y lo deposita el mismo día.</p>""",
- 7: f"""<h2>7. Garantía</h2>
-<p>La mano de obra tiene <b>{MENU['garantia_meses']} meses</b> de garantía al cliente, salvo los <b>destapes: 30 días</b>, que no cubren mal uso, fallas de la tubería (barriga, raíces, tubería rota) ni la recurrencia si el cliente no aceptó la inspección con cámara recomendada por escrito. Si el fallo es por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>""",
+ 7: f"""<h2>7. Re-trabajos</h2>
+<p>Resuelto no ofrece una garantía general de mano de obra al cliente; los <b>destapes</b> llevan <b>30 días</b>, que no cubren mal uso, fallas de la tubería (barriga, raíces, tubería rota) ni la recurrencia si el cliente no aceptó la inspección con cámara recomendada por escrito. Si Resuelto le reporta un fallo por la ejecución, el Plomero lo corrige sin costo en <b>48 horas</b>; Resuelto cubre materiales del re-trabajo hasta $150. Si el Plomero no responde, Resuelto asigna a otro y descuenta el costo de la siguiente liquidación.</p>""",
  8: """<h2>8. Calidad y terminación</h2>
 <p>Calificación promedio mínima de <b>4.8</b>. <b>Tres faltas</b> (no presentarse sin aviso, cobrar directo, queja grave verificada, no enviar fotos de forma repetida) son causa de terminación. Cualquiera de las partes puede terminar con <b>15 días</b> de aviso por escrito (WhatsApp cuenta).</p>""",
  9: """<h2>9. Confidencialidad e imagen</h2>
@@ -105,9 +105,9 @@ HOJA_REGLAS = f"""{cab("Anexo A · Se firma aparte y va contigo", "Reglas de oro
 <li><b>Precio confirmado antes de tocar nada.</b> Cualquier cambio de alcance o precio se aprueba con el cliente y con Resuelto primero.</li>
 <li><b>Fotos de antes, después y del recibo.</b> Sin fotos no se cierra el trabajo ni se paga.</li>
 <li><b>Dejas el área limpia.</b></li>
-<li><b>Garantía de 12 meses:</b> si falló tu trabajo, vuelves en 48 horas.</li>
+<li><b>Si falló tu trabajo, vuelves en 48 horas</b> sin costo.</li>
 <li><b>Calificación mínima 4.8.</b> Tres faltas y sales.</li>
-<li><b>Te pagamos los viernes, siempre.</b></li>
+<li><b>Te pagamos completo los viernes, siempre</b> (comisión y piezas).</li>
 </ol>
 <div class="firmas">{firma("firmante", "Firma del Plomero / Aprendiz")}<div class="firma"><div class="trazo">{campo("fecha")}</div>Fecha</div></div>"""
 # Anexo B (24/sep/2026): antes era "ayudante sin licencia", pero la Ley 59-2022 no tiene esa figura y el Art. 29
@@ -286,15 +286,15 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <div class="pag"></div>
 {cab("Kit de bienvenida", "Cómo cobras")}
 <div class="caja"><h2>Tu parte</h2>
-<b>65% de la mano de obra</b> de cada trabajo cobrado · <b>materiales: 100% del costo + 10%</b> por manejo (con recibo y foto, en 48 horas) · emergencias (+${MENU['recargo_emergencia']}): también 65% para ti · <b>pago todos los viernes</b> por ATH Móvil o transferencia.</div>
+<b>65% de la mano de obra</b> de cada trabajo cobrado · <b>materiales: 100% del costo + 10%</b> por manejo (con recibo y foto) · emergencias (+${MENU['recargo_emergencia']}): también 65% para ti · <b>pago todos los viernes</b> por ATH Móvil o transferencia.</div>
 <p>Ejemplo: un reemplazo de bomba de cisterna de $249 de mano de obra → <b>$161.85</b> para ti, más el costo de la bomba si la compraste tú, más el 10% de ese costo.</p>
 
 <h2>Lo que paga el cliente (mano de obra, precio fijo)</h2>
 <p style="font-size:9pt">Más ${MENU['cargo_coordinacion']} de coordinación (de Resuelto) y los materiales. Los trabajos grandes (cisternas, calentadores solares, re-tuberías, remodelaciones) se cotizan en sitio y se firman antes de empezar.</p>
 <table><tr><th>Servicio</th><th class="num">Mano de obra</th></tr>{filas}</table>
 
-<h2>Garantía</h2>
-<p>El cliente tiene <b>{MENU['garantia_meses']} meses de garantía</b> en la mano de obra. Si un trabajo tuyo falla, vuelves en <b>48 horas</b> sin costo; los materiales del re-trabajo los cubre Resuelto hasta $150.</p>
+<h2>Si un trabajo falla</h2>
+<p>Si un trabajo tuyo falla por la ejecución, vuelves en <b>48 horas</b> sin costo; los materiales del re-trabajo los cubre Resuelto hasta $150.</p>
 
 <div class="pag"></div>
 {cab("Kit de bienvenida", "Las 10 reglas de oro")}
@@ -306,9 +306,9 @@ Nosotros conseguimos al cliente, le damos el precio antes de ir, lo agendamos y 
 <li>Precio confirmado antes de tocar nada. Cambios, se aprueban primero.</li>
 <li>Fotos de antes, después y recibo. Sin fotos no hay pago.</li>
 <li>Dejas limpio.</li>
-<li>Garantía de 12 meses: si falló, vuelves en 48 horas.</li>
+<li>Si falló tu trabajo, vuelves en 48 horas.</li>
 <li>Calificación 4.8 mínimo. Tres faltas y sales.</li>
-<li>Te pagamos los viernes, siempre.</li>
+<li>Te pagamos completo los viernes, siempre.</li>
 </ol>
 <div class="caja" style="margin-top:22px"><h2>¿Dudas?</h2>WhatsApp de Resuelto: <b>787-956-1111</b> · resueltopr.com/plomeros</div>
 <p class="pie">Resuelto PR Home Services LLC · Kit de bienvenida v1 · septiembre 2026</p>

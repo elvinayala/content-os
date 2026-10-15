@@ -35,10 +35,12 @@ test("la firma del enlace distingue cliente y equipo", () => {
 });
 
 const { garantiaDe } = await import("../dist/catalogo.js");
-test("destapes: 30 días de garantía; lo demás, 12 meses", () => {
+test("destapes: 30 días de garantía; lo demás, sin garantía general desde el 14/oct (garantia_meses = 0)", () => {
   assert.equal(garantiaDe("destape-simple").texto, "30 días");
   assert.equal(garantiaDe("destape-maquina").dias, 30);
-  assert.equal(garantiaDe("llave-mezcladora").texto, "12 meses");
+  assert.equal(garantiaDe("llave-mezcladora").texto, "");
+  assert.equal(garantiaDe("llave-mezcladora").meses, null);
+  assert.equal(garantiaDe("llave-mezcladora", 12).texto, "12 meses"); // si algún día vuelve, sale del menú
 });
 test("servicio a cotizar: el plomero propone y Resuelto aprueba", () => {
   const r = A.armarAdicional({ servicioId: "valvula-salida-inodoro", precio: 85 }, servicioPorId("valvula-salida-inodoro"));

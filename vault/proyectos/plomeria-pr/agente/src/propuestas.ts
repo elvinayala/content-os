@@ -1,6 +1,6 @@
 /**
- * Documentos que ve el CLIENTE de un proyecto: la propuesta (precio cerrado, alcance, hitos,
- * garantía) y el contrato de mejoras al hogar. El cliente nunca ve costos unitarios ni márgenes.
+ * Documentos que ve el CLIENTE de un proyecto: la propuesta (precio cerrado, alcance, hitos)
+ * y el contrato de mejoras al hogar. El cliente nunca ve costos unitarios ni márgenes.
  * El texto legal del contrato es un borrador de negocio: lo fija el abogado (DACO exige
  * contrato escrito con número de registro).
  */
@@ -30,7 +30,7 @@ export function propuestaHTML(d: DatosPropuesta): string {
 <h1>${d.categoriaNombre} para ${p.nombre.split(" ")[0]}</h1>
 <div class="peq">${p.municipio} · Preparada por ${d.cotizadorNombre}, Resuelto</div>
 
-<div class="precio"><div><small>Precio fijo del proyecto</small><b>${$(c.precioFinal)}</b></div><div style="text-align:right;font-size:13px;color:#9FB8CA">Mano de obra, materiales del alcance,<br>coordinación y garantía incluidos.<br><span style="color:#fff;font-weight:600">Sin sorpresas.</span></div></div>
+<div class="precio"><div><small>Precio fijo del proyecto</small><b>${$(c.precioFinal)}</b></div><div style="text-align:right;font-size:13px;color:#9FB8CA">Mano de obra, materiales del alcance,<br>y coordinación incluidos.<br><span style="color:#fff;font-weight:600">Sin sorpresas.</span></div></div>
 
 <h2>Alcance del trabajo</h2>
 <table>${d.partidas.map((x) => `<tr><td>${x.nombre}</td><td>${x.cantidad} ${x.unidad}</td></tr>`).join("")}</table>
@@ -46,7 +46,7 @@ ${d.duracionDias ? `<p><strong>Duración estimada:</strong> ${d.duracionDias[0]}
 <p><span class="ok">✓</span> Contratista verificado (Resuelto Verified: registro DACO, seguro, referencias).<br>
 <span class="ok">✓</span> El precio de esta propuesta es el precio. Cualquier cambio de alcance lo apruebas tú por escrito antes de hacerse.<br>
 <span class="ok">✓</span> Fotos de avance y una persona de Resuelto pendiente de tu proyecto de principio a fin.<br>
-<span class="ok">✓</span> Garantía Resuelto: tu proyecto no termina hasta que el trabajo contratado se complete según este alcance. 12 meses en mano de obra.</p>
+<span class="ok">✓</span> Tu proyecto no termina hasta que el trabajo contratado se complete según este alcance.</p>
 
 <a class="cta" href="${d.waLink}">Aceptar propuesta y reservar fecha</a>
 <p class="peq">Al aceptar, te enviamos el contrato para firma y el enlace del depósito. La fecha de inicio se reserva al recibir el depósito.</p>
@@ -67,7 +67,7 @@ export function contratoClienteHTML(d: DatosPropuesta & { registroDaco?: string 
 <p>El Cliente no realizará pagos directos a ningún contratista. La fecha de inicio se reserva al recibir el depósito.</p>
 <h2>4. Cambios de alcance</h2><p>Cualquier trabajo adicional se cotiza por escrito y solo se ejecuta con la aprobación del Cliente. Sin aprobación escrita no hay cargos adicionales.</p>
 <h2>5. Plazo</h2><p>${d.duracionDias ? `Duración estimada de ${d.duracionDias[0]} a ${d.duracionDias[1]} días hábiles` : "Duración estimada según la propuesta"}, sujeta a permisos, clima y disponibilidad de materiales, con aviso al Cliente ante cualquier cambio.</p>
-<h2>6. Garantía</h2><p>Resuelto garantiza la mano de obra por 12 meses desde la aceptación. Los materiales llevan la garantía del fabricante. Ante un defecto de ejecución, Resuelto coordina la corrección sin costo para el Cliente.</p>
+<h2>6. Terminación y materiales</h2><p>El proyecto se da por terminado cuando el trabajo contratado se completa según este alcance y el Cliente lo acepta. Los materiales llevan la garantía de su fabricante. Resuelto no ofrece una garantía adicional de mano de obra.</p>
 <h2>7. Aceptación</h2><p>Al terminar, Resuelto y el Cliente inspeccionan el trabajo. El último hito se paga al aceptar. Los puntos pendientes se listan por escrito y se corrigen antes del pago final.</p>
 <h2>8. Cancelación</h2><p>[Cláusula de cancelación y derechos del consumidor conforme a DACO: la redacta el abogado.]</p>
 <h2>9. Permisos</h2><p>${p.categoriaId === "poda-arboles" || p.categoriaId === "piscinas" || p.categoriaId === "remodelacion-general" ? "Los permisos requeridos se gestionan según lo indicado en la propuesta y su costo forma parte del precio cuando así se especifica." : "No se anticipan permisos para este alcance."}</p>

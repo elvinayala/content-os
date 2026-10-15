@@ -22,11 +22,13 @@ const u = (p: string) => BASE + p;
 export const BIBLIOTECA: Creativo[] = [
   // Feed de lanzamiento
   { id: "f01", formato: "post", pilar: "mentalidad", urls: [u("/feed/f01-hola.png")], tema: "Hola, somos Resuelto: plomería con precio fijo en PR", para: "todos" },
-  { id: "f02", formato: "post", pilar: "producto", urls: [u("/feed/f02-garantia.png")], tema: "Garantía de 12 meses por escrito", para: "clientes" },
+  // 14/oct/2026: fuera de la rotación, el arte promete la garantía de 12 meses que ya no se ofrece.
+  // { id: "f02", formato: "post", pilar: "producto", urls: [u("/feed/f02-garantia.png")], tema: "Garantía de 12 meses por escrito", para: "clientes" },
   { id: "f03", formato: "carrusel", pilar: "solucion", urls: [1, 2, 3, 4, 5].map((n) => u(`/feed/f03-como-${n}.png`)), tema: "Cómo funciona Resuelto en 4 pasos: escribes, precio, agendamos, va un licenciado", para: "clientes" },
   // Clientes
   { id: "c1", formato: "post", pilar: "producto", urls: [u("/flyers/c1-menu-precios.png")], tema: "Menú de precios: destape desde $149, precio antes de ir", para: "clientes" },
-  { id: "c2", formato: "post", pilar: "mentalidad", urls: [u("/flyers/c2-promesa.png")], tema: "La promesa: precio antes de ir, ventana de 2 h, garantía", para: "clientes" },
+  // 14/oct/2026: fuera de la rotación, el arte promete la garantía de 12 meses que ya no se ofrece.
+  // { id: "c2", formato: "post", pilar: "mentalidad", urls: [u("/flyers/c2-promesa.png")], tema: "La promesa: precio antes de ir, ventana de 2 h, garantía", para: "clientes" },
   { id: "c3", formato: "post", pilar: "producto", urls: [u("/flyers/c3-destape.png")], tema: "Destape de fregadero/ducha a precio fijo", para: "clientes" },
   { id: "c4", formato: "post", pilar: "solucion", urls: [u("/flyers/c4-cisterna.png")], tema: "Cisterna: revisión y mantenimiento", para: "clientes" },
   { id: "c8", formato: "post", pilar: "problema", urls: [u("/flyers/c8-el-problema.png")], tema: "El problema: el plomero que no llega y el precio que cambia", para: "clientes" },

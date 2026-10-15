@@ -21,7 +21,7 @@ export async function crearLinkPago(args: { trabajoId: string; concepto: string;
 
   const session = await s.checkout.sessions.create({
     mode: "payment",
-    line_items: [{ quantity: 1, price_data: { currency: "usd", unit_amount: args.montoCentavos, product_data: { name: `Resuelto · ${args.concepto}`, description: `Trabajo ${args.trabajoId}. Garantía de 12 meses en mano de obra.` } } }],
+    line_items: [{ quantity: 1, price_data: { currency: "usd", unit_amount: args.montoCentavos, product_data: { name: `Resuelto · ${args.concepto}`, description: `Trabajo ${args.trabajoId}.` } } }],
     metadata: { trabajoId: args.trabajoId, telefono: args.telefono ?? "", proyectoId: args.proyectoId ?? "" },
     success_url: `${config.urlPublica}/gracias?trabajo=${args.trabajoId}`,
     cancel_url: `${config.urlPublica}/pagar/${args.trabajoId}`,

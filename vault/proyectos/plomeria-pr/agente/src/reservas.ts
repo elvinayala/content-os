@@ -28,7 +28,7 @@ const pueblosDe = (cat: Categoria) => TERR.filter((t) => activoDe(t.id, cat)).fl
  *  handyman, electricidad…; aire en pausa), los pueblos de cada oficio y el cargo de coordinación. */
 export function datosReserva() {
   const pueblosPor = Object.fromEntries((Object.keys(NOMBRE_CATEGORIA) as Categoria[]).map((c) => [c, pueblosDe(c)])) as Record<Categoria, string[]>;
-  const servicios = CATALOGO.filter((s) => !s.cotizacion && pueblosPor[s.categoria].length).map((s) => ({ id: s.id, nombre: s.nombre, nivel: s.nivel, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], precio: s.precio ?? null, desde: s.rango?.[0] ?? null, hasta: s.rango?.[1] ?? null, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto }));
+  const servicios = CATALOGO.filter((s) => !s.cotizacion && pueblosPor[s.categoria].length).map((s) => ({ id: s.id, nombre: s.nombre, nivel: s.nivel, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], precio: s.precio ?? null, desde: s.rango?.[0] ?? null, hasta: s.rango?.[1] ?? null, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto || null }));
   return { servicios, pueblos: pueblosPor.plomeria, pueblosPor, coordinacion: MENU.cargo_coordinacion, garantiaMeses: MENU.garantia_meses, pagoAlTerminar: true };
 }
 
