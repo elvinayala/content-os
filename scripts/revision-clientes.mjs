@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 // Revisión de cuentas de clientes de Level Up — la hace Max (v2, 15/oct/2026). Reglas: scripts/meta-ads/revision.mjs
-// (skill .claude/skills/revision-clientes). Cadencia: acuerdo de $3,000+ y pago inicial de $1,500+ → dos veces al mes; lo
-// demás → una vez al mes. El resumen va al ESTRATEGA (Slack, desde Ritmo) y cada punto queda como un caso en Ritmo
-// (/ritmo/cuentas) que él marca: ejecutado, o por qué no. La dirección de tráfico da seguimiento. Elvin recibe el resumen
-// del día por el Telegram de Max (en vista previa, los resúmenes completos).
+// (skill .claude/skills/revision-clientes). SOLO LOS LUNES, por grupos fijos: acuerdo de $3,000+ → dos veces al mes (Grupo A
+// 1.º y 3.er lunes, Grupo B 2.º y 4.º); lo demás → una vez al mes (Grupos 1-4, su lunes). Cada cuenta abre un caso en Ritmo
+// (/ritmo/cuentas); cada estratega recibe UN mensaje con sus cuentas de la semana y tiene hasta el miércoles para marcarlas.
+// Jueves: recordatorio; viernes: aviso a la dirección de tráfico. Elvin recibe el resumen del lunes por el Telegram de Max.
 //
-//   node scripts/revision-clientes.mjs lista                                    quién, cada cuánto y cuándo le toca
+//   node scripts/revision-clientes.mjs lista                                    quién, cada cuánto y en qué grupo
 //   node scripts/revision-clientes.mjs cliente "<nombre|empresa|cuenta>" [--enviar] [--caso] [--json]   un cliente ya (antes de una reunión)
-//   node scripts/revision-clientes.mjs hoy [--enviar] [--max 8] [--forzar]      los que tocan hoy (una tanda por día)
+//   node scripts/revision-clientes.mjs lunes [--dia AAAA-MM-DD] [--enviar] [--forzar]   la tanda del lunes (sin --enviar: solo ver)
+//   node scripts/revision-clientes.mjs seguimiento                              recordatorios (jueves) y aviso a la dirección (viernes)
 //
 // Datos: clientes de Pulse por GET /api/max?revision=1 (CRON_SECRET; o --clientes <archivo.json> para probar) y anuncios
 // por la Marketing API (META_ADS_TOKEN). SOLO LECTURA de Meta: no pausa, no cambia presupuestos.
@@ -17,7 +18,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } fr
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as M from "./meta-ads/core.mjs";
-import { PERIODOS, acciones, analizar, cadencia, diasEntre, pendientesHoy, sumarDias, textoReporte } from "./meta-ads/revision.mjs";
+import { PERIODOS, acciones, analizar, asignarGrupos, cadencia, esLunes, lunesDelMes, nombreGrupo, sumarDias, textoReporte, tocanEsteLunes, venceEl } from "./meta-ads/revision.mjs";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const DIR = resolve(ROOT, "data/meta-ads/revisiones");
@@ -26,7 +27,7 @@ const ESTADO = resolve(DIR, "estado.json");
 const args = process.argv.slice(2);
 const flag = (f) => args.includes(f);
 const valor = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : undefined; };
-const [cmd, ...resto] = args.filter((a, i) => !a.startsWith("--") && !(i > 0 && ["--max", "--clientes"].includes(args[i - 1])));
+const [cmd, ...resto] = args.filter((a, i) => !a.startsWith("--") && !(i > 0 && ["--max", "--clientes", "--dia"].includes(args[i - 1])));
 
 function leerEnv(nombre) {
   if (process.env[nombre]) return process.env[nombre].trim();
@@ -141,6 +142,8 @@ function guardarDelDia(dia, texto) {
   appendFileSync(f, (existsSync(f) ? "\n\n---\n\n" : `# Revisión de cuentas · ${dia}\n\n`) + texto + "\n");
 }
 
+let _c = null;
+const c0 = () => (_c ??= M.crearCliente(leerEnv("META_ADS_TOKEN")));
 const norm = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
@@ -149,14 +152,18 @@ try {
   const lista = await clientes();
   const estado = leerEstado();
   const hoy = hoyPR();
+  // Grupos fijos y parejos (se guardan: nadie cambia de semana salvo que cambie su acuerdo).
+  estado.grupos = asignarGrupos(lista, estado.grupos || {});
 
   if (cmd === "lista") {
     const filas = lista.map((x) => {
-      const cad = cadencia(x), ultima = estado.clientes[x.itemId]?.ultima || null, vence = ultima ? sumarDias(ultima, cad.dias) : null;
-      return { cliente: (x.empresa || x.nombre).slice(0, 30), cada: cad.dias, motivo: cad.motivo.slice(0, 48), estratega: (x.estratega || "—").slice(0, 18), ultima: ultima || "nunca", toca: vence ? (vence <= hoy ? `hoy (+${diasEntre(vence, hoy)})` : vence) : "pendiente" };
-    }).sort((a, b) => a.cada - b.cada || a.cliente.localeCompare(b.cliente));
+      const g = estado.grupos[x.itemId];
+      return { cliente: (x.empresa || x.nombre).slice(0, 30), cada: g.dias === 15 ? "2×/mes" : "mensual", grupo: nombreGrupo(g.grupo), estratega: (x.estratega || "—").slice(0, 18), motivo: cadencia(x).motivo.slice(0, 44), ultima: estado.clientes[x.itemId]?.ultima || "nunca" };
+    }).sort((a, b) => a.grupo.localeCompare(b.grupo) || a.cliente.localeCompare(b.cliente));
     console.table(filas);
-    console.log(`${lista.length} clientes activos · dos veces al mes: ${filas.filter((f) => f.cada === 15).length} · mensual: ${filas.filter((f) => f.cada === 30).length} · sin cuenta: ${lista.filter((x) => !x.cuentaId).length}${estado.pausa ? ` · EN PAUSA: ${estado.pausa}` : ""}`);
+    const por = (g) => filas.filter((f) => f.grupo.startsWith(`Grupo ${g} `)).length;
+    console.log(`${lista.length} clientes · 2×/mes: A ${por("A")} · B ${por("B")} · mensual: 1) ${por(1)} 2) ${por(2)} 3) ${por(3)} 4) ${por(4)} · sin cuenta: ${lista.filter((x) => !x.cuentaId).length}${estado.pausa ? ` · EN PAUSA: ${estado.pausa}` : ""}`);
+    guardarEstado(estado);
   } else if (cmd === "cliente") {
     const q = norm(resto.join(" "));
     if (!q) throw new Error('Uso: cliente "<nombre | empresa | cuenta>"');
@@ -180,49 +187,56 @@ try {
       guardarDelDia(hoy, r.texto);
       console.log("✔ enviado a Elvin");
     }
-  } else if (cmd === "hoy") {
+  } else if (cmd === "seguimiento") {
+    const r = await apiMax("POST", null, { accion: "revision-seguimiento" });
+    console.log(`Seguimiento: ${r.abiertos} cuentas abiertas · ${r.pendientes} puntos sin marcar · recordatorios ${r.recordados} · a la dirección ${r.escalados}`);
+  } else if (cmd === "lunes" || cmd === "hoy") {
     if (!token) throw new Error("Falta META_ADS_TOKEN");
+    const dia = valor("--dia") || hoy;
     if (flag("--enviar") && estado.pausa && !flag("--forzar")) { console.log(`Revisión en pausa: ${estado.pausa}`); process.exit(0); }
-    if (flag("--enviar") && estado.ultimaTanda === hoy && !flag("--forzar")) { console.log(`La tanda de hoy ya salió (${hoy}). --forzar para mandar otra.`); process.exit(0); }
-    const c = M.crearCliente(token);
-    const { hoy: tocan, enFila } = pendientesHoy(lista, estado.clientes, hoy, { porDia: Number(valor("--max")) || Number(leerEnv("REVISION_POR_DIA")) || 8 });
-    if (!tocan.length) { console.log("Hoy no le toca revisión a nadie."); process.exit(0); }
+    if (flag("--enviar") && estado.ultimaTanda === dia && !flag("--forzar")) { console.log(`La tanda de ${dia} ya salió. --forzar para mandar otra.`); process.exit(0); }
+    if (!esLunes(dia)) {
+      let prox = sumarDias(dia, 1);
+      while (!esLunes(prox) || lunesDelMes(prox) > 4) prox = sumarDias(prox, 1);
+      console.log(`Las revisiones salen los lunes. La próxima: ${prox} (${lunesDelMes(prox)}.º lunes: Grupo ${lunesDelMes(prox) % 2 ? "A" : "B"} + Grupo ${lunesDelMes(prox)}, ${tocanEsteLunes(lista, estado.grupos, prox).length} cuentas).`);
+      guardarEstado(estado);
+      process.exit(0);
+    }
+    const tocan = tocanEsteLunes(lista, estado.grupos, dia);
+    if (!tocan.length) { console.log("Este lunes no toca revisión (5.º lunes del mes)."); guardarEstado(estado); process.exit(0); }
     const informes = [];
-    for (const x of tocan) informes.push({ x, r: await revisar(c, x) });
-    if (!flag("--enviar")) { console.log(informes.map((i) => i.r.texto).join("\n\n---\n\n")); process.exit(0); }
+    for (const x of tocan) informes.push({ x, r: await revisar(c0(), x) });
+    if (!flag("--enviar")) { console.log(informes.map((i) => i.r.texto).join("\n\n---\n\n")); console.log(`\n${informes.length} cuentas · ${lunesDelMes(dia)}.º lunes`); guardarEstado(estado); process.exit(0); }
 
-    estado.ultimaTanda = hoy;
-    let vistaPrevia = true;
+    estado.ultimaTanda = dia;
     const cuenta = { "no-optimizada": 0, escalar: 0, optimizada: 0, "sin-gasto": 0 }, sinEstratega = [];
     for (const i of informes) {
-      const caso = i.r.acciones.length ? await abrirCaso(i.x, i.r).catch((e) => ({ error: e.message })) : null;
-      i.caso = caso;
-      if (caso && !caso.error) vistaPrevia = caso.simulacion;
+      if (i.r.acciones.length) await abrirCaso(i.x, i.r).catch((e) => console.error("caso", i.x.empresa || i.x.nombre, e.message));
       cuenta[i.r.estado] = (cuenta[i.r.estado] || 0) + 1;
       if (!i.x.estratega) sinEstratega.push(i.x.empresa || i.x.nombre);
-      estado.clientes[i.x.itemId] = { nombre: i.x.empresa || i.x.nombre, ultima: hoy, dias: i.x.cadencia.dias, estadoCuenta: i.r.estado };
+      estado.clientes[i.x.itemId] = { nombre: i.x.empresa || i.x.nombre, ultima: dia, dias: i.x.cadencia.dias, grupo: i.x.grupo, estadoCuenta: i.r.estado };
       guardarEstado(estado); // uno por uno: si algo se cae a mitad, lo hecho ya queda marcado
-      guardarDelDia(hoy, i.r.texto);
+      guardarDelDia(dia, i.r.texto);
     }
-    const seg = await apiMax("POST", null, { accion: "revision-seguimiento" }).catch(() => null);
-
+    // UN mensaje por estratega con sus cuentas de la semana (en vista previa vuelven los textos sin mandarse).
+    const av = await apiMax("POST", null, { accion: "revision-avisar" });
+    const vistaPrevia = av.textos.length > 0 && av.avisados === 0 && !av.textos.some((t) => t.avisado);
     const cab = [
-      `📋 *Revisión de cuentas · ${fechaLarga(hoy)}*`,
-      `Hoy ${informes.length}: ${informes.map((i) => i.x.empresa || i.x.nombre).join(", ")}.`,
+      `📋 *Revisión de cuentas · ${fechaLarga(dia)}*`,
+      `${informes.length} cuentas (${lunesDelMes(dia)}.º lunes) · plazo: *${fechaLarga(venceEl(dia))}*`,
       "",
-      [cuenta["no-optimizada"] && `⚠️ ${plural(cuenta["no-optimizada"], "no optimizada", "no optimizadas")}`, cuenta.escalar && `🚀 ${cuenta.escalar} para escalar`, cuenta.optimizada && `✅ ${plural(cuenta.optimizada, "al día", "al día")}`, cuenta["sin-gasto"] && `⏸️ ${cuenta["sin-gasto"]} sin gasto`].filter(Boolean).join(" · "),
-      vistaPrevia ? "👀 Vista previa: los estrategas todavía no reciben nada. Te mando los resúmenes como les llegarían." : "Cada estratega recibió su resumen por Slack y lo marca en Ritmo.",
-      seg && seg.pendientes ? `⏰ Sin marcar de antes: ${plural(seg.pendientes, "punto", "puntos")} en ${plural(seg.abiertos, "cuenta abierta", "cuentas abiertas")}${seg.recordados ? ` (recordé a ${seg.recordados})` : ""}.` : "",
+      [cuenta["no-optimizada"] && `⚠️ ${plural(cuenta["no-optimizada"], "no optimizada", "no optimizadas")}`, cuenta.escalar && `🚀 ${cuenta.escalar} para escalar`, cuenta.optimizada && `✅ ${cuenta.optimizada} al día`, cuenta["sin-gasto"] && `⏸️ ${cuenta["sin-gasto"]} sin gasto`].filter(Boolean).join(" · "),
+      ...av.textos.map((t) => `• ${t.estratega}: ${plural(t.cuentas, "cuenta", "cuentas")}${t.avisado ? " ✓" : ""}`),
+      vistaPrevia ? "👀 Vista previa: los estrategas todavía no reciben nada. Te mando lo que le llegaría a cada uno." : "Cada estratega recibió su mensaje y lo marca en Ritmo hasta el miércoles.",
       sinEstratega.length ? `Sin estratega asignado en Pulse: ${sinEstratega.join(", ")}.` : "",
-      enFila ? `Quedan ${enFila} en fila para los próximos días.` : "",
       `${RITMO()}/ritmo/cuentas`,
     ].filter((l, k, xs) => l !== "" || (k > 0 && xs[k - 1] !== "")).join("\n");
     await aElvin(cab);
-    if (vistaPrevia) for (const i of informes) await aElvin(i.r.texto);
-    await espejoSlack(`[Max] Revisión de cuentas de hoy (${informes.length}) enviada por Telegram.`);
-    console.log(`✔ ${informes.length} revisiones · ${vistaPrevia ? "vista previa" : "estrategas avisados"}${enFila ? ` · ${enFila} en fila` : ""}`);
+    if (vistaPrevia) for (const t of av.textos) await aElvin(`_Le llegaría a ${t.estratega}:_\n\n${t.texto.replace(/<([^|>]+)\|([^>]+)>/g, "$2: $1")}`);
+    await espejoSlack(`[Max] Revisión de cuentas del lunes (${informes.length}) enviada por Telegram.`);
+    console.log(`✔ ${informes.length} cuentas · ${av.textos.length} estrategas · ${vistaPrevia ? "vista previa" : `${av.avisados} avisados`}`);
   } else {
-    console.log('Uso: node scripts/revision-clientes.mjs lista | cliente "<nombre>" [--enviar] [--caso] [--json] | hoy [--enviar] [--max 8]');
+    console.log('Uso: node scripts/revision-clientes.mjs lista | cliente "<nombre>" [--enviar] [--caso] [--json] | lunes [--dia AAAA-MM-DD] [--enviar] | seguimiento');
     process.exit(1);
   }
 } catch (e) {

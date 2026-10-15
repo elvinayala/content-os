@@ -42,6 +42,392 @@
     }
   },
   "ultimaTanda": "2026-10-15",
-  "actualizadoEl": "2026-10-15T22:00:03.699Z",
-  "pausa": "hasta que Carilin verifique los montos en Pulse y salga el formato nuevo (Elvin, 15/oct)"
+  "actualizadoEl": "2026-10-15T23:47:08.486Z",
+  "pausa": "hasta que Carilin verifique los montos en Pulse y salga el formato nuevo (Elvin, 15/oct)",
+  "grupos": {
+    "8897845e-7631-419a-bb32-2e6853f2a050": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "85cabae7-9ef5-4028-adb1-5f4598a3de17": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "51e7a111-608a-48c0-8f86-f46666748a25": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "dd4ac759-9865-4e71-85dd-b35d85cfbf6c": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "48e8a60b-37d3-4b02-a7a2-8034ab2e3d95": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "dba68c40-e6db-432e-a1a2-34f1dc2f7dbc": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "64ada08b-bd17-41cd-a1ae-68034bbf524a": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "9742d594-e869-4f24-a54b-2c707f6cdcab": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "a31af0b6-9066-4697-a8de-e7a29d8d989a": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "1775752f-92de-4a99-a5a6-37581ca9cef3": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "e2b21313-716f-48e6-992a-9f8efa0b2a00": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "7a8cc1e7-65bc-41c0-a25b-62b0f5564302": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "3659fe3e-7ab9-4368-b054-1f2c887c892d": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "d9392a4c-e2c6-48bc-887a-55620c34444e": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "d9b1a77b-175a-489d-ba6a-1418e8341055": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "bbab1b4d-b718-4af7-9aa2-9be8f4357878": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "f3fbc007-d2b0-414c-9f6b-7d169d1487e0": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "e46af204-7c35-4de0-88be-339c466fd6b4": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "6c951d39-cc5f-4ed4-a7a9-f49469b5ec43": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "ecb4ed16-8936-49b5-9c65-c1bd0a8c5379": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "aa8b5bcc-83a4-425b-b233-2cf67b7df499": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "0edae365-e797-4dba-816d-a41b1a7b6bdc": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "bac57c86-fe76-4e48-9a95-d00c8e3dfea1": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "a51d31e0-ec79-42ee-aee9-0c834c8de5f3": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "3031a2fe-df8a-4c73-80a4-1f257316c49d": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "ee417150-da10-43e6-8515-20b6220a6938": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "11b42037-0361-402a-80c6-66aa9f990388": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "85701cc5-55da-49d3-9d3b-f3bf6ad9e6f4": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "b165da8e-bd6d-4ce4-87c4-e4d6592e84f6": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "ed60456c-ba57-4131-aadf-fe09cbe45660": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "724e2752-fad8-42d2-922e-ffecd7c823fb": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "74e907c4-55a1-4f98-90dc-5398c0cd9d7b": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "f1caa235-3138-481c-bdd9-2d410dcd5468": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "7c88a097-fe75-40c5-ae70-340067fbfbbd": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "0bbce686-105f-42bd-a51e-1c5593a0916d": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "dbae77d4-faa3-484c-82fb-442ea1e36d9e": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "2bffb7df-66b0-4313-82e0-16dcaab32a6e": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "abb54f9d-b3be-428c-a6b9-c88d863f2534": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "32270f57-cb27-4a4b-a656-778997c6e724": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "661644a4-a960-4ec8-9b1e-21a3e88cf674": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "25aa6dc8-f93d-45c3-854a-df2b841f2cfc": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "1b8ebdc5-0f28-41ee-844b-1d6d1be3afc2": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "4afe53b3-1854-4d52-951a-5790dfe1fd6d": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "84e50bff-11ea-4a10-8314-fbab213f58ae": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "1b1a55a7-55a8-4ac5-b656-54fde9b3cfae": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "48c4f581-ae1e-4f95-a924-b26d14dd739f": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "d026e13a-f4a1-46ab-bf1c-65d07de60e07": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "af098b0b-7314-4d1f-9608-c449ee122ffe": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "1e28fe8b-5235-4ed4-9da9-5647c6fd0885": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "bb3119ad-7da8-4dc9-9e9e-39cb35f62024": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "793fbbbf-0589-47b6-9085-7f95f29cf36b": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "a051b34b-f09c-441a-b5ab-7bcfaeb7fca3": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "8364574c-77d9-40d5-9ffd-60d8d6c50fbc": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "c1980d04-c45e-4315-94c6-d9d53d039d5d": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "903d9cc4-fd4a-4b98-b5be-b7645d2434b9": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "17b9415d-04e7-4e0d-a493-2d7fb80e41ca": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "008f87d0-c54c-4d7b-aa53-cb9414dffba6": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "dfd9d651-1c1c-41fe-9775-a74a357f5982": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "49fc7100-0dda-4f1a-aaf8-0df00e1acbe9": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "9575d71a-788e-4e81-be29-ddbfdb8e3ec9": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "df7cbc42-ea6f-44ae-8edd-f24b017767d6": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "550257ac-e7a7-405f-be43-8e32c1e4d40c": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "716e046a-0c2e-4f38-b770-5e6bcfbd0171": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "de407341-3541-4511-9447-1e75e116712c": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "76618a6d-f0e2-44ac-a836-0782d042b8c1": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "0cf4bbbc-7a2d-4845-8978-91e4c57f4a47": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "5f8069b7-e7f7-48fa-b796-ba1da1a97f19": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "09ec61bf-4113-4052-954e-156410dbb1a2": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "39bfb78d-26ba-4947-9354-33878cac464d": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "3e8ff88e-1e1d-4360-a690-924e873e1e1c": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "23bda4cb-a107-4775-b674-f20dce1529b6": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "4bf88277-280e-4669-b8b3-4a9db7eb94c4": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "595ae1c1-cafa-4d90-81f8-069586460452": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "3defb4e3-7d4a-4fea-81a5-ad429825e418": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "96edd47b-358f-4e03-a35a-3a969eab396d": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "c55ac547-a212-475e-90a7-afa9be3c1b94": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "823fc8ca-7eb1-4e3a-86d9-bc5a7ea17604": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "73053e8e-b7d1-4b7b-ae35-e59e684232f1": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "f0e8078c-a951-41e6-b469-80cb04d48f40": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "6c9a65ea-adf1-444a-a646-9b4380096ec7": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "d5646175-153e-4932-bb52-c7d154ec1bdb": {
+      "dias": 30,
+      "grupo": "3"
+    },
+    "3ce3f82c-66da-44e1-98a4-e763ec2aff1e": {
+      "dias": 30,
+      "grupo": "1"
+    },
+    "ef8b408f-4d62-4733-8572-1d375356d78e": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "95aab02b-3540-4a72-9ed4-e36668c58306": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "4d40ba99-163a-4e5c-80fe-d80df55d13b8": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "d9b64672-0d8f-4af1-b960-523c888de25c": {
+      "dias": 30,
+      "grupo": "2"
+    },
+    "bda35b7e-a5a7-480e-97e0-91afd593e55d": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "86b45217-7d69-445a-953b-f79b09bca4ed": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "3a38163d-8c56-4924-9c27-6e91edb5bd0c": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "e8098c6a-fc8b-4b14-a37c-41ca035f439b": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "b9eaaeea-f014-4401-b4c2-37393685310b": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "3d2d29b6-37a7-4d51-8be8-e74b413cb10f": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "c0787118-10fa-4301-899b-b7ff009ab1ec": {
+      "dias": 30,
+      "grupo": "4"
+    },
+    "eae49461-78d7-4f47-9b9b-77e63a19e4c7": {
+      "dias": 15,
+      "grupo": "A"
+    },
+    "f555eadb-ddc0-4af0-b436-839025a95254": {
+      "dias": 15,
+      "grupo": "B"
+    },
+    "e0058c25-1d68-4795-b7df-68c242a1a136": {
+      "dias": 15,
+      "grupo": "B"
+    }
+  }
 }

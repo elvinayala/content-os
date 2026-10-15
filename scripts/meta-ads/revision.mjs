@@ -74,19 +74,49 @@ export function sumarDias(dia, dias) {
 }
 export const diasEntre = (a, b) => Math.round((new Date(b + "T12:00:00Z") - new Date(a + "T12:00:00Z")) / 86_400_000);
 
-// Los que tocan hoy: vencidos primero (más días de atraso arriba), después los que nunca se han revisado (acuerdo
-// más grande primero). Tope por día; el resto sigue en la fila mañana.
-export function pendientesHoy(clientes, estado, hoy, { porDia = 8 } = {}) {
-  const fila = [];
+// ---------- los lunes, por grupos (Elvin, 15/oct: "no quiero que todos los días haya un revolú") ----------
+// Las revisiones salen SOLO los lunes. Dos veces al mes: Grupo A (1.º y 3.er lunes del mes) y Grupo B (2.º y 4.º).
+// Mensual: Grupos 1 a 4 (su lunes del mes). El 5.º lunes no hay revisión. El estratega tiene hasta el miércoles.
+
+export const lunesDelMes = (dia) => Math.ceil(Number(String(dia).slice(8, 10)) / 7); // 1..5
+export const esLunes = (dia) => new Date(dia + "T12:00:00Z").getUTCDay() === 1;
+export const GRUPOS = { 15: ["A", "B"], 30: ["1", "2", "3", "4"] };
+export const SEMANAS_GRUPO = { A: [1, 3], B: [2, 4], 1: [1], 2: [2], 3: [3], 4: [4] };
+export const nombreGrupo = (g) => (/^[AB]$/.test(g) ? `Grupo ${g} (${SEMANAS_GRUPO[g].join(".º y ")}.º lunes)` : `Grupo ${g} (${g}.º lunes)`);
+
+// Grupos fijos y parejos: el que ya tiene grupo lo conserva (mientras no cambie de cadencia); los nuevos van al grupo con
+// menos clientes. Devuelve el mapa completo { itemId: { dias, grupo } } para guardarlo.
+export function asignarGrupos(clientes, previos = {}) {
+  const out = {};
+  const carga = { 15: Object.fromEntries(GRUPOS[15].map((g) => [g, 0])), 30: Object.fromEntries(GRUPOS[30].map((g) => [g, 0])) };
+  const nuevos = [];
   for (const c of clientes) {
-    const cad = cadencia(c);
-    const ultima = estado?.[c.itemId]?.ultima || null;
-    const vence = ultima ? sumarDias(ultima, cad.dias) : null;
-    if (vence && vence > hoy) continue;
-    fila.push({ ...c, cadencia: cad, ultima, atraso: vence ? diasEntre(vence, hoy) : null, peso: Math.max(leerAcuerdo(c.acuerdo)?.monto || 0, n(c.pagoInicial)) });
+    const dias = cadencia(c).dias;
+    const p = previos[c.itemId];
+    if (p && p.dias === dias && GRUPOS[dias].includes(p.grupo)) { out[c.itemId] = { dias, grupo: p.grupo }; carga[dias][p.grupo]++; }
+    else nuevos.push({ c, dias });
   }
-  fila.sort((a, b) => (b.atraso ?? -1) - (a.atraso ?? -1) || b.peso - a.peso || String(a.nombre).localeCompare(String(b.nombre)));
-  return { hoy: fila.slice(0, porDia), enFila: Math.max(0, fila.length - porDia) };
+  nuevos.sort((a, b) => String(a.c.itemId).localeCompare(String(b.c.itemId)));
+  for (const { c, dias } of nuevos) {
+    const g = GRUPOS[dias].reduce((m, x) => (carga[dias][x] < carga[dias][m] ? x : m));
+    out[c.itemId] = { dias, grupo: g };
+    carga[dias][g]++;
+  }
+  return out;
+}
+
+// Los que tocan el lunes `dia` (vacío si no es lunes o es el 5.º lunes).
+export function tocanEsteLunes(clientes, grupos, dia) {
+  if (!esLunes(dia)) return [];
+  const semana = lunesDelMes(dia);
+  return clientes.filter((c) => (SEMANAS_GRUPO[grupos[c.itemId]?.grupo] || []).includes(semana)).map((c) => ({ ...c, cadencia: cadencia(c), grupo: grupos[c.itemId].grupo }));
+}
+
+// El miércoles de esa semana (fecha límite para marcar en Ritmo).
+export function venceEl(dia) {
+  const d = new Date(dia + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + ((3 - d.getUTCDay() + 7) % 7));
+  return d.toISOString().slice(0, 10);
 }
 
 // ---------- lectura de Meta ----------

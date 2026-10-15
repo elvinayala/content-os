@@ -778,8 +778,10 @@ revisan María del Carmen, Juan Diego y Carilin."*
   `scripts/meta-ads/revision.mjs` (probadas).
 - **Cadencia**: acuerdo $3,000+ (con cualquier pago inicial) → dos veces al mes; acuerdos menores → mensual (montos de
   Pulse, que Carilin verifica).
-- **Sola, L-V 7:30 AM PR**: tu puente corre `revision-clientes.mjs hoy --enviar`: cada resumen abre un caso en
-  **Ritmo → Cuentas** para el estratega (le llega por Slack del bot) y a Elvin le llega el resumen del día por tu Telegram.
+- **Solo los lunes, 7:30 AM PR, por grupos fijos** (A/B dos veces al mes, 1-4 mensual): tu puente corre
+  `revision-clientes.mjs lunes --enviar`: cada cuenta abre un caso en **Ritmo → Cuentas**, cada estratega recibe UN mensaje
+  con sus cuentas (plazo: miércoles) y a Elvin le llega el resumen por tu Telegram. L-V corre `seguimiento` (jueves
+  recordatorio, viernes a la dirección).
   Sin Claude: cero costo de IA. Vista previa (solo Elvin) hasta `REVISION_CUENTAS=on`.
 - **A pedido** ("revisa a X", "tengo reunión con X"): `revision-clientes.mjs cliente "<nombre>"` + 1-2 líneas de tu criterio.
 - **Frecuencia**: aquí el tope es **1.8** en el último mes (no el 2.5 de "quemado" de §2).

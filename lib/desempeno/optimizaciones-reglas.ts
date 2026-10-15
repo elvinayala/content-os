@@ -108,8 +108,9 @@ export function diasHabiles(desde: string, hasta: string): number {
   return n;
 }
 
-/** Seguimiento: a los 2 días hábiles con puntos sin marcar se le recuerda al estratega; a los 4, se avisa a la dirección. */
-export const RECORDAR_DIAS = 2;
+/** Seguimiento: la revisión sale el lunes y vence el miércoles. Jueves (3 días hábiles) con puntos sin marcar → recordatorio
+ * al estratega; viernes (4) → aviso a la dirección de tráfico. */
+export const RECORDAR_DIAS = 3;
 export const ESCALAR_DIAS = 4;
 export function seguimientoDe(caso: Pick<Caso, "fecha" | "estado" | "acciones" | "simulacion"> & { recordado: boolean; escalado: boolean }, hoy: string): "recordar" | "escalar" | null {
   if (caso.estado !== "abierta" || caso.simulacion || !progreso(caso.acciones).pendientes) return null;
@@ -141,3 +142,14 @@ export function cumplimiento(casos: Caso[]) {
 }
 
 export const ETIQUETA_CUENTA: Record<EstadoCuentaRevision, string> = { "no-optimizada": "Cuenta no optimizada", escalar: "Para escalar" };
+
+/** Fecha límite: el miércoles de la semana de la revisión. */
+export function venceEl(dia: string): string {
+  const d = new Date(dia + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + ((3 - d.getUTCDay() + 7) % 7));
+  return d.toISOString().slice(0, 10);
+}
+export function plazo(dia: string, hoy: string): "a-tiempo" | "vence-hoy" | "vencido" {
+  const v = venceEl(dia);
+  return hoy < v ? "a-tiempo" : hoy === v ? "vence-hoy" : "vencido";
+}

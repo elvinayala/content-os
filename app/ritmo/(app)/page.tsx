@@ -23,7 +23,8 @@ import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desemp
 import { listarNoticias } from "@/lib/desempeno/noticias";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { googleListo, miDia } from "@/lib/desempeno/google-cal";
-import { resumenCuentasHoy } from "@/lib/desempeno/optimizaciones";
+import { prioridadesDe, resumenCuentasHoy } from "@/lib/desempeno/optimizaciones";
+import { Prioridades } from "@/components/ritmo/prioridades";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
 import { accesoArena, armarArena } from "@/lib/ventas/datos";
@@ -74,6 +75,8 @@ export default async function HoyPage() {
   const porFirmar = u.maestro || direccion ? await pendientesDe(u).catch(() => 0) : 0;
   // Cuentas por optimizar (15/oct): el estratega ve sus puntos sin marcar; la dirección de tráfico, todas las abiertas.
   const cuentas = await resumenCuentasHoy(u).catch(() => null);
+  // Sus prioridades del día (las cuentas que le tocan esta semana), justo debajo del ponche.
+  const prioridades = await prioridadesDe(u.id).catch(() => []);
   const fecha = new Date(`${hoy}T12:00:00`).toLocaleDateString("es-PR", { weekday: "long", day: "numeric", month: "long" });
 
   const esDireccion = u.maestro || direccion;
@@ -143,6 +146,7 @@ export default async function HoyPage() {
           ) : estado ? (
             <Ponche estado={estado} horasHoy={yo?.hoy.asistencia.horas ?? 0} seguridad={seguridad} />
           ) : null}
+          <Prioridades items={prioridades} hoy={hoy} />
           {estado?.sinPerfil ? <p className="max-w-xs text-center text-[11px] text-muted-foreground">Si lo usas, queda solo para ti y no cuenta en ningún reporte.</p> : null}
 
           {ventas?.mio ? (

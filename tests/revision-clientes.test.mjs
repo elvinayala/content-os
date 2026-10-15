@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { acciones, agruparCreativos, analizar, cadencia, estructura, faseDe, leerAcuerdo, pendientesHoy, resultadoDe, textoReporte, tipoResultado } from "../scripts/meta-ads/revision.mjs";
+import { acciones, agruparCreativos, analizar, cadencia, estructura, faseDe, leerAcuerdo, asignarGrupos, lunesDelMes, tocanEsteLunes, venceEl, resultadoDe, textoReporte, tipoResultado } from "../scripts/meta-ads/revision.mjs";
 
 test("acuerdo: lee el monto como lo escribe el equipo en Pulse", () => {
   assert.deepEqual(leerAcuerdo("3000 x 90 dias"), { monto: 3000, mensual: false });
@@ -23,18 +23,22 @@ test("cadencia de Elvin (15/oct): acuerdo $3,000+ = dos veces al mes, con cualqu
   assert.equal(cadencia({}).dias, 30);
 });
 
-test("quién toca hoy: vencidos primero, después los nuevos por tamaño; con tope por día", () => {
-  const clientes = [
-    { itemId: "a", nombre: "A", acuerdo: "3000 x 90 dias", pagoInicial: 3000 },
-    { itemId: "b", nombre: "B", acuerdo: "6000 x 90 dias", pagoInicial: 6000 },
-    { itemId: "c", nombre: "C", acuerdo: "500 mes a mes", pagoInicial: 500 },
-    { itemId: "d", nombre: "D", acuerdo: "3500 x 90 dias", pagoInicial: 3500 },
-  ];
-  const estado = { a: { ultima: "2026-09-25" }, c: { ultima: "2026-10-01" }, d: { ultima: "2026-10-10" } };
-  const r = pendientesHoy(clientes, estado, "2026-10-15", { porDia: 2 });
-  assert.deepEqual(r.hoy.map((x) => x.itemId), ["a", "b"], "A atrasado 5 días; B nunca revisado; C (30 días) y D (15) todavía no");
-  assert.equal(r.hoy[0].atraso, 5);
-  assert.deepEqual(pendientesHoy(clientes, {}, "2026-10-15", { porDia: 3 }).hoy.map((x) => x.itemId), ["b", "d", "a"]);
+test("los lunes, por grupos fijos y parejos; el 5.º lunes no hay revisión", () => {
+  const clientes = Array.from({ length: 10 }, (_, k) => ({ itemId: "c" + k, nombre: "C" + k, acuerdo: k < 4 ? "3500 x 90 dias" : "1000 x 90 dias", pagoInicial: 500 }));
+  const g = asignarGrupos(clientes);
+  const cuenta = (x) => Object.values(g).filter((v) => v.grupo === x).length;
+  assert.deepEqual([cuenta("A"), cuenta("B")], [2, 2], "4 de $3,000+ → 2 y 2");
+  assert.deepEqual(["1", "2", "3", "4"].map(cuenta), [2, 2, 1, 1], "6 mensuales repartidos");
+  const g2 = asignarGrupos([...clientes, { itemId: "nuevo", acuerdo: "5000 x 90", pagoInicial: 0 }], g);
+  for (const c of clientes) assert.equal(g2[c.itemId].grupo, g[c.itemId].grupo, "nadie cambia de grupo");
+  assert.ok(["A", "B"].includes(g2.nuevo.grupo));
+  assert.equal(lunesDelMes("2026-10-19"), 3);
+  const t1 = tocanEsteLunes(clientes, g, "2026-10-05"); // 1.er lunes: Grupo A + Grupo 1
+  assert.deepEqual(t1.map((c) => c.grupo).sort(), ["1", "1", "A", "A"]);
+  assert.deepEqual(tocanEsteLunes(clientes, g, "2026-10-19").map((c) => c.grupo).sort(), ["3", "A", "A"], "3.er lunes: A otra vez (cada 15 días) + Grupo 3");
+  assert.deepEqual(tocanEsteLunes(clientes, g, "2026-10-14"), [], "miércoles: nada");
+  assert.deepEqual(tocanEsteLunes(clientes, g, "2026-11-30"), [], "5.º lunes: nada");
+  assert.equal(venceEl("2026-10-19"), "2026-10-21", "lunes → miércoles");
 });
 
 test("resultado: el campo results de Meta en palabras", () => {

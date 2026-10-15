@@ -4,7 +4,7 @@ import { sql } from "drizzle-orm";
 
 import { db } from "../pulse/db";
 import { avisarCorreo, avisarPersona, esc } from "./avisar";
-import { cumplimiento, limpiarAcciones, progreso, rolCuentas, seguimientoDe, validarMarca, type Accion, type Caso, type EstadoCuentaRevision, type Pedido, type RolCuentas } from "./optimizaciones-reglas";
+import { cumplimiento, limpiarAcciones, plazo, progreso, rolCuentas, seguimientoDe, validarMarca, venceEl, type Accion, type Caso, type EstadoCuentaRevision, type Pedido, type RolCuentas } from "./optimizaciones-reglas";
 import { fechaPR } from "./reglas";
 
 // Cuentas por optimizar (15/oct/2026): los casos que abre la revisión de Max y que el estratega marca en Ritmo. Tabla en
@@ -111,11 +111,60 @@ export async function registrarRevision(r: { itemId: string; cliente: string; em
   const [nuevo] = filas(await d.execute(sql`INSERT INTO desempeno_optimizaciones (item_id, cliente, empresa, cuenta_id, estratega_id, estratega, fecha, estado_cuenta, resumen, acciones, simulacion)
     VALUES (${r.itemId}, ${r.cliente.slice(0, 160)}, ${r.empresa?.slice(0, 160) ?? null}, ${r.cuentaId}, ${r.estrategaId}, ${r.estratega}, ${fechaPR(Date.now())}, ${estadoCuenta}, ${r.resumen.slice(0, 6000)}, ${JSON.stringify(acciones)}::jsonb, ${simulacion})
     RETURNING id`));
-  const id = Number(nuevo.id);
-  let avisado = false;
-  if (!simulacion && r.estrategaId) avisado = await avisarPersona(r.estrategaId, `${esc(r.resumen)}\n\n👉 Marca cada punto en Ritmo: *Ejecutado*, o por qué no. <${linkCaso(id)}|Abrir en Ritmo>`);
-  return { id, simulacion, avisado };
+  // El aviso sale después, UNO por estratega con todas sus cuentas de la semana (avisarRevisiones).
+  return { id: Number(nuevo.id), simulacion, avisado: false };
 }
+
+const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const diaLargo = (f: string) => `${DIAS[new Date(f + "T12:00:00Z").getUTCDay()]} ${Number(f.slice(8, 10))} ${MESES[Number(f.slice(5, 7)) - 1]}`;
+const ordenAcciones = (xs: Accion[]) => [...xs].sort((a, b) => a.prioridad - b.prioridad);
+
+/** El mensaje del lunes a cada estratega: todas sus cuentas de la semana en uno, con el plazo (miércoles). */
+export function textoSemanal(nombre: string | null, casos: CasoCuenta[], fecha: string): string {
+  const L = [`📋 *Revisión de cuentas · ${diaLargo(fecha)}*`, `${nombre ? `Hola ${esc(nombre.split(" ")[0])} 👋 ` : ""}Esta semana te ${casos.length === 1 ? "toca *1 cuenta*" : `tocan *${casos.length} cuentas*`}. Tienes hasta el *${diaLargo(venceEl(fecha))}* para optimizarlas y marcarlas en Ritmo.`];
+  for (const c of casos) {
+    const p = progreso(c.acciones);
+    L.push("", `*${esc(c.empresa || c.cliente)}* · ${c.estadoCuenta === "no-optimizada" ? "⚠️ no optimizada" : "🚀 para escalar"} · ${p.total === 1 ? "1 punto" : `${p.total} puntos`}`);
+    for (const a of ordenAcciones(c.acciones).slice(0, 2)) L.push(`• ${esc(a.texto)}`);
+    if (p.total > 2) L.push(`• y ${p.total - 2} más`);
+  }
+  L.push("", `👉 Marca cada punto: *Ejecutado*, o por qué no. <${BASE()}/ritmo/cuentas|Abrir Ritmo → Cuentas>`);
+  return L.join("\n");
+}
+
+/** El lunes, después de la tanda: UN mensaje por estratega (Slack del bot + push de Ritmo). En vista previa no se manda:
+ * devuelve los textos para que Elvin los vea. */
+export async function avisarRevisiones(fecha = fechaPR(Date.now())) {
+  const casos = (await listarCasos({ abiertos: true, conSimulacion: true })).filter((c) => c.fecha === fecha);
+  const por = new Map<string, CasoCuenta[]>();
+  for (const c of casos) {
+    const k = c.estrategaId ?? "—";
+    por.set(k, [...(por.get(k) ?? []), c]);
+  }
+  const textos: { estratega: string; cuentas: number; texto: string; avisado: boolean }[] = [];
+  for (const [id, cs] of por) {
+    const texto = textoSemanal(cs[0].estratega, cs, fecha);
+    const avisado = id !== "—" && !cs[0].simulacion ? await avisarPersona(id, texto) : false;
+    textos.push({ estratega: cs[0].estratega ?? "Sin estratega", cuentas: cs.length, texto, avisado });
+  }
+  return { estrategas: textos.length, avisados: textos.filter((t) => t.avisado).length, textos };
+}
+
+/** "Tus prioridades de hoy" en Ritmo: las cuentas del estratega con puntos sin marcar, lo más urgente primero. */
+export async function prioridadesDe(userId: string) {
+  if (!cuentasEncendidas()) return [];
+  const hoy = fechaPR(Date.now());
+  const cs = await listarCasos({ estrategaId: userId, abiertos: true });
+  return cs
+    .map((c) => {
+      const pend = ordenAcciones(c.acciones.filter((a) => a.estado === "pendiente"));
+      return { id: c.id, cliente: c.empresa || c.cliente, pendientes: pend.length, total: c.acciones.length, primero: pend[0]?.texto ?? null, urgente: pend.some((a) => a.prioridad === 1), plazo: plazo(c.fecha, hoy), vence: venceEl(c.fecha) };
+    })
+    .filter((x) => x.pendientes > 0)
+    .sort((a, b) => Number(b.plazo !== "a-tiempo") - Number(a.plazo !== "a-tiempo") || Number(b.urgente) - Number(a.urgente) || b.pendientes - a.pendientes);
+}
+export type Prioridad = Awaited<ReturnType<typeof prioridadesDe>>[number];
 
 export async function listarCasos(o: { estrategaId?: string; abiertos?: boolean; dias?: number; conSimulacion?: boolean } = {}): Promise<CasoCuenta[]> {
   await asegurarTabla();
@@ -199,7 +248,7 @@ export async function seguimientoCasos(): Promise<{ recordados: number; escalado
     const s = seguimientoDe(c, hoy);
     const p = progreso(c.acciones);
     if (s === "recordar" && c.estrategaId) {
-      if (await avisarPersona(c.estrategaId, `⏰ *${esc(c.empresa || c.cliente)}*: tienes ${p.pendientes === 1 ? "1 punto" : `${p.pendientes} puntos`} sin marcar de la revisión del ${c.fecha.slice(8)}/${c.fecha.slice(5, 7)}. Márcalo: *Ejecutado*, o por qué no.\n<${linkCaso(c.id)}|Abrir en Ritmo>`)) recordados++;
+      if (await avisarPersona(c.estrategaId, `⏰ *${esc(c.empresa || c.cliente)}*: el plazo era el ${diaLargo(venceEl(c.fecha))} y tienes ${p.pendientes === 1 ? "1 punto" : `${p.pendientes} puntos`} sin marcar. Márcalo hoy: *Ejecutado*, o por qué no.\n<${linkCaso(c.id)}|Abrir en Ritmo>`)) recordados++;
       await d.execute(sql`UPDATE desempeno_optimizaciones SET recordado_at = now() WHERE id = ${c.id}`);
     } else if (s === "escalar") {
       aDireccion.push(`• ${esc(c.estratega || "Sin estratega")} · *${esc(c.empresa || c.cliente)}* · ${p.pendientes} sin marcar desde el ${c.fecha.slice(8)}/${c.fecha.slice(5, 7)}`);
@@ -208,7 +257,7 @@ export async function seguimientoCasos(): Promise<{ recordados: number; escalado
     }
   }
   if (aDireccion.length) {
-    const texto = `🔔 *Cuentas sin marcar* (4+ días hábiles)\n${aDireccion.join("\n")}\n<${BASE()}/ritmo/cuentas|Ver en Ritmo>`;
+    const texto = `🔔 *Cuentas sin marcar* (venció el miércoles)\n${aDireccion.join("\n")}\n<${BASE()}/ritmo/cuentas|Ver en Ritmo>`;
     for (const e of DIRECTORES_TRAFICO()) await avisarCorreo(e, texto);
   }
   return { recordados, escalados, abiertos: casos.length, pendientes: casos.reduce((s, c) => s + progreso(c.acciones).pendientes, 0) };

@@ -6,7 +6,7 @@ import { actualizarItem, alBuzonMax, cliente, guardarCliente, item, items, lista
 import { asegurarCarpeta, driveListo, guardarArchivo, guardarDoc, listarCarpeta, saludDrive } from "@/lib/max/drive";
 import { reunirMaterial } from "@/lib/max/material";
 import { clientesParaRevision } from "@/lib/max/revision-clientes";
-import { linkCaso, registrarRevision, seguimientoCasos } from "@/lib/desempeno/optimizaciones";
+import { avisarRevisiones, linkCaso, registrarRevision, seguimientoCasos } from "@/lib/desempeno/optimizaciones";
 import { secretoValido } from "@/lib/pulse/seguridad";
 
 // Max en Slack — las manos de Max (scripts/max.mjs, desde su contenedor de Railway). Auth con
@@ -24,6 +24,7 @@ import { secretoValido } from "@/lib/pulse/seguridad";
 //        { accion: "enviar", id }                         reintenta enviar al cliente algo YA aprobado
 //        { accion: "material", cliente, hilo?, canal?, drive?[] }  baja logo/fotos/PDF del hilo y de Drive → ficha.material
 //        { accion: "revision-caso", itemId, estadoCuenta, resumen, acciones[] }  revisión de cuenta → caso en Ritmo (+ aviso al estratega)
+//        { accion: "revision-avisar" }                     el lunes: un mensaje por estratega con sus cuentas de la semana
 //        { accion: "revision-seguimiento" }                 recordatorios de puntos sin marcar (estratega y dirección de tráfico)
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -111,6 +112,9 @@ export async function POST(req: NextRequest) {
       const r = await registrarRevision({ itemId, cliente: c.nombre, empresa: c.empresa, cuentaId: c.cuentaId, estrategaId: c.estrategaId, estratega: c.estratega, estadoCuenta: s("estadoCuenta", 30) || "no-optimizada", resumen: s("resumen", 6000) || "", acciones: b.acciones });
       return NextResponse.json({ ok: true, ...r, link: r.id ? linkCaso(r.id) : null });
     }
+    case "revision-avisar":
+      // El lunes: un mensaje por estratega con todas sus cuentas (en vista previa devuelve los textos sin mandarlos).
+      return NextResponse.json({ ok: true, ...(await avisarRevisiones()) });
     case "revision-seguimiento":
       return NextResponse.json({ ok: true, ...(await seguimientoCasos()) });
     case "material": {

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { cumplimiento, diasHabiles, limpiarAcciones, progreso, puedeMarcar, rolCuentas, seguimientoDe, validarMarca } from "../lib/desempeno/optimizaciones-reglas.ts";
+import { cumplimiento, diasHabiles, plazo, venceEl, limpiarAcciones, progreso, puedeMarcar, rolCuentas, seguimientoDe, validarMarca } from "../lib/desempeno/optimizaciones-reglas.ts";
 
 test("acciones del script: se limpian, sin repetidos, con tipo válido", () => {
   const xs = limpiarAcciones([
@@ -34,15 +34,17 @@ test("quién: dirección de tráfico ve y marca todo; el estratega solo lo suyo 
   assert.equal(puedeMarcar({ estrategaId: "3", estado: "bien" }, { id: "3" }, "estratega"), false);
 });
 
-test("seguimiento: 2 días hábiles → recordar al estratega; 4 → avisar a la dirección; fines de semana no cuentan", () => {
+test("seguimiento: lunes sale, miércoles vence; jueves recordatorio, viernes a la dirección", () => {
   assert.equal(diasHabiles("2026-10-16", "2026-10-20"), 2, "viernes → martes");
-  const caso = { fecha: "2026-10-15", estado: "abierta", simulacion: false, recordado: false, escalado: false, acciones: [{ estado: "pendiente" }] };
-  assert.equal(seguimientoDe(caso, "2026-10-16"), null);
-  assert.equal(seguimientoDe(caso, "2026-10-19"), "recordar");
-  assert.equal(seguimientoDe({ ...caso, recordado: true }, "2026-10-19"), null);
-  assert.equal(seguimientoDe({ ...caso, recordado: true }, "2026-10-21"), "escalar");
-  assert.equal(seguimientoDe({ ...caso, acciones: [{ estado: "ejecutado" }] }, "2026-10-21"), null, "todo marcado");
-  assert.equal(seguimientoDe({ ...caso, simulacion: true }, "2026-10-21"), null, "vista previa: no molesta a nadie");
+  const caso = { fecha: "2026-10-19", estado: "abierta", simulacion: false, recordado: false, escalado: false, acciones: [{ estado: "pendiente" }] };
+  assert.equal(seguimientoDe(caso, "2026-10-21"), null, "miércoles: todavía está a tiempo");
+  assert.equal(seguimientoDe(caso, "2026-10-22"), "recordar", "jueves");
+  assert.equal(seguimientoDe({ ...caso, recordado: true }, "2026-10-22"), null);
+  assert.equal(seguimientoDe({ ...caso, recordado: true }, "2026-10-23"), "escalar", "viernes");
+  assert.equal(seguimientoDe({ ...caso, acciones: [{ estado: "ejecutado" }] }, "2026-10-23"), null, "todo marcado");
+  assert.equal(seguimientoDe({ ...caso, simulacion: true }, "2026-10-23"), null, "vista previa: no molesta a nadie");
+  assert.equal(venceEl("2026-10-19"), "2026-10-21");
+  assert.deepEqual(["2026-10-20", "2026-10-21", "2026-10-22"].map((h) => plazo("2026-10-19", h)), ["a-tiempo", "vence-hoy", "vencido"]);
 });
 
 test("cumplimiento por estratega: marcado (ejecutó o explicó) y ejecutado", () => {

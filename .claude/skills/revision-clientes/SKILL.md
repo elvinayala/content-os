@@ -11,8 +11,9 @@ Eres Max (o quien haga la revisión por él). Esta es la skill de Elvin para rev
 - Clientes en **CLIENTE ACTIVO** de LEVEL UP MEDIA (Pulse), con pauta.
 - **Dos veces al mes**: acuerdo de **$3,000 o más**, sea cual sea el pago inicial (Elvin, 15/oct). **Una vez al mes**:
   los acuerdos menores. Los montos los mantiene Carilin en Pulse ("Acuerdo de Pago", "Pago Inicial").
-- La tanda sale sola de lunes a viernes a las **7:30 AM PR** (≈ 8 por día). `node scripts/revision-clientes.mjs lista`
-  dice a quién le toca. Se detiene con `pausa` en `data/meta-ads/revisiones/estado.json`.
+- **Solo los lunes, 7:30 AM PR, por grupos fijos** (Elvin: "no quiero que todos los días haya un revolú"): dos veces al mes
+  = Grupo A (1.º y 3.er lunes) o B (2.º y 4.º); mensual = Grupo 1-4 (su lunes). El 5.º lunes no hay. ≈ 36 cuentas por lunes.
+  Plazo para optimizar y marcar: **el miércoles**. `node scripts/revision-clientes.mjs lista` dice el grupo de cada cliente. Se detiene con `pausa` en `data/meta-ads/revisiones/estado.json`.
 
 ## El resumen (claro, con espacios, pocos emojis)
 1. 💰 **Costo por resultado**: Máx · Mes · 7 días · Hoy (y lo gastado en el mes).
@@ -44,13 +45,15 @@ de Meta. Reglas puras en `scripts/meta-ads/revision.mjs` (tests `tests/revision-
   **No se hizo** con el porqué (obligatorio).
 - La **dirección de tráfico** (María del Carmen, Juan Diego, Carilin) ve todas las cuentas, el cumplimiento por estratega,
   marca la cuenta **"Ya está bien"** o le **pide optimización** (le llega por Slack).
-- 2 días hábiles con puntos sin marcar → recordatorio al estratega; 4 → aviso a la dirección de tráfico.
+- Cada estratega recibe **un solo mensaje** el lunes con todas sus cuentas (Slack del bot + push de Ritmo). En Ritmo → Hoy,
+  debajo del ponche, le sale **"Tus prioridades de hoy"**: sus cuentas, por dónde empezar y el plazo.
+- Jueves con puntos sin marcar → recordatorio al estratega; viernes → aviso a la dirección de tráfico.
 - Encendido con `REVISION_CUENTAS=on` (Vercel). Antes: vista previa, solo Elvin ve los casos y no se le escribe a nadie.
 
 ## Cómo correrla
 - Un cliente ya (antes de una reunión): `node scripts/revision-clientes.mjs cliente "<nombre | negocio | cuenta>"`
   (`--enviar` a Elvin por Telegram; `--caso` además lo abre en Ritmo para el estratega).
-- La tanda del día: `node scripts/revision-clientes.mjs hoy` (ver) · `hoy --enviar` (una por día).
+- La tanda: `node scripts/revision-clientes.mjs lunes [--dia AAAA-MM-DD]` (ver) · `lunes --enviar` · `seguimiento` (diario).
 - Al contestarle a Elvin: el resumen tal cual + 1-2 líneas de criterio si ves algo que las reglas no ven.
 
 ## Reglas duras
