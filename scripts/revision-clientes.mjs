@@ -162,6 +162,7 @@ try {
     }
   } else if (cmd === "hoy") {
     if (!token) throw new Error("Falta META_ADS_TOKEN");
+    if (flag("--enviar") && estado.pausa && !flag("--forzar")) { console.log(`Revisión en pausa: ${estado.pausa}`); process.exit(0); }
     if (flag("--enviar") && estado.ultimaTanda === hoy && !flag("--forzar")) { console.log(`La tanda de hoy ya salió (${hoy}). --forzar para mandar otra.`); process.exit(0); }
     const c = M.crearCliente(token);
     const { hoy: tocan, enFila } = pendientesHoy(lista, estado.clientes, hoy, { porDia: Number(valor("--max")) || Number(leerEnv("REVISION_POR_DIA")) || 8 });
