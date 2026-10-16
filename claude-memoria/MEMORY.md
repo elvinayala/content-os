@@ -100,7 +100,7 @@
 - [Mezcla de contenido 50/20/20/10](mezcla-contenido-50-20-20-10.md) — SIEMPRE: 50 % problema del avatar ideal · 20 solución · 20 producto · 10 mentalidad, en cualquier lote
 - [Shadow — avatar definitivo](shadow-avatar.md) — 18–26, salario mínimo, sin negocio; aprende a operar sistemas para creadores a 30–50 % de comisión
 - [Black Friday 2026](black-friday-2026.md) — APROBADO 11/oct: ofertas del 15/oct al 1/dic, mismo precio y bonos que bajan por ola; vault/proyectos/black-friday-2026/
-- [Encuesta de fin de onboarding](encuesta-fin-onboarding.md) — 11/oct: WhatsApp 15 min después de la llamada con Jessica; verde/ámbar/rojo → Elvin (y Carilin si no es verde); simulación hasta OK + prueba real
+- [Encuesta de fin de onboarding](encuesta-fin-onboarding.md) — 11/oct: WhatsApp 15 min después de la llamada con Jessica; verde/ámbar/rojo → Elvin (y Carilin si no es verde); EN REAL desde el 15/oct; vigilar el 1er envío
 - [Cuentas Meta en el onboarding](cuentas-meta-onboarding.md) — 12/oct: verificación automática de la cuenta publicitaria de cada cliente; portafolio Level Up 836808821982174; 21 IDs llenados solos; proceso: onboarding comparte (Jessica), estratega pone el ID; avisos ruteados así
 - [AIB — clientes nuevos en Pulse](aib-clientes-pulse-angela.md) — 12/oct: Ángela (PM de AIB) sube las fichas; falta confirmar a Edgardo Maldonado; hojas de ventas sin conectar (VENTAS_SCRIPT_URL); huecos en Acuerdo/Próximo pago/Pueblo
 - [Level Up — piezas sin precio](lu-piezas-sin-precio.md) — 12/oct: motion/anuncios de LU sin $3,500 ni valores; solo resultados de clientes

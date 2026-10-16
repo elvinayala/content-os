@@ -15,3 +15,6 @@ metadata:
 - Pendiente opcional: promedio por Project Manager en Ritmo; hora real de fin con Zoom/Fathom (cuidado con [[privacidad-reuniones-elvin]]).
 
 Relacionado: [[n8n-level-up]], [[formularios-propios]].
+
+
+**15/oct/2026: ACTIVADA en real** (Elvin: "actívala"). `ENCUESTA_ONBOARDING_MODO=real` en Vercel Production + deploy; el cron responde `modo: real`. La prueba con su número salió y se procesó (ref 7e57ab02). Vigilar el primer envío real a un cliente.
