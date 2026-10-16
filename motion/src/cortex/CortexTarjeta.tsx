@@ -16,7 +16,7 @@ const INTER = cargarInter("normal", { weights: ["300", "600", "900"], subsets: [
 export const ICONOS = [
   "reloj", "calendario", "chat", "llamada", "celular", "grafica", "dinero", "check", "salud", "corazon", "pulso", "ubicacion",
   "estrella", "usuarios", "documento", "herramienta", "comida", "carrito", "idea", "objetivo", "escudo", "chip", "hogar",
-  "tienda", "rayo",
+  "tienda", "rayo", "alerta",
 ] as const;
 export type Icono = (typeof ICONOS)[number];
 
@@ -76,6 +76,7 @@ const TRAZOS: Record<Icono, string[]> = {
   hogar: ["M3 11l9-7.5 9 7.5", "M5.5 9.3V20h13V9.3", "M10 20v-5.5h4V20"],
   tienda: ["M3.5 9l1.8-5h13.4l1.8 5", "M3.5 9h17", "M5 9v11h14V9", "M10 20v-5h4v5"],
   rayo: ["M13.5 2.5L4.5 14h6.5l-1 7.5 9-11.5h-6.5z"],
+  alerta: ["M10.3 4.2a2 2 0 0 1 3.4 0l7.6 13.2a2 2 0 0 1-1.7 3H4.4a2 2 0 0 1-1.7-3z", "M12 9.5v4.5", "M12 17.2h.01"],
 };
 
 const IconoLinea: React.FC<{ icono: Icono; lado: number; color: string; progreso: number; grosor: number }> = ({ icono, lado, color, progreso, grosor }) => (
@@ -236,8 +237,8 @@ export const TarjetaVista: React.FC<{ t: Tarjeta }> = ({ t }) => {
             <IconoLinea icono={t.icono} lado={lado * 0.56} color={colorIcono} progreso={dibujo} grosor={1.5} />
           </div>
         ) : null}
-        {/* texto */}
-        <div style={{ position: "absolute", left: tx, top: ty, transform: horizontal ? "translate(0,-50%)" : "translate(-50%,0)", width: ancho,
+        {/* texto (sin título = fondo de una lista: Cortex pone los ítems en rojo encima, la tarjeta no escribe nada) */}
+        {t.titulo ? <div style={{ position: "absolute", left: tx, top: ty, transform: horizontal ? "translate(0,-50%)" : "translate(-50%,0)", width: ancho,
           textAlign: horizontal ? "left" : "center", fontFamily: INTER }}>
           {t.entrada ? <div style={{ fontWeight: 300, fontSize: tamEntrada, color: claro ? "#3A4150" : "rgba(255,255,255,0.88)", letterSpacing: -tamEntrada * 0.02,
             marginBottom: tam * 0.1, opacity: entradaOp }}>{t.entrada}</div> : null}
@@ -250,7 +251,7 @@ export const TarjetaVista: React.FC<{ t: Tarjeta }> = ({ t }) => {
           <div style={{ height: Math.max(4, u * 0.007), width: u * 0.16 * barra, marginTop: tam * 0.28, borderRadius: 99,
             marginLeft: horizontal ? 0 : "auto", marginRight: horizontal ? 0 : "auto",
             background: t.estilo === "marca" ? "#FFFFFF" : acento, boxShadow: claro || s ? "none" : `0 0 ${u * 0.02}px ${rgba(acento, 0.8)}` }} />
-        </div>
+        </div> : null}
       </AbsoluteFill>
     </AbsoluteFill>
   );
