@@ -18,3 +18,5 @@ Relacionado: [[n8n-level-up]], [[formularios-propios]].
 
 
 **15/oct/2026: ACTIVADA en real** (Elvin: "actívala"). `ENCUESTA_ONBOARDING_MODO=real` en Vercel Production + deploy; el cron responde `modo: real`. La prueba con su número salió y se procesó (ref 7e57ab02). Vigilar el primer envío real a un cliente.
+
+**Dominio profesional (15/oct):** Elvin pidió un enlace que no diga Vercel. `formularios.levelupmediapr.net` agregado al proyecto content-os por la API de Vercel (verificación pendiente) + regla en `proxy.ts` (solo formularios; `/<slug>` → `/f/<slug>`). FALTA que Elvin ponga en Network Solutions: CNAME `formularios` → `cname.vercel-dns.com` y TXT `_vercel` = `vc-domain-verify=formularios.levelupmediapr.net,dce3af731209916e0d5d`. Cuando verifique: `ENCUESTA_ONBOARDING_BASE=https://formularios.levelupmediapr.net` en Vercel + deploy (linkEncuesta ya arma el enlace corto con ese dominio). Hasta entonces sale por levelupmedia.vercel.app.
