@@ -367,3 +367,19 @@ export function decisionVigia(previo: string | null, problema: { clave: string }
   }
   return previo?.startsWith("alerta:") ? "recuperado" : null;
 }
+
+/**
+ * Al agendar en Calendly la persona escribe su nombre real; el lead de WhatsApp suele llamarse como su
+ * perfil ("Experience Innovation Claro Dealer" era Ruth del Valle, 14/oct). Si el lead vino de WhatsApp
+ * y el nombre de la cita es otro, manda el de la cita y el viejo pasa a `negocio` si estaba vacío.
+ */
+export function renombrePorAgenda(
+  actual: { nombre: string; negocio: string | null; origen: string | null },
+  nuevo: { nombre: string; negocio?: string | null },
+): { nombre?: string; negocio?: string } {
+  const n = nuevo.nombre?.trim();
+  if (!n || actual.origen !== "whatsapp" || clave(n) === clave(actual.nombre ?? "")) return {};
+  const cambios: { nombre?: string; negocio?: string } = { nombre: n };
+  if (!actual.negocio && !nuevo.negocio?.trim() && actual.nombre?.trim()) cambios.negocio = actual.nombre.trim();
+  return cambios;
+}

@@ -40,6 +40,7 @@ export function leadCalendlyAgendo(v: { nombre: string; email: string; telefono:
       duenoNombre: v.closer ?? null,
       // Si venía del formulario de agenda (dueño = setter), al agendar pasa al closer.
       forzarDueno: !!v.closer,
+      nombreManda: true,
       nota: `📅 ${v.reagenda ? "Reagendó" : "Agendó"}: ${fechaCita(v.inicio)} · ${v.evento}${v.closer ? ` · closer ${v.closer}` : ""}${v.agendoPor ? ` · agendó ${v.agendoPor}` : ""}`,
       datos: { citaInicio: v.inicio, citaEvento: v.evento, calendlyUri: v.uri, ...(v.closer ? { closer: v.closer } : {}) },
     });

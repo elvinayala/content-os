@@ -7,7 +7,7 @@ import { desempenoFichas } from "@/lib/desempeno/schema";
 import { pulseUsers } from "@/lib/pulse/schema";
 import type { UsuarioPulse } from "@/lib/pulse/types";
 
-import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
+import { clave, duenoPorReparto, esEtapaGrupos, ETAPA_GRUPOS, normalizarReparto, normalizarTelefono, ordenEntre, rangoFecha, renombrePorAgenda, seReparte, SEMILLA, tipoAdjunto, type EventoWhatsapp, type FiltroFecha, type Marca, type Reparto } from "./reglas";
 import { leadsAcceso, leadsActividades, leadsEmbudos, leadsEtapas, leadsHistorial, leadsNumerosEquipo, leadsTratos, leadsWebhookLog, leadsWhatsapp } from "./schema";
 
 export type Embudo = typeof leadsEmbudos.$inferSelect;
@@ -641,6 +641,8 @@ export async function ingestarLead(v: {
   moverSiExiste?: boolean;
   /** true = si el lead ya existe, el dueño pasa a ser `duenoNombre` (p. ej. del setter al closer al agendar). */
   forzarDueno?: boolean;
+  /** true = el nombre que trae manda sobre el de un lead de WhatsApp (Calendly: la persona escribe su nombre). */
+  nombreManda?: boolean;
 }): Promise<{ id: string; nuevo: boolean }> {
   const emb = await embudoPorNombre(v.marca, v.embudo);
   if (!emb) throw new Error("sin-embudos");
@@ -659,12 +661,15 @@ export async function ingestarLead(v: {
   if (ya) {
     const cambios: Record<string, unknown> = { updatedAt: new Date(), datos: { ...(ya.datos ?? {}), ...(v.datos ?? {}) } };
     if (!ya.negocio && v.negocio) cambios.negocio = v.negocio;
+    const renombre = v.nombreManda ? renombrePorAgenda(ya, v) : {};
+    Object.assign(cambios, renombre);
     if (!ya.email && email) cambios.email = email;
     if (!ya.telefono && telefono) cambios.telefono = telefono;
     if (duenoId && (!ya.duenoId || v.forzarDueno)) cambios.duenoId = duenoId;
     if (v.agendoPor) cambios.agendoPor = v.agendoPor;
     await d.update(leadsTratos).set(cambios).where(eq(leadsTratos.id, ya.id));
     if (v.moverSiExiste !== false && etapa && ya.etapaId !== etapa.id) await moverTrato(ya.id, etapa.id, null, null);
+    if (renombre.nombre) await historial(ya.id, "sistema", `✏️ Nombre: ${ya.nombre} → ${renombre.nombre}`);
     if (v.nota) await historial(ya.id, "sistema", v.nota);
     return { id: ya.id, nuevo: false };
   }

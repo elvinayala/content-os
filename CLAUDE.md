@@ -1030,6 +1030,7 @@ se carga** (Elvin: archivado en Excel). Acceso: admin/editor de Pulse todo; el r
 - **Exportaciones con Nico** (9/oct): el pedido de Nahuel/Aure le llega a Elvin por el bot de Nico con un código; aprueba con
   `ok exp <código>` / `no exp <código>` en ese Telegram (el puente llama `POST /api/leads/exportaciones/decidir`, CRON_SECRET)
   o `nico ok exp <código>` en Slack. `/solicitudes` de Nico también las lista.
+- **Nombre de la cita manda** (14/oct, Ruth del Valle salía como "Experience Innovation Claro Dealer"): al agendar en Calendly, un lead de WhatsApp toma el nombre que la persona escribió y el del perfil pasa a negocio si estaba vacío (`renombrePorAgenda`, `nombreManda` en `ingestarLead`; tests `tests/leads-renombre.test.mjs`).
 - **Entrada para Zapier/formularios**: `POST /api/leads/entrada?marca=level-up&embudo=<id|nombre>&s=
   LEADS_WEBHOOK_SECRET[&etapa=…]` (JSON o form, campos tolerantes, sin duplicar, `moverSiExiste:false`).
 - **Equipo con acceso a Leads LU** (cuentas miembro de Pulse, `leads_acceso` todos): Luis Fernández (setter),
