@@ -38,6 +38,15 @@ export default async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/onboarding/") || pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname.startsWith("/onboarding/level-up/opengraph-image")) return NextResponse.next();
     return NextResponse.redirect(new URL("/", request.url));
   }
+  // Formularios de Level Up (formularios.levelupmediapr.net, 15/oct): enlace profesional para encuestas y formularios
+  // de Pulse. Ahí SOLO existen los formularios: /<slug> muestra /f/<slug>; la raíz, el onboarding; todo lo demás, a la raíz.
+  if (host.startsWith("formularios.")) {
+    if (pathname === "/") return NextResponse.rewrite(new URL("/f/onboarding-level-up", request.url));
+    if (pathname.startsWith("/f/") || pathname.startsWith("/api/f/") || pathname.startsWith("/_next/") || pathname.startsWith("/marcas/") || pathname === "/favicon.ico") return NextResponse.next();
+    const slug = pathname.slice(1);
+    if (/^[a-z0-9-]{2,80}$/.test(slug)) return NextResponse.rewrite(new URL(`/f/${slug}${request.nextUrl.search}`, request.url));
+    return NextResponse.redirect(new URL("/", request.url));
+  }
   // Dominio del equipo de ventas (leads.levelupmediapr.net, 28/sep): la raíz es la entrada de ventas y solo existe Leads
   // (lo que no sea Leads, su entrada o sus archivos/acciones vuelve a Leads: ahí nunca se ve un tablero de clientes).
   if (host.startsWith("leads.")) {

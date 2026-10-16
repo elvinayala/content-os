@@ -47,7 +47,9 @@ export function telefonoWhatsApp(v: string | null | undefined): string | null {
 export const primerNombre = (nombre: string) => (nombre.trim().split(/\s+/)[0] || "").replace(/^./, (c) => c.toUpperCase());
 
 export function linkEncuesta(ref: string, base = process.env.ENCUESTA_ONBOARDING_BASE || "https://levelupmedia.vercel.app"): string {
-  return `${base.replace(/\/$/, "")}/f/${SLUG_ENCUESTA}?origen=ob-${ref}`;
+  const b = base.replace(/\/$/, "");
+  // En formularios.levelupmediapr.net el formulario vive en /<slug> (enlace corto); en los demás dominios, en /f/<slug>.
+  return `${b}${/\/\/formularios\./.test(b) ? "" : "/f"}/${SLUG_ENCUESTA}?origen=ob-${ref}`;
 }
 
 /** El WhatsApp que recibe el cliente. */

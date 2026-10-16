@@ -87,3 +87,9 @@ test("el aviso es corto y marca lo que no salió bien", () => {
   assert.match(mal, /⚠️ nota 5\/10/);
   assert.match(mal, /💬 «Más tiempo»/);
 });
+
+test("linkEncuesta: enlace corto en formularios.levelupmediapr.net", async () => {
+  const { linkEncuesta } = await import("../lib/onboarding/encuesta-reglas.ts");
+  assert.equal(linkEncuesta("abc", "https://formularios.levelupmediapr.net"), "https://formularios.levelupmediapr.net/onboarding-experiencia?origen=ob-abc");
+  assert.equal(linkEncuesta("abc", "https://levelupmedia.vercel.app/"), "https://levelupmedia.vercel.app/f/onboarding-experiencia?origen=ob-abc");
+});
