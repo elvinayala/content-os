@@ -101,16 +101,20 @@ const Cifra: React.FC<{ e: Extract<Elemento, { tipo: "cifra" }>; f: string; peso
   );
 };
 
-// «$3,500» con p=0.5 → «$1,750»; «$500K» → «$250K»; «$1.5M» → «$0.8M» (mismos decimales y forma que lo dicho)
+// «$3,500» con p=0.5 → «$1,750»; «$500K» → «$250K»; «$1.5M» → «$0.8M»; «$1,5 millones» → «$0,8 millones» (misma forma)
 function contarCifra(texto: string, p: number): string {
   const m = texto.match(/(\d[\d,]*(?:\.\d+)?)/);
   if (!m) return texto;
   const crudo = m[1];
-  const valor = parseFloat(crudo.replace(/,/g, ""));
-  const dec = crudo.includes(".") ? crudo.split(".")[1].length : 0;
+  // «$1,5 millones» (coma DECIMAL: una sola coma con 1–2 cifras detrás) = 1.5, no 15 (16/oct, revisión)
+  const comaDecimal = /^\d+,\d{1,2}$/.test(crudo);
+  const valor = parseFloat(comaDecimal ? crudo.replace(",", ".") : crudo.replace(/,/g, ""));
+  const sep = comaDecimal ? "," : ".";
+  const dec = crudo.includes(sep) ? crudo.split(sep)[1].length : 0;
   const ahora = valor * p;
-  const conComas = crudo.includes(",") || valor >= 10000;
-  const num = conComas ? ahora.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) : ahora.toFixed(dec);
+  const conComas = !comaDecimal && (crudo.includes(",") || valor >= 10000);
+  const num = conComas ? ahora.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec })
+    : comaDecimal ? ahora.toFixed(dec).replace(".", ",") : ahora.toFixed(dec);
   return texto.replace(crudo, p >= 1 ? crudo : num);
 }
 
