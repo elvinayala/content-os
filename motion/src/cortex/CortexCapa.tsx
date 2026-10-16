@@ -25,7 +25,8 @@ export type Fuente = keyof typeof FUENTES;
 const PESO: Record<Fuente, number> = { inter: 900, montserrat: 900, poppins: 800, dmserif: 400, cormorant: 700 };
 
 export type Elemento =
-  | { tipo: "cifra"; texto: string; sub?: string | null; clase: "money" | "count" | "percent" | "plain"; desde?: number | null; hasta?: number | null; sufijo?: string; x: number; y: number; color: string }
+  // sobrio (video serio, 16/oct): sin brillo, sin extrusión de color ni borde blanco: blanco marfil con sombra suave
+  | { tipo: "cifra"; texto: string; sub?: string | null; clase: "money" | "count" | "percent" | "plain"; desde?: number | null; hasta?: number | null; sufijo?: string; x: number; y: number; color: string; sobrio?: boolean }
   | { tipo: "anillo"; pct: number; etiqueta?: string; color: string; x: number; y: number; diametro: number }
   | { tipo: "icono"; src: string; lado: "left" | "right"; x: number; y: number; escala: number }
   | { tipo: "cursor"; src: string; x: number; y: number }
@@ -38,7 +39,12 @@ export type Elemento =
   // «GIOVANNI AYALA» gigante DETRÁS de la cabeza: esta capa va debajo de la persona recortada (Cortex pone la persona encima)
   | { tipo: "detras"; texto: string; color: string; y: number }
   // lavado de luz (light leak morado/dorado) sobre una palabra fuerte
-  | { tipo: "lavado"; colores: string[] };
+  | { tipo: "lavado"; colores: string[] }
+  // alternativas de dinero (Elvin 16/oct: «lluvia de billetes solo cuando se habla de dinero, con varias alternativas»)
+  | { tipo: "monedas"; x: number; y: number; desdeY?: number | null; cantidad: number; semilla: number; color: string }
+  | { tipo: "fajo"; x: number; y: number; desdeY?: number | null; cantidad: number; semilla: number; color: string }
+  // tarjeta de oferta para PRECIOS («2x$69», «4 x $24»): lo que paga quien mira nunca lleva lluvia de billetes
+  | { tipo: "oferta"; texto: string; sub?: string; color: string; x: number; y: number; sobrio?: boolean };
 
 export type PropsCapa = { ancho: number; alto: number; fps: number; dur: number; fuente: Fuente; elemento: Elemento };
 
@@ -61,24 +67,30 @@ const Cifra: React.FC<{ e: Extract<Elemento, { tipo: "cifra" }>; f: string; peso
   const pop = spring({ frame, fps, config: { damping: 11, stiffness: 190, mass: 0.6 } });
   const esc = interpolate(pop, [0, 1], [0.55, 1]);
   const op = Math.min(interpolate(frame, [0, 3], [0, 1], { extrapolateRight: "clamp" }), salida(frame, durationInFrames, fps));
-  const dinero = e.clase === "money";
-  const col = dinero ? e.color : "#FFFFFF";
+  const sobrio = !!e.sobrio;
+  const dinero = e.clase === "money" && !sobrio;
+  const col = dinero ? e.color : sobrio ? "#F4F1EA" : "#FFFFFF";
   let texto = e.texto;
   if (e.clase === "count" && e.desde != null && e.hasta != null && durationInFrames > 12) {
     const p = interpolate(frame, [0, durationInFrames * 0.8], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.poly(2.2)) });
     texto = Math.round(e.desde + (e.hasta - e.desde) * p).toLocaleString("en-US");
+  } else if (e.clase === "money" && e.desde != null && e.hasta != null && e.hasta > 0 && durationInFrames > 12) {
+    // contador de $ (16/oct): la MISMA cifra que se dijo, contando desde $0 («$3,500», «$500K», «$1.5M» conservan su forma)
+    const p = interpolate(frame, [0, durationInFrames * 0.7], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.poly(2.6)) });
+    texto = contarCifra(e.texto, p);
   }
-  const tam = dinero ? 0.14 * B : e.clase === "count" ? 0.078 * B / 0.7 : 0.11 * B;
-  const prof = Math.max(4, Math.round(tam * 0.09));
+  const tam = e.clase === "money" ? (sobrio ? 0.12 : 0.14) * B : e.clase === "count" ? 0.078 * B / 0.7 : 0.11 * B;
+  const prof = sobrio ? 0 : Math.max(4, Math.round(tam * 0.09));
   const extrusion = Array.from({ length: prof }, (_, i) => `${i * 0.6}px ${i + 1}px 0 ${dinero ? oscurecer(e.color) : "#111"}`).join(",");
-  const brillo = interpolate(frame, [0, 6, 18], [0, 1, 0.35], { extrapolateRight: "clamp" });
+  const brillo = sobrio ? 0 : interpolate(frame, [0, 6, 18], [0, 1, 0.35], { extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ opacity: op }}>
       <div style={{ position: "absolute", left: e.x * W, top: e.y * H, transform: `translate(-50%,-50%) scale(${esc})`, textAlign: "center", whiteSpace: "nowrap" }}>
         <div style={{
           fontFamily: f, fontWeight: peso, fontSize: tam, lineHeight: 1, color: col, letterSpacing: -tam * 0.03,
           WebkitTextStroke: dinero ? `${Math.max(2, tam * 0.025)}px #FFFFFF` : undefined, paintOrder: "stroke fill",
-          textShadow: `${extrusion}, 0 ${tam * 0.12}px ${tam * 0.25}px rgba(0,0,0,0.55), 0 0 ${tam * 0.35 * brillo}px ${dinero ? e.color : "rgba(255,255,255,0.6)"}`,
+          textShadow: `${extrusion ? extrusion + ", " : ""}0 ${tam * 0.12}px ${tam * 0.25}px rgba(0,0,0,0.55), 0 0 ${tam * 0.35 * brillo}px ${dinero ? e.color : "rgba(255,255,255,0.6)"}`,
+          fontVariantNumeric: "tabular-nums",
         }}>
           {texto}
           {e.clase === "count" && e.sufijo ? <span style={{ fontSize: tam * 0.38, color: "#DDDDDD", marginLeft: tam * 0.15, fontWeight: 600 }}>{e.sufijo}</span> : null}
@@ -88,6 +100,19 @@ const Cifra: React.FC<{ e: Extract<Elemento, { tipo: "cifra" }>; f: string; peso
     </AbsoluteFill>
   );
 };
+
+// «$3,500» con p=0.5 → «$1,750»; «$500K» → «$250K»; «$1.5M» → «$0.8M» (mismos decimales y forma que lo dicho)
+function contarCifra(texto: string, p: number): string {
+  const m = texto.match(/(\d[\d,]*(?:\.\d+)?)/);
+  if (!m) return texto;
+  const crudo = m[1];
+  const valor = parseFloat(crudo.replace(/,/g, ""));
+  const dec = crudo.includes(".") ? crudo.split(".")[1].length : 0;
+  const ahora = valor * p;
+  const conComas = crudo.includes(",") || valor >= 10000;
+  const num = conComas ? ahora.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) : ahora.toFixed(dec);
+  return texto.replace(crudo, p >= 1 ? crudo : num);
+}
 
 const Anillo: React.FC<{ e: Extract<Elemento, { tipo: "anillo" }>; f: string }> = ({ e, f }) => {
   const frame = useCurrentFrame();
@@ -316,6 +341,121 @@ const Lavado: React.FC<{ e: Extract<Elemento, { tipo: "lavado" }> }> = ({ e }) =
   );
 };
 
+// ---- alternativas de dinero (16/oct) ----
+// Monedas doradas dibujadas (sin PNG): caen desde debajo de la cifra, rebotan un poco y se apilan en columnas al pecho.
+const Moneda: React.FC<{ d: number; giro: number }> = ({ d, giro }) => {
+  const canto = Math.abs(Math.cos(giro)); // de frente ↔ de canto mientras cae
+  return (
+    <div style={{ width: d, height: d, transform: `scaleX(${0.25 + 0.75 * canto})`, borderRadius: "50%",
+      background: "radial-gradient(circle at 35% 30%, #FFF4B8 0%, #F7C948 32%, #D9A21B 70%, #9C6B0B 100%)",
+      boxShadow: `inset 0 0 0 ${d * 0.07}px #B7860F, inset 0 0 0 ${d * 0.12}px #F5D36A, 0 ${d * 0.06}px ${d * 0.12}px rgba(0,0,0,0.45)`,
+      display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, fontSize: d * 0.55, color: "#8A5A00", opacity: canto > 0.35 ? 0.85 : 0, lineHeight: 1 }}>$</div>
+    </div>
+  );
+};
+
+const Monedas: React.FC<{ e: Extract<Elemento, { tipo: "monedas" }> }> = ({ e }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const t = frame / fps, total = durationInFrames / fps;
+  const d = W * 0.085;
+  const y0 = ((e.desdeY ?? e.y) + 0.02) * H;
+  const columnas = 4;
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      {Array.from({ length: e.cantidad }, (_, i) => {
+        const r = (k: string) => random(`m${e.semilla}-${i}-${k}`);
+        const nace = (i / e.cantidad) * total * 0.5 + r("t") * 0.08;
+        if (t < nace) return null;
+        const dt = t - nace;
+        const col = i % columnas;
+        const fila = Math.floor(i / columnas);
+        const xCol = W * (0.5 + (col - (columnas - 1) / 2) * 0.13) + (r("x") - 0.5) * d * 0.15;
+        const piso = Math.min(H * 0.93, y0 + H * 0.2) - fila * d * 0.22;
+        const caida = y0 + 0.5 * 3.2 * H * dt * dt;
+        const toca = caida >= piso;
+        const tToca = Math.sqrt(Math.max(0, (piso - y0) / (0.5 * 3.2 * H)));
+        const rebote = toca ? Math.abs(Math.sin((dt - tToca) * 14)) * Math.exp(-(dt - tToca) * 9) * d * 0.35 : 0;
+        const y = (toca ? piso : caida) - rebote;
+        const x0 = W * 0.5 + (r("o") - 0.5) * W * 0.12;
+        const x = toca ? xCol : interpolate(Math.min(1, dt / Math.max(0.05, tToca)), [0, 1], [x0, xCol]);
+        const giro = toca ? 0 : dt * (9 + r("g") * 6);
+        return <div key={i} style={{ position: "absolute", left: x, top: y, transform: "translate(-50%,-50%)" }}><Moneda d={d} giro={giro} /></div>;
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// Fajo: billetes que entran uno por uno de lado y se apilan, con una faja de papel del color de la marca.
+const Billete: React.FC<{ w: number }> = ({ w }) => (
+  <div style={{ width: w, height: w * 0.43, borderRadius: w * 0.025, position: "relative", overflow: "hidden",
+    background: "linear-gradient(160deg, #CFE8C8 0%, #8FC48A 45%, #5E9E62 100%)", boxShadow: "0 3px 6px rgba(0,0,0,0.35)",
+    border: `${Math.max(1, w * 0.008)}px solid #3F7A45` }}>
+    <div style={{ position: "absolute", inset: w * 0.03, border: `${Math.max(1, w * 0.006)}px solid rgba(40,90,50,0.55)`, borderRadius: w * 0.015 }} />
+    <div style={{ position: "absolute", left: "50%", top: "50%", width: w * 0.2, height: w * 0.2, transform: "translate(-50%,-50%)", borderRadius: "50%",
+      background: "radial-gradient(circle, #E9F5E4 0%, #A8D3A0 70%)", border: `${Math.max(1, w * 0.006)}px solid #3F7A45`,
+      display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontWeight: 700, fontSize: w * 0.12, color: "#2F5E35" }}>$</div>
+  </div>
+);
+
+const Fajo: React.FC<{ e: Extract<Elemento, { tipo: "fajo" }> }> = ({ e }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const w = W * 0.4;
+  const base_ = Math.min(H * 0.9, ((e.desdeY ?? e.y) + 0.16) * H);
+  const n = Math.max(4, Math.min(10, e.cantidad));
+  const cada = Math.max(2, Math.round(0.07 * fps));
+  const faja = spring({ frame: frame - n * cada - 2, fps, config: { damping: 12, stiffness: 170 } });
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      {Array.from({ length: n }, (_, i) => {
+        const p = spring({ frame: frame - i * cada, fps, config: { damping: 15, stiffness: 210, mass: 0.6 } });
+        if (frame < i * cada) return null;
+        const desde = i % 2 === 0 ? -W * 0.6 : W * 0.6;
+        const rot = (random(`f${e.semilla}-${i}`) - 0.5) * 7;
+        return (
+          <div key={i} style={{ position: "absolute", left: W / 2 + desde * (1 - p), top: base_ - i * w * 0.045,
+            transform: `translate(-50%,-50%) rotate(${rot * p + (1 - p) * (i % 2 ? 18 : -18)}deg)` }}><Billete w={w} /></div>
+        );
+      })}
+      {frame >= n * cada ? <div style={{ position: "absolute", left: W / 2, top: base_ - (n - 1) * w * 0.045 / 2, width: w * 0.16, height: w * 0.43 + (n - 1) * w * 0.045 + 8,
+        transform: `translate(-50%,-50%) scaleY(${faja})`, background: `linear-gradient(90deg, ${oscurecer(e.color, 0.8)}, ${e.color}, ${oscurecer(e.color, 0.8)})`,
+        boxShadow: "0 0 0 2px rgba(255,255,255,0.35) inset, 0 4px 8px rgba(0,0,0,0.35)", borderRadius: 3 }} /> : null}
+    </AbsoluteFill>
+  );
+};
+
+// Tarjeta de oferta: vidrio oscuro con borde del acento, etiqueta «OFERTA» y el precio que entra con resorte + barrido de luz.
+// Sobria (serio): etiqueta «PRECIO», borde fino, sin barrido.
+const Oferta: React.FC<{ e: Extract<Elemento, { tipo: "oferta" }>; f: string; peso: number }> = ({ e, f, peso }) => {
+  const frame = useCurrentFrame();
+  const { fps, width: W, height: H, durationInFrames } = useVideoConfig();
+  const B = base(W, H);
+  const sobrio = !!e.sobrio;
+  const pop = spring({ frame, fps, config: { damping: sobrio ? 18 : 12, stiffness: 170, mass: 0.7 } });
+  const precio = spring({ frame: frame - 4, fps, config: { damping: 11, stiffness: 200, mass: 0.6 } });
+  const barrido = interpolate(frame, [Math.round(0.35 * fps), Math.round(0.95 * fps)], [-40, 140], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const tam = Math.min(0.15 * B, (W * 0.62) / Math.max(4, e.texto.length * 0.62));
+  const claro = (() => { const n = parseInt(e.color.slice(1), 16); return 0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255) > 150; })();
+  return (
+    <AbsoluteFill style={{ opacity: salida(frame, durationInFrames, fps) }}>
+      <div style={{ position: "absolute", left: e.x * W, top: e.y * H, transform: `translate(-50%,-50%) scale(${interpolate(pop, [0, 1], [0.7, 1])})`,
+        opacity: Math.min(1, pop * 1.4), padding: `${tam * 0.32}px ${tam * 0.55}px ${tam * 0.36}px`, borderRadius: tam * 0.32, overflow: "hidden",
+        background: "rgba(14,18,32,0.88)", border: `${sobrio ? 2 : Math.max(3, tam * 0.04)}px solid ${e.color}`, textAlign: "center",
+        boxShadow: sobrio ? "0 14px 30px rgba(0,0,0,0.45)" : `0 18px 40px rgba(0,0,0,0.5), 0 0 ${tam * 0.5}px ${e.color}55` }}>
+        <div style={{ display: "inline-block", padding: `${tam * 0.06}px ${tam * 0.22}px`, borderRadius: 999, background: e.color, color: claro ? "#121212" : "#FFFFFF",
+          fontFamily: f, fontWeight: 900, fontSize: tam * 0.24, letterSpacing: tam * 0.03, lineHeight: 1.1 }}>{sobrio ? "PRECIO" : "OFERTA"}</div>
+        <div style={{ fontFamily: f, fontWeight: peso, fontSize: tam, color: "#FFFFFF", lineHeight: 1.05, marginTop: tam * 0.12, whiteSpace: "nowrap",
+          letterSpacing: -tam * 0.03, transform: `scale(${interpolate(precio, [0, 1], [0.6, 1])})`, textShadow: "0 4px 10px rgba(0,0,0,0.5)" }}>{e.texto}</div>
+        {e.sub ? <div style={{ fontFamily: f, fontWeight: 600, fontSize: tam * 0.3, color: "#E6E6E6", marginTop: tam * 0.1, whiteSpace: "nowrap" }}>{e.sub}</div> : null}
+        {!sobrio ? <div style={{ position: "absolute", top: "-30%", bottom: "-30%", width: tam * 0.7, left: `${barrido}%`,
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent)", transform: "skewX(-20deg)" }} /> : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
   const f = FUENTES[fuente] ?? FUENTES.inter;
   const peso = PESO[fuente] ?? 900;
@@ -331,6 +471,9 @@ export const CortexCapa: React.FC<PropsCapa> = ({ elemento, fuente }) => {
     case "link": return <PastillaLink e={elemento} f={f} />;
     case "detras": return <Detras e={elemento} />;
     case "lavado": return <Lavado e={elemento} />;
+    case "monedas": return <Monedas e={elemento} />;
+    case "fajo": return <Fajo e={elemento} />;
+    case "oferta": return <Oferta e={elemento} f={f} peso={peso} />;
   }
 };
 
