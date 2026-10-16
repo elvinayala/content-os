@@ -178,14 +178,15 @@ export const TarjetaVista: React.FC<{ t: Tarjeta }> = ({ t }) => {
   const tinta = claro ? "#141821" : "#FFFFFF";
   const colorTitulo = t.tono === "pain" && !s ? "#FF5A47" : tinta;
 
-  // entrada de toda la tarjeta: se abre de un desenfoque (Yulianna reparte la entrada en 7–14 cuadros) + acercamiento lento
-  const abre = interpolate(frame, [0, Math.round(0.4 * fps)], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  // entrada de toda la tarjeta: se abre de un desenfoque en ~9 cuadros (Yulianna: 7–14) + acercamiento lento; el ícono y
+  // la primera palabra ya se leen al 3.er cuadro (el b-roll entra CON la palabra que lo nombra)
+  const abre = interpolate(frame, [0, Math.round(0.3 * fps)], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
   const empuje = 1.06 - 0.06 * abre + interpolate(frame, [0, durationInFrames], [0, s ? 0.025 : 0.04]);
   const desenfoque = (1 - abre) * u * 0.018;
 
   // el visual (ícono en panel de vidrio, o la foto del cliente)
-  const pop = spring({ frame: frame - 3, fps, config: s ? { damping: 20, stiffness: 110 } : { damping: 13, stiffness: 140, mass: 0.8 } });
-  const dibujo = interpolate(frame, [4, 4 + Math.round(0.75 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.inOut(Easing.cubic) });
+  const pop = spring({ frame: frame + 2, fps, config: s ? { damping: 20, stiffness: 110 } : { damping: 13, stiffness: 140, mass: 0.8 } });
+  const dibujo = interpolate(frame, [2, 2 + Math.round(0.6 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.inOut(Easing.cubic) });
   const flota = s ? 0 : Math.sin(tt * 2.1) * u * 0.008;
   const lado = horizontal ? H * 0.42 : u * 0.40;
   const cx = horizontal ? W * 0.3 : W / 2;
@@ -203,11 +204,11 @@ export const TarjetaVista: React.FC<{ t: Tarjeta }> = ({ t }) => {
   let n = 0;
   const palabra = (p: string, key: string, ultima: boolean) => {
     const k = n++;
-    const a = interpolate(frame, [7 + k * 3, 7 + k * 3 + Math.round(0.35 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+    const a = interpolate(frame, [3 + k * 2, 3 + k * 2 + Math.round(0.3 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
     return <span key={key} style={{ display: "inline-block", opacity: a, transform: `translateY(${(1 - a) * tam * 0.45}px)`, filter: `blur(${(1 - a) * tam * 0.08}px)`, marginRight: ultima ? 0 : tam * 0.24 }}>{p}</span>;
   };
-  const barra = interpolate(frame, [12, 12 + Math.round(0.5 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
-  const entradaOp = interpolate(frame, [5, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const barra = interpolate(frame, [8, 8 + Math.round(0.45 * fps)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  const entradaOp = interpolate(frame, [1, 8], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   const fondo = t.estilo === "marca" ? <FondoMarca color={t.fondo || acento} t={tt} /> : claro ? <FondoClaro acento={acento} t={tt} /> : <FondoOscuro acento={acento} sobrio={s} t={tt} />;
   // en fondo de marca el ícono va blanco; en claro, del acento (si el acento es muy claro, tinta oscura)
