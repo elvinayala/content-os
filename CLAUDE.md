@@ -387,7 +387,8 @@ Variables compartidas con `puente` por referencia `${{puente.VAR}}`. Deploy:
 `npx @railway/cli up --service nico --detach`. El plist de la Mac queda como respaldo, descargado.
 
 **Enlace directo Carilin/Aure → Nico, con OK de Elvin (23/sep/2026)**: canal privado
-**#nico-desarrollo** (`SLACK_NICO_CHANNEL_ID`, Elvin + Carilin + Aure + bot): todo lo que ellas
+**#nico-desarrollo** (`SLACK_NICO_CHANNEL_ID`, Elvin + Carilin + Aure + bot; desde el 15/oct también **María del Carmen y
+Lis**: Elvin, "que todos le pidan a Nico por un solo lugar"): todo lo que ellas
 escriben ahí va a Nico sin prefijo y Nico responde en el hilo; Elvin aprueba ahí con `ok <id>`.
 También por DM al bot empezando con "Nico…" (DM o mención): `app/api/slack-eventos` lo manda al
 buzón de Nico (`de: carilin|aure`, no pasa por Sofi) y les da acuse con el #id. El puente de Nico

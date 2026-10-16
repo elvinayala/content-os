@@ -297,14 +297,14 @@ async function atenderDirector(channel: string, raiz: string): Promise<void> {
 // solo lo ejecuta cuando Elvin da el OK (scripts/telegram-puente.mjs → solicitudes del equipo).
 // Override: NICO_EQUIPO="Uxxxx=carilin,Uyyyy=aure".
 const EQUIPO_NICO: Record<string, string> = Object.fromEntries(
-  (process.env.NICO_EQUIPO || "U07V7MVJ18B=carilin,U08HA9QCJBG=aure")
+  (process.env.NICO_EQUIPO || "U07V7MVJ18B=carilin,U08HA9QCJBG=aure,U0916SXJE9Z=mariadelcarmen,U0BDGC8KGH4=lis")
     .split(",")
     .map((x) => x.split("=").map((y) => y.trim()))
     .filter(([id, nombre]) => id && nombre),
 );
 const PARA_NICO = /^\s*(?:@?nico\b|para\s+nico\b)[\s,:.\-—]*/i;
 const IDENTIDAD_NICO: Identidad = { username: "Nico · Plataformas" };
-const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela" };
+const NOMBRE_EQUIPO: Record<string, string> = { carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela", mariadelcarmen: "María del Carmen" };
 
 // Canal propio de Nico (Elvin, 23/sep: "que tengan un canal directo con Nico"): en
 // SLACK_NICO_CHANNEL_ID todo lo que escriban Carilin o Aure es para Nico, sin prefijo, y Nico

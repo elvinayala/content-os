@@ -56,7 +56,7 @@ function env(n) {
 // "separar que la Mac no firme como Sofi"). Una rutina de un agente en la Mac pone AGENTE=<agente>.
 // En Railway el servicio de Sofi ("puente") no tiene PUENTE_BOT: ahí sigue siendo Sofi (Railway pone RAILWAY_SERVICE_NAME).
 const YO = (process.env.PUENTE_BOT || process.env.AGENTE || (process.env.RAILWAY_SERVICE_NAME ? "sofi" : "mac")).toLowerCase();
-const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela" };
+const NOMBRE = { mac: "Claude (Mac)", sofi: "Sofi", nico: "Nico", max: "Max", lola: "Lola", jarvis: "Jarvis", elvin: "Elvin", carilin: "Carilin", aure: "Aure", lis: "Lis", angela: "Ángela", mariadelcarmen: "María del Carmen" };
 const CON_BUZON = new Set(["sofi", "nico", "max", "lola", "jarvis"]);
 const BASE = env("CONTENT_OS_URL") || "https://content-os-chi-seven.vercel.app";
 const SECRETO = env("CRON_SECRET");
@@ -85,7 +85,7 @@ const sinAcentos = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase
 export function resolverPersona(q) {
   if (/^U[A-Z0-9]{8,}$/.test(q)) return EQUIPO.find((p) => p.id === q) || { id: q, nombre: q, rol: "" };
   const n = sinAcentos(q.replace(/^@/, ""));
-  return EQUIPO.find((p) => sinAcentos(p.nombre) === n) || EQUIPO.find((p) => sinAcentos(p.nombre).startsWith(n)) || null;
+  return EQUIPO.find((p) => sinAcentos(p.nombre) === n || sinAcentos(p.nombre).replace(/\s+/g, "") === n) || EQUIPO.find((p) => sinAcentos(p.nombre).startsWith(n)) || null;
 }
 
 // La Mac de Elvin firma lo que manda "de mac" con su llave del Llavero (12-oct). Fuera de la Mac (Railway, agentes) no

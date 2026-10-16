@@ -34,7 +34,7 @@ const AICORE_PARA = new Set(["sofi", "max", "nico", "lola", "leo"]);
 // Equipo humano que puede dejarle solicitudes a Nico desde Slack (Elvin, 23/sep/2026: "que Nico
 // tenga un enlace directo con Carilin y Aure"). Solo como remitente: nadie les deja nada aquí.
 // Lis y Ángela (3/oct): solo desde el canal de cambios de Bori (SLACK_NICO_CANALES).
-const EQUIPO_REMITENTE = new Set(["carilin", "aure", "lis", "angela"]);
+const EQUIPO_REMITENTE = new Set(["carilin", "aure", "lis", "angela", "mariadelcarmen"]);
 // esperando-ok: solicitud del equipo que Nico ya diagnosticó y espera el OK de Elvin.
 // aprobado: Elvin dijo que sí y Nico la está ejecutando. rechazado: Elvin dijo que no.
 const ESTADOS = ["pendiente", "en-curso", "esperando-ok", "aprobado", "atendido", "fallido", "rechazado"];
