@@ -62,6 +62,9 @@ AI Borinquen: `mano-santa` (contestaba el 20 % de sus leads) · `sleekbrowspr` (
 `ernest-aib` (mensajes de madrugada).
 **Ojo:** `yazan` / `yazan-aib` (Sola Boutique, 15,000 clientes) es un resultado de **marketing** (Level Up): úsalo solo en
 propuestas de marketing, nunca en propuestas de agentes, sistemas o digitalización de AI Borinquen (Elvin, 17/oct).
+**Testimonio que cuadre con lo que se vende (Elvin, 17/oct):** Teo/Mano Santa, Sleekbrowspr y Ernest son de **AutoFlow**
+(contestar y agendar). Si la propuesta es de un **agente personalizado, un sistema o digitalización**, todavía NO hay
+testimonio de eso: **omite la sección `prueba`** antes que poner uno que no cuadra.
 Detalle completo en `testimonios.json`.
 
 ## 6. Formato de salida

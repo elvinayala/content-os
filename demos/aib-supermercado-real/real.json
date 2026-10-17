@@ -76,12 +76,6 @@
   ],
   "nota": "números de ejemplo; el sistema real usa los datos de su tienda"
  },
- "prueba": {
-  "ceja": "Un negocio de Puerto Rico que ya trabaja con nosotros",
-  "testimonios": [
-   "mano-santa"
-  ]
- },
  "servicios": [
   {
    "nombre": "Sistema de gestión *con IA*",
