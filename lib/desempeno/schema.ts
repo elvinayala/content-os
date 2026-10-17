@@ -347,6 +347,8 @@ export const desempenoNoticias = pgTable("desempeno_noticias", {
   personaId: uuid("persona_id").references(() => pulseUsers.id, { onDelete: "set null" }), // logro de alguien del equipo
   enlace: text("enlace"),
   fijada: boolean("fijada").notNull().default(false),
+  // Para quién (17/oct, Elvin: cada empleado ve solo lo de su empresa): todas | level_up | ai_borinquen.
+  empresa: text("empresa").notNull().default("todas"),
   autorId: uuid("autor_id").references(() => pulseUsers.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

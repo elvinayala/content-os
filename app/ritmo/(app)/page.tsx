@@ -20,7 +20,7 @@ import { faltantesFicha, listaHumana } from "@/lib/desempeno/ficha-completa";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
 import { hoyPR as hoyBienestar, registrosDe } from "@/lib/desempeno/bienestar";
 import { META_SEMANAL_MIN, miSemana, rutinaDelDia, semanaDe } from "@/lib/desempeno/bienestar-reglas";
-import { listarNoticias } from "@/lib/desempeno/noticias";
+import { noticiasPara } from "@/lib/desempeno/noticias";
 import { fechaPR, puestoPorId, sumarDias } from "@/lib/desempeno/reglas";
 import { googleListo, miDia } from "@/lib/desempeno/google-cal";
 import { prioridadesDe, resumenCuentasHoy } from "@/lib/desempeno/optimizaciones";
@@ -64,7 +64,7 @@ export default async function HoyPage() {
   // Elvin, 28/sep: "todo el mundo debe tener todos los datos llenos, incluyendo fotos".
   const faltan = ficha && !direccion ? faltantesFicha(ficha.ficha, { identificacion: ficha.archivos.filter((a) => a.categoria === "identificacion").length, contrato: ficha.archivos.filter((a) => a.categoria === "contrato").length }) : [];
   const vac = ficha?.saldos?.puedeSolicitar && ficha.saldos.vacaciones.disponibles >= 1 ? ficha.saldos.vacaciones.disponibles : null;
-  const noticias = await listarNoticias(3).catch(() => []);
+  const noticias = await noticiasPara(u.id, u.maestro, 3).catch(() => []);
   const semanaB = semanaDe(hoyBienestar());
   const misB = await registrosDe(u.id, semanaB).catch(() => []);
   const bien = miSemana(misB, semanaB, hoyBienestar());

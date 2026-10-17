@@ -22,7 +22,7 @@ import * as bienestar from "@/lib/desempeno/bienestar";
 import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/bienestar-reglas";
 import * as fichas from "@/lib/desempeno/fichas";
 import * as noticias from "@/lib/desempeno/noticias";
-import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
+import { CATEGORIAS_NOTICIA, esParaNoticia } from "@/lib/desempeno/noticias-tipos";
 import { errorAnticipacion, puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
@@ -747,7 +747,7 @@ export async function estadoPostulacionAction(p: { id: string; estado: string; n
 
 // ─── Noticias: logros, noticias, comunicados y causas benéficas ───────────────────────────────
 
-export async function publicarNoticiaAction(p: { categoria: string; titulo: string; cuerpo: string; personaId: string; enlace: string; fijada: boolean }) {
+export async function publicarNoticiaAction(p: { categoria: string; titulo: string; cuerpo: string; personaId: string; enlace: string; fijada: boolean; empresa?: string }) {
   return envolver(async () => {
     const u = await requiereMaestro();
     if (!CATEGORIAS_NOTICIA.some((c) => c.id === p.categoria)) throw new Error("Escoge el tipo");
@@ -757,7 +757,8 @@ export async function publicarNoticiaAction(p: { categoria: string; titulo: stri
     if (!cuerpo || cuerpo.length < 5) throw new Error("Escribe el mensaje");
     const enlace = p.enlace?.trim() || null;
     if (enlace && !/^https:\/\//i.test(enlace)) throw new Error("El enlace debe empezar con https://");
-    await noticias.publicarNoticia({ categoria: p.categoria, titulo, cuerpo, personaId: p.categoria === "logro" && p.personaId ? p.personaId : null, enlace: enlace?.slice(0, 500) ?? null, fijada: !!p.fijada }, u);
+    const empresa = p.empresa && esParaNoticia(p.empresa) ? p.empresa : "todas";
+    await noticias.publicarNoticia({ categoria: p.categoria, titulo, cuerpo, personaId: p.categoria === "logro" && p.personaId ? p.personaId : null, enlace: enlace?.slice(0, 500) ?? null, fijada: !!p.fijada, empresa }, u);
     refresh();
     return {};
   });

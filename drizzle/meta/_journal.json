@@ -309,6 +309,13 @@
       "when": 1790880470503,
       "tag": "0043_numeros-equipo",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1792242830282,
+      "tag": "0044_noticias-empresa",
+      "breakpoints": true
     }
   ]
 }

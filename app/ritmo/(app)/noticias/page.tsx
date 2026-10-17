@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Noticia, NuevaNoticia } from "@/components/ritmo/noticias";
-import { listarNoticias, personasParaLogro } from "@/lib/desempeno/noticias";
+import { noticiasPara, personasParaLogro } from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ export default async function NoticiasPage({ searchParams }: { searchParams: Pro
   const u = await usuarioRitmo();
   if (!u) return null;
   const { c } = await searchParams;
-  const [todas, personas] = await Promise.all([listarNoticias(100), u.maestro ? personasParaLogro() : Promise.resolve([])]);
+  const [todas, personas] = await Promise.all([noticiasPara(u.id, u.maestro, 100), u.maestro ? personasParaLogro() : Promise.resolve([])]);
   const lista = c ? todas.filter((n) => n.categoria === c) : todas;
   const chip = (activo: boolean) => cn("rounded-full px-3 py-1.5 transition", activo ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground");
 

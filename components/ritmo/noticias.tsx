@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CATEGORIAS_NOTICIA, categoriaNoticia } from "@/lib/desempeno/noticias-tipos";
+import { CATEGORIAS_NOTICIA, categoriaNoticia, PARA_NOTICIA } from "@/lib/desempeno/noticias-tipos";
 import { cn } from "@/lib/utils";
 
 const aviso = { className: "ritmo" };
@@ -24,7 +24,7 @@ const TONO: Record<string, string> = {
   noticia: "bg-white/5 text-foreground/80 ring-white/10",
 };
 
-export type NoticiaUI = { id: string; categoria: string; titulo: string; cuerpo: string; persona: string | null; enlace: string | null; fijada: boolean; createdAt: string };
+export type NoticiaUI = { id: string; categoria: string; titulo: string; cuerpo: string; persona: string | null; enlace: string | null; fijada: boolean; createdAt: string; empresa?: string };
 
 export function Noticia({ n, maestro, compacta }: { n: NoticiaUI; maestro: boolean; compacta?: boolean }) {
   const c = categoriaNoticia(n.categoria);
@@ -49,6 +49,8 @@ export function Noticia({ n, maestro, compacta }: { n: NoticiaUI; maestro: boole
           <span aria-hidden>{c.emoji}</span> {c.nombre}
         </span>
         {n.fijada ? <Pin className="size-3.5 text-primary" aria-label="Fijada" /> : null}
+        {/* Solo la vista maestra ve para quién es (al empleado nunca se le muestra la etiqueta de empresa). */}
+        {maestro && n.empresa ? <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-muted-foreground ring-1 ring-border">{PARA_NOTICIA.find((p) => p.id === n.empresa)?.nombre ?? n.empresa}</span> : null}
         <span className="ml-auto font-mono text-[11px] tracking-wider text-muted-foreground">{cuando(n.createdAt)}</span>
         {maestro ? (
           <span className="flex items-center">
@@ -74,7 +76,7 @@ export function Noticia({ n, maestro, compacta }: { n: NoticiaUI; maestro: boole
 }
 
 export function NuevaNoticia({ personas }: { personas: { id: string; nombre: string }[] }) {
-  const vacia = { categoria: "noticia", titulo: "", cuerpo: "", personaId: "", enlace: "", fijada: false };
+  const vacia = { categoria: "noticia", titulo: "", cuerpo: "", personaId: "", enlace: "", fijada: false, empresa: "todas" };
   const [abierto, setAbierto] = useState(false);
   const [f, setF] = useState(vacia);
   const [cargando, setCargando] = useState(false);
@@ -96,7 +98,7 @@ export function NuevaNoticia({ personas }: { personas: { id: string; nombre: str
         <DialogContent className="ritmo sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Publicar en Noticias</DialogTitle>
-            <DialogDescription>Lo ve todo el equipo al instante, en Hoy y en Noticias.</DialogDescription>
+            <DialogDescription>Sale al instante en Hoy y en Noticias de quien escojas abajo.</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-2">
@@ -105,6 +107,17 @@ export function NuevaNoticia({ personas }: { personas: { id: string; nombre: str
                   {c.emoji} {c.nombre}
                 </button>
               ))}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">¿Para quién?</Label>
+              <div className="flex flex-wrap gap-2">
+                {PARA_NOTICIA.map((p) => (
+                  <button key={p.id} type="button" onClick={() => setF((x) => ({ ...x, empresa: p.id }))} className={cn("rounded-full px-3 py-1.5 text-sm ring-1 transition", f.empresa === p.id ? "bg-primary/15 text-primary ring-primary/40" : "text-muted-foreground ring-border hover:text-foreground")}>
+                    {p.nombre}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground">Cada empleado ve solo lo de su empresa y lo de todo el equipo. Lo que hable de una sola empresa, ponlo para esa empresa.</p>
             </div>
             {f.categoria === "logro" ? (
               <div className="flex flex-col gap-1.5">
