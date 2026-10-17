@@ -1,0 +1,1012 @@
+<meta charset="utf-8">
+<title>Marketing × IA · Level Up</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Level Up Media · reunión comercial "Marketing × IA" (17/oct/2026). Mismo motor que lu-demo-ventas:
+   escenario de 1920×1080 que se escala a la pantalla; cada slide se arma al entrar (clase .activa). */
+:root {
+  color-scheme: dark;
+  --fondo: #0b0b0b; --sup: #141311; --sup2: #1b1a16; --borde: #2c2a24; --texto: #f5f1e8; --gris: #a3a097; --gris2: #6f6c63;
+  --oro: #f5ce1a; --oro2: #ffe27a; --verde: #3ddc84; --rojo: #ff6b5b;
+  --sora: "Sora", "Helvetica Neue", Arial, sans-serif; --inter: "Inter", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font-family: var(--inter); overflow: hidden; }
+#visor { position: fixed; inset: 0; overflow: hidden; background: var(--fondo); }
+#escenario { position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; }
+
+/* Escena: entra con un leve zoom y foco, como un corte de cámara */
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; overflow: hidden; transform: scale(1.035); filter: blur(10px);
+  transition: opacity .7s ease, transform 1s var(--ease), filter .8s ease, visibility 0s linear .7s;
+  background: radial-gradient(1100px 700px at 78% 18%, rgba(245,206,26,.08), rgba(245,206,26,0) 62%), var(--fondo); }
+.slide.activa { opacity: 1; visibility: visible; transform: none; filter: none; transition: opacity .7s ease, transform 1.1s var(--ease), filter .8s ease, visibility 0s; }
+.slide::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .45;
+  background-image: linear-gradient(rgba(245,206,26,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(245,206,26,.055) 1px, transparent 1px);
+  background-size: 96px 96px; -webkit-mask-image: radial-gradient(62% 62% at 50% 50%, #000, transparent); mask-image: radial-gradient(62% 62% at 50% 50%, #000, transparent); }
+
+.ceja { font-family: var(--mono); font-size: 20px; letter-spacing: .32em; text-transform: uppercase; color: var(--oro); }
+h1, h2, h3 { font-family: var(--sora); font-weight: 800; letter-spacing: -.03em; margin: 0; text-wrap: balance; }
+h2 { font-size: 76px; line-height: 1.02; }
+.oro { color: var(--oro); }
+.gris { color: var(--gris); }
+.marca { position: absolute; left: 70px; top: 52px; display: flex; align-items: center; gap: 16px; z-index: 2; }
+.marca .ico { width: 64px; height: 56px; background: var(--icono) center / contain no-repeat; }
+.marca span { font-family: var(--mono); font-size: 16px; letter-spacing: .28em; color: var(--gris2); }
+.pie { position: absolute; left: 70px; right: 70px; bottom: 40px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 16px; letter-spacing: .2em; color: var(--gris2); text-transform: uppercase; z-index: 2; }
+.etiqueta-demo { position: absolute; right: 70px; top: 54px; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 11px 20px; border-radius: 999px;
+  border: 1px dashed rgba(245,206,26,.6); color: var(--oro); font-family: var(--mono); font-size: 16px; letter-spacing: .2em; text-transform: uppercase; background: rgba(245,206,26,.06); }
+.etiqueta-demo i { width: 9px; height: 9px; border-radius: 50%; background: var(--oro); }
+.activa .etiqueta-demo i { animation: titila 1.4s ease infinite; }
+
+@keyframes sube { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.82); } 70% { opacity: 1; transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
+@keyframes titila { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+@keyframes late { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes gira { to { transform: rotate(360deg); } }
+@keyframes traza { to { stroke-dashoffset: 0; } }
+@keyframes fluye { to { stroke-dashoffset: -40; } }
+.activa .sube { animation: sube .9s var(--ease) both; animation-delay: var(--d, 0s); }
+.activa .aparece { animation: aparece 1s ease both; animation-delay: var(--d, 0s); }
+.activa .pop { animation: pop .75s var(--ease) both; animation-delay: var(--d, 0s); }
+
+/* ───────── 1 · MARKETING × IA ───────── */
+#s1 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#s1 .titulo { position: relative; display: flex; align-items: center; gap: 46px; font-family: var(--sora); font-weight: 800; font-size: 210px; letter-spacing: -.05em; line-height: 1; }
+#s1 .titulo .izq, #s1 .titulo .der { display: inline-block; }
+.activa #s1 .izq { animation: entraIzq 1.5s var(--ease) .2s both; }
+.activa #s1 .der { animation: entraDer 1.5s var(--ease) .2s both; }
+@keyframes entraIzq { from { opacity: 0; transform: translateX(-520px); filter: blur(18px); letter-spacing: .1em; } to { opacity: 1; transform: none; filter: none; } }
+@keyframes entraDer { from { opacity: 0; transform: translateX(520px); filter: blur(18px); letter-spacing: .1em; } to { opacity: 1; transform: none; filter: none; } }
+#s1 .por { position: relative; color: var(--oro); font-weight: 300; font-size: 170px; }
+.activa #s1 .por { animation: chispazo 1s var(--ease) 1.4s both; }
+@keyframes chispazo { 0% { opacity: 0; transform: scale(.2) rotate(-90deg); } 60% { opacity: 1; transform: scale(1.35) rotate(8deg); text-shadow: 0 0 80px var(--oro); } 100% { opacity: 1; transform: none; text-shadow: 0 0 40px rgba(245,206,26,.5); } }
+#s1 .onda { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; border: 2px solid var(--oro); opacity: 0; }
+.activa #s1 .onda { animation: expande 1.6s ease-out 1.55s both; }
+.activa #s1 .onda.b { animation-delay: 1.8s; }
+@keyframes expande { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(160); } }
+#s1 .sub { margin-top: 54px; font-family: var(--sora); font-size: 44px; font-weight: 400; color: var(--texto); letter-spacing: -.01em; }
+#s1 .linea { margin-top: 26px; width: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--oro), transparent); }
+.activa #s1 .linea { animation: abre 1.4s var(--ease) 2.3s both; }
+@keyframes abre { to { width: 900px; } }
+#s1 .ceja { margin-top: 26px; }
+#s1 canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+
+/* ───────── 2 · LAS REGLAS ESTÁN CAMBIANDO ───────── */
+#s2 .cab { position: absolute; left: 110px; top: 150px; width: 1100px; display: flex; flex-direction: column; gap: 22px; }
+#s2 .carriles { position: absolute; left: 110px; right: 110px; top: 380px; display: grid; grid-template-rows: 1fr 1fr; gap: 46px; }
+.carril { position: relative; display: grid; grid-template-columns: 300px 1fr; align-items: center; gap: 40px; }
+.carril .nombre small { display: block; font-family: var(--mono); font-size: 16px; letter-spacing: .22em; color: var(--gris2); text-transform: uppercase; }
+.carril .nombre b { display: block; font-family: var(--sora); font-size: 34px; margin-top: 8px; line-height: 1.1; }
+.carril.nuevo .nombre b { color: var(--oro); }
+.via { position: relative; height: 150px; border-radius: 22px; border: 1px solid var(--borde); background: var(--sup); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 0 30px; }
+.carril.nuevo .via { border-color: rgba(245,206,26,.45); background: linear-gradient(90deg, rgba(245,206,26,.07), rgba(245,206,26,.02)); box-shadow: 0 0 60px rgba(245,206,26,.08); }
+.via .paso { position: relative; z-index: 1; text-align: center; }
+.via .paso i { display: block; width: 18px; height: 18px; border-radius: 50%; margin: 0 auto 14px; background: var(--gris2); }
+.carril.nuevo .via .paso i { background: var(--oro); box-shadow: 0 0 18px rgba(245,206,26,.7); }
+.via .paso b { display: block; font-family: var(--sora); font-size: 22px; font-weight: 600; }
+.via .paso span { display: block; font-family: var(--mono); font-size: 15px; letter-spacing: .06em; margin-top: 6px; color: var(--gris2); }
+.carril.viejo .via .paso span { color: var(--rojo); }
+.carril.nuevo .via .paso span { color: var(--verde); }
+.via .riel { position: absolute; left: 60px; right: 60px; top: 50%; height: 2px; margin-top: -26px; background: var(--borde); }
+.carril.nuevo .via .riel { background: rgba(245,206,26,.35); }
+.via .bola { position: absolute; top: 50%; width: 14px; height: 14px; margin: -33px 0 0 -7px; border-radius: 50%; left: 60px; opacity: 0; }
+.carril.viejo .bola { background: var(--gris); }
+.carril.nuevo .bola { background: #fff6cc; box-shadow: 0 0 18px var(--oro), 0 0 4px #fff; }
+.activa .carril.viejo .bola { animation: lento 7s cubic-bezier(.6,0,.4,1) 1.2s infinite; }
+.activa .carril.nuevo .bola { animation: rapido 1.6s linear 1.2s infinite; }
+.activa .carril.nuevo .bola.b { animation-delay: 1.73s; } .activa .carril.nuevo .bola.c { animation-delay: 2.26s; }
+@keyframes lento { 0% { left: 60px; opacity: 1; } 22% { left: 30%; } 40% { left: 30%; } 62% { left: 55%; opacity: 1; } 75% { left: 55%; opacity: .15; } 100% { left: 55%; opacity: 0; } }
+@keyframes rapido { 0% { left: 60px; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { left: calc(100% - 60px); opacity: 0; } }
+#s2 .remate { position: absolute; left: 110px; right: 110px; bottom: 100px; font-family: var(--sora); font-size: 34px; font-weight: 600; text-align: center; }
+
+/* ───────── 3 · LOS DOS REYES (+ VENTAS) ───────── */
+#s3 .cab { position: absolute; left: 0; right: 0; top: 120px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.reyes { position: absolute; left: 230px; right: 230px; top: 300px; display: grid; grid-template-columns: 1fr 160px 1fr; align-items: stretch; }
+.rey { position: relative; border-radius: 30px; padding: 44px 46px; background: var(--sup); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+.rey::before { content: ""; position: absolute; inset: -1px; border-radius: 30px; padding: 1px; background: linear-gradient(140deg, var(--oro), transparent 55%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.rey svg.corona { width: 64px; height: 64px; stroke: var(--oro); fill: none; stroke-width: 1.6; stroke-linejoin: round; }
+.rey h3 { font-size: 64px; letter-spacing: -.035em; }
+.rey p { font-size: 26px; line-height: 1.42; color: var(--gris); margin: 0; }
+.rey p b { color: var(--texto); font-weight: 600; }
+.rey .num { position: absolute; right: 36px; top: 30px; font-family: var(--mono); font-size: 16px; letter-spacing: .2em; color: var(--gris2); }
+.mas { display: grid; place-items: center; font-family: var(--sora); font-size: 96px; font-weight: 300; color: var(--oro); }
+.uniones { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+.uniones path { fill: none; stroke: var(--oro); stroke-width: 2; stroke-dasharray: 8 12; opacity: .7; }
+.activa .uniones path { animation: fluye 1s linear infinite; }
+.ventas { position: absolute; left: 560px; right: 560px; top: 760px; border-radius: 26px; padding: 26px 40px; display: flex; align-items: center; gap: 30px;
+  background: linear-gradient(120deg, rgba(245,206,26,.22), rgba(245,206,26,.06)); border: 1px solid var(--oro); box-shadow: 0 0 80px rgba(245,206,26,.2); }
+.ventas small { font-family: var(--mono); font-size: 16px; letter-spacing: .24em; color: var(--oro); text-transform: uppercase; }
+.ventas b { display: block; font-family: var(--sora); font-size: 50px; font-weight: 800; letter-spacing: -.03em; }
+.ventas span { font-size: 23px; color: var(--texto); opacity: .85; line-height: 1.35; }
+.ventas .moneda { flex: none; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; background: var(--oro); color: #0b0b0b; font: 800 50px var(--sora); }
+.activa .ventas .moneda { animation: pop .7s var(--ease) 2.2s both; }
+
+/* ───────── 4 · LA VELOCIDAD CREATIVA ───────── */
+#s4 .izq { position: absolute; left: 110px; top: 210px; width: 640px; display: flex; flex-direction: column; gap: 26px; }
+#s4 .izq h2 { font-size: 80px; }
+#s4 .izq p { font-size: 27px; line-height: 1.5; color: var(--gris); margin: 0; }
+#s4 .izq p b { color: var(--texto); }
+.rueda { position: absolute; left: 880px; top: 150px; width: 820px; height: 820px; }
+.rueda svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.rueda .aro { fill: none; stroke: rgba(245,206,26,.25); stroke-width: 2; }
+.rueda .aro2 { fill: none; stroke: var(--oro); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 2073; stroke-dashoffset: 2073; filter: drop-shadow(0 0 10px rgba(245,206,26,.7)); }
+.activa .rueda .aro2 { animation: traza 3s cubic-bezier(.5,0,.2,1) .5s forwards; }
+.nodo { position: absolute; width: 190px; margin-left: -95px; margin-top: -48px; text-align: center; }
+.nodo i { display: grid; place-items: center; width: 74px; height: 74px; margin: 0 auto 10px; border-radius: 50%; background: var(--sup2); border: 2px solid var(--borde); font: 700 24px var(--mono); color: var(--gris); transition: all .35s; }
+.nodo b { display: inline-block; font-family: var(--sora); font-size: 25px; font-weight: 700; color: var(--gris); transition: color .35s; background: var(--fondo); padding: 2px 12px; border-radius: 10px; }
+.nodo.on i { border-color: var(--oro); color: #0b0b0b; background: var(--oro); box-shadow: 0 0 34px rgba(245,206,26,.6); }
+.nodo.on b { color: var(--texto); }
+.rueda .centro { position: absolute; left: 260px; top: 260px; width: 300px; height: 300px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: radial-gradient(circle, rgba(245,206,26,.16), rgba(11,11,11,.9) 70%); border: 1px solid rgba(245,206,26,.4); }
+.rueda .centro small { font-family: var(--mono); font-size: 15px; letter-spacing: .26em; color: var(--gris); }
+.rueda .centro b { font-family: var(--sora); font-size: 64px; font-weight: 800; color: var(--oro); line-height: 1; margin: 8px 0; font-variant-numeric: tabular-nums; }
+.rueda .centro span { font-size: 19px; color: var(--gris); }
+
+/* ───────── 5 · UNA MARCA. MUCHOS CREADORES ───────── */
+#s5 .cab { position: absolute; left: 110px; top: 160px; width: 620px; display: flex; flex-direction: column; gap: 24px; }
+#s5 .cab h2 { font-size: 82px; }
+#s5 .cab p { font-size: 26px; line-height: 1.5; color: var(--gris); margin: 0; }
+.capas { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.capa { display: flex; align-items: center; gap: 18px; padding: 16px 22px; border-radius: 16px; background: var(--sup); border: 1px solid var(--borde); }
+.capa i { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(245,206,26,.14); color: var(--oro); font: 700 18px var(--mono); }
+.capa b { font-family: var(--sora); font-size: 23px; }
+.capa span { font-size: 19px; color: var(--gris); }
+.red { position: absolute; left: 820px; top: 110px; width: 1000px; height: 860px; }
+.red svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.red .rayo { stroke: rgba(245,206,26,.55); stroke-width: 2; stroke-dasharray: 6 10; }
+.activa .red .rayo { animation: fluye .9s linear infinite; }
+.red .pub { fill: var(--gris2); opacity: 0; }
+.red .pub.on { fill: var(--oro); opacity: .9; transition: opacity .4s, fill .4s; }
+.oferta { position: absolute; left: 400px; top: 330px; width: 200px; height: 200px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: radial-gradient(circle, var(--oro2), var(--oro) 60%, #b8970a); color: #0b0b0b; box-shadow: 0 0 90px rgba(245,206,26,.55); z-index: 2; }
+.oferta small { font: 600 14px var(--mono); letter-spacing: .24em; }
+.oferta b { font: 800 34px/1 var(--sora); margin-top: 6px; letter-spacing: -.02em; }
+.activa .oferta::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--oro); animation: late 2.4s ease-out infinite; }
+.creador { position: absolute; width: 120px; margin: -60px 0 0 -60px; text-align: center; z-index: 2; }
+.creador .cara { width: 96px; height: 96px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: var(--sup2); border: 2px solid rgba(245,206,26,.55); position: relative; }
+.creador .cara svg { width: 52px; height: 52px; fill: var(--gris); }
+.creador .cara .rec { position: absolute; right: -2px; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--rojo); border: 3px solid var(--fondo); }
+.activa .creador .rec { animation: titila 1.2s ease infinite; animation-delay: var(--d); }
+.creador span { display: block; margin-top: 8px; font: 500 15px var(--mono); letter-spacing: .08em; color: var(--gris); }
+
+/* ───────── 6 · CONTENIDO = VENTAS ───────── */
+#s6 .cab { position: absolute; left: 0; right: 0; top: 116px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+#s6 .cab h2 { font-size: 70px; }
+.espejo { position: absolute; left: 110px; right: 110px; top: 330px; display: grid; grid-template-columns: 1fr 300px 1fr; gap: 0; align-items: start; }
+.equipo { display: flex; flex-direction: column; gap: 16px; }
+.equipo > small { font: 500 17px var(--mono); letter-spacing: .26em; color: var(--oro); text-transform: uppercase; margin-bottom: 6px; }
+.equipo.der > small { text-align: right; }
+.fila { display: flex; align-items: center; gap: 18px; padding: 20px 26px; border-radius: 18px; background: var(--sup); border: 1px solid var(--borde); }
+.equipo.der .fila { flex-direction: row-reverse; text-align: right; }
+.fila i { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font: 700 18px var(--mono); color: #0b0b0b; background: var(--oro); }
+.fila b { font-family: var(--sora); font-size: 30px; }
+.fila .barra { flex: 1; height: 8px; border-radius: 4px; background: var(--sup2); overflow: hidden; }
+.fila .barra u { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, rgba(245,206,26,.4), var(--oro)); }
+.equipo.der .fila .barra u { margin-left: auto; background: linear-gradient(270deg, rgba(245,206,26,.4), var(--oro)); }
+.activa .fila .barra u { animation: llena 1.2s var(--ease) forwards; animation-delay: var(--d); }
+@keyframes llena { to { width: var(--w); } }
+.columna { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 44px; }
+.columna::before { content: ""; position: absolute; top: 44px; bottom: 0; left: 50%; width: 2px; background: linear-gradient(var(--oro), rgba(245,206,26,.1)); }
+.ficha { position: relative; z-index: 1; width: 230px; padding: 16px 0; border-radius: 999px; text-align: center; font: 700 24px var(--sora); background: var(--fondo); border: 1px solid var(--oro); color: var(--oro); }
+#s6 .remate { position: absolute; left: 0; right: 0; bottom: 100px; text-align: center; font: 600 32px var(--sora); }
+
+/* ───────── 7 · LA OFERTA ES EL CENTRO ───────── */
+#s7 .cab { position: absolute; left: 110px; top: 140px; width: 1400px; display: flex; flex-direction: column; gap: 18px; }
+#s7 .cab h2 { font-size: 74px; }
+.escalera { position: absolute; left: 110px; right: 110px; bottom: 170px; height: 470px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; align-items: end; }
+.escalon { position: relative; border-radius: 24px 24px 10px 10px; padding: 28px 26px; background: var(--sup); border: 1px solid var(--borde); display: flex; flex-direction: column; gap: 10px; height: var(--h); }
+.escalon:nth-child(5) { background: linear-gradient(170deg, rgba(245,206,26,.28), rgba(245,206,26,.08)); border-color: var(--oro); box-shadow: 0 0 70px rgba(245,206,26,.2); }
+.activa .escalon { animation: crece .9s var(--ease) both; animation-delay: var(--d); transform-origin: bottom; }
+@keyframes crece { from { opacity: 0; transform: scaleY(.15); } to { opacity: 1; transform: none; } }
+.escalon small { font: 500 16px var(--mono); letter-spacing: .24em; color: var(--oro); }
+.escalon b { font: 800 40px var(--sora); letter-spacing: -.03em; }
+.escalon span { font-size: 21px; line-height: 1.4; color: var(--gris); }
+.medidor { position: absolute; left: 110px; right: 110px; bottom: 96px; display: flex; align-items: center; gap: 22px; font: 500 17px var(--mono); letter-spacing: .2em; color: var(--gris); text-transform: uppercase; }
+.medidor .tubo { flex: 1; height: 10px; border-radius: 5px; background: var(--sup2); overflow: hidden; }
+.medidor .tubo u { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gris2), var(--oro)); border-radius: 5px; }
+.activa .medidor .tubo u { animation: llena 3.4s cubic-bezier(.4,0,.2,1) .6s forwards; --w: 100%; }
+.medidor .fin { color: var(--oro); }
+
+/* ───────── 8 · EL SISTEMA COMPLETO ───────── */
+#s8 .cab { position: absolute; left: 0; right: 0; top: 112px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+#s8 .cab h2 { font-size: 66px; }
+.ia-banda { position: absolute; left: 150px; right: 150px; top: 330px; height: 84px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 18px;
+  background: linear-gradient(90deg, rgba(245,206,26,.05), rgba(245,206,26,.2), rgba(245,206,26,.05)); border: 1px solid rgba(245,206,26,.55); font: 800 30px var(--sora); letter-spacing: .02em; }
+.ia-banda i { width: 14px; height: 14px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 18px var(--oro); }
+.activa .ia-banda i { animation: titila 1.4s infinite; }
+.cadena { position: absolute; left: 110px; right: 110px; top: 560px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 18px; }
+.eslabon { position: relative; text-align: center; }
+.eslabon .caja { position: relative; height: 128px; border-radius: 20px; background: var(--sup); border: 1px solid var(--borde); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; transition: all .4s; }
+.eslabon .caja small { font: 500 15px var(--mono); letter-spacing: .2em; color: var(--gris2); }
+.eslabon .caja b { font: 700 26px var(--sora); }
+.eslabon.on .caja { border-color: var(--oro); background: linear-gradient(170deg, rgba(245,206,26,.16), var(--sup)); box-shadow: 0 0 40px rgba(245,206,26,.18); }
+.eslabon:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 46px; font: 600 26px var(--sora); color: var(--oro); z-index: 1; }
+.eslabon .haz { position: absolute; left: 50%; top: -146px; width: 2px; height: 146px; margin-left: -1px; background: linear-gradient(var(--oro), rgba(245,206,26,0)); transform-origin: top; transform: scaleY(0); }
+.eslabon.ia .haz { transform: scaleY(0); }
+.activa .eslabon.ia .haz { animation: baja .7s var(--ease) both; animation-delay: var(--d); }
+@keyframes baja { to { transform: scaleY(1); } }
+.eslabon .que { margin-top: 18px; font-size: 19px; line-height: 1.35; color: var(--gris); min-height: 52px; }
+.eslabon.ia .que { color: var(--texto); }
+.eslabon .que em { font-style: normal; color: var(--oro); font: 500 14px var(--mono); letter-spacing: .16em; display: block; margin-bottom: 4px; }
+#s8 .remate { position: absolute; left: 0; right: 0; bottom: 104px; text-align: center; font: 700 40px var(--sora); letter-spacing: -.02em; }
+
+/* ───────── 9 · AUTOFLOW ───────── */
+#s9 .cab { position: absolute; left: 110px; top: 132px; display: flex; flex-direction: column; gap: 12px; }
+#s9 .cab h2 { font-size: 64px; }
+.tel { position: absolute; left: 110px; top: 290px; width: 400px; height: 700px; border-radius: 54px; background: #050505; border: 2px solid #2f2d27; box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 10px #111; overflow: hidden; }
+.tel .isla { position: absolute; left: 50%; top: 14px; width: 120px; height: 32px; margin-left: -60px; border-radius: 20px; background: #000; z-index: 5; }
+.tel .pantalla { position: absolute; inset: 0; }
+.anuncio { position: absolute; inset: 0; padding: 66px 22px 22px; background: #0f0f0f; transition: opacity .5s, transform .5s; }
+.anuncio.fuera { opacity: 0; transform: translateX(-40px); pointer-events: none; }
+.anuncio .quien { display: flex; align-items: center; gap: 12px; }
+.anuncio .quien i { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #3fd0c9, #2b7fff); }
+.anuncio .quien b { display: block; font-size: 17px; }
+.anuncio .quien span { font-size: 13px; color: #8f8f8f; }
+.anuncio .arte { margin-top: 14px; height: 400px; border-radius: 16px; background: radial-gradient(300px 220px at 70% 20%, rgba(63,208,201,.55), transparent), linear-gradient(160deg, #11324a, #0a1520);
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; gap: 8px; }
+.anuncio .arte small { font: 600 13px var(--mono); letter-spacing: .2em; color: #8fe9e4; }
+.anuncio .arte b { font: 800 34px/1.05 var(--sora); letter-spacing: -.02em; }
+.anuncio .cta { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 12px; background: #1a1a1a; font-size: 16px; }
+.anuncio .cta u { text-decoration: none; padding: 9px 14px; border-radius: 8px; background: #2b7fff; font-weight: 600; font-size: 15px; position: relative; }
+.anuncio .cta u.toque::after { content: ""; position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px; border-radius: 50%; background: rgba(255,255,255,.5); animation: late .7s ease-out forwards; }
+.chat { position: absolute; inset: 0; background: #0b141a; display: flex; flex-direction: column; opacity: 0; transform: translateX(40px); transition: opacity .5s, transform .5s; }
+.chat.on { opacity: 1; transform: none; }
+.chat .barra { padding: 60px 18px 14px; background: #1f2c34; display: flex; align-items: center; gap: 12px; }
+.chat .barra i { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3fd0c9, #2b7fff); }
+.chat .barra b { display: block; font-size: 17px; }
+.chat .barra span { font-size: 13px; color: #8696a0; }
+.chat .mensajes { flex: 1; min-height: 0; padding: 16px 14px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; justify-content: flex-end; }
+.msg { max-width: 82%; padding: 10px 13px 8px; border-radius: 12px; font-size: 16px; line-height: 1.38; animation: sube .35s var(--ease) both; }
+.msg small { display: block; text-align: right; font-size: 11px; color: #8696a0; margin-top: 3px; }
+.msg.lead { align-self: flex-end; background: #005c4b; border-top-right-radius: 3px; }
+.msg.bot { align-self: flex-start; background: #1f2c34; border-top-left-radius: 3px; }
+.escribe { align-self: flex-start; padding: 12px 16px; border-radius: 12px; background: #1f2c34; display: flex; gap: 5px; }
+.escribe i { width: 8px; height: 8px; border-radius: 50%; background: #8696a0; animation: titila 1s infinite; }
+.escribe i:nth-child(2) { animation-delay: .2s; } .escribe i:nth-child(3) { animation-delay: .4s; }
+.cronom { position: absolute; left: 540px; top: 320px; width: 260px; padding: 22px 24px; border-radius: 22px; background: var(--sup); border: 1px solid var(--borde); transition: border-color .4s, box-shadow .4s; }
+.cronom small { font: 500 14px var(--mono); letter-spacing: .22em; color: var(--gris); }
+.cronom b { display: block; font: 800 66px/1 var(--sora); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.cronom span { display: block; margin-top: 8px; font-size: 18px; color: var(--gris); }
+.cronom.listo { border-color: var(--verde); box-shadow: 0 0 50px rgba(61,220,132,.2); }
+.cronom.listo b { color: var(--verde); }
+.tip { position: absolute; left: 540px; top: 520px; width: 260px; padding: 24px; border-radius: 22px; border: 1px dashed rgba(245,206,26,.5); background: rgba(245,206,26,.05); display: flex; flex-direction: column; gap: 12px; }
+.tip small { font: 500 14px var(--mono); letter-spacing: .22em; color: var(--oro); }
+.tip q { font: 600 23px/1.35 var(--sora); quotes: "“" "”"; }
+.tip span { font-size: 17px; line-height: 1.45; color: var(--gris); }
+.crm { position: absolute; left: 850px; right: 90px; top: 300px; height: 400px; border-radius: 26px; background: var(--sup); border: 1px solid var(--borde); padding: 22px 24px; }
+.crm .tope { display: flex; justify-content: space-between; align-items: center; font: 500 15px var(--mono); letter-spacing: .2em; color: var(--gris); text-transform: uppercase; }
+.crm .tope b { color: var(--texto); font: 700 22px var(--sora); letter-spacing: 0; text-transform: none; }
+.etapas { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; height: 310px; }
+.etapa { border-radius: 16px; background: var(--sup2); border: 1px solid var(--borde); padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; }
+.etapa > small { font: 600 13px var(--mono); letter-spacing: .14em; color: var(--gris); text-transform: uppercase; display: flex; justify-content: space-between; }
+.etapa .fantasma { height: 62px; border-radius: 12px; border: 1px dashed #34322b; background: rgba(255,255,255,.015); }
+.tarjeta { position: absolute; width: 0; height: 0; }
+.lead-card { position: absolute; width: 210px; padding: 12px 14px; border-radius: 12px; background: #262419; border: 1px solid var(--oro); box-shadow: 0 14px 40px rgba(0,0,0,.5), 0 0 30px rgba(245,206,26,.25);
+  transition: left .9s var(--ease), top .9s var(--ease), opacity .4s; opacity: 0; z-index: 3; }
+.lead-card b { display: block; font: 700 17px var(--sora); }
+.lead-card span { display: block; font-size: 14px; color: var(--gris); margin-top: 3px; }
+.lead-card em { display: inline-block; margin-top: 7px; font: 600 12px var(--mono); letter-spacing: .1em; font-style: normal; color: #0b0b0b; background: var(--oro); padding: 3px 7px; border-radius: 5px; }
+.linea-tiempo { position: absolute; left: 850px; right: 90px; top: 730px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.hito { position: relative; padding-top: 30px; }
+.hito::before { content: ""; position: absolute; left: 0; right: -10px; top: 9px; height: 2px; background: var(--borde); }
+.hito:last-child::before { right: 0; }
+.hito i { position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--sup2); border: 2px solid var(--borde); transition: all .35s; }
+.hito b { display: block; font: 600 19px var(--sora); color: var(--gris2); transition: color .35s; line-height: 1.2; }
+.hito span { display: block; font-size: 15px; color: var(--gris2); margin-top: 4px; }
+.hito.on i { background: var(--oro); border-color: var(--oro); box-shadow: 0 0 18px rgba(245,206,26,.7); }
+.hito.on b { color: var(--texto); }
+.piezas { position: absolute; left: 540px; right: 90px; bottom: 74px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.pieza { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 16px; background: var(--sup); border: 1px solid var(--borde); }
+.pieza .ico { flex: none; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: rgba(245,206,26,.12); }
+.pieza .ico svg { width: 26px; height: 26px; }
+.pieza b { display: block; font: 700 19px var(--sora); }
+.pieza span { display: block; font-size: 15px; color: var(--gris); margin-top: 2px; }
+.pieza .mini { display: flex; gap: 5px; margin-top: 4px; }
+.pieza .mini svg { width: 16px; height: 16px; }
+
+/* ───────── 10 · EL AGENTE PERSONALIZADO ───────── */
+#s10 .cab { position: absolute; left: 110px; top: 132px; display: flex; flex-direction: column; gap: 12px; }
+#s10 .cab h2 { font-size: 60px; }
+.app { position: absolute; left: 110px; right: 110px; top: 300px; bottom: 90px; border-radius: 30px; background: linear-gradient(180deg, #141311, #0f0e0c); border: 1px solid var(--borde);
+  box-shadow: 0 40px 120px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04); display: grid; grid-template-columns: 300px 1fr 520px; overflow: hidden; }
+.app .lado { border-right: 1px solid var(--borde); padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; }
+.app .lado > small, .app .reporte > small { font: 500 14px var(--mono); letter-spacing: .22em; color: var(--gris2); text-transform: uppercase; }
+.fuente { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--sup2); border: 1px solid var(--borde); font: 600 18px var(--sora); }
+.fuente i { width: 10px; height: 10px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 10px var(--verde); }
+.fuente.lee { border-color: var(--oro); }
+.fuente.lee i { background: var(--oro); box-shadow: 0 0 12px var(--oro); animation: titila .6s infinite; }
+.agente-id { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+.orbe { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6cc, var(--oro) 45%, #8a6f00); box-shadow: 0 0 30px rgba(245,206,26,.6); }
+.activa .orbe { animation: respira 2.4s ease-in-out infinite; }
+@keyframes respira { 50% { transform: scale(1.1); box-shadow: 0 0 50px rgba(245,206,26,.85); } }
+.agente-id b { display: block; font: 700 18px var(--sora); }
+.agente-id span { font-size: 14px; color: var(--verde); }
+.conversa { display: flex; flex-direction: column; padding: 26px 30px; min-height: 0; }
+.hilo { flex: 1; display: flex; flex-direction: column; gap: 14px; justify-content: flex-end; overflow: hidden; min-height: 0; }
+.preg { align-self: flex-end; max-width: 80%; padding: 14px 20px; border-radius: 18px 18px 4px 18px; background: var(--oro); color: #0b0b0b; font: 600 22px var(--sora); animation: sube .4s var(--ease) both; }
+.resp { align-self: flex-start; max-width: 92%; padding: 16px 20px; border-radius: 18px 18px 18px 4px; background: var(--sup2); border: 1px solid var(--borde); font-size: 20px; line-height: 1.45; animation: sube .45s var(--ease) both; }
+.resp b { color: var(--oro); font-weight: 600; }
+.pensando { align-self: flex-start; display: flex; align-items: center; gap: 10px; font: 500 15px var(--mono); letter-spacing: .12em; color: var(--gris); }
+.pensando i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--oro); border-right-color: transparent; animation: gira .8s linear infinite; }
+.entrada { margin-top: 18px; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 16px; background: var(--sup2); border: 1px solid var(--borde); font-size: 20px; color: var(--gris); min-height: 30px; }
+.entrada .txt { flex: 1; color: var(--texto); }
+.entrada .txt:empty::before { content: "Pregúntale lo que sea de tu negocio…"; color: var(--gris2); }
+.entrada .cursor { width: 2px; height: 26px; background: var(--oro); animation: titila 1s steps(1) infinite; }
+.entrada .enviar { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--oro); color: #0b0b0b; font: 800 20px var(--sora); }
+.reporte { border-left: 1px solid var(--borde); padding: 26px 26px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+.widget { border-radius: 18px; background: var(--sup2); border: 1px solid var(--borde); padding: 16px 18px; animation: pop .55s var(--ease) both; }
+.widget > small { display: flex; justify-content: space-between; font: 500 13px var(--mono); letter-spacing: .18em; color: var(--gris); text-transform: uppercase; }
+.widget > small em { font-style: normal; color: var(--oro); }
+.widget .grande { font: 800 44px/1.1 var(--sora); margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.widget .grande span { font-size: 20px; font-weight: 600; color: var(--verde); margin-left: 10px; }
+.barras-h { display: flex; align-items: flex-end; gap: 6px; height: 56px; margin-top: 10px; }
+.barras-h i { flex: 1; border-radius: 4px 4px 0 0; background: rgba(245,206,26,.35); height: 0; transition: height .8s var(--ease); }
+.barras-h i.pico { background: var(--oro); }
+.apilada { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin-top: 12px; }
+.apilada i { height: 100%; width: 0; transition: width .9s var(--ease); }
+.leyenda { display: flex; gap: 16px; margin-top: 10px; font-size: 15px; color: var(--gris); }
+.leyenda b { color: var(--texto); }
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.opps { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.opp { display: flex; justify-content: space-between; font-size: 17px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.03); }
+.opp b { font: 700 17px var(--sora); }
+.opp.caliente { border: 1px solid rgba(255,107,91,.5); }
+.opp.caliente::before { content: "●"; color: var(--rojo); margin-right: 8px; }
+.alertas { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; font-size: 17px; line-height: 1.35; }
+.alertas div { display: flex; gap: 10px; }
+.alertas i { font-style: normal; }
+
+/* ───────── 11 · NO VENDEMOS HERRAMIENTAS ───────── */
+#s11 .cab { position: absolute; left: 0; right: 0; top: 104px; text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+#s11 .cab h2 { font-size: 64px; }
+.venn { position: absolute; left: 110px; top: 300px; width: 820px; height: 640px; }
+.circulo { position: absolute; width: 360px; height: 360px; border-radius: 50%; border: 2px solid rgba(245,206,26,.6); background: radial-gradient(circle, rgba(245,206,26,.1), rgba(245,206,26,.02) 70%);
+  display: flex; flex-direction: column; box-sizing: border-box; mix-blend-mode: screen; transition: transform 1.4s var(--ease) .4s; }
+.circulo small { font: 600 15px var(--mono); letter-spacing: .24em; color: var(--oro); }
+.circulo b { font: 800 27px/1.15 var(--sora); letter-spacing: -.02em; margin-top: 8px; width: 190px; }
+.circulo.c1 { left: 80px; top: 0; padding: 110px 0 0 36px; align-items: flex-start; text-align: left; transform: translate(-120px, -30px); }
+.circulo.c2 { left: 380px; top: 0; padding: 110px 36px 0 0; align-items: flex-end; text-align: right; transform: translate(120px, -30px); }
+.circulo.c3 { left: 230px; top: 260px; padding-top: 220px; align-items: center; text-align: center; transform: translateY(100px); }
+.activa .circulo.junto { transform: none; }
+.nucleo-venn { position: absolute; left: 410px; top: 268px; width: 0; height: 0; }
+.nucleo-venn div { position: absolute; left: -96px; top: -40px; width: 192px; text-align: center; padding: 12px 0; border-radius: 14px; background: var(--oro); color: #0b0b0b; font: 800 18px/1.15 var(--sora);
+  box-shadow: 0 0 60px rgba(245,206,26,.6); opacity: 0; transform: scale(.6); transition: all .7s var(--ease) 1.4s; }
+.activa .junto ~ .nucleo-venn div, .activa .nucleo-venn.on div { opacity: 1; transform: none; }
+.diagnostico { position: absolute; left: 990px; right: 110px; top: 300px; display: flex; flex-direction: column; gap: 14px; }
+.diagnostico > small { font: 500 17px var(--mono); letter-spacing: .24em; color: var(--oro); text-transform: uppercase; }
+.diagnostico > b { font: 800 38px var(--sora); letter-spacing: -.02em; margin-bottom: 8px; }
+.senal { display: grid; grid-template-columns: 1fr 34px 260px; align-items: center; gap: 14px; padding: 18px 22px; border-radius: 18px; background: var(--sup); border: 1px solid var(--borde); }
+.senal q { font: 600 22px/1.3 var(--sora); quotes: "“" "”"; }
+.senal .flecha { color: var(--oro); font: 600 26px var(--sora); text-align: center; }
+.senal .sol { font: 700 19px var(--sora); color: #0b0b0b; background: var(--oro); padding: 10px 14px; border-radius: 12px; text-align: center; }
+.senal.todo { border-color: var(--oro); background: linear-gradient(120deg, rgba(245,206,26,.16), var(--sup)); }
+.senal.todo .sol { background: transparent; color: var(--oro); border: 1px solid var(--oro); }
+
+/* ───────── 12 · LA NUEVA GENERACIÓN DE CLOSERS ───────── */
+#s12 .izq { position: absolute; left: 110px; top: 170px; width: 900px; display: flex; flex-direction: column; gap: 30px; transition: opacity .8s, transform 1s var(--ease); }
+#s12 .izq h2 { font-size: 84px; }
+#s12 blockquote { margin: 0; padding-left: 30px; border-left: 3px solid var(--oro); font: 400 32px/1.45 var(--sora); color: var(--texto); }
+#s12 blockquote em { font-style: normal; color: var(--oro); font-weight: 600; }
+.ladder { position: absolute; right: 110px; top: 190px; width: 680px; display: flex; flex-direction: column-reverse; gap: 14px; transition: opacity .8s, transform 1s var(--ease); }
+.peldano { display: flex; align-items: center; gap: 20px; padding: 22px 26px; border-radius: 20px; background: var(--sup); border: 1px solid var(--borde); margin-left: calc(var(--i) * 34px); }
+.peldano i { flex: none; width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(245,206,26,.14); color: var(--oro); font: 700 21px var(--mono); }
+.peldano b { font: 700 30px var(--sora); }
+.peldano:first-child { background: linear-gradient(120deg, rgba(245,206,26,.28), rgba(245,206,26,.06)); border-color: var(--oro); }
+.peldano:first-child i { background: var(--oro); color: #0b0b0b; }
+.activa .peldano { animation: sube .8s var(--ease) both; animation-delay: calc(.9s + var(--i) * .28s); }
+#s12.final .izq, #s12.final .ladder { opacity: 0; transform: scale(.94); pointer-events: none; }
+.finale { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .9s; }
+#s12.final .finale { opacity: 1; }
+.finale .logo-arma { position: relative; width: 820px; height: 593px; }
+.finale .pz { position: absolute; left: 0; width: 820px; background-image: var(--logo); background-repeat: no-repeat; background-size: 820px 593px; }
+.finale .pz.icono { top: 0; height: 330px; background-position: 0 0; clip-path: inset(100% 0 0 0); }
+.finale .pz.level { top: 345px; height: 140px; background-position: 0 -345px; opacity: 0; }
+.finale .pz.media { top: 485px; height: 108px; background-position: 0 -485px; opacity: 0; letter-spacing: 0; }
+#s12.final .pz.icono { animation: revela 1.3s cubic-bezier(.6,0,.2,1) .3s forwards; }
+@keyframes revela { to { clip-path: inset(0 0 0 0); } }
+#s12.final .pz.level { animation: sube 1s var(--ease) 1.4s both; }
+#s12.final .pz.media { animation: abreLetras 1.1s var(--ease) 1.9s both; }
+@keyframes abreLetras { from { opacity: 0; transform: scaleX(.6); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+.finale .estela { position: absolute; left: 50%; top: 40%; width: 6px; height: 0; margin-left: -3px; background: linear-gradient(transparent, var(--oro)); filter: blur(1px); opacity: 0; }
+#s12.final .estela { animation: estela 1.2s ease-out .1s both; }
+@keyframes estela { 0% { height: 0; top: 100%; opacity: 1; } 70% { opacity: 1; } 100% { height: 600px; top: -10%; opacity: 0; } }
+.finale .lema { margin-top: 40px; font: 500 22px var(--mono); letter-spacing: .4em; color: var(--gris); opacity: 0; }
+#s12.final .lema { animation: aparece 1s ease 2.7s both; }
+.finale .halo { position: absolute; left: 50%; top: 46%; width: 1200px; height: 1200px; margin: -600px; border-radius: 50%; background: radial-gradient(circle, rgba(245,206,26,.18), transparent 60%); opacity: 0; }
+#s12.final .halo { animation: aparece 2s ease 1s both; }
+#s12 canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+/* Controles */
+.controles { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; background: rgba(11,11,11,.85); border: 1px solid var(--borde); border-radius: 14px; padding: 6px; transition: opacity .4s; z-index: 10; }
+.controles.dormido { opacity: 0; }
+.controles button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--borde); background: var(--sup); color: var(--texto); font-size: 18px; cursor: pointer; }
+.controles button:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
+.controles .pag { font-family: var(--mono); font-size: 13px; color: var(--gris); padding: 0 8px; font-variant-numeric: tabular-nums; }
+.progreso { position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 10; }
+.progreso i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--oro), var(--oro2)); transition: width .5s; }
+.girar { display: none; position: fixed; left: 12px; right: 12px; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 20; background: rgba(20,19,17,.96); border: 1px solid rgba(245,206,26,.45); color: var(--texto); border-radius: 14px; padding: 12px 14px; font: 500 15px/1.4 var(--inter); align-items: center; gap: 12px; }
+.girar b { color: var(--oro); }
+.girar button { margin-left: auto; flex: none; background: none; border: 1px solid var(--borde); color: var(--texto); border-radius: 8px; width: 32px; height: 32px; }
+@media (orientation: portrait) and (max-width: 820px) { .girar { display: flex; } }
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.activa { transition: opacity .3s; transform: none; filter: none; }
+  .activa *, #s12.final * { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+  .rueda .aro2 { stroke-dashoffset: 0; }
+}
+</style>
+
+<div id="visor">
+  <div id="escenario">
+
+    <!-- 1 · MARKETING × IA -->
+    <section class="slide activa" id="s1">
+      <canvas id="particulas" width="1920" height="1080"></canvas>
+      <div class="marca aparece" style="--d:2.4s"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="centro">
+        <div class="titulo"><span class="izq">MARKETING</span><span class="por">×<i class="onda"></i><i class="onda b"></i></span><span class="der">IA</span></div>
+        <div class="sub sube" style="--d:2.1s">La nueva era del crecimiento empresarial.</div>
+        <div class="linea"></div>
+        <div class="ceja aparece" style="--d:2.8s">Reunión comercial · Equipo de closers</div>
+      </div>
+    </section>
+
+    <!-- 2 · LAS REGLAS ESTÁN CAMBIANDO -->
+    <section class="slide" id="s2">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">01 · El mercado</div>
+        <h2 class="sube" style="--d:.15s">Las reglas <span class="oro">están cambiando.</span></h2>
+      </div>
+      <div class="carriles">
+        <div class="carril viejo sube" style="--d:.4s">
+          <div class="nombre"><small>Antes</small><b>Empresa tradicional</b></div>
+          <div class="via"><div class="riel"></div><i class="bola"></i>
+            <div class="paso"><i></i><b>Publica</b><span>cuando puede</span></div>
+            <div class="paso"><i></i><b>Llega el lead</b><span>de noche</span></div>
+            <div class="paso"><i></i><b>Responde</b><span>al otro día</span></div>
+            <div class="paso"><i></i><b>Seguimiento</b><span>si se acuerda</span></div>
+            <div class="paso"><i></i><b>Reporte</b><span>a fin de mes</span></div>
+          </div>
+        </div>
+        <div class="carril nuevo sube" style="--d:.65s">
+          <div class="nombre"><small>Ahora</small><b>Empresa con sistemas e IA</b></div>
+          <div class="via"><div class="riel"></div><i class="bola"></i><i class="bola b"></i><i class="bola c"></i>
+            <div class="paso"><i></i><b>Publica</b><span>todos los días</span></div>
+            <div class="paso"><i></i><b>Llega el lead</b><span>24/7</span></div>
+            <div class="paso"><i></i><b>Responde</b><span>en segundos</span></div>
+            <div class="paso"><i></i><b>Seguimiento</b><span>automático</span></div>
+            <div class="paso"><i></i><b>Reporte</b><span>en tiempo real</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="remate sube" style="--d:1.4s">Gana quien mejor combine <span class="oro">marketing, tecnología y velocidad.</span></div>
+      <div class="pie"><span>Marketing × IA</span><span>02 / 12</span></div>
+    </section>
+
+    <!-- 3 · LOS DOS REYES -->
+    <section class="slide" id="s3">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">02 · Lo que manda hoy</div>
+        <h2 class="sube" style="--d:.15s">Los dos reyes.</h2>
+      </div>
+      <div class="reyes">
+        <div class="rey sube" style="--d:.4s">
+          <span class="num">REY 01</span>
+          <svg class="corona" viewBox="0 0 64 64"><path d="M8 46 L12 18 L24 32 L32 12 L40 32 L52 18 L56 46 Z"/><path d="M10 54 H54"/></svg>
+          <h3>Marketing</h3>
+          <p>Genera <b>demanda</b> y <b>oportunidades</b>. Sin marketing, nadie sabe que existes.</p>
+        </div>
+        <div class="mas pop" style="--d:.9s">+</div>
+        <div class="rey sube" style="--d:.6s">
+          <span class="num">REY 02</span>
+          <svg class="corona" viewBox="0 0 64 64"><path d="M8 46 L12 18 L24 32 L32 12 L40 32 L52 18 L56 46 Z"/><path d="M10 54 H54"/></svg>
+          <h3>Inteligencia artificial</h3>
+          <p>Multiplica la <b>ejecución</b>, el <b>seguimiento</b> y la <b>capacidad de escalar</b>.</p>
+        </div>
+      </div>
+      <svg class="uniones aparece" style="--d:1.4s" viewBox="0 0 1920 1080"><path d="M555 722 C 555 750, 700 740, 720 760"/><path d="M1365 722 C 1365 750, 1220 740, 1200 760"/></svg>
+      <div class="ventas sube" style="--d:1.7s">
+        <div class="moneda">$</div>
+        <div><small>Y el que cobra la corona</small><b>Ventas</b><span>Convierte las oportunidades en ingresos. Ese eres tú.</span></div>
+      </div>
+      <div class="pie"><span>Marketing × IA</span><span>03 / 12</span></div>
+    </section>
+
+    <!-- 4 · LA VELOCIDAD CREATIVA -->
+    <section class="slide" id="s4">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="izq">
+        <div class="ceja sube">03 · La revolución del contenido</div>
+        <h2 class="sube" style="--d:.15s">La velocidad creativa es una <span class="oro">ventaja.</span></h2>
+        <p class="sube" style="--d:.35s">Cada creativo es una <b>prueba</b>. Quien prueba más, <b>aprende más rápido</b> qué vende y encuentra antes a su ganador.</p>
+        <p class="sube" style="--d:.5s">Con IA, el ciclo que antes tomaba un mes ahora da <b>vueltas cada semana.</b></p>
+      </div>
+      <div class="rueda" id="rueda">
+        <svg viewBox="0 0 820 820"><circle class="aro" cx="410" cy="410" r="330"/><circle class="aro2" cx="410" cy="410" r="330" transform="rotate(-90 410 410)"/></svg>
+        <div class="centro"><small>VUELTAS</small><b id="vueltas">0</b><span>cada vuelta aprende</span></div>
+      </div>
+      <div class="pie"><span>Marketing × IA</span><span>04 / 12</span></div>
+    </section>
+
+    <!-- 5 · UNA MARCA. MUCHOS CREADORES -->
+    <section class="slide" id="s5">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">04 · Microinfluencers</div>
+        <h2 class="sube" style="--d:.15s">Una marca. <span class="oro">Muchos creadores.</span></h2>
+        <p class="sube" style="--d:.35s">La misma oferta, contada por muchas voces reales que su comunidad ya escucha.</p>
+        <div class="capas">
+          <div class="capa sube" style="--d:.6s"><i>1</i><div><b>Creadores</b><br><span>graban la oferta a su estilo</span></div></div>
+          <div class="capa sube" style="--d:.75s"><i>2</i><div><b>Contenido orgánico</b><br><span>llega a su comunidad</span></div></div>
+          <div class="capa sube" style="--d:.9s"><i>3</i><div><b>Publicidad</b><br><span>lo que mejor funciona, se pauta</span></div></div>
+        </div>
+      </div>
+      <div class="red" id="red"><svg id="redSvg" viewBox="0 0 1000 860"></svg>
+        <div class="oferta pop" style="--d:.3s"><small>TU MARCA</small><b>LA OFERTA</b></div>
+      </div>
+      <div class="pie"><span>Marketing × IA</span><span>05 / 12</span></div>
+    </section>
+
+    <!-- 6 · TU EQUIPO DE CONTENIDO ES UN EQUIPO DE VENTAS -->
+    <section class="slide" id="s6">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">05 · Cómo se maneja</div>
+        <h2 class="sube" style="--d:.15s">Tu equipo de contenido <span class="oro">es un equipo de ventas.</span></h2>
+      </div>
+      <div class="espejo">
+        <div class="equipo">
+          <small class="sube" style="--d:.3s">Equipo comercial</small>
+          <div class="fila sube" style="--d:.4s"><i>01</i><b>Prospección</b><span class="barra"><u style="--w:92%;--d:.9s"></u></span></div>
+          <div class="fila sube" style="--d:.5s"><i>02</i><b>Citas</b><span class="barra"><u style="--w:70%;--d:1.05s"></u></span></div>
+          <div class="fila sube" style="--d:.6s"><i>03</i><b>Cierres</b><span class="barra"><u style="--w:48%;--d:1.2s"></u></span></div>
+          <div class="fila sube" style="--d:.7s"><i>04</i><b>Resultados</b><span class="barra"><u style="--w:34%;--d:1.35s"></u></span></div>
+        </div>
+        <div class="columna">
+          <div class="ficha pop" style="--d:1.6s">Metas</div>
+          <div class="ficha pop" style="--d:1.8s">Métricas</div>
+          <div class="ficha pop" style="--d:2s">Responsables</div>
+          <div class="ficha pop" style="--d:2.2s">Supervisión</div>
+        </div>
+        <div class="equipo der">
+          <small class="sube" style="--d:.3s">Equipo creativo</small>
+          <div class="fila sube" style="--d:.4s"><i>01</i><b>Ideas</b><span class="barra"><u style="--w:92%;--d:.9s"></u></span></div>
+          <div class="fila sube" style="--d:.5s"><i>02</i><b>Producción</b><span class="barra"><u style="--w:70%;--d:1.05s"></u></span></div>
+          <div class="fila sube" style="--d:.6s"><i>03</i><b>Distribución</b><span class="barra"><u style="--w:48%;--d:1.2s"></u></span></div>
+          <div class="fila sube" style="--d:.7s"><i>04</i><b>Conversiones</b><span class="barra"><u style="--w:34%;--d:1.35s"></u></span></div>
+        </div>
+      </div>
+      <div class="remate sube" style="--d:2.5s">Los dos se miden igual: <span class="oro">qué entró, qué se cerró, quién responde.</span></div>
+      <div class="pie"><span>Marketing × IA</span><span>06 / 12</span></div>
+    </section>
+
+    <!-- 7 · LA OFERTA ES EL CENTRO -->
+    <section class="slide" id="s7">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">06 · La oferta es el centro</div>
+        <h2 class="sube" style="--d:.15s">No gana quien más publica. <span class="oro">Gana quien mejor vende.</span></h2>
+      </div>
+      <div class="escalera">
+        <div class="escalon" style="--h:200px;--d:.5s"><small>01</small><b>Problema</b><span>Lo que le duele hoy.</span></div>
+        <div class="escalon" style="--h:265px;--d:.7s"><small>02</small><b>Promesa</b><span>Adónde lo llevamos.</span></div>
+        <div class="escalon" style="--h:330px;--d:.9s"><small>03</small><b>Solución</b><span>Cómo lo hacemos, en simple.</span></div>
+        <div class="escalon" style="--h:395px;--d:1.1s"><small>04</small><b>Prueba</b><span>Casos reales que ya lo lograron.</span></div>
+        <div class="escalon" style="--h:460px;--d:1.3s"><small>05</small><b>Acción</b><span>Un paso claro: agenda, escribe, compra.</span></div>
+      </div>
+      <div class="medidor aparece" style="--d:.4s"><span>Atención</span><span class="tubo"><u></u></span><span class="fin">Intención de compra</span></div>
+      <div class="pie"><span>Marketing × IA</span><span>07 / 12</span></div>
+    </section>
+
+    <!-- 8 · EL SISTEMA COMPLETO -->
+    <section class="slide" id="s8">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">07 · El sistema completo de crecimiento</div>
+        <h2 class="sube" style="--d:.15s">Cada pieza empuja a la siguiente.</h2>
+      </div>
+      <div class="ia-banda pop" style="--d:2.4s"><i></i>INTELIGENCIA ARTIFICIAL<i></i></div>
+      <div class="cadena" id="cadena">
+        <div class="eslabon"><div class="caja"><small>01</small><b>Oferta</b></div><div class="que">El centro de todo</div></div>
+        <div class="eslabon"><div class="caja"><small>02</small><b>Marketing</b></div><div class="que">Atrae a las personas correctas</div></div>
+        <div class="eslabon ia" style="--d:2.8s"><span class="haz"></span><div class="caja"><small>03</small><b>Contenido</b></div><div class="que"><em>IA</em>Ideas, guiones y creativos más rápido</div></div>
+        <div class="eslabon ia" style="--d:3s"><span class="haz"></span><div class="caja"><small>04</small><b>Embudo</b></div><div class="que"><em>IA</em>Responde y califica al momento</div></div>
+        <div class="eslabon ia" style="--d:3.2s"><span class="haz"></span><div class="caja"><small>05</small><b>Seguimiento</b></div><div class="que"><em>IA</em>Ningún lead se queda frío</div></div>
+        <div class="eslabon ia" style="--d:3.4s"><span class="haz"></span><div class="caja"><small>06</small><b>Ventas</b></div><div class="que"><em>IA</em>Citas, CRM y recordatorios</div></div>
+        <div class="eslabon ia" style="--d:3.6s"><span class="haz"></span><div class="caja"><small>07</small><b>Escalamiento</b></div><div class="que"><em>IA</em>Datos para decidir qué crecer</div></div>
+      </div>
+      <div class="remate sube" style="--d:4s">No vendemos publicaciones. <span class="oro">Diseñamos sistemas de crecimiento.</span></div>
+      <div class="pie"><span>Marketing × IA</span><span>08 / 12</span></div>
+    </section>
+
+    <!-- 9 · AUTOFLOW -->
+    <section class="slide" id="s9">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="etiqueta-demo"><i></i>Simulación · ejemplo</div>
+      <div class="cab">
+        <div class="ceja sube">08 · AutoFlow</div>
+        <h2 class="sube" style="--d:.15s">Cada lead merece <span class="oro">una respuesta.</span></h2>
+      </div>
+      <div class="tel sube" style="--d:.3s">
+        <div class="isla"></div>
+        <div class="pantalla">
+          <div class="anuncio" id="anuncio">
+            <div class="quien"><i></i><div><b>Clínica de ejemplo</b><span>Publicidad</span></div></div>
+            <div class="arte"><small>EVALUACIÓN</small><b>¿Listo para sonreír sin pena?</b></div>
+            <div class="cta"><span>Escríbenos por WhatsApp</span><u id="ctaAnuncio">Enviar mensaje</u></div>
+          </div>
+          <div class="chat" id="chat">
+            <div class="barra"><i></i><div><b>Clínica de ejemplo</b><span id="estadoChat">en línea</span></div></div>
+            <div class="mensajes" id="mensajes"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cronom" id="cronom"><small>TIEMPO DE RESPUESTA</small><b id="crono">0 s</b><span id="cronoTxt">esperando al lead…</span></div>
+      <div class="tip sube" style="--d:1.4s"><small>PARA EL CLOSER</small><q>¿Cuánto tarda tu negocio en contestar un mensaje que llega de noche?</q><span>Esa respuesta abre la conversación de AutoFlow.</span></div>
+      <div class="crm sube" style="--d:.5s" id="crm">
+        <div class="tope"><span>CRM · GoHighLevel</span><b>Pipeline de leads</b></div>
+        <div class="etapas">
+          <div class="etapa"><small>Nuevo lead <span id="n0">0</span></small><div class="fantasma"></div><div class="fantasma"></div></div>
+          <div class="etapa"><small>Contactado <span id="n1">0</span></small><div class="fantasma"></div><div class="fantasma"></div></div>
+          <div class="etapa"><small>Calificado <span id="n2">0</span></small><div class="fantasma"></div><div class="fantasma"></div></div>
+          <div class="etapa"><small>Cita agendada <span id="n3">0</span></small><div class="fantasma"></div><div class="fantasma"></div></div>
+        </div>
+        <div class="lead-card" id="leadCard"><b>Lead de Instagram</b><span id="leadInfo">Llegó por el anuncio</span><em id="leadTag">NUEVO</em></div>
+      </div>
+      <div class="linea-tiempo" id="hitos">
+        <div class="hito"><i></i><b>Entra el lead</b><span>desde el anuncio</span></div>
+        <div class="hito"><i></i><b>Responde</b><span>en segundos</span></div>
+        <div class="hito"><i></i><b>Califica</b><span>con tus preguntas</span></div>
+        <div class="hito"><i></i><b>Agenda</b><span>en tu calendario</span></div>
+        <div class="hito"><i></i><b>Lo registra</b><span>en el CRM</span></div>
+        <div class="hito"><i></i><b>Da seguimiento</b><span>recordatorios</span></div>
+      </div>
+      <div class="piezas">
+        <div class="pieza sube" style="--d:.9s"><div class="ico"><svg viewBox="0 0 24 24"><path fill="#25D366" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.43 9.88-9.88 9.88zm8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></svg></div><div><b>Agente de WhatsApp</b><div class="mini"><svg viewBox="0 0 24 24"><path fill="#0A7CFF" d="M12 0C5.24 0 0 4.95 0 11.64c0 3.5 1.43 6.52 3.77 8.61.2.17.31.42.32.68l.06 2.13a.96.96 0 0 0 1.35.85l2.38-1.05c.2-.09.43-.11.64-.05 1.09.3 2.26.46 3.48.46 6.76 0 12-4.95 12-11.64S18.76 0 12 0zm7.2 8.96-3.52 5.59a1.8 1.8 0 0 1-2.6.48l-2.8-2.1a.72.72 0 0 0-.87 0l-3.79 2.88c-.5.38-1.16-.22-.83-.76l3.53-5.59a1.8 1.8 0 0 1 2.6-.48l2.8 2.1c.26.2.61.2.87 0l3.78-2.88c.51-.38 1.17.22.83.76z"/></svg><svg viewBox="0 0 24 24"><path fill="#E4405F" d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.88 5.88 0 0 0-2.13 1.38A5.88 5.88 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13a5.88 5.88 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.13-1.38 5.88 5.88 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.38-2.13A5.88 5.88 0 0 0 19.86.63C19.1.33 18.22.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg><span>+ Messenger e IG</span></div></div></div>
+        <div class="pieza sube" style="--d:1s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#f5ce1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></div><div><b>Recepcionista</b><span>contesta tu número</span></div></div>
+        <div class="pieza sube" style="--d:1.1s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#f5ce1a" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg></div><div><b>CRM GoHighLevel</b><span>organiza los leads</span></div></div>
+        <div class="pieza sube" style="--d:1.2s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#f5ce1a" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 13l3-3 3 2 4-4"/></svg></div><div><b>Dashboard</b><span>conversaciones en vivo</span></div></div>
+      </div>
+      <div class="pie"><span>En marcha en 15 días · optimización del día 16 al 45</span><span>09 / 12</span></div>
+    </section>
+
+    <!-- 10 · EL AGENTE PERSONALIZADO -->
+    <section class="slide" id="s10">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="etiqueta-demo"><i></i>Demostración · datos de ejemplo</div>
+      <div class="cab">
+        <div class="ceja sube">09 · El agente personalizado</div>
+        <h2 class="sube" style="--d:.15s">Tu negocio. Tu información. <span class="oro">Tu agente de IA.</span></h2>
+      </div>
+      <div class="app sube" style="--d:.35s">
+        <div class="lado">
+          <small>Tu información</small>
+          <div class="fuente" data-f="ventas"><i></i>Ventas</div>
+          <div class="fuente" data-f="leads"><i></i>Leads y mensajes</div>
+          <div class="fuente" data-f="agenda"><i></i>Agenda</div>
+          <div class="fuente" data-f="crm"><i></i>Clientes y cotizaciones</div>
+          <div class="fuente" data-f="equipo"><i></i>Tareas del equipo</div>
+          <div class="agente-id"><div class="orbe"></div><div><b>Tu agente</b><span>● en línea</span></div></div>
+        </div>
+        <div class="conversa">
+          <div class="hilo" id="hilo"></div>
+          <div class="entrada"><span class="txt" id="escribiendo"></span><span class="cursor"></span><span class="enviar">↑</span></div>
+        </div>
+        <div class="reporte" id="reporte"><small>Reporte del día · ejemplo</small></div>
+      </div>
+    </section>
+
+    <!-- 11 · NO VENDEMOS HERRAMIENTAS -->
+    <section class="slide" id="s11">
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="cab">
+        <div class="ceja sube">10 · Nuestra nueva superoferta</div>
+        <h2 class="sube" style="--d:.15s">No vendemos herramientas. <span class="oro">Vendemos soluciones.</span></h2>
+      </div>
+      <div class="venn">
+        <div class="circulo c1 junto"><small>01</small><b>Marketing y contenido a escala</b></div>
+        <div class="circulo c2 junto"><small>02</small><b>AutoFlow y automatización comercial</b></div>
+        <div class="circulo c3 junto"><small>03</small><b>Agentes personalizados para empresarios</b></div>
+        <div class="nucleo-venn"><div>Sistema integral de crecimiento</div></div>
+      </div>
+      <div class="diagnostico">
+        <small class="sube" style="--d:1.6s">El closer diagnostica</small>
+        <b class="sube" style="--d:1.7s">Escucha la señal. Receta la solución.</b>
+        <div class="senal sube" style="--d:1.9s"><q>No me llegan clientes.</q><span class="flecha">→</span><span class="sol">Marketing a escala</span></div>
+        <div class="senal sube" style="--d:2.1s"><q>Me escriben y no doy abasto.</q><span class="flecha">→</span><span class="sol">AutoFlow</span></div>
+        <div class="senal sube" style="--d:2.3s"><q>No sé qué pasa en mi negocio si no estoy.</q><span class="flecha">→</span><span class="sol">Agente personalizado</span></div>
+        <div class="senal todo sube" style="--d:2.5s"><q>Quiero crecer sin hacerlo todo yo.</q><span class="flecha">→</span><span class="sol">El sistema completo</span></div>
+      </div>
+      <div class="pie"><span>Marketing × IA</span><span>11 / 12</span></div>
+    </section>
+
+    <!-- 12 · LA NUEVA GENERACIÓN DE CLOSERS (2 pasos: mensaje → logo) -->
+    <section class="slide" id="s12" data-pasos="2">
+      <canvas id="chispas" width="1920" height="1080"></canvas>
+      <div class="marca"><i class="ico"></i><span>LEVEL UP MEDIA</span></div>
+      <div class="izq">
+        <div class="ceja sube">11 · La nueva generación de closers</div>
+        <h2 class="sube" style="--d:.15s">De vendedores a <span class="oro">consultores de crecimiento.</span></h2>
+        <blockquote class="sube" style="--d:.5s">“El futuro no pertenece al que más herramientas conoce, sino al que <em>mejor sabe utilizarlas para generar resultados.</em>”</blockquote>
+      </div>
+      <div class="ladder">
+        <div class="peldano" style="--i:0"><i>01</i><b>Diagnosticar negocios</b></div>
+        <div class="peldano" style="--i:1"><i>02</i><b>Identificar oportunidades</b></div>
+        <div class="peldano" style="--i:2"><i>03</i><b>Entender marketing e IA</b></div>
+        <div class="peldano" style="--i:3"><i>04</i><b>Presentar soluciones</b></div>
+        <div class="peldano" style="--i:4"><i>05</i><b>Convertir oportunidades en ventas</b></div>
+      </div>
+      <div class="finale">
+        <div class="halo"></div>
+        <div class="estela"></div>
+        <div class="logo-arma">
+          <div class="pz icono"></div>
+          <div class="pz level"></div>
+          <div class="pz media"></div>
+        </div>
+        <div class="lema">MARKETING × IA · PUERTO RICO</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="progreso"><i id="barra"></i></div>
+<div class="girar" id="girar"><span>Gira el teléfono: esta presentación es <b>horizontal</b>.</span><button id="cerrarGirar" aria-label="Cerrar">✕</button></div>
+<div class="controles" id="controles">
+  <button id="btnAnt" aria-label="Anterior">‹</button>
+  <span class="pag" id="pag">1 / 12</span>
+  <button id="btnSig" aria-label="Siguiente">›</button>
+  <button id="btnRep" aria-label="Repetir la animación" title="Repetir (R)">↻</button>
+  <button id="btnFull" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+</div>
+
+<script>
+(function () {
+  const esc = document.getElementById("escenario");
+  function ajustar() {
+    const w = window.innerWidth, h = window.innerHeight, k = Math.min(w / 1920, h / 1080);
+    esc.style.transform = `scale(${k})`; esc.style.left = (w - 1920 * k) / 2 + "px"; esc.style.top = (h - 1080 * k) / 2 + "px";
+  }
+  window.addEventListener("resize", ajustar); ajustar();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slides = [...document.querySelectorAll(".slide")];
+  let actual = 0, paso = 0;
+  const timers = [], frames = [];
+  const luego = (ms, fn) => timers.push(setTimeout(fn, reduce ? 0 : ms));
+  const limpiar = () => { while (timers.length) clearTimeout(timers.pop()); while (frames.length) cancelAnimationFrame(frames.pop()); };
+  const $ = (id) => document.getElementById(id);
+
+  /* ── 1 · partículas que convergen al centro ── */
+  function particulas(canvas, modo) {
+    const c = canvas.getContext("2d"), W = 1920, H = 1080, cx = W / 2, cy = H / 2 - (modo === "fin" ? 60 : 30);
+    const ps = Array.from({ length: modo === "fin" ? 140 : 110 }, () => {
+      const a = Math.random() * Math.PI * 2, r = 500 + Math.random() * 700;
+      return { a, r, v: 2 + Math.random() * 5, s: Math.random() * 2 + .6, o: Math.random() * .6 + .2 };
+    });
+    const t0 = performance.now();
+    const dibuja = (t) => {
+      const e = (t - t0) / 1000;
+      c.clearRect(0, 0, W, H);
+      for (const p of ps) {
+        if (modo === "fin") { p.r += p.v * .9; if (p.r > 1300) p.r = 40; }
+        else { p.r = Math.max(10, p.r - p.v * (e < 1.6 ? 4 : .5)); if (p.r <= 10) p.r = 600 + Math.random() * 600; p.a += .0015; }
+        const x = cx + Math.cos(p.a) * p.r, y = cy + Math.sin(p.a) * p.r * .6;
+        c.fillStyle = `rgba(245,206,26,${p.o * Math.min(1, p.r / 300)})`;
+        c.beginPath(); c.arc(x, y, p.s, 0, 7); c.fill();
+      }
+      frames.push(requestAnimationFrame(dibuja));
+    };
+    if (!reduce) frames.push(requestAnimationFrame(dibuja));
+  }
+
+  /* ── 4 · la rueda creativa ── */
+  const PASOS4 = ["Ideas", "Guiones", "Creativos", "Anuncios", "Datos", "Optimización", "Escalamiento"];
+  const rueda = $("rueda");
+  PASOS4.forEach((n, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / PASOS4.length), x = 410 + Math.cos(a) * 330, y = 410 + Math.sin(a) * 330;
+    const d = document.createElement("div"); d.className = "nodo"; d.style.left = x + "px"; d.style.top = y + "px";
+    d.innerHTML = `<i>${String(i + 1).padStart(2, "0")}</i><b>${n}</b>`; rueda.appendChild(d);
+  });
+  function animaRueda() {
+    const nodos = [...rueda.querySelectorAll(".nodo")]; nodos.forEach((n) => n.classList.remove("on"));
+    let i = 0, v = 0; $("vueltas").textContent = "0";
+    const tick = () => {
+      nodos.forEach((n) => n.classList.remove("on"));
+      nodos[i].classList.add("on");
+      i = (i + 1) % nodos.length;
+      if (i === 0) { v++; $("vueltas").textContent = v; }
+      luego(v < 1 ? 480 : 220, tick);
+    };
+    luego(800, tick);
+  }
+
+  /* ── 5 · red de creadores ── */
+  const NICHOS = ["Fitness", "Mamá emprendedora", "Foodie", "Belleza", "Tu pueblo", "Estilo de vida", "Salud", "Familia", "Negocios"];
+  const red = $("red"), svgRed = $("redSvg"), CX = 500, CY = 430;
+  const personaSvg = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.4 4.3-7 8.5-7s7.7 2.6 8.5 7z"/></svg>';
+  const creadores = NICHOS.map((n, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / NICHOS.length), r = 300 + (i % 2) * 40;
+    return { n, x: CX + Math.cos(a) * r, y: CY + Math.sin(a) * r * .95, a };
+  });
+  let svgTxt = "";
+  creadores.forEach((c) => { svgTxt += `<line class="rayo" x1="${CX}" y1="${CY}" x2="${c.x}" y2="${c.y}"/>`; });
+  const publico = [];
+  creadores.forEach((c, ci) => {
+    for (let k = 0; k < 14; k++) {
+      const a = c.a + (Math.random() - .5) * .9, r = 400 + Math.random() * 130;
+      const x = CX + Math.cos(a) * r, y = CY + Math.sin(a) * r * .95;
+      if (x > -30 && x < 1030 && y > -20 && y < 880) { publico.push({ ci }); svgTxt += `<circle class="pub" data-c="${ci}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2 + Math.random() * 2.5).toFixed(1)}"/>`; }
+    }
+  });
+  svgRed.innerHTML = svgTxt;
+  creadores.forEach((c, i) => {
+    const d = document.createElement("div"); d.className = "creador pop"; d.style.left = c.x + "px"; d.style.top = c.y + "px"; d.style.setProperty("--d", (.7 + i * .12) + "s");
+    d.innerHTML = `<div class="cara">${personaSvg}<i class="rec" style="--d:${i * .2}s"></i></div><span>${c.n}</span>`; red.appendChild(d);
+  });
+  function animaRed() {
+    const pubs = [...svgRed.querySelectorAll(".pub")]; pubs.forEach((p) => p.classList.remove("on"));
+    pubs.forEach((p, i) => luego(1800 + (+p.dataset.c) * 160 + Math.random() * 1600, () => p.classList.add("on")));
+  }
+
+  /* ── 8 · la cadena se enciende de izquierda a derecha ── */
+  function animaCadena() {
+    const es = [...document.querySelectorAll("#cadena .eslabon")]; es.forEach((e) => e.classList.remove("on"));
+    es.forEach((e, i) => luego(500 + i * 260, () => e.classList.add("on")));
+  }
+
+  /* ── 9 · AutoFlow: del anuncio a la cita ── */
+  function animaAutoflow() {
+    const anuncio = $("anuncio"), chat = $("chat"), msgs = $("mensajes"), card = $("leadCard"), cta = $("ctaAnuncio"), cron = $("cronom");
+    const hitos = [...document.querySelectorAll("#hitos .hito")];
+    anuncio.classList.remove("fuera"); chat.classList.remove("on"); msgs.innerHTML = ""; cta.classList.remove("toque");
+    cron.classList.remove("listo"); $("crono").textContent = "0 s"; $("cronoTxt").textContent = "esperando al lead…";
+    hitos.forEach((h) => h.classList.remove("on")); card.style.opacity = 0;
+    ["n0", "n1", "n2", "n3"].forEach((n) => ($(n).textContent = "0"));
+    const etapas = [...document.querySelectorAll("#crm .etapa")];
+    const mover = (k, tag, info) => {
+      const e = etapas[k];
+      card.style.left = (e.offsetLeft + (e.offsetWidth - 210) / 2) + "px"; card.style.top = (e.offsetTop + 46) + "px";
+      card.style.opacity = 1; $("leadTag").textContent = tag; if (info) $("leadInfo").textContent = info;
+      ["n0", "n1", "n2", "n3"].forEach((n, i) => ($(n).textContent = i === k ? "1" : "0"));
+    };
+    const hora = () => "3:" + String(40 + msgs.children.length).padStart(2, "0") + " PM";
+    const escribe = (quien, txt) => { const t = msgs.querySelector(".escribe"); if (t) t.remove(); const m = document.createElement("div"); m.className = "msg " + quien; m.innerHTML = txt + `<small>${hora()}${quien === "lead" ? " ✓✓" : ""}</small>`; msgs.appendChild(m); };
+    const tecleando = () => { const t = document.createElement("div"); t.className = "escribe"; t.innerHTML = "<i></i><i></i><i></i>"; msgs.appendChild(t); $("estadoChat").textContent = "escribiendo…"; };
+    const enLinea = () => ($("estadoChat").textContent = "en línea");
+    luego(1300, () => cta.classList.add("toque"));
+    luego(1900, () => { anuncio.classList.add("fuera"); chat.classList.add("on"); });
+    luego(2500, () => {
+      escribe("lead", "¡Hola! Vi el anuncio. ¿Cuánto cuesta la evaluación?");
+      hitos[0].classList.add("on"); mover(0, "NUEVO", "Llegó por el anuncio · 3:40 PM");
+      $("cronoTxt").textContent = "el agente está respondiendo…";
+      let s = 0; const reloj = () => { s++; $("crono").textContent = s + " s"; if (s < 7) luego(170, reloj); };
+      luego(170, reloj);
+    });
+    luego(2900, tecleando);
+    luego(4000, () => {
+      escribe("bot", "¡Hola! 😊 Gracias por escribirnos. Te explico todo en la evaluación, que es el primer paso. ¿Es para ti?");
+      enLinea(); hitos[1].classList.add("on"); mover(1, "CONTACTADO");
+      cron.classList.add("listo"); $("cronoTxt").textContent = "respondió en menos de 10 s";
+    });
+    luego(5400, () => escribe("lead", "Sí, para mí."));
+    luego(5700, tecleando);
+    luego(6700, () => { escribe("bot", "¡Perfecto! ¿Te queda mejor en la mañana o en la tarde?"); enLinea(); hitos[2].classList.add("on"); mover(2, "CALIFICADO", "Para ella · prefiere la tarde"); });
+    luego(8000, () => escribe("lead", "En la tarde."));
+    luego(8300, tecleando);
+    luego(9300, () => { escribe("bot", "Tengo jueves 3:00 PM o viernes 4:30 PM. ¿Cuál prefieres?"); enLinea(); });
+    luego(10600, () => escribe("lead", "Jueves 3:00 👍"));
+    luego(10900, tecleando);
+    luego(11900, () => {
+      escribe("bot", "¡Listo! Quedaste el <b>jueves a las 3:00 PM</b> ✅ Te escribo un día antes para recordarte.");
+      enLinea(); hitos[3].classList.add("on"); mover(3, "CITA · JUE 3:00 PM", "Evaluación agendada");
+    });
+    luego(12700, () => hitos[4].classList.add("on"));
+    luego(13400, () => hitos[5].classList.add("on"));
+  }
+
+  /* ── 10 · el agente personalizado ── */
+  const PREGUNTAS = [
+    { q: "¿Cuánto vendimos hoy?", f: ["ventas"],
+      r: "Hoy van <b>$3,240</b> en 42 ventas, un 18 % más que el jueves pasado. Tu hora más fuerte fue de 12 a 1 PM.",
+      w: () => `<div class="widget"><small>Ventas de hoy <em>ejemplo</em></small><div class="grande">$3,240<span>▲ 18 %</span></div><div class="barras-h">${[22, 30, 46, 100, 64, 52, 40, 58].map((h, i) => `<i class="${h === 100 ? "pico" : ""}" data-h="${h}"></i>`).join("")}</div></div>` },
+    { q: "¿Cuántos leads recibimos?", f: ["leads"],
+      r: "Entraron <b>23 leads</b>: 14 por WhatsApp, 6 por Instagram y 3 por llamada. 9 ya tienen cita.",
+      w: () => `<div class="widget"><small>Leads de hoy <em>ejemplo</em></small><div class="grande">23<span>9 con cita</span></div><div class="apilada"><i data-w="61" style="background:#25D366"></i><i data-w="26" style="background:#E4405F"></i><i data-w="13" style="background:var(--oro)"></i></div><div class="leyenda"><span><i style="background:#25D366"></i><b>14</b> WhatsApp</span><span><i style="background:#E4405F"></i><b>6</b> Instagram</span><span><i style="background:var(--oro)"></i><b>3</b> llamadas</span></div></div>` },
+    { q: "¿Qué oportunidades están pendientes?", f: ["crm", "agenda"],
+      r: "Hay <b>5 oportunidades</b> abiertas por $4,850. La más caliente pidió cotización ayer y nadie le ha contestado. ¿Quieres que le escriba?",
+      w: () => `<div class="widget"><small>Oportunidades <em>ejemplo</em></small><div class="opps"><div class="opp caliente"><span>Cotización · sin respuesta</span><b>$1,600</b></div><div class="opp"><span>Seguimiento de cita</span><b>$1,200</b></div><div class="opp"><span>Renovación del mes</span><b>$950</b></div></div></div>` },
+    { q: "¿Qué está ocurriendo en mi negocio?", f: ["ventas", "leads", "agenda", "equipo"],
+      r: "En resumen: las ventas van arriba, hay <b>2 leads sin contestar</b> hace más de una hora, la agenda de mañana está casi llena y el equipo tiene 3 tareas atrasadas.",
+      w: () => `<div class="widget"><small>Lo que debes saber <em>ejemplo</em></small><div class="alertas"><div><i>🟢</i>Ventas por encima de la semana pasada</div><div><i>🔴</i>2 leads esperando respuesta</div><div><i>🟡</i>Agenda de mañana casi llena</div><div><i>🟡</i>3 tareas del equipo atrasadas</div></div></div>` },
+  ];
+  function animaAgente() {
+    const hilo = $("hilo"), rep = $("reporte"), inp = $("escribiendo"), fuentes = [...document.querySelectorAll(".fuente")];
+    hilo.innerHTML = ""; rep.innerHTML = "<small>Reporte del día · ejemplo</small>"; inp.textContent = "";
+    let t = 900;
+    PREGUNTAS.forEach((p, i) => {
+      [...p.q].forEach((ch, k) => luego(t + k * 42, () => { inp.textContent = p.q.slice(0, k + 1); }));
+      t += p.q.length * 42 + 350;
+      luego(t, () => {
+        inp.textContent = "";
+        if (hilo.children.length > 4) { hilo.removeChild(hilo.firstChild); hilo.removeChild(hilo.firstChild); }
+        const q = document.createElement("div"); q.className = "preg"; q.textContent = p.q; hilo.appendChild(q);
+        const pz = document.createElement("div"); pz.className = "pensando"; pz.innerHTML = "<i></i>Revisando tu información…"; hilo.appendChild(pz);
+        fuentes.forEach((f) => f.classList.toggle("lee", p.f.includes(f.dataset.f)));
+      });
+      t += 1300;
+      luego(t, () => {
+        hilo.querySelector(".pensando")?.remove(); fuentes.forEach((f) => f.classList.remove("lee"));
+        const r = document.createElement("div"); r.className = "resp"; r.innerHTML = p.r; hilo.appendChild(r);
+        if (rep.children.length > 3) rep.removeChild(rep.children[1]);
+        rep.insertAdjacentHTML("beforeend", p.w());
+        const w = rep.lastElementChild;
+        luego(120, () => {
+          w.querySelectorAll("[data-h]").forEach((b) => (b.style.height = b.dataset.h + "%"));
+          w.querySelectorAll("[data-w]").forEach((b) => (b.style.width = b.dataset.w + "%"));
+        });
+      });
+      t += 2200;
+    });
+  }
+
+  /* ── motor de slides ── */
+  const AL_ENTRAR = { s1: () => particulas($("particulas"), "inicio"), s4: animaRueda, s5: animaRed, s8: animaCadena, s9: animaAutoflow, s10: animaAgente };
+  function arrancar(s) {
+    s.classList.remove("activa", "final"); void s.offsetWidth; s.classList.add("activa"); paso = 0;
+    if (AL_ENTRAR[s.id]) AL_ENTRAR[s.id]();
+  }
+  function ir(n, forzar) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === actual && !forzar) return;
+    limpiar();
+    slides[actual].classList.remove("activa", "final");
+    actual = n; arrancar(slides[actual]);
+    $("pag").textContent = `${actual + 1} / ${slides.length}`;
+    $("barra").style.width = ((actual + 1) / slides.length) * 100 + "%";
+    try { history.replaceState(null, "", "#s" + (actual + 1)); } catch (e) {}
+  }
+  function siguiente() {
+    const s = slides[actual], pasos = +s.dataset.pasos || 1;
+    if (paso + 1 < pasos) { paso++; s.classList.add("final"); particulas($("chispas"), "fin"); return; }
+    ir(actual + 1);
+  }
+  function anterior() {
+    const s = slides[actual];
+    if (paso > 0) { paso = 0; limpiar(); s.classList.remove("final"); return; }
+    ir(actual - 1);
+  }
+  const inicial = /^#s(\d+)$/.exec(location.hash);
+  actual = inicial ? Math.min(slides.length - 1, +inicial[1] - 1) : 0;
+  slides.forEach((s, i) => { if (i !== actual) s.classList.remove("activa"); });
+  ir(actual, true);
+
+  $("btnAnt").addEventListener("click", (e) => { e.stopPropagation(); anterior(); });
+  $("btnSig").addEventListener("click", (e) => { e.stopPropagation(); siguiente(); });
+  $("btnRep").addEventListener("click", (e) => { e.stopPropagation(); ir(actual, true); });
+  $("cerrarGirar").addEventListener("click", (e) => { e.stopPropagation(); $("girar").hidden = true; });
+  const full = () => { const d = document.documentElement; try { (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(() => {}); } catch (e) {} };
+  $("btnFull").addEventListener("click", (e) => { e.stopPropagation(); full(); });
+  $("visor").addEventListener("click", (e) => (e.clientX < window.innerWidth * 0.3 ? anterior() : siguiente()));
+  window.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); siguiente(); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); anterior(); }
+    else if (e.key === "Home") ir(0);
+    else if (e.key === "End") ir(slides.length - 1);
+    else if (e.key === "f" || e.key === "F") full();
+    else if (e.key === "r" || e.key === "R") ir(actual, true);
+  });
+  let x0 = null;
+  window.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener("touchend", (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) (dx < 0 ? siguiente() : anterior()); x0 = null; });
+  const ctl = $("controles"); let dormir;
+  const despertar = () => { ctl.classList.remove("dormido"); clearTimeout(dormir); dormir = setTimeout(() => ctl.classList.add("dormido"), 2600); };
+  window.addEventListener("mousemove", despertar); despertar();
+})();
+</script>
