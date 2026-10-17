@@ -42,6 +42,7 @@
 - [Resuelto — Plomería PR](plomeria-pr-vision.md) — EN EJECUCIÓN: plataforma home services, plomeros, WhatsApp/Meta, LLC y contratos pendientes
 - [Resuelto — foco: reclutar plomeros](resuelto-foco-reclutar-plomeros.md) — 10/oct: la semana = reclutar 10–12 plomeros; no subir presupuesto de clientes hasta tenerlos
 - [Resuelto — sin garantía, pagos los viernes](resuelto-sin-garantia-pagos-viernes.md) — 14/oct: ya no hay garantía de 12 meses (solo destapes 30 días); plomeros cobran todo completo los viernes (piezas incluidas); calculadora de Aure en prod
+- [Resuelto — SMS no llegan a T-Mobile](resuelto-sms-tmobile.md) — 17/oct: el 787-956-1111 no tiene registro 10DLC; código de la app ahora por WhatsApp; falta registro (Elvin)
 - [Resuelto — presupuesto de ads](resuelto-presupuesto-ads.md) — HOY máx $30-35/día (6/oct, Elvin ajustando); antes $60-65 con 3 áreas; $125-150 con todas; Messenger > llamadas
 - [Resuelto — cómo vender](resuelto-como-vender.md) — no vender rápido: escuchar, fotos, diagnóstico, cerrar con horario
 - [Resuelto — equipo propio](resuelto-equipo-propio.md) — nunca gente de las agencias; Claude = agencia, Bori = creativos + ads
