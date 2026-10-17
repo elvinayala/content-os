@@ -726,7 +726,10 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
 - **Noticias** (`/ritmo/noticias` + las últimas 3 en Hoy, 26/sep; tabla `desempeno_noticias`, migración 0020;
   `lib/desempeno/noticias.ts`, categorías en `noticias-tipos.ts`): logros del equipo (con persona → le avisa por Slack),
   noticias, comunicados (se pueden fijar arriba) y causas benéficas. Publica/fija/borra la vista maestra; lo ve todo el
-  equipo. Breve a propósito (sin comentarios ni reacciones). En Hoy la maestra tiene accesos directos (Equipo, Personas,
+  equipo. Breve a propósito (sin comentarios ni reacciones). **Por empresa (17/oct)**: cada noticia es para "todas", `level_up` o `ai_borinquen`
+  (`desempeno_noticias.empresa`, migración 0044_noticias-empresa; `noticiaVisible` en `noticias-tipos.ts`, tests `tests/noticias.test.mjs`):
+  cada empleado ve las de todos + las de su empresa (o `tambien_en`), la maestra todas con su etiqueta; un logro de alguien puesto "para
+  todos" queda para la empresa de esa persona. **Dueña: Yaileen** (comunicados, causas benéficas); Carilin le pasa ≥ 1 logro a la semana. En Hoy la maestra tiene accesos directos (Equipo, Personas,
   Agentes, Carreras, Noticias, Solicitudes): en el celular no caben todas las pestañas.
 - **Bienestar** (`/ritmo/bienestar` + tarjeta en Hoy, 26/sep; tabla `desempeno_bienestar`, migración 0021; puro en
   `lib/desempeno/bienestar-reglas.ts` + tests `tests/bienestar.test.mjs`): la parte wellness (~15 %), voluntaria, privada y
