@@ -74,15 +74,20 @@ async function escribir(plan: Plan): Promise<Guion> {
   const esquema = plan.generar
     ? `{"caption":"...","tarjetas":[{"eyebrow":"...","titular":"...","apoyo":"...","pill":"...","tema":"navy|cream"}${plan.formato === "carrusel" ? ", …hasta 5" : ""}]}`
     : `{"caption":"..."}`;
-  const r = await client.messages.create({
-    model: config.modelo, max_tokens: 1200,
-    system: `Eres ${NINA.nombre}, ${NINA.cargo}. Escribes el contenido orgánico diario de Instagram y Facebook de Resuelto (plomería con precio fijo en Puerto Rico; también reclutamos plomeros licenciados en TODA la isla).\n${VOZ}\nEstructura del caption: gancho en la primera línea (sin "¿Sabías que"), 2-5 líneas cortas de desarrollo, CTA claro, línea en blanco y 4-6 hashtags (incluye ${NINA.hashtagsBase.join(" ")}). Máx. 900 caracteres. Hoy es ${diaSemanaPR()} ${plan.fecha}.\nResponde SOLO con JSON válido con este esquema: ${esquema}`,
-    messages: [{ role: "user", content: `${pilarTxt}\n\nFORMATO: ${formatoTxt}` }],
-  });
-  const txt = r.content.filter((b) => b.type === "text").map((b: any) => b.text).join("").trim().replace(/^```json\s*|```$/g, "");
-  const g = parsearGuion(txt);
-  if (!g.caption) throw new Error("Claude no devolvió caption");
-  return g;
+  // 17/oct/2026: un día la respuesta llegó sin JSON ("Unexpected end of JSON input") y Nina no publicó.
+  // Dos intentos, con más espacio y, en el segundo, el recordatorio de contestar solo con el JSON.
+  let ultimo = "";
+  for (let intento = 1; intento <= 2; intento++) {
+    const r = await client.messages.create({
+      model: config.modelo, max_tokens: 2500,
+      system: `Eres ${NINA.nombre}, ${NINA.cargo}. Escribes el contenido orgánico diario de Instagram y Facebook de Resuelto (plomería con precio fijo en Puerto Rico; también reclutamos plomeros licenciados en TODA la isla).\n${VOZ}\nEstructura del caption: gancho en la primera línea (sin "¿Sabías que"), 2-5 líneas cortas de desarrollo, CTA claro, línea en blanco y 4-6 hashtags (incluye ${NINA.hashtagsBase.join(" ")}). Máx. 900 caracteres. Hoy es ${diaSemanaPR()} ${plan.fecha}.\nResponde SOLO con JSON válido con este esquema: ${esquema}`,
+      messages: [{ role: "user", content: `${pilarTxt}\n\nFORMATO: ${formatoTxt}${intento > 1 ? "\n\nResponde SOLO con el JSON del esquema, sin texto antes ni después." : ""}` }],
+    });
+    const txt = r.content.filter((b) => b.type === "text").map((b: any) => b.text).join("").trim().replace(/^```json\s*|```$/g, "");
+    ultimo = txt;
+    try { const g = parsearGuion(txt); if (g.caption) return g; } catch { /* reintenta */ }
+  }
+  throw new Error(`Claude no devolvió el guion en JSON: ${ultimo.slice(0, 120) || "(vacío)"}`);
 }
 
 /** Genera (si toca), publica y reporta. `modo`: "publicar" | "programar" (para mañana 11:00) | "borrador". */

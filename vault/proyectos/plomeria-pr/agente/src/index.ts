@@ -34,6 +34,7 @@ import * as demo from "./demo-plomero.js";
 import { montarMarca } from "./marca.js";
 import { llamarAlCliente, escribirAlCliente } from "./contacto-plomero.js";
 import * as proAcceso from "./pro-acceso.js";
+import { leerHistorial } from "./historial.js";
 import * as pushNativo from "./push-nativo.js";
 import { avisarAlTelefono } from "./canales/telefono.js";
 import * as reservas from "./reservas.js";
@@ -206,6 +207,15 @@ async function atenderWhatsApp(m: wa.MensajeWA) {
   if (acepto) {
     const prov = proveedorPorWhatsapp(m.de);
     if (prov) { const r = await despacho.aceptar(acepto[1].toUpperCase(), prov.id); if (!r.ok) await wa.enviarTexto(m.de, r.motivo, { respuesta: true }); return; }
+  }
+  // Plomero pidiendo su código de Resuelto Pro por WhatsApp (botón de la app): se le contesta aquí mismo.
+  if (proAcceso.pideCodigo(m.texto)) {
+    const prov = proveedorPorWhatsapp(m.de);
+    if (prov && prov.estado === "activo") {
+      const codigo = proAcceso.nuevoCodigo(proAcceso.soloDiez(m.de));
+      await wa.enviarTexto(m.de, codigo ? proAcceso.textoCodigo(codigo) : "Ya pediste varios códigos. Espera 15 minutos e intenta otra vez.", { respuesta: true });
+      return;
+    }
   }
   const contacto = almacen.obtenerOCrearContacto("whatsapp", m.de);
   if (m.nombre && !contacto.nombre) { contacto.nombre = m.nombre; almacen.guardarContacto(contacto); }
@@ -417,6 +427,7 @@ app.get(["/unete", "/trabaja"], (_req, res) => { res.type("html").send(fs.readFi
 app.get("/pro", (_req, res) => { res.setHeader("Cache-Control", "no-store"); res.type("html").send(fs.readFileSync(path.join(RAIZ, "portal", "pro.html"), "utf8")); });
 const DEMO_TEL = "7870000000"; // vista de prueba: 787-000-0000 con código 000000 entra a la app de ejemplo
 const intentosPro = new Map<string, number[]>();
+const avisoCodigo = new Map<string, number>(); // aviso al equipo cuando un plomero pide código (1 cada 30 min)
 app.post("/api/pro/codigo", async (req: any, res) => {
   const ip = String(req.ip ?? ""); const ahora = Date.now(); const h = (intentosPro.get(ip) ?? []).filter((t) => ahora - t < 3600_000);
   if (h.length >= 12) return res.json({ ok: false, motivo: "Demasiados intentos. Espera un rato o llama a Resuelto." });
@@ -430,7 +441,16 @@ app.post("/api/pro/codigo", async (req: any, res) => {
   if (!codigo) return res.json({ ok: false, motivo: "Ya te enviamos varios códigos. Espera 15 minutos." });
   const enviado = await sms.enviarSMS(tel, `Resuelto Pro: tu código es ${codigo}. Vence en 10 minutos. No se lo des a nadie.\n\n@app.resueltopr.com #${codigo}`);
   if (!enviado) console.log(`[Resuelto Pro] código para ${prov.id}: no salió por texto`);
-  res.json({ ok: true });
+  // 17/oct/2026: T-Mobile filtra los SMS del 787-956-1111. Si nos escribió por WhatsApp en las últimas 24 h, el código
+  // también sale por ahí; si no, la app le ofrece pedirlo por WhatsApp y el equipo recibe su link por si hace falta.
+  const porWa = proAcceso.ventanaAbierta(leerHistorial(`whatsapp:1${tel}`, 40));
+  if (porWa) await wa.enviarTexto(tel, proAcceso.textoCodigo(codigo), { respuesta: true });
+  const antes = avisoCodigo.get(prov.id) ?? 0;
+  if (Date.now() - antes > 30 * 60_000) {
+    avisoCodigo.set(prov.id, Date.now());
+    await dmSlack(config.slack.reclutamiento, `🔑 ${prov.nombre} pidió su código para entrar a Resuelto Pro. Si no le llega (T-Mobile bloquea los textos del 787-956-1111), que toque "Pedir el código por WhatsApp" en la app, o mándale su link de entrada: ${linkPortal(prov.id, config.urlPublica)}`).catch(() => false);
+  }
+  res.json({ ok: true, wa: porWa });
 });
 app.post("/api/pro/entrar", (req: any, res) => {
   const tel = proAcceso.soloDiez(req.body?.telefono), codigo = String(req.body?.codigo ?? "");

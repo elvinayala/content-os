@@ -42,3 +42,17 @@ test("APNs: la oferta urgente suena con alerta.caf y es time-sensitive", () => {
   assert.equal(m.aps["interruption-level"], "time-sensitive");
   assert.equal(m.ofertaId, "OF-1");
 });
+
+test("el plomero pide su código por WhatsApp (T-Mobile no entrega los SMS del 787-956-1111)", async () => {
+  const { pideCodigo, ventanaAbierta, textoCodigo } = await import("../dist/pro-acceso.js");
+  assert.ok(pideCodigo("Código Resuelto Pro"));
+  assert.ok(pideCodigo("codigo"));
+  assert.ok(pideCodigo("mándame el código porfa"));
+  assert.ok(!pideCodigo("tengo un tubo roto en la cocina y el agua no para, ¿cuánto cuesta arreglarlo con todo y código de construcción?"));
+  assert.ok(!pideCodigo("hola"));
+  assert.match(textoCodigo("123456"), /123456/);
+  const ahora = Date.parse("2026-10-17T15:00:00Z");
+  assert.ok(ventanaAbierta([{ fecha: "2026-10-17T10:00:00Z", autor: "cliente" }], ahora));
+  assert.ok(!ventanaAbierta([{ fecha: "2026-09-23T21:44:31Z", autor: "cliente" }, { fecha: "2026-10-17T14:00:00Z", autor: "resuelto" }], ahora));
+  assert.ok(!ventanaAbierta([], ahora));
+});

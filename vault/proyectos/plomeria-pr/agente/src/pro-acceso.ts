@@ -38,4 +38,15 @@ export function verificar(mapa: Map<string, Pendiente>, tel: string, codigo: str
   mapa.delete(tel); return "ok";
 }
 export const verificarCodigo = (tel: string, codigo: string) => verificar(codigos, tel, codigo);
+
+/** El plomero pide su código por WhatsApp ("código", "Código Resuelto Pro"…). 17/oct/2026: T-Mobile no entrega los
+ *  SMS del 787-956-1111 (el número no está registrado ante las operadoras) y a Jaime no le llegaba; si escribe por
+ *  WhatsApp se abre la ventana de 24 h y el código sale por ahí. Pura. */
+export const pideCodigo = (texto: unknown) => { const t = String(texto ?? "").trim(); return t.length <= 60 && /\bc[oó]digo\b/i.test(t); };
+export const textoCodigo = (codigo: string) => `Tu código de Resuelto Pro es ${codigo}. Vence en 10 minutos. No se lo des a nadie.`;
+/** ¿Nos escribió por WhatsApp en las últimas 24 h? (solo así se le puede contestar con texto libre). Pura. */
+export function ventanaAbierta(eventos: { fecha: string; autor: string }[], ahora = Date.now()): boolean {
+  const ultimo = eventos.filter((e) => e.autor === "cliente" || e.autor === "plomero").at(-1);
+  return !!ultimo && ahora - Date.parse(ultimo.fecha) < 23.5 * 3600_000;
+}
 export const _codigos = codigos; // para tests
