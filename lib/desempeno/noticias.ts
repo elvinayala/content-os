@@ -42,8 +42,9 @@ export async function personasParaLogro() {
     .orderBy(pulseUsers.nombre);
 }
 
-export async function publicarNoticia(n: { categoria: string; titulo: string; cuerpo: string; personaId: string | null; enlace: string | null; fijada: boolean; empresa: string }, autor: { id: string; nombre: string }) {
+export async function publicarNoticia(n: { categoria: string; titulo: string; cuerpo: string; personaId: string | null; enlace: string | null; fijada: boolean; empresa?: string }, autor: { id: string; nombre: string }) {
   const d = await db();
+  n = { ...n, empresa: n.empresa ?? "todas" };
   // Un logro de alguien puesto "para todos" queda solo para su empresa: nunca se ve un nombre de la otra empresa.
   if (n.personaId && n.empresa === "todas") {
     const [p] = await d.select({ empresa: desempenoPerfiles.empresa }).from(desempenoPerfiles).where(eq(desempenoPerfiles.userId, n.personaId));
