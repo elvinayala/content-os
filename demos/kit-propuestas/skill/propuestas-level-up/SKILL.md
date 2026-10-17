@@ -59,7 +59,9 @@ Level Up: `bryan` (quiropráctico, agenda llena) · `robert` (taller, triplicó 
 +80 %) · `reina` (tienda de celulares, +50 %) · `ernest` (abogado, +$5K/mes) · `grissel` (salud, leads) ·
 `oliver` (restaurante, $30K→$100K) · `yazan` (tienda en línea, 15,000 clientes).
 AI Borinquen: `mano-santa` (contestaba el 20 % de sus leads) · `sleekbrowspr` (contesta en 10–15 s) ·
-`ernest-aib` (mensajes de madrugada) · `yazan-aib` (tienda en línea).
+`ernest-aib` (mensajes de madrugada).
+**Ojo:** `yazan` / `yazan-aib` (Sola Boutique, 15,000 clientes) es un resultado de **marketing** (Level Up): úsalo solo en
+propuestas de marketing, nunca en propuestas de agentes, sistemas o digitalización de AI Borinquen (Elvin, 17/oct).
 Detalle completo en `testimonios.json`.
 
 ## 6. Formato de salida

@@ -1,7 +1,11 @@
 {
  "marca": "ai-borinquen",
  "titulo_pestana": "Propuesta Supermercado Real · AI Borinquen",
- "cliente": { "nombre": "Supermercado Real", "negocio": "Supermercado Real", "fecha": "17 de octubre de 2026" },
+ "cliente": {
+  "nombre": "Supermercado Real",
+  "negocio": "Supermercado Real",
+  "fecha": "17 de octubre de 2026"
+ },
  "portada": {
   "titulo": "Su supermercado, *en vivo*\naunque usted no esté.",
   "sub": "Inventario, cajas, suplidores, nómina y clientes en un solo panel, con un agente que le contesta por WhatsApp."
@@ -9,31 +13,75 @@
  "diagnostico": {
   "titulo": "15 años de negocio. *Hoy necesita verlo todo.*",
   "puntos": [
-   ["Sin ver el punto de venta", "Cuando usted no está, no sabe qué pasa en la tienda."],
-   ["Finanzas sin control", "Cierres de caja, compras y pagos a suplidores sin un solo lugar."],
-   ["Sin informes en vivo", "Para saber cómo va el día, hay que llamar o esperar."],
-   ["Sin CRM", "No sabe quién le compra ni quién dejó de venir."]
+   [
+    "Sin ver el punto de venta",
+    "Cuando usted no está, no sabe qué pasa en la tienda."
+   ],
+   [
+    "Finanzas sin control",
+    "Cierres de caja, compras y pagos a suplidores sin un solo lugar."
+   ],
+   [
+    "Sin informes en vivo",
+    "Para saber cómo va el día, hay que llamar o esperar."
+   ],
+   [
+    "Sin CRM",
+    "No sabe quién le compra ni quién dejó de venir."
+   ]
   ]
  },
  "plan": {
   "ceja": "Lo que vamos a instalar",
   "titulo": "Un sistema que *trabaja por usted* todos los días.",
   "carriles": [
-   { "nombre": "1 · LA TIENDA, EN UN PANEL", "pasos": ["Cajas e inventario", "Compras y suplidores", "Nómina y clientes", "Todo en vivo"] },
-   { "nombre": "2 · SU AGENTE PERSONALIZADO", "pasos": ["Usted pregunta por WhatsApp", "Le contesta con sus datos", "Informe todas las noches"] }
+   {
+    "nombre": "1 · LA TIENDA, EN UN PANEL",
+    "pasos": [
+     "Cajas e inventario",
+     "Compras y suplidores",
+     "Nómina y clientes",
+     "Todo en vivo"
+    ]
+   },
+   {
+    "nombre": "2 · SU AGENTE PERSONALIZADO",
+    "pasos": [
+     "Usted pregunta por WhatsApp",
+     "Le contesta con sus datos",
+     "Informe todas las noches"
+    ]
+   }
   ]
  },
  "ejemplo": {
   "titulo": "Así le contesta *su agente.*",
   "chat": [
-   ["cliente", "¿Cuánto vendimos hoy y cuadraron las cajas?"],
-   ["agente", "Hoy van $5,888 en 218 ventas. Caja 1 y Caja 3 cuadraron; Caja 2 cerró con −$12.50 y ya le pedí la explicación a la cajera."],
-   ["cliente", "¿Qué hay que pedir?"],
-   ["agente", "Leche, pan sobao y huevos. ¿Le dejo listos los pedidos a los suplidores para que usted los apruebe?"]
+   [
+    "cliente",
+    "¿Cuánto vendimos hoy y cuadraron las cajas?"
+   ],
+   [
+    "agente",
+    "Hoy van $5,888 en 218 ventas. Caja 1 y Caja 3 cuadraron; Caja 2 cerró con −$12.50 y ya le pedí la explicación a la cajera."
+   ],
+   [
+    "cliente",
+    "¿Qué hay que pedir?"
+   ],
+   [
+    "agente",
+    "Leche, pan sobao y huevos. ¿Le dejo listos los pedidos a los suplidores para que usted los apruebe?"
+   ]
   ],
   "nota": "números de ejemplo; el sistema real usa los datos de su tienda"
  },
- "prueba": { "ceja": "Negocios de Puerto Rico que ya trabajan con nosotros", "testimonios": ["mano-santa", "yazan-aib"] },
+ "prueba": {
+  "ceja": "Un negocio de Puerto Rico que ya trabaja con nosotros",
+  "testimonios": [
+   "mano-santa"
+  ]
+ },
  "servicios": [
   {
    "nombre": "Sistema de gestión *con IA*",
@@ -64,10 +112,26 @@
  "arranque": {
   "titulo": "De la firma a *ver su negocio en vivo.*",
   "pasos": [
-   ["Semana 1", "Onboarding", "Conocemos su operación: cajas, suplidores, empleados y cómo cierra el día."],
-   ["Día 15", "Sistema en marcha", "Panel en vivo, informes y su agente contestándole."],
-   ["Días 16 a 45", "Lo afinamos", "Ajustamos todo con la operación real de la tienda."],
-   ["Siempre", "Soporte", "Cambios y ayuda con su mensualidad."]
+   [
+    "Semana 1",
+    "Onboarding",
+    "Conocemos su operación: cajas, suplidores, empleados y cómo cierra el día."
+   ],
+   [
+    "Día 15",
+    "Sistema en marcha",
+    "Panel en vivo, informes y su agente contestándole."
+   ],
+   [
+    "Días 16 a 45",
+    "Lo afinamos",
+    "Ajustamos todo con la operación real de la tienda."
+   ],
+   [
+    "Siempre",
+    "Soporte",
+    "Cambios y ayuda con su mensualidad."
+   ]
   ]
  },
  "cierre": {
