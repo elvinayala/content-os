@@ -17,7 +17,12 @@ const cuando = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("
 
 type Tipo = { id: string; nombre: string; conFechas: boolean };
 
-export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string | null }) {
+// 17/oct (Elvin): las citas médicas se descuentan de los días de enfermedad (se ven aquí) y las vacaciones se piden con
+// mínimo 60 días de anticipación (`minVacaciones` = primer día que se puede pedir hoy).
+type Dias = { vacaciones: string; enfermedad: number; cupoEnfermedad: number; renueva: string };
+const fechaLarga = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR", { day: "numeric", month: "long", year: "numeric" });
+
+export function NuevaSolicitud({ tipos, saldo, dias, minVacaciones }: { tipos: Tipo[]; saldo: string | null; dias?: Dias | null; minVacaciones: string }) {
   const [v, setV] = useState({ tipo: "", desde: "", hasta: "", dias: "1", detalle: "" });
   const [cargando, setCargando] = useState(false);
   const tipo = tipos.find((t) => t.id === v.tipo);
@@ -32,7 +37,10 @@ export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string 
       vivo = false;
     };
   }, [conCalendario, v.desde, v.hasta]);
-  const visible = conCalendario && v.desde ? choque : { error: null, aviso: null };
+  const visible0 = conCalendario && v.desde ? choque : { error: null, aviso: null };
+  const tarde = tipo?.id === "vacaciones" && !!v.desde && v.desde < minVacaciones;
+  const visible = tarde ? { error: `Las vacaciones se piden con mínimo 60 días de anticipación: lo más pronto es desde el ${fechaLarga(minVacaciones)}.`, aviso: null } : visible0;
+  const pedidos = Number(v.dias) || 0;
   const enviar = async () => {
     setCargando(true);
     const r = await crearSolicitudAction(v);
@@ -47,6 +55,20 @@ export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string 
         <h2 className="font-semibold">Pedir algo a Recursos Humanos</h2>
         <p className="text-sm text-muted-foreground">Tu supervisor lo aprueba y RR.HH. lo firma. Te avisamos en cada paso.</p>
       </div>
+      {dias ? (
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="rounded-xl bg-white/[0.03] px-3 py-2.5 ring-1 ring-border/70">
+            <p className="text-[11px] text-muted-foreground">Vacaciones</p>
+            <p className="font-semibold">{dias.vacaciones}</p>
+          </div>
+          <div className="rounded-xl bg-white/[0.03] px-3 py-2.5 ring-1 ring-border/70">
+            <p className="text-[11px] text-muted-foreground">Días de enfermedad</p>
+            <p className="font-semibold">
+              {dias.enfermedad} <span className="text-xs font-normal text-muted-foreground">de {dias.cupoEnfermedad} · se renuevan el {fechaLarga(dias.renueva)}</span>
+            </p>
+          </div>
+        </div>
+      ) : null}
       <select className={select} value={v.tipo} onChange={(e) => setV((x) => ({ ...x, tipo: e.target.value }))}>
         <option value="">¿Qué necesitas?</option>
         {tipos.map((t) => (
@@ -55,16 +77,33 @@ export function NuevaSolicitud({ tipos, saldo }: { tipos: Tipo[]; saldo: string 
       </select>
       {tipo?.conFechas ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Desde</span><Input type="date" className="h-11" value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
+          <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Desde</span><Input type="date" className="h-11" min={tipo.id === "vacaciones" ? minVacaciones : undefined} value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
           <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Hasta</span><Input type="date" className="h-11" value={v.hasta} onChange={(e) => setV((x) => ({ ...x, hasta: e.target.value }))} /></label>
           <label className="col-span-2 flex flex-col gap-1.5 sm:col-span-1"><span className="text-xs text-muted-foreground">Días laborables (0.5 = medio día)</span><Input type="number" step="0.5" min="0" className="h-11" value={v.dias} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value }))} /></label>
         </div>
+      ) : null}
+      {tipo?.id === "vacaciones" ? (
+        <p className="rounded-xl bg-white/[0.03] px-3 py-2 text-xs text-muted-foreground ring-1 ring-border/70">
+          🗓️ Las vacaciones se piden con <b className="text-foreground">mínimo 60 días de anticipación</b> (no se pueden pedir para el mismo mes). Hoy lo más pronto es desde el <b className="text-foreground">{fechaLarga(minVacaciones)}</b>.
+        </p>
+      ) : null}
+      {tipo?.id === "cita_medica" ? (
+        <p className={cn("rounded-xl px-3 py-2 text-xs ring-1", dias && pedidos > dias.enfermedad ? "bg-amber-500/10 text-amber-200 ring-amber-500/30" : "bg-white/[0.03] text-muted-foreground ring-border/70")}>
+          🩺 Al aprobarse se descuenta de tus días de enfermedad
+          {dias ? (
+            <>
+              : te quedan <b className="text-foreground">{dias.enfermedad}</b>
+              {pedidos > dias.enfermedad ? ". Lo que pase de ahí se cobra de tus vacaciones o va sin paga." : "."}
+            </>
+          ) : "."}{" "}
+          Pon el medio día (0.5) si es solo una parte del día y, en el detalle, la hora y el médico o la especialidad.
+        </p>
       ) : null}
       {visible.error ? <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-300 ring-1 ring-red-500/30">⛔ {visible.error}</p> : null}
       {visible.aviso ? <p className="rounded-xl bg-amber-500/10 px-3 py-2 text-sm text-amber-200 ring-1 ring-amber-500/30">⚠️ {visible.aviso}</p> : null}
       {conCalendario ? <a href="/ritmo/calendario" className="w-fit text-xs text-primary hover:underline">Ver el calendario del equipo →</a> : null}
       {tipo && ["vacaciones", "dia_libre"].includes(tipo.id) && saldo ? <p className="text-xs text-[color:var(--coral)]">{saldo}</p> : null}
-      <Textarea rows={3} maxLength={2000} value={v.detalle} onChange={(e) => setV((x) => ({ ...x, detalle: e.target.value }))} placeholder="Explica brevemente (motivo, a quién va dirigida la carta, horario del permiso…)" />
+      <Textarea rows={3} maxLength={2000} value={v.detalle} onChange={(e) => setV((x) => ({ ...x, detalle: e.target.value }))} placeholder={tipo?.id === "cita_medica" ? "Hora de la cita y médico o especialidad (ej.: 2:00 PM, dentista)" : "Explica brevemente (motivo, a quién va dirigida la carta, horario del permiso…)"} />
       <Button onClick={enviar} disabled={cargando || !v.tipo || !!visible.error} className="h-12 rounded-full text-base">
         {cargando ? <Loader2 className="animate-spin" /> : <Send />} Enviar solicitud
       </Button>

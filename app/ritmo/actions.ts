@@ -23,7 +23,7 @@ import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/biene
 import * as fichas from "@/lib/desempeno/fichas";
 import * as noticias from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA } from "@/lib/desempeno/noticias-tipos";
-import { puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
+import { errorAnticipacion, puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
 import { errorPlan } from "@/lib/desempeno/viajes-reglas";
@@ -547,6 +547,9 @@ export async function crearSolicitudAction(p: { tipo: string; desde: string; has
       if (!Number.isFinite(dias) || dias < 0 || dias > 60) throw new Error("Días inválidos");
       dias = Math.round(dias * 2) / 2;
     }
+    // 17/oct (Elvin): las vacaciones se piden con mínimo 60 días de anticipación (ya no el mismo mes).
+    const anticipacion = errorAnticipacion(tipo.id, desde, fechaPR(Date.now()));
+    if (anticipacion) throw new Error(anticipacion);
     // Choques de fechas (28/sep): dos estrategas no pueden estar fuera a la vez.
     if (desde && hasta && ["vacaciones", "dia_libre", "permiso"].includes(tipo.id)) {
       const r = await calendario.revisarFechas({ userId: u.id, desde, hasta });

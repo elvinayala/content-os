@@ -88,7 +88,7 @@ export default async function FichaPage({ params }: { params: Promise<{ id: stri
         {s ? (
           <div className="mb-4 grid gap-3 sm:grid-cols-3">
             <Saldo titulo="Vacaciones" valor={s.vacaciones.disponibles} horas={s.horasDia} detalle={`${s.vacaciones.acumuladas} acumulados · ${s.vacaciones.usadas} usados${s.puedeSolicitar ? "" : ` · se solicitan desde el ${fecha(s.fechaDoceMeses)}`}`} />
-            <Saldo titulo="Enfermedad (este año)" valor={s.enfermedad.disponibles} horas={s.horasDia} detalle={`de ${s.enfermedad.cupo} · con certificado médico`} />
+            <Saldo titulo="Enfermedad" valor={s.enfermedad.disponibles} horas={s.horasDia} detalle={`de ${s.enfermedad.cupo} · se renuevan el ${fecha(s.enfermedad.renueva)} · citas médicas aprobadas o certificado`} />
             <Saldo titulo="Maternidad" valor={s.maternidad} horas={s.horasDia} detalle="por evento" />
           </div>
         ) : (

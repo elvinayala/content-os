@@ -47,7 +47,7 @@ export async function decidirSolicitud(s: Solicitud, actor: { id: string; nombre
   if (estado === "aprobada") {
     const a = ausenciaDeSolicitud(s);
     if (a) {
-      await crearAusencia({ userId: s.userId, tipo: a.tipo, desde: a.desde, hasta: a.hasta, dias: a.dias, certificado: false, nota: `Solicitud firmada por ${actor.nombre}` }, actor.id);
+      await crearAusencia({ userId: s.userId, tipo: a.tipo, desde: a.desde, hasta: a.hasta, dias: a.dias, certificado: a.certificado, nota: `${s.tipo === "cita_medica" ? "Cita médica · " : ""}Solicitud firmada por ${actor.nombre}` }, actor.id);
       const [ult] = await d.select({ id: desempenoAusencias.id }).from(desempenoAusencias).where(eq(desempenoAusencias.userId, s.userId)).orderBy(desc(desempenoAusencias.createdAt)).limit(1);
       ausenciaId = ult?.id ?? null;
     }

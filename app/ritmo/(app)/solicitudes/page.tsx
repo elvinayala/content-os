@@ -3,14 +3,15 @@ import Link from "next/link";
 
 import { NuevaSolicitud, TarjetaSolicitud, type SolicitudUI } from "@/components/ritmo/solicitudes";
 import { fichaCompleta } from "@/lib/desempeno/fichas";
-import { puedeDecidir, TIPOS_SOLICITUD, diasYHoras } from "@/lib/desempeno/rrhh";
+import { puedeDecidir, primerDiaVacaciones, TIPOS_SOLICITUD, diasYHoras } from "@/lib/desempeno/rrhh";
+import { fechaPR } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { solicitudesPara } from "@/lib/desempeno/solicitudes";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Solicitudes" };
 
-// Pedir algo a RR.HH. (día libre, vacaciones, permiso, carta u otra petición) → supervisor aprueba → RR.HH. firma.
+// Pedir algo a RR.HH. (día libre, vacaciones, cita médica, permiso, carta u otra petición) → supervisor aprueba → RR.HH. firma.
 export default async function SolicitudesPage() {
   const u = await usuarioRitmo();
   if (!u) return null;
@@ -59,7 +60,12 @@ export default async function SolicitudesPage() {
         </section>
       ) : null}
 
-      <NuevaSolicitud tipos={tipos} saldo={saldo} />
+      <NuevaSolicitud
+        tipos={tipos}
+        saldo={saldo}
+        minVacaciones={primerDiaVacaciones(fechaPR(Date.now()))}
+        dias={s ? { vacaciones: diasYHoras(s.vacaciones.disponibles, s.horasDia), enfermedad: s.enfermedad.disponibles, cupoEnfermedad: s.enfermedad.cupo, renueva: s.enfermedad.renueva } : null}
+      />
 
       {mias.length ? (
         <section className="flex flex-col gap-3">

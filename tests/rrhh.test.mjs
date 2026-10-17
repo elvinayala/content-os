@@ -106,3 +106,38 @@ test("saldo en días y horas", async () => {
   assert.equal(diasYHoras(2.97, 8), "3 días");
   assert.equal(diasYHoras(0.5, 8), "0 días y 4 h");
 });
+
+// ─── 17/oct (Elvin): citas médicas → enfermedad, enfermedad por 12 meses, vacaciones con 60 días ─────
+import { ausenciaDeSolicitud as ausenciaSol, errorAnticipacion, periodoEnfermedad, primerDiaVacaciones, saldos as saldosDe, TIPOS_SOLICITUD as TIPOS } from "../lib/desempeno/rrhh.ts";
+
+test("cita médica aprobada = enfermedad certificada y se descuenta del cupo", () => {
+  assert.ok(TIPOS.some((t) => t.id === "cita_medica" && t.conFechas));
+  const a = ausenciaSol({ tipo: "cita_medica", desde: "2026-10-20", hasta: null, dias: 0.5 });
+  assert.deepEqual(a, { tipo: "enfermedad", desde: "2026-10-20", hasta: "2026-10-20", dias: 0.5, certificado: true });
+  const s = saldosDe("2025-03-10", [{ ...a, id: "x" }], "2026-10-21");
+  assert.equal(s.enfermedad.usadas, 0.5);
+  assert.equal(s.enfermedad.disponibles, 4.5);
+});
+
+test("los días de enfermedad se renuevan cada 12 meses desde el ingreso (no el 1 de enero)", () => {
+  assert.deepEqual(periodoEnfermedad("2025-03-10", "2026-10-17"), { desde: "2026-03-10", hasta: "2027-03-09", renueva: "2027-03-10" });
+  assert.equal(periodoEnfermedad("2025-03-10", "2026-03-09").desde, "2025-03-10");
+  // 5 días usados en febrero 2026 (período 2025-26) no cuentan para el período que empezó el 10/mar/2026.
+  const enf = (desde, dias) => ({ tipo: "enfermedad", desde, hasta: desde, dias, certificado: true });
+  const s = saldosDe("2025-03-10", [enf("2026-02-02", 5), enf("2026-04-01", 1)], "2026-10-17");
+  assert.equal(s.enfermedad.usadas, 1);
+  assert.equal(s.enfermedad.disponibles, 4);
+  assert.equal(s.enfermedad.renueva, "2027-03-10");
+  // Pasado el cupo, lo que sobra se va a vacaciones/sin paga.
+  const t = saldosDe("2025-03-10", [enf("2026-04-01", 6)], "2026-10-17");
+  assert.equal(t.enfermedad.disponibles, 0);
+});
+
+test("vacaciones: mínimo 60 días de anticipación; las otras solicitudes no", () => {
+  assert.equal(primerDiaVacaciones("2026-10-17"), "2026-12-16");
+  assert.match(errorAnticipacion("vacaciones", "2026-10-30", "2026-10-17"), /60 días/);
+  assert.match(errorAnticipacion("vacaciones", "2026-12-15", "2026-10-17"), /16 de diciembre/);
+  assert.equal(errorAnticipacion("vacaciones", "2026-12-16", "2026-10-17"), null);
+  assert.equal(errorAnticipacion("cita_medica", "2026-10-18", "2026-10-17"), null);
+  assert.equal(errorAnticipacion("dia_libre", "2026-10-18", "2026-10-17"), null);
+});
