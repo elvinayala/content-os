@@ -109,4 +109,4 @@
 - [Level Up — piezas sin precio](lu-piezas-sin-precio.md) — 12/oct: motion/anuncios de LU sin $3,500 ni valores; solo resultados de clientes
 - [Contenido cinematográfico con IA](contenido-cinematico-ia.md) — 12/oct: estilo Ramiro Cubria en Higgsfield para LU/AIB/marca personal; estudio en vault/proyectos/contenido-cinematico/; Higgsfield MCP sin créditos
 - [AMBC 360 · operaciones de Yaritza Amaral](ambc-360.md) — plataforma propia (~/ambc-operaciones) del checklist de AMBC; sin PHI, bitácora inmutable, alertas sin cierre automático; go-live 2/nov; deploy pendiente del OK de Elvin
-- [Stack de plugins de Claude Code](stack-claude-code-plugins.md) — 17/oct: claude-mem (local, Haiku) + context-mode instalados; gstack falta ./setup de Elvin; Orca por brew
+- [Stack de plugins de Claude Code](stack-claude-code-plugins.md) — 17/oct: claude-mem (local, Haiku) + context-mode instalados; gstack instalado (cada comando 10–34K tokens al usarlo); Orca instalada
