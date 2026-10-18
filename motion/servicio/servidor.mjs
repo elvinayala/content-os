@@ -44,11 +44,11 @@ function actualizarRepo() {
   const lockHf = path.join(REPO, "estudio-html", "package-lock.json");
   const antesHf = fs.existsSync(lockHf) ? fs.readFileSync(lockHf, "utf8") : "";
   const antes = fs.existsSync(path.join(MOTION, "package-lock.json")) ? fs.readFileSync(path.join(MOTION, "package-lock.json"), "utf8") : "";
-  execFileSync("git", ["-C", REPO, "pull", "--rebase", "--autostash", "-q"], { stdio: "pipe" });
+  execFileSync("git", ["-C", REPO, "pull", "--rebase", "--autostash", "-q"], { stdio: "pipe", timeout: 90_000 });
   const despues = fs.readFileSync(path.join(MOTION, "package-lock.json"), "utf8");
   if (antes !== despues || !fs.existsSync(path.join(MOTION, "node_modules"))) {
     log("dependencias de motion cambiaron → npm ci");
-    execFileSync("npm", ["ci", "--no-audit", "--no-fund"], { cwd: MOTION, stdio: "inherit" });
+    execFileSync("npm", ["ci", "--no-audit", "--no-fund"], { cwd: MOTION, stdio: "inherit", timeout: 15 * 60_000 });
   }
   const estudio = path.join(REPO, "estudio-html");
   if (fs.existsSync(path.join(estudio, "package-lock.json")) && (antesHf !== fs.readFileSync(path.join(estudio, "package-lock.json"), "utf8") || !fs.existsSync(path.join(estudio, "node_modules")))) {
@@ -193,23 +193,50 @@ async function procesarCapas(t) {
   t.terminado = new Date().toISOString();
 }
 
+// Vigía (17/oct): un render colgado dejaba `ocupado` para siempre (30 h con 10 trabajos en cola) y un spawn EAGAIN significa
+// que el contenedor se quedó sin procesos. En los dos casos se marca el error y el proceso sale: Railway lo levanta limpio
+// (restartPolicy ALWAYS) en segundos. Quien espera (Cortex) recibe error/404 y usa su respaldo, en vez de esperar 5 min.
+const TOPE_TRABAJO = Number(process.env.REMI_TOPE_MIN || 20) * 60_000;
+const TOPE_CAPAS = Number(process.env.REMI_TOPE_CAPAS_MIN || 8) * 60_000;
+let reiniciando = false;
+function reiniciar(motivo) {
+  if (reiniciando) return;
+  reiniciando = true;
+  log(`⟳ reinicio: ${motivo}`);
+  for (const t of [...cola, ...colaCapas]) { t.estado = "error"; t.error = `Remi se reinició (${motivo}); vuelve a pedirlo`; }
+  setTimeout(() => process.exit(1), 1500);
+}
+async function conTope(t, fn, ms) {
+  let reloj;
+  const tope = new Promise((ok) => { reloj = setTimeout(() => ok("tope"), ms); });
+  const r = await Promise.race([fn(t).then(() => "ok"), tope]);
+  clearTimeout(reloj);
+  if (r === "tope") {
+    t.estado = "error"; t.error = `se colgó: más de ${Math.round(ms / 60_000)} min`; t.terminado = new Date().toISOString();
+    reiniciar(`trabajo ${t.id} colgado`);
+  } else if (t.estado === "error" && /EAGAIN|EMFILE|ENOMEM/.test(t.error || "")) {
+    reiniciar(`sin recursos (${(t.error.match(/EAGAIN|EMFILE|ENOMEM/) || [""])[0]})`);
+  }
+}
+
 async function bombearCapas() {
   if (ocupadoCapas) return;
   ocupadoCapas = true;
-  while (colaCapas.length) await procesarCapas(colaCapas.shift());
+  while (colaCapas.length && !reiniciando) await conTope(colaCapas.shift(), procesarCapas, TOPE_CAPAS);
   ocupadoCapas = false;
 }
 
 async function bombear() {
   if (ocupado) return;
   ocupado = true;
-  while (cola.length) await procesar(cola.shift());
+  while (cola.length && !reiniciando) await conTope(cola.shift(), procesar, TOPE_TRABAJO);
   ocupado = false;
 }
 
 http.createServer(async (req, res) => {
   const u = new URL(req.url, "http://x");
-  if (u.pathname === "/salud") return responder(res, 200, { ok: true, repo: fs.existsSync(MOTION), cola: cola.length, ocupado, colaCapas: colaCapas.length, capas: true });
+  if (u.pathname === "/salud") return responder(res, reiniciando ? 503 : 200, { ok: !reiniciando, repo: fs.existsSync(MOTION), cola: cola.length, ocupado, colaCapas: colaCapas.length, capas: true });
+  if (reiniciando) return responder(res, 503, { ok: false, error: "Remi se está reiniciando; vuelve a intentar en un minuto" });
   if (!autorizado(req)) return responder(res, 401, { ok: false, error: "no autorizado" });
   if (req.method === "POST" && u.pathname === "/render") {
     let cuerpo = "";
