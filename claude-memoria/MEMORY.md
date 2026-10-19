@@ -77,7 +77,7 @@
 - [Los agentes se hablan](agentes-se-hablan.md) — buzón /api/agentes + agentes.mjs; ⟳ SEGUIR para terminar lo delegado
 - [Closers LU + Calendly](closers-lu-calendly.md) — Calendly→CLOSERS; Laura por alias; Nahuel pide cambios del CRM
 - [Director Creativo en Slack](director-creativo-slack.md) — "Leo" revisa flyers/guiones en #office-5-revision-creativa
-- [Plan listo → alerta a Elvin](plan-listo-alerta.md) — 19/oct: "PLAN LISTO | Negocio" en #office-5-revision-estrategica = Telegram con datos de Pulse; falta avisarles la convención a los estrategas
+- [Plan listo → alerta a Elvin](plan-listo-alerta.md) — 19/oct: "PLAN LISTO | Negocio" en #office-5-revision-estrategica = Telegram con datos de Pulse; equipo avisado el 19/oct
 - [ISLA Run Series](isla-run-series.md) — Cabo Rojo 5K 13/dic; excepción al plan de guerra; repo /Users/elvinayala/isla-run
 - [Juan David — sin acceso](juan-david-sin-acceso.md) — ningún acceso ni mensajes al closer Juan David Guzman Escobar
 - [Onboarding AIB](aib-onboarding-agente.md) — sale del Calendly de AIB; en simulación, falta número Zernio
