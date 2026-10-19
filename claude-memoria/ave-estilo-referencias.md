@@ -116,3 +116,5 @@ En Cortex: TESTIMONIAL → preset `PRO_TESTIMONIO` (framing.face_target 0.12, zo
 `ave/analyze/testimonio.py` (Claude marca nombre/negocio/etiquetas/CTA) → efectos logo/rotulo/etiqueta/link dibujados por Remotion
 (CortexCapa). FALTA: texto detrás de la cabeza (necesita recorte de la persona: Apple Vision person segmentation en la Mac),
 b-roll con diseño y lavados de color. Probado con la propia referencia: marcas en 4.0 s / 64 s / 101 s (la referencia: 5 / 63 / 100).
+
+**19/oct (Elvin):** los estilos sacados de reels de otros (p. ej. @lilyalvaradoesp: letra «Palabra a palabra», burbuja de chat, collage del gancho) son ADICIONALES y opcionales: «no es para cambiar nuestra referencia». Nunca tocar el estándar ni el default por ellos; se escogen en el panel/editor o se piden en una revisión.
