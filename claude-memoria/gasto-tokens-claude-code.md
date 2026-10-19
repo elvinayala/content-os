@@ -15,7 +15,9 @@ llamadas con > 300K de contexto** (sesiones que llegaban a 990K) y CLAUDE.md cos
 
 Hecho: CLAUDE.md → índice de 3.5K + `docs/contexto/<área>.md` (commit 0eb24cc4); vuelve el aviso de costo antes de un
 workflow (se quitó `skipWorkflowUsageWarning`); `CLAUDE_CODE_AUTO_COMPACT_WINDOW=400000` en `~/.claude/settings.json`.
-Elvin NO eligió pasar los workflows a Sonnet (`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`): la calidad manda.
+También (19/oct): `CLAUDE_CODE_AUTO_COMPACT_WINDOW=400000` en Railway (nico, puente, max, lola) y reporte semanal sin
+tokens `scripts/reporte-gasto-ia.mjs` (launchd lunes 8 AM, por el bot de Nico: en la Mac `TELEGRAM_BOT_TOKEN` está vacío).
+Simulación con las llamadas reales: −31% en la Mac (sesiones largas −43%, workflows −29%). Elvin NO eligió pasar los workflows a Sonnet (`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`): la calidad manda.
 
 **Why:** se le acababa la cuota semanal; la mayor parte se iba en fan-out de workflows y en contexto arrastrado.
 **How to apply:** antes de proponer un workflow, estima cuántos agentes y empieza chico; una sesión por tarea (no seguir
