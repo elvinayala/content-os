@@ -4,6 +4,7 @@ import { after, type NextRequest, NextResponse } from "next/server";
 
 import { guardarReporteAgente } from "@/lib/desempeno/agentes-reportes";
 import { descargarDeSlack, responderDirector, type TurnoDirector } from "@/lib/director-creativo";
+import { alertarPlanListo, esPlanListo } from "@/lib/estrategia/plan-listo";
 import { APROBADORES, CANAL_APROBACIONES, canalClientePermitido, decidir, EDITORES, usuarioSlack } from "@/lib/max/flujo";
 import { encabezadoBuzon, esEquipo, parsearDecision } from "@/lib/max/operador";
 import { alBuzonMax, clientePorCanal } from "@/lib/max/repo";
@@ -520,6 +521,20 @@ export async function POST(req: NextRequest) {
     if (ev.type === "message" && humano && conContenido) {
       const channel = ev.channel;
       const raiz = ev.thread_ts ?? ev.ts ?? "";
+      // "PLAN LISTO | Negocio | …" (19/oct, Elvin): el plan completo de un cliente nuevo para arrancar → alerta a Elvin
+      // por Telegram con los datos de Pulse. Leo lo revisa igual que cualquier pieza.
+      const esRespuesta = Boolean(ev.thread_ts && ev.thread_ts !== ev.ts);
+      if (esPlanListo(ev.text ?? "", { esRespuesta })) {
+        const userId = ev.user as string, ts = ev.ts ?? "", texto = limpiar(ev.text ?? ""), archivos = ev.files?.length ?? 0;
+        after(async () => {
+          try {
+            const negocio = await alertarPlanListo({ canal: channel, ts, userId, texto, archivos });
+            if (negocio) await postearRespuesta(channel, `🚀 Ya le avisé a Elvin que el plan de *${negocio}* está listo para arrancar. Lo aprueban Elvin o Carilin en este hilo.`, raiz);
+          } catch (e) {
+            console.error("[plan listo]", e instanceof Error ? e.message : e);
+          }
+        });
+      }
       after(async () => {
         try {
           await atenderDirector(channel, raiz);
