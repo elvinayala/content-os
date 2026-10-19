@@ -604,7 +604,7 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   hasta que les pongan meta y peso en Ajustes (`KPIS_REPORTADOS` en `lib/desempeno/reglas.ts`). **Videógrafo (Derek Toro, 12/oct, Elvin: "sin ponchar… viaja
   la isla y pone trabajo realizado, negocio, pueblo, cantidad de videos, hora y día")**: puesto `videografo` (`soloReporte` +
   `trabajos`); en Hoy, en vez del círculo, **Mis trabajos** (`components/ritmo/mis-trabajos.tsx`, `app/ritmo/trabajos-actions.ts`):
-  uno por negocio, hasta 7 días atrás, pueblo de la lista de los 78 (`trabajos-reglas.ts` puro + tests `tests/trabajos.test.mjs`).
+  no ve la sección Empresa/Quiénes somos (`sinEmpresa`, 19/oct); uno por negocio, hasta 7 días atrás, pueblo de la lista de los 78 (`trabajos-reglas.ts` puro + tests `tests/trabajos.test.mjs`).
   Tabla `desempeno_trabajos` en SQL directo (`lib/desempeno/trabajos.ts`, papelera); cada cambio rehace su reporte del día
   (trabajos · videos · negocios + detalle) → Equipo, Ranking, reporte a RR.HH. y recordatorio de las 6:45 PM. La vista maestra
   (Yaileen, Carilin…) le anota o borra trabajos desde su ficha en Equipo. Se da de alta en Personas → Nuevo empleado → Videógrafo. Fase 2: Meta (registro de actividad), n8n (alertas
@@ -834,6 +834,14 @@ funcionando. En `proxy.ts`, `ritmo.*`/`ritmo-*` → `/ritmo` y cualquier ruta aj
   cobros de cuotas, mensualidades/recurrentes, renovaciones/upsells y reembolsos, con el detalle de quién (`KPIS_REPORTADOS.tesoreria`;
   el formulario de salida ya acepta montos con centavos, antes recortaba a 50). Mientras la hoja de ventas no esté conectada, el resumen
   de las 8:30 PM toma de ahí las ventas de la marca de la tesorera (`ventasDesdeTesoreria`, `ventasDeReporte`); si no ha reportado, lo dice.
+  **Registro de ventas de la tesorera en la Arena (19/oct, Elvin: "María García sube ahí las ventas… del closer que sea")**: María
+  (puesto `tesoreria`) entra a la Arena SOLO de su empresa (`accesoArena` → `tesoreria`/`registra`; sin comisiones, diario, bonos ni
+  pulso) y registra cada cobro: tipo (nueva venta · referido · recurrente · pago de balance), cliente, quién vendió y quién agendó
+  (opcional), fuente/UTM, enlace del anuncio (nueva venta), de quién vino (referido), cash collected (0 vale) y total del acuerdo,
+  método de pago. Tabla `desempeno_ventas_registro` (SQL directo, `lib/ventas/registro.ts`; puro en `registro-reglas.ts`, tests
+  `tests/registro-ventas.test.mjs`); hasta 45 días atrás. **Con ventas registradas en el mes, la Arena cuenta con ellas en vez de la
+  hoja** (`aTransacciones`: nueva/referido = venta nueva; neto − pasarela; quien agendó = chatter si lo es, si no setter). La dirección
+  también registra; el director lo ve. El resumen de las 8:30 PM todavía no lee este registro.
     **Ranking de ventas** (30/sep, Elvin; sección `#ranking` de la Arena, solo director/dirección: Nahuel, Aure, Elvin): promedio por
   día con diario vs. `METAS_DIARIAS` — setter 125 llamadas (rojo < 100), 30 conectadas, 3–5 agendas; chatter 20–30 conversaciones
   (mín. 15), 5–10 pases, 3–5 agendas — y close rate de closers (`CLOSE_RATE`: < 20 % rojo, 20–30 amarillo, 30 súper, 40 élite =
@@ -1467,7 +1475,13 @@ puro + tests `tests/licitaciones.test.mjs`; `enviar` = `agentes.mjs elvin` con `
 `data/licitaciones/<id>/`. Tarea `gabo-licitaciones-diario` L-V 7:15 AM (Chrome de Elvin). **Nunca** contraseñas, pagos,
 firmas, emails a agencias ni someter sin el OK de Elvin para esa oportunidad (someter = llena y se detiene antes del botón).
 Primera: **DDEC-RFP-2026-003** (CEDD: web, redes y contenido; cierra 5/nov 4 PM; preguntas hasta 2/nov; exige RUP; pareo 10 %;
-la única de las 8 RFP de CEDD que es "servicio"), paquete en borrador con auditoría WCAG de cedd.pr.gov.
+la única de las 8 RFP de CEDD que es "servicio"), paquete en borrador con auditoría WCAG de cedd.pr.gov. RUP de Digital Seed:
+no lo tiene (19/oct); lista y plan para someter a ASG el 23/oct en `data/licitaciones/registros/rup-digital-seed-ventures.md`.
+**Relaciones con alcaldes, agencias y empresas** (`vault/proyectos/licitaciones/plan-relaciones-gobierno.md`): Elvin llama,
+saluda y firma; Gabo prepara el diagnóstico, la carta y la bitácora. Regla dura: **un gestor pagado que consigue reuniones es
+cabildero** (Memorando OSG-2025-001): tiene que estar en el Registro de Cabilderos, y una agencia del Ejecutivo no puede
+contratar a quien cabildea en ella (ni a la empresa que le paga). Silencio mientras la RFP está abierta. El mensaje diario va en
+uno solo (detalle para lo que se prepara + la de más encaje; el resto, una línea cada una).
 
 ## Conectar datos reales (próximos pasos)
 
