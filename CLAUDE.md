@@ -1240,6 +1240,16 @@ pestaña en escritorio. **Encendido con `REVISION_CUENTAS=on`** (Vercel); antes 
 (admin) los ve y nadie recibe nada. 15/oct: en pausa hasta que Carilin verifique los montos (le escribió Max desde la cuenta de
 Elvin); con los montos de ese día: 50 dos veces al mes, 46 mensual; 6 cuentas sin permiso de lectura y 2 sin ID.
 
+## Plan listo de cliente nuevo → alerta a Elvin (19/oct/2026)
+
+Elvin: "cuando un cliente esté listo, que me llegue una alerta por Telegram… dueño, negocio, pago inicial". En
+**#office-5-revision-estrategica** (C0C3SKWHZ50, el mismo canal del Director Creativo: Leo sigue revisando todo) el estratega
+sube el plan completo empezando con **`PLAN LISTO | Negocio | …`** (también vale "plan completo" / "listo para arrancar"); las
+piezas sueltas ("Negocio | Fase 2") NO avisan. `/api/slack-eventos` → `alertarPlanListo` (`lib/estrategia/plan-listo.ts`) busca
+el cliente en LEVEL UP MEDIA (todos los grupos menos bajas, `clientesParaRevision({ todos: true })`) y manda `notificarCEO`
+(Telegram + DM de Slack) con dueño, pueblo, industria, pago inicial y fecha, acuerdo, servicio, etapa en Pulse, estratega y el
+link; acusa en el hilo. Reglas puras `plan-listo-reglas.ts` (tests `tests/plan-listo.test.mjs`). Aprueban Elvin o Carilin en el hilo.
+
 ## Pulse — el CRM que reemplaza a Monday (`/pulse`)
 
 Clon simplificado de Monday.com (ahorra ~$800/mes) para lo único que Level Up usaba ahí:
@@ -1439,6 +1449,25 @@ Claude saca solo los datos, con la decisión FINAL); n8n lo publica cada 2 min y
 pide persona/audio → etiqueta `no-contactar-ia` en Chatwoot y el filtro `is-inbound?` de "B-) Agente de onboarding v5"
 deja de contestarle. Respaldos del antes en `data/n8n/respaldos/`. Regla: sin OK de Elvin no se activa/desactiva nada ni
 se tocan credenciales o webhooks.
+
+## Gabo — el licitador de Digital Seed Ventures LLC (`/licitar`, 19/oct/2026)
+
+Elvin: "un agente que trabaje licitándome contratos y subastas… lo que no puedas hacer pídemelo organizado en un
+mensaje… cuánto dinero hay en juego. La meta es ganar". Todo bajo **Digital Seed Ventures LLC** (Elvin, mismo día: "voy a
+hacerlo con mi otra corp"; antes dijo EA Market LLC). Es una corp que ya tiene, no empresa nueva: canal de venta; lo ejecutan
+LU, AIB, Remi y Lola, y la experiencia de LU (de EA Market) se cita explicando la relación. El nombre sale de
+`empresa.nombre` del pipeline; registros y certificaciones, a nombre de Digital Seed Ventures en publicidad, redes, contenido, marketing, automatizaciones, IA, consultoría, negocios
+digitales, e-commerce y adiestramientos. **LicitaPR** (licitapr.com, cuenta `elvin@levelupmediapr.net`, Pro en prueba hasta
+el 2/nov, luego $59/mes) es inteligencia (ASG, RUS, DDE, Salud, DDEC, municipios, OCPR), **no portal de entrega**: se somete
+donde diga cada pliego. Cerebro `vault/proyectos/licitaciones/cerebro-gabo.md` (URLs de LicitaPR, el truco de XHR en Chrome,
+RUL vs RUP, servicio vs subrecipiente, tabla de encaje, cómo dar valor, qué hace solo y qué no) · rutina
+`.claude/commands/licitar.md` (`ronda | analizar | preparar | someter | estado`) · pipeline `data/licitaciones/pipeline.json`
+(oportunidades + los 13 documentos de la empresa) · CLI `scripts/licitaciones.mjs` (`lista|ver|estado|doc|validar|mensaje|enviar`;
+puro + tests `tests/licitaciones.test.mjs`; `enviar` = `agentes.mjs elvin` con `AGENTE=gabo`) · paquete por oportunidad en
+`data/licitaciones/<id>/`. Tarea `gabo-licitaciones-diario` L-V 7:15 AM (Chrome de Elvin). **Nunca** contraseñas, pagos,
+firmas, emails a agencias ni someter sin el OK de Elvin para esa oportunidad (someter = llena y se detiene antes del botón).
+Primera: **DDEC-RFP-2026-003** (CEDD: web, redes y contenido; cierra 5/nov 4 PM; preguntas hasta 2/nov; exige RUP; pareo 10 %;
+la única de las 8 RFP de CEDD que es "servicio"), paquete en borrador con auditoría WCAG de cedd.pr.gov.
 
 ## Conectar datos reales (próximos pasos)
 
