@@ -111,3 +111,4 @@
 - [AMBC 360 · operaciones de Yaritza Amaral](ambc-360.md) — plataforma propia (~/ambc-operaciones) del checklist de AMBC; sin PHI, bitácora inmutable, alertas sin cierre automático; go-live 2/nov; deploy pendiente del OK de Elvin
 - [Stack de plugins de Claude Code](stack-claude-code-plugins.md) — 17/oct: claude-mem (local, Haiku) + context-mode instalados; gstack instalado (cada comando 10–34K tokens al usarlo); Orca instalada
 - [Trabajo largo fuera de /tmp](trabajo-fuera-de-tmp.md) — 18/oct: un reinicio borró /private/tmp con las finales y worktrees; usar ~/bori-trabajo/
+- [Gabo — licitador (Digital Seed Ventures)](gabo-licitaciones.md) — 19/oct: contratos del gobierno vía LicitaPR a nombre de DIGITAL SEED VENTURES LLC (no EA Market); 1.ª DDEC-RFP-2026-003 cierra 5/nov; bloqueo = RUP
