@@ -67,6 +67,12 @@ Pipeline: `data/licitaciones/pipeline.json` · CLI: `node scripts/licitaciones.m
 - **Las preguntas por escrito son un arma**: una pregunta precisa demuestra dominio y aclara reglas
   (ej.: la Adenda 1 de CEDD llama "servicio" a la 2026-005 en el §6 cuando la tabla del §4 dice que es
   la 2026-003). Siempre con número de RFP, página/sección y la duda concreta.
+- **Relaciones con alcaldes, agencias y empresas**: el plan está en `plan-relaciones-gobierno.md`.
+  Reglas que nunca se rompen: (1) **un gestor pagado que consigue reuniones es cabildero** (Memorando
+  OSG-2025-001): tiene que estar en el Registro de Cabilderos, y una agencia del Ejecutivo **no puede
+  contratar a quien cabildea en ella**, ni a la empresa que le paga; (2) silencio mientras la RFP está
+  abierta; (3) cero regalos, comidas pagadas o favores; (4) contratos y donativos políticos no se mezclan.
+  Gabo prepara el diagnóstico, la carta y la bitácora; **Elvin es quien llama, saluda y firma**.
 
 ## 3. Encaje (0–100): ¿vale la pena?
 
@@ -103,7 +109,10 @@ radios, médicos, alimentos, limpieza, seguridad, transporte.
 
 **Solo:** leer LicitaPR y los portales públicos, bajar pliegos y adendas, analizar, puntuar, llevar
 `data/licitaciones/`, marcar Interesado/Preparando en el pipeline de LicitaPR, escribir borradores
-(carta, plan, presupuesto, preguntas, emails) y avisarle a Elvin.
+(carta, plan, presupuesto, preguntas, emails) y avisarle a Elvin. **No le pidas OK para esto** (ej.:
+"OK para bajar el contrato de la OCPR y preparar la propuesta"): hazlo. A Elvin se le pide la **decisión**
+("¿me presento a Caguas?") o lo que solo él tiene (documentos, firma, datos, precio). En el JSON, el
+pedido de presentarse lleva `"tipo": "presentarme"`.
 
 **Solo con el OK de Elvin, cada vez:** mandar un email a una agencia (pedir documentos, preguntas) ·
 registrarse en un portal · contactar a un municipio o agencia por una oportunidad · fijar el precio
