@@ -1,5 +1,5 @@
 // Reporte semanal del gasto de IA → Telegram de Elvin por el bot de Nico (+ espejo Slack), SIN usar Claude (cero tokens).
-// Sale por Nico porque en la Mac TELEGRAM_BOT_TOKEN (el de Sofi) está vacío; el de Nico sí está.
+// Sale por Nico, el guardián de las plataformas y del gasto.
 //  · Claude Code en esta Mac: scripts/uso-claude.mjs (transcripciones, costo ponderado) vs. la línea base del 19/oct.
 //  · Agentes en la nube (API, dólares reales): desempeno_agentes_reportes (/ritmo/agentes), semana vs. semana anterior.
 // Uso: node --env-file=.env.local scripts/reporte-gasto-ia.mjs [--dry]   (--dry = solo imprime el mensaje)

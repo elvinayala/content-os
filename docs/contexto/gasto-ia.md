@@ -22,6 +22,6 @@ lanzar un workflow y la compactación automática tiene tope de 400K (`CLAUDE_CO
 
 **Reporte semanal y nube (19/oct/2026)**: `scripts/reporte-gasto-ia.mjs` (launchd `com.iamarket.gasto-ia`, lunes 8 AM, sin Claude)
 le manda a Elvin por el bot de Nico el gasto de la Mac vs. la línea base y el de los agentes en la nube (semana vs. anterior,
-de `desempeno_agentes_reportes`). Sale por Nico porque en la Mac `TELEGRAM_BOT_TOKEN` está vacío (todo `agentes.mjs elvin`
-sin `AGENTE` cae solo a Slack). Nico, puente (Sofi), Max y Lola tienen `CLAUDE_CODE_AUTO_COMPACT_WINDOW=400000` en Railway
+de `desempeno_agentes_reportes`). Sale por el bot de Nico. El `TELEGRAM_BOT_TOKEN` de la Mac
+estaba vacío y los avisos caían solo a Slack; se copió de Railway (`puente`) el 19/oct. Nico, puente (Sofi), Max y Lola tienen `CLAUDE_CODE_AUTO_COMPACT_WINDOW=400000` en Railway
 (su sesión de cada día se retoma con `--resume` y crecía sin tope). Estimado con las llamadas reales: −31% en la Mac.
