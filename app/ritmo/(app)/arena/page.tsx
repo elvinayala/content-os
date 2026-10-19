@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Alerta, Bonos, MiDiario } from "@/components/ritmo/arena";
 import { Avatar, BarraMeta, CarreraVivo, MarcadorEquipo, Pulso } from "@/components/ritmo/arena-vivo";
 import { MiMarcador, usd } from "@/components/ritmo/arena-marcador";
+import { RegistroVentas } from "@/components/ritmo/registro-ventas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { accesoArena, armarArena, bonosDe } from "@/lib/ventas/datos";
 import { CLOSE_RATE, ESCALONES_DIRECTOR, escalones, KPIS_VENTAS, METAS_DIARIAS, RANGOS, rankingVentas, TASAS_VENTAS, tasasVentas, type Empresa, type Nivel, type RolVentas } from "@/lib/ventas/reglas";
@@ -43,6 +44,10 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
   const gestiona = a.director || a.direccion;
   const e = ar.equipo;
   const ayer = new Date(Date.parse(`${ar.hoy}T12:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
+  // Registro de ventas (19/oct): la tesorera lo llena arriba de todo; el director y la dirección lo ven abajo.
+  const registro = ar.registro ? (
+    <RegistroVentas empresa={empresa} hoy={ar.hoy} ventas={ar.registro.ventas} equipo={ar.gente.map((g) => g.nombre)} puedeRegistrar={a.registra} cuenta={ar.registro.fuente === "registro"} />
+  ) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -70,6 +75,8 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
       />
       {e.alerta && !ar.hoja.error ? <Alerta nivel={e.alerta.nivel!} texto={e.alerta.texto} /> : null}
 
+      {a.tesoreria ? registro : null}
+
       {ar.mio ? (
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div className="lg:sticky lg:top-20">
@@ -88,11 +95,12 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         </div>
       ) : null}
 
-      <Pulso pulso={ar.pulso} etiqueta={ar.rango.etiqueta} />
+      {a.tesoreria ? null : <Pulso pulso={ar.pulso} etiqueta={ar.rango.etiqueta} />}
 
 
       <CarreraVivo carreras={{ closer: ar.carreras.closer.map((c) => ({ ...c, yo: c.userId === u.id })), setter: ar.carreras.setter.map((c) => ({ ...c, yo: c.userId === u.id })), chatter: ar.carreras.chatter.map((c) => ({ ...c, yo: c.userId === u.id })) }} />
 
+      {a.tesoreria ? null : (
       <Bonos
         empresa={empresa}
         gestiona={gestiona}
@@ -100,6 +108,9 @@ export default async function ArenaPage({ searchParams }: { searchParams: Promis
         equipo={ar.gente.filter((g) => g.rol !== "director_ventas").map((g) => ({ userId: g.userId, nombre: g.nombre }))}
         bonos={bonosFilas.map((b) => ({ id: b.id, titulo: b.titulo, detalle: b.detalle, monto: b.monto, rol: b.rol, desde: b.desde, hasta: b.hasta, estado: b.estado, ganador: b.ganadorId ? (nombres.get(b.ganadorId) ?? null) : null, creadoPor: b.creadoPor ? (nombres.get(b.creadoPor) ?? null) : null }))}
       />
+      )}
+
+      {a.tesoreria ? null : registro}
 
       {gestiona && ar.kpisEquipo.length ? <RankingVentas filas={ar.kpisEquipo} etiqueta={ar.rango.etiqueta} /> : null}
 

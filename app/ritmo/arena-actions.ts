@@ -4,6 +4,8 @@ import { refresh } from "next/cache";
 
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import * as v from "@/lib/ventas/datos";
+import { borrarVenta, registrarVenta } from "@/lib/ventas/registro";
+import { validarVenta } from "@/lib/ventas/registro-reglas";
 import { camposViejos, type Empresa, errorBono, limpiarCierres, limpiarKpis, MAX_NOTA_DIARIO, type RolVentas } from "@/lib/ventas/reglas";
 
 // Acciones de la Arena (ventas en Ritmo). Permisos: cada quien su diario y su meta; el director de ventas
@@ -107,5 +109,26 @@ export async function pagarBonoAction(id: string): Promise<R> {
     const [y, m] = hoyPR().split("-").map(Number);
     const siguiente = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
     await v.pagarBono(id, u.id, siguiente);
+  });
+}
+
+// ─── Registro de ventas (19/oct, María García, tesorera) ───────────────────────────────────────
+
+export async function registrarVentaAction(empresa: Empresa, p: Record<string, unknown>): Promise<R> {
+  return envolver(async () => {
+    const { u, a } = await acceso();
+    if (!a.registra) throw new Error("Solo la tesorera y la dirección registran ventas");
+    if (!a.empresas.includes(empresa)) throw new Error("No tienes acceso a esa empresa");
+    const r = validarVenta(p, hoyPR());
+    if (!r.ok) throw new Error(r.error);
+    await registrarVenta(empresa, r.v, u.id);
+  });
+}
+
+export async function borrarVentaAction(id: string): Promise<R> {
+  return envolver(async () => {
+    const { u, a } = await acceso();
+    if (!a.registra) throw new Error("Solo la tesorera y la dirección borran ventas");
+    await borrarVenta(id, a.empresas, u.id);
   });
 }

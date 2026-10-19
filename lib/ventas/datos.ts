@@ -11,6 +11,10 @@ import { marcasConAcceso } from "../leads/repo";
 import { leadsActividades, leadsEtapas, leadsTratos } from "../leads/schema";
 import { db } from "../pulse/db";
 import { pestanasDelMes } from "../resumen-dia";
+import { ventasRegistradas } from "./registro";
+import { aTransacciones, DIAS_ATRAS_REGISTRO, type Venta } from "./registro-reglas";
+
+const haceDias = (f: string, n: number) => new Date(Date.parse(`${f}T12:00:00Z`) - n * 86_400_000).toISOString().slice(0, 10);
 import { carrera, type CitasCRM, contarCitas, type Corredor, type Diario, type Empresa, equipo, type Equipo, esPuestoVentas, type LecturaHoja, leerHojaVentas, marcador, type Marcador, mismaPersona, resultadoCita, type ResultadoCita, type RolVentas, semanaDe, tasasDelMes, transaccionesDe, kpisDelMes, rangoFechas, resumenCierres, type ResumenCierres, type Cierre } from "./reglas";
 
 // Arena (ventas en Ritmo): datos. Las ventas salen de la hoja de tesorería de cada marca por el mismo Apps
@@ -65,6 +69,8 @@ export interface AccesoArena {
   director: boolean; // ve las comisiones de su empresa y crea bonos
   direccion: boolean; // Elvin / editoras con acceso a la marca: ven todo
   autoriza: boolean; // SOLO Elvin autoriza bonos y pagos
+  tesoreria: boolean; // la tesorera (María García, 19/oct): registra las ventas de SU empresa; no ve comisiones
+  registra: boolean; // puede registrar/borrar ventas: la tesorera y la dirección
 }
 
 /**
@@ -75,17 +81,19 @@ export async function accesoArena(u: UsuarioRitmo): Promise<AccesoArena> {
   const perfiles = await leerPerfiles().catch(() => [] as Perfil[]);
   const perfil = perfiles.find((p) => p.userId === u.id && esPuestoVentas(p.puesto)) ?? null;
   const direccion = u.maestro && (u.rol === "admin" || u.rol === "editor");
+  // La tesorera entra SOLO a la Arena de su empresa (19/oct, Elvin: "solo a la parte de Level Up").
+  const tesorera = perfiles.find((p) => p.userId === u.id && p.activo && p.puesto === "tesoreria") ?? null;
   const marcas = direccion ? ((await marcasConAcceso(u).catch(() => [])) as Empresa[]) : [];
-  const empresas = [...new Set<Empresa>([...(perfil ? [perfil.empresa as Empresa, ...(perfil.tambienEn ? [perfil.tambienEn as Empresa] : [])] : []), ...marcas])];
+  const empresas = [...new Set<Empresa>([...(perfil ? [perfil.empresa as Empresa, ...(perfil.tambienEn ? [perfil.tambienEn as Empresa] : [])] : []), ...(tesorera ? [tesorera.empresa as Empresa] : []), ...marcas])];
   const rol = perfil && perfil.puesto !== "director_ventas" ? (perfil.puesto as RolVentas) : null;
-  return { empresas, perfil, rol, director: perfil?.puesto === "director_ventas", direccion, autoriza: u.maestro && u.rol === "admin" };
+  return { empresas, perfil, rol, director: perfil?.puesto === "director_ventas", direccion, autoriza: u.maestro && u.rol === "admin", tesoreria: !!tesorera && !direccion, registra: !!tesorera || direccion };
 }
 
 /** Para la pestaña: ¿ve la Arena? (liviano: sin marcas de Leads). */
 export async function veArena(u: UsuarioRitmo): Promise<boolean> {
   if (u.maestro && (u.rol === "admin" || u.rol === "editor")) return true;
   const p = (await leerPerfiles().catch(() => [])).find((x) => x.userId === u.id);
-  return esPuestoVentas(p?.puesto);
+  return esPuestoVentas(p?.puesto) || (p?.puesto === "tesoreria" && p.activo);
 }
 
 // ─── Vendedores ───────────────────────────────────────────────────────────────────────────────
@@ -282,6 +290,8 @@ export interface Arena {
   rango: { id: string; desde: string; hasta: string; etiqueta: string };
   // Pulso: los KPIs del diario sumados por día y por puesto en el rango (de quien uno puede ver), para las mini-gráficas.
   pulso: Partial<Record<RolVentas, { fecha: string; kpis: Record<string, number> }[]>>;
+  // Registro de la tesorera (19/oct): ventas del mes; si hay, la Arena cuenta con ellas en vez de la hoja.
+  registro: { ventas: Venta[]; fuente: "registro" | "hoja" } | null;
 }
 
 export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empresa, rangoPedido?: string): Promise<Arena> {
@@ -295,14 +305,24 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
   const rango = rangoFechas(rangoPedido, hoy);
   // El diario del mes (comisiones y show-up) y el del rango que se mira; si el rango es el mes, es la misma lectura.
   const ids = conMarcador.map((g) => g.userId);
-  const [hoja, diario, agendas, citas, diarioRango] = await Promise.all([
+  const [hojaLeida, registradas, diario, agendas, citas, diarioRango] = await Promise.all([
     hojaDelMes(empresa, hoy),
+    // La lista enseña los últimos días que se pueden registrar (un cobro de fin del mes pasado anotado tarde se ve);
+    // la Arena (marcador, carrera, comisiones) cuenta solo las del mes.
+    ventasRegistradas(empresa, [`${mes}-01`, haceDias(hoy, DIAS_ATRAS_REGISTRO)].sort()[0], hoy).catch(() => [] as Venta[]),
     diarioDelMes(ids, mes),
     agendasDelMes(empresa, mes, vendiendo),
     citasDelMes(empresa, mes),
     rango.id === "mes" ? Promise.resolve(null) : diarioEntre(ids, rango.desde, rango.hasta),
   ]);
   const enRango = diarioRango ?? diario;
+  // Con ventas registradas en el mes, mandan ellas (la hoja aún no está conectada; cuando lo esté, el registro sigue
+  // siendo la fuente si María lo usa: así no se cuenta doble).
+  const chatters = gente.filter((g) => g.rol === "chatter").map((g) => g.nombre);
+  const delMes = registradas.filter((v) => v.fecha.startsWith(mes));
+  const hoja: LecturaHoja & { pestana?: string } = delMes.length
+    ? { transacciones: aTransacciones(delMes, chatters), metodoNeto: "pasarela", columnas: {}, avisos: [], pestana: "Registro de tesorería" }
+    : hojaLeida;
   const conKpis = (x: { kpis: Record<string, number> | null }) => !!x.kpis && Object.keys(x.kpis).length > 0;
   const txs = hoja.transacciones;
   const semana = semanaDe(hoy);
@@ -345,6 +365,7 @@ export async function armarArena(u: UsuarioRitmo, a: AccesoArena, empresa: Empre
           })
       : [],
     rango,
+    registro: a.registra || a.director ? { ventas: registradas, fuente: delMes.length ? "registro" : "hoja" } : null,
   };
 }
 
