@@ -3,8 +3,10 @@
 // muestra qué sesiones lanzaron más subagentes. Uso: node scripts/uso-claude.mjs [días=7]
 // Línea base del 19/oct/2026 (7 días): 1,470M equivalentes · workflows 66% · llamadas > 300K de contexto 31%.
 import fs from "node:fs"; import path from "node:path"; import readline from "node:readline";
-const DIAS = Number(process.argv[2] || 7);
-const raiz = path.join(process.env.HOME, ".claude/projects"), desde = Date.now() - DIAS*864e5;
+const iDesde = process.argv.indexOf("--desde"); // --desde 2026-10-19T15:00 = solo lo de después de un cambio
+const desde = iDesde > 0 ? Date.parse(process.argv[iDesde + 1]) : Date.now() - Number(process.argv[2] || 7) * 864e5;
+const DIAS = (Date.now() - desde) / 864e5;
+const raiz = path.join(process.env.HOME, ".claude/projects");
 const W = (u)=> (u.input_tokens||0) + 2*(u.cache_creation_input_tokens||0) + 0.1*(u.cache_read_input_tokens||0) + 5*(u.output_tokens||0);
 const vistos = new Set(); const padres = {}; let totW = 0, subW = 0, mainW = 0, calls = 0, bigW = 0;
 async function leer(f) { const rl = readline.createInterface({ input: fs.createReadStream(f) }); let w = 0, p = null, n = 0, big = 0;
@@ -21,9 +23,9 @@ for (const proj of fs.readdirSync(raiz)) { const d = path.join(raiz, proj); if (
       for (const gf of todos) {
         const r = await leer(gf); totW += r.w; subW += r.w; calls += r.n; padres[f] ??= { sub: 0, nsub: 0 }; padres[f].sub += r.w; padres[f].nsub++ } } } }
 const M = x => (x/1e6).toFixed(0)+"M";
-console.log(`${DIAS} días · costo equivalente (tokens de entrada; escritura caché 2x, lectura 0.1x, salida 5x): total ${M(totW)}`);
+console.log(`${DIAS.toFixed(1)} días · ${M(totW / DIAS)} por día (línea base 19/oct: 210M/día) · costo equivalente (tokens de entrada; escritura caché 2x, lectura 0.1x, salida 5x): total ${M(totW)}`);
 console.log(`  subagentes/workflows ${M(subW)} (${(100*subW/totW).toFixed(0)}%) · sesiones principales ${M(mainW)} (${(100*mainW/totW).toFixed(0)}%)`);
 console.log(`  llamadas con contexto > 300K tokens: ${M(bigW)} (${(100*bigW/totW).toFixed(0)}% del costo)`);
-console.log(`  CLAUDE.md (~38K) re-leído en ${calls} llamadas ≈ ${M(calls*38000*0.1)} equivalentes (${(100*calls*38000*0.1/totW).toFixed(0)}%)`);
+console.log(`  CLAUDE.md hoy ≈ ${Math.round(fs.statSync("CLAUDE.md").size / 2.07 / 1000)}K tokens por llamada (antes del 19/oct: 73K) · ${calls} llamadas`);
 console.log(`\nSesiones que más subagentes lanzaron:`);
 for (const [k, v] of Object.entries(padres).filter(([,v])=>v.nsub).sort((a,b)=>b[1].sub-a[1].sub).slice(0,10)) console.log(`  ${M(v.sub).padStart(6)} en ${String(v.nsub).padStart(3)} subagentes | propia ${M(v.main||0).padStart(5)} | ${v.p||"(sesión fuera de rango)"}`);
