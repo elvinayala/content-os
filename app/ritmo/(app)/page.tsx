@@ -250,6 +250,7 @@ export default async function HoyPage() {
             </section>
 
             <div className="flex flex-col gap-5">
+              {puestoMio?.sinEmpresa ? null : (
               <Link href="/ritmo/empresa" className="panel group flex items-center gap-3 p-4 transition hover:border-primary/40">
                 <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/30">
                   <Building2 className="size-5" />
@@ -260,6 +261,7 @@ export default async function HoyPage() {
                 </div>
                 <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
               </Link>
+              )}
               {u.maestro && u.rol === "admin" ? (
                 <Link href="/ritmo/viajes" className="panel group flex items-center gap-3 p-4 transition hover:border-primary/40">
                   <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/30">

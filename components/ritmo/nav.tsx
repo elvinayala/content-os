@@ -13,7 +13,7 @@ import { RitmoLogo } from "./logo";
 import { RelojPR } from "./reloj";
 
 // Arriba: marca + pestañas (escritorio). Abajo: barra de pestañas fija (teléfono).
-export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, cuentas = false, pulse = null, slack = [] }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; cuentas?: boolean; pulse?: { href: string; nombre: string } | null; slack?: EspacioSlack[] }) {
+export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacantesNuevas = 0, agentes = false, arena = false, cuentas = false, pulse = null, slack = [], empresa = true }: { nombre: string; equipo: boolean; ajustes: boolean; miFicha: string | null; pendientes: number; vacantesNuevas?: number; agentes?: boolean; arena?: boolean; cuentas?: boolean; pulse?: { href: string; nombre: string } | null; slack?: EspacioSlack[]; empresa?: boolean }) {
   const path = usePathname();
   const tabs = [
     { href: "/ritmo", nombre: "Hoy", icono: Timer, activo: path === "/ritmo" },
@@ -24,7 +24,7 @@ export function NavRitmo({ nombre, equipo, ajustes, miFicha, pendientes, vacante
     ...(arena && !equipo ? [{ href: "/ritmo/arena", nombre: "Arena", icono: Trophy, activo: path.startsWith("/ritmo/arena") }] : []),
     // Cuentas por optimizar (15/oct): estrategas con casos y dirección de tráfico. En el teléfono se entra desde Hoy.
     ...(cuentas && !equipo ? [{ href: "/ritmo/cuentas", nombre: "Cuentas", icono: Wrench, activo: path.startsWith("/ritmo/cuentas"), soloEscritorio: true }] : []),
-    { href: "/ritmo/empresa", nombre: "Empresa", icono: Building2, activo: path.startsWith("/ritmo/empresa"), soloEscritorio: true },
+    ...(empresa ? [{ href: "/ritmo/empresa", nombre: "Empresa", icono: Building2, activo: path.startsWith("/ritmo/empresa"), soloEscritorio: true }] : []),
     { href: "/ritmo/solicitudes", nombre: "Solicitudes", icono: Inbox, activo: path.startsWith("/ritmo/solicitudes"), badge: pendientes },
     // Vacantes internas y referidos. En el teléfono de la maestra no cabe (5 pestañas): queda en escritorio.
     { href: "/ritmo/carreras", nombre: "Carreras", icono: Briefcase, activo: path.startsWith("/ritmo/carreras"), nuevo: vacantesNuevas > 0, soloEscritorio: equipo },

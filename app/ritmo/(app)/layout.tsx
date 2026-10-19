@@ -8,6 +8,7 @@ import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { pendientesDe } from "@/lib/desempeno/solicitudes";
 import { esSoloRitmo, tipoAcceso } from "@/lib/pulse/auth";
 import { leerPerfiles } from "@/lib/desempeno/datos";
+import { puestoPorId } from "@/lib/desempeno/reglas";
 import { veArena } from "@/lib/ventas/datos";
 import { accesoCuentas } from "@/lib/desempeno/optimizaciones";
 
@@ -38,12 +39,14 @@ export default async function RitmoAppLayout({ children }: Readonly<{ children: 
     return soloLeads ? { href: "/api/pase?a=leads", nombre: "Leads" } : { href: "/api/pase?a=pulse", nombre: "Pulse" };
   })().catch(() => null);
   // Puente a Slack: el espacio de su empresa; la dirección, los dos.
-  const empresa = await leerPerfiles(false).then((ps) => ps.find((p) => p.userId === u.id)?.empresa ?? null).catch(() => null);
+  const miPerfil = await leerPerfiles(false).then((ps) => ps.find((p) => p.userId === u.id) ?? null).catch(() => null);
+  const empresa = miPerfil?.empresa ?? null;
+  const verEmpresa = maestro || !puestoPorId(miPerfil?.puesto ?? "")?.sinEmpresa;
   const slack = u.rol === "admin" || u.rol === "editor" ? [{ ...SLACK.level_up, nombre: "Slack LU" }, SLACK.ai_borinquen] : [empresa === "ai_borinquen" ? { ...SLACK.ai_borinquen, nombre: "Slack" } : SLACK.level_up];
   return (
     <>
       <RegistrarApp />
-      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} cuentas={!!cuentas} pulse={pulse} slack={slack} />
+      <NavRitmo nombre={u.nombre} equipo={maestro} ajustes={maestro} miFicha={ficha ? u.id : null} pendientes={pendientes} vacantesNuevas={nuevas} agentes={maestro && (u.rol === "admin" || u.rol === "editor")} arena={arena} cuentas={!!cuentas} pulse={pulse} slack={slack} empresa={verEmpresa} />
       <main className="entrada mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 md:pb-16">{children}</main>
       <footer className="estado-linea mx-auto hidden w-full max-w-6xl items-center gap-3 px-6 pb-8 md:flex">
         <span>Ritmo</span>

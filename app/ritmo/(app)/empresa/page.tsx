@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { Directorio, NuevoItemEmpresa, TarjetaEmpresa } from "@/components/ritmo/empresa";
 import { contenidoEmpresa, directorio, empresaDe } from "@/lib/desempeno/empresa";
 import { SECCIONES, type SeccionEmpresa } from "@/lib/desempeno/empresa-reglas";
+import { perfilDe } from "@/lib/desempeno/datos";
+import { puestoPorId } from "@/lib/desempeno/reglas";
 import { usuarioRitmo } from "@/lib/desempeno/sesion";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +16,8 @@ export const metadata = { title: "Empresa" };
 export default async function EmpresaPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
   const u = await usuarioRitmo();
   if (!u) return null;
+  // Puestos sin acceso a Empresa (Derek, videógrafo; 19/oct): vuelven a Hoy.
+  if (!u.maestro && puestoPorId((await perfilDe(u.id).catch(() => null))?.puesto ?? "")?.sinEmpresa) redirect("/ritmo");
   const { s } = await searchParams;
   const seccion = (SECCIONES.find((x) => x.id === s)?.id ?? "nosotros") as SeccionEmpresa;
   // Las dos empresas (y los borradores) solo las ve la dirección: Elvin, Carilin y Aure (Elvin, 28/sep). RR.HH. y el

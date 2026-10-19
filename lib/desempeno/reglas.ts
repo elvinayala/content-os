@@ -34,6 +34,8 @@ export interface Puesto {
   // Su reporte del día sale de los trabajos que anota uno por uno (12/oct, Derek, videógrafo): trabajo, negocio, pueblo,
   // videos, hora y día (lib/desempeno/trabajos-reglas.ts). Implica soloReporte.
   trabajos?: boolean;
+  // No ve la sección Empresa (Quiénes somos, directorio, políticas): 19/oct, Elvin: "no le dejes acceso a Derek a quiénes somos".
+  sinEmpresa?: boolean;
 }
 
 // KPIs de Producción (editores, diseñadores, copy, web): ventana móvil de 7 días.
@@ -157,7 +159,7 @@ export const PUESTOS: Puesto[] = [
   { id: "tesoreria", nombre: "Tesorera", departamento: "Finanzas", manual: manualReportado("tesoreria"), kpis: kpisReportados("tesoreria") },
   { id: "retencion_alianzas", nombre: "Coordinadora de Retención y Alianzas", departamento: "Customer Success", manual: manualReportado("retencion_alianzas"), kpis: kpisReportados("retencion_alianzas"), soloReporte: true },
   // 12/oct (Elvin): Derek Toro viaja la isla grabando; no poncha, anota cada trabajo del día.
-  { id: "videografo", nombre: "Videógrafo", departamento: "Producción", manual: manualReportado("videografo"), kpis: kpisReportados("videografo"), soloReporte: true, trabajos: true },
+  { id: "videografo", nombre: "Videógrafo", departamento: "Producción", manual: manualReportado("videografo"), kpis: kpisReportados("videografo"), soloReporte: true, trabajos: true, sinEmpresa: true },
   { id: "ai_engineer", nombre: "AI Engineer", departamento: "Tecnología", manual: manualReportado("ai_engineer"), kpis: kpisReportados("ai_engineer") },
   // Ventas (Arena, 27/sep/2026): sin ponche ni score de asistencia; lo suyo sale de la hoja de ventas.
   { id: "closer", nombre: "Closer", departamento: "Ventas", kpis: [], sinPonche: true },
