@@ -56,6 +56,17 @@ Arma en `data/licitaciones/<id>/` el paquete que gana (cerebro §4), en este ord
 Cuando lleguen los formatos oficiales, pasa el contenido a esos formatos (Word/Excel/PDF que pidan).
 Todo dato que no tengas: `[FALTA: …]` y una línea en `necesitoDeElvin`. Nunca inventes casos ni cifras.
 
+**Recompite (contrato que vence) o acercamiento a un municipio/agencia** (modelo: `data/licitaciones/REC-CAGUAS-REDES/`
+y `REC-BAYAMON-PUBLICIDAD/`, 19/oct): `datos.json` con las cifras y su fuente → `diagnostico.html` de 2 páginas
+(Lighthouse 12.6.1 celular y escritorio con `npx -y lighthouse@12.6.1`; Facebook con `apify/facebook-pages-scraper` +
+`apify/facebook-posts-scraper`; Instagram con `apify/instagram-profile-scraper`; código de la portada: idioma, H1,
+descripción, imagen para compartir, analítica) → PDF con Chrome headless (`--print-to-pdf --no-pdf-header-footer`),
+revisado con `pdftoppm` → `carta.md` en nombre de Elvin al alcalde o al jefe, con atención a quien lleva comunicaciones
+(sale del directorio oficial). Antes de afirmar algo, cruza la cifra con Lighthouse o con el dato crudo (19/oct: el
+conteo de imágenes sin `alt` en el HTML era falso; Lighthouse decía que todas lo tenían). Tono respetuoso: lo que
+funciona primero, oportunidades con datos y sin nombrar al titular del contrato. Cada contacto que haga Elvin va a
+`contactos` de la oportunidad (`{ fecha, con, canal, nota }`), y el seguimiento a los 7 días a `necesitoDeElvin`.
+
 ## someter <id>
 
 Solo cuando Elvin lo aprobó en este chat **para esa oportunidad**. Llena el formulario o portal de la
