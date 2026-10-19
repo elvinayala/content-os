@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Reporte semanal del gasto de IA a Elvin por Telegram (scripts/reporte-gasto-ia.mjs), lunes 8 AM, sin usar
+     Claude. Si la Mac está dormida, launchd lo corre al despertar. Instalar:
+     cp scripts/launchd/com.iamarket.gasto-ia.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.iamarket.gasto-ia.plist -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.iamarket.gasto-ia</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/local/bin/node</string>
+    <string>--disable-warning=MODULE_TYPELESS_PACKAGE_JSON</string>
+    <string>--env-file=.env.local</string>
+    <string>/Users/elvinayala/AGENTE CONTENIDO/scripts/reporte-gasto-ia.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/elvinayala/AGENTE CONTENIDO</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>HOME</key><string>/Users/elvinayala</string>
+  </dict>
+  <key>StartCalendarInterval</key><array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>8</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/Users/elvinayala/Library/Logs/gasto-ia.log</string>
+  <key>StandardErrorPath</key><string>/Users/elvinayala/Library/Logs/gasto-ia.err.log</string>
+</dict></plist>

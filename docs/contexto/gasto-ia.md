@@ -19,3 +19,9 @@ corridas, todo Opus 5.5) vs. **Max $1.00** (ya elegía por tarea). Ahora los dos
 (ponderado por costo). Línea base de 7 días: 1,470M equivalentes; 66% workflows multiagente, 31% llamadas con > 300K de
 contexto. Medidas: `CLAUDE.md` pasó de 73K a 3.5K tokens (índice + `docs/contexto/`), vuelve el aviso de costo antes de
 lanzar un workflow y la compactación automática tiene tope de 400K (`CLAUDE_CODE_AUTO_COMPACT_WINDOW` en `~/.claude/settings.json`).
+
+**Reporte semanal y nube (19/oct/2026)**: `scripts/reporte-gasto-ia.mjs` (launchd `com.iamarket.gasto-ia`, lunes 8 AM, sin Claude)
+le manda a Elvin por el bot de Nico el gasto de la Mac vs. la línea base y el de los agentes en la nube (semana vs. anterior,
+de `desempeno_agentes_reportes`). Sale por Nico porque en la Mac `TELEGRAM_BOT_TOKEN` está vacío (todo `agentes.mjs elvin`
+sin `AGENTE` cae solo a Slack). Nico, puente (Sofi), Max y Lola tienen `CLAUDE_CODE_AUTO_COMPACT_WINDOW=400000` en Railway
+(su sesión de cada día se retoma con `--resume` y crecía sin tope). Estimado con las llamadas reales: −31% en la Mac.

@@ -23,6 +23,11 @@ for (const proj of fs.readdirSync(raiz)) { const d = path.join(raiz, proj); if (
       for (const gf of todos) {
         const r = await leer(gf); totW += r.w; subW += r.w; calls += r.n; padres[f] ??= { sub: 0, nsub: 0 }; padres[f].sub += r.w; padres[f].nsub++ } } } }
 const M = x => (x/1e6).toFixed(0)+"M";
+if (process.argv.includes("--json")) { // para scripts/reporte-gasto-ia.mjs
+  const top = Object.values(padres).filter(v => v.nsub).sort((a, b) => b.sub - a.sub).slice(0, 3).map(v => ({ p: v.p || "", sub: v.sub, nsub: v.nsub }));
+  console.log(JSON.stringify({ dias: DIAS, total: totW, porDia: totW / DIAS, workflows: subW / totW, grandes: bigW / totW, llamadas: calls, top }));
+  process.exit(0);
+}
 console.log(`${DIAS.toFixed(1)} días · ${M(totW / DIAS)} por día (línea base 19/oct: 210M/día) · costo equivalente (tokens de entrada; escritura caché 2x, lectura 0.1x, salida 5x): total ${M(totW)}`);
 console.log(`  subagentes/workflows ${M(subW)} (${(100*subW/totW).toFixed(0)}%) · sesiones principales ${M(mainW)} (${(100*mainW/totW).toFixed(0)}%)`);
 console.log(`  llamadas con contexto > 300K tokens: ${M(bigW)} (${(100*bigW/totW).toFixed(0)}% del costo)`);
