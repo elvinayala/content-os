@@ -62,3 +62,5 @@ Además (30/sep): cada quien declara su Wi-Fi principal en Hoy; red nueva → av
 17/oct (Elvin): citas médicas = solicitud "Cita médica" que al aprobarse se descuenta de enfermedad (5 días por período de 12 meses desde el ingreso, sin arrastre); vacaciones con mínimo 60 días de anticipación (solo solicitudes nuevas). Comunicado fijado en Noticias. Pendientes de antes: permiso de María del Carmen (ecografía 19/oct) y vacaciones de Marcos Ruiz.
 
 17/oct: Noticias por empresa (todas · LU · AIB; cada empleado solo lo suyo). Dueña de Noticias = Yaileen (comunicados, benéficas); Carilin le pasa ≥ 1 logro/semana. Avisadas por DM (firmado Nico).
+
+19/oct: cita médica por horas (María García pidió 2 h como permiso de día completo → corregida a mano: enfermedad 0.25, vacaciones 8/8). Calendario muestra "2 h" y no cuenta como fuera (vacaciones de medio día sí). Deploy desde ~/bori-trabajo/deploy-ritmo (no /tmp).
