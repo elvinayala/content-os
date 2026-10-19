@@ -8,6 +8,7 @@ import { cancelarSolicitudAction, crearSolicitudAction, decidirSolicitudAction, 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { diasYHoras, duracionTexto } from "@/lib/desempeno/rrhh";
 import { cn } from "@/lib/utils";
 
 const aviso = { className: "ritmo" };
@@ -16,6 +17,15 @@ const fecha = (f: string) => new Date(`${f}T12:00:00`).toLocaleDateString("es-PR
 const cuando = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("es-PR", { timeZone: "America/Puerto_Rico", day: "numeric", month: "short" }) : "");
 
 type Tipo = { id: string; nombre: string; conFechas: boolean };
+// Duraciones de una cita médica, en días de 8 h (1 h = 0.125).
+const HORAS_CITA = [
+  { v: "0.125", t: "1 hora" },
+  { v: "0.25", t: "2 horas" },
+  { v: "0.375", t: "3 horas" },
+  { v: "0.5", t: "4 horas (medio día)" },
+  { v: "0.75", t: "6 horas" },
+  { v: "1", t: "Día completo" },
+];
 
 // 17/oct (Elvin): las citas médicas se descuentan de los días de enfermedad (se ven aquí) y las vacaciones se piden con
 // mínimo 60 días de anticipación (`minVacaciones` = primer día que se puede pedir hoy).
@@ -64,18 +74,38 @@ export function NuevaSolicitud({ tipos, saldo, dias, minVacaciones }: { tipos: T
           <div className="rounded-xl bg-white/[0.03] px-3 py-2.5 ring-1 ring-border/70">
             <p className="text-[11px] text-muted-foreground">Días de enfermedad</p>
             <p className="font-semibold">
-              {dias.enfermedad} <span className="text-xs font-normal text-muted-foreground">de {dias.cupoEnfermedad} · se renuevan el {fechaLarga(dias.renueva)}</span>
+              {diasYHoras(dias.enfermedad, 8)} <span className="text-xs font-normal text-muted-foreground">de {dias.cupoEnfermedad} · se renuevan el {fechaLarga(dias.renueva)}</span>
             </p>
           </div>
         </div>
       ) : null}
-      <select className={select} value={v.tipo} onChange={(e) => setV((x) => ({ ...x, tipo: e.target.value }))}>
+      <select className={select} value={v.tipo} onChange={(e) => { const t = e.target.value; setV((x) => ({ ...x, tipo: t, dias: t === "cita_medica" ? "0.25" : x.dias === "0.25" ? "1" : x.dias, hasta: t === "cita_medica" ? "" : x.hasta })); }}>
         <option value="">¿Qué necesitas?</option>
         {tipos.map((t) => (
           <option key={t.id} value={t.id}>{t.nombre}</option>
         ))}
       </select>
-      {tipo?.conFechas ? (
+      {tipo?.id === "cita_medica" ? (
+        // 19/oct: la cita médica va por horas (María pidió 2 h y le contó un día). "Más de un día" abre las fechas y los días.
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Día de la cita</span><Input type="date" className="h-11" value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs text-muted-foreground">¿Cuánto tiempo?</span>
+            <select className={select} value={HORAS_CITA.some((h) => h.v === v.dias) ? v.dias : "varios"} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value === "varios" ? "2" : e.target.value, hasta: e.target.value === "varios" ? x.hasta : "" }))}>
+              {HORAS_CITA.map((h) => (
+                <option key={h.v} value={h.v}>{h.t}</option>
+              ))}
+              <option value="varios">Más de un día</option>
+            </select>
+          </label>
+          {!HORAS_CITA.some((h) => h.v === v.dias) ? (
+            <>
+              <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Hasta</span><Input type="date" className="h-11" value={v.hasta} onChange={(e) => setV((x) => ({ ...x, hasta: e.target.value }))} /></label>
+              <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Días laborables</span><Input type="number" step="0.5" min="1" className="h-11" value={v.dias} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value }))} /></label>
+            </>
+          ) : null}
+        </div>
+      ) : tipo?.conFechas ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Desde</span><Input type="date" className="h-11" min={tipo.id === "vacaciones" ? minVacaciones : undefined} value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></label>
           <label className="flex flex-col gap-1.5"><span className="text-xs text-muted-foreground">Hasta</span><Input type="date" className="h-11" value={v.hasta} onChange={(e) => setV((x) => ({ ...x, hasta: e.target.value }))} /></label>
@@ -92,11 +122,11 @@ export function NuevaSolicitud({ tipos, saldo, dias, minVacaciones }: { tipos: T
           🩺 Al aprobarse se descuenta de tus días de enfermedad
           {dias ? (
             <>
-              : te quedan <b className="text-foreground">{dias.enfermedad}</b>
+              : te quedan <b className="text-foreground">{diasYHoras(dias.enfermedad, 8)}</b>
               {pedidos > dias.enfermedad ? ". Lo que pase de ahí se cobra de tus vacaciones o va sin paga." : "."}
             </>
           ) : "."}{" "}
-          Pon el medio día (0.5) si es solo una parte del día y, en el detalle, la hora y el médico o la especialidad.
+          Escoge cuánto tiempo vas a estar fuera (si son 2 horas, se descuentan 2 horas, no el día) y, en el detalle, la hora y el médico o la especialidad.
         </p>
       ) : null}
       {visible.error ? <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-300 ring-1 ring-red-500/30">⛔ {visible.error}</p> : null}
@@ -176,7 +206,7 @@ export function TarjetaSolicitud({ s, tipos }: { s: SolicitudUI; tipos: Tipo[] }
           <span className="text-sm text-muted-foreground">
             · {fecha(s.desde)}
             {s.hasta && s.hasta !== s.desde ? ` → ${fecha(s.hasta)}` : ""}
-            {s.dias ? ` · ${s.dias} ${s.dias === 1 ? "día" : "días"}` : ""}
+            {s.dias ? ` · ${duracionTexto(s.dias)}` : ""}
           </span>
         ) : null}
         <span className={cn("ml-auto rounded-full px-2 py-0.5 text-xs ring-1", ESTADO[s.estado]?.cls)}>{ESTADO[s.estado]?.txt ?? s.estado}</span>

@@ -23,7 +23,7 @@ import { ACTIVIDADES, duracionRutina, rutinaDelDia } from "@/lib/desempeno/biene
 import * as fichas from "@/lib/desempeno/fichas";
 import * as noticias from "@/lib/desempeno/noticias";
 import { CATEGORIAS_NOTICIA, esParaNoticia } from "@/lib/desempeno/noticias-tipos";
-import { errorAnticipacion, puedeDecidir, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
+import { errorAnticipacion, puedeDecidir, redondearDias, TIPOS_SOLICITUD } from "@/lib/desempeno/rrhh";
 import * as solicitudes from "@/lib/desempeno/solicitudes";
 import * as viajes from "@/lib/desempeno/viajes";
 import { errorPlan } from "@/lib/desempeno/viajes-reglas";
@@ -468,7 +468,9 @@ export async function crearAusenciaAction(p: { userId: string; tipo: string; des
     if (!["vacaciones", "enfermedad", "maternidad", "personal"].includes(p.tipo)) throw new Error("Tipo inválido");
     if (!FECHA.test(p.desde) || !FECHA.test(p.hasta) || p.hasta < p.desde) throw new Error("Fechas inválidas");
     if (!Number.isFinite(p.dias) || p.dias <= 0 || p.dias > 120) throw new Error("Días inválidos");
-    await fichas.crearAusencia({ userId: p.userId, tipo: p.tipo, desde: p.desde, hasta: p.hasta, dias: Math.round(p.dias * 2) / 2, certificado: p.tipo === "enfermedad" && p.certificado, nota: p.nota?.trim().slice(0, 300) || null }, u.id);
+    const diasAus = redondearDias(p.tipo, p.dias);
+    if (diasAus <= 0) throw new Error("Días inválidos");
+    await fichas.crearAusencia({ userId: p.userId, tipo: p.tipo, desde: p.desde, hasta: p.hasta, dias: diasAus, certificado: p.tipo === "enfermedad" && p.certificado, nota: p.nota?.trim().slice(0, 300) || null }, u.id);
     refresh();
     return {};
   });
@@ -545,7 +547,9 @@ export async function crearSolicitudAction(p: { tipo: string; desde: string; has
       hasta = FECHA.test(p.hasta) && p.hasta >= p.desde ? p.hasta : p.desde;
       dias = Number(p.dias);
       if (!Number.isFinite(dias) || dias < 0 || dias > 60) throw new Error("Días inválidos");
-      dias = Math.round(dias * 2) / 2;
+      dias = redondearDias(tipo.id, dias); // cita médica por horas (1/8 de día); lo demás por medio día
+      if (tipo.id === "cita_medica" && dias < 1) hasta = desde; // unas horas = un solo día
+      if (tipo.id === "cita_medica" && dias <= 0) throw new Error("Pon cuánto tiempo vas a estar fuera"); // un permiso de 0 días (unas horas sin descontar) sigue valiendo
     }
     // 17/oct (Elvin): las vacaciones se piden con mínimo 60 días de anticipación (ya no el mismo mes).
     const anticipacion = errorAnticipacion(tipo.id, desde, fechaPR(Date.now()));

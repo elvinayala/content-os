@@ -141,3 +141,18 @@ test("vacaciones: mínimo 60 días de anticipación; las otras solicitudes no", 
   assert.equal(errorAnticipacion("cita_medica", "2026-10-18", "2026-10-17"), null);
   assert.equal(errorAnticipacion("dia_libre", "2026-10-18", "2026-10-17"), null);
 });
+
+// ─── 19/oct: citas médicas por horas (María pidió 2 h y le contó el día completo) ─────
+import { duracionTexto, redondearDias } from "../lib/desempeno/rrhh.ts";
+
+test("cita médica y enfermedad por horas (1/8 de día); lo demás por medio día", () => {
+  assert.equal(redondearDias("cita_medica", 0.25), 0.25);
+  assert.equal(redondearDias("cita_medica", 0.3), 0.25);
+  assert.equal(redondearDias("enfermedad", 0.125), 0.125);
+  assert.equal(redondearDias("vacaciones", 0.25), 0.5);
+  assert.equal(redondearDias("permiso", 1.3), 1.5);
+  assert.equal(duracionTexto(0.25), "2 h");
+  assert.equal(duracionTexto(0.5), "4 h");
+  assert.equal(duracionTexto(1), "1 día");
+  assert.equal(duracionTexto(2.5), "2.5 días");
+});

@@ -10,25 +10,27 @@ import { desempenoAusencias, desempenoPerfiles, desempenoSolicitudes } from "./s
 // Calendario de ausencias: lo aprobado (ausencias registradas) + lo pedido en curso (solicitudes con fechas).
 // Una solicitud firmada crea su ausencia, así que de solicitudes solo se toman las que siguen en curso.
 
-const CON_FECHAS = ["vacaciones", "dia_libre", "permiso"];
+const CON_FECHAS = ["vacaciones", "dia_libre", "permiso", "cita_medica"];
 
 export async function tramosEntre(desde: string, hasta: string): Promise<Tramo[]> {
   const d = await db();
   const [aus, sol] = await Promise.all([
     d
-      .select({ id: desempenoAusencias.id, userId: desempenoAusencias.userId, tipo: desempenoAusencias.tipo, desde: desempenoAusencias.desde, hasta: desempenoAusencias.hasta, nombre: pulseUsers.nombre, puesto: desempenoPerfiles.puesto, empresa: desempenoPerfiles.empresa })
+      .select({ id: desempenoAusencias.id, userId: desempenoAusencias.userId, tipo: desempenoAusencias.tipo, desde: desempenoAusencias.desde, hasta: desempenoAusencias.hasta, dias: desempenoAusencias.dias, nombre: pulseUsers.nombre, puesto: desempenoPerfiles.puesto, empresa: desempenoPerfiles.empresa })
       .from(desempenoAusencias)
       .innerJoin(pulseUsers, eq(pulseUsers.id, desempenoAusencias.userId))
       .leftJoin(desempenoPerfiles, eq(desempenoPerfiles.userId, desempenoAusencias.userId))
       .where(and(lte(desempenoAusencias.desde, hasta), gte(desempenoAusencias.hasta, desde))),
     d
-      .select({ id: desempenoSolicitudes.id, userId: desempenoSolicitudes.userId, tipo: desempenoSolicitudes.tipo, desde: desempenoSolicitudes.desde, hasta: desempenoSolicitudes.hasta, nombre: pulseUsers.nombre, puesto: desempenoPerfiles.puesto, empresa: desempenoPerfiles.empresa })
+      .select({ id: desempenoSolicitudes.id, userId: desempenoSolicitudes.userId, tipo: desempenoSolicitudes.tipo, desde: desempenoSolicitudes.desde, hasta: desempenoSolicitudes.hasta, dias: desempenoSolicitudes.dias, nombre: pulseUsers.nombre, puesto: desempenoPerfiles.puesto, empresa: desempenoPerfiles.empresa })
       .from(desempenoSolicitudes)
       .innerJoin(pulseUsers, eq(pulseUsers.id, desempenoSolicitudes.userId))
       .leftJoin(desempenoPerfiles, eq(desempenoPerfiles.userId, desempenoSolicitudes.userId))
       .where(and(inArray(desempenoSolicitudes.estado, ["supervisor", "rrhh"]), inArray(desempenoSolicitudes.tipo, CON_FECHAS), isNotNull(desempenoSolicitudes.desde), lte(desempenoSolicitudes.desde, hasta), gte(desempenoSolicitudes.hasta, desde))),
   ]);
-  const fila = (x: (typeof aus)[number], estado: Tramo["estado"]): Tramo => ({ id: x.id, userId: x.userId, nombre: x.nombre, puesto: x.puesto ?? "", empresa: x.empresa ?? "level_up", tipo: x.tipo, desde: x.desde!, hasta: x.hasta ?? x.desde!, estado });
+  // Menos de un día en una sola fecha = unas horas (cita médica): sale con sus horas y no cuenta como "fuera" para los choques.
+  const horas = (x: { dias: number | null; desde: string | null; hasta: string | null }) => (x.dias != null && x.dias > 0 && x.dias < 1 && (!x.hasta || x.hasta === x.desde) ? Math.round(x.dias * 8) : null);
+  const fila = (x: (typeof aus)[number], estado: Tramo["estado"]): Tramo => ({ id: x.id, userId: x.userId, nombre: x.nombre, puesto: x.puesto ?? "", empresa: x.empresa ?? "level_up", tipo: x.tipo, desde: x.desde!, hasta: x.hasta ?? x.desde!, estado, horas: horas(x) });
   return [...aus.map((x) => fila(x, "aprobada")), ...sol.map((x) => fila(x as (typeof aus)[number], "pendiente"))].sort((a, b) => a.desde.localeCompare(b.desde));
 }
 

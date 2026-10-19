@@ -226,6 +226,17 @@ export function ausenciaDeSolicitud(s: { tipo: string; desde: string | null; has
   return null;
 }
 
+/** Las citas médicas (y la enfermedad que registra RR.HH.) van por horas: 1/8 de día = 1 h. Lo demás, por medio día. */
+export function redondearDias(tipo: string, dias: number): number {
+  return tipo === "cita_medica" || tipo === "enfermedad" ? Math.round(dias * 8) / 8 : Math.round(dias * 2) / 2;
+}
+
+/** "2 h" si es menos de un día; si no, "1 día", "1.5 días"… (para tarjetas, ficha y calendario). */
+export function duracionTexto(dias: number, horasDia: number = POLITICA.horasDia): string {
+  if (dias > 0 && dias < 1) return `${Math.round(dias * horasDia)} h`;
+  return `${dias} ${dias === 1 ? "día" : "días"}`;
+}
+
 /** Saldo legible en días y horas: 11.08 días con jornada de 9 h → "11 días y 1 h". */
 export function diasYHoras(dias: number, horasDia: number): string {
   let enteros = Math.floor(dias + 1e-9);

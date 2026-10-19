@@ -19,6 +19,7 @@ const TIPO: Record<string, { t: string; c: string }> = {
   vacaciones: { t: "Vacaciones", c: "bg-primary/15 text-primary ring-primary/30" },
   dia_libre: { t: "Día libre", c: "bg-sky-500/15 text-sky-300 ring-sky-500/30" },
   permiso: { t: "Permiso", c: "bg-amber-500/15 text-amber-200 ring-amber-500/30" },
+  cita_medica: { t: "Cita médica", c: "bg-[color:var(--coral)]/15 text-[color:var(--coral)] ring-[color:var(--coral)]/30" },
   personal: { t: "Personal", c: "bg-amber-500/15 text-amber-200 ring-amber-500/30" },
   enfermedad: { t: "Enfermedad", c: "bg-[color:var(--coral)]/15 text-[color:var(--coral)] ring-[color:var(--coral)]/30" },
   maternidad: { t: "Maternidad", c: "bg-[color:var(--coral)]/15 text-[color:var(--coral)] ring-[color:var(--coral)]/30" },
@@ -43,7 +44,7 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
   const todos = await tramosEntre(desde, hasta);
   const tramos = todos.filter((t) => empresa === "todas" || t.empresa === empresa);
   const rojo = diasEnConflicto(tramos, desde, hasta);
-  const etiqueta = (t: Tramo) => (u.maestro ? (TIPO[t.tipo]?.t ?? t.tipo) : t.estado === "pendiente" ? "Pedido" : "Fuera");
+  const etiqueta = (t: Tramo) => `${u.maestro ? (TIPO[t.tipo]?.t ?? t.tipo) : t.estado === "pendiente" ? "Pedido" : "Fuera"}${t.horas ? ` ${t.horas} h` : ""}`;
   const color = (t: Tramo) => (u.maestro ? (TIPO[t.tipo]?.c ?? TIPO.permiso.c) : "bg-primary/15 text-primary ring-primary/30");
   const delMes = tramos.filter((t) => t.hasta >= `${mes}-01` && t.desde <= `${mes}-31`);
   const url = (m: string, e = empresa) => `/ritmo/calendario?m=${m}${u.maestro ? `&e=${e}` : ""}`;
@@ -101,6 +102,7 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
                 {fuera.slice(0, 4).map((t) => (
                   <span key={t.id} title={`${t.nombre} · ${etiqueta(t)} · ${rango(t.desde, t.hasta)}`} className={cn("truncate rounded-md px-1.5 py-0.5 text-[11px] ring-1", color(t), t.estado === "pendiente" && "border border-dashed border-current bg-transparent")}>
                     {corto(t.nombre)}
+                    {t.horas ? <span className="opacity-70"> · {t.horas} h</span> : null}
                   </span>
                 ))}
                 {fuera.length > 4 ? <span className="px-1 text-[10px] text-muted-foreground">+{fuera.length - 4} más</span> : null}

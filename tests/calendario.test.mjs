@@ -36,3 +36,21 @@ test("calendario: semanas de lunes a domingo y días en conflicto", () => {
   const c = diasEnConflicto([t("a", "u1", "A", "estratega", "2026-10-12", "2026-10-14"), t("b", "u2", "B", "estratega", "2026-10-14", "2026-10-15")], "2026-10-01", "2026-10-31");
   assert.deepEqual([...c], ["2026-10-14"]);
 });
+
+// ─── 19/oct: una ausencia de unas horas no cuenta como "fuera" ─────
+import { choques as choques2, cuentaFuera, diasEnConflicto as conflicto2 } from "../lib/desempeno/calendario-reglas.ts";
+
+test("una cita de 2 h de un estratega no bloquea ni pinta choque", () => {
+  const base = { userId: "a", nombre: "A", puesto: "estratega", empresa: "level_up", desde: "2026-10-19", hasta: "2026-10-19", estado: "aprobada" };
+  const cita = { ...base, id: "c", tipo: "enfermedad", horas: 2 };
+  const vac = { ...base, id: "v", userId: "b", nombre: "B", tipo: "vacaciones", horas: null };
+  assert.equal(cuentaFuera(cita), false);
+  assert.equal(cuentaFuera(vac), true);
+  assert.equal(choques2({ userId: "z", puesto: "estratega", empresa: "level_up", desde: "2026-10-19", hasta: "2026-10-19" }, [cita]).bloquea.length, 0);
+  assert.equal(conflicto2([cita, vac], "2026-10-19", "2026-10-19").size, 0);
+});
+
+test("medio día de vacaciones de un estratega sigue contando como fuera", () => {
+  assert.equal(cuentaFuera({ horas: 4, tipo: "vacaciones" }), true);
+  assert.equal(cuentaFuera({ horas: 2, tipo: "cita_medica" }), false);
+});

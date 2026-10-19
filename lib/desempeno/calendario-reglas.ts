@@ -15,7 +15,14 @@ export interface Tramo {
   desde: string; // YYYY-MM-DD
   hasta: string;
   estado: "aprobada" | "pendiente";
+  // 19/oct (María, cita médica de 2 h que salía como día completo): si es menos de un día, cuántas horas. Esas no cuentan como
+  // "fuera" para los choques: la persona trabaja el resto del día.
+  horas?: number | null;
 }
+
+/** Una cita médica o enfermedad de unas horas no saca a nadie del día (no choca ni bloquea). Las vacaciones, aunque sean
+ * medio día, siguen contando para la regla de "dos estrategas no se van a la vez". */
+export const cuentaFuera = (t: { horas?: number | null; tipo?: string }) => !t.horas || t.tipo === "vacaciones";
 
 const solapan = (a: { desde: string; hasta: string }, b: { desde: string; hasta: string }) => a.desde <= b.hasta && b.desde <= a.hasta;
 
@@ -27,7 +34,7 @@ const solapan = (a: { desde: string; hasta: string }, b: { desde: string; hasta:
 export function choques(nuevo: { id?: string; userId: string; puesto: string; empresa: string; desde: string; hasta: string }, tramos: Tramo[]): { bloquea: Tramo[]; pendientes: Tramo[]; tope: number | null } {
   const tope = TOPE_FUERA[nuevo.puesto] ?? null;
   if (tope === null) return { bloquea: [], pendientes: [], tope };
-  const otros = tramos.filter((t) => t.id !== nuevo.id && t.userId !== nuevo.userId && t.puesto === nuevo.puesto && t.empresa === nuevo.empresa && solapan(t, nuevo));
+  const otros = tramos.filter((t) => cuentaFuera(t) && t.id !== nuevo.id && t.userId !== nuevo.userId && t.puesto === nuevo.puesto && t.empresa === nuevo.empresa && solapan(t, nuevo));
   const aprobadas = otros.filter((t) => t.estado === "aprobada");
   // Con tope 1 cualquier aprobada que se cruce bloquea; con tope N, bloquea si algún día ya hay N fuera.
   const lleno = dias(nuevo.desde, nuevo.hasta).some((d) => aprobadas.filter((t) => t.desde <= d && d <= t.hasta).length >= tope);
@@ -73,7 +80,7 @@ export function semanasDelMes(mes: string): string[][] {
 export function diasEnConflicto(tramos: Tramo[], desde: string, hasta: string): Set<string> {
   const out = new Set<string>();
   for (const d of dias(desde, hasta)) {
-    const fuera = tramos.filter((t) => t.desde <= d && d <= t.hasta);
+    const fuera = tramos.filter((t) => cuentaFuera(t) && t.desde <= d && d <= t.hasta);
     const cuenta = new Map<string, number>();
     for (const t of fuera) if (TOPE_FUERA[t.puesto] != null) cuenta.set(`${t.empresa}|${t.puesto}`, (cuenta.get(`${t.empresa}|${t.puesto}`) ?? 0) + 1);
     for (const [k, n] of cuenta) if (n > TOPE_FUERA[k.split("|")[1]]) out.add(d);

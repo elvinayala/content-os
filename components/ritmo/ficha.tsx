@@ -8,7 +8,7 @@ import { borrarAjusteAction, borrarArchivoAction, borrarAusenciaAction, crearAju
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { usd } from "@/lib/desempeno/rrhh";
+import { duracionTexto, usd } from "@/lib/desempeno/rrhh";
 import { cn } from "@/lib/utils";
 
 import { BotonSubir } from "./subir";
@@ -189,7 +189,7 @@ export function Ausencias({ userId, lista, maestro }: { userId: string; lista: A
               <span className="font-medium">{TIPOS[a.tipo] ?? a.tipo}</span>
               <span className="text-muted-foreground">
                 {fecha(a.desde)}
-                {a.hasta !== a.desde ? ` → ${fecha(a.hasta)}` : ""} · {a.dias} {a.dias === 1 ? "día" : "días"}
+                {a.hasta !== a.desde ? ` → ${fecha(a.hasta)}` : ""} · {duracionTexto(a.dias)}
                 {a.tipo === "enfermedad" ? (a.certificado ? " · con certificado" : " · sin certificado") : ""}
               </span>
               <span className={cn("ml-auto text-xs", a.cargo?.sinPaga ? "text-red-300" : "text-muted-foreground")}>{cargoTexto(a.cargo)}</span>
@@ -216,7 +216,7 @@ export function Ausencias({ userId, lista, maestro }: { userId: string; lista: A
             </Campo>
             <Campo label="Desde"><Input type="date" className="h-10" value={v.desde} onChange={(e) => setV((x) => ({ ...x, desde: e.target.value }))} /></Campo>
             <Campo label="Hasta"><Input type="date" className="h-10" value={v.hasta} onChange={(e) => setV((x) => ({ ...x, hasta: e.target.value }))} /></Campo>
-            <Campo label="Días laborables"><Input type="number" step="0.5" min="0.5" className="h-10" value={v.dias} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value }))} /></Campo>
+            <Campo label={v.tipo === "enfermedad" ? "Días laborables (0.25 = 2 h)" : "Días laborables"}><Input type="number" step={v.tipo === "enfermedad" ? "0.125" : "0.5"} min={v.tipo === "enfermedad" ? "0.125" : "0.5"} className="h-10" value={v.dias} onChange={(e) => setV((x) => ({ ...x, dias: e.target.value }))} /></Campo>
             {v.tipo === "enfermedad" ? (
               <label className="flex items-center gap-2 text-sm sm:col-span-2">
                 <input type="checkbox" checked={v.certificado} onChange={(e) => setV((x) => ({ ...x, certificado: e.target.checked }))} className="size-4 accent-[var(--neon)]" />
