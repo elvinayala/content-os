@@ -90,8 +90,8 @@ const pesos = (n: number | null | undefined) => (n == null ? "" : `$${Number(n).
 async function mandarAlCliente(t: Trabajo, a: Adicional, p?: Proveedor) {
   const quien = p?.nombre.split(" ")[0] ?? "Tu técnico";
   const txt = a.tipo === "recomendacion"
-    ? `${quien}, de Resuelto, te deja una recomendación sobre tu ${t.servicio.toLowerCase()}:\n\n"${a.descripcion}"${a.precio ? `\nCosto: ${pesos(a.precio)} de mano de obra.` : ""}\n\nDinos si la aceptas o no aquí (queda en tu récord): ${linkCliente(t.id, a.id)}`
-    : `${quien}, de Resuelto, encontró algo más en tu ${t.servicio.toLowerCase()}:\n\n"${a.descripcion}"\n*${pesos(a.precio)}* de mano de obra (los materiales van aparte, al costo con recibo).\n\nNo se hace nada sin tu aprobación. Aprueba o dinos que no aquí: ${linkCliente(t.id, a.id)}`;
+    ? `${quien}, de Resuelto, te deja una recomendación sobre tu ${t.servicio.toLowerCase()}:\n\n"${a.descripcion}"${a.precio ? `\nCosto: ${pesos(a.precio)}.` : ""}\n\nDinos si la aceptas o no aquí (queda en tu récord): ${linkCliente(t.id, a.id)}`
+    : `${quien}, de Resuelto, encontró algo más en tu ${t.servicio.toLowerCase()}:\n\n"${a.descripcion}"\n*${pesos(a.precio)}* (los materiales van aparte, al costo con recibo).\n\nNo se hace nada sin tu aprobación. Aprueba o dinos que no aquí: ${linkCliente(t.id, a.id)}`;
   await avisarCliente(t, txt).catch(() => undefined);
   // Que el agente sepa qué está pasando si el cliente pregunta por el chat.
   const conv = almacen.conversacion(t.contactoId);
@@ -166,6 +166,6 @@ h1{font-size:24px;margin:.2em 0}.card{background:#fff;border-radius:16px;padding
 .precio{font-size:30px;font-weight:800;color:#F2621F;margin:8px 0}label{display:block;font-size:15px;margin-top:10px}input[type=number]{width:100%;font-size:22px;padding:10px;border:1.5px solid #cfd8df;border-radius:10px;box-sizing:border-box}
 button{display:block;width:100%;font-size:19px;font-weight:700;padding:15px;border:0;border-radius:14px;margin-top:12px}.si{background:#1f9d55;color:#fff}.no{background:#eef1f4;color:#0F3D5E}.ok{font-size:20px;font-weight:700}.pie{font-size:14px;color:#5b7385}</style></head>
 <body><main><div style="font-weight:800;font-size:20px">✔ resuelto</div><h1>${titulo}</h1><div class="card"><div style="font-size:15px;color:#5b7385">${esc(t.servicio)} · ${esc(t.municipio)}</div>
-<p>“${esc(a.descripcion)}”</p>${a.precio != null || a.precioPropuesto != null ? `<div class="precio">${pesos(a.precio ?? a.precioPropuesto)}</div><div style="font-size:15px;color:#5b7385">de mano de obra${rol === "equipo" ? " (propuesto por el plomero)" : ""}</div>` : ""}
+<p>“${esc(a.descripcion)}”</p>${a.precio != null || a.precioPropuesto != null ? `<div class="precio">${pesos(a.precio ?? a.precioPropuesto)}</div><div style="font-size:15px;color:#5b7385">${rol === "equipo" ? "de mano de obra (propuesto por el plomero)" : "materiales aparte, al costo con recibo"}</div>` : ""}
 ${cuerpo}</div></main></body></html>`;
 }

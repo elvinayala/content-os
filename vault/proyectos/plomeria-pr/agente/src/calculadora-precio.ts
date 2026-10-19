@@ -134,7 +134,7 @@ btn.onclick=async()=>{
       out.innerHTML='<div>'+esc(j.servicio.nombre)+'</div><div class="precio">'+precio+'</div>'+
         (j.servicio.nota?'<p class="nota">'+esc(j.servicio.nota)+'</p>':'')+
         '<p class="nota">+ $'+j.cargos.coordinacion+' de coordinación · materiales al costo + '+j.cargos.manejoMaterialesPct+'% · emergencia (noche, fin de semana, feriado) +$'+j.cargos.emergencia+'</p>'+
-        '<p class="nota">Al cliente: "$'+(Array.isArray(j.servicio.precio)?j.servicio.precio[0]:j.servicio.precio)+' de mano de obra + $'+j.cargos.coordinacion+' de coordinación; los materiales van aparte, al costo con recibo." Sin garantía de 12 meses: ya no se ofrece.</p>';
+        '<p class="nota">Al cliente (monto final, sin desglose): "Te sale en $'+((Array.isArray(j.servicio.precio)?j.servicio.precio[0]:j.servicio.precio)+j.cargos.coordinacion)+'; los materiales van aparte, al costo con recibo." Sin garantía de 12 meses: ya no se ofrece.</p>';
     }
     out.style.display='block';
   } catch(e){ out.className='err'; out.innerHTML='⚠️ '+esc(e.message); out.style.display='block'; }

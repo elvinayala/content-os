@@ -41,7 +41,7 @@ const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,
 export const definiciones: Anthropic.Beta.BetaTool[] = [
   {
     name: "buscar_precio",
-    description: "Busca en el menú de Resuelto (plomería, handyman, electricidad y aire acondicionado) el servicio que mejor corresponde al problema descrito y devuelve su precio fijo o rango, nivel (P/M/G), su oficio (categoria) y notas. Úsala antes de dar cualquier precio; después verifica cobertura CON ese oficio.",
+    description: "Busca en el menú de Resuelto (plomería, handyman, electricidad y aire acondicionado) el servicio que mejor corresponde al problema descrito y devuelve su precio (\`precio\` = mano de obra, para las herramientas; \`precio_al_cliente\` = el monto final que le das al cliente, sin desglose) o rango, nivel (P/M/G), su oficio (categoria) y notas. Úsala antes de dar cualquier precio; después verifica cobertura CON ese oficio.",
     input_schema: { type: "object", properties: { problema: { type: "string", description: "Descripción del problema o servicio en palabras del cliente" } }, required: ["problema"], additionalProperties: false },
   },
   {
@@ -207,7 +207,7 @@ export async function ejecutar(nombre: string, input: any, ctx: Ctx): Promise<un
     case "buscar_precio": {
       const res = buscarCatalogo(input.problema);
       if (!res.length) return { encontrado: false, sugerencia: "No está en el menú. Ofrece diagnóstico ($69, se acredita) o escala si es comercial." };
-      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, rango: s.rango ?? null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto || "sin garantía (no la menciones)", garantia_nota: garantiaDe(s.id).nota })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct };
+      return { encontrado: true, opciones: res.map((s) => ({ id: s.id, nombre: s.nombre, categoria: s.categoria, oficio: NOMBRE_CATEGORIA[s.categoria], nivel: s.nivel, precio: s.precio ?? null, precio_al_cliente: s.precio != null ? s.precio + menu.cargo_coordinacion : null, rango: s.rango ?? null, rango_al_cliente: s.rango ? [s.rango[0] + menu.cargo_coordinacion, s.rango[1] + menu.cargo_coordinacion] : null, cotizacion_en_sitio: !!s.cotizacion, nota: s.nota ?? null, garantia: garantiaDe(s.id).texto || "sin garantía (no la menciones)", garantia_nota: garantiaDe(s.id).nota })), cargo_coordinacion: menu.cargo_coordinacion, recargo_emergencia: menu.recargo_emergencia, manejo_materiales_pct: menu.manejo_materiales_pct };
     }
     case "verificar_cobertura": {
       const t = territorioDeMunicipio(input.municipio);
