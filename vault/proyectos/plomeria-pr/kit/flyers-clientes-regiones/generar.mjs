@@ -38,6 +38,10 @@ const precio = (id) => {
 // OFICIO=aire|handyman|electricidad (27/sep/2026): el mismo flyer de ciudad (el que mejor funcionó en plomería) para
 // los oficios nuevos, con los precios aprobados de agente/data/menus-oficios.json. Sale como cliente-<área>-ciudad-<oficio>.
 const OFICIO = process.env.OFICIO || "";
+// PRECIO_FINAL=1 (19/oct/2026, Aure: "que la aplicación no le desglose nada sino que le coloque el monto final"): el precio
+// del flyer ya incluye la coordinación, igual que lo cotiza el agente. El archivo sale con "-final".
+const FINAL = process.env.PRECIO_FINAL === "1";
+const conCoord = (n) => (FINAL ? n + MENU.cargo_coordinacion : n);
 const OFI = JSON.parse(fs.readFileSync(path.join(DATA, "menus-oficios.json"), "utf8")).oficios;
 const o$ = (id) => { for (const o of Object.values(OFI)) { const x = o.servicios.find((y) => y.id === id); if (x) return x.precio ?? x.rango?.[0]; } throw new Error(`Sin precio: ${id}`); };
 const POR_OFICIO = {
@@ -75,7 +79,7 @@ function html(r, formato) {
   const story = formato === "story";
   const alto = story ? 1920 : 1350;
   const chips = r.municipios.map((m) => `<span class="chip">${m}</span>`).join("");
-  const filas = PRECIOS.map(([n, d, p]) => `<div class="fila"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${p}</span></div>`).join("");
+  const filas = PRECIOS.map(([n, d, p]) => `<div class="fila"><div><b>${n}</b>${d ? `<small>${d}</small>` : ""}</div><span>$${conCoord(p)}</span></div>`).join("");
   return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../feed/src/_base.css"><style>
 html,body{height:${alto}px}
 .chip{display:inline-block;background:#fff;border:1.5px solid var(--line);color:var(--c1);font-weight:600;font-size:${story ? 27 : 23}px;padding:10px 20px;border-radius:999px;margin:0 10px 12px 0}
@@ -102,7 +106,7 @@ ${LOGO}
 </div>
 <div style="margin-top:${story ? 36 : 20}px">${chips}</div>
 <div class="foot" style="align-items:center;border-top:1px solid var(--line);padding-top:${story ? 36 : 24}px">
-  <div class="muted" style="font-size:${story ? 24 : 20}px;line-height:1.35;max-width:${story ? 430 : 400}px">Mano de obra · materiales aparte<br>+ $${MENU.cargo_coordinacion} de coordinación</div>
+  <div class="muted" style="font-size:${story ? 24 : 20}px;line-height:1.35;max-width:${story ? 430 : 400}px">${FINAL ? "Precio final del servicio<br>Materiales aparte" : `Mano de obra · materiales aparte<br>+ $${MENU.cargo_coordinacion} de coordinación`}</div>
   <div class="cta">${LLAMADA ? FONO : CHAT}${CTA}</div>
 </div>
 ${AJUSTAR}
@@ -121,7 +125,7 @@ fs.mkdirSync(path.join(AQUI, "src"), { recursive: true });
 // En paralelo; cada Chrome se corta a los 40 s (la captura sale en ~5 s).
 const correr = promisify(execFile);
 const trabajos = regiones.flatMap((r) => ["feed", "story"].map((formato) => {
-  const n = `cliente-${r.slug}${OFICIO ? "-ciudad-" + OFICIO : ""}${LLAMADA ? "-llamada" : ""}-${formato}`;
+  const n = `cliente-${r.slug}${OFICIO ? "-ciudad-" + OFICIO : ""}${LLAMADA ? "-llamada" : ""}${FINAL ? "-final" : ""}-${formato}`;
   const f = path.join(AQUI, "src", n + ".html");
   fs.writeFileSync(f, sinTelefono(n, html(r, formato)));
   return correr(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--user-data-dir=${path.join(AQUI, "src", ".chrome-" + n)}`, `--window-size=1080,${formato === "story" ? 1920 : 1350}`, "--force-device-scale-factor=1", "--virtual-time-budget=10000", `--screenshot=${path.join(AQUI, n + ".png")}`, "file://" + f], { timeout: 40000 })

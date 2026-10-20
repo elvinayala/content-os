@@ -1,0 +1,127 @@
+{
+ "marca": "resuelto",
+ "creada": "2026-10-20",
+ "campanas": {
+  "reclutamiento": "120255490480550029",
+  "clientes": "120255490480720029"
+ },
+ "conjuntos": {
+  "plo-metro-oeste": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "5a99835fec2c98fa65813ec78e533f31",
+     "creativo": "1667661368249899",
+     "ad": "120255490483760029"
+    },
+    "historia": {
+     "imagen": "fc9ce963612c4fb9f584149cbcb5b159",
+     "creativo": "1776984170248861",
+     "ad": "120255490484210029"
+    }
+   },
+   "adset": "120255490481370029"
+  },
+  "plo-sur": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "ee6e1e43c3434005d0e3f05258b2b1ed",
+     "creativo": "1562553988961115",
+     "ad": "120255490489150029"
+    },
+    "historia": {
+     "imagen": "cd73c1496607843d349ec1be945aee8a",
+     "creativo": "2251652729025861",
+     "ad": "120255490490070029"
+    }
+   },
+   "adset": "120255490488340029"
+  },
+  "plo-este": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "6d7bce58e19e8d8096cf6f42e55e98be",
+     "creativo": "1446202994107929",
+     "ad": "120255490491020029"
+    },
+    "historia": {
+     "imagen": "a778903a779585e080e1d8b9653d2a73",
+     "creativo": "1059648427109013",
+     "ad": "120255490492040029"
+    }
+   },
+   "adset": "120255490490380029"
+  },
+  "handyman": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "77f7c916f635a766511baf49ff2e06f6",
+     "creativo": "28917568121209022",
+     "ad": "120255490493070029"
+    },
+    "historia": {
+     "imagen": "343c692af295f32053d55edb0788956e",
+     "creativo": "4249003922058262",
+     "ad": "120255490493430029"
+    },
+    "video": {
+     "video": "1122737950297660",
+     "miniatura": "7663bfb9a031b391a00f6254621a2978",
+     "creativo": "2026963578021572",
+     "ad": "120255490564330029"
+    }
+   },
+   "adset": "120255490492100029"
+  },
+  "contratistas": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "efe09a618fab36242f5cad911497fd93",
+     "creativo": "1789965111931261",
+     "ad": "120255490593740029"
+    },
+    "flyer-2": {
+     "imagen": "beda8235593bafd35fa76db21007400b",
+     "creativo": "1484200546977108",
+     "ad": "120255490619580029"
+    },
+    "historia": {
+     "imagen": "6b54e6b08d0547dfa481d5b1b2ee26f2",
+     "creativo": "1299031879016188",
+     "ad": "120255490643030029"
+    }
+   },
+   "adset": "120255490567930029"
+  },
+  "cli-san-juan": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "7c08c8679d9dd21f19dca0d43c15a9f7",
+     "creativo": "3367043956808588",
+     "ad": "120255490672020029"
+    },
+    "historia": {
+     "imagen": "e6169b4526df00af94b08e6208ad978c",
+     "creativo": "1112608304510348",
+     "ad": "120255490692970029"
+    }
+   },
+   "adset": "120255490647290029"
+  },
+  "cli-oeste": {
+   "anuncios": {
+    "flyer": {
+     "imagen": "9c3d444ce6a6e0f54aa34dd930da6fb6",
+     "creativo": "1475688687709715",
+     "ad": "120255490744650029"
+    },
+    "historia": {
+     "imagen": "7923ae2c35739b01e7b9b6af1a1fee4c",
+     "creativo": "1484952340143545",
+     "ad": "120255490791680029"
+    }
+   },
+   "adset": "120255490707510029"
+  }
+ },
+ "estado": "BORRADOR: las 2 campañas EN PAUSA y sin fecha de fin (Elvin, 19/oct: 'no lances campañas, deja todo en borrador'). Se prenden con --prender reclutamiento|clientes cuando Elvin dé el OK."
+}
